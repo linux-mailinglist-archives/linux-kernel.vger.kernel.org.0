@@ -2,129 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87532A66A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 12:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DCDEA66AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 12:38:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbfICKgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 06:36:11 -0400
-Received: from mga18.intel.com ([134.134.136.126]:15213 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbfICKgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 06:36:07 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 03:36:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,462,1559545200"; 
-   d="scan'208";a="198743003"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 03 Sep 2019 03:36:04 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 03 Sep 2019 13:36:03 +0300
-Date:   Tue, 3 Sep 2019 13:36:03 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Brad Campbell <lists2009@fnarfbargle.com>
-Cc:     linux-kernel@vger.kernel.org, michael.jamet@intel.com,
-        YehezkelShB@gmail.com
-Subject: Re: Thunderbolt DP oddity on v5.2.9 on iMac 12,2
-Message-ID: <20190903103603.GD2691@lahna.fi.intel.com>
-References: <472bee84-d62b-bfcb-eb83-db881165756b@fnarfbargle.com>
- <20190828073302.GO3177@lahna.fi.intel.com>
- <7c9474d2-d948-4d1d-6f7b-94335b8b1f15@fnarfbargle.com>
- <20190828102342.GT3177@lahna.fi.intel.com>
- <e3a8fa91-2cfd-76a4-641c-610c32122833@fnarfbargle.com>
- <20190828131943.GZ3177@lahna.fi.intel.com>
- <be32b369-b013-cca8-5475-9b56acaa3e18@fnarfbargle.com>
- <20190903101325.GC2691@lahna.fi.intel.com>
-MIME-Version: 1.0
+        id S1728638AbfICKid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 06:38:33 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:46896 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727969AbfICKid (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 06:38:33 -0400
+Received: from mr4.cc.vt.edu (mr4.cc.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x83AcVOR030408
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Sep 2019 06:38:31 -0400
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x83AcQr7002493
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Sep 2019 06:38:31 -0400
+Received: by mail-qk1-f197.google.com with SMTP id m2so18568095qkk.10
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 03:38:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
+         :message-id;
+        bh=5NzM42bVBs/7E1wOe1xuaPM9MIvXN3HbYxHW7n917YA=;
+        b=IWOP2VQcGN06soEJDaPxbfKTiPQPnaKg2Xh+QLlNqIJWyGLM2p2aDLPr2RLe9T3ceL
+         aCeBBckzISHSXpsR1iFYP1n1Wp1IEpSXfyXp1Uvi7+KtLD4XQyhx88K8HV0yvo+7NB8t
+         rfxx8U8qxLKnpRinhY9OvhqeiCXkLuTCmCc+kFgHgnhrka+z0cWhr9wEXLbgaFDw5tG/
+         XQSphOxCW85VugBmQ3PLcegMEGZRi5oADl4HRmoRQsQP7mCoMa5odB/xdjxOkGK2MZh8
+         Y7DTf4jfAzV1+3wwdf9c/PBxdFLf7WKrH2ujGB0UDrq+kYk1HQr7ixNHoPJLMYwfPpPr
+         qFlQ==
+X-Gm-Message-State: APjAAAXIXWx+7waNuOWVQTpGp7jjoB6e7Ai+F9MbudErnoDyC439EfGq
+        EnLJDIySb057zNFtXN/vYba/IoONqu9zH8McAN6lGl2xREtUTQX9svIFwEJ+X3wLE+R9osrF2Ox
+        jw7xLH+Orf1QJdTm+QGTXSTOvaqQZJOZJVXE=
+X-Received: by 2002:ae9:f707:: with SMTP id s7mr6182268qkg.195.1567507105962;
+        Tue, 03 Sep 2019 03:38:25 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxWzAd/YkPdEwKrKndHsYVVM6A2kzLmUcxv8tYM8Rx+8yEZ8dsBvvPMA5hbgaaKxPYWJ0qAZA==
+X-Received: by 2002:ae9:f707:: with SMTP id s7mr6182250qkg.195.1567507105758;
+        Tue, 03 Sep 2019 03:38:25 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4341::359])
+        by smtp.gmail.com with ESMTPSA id n12sm254398qkk.78.2019.09.03.03.38.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 03:38:24 -0700 (PDT)
+From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+cc:     Pablo Pellecchia <pablo9891@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/checkpatch.pl - don't check for const structs if list is empty
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903101325.GC2691@lahna.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Date:   Tue, 03 Sep 2019 06:38:23 -0400
+Message-ID: <542749.1567507103@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 01:13:28PM +0300, Mika Westerberg wrote:
-> Hi Brad,
-> 
-> On Thu, Aug 29, 2019 at 12:27:08AM +0800, Brad Campbell wrote:
-> > It wouldn't surprise me if the firmware was doing something funky. It was
-> > one of the first Thunderbolt equipped models and the support docs explicitly
-> > say only one Thunderbolt display in Windows and two in later versions of
-> > OSX. It almost needs a quirk to say "firmware does something we don't like,
-> > reset the controller and re-discover from scratch".
-> > 
-> > Anyway, I'm not in any hurry. It doesn't get rebooted often and it's not in
-> > any way preventing me using the machine. In fact, upgrading the third head
-> > from an old 24" 1920x1200 to the second Thunderbolt display has been
-> > invaluable.
-> 
-> Can you apply the below patch and then boot with two monitors connected?
-> Then send me the dmesg. It does not fix anything but should log a bit
-> more.
-> 
-> diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-> index 1f7a9e1cc09c..28a72336558a 100644
-> --- a/drivers/thunderbolt/tb.c
-> +++ b/drivers/thunderbolt/tb.c
-> @@ -313,8 +313,10 @@ static struct tb_port *tb_find_unused_port(struct tb_switch *sw,
->  			continue;
->  		if (!sw->ports[i].cap_adap)
->  			continue;
-> -		if (tb_port_is_enabled(&sw->ports[i]))
-> +		if (tb_port_is_enabled(&sw->ports[i])) {
-> +			tb_port_dbg(&sw->ports[i], "this already enabled\n");
->  			continue;
-> +		}
->  		return &sw->ports[i];
->  	}
->  	return NULL;
-> @@ -365,16 +367,25 @@ static int tb_tunnel_dp(struct tb *tb, struct tb_port *out)
->  	struct tb_tunnel *tunnel;
->  	struct tb_port *in;
->  
-> -	if (tb_port_is_enabled(out))
-> +	tb_port_dbg(out, "trying to tunnel DP\n");
-> +
-> +	if (tb_port_is_enabled(out)) {
-> +		tb_port_dbg(out, "DP OUT port already enabled\n");
->  		return 0;
-> +	}
-> +
-> +	tb_port_dbg(out, "finding free DP IN port\n");
->  
->  	do {
->  		sw = tb_to_switch(sw->dev.parent);
->  		if (!sw)
->  			return 0;
-> +		tb_sw_dbg(sw, "finding available DP IN\n");
->  		in = tb_find_unused_port(sw, TB_TYPE_DP_HDMI_IN);
->  	} while (!in);
->  
-> +	tb_port_dbg(in, "found DP IN\n");
-> +
->  	tunnel = tb_tunnel_alloc_dp(tb, in, out);
->  	if (!tunnel) {
->  		tb_port_dbg(out, "DP tunnel allocation failed\n");
-> diff --git a/drivers/thunderbolt/tunnel.c b/drivers/thunderbolt/tunnel.c
-> index 5a99234826e7..93c2c965bdde 100644
-> --- a/drivers/thunderbolt/tunnel.c
-> +++ b/drivers/thunderbolt/tunnel.c
-> @@ -351,9 +351,23 @@ struct tb_tunnel *tb_tunnel_discover_dp(struct tb *tb, struct tb_port *in)
->  	struct tb_tunnel *tunnel;
->  	struct tb_port *port;
->  	struct tb_path *path;
-> +	u32 data[2];
-> +	int ret;
-> +
-> +	tb_port_dbg(in, "start DP discover\n");
->  
-> -	if (!tb_dp_port_is_enabled(in))
-> +	if (!tb_dp_port_is_enabled(in)) {
-> +		tb_port_dbg(in, "DP port enabled\n");
+If the list of structures we expect to be const is empty (due to file permissions,
+or the file being empty, etc), we get odd complaints about structures:
 
-I did typo here so while you try apply the patch, please change this one
-to say "DP port not enabled" instead.
+[/usr/src/linux-next] scripts/checkpatch.pl -f drivers/staging/netlogic/platform_net.h
+No structs that should be const will be found - file '/usr/src/linux-next/scripts/const_structs.checkpatch': Permission denied
+WARNING: struct  should normally be const
+#9: FILE: drivers/staging/netlogic/platform_net.h:9:
++struct xlr_net_data {
+
+WARNING: struct  should normally be const
+#20: FILE: drivers/staging/netlogic/platform_net.h:20:
++	struct xlr_fmn_info *gmac_fmn_info;
+
+total: 0 errors, 2 warnings, 0 checks, 21 lines checked
+
+Fix it so that it actually *obeys* what it said about not finding structures.
+
+Reported-by: Pablo Pellecchia <pablo9891@gmail.com>
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+---
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index f4b6127ff469..103c67665f61 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6497,7 +6497,7 @@ sub process {
+ 
+ # check for various structs that are normally const (ops, kgdb, device_tree)
+ # and avoid what seem like struct definitions 'struct foo {'
+-		if ($line !~ /\bconst\b/ &&
++		if ($line !~ /\bconst\b/ && $const_structs ne "" &&
+ 		    $line =~ /\bstruct\s+($const_structs)\b(?!\s*\{)/) {
+ 			WARN("CONST_STRUCT",
+ 			     "struct $1 should normally be const\n" . $herecurr);
+
