@@ -2,95 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB3ADA7485
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F87DA7491
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:23:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbfICUTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 16:19:10 -0400
-Received: from correo.us.es ([193.147.175.20]:57988 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbfICUTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 16:19:09 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id E0700B6C65
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2019 22:19:05 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id D3086D2B1E
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2019 22:19:05 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id C2E0DB7FF6; Tue,  3 Sep 2019 22:19:05 +0200 (CEST)
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
-X-Spam-Level: 
-X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
-        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id B8CACD2B1F;
-        Tue,  3 Sep 2019 22:19:03 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Tue, 03 Sep 2019 22:19:03 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 8A1E14265A5A;
-        Tue,  3 Sep 2019 22:19:03 +0200 (CEST)
-Date:   Tue, 3 Sep 2019 22:19:04 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Florian Westphal <fw@strlen.de>
-Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v4 1/2] netfilter: Terminate rule eval if protocol=IPv6
- and ipv6 module is disabled
-Message-ID: <20190903201904.npna6dt25ug5gwvd@salvia>
-References: <20190830181354.26279-1-leonardo@linux.ibm.com>
- <20190830181354.26279-2-leonardo@linux.ibm.com>
- <20190830205802.GS20113@breakpoint.cc>
- <99e3ef9c5ead1c95df697d49ab9cc83a95b0ac7c.camel@linux.ibm.com>
- <20190903164948.kuvtpy7viqhcmp77@salvia>
- <20190903170550.GA13660@breakpoint.cc>
- <20190903193155.v74ws47zcn6zrwpr@salvia>
- <20190903194809.GD13660@breakpoint.cc>
+        id S1726882AbfICUXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 16:23:01 -0400
+Received: from outbound4sev.lav.puc.rediris.es ([130.206.19.177]:15068 "EHLO
+        mx02.puc.rediris.es" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726009AbfICUXB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 16:23:01 -0400
+X-Greylist: delayed 619 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Sep 2019 16:23:00 EDT
+Received: from mta-out01.sim.rediris.es (mta-out01.sim.rediris.es [130.206.24.43])
+        by mx02.puc.rediris.es  with ESMTP id x83KBN0J009423-x83KBN0L009423
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 3 Sep 2019 22:11:23 +0200
+Received: from mta-out01.sim.rediris.es (localhost.localdomain [127.0.0.1])
+        by mta-out01.sim.rediris.es (Postfix) with ESMTPS id 3AE24332E817;
+        Tue,  3 Sep 2019 22:11:23 +0200 (CEST)
+Received: from mta-out01.sim.rediris.es (localhost.localdomain [127.0.0.1])
+        by mta-out01.sim.rediris.es (Postfix) with ESMTPS id 2A326332E818;
+        Tue,  3 Sep 2019 22:11:23 +0200 (CEST)
+Received: from lt-gp.iram.es (219.red-80-24-122.staticip.rima-tde.net [80.24.122.219])
+        by mta-out01.sim.rediris.es (Postfix) with ESMTPA id 5A9B4332E817;
+        Tue,  3 Sep 2019 22:11:22 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 22:11:21 +0200
+From:   Gabriel Paubert <paubert@iram.es>
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Alastair D'Silva <alastair@au1.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>, alastair@d-silva.org,
+        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Allison Randal <allison@lohutok.net>
+Subject: Re: [PATCH v2 3/6] powerpc: Convert flush_icache_range & friends to C
+Message-ID: <20190903201121.GD3547@lt-gp.iram.es>
+References: <20190903052407.16638-1-alastair@au1.ibm.com>
+ <20190903052407.16638-4-alastair@au1.ibm.com>
+ <20190903130430.GC31406@gate.crashing.org>
+ <d268ee78-607e-5eb3-ed89-d5c07f672046@c-s.fr>
+ <20190903160415.GA9749@gate.crashing.org>
+ <321b003a-9633-5ff4-c4a2-59a47ec23421@c-s.fr>
+ <20190903183157.GB9749@gate.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190903194809.GD13660@breakpoint.cc>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190903183157.GB9749@gate.crashing.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-FEAS-CONTENT-MODIFICATION:      
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 09:48:09PM +0200, Florian Westphal wrote:
-> Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> > > > I was expecting we could find a way to handle this from br_netfilter
-> > > > alone itself.
-> > > 
-> > > We can't because we support ipv6 fib lookups from the netdev family
-> > > as well.
-> > > 
-> > > Alternative is to auto-accept ipv6 packets from the nf_tables eval loop,
-> > > but I think its worse.
+On Tue, Sep 03, 2019 at 01:31:57PM -0500, Segher Boessenkool wrote:
+> On Tue, Sep 03, 2019 at 07:05:19PM +0200, Christophe Leroy wrote:
+> > Le 03/09/2019 à 18:04, Segher Boessenkool a écrit :
+> > >(Why are they separate though?  It could just be one loop var).
 > > 
-> > Could we add a restriction for nf_tables + br_netfilter + !ipv6. I
-> > mean, if this is an IPv6 packet, nf_tables is on and IPv6 module if
-> > off, then drop this packet?
+> > Yes it could just be a single loop var, but in that case it would have 
+> > to be reset at the start of the second loop, which means we would have 
+> > to pass 'addr' for resetting the loop anyway,
 > 
-> We could do that from nft_do_chain_netdev().
+> Right, I noticed that after hitting send, as usual.
+> 
+> > so I opted to do it 
+> > outside the inline asm by using to separate loop vars set to their 
+> > starting value outside the inline asm.
+> 
+> The thing is, the way it is written now, it will get separate registers
+> for each loop (with proper earlyclobbers added).  Not that that really
+> matters of course, it just feels wrong :-)
 
-Indeed, this is all about the netdev case.
+After "mtmsr %3", it is always possible to copy %0 to %3 and use it as
+an address register for the second loop. One register less to allocate
+for the compiler. Constraints of course have to be adjusted.
 
-Probably add something similar to nf_ip6_route() to deal with
-ip6_route_lookup() case? This is the one trigering the problem, right?
-
-BTW, how does nft_fib_ipv6 module kicks in if ipv6 module is not
-loaded? The symbol dependency would pull in the IPv6 module anyway.
+	Gabriel
+> 
+> 
+> Segher
