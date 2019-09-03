@@ -2,126 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA041A6AF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377D5A6AFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729518AbfICOOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:14:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48612 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729117AbfICOOU (ORCPT
+        id S1729543AbfICOOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:14:41 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45865 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728490AbfICOOk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:14:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9A6716090F; Tue,  3 Sep 2019 14:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567520059;
-        bh=zXyYEMXgxwMe5kM6w/V7cIEreB+fNKc7naZiALNTuV0=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=KiOMKliERg7LuKGLumbuTIJ+UJL6E16SGVratZI6NIzYldjnimsKv2QvcAQV5XHO4
-         WwpZ1pBMjBso7JOeTQ+2vgL3verNFkH1LumYPZjaubGlS6kLW7cIbDL+HXDzTiT8rX
-         JpoYnqpTze27eHIU3lZonO0fJyF39wANCedKN4M4=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4C3D56013C;
-        Tue,  3 Sep 2019 14:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567520056;
-        bh=zXyYEMXgxwMe5kM6w/V7cIEreB+fNKc7naZiALNTuV0=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=Y/go4IHw5C2+Czr7z7sw1YY2om5Qpc43pr14YwOkFu3rW4sx63XNo/9WjnRnjEz+h
-         iOaeD/GBzmWPmUWxK3+bY5oueaSiTPPfbPWaG4cxjaHKbHJiOIIm3MULYdr94wPRpL
-         HK760yQDod/5l0ijZ3wIKP/xYHSIgKWNfWytub+g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C3D56013C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 3 Sep 2019 10:14:40 -0400
+Received: by mail-qt1-f196.google.com with SMTP id r15so14425848qtn.12
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:14:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uZuxXXMlAYNSgtrDo0fBJSBMOeWiN9xN97X6WAr23F4=;
+        b=BENam+KXO70R70KQ3+MZHBhyp0284kQXpZKvwHXmtovBSgv+h5YYYG4ir1Yi/I3Ay/
+         v69Vn8GjuCS05VDclOvBmpouOwM81YF05Ghnzp0C6CyAlsNdgsz4VXdloC4adgyZGm5h
+         16nt2+Nl2JHxZfNRD1vJZzcmLxMpI7qb69dJB7rq/6orD1ojmXuY+K6U23r6EBq2SHsX
+         5JXo/+lub1YowG0uXUxgG4ji9rzVuG3WUu6stGdifgtA0nhuCu6OPA388hVGUAJ7cdBS
+         l5rRAFgb3D6a3H+0EG/5qV8vAmJXdcITlpVttsi/BSFMtjbUfUpUQiVJ5Td7RsJk0PbU
+         Ja0g==
+X-Gm-Message-State: APjAAAUvonmZkxqhYB4HEV5g137DRFc9u/cVgd2XT8jxPC8HfJORAVKX
+        mCWQPufv9jTfU2AhP7A83SxUjm31EbISXyXOzKY=
+X-Google-Smtp-Source: APXvYqxelYH9THh93iIcl3wa1OLv6f7pgPHKDWhhtXYhUd64qKHC4ZPdbqr0L0BjKsY8IVk5YfziXZyPIgVPl1f7ccw=
+X-Received: by 2002:ac8:32ec:: with SMTP id a41mr3105234qtb.18.1567520079928;
+ Tue, 03 Sep 2019 07:14:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 2/2] Fix a NULL-ptr-deref bug in
- ath10k_usb_alloc_urb_from_pipe
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190804003101.11541-1-benquike@gmail.com>
-References: <20190804003101.11541-1-benquike@gmail.com>
-To:     Hui Peng <benquike@gmail.com>
-Cc:     davem@davemloft.net, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190903141418.9A6716090F@smtp.codeaurora.org>
-Date:   Tue,  3 Sep 2019 14:14:18 +0000 (UTC)
+References: <20190825202642.GA18853@piout.net>
+In-Reply-To: <20190825202642.GA18853@piout.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 3 Sep 2019 16:14:23 +0200
+Message-ID: <CAK8P3a02iEsnCc2chJzAs-z=1DQ=P7=WaA1q4EkOCUNxAwwALw@mail.gmail.com>
+Subject: Re: [GIT PULL] ARM: at91: DT for 5.4
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
+        SoC Team <soc@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hui Peng <benquike@gmail.com> wrote:
+On Sun, Aug 25, 2019 at 10:26 PM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+>
+>
+> ----------------------------------------------------------------
+> AT91 DT for 5.4
+>
+>  - style cleanup for at91sam9x5 based boards
+>  - avoid colliding node and property names
+>
+Pulled into arm/dt, thanks!
 
-> The `ar_usb` field of `ath10k_usb_pipe_usb_pipe` objects
-> are initialized to point to the containing `ath10k_usb` object
-> according to endpoint descriptors read from the device side, as shown
-> below in `ath10k_usb_setup_pipe_resources`:
-> 
-> for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
->         endpoint = &iface_desc->endpoint[i].desc;
-> 
->         // get the address from endpoint descriptor
->         pipe_num = ath10k_usb_get_logical_pipe_num(ar_usb,
->                                                 endpoint->bEndpointAddress,
->                                                 &urbcount);
->         ......
->         // select the pipe object
->         pipe = &ar_usb->pipes[pipe_num];
-> 
->         // initialize the ar_usb field
->         pipe->ar_usb = ar_usb;
-> }
-> 
-> The driver assumes that the addresses reported in endpoint
-> descriptors from device side  to be complete. If a device is
-> malicious and does not report complete addresses, it may trigger
-> NULL-ptr-deref `ath10k_usb_alloc_urb_from_pipe` and
-> `ath10k_usb_free_urb_to_pipe`.
-> 
-> This patch fixes the bug by preventing potential NULL-ptr-deref.
-> 
-> Signed-off-by: Hui Peng <benquike@gmail.com>
-> Reported-by: Hui Peng <benquike@gmail.com>
-> Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-This causes a new warning, please build test your patches.
-
-In file included from ./include/uapi/linux/posix_types.h:5,
-                 from ./include/uapi/linux/types.h:14,
-                 from ./include/linux/types.h:6,
-                 from ./include/linux/list.h:5,
-                 from ./include/linux/module.h:9,
-                 from drivers/net/wireless/ath/ath10k/usb.c:8:
-drivers/net/wireless/ath/ath10k/usb.c: In function 'ath10k_usb_free_urb_to_pipe':
-./include/linux/stddef.h:8:14: warning: 'return' with a value, in function returning void
- #define NULL ((void *)0)
-              ^
-drivers/net/wireless/ath/ath10k/usb.c:64:10: note: in expansion of macro 'NULL'
-   return NULL;
-          ^~~~
-drivers/net/wireless/ath/ath10k/usb.c:57:13: note: declared here
- static void ath10k_usb_free_urb_to_pipe(struct ath10k_usb_pipe *pipe,
-             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Patch set to Changes Requested.
-
--- 
-https://patchwork.kernel.org/patch/11074657/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+       Arnd
