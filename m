@@ -2,91 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48FB4A6099
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 07:31:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E686A6092
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 07:31:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfICFbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 01:31:19 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46349 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfICFbM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 01:31:12 -0400
-Received: by mail-ot1-f66.google.com with SMTP id z17so15463722otk.13
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 22:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lGKYy9yMsvJ2kTO5n+BuY7ZyhZgTpOWzHalFTSpyidQ=;
-        b=KAqD+boVKcoC0ROi4cYqnfBlJFSf5Ilc6evakbMhCji7VI5iw3xDhL39RH8t5pGCeP
-         HCa+3Yf+XVz9FUJJWu2kv0MUJnvsEla+rZJ2uBTa22jzYTZisfxqS8kEQPBex0nchX3o
-         7JLJP+fNEfoCJhrtvwxvS/M7ouJ+YNGgBi8y5xtVc1xOTCLN9oq8qdyqFykdlfYXiNiS
-         EAHLIl+e8mOVQF6tjgfW81cVNoxSx+83LGYiafqMA8EGPbM6IGPrds5WszbCFYZI+3Vu
-         Od4LWGVOan+V/9wQi3GBhzNIgoDzga26KzAI/bvAnwSthkfkKnuL9VAWb1eUsXk+q7oU
-         puEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lGKYy9yMsvJ2kTO5n+BuY7ZyhZgTpOWzHalFTSpyidQ=;
-        b=LAI2YUPRSTB4PxZXxh3w2K4IH2cxp5ihgvhImS7P7jFGC3rS2A1kx2YF/ODSJ4feYr
-         WzlDhp7aUje93rL10MSrKwNA8EdIWl+ry8Qbo/ECgxjuawhLDoRAP4qr7ZcB9bWvT0JH
-         h7Q33fzbryLLfsWW9xYJng5pyDbBeRz4rpVLXvZfZwlSOAAq70+GCet6s63XZsgzhQYC
-         HSAYo/i13fgdOzSIQYn+1wPbbUQe4gH8/xPiYYO4vgCIuJd/G9DFxlKmjAUmt/s/+GgI
-         E216RH9mcyZAYw087kDpFNesbn5i5TeJLdj9ey06UUkPKUPIrC9bz/pRVmqQAcfXL+jq
-         /PTg==
-X-Gm-Message-State: APjAAAXzUSsZpsEPIY5PvTlGujHwY4hWXr8RtE1vqpk4hggloYardAj0
-        FIFCnEuFAGKN7m6eCPV0bGgRrL4rah4BkMeRQ6IM1g==
-X-Google-Smtp-Source: APXvYqxICI33147suMA8tn/fNIGFMIb76QryDyObOhkgiI2hJnHiBjE0kEVaAW0OE+xuduvcFwDqLWBdPgXh0HoLOYk=
-X-Received: by 2002:a9d:6d15:: with SMTP id o21mr1117891otp.363.1567488671666;
- Mon, 02 Sep 2019 22:31:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190902205017.3eca5b70@canb.auug.org.au> <20190902105137.GC20@mellanox.com>
- <20190903094511.2704484a@canb.auug.org.au>
-In-Reply-To: <20190903094511.2704484a@canb.auug.org.au>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 2 Sep 2019 22:31:00 -0700
-Message-ID: <CAPcyv4hyEK=jA=ATyzjKbJDeQfpOyRo4pxoFCTf1LHa-muC14w@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the hmm tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726618AbfICFbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 01:31:08 -0400
+Received: from mx.socionext.com ([202.248.49.38]:49352 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726492AbfICFbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 01:31:06 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 03 Sep 2019 14:31:05 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 535F6605FA;
+        Tue,  3 Sep 2019 14:31:05 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 3 Sep 2019 14:31:05 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 1ADCC1A0E9F;
+        Tue,  3 Sep 2019 14:31:05 +0900 (JST)
+Received: from hamster.e01.socionext.com (unknown [10.213.134.20])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id E5B391204B3;
+        Tue,  3 Sep 2019 14:31:04 +0900 (JST)
+From:   Keiji Hayashibara <hayashibara.keiji@socionext.com>
+To:     broonie@kernel.org, yamada.masahiro@socionext.com,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     masami.hiramatsu@linaro.org, jaswinder.singh@linaro.org,
+        linux-kernel@vger.kernel.org, hayashibara.keiji@socionext.com
+Subject: [PATCH 2/3] spi: uniphier: remove unnecessary code
+Date:   Tue,  3 Sep 2019 14:31:00 +0900
+Message-Id: <1567488661-11428-3-git-send-email-hayashibara.keiji@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1567488661-11428-1-git-send-email-hayashibara.keiji@socionext.com>
+References: <1567488661-11428-1-git-send-email-hayashibara.keiji@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 2, 2019 at 4:45 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Jason,
->
-> On Mon, 2 Sep 2019 10:51:41 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
-> >
-> > On Mon, Sep 02, 2019 at 08:50:17PM +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> >
-> > > ERROR: "nd_region_provider_data" [drivers/acpi/nfit/nfit.ko] undefined!
-> > > ERROR: "to_nd_blk_region" [drivers/acpi/nfit/nfit.ko] undefined!
-> > > ERROR: "nvdimm_region_notify" [drivers/acpi/nfit/nfit.ko] undefined!
-> > > ERROR: "nvdimm_blk_region_create" [drivers/acpi/nfit/nfit.ko] undefined!
-> > >
-> > > Caused by commit
-> > >
-> > >   126470c8a58b ("libnvdimm: Enable unit test infrastructure compile checks")
-> > >
-> > > I have reverted that commit for today.
-> >
-> > Looks like more kconfig trouble, can you send Dan your kconfig? I'll
-> > drop this patch again
-> >
->
-> Thanks.  It was just an x86_64 allmodconfig build.  I don't actually
-> have the .config file (it gets cleaned up, sorry).
+This commit removed if() because priv->is_save_param is always true.
 
-Strange. x86_64 allmodconfig is certainly a 0day build target. Could
-this be toolchain dependent?
+Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+---
+ drivers/spi/spi-uniphier.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-uniphier.c b/drivers/spi/spi-uniphier.c
+index e6ebbb1..d40ad93 100644
+--- a/drivers/spi/spi-uniphier.c
++++ b/drivers/spi/spi-uniphier.c
+@@ -227,8 +227,7 @@ static void uniphier_spi_setup_transfer(struct spi_device *spi,
+ 		priv->speed_hz = t->speed_hz;
+ 	}
+ 
+-	if (!priv->is_save_param)
+-		priv->is_save_param = true;
++	priv->is_save_param = true;
+ 
+ 	/* reset FIFOs */
+ 	val = SSI_FC_TXFFL | SSI_FC_RXFFL;
+-- 
+2.7.4
+
