@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBD90A61FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AA80A6205
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbfICG5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:57:09 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40111 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfICG5J (ORCPT
+        id S1727379AbfICG5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:57:54 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38464 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfICG5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:57:09 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y10so1551198pll.7
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 23:57:09 -0700 (PDT)
+        Tue, 3 Sep 2019 02:57:54 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d10so4028592pgo.5
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 23:57:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KB/V8KmhO87QpU2qi6NuMt+cmKaMtWbc3N1EFYpdy18=;
-        b=A8hMB12rzSIXxfNLfvQpaXb05wViyP2+l2zkaePY3jY9xLsOYXyLQWNvuXoUjKYdYN
-         aVEdikjHvxlsATSHPqByhDsXFeMegocbBJZB6BrUKuSUM34tMIYiSBRSOaRBDDLzzOOm
-         4c+lh19B+smCdveQxL5zxCOCRiNP2ssUIM4XuQXxl+Iqi4niG/BblKaKI5fdu9kf1tPA
-         qJUgEXWDofovWWdVES/7abXnZRPNKx2VnEVI5u0ABQB5rCFFlAxLrBUP5Xcr5i1z0xWD
-         gAbEPtvR5qlXbdBe+KvwSmpz/tPGBjcIKTp/Hw8T+bZmD7g+tXwXPBt0n1YU+wMO8iZZ
-         ePxA==
+        bh=AeeV14OyLBTF7KaAD5jDBEtXBCp8zTp9/udCZix5Xks=;
+        b=p9W6jfMk6gjNMTcRQ3sw84ltehgzUrnBrlh77posPmyU5yfQhoe+6buCNhGW0ouOGj
+         fLnPvg2yonl4VXRxfOkrpbcSHkZHd5RiscvSIOx0ZOJ1y1Mw2BDydU+Tq8i/qIRcBIZx
+         +kx/N9qbHhYCGyQIec7LgW6gKOBQYvgFJt2UMX6odCHU2GQWEMxkr04++3zHyCeXc34L
+         7eZJiEuJTgcyNT/uahiEanGfJOlJFyMwu44Dr5DfitUxj8zsp5SQ7BWzq2z52GmNkFUl
+         3SedRw8KmftQPXKutX0FC5A5QVg0B13e2mT1t0uKzT/BB0taIQEJma/91cTQ5vfguCNO
+         LMhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KB/V8KmhO87QpU2qi6NuMt+cmKaMtWbc3N1EFYpdy18=;
-        b=iKGJ/b6dm5FL3vneaWe0flkST73KGvAXal6T0S+xNwpJYg3E9RNHTQSIeP21gICwH+
-         k+3Tj18+nbzPzIiMDwsDosS+WUTr4K6ttdh1OafnlLY/FHTZcxXlYlvKnS1Af4QN5z/C
-         LPhIF6wYuSYB4dxC5WLmCz+3u8b4QvJ+zOKR4XKLshOSVy06Qutu5riYRmPpkwdZL9tp
-         M8xQrm4cFjStok42nb2IQ6zrlMqx1/lkVudh1IPyvfFzrGe7jT3HL1VJeagF3RdgvXrZ
-         qXSSNT6UjLUYPz0Z4dURFukPNecsrcPRDa8bJ3iUDDAV50gL3NDKSTxQwIVUHt4ZWhyX
-         Ay0A==
-X-Gm-Message-State: APjAAAV07BQUy+5b2CvzyFH1Dv9cIURDXSMejMW7Awg2fY3cSsP+jpep
-        0nro8M4IMoivQ+aWesZhWBrLBA==
-X-Google-Smtp-Source: APXvYqyfySDW7CEQtmCmNLVRVF0O3NlAe8+q1y4hjyEJb68cAg2PNngFpGF2JKZm/rmzjydG4ijMmQ==
-X-Received: by 2002:a17:902:d886:: with SMTP id b6mr8606471plz.149.1567493828795;
-        Mon, 02 Sep 2019 23:57:08 -0700 (PDT)
+        bh=AeeV14OyLBTF7KaAD5jDBEtXBCp8zTp9/udCZix5Xks=;
+        b=P3pWl2MBJw6G+tbv7b6Epuk4nv9IBd4xc0g5IGYdWATiHG4t1FTa5Ljb3WN3bvbPBH
+         9x2911aYufLLpHuEQOBXZFVhVRiH7CzScGo3AWhvX3rWRf1jPXGdg1nVk8fObNfdIwB6
+         sBld/ab7JQIZ1OSjENE7gpFofJqkFGE2WpuTNVEcSEwb+nmrNS62jmlKTQ+Q/5b3b5KN
+         +2deTcvE53Zmc8XyzfzKYWOlR74BGugD3SnduiA8IctFaIAX6Pqwa+FZOGiBnxnZKCTT
+         trCfzjrcOQdhtl+NcXbpjmAlc9LMEoNae7e7/YGk5dmQYvISi3BJ71mk8BAhZMIucLX5
+         WoqQ==
+X-Gm-Message-State: APjAAAXI0OYpEM4tmlT+nmWGs+knTOOEDywjyWpKuuY+vPu4L/BL4L0H
+        N0Unhw19X3Bt6R7SnrN5s1uD6Q==
+X-Google-Smtp-Source: APXvYqw+7WbV27ga/InS0ExF8ZO/V01r9VugBLs7kebePYey1RQXVTmSVaNT4QvEWAHG7OpHeIYVHw==
+X-Received: by 2002:a17:90a:b781:: with SMTP id m1mr16250972pjr.141.1567493873489;
+        Mon, 02 Sep 2019 23:57:53 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id p20sm17786228pgi.81.2019.09.02.23.57.04
+        by smtp.gmail.com with ESMTPSA id n66sm307197pfn.90.2019.09.02.23.57.50
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Sep 2019 23:57:08 -0700 (PDT)
+        Mon, 02 Sep 2019 23:57:53 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
-To:     stable@vger.kernel.org, davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, edumazet@google.com
-Cc:     netdev@vger.kernel.org, arnd@arndb.de, baolin.wang@linaro.org,
+To:     stable@vger.kernel.org, peterz@infradead.org, mingo@redhat.com
+Cc:     longman@redhat.com, arnd@arndb.de, baolin.wang@linaro.org,
         orsonzhai@gmail.com, vincent.guittot@linaro.org,
         linux-kernel@vger.kernel.org
-Subject: [BACKPORT 4.14.y 2/8] ip6: fix skb leak in ip6frag_expire_frag_queue()
-Date:   Tue,  3 Sep 2019 14:56:42 +0800
-Message-Id: <3cf0695f42e8f1b4172b68ad145a5d2afae39a0e.1567492316.git.baolin.wang@linaro.org>
+Subject: [BACKPORT 4.14.y 3/8] locking/lockdep: Add debug_locks check in __lock_downgrade()
+Date:   Tue,  3 Sep 2019 14:57:21 +0800
+Message-Id: <ecdae1a4a913695b66404f0d34250b6812f7c1dd.1567492316.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1567492316.git.baolin.wang@linaro.org>
 References: <cover.1567492316.git.baolin.wang@linaro.org>
@@ -61,57 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Waiman Long <longman@redhat.com>
 
-Since ip6frag_expire_frag_queue() now pulls the head skb
-from frag queue, we should no longer use skb_get(), since
-this leads to an skb leak.
+Tetsuo Handa had reported he saw an incorrect "downgrading a read lock"
+warning right after a previous lockdep warning. It is likely that the
+previous warning turned off lock debugging causing the lockdep to have
+inconsistency states leading to the lock downgrade warning.
 
-Stefan Bader initially reported a problem in 4.4.stable [1] caused
-by the skb_get(), so this patch should also fix this issue.
+Fix that by add a check for debug_locks at the beginning of
+__lock_downgrade().
 
-296583.091021] kernel BUG at /build/linux-6VmqmP/linux-4.4.0/net/core/skbuff.c:1207!
-[296583.091734] Call Trace:
-[296583.091749]  [<ffffffff81740e50>] __pskb_pull_tail+0x50/0x350
-[296583.091764]  [<ffffffff8183939a>] _decode_session6+0x26a/0x400
-[296583.091779]  [<ffffffff817ec719>] __xfrm_decode_session+0x39/0x50
-[296583.091795]  [<ffffffff818239d0>] icmpv6_route_lookup+0xf0/0x1c0
-[296583.091809]  [<ffffffff81824421>] icmp6_send+0x5e1/0x940
-[296583.091823]  [<ffffffff81753238>] ? __netif_receive_skb+0x18/0x60
-[296583.091838]  [<ffffffff817532b2>] ? netif_receive_skb_internal+0x32/0xa0
-[296583.091858]  [<ffffffffc0199f74>] ? ixgbe_clean_rx_irq+0x594/0xac0 [ixgbe]
-[296583.091876]  [<ffffffffc04eb260>] ? nf_ct_net_exit+0x50/0x50 [nf_defrag_ipv6]
-[296583.091893]  [<ffffffff8183d431>] icmpv6_send+0x21/0x30
-[296583.091906]  [<ffffffff8182b500>] ip6_expire_frag_queue+0xe0/0x120
-[296583.091921]  [<ffffffffc04eb27f>] nf_ct_frag6_expire+0x1f/0x30 [nf_defrag_ipv6]
-[296583.091938]  [<ffffffff810f3b57>] call_timer_fn+0x37/0x140
-[296583.091951]  [<ffffffffc04eb260>] ? nf_ct_net_exit+0x50/0x50 [nf_defrag_ipv6]
-[296583.091968]  [<ffffffff810f5464>] run_timer_softirq+0x234/0x330
-[296583.091982]  [<ffffffff8108a339>] __do_softirq+0x109/0x2b0
-
-Fixes: d4289fcc9b16 ("net: IP6 defrag: use rbtrees for IPv6 defrag")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Stefan Bader <stefan.bader@canonical.com>
-Cc: Peter Oskolkov <posk@google.com>
-Cc: Florian Westphal <fw@strlen.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Reported-by: syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/r/1547093005-26085-1-git-send-email-longman@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- include/net/ipv6_frag.h |    1 -
- 1 file changed, 1 deletion(-)
+ kernel/locking/lockdep.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/net/ipv6_frag.h b/include/net/ipv6_frag.h
-index 28aa9b3..1f77fb4 100644
---- a/include/net/ipv6_frag.h
-+++ b/include/net/ipv6_frag.h
-@@ -94,7 +94,6 @@ static inline u32 ip6frag_obj_hashfn(const void *data, u32 len, u32 seed)
- 		goto out;
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 565005a..5c370c6 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -3650,6 +3650,9 @@ static int reacquire_held_locks(struct task_struct *curr, unsigned int depth,
+ 	unsigned int depth;
+ 	int i;
  
- 	head->dev = dev;
--	skb_get(head);
- 	spin_unlock(&fq->q.lock);
- 
- 	icmpv6_send(head, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
++	if (unlikely(!debug_locks))
++		return 0;
++
+ 	depth = curr->lockdep_depth;
+ 	/*
+ 	 * This function is about (re)setting the class of a held lock,
 -- 
 1.7.9.5
 
