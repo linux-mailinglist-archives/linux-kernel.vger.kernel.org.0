@@ -2,170 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 600AEA777A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 01:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02493A777F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 01:17:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbfICXPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 19:15:53 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46883 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfICXPw (ORCPT
+        id S1727644AbfICXRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 19:17:52 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:47014 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbfICXRw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 19:15:52 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q5so4017544pfg.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 16:15:52 -0700 (PDT)
+        Tue, 3 Sep 2019 19:17:52 -0400
+Received: by mail-qk1-f193.google.com with SMTP id 201so8281127qkd.13
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 16:17:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=0JNFzCpBJEdTemHS45RsytSZ45gxo6jwn6UP6l3k/q8=;
-        b=oW+6JVM7aPZ/oqfhrmtJXYQvAfuGgJF4dbb9hL8kr4pZK2F4F6EwJoIjBJ7cw8oBlX
-         Bvzfs/LSK+TzZhBZn7kKrT9R+4+htcZ2uy7HX6SdhTwzWczYwgs379bPE/Wb4D35slh7
-         UFBTtOd4DnDaEmUbsjxiKcaAzKvOD9GdejDNwBa+xt+CYqMSeaqmgYA2aX/QCwV2ly+L
-         7pBaBkXGPO5KmO7F5GrEBc2v4xjZ7CYFa+GAZ5Ny1iqkMW7Ubn7z5PigzPoI5Qo7bahQ
-         nBQiZWmZjmETlqZ9J/YqkaK5BsWicDUd27qtMXYAQuBx5lz2snBdq4IVnBYFLBfWEqd4
-         N5gg==
+        d=sequielo-com-ar.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=tQ7K+3HWKbiik3/g1SEzQSIcjPNYZUGislFT51VG5eQ=;
+        b=RqpcJh4+I0IItH0ck73674aoE4yFlQwrCCNS+6tsi5GkORY8GHLF7GPDtVfPUGFjpl
+         KQj237UDJ00Rv/oyZ6UsPtjT0iNnDi7I+jSDkXU9Hj1qPAk1Xa6Y0sCVSdBM9sOM7ROd
+         bFWNbU0EQuHvEBjR9jlnLKCKkztXVYjNce2WK9qch4LkLvimXvOHKewbsYfp5g1InvSa
+         Dy0pKL+T1vNXV1aKDWJb1yLkgZrPUO2D8T6Jk/nGCbEyFysRIdXyL9zU9QNTnOWenakK
+         ppXAKRiqyVUaRZdLkCNDA67DmU7sUzqYOIn7duQi7CU4xfJHZxzsc9Z4kbLus8aXoBKF
+         kGsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=0JNFzCpBJEdTemHS45RsytSZ45gxo6jwn6UP6l3k/q8=;
-        b=auGwfKH7r+IeYCpqSr3KW6tQnons/2sOl9EsNDPzfJXXwljTk6prRFLHZHWLaxR1Tw
-         IvZUaPX7R0OQS3RQTl/1QWy5b0dl/4fHW9gm980axs3VqEF2tA07kCjZpbMch0zTW0h5
-         hH4XY/4aC4J1FfeXlDooqgN70OiFMktEv1d5m0+coWeYMaVB/C1xQOkTtnjTcNQd6jPT
-         KQzsk9Nn+aDjyN1a5GpHKDkl26eCnhJuDG6yD3tpjv5xSpRT7ZRIvbyo4aDVOtVNcb7q
-         mzI2WDihTgCtq5WNUmEDCyFpeiG1ASKBu1UgArX52BeivZPjoJuBeLRO2JH1UAgPh7uu
-         jiwg==
-X-Gm-Message-State: APjAAAXHbhqlei6wDtty1JJerddZnnP2p7fhC3cRli8I9tAE2JRgf+2k
-        e2Uaq8wTbHGtzaFO5rOtlJDgvQ==
-X-Google-Smtp-Source: APXvYqwAy6VYf9bqsKAEfzgG8ON4zGp8+yZVa8O65Onr7XLG5rt2+zdJ8t0YJUfd0uch3XZDDrztnQ==
-X-Received: by 2002:a17:90a:310:: with SMTP id 16mr1910866pje.100.1567552551831;
-        Tue, 03 Sep 2019 16:15:51 -0700 (PDT)
-Received: from [10.238.221.122] (129.sub-97-41-131.myvzw.com. [97.41.131.129])
-        by smtp.gmail.com with ESMTPSA id s7sm29657053pfb.138.2019.09.03.16.15.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Sep 2019 16:15:50 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 3/4] drm/ttm, drm/vmwgfx: Correctly support support AMD memory encryption
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16G102)
-In-Reply-To: <6d122d62-9c96-4c29-8d06-02f7134e5e2a@shipmail.org>
-Date:   Tue, 3 Sep 2019 16:15:47 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        pv-drivers@vmware.com,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B3C5DD1B-A33C-417F-BDDC-73120A035EA5@amacapital.net>
-References: <20190903131504.18935-1-thomas_os@shipmail.org> <20190903131504.18935-4-thomas_os@shipmail.org> <b54bd492-9702-5ad7-95da-daf20918d3d9@intel.com> <CAKMK7uFv+poZq43as8XoQaSuoBZxCQ1p44VCmUUTXOXt4Y+Bjg@mail.gmail.com> <6d0fafcc-b596-481b-7b22-1f26f0c02c5c@intel.com> <bed2a2d9-17f0-24bd-9f4a-c7ee27f6106e@shipmail.org> <7fa3b178-b9b4-2df9-1eee-54e24d48342e@intel.com> <ba77601a-d726-49fa-0c88-3b02165a9a21@shipmail.org> <CALCETrVnNpPwmRddGLku9hobE7wG30_3j+QfcYxk09hZgtaYww@mail.gmail.com> <44b094c8-63fe-d9e5-1bf4-7da0788caccf@shipmail.org> <6d122d62-9c96-4c29-8d06-02f7134e5e2a@shipmail.org>
-To:     =?utf-8?Q? "Thomas_Hellstr=C3=B6m_=28VMware=29" ?= 
-        <thomas_os@shipmail.org>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=tQ7K+3HWKbiik3/g1SEzQSIcjPNYZUGislFT51VG5eQ=;
+        b=GKX3GSuMVCFFk3bgJLTInTGvbOTndRcC/aoe02AWKDfKw6LPm/aI/i7NZ1it+J0nRp
+         UyKwXsgAFjt06TWTv3yemPHe/rM9YZI8FlWxiyhkkMyfDay7DovYadRgjR8fdBWdLV1j
+         x/tambOst+oeU1g4zCuPW+AQuYKd4jCTNVxVbua8b86JeU89j7aHM6L9ju8ybO0RsImw
+         oIkAXWCo66sfCz+xwYbgb+rh+D54w9nSj4YAuCEsxsgusAsSavabueDmh6gj+0UPGc3u
+         qCKFrX7AKsQPCZU/9xT3NK4WB8nv/lPgMdTKNv7aMcSML4gmnBHfxMjM8iApK6qbyfe4
+         J5aQ==
+X-Gm-Message-State: APjAAAUilkJ8n6Uqz6CDz8XdbEP68VU+wDOoj92Ivz08tkiGt1EOwh7y
+        aTf8sq6fFgSxDTR4KqlJgNtzRldamCRFF/dF/71MXbHbLmk=
+X-Google-Smtp-Source: APXvYqxv9+t1J7IyggnKChvWwzadNh/2BRvXvvxlRspZQhSreRH3nC3SdaaEMmRt8MKrtybmfytD1NuwfePbQwsmeuc=
+X-Received: by 2002:a37:d287:: with SMTP id f129mr37115614qkj.490.1567552670656;
+ Tue, 03 Sep 2019 16:17:50 -0700 (PDT)
+MIME-Version: 1.0
+From:   Developer sequielo <dev@sequielo.com.ar>
+Date:   Tue, 3 Sep 2019 20:17:39 -0300
+Message-ID: <CAH9j2i1R5cfvXh=7TEy44xitODSQdMqcVJi3_B2qo_rJwt3gTA@mail.gmail.com>
+Subject: Several errors on my dmesg on kernel 4.15.18
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[    0.000000] Linux version 4.15.0-60-generic
+(buildd@lgw01-amd64-030) (gcc version 7.4.0 (Ubuntu
+7.4.0-1ubuntu1~18.04.1)) #67-Ubuntu SMP Thu Aug 22 16:55:30 UTC 2019
+(Ubuntu 4.15.0-60.67-generic 4.15.18)
+[    0.000000] Command line:
+BOOT_IMAGE=/boot/vmlinuz-4.15.0-60-generic
+root=UUID=1d57aaf7-8a07-4a4b-a82b-35839ff47585 ro quiet splash
+amd_iommu=on iommu=pt kvm_amd.npt=1 vt.handoff=1
+
+------
+
+[    2.559734] ------------[ cut here ]------------
+[    2.559777] WARNING: CPU: 5 PID: 325 at
+/build/linux-5mCauq/linux-4.15.0/drivers/gpu/drm/amd/amdgpu/../display/dc/dc_helper.c:190
+generic_reg_wait+0xf9/0x140 [amdgpu]
+[    2.559777] Modules linked in: dm_mirror dm_region_hash dm_log
+hid_generic hid_logitech_hidpp hid_logitech_dj usbhid hid amdkfd
+amd_iommu_v2 amdgpu chash i2c_algo_bit ttm drm_kms_helper syscopyarea
+sysfillrect sysimgblt fb_sys_fops nvme drm i2c_piix4 r8169 nvme_core
+ahci mii libahci wmi gpio_amdpt video gpio_generic
+[    2.559792] CPU: 5 PID: 325 Comm: plymouthd Not tainted
+4.15.0-60-generic #67-Ubuntu
+[    2.559793] Hardware name: Micro-Star International Co., Ltd.
+MS-7A40/B450I GAMING PLUS AC (MS-7A40), BIOS A.80 07/22/2019
+[    2.559822] RIP: 0010:generic_reg_wait+0xf9/0x140 [amdgpu]
+[    2.559823] RSP: 0018:ffffbd7e0253b930 EFLAGS: 00010286
+[    2.559824] RAX: 0000000000000024 RBX: 0000000000000065 RCX: ffffffffa8863a28
+[    2.559825] RDX: 0000000000000000 RSI: 0000000000000082 RDI: 0000000000000247
+[    2.559826] RBP: ffffbd7e0253b970 R08: 00000000000003da R09: 0000000000000004
+[    2.559826] R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
+[    2.559827] R13: ffff9a900e70f600 R14: 0000000000000100 R15: 0000000000000001
+[    2.559828] FS:  00007f09c7e75740(0000) GS:ffff9a901e940000(0000)
+knlGS:0000000000000000
+[    2.559828] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.559829] CR2: 000055ac97c3cf58 CR3: 0000000402376000 CR4: 00000000003406e0
+[    2.559830] Call Trace:
+[    2.559863]  tgn10_lock+0xa2/0xb0 [amdgpu]
+[    2.559893]  program_all_pipe_in_tree+0x7f3/0x8f0 [amdgpu]
+[    2.559920]  ? generic_reg_update_ex+0xf1/0x1e0 [amdgpu]
+[    2.559946]  ? generic_reg_wait+0x76/0x140 [amdgpu]
+[    2.559974]  ? amdgpu_cgs_write_register+0x14/0x20 [amdgpu]
+[    2.560000]  ? generic_reg_update_ex+0xf1/0x1e0 [amdgpu]
+[    2.560025]  ? amdgpu_cgs_read_register+0x14/0x20 [amdgpu]
+[    2.560053]  dcn10_apply_ctx_for_surface+0x4bf/0x510 [amdgpu]
+[    2.560080]  dc_commit_state+0x2aa/0x500 [amdgpu]
+[    2.560110]  amdgpu_dm_atomic_commit_tail+0x2ea/0xb20 [amdgpu]
+[    2.560128]  ? amdgpu_bo_pin_restricted+0x1bb/0x2a0 [amdgpu]
+[    2.560134]  commit_tail+0x42/0x70 [drm_kms_helper]
+[    2.560138]  drm_atomic_helper_commit+0x10c/0x120 [drm_kms_helper]
+[    2.560165]  amdgpu_dm_atomic_commit+0x8d/0xa0 [amdgpu]
+[    2.560175]  drm_atomic_commit+0x51/0x60 [drm]
+[    2.560179]  restore_fbdev_mode_atomic+0x17f/0x1f0 [drm_kms_helper]
+[    2.560183]  restore_fbdev_mode+0x32/0x140 [drm_kms_helper]
+[    2.560186]  ? _cond_resched+0x19/0x40
+[    2.560189]
+drm_fb_helper_restore_fbdev_mode_unlocked.part.32+0x28/0x80
+[drm_kms_helper]
+[    2.560192]  drm_fb_helper_restore_fbdev_mode_unlocked+0x26/0x30
+[drm_kms_helper]
+[    2.560210]  amdgpu_fbdev_restore_mode+0x1f/0x50 [amdgpu]
+[    2.560226]  amdgpu_driver_lastclose_kms+0x12/0x20 [amdgpu]
+[    2.560232]  drm_lastclose+0x3c/0xf0 [drm]
+[    2.560238]  drm_release+0x2cf/0x390 [drm]
+[    2.560241]  __fput+0xea/0x220
+[    2.560242]  ____fput+0xe/0x10
+[    2.560245]  task_work_run+0x9d/0xc0
+[    2.560251]  exit_to_usermode_loop+0xc0/0xd0
+[    2.560252]  do_syscall_64+0x121/0x130
+[    2.560254]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[    2.560255] RIP: 0033:0x7f09c75488d4
+[    2.560255] RSP: 002b:00007ffe3088be98 EFLAGS: 00000246 ORIG_RAX:
+0000000000000003
+[    2.560256] RAX: 0000000000000000 RBX: 000055ac97c3a470 RCX: 00007f09c75488d4
+[    2.560257] RDX: 000055ac97c496a0 RSI: 0000000000000000 RDI: 0000000000000009
+[    2.560257] RBP: 0000000000000009 R08: 000055ac97c496b0 R09: 0000000000000000
+[    2.560258] R10: 000055ac97c30010 R11: 0000000000000246 R12: 000000000000e200
+[    2.560258] R13: 0000000000000000 R14: 00007f09c783bb80 R15: 00007f09c783bad0
+[    2.560259] Code: 72 c0 48 c7 c7 8e 04 73 c0 44 89 55 d4 50 e8 8f
+d1 d4 ff 41 83 7d 20 01 44 8b 55 d4 58 74 12 48 c7 c7 c0 89 72 c0 e8
+27 ac e4 e6 <0f> 0b 44 8b 55 d4 48 8d 65 d8 44 89 d0 5b 41 5c 41 5d 41
+5e 41
+[    2.560278] ---[ end trace 7a4a80512ef462da ]---
 
 
-> On Sep 3, 2019, at 3:15 PM, Thomas Hellstr=C3=B6m (VMware) <thomas_os@ship=
-mail.org> wrote:
->=20
->> On 9/4/19 12:08 AM, Thomas Hellstr=C3=B6m (VMware) wrote:
->>> On 9/3/19 11:46 PM, Andy Lutomirski wrote:
->>> On Tue, Sep 3, 2019 at 2:05 PM Thomas Hellstr=C3=B6m (VMware)
->>> <thomas_os@shipmail.org> wrote:
->>>> On 9/3/19 10:51 PM, Dave Hansen wrote:
->>>>>> On 9/3/19 1:36 PM, Thomas Hellstr=C3=B6m (VMware) wrote:
->>>>>> So the question here should really be, can we determine already at mm=
-ap
->>>>>> time whether backing memory will be unencrypted and adjust the *real*=
-
->>>>>> vma->vm_page_prot under the mmap_sem?
->>>>>>=20
->>>>>> Possibly, but that requires populating the buffer with memory at mmap=
-
->>>>>> time rather than at first fault time.
->>>>> I'm not connecting the dots.
->>>>>=20
->>>>> vma->vm_page_prot is used to create a VMA's PTEs regardless of if they=
-
->>>>> are created at mmap() or fault time.  If we establish a good
->>>>> vma->vm_page_prot, can't we just use it forever for demand faults?
->>>> With SEV I think that we could possibly establish the encryption flags
->>>> at vma creation time. But thinking of it, it would actually break with
->>>> SME where buffer content can be moved between encrypted system memory
->>>> and unencrypted graphics card PCI memory behind user-space's back. That=
-
->>>> would imply killing all user-space encrypted PTEs and at fault time set=
-
->>>> up new ones pointing to unencrypted PCI memory..
->>>>=20
->>>>> Or, are you concerned that if an attempt is made to demand-fault page
->>>>> that's incompatible with vma->vm_page_prot that we have to SEGV?
->>>>>=20
->>>>>> And it still requires knowledge whether the device DMA is always
->>>>>> unencrypted (or if SEV is active).
->>>>> I may be getting mixed up on MKTME (the Intel memory encryption) and
->>>>> SEV.  Is SEV supported on all memory types?  Page cache, hugetlbfs,
->>>>> anonymous?  Or just anonymous?
->>>> SEV AFAIK encrypts *all* memory except DMA memory. To do that it uses a=
-
->>>> SWIOTLB backed by unencrypted memory, and it also flips coherent DMA
->>>> memory to unencrypted (which is a very slow operation and patch 4 deals=
-
->>>> with caching such memory).
->>>>=20
->>> I'm still lost.  You have some fancy VMA where the backing pages
->>> change behind the application's back.  This isn't particularly novel
->>> -- plain old anonymous memory and plain old mapped files do this too.
->>> Can't you all the insert_pfn APIs and call it a day?  What's so
->>> special that you need all this magic?  ISTM you should be able to
->>> allocate memory that's addressable by the device (dma_alloc_coherent()
->>> or whatever) and then map it into user memory just like you'd map any
->>> other page.
->>>=20
->>> I feel like I'm missing something here.
->>=20
->> Yes, so in this case we use dma_alloc_coherent().
->>=20
->> With SEV, that gives us unencrypted pages. (Pages whose linear kernel map=
- is marked unencrypted). With SME that (typcially) gives us encrypted pages.=
- In both these cases, vm_get_page_prot() returns
->> an encrypted page protection, which lands in vma->vm_page_prot.
->>=20
->> In the SEV case, we therefore need to modify the page protection to unenc=
-rypted. Hence we need to know whether we're running under SEV and therefore n=
-eed to modify the protection. If not, the user-space PTE would incorrectly h=
-ave the encryption flag set.
->>=20
-
-I=E2=80=99m still confused. You got unencrypted pages with an unencrypted PFN=
-. Why do you need to fiddle?  You have a PFN, and you=E2=80=99re inserting i=
-t with vmf_insert_pfn().  This should just work, no?  There doesn=E2=80=99t s=
-eem to be any real funny business in dma_mmap_attrs() or dma_common_mmap().
-
-But, reading this, I have more questions:
-
-Can=E2=80=99t you get rid of cvma by using vmf_insert_pfn_prot()?
-
-Would it make sense to add a vmf_insert_dma_page() to directly do exactly wh=
-at you=E2=80=99re trying to do?
-
-And a broader question just because I=E2=80=99m still confused: why isn=E2=80=
-=99t the encryption bit in the PFN?  The whole SEV/SME system seems like it=E2=
-=80=99s trying a bit to hard to be fully invisible to the kernel.=
+-----
+[  189.323433] ------------[ cut here ]------------
+[  189.323496] WARNING: CPU: 7 PID: 1111 at
+/build/linux-5mCauq/linux-4.15.0/drivers/gpu/drm/amd/amdgpu/../display/dc/dc_helper.c:190
+generic_reg_wait+0xf9/0x140 [amdgpu]
+[  189.323496] Modules linked in: ccm cmac bnep btusb btrtl btbcm
+input_leds btintel bluetooth ecdh_generic bridge stp llc devlink aufs
+overlay snd_hda_codec_realtek edac_mce_amd snd_hda_codec_generic
+kvm_amd snd_hda_codec_hdmi arc4 kvm snd_hda_intel irqbypass
+snd_hda_codec crct10dif_pclmul crc32_pclmul snd_hda_core snd_hwdep
+ghash_clmulni_intel snd_seq_midi snd_seq_midi_event pcbc snd_pcm
+snd_rawmidi iwlmvm mac80211 aesni_intel aes_x86_64 crypto_simd
+glue_helper cryptd snd_seq snd_seq_device iwlwifi snd_timer snd
+wmi_bmof k10temp soundcore cfg80211 shpchp mac_hid sch_fq_codel
+nct6775 hwmon_vid parport_pc ppdev lp parport ip_tables x_tables
+autofs4 btrfs xor zstd_compress uas usb_storage raid6_pq dm_mirror
+dm_region_hash dm_log hid_generic hid_logitech_hidpp hid_logitech_dj
+usbhid hid amdkfd amd_iommu_v2
+[  189.323525]  amdgpu chash i2c_algo_bit ttm drm_kms_helper
+syscopyarea sysfillrect sysimgblt fb_sys_fops nvme drm i2c_piix4 r8169
+nvme_core ahci mii libahci wmi gpio_amdpt video gpio_generic
+[  189.323536] CPU: 7 PID: 1111 Comm: Xorg Tainted: G        W
+4.15.0-60-generic #67-Ubuntu
+[  189.323537] Hardware name: Micro-Star International Co., Ltd.
+MS-7A40/B450I GAMING PLUS AC (MS-7A40), BIOS A.80 07/22/2019
+[  189.323566] RIP: 0010:generic_reg_wait+0xf9/0x140 [amdgpu]
+[  189.323567] RSP: 0018:ffffbd7e03f777c8 EFLAGS: 00010282
+[  189.323568] RAX: 0000000000000024 RBX: 0000000000000065 RCX: 0000000000000006
+[  189.323569] RDX: 0000000000000000 RSI: 0000000000000096 RDI: ffff9a901e9d6490
+[  189.323569] RBP: ffffbd7e03f77808 R08: 00000000000004ce R09: 0000000000000004
+[  189.323570] R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
+[  189.323570] R13: ffff9a900e70f600 R14: 0000000000000100 R15: 0000000000000001
+[  189.323571] FS:  00007f1918081600(0000) GS:ffff9a901e9c0000(0000)
+knlGS:0000000000000000
+[  189.323572] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  189.323572] CR2: 000055f409bb97b0 CR3: 00000004081be000 CR4: 00000000003406e0
+[  189.323573] Call Trace:
+[  189.323607]  tgn10_lock+0xa2/0xb0 [amdgpu]
+[  189.323635]  program_all_pipe_in_tree+0x7f3/0x8f0 [amdgpu]
+[  189.323638]  ? free_one_page+0x76/0x400
+[  189.323659]  ? amdgpu_cgs_read_register+0x14/0x20 [amdgpu]
+[  189.323681]  dcn10_apply_ctx_for_surface+0x4bf/0x510 [amdgpu]
+[  189.323703]  dc_commit_state+0x2aa/0x500 [amdgpu]
+[  189.323727]  amdgpu_dm_atomic_commit_tail+0x2ea/0xb20 [amdgpu]
+[  189.323741]  ? amdgpu_bo_pin_restricted+0x1bb/0x2a0 [amdgpu]
+[  189.323743]  ? wait_for_completion_interruptible+0x35/0x180
+[  189.323744]  ? ww_mutex_unlock+0x26/0x30
+[  189.323748]  commit_tail+0x42/0x70 [drm_kms_helper]
+[  189.323752]  drm_atomic_helper_commit+0x10c/0x120 [drm_kms_helper]
+[  189.323773]  amdgpu_dm_atomic_commit+0x8d/0xa0 [amdgpu]
+[  189.323782]  drm_atomic_commit+0x51/0x60 [drm]
+[  189.323785]  drm_atomic_helper_set_config+0x7c/0x90 [drm_kms_helper]
+[  189.323791]  __drm_mode_set_config_internal+0x6b/0x120 [drm]
+[  189.323796]  drm_mode_setcrtc+0x17a/0x6c0 [drm]
+[  189.323802]  ? drm_mode_getcrtc+0x190/0x190 [drm]
+[  189.323806]  drm_ioctl_kernel+0x5f/0xb0 [drm]
+[  189.323811]  drm_ioctl+0x38e/0x460 [drm]
+[  189.323816]  ? drm_mode_getcrtc+0x190/0x190 [drm]
+[  189.323829]  amdgpu_drm_ioctl+0x4f/0x90 [amdgpu]
+[  189.323831]  do_vfs_ioctl+0xa8/0x630
+[  189.323832]  SyS_ioctl+0x79/0x90
+[  189.323834]  do_syscall_64+0x73/0x130
+[  189.323835]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[  189.323836] RIP: 0033:0x7f191547e5d7
+[  189.323837] RSP: 002b:00007ffc3ca12108 EFLAGS: 00003246 ORIG_RAX:
+0000000000000010
+[  189.323838] RAX: ffffffffffffffda RBX: 00007ffc3ca12140 RCX: 00007f191547e5d7
+[  189.323838] RDX: 00007ffc3ca12140 RSI: 00000000c06864a2 RDI: 000000000000000f
+[  189.323839] RBP: 00007ffc3ca12140 R08: 0000000000000000 R09: 000055f40a4a18d0
+[  189.323839] R10: 00007ffc3ca12200 R11: 0000000000003246 R12: 00000000c06864a2
+[  189.323839] R13: 000000000000000f R14: 0000000000000000 R15: 000055f40a4a18d0
+[  189.323840] Code: 72 c0 48 c7 c7 8e 04 73 c0 44 89 55 d4 50 e8 8f
+d1 d4 ff 41 83 7d 20 01 44 8b 55 d4 58 74 12 48 c7 c7 c0 89 72 c0 e8
+27 ac e4 e6 <0f> 0b 44 8b 55 d4 48 8d 65 d8 44 89 d0 5b 41 5c 41 5d 41
+5e 41
+[  189.323858] ---[ end trace 7a4a80512ef462db ]---
