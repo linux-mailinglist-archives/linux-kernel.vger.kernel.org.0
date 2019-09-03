@@ -2,58 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00BCCA75BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:54:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A98FA75AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:53:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfICUxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 16:53:36 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:51983 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbfICUxe (ORCPT
+        id S1727106AbfICUxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 16:53:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39632 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfICUxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 16:53:34 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x83Kqi3Z022177;
-        Wed, 4 Sep 2019 05:52:44 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Wed, 04 Sep 2019 05:52:44 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x83KqiPD022174
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 4 Sep 2019 05:52:44 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH] mm, oom: disable dump_tasks by default
-To:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 3 Sep 2019 16:53:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9j9Ys3SKrunuUdWnpddWrlF3hlzVX+dYskTpGsMVRdg=; b=q6PKtm2qHXC4ZxDd1oWAesGqt
+        mkef31ksS0DE/m+V94xxk8mY4E4NK7/D6yceAd4IMOYEtng6UUMmitBiFDXkmyC3VsZShsSIDhDxA
+        spbPZghZh0gaSPUEaq9m2Id0riRmEJzPcniu1pE5CxkkCA32WDRJ3NzR/05hgewKmdlszxQcADztH
+        z19osbBcPHxeseNqIEdEFRXQ1AGIdZ5S6kJBEUtzqgvVeooolY2oxTjjKG+adYErsSQPK+86v+0qP
+        AK7u61q/Rmd8W04N+VU/Ik4OalyMQ207Yu/0eA5EaNXbWRdvGCZGHdJNie5vvkiHaECkD4l0efUVb
+        n2xH0iMQA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5Fnc-0005w9-SY; Tue, 03 Sep 2019 20:53:12 +0000
+Date:   Tue, 3 Sep 2019 13:53:12 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-References: <20190903144512.9374-1-mhocko@kernel.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <af0703d2-17e4-1b8e-eb54-58d7743cad60@i-love.sakura.ne.jp>
-Date:   Wed, 4 Sep 2019 05:52:43 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Ming Lei <ming.lei@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
+ kmalloc(power-of-two)
+Message-ID: <20190903205312.GK29434@bombadil.infradead.org>
+References: <20190826111627.7505-1-vbabka@suse.cz>
+ <20190826111627.7505-3-vbabka@suse.cz>
+ <0100016cd98bb2c1-a2af7539-706f-47ba-a68e-5f6a91f2f495-000000@email.amazonses.com>
+ <20190828194607.GB6590@bombadil.infradead.org>
+ <20190829073921.GA21880@dhcp22.suse.cz>
+ <0100016ce39e6bb9-ad20e033-f3f4-4e6d-85d6-87e7d07823ae-000000@email.amazonses.com>
+ <20190901005205.GA2431@bombadil.infradead.org>
+ <0100016cf8c3033d-bbcc9ba3-2d59-4654-a7c2-8ba094f8a7de-000000@email.amazonses.com>
 MIME-Version: 1.0
-In-Reply-To: <20190903144512.9374-1-mhocko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0100016cf8c3033d-bbcc9ba3-2d59-4654-a7c2-8ba094f8a7de-000000@email.amazonses.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/09/03 23:45, Michal Hocko wrote:
-> It's primary purpose is
-> to help analyse oom victim selection decision.
+On Tue, Sep 03, 2019 at 08:13:45PM +0000, Christopher Lameter wrote:
+> On Sat, 31 Aug 2019, Matthew Wilcox wrote:
+> 
+> > > The current behavior without special alignment for these caches has been
+> > > in the wild for over a decade. And this is now coming up?
+> >
+> > In the wild ... and rarely enabled.  When it is enabled, it may or may
+> > not be noticed as data corruption, or tripping other debugging asserts.
+> > Users then turn off the rare debugging option.
+> 
+> Its enabled in all full debug session as far as I know. Fedora for
+> example has been running this for ages to find breakage in device drivers
+> etc etc.
 
-I disagree, for I use the process list for understanding what / how many
-processes are consuming what kind of memory (without crashing the system)
-for anomaly detection purpose. Although we can't dump memory consumed by
-e.g. file descriptors, disabling dump_tasks() loose that clue, and is
-problematic for me.
+Are you telling me nobody uses the ramdisk driver on fedora?  Because
+that's one of the affected drivers.
+
+> > > If there is an exceptional alignment requirement then that needs to be
+> > > communicated to the allocator. A special flag or create a special
+> > > kmem_cache or something.
+> >
+> > The only way I'd agree to that is if we deliberately misalign every
+> > allocation that doesn't have this special flag set.  Because right now,
+> > breakage happens everywhere when these debug options are enabled, and
+> > the very people who need to be helped are being hurt by the debugging.
+> 
+> That is customarily occurring for testing by adding "slub_debug" to the
+> kernel commandline (or adding debug kernel options) and since my
+> information is that this is done frequently (and has been for over a
+> decade now) I am having a hard time believing the stories of great
+> breakage here. These drivers were not tested with debugging on before?
+> Never ran with a debug kernel?
+
+Whatever is being done is clearly not enough to trigger the bug.  So how
+about it?  Create an option to slab/slub to always return misaligned
+memory.
+
