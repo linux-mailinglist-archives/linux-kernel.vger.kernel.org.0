@@ -2,161 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51F5FA5EAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 02:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22ECEA5EBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 03:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726171AbfICApT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 20:45:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56362 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725807AbfICApT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 20:45:19 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726273AbfICBD7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 21:03:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:3648 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725955AbfICBD6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 21:03:58 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8311foi058756
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Sep 2019 21:03:57 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2us9xsww62-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 21:03:56 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <daniel@linux.ibm.com>;
+        Tue, 3 Sep 2019 02:03:55 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Sep 2019 02:03:50 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8313oMa50724980
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Sep 2019 01:03:50 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E52D8A4053;
+        Tue,  3 Sep 2019 01:03:49 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9248FA4040;
+        Tue,  3 Sep 2019 01:03:49 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Sep 2019 01:03:49 +0000 (GMT)
+Received: from volution.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 57A1443D5B;
-        Tue,  3 Sep 2019 00:45:18 +0000 (UTC)
-Received: from [10.72.12.60] (ovpn-12-60.pek2.redhat.com [10.72.12.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E4014196AE;
-        Tue,  3 Sep 2019 00:45:15 +0000 (UTC)
-Subject: Re: [PATCH 2/2 v3] nbd: fix possible page fault for nbd disk
-To:     Mike Christie <mchristi@redhat.com>, josef@toxicpanda.com,
-        axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, nbd@other.debian.org,
-        linux-kernel@vger.kernel.org
-References: <20190822075923.11996-1-xiubli@redhat.com>
- <20190822075923.11996-3-xiubli@redhat.com> <5D686498.5090602@redhat.com>
- <78d16d10-1d06-6ce1-7c51-64c42e51f549@redhat.com>
- <5D6D89ED.6020700@redhat.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <e3c0f330-26b4-a305-8e36-b452e46bed8f@redhat.com>
-Date:   Tue, 3 Sep 2019 08:45:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 1AF7DA00EC;
+        Tue,  3 Sep 2019 11:03:48 +1000 (AEST)
+Date:   Tue, 3 Sep 2019 11:03:45 +1000
+From:   Daniel Black <daniel@linux.ibm.com>
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        "open list:ACPI" <linux-acpi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Tao Xu <tao3.xu@intel.com>
+Subject: Re: [PATCH] acpi/hmat: ACPI_HMAT_MEMORY_PD_VALID is deprecated in
+ ACPI-6.3
+In-Reply-To: <CAJZ5v0jXiuA3HGPCY3vbH8_53WP-6G=bVJ8SPprCDDg9MoyAsQ@mail.gmail.com>
+References: <20190806042440.16445-1-daniel@linux.ibm.com>
+        <CAJZ5v0jXiuA3HGPCY3vbH8_53WP-6G=bVJ8SPprCDDg9MoyAsQ@mail.gmail.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <5D6D89ED.6020700@redhat.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Tue, 03 Sep 2019 00:45:18 +0000 (UTC)
+X-TM-AS-GCONF: 00
+x-cbid: 19090301-0008-0000-0000-000003103BF1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090301-0009-0000-0000-00004A2E8B1A
+Message-Id: <20190903110345.4ee753c3@volution.ozlabs.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-02_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=827 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909030008
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/3 5:30, Mike Christie wrote:
-> On 08/29/2019 07:58 PM, Xiubo Li wrote:
->> On 2019/8/30 7:49, Mike Christie wrote:
->>> On 08/22/2019 02:59 AM, xiubli@redhat.com wrote:
-[...]
->>> @@ -1596,6 +1614,7 @@ static int nbd_dev_add(int index)
->>>        nbd->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
->>>            BLK_MQ_F_BLOCKING;
->>>        nbd->tag_set.driver_data = nbd;
->>> +    init_completion(&nbd->destroy_complete);
->>>          err = blk_mq_alloc_tag_set(&nbd->tag_set);
->>>        if (err)
->>> @@ -1761,6 +1780,16 @@ static int nbd_genl_connect(struct sk_buff
->>> *skb, struct genl_info *info)
->>>            mutex_unlock(&nbd_index_mutex);
->>>            return -EINVAL;
->>>        }
->>> +
->>> +    if (test_bit(NBD_DESTROY_ON_DISCONNECT, &nbd->flags) &&
->>> Why does this have to be set? If this is not set would you end up
->>> hitting the config_refs check:
->>>
->>> if (refcount_read(&nbd->config_refs)) {
->>>
->>> and possibly returning failure?
->> Yeah, this is a good question. Before I have also tried to fix it with
->> this, but it still won't work for me.
->>
->>  From my test cases almost more than 50% times, the crash will be hit in
->> the gap just after the nbd->config already been released, and before the
->> nbd itself not yet, so the nbd->config_refs will be 0.
->>
->>
->>> If you moved the complete() to nbd_config_put would it work if this bit
->>> was set or not?
->> Tried it already, it still won't work.
->>
->> There is one case that when disconnecting the nbd device, the userspace
->> service will do the open()/release()  things, please see [1], and the
->> sequence is not the same every time, if the
->> NBD_CFLAG_DESTROY_ON_DISCONNECT bit is set the crash still exists.
->>
->> So sometimes when the nbd_put() called from the nbd_config_put(), the
->> &nbd->refs in nbd_put won't be 0, it could be 1. And it will be 0 just
->> after the release() is triggered later.
->>
->> So I just place the complete() before "free(nbd);", or there will be
->> another Call trace will be seen very often:
-> Did this happen because you race with
->
-> nbd_put->nbd_dev_remove->del_gendisk->device_del->sysfs_remove_dir
->
-> ? If so, does that still happen after you moved
->
-> mutex_unlock(&nbd_index_mutex);
->
-> in nbd_put?
+On Mon, 2 Sep 2019 23:28:50 +0200
+"Rafael J. Wysocki" <rafael@kernel.org> wrote:
 
-Currently with this fix, there is no any Call Traces anymore from my 
-test cases. I ran the test for almost a whole night long without any 
-problem.
+> On Tue, Aug 6, 2019 at 6:24 AM Daniel Black <daniel@linux.ibm.com> wrote:
+> >
+> > ACPI-6.3 corresponds to when hmat revision was bumped from
+> > 1 to 2. In this version ACPI_HMAT_MEMORY_PD_VALID was
+> > deprecated and made reserved.
+> >
+> > As such in revision 2+ we shouldn't be testing this flag.
+> >
+> > This is as per ACPI-6.3, 5.2.27.3, Table 5-145
+> > "Memory Proximity Domain Attributes Structure"
+> > for Flags.
+> >
+> > Signed-off-by: Daniel Black <daniel@linux.ibm.com>  
+> 
+> Keith, any comments?
 
+FYI this was found when I was testing Tao Xu's qemu implementation of HMAT ACPI-6.3 which has no implementation of  ACPI_HMAT_MEMORY_PD_VALID.
 
->   It seems before that part of your patch was added we could
-> hit this race and got the duplicate sysfs entry trace below:
->
-> 1. nbd_put -> idr_remove.
-> 2. nbd_put drops mutex.
-> 3. nbd_genl_connect takes mutex (index != -1 for this call).
-> 4. nbd_genl_connect-> idr_find fails due to remove in #1.
-> 5. nbd_genl_connect->nbd_dev_add is then able to try to add the device
-> to sysfs before the nbd_put->nbd_dev_remove path has deleted the device.
-
-Yeah, it is. Just before the old stale sysfs entry is totally 
-removed/released, the nbd driver is trying to create it again with the 
-same nbd_index.
-
-
->
-> When you now do the idr and sysfs removal and idr addition/search and
-> sysfs addition all under the nbd_index_mutex it shouldn't happen anymore.
->
-Correctly.
-
-Thanks,
-BRs
-
-
->
->
->>     2489 Aug 20 18:10:04 lxbfd2 kernel: sysfs: cannot create duplicate
->> filename '/devices/virtual/block/nbd0'
->>     2490 Aug 20 18:10:04 lxbfd2 kernel: CPU: 0 PID: 8635 Comm: nbd-clid
->> Kdump: loaded Tainted: G      D 5.1.18-300.fc30.x86_64 #1
->>     2491 Aug 20 18:10:04 lxbfd2 kernel: Hardware name: Red Hat KVM, BIOS
->> 0.5.1 01/01/2011
->>     2492 Aug 20 18:10:04 lxbfd2 kernel: Call Trace:
->>     2493 Aug 20 18:10:04 lxbfd2 kernel: dump_stack+0x5c/0x80
->>     2494 Aug 20 18:10:04 lxbfd2 kernel: sysfs_warn_dup.cold+0x17/0x2d
->>     2495 Aug 20 18:10:04 lxbfd2 kernel: sysfs_create_dir_ns+0xb6/0xd0
->>     2496 Aug 20 18:10:04 lxbfd2 kernel: kobject_add_internal+0xb7/0x280
->>     2497 Aug 20 18:10:04 lxbfd2 kernel: kobject_add+0x7e/0xb0
->>     2498 Aug 20 18:10:04 lxbfd2 kernel: ? _cond_resched+0x15/0x30
->>     2499 Aug 20 18:10:04 lxbfd2 kernel: device_add+0x12b/0x690
->>     2500 Aug 20 18:10:04 lxbfd2 kernel: __device_add_disk+0x1b5/0x470
->>     2501 Aug 20 18:10:04 lxbfd2 kernel: nbd_dev_add+0x21d/0x2b0 [nbd]
->>     2502 Aug 20 18:10:04 lxbfd2 kernel: nbd_genl_connect+0x16e/0x630 [nbd]
->>     2503 Aug 20 18:10:04 lxbfd2 kernel: genl_family_rcv_msg+0x1a9/0x3b0
->>     2504 Aug 20 18:10:04 lxbfd2 kernel: ? __switch_to_asm+0x35/0x70
->>     2505 Aug 20 18:10:04 lxbfd2 kernel: ? __switch_to_asm+0x41/0x70
->>     2506 Aug 20 18:10:04 lxbfd2 kernel: ? __switch_to+0x11f/0x4c0
->>     2507 Aug 20 18:10:04 lxbfd2 kernel: ? __switch_to_asm+0x41/0x70
->>     [...]
->>
+Current patch implementing Memory Proximity Domain Attributes Structure:
+https://patchwork.kernel.org/patch/11125301/
 
