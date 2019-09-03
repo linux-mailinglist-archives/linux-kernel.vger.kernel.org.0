@@ -2,98 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B79BFA725E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40595A725B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbfICSNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 14:13:50 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:35214 "EHLO ale.deltatee.com"
+        id S1730209AbfICSNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 14:13:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727069AbfICSNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 14:13:50 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1i5DJ1-0005Zx-O9; Tue, 03 Sep 2019 12:13:28 -0600
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Keith Busch <keith.busch@intel.com>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-References: <20190831000139.7662-1-logang@deltatee.com>
- <20190831152910.GA29439@localhost.localdomain>
- <33af4d94-9f6d-9baa-01fa-0f75ccee263e@deltatee.com>
- <20190903164620.GA20847@localhost.localdomain>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <d71107d2-c133-9f51-c271-688516641703@deltatee.com>
-Date:   Tue, 3 Sep 2019 12:13:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728113AbfICSNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 14:13:36 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA06822D6D;
+        Tue,  3 Sep 2019 18:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567534415;
+        bh=gdp5nfVn2oePPyYBqBBwHEYwyqchiRuWWJXoAR0MnhU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=q9KwHX6pOyHlEtpst8uiDZ/AOSUCW2DYvo1Ytp2LpYg0NqW05V1wDUWzJLrb+D71n
+         wobZ4vV01SH1Rws8kMPt7q0fO7hlsJfzX6VY6Skuidap5W1lrFXSbiM5203Aaxev/M
+         FM8yohsdJN3CLnbDvG3f9MKs5pkq9jKkUMhLg94w=
+Date:   Tue, 3 Sep 2019 19:13:30 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Martin Kepplinger <martin.kepplinger@puri.sm>
+Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>,
+        lorenzo.bianconi83@gmail.com, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH] iio: imu: st_lsm6dsx: replace underscore with hyphen in
+ device name
+Message-ID: <20190903191330.609ca6b0@archlinux>
+In-Reply-To: <75fde41c-5ae2-af96-c712-ab5009aa8214@puri.sm>
+References: <20190903051802.22716-1-martin.kepplinger@puri.sm>
+        <20190903134303.000008be@huawei.com>
+        <75fde41c-5ae2-af96-c712-ab5009aa8214@puri.sm>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190903164620.GA20847@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: martin.petersen@oracle.com, hare@suse.com, axboe@fb.com, sagi@grimberg.me, hch@lst.de, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, keith.busch@intel.com, kbusch@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH] nvme-core: Fix subsystem instance mismatches
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 3 Sep 2019 14:51:56 +0200
+Martin Kepplinger <martin.kepplinger@puri.sm> wrote:
 
-
-On 2019-09-03 10:46 a.m., Keith Busch wrote:
-> On Tue, Sep 03, 2019 at 10:08:01AM -0600, Logan Gunthorpe wrote:
->> On 2019-08-31 9:29 a.m., Keith Busch wrote:
->>> On Fri, Aug 30, 2019 at 06:01:39PM -0600, Logan Gunthorpe wrote:
->>>> To fix this, assign the subsystem's instance based on the instance
->>>> number of the controller's instance that first created it. There should
->>>> always be fewer subsystems than controllers so the should not be a need
->>>> to create extra subsystems that overlap existing controllers.
->>>
->>> The subsystem's lifetime is not tied to the controller's. When the
->>> controller is removed and releases its instance, the next controller
->>> to take that available instance will create naming collisions with the
->>> subsystem still using it.
->>>
->>
->> Hmm, yes, ok.
->>
->> So perhaps we can just make the subsystem prefer the ctrl's instance
->> when allocating the ID? Then at least, in the common case, the
->> controller numbers will match the subsystem numbers. Only when there's
->> random hot-plugs would the numbers get out of sync.
+> On 03.09.19 14:43, Jonathan Cameron wrote:
+> > +CC Greg as fix for a patch in my outstanding pull request.
+> > 
+> > On Tue, 3 Sep 2019 07:18:02 +0200
+> > Martin Kepplinger <martin.kepplinger@puri.sm> wrote:
+> >   
+> >> With the underscore character in the lsm9ds1_imu device name, we get the
+> >> following error below, so use a dash, just like the other device names do too.
+> >>
+> >> [    3.961399] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000018
+> >> [    4.010581] Mem abort info:
+> >> [    4.013838]   ESR = 0x96000004
+> >> [    4.023602]   Exception class = DABT (current EL), IL = 32 bits
+> >> [    4.047993]   SET = 0, FnV = 0
+> >> [    4.052690]   EA = 0, S1PTW = 0
+> >> [    4.056015] Data abort info:
+> >> [    4.059020]   ISV = 0, ISS = 0x00000004
+> >> [    4.080106]   CM = 0, WnR = 0
+> >> [    4.085237] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000e4f61000
+> >> [    4.092194] [0000000000000018] pgd=0000000000000000
+> >> [    4.097474] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+> >> [    4.103286] Modules linked in: tcpci st_sensors st_lsm6dsx_i2c(+) tcpm st_lsm6dsx industrialio_triggered_buffer kfifo_buf vcnl4000 roles typec goodix snd_soc_sgtl5000 bq25890_charger snvs_pwrkey imx_sdma virt_dma qoriq_thermal imx2_wdt snd_soc_fsl_sai aes_ce_blk imx_pcm_dma crypto_simd watchdog crct10dif_ce ghash_ce sha2_ce snd_soc_simple_card snd_soc_gtm601 snd_soc_simple_card_utils sha1_ce snd_soc_core snd_pcm_dmaengine snd_pcm snd_timer snd soundcore gpio_vibra usb_f_acm u_serial usb_f_rndis g_multi usb_f_mass_storage u_ether libcomposite ip_tables x_tables ipv6 nf_defrag_ipv6 xhci_plat_hcd xhci_hcd usbcore dwc3 ulpi udc_core usb_common phy_fsl_imx8mq_usb
+> >> [    4.105389] bq25890-charger 0-006b: Capacity for 3784000 is 86%
+> >> [    4.164061] CPU: 1 PID: 344 Comm: systemd-udevd Tainted: G        W         5.3.0-rc2-g24e3d989d49f-dirty #161
+> >> [    4.164063] Hardware name: Purism Librem 5 devkit (DT)
+> >> [    4.164067] pstate: 80000005 (Nzcv daif -PAN -UAO)
+> >> [    4.164082] pc : st_lsm6dsx_i2c_probe+0x18/0x80 [st_lsm6dsx_i2c]
+> >> [    4.164093] lr : i2c_device_probe+0x1f0/0x2b8
+> >> [    4.164094] sp : ffff8000a499f970
+> >> [    4.164097] x29: ffff8000a499f970 x28: 0000000000000000
+> >> [    4.164100] x27: ffff000010b70000 x26: ffff8000a499fd68
+> >> [    4.164104] x25: ffff000010860000 x24: ffff000008a8b038
+> >> [    4.164108] x23: ffff000008a8b038 x22: ffff000008a8b000
+> >> [    4.164111] x21: ffff8000a55b2400 x20: ffff000008a89000
+> >> [    4.164115] x19: ffff8000a55b2400 x18: ffffffffffffffff
+> >> [    4.164118] x17: 0000000000000000 x16: 0000000000000000
+> >> [    4.164121] x15: 0000000000040000 x14: 00000000fffffff0
+> >> [    4.164125] x13: ffff000010b6c898 x12: 0000000000000030
+> >> [    4.164128] x11: 0000000000000000 x10: 0101010101010101
+> >> [    4.260542] x9 : fffffffffffffffc x8 : 0000000000000008
+> >> [    4.266073] x7 : 0000000000000004 x6 : 1e0e1a00f2ade4ef
+> >> [    4.271605] x5 : 6f642d72001a0e1e x4 : 8080808000000000
+> >> [    4.277136] x3 : 0000000000000000 x2 : ffff000008a8a000
+> >> [    4.282667] x1 : 0000000000000000 x0 : ffff8000a55b2400
+> >> [    4.288199] Call trace:
+> >> [    4.290753]  st_lsm6dsx_i2c_probe+0x18/0x80 [st_lsm6dsx_i2c]
+> >> [    4.296648]  i2c_device_probe+0x1f0/0x2b8
+> >> [    4.300825]  really_probe+0x168/0x368
+> >> [    4.304638]  driver_probe_device.part.2+0x10c/0x128
+> >> [    4.309716]  device_driver_attach+0x74/0xa0
+> >> [    4.314071]  __driver_attach+0x84/0x130
+> >> [    4.318065]  bus_for_each_dev+0x68/0xc8
+> >> [    4.322058]  driver_attach+0x20/0x28
+> >> [    4.325780]  bus_add_driver+0xd4/0x1f8
+> >> [    4.329683]  driver_register+0x60/0x110
+> >> [    4.333677]  i2c_register_driver+0x44/0x98
+> >> [    4.337944]  st_lsm6dsx_driver_init+0x1c/0x1000 [st_lsm6dsx_i2c]
+> >> [    4.344200]  do_one_initcall+0x58/0x1a8
+> >> [    4.348195]  do_init_module+0x54/0x1d4
+> >> [    4.352098]  load_module+0x1998/0x1c40
+> >> [    4.356001]  __se_sys_finit_module+0xc0/0xd8
+> >> [    4.360446]  __arm64_sys_finit_module+0x14/0x20
+> >> [    4.365166]  el0_svc_common.constprop.0+0xb0/0x168
+> >> [    4.370154]  el0_svc_handler+0x18/0x20
+> >> [    4.374056]  el0_svc+0x8/0xc
+> >> [    4.377059] Code: d2800003 910003fd a90153f3 aa0003f3 (f9400c34)
+> >> [    4.383406] ---[ end trace 6dfe010c028e3371 ]---
+> >>  
+> >   
+> >> Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>  
+> > Fixes: a106864fd667 ("iio: imu: st_lsm6dsx: add support for accel/gyro unit of lsm9ds1")
+> > 
+> > Thanks Martin.  This one is entirely my fault for messing up tweaking
+> > that naming.  I should have bounced the patch back for another round
+> > rather than thinking "it's trivial, what could possibly go wrong!"  
 > 
-> I really don't know about a patch that works only on static
-> configurations. Connects and disconnects do happen on live systems,
-> so the numerals will inevitably get out of sync.
+> I wouldn't have thought but even your trivial change would probably have
+> deserved to be a separate commit. That would've saved time.
+True on this occaison, but the converse is that it is common for minor
+tweaks from last minute reviews to be rolled on applying in the interests of
+keeping the history clean.
 
-Well this depends on how big a problem we think the number mismatch is.
-Right now it's pretty annoying because numbers aren't matching for
-non-CMIC controllers in simple setups on boot. I think having a small
-patch that makes it more consistent for the static would be worth it and
-if CMIC controllers with significant hot-plug events have mismatches
-that seems more understandable to me.
+Just to top that, given I needed to rebase that tree anyway to fix
+a missing sign off I've rolled your patch in a fixup for the original
+patch. So as far as the final history is concerned the issue never
+happened.
 
-> Could we possibly make /dev/nvmeX be a subsystem handle without causing
-> trouble for anyone? This would essentially be the same thing as today
-> for non-CMIC controllers with a device-per-controller and only affects
-> the CMIC ones.
+Fingers crossed I haven't messed anything else up!
 
-Well then we'd have to be able to do everything that's possible with a
-controller via the subsystem and it would have to multiplex all admin
-commands for CMIC ones, etc to a sensible controller. This might make
-sense in the long term but it sounds like a larger project than I have
-time to take on.
+Thanks,
 
-Logan
+Jonathan
+
+> 
+> but np. worse things have happened. I'm glad to have it fixed. thanks
+> for the quick response.
+> 
+>                        martin
+> 
+> > 
+> > On basis Greg may prefer to pick this one directly:
+> > 
+> > Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > 
+> > Convenient lore.kernel.org link.
+> > 
+> > https://lore.kernel.org/linux-iio/20190903051802.22716-1-martin.kepplinger@puri.sm/T/#u
+> > 
+> > 
+> > If not I'll pick it up for first set of fixes post rc1.
+> > 
+> > As for the question below, I've not taken a look yet and certainly seems
+> > an odd result!
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> > 
+> > 
+> >   
+> >> ---
+> >>
+> >> While this patch fixes my (formerly already mentioned) issue, it's
+> >> a question actually: Why does is this underscore character a problem?
+> >>
+> >> thanks,
+> >>
+> >>                         martin
+> >>
+> >>
+> >>
+> >>  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
+> >> index 5e3cd96b0059..80e42c7dbcbe 100644
+> >> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
+> >> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
+> >> @@ -24,7 +24,7 @@
+> >>  #define ST_LSM6DSR_DEV_NAME	"lsm6dsr"
+> >>  #define ST_LSM6DS3TRC_DEV_NAME	"lsm6ds3tr-c"
+> >>  #define ST_ISM330DHCX_DEV_NAME	"ism330dhcx"
+> >> -#define ST_LSM9DS1_DEV_NAME	"lsm9ds1_imu"
+> >> +#define ST_LSM9DS1_DEV_NAME	"lsm9ds1-imu"
+> >>  
+> >>  enum st_lsm6dsx_hw_id {
+> >>  	ST_LSM6DS3_ID,  
+> > 
+> >   
+> 
+
