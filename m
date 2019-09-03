@@ -2,78 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 670EDA65A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4445DA6583
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728821AbfICJiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 05:38:54 -0400
-Received: from smtprelay0022.hostedemail.com ([216.40.44.22]:43643 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728550AbfICJix (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 05:38:53 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id AEB3E2B347;
-        Tue,  3 Sep 2019 09:38:51 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1461:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2198:2199:2393:2559:2562:2731:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:4605:5007:6117:6119:6120:7809:7903:10004:10400:10848:11232:11658:11914:12043:12048:12297:12740:12760:12895:13069:13311:13357:13439:14180:14659:14721:14819:21060:21080:21324:21433:21611:21627:21740:30029:30030:30054:30091,0,RBL:47.151.137.30:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: geese64_4d259d89bf017
-X-Filterd-Recvd-Size: 2574
-Received: from XPS-9350.home (unknown [47.151.137.30])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  3 Sep 2019 09:38:50 +0000 (UTC)
-Message-ID: <be9cd5d933486de9cf88a1550c2020c56348670d.camel@perches.com>
-Subject: Re: [PATCH v5 00/11] Device property improvements, add %pfw format
- specifier
-From:   Joe Perches <joe@perches.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Date:   Tue, 03 Sep 2019 02:38:48 -0700
-In-Reply-To: <20190902135732.23455-1-sakari.ailus@linux.intel.com>
-References: <20190902135732.23455-1-sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728616AbfICJh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 05:37:58 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:54534 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728122AbfICJh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 05:37:58 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8FAFC200303;
+        Tue,  3 Sep 2019 11:37:55 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 65B222002FD;
+        Tue,  3 Sep 2019 11:37:37 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 71247402B7;
+        Tue,  3 Sep 2019 17:37:23 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        dmitry.torokhov@gmail.com, aisheng.dong@nxp.com,
+        ulf.hansson@linaro.org, fugang.duan@nxp.com, peng.fan@nxp.com,
+        daniel.baluta@nxp.com, leonard.crestez@nxp.com, mripard@kernel.org,
+        olof@lixom.net, arnd@arndb.de, jagan@amarulasolutions.com,
+        bjorn.andersson@linaro.org, dinguyen@kernel.org,
+        marcin.juszkiewicz@linaro.org, stefan@agner.ch,
+        gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
+        yuehaibing@huawei.com, tglx@linutronix.de, ronald@innovation.ch,
+        m.felsch@pengutronix.de, ping.bai@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V3 1/5] dt-bindings: fsl: scu: add scu key binding
+Date:   Tue,  3 Sep 2019 17:36:36 -0400
+Message-Id: <1567546600-21566-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-09-02 at 16:57 +0300, Sakari Ailus wrote:
-> Hi all,
-> 
-> This set adds functionality into the device property API (counting a
-> node's parents as well as obtaining its name) in order to support printing
-> fwnode names using a new conversion specifier "%pfw". The names that are
-> produced are equivalent to its OF counterpart "%pOF" on OF systems for the
-> two supported modifiers ("f" and "P").
-> 
-> Printing a node's name is something that's been available on OF for a long
-> time and if something is converted to device property API (such as the
-> V4L2 fwnode framework) it always got removed of a nice feature that was
-> sometimes essential in debugging. With this set, that no longer is the
-> case.
+NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
+system controller, the system controller is in charge of system
+power, clock and scu key event etc. management, Linux kernel has
+to communicate with system controller via MU (message unit) IPC
+to get scu key event, add binding doc for i.MX system controller
+key driver.
 
-Doesn't this still have dependencies on removing all
-existing %p[fF] uses?
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V2:
+	- use "key" instead of "pwrkey" as the key function can be defined in DT.
+---
+ .../devicetree/bindings/arm/freescale/fsl,scu.txt          | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-In Linus' tree:
-
-tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt:or events have "%pF" or "%pS" parameter in its format string. It is common to
-tools/lib/traceevent/event-parse.c:             if (asprintf(&format, "%%pf: (NO FORMAT FOUND at %llx)\n", addr) < 0)
-tools/lib/traceevent/event-parse.c:     if (asprintf(&format, "%s: %s", "%pf", printk->printk) < 0)
-
-And these in -next:
-
-drivers/scsi/lpfc/lpfc_hbadisc.c:                                        "3185 FIND node filter %pf DID "
-drivers/scsi/lpfc/lpfc_hbadisc.c:                        "3186 FIND node filter %pf NOT FOUND.\n", filter);
-drivers/scsi/lpfc/lpfc_sli.c:                           "(%d):0307 Mailbox cmd x%x (x%x/x%x) Cmpl %pf "
-
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index c149fad..5eab7d0 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -157,6 +157,15 @@ Required properties:
+ Optional properties:
+ - timeout-sec: contains the watchdog timeout in seconds.
+ 
++SCU key bindings based on SCU Message Protocol
++------------------------------------------------------------
++
++Required properties:
++- compatible: should be:
++              "fsl,imx8qxp-sc-key"
++              followed by "fsl,imx-sc-key";
++- linux,keycodes: See Documentation/devicetree/bindings/input/keys.txt
++
+ Example (imx8qxp):
+ -------------
+ aliases {
+@@ -220,6 +229,11 @@ firmware {
+ 			compatible = "fsl,imx8qxp-sc-rtc";
+ 		};
+ 
++		scu_key: scu-key {
++			compatible = "fsl,imx8qxp-sc-key", "fsl,imx-sc-key";
++			linux,keycode = <KEY_POWER>;
++		};
++
+ 		watchdog {
+ 			compatible = "fsl,imx8qxp-sc-wdt", "fsl,imx-sc-wdt";
+ 			timeout-sec = <60>;
+-- 
+2.7.4
 
