@@ -2,279 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A173A6279
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08DF4A6283
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:31:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbfICHaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 03:30:11 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34799 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbfICHaL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 03:30:11 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s18so16281580wrn.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 00:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=pSCJycaKVh704Ac0S4neijcFEZ9GmBRQLJR3eMBbbCU=;
-        b=tgRlscW4dUEuVCGbWnPgzT9V8/L4/03gpsjK0WJYLO1GlhohBzsTHDNVvNhUqWJHJF
-         l4kW9qic54u3Tp/nztHukXAIMLr69gPXvNwznen0UWvLlNlaWbueEjHs0ZfwDYl0B89T
-         Q9DdfEFk6qFtx7hgB39DPC34CfIOizzxryX0dBVk7xRj47FeVyxBiICifGjhB5Xrvwj2
-         VaCrafQfyGgkJuvV441WC5KhYspZAv+q6G30TMkR4cLVMkwDPgZaup74kGIwPQIHdmw4
-         cCnBBUCLoKhHBnJUgmOiMQmlTzK9pV7Ok6edfvL7a/sRu7YTVZEhOG9pYuObis2oaL+y
-         8fag==
+        id S1727916AbfICHb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 03:31:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37262 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727505AbfICHb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 03:31:26 -0400
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D3047C04BD33
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2019 07:31:25 +0000 (UTC)
+Received: by mail-wm1-f70.google.com with SMTP id n3so840367wmf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 00:31:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=pSCJycaKVh704Ac0S4neijcFEZ9GmBRQLJR3eMBbbCU=;
-        b=WyESJcIGsTTftHjkXCizoejxXKG0eX3HUHY/tSojgxGf/YRawbx+N1/AOayZdUEeI3
-         0asx3rIAd7wVeW/akIgZ7/YKz37gwPfyTN0X2OrvhVSOgsg1cWtfdiUw/kXGVwIWDtYO
-         pCA7bm02tC9SF99sIc1OwODPE8SfXKb7koGSOuzxPs9i81HJ/gywBp2SoOYBiMwwZ6Iy
-         nmehzNl0DJTMAhaQ3shNKE/esCHq3ZXAQp5/YcV2MbbXoxbmGBwVkEaBEzKeXsAE7Hjm
-         OEYhUBIaqwO1dLrgHtYP+U2LFH2b5mUx0C+8QFoAdwtfjvhE44+KU6oftp/hVwBxcQWa
-         zdfw==
-X-Gm-Message-State: APjAAAWx+2J68V2ykg8M3q+DIm+Jvchyx0gWGzW6dEyBeuaJjALm0Jgh
-        r/y+dIPgHiS2l0zjqgBO4IHpIA==
-X-Google-Smtp-Source: APXvYqz4ooGnpbFcyZaSbyrgA6PANL0nccU1Lisypx0A74u9MR9WVmFK+4ohxfGtbbbqQaeYbOzJHQ==
-X-Received: by 2002:adf:de0d:: with SMTP id b13mr16181290wrm.140.1567495807765;
-        Tue, 03 Sep 2019 00:30:07 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t198sm25856153wmt.39.2019.09.03.00.30.07
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vIdlVo3wzaAg7+E51hvuCmhSjy3lqZ2GvkawXNng+DY=;
+        b=Gp1ZY1GPi2r4FXuvgTjI6sPeas/mW3zSSr5QzyeHCkLG2y3/IMeKf153TqvusnTCLb
+         bp4yVRtNovxC962MhUzjUphIC53gR80rNNnRL+VRc3H2vrvL8SfJoHjoLVIWHJlPntzp
+         2lnU03VI8mH0ynEqYbgVipwWh+DtgHCbxMwmnC8ObKGEy+dJawGj7gdjqAGVTa75APlU
+         UydsxI16CFzT0Cgk3gZSoCeSvBqGByxBHTzhH6H2aDdevaB9tsuXwY+Lv6Hppitwlq39
+         niLj7Fs3YLTrShBsLun2Fiy9jJbs/tc1zICuxBUupjBn8YS7MOyLunmNolsHVIE5hzvn
+         d4Og==
+X-Gm-Message-State: APjAAAXI60TFzjq4YuqjwCgS5a6lrDzK7vnaC79ZwDTLyhvNJ0+/iokU
+        pGamw7DXqlp8ly+vxAaeEh8rRwiVW0cwLd8Kior8JJgvPmcPUQ0dHV+6HTH0OuedgwLyX2rm/Vs
+        0QQp7yUfVVFAnq1U0BPHCMXSr
+X-Received: by 2002:adf:8043:: with SMTP id 61mr35027591wrk.115.1567495884505;
+        Tue, 03 Sep 2019 00:31:24 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyeFTpVz+dse95eWq0nocs/IG2NKjpvXX30eGt/rJU82VMrZ0Bsyy+QcPwkIDLVpATtIdNOPA==
+X-Received: by 2002:adf:8043:: with SMTP id 61mr35027562wrk.115.1567495884199;
+        Tue, 03 Sep 2019 00:31:24 -0700 (PDT)
+Received: from steredhat (host170-61-dynamic.36-79-r.retail.telecomitalia.it. [79.36.61.170])
+        by smtp.gmail.com with ESMTPSA id v8sm34676506wra.79.2019.09.03.00.31.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 00:30:07 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Tao Zeng <tao.zeng@amlogic.com>
-Subject: Re: [PATCH 4/4] arm64: dts: add support for A1 based Amlogic AD401
-In-Reply-To: <1567493475-75451-5-git-send-email-jianxin.pan@amlogic.com>
-References: <1567493475-75451-1-git-send-email-jianxin.pan@amlogic.com> <1567493475-75451-5-git-send-email-jianxin.pan@amlogic.com>
-Date:   Tue, 03 Sep 2019 09:30:06 +0200
-Message-ID: <1jef0xrg5d.fsf@starbuckisacylon.baylibre.com>
+        Tue, 03 Sep 2019 00:31:23 -0700 (PDT)
+Date:   Tue, 3 Sep 2019 09:31:20 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org,
+        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] vsock/virtio: reduce credit update messages
+Message-ID: <20190903073120.kefllalytkvidcvh@steredhat>
+References: <20190717113030.163499-1-sgarzare@redhat.com>
+ <20190717113030.163499-3-sgarzare@redhat.com>
+ <20190903003050-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190903003050-mutt-send-email-mst@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 03 Sep 2019 at 02:51, Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+On Tue, Sep 03, 2019 at 12:38:02AM -0400, Michael S. Tsirkin wrote:
+> On Wed, Jul 17, 2019 at 01:30:27PM +0200, Stefano Garzarella wrote:
+> > In order to reduce the number of credit update messages,
+> > we send them only when the space available seen by the
+> > transmitter is less than VIRTIO_VSOCK_MAX_PKT_BUF_SIZE.
+> > 
+> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > ---
+> >  include/linux/virtio_vsock.h            |  1 +
+> >  net/vmw_vsock/virtio_transport_common.c | 16 +++++++++++++---
+> >  2 files changed, 14 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+> > index 7d973903f52e..49fc9d20bc43 100644
+> > --- a/include/linux/virtio_vsock.h
+> > +++ b/include/linux/virtio_vsock.h
+> > @@ -41,6 +41,7 @@ struct virtio_vsock_sock {
+> >  
+> >  	/* Protected by rx_lock */
+> >  	u32 fwd_cnt;
+> > +	u32 last_fwd_cnt;
+> >  	u32 rx_bytes;
+> >  	struct list_head rx_queue;
+> >  };
+> > diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+> > index 095221f94786..a85559d4d974 100644
+> > --- a/net/vmw_vsock/virtio_transport_common.c
+> > +++ b/net/vmw_vsock/virtio_transport_common.c
+> > @@ -211,6 +211,7 @@ static void virtio_transport_dec_rx_pkt(struct virtio_vsock_sock *vvs,
+> >  void virtio_transport_inc_tx_pkt(struct virtio_vsock_sock *vvs, struct virtio_vsock_pkt *pkt)
+> >  {
+> >  	spin_lock_bh(&vvs->tx_lock);
+> > +	vvs->last_fwd_cnt = vvs->fwd_cnt;
+> >  	pkt->hdr.fwd_cnt = cpu_to_le32(vvs->fwd_cnt);
+> >  	pkt->hdr.buf_alloc = cpu_to_le32(vvs->buf_alloc);
+> >  	spin_unlock_bh(&vvs->tx_lock);
+> > @@ -261,6 +262,7 @@ virtio_transport_stream_do_dequeue(struct vsock_sock *vsk,
+> >  	struct virtio_vsock_sock *vvs = vsk->trans;
+> >  	struct virtio_vsock_pkt *pkt;
+> >  	size_t bytes, total = 0;
+> > +	u32 free_space;
+> >  	int err = -EFAULT;
+> >  
+> >  	spin_lock_bh(&vvs->rx_lock);
+> > @@ -291,11 +293,19 @@ virtio_transport_stream_do_dequeue(struct vsock_sock *vsk,
+> >  			virtio_transport_free_pkt(pkt);
+> >  		}
+> >  	}
+> > +
+> > +	free_space = vvs->buf_alloc - (vvs->fwd_cnt - vvs->last_fwd_cnt);
+> > +
+> >  	spin_unlock_bh(&vvs->rx_lock);
+> >  
+> > -	/* Send a credit pkt to peer */
+> > -	virtio_transport_send_credit_update(vsk, VIRTIO_VSOCK_TYPE_STREAM,
+> > -					    NULL);
+> > +	/* We send a credit update only when the space available seen
+> > +	 * by the transmitter is less than VIRTIO_VSOCK_MAX_PKT_BUF_SIZE
+> 
+> This is just repeating what code does though.
+> Please include the *reason* for the condition.
+> E.g. here's a better comment:
+> 
+> 	/* To reduce number of credit update messages,
+> 	 * don't update credits as long as lots of space is available.
+> 	 * Note: the limit chosen here is arbitrary. Setting the limit
+> 	 * too high causes extra messages. Too low causes transmitter
+> 	 * stalls. As stalls are in theory more expensive than extra
+> 	 * messages, we set the limit to a high value. TODO: experiment
+> 	 * with different values.
+> 	 */
+> 
 
-> Add basic support for the Amlogic A1 based Amlogic AD401 board:
-> which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
-> Timer, UART. It's capable of booting up into the serial console.
->
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> ---
->  arch/arm64/boot/dts/amlogic/Makefile           |   1 +
->  arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts |  30 ++++++
->  arch/arm64/boot/dts/amlogic/meson-a1.dtsi      | 121 +++++++++++++++++++++++++
->  3 files changed, 152 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-a1.dtsi
->
-> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-> index edbf128..1720c45 100644
-> --- a/arch/arm64/boot/dts/amlogic/Makefile
-> +++ b/arch/arm64/boot/dts/amlogic/Makefile
-> @@ -36,3 +36,4 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-sm1-sei610.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-sm1-khadas-vim3l.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-a1-ad401.dtb
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts b/arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts
-> new file mode 100644
-> index 00000000..3c05cc0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts
-> @@ -0,0 +1,30 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "meson-a1.dtsi"
-> +
-> +/ {
-> +	compatible = "amlogic,ad401", "amlogic,a1";
-> +	model = "Amlogic Meson A1 AD401 Development Board";
-> +
-> +	aliases {
-> +		serial0 = &uart_AO_B;
-> +	};
+Yes, it is better, sorry for that. I'll try to avoid unnecessary comments,
+explaining the reason for certain changes.
 
-Newline here please
+Since this patch is already queued in net-next, should I send another
+patch to fix the comment?
 
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-
-same
-
-> +	memory@0 {
-> +		device_type = "memory";
-> +		linux,usable-memory = <0x0 0x0 0x0 0x8000000>;
-> +	};
-> +};
-> +
-> +&uart_AO_B {
-> +	status = "okay";
-> +	/*pinctrl-0 = <&uart_ao_a_pins>;*/
-> +	/*pinctrl-names = "default";*/
-
-Remove the commented code please
-
-> +};
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> new file mode 100644
-> index 00000000..b98d648
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> @@ -0,0 +1,121 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +	compatible = "amlogic,a1";
-> +
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	cpus {
-> +		#address-cells = <0x2>;
-> +		#size-cells = <0x0>;
-> +
-> +		cpu0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a35";
-> +			reg = <0x0 0x0>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&l2>;
-> +		};
-> +
-> +		cpu1: cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a35";
-> +			reg = <0x0 0x1>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&l2>;
-> +		};
-> +
-> +		l2: l2-cache0 {
-> +			compatible = "cache";
-> +		};
-> +	};
-
-New line here please
-
-With this minor comments adressed, looks good.
-
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		linux,cma {
-> +			compatible = "shared-dma-pool";
-> +			reusable;
-> +			size = <0x0 0x800000>;
-> +			alignment = <0x0 0x400000>;
-> +			linux,cma-default;
-> +		};
-> +	};
-> +
-> +	sm: secure-monitor {
-> +		compatible = "amlogic,meson-gxbb-sm";
-> +	};
-> +
-> +	soc {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		uart_AO: serial@fe001c00 {
-> +			compatible = "amlogic,meson-gx-uart",
-> +				     "amlogic,meson-ao-uart";
-> +			reg = <0x0 0xfe001c00 0x0 0x18>;
-> +			interrupts = <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>;
-> +			clocks = <&xtal>, <&xtal>, <&xtal>;
-> +			clock-names = "xtal", "pclk", "baud";
-> +			status = "disabled";
-> +		};
-> +
-> +		uart_AO_B: serial@fe002000 {
-> +			compatible = "amlogic,meson-gx-uart",
-> +				     "amlogic,meson-ao-uart";
-> +				     reg = <0x0 0xfe002000 0x0 0x18>;
-> +			interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
-> +			clocks = <&xtal>, <&xtal>, <&xtal>;
-> +			clock-names = "xtal", "pclk", "baud";
-> +			status = "disabled";
-> +		};
-> +
-> +		gic: interrupt-controller@ff901000 {
-> +			compatible = "arm,gic-400";
-> +			reg = <0x0 0xff901000 0x0 0x1000>,
-> +			      <0x0 0xff902000 0x0 0x2000>,
-> +			      <0x0 0xff904000 0x0 0x2000>,
-> +			      <0x0 0xff906000 0x0 0x2000>;
-> +			interrupt-controller;
-> +			interrupts = <GIC_PPI 9
-> +				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-> +			#interrupt-cells = <3>;
-> +			#address-cells = <0>;
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 13
-> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14
-> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11
-> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10
-> +			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
-> +	};
-> +
-> +	xtal: xtal-clk {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <24000000>;
-> +		clock-output-names = "xtal";
-> +		#clock-cells = <0>;
-> +	};
-> +};
-> -- 
-> 2.7.4
+Thanks,
+Stefano
