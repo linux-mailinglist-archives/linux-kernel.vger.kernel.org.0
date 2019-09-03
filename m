@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ECCEA5FAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 05:30:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B41ABA5FC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 05:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbfICDag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 23:30:36 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12092 "EHLO
+        id S1726754AbfICDaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 23:30:55 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12114 "EHLO
         hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfICDaf (ORCPT
+        with ESMTP id S1725848AbfICDaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Sep 2019 23:30:35 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d6dde5a0001>; Mon, 02 Sep 2019 20:30:34 -0700
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d6dde5a0002>; Mon, 02 Sep 2019 20:30:34 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
+  by hqpgpgate101.nvidia.com (PGP Universal service);
   Mon, 02 Sep 2019 20:30:33 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 02 Sep 2019 20:30:33 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Sep
+        by hqpgpgate101.nvidia.com on Mon, 02 Sep 2019 20:30:33 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Sep
  2019 03:30:33 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
  Transport; Tue, 3 Sep 2019 03:30:33 +0000
 Received: from vdumpa-ubuntu.nvidia.com (Not Verified[172.17.173.140]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d6dde590004>; Mon, 02 Sep 2019 20:30:33 -0700
+        id <B5d6dde590005>; Mon, 02 Sep 2019 20:30:33 -0700
 From:   Krishna Reddy <vdumpa@nvidia.com>
 CC:     <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
@@ -36,9 +36,9 @@ CC:     <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
         <talho@nvidia.com>, <avanbrunt@nvidia.com>, <thomasz@nvidia.com>,
         <olof@lixom.net>, <jtukkinen@nvidia.com>, <mperttunen@nvidia.com>,
         Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH v2 4/7] iommu/arm-smmu: Add global/context fault implementation hooks
-Date:   Mon, 2 Sep 2019 20:32:05 -0700
-Message-ID: <1567481528-31163-5-git-send-email-vdumpa@nvidia.com>
+Subject: [PATCH v2 5/7] arm64: tegra: Add Memory controller DT node on T194
+Date:   Mon, 2 Sep 2019 20:32:06 -0700
+Message-ID: <1567481528-31163-6-git-send-email-vdumpa@nvidia.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1567481528-31163-1-git-send-email-vdumpa@nvidia.com>
 References: <1567481528-31163-1-git-send-email-vdumpa@nvidia.com>
@@ -46,216 +46,71 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1567481434; bh=/VlKejc1XrRsJR8P1GVOHW3j92BnHn38/j2r5nXMceM=;
+        t=1567481434; bh=eBq8+pmSZ4GEOeaq+B+bPoC14S2kYmqdfA9PyT31IhY=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=nj+KfdA0EUvuaFpAL2frJvI+kMJ5O3WdueFxpxQp/DHkAfzt5jIQ4mlECo8STiFl+
-         PxHxbQ+GAfZM9ESI4Z3wqnFtC2XkiIIaCh4/OF1PGz9kpWyqK9ACWhUe/nOT2+X3lp
-         YKCLRPHOJ7qOVeJPR5e7ev1FySnxFv3LAQO/t2Ar9jBGKwFMVnlDDqF7kLVgx+VEIf
-         4NfUJuCgaYMAcS403SXaPLSi6GHq5mHKIjYgPI7TXinGH+9PZp21I5VaPTdmft0A7L
-         iIxHqXAz/l9txuFYOkkpLQ8riHFZ7bWrwB/GfDUKkUuPfU/L2GB2tiXRETvg6KVk3E
-         SvcfNjHdMx9mw==
+        b=n0zgI5mbRtSBHWK12M0yQ6YJXVKhr5NaBM0CFpcH2WlH79h0ALTCWIcrQv6HDdtfV
+         s81JllGArrBSiYXB9K7tI1OB8KurHeBmTd9PyeI96Wv8cArfeAYo1JPhzbyX1Rg9vN
+         g31M8JGezcvh90t7GH09ddA1/D2lMaBsE2nzL1adtCmMyq3ZXCUef4A/rjgbvdLIDy
+         HRpWroKDZWakdVKX9K/phQBQkNAd75Wz+4tKtkwT8q0irn4vTWF6fZvMBwoOk/+4pW
+         XyBiXt2fB8rgsAR61JRUrZf3q29bHkDHIE9GRrU+8YJqY7CHiVTeJDsbE1P7S1rtUO
+         +FHP6d+ejKtzg==
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add global/context fault hooks to allow NVIDIA SMMU implementation
-handle faults across multiple SMMUs.
+Add Memory controller DT node on T194 and enable it.
+This patch is a prerequisite for SMMU enable on T194.
 
 Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
 ---
- drivers/iommu/arm-smmu-nvidia.c | 100 ++++++++++++++++++++++++++++++++++++++++
- drivers/iommu/arm-smmu.c        |  11 ++++-
- drivers/iommu/arm-smmu.h        |   3 ++
- 3 files changed, 112 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 4 ++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 7 +++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/iommu/arm-smmu-nvidia.c b/drivers/iommu/arm-smmu-nvidia.c
-index ca871dc..2a19d41 100644
---- a/drivers/iommu/arm-smmu-nvidia.c
-+++ b/drivers/iommu/arm-smmu-nvidia.c
-@@ -143,6 +143,104 @@ static int nsmmu_init_context(struct arm_smmu_domain *smmu_domain)
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+index 62e07e11..4b3441b 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+@@ -47,6 +47,10 @@
+ 			};
+ 		};
  
-+static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
-+{
-+	return container_of(dom, struct arm_smmu_domain, domain);
-+}
++		memory-controller@2c00000 {
++			status = "okay";
++		};
 +
-+static irqreturn_t nsmmu_global_fault_inst(int irq,
-+					       struct arm_smmu_device *smmu,
-+					       int inst)
-+{
-+	u32 gfsr, gfsynr0, gfsynr1, gfsynr2;
-+
-+	gfsr = readl_relaxed(nsmmu_page(smmu, inst, 0) + ARM_SMMU_GR0_sGFSR);
-+	gfsynr0 = readl_relaxed(nsmmu_page(smmu, inst, 0) +
-+				ARM_SMMU_GR0_sGFSYNR0);
-+	gfsynr1 = readl_relaxed(nsmmu_page(smmu, inst, 0) +
-+				ARM_SMMU_GR0_sGFSYNR1);
-+	gfsynr2 = readl_relaxed(nsmmu_page(smmu, inst, 0) +
-+				ARM_SMMU_GR0_sGFSYNR2);
-+
-+	if (!gfsr)
-+		return IRQ_NONE;
-+
-+	dev_err_ratelimited(smmu->dev,
-+		"Unexpected global fault, this could be serious\n");
-+	dev_err_ratelimited(smmu->dev,
-+		"\tGFSR 0x%08x, GFSYNR0 0x%08x, GFSYNR1 0x%08x, GFSYNR2 0x%08x\n",
-+		gfsr, gfsynr0, gfsynr1, gfsynr2);
-+
-+	writel_relaxed(gfsr, nsmmu_page(smmu, inst, 0) + ARM_SMMU_GR0_sGFSR);
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t nsmmu_global_fault(int irq, void *dev)
-+{
-+	int inst;
-+	irqreturn_t irq_ret = IRQ_NONE;
-+	struct arm_smmu_device *smmu = dev;
-+
-+	for (inst = 0; inst < to_nvidia_smmu(smmu)->num_inst; inst++) {
-+		irq_ret = nsmmu_global_fault_inst(irq, smmu, inst);
-+		if (irq_ret == IRQ_HANDLED)
-+			return irq_ret;
-+	}
-+
-+	return irq_ret;
-+}
-+
-+static irqreturn_t nsmmu_context_fault_bank(int irq,
-+					    struct arm_smmu_device *smmu,
-+					    int idx, int inst)
-+{
-+	u32 fsr, fsynr, cbfrsynra;
-+	unsigned long iova;
-+
-+	fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
-+	if (!(fsr & FSR_FAULT))
-+		return IRQ_NONE;
-+
-+	fsynr = readl_relaxed(nsmmu_page(smmu, inst, smmu->numpage + idx) +
-+			      ARM_SMMU_CB_FSYNR0);
-+	iova = readq_relaxed(nsmmu_page(smmu, inst, smmu->numpage + idx) +
-+			     ARM_SMMU_CB_FAR);
-+	cbfrsynra = readl_relaxed(nsmmu_page(smmu, inst, 1) +
-+				  ARM_SMMU_GR1_CBFRSYNRA(idx));
-+
-+	dev_err_ratelimited(smmu->dev,
-+	"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
-+			    fsr, iova, fsynr, cbfrsynra, idx);
-+
-+	writel_relaxed(fsr, nsmmu_page(smmu, inst, smmu->numpage + idx) +
-+			    ARM_SMMU_CB_FSR);
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t nsmmu_context_fault(int irq, void *dev)
-+{
-+	int inst, idx;
-+	irqreturn_t irq_ret = IRQ_NONE;
-+	struct iommu_domain *domain = dev;
-+	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-+	struct arm_smmu_device *smmu = smmu_domain->smmu;
-+
-+	for (inst = 0; inst < to_nvidia_smmu(smmu)->num_inst; inst++) {
-+		/* Interrupt line shared between all context faults.
-+		 * Check for faults across all contexts.
-+		 */
-+		for (idx = 0; idx < smmu->num_context_banks; idx++) {
-+			irq_ret = nsmmu_context_fault_bank(irq, smmu,
-+							   idx, inst);
-+
-+			if (irq_ret == IRQ_HANDLED)
-+				return irq_ret;
-+		}
-+	}
-+
-+	return irq_ret;
-+}
-+
- static const struct arm_smmu_impl nvidia_smmu_impl = {
- 	.read_reg = nsmmu_read_reg,
- 	.write_reg = nsmmu_write_reg,
-@@ -150,6 +248,8 @@ static const struct arm_smmu_impl nvidia_smmu_impl = {
- 	.write_reg64 = nsmmu_write_reg64,
- 	.reset = nsmmu_reset,
- 	.init_context = nsmmu_init_context,
-+	.global_fault = nsmmu_global_fault,
-+	.context_fault = nsmmu_context_fault,
- };
+ 		serial@3110000 {
+ 			status = "okay";
+ 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index adebbbf..d906958 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -6,6 +6,7 @@
+ #include <dt-bindings/reset/tegra194-reset.h>
+ #include <dt-bindings/power/tegra194-powergate.h>
+ #include <dt-bindings/thermal/tegra194-bpmp-thermal.h>
++#include <dt-bindings/memory/tegra186-mc.h>
  
- struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 16b5c54..7811e7d 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -635,6 +635,7 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
- 	enum io_pgtable_fmt fmt;
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
- 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
-+	irqreturn_t (*context_fault)(int irq, void *dev);
+ / {
+ 	compatible = "nvidia,tegra194";
+@@ -130,6 +131,12 @@
+ 			};
+ 		};
  
- 	mutex_lock(&smmu_domain->init_mutex);
- 	if (smmu_domain->smmu)
-@@ -797,7 +798,9 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
- 	 * handler seeing a half-initialised domain state.
- 	 */
- 	irq = smmu->irqs[smmu->num_global_irqs + cfg->irptndx];
--	ret = devm_request_irq(smmu->dev, irq, arm_smmu_context_fault,
-+	context_fault = (smmu->impl && smmu->impl->context_fault) ?
-+			 smmu->impl->context_fault : arm_smmu_context_fault;
-+	ret = devm_request_irq(smmu->dev, irq, context_fault,
- 			       IRQF_SHARED, "arm-smmu-context-fault", domain);
- 	if (ret < 0) {
- 		dev_err(smmu->dev, "failed to request context IRQ %d (%u)\n",
-@@ -2012,6 +2015,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 	struct arm_smmu_device *smmu;
- 	struct device *dev = &pdev->dev;
- 	int num_irqs, i, err;
-+	irqreturn_t (*global_fault)(int irq, void *dev);
- 
- 	smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
- 	if (!smmu) {
-@@ -2100,9 +2104,12 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 		smmu->num_context_irqs = smmu->num_context_banks;
- 	}
- 
-+	global_fault = (smmu->impl && smmu->impl->global_fault) ?
-+			smmu->impl->global_fault : arm_smmu_global_fault;
++		memory-controller@2c00000 {
++			compatible = "nvidia,tegra186-mc";
++			reg = <0x02c00000 0xb0000>;
++			status = "disabled";
++		};
 +
- 	for (i = 0; i < smmu->num_global_irqs; ++i) {
- 		err = devm_request_irq(smmu->dev, smmu->irqs[i],
--				       arm_smmu_global_fault,
-+				       global_fault,
- 				       IRQF_SHARED,
- 				       "arm-smmu global fault",
- 				       smmu);
-diff --git a/drivers/iommu/arm-smmu.h b/drivers/iommu/arm-smmu.h
-index 4520ef7..cfd5f22 100644
---- a/drivers/iommu/arm-smmu.h
-+++ b/drivers/iommu/arm-smmu.h
-@@ -17,6 +17,7 @@
- #include <linux/io-64-nonatomic-hi-lo.h>
- #include <linux/io-pgtable.h>
- #include <linux/iommu.h>
-+#include <linux/irqreturn.h>
- #include <linux/mutex.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-@@ -337,6 +338,8 @@ struct arm_smmu_impl {
- 	int (*cfg_probe)(struct arm_smmu_device *smmu);
- 	int (*reset)(struct arm_smmu_device *smmu);
- 	int (*init_context)(struct arm_smmu_domain *smmu_domain);
-+	irqreturn_t (*global_fault)(int irq, void *dev);
-+	irqreturn_t (*context_fault)(int irq, void *dev);
- };
- 
- static inline void __iomem *arm_smmu_page(struct arm_smmu_device *smmu, int n)
+ 		uarta: serial@3100000 {
+ 			compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
+ 			reg = <0x03100000 0x40>;
 -- 
 2.1.4
 
