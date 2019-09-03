@@ -2,44 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4099A6840
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 14:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53F3BA6825
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 14:08:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbfICMJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 08:09:06 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:49011 "EHLO
+        id S1729191AbfICMIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 08:08:17 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:38238 "EHLO
         mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729089AbfICMIK (ORCPT
+        with ESMTP id S1729091AbfICMIL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 08:08:10 -0400
-Received: by mail-io1-f70.google.com with SMTP id p1so8363073iom.15
+        Tue, 3 Sep 2019 08:08:11 -0400
+Received: by mail-io1-f70.google.com with SMTP id m5so9985951ioj.5
         for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 05:08:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+TyJ0OG+pPp/DvJlej8bfcgO9uWPlVMHlJBQUM4x4e4=;
-        b=Nj0Wzp4LvAz3CNPiD9+CRuPfGMovsZT52AfYnDTLa1sfyvr3EFy+sksvkKNLjpvrq9
-         S47XWETy+xUNtZoTafa39bj4UO4drbTpu7JQi374sJG7sQfM16M+BbHPWLdCr48USFVq
-         RI3WVad3MEh/WD5Y4VGo1AxJn3boxyDz3HaDhWrJQG2G0tpYu0oPzEsEO+oF+PwsgrXB
-         sm3VnmkozNFRGB5t+Q2ucX4/7rdlYKERKVIK/PPU+9uA0g9ixY1qE68q02QqmjGC6rYd
-         U7QoaQmUnO7Yy39jQQLKf2T1AZJqisyoUmGwjqWKoPiLFWtYr0LAU05MiMhijCxMFRaT
-         s4zA==
-X-Gm-Message-State: APjAAAVc7o8owbwVACGSQCRZbWrVvUL8ntbrKYZi3T2rme8P9t9jTIGI
-        fBqDYKZ5JsxQIZrwVIEEzQF5szrxWCD6biCscOakaGDOEZZ4
-X-Google-Smtp-Source: APXvYqwoaPI8LWTk3EClq2Sd2SgccAwr6DL1QApT7yvnOxkC1F2kOs7555u/MDme+whxIW+TPpWRqTspOTNuEf+TULLMgC0UsAcx
+        bh=CxUZjygCpasgBPF+y6oi8xFjs0AF9HB9H4iCmjReROA=;
+        b=UI3Hph1A9GKQpxbYsnTmATeCHouzhqnTv8eIs8FcEtwii4wXc/MzAQBo2724dLX/PD
+         TWRCv0o6w61S/ELYBnPGVRK+B/LiaPqbPV1eBP+vOBB1szE5R3f8TeQ8uX1wIpgEwqRV
+         hg2I/JrkuPafwHE+RJ8YnTXU7z66W2sSqQYcv76n0fw1367/y78FZeknLRgoKerH+Fdw
+         gt7WjDwtn8kfYKVILP4xyruldM9vLDrnlZYlz5kYia1kV0RdDycaqHFaLphinicOdx0w
+         5sRzW7vIodqFFiYQjy0MvLWKL8xd2uheJtc0xaKl/9vTtHeyesy13DlJS5vecHyFg+v0
+         29FA==
+X-Gm-Message-State: APjAAAWIWerNo8GcOCFCt3cu/tLWMm+X8Q+3VrHQtXU8lGoOSE1Im1O/
+        KhYOin/TnKtmqdt+WK71Nr0BAECvBjJVzAr/DovoYqfWTwjr
+X-Google-Smtp-Source: APXvYqxJaDVBHS+iGbOfAA2e4mOzogSUuWdHkrWEZqKdilXl6J5OAzbdJdVyXU1F8zsOLcuxFRx7RNEyHuu2a2/6l2VRLzfXwaYU
 MIME-Version: 1.0
-X-Received: by 2002:a5e:d80e:: with SMTP id l14mr10372843iok.217.1567512490089;
+X-Received: by 2002:a02:81c5:: with SMTP id r5mr37662960jag.143.1567512490314;
  Tue, 03 Sep 2019 05:08:10 -0700 (PDT)
 Date:   Tue, 03 Sep 2019 05:08:10 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002725f40591a4f118@google.com>
-Subject: general protection fault in pk_probe
-From:   syzbot <syzbot+1088533649dafa1c9004@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000002a95df0591a4f114@google.com>
+Subject: WARNING in hso_free_net_device
+From:   syzbot <syzbot+44d53c7255bb1aea22d2@syzkaller.appspotmail.com>
+To:     alexios.zavras@intel.com, andreyknvl@google.com,
+        benquike@gmail.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, mathias.payer@nebelwelt.net,
+        netdev@vger.kernel.org, rfontana@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,57 +54,59 @@ syzbot found the following crash on:
 
 HEAD commit:    eea39f24 usb-fuzzer: main usb gadget fuzzer driver
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c3589e600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15f17e61600000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=d0c62209eedfd54e
-dashboard link: https://syzkaller.appspot.com/bug?extid=1088533649dafa1c9004
+dashboard link: https://syzkaller.appspot.com/bug?extid=44d53c7255bb1aea22d2
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1667cc66600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10f30dbc600000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10ffdd12600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a738fe600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1088533649dafa1c9004@syzkaller.appspotmail.com
+Reported-by: syzbot+44d53c7255bb1aea22d2@syzkaller.appspotmail.com
 
-prodikeys 0003:041E:2801.0001: unknown main item tag 0x0
-prodikeys 0003:041E:2801.0001: unknown main item tag 0x0
-prodikeys 0003:041E:2801.0001: hidraw0: USB HID v0.00 Device [HID  
-041e:2801] on usb-dummy_hcd.0-1/input1
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.3.0-rc5+ #28
+usb 1-1: config 0 has no interface number 0
+usb 1-1: New USB device found, idVendor=0af0, idProduct=d257,  
+bcdDevice=4e.87
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+hso 1-1:0.15: Can't find BULK IN endpoint
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 83 at net/core/dev.c:8167  
+rollback_registered_many.cold+0x41/0x1bc net/core/dev.c:8167
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 83 Comm: kworker/1:2 Not tainted 5.3.0-rc5+ #28
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Workqueue: usb_hub_wq hub_event
-RIP: 0010:pcmidi_submit_output_report drivers/hid/hid-prodikeys.c:300  
-[inline]
-RIP: 0010:pcmidi_set_operational drivers/hid/hid-prodikeys.c:558 [inline]
-RIP: 0010:pcmidi_snd_initialise drivers/hid/hid-prodikeys.c:686 [inline]
-RIP: 0010:pk_probe+0xb51/0xfd0 drivers/hid/hid-prodikeys.c:836
-Code: 0f 85 50 04 00 00 48 8b 04 24 4c 89 7d 10 48 8b 58 08 e8 b2 53 e4 fc  
-48 8b 54 24 20 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
-85 13 04 00 00 48 ba 00 00 00 00 00 fc ff df 49 8b
-RSP: 0018:ffff8881da20ee10 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: ffff8881d2d40000 RCX: ffffffff8459833e
-RDX: 0000000000000006 RSI: ffffffff8459862e RDI: ffff8881d2aee610
-RBP: ffff8881d2aee600 R08: ffff8881da1f9800 R09: ffffed103b64677c
-R10: ffffed103b64677b R11: ffff8881db233bdb R12: ffff8881d2d40000
-R13: 0000000000000000 R14: ffff8881d4ec4ab0 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2fc6afa518 CR3: 00000001d099d000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2165
-  hid_add_device+0x33c/0x990 drivers/hid/hid-core.c:2365
-  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  panic+0x2a3/0x6da kernel/panic.c:219
+  __warn.cold+0x20/0x4a kernel/panic.c:576
+  report_bug+0x262/0x2a0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+RIP: 0010:rollback_registered_many.cold+0x41/0x1bc net/core/dev.c:8167
+Code: ff e8 c7 26 90 fc 48 c7 c7 40 ec 63 86 e8 24 c8 7a fc 0f 0b e9 93 be  
+ff ff e8 af 26 90 fc 48 c7 c7 40 ec 63 86 e8 0c c8 7a fc <0f> 0b 4c 89 e7  
+e8 f9 12 34 fd 31 ff 41 89 c4 89 c6 e8 bd 27 90 fc
+RSP: 0018:ffff8881d934f088 EFLAGS: 00010282
+RAX: 0000000000000024 RBX: ffff8881d2ad4400 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81288cfd RDI: ffffed103b269e03
+RBP: ffff8881d934f1b8 R08: 0000000000000024 R09: fffffbfff11ad794
+R10: fffffbfff11ad793 R11: ffffffff88d6bc9f R12: ffff8881d2ad4470
+R13: ffff8881d934f148 R14: dffffc0000000000 R15: 0000000000000000
+  rollback_registered+0xf2/0x1c0 net/core/dev.c:8243
+  unregister_netdevice_queue net/core/dev.c:9290 [inline]
+  unregister_netdevice_queue+0x1d7/0x2b0 net/core/dev.c:9283
+  unregister_netdevice include/linux/netdevice.h:2631 [inline]
+  unregister_netdev+0x18/0x20 net/core/dev.c:9331
+  hso_free_net_device+0xff/0x300 drivers/net/usb/hso.c:2366
+  hso_create_net_device+0x76d/0x9c0 drivers/net/usb/hso.c:2554
+  hso_probe+0x28d/0x1a46 drivers/net/usb/hso.c:2931
   usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
   really_probe+0x281/0x6d0 drivers/base/dd.c:548
   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
@@ -130,27 +134,8 @@ Call Trace:
   worker_thread+0x96/0xe20 kernel/workqueue.c:2415
   kthread+0x318/0x420 kernel/kthread.c:255
   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 57a1aecde3464295 ]---
-RIP: 0010:pcmidi_submit_output_report drivers/hid/hid-prodikeys.c:300  
-[inline]
-RIP: 0010:pcmidi_set_operational drivers/hid/hid-prodikeys.c:558 [inline]
-RIP: 0010:pcmidi_snd_initialise drivers/hid/hid-prodikeys.c:686 [inline]
-RIP: 0010:pk_probe+0xb51/0xfd0 drivers/hid/hid-prodikeys.c:836
-Code: 0f 85 50 04 00 00 48 8b 04 24 4c 89 7d 10 48 8b 58 08 e8 b2 53 e4 fc  
-48 8b 54 24 20 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
-85 13 04 00 00 48 ba 00 00 00 00 00 fc ff df 49 8b
-RSP: 0018:ffff8881da20ee10 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: ffff8881d2d40000 RCX: ffffffff8459833e
-RDX: 0000000000000006 RSI: ffffffff8459862e RDI: ffff8881d2aee610
-RBP: ffff8881d2aee600 R08: ffff8881da1f9800 R09: ffffed103b64677c
-R10: ffffed103b64677b R11: ffff8881db233bdb R12: ffff8881d2d40000
-R13: 0000000000000000 R14: ffff8881d4ec4ab0 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2fc6afa518 CR3: 00000001d099d000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
