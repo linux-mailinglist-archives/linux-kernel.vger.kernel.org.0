@@ -2,95 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DBFA7247
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D66A7236
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:05:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729907AbfICSJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 14:09:45 -0400
-Received: from mailin.studentenwerk.mhn.de ([141.84.225.229]:33810 "EHLO
-        email.studentenwerk.mhn.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727352AbfICSJp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 14:09:45 -0400
-X-Greylist: delayed 413 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Sep 2019 14:09:44 EDT
-Received: from mailhub.studentenwerk.mhn.de (mailhub.studentenwerk.mhn.de [127.0.0.1])
-        by email.studentenwerk.mhn.de (Postfix) with ESMTP id 46NFDB3KQbzRhSl;
-        Tue,  3 Sep 2019 20:02:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwm.de;
-        s=stwm-20170627; t=1567533770;
-        bh=cDBU6ESHTAM3Zu+XZG0ThiswLTZCCx+T14baC5kz5RE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oUfKGroBMvZr9bWL6bvu2wHF6cW24EWEK2kkcpSnfuO4PJqhNs/GyHai4u8Ws6Jww
-         83xWPkP3NWu/+5KIbnIH5RysurPrZ6Cqsnvp0RDeJtwwaii/64f8FFLtjJJCVxYFlW
-         J2R44xg9DCGklrBW8YIzgsUNjBl2hQswz0qiaV2OXm5d+MKfMaMqFhJ9AEcl1Ybdcq
-         BZ0TbdsO0dV6ddXrZDa0+w79j1mDRzO6MzEgdrSjCSacDmCIE+TCfpwv3hCXUHLEEX
-         EWW43y0dua6vMakLM8iwCOPZ+yxbUD6CX3ruDFA0dyjC2S8X6WqU93iF/E0KsVNBAm
-         aYiCkmbE3DmJw==
-From:   Wolfgang Walter <linux@stwm.de>
-To:     Jason L Tibbitts III <tibbs@math.uh.edu>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        linux-nfs@vger.kernel.org, km@cm4all.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: Regression in 5.1.20: Reading long directory fails
-Date:   Tue, 03 Sep 2019 20:02:50 +0200
-Message-ID: <4418877.15LTP4gqqJ@stwm.de>
-User-Agent: KMail/4.14.3 (Linux/5.0.6-050006-generic; KDE/4.14.13; x86_64; ; )
-In-Reply-To: <ufa5zm9s7kz.fsf@epithumia.math.uh.edu>
-References: <ufak1bhyuew.fsf@epithumia.math.uh.edu> <ufay2zduosz.fsf@epithumia.math.uh.edu> <ufa5zm9s7kz.fsf@epithumia.math.uh.edu>
+        id S1730156AbfICSFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 14:05:54 -0400
+Received: from sauhun.de ([88.99.104.3]:56744 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726973AbfICSFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 14:05:54 -0400
+Received: from localhost (p54B3348D.dip0.t-ipconnect.de [84.179.52.141])
+        by pokefinder.org (Postfix) with ESMTPSA id 98A132C4F2F;
+        Tue,  3 Sep 2019 20:05:52 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 20:05:52 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Cc:     pierre-yves.mordret@st.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, linux-i2c@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: stm32f7: Make structure stm32f7_i2c_algo constant
+Message-ID: <20190903180552.GI2171@ninjato>
+References: <20190815055857.1944-1-nishkadg.linux@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jQIvE3yXcK9X9HBh"
+Content-Disposition: inline
+In-Reply-To: <20190815055857.1944-1-nishkadg.linux@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 3. September 2019, 10:49:48 schrieb Jason L Tibbitts III:
-> >>>>> "JLT" =3D=3D Jason L Tibbitts <tibbs@math.uh.edu> writes:
-> JLT> Certainly a server reboot, or maybe even just
-> JLT> unmounting and remounting the filesystem or copying the data to
-> JLT> another filesystem would tell me that.  In any case, as soon as =
-I
-> JLT> am able to mess with that server, I'll know more.
->=20
-> Rebooting the server did not make any difference, and now more users =
-are
-> seeing the problem.  At this point I'm in a state where NFS simply is=
-n't
-> reliable at all, and I'm not sure what to do.  If Centos 8 were out,
-> I'd work on moving to that just so that the server was a little more
-> modern.  (Currently the server is Centos 7.)  I guess I could try usi=
-ng
-> Fedora, or installing one of the upstream kernels, just in case this =
-has
-> to do with some interaction between the client and the old RHEL7 kern=
-el.
->=20
-> I do have a packet capture of a directory listing that fails with EIO=
-,
-> but I'm not sure if it's safe to simply post it, and I'm not sure wha=
-t
-> tshark options would be useful in decoding it.
->=20
-> I do know that I can rsync one of the problematic directories to a
-> different server (running the same kernel) and it doesn't have the sa=
-me
-> problem.  What I'll try next is rsyncing to a different filesystem on=
 
-> the same server, but again I'll have to wait until people log off to =
-do
-> proper testing.
+--jQIvE3yXcK9X9HBh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Aug 15, 2019 at 11:28:57AM +0530, Nishka Dasgupta wrote:
+> Static structure stm32f7_i2c_algo, of type i2c_algorithm, is used only
+> when it is assigned to constant field algo of a variable having type
+> i2c_adapter. As stm32f7_i2c_algo is therefore never modified, make it
+> const as well to protect it from unintended modification.
+> Issue found with Coccinelle.
 >=20
->  - J<
+> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+> ---
 
-What filesystem do you use on the server? xfs? If yes, does it use 64bi=
-t=20
-inodes (or started to use them)? Do you set a fsid when you export the=20=
+Are you guys okay with this patch?
 
-filesystem?
+>  drivers/i2c/busses/i2c-stm32f7.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-st=
+m32f7.c
+> index 266d1c269b83..d36cf08461f7 100644
+> --- a/drivers/i2c/busses/i2c-stm32f7.c
+> +++ b/drivers/i2c/busses/i2c-stm32f7.c
+> @@ -1809,7 +1809,7 @@ static u32 stm32f7_i2c_func(struct i2c_adapter *ada=
+p)
+>  		I2C_FUNC_SMBUS_I2C_BLOCK;
+>  }
+> =20
+> -static struct i2c_algorithm stm32f7_i2c_algo =3D {
+> +static const struct i2c_algorithm stm32f7_i2c_algo =3D {
+>  	.master_xfer =3D stm32f7_i2c_xfer,
+>  	.smbus_xfer =3D stm32f7_i2c_smbus_xfer,
+>  	.functionality =3D stm32f7_i2c_func,
+> --=20
+> 2.19.1
+>=20
 
-Regards,
---=20
-Wolfgang Walter
-Studentenwerk M=FCnchen
-Anstalt des =F6ffentlichen Rechts
+--jQIvE3yXcK9X9HBh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1uq4AACgkQFA3kzBSg
+Kbb8bA/7Bzcu4H+4vy+pN5u7/6dvt9U1m+nVCt4vcisCCui7/eCm99H3yyDexyt0
+XfsNaP3kRsliO6VzsxJYKLmKwuoFhmweI+nDH+fTBzVproQhzrlGjcr1N+ZF3uvp
+vYMOCk84pZZ8h7eAeQIxtw8FJKLX+1EOJJcG2w7APhQ+0YoJibSkz5yVasT1arNZ
+t9wOQQki7S2HLK09QRYP1urT7dIbRvkcaFM9HQMBZdcsOCSa3SdnL52YjLTbgA3K
+HAIt1QpAmbHanMgBOEM+FTDWSSWuZyea4t1oGBK21mHksjLP/+cmR8dUiRVkpEcU
+HuJRmRE2STSo0GE8c06fiYIhNPNHUPy7M2B5LmAvEbmj9uEjElbJuzCXmY6sh2ka
+NkQypuukYn9S3EdP6+zPCVgvdB3UxnuxhxX4exQiagOa4TsrXoPv/M85wQjU6h+k
+SebrMybbLsyr57zYG77zUQxQPUGopl3gAmQrXk4C0AGDgGrGZHn5rgOIi0CqkR8Y
+n2bgrd5sG04fLP0XrhFUeQFjXKBVAfAStse3VzHzt0GdXZ3FIbhyqn39982sM2xk
+MhLO4UCcFyc3ebtcqHIZIkM23QwO/FGhSiGmwVci8EPS174rlH7G9hMvXfuMWrgc
+uFx3t0vfZmx62RXhspKEEjsxe+/pGbtGOsJsRsEi4o96NRElfDw=
+=fdQf
+-----END PGP SIGNATURE-----
+
+--jQIvE3yXcK9X9HBh--
