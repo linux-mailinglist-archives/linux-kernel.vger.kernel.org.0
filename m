@@ -2,101 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 980A0A6B4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:23:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB973A6B35
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729717AbfICOXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:23:16 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42920 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729578AbfICOWj (ORCPT
+        id S1729565AbfICOWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:22:14 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42856 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729113AbfICOWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:22:39 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u13so13025938lfm.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:38 -0700 (PDT)
+        Tue, 3 Sep 2019 10:22:11 -0400
+Received: by mail-qk1-f195.google.com with SMTP id f13so16039109qkm.9
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0NvqeeJAxqM9LsjMwddoa5m6zhHcHlw9n+K/8LgxXIo=;
-        b=Dr8gEgTBXp1w4VtAi4Mg6OCCy2rvOuKA2OxrnTOj+lxUU6Y5Zr/e/LiMXo9c/gTVMj
-         dimHRhhs+yp1gkbZp4z0mztJjWrv3WJBlxkhrla8bsYlzwEUe4f1j3+POiAD3wnTTDu0
-         ZXSwSUnivY32b9fKF7b3hLCaNRrkTSAK5o/qkfMGdNnVK6jI/byKgyQLIFIy00GkkTiB
-         uPgncVJ8PHuhJVF+6MiyqQbwg2bwS+dUntVWLDg+RUJc61GM/Bm5LkB+XtwrREL0QX0R
-         VIcIjvZ6WYdM4CJ6ZIHN0AugBpHZS696oD4v4XD1agn/DGhqtNf2KkEuLA+Gw6HZccSl
-         ttfw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zXvrHc8bIlM8VodivjNDsnx6+oAEFk8HI08Pi/PdZy0=;
+        b=arZrudyLT8vTBXeGc+RzCc8cTYEs3iyuTYalOAK8Glv1IOK+eWWBNQWyvS8kFPmvs8
+         cXIvmXi+hJkM1FOJpx5IPOjfYvPRIzhid3fb2nB/JrVWSTaqecT2VZSSzQiT3GLBEhVD
+         smanZ/a5pgEUewoLHRsTzIMv9ved1r7kbjWXhXrjDyLyY7rPLZf0ySFrYu7mKpvQJxkF
+         6zkSA2MEAIopfNY5Ll0n+vlI8Z1hVWLGrtAY/KyJTTp+EipIkSMRL9vg7B0zT/2F6vW+
+         GLuEGCAkw1KhNkAUKZ5Qs8nmOqIqiZ993sMb4VYDVKWNLkoIjdzO2woNnmAnCXfVizng
+         kRPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0NvqeeJAxqM9LsjMwddoa5m6zhHcHlw9n+K/8LgxXIo=;
-        b=rwp0uLYPrcAPP11JHiDN5WrIxnMGR31pGTD23ZU1mSLUvlstqwM5wZSqmTU31+vXud
-         sy9bsGnMoQEe4DRVZKq16wpwEV4unorkd4NVq09ulZSLDC/V/sxCIr4SuIXTH5ywBtJu
-         MGhYMFrifHfhRcKQbpREanbkSyG+REN5odM/e1ppPa+zOvVf9CJ2jR3j3QK1sr8oneP6
-         pzk7MVUVAzG6JfK7bhasWB3t9sRqYtMFxYZpVo462XcvkaZ3cFpYWnJf3KcGpK1CBovE
-         16rhs5Ar/IkppzawkYF/YTv5DQbThLl6zaj6mRbIqlNpL2P5+IFuFkKqdEvWlhAwGg9L
-         R/6g==
-X-Gm-Message-State: APjAAAV/sO5p8MsnLL/+VO6x/NAYmBPrmdbUOnmHGA4jGuMzF3kC1rVG
-        OmQ+u4Pw7EZP4Y0cmen9AU2D6Q==
-X-Google-Smtp-Source: APXvYqweF7JPxx3cnV/NebwZQV+1f/Ir2g4Sh+rI5IK4GEBLjBEWnZeSOmycdTJye0f6h/XH6sRvAw==
-X-Received: by 2002:ac2:5485:: with SMTP id t5mr18239629lfk.27.1567520557351;
-        Tue, 03 Sep 2019 07:22:37 -0700 (PDT)
-Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id v10sm2430862ljc.64.2019.09.03.07.22.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 07:22:36 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Cc:     Shawn Lin <shawn.lin@rock-chips.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Yong Mao <yong.mao@mediatek.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 03/11] mmc: mtk-sd: Re-store SDIO IRQs mask at system resume
-Date:   Tue,  3 Sep 2019 16:21:59 +0200
-Message-Id: <20190903142207.5825-4-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190903142207.5825-1-ulf.hansson@linaro.org>
-References: <20190903142207.5825-1-ulf.hansson@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zXvrHc8bIlM8VodivjNDsnx6+oAEFk8HI08Pi/PdZy0=;
+        b=Wxc5T0dy+G30uE2yM2uUj9eMscNRZ7EnVc/sgyKC8jjVCnDWOHPgBpzCOl9oVgYsTj
+         jGpKIsdKuzam9fiG6vm/b6NiDji2AMMPc6N/UVlWO6sNoxd/WVDX0nJfYw5S5mcgx5FX
+         gJSsQmRIvmTcFVAHqmdmhBhSLxu+m/M1x3kmMOg/dHCylVvNtEss2OMllg1N6oBHwkbj
+         QLZQBMAGKmjyg+YKcGXEP2FFNabcN6mdHDRele9wWOq5kE7azneHeYICz7E0zQ8boohY
+         UkdlhNkE0Z0mRsEGHswitXDCWxUKt7KI4A9BpOwA+CMOnJpUVInPuGFxD9vlxXzJPbNJ
+         VHDg==
+X-Gm-Message-State: APjAAAXupm6sDzLrDzTm8y1UBOEY8W/B3P2PC2IQuglvQNzEsebApyVn
+        AHnmmF0eOE/YvH/aU+frPs8AKonulBCBvblF+6dnhw==
+X-Google-Smtp-Source: APXvYqzRj6Qy94zXxM718BMGrBx7jps9qVb8rKF7Cps40w/i6I9cXmMkiicMdflzzRvbKZLV3AfkOSAorVEoJeh+BqA=
+X-Received: by 2002:a05:620a:1367:: with SMTP id d7mr12839832qkl.20.1567520530372;
+ Tue, 03 Sep 2019 07:22:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190822132811.31294-1-patrick.bellasi@arm.com>
+ <20190822132811.31294-2-patrick.bellasi@arm.com> <CAJuCfpGWtrg02LNE3PJZag9-LLVT=by2v+9x_tm1PyoXwZ8DqQ@mail.gmail.com>
+ <20190903085248.GB8756@blackbody.suse.cz>
+In-Reply-To: <20190903085248.GB8756@blackbody.suse.cz>
+From:   Joel Fernandes <joelaf@google.com>
+Date:   Tue, 3 Sep 2019 10:21:59 -0400
+Message-ID: <CAJWu+opnNT3bQwe+SsdR0Q+PSt7DA=JAQ_5sbZ6h2DXd4ZqwHA@mail.gmail.com>
+Subject: Re: [PATCH v14 1/6] sched/core: uclamp: Extend CPU's cgroup controller
+To:     =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc:     Suren Baghdasaryan <surenb@google.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Alessio Balsini <balsini@android.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Paul Turner <pjt@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Todd Kjos <tkjos@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Tejun Heo <tj@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        cgroups mailinglist <cgroups@vger.kernel.org>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In cases when SDIO IRQs have been enabled, runtime suspend is prevented by
-the driver. However, this still means msdc_runtime_suspend|resume() gets
-called during system suspend/resume, via pm_runtime_force_suspend|resume().
+On Tue, Sep 3, 2019 at 4:53 AM Michal Koutn=C3=BD <mkoutny@suse.com> wrote:
+>
+> On Mon, Sep 02, 2019 at 04:02:57PM -0700, Suren Baghdasaryan <surenb@goog=
+le.com> wrote:
+> > > +static inline void cpu_uclamp_print(struct seq_file *sf,
+> > > +                                   enum uclamp_id clamp_id)
+> > > [...]
+> > > +       rcu_read_lock();
+> > > +       tg =3D css_tg(seq_css(sf));
+> > > +       util_clamp =3D tg->uclamp_req[clamp_id].value;
+> > > +       rcu_read_unlock();
+> > > +
+> > > +       if (util_clamp =3D=3D SCHED_CAPACITY_SCALE) {
+> > > +               seq_puts(sf, "max\n");
+> > > +               return;
+> > > +       }
+> > > +
+> > > +       percent =3D tg->uclamp_pct[clamp_id];
+> >
+> > You are taking RCU lock when accessing tg->uclamp_req but not when
+> > accessing tg->uclamp_pct.
+> Good point.
+>
+> > Is that intentional? Can tg be destroyed under you?
+> Actually, the rcu_read{,un}lock should be unnecessary in the context of
+> the kernfs file op handler -- the tg/css won't go away as long as its
+> kernfs file is being worked with.
+>
 
-This means during system suspend/resume, the register context of the mtk-sd
-device most likely loses its register context, even in cases when SDIO IRQs
-have been enabled.
+Also, add to that the fact that there is no rcu_dereference() call to
+access any of the pointers in the reader or any of its callers. And, I
+don't see any "wait for completion" type of pattern here so that
+rcu_read_{lock, unlock}() pair does seem useless.
 
-To re-enable the SDIO IRQs during system resume, the mtk-sd driver
-currently relies on the mmc core to re-enable the SDIO IRQs when it resumes
-the SDIO card, but this isn't the recommended solution. Instead, it's
-better to deal with this locally in the mtk-sd driver, so let's do that.
+thanks,
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/mmc/host/mtk-sd.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 6946bb040a28..669ea0668159 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -2408,6 +2408,9 @@ static void msdc_save_reg(struct msdc_host *host)
- 	} else {
- 		host->save_para.pad_tune = readl(host->base + tune_reg);
- 	}
-+
-+	if (sdio_irq_enabled(host->mmc))
-+		__msdc_enable_sdio_irq(host, 1);
- }
- 
- static void msdc_restore_reg(struct msdc_host *host)
--- 
-2.17.1
-
+ - Joel
