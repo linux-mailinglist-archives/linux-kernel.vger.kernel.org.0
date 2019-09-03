@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00839A6542
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 441CDA655D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbfICJcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 05:32:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55488 "EHLO
+        id S1728558AbfICJcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 05:32:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55692 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728493AbfICJcp (ORCPT
+        with ESMTP id S1728493AbfICJcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 05:32:45 -0400
+        Tue, 3 Sep 2019 05:32:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xMLNuTn7GlwSI1I92zgUEnWchrQ1w+j4ytcM44gqZeA=; b=CSBdYBqSh7/bl+b2hcwlcxlhvE
-        Pp89aCjb9QUsFMLUxzPDIVfZFfQ1gZFpobUjJsklO6wi9vkkv5/S0yYsrB/DFchx3SO1iMKvTX30K
-        1u92zUKTA5w0K978npU7O7c5uOxR56YxAypUyww2iIm9oDkFunonX2VRY92+BTNVJ66qc6XFLV0VE
-        9tHW4JW97lIhEXPWaYpHG7fggHUxAR/ze/kxTw8WZl5N4Lev4QblMHoUgmODxhfIPYvGumjK1eh8p
-        rkwd2krbOWYbWyGoRYSbrtEF+2eFmN2PKO3CdciTsrVegL6udAAkhfXRGevB4iuXYnG54YDhIMrIb
-        D8uSzRvg==;
+        bh=V+f2G+cgKLc1xmd5cIRO1ilePI+Z6rsbxxfmORin59I=; b=n2UGEt1gkac6QXtWZ19kZvTwgQ
+        UNi5fFjzebdd1eUqmNZo3z6ob3Yj+15njNMRbd0JtL8PDXqtiw2vlYTeykrPxSm3t+GNjzgz5Bg+E
+        Dkuw9Bue+V4gjZOtqo+5sjxSY+2n/jYSK81yMV2vzPWcnif5xmqvHYlf1foom67w0tyqTg9vaI5Lx
+        ei0SUYl1FvJhCbc5hhxAzG0ONOUExibGdF9xM8/lpyyZY0sFBbsH0knYs6Yxl6NOlwGx0uOPOKVlg
+        KcotyV5hdTGIv6mEy7zMpyC4OdbpdJqdcu2lRmzEUIGP/3kt0GoR7u/abj8MJlilxpQAmmt6AKUwX
+        +6jMmxzw==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i55B5-0004GD-GS; Tue, 03 Sep 2019 09:32:43 +0000
+        id 1i55B7-0004Ha-NS; Tue, 03 Sep 2019 09:32:46 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Paul Walmsley <paul.walmsley@sifive.com>
 Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Marc Zyngier <maz@kernel.org>
-Subject: [PATCH 01/20] irqchip/sifive-plic: set max threshold for ignored handlers
-Date:   Tue,  3 Sep 2019 11:32:20 +0200
-Message-Id: <20190903093239.21278-2-hch@lst.de>
+        Atish Patra <atish.patra@wdc.com>
+Subject: [PATCH 02/20] riscv: refactor the IPI code
+Date:   Tue,  3 Sep 2019 11:32:21 +0200
+Message-Id: <20190903093239.21278-3-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903093239.21278-1-hch@lst.de>
 References: <20190903093239.21278-1-hch@lst.de>
@@ -47,56 +47,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running in M-mode, the S-mode plic handlers are still listed in the
-device tree.  Ignore them by setting the maximum threshold.
+This prepares for adding native non-SBI IPI code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Atish Patra <atish.patra@wdc.com>
 ---
- drivers/irqchip/irq-sifive-plic.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/riscv/kernel/smp.c | 55 +++++++++++++++++++++++------------------
+ 1 file changed, 31 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index cf755964f2f8..c72c036aea76 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -244,6 +244,7 @@ static int __init plic_init(struct device_node *node,
- 		struct plic_handler *handler;
- 		irq_hw_number_t hwirq;
- 		int cpu, hartid;
-+		u32 threshold = 0;
+diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+index 5a9834503a2f..8cd730239613 100644
+--- a/arch/riscv/kernel/smp.c
++++ b/arch/riscv/kernel/smp.c
+@@ -78,13 +78,38 @@ static void ipi_stop(void)
+ 		wait_for_interrupt();
+ }
  
- 		if (of_irq_parse_one(node, i, &parent)) {
- 			pr_err("failed to parse parent for context %d.\n", i);
-@@ -266,10 +267,16 @@ static int __init plic_init(struct device_node *node,
- 			continue;
- 		}
++static void send_ipi_mask(const struct cpumask *mask, enum ipi_message_type op)
++{
++	int cpuid, hartid;
++	struct cpumask hartid_mask;
++
++	cpumask_clear(&hartid_mask);
++	mb();
++	for_each_cpu(cpuid, mask) {
++		set_bit(op, &ipi_data[cpuid].bits);
++		hartid = cpuid_to_hartid_map(cpuid);
++		cpumask_set_cpu(hartid, &hartid_mask);
++	}
++	mb();
++	sbi_send_ipi(cpumask_bits(&hartid_mask));
++}
++
++static void send_ipi_single(int cpu, enum ipi_message_type op)
++{
++	send_ipi_mask(cpumask_of(cpu), op);
++}
++
++static inline void clear_ipi(void)
++{
++	csr_clear(CSR_SIP, SIE_SSIE);
++}
++
+ void riscv_software_interrupt(void)
+ {
+ 	unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
+ 	unsigned long *stats = ipi_data[smp_processor_id()].stats;
  
-+		/*
-+		 * When running in M-mode we need to ignore the S-mode handler.
-+		 * Here we assume it always comes later, but that might be a
-+		 * little fragile.
-+		 */
- 		handler = per_cpu_ptr(&plic_handlers, cpu);
- 		if (handler->present) {
- 			pr_warn("handler already present for context %d.\n", i);
--			continue;
-+			threshold = 0xffffffff;
-+			goto done;
- 		}
+-	/* Clear pending IPI */
+-	csr_clear(CSR_SIP, SIE_SSIE);
++	clear_ipi();
  
- 		handler->present = true;
-@@ -279,8 +286,9 @@ static int __init plic_init(struct device_node *node,
- 		handler->enable_base =
- 			plic_regs + ENABLE_BASE + i * ENABLE_PER_HART;
+ 	while (true) {
+ 		unsigned long ops;
+@@ -118,23 +143,6 @@ void riscv_software_interrupt(void)
+ 	}
+ }
  
-+done:
- 		/* priority must be > threshold to trigger an interrupt */
--		writel(0, handler->hart_base + CONTEXT_THRESHOLD);
-+		writel(threshold, handler->hart_base + CONTEXT_THRESHOLD);
- 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
- 			plic_toggle(handler, hwirq, 0);
- 		nr_handlers++;
+-static void
+-send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
+-{
+-	int cpuid, hartid;
+-	struct cpumask hartid_mask;
+-
+-	cpumask_clear(&hartid_mask);
+-	mb();
+-	for_each_cpu(cpuid, to_whom) {
+-		set_bit(operation, &ipi_data[cpuid].bits);
+-		hartid = cpuid_to_hartid_map(cpuid);
+-		cpumask_set_cpu(hartid, &hartid_mask);
+-	}
+-	mb();
+-	sbi_send_ipi(cpumask_bits(&hartid_mask));
+-}
+-
+ static const char * const ipi_names[] = {
+ 	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
+ 	[IPI_CALL_FUNC]		= "Function call interrupts",
+@@ -156,12 +164,12 @@ void show_ipi_stats(struct seq_file *p, int prec)
+ 
+ void arch_send_call_function_ipi_mask(struct cpumask *mask)
+ {
+-	send_ipi_message(mask, IPI_CALL_FUNC);
++	send_ipi_mask(mask, IPI_CALL_FUNC);
+ }
+ 
+ void arch_send_call_function_single_ipi(int cpu)
+ {
+-	send_ipi_message(cpumask_of(cpu), IPI_CALL_FUNC);
++	send_ipi_single(cpu, IPI_CALL_FUNC);
+ }
+ 
+ void smp_send_stop(void)
+@@ -176,7 +184,7 @@ void smp_send_stop(void)
+ 
+ 		if (system_state <= SYSTEM_RUNNING)
+ 			pr_crit("SMP: stopping secondary CPUs\n");
+-		send_ipi_message(&mask, IPI_CPU_STOP);
++		send_ipi_mask(&mask, IPI_CPU_STOP);
+ 	}
+ 
+ 	/* Wait up to one second for other CPUs to stop */
+@@ -191,6 +199,5 @@ void smp_send_stop(void)
+ 
+ void smp_send_reschedule(int cpu)
+ {
+-	send_ipi_message(cpumask_of(cpu), IPI_RESCHEDULE);
++	send_ipi_single(cpu, IPI_RESCHEDULE);
+ }
+-
 -- 
 2.20.1
 
