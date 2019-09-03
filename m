@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5FDEA697C
+	by mail.lfdr.de (Postfix) with ESMTP id 37A2BA697B
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbfICNPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 09:15:33 -0400
-Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:52312 "EHLO
-        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729289AbfICNP3 (ORCPT
+        id S1729356AbfICNP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 09:15:29 -0400
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:39744 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729332AbfICNP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Sep 2019 09:15:29 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id BA0503F4A9;
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 5CD594041E;
         Tue,  3 Sep 2019 15:15:21 +0200 (CEST)
-Authentication-Results: pio-pvt-msa3.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=W0qsxh85;
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=kRDnlGIx;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,22 +26,22 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9cMfPuv21WsU; Tue,  3 Sep 2019 15:15:20 +0200 (CEST)
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HEPT9RSmogm2; Tue,  3 Sep 2019 15:15:19 +0200 (CEST)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 14BFB3F364;
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 3AAC94047D;
         Tue,  3 Sep 2019 15:15:18 +0200 (CEST)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id B7E8C3602AF;
+        by mail1.shipmail.org (Postfix) with ESMTPSA id E453F360330;
         Tue,  3 Sep 2019 15:15:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1567516517; bh=0YXw3Yun+eSUH41y8FVOhBIlEn3SQu6i/7a617fkyRo=;
+        t=1567516518; bh=1DziKwTjiIMj17OZYZOeUEJ6CP5BMAzv4f1IdbkdopM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W0qsxh85MEstfDWUa0xW3lIkk4uQqS5VeGgXE/ygSP3krzxk9pwdVHGwa94fxn1xU
-         /cjB3QTUxIrfdRlJ1VLpMDVBwZr55xWb5E9iXdoIzGETdg+etqNd5oQDDKw37322G4
-         tAM1SRw4QtLWbzrIZOiXbhB8veMe7w5AZaxRdNwA=
+        b=kRDnlGIxm2xAiKU2h+6QgzVP4jgLGi7H7/e3P/PcpWk2QfzaUVu6YHSkh4zYUw4AB
+         cUsOOvXQOE0f5q8skRRj2Z6FvIhsATajksRYEOj/SPQmulnssLTAa5DJniDGmjbcbG
+         t0Z4hJkPl5N9cWf9aRIhktUPL0iSoqtRb76d20xc=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     dri-devel@lists.freedesktop.org, pv-drivers@vmware.com,
@@ -57,9 +57,9 @@ Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
         Christian Borntraeger <borntraeger@de.ibm.com>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Subject: [PATCH v2 3/4] drm/ttm, drm/vmwgfx: Correctly support support AMD memory encryption
-Date:   Tue,  3 Sep 2019 15:15:03 +0200
-Message-Id: <20190903131504.18935-4-thomas_os@shipmail.org>
+Subject: [PATCH v2 4/4] drm/ttm: Cache dma pool decrypted pages when AMD SEV is active
+Date:   Tue,  3 Sep 2019 15:15:04 +0200
+Message-Id: <20190903131504.18935-5-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903131504.18935-1-thomas_os@shipmail.org>
 References: <20190903131504.18935-1-thomas_os@shipmail.org>
@@ -73,14 +73,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-With TTM pages allocated out of the DMA pool, use the
-force_dma_unencrypted function to be able to set up the correct
-page-protection. Previously it was unconditionally set to encrypted,
-which only works with SME encryption on devices with a large enough DMA
-mask.
+The TTM dma pool allocates coherent pages for use with TTM. When forcing
+unencrypted DMA, such allocations become very expensive since the linear
+kernel map has to be changed to mark the pages decrypted. To avoid too many
+such allocations and frees, cache the decrypted pages even if they
+are in the normal cpu caching state, where otherwise the pool frees them
+immediately when unused.
 
-Tested with vmwgfx and sev-es. Screen garbage without this patch and normal
-functionality with it.
+Tested with vmwgfx on SEV-ES.
 
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -95,194 +95,58 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Christian König <christian.koenig@amd.com>
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 ---
- drivers/gpu/drm/ttm/ttm_bo_util.c        | 17 +++++++++++++----
- drivers/gpu/drm/ttm/ttm_bo_vm.c          | 21 ++++++++++-----------
- drivers/gpu/drm/ttm/ttm_page_alloc_dma.c |  4 ++++
- drivers/gpu/drm/vmwgfx/vmwgfx_blit.c     |  6 ++++--
- include/drm/ttm/ttm_bo_driver.h          |  8 +++++---
- include/drm/ttm/ttm_tt.h                 |  1 +
- 6 files changed, 37 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_util.c b/drivers/gpu/drm/ttm/ttm_bo_util.c
-index fe81c565e7ef..d5ad8f03b63f 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_util.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
-@@ -419,11 +419,13 @@ int ttm_bo_move_memcpy(struct ttm_buffer_object *bo,
- 		page = i * dir + add;
- 		if (old_iomap == NULL) {
- 			pgprot_t prot = ttm_io_prot(old_mem->placement,
-+						    ttm->page_flags,
- 						    PAGE_KERNEL);
- 			ret = ttm_copy_ttm_io_page(ttm, new_iomap, page,
- 						   prot);
- 		} else if (new_iomap == NULL) {
- 			pgprot_t prot = ttm_io_prot(new_mem->placement,
-+						    ttm->page_flags,
- 						    PAGE_KERNEL);
- 			ret = ttm_copy_io_ttm_page(ttm, old_iomap, page,
- 						   prot);
-@@ -526,11 +528,11 @@ static int ttm_buffer_object_transfer(struct ttm_buffer_object *bo,
- 	return 0;
- }
- 
--pgprot_t ttm_io_prot(uint32_t caching_flags, pgprot_t tmp)
-+pgprot_t ttm_io_prot(u32 caching_flags, u32 tt_page_flags, pgprot_t tmp)
- {
- 	/* Cached mappings need no adjustment */
- 	if (caching_flags & TTM_PL_FLAG_CACHED)
--		return tmp;
-+		goto check_encryption;
- 
- #if defined(__i386__) || defined(__x86_64__)
- 	if (caching_flags & TTM_PL_FLAG_WC)
-@@ -548,6 +550,11 @@ pgprot_t ttm_io_prot(uint32_t caching_flags, pgprot_t tmp)
- #if defined(__sparc__)
- 	tmp = pgprot_noncached(tmp);
- #endif
-+
-+check_encryption:
-+	if (tt_page_flags & TTM_PAGE_FLAG_DECRYPTED)
-+		tmp = pgprot_decrypted(tmp);
-+
- 	return tmp;
- }
- EXPORT_SYMBOL(ttm_io_prot);
-@@ -594,7 +601,8 @@ static int ttm_bo_kmap_ttm(struct ttm_buffer_object *bo,
- 	if (ret)
- 		return ret;
- 
--	if (num_pages == 1 && (mem->placement & TTM_PL_FLAG_CACHED)) {
-+	if (num_pages == 1 && (mem->placement & TTM_PL_FLAG_CACHED) &&
-+	    !(ttm->page_flags & TTM_PAGE_FLAG_DECRYPTED)) {
- 		/*
- 		 * We're mapping a single page, and the desired
- 		 * page protection is consistent with the bo.
-@@ -608,7 +616,8 @@ static int ttm_bo_kmap_ttm(struct ttm_buffer_object *bo,
- 		 * We need to use vmap to get the desired page protection
- 		 * or to make the buffer object look contiguous.
- 		 */
--		prot = ttm_io_prot(mem->placement, PAGE_KERNEL);
-+		prot = ttm_io_prot(mem->placement, ttm->page_flags,
-+				   PAGE_KERNEL);
- 		map->bo_kmap_type = ttm_bo_map_vmap;
- 		map->virtual = vmap(ttm->pages + start_page, num_pages,
- 				    0, prot);
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-index 76eedb963693..194d8d618d23 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-@@ -226,12 +226,7 @@ static vm_fault_t ttm_bo_vm_fault(struct vm_fault *vmf)
- 	 * by mmap_sem in write mode.
- 	 */
- 	cvma = *vma;
--	cvma.vm_page_prot = vm_get_page_prot(cvma.vm_flags);
--
--	if (bo->mem.bus.is_iomem) {
--		cvma.vm_page_prot = ttm_io_prot(bo->mem.placement,
--						cvma.vm_page_prot);
--	} else {
-+	if (!bo->mem.bus.is_iomem) {
- 		struct ttm_operation_ctx ctx = {
- 			.interruptible = false,
- 			.no_wait_gpu = false,
-@@ -240,14 +235,18 @@ static vm_fault_t ttm_bo_vm_fault(struct vm_fault *vmf)
- 		};
- 
- 		ttm = bo->ttm;
--		cvma.vm_page_prot = ttm_io_prot(bo->mem.placement,
--						cvma.vm_page_prot);
--
--		/* Allocate all page at once, most common usage */
--		if (ttm_tt_populate(ttm, &ctx)) {
-+		if (ttm_tt_populate(bo->ttm, &ctx)) {
- 			ret = VM_FAULT_OOM;
- 			goto out_io_unlock;
- 		}
-+		cvma.vm_page_prot = ttm_io_prot(bo->mem.placement,
-+						ttm->page_flags,
-+						cvma.vm_page_prot);
-+	} else {
-+		/* Iomem should not be marked encrypted */
-+		cvma.vm_page_prot = ttm_io_prot(bo->mem.placement,
-+						TTM_PAGE_FLAG_DECRYPTED,
-+						cvma.vm_page_prot);
- 	}
- 
- 	/*
 diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-index 7d78e6deac89..9b15df8ecd49 100644
+index 9b15df8ecd49..a3247f24e106 100644
 --- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
 +++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-@@ -48,6 +48,7 @@
- #include <linux/atomic.h>
- #include <linux/device.h>
- #include <linux/kthread.h>
-+#include <linux/dma-direct.h>
- #include <drm/ttm/ttm_bo_driver.h>
- #include <drm/ttm/ttm_page_alloc.h>
- #include <drm/ttm/ttm_set_memory.h>
-@@ -984,6 +985,9 @@ int ttm_dma_populate(struct ttm_dma_tt *ttm_dma, struct device *dev,
+@@ -1000,7 +1000,7 @@ void ttm_dma_unpopulate(struct ttm_dma_tt *ttm_dma, struct device *dev)
+ 	struct dma_pool *pool;
+ 	struct dma_page *d_page, *next;
+ 	enum pool_type type;
+-	bool is_cached = false;
++	bool immediate_free = false;
+ 	unsigned count, i, npages = 0;
+ 	unsigned long irq_flags;
+ 
+@@ -1035,8 +1035,17 @@ void ttm_dma_unpopulate(struct ttm_dma_tt *ttm_dma, struct device *dev)
+ 	if (!pool)
+ 		return;
+ 
+-	is_cached = (ttm_dma_find_pool(pool->dev,
+-		     ttm_to_type(ttm->page_flags, tt_cached)) == pool);
++	/*
++	 * If memory is cached and sev encryption is not active, allocating
++	 * and freeing coherent memory is relatively cheap, so we can free
++	 * it immediately. If sev encryption is active, allocating coherent
++	 * memory involves a call to set_memory_decrypted() which is very
++	 * expensive, so cache coherent pages is sev is active.
++	 */
++	immediate_free = (ttm_dma_find_pool
++			  (pool->dev,
++			   ttm_to_type(ttm->page_flags, tt_cached)) == pool &&
++			  !force_dma_unencrypted(dev));
+ 
+ 	/* make sure pages array match list and count number of pages */
+ 	count = 0;
+@@ -1051,13 +1060,13 @@ void ttm_dma_unpopulate(struct ttm_dma_tt *ttm_dma, struct device *dev)
+ 			d_page->vaddr &= ~VADDR_FLAG_UPDATED_COUNT;
+ 		}
+ 
+-		if (is_cached)
++		if (immediate_free)
+ 			ttm_dma_page_put(pool, d_page);
  	}
  
- 	ttm->state = tt_unbound;
-+	if (force_dma_unencrypted(dev))
-+		ttm->page_flags |= TTM_PAGE_FLAG_DECRYPTED;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(ttm_dma_populate);
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-index bb46ca0c458f..d3ced89a37e9 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-@@ -483,8 +483,10 @@ int vmw_bo_cpu_blit(struct ttm_buffer_object *dst,
- 	d.src_pages = src->ttm->pages;
- 	d.dst_num_pages = dst->num_pages;
- 	d.src_num_pages = src->num_pages;
--	d.dst_prot = ttm_io_prot(dst->mem.placement, PAGE_KERNEL);
--	d.src_prot = ttm_io_prot(src->mem.placement, PAGE_KERNEL);
-+	d.dst_prot = ttm_io_prot(dst->mem.placement, dst->ttm->page_flags,
-+				 PAGE_KERNEL);
-+	d.src_prot = ttm_io_prot(src->mem.placement, src->ttm->page_flags,
-+				 PAGE_KERNEL);
- 	d.diff = diff;
- 
- 	for (j = 0; j < h; ++j) {
-diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
-index 6f536caea368..68ead1bd3042 100644
---- a/include/drm/ttm/ttm_bo_driver.h
-+++ b/include/drm/ttm/ttm_bo_driver.h
-@@ -893,13 +893,15 @@ int ttm_bo_pipeline_gutting(struct ttm_buffer_object *bo);
- /**
-  * ttm_io_prot
-  *
-- * @c_state: Caching state.
-+ * @caching_flags: The caching flags of the map.
-+ * @tt_page_flags: The tt_page_flags of the map, TTM_PAGE_FLAG_*
-  * @tmp: Page protection flag for a normal, cached mapping.
-  *
-  * Utility function that returns the pgprot_t that should be used for
-- * setting up a PTE with the caching model indicated by @c_state.
-+ * setting up a PTE with the caching model indicated by @caching_flags,
-+ * and encryption state indicated by @tt_page_flags,
-  */
--pgprot_t ttm_io_prot(uint32_t caching_flags, pgprot_t tmp);
-+pgprot_t ttm_io_prot(u32 caching_flags, u32 tt_page_flags, pgprot_t tmp);
- 
- extern const struct ttm_mem_type_manager_func ttm_bo_manager_func;
- 
-diff --git a/include/drm/ttm/ttm_tt.h b/include/drm/ttm/ttm_tt.h
-index c0e928abf592..45cc26355513 100644
---- a/include/drm/ttm/ttm_tt.h
-+++ b/include/drm/ttm/ttm_tt.h
-@@ -41,6 +41,7 @@ struct ttm_operation_ctx;
- #define TTM_PAGE_FLAG_DMA32           (1 << 7)
- #define TTM_PAGE_FLAG_SG              (1 << 8)
- #define TTM_PAGE_FLAG_NO_RETRY	      (1 << 9)
-+#define TTM_PAGE_FLAG_DECRYPTED       (1 << 10)
- 
- enum ttm_caching_state {
- 	tt_uncached,
+ 	spin_lock_irqsave(&pool->lock, irq_flags);
+ 	pool->npages_in_use -= count;
+-	if (is_cached) {
++	if (immediate_free) {
+ 		pool->nfrees += count;
+ 	} else {
+ 		pool->npages_free += count;
 -- 
 2.20.1
 
