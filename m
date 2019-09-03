@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A8EBA6E5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:26:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1841FA6E62
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730440AbfICQZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:25:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45778 "EHLO mail.kernel.org"
+        id S1730054AbfICQZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:25:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730395AbfICQZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:25:36 -0400
+        id S1729791AbfICQZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:25:45 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8E0223717;
-        Tue,  3 Sep 2019 16:25:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C44C2343A;
+        Tue,  3 Sep 2019 16:25:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527935;
-        bh=oe14+vK7P/AQ7RwNiioO7YAGtQb2g3lvNAJHcLJkzbY=;
+        s=default; t=1567527944;
+        bh=CC0jLTX4WDNq6QPJuI18WeL6EaFRS3B/x7g/1f+OPqk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G92S1SiwuvDhRSBsQM4B5a5IsA+mWu5wpOQXScd58JnlMob81hYdeOU7Jjj72HFvk
-         KUVmBXvCEhsgvqSvgcVJshUiIxwMa/yGBapn1rc/UUM0lM6ORyH312RcHfNk7kguov
-         2TsNRWHG3ZYisdzZc0gUwK77wq4R0to0kjiQD4LY=
+        b=glqzn8vVQSqMROJNOcBuCiRlfPSNXnrEG+6n6A+hVwT+iC3C0rCDlmToSk8+goWHq
+         r+axZ4hmuO2dASkWiU9/J59kdtKzRLYkc9jVF6L8uWhqFHD4Ehxz0QsXMVcVoCeORj
+         dSWnqy6otg9qiFCyUR4QLO0qoo0MvsRjPEFg+kz4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Norris <briannorris@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 008/167] remoteproc: qcom: q6v5-mss: add SCM probe dependency
-Date:   Tue,  3 Sep 2019 12:22:40 -0400
-Message-Id: <20190903162519.7136-8-sashal@kernel.org>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 012/167] KVM: x86: hyperv: consistently use 'hv_vcpu' for 'struct kvm_vcpu_hv' variables
+Date:   Tue,  3 Sep 2019 12:22:44 -0400
+Message-Id: <20190903162519.7136-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -44,38 +44,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-[ Upstream commit bbcda30271752bb7490f2e2aef5411dbcae69116 ]
+[ Upstream commit 1779a39f786397760ae7a7cc03cf37697d8ae58d ]
 
-The memory ownership transfer request is performed using SCM, ensure
-that SCM is available before we probe the driver if memory protection is
-needed by the subsystem.
+Rename 'hv' to 'hv_vcpu' in kvm_hv_set_msr/kvm_hv_get_msr(); 'hv' is
+'reserved' for 'struct kvm_hv' variables across the file.
 
-Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
-Cc: stable@vger.kernel.org
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-[bjorn: Added condition for need_mem_protection, updated commit message]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kvm/hyperv.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index d7a4b9eca5d25..6a84b6372897d 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -1132,6 +1132,9 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (!desc)
- 		return -EINVAL;
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 73fa074b9089a..3f2775aac5545 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1042,20 +1042,20 @@ static u64 current_task_runtime_100ns(void)
  
-+	if (desc->need_mem_protection && !qcom_scm_is_available())
-+		return -EPROBE_DEFER;
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
- 			    desc->hexagon_mba_image, sizeof(*qproc));
- 	if (!rproc) {
+ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ {
+-	struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
++	struct kvm_vcpu_hv *hv_vcpu = &vcpu->arch.hyperv;
+ 
+ 	switch (msr) {
+ 	case HV_X64_MSR_VP_INDEX:
+ 		if (!host || (u32)data >= KVM_MAX_VCPUS)
+ 			return 1;
+-		hv->vp_index = (u32)data;
++		hv_vcpu->vp_index = (u32)data;
+ 		break;
+ 	case HV_X64_MSR_VP_ASSIST_PAGE: {
+ 		u64 gfn;
+ 		unsigned long addr;
+ 
+ 		if (!(data & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE)) {
+-			hv->hv_vapic = data;
++			hv_vcpu->hv_vapic = data;
+ 			if (kvm_lapic_enable_pv_eoi(vcpu, 0))
+ 				return 1;
+ 			break;
+@@ -1066,7 +1066,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ 			return 1;
+ 		if (__clear_user((void __user *)addr, PAGE_SIZE))
+ 			return 1;
+-		hv->hv_vapic = data;
++		hv_vcpu->hv_vapic = data;
+ 		kvm_vcpu_mark_page_dirty(vcpu, gfn);
+ 		if (kvm_lapic_enable_pv_eoi(vcpu,
+ 					    gfn_to_gpa(gfn) | KVM_MSR_ENABLED))
+@@ -1082,7 +1082,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ 	case HV_X64_MSR_VP_RUNTIME:
+ 		if (!host)
+ 			return 1;
+-		hv->runtime_offset = data - current_task_runtime_100ns();
++		hv_vcpu->runtime_offset = data - current_task_runtime_100ns();
+ 		break;
+ 	case HV_X64_MSR_SCONTROL:
+ 	case HV_X64_MSR_SVERSION:
+@@ -1174,11 +1174,11 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata,
+ 			  bool host)
+ {
+ 	u64 data = 0;
+-	struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
++	struct kvm_vcpu_hv *hv_vcpu = &vcpu->arch.hyperv;
+ 
+ 	switch (msr) {
+ 	case HV_X64_MSR_VP_INDEX:
+-		data = hv->vp_index;
++		data = hv_vcpu->vp_index;
+ 		break;
+ 	case HV_X64_MSR_EOI:
+ 		return kvm_hv_vapic_msr_read(vcpu, APIC_EOI, pdata);
+@@ -1187,10 +1187,10 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata,
+ 	case HV_X64_MSR_TPR:
+ 		return kvm_hv_vapic_msr_read(vcpu, APIC_TASKPRI, pdata);
+ 	case HV_X64_MSR_VP_ASSIST_PAGE:
+-		data = hv->hv_vapic;
++		data = hv_vcpu->hv_vapic;
+ 		break;
+ 	case HV_X64_MSR_VP_RUNTIME:
+-		data = current_task_runtime_100ns() + hv->runtime_offset;
++		data = current_task_runtime_100ns() + hv_vcpu->runtime_offset;
+ 		break;
+ 	case HV_X64_MSR_SCONTROL:
+ 	case HV_X64_MSR_SVERSION:
 -- 
 2.20.1
 
