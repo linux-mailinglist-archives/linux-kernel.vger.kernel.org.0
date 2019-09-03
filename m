@@ -2,96 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D0DA69C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C336A69CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbfICNZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 09:25:38 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45825 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729477AbfICNZf (ORCPT
+        id S1729336AbfICN01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 09:26:27 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34153 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728860AbfICN00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:25:35 -0400
-Received: by mail-qt1-f196.google.com with SMTP id r15so14199859qtn.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 06:25:34 -0700 (PDT)
+        Tue, 3 Sep 2019 09:26:26 -0400
+Received: by mail-wr1-f65.google.com with SMTP id s18so17539380wrn.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 06:26:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IgaWqpbggJdtFS0lsisPfgo0qEE5OAL+0+hMHaz58O8=;
-        b=Ook46E5ai7wedx0+Ht/3/+XWVougimpu7tUXd5jHi6/BJ66VKoNxZe/jl1q+bSxrGT
-         Hnl2pZJO8rYzlWEhaL0solY9ZqKCtTpPpzK08C/8h+Vf/Kem75aZ38RLW47ZMh6W3fIT
-         9qfphhpCVxoF88UpynyXDHdv3/D4lCGBl/0Pq5xvZck4U/8ohh61itD69uqEYfytGGXt
-         hCZvCjjnRLR77y9UgCTfouWUWmpHWnR/w/E5s1JeKTczhCQb3Ln8mSus9YSQMS5cQNPI
-         hDlan2KBqQuzqy39x3s+D+htZoUjdlNXLVtwPZ4+CF6+QlcdMKA9qdgNF6VSzC5Ovad5
-         VU/Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=HmKS5icR2XtM6EbIPJ1Tm+uhnGjDveYu0mDP7J5zs5M=;
+        b=NHuuxSNBjql75Uxyhs5UQ7ebPNnmCrojO43NCrbKqNn9pFTfsVBGUYlR4mTrzlWwNy
+         axw9WtCxhIG1CcfCxHwBqJje84SsPLFmT8VidVo1QWP01h27QlcQr9u/IFLD/1V9ogm6
+         mchcZVhJwWLcFSbIosgwAGYeSEcRQvr/IUjsA+052HXWNOlUPfm+RrdReBR8ARmjdSxU
+         zsFuxCeTrFE8ZnDkYzu1ZifOQP3wFOVMCX5eSXz4hZUEFynPOrQntA8RfVY/14jSowBv
+         Mwb3xxCHwQCtJiNAQ1OkaSdO96mb62Ke9L0fV+be0Ags2eplGep541Id+3ri5NDawdDw
+         MF0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IgaWqpbggJdtFS0lsisPfgo0qEE5OAL+0+hMHaz58O8=;
-        b=Fb+90jN1QS+mZzUAKZvymNEiAHKQCsvJ1MMacEH5/7uyGM8Gf1Gg8rjXVMS1EokEIb
-         cAoprw1lmdK2TA8M8zves3f9kJ276UpwU42UKgPh1diqcqf7KbO6i6osIY+OYdLnBp3h
-         MJ0hSTl7xXxZgsJg/zRJ9YFAZxY3f8r2SpHfBXM86gh7y+yVOWDQSqFcZBHBM9cI6PfK
-         rdJKa/qiX2dYXGuibxagfiZrHveOz7kjkEwOfqwBhYFxY4REJfvpEowuhS5wRRsWVvt+
-         RWgJEHZyM7fQXxyrzw29UPFZUmt36s+VAhwmvEMIBWNil601xaXxg1Ytn6Wg3t1gXjIb
-         J3EQ==
-X-Gm-Message-State: APjAAAUVTjhU0CYq9+9JgJX13g6pkBLr3qhVkGPSjR88RFaqa32EcgbH
-        LFgie90JMubMeCRPnxVtotDtETxvb5YNgA==
-X-Google-Smtp-Source: APXvYqz03P/UTuDhZEvzm3hmEOZWGK6tITGga5Y8zrYJRRvUnTQMDDIcBEsfOjDiNvaP2EFfDJg9Kw==
-X-Received: by 2002:ac8:5405:: with SMTP id b5mr32512828qtq.203.1567517134215;
-        Tue, 03 Sep 2019 06:25:34 -0700 (PDT)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id 27sm9291825qtv.96.2019.09.03.06.25.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Sep 2019 06:25:33 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 09:25:32 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
-Subject: Re: [btrfs]  3ae92b3782: xfstests.generic.269.fail
-Message-ID: <20190903132531.ojllcte3au7ipggd@MacBook-Pro-91.local>
-References: <20190903080633.GA15734@shao2-debian>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903080633.GA15734@shao2-debian>
-User-Agent: NeoMutt/20180716
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HmKS5icR2XtM6EbIPJ1Tm+uhnGjDveYu0mDP7J5zs5M=;
+        b=qZvTgBKUHdGj+4pK+rWaAu+P4VwmySSMKCqZpnN1Ej6IupWoKyNa91dQ1vAVu9OlgS
+         fkldT8v/sIFiCdJk/AK1GQpjJItkjuD9ZmGd8qG3M41YWA6nyw+nU7S6V2entbzdmfcc
+         GCsurGIgDF1t33QWYyyVIMAojM6+YgsonBfZEYvc7h/UxL0ATeO3S7uhyPRzyExYF8Gq
+         XI8a4MNM+G853+xtQVdW6s3Sl5YbnszSn7fp+zPGv6OYy7aQM1mauUqLAuSitgfytubp
+         55aZ5ieFKQn7oqtUgzuiKzv4V6TtSUDjrJP/sOKfFvshLoLvH/ttimeyTuVBNSA83z1P
+         3sKQ==
+X-Gm-Message-State: APjAAAV9XZ7tPaZ2G0eBKAiWz8hsnpE7TZxdcj2f0K+C6Xvc3MiJDIHe
+        zaMAkGq/+0jFqmGyZ7SSNA==
+X-Google-Smtp-Source: APXvYqzkIanIQj5e4CVmC+QaWFRjE2YizgOH8DnmHYqCoFnV18oZufWvm+JsUZxtL8No30cUTm1tZA==
+X-Received: by 2002:adf:e488:: with SMTP id i8mr14929216wrm.20.1567517184457;
+        Tue, 03 Sep 2019 06:26:24 -0700 (PDT)
+Received: from buster-jangle.bmw-carit.intra ([217.89.178.117])
+        by smtp.gmail.com with ESMTPSA id w9sm3906668wra.15.2019.09.03.06.26.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 06:26:23 -0700 (PDT)
+From:   Viktor Rosendahl <viktor.rosendahl@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Viktor Rosendahl <viktor.rosendahl@gmail.com>
+Subject: [PATCH v5 0/4] Some new features for the preempt/irqsoff tracers
+Date:   Tue,  3 Sep 2019 15:25:58 +0200
+Message-Id: <20190903132602.3440-1-viktor.rosendahl@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 04:06:33PM +0800, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 3ae92b3782182d282a92573abe95c96d34ca6e73 ("btrfs: change the minimum global reserve size")
-> https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git master
-> 
-> in testcase: xfstests
-> with following parameters:
-> 
-> 	disk: 4HDD
-> 	fs: btrfs
-> 	test: generic-group13
-> 
-> test-description: xfstests is a regression test suite for xfs and other files ystems.
-> test-url: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
-> 
-> 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
+Hello all,
 
-It would help if you could capture generic/269.full, but this is likely a
-problem with fsck that I fixed a few weeks ago where we're seeing nbytes of an
-inode is wrong, but there's an orphan item so it doesn't matter.  This patch
-just made it more likely for us to have a still being iput'ed inode after a
-transaction commit.  Thanks,
+Changes in v5:
+- [PATCH 1/4]:
+  * trace_disable_fsnotify() => latency_fsnotify_disable(), in order to avoid
+    naming conflicts with trace points.
 
-Josef
+  * Using more appropriate operations for the percpu variables.
+
+  * Moved around the calls to latency_fsnotify_enable/disable() a bit.
+
+  * Added static branches to reduce overhead when the facility is not in use.
+
+  * Does not add any trace points anymore. Instead using explicit function
+    calls from sched and idle code.
+
+  * Unfortunately still adds some gunk to sched and idle code. I do not know
+    how to avoid this.
+
+This series is meant to address two issues with the latency tracing.
+
+The first three patches provide a method to trace latencies that always
+occurs very close to each other and to differentiate between them, in spite
+of the fact that the latency tracers work in overwrite mode.
+
+[PATCH 1/4] This implement fs notification for tracing_max_latency. It
+makes it possible for userspace to detect when a new latency has been
+detected.
+
+[PATCH 2/4] This extends the preemptirq_delay_test module so that it can be
+used to generate a burst of closely occurring latencies.
+
+[PATCH 3/4] This adds a user space program to the tools directory that
+utilizes the fs notification feature and a randomized algorithm to print out
+any of the latencies in a burst with approximately equal probability.
+
+The last patch is not directly connected but earlier it didn't apply
+cleanly on its own. However, now it does, so in principle it could be
+applied separately from the others.
+
+[PATCH 4/4] This adds the option console-latency to the trace options. This
+makes it possible to enable tracing of console latencies.
+
+best regards,
+
+Viktor
+
+Viktor Rosendahl (4):
+  ftrace: Implement fs notification for tracing_max_latency
+  preemptirq_delay_test: Add the burst feature and a sysfs trigger
+  Add the latency-collector to tools
+  ftrace: Add an option for tracing console latencies
+
+ include/linux/ftrace.h               |   31 +
+ include/linux/irqflags.h             |   21 +
+ kernel/printk/printk.c               |    6 +-
+ kernel/sched/core.c                  |    3 +
+ kernel/sched/idle.c                  |    3 +
+ kernel/sched/sched.h                 |    1 +
+ kernel/trace/Kconfig                 |    6 +-
+ kernel/trace/preemptirq_delay_test.c |  145 ++-
+ kernel/trace/trace.c                 |  112 ++-
+ kernel/trace/trace.h                 |   23 +
+ kernel/trace/trace_hwlat.c           |    4 +-
+ kernel/trace/trace_irqsoff.c         |   16 +
+ kernel/trace/trace_sched_wakeup.c    |    4 +
+ tools/Makefile                       |   14 +-
+ tools/trace/Makefile                 |   20 +
+ tools/trace/latency-collector.c      | 1211 ++++++++++++++++++++++++++
+ 16 files changed, 1587 insertions(+), 33 deletions(-)
+ create mode 100644 tools/trace/Makefile
+ create mode 100644 tools/trace/latency-collector.c
+
+-- 
+2.17.1
+
