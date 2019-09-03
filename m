@@ -2,65 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28A0AA6EEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D02A707C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:39:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbfICQ31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:29:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34172 "EHLO mx1.redhat.com"
+        id S1731464AbfICQjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:39:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730333AbfICQ30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:29:26 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730402AbfICQZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:25:31 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 563E187521B;
-        Tue,  3 Sep 2019 16:29:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 57C0A19C78;
-        Tue,  3 Sep 2019 16:29:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190903161202.GB22754@roeck-us.net>
-References: <20190903161202.GB22754@roeck-us.net> <20190903125129.GA18838@roeck-us.net> <156717343223.2204.15875738850129174524.stgit@warthog.procyon.org.uk> <156717350329.2204.7056537095039252263.stgit@warthog.procyon.org.uk> <7481.1567526867@warthog.procyon.org.uk>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] usb: Add USB subsystem notifications [ver #7]
+        by mail.kernel.org (Postfix) with ESMTPSA id 41FC12377F;
+        Tue,  3 Sep 2019 16:25:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567527930;
+        bh=8O/nJ8QsWRakObntQlxlpgwBzmx15+PaEmBLe0UqJvc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=yEJb1tIBTTEVop6iIZjIc/ueqiFD9kKfXkAKuUrugFNiENnSMfjTodlzp6y5tDxg0
+         AB0U3zplzxrvkx7MxN0yOwonn/URhhYpQ82d72HnWmpdMretcsQLedGFd9gfPssCqh
+         R+2VVFop9JTvgAm5nN6gONvcCXjqKdHvJIYSkvRU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        James Morris <jmorris@namei.org>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <james.morris@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 005/167] keys: Fix the use of the C++ keyword "private" in uapi/linux/keyctl.h
+Date:   Tue,  3 Sep 2019 12:22:37 -0400
+Message-Id: <20190903162519.7136-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <29418.1567528161.1@warthog.procyon.org.uk>
-Date:   Tue, 03 Sep 2019 17:29:21 +0100
-Message-ID: <29419.1567528161@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Tue, 03 Sep 2019 16:29:25 +0000 (UTC)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guenter Roeck <linux@roeck-us.net> wrote:
+From: David Howells <dhowells@redhat.com>
 
-> > > This added call to usbdev_remove() results in a crash when running
-> > > the qemu "tosa" emulation. Removing the call fixes the problem.
-> > 
-> > Yeah - I'm going to drop the bus notification messages for now.
-> > 
-> It is not the bus notification itself causing problems. It is the
-> call to usbdev_remove().
+[ Upstream commit 2ecefa0a15fd0ef88b9cd5d15ceb813008136431 ]
 
-Unfortunately, I don't know how to fix it and don't have much time to
-investigate it right now - and it's something that can be added back later.
+The keyctl_dh_params struct in uapi/linux/keyctl.h contains the symbol
+"private" which means that the header file will cause compilation failure
+if #included in to a C++ program.  Further, the patch that added the same
+struct to the keyutils package named the symbol "priv", not "private".
 
-David
+The previous attempt to fix this (commit 8a2336e549d3) did so by simply
+renaming the kernel's copy of the field to dh_private, but this then breaks
+existing userspace and as such has been reverted (commit 8c0f9f5b309d).
+
+[And note, to those who think that wrapping the struct in extern "C" {}
+ will work: it won't; that only changes how symbol names are presented to
+ the assembler and linker.].
+
+Instead, insert an anonymous union around the "private" member and add a
+second member in there with the name "priv" to match the one in the
+keyutils package.  The "private" member is then wrapped in !__cplusplus
+cpp-conditionals to hide it from C++.
+
+Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
+Fixes: 8a2336e549d3 ("uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Randy Dunlap <rdunlap@infradead.org>
+cc: Lubomir Rintel <lkundrak@v3.sk>
+cc: James Morris <jmorris@namei.org>
+cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+cc: Stephan Mueller <smueller@chronox.de>
+cc: Andrew Morton <akpm@linux-foundation.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: stable@vger.kernel.org
+Signed-off-by: James Morris <james.morris@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/uapi/linux/keyctl.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
+index 7b8c9e19bad1c..0f3cb13db8e93 100644
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -65,7 +65,12 @@
+ 
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 private;
++	union {
++#ifndef __cplusplus
++		__s32 private;
++#endif
++		__s32 priv;
++	};
+ 	__s32 prime;
+ 	__s32 base;
+ };
+-- 
+2.20.1
+
