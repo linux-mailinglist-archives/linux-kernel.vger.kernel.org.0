@@ -2,96 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16918A6C7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85C93A6C83
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:09:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbfICPIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 11:08:13 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37608 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729878AbfICPIM (ORCPT
+        id S1729991AbfICPI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 11:08:57 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36254 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729169AbfICPI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:08:12 -0400
-Received: by mail-lj1-f193.google.com with SMTP id t14so16438529lji.4
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 08:08:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h2yAjc2hJCjjaepN2ZkdwcHMrEZsiJoFozFvDMefoRw=;
-        b=qtrVEo5hiEW35+KHBeaMmVNP+7Pnoux7SAr+dyV7tNyctOLt0hM5XqWoYPZZAosKMI
-         ujnpolv8ByO91hPnZoRt+YWHlIUkQ2u6/6VjKlmhzdkIm1sgCit0OGgmOzsuH+PhZFUN
-         oJC0gsIhqSEQ4sl0+ZbfG4zHMuIEyQj8ZZEsQ4ApjqeVnKOmrp3jQqmSxchD7PA6YekT
-         FF8nlVXY10LaZFbVioK8GJ3bIVnbNhubmxqaMJROiKkgRe5kFzb0X3peWRlm8c4Pez6a
-         Qkzbxs/8bH4vGVU1vD00OoGGnuZVseGxwWA2ITQ25bYTNpqqOtM18qDObGrQ1QKjECus
-         n/rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h2yAjc2hJCjjaepN2ZkdwcHMrEZsiJoFozFvDMefoRw=;
-        b=NL8Ub/D+rbxjKMGctMLJlODGlyRT/5slhE8ERy01ro3E/R1YnSyF94iGNH1Fo7XFFw
-         eXpV7Xkgzt+8VydR1WD1V9UZF1ZNrXUonJSfgRMNUx1adQeltlCvLoMZPQjr/n7mGw8U
-         l5/9SJpI/XRv3+6irBSYI9VuDoVPWUH9zHJjXyeUpT3/5Mu3fpjNjPN7wcZiZsZHeC6I
-         9Ep7IY5lEh1KQITCifJncpO8UZr2Sb+irkg9k9sjt6f+d61VQvLZ/mq4uDsCz5FqDsKT
-         NkAsBAVKbsnKF9HV+sUHPXH6Lge1hhPF/SCR+KDb/mFIsKusrnNIAiewd4M11X/gH0VQ
-         h+RA==
-X-Gm-Message-State: APjAAAV2jgMf10S3xjXOD5C8F6Sg1hovqQPgG5uJdjwMjh8ojmA3rRyC
-        qbfYhyiH0OlUQRQsfVvGp373hYpF0RARPoIxBlU73w==
-X-Google-Smtp-Source: APXvYqzHTJ4rXh88bRtnP+VcBH4Tx2ddUfKifZ8gVfeGmMwa3ovSQrn97zqTmcBfvcoIoTIQ1izbtNDwn6zYYGzgiKY=
-X-Received: by 2002:a2e:884d:: with SMTP id z13mr13192354ljj.62.1567523291209;
- Tue, 03 Sep 2019 08:08:11 -0700 (PDT)
+        Tue, 3 Sep 2019 11:08:56 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 8305628B338;
+        Tue,  3 Sep 2019 16:08:53 +0100 (BST)
+Date:   Tue, 3 Sep 2019 17:08:50 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>
+Subject: Re: [PATCH] eeprom: at25: Convert the driver to the spi-mem
+ interface
+Message-ID: <20190903170850.6aee808b@collabora.com>
+In-Reply-To: <CAMuHMdViBLGurV+w=EN4TMOsDey9vC=YS6qoX6wA4gwvirOoAA@mail.gmail.com>
+References: <20190330141637.22632-1-boris.brezillon@collabora.com>
+        <20190425194451.GA14552@kroah.com>
+        <CAMuHMdViBLGurV+w=EN4TMOsDey9vC=YS6qoX6wA4gwvirOoAA@mail.gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <20190903141215.18283-1-dinguyen@kernel.org>
-In-Reply-To: <20190903141215.18283-1-dinguyen@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 3 Sep 2019 17:07:59 +0200
-Message-ID: <CACRpkdZOn+P6R3RmQEyk-LQ9-g-ng-mVepghS6+Cic-6xMrNjg@mail.gmail.com>
-Subject: Re: [PATCHv7] drivers/amba: add reset control to amba bus probe
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 4:20 PM Dinh Nguyen <dinguyen@kernel.org> wrote:
+Hi Geert,
 
-> The primecell controller on some SoCs, i.e. SoCFPGA, is held in reset by
-> default. Until recently, the DMA controller was brought out of reset by the
-> bootloader(i.e. U-Boot). But a recent change in U-Boot, the peripherals
-> that are not used are held in reset and are left to Linux to bring them
-> out of reset.
->
-> Add a mechanism for getting the reset property and de-assert the primecell
-> module from reset if found. This is a not a hard fail if the reset properti
-> is not present in the device tree node, so the driver will continue to
-> probe.
->
-> Because there are different variants of the controller that may have
-> multiple reset signals, the code will find all reset(s) specified and
-> de-assert them.
->
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+On Tue, 3 Sep 2019 17:06:52 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> On Thu, Apr 25, 2019 at 9:44 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Sat, Mar 30, 2019 at 03:16:37PM +0100, Boris Brezillon wrote:  
+> > > The AT25 protocol fits pretty well in the spi-mem model. Convert the
+> > > at25 spi driver to a spi-mem driver and use the dirmap API instead of
+> > > forging SPI messages manually.
+> > > This makes the driver compatible with spi-mem-only controllers
+> > > (controllers implementing only the spi_mem ops).
+> > >
+> > > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > > ---
+> > >  drivers/misc/eeprom/at25.c | 282 +++++++++++++++++++++++--------------
+> > >  1 file changed, 176 insertions(+), 106 deletions(-)  
+> >
+> > Will there be a new version of this to fix up the problems that 0-day
+> > found in it?  
+> 
+> gmail-whitespace-damaged fix:
+> 
+> diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
+> index f2abe27010eff133..98145d7d43d0c728 100644
+> --- a/drivers/misc/eeprom/Kconfig
+> +++ b/drivers/misc/eeprom/Kconfig
+> @@ -36,6 +36,7 @@ config EEPROM_AT25
+>         depends on SPI && SYSFS
+>         select NVMEM
+>         select NVMEM_SYSFS
+> +       select SPI_MEM
+>         help
+>           Enable this driver to get read/write support to most SPI EEPROMs,
+>           after you configure the board init code to know about each eeprom
+> 
+> Boris: what's the plan?
 
-Please put this patch into Russell's patch tracker.
+Sorry, I don't have time to respin this patch. Feel free to send a new
+version if you need it.
 
-Yours,
-Linus Walleij
+Regards,
+
+Boris
