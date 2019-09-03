@@ -2,140 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36BD6A6783
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 13:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B125A676D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 13:31:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbfICLhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 07:37:13 -0400
-Received: from mx0a-002c1b01.pphosted.com ([148.163.151.68]:23074 "EHLO
-        mx0a-002c1b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728923AbfICLhL (ORCPT
+        id S1728809AbfICLbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 07:31:05 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40188 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbfICLbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:37:11 -0400
-Received: from pps.filterd (m0127838.ppops.net [127.0.0.1])
-        by mx0a-002c1b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x83B9tLw025014;
-        Tue, 3 Sep 2019 04:14:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint20171006;
- bh=2eShb8ZVlR1djqEtIBM+AQMVA3y9uR2hZbvS4ztCLHg=;
- b=on/HiodSAcBIsciVgR7gKP8YVp3yT9jvCkZebY0tkqiFvsy+xN8AxmZ60veK++wIpEuf
- AimbeuFr+hHbV8vrw6ma9LWFQnYOEHYHyQ0YpDNJglojcfU3xDWqNbNMEyllsSOVtYtX
- PEEiIXa08cczheNeFlQ8Twj9ihSLA6YQqpzKGkFIvlQfYjys5aW62Vexy1VUKK/yFXak
- h1vJQIf4R1WbwRn3pbGu88ZpM2gQC3ro0zzrtv1ODS5dheTEh9GWkrTr12xWoNN9wTAT
- GLBvHtLBhbbeGpiaobroUwleSUKZb4RRQkWe6senuzv3UWi4SREkyHIaThtNZLHZhz5K qw== 
-Received: from nam01-by2-obe.outbound.protection.outlook.com (mail-by2nam01lp2055.outbound.protection.outlook.com [104.47.34.55])
-        by mx0a-002c1b01.pphosted.com with ESMTP id 2uqrexmqu1-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 03 Sep 2019 04:14:17 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IPEYD2dNaiLQ5x9gAUC0JjmEyjygg+QnwsMDlhPnG7CWwmJzx1kkC4U7tGscnsgEx8IylEBn8+Pkfu2NXEoQEfzx1egty4BCZ/Z93VgpwfOmEDzfJiFsjb0+0gapJUMZ+O6CrkU+20bHQqqrTdK7bc35iXJF904eVSKwwfpA/SNzI3E515T6t8Bpy2mjq6+JvOOyjb7uVn6raXb+P4IEAUdssCHjYCOegwsj21V8viTreCUTOAxc0s62HvzYjzrs3oynOqjYfZyvKf45z4sGXMA8smPdYHWwbK6c6pApNwP5Bu60g9BRm/jcxaMIIO0RYkpW95MqJfQLgUgmmPw8Ug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2eShb8ZVlR1djqEtIBM+AQMVA3y9uR2hZbvS4ztCLHg=;
- b=Q+0yKo39AtYcy5xXYd/ToMje97sHgyU//SCSQOkFo/Xiw4NDqBfoFgSjGgwq/abq/g6YQSUUkrYQqLIuqLraIdLgvt/7/+EeYYN7NsDThObOhYvHG+udXtXiGITYM48W+ny00mAk0Y+IXHMPvZvui2d3fQzGBsm7Yz9UfvnpBNsr6IUGtfpEjlbbWN2xvuwP90Vhu1S2yaKEXtEwnO5ttQIlppg8zCgq7m79X2SX/DwT8hfxqNAD+1TmOjquGghlt7naSQXLR1Oq7TOyfr/NpTq/ap1xaP4QYmNr43xtH0HHnjDQ2sm8INteKhmV5S68zmddQHsUVgVyzWqp4Sbyeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-Received: from CY4PR0201MB3588.namprd02.prod.outlook.com (52.132.98.38) by
- CY4PR0201MB3409.namprd02.prod.outlook.com (52.132.98.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.21; Tue, 3 Sep 2019 11:14:14 +0000
-Received: from CY4PR0201MB3588.namprd02.prod.outlook.com
- ([fe80::5598:9f2e:9d39:c737]) by CY4PR0201MB3588.namprd02.prod.outlook.com
- ([fe80::5598:9f2e:9d39:c737%6]) with mapi id 15.20.2199.021; Tue, 3 Sep 2019
- 11:14:14 +0000
-From:   Florian Schmidt <florian.schmidt@nutanix.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Florian Schmidt <florian.schmidt@nutanix.com>
-Subject: [PATCH 2/2] trace-vmscan-postprocess: fix output table spacing
-Thread-Topic: [PATCH 2/2] trace-vmscan-postprocess: fix output table spacing
-Thread-Index: AQHVYki4LEg7lvV4zkeKLmneuY6/wg==
-Date:   Tue, 3 Sep 2019 11:14:14 +0000
-Message-ID: <20190903111342.17731-3-florian.schmidt@nutanix.com>
-References: <20190903111342.17731-1-florian.schmidt@nutanix.com>
-In-Reply-To: <20190903111342.17731-1-florian.schmidt@nutanix.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM4PR07CA0033.eurprd07.prod.outlook.com
- (2603:10a6:205:1::46) To CY4PR0201MB3588.namprd02.prod.outlook.com
- (2603:10b6:910:8b::38)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.23.0
-x-originating-ip: [62.254.189.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3a887a5f-f8bb-4bc6-54a5-08d7305fda69
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR0201MB3409;
-x-ms-traffictypediagnostic: CY4PR0201MB3409:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CY4PR0201MB340965937AC7E4BC495C20FCF7B90@CY4PR0201MB3409.namprd02.prod.outlook.com>
-x-proofpoint-crosstenant: true
-x-ms-oob-tlc-oobclassifiers: OLM:635;
-x-forefront-prvs: 01494FA7F7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(136003)(366004)(376002)(396003)(189003)(199004)(1076003)(36756003)(305945005)(476003)(6512007)(186003)(71190400001)(71200400001)(50226002)(107886003)(81166006)(66066001)(14454004)(52116002)(81156014)(8676002)(86362001)(7736002)(6486002)(54906003)(5660300002)(102836004)(66946007)(3846002)(6116002)(4326008)(66476007)(66556008)(316002)(8936002)(478600001)(76176011)(6916009)(26005)(2906002)(486006)(53936002)(44832011)(25786009)(446003)(6506007)(386003)(11346002)(64756008)(99286004)(2616005)(14444005)(256004)(6436002)(66446008)(64030200001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR0201MB3409;H:CY4PR0201MB3588.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nutanix.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /NtxLahfv5WOPbaoTJ56KEaBjTpy7PdQv9V8GspgXl55vh4JFYH49CwuP1KGl850za7K/oX6B44UsfiAdfLVy+uDeR5Lo+EfLRbNKGlseedlSzZQkm9KUc5lOiY75TksQwP/nFsCrKKC72RVSgOTNKAP5oCy8grO4x5MIDA/twlL8buCdVx4GI4e97FabfQKj6iUxzeIYW/2w5v80+jQbTKinVDk4I+17fbHItoBlbXhiE7lwReMss97JFK92I2CRHwdtohg25M5OIHc9R3dyiminEMJNwry1FTooQofvn0rDvveCSHoHGJCoYp4TaAsQVWgTL7W6ZmBKXARypIRWapuBDfujPxW84DJp4Gw0XBTkOPLk0GFNDV0AplRQjyVNelFt3KXNWF1vzLV5Rez9uswvVYUYAE9joWoqbqMyLQ=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 3 Sep 2019 07:31:04 -0400
+Received: by mail-wm1-f66.google.com with SMTP id t9so17802760wmi.5;
+        Tue, 03 Sep 2019 04:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=2Ekc0W7zJk5w+9GqjfFzhlAJ4FiN+oEvkKnq/TUY/UA=;
+        b=rxQ0A7gL/rvUTRgFS/x6Jhz66KR/9EtqdUj00Gi6qx2X2kvUeehgUkd8+p67o1zAdh
+         jhHPTILE48XYrnwg8UBBO258FnM17/u/jy7Djy7SpVAb0P8pFAoTW1qOfpfAwfNjhJAT
+         DgMvezl32n1VEXVXQNQbjeAq4GqCIpmC++6kN/xbkwj+u+PUgbKIgQ1Llm24sLydd5ao
+         LKeszXIV4Hr0QQP3BUctE8YxTL4jz9rRJTA4f8AjNqEOacNNW1CVAeZAN2slkCI5Hcqh
+         2/OS+iB6IzU6RSZYWkyMRuB5kD1XX6OEaiVdFvsFPUttT5lL/m20kyhe/Hpi4gYMB5ti
+         fqDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=2Ekc0W7zJk5w+9GqjfFzhlAJ4FiN+oEvkKnq/TUY/UA=;
+        b=tDxBYroz5O57qM5WaSrjNVg1DVHNtNoxn4coX1hza0V+YMxqRBI+1jUNy1WRa8tAy5
+         JJOy1tK3MQ4uisSzvX3K4QBSxMWbTbqsmdRctHGbRCOv53fyMM+1JCqkz+BnrVzGstX3
+         WTTul8zMefWMMcYnSUWbvaexcRl+EBzNf5GSK5dOX3pNHG2E2ZkBhbqKXbzpdzDiUGxV
+         AVp4E/xKMZM5KNZi9lO/Qb5UOvedjWFAhrqmAXKjvb2RU77aj5R+jPtTsrqW6B8eCSZt
+         nqlnIXfhlp/aN+hCuTaXzH8HymZZxV+cARc5DgTDsKIbjgHwbK4w6CJzYnWcMVFOtgnQ
+         YmVQ==
+X-Gm-Message-State: APjAAAUTkOj5utBNld4ujSBjBsQYT/KRzA/HzPnKzkAGNIRIOfRrR1yn
+        0YH17IVIbEvB68Tum4CG6xMtVLV3QZa0iA==
+X-Google-Smtp-Source: APXvYqziAyX3arV2k8bnfEcXOZ1Bh4SmqiEN1nono5tsDY7ufXY/SqE/5xUTbeQQ6Nd5YaemyR+OCQ==
+X-Received: by 2002:a1c:1d85:: with SMTP id d127mr29102252wmd.14.1567510261446;
+        Tue, 03 Sep 2019 04:31:01 -0700 (PDT)
+Received: from localhost.localdomain (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
+        by smtp.gmail.com with ESMTPSA id l2sm19455074wme.36.2019.09.03.04.31.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 04:31:00 -0700 (PDT)
+From:   Krzysztof Wilczynski <kw@linux.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Joerg Roedel <joro@8bytes.org>, Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2] PCI: Remove unused includes and superfluous struct declaration
+Date:   Tue,  3 Sep 2019 13:30:59 +0200
+Message-Id: <20190903113059.2901-1-kw@linux.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190901112506.8469-1-kw@linux.com>
+References: <20190901112506.8469-1-kw@linux.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a887a5f-f8bb-4bc6-54a5-08d7305fda69
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2019 11:14:14.3635
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cfyo57Mvz5ovwKCQxQv8GLkoHJCGoKsxzw29YA0vV+gWFRKcCZpJDwvDZxzeudfK1VgzM1YHCvsaJm2Y+zTq+WIbwuFkgLNJQL+O9Z3/nkY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0201MB3409
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-03_01:2019-09-03,2019-09-03 signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rml4IHNwYWNpbmcgc28gdGhhdCBib3RoIHRoZSBoZWFkZXJzIGluIHRoZW1zZWx2ZXMsIGFzIHdl
-bGwgYXMgdGhlDQpvdXRwdXQgb2YgdGhlIHR3byB0YWJsZXMgcmVsYXRlZCB0byBlYWNoIG90aGVy
-LCBhcmUgcHJvcGVybHkgYWxpZ25lZC4NCg0KU2lnbmVkLW9mZi1ieTogRmxvcmlhbiBTY2htaWR0
-IDxmbG9yaWFuLnNjaG1pZHRAbnV0YW5peC5jb20+DQotLS0NCiBEb2N1bWVudGF0aW9uL3RyYWNl
-L3Bvc3Rwcm9jZXNzL3RyYWNlLXZtc2Nhbi1wb3N0cHJvY2Vzcy5wbCB8IDYgKysrLS0tDQogMSBm
-aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdp
-dCBhL0RvY3VtZW50YXRpb24vdHJhY2UvcG9zdHByb2Nlc3MvdHJhY2Utdm1zY2FuLXBvc3Rwcm9j
-ZXNzLnBsIGIvRG9jdW1lbnRhdGlvbi90cmFjZS9wb3N0cHJvY2Vzcy90cmFjZS12bXNjYW4tcG9z
-dHByb2Nlc3MucGwNCmluZGV4IDZjNGUzZmRlOTQ0Ny4uNWE1ZDcwMDI5YzQxIDEwMDY0NA0KLS0t
-IGEvRG9jdW1lbnRhdGlvbi90cmFjZS9wb3N0cHJvY2Vzcy90cmFjZS12bXNjYW4tcG9zdHByb2Nl
-c3MucGwNCisrKyBiL0RvY3VtZW50YXRpb24vdHJhY2UvcG9zdHByb2Nlc3MvdHJhY2Utdm1zY2Fu
-LXBvc3Rwcm9jZXNzLnBsDQpAQCAtNTc1LDggKzU3NSw4IEBAIHN1YiBkdW1wX3N0YXRzIHsNCiAN
-CiAJIyBQcmludCBvdXQga3N3YXBkIGFjdGl2aXR5DQogCXByaW50ZigiXG4iKTsNCi0JcHJpbnRm
-KCIlLSIgLiAkbWF4X3N0cmxlbiAuICJzICU4cyAlMTBzICAgJThzICAgJThzICU4cyAlOHNcbiIs
-ICJLc3dhcGQiLCAgICJLc3dhcGQiLCAgIk9yZGVyIiwgICAgICJQYWdlcyIsICAgIlBhZ2VzIiwg
-ICAiUGFnZXMiLCAgIlBhZ2VzIik7DQotCXByaW50ZigiJS0iIC4gJG1heF9zdHJsZW4gLiAicyAl
-OHMgJTEwcyAgICU4cyAgICU4cyAlOHMgJThzXG4iLCAiSW5zdGFuY2UiLCAiV2FrZXVwcyIsICJS
-ZS13YWtldXAiLCAiU2Nhbm5lZCIsICJSY2xtZWQiLCAgIlN5bmMtSU8iLCAiQVN5bmMtSU8iKTsN
-CisJcHJpbnRmKCIlLSIgLiAkbWF4X3N0cmxlbiAuICJzICU4cyAlMTBzICAgJThzICAlOHMgJThz
-ICU4c1xuIiwgIktzd2FwZCIsICAgIktzd2FwZCIsICAiT3JkZXIiLCAgICAgIlBhZ2VzIiwgICAi
-UGFnZXMiLCAgICJQYWdlcyIsICAiUGFnZXMiKTsNCisJcHJpbnRmKCIlLSIgLiAkbWF4X3N0cmxl
-biAuICJzICU4cyAlMTBzICAgJThzICAlOHMgJThzICU4c1xuIiwgIkluc3RhbmNlIiwgIldha2V1
-cHMiLCAiUmUtd2FrZXVwIiwgIlNjYW5uZWQiLCAiUmNsbWVkIiwgICJTeW5jLUlPIiwgIkFTeW5j
-LUlPIik7DQogCWZvcmVhY2ggJHByb2Nlc3NfcGlkIChrZXlzICVzdGF0cykgew0KIA0KIAkJaWYg
-KCEkc3RhdHN7JHByb2Nlc3NfcGlkfS0+e01NX1ZNU0NBTl9LU1dBUERfV0FLRX0pIHsNCkBAIC01
-OTUsNyArNTk1LDcgQEAgc3ViIGR1bXBfc3RhdHMgew0KIAkJJHRvdGFsX2tzd2FwZF93cml0ZXBh
-Z2VfZmlsZV9hc3luYyArPSAkc3RhdHN7JHByb2Nlc3NfcGlkfS0+e01NX1ZNU0NBTl9XUklURVBB
-R0VfRklMRV9BU1lOQ307DQogCQkkdG90YWxfa3N3YXBkX3dyaXRlcGFnZV9hbm9uX2FzeW5jICs9
-ICRzdGF0c3skcHJvY2Vzc19waWR9LT57TU1fVk1TQ0FOX1dSSVRFUEFHRV9BTk9OX0FTWU5DfTsN
-CiANCi0JCXByaW50ZigiJS0iIC4gJG1heF9zdHJsZW4gLiAicyAlOGQgJTEwZCAgICU4dSAlOHUg
-ICU4aSAlOHUiLA0KKwkJcHJpbnRmKCIlLSIgLiAkbWF4X3N0cmxlbiAuICJzICU4ZCAlMTBkICAl
-OHUgICAlOHUgJThpICU4dSAgICAgICAgICIsDQogCQkJJHByb2Nlc3NfcGlkLA0KIAkJCSRzdGF0
-c3skcHJvY2Vzc19waWR9LT57TU1fVk1TQ0FOX0tTV0FQRF9XQUtFfSwNCiAJCQkkc3RhdHN7JHBy
-b2Nlc3NfcGlkfS0+e0hJR0hfS1NXQVBEX1JFV0FLRVVQfSwNCi0tIA0KMi4yMy4wLnJjMQ0KDQo=
+Remove <linux/pci.h> and <linux/msi.h> from being included
+directly as part of the include/linux/of_pci.h, and remove
+superfluous declaration of struct of_phandle_args.
+
+Move users of include <linux/of_pci.h> to include <linux/pci.h>
+and <linux/msi.h> directly rather than rely on both being
+included transitively through <linux/of_pci.h>.
+
+Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+---
+ drivers/iommu/of_iommu.c                          | 2 ++
+ drivers/irqchip/irq-gic-v2m.c                     | 1 +
+ drivers/irqchip/irq-gic-v3-its-pci-msi.c          | 1 +
+ drivers/pci/controller/dwc/pcie-designware-host.c | 1 +
+ drivers/pci/controller/pci-aardvark.c             | 1 +
+ drivers/pci/controller/pci-thunder-pem.c          | 1 +
+ drivers/pci/pci.c                                 | 1 +
+ drivers/pci/probe.c                               | 1 +
+ include/linux/of_pci.h                            | 5 ++---
+ 9 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+index 614a93aa5305..026ad2b29dcd 100644
+--- a/drivers/iommu/of_iommu.c
++++ b/drivers/iommu/of_iommu.c
+@@ -8,6 +8,8 @@
+ #include <linux/export.h>
+ #include <linux/iommu.h>
+ #include <linux/limits.h>
++#include <linux/pci.h>
++#include <linux/msi.h>
+ #include <linux/of.h>
+ #include <linux/of_iommu.h>
+ #include <linux/of_pci.h>
+diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
+index e88e75c22b6a..fbec07d634ad 100644
+--- a/drivers/irqchip/irq-gic-v2m.c
++++ b/drivers/irqchip/irq-gic-v2m.c
+@@ -17,6 +17,7 @@
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/kernel.h>
++#include <linux/pci.h>
+ #include <linux/msi.h>
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+diff --git a/drivers/irqchip/irq-gic-v3-its-pci-msi.c b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+index 229d586c3d7a..87711e0f8014 100644
+--- a/drivers/irqchip/irq-gic-v3-its-pci-msi.c
++++ b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/acpi_iort.h>
++#include <linux/pci.h>
+ #include <linux/msi.h>
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index d3156446ff27..7a9bef993e57 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/irqdomain.h>
++#include <linux/msi.h>
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci_regs.h>
+diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+index fc0fe4d4de49..3a05f6ca95b0 100644
+--- a/drivers/pci/controller/pci-aardvark.c
++++ b/drivers/pci/controller/pci-aardvark.c
+@@ -16,6 +16,7 @@
+ #include <linux/pci.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
++#include <linux/msi.h>
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+ 
+diff --git a/drivers/pci/controller/pci-thunder-pem.c b/drivers/pci/controller/pci-thunder-pem.c
+index f127ce8bd4ef..9491e266b1ea 100644
+--- a/drivers/pci/controller/pci-thunder-pem.c
++++ b/drivers/pci/controller/pci-thunder-pem.c
+@@ -6,6 +6,7 @@
+ #include <linux/bitfield.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/pci.h>
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci-acpi.h>
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 484e35349565..571e7e00984b 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -13,6 +13,7 @@
+ #include <linux/delay.h>
+ #include <linux/dmi.h>
+ #include <linux/init.h>
++#include <linux/msi.h>
+ #include <linux/of.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 169943f17a4c..11b11a652d18 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -7,6 +7,7 @@
+ #include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/pci.h>
++#include <linux/msi.h>
+ #include <linux/of_device.h>
+ #include <linux/of_pci.h>
+ #include <linux/pci_hotplug.h>
+diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
+index 21a89c4880fa..29658c0ee71f 100644
+--- a/include/linux/of_pci.h
++++ b/include/linux/of_pci.h
+@@ -2,11 +2,10 @@
+ #ifndef __OF_PCI_H
+ #define __OF_PCI_H
+ 
+-#include <linux/pci.h>
+-#include <linux/msi.h>
++#include <linux/types.h>
++#include <linux/errno.h>
+ 
+ struct pci_dev;
+-struct of_phandle_args;
+ struct device_node;
+ 
+ #if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_PCI)
+-- 
+2.23.0
+
