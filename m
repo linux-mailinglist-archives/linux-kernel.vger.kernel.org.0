@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D6EA70A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83DE0A70A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:41:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbfICQZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:25:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45392 "EHLO mail.kernel.org"
+        id S1731468AbfICQjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:39:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730355AbfICQZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:25:22 -0400
+        id S1730389AbfICQZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:25:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11F432343A;
-        Tue,  3 Sep 2019 16:25:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8A7D2343A;
+        Tue,  3 Sep 2019 16:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527921;
-        bh=y6jv+OHUHxEmn5hA5V/b/pfb8RWdE4SDWdiWC+3AyFY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fktxo9kwQhwWMFXoU7eQDyn04xa/nB5bfIOAislXbhxWTJ4g9LGpF9cmGc6rq2ps0
-         VRB42Q6W2KyfuaY0P5a7TblDJND6KmCI2kShRIn+DhNumBMSbcO1I8AwQm2Rz6g+5W
-         LJqybxcRH3j1hlbMqPd97dqhlnP+Lg263ri59lSU=
+        s=default; t=1567527927;
+        bh=wwerqmC3bXh4Yc8fQeoW4IUNyVQ9Cmz2XuGCLkZv53M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=C4OzAUV2zqefL4HTF9sHrIicZgmhZa2xwebA4QB8yiD/b/4QxULp9ro2u9DXqUCFw
+         2xjLrVFBScUpeiPsZkLB2YySZ76CbIOq7+K6p9SjnC1Oju6bXv4dtTh4rJAVvEASct
+         ezvfU/hUI2qwgD8eqGVYGRz+0zc663CnReKMUeA0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jan-Marek Glogowski <glogow@fbihome.de>,
-        Lyude Paul <lyude@redhat.com>, Sasha Levin <sashal@kernel.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 001/167] drm/i915: Re-apply "Perform link quality check, unconditionally during long pulse"
-Date:   Tue,  3 Sep 2019 12:22:33 -0400
-Message-Id: <20190903162519.7136-1-sashal@kernel.org>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 003/167] media: cec: remove cec-edid.c
+Date:   Tue,  3 Sep 2019 12:22:35 -0400
+Message-Id: <20190903162519.7136-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -41,57 +43,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan-Marek Glogowski <glogow@fbihome.de>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-[ Upstream commit 3cf71bc9904d7ee4a25a822c5dcb54c7804ea388 ]
+[ Upstream commit f94d463f1b7f83d465ed77521821583dbcdaa3c5 ]
 
-This re-applies the workaround for "some DP sinks, [which] are a
-little nuts" from commit 1a36147bb939 ("drm/i915: Perform link
-quality check unconditionally during long pulse").
-It makes the secondary AOC E2460P monitor connected via DP to an
-acer Veriton N4640G usable again.
+Move cec_get_edid_phys_addr() to cec-adap.c. It's not worth keeping
+a separate source for this.
 
-This hunk was dropped in commit c85d200e8321 ("drm/i915: Move SST
-DP link retraining into the ->post_hotplug() hook")
-
-Fixes: c85d200e8321 ("drm/i915: Move SST DP link retraining into the ->post_hotplug() hook")
-[Cleaned up commit message, added stable cc]
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Jan-Marek Glogowski <glogow@fbihome.de>
-Cc: stable@vger.kernel.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20180825191035.3945-1-lyude@redhat.com
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: <stable@vger.kernel.org>      # for v4.17 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/intel_dp.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/media/cec/Makefile   |  2 +-
+ drivers/media/cec/cec-adap.c | 13 +++++++++++++
+ drivers/media/cec/cec-edid.c | 24 ------------------------
+ 3 files changed, 14 insertions(+), 25 deletions(-)
+ delete mode 100644 drivers/media/cec/cec-edid.c
 
-diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-index f92079e19de8d..20cd4c8acecc3 100644
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -4739,6 +4739,22 @@ intel_dp_long_pulse(struct intel_connector *connector,
- 		 */
- 		status = connector_status_disconnected;
- 		goto out;
-+	} else {
-+		/*
-+		 * If display is now connected check links status,
-+		 * there has been known issues of link loss triggering
-+		 * long pulse.
-+		 *
-+		 * Some sinks (eg. ASUS PB287Q) seem to perform some
-+		 * weird HPD ping pong during modesets. So we can apparently
-+		 * end up with HPD going low during a modeset, and then
-+		 * going back up soon after. And once that happens we must
-+		 * retrain the link to get a picture. That's in case no
-+		 * userspace component reacted to intermittent HPD dip.
-+		 */
-+		struct intel_encoder *encoder = &dp_to_dig_port(intel_dp)->base;
-+
-+		intel_dp_retrain_link(encoder, ctx);
- 	}
+diff --git a/drivers/media/cec/Makefile b/drivers/media/cec/Makefile
+index 29a2ab9e77c5d..ad8677d8c8967 100644
+--- a/drivers/media/cec/Makefile
++++ b/drivers/media/cec/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-cec-objs := cec-core.o cec-adap.o cec-api.o cec-edid.o
++cec-objs := cec-core.o cec-adap.o cec-api.o
  
- 	/*
+ ifeq ($(CONFIG_CEC_NOTIFIER),y)
+   cec-objs += cec-notifier.o
+diff --git a/drivers/media/cec/cec-adap.c b/drivers/media/cec/cec-adap.c
+index a7ea27d2aa8ef..4a15d53f659ec 100644
+--- a/drivers/media/cec/cec-adap.c
++++ b/drivers/media/cec/cec-adap.c
+@@ -62,6 +62,19 @@ static unsigned int cec_log_addr2dev(const struct cec_adapter *adap, u8 log_addr
+ 	return adap->log_addrs.primary_device_type[i < 0 ? 0 : i];
+ }
+ 
++u16 cec_get_edid_phys_addr(const u8 *edid, unsigned int size,
++			   unsigned int *offset)
++{
++	unsigned int loc = cec_get_edid_spa_location(edid, size);
++
++	if (offset)
++		*offset = loc;
++	if (loc == 0)
++		return CEC_PHYS_ADDR_INVALID;
++	return (edid[loc] << 8) | edid[loc + 1];
++}
++EXPORT_SYMBOL_GPL(cec_get_edid_phys_addr);
++
+ /*
+  * Queue a new event for this filehandle. If ts == 0, then set it
+  * to the current time.
+diff --git a/drivers/media/cec/cec-edid.c b/drivers/media/cec/cec-edid.c
+deleted file mode 100644
+index e2f54eec08294..0000000000000
+--- a/drivers/media/cec/cec-edid.c
++++ /dev/null
+@@ -1,24 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * cec-edid - HDMI Consumer Electronics Control EDID & CEC helper functions
+- *
+- * Copyright 2016 Cisco Systems, Inc. and/or its affiliates. All rights reserved.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/kernel.h>
+-#include <linux/types.h>
+-#include <media/cec.h>
+-
+-u16 cec_get_edid_phys_addr(const u8 *edid, unsigned int size,
+-			   unsigned int *offset)
+-{
+-	unsigned int loc = cec_get_edid_spa_location(edid, size);
+-
+-	if (offset)
+-		*offset = loc;
+-	if (loc == 0)
+-		return CEC_PHYS_ADDR_INVALID;
+-	return (edid[loc] << 8) | edid[loc + 1];
+-}
+-EXPORT_SYMBOL_GPL(cec_get_edid_phys_addr);
 -- 
 2.20.1
 
