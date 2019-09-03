@@ -2,104 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81898A6E03
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B205A6EA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbfICQYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:24:09 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43776 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729692AbfICQYI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:24:08 -0400
-Received: by mail-lj1-f196.google.com with SMTP id d5so5686784lja.10
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 09:24:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qZveg6mK+E2YHe55A6a0W+my7BBYnxsHTvRqGKfbHHU=;
-        b=N8zWABOn9S+3i7NCdVRFka+PsNBaHlwe6NsbV/3gcuW2ESNEl8uh2oqvumWFPXbEDr
-         iBEFwEPZjx9RRFw8g7fhIy0mOrWL3g6kOkSPnp4dKT4RTMG007mkeRGB1skoCqMaPrzC
-         G+cvlMy/mviUKpyz2n8C346C4h1M3FKOxUums=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qZveg6mK+E2YHe55A6a0W+my7BBYnxsHTvRqGKfbHHU=;
-        b=RhW8ycm31TxaCgHT+iHK0tVJ0AsDqJoZREjQeLSv/3FXXiXFqsy7HXmPJJv0qIUZJX
-         o/pDFrpR5nXT8Stp5gNWDREy+afKc5zCidzEx2ihM95yLdKi9xFxjSCjdPF2kiVdG9ja
-         j6H5NoJ2Sx+n1IAkCF/xKBm+ZLBjP70fZDs+fxmcGm3xPoTlHn+muoRfx0Eph1OhwIKi
-         7PAlY6RZCjw5ttFZlO7iYsjqx5kgp+zFZL6iajZIjb7pYS2jkbQjbOa5STkhzc8OwyS/
-         ijKOAU57p3UM/3zZdiVT0bqSfe3tVbMNYmOyvcoIhd8mMkJ8PU+5Kj+KR29+C0RuQN0t
-         1Nzw==
-X-Gm-Message-State: APjAAAUYdoRpB87rbdEWNAghBdAcEdjTc+J2sncbBcmSVg1yfgKgp7kw
-        yrjdfD10uJ0RMVBJSrQzkGbxTs8ojGM=
-X-Google-Smtp-Source: APXvYqx4dEnCkmdGVl0jCWjVBW9P1sRYsV1ytrnX1cger/wrSfWhamm6O20NVyrKY9kdcCC0+t/YHA==
-X-Received: by 2002:a2e:9586:: with SMTP id w6mr702131ljh.47.1567527845472;
-        Tue, 03 Sep 2019 09:24:05 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id f26sm1004976ljc.10.2019.09.03.09.24.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2019 09:24:04 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id y23so5576701lje.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 09:24:03 -0700 (PDT)
-X-Received: by 2002:a2e:814d:: with SMTP id t13mr8334804ljg.72.1567527843691;
- Tue, 03 Sep 2019 09:24:03 -0700 (PDT)
+        id S1730966AbfICQ1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:27:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730429AbfICQ1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:27:43 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6724238CD;
+        Tue,  3 Sep 2019 16:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567528062;
+        bh=5ZT2XI1WUbOsdYDUfs/eoI2vbKjG89YMBIlt1zsysqg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FD2+wtMvMtBJgBnHkZbDtRB39Sh+xxvkadK01PQU1z8LnyEB7liS+RHGENWvoMw3i
+         2hImcR8xDuGIA32LDj0O9tt/JT6kgvmQmz9qYxodN/nKIpyl1wdjjfPm5aiUgGS5DK
+         XgSmRlZFAVSRpbLM6DT20CLwMzmvFjGBPJMMvOy8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     David Sterba <dsterba@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 077/167] btrfs: scrub: pass fs_info to scrub_setup_ctx
+Date:   Tue,  3 Sep 2019 12:23:49 -0400
+Message-Id: <20190903162519.7136-77-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190903160036.2400-1-mathieu.desnoyers@efficios.com> <20190903160036.2400-3-mathieu.desnoyers@efficios.com>
-In-Reply-To: <20190903160036.2400-3-mathieu.desnoyers@efficios.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 3 Sep 2019 09:23:47 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiY-Lh1SvzpG2OPh_DUNJMeTTSyfNmx=ALz1UuZ4EiC=g@mail.gmail.com>
-Message-ID: <CAHk-=wiY-Lh1SvzpG2OPh_DUNJMeTTSyfNmx=ALz1UuZ4EiC=g@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] Fix: sched/membarrier: READ_ONCE p->mm in membarrier_global_expedited
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 9:00 AM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> Due to the lack of READ_ONCE() on p->mm, this code can in fact turn into
-> a NULL deref when we hit do_exit() around exit_mm(). The first p->mm
-> read is before and sees !NULL, the second is after and does observe
-> NULL, which triggers a null pointer dereference.
+From: David Sterba <dsterba@suse.com>
 
-This is horribly ugly, and I don't think it is necessary.
+[ Upstream commit 92f7ba434f51e8e9317f1d166105889aa230abd2 ]
 
-The way to fix the problem you are addressing in patches 2-3 is to
-move the MEMBARRIER_STATE_GLOBAL_EXPEDITED flag from the mm struct to
-the task struct, and avoiding the whole issue with "mm may be released
-at any point" that way.
+We can pass fs_info directly as this is the only member of btrfs_device
+that's bing used inside scrub_setup_ctx.
 
-Now, your reaction will be "but lots of threads can share an 'mm', so
-we can't do that", but that doesn't seem to be true. Looking at the
-place that _sets_ this, you already handle the single-thread cases
-specially, and the multiple threads has to do a "synchronize_rcu()".
-You might as well either walk the current CPU's and set it in all
-threads where the thread->mm matches the mm. And then you make the
-scheduler set the bit on newly scheduled entities.
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/btrfs/scrub.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-NOTE! When you walk all current cpu's in
-membarrier_register_global_expedited(), you only look at the
-'task->mm' _value_, you don't dereference it. And that's ok, because
-'task' itself is stable, it's just mm that can go away.
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index 5a2d10ba747f7..efaad3e1b295a 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -578,12 +578,11 @@ static void scrub_put_ctx(struct scrub_ctx *sctx)
+ 		scrub_free_ctx(sctx);
+ }
+ 
+-static noinline_for_stack
+-struct scrub_ctx *scrub_setup_ctx(struct btrfs_device *dev, int is_dev_replace)
++static noinline_for_stack struct scrub_ctx *scrub_setup_ctx(
++		struct btrfs_fs_info *fs_info, int is_dev_replace)
+ {
+ 	struct scrub_ctx *sctx;
+ 	int		i;
+-	struct btrfs_fs_info *fs_info = dev->fs_info;
+ 
+ 	sctx = kzalloc(sizeof(*sctx), GFP_KERNEL);
+ 	if (!sctx)
+@@ -592,7 +591,7 @@ struct scrub_ctx *scrub_setup_ctx(struct btrfs_device *dev, int is_dev_replace)
+ 	sctx->is_dev_replace = is_dev_replace;
+ 	sctx->pages_per_rd_bio = SCRUB_PAGES_PER_RD_BIO;
+ 	sctx->curr = -1;
+-	sctx->fs_info = dev->fs_info;
++	sctx->fs_info = fs_info;
+ 	for (i = 0; i < SCRUB_BIOS_PER_SCTX; ++i) {
+ 		struct scrub_bio *sbio;
+ 
+@@ -3881,7 +3880,7 @@ int btrfs_scrub_dev(struct btrfs_fs_info *fs_info, u64 devid, u64 start,
+ 		return ret;
+ 	}
+ 
+-	sctx = scrub_setup_ctx(dev, is_dev_replace);
++	sctx = scrub_setup_ctx(fs_info, is_dev_replace);
+ 	if (IS_ERR(sctx)) {
+ 		mutex_unlock(&fs_info->scrub_lock);
+ 		mutex_unlock(&fs_info->fs_devices->device_list_mutex);
+-- 
+2.20.1
 
-Wouldn't that solve the issue much more cleanly?
-
-             Linus
