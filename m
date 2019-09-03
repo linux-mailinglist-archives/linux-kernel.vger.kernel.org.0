@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 867FDA6E90
+	by mail.lfdr.de (Postfix) with ESMTP id F0EA0A6E91
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbfICQ04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:26:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47862 "EHLO mail.kernel.org"
+        id S1730116AbfICQ07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:26:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730105AbfICQ0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:26:47 -0400
+        id S1730725AbfICQ0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:26:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71CB1238C6;
-        Tue,  3 Sep 2019 16:26:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91511238C5;
+        Tue,  3 Sep 2019 16:26:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528007;
-        bh=REnPNTLrhxtJ3anH3iT9BiT+jJLrbT6d4WeR9kfmNM4=;
+        s=default; t=1567528011;
+        bh=IDegn3PA5hO68dkXxmfnYOmtBRQOB+r1GrT3sBEHpmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TfXxUsdAOlM7lAddg++FEUOfV+TcIoRH4UeTb8DRRucBruYZ4G20bBfd/awpWBoa+
-         NCHkaqwdGKBQWBb+1Jqez+NvSxvlvjxr5YYLc0IOgCMtPt+W3r9ptDNY9F4X2Jf9k8
-         /gyjWKMb4SM1mWWrjThROWvUVlYNaMYzP9QQM008=
+        b=wCZXqinraaRzNmx7nhj7DvbnWaAMutnvb+qZUS0eV5h2E0Hsc2HLLMKWt23TskIPn
+         Zz2xiTG8kLOBtnybQs0m439SxjnxXDys4hv9XvQKsmNx6WyOzdlJKSI/zabszKPwAU
+         TZa3iFGuz3rOQtnqErw4vLM++qm4Wd5Nl/X+1d8Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 050/167] ARC: mm: do_page_fault fixes #1: relinquish mmap_sem if signal arrives while handle_mm_fault
-Date:   Tue,  3 Sep 2019 12:23:22 -0400
-Message-Id: <20190903162519.7136-50-sashal@kernel.org>
+Cc:     Ricardo Biehl Pasquali <pasqualirb@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 052/167] ALSA: pcm: Update hardware pointer before start capture
+Date:   Tue,  3 Sep 2019 12:23:24 -0400
+Message-Id: <20190903162519.7136-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -43,106 +42,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vineet Gupta <vgupta@synopsys.com>
+From: Ricardo Biehl Pasquali <pasqualirb@gmail.com>
 
-[ Upstream commit 4d447455e73b47c43dd35fcc38ed823d3182a474 ]
+[ Upstream commit 64b6acf60b665fffd419c23886a1cbeeb253cfb4 ]
 
-do_page_fault() forgot to relinquish mmap_sem if a signal came while
-handling handle_mm_fault() - due to say a ctl+c or oom etc.
-This would later cause a deadlock by acquiring it twice.
+This ensures the transfer loop won't waste a run to read
+the few frames (if any) between start and hw_ptr update.
+It will wait for the next interrupt with wait_for_avail().
 
-This came to light when running libc testsuite tst-tls3-malloc test but
-is likely also the cause for prior seen LTP failures. Using lockdep
-clearly showed what the issue was.
-
-| # while true; do ./tst-tls3-malloc ; done
-| Didn't expect signal from child: got `Segmentation fault'
-| ^C
-| ============================================
-| WARNING: possible recursive locking detected
-| 4.17.0+ #25 Not tainted
-| --------------------------------------------
-| tst-tls3-malloc/510 is trying to acquire lock:
-| 606c7728 (&mm->mmap_sem){++++}, at: __might_fault+0x28/0x5c
-|
-|but task is already holding lock:
-|606c7728 (&mm->mmap_sem){++++}, at: do_page_fault+0x9c/0x2a0
-|
-| other info that might help us debug this:
-|  Possible unsafe locking scenario:
-|
-|       CPU0
-|       ----
-|  lock(&mm->mmap_sem);
-|  lock(&mm->mmap_sem);
-|
-| *** DEADLOCK ***
-|
-
-------------------------------------------------------------
-What the change does is not obvious (note to myself)
-
-prior code was
-
-| do_page_fault
-|
-|   down_read()		<-- lock taken
-|   handle_mm_fault	<-- signal pending as this runs
-|   if fatal_signal_pending
-|       if VM_FAULT_ERROR
-|           up_read
-|       if user_mode
-|          return	<-- lock still held, this was the BUG
-
-New code
-
-| do_page_fault
-|
-|   down_read()		<-- lock taken
-|   handle_mm_fault	<-- signal pending as this runs
-|   if fatal_signal_pending
-|       if VM_FAULT_RETRY
-|          return       <-- not same case as above, but still OK since
-|                           core mm already relinq lock for FAULT_RETRY
-|    ...
-|
-|   < Now falls through for bug case above >
-|
-|   up_read()		<-- lock relinquished
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Ricardo Biehl Pasquali <pasqualirb@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/mm/fault.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ sound/core/pcm_lib.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index db6913094be3c..f28db0b112a30 100644
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@ -143,12 +143,17 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	 */
- 	fault = handle_mm_fault(vma, address, flags);
+diff --git a/sound/core/pcm_lib.c b/sound/core/pcm_lib.c
+index 7f71c2449af5e..40013b26f6719 100644
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -2172,6 +2172,10 @@ snd_pcm_sframes_t __snd_pcm_lib_xfer(struct snd_pcm_substream *substream,
+ 	if (err < 0)
+ 		goto _end_unlock;
  
--	/* If Pagefault was interrupted by SIGKILL, exit page fault "early" */
- 	if (unlikely(fatal_signal_pending(current))) {
--		if ((fault & VM_FAULT_ERROR) && !(fault & VM_FAULT_RETRY))
--			up_read(&mm->mmap_sem);
--		if (user_mode(regs))
++	runtime->twake = runtime->control->avail_min ? : 1;
++	if (runtime->status->state == SNDRV_PCM_STATE_RUNNING)
++		snd_pcm_update_hw_ptr(substream);
 +
-+		/*
-+		 * if fault retry, mmap_sem already relinquished by core mm
-+		 * so OK to return to user mode (with signal handled first)
-+		 */
-+		if (fault & VM_FAULT_RETRY) {
-+			if (!user_mode(regs))
-+				goto no_context;
- 			return;
-+		}
+ 	if (!is_playback &&
+ 	    runtime->status->state == SNDRV_PCM_STATE_PREPARED) {
+ 		if (size >= runtime->start_threshold) {
+@@ -2185,10 +2189,8 @@ snd_pcm_sframes_t __snd_pcm_lib_xfer(struct snd_pcm_substream *substream,
+ 		}
  	}
  
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+-	runtime->twake = runtime->control->avail_min ? : 1;
+-	if (runtime->status->state == SNDRV_PCM_STATE_RUNNING)
+-		snd_pcm_update_hw_ptr(substream);
+ 	avail = snd_pcm_avail(substream);
++
+ 	while (size > 0) {
+ 		snd_pcm_uframes_t frames, appl_ptr, appl_ofs;
+ 		snd_pcm_uframes_t cont;
 -- 
 2.20.1
 
