@@ -2,89 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBE8DA5E51
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 02:01:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A607A5E5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 02:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727914AbfICABB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Sep 2019 20:01:01 -0400
-Received: from ozlabs.org ([203.11.71.1]:39819 "EHLO ozlabs.org"
+        id S1727887AbfICAE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 20:04:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbfICABB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 20:01:01 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726845AbfICAE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 20:04:58 -0400
+Received: from earth.universe (dyndsl-091-096-044-124.ewe-ip-backbone.de [91.96.44.124])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46MnCs4mlgz9s7T;
-        Tue,  3 Sep 2019 10:00:57 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Michal =?utf-8?Q?Such=C3=A1nek?= <msuchanek@suse.de>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Breno Leitao <leitao@debian.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Diana Craciun <diana.craciun@nxp.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v7 5/6] powerpc/64: Make COMPAT user-selectable disabled on littleendian by default.
-In-Reply-To: <20190902114239.32bd81f4@naga>
-References: <cover.1567198491.git.msuchanek@suse.de> <c7c88e88408588fa6fcf858a5ae503b5e2f4ec0b.1567198492.git.msuchanek@suse.de> <87ftlftpy7.fsf@mpe.ellerman.id.au> <20190902114239.32bd81f4@naga>
-Date:   Tue, 03 Sep 2019 10:00:57 +1000
-Message-ID: <87h85us0xy.fsf@mpe.ellerman.id.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FE9F21881;
+        Tue,  3 Sep 2019 00:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567469097;
+        bh=C2Oo2ekkJf07UhZBjYcgHSOlX2ttr9aZ7KHtFcD/uVs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Pqgu9s97I5kIBQCgfJOcjjiwIvlIAMdsQ6MttlVE7h5NayMbcKz8kzhxfO14I/W0e
+         uNclzdygVNWAo96lxNW6jLxOFs9xu8+YcCuAfZFVSEOMjUQvreWEj2hEOYKjgsk0gn
+         1+sO9sTJvJyfBKgHu7ISaJIGc5yH4t6OezqHBoQE=
+Received: by earth.universe (Postfix, from userid 1000)
+        id E087E3C0CFA; Tue,  3 Sep 2019 02:04:54 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 02:04:54 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Nandor Han <nandor.han@vaisala.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] power: reset: make reboot-mode user selectable
+Message-ID: <20190903000454.lul7fn5nxqcvi5x5@earth.universe>
+References: <20190805075812.1056069-1-arnd@arndb.de>
+ <20190902203857.zusvlv3yv5arel6y@earth.universe>
+ <CAK8P3a3uNPepYweCN9+_cQNQyiSGdidwNGL0+xhti2vm8g9O_g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jk6o2ixaejebpkmd"
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3uNPepYweCN9+_cQNQyiSGdidwNGL0+xhti2vm8g9O_g@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Suchánek <msuchanek@suse.de> writes:
-> On Mon, 02 Sep 2019 12:03:12 +1000
-> Michael Ellerman <mpe@ellerman.id.au> wrote:
->
->> Michal Suchanek <msuchanek@suse.de> writes:
->> > On bigendian ppc64 it is common to have 32bit legacy binaries but much
->> > less so on littleendian.  
->> 
->> I think the toolchain people will tell you that there is no 32-bit
->> little endian ABI defined at all, if anything works it's by accident.
->
-> I have seen a piece of software that workarounds code issues on 64bit
-> by always compiling 32bit code. So it does work in some way.
 
-What software is that?
+--jk6o2ixaejebpkmd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Also it has been pointed out that you can still switch to BE even with
-> the 'fast-switch' removed.
+Hi,
 
-Yes we have a proper syscall for endian switching, sys_switch_endian(),
-which is definitely supported.
+On Mon, Sep 02, 2019 at 11:16:27PM +0200, Arnd Bergmann wrote:
+> On Mon, Sep 2, 2019 at 10:39 PM Sebastian Reichel <sre@kernel.org> wrote:
+> > This patch does not look good to me. Better patch would be to
+> > allow compiling CONFIG_REBOOT_MODE without CONFIG_OF. Obviously
+> > the configuration would not be useful for anything except compile
+> > testing, but that is also true for this patch.
+>=20
+> Ok, I'd suggest we leave it with the bugfix you already applied then.
+> [caa2b55784, power: reset: nvmem-reboot-mode: add CONFIG_OF dependency]
 
-But that *only* switches the endian-ness of the process, it does nothing
-to the syscall layer. So any process that switches to the other endian
-must endian flip syscall arguments (that aren't in registers), or flip
-back to the native endian before calling syscalls.
+That's also fine with me.
 
->> So I think we should not make this selectable, unless someone puts their
->> hand up to say they want it and are willing to test it and keep it
->> working.
->
-> I don't really care either way.
+-- Sebastian
 
-Sure. We'll see if anyone else speaks up.
+--jk6o2ixaejebpkmd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-cheers
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl1triEACgkQ2O7X88g7
++prOIw//St+HxBGAjsiXQniqUuYYbeK3Snbkmksh6ma9RNd6of3UOCaeF0jMr0sQ
+SjIgMlGJUgmOoa28eSoI+v2hRxugs1Wz5by/YCIAZxXysseA/xB8iDuScnjR2/FV
+BC9xhdAUQorvqeSHfBjrYQVSVjBqAg2lxbYFLLIbJFMvFTOf4656fQr6YaORvvC7
+lF4W9sedS1nqv5fStCQmFWoiodzKcie6QVvJtDuqueg7g/St1d0dDDiJO8fbgp1/
+w1sK3QEhrzGBfTp9GzmO7F98RUXxsCpxv5K+nQBuWx1pbLJIabJ9PP113Zuz2HQY
+/m/n4bwXeO47PaQ85/iC1qpn/L6XIReQC1TSA/pYureaazxf0zKwm0zOD5X9qHQJ
+0e5BxzWKsg5DgRg573oFoCzQtE1mgTm1Bv3ehmIYkW25I2pFhph+z5EI6tyFPIW1
+WxtgZY19dKK3YQQ7MF1ZxMUazuChHWqzGfLyrjhcglD8uQlx39fLu5N+DQceNhJm
+z9hv44m2kdcqUctjT91qi1CdZJDJhu3fJHy/QYk/KB9RdP6rhQUCmirmLMn1jjjO
+T6IhRTvtjKVtABjVa4ps97rY+hAIOffepm3KtPHa+6qPI7Wf8AY/JTCHE2+Tc1q4
+C2IFoOxpAd5HjBC+ZJqjkW+r/2xq+1bY4Z0WhT8BCvTYvJqWeOI=
+=UaPm
+-----END PGP SIGNATURE-----
+
+--jk6o2ixaejebpkmd--
