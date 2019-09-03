@@ -2,109 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F016A5ED8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 03:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18E03A5EE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 03:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbfICBae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 21:30:34 -0400
-Received: from mail-eopbgr50063.outbound.protection.outlook.com ([40.107.5.63]:5281
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725306AbfICBad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 21:30:33 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cVvlneYlJTWB0kA6Vz1uED0YcbchO3eJjLEIE8a1E3vpf45ZjaRW97zOw04IrWJJ+855P6/ssLhV+WWQ1QTUA6ncsaPqmdtkeXFk6WfjhkVhigzktOQVyA4YsAjOnuVySzhAQrd13QEfue+Vc1ANgEUFqw8yv3P7xtfPj3iRmEsujjuoRkOkHMskXEviMA9YgA5ya4YpDwO6iW4U2lJygEC5V770vKMoXKkCxMJYGQnBdMX/PHuQVjDmirKDoP4f9TSDug0YV/BewukypmOPPHWEJI2JYmcIdZUJI5MyAcbYEfDZ4jy+zp0/eSMh1ENvWw1gznaSduu++Cu6O+pfDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4sLXu1hTekGFHMH77eq+mpfv4IUSEXIjcvHHtWRzrng=;
- b=L6vljOSVJFWJe+DKnlQj1NhLQjFHBS2AnsXQ3gTig2iZih0W+K74SH6ehY5hqpKYZu+P9mdL/Z1rnUnNKVTeubZTlysl78Y1SI9vvUFPaxG2m4HuTzE6dVKRmYK/SgJzZIJeRRito7vKO1fu5eF7XoevbaieNOWw4uhda9ErZFA1Q7oqI8vFmuXI/THk6OpVMb2v5lSaGHVFokXTPT3nH2i+25mXkavSNsd25sRSE/A/gb5aqXQrhWT0k1dp2ZS+j2tHJGOyicyYSjj+TQNHqUUrI3XnEzVbFDDSncs2Dk0xoW60Zuiz10w6X9j2sMIv+W/rdpWgyZPMqWd3UPaOUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4sLXu1hTekGFHMH77eq+mpfv4IUSEXIjcvHHtWRzrng=;
- b=cvYXkMLM4gB1xKYdY9uK3wYbAlZvx8jmnM0JL4c811MN+wM6DT5Zdo8NOa3F30UpSqkveU/nUFTJgxhl82MDgMImd2SOf4HAWhjnZ2VxNRxO7SYJ1Q5GyEAZSbBBWsJJMdVVjgzSaKr4Uo4zqZGVTDl0HbsYKy17ZZA4o+IMpgM=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3739.eurprd04.prod.outlook.com (52.134.67.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.21; Tue, 3 Sep 2019 01:30:28 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::8958:299c:bc54:2a38]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::8958:299c:bc54:2a38%7]) with mapi id 15.20.2199.021; Tue, 3 Sep 2019
- 01:30:28 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] arm64: dts: imx8mn-ddr4-evk: Enable GPIO LED
-Thread-Topic: [PATCH] arm64: dts: imx8mn-ddr4-evk: Enable GPIO LED
-Thread-Index: AQHVYWrrg3PTEyasrEi6IvuVESLdoacY2AgAgABS8lA=
-Date:   Tue, 3 Sep 2019 01:30:28 +0000
-Message-ID: <DB3PR0402MB39163A67EBD2E00310973D97F5B90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1567457138-3002-1-git-send-email-Anson.Huang@nxp.com>
- <20190902203144.GA4787@bug>
-In-Reply-To: <20190902203144.GA4787@bug>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0345a1ae-cd9b-41b6-d119-08d7300e4dbd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DB3PR0402MB3739;
-x-ms-traffictypediagnostic: DB3PR0402MB3739:|DB3PR0402MB3739:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB3739DCB3C7F5779B7EB3B82DF5B90@DB3PR0402MB3739.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 01494FA7F7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(366004)(136003)(39860400002)(189003)(199004)(446003)(478600001)(11346002)(186003)(4744005)(66946007)(66476007)(66556008)(81156014)(26005)(81166006)(256004)(8676002)(74316002)(6506007)(7416002)(66066001)(99286004)(5660300002)(476003)(76176011)(8936002)(52536014)(44832011)(102836004)(486006)(7696005)(14454004)(2906002)(6116002)(316002)(229853002)(33656002)(53936002)(6916009)(4326008)(9686003)(6436002)(305945005)(7736002)(71190400001)(71200400001)(3846002)(6246003)(54906003)(25786009)(76116006)(55016002)(66446008)(86362001)(64756008)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3739;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: VY7sL36u/UrkLyrkbgqdHqSBaMFBjdVMye7mSeYy0UKjNf499N3xBft87imFF5d6pLy6yT1kWXCBTRCD11t7VoM1eye2hyF7CYCpLvTtlJEe6qFIKKV0bDTFWsJoIj6SOm4SZbm85z7e/lgD2bFeg3/uabDfrhX2IRkayB8YfLYTZQtEGaTsmDgu8BGJH+IxWS7XsDqr75uF7ARe/nOe9ZqpA6pgtKNE5AQxyKudR4RhXnRmKAKx8lKDS7maAV7tbRxTXvvgaP4bZ09WfBKtbdcoX/oO/IByVp3eEWo4Y8dUs1190DxoHsK8qNbOKUAAK/AmBJlJ+tJfmCjHlkz/reM4MAo7annNAaUq+PA6KfKQQkeTx1o1AgzEBXLLklS2maqrKm9xX49mn7ZhNKAe60Yaewibt036qQNku5Ym4L4=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726270AbfICBdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 21:33:00 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35875 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725306AbfICBc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 21:32:59 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y19so15593726wrd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 18:32:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uFS2gOcYr8n/ORpATsI1tuRB3yF1KuNhjqNeg1CIjrE=;
+        b=R1Lpt51wO+GzINS3yWChj0BXJMJqkMP9mu6bSaU5xh7eK2U7gKQYnWPZixECbB7E2z
+         Qf0Rd22TO25rNh/j6ZmaqL3NQXKxSydxgAZClM6F4+xFQzMurJ4pR08CINMOu9KE0wby
+         +U9N+RQHPY9nCCjZ+/t65IkRtr18tQ+0Vg1jpCk5xIRu2cBgBut9+qtvZ3U1MXykbeIJ
+         +La4378jP6SneFiirqWrq/MI8Xfeq2Px3oyDErIsGA7P08U2ETtUMZDeO5MrkM1lZ+ye
+         Wm/kjvarMmzB572BllROeT5Zd+d9r989UwjmNkmxE/pQRLfjeHx2tHRYJQSgobS9URj/
+         eVFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uFS2gOcYr8n/ORpATsI1tuRB3yF1KuNhjqNeg1CIjrE=;
+        b=t/inoX783n5oJHvsWJZU9CLkrDApr3EFLrS4rqpnUU56W80c5EuwB43wIEpSyVZJEX
+         yOAriQ/jEaYX9kcfDQYvGIb4dze3m05TbDrZ2l0V7XnZ4SpcAgebZjYnW+7v70wZkzRo
+         ggiUoQn4mfyggSuy0gH7QUDikmaw+ReHyYRFJINkNHVfrVJSpLR8FU+PtYw6WrO0ayjY
+         5nvpPU0kYKJ1qC+mBMng9sSJwd+Q0pP2KkilN4ZTH1GUz3HFBQaHW20dxbK9C1PHLAjq
+         ugkpvSQogHPKHWz8tv+s+FClwJHUlARD/ccc4127kyedciWkBAbkpYhaLo9MvPhuFFFS
+         LPbg==
+X-Gm-Message-State: APjAAAXeytSWHLcWsboS0ZxsqQkpuzPXr/e/X14OfqKerEwt7gu1SGG0
+        pY0BYSPqwT8GH8fRo7blF5ZXxa/KPWQQp7RHxc1DQg==
+X-Google-Smtp-Source: APXvYqywEhSAzEzmZtouqsNLkCC21lslmkYtGd0pJB5YXkRwe5tytIQ1eMiVj7rGRvIQoLguHC7TQ2mmRCWTSeERGPw=
+X-Received: by 2002:a05:6000:128d:: with SMTP id f13mr40375615wrx.241.1567474377709;
+ Mon, 02 Sep 2019 18:32:57 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0345a1ae-cd9b-41b6-d119-08d7300e4dbd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2019 01:30:28.6996
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: frrhyE+QJ/zDPGTw1zL1WgDQyJb4tyToYqvKmfDzm48fx58QuNoAosQUBNBB4NK8T1TrH0leQXXv3fZsDpk05A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3739
+References: <20190902141910.1080-1-yuehaibing@huawei.com>
+In-Reply-To: <20190902141910.1080-1-yuehaibing@huawei.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 2 Sep 2019 18:32:45 -0700
+Message-ID: <CAKv+Gu-KFp13gnx=cnVRrU4_sD8qLLXFcTOK8zuc7MC+B+GmcQ@mail.gmail.com>
+Subject: Re: [PATCH -next] crypto: inside-secure - Fix build error without CONFIG_PCI
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pascal Van Leeuwen <pvanleeuwen@insidesecure.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFBhdmVsDQoNCj4gT24gTW9uIDIwMTktMDktMDIgMTY6NDU6MzgsIEFuc29uIEh1YW5nIHdy
-b3RlOg0KPiA+IGkuTVg4TU4gRERSNCBFVksgYm9hcmQgaGFzIGEgR1BJTyBMRUQgdG8gaW5kaWNh
-dGUgc3RhdHVzLCBhZGQgc3VwcG9ydA0KPiA+IGZvciBpdC4NCj4gDQo+IExFRCBtYWludGFpbmVy
-cyB3YW50IHRvIGJlIG9uIHRoZSBjYyBsaXN0Li4uDQoNClRoZSBnZXRfbWFpbnRhaW5lci5wbCBk
-b2VzIE5PVCBzaG93IHRoZSBMRUQgbWFpbnRhaW5lcnMuLi5CdXQgSSBoYXZlIGFkZGVkIGl0DQpp
-biBWMi4NCg0KPiANCj4gPiBAQCAtMTUsNiArMTUsMTggQEANCj4gPiAgCQlzdGRvdXQtcGF0aCA9
-ICZ1YXJ0MjsNCj4gPiAgCX07DQo+ID4NCj4gPiArCWxlZHMgew0KPiA+ICsJCWNvbXBhdGlibGUg
-PSAiZ3Bpby1sZWRzIjsNCj4gPiArCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOw0KPiA+ICsJ
-CXBpbmN0cmwtMCA9IDwmcGluY3RybF9ncGlvX2xlZD47DQo+ID4gKw0KPiA+ICsJCXN0YXR1cyB7
-DQo+ID4gKwkJCWxhYmVsID0gInN0YXR1cyI7DQo+ID4gKwkJCWdwaW9zID0gPCZncGlvMyAxNiBH
-UElPX0FDVElWRV9ISUdIPjsNCj4gPiArCQkJZGVmYXVsdC1zdGF0ZSA9ICJvbiI7DQo+ID4gKwkJ
-fTsNCj4gDQo+IEFuZCB3ZSBzaG91bGQgcmVhbGx5IHN0YW5kYXJkaXplIGxhYmVscyBmb3IgdXNl
-ci1jb250cm9sbGVkIHN0YXR1cyBMRURzLg0KPiBNZW50aW9uaW5nIGNvbG9yIHdvdWxkIGJlIG5p
-Y2UsIGZvciBhIHN0YXJ0Lg0KDQpPSywgSSBjaGFuZ2UgdGhlIGxhYmVsIHRvICJ5ZWxsb3c6c3Rh
-dHVzIiBpbiBWMiwgcGxlYXNlIGhlbHAgcmV2aWV3LCB0aGFua3MuDQoNCkFuc29uDQoNCg==
+On Mon, 2 Sep 2019 at 07:19, YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> If CONFIG_PCI is not set, building fails:
+>
+> rivers/crypto/inside-secure/safexcel.c: In function safexcel_request_ring_irq:
+> drivers/crypto/inside-secure/safexcel.c:944:9: error: implicit declaration of function pci_irq_vector;
+>  did you mean rcu_irq_enter? [-Werror=implicit-function-declaration]
+>    irq = pci_irq_vector(pci_pdev, irqid);
+>          ^~~~~~~~~~~~~~
+>
+> Use #ifdef block to guard this.
+>
+> Fixes: 625f269a5a7a ("crypto: inside-secure - add support for PCI based FPGA development board")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/crypto/inside-secure/safexcel.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+> index e12a2a3..c23fe34 100644
+> --- a/drivers/crypto/inside-secure/safexcel.c
+> +++ b/drivers/crypto/inside-secure/safexcel.c
+> @@ -937,7 +937,8 @@ static int safexcel_request_ring_irq(void *pdev, int irqid,
+>         int ret, irq;
+>         struct device *dev;
+>
+> -       if (IS_ENABLED(CONFIG_PCI) && is_pci_dev) {
+> +#if IS_ENABLED(CONFIG_PCI)
+
+please don't use IS_ENABLED() with preprocessor conditionals - just
+use #ifdef CONFIG_PCI instead
+
+> +       if (is_pci_dev) {
+>                 struct pci_dev *pci_pdev = pdev;
+>
+>                 dev = &pci_pdev->dev;
+> @@ -947,7 +948,10 @@ static int safexcel_request_ring_irq(void *pdev, int irqid,
+>                                 irqid, irq);
+>                         return irq;
+>                 }
+> -       } else if (IS_ENABLED(CONFIG_OF)) {
+> +       } else
+> +#endif
+> +       {
+> +#if IS_ENABLED(CONFIG_OF)
+>                 struct platform_device *plf_pdev = pdev;
+>                 char irq_name[6] = {0}; /* "ringX\0" */
+>
+> @@ -960,6 +964,7 @@ static int safexcel_request_ring_irq(void *pdev, int irqid,
+>                                 irq_name, irq);
+>                         return irq;
+>                 }
+> +#endif
+>         }
+>
+>         ret = devm_request_threaded_irq(dev, irq, handler,
+> @@ -1137,7 +1142,8 @@ static int safexcel_probe_generic(void *pdev,
+>
+>         safexcel_configure(priv);
+>
+> -       if (IS_ENABLED(CONFIG_PCI) && priv->version == EIP197_DEVBRD) {
+> +#if IS_ENABLED(CONFIG_PCI)
+> +       if (priv->version == EIP197_DEVBRD) {
+>                 /*
+>                  * Request MSI vectors for global + 1 per ring -
+>                  * or just 1 for older dev images
+> @@ -1153,6 +1159,7 @@ static int safexcel_probe_generic(void *pdev,
+>                         return ret;
+>                 }
+>         }
+> +#endif
+>
+>         /* Register the ring IRQ handlers and configure the rings */
+>         priv->ring = devm_kcalloc(dev, priv->config.rings,
+> --
+> 2.7.4
+>
+>
