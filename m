@@ -2,88 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE708A6D84
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 064D7A6D7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730005AbfICQGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:06:41 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35777 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728860AbfICQGk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:06:40 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 205so8613853pfw.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 09:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tqiMeM8TceesmPz2bTRikxBBQDBEs3u6ayncNAD+gSk=;
-        b=e3t1McXM+B7+qPx+6xlw63jz2BIyLqfLkwAuPUpZ/KBlMqhABGIuIsh/P2+qg4fL3G
-         e68oPxPeHi8vjpPuXdOVgYVl7iyc9re3mqNsfOKETT5TLTMCJariudPc5aEYUvdJIMIr
-         8GsII5RUZLQEHyo9d62A4LFpgd69nti5zrZ7Fp+W993mrs8mrA6NQAypayAo89Qeh692
-         oYxKPcTw6O0k6WJPPZjWHpbXrBkjaz6giJxa+GF34nICobYKGyS0s0tAEw8F6vxQbAFt
-         t6J97R9xlt3Cwo1btDvuXlruov3D0WO6G2ERLjOiOc9McIhcixZ4rT8uvKQxri0cBUNW
-         EbcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tqiMeM8TceesmPz2bTRikxBBQDBEs3u6ayncNAD+gSk=;
-        b=T4RjVVqz+Z27kqbOegeiVS7asxunzVlxZMJQjQ/0YR7MF1btP5tD5k2mpgkQnJyUMJ
-         EwILUEHv9WGaoxdka8oS2xBsMLXx/OvT9z5CciPqN3qB8AnoXpnFi8GQrMF52gFax3Go
-         kt9FAzSMuFA5bEokb4eV+/NQwSOK35WXlzCQc0ClUzg5U81ctWYyVOpsxxEUJid0tGHu
-         0O9s4SuMSOUPq34Ob6gJdfPi6SAJ3mWOxm7KinWTxhA6WEizSMdx0DpNp4Lci+VcvCa+
-         fWlNR0ADRPzKxtlf1uB05Eaxs5EG9J0xIX1mTdxvjqQy6vReQQoi03f2klYvSbYKU0Pk
-         vUkQ==
-X-Gm-Message-State: APjAAAUFla/id66/FCcX5gA/EY0VDL9okQl0w19a1vxTXZT/wI4mWTur
-        tvIpRSSTmP3rIjHhn0aGynI=
-X-Google-Smtp-Source: APXvYqylZr4jbswujqwYAo39xphsMw3eAgJhDESJUjXAsNJEvXeRyMT0McdB5r6QPlWEFyI3l5Gd5g==
-X-Received: by 2002:a63:2903:: with SMTP id p3mr16265577pgp.306.1567526799745;
-        Tue, 03 Sep 2019 09:06:39 -0700 (PDT)
-Received: from localhost.localdomain.localdomain ([2408:823c:c11:160:b8c3:8577:bf2f:3])
-        by smtp.gmail.com with ESMTPSA id t11sm18501567pgb.33.2019.09.03.09.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 09:06:39 -0700 (PDT)
-From:   Pengfei Li <lpf.vector@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Pengfei Li <lpf.vector@gmail.com>
-Subject: [PATCH 5/5] mm, slab_common: Make initializing KMALLOC_DMA start from 1
-Date:   Wed,  4 Sep 2019 00:04:30 +0800
-Message-Id: <20190903160430.1368-6-lpf.vector@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190903160430.1368-1-lpf.vector@gmail.com>
-References: <20190903160430.1368-1-lpf.vector@gmail.com>
+        id S1729934AbfICQFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:05:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:39712 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729709AbfICQFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:05:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5FC3E360;
+        Tue,  3 Sep 2019 09:05:50 -0700 (PDT)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAC203F246;
+        Tue,  3 Sep 2019 09:05:48 -0700 (PDT)
+Subject: Re: [PATCH 2/2] sched/debug: add sched_update_nr_running tracepoint
+To:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        =?UTF-8?Q?Jirka_Hladk=c3=bd?= <jhladky@redhat.com>,
+        =?UTF-8?B?SmnFmcOtIFZvesOhcg==?= <jvozar@redhat.com>,
+        x86@kernel.org, Qais Yousef <qais.yousef@arm.com>
+References: <20190903154340.860299-1-rkrcmar@redhat.com>
+ <20190903154340.860299-3-rkrcmar@redhat.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <a2924d91-df68-42de-0709-af53649346d5@arm.com>
+Date:   Tue, 3 Sep 2019 17:05:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190903154340.860299-3-rkrcmar@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmalloc_caches[KMALLOC_NORMAL][0] will never be initialized,
-so the loop should start at 1 instead of 0
+On 03/09/2019 16:43, Radim Krčmář wrote:
+> The paper "The Linux Scheduler: a Decade of Wasted Cores" used several
+> custom data gathering points to better understand what was going on in
+> the scheduler.
+> Red Hat adapted one of them for the tracepoint framework and created a
+> tool to plot a heatmap of nr_running, where the sched_update_nr_running
+> tracepoint is being used for fine grained monitoring of scheduling
+> imbalance.
+> The tool is available from https://github.com/jirvoz/plot-nr-running.
+> 
+> The best place for the tracepoints is inside the add/sub_nr_running,
+> which requires some shenanigans to make it work as they are defined
+> inside sched.h.
+> The tracepoints have to be included from sched.h, which means that
+> CREATE_TRACE_POINTS has to be defined for the whole header and this
+> might cause problems if tree-wide headers expose tracepoints in sched.h
+> dependencies, but I'd argue it's the other side's misuse of tracepoints.
+> 
+> Moving the import sched.h line lower would require fixes in s390 and ppc
+> headers, because they don't include dependecies properly and expect
+> sched.h to do it, so it is simpler to keep sched.h there and
+> preventively undefine CREATE_TRACE_POINTS right after.
+> 
+> Exports of the pelt tracepoints remain because they don't need to be
+> protected by CREATE_TRACE_POINTS and moving them closer would be
+> unsightly.
+> 
 
-Signed-off-by: Pengfei Li <lpf.vector@gmail.com>
----
- mm/slab_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Pure trace events are frowned upon in scheduler world, try going with
+trace points. Qais did something very similar recently:
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index af45b5278fdc..c81fc7dc2946 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1236,7 +1236,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
- 	slab_state = UP;
- 
- #ifdef CONFIG_ZONE_DMA
--	for (i = 0; i <= KMALLOC_SHIFT_HIGH; i++) {
-+	for (i = 1; i <= KMALLOC_SHIFT_HIGH; i++) {
- 		struct kmem_cache *s = kmalloc_caches[KMALLOC_NORMAL][i];
- 
- 		if (s) {
--- 
-2.21.0
+https://lore.kernel.org/lkml/20190604111459.2862-1-qais.yousef@arm.com/
 
+You'll have to implement the associated trace events in a module, which
+lets you define your own event format and doesn't form an ABI :).
