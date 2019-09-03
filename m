@@ -2,92 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9031A6304
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D36BAA6309
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:47:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbfICHrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 03:47:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44312 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbfICHrW (ORCPT
+        id S1728145AbfICHrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 03:47:49 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50000 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfICHrs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 03:47:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 30so5344889wrk.11;
-        Tue, 03 Sep 2019 00:47:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kwp0BHhoVfTT4vyOvoyVFGJwO5w5YrMAPp4t1qkVO3w=;
-        b=shbt6WkokXyf7Hw77sVZvi3Y1VrgFRV/lEMSLU2zqwUUGfKJA1m4G2VXGkqnwToauk
-         HhX6gkgDDeQyZDWHSX3tFeNbr6Xa76EmLH77KlCXF/puLLvH3LhnlyMa94LNtN9gUGaV
-         q/QSrwqntzGq/vFO2n4N33+ruEx5+b5W1NLVl3J5DuOpcQNkXpsQViRJ997MlZVuyDvY
-         L+2rqyUSR6iCrWOGNCXjXqhOvcUZ3GAc0t2xI5t+WIye7tv/zFYVWG/9v/JtlS9fOa1B
-         WlK1BnAbEKPNrHwhGw3X5KoDJZGhXyWP+mSkU87GNA2etBTD9BhHd/IeF7uHsa6gE4mf
-         14gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kwp0BHhoVfTT4vyOvoyVFGJwO5w5YrMAPp4t1qkVO3w=;
-        b=oDeYj1tm0uNw2dtuezCZBUdKjuRQH8cd/m3946hsjgj/z3nrVZEpxobOiM+nXfA9QA
-         0+T68oE5JVv4Vf2cAcabIkTibPt+qIOTq8H8aQ2HfINpVW4xAggNr1dphkR4rk1bCgdW
-         IH8hpJMGdoBkTwvBmLyhX35z77w4VSpKX4muiEXrsJpQNt7wviWWWIZWIesW5zdP4Vzc
-         3W1bYw2rc7e3Sr0Nvmb4cPG6WP25OwR1edBv3uYydosM+dcu1PkbOR2hnJkC6l6BHDwM
-         YJqoNmX4Rwzc2Z03syMmytFhrpfeGfpmxhIXjScl6bzL0EpHflPtlGsRgkCfAv7wP5l+
-         BBkQ==
-X-Gm-Message-State: APjAAAW7xnvSqjPR1OZ2/imd56uFTxneqIIbjF70wOC7f14sAMItiiKY
-        goMmM1O3+mjFb4mDWX27khHCE+Li
-X-Google-Smtp-Source: APXvYqzhFdth8drAAl0ulFFHjoDUSNShaJg4oGaKEmjlTozCfRseyENp3XULXQZJHhmJ9OKv0UmZEA==
-X-Received: by 2002:adf:bd84:: with SMTP id l4mr41442145wrh.143.1567496839734;
-        Tue, 03 Sep 2019 00:47:19 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 2sm18179973wmz.16.2019.09.03.00.47.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 00:47:19 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 09:47:17 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Mike Travis <mike.travis@hpe.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 0/8] x86/platform/UV: Update UV Hubless System Support
-Message-ID: <20190903074717.GA34890@gmail.com>
-References: <20190903001815.504418099@stormcage.eag.rdlabs.hpecorp.net>
+        Tue, 3 Sep 2019 03:47:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gGHouZH/ciuLGyIRExd41CGKa87B1imPF/6rkdY3lbg=; b=YElJ2j2cjWJ1exLoHh9Lpbmqv
+        hw/wtXMaB3TTMwc3g/SkOPult+gnfJTXSOgShNqQGiQPi4FGnWKO/L8hYZ8LjTKSbBeyedGsCJeC1
+        i/54yD30lPgCOwNoFj0uo+VQx/rSy3VIq1OVP/s8ECk13akb2FnpThTCis945OyiaA8GDkFYAXTq4
+        cGlDPArMTzyEOD6UFjDOjUIrKJw87nWQHX/LzmWMwX/wWrjd2kNCBPkDIU8KLZhfOxrBGd3vbTVAs
+        o9NBmUVOaBzJoFfjS6pDqkx5YuqAB9x9gPhIHNYCR90rjzFGNkwGS3/Z/3F1VPFP4mvNwnxfjWLkR
+        +sgHpbtfA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i53X6-0003Gi-RF; Tue, 03 Sep 2019 07:47:21 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AF5DF306010;
+        Tue,  3 Sep 2019 09:46:42 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 75C3A29BA4608; Tue,  3 Sep 2019 09:47:18 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 09:47:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH 2/3] task: RCU protect tasks on the runqueue
+Message-ID: <20190903074718.GT2386@hirez.programming.kicks-ass.net>
+References: <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
+ <20190830160957.GC2634@redhat.com>
+ <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
+ <87o906wimo.fsf@x220.int.ebiederm.org>
+ <20190902134003.GA14770@redhat.com>
+ <87tv9uiq9r.fsf@x220.int.ebiederm.org>
+ <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
+ <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
+ <878sr6t21a.fsf_-_@x220.int.ebiederm.org>
+ <20190903074117.GX2369@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190903001815.504418099@stormcage.eag.rdlabs.hpecorp.net>
+In-Reply-To: <20190903074117.GX2369@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Mike Travis <mike.travis@hpe.com> wrote:
-
+On Tue, Sep 03, 2019 at 09:41:17AM +0200, Peter Zijlstra wrote:
+> On Mon, Sep 02, 2019 at 11:52:01PM -0500, Eric W. Biederman wrote:
 > 
-> These patches support upcoming UV systems that do not have a UV HUB.
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 2b037f195473..802958407369 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
 > 
-> 	* Save OEM_ID from ACPI MADT probe
-> 	* Return UV Hubless System Type
-> 	* Add return code to UV BIOS Init function
-> 	* Setup UV functions for Hubless UV Systems
-> 	* Add UV Hubbed/Hubless Proc FS Files
-> 	* Decode UVsystab Info
-> 	* Account for UV Hubless in is_uvX_hub Ops
+> > @@ -3857,7 +3857,7 @@ static void __sched notrace __schedule(bool preempt)
+> >  
+> >  	if (likely(prev != next)) {
+> >  		rq->nr_switches++;
+> > -		rq->curr = next;
+> > +		rcu_assign_pointer(rq->curr, next);
+> >  		/*
+> >  		 * The membarrier system call requires each architecture
+> >  		 * to have a full memory barrier after updating
+> 
+> This one is sad; it puts a (potentially) expensive barrier in here. And
+> I'm not sure I can explain the need for it. That is, we've not changed
+> @next before this and don't need to 'publish' it as such.
+> 
+> Can we use RCU_INIT_POINTER() or simply WRITE_ONCE(), here?
 
-Beyond addressing Christoph's feedback, please also make sure the series 
-applies cleanly to tip:master, because right now it doesn't.
-
-Thanks,
-
-	Ingo
+That is, I'm thinking we qualify for point 3 (both a and b) of
+RCU_INIT_POINTER().
