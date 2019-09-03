@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0707A6E4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56DCEA6ECA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:29:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730384AbfICQZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:25:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45130 "EHLO mail.kernel.org"
+        id S1730677AbfICQ2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:28:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730322AbfICQZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:25:16 -0400
+        id S1727107AbfICQ2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:28:33 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19B0A2343A;
-        Tue,  3 Sep 2019 16:25:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3129215EA;
+        Tue,  3 Sep 2019 16:28:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527915;
-        bh=YaelBjv9CrC3Jq0WoYTd+rflT0fewMxLIJgPOZWkLcc=;
+        s=default; t=1567528111;
+        bh=FkGpRU1yy9aEz6Lo31CjpS1AI9j+y3Elk0LzZ2y+ofY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yThhcpjJ9ttmo1oTs1wt3c1R1/rgO50Rn6XiBjbSuPsRQNsefJ7r7grfFCqU/Uf2Q
-         uAhnpQsOnf0ThglT40I+UYN58AItz17Y0XZfWvWaSIaZeB7x8tZSD6xrXYkropFo6D
-         RRt7hPu+Wd4eT2Zb/wiZllOuZB/pTqhGafpgaWXk=
+        b=amPuOO3ARIp3oBp2Rjhy7U0gnQcX7TpkPYBoYJBu2+9WaNSSoNw92sOhUTXZM41S0
+         3hWBwE8f3gv2Oy2GPL1ci3/xLtbZubmvSGkNtkTYYYp8rlNgEX2pB+igEyYHxdaQef
+         FH2twAkeoDVXjmiBvoUGVJrI251GbfxLVoZGV+zQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Anuj Phogat <anuj.phogat@gmail.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 23/23] drm/i915/icl: whitelist PS_(DEPTH|INVOCATION)_COUNT
-Date:   Tue,  3 Sep 2019 12:24:24 -0400
-Message-Id: <20190903162424.6877-23-sashal@kernel.org>
+Cc:     Peter Xu <peterx@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Eduardo Habkost <ehabkost@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 115/167] kvm: Check irqchip mode before assign irqfd
+Date:   Tue,  3 Sep 2019 12:24:27 -0400
+Message-Id: <20190903162519.7136-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903162424.6877-1-sashal@kernel.org>
-References: <20190903162424.6877-1-sashal@kernel.org>
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,55 +46,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+From: Peter Xu <peterx@redhat.com>
 
-[ Upstream commit cf8f9aa1eda7d916bd23f6b8c226404deb11690c ]
+[ Upstream commit 654f1f13ea56b92bacade8ce2725aea0457f91c0 ]
 
-The same tests failing on CFL+ platforms are also failing on ICL.
-Documentation doesn't list the
-WaAllowPMDepthAndInvocationCountAccessFromUMD workaround for ICL but
-applying it fixes the same tests as CFL.
+When assigning kvm irqfd we didn't check the irqchip mode but we allow
+KVM_IRQFD to succeed with all the irqchip modes.  However it does not
+make much sense to create irqfd even without the kernel chips.  Let's
+provide a arch-dependent helper to check whether a specific irqfd is
+allowed by the arch.  At least for x86, it should make sense to check:
 
-v2: Use only one whitelist entry (Lionel)
+- when irqchip mode is NONE, all irqfds should be disallowed, and,
 
-Signed-off-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-Tested-by: Anuj Phogat <anuj.phogat@gmail.com>
-Cc: stable@vger.kernel.org # 6883eab27481: drm/i915: Support flags in whitlist WAs
+- when irqchip mode is SPLIT, irqfds that are with resamplefd should
+  be disallowed.
+
+For either of the case, previously we'll silently ignore the irq or
+the irq ack event if the irqchip mode is incorrect.  However that can
+cause misterious guest behaviors and it can be hard to triage.  Let's
+fail KVM_IRQFD even earlier to detect these incorrect configurations.
+
+CC: Paolo Bonzini <pbonzini@redhat.com>
+CC: Radim Krčmář <rkrcmar@redhat.com>
+CC: Alex Williamson <alex.williamson@redhat.com>
+CC: Eduardo Habkost <ehabkost@redhat.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
 Cc: stable@vger.kernel.org
-Acked-by: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190628120720.21682-4-lionel.g.landwerlin@intel.com
-(cherry picked from commit 3fe0107e45ab396342497e06b8924cdd485cde3b)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/intel_workarounds.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/x86/kvm/irq.c | 7 +++++++
+ arch/x86/kvm/irq.h | 1 +
+ virt/kvm/eventfd.c | 9 +++++++++
+ 3 files changed, 17 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/intel_workarounds.c b/drivers/gpu/drm/i915/intel_workarounds.c
-index efea5a18fa6db..edd57a5e0495f 100644
---- a/drivers/gpu/drm/i915/intel_workarounds.c
-+++ b/drivers/gpu/drm/i915/intel_workarounds.c
-@@ -1107,6 +1107,19 @@ static void icl_whitelist_build(struct intel_engine_cs *engine)
- 
- 		/* WaEnableStateCacheRedirectToCS:icl */
- 		whitelist_reg(w, GEN9_SLICE_COMMON_ECO_CHICKEN1);
+diff --git a/arch/x86/kvm/irq.c b/arch/x86/kvm/irq.c
+index faa264822cee3..007bc654f928a 100644
+--- a/arch/x86/kvm/irq.c
++++ b/arch/x86/kvm/irq.c
+@@ -172,3 +172,10 @@ void __kvm_migrate_timers(struct kvm_vcpu *vcpu)
+ 	__kvm_migrate_apic_timer(vcpu);
+ 	__kvm_migrate_pit_timer(vcpu);
+ }
 +
-+		/*
-+		 * WaAllowPMDepthAndInvocationCountAccessFromUMD:icl
-+		 *
-+		 * This covers 4 register which are next to one another :
-+		 *   - PS_INVOCATION_COUNT
-+		 *   - PS_INVOCATION_COUNT_UDW
-+		 *   - PS_DEPTH_COUNT
-+		 *   - PS_DEPTH_COUNT_UDW
-+		 */
-+		whitelist_reg_ext(w, PS_INVOCATION_COUNT,
-+				  RING_FORCE_TO_NONPRIV_RD |
-+				  RING_FORCE_TO_NONPRIV_RANGE_4);
- 		break;
++bool kvm_arch_irqfd_allowed(struct kvm *kvm, struct kvm_irqfd *args)
++{
++	bool resample = args->flags & KVM_IRQFD_FLAG_RESAMPLE;
++
++	return resample ? irqchip_kernel(kvm) : irqchip_in_kernel(kvm);
++}
+diff --git a/arch/x86/kvm/irq.h b/arch/x86/kvm/irq.h
+index d5005cc265217..fd210cdd49839 100644
+--- a/arch/x86/kvm/irq.h
++++ b/arch/x86/kvm/irq.h
+@@ -114,6 +114,7 @@ static inline int irqchip_in_kernel(struct kvm *kvm)
+ 	return mode != KVM_IRQCHIP_NONE;
+ }
  
- 	case VIDEO_DECODE_CLASS:
++bool kvm_arch_irqfd_allowed(struct kvm *kvm, struct kvm_irqfd *args);
+ void kvm_inject_pending_timer_irqs(struct kvm_vcpu *vcpu);
+ void kvm_inject_apic_timer_irqs(struct kvm_vcpu *vcpu);
+ void kvm_apic_nmi_wd_deliver(struct kvm_vcpu *vcpu);
+diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+index b20b751286fc6..757a17f5ebdeb 100644
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -44,6 +44,12 @@
+ 
+ static struct workqueue_struct *irqfd_cleanup_wq;
+ 
++bool __attribute__((weak))
++kvm_arch_irqfd_allowed(struct kvm *kvm, struct kvm_irqfd *args)
++{
++	return true;
++}
++
+ static void
+ irqfd_inject(struct work_struct *work)
+ {
+@@ -297,6 +303,9 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	if (!kvm_arch_intc_initialized(kvm))
+ 		return -EAGAIN;
+ 
++	if (!kvm_arch_irqfd_allowed(kvm, args))
++		return -EINVAL;
++
+ 	irqfd = kzalloc(sizeof(*irqfd), GFP_KERNEL);
+ 	if (!irqfd)
+ 		return -ENOMEM;
 -- 
 2.20.1
 
