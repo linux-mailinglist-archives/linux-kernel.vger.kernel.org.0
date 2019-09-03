@@ -2,192 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94394A7284
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AEDEA728A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbfICS1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 14:27:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34891 "EHLO mx1.redhat.com"
+        id S1726508AbfICScs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 14:32:48 -0400
+Received: from gate.crashing.org ([63.228.1.57]:50902 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727069AbfICS1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 14:27:50 -0400
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 554753680A
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2019 18:27:49 +0000 (UTC)
-Received: by mail-qk1-f199.google.com with SMTP id d9so20074730qko.8
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 11:27:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=07Nosu99Mp1zqKp4ye8H9IkjaI2ZBjCJN3UDTKMkL/I=;
-        b=IQBnwxp3z/g8oPYx5QdetsSJ1dDZTE8oc6W0bQrCnEvHcxqiRSUkVsVo9Dz9uTCq11
-         zKpBNT8+lgtn24tKPVCbc9TAYAGcTQ8r1LroHqYnKt1tf2/fpxyHUY3dP6PezImNBN9/
-         OsVXYsaWbWO2KCHt7KlgjyV7wQhIRG+s28gFY8TblzjjMGLzDAioMTDqcV1rfoKHgf9c
-         4xf+fnbRibBoQVpgYvI4DWoU400Gy9mBGBn4bocnzUWbEoZaGxVZKUoC4YqUEQnxHC4B
-         je7BapGsAoahnX+70Crs8/T0dvh5Onp/HcXnwucemRy/s6LQbisFzgOidSipNRsK4bvJ
-         B7Lg==
-X-Gm-Message-State: APjAAAXOJNA5miq/hxvh4Z8ZsmMpWZe2qlEZTC3dAJ1ueeApjHj2NkXp
-        6RmODVBZWaZSk4hcjO5Ujcg0NKz+XJPUBH/4L6cs81toaqAEIRdABbLcel4/6RDn5VHkiHBqbOp
-        uuQ9zpdAmiI9cF/1CMZletr6B
-X-Received: by 2002:aed:27c1:: with SMTP id m1mr15498663qtg.197.1567535268660;
-        Tue, 03 Sep 2019 11:27:48 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqztOEl0H8g/hPHQCmeKx+cH2srAaosbtrUNr/jReZ5cxMrICdEyZyhC5Lxe2bZk0gPYyqchpw==
-X-Received: by 2002:aed:27c1:: with SMTP id m1mr15498636qtg.197.1567535268421;
-        Tue, 03 Sep 2019 11:27:48 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id c26sm10902892qtk.93.2019.09.03.11.27.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 11:27:47 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 11:27:42 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jordan Hand <jorhand@linux.microsoft.com>
-Cc:     jarkko.sakkinen@linux.intel.com, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        id S1726377AbfICScs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 14:32:48 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x83IVx20018430;
+        Tue, 3 Sep 2019 13:31:59 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x83IVvlH018429;
+        Tue, 3 Sep 2019 13:31:57 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Tue, 3 Sep 2019 13:31:57 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     "Alastair D'Silva" <alastair@au1.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] tpm: Parse event log from TPM2 ACPI table
-Message-ID: <20190903182742.rmqthgu6rms3uill@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Jordan Hand <jorhand@linux.microsoft.com>,
-        jarkko.sakkinen@linux.intel.com, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190831051027.11544-1-jorhand@linux.microsoft.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>, alastair@d-silva.org,
+        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Allison Randal <allison@lohutok.net>
+Subject: Re: [PATCH v2 3/6] powerpc: Convert flush_icache_range & friends to C
+Message-ID: <20190903183157.GB9749@gate.crashing.org>
+References: <20190903052407.16638-1-alastair@au1.ibm.com> <20190903052407.16638-4-alastair@au1.ibm.com> <20190903130430.GC31406@gate.crashing.org> <d268ee78-607e-5eb3-ed89-d5c07f672046@c-s.fr> <20190903160415.GA9749@gate.crashing.org> <321b003a-9633-5ff4-c4a2-59a47ec23421@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190831051027.11544-1-jorhand@linux.microsoft.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <321b003a-9633-5ff4-c4a2-59a47ec23421@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri Aug 30 19, Jordan Hand wrote:
->For systems with a TPM2 chip which use ACPI to expose event logs, retrieve the
->crypto-agile event log from the TPM2 ACPI table. The TPM2 table is defined
->in section 7.3 of the TCG ACPI Specification (see link).
->
->The TPM2 table is used by SeaBIOS in place of the TCPA table when the system's
->TPM is version 2.0 to denote (among other metadata) the location of the
->crypto-agile log.
->
->Link: https://trustedcomputinggroup.org/resource/tcg-acpi-specification/
->Signed-off-by: Jordan Hand <jorhand@linux.microsoft.com>
->---
-> drivers/char/tpm/eventlog/acpi.c | 60 ++++++++++++++++++++++----------
-> 1 file changed, 41 insertions(+), 19 deletions(-)
->
->diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
->index 63ada5e53f13..38a8bcec1dd5 100644
->--- a/drivers/char/tpm/eventlog/acpi.c
->+++ b/drivers/char/tpm/eventlog/acpi.c
->@@ -41,17 +41,23 @@ struct acpi_tcpa {
-> 	};
-> };
->
->+/* If an event log is present, the TPM2 ACPI table will contain the full
->+ * trailer
->+ */
->+
-> /* read binary bios log */
-> int tpm_read_log_acpi(struct tpm_chip *chip)
-> {
->-	struct acpi_tcpa *buff;
->+	struct acpi_table_header *buff;
->+	struct acpi_tcpa *tcpa;
->+	struct acpi_tpm2_trailer *tpm2_trailer;
-> 	acpi_status status;
-> 	void __iomem *virt;
-> 	u64 len, start;
->+	int log_type;
-> 	struct tpm_bios_log *log;
->-
->-	if (chip->flags & TPM_CHIP_FLAG_TPM2)
->-		return -ENODEV;
->+	bool is_tpm2 = chip->flags & TPM_CHIP_FLAG_TPM2;
->+	acpi_string table_sig;
->
-> 	log = &chip->log;
->
->@@ -61,26 +67,42 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
-> 	if (!chip->acpi_dev_handle)
-> 		return -ENODEV;
->
->-	/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
->-	status = acpi_get_table(ACPI_SIG_TCPA, 1,
->-				(struct acpi_table_header **)&buff);
->+	/* Find TCPA or TPM2 entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
->+	table_sig = is_tpm2 ? ACPI_SIG_TPM2 : ACPI_SIG_TCPA;
->+	status = acpi_get_table(table_sig, 1, &buff);
->
-> 	if (ACPI_FAILURE(status))
-> 		return -ENODEV;
->
->-	switch(buff->platform_class) {
->-	case BIOS_SERVER:
->-		len = buff->server.log_max_len;
->-		start = buff->server.log_start_addr;
->-		break;
->-	case BIOS_CLIENT:
->-	default:
->-		len = buff->client.log_max_len;
->-		start = buff->client.log_start_addr;
->-		break;
->+	if (!is_tpm2) {
->+		tcpa = (struct acpi_tcpa *)buff;
->+		switch (tcpa->platform_class) {
->+		case BIOS_SERVER:
->+			len = tcpa->server.log_max_len;
->+			start = tcpa->server.log_start_addr;
->+			break;
->+		case BIOS_CLIENT:
->+		default:
->+			len = tcpa->client.log_max_len;
->+			start = tcpa->client.log_start_addr;
->+			break;
->+		}
->+		log_type = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
->+	} else if (buff->length ==
->+		   sizeof(struct acpi_table_tpm2) +
->+		   sizeof(struct acpi_tpm2_trailer)) {
->+		tpm2_trailer = (struct acpi_tpm2_trailer *)buff;
->+
->+		len = tpm2_trailer.minimum_log_length;
->+		start = tpm2_trailer.log_address;
+On Tue, Sep 03, 2019 at 07:05:19PM +0200, Christophe Leroy wrote:
+> Le 03/09/2019 à 18:04, Segher Boessenkool a écrit :
+> >(Why are they separate though?  It could just be one loop var).
+> 
+> Yes it could just be a single loop var, but in that case it would have 
+> to be reset at the start of the second loop, which means we would have 
+> to pass 'addr' for resetting the loop anyway,
 
-Are your builds not failing here? Both v3 and v4 have this.
+Right, I noticed that after hitting send, as usual.
 
->+		log_type = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
->+	} else {
->+		return -ENODEV;
-> 	}
->+
-> 	if (!len) {
->-		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
->+		dev_warn(&chip->dev, "%s: %s log area empty\n",
->+			 __func__, table_sig);
-> 		return -EIO;
-> 	}
->
->@@ -98,7 +120,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
-> 	memcpy_fromio(log->bios_event_log, virt, len);
->
-> 	acpi_os_unmap_iomem(virt, len);
->-	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
->+	return log_type;
->
-> err:
-> 	kfree(log->bios_event_log);
->-- 
->2.20.1
->
+> so I opted to do it 
+> outside the inline asm by using to separate loop vars set to their 
+> starting value outside the inline asm.
+
+The thing is, the way it is written now, it will get separate registers
+for each loop (with proper earlyclobbers added).  Not that that really
+matters of course, it just feels wrong :-)
+
+
+Segher
