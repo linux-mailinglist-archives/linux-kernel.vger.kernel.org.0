@@ -2,185 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2436A67AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 13:42:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2A65A67BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 13:44:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbfICLmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 07:42:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35324 "EHLO mx1.redhat.com"
+        id S1728918AbfICLof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 07:44:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729126AbfICLmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:42:22 -0400
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+        id S1726936AbfICLoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 07:44:34 -0400
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6A257356C5
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2019 11:42:21 +0000 (UTC)
-Received: by mail-wr1-f72.google.com with SMTP id x1so4985821wrn.11
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 04:42:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OAN7nnEOH+Yjifk4c+jX2lC/QmauX+hAkPf3AFHmQks=;
-        b=TY/ghuzDmXSA6Yr7RbKjzaa/go2R9sYNBeE6CVUfRxICG6XPcVk/ljXQhAp7zXC3HK
-         cEQ45IkVvA6VpL57ODbQ6svTBrhtu8vNc3GWO7xT+CuMVpz5/U0FSg5LbZNUjFS/7X/1
-         xEDMWJmxTK81I3106jo/q6Za4TSrXaHhKkmayqTA/M//NOKdRV5w6KCX0aTwMmtHVB2C
-         ExdlxKambJObp5i7x9ObAHggYRMCQH2M4uuAch6BDsxN7D90J+YdTClNNUGMQieSRTiX
-         IYltplbjbdY8NnTGaHBzslriItV0YUAkFMbm5kK17XjhatJ3G+JHd1jqAddwShS7p34V
-         Jp9A==
-X-Gm-Message-State: APjAAAUH63SWMg66xgBHT2SbEWyhsW7KOVRa0dAfly/Gu6ZZzg+l3Bwf
-        qpqoPypKAmLZ+yuFs15GoQKEi/79UWdGqmkaiBM3V0jx6o1fCnSLDx9BpLOBjr4/xBk7/xOw0Q9
-        1/PQr0+GUIBffQ/VINCFcFaHl
-X-Received: by 2002:a5d:6288:: with SMTP id k8mr28211443wru.209.1567510939823;
-        Tue, 03 Sep 2019 04:42:19 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwxBZwbWA+ixdgpc74X3E/33uuCSu4TTuS7g05oqkicDMw4i1d0jy4fyCnvZ596KAZw2h29cw==
-X-Received: by 2002:a5d:6288:: with SMTP id k8mr28211419wru.209.1567510939587;
-        Tue, 03 Sep 2019 04:42:19 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id x6sm2087551wmf.38.2019.09.03.04.42.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 04:42:19 -0700 (PDT)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: [PATCH v4 16/16] virtio-fs: add Documentation/filesystems/virtiofs.rst
-Date:   Tue,  3 Sep 2019 13:42:03 +0200
-Message-Id: <20190903114203.8278-11-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190903113640.7984-1-mszeredi@redhat.com>
-References: <20190903113640.7984-1-mszeredi@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id B59E22087E;
+        Tue,  3 Sep 2019 11:44:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567511074;
+        bh=GLV2PrI/w8WKtzeB6Jimizt3wNVcE7gXazlgmzVZ2VA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=EnqJXBD8dkyrwGsBAUhGPddErCfaZwlTLTUa5f+8glfQltP2ohwel9bhSzZha9Sqz
+         UgceN2Su+cXuY4948X2puyubqSotGIyYVxXsOb3AETqjK/xEyB0/ki14jvvmgJIeEu
+         WasyBWRwQcna6q44TUF//BKBUv32kZLtmNiLNK9I=
+Received: by mail-lj1-f179.google.com with SMTP id l20so1224256ljj.3;
+        Tue, 03 Sep 2019 04:44:33 -0700 (PDT)
+X-Gm-Message-State: APjAAAUM8oSm9kQ99K2JLg0Cj1YCfl8fVd46N3YXPChGhrjaYogPMByH
+        9mii0dw+rtbsjsvoXfZhtblcKSi3L7l1/CGs+wA=
+X-Google-Smtp-Source: APXvYqyECBe/crmq4JV2MfBJDre5Qh7vIn7L4YZKge7PR+AYhXx56re52lOMKFQztCZLzQihgJt+s/Vw4EAIHMTM8ZU=
+X-Received: by 2002:a2e:99cc:: with SMTP id l12mr7148200ljj.5.1567511071966;
+ Tue, 03 Sep 2019 04:44:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190902150336.3600-1-krzk@kernel.org> <CAL_JsqK_O+7zQDGxAhAHDW=AkMy+RtyijTXUuRStOgu8CYXe0g@mail.gmail.com>
+ <CAJKOXPfO0yBzGFPvF_WwsGGJBZSBGMLsFi2CQ2Eg5RVfyfW3nA@mail.gmail.com> <CAL_JsqJUfGBRAv=StPyavQU1DiHnFwUseNCvP6Ce_ZMohJXTXQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqJUfGBRAv=StPyavQU1DiHnFwUseNCvP6Ce_ZMohJXTXQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 3 Sep 2019 13:44:20 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcjF9nERQxDdSVBLsfc2V_M1_BPZ6iM6EXvEx4tdr3rDQ@mail.gmail.com>
+Message-ID: <CAJKOXPcjF9nERQxDdSVBLsfc2V_M1_BPZ6iM6EXvEx4tdr3rDQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: power: syscon-reboot: Convert bindings
+ to json-schema
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Hajnoczi <stefanha@redhat.com>
+On Tue, 3 Sep 2019 at 11:00, Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Tue, Sep 3, 2019 at 8:47 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Tue, 3 Sep 2019 at 09:14, Rob Herring <robh+dt@kernel.org> wrote:
+> > >
+> > > On Mon, Sep 2, 2019 at 4:03 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > >
+> > > > Convert the Syscon reboot bindings to DT schema format using
+> > > > json-schema.
+> > > >
+> > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > > ---
+> > > >  .../bindings/power/reset/syscon-reboot.txt    | 30 --------
+> > > >  .../bindings/power/reset/syscon-reboot.yaml   | 68 +++++++++++++++++++
+> > > >  2 files changed, 68 insertions(+), 30 deletions(-)
+> > > >  delete mode 100644 Documentation/devicetree/bindings/power/reset/syscon-reboot.txt
+> > > >  create mode 100644 Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> > >
+> > > > diff --git a/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..a583f3dc8ef4
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> > > > @@ -0,0 +1,68 @@
+> > > > +# SPDX-License-Identifier: GPL-2.0
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/power/reset/syscon-reboot.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Generic SYSCON mapped register reset driver
+> > > > +
+> > > > +maintainers:
+> > > > +  - Sebastian Reichel <sre@kernel.org>
+> > > > +
+> > > > +description: |+
+> > > > +  This is a generic reset driver using syscon to map the reset register.
+> > > > +  The reset is generally performed with a write to the reset register
+> > > > +  defined by the register map pointed by syscon reference plus the offset
+> > > > +  with the value and mask defined in the reboot node.
+> > > > +  Default will be little endian mode, 32 bit access only.
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    const: syscon-reboot
+> > > > +
+> > > > +  mask:
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +    description: Update only the register bits defined by the mask (32 bit).
+> > > > +    maxItems: 1
+> > >
+> > > Drop this as that is already defined for uint32.
+> > >
+> > > It also doesn't actually work. The $ref has to be under an 'allOf' if
+> > > you have additional schemas. A quirk of json-schema...
+> > >
+> > > > +
+> > > > +  offset:
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +    description: Offset in the register map for the reboot register (in bytes).
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  regmap:
+> > > > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > > > +    description: Phandle to the register map node.
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  value:
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +    description: The reset value written to the reboot register (32 bit access).
+> > > > +    maxItems: 1
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - regmap
+> > > > +  - offset
+> > > > +
+> > > > +allOf:
+> > > > +  - if:
+> > > > +      properties:
+> > > > +        value:
+> > > > +          not:
+> > > > +            type: array
+> > >
+> > > I think you could make this a bit more readable with:
+> > >
+> > > if:
+> > >   not:
+> > >     required:
+> > >       - value
+> >
+> > I do not understand how does it work (value is not mentioned in the
+> > required fields so why checking of it?)... but it works fine.
+>
+> What's under required doesn't have to be listed as a property.
+>
+> > > However, if the tree is free of legacy usage, then you could just drop all this.
+> >
+> > One of them - mask or value - has to be provided.
+>
+> Or both, right?
+>
+> Actually, a better way to express it is probably this:
+>
+> oneOf:
+>   - required: [ value ]
+>   - required: [ mask ]
+>   - required: [ value, mask ]
 
-Add information about the new "virtiofs" file system.
+This does not work mask+value would be valid everywhere:
 
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- Documentation/filesystems/index.rst    | 10 +++++
- Documentation/filesystems/virtiofs.rst | 60 ++++++++++++++++++++++++++
- MAINTAINERS                            | 11 +++++
- 3 files changed, 81 insertions(+)
- create mode 100644 Documentation/filesystems/virtiofs.rst
-
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 2de2fe2ab078..56e94bfc580f 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -32,3 +32,13 @@ filesystem implementations.
- 
-    journalling
-    fscrypt
-+
-+Filesystems
-+===========
-+
-+Documentation for filesystem implementations.
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-+   virtiofs
-diff --git a/Documentation/filesystems/virtiofs.rst b/Documentation/filesystems/virtiofs.rst
-new file mode 100644
-index 000000000000..4f338e3cb3f7
---- /dev/null
-+++ b/Documentation/filesystems/virtiofs.rst
-@@ -0,0 +1,60 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===================================================
-+virtiofs: virtio-fs host<->guest shared file system
-+===================================================
-+
-+- Copyright (C) 2019 Red Hat, Inc.
-+
-+Introduction
-+============
-+The virtiofs file system for Linux implements a driver for the paravirtualized
-+VIRTIO "virtio-fs" device for guest<->host file system sharing.  It allows a
-+guest to mount a directory that has been exported on the host.
-+
-+Guests often require access to files residing on the host or remote systems.
-+Use cases include making files available to new guests during installation,
-+booting from a root file system located on the host, persistent storage for
-+stateless or ephemeral guests, and sharing a directory between guests.
-+
-+Although it is possible to use existing network file systems for some of these
-+tasks, they require configuration steps that are hard to automate and they
-+expose the storage network to the guest.  The virtio-fs device was designed to
-+solve these problems by providing file system access without networking.
-+
-+Furthermore the virtio-fs device takes advantage of the co-location of the
-+guest and host to increase performance and provide semantics that are not
-+possible with network file systems.
-+
-+Usage
-+=====
-+Mount file system with tag ``myfs`` on ``/mnt``:
-+
-+.. code-block:: sh
-+
-+  guest# mount -t virtiofs myfs /mnt
-+
-+Please see https://virtio-fs.gitlab.io/ for details on how to configure QEMU
-+and the virtiofsd daemon.
-+
-+Internals
-+=========
-+Since the virtio-fs device uses the FUSE protocol for file system requests, the
-+virtiofs file system for Linux is integrated closely with the FUSE file system
-+client.  The guest acts as the FUSE client while the host acts as the FUSE
-+server.  The /dev/fuse interface between the kernel and userspace is replaced
-+with the virtio-fs device interface.
-+
-+FUSE requests are placed into a virtqueue and processed by the host.  The
-+response portion of the buffer is filled in by the host and the guest handles
-+the request completion.
-+
-+Mapping /dev/fuse to virtqueues requires solving differences in semantics
-+between /dev/fuse and virtqueues.  Each time the /dev/fuse device is read, the
-+FUSE client may choose which request to transfer, making it possible to
-+prioritize certain requests over others.  Virtqueues have queue semantics and
-+it is not possible to change the order of requests that have been enqueued.
-+This is especially important if the virtqueue becomes full since it is then
-+impossible to add high priority requests.  In order to address this difference,
-+the virtio-fs device uses a "hiprio" virtqueue specifically for requests that
-+have priority over normal requests.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9cbcf167bdd0..459b3fa8e25e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17117,6 +17117,17 @@ S:	Supported
- F:	drivers/s390/virtio/
- F:	arch/s390/include/uapi/asm/virtio-ccw.h
- 
-+VIRTIO FILE SYSTEM
-+M:	Stefan Hajnoczi <stefanha@redhat.com>
-+M:	Miklos Szeredi <miklos@szeredi.hu>
-+L:	virtualization@lists.linux-foundation.org
-+L:	linux-fsdevel@vger.kernel.org
-+W:	https://virtio-fs.gitlab.io/
-+S:	Supported
-+F:	fs/fuse/virtio_fs.c
-+F:	include/uapi/linux/virtio_fs.h
-+F:	Documentation/filesystems/virtiofs.rst
-+
- VIRTIO GPU DRIVER
- M:	David Airlie <airlied@linux.ie>
- M:	Gerd Hoffmann <kraxel@redhat.com>
--- 
-2.21.0
-
+arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml: syscon-reboot:
+{'regmap': [[9]], 'mask': [[1]], '$nodename': ['syscon-reboot'],
+'value': [[1]], 'offset': [[1024]], 'compatible': ['syscon-reboot']}
+is valid under each of {'required': ['mask']}, {'required': ['value',
+'mask']}, {'required': ['value']}
