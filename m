@@ -2,157 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68A6AA7519
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19B92A752B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:47:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfICUlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 16:41:50 -0400
-Received: from mail.efficios.com ([167.114.142.138]:48680 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725953AbfICUlt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 16:41:49 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 56F032B2FED;
-        Tue,  3 Sep 2019 16:41:48 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id YGe_ofTvY5TO; Tue,  3 Sep 2019 16:41:48 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id E3F942B2FE8;
-        Tue,  3 Sep 2019 16:41:47 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E3F942B2FE8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1567543307;
-        bh=kzbhdxL6p5DVUn//4xlV8bUJLkFCNwDgZOU5rVYtjZo=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=QAGZVubgcPGJTtBDr1bZtaI93DEcxBG552w5ddI7wME23neccf4IK82x+KTg2V5GK
-         qxI/CbcmcauVtv1odvRNG1/k8DZanCIOGey/OKJR4S2s/1GFUTRhQQ5U74Nc65pq+Z
-         tRB6ZGHVoqHgkEtq5w66456VfFXf+nKYulNt4HSFb5NfcyiCQyCypEjb5swSbWWDjL
-         XJ2MI/13Ety0vpqOJk9F4Z0nLOztTTrW0wFZI5T20h1RijonD6defKy4eNEZt2Dur+
-         w292u1muSB65YX/7d5ysT44X0BAYId6pymLNcn0waVJkFgX7MzZjebyNQnTd/1zuFj
-         3shykfPVFauEw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id f_nSfkUuR3DT; Tue,  3 Sep 2019 16:41:47 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id C94F62B2FDA;
-        Tue,  3 Sep 2019 16:41:47 -0400 (EDT)
-Date:   Tue, 3 Sep 2019 16:41:47 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     paulmck <paulmck@linux.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
-        Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Message-ID: <1029906102.725.1567543307658.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20190903202434.GX2349@hirez.programming.kicks-ass.net>
-References: <20190903201135.1494-1-mathieu.desnoyers@efficios.com> <20190903202434.GX2349@hirez.programming.kicks-ass.net>
-Subject: Re: [RFC PATCH 1/2] Fix: sched/membarrier: p->mm->membarrier_state
- racy load
+        id S1726935AbfICUrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 16:47:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38014 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726375AbfICUrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 16:47:40 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D2F2510F09;
+        Tue,  3 Sep 2019 20:47:39 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-34.bss.redhat.com [10.20.1.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A13E81001B02;
+        Tue,  3 Sep 2019 20:47:38 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org
+Cc:     Juston Li <juston.li@intel.com>, Imre Deak <imre.deak@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/27] drm/dp_mst: Move link address dumping into a function
+Date:   Tue,  3 Sep 2019 16:45:39 -0400
+Message-Id: <20190903204645.25487-2-lyude@redhat.com>
+In-Reply-To: <20190903204645.25487-1-lyude@redhat.com>
+References: <20190903204645.25487-1-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - FF68 (Linux)/8.8.15_GA_3829)
-Thread-Topic: sched/membarrier: p->mm->membarrier_state racy load
-Thread-Index: VxBHx0Ijjv+FZdN+7ID1WvH9d1Li7A==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 03 Sep 2019 20:47:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Sep 3, 2019, at 4:24 PM, Peter Zijlstra peterz@infradead.org wrote:
+Makes things easier to read.
 
-> On Tue, Sep 03, 2019 at 04:11:34PM -0400, Mathieu Desnoyers wrote:
-> 
->> diff --git a/include/linux/sched.h b/include/linux/sched.h
->> index 9f51932bd543..e24d52a4c37a 100644
->> --- a/include/linux/sched.h
->> +++ b/include/linux/sched.h
->> @@ -1130,6 +1130,10 @@ struct task_struct {
->>  	unsigned long			numa_pages_migrated;
->>  #endif /* CONFIG_NUMA_BALANCING */
->>  
->> +#ifdef CONFIG_MEMBARRIER
->> +	atomic_t membarrier_state;
->> +#endif
->> +
->>  #ifdef CONFIG_RSEQ
->>  	struct rseq __user *rseq;
->>  	u32 rseq_sig;
->> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
->> index 4a7944078cc3..3577cd7b3dbb 100644
->> --- a/include/linux/sched/mm.h
->> +++ b/include/linux/sched/mm.h
->> @@ -371,7 +371,17 @@ static inline void
->> membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
->>  static inline void membarrier_execve(struct task_struct *t)
->>  {
->>  	atomic_set(&t->mm->membarrier_state, 0);
->> +	atomic_set(&t->membarrier_state, 0);
->>  }
->> +
->> +static inline void membarrier_prepare_task_switch(struct task_struct *t)
->> +{
->> +	if (!t->mm)
->> +		return;
->> +	atomic_set(&t->membarrier_state,
->> +		   atomic_read(&t->mm->membarrier_state));
->> +}
->> +
-> 
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index 010d578118d6..8d4f1f20db15 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -3038,6 +3038,7 @@ prepare_task_switch(struct rq *rq, struct task_struct
->> *prev,
->>  	perf_event_task_sched_out(prev, next);
->>  	rseq_preempt(prev);
->>  	fire_sched_out_preempt_notifiers(prev, next);
->> +	membarrier_prepare_task_switch(next);
->>  	prepare_task(next);
->>  	prepare_arch_switch(next);
->>  }
-> 
-> 
-> Yuck yuck yuck..
-> 
-> so the problem I have with this is that we add yet another cacheline :/
-> 
-> Why can't we frob this state into a line/word we already have to
-> unconditionally touch, like the thread_info::flags word for example.
-> 
-> The above also does the store unconditionally, even though, in the most
-> common case, it won't have to.
+Cc: Juston Li <juston.li@intel.com>
+Cc: Imre Deak <imre.deak@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: Harry Wentland <hwentlan@amd.com>
+Reviewed-by: Daniel Vetter <daniel@ffwll.ch>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ drivers/gpu/drm/drm_dp_mst_topology.c | 35 ++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
 
-This approach would require to reserve TIF flags in each supported
-architecture, which I would like to avoid if possible.
-
-As discussed on IRC, one alternative for the multi-threaded case would
-be to grab the task list lock and iterate over all existing tasks to
-set the bit, so we don't have to touch an extra cache line from the
-scheduler.
-
-In order to keep the speed of the common single-threaded library
-constructor common case fast, we simply set the bit in the current
-task struct, and rely on clone() propagating the flag to children
-threads (which it already does).
-
-Thanks,
-
-Mathieu
-
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+index 82add736e17d..36db66a0ddb1 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -2103,6 +2103,28 @@ static void drm_dp_queue_down_tx(struct drm_dp_mst_topology_mgr *mgr,
+ 	mutex_unlock(&mgr->qlock);
+ }
+ 
++static void
++drm_dp_dump_link_address(struct drm_dp_link_address_ack_reply *reply)
++{
++	struct drm_dp_link_addr_reply_port *port_reply;
++	int i;
++
++	for (i = 0; i < reply->nports; i++) {
++		port_reply = &reply->ports[i];
++		DRM_DEBUG_KMS("port %d: input %d, pdt: %d, pn: %d, dpcd_rev: %02x, mcs: %d, ddps: %d, ldps %d, sdp %d/%d\n",
++			      i,
++			      port_reply->input_port,
++			      port_reply->peer_device_type,
++			      port_reply->port_number,
++			      port_reply->dpcd_revision,
++			      port_reply->mcs,
++			      port_reply->ddps,
++			      port_reply->legacy_device_plug_status,
++			      port_reply->num_sdp_streams,
++			      port_reply->num_sdp_stream_sinks);
++	}
++}
++
+ static void drm_dp_send_link_address(struct drm_dp_mst_topology_mgr *mgr,
+ 				     struct drm_dp_mst_branch *mstb)
+ {
+@@ -2128,18 +2150,7 @@ static void drm_dp_send_link_address(struct drm_dp_mst_topology_mgr *mgr,
+ 			DRM_DEBUG_KMS("link address nak received\n");
+ 		} else {
+ 			DRM_DEBUG_KMS("link address reply: %d\n", txmsg->reply.u.link_addr.nports);
+-			for (i = 0; i < txmsg->reply.u.link_addr.nports; i++) {
+-				DRM_DEBUG_KMS("port %d: input %d, pdt: %d, pn: %d, dpcd_rev: %02x, mcs: %d, ddps: %d, ldps %d, sdp %d/%d\n", i,
+-				       txmsg->reply.u.link_addr.ports[i].input_port,
+-				       txmsg->reply.u.link_addr.ports[i].peer_device_type,
+-				       txmsg->reply.u.link_addr.ports[i].port_number,
+-				       txmsg->reply.u.link_addr.ports[i].dpcd_revision,
+-				       txmsg->reply.u.link_addr.ports[i].mcs,
+-				       txmsg->reply.u.link_addr.ports[i].ddps,
+-				       txmsg->reply.u.link_addr.ports[i].legacy_device_plug_status,
+-				       txmsg->reply.u.link_addr.ports[i].num_sdp_streams,
+-				       txmsg->reply.u.link_addr.ports[i].num_sdp_stream_sinks);
+-			}
++			drm_dp_dump_link_address(&txmsg->reply.u.link_addr);
+ 
+ 			drm_dp_check_mstb_guid(mstb, txmsg->reply.u.link_addr.guid);
+ 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.21.0
+
