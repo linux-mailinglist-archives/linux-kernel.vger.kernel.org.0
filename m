@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A447A6EAD
+	by mail.lfdr.de (Postfix) with ESMTP id C3F8DA6EAE
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730544AbfICQ17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:27:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49438 "EHLO mail.kernel.org"
+        id S1731019AbfICQ2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:28:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730964AbfICQ1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:27:52 -0400
+        id S1730190AbfICQ14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:27:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA0F32343A;
-        Tue,  3 Sep 2019 16:27:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3807E215EA;
+        Tue,  3 Sep 2019 16:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528071;
-        bh=y7zrbxbyuIpeUNUY35urgqiiOnBeTRg/Nw172CvPTf0=;
+        s=default; t=1567528075;
+        bh=f21eev754077QISDuWAvVBzwWnDaFeAJ0E93al3vANs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vkfpgPGdfz2fmWmNauNAkgvxl0v17rp9Ex+oikIiHFRZkJW9VLY2KWngITr3s1gt+
-         /qrYeWecB9FS7FcNjayrQACNeXc+OOHr5E4FbvDqxagrztBCcqBZepjrkuybAcH56E
-         6fe5qnEOwe3tFKVN75InuHYqTzyqJJsjXSQW6WCE=
+        b=zojX9ZH0xnYZ5SDBNLLQzHJNR2IsYgaEEQkKgrKXQvZsmyeXbArkcbmkJPBoEu43e
+         dNL3fNnKOj64ooBJjp9WrbwUaLlQ3yUJMsWzwZtJbfzTN5v1yY7tgOK3KpU+wB1PyH
+         XJfI85WlRWRV6Ou9Js2vBs2XSAd4MpWrbsDgfUU8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 085/167] CIFS: Fix leaking locked VFS cache pages in writeback retry
-Date:   Tue,  3 Sep 2019 12:23:57 -0400
-Message-Id: <20190903162519.7136-85-sashal@kernel.org>
+Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
+        Antonio Argenziano <antonio.argenziano@intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 088/167] drm/i915: Sanity check mmap length against object size
+Date:   Tue,  3 Sep 2019 12:24:00 -0400
+Message-Id: <20190903162519.7136-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -43,67 +47,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-[ Upstream commit 165df9a080b6863ae286fa01780c13d87cd81076 ]
+[ Upstream commit 000c4f90e3f0194eef218ff2c6a8fd8ca1de4313 ]
 
-If we don't find a writable file handle when retrying writepages
-we break of the loop and do not unlock and put pages neither from
-wdata2 nor from the original wdata. Fix this by walking through
-all the remaining pages and cleanup them properly.
+We assumed that vm_mmap() would reject an attempt to mmap past the end of
+the filp (our object), but we were wrong.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Applications that tried to use the mmap beyond the end of the object
+would be greeted by a SIGBUS. After this patch, those applications will
+be told about the error on creating the mmap, rather than at a random
+moment on later access.
+
+Reported-by: Antonio Argenziano <antonio.argenziano@intel.com>
+Testcase: igt/gem_mmap/bad-size
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Antonio Argenziano <antonio.argenziano@intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190314075829.16838-1-chris@chris-wilson.co.uk
+(cherry picked from commit 794a11cb67201ad1bb61af510bb8460280feb3f3)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/cifssmb.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/i915_gem.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-index a5cb7b2d1ac5d..86a54b809c484 100644
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -2033,12 +2033,13 @@ cifs_writev_requeue(struct cifs_writedata *wdata)
- 
- 		wdata2->cfile = find_writable_file(CIFS_I(inode), false);
- 		if (!wdata2->cfile) {
--			cifs_dbg(VFS, "No writable handles for inode\n");
-+			cifs_dbg(VFS, "No writable handle to retry writepages\n");
- 			rc = -EBADF;
--			break;
-+		} else {
-+			wdata2->pid = wdata2->cfile->pid;
-+			rc = server->ops->async_writev(wdata2,
-+						       cifs_writedata_release);
- 		}
--		wdata2->pid = wdata2->cfile->pid;
--		rc = server->ops->async_writev(wdata2, cifs_writedata_release);
- 
- 		for (j = 0; j < nr_pages; j++) {
- 			unlock_page(wdata2->pages[j]);
-@@ -2053,6 +2054,7 @@ cifs_writev_requeue(struct cifs_writedata *wdata)
- 			kref_put(&wdata2->refcount, cifs_writedata_release);
- 			if (is_retryable_error(rc))
- 				continue;
-+			i += nr_pages;
- 			break;
- 		}
- 
-@@ -2060,6 +2062,13 @@ cifs_writev_requeue(struct cifs_writedata *wdata)
- 		i += nr_pages;
- 	} while (i < wdata->nr_pages);
- 
-+	/* cleanup remaining pages from the original wdata */
-+	for (; i < wdata->nr_pages; i++) {
-+		SetPageError(wdata->pages[i]);
-+		end_page_writeback(wdata->pages[i]);
-+		put_page(wdata->pages[i]);
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index 9634d3adb8d01..9372877100420 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -1874,8 +1874,13 @@ i915_gem_mmap_ioctl(struct drm_device *dev, void *data,
+ 	 * pages from.
+ 	 */
+ 	if (!obj->base.filp) {
+-		i915_gem_object_put(obj);
+-		return -ENXIO;
++		addr = -ENXIO;
++		goto err;
 +	}
 +
- 	if (rc != 0 && !is_retryable_error(rc))
- 		mapping_set_error(inode->i_mapping, rc);
- 	kref_put(&wdata->refcount, cifs_writedata_release);
++	if (range_overflows(args->offset, args->size, (u64)obj->base.size)) {
++		addr = -EINVAL;
++		goto err;
+ 	}
+ 
+ 	addr = vm_mmap(obj->base.filp, 0, args->size,
+@@ -1889,8 +1894,8 @@ i915_gem_mmap_ioctl(struct drm_device *dev, void *data,
+ 		struct vm_area_struct *vma;
+ 
+ 		if (down_write_killable(&mm->mmap_sem)) {
+-			i915_gem_object_put(obj);
+-			return -EINTR;
++			addr = -EINTR;
++			goto err;
+ 		}
+ 		vma = find_vma(mm, addr);
+ 		if (vma && __vma_matches(vma, obj->base.filp, addr, args->size))
+@@ -1908,12 +1913,10 @@ i915_gem_mmap_ioctl(struct drm_device *dev, void *data,
+ 	i915_gem_object_put(obj);
+ 
+ 	args->addr_ptr = (uint64_t) addr;
+-
+ 	return 0;
+ 
+ err:
+ 	i915_gem_object_put(obj);
+-
+ 	return addr;
+ }
+ 
 -- 
 2.20.1
 
