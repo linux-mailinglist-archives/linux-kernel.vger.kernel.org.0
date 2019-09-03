@@ -2,108 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4E9A6D4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59BE2A6D44
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:50:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbfICPwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 11:52:00 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44474 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728860AbfICPwA (ORCPT
+        id S1729747AbfICPuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 11:50:37 -0400
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:42244 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbfICPug (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:52:00 -0400
-Received: by mail-lj1-f196.google.com with SMTP id u14so9990892ljj.11
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 08:51:58 -0700 (PDT)
+        Tue, 3 Sep 2019 11:50:36 -0400
+Received: by mail-ot1-f47.google.com with SMTP id c10so5877465otd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 08:50:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fbZGYf3OM74TDoZcG4y1Mo3Qe7dm90Zsdt+bqnPSAQI=;
-        b=NfkWCRoRsGlKw3xdjMaVldpa586an4pWg7h4VWCWhYSlcEHn++uHuPt48P8rFcZbYK
-         W5w8X+o2iBB6KzG7FvEZXB7fw0wp5nCxwNZAHLN66OG9o3AyF7JTsIzq0T9arTknwldF
-         3CvUol2k6c8RCQgu2YbTlJg3M8g2QYwkRrkhs=
+        d=lonelycoder.com; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=i8XrzJqX/k14d/NNyJqP2fuyq+Gn/gMNB5vapsoUn58=;
+        b=UgVPPHBy7wPMXgWT0jSZjefR28XGx4gtdEcliXDELdGOyuWUfLGaQi196Es/6Aab7e
+         UCaGsyvJgZ0adWE8GYH9jZFJ10G6e73ruDZeGltRV3bRc3Szj9eH8BAjef7iBIBZG3sT
+         Ilc0DG0V3WcdWZXcwKOl83ia5gb3U5Xdwl1DWM5+FKF8P/R7sVDHG1NkvkbgZquVrhKi
+         G+vM4/VrdK8HA2AimQnFyz5sfIiPubj6M4PoBt9YWxYO5YuaAjf+MkuF8bU8LD2QOmrH
+         Jr/yQP6SdiegTLH++cc4BWfHCTmDjoRJZh1+bQZQNowRYkl43A/As+siwv/Z/00K9AV0
+         ywgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fbZGYf3OM74TDoZcG4y1Mo3Qe7dm90Zsdt+bqnPSAQI=;
-        b=NqK5VY7zCqSFXVXUXpnMo032+s80SMyfYzOSHyDiSPmX7Ln5cxKyp0WKdx6vZlBOoQ
-         k01UvNMCXXvwD/iqdnqWtd7eUaNIkkFJKQNx8Qw9ZE8buw9f4T6eEiGY/wqBFMog4OJ4
-         e5bQIx2iPdIFqmlwNd1QVF6+fMzkDav7XS/Hq9TEatR3XwiMdw/eIqKs6govq4mw/47/
-         r/7FUZpCZuYnOfi4Ka2iVlooflWYB6y3ZYknNnkE8c5ErPlRyJib23oZ31C7Zu47mEof
-         Xz+9TJHNODuMLRUeqS2r+4agTArtj4CzbJtm2oJY/NnJVpfAc98YITXYN6m8BJ41kBip
-         mRQg==
-X-Gm-Message-State: APjAAAVi9TC0PmTwSgS3Nm9cN5+hWX/Kk8WziZR/dgpv1P6LpRoyboxD
-        Im45xHR3rC5yjsr3v0P3tUf+lLfg/20=
-X-Google-Smtp-Source: APXvYqyPrTpQe5qEeuWFylDVP6Jp1yLkSzf/J1MyJ7lXQ2fU9AvR/f8cCEyEW2Kh/vmR0zNP1pgYTw==
-X-Received: by 2002:a05:651c:292:: with SMTP id b18mr4084508ljo.131.1567525917831;
-        Tue, 03 Sep 2019 08:51:57 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id d28sm2218751lfq.88.2019.09.03.08.51.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2019 08:51:57 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id 7so7029659ljw.7
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 08:51:57 -0700 (PDT)
-X-Received: by 2002:a2e:9a84:: with SMTP id p4mr20175666lji.52.1567525496143;
- Tue, 03 Sep 2019 08:44:56 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=i8XrzJqX/k14d/NNyJqP2fuyq+Gn/gMNB5vapsoUn58=;
+        b=geKtE6eK3acdyUnliglqR1HRVcBYs/ScD5S7/iermqRPY5wsdfZhedjkEPvj8q5JBY
+         KyBb3RP7WH5cRwBj7UTuQmX1IhFOdD95aTb8NV/EqJR2/1HEpE9L+pRSLhIuZyBP2zX9
+         4KWcJ8YBjUt17gWSWDJ9R2iE7m+tTTNhdU+FXM4gO+TsnRlNFNcoowrcL0h5WN+aS9r1
+         nKGA5i/IC97NU6no3uMJwR2fkzLRk7Rd7szOdM232zFXMM+FPlYxw/HhcGsNxO0FCaYd
+         0x+rmjpdXikM1HoyHbBXpo1+9pjhv6cgnykd2hquPQZ7KW/Wnk0WKyf3/K9t8qmgcy8i
+         w5Uw==
+X-Gm-Message-State: APjAAAWudf4mkN86BdBkNO6aur8+pVhx/za9gCyGPG0uGsyINM2UMGEJ
+        FgL2YeDHpa+OXxwgr85FU7Z/M0D+XyiqpzcvunCtvSFS75w=
+X-Google-Smtp-Source: APXvYqyN6cw/+flwkfGoM7u8JTsci0bUsTH1m0MnvNpbSpg1XPjL7sEB3w8MODkSqhhPK+wbj5t5VK3b3aWzlUh2h+4=
+X-Received: by 2002:a9d:4d0e:: with SMTP id n14mr4209186otf.285.1567525835588;
+ Tue, 03 Sep 2019 08:50:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190830140805.GD13294@shell.armlinux.org.uk> <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
- <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
- <20190830160957.GC2634@redhat.com> <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
- <87o906wimo.fsf@x220.int.ebiederm.org> <20190902134003.GA14770@redhat.com>
- <87tv9uiq9r.fsf@x220.int.ebiederm.org> <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
- <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
-In-Reply-To: <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 3 Sep 2019 08:44:40 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgQ_tZXQkovVked+nEsZhZqGVNnKmoy3b699dycZqCdKA@mail.gmail.com>
-Message-ID: <CAHk-=wgQ_tZXQkovVked+nEsZhZqGVNnKmoy3b699dycZqCdKA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] task: Making tasks on the runqueue rcu protected
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>
+From:   Andreas Smas <andreas@lonelycoder.com>
+Date:   Tue, 3 Sep 2019 08:50:25 -0700
+Message-ID: <CAObFT-SqdcM2Xo7P3FqgwTABao5uoWrb+A3bXy9vKt5rBffSwA@mail.gmail.com>
+Subject: x86/purgatory: undefined symbol __stack_chk_fail
+To:     linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 2, 2019 at 9:50 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> I have split this work into 3 simple patches, so the code is straight
-> forward to review and so that if any mistakes slip in it is easy to
-> bisect them.  In the process of review what it takes to remove
-> task_rcu_dereference I found yet another user of tasks on the
-> runqueue in rcu context; the rcuwait_event code.  That code only needs
-> it now unnecessary limits removed.
+Hi,
 
-Looks very good to me.
+For me, kernels built including this commit
+b059f801a937 (x86/purgatory: Use CFLAGS_REMOVE rather than reset KBUILD_CFLAGS)
 
-I think PeterZ is right that the rcu_assign_pointer() in [PATCH 2/3]
-could be a RCU_INIT_POINTER() due to condition #3 in the
-RCU_INIT_POINTER rules. The initialization of the pointer value simply
-has nothing to do with what the pointer points to - we're just
-switching it to another case.
+results in kexec() failing to load the kernel:
 
-That said, it won't affect any of the core architectures much, because
-smp_store_release() isn't that expensive (it's just a compiler barrier
-on x86, it's a cheap instruction on arm64, and it should be very cheap
-on any other architecture too unless they do insane things - even on
-powerpc, which is about the worst case for any barriers, it's just an
-lwsync).
+kexec: Undefined symbol: __stack_chk_fail
+kexec-bzImage64: Loading purgatory failed
 
-It might be good to have Paul _look_ at it, and because of the minimal
-performance impact I don't worry about it too much if it happens
-later, but it should be something we keep in mind.
+Can be seen:
 
-                  Linus
+$ readelf -a arch/x86/purgatory/purgatory.ro | grep UND
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
+    51: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND __stack_chk_fail
+
+Using: gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1)
+
+Adding -ffreestanding or -fno-stack-protector to ccflags-y in
+arch/x86/purgatory/Makefile
+fixes the problem. Not sure which would be preferred.
