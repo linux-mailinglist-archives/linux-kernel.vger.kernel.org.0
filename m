@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C7AA701F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:37:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07938A701C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731059AbfICQhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:37:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47762 "EHLO mail.kernel.org"
+        id S1731021AbfICQhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:37:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730699AbfICQ0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:26:43 -0400
+        id S1730717AbfICQ0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:26:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C097023789;
-        Tue,  3 Sep 2019 16:26:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8111C23789;
+        Tue,  3 Sep 2019 16:26:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528002;
-        bh=SebfApjkwn1FtARA0bW+W3QhdPA0kSbofoRWILz9//k=;
+        s=default; t=1567528009;
+        bh=hZ88OPcW/uIsLOuymIz8Dzs7/P+IEy5pFES3O5z/m9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=exo/CpjhndAhqYDRinw3Nn8NFh+8It3G8hqp6KRMFkqTRvuW1gYAxJkctfWRYQ3yi
-         6XZysL7gyVqlr+tajulalyj+MYUN3p+hxlnv8ZCa+M8RzTlOpcelNXZYl1b6r+g35q
-         03MbKVV6oGR4Ica8J7WEeFfKOhGLBYvwl6d/Rvx8=
+        b=V6kivvQWi/ogWyC37hh++fgdoHhbOhoYii2TvwnFTkfH4f6Zn7Y/1UMlp1a8Dx4bB
+         Q1qu4tf0HSxVr5/H4uMiX5AAPFk86INWlG6o/iqsO5EL+byFlP73Z5fF3CZtR7AGnv
+         xtAdIDA/cOa6NCDIyjUe8LTrV0s6wNSMAuppfHb8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 048/167] media: vim2m: only cancel work if it is for right context
-Date:   Tue,  3 Sep 2019 12:23:20 -0400
-Message-Id: <20190903162519.7136-48-sashal@kernel.org>
+Cc:     Ricardo Biehl Pasquali <pasqualirb@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 051/167] ALSA: pcm: Return 0 when size < start_threshold in capture
+Date:   Tue,  3 Sep 2019 12:23:23 -0400
+Message-Id: <20190903162519.7136-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -44,44 +42,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Ricardo Biehl Pasquali <pasqualirb@gmail.com>
 
-[ Upstream commit 240809ef6630a4ce57c273c2d79ffb657cd361eb ]
+[ Upstream commit 62ba568f7aef4beb0eda945a2b2a91b7a2b8f215 ]
 
-cancel_delayed_work_sync() was called for any queue, but it should only
-be called for the queue that is associated with the currently running job.
+In __snd_pcm_lib_xfer(), when capture, if state is PREPARED
+and size is less than start_threshold nothing can be done.
+As there is no error, 0 is returned.
 
-Otherwise, if two filehandles are streaming at the same time, then closing the
-first will cancel the work which might still be running for a job from the
-second filehandle. As a result the second filehandle will never be able to
-finish the job and an attempt to stop streaming on that second filehandle will
-stall.
-
-Fixes: 52117be68b82 ("media: vim2m: use cancel_delayed_work_sync instead of flush_schedule_work")
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: <stable@vger.kernel.org>      # for v4.20 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Ricardo Biehl Pasquali <pasqualirb@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vim2m.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/core/pcm_lib.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
-index de7f9fe7e7cd9..7b8cf661f2386 100644
---- a/drivers/media/platform/vim2m.c
-+++ b/drivers/media/platform/vim2m.c
-@@ -801,7 +801,9 @@ static void vim2m_stop_streaming(struct vb2_queue *q)
- 	struct vb2_v4l2_buffer *vbuf;
- 	unsigned long flags;
+diff --git a/sound/core/pcm_lib.c b/sound/core/pcm_lib.c
+index 4e6110d778bd2..7f71c2449af5e 100644
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -2173,11 +2173,16 @@ snd_pcm_sframes_t __snd_pcm_lib_xfer(struct snd_pcm_substream *substream,
+ 		goto _end_unlock;
  
--	cancel_delayed_work_sync(&dev->work_run);
-+	if (v4l2_m2m_get_curr_priv(dev->m2m_dev) == ctx)
-+		cancel_delayed_work_sync(&dev->work_run);
-+
- 	for (;;) {
- 		if (V4L2_TYPE_IS_OUTPUT(q->type))
- 			vbuf = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+ 	if (!is_playback &&
+-	    runtime->status->state == SNDRV_PCM_STATE_PREPARED &&
+-	    size >= runtime->start_threshold) {
+-		err = snd_pcm_start(substream);
+-		if (err < 0)
++	    runtime->status->state == SNDRV_PCM_STATE_PREPARED) {
++		if (size >= runtime->start_threshold) {
++			err = snd_pcm_start(substream);
++			if (err < 0)
++				goto _end_unlock;
++		} else {
++			/* nothing to do */
++			err = 0;
+ 			goto _end_unlock;
++		}
+ 	}
+ 
+ 	runtime->twake = runtime->control->avail_min ? : 1;
 -- 
 2.20.1
 
