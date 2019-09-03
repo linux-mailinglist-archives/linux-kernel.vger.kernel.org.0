@@ -2,143 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66907A716E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 19:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C48FA716F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 19:13:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729888AbfICRMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 13:12:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48778 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729644AbfICRMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 13:12:32 -0400
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AACA2339D
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2019 17:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567530751;
-        bh=/wdQ1YhXsTvuDiWZTQITULzZHMbY+cl0uiFulxQoW6o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mva18n3MRZ/TlzdcC5FSQiScaVxm5H2GoC7okBNeqLeHRiydEvAtmvwZ+nPpmAbgQ
-         9GE0rivo3Mz4yKUHcu155m/J7PS+FgQjOACVQvmVissBDLW2OGs+g3GLCduffIdi/c
-         Zm77bHIIEsG+gW4PWciTGULVTnMo3Ik8EzS02VO8=
-Received: by mail-wr1-f46.google.com with SMTP id u16so18344956wrr.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 10:12:31 -0700 (PDT)
-X-Gm-Message-State: APjAAAWchY3K8sq45n5iduhQ4ASpSIslUjEL56VaMIqSE+uqvkNhP+6J
-        xYa36p9xwbjPdWC7v8rMh1G+hsw/mG+LoQ39M5k=
-X-Google-Smtp-Source: APXvYqxKRabkSSRgWU+32cKIIPNwz26js4n2SGBqfmD4T68CUkwoKtbvmcEzwVjsMzCDpREJg3bMZpt/VNlH4XEWLlg=
-X-Received: by 2002:adf:fe0f:: with SMTP id n15mr24120785wrr.343.1567530749864;
- Tue, 03 Sep 2019 10:12:29 -0700 (PDT)
+        id S1729993AbfICRNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 13:13:22 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37426 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727624AbfICRNV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 13:13:21 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id E4F3228A124
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     linux-media@vger.kernel.org
+Cc:     kernel@collabora.com,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-rockchip@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        fbuergisser@chromium.org, linux-kernel@vger.kernel.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: [PATCH for 5.4] media: hantro: Fix s_fmt for dynamic resolution changes
+Date:   Tue,  3 Sep 2019 14:12:56 -0300
+Message-Id: <20190903171256.25052-1-ezequiel@collabora.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190903113651.3862-1-kw@linux.com>
-In-Reply-To: <20190903113651.3862-1-kw@linux.com>
-From:   Guo Ren <guoren@kernel.org>
-Date:   Wed, 4 Sep 2019 01:12:18 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTT-woTmWe4aqOLUemK6agTRHxXqWKoOAxeJ8XPiAJ+UzQ@mail.gmail.com>
-Message-ID: <CAJF2gTT-woTmWe4aqOLUemK6agTRHxXqWKoOAxeJ8XPiAJ+UzQ@mail.gmail.com>
-Subject: Re: [PATCH] csky: Move static keyword to the front of declaration
-To:     Krzysztof Wilczynski <kw@linux.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thx,
+Commit 953aaa1492c53 ("media: rockchip/vpu: Prepare things to support decoders")
+changed the conditions under S_FMT was allowed for OUTPUT
+CAPTURE buffers.
 
-Acked by: Guo Ren <guoren@kernel.org>
+However, and according to the mem-to-mem stateless decoder specification,
+in order to support dynamic resolution changes, S_FMT should be allowed
+even if OUTPUT buffers have been allocated.
 
-You may also modify others'
+Relax decoder S_FMT restrictions on OUTPUT buffers, allowing a resolution
+modification, provided the pixel format stays the same.
 
-=E2=9E=9C  linux-next git:(linux-next-for-v5.4) =E2=9C=97 grep "const stati=
-c" * -r
-arch/csky/kernel/perf_event.c:const static struct of_device_id
-csky_pmu_of_device_ids[] =3D {
-arch/nds32/kernel/perf_event_cpu.c:const static struct of_device_id
-cpu_pmu_of_device_ids[] =3D {
-drivers/gpu/drm/amd/display/dc/core/dc.c:const static char
-DC_BUILD_ID[] =3D "production-build";
-drivers/gpu/drm/msm/dsi/dsi_cfg.c:const static struct
-msm_dsi_host_cfg_ops msm_dsi_v2_host_ops =3D {
-drivers/gpu/drm/msm/dsi/dsi_cfg.c:const static struct
-msm_dsi_host_cfg_ops msm_dsi_6g_host_ops =3D {
-drivers/gpu/drm/msm/dsi/dsi_cfg.c:const static struct
-msm_dsi_host_cfg_ops msm_dsi_6g_v2_host_ops =3D {
-drivers/leds/leds-ti-lmu-common.c:const static int ramp_table[16] =3D
-{2048, 262000, 524000, 1049000, 2090000,
-drivers/leds/leds-lm3532.c:const static int
-als_imp_table[LM3532_NUM_IMP_VALS] =3D {37000, 18500, 12330,
-drivers/leds/leds-lm3532.c:const static int
-als_avrg_table[LM3532_NUM_AVG_VALS] =3D {17920, 35840, 71680,
-drivers/leds/leds-lm3532.c:const static int
-ramp_table[LM3532_NUM_RAMP_VALS] =3D { 8, 1024, 2048, 4096, 8192,
-drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c:const static u8
-he_if_types_ext_capa_sta[] =3D {
-drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c:const static struct
-wiphy_iftype_ext_capab he_iftypes_ext_capa[] =3D {
-drivers/net/ethernet/qlogic/qed/qed_iwarp.c:const static char
-*iwarp_state_names[] =3D {
-drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:const static char
-*g_dsaf_mode_match[DSAF_MODE_MAX] =3D {
-drivers/pci/pci-bridge-emul.c:const static struct
-pci_bridge_reg_behavior pci_regs_behavior[] =3D {
-drivers/pci/pci-bridge-emul.c:const static struct
-pci_bridge_reg_behavior pcie_cap_regs_behavior[] =3D {
-fs/ceph/export.c: const static int snap_handle_length =3D
-fs/ceph/export.c: const static int handle_length =3D
-fs/ceph/export.c: const static int connected_handle_length =3D
-fs/unicode/utf8-selftest.c:const static struct {
-fs/unicode/utf8-selftest.c:const static struct {
+Tested on RK3288 platforms using ChromiumOS Video Decode/Encode Accelerator Unittests.
 
-On Tue, Sep 3, 2019 at 7:36 PM Krzysztof Wilczynski <kw@linux.com> wrote:
->
-> Move the static keyword to the front of declaration of
-> csky_pmu_of_device_ids, and resolve the following compiler
-> warning that can be seen when building with warnings
-> enabled (W=3D1):
->
-> arch/csky/kernel/perf_event.c:1340:1: warning:
->   =E2=80=98static=E2=80=99 is not at beginning of declaration [-Wold-styl=
-e-declaration]
->
-> Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
-> ---
-> Related: https://lore.kernel.org/r/20190827233017.GK9987@google.com
->
->  arch/csky/kernel/perf_event.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.=
-c
-> index 4c1a1934d76a..bc33e4ed189d 100644
-> --- a/arch/csky/kernel/perf_event.c
-> +++ b/arch/csky/kernel/perf_event.c
-> @@ -1337,7 +1337,7 @@ int csky_pmu_device_probe(struct platform_device *p=
-dev,
->         return ret;
->  }
->
-> -const static struct of_device_id csky_pmu_of_device_ids[] =3D {
-> +static const struct of_device_id csky_pmu_of_device_ids[] =3D {
->         {.compatible =3D "csky,csky-pmu"},
->         {},
->  };
-> --
-> 2.22.1
->
+Fixes: 953aaa1492c53 ("media: rockchip/vpu: Prepare things to support decoders")
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+---
+ drivers/staging/media/hantro/hantro_v4l2.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/staging/media/hantro/hantro_v4l2.c b/drivers/staging/media/hantro/hantro_v4l2.c
+index 3dae52abb96c..d48b548842cf 100644
+--- a/drivers/staging/media/hantro/hantro_v4l2.c
++++ b/drivers/staging/media/hantro/hantro_v4l2.c
+@@ -367,19 +367,22 @@ vidioc_s_fmt_out_mplane(struct file *file, void *priv, struct v4l2_format *f)
+ {
+ 	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
+ 	struct hantro_ctx *ctx = fh_to_ctx(priv);
++	struct vb2_queue *vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
+ 	const struct hantro_fmt *formats;
+ 	unsigned int num_fmts;
+-	struct vb2_queue *vq;
+ 	int ret;
+ 
+-	/* Change not allowed if queue is busy. */
+-	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
+-	if (vb2_is_busy(vq))
+-		return -EBUSY;
+-
+ 	if (!hantro_is_encoder_ctx(ctx)) {
+ 		struct vb2_queue *peer_vq;
+ 
++		/*
++		 * In other to support dynamic resolution change,
++		 * the decoder admits a resolution change, as long
++		 * as the pixelformat remains. Can't be done if streaming.
++		 */
++		if (vb2_is_streaming(vq) || (vb2_is_busy(vq) &&
++		    pix_mp->pixelformat != ctx->src_fmt.pixelformat))
++			return -EBUSY;
+ 		/*
+ 		 * Since format change on the OUTPUT queue will reset
+ 		 * the CAPTURE queue, we can't allow doing so
+@@ -389,6 +392,13 @@ vidioc_s_fmt_out_mplane(struct file *file, void *priv, struct v4l2_format *f)
+ 					  V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
+ 		if (vb2_is_busy(peer_vq))
+ 			return -EBUSY;
++	} else {
++		/*
++		 * The encoder doesn't admit a format change if
++		 * there are OUTPUT buffers allocated.
++		 */
++		if (vb2_is_busy(vq))
++			return -EBUSY;
+ 	}
+ 
+ 	ret = vidioc_try_fmt_out_mplane(file, priv, f);
+-- 
+2.22.0
 
---=20
-Best Regards
- Guo Ren
-
-ML: https://lore.kernel.org/linux-csky/
