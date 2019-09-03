@@ -2,151 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB5CDA6B2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E0FA6B37
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:22:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbfICOU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:20:58 -0400
-Received: from mout.web.de ([217.72.192.78]:51171 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729036AbfICOU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:20:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1567520444;
-        bh=vMgAzBXUWskQTecRcuVXqAK+gjDpq21bPltTH0WE3wk=;
-        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
-        b=LLzyiz+MMSl5cCqMEnzYAW/NWXCMP6xyZV1AtYa+Etj2NDgUdRV+8o8PIcYyMkfpn
-         2B9GdROulxOh5t/TQXb1UqzkSgKFwjaBiVyj9yqVnSLcnPOtdjKOetasPaxByM/iZf
-         /GmqRwoMWlclAn0WBWBmJOKqOCENBGMwXGUAHk6g=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.133.43]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MgwZQ-1hrs0h3yYy-00M3cJ; Tue, 03
- Sep 2019 16:20:44 +0200
-To:     linux-ntfs-dev@lists.sourceforge.net,
-        Anton Altaparmakov <anton@tuxera.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-From:   Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ntfs: Delete unnecessary checks before brelse()
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <9d047687-af84-4688-c025-13103cc22a52@web.de>
-Date:   Tue, 3 Sep 2019 16:20:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0jR0GS55GaFdFydxT9bQ63zyKh3AOSnu2BwcrtffX82rI2Nh+rd
- E1lvLYUJPtSUvdq56al/VyGkMSEP8fbHSQN0lzMuf3BvECj4VXYZgCgUaYUBTJ539pVJG6K
- rCYI84xyfu95ue3XHspWwGLE0PZfN1azwBZu244b2XEjvp8sUtRzLDnN9Z6uZl8UdwjVBpA
- /kYbBFBZ96+ogN7SMp6MQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Z2QhvI6IXS8=:KyHeoZ6CAd/47a/5c1uDE0
- timjntSTdr+cwCFyHvlfw6Gof2E0HIC4TGOj9zdVb5fmshfzWB/lcN6MiYbXP7pygy8CUoTZ3
- ljWPxyTcZrRxQK90SK/FWxlNARmpe/VWliaHLYsFAL2k//XU3usNQwgeJmKdOMU+2TVHmwmJu
- 3rLzzw8Dk3NFPUT+gVXtcr3i1qofi4Kt325/k1BuAm12fYxnQNV9HglX7ksGJ9G4MMgVKfVDV
- GVruJEEdHRR3Mxut0Pt2FuiATnqJMrW5yXyUMFqYC6vmh2w/pu1HvZq5n6nyeQCOTWfZK9w2H
- 0Oz2pdxq/Fnmfvo/kC8ziu+jxdyOQVqkhIMADEZIgbE/3NODJRX7dV16ldnTQcOOdaJ1RlNsQ
- 60jSHw5lYCFOZ0f9LS4B1XezVK/AYSgbDGX+DkVRQlGLBsudOf/gr3ED2fzkAlCJj8856omdx
- ngr8boWgOdp2QzjHMN3sA4zxGouO+rSCrxGX3gVUsg7lvI1AzIZ6xtCol4LVALBaf3w7KopHo
- Y3Uru0pOsJm8aA1H0aRbBET64bW/W+qt2cyYb7SB/cKEY5Fw1WX6CxM3ehZ9SUP4/XZVCws9W
- l37Ckr1i4jr9pALFWVDqAckCc3uXzv3uSUmp3HyEN2dMjj3arURpS7n04kDzdlWAWJ/+qKu8A
- VPdPQJH/fMB95+AYQ8mDvBa2X+RvPqhokxYgdoenhycX/Kun0+CNOq7QOnsPlLDlsvlbwIJTZ
- DJG6O6t7UQWD9FnHp+9r6cl7Lkfac5di0/aqsEs5eC3eg1RIN+gTBuOknq7RdwyieGSVfbzzf
- lZmZ4o0qN52UePPhFR466ukU9T9Oa0WeTo269NgGhOitYnn+d0P+3G2TKeQW6cpnVls5Jwt0s
- rlcpgOgiazojDG7xlvvBsuwXQhnfrVyUIQxNgpa/hW+Pb/rlVyi9I7k7MlinWEwQfL4EVvtqY
- jtv9pw7/htR8ILu6yH+sSvbk6Uq5MANDqVyo9DE82u3vHzijPK4LJ6eqq/cajPdB9VvqgFqEh
- TZJMdsl0ph2bIa/i/po/j8K535vRiZ6WgUUuubsSYQJgCl3Yp+keurd74kXzGOTaRhmuFwJnC
- kWnMEe6y1ccfpi70q3KumQnMF91ikYub6rYfznPUOOv4KqKXcARr4pkzsbKb2G/vTOD/cd+7l
- MKdqauOZIWHZrmryH5JKxNkKXwlFHRevjv+rjVs2C97YL02w==
+        id S1729572AbfICOWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:22:36 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41975 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729083AbfICOWf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 10:22:35 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j4so13036519lfh.8
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=jxeGFOcZojq09mDU5ChwaMdlo1ENQtr/dK8PzPkIcNw=;
+        b=kOUvGuZPDWhYmoFZ35uZfgKof779e/mNRWaIlCuKoDc0z3PMHRNxbDGTHBXqZz/2iX
+         OSKysAxrn1xT+ofGb+IXLEQgvcNF0k9/Tn7YqJc2ZYwjSaGQl4RkDUQjiBAfnJMNUOV4
+         iE1GyRugTEu3VYfJInaXRoeFiej1bLSQBZ7NBwz3WnFC25vDBmuusqNYItGjFwbLtlDX
+         aqgKGQ0I/2WguqVVqp2ALpPELYXObaA8Vz/6M+j1xt6Vy0ulakacsE45tKyvIQQhOpjE
+         zhMsdp7RQhJE4lJaf1MYw3tzhQumhHZbkTP21KOW3EmBVEAwibHTnZ+dhArKcBLzP8Tg
+         nQCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jxeGFOcZojq09mDU5ChwaMdlo1ENQtr/dK8PzPkIcNw=;
+        b=kJ4o5ki87yfq/CPIRFZCmdYtT3liT5rT7XBOQDdpjkI89wm0iZfFCqId2FeJ2HcoTW
+         YYg4k5Ziq/F0xRaRarQikqND78wy+pTGaRdeXPH8tRkTdgNiExwZv3aso4O91BTxwZAh
+         UFH7mmJZhLyIDqxN+77PRtyEHvdCxkBtF9coKfcN7kifuiGxn6A/axHWT8uZ6ssiYPo5
+         67gmKIJk7ruqmg2uMJXcpt30TjgY7fP5QbhcX8qW2QstPn6LKdDni/MWMz8S4P8IgGHN
+         BQE05bLmKZt+MRe0vd4rmt+HyaWQFU26J2RATTR93d07xrZKhCdn+tAFhYBwH3yll1e8
+         ZKQw==
+X-Gm-Message-State: APjAAAUzubcSCDk21CkURHRNg72f4TMNBZR2CkXBClBhey483q0BLUvi
+        QGRyRYAZg+Bj0KyeK015Xpa8Aw==
+X-Google-Smtp-Source: APXvYqw8xc5Srvx7uVIgZ6CAWg48jVMdxECIPClJ1jocPjMMn6ha3+WY+sH6SwYYQ8AJcdr0Js7Fsg==
+X-Received: by 2002:ac2:5dfa:: with SMTP id z26mr13175013lfq.37.1567520553527;
+        Tue, 03 Sep 2019 07:22:33 -0700 (PDT)
+Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id v10sm2430862ljc.64.2019.09.03.07.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 07:22:32 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Cc:     Shawn Lin <shawn.lin@rock-chips.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Yong Mao <yong.mao@mediatek.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/11] mmc: core: PM fixes/improvements for SDIO IRQs 
+Date:   Tue,  3 Sep 2019 16:21:56 +0200
+Message-Id: <20190903142207.5825-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Sep 2019 16:18:07 +0200
+The power management support for SDIO cards have slowly been improved, but
+there are still quite some serious problems, especially when dealing with the
+so called SDIO IRQs during system suspend/resume.
 
-The brelse() function tests whether its argument is NULL
-and then returns immediately.
-Thus the tests around the shown calls are not needed.
+This series makes some additional improvements to this code in the mmc core,
+but also includes some needed adaptations for the sdhci, the dw_mmc and the
+mtk-sd host drivers.
 
-This issue was detected by using the Coccinelle software.
+So far the series has only been compile tested, so definitely need some help in
+testing this on HW, which of course would be greatly appreciated.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/ntfs/super.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+The series is also available at:
+git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git sdio_irq_suspend_next
 
-diff --git a/fs/ntfs/super.c b/fs/ntfs/super.c
-index 29621d40f448..f0ed1a3e5c7e 100644
-=2D-- a/fs/ntfs/super.c
-+++ b/fs/ntfs/super.c
-@@ -676,8 +676,7 @@ static struct buffer_head *read_ntfs_boot_sector(struc=
-t super_block *sb,
- 	} else if (!silent)
- 		ntfs_error(sb, read_err_str, "primary");
- 	if (!(NTFS_SB(sb)->on_errors & ON_ERRORS_RECOVER)) {
--		if (bh_primary)
--			brelse(bh_primary);
-+		brelse(bh_primary);
- 		if (!silent)
- 			ntfs_error(sb, "Mount option errors=3Drecover not used. "
- 					"Aborting without trying to recover.");
-@@ -703,8 +702,7 @@ static struct buffer_head *read_ntfs_boot_sector(struc=
-t super_block *sb,
- 	} else if (!silent)
- 		ntfs_error(sb, read_err_str, "backup");
- 	/* We failed. Cleanup and return. */
--	if (bh_primary)
--		brelse(bh_primary);
-+	brelse(bh_primary);
- 	return NULL;
- hotfix_primary_boot_sector:
- 	if (bh_primary) {
-=2D-
-2.23.0
+Kind regards
+Uffe
+
+
+Matthias Kaehlcke (1):
+  mmc: core: Move code to get pending SDIO IRQs to a function
+
+Ulf Hansson (10):
+  mmc: core: Add helper function to indicate if SDIO IRQs is enabled
+  mmc: dw_mmc: Re-store SDIO IRQs mask at system resume
+  mmc: mtk-sd: Re-store SDIO IRQs mask at system resume
+  mmc: core: Clarify sdio_irq_pending flag for
+    MMC_CAP2_SDIO_IRQ_NOTHREAD
+  mmc: core: Clarify that the ->ack_sdio_irq() callback is mandatory
+  mmc: core: WARN if SDIO IRQs are enabled for non-powered card in
+    suspend
+  mmc: core: Fixup processing of SDIO IRQs during system suspend/resume
+  mmc: sdhci: Drop redundant check in sdhci_ack_sdio_irq()
+  mmc: sdhci: Drop redundant code for SDIO IRQs
+  mmc: sdhci: Convert to use sdio_irq_enabled()
+
+ drivers/mmc/core/sdio.c            |  4 ++-
+ drivers/mmc/core/sdio_irq.c        | 57 +++++++++++++++++++-----------
+ drivers/mmc/host/dw_mmc.c          |  4 +++
+ drivers/mmc/host/mtk-sd.c          |  3 ++
+ drivers/mmc/host/sdhci-esdhc-imx.c | 34 ++++++++----------
+ drivers/mmc/host/sdhci.c           | 12 ++-----
+ drivers/mmc/host/sdhci.h           |  6 ----
+ include/linux/mmc/host.h           | 10 ++++++
+ 8 files changed, 75 insertions(+), 55 deletions(-)
+
+-- 
+2.17.1
 
