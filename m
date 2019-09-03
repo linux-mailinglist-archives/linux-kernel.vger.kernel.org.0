@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE06A701A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC4A3A702B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730716AbfICQ0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:26:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47630 "EHLO mail.kernel.org"
+        id S1731055AbfICQhc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:37:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730165AbfICQ0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:26:38 -0400
+        id S1730681AbfICQ0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:26:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 933CF238C7;
-        Tue,  3 Sep 2019 16:26:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1C95238CD;
+        Tue,  3 Sep 2019 16:26:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527997;
-        bh=iMc28nEHo4LwcU2m4S1Z3UyNfivaugakbuC8bbOlxuQ=;
+        s=default; t=1567527999;
+        bh=CtmaAsWwoZNRqt4zv2q01+SAMp6zV/HtcJVWUSCftAM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t4IVzicSxrtGse5+0+iqgN3MbGIqlNjux/jQ6/1O6W4IeMBDn0J3XM9kkgKYghIkr
-         8vn3nOW85xRAevJoNC+U8taw9O/QTkHRsjbkzTl7jJiHNr4ghDrUV23cbTM1Wh+e9U
-         84UlSh6CHDxU1dPuxQzAJb4e3nfKbxrtGU2008zM=
+        b=Ic2JiOQPcqIEQEZ0YjDuEQUMveZhrfqz6n9swfKlx4pCr76LmWUVAPcvzFWmezygT
+         0EKoBEU5HBRo3PVh0TN4Em6gcYoZAqyQxiMVYuJR+HuNR1TPAt/iKabTt82qAFedtI
+         R2wOadfLF+tsvOfgKB4Nh4cyLUqMkyNuqQYHOo8E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 045/167] drm/amdgpu: validate user GEM object size
-Date:   Tue,  3 Sep 2019 12:23:17 -0400
-Message-Id: <20190903162519.7136-45-sashal@kernel.org>
+Cc:     Qu Wenruo <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 047/167] btrfs: Use real device structure to verify dev extent
+Date:   Tue,  3 Sep 2019 12:23:19 -0400
+Message-Id: <20190903162519.7136-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,53 +43,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Qu Wenruo <wqu@suse.com>
 
-[ Upstream commit c4a32b266da7bb702e60381ca0c35eaddbc89a6c ]
+[ Upstream commit 1b3922a8bc74231f9a767d1be6d9a061a4d4eeab ]
 
-When creating frame buffer, userspace may request to attach to a
-previously allocated GEM object that is smaller than what GPU
-requires. Validation must be done to prevent out-of-bound DMA,
-otherwise it could be exploited to reveal sensitive data.
+[BUG]
+Linux v5.0-rc1 will fail fstests/btrfs/163 with the following kernel
+message:
 
-This fix is not done in a common code path because individual
-driver might have different requirement.
+  BTRFS error (device dm-6): dev extent devid 1 physical offset 13631488 len 8388608 is beyond device boundary 0
+  BTRFS error (device dm-6): failed to verify dev extents against chunks: -117
+  BTRFS error (device dm-6): open_ctree failed
 
-Cc: stable@vger.kernel.org # v4.2+
-Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+[CAUSE]
+Commit cf90d884b347 ("btrfs: Introduce mount time chunk <-> dev extent
+mapping check") introduced strict check on dev extents.
+
+We use btrfs_find_device() with dev uuid and fs uuid set to NULL, and
+only dependent on @devid to find the real device.
+
+For seed devices, we call clone_fs_devices() in open_seed_devices() to
+allow us search seed devices directly.
+
+However clone_fs_devices() just populates devices with devid and dev
+uuid, without populating other essential members, like disk_total_bytes.
+
+This makes any device returned by btrfs_find_device(fs_info, devid,
+NULL, NULL) is just a dummy, with 0 disk_total_bytes, and any dev
+extents on the seed device will not pass the device boundary check.
+
+[FIX]
+This patch will try to verify the device returned by btrfs_find_device()
+and if it's a dummy then re-search in seed devices.
+
+Fixes: cf90d884b347 ("btrfs: Introduce mount time chunk <-> dev extent mapping check")
+CC: stable@vger.kernel.org # 4.19+
+Reported-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/btrfs/volumes.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index 6e67814d33e29..1035a47f81c9c 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -527,6 +527,7 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
- 	struct drm_gem_object *obj;
- 	struct amdgpu_framebuffer *amdgpu_fb;
- 	int ret;
-+	int height;
- 	struct amdgpu_device *adev = dev->dev_private;
- 	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
- 	int pitch = mode_cmd->pitches[0] / cpp;
-@@ -551,6 +552,13 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
- 		return ERR_PTR(-EINVAL);
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index c20708bfae561..a8297e7489d98 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -7469,6 +7469,18 @@ static int verify_one_dev_extent(struct btrfs_fs_info *fs_info,
+ 		ret = -EUCLEAN;
+ 		goto out;
  	}
- 
-+	height = ALIGN(mode_cmd->height, 8);
-+	if (obj->size < pitch * height) {
-+		DRM_DEBUG_KMS("Invalid GEM size: expecting >= %d but got %zu\n",
-+			      pitch * height, obj->size);
-+		return ERR_PTR(-EINVAL);
++
++	/* It's possible this device is a dummy for seed device */
++	if (dev->disk_total_bytes == 0) {
++		dev = find_device(fs_info->fs_devices->seed, devid, NULL);
++		if (!dev) {
++			btrfs_err(fs_info, "failed to find seed devid %llu",
++				  devid);
++			ret = -EUCLEAN;
++			goto out;
++		}
 +	}
 +
- 	amdgpu_fb = kzalloc(sizeof(*amdgpu_fb), GFP_KERNEL);
- 	if (amdgpu_fb == NULL) {
- 		drm_gem_object_put_unlocked(obj);
+ 	if (physical_offset + physical_len > dev->disk_total_bytes) {
+ 		btrfs_err(fs_info,
+ "dev extent devid %llu physical offset %llu len %llu is beyond device boundary %llu",
 -- 
 2.20.1
 
