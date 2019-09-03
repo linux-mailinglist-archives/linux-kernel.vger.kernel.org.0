@@ -2,98 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DF53A5FA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 05:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FCAFA5FB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 05:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbfICDa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 23:30:27 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43613 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfICDaY (ORCPT
+        id S1726626AbfICDai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 23:30:38 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:6080 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbfICDaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 23:30:24 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d15so380860pfo.10;
-        Mon, 02 Sep 2019 20:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=qLqPgNPPOtAuqly/y/WrIiw3//xdfCK2UaIc05HwaDc=;
-        b=i9zMLnEndimQEPM23G3jZaulRBWHxJMHfHVyLq3l+6EK7LTME1+lgichvWRKS4c+Bx
-         XisUTod0mLsoEzFl5kHiXekdasvsKpWIeEyLaXCnO4HLWITBfavtVB8A/BeHqGgjlL0z
-         Fl2y0TAlmtIFP0GuMm60GwcepRgOzVr4qwUZOT6+NVw8evZmP93AlCxNmc34P3aRQd+g
-         mv2v4rF7iz+mFe57PygbK7olDzYGBz4aPKWPnYIlsazIh02bmSQZQbu6hYR+Bbli/AH/
-         s9nijMNOSvZPmA+Cc69q9JQMfdlg2qKEndhgLu85FuuuGkUbKUD54ATMw9/MCCuap7ev
-         JSJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=qLqPgNPPOtAuqly/y/WrIiw3//xdfCK2UaIc05HwaDc=;
-        b=ndDkP2sd2Bt29gXqmMzfpaTCbveNdEu+X1rEtNcYdwGLNiHN1gLjV+rFQg3cLoJ2up
-         MkSDIL0sf6wmt102TQZIrjoAnE8QHQr+jyWMPD9VVBs74I2BlowlKoABYR5UjgaoSWg/
-         AvKah82CtD1SBq1Acp9DMO3ukXIJbw8T5ZRvjBCqXal1DncwpRpvAa46UXXEvblLKpgh
-         pYpe7r1sd7DZfuHEZGbAidQfDOYlhR1H769QEHPieKS5MNAaBF1fy2Xee4vjDdjIQaRl
-         8TorpPWRsE7Xq/bD4KPOq/NcRMICeosuvRCaWFuqfD/6xJH+i8/aAJoDjHIKFftldF4P
-         LRuQ==
-X-Gm-Message-State: APjAAAUoWqidT9zrYeP2wG/0CsYVDyQTCuJVFQJqf7FXl0fj+146J1Io
-        YWpF8S3AGXkBDcvyO1yGH9Y=
-X-Google-Smtp-Source: APXvYqxsLgSdmhCiUYEXvMIOSWHbXYJGJ1fy+gfGMw3fPBeAYf2G2r9dHLJ2wFbBeajOcDDx7/Bb2g==
-X-Received: by 2002:a63:6d8d:: with SMTP id i135mr27826429pgc.303.1567481424024;
-        Mon, 02 Sep 2019 20:30:24 -0700 (PDT)
-Received: from LGEARND20B15 ([27.122.242.75])
-        by smtp.gmail.com with ESMTPSA id l123sm21092519pfl.9.2019.09.02.20.30.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Sep 2019 20:30:23 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 12:30:19 +0900
-From:   Austin Kim <austindh.kim@gmail.com>
-To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        austindh.kim@gmail.com
-Subject: [PATCH] btrfs: fix Wmaybe-uninitialized warning
-Message-ID: <20190903033019.GA149622@LGEARND20B15>
+        Mon, 2 Sep 2019 23:30:35 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d6dde5c0000>; Mon, 02 Sep 2019 20:30:36 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 02 Sep 2019 20:30:33 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 02 Sep 2019 20:30:33 -0700
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Sep
+ 2019 03:30:33 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Sep
+ 2019 03:30:33 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 3 Sep 2019 03:30:33 +0000
+Received: from vdumpa-ubuntu.nvidia.com (Not Verified[172.17.173.140]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d6dde590000>; Mon, 02 Sep 2019 20:30:33 -0700
+From:   Krishna Reddy <vdumpa@nvidia.com>
+CC:     <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+        <yhsu@nvidia.com>, <snikam@nvidia.com>, <praithatha@nvidia.com>,
+        <talho@nvidia.com>, <avanbrunt@nvidia.com>, <thomasz@nvidia.com>,
+        <olof@lixom.net>, <jtukkinen@nvidia.com>, <mperttunen@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>
+Subject: [PATCH v2 0/7] Nvidia Arm SMMUv2 Implementation
+Date:   Mon, 2 Sep 2019 20:32:01 -0700
+Message-ID: <1567481528-31163-1-git-send-email-vdumpa@nvidia.com>
+X-Mailer: git-send-email 2.1.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1567481436; bh=T9BbTYlYBfuyCj1sNd2063D0NTKNlCCYjU+ccrUrfNA=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=kwrJNN0Z9MVA02HH4Wy53rTiwgJNHARlt4xypssjUsxFSJGrizKy75cuamg/sjrg/
+         E9Pt+9meLVYnXR+dl1zRa3/lARZKXWQPX8inmBCdazmVCjUQ2G7Z0tVlpNHzHSxIF1
+         sZ3oxbnNo77T4+yOPP8NVlvsHwfpUiUeLS0C5nddFZRZShOhuRw4Xv9nktMOChFLo5
+         df5dH2Pn6HUbQ1ZnxM1VpoUcfFVGIg7+50ecCIQ3HenSasr61ED+8pVkITeCqA+Tpm
+         ChB56uDR2DUhGWujtOHo3TuJRUi9W6KPYzUA+gL5KZglno04DaFZD6McHvjhSW+3ff
+         enfvdybAwqu4Q==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc throws warning message as below:
+Changes in v2:
+- Prepare arm_smu_flush_ops for override.
+- Remove NVIDIA_SMMUv2 and use ARM_SMMUv2 model as T194 SMMU hasn't modified ARM MMU-500.
+- Add T194 specific compatible string - "nvidia,tegra194-smmu"
+- Remove tlb_sync hook added in v1 and Override arm_smmu_flush_ops->tlb_sync() from implementation.
+- Register implementation specific context/global fault hooks directly for irq handling.
+- Update global/context interrupt list in DT and releant fault handling code in arm-smmu-nvidia.c.
+- Implement reset hook in arm-smmu-nvidia.c to clear irq status and sync tlb.
 
-‘clone_src_i_size’ may be used uninitialized in this function
-[-Wmaybe-uninitialized]
- #define IS_ALIGNED(x, a)  (((x) & ((typeof(x))(a) - 1)) == 0)
-                       ^
-fs/btrfs/send.c:5088:6: note: ‘clone_src_i_size’ was declared here
- u64 clone_src_i_size;
-   ^
-The clone_src_i_size is only used as call-by-reference
-in a call to get_inode_info().
+v1 - https://lkml.org/lkml/2019/8/29/1588
 
-Silence the warning by initializing clone_src_i_size to 0.
+Krishna Reddy (7):
+  iommu/arm-smmu: prepare arm_smmu_flush_ops for override
+  iommu/arm-smmu: add NVIDIA implementation for dual ARM MMU-500 usage
+  dt-bindings: arm-smmu: Add binding for Tegra194 SMMU
+  iommu/arm-smmu: Add global/context fault implementation hooks
+  arm64: tegra: Add Memory controller DT node on T194
+  arm64: tegra: Add DT node for T194 SMMU
+  arm64: tegra: enable SMMU for SDHCI and EQOS on T194
 
-Signed-off-by: Austin Kim <austindh.kim@gmail.com>
----
- fs/btrfs/send.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/iommu/arm,smmu.txt         |   4 +
+ MAINTAINERS                                        |   2 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   4 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |  88 +++++++
+ drivers/iommu/Makefile                             |   2 +-
+ drivers/iommu/arm-smmu-impl.c                      |   3 +
+ drivers/iommu/arm-smmu-nvidia.c                    | 287 +++++++++++++++++++++
+ drivers/iommu/arm-smmu.c                           |  27 +-
+ drivers/iommu/arm-smmu.h                           |   8 +-
+ 9 files changed, 413 insertions(+), 12 deletions(-)
+ create mode 100644 drivers/iommu/arm-smmu-nvidia.c
 
-diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-index f856d6c..197536b 100644
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -5085,7 +5085,7 @@ static int clone_range(struct send_ctx *sctx,
- 	struct btrfs_path *path;
- 	struct btrfs_key key;
- 	int ret;
--	u64 clone_src_i_size;
-+	u64 clone_src_i_size = 0;
- 
- 	/*
- 	 * Prevent cloning from a zero offset with a length matching the sector
 -- 
-2.6.2
+2.1.4
 
