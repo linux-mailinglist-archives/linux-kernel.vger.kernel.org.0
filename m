@@ -2,80 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDF7CA62A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:37:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A9FAA62CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbfICHhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 03:37:23 -0400
-Received: from sauhun.de ([88.99.104.3]:49762 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbfICHhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 03:37:22 -0400
-Received: from localhost (p54B3348D.dip0.t-ipconnect.de [84.179.52.141])
-        by pokefinder.org (Postfix) with ESMTPSA id 7167C2C4F2F;
-        Tue,  3 Sep 2019 09:37:20 +0200 (CEST)
-Date:   Tue, 3 Sep 2019 09:37:20 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     jacopo mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Peter Rosin <peda@axentia.se>
-Subject: Re: [RFC,v2 2/6] i2c: add I2C Address Translator (ATR) support
-Message-ID: <20190903073719.GA1020@kunai>
-References: <20190723203723.11730-1-luca@lucaceresoli.net>
- <20190723203723.11730-3-luca@lucaceresoli.net>
- <20190901143101.humomdehy5ee73sk@vino>
- <20bac324-c4d3-270c-5175-0a7f261fd760@lucaceresoli.net>
+        id S1728184AbfICHiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 03:38:52 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5726 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727525AbfICHir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 03:38:47 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3E0813730EF591927676;
+        Tue,  3 Sep 2019 15:38:45 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Tue, 3 Sep 2019
+ 15:38:38 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <jannh@google.com>, <axboe@kernel.dk>, <dhowells@redhat.com>,
+        <james.morris@microsoft.com>, <yuehaibing@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] misc: watch_queue: Fix build error
+Date:   Tue, 3 Sep 2019 15:37:26 +0800
+Message-ID: <20190903073726.21880-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-In-Reply-To: <20bac324-c4d3-270c-5175-0a7f261fd760@lucaceresoli.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+drivers/misc/watch_queue.c: In function watch_queue_account_mem:
+drivers/misc/watch_queue.c:309:38: error: struct user_struct has no member named locked_vm; did you mean locked_shm?
+  cur_pages = atomic_long_read(&user->locked_vm);
+                                      ^~~~~~~~~
+                                      locked_shm
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+struct user_struct {
+...
+   #if defined(CONFIG_PERF_EVENTS) || defined(CONFIG_BPF_SYSCALL) || \
+       defined(CONFIG_NET) || defined(CONFIG_IO_URING)
+           atomic_long_t locked_vm;
+   #endif
+...
+}
+
+If none of the CONFIGS is defined, locked_vm will be unavailable.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 064756fb355a ("General notification queue with user mmap()'able ring buffer")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ include/linux/sched/user.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
+index 917d88e..126494d 100644
+--- a/include/linux/sched/user.h
++++ b/include/linux/sched/user.h
+@@ -33,7 +33,8 @@ struct user_struct {
+ 	kuid_t uid;
+ 
+ #if defined(CONFIG_PERF_EVENTS) || defined(CONFIG_BPF_SYSCALL) || \
+-    defined(CONFIG_NET) || defined(CONFIG_IO_URING)
++	defined(CONFIG_NET) || defined(CONFIG_IO_URING) || \
++	defined(CONFIG_WATCH_QUEUE)
+ 	atomic_long_t locked_vm;
+ #endif
+ 
+-- 
+2.7.4
 
 
-> Adding the ATR features to i2c-mux.c was very tricky and error-prone due
-> to all of this code, that's why I have moved ATR to its own file in RFCv2.
-
-I forgot to say that I like this.
-
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1uGCoACgkQFA3kzBSg
-KbZidw/9EM+Hx6X3hquMtRxGgJV6HJWi8UYyPYgFrwAIYCAt7gtjHWnk1cNizf98
-4DSVtoi6zpMeLx4zM76DZ3P2nnDSDNQ+QwJRYRIoWLs3yWkZ56EPQvCxcc4lhNRW
-+XDgzFLnoVnkn4PJlAjztG7xcVm0u9XfM+8Ion0U9A9E7wIR1ml3XwctccOL0Zd7
-VW2zR+nzhEEH9iV/bCKeKTQXg75YgHyIIUlJm48FuP1mA5uWMqtX9hf5h6ctRZK4
-AYcxw1uLOICIBmbW5WaTOHq0xd3TaE4R0+lI9fcODckq7CVFijl1/odDsmgy/ISU
-24A0v/ulqd6b8XMXq3DyU3hyFmbwbJjWitI0nYQKdpCvF9hNFJ5KR++ko/P2I4s8
-inR7erFYYab2RSo0VKsZLgB4t45jmbQmCQtwKjla9uDcz2lHgG5/JzumGaPYdDEa
-DdQZOM8vz1GxM/3Yf2sCNkE2WJ5S0dT8PvrtsIhkn4Sqd9WiGPDiyjpK9mhdU1ap
-H9aXNKDRl+t4/x0zRe1K1gCydQzRsmLByXzAbs/sq+aKtUHl/obBKt9j6XFHMStG
-hOdIT2mQCys07yZpSK/LApFds0PbYBIB8XQjEsXIzGbSwau0BUJl3Ezwn7seZeer
-1SKdzmZlqUCJTeGdvjz6ef8RWeFRKrtl4srdu6ApbgvYAxGvcVk=
-=RqGE
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
