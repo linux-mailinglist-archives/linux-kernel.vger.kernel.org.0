@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 900CCA6E10
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A539FA6EB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729989AbfICQYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:24:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44162 "EHLO mail.kernel.org"
+        id S1730266AbfICQ2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:28:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729692AbfICQY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:24:29 -0400
+        id S1731007AbfICQ2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:28:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C40E823697;
-        Tue,  3 Sep 2019 16:24:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F4592343A;
+        Tue,  3 Sep 2019 16:27:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527868;
-        bh=LsqT4v/r/CImOLd7JR4Kl4tEVebpBdFgQ85JnTbOAkE=;
+        s=default; t=1567528079;
+        bh=5a1NYFVj1E1tb2pLQaCqcgLB6whCrKzXo36U2GMgsaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RyV73XCL7IZ7Ffeg+AusefI1URM36fDDpWJgb4Q9+troyVP5Wdcnm4TNmJY481Ojk
-         9Q/eWhnSsM2XTSYekOvL3EgCUs+JhVLSV1H9vVSfxsvwBNu3WbCafRO5qOKqRGGjXZ
-         3biI9gm+PlwTjGu+lmQqLHjNVERsAOHKhOr/+Ob0=
+        b=RGaNe4JkYsKmE5ZyCo4ArOqL+e+29APDnPc//nQOcJ9y5UALfmKwW/d1nP+tATRJR
+         +a4eFzckfO2YkKmZzozJEgsCcDVkhKnUtSKUSHW7CvwHnrtwzCmlbvHSBsf1v/ERTy
+         S/wEN2Rtd1uKl4ytOD7kQdDGfTP2pwWwiJGTQ1sY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>, kbuild test robot <lkp@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 03/23] bcache: fix race in btree_flush_write()
+Cc:     Ben Gardon <bgardon@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 092/167] kvm: mmu: Fix overflow on kvm mmu page limit calculation
 Date:   Tue,  3 Sep 2019 12:24:04 -0400
-Message-Id: <20190903162424.6877-3-sashal@kernel.org>
+Message-Id: <20190903162519.7136-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903162424.6877-1-sashal@kernel.org>
-References: <20190903162424.6877-1-sashal@kernel.org>
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -42,187 +43,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Ben Gardon <bgardon@google.com>
 
-There is a race between mca_reap(), btree_node_free() and journal code
-btree_flush_write(), which results very rare and strange deadlock or
-panic and are very hard to reproduce.
+[ Upstream commit bc8a3d8925a8fa09fa550e0da115d95851ce33c6 ]
 
-Let me explain how the race happens. In btree_flush_write() one btree
-node with oldest journal pin is selected, then it is flushed to cache
-device, the select-and-flush is a two steps operation. Between these two
-steps, there are something may happen inside the race window,
-- The selected btree node was reaped by mca_reap() and allocated to
-  other requesters for other btree node.
-- The slected btree node was selected, flushed and released by mca
-  shrink callback bch_mca_scan().
-When btree_flush_write() tries to flush the selected btree node, firstly
-b->write_lock is held by mutex_lock(). If the race happens and the
-memory of selected btree node is allocated to other btree node, if that
-btree node's write_lock is held already, a deadlock very probably
-happens here. A worse case is the memory of the selected btree node is
-released, then all references to this btree node (e.g. b->write_lock)
-will trigger NULL pointer deference panic.
+KVM bases its memory usage limits on the total number of guest pages
+across all memslots. However, those limits, and the calculations to
+produce them, use 32 bit unsigned integers. This can result in overflow
+if a VM has more guest pages that can be represented by a u32. As a
+result of this overflow, KVM can use a low limit on the number of MMU
+pages it will allocate. This makes KVM unable to map all of guest memory
+at once, prompting spurious faults.
 
-This race was introduced in commit cafe56359144 ("bcache: A block layer
-cache"), and enlarged by commit c4dc2497d50d ("bcache: fix high CPU
-occupancy during journal"), which selected 128 btree nodes and flushed
-them one-by-one in a quite long time period.
+Tested: Ran all kvm-unit-tests on an Intel Haswell machine. This patch
+	introduced no new failures.
 
-Such race is not easy to reproduce before. On a Lenovo SR650 server with
-48 Xeon cores, and configure 1 NVMe SSD as cache device, a MD raid0
-device assembled by 3 NVMe SSDs as backing device, this race can be
-observed around every 10,000 times btree_flush_write() gets called. Both
-deadlock and kernel panic all happened as aftermath of the race.
-
-The idea of the fix is to add a btree flag BTREE_NODE_journal_flush. It
-is set when selecting btree nodes, and cleared after btree nodes
-flushed. Then when mca_reap() selects a btree node with this bit set,
-this btree node will be skipped. Since mca_reap() only reaps btree node
-without BTREE_NODE_journal_flush flag, such race is avoided.
-
-Once corner case should be noticed, that is btree_node_free(). It might
-be called in some error handling code path. For example the following
-code piece from btree_split(),
-        2149 err_free2:
-        2150         bkey_put(b->c, &n2->key);
-        2151         btree_node_free(n2);
-        2152         rw_unlock(true, n2);
-        2153 err_free1:
-        2154         bkey_put(b->c, &n1->key);
-        2155         btree_node_free(n1);
-        2156         rw_unlock(true, n1);
-At line 2151 and 2155, the btree node n2 and n1 are released without
-mac_reap(), so BTREE_NODE_journal_flush also needs to be checked here.
-If btree_node_free() is called directly in such error handling path,
-and the selected btree node has BTREE_NODE_journal_flush bit set, just
-delay for 1 us and retry again. In this case this btree node won't
-be skipped, just retry until the BTREE_NODE_journal_flush bit cleared,
-and free the btree node memory.
-
-Fixes: cafe56359144 ("bcache: A block layer cache")
-Signed-off-by: Coly Li <colyli@suse.de>
-Reported-and-tested-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Ben Gardon <bgardon@google.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/btree.c   | 28 +++++++++++++++++++++++++++-
- drivers/md/bcache/btree.h   |  2 ++
- drivers/md/bcache/journal.c |  7 +++++++
- 3 files changed, 36 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/kvm_host.h | 12 ++++++------
+ arch/x86/kvm/mmu.c              | 13 ++++++-------
+ arch/x86/kvm/mmu.h              |  2 +-
+ arch/x86/kvm/x86.c              |  4 ++--
+ 4 files changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 9788b2ee6638f..5cf3247e8afb2 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -35,7 +35,7 @@
- #include <linux/rcupdate.h>
- #include <linux/sched/clock.h>
- #include <linux/rculist.h>
--
-+#include <linux/delay.h>
- #include <trace/events/bcache.h>
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index b6417454a9d79..0d3f5cf3ff3ea 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -117,7 +117,7 @@ static inline gfn_t gfn_to_index(gfn_t gfn, gfn_t base_gfn, int level)
+ }
  
- /*
-@@ -655,12 +655,25 @@ static int mca_reap(struct btree *b, unsigned int min_order, bool flush)
- 		up(&b->io_mutex);
- 	}
- 
-+retry:
- 	/*
- 	 * BTREE_NODE_dirty might be cleared in btree_flush_btree() by
- 	 * __bch_btree_node_write(). To avoid an extra flush, acquire
- 	 * b->write_lock before checking BTREE_NODE_dirty bit.
- 	 */
- 	mutex_lock(&b->write_lock);
-+	/*
-+	 * If this btree node is selected in btree_flush_write() by journal
-+	 * code, delay and retry until the node is flushed by journal code
-+	 * and BTREE_NODE_journal_flush bit cleared by btree_flush_write().
-+	 */
-+	if (btree_node_journal_flush(b)) {
-+		pr_debug("bnode %p is flushing by journal, retry", b);
-+		mutex_unlock(&b->write_lock);
-+		udelay(1);
-+		goto retry;
-+	}
-+
- 	if (btree_node_dirty(b))
- 		__bch_btree_node_write(b, &cl);
- 	mutex_unlock(&b->write_lock);
-@@ -1077,7 +1090,20 @@ static void btree_node_free(struct btree *b)
- 
- 	BUG_ON(b == b->c->root);
- 
-+retry:
- 	mutex_lock(&b->write_lock);
-+	/*
-+	 * If the btree node is selected and flushing in btree_flush_write(),
-+	 * delay and retry until the BTREE_NODE_journal_flush bit cleared,
-+	 * then it is safe to free the btree node here. Otherwise this btree
-+	 * node will be in race condition.
-+	 */
-+	if (btree_node_journal_flush(b)) {
-+		mutex_unlock(&b->write_lock);
-+		pr_debug("bnode %p journal_flush set, retry", b);
-+		udelay(1);
-+		goto retry;
-+	}
- 
- 	if (btree_node_dirty(b)) {
- 		btree_complete_write(b, btree_current_write(b));
-diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
-index d1c72ef64edf5..76cfd121a4861 100644
---- a/drivers/md/bcache/btree.h
-+++ b/drivers/md/bcache/btree.h
-@@ -158,11 +158,13 @@ enum btree_flags {
- 	BTREE_NODE_io_error,
- 	BTREE_NODE_dirty,
- 	BTREE_NODE_write_idx,
-+	BTREE_NODE_journal_flush,
+ #define KVM_PERMILLE_MMU_PAGES 20
+-#define KVM_MIN_ALLOC_MMU_PAGES 64
++#define KVM_MIN_ALLOC_MMU_PAGES 64UL
+ #define KVM_MMU_HASH_SHIFT 12
+ #define KVM_NUM_MMU_PAGES (1 << KVM_MMU_HASH_SHIFT)
+ #define KVM_MIN_FREE_MMU_PAGES 5
+@@ -796,9 +796,9 @@ enum kvm_irqchip_mode {
  };
  
- BTREE_FLAG(io_error);
- BTREE_FLAG(dirty);
- BTREE_FLAG(write_idx);
-+BTREE_FLAG(journal_flush);
+ struct kvm_arch {
+-	unsigned int n_used_mmu_pages;
+-	unsigned int n_requested_mmu_pages;
+-	unsigned int n_max_mmu_pages;
++	unsigned long n_used_mmu_pages;
++	unsigned long n_requested_mmu_pages;
++	unsigned long n_max_mmu_pages;
+ 	unsigned int indirect_shadow_pages;
+ 	unsigned long mmu_valid_gen;
+ 	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
+@@ -1201,8 +1201,8 @@ void kvm_mmu_clear_dirty_pt_masked(struct kvm *kvm,
+ 				   gfn_t gfn_offset, unsigned long mask);
+ void kvm_mmu_zap_all(struct kvm *kvm);
+ void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, u64 gen);
+-unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm);
+-void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned int kvm_nr_mmu_pages);
++unsigned long kvm_mmu_calculate_mmu_pages(struct kvm *kvm);
++void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned long kvm_nr_mmu_pages);
  
- static inline struct btree_write *btree_current_write(struct btree *b)
+ int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3);
+ bool pdptrs_changed(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index cdc0c460950f3..88940261fb537 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -1954,7 +1954,7 @@ static int is_empty_shadow_page(u64 *spt)
+  * aggregate version in order to make the slab shrinker
+  * faster
+  */
+-static inline void kvm_mod_used_mmu_pages(struct kvm *kvm, int nr)
++static inline void kvm_mod_used_mmu_pages(struct kvm *kvm, unsigned long nr)
  {
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index cae2aff5e27ae..33556acdcf9cd 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -405,6 +405,7 @@ static void btree_flush_write(struct cache_set *c)
- retry:
- 	best = NULL;
+ 	kvm->arch.n_used_mmu_pages += nr;
+ 	percpu_counter_add(&kvm_total_used_mmu_pages, nr);
+@@ -2704,7 +2704,7 @@ static bool prepare_zap_oldest_mmu_page(struct kvm *kvm,
+  * Changing the number of mmu pages allocated to the vm
+  * Note: if goal_nr_mmu_pages is too small, you will get dead lock
+  */
+-void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned int goal_nr_mmu_pages)
++void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned long goal_nr_mmu_pages)
+ {
+ 	LIST_HEAD(invalid_list);
  
-+	mutex_lock(&c->bucket_lock);
- 	for_each_cached_btree(b, c, i)
- 		if (btree_current_write(b)->journal) {
- 			if (!best)
-@@ -417,9 +418,14 @@ static void btree_flush_write(struct cache_set *c)
- 		}
- 
- 	b = best;
-+	if (b)
-+		set_btree_node_journal_flush(b);
-+	mutex_unlock(&c->bucket_lock);
-+
- 	if (b) {
- 		mutex_lock(&b->write_lock);
- 		if (!btree_current_write(b)->journal) {
-+			clear_bit(BTREE_NODE_journal_flush, &b->flags);
- 			mutex_unlock(&b->write_lock);
- 			/* We raced */
- 			atomic_long_inc(&c->retry_flush_write);
-@@ -427,6 +433,7 @@ static void btree_flush_write(struct cache_set *c)
- 		}
- 
- 		__bch_btree_node_write(b, NULL);
-+		clear_bit(BTREE_NODE_journal_flush, &b->flags);
- 		mutex_unlock(&b->write_lock);
+@@ -5926,10 +5926,10 @@ int kvm_mmu_module_init(void)
+ /*
+  * Caculate mmu pages needed for kvm.
+  */
+-unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm)
++unsigned long kvm_mmu_calculate_mmu_pages(struct kvm *kvm)
+ {
+-	unsigned int nr_mmu_pages;
+-	unsigned int  nr_pages = 0;
++	unsigned long nr_mmu_pages;
++	unsigned long nr_pages = 0;
+ 	struct kvm_memslots *slots;
+ 	struct kvm_memory_slot *memslot;
+ 	int i;
+@@ -5942,8 +5942,7 @@ unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm)
  	}
+ 
+ 	nr_mmu_pages = nr_pages * KVM_PERMILLE_MMU_PAGES / 1000;
+-	nr_mmu_pages = max(nr_mmu_pages,
+-			   (unsigned int) KVM_MIN_ALLOC_MMU_PAGES);
++	nr_mmu_pages = max(nr_mmu_pages, KVM_MIN_ALLOC_MMU_PAGES);
+ 
+ 	return nr_mmu_pages;
+ }
+diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+index 1fab69c0b2f32..65892288bf510 100644
+--- a/arch/x86/kvm/mmu.h
++++ b/arch/x86/kvm/mmu.h
+@@ -69,7 +69,7 @@ bool kvm_can_do_async_pf(struct kvm_vcpu *vcpu);
+ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
+ 				u64 fault_address, char *insn, int insn_len);
+ 
+-static inline unsigned int kvm_mmu_available_pages(struct kvm *kvm)
++static inline unsigned long kvm_mmu_available_pages(struct kvm *kvm)
+ {
+ 	if (kvm->arch.n_max_mmu_pages > kvm->arch.n_used_mmu_pages)
+ 		return kvm->arch.n_max_mmu_pages -
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index ed6b43f344b0c..4f564dc17c333 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4116,7 +4116,7 @@ static int kvm_vm_ioctl_set_identity_map_addr(struct kvm *kvm,
+ }
+ 
+ static int kvm_vm_ioctl_set_nr_mmu_pages(struct kvm *kvm,
+-					  u32 kvm_nr_mmu_pages)
++					 unsigned long kvm_nr_mmu_pages)
+ {
+ 	if (kvm_nr_mmu_pages < KVM_MIN_ALLOC_MMU_PAGES)
+ 		return -EINVAL;
+@@ -4130,7 +4130,7 @@ static int kvm_vm_ioctl_set_nr_mmu_pages(struct kvm *kvm,
+ 	return 0;
+ }
+ 
+-static int kvm_vm_ioctl_get_nr_mmu_pages(struct kvm *kvm)
++static unsigned long kvm_vm_ioctl_get_nr_mmu_pages(struct kvm *kvm)
+ {
+ 	return kvm->arch.n_max_mmu_pages;
  }
 -- 
 2.20.1
