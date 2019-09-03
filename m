@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AFFDA7009
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF81EA6FF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730868AbfICQg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:36:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48550 "EHLO mail.kernel.org"
+        id S1730919AbfICQ1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:27:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730806AbfICQ1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:27:15 -0400
+        id S1730397AbfICQ1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:27:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78B4D23431;
-        Tue,  3 Sep 2019 16:27:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C92F123878;
+        Tue,  3 Sep 2019 16:27:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528034;
-        bh=tllepvZJRZs1qOdtJ/BX20/5Z2C4FVcCNaCrspFb104=;
+        s=default; t=1567528053;
+        bh=q5ZJWKx0nWBeqan1jHUzLp/Zn1zEO8T0hXGdrABoMJw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GKX07FTHVmat85oEe467HVJnSncOIrTJ2AV7LknDVQVIL7b2C6BdFbDFGeT0zO3dB
-         RUtxAlPvi1rbIfEKSd9zRZrAq5vdYRJVK2mKdMhcHL/klInkJt4zlAdGtLvcjqQSdR
-         umloiqBvEGOrPVzOQKEZdWdmA7xG5vYL0XlLplJg=
+        b=bpm3h19DFewh5wHr8MQTi4nWxxnugGo92w1VmHzYOTWeOw2XT3bM2Imlc3aivZF9O
+         8U61nfrwG/AxAbjrfWeRPeVcrdaG5YYYzOkBDnCJIoc0HzHIILDmbFy61i2C97pw3z
+         B3mKIAwgaDh+MlJzth5RxtI7f1e/BjLyvkhw30GI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tang Junhui <tang.junhui.linux@gmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 064/167] bcache: treat stale && dirty keys as bad keys
-Date:   Tue,  3 Sep 2019 12:23:36 -0400
-Message-Id: <20190903162519.7136-64-sashal@kernel.org>
+Cc:     Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 071/167] iwlwifi: fix devices with PCI Device ID 0x34F0 and 11ac RF modules
+Date:   Tue,  3 Sep 2019 12:23:43 -0400
+Message-Id: <20190903162519.7136-71-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -43,97 +43,226 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tang Junhui <tang.junhui.linux@gmail.com>
+From: Luca Coelho <luciano.coelho@intel.com>
 
-[ Upstream commit 58ac323084ebf44f8470eeb8b82660f9d0ee3689 ]
+[ Upstream commit ab27926d9e4ae23df4f4d98e31f067c8b486bb4f ]
 
-Stale && dirty keys can be produced in the follow way:
-After writeback in write_dirty_finish(), dirty keys k1 will
-replace by clean keys k2
-==>ret = bch_btree_insert(dc->disk.c, &keys, NULL, &w->key);
-==>btree_insert_fn(struct btree_op *b_op, struct btree *b)
-==>static int bch_btree_insert_node(struct btree *b,
-       struct btree_op *op,
-       struct keylist *insert_keys,
-       atomic_t *journal_ref,
-Then two steps:
-A) update k1 to k2 in btree node memory;
-   bch_btree_insert_keys(b, op, insert_keys, replace_key)
-B) Write the bset(contains k2) to cache disk by a 30s delay work
-   bch_btree_leaf_dirty(b, journal_ref).
-But before the 30s delay work write the bset to cache device,
-these things happened:
-A) GC works, and reclaim the bucket k2 point to;
-B) Allocator works, and invalidate the bucket k2 point to,
-   and increase the gen of the bucket, and place it into free_inc
-   fifo;
-C) Until now, the 30s delay work still does not finish work,
-   so in the disk, the key still is k1, it is dirty and stale
-   (its gen is smaller than the gen of the bucket). and then the
-   machine power off suddenly happens;
-D) When the machine power on again, after the btree reconstruction,
-   the stale dirty key appear.
+The devices with PCI device ID 0x34F0 are part of the SoC and can be
+combined with some different external RF modules.  The configuration
+for these devices should reflect that, but are currently mixed up.  To
+avoid confusion with discrete devices, add part of the firmware to be
+used and the official name of the device to the cfg structs.
 
-In bch_extent_bad(), when expensive_debug_checks is off, it would
-treat the dirty key as good even it is stale keys, and it would
-cause bellow probelms:
-A) In read_dirty() it would cause machine crash:
-   BUG_ON(ptr_stale(dc->disk.c, &w->key, 0));
-B) It could be worse when reads hits stale dirty keys, it would
-   read old incorrect data.
+This is least reorganization possible (without messing things even
+more) that could be done as a bugfix for this SoC.  Further
+reorganization of this code will be done separately.
 
-This patch tolerate the existence of these stale && dirty keys,
-and treat them as bad key in bch_extent_bad().
-
-(Coly Li: fix indent which was modified by sender's email client)
-
-Signed-off-by: Tang Junhui <tang.junhui.linux@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/extents.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ .../net/wireless/intel/iwlwifi/cfg/22000.c    | 65 ++++++++++++++++++-
+ .../net/wireless/intel/iwlwifi/iwl-config.h   |  9 ++-
+ drivers/net/wireless/intel/iwlwifi/pcie/drv.c | 55 ++++++++--------
+ 3 files changed, 97 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/md/bcache/extents.c b/drivers/md/bcache/extents.c
-index 9560043666999..886710043025f 100644
---- a/drivers/md/bcache/extents.c
-+++ b/drivers/md/bcache/extents.c
-@@ -538,6 +538,7 @@ static bool bch_extent_bad(struct btree_keys *bk, const struct bkey *k)
- {
- 	struct btree *b = container_of(bk, struct btree, keys);
- 	unsigned int i, stale;
-+	char buf[80];
+diff --git a/drivers/net/wireless/intel/iwlwifi/cfg/22000.c b/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
+index 91ca77c7571ce..b4347806a59ed 100644
+--- a/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
++++ b/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
+@@ -77,10 +77,13 @@
+ #define IWL_22000_HR_FW_PRE		"iwlwifi-Qu-a0-hr-a0-"
+ #define IWL_22000_HR_CDB_FW_PRE		"iwlwifi-QuIcp-z0-hrcdb-a0-"
+ #define IWL_22000_HR_A_F0_FW_PRE	"iwlwifi-QuQnj-f0-hr-a0-"
+-#define IWL_22000_HR_B_FW_PRE		"iwlwifi-Qu-b0-hr-b0-"
++#define IWL_22000_HR_B_F0_FW_PRE	"iwlwifi-Qu-b0-hr-b0-"
++#define IWL_22000_QU_B_HR_B_FW_PRE	"iwlwifi-Qu-b0-hr-b0-"
++#define IWL_22000_HR_B_FW_PRE		"iwlwifi-QuQnj-b0-hr-b0-"
+ #define IWL_22000_JF_B0_FW_PRE		"iwlwifi-QuQnj-a0-jf-b0-"
+ #define IWL_22000_HR_A0_FW_PRE		"iwlwifi-QuQnj-a0-hr-a0-"
+ #define IWL_22000_SU_Z0_FW_PRE		"iwlwifi-su-z0-"
++#define IWL_QU_B_JF_B_FW_PRE		"iwlwifi-Qu-b0-jf-b0-"
  
- 	if (!KEY_PTRS(k) ||
- 	    bch_extent_invalid(bk, k))
-@@ -547,19 +548,19 @@ static bool bch_extent_bad(struct btree_keys *bk, const struct bkey *k)
- 		if (!ptr_available(b->c, k, i))
- 			return true;
+ #define IWL_22000_HR_MODULE_FIRMWARE(api) \
+ 	IWL_22000_HR_FW_PRE __stringify(api) ".ucode"
+@@ -88,7 +91,11 @@
+ 	IWL_22000_JF_FW_PRE __stringify(api) ".ucode"
+ #define IWL_22000_HR_A_F0_QNJ_MODULE_FIRMWARE(api) \
+ 	IWL_22000_HR_A_F0_FW_PRE __stringify(api) ".ucode"
+-#define IWL_22000_HR_B_QNJ_MODULE_FIRMWARE(api) \
++#define IWL_22000_HR_B_F0_QNJ_MODULE_FIRMWARE(api) \
++	IWL_22000_HR_B_F0_FW_PRE __stringify(api) ".ucode"
++#define IWL_22000_QU_B_HR_B_MODULE_FIRMWARE(api) \
++	IWL_22000_QU_B_HR_B_FW_PRE __stringify(api) ".ucode"
++#define IWL_22000_HR_B_QNJ_MODULE_FIRMWARE(api)	\
+ 	IWL_22000_HR_B_FW_PRE __stringify(api) ".ucode"
+ #define IWL_22000_JF_B0_QNJ_MODULE_FIRMWARE(api) \
+ 	IWL_22000_JF_B0_FW_PRE __stringify(api) ".ucode"
+@@ -96,6 +103,8 @@
+ 	IWL_22000_HR_A0_FW_PRE __stringify(api) ".ucode"
+ #define IWL_22000_SU_Z0_MODULE_FIRMWARE(api) \
+ 	IWL_22000_SU_Z0_FW_PRE __stringify(api) ".ucode"
++#define IWL_QU_B_JF_B_MODULE_FIRMWARE(api) \
++	IWL_QU_B_JF_B_FW_PRE __stringify(api) ".ucode"
  
--	if (!expensive_debug_checks(b->c) && KEY_DIRTY(k))
--		return false;
--
- 	for (i = 0; i < KEY_PTRS(k); i++) {
- 		stale = ptr_stale(b->c, k, i);
+ #define NVM_HW_SECTION_NUM_FAMILY_22000		10
  
-+		if (stale && KEY_DIRTY(k)) {
-+			bch_extent_to_text(buf, sizeof(buf), k);
-+			pr_info("stale dirty pointer, stale %u, key: %s",
-+				stale, buf);
-+		}
+@@ -190,7 +199,54 @@ const struct iwl_cfg iwl22000_2ac_cfg_jf = {
+ 
+ const struct iwl_cfg iwl22000_2ax_cfg_hr = {
+ 	.name = "Intel(R) Dual Band Wireless AX 22000",
+-	.fw_name_pre = IWL_22000_HR_FW_PRE,
++	.fw_name_pre = IWL_22000_QU_B_HR_B_FW_PRE,
++	IWL_DEVICE_22500,
++	/*
++	 * This device doesn't support receiving BlockAck with a large bitmap
++	 * so we need to restrict the size of transmitted aggregation to the
++	 * HT size; mac80211 would otherwise pick the HE max (256) by default.
++	 */
++	.max_tx_agg_size = IEEE80211_MAX_AMPDU_BUF_HT,
++};
 +
- 		btree_bug_on(stale > BUCKET_GC_GEN_MAX, b,
- 			     "key too stale: %i, need_gc %u",
- 			     stale, b->c->need_gc);
++/*
++ * All JF radio modules are part of the 9000 series, but the MAC part
++ * looks more like 22000.  That's why this device is here, but called
++ * 9560 nevertheless.
++ */
++const struct iwl_cfg iwl9461_2ac_cfg_qu_b0_jf_b0 = {
++	.name = "Intel(R) Wireless-AC 9461",
++	.fw_name_pre = IWL_QU_B_JF_B_FW_PRE,
++	IWL_DEVICE_22500,
++};
++
++const struct iwl_cfg iwl9462_2ac_cfg_qu_b0_jf_b0 = {
++	.name = "Intel(R) Wireless-AC 9462",
++	.fw_name_pre = IWL_QU_B_JF_B_FW_PRE,
++	IWL_DEVICE_22500,
++};
++
++const struct iwl_cfg iwl9560_2ac_cfg_qu_b0_jf_b0 = {
++	.name = "Intel(R) Wireless-AC 9560",
++	.fw_name_pre = IWL_QU_B_JF_B_FW_PRE,
++	IWL_DEVICE_22500,
++};
++
++const struct iwl_cfg killer1550i_2ac_cfg_qu_b0_jf_b0 = {
++	.name = "Killer (R) Wireless-AC 1550i Wireless Network Adapter (9560NGW)",
++	.fw_name_pre = IWL_QU_B_JF_B_FW_PRE,
++	IWL_DEVICE_22500,
++};
++
++const struct iwl_cfg killer1550s_2ac_cfg_qu_b0_jf_b0 = {
++	.name = "Killer (R) Wireless-AC 1550s Wireless Network Adapter (9560NGW)",
++	.fw_name_pre = IWL_QU_B_JF_B_FW_PRE,
++	IWL_DEVICE_22500,
++};
++
++const struct iwl_cfg iwl22000_2ax_cfg_jf = {
++	.name = "Intel(R) Dual Band Wireless AX 22000",
++	.fw_name_pre = IWL_QU_B_JF_B_FW_PRE,
+ 	IWL_DEVICE_22500,
+ 	/*
+ 	 * This device doesn't support receiving BlockAck with a large bitmap
+@@ -264,7 +320,10 @@ const struct iwl_cfg iwl22560_2ax_cfg_su_cdb = {
+ MODULE_FIRMWARE(IWL_22000_HR_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
+ MODULE_FIRMWARE(IWL_22000_JF_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
+ MODULE_FIRMWARE(IWL_22000_HR_A_F0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
++MODULE_FIRMWARE(IWL_22000_HR_B_F0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
++MODULE_FIRMWARE(IWL_22000_QU_B_HR_B_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
+ MODULE_FIRMWARE(IWL_22000_HR_B_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
+ MODULE_FIRMWARE(IWL_22000_JF_B0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
+ MODULE_FIRMWARE(IWL_22000_HR_A0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
+ MODULE_FIRMWARE(IWL_22000_SU_Z0_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
++MODULE_FIRMWARE(IWL_QU_B_JF_B_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-config.h b/drivers/net/wireless/intel/iwlwifi/iwl-config.h
+index 12fddcf15bab3..2e9fd7a303985 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-config.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-config.h
+@@ -574,11 +574,18 @@ extern const struct iwl_cfg iwl22000_2ac_cfg_hr;
+ extern const struct iwl_cfg iwl22000_2ac_cfg_hr_cdb;
+ extern const struct iwl_cfg iwl22000_2ac_cfg_jf;
+ extern const struct iwl_cfg iwl22000_2ax_cfg_hr;
++extern const struct iwl_cfg iwl9461_2ac_cfg_qu_b0_jf_b0;
++extern const struct iwl_cfg iwl9462_2ac_cfg_qu_b0_jf_b0;
++extern const struct iwl_cfg iwl9560_2ac_cfg_qu_b0_jf_b0;
++extern const struct iwl_cfg killer1550i_2ac_cfg_qu_b0_jf_b0;
++extern const struct iwl_cfg killer1550s_2ac_cfg_qu_b0_jf_b0;
++extern const struct iwl_cfg iwl22000_2ax_cfg_jf;
+ extern const struct iwl_cfg iwl22000_2ax_cfg_qnj_hr_a0_f0;
++extern const struct iwl_cfg iwl22000_2ax_cfg_qnj_hr_b0_f0;
+ extern const struct iwl_cfg iwl22000_2ax_cfg_qnj_hr_b0;
+ extern const struct iwl_cfg iwl22000_2ax_cfg_qnj_jf_b0;
+ extern const struct iwl_cfg iwl22000_2ax_cfg_qnj_hr_a0;
+ extern const struct iwl_cfg iwl22560_2ax_cfg_su_cdb;
+-#endif /* CONFIG_IWLMVM */
++#endif /* CPTCFG_IWLMVM || CPTCFG_IWLFMAC */
  
--		btree_bug_on(stale && KEY_DIRTY(k) && KEY_SIZE(k),
--			     b, "stale dirty pointer");
--
- 		if (stale)
- 			return true;
- 
+ #endif /* __IWL_CONFIG_H__ */
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
+index 5d65500a8aa75..d3a1c13bcf6f1 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
+@@ -696,34 +696,33 @@ static const struct pci_device_id iwl_hw_card_ids[] = {
+ 	{IWL_PCI_DEVICE(0x31DC, 0x40A4, iwl9462_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x4234, iwl9560_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x42A4, iwl9462_2ac_cfg_shared_clk)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0030, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0034, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0038, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x003C, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0060, iwl9461_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0064, iwl9461_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x00A0, iwl9462_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x00A4, iwl9462_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0230, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0234, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0238, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x023C, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0260, iwl9461_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x0264, iwl9461_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x02A0, iwl9462_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x02A4, iwl9462_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x1010, iwl9260_2ac_cfg)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x1030, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x1210, iwl9260_2ac_cfg)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x2030, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x2034, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x4030, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x4034, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x40A4, iwl9462_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x4234, iwl9560_2ac_cfg_soc)},
+-	{IWL_PCI_DEVICE(0x34F0, 0x42A4, iwl9462_2ac_cfg_soc)},
++
++	{IWL_PCI_DEVICE(0x34F0, 0x0030, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0034, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0038, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x003C, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0060, iwl9461_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0064, iwl9461_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x00A0, iwl9462_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x00A4, iwl9462_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0230, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0234, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0238, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x023C, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0260, iwl9461_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0264, iwl9461_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x02A0, iwl9462_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x02A4, iwl9462_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x1551, killer1550s_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x1552, killer1550i_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x2030, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x2034, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x4030, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x4034, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x40A4, iwl9462_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x4234, iwl9560_2ac_cfg_qu_b0_jf_b0)},
++	{IWL_PCI_DEVICE(0x34F0, 0x42A4, iwl9462_2ac_cfg_qu_b0_jf_b0)},
++
+ 	{IWL_PCI_DEVICE(0x3DF0, 0x0030, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x3DF0, 0x0034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x3DF0, 0x0038, iwl9560_2ac_cfg_soc)},
 -- 
 2.20.1
 
