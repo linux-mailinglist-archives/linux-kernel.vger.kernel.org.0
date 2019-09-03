@@ -2,33 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4811A6EF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1FF5A6ED4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:29:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731266AbfICQ3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:29:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51478 "EHLO mail.kernel.org"
+        id S1731275AbfICQ3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:29:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731178AbfICQ3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:29:00 -0400
+        id S1731240AbfICQ3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:29:02 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0FAD238CD;
-        Tue,  3 Sep 2019 16:28:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1406238CE;
+        Tue,  3 Sep 2019 16:29:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528139;
-        bh=BvuGDEuuCV3tL/5E1orvDAlLtATndOot/2zhu3g99Hc=;
+        s=default; t=1567528141;
+        bh=w77g1XRuir6cwf+dV8sn+KOaE+5X5efzEZQPmAsp56U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NUHfoW2crAgzF6TnIUp4UUPUrNyye2F9Je9v7Gc6FKADdb4hIrV+E1brLoxEcxFem
-         VeQlfyX5bA2yTnAb54DTYNbv9Jh9KINO4EYQ7EpBu+e/oO13yyvRe++TyBWdIusu8k
-         0Gj4PZoYC95ICGaHWZfESAvZdI740XbZpt8zcWT0=
+        b=Qls+6Th++vb1CIghRY7es90shyC9G1RLgs4e5hHWcoNKu1ARmrMIZWqirjyFl50e/
+         gSmriw68UYQ4UxR/Z+fYSUQFiZHSujOJXlxWNxo7jKn4XWHswPtxGQeryRhgvVAGEN
+         HzR0HPAEn058vA0cpfLeLAntjSA+GuVdPI+dpNhM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 130/167] ALSA: hda - Don't resume forcibly i915 HDMI/DP codec
-Date:   Tue,  3 Sep 2019 12:24:42 -0400
-Message-Id: <20190903162519.7136-130-sashal@kernel.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 132/167] KVM: x86: optimize check for valid PAT value
+Date:   Tue,  3 Sep 2019 12:24:44 -0400
+Message-Id: <20190903162519.7136-132-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -41,99 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-[ Upstream commit 4914da2fb0c89205790503f20dfdde854f3afdd8 ]
+[ Upstream commit 674ea351cdeb01d2740edce31db7f2d79ce6095d ]
 
-We apply the codec resume forcibly at system resume callback for
-updating and syncing the jack detection state that may have changed
-during sleeping.  This is, however, superfluous for the codec like
-Intel HDMI/DP, where the jack detection is managed via the audio
-component notification; i.e. the jack state change shall be reported
-sooner or later from the graphics side at mode change.
+This check will soon be done on every nested vmentry and vmexit,
+"parallelize" it using bitwise operations.
 
-This patch changes the codec resume callback to avoid the forcible
-resume conditionally with a new flag, codec->relaxed_resume, for
-reducing the resume time.  The flag is set in the codec probe.
-
-Although this doesn't fix the entire bug mentioned in the bugzilla
-entry below, it's still a good optimization and some improvements are
-seen.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201901
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_codec.c  | 8 ++++++--
- sound/pci/hda/hda_codec.h  | 2 ++
- sound/pci/hda/patch_hdmi.c | 6 +++++-
- 3 files changed, 13 insertions(+), 3 deletions(-)
+ arch/x86/kvm/mtrr.c | 10 +---------
+ arch/x86/kvm/vmx.c  |  2 +-
+ arch/x86/kvm/x86.h  | 10 ++++++++++
+ 3 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
-index a6233775e779f..82b0dc9f528f0 100644
---- a/sound/pci/hda/hda_codec.c
-+++ b/sound/pci/hda/hda_codec.c
-@@ -2947,15 +2947,19 @@ static int hda_codec_runtime_resume(struct device *dev)
- #ifdef CONFIG_PM_SLEEP
- static int hda_codec_force_resume(struct device *dev)
+diff --git a/arch/x86/kvm/mtrr.c b/arch/x86/kvm/mtrr.c
+index e9ea2d45ae66b..9f72cc427158e 100644
+--- a/arch/x86/kvm/mtrr.c
++++ b/arch/x86/kvm/mtrr.c
+@@ -48,11 +48,6 @@ static bool msr_mtrr_valid(unsigned msr)
+ 	return false;
+ }
+ 
+-static bool valid_pat_type(unsigned t)
+-{
+-	return t < 8 && (1 << t) & 0xf3; /* 0, 1, 4, 5, 6, 7 */
+-}
+-
+ static bool valid_mtrr_type(unsigned t)
  {
-+	struct hda_codec *codec = dev_to_hda_codec(dev);
-+	bool forced_resume = !codec->relaxed_resume;
- 	int ret;
+ 	return t < 8 && (1 << t) & 0x73; /* 0, 1, 4, 5, 6 */
+@@ -67,10 +62,7 @@ bool kvm_mtrr_valid(struct kvm_vcpu *vcpu, u32 msr, u64 data)
+ 		return false;
  
- 	/* The get/put pair below enforces the runtime resume even if the
- 	 * device hasn't been used at suspend time.  This trick is needed to
- 	 * update the jack state change during the sleep.
- 	 */
--	pm_runtime_get_noresume(dev);
-+	if (forced_resume)
-+		pm_runtime_get_noresume(dev);
- 	ret = pm_runtime_force_resume(dev);
--	pm_runtime_put(dev);
-+	if (forced_resume)
-+		pm_runtime_put(dev);
- 	return ret;
+ 	if (msr == MSR_IA32_CR_PAT) {
+-		for (i = 0; i < 8; i++)
+-			if (!valid_pat_type((data >> (i * 8)) & 0xff))
+-				return false;
+-		return true;
++		return kvm_pat_valid(data);
+ 	} else if (msr == MSR_MTRRdefType) {
+ 		if (data & ~0xcff)
+ 			return false;
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index ee9ff20da3902..feff7ed44a2bb 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4266,7 +4266,7 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		break;
+ 	case MSR_IA32_CR_PAT:
+ 		if (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_IA32_PAT) {
+-			if (!kvm_mtrr_valid(vcpu, MSR_IA32_CR_PAT, data))
++			if (!kvm_pat_valid(data))
+ 				return 1;
+ 			vmcs_write64(GUEST_IA32_PAT, data);
+ 			vcpu->arch.pat = data;
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 8889e0c029a70..3a91ea760f073 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -345,6 +345,16 @@ static inline void kvm_after_interrupt(struct kvm_vcpu *vcpu)
+ 	__this_cpu_write(current_vcpu, NULL);
  }
  
-diff --git a/sound/pci/hda/hda_codec.h b/sound/pci/hda/hda_codec.h
-index acacc19002658..2003403ce1c82 100644
---- a/sound/pci/hda/hda_codec.h
-+++ b/sound/pci/hda/hda_codec.h
-@@ -261,6 +261,8 @@ struct hda_codec {
- 	unsigned int auto_runtime_pm:1; /* enable automatic codec runtime pm */
- 	unsigned int force_pin_prefix:1; /* Add location prefix */
- 	unsigned int link_down_at_suspend:1; /* link down at runtime suspend */
-+	unsigned int relaxed_resume:1;	/* don't resume forcibly for jack */
 +
- #ifdef CONFIG_PM
- 	unsigned long power_on_acct;
- 	unsigned long power_off_acct;
-diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
-index 35931a18418f3..e4fbfb5557ab7 100644
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -2293,8 +2293,10 @@ static void generic_hdmi_free(struct hda_codec *codec)
- 	struct hdmi_spec *spec = codec->spec;
- 	int pin_idx, pcm_idx;
- 
--	if (codec_has_acomp(codec))
-+	if (codec_has_acomp(codec)) {
- 		snd_hdac_acomp_register_notifier(&codec->bus->core, NULL);
-+		codec->relaxed_resume = 0;
-+	}
- 
- 	for (pin_idx = 0; pin_idx < spec->num_pins; pin_idx++) {
- 		struct hdmi_spec_per_pin *per_pin = get_pin(spec, pin_idx);
-@@ -2550,6 +2552,8 @@ static void register_i915_notifier(struct hda_codec *codec)
- 	spec->drm_audio_ops.pin_eld_notify = intel_pin_eld_notify;
- 	snd_hdac_acomp_register_notifier(&codec->bus->core,
- 					&spec->drm_audio_ops);
-+	/* no need for forcible resume for jack check thanks to notifier */
-+	codec->relaxed_resume = 1;
- }
- 
- /* setup_stream ops override for HSW+ */
++static inline bool kvm_pat_valid(u64 data)
++{
++	if (data & 0xF8F8F8F8F8F8F8F8ull)
++		return false;
++	/* 0, 1, 4, 5, 6, 7 are valid values.  */
++	return (data | ((data & 0x0202020202020202ull) << 1)) == data;
++}
++
+ void kvm_load_guest_xcr0(struct kvm_vcpu *vcpu);
+ void kvm_put_guest_xcr0(struct kvm_vcpu *vcpu);
++
+ #endif
 -- 
 2.20.1
 
