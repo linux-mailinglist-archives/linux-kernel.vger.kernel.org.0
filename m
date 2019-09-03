@@ -2,162 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 343D1A73ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 21:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FD80A73F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 21:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfICTqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 15:46:36 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35068 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfICTqg (ORCPT
+        id S1726961AbfICTq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 15:46:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49840 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfICTq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 15:46:36 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n4so9765834pgv.2;
-        Tue, 03 Sep 2019 12:46:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=igmg6AwfGYbAp3MYYh4Kk1p8kAHB/xsXsNHr4nn4ius=;
-        b=F+5mHo0Pc7wnq15LIJvJIQhoNZSBBx0k7UKN/GWlOYX6SiT5NSARfjS+20qm8DAiwQ
-         Nja+QjRQCT0Y3r5yxoXNjObBW75vUPa/AizhaAyD8fu3HnSV7HfuPErQqNTPhiStKhRC
-         GXtvBQ3Ux0FNL/klbVHk3QqZHt1jlRnbRGXjGoOcNbnWT/I4rsoBqLrMeATw6NPrAELp
-         YZnvCNsN2sCumcv6io1UtHFvyPR4U4/jZ+7tiCCkqe6OIymoLNFOTHO89Bk4C1W1WZU4
-         PKlT0wsaogeaQ/A0EyJtS6Af9k+hAEAzuo2rKz+0nU/gI+CSkROmWzSdAGvZ3YFC//aW
-         KggA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=igmg6AwfGYbAp3MYYh4Kk1p8kAHB/xsXsNHr4nn4ius=;
-        b=IL7gSAvne1KqEv+YiI5zIdjoiAigSkXXn7/8D2Bs3YJMOYlmEZ2Bu+VBGCHy0DxoX+
-         3xgRm9r2xiKS50nKJwP73/VJfp44fNS09GPMUUN/5urzlz1moY9ubExpXRKn8hEWVuxi
-         FD3vUP0gaQ5K/Gl92oVRRNeEsSixTp7WG50Klo0/i6LM+S2wd63SfF9t8BUcsS0A+wez
-         zswbDTOrRO2u5UWf+vEWlrw/8jjsRHCmMX3E29QztpYmr9Ff8ih4kTwuURAwlAVjaR94
-         iouwMtsNSwbbFeqavram99OXDyGzB7w63gVeJcNvLe9OyQjbASCzWjNGUMJZOh2iPhXs
-         LzIg==
-X-Gm-Message-State: APjAAAV8VW3+RmTczYDj0kDTDCkb/JGB0XkTaQVuO6buQ67V7zWA8rxD
-        k9rR9Gf1yABKTIP5DF3Oi2M=
-X-Google-Smtp-Source: APXvYqz/z1n6VqRkLqpP+JOl2WoAy7bUZcayG7Qzi21C1gIKdqgyDS1yRSB/5vrBmOM0cmx5lGt+4g==
-X-Received: by 2002:a63:2744:: with SMTP id n65mr31585095pgn.277.1567539995164;
-        Tue, 03 Sep 2019 12:46:35 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id s5sm343566pjo.26.2019.09.03.12.46.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Sep 2019 12:46:34 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 12:46:33 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, Rudolf Marek <r.marek@assembler.cz>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 3/3] hwmon: w83793d: convert to use
- devm_i2c_new_dummy_device
-Message-ID: <20190903194633.GB32299@roeck-us.net>
-References: <20190903181256.13450-1-wsa+renesas@sang-engineering.com>
- <20190903181256.13450-4-wsa+renesas@sang-engineering.com>
+        Tue, 3 Sep 2019 15:46:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0oSK57qWeSItTDz/D1Y7sd4ufyamhAWf1L+/fFFqZyQ=; b=XXl2aHLEUe68XutV+fxkA3608
+        I7vNH9lR5XVbY+UgpzYTbkAox4OSJ03Bzgs3NwC0AtJMaQw1As2aLxpN8Opt30kA1U8WEKusrExp6
+        4fUj9HPZD+tR0VciCPG3qSl/CZARQgij/0mwWRcGQqaK3Q/H3iIfcz5rcG6VHDIG+iIP7zCdhLSWo
+        VbE53FBHmuMfjWaaoQGBr9JeLAyEjQVpBOkVOpBWFHw+vEVA4HVG1vjbX5cV6Be3UooOVtF2p/cyz
+        od9fmPPSm39VMMPVLf52xTnV3ErNBwd528mnkG76Q8EQ8wp6M4y0FiJ01d6F6zOLuhVe7If542Lb6
+        /Cvczd0Hg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5ElH-0000KZ-UH; Tue, 03 Sep 2019 19:46:44 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F1B33306010;
+        Tue,  3 Sep 2019 21:46:05 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3CE6B20977765; Tue,  3 Sep 2019 21:46:42 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 21:46:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH 0/3] task: Making tasks on the runqueue rcu protected
+Message-ID: <20190903194642.GV2349@hirez.programming.kicks-ass.net>
+References: <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+ <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
+ <20190830160957.GC2634@redhat.com>
+ <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
+ <87o906wimo.fsf@x220.int.ebiederm.org>
+ <20190902134003.GA14770@redhat.com>
+ <87tv9uiq9r.fsf@x220.int.ebiederm.org>
+ <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
+ <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
+ <CAHk-=wgQ_tZXQkovVked+nEsZhZqGVNnKmoy3b699dycZqCdKA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190903181256.13450-4-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAHk-=wgQ_tZXQkovVked+nEsZhZqGVNnKmoy3b699dycZqCdKA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 08:12:56PM +0200, Wolfram Sang wrote:
-> And simplify the error handling.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Tue, Sep 03, 2019 at 08:44:40AM -0700, Linus Torvalds wrote:
 
-Applied to hwmon-next.
+> That said, it won't affect any of the core architectures much, because
+> smp_store_release() isn't that expensive (it's just a compiler barrier
+> on x86, it's a cheap instruction on arm64, and it should be very cheap
+> on any other architecture too unless they do insane things - even on
+> powerpc, which is about the worst case for any barriers, it's just an
+> lwsync).
 
-Thanks,
-Guenter
+Right, x86/s390/Sparc it's a compiler barrier, ARM64 has a store-release
+op which is relatively cheap, Power has an LWSYNC, but the rest does
+store-release with smp_mb() -- and this includes ARM.
 
-> ---
->  drivers/hwmon/w83793.c | 30 ++++++++----------------------
->  1 file changed, 8 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/hwmon/w83793.c b/drivers/hwmon/w83793.c
-> index 46f5dfec8d0a..9df48b70c70c 100644
-> --- a/drivers/hwmon/w83793.c
-> +++ b/drivers/hwmon/w83793.c
-> @@ -1551,9 +1551,6 @@ static int w83793_remove(struct i2c_client *client)
->  	for (i = 0; i < ARRAY_SIZE(w83793_temp); i++)
->  		device_remove_file(dev, &w83793_temp[i].dev_attr);
->  
-> -	i2c_unregister_device(data->lm75[0]);
-> -	i2c_unregister_device(data->lm75[1]);
-> -
->  	/* Decrease data reference counter */
->  	mutex_lock(&watchdog_data_mutex);
->  	kref_put(&data->kref, w83793_release_resources);
-> @@ -1565,7 +1562,7 @@ static int w83793_remove(struct i2c_client *client)
->  static int
->  w83793_detect_subclients(struct i2c_client *client)
->  {
-> -	int i, id, err;
-> +	int i, id;
->  	int address = client->addr;
->  	u8 tmp;
->  	struct i2c_adapter *adapter = client->adapter;
-> @@ -1580,8 +1577,7 @@ w83793_detect_subclients(struct i2c_client *client)
->  					"invalid subclient "
->  					"address %d; must be 0x48-0x4f\n",
->  					force_subclients[i]);
-> -				err = -EINVAL;
-> -				goto ERROR_SC_0;
-> +				return -EINVAL;
->  			}
->  		}
->  		w83793_write_value(client, W83793_REG_I2C_SUBADDR,
-> @@ -1591,28 +1587,21 @@ w83793_detect_subclients(struct i2c_client *client)
->  
->  	tmp = w83793_read_value(client, W83793_REG_I2C_SUBADDR);
->  	if (!(tmp & 0x08))
-> -		data->lm75[0] = i2c_new_dummy(adapter, 0x48 + (tmp & 0x7));
-> +		data->lm75[0] = devm_i2c_new_dummy_device(&client->dev, adapter,
-> +							  0x48 + (tmp & 0x7));
->  	if (!(tmp & 0x80)) {
-> -		if ((data->lm75[0] != NULL)
-> +		if (!IS_ERR(data->lm75[0])
->  		    && ((tmp & 0x7) == ((tmp >> 4) & 0x7))) {
->  			dev_err(&client->dev,
->  				"duplicate addresses 0x%x, "
->  				"use force_subclients\n", data->lm75[0]->addr);
-> -			err = -ENODEV;
-> -			goto ERROR_SC_1;
-> +			return -ENODEV;
->  		}
-> -		data->lm75[1] = i2c_new_dummy(adapter,
-> -					      0x48 + ((tmp >> 4) & 0x7));
-> +		data->lm75[1] = devm_i2c_new_dummy_device(&client->dev, adapter,
-> +							  0x48 + ((tmp >> 4) & 0x7));
->  	}
->  
->  	return 0;
-> -
-> -	/* Undo inits in case of errors */
-> -
-> -ERROR_SC_1:
-> -	i2c_unregister_device(data->lm75[0]);
-> -ERROR_SC_0:
-> -	return err;
->  }
->  
->  /* Return 0 if detection is successful, -ENODEV otherwise */
-> @@ -1945,9 +1934,6 @@ static int w83793_probe(struct i2c_client *client,
->  
->  	for (i = 0; i < ARRAY_SIZE(w83793_temp); i++)
->  		device_remove_file(dev, &w83793_temp[i].dev_attr);
-> -
-> -	i2c_unregister_device(data->lm75[0]);
-> -	i2c_unregister_device(data->lm75[1]);
->  free_mem:
->  	kfree(data);
->  exit:
-> -- 
-> 2.20.1
-> 
