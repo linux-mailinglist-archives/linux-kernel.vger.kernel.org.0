@@ -2,70 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73849A61A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2448CA61AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfICGk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:40:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45424 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbfICGk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:40:56 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 048432173E;
-        Tue,  3 Sep 2019 06:40:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567492855;
-        bh=Kjnhxdr190S6hyFGdIsCbzAIQoMLyHpi5BtCmbjQvfo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CJNMYLqKdbPFEmIjo2UcyeccD7qZ4BLQcspji35Bg8d5E5Cfx5WnE2mk2d8cDlg1T
-         ZwfTmgVyXlwi1nUwRCoa62/pcsRd7iTbF88V4/6joXY7I95cZvmsCudYIkrgFAJJo8
-         kPgaKEfu3M7dXQ6AotA/WJq4dpeaZY3h4hYgLX6k=
-Date:   Tue, 3 Sep 2019 07:40:51 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Joerg Roedel <jroedel@suse.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: "Rework enabling/disabling of ATS for PCI masters" failed to
- compile on arm64
-Message-ID: <20190903064050.zsmaum4gajqjdivv@willie-the-truck>
-References: <63FF6963-E1D9-4C65-AD2E-0E4938D08584@lca.pw>
+        id S1727046AbfICGox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:44:53 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35615 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfICGow (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 02:44:52 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g7so16139710wrx.2;
+        Mon, 02 Sep 2019 23:44:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eLRHaMm5B6DSKtBXOKSlfBnVpYhlS9Wrwjo0dsWl554=;
+        b=X1VieKiIW2+c25kqAeFrDvYt7EmjVEd8Tmz/+8Y5rn6/kk3AvXWpSrLq82nzgX3aSp
+         Pxi9+vvsDdF/bX0jIy5Ms11O1blGFPRTxKY861UecdyxJpbcIui+xg8QMEtr4zd4SIsN
+         39YRwUO9eFxBb4AFHlSth9agDY1QbMUbuW96obGsHwB1Ppt7j/mM8VJ0GB2gw1Z+BRD0
+         o8OAHfsSQRxwv8gPtJCyYl4VO+3kyFbKSfzoWBHqHze2fhS8CbzB+t4plEsfe/VfKRXN
+         kGbXtJKhCQZmHhaUNJqwip4Ch9Uk05YTJt/zhS675PrQbktWViFA6J2zJHeuBt4esFE4
+         yYDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eLRHaMm5B6DSKtBXOKSlfBnVpYhlS9Wrwjo0dsWl554=;
+        b=lW5IYCdVtMa1Xd5osHH3nhO1lkkJGb0NG26HP8jXn08GNi9z5yRlQtL1qbBpjQLOCr
+         7/kwrlsKbi1H5BFvMdR9nvCxg88kJiQ3YZj6Z4Jru7I4sGS96ghWZ6E863FdahpH7NFR
+         XiX2eVPnELfwepJyA6PZ7Xq5LHamiLvjVKI7uEbY+TrqVIniIOmgkc+xMWvC4UOCGXbE
+         pMKtRHavU0X3gL7GbcI1Po2xvNomU5Z+PjccHa/odC3hguNsZngprez6J8KI8mQg3ix0
+         DSH7J8ytGX3KCHkmF40gq22XfRTxReJn11wiNVaiwAMsAHUQyB9Jwmqvu6Ae6OSW0FaL
+         MFlw==
+X-Gm-Message-State: APjAAAXqNk3cpRndKFN4ngHzNJbG7FeD2raZu9COTlgkNsz4qbQSi9dy
+        8pV/cpod9QNEWkcT4DW3/MIyQShs
+X-Google-Smtp-Source: APXvYqxXLB7BoBubkP6IC8GWOdgEhRE+9kBdQ3Qqut5fAf+PeV/MDxcIdkWVxypqwI4PUQjIYcRw0A==
+X-Received: by 2002:a5d:5612:: with SMTP id l18mr23176354wrv.177.1567493090192;
+        Mon, 02 Sep 2019 23:44:50 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8f04:7c00:f018:f11c:b684:4652? (p200300EA8F047C00F018F11CB6844652.dip0.t-ipconnect.de. [2003:ea:8f04:7c00:f018:f11c:b684:4652])
+        by smtp.googlemail.com with ESMTPSA id g201sm19148197wmg.34.2019.09.02.23.44.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Sep 2019 23:44:49 -0700 (PDT)
+Subject: Re: [PATCH net-next] r8152: modify rtl8152_set_speed function
+To:     Hayes Wang <hayeswang@realtek.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc:     nic_swsd <nic_swsd@realtek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1394712342-15778-326-Taiwan-albertk@realtek.com>
+ <280e6a3d-c6c3-ef32-a65d-19566190a1d3@gmail.com>
+ <0835B3720019904CB8F7AA43166CEEB2F18DAB41@RTITMBSVM03.realtek.com.tw>
+ <aa9513ff-3cef-4b9f-ecbd-1310660a911c@gmail.com>
+ <0835B3720019904CB8F7AA43166CEEB2F18DACE1@RTITMBSVM03.realtek.com.tw>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <56675c6b-c792-245e-54d0-eacd50e7a139@gmail.com>
+Date:   Tue, 3 Sep 2019 08:44:44 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <0835B3720019904CB8F7AA43166CEEB2F18DACE1@RTITMBSVM03.realtek.com.tw>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <63FF6963-E1D9-4C65-AD2E-0E4938D08584@lca.pw>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 10:10:30PM -0400, Qian Cai wrote:
-> The linux-next commit “iommu/arm-smmu-v3: Rework enabling/disabling of ATS for PCI masters” [1] causes a compilation error when PCI_ATS=n on arm64.
+On 03.09.2019 08:36, Hayes Wang wrote:
+> Heiner Kallweit [mailto:hkallweit1@gmail.com]
+>> Sent: Tuesday, September 03, 2019 2:14 PM
+> [...]
+>>>> Seeing all this code it might be a good idea to switch this driver
+>>>> to phylib, similar to what I did with r8169 some time ago.
+>>>
+>>> It is too complex to be completed for me at the moment.
+>>> If this patch is unacceptable, I would submit other
+>>> patches first. Thanks.
+>>>
+>> My remark isn't directly related to your patch and wasn't
+>> meant as an immediate ToDo. It's just a hint, because I think
+>> using phylib could help to significantly simplify the driver.
 > 
-> [1] https://lore.kernel.org/linux-iommu/20190820154549.17018-3-will@kernel.org/
+> I would schedule this in my work. Maybe I finish submitting
+> the other patches later.
 > 
-> drivers/iommu/arm-smmu-v3.c:2325:35: error: no member named 'ats_cap' in 'struct pci_dev'
->         return !pdev->untrusted && pdev->ats_cap;
->                                    ~~~~  ^
+> Besides, I have a question. I think I don't need rtl8152_set_speed()
+> if I implement phylib. However, I need to record some information
+> according to the settings of speed. For now, I do it in rtl8152_set_speed().
+> Do you have any idea about how I should do it with phylib without
+> rtl8152_set_speed()?
 > 
-> For example,
-> 
-> Symbol: PCI_ATS [=n]
->   │ Type  : bool
->   │   Defined at drivers/pci/Kconfig:118
->   │   Depends on: PCI [=y] 
->   │   Selected by [n]: 
->   │   - PCI_IOV [=n] && PCI [=y] 
->   │   - PCI_PRI [=n] && PCI [=y]│  
->   │   - PCI_PASID [=n] && PCI [=y] │  
->   │   - AMD_IOMMU [=n] && IOMMU_SUPPORT [=y] && X86_64 && PCI [=y] && ACPI [=y]
+When saying "record some information", what kind of information?
+The speed itself is stored in struct phy_device, if you need to adjust
+certain chip settings depending on negotiated speed, then you can do
+this in a callback (parameter handler of phy_connect_direct).
+See e.g. r8169_phylink_handler()
 
-https://lkml.kernel.org/r/20190903063028.6ryuk5dmaohi2fqa@willie-the-truck
+> Best Regards,
+> Hayes
+> 
+> 
 
-Will
+Heiner
