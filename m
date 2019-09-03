@@ -2,101 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B928A6B44
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C623AA6B32
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:22:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbfICOWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:22:40 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46713 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729083AbfICOWi (ORCPT
+        id S1729553AbfICOWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:22:11 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43369 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728576AbfICOWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:22:38 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t8so582210lfc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:36 -0700 (PDT)
+        Tue, 3 Sep 2019 10:22:11 -0400
+Received: by mail-pf1-f196.google.com with SMTP id d15so1371820pfo.10;
+        Tue, 03 Sep 2019 07:22:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SADru+zeJoUa6Kq7NgE3oCMhDB2qphP6ONJw4NgANKU=;
-        b=OFHtfa4wufhXWOWb3kQTUHd0i9YHGWH7vS4YpuePByo1apgcQx0qPn5D2rDAPelA2Z
-         c9AFN0rmRl04Af4morxrZ3mOH/6uAa5o24p5hlLofES39wmRTB39cuKWKsxsRbwOPueA
-         DWKNvjHA7bcEZ1WnlxtbCacM07rt3dqTsZp4a0qXvTQeCR28W5+16F2Hu7sZslGhNe+2
-         /aLGk/irsE8VSg2imBO3LXorORY3s5UnmKKS0pZ1Wf/Tcs/Byda5X4A+tL6KlvEDpHqt
-         vHpl86saT3X7iGXCPgRyUtq7iDDP1IjtuQWaqjKo5k1t5UqNlEovBQ6B26wBM3t7/M3q
-         dWQA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=WJT8mC+y7rk6LxADX+jcP4QHKshWYtsWFcHsDWvCv6o=;
+        b=M+u/sdgRp7BmBOgRDTVflFNf8pslru3t4U8MOJsazOLz96FhHuJqREwKSNd2A4H3Qj
+         LCQklPPReXTVNLVqiLtzRmHgIoNTZkK+7QCbdijkP+Kg7ecSw0ImPFwvrdM6HqIU/oPz
+         CjrAyNl0Ouj9u4OrwnbW+qzp5NEtaMZgmRQ79YhiQQNIs3LGA3q0OOnDy6IXXPnBgmUu
+         9iHG+seZireoepKI+rf5cvnLbnIef/2/MmsHK9sWKqWIWJBmxQOQ4+zj7Fds8vMFH0Vj
+         gjYG4BEm3RTySymgotlC2z3Ch/Hh37lZeboHjijeS7rBbCEPybeoadbph9rPy2Zg3vws
+         x7+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=SADru+zeJoUa6Kq7NgE3oCMhDB2qphP6ONJw4NgANKU=;
-        b=XeDsL/HmruFtICnskX4IpvyM07Amaqc8K2JgWllRQkc7Ln1RgIoN/OOT2RtPr3F2bE
-         JFDwG7kEfKeyRypI2SP4pr7KmM34jCmljiPNBmqUisZPTlXHhf0sjUZRdmGd93pROOKM
-         fa3o6YUr6Owoh0dWrB60snIEqbqVchQBB9CvEN+8I3BI0DD1oOlkYDjReflR6wTeeGKr
-         uV4SxN3wtC3rhyBlKeD7t7CxF4gl9Nvxdu0dkLInOK5XDoRaevkaa3C6+5eh75ozP5Q+
-         Xj0+Cld8+vzKKHhcV2bckD8lpOD9YhESd35T8EjgMNVBi1KCdnGl1KjGVFsf4kZRx/O5
-         U/Qw==
-X-Gm-Message-State: APjAAAXIwXh7qgP69xcq6sqMHwlLY9G00vLHtcc5TR8aZjRZkqkVssnZ
-        wI6XY3EZt2T2DXfv5k6KraLXnw==
-X-Google-Smtp-Source: APXvYqx/2ml75qZUvcITEBML+/VXCJWVUP/iHChuBbmOfuQX/0u72UoOykubRwkl0ub8F7RLyPaLPA==
-X-Received: by 2002:ac2:4906:: with SMTP id n6mr451699lfi.81.1567520556123;
-        Tue, 03 Sep 2019 07:22:36 -0700 (PDT)
-Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id v10sm2430862ljc.64.2019.09.03.07.22.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 07:22:35 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Cc:     Shawn Lin <shawn.lin@rock-chips.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Yong Mao <yong.mao@mediatek.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 02/11] mmc: dw_mmc: Re-store SDIO IRQs mask at system resume
-Date:   Tue,  3 Sep 2019 16:21:58 +0200
-Message-Id: <20190903142207.5825-3-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190903142207.5825-1-ulf.hansson@linaro.org>
-References: <20190903142207.5825-1-ulf.hansson@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WJT8mC+y7rk6LxADX+jcP4QHKshWYtsWFcHsDWvCv6o=;
+        b=tNG5He9yKZ70o4MIVXgouAqCRWy1O09lgXloM393MgjS+7v+/jszrWsWBiBNM8T3/9
+         r5INa29QsRpvtQwaRxHJMcyuZl+gdl0yX/qY/0mJxHfWCtxR2drWwKhpr/ORC2D6nQn+
+         hV8d7dWlflEtmrbQ0HTgn3rEOb/CWGdZuDV0j/1eQGXOq1yKqVKwUEtoHmA87tYOPgFZ
+         iwclX5jhea1/qkRCyJzjZAF3/++ZHLqy2FEdRG9ViN44Hmp6Pxy3c85RPGPlogo7ZkSx
+         3X9udGdRQU3xgyiXsdOE1UlLmSe5lQRfOVno0d20loX4BbOY523JufNWGOiCOWj2O+lP
+         ffzA==
+X-Gm-Message-State: APjAAAVHmQl3QqRKoTXnWIJOdZq4ebOnEdabjhCvlbjIUw9iMM9gam7s
+        9+tTDNKIpJ9tt40tOy2TW1TnOZMCcSGvTlDq/hU=
+X-Google-Smtp-Source: APXvYqxuEwoU+wUljRNwFRrt6A6UXzHB5I57vI9aPFbbX5bo7O6q/UxKyoT4oApqBKsFT1w0vVKqknvyDeSu6QYclRc=
+X-Received: by 2002:a63:505a:: with SMTP id q26mr29702007pgl.18.1567520530332;
+ Tue, 03 Sep 2019 07:22:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <1567090164-6819-1-git-send-email-akinobu.mita@gmail.com>
+ <6ebeedab-4a7f-14ea-d62e-9184e911047f@gmail.com> <20190902181207.GA18577@kroah.com>
+ <1cd468a3-b6e5-a93b-739a-f30288318356@gmail.com> <20190902190843.GB25019@kroah.com>
+ <CAC5umyjTJSMdKMtZbF8Uxky6nOrAHesTHmZRV5VA1uPwX2rtxA@mail.gmail.com> <20190903140719.GA9506@kroah.com>
+In-Reply-To: <20190903140719.GA9506@kroah.com>
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Tue, 3 Sep 2019 23:21:59 +0900
+Message-ID: <CAC5umyhApkfo+-7+nPFn20MLpG7dxrSE1+1FPhZp+p=hCsopeg@mail.gmail.com>
+Subject: Re: [PATCH] leds: remove PAGE_SIZE limit of /sys/class/leds/<led>/trigger
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In cases when SDIO IRQs have been enabled, runtime suspend is prevented by
-the driver. However, this still means dw_mci_runtime_suspend|resume() gets
-called during system suspend/resume, via pm_runtime_force_suspend|resume().
-This means during system suspend/resume, the register context of the dw_mmc
-device most likely loses its register context, even in cases when SDIO IRQs
-have been enabled.
+2019=E5=B9=B49=E6=9C=883=E6=97=A5(=E7=81=AB) 23:07 Greg KH <gregkh@linuxfou=
+ndation.org>:
+>
+> On Tue, Sep 03, 2019 at 10:55:40PM +0900, Akinobu Mita wrote:
+> > 2019=E5=B9=B49=E6=9C=883=E6=97=A5(=E7=81=AB) 4:08 Greg KH <gregkh@linux=
+foundation.org>:
+> > >
+> > > On Mon, Sep 02, 2019 at 08:47:02PM +0200, Jacek Anaszewski wrote:
+> > > > On 9/2/19 8:12 PM, Greg KH wrote:
+> > > > > On Sun, Sep 01, 2019 at 06:53:34PM +0200, Jacek Anaszewski wrote:
+> > > > >> Hi Akinobu,
+> > > > >>
+> > > > >> Thank you for the patch.
+> > > > >>
+> > > > >> I have one nit below but in general it looks good to me.
+> > > > >> I've tested it with 2000 mtd triggers (~14kB file size)
+> > > > >> and it worked flawlessly.
+> > > > >>
+> > > > >> Still, I would like to have ack from Greg for it.
+> > > > >>
+> > > > >> Adding Greg on Cc.
+> > > > >>
+> > > > >> On 8/29/19 4:49 PM, Akinobu Mita wrote:
+> > > > >>> Reading /sys/class/leds/<led>/trigger returns all available LED=
+ triggers.
+> > > > >>> However, the size of this file is limited to PAGE_SIZE because =
+of the
+> > > > >>> limitation for sysfs attribute.
+> > > > >>>
+> > > > >>> Enabling LED CPU trigger on systems with thousands of CPUs easi=
+ly hits
+> > > > >>> PAGE_SIZE limit, and makes it impossible to see all available L=
+ED triggers
+> > > > >>> and which trigger is currently activated.
+> > > > >>>
+> > > > >>> This converts /sys/class/leds/<led>/trigger to bin attribute an=
+d removes
+> > > > >>> the PAGE_SIZE limitation.
+> > > > >
+> > > > > But this is NOT a binary file.  A sysfs binary file is used for w=
+hen the
+> > > > > kernel passes data to or from hardware without any parsing of the=
+ data
+> > > > > by the kernel.
+> > > > >
+> > > > > You are not doing that here, you are abusing the "one value per f=
+ile"
+> > > > > rule of sysfs so much that you are forced to work around the limi=
+tation
+> > > > > it put in place on purpose to keep you from doing stuff like this=
+.
+> > > > >
+> > > > > Please fix this "correctly" by creating a new api that works prop=
+erly
+> > > > > and just live with the fact that this file will never work correc=
+tly and
+> > > > > move everyone to use the new api instead.
+> > > > >
+> > > > > Don't keep on abusing the interface by workarounds like this, it =
+is not
+> > > > > ok.
+> > > >
+> > > > In the message [0] you pledged to give us exception for that, provi=
+ded
+> > > > it will be properly documented in the code. I suppose you now objec=
+t
+> > > > because the patch does not meet that condition.
+> > >
+> > > Well, I honestly don't remember writing that email, but it was 5 mont=
+hs
+> > > and many thousands of emails ago :)
+> > >
+> > > Also, you all didn't document the heck out of this.  So no, I really =
+do
+> > > not want to see this patch accepted as-is.
+> > >
+> > > > Provided that will be fixed, can we count on your ack for the
+> > > > implementation of the solution you proposed? :-)
+> > >
+> > > Let's see the patch that actually implements what I suggested first :=
+)
+> >
+> > I'd propose introducing a new procfs file (/proc/led-triggers) and new
+> > /sys/class/leds/<led>/current-trigger api.
+> >
+> > Reading /proc/led-triggers file shows all available triggers.
+> > This violates "one value per file", but it's a procfs file.
+>
+> No, procfs files are ONLY for process-related things.  Don't keep the
+> insanity of this file format by just moving it out of sysfs and into
+> procfs :)
 
-To re-enable the SDIO IRQs during system resume, the dw_mmc driver
-currently relies on the mmc core to re-enable the SDIO IRQs when it resumes
-the SDIO card, but this isn't the recommended solution. Instead, it's
-better to deal with this locally in the dw_mmc driver, so let's do that.
+I see.
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/mmc/host/dw_mmc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+How about creating one file or directory for each led-trigger in
+/sys/kernel/led-triggers directory?
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index eea52e2c5a0c..f114710e82b4 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -3460,6 +3460,10 @@ int dw_mci_runtime_resume(struct device *dev)
- 	/* Force setup bus to guarantee available clock output */
- 	dw_mci_setup_bus(host->slot, true);
- 
-+	/* Re-enable SDIO interrupts. */
-+	if (sdio_irq_enabled(host->slot->mmc))
-+		__dw_mci_enable_sdio_irq(host->slot, 1);
-+
- 	/* Now that slots are all setup, we can enable card detect */
- 	dw_mci_enable_cd(host);
- 
--- 
-2.17.1
+e.g.
 
+$ ls /sys/kernel/led-triggers
+audio-micmute                              ide-disk        phy0assoc
+audio-mute                                 kbd-altgrlock   phy0radio
+...
+hidpp_battery_3-full                       panic
