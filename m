@@ -2,76 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4465CA6AF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:14:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAF55A6AFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:15:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbfICOOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:14:37 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:60612 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1728490AbfICOOh (ORCPT
+        id S1729549AbfICOPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:15:05 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56421 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729113AbfICOPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:14:37 -0400
-Received: (qmail 2738 invoked by uid 2102); 3 Sep 2019 10:14:36 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 3 Sep 2019 10:14:36 -0400
-Date:   Tue, 3 Sep 2019 10:14:36 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Greg KH <greg@kroah.com>
-cc:     Oliver Neukum <oneukum@suse.com>,
-        Julius Werner <jwerner@chromium.org>,
-        USB Storage list <usb-storage@lists.one-eyed-alien.net>,
-        Dan Williams <dcbw@redhat.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH] usb: storage: Add ums-cros-aoa driver
-In-Reply-To: <20190903091953.GA12325@kroah.com>
-Message-ID: <Pine.LNX.4.44L0.1909031009250.1859-100000@iolanthe.rowland.org>
+        Tue, 3 Sep 2019 10:15:05 -0400
+X-Originating-IP: 83.155.44.161
+Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
+        (Authenticated sender: hadess@hadess.net)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id D2C496000C;
+        Tue,  3 Sep 2019 14:15:01 +0000 (UTC)
+Message-ID: <2505a7c3e29afb5a140ed47e54ea9c72d0192367.camel@hadess.net>
+Subject: Re: [PATCH v6] HID: sb0540: add support for Creative SB0540 IR
+ receivers
+From:   Bastien Nocera <hadess@hadess.net>
+To:     linux-input@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Bastien Nocera <bnocera@redhat.com>
+Date:   Tue, 03 Sep 2019 16:15:00 +0200
+In-Reply-To: <20190702083931.7392-1-hadess@hadess.net>
+References: <20190702083931.7392-1-hadess@hadess.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Sep 2019, Greg KH wrote:
+Hey,
 
-> On Tue, Sep 03, 2019 at 10:46:14AM +0200, Oliver Neukum wrote:
-> > Am Montag, den 02.09.2019, 18:47 +0200 schrieb Greg KH:
-> > > 
-> > > This should work just fine today.  Add a new device id to the "new_id"
-> > > file and then tell the driver to bind.  That's pretty much the same as a
-> > > "force_bind", right?
-> > 
-> > That looks like a race condition by design to me.
+On Tue, 2019-07-02 at 10:39 +0200, Bastien Nocera wrote:
+> From: Bastien Nocera <bnocera@redhat.com>
 > 
-> How?
+> Add a new hid driver for the Creative SB0540 IR receiver. This
+> receiver
+> is usually coupled with an RM-1500 or an RM-1800 remote control.
 > 
-> Anyway, this should all "just work" somehow, there's an old lwn.net
-> article I wrote about this over a decade ago when it was added.  A
-> number of subsystems use this all the time (vfio?) and I haven't heard
-> any issues with it in a long time.
+> The scrollwheels on the RM-1800 remote are not bound, as they are
+> labelled for specific audio controls that don't usually exist on most
+> systems. They can be remapped using standard Linux keyboard
+> remapping tools.
 
-No, this won't "just work".  The problem is that when you write to the 
-new_id file, usb_store_new_id() calls driver_attach(), which tries to 
-bind the driver to any matching device.  There _will_ be other matching 
-devices, and trying to bind them will cause runtime errors.
+I'm back from travelling, so ready to update/respin this patch if
+needed.
 
-That isn't what we want.  We want to bind the driver to a _specific_ 
-device and no others, even if the others match the new id.
-
-Now, this is what writing to the sysfs "bind" file does -- except that
-it won't let you bind a driver to a device it doesn't match!
-
-So we have two problems:
-
-	Bind a driver to a particular device,
-
-	Even though the id's for the device don't match the driver.
-
-The kernel already contains solutions for each of these problems, but 
-nothing that can handle both at once.
-
-Alan Stern
+Cheers
 
