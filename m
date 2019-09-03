@@ -2,85 +2,285 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8245FA61C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CAE4A61CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:52:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfICGvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:51:38 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5724 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726180AbfICGvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:51:38 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6F0BF84B5CCF034E3493;
-        Tue,  3 Sep 2019 14:51:36 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Tue, 3 Sep 2019
- 14:51:29 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2 -next] iommu/arm-smmu-v3: Fix build error without CONFIG_PCI_ATS
-Date:   Tue, 3 Sep 2019 14:50:56 +0800
-Message-ID: <20190903065056.17988-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190903024212.20300-1-yuehaibing@huawei.com>
-References: <20190903024212.20300-1-yuehaibing@huawei.com>
+        id S1727433AbfICGwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:52:04 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:46962 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbfICGwD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 02:52:03 -0400
+Received: by mail-io1-f66.google.com with SMTP id x4so33373644iog.13
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 23:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0F9dHVWqGS8pUXJgoGylFO0BRrE92SZVgNyvb5o+ce8=;
+        b=Rb9snEpQ7SvC+b9oG9ag30UFSjulOK5Q7VYo24KhNE4ndEiW127L6VDsWso4nAaiWY
+         Gkmfx96iNGy+MKCfw6VvEhxFwrr1QHd4XQeFucutBfqo4UILDU3OmUmAhDxk5yU9nIIM
+         1RSCyjZ3XOQMS7iJvz6jt7lqYUb53ha+HBQZByisz3YcwKICC4WvXDU0LNciP2gzO3KC
+         OfW57Z5IQyE5YThgotILbUkKItoVs7SYt/j6LEFDvAupjI0oy4lM5jfm28uHSvgseKJk
+         FwHvsQHQEEOa34V+jVhrdQgAAJ1zN/2rJcruvgq8wjr4kSk7rA6Bk8Rfx2/6WazDBypQ
+         LL/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0F9dHVWqGS8pUXJgoGylFO0BRrE92SZVgNyvb5o+ce8=;
+        b=WyoFpb8ZZL4cE7Ph319/PJwB9NMXn6CCMFqenE8VX3oHuO1SB/gXqkv12SPr9JBe6/
+         bMpwvWO5aXGgvxr/QE8Zozxz1TWaaqKFCQLeJLmWjKIUZ7zID7ioRlWkKBTKrfo2cmuB
+         Z6PAklrXo3tcVL50qD2FFHUaBGgVXCWBHOX2Bj8wKOzMYolRPmZQOGqBGXCprSAB8Fxz
+         HI5a6pZsV1tPlxW1xbHE30iTAKYZGWtWzn52fTdk0fW78q+7pEO0oobO63Z0gBnXn4RF
+         DCbf+inGHL73Fkih2go4KEGY5UGG3RoaztRfitVXamYS+QirfmIryyrkbi0dlPfhP1cO
+         IEgA==
+X-Gm-Message-State: APjAAAXr1HLtl4g/ECq+e3U4SDZrz/2HwiONhNOEAkCwgQgB7jkAC+OR
+        CAQo/tHdst5mSwWgjRiGXmNBgviHs3fIThom70ybjQ==
+X-Google-Smtp-Source: APXvYqzaomYalEUMi0UtKAc6wlYG9J1JwC+gFONN+ZRF3rN5gAzYpDYlZkeEBuPHh200MECf4otHjQ3RpjlIGEVlVd4=
+X-Received: by 2002:a6b:b714:: with SMTP id h20mr1071770iof.302.1567493522612;
+ Mon, 02 Sep 2019 23:52:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <1567321765-3738-1-git-send-email-pragnesh.patel@sifive.com> <5d6d1b81.1c69fb81.7eabb.cabd@mx.google.com>
+In-Reply-To: <5d6d1b81.1c69fb81.7eabb.cabd@mx.google.com>
+From:   Pragnesh Patel <pragnesh.patel@sifive.com>
+Date:   Tue, 3 Sep 2019 12:21:51 +0530
+Message-ID: <CAN8ut8KMjo4KVcgLp6AhZOpuLwWMJ8HeiecH70RgYnLQQ05M9w@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: serial: Convert riscv,sifive-serial to json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_PCI_ATS is not set, building fails:
+On Mon, Sep 2, 2019 at 7:09 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Sun, Sep 01, 2019 at 12:39:21PM +0530, Pragnesh Patel wrote:
+> > Convert the riscv,sifive-serial binding to DT schema using json-schema.
+> >
+> > Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
+> > ---
+> >  .../devicetree/bindings/serial/sifive-serial.txt   | 33 ------------
+> >  .../devicetree/bindings/serial/sifive-serial.yaml  | 62 ++++++++++++++++++++++
+> >  2 files changed, 62 insertions(+), 33 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.txt
+> >  create mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.txt b/Documentation/devicetree/bindings/serial/sifive-serial.txt
+> > deleted file mode 100644
+> > index c86b1e5..0000000
+> > --- a/Documentation/devicetree/bindings/serial/sifive-serial.txt
+> > +++ /dev/null
+> > @@ -1,33 +0,0 @@
+> > -SiFive asynchronous serial interface (UART)
+> > -
+> > -Required properties:
+> > -
+> > -- compatible: should be something similar to
+> > -           "sifive,<chip>-uart" for the UART as integrated
+> > -           on a particular chip, and "sifive,uart<version>" for the
+> > -           general UART IP block programming model.  Supported
+> > -           compatible strings as of the date of this writing are:
+> > -           "sifive,fu540-c000-uart" for the SiFive UART v0 as
+> > -           integrated onto the SiFive FU540 chip, or "sifive,uart0"
+> > -           for the SiFive UART v0 IP block with no chip integration
+> > -           tweaks (if any)
+> > -- reg: address and length of the register space
+> > -- interrupts: Should contain the UART interrupt identifier
+> > -- clocks: Should contain a clock identifier for the UART's parent clock
+> > -
+> > -
+> > -UART HDL that corresponds to the IP block version numbers can be found
+> > -here:
+> > -
+> > -https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/uart
+> > -
+> > -
+> > -Example:
+> > -
+> > -uart0: serial@10010000 {
+> > -     compatible = "sifive,fu540-c000-uart", "sifive,uart0";
+> > -     interrupt-parent = <&plic0>;
+> > -     interrupts = <80>;
+> > -     reg = <0x0 0x10010000 0x0 0x1000>;
+> > -     clocks = <&prci PRCI_CLK_TLCLK>;
+> > -};
+> > diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.yaml b/Documentation/devicetree/bindings/serial/sifive-serial.yaml
+> > new file mode 100644
+> > index 0000000..56fa935
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/serial/sifive-serial.yaml
+> > @@ -0,0 +1,62 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/serial/sifive-serial.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: SiFive asynchronous serial interface (UART)
+> > +
+> > +maintainers:
+> > +  - Pragnesh Patel <pragnesh.patel@sifive.com>
+> > +  - Paul Walmsley  <paul.walmsley@sifive.com>
+> > +  - Palmer Dabbelt <palmer@sifive.com>
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/serial.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - sifive,fu540-c000-uart
+> > +      - sifive,uart0
+>
+> This is wrong and should have warned if you tested this on 5.3.
+>
+> items:
+>   - const: sifive,fu540-c000-uart
+>   - const: sifive,uart0
+>
 
-drivers/iommu/arm-smmu-v3.c: In function arm_smmu_ats_supported:
-drivers/iommu/arm-smmu-v3.c:2325:35: error: struct pci_dev has no member named ats_cap; did you mean msi_cap?
-  return !pdev->untrusted && pdev->ats_cap;
-                                   ^~~~~~~
+Thanks for the correction, i will update this in v2 patch.
 
-ats_cap should only used when CONFIG_PCI_ATS is defined,
-so use #ifdef block to guard this.
+I haven't got any warnings due to my patch.
+For your reference, following is the list of warnings when i did "make
+dtbs_check" (kernel version - 5.3.0-rc7)
 
-Fixes: bfff88ec1afe ("iommu/arm-smmu-v3: Rework enabling/disabling of ATS for PCI masters")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v2: Add arm_smmu_ats_supported() of no CONFIG_PCI_ATS
----
- drivers/iommu/arm-smmu-v3.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+/home/pragneshp/opensource/linux/Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml:
+cpu@0: compatible:0: 'riscv' is not one of ['sifive,rocket0',
+'sifive,e5', 'sifive,e51', 'sifive,u54-mc', 'sifive,u54', 'sifive,u5']
+/home/pragneshp/opensource/linux/Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml:
+cpu@0: compatible: ['riscv'] is too short
+/home/pragneshp/opensource/linux/Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml:
+cpu@0: 'timebase-frequency' is a required property
+/home/pragneshp/opensource/linux/Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml:
+cpu@0: 'timebase-frequency' is a required property
+/home/pragneshp/opensource/linux/Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml:
+cpu@1: 'timebase-frequency' is a required property
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 66bf641..8da93e7 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -2311,6 +2311,7 @@ static void arm_smmu_install_ste_for_dev(struct arm_smmu_master *master)
- 	}
- }
- 
-+#ifdef CONFIG_PCI_ATS
- static bool arm_smmu_ats_supported(struct arm_smmu_master *master)
- {
- 	struct pci_dev *pdev;
-@@ -2324,6 +2325,12 @@ static bool arm_smmu_ats_supported(struct arm_smmu_master *master)
- 	pdev = to_pci_dev(master->dev);
- 	return !pdev->untrusted && pdev->ats_cap;
- }
-+#else
-+static bool arm_smmu_ats_supported(struct arm_smmu_master *master)
-+{
-+	return false;
-+}
-+#endif
- 
- static void arm_smmu_enable_ats(struct arm_smmu_master *master)
- {
--- 
-2.7.4
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+/: compatible: ['sifive,hifive-unleashed-a00', 'sifive,fu540-c000'] is
+too short
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@3: 'timebase-frequency' is a required property
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@3: compatible: Additional items are not allowed ('riscv' was
+unexpected)
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@3: compatible:1: 'riscv' was expected
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@3: compatible: ['sifive,u54-mc', 'sifive,rocket0', 'riscv'] is too
+long
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@1: 'timebase-frequency' is a required property
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@1: compatible: Additional items are not allowed ('riscv' was
+unexpected)
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@1: compatible:1: 'riscv' was expected
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@1: compatible: ['sifive,u54-mc', 'sifive,rocket0', 'riscv'] is too
+long
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@4: 'timebase-frequency' is a required property
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@4: compatible: Additional items are not allowed ('riscv' was
+unexpected)
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@4: compatible:1: 'riscv' was expected
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@4: compatible: ['sifive,u54-mc', 'sifive,rocket0', 'riscv'] is too
+long
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@2: 'timebase-frequency' is a required property
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@2: compatible: Additional items are not allowed ('riscv' was
+unexpected)
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@2: compatible:1: 'riscv' was expected
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@2: compatible: ['sifive,u54-mc', 'sifive,rocket0', 'riscv'] is too
+long
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@0: compatible: Additional items are not allowed ('riscv' was
+unexpected)
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@0: compatible:1: 'riscv' was expected
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+cpu@0: compatible: ['sifive,e51', 'sifive,rocket0', 'riscv'] is too
+long
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+soc: compatible:0: 'sifive,fu540-c000' is not one of
+['sifive,hifive-unleashed-a00']
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+soc: compatible:1: 'sifive,fu540-c000' was expected
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+soc: compatible:2: 'sifive,fu540' was expected
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+soc: $nodename:0: '/' was expected
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+soc: spi@10041000:reg:0: [0, 268701696, 0, 4096, 0, 805306368, 0,
+268435456] is too long
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+soc: ethernet@10090000:reg:0: [0, 269025280, 0, 8192, 0, 269090816, 0,
+4096] is too long
+/home/pragneshp/opensource/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dt.yaml:
+soc: spi@10040000:reg:0: [0, 268697600, 0, 4096, 0, 536870912, 0,
+268435456] is too long
 
 
+>
+> > +
+> > +    description:
+> > +      Should be something similar to "sifive,<chip>-uart"
+> > +      for the UART as integrated on a particular chip,
+> > +      and "sifive,uart<version>" for the general UART IP
+> > +      block programming model.
+> > +
+> > +      UART HDL that corresponds to the IP block version
+> > +      numbers can be found here -
+> > +
+> > +      https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/uart
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - clocks
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +      #include <dt-bindings/clock/sifive-fu540-prci.h>
+> > +      serial@10010000 {
+> > +        compatible = "sifive,fu540-c000-uart", "sifive,uart0";
+> > +        interrupt-parent = <&plic0>;
+> > +        interrupts = <80>;
+> > +        reg = <0x0 0x10010000 0x0 0x1000>;
+> > +        clocks = <&prci PRCI_CLK_TLCLK>;
+> > +      };
+> > +
+> > +...
+> > --
+> > 2.7.4
+> >
+>
