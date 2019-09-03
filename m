@@ -2,70 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0ADEA6893
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 14:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ABB0A6897
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 14:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbfICM1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 08:27:34 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35196 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728288AbfICM1e (ORCPT
+        id S1729049AbfICM2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 08:28:18 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44437 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728288AbfICM2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 08:27:34 -0400
-Received: by mail-qk1-f194.google.com with SMTP id d26so8077815qkk.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 05:27:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GhRwLyjUlW+c2hC8fBDr52ubKPgjR7IWnK8ss/n1sqc=;
-        b=LvYFP+0bzpv6FMzy/f6sUBjmP0k+BIXx+Ib9XdoPmYb/BEK8ORujseZLj+YpncJKCI
-         gfa1W305tBecC2VIj4PiKiLb8lc5GJS/DRYFoVb8zRp5MXa1iwI3ofrQYzuFeGYLQlnc
-         I9kK5I0ROiHLa6Tnt9kOc73E7P6YPmgpY4MgizyZKks3jimqThD6jo9sbWaYe6MeLwGo
-         XOD6+ki1WfqQguxpERIy3ebSvGoUaW/dGl9vP2CXRHHuZf7NhdNY+evmwYt06fdjiGCL
-         LdkUyHmKyCa/VTYN56q0RJZAw6K1nc2lssbhlGlOoP8oOe3FNRzaaBJ5frSqaXHdTVXu
-         1PXg==
-X-Gm-Message-State: APjAAAU5jA0RlFdYAyFYlijW0kLvt27fGmAWMt8YcIQoLbABOeSJSy8f
-        aagw7vwlS26CLeekFaf67mT4eJrp0S/c79by6Yo=
-X-Google-Smtp-Source: APXvYqzwVU2KcZM6MzMS/hjDxWHhc2k8jQTbk38dxVSSZJ8yySnydBQRREAwEmKpByufxBClRZAA0HL2G5RvXLyBaXM=
-X-Received: by 2002:a05:620a:b:: with SMTP id j11mr34016279qki.352.1567513653740;
- Tue, 03 Sep 2019 05:27:33 -0700 (PDT)
+        Tue, 3 Sep 2019 08:28:17 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1i57uu-00069F-Q7; Tue, 03 Sep 2019 12:28:12 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Mark Brown <broonie@kernel.org>, openbmc@lists.ozlabs.org,
+        linux-spi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][spi-next] spi: npcm-fiu: fix spelling mistake "frequancy" -> "frequency"
+Date:   Tue,  3 Sep 2019 13:28:12 +0100
+Message-Id: <20190903122812.3986-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190825203222.GA22800@piout.net>
-In-Reply-To: <20190825203222.GA22800@piout.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 3 Sep 2019 14:27:17 +0200
-Message-ID: <CAK8P3a0jKyOXD=5SokdMCOjOqN2Zmja3gC2eebgvk_fmxQ6dLA@mail.gmail.com>
-Subject: Re: [GIT PULL] ARM: at91: SoC for 5.4
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
-        SoC Team <soc@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 25, 2019 at 10:32 PM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> AT91 SoC for 5.4
->
->  - MAINTAINERS updates
->  - a generated headers parallel build fix
->
-> ----------------------------------------------------------------
-> Masahiro Yamada (1):
->       ARM: at91: move platform-specific asm-offset.h to arch/arm/mach-at91
->
-> Nicolas Ferre (3):
->       MAINTAINERS: at91: Collect all pinctrl/gpio drivers in same entry
->       MAINTAINERS: at91: remove the TC entry
->       mailmap: map old company name to new one @microchip.com
+From: Colin Ian King <colin.king@canonical.com>
 
-Pulled into arm/soc, thanks!
+There is a spelling mistake in a dev_warning message. Fix it. Also
+break line to clear up checkpatch warning.
 
-     Arnd
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/spi/spi-npcm-fiu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-npcm-fiu.c b/drivers/spi/spi-npcm-fiu.c
+index 3ea1ec68147e..d9e2f58b104b 100644
+--- a/drivers/spi/spi-npcm-fiu.c
++++ b/drivers/spi/spi-npcm-fiu.c
+@@ -544,7 +544,8 @@ static int npcm_fiu_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 	if (fiu->clkrate != chip->clkrate) {
+ 		ret = clk_set_rate(fiu->clk, chip->clkrate);
+ 		if (ret < 0)
+-			dev_warn(fiu->dev, "Failed setting %lu frequancy, stay at %lu frequancy\n", chip->clkrate, fiu->clkrate);
++			dev_warn(fiu->dev, "Failed setting %lu frequency, stay at %lu frequency\n",
++				 chip->clkrate, fiu->clkrate);
+ 		else
+ 			fiu->clkrate = chip->clkrate;
+ 	}
+-- 
+2.20.1
+
