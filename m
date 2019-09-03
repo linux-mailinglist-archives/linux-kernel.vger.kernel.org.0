@@ -2,130 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E3ACA7226
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41DBFA7247
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730295AbfICSBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 14:01:43 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54716 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbfICSBn (ORCPT
+        id S1729907AbfICSJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 14:09:45 -0400
+Received: from mailin.studentenwerk.mhn.de ([141.84.225.229]:33810 "EHLO
+        email.studentenwerk.mhn.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727352AbfICSJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 14:01:43 -0400
-Received: by mail-wm1-f66.google.com with SMTP id k2so455344wmj.4;
-        Tue, 03 Sep 2019 11:01:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9+j7vGFIuajYqxHIUEx1josnLfHJODn+hIKQuA7Dj6k=;
-        b=TTfOrBMgtX7gWYDPuOJ9PpZ2t4ex9K04x8m0qm6+U9HF9aP8wUn5Qf4RA7/bZd4lRT
-         6/sd0HFNFakkqfr1T5Ab61WEhymYwGR96jdK1oXdn3DzksxPcQGbFaR8wju6O3Zf5jMv
-         WiC5kJCkMRpmJy6IXQOb+LwxHTbwwc8lWbOOgTjg+ury2b0Z8n+Uww6toMlRh5qRuHx8
-         QPMLw8A8Y/1/qEs4c/hTFATulrKAxyjfYM4ZiHaS2rHcDH4IjVTOAdW67WT1ULyymFJ/
-         BMji2PJ0pJnLtvEc7oAuqRjXqAxCk05U7UU6NiuYBHutiUYDxtEkX0DorlEDcdFJf98W
-         E/iQ==
-X-Gm-Message-State: APjAAAXqAFRTg7T49CNV2T3S3+8g+6a1128QOS0wBhIO+KYqo0lky5AJ
-        KT7Cxoqb8YWZrp9SqRUtpdZ4yMQ6
-X-Google-Smtp-Source: APXvYqziqD0+PoZoE7pqsz+OatNdMNyKewQuKhGvLWT7dXvwOj3fBkQa5KLuwzCJDZTdQOPtpNUHrw==
-X-Received: by 2002:a7b:c3d4:: with SMTP id t20mr656855wmj.136.1567533700734;
-        Tue, 03 Sep 2019 11:01:40 -0700 (PDT)
-Received: from black.home (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
-        by smtp.googlemail.com with ESMTPSA id m62sm484019wmm.35.2019.09.03.11.01.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 11:01:40 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Denis Efremov <efremov@linux.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Smack: Move request_buffer from stack to smack_audit_data
-Date:   Tue,  3 Sep 2019 21:01:34 +0300
-Message-Id: <20190903180134.16176-1-efremov@linux.com>
-X-Mailer: git-send-email 2.21.0
+        Tue, 3 Sep 2019 14:09:45 -0400
+X-Greylist: delayed 413 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Sep 2019 14:09:44 EDT
+Received: from mailhub.studentenwerk.mhn.de (mailhub.studentenwerk.mhn.de [127.0.0.1])
+        by email.studentenwerk.mhn.de (Postfix) with ESMTP id 46NFDB3KQbzRhSl;
+        Tue,  3 Sep 2019 20:02:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwm.de;
+        s=stwm-20170627; t=1567533770;
+        bh=cDBU6ESHTAM3Zu+XZG0ThiswLTZCCx+T14baC5kz5RE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oUfKGroBMvZr9bWL6bvu2wHF6cW24EWEK2kkcpSnfuO4PJqhNs/GyHai4u8Ws6Jww
+         83xWPkP3NWu/+5KIbnIH5RysurPrZ6Cqsnvp0RDeJtwwaii/64f8FFLtjJJCVxYFlW
+         J2R44xg9DCGklrBW8YIzgsUNjBl2hQswz0qiaV2OXm5d+MKfMaMqFhJ9AEcl1Ybdcq
+         BZ0TbdsO0dV6ddXrZDa0+w79j1mDRzO6MzEgdrSjCSacDmCIE+TCfpwv3hCXUHLEEX
+         EWW43y0dua6vMakLM8iwCOPZ+yxbUD6CX3ruDFA0dyjC2S8X6WqU93iF/E0KsVNBAm
+         aYiCkmbE3DmJw==
+From:   Wolfgang Walter <linux@stwm.de>
+To:     Jason L Tibbitts III <tibbs@math.uh.edu>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        linux-nfs@vger.kernel.org, km@cm4all.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: Regression in 5.1.20: Reading long directory fails
+Date:   Tue, 03 Sep 2019 20:02:50 +0200
+Message-ID: <4418877.15LTP4gqqJ@stwm.de>
+User-Agent: KMail/4.14.3 (Linux/5.0.6-050006-generic; KDE/4.14.13; x86_64; ; )
+In-Reply-To: <ufa5zm9s7kz.fsf@epithumia.math.uh.edu>
+References: <ufak1bhyuew.fsf@epithumia.math.uh.edu> <ufay2zduosz.fsf@epithumia.math.uh.edu> <ufa5zm9s7kz.fsf@epithumia.math.uh.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-request_buffer is required to describe an access type in a string for
-the audit. The problem here is that the string is saved on the stack
-and then passed by reference to the next function in request field of
-the smack_audit_data structure. Referencing variables on a stack
-and saving them in external data structures is usually considered
-as bad and error-prone practice. Thus, this commit simply moves
-the request_buffer from the stack to the stack_audit_data structure
-and removes the necessity of stack referencing. strcat calls are
-replaced with strlcat calls - a safer analog for strings concatenation
-with bounds checking.
+Am Dienstag, 3. September 2019, 10:49:48 schrieb Jason L Tibbitts III:
+> >>>>> "JLT" =3D=3D Jason L Tibbitts <tibbs@math.uh.edu> writes:
+> JLT> Certainly a server reboot, or maybe even just
+> JLT> unmounting and remounting the filesystem or copying the data to
+> JLT> another filesystem would tell me that.  In any case, as soon as =
+I
+> JLT> am able to mess with that server, I'll know more.
+>=20
+> Rebooting the server did not make any difference, and now more users =
+are
+> seeing the problem.  At this point I'm in a state where NFS simply is=
+n't
+> reliable at all, and I'm not sure what to do.  If Centos 8 were out,
+> I'd work on moving to that just so that the server was a little more
+> modern.  (Currently the server is Centos 7.)  I guess I could try usi=
+ng
+> Fedora, or installing one of the upstream kernels, just in case this =
+has
+> to do with some interaction between the client and the old RHEL7 kern=
+el.
+>=20
+> I do have a packet capture of a directory listing that fails with EIO=
+,
+> but I'm not sure if it's safe to simply post it, and I'm not sure wha=
+t
+> tshark options would be useful in decoding it.
+>=20
+> I do know that I can rsync one of the problematic directories to a
+> different server (running the same kernel) and it doesn't have the sa=
+me
+> problem.  What I'll try next is rsyncing to a different filesystem on=
 
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
- security/smack/smack.h        |  6 +++++-
- security/smack/smack_access.c | 12 +++---------
- 2 files changed, 8 insertions(+), 10 deletions(-)
+> the same server, but again I'll have to wait until people log off to =
+do
+> proper testing.
+>=20
+>  - J<
 
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 62529f382942..9eeefb865dfd 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -278,7 +278,11 @@ struct smack_audit_data {
- 	const char *function;
- 	char *subject;
- 	char *object;
--	char *request;
-+#ifdef CONFIG_SECURITY_SMACK_BRINGUP
-+	char request[SMK_NUM_ACCESS_TYPE + 5];
-+#else
-+	char request[SMK_NUM_ACCESS_TYPE + 1];
-+#endif
- 	int result;
- };
- 
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index f1c93a7be9ec..99e58d4a9980 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -340,11 +340,6 @@ static void smack_log_callback(struct audit_buffer *ab, void *a)
- void smack_log(char *subject_label, char *object_label, int request,
- 	       int result, struct smk_audit_info *ad)
- {
--#ifdef CONFIG_SECURITY_SMACK_BRINGUP
--	char request_buffer[SMK_NUM_ACCESS_TYPE + 5];
--#else
--	char request_buffer[SMK_NUM_ACCESS_TYPE + 1];
--#endif
- 	struct smack_audit_data *sad;
- 	struct common_audit_data *a = &ad->a;
- 
-@@ -360,7 +355,7 @@ void smack_log(char *subject_label, char *object_label, int request,
- 		sad->function = "unknown";
- 
- 	/* end preparing the audit data */
--	smack_str_from_perm(request_buffer, request);
-+	smack_str_from_perm(sad->request, request);
- 	sad->subject = subject_label;
- 	sad->object  = object_label;
- #ifdef CONFIG_SECURITY_SMACK_BRINGUP
-@@ -371,14 +366,13 @@ void smack_log(char *subject_label, char *object_label, int request,
- 	 * the logging policy says to do so.
- 	 */
- 	if (result == SMACK_UNCONFINED_SUBJECT)
--		strcat(request_buffer, "(US)");
-+		strlcat(sad->request, "(US)", sizeof(sad->request));
- 	else if (result == SMACK_UNCONFINED_OBJECT)
--		strcat(request_buffer, "(UO)");
-+		strlcat(sad->request, "(UO)", sizeof(sad->request));
- 
- 	if (result > 0)
- 		result = 0;
- #endif
--	sad->request = request_buffer;
- 	sad->result  = result;
- 
- 	common_lsm_audit(a, smack_log_callback, NULL);
--- 
-2.21.0
+What filesystem do you use on the server? xfs? If yes, does it use 64bi=
+t=20
+inodes (or started to use them)? Do you set a fsid when you export the=20=
 
+filesystem?
+
+Regards,
+--=20
+Wolfgang Walter
+Studentenwerk M=FCnchen
+Anstalt des =F6ffentlichen Rechts
