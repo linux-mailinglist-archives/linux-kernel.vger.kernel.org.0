@@ -2,88 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2962EA5ED3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 03:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E72E4A5EDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 03:31:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbfICB3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 21:29:02 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:50022 "EHLO inva020.nxp.com"
+        id S1726426AbfICBbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 21:31:06 -0400
+Received: from mga06.intel.com ([134.134.136.31]:40781 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725306AbfICB3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 21:29:01 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C2EFA1A09E7;
-        Tue,  3 Sep 2019 03:28:59 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C75341A09F3;
-        Tue,  3 Sep 2019 03:28:47 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0401F402B1;
-        Tue,  3 Sep 2019 09:28:39 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        dmurphy@ti.com
-Subject: [PATCH V2] arm64: dts: imx8mn-ddr4-evk: Enable GPIO LED
-Date:   Tue,  3 Sep 2019 09:27:57 -0400
-Message-Id: <1567517277-30919-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725306AbfICBbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 21:31:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 18:31:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,461,1559545200"; 
+   d="scan'208";a="381967332"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga005.fm.intel.com with ESMTP; 02 Sep 2019 18:31:04 -0700
+Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Micha=c5=82_Wajdeczko?= <michal.wajdeczko@intel.com>
+Subject: Re: [RFC PATCH] iommu/vt-d: Fix IOMMU field not populated on device
+ hot re-plug
+To:     Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+References: <20190822142922.31526-1-janusz.krzysztofik@linux.intel.com>
+ <3255251.C7nBVfOIaa@jkrzyszt-desk.ger.corp.intel.com>
+ <ccb1434d-281c-abae-0726-7fd924041315@linux.intel.com>
+ <1769080.0GM3UzqXcv@jkrzyszt-desk.ger.corp.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <52fbfac9-c879-4b45-dd74-fafe62c2432b@linux.intel.com>
+Date:   Tue, 3 Sep 2019 09:29:40 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <1769080.0GM3UzqXcv@jkrzyszt-desk.ger.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX8MN DDR4 EVK board has a GPIO LED to indicate status,
-add support for it.
+Hi Janusz,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V1:
-	- Mention color in the label.
----
- arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+On 9/2/19 4:37 PM, Janusz Krzysztofik wrote:
+>> I am not saying that keeping data is not acceptable. I just want to
+>> check whether there are any other solutions.
+> Then reverting 458b7c8e0dde and applying this patch still resolves the issue
+> for me.  No errors appear when mappings are unmapped on device close after the
+> device has been removed, and domain info preserved on device removal is
+> successfully reused on device re-plug.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
-index b698061..bf1c097 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
-@@ -15,6 +15,18 @@
- 		stdout-path = &uart2;
- 	};
- 
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio_led>;
-+
-+		status {
-+			label = "yellow:status";
-+			gpios = <&gpio3 16 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+		};
-+	};
-+
- 	reg_usdhc2_vmmc: regulator-usdhc2 {
- 		compatible = "regulator-fixed";
- 		pinctrl-names = "default";
-@@ -54,6 +66,12 @@
- 		>;
- 	};
- 
-+	pinctrl_gpio_led: gpioledgrp {
-+		fsl,pins = <
-+			MX8MN_IOMUXC_NAND_READY_B_GPIO3_IO16	0x19
-+		>;
-+	};
-+
- 	pinctrl_i2c1: i2c1grp {
- 		fsl,pins = <
- 			MX8MN_IOMUXC_I2C1_SCL_I2C1_SCL		0x400001c3
--- 
-2.7.4
+This patch doesn't look good to me although I agree that keeping data is
+acceptable. It updates dev->archdata.iommu, but leaves the hardware
+context/pasid table unchanged. This might cause problems somewhere.
 
+> 
+> Is there anything else I can do to help?
+
+Can you please tell me how to reproduce the problem? Keeping the per
+device domain info while device is unplugged is a bit dangerous because
+info->dev might be a wild pointer. We need to work out a clean fix.
+
+> 
+> Thanks,
+> Janusz
+> 
+
+Best regards,
+Baolu
