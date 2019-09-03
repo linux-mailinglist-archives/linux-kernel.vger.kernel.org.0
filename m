@@ -2,99 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11053A76C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 00:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B506A76D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 00:18:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfICWQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 18:16:48 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39935 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726567AbfICWQr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 18:16:47 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-96.corp.google.com [104.133.0.96] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x83MGcB2011727
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 3 Sep 2019 18:16:39 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4638F42049E; Tue,  3 Sep 2019 18:16:38 -0400 (EDT)
-Date:   Tue, 3 Sep 2019 18:16:38 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     Qian Cai <cai@lca.pw>, Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: "beyond 2038" warnings from loopback mount is noisy
-Message-ID: <20190903221638.GF2899@mit.edu>
-References: <1567523922.5576.57.camel@lca.pw>
- <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
- <20190903211747.GD2899@mit.edu>
- <CABeXuvoYh0mhg049+pXbMqh-eM=rw+Ui1=rDree4Yb=7H7mQRg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABeXuvoYh0mhg049+pXbMqh-eM=rw+Ui1=rDree4Yb=7H7mQRg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727109AbfICWSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 18:18:45 -0400
+Received: from mga14.intel.com ([192.55.52.115]:59833 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726090AbfICWSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 18:18:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 15:18:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,464,1559545200"; 
+   d="scan'208";a="189964151"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by FMSMGA003.fm.intel.com with ESMTP; 03 Sep 2019 15:18:43 -0700
+Message-ID: <1da2a58548277dfd8086be02b8467cc903ed7932.camel@linux.intel.com>
+Subject: Re: [PATCH 8/8] tools/power/x86/intel-speed-select: Output
+ success/failed for command output
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Prarit Bhargava <prarit@redhat.com>,
+        platform-driver-x86@vger.kernel.org
+Cc:     David Arcari <darcari@redhat.com>, linux-kernel@vger.kernel.org
+Date:   Tue, 03 Sep 2019 15:18:43 -0700
+In-Reply-To: <20190903153734.11904-9-prarit@redhat.com>
+References: <20190903153734.11904-1-prarit@redhat.com>
+         <20190903153734.11904-9-prarit@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 02:31:06PM -0700, Deepa Dinamani wrote:
-> > We need to drop this commit (ext4: Initialize timestamps limits), or
-> > at least the portion which adds the call to the EXT4_INODE_SET_XTIME
-> > macro in ext4.h.
+On Tue, 2019-09-03 at 11:37 -0400, Prarit Bhargava wrote:
+> Command output has confusing data, returning "0" on success.  For
+> example
 > 
-> As Arnd said, I think this can be fixed by warning only when the inode
-> size is not uniformly 128 bytes in ext4.h. Is this an acceptable
-> solution or we want to drop this warning altogether?
+> > # ./intel-speed-select -c 14 turbo-freq enable
+> 
+> Intel(R) Speed Select Technology
+> Executing on CPU model:106[0x6a]
+>  package-1
+>    die-0
+>      cpu-14
+>        turbo-freq
+>          enable:0
+> 
+> To avoid confusion change the command output to 'success' or
+> 'failed'.
+We need to fix also help in the function usage() to match new
+implementation
 
-If we have a mount-time warning, I really don't think a warning in the
-kernel is going to be helpful.  It's only going to catch the most
-extreme cases --- specifically, a file system originally created and
-written using ext3 (real ext3; even before we dropped ext3 from the
-upstream kernel, most distributions were using ext4 to provide ext3
-support) and which included enough extended attributes that there is
-no space in the inode and the external xattr block for there to make
-space for the extra timestamp.  That's extremely rare edge cases, and
-I don't think it's worth trying to catch it in the kernel.
+"        printf("\t\t\tFor Set commands, status is 0 for success and
+rest for failures\n");
+"
 
-The right place to catch this is rather in e2fsck, I think.
+Thanks,
+Srinivas
 
-> We have a single mount time warning already in place here. I did not
-> realize some people actually chose to use 128 byte inodes on purpose.
+> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> Cc: David Arcari <darcari@redhat.com>
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  tools/power/x86/intel-speed-select/isst-display.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/power/x86/intel-speed-select/isst-display.c
+> b/tools/power/x86/intel-speed-select/isst-display.c
+> index 890a01bfee4b..8500cf2997a6 100644
+> --- a/tools/power/x86/intel-speed-select/isst-display.c
+> +++ b/tools/power/x86/intel-speed-select/isst-display.c
+> @@ -519,7 +519,10 @@ void isst_display_result(int cpu, FILE *outf,
+> char *feature, char *cmd,
+>  	snprintf(header, sizeof(header), "%s", feature);
+>  	format_and_print(outf, 4, header, NULL);
+>  	snprintf(header, sizeof(header), "%s", cmd);
+> -	snprintf(value, sizeof(value), "%d", result);
+> +	if (!result)
+> +		snprintf(value, sizeof(value), "success");
+> +	else
+> +		snprintf(value, sizeof(value), "failed(error %d)",
+> result);
+>  	format_and_print(outf, 5, header, value);
+>  
+>  	format_and_print(outf, 1, NULL, NULL);
 
-Yes, there are definitely some people who are still doing this.  The
-other case, as noted on this thread, is that file systems smaller than
-512 MiB are treated as type "small" (and file systems smaller than
-4MiB are treated as type "floppy"), and today, we are still using 128
-byte inodes to minimize the overhead of the inode table.  It's
-probably time to reconsider these defaults, but that's an e2fsprogs
-level change.  And that's not going to change the fact that there are
-people who are deliberately choosing to use 128 byte inode.
-
-Changes that we could consider:
-
-1)  Change the default for types "small" and "floppy" to be 256 byte inodes.
-
-2)  Add a warning to mke2fs to give a warning when creating a file
-system with 128 byte inodes.
-
-3)  Add code to e2fsck to automatically make room for the timestamp if
-possible.
-
-4)  Add code to e2fsck so that at some pre-determined point in the
-future (maybe 5 years before 2038?) have it print warnings for file
-systems using 128 byte inodes, and for file systems with 256+ byte
-inodes and where there isn't enough space in the inode for expanded
-timestamps.
-
-Cheers,
-
-						- Ted
