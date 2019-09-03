@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE18A6E1F
+	by mail.lfdr.de (Postfix) with ESMTP id D3A79A6E20
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730219AbfICQY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:24:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44596 "EHLO mail.kernel.org"
+        id S1730243AbfICQZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:25:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729692AbfICQY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:24:56 -0400
+        id S1730195AbfICQY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:24:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7180D23431;
-        Tue,  3 Sep 2019 16:24:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEE7B2343A;
+        Tue,  3 Sep 2019 16:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527895;
-        bh=rGd/jhcohvfr33CDRbiPtj5fZm7BrKnfFVmg+V1ROq8=;
+        s=default; t=1567527897;
+        bh=1IgGJaqHS9LAdpyE8dhABw+/U8sNKGPClXeP6QDvX0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rUqcepTJ6LgnAJIOMseZF84yO5EobLQD5i64G+KJl65lz5Nh3fFA6S2Zu6otmOrMZ
-         /Tg5WYB1F0HMvkrb6LRAMhW93GsFm6NeSgewmEmmAiVQtu4tyQcbuZ4WCDa6vkxNae
-         iEnQEPDuTizlctaxziOkk6mODUqVANS/jAqDUaf4=
+        b=L4hLeOlxjQLy5GTMhHBaefehMpEt4zd/BNislqoyM8+ofl/qDEW1lFtKQx3UDRNso
+         ykOF0b5AnYOaKqnuNBbpkkNbN3x/DgFiv7xQdyjp6AhCAsMAIC+t+vfZt5E9qp2A7r
+         X/f/JfG70/U3EXCyntVGsBHSfPnHZay3GnVE/qVo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 08/23] iwlwifi: pcie: add support for qu c-step devices
-Date:   Tue,  3 Sep 2019 12:24:09 -0400
-Message-Id: <20190903162424.6877-8-sashal@kernel.org>
+Cc:     Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Michael J . Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 10/23] IB/{rdmavt, qib, hfi1}: Convert to new completion API
+Date:   Tue,  3 Sep 2019 12:24:11 -0400
+Message-Id: <20190903162424.6877-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162424.6877-1-sashal@kernel.org>
 References: <20190903162424.6877-1-sashal@kernel.org>
@@ -43,189 +45,249 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-Add support for C-step devices.  Currently we don't have a nice way of
-matching the step and choosing the proper configuration, so we need to
-switch the config structs one by one.
+Convert all completions to use the new completion routine that
+fixes a race between post send and completion where fields from
+a SWQE can be read after SWQE has been freed.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This patch also addresses issues reported in
+https://marc.info/?l=linux-kernel&m=155656897409107&w=2.
+
+The reserved operation path has no need for any barrier.
+
+The barrier for the other path is addressed by the
+smp_load_acquire() barrier.
+
+Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 ---
- .../net/wireless/intel/iwlwifi/cfg/22000.c    | 53 +++++++++++++++++++
- .../net/wireless/intel/iwlwifi/iwl-config.h   |  7 +++
- drivers/net/wireless/intel/iwlwifi/iwl-csr.h  |  2 +
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c | 21 ++++++++
- 4 files changed, 83 insertions(+)
+ drivers/infiniband/hw/hfi1/rc.c    | 26 ++++-----------------
+ drivers/infiniband/hw/qib/qib_rc.c | 26 ++++-----------------
+ drivers/infiniband/sw/rdmavt/qp.c  | 31 ++++++++-----------------
+ include/rdma/rdmavt_qp.h           | 36 ------------------------------
+ 4 files changed, 17 insertions(+), 102 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/cfg/22000.c b/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
-index 93526dfaf7912..1f500cddb3a75 100644
---- a/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
-+++ b/drivers/net/wireless/intel/iwlwifi/cfg/22000.c
-@@ -80,7 +80,9 @@
- #define IWL_22000_QU_B_HR_B_FW_PRE	"iwlwifi-Qu-b0-hr-b0-"
- #define IWL_22000_HR_B_FW_PRE		"iwlwifi-QuQnj-b0-hr-b0-"
- #define IWL_22000_HR_A0_FW_PRE		"iwlwifi-QuQnj-a0-hr-a0-"
-+#define IWL_QU_C_HR_B_FW_PRE		"iwlwifi-Qu-c0-hr-b0-"
- #define IWL_QU_B_JF_B_FW_PRE		"iwlwifi-Qu-b0-jf-b0-"
-+#define IWL_QU_C_JF_B_FW_PRE		"iwlwifi-Qu-c0-jf-b0-"
- #define IWL_QUZ_A_HR_B_FW_PRE		"iwlwifi-QuZ-a0-hr-b0-"
- #define IWL_QUZ_A_JF_B_FW_PRE		"iwlwifi-QuZ-a0-jf-b0-"
- #define IWL_QNJ_B_JF_B_FW_PRE		"iwlwifi-QuQnj-b0-jf-b0-"
-@@ -109,6 +111,8 @@
- 	IWL_QUZ_A_HR_B_FW_PRE __stringify(api) ".ucode"
- #define IWL_QUZ_A_JF_B_MODULE_FIRMWARE(api) \
- 	IWL_QUZ_A_JF_B_FW_PRE __stringify(api) ".ucode"
-+#define IWL_QU_C_HR_B_MODULE_FIRMWARE(api) \
-+	IWL_QU_C_HR_B_FW_PRE __stringify(api) ".ucode"
- #define IWL_QU_B_JF_B_MODULE_FIRMWARE(api) \
- 	IWL_QU_B_JF_B_FW_PRE __stringify(api) ".ucode"
- #define IWL_QNJ_B_JF_B_MODULE_FIRMWARE(api)		\
-@@ -256,6 +260,30 @@ const struct iwl_cfg iwl_ax201_cfg_qu_hr = {
- 	.max_tx_agg_size = IEEE80211_MAX_AMPDU_BUF_HT,
- };
- 
-+const struct iwl_cfg iwl_ax101_cfg_qu_c0_hr_b0 = {
-+	.name = "Intel(R) Wi-Fi 6 AX101",
-+	.fw_name_pre = IWL_QU_C_HR_B_FW_PRE,
-+	IWL_DEVICE_22500,
-+	/*
-+	 * This device doesn't support receiving BlockAck with a large bitmap
-+	 * so we need to restrict the size of transmitted aggregation to the
-+	 * HT size; mac80211 would otherwise pick the HE max (256) by default.
-+	 */
-+	.max_tx_agg_size = IEEE80211_MAX_AMPDU_BUF_HT,
-+};
-+
-+const struct iwl_cfg iwl_ax201_cfg_qu_c0_hr_b0 = {
-+	.name = "Intel(R) Wi-Fi 6 AX201 160MHz",
-+	.fw_name_pre = IWL_QU_C_HR_B_FW_PRE,
-+	IWL_DEVICE_22500,
-+	/*
-+	 * This device doesn't support receiving BlockAck with a large bitmap
-+	 * so we need to restrict the size of transmitted aggregation to the
-+	 * HT size; mac80211 would otherwise pick the HE max (256) by default.
-+	 */
-+	.max_tx_agg_size = IEEE80211_MAX_AMPDU_BUF_HT,
-+};
-+
- const struct iwl_cfg iwl_ax101_cfg_quz_hr = {
- 	.name = "Intel(R) Wi-Fi 6 AX101",
- 	.fw_name_pre = IWL_QUZ_A_HR_B_FW_PRE,
-@@ -372,6 +400,30 @@ const struct iwl_cfg iwl9560_2ac_160_cfg_qu_b0_jf_b0 = {
- 	IWL_DEVICE_22500,
- };
- 
-+const struct iwl_cfg iwl9461_2ac_cfg_qu_c0_jf_b0 = {
-+	.name = "Intel(R) Wireless-AC 9461",
-+	.fw_name_pre = IWL_QU_C_JF_B_FW_PRE,
-+	IWL_DEVICE_22500,
-+};
-+
-+const struct iwl_cfg iwl9462_2ac_cfg_qu_c0_jf_b0 = {
-+	.name = "Intel(R) Wireless-AC 9462",
-+	.fw_name_pre = IWL_QU_C_JF_B_FW_PRE,
-+	IWL_DEVICE_22500,
-+};
-+
-+const struct iwl_cfg iwl9560_2ac_cfg_qu_c0_jf_b0 = {
-+	.name = "Intel(R) Wireless-AC 9560",
-+	.fw_name_pre = IWL_QU_C_JF_B_FW_PRE,
-+	IWL_DEVICE_22500,
-+};
-+
-+const struct iwl_cfg iwl9560_2ac_160_cfg_qu_c0_jf_b0 = {
-+	.name = "Intel(R) Wireless-AC 9560 160MHz",
-+	.fw_name_pre = IWL_QU_C_JF_B_FW_PRE,
-+	IWL_DEVICE_22500,
-+};
-+
- const struct iwl_cfg iwl9560_2ac_cfg_qnj_jf_b0 = {
- 	.name = "Intel(R) Wireless-AC 9560 160MHz",
- 	.fw_name_pre = IWL_QNJ_B_JF_B_FW_PRE,
-@@ -590,6 +642,7 @@ MODULE_FIRMWARE(IWL_22000_HR_A_F0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_22000_HR_B_F0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_22000_HR_B_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_22000_HR_A0_QNJ_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
-+MODULE_FIRMWARE(IWL_QU_C_HR_B_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_QU_B_JF_B_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_QUZ_A_HR_B_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
- MODULE_FIRMWARE(IWL_QUZ_A_JF_B_MODULE_FIRMWARE(IWL_22000_UCODE_API_MAX));
-diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-config.h b/drivers/net/wireless/intel/iwlwifi/iwl-config.h
-index bc267bd2c3b0e..1c1bf1b281cd9 100644
---- a/drivers/net/wireless/intel/iwlwifi/iwl-config.h
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-config.h
-@@ -565,10 +565,13 @@ extern const struct iwl_cfg iwl22000_2ac_cfg_hr;
- extern const struct iwl_cfg iwl22000_2ac_cfg_hr_cdb;
- extern const struct iwl_cfg iwl22000_2ac_cfg_jf;
- extern const struct iwl_cfg iwl_ax101_cfg_qu_hr;
-+extern const struct iwl_cfg iwl_ax101_cfg_qu_c0_hr_b0;
- extern const struct iwl_cfg iwl_ax101_cfg_quz_hr;
- extern const struct iwl_cfg iwl22000_2ax_cfg_hr;
- extern const struct iwl_cfg iwl_ax200_cfg_cc;
- extern const struct iwl_cfg iwl_ax201_cfg_qu_hr;
-+extern const struct iwl_cfg iwl_ax201_cfg_qu_hr;
-+extern const struct iwl_cfg iwl_ax201_cfg_qu_c0_hr_b0;
- extern const struct iwl_cfg iwl_ax201_cfg_quz_hr;
- extern const struct iwl_cfg iwl_ax1650i_cfg_quz_hr;
- extern const struct iwl_cfg iwl_ax1650s_cfg_quz_hr;
-@@ -580,6 +583,10 @@ extern const struct iwl_cfg iwl9461_2ac_cfg_qu_b0_jf_b0;
- extern const struct iwl_cfg iwl9462_2ac_cfg_qu_b0_jf_b0;
- extern const struct iwl_cfg iwl9560_2ac_cfg_qu_b0_jf_b0;
- extern const struct iwl_cfg iwl9560_2ac_160_cfg_qu_b0_jf_b0;
-+extern const struct iwl_cfg iwl9461_2ac_cfg_qu_c0_jf_b0;
-+extern const struct iwl_cfg iwl9462_2ac_cfg_qu_c0_jf_b0;
-+extern const struct iwl_cfg iwl9560_2ac_cfg_qu_c0_jf_b0;
-+extern const struct iwl_cfg iwl9560_2ac_160_cfg_qu_c0_jf_b0;
- extern const struct iwl_cfg killer1550i_2ac_cfg_qu_b0_jf_b0;
- extern const struct iwl_cfg killer1550s_2ac_cfg_qu_b0_jf_b0;
- extern const struct iwl_cfg iwl22000_2ax_cfg_jf;
-diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-csr.h b/drivers/net/wireless/intel/iwlwifi/iwl-csr.h
-index 93da96a7247c3..cb4c5514a5560 100644
---- a/drivers/net/wireless/intel/iwlwifi/iwl-csr.h
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-csr.h
-@@ -328,6 +328,8 @@ enum {
- #define CSR_HW_REV_TYPE_NONE		(0x00001F0)
- #define CSR_HW_REV_TYPE_QNJ		(0x0000360)
- #define CSR_HW_REV_TYPE_QNJ_B0		(0x0000364)
-+#define CSR_HW_REV_TYPE_QU_B0		(0x0000334)
-+#define CSR_HW_REV_TYPE_QU_C0		(0x0000338)
- #define CSR_HW_REV_TYPE_QUZ		(0x0000354)
- #define CSR_HW_REV_TYPE_HR_CDB		(0x0000340)
- #define CSR_HW_REV_TYPE_SO		(0x0000370)
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-index fe645380bd2fa..ea2a03d4bf55c 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@ -1039,6 +1039,27 @@ static int iwl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		}
- 		iwl_trans->cfg = cfg;
+diff --git a/drivers/infiniband/hw/hfi1/rc.c b/drivers/infiniband/hw/hfi1/rc.c
+index 7c8cfb149da09..235bdbc706acc 100644
+--- a/drivers/infiniband/hw/hfi1/rc.c
++++ b/drivers/infiniband/hw/hfi1/rc.c
+@@ -1830,23 +1830,14 @@ void hfi1_rc_send_complete(struct rvt_qp *qp, struct hfi1_opa_header *opah)
  	}
-+
-+	/*
-+	 * This is a hack to switch from Qu B0 to Qu C0.  We need to
-+	 * do this for all cfgs that use Qu B0.  All this code is in
-+	 * urgent need for a refactor, but for now this is the easiest
-+	 * thing to do to support Qu C-step.
-+	 */
-+	if (iwl_trans->hw_rev == CSR_HW_REV_TYPE_QU_C0) {
-+		if (iwl_trans->cfg == &iwl_ax101_cfg_qu_hr)
-+			iwl_trans->cfg = &iwl_ax101_cfg_qu_c0_hr_b0;
-+		else if (iwl_trans->cfg == &iwl_ax201_cfg_qu_hr)
-+			iwl_trans->cfg = &iwl_ax201_cfg_qu_c0_hr_b0;
-+		else if (iwl_trans->cfg == &iwl9461_2ac_cfg_qu_b0_jf_b0)
-+			iwl_trans->cfg = &iwl9461_2ac_cfg_qu_c0_jf_b0;
-+		else if (iwl_trans->cfg == &iwl9462_2ac_cfg_qu_b0_jf_b0)
-+			iwl_trans->cfg = &iwl9462_2ac_cfg_qu_c0_jf_b0;
-+		else if (iwl_trans->cfg == &iwl9560_2ac_cfg_qu_b0_jf_b0)
-+			iwl_trans->cfg = &iwl9560_2ac_cfg_qu_c0_jf_b0;
-+		else if (iwl_trans->cfg == &iwl9560_2ac_160_cfg_qu_b0_jf_b0)
-+			iwl_trans->cfg = &iwl9560_2ac_160_cfg_qu_c0_jf_b0;
-+	}
- #endif
  
- 	pci_set_drvdata(pdev, iwl_trans);
+ 	while (qp->s_last != qp->s_acked) {
+-		u32 s_last;
+-
+ 		wqe = rvt_get_swqe_ptr(qp, qp->s_last);
+ 		if (cmp_psn(wqe->lpsn, qp->s_sending_psn) >= 0 &&
+ 		    cmp_psn(qp->s_sending_psn, qp->s_sending_hpsn) <= 0)
+ 			break;
+ 		trdma_clean_swqe(qp, wqe);
+ 		rvt_qp_wqe_unreserve(qp, wqe);
+-		s_last = qp->s_last;
+-		trace_hfi1_qp_send_completion(qp, wqe, s_last);
+-		if (++s_last >= qp->s_size)
+-			s_last = 0;
+-		qp->s_last = s_last;
+-		/* see post_send() */
+-		barrier();
+-		rvt_put_qp_swqe(qp, wqe);
+-		rvt_qp_swqe_complete(qp,
++		trace_hfi1_qp_send_completion(qp, wqe, qp->s_last);
++		rvt_qp_complete_swqe(qp,
+ 				     wqe,
+ 				     ib_hfi1_wc_opcode[wqe->wr.opcode],
+ 				     IB_WC_SUCCESS);
+@@ -1890,19 +1881,10 @@ struct rvt_swqe *do_rc_completion(struct rvt_qp *qp,
+ 	trace_hfi1_rc_completion(qp, wqe->lpsn);
+ 	if (cmp_psn(wqe->lpsn, qp->s_sending_psn) < 0 ||
+ 	    cmp_psn(qp->s_sending_psn, qp->s_sending_hpsn) > 0) {
+-		u32 s_last;
+-
+ 		trdma_clean_swqe(qp, wqe);
+-		rvt_put_qp_swqe(qp, wqe);
+ 		rvt_qp_wqe_unreserve(qp, wqe);
+-		s_last = qp->s_last;
+-		trace_hfi1_qp_send_completion(qp, wqe, s_last);
+-		if (++s_last >= qp->s_size)
+-			s_last = 0;
+-		qp->s_last = s_last;
+-		/* see post_send() */
+-		barrier();
+-		rvt_qp_swqe_complete(qp,
++		trace_hfi1_qp_send_completion(qp, wqe, qp->s_last);
++		rvt_qp_complete_swqe(qp,
+ 				     wqe,
+ 				     ib_hfi1_wc_opcode[wqe->wr.opcode],
+ 				     IB_WC_SUCCESS);
+diff --git a/drivers/infiniband/hw/qib/qib_rc.c b/drivers/infiniband/hw/qib/qib_rc.c
+index 2ac4c67f5ba1a..8d9a94d6f6856 100644
+--- a/drivers/infiniband/hw/qib/qib_rc.c
++++ b/drivers/infiniband/hw/qib/qib_rc.c
+@@ -921,20 +921,11 @@ void qib_rc_send_complete(struct rvt_qp *qp, struct ib_header *hdr)
+ 		rvt_add_retry_timer(qp);
+ 
+ 	while (qp->s_last != qp->s_acked) {
+-		u32 s_last;
+-
+ 		wqe = rvt_get_swqe_ptr(qp, qp->s_last);
+ 		if (qib_cmp24(wqe->lpsn, qp->s_sending_psn) >= 0 &&
+ 		    qib_cmp24(qp->s_sending_psn, qp->s_sending_hpsn) <= 0)
+ 			break;
+-		s_last = qp->s_last;
+-		if (++s_last >= qp->s_size)
+-			s_last = 0;
+-		qp->s_last = s_last;
+-		/* see post_send() */
+-		barrier();
+-		rvt_put_qp_swqe(qp, wqe);
+-		rvt_qp_swqe_complete(qp,
++		rvt_qp_complete_swqe(qp,
+ 				     wqe,
+ 				     ib_qib_wc_opcode[wqe->wr.opcode],
+ 				     IB_WC_SUCCESS);
+@@ -972,21 +963,12 @@ static struct rvt_swqe *do_rc_completion(struct rvt_qp *qp,
+ 	 * is finished.
+ 	 */
+ 	if (qib_cmp24(wqe->lpsn, qp->s_sending_psn) < 0 ||
+-	    qib_cmp24(qp->s_sending_psn, qp->s_sending_hpsn) > 0) {
+-		u32 s_last;
+-
+-		rvt_put_qp_swqe(qp, wqe);
+-		s_last = qp->s_last;
+-		if (++s_last >= qp->s_size)
+-			s_last = 0;
+-		qp->s_last = s_last;
+-		/* see post_send() */
+-		barrier();
+-		rvt_qp_swqe_complete(qp,
++	    qib_cmp24(qp->s_sending_psn, qp->s_sending_hpsn) > 0)
++		rvt_qp_complete_swqe(qp,
+ 				     wqe,
+ 				     ib_qib_wc_opcode[wqe->wr.opcode],
+ 				     IB_WC_SUCCESS);
+-	} else
++	else
+ 		this_cpu_inc(*ibp->rvp.rc_delayed_comp);
+ 
+ 	qp->s_retry = qp->s_retry_cnt;
+diff --git a/drivers/infiniband/sw/rdmavt/qp.c b/drivers/infiniband/sw/rdmavt/qp.c
+index c5a50614a6c63..cb9e171d7e7bf 100644
+--- a/drivers/infiniband/sw/rdmavt/qp.c
++++ b/drivers/infiniband/sw/rdmavt/qp.c
+@@ -1856,10 +1856,9 @@ static inline int rvt_qp_is_avail(
+ 
+ 	/* see rvt_qp_wqe_unreserve() */
+ 	smp_mb__before_atomic();
+-	reserved_used = atomic_read(&qp->s_reserved_used);
+ 	if (unlikely(reserved_op)) {
+ 		/* see rvt_qp_wqe_unreserve() */
+-		smp_mb__before_atomic();
++		reserved_used = atomic_read(&qp->s_reserved_used);
+ 		if (reserved_used >= rdi->dparms.reserved_operations)
+ 			return -ENOMEM;
+ 		return 0;
+@@ -1867,14 +1866,13 @@ static inline int rvt_qp_is_avail(
+ 	/* non-reserved operations */
+ 	if (likely(qp->s_avail))
+ 		return 0;
+-	slast = READ_ONCE(qp->s_last);
++	/* See rvt_qp_complete_swqe() */
++	slast = smp_load_acquire(&qp->s_last);
+ 	if (qp->s_head >= slast)
+ 		avail = qp->s_size - (qp->s_head - slast);
+ 	else
+ 		avail = slast - qp->s_head;
+ 
+-	/* see rvt_qp_wqe_unreserve() */
+-	smp_mb__before_atomic();
+ 	reserved_used = atomic_read(&qp->s_reserved_used);
+ 	avail =  avail - 1 -
+ 		(rdi->dparms.reserved_operations - reserved_used);
+@@ -2667,27 +2665,16 @@ void rvt_send_complete(struct rvt_qp *qp, struct rvt_swqe *wqe,
+ 		       enum ib_wc_status status)
+ {
+ 	u32 old_last, last;
+-	struct rvt_dev_info *rdi = ib_to_rvt(qp->ibqp.device);
++	struct rvt_dev_info *rdi;
+ 
+ 	if (!(ib_rvt_state_ops[qp->state] & RVT_PROCESS_OR_FLUSH_SEND))
+ 		return;
++	rdi = ib_to_rvt(qp->ibqp.device);
+ 
+-	last = qp->s_last;
+-	old_last = last;
+-	trace_rvt_qp_send_completion(qp, wqe, last);
+-	if (++last >= qp->s_size)
+-		last = 0;
+-	trace_rvt_qp_send_completion(qp, wqe, last);
+-	qp->s_last = last;
+-	/* See post_send() */
+-	barrier();
+-	rvt_put_qp_swqe(qp, wqe);
+-
+-	rvt_qp_swqe_complete(qp,
+-			     wqe,
+-			     rdi->wc_opcode[wqe->wr.opcode],
+-			     status);
+-
++	old_last = qp->s_last;
++	trace_rvt_qp_send_completion(qp, wqe, old_last);
++	last = rvt_qp_complete_swqe(qp, wqe, rdi->wc_opcode[wqe->wr.opcode],
++				    status);
+ 	if (qp->s_acked == old_last)
+ 		qp->s_acked = last;
+ 	if (qp->s_cur == old_last)
+diff --git a/include/rdma/rdmavt_qp.h b/include/rdma/rdmavt_qp.h
+index 6014f17669071..84d0f36afc2f7 100644
+--- a/include/rdma/rdmavt_qp.h
++++ b/include/rdma/rdmavt_qp.h
+@@ -565,42 +565,6 @@ static inline void rvt_qp_wqe_unreserve(
+ 
+ extern const enum ib_wc_opcode ib_rvt_wc_opcode[];
+ 
+-/**
+- * rvt_qp_swqe_complete() - insert send completion
+- * @qp - the qp
+- * @wqe - the send wqe
+- * @status - completion status
+- *
+- * Insert a send completion into the completion
+- * queue if the qp indicates it should be done.
+- *
+- * See IBTA 10.7.3.1 for info on completion
+- * control.
+- */
+-static inline void rvt_qp_swqe_complete(
+-	struct rvt_qp *qp,
+-	struct rvt_swqe *wqe,
+-	enum ib_wc_opcode opcode,
+-	enum ib_wc_status status)
+-{
+-	if (unlikely(wqe->wr.send_flags & RVT_SEND_RESERVE_USED))
+-		return;
+-	if (!(qp->s_flags & RVT_S_SIGNAL_REQ_WR) ||
+-	    (wqe->wr.send_flags & IB_SEND_SIGNALED) ||
+-	     status != IB_WC_SUCCESS) {
+-		struct ib_wc wc;
+-
+-		memset(&wc, 0, sizeof(wc));
+-		wc.wr_id = wqe->wr.wr_id;
+-		wc.status = status;
+-		wc.opcode = opcode;
+-		wc.qp = &qp->ibqp;
+-		wc.byte_len = wqe->length;
+-		rvt_cq_enter(ibcq_to_rvtcq(qp->ibqp.send_cq), &wc,
+-			     status != IB_WC_SUCCESS);
+-	}
+-}
+-
+ /*
+  * Compare the lower 24 bits of the msn values.
+  * Returns an integer <, ==, or > than zero.
 -- 
 2.20.1
 
