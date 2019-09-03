@@ -2,169 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84336A6B75
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB42DA6B61
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:27:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729773AbfICO3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:29:54 -0400
-Received: from mga12.intel.com ([192.55.52.136]:46685 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729079AbfICO3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:29:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 07:29:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
-   d="scan'208";a="189826383"
-Received: from vkuppusa-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.39.67])
-  by FMSMGA003.fm.intel.com with ESMTP; 03 Sep 2019 07:29:45 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, Andy Lutomirski <luto@amacapital.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH v22 18/24] x86/traps: Attempt to fixup exceptions in vDSO before signaling
-Date:   Tue,  3 Sep 2019 17:26:49 +0300
-Message-Id: <20190903142655.21943-19-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
+        id S1729590AbfICO1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:27:38 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35992 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728571AbfICO1h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 10:27:37 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p13so18564415wmh.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:27:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ztizy0u6H258Ae8Jp90WnU8QSxT6Zt2zjZWBgoNCqd4=;
+        b=ESXVtTHUIucPYUIW1KPWDFAOdL8m9NXsKyjVChp9ailvsURMWpL7cAjJpYWKtpfyjo
+         aTUNFlhzx6/Uq94sFsvnuBW77/sqooIEgBNaNA4TsxyKcHoNmQS0YMQyxnbuPyrmZOPR
+         cpErI4PE/vbSEEH5mbgzmNSiX7hRQGC7xEm+EbJGk1tC92VvuI0loiD31fgwhPjboX3a
+         qJo6ZVACakyH82ZNpOAXG9DIdiVdv3mn9Fsm73/XCSgMszSoIvOySfYbCxJC3P+zXxzo
+         OKGPDAeu/vXEfiXZ6b7vjDUb+xgQ9uLTU9sZSBed+ptPt9/IqNFyFw/YCSGsthvlUds+
+         xeHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ztizy0u6H258Ae8Jp90WnU8QSxT6Zt2zjZWBgoNCqd4=;
+        b=bu6X7HE6qjZoe9mgOesm13Yi6igf1fUcjoG99g3DpPt+Db25chEAb+op/YSbru9qHx
+         YeVBwo/L3qqrPWPAkwmiitFwIJy197lNROy2BMEsMHt0euzHpBohJHYPc4rob2BJKO5i
+         gLe6rkdqgUoe5eV8MiVj2vU696lm9ntq6BdDuMn4kr4UfDrdk3047jQdhfYbk4TRB+8s
+         dKzFLjd2SKd2DVAPrUMYPOfTNeEKVIX47mzOPgd98pZaQ6GeYb0fjJov8MwxWrGr72hG
+         NQ/INjhRcI/XLaWWNSNQuAqT6FJqJ4MGqjwJntmg+fk+ZSwWibjxM864TjI6klHN8/I0
+         x5bQ==
+X-Gm-Message-State: APjAAAXfT3xeVe+MZqXc8ZmD3667KXdLpxmngnrjo1q7TGs0ZO2sX6Gh
+        VdfmshKKJ7WoUN5qeL/In4Gcsw==
+X-Google-Smtp-Source: APXvYqxwSZ6oVFY6ZQ+MXwrwDJGE2SrgSvya83qum4+mf2S+HXiY1Ja9udjVszHndrpe58MWjHIOPw==
+X-Received: by 2002:a7b:c1cc:: with SMTP id a12mr355823wmj.73.1567520855044;
+        Tue, 03 Sep 2019 07:27:35 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:e751:37a0:1e95:e65d])
+        by smtp.gmail.com with ESMTPSA id n1sm862908wrg.67.2019.09.03.07.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 07:27:34 -0700 (PDT)
+Date:   Tue, 3 Sep 2019 15:27:32 +0100
+From:   Alessio Balsini <balsini@android.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, juri.lelli@redhat.com,
+        linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
+        luca.abeni@santannapisa.it, bristot@redhat.com, dvyukov@google.com,
+        tglx@linutronix.de, vpillai@digitalocean.com, rostedt@goodmis.org
+Subject: Re: [RFC][PATCH 00/13] SCHED_DEADLINE server infrastructure
+Message-ID: <20190903142732.GA35593@google.com>
+References: <20190726145409.947503076@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190726145409.947503076@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Hi Peter,
 
-vDSO functions can now leverage an exception fixup mechanism similar to
-kernel exception fixup.  For vDSO exception fixup, the initial user is
-Intel's Software Guard Extensions (SGX), which will wrap the low-level
-transitions to/from the enclave, i.e. EENTER and ERESUME instructions,
-in a vDSO function and leverage fixup to intercept exceptions that would
-otherwise generate a signal.  This allows the vDSO wrapper to return the
-fault information directly to its caller, obviating the need for SGX
-applications and libraries to juggle signal handlers.
+While testing your series (peterz/sched/wip-deadline 7a9e91d3fe951), I ended up
+in a panic at boot on a x86_64 kvm guest, would you please have a look?  Here
+attached the backtrace.
+Happy to test any suggestion that fixes the issue.
 
-Attempt to fixup vDSO exceptions immediately prior to populating and
-sending signal information.  Except for the delivery mechanism, an
-exception in a vDSO function should be treated like any other exception
-in userspace, e.g. any fault that is successfully handled by the kernel
-should not be directly visible to userspace.
-
-Although it's debatable whether or not all exceptions are of interest to
-enclaves, defer to the vDSO fixup to decide whether to do fixup or
-generate a signal.  Future users of vDSO fixup, if there ever are any,
-will undoubtedly have different requirements than SGX enclaves, e.g. the
-fixup vs. signal logic can be made function specific if/when necessary.
-
-Suggested-by: Andy Lutomirski <luto@amacapital.net>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Thanks,
+Alessio
 ---
- arch/x86/kernel/traps.c | 14 ++++++++++++++
- arch/x86/mm/fault.c     |  7 +++++++
- 2 files changed, 21 insertions(+)
-
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 4bb0f8447112..9f06a3441f10 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -61,6 +61,7 @@
- #include <asm/mpx.h>
- #include <asm/vm86.h>
- #include <asm/umip.h>
-+#include <asm/vdso.h>
- 
- #ifdef CONFIG_X86_64
- #include <asm/x86_init.h>
-@@ -210,6 +211,9 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
- 		tsk->thread.error_code = error_code;
- 		tsk->thread.trap_nr = trapnr;
- 		die(str, regs, error_code);
-+	} else {
-+		if (fixup_vdso_exception(regs, trapnr, error_code, 0))
-+			return 0;
- 	}
- 
- 	/*
-@@ -557,6 +561,9 @@ do_general_protection(struct pt_regs *regs, long error_code)
- 		return;
- 	}
- 
-+	if (fixup_vdso_exception(regs, X86_TRAP_GP, error_code, 0))
-+		return;
-+
- 	tsk->thread.error_code = error_code;
- 	tsk->thread.trap_nr = X86_TRAP_GP;
- 
-@@ -771,6 +778,10 @@ dotraplinkage void do_debug(struct pt_regs *regs, long error_code)
- 							SIGTRAP) == NOTIFY_STOP)
- 		goto exit;
- 
-+	if (user_mode(regs) &&
-+	    fixup_vdso_exception(regs, X86_TRAP_DB, error_code, 0))
-+		goto exit;
-+
- 	/*
- 	 * Let others (NMI) know that the debug stack is in use
- 	 * as we may switch to the interrupt stack.
-@@ -851,6 +862,9 @@ static void math_error(struct pt_regs *regs, int error_code, int trapnr)
- 	if (!si_code)
- 		return;
- 
-+	if (fixup_vdso_exception(regs, trapnr, error_code, 0))
-+		return;
-+
- 	force_sig_fault(SIGFPE, si_code,
- 			(void __user *)uprobe_get_trap_addr(regs));
- }
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 7efaf0269951..936946a5e723 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -29,6 +29,7 @@
- #include <asm/efi.h>			/* efi_recover_from_page_fault()*/
- #include <asm/desc.h>			/* store_idt(), ...		*/
- #include <asm/cpu_entry_area.h>		/* exception stack		*/
-+#include <asm/vdso.h>			/* fixup_vdso_exception()	*/
- 
- #define CREATE_TRACE_POINTS
- #include <asm/trace/exceptions.h>
-@@ -901,6 +902,9 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
- 
- 		sanitize_error_code(address, &error_code);
- 
-+		if (fixup_vdso_exception(regs, X86_TRAP_PF, error_code, address))
-+			return;
-+
- 		if (likely(show_unhandled_signals))
- 			show_signal_msg(regs, error_code, address, tsk);
- 
-@@ -1018,6 +1022,9 @@ do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
- 
- 	sanitize_error_code(address, &error_code);
- 
-+	if (fixup_vdso_exception(regs, X86_TRAP_PF, error_code, address))
-+		return;
-+
- 	set_signal_archinfo(address, error_code);
- 
- #ifdef CONFIG_MEMORY_FAILURE
--- 
-2.20.1
+------>8------
+[    0.798326] ------------[ cut here ]------------       
+[    0.798328] kernel BUG at kernel/sched/deadline.c:1542!            
+[    0.798335] invalid opcode: 0000 [#1] SMP PTI                                  
+[    0.798339] CPU: 4 PID: 0 Comm: swapper/4 Not tainted 5.3.0-rc6+ #28
+[    0.798340] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+[    0.798349] RIP: 0010:enqueue_dl_entity+0x3f8/0x440
+[    0.798351] Code: ff 48 8b 85 60 0a 00 00 8b 48 28 85 c9 0f 85 99 fd ff ff c7 40 28 01 00 00 00 e9 8d fd ff ff 85 c0 75 20 f                                                                                                                             
+[    0.798353] RSP: 0000:ffffb68e40154f10 EFLAGS: 00010096
+[    0.798356] RAX: 0000000000000020 RBX: ffff974bc74d0c00 RCX: ffff974bc751b200
+[    0.798358] RDX: 0000000000000001 RSI: ffff974bc7929410 RDI: ffff974bc7929410
+[    0.798359] RBP: 0000000000000009 R08: 00000000a73eb274 R09: 00000000000f4887
+[    0.798361] R10: 0000000000000000 R11: 0000000000000000 R12: ffff974bc74d0c80
+[    0.798362] R13: 0000000000000000 R14: ffff974bc74d0d00 R15: 0000000000000000
+[    0.798365] FS:  0000000000000000(0000) GS:ffff974bc7900000(0000) knlGS:0000000000000000
+[    0.798371] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033 
+[    0.798372] CR2: 00000000ffffffff CR3: 000000000480a000 CR4: 00000000000006e0
+[    0.798374] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    0.798375] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    0.798376] Call Trace:                       
+[    0.798397]  <IRQ>                                                
+[    0.798402]  enqueue_task_fair+0xe69/0x11d0   
+[    0.798407]  activate_task+0x58/0x90                                
+[    0.798412]  ? kvm_sched_clock_read+0xd/0x20              
+[    0.798416]  ttwu_do_activate.isra.96+0x3a/0x50                 
+[    0.798420]  sched_ttwu_pending+0x5e/0x90                                              
+[    0.798424]  scheduler_ipi+0x9f/0x120               
+[    0.798430]  reschedule_interrupt+0xf/0x20           
+[    0.798432]  </IRQ>                                                                           
+[    0.798436] RIP: 0010:default_idle+0x20/0x140   
+[    0.798438] Code: 90 90 90 90 90 90 90 90 90 90 41 55 41 54 55 65 8b 2d f4 40 d7 70 53 0f 1f 44 00 00 e9 07 00 00 00 0f 00 5                                                                                                                             
+[    0.798440] RSP: 0000:ffffb68e40083ec0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff02
+[    0.798442] RAX: ffffffff8f29c250 RBX: 0000000000000004 RCX: ffff974bc7916000               
+[    0.798444] RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff974bc791ca80
+[    0.798445] RBP: 0000000000000004 R08: 000000009d74022b R09: 0000004d7ebb5820
+[    0.798447] R10: 0000000000000400 R11: 0000000000000400 R12: 0000000000000000
+[    0.798448] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[    0.798451]  ? __cpuidle_text_start+0x8/0x8 
+[    0.798455]  do_idle+0x19e/0x210              
+[    0.798458]  cpu_startup_entry+0x14/0x20
+[    0.798464]  start_secondary+0x144/0x170                       
+[    0.798467]  secondary_startup_64+0xa4/0xb0   
+[    0.798469] Modules linked in:              
+[    0.798478] ---[ end trace c2be7729c78a55ad ]---
+[    0.798482] RIP: 0010:enqueue_dl_entity+0x3f8/0x440                                   
+[    0.798484] Code: ff 48 8b 85 60 0a 00 00 8b 48 28 85 c9 0f 85 99 fd ff ff c7 40 28 01 00 00 00 e9 8d fd ff ff 85 c0 75 20 f                                                                                                                             
+[    0.798485] RSP: 0000:ffffb68e40154f10 EFLAGS: 00010096
+[    0.798487] RAX: 0000000000000020 RBX: ffff974bc74d0c00 RCX: ffff974bc751b200
+[    0.798489] RDX: 0000000000000001 RSI: ffff974bc7929410 RDI: ffff974bc7929410
+[    0.798490] RBP: 0000000000000009 R08: 00000000a73eb274 R09: 00000000000f4887
+[    0.798491] R10: 0000000000000000 R11: 0000000000000000 R12: ffff974bc74d0c80
+[    0.798493] R13: 0000000000000000 R14: ffff974bc74d0d00 R15: 0000000000000000
+[    0.798495] FS:  0000000000000000(0000) GS:ffff974bc7900000(0000) knlGS:0000000000000000
+[    0.798500] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.798501] CR2: 00000000ffffffff CR3: 000000000480a000 CR4: 00000000000006e0
+[    0.798502] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    0.798504] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    0.798505] Kernel panic - not syncing: Fatal exception in interrupt
+[    0.799522] Kernel Offset: 0xd800000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[    0.875144] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+------8<------
 
