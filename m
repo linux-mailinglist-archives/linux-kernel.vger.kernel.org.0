@@ -2,111 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0305A8F00
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD1F0A8F0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388203AbfIDSBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:16 -0400
-Received: from mail-ua1-f73.google.com ([209.85.222.73]:44277 "EHLO
-        mail-ua1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388522AbfIDSBN (ORCPT
+        id S2387866AbfIDSB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:01:28 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33730 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388169AbfIDSB0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:13 -0400
-Received: by mail-ua1-f73.google.com with SMTP id g19so1613712uaq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:01:13 -0700 (PDT)
+        Wed, 4 Sep 2019 14:01:26 -0400
+Received: by mail-qt1-f196.google.com with SMTP id r5so20186104qtd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:01:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=hB3975bQEe7YwXrrn5iDW2OoMeJHoR5KURbyU532I8E=;
-        b=j6b8aJX2+AM7wrmVWiG+1fBH3wBs4G7vlhLs5djzluKf1lh+aDFRF0DMqvpeYk7+N4
-         NWTrFarLNMYotaTdV8+vHMyUHu3u6e/VrZO3+F9Ej2OgFoJrTfiP0YoPYSpH1YHOsv8z
-         E2HTiEOcRLPiX/OHLjxMn/5GFOMG1TrT9IxVAF0V06mOiD6zz9IyxSdlkNkrX4feJkzG
-         67IYNwK0B55+dyhjwdRNdAbIzHB0fQWFk78352Q5stGVPa7ofrtHOQU6t3kUVpP5WwO3
-         d32chlFQfIremRbEW84FjjFPwHhLKRnsAIrAxqe00Z1u0CR823dkMmdoPgruB+44nR9s
-         /8Tg==
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I+yojRW69JxaQ1YWeqMffbm7yLHLeYtlezXpC/ayb9A=;
+        b=kbRt0PBSJ48HPVKqYf6ln5xrY0K3tPQUm2vMDVscw9cYbN6byjes7cgfaBiOH/g4Se
+         bSV5QE+ivAav5Lo49RKTpLIuAmKnEIhwOObmqBuh3aDAtAgqiYZUoP025LEG6AO4xfOM
+         Ad4rH+Rj4ColCBhR7VZeM0jzkWvmq5qUjtYyw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=hB3975bQEe7YwXrrn5iDW2OoMeJHoR5KURbyU532I8E=;
-        b=gXkaXAuCQUyR0moU4quM/xSAiOIK9Tl4dOKdktfazEPAo/JmtzXq28LaIXtrbmZnBd
-         Jn3sKbWfx0r8Tz0++BuJB4V2SHcX839o2JfUXCxEle51akjZEwbUYL2qcorVZYyGm2qG
-         TI/K+03qcTc9d4/uulqMPTjm3VH2LmRaRAHIA+L9EDbPLVcI0uQcbtuat6R5hlq/AiYF
-         dt0iJ6w3Co3FggSjJTNqK2yk/G4wmlNHlU1sF1HZSDPi4Ig4omudZfeCC0rPxHsn+aFV
-         ZqYnIMOoE8qmnJoYCZS579Wjh2LJICfo6IsPbSmxy3E3a4fJUJnul9TBSfbmvnq7CeBT
-         6qGg==
-X-Gm-Message-State: APjAAAXt5prAwv90VM544tk23P2YETWLjlsmALxnkXNEa9lcOt83I1Fz
-        xVMDZko67H+p1uz5xeP4OLNjyUjx9KJ0
-X-Google-Smtp-Source: APXvYqzjwKtiv/1+0t4qQYpQXzR295bpi01G2uz1AA5oIHglW2/SsuxkeOjLPLYIKpdXnjT89djQWtlcLXvx
-X-Received: by 2002:ab0:2412:: with SMTP id f18mr7710005uan.53.1567620072442;
- Wed, 04 Sep 2019 11:01:12 -0700 (PDT)
-Date:   Wed,  4 Sep 2019 11:00:45 -0700
-Message-Id: <20190904180045.138513-1-irogers@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-Subject: [PATCH] perf tools: Fix include paths in ui
-From:   Ian Rogers <irogers@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Cc:     Stephane Eranian <eranian@google.com>,
-        Ian Rogers <irogers@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I+yojRW69JxaQ1YWeqMffbm7yLHLeYtlezXpC/ayb9A=;
+        b=I0groZ1bagr8gPNVkmdIOVTUFk5j/rN78c0DHVr5C8GOJjgbKW4VJVN6hRTW3IcBjn
+         ypAvVcrkMsQ5wXxyYwYsuHv+urNVyiL/OTyR0dfnt70jXuM41jI33dp/c10cndKr4L8Y
+         UzOeHFDcXVAgmRYWtmYNL68cNFQlT/UwJXDuMFkyBrH9dg485TkEoyNRI1g3wg6W9ZHo
+         eMrnRcLkpAf6fOWk72znsbGgRhUDik9qImEbNJML2fEYQOkMnTBX42h1ObMgiCyl6Q9v
+         DeQ60ijur7L7ZqBuB2c+EvYfVSt/AYcAAeZ69I9VFi2wMOBPIlgFf8Qhfq11TMMPcvMg
+         1oyQ==
+X-Gm-Message-State: APjAAAW9TL6XTWx7papL1uiSmTyMFVt3veP+0YZDLd5A7uzHikPWmAYH
+        CiK8yHDUOAQcKRsCesJp2UhhfqWlry1l40c+OuKtnQ==
+X-Google-Smtp-Source: APXvYqwWC2X+OYzUl5J5ytQJfTXyJbSLc0g6beM03QYuEGvgG0SQAMDJ28TJJEMxAaAsJBpxWqCA1jWIOj3doc4HQKU=
+X-Received: by 2002:ac8:44c7:: with SMTP id b7mr24636084qto.170.1567620084987;
+ Wed, 04 Sep 2019 11:01:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190830231817.76862-1-joel@joelfernandes.org>
+ <201909041108.RSjNvfDL%lkp@intel.com> <20190904050419.GA102582@google.com> <CAHp75Vdeoc1S_0Dn_vk2ULPRLk_sevWoxs8+Gscv9ki_kkPx4Q@mail.gmail.com>
+In-Reply-To: <CAHp75Vdeoc1S_0Dn_vk2ULPRLk_sevWoxs8+Gscv9ki_kkPx4Q@mail.gmail.com>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Wed, 4 Sep 2019 14:01:13 -0400
+Message-ID: <CAEXW_YQyXSuT9o6pTdMJBM=7xRhUAGtVoteswY5hNcNZBc9bgg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pci: Convert to use built-in RCU list checking
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Keith Busch <keith.busch@intel.com>, linux-pci@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These paths point to the wrong location but still work because they
-get picked up by a -I flag that happens to direct to the correct
-file. Fix paths to point to the correct location without -I flags.
+On Wed, Sep 4, 2019 at 1:13 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Wed, Sep 4, 2019 at 8:07 AM Joel Fernandes <joel@joelfernandes.org> wrote:
+> >
+> > On Wed, Sep 04, 2019 at 12:06:43PM +0800, kbuild test robot wrote:
+> > > Hi "Joel,
+> > >
+> > > Thank you for the patch! Yet something to improve:
+> > >
+> > > [auto build test ERROR on linus/master]
+> > > [cannot apply to v5.3-rc7 next-20190903]
+> > > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> > >
+> > > url:    https://github.com/0day-ci/linux/commits/Joel-Fernandes-Google/pci-Convert-to-use-built-in-RCU-list-checking/20190901-211013
+> > > config: x86_64-rhel-7.6 (attached as .config)
+> > > compiler: gcc-7 (Debian 7.4.0-11) 7.4.0
+> > > reproduce:
+> > >         # save the attached .config to linux build tree
+> > >         make ARCH=x86_64
+> >
+> > This error seems bogus. I pulled -next and applied this patch and it builds
+> > fine. I am not sure what is wrong with the 0day tree, and the above 0day link
+> > is also dead.
+> >
+> > What's going on with 0day ?!
+>
+> I would rather to add Depends-on: ... tag to your patch if the
+> dependency is going thru another tree at the same cycle.
+> kbuildbot absolutely correct here.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/ui/browser.c      | 9 +++++----
- tools/perf/ui/tui/progress.c | 2 +-
- 2 files changed, 6 insertions(+), 5 deletions(-)
+The dependency is already in -next and I pulled it and applied the
+patch. It is testing -next right?
 
-diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
-index f80c51d53565..d227d74b28f8 100644
---- a/tools/perf/ui/browser.c
-+++ b/tools/perf/ui/browser.c
-@@ -1,7 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
--#include "../string2.h"
--#include "../config.h"
--#include "../../perf.h"
-+#include "../util/util.h"
-+#include "../util/string2.h"
-+#include "../util/config.h"
-+#include "../perf.h"
- #include "libslang.h"
- #include "ui.h"
- #include "util.h"
-@@ -14,7 +15,7 @@
- #include "browser.h"
- #include "helpline.h"
- #include "keysyms.h"
--#include "../color.h"
-+#include "../util/color.h"
- #include <linux/ctype.h>
- #include <linux/zalloc.h>
- 
-diff --git a/tools/perf/ui/tui/progress.c b/tools/perf/ui/tui/progress.c
-index bc134b82829d..5a24dd3ce4db 100644
---- a/tools/perf/ui/tui/progress.c
-+++ b/tools/perf/ui/tui/progress.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/kernel.h>
--#include "../cache.h"
-+#include "../../util/cache.h"
- #include "../progress.h"
- #include "../libslang.h"
- #include "../ui.h"
--- 
-2.22.0.770.g0f2c4a37fd-goog
+thanks,
 
+ - Joel
