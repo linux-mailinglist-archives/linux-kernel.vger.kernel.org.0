@@ -2,74 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97A71A94DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA02A94E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:23:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbfIDVUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 17:20:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45018 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbfIDVUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 17:20:44 -0400
-Received: from localhost (unknown [209.117.102.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C354F20828;
-        Wed,  4 Sep 2019 21:20:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567632043;
-        bh=Ojqy8ivmyKF5BkwEZLUHZkZNdboqGhLpouawdNXUclQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=To9BkXo/HIhtWlCLEliRLzA2HuJEM6u4Mxb8PHP8wPNMzVKs9a+iU650d2oxPR7aV
-         J2/LL4Tx9YRHFlGHovgPjTlm17Rd0axoECwDoSveJpTfOHePAfJJPOjy+X/rlV1S1p
-         /YrWcJgOY5A00o4poMoD5XjBXIZHZJMLNgSpEVm4=
-Date:   Wed, 4 Sep 2019 17:20:40 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        syzbot+c6167ec3de7def23d1e8@syzkaller.appspotmail.com,
-        Arvid Brodin <arvid.brodin@alten.se>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 5.2 143/143] hsr: implement dellink to clean up resources
-Message-ID: <20190904212040.GA1616@sasha-vm>
-References: <20190904175314.206239922@linuxfoundation.org>
- <20190904175320.090038891@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190904175320.090038891@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730185AbfIDVXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 17:23:03 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45640 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727809AbfIDVXD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 17:23:03 -0400
+Received: by mail-lj1-f193.google.com with SMTP id l1so152812lji.12
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:23:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=y0/K/3NHW2BoW66hjF3E64lXnccuPIx+Txfbqzf3jL0=;
+        b=e4KCsujIe59XNJPsOgxhHEmYvS6Ir/WAdxo1GJhGHE/R3+AjBK2RgqtyTX3IZyINrf
+         SRreCzQZEnn0Yq8Wtj1O65F1SFMziACSlVSQCqda7Bh2FAcpMMUbrNGrjCaBJj9Zs4Ib
+         OuBXJPEFa3+9pMFMo7zbfu76utYP3aIKNBrbRWQ6M+zBO7HmbHg4RrESIbDQapxTQ+c1
+         hLH3lRY0zxCVAUmNOE73sfln/v46G/JKY5aY8q8Ida9BNUwgRAlBkTpd99zCRrZURLSt
+         00nL2H4XqV0cpyNBcr7DamsSvkZTS5zQmVLP7Iqc+4QDVhEp+crY/7PKZWNKycVzq0V2
+         fkow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=y0/K/3NHW2BoW66hjF3E64lXnccuPIx+Txfbqzf3jL0=;
+        b=DgMv7dSDSWvYP7TiUZWas/s47qKsaurYrixvUd3XABqyWhH+j2whidjtvb9ADI2qli
+         Ura/iqSiHGifS2ra3oHs1iOE3fyStTDIlB9cUSePIFMnkUprc2buzilA0MwXZNEGNMwd
+         RWYF9aQXMvPQ/NpuAZtTfhv+PKT9g+nHz2diLdZF2gMDtYWTBnjt8sdYc2WbntvilEKN
+         QG+5zKkKm4ae+mrIGr+bKojH/DMEHi1Ll4/wKvmHqrWJQmCMizXLuk3Puo6fvIS0uzP/
+         fvCIw0DsU7AnPi0fg+EWSoyY+evAwJE3REL4lgySjszDZbM6At+Ofu2mnkC/5TrDlyXM
+         xH2Q==
+X-Gm-Message-State: APjAAAVfKLQGtgrlgSCdH3h3AaWo7IBuu/NyZioIyjoLsWBxr61ebdy+
+        HeAb0oceanXrQ/xOrBcKTnm//g==
+X-Google-Smtp-Source: APXvYqxRpzRoAAkk3MuHOz0pYKzdu098OV1QWuP6crUl1RenkK0czy8yKZ2lfl5cQtYl5dgLJMMYOg==
+X-Received: by 2002:a2e:9882:: with SMTP id b2mr3706041ljj.225.1567632181203;
+        Wed, 04 Sep 2019 14:23:01 -0700 (PDT)
+Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
+        by smtp.gmail.com with ESMTPSA id s8sm3540836ljd.94.2019.09.04.14.23.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 14:23:00 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
+        davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
+        john.fastabend@gmail.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH bpf-next 0/8] samples: bpf: improve/fix cross-compilation
+Date:   Thu,  5 Sep 2019 00:22:04 +0300
+Message-Id: <20190904212212.13052-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 07:54:46PM +0200, Greg Kroah-Hartman wrote:
->From: Cong Wang <xiyou.wangcong@gmail.com>
->
->commit b9a1e627405d68d475a3c1f35e685ccfb5bbe668 upstream.
->
->hsr_link_ops implements ->newlink() but not ->dellink(),
->which leads that resources not released after removing the device,
->particularly the entries in self_node_db and node_db.
->
->So add ->dellink() implementation to replace the priv_destructor.
->This also makes the code slightly easier to understand.
->
->Reported-by: syzbot+c6167ec3de7def23d1e8@syzkaller.appspotmail.com
->Cc: Arvid Brodin <arvid.brodin@alten.se>
->Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
->Signed-off-by: David S. Miller <davem@davemloft.net>
->Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This series contains mainly fixes/improvements for cross-compilation
+(also verified on native platform build), tested on arm, but intended
+for any arch.
 
-If the airport gods cooperate, I'm going to queue:
+Initial RFC link:
+https://lkml.org/lkml/2019/8/29/1665
 
-edf070a0fb45a ("hsr: fix a NULL pointer deref in hsr_dev_xmit()")
-311633b604063 ("hsr: switch ->dellink() to ->ndo_uninit()")
+Besides the pathces given here, the RFC also contains couple patches
+related to llvm clang
+  arm: include: asm: swab: mask rev16 instruction for clang
+  arm: include: asm: unified: mask .syntax unified for clang
 
-as fixes for this commit.
+The change touches not only cross-compilation and can have impact on
+other archs and build environments, so might be good idea to verify
+it in order to add appropriate changes, some warn options could be
+tuned also.
 
---
-Thanks,
-Sasha
+Ivan Khoronzhuk (8):
+  samples: bpf: Makefile: use --target from cross-compile
+  samples: bpf: Makefile: remove target for native build
+  libbpf: Makefile: add C/CXX/LDFLAGS to libbpf.so and test_libpf
+    targets
+  samples: bpf: use own EXTRA_CFLAGS for clang commands
+  samples: bpf: Makefile: use vars from KBUILD_CFLAGS to handle linux
+    headers
+  samples: bpf: makefile: fix HDR_PROBE "echo"
+  samples: bpf: add makefile.prog for separate CC build
+  samples: bpf: Makefile: base progs build on Makefile.progs
+
+ samples/bpf/Makefile      | 177 ++++++++++++++++++++++----------------
+ samples/bpf/Makefile.prog |  77 +++++++++++++++++
+ samples/bpf/README.rst    |   7 ++
+ tools/lib/bpf/Makefile    |  11 ++-
+ 4 files changed, 197 insertions(+), 75 deletions(-)
+ create mode 100644 samples/bpf/Makefile.prog
+
+-- 
+2.17.1
+
