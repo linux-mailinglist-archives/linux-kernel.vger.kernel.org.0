@@ -2,85 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C11A8A8129
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 13:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AFCAA8147
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 13:45:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbfIDLgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 07:36:23 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50748 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbfIDLgT (ORCPT
+        id S1729656AbfIDLnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 07:43:12 -0400
+Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:46457 "EHLO
+        esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729122AbfIDLnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 07:36:19 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c10so2945850wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 04:36:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Uuq1eCLagqB7It6aGbezur+IR8biDO9SazdI7cqdaFI=;
-        b=qp0yJe04jx2ivZeuIXUwlhAyXXeFSfk5tgqH6oCkHR05lDEik9mPR5v9927SPGcRcF
-         Bqpd9uYWbP1lsr+hb7QvkpYLluhnrev870vk1hyz6CstDwPiqkr8mp4/e4g5uP5dShX8
-         xdt0ym7tbVmwYwx2pgRVRGsEZ8C1evHUk9FGitl/8RMxdTyfqj6zxtwcIzKPbnKHu2ay
-         q7f/9kZ1lQ7dZpPPtuumZ9QoFlwEHWVriNgD+6IQtn2ystKcFOD1L8ahTB72/zQlOPjj
-         vijaYPmPpyVFjezLg3cx8drAtt4pP5Fz+cYk5fH1mE2O8yX+nvUAM681Qx1ltYOUjSXv
-         zQLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Uuq1eCLagqB7It6aGbezur+IR8biDO9SazdI7cqdaFI=;
-        b=B9CxMuCptvRK9Z6QjfR0EWzuJUJQd7aQZhIr5/7/OUoExhsHEoo7TDIph1tKOo115S
-         JYAANHESXUYNRaPe14ND7tDc9yTUBcFOpJ04bfNpxLWIJjcfclpylJkgBIQ/sdfx8lWQ
-         IXlZ07NgnyFWVkhP14P5b0frTA48MkZtpRW9M02rUy+SebVuOOQAbk1wxVAQRCSb2u1i
-         gm6JFLiyJqbS5moxbyofELEaHsHl4mWwXEywUgtOhCYiEqYfjQFUT7Zx+oY1cLEcZG0A
-         1QBOeSvY2vMUVRdqXir5zcMtteVBMYJ0TVaRfNN3mSBP6EQKdSo+zBCG2WUn6PDHIJJe
-         yJJQ==
-X-Gm-Message-State: APjAAAViydgEblveucz/hj9kC6piriG+vJPv5bCmlu8bfV8RT6RwbLq4
-        waX9NBzSk0c1r3LU7j8fcjVnMA==
-X-Google-Smtp-Source: APXvYqxrVXn7NXLmsW+n0aD02675Wv9vt7hSV40SwdLs0RB8oNmnK6HhJ+4q7rd/GnqwtFaz3fRPdA==
-X-Received: by 2002:a7b:c8ca:: with SMTP id f10mr3812956wml.36.1567596978030;
-        Wed, 04 Sep 2019 04:36:18 -0700 (PDT)
-Received: from localhost.localdomain ([95.147.198.36])
-        by smtp.gmail.com with ESMTPSA id d9sm10823933wrc.39.2019.09.04.04.36.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2019 04:36:17 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     alokc@codeaurora.org, agross@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, bjorn.andersson@linaro.org,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 2/2] dt-bindings: soc: qcom: Provide option to select FIFO mode
-Date:   Wed,  4 Sep 2019 12:36:13 +0100
-Message-Id: <20190904113613.14997-2-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190904113613.14997-1-lee.jones@linaro.org>
-References: <20190904113613.14997-1-lee.jones@linaro.org>
+        Wed, 4 Sep 2019 07:43:11 -0400
+X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Sep 2019 07:43:10 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1567597390;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=Py2ZD8CCSw/9B0rd6D03QDD9TGSgz5D84ZWXYCCdtq8=;
+  b=HcwA6HCPbB/1iVnFtUqzUlucAdDgvgwiGR+nadl55l/HoVIqjfW/6cnK
+   Kp0nLo0GFXKXOFbfv05Po6A8H3krhCeXWm6tJxltLUT6dI3R71j6NULIm
+   NKYB3ygq9k9hEC3lFyWJkz48pEh+kO7AOHXKUtKyuy6FXCnYnaZnMijjG
+   g=;
+Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=igor.druzhinin@citrix.com; spf=Pass smtp.mailfrom=igor.druzhinin@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  igor.druzhinin@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="igor.druzhinin@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa2.hc3370-68.iphmx.com: domain of
+  igor.druzhinin@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="igor.druzhinin@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: 2PTu1kolVbKh7SpgBh5Drp1q5mHyou+YZiM+VEqUUyr78eZkRLs3AGIVi00rAA/BJKspJQfYBF
+ 3GaJIe+PrYIECgWU8inhCmA2FqHQuR6bT2blqwD12xI7+Ex/yHfCghPkbiJdJQeGlW+lAF3+Tf
+ P+TXL70gVl1Pfc+zaH3Qsns+LKZK5zKh3s4xAKoEOPAbSRWWHjSUkkTHA5TdlBVQPu8S+0+5gz
+ K/l+8Z/vM4LGBuHVLdB2pl6V9xUjd+9AlnGcbL5Ldl/wr520/JWn1LfIvVmKmsZHASjVFg7yDg
+ Fjc=
+X-SBRS: 2.7
+X-MesageID: 5111376
+X-Ironport-Server: esa2.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.64,465,1559534400"; 
+   d="scan'208";a="5111376"
+Subject: Re: [PATCH] xen/pci: try to reserve MCFG areas earlier
+To:     Jan Beulich <jbeulich@suse.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>
+CC:     <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
+        <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>
+References: <1567556431-9809-1-git-send-email-igor.druzhinin@citrix.com>
+ <52fe7f67-ffd0-2d22-90fb-f3462ea059cd@suse.com>
+From:   Igor Druzhinin <igor.druzhinin@citrix.com>
+Message-ID: <d5dd94c2-070e-b3ff-57cf-92893b3cca7b@citrix.com>
+Date:   Wed, 4 Sep 2019 12:36:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <52fe7f67-ffd0-2d22-90fb-f3462ea059cd@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Used when DMA is not available or the best option.
+On 04/09/2019 10:08, Jan Beulich wrote:
+> On 04.09.2019 02:20, Igor Druzhinin wrote:
+>> If MCFG area is not reserved in E820, Xen by default will defer its usage
+>> until Dom0 registers it explicitly after ACPI parser recognizes it as
+>> a reserved resource in DSDT. Having it reserved in E820 is not
+>> mandatory according to "PCI Firmware Specification, rev 3.2" (par. 4.1.2)
+>> and firmware is free to keep a hole E820 in that place. Xen doesn't know
+>> what exactly is inside this hole since it lacks full ACPI view of the
+>> platform therefore it's potentially harmful to access MCFG region
+>> without additional checks as some machines are known to provide
+>> inconsistent information on the size of the region.
+> 
+> Irrespective of this being a good change, I've had another thought
+> while reading this paragraph, for a hypervisor side control: Linux
+> has a "memopt=" command line option allowing fine grained control
+> over the E820 map. We could have something similar to allow
+> inserting an E820_RESERVED region into a hole (it would be the
+> responsibility of the admin to guarantee no other conflicts, i.e.
+> it should generally be used only if e.g. the MCFG is indeed known
+> to live at the specified place, and being properly represented in
+> the ACPI tables). Thoughts?
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt | 1 +
- 1 file changed, 1 insertion(+)
+What other use cases can you think of in case we'd have this option?
+From the top of my head, it might be providing a memmap for a second Xen
+after doing kexec from Xen to Xen.
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
-index dab7ca9f250c..b0e71c07e604 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
-@@ -40,6 +40,7 @@ Required properties:
- Optional property:
- - clock-frequency:	Desired I2C bus clock frequency in Hz.
- 			When missing default to 100000Hz.
-+- qcom,geni-se-fifo:	Selects FIFO processing - as opposed to DMA.
- 
- Child nodes should conform to I2C bus binding as described in i2c.txt.
- 
--- 
-2.17.1
+What benefits do you think it might have over just accepting a hole
+using "mcfg=relaxed" option from admin perspective?
 
+Igor
