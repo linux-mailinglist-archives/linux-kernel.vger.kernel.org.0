@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF16A9199
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93CAAA9054
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387827AbfIDSTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:19:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52006 "EHLO mail.kernel.org"
+        id S1733153AbfIDSJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:09:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389476AbfIDSI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:08:57 -0400
+        id S2389875AbfIDSJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:09:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E2A7206B8;
-        Wed,  4 Sep 2019 18:08:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA78D206B8;
+        Wed,  4 Sep 2019 18:08:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620536;
-        bh=KWRkPpHq4GKG0B43OYfuAYJdaXvoifvfYz9Fl7bcoeU=;
+        s=default; t=1567620539;
+        bh=t5k0d5Hlbptx9JzbKotbIA33MLcsaAYFkrvVTiPqKCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MlVVTnlTVEWCV2UG3kPo30GnFezzmp6bo4VS8Zw6tciMmQkvdyiBPIJbUwFfP3LQN
-         x0EFV1XvWaFZAIUDjFrcN9XTz+am0xBZ5ZhN3LD+mNlbq/THxpv2mH82K+gJURVR2n
-         BExoMxbBRdqC0sPBUi4d8o8UNUBDrwyBT6E3CKxI=
+        b=FlOwsUr1FjIeDkJ336dSN2E0qQtEA+XQuQthBr9jmpLyOft3A8s85wLEi0JXnYcRc
+         dUnp2Lg/CckOr3K/2EbHUMDvgqhQD1b/T2JTCyD3ySGWUfSFiRlT5nXxy5+FpS5rn7
+         gQenUmiwHUAuSf+xKrkysnYWYGYKZ+ln4fgZi2mM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 88/93] NFSv4/pnfs: Fix a page lock leak in nfs_pageio_resend()
-Date:   Wed,  4 Sep 2019 19:54:30 +0200
-Message-Id: <20190904175310.728158872@linuxfoundation.org>
+Subject: [PATCH 4.19 89/93] NFS: Pass error information to the pgio error cleanup routine
+Date:   Wed,  4 Sep 2019 19:54:31 +0200
+Message-Id: <20190904175310.804759726@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
 References: <20190904175302.845828956@linuxfoundation.org>
@@ -44,53 +44,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f4340e9314dbfadc48758945f85fc3b16612d06f ]
+[ Upstream commit df3accb849607a86278a37c35e6b313635ccc48b ]
 
-If the attempt to resend the pages fails, we need to ensure that we
-clean up those pages that were not transmitted.
+Allow the caller to pass error information when cleaning up a failed
+I/O request so that we can conditionally take action to cancel the
+request altogether if the error turned out to be fatal.
 
-Fixes: d600ad1f2bdb ("NFS41: pop some layoutget errors to application")
 Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: stable@vger.kernel.org # v4.5+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/pagelist.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ fs/nfs/direct.c         |  4 ++--
+ fs/nfs/pagelist.c       |  5 +++--
+ fs/nfs/read.c           |  2 +-
+ fs/nfs/write.c          | 11 +++++++++--
+ include/linux/nfs_xdr.h |  2 +-
+ 5 files changed, 16 insertions(+), 8 deletions(-)
 
+diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+index 1377ee20ecf91..0fd811ac08b52 100644
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -428,7 +428,7 @@ out_put:
+ 	hdr->release(hdr);
+ }
+ 
+-static void nfs_read_sync_pgio_error(struct list_head *head)
++static void nfs_read_sync_pgio_error(struct list_head *head, int error)
+ {
+ 	struct nfs_page *req;
+ 
+@@ -820,7 +820,7 @@ out_put:
+ 	hdr->release(hdr);
+ }
+ 
+-static void nfs_write_sync_pgio_error(struct list_head *head)
++static void nfs_write_sync_pgio_error(struct list_head *head, int error)
+ {
+ 	struct nfs_page *req;
+ 
 diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
-index d40bf560f3ca7..9cbd829b4ed5f 100644
+index 9cbd829b4ed5f..7f0b9409202cc 100644
 --- a/fs/nfs/pagelist.c
 +++ b/fs/nfs/pagelist.c
-@@ -1232,20 +1232,22 @@ static void nfs_pageio_complete_mirror(struct nfs_pageio_descriptor *desc,
- int nfs_pageio_resend(struct nfs_pageio_descriptor *desc,
- 		      struct nfs_pgio_header *hdr)
- {
--	LIST_HEAD(failed);
-+	LIST_HEAD(pages);
+@@ -994,7 +994,7 @@ nfs_pageio_cleanup_request(struct nfs_pageio_descriptor *desc,
+ 	LIST_HEAD(head);
  
- 	desc->pg_io_completion = hdr->io_completion;
- 	desc->pg_dreq = hdr->dreq;
--	while (!list_empty(&hdr->pages)) {
--		struct nfs_page *req = nfs_list_entry(hdr->pages.next);
-+	list_splice_init(&hdr->pages, &pages);
-+	while (!list_empty(&pages)) {
-+		struct nfs_page *req = nfs_list_entry(pages.next);
- 
- 		if (!nfs_pageio_add_request(desc, req))
--			nfs_list_move_request(req, &failed);
-+			break;
- 	}
- 	nfs_pageio_complete(desc);
--	if (!list_empty(&failed)) {
--		list_move(&failed, &hdr->pages);
--		return desc->pg_error < 0 ? desc->pg_error : -EIO;
-+	if (!list_empty(&pages)) {
-+		int err = desc->pg_error < 0 ? desc->pg_error : -EIO;
-+		hdr->completion_ops->error_cleanup(&pages, err);
-+		return err;
- 	}
- 	return 0;
+ 	nfs_list_move_request(req, &head);
+-	desc->pg_completion_ops->error_cleanup(&head);
++	desc->pg_completion_ops->error_cleanup(&head, desc->pg_error);
  }
+ 
+ /**
+@@ -1130,7 +1130,8 @@ static void nfs_pageio_error_cleanup(struct nfs_pageio_descriptor *desc)
+ 
+ 	for (midx = 0; midx < desc->pg_mirror_count; midx++) {
+ 		mirror = &desc->pg_mirrors[midx];
+-		desc->pg_completion_ops->error_cleanup(&mirror->pg_list);
++		desc->pg_completion_ops->error_cleanup(&mirror->pg_list,
++				desc->pg_error);
+ 	}
+ }
+ 
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index 48d7277c60a97..09d5c282f50e9 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -205,7 +205,7 @@ static void nfs_initiate_read(struct nfs_pgio_header *hdr,
+ }
+ 
+ static void
+-nfs_async_read_error(struct list_head *head)
++nfs_async_read_error(struct list_head *head, int error)
+ {
+ 	struct nfs_page	*req;
+ 
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 51d0b7913c04c..5ab997912d8d5 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1394,20 +1394,27 @@ static void nfs_redirty_request(struct nfs_page *req)
+ 	nfs_release_request(req);
+ }
+ 
+-static void nfs_async_write_error(struct list_head *head)
++static void nfs_async_write_error(struct list_head *head, int error)
+ {
+ 	struct nfs_page	*req;
+ 
+ 	while (!list_empty(head)) {
+ 		req = nfs_list_entry(head->next);
+ 		nfs_list_remove_request(req);
++		if (nfs_error_is_fatal(error)) {
++			nfs_context_set_write_error(req->wb_context, error);
++			if (nfs_error_is_fatal_on_server(error)) {
++				nfs_write_error_remove_page(req);
++				continue;
++			}
++		}
+ 		nfs_redirty_request(req);
+ 	}
+ }
+ 
+ static void nfs_async_write_reschedule_io(struct nfs_pgio_header *hdr)
+ {
+-	nfs_async_write_error(&hdr->pages);
++	nfs_async_write_error(&hdr->pages, 0);
+ 	filemap_fdatawrite_range(hdr->inode->i_mapping, hdr->args.offset,
+ 			hdr->args.offset + hdr->args.count - 1);
+ }
+diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
+index bd1c889a9ed95..cab24a127feb3 100644
+--- a/include/linux/nfs_xdr.h
++++ b/include/linux/nfs_xdr.h
+@@ -1539,7 +1539,7 @@ struct nfs_commit_data {
+ };
+ 
+ struct nfs_pgio_completion_ops {
+-	void	(*error_cleanup)(struct list_head *head);
++	void	(*error_cleanup)(struct list_head *head, int);
+ 	void	(*init_hdr)(struct nfs_pgio_header *hdr);
+ 	void	(*completion)(struct nfs_pgio_header *hdr);
+ 	void	(*reschedule_io)(struct nfs_pgio_header *hdr);
 -- 
 2.20.1
 
