@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E7EA8F2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 899F3A916B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388716AbfIDSCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:02:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41956 "EHLO mail.kernel.org"
+        id S2389517AbfIDSPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:15:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388701AbfIDSCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:02:10 -0400
+        id S2390949AbfIDSPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:15:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 036EB22CF5;
-        Wed,  4 Sep 2019 18:02:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 003BE23400;
+        Wed,  4 Sep 2019 18:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620129;
-        bh=8XGpZNUio1W7mgwl+llBK/s9QyI+imtyhJPb9C6TdJc=;
+        s=default; t=1567620918;
+        bh=wzdzttJzLdxJMiPAyhMuDzxSVX/sJd8goyf39tXfyfY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gh7Sv+3xsf/+uvYYw6mnvTPJQeUai6iK8IpM0i1If+9bmPjG7F09F+FsTU9TSJdr3
-         +PodMzFCmazL3nPNm8pA4ImAF4dLBf8oqXCWdTFnuQqZ7ZzDb3Apcjs7JnKVjGApHA
-         9v9QE/qXEJIzttBhsQ2wkkqfsMvWt/Qw94oVVMUI=
+        b=URawB6nVftJvV0tH/cEPmId8ePTdlgZi3aetUqOFk4Q76S10QIU0diTUJta/F56LA
+         ykPCy6uoLF9fEaEFiFm5m2GVPmqC6XjFKsuUYFVI0G1M7sqTFNBThJCmvg2xTMWrCb
+         zgKPrxfK3Z0Jv9fkOBq33s876BlLszFgZjhITTT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philip Langdale <philipl@overt.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Manuel Presnitz <mail@mpy.de>
-Subject: [PATCH 4.9 75/83] mmc: core: Fix init of SD cards reporting an invalid VDD range
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 5.2 104/143] NFSv4/pnfs: Fix a page lock leak in nfs_pageio_resend()
 Date:   Wed,  4 Sep 2019 19:54:07 +0200
-Message-Id: <20190904175310.199461467@linuxfoundation.org>
+Message-Id: <20190904175318.378060883@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit 72741084d903e65e121c27bd29494d941729d4a1 upstream.
+commit f4340e9314dbfadc48758945f85fc3b16612d06f upstream.
 
-The OCR register defines the supported range of VDD voltages for SD cards.
-However, it has turned out that some SD cards reports an invalid voltage
-range, for example having bit7 set.
+If the attempt to resend the pages fails, we need to ensure that we
+clean up those pages that were not transmitted.
 
-When a host supports MMC_CAP2_FULL_PWR_CYCLE and some of the voltages from
-the invalid VDD range, this triggers the core to run a power cycle of the
-card to try to initialize it at the lowest common supported voltage.
-Obviously this fails, since the card can't support it.
-
-Let's fix this problem, by clearing invalid bits from the read OCR register
-for SD cards, before proceeding with the VDD voltage negotiation.
-
-Cc: stable@vger.kernel.org
-Reported-by: Philip Langdale <philipl@overt.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Philip Langdale <philipl@overt.org>
-Tested-by: Philip Langdale <philipl@overt.org>
-Tested-by: Manuel Presnitz <mail@mpy.de>
+Fixes: d600ad1f2bdb ("NFS41: pop some layoutget errors to application")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org # v4.5+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/core/sd.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/nfs/pagelist.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -1259,6 +1259,12 @@ int mmc_attach_sd(struct mmc_host *host)
- 			goto err;
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -1253,20 +1253,22 @@ static void nfs_pageio_complete_mirror(s
+ int nfs_pageio_resend(struct nfs_pageio_descriptor *desc,
+ 		      struct nfs_pgio_header *hdr)
+ {
+-	LIST_HEAD(failed);
++	LIST_HEAD(pages);
+ 
+ 	desc->pg_io_completion = hdr->io_completion;
+ 	desc->pg_dreq = hdr->dreq;
+-	while (!list_empty(&hdr->pages)) {
+-		struct nfs_page *req = nfs_list_entry(hdr->pages.next);
++	list_splice_init(&hdr->pages, &pages);
++	while (!list_empty(&pages)) {
++		struct nfs_page *req = nfs_list_entry(pages.next);
+ 
+ 		if (!nfs_pageio_add_request(desc, req))
+-			nfs_list_move_request(req, &failed);
++			break;
  	}
- 
-+	/*
-+	 * Some SD cards claims an out of spec VDD voltage range. Let's treat
-+	 * these bits as being in-valid and especially also bit7.
-+	 */
-+	ocr &= ~0x7FFF;
-+
- 	rocr = mmc_select_voltage(host, ocr);
- 
- 	/*
+ 	nfs_pageio_complete(desc);
+-	if (!list_empty(&failed)) {
+-		list_move(&failed, &hdr->pages);
+-		return desc->pg_error < 0 ? desc->pg_error : -EIO;
++	if (!list_empty(&pages)) {
++		int err = desc->pg_error < 0 ? desc->pg_error : -EIO;
++		hdr->completion_ops->error_cleanup(&pages, err);
++		return err;
+ 	}
+ 	return 0;
+ }
 
 
