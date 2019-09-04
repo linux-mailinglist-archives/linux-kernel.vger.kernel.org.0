@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96024A9004
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DDC5A8E76
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389003AbfIDSHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:07:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49524 "EHLO mail.kernel.org"
+        id S2387998AbfIDR6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:58:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389583AbfIDSHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:07:11 -0400
+        id S2387991AbfIDR6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:58:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1BF72339E;
-        Wed,  4 Sep 2019 18:07:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 769C522CF7;
+        Wed,  4 Sep 2019 17:58:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620430;
-        bh=YhZYuhnmS9tdig3xXuI3dsas3LT8WuW+r+Q0IcMXP2k=;
+        s=default; t=1567619887;
+        bh=71JlX85HloXRuFk35f6G10fhXpqx61Us6ZgYwqEoDeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OvNkWZZTkOIfr8mC8brCEg4jKbSoSSuKtHJCQ6vV3e7QAcHHlx5RUxRRJqP0yFAcN
-         0kkyW37c2t6w1zQlitEEMDlveHPv/PFUltc6KOC2CB+HXYkeOi1B+ly5fSKSa8kBtG
-         /BLHVFDYT/jHVeSK2cR//5msxR9bcqBm8rMJs8wE=
+        b=leG1P1Mm2C22K5VPiq+Kpz/8qovMBXguxPh/2rspN8cDzyZ2bzZB0XwRsCRxXOEoR
+         V9ygc126N1kuCqw73o4UQg+NkbWfguEJCc49S6IyD8cSrkCkBUsx1Aj1Fz8yajdDfv
+         pJzz5HVyiCby80PMtPyrBa8QBZ+mp3adeoQxnfh4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carsten Schmid <carsten_schmid@mentor.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.19 56/93] usb: hcd: use managed device resources
-Date:   Wed,  4 Sep 2019 19:53:58 +0200
-Message-Id: <20190904175307.950136275@linuxfoundation.org>
+        stable@vger.kernel.org, Philip Langdale <philipl@overt.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Manuel Presnitz <mail@mpy.de>
+Subject: [PATCH 4.4 72/77] mmc: core: Fix init of SD cards reporting an invalid VDD range
+Date:   Wed,  4 Sep 2019 19:53:59 +0200
+Message-Id: <20190904175310.073705023@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,110 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Schmid, Carsten <Carsten_Schmid@mentor.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-commit 76da906ad727048a74bb8067031ee99fc070c7da upstream.
+commit 72741084d903e65e121c27bd29494d941729d4a1 upstream.
 
-Using managed device resources in usb_hcd_pci_probe() allows devm usage for
-resource subranges, such as the mmio resource for the platform device
-created to control host/device mode mux, which is a xhci extended
-capability, and sits inside the xhci mmio region.
+The OCR register defines the supported range of VDD voltages for SD cards.
+However, it has turned out that some SD cards reports an invalid voltage
+range, for example having bit7 set.
 
-If managed device resources are not used then "parent" resource
-is released before subrange at driver removal as .remove callback is
-called before the devres list of resources for this device is walked
-and released.
+When a host supports MMC_CAP2_FULL_PWR_CYCLE and some of the voltages from
+the invalid VDD range, this triggers the core to run a power cycle of the
+card to try to initialize it at the lowest common supported voltage.
+Obviously this fails, since the card can't support it.
 
-This has been observed with the xhci extended capability driver causing a
-use-after-free which is now fixed.
+Let's fix this problem, by clearing invalid bits from the read OCR register
+for SD cards, before proceeding with the VDD voltage negotiation.
 
-An additional nice benefit is that error handling on driver initialisation
-is simplified much.
-
-Signed-off-by: Carsten Schmid <carsten_schmid@mentor.com>
-Tested-by: Carsten Schmid <carsten_schmid@mentor.com>
-Reviewed-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Fixes: fa31b3cb2ae1 ("xhci: Add Intel extended cap / otg phy mux handling")
-Cc: <stable@vger.kernel.org> # v4.19+
-Link: https://lore.kernel.org/r/1566569488679.31808@mentor.com
+Cc: stable@vger.kernel.org
+Reported-by: Philip Langdale <philipl@overt.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Philip Langdale <philipl@overt.org>
+Tested-by: Philip Langdale <philipl@overt.org>
+Tested-by: Manuel Presnitz <mail@mpy.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/hcd-pci.c |   30 ++++++++----------------------
- 1 file changed, 8 insertions(+), 22 deletions(-)
+ drivers/mmc/core/sd.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/usb/core/hcd-pci.c
-+++ b/drivers/usb/core/hcd-pci.c
-@@ -216,17 +216,18 @@ int usb_hcd_pci_probe(struct pci_dev *de
- 		/* EHCI, OHCI */
- 		hcd->rsrc_start = pci_resource_start(dev, 0);
- 		hcd->rsrc_len = pci_resource_len(dev, 0);
--		if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len,
--				driver->description)) {
-+		if (!devm_request_mem_region(&dev->dev, hcd->rsrc_start,
-+				hcd->rsrc_len, driver->description)) {
- 			dev_dbg(&dev->dev, "controller already in use\n");
- 			retval = -EBUSY;
- 			goto put_hcd;
- 		}
--		hcd->regs = ioremap_nocache(hcd->rsrc_start, hcd->rsrc_len);
-+		hcd->regs = devm_ioremap_nocache(&dev->dev, hcd->rsrc_start,
-+				hcd->rsrc_len);
- 		if (hcd->regs == NULL) {
- 			dev_dbg(&dev->dev, "error mapping memory\n");
- 			retval = -EFAULT;
--			goto release_mem_region;
-+			goto put_hcd;
- 		}
- 
- 	} else {
-@@ -240,8 +241,8 @@ int usb_hcd_pci_probe(struct pci_dev *de
- 
- 			hcd->rsrc_start = pci_resource_start(dev, region);
- 			hcd->rsrc_len = pci_resource_len(dev, region);
--			if (request_region(hcd->rsrc_start, hcd->rsrc_len,
--					driver->description))
-+			if (devm_request_region(&dev->dev, hcd->rsrc_start,
-+					hcd->rsrc_len, driver->description))
- 				break;
- 		}
- 		if (region == PCI_ROM_RESOURCE) {
-@@ -275,20 +276,13 @@ int usb_hcd_pci_probe(struct pci_dev *de
+--- a/drivers/mmc/core/sd.c
++++ b/drivers/mmc/core/sd.c
+@@ -1232,6 +1232,12 @@ int mmc_attach_sd(struct mmc_host *host)
+ 			goto err;
  	}
  
- 	if (retval != 0)
--		goto unmap_registers;
-+		goto put_hcd;
- 	device_wakeup_enable(hcd->self.controller);
++	/*
++	 * Some SD cards claims an out of spec VDD voltage range. Let's treat
++	 * these bits as being in-valid and especially also bit7.
++	 */
++	ocr &= ~0x7FFF;
++
+ 	rocr = mmc_select_voltage(host, ocr);
  
- 	if (pci_dev_run_wake(dev))
- 		pm_runtime_put_noidle(&dev->dev);
- 	return retval;
- 
--unmap_registers:
--	if (driver->flags & HCD_MEMORY) {
--		iounmap(hcd->regs);
--release_mem_region:
--		release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
--	} else
--		release_region(hcd->rsrc_start, hcd->rsrc_len);
- put_hcd:
- 	usb_put_hcd(hcd);
- disable_pci:
-@@ -347,14 +341,6 @@ void usb_hcd_pci_remove(struct pci_dev *
- 		dev_set_drvdata(&dev->dev, NULL);
- 		up_read(&companions_rwsem);
- 	}
--
--	if (hcd->driver->flags & HCD_MEMORY) {
--		iounmap(hcd->regs);
--		release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
--	} else {
--		release_region(hcd->rsrc_start, hcd->rsrc_len);
--	}
--
- 	usb_put_hcd(hcd);
- 	pci_disable_device(dev);
- }
+ 	/*
 
 
