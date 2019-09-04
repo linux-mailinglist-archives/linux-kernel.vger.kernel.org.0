@@ -2,88 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0322A7F79
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B87DEA7F77
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729696AbfIDJeQ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Sep 2019 05:34:16 -0400
-Received: from exmail.tralee.bonsecours.ie ([213.190.149.3]:63204 "EHLO
-        BSHSSOPHOSVEA.bonsecours.ie" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726045AbfIDJeP (ORCPT
+        id S1729644AbfIDJdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 05:33:45 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:38403 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfIDJdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:34:15 -0400
-Received: from BSHSSOPHOSVEA.bonsecours.ie (localhost.localdomain [127.0.0.1])
-        by localhost (Email Security Appliance) with SMTP id 7B788266731_D6F84CAB;
-        Wed,  4 Sep 2019 09:32:58 +0000 (GMT)
-Received: from bscexccashub01.bonsecours.ie (bscexccashub01.bonsecours.ie [10.1.4.106])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "webmail.bonsecours.ie", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by BSHSSOPHOSVEA.bonsecours.ie (Sophos Email Appliance) with ESMTPS id 8DD54264BE0_D6F84C6F;
-        Wed,  4 Sep 2019 09:32:54 +0000 (GMT)
-Received: from BSCEXCMAIL01.BONSECOURS.IE ([fe80::9cc5:4b62:bcf9:3590]) by
- BSCEXCCASHUB01.BONSECOURS.IE ([::1]) with mapi id 14.03.0408.000; Wed, 4 Sep
- 2019 10:32:50 +0100
-From:   James Forde <jamesforde@bonsecours.ie>
-To:     "NO-REPLY@MICROSOFT.NET" <NO-REPLY@MICROSOFT.NET>
-Subject: Beachten Sie, dass Ihr E-Mail-Konto vor der Sperrung steht
-Thread-Topic: Beachten Sie, dass Ihr E-Mail-Konto vor der Sperrung steht
-Thread-Index: AdVjAzM7MBYlOXgwTe2ejc6KmPe32A==
-Date:   Wed, 4 Sep 2019 09:32:49 +0000
-Message-ID: <F9DF1CD3F70C2A4C9BFBA3CE1A4EA99587EBD10B@BSCEXCMAIL01.BONSECOURS.IE>
-Accept-Language: en-IE, en-US
-Content-Language: en-IE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [196.171.179.88]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Wed, 4 Sep 2019 05:33:44 -0400
+Received: by mail-ua1-f66.google.com with SMTP id 107so4315467uau.5
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 02:33:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Q3j0a3Va0LILUbftY+GrXeWgsFCC2hnB8/26iKXZT1A=;
+        b=jqhuORz5LRSTHE6yt9hdascFr7gMHYN103bOmBaep6127Qya3qjDukMlGpegWxRMZv
+         ON0jdjcvzdh8vkTyD5dnXmhSebSrDj9JQHlOSwyEga7W5Kp0QOb47w7dLnGDhylvyr54
+         hPNzF3xQTlOw0d0ZrW6fUU20nP4I56aAXLh6GiIavwU32gz3PV7i3YZ8YHJxKni1DdCt
+         kB8yBfCEHp0i74IhgSIYgj8w4yy3O4irTba0lbnEizx3eefKcUIftImJrg5Uyf7ePgmz
+         PKcRwipPk43fuo3ST53fkMBUMrOq4ehB/+P4mwh3doDfk7ZJ2so1FBVcStac/6408m1t
+         m2Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Q3j0a3Va0LILUbftY+GrXeWgsFCC2hnB8/26iKXZT1A=;
+        b=qTbOfY1Y/GlpXCeKdg3M7V6z0+azoWDSpnX0cl5ucVuLOdyMrUfjWgQuldQKtDxZGK
+         AZEPzaiFZaYkgdegXUc+bwGRUEAQlxJOcViYVvClo7QOzEkmSy51XL82C2Te4HhT8+BP
+         /1QQNXKbDpDBSPEYu06RCVCP2iXYCC4N6PYGXAPezNndsZU75R+Ji8DtSXkS32sC3N2i
+         5bCDbS1lC/0kHNqzuKgoY16pp3YA/ttE3OU6ow+ENK1PfcKqcx16j69oo6slwCwZhefI
+         UxwDGPGBosLpwMMXAr295vUVWNN40fiKVlPgCD7ECZzpjclANMxAhRSa4jRXzGrhgyZ/
+         7Oaw==
+X-Gm-Message-State: APjAAAXDGaFBPrFdPfrkWfuzLPqTfm99YaIlJbvMtfFK8BFA7NMSnOxZ
+        dWotdUHa2fGmgw5PcxPguTMwgXgIt7gt/j7cKdp8Xg==
+X-Google-Smtp-Source: APXvYqz9j4GhmvTsAglNcvbdHH9GGXTS4jNOSKlZBReCRMOyxFxcXtxwVlgUVi/RzOQyWDDCDgYkofWSDUZ4OId8sms=
+X-Received: by 2002:ab0:6601:: with SMTP id r1mr5312898uam.100.1567589623643;
+ Wed, 04 Sep 2019 02:33:43 -0700 (PDT)
 MIME-Version: 1.0
+References: <d355e790-7c60-5681-3ea5-dc4fd6206628@zoho.com>
+In-Reply-To: <d355e790-7c60-5681-3ea5-dc4fd6206628@zoho.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 4 Sep 2019 11:33:07 +0200
+Message-ID: <CAPDyKFqKxSo50FSmesuOBz+FfE_DEFsZmEHD5CiU8SORv1Jrow@mail.gmail.com>
+Subject: Re: Asus VivoBook Flip TP202NA-EH012T EMMC problem
+To:     =?UTF-8?B?w5N2w6FyaQ==?= <ovari123@zoho.com>,
+        Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DRINGENDER HINWEIS ZUR MICROSOFT-ÜBERPRÜFUNG
++ Kai Heng Feng
 
-Beachten Sie, dass Ihr E-Mail-Konto vor der Sperrung steht, wenn Sie es jetzt nicht ordnungsgemäß bestätigen. Überprüfen<http://bbg58.000webhostapp.com/> Sie dies jetzt, da es sonst ausgesetzt wird.
+On Sat, 31 Aug 2019 at 11:43, =C3=93v=C3=A1ri <ovari123@zoho.com> wrote:
+>
+> Hello,
+>
+> As per https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1818407/comme=
+nts/26 here is an email.
+>
+> Information is provided at https://bugs.launchpad.net/ubuntu/+source/linu=
+x/+bug/1818407/comments/32
+>
+> Please advise what else you require.
 
-Microsoft Verification Team
+Future wise, rather than solely sending links to bugreports, please
+copy the relevant data into the email. Moreover, we don't normally
+care that much about "old" kernels, unless problems exists on the
+latest kernels as well.
 
+Anyway, by following the above links, I figured this is about
+sdhci-pci and you get a CRC problem when switching to HS400 mode.
 
-Microsoft Copyright © 2018 .Inc. Alle Rechte vorbehalten.
+[ 3.673358] mmc0: error -84 whilst initialising MMC card
+[ 3.808029] mmc0: mmc_select_hs400 failed, error -84
 
+A wild shot is to try out my fixes branch, which holds the following
+below queued fix, that might solve the problem if it's a regression.
 
+commit 8ad8e02c2fa70cfddc1ded53ba9001c9d444075d
+Author: Jan Kaisrlik <ja.kaisrlik@gmail.com>
+Date:   Tue Aug 20 13:42:29 2019 +0200
+Revert "mmc: core: do not retry CMD6 in __mmc_switch()"
 
+git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git fixes
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Bon Secours Health System Ltd, Registered in Ireland No. 198596.
-Registered Office - College Road, Cork
-
-This e-mail and any files transmitted with it are confidential and
-intended solely for the use of the individual or entity to whom
-they are addressed.
-
-If you have received this e-mail in error please notify the
-originator of the message. This footer also confirms that this
-e-mail message has been scanned for the presence of computer viruses.
-
-Any views expressed in this message are those of the individual
-sender, except where the sender specifies and with authority,
-states them to be the views of Bon Secours Health System Limited .
-
-Please consider the environment before printing this e-mail.
-
+Kind regards
+Uffe
