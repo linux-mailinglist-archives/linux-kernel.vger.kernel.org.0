@@ -2,143 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB9A1A8C18
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B37B4A8BE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733089AbfIDQJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:09:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:57760 "EHLO foss.arm.com"
+        id S1732494AbfIDQHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:07:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731869AbfIDQBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:01:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F5CB28;
-        Wed,  4 Sep 2019 09:01:14 -0700 (PDT)
-Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9042B3F246;
-        Wed,  4 Sep 2019 09:01:12 -0700 (PDT)
-Subject: Re: [PATCH v4 10/10] arm64: Retrieve stolen time as paravirtualized
- guest
-To:     Andrew Jones <drjones@redhat.com>
-Cc:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190830084255.55113-1-steven.price@arm.com>
- <20190830084255.55113-11-steven.price@arm.com>
- <20190903084703.hwpelmr7fikb32nj@kamzik.brq.redhat.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <329fa72e-5c92-602e-a010-2083366221d1@arm.com>
-Date:   Wed, 4 Sep 2019 17:01:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1732163AbfIDQCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:02:02 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9322622CF5;
+        Wed,  4 Sep 2019 16:02:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567612921;
+        bh=n4O69lSB8nwj9edhHifkBr0eP+IfjyRsjVkeu8i6mzw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gz8yh6LcYEdqewQCeUwC3sKS8d+tgPTb11xxBjt3xdz3Pd5GO4Q3LjKxeWYJf2NIC
+         LtO+kVezy+j4PoNDPeHVqlqT9KGe0G17TFLYvq9AUht9KU9TQDnv/uS0PnHvLb1RP+
+         buFRFlwZPGtnjfQQhg/LlTCzPdEpROVxhnmzXgek=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 25/36] x86/build: Add -Wnoaddress-of-packed-member to REALMODE_CFLAGS, to silence GCC9 build warning
+Date:   Wed,  4 Sep 2019 12:01:11 -0400
+Message-Id: <20190904160122.4179-25-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190904160122.4179-1-sashal@kernel.org>
+References: <20190904160122.4179-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190903084703.hwpelmr7fikb32nj@kamzik.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2019 09:47, Andrew Jones wrote:
-> On Fri, Aug 30, 2019 at 09:42:55AM +0100, Steven Price wrote:
->> Enable paravirtualization features when running under a hypervisor
->> supporting the PV_TIME_ST hypercall.
->>
->> For each (v)CPU, we ask the hypervisor for the location of a shared
->> page which the hypervisor will use to report stolen time to us. We set
->> pv_time_ops to the stolen time function which simply reads the stolen
->> value from the shared page for a VCPU. We guarantee single-copy
->> atomicity using READ_ONCE which means we can also read the stolen
->> time for another VCPU than the currently running one while it is
->> potentially being updated by the hypervisor.
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->>  arch/arm64/include/asm/paravirt.h |   9 +-
->>  arch/arm64/kernel/paravirt.c      | 148 ++++++++++++++++++++++++++++++
->>  arch/arm64/kernel/time.c          |   3 +
->>  include/linux/cpuhotplug.h        |   1 +
->>  4 files changed, 160 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/include/asm/paravirt.h b/arch/arm64/include/asm/paravirt.h
->> index 799d9dd6f7cc..125c26c42902 100644
->> --- a/arch/arm64/include/asm/paravirt.h
->> +++ b/arch/arm64/include/asm/paravirt.h
->> @@ -21,6 +21,13 @@ static inline u64 paravirt_steal_clock(int cpu)
->>  {
->>  	return pv_ops.time.steal_clock(cpu);
->>  }
->> -#endif
->> +
->> +int __init kvm_guest_init(void);
->> +
->> +#else
->> +
->> +#define kvm_guest_init()
->> +
->> +#endif // CONFIG_PARAVIRT
->>  
->>  #endif
->> diff --git a/arch/arm64/kernel/paravirt.c b/arch/arm64/kernel/paravirt.c
->> index 4cfed91fe256..5bf3be7ccf7e 100644
->> --- a/arch/arm64/kernel/paravirt.c
->> +++ b/arch/arm64/kernel/paravirt.c
->> @@ -6,13 +6,161 @@
->>   * Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
->>   */
->>  
->> +#define pr_fmt(fmt) "kvmarm-pv: " fmt
->> +
->> +#include <linux/arm-smccc.h>
->> +#include <linux/cpuhotplug.h>
->>  #include <linux/export.h>
->> +#include <linux/io.h>
->>  #include <linux/jump_label.h>
->> +#include <linux/printk.h>
->> +#include <linux/psci.h>
->> +#include <linux/reboot.h>
->> +#include <linux/slab.h>
->>  #include <linux/types.h>
->> +
->>  #include <asm/paravirt.h>
->> +#include <asm/pvclock-abi.h>
->> +#include <asm/smp_plat.h>
->>  
->>  struct static_key paravirt_steal_enabled;
->>  struct static_key paravirt_steal_rq_enabled;
->>  
->>  struct paravirt_patch_template pv_ops;
->>  EXPORT_SYMBOL_GPL(pv_ops);
->> +
->> +struct kvmarm_stolen_time_region {
->> +	struct pvclock_vcpu_stolen_time *kaddr;
->> +};
->> +
->> +static DEFINE_PER_CPU(struct kvmarm_stolen_time_region, stolen_time_region);
->> +
->> +static bool steal_acc = true;
->> +static int __init parse_no_stealacc(char *arg)
->> +{
->> +	steal_acc = false;
->> +	return 0;
->> +}
->> +
->> +early_param("no-steal-acc", parse_no_stealacc);
-> 
-> Need to also add an 'ARM64' to the
-> Documentation/admin-guide/kernel-parameters.txt entry for this.
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-Good point, thanks for the pointer.
+[ Upstream commit 42e0e95474fc6076b5cd68cab8fa0340a1797a72 ]
 
-Steve
+One of the very few warnings I have in the current build comes from
+arch/x86/boot/edd.c, where I get the following with a gcc9 build:
+
+   arch/x86/boot/edd.c: In function ‘query_edd’:
+   arch/x86/boot/edd.c:148:11: warning: taking address of packed member of ‘struct boot_params’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+     148 |  mbrptr = boot_params.edd_mbr_sig_buffer;
+         |           ^~~~~~~~~~~
+
+This warning triggers because we throw away all the CFLAGS and then make
+a new set for REALMODE_CFLAGS, so the -Wno-address-of-packed-member we
+added in the following commit is not present:
+
+  6f303d60534c ("gcc-9: silence 'address-of-packed-member' warning")
+
+The simplest solution for now is to adjust the warning for this version
+of CFLAGS as well, but it would definitely make sense to examine whether
+REALMODE_CFLAGS could be derived from CFLAGS, so that it picks up changes
+in the compiler flags environment automatically.
+
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: Borislav Petkov <bp@alien8.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index b4c72da8a7adb..cd596ca609010 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -39,6 +39,7 @@ REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os -D__KERNEL__ \
+ 
+ REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -ffreestanding)
+ REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -fno-stack-protector)
++REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -Wno-address-of-packed-member)
+ REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), $(cc_stack_align4))
+ export REALMODE_CFLAGS
+ 
+-- 
+2.20.1
 
