@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9730DA90FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31C26A9048
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390571AbfIDSMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:12:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57304 "EHLO mail.kernel.org"
+        id S2389840AbfIDSIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:08:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390566AbfIDSMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:12:46 -0400
+        id S2388873AbfIDSIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:08:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD798206BA;
-        Wed,  4 Sep 2019 18:12:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 849A22087E;
+        Wed,  4 Sep 2019 18:08:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620766;
-        bh=0yclGDOg7Dy3vf9xGWlNF8+UryRlkRqDD76l1GgU0bU=;
+        s=default; t=1567620518;
+        bh=/Ikg1oTFgLbWc7CCvacmFabaNNVg+d+9Cq228W4ZDBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q8mCAsRLxDdLQ8csIIyKKyR4M4azpP38m7Nr0JZO4c9PQjdkr/7p9B17XkLyX4ErF
-         jW5akFGtRGA6tvJ+LLjy3UEhWWBjhlhRs/UcPkHgKqZUGO3Yf4/KiEdjIfoFvDcbkx
-         7sIDvFx9whM/1XU6QgXZdk6gb6idaZmVX8Z59xmY=
+        b=Qbg7sDbeAnp+jQDEZn3BufAWnkAlYKvoYWRoTID0g5y+HcNzBO+PDNTzOl1zWVxGx
+         f1812de9s3Ig9RiihtMzVb8V5kU/nN/WTiSaadFYrKjk7GHo9ss0G5QEHUfYbVf9bc
+         Qgbg1ftUyYLyKCLYYGlhSvl1prMLHyzxLgjmHUEg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 5.2 086/143] USB: storage: ums-realtek: Whitelist auto-delink support
+        stable@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.19 47/93] KVM: x86: Dont update RIP or do single-step on faulting emulation
 Date:   Wed,  4 Sep 2019 19:53:49 +0200
-Message-Id: <20190904175317.437575744@linuxfoundation.org>
+Message-Id: <20190904175307.189284051@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 1902a01e2bcc3abd7c9a18dc05e78c7ab4a53c54 upstream.
+commit 75ee23b30dc712d80d2421a9a547e7ab6e379b44 upstream.
 
-Auto-delink requires writing special registers to ums-realtek devices.
-Unconditionally enable auto-delink may break newer devices.
+Don't advance RIP or inject a single-step #DB if emulation signals a
+fault.  This logic applies to all state updates that are conditional on
+clean retirement of the emulation instruction, e.g. updating RFLAGS was
+previously handled by commit 38827dbd3fb85 ("KVM: x86: Do not update
+EFLAGS on faulting emulation").
 
-So only enable auto-delink by default for the original three IDs,
-0x0138, 0x0158 and 0x0159.
+Not advancing RIP is likely a nop, i.e. ctxt->eip isn't updated with
+ctxt->_eip until emulation "retires" anyways.  Skipping #DB injection
+fixes a bug reported by Andy Lutomirski where a #UD on SYSCALL due to
+invalid state with EFLAGS.TF=1 would loop indefinitely due to emulation
+overwriting the #UD with #DB and thus restarting the bad SYSCALL over
+and over.
 
-Realtek is working on a patch to properly support auto-delink for other
-IDs.
-
-BugLink: https://bugs.launchpad.net/bugs/1838886
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190827173450.13572-2-kai.heng.feng@canonical.com
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: stable@vger.kernel.org
+Reported-by: Andy Lutomirski <luto@kernel.org>
+Fixes: 663f4c61b803 ("KVM: x86: handle singlestep during emulation")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/realtek_cr.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ arch/x86/kvm/x86.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/storage/realtek_cr.c
-+++ b/drivers/usb/storage/realtek_cr.c
-@@ -996,12 +996,15 @@ static int init_realtek_cr(struct us_dat
- 			goto INIT_FAIL;
- 	}
- 
--	if (CHECK_FW_VER(chip, 0x5888) || CHECK_FW_VER(chip, 0x5889) ||
--	    CHECK_FW_VER(chip, 0x5901))
--		SET_AUTO_DELINK(chip);
--	if (STATUS_LEN(chip) == 16) {
--		if (SUPPORT_AUTO_DELINK(chip))
-+	if (CHECK_PID(chip, 0x0138) || CHECK_PID(chip, 0x0158) ||
-+	    CHECK_PID(chip, 0x0159)) {
-+		if (CHECK_FW_VER(chip, 0x5888) || CHECK_FW_VER(chip, 0x5889) ||
-+				CHECK_FW_VER(chip, 0x5901))
- 			SET_AUTO_DELINK(chip);
-+		if (STATUS_LEN(chip) == 16) {
-+			if (SUPPORT_AUTO_DELINK(chip))
-+				SET_AUTO_DELINK(chip);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6308,12 +6308,13 @@ restart:
+ 		unsigned long rflags = kvm_x86_ops->get_rflags(vcpu);
+ 		toggle_interruptibility(vcpu, ctxt->interruptibility);
+ 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
+-		kvm_rip_write(vcpu, ctxt->eip);
+-		if (r == EMULATE_DONE && ctxt->tf)
+-			kvm_vcpu_do_singlestep(vcpu, &r);
+ 		if (!ctxt->have_exception ||
+-		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
++		    exception_type(ctxt->exception.vector) == EXCPT_TRAP) {
++			kvm_rip_write(vcpu, ctxt->eip);
++			if (r == EMULATE_DONE && ctxt->tf)
++				kvm_vcpu_do_singlestep(vcpu, &r);
+ 			__kvm_set_rflags(vcpu, ctxt->eflags);
 +		}
- 	}
- #ifdef CONFIG_REALTEK_AUTOPM
- 	if (ss_en)
+ 
+ 		/*
+ 		 * For STI, interrupts are shadowed; so KVM_REQ_EVENT will
 
 
