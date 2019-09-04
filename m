@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 191A0A9036
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9441DA91AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:40:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389768AbfIDSIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:08:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51134 "EHLO mail.kernel.org"
+        id S2389156AbfIDSWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:22:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389749AbfIDSIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:08:17 -0400
+        id S2389094AbfIDSEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:04:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A2CB208E4;
-        Wed,  4 Sep 2019 18:08:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 324842339E;
+        Wed,  4 Sep 2019 18:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620496;
-        bh=WK2wFAtlSHEEP0K9IUFvmPukBhdxwgGix6tED6IaHXE=;
+        s=default; t=1567620270;
+        bh=p3mS5M2VL2WP7HU7xDfcmCo78rfdX99EhmyzDEcf49Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ue5sqTNfaCX8F4Sd8qsV2xIgwYOxAgSokG8ndGzRWDxK7wkBR3gcZZHudICb4gZAC
-         nB+on9JkcZayC6gClXJVGpXUMUPbMhkV162byJP1KD5dyHZE1/qrvdunifRCZTBVm+
-         KmLgDWpUgnnIRQithrQCbFOKip6JrdGl1R0qPi6E=
+        b=oxNHoHJHQEXknvIQRdGWCj8MpWXMtQy0Ed7SD1mtaswPaUwt7fXKgcW0N2wW3+mnS
+         7kD0Bqeei6WxLI8TlQWmxez9sLdvZST/gvrWdbkX13kJqVOy5s5/BYIx0HSrE4ilZJ
+         sGW7WqlOZs0aSnuqyuqKUy4M7IMCm/izraU3Zi1Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gary R Hook <gary.hook@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 79/93] crypto: ccp - Ignore unconfigured CCP device on suspend/resume
-Date:   Wed,  4 Sep 2019 19:54:21 +0200
-Message-Id: <20190904175309.912343198@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 54/57] NFS: Pass error information to the pgio error cleanup routine
+Date:   Wed,  4 Sep 2019 19:54:22 +0200
+Message-Id: <20190904175307.166577781@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +44,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gary R Hook <gary.hook@amd.com>
+[ Upstream commit df3accb849607a86278a37c35e6b313635ccc48b ]
 
-commit 5871cd93692c8071fb9358daccb715b5081316ac upstream.
+Allow the caller to pass error information when cleaning up a failed
+I/O request so that we can conditionally take action to cancel the
+request altogether if the error turned out to be fatal.
 
-If a CCP is unconfigured (e.g. there are no available queues) then
-there will be no data structures allocated for the device. Thus, we
-must check for validity of a pointer before trying to access structure
-members.
-
-Fixes: 720419f01832f ("crypto: ccp - Introduce the AMD Secure Processor device")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ccp/ccp-dev.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/nfs/direct.c         |  4 ++--
+ fs/nfs/pagelist.c       |  5 +++--
+ fs/nfs/read.c           |  2 +-
+ fs/nfs/write.c          | 11 +++++++++--
+ include/linux/nfs_xdr.h |  2 +-
+ 5 files changed, 16 insertions(+), 8 deletions(-)
 
---- a/drivers/crypto/ccp/ccp-dev.c
-+++ b/drivers/crypto/ccp/ccp-dev.c
-@@ -543,6 +543,10 @@ int ccp_dev_suspend(struct sp_device *sp
- 	unsigned long flags;
- 	unsigned int i;
+diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+index 0c5e56702b19e..2256ea4394d3a 100644
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -428,7 +428,7 @@ out_put:
+ 	hdr->release(hdr);
+ }
  
-+	/* If there's no device there's nothing to do */
-+	if (!ccp)
-+		return 0;
-+
- 	spin_lock_irqsave(&ccp->cmd_lock, flags);
+-static void nfs_read_sync_pgio_error(struct list_head *head)
++static void nfs_read_sync_pgio_error(struct list_head *head, int error)
+ {
+ 	struct nfs_page *req;
  
- 	ccp->suspending = 1;
-@@ -567,6 +571,10 @@ int ccp_dev_resume(struct sp_device *sp)
- 	unsigned long flags;
- 	unsigned int i;
+@@ -820,7 +820,7 @@ out_put:
+ 	hdr->release(hdr);
+ }
  
-+	/* If there's no device there's nothing to do */
-+	if (!ccp)
-+		return 0;
-+
- 	spin_lock_irqsave(&ccp->cmd_lock, flags);
+-static void nfs_write_sync_pgio_error(struct list_head *head)
++static void nfs_write_sync_pgio_error(struct list_head *head, int error)
+ {
+ 	struct nfs_page *req;
  
- 	ccp->suspending = 0;
+diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
+index ae598e45b2df0..16d7f9068c7ae 100644
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -993,7 +993,7 @@ nfs_pageio_cleanup_request(struct nfs_pageio_descriptor *desc,
+ 	LIST_HEAD(head);
+ 
+ 	nfs_list_move_request(req, &head);
+-	desc->pg_completion_ops->error_cleanup(&head);
++	desc->pg_completion_ops->error_cleanup(&head, desc->pg_error);
+ }
+ 
+ /**
+@@ -1129,7 +1129,8 @@ static void nfs_pageio_error_cleanup(struct nfs_pageio_descriptor *desc)
+ 
+ 	for (midx = 0; midx < desc->pg_mirror_count; midx++) {
+ 		mirror = &desc->pg_mirrors[midx];
+-		desc->pg_completion_ops->error_cleanup(&mirror->pg_list);
++		desc->pg_completion_ops->error_cleanup(&mirror->pg_list,
++				desc->pg_error);
+ 	}
+ }
+ 
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index 48d7277c60a97..09d5c282f50e9 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -205,7 +205,7 @@ static void nfs_initiate_read(struct nfs_pgio_header *hdr,
+ }
+ 
+ static void
+-nfs_async_read_error(struct list_head *head)
++nfs_async_read_error(struct list_head *head, int error)
+ {
+ 	struct nfs_page	*req;
+ 
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 50ed3944d1830..3c1e46f4bce32 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1397,20 +1397,27 @@ static void nfs_redirty_request(struct nfs_page *req)
+ 	nfs_release_request(req);
+ }
+ 
+-static void nfs_async_write_error(struct list_head *head)
++static void nfs_async_write_error(struct list_head *head, int error)
+ {
+ 	struct nfs_page	*req;
+ 
+ 	while (!list_empty(head)) {
+ 		req = nfs_list_entry(head->next);
+ 		nfs_list_remove_request(req);
++		if (nfs_error_is_fatal(error)) {
++			nfs_context_set_write_error(req->wb_context, error);
++			if (nfs_error_is_fatal_on_server(error)) {
++				nfs_write_error_remove_page(req);
++				continue;
++			}
++		}
+ 		nfs_redirty_request(req);
+ 	}
+ }
+ 
+ static void nfs_async_write_reschedule_io(struct nfs_pgio_header *hdr)
+ {
+-	nfs_async_write_error(&hdr->pages);
++	nfs_async_write_error(&hdr->pages, 0);
+ }
+ 
+ static const struct nfs_pgio_completion_ops nfs_async_write_completion_ops = {
+diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
+index 6959968dc36a7..373fb26b5fed1 100644
+--- a/include/linux/nfs_xdr.h
++++ b/include/linux/nfs_xdr.h
+@@ -1520,7 +1520,7 @@ struct nfs_commit_data {
+ };
+ 
+ struct nfs_pgio_completion_ops {
+-	void	(*error_cleanup)(struct list_head *head);
++	void	(*error_cleanup)(struct list_head *head, int);
+ 	void	(*init_hdr)(struct nfs_pgio_header *hdr);
+ 	void	(*completion)(struct nfs_pgio_header *hdr);
+ 	void	(*reschedule_io)(struct nfs_pgio_header *hdr);
+-- 
+2.20.1
+
 
 
