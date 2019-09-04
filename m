@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E41A8A8EC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE1F8A9096
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387941AbfIDR74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:59:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38872 "EHLO mail.kernel.org"
+        id S2390122AbfIDSKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:10:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388288AbfIDR7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:59:52 -0400
+        id S2390085AbfIDSKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:10:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE6EA21883;
-        Wed,  4 Sep 2019 17:59:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5CEB206BA;
+        Wed,  4 Sep 2019 18:10:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619991;
-        bh=NVskeiPKyvwjOZ59iphJ2aRht2gkv7aHxNlQjBu7mic=;
+        s=default; t=1567620633;
+        bh=nWGqu5LvfO5GpMioG9+wuNyHYM4Bt3PWimoGc8ZaEzI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DnywrzOhfLqgR4FaKHIYNcyLbkyR7umd0+HrXgeMmV0oQgP7JNlN/tjThesPpdjZL
-         C4358FlxH/IsZVgLw7MEFgNZQOtUMmB7e8DLy4NqiAWJKzs/0gkbOSju8ewnI3hiNo
-         41ghTs6422VhLLCUgV6JLhTPYHkecWovZ8xqYODY=
+        b=KP0tfkslv1eRztfuAl4VEbGQZqrxme9iSnD/3obP5QBz7c9t4ULDnVd2HL0zVH+pk
+         mDYg4P+vi57f8+Rw6mN0bVCweTgTl4zP1Iyl1VFiL3Kep7HOGcHjJo9O9zkDIW/y8m
+         1M6K1jATvubNXTAvsQ9UzT7XAxge60ZSZAQKzyaI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ricard Wanderlof <ricardw@axis.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 07/83] ASoC: Fail card instantiation if DAI format setup fails
-Date:   Wed,  4 Sep 2019 19:52:59 +0200
-Message-Id: <20190904175304.389271806@linuxfoundation.org>
+Subject: [PATCH 5.2 037/143] i2c: emev2: avoid race when unregistering slave client
+Date:   Wed,  4 Sep 2019 19:53:00 +0200
+Message-Id: <20190904175315.498967852@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +46,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 40aa5383e393d72f6aa3943a4e7b1aae25a1e43b ]
+[ Upstream commit d7437fc0d8291181debe032671a289b6bd93f46f ]
 
-If the DAI format setup fails, there is no valid communication format
-between CPU and CODEC, so fail card instantiation, rather than continue
-with a card that will most likely not function properly.
+After we disabled interrupts, there might still be an active one
+running. Sync before clearing the pointer to the slave device.
 
-Signed-off-by: Ricard Wanderlof <ricardw@axis.com>
-Link: https://lore.kernel.org/r/alpine.DEB.2.20.1907241132350.6338@lnxricardw1.se.axis.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: c31d0a00021d ("i2c: emev2: add slave support")
+Reported-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-core.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-emev2.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 168559b5e9f32..d4fb45710eec1 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1632,8 +1632,11 @@ static int soc_probe_link_dais(struct snd_soc_card *card,
- 		}
- 	}
+diff --git a/drivers/i2c/busses/i2c-emev2.c b/drivers/i2c/busses/i2c-emev2.c
+index 35b302d983e0d..959d4912ec0d5 100644
+--- a/drivers/i2c/busses/i2c-emev2.c
++++ b/drivers/i2c/busses/i2c-emev2.c
+@@ -69,6 +69,7 @@ struct em_i2c_device {
+ 	struct completion msg_done;
+ 	struct clk *sclk;
+ 	struct i2c_client *slave;
++	int irq;
+ };
  
--	if (dai_link->dai_fmt)
--		snd_soc_runtime_set_dai_fmt(rtd, dai_link->dai_fmt);
-+	if (dai_link->dai_fmt) {
-+		ret = snd_soc_runtime_set_dai_fmt(rtd, dai_link->dai_fmt);
-+		if (ret)
-+			return ret;
-+	}
+ static inline void em_clear_set_bit(struct em_i2c_device *priv, u8 clear, u8 set, u8 reg)
+@@ -339,6 +340,12 @@ static int em_i2c_unreg_slave(struct i2c_client *slave)
  
- 	ret = soc_post_component_init(rtd, dai_link->name);
+ 	writeb(0, priv->base + I2C_OFS_SVA0);
+ 
++	/*
++	 * Wait for interrupt to finish. New slave irqs cannot happen because we
++	 * cleared the slave address and, thus, only extension codes will be
++	 * detected which do not use the slave ptr.
++	 */
++	synchronize_irq(priv->irq);
+ 	priv->slave = NULL;
+ 
+ 	return 0;
+@@ -355,7 +362,7 @@ static int em_i2c_probe(struct platform_device *pdev)
+ {
+ 	struct em_i2c_device *priv;
+ 	struct resource *r;
+-	int irq, ret;
++	int ret;
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -390,8 +397,8 @@ static int em_i2c_probe(struct platform_device *pdev)
+ 
+ 	em_i2c_reset(&priv->adap);
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	ret = devm_request_irq(&pdev->dev, irq, em_i2c_irq_handler, 0,
++	priv->irq = platform_get_irq(pdev, 0);
++	ret = devm_request_irq(&pdev->dev, priv->irq, em_i2c_irq_handler, 0,
+ 				"em_i2c", priv);
  	if (ret)
+ 		goto err_clk;
+@@ -401,7 +408,8 @@ static int em_i2c_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_clk;
+ 
+-	dev_info(&pdev->dev, "Added i2c controller %d, irq %d\n", priv->adap.nr, irq);
++	dev_info(&pdev->dev, "Added i2c controller %d, irq %d\n", priv->adap.nr,
++		 priv->irq);
+ 
+ 	return 0;
+ 
 -- 
 2.20.1
 
