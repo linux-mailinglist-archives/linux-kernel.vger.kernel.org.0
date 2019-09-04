@@ -2,113 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AFCAA8147
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 13:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D55A6A8135
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 13:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbfIDLnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 07:43:12 -0400
-Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:46457 "EHLO
-        esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729122AbfIDLnL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 07:43:11 -0400
-X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Sep 2019 07:43:10 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1567597390;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=Py2ZD8CCSw/9B0rd6D03QDD9TGSgz5D84ZWXYCCdtq8=;
-  b=HcwA6HCPbB/1iVnFtUqzUlucAdDgvgwiGR+nadl55l/HoVIqjfW/6cnK
-   Kp0nLo0GFXKXOFbfv05Po6A8H3krhCeXWm6tJxltLUT6dI3R71j6NULIm
-   NKYB3ygq9k9hEC3lFyWJkz48pEh+kO7AOHXKUtKyuy6FXCnYnaZnMijjG
-   g=;
-Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=igor.druzhinin@citrix.com; spf=Pass smtp.mailfrom=igor.druzhinin@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  igor.druzhinin@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="igor.druzhinin@citrix.com";
-  x-sender="igor.druzhinin@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa2.hc3370-68.iphmx.com: domain of
-  igor.druzhinin@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="igor.druzhinin@citrix.com";
-  x-sender="igor.druzhinin@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="igor.druzhinin@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: 2PTu1kolVbKh7SpgBh5Drp1q5mHyou+YZiM+VEqUUyr78eZkRLs3AGIVi00rAA/BJKspJQfYBF
- 3GaJIe+PrYIECgWU8inhCmA2FqHQuR6bT2blqwD12xI7+Ex/yHfCghPkbiJdJQeGlW+lAF3+Tf
- P+TXL70gVl1Pfc+zaH3Qsns+LKZK5zKh3s4xAKoEOPAbSRWWHjSUkkTHA5TdlBVQPu8S+0+5gz
- K/l+8Z/vM4LGBuHVLdB2pl6V9xUjd+9AlnGcbL5Ldl/wr520/JWn1LfIvVmKmsZHASjVFg7yDg
- Fjc=
-X-SBRS: 2.7
-X-MesageID: 5111376
-X-Ironport-Server: esa2.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.64,465,1559534400"; 
-   d="scan'208";a="5111376"
-Subject: Re: [PATCH] xen/pci: try to reserve MCFG areas earlier
-To:     Jan Beulich <jbeulich@suse.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>
-CC:     <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
-        <boris.ostrovsky@oracle.com>, Juergen Gross <jgross@suse.com>
-References: <1567556431-9809-1-git-send-email-igor.druzhinin@citrix.com>
- <52fe7f67-ffd0-2d22-90fb-f3462ea059cd@suse.com>
-From:   Igor Druzhinin <igor.druzhinin@citrix.com>
-Message-ID: <d5dd94c2-070e-b3ff-57cf-92893b3cca7b@citrix.com>
-Date:   Wed, 4 Sep 2019 12:36:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729640AbfIDLgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 07:36:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726589AbfIDLgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 07:36:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 570E320820;
+        Wed,  4 Sep 2019 11:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567597012;
+        bh=a56KG1rm+dxxe4u1p29NlNtKXIQggvIKhjPKOKWs/KQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YXK5LvcsSf+fXLWKyCcDDnoK7JjgM5tb8afue21/iYjn6NS5vzvdc/xIL8kUv7Aql
+         ObEyuV6v/38/XFHwUq85kTLTQBMYnGMVEo1cz2ASFWQYXT+HslPLL/neAukQNmT9QZ
+         nynLzFH1HhrSNxsUDGSvCMqYIS96U1w1BvcvzrHw=
+Date:   Wed, 4 Sep 2019 13:36:50 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Nayna <nayna@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.ibm.com>,
+        linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>
+Subject: Re: [PATCH] sysfs: add BIN_ATTR_WO() macro
+Message-ID: <20190904113650.GA8275@kroah.com>
+References: <1566825818-9731-1-git-send-email-nayna@linux.ibm.com>
+ <1566825818-9731-3-git-send-email-nayna@linux.ibm.com>
+ <20190826140131.GA15270@kroah.com>
+ <ff9674e1-1b27-783a-38f3-4fd725353186@linux.vnet.ibm.com>
+ <20190826150153.GD18418@kroah.com>
+ <87ef0yrqxt.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <52fe7f67-ffd0-2d22-90fb-f3462ea059cd@suse.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ef0yrqxt.fsf@mpe.ellerman.id.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2019 10:08, Jan Beulich wrote:
-> On 04.09.2019 02:20, Igor Druzhinin wrote:
->> If MCFG area is not reserved in E820, Xen by default will defer its usage
->> until Dom0 registers it explicitly after ACPI parser recognizes it as
->> a reserved resource in DSDT. Having it reserved in E820 is not
->> mandatory according to "PCI Firmware Specification, rev 3.2" (par. 4.1.2)
->> and firmware is free to keep a hole E820 in that place. Xen doesn't know
->> what exactly is inside this hole since it lacks full ACPI view of the
->> platform therefore it's potentially harmful to access MCFG region
->> without additional checks as some machines are known to provide
->> inconsistent information on the size of the region.
+On Tue, Sep 03, 2019 at 01:37:02PM +1000, Michael Ellerman wrote:
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> > This variant was missing from sysfs.h, I guess no one noticed it before.
+> >
+> > Turns out the powerpc secure variable code can use it, so add it to the
+> > tree for it, and potentially others to take advantage of, instead of
+> > open-coding it.
+> >
+> > Reported-by: Nayna Jain <nayna@linux.ibm.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >
+> > I'll queue this up to my tree for 5.4-rc1, but if you want to take this
+> > in your tree earlier, feel free to do so.
 > 
-> Irrespective of this being a good change, I've had another thought
-> while reading this paragraph, for a hypervisor side control: Linux
-> has a "memopt=" command line option allowing fine grained control
-> over the E820 map. We could have something similar to allow
-> inserting an E820_RESERVED region into a hole (it would be the
-> responsibility of the admin to guarantee no other conflicts, i.e.
-> it should generally be used only if e.g. the MCFG is indeed known
-> to live at the specified place, and being properly represented in
-> the ACPI tables). Thoughts?
+> OK. This series is blocked on the firmware support going in, so at the
+> moment it might miss v5.4 anyway. So this going via your tree is no
+> problem.
 
-What other use cases can you think of in case we'd have this option?
-From the top of my head, it might be providing a memmap for a second Xen
-after doing kexec from Xen to Xen.
+Ok, will queue it up now, thanks!
 
-What benefits do you think it might have over just accepting a hole
-using "mcfg=relaxed" option from admin perspective?
-
-Igor
+greg k-h
