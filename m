@@ -2,86 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5644AA8C15
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 568A2A8C26
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387496AbfIDQJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:09:15 -0400
-Received: from mail-pf1-f181.google.com ([209.85.210.181]:43958 "EHLO
-        mail-pf1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731423AbfIDQJN (ORCPT
+        id S1733217AbfIDQKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:10:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59818 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732989AbfIDQKI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:09:13 -0400
-Received: by mail-pf1-f181.google.com with SMTP id d15so4026951pfo.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 09:09:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XErXDQUXB06HtDTOiYRG9XmArU9bvhEptkEPoC0URcA=;
-        b=JyYw4PHfiayDaITAV/QBm2/ef9+99NMsvZSXHuHM2u0slzTaz6BGwNQ3YQgDueFh6J
-         ypuwcQmQlg9/yNSLetqHVSOA5fZKyaYEGcyHoqLpG2n0WiwrfwzlgDb6jY1ULC0G5ifq
-         r02go+r+97mcHcMCBgEuA3Gdenja/6TEh9v8tz30VPqbP9XievN97vTWaUQnjFCR2CM6
-         8kh7qV3RDEXZ7zNXDkBsvhS72pKMlWv0djVW5/ukPRIF0i35plO14mmn/RCgDUloprCT
-         K1Ow+zXY5p5lOWQdSCoB3d2docwgrgPR7XWa5mp4vCIeYr4bYL9qdoFY0bYPpwm1tm3d
-         5a5g==
-X-Gm-Message-State: APjAAAVIzKy72HjJpn5ffUnzdw0Gs/N1JlwKPPIFllhU9nCf9OP6swaM
-        /9++3jkUYdqNKbyUN33X4dH7TOaX
-X-Google-Smtp-Source: APXvYqw0Ks9MUXGu/5Cf6iBSADywOoWtDQLLDbxBDQ8d9toYPzgTjAcQLLN0ef2hdNAfHtQzc/Ct/A==
-X-Received: by 2002:a65:4546:: with SMTP id x6mr35120577pgr.266.1567613351999;
-        Wed, 04 Sep 2019 09:09:11 -0700 (PDT)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id v12sm19059248pgr.86.2019.09.04.09.09.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2019 09:09:10 -0700 (PDT)
-Subject: Re: lockdep warning while booting POWER9 PowerNV
-To:     Qian Cai <cai@lca.pw>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <1567199630.5576.39.camel@lca.pw>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <9b8b287a-4ae1-ca9b-cff1-6d93672b6893@acm.org>
-Date:   Wed, 4 Sep 2019 09:09:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 4 Sep 2019 12:10:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/EDR4GvlJhkdLPR8kYkQGJ2qlMGAC0osrPMnnOYDBIg=; b=SuGvE/+zYB3jQ+kfZDnQwC7Wo
+        JeUwO3O/k3flaa2K4c95ijKzir0G0VZIUtveVY32G++8pFy+Gf/t0gvdOS7SsDPOQ8qLMHHc3bXss
+        +KHCuVIYwAEZmqReLHCigSc6/lMSH7GMXiLRXv/Of8zZZPt0Bk+QQhgIOy6NwWYvwTg2NoMPUbiMC
+        eK2/qz1LF3xsEpd3ui+WV4Ir2RPUP2TlY9SH5qW4l6s4jxNCtX2TNu9DbxsTlqUMKIH4mVshHHrZM
+        8IoGIjtooW76ukE2EZ2DXE0LtPyHGxSpN/NSjjaG5/T1RWCuP9kCP4hnO1hMOhLqntQp7bCbqHZT3
+        1k6uuxhpA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5Xr2-0006yh-CU; Wed, 04 Sep 2019 16:09:56 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C79AA3060CF;
+        Wed,  4 Sep 2019 18:09:16 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6037D20EFA5D9; Wed,  4 Sep 2019 18:09:53 +0200 (CEST)
+Date:   Wed, 4 Sep 2019 18:09:53 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        paulmck <paulmck@linux.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
+        Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC PATCH 1/2] Fix: sched/membarrier: p->mm->membarrier_state
+ racy load
+Message-ID: <20190904160953.GU2332@hirez.programming.kicks-ass.net>
+References: <20190903201135.1494-1-mathieu.desnoyers@efficios.com>
+ <20190903202434.GX2349@hirez.programming.kicks-ass.net>
+ <CAHk-=whfYb5RnJGqDV3W3093XGwOwePV-SxixaWcWM6hmidArg@mail.gmail.com>
+ <1604807537.1565.1567610340030.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-In-Reply-To: <1567199630.5576.39.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1604807537.1565.1567610340030.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/30/19 2:13 PM, Qian Cai wrote:
-> https://raw.githubusercontent.com/cailca/linux-mm/master/powerpc.config
-> 
-> Once in a while, booting an IBM POWER9 PowerNV system (8335-GTH) would generate
-> a warning in lockdep_register_key() at,
-> 
-> if (WARN_ON_ONCE(static_obj(key)))
-> 
-> because
-> 
-> key = 0xc0000000019ad118
-> &_stext = 0xc000000000000000
-> &_end = 0xc0000000049d0000
-> 
-> i.e., it will cause static_obj() returns 1.
+On Wed, Sep 04, 2019 at 11:19:00AM -0400, Mathieu Desnoyers wrote:
+> ----- On Sep 3, 2019, at 4:36 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
 
-(back from a trip)
+> > I wonder if the easiest model might be to just use a percpu variable
+> > instead for the membarrier stuff? It's not like it has to be in
+> > 'struct task_struct' at all, I think. We only care about the current
+> > runqueues, and those are percpu anyway.
+> 
+> One issue here is that membarrier iterates over all runqueues without
+> grabbing any runqueue lock. If we copy that state from mm to rq on
+> sched switch prepare, we would need to ensure we have the proper
+> memory barriers between:
+> 
+> prior user-space memory accesses  /  setting the runqueue membarrier state
+> 
+> and
+> 
+> setting the runqueue membarrier state / following user-space memory accesses
+> 
+> Copying the membarrier state into the task struct leverages the fact that
+> we have documented and guaranteed those barriers around the rq->curr update
+> in the scheduler.
 
-Hi Qian,
+Should be the same as the barriers we already rely on for rq->curr, no?
+That is, if we put this before switch_mm() then we have
+smp_mb__after_spinlock() and switch_mm() itself.
 
-Does this mean that on POWER9 it can happen that a dynamically allocated 
-object has an address that falls between &_stext and &_end? Since I am 
-not familiar with POWER9 nor have access to such a system, can you 
-propose a patch?
-
-Thanks,
-
-Bart.
+Also, if we place mm->membarrier_state in the same cacheline as mm->pgd
+(which switch_mm() is bound to load) then we should be fine, I think.
