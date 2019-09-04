@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 361D3A90B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583C1A8E20
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388990AbfIDSLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:11:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55296 "EHLO mail.kernel.org"
+        id S1733247AbfIDR4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:56:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390255AbfIDSLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:11:19 -0400
+        id S1732094AbfIDR4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:56:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E364B208E4;
-        Wed,  4 Sep 2019 18:11:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20DB022CF7;
+        Wed,  4 Sep 2019 17:56:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620678;
-        bh=akaLcIMGPl7jRk2vLyKokSdiNDoH6/m1Fi2RRn2Oagk=;
+        s=default; t=1567619769;
+        bh=OB04hPq4goy2WxzaUI+Dt3CGXgwKpr20c1CJuDud7zY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kZ/PP0rKt5BaBLDAmv2BZtUBDllkYVnrMiPEYa+b+YL5yMZCCBKtdOrlrthts/RT7
-         XSVc2ILn0oLfSNXLVxCo/Ta7zKiBOfkGr5wKbKemdvaTsXUV3O+y3JwtBSlo7t/h36
-         rVv7JuaFrTo5uXXyEMrMmvFDZnYNQK/DThhVPFkk=
+        b=qC/Yg56fMLfbslPR/gr+xnHr9HYcVqthesRsxgi+H8BgNXzXUZ94sIrmA49y050Nu
+         bXu2Oe7u8ukqfh9miRmdvhNfgWdXCwNJ+FnXFbIhU/KQP/vezKb6DF6AMbkTxGCASa
+         MnpA0zYAU3SG2F6yvEYTn/PSEljYInE7SlvVFtVw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Zhang Yu <zhangyu31@baidu.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 052/143] net: fix __ip_mc_inc_group usage
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 4.4 28/77] x86/boot: Save fields explicitly, zero out everything else
 Date:   Wed,  4 Sep 2019 19:53:15 +0200
-Message-Id: <20190904175316.104436971@linuxfoundation.org>
+Message-Id: <20190904175306.277352889@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+From: John Hubbard <jhubbard@nvidia.com>
 
-[ Upstream commit a1c4cd67840ef80f6ca5f73326fa9a6719303a95 ]
+commit a90118c445cc7f07781de26a9684d4ec58bfcfd1 upstream.
 
-in ip_mc_inc_group, memory allocation flag, not mcast mode, is expected
-by __ip_mc_inc_group
+Recent gcc compilers (gcc 9.1) generate warnings about an out of bounds
+memset, if the memset goes accross several fields of a struct. This
+generated a couple of warnings on x86_64 builds in sanitize_boot_params().
 
-similar issue in __ip_mc_join_group, both mcase mode and gfp_t are needed
-here, so use ____ip_mc_inc_group(...)
+Fix this by explicitly saving the fields in struct boot_params
+that are intended to be preserved, and zeroing all the rest.
 
-Fixes: 9fb20801dab4 ("net: Fix ip_mc_{dec,inc}_group allocation context")
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[ tglx: Tagged for stable as it breaks the warning free build there as well ]
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190731054627.5627-2-jhubbard@nvidia.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/igmp.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/igmp.c
-+++ b/net/ipv4/igmp.c
-@@ -1474,7 +1474,7 @@ EXPORT_SYMBOL(__ip_mc_inc_group);
- 
- void ip_mc_inc_group(struct in_device *in_dev, __be32 addr)
+---
+ arch/x86/include/asm/bootparam_utils.h |   59 +++++++++++++++++++++++++--------
+ 1 file changed, 46 insertions(+), 13 deletions(-)
+
+--- a/arch/x86/include/asm/bootparam_utils.h
++++ b/arch/x86/include/asm/bootparam_utils.h
+@@ -17,6 +17,20 @@
+  * Note: efi_info is commonly left uninitialized, but that field has a
+  * private magic, so it is better to leave it unchanged.
+  */
++
++#define sizeof_mbr(type, member) ({ sizeof(((type *)0)->member); })
++
++#define BOOT_PARAM_PRESERVE(struct_member)				\
++	{								\
++		.start = offsetof(struct boot_params, struct_member),	\
++		.len   = sizeof_mbr(struct boot_params, struct_member),	\
++	}
++
++struct boot_params_to_save {
++	unsigned int start;
++	unsigned int len;
++};
++
+ static void sanitize_boot_params(struct boot_params *boot_params)
  {
--	__ip_mc_inc_group(in_dev, addr, MCAST_EXCLUDE);
-+	__ip_mc_inc_group(in_dev, addr, GFP_KERNEL);
+ 	/* 
+@@ -35,19 +49,38 @@ static void sanitize_boot_params(struct
+ 	 */
+ 	if (boot_params->sentinel) {
+ 		/* fields in boot_params are left uninitialized, clear them */
+-		memset(&boot_params->ext_ramdisk_image, 0,
+-		       (char *)&boot_params->efi_info -
+-			(char *)&boot_params->ext_ramdisk_image);
+-		memset(&boot_params->kbd_status, 0,
+-		       (char *)&boot_params->hdr -
+-		       (char *)&boot_params->kbd_status);
+-		memset(&boot_params->_pad7[0], 0,
+-		       (char *)&boot_params->edd_mbr_sig_buffer[0] -
+-			(char *)&boot_params->_pad7[0]);
+-		memset(&boot_params->_pad8[0], 0,
+-		       (char *)&boot_params->eddbuf[0] -
+-			(char *)&boot_params->_pad8[0]);
+-		memset(&boot_params->_pad9[0], 0, sizeof(boot_params->_pad9));
++		static struct boot_params scratch;
++		char *bp_base = (char *)boot_params;
++		char *save_base = (char *)&scratch;
++		int i;
++
++		const struct boot_params_to_save to_save[] = {
++			BOOT_PARAM_PRESERVE(screen_info),
++			BOOT_PARAM_PRESERVE(apm_bios_info),
++			BOOT_PARAM_PRESERVE(tboot_addr),
++			BOOT_PARAM_PRESERVE(ist_info),
++			BOOT_PARAM_PRESERVE(hd0_info),
++			BOOT_PARAM_PRESERVE(hd1_info),
++			BOOT_PARAM_PRESERVE(sys_desc_table),
++			BOOT_PARAM_PRESERVE(olpc_ofw_header),
++			BOOT_PARAM_PRESERVE(efi_info),
++			BOOT_PARAM_PRESERVE(alt_mem_k),
++			BOOT_PARAM_PRESERVE(scratch),
++			BOOT_PARAM_PRESERVE(e820_entries),
++			BOOT_PARAM_PRESERVE(eddbuf_entries),
++			BOOT_PARAM_PRESERVE(edd_mbr_sig_buf_entries),
++			BOOT_PARAM_PRESERVE(edd_mbr_sig_buffer),
++			BOOT_PARAM_PRESERVE(eddbuf),
++		};
++
++		memset(&scratch, 0, sizeof(scratch));
++
++		for (i = 0; i < ARRAY_SIZE(to_save); i++) {
++			memcpy(save_base + to_save[i].start,
++			       bp_base + to_save[i].start, to_save[i].len);
++		}
++
++		memcpy(boot_params, save_base, sizeof(*boot_params));
+ 	}
  }
- EXPORT_SYMBOL(ip_mc_inc_group);
  
-@@ -2196,7 +2196,7 @@ static int __ip_mc_join_group(struct soc
- 	iml->sflist = NULL;
- 	iml->sfmode = mode;
- 	rcu_assign_pointer(inet->mc_list, iml);
--	__ip_mc_inc_group(in_dev, addr, mode);
-+	____ip_mc_inc_group(in_dev, addr, mode, GFP_KERNEL);
- 	err = 0;
- done:
- 	return err;
 
 
