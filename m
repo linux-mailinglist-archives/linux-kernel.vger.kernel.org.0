@@ -2,262 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C81A96E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 01:14:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0A7A96EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 01:14:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbfIDXNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 19:13:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43386 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728286AbfIDXNw (ORCPT
+        id S1730377AbfIDXO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 19:14:27 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:7902 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728286AbfIDXO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 19:13:52 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x84NCYwa061652;
-        Wed, 4 Sep 2019 19:13:09 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2utmfamb4j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Sep 2019 19:13:09 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x84ND9Ga063593;
-        Wed, 4 Sep 2019 19:13:09 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2utmfamb3w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Sep 2019 19:13:08 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x84NA26u010149;
-        Wed, 4 Sep 2019 23:13:08 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma04dal.us.ibm.com with ESMTP id 2uqgh73fm2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Sep 2019 23:13:07 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x84ND7cP13828750
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Sep 2019 23:13:07 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1FA3CB2067;
-        Wed,  4 Sep 2019 23:13:07 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E4E5DB205F;
-        Wed,  4 Sep 2019 23:13:06 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  4 Sep 2019 23:13:06 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 3941316C3CAB; Wed,  4 Sep 2019 16:13:08 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 16:13:08 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Petr Mladek <pmladek@suse.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: [PATCH -rcu dev 1/2] Revert b8c17e6664c4 ("rcu: Maintain special
- bits at bottom of ->dynticks counter")
-Message-ID: <20190904231308.GB4125@linux.ibm.com>
-Reply-To: paulmck@kernel.org
-References: <20190830162348.192303-1-joel@joelfernandes.org>
- <20190903200249.GD4125@linux.ibm.com>
- <20190904045910.GC144846@google.com>
- <20190904101210.GM4125@linux.ibm.com>
- <20190904135420.GB240514@google.com>
+        Wed, 4 Sep 2019 19:14:27 -0400
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x84NALdV018693;
+        Wed, 4 Sep 2019 16:13:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=4Ul75V30fqg4tJL6AUehuDGJapCIoB5ZrB+HTS8LLpk=;
+ b=pJ2gHKdGifN8CNjgU7HV5nuCIIzfX11XJlKcHZM1ax6ypV1uSDfZ0+MCD639VYr9SaI5
+ Q8ffYW1o3OYG1MEZx+arnhT12sHPGBLXg9+H6e7nya15X2AORb+HugoAUORjVRJedbLm
+ gPixdCfnK5QjfNCWIvchAjgFmqoMj4Jcy0E= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2utkkxrw3b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 04 Sep 2019 16:13:57 -0700
+Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 4 Sep 2019 16:13:56 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Wed, 4 Sep 2019 16:13:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CP8Vy9gCfe6jVZlVq3h2laL28bShAkcIYnoVtqg/m1O+UCYb+B6JYFUpRkfrWVwIjm5Fn3kp/J1j4jpI6mWdK6xvhcs3qoowR5ylEqIrDC7jsahr9wv362rLY428iNR5KOpeMSnYPUKnu7Ny/i3ZIPa4h8pRp+Ff5i2+AK7pHZW16mzzXAwqja9leMP88ezYqlxRfJg2BWIHo0JIA+YQ23ZqHIptp3wOSlly1Yn632/DOChiXIq0UiQkbzk6EoshqiVUg6I6QonuUolU7NrvsDUgG0KP8Phi9Td0JdWdaFA5X9SaC2OtAaOzEUx5uufeMCBnYG3eYTOUiuEzAvG+Dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Ul75V30fqg4tJL6AUehuDGJapCIoB5ZrB+HTS8LLpk=;
+ b=k64lqFJhVnpK/yOl9Sk4XijnRsWwPiZDI2HXxr7HPNAfSiYrwniyHibGTwKFODuxs7eCIvoE55O4TFnr2AQ2Dqb5wz1dcQSqij1Mk56kAEKys6Qr/yf37ilJNsLZE6ogK+YamRtqFu2Z4tcmFpiMsVbZEYN9uZ23IspzhjPJQcSmxaSFe1tzjg+sibVYX9Z1LomNCEBwJ27rf+1y7IpeXvTc3zL3HkCnVlDzYs9XS4AWYi0BQT9pPJsZdn+eM2m+V9nkHhjlnVKoFCh4ts/pmLp5iQxdjCOVDx/UNGSJtTGwe1UHhmW1risYtZuaA01xEqtYcMXZzCLwWZdWWK2JtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Ul75V30fqg4tJL6AUehuDGJapCIoB5ZrB+HTS8LLpk=;
+ b=ijbRmKJisfWxcyzK5Y351mYbicHFxusReORY87YCZb366NVHVOckZpGPneVHegf1M9DI0Y/cRefOlTKhb8SxOd6oWeuAhy6q/O9at8kBTDNpwmZcRQUM4Y5UmyHY4ySvJeKFe27cuZcI6vNYqmgUpBJGQYiVt1+MgZtFzWULsNQ=
+Received: from DM6PR15MB2635.namprd15.prod.outlook.com (20.179.161.152) by
+ DM6PR15MB3468.namprd15.prod.outlook.com (20.179.48.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2220.18; Wed, 4 Sep 2019 23:13:54 +0000
+Received: from DM6PR15MB2635.namprd15.prod.outlook.com
+ ([fe80::d1fc:b5c5:59a1:bd7e]) by DM6PR15MB2635.namprd15.prod.outlook.com
+ ([fe80::d1fc:b5c5:59a1:bd7e%3]) with mapi id 15.20.2220.022; Wed, 4 Sep 2019
+ 23:13:54 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH v1 0/7] mm/memcontrol: recharge mlocked pages
+Thread-Topic: [PATCH v1 0/7] mm/memcontrol: recharge mlocked pages
+Thread-Index: AQHVYygb4ML2nlRWy0qljqLE4Dgc06ccJoIA
+Date:   Wed, 4 Sep 2019 23:13:54 +0000
+Message-ID: <20190904231350.GA5246@tower.dhcp.thefacebook.com>
+References: <156760509382.6560.17364256340940314860.stgit@buzz>
+In-Reply-To: <156760509382.6560.17364256340940314860.stgit@buzz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR22CA0035.namprd22.prod.outlook.com
+ (2603:10b6:300:69::21) To DM6PR15MB2635.namprd15.prod.outlook.com
+ (2603:10b6:5:1a6::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::2:9261]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8ec29334-f3db-4bb4-1fe2-08d7318d8e46
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM6PR15MB3468;
+x-ms-traffictypediagnostic: DM6PR15MB3468:
+x-microsoft-antispam-prvs: <DM6PR15MB34688EC908D5FCCDA9F14471BEB80@DM6PR15MB3468.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0150F3F97D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(39860400002)(366004)(346002)(189003)(199004)(476003)(486006)(446003)(11346002)(46003)(256004)(8676002)(81156014)(316002)(102836004)(386003)(6506007)(186003)(33656002)(6512007)(53936002)(6486002)(54906003)(9686003)(8936002)(14444005)(4326008)(71200400001)(71190400001)(6246003)(86362001)(229853002)(25786009)(6916009)(6116002)(76176011)(52116002)(6436002)(2906002)(99286004)(66946007)(64756008)(66446008)(14454004)(478600001)(1076003)(7736002)(5660300002)(81166006)(66556008)(66476007)(305945005);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR15MB3468;H:DM6PR15MB2635.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: C2e56HbFY+/a8mHr765490FuHJJ2s6Rg/WIqdFaLJGPqkAAId9mNruXp2154h2G7ASXfM6BW03IDOGadXMmUocYAka42ER1X7KNOMFwee2rjvPy0v9CCB4VeRLvTQ00Ji7rrZWkfzldeDj/P2VJfAoQMD6MYJWBRfuLSKwU2/B6MZunWuMgc15+1XWBZamTMlMqrcnl2NZ1YX6U6DREOmXuHclJSK3ys23r7sEdkWSO86lrDQDV7J8AL+QJ0X44zRRSDfc+OJKXvnSUd4YgIzXOc7jdnAlRw4hTOtzF9I97IhLPqO5xV1sAvz0ZtDGEPL0sMVuywMDlgMO9f1P+14jz7PIAqrlwXSFuHKE++AzrPW2XeOlbDMMUZHZJZlHeHO8kPEWed92OSl55IxJUhFRkT+GBdsNiR+4XC7+tfNmw=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <59294D3005729C4181703E55A0E5DA85@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904135420.GB240514@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-04_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1034 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909040225
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ec29334-f3db-4bb4-1fe2-08d7318d8e46
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2019 23:13:54.6342
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: J/wqnvY0MdP4D4+gNgsu4mazdmv7rS8soYR/HeOiNtyTeZgukuQL4gmDN0NY94Ae
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB3468
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-04_06:2019-09-04,2019-09-04 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 priorityscore=1501 phishscore=0
+ mlxlogscore=999 mlxscore=0 clxscore=1015 adultscore=0 suspectscore=0
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1906280000 definitions=main-1909040225
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 09:54:20AM -0400, Joel Fernandes wrote:
-> On Wed, Sep 04, 2019 at 03:12:10AM -0700, Paul E. McKenney wrote:
-> > On Wed, Sep 04, 2019 at 12:59:10AM -0400, Joel Fernandes wrote:
-> > > On Tue, Sep 03, 2019 at 01:02:49PM -0700, Paul E. McKenney wrote:
+On Wed, Sep 04, 2019 at 04:53:08PM +0300, Konstantin Khlebnikov wrote:
+> Currently mlock keeps pages in cgroups where they were accounted.
+> This way one container could affect another if they share file cache.
+> Typical case is writing (downloading) file in one container and then
+> locking in another. After that first container cannot get rid of cache.
 
-[ . . . ]
+Yeah, it's a valid problem, and it's not about mlocked pages only,
+the same thing is true for generic pagecache. The only difference is that
+in theory memory pressure should fix everything. But in reality
+pagecache used by the second container can be very hot, so the first
+once can't really get rid of it.
+In other words, there is no way to pass a pagecache page between cgroups
+without evicting it and re-reading from a storage, which is sub-optimal
+in many cases.
 
-> > If this task gets delayed betweentimes, rcu_implicit_dynticks_qs() would
-> > fail to set .rcu_need_heavy_qs because it saw it already being set,
-> > even though the corresponding ->dynticks update had already happened.
-> > (It might be a new grace period, given that the old grace period might
-> > have ended courtesy of the atomic_add_return().)
-> 
-> Makes sense and I agree.
-> 
-> Also, I would really appreciate if you can correct the nits in the above
-> patch we're reviewing, and apply them (if you can).
-> I think, there are only 2 changes left:
-> - rename special to seq.
-> - reorder the rcu_need_heavy_qs write.
-> 
->  On a related point, when I was working on the NOHZ_FULL testing I noticed a
->  weird issue where rcu_urgent_qs was reset but rcu_need_heavy_qs was still
->  set indefinitely. I am a bit afraid our hints are not being cleared
->  appropriately and I believe I fixed a similar issue a few months ago. I
->  would rather have them cleared once they are no longer needed.  What do you
->  think about the below patch? I did not submit it yet because I was working
->  on other patches. 
-> 
-> ---8<-----------------------
-> 
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> Subject: [RFC] rcu/tree: Reset CPU hints when reporting a quiescent state
-> 
-> While tracing, I am seeing cases where need_heavy_qs is still set even
-> though urgent_qs was cleared, after a quiescent state is reported. One
-> such case is when the softirq reports that a CPU has passed quiescent
-> state.
-> 
-> Previously in 671a63517cf9 ("rcu: Avoid unnecessary softirq when system
-> is idle"), I had fixed a bug where core_needs_qs was not being cleared.
-> I worry we keep running into similar situations. Let us just add a
-> function to clear hints and call it from all relevant places to make the
-> code more robust and avoid such stale hints which could in theory at
-> least, cause false hints after the quiescent state was already reported.
-> 
-> Tested overnight with rcutorture running for 60 minutes on all
-> configurations of RCU.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  kernel/rcu/tree.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
+We thought about new madvise(), which will uncharge pagecache but set
+a new page flag, which will mean something like "whoever first starts using
+the page, should be charged for it". But it never materialized in a patchse=
+t.
 
-Excellent point!  But how about if we combine it with the existing
-disabling of the scheduler tick, perhaps something like the following?
+> Also removed cgroup stays pinned by these mlocked pages.
 
-Note that the FQS clearing can come from some other CPU, hence the added
-{READ,WRITE}_ONCE() calls.  The call is moved down in rcu_report_qs_rdp()
-because something would have had to clear the bit to prevent execution
-from getting there, and I believe that the other bit-clearing events
-have calls to rcu_disable_urgency_upon_qs().  (But I easily could have
-missed something!)
+Tbh, I don't think it's a big issue here. If only there is a huge number
+of 1-page sized mlock areas, but this seems to be unlikely.
 
-I am OK leaving RCU urgency set on offline CPUs, hence clearing things
-at online time.
+>=20
+> This patchset implements recharging pages to cgroup of mlock user.
+>=20
+> There are three cases:
+> * recharging at first mlock
+> * recharging at munlock to any remaining mlock
+> * recharging at 'culling' in reclaimer to any existing mlock
+>=20
+> To keep things simple recharging ignores memory limit. After that memory
+> usage temporary could be higher than limit but cgroup will reclaim memory
+> later or trigger oom, which is valid outcome when somebody mlock too much=
+.
 
-							Thanx, Paul
+OOM is a concern here. If quitting an application will cause an immediate O=
+OM
+in an other cgroup, that's not so good. Ideally it should work like
+memory.high, forcing all threads in the second cgroup into direct reclaim.
 
-------------------------------------------------------------------------
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 68ebf0eb64c8..2b74b6c94086 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -827,7 +827,7 @@ static __always_inline void rcu_nmi_enter_common(bool irq)
- 		incby = 1;
- 	} else if (tick_nohz_full_cpu(rdp->cpu) &&
- 		   rdp->dynticks_nmi_nesting == DYNTICK_IRQ_NONIDLE &&
--		   rdp->rcu_urgent_qs && !rdp->rcu_forced_tick) {
-+		   READ_ONCE(rdp->rcu_urgent_qs) && !rdp->rcu_forced_tick) {
- 		rdp->rcu_forced_tick = true;
- 		tick_dep_set_cpu(rdp->cpu, TICK_DEP_BIT_RCU);
- 	}
-@@ -892,11 +892,15 @@ void rcu_irq_enter_irqson(void)
- }
- 
- /*
-- * If the scheduler-clock interrupt was enabled on a nohz_full CPU
-- * in order to get to a quiescent state, disable it.
-+ * If any sort of urgency was applied to the current CPU (for example,
-+ * the scheduler-clock interrupt was enabled on a nohz_full CPU) in order
-+ * to get to a quiescent state, disable it.
-  */
--void rcu_disable_tick_upon_qs(struct rcu_data *rdp)
-+void rcu_disable_urgency_upon_qs(struct rcu_data *rdp)
- {
-+	WRITE_ONCE(rdp->core_needs_qs, false);
-+	WRITE_ONCE(rdp->rcu_urgent_qs, false);
-+	WRITE_ONCE(rdp->rcu_need_heavy_qs, false);
- 	if (tick_nohz_full_cpu(rdp->cpu) && rdp->rcu_forced_tick) {
- 		tick_dep_clear_cpu(rdp->cpu, TICK_DEP_BIT_RCU);
- 		rdp->rcu_forced_tick = false;
-@@ -1417,7 +1421,7 @@ static bool __note_gp_changes(struct rcu_node *rnp, struct rcu_data *rdp)
- 		trace_rcu_grace_period(rcu_state.name, rnp->gp_seq, TPS("cpustart"));
- 		need_gp = !!(rnp->qsmask & rdp->grpmask);
- 		rdp->cpu_no_qs.b.norm = need_gp;
--		rdp->core_needs_qs = need_gp;
-+		WRITE_ONCE(rdp->core_needs_qs, need_gp);
- 		zero_cpu_stall_ticks(rdp);
- 	}
- 	rdp->gp_seq = rnp->gp_seq;  /* Remember new grace-period state. */
-@@ -1987,7 +1991,6 @@ rcu_report_qs_rdp(int cpu, struct rcu_data *rdp)
- 		return;
- 	}
- 	mask = rdp->grpmask;
--	rdp->core_needs_qs = false;
- 	if ((rnp->qsmask & mask) == 0) {
- 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	} else {
-@@ -1998,7 +2001,7 @@ rcu_report_qs_rdp(int cpu, struct rcu_data *rdp)
- 		if (!offloaded)
- 			needwake = rcu_accelerate_cbs(rnp, rdp);
- 
--		rcu_disable_tick_upon_qs(rdp);
-+		rcu_disable_urgency_upon_qs(rdp);
- 		rcu_report_qs_rnp(mask, rnp, rnp->gp_seq, flags);
- 		/* ^^^ Released rnp->lock */
- 		if (needwake)
-@@ -2022,7 +2025,7 @@ rcu_check_quiescent_state(struct rcu_data *rdp)
- 	 * Does this CPU still need to do its part for current grace period?
- 	 * If no, return and let the other CPUs do their part as well.
- 	 */
--	if (!rdp->core_needs_qs)
-+	if (!READ_ONCE(rdp->core_needs_qs))
- 		return;
- 
- 	/*
-@@ -2316,7 +2319,7 @@ static void force_qs_rnp(int (*f)(struct rcu_data *rdp))
- 				rdp = per_cpu_ptr(&rcu_data, cpu);
- 				if (f(rdp)) {
- 					mask |= bit;
--					rcu_disable_tick_upon_qs(rdp);
-+					rcu_disable_urgency_upon_qs(rdp);
- 				}
- 			}
- 		}
-@@ -3004,7 +3007,7 @@ static int rcu_pending(void)
- 		return 0;
- 
- 	/* Is the RCU core waiting for a quiescent state from this CPU? */
--	if (rdp->core_needs_qs && !rdp->cpu_no_qs.b.norm)
-+	if (READ_ONCE(rdp->core_needs_qs) && !rdp->cpu_no_qs.b.norm)
- 		return 1;
- 
- 	/* Does this CPU have callbacks ready to invoke? */
-@@ -3244,7 +3247,6 @@ int rcutree_prepare_cpu(unsigned int cpu)
- 	rdp->gp_seq = rnp->gp_seq;
- 	rdp->gp_seq_needed = rnp->gp_seq;
- 	rdp->cpu_no_qs.b.norm = true;
--	rdp->core_needs_qs = false;
- 	rdp->rcu_iw_pending = false;
- 	rdp->rcu_iw_gp_seq = rnp->gp_seq - 1;
- 	trace_rcu_grace_period(rcu_state.name, rdp->gp_seq, TPS("cpuonl"));
-@@ -3359,7 +3361,7 @@ void rcu_cpu_starting(unsigned int cpu)
- 	rdp->rcu_onl_gp_seq = READ_ONCE(rcu_state.gp_seq);
- 	rdp->rcu_onl_gp_flags = READ_ONCE(rcu_state.gp_flags);
- 	if (rnp->qsmask & mask) { /* RCU waiting on incoming CPU? */
--		rcu_disable_tick_upon_qs(rdp);
-+		rcu_disable_urgency_upon_qs(rdp);
- 		/* Report QS -after- changing ->qsmaskinitnext! */
- 		rcu_report_qs_rnp(mask, rnp, rnp->gp_seq, flags);
- 	} else {
+Thanks!
