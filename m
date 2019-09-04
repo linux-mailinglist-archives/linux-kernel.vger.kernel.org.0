@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C954A90AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A47DA8E17
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389871AbfIDSLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:11:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54982 "EHLO mail.kernel.org"
+        id S1733117AbfIDR4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:56:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389078AbfIDSLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:11:05 -0400
+        id S1733059AbfIDRz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:55:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FB9B23401;
-        Wed,  4 Sep 2019 18:11:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7601822CF5;
+        Wed,  4 Sep 2019 17:55:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620665;
-        bh=GCIkHpnTuD4C09Cw4jJmBv6F6eHMlnrCVJ4JE7VG5qM=;
+        s=default; t=1567619759;
+        bh=C+g5dJThEkiTnCwufBUzsevaiuznZHmKFpkm824y7JI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VJkxSkpTKkzJjomULZb8DcPXiNex+IUC1HUhZi358n4M2x6DndWfEzrOhVEsfh43G
-         5SNV4qWAkRiVkQ0dJalPS3bwf1C2K/xhI2BDzk1O6xnDQAt2wVPryjX1qpOxbdvT1M
-         xEolTR3UIDzN4ar6rcYry+Wx3zPEeqkQdSV8+pdc=
+        b=h+dATPTpUNbLbAAETdToKomv/2S5rqlul0sUQgr47KKIDXvxpNxbBwQIVoJbGz8HU
+         BUzQl8sXj8+MNxAtkBNJ0fPbBlhnPBBUKfsDF6XFq0myJaUYWeSbB+ym74zR9Otz29
+         3Lu5nV/x3uG02Ze3tF4yPZD5IFYtnY7jUARRDFdA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 048/143] mt76: usb: fix rx A-MSDU support
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.4 24/77] Revert "dm bufio: fix deadlock with loop device"
 Date:   Wed,  4 Sep 2019 19:53:11 +0200
-Message-Id: <20190904175315.950630952@linuxfoundation.org>
+Message-Id: <20190904175305.820812068@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,107 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2a92b08b18553c101115423bd34963b1a59a45a3 ]
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-Commit f8f527b16db5 ("mt76: usb: use EP max packet aligned buffer sizes
-for rx") breaks A-MSDU support. When A-MSDU is enable the device can
-receive frames up to q->buf_size but they will be discarded in
-mt76u_process_rx_entry since there is no enough room for
-skb_shared_info. Fix the issue reallocating the skb and copying in the
-linear area the first 128B of the received frames and in the frag_list
-the remaining part
+commit cf3591ef832915892f2499b7e54b51d4c578b28c upstream.
 
-Fixes: f8f527b16db5 ("mt76: usb: use EP max packet aligned buffer sizes for rx")
-Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Revert the commit bd293d071ffe65e645b4d8104f9d8fe15ea13862. The proper
+fix has been made available with commit d0a255e795ab ("loop: set
+PF_MEMALLOC_NOIO for the worker thread").
+
+Note that the fix offered by commit bd293d071ffe doesn't really prevent
+the deadlock from occuring - if we look at the stacktrace reported by
+Junxiao Bi, we see that it hangs in bit_wait_io and not on the mutex -
+i.e. it has already successfully taken the mutex. Changing the mutex
+from mutex_lock to mutex_trylock won't help with deadlocks that happen
+afterwards.
+
+PID: 474    TASK: ffff8813e11f4600  CPU: 10  COMMAND: "kswapd0"
+   #0 [ffff8813dedfb938] __schedule at ffffffff8173f405
+   #1 [ffff8813dedfb990] schedule at ffffffff8173fa27
+   #2 [ffff8813dedfb9b0] schedule_timeout at ffffffff81742fec
+   #3 [ffff8813dedfba60] io_schedule_timeout at ffffffff8173f186
+   #4 [ffff8813dedfbaa0] bit_wait_io at ffffffff8174034f
+   #5 [ffff8813dedfbac0] __wait_on_bit at ffffffff8173fec8
+   #6 [ffff8813dedfbb10] out_of_line_wait_on_bit at ffffffff8173ff81
+   #7 [ffff8813dedfbb90] __make_buffer_clean at ffffffffa038736f [dm_bufio]
+   #8 [ffff8813dedfbbb0] __try_evict_buffer at ffffffffa0387bb8 [dm_bufio]
+   #9 [ffff8813dedfbbd0] dm_bufio_shrink_scan at ffffffffa0387cc3 [dm_bufio]
+  #10 [ffff8813dedfbc40] shrink_slab at ffffffff811a87ce
+  #11 [ffff8813dedfbd30] shrink_zone at ffffffff811ad778
+  #12 [ffff8813dedfbdc0] kswapd at ffffffff811ae92f
+  #13 [ffff8813dedfbec0] kthread at ffffffff810a8428
+  #14 [ffff8813dedfbf50] ret_from_fork at ffffffff81745242
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: bd293d071ffe ("dm bufio: fix deadlock with loop device")
+Depends-on: d0a255e795ab ("loop: set PF_MEMALLOC_NOIO for the worker thread")
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wireless/mediatek/mt76/mt76.h |  1 +
- drivers/net/wireless/mediatek/mt76/usb.c  | 46 ++++++++++++++++++-----
- 2 files changed, 38 insertions(+), 9 deletions(-)
+ drivers/md/dm-bufio.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76.h b/drivers/net/wireless/mediatek/mt76/mt76.h
-index 8ecbf81a906f5..889b76deb7037 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt76.h
-@@ -30,6 +30,7 @@
- #define MT_TX_RING_SIZE     256
- #define MT_MCU_RING_SIZE    32
- #define MT_RX_BUF_SIZE      2048
-+#define MT_SKB_HEAD_LEN     128
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -1561,7 +1561,9 @@ dm_bufio_shrink_scan(struct shrinker *sh
+ 	unsigned long freed;
  
- struct mt76_dev;
- struct mt76_wcid;
-diff --git a/drivers/net/wireless/mediatek/mt76/usb.c b/drivers/net/wireless/mediatek/mt76/usb.c
-index bbaa1365bbda2..dd90427b2d672 100644
---- a/drivers/net/wireless/mediatek/mt76/usb.c
-+++ b/drivers/net/wireless/mediatek/mt76/usb.c
-@@ -429,6 +429,42 @@ static int mt76u_get_rx_entry_len(u8 *data, u32 data_len)
- 	return dma_len;
- }
+ 	c = container_of(shrink, struct dm_bufio_client, shrinker);
+-	if (!dm_bufio_trylock(c))
++	if (sc->gfp_mask & __GFP_FS)
++		dm_bufio_lock(c);
++	else if (!dm_bufio_trylock(c))
+ 		return SHRINK_STOP;
  
-+static struct sk_buff *
-+mt76u_build_rx_skb(void *data, int len, int buf_size)
-+{
-+	struct sk_buff *skb;
-+
-+	if (SKB_WITH_OVERHEAD(buf_size) < MT_DMA_HDR_LEN + len) {
-+		struct page *page;
-+
-+		/* slow path, not enough space for data and
-+		 * skb_shared_info
-+		 */
-+		skb = alloc_skb(MT_SKB_HEAD_LEN, GFP_ATOMIC);
-+		if (!skb)
-+			return NULL;
-+
-+		skb_put_data(skb, data + MT_DMA_HDR_LEN, MT_SKB_HEAD_LEN);
-+		data += (MT_DMA_HDR_LEN + MT_SKB_HEAD_LEN);
-+		page = virt_to_head_page(data);
-+		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
-+				page, data - page_address(page),
-+				len - MT_SKB_HEAD_LEN, buf_size);
-+
-+		return skb;
-+	}
-+
-+	/* fast path */
-+	skb = build_skb(data, buf_size);
-+	if (!skb)
-+		return NULL;
-+
-+	skb_reserve(skb, MT_DMA_HDR_LEN);
-+	__skb_put(skb, len);
-+
-+	return skb;
-+}
-+
- static int
- mt76u_process_rx_entry(struct mt76_dev *dev, struct urb *urb)
- {
-@@ -446,19 +482,11 @@ mt76u_process_rx_entry(struct mt76_dev *dev, struct urb *urb)
- 		return 0;
- 
- 	data_len = min_t(int, len, data_len - MT_DMA_HDR_LEN);
--	if (MT_DMA_HDR_LEN + data_len > SKB_WITH_OVERHEAD(q->buf_size)) {
--		dev_err_ratelimited(dev->dev, "rx data too big %d\n", data_len);
--		return 0;
--	}
--
--	skb = build_skb(data, q->buf_size);
-+	skb = mt76u_build_rx_skb(data, data_len, q->buf_size);
- 	if (!skb)
- 		return 0;
- 
--	skb_reserve(skb, MT_DMA_HDR_LEN);
--	__skb_put(skb, data_len);
- 	len -= data_len;
--
- 	while (len > 0 && nsgs < urb->num_sgs) {
- 		data_len = min_t(int, len, urb->sg[nsgs].length);
- 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
--- 
-2.20.1
-
+ 	freed  = __scan(c, sc->nr_to_scan, sc->gfp_mask);
 
 
