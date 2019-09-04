@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00A21A91A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2577EA8F76
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389572AbfIDSVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:21:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49850 "EHLO mail.kernel.org"
+        id S2388004AbfIDSDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:03:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389643AbfIDSH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:07:26 -0400
+        id S2388995AbfIDSDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:03:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E3BA206B8;
-        Wed,  4 Sep 2019 18:07:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD6CA22CEA;
+        Wed,  4 Sep 2019 18:03:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620446;
-        bh=0yclGDOg7Dy3vf9xGWlNF8+UryRlkRqDD76l1GgU0bU=;
+        s=default; t=1567620225;
+        bh=iXbFIJf6QaO+qi3Exye0+Fd0r+llpYzfwwi0AggCSPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0eRDfi7Cp0t6c2RCyqiDVZWMZeYhfiA/zfbghxCtu4v71ohNRMoJIZ6aTirp0tH/6
-         AppEsrjjuOJCEvIzXcpMiiQmeFPw88DA+PwMWAZn9NUtNOtF1tjgQ3KYtmCswbQr4m
-         8EeFKy6ldAFo0e4LVCd7x05IIvJx9+tQLWj18gD0=
+        b=thzrtZSYTR9QEb+LAMfmO7C4KekPJ4TF1KgA0M6JC4K0CYV/qMlBvi4tJNzA+yiGh
+         Dlliazp28UAPsprMEKYOUrSGmNozOSygYX49Ztoj6X1+Yz0sgBVJD1/oF/jI3D8g4m
+         g+EVtpYxddlq4v0yec2SLh5uPnks/M2SIJerXcTI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.19 61/93] USB: storage: ums-realtek: Whitelist auto-delink support
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4.14 35/57] usb: host: xhci: rcar: Fix typo in compatible string matching
 Date:   Wed,  4 Sep 2019 19:54:03 +0200
-Message-Id: <20190904175308.301296683@linuxfoundation.org>
+Message-Id: <20190904175305.541999221@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 1902a01e2bcc3abd7c9a18dc05e78c7ab4a53c54 upstream.
+commit 636bd02a7ba9025ff851d0cfb92768c8fa865859 upstream.
 
-Auto-delink requires writing special registers to ums-realtek devices.
-Unconditionally enable auto-delink may break newer devices.
+It's spelled "renesas", not "renensas".
 
-So only enable auto-delink by default for the original three IDs,
-0x0138, 0x0158 and 0x0159.
+Due to this typo, RZ/G1M and RZ/G1N were not covered by the check.
 
-Realtek is working on a patch to properly support auto-delink for other
-IDs.
-
-BugLink: https://bugs.launchpad.net/bugs/1838886
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: 2dc240a3308b ("usb: host: xhci: rcar: retire use of xhci_plat_type_is()")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190827173450.13572-2-kai.heng.feng@canonical.com
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Link: https://lore.kernel.org/r/20190827125112.12192-1-geert+renesas@glider.be
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/realtek_cr.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/usb/host/xhci-rcar.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/storage/realtek_cr.c
-+++ b/drivers/usb/storage/realtek_cr.c
-@@ -996,12 +996,15 @@ static int init_realtek_cr(struct us_dat
- 			goto INIT_FAIL;
- 	}
+--- a/drivers/usb/host/xhci-rcar.c
++++ b/drivers/usb/host/xhci-rcar.c
+@@ -113,7 +113,7 @@ static int xhci_rcar_is_gen2(struct devi
+ 	return of_device_is_compatible(node, "renesas,xhci-r8a7790") ||
+ 		of_device_is_compatible(node, "renesas,xhci-r8a7791") ||
+ 		of_device_is_compatible(node, "renesas,xhci-r8a7793") ||
+-		of_device_is_compatible(node, "renensas,rcar-gen2-xhci");
++		of_device_is_compatible(node, "renesas,rcar-gen2-xhci");
+ }
  
--	if (CHECK_FW_VER(chip, 0x5888) || CHECK_FW_VER(chip, 0x5889) ||
--	    CHECK_FW_VER(chip, 0x5901))
--		SET_AUTO_DELINK(chip);
--	if (STATUS_LEN(chip) == 16) {
--		if (SUPPORT_AUTO_DELINK(chip))
-+	if (CHECK_PID(chip, 0x0138) || CHECK_PID(chip, 0x0158) ||
-+	    CHECK_PID(chip, 0x0159)) {
-+		if (CHECK_FW_VER(chip, 0x5888) || CHECK_FW_VER(chip, 0x5889) ||
-+				CHECK_FW_VER(chip, 0x5901))
- 			SET_AUTO_DELINK(chip);
-+		if (STATUS_LEN(chip) == 16) {
-+			if (SUPPORT_AUTO_DELINK(chip))
-+				SET_AUTO_DELINK(chip);
-+		}
- 	}
- #ifdef CONFIG_REALTEK_AUTOPM
- 	if (ss_en)
+ static int xhci_rcar_is_gen3(struct device *dev)
 
 
