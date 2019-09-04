@@ -2,132 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92DD6A82DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:51:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EA0DA830F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730049AbfIDMeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 08:34:24 -0400
-Received: from mga11.intel.com ([192.55.52.93]:4080 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728878AbfIDMeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:34:24 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 05:34:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
-   d="scan'208";a="194716420"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga002.jf.intel.com with ESMTP; 04 Sep 2019 05:34:21 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i5UUO-0000nP-7s; Wed, 04 Sep 2019 15:34:20 +0300
-Date:   Wed, 4 Sep 2019 15:34:20 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: of: fix fallback quirks handling
-Message-ID: <20190904123420.GK2680@smile.fi.intel.com>
-References: <20190903231856.GA165165@dtor-ws>
+        id S1730365AbfIDMf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 08:35:27 -0400
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:49158 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729727AbfIDMfX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 08:35:23 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 58A723F77F;
+        Wed,  4 Sep 2019 14:35:15 +0200 (CEST)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=qNbx1UJS;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3i3BzrVFK044; Wed,  4 Sep 2019 14:35:14 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 8FD2F3F73E;
+        Wed,  4 Sep 2019 14:35:12 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 22A4A360160;
+        Wed,  4 Sep 2019 14:35:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1567600512; bh=pK5b7yS9C1/xG6gv0GQcM1GFQgwTOHxSWdUhligApBw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=qNbx1UJSV4EI8nxOrOXumaK0I328MaM+uBIrNusdqeabZXKCERZfPTk1P6jL7m4ab
+         C0pib5CDDYth9dO4ab+YLmCvIalOtlsKoRDUI81JSaMSOrwGm98nR/r7cz+D0/2k6g
+         NIIRcNFe9IWHjC+CW1wxbyaUItmT4Txls1f9lRoU=
+Subject: Re: [PATCH v2 3/4] drm/ttm, drm/vmwgfx: Correctly support support AMD
+ memory encryption
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        "pv-drivers@vmware.com" <pv-drivers@vmware.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20190903131504.18935-1-thomas_os@shipmail.org>
+ <20190903131504.18935-4-thomas_os@shipmail.org>
+ <b54bd492-9702-5ad7-95da-daf20918d3d9@intel.com>
+ <CAKMK7uFv+poZq43as8XoQaSuoBZxCQ1p44VCmUUTXOXt4Y+Bjg@mail.gmail.com>
+ <6d0fafcc-b596-481b-7b22-1f26f0c02c5c@intel.com>
+ <bed2a2d9-17f0-24bd-9f4a-c7ee27f6106e@shipmail.org>
+ <7fa3b178-b9b4-2df9-1eee-54e24d48342e@intel.com>
+ <ba77601a-d726-49fa-0c88-3b02165a9a21@shipmail.org>
+ <cfe46eda-66b5-b40d-6721-84e6e0e1f5de@amd.com>
+ <94113acc-1f99-2386-1d42-4b9930b04f73@shipmail.org>
+ <7eec2c11-d0d4-4c81-6ed2-d0932bf5af33@amd.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <9ca29de8-0c9b-65b2-52e8-8668a1517ac5@shipmail.org>
+Date:   Wed, 4 Sep 2019 14:35:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903231856.GA165165@dtor-ws>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7eec2c11-d0d4-4c81-6ed2-d0932bf5af33@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 04:18:56PM -0700, Dmitry Torokhov wrote:
-> We should only try to execute fallback quirks handling when previous
-> call returned -ENOENT, and not when we did not get -EPROBE_DEFER.
-> The other errors should be treated as hard errors: we did find the GPIO
-> description, but for some reason we failed to handle it properly.
-> 
-> The fallbacks should only be executed when previous handlers returned
-> -ENOENT, which means the mapping/description was not found.
-> 
-> Also let's remove the explicit deferral handling when iterating through
-> GPIO suffixes: it is not needed anymore as we will not be calling
-> fallbacks for anything but -ENOENT.
-> 
+On 9/4/19 1:10 PM, Koenig, Christian wrote:
+> Am 04.09.19 um 10:19 schrieb Thomas Hellström (VMware):
+>> Hi, Christian,
+>>
+>> On 9/4/19 9:33 AM, Koenig, Christian wrote:
+>>> Am 03.09.19 um 23:05 schrieb Thomas Hellström (VMware):
+>>>> On 9/3/19 10:51 PM, Dave Hansen wrote:
+>>>>> On 9/3/19 1:36 PM, Thomas Hellström (VMware) wrote:
+>>>>>> So the question here should really be, can we determine already at
+>>>>>> mmap
+>>>>>> time whether backing memory will be unencrypted and adjust the *real*
+>>>>>> vma->vm_page_prot under the mmap_sem?
+>>>>>>
+>>>>>> Possibly, but that requires populating the buffer with memory at mmap
+>>>>>> time rather than at first fault time.
+>>>>> I'm not connecting the dots.
+>>>>>
+>>>>> vma->vm_page_prot is used to create a VMA's PTEs regardless of if they
+>>>>> are created at mmap() or fault time.  If we establish a good
+>>>>> vma->vm_page_prot, can't we just use it forever for demand faults?
+>>>> With SEV I think that we could possibly establish the encryption flags
+>>>> at vma creation time. But thinking of it, it would actually break with
+>>>> SME where buffer content can be moved between encrypted system memory
+>>>> and unencrypted graphics card PCI memory behind user-space's back.
+>>>> That would imply killing all user-space encrypted PTEs and at fault
+>>>> time set up new ones pointing to unencrypted PCI memory..
+>>> Well my problem is where do you see encrypted system memory here?
+>>>
+>>> At least for AMD GPUs all memory accessed must be unencrypted and that
+>>> counts for both system as well as PCI memory.
+>> We're talking SME now right?
+>>
+>> The current SME setup is that if a device's DMA mask says it's capable
+>> of addressing the encryption bit, coherent memory will be encrypted.
+>> The memory controllers will decrypt for the device on the fly.
+>> Otherwise coherent memory will be decrypted.
+>>
+>>> So I don't get why we can't assume always unencrypted and keep it
+>>> like that.
+>> I see two reasons. First, it would break with a real device that
+>> signals it's capable of addressing the encryption bit.
+> Why? Because we don't use dma_mmap_coherent()?
 
-I would rather leave extra parenthesis and comments untouched,
-nevertheless, FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Well, assuming always unencrypted would obviously break on a real device 
+with encrypted coherent memory?
 
-> Fixes: df451f83e1fc ("gpio: of: fix Freescale SPI CS quirk handling")
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/gpio/gpiolib-of.c | 27 +++++++++------------------
->  1 file changed, 9 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index b034abe59f28..b45b39c48a34 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -457,36 +457,27 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
->  
->  		desc = of_get_named_gpiod_flags(dev->of_node, prop_name, idx,
->  						&of_flags);
-> -		/*
-> -		 * -EPROBE_DEFER in our case means that we found a
-> -		 * valid GPIO property, but no controller has been
-> -		 * registered so far.
-> -		 *
-> -		 * This means we don't need to look any further for
-> -		 * alternate name conventions, and we should really
-> -		 * preserve the return code for our user to be able to
-> -		 * retry probing later.
-> -		 */
-> -		if (IS_ERR(desc) && PTR_ERR(desc) == -EPROBE_DEFER)
-> -			return desc;
->  
-> -		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
-> +		if (!IS_ERR(desc) || PTR_ERR(desc) != -ENOENT)
->  			break;
->  	}
->  
-> -	/* Special handling for SPI GPIOs if used */
-> -	if (IS_ERR(desc))
-> +	if (IS_ERR(desc) && PTR_ERR(desc) == -ENOENT) {
-> +		/* Special handling for SPI GPIOs if used */
->  		desc = of_find_spi_gpio(dev, con_id, &of_flags);
-> -	if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER) {
-> +	}
-> +
-> +	if (IS_ERR(desc) && PTR_ERR(desc) == -ENOENT) {
->  		/* This quirk looks up flags and all */
->  		desc = of_find_spi_cs_gpio(dev, con_id, idx, flags);
->  		if (!IS_ERR(desc))
->  			return desc;
->  	}
->  
-> -	/* Special handling for regulator GPIOs if used */
-> -	if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER)
-> +	if (IS_ERR(desc) && PTR_ERR(desc) == -ENOENT) {
-> +		/* Special handling for regulator GPIOs if used */
->  		desc = of_find_regulator_gpio(dev, con_id, &of_flags);
-> +	}
->  
->  	if (IS_ERR(desc))
->  		return desc;
-> -- 
-> 2.23.0.187.g17f5b7556c-goog
-> 
-> 
-> -- 
-> Dmitry
+dma_mmap_coherent() would work from the encryption point of view 
+(although I think it's currently buggy and will send out an RFC for what 
+I believe is a fix for that).
 
--- 
-With Best Regards,
-Andy Shevchenko
+>
+> I've already talked with Christoph that we probably want to switch TTM
+> over to using that instead to also get rid of the ttm_io_prot() hack.
 
+OK, would that mean us ditching other memory modes completely? And 
+on-the-fly caching transitions? or is it just for the special case of 
+cached coherent memory? Do we need to cache the coherent kernel mappings 
+in TTM as well, for ttm_bo_kmap()?
+
+/Thomas
+
+>
+> Regards,
+> Christian.
+>
+>> Second I can imagine unaccelerated setups (something like vkms using
+>> prime feeding a VNC connection) where we actually want the TTM buffers
+>> encrypted to protect data.
+>>
+>> But at least the latter reason is way far out in the future.
+>>
+>> So for me I'm ok with that if that works for you?
+>>
+>> /Thomas
+>>
+>>
+>>> Regards,
+>>> Christian.
+>>
 
