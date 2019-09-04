@@ -2,135 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36CAFA8DBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BB5EA8DC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731863AbfIDRdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:33:31 -0400
-Received: from mga14.intel.com ([192.55.52.115]:6106 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731376AbfIDRda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:33:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 10:33:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
-   d="scan'208";a="207565902"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Sep 2019 10:33:28 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i5Z9r-0004co-Ns; Wed, 04 Sep 2019 20:33:27 +0300
-Date:   Wed, 4 Sep 2019 20:33:27 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: make acpi_can_fallback_to_crs() static
-Message-ID: <20190904173327.GZ2680@smile.fi.intel.com>
-References: <20190904172624.GA76617@dtor-ws>
+        id S1731376AbfIDRfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:35:54 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34690 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727809AbfIDRfx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:35:53 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x84HXaJ6178061;
+        Wed, 4 Sep 2019 17:35:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=oKAkTwSIfkLy1nyeOp7Bhpf8xnCuOFObRzurrxywKfg=;
+ b=XfzOvHMWY/mrSSg9OA3+35NYIVw1A8UGcpvQvqJfD4G+PPLpa4dvKXqyaeQFs+Ik99Hk
+ gclX6tHZ/fAbx6AAnqpSQXewCEhk4kKchGGNdQ39SjqA2ThB7h6i/JzAAKUshzbKsPRz
+ aoVIm4fv7GzuKBriNZsIICBVIjsMdjr8hsN0J2/RcjoI7C1CWzUKyAsRrOqxSvBgRkMa
+ dascJ8PVldmFQETpIop4ryhCxsVGJTGRC5AqUxmXU24c7Jn0tvVO2D83ZCNaLKt/bKoJ
+ DZWMMgXOFb2j9CpYXw3v088ByYCXqCPPWiipTG70FBaZBJ4daVkfMiJ7er07ZT4OqHXr XQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2uthkbr35c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Sep 2019 17:35:41 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x84HXLJS194806;
+        Wed, 4 Sep 2019 17:35:41 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2usu53e1ej-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Sep 2019 17:35:41 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x84HZe9E026221;
+        Wed, 4 Sep 2019 17:35:40 GMT
+Received: from [10.209.243.89] (/10.209.243.89)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 04 Sep 2019 10:35:39 -0700
+Subject: Re: [GIT PULL] SOC: TI soc updates for 5.4
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1566875507-8067-1-git-send-email-santosh.shilimkar@oracle.com>
+ <CAK8P3a3_NWWBFrpNpbPH9+47Segi_EaYx2jx5jvPhYJJqR+a7A@mail.gmail.com>
+From:   santosh.shilimkar@oracle.com
+Organization: Oracle Corporation
+Message-ID: <3af4da24-2246-ff94-b83d-2b6ada4fc362@oracle.com>
+Date:   Wed, 4 Sep 2019 10:35:38 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904172624.GA76617@dtor-ws>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAK8P3a3_NWWBFrpNpbPH9+47Segi_EaYx2jx5jvPhYJJqR+a7A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9370 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909040175
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9370 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909040175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 10:26:24AM -0700, Dmitry Torokhov wrote:
-> It is not used outside gpiolib-acpi.c module, so there is no need to
-> export it.
+On 9/4/19 6:13 AM, Arnd Bergmann wrote:
+> On Tue, Aug 27, 2019 at 5:12 AM Santosh Shilimkar
+> <santosh.shilimkar@oracle.com> wrote:
 > 
-
-Thank you for a nice clean up!
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/gpio/gpiolib-acpi.c | 19 ++++++++++---------
->  drivers/gpio/gpiolib-acpi.h |  8 --------
->  2 files changed, 10 insertions(+), 17 deletions(-)
+>> ----------------------------------------------------------------
+>> soc: TI soc updates for 5.4
+>>
+>>   -  Update firmware to support PM domain shared and exclusive support
+>>   -  Update driver and dt binding docs for the same.
+>>
+>> ----------------------------------------------------------------
+>>
+>> Lokesh Vutla (3):
+>>    firmware: ti_sci: Allow for device shared and exclusive requests
+>>    dt-bindings: ti_sci_pm_domains: Add support for exclusive and shared
+>>      access
+>>    soc: ti: ti_sci_pm_domains: Add support for exclusive and shared
+>>      access
 > 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index fdee8afa5339..2b6fdc9947f7 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -728,6 +728,16 @@ static struct gpio_desc *acpi_get_gpiod_by_index(struct acpi_device *adev,
->  	return ret ? ERR_PTR(ret) : lookup.desc;
->  }
->  
-> +static bool acpi_can_fallback_to_crs(struct acpi_device *adev,
-> +				     const char *con_id)
-> +{
-> +	/* Never allow fallback if the device has properties */
-> +	if (acpi_dev_has_props(adev) || adev->driver_gpios)
-> +		return false;
-> +
-> +	return con_id == NULL;
-> +}
-> +
->  struct gpio_desc *acpi_find_gpio(struct device *dev,
->  				 const char *con_id,
->  				 unsigned int idx,
-> @@ -1264,15 +1274,6 @@ int acpi_gpio_count(struct device *dev, const char *con_id)
->  	return count ? count : -ENOENT;
->  }
->  
-> -bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id)
-> -{
-> -	/* Never allow fallback if the device has properties */
-> -	if (acpi_dev_has_props(adev) || adev->driver_gpios)
-> -		return false;
-> -
-> -	return con_id == NULL;
-> -}
-> -
->  /* Run deferred acpi_gpiochip_request_irqs() */
->  static int acpi_gpio_handle_deferred_request_irqs(void)
->  {
-> diff --git a/drivers/gpio/gpiolib-acpi.h b/drivers/gpio/gpiolib-acpi.h
-> index d7241b432b8b..1c6d65cf0629 100644
-> --- a/drivers/gpio/gpiolib-acpi.h
-> +++ b/drivers/gpio/gpiolib-acpi.h
-> @@ -52,8 +52,6 @@ struct gpio_desc *acpi_node_get_gpiod(struct fwnode_handle *fwnode,
->  				      struct acpi_gpio_info *info);
->  
->  int acpi_gpio_count(struct device *dev, const char *con_id);
-> -
-> -bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id);
->  #else
->  static inline void acpi_gpiochip_add(struct gpio_chip *chip) { }
->  static inline void acpi_gpiochip_remove(struct gpio_chip *chip) { }
-> @@ -93,12 +91,6 @@ static inline int acpi_gpio_count(struct device *dev, const char *con_id)
->  {
->  	return -ENODEV;
->  }
-> -
-> -static inline bool acpi_can_fallback_to_crs(struct acpi_device *adev,
-> -					    const char *con_id)
-> -{
-> -	return false;
-> -}
->  #endif
->  
->  #endif /* GPIOLIB_ACPI_H */
-> -- 
-> 2.23.0.187.g17f5b7556c-goog
+> Hi Santosh,
 > 
+> I noticed that your branch is based on top of v5.3-rc2, while my
+> arm/drivers branch started out from -rc1.
 > 
-> -- 
-> Dmitry
+> Do you have any dependencies on -rc2 in your changes? If not,
+> could you please resubmit after rebasing? I can also just
+> cherry-pick those three commits if that's easier.
+> 
+No dependencies. Can you please cherry pick them this time ?
+Will use rc1 for future pull request(s). Thanks !!
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Santosh
