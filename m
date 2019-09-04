@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2C26A8E9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9891EA90A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388167AbfIDR67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:58:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37592 "EHLO mail.kernel.org"
+        id S2390177AbfIDSKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:10:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732997AbfIDR66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:58:58 -0400
+        id S2390154AbfIDSKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:10:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6586022CF7;
-        Wed,  4 Sep 2019 17:58:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCBB72087E;
+        Wed,  4 Sep 2019 18:10:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619937;
-        bh=uun2tIggxofMoBfrIBSPSFtfiMuhO/XgwscPuae6WE0=;
+        s=default; t=1567620649;
+        bh=8D0XYH/BP7WlnI0S1acI+G0Wdhg7xl/oa49+rw9yleY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V5qgVTu28L96VcNxZsBINyYxPmqH0Z1eC+tEtyZcBKXyEatqQbh8KtcBbN2MFBiLO
-         mK8StjdHdzAg9qOKyu3z5tKv3cqo7mvLIF9NSiXZywcUZ1/pB8MJb26vSQlCDEGfZJ
-         IIdHENVxyKxR/fun28vVZSA5Mm4ruCFNNhPf+Boo=
+        b=Xunm3hnPfZ+iMt1qVPoCoOp07H6fLyLkv6F355StdGLtrzsUdv8cOscE/BMRz7wKt
+         Jfn7dso7GfcTIJbNFEw3FN510Ihx1unGJJ9aCMLKGWeg0v2YQx6xX/Hfsjj5PaERAb
+         Mxs4znMQaRVxXGiIE1O5DSSvStD+ReURsF1RN/F4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 13/83] isdn: hfcsusb: Fix mISDN driver crash caused by transfer buffer on the stack
+        Adrian Vladu <avladu@cloudbasesolutions.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Alessandro Pilotti <apilotti@cloudbasesolutions.com>
+Subject: [PATCH 5.2 042/143] tools: hv: fix KVP and VSS daemons exit code
 Date:   Wed,  4 Sep 2019 19:53:05 +0200
-Message-Id: <20190904175305.058301660@linuxfoundation.org>
+Message-Id: <20190904175315.705362983@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,83 +48,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d8a1de3d5bb881507602bc02e004904828f88711 ]
+[ Upstream commit b0995156071b0ff29a5902964a9dc8cfad6f81c0 ]
 
-Since linux 4.9 it is not possible to use buffers on the stack for DMA transfers.
+HyperV KVP and VSS daemons should exit with 0 when the '--help'
+or '-h' flags are used.
 
-During usb probe the driver crashes with "transfer buffer is on stack" message.
+Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
 
-This fix k-allocates a buffer to be used on "read_reg_atomic", which is a macro
-that calls "usb_control_msg" under the hood.
-
-Kernel 4.19 backtrace:
-
-usb_hcd_submit_urb+0x3e5/0x900
-? sched_clock+0x9/0x10
-? log_store+0x203/0x270
-? get_random_u32+0x6f/0x90
-? cache_alloc_refill+0x784/0x8a0
-usb_submit_urb+0x3b4/0x550
-usb_start_wait_urb+0x4e/0xd0
-usb_control_msg+0xb8/0x120
-hfcsusb_probe+0x6bc/0xb40 [hfcsusb]
-usb_probe_interface+0xc2/0x260
-really_probe+0x176/0x280
-driver_probe_device+0x49/0x130
-__driver_attach+0xa9/0xb0
-? driver_probe_device+0x130/0x130
-bus_for_each_dev+0x5a/0x90
-driver_attach+0x14/0x20
-? driver_probe_device+0x130/0x130
-bus_add_driver+0x157/0x1e0
-driver_register+0x51/0xe0
-usb_register_driver+0x5d/0x120
-? 0xf81ed000
-hfcsusb_drv_init+0x17/0x1000 [hfcsusb]
-do_one_initcall+0x44/0x190
-? free_unref_page_commit+0x6a/0xd0
-do_init_module+0x46/0x1c0
-load_module+0x1dc1/0x2400
-sys_init_module+0xed/0x120
-do_fast_syscall_32+0x7a/0x200
-entry_SYSENTER_32+0x6b/0xbe
-
-Signed-off-by: Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: Sasha Levin <sashal@kernel.org>
+Cc: Alessandro Pilotti <apilotti@cloudbasesolutions.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/hardware/mISDN/hfcsusb.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ tools/hv/hv_kvp_daemon.c | 2 ++
+ tools/hv/hv_vss_daemon.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
-index 6f19530ba2a93..726fba452f5f6 100644
---- a/drivers/isdn/hardware/mISDN/hfcsusb.c
-+++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
-@@ -1701,13 +1701,23 @@ hfcsusb_stop_endpoint(struct hfcsusb *hw, int channel)
- static int
- setup_hfcsusb(struct hfcsusb *hw)
- {
-+	void *dmabuf = kmalloc(sizeof(u_char), GFP_KERNEL);
- 	u_char b;
-+	int ret;
- 
- 	if (debug & DBG_HFC_CALL_TRACE)
- 		printk(KERN_DEBUG "%s: %s\n", hw->name, __func__);
- 
-+	if (!dmabuf)
-+		return -ENOMEM;
-+
-+	ret = read_reg_atomic(hw, HFCUSB_CHIP_ID, dmabuf);
-+
-+	memcpy(&b, dmabuf, sizeof(u_char));
-+	kfree(dmabuf);
-+
- 	/* check the chip id */
--	if (read_reg_atomic(hw, HFCUSB_CHIP_ID, &b) != 1) {
-+	if (ret != 1) {
- 		printk(KERN_DEBUG "%s: %s: cannot read chip id\n",
- 		       hw->name, __func__);
- 		return 1;
+diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
+index d7e06fe0270ee..0ce50c319cfd6 100644
+--- a/tools/hv/hv_kvp_daemon.c
++++ b/tools/hv/hv_kvp_daemon.c
+@@ -1386,6 +1386,8 @@ int main(int argc, char *argv[])
+ 			daemonize = 0;
+ 			break;
+ 		case 'h':
++			print_usage(argv);
++			exit(0);
+ 		default:
+ 			print_usage(argv);
+ 			exit(EXIT_FAILURE);
+diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
+index efe1e34dd91b4..8f813f5233d48 100644
+--- a/tools/hv/hv_vss_daemon.c
++++ b/tools/hv/hv_vss_daemon.c
+@@ -218,6 +218,8 @@ int main(int argc, char *argv[])
+ 			daemonize = 0;
+ 			break;
+ 		case 'h':
++			print_usage(argv);
++			exit(0);
+ 		default:
+ 			print_usage(argv);
+ 			exit(EXIT_FAILURE);
 -- 
 2.20.1
 
