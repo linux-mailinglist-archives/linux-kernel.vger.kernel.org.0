@@ -2,84 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBEA2A9436
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A35FA943E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730684AbfIDU4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 16:56:37 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:37219 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfIDU4g (ORCPT
+        id S1730520AbfIDU62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 16:58:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34844 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfIDU62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 16:56:36 -0400
-Received: by mail-qk1-f195.google.com with SMTP id s14so11621qkm.4;
-        Wed, 04 Sep 2019 13:56:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8rwFcbv8ysatmI5tLrkRcCFyc0txYVdfJq7aSGtxta8=;
-        b=uVL9Sh+brLAh2oENCqd9GJim4fJD6f/2ZPJbt6Puxmi4psn+XdiHSLo59Ugh36kWQt
-         MljWnlBoyhSXZD2ykdPQ7Q4iiPGItBMpJ3sEqC/qIY8Rsa7pXe0uxpCo1DEc47zTUksr
-         jACC6ZOq8Kt+wMprg4K5HzSmurXTfIuOWu3MV023tb5g2U53QY4Jy+WCN7b17fH2/2bQ
-         wYIo71njSc8A5L1CGB9kGGyP+bTUWPbmPHZ5ckXVjILvjRgrbK5url9teLhbenoPwL1I
-         q//vl1FZFeJGsF6VKcH8UdXS/C5VY1ryreYWlVPyXt1Dz8kLTFlVCvWdBszWXefGVRCS
-         GZEg==
-X-Gm-Message-State: APjAAAW9gKeRQ+jh0dDndqBfsTMWn++Nfq2ppvbPkpZpFt6wtRgBrBwT
-        /mcU1ArHaS6b9ND6f9cO+WHBPORm7bjgXr2dXRI=
-X-Google-Smtp-Source: APXvYqyNf6/R0CbOS/YJtFLQ3Jl51yOjJsflDfUUqw3iFf5p9kL3WvWb3FQ6id+qoirrK19x8FXOv/jcWr5ZQm0ML2c=
-X-Received: by 2002:a37:4051:: with SMTP id n78mr40135453qka.138.1567630595588;
- Wed, 04 Sep 2019 13:56:35 -0700 (PDT)
+        Wed, 4 Sep 2019 16:58:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RySvkA4PqDSjeZsiLdGzYmedvJgqhRvVYcnWJF/ahYY=; b=QO7/P7gHmvX8Mwzs+sfP6cUwP
+        F6s3cPMwa8vVNxBwmN+xo48tUORqOS2p2CJ0UixJzBsPvGt35pc5CcP2zOtTX8SlLSnWLVcXJjDfJ
+        iusNjIpcM2eN7kWOD52ArqmyDzy5XKpXI+lD3QEbklIp0CdV9cXhtT2DXz5P0ufrzw+6XMKvv9YRG
+        j1UKNWosS8ePE6QFjG0BJ+RnOMYmJFNyuUtDn4MZU9tPKS/LbzPH7hjscmzBQte7ymS6pWjp2xfCD
+        Iig8s1yLMMYULue2Dq6l0I3I7m0i7zxYg7dCvlaMeK0k/cExT0GW6z42tE6JvnY1cnzNN1+CPYiHu
+        e3EfEi7vw==;
+Received: from [2601:1c0:6200:6e8::e2a8]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5cME-00010R-Up; Wed, 04 Sep 2019 20:58:27 +0000
+Subject: Re: linux-next: Tree for Sep 4 (amd/display/)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        amd-gfx@lists.freedesktop.org,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>
+References: <20190904233443.3f73c46b@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6b70fdfd-1f18-1e55-2574-7be5997cfb2a@infradead.org>
+Date:   Wed, 4 Sep 2019 13:58:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <31a671ea-a00b-37da-5f30-558c3ab6d690@thelounge.net>
- <20190904150251.27004-1-deepa.kernel@gmail.com> <ECBC97E7-53C5-4B4C-BC4C-1FCDC4C371B9@dilger.ca>
-In-Reply-To: <ECBC97E7-53C5-4B4C-BC4C-1FCDC4C371B9@dilger.ca>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 4 Sep 2019 22:56:19 +0200
-Message-ID: <CAK8P3a1YnNbzoRE_=3_F9ppqNaS7TO3a+ccN7mCgwjSUuNcW3w@mail.gmail.com>
-Subject: Re: [PATCH] ext4: Reduce ext4 timestamp warnings
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Qian Cai <cai@lca.pw>, Jeff Layton <jlayton@kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190904233443.3f73c46b@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 8:39 PM Andreas Dilger <adilger@dilger.ca> wrote:
->
-> On Sep 4, 2019, at 09:02, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> >
-> > When ext4 file systems were created intentionally with 128 byte inodes,
-> > the rate-limited warning of eventual possible timestamp overflow are
-> > still emitted rather frequently.  Remove the warning for now.
-> >
-> > Discussion for whether any warning is needed,
-> > and where it should be emitted, can be found at
-> > https://lore.kernel.org/lkml/1567523922.5576.57.camel@lca.pw/.
-> > I can post a separate follow-up patch after the conclusion.
-> >
-> > Reported-by: Qian Cai <cai@lca.pw>
-> > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
->
-> I'd be in favor of a severely rare-limited warning in the actual case
-> that Y2038 timestamps cannot be stored, but the current message is
-> too verbose for now and I agree it is better to remove it while discussions
-> on the best solution are underway.
->
-> Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+On 9/4/19 6:34 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> News: this will be the last linux-next I will release until Sept 30.
+> 
+> Changes since 20190903:
+> 
 
-Agreed completely.
+on x86_64:
 
-Applied on top of the y2038 branch now, thanks a lot for the update!
+In file included from ../drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn20/display_rq_dlg_calc_20v2.c:77:0:
+../drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn20/../dml_inline_defs.h: In function ‘dml_min’:
+../drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn20/../dml_inline_defs.h:34:1: error: SSE register return with SSE disabled
 
-This should be part of tomorrow's linux-next then.
 
-       Arnd
+-- 
+~Randy
