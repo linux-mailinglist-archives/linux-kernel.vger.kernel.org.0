@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D7C0A8E57
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA2DA90E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387851AbfIDR50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:57:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35302 "EHLO mail.kernel.org"
+        id S2390084AbfIDSMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:12:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387834AbfIDR5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:57:22 -0400
+        id S2390483AbfIDSMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:12:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F10812339D;
-        Wed,  4 Sep 2019 17:57:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A4B2208E4;
+        Wed,  4 Sep 2019 18:12:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619841;
-        bh=XBqv6luQ5CXrM3bvctgYpcF6Xz+G0qfVbm9g6i0gai8=;
+        s=default; t=1567620742;
+        bh=JGrzN6UeZqnNk2EPqbW69dSFxVo/JYTqdlEC7Nk+WQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=scnxmbe3IEf2D2d2vtaLatFUDsaMqeCrFfNQFU8kwg8uA1arP/i6OkquRHmAQR2gz
-         No1pil25rMAUk0NI0Kj0TQaib1bqzRh3lAdmSjh8paNSR4Iax/heLWlTrfMnIbxTXm
-         6s7gLmr3GgzZCoBCR+lSdWegyJHKnIfRNFnPj+GQ=
+        b=eZABwiQk8lpyN2X19jM9S0dnHjJ7EBRmZyHADVBs1Pk8TcteL81KALqRwQ/FHLrtn
+         hb49g30Ss+qsjj+p4VL9Rf0/da7NhzXcyUnuoeVVVH1dBMiPWuD5MArrYFSL+QXLQh
+         Rhb2eBy76HRSm/osGOQ0LkDaWcz43eGxAbrZ54iA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 53/77] usb: host: fotg2: restart hcd after port reset
-Date:   Wed,  4 Sep 2019 19:53:40 +0200
-Message-Id: <20190904175308.345191767@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 5.2 078/143] usbtmc: more sanity checking for packet size
+Date:   Wed,  4 Sep 2019 19:53:41 +0200
+Message-Id: <20190904175317.111350107@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +42,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 777758888ffe59ef754cc39ab2f275dc277732f4 ]
+From: Oliver Neukum <oneukum@suse.com>
 
-On the Gemini SoC the FOTG2 stalls after port reset
-so restart the HCD after each port reset.
+commit de7b9aa633b693e77942e12f1769506efae6917b upstream.
 
-Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/20190810150458.817-1-linus.walleij@linaro.org
+A malicious device can make the driver divide ny zero
+with a nonsense maximum packet size.
+
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190820092826.17694-1-oneukum@suse.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/usb/host/fotg210-hcd.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/class/usbtmc.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/usb/host/fotg210-hcd.c b/drivers/usb/host/fotg210-hcd.c
-index 2341af4f34909..11b3a8c57eabc 100644
---- a/drivers/usb/host/fotg210-hcd.c
-+++ b/drivers/usb/host/fotg210-hcd.c
-@@ -1653,6 +1653,10 @@ static int fotg210_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
- 			/* see what we found out */
- 			temp = check_reset_complete(fotg210, wIndex, status_reg,
- 					fotg210_readl(fotg210, status_reg));
-+
-+			/* restart schedule */
-+			fotg210->command |= CMD_RUN;
-+			fotg210_writel(fotg210, fotg210->command, &fotg210->regs->command);
- 		}
+--- a/drivers/usb/class/usbtmc.c
++++ b/drivers/usb/class/usbtmc.c
+@@ -2362,8 +2362,11 @@ static int usbtmc_probe(struct usb_inter
+ 		goto err_put;
+ 	}
  
- 		if (!(temp & (PORT_RESUME|PORT_RESET))) {
--- 
-2.20.1
-
++	retcode = -EINVAL;
+ 	data->bulk_in = bulk_in->bEndpointAddress;
+ 	data->wMaxPacketSize = usb_endpoint_maxp(bulk_in);
++	if (!data->wMaxPacketSize)
++		goto err_put;
+ 	dev_dbg(&intf->dev, "Found bulk in endpoint at %u\n", data->bulk_in);
+ 
+ 	data->bulk_out = bulk_out->bEndpointAddress;
 
 
