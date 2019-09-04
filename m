@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45EE9A8E74
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98EAAA910E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387989AbfIDR6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:58:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36388 "EHLO mail.kernel.org"
+        id S2390644AbfIDSNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:13:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387980AbfIDR6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:58:04 -0400
+        id S2390637AbfIDSNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:13:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5D5F22CED;
-        Wed,  4 Sep 2019 17:58:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C6D122CEA;
+        Wed,  4 Sep 2019 18:13:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619884;
-        bh=G12k7nB8oMz3+GOLYxp3n6dUajHE3heh+g6YU64/Aws=;
+        s=default; t=1567620793;
+        bh=e4VEkKiQELvj7Z6AAa95aiGEQyZjhunkkdsvdZzpoo8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dekeOPyxYpwJEFMBKmhilP+1E/XGsj8fYwTaFIB8eOYcxcOM3P4G2DXJGPoX+4cPd
-         L5hxFHdGVyOtA46I2YOCGvYGH92MXA3Swh3fQHIy4afDQ0aKc0jYqq6cRBNtD2Tluo
-         hx69MiJgJykEE/vGE3lmtv1mIXnSD/se/yJz3fBQ=
+        b=Q0gmUIjhao0S0JdrOJsQcjF6V6r+0e1r6Tcw18evvsxdb8vh56jMXiUSxSHg9wv5b
+         hHJk86G/RXUciac/EFz1ckKIoxpkQ2ctMF8ZZs9FeEKATMxZdPegoExQIsPK8wI/x0
+         +bnj+6CI2dufSg0x6mAhQFgpY1xUTscAMKaeDUF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.4 71/77] mmc: sdhci-of-at91: add quirk for broken HS200
+        stable@vger.kernel.org, Philip Langdale <philipl@overt.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Manuel Presnitz <mail@mpy.de>
+Subject: [PATCH 5.2 095/143] mmc: core: Fix init of SD cards reporting an invalid VDD range
 Date:   Wed,  4 Sep 2019 19:53:58 +0200
-Message-Id: <20190904175309.989130693@linuxfoundation.org>
+Message-Id: <20190904175317.892860511@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-commit 7871aa60ae0086fe4626abdf5ed13eeddf306c61 upstream.
+commit 72741084d903e65e121c27bd29494d941729d4a1 upstream.
 
-HS200 is not implemented in the driver, but the controller claims it
-through caps. Remove it via a quirk, to make sure the mmc core do not try
-to enable HS200, as it causes the eMMC initialization to fail.
+The OCR register defines the supported range of VDD voltages for SD cards.
+However, it has turned out that some SD cards reports an invalid voltage
+range, for example having bit7 set.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Fixes: bb5f8ea4d514 ("mmc: sdhci-of-at91: introduce driver for the Atmel SDMMC")
-Cc: stable@vger.kernel.org # v4.4+
+When a host supports MMC_CAP2_FULL_PWR_CYCLE and some of the voltages from
+the invalid VDD range, this triggers the core to run a power cycle of the
+card to try to initialize it at the lowest common supported voltage.
+Obviously this fails, since the card can't support it.
+
+Let's fix this problem, by clearing invalid bits from the read OCR register
+for SD cards, before proceeding with the VDD voltage negotiation.
+
+Cc: stable@vger.kernel.org
+Reported-by: Philip Langdale <philipl@overt.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Philip Langdale <philipl@overt.org>
+Tested-by: Philip Langdale <philipl@overt.org>
+Tested-by: Manuel Presnitz <mail@mpy.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-of-at91.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/core/sd.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/mmc/host/sdhci-of-at91.c
-+++ b/drivers/mmc/host/sdhci-of-at91.c
-@@ -144,6 +144,9 @@ static int sdhci_at91_probe(struct platf
+--- a/drivers/mmc/core/sd.c
++++ b/drivers/mmc/core/sd.c
+@@ -1292,6 +1292,12 @@ int mmc_attach_sd(struct mmc_host *host)
+ 			goto err;
+ 	}
  
- 	sdhci_get_of_property(pdev);
- 
-+	/* HS200 is broken at this moment */
-+	host->quirks2 = SDHCI_QUIRK2_BROKEN_HS200;
++	/*
++	 * Some SD cards claims an out of spec VDD voltage range. Let's treat
++	 * these bits as being in-valid and especially also bit7.
++	 */
++	ocr &= ~0x7FFF;
 +
- 	ret = sdhci_add_host(host);
- 	if (ret)
- 		goto clocks_disable_unprepare;
+ 	rocr = mmc_select_voltage(host, ocr);
+ 
+ 	/*
 
 
