@@ -2,91 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A41B1A8DA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD9AA8DAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731895AbfIDRZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:25:17 -0400
-Received: from sauhun.de ([88.99.104.3]:44264 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbfIDRZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:25:17 -0400
-Received: from localhost (p54B337F1.dip0.t-ipconnect.de [84.179.55.241])
-        by pokefinder.org (Postfix) with ESMTPSA id E42F02C08C3;
-        Wed,  4 Sep 2019 19:25:14 +0200 (CEST)
-Date:   Wed, 4 Sep 2019 19:25:14 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     miquel.raynal@bootlin.com, rui.zhang@intel.com,
-        edubezval@gmail.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, eric@anholt.net, wahrenst@gmx.net,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        mmayer@broadcom.com, computersforpeace@gmail.com,
-        gregory.0xf0@gmail.com, matthias.bgg@gmail.com, agross@kernel.org,
-        heiko@sntech.de, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, marc.w.gonzalez@free.fr, mans@mansr.com,
-        talel@amazon.com, jun.nie@linaro.org, shawnguo@kernel.org,
-        phil@raspberrypi.org, gregkh@linuxfoundation.org,
-        david.hernandezsanchez@st.com, horms+renesas@verge.net.au,
-        wsa+renesas@sang-engineering.com,
-        bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH -next 15/15] thermal: rcar: use
- devm_platform_ioremap_resource() to simplify code
-Message-ID: <20190904172514.GA2602@kunai>
-References: <20190904122939.23780-1-yuehaibing@huawei.com>
- <20190904122939.23780-16-yuehaibing@huawei.com>
+        id S1732075AbfIDRZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:25:52 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:44435 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726589AbfIDRZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:25:52 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 92912221CF;
+        Wed,  4 Sep 2019 13:25:51 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 04 Sep 2019 13:25:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=u9bMn1zukKv1Hh6yTnH9HI+sDfv
+        YF98vUBzUJo2wB3U=; b=OgrPG8MDdFNrrodczUrZS8zdRqTMSRDXMA/LeV9IjsS
+        vGLBbsQQHixUXCoH9o6dNnOconyEVqNWy3uYbMshtbUdNjHj5JDh8Yp+tWLWruDr
+        kxdzoC2I/R/nGxpZLc8STD1cKOK1XaFwDXyslPLbopWmla56G0K7SMIkdFxprgyj
+        9+CX0wurTn2Pb/Ys3CSZdoOVQL/3pjbL3Je9chtKwt/OYrsvs0XH62aOdj5j7btm
+        QyFEvtYErJ8o62LOaVCYATcWBl2uFJ/Mv+XjTKLrTmeE6zg8iRc3v2L2YA3J9HMA
+        aAOQ9wnsMW4NsRxF+UkcpUgL9qoErjJJVhGx3iV39Ug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=u9bMn1
+        zukKv1Hh6yTnH9HI+sDfvYF98vUBzUJo2wB3U=; b=XRl6AQgyIoguGW9YejvZ84
+        4ofofym1GgUD5vuItjO3XO1uuRiJD0Gvyq4oNerr+XJRFsO/hbDC4E1dt0Pq/WsI
+        ykAjpKths+74DadELoLM3gLd/YUo2ShgfPCexk+oVirhhD2vTyd8U6x9HsXvW33b
+        XfVv7QHhQNlAwRtisMF5YW7kJndzd9XIEuoPJujGNPNZr1bYQ/KQWqdC6yCq5Yf/
+        m9MGQtUDeMPS1NUcDABhznWZI/dCDmHiLAl6gcWWzCo0nk9/IDR/kNGmy+WTTUU3
+        h9Rxb3ZHrVmntOGVscoihUJapZFEoEoe1RlXdsjHuV0PbRmNmzQRdJHsBIXYwS1g
+        ==
+X-ME-Sender: <xms:nvNvXVuX4lOaTn0ykdGjS5BNX_b3eAcilqGme9epzllWCdQQEo2KKA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudejhedguddutdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucffohhmrghinhepfhhrvggvug
+    gvshhkthhophdrohhrghenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiii
+    gvpedt
+X-ME-Proxy: <xmx:nvNvXY_bFWiVwWUbWOg9H7tGZvI05AgpFNIRd-TaW34fRAHPgnrYdw>
+    <xmx:nvNvXVuTiqTH9CM2BVSWqklUfbR7R3Cg4IcbWdQjC5pe3C9O7Ga6Qw>
+    <xmx:nvNvXe5GtWxvLqsk6iXj8X2QdeDvYLdo0RZmgb9MaZjvfgEMt-RC0Q>
+    <xmx:n_NvXR5JnQ_I-InaallQbf1ILZOP-cYAduxbU3wtYs5_uUyBcjLPCw>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8743DD60062;
+        Wed,  4 Sep 2019 13:25:50 -0400 (EDT)
+Date:   Wed, 4 Sep 2019 19:25:48 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     stable@vger.kernel.org, chris@chris-wilson.co.uk, airlied@linux.ie,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        arnd@arndb.de, orsonzhai@gmail.com, vincent.guittot@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [BACKPORT 4.14.y 1/8] drm/i915/fbdev: Actually configure untiled
+ displays
+Message-ID: <20190904172548.GA10973@kroah.com>
+References: <cover.1567492316.git.baolin.wang@linaro.org>
+ <5723d9006de706582fb46f9e1e3eb8ce168c2126.1567492316.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190904122939.23780-16-yuehaibing@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5723d9006de706582fb46f9e1e3eb8ce168c2126.1567492316.git.baolin.wang@linaro.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 03, 2019 at 02:55:26PM +0800, Baolin Wang wrote:
+> From: Chris Wilson <chris@chris-wilson.co.uk>
+> 
+> If we skipped all the connectors that were not part of a tile, we would
+> leave conn_seq=0 and conn_configured=0, convincing ourselves that we
+> had stagnated in our configuration attempts. Avoid this situation by
+> starting conn_seq=ALL_CONNECTORS, and repeating until we find no more
+> connectors to configure.
+> 
+> Fixes: 754a76591b12 ("drm/i915/fbdev: Stop repeating tile configuration on stagnation")
+> Reported-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Link: https://patchwork.freedesktop.org/patch/msgid/20190215123019.32283-1-chris@chris-wilson.co.uk
+> Cc: <stable@vger.kernel.org> # v3.19+
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+>  drivers/gpu/drm/i915/intel_fbdev.c |   12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
 
---AhhlLboLdkugWU4S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What is the git commit id of this patch in Linus's tree?
 
-On Wed, Sep 04, 2019 at 08:29:39PM +0800, YueHaibing wrote:
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
->=20
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Can you please add that as the first line of the changelog like is done
+with all other stable patches?  That way I can verify that what you
+posted here is the correct one.
 
-I think for such straightforward (and manifold) conversions, one patch
-per subsystem is better than one patch per driver. But this is not my
-subsystem, so I'll leave it to the thermal maintainers.
+Please fix the up for all of these and resend.
 
+thanks,
 
---AhhlLboLdkugWU4S
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1v83EACgkQFA3kzBSg
-KbZOUg/+Jw+mcZ79x8rHt2nPfBEtW1lYrickXXODhze40rPG/rARNtQxdyBIRKOj
-cl3g5q/PL2U0k4nrUuD3osCpUNceFye3A7o5eE81j8hSOBvwADNtAIPaIXenudHD
-P8krbODpUIy3ifIf24cUnCMr6teo0CduolmrCpDlmd1LWJmRpbdY+sejDVi8qAzs
-xJDN67R6O8lEDJSS0o63xXu4+ZSizqcfVQqlWdkTxc3wqHhdUXFLeCWH5Ow1RsbP
-ArXyH7xGG9xQxkiKavZSxYciob3PqcvRdfDv4dNRgNpJFir+mxbJVpQ2IyKr/hyn
-jYzzcz9sd02cXsxAOURY1OS7AhPUiRl5XZIhWR+0VRXwJhBTkpHh/Ro4RRgzMHCC
-UnRZgonQvO50HpmC3IHKPjq2rvKYYAYF2kr+rTjAiXsT2ZgECU5nQRypkMPy3CX2
-YdP9JnaDd7OpDw3+tvPRmbEpAkjcXK5QQp4vHnqaTrnaqyxbMVA6uRt68uSbNHIY
-gkTny6PNBTAr/0scsb7xo481yPA0MOCeShSAj6Dvk0pagXrfE4AgWf1vLPbUieUZ
-PrZ+0B6jIYMKswq8FVvwSvn+Jrk/RFvFOLFpiuCnWZx0kDz8BDVrkQrwz5NsNm7D
-NNOQUh/6TBD6/1TLapgeH4dtXhje3qlv8OzuEYhnkwS4UX3HvAI=
-=XQ0z
------END PGP SIGNATURE-----
-
---AhhlLboLdkugWU4S--
+greg k-h
