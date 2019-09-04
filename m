@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD286A8F5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 190DAA904A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388888AbfIDSDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:03:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43562 "EHLO mail.kernel.org"
+        id S2389850AbfIDSIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:08:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388316AbfIDSDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:03:11 -0400
+        id S2389832AbfIDSIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:08:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9F4522CEA;
-        Wed,  4 Sep 2019 18:03:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9ECE206B8;
+        Wed,  4 Sep 2019 18:08:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620190;
-        bh=3M5ixd/WOK2yddgQVzoxlVi3ZV7hybbQmQGDd2w2B8M=;
+        s=default; t=1567620523;
+        bh=pfHA4ghX1sdzBre+QSIFvxbGOXnT+CmSpcZh5msUerA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A7YCm8PtMpAC7oDwnA2axl9NGoXVvPiVUYCFZpcn01sUAnFP64giwzH3Y5TMZtpF8
-         Lf4fcnet7Wsv3TCVyTmYfBaMMdNzs4Wn0n0BImdgMvowAHYKPSUIHlJ3g40JK4DJmr
-         49beiVQvcjHjipO4fDrUNO6EkVWMo3+RoQy9qlLc=
+        b=AONVxaHq9vJc5YZCARfcJHeEGKpMQhhyhZar5pEiHf+vAblj+7N+sFogM2dtnT09O
+         dp2C4afac5+a4+vXd7lorb0aYhBcAZXlQ3wR6S9vCB4pnnbBDQ2wIkwuE6ECOg5fmn
+         XksfdwnptGCgpvE8c1xKuP0n0aNHW92nxxhDRb+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+4a75454b9ca2777f35c7@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 23/57] ALSA: seq: Fix potential concurrent access to the deleted pool
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Bandan Das <bsd@redhat.com>
+Subject: [PATCH 4.19 49/93] x86/apic: Do not initialize LDR and DFR for bigsmp
 Date:   Wed,  4 Sep 2019 19:53:51 +0200
-Message-Id: <20190904175304.218543213@linuxfoundation.org>
+Message-Id: <20190904175307.302636845@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +43,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Bandan Das <bsd@redhat.com>
 
-commit 75545304eba6a3d282f923b96a466dc25a81e359 upstream.
+commit bae3a8d3308ee69a7dbdf145911b18dfda8ade0d upstream.
 
-The input pool of a client might be deleted via the resize ioctl, the
-the access to it should be covered by the proper locks.  Currently the
-only missing place is the call in snd_seq_ioctl_get_client_pool(), and
-this patch papers over it.
+Legacy apic init uses bigsmp for smp systems with 8 and more CPUs. The
+bigsmp APIC implementation uses physical destination mode, but it
+nevertheless initializes LDR and DFR. The LDR even ends up incorrectly with
+multiple bit being set.
 
-Reported-by: syzbot+4a75454b9ca2777f35c7@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This does not cause a functional problem because LDR and DFR are ignored
+when physical destination mode is active, but it triggered a problem on a
+32-bit KVM guest which jumps into a kdump kernel.
+
+The multiple bits set unearthed a bug in the KVM APIC implementation. The
+code which creates the logical destination map for VCPUs ignores the
+disabled state of the APIC and ends up overwriting an existing valid entry
+and as a result, APIC calibration hangs in the guest during kdump
+initialization.
+
+Remove the bogus LDR/DFR initialization.
+
+This is not intended to work around the KVM APIC bug. The LDR/DFR
+ininitalization is wrong on its own.
+
+The issue goes back into the pre git history. The fixes tag is the commit
+in the bitkeeper import which introduced bigsmp support in 2003.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+
+Fixes: db7b9e9f26b8 ("[PATCH] Clustered APIC setup for >8 CPU systems")
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Bandan Das <bsd@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190826101513.5080-2-bsd@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_clientmgr.c |    3 +--
- sound/core/seq/seq_fifo.c      |   17 +++++++++++++++++
- sound/core/seq/seq_fifo.h      |    2 ++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+ arch/x86/kernel/apic/bigsmp_32.c |   24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -1821,8 +1821,7 @@ static int snd_seq_ioctl_get_client_pool
- 	if (cptr->type == USER_CLIENT) {
- 		info->input_pool = cptr->data.user.fifo_pool_size;
- 		info->input_free = info->input_pool;
--		if (cptr->data.user.fifo)
--			info->input_free = snd_seq_unused_cells(cptr->data.user.fifo->pool);
-+		info->input_free = snd_seq_fifo_unused_cells(cptr->data.user.fifo);
- 	} else {
- 		info->input_pool = 0;
- 		info->input_free = 0;
---- a/sound/core/seq/seq_fifo.c
-+++ b/sound/core/seq/seq_fifo.c
-@@ -280,3 +280,20 @@ int snd_seq_fifo_resize(struct snd_seq_f
- 
- 	return 0;
+--- a/arch/x86/kernel/apic/bigsmp_32.c
++++ b/arch/x86/kernel/apic/bigsmp_32.c
+@@ -38,32 +38,12 @@ static int bigsmp_early_logical_apicid(i
+ 	return early_per_cpu(x86_cpu_to_apicid, cpu);
  }
-+
-+/* get the number of unused cells safely */
-+int snd_seq_fifo_unused_cells(struct snd_seq_fifo *f)
-+{
-+	unsigned long flags;
-+	int cells;
-+
-+	if (!f)
-+		return 0;
-+
-+	snd_use_lock_use(&f->use_lock);
-+	spin_lock_irqsave(&f->lock, flags);
-+	cells = snd_seq_unused_cells(f->pool);
-+	spin_unlock_irqrestore(&f->lock, flags);
-+	snd_use_lock_free(&f->use_lock);
-+	return cells;
-+}
---- a/sound/core/seq/seq_fifo.h
-+++ b/sound/core/seq/seq_fifo.h
-@@ -68,5 +68,7 @@ int snd_seq_fifo_poll_wait(struct snd_se
- /* resize pool in fifo */
- int snd_seq_fifo_resize(struct snd_seq_fifo *f, int poolsize);
  
-+/* get the number of unused cells safely */
-+int snd_seq_fifo_unused_cells(struct snd_seq_fifo *f);
+-static inline unsigned long calculate_ldr(int cpu)
+-{
+-	unsigned long val, id;
+-
+-	val = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
+-	id = per_cpu(x86_bios_cpu_apicid, cpu);
+-	val |= SET_APIC_LOGICAL_ID(id);
+-
+-	return val;
+-}
+-
+ /*
+- * Set up the logical destination ID.
+- *
+- * Intel recommends to set DFR, LDR and TPR before enabling
+- * an APIC.  See e.g. "AP-388 82489DX User's Manual" (Intel
+- * document number 292116).  So here it goes...
++ * bigsmp enables physical destination mode
++ * and doesn't use LDR and DFR
+  */
+ static void bigsmp_init_apic_ldr(void)
+ {
+-	unsigned long val;
+-	int cpu = smp_processor_id();
+-
+-	apic_write(APIC_DFR, APIC_DFR_FLAT);
+-	val = calculate_ldr(cpu);
+-	apic_write(APIC_LDR, val);
+ }
  
- #endif
+ static void bigsmp_setup_apic_routing(void)
 
 
