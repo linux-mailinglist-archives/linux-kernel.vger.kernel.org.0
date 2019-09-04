@@ -2,104 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E049A9696
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 00:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3F06A96AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 00:46:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbfIDWkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 18:40:04 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34568 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbfIDWkD (ORCPT
+        id S1729963AbfIDWqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 18:46:34 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41412 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727156AbfIDWqd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 18:40:03 -0400
-Received: by mail-qt1-f195.google.com with SMTP id a13so464782qtj.1;
-        Wed, 04 Sep 2019 15:40:03 -0700 (PDT)
+        Wed, 4 Sep 2019 18:46:33 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a4so338134ljk.8
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 15:46:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HnUeqUgvHmEsTezEaxVg2P6RFT85Zk7uuJIhbn7279Y=;
-        b=pHvO1Y9pNOVKwRDHUIFgh/rciGlFlYVWTkT0XBPv3nosE3PGDq9qMpuxybiiIAGv+e
-         u1DXeKgOt8lvb3xWzxLbn3rXD8Y543Cn6/f/S0fTlQJ6G6vexCPK09TX1fpmWfEW3VC8
-         1O0W2KL70cG2ClE3xVKoRW1RCvdz6CGu49Pfadneo99ROd27P3CrwHzIN1Jt/qytAZI0
-         yu4BMgLor1zn5Z75g9el0823gTTlROvmhmqDtDpQxLhA/g08zB7EKeAgCWJXY7qsw8YF
-         w1NOUlfLyLJ49HAykmfTN7k1d5tqxaRCuCVdRD7PEISkHjDWi3NxNA0FDU+aUcrH4K39
-         RKfg==
+         :cc;
+        bh=KFDhCyHzhyiLnyceYcteUHqOXGgh38Kg6TIOg9RDlV8=;
+        b=GnnwuO2FC8JvRpMBdQIyMOw63KWp0i8RWU7BAf9vhwmdfauk+kGPRrhGsnlnlPAmBt
+         Cx6hzCIVK4L+kzxznEGXiVTPGueSaoLKTwELcbVCO2oVI6bZuWttjzsqT9tZPNkgY/TA
+         7QyH0CjS5KTQcx4hIjs9o8ztIuxjlBT486QSI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HnUeqUgvHmEsTezEaxVg2P6RFT85Zk7uuJIhbn7279Y=;
-        b=GgMZ8czmYgoGpPrbAZ8e+r1Kbs45YJ/wfZpdhDSP0TP0U4xlF9esDrpI3q2ZoFOCUC
-         PVdwV0m5uZR25dNTONyNO2mbusV1NBCW/U6M0lI9s4LZ/aROvcQa16FMBNrLhbQNDoui
-         8dZClNb/c/V/xbBxHKkmwQEqErwc4H2itcFMVXGEpza6qU7EiA0ZwqzlGlCc6NOpZKGn
-         Cj1XvQpIdYvyzYkg8U8sxVFy9ONAHzXCc/H6puKwZQ5D/UPcsFCWaJNipKyH98PY/TAG
-         4KtCyfhaBJhYjK5VvdL2HMqOfE89oy4yptOwDzuLQ9IgUDFx7+vCVarDnDaVcU5DQ+d4
-         agfQ==
-X-Gm-Message-State: APjAAAVI/tzUl/MdZW5bDHOnRZViJ0AUnOvDXJoGGYD+07sSHooCXYZf
-        6aB+KfX2l6YUlYCkbOSn2PeTlhrgXcKtZXzD8YM=
-X-Google-Smtp-Source: APXvYqyH3l5wJ+MhaBXYfkRtMRlhZBfMa58sa4xh3qswk4Z/y/j0Dvr7JPVsQW+3Jh0f/2/JjsSBQjhIBEdTRPhtZ3M=
-X-Received: by 2002:a0c:fba4:: with SMTP id m4mr74237qvp.136.1567636802622;
- Wed, 04 Sep 2019 15:40:02 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=KFDhCyHzhyiLnyceYcteUHqOXGgh38Kg6TIOg9RDlV8=;
+        b=EeoK4rw/UsBxpj3q50vh7kmH8jkHabTEIW/jK1liPEmo1Vl19qBR1rmZWFxg+pD7Wi
+         FQZUZHuFdDPicsINGV0+qGvra+UdpopMS+RVr2N7TC+Fz4JVP3XOzir+AZYseVAs9gvk
+         w/l6ep/x0Jf5O+UGJvXNt03z9vIZUHaPpX1HMQ/PBEy89vAsO4/s0ySOp3f8tKZFfgWX
+         djV2pGtvBn8ndmQrXRMY96htnMp3D5Knu9ypUQ1T0jSTKP+Vn3uNUsCmkQKe2cYW3t2i
+         FDNZlKeGRexaB58TFS0Mp/UqySWEkbsFO/6FlbcpXvHDRH3BMu4i5rKdfuoNX+pQbTfB
+         gC4w==
+X-Gm-Message-State: APjAAAUZg9LcOLqsNvd4968rGKdGbhB2sFguh44amyTbzbphcfDuPoWS
+        Y88zj5kKW8VLnWwVYsUTNALLD6LK9Qs=
+X-Google-Smtp-Source: APXvYqyrCxx0DFMDkIzNQH+/2HhBiaLSuyaL7wZsogJXJTkxFk/vIsJjLVWLl7UPp55ThiWMLSkkEg==
+X-Received: by 2002:a2e:2953:: with SMTP id u80mr10998lje.233.1567637191650;
+        Wed, 04 Sep 2019 15:46:31 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id b205sm48517lfg.72.2019.09.04.15.46.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2019 15:46:31 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id x18so377772ljh.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 15:46:31 -0700 (PDT)
+X-Received: by 2002:a2e:814d:: with SMTP id t13mr24885ljg.72.1567636715921;
+ Wed, 04 Sep 2019 15:38:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190904082232.GA171180@LGEARND20B15> <20190904084525.GB4925@kroah.com>
-In-Reply-To: <20190904084525.GB4925@kroah.com>
-From:   Austin Kim <austindh.kim@gmail.com>
-Date:   Thu, 5 Sep 2019 07:39:53 +0900
-Message-ID: <CADLLry5WHSTyWzRa0bg0Dsnm8rO-cVF=i1CkzKN+DMXv9wq-Xw@mail.gmail.com>
-Subject: Re: [PATCH] media: meson: Add NULL check after the call to kmalloc()
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mchehab@kernel.org, khilman@baylibre.com, mjourdan@baylibre.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-11-cyphar@cyphar.com>
+ <CAHk-=wiod1rQMU+6Zew=cLE8uX4tUdf42bM5eKngMnNVS2My7g@mail.gmail.com>
+ <20190904214856.vnvom7h5xontvngq@yavin.dot.cyphar.com> <CAHk-=wgcJq21Hydh7Tx5-o8empoPp7ULDBw0Am-du_Pa+fcftQ@mail.gmail.com>
+ <20592.1567636276@warthog.procyon.org.uk>
+In-Reply-To: <20592.1567636276@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 4 Sep 2019 15:38:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg7Wq1kj8kZ+SSpfU_o991woW60NWca9yBA2ccs2eNx8Q@mail.gmail.com>
+Message-ID: <CAHk-=wg7Wq1kj8kZ+SSpfU_o991woW60NWca9yBA2ccs2eNx8Q@mail.gmail.com>
+Subject: Re: [PATCH v12 10/12] namei: aggressively check for nd->root escape
+ on ".." resolution
+To:     David Howells <dhowells@redhat.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019=EB=85=84 9=EC=9B=94 4=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 5:45, Gr=
-eg KH <gregkh@linuxfoundation.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+On Wed, Sep 4, 2019 at 3:31 PM David Howells <dhowells@redhat.com> wrote:
 >
-> On Wed, Sep 04, 2019 at 05:22:32PM +0900, Austin Kim wrote:
-> > If the kmalloc() return NULL, the NULL pointer dereference will occur.
-> >       new_ts->ts =3D ts;
-> >
-> > Add exception check after the call to kmalloc() is made.
-> >
-> > Signed-off-by: Austin Kim <austindh.kim@gmail.com>
-> > ---
-> >  drivers/staging/media/meson/vdec/vdec_helpers.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/staging/media/meson/vdec/vdec_helpers.c b/drivers/=
-staging/media/meson/vdec/vdec_helpers.c
-> > index f16948b..e7e56d5 100644
-> > --- a/drivers/staging/media/meson/vdec/vdec_helpers.c
-> > +++ b/drivers/staging/media/meson/vdec/vdec_helpers.c
-> > @@ -206,6 +206,10 @@ void amvdec_add_ts_reorder(struct amvdec_session *=
-sess, u64 ts, u32 offset)
-> >       unsigned long flags;
-> >
-> >       new_ts =3D kmalloc(sizeof(*new_ts), GFP_KERNEL);
-> > +     if (!new_ts) {
-> > +             dev_err(sess->core->dev, "Failed to kmalloc()\n");
->
-> Did you run this through checkpatch?  I think it will say that this line
-> is not ok.
->
-> > +             return;
->
-> Shouldn't you return an -ENOMEM error somehow?
+> It ought to be reasonably easy to make them per-sb at least, I think.  We
+> don't allow cross-super rename, right?
 
-I agreed with your feedback.
-Let me take a look at the code more and then resend the patch if necessary.
+Right now the sequence count handling very much depends on it being a
+global entity on the reader side, at least.
 
-Thanks,
-Austin Kim
->
-> thanks,
->
-> greg k-h
+And while the rename sequence count could (and probably should) be
+per-sb, the same is very much not true of the mount one.
+
+So the rename seqcount is likely easier to fix than the mount one, but
+neither of them are entirely trivial, afaik.
+
+               Linus
