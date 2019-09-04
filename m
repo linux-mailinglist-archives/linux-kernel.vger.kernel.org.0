@@ -2,73 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7C32A7FA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E5A5A7FAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729461AbfIDJqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 05:46:43 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33024 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725840AbfIDJqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:46:43 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A41B6469D31384F761E5;
-        Wed,  4 Sep 2019 17:46:40 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
- 17:46:34 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <daniel@zonque.org>, <haojian.zhuang@gmail.com>,
-        <robert.jarzmik@free.fr>, <balbi@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] usb: gadget: pxa27x_udc: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 4 Sep 2019 17:45:57 +0800
-Message-ID: <20190904094557.22884-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1729745AbfIDJrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 05:47:25 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:47229 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725840AbfIDJrZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 05:47:25 -0400
+X-UUID: 20d97f0ab7ab4b9487fb870f7a985cba-20190904
+X-UUID: 20d97f0ab7ab4b9487fb870f7a985cba-20190904
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 782800987; Wed, 04 Sep 2019 17:47:18 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 4 Sep
+ 2019 17:47:15 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 4 Sep 2019 17:47:15 +0800
+Message-ID: <1567590435.7317.55.camel@mhfsdcap03>
+Subject: Re: [Patch V8 6/8] arm64: tegra: Enable xudc on Jetson TX1
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Nagarjuna Kristam <nkristam@nvidia.com>
+CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Date:   Wed, 4 Sep 2019 17:47:15 +0800
+In-Reply-To: <1567585440-13751-7-git-send-email-nkristam@nvidia.com>
+References: <1567585440-13751-1-git-send-email-nkristam@nvidia.com>
+         <1567585440-13751-7-git-send-email-nkristam@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: D87928C5A73737F4FDAFFCF7D19F9B4E08A5B9C99695FB703669287E41A94F292000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Wed, 2019-09-04 at 13:53 +0530, Nagarjuna Kristam wrote:
+> Enable XUSB device mode driver for USB0 slot on Jetson TX1.
+> 
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> Reviewed-by: JC Kuo <jckuo@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 31 +++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> index a7dc319..6aba1ba 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> @@ -1362,7 +1362,7 @@
+>  				status = "okay";
+>  
+>  				lanes {
+> -					usb2-0 {
+> +					micro_b: usb2-0 {
+>  						nvidia,function = "xusb";
+>  						status = "okay";
+>  					};
+> @@ -1483,6 +1483,21 @@
+>  		vmmc-supply = <&vdd_3v3_sd>;
+>  	};
+>  
+> +	usb@700d0000 {
+> +		status = "okay";
+> +		phys = <&micro_b>;
+> +		phy-names = "usb2";
+> +		avddio-usb-supply = <&vdd_3v3_sys>;
+> +		hvdd-usb-supply = <&vdd_1v8>;
+> +		usb-role-switch;
+> +
+> +		port {
+> +			usb_role_switch: endpoint {
+> +				remote-endpoint = <&usb_b_conn_ep>;
+> +			};
+> +		};
+> +	};
+> +
+>  	regulators {
+>  		compatible = "simple-bus";
+>  		#address-cells = <1>;
+> @@ -1641,4 +1656,18 @@
+>  			linux,code = <KEY_VOLUMEUP>;
+>  		};
+>  	};
+> +
+> +	usb_type_b: connector {
+> +		compatible = "linux,usb-conn-gpio", "gpio-usb-b-connector";
+please use "gpio-usb-b-connector" and "usb-b-connector", due to
+"linux,usb-conn-gpio" is not supported now
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/usb/gadget/udc/pxa27x_udc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/pxa27x_udc.c b/drivers/usb/gadget/udc/pxa27x_udc.c
-index 0142332..5f107f2 100644
---- a/drivers/usb/gadget/udc/pxa27x_udc.c
-+++ b/drivers/usb/gadget/udc/pxa27x_udc.c
-@@ -2356,7 +2356,6 @@ MODULE_DEVICE_TABLE(of, udc_pxa_dt_ids);
-  */
- static int pxa_udc_probe(struct platform_device *pdev)
- {
--	struct resource *regs;
- 	struct pxa_udc *udc = &memory;
- 	int retval = 0, gpio;
- 	struct pxa2xx_udc_mach_info *mach = dev_get_platdata(&pdev->dev);
-@@ -2378,8 +2377,7 @@ static int pxa_udc_probe(struct platform_device *pdev)
- 		udc->gpiod = devm_gpiod_get(&pdev->dev, NULL, GPIOD_ASIS);
- 	}
- 
--	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	udc->regs = devm_ioremap_resource(&pdev->dev, regs);
-+	udc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(udc->regs))
- 		return PTR_ERR(udc->regs);
- 	udc->irq = platform_get_irq(pdev, 0);
--- 
-2.7.4
+> +		label = "micro-USB";
+> +		type = "micro";
+> +		vbus-gpio = <&gpio TEGRA_GPIO(Z, 0) GPIO_ACTIVE_LOW>;
+> +
+> +		port {
+> +			usb_b_conn_ep: endpoint {
+> +				remote-endpoint = <&usb_role_switch>;
+> +			};
+> +		};
+> +	};
+> +
+>  };
 
 
