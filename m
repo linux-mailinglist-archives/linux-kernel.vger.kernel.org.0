@@ -2,62 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B2B2A843E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BF9A8449
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:49:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730376AbfIDNQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 09:16:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43778 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730188AbfIDNQj (ORCPT
+        id S1730470AbfIDNRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 09:17:19 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:33472 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729296AbfIDNRO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 09:16:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Ngepyp17twGTeYQ8Cw2V78KUkItUxdkjHkfPYs5tJiE=; b=EPgCnv3/3HMoDmVsbpFjvbyTDM
-        0neIHRURrGJEadkGkuEjNUD1pZiPkf4j+wRMTw/4qqa9FCC0XT9d8K1r9moXgys751vncLs835TX4
-        okmT3e8VY548HAPx1xrCQz/lrTC5V1mAmkfOTGQGOfbqhQvJHmm6t8YFCyRyqgDOdfticjqyeKmgn
-        aprsSCdziDmx/xCEXAIEo1LvYpFjlvJs7xLtZ/FuYxgMBrNCnsIVi2KcbG8dsXBlcgc0Fm5N2Uvmm
-        sf7DBwSRYPg0yaXJ0GPXLkTaNRd3qXnHAsE9h0BSjZmA2UVws5dm6VaOKye6MBJ5Gr8Gc1SMmr+IR
-        xaC9yM/Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5V9K-0000oJ-GN; Wed, 04 Sep 2019 13:16:38 +0000
-Date:   Wed, 4 Sep 2019 06:16:38 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: dma api errors with swiotlb
-Message-ID: <20190904131638.GA29164@infradead.org>
-References: <e3c4b2e1-7518-ab0e-a6ce-3fae9903dac0@shipmail.org>
- <20190904121722.GA15601@infradead.org>
- <4e21951d-025a-2b3d-14c8-878c6f237525@shipmail.org>
- <20190904125538.GA30177@infradead.org>
- <a78c4100-4f93-d96d-60d1-d965a7769fca@shipmail.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a78c4100-4f93-d96d-60d1-d965a7769fca@shipmail.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 4 Sep 2019 09:17:14 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 754F9C573D;
+        Wed,  4 Sep 2019 13:17:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1567603034; bh=m0FKVlQ3LYmFjKrpFGWx405TxbxntEzWiK7CqLuD+Lo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Ex1Hb+dmHc02GukpJLes2UZSljRIUwzCQcg0To9kjxphUB1VpAWd4NHLOsqQI+/HI
+         bObZ0RaFww1z1fQhWGcxh4YJCkEp3kCuJ1/F9wveAF15yQvXtQERByeM2LhXcb/HHt
+         UsXD2ZRg3nomsCzqG4qo9ZWhCus37Br8SXH1hReR11r+A+30zN396NUtAa3kIy2Klu
+         /miHONSZ9p767M57c9sHx+D5RRrmaLLhXGkjsQvrhHTD2IaxNzuxb63sqa7kVIQZoj
+         bTllNjRkKTUuztiSs1g8jPXcImygWx8RralUo6KVPA+8RNQ9rQtGcwZxJMUUTT32bp
+         UUOYNEyZk1O2Q==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 7C9EEA005E;
+        Wed,  4 Sep 2019 13:17:11 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 net-next 00/13] net: stmmac: Improvements for -next
+Date:   Wed,  4 Sep 2019 15:16:52 +0200
+Message-Id: <cover.1567602867.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 03:02:14PM +0200, Thomas Hellström (VMware) wrote:
-> It looks like it does that, although when we send it, the SWIOTLB error has
-> already occured and been printed out, and then the sequence starts again.
+Couple of improvements for -next tree. More info in commit logs.
 
-Well, the only way to really find out is to try.  We also have a
-backoff algorithm in the SCSI midlayer, so it should not be much of
-an inpact.  If you care about the warnings they can be disabled using
-DMA_ATTR_NO_WARN.  I have to admit that I'm not even sure the warnings
-are all that useful, but that's something you need to take up with
-the swiotlb maintainer.
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Jose Abreu (13):
+  net: stmmac: selftests: Return proper error code to userspace
+  net: stmmac: xgmac: Add RBU handling in DMA interrupt
+  net: stmmac: Do not return error code in TC Initialization
+  net: stmmac: Implement L3/L4 Filters using TC Flower
+  net: stmmac: selftests: Add selftest for L3/L4 Filters
+  net: stmmac: xgmac: Implement ARP Offload
+  net: stmmac: selftests: Implement the ARP Offload test
+  net: stmmac: Only consider RX error when HW Timestamping is not
+    enabled
+  net: stmmac: ethtool: Let user configure TX coalesce without RIWT
+  net: stmmac: xgmac: Correct RAVSEL field interpretation
+  net: stmmac: Correctly assing MAX MTU in XGMAC cores case
+  net: stmmac: xgmac: Enable RX Jumbo frame support
+  net: stmmac: selftests: Add Jumbo Frame tests
+
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   2 +
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |  33 +-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    | 205 ++++++++-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   8 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  19 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  12 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |  21 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  18 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 483 ++++++++++++++++++++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    | 247 ++++++++++-
+ 10 files changed, 1001 insertions(+), 47 deletions(-)
+
+-- 
+2.7.4
+
