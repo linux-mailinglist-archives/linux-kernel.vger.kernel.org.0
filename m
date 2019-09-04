@@ -2,208 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFE59A7BFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89CC1A7BE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbfIDGtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 02:49:22 -0400
-Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:51628 "EHLO
-        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbfIDGtW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 02:49:22 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 0AB7A3F5C8;
-        Wed,  4 Sep 2019 08:49:08 +0200 (CEST)
-Authentication-Results: pio-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=ZDAqiNgE;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id VSiW-JFuoVb1; Wed,  4 Sep 2019 08:49:06 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 0FA733F448;
-        Wed,  4 Sep 2019 08:49:04 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 5549036014E;
-        Wed,  4 Sep 2019 08:49:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1567579744; bh=0jqVREsejBHV3iFCQGYQ6LoaKWK6t6ZiwYheG9Q/MGk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZDAqiNgEw4++0FCZM5xTyh6MWbA1QryMgeea2+YUaurcJhQKa8rU46SPkJhGNWn1T
-         8nFwUCCwqH0qFssVp3tAcgg2os8MID6TDBJNjVycCiP+p2lp7GKiRaBXxOVpHV7x5y
-         hG0G7B8Dq8u85H8hibrpZ9Og2u3/Y3aIfnl0Esvo=
-Subject: Re: [PATCH v2 3/4] drm/ttm, drm/vmwgfx: Correctly support support AMD
- memory encryption
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        pv-drivers@vmware.com,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20190903131504.18935-1-thomas_os@shipmail.org>
- <20190903131504.18935-4-thomas_os@shipmail.org>
- <b54bd492-9702-5ad7-95da-daf20918d3d9@intel.com>
- <CAKMK7uFv+poZq43as8XoQaSuoBZxCQ1p44VCmUUTXOXt4Y+Bjg@mail.gmail.com>
- <6d0fafcc-b596-481b-7b22-1f26f0c02c5c@intel.com>
- <bed2a2d9-17f0-24bd-9f4a-c7ee27f6106e@shipmail.org>
- <7fa3b178-b9b4-2df9-1eee-54e24d48342e@intel.com>
- <ba77601a-d726-49fa-0c88-3b02165a9a21@shipmail.org>
- <CALCETrVnNpPwmRddGLku9hobE7wG30_3j+QfcYxk09hZgtaYww@mail.gmail.com>
- <44b094c8-63fe-d9e5-1bf4-7da0788caccf@shipmail.org>
- <6d122d62-9c96-4c29-8d06-02f7134e5e2a@shipmail.org>
- <B3C5DD1B-A33C-417F-BDDC-73120A035EA5@amacapital.net>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <3393108b-c7e3-c9be-b65b-5860c15ca228@shipmail.org>
-Date:   Wed, 4 Sep 2019 08:49:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728648AbfIDGq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 02:46:28 -0400
+Received: from mga09.intel.com ([134.134.136.24]:6670 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727787AbfIDGq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 02:46:28 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 23:46:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
+   d="scan'208";a="383355312"
+Received: from xsang-optiplex-9020.sh.intel.com (HELO xsang-OptiPlex-9020) ([10.239.159.135])
+  by fmsmga006.fm.intel.com with ESMTP; 03 Sep 2019 23:46:25 -0700
+Date:   Wed, 4 Sep 2019 14:52:40 +0800
+From:   Oliver Sang <oliver.sang@intel.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     kernel test robot <lkp@intel.com>, linux-fsdevel@vger.kernel.org,
+        lkp@01.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [LKP] [fs/namei.c] e013ec23b8:
+ WARNING:at_fs/dcache.c:#dentry_free
+Message-ID: <20190904065240.GQ22468@xsang-OptiPlex-9020>
+References: <20190831130917.ea4yx4uo5uttxk6l@inn2.lkp.intel.com>
+ <20190831154246.GY1131@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <B3C5DD1B-A33C-417F-BDDC-73120A035EA5@amacapital.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190831154246.GY1131@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/4/19 1:15 AM, Andy Lutomirski wrote:
->
->> On Sep 3, 2019, at 3:15 PM, Thomas Hellström (VMware) <thomas_os@shipmail.org> wrote:
->>
->>> On 9/4/19 12:08 AM, Thomas Hellström (VMware) wrote:
->>>> On 9/3/19 11:46 PM, Andy Lutomirski wrote:
->>>> On Tue, Sep 3, 2019 at 2:05 PM Thomas Hellström (VMware)
->>>> <thomas_os@shipmail.org> wrote:
->>>>> On 9/3/19 10:51 PM, Dave Hansen wrote:
->>>>>>> On 9/3/19 1:36 PM, Thomas Hellström (VMware) wrote:
->>>>>>> So the question here should really be, can we determine already at mmap
->>>>>>> time whether backing memory will be unencrypted and adjust the *real*
->>>>>>> vma->vm_page_prot under the mmap_sem?
->>>>>>>
->>>>>>> Possibly, but that requires populating the buffer with memory at mmap
->>>>>>> time rather than at first fault time.
->>>>>> I'm not connecting the dots.
->>>>>>
->>>>>> vma->vm_page_prot is used to create a VMA's PTEs regardless of if they
->>>>>> are created at mmap() or fault time.  If we establish a good
->>>>>> vma->vm_page_prot, can't we just use it forever for demand faults?
->>>>> With SEV I think that we could possibly establish the encryption flags
->>>>> at vma creation time. But thinking of it, it would actually break with
->>>>> SME where buffer content can be moved between encrypted system memory
->>>>> and unencrypted graphics card PCI memory behind user-space's back. That
->>>>> would imply killing all user-space encrypted PTEs and at fault time set
->>>>> up new ones pointing to unencrypted PCI memory..
->>>>>
->>>>>> Or, are you concerned that if an attempt is made to demand-fault page
->>>>>> that's incompatible with vma->vm_page_prot that we have to SEGV?
->>>>>>
->>>>>>> And it still requires knowledge whether the device DMA is always
->>>>>>> unencrypted (or if SEV is active).
->>>>>> I may be getting mixed up on MKTME (the Intel memory encryption) and
->>>>>> SEV.  Is SEV supported on all memory types?  Page cache, hugetlbfs,
->>>>>> anonymous?  Or just anonymous?
->>>>> SEV AFAIK encrypts *all* memory except DMA memory. To do that it uses a
->>>>> SWIOTLB backed by unencrypted memory, and it also flips coherent DMA
->>>>> memory to unencrypted (which is a very slow operation and patch 4 deals
->>>>> with caching such memory).
->>>>>
->>>> I'm still lost.  You have some fancy VMA where the backing pages
->>>> change behind the application's back.  This isn't particularly novel
->>>> -- plain old anonymous memory and plain old mapped files do this too.
->>>> Can't you all the insert_pfn APIs and call it a day?  What's so
->>>> special that you need all this magic?  ISTM you should be able to
->>>> allocate memory that's addressable by the device (dma_alloc_coherent()
->>>> or whatever) and then map it into user memory just like you'd map any
->>>> other page.
->>>>
->>>> I feel like I'm missing something here.
->>> Yes, so in this case we use dma_alloc_coherent().
->>>
->>> With SEV, that gives us unencrypted pages. (Pages whose linear kernel map is marked unencrypted). With SME that (typcially) gives us encrypted pages. In both these cases, vm_get_page_prot() returns
->>> an encrypted page protection, which lands in vma->vm_page_prot.
->>>
->>> In the SEV case, we therefore need to modify the page protection to unencrypted. Hence we need to know whether we're running under SEV and therefore need to modify the protection. If not, the user-space PTE would incorrectly have the encryption flag set.
->>>
-> I’m still confused. You got unencrypted pages with an unencrypted PFN. Why do you need to fiddle?  You have a PFN, and you’re inserting it with vmf_insert_pfn().  This should just work, no?
+On Sat, Aug 31, 2019 at 04:42:46PM +0100, Al Viro wrote:
+> On Sat, Aug 31, 2019 at 09:09:17PM +0800, kernel test robot wrote:
+> 
+> > [   13.886602] WARNING: CPU: 0 PID: 541 at fs/dcache.c:338 dentry_free+0x7f/0x90
+> > [   13.889208] Modules linked in:
+> > [   13.890276] CPU: 0 PID: 541 Comm: readlink Not tainted 5.3.0-rc1-00008-ge013ec23b8231 #1
+> > [   13.892699] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> > [   13.895419] RIP: 0010:dentry_free+0x7f/0x90
+> > [   13.896739] Code: f0 75 cb 48 8d be b0 00 00 00 48 83 c4 08 48 c7 c6 60 8d cd a5 e9 51 69 e4 ff 48 89 3c 24 48 c7 c7 f8 a9 cb a6 e8 7f 37 e3 ff <0f> 0b 48 8b 34 24 eb 8f 66 0f 1f 84 00 00 00 00 00 66 66 66 66 90
+> > [   13.901957] RSP: 0018:ffffb5524063fe38 EFLAGS: 00010282
+> > [   13.903527] RAX: 0000000000000024 RBX: ffff9941878040c0 RCX: ffffffffa706aa08
+> > [   13.905566] RDX: 0000000000000000 RSI: 0000000000000096 RDI: 0000000000000246
+> > [   13.907612] RBP: 0000000000000000 R08: 0000000000000280 R09: 0000000000000033
+> > [   13.909664] R10: 0000000000000000 R11: ffffb5524063fce8 R12: ffff994187804118
+> > [   13.911711] R13: ffff99427a810000 R14: ffff994187d7c8f0 R15: ffff99427a810b80
+> > [   13.913753] FS:  0000000000000000(0000) GS:ffff9942bfc00000(0000) knlGS:0000000000000000
+> > [   13.916187] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> > [   13.917892] CR2: 000000000937458b CR3: 000000006800a000 CR4: 00000000000006f0
+> > [   13.919925] Call Trace:
+> > [   13.920840]  __dentry_kill+0x13c/0x1a0
+> > [   13.922076]  path_put+0x12/0x20
+> > [   13.923148]  free_fs_struct+0x1b/0x30
+> > [   13.924346]  do_exit+0x304/0xc40
+> > [   13.925438]  ? __schedule+0x25d/0x670
+> > [   13.926642]  do_group_exit+0x3a/0xa0
+> > [   13.927817]  __ia32_sys_exit_group+0x14/0x20
+> > [   13.929160]  do_fast_syscall_32+0xa9/0x340
+> > [   13.930565]  entry_SYSENTER_compat+0x7f/0x91
+> > [   13.931924] ---[ end trace 02c6706eb2c2ebf2 ]---
+> > 
+> > 
+> > To reproduce:
+> > 
+> >         # build kernel
+> > 	cd linux
+> > 	cp config-5.3.0-rc1-00008-ge013ec23b8231 .config
+> > 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 olddefconfig prepare modules_prepare bzImage
+> > 
+> >         git clone https://github.com/intel/lkp-tests.git
+> >         cd lkp-tests
+> >         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
+> 
+> Can't reproduce here...
 
-OK now I see what causes the confusion.
+any detail failure by using this reproducer?
 
-With SEV, the encryption state is, while *physically* encoded in an 
-address bit, from what I can tell, not *logically* encoded in the pfn, 
-but in the page_prot for cpu mapping purposes.  That is, page_to_pfn()  
-returns the same pfn whether the page is encrypted or unencrypted. Hence 
-nobody can't tell from the pfn whether the page is unencrypted or encrypted.
+> 
+> I see one potential problem in there, but I would expect it to have the
+> opposite effect (I really don't believe that it's a ->d_count wraparound -
+> that would've taken much longer than a minute, if nothing else).
+> 
+> How reliably is it reproduced on your setup and does the following have
+> any impact, one way or another?
 
-For device DMA address purposes, the encryption status is encoded in the 
-dma address by the dma layer in phys_to_dma().
+It is always reproduced. We noticed that your branch was rebased. If it's still with problem, will let you know.
 
-
->   There doesn’t seem to be any real funny business in dma_mmap_attrs() or dma_common_mmap().
-
-No, from what I can tell the call in these functions to dma_pgprot() 
-generates an incorrect page protection since it doesn't take unencrypted 
-coherent memory into account. I don't think anybody has used these 
-functions yet with SEV.
-
->
-> But, reading this, I have more questions:
->
-> Can’t you get rid of cvma by using vmf_insert_pfn_prot()?
-
-It looks like that, although there are comments in the code about 
-serious performance problems using VM_PFNMAP / vmf_insert_pfn() with 
-write-combining and PAT, so that would require some serious testing with 
-hardware I don't have. But I guess there is definitely room for 
-improvement here. Ideally we'd like to be able to change the 
-vma->vm_page_prot within fault(). But we can
-
->
-> Would it make sense to add a vmf_insert_dma_page() to directly do exactly what you’re trying to do?
-
-Yes, but as a longer term solution I would prefer a general dma_pgprot() 
-exported, so that we could, in a dma-compliant way, use coherent pages 
-with other apis, like kmap_atomic_prot() and vmap(). That is, basically 
-split coherent page allocation in two steps: Allocation and mapping.
-
->
-> And a broader question just because I’m still confused: why isn’t the encryption bit in the PFN?  The whole SEV/SME system seems like it’s trying a bit to hard to be fully invisible to the kernel.
-
-I guess you'd have to ask AMD about that. But my understanding is that 
-encoding it in an address bit does make it trivial to do decryption / 
-encryption on the fly to DMA devices that are not otherwise aware of it, 
-just by handing them a special physical address. For cpu mapping 
-purposes it might become awkward to encode it in the pfn since 
-pfn_to_page and friends would need knowledge about this. Personally I 
-think it would have made sense to track it like PAT in track_pfn_insert().
-
-Thanks,
-
-Thomas
-
-
-
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 412479e4c258..671c3c1a3425 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -643,10 +643,8 @@ static bool legitimize_root(struct nameidata *nd)
+>  {
+>  	if (!nd->root.mnt || (nd->flags & LOOKUP_ROOT))
+>  		return true;
+> -	if (unlikely(!legitimize_path(nd, &nd->root, nd->root_seq)))
+> -		return false;
+>  	nd->flags |= LOOKUP_ROOT_GRABBED;
+> -	return true;
+> +	return legitimize_path(nd, &nd->root, nd->root_seq);
+>  }
+>  
+>  /*
+> _______________________________________________
+> LKP mailing list
+> LKP@lists.01.org
+> https://lists.01.org/mailman/listinfo/lkp
