@@ -2,250 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B171DA7A61
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 06:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BD92A7A21
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 06:43:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbfIDEqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 00:46:39 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38368 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfIDEqj (ORCPT
+        id S1727716AbfIDEm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 00:42:58 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33370 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbfIDEm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 00:46:39 -0400
-Received: by mail-io1-f66.google.com with SMTP id p12so41323391iog.5;
-        Tue, 03 Sep 2019 21:46:38 -0700 (PDT)
+        Wed, 4 Sep 2019 00:42:57 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n190so10524295pgn.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 21:42:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iv0qLpuR7sLWwOR4i5Pjgd55i1xxcdakcMdY3Zu+Myg=;
-        b=s5nPjsg7Z3oXHjd99cvFXQcA2JoqYRob7b6+TkOKdPkWoXkXEp0tAmvgfyND2sqPOg
-         nJHYruAT7jjAGpMhw60qkQfiDvxYP9Ofr46OZy4v32PQAJtKLWy7PesRBaHCx/pG6HB4
-         OivEUOzAdZGouKV2MhmbwRTTZymfb+6myyhHWR4rjX2Xqk+iL1LwuK1+C99OV7WgiKCs
-         wri5M5a/fmXcYVhuAkU1C1G4OJ9uvuEcYpxhrkIec+DDXbRkZFYx46hN96ODKYYMsql6
-         KmeyrYxDncoXFiDoxTBxth+dkrIOGU/VUjCistU2MO7CbJl+AzV9c24LXCQXy+qP+dmZ
-         6ijA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nJ8WdF3ild99tEEbygL0ot0ojOVW2zZpc22ATe0+scs=;
+        b=oO0EEfo+NTHRhTnLZ2TXj73Y+Y5GdZgVkd6bW6YHmvfBv8r3Vx4i2UgUcS17mbwY9J
+         oiQ2cOHPkHUOZbZu1UR+HKXgF/URLa1Kt0cImQCG2YscIuUATWWZ6NiqsBNv2/Pu3cSB
+         qHg6Qep7XO5gvsL6CSL5ewPwE6tLxb7yCFKDbCa2pHzBrSZtZvaNtbPW4RFQzMbFTrzq
+         llWvO8keys/KHsAzcu3Gf9YREwRGulM7IcvFcZDXJvGAQpXUXH2/TMhjxhbxZSpSYk6U
+         sawXDddaVKICrTuFOM9IBeh4CD+qH8xqd5W6yRTt80Lv0UYtKOBD9AbWH9ETAl7Gs7p1
+         AhBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iv0qLpuR7sLWwOR4i5Pjgd55i1xxcdakcMdY3Zu+Myg=;
-        b=nNM+ctWmiCrst8ViCXs4ePp+HaS7Vtkt/Ub3RoVyFrA3glVjOZlccmpIZVF7yfOd92
-         w77of5x8p6TINl5MT6GV4ieG7kpMNPopjHOZ18a6/oLYwqXGbbFgAzsZWVeVjIBRDHxR
-         rwvAeVBiAFwERp3SW1FbillXGLmJAy74yb5rXPCWbw8qf8hHQm+bv+VEYJv7fgEa6BMn
-         sJ1DRMz4H7mrjPAacGw+AmkeSUxn6TPykFJ+gHj9ON9JdKwZ/arudoaPyOCfD7rd7EiT
-         CMAQGp5dQw9sX0sPSTmkUX7iyF/94pnervWgBxtNvuZVo4uQO7EkZIrqejY0R3JgHHlW
-         ti5A==
-X-Gm-Message-State: APjAAAXpzGQQG9IqnA3htJkNm61+HS+++v/tO3J08Kqr1VdoFIWHNU+s
-        6bM3MVpzjz0ixS7OcirV/vDyrDo0MYU=
-X-Google-Smtp-Source: APXvYqxys+cUKvwWqzLmuAoYeZPyTanlWNts40Uy6h0/VS05YBdQ0JWCAbphM7EhKTgO1byu8nsvvw==
-X-Received: by 2002:a5d:81cc:: with SMTP id t12mr3110186iol.157.1567571993732;
-        Tue, 03 Sep 2019 21:39:53 -0700 (PDT)
-Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
-        by smtp.gmail.com with ESMTPSA id s5sm16471411iol.88.2019.09.03.21.39.52
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nJ8WdF3ild99tEEbygL0ot0ojOVW2zZpc22ATe0+scs=;
+        b=BGzmqrmaHYaryaip9pVJbrWTTDynhfkhOOLGXXvNdINf4sf8eb2QaDiIj/mARwHM41
+         DA/i5uifHpAyf9DCByvTgD7XcRdUwC2411wXO6HBpWZTibKPOI9WUD/OcN6sWfgQTLS2
+         p8oxhmiDefhQq7mTbzpv8U4qTWRsFeig7uBusKn6IcARV1AxeL453ReNp9wMbQLEjOYi
+         NdJaBsIR8ja8NPd8XSR/DYo+UZrY9YgYz1LxKO7ug4zMRmJI5+Egjrw5u0dfwQdYuw1e
+         1fKYZ0+P25CadoCbk/fuT48BZKricNszGVwK15Xe/C5oatOWPw2i8CJ7gyMJEf3ZhcoL
+         Jk4g==
+X-Gm-Message-State: APjAAAUTz789AXacKYgXJigzx0f3spCmHuTAAOHrWFWrmiSoBHiuRTSg
+        TyHHQBFj72QDOMFv16/Z54Aexw==
+X-Google-Smtp-Source: APXvYqwlDQvDhrlYU+PPzl7Wz1eVzTvoMLivDLt4Y8P3QfWIcjArp1vqAtQHDmvzExwjprOpgNHWsA==
+X-Received: by 2002:a17:90a:2182:: with SMTP id q2mr3124104pjc.56.1567572177000;
+        Tue, 03 Sep 2019 21:42:57 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id q8sm1136479pjd.28.2019.09.03.21.42.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 21:39:53 -0700 (PDT)
-From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
-To:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        skunberg.kelsey@gmail.com
-Cc:     skhan@linuxfoundation.org, rafael.j.wysocki@intel.com,
-        keith.busch@intel.com
-Subject: [PATCH 2/2] PCI: Unify pci_dev_is_disconnected() and pci_dev_is_inaccessible()
-Date:   Tue,  3 Sep 2019 22:36:35 -0600
-Message-Id: <20190904043633.65026-3-skunberg.kelsey@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190904043633.65026-1-skunberg.kelsey@gmail.com>
-References: <20190904043633.65026-1-skunberg.kelsey@gmail.com>
+        Tue, 03 Sep 2019 21:42:56 -0700 (PDT)
+Date:   Tue, 3 Sep 2019 21:42:52 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        rishabhb@codeaurora.org, Evan Green <evgreen@chromium.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] soc: qcom: llcc cleanups
+Message-ID: <20190904044252.GD3081@tuxbook-pro>
+References: <20190718130238.11324-1-vivek.gautam@codeaurora.org>
+ <CAFp+6iE7224G4k8XE6Oz1S82iMgSza-n_zMN-ppOUWnuz+hFLQ@mail.gmail.com>
+ <CAFp+6iE6zwrOUoCoOJO0mgYJGrWj+wUjXQ7RnxSPsV34ndYGbw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFp+6iE6zwrOUoCoOJO0mgYJGrWj+wUjXQ7RnxSPsV34ndYGbw@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Combine pci_dev_is_disconnected() with pci_dev_is_inaccessible() so only
-one function is used to learn if we should avoid accessing a device that's
-inaccessible due to surprise removal or an error condition.
+On Tue 27 Aug 04:01 PDT 2019, Vivek Gautam wrote:
 
-The use cases for pci_dev_is_disconnected() do not need to distinguish
-between a device being inaccessible due to a surprise removal or an error
-condition. This provides the opportunity to unify
-pci_dev_is_disconnected() and pci_dev_is_inaccessible() to reduce multiple
-functions used for the same task.
+> On Fri, Aug 2, 2019 at 11:43 AM Vivek Gautam
+> <vivek.gautam@codeaurora.org> wrote:
+> >
+> > On Thu, Jul 18, 2019 at 6:33 PM Vivek Gautam
+> > <vivek.gautam@codeaurora.org> wrote:
+> > >
+> > > To better support future versions of llcc, consolidating the
+> > > driver to llcc-qcom driver file, and taking care of the dependencies.
+> > > v1 series is availale at:
+> > > https://lore.kernel.org/patchwork/patch/1099573/
+> > >
+> > > Changes since v1:
+> > > Addressing Bjorn's comments -
+> > >  * Not using llcc-plat as the platform driver rather using a single
+> > >    driver file now - llcc-qcom.
+> > >  * Removed SCT_ENTRY macro.
+> > >  * Moved few structure definitions from include/linux path to llcc-qcom
+> > >    driver as they are not exposed to other subsystems.
+> >
+> > Hi Bjorn,
+> >
+> > How does this cleanup look now? Let me know if there are any
+> > improvements to make here.
+> >
+> 
+> Hi Bjorn,
+> 
+> Are you planning to pull this series in the next merge window?
+> There's a dt patch as well for llcc on sdm845 [1] that has been lying around.
+> 
+> Let me know if you have concerns with this series. I will be happy to
+> incorporate the suggestions.
+> 
 
-Change pci_dev_is_disconnected() call inside pci_dev_is_inaccessible() to:
+No concerns, this is exactly what we discussed before. Sorry for missing
+it. I've picked the patches now.
 
-	pdev->error_state == pci_channel_io_perm_failure
+> [1] https://lore.kernel.org/patchwork/patch/1099318/
+> 
 
-Change remaining pci_dev_is_disconnected() calls to
-pci_dev_is_inaccessible() calls.
+This is part of the v5.4 pull request.
 
-Remove pci_dev_is_disconnected() from /pci/pci.h which would now no longer
-be used.
+Thanks,
+Bjorn
 
-Demonstration of changes to pci_dev_is_disconnected() and
-pci_dev_is_inaccessible():
-
-Before combining:
-
-	static inline bool pci_dev_is_disconnected(const struct pci_dev *dev)
-	{
-		return dev->error_state == pci_channel_io_perm_failure;
-	}
-
-	bool pci_dev_is_inaccessible(struct pci_dev *pdev)
-	{
-		u32 v;
-
-		if (pci_dev_is_disconnected(pdev))
-			return true;
-		return !pci_bus_read_dev_vendor_id(pdev->bus, pdev->devfn, &v, 0);
-	}
-
-After combining:
-
-	bool pci_dev_is_inaccessible(struct pci_dev *pdev)
-	{
-		u32 v;
-
-		if (pdev->error_state == pci_channel_io_perm_failure)
-			return true;
-		return !pci_bus_read_dev_vendor_id(pdev->bus, pdev->devfn, &v, 0);
-	}
-
-Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
----
- drivers/pci/access.c            | 12 ++++++------
- drivers/pci/msi.c               |  4 ++--
- drivers/pci/pci.c               |  2 +-
- drivers/pci/pci.h               |  5 -----
- drivers/pci/pcie/portdrv_core.c |  2 +-
- 5 files changed, 10 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/pci/access.c b/drivers/pci/access.c
-index 544922f097c0..c096340afb8c 100644
---- a/drivers/pci/access.c
-+++ b/drivers/pci/access.c
-@@ -535,7 +535,7 @@ EXPORT_SYMBOL(pcie_capability_clear_and_set_dword);
- 
- int pci_read_config_byte(const struct pci_dev *dev, int where, u8 *val)
- {
--	if (pci_dev_is_disconnected(dev)) {
-+	if (pci_dev_is_inaccessible(dev)) {
- 		*val = ~0;
- 		return PCIBIOS_DEVICE_NOT_FOUND;
- 	}
-@@ -545,7 +545,7 @@ EXPORT_SYMBOL(pci_read_config_byte);
- 
- int pci_read_config_word(const struct pci_dev *dev, int where, u16 *val)
- {
--	if (pci_dev_is_disconnected(dev)) {
-+	if (pci_dev_is_inaccessible(dev)) {
- 		*val = ~0;
- 		return PCIBIOS_DEVICE_NOT_FOUND;
- 	}
-@@ -556,7 +556,7 @@ EXPORT_SYMBOL(pci_read_config_word);
- int pci_read_config_dword(const struct pci_dev *dev, int where,
- 					u32 *val)
- {
--	if (pci_dev_is_disconnected(dev)) {
-+	if (pci_dev_is_inaccessible(dev)) {
- 		*val = ~0;
- 		return PCIBIOS_DEVICE_NOT_FOUND;
- 	}
-@@ -566,7 +566,7 @@ EXPORT_SYMBOL(pci_read_config_dword);
- 
- int pci_write_config_byte(const struct pci_dev *dev, int where, u8 val)
- {
--	if (pci_dev_is_disconnected(dev))
-+	if (pci_dev_is_inaccessible(dev))
- 		return PCIBIOS_DEVICE_NOT_FOUND;
- 	return pci_bus_write_config_byte(dev->bus, dev->devfn, where, val);
- }
-@@ -574,7 +574,7 @@ EXPORT_SYMBOL(pci_write_config_byte);
- 
- int pci_write_config_word(const struct pci_dev *dev, int where, u16 val)
- {
--	if (pci_dev_is_disconnected(dev))
-+	if (pci_dev_is_inaccessible(dev))
- 		return PCIBIOS_DEVICE_NOT_FOUND;
- 	return pci_bus_write_config_word(dev->bus, dev->devfn, where, val);
- }
-@@ -583,7 +583,7 @@ EXPORT_SYMBOL(pci_write_config_word);
- int pci_write_config_dword(const struct pci_dev *dev, int where,
- 					 u32 val)
- {
--	if (pci_dev_is_disconnected(dev))
-+	if (pci_dev_is_inaccessible(dev))
- 		return PCIBIOS_DEVICE_NOT_FOUND;
- 	return pci_bus_write_config_dword(dev->bus, dev->devfn, where, val);
- }
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 0884bedcfc7a..4680043aa315 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -311,7 +311,7 @@ void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
- {
- 	struct pci_dev *dev = msi_desc_to_pci_dev(entry);
- 
--	if (dev->current_state != PCI_D0 || pci_dev_is_disconnected(dev)) {
-+	if (dev->current_state != PCI_D0 || pci_dev_is_inaccessible(dev)) {
- 		/* Don't touch the hardware now */
- 	} else if (entry->msi_attrib.is_msix) {
- 		void __iomem *base = pci_msix_desc_addr(entry);
-@@ -1008,7 +1008,7 @@ static void pci_msix_shutdown(struct pci_dev *dev)
- 	if (!pci_msi_enable || !dev || !dev->msix_enabled)
- 		return;
- 
--	if (pci_dev_is_disconnected(dev)) {
-+	if (pci_dev_is_inaccessible(dev)) {
- 		dev->msix_enabled = 0;
- 		return;
- 	}
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 7b4e248db5f9..e5f46d98dbe1 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5910,7 +5910,7 @@ bool pci_dev_is_inaccessible(struct pci_dev *pdev)
- {
- 	u32 v;
- 
--	if (pci_dev_is_disconnected(pdev))
-+	if (pdev->error_state == pci_channel_io_perm_failure)
- 		return true;
- 	return !pci_bus_read_dev_vendor_id(pdev->bus, pdev->devfn, &v, 0);
- }
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 1be03a97cb92..f0dc86dc8aab 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -363,11 +363,6 @@ static inline int pci_dev_set_disconnected(struct pci_dev *dev, void *unused)
- 	return 0;
- }
- 
--static inline bool pci_dev_is_disconnected(const struct pci_dev *dev)
--{
--	return dev->error_state == pci_channel_io_perm_failure;
--}
--
- /* pci_dev priv_flags */
- #define PCI_DEV_ADDED 0
- 
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index 308c3e0c4a34..8bf6b47dd2c6 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -416,7 +416,7 @@ static void wait_for_downstream_link(struct pci_dev *pdev)
- 	    pci_pcie_type(pdev) != PCI_EXP_TYPE_DOWNSTREAM)
- 		return;
- 
--	if (pci_dev_is_disconnected(pdev))
-+	if (pci_dev_is_inaccessible(pdev))
- 		return;
- 
- 	if (!pdev->subordinate || list_empty(&pdev->subordinate->devices) ||
--- 
-2.20.1
-
+> Thanks & Regards
+> Vivek
+> 
+> > Best Regards
+> > Vivek
+> > >
+> > > Vivek Gautam (3):
+> > >   soc: qcom: llcc cleanup to get rid of sdm845 specific driver file
+> > >   soc: qcom: Rename llcc-slice to llcc-qcom
+> > >   soc: qcom: Make llcc-qcom a generic driver
+> > >
+> > >  drivers/soc/qcom/Kconfig                       |  14 +--
+> > >  drivers/soc/qcom/Makefile                      |   3 +-
+> > >  drivers/soc/qcom/{llcc-slice.c => llcc-qcom.c} | 155 +++++++++++++++++++++++--
+> > >  drivers/soc/qcom/llcc-sdm845.c                 | 100 ----------------
+> > >  include/linux/soc/qcom/llcc-qcom.h             | 104 -----------------
+> > >  5 files changed, 152 insertions(+), 224 deletions(-)
+> > >  rename drivers/soc/qcom/{llcc-slice.c => llcc-qcom.c} (64%)
+> > >  delete mode 100644 drivers/soc/qcom/llcc-sdm845.c
+> > >
+> 
+> 
+> 
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
