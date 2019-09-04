@@ -2,141 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6227A82C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 042B6A82C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:51:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729773AbfIDM0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 08:26:38 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:60328 "EHLO fornost.hmeau.com"
+        id S1729919AbfIDM1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 08:27:08 -0400
+Received: from mga09.intel.com ([134.134.136.24]:49461 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbfIDM0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:26:38 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1i5UMR-0000kS-HM; Wed, 04 Sep 2019 22:26:08 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Wed, 04 Sep 2019 22:26:00 +1000
-Date:   Wed, 4 Sep 2019 22:26:00 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Cc:     Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "antoine.tenart@bootlin.com" <antoine.tenart@bootlin.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "pvanleeuwen@insidesecure.com" <pvanleeuwen@insidesecure.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: PCI: Add stub pci_irq_vector and others
-Message-ID: <20190904122600.GA28660@gondor.apana.org.au>
-References: <20190902141910.1080-1-yuehaibing@huawei.com>
- <20190903014518.20880-1-yuehaibing@huawei.com>
- <MN2PR20MB29732EEECB217DDDF822EDA5CAB80@MN2PR20MB2973.namprd20.prod.outlook.com>
- <CAKv+Gu8PVYyA-mzjrhR6r6upMc=xzpAhsbkuKRtb8T2noo_2XQ@mail.gmail.com>
+        id S1725938AbfIDM1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 08:27:08 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 05:27:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
+   d="scan'208";a="382496209"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga005.fm.intel.com with ESMTP; 04 Sep 2019 05:27:05 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1i5UNM-0000iu-Hy; Wed, 04 Sep 2019 15:27:04 +0300
+Date:   Wed, 4 Sep 2019 15:27:04 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Chris Chiu <chiu@endlessm.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] mfd: intel-lpss: Add default I2C device properties for
+ Gemini Lake
+Message-ID: <20190904122704.GJ2680@smile.fi.intel.com>
+References: <20190904055625.12037-1-jarkko.nikula@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKv+Gu8PVYyA-mzjrhR6r6upMc=xzpAhsbkuKRtb8T2noo_2XQ@mail.gmail.com>
+In-Reply-To: <20190904055625.12037-1-jarkko.nikula@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 05:10:34AM -0700, Ard Biesheuvel wrote:
->
-> This is the reason we have so many empty static inline functions in
-> header files - it ensures that the symbols are declared even if the
-> only invocations are from dead code.
+On Wed, Sep 04, 2019 at 08:56:25AM +0300, Jarkko Nikula wrote:
+> It turned out Intel Gemini Lake doesn't use the same I2C timing
+> parameters as Broxton.
+> 
+> I got confirmation from the Windows team that Gemini Lake systems should
+> use updated timing parameters that differ from those used in Broxton
+> based systems.
+> 
 
-Does this patch work?
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
----8<---
-This patch adds stub functions pci_alloc_irq_vectors_affinity and
-pci_irq_vector when CONFIG_PCI is off so that drivers can use them
-without resorting to ifdefs.
+> Fixes: f80e78aa11ad ("mfd: intel-lpss: Add Intel Gemini Lake PCI IDs")
+> Tested-by: Chris Chiu <chiu@endlessm.com>
+> Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> ---
+> This is not immediate stable material since there is no regression
+> related to this. Those machines that need updated parameters have
+> obviously never worked and I don't want this to cause regression either
+> so better to let this get some test coverage first.
+> ---
+>  drivers/mfd/intel-lpss-pci.c | 28 ++++++++++++++++++++--------
+>  1 file changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
+> index ade6e1ce5a98..269cb851a596 100644
+> --- a/drivers/mfd/intel-lpss-pci.c
+> +++ b/drivers/mfd/intel-lpss-pci.c
+> @@ -120,6 +120,18 @@ static const struct intel_lpss_platform_info apl_i2c_info = {
+>  	.properties = apl_i2c_properties,
+>  };
+>  
+> +static struct property_entry glk_i2c_properties[] = {
+> +	PROPERTY_ENTRY_U32("i2c-sda-hold-time-ns", 313),
+> +	PROPERTY_ENTRY_U32("i2c-sda-falling-time-ns", 171),
+> +	PROPERTY_ENTRY_U32("i2c-scl-falling-time-ns", 290),
+> +	{ },
+> +};
+> +
+> +static const struct intel_lpss_platform_info glk_i2c_info = {
+> +	.clk_rate = 133000000,
+> +	.properties = glk_i2c_properties,
+> +};
+> +
+>  static const struct intel_lpss_platform_info cnl_i2c_info = {
+>  	.clk_rate = 216000000,
+>  	.properties = spt_i2c_properties,
+> @@ -172,14 +184,14 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
+>  	{ PCI_VDEVICE(INTEL, 0x1ac6), (kernel_ulong_t)&bxt_info },
+>  	{ PCI_VDEVICE(INTEL, 0x1aee), (kernel_ulong_t)&bxt_uart_info },
+>  	/* GLK */
+> -	{ PCI_VDEVICE(INTEL, 0x31ac), (kernel_ulong_t)&bxt_i2c_info },
+> -	{ PCI_VDEVICE(INTEL, 0x31ae), (kernel_ulong_t)&bxt_i2c_info },
+> -	{ PCI_VDEVICE(INTEL, 0x31b0), (kernel_ulong_t)&bxt_i2c_info },
+> -	{ PCI_VDEVICE(INTEL, 0x31b2), (kernel_ulong_t)&bxt_i2c_info },
+> -	{ PCI_VDEVICE(INTEL, 0x31b4), (kernel_ulong_t)&bxt_i2c_info },
+> -	{ PCI_VDEVICE(INTEL, 0x31b6), (kernel_ulong_t)&bxt_i2c_info },
+> -	{ PCI_VDEVICE(INTEL, 0x31b8), (kernel_ulong_t)&bxt_i2c_info },
+> -	{ PCI_VDEVICE(INTEL, 0x31ba), (kernel_ulong_t)&bxt_i2c_info },
+> +	{ PCI_VDEVICE(INTEL, 0x31ac), (kernel_ulong_t)&glk_i2c_info },
+> +	{ PCI_VDEVICE(INTEL, 0x31ae), (kernel_ulong_t)&glk_i2c_info },
+> +	{ PCI_VDEVICE(INTEL, 0x31b0), (kernel_ulong_t)&glk_i2c_info },
+> +	{ PCI_VDEVICE(INTEL, 0x31b2), (kernel_ulong_t)&glk_i2c_info },
+> +	{ PCI_VDEVICE(INTEL, 0x31b4), (kernel_ulong_t)&glk_i2c_info },
+> +	{ PCI_VDEVICE(INTEL, 0x31b6), (kernel_ulong_t)&glk_i2c_info },
+> +	{ PCI_VDEVICE(INTEL, 0x31b8), (kernel_ulong_t)&glk_i2c_info },
+> +	{ PCI_VDEVICE(INTEL, 0x31ba), (kernel_ulong_t)&glk_i2c_info },
+>  	{ PCI_VDEVICE(INTEL, 0x31bc), (kernel_ulong_t)&bxt_uart_info },
+>  	{ PCI_VDEVICE(INTEL, 0x31be), (kernel_ulong_t)&bxt_uart_info },
+>  	{ PCI_VDEVICE(INTEL, 0x31c0), (kernel_ulong_t)&bxt_uart_info },
+> -- 
+> 2.23.0.rc1
+> 
 
-It also moves the PCI_IRQ_* macros outside of the ifdefs so that
-they are always available.
-
-Fixes: 625f269a5a7a ("crypto: inside-secure - add support for...")
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 9e700d9f9f28..74415ee62211 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -925,6 +925,11 @@ enum {
- 	PCI_SCAN_ALL_PCIE_DEVS	= 0x00000040,	/* Scan all, not just dev 0 */
- };
- 
-+#define PCI_IRQ_LEGACY		(1 << 0) /* Allow legacy interrupts */
-+#define PCI_IRQ_MSI		(1 << 1) /* Allow MSI interrupts */
-+#define PCI_IRQ_MSIX		(1 << 2) /* Allow MSI-X interrupts */
-+#define PCI_IRQ_AFFINITY	(1 << 3) /* Auto-assign affinity */
-+
- /* These external functions are only available when PCI support is enabled */
- #ifdef CONFIG_PCI
- 
-@@ -1408,11 +1413,6 @@ resource_size_t pcibios_window_alignment(struct pci_bus *bus,
- int pci_set_vga_state(struct pci_dev *pdev, bool decode,
- 		      unsigned int command_bits, u32 flags);
- 
--#define PCI_IRQ_LEGACY		(1 << 0) /* Allow legacy interrupts */
--#define PCI_IRQ_MSI		(1 << 1) /* Allow MSI interrupts */
--#define PCI_IRQ_MSIX		(1 << 2) /* Allow MSI-X interrupts */
--#define PCI_IRQ_AFFINITY	(1 << 3) /* Auto-assign affinity */
--
- /*
-  * Virtual interrupts allow for more interrupts to be allocated
-  * than the device has interrupts for. These are not programmed
-@@ -1517,14 +1517,6 @@ static inline int pci_irq_get_node(struct pci_dev *pdev, int vec)
- }
- #endif
- 
--static inline int
--pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
--		      unsigned int max_vecs, unsigned int flags)
--{
--	return pci_alloc_irq_vectors_affinity(dev, min_vecs, max_vecs, flags,
--					      NULL);
--}
--
- /**
-  * pci_irqd_intx_xlate() - Translate PCI INTx value to an IRQ domain hwirq
-  * @d: the INTx IRQ domain
-@@ -1780,8 +1772,29 @@ static inline const struct pci_device_id *pci_match_id(const struct pci_device_i
- 							 struct pci_dev *dev)
- { return NULL; }
- static inline bool pci_ats_disabled(void) { return true; }
-+
-+static inline int pci_irq_vector(struct pci_dev *dev, unsigned int nr)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int
-+pci_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
-+			       unsigned int max_vecs, unsigned int flags,
-+			       struct irq_affinity *aff_desc)
-+{
-+	return -ENOSPC;
-+}
- #endif /* CONFIG_PCI */
- 
-+static inline int
-+pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
-+		      unsigned int max_vecs, unsigned int flags)
-+{
-+	return pci_alloc_irq_vectors_affinity(dev, min_vecs, max_vecs, flags,
-+					      NULL);
-+}
-+
- #ifdef CONFIG_PCI_ATS
- /* Address Translation Service */
- void pci_ats_init(struct pci_dev *dev);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+With Best Regards,
+Andy Shevchenko
+
+
