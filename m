@@ -2,78 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08F8CA7DCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8821EA7DD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbfIDIZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 04:25:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41322 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726358AbfIDIZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:25:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6FFC6AE89;
-        Wed,  4 Sep 2019 08:25:41 +0000 (UTC)
-Date:   Wed, 4 Sep 2019 10:25:40 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Qian Cai <cai@lca.pw>, Eric Dumazet <eric.dumazet@gmail.com>,
-        davem@davemloft.net, netdev@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] net/skbuff: silence warnings under memory pressure
-Message-ID: <20190904082540.GI3838@dhcp22.suse.cz>
-References: <6109dab4-4061-8fee-96ac-320adf94e130@gmail.com>
- <1567178728.5576.32.camel@lca.pw>
- <229ebc3b-1c7e-474f-36f9-0fa603b889fb@gmail.com>
- <20190903132231.GC18939@dhcp22.suse.cz>
- <1567525342.5576.60.camel@lca.pw>
- <20190903185305.GA14028@dhcp22.suse.cz>
- <1567546948.5576.68.camel@lca.pw>
- <20190904061501.GB3838@dhcp22.suse.cz>
- <20190904064144.GA5487@jagdpanzerIV>
- <20190904070042.GA11968@jagdpanzerIV>
+        id S1729281AbfIDI0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 04:26:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48426 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725267AbfIDI0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 04:26:34 -0400
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D053E121D
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2019 08:26:33 +0000 (UTC)
+Received: by mail-ed1-f71.google.com with SMTP id x40so12190213edm.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 01:26:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Mdq+QracXr/iUxjMIxa/s/5noOnKKkBNDchKNpboJh8=;
+        b=k371zjgitfId6W0Vzq21hraMuGWwJc85VpQzLcb94bL0UHwttww1jaoW+tehS7W0U8
+         exV67DHv4fHaDNm0hrR31zzHeuEi32MC0p47FvZsu4x0EP5UMSpSmFXINSMohaJPQwNW
+         3Rb2JqJ3T33oZ/McVB0Ow3uxf5I1mL2Gl7/7H7Qax6ZksFK60geQxpxlr6sVPekoRjD0
+         3TJFHKNQYqhCxJRAqUDlc53e/v7lWt8pQcdCqAoPHOvX49Og4GR7ees0Pb6sn1UwZveQ
+         Pwibepq/6gP9Ezre205BLej9+jB2+lbjIyQWyMBSQ0e7CwBXw5Wdc8Svvh95hTZvuuaK
+         WlZw==
+X-Gm-Message-State: APjAAAVDbEE0OROXC4ZTYRvfPgeVGqREm5HWxlP8iDENvjiTNUIiLLSL
+        9ee42zz4/IRDCFN3Immu0IgnHnKp2wo3GekQD9pmTKFqtkr7LJP3ppm3778ZZXJoh8txjICs+JU
+        sm9H+Cz8vKWJJXyRUd7JavlcZ
+X-Received: by 2002:a50:935d:: with SMTP id n29mr17641206eda.294.1567585592218;
+        Wed, 04 Sep 2019 01:26:32 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyrZIi/f7VkraEJ2lB8pAtxxch5NNjc6CDt2RyPZ8JPCmVki5CWKUep7EVPz+F/rfwvljQ3FQ==
+X-Received: by 2002:a50:935d:: with SMTP id n29mr17641199eda.294.1567585592109;
+        Wed, 04 Sep 2019 01:26:32 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id d10sm2621252ejd.86.2019.09.04.01.26.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2019 01:26:31 -0700 (PDT)
+Subject: Re: [PATCH] i2c: cht-wc: drop check because i2c_unregister_device()
+ is NULL safe
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190820153441.7693-1-wsa+renesas@sang-engineering.com>
+ <20190903175218.GE2171@ninjato>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <2e55f3cb-ba88-5404-3b38-585710976ed0@redhat.com>
+Date:   Wed, 4 Sep 2019 10:26:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904070042.GA11968@jagdpanzerIV>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190903175218.GE2171@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 04-09-19 16:00:42, Sergey Senozhatsky wrote:
-> On (09/04/19 15:41), Sergey Senozhatsky wrote:
-> > But the thing is different in case of dump_stack() + show_mem() +
-> > some other output. Because now we ratelimit not a single printk() line,
-> > but hundreds of them. The ratelimit becomes - 10 * $$$ lines in 5 seconds
-> > (IOW, now we talk about thousands of lines).
+Hi,
+
+On 03-09-19 19:52, Wolfram Sang wrote:
+> On Tue, Aug 20, 2019 at 05:34:40PM +0200, Wolfram Sang wrote:
+>> No need to check the argument of i2c_unregister_device() because the
+>> function itself does it.
+>>
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> ---
 > 
-> And on devices with slow serial consoles this can be somewhat close to
-> "no ratelimit". *Suppose* that warn_alloc() adds 700 lines each time.
-> Within 5 seconds we can call warn_alloc() 10 times, which will add 7000
-> lines to the logbuf. If printk() can evict only 6000 lines in 5 seconds
-> then we have a growing number of pending logbuf messages.
+> Hans, are you OK with this change?
 
-Yes, ratelimit is problematic when the ratelimited operation is slow. I
-guess that is a well known problem and we would need to rework both the
-api and the implementation to make it work in those cases as well.
-Essentially we need to make the ratelimit act as a gatekeeper to an
-operation section - something like a critical section except you can
-tolerate more code executions but not too many. So effectively
+Yes this is fine by me:
 
-	start_throttle(rate, number);
-	/* here goes your operation */
-	end_throttle();
+Acked-by: Hans de Goede <hdegoede@redhat.com>
 
-one operation is not considered done until the whole section ends.
-Or something along those lines.
+Regards,
 
-In this particular case we can increase the rate limit parameters of
-course but I think that longterm we need a better api.
--- 
-Michal Hocko
-SUSE Labs
+Hans
+
+
+> 
+>> Build tested only, buildbot is happy, too.
+>>
+>> Please apply to your tree.
+>>
+>>   drivers/i2c/busses/i2c-cht-wc.c | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-cht-wc.c b/drivers/i2c/busses/i2c-cht-wc.c
+>> index 66af44bfa67d..3e2608a65c06 100644
+>> --- a/drivers/i2c/busses/i2c-cht-wc.c
+>> +++ b/drivers/i2c/busses/i2c-cht-wc.c
+>> @@ -363,8 +363,7 @@ static int cht_wc_i2c_adap_i2c_remove(struct platform_device *pdev)
+>>   {
+>>   	struct cht_wc_i2c_adap *adap = platform_get_drvdata(pdev);
+>>   
+>> -	if (adap->client)
+>> -		i2c_unregister_device(adap->client);
+>> +	i2c_unregister_device(adap->client);
+>>   	i2c_del_adapter(&adap->adapter);
+>>   	irq_domain_remove(adap->irq_domain);
+>>   
+>> -- 
+>> 2.20.1
+>>
