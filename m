@@ -2,67 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1269BA9477
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B3EA9472
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:05:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730741AbfIDVGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 17:06:34 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37441 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730257AbfIDVGd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 17:06:33 -0400
-Received: by mail-ot1-f67.google.com with SMTP id s28so404444otd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:06:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YIZN2wM55zKdgwL+0xN86o81SzNdsgWSw7Svn4BwB44=;
-        b=KrI/WeVz1Q87wpkYDsgiu39HziiqZw1TTr1fWqZ5pyphtbeRtvuWLULKDvKyPzDDxj
-         j/vF4J1p58RAAB4NmPrOelfOW6oEhG2Y6fBFq1h54WStLlU9Pa1svDLhofDdyzGuWzJC
-         ZieeODDV7km8sdp/2UaiBqsBi+1yAD8HpevV6IKnX3E6sex/0mrWk3LOe79mxmWDxL1R
-         JlXSPwa1MsGNUam6e+3wX2pNUloaDfRAy7hSsuPArkryJuOKhsyF8CYfywhNNFOttrAV
-         NHQAi9BTezlzmnXGQ4ZLy3xt5FstMM4Zd95Hb2WiT2BXQjl7aln5z2yBXWrVLunDVuFL
-         QjFA==
-X-Gm-Message-State: APjAAAXzk6o2OzsGJnvBvjHyHMqov3UDEsETCmwCm8pwAyPpwFnahP7b
-        kx8pjZr/i9JYWHfTH95MWHaPBIUldKsUITNp0JQ=
-X-Google-Smtp-Source: APXvYqyMjenX8y8SBV0Gg3SVH0N+zZcrn+GaGc7vuiriVI7wzdJ34CEHNXpGDQCpXcbFQIxYpc8TWfe+oUnoHD4Vlug=
-X-Received: by 2002:a9d:7411:: with SMTP id n17mr14551012otk.118.1567631192682;
- Wed, 04 Sep 2019 14:06:32 -0700 (PDT)
+        id S1730677AbfIDVF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 17:05:28 -0400
+Received: from mx1.riseup.net ([198.252.153.129]:47224 "EHLO mx1.riseup.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730214AbfIDVF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 17:05:27 -0400
+Received: from bell.riseup.net (bell-pn.riseup.net [10.0.1.178])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "*.riseup.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (verified OK))
+        by mx1.riseup.net (Postfix) with ESMTPS id E80261A652C;
+        Wed,  4 Sep 2019 14:05:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+        t=1567631127; bh=RLM1V7holiv5uXxR58b5zPqf00nxc2ymX8fdlGsPBOs=;
+        h=From:To:Subject:Date:From;
+        b=A3wowv/MIngUNkpsgk59MMoIHhiDyIi6FhwyI39b9jnKZgmF0poaC7Jh0GD4dSm+K
+         PYmi5kdloCu8LfuedeZmcW3Jtxvs2kKNd2VvHjmgdGtdBMAv75hw1NKs1RANcqaZ8n
+         7qdLwlMEg2vM+uzjZqcjLOXQu0AXcIf1ggjwietE=
+X-Riseup-User-ID: 4E284FA5E98CD97C1A4A4A34D27E74924627F18E6477D22557B90FBBC61CF950
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+         by bell.riseup.net (Postfix) with ESMTPSA id 63C952231D9;
+        Wed,  4 Sep 2019 14:05:25 -0700 (PDT)
+From:   Leandro Ribeiro <leandrohr@riseup.net>
+To:     lkcamp@lists.libreplanetbr.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Subject: [PATCH] staging: rtl8723bs: Remove return statement from void function
+Date:   Wed,  4 Sep 2019 21:06:31 +0000
+Message-Id: <20190904210631.13599-1-leandrohr@riseup.net>
 MIME-Version: 1.0
-References: <20190830075156.76873-1-heikki.krogerus@linux.intel.com>
- <20190830075156.76873-3-heikki.krogerus@linux.intel.com> <20190904120732.GB15829@kroah.com>
-In-Reply-To: <20190904120732.GB15829@kroah.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 4 Sep 2019 23:06:21 +0200
-Message-ID: <CAJZ5v0h_UUu8ATkK0t7ffSg6hQiFf0JsHYNTSGZeELkNrxoe5g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] software node: Initialize the return value in software_node_find_by_name()
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kbuild test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 2:07 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Aug 30, 2019 at 10:51:56AM +0300, Heikki Krogerus wrote:
-> > The software node is searched from a list that may be empty
-> > when the function is called. This makes sure that the
-> > function returns NULL if the list is empty.
-> >
-> > Fixes: 1666faedb567 ("software node: Add software_node_get_reference_args()")
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix the following checkpatch warning:
 
-Applied, thanks!
+"WARNING: void function return statements are not generally useful"
+
+Signed-off-by: Leandro Ribeiro <leandrohr@riseup.net>
+---
+ drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+index 79c1e3edb189..7760fd0eb6c9 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c
+@@ -1406,7 +1406,6 @@ void rtl8723b_set_ap_wowlan_cmd(struct adapter *padapter, u8 enable)
+ 	rtl8723b_set_Fw_AP_Offload_Cmd(padapter, enable);
+ 	msleep(10);
+ 	DBG_871X_LEVEL(_drv_always_, "-%s()-\n", __func__);
+-	return ;
+ }
+ #endif /* CONFIG_AP_WOWLAN */
+ 
+-- 
+2.20.1
+
