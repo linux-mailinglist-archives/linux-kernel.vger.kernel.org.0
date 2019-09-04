@@ -2,121 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 285E1A9017
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEB15A919D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389501AbfIDSHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:07:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35269 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389066AbfIDSHf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:07:35 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g7so22308921wrx.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:07:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0pNxF1eREpDVfAwH6P4Jz2ZR6a4tSQss5fAPg9xipcU=;
-        b=FA9r/2CC69zrS4nHuU7/ZJsIVHzlYShr6fmJ9cEc28SsCM0dUkvafTdZzwpdBAt2UJ
-         jgxR/dmssZ0xRcjzo8HoyhLmr8+B211eJV67GRxLPu86Kh08UJ1M1p+lCItWU9YBYMaP
-         APb5itG0fZ19ZkUDqEPz9SJpJu/LnXye6hZ5ZtVEqo8WP/O4eoRmU/L14TfW3+/K1Iaw
-         JTJFif5NJ9zgEIzRwPA2gZGm20IFW/hWZHk4qoXyXrYt3I5F4HQvmvCA10jlLa8lk3Vp
-         2MEc68xp6S66OT+1IObXV0L3CeWimjP7T92glaYZ4xeielSt4PxHZK5WPz9JnXCHmnLB
-         bDvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0pNxF1eREpDVfAwH6P4Jz2ZR6a4tSQss5fAPg9xipcU=;
-        b=oDsbi08iNejWDrNUyVWbiO4JQaTj4cekjFIfkAnqQONqAPmlTROmwudvqMuHUuRzTJ
-         KYy/2ZcvaBeJQfdn8mguM/DZ04a5iNZmoiSJDmgIqSliC8vz3QSnZ8lovaUatb5FOLp4
-         UjVfrJCIXbJecStKeb85Sbrg4NfLAUCrVHU21+mqxc+HiuG2o0kkgYRpLqALVgx8CCAj
-         FNcOp187n51Wt89PVM7UYA8gXllXmS55tMMqU9W1GvxEfvyRvOkQgmhGGtdJ0ZE5Fxi8
-         Nw2TG+m13uWza0FOvFXakzk+KXjz7XCNHCRs6YGZtZU6Oai+zE4ooxux4L9I3zQgcvc8
-         T2tg==
-X-Gm-Message-State: APjAAAWmnKbjXgvULAlOtreY5ABhFC/8WjQ6NwKBcWt7PXAcZ95QbpDS
-        9KLWFKK1FCx31CG2zJwk96vPHfI7wXMTe9m3sV4hzA==
-X-Google-Smtp-Source: APXvYqw1PiXtVVva1gwnaGI3eyRH6HOU+Beb+APJ8gT0kJZ5PRbpcdwK3VG10lRtE7999s45H+XmUEwn8pdTuluQXVU=
-X-Received: by 2002:a5d:6703:: with SMTP id o3mr10511544wru.335.1567620453261;
- Wed, 04 Sep 2019 11:07:33 -0700 (PDT)
+        id S2389955AbfIDSUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:20:24 -0400
+Received: from mout.gmx.net ([212.227.15.15]:44349 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388701AbfIDSIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:08:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1567620473;
+        bh=uSFdeY18J73GEbur7/f5eGY33e2+gZfGIbg70oqM+2E=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=dFPK7v0eikK//IWvKaPDuTF8vPd9O/aKmO1DDSUY2K3IC2bxnVQ5PIk2EJhGM27kR
+         +lY+G9BNhgaiYDLaUrJX9F/2f1aIQsTNuq3ya5rD0AT7g8CjigqFQwromeihBXHSXC
+         O/uuMoGto9MJPLXCEM44QVkN4nCV3sTM8MJWrjW4=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([84.118.159.3]) by mail.gmx.com
+ (mrgmx004 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 1MhlGk-1ij1B310yG-00dqYX; Wed, 04 Sep 2019 20:07:53 +0200
+From:   Heinrich Schuchardt <xypron.glpk@gmx.de>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        =?UTF-8?q?Daniel=20P=20=2E=20Berrang=C3=A9?= <berrange@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>
+Subject: [PATCH 1/1] KVM: inject data abort if instruction cannot be decoded
+Date:   Wed,  4 Sep 2019 20:07:36 +0200
+Message-Id: <20190904180736.29009-1-xypron.glpk@gmx.de>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-References: <20190904180045.138513-1-irogers@google.com>
-In-Reply-To: <20190904180045.138513-1-irogers@google.com>
-From:   Ian Rogers <irogers@google.com>
-Date:   Wed, 4 Sep 2019 11:07:21 -0700
-Message-ID: <CAP-5=fXdZudoPWGASVVB0YKAok9hTBKAY43h7prSX7=1PPoR3w@mail.gmail.com>
-Subject: Re: [PATCH] perf tools: Fix include paths in ui
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:abXNHvOQi/p7CEIzoPWMQ9XFYpp4Z25ZscYRNbtDcb67ZH0vqAE
+ CCaWYLtBMzVUoZZj3DLLIFWRozpR+tYvr63KEw05ujxgzzI7iN0g+dgjei45TpxWlugdsiF
+ hLqcNFs7qc6B5xKFTZBxgoGdWkp6vsuL+qhmsf9GozxhZ5IUyUHXZk7+SsU37eCbQpoyn4O
+ c/fcxp1MYFQRPvj2y1OVw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:JozR6u9JImk=:9BlOOIijgEVJQxytK0x9tx
+ ffPR1NDnISmrIyzczzP11cywtaAFP9aCT0RxToSFNkToJSnm4aAHE/S7sSOhgAIyxz/MiIr75
+ KcPkdb6fnx23AA/KWNlaSRurYgMgazJ/6IuexrQBTdxaFm90ZlBzRLL3K8ywN/CV7JZtvH6z7
+ aFhqnENeGY04kiL4Zvg4gvZ4OW0XCYjI/FqU9AbtXKdBObedSvwR72zNEd05U37t9+x8zKk6j
+ LTJizGn7PHI8EuNOQLdKg0IXFjG8dPDYe8z7wgn2qlKGBjBeAawjfNp3Epb6kUw9213ZNGLMo
+ fh1gBhdrooRdaj1tEiGAhterenwoPCIM9X+VRYi8DAQbb70yGSicPAYEljE/k+/rJofxOuT+q
+ CxwkoHsuZ4mqi5+NhnaTJl4e36SNg28WzHRxDYOvL2igXBERcU6bsBTitDCccbufyP+5dPxOQ
+ uPyjZfdAVfzt20K85FboUwnZkpWJ8PAiIrQaJZXInThEl1hlhcQZBHzYzyhU5Hr0vT7U4bguC
+ Jk1d4iShpWENsqgl5/YyR1EpmrUUZyiBRo01uDGlt9hLy/RC6f3F7rSjihjY1zPvYJb9r26zl
+ sjKm0HwdyniWypblwzX1tidPLcBPHVc7xLlAQB9Amxfrap8J5aIaJV9ncupkKh9lDp1SMA7bi
+ bbFb7ydvnEj9BvWA7m7P9G3rJBACZN+IByS9r2paS2gmJORze++SF7xMJ4CapGqMPhm0Uh0+m
+ NWRh4c0s58AB0LRR0FnqR0vIkZjw58tSrhrZpQ+i3HGvS9U73dI9u74NpBU/UtPNAl1M2oC33
+ lU0fo9l6DRWSvRYhpvM+2DLbV2udzosMeRZaicEkLQuVPBWNFtqfE6GjW4KVEbg3EftIIKjKR
+ 0gT3EfIIZdht5LApSOvcoT70CR06LPLNQ0o3DEzr2ake3RZ2x6ItWyyJD2cf+MIMsBa7xKluS
+ cRnSMqgtb9PkRlVbNFar+V/OJ3yKgF04Ay4K/3PiP3AygXGBXLaN2SaDOnbm+6BsN8XXZNLGJ
+ wEJbpsOVJ8RM0sLV8X2HpOgJy77cP3gLkngJ3OQ0+ziAetElq+4QoVGQHvzzIc37WuWuUj672
+ HV4zT7/BsxTmuoCUoNd2qwOf/vWbcWNHRuTTY+ujEDs0+SybO+LhCZ8r+WlBFZgejj7NXq+RE
+ cgxieGDxbNjHstwJ68ra7rk37gfXEY/CDV3xk1cGtH89pLOT4mYhLPJ/CAin64ctNsznLUIXM
+ 81exZsNAov/vsxqph
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apologies, this was an accidental resend of a patch that's already
-merged fa37bab6d7154658d8a35920513f9396587754cc.
+If an application tries to access memory that is not mapped, an error
+ENOSYS, "load/store instruction decoding not implemented" may occur.
+QEMU will hang with a register dump.
 
-Ian
+Instead create a data abort that can be handled gracefully by the
+application running in the virtual environment.
 
-On Wed, Sep 4, 2019 at 11:01 AM Ian Rogers <irogers@google.com> wrote:
->
-> These paths point to the wrong location but still work because they
-> get picked up by a -I flag that happens to direct to the correct
-> file. Fix paths to point to the correct location without -I flags.
->
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/ui/browser.c      | 9 +++++----
->  tools/perf/ui/tui/progress.c | 2 +-
->  2 files changed, 6 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
-> index f80c51d53565..d227d74b28f8 100644
-> --- a/tools/perf/ui/browser.c
-> +++ b/tools/perf/ui/browser.c
-> @@ -1,7 +1,8 @@
->  // SPDX-License-Identifier: GPL-2.0
-> -#include "../string2.h"
-> -#include "../config.h"
-> -#include "../../perf.h"
-> +#include "../util/util.h"
-> +#include "../util/string2.h"
-> +#include "../util/config.h"
-> +#include "../perf.h"
->  #include "libslang.h"
->  #include "ui.h"
->  #include "util.h"
-> @@ -14,7 +15,7 @@
->  #include "browser.h"
->  #include "helpline.h"
->  #include "keysyms.h"
-> -#include "../color.h"
-> +#include "../util/color.h"
->  #include <linux/ctype.h>
->  #include <linux/zalloc.h>
->
-> diff --git a/tools/perf/ui/tui/progress.c b/tools/perf/ui/tui/progress.c
-> index bc134b82829d..5a24dd3ce4db 100644
-> --- a/tools/perf/ui/tui/progress.c
-> +++ b/tools/perf/ui/tui/progress.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include <linux/kernel.h>
-> -#include "../cache.h"
-> +#include "../../util/cache.h"
->  #include "../progress.h"
->  #include "../libslang.h"
->  #include "../ui.h"
-> --
-> 2.22.0.770.g0f2c4a37fd-goog
->
+Now the virtual machine can react to the event in the most appropriate
+way - by recovering, by writing an informative log, or by rebooting.
+
+Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+=2D--
+ virt/kvm/arm/mmio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/virt/kvm/arm/mmio.c b/virt/kvm/arm/mmio.c
+index a8a6a0c883f1..0cbed7d6a0f4 100644
+=2D-- a/virt/kvm/arm/mmio.c
++++ b/virt/kvm/arm/mmio.c
+@@ -161,8 +161,8 @@ int io_mem_abort(struct kvm_vcpu *vcpu, struct kvm_run=
+ *run,
+ 		if (ret)
+ 			return ret;
+ 	} else {
+-		kvm_err("load/store instruction decoding not implemented\n");
+-		return -ENOSYS;
++		kvm_inject_dabt(vcpu, kvm_vcpu_get_hfar(vcpu));
++		return 1;
+ 	}
+
+ 	rt =3D vcpu->arch.mmio_decode.rt;
+=2D-
+2.23.0.rc1
+
