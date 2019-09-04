@@ -2,111 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D550A8BE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC771A8C14
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733245AbfIDQH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:07:27 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:57316 "EHLO ale.deltatee.com"
+        id S2387479AbfIDQJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:09:13 -0400
+Received: from mga03.intel.com ([134.134.136.65]:26190 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728878AbfIDQHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:07:20 -0400
-Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1i5XoS-0006yr-3P; Wed, 04 Sep 2019 10:07:17 -0600
-To:     Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@fb.com>, Hannes Reinecke <hare@suse.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>
-References: <20190831000139.7662-1-logang@deltatee.com>
- <20190831152910.GA29439@localhost.localdomain>
- <33af4d94-9f6d-9baa-01fa-0f75ccee263e@deltatee.com>
- <20190903164620.GA20847@localhost.localdomain>
- <20190904060558.GA10849@lst.de>
- <20190904144426.GB21302@localhost.localdomain>
- <20190904154215.GA20422@lst.de>
- <20190904155445.GD21302@localhost.localdomain>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <ef3bf93b-cb47-95c5-7d96-f81d9acfdb55@deltatee.com>
-Date:   Wed, 4 Sep 2019 10:07:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1732095AbfIDQJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:09:11 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 09:09:11 -0700
+X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
+   d="scan'208";a="182536037"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 09:09:08 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 810DE204A6; Wed,  4 Sep 2019 19:09:06 +0300 (EEST)
+Date:   Wed, 4 Sep 2019 19:09:06 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Petr Mladek <pmladek@suse.com>, rafael@kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 10/11] lib/vsprintf: Add %pfw conversion specifier for
+ printing fwnode names
+Message-ID: <20190904160906.GW5475@paasikivi.fi.intel.com>
+References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
+ <20190902083240.20367-11-sakari.ailus@linux.intel.com>
+ <20190903130607.cf2qv3s3evobbd5g@pathway.suse.cz>
+ <20190904150413.GU5475@paasikivi.fi.intel.com>
+ <78ccab5e0f07b3acaade1dec1ca3241938ab298f.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <20190904155445.GD21302@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.73.163.230
-X-SA-Exim-Rcpt-To: keith.busch@intel.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, martin.petersen@oracle.com, sagi@grimberg.me, hare@suse.com, axboe@fb.com, hch@lst.de, kbusch@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH] nvme-core: Fix subsystem instance mismatches
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78ccab5e0f07b3acaade1dec1ca3241938ab298f.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Joe,
 
-
-On 2019-09-04 9:54 a.m., Keith Busch wrote:
-> On Wed, Sep 04, 2019 at 05:42:15PM +0200, Christoph Hellwig wrote:
->> On Wed, Sep 04, 2019 at 08:44:27AM -0600, Keith Busch wrote:
->>> Let me step through an example:
->>>
->>>   Ctrl A gets instance 0.
->>>
->>>   Its subsystem gets the same instance, and takes ref count on it:
->>>   all namespaces in this subsystem will use '0'.
->>>
->>>   Ctrl B gets instance 1, and it's in the same subsystem as Ctrl A so
->>>   no new subsytem is allocated.
->>>
->>>   Ctrl A is disconnected, dropping its ref on instance 0, but the
->>>   subsystem still has its refcount, making it unavailable.
->>>
->>>   Ctrl A is reconnected, and allocates instance 2 because 0 is still in
->>>   use.
->>>
->>> Now all the namespaces in this subsystem are prefixed with nvme0, but no
->>> controller exists with the same prefix. We still have inevitable naming
->>> mismatch, right?
->>
->> I think th major confusion was that we can use the same handle for
->> and unrelated subsystem vs controller, and that would avoid it.
->>
->> I don't see how we can avoid the controller is entirely different
->> from namespace problem ever.
-
-
-Yes, I agree, we can't solve the mismatch problem in the general case:
-with sequences of hot plug events there will always be a case that
-mismatches. I just think we can do better in the simple common default case.
-
-
-> Can we just ensure there is never a matching controller then? This
-> patch will accomplish that and simpler than wrapping the instance in a
-> refcount'ed object:
+On Wed, Sep 04, 2019 at 08:37:08AM -0700, Joe Perches wrote:
+> On Wed, 2019-09-04 at 18:04 +0300, Sakari Ailus wrote:
+> > On Tue, Sep 03, 2019 at 03:06:07PM +0200, Petr Mladek wrote:
+> > > On Mon 2019-09-02 11:32:39, Sakari Ailus wrote:
+> []
+> > > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> []
+> > > > @@ -5995,7 +5995,8 @@ sub process {
+> > > >  				while ($fmt =~ /(\%[\*\d\.]*p(\w))/g) {
+> > > >  					$specifier = $1;
+> > > >  					$extension = $2;
+> > > > -					if ($extension !~ /[SsBKRraEhMmIiUDdgVCbGNOxt]/) {
+> > > > +					if ($extension !~ /[SsBKRraEhMmIiUDdgVCbGNOxtf]/ ||
+> > > > +					    $extension =~ /^f[^w]/) {
+> > > 
+> > > This does not work. $extension seems to have only one character.
+> > 
+> > Good catch. \w indeed matches a single letter; I'll change that to \w+ and
+> > change the other uses accordingly.
 > 
-> http://lists.infradead.org/pipermail/linux-nvme/2019-May/024142.html
+> If you want to make changes to checkpatch, please
+> send patches to the checkpatch maintainers.
+> 
+> Don't break other parsing of $2/#extension.
+> 
+> If you really need to know whatever follows the specific
+> extension letter use another capture group.
+> 
+> 			while ($fmt =~  /(\%[\*\d\.]*p(\w)(\w*))/g) {
+> 				$specifier = $1;
+> 				$extension = $2;
+> 				$qualifier = $3;
+> 
+> etc...
+> 
+> Then verify $qualifier or $3 is not undef if necessary
 
-I don't really like that idea. It reduces the confusion caused by
-mismatching numbers, but causes the controller to never match the
-namespace, which is also confusing but in a different way.
+There are just a couple of users, but indeed, the extension handlers work
+based on a single letter as well so this way it's better aligned with the
+kernel implementation. Forks for me.
 
-I like the nvme_instance idea. It's not going to be perfect but it has
-some nice properties: the subsystem will try to match the controller's
-instance whenever possible, but in cases where it doesn't, the instance
-number of the subsystem will never be the same as an existing controller.
+-- 
+Regards,
 
-I'll see if I can work up a quick patch set and see what people think.
-
-Logan
+Sakari Ailus
+sakari.ailus@linux.intel.com
