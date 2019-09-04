@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DA44A8F0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EEFDA9006
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388029AbfIDSBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41008 "EHLO mail.kernel.org"
+        id S2389602AbfIDSHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:07:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387984AbfIDSB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:27 -0400
+        id S2389171AbfIDSHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:07:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B9D42341E;
-        Wed,  4 Sep 2019 18:01:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B4652087E;
+        Wed,  4 Sep 2019 18:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620087;
-        bh=HmqFCPFCKaJpoZao2sHYtfAsKC5MuJ2xbU/4FCfXwvU=;
+        s=default; t=1567620432;
+        bh=lm2ggu0B+hEIa5s9zRmKIf6P8oQ23BeKtocwhGD3hxo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MP9ulvXZfFe7dYsRF4f2NMP8K28FubBVo9cUIOGS9T0bdMMAti/dCjtEBAyHLZKlR
-         UyIpQzAZ3nI6Tu6ccK89vvzMT3xUqJ+T0Qxr5nZ3L0X9Np7gCZz1pT/acs2GUbr0id
-         J9C0oSQI8SyFNjM/ih5ukfC6wv1ogrGM6DU6n+C8=
+        b=eaw+6ce7VZjDWm5oBfOwzZIkpaYZDB70ezNUlWMuR64h2Do9EWwNM7LKNaVsfbJge
+         0OKrsfAxM9puCYHOG+pyyTzVcErur2WiQr80ihBCG+z+Vt2hjFUyDqR5U63nHS4BvL
+         j3B2/XBJQyyepYfNN4AjObH0tWIR2AJ2sSZTEeHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Peter Chen <peter.chen@nxp.com>
-Subject: [PATCH 4.9 67/83] usb: chipidea: udc: dont do hardware access if gadget has stopped
+Subject: [PATCH 4.19 57/93] usb: chipidea: udc: dont do hardware access if gadget has stopped
 Date:   Wed,  4 Sep 2019 19:53:59 +0200
-Message-Id: <20190904175309.517424909@linuxfoundation.org>
+Message-Id: <20190904175308.051011622@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -74,7 +74,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/usb/chipidea/udc.c
 +++ b/drivers/usb/chipidea/udc.c
-@@ -709,12 +709,6 @@ static int _gadget_stop_activity(struct
+@@ -708,12 +708,6 @@ static int _gadget_stop_activity(struct
  	struct ci_hdrc    *ci = container_of(gadget, struct ci_hdrc, gadget);
  	unsigned long flags;
  
@@ -87,7 +87,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	/* flush all endpoints */
  	gadget_for_each_ep(ep, gadget) {
  		usb_ep_fifo_flush(ep);
-@@ -732,6 +726,12 @@ static int _gadget_stop_activity(struct
+@@ -731,6 +725,12 @@ static int _gadget_stop_activity(struct
  		ci->status = NULL;
  	}
  
@@ -100,7 +100,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	return 0;
  }
  
-@@ -1306,6 +1306,10 @@ static int ep_disable(struct usb_ep *ep)
+@@ -1302,6 +1302,10 @@ static int ep_disable(struct usb_ep *ep)
  		return -EBUSY;
  
  	spin_lock_irqsave(hwep->lock, flags);
@@ -111,7 +111,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
  	/* only internal SW should disable ctrl endpts */
  
-@@ -1395,6 +1399,10 @@ static int ep_queue(struct usb_ep *ep, s
+@@ -1391,6 +1395,10 @@ static int ep_queue(struct usb_ep *ep, s
  		return -EINVAL;
  
  	spin_lock_irqsave(hwep->lock, flags);
@@ -122,7 +122,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	retval = _ep_queue(ep, req, gfp_flags);
  	spin_unlock_irqrestore(hwep->lock, flags);
  	return retval;
-@@ -1418,8 +1426,8 @@ static int ep_dequeue(struct usb_ep *ep,
+@@ -1414,8 +1422,8 @@ static int ep_dequeue(struct usb_ep *ep,
  		return -EINVAL;
  
  	spin_lock_irqsave(hwep->lock, flags);
@@ -133,7 +133,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
  	list_for_each_entry_safe(node, tmpnode, &hwreq->tds, td) {
  		dma_pool_free(hwep->td_pool, node->ptr, node->dma);
-@@ -1490,6 +1498,10 @@ static void ep_fifo_flush(struct usb_ep
+@@ -1486,6 +1494,10 @@ static void ep_fifo_flush(struct usb_ep
  	}
  
  	spin_lock_irqsave(hwep->lock, flags);
