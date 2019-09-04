@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC0CEA9026
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B29DA8F27
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389115AbfIDSH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:07:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50554 "EHLO mail.kernel.org"
+        id S2387953AbfIDSCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:02:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389302AbfIDSH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:07:56 -0400
+        id S2388676AbfIDSCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:02:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8BA520870;
-        Wed,  4 Sep 2019 18:07:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40BE722CF7;
+        Wed,  4 Sep 2019 18:02:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620475;
-        bh=UbwxphCkJgqkkmqkEGI327ZtsTfNouQD7+qWRvtcpI0=;
+        s=default; t=1567620121;
+        bh=/wv3AgA7zMwW73GFBi8l04EhSvdtctzZwKdDe8/Y3uM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=stARnLWN+RtRq81hHYa2OulY7q8ZKiMxoo3ABQxJRfDDRAdTgFduGi5WKCs4D0yY0
-         wBdiW/2W7hTfpofjgBFhmZbensHnq+aGr7q+iws+c5ByfNiaK5WeIf4ebfTlMLHbi+
-         ftnEcKLDIAZ9vw+LpycL16+7cciiPGrzalWOtC0o=
+        b=W0xGmcCpu8ln/nHkF2vhwUXJ7cPHMtTN/GNaLT6+MB8qmVPb6zKmrTgji7+ama82e
+         edzXrq0LZAswgiTBFOeJ1JJNrkuhsTcjGwM37U/Bv+/quqcwPxOQTnNtchyhgqfYLP
+         TeZ/NMPCEkJPxLOMAVRNhUWAbnVhY5iiBMtDm7yM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Wei Xu <xuwei5@hisilicon.com>
-Subject: [PATCH 4.19 71/93] lib: logic_pio: Avoid possible overlap for unregistering regions
-Date:   Wed,  4 Sep 2019 19:54:13 +0200
-Message-Id: <20190904175309.207549490@linuxfoundation.org>
+        stable@vger.kernel.org, Andrew Cooks <andrew.cooks@opengear.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 82/83] i2c: piix4: Fix port selection for AMD Family 16h Model 30h
+Date:   Wed,  4 Sep 2019 19:54:14 +0200
+Message-Id: <20190904175310.865012524@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,66 +45,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+[ Upstream commit c7c06a1532f3fe106687ac82a13492c6a619ff1c ]
 
-commit 0a27142bd1ee259e24a0be2b0133e5ca5df8da91 upstream.
+Family 16h Model 30h SMBus controller needs the same port selection fix
+as described and fixed in commit 0fe16195f891 ("i2c: piix4: Fix SMBus port
+selection for AMD Family 17h chips")
 
-The code was originally written to not support unregistering logical PIO
-regions.
+commit 6befa3fde65f ("i2c: piix4: Support alternative port selection
+register") also fixed the port selection for Hudson2, but unfortunately
+this is not the exact same device and the AMD naming and PCI Device IDs
+aren't particularly helpful here.
 
-To accommodate supporting unregistering logical PIO regions, subtly modify
-LOGIC_PIO_CPU_MMIO region registration code, such that the "end" of the
-registered regions is the "end" of the last region, and not the sum of
-the sizes of all the registered regions.
+The SMBus port selection register is common to the following Families
+and models, as documented in AMD's publicly available BIOS and Kernel
+Developer Guides:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ 50742 - Family 15h Model 60h-6Fh (PCI_DEVICE_ID_AMD_KERNCZ_SMBUS)
+ 55072 - Family 15h Model 70h-7Fh (PCI_DEVICE_ID_AMD_KERNCZ_SMBUS)
+ 52740 - Family 16h Model 30h-3Fh (PCI_DEVICE_ID_AMD_HUDSON2_SMBUS)
 
+The Hudson2 PCI Device ID (PCI_DEVICE_ID_AMD_HUDSON2_SMBUS) is shared
+between Bolton FCH and Family 16h Model 30h, but the location of the
+SmBus0Sel port selection bits are different:
+
+ 51192 - Bolton Register Reference Guide
+
+We distinguish between Bolton and Family 16h Model 30h using the PCI
+Revision ID:
+
+  Bolton is device 0x780b, revision 0x15
+  Family 16h Model 30h is device 0x780b, revision 0x1F
+  Family 15h Model 60h and 70h are both device 0x790b, revision 0x4A.
+
+The following additional public AMD BKDG documents were checked and do
+not share the same port selection register:
+
+ 42301 - Family 15h Model 00h-0Fh doesn't mention any
+ 42300 - Family 15h Model 10h-1Fh doesn't mention any
+ 49125 - Family 15h Model 30h-3Fh doesn't mention any
+
+ 48751 - Family 16h Model 00h-0Fh uses the previously supported
+         index register SB800_PIIX4_PORT_IDX_ALT at 0x2e
+
+Signed-off-by: Andrew Cooks <andrew.cooks@opengear.com>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: stable@vger.kernel.org [v4.6+]
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/logic_pio.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/i2c/busses/i2c-piix4.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/lib/logic_pio.c
-+++ b/lib/logic_pio.c
-@@ -35,7 +35,7 @@ int logic_pio_register_range(struct logi
- 	struct logic_pio_hwaddr *range;
- 	resource_size_t start;
- 	resource_size_t end;
--	resource_size_t mmio_sz = 0;
-+	resource_size_t mmio_end = 0;
- 	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
- 	int ret = 0;
+diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
+index 8f1c5f24c1df5..62785aa76b3fb 100644
+--- a/drivers/i2c/busses/i2c-piix4.c
++++ b/drivers/i2c/busses/i2c-piix4.c
+@@ -96,7 +96,7 @@
+ #define SB800_PIIX4_PORT_IDX_MASK	0x06
+ #define SB800_PIIX4_PORT_IDX_SHIFT	1
  
-@@ -56,7 +56,7 @@ int logic_pio_register_range(struct logi
- 			/* for MMIO ranges we need to check for overlap */
- 			if (start >= range->hw_start + range->size ||
- 			    end < range->hw_start) {
--				mmio_sz += range->size;
-+				mmio_end = range->io_start + range->size;
- 			} else {
- 				ret = -EFAULT;
- 				goto end_register;
-@@ -69,16 +69,16 @@ int logic_pio_register_range(struct logi
+-/* On kerncz, SmBus0Sel is at bit 20:19 of PMx00 DecodeEn */
++/* On kerncz and Hudson2, SmBus0Sel is at bit 20:19 of PMx00 DecodeEn */
+ #define SB800_PIIX4_PORT_IDX_KERNCZ		0x02
+ #define SB800_PIIX4_PORT_IDX_MASK_KERNCZ	0x18
+ #define SB800_PIIX4_PORT_IDX_SHIFT_KERNCZ	3
+@@ -355,18 +355,16 @@ static int piix4_setup_sb800(struct pci_dev *PIIX4_dev,
  
- 	/* range not registered yet, check for available space */
- 	if (new_range->flags == LOGIC_PIO_CPU_MMIO) {
--		if (mmio_sz + new_range->size - 1 > MMIO_UPPER_LIMIT) {
-+		if (mmio_end + new_range->size - 1 > MMIO_UPPER_LIMIT) {
- 			/* if it's too big check if 64K space can be reserved */
--			if (mmio_sz + SZ_64K - 1 > MMIO_UPPER_LIMIT) {
-+			if (mmio_end + SZ_64K - 1 > MMIO_UPPER_LIMIT) {
- 				ret = -E2BIG;
- 				goto end_register;
- 			}
- 			new_range->size = SZ_64K;
- 			pr_warn("Requested IO range too big, new size set to 64K\n");
+ 	/* Find which register is used for port selection */
+ 	if (PIIX4_dev->vendor == PCI_VENDOR_ID_AMD) {
+-		switch (PIIX4_dev->device) {
+-		case PCI_DEVICE_ID_AMD_KERNCZ_SMBUS:
++		if (PIIX4_dev->device == PCI_DEVICE_ID_AMD_KERNCZ_SMBUS ||
++		    (PIIX4_dev->device == PCI_DEVICE_ID_AMD_HUDSON2_SMBUS &&
++		     PIIX4_dev->revision >= 0x1F)) {
+ 			piix4_port_sel_sb800 = SB800_PIIX4_PORT_IDX_KERNCZ;
+ 			piix4_port_mask_sb800 = SB800_PIIX4_PORT_IDX_MASK_KERNCZ;
+ 			piix4_port_shift_sb800 = SB800_PIIX4_PORT_IDX_SHIFT_KERNCZ;
+-			break;
+-		case PCI_DEVICE_ID_AMD_HUDSON2_SMBUS:
+-		default:
++		} else {
+ 			piix4_port_sel_sb800 = SB800_PIIX4_PORT_IDX_ALT;
+ 			piix4_port_mask_sb800 = SB800_PIIX4_PORT_IDX_MASK;
+ 			piix4_port_shift_sb800 = SB800_PIIX4_PORT_IDX_SHIFT;
+-			break;
  		}
--		new_range->io_start = mmio_sz;
-+		new_range->io_start = mmio_end;
- 	} else if (new_range->flags == LOGIC_PIO_INDIRECT) {
- 		if (iio_sz + new_range->size - 1 > IO_SPACE_LIMIT) {
- 			ret = -E2BIG;
+ 	} else {
+ 		mutex_lock(&piix4_mutex_sb800);
+-- 
+2.20.1
+
 
 
