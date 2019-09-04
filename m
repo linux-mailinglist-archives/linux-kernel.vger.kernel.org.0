@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E0F5A8EF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF823A9115
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388496AbfIDSBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40434 "EHLO mail.kernel.org"
+        id S2390682AbfIDSN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:13:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388490AbfIDSBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:01 -0400
+        id S2390669AbfIDSNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:13:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E555F21883;
-        Wed,  4 Sep 2019 18:00:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E40E22CEA;
+        Wed,  4 Sep 2019 18:13:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620060;
-        bh=isNUUNz+CtV1YBtlcUly8NZkwfoyz1BR7ymRXL9XGlo=;
+        s=default; t=1567620803;
+        bh=T6X5eR2XhJprV6XznDa1AjWyiWhDWpBUUCRPWS0OZuc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dGT2lXidf/WfWhx5+BFQaU8PotybdI1d0hlxCDID4fXVqT8wu+wYy2Lw8CzT4dOT8
-         JdvWoCEkI+KZ9fi6vUlLlZ+w7hU6Gy+dWVxzQEALokhP3o4jR/F2R6lq1zCwaCbnjc
-         zDckIN+2YL6mxCiU+R7Mjw0Xw0ieCRV/28f/WRvg=
+        b=C4e2PVWZVujLx4kOzCzz7FpEcJpX2JWoUsE2S/E/DRZyGmkYffRmU5eyQ+u1V4eyv
+         1b8OKXFAYeZudyR37vcJN9CtJW5U3V/PwhKaMVyW915bVztwP83xLmzxg0nxUM/d24
+         metUte/chnmJy3GWqoR2k5Jikk+RArsC6yjXRRmg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.9 31/83] gpiolib: never report open-drain/source lines as input to user-space
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.2 060/143] ALSA: usb-audio: Check mixer unit bitmap yet more strictly
 Date:   Wed,  4 Sep 2019 19:53:23 +0200
-Message-Id: <20190904175306.615495708@linuxfoundation.org>
+Message-Id: <20190904175316.421126487@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +42,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 2c60e6b5c9241b24b8b523fefd3e44fb85622cda upstream.
+commit f9f0e9ed350e15d51ad07364b4cf910de50c472a upstream.
 
-If the driver doesn't support open-drain/source config options, we
-emulate this behavior when setting the direction by calling
-gpiod_direction_input() if the default value is 0 (open-source) or
-1 (open-drain), thus not actively driving the line in those cases.
+The bmControls (for UAC1) or bmMixerControls (for UAC2/3) bitmap has a
+variable size depending on both input and output pins.  Its size is to
+fit with input * output bits.  The problem is that the input size
+can't be determined simply from the unit descriptor itself but it
+needs to parse the whole connected sources.  Although the
+uac_mixer_unit_get_channels() tries to check some possible overflow of
+this bitmap, it's incomplete due to the lack of the  evaluation of
+input pins.
 
-This however clears the FLAG_IS_OUT bit for the GPIO line descriptor
-and makes the LINEINFO ioctl() incorrectly report this line's mode as
-'input' to user-space.
+For covering possible overflows, this patch adds the bitmap overflow
+check in the loop of input pins in parse_audio_mixer_unit().
 
-This commit modifies the ioctl() to always set the GPIOLINE_FLAG_IS_OUT
-bit in the lineinfo structure's flags field. Since it's impossible to
-use the input mode and open-drain/source options at the same time, we
-can be sure the reported information will be correct.
-
-Fixes: 521a2ad6f862 ("gpio: add userspace ABI for GPIO line information")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Link: https://lore.kernel.org/r/20190806114151.17652-1-brgl@bgdev.pl
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 0bfe5e434e66 ("ALSA: usb-audio: Check mixer unit descriptors more strictly")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/usb/mixer.c |   36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -953,9 +953,11 @@ static long gpio_ioctl(struct file *filp
- 		if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_ACTIVE_LOW;
- 		if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
--			lineinfo.flags |= GPIOLINE_FLAG_OPEN_DRAIN;
-+			lineinfo.flags |= (GPIOLINE_FLAG_OPEN_DRAIN |
-+					   GPIOLINE_FLAG_IS_OUT);
- 		if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
--			lineinfo.flags |= GPIOLINE_FLAG_OPEN_SOURCE;
-+			lineinfo.flags |= (GPIOLINE_FLAG_OPEN_SOURCE |
-+					   GPIOLINE_FLAG_IS_OUT);
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -739,7 +739,6 @@ static int uac_mixer_unit_get_channels(s
+ 				       struct uac_mixer_unit_descriptor *desc)
+ {
+ 	int mu_channels;
+-	void *c;
  
- 		if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
- 			return -EFAULT;
+ 	if (desc->bLength < sizeof(*desc))
+ 		return -EINVAL;
+@@ -762,13 +761,6 @@ static int uac_mixer_unit_get_channels(s
+ 		break;
+ 	}
+ 
+-	if (!mu_channels)
+-		return 0;
+-
+-	c = uac_mixer_unit_bmControls(desc, state->mixer->protocol);
+-	if (c - (void *)desc + (mu_channels - 1) / 8 >= desc->bLength)
+-		return 0; /* no bmControls -> skip */
+-
+ 	return mu_channels;
+ }
+ 
+@@ -2009,6 +2001,31 @@ static int parse_audio_feature_unit(stru
+  * Mixer Unit
+  */
+ 
++/* check whether the given in/out overflows bmMixerControls matrix */
++static bool mixer_bitmap_overflow(struct uac_mixer_unit_descriptor *desc,
++				  int protocol, int num_ins, int num_outs)
++{
++	u8 *hdr = (u8 *)desc;
++	u8 *c = uac_mixer_unit_bmControls(desc, protocol);
++	size_t rest; /* remaining bytes after bmMixerControls */
++
++	switch (protocol) {
++	case UAC_VERSION_1:
++	default:
++		rest = 1; /* iMixer */
++		break;
++	case UAC_VERSION_2:
++		rest = 2; /* bmControls + iMixer */
++		break;
++	case UAC_VERSION_3:
++		rest = 6; /* bmControls + wMixerDescrStr */
++		break;
++	}
++
++	/* overflow? */
++	return c + (num_ins * num_outs + 7) / 8 + rest > hdr + hdr[0];
++}
++
+ /*
+  * build a mixer unit control
+  *
+@@ -2137,6 +2154,9 @@ static int parse_audio_mixer_unit(struct
+ 		if (err < 0)
+ 			return err;
+ 		num_ins += iterm.channels;
++		if (mixer_bitmap_overflow(desc, state->mixer->protocol,
++					  num_ins, num_outs))
++			break;
+ 		for (; ich < num_ins; ich++) {
+ 			int och, ich_has_controls = 0;
+ 
 
 
