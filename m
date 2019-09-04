@@ -2,115 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AD0EA8C6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CB49A8C60
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733222AbfIDQNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:13:21 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42534 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733110AbfIDQLU (ORCPT
+        id S1733019AbfIDQMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:12:53 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38977 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732548AbfIDQMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:11:20 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 3B2232A7BDB;
-        Wed,  4 Sep 2019 12:11:19 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id WrxUKyOHNboE; Wed,  4 Sep 2019 12:11:18 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id B92512A7BD6;
-        Wed,  4 Sep 2019 12:11:18 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B92512A7BD6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1567613478;
-        bh=UvCTGqUCf4urIjnb3JtMZ9hbarJ4G87XaD/J1JfL2Sk=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=rixIuGRs3W8jXvPj13DrndaJXHwzFAXleVU6uHQ7aEkcBXVsSui0yny6uR/JL9o5i
-         XTT17NiofQOSaweia9Arc7eYXjqJgK6Ln79A0hJNTwT0kJQI4TQFcGmiF5IYHc/xjq
-         bekFPTzEbTz/H3uVi9odF/6UvG0ikUnj48ZYo+pWNzMgSjKdskh3xzfe6TSMKoGDxN
-         NFGWe3ok1JD00qZ4jbh6CQ9sxKU/I4cZFtKHJszfkOKOAy652Y3WoPXQec2fZqt7Uj
-         Ex6SnUMIIGG8O1Y009s37H7zG9J35F1dlQwzu6MAEMYzbsKmKHc+nL2qb0O0iTykGd
-         f29PGkg3up6vQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id R42Tsp5JXwDz; Wed,  4 Sep 2019 12:11:18 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 9E1712A7BBC;
-        Wed,  4 Sep 2019 12:11:18 -0400 (EDT)
-Date:   Wed, 4 Sep 2019 12:11:18 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     paulmck <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
-        Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Message-ID: <1457548021.1684.1567613478460.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20190904111126.GB24568@redhat.com>
-References: <20190903201135.1494-1-mathieu.desnoyers@efficios.com> <20190904111126.GB24568@redhat.com>
-Subject: Re: [RFC PATCH 1/2] Fix: sched/membarrier: p->mm->membarrier_state
- racy load
+        Wed, 4 Sep 2019 12:12:51 -0400
+Received: by mail-wr1-f65.google.com with SMTP id t16so21936361wra.6
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 09:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=q8pUvpVjKp1g5Qr8w2IVnrREUirRn/vuVmUWXmSYL4Q=;
+        b=LTfKPX0N8u61M2wJ5sy42uTQ+BoMX6ermJhYqKH/Q9DtGM30IwZRVjEk1iEvZtxsFg
+         jQGWkdRoBDp2evmwXeNcR4Jf89nZto3VO5zeJr9dneojF1ouo9VkWbE2ima2ckTz/TcK
+         HUhJSSX0ZdT69PvDgc9MqPoNpwJNAMOvdEDZ8rgfjX8b6w+KYSLYv6oexA5UhJ9bgwjk
+         xdzh+p3SgAql537WzCRStiL10eKM0SWalzasmaxAMDujB9HZfdyPziW4Os3qGGG5zIEj
+         0qayE9Hgo+ALfLW3FOs/S7GpC4nmNRQVGtWL0kMqrLWlSOjpmVJQLLFEeObL1ztJmEU4
+         3jtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=q8pUvpVjKp1g5Qr8w2IVnrREUirRn/vuVmUWXmSYL4Q=;
+        b=WzD02HIBxCz3wHixBPwvSucE4+MPbEcFbocbPR+v4821qHMwMmB62K7oQnQm3ahB48
+         O7216I0ole7hLTJYHEDZPsBaH5sdWXaELGCvHIZn66+aLUnVmBv7Cmg95mAI0Lk5Eofc
+         1F8Q8YMWp8LH0VwnErRkSZipOjhlmPZmewcixtiHs85fgxsxT6g1toO0u7/o6YTaIGGm
+         D3BwBo94279Up+HUmvfIeBZS2t9PcdF9tCZwCtj1rkCEh4whQyhlwnAXHxy335FKtYEo
+         DzoMiS8ancwX10cD6E6DZWfjiq4/YT3mMRI0D0EE4tVPilI2N8acIhzPfyZ8DsZRYHN5
+         +4Ow==
+X-Gm-Message-State: APjAAAUNAK4wQzZFIVDIiw0fKvgUzf5jRi0CseoCPxqJ3Tm7U3YueOxk
+        cUGS5EaWi9hlBWjAScFe4yBFfQ==
+X-Google-Smtp-Source: APXvYqwdxIz1SPASSWDxK72taN7umX8eaGJ50gyjNa1JHwg+UjQz1fdTJ6rPguOhSqf3vQ64uuDm7w==
+X-Received: by 2002:adf:f48e:: with SMTP id l14mr32359282wro.234.1567613569826;
+        Wed, 04 Sep 2019 09:12:49 -0700 (PDT)
+Received: from dell ([95.147.198.36])
+        by smtp.gmail.com with ESMTPSA id e6sm19269452wrr.14.2019.09.04.09.12.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Sep 2019 09:12:49 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 17:12:47 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     agross@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        bjorn.andersson@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] arm64: dts: qcom: Add Lenovo Yoga C630
+Message-ID: <20190904161247.GP26880@dell>
+References: <20190904121606.17474-1-lee.jones@linaro.org>
+ <20190904141257.GB6144@bogus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - FF68 (Linux)/8.8.15_GA_3829)
-Thread-Topic: sched/membarrier: p->mm->membarrier_state racy load
-Thread-Index: hfEVYLcRG2Y34JmTkaLiqVjU31tDtw==
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190904141257.GB6144@bogus>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Sep 4, 2019, at 7:11 AM, Oleg Nesterov oleg@redhat.com wrote:
+On Wed, 04 Sep 2019, Sudeep Holla wrote:
 
-> with or without these changes...
+> On Wed, Sep 04, 2019 at 01:16:06PM +0100, Lee Jones wrote:
+> > From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >
+> > The Lenovo Yoga C630 is built on the SDM850 from Qualcomm, but this seem
+> > to be similar enough to the SDM845 that we can reuse the sdm845.dtsi.
+> >
+> > Supported by this patch is: keyboard, battery monitoring, UFS storage,
+> > USB host and Bluetooth.
+> >
 > 
-> Why do membarrier_register_*_expedited() check get_nr_threads() == 1?
-> This makes no sense to me, atomic_read(mm_users) == 1 should be enough.
+> Just curious to know if the idea of booting using ACPI is completely
+> dropped as it's extremely difficult(because the firmware is so hacked
+> up and may violate spec, just my opinion) for whatever reasons.
 
-Indeed, if every thread within a process hold a mm_users refcount, then
-the get_nr_threads() == 1 check becomes redundant.
+Once [0] is applied, we can boot Mainline using ACPI.
 
-AFAIR, this check started out as "get_nr_threads() == 1", and then I changed
-the code to also cover the multi-process CLONE_VM use-case by adding the
-additional check.
+> We just made ACPI table version checking more lenient for this platform
+> and would be good to know if we continue to run ACPI on that or will
+> abandon and just use DT.
 
-> And I am not sure I understand membarrier_mm_sync_core_before_usermode().
-> OK, membarrier_private_expedited() can race with user -> kernel -> user
-> transition, but we do not care unless both user's above have the same mm?
-> Shouldn't membarrier_mm_sync_core_before_usermode() do
-> 
->	if (current->mm != mm)
->		return;
-> 
-> at the start to make it more clear and avoid sync_core_before_usermode()
-> if possible?
+Which patch are you referring to?  If you mean the ACPI v5.0 vs v5.1
+patch authored by Ard, then yes I know, I instigated it's existence
+due to these devices.
 
-Indeed, if we have taskA -> kernel -> taskB, it implies that we go through
-switch_mm() when scheduling taskB, which provides the required core serializing
-guarantees.
+DT will *always* be more enabled than ACPI, so it's advised that you
+use DT for anything useful.  ACPI booting is ideal for things like
+installing distros however, since they do not tend to provide DTBs in
+their installers.
 
-Moreover, if we look closely at the call to membarrier_mm_sync_core_before_usermode(),
-the mm it receives as parameter is the rq->prev_mm. So using the prev_mm membarrier
-state to decide whether we need to issue a sync_core before returning to a
-different next mm is not really relevant unless the next mm == rq->prev_mm.
-
-Nothing there seem to be actively buggy, but those are indeed nice cleanups.
-
-Thanks,
-
-Mathieu
+[0] https://lkml.org/lkml/2019/9/3/580
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
