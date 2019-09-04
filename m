@@ -2,60 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D63DA7939
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 05:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC47A7933
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 05:19:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbfIDDTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 23:19:38 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6197 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727065AbfIDDTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 23:19:37 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id AD1F964A5027FFA3A10A;
-        Wed,  4 Sep 2019 11:19:34 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 4 Sep 2019 11:19:25 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <martin.petersen@oracle.com>, <jejb@linux.ibm.com>
-CC:     <linux-scsi@vger.kernel.org>, <zhongjiang@huawei.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] scsi: qedi: remove an redundant null check before kfree_skb
-Date:   Wed, 4 Sep 2019 11:16:32 +0800
-Message-ID: <1567566992-8147-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1728062AbfIDDTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 23:19:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:47146 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726770AbfIDDTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 23:19:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A44F337;
+        Tue,  3 Sep 2019 20:19:00 -0700 (PDT)
+Received: from [10.162.41.129] (p8cg001049571a15.blr.arm.com [10.162.41.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D7053F718;
+        Tue,  3 Sep 2019 20:18:55 -0700 (PDT)
+Subject: Re: [PATCH] mm: fix double page fault on arm64 if PTE_AF is cleared
+To:     Jia He <justin.he@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Airlie <airlied@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190904005831.153934-1-justin.he@arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <fd22d787-3240-fe42-3ca3-9e8a98f86fce@arm.com>
+Date:   Wed, 4 Sep 2019 08:49:03 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190904005831.153934-1-justin.he@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kfree_skb has taken null pointer into account. Hence it is unnecessary
-to check it before kfree_skb. Just remove the condition.
+On 09/04/2019 06:28 AM, Jia He wrote:
+> When we tested pmdk unit test [1] vmmalloc_fork TEST1 in arm64 guest, there
+> will be a double page fault in __copy_from_user_inatomic of cow_user_page.
+> 
+> Below call trace is from arm64 do_page_fault for debugging purpose
+> [  110.016195] Call trace:
+> [  110.016826]  do_page_fault+0x5a4/0x690
+> [  110.017812]  do_mem_abort+0x50/0xb0
+> [  110.018726]  el1_da+0x20/0xc4
+> [  110.019492]  __arch_copy_from_user+0x180/0x280
+> [  110.020646]  do_wp_page+0xb0/0x860
+> [  110.021517]  __handle_mm_fault+0x994/0x1338
+> [  110.022606]  handle_mm_fault+0xe8/0x180
+> [  110.023584]  do_page_fault+0x240/0x690
+> [  110.024535]  do_mem_abort+0x50/0xb0
+> [  110.025423]  el0_da+0x20/0x24
+> 
+> The pte info before __copy_from_user_inatomic is(PTE_AF is cleared):
+> [ffff9b007000] pgd=000000023d4f8003, pud=000000023da9b003, pmd=000000023d4b3003, pte=360000298607bd3
+> 
+> The keypoint is: we don't always have a hardware-managed access flag on
+> arm64.
+> 
+> The root cause is in copy_one_pte, it will clear the PTE_AF for COW
+> pages. Generally, when it is accessed by user, the COW pages will be set
+> as accessed(PTE_AF bit on arm64) by hardware if hardware feature is
+> supported. But on some arm64 platforms, the PTE_AF needs to be set by
+> software.
+> 
+> This patch fix it by calling pte_mkyoung. Also, the parameter is
+> changed because vmf should be passed to cow_user_page()
+> 
+> [1] https://github.com/pmem/pmdk/tree/master/src/test/vmmalloc_fork
+> 
+> Reported-by: Yibo Cai <Yibo.Cai@arm.com>
+> Signed-off-by: Jia He <justin.he@arm.com>
+> ---
+>  mm/memory.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/memory.c b/mm/memory.c
+> index e2bb51b6242e..b1f9ace2e943 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2140,7 +2140,8 @@ static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
+>  	return same;
+>  }
+>  
+> -static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
+> +static inline void cow_user_page(struct page *dst, struct page *src,
+> +				struct vm_fault *vmf)
+>  {
+>  	debug_dma_assert_idle(src);
+>  
+> @@ -2152,20 +2153,30 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
+>  	 */
+>  	if (unlikely(!src)) {
+>  		void *kaddr = kmap_atomic(dst);
+> -		void __user *uaddr = (void __user *)(va & PAGE_MASK);
+> +		void __user *uaddr = (void __user *)(vmf->address & PAGE_MASK);
+> +		pte_t entry;
+>  
+>  		/*
+>  		 * This really shouldn't fail, because the page is there
+>  		 * in the page tables. But it might just be unreadable,
+>  		 * in which case we just give up and fill the result with
+> -		 * zeroes.
+> +		 * zeroes. If PTE_AF is cleared on arm64, it might
+> +		 * cause double page fault here. so makes pte young here
+>  		 */
+> +		if (!pte_young(vmf->orig_pte)) {
+> +			entry = pte_mkyoung(vmf->orig_pte);
+> +			if (ptep_set_access_flags(vmf->vma, vmf->address,
+> +				vmf->pte, entry, vmf->flags & FAULT_FLAG_WRITE))
+> +				update_mmu_cache(vmf->vma, vmf->address,
+> +						vmf->pte);
+> +		}
+> +
+>  		if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/scsi/qedi/qedi_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index acb930b..dabf425 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -789,8 +789,7 @@ static void qedi_ll2_free_skbs(struct qedi_ctx *qedi)
- 	spin_lock_bh(&qedi->ll2_lock);
- 	list_for_each_entry_safe(work, work_tmp, &qedi->ll2_skb_list, list) {
- 		list_del(&work->list);
--		if (work->skb)
--			kfree_skb(work->skb);
-+		kfree_skb(work->skb);
- 		kfree(work);
- 	}
- 	spin_unlock_bh(&qedi->ll2_lock);
--- 
-1.7.12.4
-
+Should not page fault be disabled when doing this ? Ideally it should
+have also called access_ok() on the user address range first. The point
+is that the caller of __copy_from_user_inatomic() must make sure that
+there cannot be any page fault while doing the actual copy. But also it
+should be done in generic way, something like in access_ok(). The current
+proposal here seems very specific to arm64 case.
