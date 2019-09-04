@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DC3CA8E72
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA22A9002
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387979AbfIDR6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:58:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36332 "EHLO mail.kernel.org"
+        id S2389589AbfIDSHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:07:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733164AbfIDR6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:58:02 -0400
+        id S2388067AbfIDSHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:07:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30C1C21883;
-        Wed,  4 Sep 2019 17:58:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0656F233FF;
+        Wed,  4 Sep 2019 18:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619881;
-        bh=4rP86TfaAMjgCiBLphU1/UPXUB0yv9Gq5PyHJn/AYVc=;
+        s=default; t=1567620427;
+        bh=RwAewO1EypVLVJLkigioLHmRtyVfLIej5e1mBvm8MZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Thv+jXya8VTQbYz9R4HmNDIWvK2gjb1ptSw2goQbQ3U2hCG2lv3ULyfeSVwb1UMf0
-         ryqZOEIkWNHBtxf72K+dlzQDELdVko6ktGMl2TpM7c1C/dEim3+b9SW9COvpWyxV8X
-         lDiPE+iGkmKMWjHz0BL6DI+z21Se4y6nEwkvTGcA=
+        b=PP/K7Jk/BqNpoBy57YhhgjFtxwACUdf0IJbEt1WP5AElhvc1oyIKgfuqcvEGSHyll
+         IyfUQlvuOpXhKKxdYcwfS6BsCnCaFJWWIS0559qWjwGevBUWEw6lu99/r4v9HEDMgs
+         UlyVEdqkrDzDcWy34Buhe4tC7TYYA/5XymZp3s9g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Mayr <me@sam.st>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 70/77] uprobes/x86: Fix detection of 32-bit user mode
+        stable@vger.kernel.org,
+        syzbot+d232cca6ec42c2edb3fc@syzkaller.appspotmail.com,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.19 55/93] USB: cdc-wdm: fix race between write and disconnect due to flag abuse
 Date:   Wed,  4 Sep 2019 19:53:57 +0200
-Message-Id: <20190904175309.893076215@linuxfoundation.org>
+Message-Id: <20190904175307.799477736@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,130 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9212ec7d8357ea630031e89d0d399c761421c83b ]
+From: Oliver Neukum <oneukum@suse.com>
 
-32-bit processes running on a 64-bit kernel are not always detected
-correctly, causing the process to crash when uretprobes are installed.
+commit 1426bd2c9f7e3126e2678e7469dca9fd9fc6dd3e upstream.
 
-The reason for the crash is that in_ia32_syscall() is used to determine the
-process's mode, which only works correctly when called from a syscall.
+In case of a disconnect an ongoing flush() has to be made fail.
+Nevertheless we cannot be sure that any pending URB has already
+finished, so although they will never succeed, they still must
+not be touched.
+The clean solution for this is to check for WDM_IN_USE
+and WDM_DISCONNECTED in flush(). There is no point in ever
+clearing WDM_IN_USE, as no further writes make sense.
 
-In the case of uretprobes, however, the function is called from a exception
-and always returns 'false' on a 64-bit kernel. In consequence this leads to
-corruption of the process's return address.
+The issue is as old as the driver.
 
-Fix this by using user_64bit_mode() instead of in_ia32_syscall(), which
-is correct in any situation.
+Fixes: afba937e540c9 ("USB: CDC WDM driver")
+Reported-by: syzbot+d232cca6ec42c2edb3fc@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190827103436.21143-1-oneukum@suse.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[ tglx: Add a comment and the following historical info ]
-
-This should have been detected by the rename which happened in commit
-
-  abfb9498ee13 ("x86/entry: Rename is_{ia32,x32}_task() to in_{ia32,x32}_syscall()")
-
-which states in the changelog:
-
-    The is_ia32_task()/is_x32_task() function names are a big misnomer: they
-    suggests that the compat-ness of a system call is a task property, which
-    is not true, the compatness of a system call purely depends on how it
-    was invoked through the system call layer.
-    .....
-
-and then it went and blindly renamed every call site.
-
-Sadly enough this was already mentioned here:
-
-   8faaed1b9f50 ("uprobes/x86: Introduce sizeof_long(), cleanup adjust_ret_addr() and
-arch_uretprobe_hijack_return_addr()")
-
-where the changelog says:
-
-    TODO: is_ia32_task() is not what we actually want, TS_COMPAT does
-    not necessarily mean 32bit. Fortunately syscall-like insns can't be
-    probed so it actually works, but it would be better to rename and
-    use is_ia32_frame().
-
-and goes all the way back to:
-
-    0326f5a94dde ("uprobes/core: Handle breakpoint and singlestep exceptions")
-
-Oh well. 7+ years until someone actually tried a uretprobe on a 32bit
-process on a 64bit kernel....
-
-Fixes: 0326f5a94dde ("uprobes/core: Handle breakpoint and singlestep exceptions")
-Signed-off-by: Sebastian Mayr <me@sam.st>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190728152617.7308-1-me@sam.st
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/uprobes.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/usb/class/cdc-wdm.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-index b8105289c60b6..178d63cac321b 100644
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -514,9 +514,12 @@ struct uprobe_xol_ops {
- 	void	(*abort)(struct arch_uprobe *, struct pt_regs *);
- };
- 
--static inline int sizeof_long(void)
-+static inline int sizeof_long(struct pt_regs *regs)
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -587,10 +587,20 @@ static int wdm_flush(struct file *file,
  {
--	return is_ia32_task() ? 4 : 8;
-+	/*
-+	 * Check registers for mode as in_xxx_syscall() does not apply here.
-+	 */
-+	return user_64bit_mode(regs) ? 8 : 4;
- }
+ 	struct wdm_device *desc = file->private_data;
  
- static int default_pre_xol_op(struct arch_uprobe *auprobe, struct pt_regs *regs)
-@@ -527,9 +530,9 @@ static int default_pre_xol_op(struct arch_uprobe *auprobe, struct pt_regs *regs)
+-	wait_event(desc->wait, !test_bit(WDM_IN_USE, &desc->flags));
++	wait_event(desc->wait,
++			/*
++			 * needs both flags. We cannot do with one
++			 * because resetting it would cause a race
++			 * with write() yet we need to signal
++			 * a disconnect
++			 */
++			!test_bit(WDM_IN_USE, &desc->flags) ||
++			test_bit(WDM_DISCONNECTING, &desc->flags));
  
- static int push_ret_address(struct pt_regs *regs, unsigned long ip)
- {
--	unsigned long new_sp = regs->sp - sizeof_long();
-+	unsigned long new_sp = regs->sp - sizeof_long(regs);
+ 	/* cannot dereference desc->intf if WDM_DISCONNECTING */
+-	if (desc->werr < 0 && !test_bit(WDM_DISCONNECTING, &desc->flags))
++	if (test_bit(WDM_DISCONNECTING, &desc->flags))
++		return -ENODEV;
++	if (desc->werr < 0)
+ 		dev_err(&desc->intf->dev, "Error in flush path: %d\n",
+ 			desc->werr);
  
--	if (copy_to_user((void __user *)new_sp, &ip, sizeof_long()))
-+	if (copy_to_user((void __user *)new_sp, &ip, sizeof_long(regs)))
- 		return -EFAULT;
- 
- 	regs->sp = new_sp;
-@@ -562,7 +565,7 @@ static int default_post_xol_op(struct arch_uprobe *auprobe, struct pt_regs *regs
- 		long correction = utask->vaddr - utask->xol_vaddr;
- 		regs->ip += correction;
- 	} else if (auprobe->defparam.fixups & UPROBE_FIX_CALL) {
--		regs->sp += sizeof_long(); /* Pop incorrect return address */
-+		regs->sp += sizeof_long(regs); /* Pop incorrect return address */
- 		if (push_ret_address(regs, utask->vaddr + auprobe->defparam.ilen))
- 			return -ERESTART;
- 	}
-@@ -671,7 +674,7 @@ static int branch_post_xol_op(struct arch_uprobe *auprobe, struct pt_regs *regs)
- 	 * "call" insn was executed out-of-line. Just restore ->sp and restart.
- 	 * We could also restore ->ip and try to call branch_emulate_op() again.
- 	 */
--	regs->sp += sizeof_long();
-+	regs->sp += sizeof_long(regs);
- 	return -ERESTART;
- }
- 
-@@ -962,7 +965,7 @@ bool arch_uprobe_skip_sstep(struct arch_uprobe *auprobe, struct pt_regs *regs)
- unsigned long
- arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr, struct pt_regs *regs)
- {
--	int rasize = sizeof_long(), nleft;
-+	int rasize = sizeof_long(regs), nleft;
- 	unsigned long orig_ret_vaddr = 0; /* clear high bits for 32-bit apps */
- 
- 	if (copy_from_user(&orig_ret_vaddr, (void __user *)regs->sp, rasize))
--- 
-2.20.1
-
+@@ -974,8 +984,6 @@ static void wdm_disconnect(struct usb_in
+ 	spin_lock_irqsave(&desc->iuspin, flags);
+ 	set_bit(WDM_DISCONNECTING, &desc->flags);
+ 	set_bit(WDM_READ, &desc->flags);
+-	/* to terminate pending flushes */
+-	clear_bit(WDM_IN_USE, &desc->flags);
+ 	spin_unlock_irqrestore(&desc->iuspin, flags);
+ 	wake_up_all(&desc->wait);
+ 	mutex_lock(&desc->rlock);
 
 
