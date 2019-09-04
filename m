@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7116A90D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E573A8F84
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390428AbfIDSL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:11:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56136 "EHLO mail.kernel.org"
+        id S2389061AbfIDSEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:04:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390419AbfIDSL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:11:56 -0400
+        id S2389053AbfIDSEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:04:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EAFA22CEA;
-        Wed,  4 Sep 2019 18:11:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A841208E4;
+        Wed,  4 Sep 2019 18:04:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620715;
-        bh=VFKkMxlmDxUAAOBEKSCj/Ht+0a40E6lIGzO0uhI0/ls=;
+        s=default; t=1567620244;
+        bh=fhHOuvkO9622U0xzRJeu4w7rQ+ZA2sQ7P92LgGkwuQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=in6co2p0WxjSCOHn8XIUeEd56jaLzkTJDmBvVWKV412luUxjQWCgAtDXlLFA3JN2e
-         g77R66fNBisBOkAAiGIbsADFM+HQI+VuXEVpDao++Bl4a7OiPYQgp7WE/uKBzNYXWw
-         sA8XZSn7JhXeqScfZyBvtCLtxvWWQq7023zqU0CE=
+        b=GleYQikJlco3xDLt1IOmF4JjWYXkBupAck54/l7hl3bkWI89L3C4T+8OoB4el4deE
+         G8qZjr6UU1q3wpqroBVhxQV7bmthwP4oOCylsD/hvnUn1m2j79W9ANqWl9Z06XLSbK
+         oYybicTfWKzzn0zNRtxR/OZVgU+Sp3Je9bjlkp4g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 5.2 069/143] KVM: x86: Dont update RIP or do single-step on faulting emulation
-Date:   Wed,  4 Sep 2019 19:53:32 +0200
-Message-Id: <20190904175316.762609715@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 05/57] usb: gadget: mass_storage: Fix races between fsg_disable and fsg_set_alt
+Date:   Wed,  4 Sep 2019 19:53:33 +0200
+Message-Id: <20190904175302.448648132@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +46,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+[ Upstream commit 4a56a478a525d6427be90753451c40e1327caa1a ]
 
-commit 75ee23b30dc712d80d2421a9a547e7ab6e379b44 upstream.
+If fsg_disable() and fsg_set_alt() are called too closely to each
+other (for example due to a quick reset/reconnect), what can happen
+is that fsg_set_alt sets common->new_fsg from an interrupt while
+handle_exception is trying to process the config change caused by
+fsg_disable():
 
-Don't advance RIP or inject a single-step #DB if emulation signals a
-fault.  This logic applies to all state updates that are conditional on
-clean retirement of the emulation instruction, e.g. updating RFLAGS was
-previously handled by commit 38827dbd3fb85 ("KVM: x86: Do not update
-EFLAGS on faulting emulation").
+	fsg_disable()
+	...
+	handle_exception()
+		sets state back to FSG_STATE_NORMAL
+		hasn't yet called do_set_interface()
+		or is inside it.
 
-Not advancing RIP is likely a nop, i.e. ctxt->eip isn't updated with
-ctxt->_eip until emulation "retires" anyways.  Skipping #DB injection
-fixes a bug reported by Andy Lutomirski where a #UD on SYSCALL due to
-invalid state with EFLAGS.TF=1 would loop indefinitely due to emulation
-overwriting the #UD with #DB and thus restarting the bad SYSCALL over
-and over.
+ ---> interrupt
+	fsg_set_alt
+		sets common->new_fsg
+		queues a new FSG_STATE_CONFIG_CHANGE
+ <---
 
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: stable@vger.kernel.org
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Fixes: 663f4c61b803 ("KVM: x86: handle singlestep during emulation")
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Now, the first handle_exception can "see" the updated
+new_fsg, treats it as if it was a fsg_set_alt() response,
+call usb_composite_setup_continue() etc...
 
+But then, the thread sees the second FSG_STATE_CONFIG_CHANGE,
+and goes back down the same path, wipes and reattaches a now
+active fsg, and .. calls usb_composite_setup_continue() which
+at this point is wrong.
+
+Not only we get a backtrace, but I suspect the second set_interface
+wrecks some state causing the host to get upset in my case.
+
+This fixes it by replacing "new_fsg" by a "state argument" (same
+principle) which is set in the same lock section as the state
+update, and retrieved similarly.
+
+That way, there is never any discrepancy between the dequeued
+state and the observed value of it. We keep the ability to have
+the latest reconfig operation take precedence, but we guarantee
+that once "dequeued" the argument (new_fsg) will not be clobbered
+by any new event.
+
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/x86.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/usb/gadget/function/f_mass_storage.c | 28 +++++++++++++-------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6547,12 +6547,13 @@ restart:
- 		unsigned long rflags = kvm_x86_ops->get_rflags(vcpu);
- 		toggle_interruptibility(vcpu, ctxt->interruptibility);
- 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
--		kvm_rip_write(vcpu, ctxt->eip);
--		if (r == EMULATE_DONE && ctxt->tf)
--			kvm_vcpu_do_singlestep(vcpu, &r);
- 		if (!ctxt->have_exception ||
--		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
-+		    exception_type(ctxt->exception.vector) == EXCPT_TRAP) {
-+			kvm_rip_write(vcpu, ctxt->eip);
-+			if (r == EMULATE_DONE && ctxt->tf)
-+				kvm_vcpu_do_singlestep(vcpu, &r);
- 			__kvm_set_rflags(vcpu, ctxt->eflags);
-+		}
+diff --git a/drivers/usb/gadget/function/f_mass_storage.c b/drivers/usb/gadget/function/f_mass_storage.c
+index 25ba303295332..41b5baa1f43b7 100644
+--- a/drivers/usb/gadget/function/f_mass_storage.c
++++ b/drivers/usb/gadget/function/f_mass_storage.c
+@@ -261,7 +261,7 @@ struct fsg_common;
+ struct fsg_common {
+ 	struct usb_gadget	*gadget;
+ 	struct usb_composite_dev *cdev;
+-	struct fsg_dev		*fsg, *new_fsg;
++	struct fsg_dev		*fsg;
+ 	wait_queue_head_t	io_wait;
+ 	wait_queue_head_t	fsg_wait;
  
- 		/*
- 		 * For STI, interrupts are shadowed; so KVM_REQ_EVENT will
+@@ -290,6 +290,7 @@ struct fsg_common {
+ 	unsigned int		bulk_out_maxpacket;
+ 	enum fsg_state		state;		/* For exception handling */
+ 	unsigned int		exception_req_tag;
++	void			*exception_arg;
+ 
+ 	enum data_direction	data_dir;
+ 	u32			data_size;
+@@ -393,7 +394,8 @@ static int fsg_set_halt(struct fsg_dev *fsg, struct usb_ep *ep)
+ 
+ /* These routines may be called in process context or in_irq */
+ 
+-static void raise_exception(struct fsg_common *common, enum fsg_state new_state)
++static void __raise_exception(struct fsg_common *common, enum fsg_state new_state,
++			      void *arg)
+ {
+ 	unsigned long		flags;
+ 
+@@ -406,6 +408,7 @@ static void raise_exception(struct fsg_common *common, enum fsg_state new_state)
+ 	if (common->state <= new_state) {
+ 		common->exception_req_tag = common->ep0_req_tag;
+ 		common->state = new_state;
++		common->exception_arg = arg;
+ 		if (common->thread_task)
+ 			send_sig_info(SIGUSR1, SEND_SIG_FORCED,
+ 				      common->thread_task);
+@@ -413,6 +416,10 @@ static void raise_exception(struct fsg_common *common, enum fsg_state new_state)
+ 	spin_unlock_irqrestore(&common->lock, flags);
+ }
+ 
++static void raise_exception(struct fsg_common *common, enum fsg_state new_state)
++{
++	__raise_exception(common, new_state, NULL);
++}
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+@@ -2287,16 +2294,16 @@ reset:
+ static int fsg_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+ {
+ 	struct fsg_dev *fsg = fsg_from_func(f);
+-	fsg->common->new_fsg = fsg;
+-	raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
++
++	__raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE, fsg);
+ 	return USB_GADGET_DELAYED_STATUS;
+ }
+ 
+ static void fsg_disable(struct usb_function *f)
+ {
+ 	struct fsg_dev *fsg = fsg_from_func(f);
+-	fsg->common->new_fsg = NULL;
+-	raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
++
++	__raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE, NULL);
+ }
+ 
+ 
+@@ -2309,6 +2316,7 @@ static void handle_exception(struct fsg_common *common)
+ 	enum fsg_state		old_state;
+ 	struct fsg_lun		*curlun;
+ 	unsigned int		exception_req_tag;
++	struct fsg_dev		*new_fsg;
+ 
+ 	/*
+ 	 * Clear the existing signals.  Anything but SIGUSR1 is converted
+@@ -2362,6 +2370,7 @@ static void handle_exception(struct fsg_common *common)
+ 	common->next_buffhd_to_fill = &common->buffhds[0];
+ 	common->next_buffhd_to_drain = &common->buffhds[0];
+ 	exception_req_tag = common->exception_req_tag;
++	new_fsg = common->exception_arg;
+ 	old_state = common->state;
+ 	common->state = FSG_STATE_NORMAL;
+ 
+@@ -2415,8 +2424,8 @@ static void handle_exception(struct fsg_common *common)
+ 		break;
+ 
+ 	case FSG_STATE_CONFIG_CHANGE:
+-		do_set_interface(common, common->new_fsg);
+-		if (common->new_fsg)
++		do_set_interface(common, new_fsg);
++		if (new_fsg)
+ 			usb_composite_setup_continue(common->cdev);
+ 		break;
+ 
+@@ -3007,8 +3016,7 @@ static void fsg_unbind(struct usb_configuration *c, struct usb_function *f)
+ 
+ 	DBG(fsg, "unbind\n");
+ 	if (fsg->common->fsg == fsg) {
+-		fsg->common->new_fsg = NULL;
+-		raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
++		__raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE, NULL);
+ 		/* FIXME: make interruptible or killable somehow? */
+ 		wait_event(common->fsg_wait, common->fsg != fsg);
+ 	}
+-- 
+2.20.1
+
 
 
