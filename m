@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9441DA91AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 718EFA913A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389156AbfIDSWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:22:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45594 "EHLO mail.kernel.org"
+        id S2390224AbfIDSOP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:14:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389094AbfIDSEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:04:31 -0400
+        id S2390742AbfIDSOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:14:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 324842339E;
-        Wed,  4 Sep 2019 18:04:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7578E206BA;
+        Wed,  4 Sep 2019 18:14:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620270;
-        bh=p3mS5M2VL2WP7HU7xDfcmCo78rfdX99EhmyzDEcf49Q=;
+        s=default; t=1567620852;
+        bh=auObbfFtxe1vAJIVlAJXLA+5R7odgXX5KYToodQnPi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oxNHoHJHQEXknvIQRdGWCj8MpWXMtQy0Ed7SD1mtaswPaUwt7fXKgcW0N2wW3+mnS
-         7kD0Bqeei6WxLI8TlQWmxez9sLdvZST/gvrWdbkX13kJqVOy5s5/BYIx0HSrE4ilZJ
-         sGW7WqlOZs0aSnuqyuqKUy4M7IMCm/izraU3Zi1Y=
+        b=db6KvBD1B+wZJ9MaNQxZdv1QonuTlUsp4S4ZryxHJCjyQ6gPshZUMRnuhTY+HCrK1
+         mAb0VwOMoqc0fMtN903t0+RCUS0693+l8/KkjGAskMQoHD4iSjXPhs5NP4J8a8PFvq
+         P1O0p0x3Uk5sTJX+AwXMa3PpZHsqmWcciEkuuMO8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 54/57] NFS: Pass error information to the pgio error cleanup routine
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 5.2 119/143] SUNRPC: Dont handle errors if the bind/connect succeeded
 Date:   Wed,  4 Sep 2019 19:54:22 +0200
-Message-Id: <20190904175307.166577781@linuxfoundation.org>
+Message-Id: <20190904175319.054317713@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,129 +43,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit df3accb849607a86278a37c35e6b313635ccc48b ]
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-Allow the caller to pass error information when cleaning up a failed
-I/O request so that we can conditionally take action to cancel the
-request altogether if the error turned out to be fatal.
+commit bd736ed3e2d1088d9b4050f727342e1e619c3841 upstream.
+
+Don't handle errors in call_bind_status()/call_connect_status()
+if it turns out that a previous call caused it to succeed.
 
 Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org # v5.1+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/nfs/direct.c         |  4 ++--
- fs/nfs/pagelist.c       |  5 +++--
- fs/nfs/read.c           |  2 +-
- fs/nfs/write.c          | 11 +++++++++--
- include/linux/nfs_xdr.h |  2 +-
- 5 files changed, 16 insertions(+), 8 deletions(-)
+ net/sunrpc/clnt.c |   35 ++++++++++++++++++++++++-----------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
 
-diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-index 0c5e56702b19e..2256ea4394d3a 100644
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -428,7 +428,7 @@ out_put:
- 	hdr->release(hdr);
- }
- 
--static void nfs_read_sync_pgio_error(struct list_head *head)
-+static void nfs_read_sync_pgio_error(struct list_head *head, int error)
- {
- 	struct nfs_page *req;
- 
-@@ -820,7 +820,7 @@ out_put:
- 	hdr->release(hdr);
- }
- 
--static void nfs_write_sync_pgio_error(struct list_head *head)
-+static void nfs_write_sync_pgio_error(struct list_head *head, int error)
- {
- 	struct nfs_page *req;
- 
-diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
-index ae598e45b2df0..16d7f9068c7ae 100644
---- a/fs/nfs/pagelist.c
-+++ b/fs/nfs/pagelist.c
-@@ -993,7 +993,7 @@ nfs_pageio_cleanup_request(struct nfs_pageio_descriptor *desc,
- 	LIST_HEAD(head);
- 
- 	nfs_list_move_request(req, &head);
--	desc->pg_completion_ops->error_cleanup(&head);
-+	desc->pg_completion_ops->error_cleanup(&head, desc->pg_error);
- }
- 
- /**
-@@ -1129,7 +1129,8 @@ static void nfs_pageio_error_cleanup(struct nfs_pageio_descriptor *desc)
- 
- 	for (midx = 0; midx < desc->pg_mirror_count; midx++) {
- 		mirror = &desc->pg_mirrors[midx];
--		desc->pg_completion_ops->error_cleanup(&mirror->pg_list);
-+		desc->pg_completion_ops->error_cleanup(&mirror->pg_list,
-+				desc->pg_error);
- 	}
- }
- 
-diff --git a/fs/nfs/read.c b/fs/nfs/read.c
-index 48d7277c60a97..09d5c282f50e9 100644
---- a/fs/nfs/read.c
-+++ b/fs/nfs/read.c
-@@ -205,7 +205,7 @@ static void nfs_initiate_read(struct nfs_pgio_header *hdr,
- }
- 
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -1893,6 +1893,7 @@ call_bind(struct rpc_task *task)
  static void
--nfs_async_read_error(struct list_head *head)
-+nfs_async_read_error(struct list_head *head, int error)
+ call_bind_status(struct rpc_task *task)
  {
- 	struct nfs_page	*req;
++	struct rpc_xprt *xprt = task->tk_rqstp->rq_xprt;
+ 	int status = -EIO;
  
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index 50ed3944d1830..3c1e46f4bce32 100644
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -1397,20 +1397,27 @@ static void nfs_redirty_request(struct nfs_page *req)
- 	nfs_release_request(req);
- }
- 
--static void nfs_async_write_error(struct list_head *head)
-+static void nfs_async_write_error(struct list_head *head, int error)
- {
- 	struct nfs_page	*req;
- 
- 	while (!list_empty(head)) {
- 		req = nfs_list_entry(head->next);
- 		nfs_list_remove_request(req);
-+		if (nfs_error_is_fatal(error)) {
-+			nfs_context_set_write_error(req->wb_context, error);
-+			if (nfs_error_is_fatal_on_server(error)) {
-+				nfs_write_error_remove_page(req);
-+				continue;
-+			}
-+		}
- 		nfs_redirty_request(req);
+ 	if (rpc_task_transmitted(task)) {
+@@ -1900,14 +1901,15 @@ call_bind_status(struct rpc_task *task)
+ 		return;
  	}
- }
  
- static void nfs_async_write_reschedule_io(struct nfs_pgio_header *hdr)
+-	if (task->tk_status >= 0) {
+-		dprint_status(task);
++	dprint_status(task);
++	trace_rpc_bind_status(task);
++	if (task->tk_status >= 0)
++		goto out_next;
++	if (xprt_bound(xprt)) {
+ 		task->tk_status = 0;
+-		task->tk_action = call_connect;
+-		return;
++		goto out_next;
+ 	}
+ 
+-	trace_rpc_bind_status(task);
+ 	switch (task->tk_status) {
+ 	case -ENOMEM:
+ 		dprintk("RPC: %5u rpcbind out of memory\n", task->tk_pid);
+@@ -1966,7 +1968,9 @@ call_bind_status(struct rpc_task *task)
+ 
+ 	rpc_call_rpcerror(task, status);
+ 	return;
+-
++out_next:
++	task->tk_action = call_connect;
++	return;
+ retry_timeout:
+ 	task->tk_status = 0;
+ 	task->tk_action = call_bind;
+@@ -2013,6 +2017,7 @@ call_connect(struct rpc_task *task)
+ static void
+ call_connect_status(struct rpc_task *task)
  {
--	nfs_async_write_error(&hdr->pages);
-+	nfs_async_write_error(&hdr->pages, 0);
- }
++	struct rpc_xprt *xprt = task->tk_rqstp->rq_xprt;
+ 	struct rpc_clnt *clnt = task->tk_client;
+ 	int status = task->tk_status;
  
- static const struct nfs_pgio_completion_ops nfs_async_write_completion_ops = {
-diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
-index 6959968dc36a7..373fb26b5fed1 100644
---- a/include/linux/nfs_xdr.h
-+++ b/include/linux/nfs_xdr.h
-@@ -1520,7 +1520,7 @@ struct nfs_commit_data {
- };
+@@ -2022,8 +2027,17 @@ call_connect_status(struct rpc_task *tas
+ 	}
  
- struct nfs_pgio_completion_ops {
--	void	(*error_cleanup)(struct list_head *head);
-+	void	(*error_cleanup)(struct list_head *head, int);
- 	void	(*init_hdr)(struct nfs_pgio_header *hdr);
- 	void	(*completion)(struct nfs_pgio_header *hdr);
- 	void	(*reschedule_io)(struct nfs_pgio_header *hdr);
--- 
-2.20.1
-
+ 	dprint_status(task);
+-
+ 	trace_rpc_connect_status(task);
++
++	if (task->tk_status == 0) {
++		clnt->cl_stats->netreconn++;
++		goto out_next;
++	}
++	if (xprt_connected(xprt)) {
++		task->tk_status = 0;
++		goto out_next;
++	}
++
+ 	task->tk_status = 0;
+ 	switch (status) {
+ 	case -ECONNREFUSED:
+@@ -2054,13 +2068,12 @@ call_connect_status(struct rpc_task *tas
+ 	case -EAGAIN:
+ 	case -ETIMEDOUT:
+ 		goto out_retry;
+-	case 0:
+-		clnt->cl_stats->netreconn++;
+-		task->tk_action = call_transmit;
+-		return;
+ 	}
+ 	rpc_call_rpcerror(task, status);
+ 	return;
++out_next:
++	task->tk_action = call_transmit;
++	return;
+ out_retry:
+ 	/* Check for timeouts before looping back to call_bind */
+ 	task->tk_action = call_bind;
 
 
