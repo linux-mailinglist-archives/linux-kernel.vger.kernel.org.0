@@ -2,135 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 933A8A885D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32935A8865
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:22:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730636AbfIDOEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 10:04:05 -0400
-Received: from mga11.intel.com ([192.55.52.93]:11571 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727417AbfIDOEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 10:04:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 07:04:03 -0700
-X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
-   d="scan'208";a="185122449"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 07:03:58 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 61906204A6; Wed,  4 Sep 2019 17:03:45 +0300 (EEST)
-Date:   Wed, 4 Sep 2019 17:03:45 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v4 11/11] lib/test_printf: Add tests for %pfw printk
- modifier
-Message-ID: <20190904140345.GT5475@paasikivi.fi.intel.com>
-References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
- <20190902083240.20367-12-sakari.ailus@linux.intel.com>
- <20190903133841.dhb6k2lwx2gglyjs@pathway.suse.cz>
+        id S1730839AbfIDOGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 10:06:18 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:60220 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730462AbfIDOGS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 10:06:18 -0400
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x84E65FQ012074;
+        Wed, 4 Sep 2019 23:06:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x84E65FQ012074
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567605966;
+        bh=EIcW7nuR2BwIgm+8fvmv+3/OtKATqWDtbykL5X1yVEI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Ctf67tOBMnzuIGRVtw7qPYg87jOjmZTf9vdUjarlrSrcrPC2pYi/twYuqrhQBYtgP
+         pt0NB0gigDE2jQbTGoQHX4/5V3ELKocKEC+gvE/K2fbUTsmj35x02tpHmTCVTKAePi
+         8Zc+S9nQtNbWlsfRq/huhIh/9ScT4+96hDLOuAYbv8h/jh/0UXUbfhTweA5uTA0EFj
+         pPYOEQIM8aF6MaV8EdYmfT9Xs5hXT3n1M+LO/cJ958Ga2INt0bxig9/uwJhQVRVcI2
+         knVovMKLNQL7J21XGPRIMwV/BN6WufKxGQelj3/blPczhZMs7jxcYDmDtJRTi4ouhZ
+         Zhn0s5/R3subg==
+X-Nifty-SrcIP: [209.85.222.48]
+Received: by mail-ua1-f48.google.com with SMTP id h23so2703851uao.10;
+        Wed, 04 Sep 2019 07:06:06 -0700 (PDT)
+X-Gm-Message-State: APjAAAWphMMClKxjHmWFpQ+IBr5I4tc04w0F4qWaOsKyjEyr90knVDQI
+        qeonlTO9FZRjNz92EQmAz5yvhk/oXVwrn8s1GbU=
+X-Google-Smtp-Source: APXvYqyDmWQLlXmtoyVyouREoqmPaMLGw1tPpcxgighXpcAcoFK3ScNooPQI4LTe/+po0y7FdOnWYKnxlyKUaYtiwFY=
+X-Received: by 2002:ab0:32d8:: with SMTP id f24mr19579922uao.121.1567605964838;
+ Wed, 04 Sep 2019 07:06:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903133841.dhb6k2lwx2gglyjs@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190831162555.31887-1-yamada.masahiro@socionext.com>
+ <20190831162555.31887-2-yamada.masahiro@socionext.com> <CAKwvOdm0zcyaBLdSVc7PmjUa-wyVuCaN=6qZoPLvnoJC1ammog@mail.gmail.com>
+ <CA+icZUWzSsFXLmrO2G7ochE62e=kByEV6UKregcJqZrJN1WJxQ@mail.gmail.com>
+ <CA+icZUXboR-0TzpSHf7a8MSjxPWxdC13Oudu8D+b+umtvWCCkg@mail.gmail.com> <CA+icZUVN1zRi5P8PPWMjXoXwtSCkbzTFNreYXi+0HtTjPnfkTQ@mail.gmail.com>
+In-Reply-To: <CA+icZUVN1zRi5P8PPWMjXoXwtSCkbzTFNreYXi+0HtTjPnfkTQ@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 4 Sep 2019 23:05:28 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ28VedOdiHX-tKatT1ebzDNXM8b5CxcxKek3b271PgzA@mail.gmail.com>
+Message-ID: <CAK7LNAQ28VedOdiHX-tKatT1ebzDNXM8b5CxcxKek3b271PgzA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] kbuild: rename KBUILD_ENABLE_EXTRA_GCC_CHECKS to KBUILD_EXTRA_WARN
+To:     Sedat Dilek <sedat.dilek@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Petr,
+On Wed, Sep 4, 2019 at 6:58 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+> On Wed, Sep 4, 2019 at 10:07 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> >
+> > On Wed, Sep 4, 2019 at 8:58 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> > >
+> > > On Tue, Sep 3, 2019 at 11:50 PM Nick Desaulniers
+> > > <ndesaulniers@google.com> wrote:
+> > > >
+> > > > On Sat, Aug 31, 2019 at 9:26 AM Masahiro Yamada
+> > > > <yamada.masahiro@socionext.com> wrote:
+> > > > >
+> > > > > KBUILD_ENABLE_EXTRA_GCC_CHECKS started as a switch to add extra warning
+> > > > > options for GCC, but now it is a historical misnomer since we use it
+> > > > > also for Clang, DTC, and even kernel-doc.
+> > > >
+> > > > Thanks for the patch!
+> > > > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > >
+> > >
+> > > Thanks for the patch.
+> > > I like the backward compatibility and am OK with pointing to 'make
+> > > --help' for the documentation part (KISS - Keep It Simple and
+> > > Short/Stupid).
+> > >
+> > > Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
+> >
+> > If you will do a next version...
+> >
+> > - @echo  '  make W=n   [targets] Enable extra gcc checks, n=1,2,3 where'
+> > + @echo  '  make W=n   [targets] Enable extra checks, n=1,2,3 where'
+> >
+> > ...clarify on extra checks for compiler...
+> >
+> > + @echo  '  make W=n   [targets] Enable extra *compiler* checks, n=1,2,3 where'
+> >
+>
+> +KBUILD_EXTRA_WARN
+> +-----------------
+> +Specify the extra build checks. The same value can be assigned by passing
+> +W=... from the command line.
+>
+> For consistency reasons might be better:
+>
+> - @echo  '  make W=n   [targets] Enable extra gcc checks, n=1,2,3 where'
+> + @echo  '  make W=n   [targets] Enable extra build checks, n=1,2,3 where'
+>
 
-Thanks for the comments.
+OK, I will squash this. Thanks.
 
-On Tue, Sep 03, 2019 at 03:38:41PM +0200, Petr Mladek wrote:
-> On Mon 2019-09-02 11:32:40, Sakari Ailus wrote:
-> > Add a test for the %pfw printk modifier using software nodes.
-> > 
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  lib/test_printf.c | 37 +++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 37 insertions(+)
-> > 
-> > diff --git a/lib/test_printf.c b/lib/test_printf.c
-> > index 944eb50f38625..9c6d716979fb1 100644
-> > --- a/lib/test_printf.c
-> > +++ b/lib/test_printf.c
-> > @@ -22,6 +22,8 @@
-> >  #include <linux/gfp.h>
-> >  #include <linux/mm.h>
-> >  
-> > +#include <linux/property.h>
-> > +
-> >  #include "../tools/testing/selftests/kselftest_module.h"
-> >  
-> >  #define BUF_SIZE 256
-> > @@ -588,6 +590,40 @@ flags(void)
-> >  	kfree(cmp_buffer);
-> >  }
-> >  
-> > +static void __init fwnode_pointer(void)
-> > +{
-> > +	const struct software_node softnodes[] = {
-> > +		{ .name = "first", },
-> > +		{ .name = "second", .parent = &softnodes[0], },
-> > +		{ .name = "third", .parent = &softnodes[1], },
-> > +		{ NULL /* Guardian */ },
-> > +	};
-> > +	const char * const full_name = "/second/third";
-> > +	const char * const full_name_second = "/second";
-> > +	const char * const second_name = "second";
-> > +	const char * const third_name = "third";
-> > +	int rval;
-> > +
-> > +	rval = software_node_register_nodes(softnodes);
-> > +	if (rval) {
-> > +		pr_warn("cannot register softnodes; rval %d\n", rval);
-> > +		return;
-> > +	}
-> > +
-> > +	test(full_name_second, "%pfw",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-> 
-> "ARRAY_SIZE(softnodes) - 3" is quite cryptic.
-> Is there any particular reason to use it instead of &softnodes[1] ?
-
-I'm fine using a direct index, rather than refer to entries from the top
-downwards.
-
-> 
-> And is it expected that it does not print the "/first" parent?
-
-Heikki actually commented on an issue related to the "root" nodes. I'll
-reply to his comment, on the 5th patch of the set.
-
-> 
-> > +	test(full_name, "%pfw",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> > +	test(full_name, "%pfwf",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> > +	test(second_name, "%pfwP",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-> > +	test(third_name, "%pfwP",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> > +
-> > +	software_node_unregister_nodes(softnodes);
-> > +}
-> 
-> Anyway, thanks for the tests.
-
-You're welcome!
 
 -- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Best Regards
+Masahiro Yamada
