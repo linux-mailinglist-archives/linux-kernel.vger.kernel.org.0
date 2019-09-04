@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D719DA90CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80048A8E27
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390396AbfIDSLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:11:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55856 "EHLO mail.kernel.org"
+        id S2387487AbfIDR4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:56:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389971AbfIDSLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:11:43 -0400
+        id S1732038AbfIDR4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:56:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D05352087E;
-        Wed,  4 Sep 2019 18:11:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6D6C22CF5;
+        Wed,  4 Sep 2019 17:56:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620702;
-        bh=3PPlJtyaYmGB8nr08FGdGC9v13Bgstuekc9LvF+Trjs=;
+        s=default; t=1567619780;
+        bh=L0sZQK6qaSRuKrv7nMZnF4nMuJ8kVVOlJ/PIJH9sBt4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jCvFUH0DPNmcZ7bglVOCS+IrzPUR0gNqL/OldegLB+NugUXNuOdEtFeVlPymZOIu8
-         yCaef7hmRVI1nGTAgL+c9jlCuW2fAvQvaJRqjbZo05vDX/C9aZCpv6z8cV33A726eg
-         e2SgXqf5Ae1qahsQc/OKn8ZpExDG4TwuHx51abcM=
+        b=ZGP6t6h7oopDdh/JPddCwIdtGoSTPltJ3JkGGMNqMbGuNGVNniYI4LVm3kXYJPXxS
+         lcSiLyLgENggILX/y7bgX1eNJMHVuQ+/jfFWC9ySndv+q6HHwq5cxYM2fMGzUe1bqu
+         IkPsoQRUsPlGkqw9EPz8CV9jCmESwKhvlP6a0+0E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Yi-Hung Wei <yihung.wei@gmail.com>,
-        Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 056/143] openvswitch: Fix conntrack cache with timeout
+        stable@vger.kernel.org, Zhang Tao <kontais@zoho.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.4 32/77] dm table: fix invalid memory accesses with too high sector number
 Date:   Wed,  4 Sep 2019 19:53:19 +0200
-Message-Id: <20190904175316.266310168@linuxfoundation.org>
+Message-Id: <20190904175306.554010893@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yi-Hung Wei <yihung.wei@gmail.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[ Upstream commit 7177895154e6a35179d332f4a584d396c50d0612 ]
+commit 1cfd5d3399e87167b7f9157ef99daa0e959f395d upstream.
 
-This patch addresses a conntrack cache issue with timeout policy.
-Currently, we do not check if the timeout extension is set properly in the
-cached conntrack entry.  Thus, after packet recirculate from conntrack
-action, the timeout policy is not applied properly.  This patch fixes the
-aforementioned issue.
+If the sector number is too high, dm_table_find_target() should return a
+pointer to a zeroed dm_target structure (the caller should test it with
+dm_target_is_valid).
 
-Fixes: 06bd2bdf19d2 ("openvswitch: Add timeout support to ct action")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Yi-Hung Wei <yihung.wei@gmail.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+However, for some table sizes, the code in dm_table_find_target() that
+performs btree lookup will access out of bound memory structures.
+
+Fix this bug by testing the sector number at the beginning of
+dm_table_find_target(). Also, add an "inline" keyword to the function
+dm_table_get_size() because this is a hot path.
+
+Fixes: 512875bd9661 ("dm: table detect io beyond device")
+Cc: stable@vger.kernel.org
+Reported-by: Zhang Tao <kontais@zoho.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/openvswitch/conntrack.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
---- a/net/openvswitch/conntrack.c
-+++ b/net/openvswitch/conntrack.c
-@@ -67,6 +67,7 @@ struct ovs_conntrack_info {
- 	struct md_mark mark;
- 	struct md_labels labels;
- 	char timeout[CTNL_TIMEOUT_NAME_MAX];
-+	struct nf_ct_timeout *nf_ct_timeout;
- #if IS_ENABLED(CONFIG_NF_NAT)
- 	struct nf_nat_range2 range;  /* Only present for SRC NAT and DST NAT. */
- #endif
-@@ -697,6 +698,14 @@ static bool skb_nfct_cached(struct net *
- 		if (help && rcu_access_pointer(help->helper) != info->helper)
- 			return false;
- 	}
-+	if (info->nf_ct_timeout) {
-+		struct nf_conn_timeout *timeout_ext;
-+
-+		timeout_ext = nf_ct_timeout_find(ct);
-+		if (!timeout_ext || info->nf_ct_timeout !=
-+		    rcu_dereference(timeout_ext->timeout))
-+			return false;
-+	}
- 	/* Force conntrack entry direction to the current packet? */
- 	if (info->force && CTINFO2DIR(ctinfo) != IP_CT_DIR_ORIGINAL) {
- 		/* Delete the conntrack entry if confirmed, else just release
-@@ -1657,6 +1666,10 @@ int ovs_ct_copy_action(struct net *net,
- 				      ct_info.timeout))
- 			pr_info_ratelimited("Failed to associated timeout "
- 					    "policy `%s'\n", ct_info.timeout);
-+		else
-+			ct_info.nf_ct_timeout = rcu_dereference(
-+				nf_ct_timeout_find(ct_info.ct)->timeout);
-+
- 	}
+---
+ drivers/md/dm-table.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1167,7 +1167,7 @@ void dm_table_event(struct dm_table *t)
+ }
+ EXPORT_SYMBOL(dm_table_event);
  
- 	if (helper) {
+-sector_t dm_table_get_size(struct dm_table *t)
++inline sector_t dm_table_get_size(struct dm_table *t)
+ {
+ 	return t->num_targets ? (t->highs[t->num_targets - 1] + 1) : 0;
+ }
+@@ -1192,6 +1192,9 @@ struct dm_target *dm_table_find_target(s
+ 	unsigned int l, n = 0, k = 0;
+ 	sector_t *node;
+ 
++	if (unlikely(sector >= dm_table_get_size(t)))
++		return &t->targets[t->num_targets];
++
+ 	for (l = 0; l < t->depth; l++) {
+ 		n = get_child(n, k);
+ 		node = get_node(t, l, n);
 
 
