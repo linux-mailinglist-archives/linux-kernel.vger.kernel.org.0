@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 921B9A8EE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AEF7A8FEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388434AbfIDSAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:00:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39886 "EHLO mail.kernel.org"
+        id S2389085AbfIDSGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:06:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731972AbfIDSAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:00:37 -0400
+        id S2388511AbfIDSGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:06:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29ABB22CF7;
-        Wed,  4 Sep 2019 18:00:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2053B208E4;
+        Wed,  4 Sep 2019 18:06:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620036;
-        bh=eDi4c9RqkYDFcTPXhkbIIu8neFk087wFdjiOL5svrkQ=;
+        s=default; t=1567620395;
+        bh=Y3WTWkG85/3eRaBnKPhC5oucDyL+QcYVnYaPUi5pWaI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=euIF6vacBCHzml0o2OFcd7xrSzRPzpXjlRBjuhaNQ5x/OSmeoQJOYmjwtMNfCjlgq
-         V5b/buXJYoOR0UA5kOCOMrLwAaFPGPsR6AV9CXZua50Iz7TOB1HoTo4C61ax1dC1vY
-         +2NUzCvnxh010QPBMgKDjXG3muJjWjkngY3MRFBo=
+        b=e9gDpulvItrcrU35YaG0j37brLd2IxGZFNpZIqt7r+K16h1QC+4cJvctGIOnVXvO8
+         cMectUaNgPdxRiW4iVywJlIy67yYGF5mqLwKak7lZb6Cxjgd7ALer/AP6y2s7iR7PZ
+         Kn97lnx1AM7/0J9ZK7imgXRi09BtzgUqxu71q7ZQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Wenwen Wang <wenwen@cs.uga.edu>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 49/83] xen/blkback: fix memory leaks
-Date:   Wed,  4 Sep 2019 19:53:41 +0200
-Message-Id: <20190904175308.124080026@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 40/93] ALSA: usb-audio: Check mixer unit bitmap yet more strictly
+Date:   Wed,  4 Sep 2019 19:53:42 +0200
+Message-Id: <20190904175306.656801287@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,56 +42,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ae78ca3cf3d9e9f914bfcd0bc5c389ff18b9c2e0 ]
+From: Takashi Iwai <tiwai@suse.de>
 
-In read_per_ring_refs(), after 'req' and related memory regions are
-allocated, xen_blkif_map() is invoked to map the shared frame, irq, and
-etc. However, if this mapping process fails, no cleanup is performed,
-leading to memory leaks. To fix this issue, invoke the cleanup before
-returning the error.
+commit f9f0e9ed350e15d51ad07364b4cf910de50c472a upstream.
 
-Acked-by: Roger Pau Monné <roger.pau@citrix.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The bmControls (for UAC1) or bmMixerControls (for UAC2/3) bitmap has a
+variable size depending on both input and output pins.  Its size is to
+fit with input * output bits.  The problem is that the input size
+can't be determined simply from the unit descriptor itself but it
+needs to parse the whole connected sources.  Although the
+uac_mixer_unit_get_channels() tries to check some possible overflow of
+this bitmap, it's incomplete due to the lack of the  evaluation of
+input pins.
+
+For covering possible overflows, this patch adds the bitmap overflow
+check in the loop of input pins in parse_audio_mixer_unit().
+
+Fixes: 0bfe5e434e66 ("ALSA: usb-audio: Check mixer unit descriptors more strictly")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/block/xen-blkback/xenbus.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/usb/mixer.c |   36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index 5dfe6e8af1408..ad736d7de8383 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -967,6 +967,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
- 	}
- 	blkif->nr_ring_pages = nr_grefs;
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -754,7 +754,6 @@ static int uac_mixer_unit_get_channels(s
+ 				       struct uac_mixer_unit_descriptor *desc)
+ {
+ 	int mu_channels;
+-	void *c;
  
-+	err = -ENOMEM;
- 	for (i = 0; i < nr_grefs * XEN_BLKIF_REQS_PER_PAGE; i++) {
- 		req = kzalloc(sizeof(*req), GFP_KERNEL);
- 		if (!req)
-@@ -989,7 +990,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
- 	err = xen_blkif_map(ring, ring_ref, nr_grefs, evtchn);
- 	if (err) {
- 		xenbus_dev_fatal(dev, err, "mapping ring-ref port %u", evtchn);
--		return err;
-+		goto fail;
+ 	if (desc->bLength < sizeof(*desc))
+ 		return -EINVAL;
+@@ -777,13 +776,6 @@ static int uac_mixer_unit_get_channels(s
+ 		break;
  	}
  
- 	return 0;
-@@ -1009,8 +1010,7 @@ fail:
- 		}
- 		kfree(req);
- 	}
--	return -ENOMEM;
+-	if (!mu_channels)
+-		return 0;
 -
-+	return err;
+-	c = uac_mixer_unit_bmControls(desc, state->mixer->protocol);
+-	if (c - (void *)desc + (mu_channels - 1) / 8 >= desc->bLength)
+-		return 0; /* no bmControls -> skip */
+-
+ 	return mu_channels;
  }
  
- static int connect_ring(struct backend_info *be)
--- 
-2.20.1
-
+@@ -2028,6 +2020,31 @@ static int parse_audio_feature_unit(stru
+  * Mixer Unit
+  */
+ 
++/* check whether the given in/out overflows bmMixerControls matrix */
++static bool mixer_bitmap_overflow(struct uac_mixer_unit_descriptor *desc,
++				  int protocol, int num_ins, int num_outs)
++{
++	u8 *hdr = (u8 *)desc;
++	u8 *c = uac_mixer_unit_bmControls(desc, protocol);
++	size_t rest; /* remaining bytes after bmMixerControls */
++
++	switch (protocol) {
++	case UAC_VERSION_1:
++	default:
++		rest = 1; /* iMixer */
++		break;
++	case UAC_VERSION_2:
++		rest = 2; /* bmControls + iMixer */
++		break;
++	case UAC_VERSION_3:
++		rest = 6; /* bmControls + wMixerDescrStr */
++		break;
++	}
++
++	/* overflow? */
++	return c + (num_ins * num_outs + 7) / 8 + rest > hdr + hdr[0];
++}
++
+ /*
+  * build a mixer unit control
+  *
+@@ -2156,6 +2173,9 @@ static int parse_audio_mixer_unit(struct
+ 		if (err < 0)
+ 			return err;
+ 		num_ins += iterm.channels;
++		if (mixer_bitmap_overflow(desc, state->mixer->protocol,
++					  num_ins, num_outs))
++			break;
+ 		for (; ich < num_ins; ich++) {
+ 			int och, ich_has_controls = 0;
+ 
 
 
