@@ -2,85 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C5F2A91C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3EE5A91C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388566AbfIDSZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:25:11 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39642 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387988AbfIDSZJ (ORCPT
+        id S2388125AbfIDS0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:26:36 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38906 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730209AbfIDS0f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:25:09 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q12so3136353wmj.4;
-        Wed, 04 Sep 2019 11:25:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZNs26im8IZSiycRp5YdzdEf5xY+Panks2L0eHlZ793s=;
-        b=Qo/FhpDlrpLbmZy2AOO5cvsZQKPxLx53cw2F2bhjcD0IsT8ffwi1wSd1LFXmvLDYwV
-         uAjyijfk2M8YwZw9XktUtF0rEnGNek0Jc+/GLiJugzvXmuXQH5v6NeR9Mt+VZMP3iqJo
-         0w84fJY9gcNsEEadVnwtp8l8D2ZxfvkTkRfMepAvTM68WvVEmxYwaYsWyKdVD4Vn6BEZ
-         +J6HUcR2kK6fbwi6P6LSYTJ21ATYfqOLBNKu2XNSwIxvV4F+gEAe7tV6qG5dSOVbATIs
-         totGlRUmDm93sUTk01IkMB2zvoohqdRHukj0bTaJFepQ5knMAZW0AkLrjMnTw+6IS+6Q
-         hVqg==
-X-Gm-Message-State: APjAAAXOaj5RRNDWDMszx/cHmK+Quj8KaTlgVEiF1ML+wNjtLwP4gs3l
-        W7kL4tpsY8zSTedTfVVRAts=
-X-Google-Smtp-Source: APXvYqzKhl9Da3x+NOQGn/asSthLbZVbQBHuEIslYz5CVROihkX7N/X4nng7WKd5gmnOLs0uBCdTJA==
-X-Received: by 2002:a1c:c78f:: with SMTP id x137mr6042843wmf.42.1567621506722;
-        Wed, 04 Sep 2019 11:25:06 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id k6sm71403811wrg.0.2019.09.04.11.25.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Sep 2019 11:25:05 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 20:25:02 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v13 7/8] ARM: dts: exynos: add DMC device for exynos5422
-Message-ID: <20190904182502.GA12918@kozik-lap>
-References: <20190821104303.32079-1-l.luba@partner.samsung.com>
- <CGME20190821104324eucas1p16bdeb27250c8c9fa87591d6bd9743a17@eucas1p1.samsung.com>
- <20190821104303.32079-8-l.luba@partner.samsung.com>
+        Wed, 4 Sep 2019 14:26:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=s77u1k+rZJN6iSCbRoduEfOWdKA/7h9aaKfVHtc+CJw=; b=jFaDXlIx/OxYa+ytg8ebhfp27
+        E37dN3upZd3PsOfL2E0F81O3rPSaZ0mE6WXgF6HdIizgXHeU26Sk2FQhzSwqGmy+t+TIkCAGovloI
+        2OJcrHDs22d9vji2GLvzkeOtd+Hsw/nWV5CHvY2DFwrzIj2iq9CN5CJ3vCvs3VbmzJEpzi3Ytm37F
+        YP8BTbGaXiJt1t5+Pa2ukY7KDVMp6tqjfNzn6oRzce2t1olJjZZKwWtU15uV2lCyPgjjqJbhFHvYg
+        ep8ljixm4zwNixNS95lKfRbEVfDkU5LxNncNhREXzEEcikdxl1tuc9dFOCtU2xWILl/aJW7wddrKc
+        t7Hp916AQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5Zyk-0002Ja-Ih; Wed, 04 Sep 2019 18:26:02 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 985D3980BFC; Wed,  4 Sep 2019 20:26:07 +0200 (CEST)
+Date:   Wed, 4 Sep 2019 20:26:07 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        paulmck <paulmck@linux.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
+        Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC PATCH 1/2] Fix: sched/membarrier: p->mm->membarrier_state
+ racy load
+Message-ID: <20190904182607.GG17205@worktop.programming.kicks-ass.net>
+References: <20190903201135.1494-1-mathieu.desnoyers@efficios.com>
+ <20190903202434.GX2349@hirez.programming.kicks-ass.net>
+ <CAHk-=whfYb5RnJGqDV3W3093XGwOwePV-SxixaWcWM6hmidArg@mail.gmail.com>
+ <1604807537.1565.1567610340030.JavaMail.zimbra@efficios.com>
+ <20190904160953.GU2332@hirez.programming.kicks-ass.net>
+ <1825272223.1740.1567617173011.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190821104303.32079-8-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1825272223.1740.1567617173011.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 12:43:02PM +0200, Lukasz Luba wrote:
-> Add description of Dynamic Memory Controller and PPMU counters.
-> They are used by exynos5422-dmc driver.
-> There is a definition of the memory chip, which is then used during
-> calculation of timings for each OPP.
-> The algorithm in the driver needs these two sets to bound the timings.
+On Wed, Sep 04, 2019 at 01:12:53PM -0400, Mathieu Desnoyers wrote:
+> ----- On Sep 4, 2019, at 12:09 PM, Peter Zijlstra peterz@infradead.org wrote:
 > 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi             |  71 +++++++++++
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 116 ++++++++++++++++++
->  2 files changed, 187 insertions(+)
+> > On Wed, Sep 04, 2019 at 11:19:00AM -0400, Mathieu Desnoyers wrote:
+> >> ----- On Sep 3, 2019, at 4:36 PM, Linus Torvalds torvalds@linux-foundation.org
+> >> wrote:
+> > 
+> >> > I wonder if the easiest model might be to just use a percpu variable
+> >> > instead for the membarrier stuff? It's not like it has to be in
+> >> > 'struct task_struct' at all, I think. We only care about the current
+> >> > runqueues, and those are percpu anyway.
+> >> 
+> >> One issue here is that membarrier iterates over all runqueues without
+> >> grabbing any runqueue lock. If we copy that state from mm to rq on
+> >> sched switch prepare, we would need to ensure we have the proper
+> >> memory barriers between:
+> >> 
+> >> prior user-space memory accesses  /  setting the runqueue membarrier state
+> >> 
+> >> and
+> >> 
+> >> setting the runqueue membarrier state / following user-space memory accesses
+> >> 
+> >> Copying the membarrier state into the task struct leverages the fact that
+> >> we have documented and guaranteed those barriers around the rq->curr update
+> >> in the scheduler.
+> > 
+> > Should be the same as the barriers we already rely on for rq->curr, no?
+> > That is, if we put this before switch_mm() then we have
+> > smp_mb__after_spinlock() and switch_mm() itself.
+> 
+> Yes, I think we can piggy-back on the already documented barriers documented around
+> rq->curr store.
+> 
+> > Also, if we place mm->membarrier_state in the same cacheline as mm->pgd
+> > (which switch_mm() is bound to load) then we should be fine, I think.
+> 
+> Yes, if we make sure membarrier_prepare_task_switch only updates the
+> rq->membarrier_state if prev->mm != next->mm, we should be able to avoid
+> loading next->mm->membarrier_state when switch_mm() is not invoked.
+> 
+> I'll prepare RFC patch implementing this approach.
 
-Thanks, applied conditionally. Please send a follow up fixing the
-checkpatch error about undocumented binding:
-https://krzk.eu/#/builders/26/builds/392
+Thinking about this a bit; switching it 'on' still requires some
+thinking. Consider register on an already threaded process of which
+multiple threads are 'current' on multiple CPUs. In that case none of
+the rq bits will be set.
 
-You should not skip such checkpatch warning.
+Not even synchronize_rcu() is sufficient to force it either, since we
+only update on switch_mm() and nothing guarantees we pass that.
 
-Best regards,
-Krzysztof
+One possible approach would be to IPI broadcast (after setting the
+->mm->membarrier_State) and having the IPI update the rq state from
+'current->mm'.
 
+But possible I'm just confusing evryone again. I'm not having a good day
+today.
