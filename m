@@ -2,88 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEF41A7B9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:23:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE46FA7B9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728883AbfIDGXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 02:23:04 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:39348 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfIDGXD (ORCPT
+        id S1728747AbfIDGWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 02:22:32 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34857 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfIDGWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 02:23:03 -0400
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x846MjSa007900;
-        Wed, 4 Sep 2019 15:22:46 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x846MjSa007900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1567578166;
-        bh=f/Vt6AfJ/h0GmLP4nlGQ6fG5Sb31T5I6KrbEB4uL3XQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=klSroD0qCQpZ5U6pxi2/qRowXcLbgDr38bNgsFdq09oA5xRagfY68AYymJmL2UKlZ
-         AdN3EX+pOaZXFigtquwmXFnvIz3YR5SyvpELIcqwh15t9FojM4OT3w//5DNBllrIS6
-         8jcWank4fplhHLSRIv52JaVQuXE5k/O5ezpgG5ovUix9gr7t72Y2U85WCK6zchNNJI
-         IGep9b/kvtqmmEuB+oOySx5SD5G4+ClVDvd1oagm+uuBhiKUFk40Yrf9WaJNoy0z1a
-         NNwxMd4a2bXNJgvA3NvxjGlIrwB+ZlBl4kmYV1maLKxeec0WoF6e/8B3E0jIXdQNVi
-         GUbzyrXAys9UQ==
-X-Nifty-SrcIP: [209.85.222.46]
-Received: by mail-ua1-f46.google.com with SMTP id u18so2480760uap.2;
-        Tue, 03 Sep 2019 23:22:46 -0700 (PDT)
-X-Gm-Message-State: APjAAAXmjG0wAViQZJiZZVD4ViCOYzE0bTlAmHaEhT/5Imq3Vsn9JUxM
-        sPFYEV7uTykDw1/7OcHReJ49uoEVO4UsVr1MdD4=
-X-Google-Smtp-Source: APXvYqwXqIiEkpz8t5zX3CwWA0I7b3aQl9vXC5xpQV6eLWDVUn+QwNnliorr9pE1hNc0I8hJVRq/h0Tg+eKQL9tTnI0=
-X-Received: by 2002:a9f:2213:: with SMTP id 19mr6836107uad.25.1567578165238;
- Tue, 03 Sep 2019 23:22:45 -0700 (PDT)
+        Wed, 4 Sep 2019 02:22:32 -0400
+Received: by mail-io1-f67.google.com with SMTP id b10so41771785ioj.2;
+        Tue, 03 Sep 2019 23:22:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ha13jbBTJ78NMGOciyWwaZeX7xMQMX408d8EPNxVmIs=;
+        b=LfD5oJENpa1oAY/gb/OD2LLz+K2jKvTt8+yeSZEVcHtD1k9VN/Ifr6qI4QB8BZzyjx
+         QOpxxSZ6JJO4O96hJMv8Tq0eL98tb6W+nr6YpnIISDuQcid+4C0k+PfhPVU5r44gSsrr
+         fScRxF2Bxw5otqKfBRhz8GHIIvGmHxXkhOg6OnYFAZeCv/QWY+jAVM0DitJzZ8cOrBNB
+         RQiJq6TKmigyAjxNiJ6+9viTdOt2pX/FyEU65PNHjFu8MAWmhSAeWFTLiph+ci8vDj4z
+         9ZQ39kdDrm4CwcYC4xXV2LBBogfQfOE3iwCxflTIil9N9yKriFL1l1uQ9NUdsjD9JDps
+         oVGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ha13jbBTJ78NMGOciyWwaZeX7xMQMX408d8EPNxVmIs=;
+        b=qFILi6/8WWk26A7lWwN+9eVGOmJ4A83jUT6ymhap7A6o4Psu3O/4Hih78p/yWJfypW
+         F4xbAHeUHn/VfVPSsn51IMJAJE+ZL/1e8a+4RDs4hUhV72id18005FW9Ahi75LZIskSq
+         Hs0PE0MibguhK8jNeszo2BsdotChJZzVaRi6dmVvW4kLbPIwTf+XOKPIPYP3CvTSkhC5
+         ACnggehFAZ454di8TycM3JAXcpHhk4N3ehtzGLKCQXcZVBL7FTVCwoLFHYs2azjd5G01
+         OtSi+lZx/J/rdK3k4ojhrtrvDU3wEjnWCDht/qk0VJpC2CS0Y/aBpLsacfLFu0q2iSLS
+         Tw5Q==
+X-Gm-Message-State: APjAAAXd9a1okt4pt/lHlechqwSkNvLcUfD5Zd28HZQLfxUGkZQxzPxq
+        TGKRPp3y+itWH3yHz0pxWOg=
+X-Google-Smtp-Source: APXvYqyGF/nT7hMCagXQoT3al4s5E9hCIUwMr8muaqs6rrZkEfVxma8D+VTyjUf4JfEBbaY11AwnVw==
+X-Received: by 2002:a5e:8c01:: with SMTP id n1mr1049078ioj.152.1567578151734;
+        Tue, 03 Sep 2019 23:22:31 -0700 (PDT)
+Received: from JATN (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id t5sm17061967ios.33.2019.09.03.23.22.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 23:22:31 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 00:22:29 -0600
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     Don Dutile <ddutile@redhat.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Bodong Wang <bodong@mellanox.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [Linux-kernel-mentees] [PATCH v2 2/3] PCI: sysfs: Change
+ permissions from symbolic to octal
+Message-ID: <20190904062229.GA66871@JATN>
+References: <20190809195721.34237-1-skunberg.kelsey@gmail.com>
+ <20190813204513.4790-1-skunberg.kelsey@gmail.com>
+ <20190813204513.4790-3-skunberg.kelsey@gmail.com>
+ <20190814053846.GA253360@google.com>
+ <b4c0d5b4-7243-ba96-96d1-041a264ac499@redhat.com>
 MIME-Version: 1.0
-References: <20190904101259.2687cea4@canb.auug.org.au> <CAK7LNAT=qUi76cF776GcT=UYce5QBo+_24gLwXH7ra15=1xLvQ@mail.gmail.com>
-In-Reply-To: <CAK7LNAT=qUi76cF776GcT=UYce5QBo+_24gLwXH7ra15=1xLvQ@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 4 Sep 2019 15:22:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ8VJz8fxecnEWmbFCpD0rgt4tjoipOX0g3oY0xU8xt5w@mail.gmail.com>
-Message-ID: <CAK7LNAQ8VJz8fxecnEWmbFCpD0rgt4tjoipOX0g3oY0xU8xt5w@mail.gmail.com>
-Subject: Re: linux-next: build warnings after merge of the kbuild tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4c0d5b4-7243-ba96-96d1-041a264ac499@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 10:00 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Thu, Aug 15, 2019 at 10:37:13AM -0400, Don Dutile wrote:
+> On 08/14/2019 01:38 AM, Bjorn Helgaas wrote:
+> > [+cc Bodong, Don, Greg for permission question]
+> > 
+> > On Tue, Aug 13, 2019 at 02:45:12PM -0600, Kelsey Skunberg wrote:
+> > > Symbolic permissions such as "(S_IWUSR | S_IWGRP)" are not
+> > > preferred and octal permissions should be used instead. Change all
+> > > symbolic permissions to octal permissions.
+> > > 
+> > > Example of old:
+> > > 
+> > > "(S_IWUSR | S_IWGRP)"
+> > > 
+> > > Example of new:
+> > > 
+> > > "0220"
+> > 
+> > 
+> > >   static DEVICE_ATTR_RO(sriov_totalvfs);
+> > > -static DEVICE_ATTR(sriov_numvfs, (S_IRUGO | S_IWUSR | S_IWGRP),
+> > > -				  sriov_numvfs_show, sriov_numvfs_store);
+> > > +static DEVICE_ATTR(sriov_numvfs, 0664, sriov_numvfs_show, sriov_numvfs_store);
+> > >   static DEVICE_ATTR_RO(sriov_offset);
+> > >   static DEVICE_ATTR_RO(sriov_stride);
+> > >   static DEVICE_ATTR_RO(sriov_vf_device);
+> > > -static DEVICE_ATTR(sriov_drivers_autoprobe, (S_IRUGO | S_IWUSR | S_IWGRP),
+> > > -		   sriov_drivers_autoprobe_show, sriov_drivers_autoprobe_store);
+> > > +static DEVICE_ATTR(sriov_drivers_autoprobe, 0664, sriov_drivers_autoprobe_show,
+> > > +		   sriov_drivers_autoprobe_store);
+> > 
+> > Greg noticed that sriov_numvfs and sriov_drivers_autoprobe have
+> > "unusual" permissions.  These were added by:
+> > 
+> >    0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control VF driver binding")
+> >    1789382a72a5 ("PCI: SRIOV control and status via sysfs")
+> > 
+> > Kelsey's patch correctly preserves the existing permissions, but we
+> > should double-check that they are the permissions they want, and
+> > possibly add a comment about why they're different from the rest.
+> > 
+> > Bjorn
+> > 
+
+Hi Don,
+
+> The rest being? ... 0644 vs 0664 ?
+> The file is read & written, thus the (first) 6; I'll have to dig through very old (7 yr) notes to see if the second 6 is needed for libvirt (so it doesn't have to be root to enable).
+> 
+> -dd
 >
-> Hi Stephen,
->
-> On Wed, Sep 4, 2019 at 9:13 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
 
-For today's linux-next, please squash the following too.
+Were you able to see if the unusual permissions (0664) are needed for
+libvirt? I appreciate your help!
 
-(This is my fault, since scripts/mkuboot.sh is a bash script)
-
-
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 41c50f9461e5..2d72327417a9 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -374,7 +374,7 @@ UIMAGE_ENTRYADDR ?= $(UIMAGE_LOADADDR)
- UIMAGE_NAME ?= 'Linux-$(KERNELRELEASE)'
-
- quiet_cmd_uimage = UIMAGE  $@
--      cmd_uimage = $(CONFIG_SHELL) $(MKIMAGE) -A $(UIMAGE_ARCH) -O linux \
-+      cmd_uimage = $(BASE) $(MKIMAGE) -A $(UIMAGE_ARCH) -O linux \
-                        -C $(UIMAGE_COMPRESSION) $(UIMAGE_OPTS-y) \
-                        -T $(UIMAGE_TYPE) \
-                        -a $(UIMAGE_LOADADDR) -e $(UIMAGE_ENTRYADDR) \
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+-Kelsey
