@@ -2,113 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A887A9439
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 365B2A9427
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:54:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730713AbfIDU5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 16:57:10 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34224 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfIDU5K (ORCPT
+        id S1730312AbfIDUyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 16:54:49 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:42260 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfIDUyt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 16:57:10 -0400
-Received: by mail-lj1-f194.google.com with SMTP id x18so159963ljh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 13:57:09 -0700 (PDT)
+        Wed, 4 Sep 2019 16:54:49 -0400
+Received: by mail-io1-f65.google.com with SMTP id n197so45572489iod.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 13:54:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YRdCAVRAhTdLrO2mQDquZKKD1XyXDQFQecwZBQrW2l0=;
-        b=Ze7jrxDdyMP3SGOIesp7e7J/31BijZsyDh1sIQ7zUiaQzSssRLwu0Ke8i7Ma6J1ANp
-         +Y5ZM0aEii6+0RhihFBDvVJHDKpgy6odNUVXcrGCLgyyDaE911gL75i/CI9XscaVSNbQ
-         F9aqFQyEV98rhO6Nc66q5tz/D9khPZIijk1p4=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vXwoIRD/HomfAGA3enlPIWun5YO8zmnB2AFzW0Iniws=;
+        b=lL5TlUCtshbicXBX7o8SDAZtZAKYXC6ca2f5A9ldF6R14qEtWGy99KueQps418Znq9
+         nw1RLiYAkb29C6Cfvhf3pDnBrnOMftTxL0cYvm/oCqZOub6VMXqVfVa2aWTgjSr4r4gj
+         8MPzqz7MtWfwJUNQo6KkZ7T76dRaxG/HeGS4IoscFtXW3YiOUivL81MJNqyOmTtrXfBt
+         FEP+y4hCVNmDxZ1WzytKXQkbjsItc+aiZlQ5r32sAp8B+XE3wc1ogHHQaB3hdPCP7KzD
+         fF+6ITHH/T4LiOKChbaM11LaRBRmjfa66V0sB+gCbPI1l5aDRVuBbn6GWlOoZa6zD2tK
+         SenA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YRdCAVRAhTdLrO2mQDquZKKD1XyXDQFQecwZBQrW2l0=;
-        b=hhBUrZOG9cJVvoJ4TwlECCMbvh5CwwRuYm+peWN1+2H3MqjHgfYS1TKeusCalR3YVv
-         KAb3Aom0shgwnO01VHccZW9NDphhCh1bbEhSELaBqd9sAnnwcxi025otQYvPH9AMOSYs
-         ou61TtyCYtmHCG9OFZJmsaYQogiCmAiDgt7L0IPZuXZI5Ap3sJe9Kf6LVsV1YybdiQy8
-         jmEO2xyyYJmPtvkQK92e8TrWqv0AUz7W78s4YE/mnZCATXma+ScOrgoe5coYBDr+14Dp
-         ImwpZ0u4YzYr5+Uk+dMFcF9zIq+OYb4Jiv8EPDYvM+JfX3T0he9xLFHmpbPQt80/JWj3
-         IRyg==
-X-Gm-Message-State: APjAAAXn9mHfXxqXuM7dTLGgQXMhblhL6GnuczzKm3tK7Dm1H8pS5dkN
-        jhFFv8wFW9w5/mWO2RORjsdMA/VNAm8=
-X-Google-Smtp-Source: APXvYqwMnctrS2ygeyzT98tpr4xQmUn1eLB1JkVz/bkR+qaMOlwLaAVxoCQFoZ0PLrFoI8Ghs11OJg==
-X-Received: by 2002:a2e:3304:: with SMTP id d4mr18549204ljc.53.1567630628389;
-        Wed, 04 Sep 2019 13:57:08 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id j7sm2361458lfc.16.2019.09.04.13.57.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2019 13:57:08 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id w67so135455lff.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 13:57:08 -0700 (PDT)
-X-Received: by 2002:a19:f204:: with SMTP id q4mr52203lfh.29.1567630138756;
- Wed, 04 Sep 2019 13:48:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-2-cyphar@cyphar.com>
-In-Reply-To: <20190904201933.10736-2-cyphar@cyphar.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 4 Sep 2019 13:48:43 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiDUA-cMy4VZxO6o6q+Cs3D6Od_MwEK53gcXuVn-dqv2g@mail.gmail.com>
-Message-ID: <CAHk-=wiDUA-cMy4VZxO6o6q+Cs3D6Od_MwEK53gcXuVn-dqv2g@mail.gmail.com>
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user helpers
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vXwoIRD/HomfAGA3enlPIWun5YO8zmnB2AFzW0Iniws=;
+        b=RXAjNAdiPbFL8QD6WaAYZXS/dBDiaxRSZcV4DJ5ZOAuigKpEAuz1l30EvH0fyLuUuI
+         u5lM9j5UKmf2L1nLZfIUCvQiahzEwH2zQQPT4DWF9Frpp6Ici5eGLg7spK3v0yZhRL3N
+         e5fHo6YtYU1Ya+ZZ9egnfIVSUBW0qU9lVAkhDR3dlQ+uKWtqmqfOaKPnye5eY6SnCANw
+         PUREhW6VUFKc3cheOurItLxdCZr/vBGCWU73flmkiYUDB55yxkfEwwjqVCkPDfWml4no
+         lIv3NKVks1PmsywoQV+NH5hSmM2yZKnjmSbfHhDikqzWfkUc69lZZF60xC9tKrH5qCAs
+         vflA==
+X-Gm-Message-State: APjAAAUMe3hvC+XDKOo/DoD1V5Idg7NTZ0g83YG9Ute0Oz6yyDFXshH/
+        4QFf+ZP/9xQZ+ysMr/5ZBtfsxw==
+X-Google-Smtp-Source: APXvYqw87BnjWR9GdN8CRA7xMoVsDrp0wOKoOFPjmTBeJqSfmuF9wzp9tZO06jjNNw9zgpEiqOgfrA==
+X-Received: by 2002:a5e:9813:: with SMTP id s19mr2214175ioj.263.1567630488336;
+        Wed, 04 Sep 2019 13:54:48 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:9f3b:444a:4649:ca05])
+        by smtp.gmail.com with ESMTPSA id j26sm36426ioe.18.2019.09.04.13.54.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 13:54:47 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 14:54:43 -0600
+From:   Yu Zhao <yuzhao@google.com>
+To:     Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Ralph Campbell <rcampbell@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: replace is_zero_pfn with is_huge_zero_pmd for thp
+Message-ID: <20190904205443.GA70057@google.com>
+References: <20190825200621.211494-1-yuzhao@google.com>
+ <20190826131858.GB15933@bombadil.infradead.org>
+ <20190826170934.7c2f4340@thinkpad>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190826170934.7c2f4340@thinkpad>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 1:20 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> A common pattern for syscall extensions is increasing the size of a
-> struct passed from userspace, such that the zero-value of the new fields
-> result in the old kernel behaviour (allowing for a mix of userspace and
-> kernel vintages to operate on one another in most cases).
+On Mon, Aug 26, 2019 at 05:09:34PM +0200, Gerald Schaefer wrote:
+> On Mon, 26 Aug 2019 06:18:58 -0700
+> Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> > Why did you not cc Gerald who wrote the patch?  You can't just
+> > run get_maintainers.pl and call it good.
+> > 
+> > On Sun, Aug 25, 2019 at 02:06:21PM -0600, Yu Zhao wrote:
+> > > For hugely mapped thp, we use is_huge_zero_pmd() to check if it's
+> > > zero page or not.
+> > > 
+> > > We do fill ptes with my_zero_pfn() when we split zero thp pmd, but
+> > >  this is not what we have in vm_normal_page_pmd().
+> > > pmd_trans_huge_lock() makes sure of it.
+> > > 
+> > > This is a trivial fix for /proc/pid/numa_maps, and AFAIK nobody
+> > > complains about it.
+> > > 
+> > > Signed-off-by: Yu Zhao <yuzhao@google.com>
+> > > ---
+> > >  mm/memory.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/mm/memory.c b/mm/memory.c
+> > > index e2bb51b6242e..ea3c74855b23 100644
+> > > --- a/mm/memory.c
+> > > +++ b/mm/memory.c
+> > > @@ -654,7 +654,7 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+> > >  
+> > >  	if (pmd_devmap(pmd))
+> > >  		return NULL;
+> > > -	if (is_zero_pfn(pfn))
+> > > +	if (is_huge_zero_pmd(pmd))
+> > >  		return NULL;
+> > >  	if (unlikely(pfn > highest_memmap_pfn))
+> > >  		return NULL;
+> > > -- 
+> > > 2.23.0.187.g17f5b7556c-goog
+> > >   
+> 
+> Looks good to me. The "_pmd" versions for can_gather_numa_stats() and
+> vm_normal_page() were introduced to avoid using pte_present/dirty() on
+> pmds, which is not affected by this patch.
+> 
+> In fact, for vm_normal_page_pmd() I basically copied most of the code
+> from vm_normal_page(), including the is_zero_pfn(pfn) check, which does
+> look wrong to me now. Using is_huge_zero_pmd() should be correct.
+> 
+> Maybe the description could also mention the symptom of this bug?
+> I would assume that it affects anon/dirty accounting in gather_pte_stats(),
+> for huge mappings, if zero page mappings are not correctly recognized.
 
-Ack, this makes the whole series (and a few unrelated system calls) cleaner.
-
-           Linus
+Hi, sorry for not copying you on the original email. I came across
+this while I was looking at the code. I'm not aware of any symptom.
+Thank you.
