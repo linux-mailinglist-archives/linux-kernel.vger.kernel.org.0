@@ -2,196 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89B98A9177
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0305A8F00
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390989AbfIDSPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:15:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390990AbfIDSPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:15:35 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E560B206BA;
-        Wed,  4 Sep 2019 18:15:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620934;
-        bh=GVhog9IIZmIBP587bxenKiB18fEW1PN/f7l5RLrKjIQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BaLi7Aq8B0QfOaS41vV7GigNX4QA/qm/goYF/dX8q7v0M2HLlggdHm4P0wIPVBCdE
-         8wYnLrYi0TNS0atduzhY1/D2jCPrn3eAAGH+Tqs53ka/ryP92cHcgV+ln/OBflGOd5
-         gsozUun8HymYBXC0BU9SmXmbu13gGN9yD9CpMl7c=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c6167ec3de7def23d1e8@syzkaller.appspotmail.com,
-        Arvid Brodin <arvid.brodin@alten.se>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 143/143] hsr: implement dellink to clean up resources
-Date:   Wed,  4 Sep 2019 19:54:46 +0200
-Message-Id: <20190904175320.090038891@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S2388203AbfIDSBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:01:16 -0400
+Received: from mail-ua1-f73.google.com ([209.85.222.73]:44277 "EHLO
+        mail-ua1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388522AbfIDSBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:01:13 -0400
+Received: by mail-ua1-f73.google.com with SMTP id g19so1613712uaq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=hB3975bQEe7YwXrrn5iDW2OoMeJHoR5KURbyU532I8E=;
+        b=j6b8aJX2+AM7wrmVWiG+1fBH3wBs4G7vlhLs5djzluKf1lh+aDFRF0DMqvpeYk7+N4
+         NWTrFarLNMYotaTdV8+vHMyUHu3u6e/VrZO3+F9Ej2OgFoJrTfiP0YoPYSpH1YHOsv8z
+         E2HTiEOcRLPiX/OHLjxMn/5GFOMG1TrT9IxVAF0V06mOiD6zz9IyxSdlkNkrX4feJkzG
+         67IYNwK0B55+dyhjwdRNdAbIzHB0fQWFk78352Q5stGVPa7ofrtHOQU6t3kUVpP5WwO3
+         d32chlFQfIremRbEW84FjjFPwHhLKRnsAIrAxqe00Z1u0CR823dkMmdoPgruB+44nR9s
+         /8Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=hB3975bQEe7YwXrrn5iDW2OoMeJHoR5KURbyU532I8E=;
+        b=gXkaXAuCQUyR0moU4quM/xSAiOIK9Tl4dOKdktfazEPAo/JmtzXq28LaIXtrbmZnBd
+         Jn3sKbWfx0r8Tz0++BuJB4V2SHcX839o2JfUXCxEle51akjZEwbUYL2qcorVZYyGm2qG
+         TI/K+03qcTc9d4/uulqMPTjm3VH2LmRaRAHIA+L9EDbPLVcI0uQcbtuat6R5hlq/AiYF
+         dt0iJ6w3Co3FggSjJTNqK2yk/G4wmlNHlU1sF1HZSDPi4Ig4omudZfeCC0rPxHsn+aFV
+         ZqYnIMOoE8qmnJoYCZS579Wjh2LJICfo6IsPbSmxy3E3a4fJUJnul9TBSfbmvnq7CeBT
+         6qGg==
+X-Gm-Message-State: APjAAAXt5prAwv90VM544tk23P2YETWLjlsmALxnkXNEa9lcOt83I1Fz
+        xVMDZko67H+p1uz5xeP4OLNjyUjx9KJ0
+X-Google-Smtp-Source: APXvYqzjwKtiv/1+0t4qQYpQXzR295bpi01G2uz1AA5oIHglW2/SsuxkeOjLPLYIKpdXnjT89djQWtlcLXvx
+X-Received: by 2002:ab0:2412:: with SMTP id f18mr7710005uan.53.1567620072442;
+ Wed, 04 Sep 2019 11:01:12 -0700 (PDT)
+Date:   Wed,  4 Sep 2019 11:00:45 -0700
+Message-Id: <20190904180045.138513-1-irogers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+Subject: [PATCH] perf tools: Fix include paths in ui
+From:   Ian Rogers <irogers@google.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
+Cc:     Stephane Eranian <eranian@google.com>,
+        Ian Rogers <irogers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+These paths point to the wrong location but still work because they
+get picked up by a -I flag that happens to direct to the correct
+file. Fix paths to point to the correct location without -I flags.
 
-commit b9a1e627405d68d475a3c1f35e685ccfb5bbe668 upstream.
-
-hsr_link_ops implements ->newlink() but not ->dellink(),
-which leads that resources not released after removing the device,
-particularly the entries in self_node_db and node_db.
-
-So add ->dellink() implementation to replace the priv_destructor.
-This also makes the code slightly easier to understand.
-
-Reported-by: syzbot+c6167ec3de7def23d1e8@syzkaller.appspotmail.com
-Cc: Arvid Brodin <arvid.brodin@alten.se>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- net/hsr/hsr_device.c   |   13 +++++--------
- net/hsr/hsr_device.h   |    1 +
- net/hsr/hsr_framereg.c |   11 ++++++++++-
- net/hsr/hsr_framereg.h |    3 ++-
- net/hsr/hsr_netlink.c  |    7 +++++++
- 5 files changed, 25 insertions(+), 10 deletions(-)
+ tools/perf/ui/browser.c      | 9 +++++----
+ tools/perf/ui/tui/progress.c | 2 +-
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/net/hsr/hsr_device.c
-+++ b/net/hsr/hsr_device.c
-@@ -344,10 +344,7 @@ static void hsr_announce(struct timer_li
- 	rcu_read_unlock();
- }
+diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
+index f80c51d53565..d227d74b28f8 100644
+--- a/tools/perf/ui/browser.c
++++ b/tools/perf/ui/browser.c
+@@ -1,7 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#include "../string2.h"
+-#include "../config.h"
+-#include "../../perf.h"
++#include "../util/util.h"
++#include "../util/string2.h"
++#include "../util/config.h"
++#include "../perf.h"
+ #include "libslang.h"
+ #include "ui.h"
+ #include "util.h"
+@@ -14,7 +15,7 @@
+ #include "browser.h"
+ #include "helpline.h"
+ #include "keysyms.h"
+-#include "../color.h"
++#include "../util/color.h"
+ #include <linux/ctype.h>
+ #include <linux/zalloc.h>
  
--/* According to comments in the declaration of struct net_device, this function
-- * is "Called from unregister, can be used to call free_netdev". Ok then...
-- */
--static void hsr_dev_destroy(struct net_device *hsr_dev)
-+void hsr_dev_destroy(struct net_device *hsr_dev)
- {
- 	struct hsr_priv *hsr;
- 	struct hsr_port *port;
-@@ -356,15 +353,16 @@ static void hsr_dev_destroy(struct net_d
- 
- 	hsr_debugfs_term(hsr);
- 
--	rtnl_lock();
- 	hsr_for_each_port(hsr, port)
- 		hsr_del_port(port);
--	rtnl_unlock();
- 
- 	del_timer_sync(&hsr->prune_timer);
- 	del_timer_sync(&hsr->announce_timer);
- 
- 	synchronize_rcu();
-+
-+	hsr_del_self_node(&hsr->self_node_db);
-+	hsr_del_nodes(&hsr->node_db);
- }
- 
- static const struct net_device_ops hsr_device_ops = {
-@@ -391,7 +389,6 @@ void hsr_dev_setup(struct net_device *de
- 	dev->priv_flags |= IFF_NO_QUEUE;
- 
- 	dev->needs_free_netdev = true;
--	dev->priv_destructor = hsr_dev_destroy;
- 
- 	dev->hw_features = NETIF_F_SG | NETIF_F_FRAGLIST | NETIF_F_HIGHDMA |
- 			   NETIF_F_GSO_MASK | NETIF_F_HW_CSUM |
-@@ -495,7 +492,7 @@ fail:
- 	hsr_for_each_port(hsr, port)
- 		hsr_del_port(port);
- err_add_port:
--	hsr_del_node(&hsr->self_node_db);
-+	hsr_del_self_node(&hsr->self_node_db);
- 
- 	return res;
- }
---- a/net/hsr/hsr_device.h
-+++ b/net/hsr/hsr_device.h
-@@ -14,6 +14,7 @@
- void hsr_dev_setup(struct net_device *dev);
- int hsr_dev_finalize(struct net_device *hsr_dev, struct net_device *slave[2],
- 		     unsigned char multicast_spec, u8 protocol_version);
-+void hsr_dev_destroy(struct net_device *hsr_dev);
- void hsr_check_carrier_and_operstate(struct hsr_priv *hsr);
- bool is_hsr_master(struct net_device *dev);
- int hsr_get_max_mtu(struct hsr_priv *hsr);
---- a/net/hsr/hsr_framereg.c
-+++ b/net/hsr/hsr_framereg.c
-@@ -104,7 +104,7 @@ int hsr_create_self_node(struct list_hea
- 	return 0;
- }
- 
--void hsr_del_node(struct list_head *self_node_db)
-+void hsr_del_self_node(struct list_head *self_node_db)
- {
- 	struct hsr_node *node;
- 
-@@ -117,6 +117,15 @@ void hsr_del_node(struct list_head *self
- 	}
- }
- 
-+void hsr_del_nodes(struct list_head *node_db)
-+{
-+	struct hsr_node *node;
-+	struct hsr_node *tmp;
-+
-+	list_for_each_entry_safe(node, tmp, node_db, mac_list)
-+		kfree(node);
-+}
-+
- /* Allocate an hsr_node and add it to node_db. 'addr' is the node's address_A;
-  * seq_out is used to initialize filtering of outgoing duplicate frames
-  * originating from the newly added node.
---- a/net/hsr/hsr_framereg.h
-+++ b/net/hsr/hsr_framereg.h
-@@ -12,7 +12,8 @@
- 
- struct hsr_node;
- 
--void hsr_del_node(struct list_head *self_node_db);
-+void hsr_del_self_node(struct list_head *self_node_db);
-+void hsr_del_nodes(struct list_head *node_db);
- struct hsr_node *hsr_add_node(struct list_head *node_db, unsigned char addr[],
- 			      u16 seq_out);
- struct hsr_node *hsr_get_node(struct hsr_port *port, struct sk_buff *skb,
---- a/net/hsr/hsr_netlink.c
-+++ b/net/hsr/hsr_netlink.c
-@@ -69,6 +69,12 @@ static int hsr_newlink(struct net *src_n
- 	return hsr_dev_finalize(dev, link, multicast_spec, hsr_version);
- }
- 
-+static void hsr_dellink(struct net_device *hsr_dev, struct list_head *head)
-+{
-+	hsr_dev_destroy(hsr_dev);
-+	unregister_netdevice_queue(hsr_dev, head);
-+}
-+
- static int hsr_fill_info(struct sk_buff *skb, const struct net_device *dev)
- {
- 	struct hsr_priv *hsr;
-@@ -113,6 +119,7 @@ static struct rtnl_link_ops hsr_link_ops
- 	.priv_size	= sizeof(struct hsr_priv),
- 	.setup		= hsr_dev_setup,
- 	.newlink	= hsr_newlink,
-+	.dellink	= hsr_dellink,
- 	.fill_info	= hsr_fill_info,
- };
- 
-
+diff --git a/tools/perf/ui/tui/progress.c b/tools/perf/ui/tui/progress.c
+index bc134b82829d..5a24dd3ce4db 100644
+--- a/tools/perf/ui/tui/progress.c
++++ b/tools/perf/ui/tui/progress.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/kernel.h>
+-#include "../cache.h"
++#include "../../util/cache.h"
+ #include "../progress.h"
+ #include "../libslang.h"
+ #include "../ui.h"
+-- 
+2.22.0.770.g0f2c4a37fd-goog
 
