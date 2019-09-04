@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB83A90A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B584A8EA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390197AbfIDSK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:10:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54720 "EHLO mail.kernel.org"
+        id S2388182AbfIDR7F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:59:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390170AbfIDSKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:10:55 -0400
+        id S1732997AbfIDR7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:59:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C2FC23400;
-        Wed,  4 Sep 2019 18:10:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADD5423400;
+        Wed,  4 Sep 2019 17:59:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620654;
-        bh=reqK3qDzV0OY1qcf3LHJVujmnjBe/yW+o7i+jB6muVk=;
+        s=default; t=1567619943;
+        bh=wfm3p1mSjCIv3JJ5U8S/ye/6/qwD8rPoPH5Qc/F+lTQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZGdHn8mdjIWAQY63T0A6/chrIbjfPnQ1yx0kqUFIJoXDD3vdr2EhFBdm85nTsNjbS
-         FW/Ou9mTKslh2Mor0DIIH04N7pYHMpSNQiwGazHqN5Pt0rnagrO3Zv34fOLpHM1jND
-         6sSTAuW3AEimFrukyvia/i9w+XikFjdRtL6YgouI=
+        b=yl//7GqwnhjprxyKmt9rxl9VUyj6BAUvHxQD7rVxJxSqkQNF4iR2J9Ff/Oz3o3l/o
+         oIIDVRIMEQpWJU2LZBgSAGSjtNDb11ct4uZP40wk2RxRpSxo4Eh80zsUAlx3UpPVxX
+         /pqwKbtjBSnBfMFIfKfQKNgN1q01IDEvO0q66U80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jan Stancek <jstancek@redhat.com>,
+        stable@vger.kernel.org, Wang Xiayang <xywang.sjtu@sjtu.edu.cn>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 044/143] lcoking/rwsem: Add missing ACQUIRE to read_slowpath sleep loop
+Subject: [PATCH 4.9 15/83] can: sja1000: force the string buffer NULL-terminated
 Date:   Wed,  4 Sep 2019 19:53:07 +0200
-Message-Id: <20190904175315.793575310@linuxfoundation.org>
+Message-Id: <20190904175305.226467808@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,66 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 99143f82a255e7f054bead8443462fae76dd829e ]
+[ Upstream commit cd28aa2e056cd1ea79fc5f24eed0ce868c6cab5c ]
 
-While reviewing another read_slowpath patch, both Will and I noticed
-another missing ACQUIRE, namely:
+strncpy() does not ensure NULL-termination when the input string size
+equals to the destination buffer size IFNAMSIZ. The output string
+'name' is passed to dev_info which relies on NULL-termination.
 
-  X = 0;
+Use strlcpy() instead.
 
-  CPU0			CPU1
+This issue is identified by a Coccinelle script.
 
-  rwsem_down_read()
-    for (;;) {
-      set_current_state(TASK_UNINTERRUPTIBLE);
-
-                        X = 1;
-                        rwsem_up_write();
-                          rwsem_mark_wake()
-                            atomic_long_add(adjustment, &sem->count);
-                            smp_store_release(&waiter->task, NULL);
-
-      if (!waiter.task)
-        break;
-
-      ...
-    }
-
-  r = X;
-
-Allows 'r == 0'.
-
-Reported-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reported-by: Will Deacon <will@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Will Deacon <will@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Jan Stancek <jstancek@redhat.com>
+Signed-off-by: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/rwsem-xadd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/can/sja1000/peak_pcmcia.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 397dedc58432d..385ebcfc31a6d 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -485,8 +485,10 @@ __rwsem_down_read_failed_common(struct rw_semaphore *sem, int state)
- 	/* wait to be given the lock */
- 	while (true) {
- 		set_current_state(state);
--		if (!waiter.task)
-+		if (!smp_load_acquire(&waiter.task)) {
-+			/* Orders against rwsem_mark_wake()'s smp_store_release() */
- 			break;
-+		}
- 		if (signal_pending_state(state, current)) {
- 			raw_spin_lock_irq(&sem->wait_lock);
- 			if (waiter.task)
+diff --git a/drivers/net/can/sja1000/peak_pcmcia.c b/drivers/net/can/sja1000/peak_pcmcia.c
+index dd56133cc4616..fc9f8b01ecae2 100644
+--- a/drivers/net/can/sja1000/peak_pcmcia.c
++++ b/drivers/net/can/sja1000/peak_pcmcia.c
+@@ -487,7 +487,7 @@ static void pcan_free_channels(struct pcan_pccard *card)
+ 		if (!netdev)
+ 			continue;
+ 
+-		strncpy(name, netdev->name, IFNAMSIZ);
++		strlcpy(name, netdev->name, IFNAMSIZ);
+ 
+ 		unregister_sja1000dev(netdev);
+ 
 -- 
 2.20.1
 
