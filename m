@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7930A9000
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 072BDA9106
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389580AbfIDSHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:07:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49416 "EHLO mail.kernel.org"
+        id S2390618AbfIDSNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:13:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389556AbfIDSHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:07:05 -0400
+        id S2390179AbfIDSNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:13:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F69D2339E;
-        Wed,  4 Sep 2019 18:07:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6143C206BA;
+        Wed,  4 Sep 2019 18:13:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620424;
-        bh=9hgMXgkNJzThjRfpCW8b9QSGAvBoey94nmv0IyNl+pk=;
+        s=default; t=1567620784;
+        bh=r0SrvcMLry7DKvNjs2Ldsrbj9Ap89oj8kRRUbcQ4JpA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xo9ivCfx65afGBhZhGIdnirXjRxdSkfbV4bEQtnFiAGDMhMULFFxse5xF2U4+c3E7
-         zuKyOBy4t/B/osypKC1ORXv90FeNJfawMTsNkUOhdxZB9WGmVQk32C/8CumQUyE9hP
-         naCatF+Bqgw6Jqu58mZ223ODBE0EQsSmx/xD9kmY=
+        b=f561hXANtH2y2cip/X8RMBk3UU/EGv58L0vjQ6UH+sMf1dWeXNb1TtIhFpFMRQTtJ
+         rGwTRucInIJaaOpvs4LhIKVot4hv+r8a0LpPkl1Ji9aSp2kNFg8qMLFXxv3pEa/mQZ
+         1JMaHtgeWyYyCDPGMW/e7z3FW1tDBugOPPakdffQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Henk van der Laan <opensource@henkvdlaan.com>
-Subject: [PATCH 4.19 54/93] usb-storage: Add new JMS567 revision to unusual_devs
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 5.2 093/143] mmc: sdhci-of-at91: add quirk for broken HS200
 Date:   Wed,  4 Sep 2019 19:53:56 +0200
-Message-Id: <20190904175307.742090146@linuxfoundation.org>
+Message-Id: <20190904175317.760831237@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Henk van der Laan <opensource@henkvdlaan.com>
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
-commit 08d676d1685c2a29e4d0e1b0242324e564d4589e upstream.
+commit 7871aa60ae0086fe4626abdf5ed13eeddf306c61 upstream.
 
-Revision 0x0117 suffers from an identical issue to earlier revisions,
-therefore it should be added to the quirks list.
+HS200 is not implemented in the driver, but the controller claims it
+through caps. Remove it via a quirk, to make sure the mmc core do not try
+to enable HS200, as it causes the eMMC initialization to fail.
 
-Signed-off-by: Henk van der Laan <opensource@henkvdlaan.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190816200847.21366-1-opensource@henkvdlaan.com
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Fixes: bb5f8ea4d514 ("mmc: sdhci-of-at91: introduce driver for the Atmel SDMMC")
+Cc: stable@vger.kernel.org # v4.4+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/unusual_devs.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-of-at91.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -2100,7 +2100,7 @@ UNUSUAL_DEV(  0x14cd, 0x6600, 0x0201, 0x
- 		US_FL_IGNORE_RESIDUE ),
+--- a/drivers/mmc/host/sdhci-of-at91.c
++++ b/drivers/mmc/host/sdhci-of-at91.c
+@@ -357,6 +357,9 @@ static int sdhci_at91_probe(struct platf
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
  
- /* Reported by Michael Büsch <m@bues.ch> */
--UNUSUAL_DEV(  0x152d, 0x0567, 0x0114, 0x0116,
-+UNUSUAL_DEV(  0x152d, 0x0567, 0x0114, 0x0117,
- 		"JMicron",
- 		"USB to ATA/ATAPI Bridge",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++	/* HS200 is broken at this moment */
++	host->quirks2 = SDHCI_QUIRK2_BROKEN_HS200;
++
+ 	ret = sdhci_add_host(host);
+ 	if (ret)
+ 		goto pm_runtime_disable;
 
 
