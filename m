@@ -2,98 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90C77A82CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07707A82DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:51:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729907AbfIDM3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 08:29:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726495AbfIDM3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:29:13 -0400
-Received: from oasis.local.home (bl11-233-114.dsl.telepac.pt [85.244.233.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9269222DBF;
-        Wed,  4 Sep 2019 12:29:10 +0000 (UTC)
-Date:   Wed, 4 Sep 2019 08:29:03 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -tip v2] kprobes: Prohibit probing on BUG() and WARN()
- address
-Message-ID: <20190904082903.0ae0656a@oasis.local.home>
-In-Reply-To: <156750890133.19112.3393666300746167111.stgit@devnote2>
-References: <156750890133.19112.3393666300746167111.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1730074AbfIDMe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 08:34:27 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56818 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728878AbfIDMe0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 08:34:26 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9CD8AFFFA055F3DC3ABE;
+        Wed,  4 Sep 2019 20:34:24 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
+ 20:34:17 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <miquel.raynal@bootlin.com>, <rui.zhang@intel.com>,
+        <edubezval@gmail.com>, <daniel.lezcano@linaro.org>,
+        <amit.kucheria@verdurent.com>, <eric@anholt.net>,
+        <wahrenst@gmx.net>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
+        <sbranden@broadcom.com>, <mmayer@broadcom.com>,
+        <computersforpeace@gmail.com>, <gregory.0xf0@gmail.com>,
+        <matthias.bgg@gmail.com>, <agross@kernel.org>, <heiko@sntech.de>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <marc.w.gonzalez@free.fr>, <mans@mansr.com>, <talel@amazon.com>,
+        <jun.nie@linaro.org>, <shawnguo@kernel.org>,
+        <phil@raspberrypi.org>, <yuehaibing@huawei.com>,
+        <gregkh@linuxfoundation.org>, <david.hernandezsanchez@st.com>,
+        <horms+renesas@verge.net.au>, <wsa+renesas@sang-engineering.com>
+CC:     <bcm-kernel-feedback-list@broadcom.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH -next 00/15] use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 4 Sep 2019 20:29:24 +0800
+Message-ID: <20190904122939.23780-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  3 Sep 2019 20:08:21 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+devm_platform_ioremap_resource() internally have platform_get_resource()
+and devm_ioremap_resource() in it. So instead of calling them separately
+use devm_platform_ioremap_resource() directly.
 
-> Since BUG() and WARN() may use a trap (e.g. UD2 on x86) to
-> get the address where the BUG() has occurred, kprobes can not
-> do single-step out-of-line that instruction. So prohibit
-> probing on such address.
-> 
-> Without this fix, if someone put a kprobe on WARN(), the
-> kernel will crash with invalid opcode error instead of
-> outputing warning message, because kernel can not find
-> correct bug address.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+YueHaibing (15):
+  thermal: armada: use devm_platform_ioremap_resource() to simplify code
+  thermal: bcm2835: use devm_platform_ioremap_resource() to simplify
+    code
+  thermal: brcmstb: use devm_platform_ioremap_resource() to simplify
+    code
+  thermal: hisilicon: use devm_platform_ioremap_resource() to simplify
+    code
+  thermal: dove: use devm_platform_ioremap_resource() to simplify code
+  thermal: mtk: use devm_platform_ioremap_resource() to simplify code
+  thermal: kirkwood: use devm_platform_ioremap_resource() to simplify
+    code
+  thermal: tsens: use devm_platform_ioremap_resource() to simplify code
+  thermal: rockchip: use devm_platform_ioremap_resource() to simplify
+    code
+  thermal: spear: use devm_platform_ioremap_resource() to simplify code
+  thermal: stm32: use devm_platform_ioremap_resource() to simplify code
+  thermal: tango: use devm_platform_ioremap_resource() to simplify code
+  thermal: thermal_mmio: use devm_platform_ioremap_resource() to
+    simplify code
+  thermal: zx2967: use devm_platform_ioremap_resource() to simplify code
+  thermal: rcar: use devm_platform_ioremap_resource() to simplify code
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+ drivers/thermal/armada_thermal.c           | 4 +---
+ drivers/thermal/broadcom/bcm2835_thermal.c | 4 +---
+ drivers/thermal/broadcom/brcmstb_thermal.c | 4 +---
+ drivers/thermal/dove_thermal.c             | 7 ++-----
+ drivers/thermal/hisi_thermal.c             | 4 +---
+ drivers/thermal/kirkwood_thermal.c         | 4 +---
+ drivers/thermal/mtk_thermal.c              | 4 +---
+ drivers/thermal/qcom/tsens-common.c        | 7 ++-----
+ drivers/thermal/rcar_thermal.c             | 5 ++---
+ drivers/thermal/rockchip_thermal.c         | 4 +---
+ drivers/thermal/spear_thermal.c            | 4 +---
+ drivers/thermal/st/stm_thermal.c           | 4 +---
+ drivers/thermal/tango_thermal.c            | 4 +---
+ drivers/thermal/thermal_mmio.c             | 4 +---
+ drivers/thermal/zx2967_thermal.c           | 4 +---
+ 15 files changed, 18 insertions(+), 49 deletions(-)
 
--- Steve
+-- 
+2.7.4
 
-> ---
->   Changes in v2:
->    - Add find_bug() stub function for !CONFIG_GENERIC_BUG
->    - Cast the p->addr to unsigned long.
-> ---
->  include/linux/bug.h |    5 +++++
->  kernel/kprobes.c    |    3 ++-
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/bug.h b/include/linux/bug.h
-> index fe5916550da8..f639bd0122f3 100644
-> --- a/include/linux/bug.h
-> +++ b/include/linux/bug.h
-> @@ -47,6 +47,11 @@ void generic_bug_clear_once(void);
->  
->  #else	/* !CONFIG_GENERIC_BUG */
->  
-> +static inline void *find_bug(unsigned long bugaddr)
-> +{
-> +	return NULL;
-> +}
-> +
->  static inline enum bug_trap_type report_bug(unsigned long bug_addr,
->  					    struct pt_regs *regs)
->  {
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index 452151e79535..5bdf47190f09 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -1514,7 +1514,8 @@ static int check_kprobe_address_safe(struct kprobe *p,
->  	/* Ensure it is not in reserved area nor out of text */
->  	if (!kernel_text_address((unsigned long) p->addr) ||
->  	    within_kprobe_blacklist((unsigned long) p->addr) ||
-> -	    jump_label_text_reserved(p->addr, p->addr)) {
-> +	    jump_label_text_reserved(p->addr, p->addr) ||
-> +	    find_bug((unsigned long) p->addr)) {
->  		ret = -EINVAL;
->  		goto out;
->  	}
 
