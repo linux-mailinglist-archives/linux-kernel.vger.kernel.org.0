@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBCA5A8F48
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEFF7A8EEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388827AbfIDSCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:02:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42890 "EHLO mail.kernel.org"
+        id S2388452AbfIDSAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:00:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388817AbfIDSCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:02:47 -0400
+        id S2388427AbfIDSAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:00:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F254A208E4;
-        Wed,  4 Sep 2019 18:02:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7071C22CF5;
+        Wed,  4 Sep 2019 18:00:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620166;
-        bh=uUtTDLmE6A7J+WslKrqJN/mBaUTuWh4DOMBFskrszMY=;
+        s=default; t=1567620041;
+        bh=iryYQO161VMi3ttZTGFDeTVGpdK1PfArdz98f7LOIok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U8FoysfyFEH1yCd1+z51QPLHnekIf7yoR41vaA1qjEcA/KdF8vxIVuu6MBDPLQn/0
-         SV2HzZdJoB6mHVdoMKHln9jfMuiTBhkL1lPpWkLFnoH/WvpPdfEcc5ePV4rlM/Do61
-         A0EqR1nJUcrjgT7DA1cpchomg8aFRCUyUXX18HSY=
+        b=ycB7IOigvRd1f06mxFqwRgYfCZFdE60+wvfsTgMZJMrOpNRqpK9jdPAdR3cLVow47
+         Yv3VVxzTK1fZyKHuzqz7bfWjFqaDGf/Xh6u2v5c/kJkRKcEamRc9DTQz3UUGbX3kFt
+         8vp6oZbA/vimNULmUGJr/swWHy5uAGX0IyY/ORXE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jyri Sarha <jsarha@ti.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 15/57] drm/tilcdc: Register cpufreq notifier after we have initialized crtc
+        stable@vger.kernel.org,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 51/83] usb: host: fotg2: restart hcd after port reset
 Date:   Wed,  4 Sep 2019 19:53:43 +0200
-Message-Id: <20190904175303.465167730@linuxfoundation.org>
+Message-Id: <20190904175308.222041811@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,85 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 432973fd3a20102840d5f7e61af9f1a03c217a4c ]
+[ Upstream commit 777758888ffe59ef754cc39ab2f275dc277732f4 ]
 
-Register cpufreq notifier after we have initialized the crtc and
-unregister it before we remove the ctrc. Receiving a cpufreq notify
-without crtc causes a crash.
+On the Gemini SoC the FOTG2 stalls after port reset
+so restart the HCD after each port reset.
 
-Reported-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Jyri Sarha <jsarha@ti.com>
+Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/20190810150458.817-1-linus.walleij@linaro.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/tilcdc/tilcdc_drv.c | 34 ++++++++++++++---------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ drivers/usb/host/fotg210-hcd.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-index b0d70f943cec5..56039897607c6 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-@@ -189,6 +189,12 @@ static void tilcdc_fini(struct drm_device *dev)
- {
- 	struct tilcdc_drm_private *priv = dev->dev_private;
- 
-+#ifdef CONFIG_CPU_FREQ
-+	if (priv->freq_transition.notifier_call)
-+		cpufreq_unregister_notifier(&priv->freq_transition,
-+					    CPUFREQ_TRANSITION_NOTIFIER);
-+#endif
+diff --git a/drivers/usb/host/fotg210-hcd.c b/drivers/usb/host/fotg210-hcd.c
+index 66efa9a676877..72853020a5426 100644
+--- a/drivers/usb/host/fotg210-hcd.c
++++ b/drivers/usb/host/fotg210-hcd.c
+@@ -1653,6 +1653,10 @@ static int fotg210_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+ 			/* see what we found out */
+ 			temp = check_reset_complete(fotg210, wIndex, status_reg,
+ 					fotg210_readl(fotg210, status_reg));
 +
- 	if (priv->crtc)
- 		tilcdc_crtc_shutdown(priv->crtc);
++			/* restart schedule */
++			fotg210->command |= CMD_RUN;
++			fotg210_writel(fotg210, fotg210->command, &fotg210->regs->command);
+ 		}
  
-@@ -204,12 +210,6 @@ static void tilcdc_fini(struct drm_device *dev)
- 	drm_mode_config_cleanup(dev);
- 	tilcdc_remove_external_device(dev);
- 
--#ifdef CONFIG_CPU_FREQ
--	if (priv->freq_transition.notifier_call)
--		cpufreq_unregister_notifier(&priv->freq_transition,
--					    CPUFREQ_TRANSITION_NOTIFIER);
--#endif
--
- 	if (priv->clk)
- 		clk_put(priv->clk);
- 
-@@ -282,17 +282,6 @@ static int tilcdc_init(struct drm_driver *ddrv, struct device *dev)
- 		goto init_failed;
- 	}
- 
--#ifdef CONFIG_CPU_FREQ
--	priv->freq_transition.notifier_call = cpufreq_transition;
--	ret = cpufreq_register_notifier(&priv->freq_transition,
--			CPUFREQ_TRANSITION_NOTIFIER);
--	if (ret) {
--		dev_err(dev, "failed to register cpufreq notifier\n");
--		priv->freq_transition.notifier_call = NULL;
--		goto init_failed;
--	}
--#endif
--
- 	if (of_property_read_u32(node, "max-bandwidth", &priv->max_bandwidth))
- 		priv->max_bandwidth = TILCDC_DEFAULT_MAX_BANDWIDTH;
- 
-@@ -369,6 +358,17 @@ static int tilcdc_init(struct drm_driver *ddrv, struct device *dev)
- 	}
- 	modeset_init(ddev);
- 
-+#ifdef CONFIG_CPU_FREQ
-+	priv->freq_transition.notifier_call = cpufreq_transition;
-+	ret = cpufreq_register_notifier(&priv->freq_transition,
-+			CPUFREQ_TRANSITION_NOTIFIER);
-+	if (ret) {
-+		dev_err(dev, "failed to register cpufreq notifier\n");
-+		priv->freq_transition.notifier_call = NULL;
-+		goto init_failed;
-+	}
-+#endif
-+
- 	if (priv->is_componentized) {
- 		ret = component_bind_all(dev, ddev);
- 		if (ret < 0)
+ 		if (!(temp & (PORT_RESUME|PORT_RESET))) {
 -- 
 2.20.1
 
