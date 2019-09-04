@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 550C2A8EE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B57FA8E33
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388417AbfIDSAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:00:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39798 "EHLO mail.kernel.org"
+        id S1732060AbfIDR4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:56:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388405AbfIDSAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:00:31 -0400
+        id S1732038AbfIDR4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:56:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4D702339E;
-        Wed,  4 Sep 2019 18:00:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E8BC22CF5;
+        Wed,  4 Sep 2019 17:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620031;
-        bh=MBL6o8AQn13xHy3RKVUNkSPUrr0fYctGP4ivvm3vXoE=;
+        s=default; t=1567619793;
+        bh=x0vzwigvrpZU/bacqRukLVsYw4+ONMKih6MKqoZosmw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SkKl3fMjyZO54k3ifouZbQoEZ07etgdiI6s9QDThAUpzExxRUHIdGorp3e/V/v7x3
-         447cQXQo6UbSM1Te0Suc6IG2Nww4wX3yFqENx8Hp/YUU3krPlyvtcc2sCuBdQF/Fb9
-         UOndB3P4mfMaOpTpLu+Guv1gRMEgEkSKnUHLmIgM=
+        b=EDewrEm2XxiPHhfu9xYbwFHQZGDVI8VFbqZnZkCp1w06JxeAZFNYKMp6Mw179CggH
+         0NOWqV9NCyHBokxmeMA3JEb1sUGfpZdVTQn37DxPU9WwnCPxtivmIUgmNnl7ADzK+r
+         0t32NGYr77/JCDzjgnCtiBqS0ABGwYNARpjkiugk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.9 30/83] Revert "dm bufio: fix deadlock with loop device"
-Date:   Wed,  4 Sep 2019 19:53:22 +0200
-Message-Id: <20190904175306.544969044@linuxfoundation.org>
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Haibin Zhang <haibinzhang@tencent.com>,
+        Yunfang Tai <yunfangtai@tencent.com>,
+        Lidong Chen <lidongchen@tencent.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 36/77] vhost-net: set packet weight of tx polling to 2 * vq size
+Date:   Wed,  4 Sep 2019 19:53:23 +0200
+Message-Id: <20190904175306.977087695@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,61 +48,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+commit a2ac99905f1ea8b15997a6ec39af69aa28a3653b upstream.
 
-commit cf3591ef832915892f2499b7e54b51d4c578b28c upstream.
+handle_tx will delay rx for tens or even hundreds of milliseconds when tx busy
+polling udp packets with small length(e.g. 1byte udp payload), because setting
+VHOST_NET_WEIGHT takes into account only sent-bytes but no single packet length.
 
-Revert the commit bd293d071ffe65e645b4d8104f9d8fe15ea13862. The proper
-fix has been made available with commit d0a255e795ab ("loop: set
-PF_MEMALLOC_NOIO for the worker thread").
+Ping-Latencies shown below were tested between two Virtual Machines using
+netperf (UDP_STREAM, len=1), and then another machine pinged the client:
 
-Note that the fix offered by commit bd293d071ffe doesn't really prevent
-the deadlock from occuring - if we look at the stacktrace reported by
-Junxiao Bi, we see that it hangs in bit_wait_io and not on the mutex -
-i.e. it has already successfully taken the mutex. Changing the mutex
-from mutex_lock to mutex_trylock won't help with deadlocks that happen
-afterwards.
+vq size=256
+Packet-Weight   Ping-Latencies(millisecond)
+                   min      avg       max
+Origin           3.319   18.489    57.303
+64               1.643    2.021     2.552
+128              1.825    2.600     3.224
+256              1.997    2.710     4.295
+512              1.860    3.171     4.631
+1024             2.002    4.173     9.056
+2048             2.257    5.650     9.688
+4096             2.093    8.508    15.943
 
-PID: 474    TASK: ffff8813e11f4600  CPU: 10  COMMAND: "kswapd0"
-   #0 [ffff8813dedfb938] __schedule at ffffffff8173f405
-   #1 [ffff8813dedfb990] schedule at ffffffff8173fa27
-   #2 [ffff8813dedfb9b0] schedule_timeout at ffffffff81742fec
-   #3 [ffff8813dedfba60] io_schedule_timeout at ffffffff8173f186
-   #4 [ffff8813dedfbaa0] bit_wait_io at ffffffff8174034f
-   #5 [ffff8813dedfbac0] __wait_on_bit at ffffffff8173fec8
-   #6 [ffff8813dedfbb10] out_of_line_wait_on_bit at ffffffff8173ff81
-   #7 [ffff8813dedfbb90] __make_buffer_clean at ffffffffa038736f [dm_bufio]
-   #8 [ffff8813dedfbbb0] __try_evict_buffer at ffffffffa0387bb8 [dm_bufio]
-   #9 [ffff8813dedfbbd0] dm_bufio_shrink_scan at ffffffffa0387cc3 [dm_bufio]
-  #10 [ffff8813dedfbc40] shrink_slab at ffffffff811a87ce
-  #11 [ffff8813dedfbd30] shrink_zone at ffffffff811ad778
-  #12 [ffff8813dedfbdc0] kswapd at ffffffff811ae92f
-  #13 [ffff8813dedfbec0] kthread at ffffffff810a8428
-  #14 [ffff8813dedfbf50] ret_from_fork at ffffffff81745242
+vq size=512
+Packet-Weight   Ping-Latencies(millisecond)
+                   min      avg       max
+Origin           6.537   29.177    66.245
+64               2.798    3.614     4.403
+128              2.861    3.820     4.775
+256              3.008    4.018     4.807
+512              3.254    4.523     5.824
+1024             3.079    5.335     7.747
+2048             3.944    8.201    12.762
+4096             4.158   11.057    19.985
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: bd293d071ffe ("dm bufio: fix deadlock with loop device")
-Depends-on: d0a255e795ab ("loop: set PF_MEMALLOC_NOIO for the worker thread")
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Seems pretty consistent, a small dip at 2 VQ sizes.
+Ring size is a hint from device about a burst size it can tolerate. Based on
+benchmarks, set the weight to 2 * vq size.
 
+To evaluate this change, another tests were done using netperf(RR, TX) between
+two machines with Intel(R) Xeon(R) Gold 6133 CPU @ 2.50GHz, and vq size was
+tweaked through qemu. Results shown below does not show obvious changes.
+
+vq size=256 TCP_RR                vq size=512 TCP_RR
+size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
+   1/       1/  -7%/        -2%      1/       1/   0%/        -2%
+   1/       4/  +1%/         0%      1/       4/  +1%/         0%
+   1/       8/  +1%/        -2%      1/       8/   0%/        +1%
+  64/       1/  -6%/         0%     64/       1/  +7%/        +3%
+  64/       4/   0%/        +2%     64/       4/  -1%/        +1%
+  64/       8/   0%/         0%     64/       8/  -1%/        -2%
+ 256/       1/  -3%/        -4%    256/       1/  -4%/        -2%
+ 256/       4/  +3%/        +4%    256/       4/  +1%/        +2%
+ 256/       8/  +2%/         0%    256/       8/  +1%/        -1%
+
+vq size=256 UDP_RR                vq size=512 UDP_RR
+size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
+   1/       1/  -5%/        +1%      1/       1/  -3%/        -2%
+   1/       4/  +4%/        +1%      1/       4/  -2%/        +2%
+   1/       8/  -1%/        -1%      1/       8/  -1%/         0%
+  64/       1/  -2%/        -3%     64/       1/  +1%/        +1%
+  64/       4/  -5%/        -1%     64/       4/  +2%/         0%
+  64/       8/   0%/        -1%     64/       8/  -2%/        +1%
+ 256/       1/  +7%/        +1%    256/       1/  -7%/         0%
+ 256/       4/  +1%/        +1%    256/       4/  -3%/        -4%
+ 256/       8/  +2%/        +2%    256/       8/  +1%/        +1%
+
+vq size=256 TCP_STREAM            vq size=512 TCP_STREAM
+size/sessions/+thu%/+normalize%   size/sessions/+thu%/+normalize%
+  64/       1/   0%/        -3%     64/       1/   0%/         0%
+  64/       4/  +3%/        -1%     64/       4/  -2%/        +4%
+  64/       8/  +9%/        -4%     64/       8/  -1%/        +2%
+ 256/       1/  +1%/        -4%    256/       1/  +1%/        +1%
+ 256/       4/  -1%/        -1%    256/       4/  -3%/         0%
+ 256/       8/  +7%/        +5%    256/       8/  -3%/         0%
+ 512/       1/  +1%/         0%    512/       1/  -1%/        -1%
+ 512/       4/  +1%/        -1%    512/       4/   0%/         0%
+ 512/       8/  +7%/        -5%    512/       8/  +6%/        -1%
+1024/       1/   0%/        -1%   1024/       1/   0%/        +1%
+1024/       4/  +3%/         0%   1024/       4/  +1%/         0%
+1024/       8/  +8%/        +5%   1024/       8/  -1%/         0%
+2048/       1/  +2%/        +2%   2048/       1/  -1%/         0%
+2048/       4/  +1%/         0%   2048/       4/   0%/        -1%
+2048/       8/  -2%/         0%   2048/       8/   5%/        -1%
+4096/       1/  -2%/         0%   4096/       1/  -2%/         0%
+4096/       4/  +2%/         0%   4096/       4/   0%/         0%
+4096/       8/  +9%/        -2%   4096/       8/  -5%/        -1%
+
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
+Signed-off-by: Yunfang Tai <yunfangtai@tencent.com>
+Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-bufio.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/vhost/net.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/md/dm-bufio.c
-+++ b/drivers/md/dm-bufio.c
-@@ -1585,7 +1585,9 @@ dm_bufio_shrink_scan(struct shrinker *sh
- 	unsigned long freed;
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index f463171352245..b8496f713bc62 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -39,6 +39,10 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+  * Using this limit prevents one virtqueue from starving others. */
+ #define VHOST_NET_WEIGHT 0x80000
  
- 	c = container_of(shrink, struct dm_bufio_client, shrinker);
--	if (!dm_bufio_trylock(c))
-+	if (sc->gfp_mask & __GFP_FS)
-+		dm_bufio_lock(c);
-+	else if (!dm_bufio_trylock(c))
- 		return SHRINK_STOP;
++/* Max number of packets transferred before requeueing the job.
++ * Using this limit prevents one virtqueue from starving rx. */
++#define VHOST_NET_PKT_WEIGHT(vq) ((vq)->num * 2)
++
+ /* MAX number of TX used buffers for outstanding zerocopy */
+ #define VHOST_MAX_PEND 128
+ #define VHOST_GOODCOPY_LEN 256
+@@ -308,6 +312,7 @@ static void handle_tx(struct vhost_net *net)
+ 	struct socket *sock;
+ 	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+ 	bool zcopy, zcopy_used;
++	int sent_pkts = 0;
  
- 	freed  = __scan(c, sc->nr_to_scan, sc->gfp_mask);
+ 	mutex_lock(&vq->mutex);
+ 	sock = vq->private_data;
+@@ -408,7 +413,8 @@ static void handle_tx(struct vhost_net *net)
+ 			vhost_zerocopy_signal_used(net, vq);
+ 		total_len += len;
+ 		vhost_net_tx_packet(net);
+-		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
++		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
++		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT(vq))) {
+ 			vhost_poll_queue(&vq->poll);
+ 			break;
+ 		}
+-- 
+2.20.1
+
 
 
