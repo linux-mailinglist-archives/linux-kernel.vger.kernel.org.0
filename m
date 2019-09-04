@@ -2,113 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82766A9182
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87FDA9185
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390311AbfIDSRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:17:10 -0400
-Received: from esa4.hc3370-68.iphmx.com ([216.71.155.144]:52809 "EHLO
-        esa4.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390016AbfIDSRI (ORCPT
+        id S2390412AbfIDSR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:17:26 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42872 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390136AbfIDSRX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:17:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1567621027;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=6sKFQsgK3hmnQqRn7QbS0Q0onQxt/wsvfBLo+ew2VPs=;
-  b=MVk9Ap6OuSERi/77uUYiStbwQojfGqlS2O6PFD0U5T9kUmgUwmbsCbvQ
-   8kIc94cE66/1DRZMtBIly9JyVQ2KX4Ro6P/wb8nA+Ybir7c/cskSmDA/l
-   iz+98Y5XrD0M+aI9tISvXQuSJZ+0u1HCwZc4jG+RXw0++CCxmANyXOSEQ
-   o=;
-Authentication-Results: esa4.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  andrew.cooper3@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa4.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="andrew.cooper3@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa4.hc3370-68.iphmx.com: domain of
-  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa4.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="Andrew.Cooper3@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
-Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa4.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: asFe9edQEmHVY/aROrCRTcmcYIq+1J/+sWfY+RCj0l/CO4uUHkEG1jxAebSGWUZ/18SxWqwcxF
- Xn25wGDLhpWgGVJKKjA4fimC/hT+5bWo0Ny9I9b2Smp4dkzWRyyqmEsE9zx/CYPGFdiv2hltxT
- W8slK2rY7rXJqVC5ZPDbwDTa2nVkWpuqhCiHL9GtaOu4lUSMUkXzjPPNIpSadaZEYB+gxNYpct
- 6yzhkAQqhd60FTTCgzI9eqSD2TEKqcCSQM5Ka/+88HHDGxf1db25eaLi2EtXAZ7Y1K26BYVtdb
- +YE=
-X-SBRS: 2.7
-X-MesageID: 5411413
-X-Ironport-Server: esa4.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.64,467,1559534400"; 
-   d="scan'208";a="5411413"
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-To:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Andrew Cooper <andrew.cooper3@citrix.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        "Ben Hutchings" <ben@decadent.org.uk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH] Documentation/process: Volunteer as the ambassador for Xen
-Date:   Wed, 4 Sep 2019 19:17:02 +0100
-Message-ID: <20190904181702.19788-1-andrew.cooper3@citrix.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 4 Sep 2019 14:17:23 -0400
+Received: by mail-io1-f67.google.com with SMTP id n197so44404989iod.9;
+        Wed, 04 Sep 2019 11:17:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jnf8E1B10U/rZLorYmCb+yTjJ2/FF27pXtV4pEIHWJ0=;
+        b=L6PKN1h75ntIi1hddTwn5fOXeCxCPppqjd/YrkdL5yYs7EU3vZ5oDR4M/GQBy57/Z8
+         xWRRcnQKszDv1BqJs6/5TuEK2B1akvMvgIgk4YgCAA+0xl6Qx7mrHMtG4BoESAE1T/TP
+         xHD6WT8kfPQDYULdNTUgikCKoz9lIuMFYGZjJOyhnUJagv52rk+qjBvB4VW/Ji+qSvmn
+         5uaNnbHbcRdukqYekxvI5olN9RVutymKyiOnFr4+4940zXpkHjrWCJIKg5uRyqK2DDz5
+         p935Nk511rkIgkcSVB+h6j9EMIW+sSej+2hfpcPEvESvHLSdESvaKuif11AkNtXpNEQU
+         KejA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jnf8E1B10U/rZLorYmCb+yTjJ2/FF27pXtV4pEIHWJ0=;
+        b=WnL8Ii8uLV7+ubRzpuZqR2PtC2VghNKo+PCEjrbipAw4XhK9UIPMzSnqphoVa+BIMo
+         9zYPSa0uhtuf1ev18NYiUojDkoht/Ueqj1jZgMF20EXDngMp/ghBfAQvH8Es5Epv6jDM
+         30p0I7TxGyEQkPAB8A0UPXJ9X4mRSqQJbR38JfaAN0y0a8r1zaF338KpgB2EeGxyg/Ln
+         XbNJvHLNDxg1AdAVFI1W/4Mj3oB0K9QNvRINhW40VPDxO2SxooHnLDW4gduU8pIivBDD
+         f8v9bZ+mvbGxLmmDwjwv9/uC4lpyQSkMGdD58uCABBefL2doDf8qgaT9P/4DijeQb0YD
+         qbGA==
+X-Gm-Message-State: APjAAAUEE4dKH8lgvH6aRmt6CQ7ZKqISZHQz+vcKAie3/92Pohw2mVdp
+        gaD9xU8dbgdUBNxIkIxTHVYE68yuEQ==
+X-Google-Smtp-Source: APXvYqyZAEsHdr+O6sWnZYGZk2KlpCsOIz9qthXXldoAac9Gbaef+GHeHMxDxTgj7gaJf5/xLeJDNw==
+X-Received: by 2002:a02:a516:: with SMTP id e22mr30362312jam.77.1567621042372;
+        Wed, 04 Sep 2019 11:17:22 -0700 (PDT)
+Received: from [192.168.1.99] ([92.117.176.185])
+        by smtp.googlemail.com with ESMTPSA id s201sm28603484ios.83.2019.09.04.11.17.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Sep 2019 11:17:21 -0700 (PDT)
+Subject: Re: [PATCH v5 1/4] ftrace: Implement fs notification for
+ tracing_max_latency
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+Cc:     paulmck@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+References: <20190903132602.3440-1-viktor.rosendahl@gmail.com>
+ <20190903132602.3440-2-viktor.rosendahl@gmail.com>
+ <20190904040039.GB150430@google.com>
+ <20190904081919.GA2349@hirez.programming.kicks-ass.net>
+From:   Viktor Rosendahl <viktor.rosendahl@gmail.com>
+Message-ID: <5bd4f538-f205-1134-d491-5a8727855b51@gmail.com>
+Date:   Wed, 4 Sep 2019 20:17:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190904081919.GA2349@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tyler Hicks <tyhicks@canonical.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Jiri Kosina <jkosina@suse.cz>
----
-Volunteer as tribute, perhaps.  Lets hope this isn't needed as frequenly as
-the past two years have gone.
----
- Documentation/process/embargoed-hardware-issues.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 9/4/19 10:19 AM, Peter Zijlstra wrote:
 
-diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
-index d37cbc502936..f9e8c0b23c52 100644
---- a/Documentation/process/embargoed-hardware-issues.rst
-+++ b/Documentation/process/embargoed-hardware-issues.rst
-@@ -221,7 +221,7 @@ an involved disclosed party. The current ambassadors list:
- 
-   Microsoft
-   VMware
--  XEN
-+  Xen		Andrew Cooper <andrew.cooper3@citrix.com>
- 
-   Canonical	Tyler Hicks <tyhicks@canonical.com>
-   Debian	Ben Hutchings <ben@decadent.org.uk>
--- 
-2.11.0
+>>
+>> Adding Paul since RCU faces similar situations, i.e. raising softirq risks
+>> scheduler deadlock in rcu_read_unlock_special() -- but RCU's solution is to
+>> avoid raising the softirq and instead use irq_work.
+> 
+> Which is right.
+> 
 
+Thanks Joel and Peter for suggesting the irq_work facility.
+
+I was ignorant of the existence of this facility.
+
+It looks like it is the Holy Grail of deferred work, for this particular 
+type of problem :)
+
+It looks like it will be possible to both avoid deadlock and also avoid 
+the ugly additions to the sched and idle code. In addition, the rest of 
+the code will become a lot simpler.
+
+best regards,
+
+Viktor
