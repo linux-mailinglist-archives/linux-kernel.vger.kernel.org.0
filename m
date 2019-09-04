@@ -2,84 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A908DA824A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FC86A82C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:51:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729834AbfIDMWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 08:22:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42586 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfIDMWH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:22:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=p4xwnk3QcMZRDVTI+Ilfg/a5Gh1VJ5mfJ+ENgw6ZREk=; b=cEOtN5aIUSshGFlNm1cUCBAk3y
-        EV8E8pW467LFTlqVeymYmD3s6MOrFZoy3EFlNQelrEXJoxRNtk/vLw4o17cx5sbVGQzdgcmPHBFSv
-        kjbSCmSdmhSDya9tTK6DwbBd4xveQgg9KDvtvfJxS2Kc1EDppJbkinubrRAgq6F9N2kGuOJiqc/Re
-        k4HGhQzkuSrSbMSa+3mTxte66rvMomdVdVFYTWjuYTbWLZYZUblbpE9jJahXb77MzJvrGiuGcnb5f
-        UIIegTTmtdXOHPooEI1kLmqSR7zp55J3fS4K2g2FN3vBOAjIlklWu0OEdPI1ZdwHFJz2+JBfDEwg+
-        W8Fpch9A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5UIW-00060Y-GS; Wed, 04 Sep 2019 12:22:04 +0000
-Date:   Wed, 4 Sep 2019 05:22:04 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        dri-devel@lists.freedesktop.org, pv-drivers@vmware.com,
-        linux-graphics-maintainer@vmware.com, linux-kernel@vger.kernel.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Subject: Re: [PATCH v2 1/4] x86/mm: Export force_dma_unencrypted
-Message-ID: <20190904122204.GA16937@infradead.org>
-References: <20190903131504.18935-1-thomas_os@shipmail.org>
- <20190903131504.18935-2-thomas_os@shipmail.org>
- <20190903134627.GA2951@infradead.org>
- <f85e7fa6-54e1-7ac5-ce6c-96349c7af322@shipmail.org>
- <20190903162204.GB23281@infradead.org>
- <558f1224-d157-5848-1752-1430a5b3947e@shipmail.org>
- <20190904065823.GA31794@infradead.org>
- <8698dc21-8679-b4a7-3179-71589fa33ab7@shipmail.org>
+        id S1729890AbfIDM0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 08:26:44 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5759 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725938AbfIDM0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 08:26:44 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4A74BF3FA70A6108B030;
+        Wed,  4 Sep 2019 20:26:42 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
+ 20:26:33 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <linux@prisktech.co.nz>, <b.zolnierkie@samsung.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] fbdev: wm8505fb: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 4 Sep 2019 20:01:32 +0800
+Message-ID: <20190904120132.25524-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8698dc21-8679-b4a7-3179-71589fa33ab7@shipmail.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 09:32:30AM +0200, Thomas Hellström (VMware) wrote:
-> That sounds great. Is there anything I can do to help out? I thought this
-> was more or less a dead end since the current dma_mmap_ API requires the
-> mmap_sem to be held in write mode (modifying the vma->vm_flags) whereas
-> fault() only offers read mode. But that would definitely work.
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-We'll just need to split into a setup and faul phase.  I have some
-sketches from a while ago, let me dust them off so that you can
-try them.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/video/fbdev/wm8505fb.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> "If it's the latter, then I would like to reiterate that it would be better
-> that we work to come up with a long term plan to add what's missing to the
-> DMA api to help graphics drivers use coherent memory?"
+diff --git a/drivers/video/fbdev/wm8505fb.c b/drivers/video/fbdev/wm8505fb.c
+index 17c7803..351d27b 100644
+--- a/drivers/video/fbdev/wm8505fb.c
++++ b/drivers/video/fbdev/wm8505fb.c
+@@ -261,7 +261,6 @@ static struct fb_ops wm8505fb_ops = {
+ static int wm8505fb_probe(struct platform_device *pdev)
+ {
+ 	struct wm8505fb_info	*fbi;
+-	struct resource	*res;
+ 	struct display_timings *disp_timing;
+ 	void			*addr;
+ 	int ret;
+@@ -299,8 +298,7 @@ static int wm8505fb_probe(struct platform_device *pdev)
+ 	addr = addr + sizeof(struct wm8505fb_info);
+ 	fbi->fb.pseudo_palette	= addr;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	fbi->regbase = devm_ioremap_resource(&pdev->dev, res);
++	fbi->regbase = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(fbi->regbase))
+ 		return PTR_ERR(fbi->regbase);
+ 
+-- 
+2.7.4
 
-I don't think we need a long term plan.  We've been adding features
-on an as-needed basis.  And now that we have siginificanty less
-implementations of the API this actually becomes much easier as well.
+
