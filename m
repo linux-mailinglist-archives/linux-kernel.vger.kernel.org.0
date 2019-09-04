@@ -2,110 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97A8DA8D8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED139A8D92
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731708AbfIDROR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:14:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46930 "EHLO mail.kernel.org"
+        id S1731801AbfIDRQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:16:18 -0400
+Received: from mga07.intel.com ([134.134.136.100]:25282 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729890AbfIDROR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:14:17 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DF2D21726;
-        Wed,  4 Sep 2019 17:14:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567617256;
-        bh=4lhedrTdvyNdZnIcwKpoBZ0Q5do9zTK6jHQL29tFVZk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=naAF2dfkuBEiligHmtjWd3v3i9bZ8JYi0blq+r3tgLJoaqM7VrZG1NsRN+uaBjP3y
-         In17bJ03iAHIZdxty25BGNeU5mPsbF1nkdNeCgHx6qdzzJ1GME4qSJtypq5qJte641
-         fJE5cpxekm16N9eCR8flaq7d6+oCPkh46chnlj9M=
-Date:   Wed, 4 Sep 2019 19:14:13 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Prakhar Sinha <prakharsinha2808@gmail.com>
-Cc:     tobias.niessen@stud.uni-hannover.de, kim.jamie.bradley@gmail.com,
-        pakki001@umn.edu, sabrina-gaube@web.de, nishkadg.linux@gmail.com,
-        qader.aymen@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rts5208: Fix 80 char warning by re-structuring
- if-blocks.
-Message-ID: <20190904171413.GA18390@kroah.com>
-References: <20190904130523.GA17126@MeraComputer>
+        id S1731173AbfIDRQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:16:17 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 10:16:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
+   d="scan'208";a="212470355"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga002.fm.intel.com with ESMTP; 04 Sep 2019 10:16:16 -0700
+Date:   Wed, 4 Sep 2019 11:14:45 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>
+Subject: Re: [PATCH] nvme-core: Fix subsystem instance mismatches
+Message-ID: <20190904171445.GG21302@localhost.localdomain>
+References: <20190831152910.GA29439@localhost.localdomain>
+ <33af4d94-9f6d-9baa-01fa-0f75ccee263e@deltatee.com>
+ <20190903164620.GA20847@localhost.localdomain>
+ <20190904060558.GA10849@lst.de>
+ <20190904144426.GB21302@localhost.localdomain>
+ <20190904154215.GA20422@lst.de>
+ <20190904155445.GD21302@localhost.localdomain>
+ <ef3bf93b-cb47-95c5-7d96-f81d9acfdb55@deltatee.com>
+ <20190904163557.GF21302@localhost.localdomain>
+ <f07e03f1-48f0-591e-fdf6-9499fa4dd9ab@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190904130523.GA17126@MeraComputer>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <f07e03f1-48f0-591e-fdf6-9499fa4dd9ab@deltatee.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 06:35:23PM +0530, Prakhar Sinha wrote:
-> This patch solves the following checkpatch.pl's messages in
-> drivers/staging/rts5208/sd.c
-> 
-> WARNING: line over 80 characters
-> 4517: FILE: drivers/staging/rts5208/sd.c:4517:
-> +                                               sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON | SD_SDR_RST);
-> 
-> WARNING: line over 80 characters
-> 4518: FILE: drivers/staging/rts5208/sd.c:4518:
-> +                                               goto sd_execute_write_cmd_failed;
-> 
-> WARNING: line over 80 characters
-> 4522: FILE: drivers/staging/rts5208/sd.c:4522:
-> +                               sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON | SD_SDR_RST);
-> 
-> Signed-off-by: Prakhar Sinha <prakharsinha2808@gmail.com>
-> ---
->  drivers/staging/rts5208/sd.c | 26 ++++++++++++--------------
->  1 file changed, 12 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/staging/rts5208/sd.c b/drivers/staging/rts5208/sd.c
-> index a06045344301..7d6f2c56e740 100644
-> --- a/drivers/staging/rts5208/sd.c
-> +++ b/drivers/staging/rts5208/sd.c
-> @@ -4505,22 +4505,20 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
->  
->  		dev_dbg(rtsx_dev(chip), "sd_lock_state = 0x%x, sd_card->sd_lock_status = 0x%x\n",
->  			sd_lock_state, sd_card->sd_lock_status);
-> -		if (sd_lock_state ^ (sd_card->sd_lock_status & SD_LOCKED)) {
-> +		if (sd_lock_state ^ (sd_card->sd_lock_status & SD_LOCKED))
->  			sd_card->sd_lock_notify = 1;
-> -			if (sd_lock_state &&
-> -			    (sd_card->sd_lock_status & SD_LOCK_1BIT_MODE)) {
-> -				sd_card->sd_lock_status |= (
-> -					SD_UNLOCK_POW_ON | SD_SDR_RST);
-> -				if (CHK_SD(sd_card)) {
-> -					retval = reset_sd(chip);
-> -					if (retval != STATUS_SUCCESS) {
-> -						sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON | SD_SDR_RST);
-> -						goto sd_execute_write_cmd_failed;
-> -					}
-> -				}
-> -
-> -				sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON | SD_SDR_RST);
-> +		if ((sd_lock_state & !(sd_card->sd_lock_status & SD_LOCKED)) &&
-> +		    (sd_card->sd_lock_status & SD_LOCK_1BIT_MODE)) {
-> +			sd_card->sd_lock_status |= (SD_UNLOCK_POW_ON |
-> +						    SD_SDR_RST);
-> +			if (CHK_SD(sd_card) &&
-> +			    reset_sd(chip) != STATUS_SUCCESS) {
-> +				sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON |
-> +							     SD_SDR_RST);
-> +				goto sd_execute_write_cmd_failed;
->  			}
-> +			sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON |
-> +						     SD_SDR_RST);
+On Wed, Sep 04, 2019 at 11:01:22AM -0600, Logan Gunthorpe wrote:
+> Oh, yes that's simpler than the struct/kref method and looks like it
+> will accomplish the same thing. I did some brief testing with it and it
+> seems to work for me (though I don't have any subsystems with multiple
+> controllers). If you want to make a patch out of it you can add my
+>
+> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 
-Are you sure you can indent and call the if() statement twice like this?
+Thanks! I'll make it a proper patch and send shortly.
 
-If so, please document this in your changelog text.
+For testing multi-controller subsystems, I haven't got proper hardware
+either, so I really like the nvme loop target. Here's a very simple json
+defining a two namespace subsystem backed by two real nvme devices:
 
-thanks,
+loop.json:
+---
+{
+  "ports": [
+    {
+      "addr": {
+        "adrfam": "",
+        "traddr": "",
+        "treq": "not specified",
+        "trsvcid": "",
+        "trtype": "loop"
+      },
+      "portid": 1,
+      "referrals": [],
+      "subsystems": [
+        "testnqn"
+      ]
+    }
+  ],
+  "subsystems": [
+    {
+      "attr": {
+        "allow_any_host": "1"
+      },
+      "namespaces": [
+        {
+          "device": {
+            "nguid": "ef90689c-6c46-d44c-89c1-4067801309a8",
+            "path": "/dev/nvme0n1"
+          },
+          "enable": 1,
+          "nsid": 1
+        },
+        {
+          "device": {
+            "nguid": "ef90689c-6c46-d44c-89c1-4067801309a9",
+            "path": "/dev/nvme1n1"
+          },
+          "enable": 1,
+          "nsid": 2
+        }
+      ],
+      "nqn": "testnqn"
+    }
+  ]
+}
+--
 
-greg k-h
+Configure the target:
+
+  # nvmetcli restore loop.json
+
+Connect to it twice:
+
+  # nvme connect -n testnqn -t loop
+  # nvme connect -n testnqn -t loop
+
+List the result:
+
+  # nvme list -v
+  NVM Express Subsystems
+
+  Subsystem        Subsystem-NQN                                                                                    Controllers
+  ---------------- ------------------------------------------------------------------------------------------------ ----------------
+  nvme-subsys0     nqn.2014.08.org.nvmexpress:8086108ePHLE7200015N6P4BGN-17335943:ICDPC5ED2ORA6.4T                  nvme0
+  nvme-subsys1     nqn.2014.08.org.nvmexpress:8086108ePHLE7200015N6P4BGN-27335943:ICDPC5ED2ORA6.4T                  nvme1
+  nvme-subsys2     testnqn                                                                                          nvme2, nvme3
+
+  NVM Express Controllers
+
+  Device   SN                   MN                                       FR       TxPort Address        Subsystem    Namespaces
+  -------- -------------------- ---------------------------------------- -------- ------ -------------- ------------ ----------------
+  nvme0    PHLE7200015N6P4BGN-1 7335943:ICDPC5ED2ORA6.4T                 QDV1RD07 pcie   0000:88:00.0   nvme-subsys0 nvme0n1
+  nvme1    PHLE7200015N6P4BGN-2 7335943:ICDPC5ED2ORA6.4T                 QDV1RD03 pcie   0000:89:00.0   nvme-subsys1 nvme1n1
+  nvme2    9eb72cbeecc6fdb0     Linux                                    5.3.0-rc loop                  nvme-subsys2 nvme2n1, nvme2n2
+  nvme3    9eb72cbeecc6fdb0     Linux                                    5.3.0-rc loop                  nvme-subsys2 nvme2n1, nvme2n2
+
+  NVM Express Namespaces
+
+  Device       NSID     Usage                      Format           Controllers
+  ------------ -------- -------------------------- ---------------- ----------------
+  nvme0n1      1          3.20  TB /   3.20  TB    512   B +  0 B   nvme0
+  nvme1n1      1          3.20  TB /   3.20  TB    512   B +  0 B   nvme1
+  nvme2n1      1          3.20  TB /   3.20  TB    512   B +  0 B   nvme2, nvme3
+  nvme2n2      2          3.20  TB /   3.20  TB    512   B +  0 B   nvme2, nvme3
+
+
