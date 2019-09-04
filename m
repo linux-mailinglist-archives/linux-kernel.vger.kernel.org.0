@@ -2,120 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48BBEA7CAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0955A7CB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:23:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbfIDHWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 03:22:19 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34795 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfIDHWS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 03:22:18 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n9so10752048pgc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 00:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=k5iU7vWPjCKUNszLjo1EIEgwZ0+VgslA2cRZaOoMdXw=;
-        b=E3u/RtT3z0ejfdWGzoAwlpOd3pFC+iFylvsxbFkIQG5Mk6lIrZFqAxY/wzfukTZab4
-         IlCc9iZEZth6OuNubGQNJrjIH5thuTE4jo5kuW7zcMnGChwRSC/H/Buwf9yugb0rbVht
-         kMscYzGT9e/V0v0yPDjBt1mfX+Z2GQvGhPYy7tHvR8ypFt3CgyVUBrR0HUAWSPggtc3Z
-         m7jfVT1jVDT3YgxP71iC9aeu9BOpvLt7hAvuMqNliX+XUIzPJ5pDDZquxZNPDZVu76cD
-         l38fu0wg10M3nUq7d01NNdMGuakN19VcglJzVR8etxln+4ZTk8mKV7/2f/FkhswVK2On
-         CxMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=k5iU7vWPjCKUNszLjo1EIEgwZ0+VgslA2cRZaOoMdXw=;
-        b=F2hhp6ypSvHxITxA1BU2WbWFGVpigu184N0AaOvMb7wDWmdZwkHUne+XwU9Wo2tkDA
-         ffi+McLRNOa3iEqcOwJ+pxIzmd6edCECcpqHgZ0ECqm3xb0Qv53EphT2K00h7f+rKxH6
-         jR0SThGLo6YJ+oHCsTtsaDyrMN9qwZEa+WNqJ+SVvcBHIqDR9AW1AvsrPt6C/okplWWM
-         e7bMWs6jWjTG/HaKnDeoBjSHY+JPCZwLWFJf2jNx/5pOhRJ+MlpxFL9mNdZJMowoi9tV
-         CcL7al9ztBu6rmF1u3QpTt4+zSKP5LHoZMhydZYgUMhVCI5VVo+WvVg+O+q4OfpEwDjI
-         U5ww==
-X-Gm-Message-State: APjAAAUUGiPWtnCtSBlhMOkq0QrLLqX/M42J++CGTnms88gTFAJfnnXp
-        7KZALGqd/UO7HhSOXcDR9VaV3F+WxzU=
-X-Google-Smtp-Source: APXvYqxLCJ/mi+WEi6Hizyc8n+UGDgwDe+iBmNMTCCrPk2L2yLhgzlweZdQeKPuU7rt4Jv/8s4pLdw==
-X-Received: by 2002:a65:6294:: with SMTP id f20mr34883435pgv.349.1567581738039;
-        Wed, 04 Sep 2019 00:22:18 -0700 (PDT)
-Received: from VM_12_95_centos.localdomain ([58.87.109.34])
-        by smtp.googlemail.com with ESMTPSA id x24sm17102188pgl.84.2019.09.04.00.22.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Sep 2019 00:22:17 -0700 (PDT)
-From:   Zhigang Lu <totty.lu@gmail.com>
-To:     luzhigang001@gmail.com, mike.kravetz@oracle.com,
-        willy@infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Zhigang Lu <tonnylu@tencent.com>
-Subject: [PATCH v3] mm/hugetlb: avoid looping to the same hugepage if !pages and !vmas
-Date:   Wed,  4 Sep 2019 15:21:52 +0800
-Message-Id: <1567581712-5992-1-git-send-email-totty.lu@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1729034AbfIDHXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 03:23:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34176 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728209AbfIDHXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 03:23:35 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AF44BB6B9;
+        Wed,  4 Sep 2019 07:23:33 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4783E1E37A2; Wed,  4 Sep 2019 09:23:33 +0200 (CEST)
+Date:   Wed, 4 Sep 2019 09:23:33 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ext2: Delete an unnecessary check before brelse()
+Message-ID: <20190904072333.GB8225@quack2.suse.cz>
+References: <51dea296-2207-ebc0-bac3-13f3e5c3b235@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <51dea296-2207-ebc0-bac3-13f3e5c3b235@web.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhigang Lu <tonnylu@tencent.com>
+On Tue 03-09-19 14:44:08, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 3 Sep 2019 14:40:18 +0200
+> 
+> The brelse() function tests whether its argument is NULL
+> and then returns immediately.
+> Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-When mmapping an existing hugetlbfs file with MAP_POPULATE, we find
-it is very time consuming. For example, mmapping a 128GB file takes
-about 50 milliseconds. Sampling with perfevent shows it spends 99%
-time in the same_page loop in follow_hugetlb_page().
+Thanks. Added to my tree.
 
-samples: 205  of event 'cycles', Event count (approx.): 136686374
--  99.04%  test_mmap_huget  [kernel.kallsyms]  [k] follow_hugetlb_page
-        follow_hugetlb_page
-        __get_user_pages
-        __mlock_vma_pages_range
-        __mm_populate
-        vm_mmap_pgoff
-        sys_mmap_pgoff
-        sys_mmap
-        system_call_fastpath
-        __mmap64
+								Honza
 
-follow_hugetlb_page() is called with pages=NULL and vmas=NULL, so for
-each hugepage, we run into the same_page loop for pages_per_huge_page()
-times, but doing nothing. With this change, it takes less then 1
-millisecond to mmap a 128GB file in hugetlbfs.
-
-Signed-off-by: Zhigang Lu <tonnylu@tencent.com>
-Reviewed-by: Haozhong Zhang <hzhongzhang@tencent.com>
-Reviewed-by: Zongming Zhang <knightzhang@tencent.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Acked-by: Matthew Wilcox <willy@infradead.org>
----
- mm/hugetlb.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6d7296d..a096fb3 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4391,6 +4391,21 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
- 				break;
- 			}
- 		}
-+
-+		/*
-+		 * If subpage information not requested, update counters
-+		 * and skip the same_page loop below.
-+		 */
-+		if (!pages && !vmas && !pfn_offset &&
-+		    (vaddr + huge_page_size(h) < vma->vm_end) &&
-+		    (remainder >= pages_per_huge_page(h))) {
-+			vaddr += huge_page_size(h);
-+			remainder -= pages_per_huge_page(h);
-+			i += pages_per_huge_page(h);
-+			spin_unlock(ptl);
-+			continue;
-+		}
-+
- same_page:
- 		if (pages) {
- 			pages[i] = mem_map_offset(page, pfn_offset);
+> ---
+>  fs/ext2/super.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+> index baa36c6fb71e..30c630d73f0f 100644
+> --- a/fs/ext2/super.c
+> +++ b/fs/ext2/super.c
+> @@ -162,8 +162,7 @@ static void ext2_put_super (struct super_block * sb)
+>  	}
+>  	db_count = sbi->s_gdb_count;
+>  	for (i = 0; i < db_count; i++)
+> -		if (sbi->s_group_desc[i])
+> -			brelse (sbi->s_group_desc[i]);
+> +		brelse(sbi->s_group_desc[i]);
+>  	kfree(sbi->s_group_desc);
+>  	kfree(sbi->s_debts);
+>  	percpu_counter_destroy(&sbi->s_freeblocks_counter);
+> --
+> 2.23.0
+> 
+> 
 -- 
-1.8.3.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
