@@ -2,318 +2,357 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37610A7F82
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1313A7F8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbfIDJgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 05:36:25 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:32962 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbfIDJgY (ORCPT
+        id S1729688AbfIDJiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 05:38:04 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:23633 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfIDJiD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:36:24 -0400
-Received: by mail-vs1-f68.google.com with SMTP id s18so6275181vsa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 02:36:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+o+ErCjuT5qX6PyUMFETCMRQPrMpr1ayP1BJFKFPXQY=;
-        b=RUqHkSmy9lAe6HlMGvJ2AeO7vvfTM/8ipY2yHVIo0GAAHyrGu1dtp2hncgfldaDL19
-         0HgFoiRdCBjS33NXxSzdy9Igs4pUaLthBfVUFDpkYJTVRuQjYcc3oPcrvfUkCnx2TpO7
-         Hyv+CTguGHsymOnLw2Vy2oDEPaCwxDbVwVANA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+o+ErCjuT5qX6PyUMFETCMRQPrMpr1ayP1BJFKFPXQY=;
-        b=FzdQTM1ClrA9tows3k65Y8NfvQb0PprnapvP7y3gTiuiRzLRsltTf4ZbFLdnnwBm2a
-         Btuxp612jNKfr0pjK+Bmh5W25vNshfk27ZutRR7DAoTv/7skl3mBD761hU293SN6io12
-         Q3b2B3Wh3ob3fUGGHNwOozMfIyV5nAzMCO9PMA7W+lfqm6OS1Fk95jnm6RsD+pGLraMh
-         PtIOos/GMgK6JeXRk59ADN28pwROBJij2s65OgXhxZkK8Kmn1aIu0QXor7nF76YtVhFt
-         ZoRQuGmocQkP2bm4c2XRAFre1FyI0ahETGWja8NBd1rTn3jC/sBEZ3TQKBcbJ7OfSYli
-         L/6Q==
-X-Gm-Message-State: APjAAAXD3nBSVuLTt4dMf9BdCNGZ3kTTUSXB5GasrTj0VOC/7wADBl+t
-        B2W30Y5tfpFRpRGbTPpLAKrQL/pvj8ZvgAtMm6Q41A==
-X-Google-Smtp-Source: APXvYqz7zQLlv7fkn9VJhICKcEdJo5UbgsU5W16+fLJAaZnX0P6LdvN3fnQs0PNd8MeWH4ar/6qO0Hc/ewmG8+HR4UE=
-X-Received: by 2002:a67:ab0b:: with SMTP id u11mr5576460vse.163.1567589782809;
- Wed, 04 Sep 2019 02:36:22 -0700 (PDT)
+        Wed, 4 Sep 2019 05:38:03 -0400
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x849bnb5030463;
+        Wed, 4 Sep 2019 18:37:49 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x849bnb5030463
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567589870;
+        bh=CgmmuzVkhVQ+o1CkaLANRBuCyNbfCQSFWOCba3Tazjw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cc4YDaUiFhyrvPlS08sc6wubjrBJJg3n2+cRI9xGWFslrPGUoQVo/8BTbWDMUcyAJ
+         ULzI7TWgXHe78IobvE/RDJ27izWkmmMApkpoYJvidQEPSd8iqWdjPbV3T2hMmCUscv
+         VHysTQqUyhHNrNSp4daCOYiJ8P2KJggjDFomFpYPAdXWqUZqZ2Lo8H5G29fNmZ+U7W
+         J7E8QLp4nGNwIXMPaoHx57b+K8x06AUd49ywk6liYjHDFm/KwncCbKvfBaBIlhTF37
+         r77+DCrE4Hfta87nKDcojEMv+wThfZlViAMNcuJx39xGak3bbiBwlw7bj9BeJXsAc8
+         jcfow+pV+dVww==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id m62so13325434vsc.8;
+        Wed, 04 Sep 2019 02:37:49 -0700 (PDT)
+X-Gm-Message-State: APjAAAU6wbK6wIWyIq/ozXkA0lQd5gX1AhBokafpC4UEZp5XZ4Nd38yB
+        QWtDCGDyVZjqapjyDw8HchHw0zKYjSiSBUzIfCw=
+X-Google-Smtp-Source: APXvYqxH9/1NkppRKxnXt9oQjnGl1dmb5P5bz0Rh2NAIoKzwHdtZVq+9w5NOKqnfRJ4H8aK8fucFWaX7Nj+Ho56tyV4=
+X-Received: by 2002:a67:e9cc:: with SMTP id q12mr11780704vso.181.1567589868735;
+ Wed, 04 Sep 2019 02:37:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190903055103.134764-1-cychiang@chromium.org>
- <e1c3483c-baa6-c726-e547-fadf40d259f4@baylibre.com> <d8a80ba5-dd2b-f84d-bbfc-9dd5ccbc26e9@baylibre.com>
- <19353031.SdOy5F5fmg@jernej-laptop> <HE1PR06MB40112AD52DAF0E837F23B441ACB90@HE1PR06MB4011.eurprd06.prod.outlook.com>
-In-Reply-To: <HE1PR06MB40112AD52DAF0E837F23B441ACB90@HE1PR06MB4011.eurprd06.prod.outlook.com>
-From:   Cheng-yi Chiang <cychiang@chromium.org>
-Date:   Wed, 4 Sep 2019 17:35:56 +0800
-Message-ID: <CAFv8NwJptZfdqOqtpw4ZrCDwAYT1Rz_Z1wTAybMF_M6Uj4NF2A@mail.gmail.com>
-Subject: Re: [PATCH] drm: bridge/dw_hdmi: add audio sample channel status setting
-To:     Jonas Karlman <jonas@kwiboo.se>
-Cc:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "tzungbi@chromium.org" <tzungbi@chromium.org>,
-        "zhengxing@rock-chips.com" <zhengxing@rock-chips.com>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "a.hajda@samsung.com" <a.hajda@samsung.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "kuankuan.y@gmail.com" <kuankuan.y@gmail.com>,
-        "jeffy.chen@rock-chips.com" <jeffy.chen@rock-chips.com>,
-        "dianders@chromium.org" <dianders@chromium.org>,
-        "cain.cai@rock-chips.com" <cain.cai@rock-chips.com>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "eddie.cai@rock-chips.com" <eddie.cai@rock-chips.com>,
-        "Laurent.pinchart@ideasonboard.com" 
-        <Laurent.pinchart@ideasonboard.com>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "dgreid@chromium.org" <dgreid@chromium.org>,
-        "sam@ravnborg.org" <sam@ravnborg.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
+References: <20180716122125.175792-1-maco@android.com> <20190903150638.242049-1-maennich@google.com>
+In-Reply-To: <20190903150638.242049-1-maennich@google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 4 Sep 2019 18:37:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAStNtY=xGyUM6cJTH-DTmoHE5b-ba_BGxoAJyJ_0-6O_A@mail.gmail.com>
+Message-ID: <CAK7LNAStNtY=xGyUM6cJTH-DTmoHE5b-ba_BGxoAJyJ_0-6O_A@mail.gmail.com>
+Subject: Re: [PATCH v4 00/12] Symbol Namespaces
+To:     Matthias Maennich <maennich@google.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        maco@android.com, sspatil@google.com,
+        Will Deacon <will@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-modules@vger.kernel.org,
+        linux-usb <linux-usb@vger.kernel.org>,
+        usb-storage@lists.one-eyed-alien.net,
+        linux-watchdog@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 4:33 AM Jonas Karlman <jonas@kwiboo.se> wrote:
+On Wed, Sep 4, 2019 at 12:07 AM Matthias Maennich <maennich@google.com> wrote:
 >
-> On 2019-09-03 20:08, Jernej =C5=A0krabec wrote:
-> > Hi!
-> >
-> > Dne torek, 03. september 2019 ob 20:00:33 CEST je Neil Armstrong napisa=
-l(a):
-> >> Hi,
-> >>
-> >> Le 03/09/2019 =C3=A0 11:53, Neil Armstrong a =C3=A9crit :
-> >>> Hi,
-> >>>
-> >>> On 03/09/2019 07:51, Cheng-Yi Chiang wrote:
-> >>>> From: Yakir Yang <ykk@rock-chips.com>
-> >>>>
-> >>>> When transmitting IEC60985 linear PCM audio, we configure the
-> >>>> Audio Sample Channel Status information of all the channel
-> >>>> status bits in the IEC60958 frame.
-> >>>> Refer to 60958-3 page 10 for frequency, original frequency, and
-> >>>> wordlength setting.
-> >>>>
-> >>>> This fix the issue that audio does not come out on some monitors
-> >>>> (e.g. LG 22CV241)
-> >>>>
-> >>>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> >>>> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-> >>>> ---
-> >>>>
-> >>>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 59 ++++++++++++++++++++=
-+++
-> >>>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h | 20 ++++++++
-> >>>>  2 files changed, 79 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> >>>> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
-> >>>> bd65d0479683..34d46e25d610 100644
-> >>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> >>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> >>>> @@ -582,6 +582,63 @@ static unsigned int hdmi_compute_n(unsigned int
-> >>>> freq, unsigned long pixel_clk)>>
-> >>>>    return n;
-> >>>>
-> >>>>  }
-> >>>>
-> >>>> +static void hdmi_set_schnl(struct dw_hdmi *hdmi)
-> >>>> +{
-> >>>> +  u8 aud_schnl_samplerate;
-> >>>> +  u8 aud_schnl_8;
-> >>>> +
-> >>>> +  /* These registers are on RK3288 using version 2.0a. */
-> >>>> +  if (hdmi->version !=3D 0x200a)
-> >>>> +          return;
-> >>> Are these limited to the 2.0a version *in* RK3288, or 2.0a version on=
- all
-> >>> SoCs ?
-> >> After investigations, Amlogic sets these registers on their 2.0a versi=
-on
-> >> aswell, and Jernej (added in Cc) reported me Allwinner sets them on th=
-eir
-> >> < 2.0a and > 2.0a IPs versions.
-> >>
-> >> Can you check on the Rockchip IP versions in RK3399 ?
-> >>
-> >> For reference, the HDMI 1.4a IP version allwinner setups is:
-> >> https://github.com/Allwinner-Homlet/H3-BSP4.4-linux/blob/master/driver=
-s/vide
-> >> o/fbdev/sunxi/disp2/hdmi/hdmi_bsp_sun8iw7.c#L531-L539 (registers a
-> >> "scrambled" but a custom bit can reset to the original mapping, 0x1066=
- ...
-> >> 0x106f)
-> > For easier reading, here is similar, but annotated version: http://ix.i=
-o/1Ub6
-> > Check function bsp_hdmi_audio().
-> >
-> > Unless there is a special reason, you can just remove that check.
+> As of Linux 5.3-rc7, there are 31207 [1] exported symbols in the kernel.
+> That is a growth of roughly 1000 symbols since 4.17 (30206 [2]). There
+> seems to be some consensus amongst kernel devs that the export surface
+> is too large, and hard to reason about.
 >
-> Agree, this check should not be needed, AUDSCHNLS7 used to be configured =
-in my old
-> multi-channel patches that have seen lot of testing on Amlogic, Allwinner=
- and Rockchip SoCs.
+> Generally, these symbols fall in one of these categories:
+> 1) Symbols actually meant for drivers
+> 2) Symbols that are only exported because functionality is split over
+>    multiple modules, yet they really shouldn't be used by modules outside
+>    of their own subsystem
+> 3) Symbols really only meant for in-tree use
+>
+> When module developers try to upstream their code, it regularly turns
+> out that they are using exported symbols that they really shouldn't be
+> using. This problem is even bigger for drivers that are currently
+> out-of-tree, which may be using many symbols that they shouldn't be
+> using, and that break when those symbols are removed or modified.
+>
+> This patch allows subsystem maintainers to partition their exported
+> symbols into separate namespaces, and module authors to import such
+> namespaces only when needed.
+>
+> This allows subsystem maintainers to more easily limit availability of
+> these namespaced symbols to other parts of the kernel. It can also be
+> used to partition the set of exported symbols for documentation
+> purposes; for example, a set of symbols that is really only used for
+> debugging could be in a "SUBSYSTEM_DEBUG" namespace.
+
+
+Why is the namespace helpful to limit the availability of symbols?
+External modules would add whatever EXPORT_SYMBOL_NS() needed
+to use the symbols.
+Nothing would change except that it would increase the code size.
+
+
+
+
+If we introduce the namespace, do symbols no longer
+need to be globally unique?
+
+Theoretically, we could do this:
+
+EXPORT_SYMBOL_NS(foo, SUBSYSTEM_A);   (for Subsystem-A)
+EXPORT_SYMBOL_NS(foo, SUBSYSTEM_B);   (for Subsystem-B)
+
+
+But, I do not see benefit to do so.
+
+
+We usually prefix symbol names with the sybsystem names
+(usb_ ...  ,  watchdog_ ...).
+
+By ensuring the symbol uniqueness,
+it is really clear which functions are called.
+You can easily grep the source code.
+Editors can follow the code with tag files.
+
+Adding namespace just introduces extra complexity.
+
+
+Thanks.
+
+
+>
+> The series contains two RFC patches that do not need to be merged along
+> with the rest of the series, but they serve as a reference for using the
+> symbol namespaces. Especially, the watchdog subsystem might not be
+> affected by the issues addressed by Symbol Namespaces. I left the patch
+> in for reference anyway for demonstration purposes.
+>
+> I continued the work mainly done by Martijn Coenen.
+>
+> Changes in v2:
+> - Rather than adding and evaluating separate sections __knsimport_NS,
+>   use modinfo tags to declare the namespaces a module introduces.
+>   Adjust modpost and the module loader accordingly.
+> - Also add support for reading multiple modinfo values for the same tag
+>   to allow list-like access to modinfo tags.
+> - The macros in export.h have been cleaned up to avoid redundancy in the
+>   macro parameters (ns, nspost, nspost2).
+> - The introduction of relative references in the ksymtab entries caused
+>   a rework of the macros to accommodate that configuration as well.
+> - Alignment of kernel_symbol in the ksymtab needed to be fixed to allow
+>   growing the kernel_symbol struct.
+> - Modpost does now also append the namespace suffix to the symbol
+>   entries in Module.symvers.
+> - The configuration option MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS allows
+>   relaxing the enforcement of properly declared namespace imports at
+>   module loading time.
+> - Symbols can be collectively exported into a namespace by defining
+>   DEFAULT_SYMBOL_NAMESPACE in the corresponding Makefile.
+> - The requirement for a very recent coccinelle spatch has been lifted by
+>   simplifying the script.
+> - nsdeps does now ensures MODULE_IMPORT_NS statements are sorted when
+>   patching the module source files.
+> - Some minor bugs have been addressed in nsdeps to allow it to work with
+>   modules that have more than one source file.
+> - The RFC for the usb-storage symbols has been simplified by using
+>   DEFAULT_SYMBOL_NAMESPACE=USB_STORAGE rather than explicitly exporting
+>   each and every symbol into that new namespace.
+>
+> Changes in v3:
+> - Reword the documentation for the
+>   MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS option for clarification.
+> - Fix printed required version of spatch in coccinelle script.
+> - Adopt kbuild changes for modpost: .mod files are no longer generated
+>   in .tmp_versions. Similarely, generate the .ns_deps files in the tree
+>   along with the .mod files. Also, nsdeps now uses modules.order as
+>   source for the list modules to consider.
+> - Add an RFC patch to introduce the namespace WATCHDOG_CORE for symbols
+>   exported in watchdog_core.c.
+>
+> Changes in v4:
+> - scripts/nsdeps:
+>   - exit on first error
+>   - support out-of-tree builds O=...
+> - scripts/mod/modpost: make the namespace a separate field when
+>   exporting to Module.symvers (rather than symbol.NS)
+> - scripts/export_report.pl: update for new Module.symvers format
+> - include/linux/export.h: fixed style nits
+> - kernel/module.c: ensure namespaces are imported before taking a
+>   reference to the owner module
+> - Documentation: document the Symbol Namespace feature and update
+>   references to Module.symvers and EXPORT_SYMBOL*
+>
+> This patch series was developed against v5.3-rc7.
+>
+> [1] git grep "^EXPORT_SYMBOL\w*(" v5.3-rc7 | wc -l
+> [2] git grep "^EXPORT_SYMBOL\w*(" v4.17    | wc -l
+>
+> Cc: arnd@arndb.de
+> Cc: gregkh@linuxfoundation.org
+> Cc: jeyu@kernel.org
+> Cc: joel@joelfernandes.org
+> Cc: lucas.de.marchi@gmail.com
+> Cc: maco@android.com
+> Cc: sspatil@google.com
+> Cc: will@kernel.org
+> Cc: yamada.masahiro@socionext.com
+> Cc: linux-kbuild@vger.kernel.org
+> Cc: linux-modules@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> Cc: usb-storage@lists.one-eyed-alien.net
+> Cc: linux-watchdog@vger.kernel.org
+>
+>
+> Matthias Maennich (12):
+>   module: support reading multiple values per modinfo tag
+>   export: explicitly align struct kernel_symbol
+>   module: add support for symbol namespaces.
+>   modpost: add support for symbol namespaces
+>   module: add config option MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS
+>   export: allow definition default namespaces in Makefiles or sources
+>   modpost: add support for generating namespace dependencies
+>   scripts: Coccinelle script for namespace dependencies.
+>   docs: Add documentation for Symbol Namespaces
+>   usb-storage: remove single-use define for debugging
+>   RFC: usb-storage: export symbols in USB_STORAGE namespace
+>   RFC: watchdog: export core symbols in WATCHDOG_CORE namespace
+>
+>  .gitignore                                  |   1 +
+>  Documentation/kbuild/modules.rst            |   7 +-
+>  Documentation/kbuild/namespaces.rst         | 154 ++++++++++++++++++++
+>  Documentation/kernel-hacking/hacking.rst    |  18 +++
+>  MAINTAINERS                                 |   5 +
+>  Makefile                                    |  14 +-
+>  arch/m68k/include/asm/export.h              |   1 -
+>  drivers/hwmon/ftsteutates.c                 |   1 +
+>  drivers/hwmon/sch56xx-common.c              |   1 +
+>  drivers/rtc/rtc-abx80x.c                    |   1 +
+>  drivers/usb/storage/Makefile                |   2 +
+>  drivers/usb/storage/alauda.c                |   1 +
+>  drivers/usb/storage/cypress_atacb.c         |   1 +
+>  drivers/usb/storage/datafab.c               |   1 +
+>  drivers/usb/storage/debug.h                 |   2 -
+>  drivers/usb/storage/ene_ub6250.c            |   1 +
+>  drivers/usb/storage/freecom.c               |   1 +
+>  drivers/usb/storage/isd200.c                |   1 +
+>  drivers/usb/storage/jumpshot.c              |   1 +
+>  drivers/usb/storage/karma.c                 |   1 +
+>  drivers/usb/storage/onetouch.c              |   1 +
+>  drivers/usb/storage/realtek_cr.c            |   1 +
+>  drivers/usb/storage/scsiglue.c              |   2 +-
+>  drivers/usb/storage/sddr09.c                |   1 +
+>  drivers/usb/storage/sddr55.c                |   1 +
+>  drivers/usb/storage/shuttle_usbat.c         |   1 +
+>  drivers/usb/storage/uas.c                   |   1 +
+>  drivers/watchdog/armada_37xx_wdt.c          |   1 +
+>  drivers/watchdog/asm9260_wdt.c              |   1 +
+>  drivers/watchdog/aspeed_wdt.c               |   1 +
+>  drivers/watchdog/at91sam9_wdt.c             |   1 +
+>  drivers/watchdog/atlas7_wdt.c               |   1 +
+>  drivers/watchdog/bcm2835_wdt.c              |   1 +
+>  drivers/watchdog/bcm47xx_wdt.c              |   1 +
+>  drivers/watchdog/bcm7038_wdt.c              |   1 +
+>  drivers/watchdog/bcm_kona_wdt.c             |   1 +
+>  drivers/watchdog/bd70528_wdt.c              |   1 +
+>  drivers/watchdog/cadence_wdt.c              |   1 +
+>  drivers/watchdog/da9052_wdt.c               |   1 +
+>  drivers/watchdog/da9055_wdt.c               |   1 +
+>  drivers/watchdog/da9062_wdt.c               |   1 +
+>  drivers/watchdog/da9063_wdt.c               |   1 +
+>  drivers/watchdog/davinci_wdt.c              |   1 +
+>  drivers/watchdog/digicolor_wdt.c            |   1 +
+>  drivers/watchdog/dw_wdt.c                   |   1 +
+>  drivers/watchdog/ebc-c384_wdt.c             |   1 +
+>  drivers/watchdog/ep93xx_wdt.c               |   1 +
+>  drivers/watchdog/ftwdt010_wdt.c             |   1 +
+>  drivers/watchdog/gpio_wdt.c                 |   1 +
+>  drivers/watchdog/hpwdt.c                    |   1 +
+>  drivers/watchdog/i6300esb.c                 |   1 +
+>  drivers/watchdog/iTCO_wdt.c                 |   1 +
+>  drivers/watchdog/ie6xx_wdt.c                |   1 +
+>  drivers/watchdog/imgpdc_wdt.c               |   1 +
+>  drivers/watchdog/imx2_wdt.c                 |   1 +
+>  drivers/watchdog/intel-mid_wdt.c            |   1 +
+>  drivers/watchdog/it87_wdt.c                 |   1 +
+>  drivers/watchdog/kempld_wdt.c               |   1 +
+>  drivers/watchdog/lpc18xx_wdt.c              |   1 +
+>  drivers/watchdog/max63xx_wdt.c              |   1 +
+>  drivers/watchdog/max77620_wdt.c             |   1 +
+>  drivers/watchdog/mei_wdt.c                  |   1 +
+>  drivers/watchdog/mena21_wdt.c               |   1 +
+>  drivers/watchdog/menf21bmc_wdt.c            |   1 +
+>  drivers/watchdog/menz69_wdt.c               |   1 +
+>  drivers/watchdog/meson_gxbb_wdt.c           |   1 +
+>  drivers/watchdog/meson_wdt.c                |   1 +
+>  drivers/watchdog/mlx_wdt.c                  |   1 +
+>  drivers/watchdog/moxart_wdt.c               |   1 +
+>  drivers/watchdog/mtk_wdt.c                  |   1 +
+>  drivers/watchdog/ni903x_wdt.c               |   1 +
+>  drivers/watchdog/nic7018_wdt.c              |   1 +
+>  drivers/watchdog/npcm_wdt.c                 |   1 +
+>  drivers/watchdog/of_xilinx_wdt.c            |   1 +
+>  drivers/watchdog/omap_wdt.c                 |   1 +
+>  drivers/watchdog/pm8916_wdt.c               |   1 +
+>  drivers/watchdog/qcom-wdt.c                 |   1 +
+>  drivers/watchdog/rave-sp-wdt.c              |   1 +
+>  drivers/watchdog/renesas_wdt.c              |   1 +
+>  drivers/watchdog/retu_wdt.c                 |   1 +
+>  drivers/watchdog/rn5t618_wdt.c              |   1 +
+>  drivers/watchdog/rza_wdt.c                  |   1 +
+>  drivers/watchdog/s3c2410_wdt.c              |   1 +
+>  drivers/watchdog/sama5d4_wdt.c              |   1 +
+>  drivers/watchdog/sirfsoc_wdt.c              |   1 +
+>  drivers/watchdog/softdog.c                  |   1 +
+>  drivers/watchdog/sp5100_tco.c               |   1 +
+>  drivers/watchdog/sprd_wdt.c                 |   1 +
+>  drivers/watchdog/st_lpc_wdt.c               |   1 +
+>  drivers/watchdog/stmp3xxx_rtc_wdt.c         |   1 +
+>  drivers/watchdog/stpmic1_wdt.c              |   1 +
+>  drivers/watchdog/sunxi_wdt.c                |   1 +
+>  drivers/watchdog/tangox_wdt.c               |   1 +
+>  drivers/watchdog/tegra_wdt.c                |   1 +
+>  drivers/watchdog/tqmx86_wdt.c               |   1 +
+>  drivers/watchdog/ts4800_wdt.c               |   1 +
+>  drivers/watchdog/ts72xx_wdt.c               |   1 +
+>  drivers/watchdog/twl4030_wdt.c              |   1 +
+>  drivers/watchdog/uniphier_wdt.c             |   1 +
+>  drivers/watchdog/via_wdt.c                  |   1 +
+>  drivers/watchdog/w83627hf_wdt.c             |   1 +
+>  drivers/watchdog/watchdog_core.c            |  10 +-
+>  drivers/watchdog/wdat_wdt.c                 |   1 +
+>  drivers/watchdog/wm831x_wdt.c               |   1 +
+>  drivers/watchdog/wm8350_wdt.c               |   1 +
+>  drivers/watchdog/xen_wdt.c                  |   1 +
+>  drivers/watchdog/ziirave_wdt.c              |   1 +
+>  include/asm-generic/export.h                |  14 +-
+>  include/linux/export.h                      |  98 +++++++++++--
+>  include/linux/module.h                      |   2 +
+>  init/Kconfig                                |  13 ++
+>  kernel/module.c                             |  67 ++++++++-
+>  scripts/Makefile.modpost                    |   4 +-
+>  scripts/coccinelle/misc/add_namespace.cocci |  23 +++
+>  scripts/export_report.pl                    |   2 +-
+>  scripts/mod/modpost.c                       | 150 ++++++++++++++++---
+>  scripts/mod/modpost.h                       |   9 ++
+>  scripts/nsdeps                              |  60 ++++++++
+>  118 files changed, 697 insertions(+), 57 deletions(-)
+>  create mode 100644 Documentation/kbuild/namespaces.rst
+>  create mode 100644 scripts/coccinelle/misc/add_namespace.cocci
+>  create mode 100644 scripts/nsdeps
+>
+> --
+> 2.23.0.187.g17f5b7556c-goog
 >
 
-As stated in previous mail, I will modify the check for version >=3D1.4
-since I know that 1.3 does not have such register, at least on iMX6.
 
-> >
-> > Best regards,
-> > Jernej
-> >
-> >> Neil
-> >>
-> >>>> +
-> >>>> +  switch (hdmi->sample_rate) {
-> >>>> +  case 32000:
-> >>>> +          aud_schnl_samplerate =3D HDMI_FC_AUDSCHNLS7_SMPRATE_32K;
-> >>>> +          break;
-> >>>> +  case 44100:
-> >>>> +          aud_schnl_samplerate =3D HDMI_FC_AUDSCHNLS7_SMPRATE_44K1;
-> >>>> +          break;
-> >>>> +  case 48000:
-> >>>> +          aud_schnl_samplerate =3D HDMI_FC_AUDSCHNLS7_SMPRATE_48K;
-> >>>> +          break;
-> >>>> +  case 88200:
-> >>>> +          aud_schnl_samplerate =3D HDMI_FC_AUDSCHNLS7_SMPRATE_88K2;
-> >>>> +          break;
-> >>>> +  case 96000:
-> >>>> +          aud_schnl_samplerate =3D HDMI_FC_AUDSCHNLS7_SMPRATE_96K;
-> >>>> +          break;
-> >>>> +  case 176400:
-> >>>> +          aud_schnl_samplerate =3D HDMI_FC_AUDSCHNLS7_SMPRATE_176K4=
-;
-> >>>> +          break;
-> >>>> +  case 192000:
-> >>>> +          aud_schnl_samplerate =3D HDMI_FC_AUDSCHNLS7_SMPRATE_192K;
-> >>>> +          break;
-> >>>> +  case 768000:
-> >>>> +          aud_schnl_samplerate =3D HDMI_FC_AUDSCHNLS7_SMPRATE_768K;
-> >>>> +          break;
-> >>>> +  default:
-> >>>> +          dev_warn(hdmi->dev, "Unsupported audio sample rate (%u)\n=
-",
-> >>>> +                   hdmi->sample_rate);
-> >>>> +          return;
-> >>>> +  }
-> >>>> +
-> >>>> +  /* set channel status register */
-> >>>> +  hdmi_modb(hdmi, aud_schnl_samplerate, HDMI_FC_AUDSCHNLS7_SMPRATE_=
-MASK,
-> >>>> +            HDMI_FC_AUDSCHNLS7);
-> >>>> +
-> >>>> +  /*
-> >>>> +   * Set original frequency to be the same as frequency.
-> >>>> +   * Use one-complement value as stated in IEC60958-3 page 13.
-> >>>> +   */
-> >>>> +  aud_schnl_8 =3D (~aud_schnl_samplerate) <<
-> >>>> +                  HDMI_FC_AUDSCHNLS8_ORIGSAMPFREQ_OFFSET;
-> >>>> +
-> >>>> +  /* This means word length is 16 bit. Refer to IEC60958-3 page 12.=
- */
-> >>>> +  aud_schnl_8 |=3D 2 << HDMI_FC_AUDSCHNLS8_WORDLEGNTH_OFFSET;
->
-> This looks wrong, user can use 16 and 24 bit wide audio streams.
->
-
-Thanks for spotting this issue.
-I will fix it in v2 (following how http://ix.io/1Ub6 set it for 16 and 24 b=
-it)
-
-> >>>> +
-> >>>> +  hdmi_writeb(hdmi, aud_schnl_8, HDMI_FC_AUDSCHNLS8);
-> >>>> +}
-> >>>> +
-> >>>>
-> >>>>  static void hdmi_set_clk_regenerator(struct dw_hdmi *hdmi,
-> >>>>
-> >>>>    unsigned long pixel_clk, unsigned int sample_rate)
-> >>>>
-> >>>>  {
-> >>>>
-> >>>> @@ -620,6 +677,8 @@ static void hdmi_set_clk_regenerator(struct dw_h=
-dmi
-> >>>> *hdmi,>>
-> >>>>    hdmi->audio_cts =3D cts;
-> >>>>    hdmi_set_cts_n(hdmi, cts, hdmi->audio_enable ? n : 0);
-> >>>>    spin_unlock_irq(&hdmi->audio_lock);
-> >>>>
-> >>>> +
-> >>>> +  hdmi_set_schnl(hdmi);
->
-> I will suggest this function is called from or merged with dw_hdmi_set_sa=
-mple_rate().
-> Similar to how AUDSCONF and AUDICONF0 is configured from dw_hdmi_set_chan=
-nel_count().
->
-
-I see. I think it will make sense to add a function
-set_channel_status() for dw-hdmi-i2s-audio.c to call,
-since this function is more than just setting rate.
-Will fix in v2.
-
-Thanks!
-
-> Regards,
-> Jonas
->
-> >>>>
-> >>>>  }
-> >>>>
-> >>>>  static void hdmi_init_clk_regenerator(struct dw_hdmi *hdmi)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-> >>>> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h index
-> >>>> 6988f12d89d9..619ebc1c8354 100644
-> >>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-> >>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-> >>>> @@ -158,6 +158,17 @@
-> >>>>
-> >>>>  #define HDMI_FC_SPDDEVICEINF                    0x1062
-> >>>>  #define HDMI_FC_AUDSCONF                        0x1063
-> >>>>  #define HDMI_FC_AUDSSTAT                        0x1064
-> >>>>
-> >>>> +#define HDMI_FC_AUDSV                           0x1065
-> >>>> +#define HDMI_FC_AUDSU                           0x1066
-> >>>> +#define HDMI_FC_AUDSCHNLS0                      0x1067
-> >>>> +#define HDMI_FC_AUDSCHNLS1                      0x1068
-> >>>> +#define HDMI_FC_AUDSCHNLS2                      0x1069
-> >>>> +#define HDMI_FC_AUDSCHNLS3                      0x106a
-> >>>> +#define HDMI_FC_AUDSCHNLS4                      0x106b
-> >>>> +#define HDMI_FC_AUDSCHNLS5                      0x106c
-> >>>> +#define HDMI_FC_AUDSCHNLS6                      0x106d
-> >>>> +#define HDMI_FC_AUDSCHNLS7                      0x106e
-> >>>> +#define HDMI_FC_AUDSCHNLS8                      0x106f
-> >>>>
-> >>>>  #define HDMI_FC_DATACH0FILL                     0x1070
-> >>>>  #define HDMI_FC_DATACH1FILL                     0x1071
-> >>>>  #define HDMI_FC_DATACH2FILL                     0x1072
-> >>>>
-> >>>> @@ -706,6 +717,15 @@ enum {
-> >>>>
-> >>>>  /* HDMI_FC_AUDSCHNLS7 field values */
-> >>>>
-> >>>>    HDMI_FC_AUDSCHNLS7_ACCURACY_OFFSET =3D 4,
-> >>>>    HDMI_FC_AUDSCHNLS7_ACCURACY_MASK =3D 0x30,
-> >>>>
-> >>>> +  HDMI_FC_AUDSCHNLS7_SMPRATE_MASK =3D 0x0f,
-> >>>> +  HDMI_FC_AUDSCHNLS7_SMPRATE_192K =3D 0xe,
-> >>>> +  HDMI_FC_AUDSCHNLS7_SMPRATE_176K4 =3D 0xc,
-> >>>> +  HDMI_FC_AUDSCHNLS7_SMPRATE_96K =3D 0xa,
-> >>>> +  HDMI_FC_AUDSCHNLS7_SMPRATE_768K =3D 0x9,
-> >>>> +  HDMI_FC_AUDSCHNLS7_SMPRATE_88K2 =3D 0x8,
-> >>>> +  HDMI_FC_AUDSCHNLS7_SMPRATE_32K =3D 0x3,
-> >>>> +  HDMI_FC_AUDSCHNLS7_SMPRATE_48K =3D 0x2,
-> >>>> +  HDMI_FC_AUDSCHNLS7_SMPRATE_44K1 =3D 0x0,
-> >>>>
-> >>>>  /* HDMI_FC_AUDSCHNLS8 field values */
-> >>>>
-> >>>>    HDMI_FC_AUDSCHNLS8_ORIGSAMPFREQ_MASK =3D 0xf0,
+-- 
+Best Regards
+Masahiro Yamada
