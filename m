@@ -2,41 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43718A8E35
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2CAA8F0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387655AbfIDR4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:56:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34018 "EHLO mail.kernel.org"
+        id S2388581AbfIDSBc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:01:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387619AbfIDR4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:56:37 -0400
+        id S2388560AbfIDSBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:01:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D197122CF7;
-        Wed,  4 Sep 2019 17:56:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C16223401;
+        Wed,  4 Sep 2019 18:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619796;
-        bh=Wf0yReSvmLtQN3TZjus7kyYzHe+ulnlqZnDfcwXGxiw=;
+        s=default; t=1567620089;
+        bh=dVKz7MB7QAhE55dn1yOIiJlJLlJhegPj0oalIp3b/GA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U7WV3lS0KQ0oOeHE+tqz3p3XBlLfdXdEcaCrH9Gcv+PGhIKi+la1K1Oj1Df0j6tKX
-         IzKRj5rvEoaCh2a1wOxxN6THlYITIwHecIyDsIupKdh34bVwQP+auYWvqQ8XF+8T6K
-         9TUOl4Vr32EBwhA0kAUYt6U9zE71AHKMJV7PTqgY=
+        b=gzYFtvYG212RRts4kuV/P5EaT5Ju+DnpU9CiBkp7imofVuJke+NRp6Wx+lw/yD6us
+         J8AIkLGotndHrjEjr9Eh0qtUdV+D1sy0B1JvJTemmC3Y4EbUOkMk1vkkVeuAQOgR2l
+         dfUBHLXkWssmb6ycp7+M1rhnHx2s3atcdF1W45i0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 37/77] vhost_net: use packet weight for rx handler, too
+        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Jann Horn <jannh@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 32/83] userfaultfd_release: always remove uffd flags and clear vm_userfaultfd_ctx
 Date:   Wed,  4 Sep 2019 19:53:24 +0200
-Message-Id: <20190904175307.104169907@linuxfoundation.org>
+Message-Id: <20190904175306.675479036@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,94 +52,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit db688c24eada63b1efe6d0d7d835e5c3bdd71fd3 upstream.
+From: Oleg Nesterov <oleg@redhat.com>
 
-Similar to commit a2ac99905f1e ("vhost-net: set packet weight of
-tx polling to 2 * vq size"), we need a packet-based limit for
-handler_rx, too - elsewhere, under rx flood with small packets,
-tx can be delayed for a very long time, even without busypolling.
+commit 46d0b24c5ee10a15dfb25e20642f5a5ed59c5003 upstream.
 
-The pkt limit applied to handle_rx must be the same applied by
-handle_tx, or we will get unfair scheduling between rx and tx.
-Tying such limit to the queue length makes it less effective for
-large queue length values and can introduce large process
-scheduler latencies, so a constant valued is used - likewise
-the existing bytes limit.
+userfaultfd_release() should clear vm_flags/vm_userfaultfd_ctx even if
+mm->core_state != NULL.
 
-The selected limit has been validated with PVP[1] performance
-test with different queue sizes:
+Otherwise a page fault can see userfaultfd_missing() == T and use an
+already freed userfaultfd_ctx.
 
-queue size		256	512	1024
+Link: http://lkml.kernel.org/r/20190820160237.GB4983@redhat.com
+Fixes: 04f5866e41fb ("coredump: fix race condition between mmget_not_zero()/get_task_mm() and core dumping")
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+Tested-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-baseline		366	354	362
-weight 128		715	723	670
-weight 256		740	745	733
-weight 512		600	460	583
-weight 1024		423	427	418
-
-A packet weight of 256 gives peek performances in under all the
-tested scenarios.
-
-No measurable regression in unidirectional performance tests has
-been detected.
-
-[1] https://developers.redhat.com/blog/2017/06/05/measuring-and-comparing-open-vswitch-performance/
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vhost/net.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/userfaultfd.c |   25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index b8496f713bc62..c1b5bccab293f 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -40,8 +40,10 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
- #define VHOST_NET_WEIGHT 0x80000
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -464,6 +464,7 @@ static int userfaultfd_release(struct in
+ 	/* len == 0 means wake all */
+ 	struct userfaultfd_wake_range range = { .len = 0, };
+ 	unsigned long new_flags;
++	bool still_valid;
  
- /* Max number of packets transferred before requeueing the job.
-- * Using this limit prevents one virtqueue from starving rx. */
--#define VHOST_NET_PKT_WEIGHT(vq) ((vq)->num * 2)
-+ * Using this limit prevents one virtqueue from starving others with small
-+ * pkts.
-+ */
-+#define VHOST_NET_PKT_WEIGHT 256
+ 	ACCESS_ONCE(ctx->released) = true;
  
- /* MAX number of TX used buffers for outstanding zerocopy */
- #define VHOST_MAX_PEND 128
-@@ -414,7 +416,7 @@ static void handle_tx(struct vhost_net *net)
- 		total_len += len;
- 		vhost_net_tx_packet(net);
- 		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
--		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT(vq))) {
-+		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT)) {
- 			vhost_poll_queue(&vq->poll);
- 			break;
+@@ -479,8 +480,7 @@ static int userfaultfd_release(struct in
+ 	 * taking the mmap_sem for writing.
+ 	 */
+ 	down_write(&mm->mmap_sem);
+-	if (!mmget_still_valid(mm))
+-		goto skip_mm;
++	still_valid = mmget_still_valid(mm);
+ 	prev = NULL;
+ 	for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 		cond_resched();
+@@ -491,19 +491,20 @@ static int userfaultfd_release(struct in
+ 			continue;
  		}
-@@ -545,6 +547,7 @@ static void handle_rx(struct vhost_net *net)
- 	struct socket *sock;
- 	struct iov_iter fixup;
- 	__virtio16 num_buffers;
-+	int recv_pkts = 0;
- 
- 	mutex_lock(&vq->mutex);
- 	sock = vq->private_data;
-@@ -637,7 +640,8 @@ static void handle_rx(struct vhost_net *net)
- 		if (unlikely(vq_log))
- 			vhost_log_write(vq, vq_log, log, vhost_len);
- 		total_len += vhost_len;
--		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
-+		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
-+		    unlikely(++recv_pkts >= VHOST_NET_PKT_WEIGHT)) {
- 			vhost_poll_queue(&vq->poll);
- 			break;
- 		}
--- 
-2.20.1
-
+ 		new_flags = vma->vm_flags & ~(VM_UFFD_MISSING | VM_UFFD_WP);
+-		prev = vma_merge(mm, prev, vma->vm_start, vma->vm_end,
+-				 new_flags, vma->anon_vma,
+-				 vma->vm_file, vma->vm_pgoff,
+-				 vma_policy(vma),
+-				 NULL_VM_UFFD_CTX);
+-		if (prev)
+-			vma = prev;
+-		else
+-			prev = vma;
++		if (still_valid) {
++			prev = vma_merge(mm, prev, vma->vm_start, vma->vm_end,
++					 new_flags, vma->anon_vma,
++					 vma->vm_file, vma->vm_pgoff,
++					 vma_policy(vma),
++					 NULL_VM_UFFD_CTX);
++			if (prev)
++				vma = prev;
++			else
++				prev = vma;
++		}
+ 		vma->vm_flags = new_flags;
+ 		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+ 	}
+-skip_mm:
+ 	up_write(&mm->mmap_sem);
+ 	mmput(mm);
+ wakeup:
 
 
