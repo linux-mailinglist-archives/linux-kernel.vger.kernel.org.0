@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DDBBA91BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04440A8E8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388591AbfIDSYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:24:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40548 "EHLO mail.kernel.org"
+        id S2388100AbfIDR6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:58:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388490AbfIDSBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:06 -0400
+        id S2388088AbfIDR6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:58:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B66022CF7;
-        Wed,  4 Sep 2019 18:01:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A179B208E4;
+        Wed,  4 Sep 2019 17:58:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620065;
-        bh=fi+kolDLinVLp769w8IN7noDpuUcqcKOXvDbumYGMhA=;
+        s=default; t=1567619919;
+        bh=lYKGDhZHrSAdetGgKg2/X9fiFpLIw2ZUBO+sUBzkB1E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NUCSmvTjgGy7cUUOBs+uWG3Y569dwjncsW7NTd8PBWku11eB/VMZ38dNW8AUfoZfN
-         zZCXQ1e+vb3uIsnYvL8ZSSJBC95KEiZRV1HP+ina9OVG4gnKXA954Esxu7bx/0Rvzd
-         CmX19NbfMSEws6TccqbZHBYXdRovINtT3AhGS+Ag=
+        b=fp/Ua+p362TngDOu+Rzj1Udt4jzgo81A7bKd6TYjM7xmncxkDZ/8EqOm6EHtcWS4e
+         lerF+pG3+DiztG5P6toxucqGqKgMhwYEYUzYtD2Cuw3Ycz4/o3z4n/0tNrYq0V31bQ
+         yC388S8kZbDmgPfvsjSHIgHObSy0XeORWGbFYBrM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 59/83] ALSA: line6: Fix memory leak at line6_init_pcm() error path
-Date:   Wed,  4 Sep 2019 19:53:51 +0200
-Message-Id: <20190904175308.776163002@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+d232cca6ec42c2edb3fc@syzkaller.appspotmail.com,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.4 65/77] USB: cdc-wdm: fix race between write and disconnect due to flag abuse
+Date:   Wed,  4 Sep 2019 19:53:52 +0200
+Message-Id: <20190904175309.458046474@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,57 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 1bc8d18c75fef3b478dbdfef722aae09e2a9fde7 upstream.
+commit 1426bd2c9f7e3126e2678e7469dca9fd9fc6dd3e upstream.
 
-I forgot to release the allocated object at the early error path in
-line6_init_pcm().  For addressing it, slightly shuffle the code so
-that the PCM destructor (pcm->private_free) is assigned properly
-before all error paths.
+In case of a disconnect an ongoing flush() has to be made fail.
+Nevertheless we cannot be sure that any pending URB has already
+finished, so although they will never succeed, they still must
+not be touched.
+The clean solution for this is to check for WDM_IN_USE
+and WDM_DISCONNECTED in flush(). There is no point in ever
+clearing WDM_IN_USE, as no further writes make sense.
 
-Fixes: 3450121997ce ("ALSA: line6: Fix write on zero-sized buffer")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+The issue is as old as the driver.
+
+Fixes: afba937e540c9 ("USB: CDC WDM driver")
+Reported-by: syzbot+d232cca6ec42c2edb3fc@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190827103436.21143-1-oneukum@suse.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/line6/pcm.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/usb/class/cdc-wdm.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/sound/usb/line6/pcm.c
-+++ b/sound/usb/line6/pcm.c
-@@ -552,6 +552,15 @@ int line6_init_pcm(struct usb_line6 *lin
- 	line6pcm->volume_monitor = 255;
- 	line6pcm->line6 = line6;
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -577,10 +577,20 @@ static int wdm_flush(struct file *file,
+ {
+ 	struct wdm_device *desc = file->private_data;
  
-+	spin_lock_init(&line6pcm->out.lock);
-+	spin_lock_init(&line6pcm->in.lock);
-+	line6pcm->impulse_period = LINE6_IMPULSE_DEFAULT_PERIOD;
-+
-+	line6->line6pcm = line6pcm;
-+
-+	pcm->private_data = line6pcm;
-+	pcm->private_free = line6_cleanup_pcm;
-+
- 	line6pcm->max_packet_size_in =
- 		usb_maxpacket(line6->usbdev,
- 			usb_rcvisocpipe(line6->usbdev, ep_read), 0);
-@@ -564,15 +573,6 @@ int line6_init_pcm(struct usb_line6 *lin
- 		return -EINVAL;
- 	}
+-	wait_event(desc->wait, !test_bit(WDM_IN_USE, &desc->flags));
++	wait_event(desc->wait,
++			/*
++			 * needs both flags. We cannot do with one
++			 * because resetting it would cause a race
++			 * with write() yet we need to signal
++			 * a disconnect
++			 */
++			!test_bit(WDM_IN_USE, &desc->flags) ||
++			test_bit(WDM_DISCONNECTING, &desc->flags));
  
--	spin_lock_init(&line6pcm->out.lock);
--	spin_lock_init(&line6pcm->in.lock);
--	line6pcm->impulse_period = LINE6_IMPULSE_DEFAULT_PERIOD;
--
--	line6->line6pcm = line6pcm;
--
--	pcm->private_data = line6pcm;
--	pcm->private_free = line6_cleanup_pcm;
--
- 	err = line6_create_audio_out_urbs(line6pcm);
- 	if (err < 0)
- 		return err;
+ 	/* cannot dereference desc->intf if WDM_DISCONNECTING */
+-	if (desc->werr < 0 && !test_bit(WDM_DISCONNECTING, &desc->flags))
++	if (test_bit(WDM_DISCONNECTING, &desc->flags))
++		return -ENODEV;
++	if (desc->werr < 0)
+ 		dev_err(&desc->intf->dev, "Error in flush path: %d\n",
+ 			desc->werr);
+ 
+@@ -968,8 +978,6 @@ static void wdm_disconnect(struct usb_in
+ 	spin_lock_irqsave(&desc->iuspin, flags);
+ 	set_bit(WDM_DISCONNECTING, &desc->flags);
+ 	set_bit(WDM_READ, &desc->flags);
+-	/* to terminate pending flushes */
+-	clear_bit(WDM_IN_USE, &desc->flags);
+ 	spin_unlock_irqrestore(&desc->iuspin, flags);
+ 	wake_up_all(&desc->wait);
+ 	mutex_lock(&desc->rlock);
 
 
