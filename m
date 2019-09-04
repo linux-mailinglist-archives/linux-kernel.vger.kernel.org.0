@@ -2,83 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CF72A77C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 02:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9ED3A77E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 02:27:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbfIDANh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 20:13:37 -0400
-Received: from ozlabs.org ([203.11.71.1]:53439 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbfIDANg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 20:13:36 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46NPRx71w0z9sP3;
-        Wed,  4 Sep 2019 10:13:33 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1567556014;
-        bh=9sKqcVmNPYcGRbL8j5mK/risVZPS130A9GxQFjJc+2w=;
-        h=Date:From:To:Cc:Subject:From;
-        b=hMmtYMXzvtmigmoLB8fOijNYtv0w5+23EcHc04CBtf7WVe1yOFljK8/8JBMv0QYYK
-         sj3vgnkfMV07qCWR2S11v+HEgAcxQiXVr2h7CBqCSoon2uSCqelyjObd3OHkACDdbq
-         TQ4jsVE5GPT7/F6jlmtINjBcCW64T4xw64tqMJU1TM9tfUkRWLVMe6pDEom1/9R2fZ
-         xRnuZE1vNZQWMPFf6lIYE8QRrqUt4SHTw39cJZK/ye9bNwlse+27i6lpiUefqlZRCF
-         mqOmFYYFQRIK56R+XSEQqfLtnuJdEmzpE29jGxuYiEN9PJ8jd6qM12eYrSCoVOzryg
-         N4W6fPgtzWARQ==
-Date:   Wed, 4 Sep 2019 10:13:26 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Subject: linux-next: build warnings after merge of the kbuild tree
-Message-ID: <20190904101259.2687cea4@canb.auug.org.au>
+        id S1727340AbfIDA1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 20:27:43 -0400
+Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:54464 "EHLO
+        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbfIDA1n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 20:27:43 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Sep 2019 20:27:42 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1567556862;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=REnkVIGmDtY7lvGG2M1j0JFI4QkmkQIKYK2dQ3BcqE0=;
+  b=aw8yoN9380ezXYR6GcSTWVpIt0iGpSKk9+/pu4pnzshv1lpBQBxzV3m/
+   00/lSX2jnaU2S4wOGr5Ju1XLMVgd7QFYdv5JdUwIk3BNCIN6a5Vk9F+7j
+   Al9rDliHIQUkouu75JDjuhxBtQ3i7d5bc9GstnmLvB9TpweYyCaEPtQVV
+   0=;
+Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=igor.druzhinin@citrix.com; spf=Pass smtp.mailfrom=igor.druzhinin@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  igor.druzhinin@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="igor.druzhinin@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
+  igor.druzhinin@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="igor.druzhinin@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: ihSSbqvcBHI79WN++CxzfilhADPpkPgRdVrUvsODTRGNlVu/v8KiA/qtX5WBIuXu1jFbgT2T2/
+ QuuqyfAMPLTt6WApOiA+yLeqvnRRV2g6wFdGB7Mee6A1OMk31Cwzm5hPaIdr9Mv3U0mOwdr75Q
+ OlEFTUgwkSh6O0ZVXRIhzTa0y7KIxJZcjMp4ozQPlmkYHBfGvjr+ZiShLVBIV5+K1VXyvMYfXP
+ zlzwRzURUY3WIyIMoMNx6BaOBXRwRz1OYDLSmlzXBHhZh2XGyTG1U6LyT0zyK+brgZz5NbeqLN
+ 5z0=
+X-SBRS: 2.7
+X-MesageID: 5277025
+X-Ironport-Server: esa5.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.64,465,1559534400"; 
+   d="scan'208";a="5277025"
+From:   Igor Druzhinin <igor.druzhinin@citrix.com>
+To:     <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
+CC:     <jgross@suse.com>, <boris.ostrovsky@oracle.com>,
+        Igor Druzhinin <igor.druzhinin@citrix.com>
+Subject: [PATCH] xen/pci: try to reserve MCFG areas earlier
+Date:   Wed, 4 Sep 2019 01:20:31 +0100
+Message-ID: <1567556431-9809-1-git-send-email-igor.druzhinin@citrix.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ssBCJi3mTERdd=v=ROJKrJr";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ssBCJi3mTERdd=v=ROJKrJr
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+If MCFG area is not reserved in E820, Xen by default will defer its usage
+until Dom0 registers it explicitly after ACPI parser recognizes it as
+a reserved resource in DSDT. Having it reserved in E820 is not
+mandatory according to "PCI Firmware Specification, rev 3.2" (par. 4.1.2)
+and firmware is free to keep a hole E820 in that place. Xen doesn't know
+what exactly is inside this hole since it lacks full ACPI view of the
+platform therefore it's potentially harmful to access MCFG region
+without additional checks as some machines are known to provide
+inconsistent information on the size of the region.
 
-Hi all,
+Now xen_mcfg_late() runs after acpi_init() which is too late as some basic
+PCI enumeration starts exactly there. Trying to register a device prior
+to MCFG reservation causes multiple problems with PCIe extended
+capability initializations in Xen (e.g. SR-IOV VF BAR sizing). There are
+no convenient hooks for us to subscribe to so try to register MCFG
+areas earlier upon the first invocation of xen_add_device(). Keep the
+existing initcall in case information of MCFG areas is updated later
+in acpi_init().
 
-After merging the kbuild tree, today's linux-next build (powerpc
-ppc64_defconfig) produced these warnings:
+Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
+---
+ drivers/xen/pci.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/xen/pci.c b/drivers/xen/pci.c
+index 7494dbe..800f415 100644
+--- a/drivers/xen/pci.c
++++ b/drivers/xen/pci.c
+@@ -29,6 +29,9 @@
+ #include "../pci/pci.h"
+ #ifdef CONFIG_PCI_MMCONFIG
+ #include <asm/pci_x86.h>
++
++static int xen_mcfg_late(void);
++static bool __read_mostly pci_mcfg_reserved = false;
+ #endif
+ 
+ static bool __read_mostly pci_seg_supported = true;
+@@ -41,6 +44,16 @@ static int xen_add_device(struct device *dev)
+ 	struct pci_dev *physfn = pci_dev->physfn;
+ #endif
+ 
++#ifdef CONFIG_PCI_MMCONFIG
++	/*
++	 * Try to reserve MCFG areas discovered so far early on first invocation
++	 * due to this being potentially called from inside of acpi_init
++	 */
++	if (!pci_mcfg_reserved) {
++		xen_mcfg_late();
++		pci_mcfg_reserved = true;
++	}
++#endif
+ 	if (pci_seg_supported) {
+ 		struct {
+ 			struct physdev_pci_device_add add;
+@@ -213,7 +226,7 @@ static int __init register_xen_pci_notifier(void)
+ arch_initcall(register_xen_pci_notifier);
+ 
+ #ifdef CONFIG_PCI_MMCONFIG
+-static int __init xen_mcfg_late(void)
++static int xen_mcfg_late(void)
+ {
+ 	struct pci_mmcfg_region *cfg;
+ 	int rc;
+-- 
+2.7.4
 
-Presumably introduced by commit
-
-  1267f9d3047d ("kbuild: add $(BASH) to run scripts with bash-extension")
-
-and presumably arch/powerpc/tools/unrel_branch_check.sh (which has no
-#! line) is a bash script.  Yeah, is uses '((' and '))'.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ssBCJi3mTERdd=v=ROJKrJr
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1vAaYACgkQAVBC80lX
-0GxOmAf+IJwgmJGltVlvpa0v/AYyBNUCM/OMskna4gAT92XarZeed2UfoxwB0g/l
-hXnIdav7xtwj/Enz2jsOiomWSzBEAY+D2idUi2T8VMD+VVWdV5xFXFyFKL7+c0/N
-lxyYAXB/oKmyhNTOPMNJk8ThSr+hBZEgDSHX//j0iJ39+wfmf098N+RbvdVCUqXc
-jirj7RLWRrWA4LcUjMMPQMky3gp+CI5olpcFdVyGNKS4j+nE3BTR/DzQCGLPO31Y
-2XlhVtnbDGD18/aGnc8n0qBm5wqVexi939dCcXJDGmO2l+Jyb7iUAvPFD4Tev2u+
-0HyFqdbbIU5lqfTTQGgwcKlbePY3CQ==
-=l4Bs
------END PGP SIGNATURE-----
-
---Sig_/ssBCJi3mTERdd=v=ROJKrJr--
