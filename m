@@ -2,103 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F22B9A7D18
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29508A7D1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729122AbfIDHyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 03:54:06 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33766 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbfIDHyG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 03:54:06 -0400
-Received: by mail-ot1-f66.google.com with SMTP id p23so19703391oto.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 00:54:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=nsL2dG0Jkv/yBtdq643XdQgXacAtlmVt/WZU7C9r86Q=;
-        b=Fpfim0KLgJ+FNUELGd/cGbfkJVwz26hJlETB2SD4TW1Yi+H4dORrDsb+7WOsgUCfCa
-         wvIESBCC6aMyklaV4lbBJAoUZOpTVEfCpEgrnDEPYSaTF5HzRKGBzIWCpRMC+wTI2Kse
-         X2iSsZIejDC/X+uhwFkMzF8Ia0FiRe8aLWGxI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nsL2dG0Jkv/yBtdq643XdQgXacAtlmVt/WZU7C9r86Q=;
-        b=jjsMjU0cyxJ9iSAigU93A9Nm7M4SGgqKwbUOWY+Fk9Bsl5sa0zcpgKvKMTOOmhpi1X
-         PT4TNId/QGoFYq6C2XExF2wg8+63g37kIqMTF4jO4cghJ/NpGg6QThQW2nx2+zhDiHrw
-         nCgIwGd9gKezJqFZlj//NLkQQ4rIDqertLdlR239AbLM/4TfOTT8kXUSiN1Wjqkz1nTF
-         nkqLZFKtEBYlXOkItiNTgDw83d61uZBeFeNGfZGgJnbfEsjOWQGqrbe0UzAjBG5g/BGg
-         IWT39nt+bSdhuI7L9tYsTrEnVhkl12TjbdvWUBo4I+zD6gIe8lAw/fLCpiSorAEl0Fzz
-         FzNw==
-X-Gm-Message-State: APjAAAWHPocRC91s8Zf5Os7a5FHCaqRIVew1dI/SDegKrSabqhqJJE5d
-        mcrO53mtYP4HhMrRgM4TFJ2pHs4yLd3c8dEYAqzodg==
-X-Google-Smtp-Source: APXvYqxIAUAvfPNM73tpeSvNr//yloLprQQu73fJhL+XKHcnaBcmH7124BD4NPk5vIXaT6rUNf8CFt+b+b0Z/W6osOs=
-X-Received: by 2002:a05:6830:10d8:: with SMTP id z24mr11461873oto.281.1567583645124;
- Wed, 04 Sep 2019 00:54:05 -0700 (PDT)
+        id S1729249AbfIDHyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 03:54:36 -0400
+Received: from mga14.intel.com ([192.55.52.115]:20282 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728526AbfIDHyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 03:54:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 00:54:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
+   d="asc'?scan'208";a="185033564"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by orsmga003.jf.intel.com with ESMTP; 04 Sep 2019 00:54:32 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Jacky.Cao@sony.com, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>
+Cc:     Kento.A.Kobayashi@sony.com, Jacky.Cao@sony.com
+Subject: Re: [PATCH] USB: dummy-hcd: fix power budget for SuperSpeed mode
+In-Reply-To: <16EA1F625E922C43B00B9D82250220500871C862@APYOKXMS108.ap.sony.com>
+References: <16EA1F625E922C43B00B9D82250220500871C862@APYOKXMS108.ap.sony.com>
+Date:   Wed, 04 Sep 2019 10:54:28 +0300
+Message-ID: <87sgpcmr7v.fsf@gmail.com>
 MIME-Version: 1.0
-References: <20190903131504.18935-1-thomas_os@shipmail.org>
- <20190903131504.18935-4-thomas_os@shipmail.org> <b54bd492-9702-5ad7-95da-daf20918d3d9@intel.com>
- <CAKMK7uFv+poZq43as8XoQaSuoBZxCQ1p44VCmUUTXOXt4Y+Bjg@mail.gmail.com>
- <6d0fafcc-b596-481b-7b22-1f26f0c02c5c@intel.com> <bed2a2d9-17f0-24bd-9f4a-c7ee27f6106e@shipmail.org>
- <7fa3b178-b9b4-2df9-1eee-54e24d48342e@intel.com> <ba77601a-d726-49fa-0c88-3b02165a9a21@shipmail.org>
- <CALCETrVnNpPwmRddGLku9hobE7wG30_3j+QfcYxk09hZgtaYww@mail.gmail.com>
- <44b094c8-63fe-d9e5-1bf4-7da0788caccf@shipmail.org> <6d122d62-9c96-4c29-8d06-02f7134e5e2a@shipmail.org>
- <B3C5DD1B-A33C-417F-BDDC-73120A035EA5@amacapital.net> <3393108b-c7e3-c9be-b65b-5860c15ca228@shipmail.org>
-In-Reply-To: <3393108b-c7e3-c9be-b65b-5860c15ca228@shipmail.org>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 4 Sep 2019 09:53:53 +0200
-Message-ID: <CAKMK7uH0jxaWJLxfXfGLyN-Rb=0ZKUFTkrEPdFCuGCh4ORCv9w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] drm/ttm, drm/vmwgfx: Correctly support support AMD
- memory encryption
-To:     =?UTF-8?Q?Thomas_Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        pv-drivers@vmware.com,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 8:49 AM Thomas Hellstr=C3=B6m (VMware)
-<thomas_os@shipmail.org> wrote:
-> On 9/4/19 1:15 AM, Andy Lutomirski wrote:
-> > But, reading this, I have more questions:
-> >
-> > Can=E2=80=99t you get rid of cvma by using vmf_insert_pfn_prot()?
->
-> It looks like that, although there are comments in the code about
-> serious performance problems using VM_PFNMAP / vmf_insert_pfn() with
-> write-combining and PAT, so that would require some serious testing with
-> hardware I don't have. But I guess there is definitely room for
-> improvement here. Ideally we'd like to be able to change the
-> vma->vm_page_prot within fault(). But we can
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Just a quick comment on this: It's the repeated (per-pfn/pte) lookup
-of the PAT tables, which are dead slow. If you have a struct
-io_mapping then that can be done once, and then just blindly inserted.
-See remap_io_mapping in i915.
--Daniel
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+
+Hi,
+
+<Jacky.Cao@sony.com> writes:
+
+> The power budget for SuperSpeed mode should be 900 mA
+> according to USB3.0 specification, so set the power
+> budget to 900 mA for dummy_start_ss which is only used
+> for SuperSpeed mode.
+>
+> If the max power consumption of SuperSpeed device is
+> larger than 500 mA, insufficient available bus power
+> error happens in usb_choose_configuration function
+> when the device connects to dummy hcd.
+>
+> Signed-off-by: Jacky Cao <Jacky.Cao@sony.com>
+> ---
+> drivers/usb/gadget/udc/dummy_hcd.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/=
+dummy_hcd.c
+> index 8414fac..52f2cf5 100644
+> --- a/drivers/usb/gadget/udc/dummy_hcd.c
+> +++ b/drivers/usb/gadget/udc/dummy_hcd.c
+> @@ -48,6 +48,7 @@
+> #define DRIVER_VERSION "02 May 2005"
+>
+>  #define POWER_BUDGET  500  /* in mA; use 8 for low-power port testing */
+> +#define POWER_BUDGET_3_0  900  /* in mA */
+>
+>  static const char  driver_name[] =3D "dummy_hcd";
+> static const char  driver_desc[] =3D "USB Host+Gadget Emulator";
+> @@ -2432,7 +2433,7 @@ static int dummy_start_ss(struct dummy_hcd *dum_hcd)
+>      dum_hcd->rh_state =3D DUMMY_RH_RUNNING;
+>      dum_hcd->stream_en_ep =3D 0;
+>      INIT_LIST_HEAD(&dum_hcd->urbp_list);
+> -     dummy_hcd_to_hcd(dum_hcd)->power_budget =3D POWER_BUDGET;
+> +     dummy_hcd_to_hcd(dum_hcd)->power_budget =3D POWER_BUDGET_3_0;
+>      dummy_hcd_to_hcd(dum_hcd)->state =3D HC_STATE_RUNNING;
+>      dummy_hcd_to_hcd(dum_hcd)->uses_new_polling =3D 1;
+> #ifdef CONFIG_USB_OTG
+
+Alan, I suppose you're okay with this change?
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl1vbbQACgkQzL64meEa
+mQYEag/8CNh1XxPX+xromrb3wEL2ptcSNpiSoaTbtGEGO0NrebNOWnfyQIJGP9OR
+p9eEMlQuTSulxCi+bsDORBhxZ+f/hlEK/ix/7U6g+BzeW0ex8U0DIpOFXa3Q0riS
+f7h5vPDYGy+HZMBiGZQc4J4A8ejh5XCRLo7fOf9RgL7tUOoT1ud9vi0J/unIsFmc
+zoz3Bt3SVMtKJf86L1x5/EP7U5V2QM/dZhYzW6Ux+++zqYlYm3IEocHYLeZ2OmYc
+b81z9yePo1xjavtZ1wX39xhdJpV4GqDVnJkqjPeut9sJQSntsSQcVsXh49Vk9s5l
+lTalG0+BwIAqvHKkQAoT8kXnSYQbShGF7qIlGoO7sHDs0btvcBQAE+PKPcm1M5W4
+iryECIsp2T5DowXbw3eukXS3EoMT+fIbVuNn41I4owwRDlgeP7FFUnDdqwINjHBu
+I0Fg37W9x2FLqJx+5cETMlUo11BgDkd0wo/QOG0t5kqL/c4zyKpyJxtAjLM2jxkU
+/al2yuL0okMNS23cZxNdjGIeVA5wsAsjzWbYHIGa9ZAfUCyQpdtkoIL0NSDDeOXm
+PRc3LYXNRshYawW1pTx917u2iFz/gKl8VrECgXiOd1tuzd+uIU6wCiZRGnVyEPe1
+HGBvfsMl9E76IbGkNCYd+W+uBsG0Diq7NQ9uMGnEgiI+eZVn/gw=
+=NvCb
+-----END PGP SIGNATURE-----
+--=-=-=--
