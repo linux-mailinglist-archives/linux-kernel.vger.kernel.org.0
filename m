@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B5E7A902E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA383A8FA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389726AbfIDSIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:08:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50780 "EHLO mail.kernel.org"
+        id S2389182AbfIDSE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:04:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389717AbfIDSIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:08:07 -0400
+        id S2389173AbfIDSE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:04:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FF312087E;
-        Wed,  4 Sep 2019 18:08:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DEF7206B8;
+        Wed,  4 Sep 2019 18:04:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620486;
-        bh=UzcHAmeVGD68ESeG2+GzPUb01ujJEsRYWeCT0/a0gUk=;
+        s=default; t=1567620297;
+        bh=zV6Oz1eNYxYgplHgnqQsHbvKLHOd2FEQv/eSx8SQHxs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NBYabfAs3nSsLuaKoghOuJkBREcobNssa5K+cT1QWfFN23Yy1wrcPNdpEJdvssn/6
-         udBkAKg2tcr1Q7rrR3fsHIxn8vPwZh/OMpOLJ0YpteucTajowOSGnmU7T3/Wt0bkcJ
-         JCOdxXUEcmJaeIlwa8VldE56r9KMgxsKs88jSIgk=
+        b=FWa1TN/QQzTpu2hnUYAac6w6GnHuQF904jJ2GdDWfWH8FINbT0ZBBJNRhZc8ei6qG
+         Rj4G/tHQVIoyzfky3pk7k0KBig4i4dCkGuUGGJW/sT1tQPhrJSEp8uI8TvXAQhx2z5
+         PgcRXP5aTWVzDphbSNmedKuOQynQjAidLvhpLXcI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.19 75/93] drm/i915: Call dma_set_max_seg_size() in i915_driver_hw_probe()
+        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 49/57] KVM: PPC: Book3S: Fix incorrect guest-to-user-translation error handling
 Date:   Wed,  4 Sep 2019 19:54:17 +0200
-Message-Id: <20190904175309.560645681@linuxfoundation.org>
+Message-Id: <20190904175306.689260889@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,85 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lyude Paul <lyude@redhat.com>
+[ Upstream commit ddfd151f3def9258397fcde7a372205a2d661903 ]
 
-commit 32f0a982650b123bdab36865617d3e03ebcacf3b upstream.
+H_PUT_TCE_INDIRECT handlers receive a page with up to 512 TCEs from
+a guest. Although we verify correctness of TCEs before we do anything
+with the existing tables, there is a small window when a check in
+kvmppc_tce_validate might pass and right after that the guest alters
+the page of TCEs, causing an early exit from the handler and leaving
+srcu_read_lock(&vcpu->kvm->srcu) (virtual mode) or lock_rmap(rmap)
+(real mode) locked.
 
-Currently, we don't call dma_set_max_seg_size() for i915 because we
-intentionally do not limit the segment length that the device supports.
-However, this results in a warning being emitted if we try to map
-anything larger than SZ_64K on a kernel with CONFIG_DMA_API_DEBUG_SG
-enabled:
+This fixes the bug by jumping to the common exit code with an appropriate
+unlock.
 
-[    7.751926] DMA-API: i915 0000:00:02.0: mapping sg segment longer
-than device claims to support [len=98304] [max=65536]
-[    7.751934] WARNING: CPU: 5 PID: 474 at kernel/dma/debug.c:1220
-debug_dma_map_sg+0x20f/0x340
-
-This was originally brought up on
-https://bugs.freedesktop.org/show_bug.cgi?id=108517 , and the consensus
-there was it wasn't really useful to set a limit (and that dma-debug
-isn't really all that useful for i915 in the first place). Unfortunately
-though, CONFIG_DMA_API_DEBUG_SG is enabled in the debug configs for
-various distro kernels. Since a WARN_ON() will disable automatic problem
-reporting (and cause any CI with said option enabled to start
-complaining), we really should just fix the problem.
-
-Note that as me and Chris Wilson discussed, the other solution for this
-would be to make DMA-API not make such assumptions when a driver hasn't
-explicitly set a maximum segment size. But, taking a look at the commit
-which originally introduced this behavior, commit 78c47830a5cb
-("dma-debug: check scatterlist segments"), there is an explicit mention
-of this assumption and how it applies to devices with no segment size:
-
-	Conversely, devices which are less limited than the rather
-	conservative defaults, or indeed have no limitations at all
-	(e.g. GPUs with their own internal MMU), should be encouraged to
-	set appropriate dma_parms, as they may get more efficient DMA
-	mapping performance out of it.
-
-So unless there's any concerns (I'm open to discussion!), let's just
-follow suite and call dma_set_max_seg_size() with UINT_MAX as our limit
-to silence any warnings.
-
-Changes since v3:
-* Drop patch for enabling CONFIG_DMA_API_DEBUG_SG in CI. It looks like
-  just turning it on causes the kernel to spit out bogus WARN_ONs()
-  during some igt tests which would otherwise require teaching igt to
-  disable the various DMA-API debugging options causing this. This is
-  too much work to be worth it, since DMA-API debugging is useless for
-  us. So, we'll just settle with this single patch to squelch WARN_ONs()
-  during driver load for users that have CONFIG_DMA_API_DEBUG_SG turned
-  on for some reason.
-* Move dma_set_max_seg_size() call into i915_driver_hw_probe() - Chris
-  Wilson
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: <stable@vger.kernel.org> # v4.18+
-Link: https://patchwork.freedesktop.org/patch/msgid/20190823205251.14298-1-lyude@redhat.com
-(cherry picked from commit acd674af95d3f627062007429b9c195c6b32361d)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable@vger.kernel.org # v4.11+
+Fixes: 121f80ba68f1 ("KVM: PPC: VFIO: Add in-kernel acceleration for VFIO")
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/i915_drv.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/powerpc/kvm/book3s_64_vio.c    | 6 ++++--
+ arch/powerpc/kvm/book3s_64_vio_hv.c | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_drv.c
-+++ b/drivers/gpu/drm/i915/i915_drv.c
-@@ -1120,6 +1120,12 @@ static int i915_driver_init_hw(struct dr
+diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
+index e14cec6bc3398..2c6cce8e7cfd0 100644
+--- a/arch/powerpc/kvm/book3s_64_vio.c
++++ b/arch/powerpc/kvm/book3s_64_vio.c
+@@ -566,8 +566,10 @@ long kvmppc_h_put_tce_indirect(struct kvm_vcpu *vcpu,
  
- 	pci_set_master(pdev);
+ 		if (kvmppc_gpa_to_ua(vcpu->kvm,
+ 				tce & ~(TCE_PCI_READ | TCE_PCI_WRITE),
+-				&ua, NULL))
+-			return H_PARAMETER;
++				&ua, NULL)) {
++			ret = H_PARAMETER;
++			goto unlock_exit;
++		}
  
-+	/*
-+	 * We don't have a max segment size, so set it to the max so sg's
-+	 * debugging layer doesn't complain
-+	 */
-+	dma_set_max_seg_size(&pdev->dev, UINT_MAX);
-+
- 	/* overlay on gen2 is broken and can't address above 1G */
- 	if (IS_GEN2(dev_priv)) {
- 		ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(30));
+ 		list_for_each_entry_lockless(stit, &stt->iommu_tables, next) {
+ 			ret = kvmppc_tce_iommu_map(vcpu->kvm,
+diff --git a/arch/powerpc/kvm/book3s_64_vio_hv.c b/arch/powerpc/kvm/book3s_64_vio_hv.c
+index 648cf6c013489..23d6d1592f117 100644
+--- a/arch/powerpc/kvm/book3s_64_vio_hv.c
++++ b/arch/powerpc/kvm/book3s_64_vio_hv.c
+@@ -475,8 +475,10 @@ long kvmppc_rm_h_put_tce_indirect(struct kvm_vcpu *vcpu,
+ 		ua = 0;
+ 		if (kvmppc_gpa_to_ua(vcpu->kvm,
+ 				tce & ~(TCE_PCI_READ | TCE_PCI_WRITE),
+-				&ua, NULL))
+-			return H_PARAMETER;
++				&ua, NULL)) {
++			ret = H_PARAMETER;
++			goto unlock_exit;
++		}
+ 
+ 		list_for_each_entry_lockless(stit, &stt->iommu_tables, next) {
+ 			ret = kvmppc_rm_tce_iommu_map(vcpu->kvm,
+-- 
+2.20.1
+
 
 
