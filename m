@@ -2,92 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB1EEA9AA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 08:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C6BEA9AB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 08:33:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731588AbfIEG0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 02:26:37 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39792 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731570AbfIEG0f (ORCPT
+        id S1731582AbfIEGc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 02:32:58 -0400
+Received: from webmail.cidadaniaejustica.to.gov.br ([131.72.217.134]:59749
+        "EHLO webmail.cidadaniaejustica.to.gov.br" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731393AbfIEGc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 02:26:35 -0400
-Received: by mail-pg1-f194.google.com with SMTP id u17so813798pgi.6;
-        Wed, 04 Sep 2019 23:26:35 -0700 (PDT)
+        Thu, 5 Sep 2019 02:32:57 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by webmail.cidadaniaejustica.to.gov.br (Postfix) with ESMTP id 7106327449;
+        Wed,  4 Sep 2019 11:58:48 -0300 (BRT)
+Received: from webmail.cidadaniaejustica.to.gov.br ([127.0.0.1])
+        by localhost (webmail.cidadaniaejustica.to.gov.br [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id JYwoFOima3uH; Wed,  4 Sep 2019 11:58:48 -0300 (BRT)
+Received: from localhost (localhost [127.0.0.1])
+        by webmail.cidadaniaejustica.to.gov.br (Postfix) with ESMTP id E525A27436;
+        Wed,  4 Sep 2019 11:57:26 -0300 (BRT)
+DKIM-Filter: OpenDKIM Filter v2.9.2 webmail.cidadaniaejustica.to.gov.br E525A27436
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AziVDiNsJfWSoLEyeTjoxxBYGSeB6j2LvcpA2gkjX9Y=;
-        b=snr+7JsvbIfvpSDRxAoAa9XtG8kcTu0x20sFyZBuc1LG+RRbdITGufDsg2QRL2gKJk
-         J1twKplySDIR+kI5oIOg7h8eNBU7eLxVKx7tP//i4EKH5THVSXOukQZUGh7v9M1WiuBF
-         jOL36ziqYZWkeWM0vVgdMzpqGSKLH+YTsKgEYMEiBLwPROMsHUVps1xQMv4EW2yEDVHZ
-         FJMZXitwdr3OstV2sTa5gBJaEDtKI65Mbk4ya6WAzhyT5rcNCgW0y+5T7ZWrU5NsM158
-         Ur+SDe3iGpjrEZUI2L2jbCMdFOV0nnZb+uelqlpFIuz2R5ypKllyP9MQ2I7r+CH5IMlj
-         9yxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AziVDiNsJfWSoLEyeTjoxxBYGSeB6j2LvcpA2gkjX9Y=;
-        b=HQp8DhO0L8fjiLHRnw/PDGSknJHIxC3c5scbr03OUNDIIjqFjBGobTdIcB4KxQBgB6
-         /eJg5r0YkxXGmzxmKE1pgfFrxKHvFe7HS1ZWs1Z7C95qMI3mtOxvdnl8b9MqDrtF1OIa
-         TRBMgp9p6GSjOc/lET4xf2vsRimrp3eCgsf/+TK4x0iha+AffEfkXdm/9zAWfuFx/lMs
-         6uqC1/XLtJJ1JEM27Uw1W0AbnsMVEab7ZIX/cJnW0MAyXvLptlG75fSQ5gMXU/L652SU
-         jLAzDGhIhtqt5qzl9J9Syf33uooTNzr0Vzt28cYyN0y/BgtYbbByXYQLDBx4appE1htz
-         8+iA==
-X-Gm-Message-State: APjAAAWyVe3IcvSUeC3H4hXv/QN3k3/1j8QOH+xByh9ESD6avPe/Pmd+
-        q/nvdMkk2ttrDIy1ExiojUgIUhvN
-X-Google-Smtp-Source: APXvYqxSMXgpLfyQpBqsSE4U5weR8hDwgwbVXZkW1nsGMJzKXWjlgiKGN5qy4WA2vqDOIJGNUfWwMA==
-X-Received: by 2002:a62:e50c:: with SMTP id n12mr1879416pff.206.1567664795032;
-        Wed, 04 Sep 2019 23:26:35 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id d69sm1102941pfd.175.2019.09.04.23.26.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 04 Sep 2019 23:26:34 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 2/2] KVM: VMX: Stop the preemption timer during vCPU reset
-Date:   Thu,  5 Sep 2019 14:26:28 +0800
-Message-Id: <1567664788-10249-2-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567664788-10249-1-git-send-email-wanpengli@tencent.com>
-References: <1567664788-10249-1-git-send-email-wanpengli@tencent.com>
+        d=cidadaniaejustica.to.gov.br; s=dkimcidadaniaejustica;
+        t=1567609047; bh=Fu5OY6jzDJBwfo+M+uwdYzro4e8XBIrzEDErYua+1dI=;
+        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:To:
+         From:Date:Reply-To:Message-Id;
+        b=ijt1PIBs7RNZDCrJX3wFEeAArzQkrLePFYCxm8OBbxemD55pE5DD312eU7CPrsEq3
+         Kl8mrVgU2rDWStxnWiXJtmECIGEltymTmjdFLEduMD//mO2U8T5jPtulih1liZ/TG9
+         vhf+WgMF9DCgQCAsqEQCCJ+teZVoOOdgggDRvr7k=
+X-Virus-Scanned: amavisd-new at cidadaniaejustica.to.gov.br
+Received: from webmail.cidadaniaejustica.to.gov.br ([127.0.0.1])
+        by localhost (webmail.cidadaniaejustica.to.gov.br [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Crt5R7-mJO3k; Wed,  4 Sep 2019 11:57:26 -0300 (BRT)
+Received: from [192.168.88.207] (unknown [185.248.13.226])
+        by webmail.cidadaniaejustica.to.gov.br (Postfix) with ESMTPSA id BC8C727430;
+        Wed,  4 Sep 2019 11:56:47 -0300 (BRT)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: leihen ohne sorgen
+To:     Recipients <dppm.to@cidadaniaejustica.to.gov.br>
+From:   "Mr Muller Dieter" <dppm.to@cidadaniaejustica.to.gov.br>
+Date:   Wed, 04 Sep 2019 15:57:28 +0100
+Reply-To: stewarrt.lf01@gmail.com
+Message-Id: <20190904145647.BC8C727430@webmail.cidadaniaejustica.to.gov.br>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
-
-The hrtimer which is used to emulate lapic timer is stopped during 
-vcpu reset, preemption timer should do the same.
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kvm/vmx/vmx.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 570a233..f794929 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -4162,6 +4162,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 
- 	vcpu->arch.microcode_version = 0x100000000ULL;
- 	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
-+	vmx->hv_deadline_tsc = -1;
- 	kvm_set_cr8(vcpu, 0);
- 
- 	if (!init_event) {
--- 
-2.7.4
-
+Brauchen Sie dringend Geld? Wir k=F6nnen dir helfen!
+Bist du durch die aktuelle Situation in Schwierigkeiten oder droht dir =C4r=
+ger?
+Auf diese Weise geben wir Ihnen die M=F6glichkeit, eine neue Entwicklung zu=
+ nehmen.
+Als reiche Person f=FChle ich mich verpflichtet, Menschen zu helfen, die Sc=
+hwierigkeiten haben, ihnen eine Chance zu geben. Jeder verdiente eine zweit=
+e Chance und da die Regierung scheitert, wird es von anderen kommen m=FCsse=
+n.
