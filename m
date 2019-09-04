@@ -2,99 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491FEA919E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C5F2A91C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:40:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390048AbfIDSU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:20:29 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46059 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387477AbfIDSUX (ORCPT
+        id S2388566AbfIDSZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:25:11 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39642 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387988AbfIDSZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:20:23 -0400
-Received: by mail-io1-f67.google.com with SMTP id f12so28881918iog.12
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:20:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D27Zs+STvqIcqPGbkFvSR5YBtl93H53NlQy8TmMQ104=;
-        b=FkPQsG3WR1YbR2JzeHMw/rv9JM87flNUuNo7Y+xbD2DJNytrA9+X8V+7zJ/fmuxtCA
-         8xZJFPVFel2vCew6v0IXDtx5bHrTa4GvDfSh2dNDzCTNthDwmm2YUUl4/gfmcT2VbGtg
-         4ApFszIbB53oyQlY9D4vR8eo4SA7jeAUSVXA4=
+        Wed, 4 Sep 2019 14:25:09 -0400
+Received: by mail-wm1-f66.google.com with SMTP id q12so3136353wmj.4;
+        Wed, 04 Sep 2019 11:25:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D27Zs+STvqIcqPGbkFvSR5YBtl93H53NlQy8TmMQ104=;
-        b=KmS+PexwhcDjD4afZj4pWYVxTWbiSp59d8I0J+qiw+7uSM547bmgFetSO2I2SsI8Dk
-         DWuVyUeRNIBugGuToBCdbJPQqKu6oLLw7nDTt3BRukexC8fk26cF8qVsp3rvUyYCKm5n
-         bigH/H3FfnJ1ty1Xs3fsicupu1PoiO4kVSeQArtLDhOxiTR4usUDMDuKt/iPT2RndI6K
-         zGLtsNuWRARS9SGmFzwTJCpXCD/FksPELXuf4+FrC5KEUW1YOviGTfJEgXOIeiA4uyIk
-         D+8MSJqfSdVCXe8LOQBzFlKUKhhMXbMgf/3Km7+Ji4vzKnWaMKDkNTY7yss/NJji86Xa
-         EnTA==
-X-Gm-Message-State: APjAAAU0orkfIhzhGZ/3AFPQZpslgy6T/seYRVjHYkPhffXuh2TN0UaG
-        XK8QaEtg2yJYJ2uISv/pnr0A24HdSow=
-X-Google-Smtp-Source: APXvYqx4ksyIz2mp2cVEg7gzmc1wLIVctlBhstO+/w9PNAVcEaLfWYidhI8b/EOywYxqFtJebLyMCQ==
-X-Received: by 2002:a5d:9c0b:: with SMTP id 11mr4273776ioe.192.1567621222620;
-        Wed, 04 Sep 2019 11:20:22 -0700 (PDT)
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com. [209.85.166.53])
-        by smtp.gmail.com with ESMTPSA id p9sm19328035ios.1.2019.09.04.11.20.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2019 11:20:20 -0700 (PDT)
-Received: by mail-io1-f53.google.com with SMTP id n197so44426208iod.9
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:20:19 -0700 (PDT)
-X-Received: by 2002:a6b:581a:: with SMTP id m26mr1356085iob.161.1567621219740;
- Wed, 04 Sep 2019 11:20:19 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZNs26im8IZSiycRp5YdzdEf5xY+Panks2L0eHlZ793s=;
+        b=Qo/FhpDlrpLbmZy2AOO5cvsZQKPxLx53cw2F2bhjcD0IsT8ffwi1wSd1LFXmvLDYwV
+         uAjyijfk2M8YwZw9XktUtF0rEnGNek0Jc+/GLiJugzvXmuXQH5v6NeR9Mt+VZMP3iqJo
+         0w84fJY9gcNsEEadVnwtp8l8D2ZxfvkTkRfMepAvTM68WvVEmxYwaYsWyKdVD4Vn6BEZ
+         +J6HUcR2kK6fbwi6P6LSYTJ21ATYfqOLBNKu2XNSwIxvV4F+gEAe7tV6qG5dSOVbATIs
+         totGlRUmDm93sUTk01IkMB2zvoohqdRHukj0bTaJFepQ5knMAZW0AkLrjMnTw+6IS+6Q
+         hVqg==
+X-Gm-Message-State: APjAAAXOaj5RRNDWDMszx/cHmK+Quj8KaTlgVEiF1ML+wNjtLwP4gs3l
+        W7kL4tpsY8zSTedTfVVRAts=
+X-Google-Smtp-Source: APXvYqzKhl9Da3x+NOQGn/asSthLbZVbQBHuEIslYz5CVROihkX7N/X4nng7WKd5gmnOLs0uBCdTJA==
+X-Received: by 2002:a1c:c78f:: with SMTP id x137mr6042843wmf.42.1567621506722;
+        Wed, 04 Sep 2019 11:25:06 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id k6sm71403811wrg.0.2019.09.04.11.25.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Sep 2019 11:25:05 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 20:25:02 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
+        willy.mh.wolff.ml@gmail.com
+Subject: Re: [PATCH v13 7/8] ARM: dts: exynos: add DMC device for exynos5422
+Message-ID: <20190904182502.GA12918@kozik-lap>
+References: <20190821104303.32079-1-l.luba@partner.samsung.com>
+ <CGME20190821104324eucas1p16bdeb27250c8c9fa87591d6bd9743a17@eucas1p1.samsung.com>
+ <20190821104303.32079-8-l.luba@partner.samsung.com>
 MIME-Version: 1.0
-References: <20190830160957.GC2634@redhat.com> <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
- <87o906wimo.fsf@x220.int.ebiederm.org> <20190902134003.GA14770@redhat.com>
- <87tv9uiq9r.fsf@x220.int.ebiederm.org> <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
- <87k1aqt23r.fsf_-_@x220.int.ebiederm.org> <87ef0yt221.fsf_-_@x220.int.ebiederm.org>
- <20190904144415.GB20391@lenoir> <20190904153245.GF24568@redhat.com> <20190904163325.GA22421@lenoir>
-In-Reply-To: <20190904163325.GA22421@lenoir>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 4 Sep 2019 11:20:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whv60YepBaTUWnDvZ1QMezTyHLvCvzF_QgUQ+6LdrpScw@mail.gmail.com>
-Message-ID: <CAHk-=whv60YepBaTUWnDvZ1QMezTyHLvCvzF_QgUQ+6LdrpScw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] task: Add a count of task rcu users
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190821104303.32079-8-l.luba@partner.samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 9:33 AM Frederic Weisbecker <frederic@kernel.org> wrote:
->
-> I thought the point of these rcu_users was to be able to do:
->
-> rcu_read_lock()
-> p = rcu_dereference(task)
-> if (!refcount_inc_not_zero(p->rcu_users)) {
+On Wed, Aug 21, 2019 at 12:43:02PM +0200, Lukasz Luba wrote:
+> Add description of Dynamic Memory Controller and PPMU counters.
+> They are used by exynos5422-dmc driver.
+> There is a definition of the memory chip, which is then used during
+> calculation of timings for each OPP.
+> The algorithm in the driver needs these two sets to bound the timings.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi             |  71 +++++++++++
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 116 ++++++++++++++++++
+>  2 files changed, 187 insertions(+)
 
-No. Because of the shared state, you can't do that from RCU context.
+Thanks, applied conditionally. Please send a follow up fixing the
+checkpatch error about undocumented binding:
+https://krzk.eu/#/builders/26/builds/392
 
-But you *could* increase rcu_users from within the process context
-itself (as long as you do it before the exit path, ie during normal
-system call execution), or possibly while holding the tasklist_lock
-and verifying that the task hasn't died yet.
+You should not skip such checkpatch warning.
 
-I'm not sure there is any sensible case for doing that, though. It
-would have to have a similar pattern to the runqueue use, where you
-add a new RCU lookup point for the task. I'm sure something like that
-_could_ exist, I just can't think of any right now.
+Best regards,
+Krzysztof
 
-             Linus
