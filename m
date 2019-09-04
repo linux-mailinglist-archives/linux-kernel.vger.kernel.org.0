@@ -2,199 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D935CA78D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 04:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 772FFA78E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 04:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbfIDCf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 22:35:56 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42210 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728203AbfIDCfs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 22:35:48 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y1so8822828plp.9;
-        Tue, 03 Sep 2019 19:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8qVYauEaF289x3cMhI4s/1Faayix+NfSLUGn8z2s1l8=;
-        b=KlNICeLzni8606fHeBg3p2Gs7jsz8W0wYZD1eNpKr8RBpEsnEK6/Vl97FcoRSEuixK
-         JOhlFlN7UKvbN/xLzPQYke6bGEvG788Raxy0rUnH5evklIc6LeWgbX0N0+oMVBXE+fpj
-         VbVPcBKlCaWo7xdZE5L+SmPCrDBbn0U5yAa2twIsEcAXRgsK/bpD54U4vnBIs0nSMtp0
-         hPBNidHIMqeF2sG4rcKjAnxFpAoDjivJZnDfYN7g71tYc6nuW67W9a0+Lx9dW+TykGLm
-         ytdI/PPaUBKWb9+xvDkNMvjDeate6YydpvgqlB997iKrl8Nye0rQkrAfj+/qiCNfypeq
-         sd8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8qVYauEaF289x3cMhI4s/1Faayix+NfSLUGn8z2s1l8=;
-        b=rgFPqiyDIui5ZuMhEvDVAmkVrx0Dn2mDqL0E6dqrLQk2HywIYPeZ9+mni4i6HBb2GP
-         Mjki1wMp8JsP2WESEj+1UFwRqCHxLARvHuzKygprWAzl9w33j+aXyCeTtgPKYKWKMqAg
-         Ovvprv+P1I+2w0uIKZX3JjHUOt7W3LGEgJaBRmINr2HoUi4FCSitrIdXJXJyXBCVy+Rx
-         U5yJTJl+24Up97/VMsw6+egMMbPJLOPUTl7iNEdhUyRBrTO6PEAg2soBF0lXXy8j/wbG
-         RMcwZErQW+vMOfhS7rb8fO0BhtbsaqvCzQz0ycEXcGYbl2ujTOn4q+M4h3HdWlaJqaCg
-         CUGQ==
-X-Gm-Message-State: APjAAAX2WVmW5jKLP4pug9/GAy04TcorOQ0fPO0cwxdRrvtItwUiYM39
-        nS1DnLtw8rtE2MtSbK/jfH22s43XBz0=
-X-Google-Smtp-Source: APXvYqwnAGnhH5o46xWifKgP2jXR/QyoQk1BhIrYvTTHKZS9rgDcSS9ehbi5TqfWaCTe+QkEBvIwjw==
-X-Received: by 2002:a17:902:7886:: with SMTP id q6mr39191212pll.78.1567564546864;
-        Tue, 03 Sep 2019 19:35:46 -0700 (PDT)
-Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id i74sm7480250pfe.28.2019.09.03.19.35.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 19:35:46 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 12/12] crypto: caam - change JR device ownership scheme
-Date:   Tue,  3 Sep 2019 19:35:15 -0700
-Message-Id: <20190904023515.7107-13-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190904023515.7107-1-andrew.smirnov@gmail.com>
-References: <20190904023515.7107-1-andrew.smirnov@gmail.com>
+        id S1728049AbfIDChI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 22:37:08 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:42056 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727499AbfIDChI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 22:37:08 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x842a533009007
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 3 Sep 2019 19:36:20 -0700
+Received: from [128.224.162.188] (128.224.162.188) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 3 Sep
+ 2019 19:36:03 -0700
+Subject: Re: Bug Report: Btrfs can't allocate space for delete when block size
+ arounds 512M
+To:     <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <josef@toxicpanda.com>, <dsterba@suse.com>
+References: <b501bcff-8be0-4303-8789-363fda4658e5@windriver.com>
+From:   "Hongzhi, Song" <hongzhi.song@windriver.com>
+Message-ID: <3eca92d0-5a57-3fff-63e1-edd3217341d5@windriver.com>
+Date:   Wed, 4 Sep 2019 10:36:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <b501bcff-8be0-4303-8789-363fda4658e5@windriver.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.188]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Returning -EBUSY from platform device's .remove() callback won't stop
-the removal process, so the code in caam_jr_remove() is not going to
-have the desired effect of preventing JR from being removed.
+Anybody notice this?
 
-In order to be able to deal with removal of the JR device, change the
-code as follows:
+--Hongzhi
 
-  1. To make sure that underlying struct device remains valid for as
-     long as we have a reference to it, add appropriate device
-     refcount management to caam_jr_alloc() and caam_jr_free()
 
-  2. To make sure that device removal doesn't happen in parallel to
-      use using the device in caam_jr_enqueue() augment the latter to
-      acquire/release device lock for the duration of the subroutine
-
-  3. In order to handle the case when caam_jr_enqueue() is executed
-     right after corresponding caam_jr_remove(), add code to check
-     that driver data has not been set to NULL.
-
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/crypto/caam/jr.c | 36 +++++++++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/crypto/caam/jr.c b/drivers/crypto/caam/jr.c
-index 47b389cb1c62..8a30bbd7f2aa 100644
---- a/drivers/crypto/caam/jr.c
-+++ b/drivers/crypto/caam/jr.c
-@@ -124,14 +124,6 @@ static int caam_jr_remove(struct platform_device *pdev)
- 	jrdev = &pdev->dev;
- 	jrpriv = dev_get_drvdata(jrdev);
- 
--	/*
--	 * Return EBUSY if job ring already allocated.
--	 */
--	if (atomic_read(&jrpriv->tfm_count)) {
--		dev_err(jrdev, "Device is busy\n");
--		return -EBUSY;
--	}
--
- 	/* Unregister JR-based RNG & crypto algorithms */
- 	unregister_algs();
- 
-@@ -300,7 +292,7 @@ struct device *caam_jr_alloc(void)
- 
- 	if (min_jrpriv) {
- 		atomic_inc(&min_jrpriv->tfm_count);
--		dev = min_jrpriv->dev;
-+		dev = get_device(min_jrpriv->dev);
- 	}
- 	spin_unlock(&driver_data.jr_alloc_lock);
- 
-@@ -318,13 +310,16 @@ void caam_jr_free(struct device *rdev)
- 	struct caam_drv_private_jr *jrpriv = dev_get_drvdata(rdev);
- 
- 	atomic_dec(&jrpriv->tfm_count);
-+	put_device(rdev);
- }
- EXPORT_SYMBOL(caam_jr_free);
- 
- /**
-  * caam_jr_enqueue() - Enqueue a job descriptor head. Returns 0 if OK,
-  * -EBUSY if the queue is full, -EIO if it cannot map the caller's
-- * descriptor.
-+ * descriptor, -ENODEV if given device was removed and is no longer
-+ * valid
-+ *
-  * @dev:  device of the job ring to be used. This device should have
-  *        been assigned prior by caam_jr_register().
-  * @desc: points to a job descriptor that execute our request. All
-@@ -354,15 +349,32 @@ int caam_jr_enqueue(struct device *dev, u32 *desc,
- 				u32 status, void *areq),
- 		    void *areq)
- {
--	struct caam_drv_private_jr *jrp = dev_get_drvdata(dev);
-+	struct caam_drv_private_jr *jrp;
- 	struct caam_jrentry_info *head_entry;
- 	int head, tail, desc_size;
- 	dma_addr_t desc_dma;
- 
-+	/*
-+	 * Lock the device to prevent it from being removed while we
-+	 * are using it
-+	 */
-+	device_lock(dev);
-+
-+	/*
-+	 * If driver data is NULL, it is very likely that this device
-+	 * was removed already. Nothing we can do here but bail out.
-+	 */
-+	jrp = dev_get_drvdata(dev);
-+	if (!jrp) {
-+		device_unlock(dev);
-+		return -ENODEV;
-+	}
-+
- 	desc_size = (caam32_to_cpu(*desc) & HDR_JD_LENGTH_MASK) * sizeof(u32);
- 	desc_dma = dma_map_single(dev, desc, desc_size, DMA_TO_DEVICE);
- 	if (dma_mapping_error(dev, desc_dma)) {
- 		dev_err(dev, "caam_jr_enqueue(): can't map jobdesc\n");
-+		device_unlock(dev);
- 		return -EIO;
- 	}
- 
-@@ -375,6 +387,7 @@ int caam_jr_enqueue(struct device *dev, u32 *desc,
- 	    CIRC_SPACE(head, tail, JOBR_DEPTH) <= 0) {
- 		spin_unlock_bh(&jrp->inplock);
- 		dma_unmap_single(dev, desc_dma, desc_size, DMA_TO_DEVICE);
-+		device_unlock(dev);
- 		return -EBUSY;
- 	}
- 
-@@ -411,6 +424,7 @@ int caam_jr_enqueue(struct device *dev, u32 *desc,
- 		jrp->inpring_avail = rd_reg32(&jrp->rregs->inpring_avail);
- 
- 	spin_unlock_bh(&jrp->inplock);
-+	device_unlock(dev);
- 
- 	return 0;
- }
--- 
-2.21.0
-
+On 7/17/19 4:34 PM, Hongzhi, Song wrote:
+> Hi friends,
+>
+> *Description:*
+>
+>
+>     One LTP testcase, fs_fill.c, fails on btrfs with kernel error when 
+> unlink files on Btrfs device:
+>
+>     "BTRFS warning (device loop0): could not allocate space for a 
+> delete; will truncate on mount".
+>
+>
+>     I found the loop block device formatted with btrfs roughly rangs 
+> from 460M to 560M will cause the error.
+>
+>     256M and 1G all pass.
+>
+>
+>     The fs_fill.c source code:
+>
+> [https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/fs_fill/fs_fill.c] 
+>
+>
+>     The fs_fill.c calls unlink which triggers the error.
+>
+> [https://github.com/linux-test-project/ltp/blob/e3457e42c1b93f54bb81da746eba314fd34ad40e/testcases/kernel/fs/fs_fill/fs_fill.c#L55] 
+>
+>
+> [https://github.com/linux-test-project/ltp/blob/e3457e42c1b93f54bb81da746eba314fd34ad40e/lib/safe_macros.c#L358] 
+>
+>
+>
+> *Error info:*
+>
+>     The issue maybe not reproduced everytime but four fifths chance.
+>
+>     fs_fill.c:53: INFO: Unlinking mntpoint/thread5/file0
+>     safe_macros.c:360: BROK: fs_fill.c:55: 
+> unlink(mntpoint/thread10/file0) failed: ENOSPC
+>     safe_macros.c:360: BROK: fs_fill.c:55: 
+> unlink(mntpoint/thread11/file0) failed: ENOSPC
+>     [62477.378848] BTRFS warning (device loop0): could not allocate 
+> space for a delete; will truncate on mount
+>     [62477.378905] BTRFS warning (device loop0): could not allocate 
+> space for a delete; will truncate on mount
+>
+>
+>
+> *Kernel:*
+>
+>     After v5.2-rc1, qemux86-64
+>
+>     # make -j40 ARCH=x86_64 CROSS_COMPILE=x86-64-gcc
+>     use qemu to bootup kernel
+>
+>
+> *LTP:*
+>
+>     master branch: I tested on 20190625
+>     Reproduce:
+>
+>     // build Ltp
+>     # cd Ltp-source
+>     # ./build.sh
+>
+>     // copy files to qemu
+>     # cp runltp testcases/kernel/fs/fs_fill/fs_fill to qemu
+>
+>     // login to qemu:
+>     // adjust block device size to 512M
+>     # vi runltp
+>     in function: create_block()
+>         dd if=/dev/zero of=${TMP}/test.img bs=1024 count=262144
+>         --->
+>         dd if=/dev/zero of=${TMP}/test.img bs=1024 count=524288
+>
+>     // execute testcase
+>     # runltp -f fs -s fs_fill
+>
+>
+> *Analysis:*
+>
+>     One new kernel commit contained in v5.2-rc1 introduces the issue.
+>
+>     commit c8eaeac7b734347c3afba7008b7af62f37b9c140
+>     Author: Josef Bacik <josef@toxicpanda.com>
+>     Date:   Wed Apr 10 15:56:10 2019 -0400
+>
+>         btrfs: reserve delalloc metadata differently
+>         ...
+>
+>
+> Anyone's reply will be appreciated.
+>
+> --Hongzhi
+>
+>
+>
+>
+>
+>
