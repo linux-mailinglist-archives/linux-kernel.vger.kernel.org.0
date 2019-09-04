@@ -2,113 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAACFA8C2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFDF5A8C0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387468AbfIDQK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:10:29 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:59031 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731766AbfIDQA4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:00:56 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MryKp-1iYq7A0YsP-00o0MA; Wed, 04 Sep 2019 18:00:41 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH] bus: imx-weim: remove incorrect __init annotations
-Date:   Wed,  4 Sep 2019 18:00:21 +0200
-Message-Id: <20190904160039.3350229-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S2387419AbfIDQIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:08:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36760 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732974AbfIDQBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:01:24 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 377A522DBF;
+        Wed,  4 Sep 2019 16:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567612884;
+        bh=1hjpLjdFnleXPVsjkwIlMm3goH7mRfAhm1zbSJYjR7s=;
+        h=From:To:Cc:Subject:Date:From;
+        b=R5S/Ai9qfoySfMe3lfnhlkDZTOfXjU6QQwctylnMYMHZB7TDtgbXg2WSgTbMglCCo
+         XvPXSy6n4UCDkczfo2Tuh6KXTOmDxvKpO6Qd8DZepZH8ySiag0AwZtA1OuJ5bkAunv
+         ls81T1HM6NusIPxPx1+17Q+1OS8/myHD3/yN3VgA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Tony Lindgren <tony@atomide.com>, Suman Anna <s-anna@ti.com>,
+        Keerthy <j-keerthy@ti.com>, Sasha Levin <sashal@kernel.org>,
+        linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 01/36] ARM: OMAP2+: Fix missing SYSC_HAS_RESET_STATUS for dra7 epwmss
+Date:   Wed,  4 Sep 2019 12:00:47 -0400
+Message-Id: <20190904160122.4179-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:edSQpPbQz2i0QyQuA+gpW63iqvRaqDAQVKOzJ3suKf+nyFqMcMI
- RKLBf7wmMBsX3B6VL98jLw9HvRgEXOWqAn0lir9QaQkdbIqWjGOdCwOzCesPsKPDZpAPytU
- Clh0eqK029q8ih2vNOnoAQcxDdYCdoX9GBgduNipzMpBvbnC+VHkNDTahUYu0rgxX8Hic0R
- SlBCpbELBaATcVxUwqyPg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/BMWc4WL1IA=:UQx49a3M/46yAIqufq86VM
- 21sdTV7pJuWwJq7AbtHv9HfmlMBrqz8vmUsYWa39y97opPHXoyc1sIXe97gV0XC/kGnKj+Nd1
- Tt/oIBVkzFJ4LMbmMpntZdjy/pJiN1CfmTv1McQjMJdiFfZ2hpuk/6vNEEkVChe8MbHabbQ7V
- t8uH+4XMeyvvUkYoih/aDjRlXcsMwnHuu7boacviY0LDxIcAs7Umgb19jGciq+vemPjpfeOHR
- XbygfneBE2EpgJ2g3HZpqmA9zV1ouaUo4egHuag854s/+a+fxsYtaA5/pROTuEDTW5hq42gZy
- 7tU3hYKuirDFCj3hRlcRMavDS7JTPi631dG7krtkUwds1iH9heTV7C6aAoFifpBpPJ9uHVrmT
- jqTp9kjYaUfnLpTbf29yLKXksB7vxKPWYa+YKyBaw7UpZJxpZ1VCbVEZd/xC3/1vI6IZFpnEs
- P4u4Fmj4wBTfC0BTmXuicKjIEZkCUnhgK6Ly6rYQFf2lX8zkoENzntEx9yPbpyDbOB5fnizXv
- oSPM1o30Cv2Cu7bDnicaflr7Etgh6CWuEdmrEsn1C03dRvsIawfFuB3t15y48Sxa8tmHartHF
- 66RgCYPZZfNMhFNslVM9pK4Z4UgNHkFujrxCXdY9X2m4XhklZTRwc0CQCo8q6s0LLHH8sL77R
- CzckQD7lBVVuh8YqsM0HwQO+gdwTsYe8B0glWp8SjiGMh5wsjT3lGufB28kVHNOEDnmh+Vg13
- jLbk+CBHS6AgfQmVIClUAseuUJ2m54DCWQ/uBYAkSgE5MqLLPZQmJkr8nsIVdApZj1WHBvv2B
- 828SZegT19VN2u1ywaaOouOFK8e+gX21cMHH44rYiESsKjdsCg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The probe function is no longer __init, so anything it calls now
-must also be available at runtime, as Kbuild points out when building
-with clang-9:
+From: Tony Lindgren <tony@atomide.com>
 
-WARNING: vmlinux.o(.text+0x6e7040): Section mismatch in reference from the function weim_probe() to the function .init.text:imx_weim_gpr_setup()
-The function weim_probe() references
-the function __init imx_weim_gpr_setup().
-This is often because weim_probe lacks a __init
-annotation or the annotation of imx_weim_gpr_setup is wrong.
+[ Upstream commit afd58b162e48076e3fe66d08a69eefbd6fe71643 ]
 
-WARNING: vmlinux.o(.text+0x6e70f0): Section mismatch in reference from the function weim_probe() to the function .init.text:weim_timing_setup()
-The function weim_probe() references
-the function __init weim_timing_setup().
-This is often because weim_probe lacks a __init
-annotation or the annotation of weim_timing_setup is wrong.
+TRM says PWMSS_SYSCONFIG bit for SOFTRESET changes to zero when
+reset is completed. Let's configure it as otherwise we get warnings
+on boot when we check the data against dts provided data. Eventually
+the legacy platform data will be just dropped, but let's fix the
+warning first.
 
-Remove the remaining __init markings that are now wrong.
-
-Fixes: 4a92f07816ba ("bus: imx-weim: use module_platform_driver()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Suman Anna <s-anna@ti.com>
+Tested-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-I applied this on top of the patch taht introduced the build error
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/bus/imx-weim.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
-index 79af0c27f5a3..28bb65a5613f 100644
---- a/drivers/bus/imx-weim.c
-+++ b/drivers/bus/imx-weim.c
-@@ -76,7 +76,7 @@ static const struct of_device_id weim_id_table[] = {
+diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+index 2f4f7002f38d0..87b0c38b7ca59 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+@@ -389,7 +389,8 @@ static struct omap_hwmod dra7xx_dcan2_hwmod = {
+ static struct omap_hwmod_class_sysconfig dra7xx_epwmss_sysc = {
+ 	.rev_offs	= 0x0,
+ 	.sysc_offs	= 0x4,
+-	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET,
++	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET |
++			  SYSC_HAS_RESET_STATUS,
+ 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
+ 	.sysc_fields	= &omap_hwmod_sysc_type2,
  };
- MODULE_DEVICE_TABLE(of, weim_id_table);
- 
--static int __init imx_weim_gpr_setup(struct platform_device *pdev)
-+static int imx_weim_gpr_setup(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct property *prop;
-@@ -126,10 +126,10 @@ static int __init imx_weim_gpr_setup(struct platform_device *pdev)
- }
- 
- /* Parse and set the timing for this device. */
--static int __init weim_timing_setup(struct device *dev,
--				    struct device_node *np, void __iomem *base,
--				    const struct imx_weim_devtype *devtype,
--				    struct cs_timing_state *ts)
-+static int weim_timing_setup(struct device *dev,
-+			     struct device_node *np, void __iomem *base,
-+			     const struct imx_weim_devtype *devtype,
-+			     struct cs_timing_state *ts)
- {
- 	u32 cs_idx, value[MAX_CS_REGS_COUNT];
- 	int i, ret;
 -- 
-2.20.0
+2.20.1
 
