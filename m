@@ -2,73 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D04B7A7DD1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08F8CA7DCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:25:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbfIDIZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 04:25:56 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5753 "EHLO huawei.com"
+        id S1728797AbfIDIZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 04:25:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41322 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727054AbfIDIZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:25:55 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 77C2C866E5C9B334EF1E;
-        Wed,  4 Sep 2019 16:25:53 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
- 16:25:43 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <olof@lixom.net>, <info@metux.net>,
-        <alexander.sverdlin@gmail.com>, <tglx@linutronix.de>,
-        <hsweeten@visionengravers.com>, <yuehaibing@huawei.com>,
-        <arnd@arndb.de>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] ASoC: ep93xx: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 4 Sep 2019 16:25:07 +0800
-Message-ID: <20190904082507.24300-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726358AbfIDIZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 04:25:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6FFC6AE89;
+        Wed,  4 Sep 2019 08:25:41 +0000 (UTC)
+Date:   Wed, 4 Sep 2019 10:25:40 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Qian Cai <cai@lca.pw>, Eric Dumazet <eric.dumazet@gmail.com>,
+        davem@davemloft.net, netdev@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH] net/skbuff: silence warnings under memory pressure
+Message-ID: <20190904082540.GI3838@dhcp22.suse.cz>
+References: <6109dab4-4061-8fee-96ac-320adf94e130@gmail.com>
+ <1567178728.5576.32.camel@lca.pw>
+ <229ebc3b-1c7e-474f-36f9-0fa603b889fb@gmail.com>
+ <20190903132231.GC18939@dhcp22.suse.cz>
+ <1567525342.5576.60.camel@lca.pw>
+ <20190903185305.GA14028@dhcp22.suse.cz>
+ <1567546948.5576.68.camel@lca.pw>
+ <20190904061501.GB3838@dhcp22.suse.cz>
+ <20190904064144.GA5487@jagdpanzerIV>
+ <20190904070042.GA11968@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190904070042.GA11968@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Wed 04-09-19 16:00:42, Sergey Senozhatsky wrote:
+> On (09/04/19 15:41), Sergey Senozhatsky wrote:
+> > But the thing is different in case of dump_stack() + show_mem() +
+> > some other output. Because now we ratelimit not a single printk() line,
+> > but hundreds of them. The ratelimit becomes - 10 * $$$ lines in 5 seconds
+> > (IOW, now we talk about thousands of lines).
+> 
+> And on devices with slow serial consoles this can be somewhat close to
+> "no ratelimit". *Suppose* that warn_alloc() adds 700 lines each time.
+> Within 5 seconds we can call warn_alloc() 10 times, which will add 7000
+> lines to the logbuf. If printk() can evict only 6000 lines in 5 seconds
+> then we have a growing number of pending logbuf messages.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- sound/soc/cirrus/ep93xx-ac97.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Yes, ratelimit is problematic when the ratelimited operation is slow. I
+guess that is a well known problem and we would need to rework both the
+api and the implementation to make it work in those cases as well.
+Essentially we need to make the ratelimit act as a gatekeeper to an
+operation section - something like a critical section except you can
+tolerate more code executions but not too many. So effectively
 
-diff --git a/sound/soc/cirrus/ep93xx-ac97.c b/sound/soc/cirrus/ep93xx-ac97.c
-index 84c967f..e21eaa1 100644
---- a/sound/soc/cirrus/ep93xx-ac97.c
-+++ b/sound/soc/cirrus/ep93xx-ac97.c
-@@ -362,7 +362,6 @@ static const struct snd_soc_component_driver ep93xx_ac97_component = {
- static int ep93xx_ac97_probe(struct platform_device *pdev)
- {
- 	struct ep93xx_ac97_info *info;
--	struct resource *res;
- 	int irq;
- 	int ret;
- 
-@@ -370,8 +369,7 @@ static int ep93xx_ac97_probe(struct platform_device *pdev)
- 	if (!info)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	info->regs = devm_ioremap_resource(&pdev->dev, res);
-+	info->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(info->regs))
- 		return PTR_ERR(info->regs);
- 
+	start_throttle(rate, number);
+	/* here goes your operation */
+	end_throttle();
+
+one operation is not considered done until the whole section ends.
+Or something along those lines.
+
+In this particular case we can increase the rate limit parameters of
+course but I think that longterm we need a better api.
 -- 
-2.7.4
-
-
+Michal Hocko
+SUSE Labs
