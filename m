@@ -2,259 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B3AA7CBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD13FA7CB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729065AbfIDH0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 03:26:03 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33828 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbfIDH0C (ORCPT
+        id S1728924AbfIDHZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 03:25:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33594 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725840AbfIDHZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 03:26:02 -0400
-Received: by mail-qk1-f196.google.com with SMTP id q203so9478778qke.1;
-        Wed, 04 Sep 2019 00:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kILb5kRYDfIYgYQ1PBbvSwMF1niGIDsl+wR4HOmjCNU=;
-        b=uaH7rksAotumr8ax8nw/7oZzX88KtciuB4aJ9gY+h5WmbKYjYKwAw8WlZiMT4gK1Zf
-         fC/DfZIjMkOfV1qiTNAHt0xbHCcIcvHDjmVIKet7G//yQjN9wXNVh8mM4c33A+Sk1tz9
-         tSNuXGdeJpMpWb6piTpZYzFqOK9EmBdxCp62AEv/DSDKAMPKQB7DLmnM93jxgNqbRbxf
-         btEo7DD0c1+rS1q7/e/epSE3JOFDBkoPI3phxSKIblGPzzum88Wh5+ngmSLgnxIOHKXT
-         N627ni0RkZd4yLOUXDgvNpypgN4/PVBim0tWW7Ryuh2atbZAIAjleJWGWlpVSHtu5KOA
-         4opA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kILb5kRYDfIYgYQ1PBbvSwMF1niGIDsl+wR4HOmjCNU=;
-        b=gOK0MmHTW2b2bzEo1kmko8YAU1vRjNrSJ4yrRXQOZibs6EqJW3uYBqC26cMS0D+x2j
-         R3AW5FYCJdtCfwifWBNVgqppEx2FWiTt0/g0PZgabtL46IoNXplx7KxXoop2xArOUSJR
-         v+AVDFZp6rJv6u7tm5mD3keQA219fr5gEk51ZsA5uXo3coJYJIwpe20dnVC5Z+nqt8GM
-         vsynxWpLMMStuaxXRE67qVJQWljy9OXDgYnDvO5BFEh8bT+rPYLbChMPkdEmgpwEozVa
-         SIdi5o1jJRsQe7hfBt+Sr1yB9w2z8PgmHVUGRLQgNI6iQLeyY+NwaPdXpuhMgzxOhzEr
-         brPA==
-X-Gm-Message-State: APjAAAUaBbhiGl6UFQe9DpdRGmpgcO63FitzDzcLaBUVGepap7GEJo2m
-        HQa0cnG/aXswC2xbg9lPvaW9Te7dEP4AfCTMm4w=
-X-Google-Smtp-Source: APXvYqz/cc5gz57o2Qkbc9WLcqb/307wIfQ5/nIT/cA75tR1A4lzBM4tRRE+t597oIcoHCe72n/2ZfbnJj0S3C9vCQg=
-X-Received: by 2002:a37:4f84:: with SMTP id d126mr19937883qkb.430.1567581961441;
- Wed, 04 Sep 2019 00:26:01 -0700 (PDT)
+        Wed, 4 Sep 2019 03:25:31 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x847MGWH064380
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Sep 2019 03:25:30 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ut851hfu8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 03:25:30 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Wed, 4 Sep 2019 08:25:28 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Sep 2019 08:25:26 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x847PP0o26279988
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Sep 2019 07:25:25 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EAABB4C04A;
+        Wed,  4 Sep 2019 07:25:24 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A838E4C046;
+        Wed,  4 Sep 2019 07:25:24 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.122])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Sep 2019 07:25:24 +0000 (GMT)
+Subject: Re: [PATCH 1/1] s390: vfio-ap: fix warning reset not completed
+To:     Halil Pasic <pasic@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+References: <20190903133618.9122-1-pasic@linux.ibm.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Wed, 4 Sep 2019 09:25:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <cover.1567060834.git.han_mao@c-sky.com>
-In-Reply-To: <cover.1567060834.git.han_mao@c-sky.com>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Wed, 4 Sep 2019 15:25:23 +0800
-Message-ID: <CAEbi=3cMhBsC3n6DpOfvSD0-ZgGbV=0ik8avjugYzRHcimFRbA@mail.gmail.com>
-Subject: Re: [PATCH V6 0/3] riscv: Add perf callchain support
-To:     Mao Han <han_mao@c-sky.com>, greentime.hu@sifive.com
-Cc:     linux-riscv@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-csky@vger.kernel.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Christoph Hellwig <hch@lst.de>, Guo Ren <guoren@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190903133618.9122-1-pasic@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19090407-0028-0000-0000-000003977634
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090407-0029-0000-0000-00002459C68B
+Message-Id: <9af2dd28-a2ce-769c-f90c-dd079c967022@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-04_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909040076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mao Han <han_mao@c-sky.com> =E6=96=BC 2019=E5=B9=B48=E6=9C=8829=E6=97=A5 =
-=E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=882:57=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> This patch set add perf callchain(FP/DWARF) support for RISC-V.
-> It comes from the csky version callchain support with some
-> slight modifications. The patchset base on Linux 5.3-rc6.
->
-> Changes since v5:
->   - use walk_stackframe from stacktrace.c to handle
->     kernel callchain unwinding(fix invalid mem access)
->
-> Changes since v4:
->   - Add missing PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET
->     verified with extra CFLAGS(-Wall -Werror)
->
-> Changes since v3:
->   - Add more strict check for unwind_frame_kernel
->   - update for kernel 5.3
->
-> Changes since v2:
->   - fix inconsistent comment
->   - force to build kernel with -fno-omit-frame-pointer if perf
->     event is enabled
->
-> Changes since v1:
->   - simplify implementation and code convention
->
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Greentime Hu <green.hu@gmail.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: linux-riscv <linux-riscv@lists.infradead.org>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Guo Ren <guoren@kernel.org>
->
-> Mao Han (3):
->   riscv: Add perf callchain support
->   riscv: Add support for perf registers sampling
->   riscv: Add support for libdw
->
->  arch/riscv/Kconfig                            |  2 +
->  arch/riscv/Makefile                           |  3 +
->  arch/riscv/include/uapi/asm/perf_regs.h       | 42 ++++++++++++
->  arch/riscv/kernel/Makefile                    |  4 +-
->  arch/riscv/kernel/perf_callchain.c            | 95 +++++++++++++++++++++=
-+++++
->  arch/riscv/kernel/perf_regs.c                 | 44 ++++++++++++
->  arch/riscv/kernel/stacktrace.c                |  2 +-
->  tools/arch/riscv/include/uapi/asm/perf_regs.h | 42 ++++++++++++
->  tools/perf/Makefile.config                    |  6 +-
->  tools/perf/arch/riscv/Build                   |  1 +
->  tools/perf/arch/riscv/Makefile                |  4 ++
->  tools/perf/arch/riscv/include/perf_regs.h     | 96 +++++++++++++++++++++=
-++++++
->  tools/perf/arch/riscv/util/Build              |  2 +
->  tools/perf/arch/riscv/util/dwarf-regs.c       | 72 ++++++++++++++++++++
->  tools/perf/arch/riscv/util/unwind-libdw.c     | 57 ++++++++++++++++
->  15 files changed, 469 insertions(+), 3 deletions(-)
->  create mode 100644 arch/riscv/include/uapi/asm/perf_regs.h
->  create mode 100644 arch/riscv/kernel/perf_callchain.c
->  create mode 100644 arch/riscv/kernel/perf_regs.c
->  create mode 100644 tools/arch/riscv/include/uapi/asm/perf_regs.h
->  create mode 100644 tools/perf/arch/riscv/Build
->  create mode 100644 tools/perf/arch/riscv/Makefile
->  create mode 100644 tools/perf/arch/riscv/include/perf_regs.h
->  create mode 100644 tools/perf/arch/riscv/util/Build
->  create mode 100644 tools/perf/arch/riscv/util/dwarf-regs.c
->  create mode 100644 tools/perf/arch/riscv/util/unwind-libdw.c
->
+On 03.09.19 15:36, Halil Pasic wrote:
+> The intention seems to be to warn once when we don't wait enough for the
+> reset to complete. Let's use the right retry counter to accomplish that
+> semantic.
+> 
+> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
 
-Tested-by: Greentime Hu <greentime.hu@sifive.com>
+Thanks applied.
 
-I tested this patchset based on v5.3-rc6 and it can use dwarf or fp to
-backtrace in Unleashed board.
+I will let it sit in our tree for some days as I want to see if we actually
+hit the WARN_ON now. So if there is an rc8 this will be part of the next 
+merge window, otherwise this will somewhat come later.
+> ---
+>  drivers/s390/crypto/vfio_ap_ops.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 0604b49a4d32..5c0f53c6dde7 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -1143,7 +1143,7 @@ int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
+>  				msleep(20);
+>  				status = ap_tapq(apqn, NULL);
+>  			}
+> -			WARN_ON_ONCE(retry <= 0);
+> +			WARN_ON_ONCE(retry2 <= 0);
+>  			return 0;
+>  		case AP_RESPONSE_RESET_IN_PROGRESS:
+>  		case AP_RESPONSE_BUSY:
+> 
 
-# perf record -e cpu-clock --call-graph dwarf ls -l /
-total 4
-drwxr-xr-x    2 root     root             0 Aug 26  2019 bin
-drwxr-xr-x    5 root     root         12720 Jan  1 00:00 dev
-drwxr-xr-x    5 root     root             0 Jan  1 00:00 etc
--rwxr-xr-x    1 root     root           178 Aug 26  2019 init
-drwxr-xr-x    2 root     root             0 Aug 26  2019 lib
-lrwxrwxrwx    1 root     root             3 Aug 19  2019 lib64 -> lib
-lrwxrwxrwx    1 root     root            11 Aug 19  2019 linuxrc -> bin/bus=
-ybox
-drwxr-xr-x    2 root     root             0 Aug 19  2019 media
-drwxr-xr-x    2 root     root             0 Aug 19  2019 mnt
-drwxr-xr-x    2 root     root             0 Aug 19  2019 opt
-dr-xr-xr-x   66 root     root             0 Jan  1 00:00 proc
-drwx------    3 root     root             0 Jan  1 00:01 root
-drwxr-xr-x    3 root     root           140 Jan  1 00:00 run
-drwxr-xr-x    2 root     root             0 Aug 19  2019 sbin
-dr-xr-xr-x   11 root     root             0 Jan  1 00:00 sys
-drwxrwxrwt    2 root     root            60 Jan  1 00:00 tmp
-drwxr-xr-x    6 root     root             0 Aug 26  2019 usr
-drwxr-xr-x    4 root     root             0 Aug 26  2019 var
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.175 MB perf.data (21 samples) ]
-
-# perf record -e cpu-clock --call-graph fp ls -l /
-total 4
-drwxr-xr-x    2 root     root             0 Aug 26  2019 bin
-drwxr-xr-x    5 root     root         12720 Jan  1 00:00 dev
-drwxr-xr-x    5 root     root             0 Jan  1 00:00 etc
--rwxr-xr-x    1 root     root           178 Aug 26  2019 init
-drwxr-xr-x    2 root     root             0 Aug 26  2019 lib
-lrwxrwxrwx    1 root     root             3 Aug 19  2019 lib64 -> lib
-lrwxrwxrwx    1 root     root            11 Aug 19  2019 linuxrc -> bin/bus=
-ybox
-drwxr-xr-x    2 root     root             0 Aug 19  2019 media
-drwxr-xr-x    2 root     root             0 Aug 19  2019 mnt
-drwxr-xr-x    2 root     root             0 Aug 19  2019 opt
-dr-xr-xr-x   66 root     root             0 Jan  1 00:00 proc
-drwx------    3 root     root             0 Jan  1 00:00 root
-drwxr-xr-x    3 root     root           140 Jan  1 00:00 run
-drwxr-xr-x    2 root     root             0 Aug 19  2019 sbin
-dr-xr-xr-x   11 root     root             0 Jan  1 00:00 sys
-drwxrwxrwt    2 root     root            60 Jan  1 00:00 tmp
-drwxr-xr-x    6 root     root             0 Aug 26  2019 usr
-drwxr-xr-x    4 root     root             0 Aug 26  2019 var
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.004 MB perf.data (19 samples) ]
-
-# perf test
- 1: vmlinux symtab matches kallsyms            : Skip
- 2: Detect openat syscall event                : FAILED!
- 3: Detect openat syscall event on all cpus    : FAILED!
- 4: Read samples using the mmap interface      : FAILED!
- 5: Test data source output                    : Ok
- 6: Parse event definition strings             : FAILED!
- 7: Simple expression parser                   : Ok
- 8: PERF_RECORD_* events & perf_sample fields  : FAILED!
- 9: Parse perf pmu format                      : Ok
-10: DSO data read                              : Ok
-11: DSO data cache                             : Ok
-12: DSO data reopen                            : Ok
-13: Roundtrip evsel->name                      : Ok
-14: Parse sched tracepoints fields             : Ok
-15: syscalls:sys_enter_openat event fields     : FAILED!
-16: Setup struct perf_event_attr               : Skip
-17: Match and link multiple hists              : Ok
-18: 'import perf' in python                    : FAILED!
-19: Breakpoint overflow signal handler         : FAILED!
-20: Breakpoint overflow sampling               : FAILED!
-21: Breakpoint accounting                      : Skip
-22: Watchpoint                                 :
-22.1: Read Only Watchpoint                     : FAILED!
-22.2: Write Only Watchpoint                    : FAILED!
-22.3: Read / Write Watchpoint                  : FAILED!
-22.4: Modify Watchpoint                        : FAILED!
-23: Number of exit events of a simple workload : Ok
-24: Software clock events period values        : Ok
-25: Object code reading                        : Ok
-26: Sample parsing                             : Ok
-27: Use a dummy software event to keep tracking: Ok
-28: Parse with no sample_id_all bit set        : Ok
-29: Filter hist entries                        : Ok
-30: Lookup mmap thread                         : Ok
-31: Share thread mg                            : Ok
-32: Sort output of hist entries                : Ok
-33: Cumulate child hist entries                : Ok
-34: Track with sched_switch                    : FAILED!
-35: Filter fds with revents mask in a fdarray  : Ok
-36: Add fd to a fdarray, making it autogrow    : Ok
-37: kmod_path__parse                           : Ok
-38: Thread map                                 : Ok
-39: LLVM search and compile                    :
-39.1: Basic BPF llvm compile                    : Skip
-39.2: kbuild searching                          : Skip
-39.3: Compile source for BPF prologue generation: Skip
-39.4: Compile source for BPF relocation         : Skip
-40: Session topology                           : FAILED!
-41: BPF filter                                 :
-41.1: Basic BPF filtering                      : Skip
-41.2: BPF pinning                              : Skip
-41.3: BPF prologue generation                  : Skip
-41.4: BPF relocation checker                   : Skip
-42: Synthesize thread map                      : Ok
-43: Remove thread map                          : Ok
-44: Synthesize cpu map                         : Ok
-45: Synthesize stat config                     : Ok
-46: Synthesize stat                            : Ok
-47: Synthesize stat round                      : Ok
-48: Synthesize attr update                     : Ok
-49: Event times                                : Ok
-50: Read backward ring buffer                  : Skip
-51: Print cpu map                              : Ok
-52: Probe SDT events                           : Skip
-53: is_printable_array                         : Ok
-54: Print bitmap                               : Ok
-55: perf hooks                                 : Ok
-56: builtin clang support                      : Skip (not compiled in)
-57: unit_number__scnprintf                     : Ok
-58: mem2node                                   : Ok
-59: time utils                                 : Ok
-60: map_groups__merge_in                       : Ok
-#
