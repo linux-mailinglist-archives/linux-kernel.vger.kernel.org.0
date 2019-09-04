@@ -2,134 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00ED5A7A0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 06:38:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C930A7A5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 06:45:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbfIDEih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 00:38:37 -0400
-Received: from mail-qt1-f182.google.com ([209.85.160.182]:41387 "EHLO
-        mail-qt1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfIDEig (ORCPT
+        id S1728145AbfIDEpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 00:45:43 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39041 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfIDEpn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 00:38:36 -0400
-Received: by mail-qt1-f182.google.com with SMTP id j10so5273704qtp.8
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 21:38:36 -0700 (PDT)
+        Wed, 4 Sep 2019 00:45:43 -0400
+Received: by mail-io1-f66.google.com with SMTP id d25so38757104iob.6;
+        Tue, 03 Sep 2019 21:45:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rCfo8ZTPLFD1J9LanJqx/ih06mAfCjEXW/qtymlzmaY=;
-        b=nNUzE22szLB6fIHBMR61HcFOyBi2VxuEnTbkYKcFzTfAR0nkrN45m6Of3tnpFA2oyx
-         P1fi4etH/iQsP64d4b0YNZlnLtUlvmEHAgNlv66WbzKe+8hmp7jUpcRvHOuDj5i0FLU3
-         A3HVwuRPEMedPMCsVK5PH0596ZxTw9AkeUxaZOlFEBRtYx83g+ZOEE/OV5cRlC3r4r7a
-         gf8CohZBRIO4k48aQnrWZDr/m9fQ3BsOpyj4KcC0VmY768nqdBJtX/njhT0kB4h21Due
-         SxBimvqXPlVileAF76Tzhf6zGehsrzX/zAWBFjDRoPinSnt8+/kxRe3juVV0snbQlQ8Y
-         pcOQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/0TcseJqoK4D9Yyytz4SmT57BGmCs5CagUjz8hmy+sU=;
+        b=BjMULzB+hktHhh5x1vQWuAxNP/jWMQfGeXEYEJdJ/LzVpAgSb/ZjkdsFMRWPj96Y3X
+         GsFWk4K4pcbvg4qfxTWDFe/21KrG+W07DHa8k/8aYvNvYjvCZnS+njU1GmQpizzjCQK/
+         hdfLqAM7h56HQnHxibQgTTiBQ7rle5AeyoO40scXPxiuEgb3CohQ/JIY0XYJZPn4odKR
+         f6Cg7umULnecbw+Rty3DUmVhobw0qBg5MnolcVhxCUiWZTV6FJp+x1STn7LL/i5yNltq
+         5Rz593Nl9DNbuiu+6T4+EGr81WL1JVfR8tUZTGYzp0zUw6HA88j2AAScjCvb/TKa8Zcr
+         njQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rCfo8ZTPLFD1J9LanJqx/ih06mAfCjEXW/qtymlzmaY=;
-        b=L00wLmqASJbeQSi46pKpQjrNi7AYbDFElJ38xQPNFFsT6ep7+Zd9xSswoWbmNaf7iO
-         zHaD5TqpSiKIAtbyHLcCO9xS/zePdlJUEpYEsdCkYyuB3W8OfZfBnXFv3LBEUwt1W30h
-         OKb2PFvgm6b7YMGnttKGhKyl1lYf9X8iXbImXsdCjV+48qiWoHB5xyhuDxv1rmYec6qE
-         QKqIlnUnNraXVcdlbz/TS9ByUPp/9grvfvp1ytqRh5SZmkwowDmHscCqVX4QWnOWYExT
-         UnWkfzwhjUR48bI1v+9GFlTSGic7vtee8IPdOnpHC8dkCy7AkIoznsICaBOHgu+E4D7q
-         MLYA==
-X-Gm-Message-State: APjAAAXIpq5/ycUyWlUD7+58+ZwfV9mJcaSNppuj09bXbjKJSAfZQhHb
-        oXpMCiwR7E7eNLdIZkBS+fiaLhIRcZnYzSsvmAmPMQ==
-X-Google-Smtp-Source: APXvYqyGEOXLOXrHz31XbbkOyu/PhaDVQ5axvbUz3OqstIKTzlq16n68flaEzNvHDLw7Qn3j0Twu0+XOyVZW+dXa+og=
-X-Received: by 2002:ac8:7959:: with SMTP id r25mr37347795qtt.208.1567571915575;
- Tue, 03 Sep 2019 21:38:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/0TcseJqoK4D9Yyytz4SmT57BGmCs5CagUjz8hmy+sU=;
+        b=PzYUQ4b4sDHMs5ud/ktg9+DGqFo/4frEjAkS94R1nQgEuRCploevX9lvj04hPO1mK3
+         88F0bIVPbQyp0Pk9wLQha19J/K/ZwO/jwjlavu4QC2c8YzCW7vAkBAefs/x92LtQgxGl
+         /XYP40LbKafNZhujxRpK/KXHi40vpUkpBqTOb8udGaKwYj9qeQqHUwgUbEYzbFivCNil
+         XCJIskEWGy2SPxnSvxuJoYQt5qSAVkY5NWW0W7gDl1gbRL44H8zFSpQk+l0S5K5nbw6N
+         eOAZImSN7Ot2/wTrW9PQ1WfPyLIKFNpS6E1T983MHUE6N+81v1Lf7mF6mU07At2KvO0p
+         3W4Q==
+X-Gm-Message-State: APjAAAUsZzJjdaOlxVIXVqLYk5Uhig1gFU9dY+mk1TE2WMYku/zKMfwJ
+        wixTy9LUTHh7hDGhigbDbqBDLP58HvM=
+X-Google-Smtp-Source: APXvYqzov4EkbTZXg1j47Ju/zrxTBaboIMgXAEg90DfbebeE57Em9acA9/l39rqabo2o85/2PC00sg==
+X-Received: by 2002:a02:a516:: with SMTP id e22mr27158903jam.77.1567571990930;
+        Tue, 03 Sep 2019 21:39:50 -0700 (PDT)
+Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id s5sm16471411iol.88.2019.09.03.21.39.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 21:39:50 -0700 (PDT)
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skunberg.kelsey@gmail.com
+Cc:     skhan@linuxfoundation.org, rafael.j.wysocki@intel.com,
+        keith.busch@intel.com
+Subject: [PATCH 0/2] PCI: Change to using pci_dev_is_inaccessible()
+Date:   Tue,  3 Sep 2019 22:36:33 -0600
+Message-Id: <20190904043633.65026-1-skunberg.kelsey@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <CAB4CAwdo7H3QNEHLgG-h1Z_eRYkb+pc=V3Wvrmeju8fBByYJzw@mail.gmail.com>
- <20190903081858.GA2691@lahna.fi.intel.com> <3141a819-5964-4082-6f05-1926e16468b4@linux.intel.com>
-In-Reply-To: <3141a819-5964-4082-6f05-1926e16468b4@linux.intel.com>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Wed, 4 Sep 2019 12:38:24 +0800
-Message-ID: <CAB4CAwdRHQOiqrK5utgCzZKB-X+mDcJePBLa7o0rTWzAogo5vw@mail.gmail.com>
-Subject: Re: Tweak I2C SDA hold time on GemniLake to make touchpad work
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        lee.jones@linaro.org, Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 8:03 PM Jarkko Nikula
-<jarkko.nikula@linux.intel.com> wrote:
->
-> Hi Chris
->
-> On 9/3/19 11:18 AM, Mika Westerberg wrote:
-> > +Jarkko
-> >
-> > On Tue, Sep 03, 2019 at 04:10:27PM +0800, Chris Chiu wrote:
-> >> Hi,
-> >>
-> >> We're working on the acer Gemnilake laptop TravelMate B118-M for
-> >> touchpad not working issue. The touchpad fails to bring up and the
-> >> i2c-hid ouput the message as follows
-> >>      [    8.317293] i2c_hid i2c-ELAN0502:00: hid_descr_cmd failed
-> >> We tried on latest linux kernel 5.3.0-rc6 and it reports the same.
-> >>
-> >> We then look into I2C signal level measurement to find out why.
-> >> The following is the signal output from LA for the SCL/SDA.
-> >> https://imgur.com/sKcpvdo
-> >> The SCL frequency is ~400kHz from the SCL period, but the SDA
-> >> transition is quite weird. Per the I2C spec, the data on the SDA line
-> >> must be stable during the high period of the clock. The HIGH or LOW
-> >> state of the data line can only change when the clock signal on the
-> >> SCL line is LOW. The SDA period span across 2 SCL high, I think
-> >> that's the reason why the I2C read the wrong data and fail to initialize.
-> >>
-> >> Thus, we treak the SDA hold time by the following modification.
-> >>
-> >> --- a/drivers/mfd/intel-lpss-pci.c
-> >> +++ b/drivers/mfd/intel-lpss-pci.c
-> >> @@ -97,7 +97,8 @@ static const struct intel_lpss_platform_info bxt_uart_info = {
-> >>   };
-> >>
-> >>   static struct property_entry bxt_i2c_properties[] = {
-> >> -       PROPERTY_ENTRY_U32("i2c-sda-hold-time-ns", 42),
-> >> +       PROPERTY_ENTRY_U32("i2c-sda-hold-time-ns", 230),
-> >>          PROPERTY_ENTRY_U32("i2c-sda-falling-time-ns", 171),
-> >>          PROPERTY_ENTRY_U32("i2c-scl-falling-time-ns", 208),
-> >>          { },
-> >>
-> >> The reason why I choose sda hold time is by the Table 10 of
-> >> https://www.nxp.com/docs/en/user-guide/UM10204.pdf, the device
-> >> must provide a hold time at lease 300ns and and 42 here is relatively
-> >> too small. The signal measurement result for the same pin on Windows
-> >> is as follows.
-> >> https://imgur.com/BtKUIZB
-> >> Comparing to the same result running Linux
-> >> https://imgur.com/N4fPTYN
-> >>
-> >> After applying the sda hold time tweak patch above, the touchpad can
-> >> be correctly initialized and work. The LA signal is shown as down below.
-> >> https://imgur.com/B3PmnIp
-> >>
-> Could you try does attached patch work for you?
->
-> It's from last year for another related issue but there platform was
-> actually Apollo Lake instead of Gemini Lake but anyway it was found out
-> that Windows uses different timing parameters than Linux on Gemini Lake.
->
-> I didn't take patch forward back then due known Gemini Lake machines
-> were working with the Broxton I2C timing parameters but now it's time if
-> attached patch fixes the issue on your machine.
->
-> Patch is from top of v5.3-rc7 but should probably apply also to older
-> kernels.
->
-> --
-> Jarkko
+Patch 1: Change pci_device_is_present() name to pci_dev_is_inaccessible()
+         to encourage only using to learn if we should not access a
+         device that's inaccessible. Return value will need to be reversed
+	 to reflect the name change.
 
-Thanks, Jarkko, the patche works on my acer laptops.
+Patch 2: Relies on patch 1. Unify pci_dev_is_disconnected() with
+         pci_dev_is_inaccessible() so there is only one function
+         needed to learn if a device is inaccessible due to surprise
+         removal or an error condition.
 
-Chris
+Kelsey Skunberg (2):
+  PCI: Change pci_device_is_present() to pci_dev_is_inaccessible()
+  PCI: Unify pci_dev_is_disconnected() and pci_dev_is_inaccessible()
+
+ drivers/net/ethernet/broadcom/tg3.c       |  4 ++--
+ drivers/net/ethernet/intel/igb/igb_main.c |  2 +-
+ drivers/nvme/host/pci.c                   |  2 +-
+ drivers/pci/access.c                      | 12 ++++++------
+ drivers/pci/hotplug/acpiphp_glue.c        |  2 +-
+ drivers/pci/msi.c                         |  4 ++--
+ drivers/pci/pci.c                         | 12 ++++++------
+ drivers/pci/pci.h                         |  5 -----
+ drivers/pci/pcie/portdrv_core.c           |  2 +-
+ drivers/thunderbolt/nhi.c                 |  2 +-
+ include/linux/pci.h                       |  2 +-
+ 11 files changed, 22 insertions(+), 27 deletions(-)
+
+-- 
+2.20.1
+
