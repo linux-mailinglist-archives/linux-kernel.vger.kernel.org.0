@@ -2,126 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED8CA88B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C53D1A88B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:22:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731026AbfIDOWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 10:22:16 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39850 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730075AbfIDOWP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 10:22:15 -0400
-Received: by mail-pl1-f193.google.com with SMTP id bd8so3321151plb.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 07:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zLfyPE0SwETDkvtq1bsqjNVDjHFo5NFhYLI0JJDHf+U=;
-        b=1snVJDaz07aE2jmpN2RYpCQk1j6M/Srf+5TWc6mM9g3qTtc/LGhpFS8SBr3wKWtEUs
-         2vYCnwXgW9GP8u+jBChNFuPMJ8iwZ9V7Xcr5VSkZ9pwacLNBnQbE0mDlDmHrKh6ex7KU
-         dEWnsOFqHjya8jp54mNersHodjBUqcvphyH7IfadVYLHKiPHrbJWewxG3TVx7nFeFjiN
-         rQk268Xl9j6jNOHV5Tft4pL4TgqePxl2lKQ7MPMfBiNESFOZceoezwFHn8NU4khM2WX0
-         p/zEYa4oRctpb7xuorIQkOq1Zv3b4yQo/bzlGSKATz5xFIwT+rPVQBDntFMkz5DnGdMA
-         4y8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zLfyPE0SwETDkvtq1bsqjNVDjHFo5NFhYLI0JJDHf+U=;
-        b=LUaPhug79zW8m5vSCuZbG9+W16CbaUfROI6+gdEZL8pzwJ5Gk+JwtQcCFb6Isyjv7p
-         OiRmUeNT/JJnoiscM7HEcQo1VE927xuENYfClJcRhn6CnZP28zqGmuYk3YHM5SUN8ut3
-         zy19Cc6XIjQEyUptvBL36cDos12a50rDWGuteScPVa8EU+jaTFwC3QuGFScW6aNf9Vs5
-         RSSkW3JyZyq/o+aksl9+TU9XN30Jv8UNTSjv6Vh76RptuzRO+GaspqyM3Np/YUZdrXJE
-         X3RjVGasTG0ByeQS6isB33OIkZg+TYNmd9GCnaKwVlxIWL3wXnVMXCxDUOn6BwZD//lF
-         zfVg==
-X-Gm-Message-State: APjAAAXVfIk6MenytO7qn9+er4qV9YliE0/EZSFUTg7vUG5aM++UnHIy
-        ZhAE1Es/4V58BwfL9ZC57QXx/cIK0iYVhsCH/yw=
-X-Google-Smtp-Source: APXvYqwXlRS/Ftz/KVLDn4/l/NIOLb/ncyHE2q5troSsqlmTwDtLGgmlgtnwK5RjJr9zJVjSABvjyUk7dHWl92vOS74=
-X-Received: by 2002:a17:902:8a93:: with SMTP id p19mr41493501plo.106.1567606935073;
- Wed, 04 Sep 2019 07:22:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190904005831.153934-1-justin.he@arm.com> <fd22d787-3240-fe42-3ca3-9e8a98f86fce@arm.com>
-In-Reply-To: <fd22d787-3240-fe42-3ca3-9e8a98f86fce@arm.com>
-From:   Catalin Marinas <catalin.marinas@arm.com>
-Date:   Wed, 4 Sep 2019 15:22:03 +0100
-Message-ID: <CAHkRjk6cQTu7N+UanTspWm_LyABRhfPHQn1+PPdaHYrTC3PtfQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: fix double page fault on arm64 if PTE_AF is cleared
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Jia He <justin.he@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
+        id S1730849AbfIDOWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 10:22:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54218 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730075AbfIDOWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 10:22:08 -0400
+Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59AED22CED;
+        Wed,  4 Sep 2019 14:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567606927;
+        bh=jWVhgoJBHtb2EGwmals7m5cy/1YyE3LOy9mjAFXslGs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ux8kSma117a/mVBjYQVeu+1eVdOHvG3a1VL7F047nrPpyE20wntkkbU5JvjVMXIrI
+         JBoOfXz3lJyXWymhPYA04ymmSof6ia2kxmi+cpkTTAsK4CVCBBqNULhHt6D9hrZQYU
+         E3z75a2tG/SH0Ky0xCthJIDjZgik5a/eX+tQPStY=
+Date:   Wed, 4 Sep 2019 16:22:03 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
         Peter Zijlstra <peterz@infradead.org>,
-        Dave Airlie <airlied@redhat.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH 2/3] task: RCU protect tasks on the runqueue
+Message-ID: <20190904142202.GA20391@lenoir>
+References: <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+ <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
+ <20190830160957.GC2634@redhat.com>
+ <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
+ <87o906wimo.fsf@x220.int.ebiederm.org>
+ <20190902134003.GA14770@redhat.com>
+ <87tv9uiq9r.fsf@x220.int.ebiederm.org>
+ <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
+ <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
+ <878sr6t21a.fsf_-_@x220.int.ebiederm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878sr6t21a.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Sep 2019 at 04:20, Anshuman Khandual
-<anshuman.khandual@arm.com> wrote:
-> On 09/04/2019 06:28 AM, Jia He wrote:
-> > @@ -2152,20 +2153,30 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
-> >        */
-> >       if (unlikely(!src)) {
-> >               void *kaddr = kmap_atomic(dst);
-> > -             void __user *uaddr = (void __user *)(va & PAGE_MASK);
-> > +             void __user *uaddr = (void __user *)(vmf->address & PAGE_MASK);
-> > +             pte_t entry;
-> >
-> >               /*
-> >                * This really shouldn't fail, because the page is there
-> >                * in the page tables. But it might just be unreadable,
-> >                * in which case we just give up and fill the result with
-> > -              * zeroes.
-> > +              * zeroes. If PTE_AF is cleared on arm64, it might
-> > +              * cause double page fault here. so makes pte young here
-> >                */
-> > +             if (!pte_young(vmf->orig_pte)) {
-> > +                     entry = pte_mkyoung(vmf->orig_pte);
-> > +                     if (ptep_set_access_flags(vmf->vma, vmf->address,
-> > +                             vmf->pte, entry, vmf->flags & FAULT_FLAG_WRITE))
-> > +                             update_mmu_cache(vmf->vma, vmf->address,
-> > +                                             vmf->pte);
-> > +             }
-> > +
-> >               if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
->
-> Should not page fault be disabled when doing this ?
+On Mon, Sep 02, 2019 at 11:52:01PM -0500, Eric W. Biederman wrote:
+> 
+> In the ordinary case today the rcu grace period of a task comes when a
+> task is reaped, well after the task has left the runqueue.  This
+> change guarantees that the rcu grace period always happens after a
+> task has left the runqueue.  As this is something that usaually happens
+> today I do not expect any code correctness problems with this change.
+> At most I anticipate timing challenges.
 
-Page faults are already disabled by the kmap_atomic(). But that only
-means that you don't deadlock trying to take the mmap_sem again.
+What do you consider as the reaping point here? If this is the call to
+release_task(), it can happen way before the task forever leaves the runqueue.
 
-> Ideally it should
-> have also called access_ok() on the user address range first.
-
-Not necessary, we've already got a vma and the access to the vma checked.
-
-> The point
-> is that the caller of __copy_from_user_inatomic() must make sure that
-> there cannot be any page fault while doing the actual copy.
-
-When you copy from a user address, in general that's not guaranteed,
-more of a best effort.
-
-> But also it
-> should be done in generic way, something like in access_ok(). The current
-> proposal here seems very specific to arm64 case.
-
-The commit log didn't explain the problem properly. On arm64 without
-hardware Access Flag, copying from user will fail because the pte is
-old and cannot be marked young. So we always end up with zeroed page
-after fork() + CoW for pfn mappings.
-
--- 
-Catalin
+Let alone the RCU call to delayed_put_task_struct() can happen way before
+the target leaves the runqueue, either after autoreap or normal reaping.
