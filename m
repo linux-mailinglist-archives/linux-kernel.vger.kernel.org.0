@@ -2,95 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A27BA7D3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F82BA7D45
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbfIDIDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 04:03:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55334 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725267AbfIDIDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:03:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8A7E5B022;
-        Wed,  4 Sep 2019 08:03:11 +0000 (UTC)
-Subject: Re: Bug Report: Btrfs can't allocate space for delete when block size
- arounds 512M
-To:     "Hongzhi, Song" <hongzhi.song@windriver.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     David Sterba <dsterba@suse.com>, josef@toxicpanda.com
-References: <b501bcff-8be0-4303-8789-363fda4658e5@windriver.com>
- <3eca92d0-5a57-3fff-63e1-edd3217341d5@windriver.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <4c4f6620-66e5-8c1f-d894-c9175163bf03@suse.com>
-Date:   Wed, 4 Sep 2019 11:03:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S1729245AbfIDIEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 04:04:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:47680 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727787AbfIDIEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 04:04:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 01:04:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
+   d="scan'208";a="182406388"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga008.fm.intel.com with ESMTP; 04 Sep 2019 01:04:04 -0700
+Received: from [10.226.38.83] (rtanwar-mobl.gar.corp.intel.com [10.226.38.83])
+        by linux.intel.com (Postfix) with ESMTP id 336DC580105;
+        Wed,  4 Sep 2019 01:04:02 -0700 (PDT)
+Subject: Re: [PATCH v1 1/2] clk: intel: Add CGU clock driver for a new SoC
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com,
+        qi-ming.wu@intel.com, rahul.tanwar@intel.com, robh+dt@kernel.org,
+        robh@kernel.org, sboyd@kernel.org, yixin.zhu@linux.intel.com
+References: <6a3c26bc6e25d883686287883528dbde30725922.1566975410.git.rahul.tanwar@linux.intel.com>
+ <20190902222015.11360-1-martin.blumenstingl@googlemail.com>
+ <d9e96dab-96be-0c14-b7af-e1f2dc07ebd2@linux.intel.com>
+ <CAFBinCARQJ7q9q3r6c6Yr2SD0Oo_Drah-kxss3Obs-g=B1M28A@mail.gmail.com>
+From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Message-ID: <b7920723-1df2-62df-61c7-98c3a1665aa1@linux.intel.com>
+Date:   Wed, 4 Sep 2019 16:03:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <3eca92d0-5a57-3fff-63e1-edd3217341d5@windriver.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <CAFBinCARQJ7q9q3r6c6Yr2SD0Oo_Drah-kxss3Obs-g=B1M28A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Hi Martin,
 
-On 4.09.19 г. 5:36 ч.,  Hongzhi, Song  wrote:
-> Anybody notice this?
-> 
+On 4/9/2019 2:53 AM, Martin Blumenstingl wrote:
+>> My understanding is that if we do not use syscon, then there is no
+>> point in using regmap because this driver uses simple 32 bit register
+>> access. Can directly read/write registers using readl() & writel().
+>>
+>> Would you agree ?
+> if there was only the LGM SoC then I would say: drop regmap
+>
+> however, last year a driver for the GRX350/GRX550 SoCs was proposed: [0]
+> this was never updated but it seems to use the same "framework" as the
+> LGM driver
+> with this in mind I am for keeping regmap support because.
+> I think it will be easier to add support for old SoCs like
+> GRX350/GRX550 (but also VRX200), because the PLL sub-driver (I am
+> assuming that it is similar on all SoCs) or some other helpers can be
+> re-used across various SoCs instead of "duplicating" code (where one
+> variant would use regmap and the other readl/writel).
 
-There were multiple fixes from Josef recently improving btrfs enospc
-handling with tiny filesystems (which is generally not the targeted use
-case of btrfs). The code lives in
-https://github.com/kdave/btrfs-devel/commits/misc-next should you want
-to test it. Otherwise re-test after next merge windows when those
-patches are supposed to be merged for 5.4
+
+Earlier, we had discussed about it in our team.  There are no plans to
+
+upstream mips based platform code, past up-streaming efforts for mips
+
+platforms were also dropped. GRX350/GRX550/VRX200 are all mips
+
+based platforms. Plan is to upstream only x86 based platforms. In-fact,
+
+i had removed GRX & other older SoCs support from this driver before
+
+sending for review. So we can consider only x86 based LGM family of
+
+SoCs for this driver & all of them will be reusing same IP.
+
+> [...]
+>>> +     select OF_EARLY_FLATTREE
+>>> there's not a single other "select OF_EARLY_FLATTREE" in driver/clk
+>>> I'm not saying this is wrong but it makes me curious why you need this
+>>
+>> We need OF_EARLY_FLATTREE for LGM. But adding a new x86
+>> platform for LGM is discouraged because that would lead to too
+>> many platforms. Only differentiating factor for LGM is CPU model
+>> ID but it can differentiate only at run time. So i had no option
+>> other then enabling it with some LGM specific core system module
+>> driver and CGU seemed perfect for this purpose.
+> so when my x86 kernel maintainer enables CONFIG_INTEL_LGM_CGU_CLK then
+> OF_EARLY_FLATTREE is enabled as well.
+> does this hurt any existing x86 platform? if not: why can't we enable
+> it for x86 unconditionally?
 
 
+IMHO, it will not hurt any other existing x86 platform but enabling it for
+
+x86 unconditionally also doesn't sound like a good idea. I now get your
+
+point that enabling OF_EARLY_FLATTREE here is a bit odd. I will remove
+
+it in next patch.
+
+Regards,
+
+Rahul
+
+> I went through meson & qcom regmap clock code. Agree, it can be
+> reused for mux, divider and gate. But as mentioned above, i am now
+> considering to move away from using regmap.
+> thank you for evaluating them. let's continue the discussion above
+> whether regmap should be used - after that we decide (if needed) which
+> regmap implementation to use
+>
+>
+> Martin
+>
+>
+> [0] https://patchwork.kernel.org/patch/10554401/
