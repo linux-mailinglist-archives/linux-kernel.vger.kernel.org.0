@@ -2,75 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2410EA7E09
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AAD4A7E0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbfIDIke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 04:40:34 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38188 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725822AbfIDIkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:40:33 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B48CFF872193D02F1BFB;
-        Wed,  4 Sep 2019 16:40:28 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
- 16:40:21 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <yuehaibing@huawei.com>,
-        <alexios.zavras@intel.com>, <gregkh@linuxfoundation.org>,
-        <rfontana@redhat.com>, <tglx@linutronix.de>
-CC:     <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] ASoC: tegra: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 4 Sep 2019 16:39:09 +0800
-Message-ID: <20190904083909.18804-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1729170AbfIDIlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 04:41:11 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:45074 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728598AbfIDIlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 04:41:11 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x848dwSc017399
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Wed, 4 Sep 2019 01:40:25 -0700
+Received: from [128.224.162.188] (128.224.162.188) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Wed, 4 Sep
+ 2019 01:39:52 -0700
+Subject: Re: Bug?: unlink cause btrfs error but other fs don't
+To:     <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
+References: <49edadc4-9191-da89-3e3b-ca495f582a4d@windriver.com>
+CC:     <josef@toxicpanda.com>
+From:   "Hongzhi, Song" <hongzhi.song@windriver.com>
+Message-ID: <bbdb613c-020b-03ec-c218-57299c3f6b29@windriver.com>
+Date:   Wed, 4 Sep 2019 16:39:49 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <49edadc4-9191-da89-3e3b-ca495f582a4d@windriver.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.188]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+Hi Nikolay,
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- sound/soc/tegra/tegra30_ahub.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ >
 
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 9523812..635eacb 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -511,7 +511,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 	const struct tegra30_ahub_soc_data *soc_data;
- 	struct reset_control *rst;
- 	int i;
--	struct resource *res0, *res1;
-+	struct resource *res0;
- 	void __iomem *regs_apbif, *regs_ahub;
- 	int ret = 0;
- 
-@@ -587,8 +587,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 	}
- 	regcache_cache_only(ahub->regmap_apbif, true);
- 
--	res1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	regs_ahub = devm_ioremap_resource(&pdev->dev, res1);
-+	regs_ahub = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(regs_ahub))
- 		return PTR_ERR(regs_ahub);
- 
--- 
-2.7.4
+There were multiple fixes from Josef recently improving btrfs enospc
+handling with tiny filesystems (which is generally not the targeted use
+case of btrfs). The code lives in
+https://github.com/kdave/btrfs-devel/commits/misc-next  should you want
+to test it. Otherwise re-test after next merge windows when those
+patches are supposed to be merged for 5.4
+
+ >
 
 
+Thank for your reply, I will keep eyes on the branch.
+
+ps: this email is my simply testcase from ltp
+
+
+--Hongzhi
+
+
+On 9/4/19 4:02 PM, Hongzhi, Song wrote:
+> Hi ,
+>
+>
+> *Kernel:*
+>
+>     After v5.2-rc1, qemux86-64
+>
+>     make -j40 ARCH=x86_64 CROSS_COMPILE=x86-64-gcc
+>     use qemu to bootup kernel
+>
+>
+> *Reproduce:*
+>
+>     There is a test case failed on btrfs but success on other 
+> fs(ext4,ext3), see attachment.
+>
+>
+>     Download attachments:
+>
+>         gcc test.c -o myout -Wall -lpthread
+>
+>         copy myout and run.sh to your qemu same directory.
+>
+>         on qemu:
+>
+>             ./run.sh
+>
+>
+>     I found the block device size with btrfs set 512M will cause the 
+> error.
+>     256M and 1G all success.
+>
+>
+> *Error info:*
+>
+>     "BTRFS warning (device loop0): could not allocate space for a 
+> delete; will truncate on mount"
+>
+>
+> *Related patch:*
+>
+>     I use git bisect to find the following patch introduces the issue.
+>
+>     commit c8eaeac7b734347c3afba7008b7af62f37b9c140
+>     Author: Josef Bacik <josef@toxicpanda.com>
+>     Date:   Wed Apr 10 15:56:10 2019 -0400
+>
+>         btrfs: reserve delalloc metadata differently
+>         ...
+>
+>
+> Anyone's reply will be appreciated.
+>
+> --Hongzhi
+>
