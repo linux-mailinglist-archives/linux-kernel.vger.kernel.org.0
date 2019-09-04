@@ -2,106 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA81A8D9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A41B1A8DA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731944AbfIDRXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:23:41 -0400
-Received: from mga04.intel.com ([192.55.52.120]:18319 "EHLO mga04.intel.com"
+        id S1731895AbfIDRZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:25:17 -0400
+Received: from sauhun.de ([88.99.104.3]:44264 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731447AbfIDRXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:23:40 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 10:23:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
-   d="scan'208";a="383550359"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Sep 2019 10:23:38 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i5Z0L-0004UW-2P; Wed, 04 Sep 2019 20:23:37 +0300
-Date:   Wed, 4 Sep 2019 20:23:37 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        linux-scsi@vger.kernel.org, Joe Perches <joe@perches.com>,
-        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH 1/1] scsi: lpfc: Convert existing %pf users to %ps
-Message-ID: <20190904172337.GW2680@smile.fi.intel.com>
-References: <20190904160423.3865-1-sakari.ailus@linux.intel.com>
+        id S1726589AbfIDRZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:25:17 -0400
+Received: from localhost (p54B337F1.dip0.t-ipconnect.de [84.179.55.241])
+        by pokefinder.org (Postfix) with ESMTPSA id E42F02C08C3;
+        Wed,  4 Sep 2019 19:25:14 +0200 (CEST)
+Date:   Wed, 4 Sep 2019 19:25:14 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     miquel.raynal@bootlin.com, rui.zhang@intel.com,
+        edubezval@gmail.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, eric@anholt.net, wahrenst@gmx.net,
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        mmayer@broadcom.com, computersforpeace@gmail.com,
+        gregory.0xf0@gmail.com, matthias.bgg@gmail.com, agross@kernel.org,
+        heiko@sntech.de, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, marc.w.gonzalez@free.fr, mans@mansr.com,
+        talel@amazon.com, jun.nie@linaro.org, shawnguo@kernel.org,
+        phil@raspberrypi.org, gregkh@linuxfoundation.org,
+        david.hernandezsanchez@st.com, horms+renesas@verge.net.au,
+        wsa+renesas@sang-engineering.com,
+        bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH -next 15/15] thermal: rcar: use
+ devm_platform_ioremap_resource() to simplify code
+Message-ID: <20190904172514.GA2602@kunai>
+References: <20190904122939.23780-1-yuehaibing@huawei.com>
+ <20190904122939.23780-16-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
 Content-Disposition: inline
-In-Reply-To: <20190904160423.3865-1-sakari.ailus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20190904122939.23780-16-yuehaibing@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 07:04:23PM +0300, Sakari Ailus wrote:
-> Convert the remaining %pf users to %ps to prepare for the removal of the
-> old %pf conversion specifier support.
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+--AhhlLboLdkugWU4S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Fixes: 323506644972 ("scsi: lpfc: Migrate to %px and %pf in kernel print calls")
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  drivers/scsi/lpfc/lpfc_hbadisc.c | 4 ++--
->  drivers/scsi/lpfc/lpfc_sli.c     | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-> index e7463d561f305..749286acdc173 100644
-> --- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-> +++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-> @@ -6051,7 +6051,7 @@ __lpfc_find_node(struct lpfc_vport *vport, node_filter filter, void *param)
->  	list_for_each_entry(ndlp, &vport->fc_nodes, nlp_listp) {
->  		if (filter(ndlp, param)) {
->  			lpfc_printf_vlog(vport, KERN_INFO, LOG_NODE,
-> -					 "3185 FIND node filter %pf DID "
-> +					 "3185 FIND node filter %ps DID "
->  					 "ndlp x%px did x%x flg x%x st x%x "
->  					 "xri x%x type x%x rpi x%x\n",
->  					 filter, ndlp, ndlp->nlp_DID,
-> @@ -6062,7 +6062,7 @@ __lpfc_find_node(struct lpfc_vport *vport, node_filter filter, void *param)
->  		}
->  	}
->  	lpfc_printf_vlog(vport, KERN_INFO, LOG_NODE,
-> -			 "3186 FIND node filter %pf NOT FOUND.\n", filter);
-> +			 "3186 FIND node filter %ps NOT FOUND.\n", filter);
->  	return NULL;
->  }
->  
-> diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-> index bb5705267c395..2ff0879a95126 100644
-> --- a/drivers/scsi/lpfc/lpfc_sli.c
-> +++ b/drivers/scsi/lpfc/lpfc_sli.c
-> @@ -2712,7 +2712,7 @@ lpfc_sli_handle_mb_event(struct lpfc_hba *phba)
->  
->  		/* Mailbox cmd <cmd> Cmpl <cmpl> */
->  		lpfc_printf_log(phba, KERN_INFO, LOG_MBOX | LOG_SLI,
-> -				"(%d):0307 Mailbox cmd x%x (x%x/x%x) Cmpl %pf "
-> +				"(%d):0307 Mailbox cmd x%x (x%x/x%x) Cmpl %ps "
->  				"Data: x%x x%x x%x x%x x%x x%x x%x x%x x%x "
->  				"x%x x%x x%x\n",
->  				pmb->vport ? pmb->vport->vpi : 0,
-> -- 
-> 2.20.1
-> 
+On Wed, Sep 04, 2019 at 08:29:39PM +0800, YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+>=20
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
+I think for such straightforward (and manifold) conversions, one patch
+per subsystem is better than one patch per driver. But this is not my
+subsystem, so I'll leave it to the thermal maintainers.
 
 
+--AhhlLboLdkugWU4S
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1v83EACgkQFA3kzBSg
+KbZOUg/+Jw+mcZ79x8rHt2nPfBEtW1lYrickXXODhze40rPG/rARNtQxdyBIRKOj
+cl3g5q/PL2U0k4nrUuD3osCpUNceFye3A7o5eE81j8hSOBvwADNtAIPaIXenudHD
+P8krbODpUIy3ifIf24cUnCMr6teo0CduolmrCpDlmd1LWJmRpbdY+sejDVi8qAzs
+xJDN67R6O8lEDJSS0o63xXu4+ZSizqcfVQqlWdkTxc3wqHhdUXFLeCWH5Ow1RsbP
+ArXyH7xGG9xQxkiKavZSxYciob3PqcvRdfDv4dNRgNpJFir+mxbJVpQ2IyKr/hyn
+jYzzcz9sd02cXsxAOURY1OS7AhPUiRl5XZIhWR+0VRXwJhBTkpHh/Ro4RRgzMHCC
+UnRZgonQvO50HpmC3IHKPjq2rvKYYAYF2kr+rTjAiXsT2ZgECU5nQRypkMPy3CX2
+YdP9JnaDd7OpDw3+tvPRmbEpAkjcXK5QQp4vHnqaTrnaqyxbMVA6uRt68uSbNHIY
+gkTny6PNBTAr/0scsb7xo481yPA0MOCeShSAj6Dvk0pagXrfE4AgWf1vLPbUieUZ
+PrZ+0B6jIYMKswq8FVvwSvn+Jrk/RFvFOLFpiuCnWZx0kDz8BDVrkQrwz5NsNm7D
+NNOQUh/6TBD6/1TLapgeH4dtXhje3qlv8OzuEYhnkwS4UX3HvAI=
+=XQ0z
+-----END PGP SIGNATURE-----
+
+--AhhlLboLdkugWU4S--
