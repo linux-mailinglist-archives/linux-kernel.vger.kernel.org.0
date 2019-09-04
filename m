@@ -2,94 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F887A8243
+	by mail.lfdr.de (Postfix) with ESMTP id E9291A8244
 	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:23:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729981AbfIDMTS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Sep 2019 08:19:18 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:37294 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727929AbfIDMTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:19:18 -0400
-Received: from DGGEML401-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 409C5B175537DB1266F5;
-        Wed,  4 Sep 2019 20:19:16 +0800 (CST)
-Received: from DGGEML512-MBX.china.huawei.com ([169.254.2.60]) by
- DGGEML401-HUB.china.huawei.com ([fe80::89ed:853e:30a9:2a79%31]) with mapi id
- 14.03.0439.000; Wed, 4 Sep 2019 20:19:11 +0800
-From:   sunqiuyang <sunqiuyang@huawei.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: RE: [PATCH 1/1] mm/migrate: fix list corruption in migration of
- non-LRU movable pages
-Thread-Topic: [PATCH 1/1] mm/migrate: fix list corruption in migration of
- non-LRU movable pages
-Thread-Index: AQHVYi7CKRiSaGuZ20KJAhdeZXNZ4qcZaW+AgAFf/lT//8LbAIAAjGWd//+OTACAAMgqDg==
-Date:   Wed, 4 Sep 2019 12:19:11 +0000
-Message-ID: <157FC541501A9C4C862B2F16FFE316DC190C3402@dggeml512-mbx.china.huawei.com>
-References: <20190903082746.20736-1-sunqiuyang@huawei.com>
- <20190903131737.GB18939@dhcp22.suse.cz>
- <157FC541501A9C4C862B2F16FFE316DC190C1B09@dggeml512-mbx.china.huawei.com>
- <20190904063836.GD3838@dhcp22.suse.cz>
- <157FC541501A9C4C862B2F16FFE316DC190C2EBD@dggeml512-mbx.china.huawei.com>,<20190904081408.GF3838@dhcp22.suse.cz>
-In-Reply-To: <20190904081408.GF3838@dhcp22.suse.cz>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.177.249.127]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1729989AbfIDMUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 08:20:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42176 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727929AbfIDMUQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 08:20:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Awvpdgkqn6/w+tezauopO9pT/rkCwfPb/ThYPnLC8xo=; b=S22mIGBDa3bIDmaOJah99xsFD
+        /c7IULtxrQCz9AmzLPMibuTKx1dhSVAEaa8hVdn2c5xYy1TMv/KQpCVGApDA9ay043sxNlo+ZwlH4
+        2UD4R/xW5ypUAhsJFI92Iu5uKj7NNmte0VHT1ijvIvIamRVshOmawFJykKiK8M84mlaeVfnwxALWa
+        wkLFq0jmhjSk8hIzLtgM7M8AlKLiny42Kq0RJ9YzY4jzIUn7Bm+7ALkbABGEFsKO43qgsyyfhgWJV
+        WlUWnaaQm2anLlACQIeN3YVISvlpuqijNJ8wT0lD1QPg1LOXHVW52GFlg7UBpWWrtrUJS9pmU/Lce
+        HofrjIoPw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5UGK-0004fb-Er; Wed, 04 Sep 2019 12:19:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DD860306029;
+        Wed,  4 Sep 2019 14:19:09 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6BA2329D94A62; Wed,  4 Sep 2019 14:19:46 +0200 (CEST)
+Date:   Wed, 4 Sep 2019 14:19:46 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     John Ogness <john.ogness@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: numlist_pop(): Re: [RFC PATCH v4 1/9] printk-rb: add a new
+ printk ringbuffer implementation
+Message-ID: <20190904121946.GZ2369@hirez.programming.kicks-ass.net>
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+ <20190807222634.1723-2-john.ogness@linutronix.de>
+ <20190820081518.3r3cagzggtifsvhz@pathway.suse.cz>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190820081518.3r3cagzggtifsvhz@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 20, 2019 at 10:15:18AM +0200, Petr Mladek wrote:
 
-________________________________________
-From: Michal Hocko [mhocko@kernel.org]
-Sent: Wednesday, September 04, 2019 16:14
-To: sunqiuyang
-Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org
-Subject: Re: [PATCH 1/1] mm/migrate: fix list corruption in migration of non-LRU movable pages
+> 	do {
+> 		tail_id = atomic_long_read(&nl->tail_id);
+> 
+> 		/*
+> 		 * Read might fail when the tail node has been removed
+> 		 * and reused in parallel.
+> 		 */
+> 		if (!numlist_read(nl, tail_id, NULL, &next_id))
+> 			continue;
+> 
+> 		/* Make sure the node is not the only node on the list. */
+> 		if (next_id == tail_id)
+> 			return NULL;
+> 
+> 		/* cC: Make sure the node is not busy. */
+> 		if (nl->busy(tail_id, nl->busy_arg))
+> 			return NULL;
+> 
+> 	while (atomic_long_cmpxchg_relaxed(&nl->tail_id, tail_id, next_id) !=
+> 			tail_id);
 
-Do not top post please
+Both you and John should have a look at atomic*_try_cmpxchg*(); with
+that you can write the above as:
 
-On Wed 04-09-19 07:27:25, sunqiuyang wrote:
-> isolate_migratepages_block() from another thread may try to isolate the page again:
->
-> for (; low_pfn < end_pfn; low_pfn++) {
->   /* ... */
->   page = pfn_to_page(low_pfn);
->  /* ... */
->   if (!PageLRU(page)) {
->     if (unlikely(__PageMovable(page)) && !PageIsolated(page)) {
->         /* ... */
->         if (!isolate_movable_page(page, isolate_mode))
->           goto isolate_success;
->       /*... */
-> isolate_success:
->      list_add(&page->lru, &cc->migratepages);
->
-> And this page will be added to another list.
-> Or, do you see any reason that the page cannot go through this path?
+	tail_id = atomic_long_read(&nl->tai_id);
+	do {
+		...
+	} while (!atomic_long_try_cmpxchg_relaxed(&nl->tail_id, &tail_id, next_id));
 
-The page shouldn't be __PageMovable after the migration is done. All the
-state should have been transfered to the new page IIUC.
-
-----
-I don't see where page->mapping is modified after the migration is done. 
-
-Actually, the last comment in move_to_new_page() says,
-"Anonymous and movable page->mapping will be cleard by
-free_pages_prepare so don't reset it here for keeping
-the type to work PageAnon, for example. "
-
-Or did I miss something? Thanks,
-
---
-Michal Hocko
-SUSE Labs
+And get better code-gen to boot.
