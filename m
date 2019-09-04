@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 199B8A8FFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49D5FA8F01
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389559AbfIDSHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:07:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49234 "EHLO mail.kernel.org"
+        id S2388541AbfIDSBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:01:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389118AbfIDSG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:06:58 -0400
+        id S1733156AbfIDSBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:01:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 673C022CEA;
-        Wed,  4 Sep 2019 18:06:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36BD421883;
+        Wed,  4 Sep 2019 18:01:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620416;
-        bh=Aonhen+Hf0IKqypzw6q6wfDZU0CswYTHcylXX+4eS8g=;
+        s=default; t=1567620073;
+        bh=KFODnPUszH4MM9Zm/k4q06s97DmxuuLgP9E4w7ZP23Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jr9WFpX1qup9H7n+9CZuuVzmc8uhY4+8J6PK2g3ICbo1jVWzXRmAee+PPtQwuqBUd
-         tXVC7veMrBYWRO1JREeHnf8hs6PMmULTjlVx23h0NdUmRqxPfxKDk+LLR1D0LD5QwA
-         4S/Yy9QVWM/MkwzGu6atypy7SuWvUme+VOLFuWN8=
+        b=LTedBING+TA5YrW62xK2WLonC2WdJZurSa6GugFkBCnHUyGOOecE1uy9b6NxxE0l9
+         q+o0cSjVeS8E5IzfrFjgslECWMEW4fbG8tLdfHUSZeTdgSKBDTRI3kwstN6QiGCLBk
+         tfvibPh+tkg9oOgsyt9BAGlqRppcNhP+ahpVBgWU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 51/93] ftrace: Fix NULL pointer dereference in t_probe_next()
-Date:   Wed,  4 Sep 2019 19:53:53 +0200
-Message-Id: <20190904175307.427412338@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Bandan Das <bsd@redhat.com>
+Subject: [PATCH 4.9 62/83] x86/apic: Do not initialize LDR and DFR for bigsmp
+Date:   Wed,  4 Sep 2019 19:53:54 +0200
+Message-Id: <20190904175309.055395108@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,77 +43,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+From: Bandan Das <bsd@redhat.com>
 
-commit 7bd46644ea0f6021dc396a39a8bfd3a58f6f1f9f upstream.
+commit bae3a8d3308ee69a7dbdf145911b18dfda8ade0d upstream.
 
-LTP testsuite on powerpc results in the below crash:
+Legacy apic init uses bigsmp for smp systems with 8 and more CPUs. The
+bigsmp APIC implementation uses physical destination mode, but it
+nevertheless initializes LDR and DFR. The LDR even ends up incorrectly with
+multiple bit being set.
 
-  Unable to handle kernel paging request for data at address 0x00000000
-  Faulting instruction address: 0xc00000000029d800
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  LE SMP NR_CPUS=2048 NUMA PowerNV
-  ...
-  CPU: 68 PID: 96584 Comm: cat Kdump: loaded Tainted: G        W
-  NIP:  c00000000029d800 LR: c00000000029dac4 CTR: c0000000001e6ad0
-  REGS: c0002017fae8ba10 TRAP: 0300   Tainted: G        W
-  MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 28022422  XER: 20040000
-  CFAR: c00000000029d90c DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0
-  ...
-  NIP [c00000000029d800] t_probe_next+0x60/0x180
-  LR [c00000000029dac4] t_mod_start+0x1a4/0x1f0
-  Call Trace:
-  [c0002017fae8bc90] [c000000000cdbc40] _cond_resched+0x10/0xb0 (unreliable)
-  [c0002017fae8bce0] [c0000000002a15b0] t_start+0xf0/0x1c0
-  [c0002017fae8bd30] [c0000000004ec2b4] seq_read+0x184/0x640
-  [c0002017fae8bdd0] [c0000000004a57bc] sys_read+0x10c/0x300
-  [c0002017fae8be30] [c00000000000b388] system_call+0x5c/0x70
+This does not cause a functional problem because LDR and DFR are ignored
+when physical destination mode is active, but it triggered a problem on a
+32-bit KVM guest which jumps into a kdump kernel.
 
-The test (ftrace_set_ftrace_filter.sh) is part of ftrace stress tests
-and the crash happens when the test does 'cat
-$TRACING_PATH/set_ftrace_filter'.
+The multiple bits set unearthed a bug in the KVM APIC implementation. The
+code which creates the logical destination map for VCPUs ignores the
+disabled state of the APIC and ends up overwriting an existing valid entry
+and as a result, APIC calibration hangs in the guest during kdump
+initialization.
 
-The address points to the second line below, in t_probe_next(), where
-filter_hash is dereferenced:
-  hash = iter->probe->ops.func_hash->filter_hash;
-  size = 1 << hash->size_bits;
+Remove the bogus LDR/DFR initialization.
 
-This happens due to a race with register_ftrace_function_probe(). A new
-ftrace_func_probe is created and added into the func_probes list in
-trace_array under ftrace_lock. However, before initializing the filter,
-we drop ftrace_lock, and re-acquire it after acquiring regex_lock. If
-another process is trying to read set_ftrace_filter, it will be able to
-acquire ftrace_lock during this window and it will end up seeing a NULL
-filter_hash.
+This is not intended to work around the KVM APIC bug. The LDR/DFR
+ininitalization is wrong on its own.
 
-Fix this by just checking for a NULL filter_hash in t_probe_next(). If
-the filter_hash is NULL, then this probe is just being added and we can
-simply return from here.
+The issue goes back into the pre git history. The fixes tag is the commit
+in the bitkeeper import which introduced bigsmp support in 2003.
 
-Link: http://lkml.kernel.org/r/05e021f757625cbbb006fad41380323dbe4e3b43.1562249521.git.naveen.n.rao@linux.vnet.ibm.com
+  git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
 
+Fixes: db7b9e9f26b8 ("[PATCH] Clustered APIC setup for >8 CPU systems")
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Bandan Das <bsd@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
-Fixes: 7b60f3d876156 ("ftrace: Dynamically create the probe ftrace_ops for the trace_array")
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Link: https://lkml.kernel.org/r/20190826101513.5080-2-bsd@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/ftrace.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kernel/apic/bigsmp_32.c |   24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -3112,6 +3112,10 @@ t_probe_next(struct seq_file *m, loff_t
- 		hnd = &iter->probe_entry->hlist;
+--- a/arch/x86/kernel/apic/bigsmp_32.c
++++ b/arch/x86/kernel/apic/bigsmp_32.c
+@@ -37,32 +37,12 @@ static int bigsmp_early_logical_apicid(i
+ 	return early_per_cpu(x86_cpu_to_apicid, cpu);
+ }
  
- 	hash = iter->probe->ops.func_hash->filter_hash;
-+
-+	if (!hash)
-+		return NULL;
-+
- 	size = 1 << hash->size_bits;
+-static inline unsigned long calculate_ldr(int cpu)
+-{
+-	unsigned long val, id;
+-
+-	val = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
+-	id = per_cpu(x86_bios_cpu_apicid, cpu);
+-	val |= SET_APIC_LOGICAL_ID(id);
+-
+-	return val;
+-}
+-
+ /*
+- * Set up the logical destination ID.
+- *
+- * Intel recommends to set DFR, LDR and TPR before enabling
+- * an APIC.  See e.g. "AP-388 82489DX User's Manual" (Intel
+- * document number 292116).  So here it goes...
++ * bigsmp enables physical destination mode
++ * and doesn't use LDR and DFR
+  */
+ static void bigsmp_init_apic_ldr(void)
+ {
+-	unsigned long val;
+-	int cpu = smp_processor_id();
+-
+-	apic_write(APIC_DFR, APIC_DFR_FLAT);
+-	val = calculate_ldr(cpu);
+-	apic_write(APIC_LDR, val);
+ }
  
-  retry:
+ static void bigsmp_setup_apic_routing(void)
 
 
