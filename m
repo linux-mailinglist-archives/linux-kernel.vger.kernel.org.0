@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4739A90B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43251A8FB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390256AbfIDSLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:11:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55224 "EHLO mail.kernel.org"
+        id S2389227AbfIDSFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:05:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389078AbfIDSLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:11:16 -0400
+        id S2389184AbfIDSFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:05:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4937B2087E;
-        Wed,  4 Sep 2019 18:11:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9317A206BA;
+        Wed,  4 Sep 2019 18:05:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620675;
-        bh=6VocBX/cUeMQovf54r30/HgPsxfG/keOsg+hSKLsjPY=;
+        s=default; t=1567620313;
+        bh=LcdcNnE9n2PIlKVNNgykQorugHH6svCUBvse4OwtHms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k1qikXAhjY9nwSoQpREVg1orzn5241AD9Skcu9NCUG2lGZ2MOyD2vojhNVRhfgLU6
-         tG1UcxkLSv89zyEFLLA8CpW9UYU6x5U2FAonH2p+QhBKmdh8iuN5UKBJKUD3Xr/AYJ
-         x9tH5Ja+F9DOjxTBJqXx9cQGs1mpQd5BY2jHjZ+o=
+        b=fT9nUc9hChnsKJZXxcP7TJGctlaOgkZVHx36Si7yC2Bu3i6vkH5ijG2If2iPOnMyY
+         XkW8XIhadi8e3+CpKyBe2mLL8uBUgdH5od1MSLJMQrrm+1KaTr5Yk75S7xwAwvFlo6
+         W8FYnuJW2p836wx4Uvy4RITFzaZ5Dxg6ndSNLASU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 051/143] net: cpsw: fix NULL pointer exception in the probe error path
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        zhengbin <zhengbin13@huawei.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 12/93] auxdisplay: panel: need to delete scan_timer when misc_register fails in panel_attach
 Date:   Wed,  4 Sep 2019 19:53:14 +0200
-Message-Id: <20190904175316.065876752@linuxfoundation.org>
+Message-Id: <20190904175304.238518350@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,43 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Antoine Tenart <antoine.tenart@bootlin.com>
+[ Upstream commit b33d567560c1aadf3033290d74d4fd67af47aa61 ]
 
-[ Upstream commit 2d683eaaeeb9d33d23674ae635e0ef1448523d18 ]
+In panel_attach, if misc_register fails, we need to delete scan_timer,
+which was setup in keypad_init->init_scan_timer.
 
-In certain cases when the probe function fails the error path calls
-cpsw_remove_dt() before calling platform_set_drvdata(). This is an
-issue as cpsw_remove_dt() uses platform_get_drvdata() to retrieve the
-cpsw_common data and leds to a NULL pointer exception. This patches
-fixes it by calling platform_set_drvdata() earlier in the probe.
-
-Fixes: 83a8471ba255 ("net: ethernet: ti: cpsw: refactor probe to group common hw initialization")
-Reported-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ti/cpsw.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/auxdisplay/panel.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -2372,6 +2372,7 @@ static int cpsw_probe(struct platform_de
- 	if (!cpsw)
- 		return -ENOMEM;
+diff --git a/drivers/auxdisplay/panel.c b/drivers/auxdisplay/panel.c
+index 3b25a643058c9..0b8e2a7d6e934 100644
+--- a/drivers/auxdisplay/panel.c
++++ b/drivers/auxdisplay/panel.c
+@@ -1618,6 +1618,8 @@ static void panel_attach(struct parport *port)
+ 	return;
  
-+	platform_set_drvdata(pdev, cpsw);
- 	cpsw->dev = dev;
- 
- 	mode = devm_gpiod_get_array_optional(dev, "mode", GPIOD_OUT_LOW);
-@@ -2476,7 +2477,6 @@ static int cpsw_probe(struct platform_de
- 		goto clean_cpts;
- 	}
- 
--	platform_set_drvdata(pdev, ndev);
- 	priv = netdev_priv(ndev);
- 	priv->cpsw = cpsw;
- 	priv->ndev = ndev;
+ err_lcd_unreg:
++	if (scan_timer.function)
++		del_timer_sync(&scan_timer);
+ 	if (lcd.enabled)
+ 		charlcd_unregister(lcd.charlcd);
+ err_unreg_device:
+-- 
+2.20.1
+
 
 
