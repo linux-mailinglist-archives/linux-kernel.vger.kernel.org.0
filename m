@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFC69A8EB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69BBDA8EBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387612AbfIDR7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:59:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
+        id S2387910AbfIDR7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:59:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388249AbfIDR7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:59:36 -0400
+        id S2387617AbfIDR7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:59:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A570622CF5;
-        Wed,  4 Sep 2019 17:59:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D1B422CEA;
+        Wed,  4 Sep 2019 17:59:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619975;
-        bh=f+1Mex/iqBR9je1HugsNkp7YBw0XSVbsJslW2ml9QmA=;
+        s=default; t=1567619978;
+        bh=fp7pC5A6v8DesicfVH1brRId9ycSV71FJmTtEnSVlJ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vZ6FxgymmDVsxPXIXu7SZ0Zw1ZtJ6p3X4yo/vSV0MuamNEAovgjpilWF8Q2ZcXjbK
-         y405Glyaz5fH6DFKOae6piyJM8zYP9v/ALRCSMmyQ6z8EIPE4+Zoy11hxrMgxuoVBB
-         P38v08oQT9nJpVGlH2nkPXZq0zXfT45NDdkdoia0=
+        b=zirDyoIJu9bW7MizUdlA3ZG6lglSzRnzCPTSCqxEP1oEtq0dqiTRK4rMHsp9NtTt1
+         9VQAkx0fVdWxkLvAIubVsSzChfb6B9QSgKNh0X1WsNlhpRDsv9BXcF/7upbpGPWczO
+         fgohj4Jo9ZcRynk384Uh6mC93tXeIwUfPo0uIskk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jin Yao <yao.jin@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 26/83] perf pmu-events: Fix missing "cpu_clk_unhalted.core" event
-Date:   Wed,  4 Sep 2019 19:53:18 +0200
-Message-Id: <20190904175306.271717796@linuxfoundation.org>
+Subject: [PATCH 4.9 27/83] selftests: kvm: Adding config fragments
+Date:   Wed,  4 Sep 2019 19:53:19 +0200
+Message-Id: <20190904175306.343765540@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
 References: <20190904175303.488266791@linuxfoundation.org>
@@ -49,62 +44,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8e6e5bea2e34c61291d00cb3f47560341aa84bc3 ]
+[ Upstream commit c096397c78f766db972f923433031f2dec01cae0 ]
 
-The events defined in pmu-events JSON are parsed and added into perf
-tool. For fixed counters, we handle the encodings between JSON and perf
-by using a static array fixed[].
+selftests kvm test cases need pre-required kernel configs for the test
+to get pass.
 
-But the fixed[] has missed an important event "cpu_clk_unhalted.core".
-
-For example, on the Tremont platform,
-
-  [root@localhost ~]# perf stat -e cpu_clk_unhalted.core -a
-  event syntax error: 'cpu_clk_unhalted.core'
-                       \___ parser error
-
-With this patch, the event cpu_clk_unhalted.core can be parsed.
-
-  [root@localhost perf]# ./perf stat -e cpu_clk_unhalted.core -a -vvv
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             4
-    size                             112
-    config                           0x3c
-    sample_type                      IDENTIFIER
-    read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
-    disabled                         1
-    inherit                          1
-    exclude_guest                    1
-  ------------------------------------------------------------
-...
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190729072755.2166-1-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/pmu-events/jevents.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/selftests/kvm/config | 3 +++
+ 1 file changed, 3 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/config
 
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index 41611d7f9873c..016d12af68773 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -315,6 +315,7 @@ static struct fixed {
- 	{ "inst_retired.any_p", "event=0xc0" },
- 	{ "cpu_clk_unhalted.ref", "event=0x0,umask=0x03" },
- 	{ "cpu_clk_unhalted.thread", "event=0x3c" },
-+	{ "cpu_clk_unhalted.core", "event=0x3c" },
- 	{ "cpu_clk_unhalted.thread_any", "event=0x3c,any=1" },
- 	{ NULL, NULL},
- };
+diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
+new file mode 100644
+index 0000000000000..63ed533f73d6e
+--- /dev/null
++++ b/tools/testing/selftests/kvm/config
+@@ -0,0 +1,3 @@
++CONFIG_KVM=y
++CONFIG_KVM_INTEL=y
++CONFIG_KVM_AMD=y
 -- 
 2.20.1
 
