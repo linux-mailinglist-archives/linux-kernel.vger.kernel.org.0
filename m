@@ -2,126 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E768A9569
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D29DCA9570
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730251AbfIDVpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 17:45:10 -0400
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:4868 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726495AbfIDVpJ (ORCPT
+        id S1730444AbfIDVqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 17:46:32 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:22900 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729626AbfIDVqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 17:45:09 -0400
-Received: from pps.filterd (m0134425.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x84LfFJb011536;
-        Wed, 4 Sep 2019 21:45:06 GMT
-Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2utf2aaxg3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Sep 2019 21:45:06 +0000
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2353.austin.hpe.com (Postfix) with ESMTP id 9D1EA89;
-        Wed,  4 Sep 2019 21:45:05 +0000 (UTC)
-Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
-        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id 462FD36;
-        Wed,  4 Sep 2019 21:45:05 +0000 (UTC)
-Date:   Wed, 4 Sep 2019 16:45:05 -0500
-From:   Steve Wahl <steve.wahl@hpe.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com, vaibhavrustagi@google.com,
-        russ.anderson@hpe.com, dimitri.sivanich@hpe.com,
-        mike.travis@hpe.com
-Subject: [PATCH 1/1] x86/purgatory: Change compiler flags to avoid relocation
- errors.
-Message-ID: <20190904214505.GA15093@swahl-linux>
+        Wed, 4 Sep 2019 17:46:31 -0400
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x84LPGfi031095
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Sep 2019 14:46:28 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=TzE5W3eqTtOsBBkx638/fn6BtEgf/jR//x4WCHCokyg=;
+ b=e7lptsGC+xk7s4mZ/XfItQBSyUjAkMuS2x55u7xlArSsMZhmxlC5Wag14VsSO+9BOt7R
+ k3O3kZ+SSZksz8Gs0AYBMZMwhY3ySVVgYU37edANIM1L3KtwGUnCxYU5NOt2FRgI+KB7
+ D4If0vfRTFJVlWhqU399XamUXfoMRSqs1Yo= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2utkkpgqb8-12
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:46:27 -0700
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Wed, 4 Sep 2019 14:46:27 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 75DBD62E2A5C; Wed,  4 Sep 2019 14:46:24 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>
+CC:     <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
+        Jie Meng <jmeng@fb.com>, Peter Zijlstra <peterz@infradead.org>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH] perf: rework memory accounting in perf_mmap()
+Date:   Wed, 4 Sep 2019 14:46:18 -0700
+Message-ID: <20190904214618.3795672-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-HPE-SCL: -1
+Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
  definitions=2019-09-04_05:2019-09-04,2019-09-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 mlxscore=0 adultscore=0
- suspectscore=0 malwarescore=0 spamscore=0 clxscore=1011 mlxlogscore=503
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1909040211
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 mlxlogscore=868 phishscore=0
+ clxscore=1015 suspectscore=3 impostorscore=0 spamscore=0
+ priorityscore=1501 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1906280000 definitions=main-1909040210
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The last change to this Makefile caused relocation errors when loading
-a kdump kernel.  This change restores the appropriate flags, without
-reverting to the former practice of resetting KBUILD_CFLAGS.
+perf_mmap() always increases user->locked_vm. As a result, "extra" could
+grow bigger than "user_extra", which doesn't make sense. Here is an
+example case:
 
-Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+Note: Assume "user_lock_limit" is very small.
+| # of perf_mmap calls |vma->vm_mm->pinned_vm|user->locked_vm|
+| 0                    | 0                   | 0             |
+| 1                    | user_extra          | user_extra    |
+| 2                    | 3 * user_extra      | 2 * user_extra|
+| 3                    | 6 * user_extra      | 3 * user_extra|
+| 4                    | 10 * user_extra     | 4 * user_extra|
+
+Fix this by maintaining proper user_extra and extra.
+
+Reported-by: Hechao Li <hechaol@fb.com>
+Cc: Jie Meng <jmeng@fb.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- arch/x86/purgatory/Makefile | 35 +++++++++++++++++++----------------
- 1 file changed, 19 insertions(+), 16 deletions(-)
+ kernel/events/core.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 8901a1f89cf5..9f0bfef1f5db 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -18,37 +18,40 @@ targets += purgatory.ro
- KASAN_SANITIZE	:= n
- KCOV_INSTRUMENT := n
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 0463c1151bae..a0120bdbce17 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5585,7 +5585,8 @@ static void perf_mmap_close(struct vm_area_struct *vma)
+ 	 * undo the VM accounting.
+ 	 */
  
-+# These are adjustments to the compiler flags used for objects that
-+# make up the standalone porgatory.ro
-+
-+PURGATORY_CFLAGS_REMOVE := -mcmodel=kernel
-+PURGATORY_CFLAGS := -mcmodel=large -ffreestanding -fno-zero-initialized-in-bss
-+
- # Default KBUILD_CFLAGS can have -pg option set when FTRACE is enabled. That
- # in turn leaves some undefined symbols like __fentry__ in purgatory and not
- # sure how to relocate those.
- ifdef CONFIG_FUNCTION_TRACER
--CFLAGS_REMOVE_sha256.o		+= $(CC_FLAGS_FTRACE)
--CFLAGS_REMOVE_purgatory.o	+= $(CC_FLAGS_FTRACE)
--CFLAGS_REMOVE_string.o		+= $(CC_FLAGS_FTRACE)
--CFLAGS_REMOVE_kexec-purgatory.o	+= $(CC_FLAGS_FTRACE)
-+PURGATORY_CFLAGS_REMOVE		+= $(CC_FLAGS_FTRACE)
- endif
+-	atomic_long_sub((size >> PAGE_SHIFT) + 1, &mmap_user->locked_vm);
++	atomic_long_sub((size >> PAGE_SHIFT) + 1 - mmap_locked,
++			&mmap_user->locked_vm);
+ 	atomic64_sub(mmap_locked, &vma->vm_mm->pinned_vm);
+ 	free_uid(mmap_user);
  
- ifdef CONFIG_STACKPROTECTOR
--CFLAGS_REMOVE_sha256.o		+= -fstack-protector
--CFLAGS_REMOVE_purgatory.o	+= -fstack-protector
--CFLAGS_REMOVE_string.o		+= -fstack-protector
--CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector
-+PURGATORY_CFLAGS_REMOVE		+= -fstack-protector
- endif
+@@ -5729,8 +5730,20 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
  
- ifdef CONFIG_STACKPROTECTOR_STRONG
--CFLAGS_REMOVE_sha256.o		+= -fstack-protector-strong
--CFLAGS_REMOVE_purgatory.o	+= -fstack-protector-strong
--CFLAGS_REMOVE_string.o		+= -fstack-protector-strong
--CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector-strong
-+PURGATORY_CFLAGS_REMOVE		+= -fstack-protector-strong
- endif
+ 	user_locked = atomic_long_read(&user->locked_vm) + user_extra;
  
- ifdef CONFIG_RETPOLINE
--CFLAGS_REMOVE_sha256.o		+= $(RETPOLINE_CFLAGS)
--CFLAGS_REMOVE_purgatory.o	+= $(RETPOLINE_CFLAGS)
--CFLAGS_REMOVE_string.o		+= $(RETPOLINE_CFLAGS)
--CFLAGS_REMOVE_kexec-purgatory.o	+= $(RETPOLINE_CFLAGS)
-+PURGATORY_CFLAGS_REMOVE		+= $(RETPOLINE_CFLAGS)
- endif
+-	if (user_locked > user_lock_limit)
++	if (user_locked <= user_lock_limit) {
++		/* charge all to locked_vm */
++	} else if (atomic_long_read(&user->locked_vm) >= user_lock_limit) {
++		/* charge all to pinned_vm */
++		extra = user_extra;
++		user_extra = 0;
++	} else {
++		/*
++		 * charge locked_vm until it hits user_lock_limit;
++		 * charge the rest from pinned_vm
++		 */
+ 		extra = user_locked - user_lock_limit;
++		user_extra -= extra;
++	}
  
-+CFLAGS_REMOVE_purgatory.o	+= $(PURGATORY_CFLAGS_REMOVE)
-+CFLAGS_purgatory.o		+= $(PURGATORY_CFLAGS)
-+
-+CFLAGS_REMOVE_sha256.o		+= $(PURGATORY_CFLAGS_REMOVE)
-+CFLAGS_sha256.o			+= $(PURGATORY_CFLAGS)
-+
-+CFLAGS_REMOVE_string.o		+= $(PURGATORY_CFLAGS_REMOVE)
-+CFLAGS_string.o			+= $(PURGATORY_CFLAGS)
-+
- $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
- 		$(call if_changed,ld)
- 
+ 	lock_limit = rlimit(RLIMIT_MEMLOCK);
+ 	lock_limit >>= PAGE_SHIFT;
 -- 
-2.12.3
+2.17.1
 
