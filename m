@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E8BDA8EF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFB13A90F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388482AbfIDSA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:00:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40312 "EHLO mail.kernel.org"
+        id S2390162AbfIDSMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:12:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388473AbfIDSA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:00:56 -0400
+        id S2389943AbfIDSMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:12:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82D8122CF5;
-        Wed,  4 Sep 2019 18:00:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05F8D206BA;
+        Wed,  4 Sep 2019 18:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620055;
-        bh=XqceKEptIwGk8H5m03WkbUCfHdSr+UUp3TD51WBICh0=;
+        s=default; t=1567620763;
+        bh=z5zPOJAwtuXws16D0TTZ/2gP1HvIBD2bOGos/nDRij0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K3LQsmX7bp/D+Hnrny87fuCYUhhU3dzkWO4opT7HY0mWOzR0CzjLyAQzkKaRZBgOx
-         E0/F6aqZe13ofLwHehJ0BgOFtYHTX2YDmluE8a1Fivhu+g6e1kCjLLGR933/nwFotA
-         mPiVgZqkCoAApz8t2Zfv+Jq97+rcN2Mmy0CS0BrM=
+        b=TvErGibtIHUDr2/8KACpX4r9ioTFVXWS1041JIhU8Di5g812olwwKukSTyzgsKzD8
+         r/d7i5H7J5kWYu4mxqt1nrJtJGuRIZgup4RfnKxE4mK+VfJUtr0PaR8P+Kob4dIQ64
+         N0YCpcZVawfr8BXwCpQHf++N4vqHwrOwR+YP1sGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 56/83] ALSA: usb-audio: Fix a stack buffer overflow bug in check_input_term
+        stable@vger.kernel.org, Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 5.2 085/143] USB: storage: ums-realtek: Update module parameter description for auto_delink_en
 Date:   Wed,  4 Sep 2019 19:53:48 +0200
-Message-Id: <20190904175308.494095805@linuxfoundation.org>
+Message-Id: <20190904175317.396785169@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,104 +42,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Peng <benquike@gmail.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 19bce474c45be69a284ecee660aa12d8f1e88f18 upstream.
+commit f6445b6b2f2bb1745080af4a0926049e8bca2617 upstream.
 
-`check_input_term` recursively calls itself with input from
-device side (e.g., uac_input_terminal_descriptor.bCSourceID)
-as argument (id). In `check_input_term`, if `check_input_term`
-is called with the same `id` argument as the caller, it triggers
-endless recursive call, resulting kernel space stack overflow.
+The option named "auto_delink_en" is a bit misleading, as setting it to
+false doesn't really disable auto-delink but let auto-delink be firmware
+controlled.
 
-This patch fixes the bug by adding a bitmap to `struct mixer_build`
-to keep track of the checked ids and stop the execution if some id
-has been checked (similar to how parse_audio_unit handles unitid
-argument).
+Update the description to reflect the real usage of this parameter.
 
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190827173450.13572-1-kai.heng.feng@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- sound/usb/mixer.c |   29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ drivers/usb/storage/realtek_cr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -82,6 +82,7 @@ struct mixer_build {
- 	unsigned char *buffer;
- 	unsigned int buflen;
- 	DECLARE_BITMAP(unitbitmap, MAX_ID_ELEMS);
-+	DECLARE_BITMAP(termbitmap, MAX_ID_ELEMS);
- 	struct usb_audio_term oterm;
- 	const struct usbmix_name_map *map;
- 	const struct usbmix_selector_map *selector_map;
-@@ -710,15 +711,24 @@ static int get_term_name(struct mixer_bu
-  * parse the source unit recursively until it reaches to a terminal
-  * or a branched unit.
-  */
--static int check_input_term(struct mixer_build *state, int id,
-+static int __check_input_term(struct mixer_build *state, int id,
- 			    struct usb_audio_term *term)
- {
- 	int err;
- 	void *p1;
-+	unsigned char *hdr;
+--- a/drivers/usb/storage/realtek_cr.c
++++ b/drivers/usb/storage/realtek_cr.c
+@@ -38,7 +38,7 @@ MODULE_LICENSE("GPL");
  
- 	memset(term, 0, sizeof(*term));
--	while ((p1 = find_audio_control_unit(state, id)) != NULL) {
--		unsigned char *hdr = p1;
-+	for (;;) {
-+		/* a loop in the terminal chain? */
-+		if (test_and_set_bit(id, state->termbitmap))
-+			return -EINVAL;
-+
-+		p1 = find_audio_control_unit(state, id);
-+		if (!p1)
-+			break;
-+
-+		hdr = p1;
- 		term->id = id;
- 		switch (hdr[2]) {
- 		case UAC_INPUT_TERMINAL:
-@@ -733,7 +743,7 @@ static int check_input_term(struct mixer
+ static int auto_delink_en = 1;
+ module_param(auto_delink_en, int, S_IRUGO | S_IWUSR);
+-MODULE_PARM_DESC(auto_delink_en, "enable auto delink");
++MODULE_PARM_DESC(auto_delink_en, "auto delink mode (0=firmware, 1=software [default])");
  
- 				/* call recursively to verify that the
- 				 * referenced clock entity is valid */
--				err = check_input_term(state, d->bCSourceID, term);
-+				err = __check_input_term(state, d->bCSourceID, term);
- 				if (err < 0)
- 					return err;
- 
-@@ -765,7 +775,7 @@ static int check_input_term(struct mixer
- 		case UAC2_CLOCK_SELECTOR: {
- 			struct uac_selector_unit_descriptor *d = p1;
- 			/* call recursively to retrieve the channel info */
--			err = check_input_term(state, d->baSourceID[0], term);
-+			err = __check_input_term(state, d->baSourceID[0], term);
- 			if (err < 0)
- 				return err;
- 			term->type = d->bDescriptorSubtype << 16; /* virtual type */
-@@ -812,6 +822,15 @@ static int check_input_term(struct mixer
- 	return -ENODEV;
- }
- 
-+
-+static int check_input_term(struct mixer_build *state, int id,
-+			    struct usb_audio_term *term)
-+{
-+	memset(term, 0, sizeof(*term));
-+	memset(state->termbitmap, 0, sizeof(state->termbitmap));
-+	return __check_input_term(state, id, term);
-+}
-+
- /*
-  * Feature Unit
-  */
+ #ifdef CONFIG_REALTEK_AUTOPM
+ static int ss_en = 1;
 
 
