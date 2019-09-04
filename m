@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49D5FA8F01
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37E02A9102
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388541AbfIDSBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40734 "EHLO mail.kernel.org"
+        id S2390601AbfIDSNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:13:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733156AbfIDSBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:14 -0400
+        id S2390179AbfIDSNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:13:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36BD421883;
-        Wed,  4 Sep 2019 18:01:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07F60206BA;
+        Wed,  4 Sep 2019 18:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620073;
-        bh=KFODnPUszH4MM9Zm/k4q06s97DmxuuLgP9E4w7ZP23Q=;
+        s=default; t=1567620779;
+        bh=0y5+RMYohQRiIUOdlzRkT2PtPL2k/LFAN0Xo53QbJo4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LTedBING+TA5YrW62xK2WLonC2WdJZurSa6GugFkBCnHUyGOOecE1uy9b6NxxE0l9
-         q+o0cSjVeS8E5IzfrFjgslECWMEW4fbG8tLdfHUSZeTdgSKBDTRI3kwstN6QiGCLBk
-         tfvibPh+tkg9oOgsyt9BAGlqRppcNhP+ahpVBgWU=
+        b=nOECxLLkA/p3OIdGbscXl/sQueviVbw+4SODIXQBM1+Y4v4SHWrj/HzNyMLJr9rMm
+         HGqhsUo0nAatzvxu9wURT4gqjLtOc0hdGvUgLF+Hplkwc51r6nK6Z44rxVvDuEgWgv
+         6Fsm+pZl0NLtF+tbolMjUpifv0cGaWvF2RIpuTsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Bandan Das <bsd@redhat.com>
-Subject: [PATCH 4.9 62/83] x86/apic: Do not initialize LDR and DFR for bigsmp
+        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 5.2 091/143] mei: me: add Tiger Lake point LP device ID
 Date:   Wed,  4 Sep 2019 19:53:54 +0200
-Message-Id: <20190904175309.055395108@linuxfoundation.org>
+Message-Id: <20190904175317.665919251@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,83 +42,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bandan Das <bsd@redhat.com>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit bae3a8d3308ee69a7dbdf145911b18dfda8ade0d upstream.
+commit 587f17407741a5be07f8a2d1809ec946c8120962 upstream.
 
-Legacy apic init uses bigsmp for smp systems with 8 and more CPUs. The
-bigsmp APIC implementation uses physical destination mode, but it
-nevertheless initializes LDR and DFR. The LDR even ends up incorrectly with
-multiple bit being set.
+Add Tiger Lake Point device ID for TGP LP.
 
-This does not cause a functional problem because LDR and DFR are ignored
-when physical destination mode is active, but it triggered a problem on a
-32-bit KVM guest which jumps into a kdump kernel.
-
-The multiple bits set unearthed a bug in the KVM APIC implementation. The
-code which creates the logical destination map for VCPUs ignores the
-disabled state of the APIC and ends up overwriting an existing valid entry
-and as a result, APIC calibration hangs in the guest during kdump
-initialization.
-
-Remove the bogus LDR/DFR initialization.
-
-This is not intended to work around the KVM APIC bug. The LDR/DFR
-ininitalization is wrong on its own.
-
-The issue goes back into the pre git history. The fixes tag is the commit
-in the bitkeeper import which introduced bigsmp support in 2003.
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
-
-Fixes: db7b9e9f26b8 ("[PATCH] Clustered APIC setup for >8 CPU systems")
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Bandan Das <bsd@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190826101513.5080-2-bsd@redhat.com
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190819103210.32748-1-tomas.winkler@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/apic/bigsmp_32.c |   24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+ drivers/misc/mei/hw-me-regs.h |    2 ++
+ drivers/misc/mei/pci-me.c     |    2 ++
+ 2 files changed, 4 insertions(+)
 
---- a/arch/x86/kernel/apic/bigsmp_32.c
-+++ b/arch/x86/kernel/apic/bigsmp_32.c
-@@ -37,32 +37,12 @@ static int bigsmp_early_logical_apicid(i
- 	return early_per_cpu(x86_cpu_to_apicid, cpu);
- }
+--- a/drivers/misc/mei/hw-me-regs.h
++++ b/drivers/misc/mei/hw-me-regs.h
+@@ -81,6 +81,8 @@
  
--static inline unsigned long calculate_ldr(int cpu)
--{
--	unsigned long val, id;
--
--	val = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
--	id = per_cpu(x86_bios_cpu_apicid, cpu);
--	val |= SET_APIC_LOGICAL_ID(id);
--
--	return val;
--}
--
- /*
-- * Set up the logical destination ID.
-- *
-- * Intel recommends to set DFR, LDR and TPR before enabling
-- * an APIC.  See e.g. "AP-388 82489DX User's Manual" (Intel
-- * document number 292116).  So here it goes...
-+ * bigsmp enables physical destination mode
-+ * and doesn't use LDR and DFR
-  */
- static void bigsmp_init_apic_ldr(void)
- {
--	unsigned long val;
--	int cpu = smp_processor_id();
--
--	apic_write(APIC_DFR, APIC_DFR_FLAT);
--	val = calculate_ldr(cpu);
--	apic_write(APIC_LDR, val);
- }
+ #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
  
- static void bigsmp_setup_apic_routing(void)
++#define MEI_DEV_ID_TGP_LP     0xA0E0  /* Tiger Lake Point LP */
++
+ #define MEI_DEV_ID_MCC        0x4B70  /* Mule Creek Canyon (EHL) */
+ #define MEI_DEV_ID_MCC_4      0x4B75  /* Mule Creek Canyon 4 (EHL) */
+ 
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -98,6 +98,8 @@ static const struct pci_device_id mei_me
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
+ 
++	{MEI_PCI_DEVICE(MEI_DEV_ID_TGP_LP, MEI_ME_PCH12_CFG)},
++
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_MCC, MEI_ME_PCH12_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_MCC_4, MEI_ME_PCH8_CFG)},
+ 
 
 
