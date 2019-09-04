@@ -2,61 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18A85A831E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:52:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EE8DA8321
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:52:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730022AbfIDMkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 08:40:01 -0400
-Received: from mga11.intel.com ([192.55.52.93]:4451 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729565AbfIDMkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:40:01 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 05:40:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
-   d="scan'208";a="194717629"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga002.jf.intel.com with ESMTP; 04 Sep 2019 05:39:58 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1i5UZp-0000qY-7a; Wed, 04 Sep 2019 15:39:57 +0300
-Date:   Wed, 4 Sep 2019 15:39:57 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     "Ramuthevar,Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Cc:     kishon@ti.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        peter.harliman.liem@intel.com
-Subject: Re: [PATCH v3 2/2] phy: intel-lgm-sdxc: Add support for SDXC PHY
-Message-ID: <20190904123957.GM2680@smile.fi.intel.com>
-References: <20190904062719.37462-1-vadivel.muruganx.ramuthevar@linux.intel.com>
- <20190904062719.37462-2-vadivel.muruganx.ramuthevar@linux.intel.com>
+        id S1729877AbfIDMnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 08:43:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35990 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbfIDMnG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 08:43:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kT6JiKSS9HwgRZeLeoXhpFd1kRtgRGK+0O09M9Xb7A4=; b=bLOgq8Hq7J4RrL6Ex2KHUEO52
+        5CfCv2ZZeEOLWUyigJX9wVVFaEGiYFO6UlzH0P12zjIv9WTtjVe/mbHtpTEq+iTOPO6RLvzVQKYLn
+        K3TkC3br3bLefWytp4Ztv6RY/+Gm6Y3MAnVsoszwYI0wvjhuWAeFbDHAMstUXIviLB0yE=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1i5Ucq-0005XK-FK; Wed, 04 Sep 2019 12:43:04 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 925622742B45; Wed,  4 Sep 2019 13:43:03 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH] regulator: Defer init completion for a while after late_initcall
+Date:   Wed,  4 Sep 2019 13:42:50 +0100
+Message-Id: <20190904124250.25844-1-broonie@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904062719.37462-2-vadivel.muruganx.ramuthevar@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 02:27:19PM +0800, Ramuthevar,Vadivel MuruganX wrote:
-> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-> 
-> Add support for SDXC PHY on Intel's Lightning Mountain SoC.
+The kernel has no way of knowing when we have finished instantiating
+drivers, between deferred probe and systems that build key drivers as
+modules we might be doing this long after userspace has booted. This has
+always been a bit of an issue with regulator_init_complete since it can
+power off hardware that's not had it's driver loaded which can result in
+user visible effects, the main case is powering off displays. Practically
+speaking it's not been an issue in real systems since most systems that
+use the regulator API are embedded and build in key drivers anyway but
+with Arm laptops coming on the market it's becoming more of an issue so
+let's do something about it.
 
-What's the difference to eMMC PHY?
-Can they share the same / similar code?
+In the absence of any better idea just defer the powering off for 30s
+after late_initcall(), this is obviously a hack but it should mask the
+issue for now and it's no more arbitrary than late_initcall() itself.
+Ideally we'd have some heuristics to detect if we're on an affected
+system and tune or skip the delay appropriately, and there may be some
+need for a command line option to be added.
 
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Tested-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/regulator/core.c | 42 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 31 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 4a27a46ec6e7..340db986b67f 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -5644,7 +5644,7 @@ static int __init regulator_init(void)
+ /* init early to allow our consumers to complete system booting */
+ core_initcall(regulator_init);
+ 
+-static int __init regulator_late_cleanup(struct device *dev, void *data)
++static int regulator_late_cleanup(struct device *dev, void *data)
+ {
+ 	struct regulator_dev *rdev = dev_to_rdev(dev);
+ 	const struct regulator_ops *ops = rdev->desc->ops;
+@@ -5693,17 +5693,8 @@ static int __init regulator_late_cleanup(struct device *dev, void *data)
+ 	return 0;
+ }
+ 
+-static int __init regulator_init_complete(void)
++static void regulator_init_complete_work_function(struct work_struct *work)
+ {
+-	/*
+-	 * Since DT doesn't provide an idiomatic mechanism for
+-	 * enabling full constraints and since it's much more natural
+-	 * with DT to provide them just assume that a DT enabled
+-	 * system has full constraints.
+-	 */
+-	if (of_have_populated_dt())
+-		has_full_constraints = true;
+-
+ 	/*
+ 	 * Regulators may had failed to resolve their input supplies
+ 	 * when were registered, either because the input supply was
+@@ -5721,6 +5712,35 @@ static int __init regulator_init_complete(void)
+ 	 */
+ 	class_for_each_device(&regulator_class, NULL, NULL,
+ 			      regulator_late_cleanup);
++}
++
++static DECLARE_DELAYED_WORK(regulator_init_complete_work,
++			    regulator_init_complete_work_function);
++
++static int __init regulator_init_complete(void)
++{
++	/*
++	 * Since DT doesn't provide an idiomatic mechanism for
++	 * enabling full constraints and since it's much more natural
++	 * with DT to provide them just assume that a DT enabled
++	 * system has full constraints.
++	 */
++	if (of_have_populated_dt())
++		has_full_constraints = true;
++
++	/*
++	 * We punt completion for an arbitrary amount of time since
++	 * systems like distros will load many drivers from userspace
++	 * so consumers might not always be ready yet, this is
++	 * particularly an issue with laptops where this might bounce
++	 * the display off then on.  Ideally we'd get a notification
++	 * from userspace when this happens but we don't so just wait
++	 * a bit and hope we waited long enough.  It'd be better if
++	 * we'd only do this on systems that need it, and a kernel
++	 * command line option might be useful.
++	 */
++	schedule_delayed_work(&regulator_init_complete_work,
++			      msecs_to_jiffies(30000));
+ 
+ 	return 0;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.20.1
 
