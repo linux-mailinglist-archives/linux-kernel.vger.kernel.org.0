@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E886A8FBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF511A8ECC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389278AbfIDSFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:05:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47056 "EHLO mail.kernel.org"
+        id S2387970AbfIDSAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:00:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387532AbfIDSFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:05:33 -0400
+        id S1731612AbfIDSAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:00:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 401DE2339E;
-        Wed,  4 Sep 2019 18:05:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F116208E4;
+        Wed,  4 Sep 2019 18:00:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620331;
-        bh=0Fw/6tbnF5dPuAkSNbGV3kjnBEsH029C3qwRVjq48pA=;
+        s=default; t=1567620002;
+        bh=eNH3i2y7roWiXsi/UjHR77xvjZRes21W6t2db1K5t/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c+4k6kKFgdgu2izGj1QiJaXdLvClq4WFDvQqzo2Pi8vfc4HP49g2Ayj4c4ObNLy8a
-         SaJrhGD9LBWdhI5+GuXtwAwjtA+g34pQlRVv7aNNf2NV4sxtB+fkClDpzQ6guVFaTd
-         86yyl3KMLzesy1s6F+wiZ6E9ZwDRQd5cO2NgOY+o=
+        b=gg/jKpf4ssVGUoUCOi64aHBS1WrwMNUzp7GVFVo5dNUZMjHiQJ+DTTPTcNBr91TVb
+         a+eQQ/w5JKEhbjb6v0n6EPDSCXvyOZwTG+tR48MgDgtA9zb0mu+s5Ww4Dnaeje1cvJ
+         eAleZvHwEC3josYetfr6TK4aWVP0EtLnEE6bJLlg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 19/93] arm64: cpufeature: Dont treat granule sizes as strict
+        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.9 29/83] HID: wacom: Correct distance scale for 2nd-gen Intuos devices
 Date:   Wed,  4 Sep 2019 19:53:21 +0200
-Message-Id: <20190904175305.025246804@linuxfoundation.org>
+Message-Id: <20190904175306.465260713@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,66 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5717fe5ab38f9ccb32718bcb03bea68409c9cce4 ]
+From: Jason Gerecke <jason.gerecke@wacom.com>
 
-If a CPU doesn't support the page size for which the kernel is
-configured, then we will complain and refuse to bring it online. For
-secondary CPUs (and the boot CPU on a system booting with EFI), we will
-also print an error identifying the mismatch.
+commit b72fb1dcd2ea9d29417711cb302cef3006fa8d5a upstream.
 
-Consequently, the only time that the cpufeature code can detect a
-granule size mismatch is for a granule other than the one that is
-currently being used. Although we would rather such systems didn't
-exist, we've unfortunately lost that battle and Kevin reports that
-on his amlogic S922X (odroid-n2 board) we end up warning and taining
-with defconfig because 16k pages are not supported by all of the CPUs.
+Distance values reported by 2nd-gen Intuos tablets are on an inverted
+scale (0 == far, 63 == near). We need to change them over to a normal
+scale before reporting to userspace or else userspace drivers and
+applications can get confused.
 
-In such a situation, we don't actually care about the feature mismatch,
-particularly now that KVM only exposes the sanitised view of the CPU
-registers (commit 93390c0a1b20 - "arm64: KVM: Hide unsupported AArch64
-CPU features from guests"). Treat the granule fields as non-strict and
-let Kevin run without a tainted kernel.
+Ref: https://github.com/linuxwacom/input-wacom/issues/98
+Fixes: eda01dab53 ("HID: wacom: Add four new Intuos devices")
+Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Cc: Marc Zyngier <maz@kernel.org>
-Reported-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-[catalin.marinas@arm.com: changelog updated with KVM sanitised regs commit]
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/cpufeature.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/hid/wacom_wac.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index bce06083685dc..94babc3d0ec2c 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -165,9 +165,17 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
- };
- 
- static const struct arm64_ftr_bits ftr_id_aa64mmfr0[] = {
--	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN4_SHIFT, 4, ID_AA64MMFR0_TGRAN4_NI),
--	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN64_SHIFT, 4, ID_AA64MMFR0_TGRAN64_NI),
--	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN16_SHIFT, 4, ID_AA64MMFR0_TGRAN16_NI),
-+	/*
-+	 * We already refuse to boot CPUs that don't support our configured
-+	 * page size, so we can only detect mismatches for a page size other
-+	 * than the one we're currently using. Unfortunately, SoCs like this
-+	 * exist in the wild so, even though we don't like it, we'll have to go
-+	 * along with it and treat them as non-strict.
-+	 */
-+	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN4_SHIFT, 4, ID_AA64MMFR0_TGRAN4_NI),
-+	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN64_SHIFT, 4, ID_AA64MMFR0_TGRAN64_NI),
-+	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN16_SHIFT, 4, ID_AA64MMFR0_TGRAN16_NI),
-+
- 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_BIGENDEL0_SHIFT, 4, 0),
- 	/* Linux shouldn't care about secure memory */
- 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_SNSMEM_SHIFT, 4, 0),
--- 
-2.20.1
-
+--- a/drivers/hid/wacom_wac.c
++++ b/drivers/hid/wacom_wac.c
+@@ -949,6 +949,8 @@ static int wacom_intuos_general(struct w
+ 		y >>= 1;
+ 		distance >>= 1;
+ 	}
++	if (features->type == INTUOSHT2)
++		distance = features->distance_max - distance;
+ 	input_report_abs(input, ABS_X, x);
+ 	input_report_abs(input, ABS_Y, y);
+ 	input_report_abs(input, ABS_DISTANCE, distance);
 
 
