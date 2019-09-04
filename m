@@ -2,95 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 568A2A8C26
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5E9DA8C3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733217AbfIDQKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:10:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59818 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732989AbfIDQKI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:10:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/EDR4GvlJhkdLPR8kYkQGJ2qlMGAC0osrPMnnOYDBIg=; b=SuGvE/+zYB3jQ+kfZDnQwC7Wo
-        JeUwO3O/k3flaa2K4c95ijKzir0G0VZIUtveVY32G++8pFy+Gf/t0gvdOS7SsDPOQ8qLMHHc3bXss
-        +KHCuVIYwAEZmqReLHCigSc6/lMSH7GMXiLRXv/Of8zZZPt0Bk+QQhgIOy6NwWYvwTg2NoMPUbiMC
-        eK2/qz1LF3xsEpd3ui+WV4Ir2RPUP2TlY9SH5qW4l6s4jxNCtX2TNu9DbxsTlqUMKIH4mVshHHrZM
-        8IoGIjtooW76ukE2EZ2DXE0LtPyHGxSpN/NSjjaG5/T1RWCuP9kCP4hnO1hMOhLqntQp7bCbqHZT3
-        1k6uuxhpA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5Xr2-0006yh-CU; Wed, 04 Sep 2019 16:09:56 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C79AA3060CF;
-        Wed,  4 Sep 2019 18:09:16 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6037D20EFA5D9; Wed,  4 Sep 2019 18:09:53 +0200 (CEST)
-Date:   Wed, 4 Sep 2019 18:09:53 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        paulmck <paulmck@linux.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
-        Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [RFC PATCH 1/2] Fix: sched/membarrier: p->mm->membarrier_state
- racy load
-Message-ID: <20190904160953.GU2332@hirez.programming.kicks-ass.net>
-References: <20190903201135.1494-1-mathieu.desnoyers@efficios.com>
- <20190903202434.GX2349@hirez.programming.kicks-ass.net>
- <CAHk-=whfYb5RnJGqDV3W3093XGwOwePV-SxixaWcWM6hmidArg@mail.gmail.com>
- <1604807537.1565.1567610340030.JavaMail.zimbra@efficios.com>
+        id S1733080AbfIDQLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:11:01 -0400
+Received: from mga14.intel.com ([192.55.52.115]:62815 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732057AbfIDQK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:10:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 09:10:56 -0700
+X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
+   d="scan'208";a="183951504"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 09:10:54 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 07921204A6; Wed,  4 Sep 2019 19:10:52 +0300 (EEST)
+Date:   Wed, 4 Sep 2019 19:10:51 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, linux-acpi@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH v5 11/11] lib/test_printf: Add tests for %pfw printk
+ modifier
+Message-ID: <20190904161051.GX5475@paasikivi.fi.intel.com>
+References: <20190902135732.23455-1-sakari.ailus@linux.intel.com>
+ <20190902135732.23455-12-sakari.ailus@linux.intel.com>
+ <20190902161352.GS2680@smile.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1604807537.1565.1567610340030.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20190902161352.GS2680@smile.fi.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 11:19:00AM -0400, Mathieu Desnoyers wrote:
-> ----- On Sep 3, 2019, at 4:36 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
+Hi Andy,
 
-> > I wonder if the easiest model might be to just use a percpu variable
-> > instead for the membarrier stuff? It's not like it has to be in
-> > 'struct task_struct' at all, I think. We only care about the current
-> > runqueues, and those are percpu anyway.
+On Mon, Sep 02, 2019 at 07:13:52PM +0300, Andy Shevchenko wrote:
+> On Mon, Sep 02, 2019 at 04:57:32PM +0300, Sakari Ailus wrote:
+> > Add a test for the %pfw printk modifier using software nodes.
 > 
-> One issue here is that membarrier iterates over all runqueues without
-> grabbing any runqueue lock. If we copy that state from mm to rq on
-> sched switch prepare, we would need to ensure we have the proper
-> memory barriers between:
+> > +static void __init fwnode_pointer(void)
+> > +{
+> > +	const struct software_node softnodes[] = {
+> > +		{ .name = "first", },
+> > +		{ .name = "second", .parent = &softnodes[0], },
+> > +		{ .name = "third", .parent = &softnodes[1], },
+> > +		{ NULL /* Guardian */ },
 > 
-> prior user-space memory accesses  /  setting the runqueue membarrier state
-> 
-> and
-> 
-> setting the runqueue membarrier state / following user-space memory accesses
-> 
-> Copying the membarrier state into the task struct leverages the fact that
-> we have documented and guaranteed those barriers around the rq->curr update
-> in the scheduler.
+> Comma is still here :-)
 
-Should be the same as the barriers we already rely on for rq->curr, no?
-That is, if we put this before switch_mm() then we have
-smp_mb__after_spinlock() and switch_mm() itself.
+Oops. I ended up removing the comma in a wrong patch which wasn't submitted
+to the list. Will fix for v6.
 
-Also, if we place mm->membarrier_state in the same cacheline as mm->pgd
-(which switch_mm() is bound to load) then we should be fine, I think.
+> 
+> > +	};
+> 
+> > +	test(full_name_second, "%pfw",
+> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
+> > +	test(full_name, "%pfw",
+> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
+> > +	test(full_name, "%pfwf",
+> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
+> > +	test(second_name, "%pfwP",
+> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
+> > +	test(third_name, "%pfwP",
+> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
+> 
+> I have another thought about these. The test cases will fail in either of
+> adding, inserting or removing items in softnodes array. So, using the above
+> "protective" scheme doesn't bring any value except making readability worse.
+
+Agreed, to be addressed in v6.
+
+-- 
+Regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
