@@ -2,68 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87A89A797B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 05:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E9BA797E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 06:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfIDD5C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 23:57:02 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33663 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfIDD5B (ORCPT
+        id S1725938AbfIDEAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 00:00:42 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39341 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfIDEAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 23:57:01 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t11so2852739plo.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 20:57:01 -0700 (PDT)
+        Wed, 4 Sep 2019 00:00:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id s12so5348372pfe.6
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 21:00:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
-        h=date:from:to:cc:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ZmOY7m3IyWINx7xPEGcvNHI4tV2iIeXUtDevd4vyPOA=;
-        b=iQjibxV1UZeSOO2NBCzP8UUQtSVBWvvzucdk2Cj5fQNJdMPULZH3K7MpQlnoz2Rt0w
-         qcKQjSen6OKXPBnJEd7scUDqURziwVr1MrvDR94zTjyXB8iF7ZRjMNVly3FwgM6vUSFb
-         zhMJJw6fQ4Q4A6XBKgzik3c0WyiGNSFMJ/kdM=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6rvr4dn5QwAw4fnMn4YJzPC1OcfnAFGcRF8zv0bU+98=;
+        b=DvOZ6DrXbBAluWLb8VUiW6wJr0c1TwwMWe4azaqPu9kn0m9IasSnsFOls0mjhnHj2E
+         EvrsHf9lUZyQi8jdZmEIf7Wy04OISpMZ4fc5Y7HfctoRkNLSyUdoUcsAE3wTU9QZMky8
+         8dFGjQ5z46n1HYL4TErtqMyAdOtJ8bLIBUxZY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ZmOY7m3IyWINx7xPEGcvNHI4tV2iIeXUtDevd4vyPOA=;
-        b=rqsYXorUkOE5Bp2ZZbnkCyoKS4wd0EWcWe3VQatLeEZF1qg8pHSpDWVrnseMyMTMMP
-         DbUf/7sTQesPWUZ/3XC3bpHKWAvZpcnjOqGepIOwJc1RHs97M5V1Aoq6P4xmGMd2PRQ3
-         smQWTwsA3XjDv04n2g/9LB49gz2AongXp8mmB9Kq+I/zYc/Dv5exrPfgWrTZjFMG1J0m
-         L8uVt1mNtbht92+/aP+rgnHi3dBZYuxRQ6U2W438lVxy+Ihk7hg5kFN1ckciqRcr1gpt
-         GNN6J67Nvbcuf6VRuS/cqfLCvkyaghbD/c6yK0zuyNCcCKEjeLhgsOvqNyGLH1Hdp85X
-         nQUQ==
-X-Gm-Message-State: APjAAAVDmWfTbTiq4Q3gZ1QFqnWbQq9URMFXhyPthFYUvD6vC0w6RG2V
-        +/JZKcQlYaB51h8eTk3Mba1fKA==
-X-Google-Smtp-Source: APXvYqyNb1qIhRkrqkag8/5MfYRHxz0EH+kknP/8/34rk6FKOV7HVBSBaRC3sJoZ+75N/km8WMC/Ug==
-X-Received: by 2002:a17:902:a506:: with SMTP id s6mr11160679plq.232.1567569420632;
-        Tue, 03 Sep 2019 20:57:00 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6rvr4dn5QwAw4fnMn4YJzPC1OcfnAFGcRF8zv0bU+98=;
+        b=HQHVVazu4Wqwu8Toiebc4fzuvfsQW51vqhCU1FO2VNYC8Bash+cJS2A3sOxNlAA2g6
+         RuyXhTuKfaZ35Ww/xHOzzcCaHXKIHhuTwEjpm1Zv8krTiKpZYJXrgFkA0mr4qnqU9x89
+         1H3hHIO5JgwLzGRPULDE4C+WPtfK0TUgomLYVdrWwD43zE5R8GhIk43y/KiL9r00hFKd
+         qqbwFKOpdJioTSk/4Y3W2vAeqZwvzMyLPP/m8cTgvDaWCxoVCFQdFAdJEqo3zEfETWde
+         Qk9UXxgyuoei074Gq50SF6TU06F3Mzs+J2r3TdgKUhnjDtluUQCqIPkYttUD5kiE+kqq
+         uhog==
+X-Gm-Message-State: APjAAAVG/8QkbnCzMZrjsxcbSQ2GXGOVs8deAtWZJumuG6Ynl+xishPf
+        9JGdRFrTdiwhtxS+U/hOuaneQw==
+X-Google-Smtp-Source: APXvYqx85xtL4/neMvJg4VFmLjSqz0LLRB1Pjqx3oKpBWqm8ujiqQ1G7mN2v1Av5NQJS2dAEy363wg==
+X-Received: by 2002:a62:e403:: with SMTP id r3mr18268158pfh.251.1567569640485;
+        Tue, 03 Sep 2019 21:00:40 -0700 (PDT)
 Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id v67sm31854157pfb.45.2019.09.03.20.56.59
+        by smtp.gmail.com with ESMTPSA id o35sm16784520pgm.29.2019.09.03.21.00.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 20:56:59 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 23:56:58 -0400
+        Tue, 03 Sep 2019 21:00:40 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 00:00:39 -0400
 From:   Joel Fernandes <joel@joelfernandes.org>
 To:     Viktor Rosendahl <viktor.rosendahl@gmail.com>, paulmck@kernel.org
 Cc:     Steven Rostedt <rostedt@goodmis.org>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Message-ID: <20190904035658.GA150430@google.com>
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v5 1/4] ftrace: Implement fs notification for
+ tracing_max_latency
+Message-ID: <20190904040039.GB150430@google.com>
+References: <20190903132602.3440-1-viktor.rosendahl@gmail.com>
+ <20190903132602.3440-2-viktor.rosendahl@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190903132602.3440-2-viktor.rosendahl@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-linux-rt-users@vger.kernel.org
-Bcc: 
-Subject: Re: [PATCH v5 1/4] ftrace: Implement fs notification for
- tracing_max_latency
-Reply-To: 
-In-Reply-To: <20190903132602.3440-2-viktor.rosendahl@gmail.com>
+[ Resending since I messed up my last email's headers! ]
 
 On Tue, Sep 03, 2019 at 03:25:59PM +0200, Viktor Rosendahl wrote:
 > This patch implements the feature that the tracing_max_latency file,
@@ -78,15 +79,6 @@ On Tue, Sep 03, 2019 at 03:25:59PM +0200, Viktor Rosendahl wrote:
 > obtain traces of latencies that occur immediately after each other in
 > spite of the fact that the preempt/irqsoff tracers operate in overwrite
 > mode.
-> 
-> This facility works with the hwlat, preempt/irqsoff, and wakeup
-> tracers.
-> 
-> This patch also adds some unfortunate calls from __schedule() and
-> do_idle(). Those calls to the latency_fsnotify_disable/enable() are
-> needed because we cannot wake up the workqueue from these critical
-> sections without risking a deadlock. Similar problems would also arise
-> if we try to schedule a tasklet, raise a softirq, or wake up a kernel
 
 Adding Paul since RCU faces similar situations, i.e. raising softirq risks
 scheduler deadlock in rcu_read_unlock_special() -- but RCU's solution is to
@@ -95,15 +87,23 @@ avoid raising the softirq and instead use irq_work.
 I was wondering, if we can rename __raise_softirq_irqoff() to
 raise_softirq_irqoff_no_wake() and call that from places where there is risk
 of scheduler related deadlocks. Then I think this can be used from Viktor's
-code.  What would happen if the softirq is raised, but ksoftirqd is not
-awakened for some paths? Is this really an issue considering the softirq will
-execute during the next interrupt exit?
+code.  Let us discuss - what would happen if the softirq is raised, but
+ksoftirqd is not awakened for this latency notification path? Is this really
+an issue considering the softirq will execute during the next interrupt exit?
 
 thanks,
 
  - Joel
 
 
+> This facility works with the hwlat, preempt/irqsoff, and wakeup
+> tracers.
+> 
+> This patch also adds some unfortunate calls from __schedule() and
+> do_idle(). Those calls to the latency_fsnotify_disable/enable() are
+> needed because we cannot wake up the workqueue from these critical
+> sections without risking a deadlock. Similar problems would also arise
+> if we try to schedule a tasklet, raise a softirq, or wake up a kernel
 > thread. If a notification event would happen in the forbidden sections,
 > we schedule the fsnotify work as soon as we have exited them.
 > 
