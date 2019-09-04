@@ -2,37 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB13A90F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FA10A8F56
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390162AbfIDSMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:12:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57246 "EHLO mail.kernel.org"
+        id S2388870AbfIDSDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:03:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389943AbfIDSMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:12:44 -0400
+        id S2388284AbfIDSDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:03:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05F8D206BA;
-        Wed,  4 Sep 2019 18:12:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD26523697;
+        Wed,  4 Sep 2019 18:03:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620763;
-        bh=z5zPOJAwtuXws16D0TTZ/2gP1HvIBD2bOGos/nDRij0=;
+        s=default; t=1567620182;
+        bh=H+dch+YFeYG4YZLYOpmbLkkC1J9RsxRQVN+Y3N93/zE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TvErGibtIHUDr2/8KACpX4r9ioTFVXWS1041JIhU8Di5g812olwwKukSTyzgsKzD8
-         r/d7i5H7J5kWYu4mxqt1nrJtJGuRIZgup4RfnKxE4mK+VfJUtr0PaR8P+Kob4dIQ64
-         N0YCpcZVawfr8BXwCpQHf++N4vqHwrOwR+YP1sGA=
+        b=NmSzNQyDtqVGvNqZYW5PBcJAZWI7fp+WFSZ805mhM5R2/X0WJHQbrW/xiMluwgqpm
+         xVKZVygGYATmDHbKCNA55xV+t6aB5hLGeJH7sDhSsGs1wDSa7cla0xcltZ1F4x4coW
+         aB2SDaY4KeHpGxtGRFXt5WncGNvC1GGD3lYETpJw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 5.2 085/143] USB: storage: ums-realtek: Update module parameter description for auto_delink_en
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Vladimir Rutsky <rutsky@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 20/57] tcp: make sure EPOLLOUT wont be missed
 Date:   Wed,  4 Sep 2019 19:53:48 +0200
-Message-Id: <20190904175317.396785169@linuxfoundation.org>
+Message-Id: <20190904175303.918854334@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,35 +47,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit f6445b6b2f2bb1745080af4a0926049e8bca2617 upstream.
+[ Upstream commit ef8d8ccdc216f797e66cb4a1372f5c4c285ce1e4 ]
 
-The option named "auto_delink_en" is a bit misleading, as setting it to
-false doesn't really disable auto-delink but let auto-delink be firmware
-controlled.
+As Jason Baron explained in commit 790ba4566c1a ("tcp: set SOCK_NOSPACE
+under memory pressure"), it is crucial we properly set SOCK_NOSPACE
+when needed.
 
-Update the description to reflect the real usage of this parameter.
+However, Jason patch had a bug, because the 'nonblocking' status
+as far as sk_stream_wait_memory() is concerned is governed
+by MSG_DONTWAIT flag passed at sendmsg() time :
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190827173450.13572-1-kai.heng.feng@canonical.com
+    long timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT);
+
+So it is very possible that tcp sendmsg() calls sk_stream_wait_memory(),
+and that sk_stream_wait_memory() returns -EAGAIN with SOCK_NOSPACE
+cleared, if sk->sk_sndtimeo has been set to a small (but not zero)
+value.
+
+This patch removes the 'noblock' variable since we must always
+set SOCK_NOSPACE if -EAGAIN is returned.
+
+It also renames the do_nonblock label since we might reach this
+code path even if we were in blocking mode.
+
+Fixes: 790ba4566c1a ("tcp: set SOCK_NOSPACE under memory pressure")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Jason Baron <jbaron@akamai.com>
+Reported-by: Vladimir Rutsky  <rutsky@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Jason Baron <jbaron@akamai.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/storage/realtek_cr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/stream.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/drivers/usb/storage/realtek_cr.c
-+++ b/drivers/usb/storage/realtek_cr.c
-@@ -38,7 +38,7 @@ MODULE_LICENSE("GPL");
+--- a/net/core/stream.c
++++ b/net/core/stream.c
+@@ -120,7 +120,6 @@ int sk_stream_wait_memory(struct sock *s
+ 	int err = 0;
+ 	long vm_wait = 0;
+ 	long current_timeo = *timeo_p;
+-	bool noblock = (*timeo_p ? false : true);
+ 	DEFINE_WAIT_FUNC(wait, woken_wake_function);
  
- static int auto_delink_en = 1;
- module_param(auto_delink_en, int, S_IRUGO | S_IWUSR);
--MODULE_PARM_DESC(auto_delink_en, "enable auto delink");
-+MODULE_PARM_DESC(auto_delink_en, "auto delink mode (0=firmware, 1=software [default])");
+ 	if (sk_stream_memory_free(sk))
+@@ -133,11 +132,8 @@ int sk_stream_wait_memory(struct sock *s
  
- #ifdef CONFIG_REALTEK_AUTOPM
- static int ss_en = 1;
+ 		if (sk->sk_err || (sk->sk_shutdown & SEND_SHUTDOWN))
+ 			goto do_error;
+-		if (!*timeo_p) {
+-			if (noblock)
+-				set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
+-			goto do_nonblock;
+-		}
++		if (!*timeo_p)
++			goto do_eagain;
+ 		if (signal_pending(current))
+ 			goto do_interrupted;
+ 		sk_clear_bit(SOCKWQ_ASYNC_NOSPACE, sk);
+@@ -169,7 +165,13 @@ out:
+ do_error:
+ 	err = -EPIPE;
+ 	goto out;
+-do_nonblock:
++do_eagain:
++	/* Make sure that whenever EAGAIN is returned, EPOLLOUT event can
++	 * be generated later.
++	 * When TCP receives ACK packets that make room, tcp_check_space()
++	 * only calls tcp_new_space() if SOCK_NOSPACE is set.
++	 */
++	set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
+ 	err = -EAGAIN;
+ 	goto out;
+ do_interrupted:
 
 
