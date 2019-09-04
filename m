@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E573A8F84
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C36EA8E46
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389061AbfIDSEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:04:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44958 "EHLO mail.kernel.org"
+        id S2387785AbfIDR5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:57:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389053AbfIDSEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:04:05 -0400
+        id S2387773AbfIDR5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:57:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A841208E4;
-        Wed,  4 Sep 2019 18:04:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B563D22CEA;
+        Wed,  4 Sep 2019 17:57:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620244;
-        bh=fhHOuvkO9622U0xzRJeu4w7rQ+ZA2sQ7P92LgGkwuQU=;
+        s=default; t=1567619823;
+        bh=6DTqg9frxndXf+CFHwsm71uZlpFbznLVFeK7I+rtje8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GleYQikJlco3xDLt1IOmF4JjWYXkBupAck54/l7hl3bkWI89L3C4T+8OoB4el4deE
-         G8qZjr6UU1q3wpqroBVhxQV7bmthwP4oOCylsD/hvnUn1m2j79W9ANqWl9Z06XLSbK
-         oYybicTfWKzzn0zNRtxR/OZVgU+Sp3Je9bjlkp4g=
+        b=X48g5W569boKknEM0ODWRkYTI7XBMmF9nEqkiMOa9m1ZLGdQ0E1AyS08vFvdr913c
+         5QC9kAX3em5IzZy5mwNZ7kM4qoR/gKiQWkmws+CfCe9CJuQevnO7kRC/BIxNXuzLIz
+         nNHt68G5QPxSIpMU5mFCuEMOClwZ8V2jO4QZKkQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Dirk Morris <dmorris@metaloft.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 05/57] usb: gadget: mass_storage: Fix races between fsg_disable and fsg_set_alt
+Subject: [PATCH 4.4 46/77] netfilter: conntrack: Use consistent ct id hash calculation
 Date:   Wed,  4 Sep 2019 19:53:33 +0200
-Message-Id: <20190904175302.448648132@linuxfoundation.org>
+Message-Id: <20190904175307.831985497@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,165 +46,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4a56a478a525d6427be90753451c40e1327caa1a ]
+commit 656c8e9cc1badbc18eefe6ba01d33ebbcae61b9a upstream.
 
-If fsg_disable() and fsg_set_alt() are called too closely to each
-other (for example due to a quick reset/reconnect), what can happen
-is that fsg_set_alt sets common->new_fsg from an interrupt while
-handle_exception is trying to process the config change caused by
-fsg_disable():
+Change ct id hash calculation to only use invariants.
 
-	fsg_disable()
-	...
-	handle_exception()
-		sets state back to FSG_STATE_NORMAL
-		hasn't yet called do_set_interface()
-		or is inside it.
+Currently the ct id hash calculation is based on some fields that can
+change in the lifetime on a conntrack entry in some corner cases. The
+current hash uses the whole tuple which contains an hlist pointer which
+will change when the conntrack is placed on the dying list resulting in
+a ct id change.
 
- ---> interrupt
-	fsg_set_alt
-		sets common->new_fsg
-		queues a new FSG_STATE_CONFIG_CHANGE
- <---
+This patch also removes the reply-side tuple and extension pointer from
+the hash calculation so that the ct id will will not change from
+initialization until confirmation.
 
-Now, the first handle_exception can "see" the updated
-new_fsg, treats it as if it was a fsg_set_alt() response,
-call usb_composite_setup_continue() etc...
-
-But then, the thread sees the second FSG_STATE_CONFIG_CHANGE,
-and goes back down the same path, wipes and reattaches a now
-active fsg, and .. calls usb_composite_setup_continue() which
-at this point is wrong.
-
-Not only we get a backtrace, but I suspect the second set_interface
-wrecks some state causing the host to get upset in my case.
-
-This fixes it by replacing "new_fsg" by a "state argument" (same
-principle) which is set in the same lock section as the state
-update, and retrieved similarly.
-
-That way, there is never any discrepancy between the dequeued
-state and the observed value of it. We keep the ability to have
-the latest reconfig operation take precedence, but we guarantee
-that once "dequeued" the argument (new_fsg) will not be clobbered
-by any new event.
-
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: 3c79107631db1f7 ("netfilter: ctnetlink: don't use conntrack/expect object addresses as id")
+Signed-off-by: Dirk Morris <dmorris@metaloft.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/f_mass_storage.c | 28 +++++++++++++-------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ net/netfilter/nf_conntrack_core.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_mass_storage.c b/drivers/usb/gadget/function/f_mass_storage.c
-index 25ba303295332..41b5baa1f43b7 100644
---- a/drivers/usb/gadget/function/f_mass_storage.c
-+++ b/drivers/usb/gadget/function/f_mass_storage.c
-@@ -261,7 +261,7 @@ struct fsg_common;
- struct fsg_common {
- 	struct usb_gadget	*gadget;
- 	struct usb_composite_dev *cdev;
--	struct fsg_dev		*fsg, *new_fsg;
-+	struct fsg_dev		*fsg;
- 	wait_queue_head_t	io_wait;
- 	wait_queue_head_t	fsg_wait;
- 
-@@ -290,6 +290,7 @@ struct fsg_common {
- 	unsigned int		bulk_out_maxpacket;
- 	enum fsg_state		state;		/* For exception handling */
- 	unsigned int		exception_req_tag;
-+	void			*exception_arg;
- 
- 	enum data_direction	data_dir;
- 	u32			data_size;
-@@ -393,7 +394,8 @@ static int fsg_set_halt(struct fsg_dev *fsg, struct usb_ep *ep)
- 
- /* These routines may be called in process context or in_irq */
- 
--static void raise_exception(struct fsg_common *common, enum fsg_state new_state)
-+static void __raise_exception(struct fsg_common *common, enum fsg_state new_state,
-+			      void *arg)
+diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+index fd301fb137194..de0aad12b91d2 100644
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -241,13 +241,12 @@ EXPORT_SYMBOL_GPL(nf_ct_invert_tuple);
+  * table location, we assume id gets exposed to userspace.
+  *
+  * Following nf_conn items do not change throughout lifetime
+- * of the nf_conn after it has been committed to main hash table:
++ * of the nf_conn:
+  *
+  * 1. nf_conn address
+- * 2. nf_conn->ext address
+- * 3. nf_conn->master address (normally NULL)
+- * 4. tuple
+- * 5. the associated net namespace
++ * 2. nf_conn->master address (normally NULL)
++ * 3. the associated net namespace
++ * 4. the original direction tuple
+  */
+ u32 nf_ct_get_id(const struct nf_conn *ct)
  {
- 	unsigned long		flags;
+@@ -257,9 +256,10 @@ u32 nf_ct_get_id(const struct nf_conn *ct)
+ 	net_get_random_once(&ct_id_seed, sizeof(ct_id_seed));
  
-@@ -406,6 +408,7 @@ static void raise_exception(struct fsg_common *common, enum fsg_state new_state)
- 	if (common->state <= new_state) {
- 		common->exception_req_tag = common->ep0_req_tag;
- 		common->state = new_state;
-+		common->exception_arg = arg;
- 		if (common->thread_task)
- 			send_sig_info(SIGUSR1, SEND_SIG_FORCED,
- 				      common->thread_task);
-@@ -413,6 +416,10 @@ static void raise_exception(struct fsg_common *common, enum fsg_state new_state)
- 	spin_unlock_irqrestore(&common->lock, flags);
- }
- 
-+static void raise_exception(struct fsg_common *common, enum fsg_state new_state)
-+{
-+	__raise_exception(common, new_state, NULL);
-+}
- 
- /*-------------------------------------------------------------------------*/
- 
-@@ -2287,16 +2294,16 @@ reset:
- static int fsg_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
- {
- 	struct fsg_dev *fsg = fsg_from_func(f);
--	fsg->common->new_fsg = fsg;
--	raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
-+
-+	__raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE, fsg);
- 	return USB_GADGET_DELAYED_STATUS;
- }
- 
- static void fsg_disable(struct usb_function *f)
- {
- 	struct fsg_dev *fsg = fsg_from_func(f);
--	fsg->common->new_fsg = NULL;
--	raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
-+
-+	__raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE, NULL);
- }
- 
- 
-@@ -2309,6 +2316,7 @@ static void handle_exception(struct fsg_common *common)
- 	enum fsg_state		old_state;
- 	struct fsg_lun		*curlun;
- 	unsigned int		exception_req_tag;
-+	struct fsg_dev		*new_fsg;
- 
- 	/*
- 	 * Clear the existing signals.  Anything but SIGUSR1 is converted
-@@ -2362,6 +2370,7 @@ static void handle_exception(struct fsg_common *common)
- 	common->next_buffhd_to_fill = &common->buffhds[0];
- 	common->next_buffhd_to_drain = &common->buffhds[0];
- 	exception_req_tag = common->exception_req_tag;
-+	new_fsg = common->exception_arg;
- 	old_state = common->state;
- 	common->state = FSG_STATE_NORMAL;
- 
-@@ -2415,8 +2424,8 @@ static void handle_exception(struct fsg_common *common)
- 		break;
- 
- 	case FSG_STATE_CONFIG_CHANGE:
--		do_set_interface(common, common->new_fsg);
--		if (common->new_fsg)
-+		do_set_interface(common, new_fsg);
-+		if (new_fsg)
- 			usb_composite_setup_continue(common->cdev);
- 		break;
- 
-@@ -3007,8 +3016,7 @@ static void fsg_unbind(struct usb_configuration *c, struct usb_function *f)
- 
- 	DBG(fsg, "unbind\n");
- 	if (fsg->common->fsg == fsg) {
--		fsg->common->new_fsg = NULL;
--		raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
-+		__raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE, NULL);
- 		/* FIXME: make interruptible or killable somehow? */
- 		wait_event(common->fsg_wait, common->fsg != fsg);
- 	}
+ 	a = (unsigned long)ct;
+-	b = (unsigned long)ct->master ^ net_hash_mix(nf_ct_net(ct));
+-	c = (unsigned long)ct->ext;
+-	d = (unsigned long)siphash(&ct->tuplehash, sizeof(ct->tuplehash),
++	b = (unsigned long)ct->master;
++	c = (unsigned long)nf_ct_net(ct);
++	d = (unsigned long)siphash(&ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple,
++				   sizeof(ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple),
+ 				   &ct_id_seed);
+ #ifdef CONFIG_64BIT
+ 	return siphash_4u64((u64)a, (u64)b, (u64)c, (u64)d, &ct_id_seed);
 -- 
 2.20.1
 
