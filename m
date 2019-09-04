@@ -2,126 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A5E3A7C5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:13:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D89A7C62
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbfIDHNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 03:13:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37176 "EHLO mx1.redhat.com"
+        id S1728976AbfIDHO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 03:14:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbfIDHNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 03:13:15 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725938AbfIDHO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 03:14:26 -0400
+Received: from localhost (unknown [122.182.201.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D88157CBB1;
-        Wed,  4 Sep 2019 07:13:14 +0000 (UTC)
-Received: from thuth.com (ovpn-116-69.ams2.redhat.com [10.36.116.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0339D1001B1A;
-        Wed,  4 Sep 2019 07:13:12 +0000 (UTC)
-From:   Thomas Huth <thuth@redhat.com>
-To:     kvm@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: s390: Disallow invalid bits in kvm_valid_regs and kvm_dirty_regs
-Date:   Wed,  4 Sep 2019 09:13:08 +0200
-Message-Id: <20190904071308.25683-1-thuth@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 04 Sep 2019 07:13:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3A6D22CEA;
+        Wed,  4 Sep 2019 07:14:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567581265;
+        bh=NNC+RkkJ+eyITyoMs4o1gFL0TAFukDFGUWCl2aimc18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XhBTLeuw97W8DprCY1IMVU6AdWo9PaTC7PJNuXO6HzMcs8KiXB+r/kBYAe39/5zir
+         sPdcD6rlDeUxYQxDEk+mwM/j6EEXXjljTJX8YSfpZNvbLVdpcinoL2U9CQkPLszhz3
+         VuVt9dCMUtswZmUlmQ428EVv4SMmMXfeV75K8qCk=
+Date:   Wed, 4 Sep 2019 12:43:17 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [PATCH 2/6] soundwire: cadence_master: add hw_reset capability
+ in debugfs
+Message-ID: <20190904071317.GJ2672@vkoul-mobl>
+References: <20190813213227.5163-1-pierre-louis.bossart@linux.intel.com>
+ <20190813213227.5163-3-pierre-louis.bossart@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813213227.5163-3-pierre-louis.bossart@linux.intel.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If unknown bits are set in kvm_valid_regs or kvm_dirty_regs, this
-clearly indicates that something went wrong in the KVM userspace
-application. The x86 variant of KVM already contains a check for
-bad bits (and the corresponding kselftest checks this), so let's
-do the same on s390x now, too.
+On 13-08-19, 16:32, Pierre-Louis Bossart wrote:
+> Provide debugfs capability to kick link and devices into hard-reset
+> (as defined by MIPI). This capability is really useful when some
+> devices are no longer responsive and/or to check the software handling
+> of resynchronization.
+> 
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>  drivers/soundwire/cadence_master.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
+> index 046622e4b264..bd58d80ff636 100644
+> --- a/drivers/soundwire/cadence_master.c
+> +++ b/drivers/soundwire/cadence_master.c
+> @@ -340,6 +340,23 @@ static int cdns_reg_show(struct seq_file *s, void *data)
+>  }
+>  DEFINE_SHOW_ATTRIBUTE(cdns_reg);
+>  
+> +static int cdns_hw_reset(void *data, u64 value)
+> +{
+> +	struct sdw_cdns *cdns = data;
+> +	int ret;
+> +
+> +	if (value != 1)
+> +		return 0;
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- arch/s390/include/uapi/asm/kvm.h              |  6 ++++
- arch/s390/kvm/kvm-s390.c                      |  4 +++
- .../selftests/kvm/s390x/sync_regs_test.c      | 30 +++++++++++++++++++
- 3 files changed, 40 insertions(+)
+Should this not be EINVAL to indicate invalid value passed?
 
-diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
-index 47104e5b47fd..436ec7636927 100644
---- a/arch/s390/include/uapi/asm/kvm.h
-+++ b/arch/s390/include/uapi/asm/kvm.h
-@@ -231,6 +231,12 @@ struct kvm_guest_debug_arch {
- #define KVM_SYNC_GSCB   (1UL << 9)
- #define KVM_SYNC_BPBC   (1UL << 10)
- #define KVM_SYNC_ETOKEN (1UL << 11)
-+
-+#define KVM_SYNC_S390_VALID_FIELDS \
-+	(KVM_SYNC_PREFIX | KVM_SYNC_GPRS | KVM_SYNC_ACRS | KVM_SYNC_CRS | \
-+	 KVM_SYNC_ARCH0 | KVM_SYNC_PFAULT | KVM_SYNC_VRS | KVM_SYNC_RICCB | \
-+	 KVM_SYNC_FPRS | KVM_SYNC_GSCB | KVM_SYNC_BPBC | KVM_SYNC_ETOKEN)
-+
- /* length and alignment of the sdnx as a power of two */
- #define SDNXC 8
- #define SDNXL (1UL << SDNXC)
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 49d7722229ae..a7d7dedfe527 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -3998,6 +3998,10 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
- 	if (kvm_run->immediate_exit)
- 		return -EINTR;
- 
-+	if (kvm_run->kvm_valid_regs & ~KVM_SYNC_S390_VALID_FIELDS ||
-+	    kvm_run->kvm_dirty_regs & ~KVM_SYNC_S390_VALID_FIELDS)
-+		return -EINVAL;
-+
- 	vcpu_load(vcpu);
- 
- 	if (guestdbg_exit_pending(vcpu)) {
-diff --git a/tools/testing/selftests/kvm/s390x/sync_regs_test.c b/tools/testing/selftests/kvm/s390x/sync_regs_test.c
-index bbc93094519b..d5290b4ad636 100644
---- a/tools/testing/selftests/kvm/s390x/sync_regs_test.c
-+++ b/tools/testing/selftests/kvm/s390x/sync_regs_test.c
-@@ -85,6 +85,36 @@ int main(int argc, char *argv[])
- 
- 	run = vcpu_state(vm, VCPU_ID);
- 
-+	/* Request reading invalid register set from VCPU. */
-+	run->kvm_valid_regs = INVALID_SYNC_FIELD;
-+	rv = _vcpu_run(vm, VCPU_ID);
-+	TEST_ASSERT(rv < 0 && errno == EINVAL,
-+		    "Invalid kvm_valid_regs did not cause expected KVM_RUN error: %d\n",
-+		    rv);
-+	vcpu_state(vm, VCPU_ID)->kvm_valid_regs = 0;
-+
-+	run->kvm_valid_regs = INVALID_SYNC_FIELD | TEST_SYNC_FIELDS;
-+	rv = _vcpu_run(vm, VCPU_ID);
-+	TEST_ASSERT(rv < 0 && errno == EINVAL,
-+		    "Invalid kvm_valid_regs did not cause expected KVM_RUN error: %d\n",
-+		    rv);
-+	vcpu_state(vm, VCPU_ID)->kvm_valid_regs = 0;
-+
-+	/* Request setting invalid register set into VCPU. */
-+	run->kvm_dirty_regs = INVALID_SYNC_FIELD;
-+	rv = _vcpu_run(vm, VCPU_ID);
-+	TEST_ASSERT(rv < 0 && errno == EINVAL,
-+		    "Invalid kvm_dirty_regs did not cause expected KVM_RUN error: %d\n",
-+		    rv);
-+	vcpu_state(vm, VCPU_ID)->kvm_dirty_regs = 0;
-+
-+	run->kvm_dirty_regs = INVALID_SYNC_FIELD | TEST_SYNC_FIELDS;
-+	rv = _vcpu_run(vm, VCPU_ID);
-+	TEST_ASSERT(rv < 0 && errno == EINVAL,
-+		    "Invalid kvm_dirty_regs did not cause expected KVM_RUN error: %d\n",
-+		    rv);
-+	vcpu_state(vm, VCPU_ID)->kvm_dirty_regs = 0;
-+
- 	/* Request and verify all valid register sets. */
- 	run->kvm_valid_regs = TEST_SYNC_FIELDS;
- 	rv = _vcpu_run(vm, VCPU_ID);
+> +
+> +	ret = sdw_cdns_exit_reset(cdns);
+> +
+> +	dev_dbg(cdns->dev, "link hw_reset done: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +DEFINE_DEBUGFS_ATTRIBUTE(cdns_hw_reset_fops, NULL, cdns_hw_reset, "%llu\n");
+> +
+>  /**
+>   * sdw_cdns_debugfs_init() - Cadence debugfs init
+>   * @cdns: Cadence instance
+> @@ -348,6 +365,9 @@ DEFINE_SHOW_ATTRIBUTE(cdns_reg);
+>  void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root)
+>  {
+>  	debugfs_create_file("cdns-registers", 0400, root, cdns, &cdns_reg_fops);
+> +
+> +	debugfs_create_file("cdns-hw-reset", 0200, root, cdns,
+> +			    &cdns_hw_reset_fops);
+>  }
+>  EXPORT_SYMBOL_GPL(sdw_cdns_debugfs_init);
+>  
+> -- 
+> 2.20.1
+
 -- 
-2.18.1
-
+~Vinod
