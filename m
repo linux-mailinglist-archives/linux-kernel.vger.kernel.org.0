@@ -2,146 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D340CA7AE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 07:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC4B6A7AFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 07:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbfIDFrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 01:47:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45338 "EHLO mx1.redhat.com"
+        id S1727929AbfIDFvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 01:51:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728544AbfIDFrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 01:47:47 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725840AbfIDFvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 01:51:46 -0400
+Received: from localhost (unknown [122.182.201.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 052E030842A8;
-        Wed,  4 Sep 2019 05:47:47 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-72.ams2.redhat.com [10.36.117.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D8A9019C4F;
-        Wed,  4 Sep 2019 05:47:45 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 060F131EEC; Wed,  4 Sep 2019 07:47:42 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Airlie <airlied@redhat.com>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-kernel@vger.kernel.org (open list),
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU)
-Subject: [PATCH v3 7/7] drm/vram: fix Kconfig
-Date:   Wed,  4 Sep 2019 07:47:40 +0200
-Message-Id: <20190904054740.20817-8-kraxel@redhat.com>
-In-Reply-To: <20190904054740.20817-1-kraxel@redhat.com>
-References: <20190904054740.20817-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 04 Sep 2019 05:47:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC0DD23400;
+        Wed,  4 Sep 2019 05:51:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567576305;
+        bh=l7eIx4DSpd0U+fEd+RL7AhDqTLb6d7EsJav6w5VgEaY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dl7uTKaE4zW6dgY+wo0kzdahgAe/kvfTIdua16LeD8WFuL+EebLLxrP0WFepsQ6lw
+         nc0pvE0VrG3grn6KMEPvk38PuBhANiMBBNQaaOMNDz5vchBtGl8ambJK86yJgtb3aJ
+         1m7rtUcO+51HsFQa/acNSwkivQismAJQMNRWUF10=
+Date:   Wed, 4 Sep 2019 11:20:37 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     jassisinghbrar@gmail.com
+Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: milbeaut-m10v-hdmac: Add Socionext
+ Milbeaut HDMAC bindings
+Message-ID: <20190904055037.GC2672@vkoul-mobl>
+References: <20190818051647.17475-1-jassisinghbrar@gmail.com>
+ <20190818051754.17548-1-jassisinghbrar@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190818051754.17548-1-jassisinghbrar@gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-select isn't recursive, so we can't turn on DRM_TTM + DRM_TTM_HELPER
-in config DRM_VRAM_HELPER, we have to select them on the vram users
-instead.
+On 18-08-19, 00:17, jassisinghbrar@gmail.com wrote:
+> From: Jassi Brar <jaswinder.singh@linaro.org>
+> 
+> Document the devicetree bindings for Socionext Milbeaut HDMAC
+> controller. Controller has upto 8 floating channels, that need
+> a predefined slave-id to work from a set of slaves.
+> 
+> Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+> ---
+>  .../bindings/dma/milbeaut-m10v-hdmac.txt      | 32 +++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt b/Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt
+> new file mode 100644
+> index 000000000000..f0960724f1c7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt
+> @@ -0,0 +1,32 @@
+> +* Milbeaut AHB DMA Controller
+> +
+> +Milbeaut AHB DMA controller has transfer capability bellow.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/Kconfig                 | 2 --
- drivers/gpu/drm/ast/Kconfig             | 2 ++
- drivers/gpu/drm/bochs/Kconfig           | 2 ++
- drivers/gpu/drm/hisilicon/hibmc/Kconfig | 3 ++-
- drivers/gpu/drm/mgag200/Kconfig         | 2 ++
- drivers/gpu/drm/vboxvideo/Kconfig       | 2 ++
- 6 files changed, 10 insertions(+), 3 deletions(-)
+s/bellow/below:
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 1be8ad30d8fe..cd11a3bde19c 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -168,8 +168,6 @@ config DRM_TTM
- config DRM_VRAM_HELPER
- 	tristate
- 	depends on DRM
--	select DRM_TTM
--	select DRM_TTM_HELPER
- 	help
- 	  Helpers for VRAM memory management
- 
-diff --git a/drivers/gpu/drm/ast/Kconfig b/drivers/gpu/drm/ast/Kconfig
-index 829620d5326c..fbcf2f45cef5 100644
---- a/drivers/gpu/drm/ast/Kconfig
-+++ b/drivers/gpu/drm/ast/Kconfig
-@@ -4,6 +4,8 @@ config DRM_AST
- 	depends on DRM && PCI && MMU
- 	select DRM_KMS_HELPER
- 	select DRM_VRAM_HELPER
-+	select DRM_TTM
-+	select DRM_TTM_HELPER
- 	help
- 	 Say yes for experimental AST GPU driver. Do not enable
- 	 this driver without having a working -modesetting,
-diff --git a/drivers/gpu/drm/bochs/Kconfig b/drivers/gpu/drm/bochs/Kconfig
-index 32b043abb668..7bcdf294fed8 100644
---- a/drivers/gpu/drm/bochs/Kconfig
-+++ b/drivers/gpu/drm/bochs/Kconfig
-@@ -4,6 +4,8 @@ config DRM_BOCHS
- 	depends on DRM && PCI && MMU
- 	select DRM_KMS_HELPER
- 	select DRM_VRAM_HELPER
-+	select DRM_TTM
-+	select DRM_TTM_HELPER
- 	help
- 	  Choose this option for qemu.
- 	  If M is selected the module will be called bochs-drm.
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/Kconfig b/drivers/gpu/drm/hisilicon/hibmc/Kconfig
-index f20eedf0073a..8ad9a5b12e40 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/Kconfig
-+++ b/drivers/gpu/drm/hisilicon/hibmc/Kconfig
-@@ -4,7 +4,8 @@ config DRM_HISI_HIBMC
- 	depends on DRM && PCI && MMU
- 	select DRM_KMS_HELPER
- 	select DRM_VRAM_HELPER
--
-+	select DRM_TTM
-+	select DRM_TTM_HELPER
- 	help
- 	  Choose this option if you have a Hisilicon Hibmc soc chipset.
- 	  If M is selected the module will be called hibmc-drm.
-diff --git a/drivers/gpu/drm/mgag200/Kconfig b/drivers/gpu/drm/mgag200/Kconfig
-index 76fee0fbdcae..aed11f4f4c55 100644
---- a/drivers/gpu/drm/mgag200/Kconfig
-+++ b/drivers/gpu/drm/mgag200/Kconfig
-@@ -4,6 +4,8 @@ config DRM_MGAG200
- 	depends on DRM && PCI && MMU
- 	select DRM_KMS_HELPER
- 	select DRM_VRAM_HELPER
-+	select DRM_TTM
-+	select DRM_TTM_HELPER
- 	help
- 	 This is a KMS driver for the MGA G200 server chips, it
-          does not support the original MGA G200 or any of the desktop
-diff --git a/drivers/gpu/drm/vboxvideo/Kconfig b/drivers/gpu/drm/vboxvideo/Kconfig
-index 56ba510f21a2..45fe135d6e43 100644
---- a/drivers/gpu/drm/vboxvideo/Kconfig
-+++ b/drivers/gpu/drm/vboxvideo/Kconfig
-@@ -4,6 +4,8 @@ config DRM_VBOXVIDEO
- 	depends on DRM && X86 && PCI
- 	select DRM_KMS_HELPER
- 	select DRM_VRAM_HELPER
-+	select DRM_TTM
-+	select DRM_TTM_HELPER
- 	select GENERIC_ALLOCATOR
- 	help
- 	  This is a KMS driver for the virtual Graphics Card used in
+> + - device to memory transfer
+> + - memory to device transfer
+> +
+> +Required property:
+> +- compatible:       Should be  "socionext,milbeaut-m10v-hdmac"
+> +- reg:              Should contain DMA registers location and length.
+> +- interrupts:       Should contain all of the per-channel DMA interrupts.
+> +                     Number of channels is configurable - 2, 4 or 8, so
+> +                     the number of interrupts specfied should be {2,4,8}.
+
+s/specfied/specified
+
 -- 
-2.18.1
-
+~Vinod
