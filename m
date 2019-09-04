@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 564D1A8EF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80DB9A90FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388493AbfIDSBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40370 "EHLO mail.kernel.org"
+        id S2390576AbfIDSMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:12:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387777AbfIDSA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:00:58 -0400
+        id S2389947AbfIDSMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:12:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D99721883;
-        Wed,  4 Sep 2019 18:00:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B86E206BA;
+        Wed,  4 Sep 2019 18:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620057;
-        bh=BfhlLiLUo+otcdw2PhxmxNxKrM1EJHiwJIqAWc5ijxc=;
+        s=default; t=1567620768;
+        bh=Qt0pZTBm2HLd9hNL3X5vWaW/wEcU1poUIWeHPEe82YQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GQVvVxE+uQqK0KUMvJ/3qNr2D81LH9x35XoD2bsg1us8ys52AZfGHx53Sk8x7nCd6
-         r2ShakgSAbd/KsB2zNn3a+zEFfBR0wWSWWFRxIG2KD1i+c5eW3e9sJEv2rVFF4UBxv
-         7s00dNKAJm4AjwbfOadXEBHfeZI/N2QXKvGRl46c=
+        b=vPAI8I20L/jdgUsmpZs/GJyw2fbgqYzFFrR52ougpGbGD/JudUxIKsE2XZQ0y6rjs
+         Y6+tplZ3r/DHxSLEwla5cvsTH50abk8UaAVxCJDqRRWmgVhCIKel0eeH8GRhLZwZuX
+         UykpswWRcasGp0WFiEwK+aNO1FT/HGGpiKonlU5U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 57/83] ALSA: usb-audio: Fix an OOB bug in parse_audio_mixer_unit
-Date:   Wed,  4 Sep 2019 19:53:49 +0200
-Message-Id: <20190904175308.585489773@linuxfoundation.org>
+        stable@vger.kernel.org, Pu Wen <puwen@hygon.cn>,
+        Calvin Walton <calvin.walton@kepstin.ca>,
+        Len Brown <len.brown@intel.com>
+Subject: [PATCH 5.2 087/143] tools/power turbostat: Fix caller parameter of get_tdp_amd()
+Date:   Wed,  4 Sep 2019 19:53:50 +0200
+Message-Id: <20190904175317.487175133@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Peng <benquike@gmail.com>
+From: Pu Wen <puwen@hygon.cn>
 
-commit daac07156b330b18eb5071aec4b3ddca1c377f2c upstream.
+commit 9cfa8e042f7cbb1994cc5923e46c78b36f6054f4 upstream.
 
-The `uac_mixer_unit_descriptor` shown as below is read from the
-device side. In `parse_audio_mixer_unit`, `baSourceID` field is
-accessed from index 0 to `bNrInPins` - 1, the current implementation
-assumes that descriptor is always valid (the length  of descriptor
-is no shorter than 5 + `bNrInPins`). If a descriptor read from
-the device side is invalid, it may trigger out-of-bound memory
-access.
+Commit 9392bd98bba760be96ee ("tools/power turbostat: Add support for AMD
+Fam 17h (Zen) RAPL") add a function get_tdp_amd(), the parameter is CPU
+family. But the rapl_probe_amd() function use wrong model parameter.
+Fix the wrong caller parameter of get_tdp_amd() to use family.
 
-```
-struct uac_mixer_unit_descriptor {
-	__u8 bLength;
-	__u8 bDescriptorType;
-	__u8 bDescriptorSubtype;
-	__u8 bUnitID;
-	__u8 bNrInPins;
-	__u8 baSourceID[];
-}
-```
-
-This patch fixes the bug by add a sanity check on the length of
-the descriptor.
-
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: <stable@vger.kernel.org> # v5.1+
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+Reviewed-by: Calvin Walton <calvin.walton@kepstin.ca>
+Signed-off-by: Len Brown <len.brown@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/power/x86/turbostat/turbostat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -1713,6 +1713,7 @@ static int parse_audio_mixer_unit(struct
- 	int pin, ich, err;
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -4002,7 +4002,7 @@ void rapl_probe_amd(unsigned int family,
+ 	rapl_energy_units = ldexp(1.0, -(msr >> 8 & 0x1f));
+ 	rapl_power_units = ldexp(1.0, -(msr & 0xf));
  
- 	if (desc->bLength < 11 || !(input_pins = desc->bNrInPins) ||
-+	    desc->bLength < sizeof(*desc) + desc->bNrInPins ||
- 	    !(num_outs = uac_mixer_unit_bNrChannels(desc))) {
- 		usb_audio_err(state->chip,
- 			      "invalid MIXER UNIT descriptor %d\n",
+-	tdp = get_tdp_amd(model);
++	tdp = get_tdp_amd(family);
+ 
+ 	rapl_joule_counter_range = 0xFFFFFFFF * rapl_energy_units / tdp;
+ 	if (!quiet)
 
 
