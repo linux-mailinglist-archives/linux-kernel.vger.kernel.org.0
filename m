@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 499E9A9032
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C2B4A8F91
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389743AbfIDSIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:08:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50952 "EHLO mail.kernel.org"
+        id S2388761AbfIDSEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:04:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389734AbfIDSIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:08:12 -0400
+        id S2388665AbfIDSE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:04:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E89942087E;
-        Wed,  4 Sep 2019 18:08:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC8E523401;
+        Wed,  4 Sep 2019 18:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620491;
-        bh=FCQ49UyAnellf/2lRQYhfrCi+V/oPwiaJ/v5oINvU/8=;
+        s=default; t=1567620265;
+        bh=FIMhe5wqKZ7wKr08bAItySFaV2dIz+9zENYWQkjtVdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AmXz9VW6FatDNjkrZPMIJUq5/X6yMrsAAL7bKeCmxR/pVAsb2yr/sCOetwkV/fJdS
-         E6VqBH4gvA6g8yyObg+MoCZ7jbLmjXrrNY6Yj8x+UMKZeL9rZ8CxTpBN7r7g2NKPOd
-         riYXkU3sV+ZGVa3jLZ+k+8YQl8TMIaMK+uwSCJek=
+        b=fjcejCe54Tml8Dh/OBaleLUN2onYirjL4w0r4oF/PkVOQQz4wKFcdrGTbi+FmaJKd
+         96ntmm71nnG90X0yVB+ga7e39U/yMc7w6HlcvP9T0H7ij0p2s21qF2fgHNZOYMllzf
+         X+lgU7CXUaPaQEV4EENld2kPfY5AKDlNMgi4ce/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Wei Xu <xuwei5@hisilicon.com>
-Subject: [PATCH 4.19 77/93] bus: hisi_lpc: Add .remove method to avoid driver unbind crash
-Date:   Wed,  4 Sep 2019 19:54:19 +0200
-Message-Id: <20190904175309.744840990@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 52/57] NFS: Clean up list moves of struct nfs_page
+Date:   Wed,  4 Sep 2019 19:54:20 +0200
+Message-Id: <20190904175306.975236128@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,171 +44,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+[ Upstream commit 078b5fd92c4913dd367361db6c28568386077c89 ]
 
-commit 10e62b47973b0b0ceda076255bcb147b83e20517 upstream.
+In several places we're just moving the struct nfs_page from one list to
+another by first removing from the existing list, then adding to the new
+one.
 
-The original driver author seemed to be under the impression that a driver
-cannot be removed if it does not have a .remove method. Or maybe if it is
-a built-in platform driver.
-
-This is not true. This crash can be created:
-
-root@ubuntu:/sys/bus/platform/drivers/hisi-lpc# echo HISI0191\:00 > unbind
-root@ubuntu:/sys/bus/platform/drivers/hisi-lpc# ipmitool raw 6 1
- Unable to handle kernel paging request at virtual address ffff000010035010
- Mem abort info:
-   ESR = 0x96000047
-   Exception class = DABT (current EL), IL = 32 bits
-   SET = 0, FnV = 0
-   EA = 0, S1PTW = 0
- Data abort info:
-   ISV = 0, ISS = 0x00000047
-   CM = 0, WnR = 1
- swapper pgtable: 4k pages, 48-bit VAs, pgdp=000000000118b000
- [ffff000010035010] pgd=0000041ffbfff003, pud=0000041ffbffe003, pmd=0000041ffbffd003, pte=0000000000000000
- Internal error: Oops: 96000047 [#1] PREEMPT SMP
- Modules linked in:
- CPU: 17 PID: 1473 Comm: ipmitool Not tainted 5.2.0-rc5-00003-gf68c53b414a3-dirty #198
- Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT21 Nemo 2.0 RC0 04/18/2018
- pstate: 20000085 (nzCv daIf -PAN -UAO)
- pc : hisi_lpc_target_in+0x7c/0x120
- lr : hisi_lpc_target_in+0x70/0x120
- sp : ffff00001efe3930
- x29: ffff00001efe3930 x28: ffff841f9f599200
- x27: 0000000000000002 x26: 0000000000000000
- x25: 0000000000000080 x24: 00000000000000e4
- x23: 0000000000000000 x22: 0000000000000064
- x21: ffff801fb667d280 x20: 0000000000000001
- x19: ffff00001efe39ac x18: 0000000000000000
- x17: 0000000000000000 x16: 0000000000000000
- x15: 0000000000000000 x14: 0000000000000000
- x13: 0000000000000000 x12: 0000000000000000
- x11: 0000000000000000 x10: 0000000000000000
- x9 : 0000000000000000 x8 : ffff841febe60340
- x7 : ffff801fb55c52e8 x6 : 0000000000000000
- x5 : 0000000000ffc0e3 x4 : 0000000000000001
- x3 : ffff801fb667d280 x2 : 0000000000000001
- x1 : ffff000010035010 x0 : ffff000010035000
- Call trace:
-  hisi_lpc_target_in+0x7c/0x120
-  hisi_lpc_comm_in+0x88/0x98
-  logic_inb+0x5c/0xb8
-  port_inb+0x18/0x20
-  bt_event+0x38/0x808
-  smi_event_handler+0x4c/0x5a0
-  check_start_timer_thread.part.4+0x40/0x58
-  sender+0x78/0x88
-  smi_send.isra.6+0x94/0x108
-  i_ipmi_request+0x2c4/0x8f8
-  ipmi_request_settime+0x124/0x160
-  handle_send_req+0x19c/0x208
-  ipmi_ioctl+0x2c0/0x990
-  do_vfs_ioctl+0xb8/0x8f8
-  ksys_ioctl+0x80/0xb8
-  __arm64_sys_ioctl+0x1c/0x28
-  el0_svc_common.constprop.0+0x64/0x160
-  el0_svc_handler+0x28/0x78
-  el0_svc+0x8/0xc
- Code: 941d1511 aa0003f9 f94006a0 91004001 (b9000034)
- ---[ end trace aa842b86af7069e4 ]---
-
-The problem here is that the host goes away but the associated logical PIO
-region remains registered, as do the children devices.
-
-Fix by adding a .remove method to tidy-up by removing the child devices
-and unregistering the logical PIO region.
-
-Cc: stable@vger.kernel.org
-Fixes: adf38bb0b595 ("HISI LPC: Support the LPC host on Hip06/Hip07 with DT bindings")
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bus/hisi_lpc.c |   38 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+ fs/nfs/direct.c          |  3 +--
+ fs/nfs/pagelist.c        | 12 ++++--------
+ include/linux/nfs_page.h | 10 ++++++++++
+ 3 files changed, 15 insertions(+), 10 deletions(-)
 
---- a/drivers/bus/hisi_lpc.c
-+++ b/drivers/bus/hisi_lpc.c
-@@ -456,6 +456,17 @@ struct hisi_lpc_acpi_cell {
- 	size_t pdata_size;
- };
+diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+index 89c03a507dd9d..0c5e56702b19e 100644
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -664,8 +664,7 @@ static void nfs_direct_write_reschedule(struct nfs_direct_req *dreq)
  
-+static void hisi_lpc_acpi_remove(struct device *hostdev)
-+{
-+	struct acpi_device *adev = ACPI_COMPANION(hostdev);
-+	struct acpi_device *child;
-+
-+	device_for_each_child(hostdev, NULL, hisi_lpc_acpi_remove_subdev);
-+
-+	list_for_each_entry(child, &adev->children, node)
-+		acpi_device_clear_enumerated(child);
-+}
-+
- /*
-  * hisi_lpc_acpi_probe - probe children for ACPI FW
-  * @hostdev: LPC host device pointer
-@@ -556,8 +567,7 @@ static int hisi_lpc_acpi_probe(struct de
- 	return 0;
+ 	list_for_each_entry_safe(req, tmp, &reqs, wb_list) {
+ 		if (!nfs_pageio_add_request(&desc, req)) {
+-			nfs_list_remove_request(req);
+-			nfs_list_add_request(req, &failed);
++			nfs_list_move_request(req, &failed);
+ 			spin_lock(&cinfo.inode->i_lock);
+ 			dreq->flags = 0;
+ 			if (desc.pg_error < 0)
+diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
+index 28b013d1d44ae..a7aa028a5b0bb 100644
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -768,8 +768,7 @@ int nfs_generic_pgio(struct nfs_pageio_descriptor *desc,
+ 	pageused = 0;
+ 	while (!list_empty(head)) {
+ 		req = nfs_list_entry(head->next);
+-		nfs_list_remove_request(req);
+-		nfs_list_add_request(req, &hdr->pages);
++		nfs_list_move_request(req, &hdr->pages);
  
- fail:
--	device_for_each_child(hostdev, NULL,
--			      hisi_lpc_acpi_remove_subdev);
-+	hisi_lpc_acpi_remove(hostdev);
- 	return ret;
- }
- 
-@@ -570,6 +580,10 @@ static int hisi_lpc_acpi_probe(struct de
- {
- 	return -ENODEV;
- }
-+
-+static void hisi_lpc_acpi_remove(struct device *hostdev)
-+{
-+}
- #endif // CONFIG_ACPI
- 
- /*
-@@ -627,6 +641,8 @@ static int hisi_lpc_probe(struct platfor
- 		return ret;
+ 		if (!last_page || last_page != req->wb_page) {
+ 			pageused++;
+@@ -961,8 +960,7 @@ static int nfs_pageio_do_add_request(struct nfs_pageio_descriptor *desc,
  	}
+ 	if (!nfs_can_coalesce_requests(prev, req, desc))
+ 		return 0;
+-	nfs_list_remove_request(req);
+-	nfs_list_add_request(req, &mirror->pg_list);
++	nfs_list_move_request(req, &mirror->pg_list);
+ 	mirror->pg_count += req->wb_bytes;
+ 	return 1;
+ }
+@@ -994,8 +992,7 @@ nfs_pageio_cleanup_request(struct nfs_pageio_descriptor *desc,
+ {
+ 	LIST_HEAD(head);
  
-+	dev_set_drvdata(dev, lpcdev);
-+
- 	io_end = lpcdev->io_host->io_start + lpcdev->io_host->size;
- 	dev_info(dev, "registered range [%pa - %pa]\n",
- 		 &lpcdev->io_host->io_start, &io_end);
-@@ -634,6 +650,23 @@ static int hisi_lpc_probe(struct platfor
- 	return ret;
+-	nfs_list_remove_request(req);
+-	nfs_list_add_request(req, &head);
++	nfs_list_move_request(req, &head);
+ 	desc->pg_completion_ops->error_cleanup(&head);
  }
  
-+static int hisi_lpc_remove(struct platform_device *pdev)
+@@ -1241,9 +1238,8 @@ int nfs_pageio_resend(struct nfs_pageio_descriptor *desc,
+ 	while (!list_empty(&hdr->pages)) {
+ 		struct nfs_page *req = nfs_list_entry(hdr->pages.next);
+ 
+-		nfs_list_remove_request(req);
+ 		if (!nfs_pageio_add_request(desc, req))
+-			nfs_list_add_request(req, &failed);
++			nfs_list_move_request(req, &failed);
+ 	}
+ 	nfs_pageio_complete(desc);
+ 	if (!list_empty(&failed)) {
+diff --git a/include/linux/nfs_page.h b/include/linux/nfs_page.h
+index e27572d30d977..ad69430fd0eb5 100644
+--- a/include/linux/nfs_page.h
++++ b/include/linux/nfs_page.h
+@@ -164,6 +164,16 @@ nfs_list_add_request(struct nfs_page *req, struct list_head *head)
+ 	list_add_tail(&req->wb_list, head);
+ }
+ 
++/**
++ * nfs_list_move_request - Move a request to a new list
++ * @req: request
++ * @head: head of list into which to insert the request.
++ */
++static inline void
++nfs_list_move_request(struct nfs_page *req, struct list_head *head)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct acpi_device *acpi_device = ACPI_COMPANION(dev);
-+	struct hisi_lpc_dev *lpcdev = dev_get_drvdata(dev);
-+	struct logic_pio_hwaddr *range = lpcdev->io_host;
-+
-+	if (acpi_device)
-+		hisi_lpc_acpi_remove(dev);
-+	else
-+		of_platform_depopulate(dev);
-+
-+	logic_pio_unregister_range(range);
-+
-+	return 0;
++	list_move_tail(&req->wb_list, head);
 +}
-+
- static const struct of_device_id hisi_lpc_of_match[] = {
- 	{ .compatible = "hisilicon,hip06-lpc", },
- 	{ .compatible = "hisilicon,hip07-lpc", },
-@@ -647,5 +680,6 @@ static struct platform_driver hisi_lpc_d
- 		.acpi_match_table = ACPI_PTR(hisi_lpc_acpi_match),
- 	},
- 	.probe = hisi_lpc_probe,
-+	.remove = hisi_lpc_remove,
- };
- builtin_platform_driver(hisi_lpc_driver);
+ 
+ /**
+  * nfs_list_remove_request - Remove a request from its wb_list
+-- 
+2.20.1
+
 
 
