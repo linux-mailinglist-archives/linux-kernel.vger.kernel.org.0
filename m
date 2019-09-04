@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D04A8F17
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CED9A8F78
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388628AbfIDSBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41312 "EHLO mail.kernel.org"
+        id S2389011AbfIDSDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:03:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388035AbfIDSBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:41 -0400
+        id S2388063AbfIDSDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:03:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 983C0208E4;
-        Wed,  4 Sep 2019 18:01:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B32422CF7;
+        Wed,  4 Sep 2019 18:03:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620100;
-        bh=yxrOLr+nJlXGFgJxEKj2ytBilMzRxqfUP+zKQXQ0p7U=;
+        s=default; t=1567620228;
+        bh=2JqQvux28qzqiQiG86sbz00E1q+ZPZB1ah/c7nNZNI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oxS9E2DJaqwVIRX6w8gEOpRpWBLDOEhySjfVZ5lz+R+HhDXu4Tqh/Oms+33lD6zPU
-         xE4VgWm20yk8YHsPJpNIFrcj8nwfE5h7fnBlfDocaxAP46Bg/qzcAFbBfafwTbUqjD
-         yaZisc+jzbVPuriaLFAR7A5rmbaAZ5KtQum+SfsI=
+        b=11GomNU5/K6vEBCxn+HbFlgu1cDnabug/gCXyJlgoHEfvd7+sEvVtXd77H8i8BO2w
+         iarCa52MAQLcs3pOlegEoc2lj877duyYLvMFcQf1fOKNJhIJ4Yo7RsqbCHyYfov8KF
+         eBC+KC2cSsBr4OQK7zyEhkI0h0E9L/GLPqkIOvd8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.9 71/83] USB: storage: ums-realtek: Whitelist auto-delink support
-Date:   Wed,  4 Sep 2019 19:54:03 +0200
-Message-Id: <20190904175309.858290715@linuxfoundation.org>
+        stable@vger.kernel.org, Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 4.14 36/57] USB: storage: ums-realtek: Update module parameter description for auto_delink_en
+Date:   Wed,  4 Sep 2019 19:54:04 +0200
+Message-Id: <20190904175305.642752374@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +44,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 1902a01e2bcc3abd7c9a18dc05e78c7ab4a53c54 upstream.
+commit f6445b6b2f2bb1745080af4a0926049e8bca2617 upstream.
 
-Auto-delink requires writing special registers to ums-realtek devices.
-Unconditionally enable auto-delink may break newer devices.
+The option named "auto_delink_en" is a bit misleading, as setting it to
+false doesn't really disable auto-delink but let auto-delink be firmware
+controlled.
 
-So only enable auto-delink by default for the original three IDs,
-0x0138, 0x0158 and 0x0159.
+Update the description to reflect the real usage of this parameter.
 
-Realtek is working on a patch to properly support auto-delink for other
-IDs.
-
-BugLink: https://bugs.launchpad.net/bugs/1838886
 Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190827173450.13572-2-kai.heng.feng@canonical.com
+Link: https://lore.kernel.org/r/20190827173450.13572-1-kai.heng.feng@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/realtek_cr.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/usb/storage/realtek_cr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/usb/storage/realtek_cr.c
 +++ b/drivers/usb/storage/realtek_cr.c
-@@ -1010,12 +1010,15 @@ static int init_realtek_cr(struct us_dat
- 			goto INIT_FAIL;
- 	}
+@@ -50,7 +50,7 @@ MODULE_LICENSE("GPL");
  
--	if (CHECK_FW_VER(chip, 0x5888) || CHECK_FW_VER(chip, 0x5889) ||
--	    CHECK_FW_VER(chip, 0x5901))
--		SET_AUTO_DELINK(chip);
--	if (STATUS_LEN(chip) == 16) {
--		if (SUPPORT_AUTO_DELINK(chip))
-+	if (CHECK_PID(chip, 0x0138) || CHECK_PID(chip, 0x0158) ||
-+	    CHECK_PID(chip, 0x0159)) {
-+		if (CHECK_FW_VER(chip, 0x5888) || CHECK_FW_VER(chip, 0x5889) ||
-+				CHECK_FW_VER(chip, 0x5901))
- 			SET_AUTO_DELINK(chip);
-+		if (STATUS_LEN(chip) == 16) {
-+			if (SUPPORT_AUTO_DELINK(chip))
-+				SET_AUTO_DELINK(chip);
-+		}
- 	}
+ static int auto_delink_en = 1;
+ module_param(auto_delink_en, int, S_IRUGO | S_IWUSR);
+-MODULE_PARM_DESC(auto_delink_en, "enable auto delink");
++MODULE_PARM_DESC(auto_delink_en, "auto delink mode (0=firmware, 1=software [default])");
+ 
  #ifdef CONFIG_REALTEK_AUTOPM
- 	if (ss_en)
+ static int ss_en = 1;
 
 
