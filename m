@@ -2,118 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5A5A7FAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 261B6A7FB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:48:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729745AbfIDJrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 05:47:25 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:47229 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725840AbfIDJrZ (ORCPT
+        id S1729782AbfIDJsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 05:48:04 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41564 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725840AbfIDJsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:47:25 -0400
-X-UUID: 20d97f0ab7ab4b9487fb870f7a985cba-20190904
-X-UUID: 20d97f0ab7ab4b9487fb870f7a985cba-20190904
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 782800987; Wed, 04 Sep 2019 17:47:18 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 4 Sep
- 2019 17:47:15 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 4 Sep 2019 17:47:15 +0800
-Message-ID: <1567590435.7317.55.camel@mhfsdcap03>
-Subject: Re: [Patch V8 6/8] arm64: tegra: Enable xudc on Jetson TX1
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Nagarjuna Kristam <nkristam@nvidia.com>
-CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Date:   Wed, 4 Sep 2019 17:47:15 +0800
-In-Reply-To: <1567585440-13751-7-git-send-email-nkristam@nvidia.com>
-References: <1567585440-13751-1-git-send-email-nkristam@nvidia.com>
-         <1567585440-13751-7-git-send-email-nkristam@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: D87928C5A73737F4FDAFFCF7D19F9B4E08A5B9C99695FB703669287E41A94F292000:8
-X-MTK:  N
+        Wed, 4 Sep 2019 05:48:03 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x849hTOu054617
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Sep 2019 05:48:03 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ut9dhudrr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 05:48:02 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Wed, 4 Sep 2019 10:48:00 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Sep 2019 10:47:57 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x849lu7A31326246
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Sep 2019 09:47:56 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7738BA4051;
+        Wed,  4 Sep 2019 09:47:56 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 324B3A4057;
+        Wed,  4 Sep 2019 09:47:55 +0000 (GMT)
+Received: from srikart450.in.ibm.com (unknown [9.122.211.65])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Sep 2019 09:47:55 +0000 (GMT)
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Naveen N Rao <naveen.n.rao@linux.vnet.ibm.com>
+Subject: [PATCH 0/2] Perf/stat: Solve problems with repeat and interval
+Date:   Wed,  4 Sep 2019 15:17:36 +0530
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 19090409-0008-0000-0000-00000310E2F6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090409-0009-0000-0000-00004A2F37D8
+Message-Id: <20190904094738.9558-1-srikar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-04_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=705 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909040096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-09-04 at 13:53 +0530, Nagarjuna Kristam wrote:
-> Enable XUSB device mode driver for USB0 slot on Jetson TX1.
-> 
-> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
-> Reviewed-by: JC Kuo <jckuo@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 31 +++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> index a7dc319..6aba1ba 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> @@ -1362,7 +1362,7 @@
->  				status = "okay";
->  
->  				lanes {
-> -					usb2-0 {
-> +					micro_b: usb2-0 {
->  						nvidia,function = "xusb";
->  						status = "okay";
->  					};
-> @@ -1483,6 +1483,21 @@
->  		vmmc-supply = <&vdd_3v3_sd>;
->  	};
->  
-> +	usb@700d0000 {
-> +		status = "okay";
-> +		phys = <&micro_b>;
-> +		phy-names = "usb2";
-> +		avddio-usb-supply = <&vdd_3v3_sys>;
-> +		hvdd-usb-supply = <&vdd_1v8>;
-> +		usb-role-switch;
-> +
-> +		port {
-> +			usb_role_switch: endpoint {
-> +				remote-endpoint = <&usb_b_conn_ep>;
-> +			};
-> +		};
-> +	};
-> +
->  	regulators {
->  		compatible = "simple-bus";
->  		#address-cells = <1>;
-> @@ -1641,4 +1656,18 @@
->  			linux,code = <KEY_VOLUMEUP>;
->  		};
->  	};
-> +
-> +	usb_type_b: connector {
-> +		compatible = "linux,usb-conn-gpio", "gpio-usb-b-connector";
-please use "gpio-usb-b-connector" and "usb-b-connector", due to
-"linux,usb-conn-gpio" is not supported now
+There are some problems in perf stat when using a combination of repeat and
+interval options. This series tries to fix them.
 
+Srikar Dronamraju (2):
+  perf/stat: Reset previous counts on repeat with interval
+  perf/stat: Fix a segmentation fault when using repeat forever
 
-> +		label = "micro-USB";
-> +		type = "micro";
-> +		vbus-gpio = <&gpio TEGRA_GPIO(Z, 0) GPIO_ACTIVE_LOW>;
-> +
-> +		port {
-> +			usb_b_conn_ep: endpoint {
-> +				remote-endpoint = <&usb_role_switch>;
-> +			};
-> +		};
-> +	};
-> +
->  };
+ tools/perf/builtin-stat.c |  5 ++++-
+ tools/perf/util/stat.c    | 17 +++++++++++++++++
+ tools/perf/util/stat.h    |  1 +
+ 3 files changed, 22 insertions(+), 1 deletion(-)
 
+-- 
+2.18.1
 
