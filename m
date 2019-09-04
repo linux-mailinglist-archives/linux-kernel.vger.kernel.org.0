@@ -2,157 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97211A8433
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41931A843B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730290AbfIDNOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 09:14:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48600 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729471AbfIDNOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 09:14:01 -0400
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ED202168B;
-        Wed,  4 Sep 2019 13:14:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567602840;
-        bh=ApIlzumSG2XRizv2fQ/w6se2CSvynXPZsfEwE6QrSSw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Ul7jJOLhJySRF7/S/f4iXEa53oVHhmU76IJFh1/2KWvuSuYyEUO0DcqyBlL5MPomC
-         XR9Ob8O6Goc77LDaYRilBSiLYbafmGso7CPpi+jA7WFcsrnx8q+EgLIHkYfjbdMAq7
-         NxvFwO39Mrwn1jaOLzvyOLqoBj2gK/kAbCQ9hNY0=
-Message-ID: <1567602838.13841.1.camel@kernel.org>
-Subject: Re: [PATCH v3] trace:Add "gfp_t" support in synthetic_events
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Zhengjun Xing <zhengjun.xing@linux.intel.com>, mingo@redhat.com,
-        tom.zanussi@linux.intel.com, linux-kernel@vger.kernel.org
-Date:   Wed, 04 Sep 2019 08:13:58 -0500
-In-Reply-To: <20190904064327.28876d71@oasis.local.home>
-References: <20190712015308.9908-1-zhengjun.xing@linux.intel.com>
-         <1562947506.12920.0.camel@kernel.org>
-         <20190904064327.28876d71@oasis.local.home>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        id S1730343AbfIDNQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 09:16:18 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:43951 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfIDNQS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 09:16:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1567602978; x=1599138978;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=dVPgUqN88hiyFCDUl2n0H4GWl7kQ/LvDY+M8i0q+25Y=;
+  b=VZ3WoOwZpRNbBzyask86p+s4bzhM8s3rmsabMlkwyJH3M21cXVQCp8uw
+   wTHlnw8VLhZerNNEdVY59ltyzNsefsAk0t6RL2XdWQBV4jcjYOxAWB1x5
+   rLSrxKCRKFhsCPtzFe4rAzF2EfZr+EJ8mF79yr+8z7QKIPk+FoNiHNa48
+   Y=;
+X-IronPort-AV: E=Sophos;i="5.64,467,1559520000"; 
+   d="scan'208";a="700658012"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2c-397e131e.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 04 Sep 2019 13:16:13 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2c-397e131e.us-west-2.amazon.com (Postfix) with ESMTPS id 3E81BA215A;
+        Wed,  4 Sep 2019 13:16:11 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 4 Sep 2019 13:16:10 +0000
+Received: from [10.88.66.45] (10.43.160.149) by EX13D01EUB001.ant.amazon.com
+ (10.43.166.194) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Wed, 4 Sep
+ 2019 13:15:54 +0000
+Subject: Re: [PATCH -next 13/15] thermal: thermal_mmio: use
+ devm_platform_ioremap_resource() to simplify code
+To:     YueHaibing <yuehaibing@huawei.com>, <miquel.raynal@bootlin.com>,
+        <rui.zhang@intel.com>, <edubezval@gmail.com>,
+        <daniel.lezcano@linaro.org>, <amit.kucheria@verdurent.com>,
+        <eric@anholt.net>, <wahrenst@gmx.net>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <mmayer@broadcom.com>, <computersforpeace@gmail.com>,
+        <gregory.0xf0@gmail.com>, <matthias.bgg@gmail.com>,
+        <agross@kernel.org>, <heiko@sntech.de>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <marc.w.gonzalez@free.fr>, <mans@mansr.com>, <jun.nie@linaro.org>,
+        <shawnguo@kernel.org>, <phil@raspberrypi.org>,
+        <gregkh@linuxfoundation.org>, <david.hernandezsanchez@st.com>,
+        <horms+renesas@verge.net.au>, <wsa+renesas@sang-engineering.com>,
+        <linux-pm@vger.kernel.org>
+CC:     <bcm-kernel-feedback-list@broadcom.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <talel@amazon.com>,
+        <ronenk@amazon.com>
+References: <20190904122939.23780-1-yuehaibing@huawei.com>
+ <20190904122939.23780-14-yuehaibing@huawei.com>
+From:   Talel Shenhar <talel@amazon.com>
+Message-ID: <228fdf20-9f3a-4809-6fed-448e2bb349d3@amazon.com>
+Date:   Wed, 4 Sep 2019 16:15:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190904122939.23780-14-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.43.160.149]
+X-ClientProxiedBy: EX13D08UWC003.ant.amazon.com (10.43.162.21) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+Thanks.
 
-On Wed, 2019-09-04 at 06:43 -0400, Steven Rostedt wrote:
-> On Fri, 12 Jul 2019 11:05:06 -0500
-> Tom Zanussi <zanussi@kernel.org> wrote:
-> 
-> > Hi Zhengjun,
-> > 
-> > On Fri, 2019-07-12 at 09:53 +0800, Zhengjun Xing wrote:
-> > > Add "gfp_t" support in synthetic_events, then the "gfp_t" type
-> > > parameter in some functions can be traced.
-> > > 
-> > > Prints the gfp flags as hex in addition to the human-readable
-> > > flag
-> > > string.  Example output:
-> > > 
-> > >   whoopsie-630 [000] ...1 78.969452: testevent: bar=b20
-> > > (GFP_ATOMIC|__GFP_ZERO)
-> > >     rcuc/0-11  [000] ...1 81.097555: testevent: bar=a20
-> > > (GFP_ATOMIC)
-> > >     rcuc/0-11  [000] ...1 81.583123: testevent: bar=a20
-> > > (GFP_ATOMIC)
-> > > 
-> > > Signed-off-by: Tom Zanussi <zanussi@kernel.org>
-> 
-> Why is this Signed-off-by Tom? Tom, did you author part of this??
-> 
+Talel.
 
-Yeah, I added the part that prints the flag names.
-
-Tom
-
-> -- Steve
-> 
-> > > Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>  
-> > 
-> > Looks good to me, thanks!
-> > 
-> > Tom
-> > 
-> > > ---
-> > >  kernel/trace/trace_events_hist.c | 19 +++++++++++++++++++
-> > >  1 file changed, 19 insertions(+)
-> > > 
-> > > diff --git a/kernel/trace/trace_events_hist.c
-> > > b/kernel/trace/trace_events_hist.c
-> > > index ca6b0dff60c5..30f0f32aca62 100644
-> > > --- a/kernel/trace/trace_events_hist.c
-> > > +++ b/kernel/trace/trace_events_hist.c
-> > > @@ -13,6 +13,10 @@
-> > >  #include <linux/rculist.h>
-> > >  #include <linux/tracefs.h>
-> > >  
-> > > +/* for gfp flag names */
-> > > +#include <linux/trace_events.h>
-> > > +#include <trace/events/mmflags.h>
-> > > +
-> > >  #include "tracing_map.h"
-> > >  #include "trace.h"
-> > >  #include "trace_dynevent.h"
-> > > @@ -752,6 +756,8 @@ static int synth_field_size(char *type)
-> > >  		size = sizeof(unsigned long);
-> > >  	else if (strcmp(type, "pid_t") == 0)
-> > >  		size = sizeof(pid_t);
-> > > +	else if (strcmp(type, "gfp_t") == 0)
-> > > +		size = sizeof(gfp_t);
-> > >  	else if (synth_field_is_string(type))
-> > >  		size = synth_field_string_size(type);
-> > >  
-> > > @@ -792,6 +798,8 @@ static const char *synth_field_fmt(char
-> > > *type)
-> > >  		fmt = "%lu";
-> > >  	else if (strcmp(type, "pid_t") == 0)
-> > >  		fmt = "%d";
-> > > +	else if (strcmp(type, "gfp_t") == 0)
-> > > +		fmt = "%x";
-> > >  	else if (synth_field_is_string(type))
-> > >  		fmt = "%s";
-> > >  
-> > > @@ -834,9 +842,20 @@ static enum print_line_t
-> > > print_synth_event(struct trace_iterator *iter,
-> > >  					 i == se->n_fields - 1 ?
-> > > ""
-> > > : " ");
-> > >  			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
-> > >  		} else {
-> > > +			struct trace_print_flags __flags[] = {
-> > > +			    __def_gfpflag_names, {-1, NULL} };
-> > > +
-> > >  			trace_seq_printf(s, print_fmt, se-  
-> > > > fields[i]->name,  
-> > > 
-> > >  					 entry->fields[n_u64],
-> > >  					 i == se->n_fields - 1 ?
-> > > ""
-> > > : " ");
-> > > +
-> > > +			if (strcmp(se->fields[i]->type, "gfp_t")
-> > > ==
-> > > 0) {
-> > > +				trace_seq_puts(s, " (");
-> > > +				trace_print_flags_seq(s, "|",
-> > > +						      entry-  
-> > > > fields[n_u64],  
-> > > 
-> > > +						      __flags);
-> > > +				trace_seq_putc(s, ')');
-> > > +			}
-> > >  			n_u64++;
-> > >  		}
-> > >  	}  
-> 
-> 
+On 9/4/19 2:29 PM, YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-By: Talel Shenhar <talel@amazon.com>
+> ---
+>   drivers/thermal/thermal_mmio.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
