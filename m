@@ -2,72 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3BFBA81CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA5EA81C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:07:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbfIDMAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 08:00:05 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6643 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726240AbfIDMAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:00:05 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 2676FB443D939C8DA4D7;
-        Wed,  4 Sep 2019 20:00:03 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
- 19:59:54 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <b.zolnierkie@samsung.com>, <maarten.lankhorst@linux.intel.com>,
-        <daniel.vetter@ffwll.ch>, <viresh.kumar@linaro.org>,
-        <rafael.j.wysocki@intel.com>, <yuehaibing@huawei.com>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] fbdev/sa1100fb: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 4 Sep 2019 19:57:54 +0800
-Message-ID: <20190904115754.21612-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1729745AbfIDL7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 07:59:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39500 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725938AbfIDL7S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 07:59:18 -0400
+Received: from localhost (unknown [122.182.201.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E26722CF5;
+        Wed,  4 Sep 2019 11:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567598357;
+        bh=QOB+pnpJzvM3T17WHP6bSNkNARFO49kKixC1PCOUZsM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aOlfHDSGCDjFeO2R0XS7K6sD4Lgld5REbGaRR3Qia3o5yuRAt/i0/X9owavTvrpO8
+         ScrJCDtPQJM+KraQIysQVQWs7fTg5FLoD8fIathUzBvL58Y07IwwuO7RoithpqZvdC
+         VmY5Psyz9wHu1jd8h41snskHyvO731eV6EdFByvs=
+Date:   Wed, 4 Sep 2019 17:28:08 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     alokc@codeaurora.org, agross@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, bjorn.andersson@linaro.org,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: soc: qcom: Provide option to select
+ FIFO mode
+Message-ID: <20190904115808.GX2672@vkoul-mobl>
+References: <20190904113613.14997-1-lee.jones@linaro.org>
+ <20190904113613.14997-2-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190904113613.14997-2-lee.jones@linaro.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On 04-09-19, 12:36, Lee Jones wrote:
+> Used when DMA is not available or the best option.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/video/fbdev/sa1100fb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Ah binding is the second patch, I would assume think that this should be
+first patch :)
 
-diff --git a/drivers/video/fbdev/sa1100fb.c b/drivers/video/fbdev/sa1100fb.c
-index ae2bcfe..4428cef 100644
---- a/drivers/video/fbdev/sa1100fb.c
-+++ b/drivers/video/fbdev/sa1100fb.c
-@@ -1156,7 +1156,6 @@ static struct sa1100fb_info *sa1100fb_init_fbinfo(struct device *dev)
- static int sa1100fb_probe(struct platform_device *pdev)
- {
- 	struct sa1100fb_info *fbi;
--	struct resource *res;
- 	int ret, irq;
- 
- 	if (!dev_get_platdata(&pdev->dev)) {
-@@ -1172,8 +1171,7 @@ static int sa1100fb_probe(struct platform_device *pdev)
- 	if (!fbi)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	fbi->base = devm_ioremap_resource(&pdev->dev, res);
-+	fbi->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(fbi->base))
- 		return PTR_ERR(fbi->base);
- 
+Nevertheless looks good to me.
+
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> index dab7ca9f250c..b0e71c07e604 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+> @@ -40,6 +40,7 @@ Required properties:
+>  Optional property:
+>  - clock-frequency:	Desired I2C bus clock frequency in Hz.
+>  			When missing default to 100000Hz.
+> +- qcom,geni-se-fifo:	Selects FIFO processing - as opposed to DMA.
+>  
+>  Child nodes should conform to I2C bus binding as described in i2c.txt.
+>  
+> -- 
+> 2.17.1
+
 -- 
-2.7.4
-
-
+~Vinod
