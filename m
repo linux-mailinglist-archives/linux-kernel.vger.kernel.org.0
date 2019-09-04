@@ -2,124 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5141A9408
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A887A9439
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730405AbfIDUqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 16:46:55 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44947 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbfIDUqz (ORCPT
+        id S1730713AbfIDU5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 16:57:10 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34224 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfIDU5K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 16:46:55 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q21so20300pfn.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 13:46:54 -0700 (PDT)
+        Wed, 4 Sep 2019 16:57:10 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x18so159963ljh.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 13:57:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7FpVgaIhgimDRqpweFDbMiGBjSsk/JazcD80okKL/K8=;
-        b=B3ZwBoxDNj5wp/W0+6EgPLtyn42FRM4lKEPuGul/INFNVDV0d6vrjAfI74kiYbBjwb
-         RtwOAFpFkp8ULzlYQBnaGau4RSDKiK2Sdq8Hjs6JHKbU5On8H56ARMSYggt77ImaOAXR
-         Phja5i1TBR6bjGzSRWjJc8EZqzoOHCuT1G+iocES8UWBNVeoOYiRY6HkgRLZvKh5M6Sb
-         WHzguaFI/2ByIIVLDKt6nFLW+FJbEXZiBcnjB+VvF1jsWXutZ6GLiXNq+3ly3QHxD/gn
-         UhmFNW0RtNQQoSqk6dbh3isqFmSp5AkCvUY6fi5kmUt8vL3neywbb2V1USK8/dnNvSiJ
-         Cxug==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YRdCAVRAhTdLrO2mQDquZKKD1XyXDQFQecwZBQrW2l0=;
+        b=Ze7jrxDdyMP3SGOIesp7e7J/31BijZsyDh1sIQ7zUiaQzSssRLwu0Ke8i7Ma6J1ANp
+         +Y5ZM0aEii6+0RhihFBDvVJHDKpgy6odNUVXcrGCLgyyDaE911gL75i/CI9XscaVSNbQ
+         F9aqFQyEV98rhO6Nc66q5tz/D9khPZIijk1p4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7FpVgaIhgimDRqpweFDbMiGBjSsk/JazcD80okKL/K8=;
-        b=U1o2AC8iiOimRN62vmv4Y1B3sXSOvfWn1ZHjfdMq7hm1JsBmPgJ0/jVLaDYgvW9ijG
-         CXFCaSy9wItvk86pU+9XLGqUaE2EaIW7ZRWF4OpHYP5fXb+dWHB/nKwT18PUcAinLE9w
-         TgNpZwpWYlaE5L5/C77KEqGaGvd1XcyPnr3tD17o0+2SHgTks+RqekiM+pAyCLy6Bq/l
-         D+YrixO9m1o/7OLPe4Sk25vnBiCPUrm1kxMWxdKXNXrj40DtffyG4d8M4FthEBDWFUpg
-         xb34rho51ZgsvXyHwIbdVTTpgh7kE0pYLs4ecvKt8tb9Vr+vkQuKuRyj8Hj51hLuL+gh
-         56bA==
-X-Gm-Message-State: APjAAAXDyABEM6CySlZyVF69k1vcfwST9fJgA1BAKV0ypVyLM9TujER8
-        sqjkaGDJ0biUuBiK3167B+RIaw==
-X-Google-Smtp-Source: APXvYqx6p9POXMCXKO+7CZNt3OeG669blGTjX7rgKqWleU9xBmKU6iit1LtXZOmDeIMaYc7+Sw+ZcA==
-X-Received: by 2002:a63:66c5:: with SMTP id a188mr49168pgc.127.1567630014448;
-        Wed, 04 Sep 2019 13:46:54 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id br18sm3019455pjb.20.2019.09.04.13.46.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2019 13:46:53 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 13:46:49 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     broonie@kernel.org, f.fainelli@gmail.com, rjui@broadcom.com,
-        sbranden@broadcom.com, eric@anholt.net, wahrenst@gmx.net,
-        shc_work@mail.ru, agross@kernel.org, khilman@baylibre.com,
-        matthias.bgg@gmail.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, avifishman70@gmail.com, tmaimon77@gmail.com,
-        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
-        benjaminfair@google.com, kgene@kernel.org, krzk@kernel.org,
-        andi@etezian.org, palmer@sifive.com, paul.walmsley@sifive.com,
-        baohua@kernel.org, mripard@kernel.org, wens@csie.org,
-        ldewangan@nvidia.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, yamada.masahiro@socionext.com,
-        michal.simek@xilinx.com, bcm-kernel-feedback-list@broadcom.com,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH -next 23/36] spi: spi-qcom-qspi: use
- devm_platform_ioremap_resource() to simplify code
-Message-ID: <20190904204649.GF580@tuxbook-pro>
-References: <20190904135918.25352-1-yuehaibing@huawei.com>
- <20190904135918.25352-24-yuehaibing@huawei.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YRdCAVRAhTdLrO2mQDquZKKD1XyXDQFQecwZBQrW2l0=;
+        b=hhBUrZOG9cJVvoJ4TwlECCMbvh5CwwRuYm+peWN1+2H3MqjHgfYS1TKeusCalR3YVv
+         KAb3Aom0shgwnO01VHccZW9NDphhCh1bbEhSELaBqd9sAnnwcxi025otQYvPH9AMOSYs
+         ou61TtyCYtmHCG9OFZJmsaYQogiCmAiDgt7L0IPZuXZI5Ap3sJe9Kf6LVsV1YybdiQy8
+         jmEO2xyyYJmPtvkQK92e8TrWqv0AUz7W78s4YE/mnZCATXma+ScOrgoe5coYBDr+14Dp
+         ImwpZ0u4YzYr5+Uk+dMFcF9zIq+OYb4Jiv8EPDYvM+JfX3T0he9xLFHmpbPQt80/JWj3
+         IRyg==
+X-Gm-Message-State: APjAAAXn9mHfXxqXuM7dTLGgQXMhblhL6GnuczzKm3tK7Dm1H8pS5dkN
+        jhFFv8wFW9w5/mWO2RORjsdMA/VNAm8=
+X-Google-Smtp-Source: APXvYqwMnctrS2ygeyzT98tpr4xQmUn1eLB1JkVz/bkR+qaMOlwLaAVxoCQFoZ0PLrFoI8Ghs11OJg==
+X-Received: by 2002:a2e:3304:: with SMTP id d4mr18549204ljc.53.1567630628389;
+        Wed, 04 Sep 2019 13:57:08 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id j7sm2361458lfc.16.2019.09.04.13.57.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2019 13:57:08 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id w67so135455lff.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 13:57:08 -0700 (PDT)
+X-Received: by 2002:a19:f204:: with SMTP id q4mr52203lfh.29.1567630138756;
+ Wed, 04 Sep 2019 13:48:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904135918.25352-24-yuehaibing@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-2-cyphar@cyphar.com>
+In-Reply-To: <20190904201933.10736-2-cyphar@cyphar.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 4 Sep 2019 13:48:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiDUA-cMy4VZxO6o6q+Cs3D6Od_MwEK53gcXuVn-dqv2g@mail.gmail.com>
+Message-ID: <CAHk-=wiDUA-cMy4VZxO6o6q+Cs3D6Od_MwEK53gcXuVn-dqv2g@mail.gmail.com>
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user helpers
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 04 Sep 06:59 PDT 2019, YueHaibing wrote:
+On Wed, Sep 4, 2019 at 1:20 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+>
+> A common pattern for syscall extensions is increasing the size of a
+> struct passed from userspace, such that the zero-value of the new fields
+> result in the old kernel behaviour (allowing for a mix of userspace and
+> kernel vintages to operate on one another in most cases).
 
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
-> 
+Ack, this makes the whole series (and a few unrelated system calls) cleaner.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/spi/spi-qcom-qspi.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-qcom-qspi.c b/drivers/spi/spi-qcom-qspi.c
-> index a0ad73f..250fd60 100644
-> --- a/drivers/spi/spi-qcom-qspi.c
-> +++ b/drivers/spi/spi-qcom-qspi.c
-> @@ -424,7 +424,6 @@ static int qcom_qspi_probe(struct platform_device *pdev)
->  {
->  	int ret;
->  	struct device *dev;
-> -	struct resource *res;
->  	struct spi_master *master;
->  	struct qcom_qspi *ctrl;
->  
-> @@ -440,8 +439,7 @@ static int qcom_qspi_probe(struct platform_device *pdev)
->  
->  	spin_lock_init(&ctrl->lock);
->  	ctrl->dev = dev;
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	ctrl->base = devm_ioremap_resource(dev, res);
-> +	ctrl->base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(ctrl->base)) {
->  		ret = PTR_ERR(ctrl->base);
->  		goto exit_probe_master_put;
-> -- 
-> 2.7.4
-> 
-> 
+           Linus
