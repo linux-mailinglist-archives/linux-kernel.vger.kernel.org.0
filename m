@@ -2,54 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 367DFA7F68
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D288A7F6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:32:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbfIDJa2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 05:30:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51906 "EHLO mail.kernel.org"
+        id S1729625AbfIDJcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 05:32:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729093AbfIDJa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:30:28 -0400
+        id S1725938AbfIDJcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 05:32:01 -0400
 Received: from localhost (unknown [122.182.201.156])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79B0A21670;
-        Wed,  4 Sep 2019 09:30:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A6FA21670;
+        Wed,  4 Sep 2019 09:31:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567589427;
-        bh=5A9Vcn8Wbx2ac8gtPDwlVez5G3AlEtznhc3EeNKZ6O8=;
+        s=default; t=1567589520;
+        bh=WgIUy8LE9J87OsA/15aWqvYEgaNDugjXyzgcT2llIIg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OBDyIX2wKFW6B58iWnY1iy0cRV6uBL01HgiPIHX0t6i8G3XRVAAb30f1bh49zpAcB
-         wEaxqXnAwVTxGemhdTiP7xFxc02yySQRGiKDK2Kszh7AhQrimP/xcT5M/EVj5yIEo3
-         MPYVir2eVWMSrBN66PAli4U3LfSMv5shj73SFFQI=
-Date:   Wed, 4 Sep 2019 14:59:19 +0530
+        b=GtGomH9v7txv+9qLZ9tZuCxIymaWrnwtZSsPvbYLctwoeAEUuyslKGLcUZ/PKqz7q
+         aOsrl7gZPrpoqor59+m+aIqPC1tIM4lZfBHb36sjPuufs3+zaeru6XFkFV+QiG5/ts
+         f0KpSkqiYCQL0QnrTdu5DYpv7uaKvXHC1C7MCldM=
+Date:   Wed, 4 Sep 2019 15:00:52 +0530
 From:   Vinod Koul <vkoul@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     broonie@kernel.org, bgoswami@codeaurora.org, plai@codeaurora.org,
-        pierre-louis.bossart@linux.intel.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org
-Subject: Re: [PATCH v2 2/5] soundwire: stream: make stream name a const
- pointer
-Message-ID: <20190904092919.GP2672@vkoul-mobl>
-References: <20190813083550.5877-1-srinivas.kandagatla@linaro.org>
- <20190813083550.5877-3-srinivas.kandagatla@linaro.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Michal Suchanek <msuchanek@suse.de>, alsa-devel@alsa-project.org,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soundwire: slave: Fix unused function warning on !ACPI
+Message-ID: <20190904093052.GQ2672@vkoul-mobl>
+References: <20190830185212.25144-1-msuchanek@suse.de>
+ <f8c58d45-e641-5071-33bf-2927a61cb419@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190813083550.5877-3-srinivas.kandagatla@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f8c58d45-e641-5071-33bf-2927a61cb419@infradead.org>
 User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-08-19, 09:35, Srinivas Kandagatla wrote:
-> Make stream name const pointer
+On 30-08-19, 11:56, Randy Dunlap wrote:
+> On 8/30/19 11:52 AM, Michal Suchanek wrote:
+> > Fixes the following warning on !ACPI systems:
+> > 
+> > drivers/soundwire/slave.c:16:12: warning: ‘sdw_slave_add’ defined but
+> > not used [-Wunused-function]
+> >  static int sdw_slave_add(struct sdw_bus *bus,
+> >             ^~~~~~~~~~~~~
+> > 
+> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> 
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> 
+> I was about to send the same patch.
 
-Good catch,  Applied, thanks
+So I have applied Srini's patches which add DT support and they use
+sdw_slave_add(). So next tomorrow should not see this error as it is now
+used by DT parts as well.
+
+So dropping this patch
 
 -- 
 ~Vinod
