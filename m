@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4172EA8E22
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD1FFA8EB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733276AbfIDR4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:56:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33436 "EHLO mail.kernel.org"
+        id S2388246AbfIDR7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:59:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733211AbfIDR4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:56:13 -0400
+        id S2388239AbfIDR7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:59:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D830323400;
-        Wed,  4 Sep 2019 17:56:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7261521883;
+        Wed,  4 Sep 2019 17:59:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619772;
-        bh=YaezAtlfkEaTi5ezWg9Y7/KVHwZlyo5nraWPbkLVsaE=;
+        s=default; t=1567619970;
+        bh=K3sUxwuK4U/+xieBaB5p/JucqXzHSKvpmUsQVWuCUMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SOVZu1/0h9DHMqQ88NdbSeXSVmjB44VgoH7l+uOdqcqd9aZOi78k/hTEWf7IbC6Sp
-         3may/LmMhDBHZOfM0Uo9C/6H88xpOcKNuQil/jS0eZSLAoNL3cQkCSCen1YHWGcVpj
-         QbWbe5YEYw++Ps29au9QRXNtXv8qApHYAM11y3gU=
+        b=GBgnLdVtJBYUjsrqtHl4UL+K7Ef0Gc5m8VmQKiUEk8A/cWo26O1LeSR4ti5wpNGP3
+         k9p5JOmvVkKv9+Pqa2eWzXFIQ5jJ70rGw9mc4ID3pbVs8w/o0y2hTnrfo2enbpDp44
+         wQH3idPTyUdrF0jxU4bR+S/qFP9ynyRBjTX3GC4Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil MacLeod <neil@nmacleod.com>,
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
         Thomas Gleixner <tglx@linutronix.de>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 4.4 29/77] x86/boot: Fix boot regression caused by bootparam sanitizing
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 24/83] x86/lib/cpu: Address missing prototypes warning
 Date:   Wed,  4 Sep 2019 19:53:16 +0200
-Message-Id: <20190904175306.362034308@linuxfoundation.org>
+Message-Id: <20190904175306.030470019@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+[ Upstream commit 04f5bda84b0712d6f172556a7e8dca9ded5e73b9 ]
 
-commit 7846f58fba964af7cb8cf77d4d13c33254725211 upstream.
+When building with W=1, warnings about missing prototypes are emitted:
 
-commit a90118c445cc ("x86/boot: Save fields explicitly, zero out everything
-else") had two errors:
+  CC      arch/x86/lib/cpu.o
+arch/x86/lib/cpu.c:5:14: warning: no previous prototype for 'x86_family' [-Wmissing-prototypes]
+    5 | unsigned int x86_family(unsigned int sig)
+      |              ^~~~~~~~~~
+arch/x86/lib/cpu.c:18:14: warning: no previous prototype for 'x86_model' [-Wmissing-prototypes]
+   18 | unsigned int x86_model(unsigned int sig)
+      |              ^~~~~~~~~
+arch/x86/lib/cpu.c:33:14: warning: no previous prototype for 'x86_stepping' [-Wmissing-prototypes]
+   33 | unsigned int x86_stepping(unsigned int sig)
+      |              ^~~~~~~~~~~~
 
-    * It preserved boot_params.acpi_rsdp_addr, and
-    * It failed to preserve boot_params.hdr
+Add the proper include file so the prototypes are there.
 
-Therefore, zero out acpi_rsdp_addr, and preserve hdr.
-
-Fixes: a90118c445cc ("x86/boot: Save fields explicitly, zero out everything else")
-Reported-by: Neil MacLeod <neil@nmacleod.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Neil MacLeod <neil@nmacleod.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190821192513.20126-1-jhubbard@nvidia.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: https://lkml.kernel.org/r/42513.1565234837@turing-police
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/bootparam_utils.h |    1 +
+ arch/x86/lib/cpu.c | 1 +
  1 file changed, 1 insertion(+)
 
---- a/arch/x86/include/asm/bootparam_utils.h
-+++ b/arch/x86/include/asm/bootparam_utils.h
-@@ -70,6 +70,7 @@ static void sanitize_boot_params(struct
- 			BOOT_PARAM_PRESERVE(eddbuf_entries),
- 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buf_entries),
- 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buffer),
-+			BOOT_PARAM_PRESERVE(hdr),
- 			BOOT_PARAM_PRESERVE(eddbuf),
- 		};
+diff --git a/arch/x86/lib/cpu.c b/arch/x86/lib/cpu.c
+index 2dd1fe13a37b3..19f707992db22 100644
+--- a/arch/x86/lib/cpu.c
++++ b/arch/x86/lib/cpu.c
+@@ -1,5 +1,6 @@
+ #include <linux/types.h>
+ #include <linux/export.h>
++#include <asm/cpu.h>
  
+ unsigned int x86_family(unsigned int sig)
+ {
+-- 
+2.20.1
+
 
 
