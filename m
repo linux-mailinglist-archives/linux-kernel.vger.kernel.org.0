@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4125A9120
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D75EAA8FB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390323AbfIDSNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:13:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58534 "EHLO mail.kernel.org"
+        id S2389257AbfIDSF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:05:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388984AbfIDSNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:13:37 -0400
+        id S2389249AbfIDSFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:05:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7884E208E4;
-        Wed,  4 Sep 2019 18:13:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DC1923401;
+        Wed,  4 Sep 2019 18:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620817;
-        bh=ynBtC09Evgr3eVUFBLyZhJcRTnkYVtUlu6SMzMg/fKE=;
+        s=default; t=1567620323;
+        bh=ewCJZV8Vixq4xGts43VedgHqguAgWQMen+I8V0h/bS0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vQDWHfjwGTCiIfRkVQW+AGVIyr4Na0rzeTneufJKX6LQfa+YJW64imj/2AU9+F3Fx
-         VOWpx9SItVEeI1MSuIMMhtZdYXWpEkiSCoqAz7O3grLo01VrxzESUguZbstgekMR9/
-         0leoVJoHV9PY5ErwXSGNJ3+qBlRZNA/4YqpT1IdQ=
+        b=qto2UubHxonkD9StQq5spXCZFUtf/crTrUHuq6SH/FJkuzR8WxUoiGBH4CUiHA+nV
+         /lYLrNrL3SFvNH8fWD/vjRwBs/1acMouRfI8sg3d0c2YApMQE89b8jfLABDq15B83O
+         ytedU0OUWR0r043BLtlnYGEnKDF5tzc2bjcxa978=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 055/143] ipv4: mpls: fix mpls_xmit for iptunnel
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 16/93] usb: gadget: composite: Clear "suspended" on reset/disconnect
 Date:   Wed,  4 Sep 2019 19:53:18 +0200
-Message-Id: <20190904175316.228828422@linuxfoundation.org>
+Message-Id: <20190904175304.656174371@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+[ Upstream commit 602fda17c7356bb7ae98467d93549057481d11dd ]
 
-[ Upstream commit 803f3e22ae10003a83c781498c0ac34cfe3463ff ]
+In some cases, one can get out of suspend with a reset or
+a disconnect followed by a reconnect. Previously we would
+leave a stale suspended flag set.
 
-When using mpls over gre/gre6 setup, rt->rt_gw4 address is not set, the
-same for rt->rt_gw_family.  Therefore, when rt->rt_gw_family is checked
-in mpls_xmit(), neigh_xmit() call is skipped. As a result, such setup
-doesn't work anymore.
-
-This issue was found with LTP mpls03 tests.
-
-Fixes: 1550c171935d ("ipv4: Prepare rtable for IPv6 gateway")
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mpls/mpls_iptunnel.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/gadget/composite.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/mpls/mpls_iptunnel.c
-+++ b/net/mpls/mpls_iptunnel.c
-@@ -133,12 +133,12 @@ static int mpls_xmit(struct sk_buff *skb
- 	mpls_stats_inc_outucastpkts(out_dev, skb);
- 
- 	if (rt) {
--		if (rt->rt_gw_family == AF_INET)
--			err = neigh_xmit(NEIGH_ARP_TABLE, out_dev, &rt->rt_gw4,
--					 skb);
--		else if (rt->rt_gw_family == AF_INET6)
-+		if (rt->rt_gw_family == AF_INET6)
- 			err = neigh_xmit(NEIGH_ND_TABLE, out_dev, &rt->rt_gw6,
- 					 skb);
-+		else
-+			err = neigh_xmit(NEIGH_ARP_TABLE, out_dev, &rt->rt_gw4,
-+					 skb);
- 	} else if (rt6) {
- 		if (ipv6_addr_v4mapped(&rt6->rt6i_gateway)) {
- 			/* 6PE (RFC 4798) */
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index b8a15840b4ffd..dfcabadeed01b 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1976,6 +1976,7 @@ void composite_disconnect(struct usb_gadget *gadget)
+ 	 * disconnect callbacks?
+ 	 */
+ 	spin_lock_irqsave(&cdev->lock, flags);
++	cdev->suspended = 0;
+ 	if (cdev->config)
+ 		reset_config(cdev);
+ 	if (cdev->driver->disconnect)
+-- 
+2.20.1
+
 
 
