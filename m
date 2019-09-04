@@ -2,88 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36736A7E46
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A76CA7E4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729020AbfIDIsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 04:48:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60530 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726486AbfIDIsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:48:36 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 577BD875222;
-        Wed,  4 Sep 2019 08:48:36 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C9AD560BFB;
-        Wed,  4 Sep 2019 08:48:30 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id x848mUBu011879;
-        Wed, 4 Sep 2019 04:48:30 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id x848mUGT011875;
-        Wed, 4 Sep 2019 04:48:30 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 4 Sep 2019 04:48:30 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Huaisheng Ye <yehs2007@zoho.com>
-cc:     snitzer@redhat.com, agk@redhat.com, prarit@redhat.com,
-        tyu1@lenovo.com, dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        Huaisheng Ye <yehs1@lenovo.com>
-Subject: Re: [PATCH] dm writecache: skip writecache_wait for pmem mode
-In-Reply-To: <20190902100450.10600-1-yehs2007@zoho.com>
-Message-ID: <alpine.LRH.2.02.1909040444440.11252@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20190902100450.10600-1-yehs2007@zoho.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1729292AbfIDItf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 04:49:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57098 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726240AbfIDIte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 04:49:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4592CADFE;
+        Wed,  4 Sep 2019 08:49:33 +0000 (UTC)
+Date:   Wed, 4 Sep 2019 10:49:32 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Joe Lawrence <joe.lawrence@redhat.com>, jikos@kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] livepatch: Clear relocation targets on a module
+ removal
+Message-ID: <20190904084932.gndrtewubqiaxmzy@pathway.suse.cz>
+References: <20190728200427.dbrojgu7hafphia7@treble>
+ <alpine.LSU.2.21.1908141256150.16696@pobox.suse.cz>
+ <20190814151244.5xoaxib5iya2qjco@treble>
+ <20190816094608.3p2z73oxcoqavnm4@pathway.suse.cz>
+ <20190822223649.ptg6e7qyvosrljqx@treble>
+ <20190823081306.kbkm7b4deqrare2v@pathway.suse.cz>
+ <20190826145449.wyo7avwpqyriem46@treble>
+ <alpine.LSU.2.21.1909021802180.29987@pobox.suse.cz>
+ <5c649320-a9bf-ae7f-5102-483bc34d219f@redhat.com>
+ <alpine.LSU.2.21.1909031447140.3872@pobox.suse.cz>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Wed, 04 Sep 2019 08:48:36 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1909031447140.3872@pobox.suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Mon, 2 Sep 2019, Huaisheng Ye wrote:
-
-> From: Huaisheng Ye <yehs1@lenovo.com>
+On Tue 2019-09-03 15:02:34, Miroslav Benes wrote:
+> On Mon, 2 Sep 2019, Joe Lawrence wrote:
 > 
-> The array bio_in_progress[2] only have chance to be increased and
-> decreased with ssd mode. For pmem mode, they are not involved at all.
-> So skip writecache_wait_for_ios in writecache_flush for pmem.
+> > On 9/2/19 12:13 PM, Miroslav Benes wrote:
+> > >> I can easily foresee more problems like those in the future.  Going
+> > >> forward we have to always keep track of which special sections are
+> > >> needed for which architectures.  Those special sections can change over
+> > >> time, or can simply be overlooked for a given architecture.  It's
+> > >> fragile.
+> > > 
+> > > Indeed. It bothers me a lot. Even x86 "port" is not feature complete in
+> > > this regard (jump labels, alternatives,...) and who knows what lurks in
+> > > the corners of the other architectures we support.
+> > > 
+> > > So it is in itself reason enough to do something about late module
+> > > patching.
+> > > 
+> > 
+> > Hi Miroslav,
+> > 
+> > I was tinkering with the "blue-sky" ideas that I mentioned to Josh the other
+> > day.
 > 
-> Suggested-by: Doris Yu <tyu1@lenovo.com>
-> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
-> ---
->  drivers/md/dm-writecache.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> > I dunno if you had a chance to look at what removing that code looks
+> > like, but I can continue to flesh out that idea if it looks interesting:
 > 
-> diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-> index c481947..d06b8aa 100644
-> --- a/drivers/md/dm-writecache.c
-> +++ b/drivers/md/dm-writecache.c
-> @@ -726,7 +726,8 @@ static void writecache_flush(struct dm_writecache *wc)
->  	}
->  	writecache_commit_flushed(wc);
->  
-> -	writecache_wait_for_ios(wc, WRITE);
-> +	if (!WC_MODE_PMEM(wc))
-> +		writecache_wait_for_ios(wc, WRITE);
->  
->  	wc->seq_count++;
->  	pmem_assign(sb(wc)->seq_count, cpu_to_le64(wc->seq_count));
-> -- 
-> 1.8.3.1
+> Unfortunately no and I don't think I'll come up with something useful 
+> before LPC, so anything is really welcome.
+> 
+> > 
+> >   https://github.com/joe-lawrence/linux/tree/blue-sky
+> > 
+> > A full demo would require packaging up replacement .ko's with a livepatch, as
+> > well as "blacklisting" those deprecated .kos, etc.  But that's all I had time
+> > to cook up last week before our holiday weekend here.
+> 
+> Frankly, I'm not sure about this approach. I'm kind of torn. The current 
+> solution is far from ideal, but I'm not excited about the other options 
+> either. It seems like the choice is basically between "general but 
+> technically complicated fragile solution with nontrivial maintenance 
+> burden", or "something safer and maybe cleaner, but limiting for 
+> users/distros". Of course it depends on whether the limitation is even 
+> real and how big it is. Unfortunately we cannot quantify it much and that 
+> is probably why our opinions (in the email thread) differ.
 
-I think this is not needed - wait_event in writecache_wait_for_ios exits 
-immediatelly if the condition is true.
+I wonder what is necessary for a productive discussion on Plumbers:
 
-This code path is not so hot that we would need microoptimizations like 
-this to avoid function calls.
+  + Josh would like to see what code can get removed when late
+    handling of modules gets removed. I think that it might be
+    partially visible from Joe's blue-sky patches.
 
-Mikulas
+
+  + I would like to better understand the scope of the current
+    problems. It is about modifying code in the livepatch that
+    depends on position of the related code:
+
+      + relocations are rather clear; we will need them anyway
+	to access non-public (static) API from the original code.
+
+      + What are the other changes?
+
+      + Do we use them in livepatches? How often?
+
+      + How often new problematic features appear?
+
+      + Would be possible to detect potential problems, for example
+	by comparing the code in the binary and in memory when
+	the module is loaded the normal way?
+
+      + Would be possible to reset the livepatch code in memory
+	when the related module is unloaded and safe us half
+	of the troubles?
+
+
+    + It might be useful to prepare overview of the existing proposals
+      and agree on the positives and negatives. I am afraid that some
+      of them might depend on the customer base and
+      use cases. Sometimes we might not have enough information.
+      But it might be good to get on the same page where possible.
+
+      Anyway, it might rule out some variants so that we could better
+      concentrate on the acceptable ones. Or come with yet another
+      proposal that would avoid the real blockers.
+
+
+Any other ideas?
+
+Would it be better to discuss this in a separate room with
+a whiteboard or paperboard?
+
+Best Regards,
+Petr
