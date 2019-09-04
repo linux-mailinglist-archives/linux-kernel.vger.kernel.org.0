@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 956A8A8E96
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3683A8E2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731600AbfIDR6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:58:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37402 "EHLO mail.kernel.org"
+        id S2387549AbfIDR4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:56:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388127AbfIDR6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:58:50 -0400
+        id S1732038AbfIDR40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:56:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A7C222DBF;
-        Wed,  4 Sep 2019 17:58:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 303F522CF5;
+        Wed,  4 Sep 2019 17:56:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619929;
-        bh=o6Yw+g/IHaaPCBPgYqdRlu4/1f8CyDotscowmBTHSG8=;
+        s=default; t=1567619785;
+        bh=wpHgXNLKJJ7Qcv3Io2JOGqlm6M9bh7i9sIQhYjSNxDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D8QU/+HLn9R87Qbpom/u9ch+8QGfGTFAoUbfv+15U5DcHYJ0CZiZO3E/FVTX9tCya
-         c4g6xmMiGMFSWoIDvsgpEnHCSDoQTdTi9lQ6BSfYD6vnu+U1ty1PVVkddEPoB/Adhw
-         aMe+93iB94xDggAKyyXLLEO+YMRWvfp0/ZOsJuWo=
+        b=NyLCvYhdiwReIgemnvwb3LCH6+mvuyQvv9RY78GrDRmM/m2HNnbmt1YL0898+NuHj
+         /LMtL2uk2kWs1dAtsig7sgxSGnywM0c3H6KDxTOvtSrl52w0ABmhgq5O9KN0WWKjBH
+         mlB1r270+C1tuxV9+rl/ipmdBIvmPBLUFL9qPz/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 10/83] ASoC: ti: davinci-mcasp: Correct slot_width posed constraint
-Date:   Wed,  4 Sep 2019 19:53:02 +0200
-Message-Id: <20190904175304.732631665@linuxfoundation.org>
+Subject: [PATCH 4.4 16/77] NFSv4: Fix a potential sleep while atomic in nfs4_do_reclaim()
+Date:   Wed,  4 Sep 2019 19:53:03 +0200
+Message-Id: <20190904175305.152724843@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,110 +44,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1e112c35e3c96db7c8ca6ddaa96574f00c06e7db ]
+[ Upstream commit c77e22834ae9a11891cb613bd9a551be1b94f2bc ]
 
-The slot_width is a property for the bus while the constraint for
-SNDRV_PCM_HW_PARAM_SAMPLE_BITS is for the in memory format.
+John Hubbard reports seeing the following stack trace:
 
-Applying slot_width constraint to sample_bits works most of the time, but
-it will blacklist valid formats in some cases.
+nfs4_do_reclaim
+   rcu_read_lock /* we are now in_atomic() and must not sleep */
+       nfs4_purge_state_owners
+           nfs4_free_state_owner
+               nfs4_destroy_seqid_counter
+                   rpc_destroy_wait_queue
+                       cancel_delayed_work_sync
+                           __cancel_work_timer
+                               __flush_work
+                                   start_flush_work
+                                       might_sleep:
+                                        (kernel/workqueue.c:2975: BUG)
 
-With slot_width 24 we can support S24_3LE and S24_LE formats as they both
-look the same on the bus, but a a 24 constraint on sample_bits would not
-allow S24_LE as it is stored in 32bits in memory.
+The solution is to separate out the freeing of the state owners
+from nfs4_purge_state_owners(), and perform that outside the atomic
+context.
 
-Implement a simple hw_rule function to allow all formats which require less
-or equal number of bits on the bus as slot_width (if configured).
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/20190726064244.3762-2-peter.ujfalusi@ti.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: John Hubbard <jhubbard@nvidia.com>
+Fixes: 0aaaf5c424c7f ("NFS: Cache state owners after files are closed")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/davinci/davinci-mcasp.c | 43 ++++++++++++++++++++++++-------
- 1 file changed, 34 insertions(+), 9 deletions(-)
+ fs/nfs/nfs4_fs.h    |  3 ++-
+ fs/nfs/nfs4client.c |  5 ++++-
+ fs/nfs/nfs4state.c  | 27 ++++++++++++++++++++++-----
+ 3 files changed, 28 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
-index 5a0b17ebfc025..624c209c94981 100644
---- a/sound/soc/davinci/davinci-mcasp.c
-+++ b/sound/soc/davinci/davinci-mcasp.c
-@@ -1158,6 +1158,28 @@ static int davinci_mcasp_trigger(struct snd_pcm_substream *substream,
- 	return ret;
+diff --git a/fs/nfs/nfs4_fs.h b/fs/nfs/nfs4_fs.h
+index 4afdee420d253..9f15696f55b9f 100644
+--- a/fs/nfs/nfs4_fs.h
++++ b/fs/nfs/nfs4_fs.h
+@@ -416,7 +416,8 @@ static inline void nfs4_schedule_session_recovery(struct nfs4_session *session,
+ 
+ extern struct nfs4_state_owner *nfs4_get_state_owner(struct nfs_server *, struct rpc_cred *, gfp_t);
+ extern void nfs4_put_state_owner(struct nfs4_state_owner *);
+-extern void nfs4_purge_state_owners(struct nfs_server *);
++extern void nfs4_purge_state_owners(struct nfs_server *, struct list_head *);
++extern void nfs4_free_state_owners(struct list_head *head);
+ extern struct nfs4_state * nfs4_get_open_state(struct inode *, struct nfs4_state_owner *);
+ extern void nfs4_put_open_state(struct nfs4_state *);
+ extern void nfs4_close_state(struct nfs4_state *, fmode_t);
+diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
+index ae91d1e450be7..dac20f31f01f8 100644
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -685,9 +685,12 @@ found:
+ 
+ static void nfs4_destroy_server(struct nfs_server *server)
+ {
++	LIST_HEAD(freeme);
++
+ 	nfs_server_return_all_delegations(server);
+ 	unset_pnfs_layoutdriver(server);
+-	nfs4_purge_state_owners(server);
++	nfs4_purge_state_owners(server, &freeme);
++	nfs4_free_state_owners(&freeme);
  }
  
-+static int davinci_mcasp_hw_rule_slot_width(struct snd_pcm_hw_params *params,
-+					    struct snd_pcm_hw_rule *rule)
-+{
-+	struct davinci_mcasp_ruledata *rd = rule->private;
-+	struct snd_mask *fmt = hw_param_mask(params, SNDRV_PCM_HW_PARAM_FORMAT);
-+	struct snd_mask nfmt;
-+	int i, slot_width;
-+
-+	snd_mask_none(&nfmt);
-+	slot_width = rd->mcasp->slot_width;
-+
-+	for (i = 0; i <= SNDRV_PCM_FORMAT_LAST; i++) {
-+		if (snd_mask_test(fmt, i)) {
-+			if (snd_pcm_format_width(i) <= slot_width) {
-+				snd_mask_set(&nfmt, i);
-+			}
-+		}
-+	}
-+
-+	return snd_mask_refine(fmt, &nfmt);
-+}
-+
- static const unsigned int davinci_mcasp_dai_rates[] = {
- 	8000, 11025, 16000, 22050, 32000, 44100, 48000, 64000,
- 	88200, 96000, 176400, 192000,
-@@ -1251,7 +1273,7 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 	struct davinci_mcasp_ruledata *ruledata =
- 					&mcasp->ruledata[substream->stream];
- 	u32 max_channels = 0;
--	int i, dir;
-+	int i, dir, ret;
- 	int tdm_slots = mcasp->tdm_slots;
+ /*
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 5be61affeefd8..ef3ed2b1fd278 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -611,24 +611,39 @@ void nfs4_put_state_owner(struct nfs4_state_owner *sp)
+ /**
+  * nfs4_purge_state_owners - Release all cached state owners
+  * @server: nfs_server with cached state owners to release
++ * @head: resulting list of state owners
+  *
+  * Called at umount time.  Remaining state owners will be on
+  * the LRU with ref count of zero.
++ * Note that the state owners are not freed, but are added
++ * to the list @head, which can later be used as an argument
++ * to nfs4_free_state_owners.
+  */
+-void nfs4_purge_state_owners(struct nfs_server *server)
++void nfs4_purge_state_owners(struct nfs_server *server, struct list_head *head)
+ {
+ 	struct nfs_client *clp = server->nfs_client;
+ 	struct nfs4_state_owner *sp, *tmp;
+-	LIST_HEAD(doomed);
  
- 	/* Do not allow more then one stream per direction */
-@@ -1280,6 +1302,7 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 			max_channels++;
+ 	spin_lock(&clp->cl_lock);
+ 	list_for_each_entry_safe(sp, tmp, &server->state_owners_lru, so_lru) {
+-		list_move(&sp->so_lru, &doomed);
++		list_move(&sp->so_lru, head);
+ 		nfs4_remove_state_owner_locked(sp);
  	}
- 	ruledata->serializers = max_channels;
-+	ruledata->mcasp = mcasp;
- 	max_channels *= tdm_slots;
- 	/*
- 	 * If the already active stream has less channels than the calculated
-@@ -1305,20 +1328,22 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 				   0, SNDRV_PCM_HW_PARAM_CHANNELS,
- 				   &mcasp->chconstr[substream->stream]);
+ 	spin_unlock(&clp->cl_lock);
++}
  
--	if (mcasp->slot_width)
--		snd_pcm_hw_constraint_minmax(substream->runtime,
--					     SNDRV_PCM_HW_PARAM_SAMPLE_BITS,
--					     8, mcasp->slot_width);
-+	if (mcasp->slot_width) {
-+		/* Only allow formats require <= slot_width bits on the bus */
-+		ret = snd_pcm_hw_rule_add(substream->runtime, 0,
-+					  SNDRV_PCM_HW_PARAM_FORMAT,
-+					  davinci_mcasp_hw_rule_slot_width,
-+					  ruledata,
-+					  SNDRV_PCM_HW_PARAM_FORMAT, -1);
-+		if (ret)
-+			return ret;
-+	}
+-	list_for_each_entry_safe(sp, tmp, &doomed, so_lru) {
++/**
++ * nfs4_purge_state_owners - Release all cached state owners
++ * @head: resulting list of state owners
++ *
++ * Frees a list of state owners that was generated by
++ * nfs4_purge_state_owners
++ */
++void nfs4_free_state_owners(struct list_head *head)
++{
++	struct nfs4_state_owner *sp, *tmp;
++
++	list_for_each_entry_safe(sp, tmp, head, so_lru) {
+ 		list_del(&sp->so_lru);
+ 		nfs4_free_state_owner(sp);
+ 	}
+@@ -1724,12 +1739,13 @@ static int nfs4_do_reclaim(struct nfs_client *clp, const struct nfs4_state_recov
+ 	struct nfs4_state_owner *sp;
+ 	struct nfs_server *server;
+ 	struct rb_node *pos;
++	LIST_HEAD(freeme);
+ 	int status = 0;
  
- 	/*
- 	 * If we rely on implicit BCLK divider setting we should
- 	 * set constraints based on what we can provide.
- 	 */
- 	if (mcasp->bclk_master && mcasp->bclk_div == 0 && mcasp->sysclk_freq) {
--		int ret;
--
--		ruledata->mcasp = mcasp;
--
- 		ret = snd_pcm_hw_rule_add(substream->runtime, 0,
- 					  SNDRV_PCM_HW_PARAM_RATE,
- 					  davinci_mcasp_hw_rule_rate,
+ restart:
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
+-		nfs4_purge_state_owners(server);
++		nfs4_purge_state_owners(server, &freeme);
+ 		spin_lock(&clp->cl_lock);
+ 		for (pos = rb_first(&server->state_owners);
+ 		     pos != NULL;
+@@ -1758,6 +1774,7 @@ restart:
+ 		spin_unlock(&clp->cl_lock);
+ 	}
+ 	rcu_read_unlock();
++	nfs4_free_state_owners(&freeme);
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
