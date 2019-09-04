@@ -2,162 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC514A7D49
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:07:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1555DA7D53
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:08:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbfIDIHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 04:07:55 -0400
-Received: from mail-eopbgr60100.outbound.protection.outlook.com ([40.107.6.100]:10980
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728698AbfIDIHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:07:54 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MGfgILCw9rOcXuK9DFMbfpYzqXUOfA2aM3vasJXrpeJO6ABGF1KNQ4P6QWKxZ1QFrMu1qHRsqwwNftB29xUK8DOCsRwo7N5AsTpjRXulIwBm4RiPSB54OA3m5T2NtLVkP0vp6BHnLAYCKT+HZ+9TqHVnSpzxisJxPsaYjp2lj406Km1pV617MKCKpFWHgy2YWc5RhpBXWY/4bG5UtcpHjFkcFFBdjCAa8Tn5c+6Vp/n+CeXQV9BWtVIq0x+cK05iodi9xHaL9GWOUwsw5+1EaaLOftzPkIe53s7uGqSy1FwfOFlqUOAF+xTsLdnqqUUuEIrY0PJFIgGxyA2u2nFcHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A63fIizQuAoBE6Vfps4D4T5hv6kLRCDSoaUZ44rsJVI=;
- b=gAWaRypuvVhch/IuS0x/6Vzib1H6jWH1dQfajA0qIvWgX8ZEnU8Bl5mP+x6A+uJ8Yw/4L1ruoITwh9dRjcde1P7kNPaZ2FYM4Ko29vXzZn/PD0BxTJ1jSJIfTxOm4grxHApxmHUrkjMDc+kTYD+UDE7sYl/ZHNMIBTJXswBvtEVmoTEJwMOmSGnj5ZVYtKtfzhH8nZJWUqGTb1DPXtuFrt1ZWtHOa+ZGZg/RR5dgulFk238XhZ4geaUiraeqEN96RBso14hrIngb7/q2SbQhmVIBoxpVGvh9jSzO9mVQ/KpKK0sdu6nZYoGcgfsDdK7IfEEdBoFKKUTUzN59PG0iEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
- dkim=pass header.d=toradex.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A63fIizQuAoBE6Vfps4D4T5hv6kLRCDSoaUZ44rsJVI=;
- b=EiMCZvKWm6CAlbQR44aK5Q4S/xcqYSvXV54B4mNBEarUU7v+wFFYJBQHyh6LoBHfhi4//Js/PTbWkW0TxGpKw8RnKCIDRP7bzpFTzOWy7aipc9frXcHx9wbzo44sdwhs/Bv8kY0k9OqUqgrPLlRAzYdjoH9PcYe+X77qHjxSifI=
-Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com (52.134.17.157) by
- VI1PR0502MB3936.eurprd05.prod.outlook.com (52.134.8.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.14; Wed, 4 Sep 2019 08:07:48 +0000
-Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com
- ([fe80::f59f:a307:9c53:63b9]) by VI1PR0502MB3965.eurprd05.prod.outlook.com
- ([fe80::f59f:a307:9c53:63b9%6]) with mapi id 15.20.2220.022; Wed, 4 Sep 2019
- 08:07:48 +0000
-From:   Philippe Schenker <philippe.schenker@toradex.com>
-To:     "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     Max Krummenacher <max.krummenacher@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Luka Pivk <luka.pivk@toradex.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Stefan Agner <stefan.agner@toradex.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Subject: Re: [PATCH 3/3] dt-bindings: regulator: add regulator-fixed-clock
- binding
-Thread-Topic: [PATCH 3/3] dt-bindings: regulator: add regulator-fixed-clock
- binding
-Thread-Index: AQHVYi4eVTMHP4rOrkKfHmYdMpCNbKcZo3GAgAGH34A=
-Date:   Wed, 4 Sep 2019 08:07:47 +0000
-Message-ID: <e64429ba4b86411da1741ab54176fb5b4b7a36de.camel@toradex.com>
-References: <20190903080336.32288-1-philippe.schenker@toradex.com>
-         <20190903080336.32288-4-philippe.schenker@toradex.com>
-         <CAL_JsqLnqZ80soGVMvZjAMZvu+K=ebDUz2bM_ZodPp7YRvUnDw@mail.gmail.com>
-In-Reply-To: <CAL_JsqLnqZ80soGVMvZjAMZvu+K=ebDUz2bM_ZodPp7YRvUnDw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=philippe.schenker@toradex.com; 
-x-originating-ip: [46.140.72.82]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7860de5c-6be2-4345-27b8-08d7310ef97e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR0502MB3936;
-x-ms-traffictypediagnostic: VI1PR0502MB3936:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0502MB39366F7860E521BCABBFDAADF4B80@VI1PR0502MB3936.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:843;
-x-forefront-prvs: 0150F3F97D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(39840400004)(396003)(346002)(136003)(366004)(199004)(189003)(71200400001)(71190400001)(118296001)(476003)(6246003)(44832011)(486006)(25786009)(256004)(14444005)(36756003)(14454004)(8676002)(53936002)(7736002)(305945005)(6512007)(99286004)(4326008)(6486002)(229853002)(6436002)(446003)(2616005)(11346002)(66946007)(66476007)(66556008)(64756008)(66446008)(66066001)(26005)(91956017)(76116006)(6506007)(186003)(2906002)(5660300002)(8936002)(86362001)(54906003)(102836004)(478600001)(76176011)(53546011)(6116002)(81156014)(3846002)(316002)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB3936;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: of/Xk0+TnPZyuGcyyiBhuq8DjiObqB9Z1WiuWjOzTNozCUlTbbIjuEfPhtND3p04/74SvfWA2xdnvl1JpkHkcVBrH1eFDVrElMUqs85tmvHHcJiCCZNdVRQ2CmsXfHCDXbvdTRFJRrjDDmBJoajzI/hRV0krBrw3KHrLwNhBdvfGK4py70tnFmgyYGUFK6mGheFigjeOB0PteNyNQzLChNzsFNM4yL+RkjmtGK6+WMJOavKN8ZNahhEjtKey93e7exO3oJg4uaXw+LFykngeyoHvaxUb3aZkA4lmqesdRfsHbGUhwzWQYv8AUqNWod0x5y5tVV1ASdxYeGTK7dzRcGv4qEBYBXtzI9XprqWWOAgXpjKfzNPM/VNYvzM7z/fQNRgPomvZMVvKVgWgcNUmJ67fQTSQjci1dNghSR1EPnQ=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6F6969123F304048AF083CD716008E7C@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1729304AbfIDIIQ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Sep 2019 04:08:16 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54190 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727787AbfIDIIQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 04:08:16 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x848871c041123
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Sep 2019 04:08:14 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ut67a637w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 04:08:13 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
+        Wed, 4 Sep 2019 09:07:56 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Sep 2019 09:07:54 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8487rWX47186058
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Sep 2019 08:07:53 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 62606A4057;
+        Wed,  4 Sep 2019 08:07:53 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 12C64A4051;
+        Wed,  4 Sep 2019 08:07:53 +0000 (GMT)
+Received: from localhost (unknown [9.124.35.94])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Sep 2019 08:07:52 +0000 (GMT)
+Date:   Wed, 04 Sep 2019 13:37:50 +0530
+From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH 1/2] ftrace: Fix NULL pointer dereference in
+ t_probe_next()
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1562249521.git.naveen.n.rao@linux.vnet.ibm.com>
+        <05e021f757625cbbb006fad41380323dbe4e3b43.1562249521.git.naveen.n.rao@linux.vnet.ibm.com>
+        <20190830164706.453a119e@gandalf.local.home>
+In-Reply-To: <20190830164706.453a119e@gandalf.local.home>
 MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7860de5c-6be2-4345-27b8-08d7310ef97e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2019 08:07:47.9553
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jNyYxIUUC3Xbzg6povI7IMoZNNAUu32sN3PW9kHClF6uS3vYjfyDd/yE1thSrx/w0JKch3fW1gSwhir8CpMXgEn+9kclFxLaOvp9ch6vN+E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0502MB3936
+User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 19090408-0008-0000-0000-00000310D94C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090408-0009-0000-0000-00004A2F2DBF
+Message-Id: <1567584434.0m0xodpunl.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-04_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909040083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTA5LTAzIGF0IDA5OjQ1ICswMTAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4g
-T24gVHVlLCBTZXAgMywgMjAxOSBhdCA5OjAzIEFNIFBoaWxpcHBlIFNjaGVua2VyDQo+IDxwaGls
-aXBwZS5zY2hlbmtlckB0b3JhZGV4LmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBhZGRzIHRoZSBkb2N1
-bWVudGF0aW9uIHRvIHRoZSBjb21wYXRpYmxlIHJlZ3VsYXRvci1maXhlZC1jbG9jaw0KPiANCj4g
-UGxlYXNlIGV4cGxhaW4gd2hhdCB0aGF0IGlzIGluIHRoaXMgcGF0Y2guDQoNCkhpIFJvYiBhbmQg
-dGhhbmtzIGZvciB5b3VyIGNvbW1lbnRzLiBJIHdpbGwgY2hhbmdlIHRoaXMgY29tbWl0IG1lc3Nh
-Z2UNCmZvciBhIHBvc3NpYmxlIHYyIGludG8gdGhpczoNCg0KVGhpcyBhZGRzIHRoZSBkb2N1bWVu
-dGF0aW9uIHRvIHRoZSBjb21wYXRpYmxlIHJlZ3VsYXRvci1maXhlZC1jbG9jay4NClRoaXMgYmlu
-ZGluZyBpcyBhIHNwZWNpYWwgYmluZGluZyBvZiByZWd1bGF0b3ItZml4ZWQgYW5kIGFkZHMgdGhl
-DQphYmlsaXR5IHRvIGFkZCBhIGNsb2NrIHRvIHJlZ3VsYXRvci1maXhlZCwgc28gdGhlIHJlZ3Vs
-YXRvciBjYW4gYmUNCmVuYWJsZWQgYW5kIGRpc2FibGVkIHdpdGggdGhhdCBjbG9jay4NCklmIHRo
-ZSBzcGVjaWFsIGNvbXBhdGlibGUgcmVndWxhdG9yLWZpeGVkLWNsb2NrIGlzIHVzZWQgaXQgaXMg
-bWFuZGF0b3J5DQp0byBzdXBwbHkgYSBjbG9jay4NCg0KPiA+IA0KPiANCj4gPiBTaWduZWQtb2Zm
-LWJ5OiBQaGlsaXBwZSBTY2hlbmtlciA8cGhpbGlwcGUuc2NoZW5rZXJAdG9yYWRleC5jb20+DQo+
-ID4gDQo+ID4gLS0tDQo+ID4gDQo+ID4gIC4uLi9iaW5kaW5ncy9yZWd1bGF0b3IvZml4ZWQtcmVn
-dWxhdG9yLnlhbWwgICAgfCAxOA0KPiA+ICsrKysrKysrKysrKysrKysrLQ0KPiA+ICAxIGZpbGUg
-Y2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+IA0KPiA+IGRpZmYg
-LS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcmVndWxhdG9yL2ZpeGVk
-LQ0KPiA+IHJlZ3VsYXRvci55YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L3JlZ3VsYXRvci9maXhlZC0NCj4gPiByZWd1bGF0b3IueWFtbA0KPiA+IGluZGV4IGE2NTBiNDU3
-MDg1ZC4uNWZkMDgxZTgwYjQzIDEwMDY0NA0KPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9yZWd1bGF0b3IvZml4ZWQtDQo+ID4gcmVndWxhdG9yLnlhbWwNCj4gPiAr
-KysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcmVndWxhdG9yL2ZpeGVkLQ0K
-PiA+IHJlZ3VsYXRvci55YW1sDQo+ID4gQEAgLTE5LDkgKzE5LDE5IEBAIGRlc2NyaXB0aW9uOg0K
-PiA+ICBhbGxPZjoNCj4gPiAgICAtICRyZWY6ICJyZWd1bGF0b3IueWFtbCMiDQo+ID4gDQo+ID4g
-K3NlbGVjdDoNCj4gPiArICBwcm9wZXJ0aWVzOg0KPiA+ICsgICAgY29tcGF0aWJsZToNCj4gPiAr
-ICAgICAgY29udGFpbnM6DQo+ID4gKyAgICAgICAgY29uc3Q6IHJlZ3VsYXRvci1maXhlZC1jbG9j
-aw0KPiA+ICsgIHJlcXVpcmVkOg0KPiA+ICsgICAgLSBjbG9ja3MNCj4gDQo+IFlvdSBkb24ndCBu
-ZWVkIHRoaXMuDQo+IA0KPiBJZiB5b3UgYWRkIGEgbmV3IGNvbXBhdGlibGUsIHRoZW4gdGhpcyBz
-aG91bGQgcHJvYmFibHkgYmUgYSBuZXcgc2NoZW1hDQo+IGRvYy4gSXMgdGhlICdncGlvJyBwcm9w
-ZXJ0eSB2YWxpZCBpbiB0aGlzIGNhc2UgYXMgaWYgYSBjbG9jayBpcyB0aGUNCj4gZW5hYmxlLCBj
-YW4geW91IGFsc28gaGF2ZSBhIGdwaW8gZW5hYmxlPyBUaGF0IHNhaWQsIGl0IHNlZW1zIGxpa2Ug
-dGhlDQo+IG5ldyBjb21wYXRpYmxlIGlzIG9ubHkgZm9yIHZhbGlkYXRpbmcgdGhlIERUIGluIHRo
-ZSBkcml2ZXIuIFlvdSBjb3VsZA0KPiBqdXN0IHVzZSBhIGNsb2NrIGlmIHByZXNlbnQgYW5kIGRl
-ZmF1bHQgdG8gY3VycmVudCBiZWhhdmlvciBpZiBub3QuDQo+IEl0J3Mgbm90IHRoZSBrZXJuZWwn
-cyBqb2IgdG8gdmFsaWRhdGUgRFRzLg0KDQpUaGUgZ3BpbyBwcm9wZXJ0eSBpcyB2YWxpZCB3aXRo
-IHRoaXMgY29tcGF0aWJsZS4gSSBhZGRlZCByZWd1bGF0b3ItDQpmaXhlZC1jbG9jayB0byByZWd1
-bGF0b3ItZml4ZWQgaGVuY2UgSSBhbHNvIGRvbid0IHdhbnQgdG8gY3JlYXRlIGEgbmV3DQpzY2hl
-bWEgZmlsZS4NCg0KV2l0aCB0aGUgYWJvdmUgc2VsZWN0IHN0YXRlbWVudCBJIHdhbnRlZCB0byBz
-dGF0ZSBjbG9ja3MgYXMgcmVxdWlyZWQNCndoZW4gdGhlIGNvbXBhdGlibGUgcmVndWxhdG9yLWZp
-eGVkLWNsb2NrIGlzIGdpdmVuLg0KDQo+IA0KPiA+ICBwcm9wZXJ0aWVzOg0KPiA+ICAgIGNvbXBh
-dGlibGU6DQo+ID4gLSAgICBjb25zdDogcmVndWxhdG9yLWZpeGVkDQo+ID4gKyAgICBpdGVtczoN
-Cj4gPiArICAgICAgLSBjb25zdDogcmVndWxhdG9yLWZpeGVkDQo+ID4gKyAgICAgIC0gY29uc3Q6
-IHJlZ3VsYXRvci1maXhlZC1jbG9jaw0KPiANCj4gVGhpcyBzYXlzIHlvdSBtdXN0IGhhdmUgJ2Nv
-bXBhdGlibGUgPSAicmVndWxhdG9yLWZpeGVkIiwNCj4gInJlZ3VsYXRvci1maXhlZC1jbG9jayI7
-Jy4NCj4gDQo+IFdoYXQgeW91IHdhbnQgaXM6DQo+IA0KPiBlbnVtOg0KPiAgIC0gcmVndWxhdG9y
-LWZpeGVkDQo+ICAgLSByZWd1bGF0b3ItZml4ZWQtY2xvY2sNCg0KVGhhbmtzLCB0aGlzIHdhcyBl
-eGFjdGx5IHdoYXQgSSB3YW50ZWQgdG8gZG8uDQoNCj4gDQo+ID4gICAgcmVndWxhdG9yLW5hbWU6
-IHRydWUNCj4gPiANCj4gPiBAQCAtMjksNiArMzksMTIgQEAgcHJvcGVydGllczoNCj4gPiAgICAg
-IGRlc2NyaXB0aW9uOiBncGlvIHRvIHVzZSBmb3IgZW5hYmxlIGNvbnRyb2wNCj4gPiAgICAgIG1h
-eEl0ZW1zOiAxDQo+ID4gDQo+ID4gKyAgY2xvY2tzOg0KPiA+ICsgICAgZGVzY3JpcHRpb246DQo+
-ID4gKyAgICAgIGNsb2NrIHRvIHVzZSBmb3IgZW5hYmxlIGNvbnRyb2wuIFRoaXMgYmluZGluZyBp
-cyBvbmx5DQo+ID4gYXZhaWxhYmxlIGlmDQo+ID4gKyAgICAgIHRoZSBjb21wYXRpYmxlIGlzIGNo
-b3NlbiB0byByZWd1bGF0b3ItZml4ZWQtY2xvY2suIFRoZSBjbG9jaw0KPiA+IGJpbmRpbmcNCj4g
-PiArICAgICAgaXMgbWFuZGF0b3J5IGlmIGNvbXBhdGlibGUgaXMgY2hvc2VuIHRvIHJlZ3VsYXRv
-ci1maXhlZC0NCj4gPiBjbG9jay4NCj4gDQo+IE5lZWQgdG8gZGVmaW5lIGhvdyBtYW55IGNsb2Nr
-cyAobWF4SXRlbXM6IDEpLg0KDQpXaWxsIGRvIGZvciBhIHBvc3NpYmxlIHYyLiBJIHdhbnQgdG8g
-d2FpdCB3aGF0IE1hcmsgQnJvd24gc2F5cyBhYm91dCB0aGUNCmFkZGl0aW9uIGluIGdlbmVyYWws
-IG1heWJlIEkgaGF2ZSB0byBjaGFuZ2UgYWxsIG92ZXIgaG93IHRoaXMgc3BlY2lhbGl0eQ0KaXMg
-YWRkZWQgaW50byByZWd1bGF0b3Igc3Vic3lzdGVtIGFuZCB0aGVyZWZvcmUgYWxzbyB0aGUgYmlu
-ZGluZyB3aWxsDQpjaGFuZ2UuDQoNClBoaWxpcHBlDQo+IA0KPiA+ICsNCj4gPiAgICBzdGFydHVw
-LWRlbGF5LXVzOg0KPiA+ICAgICAgZGVzY3JpcHRpb246IHN0YXJ0dXAgdGltZSBpbiBtaWNyb3Nl
-Y29uZHMNCj4gPiAgICAgICRyZWY6IC9zY2hlbWFzL3R5cGVzLnlhbWwjL2RlZmluaXRpb25zL3Vp
-bnQzMg0KPiA+IC0tDQo+ID4gMi4yMy4wDQo+ID4gDQo=
+Steven Rostedt wrote:
+> On Thu,  4 Jul 2019 20:04:41 +0530
+> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+> 
+> 
+>>  kernel/trace/ftrace.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>> 
+>> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+>> index 7b037295a1f1..0791eafb693d 100644
+>> --- a/kernel/trace/ftrace.c
+>> +++ b/kernel/trace/ftrace.c
+>> @@ -3093,6 +3093,10 @@ t_probe_next(struct seq_file *m, loff_t *pos)
+>>  		hnd = &iter->probe_entry->hlist;
+>>  
+>>  	hash = iter->probe->ops.func_hash->filter_hash;
+>> +
+>> +	if (!hash)
+>> +		return NULL;
+>> +
+>>  	size = 1 << hash->size_bits;
+>>  
+>>   retry:
+> 
+> OK, I added this, but I'm also adding this on top:
+
+Thanks, the additional comments do make this much clearer.
+
+Regards,
+Naveen
+
