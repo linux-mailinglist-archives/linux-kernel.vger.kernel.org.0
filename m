@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77A50A8FD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ECBDA8ED0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389378AbfIDSGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:06:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47844 "EHLO mail.kernel.org"
+        id S2388359AbfIDSAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:00:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389366AbfIDSGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:06:01 -0400
+        id S2388352AbfIDSAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:00:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCB4B206B8;
-        Wed,  4 Sep 2019 18:06:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF16A22CEA;
+        Wed,  4 Sep 2019 18:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620361;
-        bh=IRnDFMFoLiFLP/Eybumclhwuki5Ux8C0dWpNaSumgJs=;
+        s=default; t=1567620007;
+        bh=Ui+0UrEl6Wdi7CRb8+V3zC+O+5oPfmhX1x6ySkn9Rs0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FU2erhxTkcFLsy1dlA4USV/GMIDg7F6xpskBHa0PgKRs4i7Afd75MAbG819ufoY+3
-         bTBrJa7tW0WMWiC/+mKJO8jWlTdJk/3mK6nCP5AoDdTH2YDK1WjECdCIjEPOwmx5oi
-         01C43f4ENGqKovD8e0T24qfCU33S2K9SQROIZNa8=
+        b=kZoWJPR0Izd8t6T219ZXxesPcP3VJLij6puVezaVZbiwCkrJD5fU8bRD0Hc3km9fH
+         DWAGvPI0N38/gstKU9n85hDBfSikdPOA5fls766iZmeXmP8r4uYoBQ1qtseXFWDtEY
+         v0cj0bprfE06vwbQ+VXKevzj/CWCJlCxPMwXS04I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pedro Sousa <sousa@synopsys.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 29/93] scsi: ufs: Fix RX_TERMINATION_FORCE_ENABLE define value
+        stable@vger.kernel.org, Zhang Tao <kontais@zoho.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.9 39/83] dm table: fix invalid memory accesses with too high sector number
 Date:   Wed,  4 Sep 2019 19:53:31 +0200
-Message-Id: <20190904175305.811788415@linuxfoundation.org>
+Message-Id: <20190904175307.275806394@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ebcb8f8508c5edf428f52525cec74d28edea7bcb ]
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-Fix RX_TERMINATION_FORCE_ENABLE define value from 0x0089 to 0x00A9
-according to MIPI Alliance MPHY specification.
+commit 1cfd5d3399e87167b7f9157ef99daa0e959f395d upstream.
 
-Fixes: e785060ea3a1 ("ufs: definitions for phy interface")
-Signed-off-by: Pedro Sousa <sousa@synopsys.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+If the sector number is too high, dm_table_find_target() should return a
+pointer to a zeroed dm_target structure (the caller should test it with
+dm_target_is_valid).
+
+However, for some table sizes, the code in dm_table_find_target() that
+performs btree lookup will access out of bound memory structures.
+
+Fix this bug by testing the sector number at the beginning of
+dm_table_find_target(). Also, add an "inline" keyword to the function
+dm_table_get_size() because this is a hot path.
+
+Fixes: 512875bd9661 ("dm: table detect io beyond device")
+Cc: stable@vger.kernel.org
+Reported-by: Zhang Tao <kontais@zoho.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/ufs/unipro.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-table.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/ufs/unipro.h b/drivers/scsi/ufs/unipro.h
-index 23129d7b2678d..c77e365264478 100644
---- a/drivers/scsi/ufs/unipro.h
-+++ b/drivers/scsi/ufs/unipro.h
-@@ -52,7 +52,7 @@
- #define RX_HS_UNTERMINATED_ENABLE		0x00A6
- #define RX_ENTER_HIBERN8			0x00A7
- #define RX_BYPASS_8B10B_ENABLE			0x00A8
--#define RX_TERMINATION_FORCE_ENABLE		0x0089
-+#define RX_TERMINATION_FORCE_ENABLE		0x00A9
- #define RX_MIN_ACTIVATETIME_CAPABILITY		0x008F
- #define RX_HIBERN8TIME_CAPABILITY		0x0092
- #define RX_REFCLKFREQ				0x00EB
--- 
-2.20.1
-
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1263,7 +1263,7 @@ void dm_table_event(struct dm_table *t)
+ }
+ EXPORT_SYMBOL(dm_table_event);
+ 
+-sector_t dm_table_get_size(struct dm_table *t)
++inline sector_t dm_table_get_size(struct dm_table *t)
+ {
+ 	return t->num_targets ? (t->highs[t->num_targets - 1] + 1) : 0;
+ }
+@@ -1288,6 +1288,9 @@ struct dm_target *dm_table_find_target(s
+ 	unsigned int l, n = 0, k = 0;
+ 	sector_t *node;
+ 
++	if (unlikely(sector >= dm_table_get_size(t)))
++		return &t->targets[t->num_targets];
++
+ 	for (l = 0; l < t->depth; l++) {
+ 		n = get_child(n, k);
+ 		node = get_node(t, l, n);
 
 
