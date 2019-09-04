@@ -2,111 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D558A9299
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A52C2A92A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:54:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730106AbfIDTth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 15:49:37 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36853 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728238AbfIDTtf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 15:49:35 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y22so8329618pfr.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 12:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=MJZ59OzDe/mWiaBLP8jVMpUtkGX1PofiwqpjWM71xRs=;
-        b=mogqm3X+Rch8sVC/xusY+3xSkTL37ezlnaM47EZw9OfMVezEYCUSs/FG5vdl7MUPX7
-         QmQEzuiCg8Lry0hMmkMejJqeKcbfGDsB746Aj1Shx4mVe770eFR0kRiVJzcRSlW5mDuj
-         jY7mARh/mZmxyceKWn0NobxwgLKC3+U36hKiQsrHSq5uSsvyfFjvkXvR4Ifl5ZI6R+/z
-         KgI1dK5KqRpOkuSJ9NeHS5EAOas0i22dkvkVlruesul/iriYXoFZpojSIlRAKnb/oVTe
-         eF1MQRe+xAh1ciyZkbcGnY0l+gG01QLHYV5D8pKCQvJ3pq0acnOmh355G37ucRU7Ltzm
-         v5lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=MJZ59OzDe/mWiaBLP8jVMpUtkGX1PofiwqpjWM71xRs=;
-        b=Q33NOAvt/nirwXdZY9p4zZC4lIB/hh+XhU1e75WL2xf6jluOov80wh5fYh0poGC76M
-         p9NKk+YAwEXPz5tprHosECKd6RbVz1Slfaa4PsAwA4sRDWre+I6kUF2oU1pNmox/XfDG
-         lKXPzE5o3cLnMvuxC18RW51m7Olh2EAs+Q8OBYqdV0P6Umd7fDIklj8QYJf87YUKDVOB
-         Ow2PNeel6C4LUe3HJRxhdzR8ntyulbS8sOJglX5M4YUFlY7CmnloSNHC4vt0C0P0VPux
-         8PFsO3g4wpzTWXSzEsLzlL/Z9i+nDeF0hnlfOs/sxwbKL2LzfXm7JBNQOvTzwJXrzLA9
-         +phA==
-X-Gm-Message-State: APjAAAX2DQDnXJX0/P93Zhe9XL2sjuIkoufbVdu88shP2tRE0Cn+UusN
-        4RHVBSo7IPi7xIdsxxSy7HwC
-X-Google-Smtp-Source: APXvYqwmOdnog1Tt35IIPB+oPdZuaX+clxfT0GSE87X07y62HoChl0HSmZq2tosZO3IAaK0o3gSTCA==
-X-Received: by 2002:a17:90a:8911:: with SMTP id u17mr6973459pjn.128.1567626574655;
-        Wed, 04 Sep 2019 12:49:34 -0700 (PDT)
-Received: from ?IPv6:2409:4072:994:cdd3:65d0:8a4e:9992:92e2? ([2409:4072:994:cdd3:65d0:8a4e:9992:92e2])
-        by smtp.gmail.com with ESMTPSA id y194sm613378pfg.186.2019.09.04.12.49.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Sep 2019 12:49:33 -0700 (PDT)
-Date:   Thu, 05 Sep 2019 01:19:27 +0530
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190904130457.24744-1-yuehaibing@huawei.com>
-References: <20190904130457.24744-1-yuehaibing@huawei.com>
+        id S1730065AbfIDTyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 15:54:04 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:55172 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726528AbfIDTyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 15:54:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=TO3XmjK7/zkVIsdutEk+4Z0LXFPsPRLuV22DXu6h7GE=; b=XuGIq/dPS3G9wxj8KNBtmbPkxX
+        jRyxT56aw9Kws2n+4QEsPCMntw8AOq5lGzqL5k/HmLQ2e80xkKQzzFi56u4ogCQ+AnhMmfhQR276/
+        Ui35Mp0bJCKR/eu388lJNsjyvt12fktW1qHI9CoBpJtO3h5aaYQqJ7aJP/53OdPkYZZY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1i5bLp-0005os-Bn; Wed, 04 Sep 2019 21:53:57 +0200
+Date:   Wed, 4 Sep 2019 21:53:57 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        f.fainelli@gmail.com, hkallweit1@gmail.com, davem@davemloft.net
+Subject: Re: [PATCH v2 1/2] ethtool: implement Energy Detect Powerdown
+ support via phy-tunable
+Message-ID: <20190904195357.GA21264@lunn.ch>
+References: <20190904162322.17542-1-alexandru.ardelean@analog.com>
+ <20190904162322.17542-2-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH -next] scsi: ufs-hisi: use devm_platform_ioremap_resource() to simplify code
-To:     YueHaibing <yuehaibing@huawei.com>, alim.akhtar@samsung.com,
-        avri.altman@wdc.com, pedrom.sousa@synopsys.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, liwei213@huawei.com,
-        dimitrysh@google.com, kjlu@umn.edu, tglx@linutronix.de,
-        yuehaibing@huawei.com, stanley.chu@mediatek.com, arnd@arndb.de
-CC:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Message-ID: <56F1F139-26BD-42D6-8C24-118DEC0D0B97@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190904162322.17542-2-alexandru.ardelean@analog.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 04, 2019 at 07:23:21PM +0300, Alexandru Ardelean wrote:
 
+Hi Alexandru
 
-On 4 September 2019 6:34:57 PM IST, YueHaibing <yuehaibing@huawei=2Ecom> w=
-rote:
->Use devm_platform_ioremap_resource() to simplify the code a bit=2E
->This is detected by coccinelle=2E
->
->Reported-by: Hulk Robot <hulkci@huawei=2Ecom>
->Signed-off-by: YueHaibing <yuehaibing@huawei=2Ecom>
+Somewhere we need a comment stating what EDPD means. Here would be a
+good place.
 
-Acked-by: Manivannan Sadhasivam <manivannan=2Esadhasivam@linaro=2Eorg>
+> +#define ETHTOOL_PHY_EDPD_DFLT_TX_INTERVAL	0x7fff
+> +#define ETHTOOL_PHY_EDPD_NO_TX			0x8000
+> +#define ETHTOOL_PHY_EDPD_DISABLE		0
 
-Thanks,=20
-Mani
->---
-> drivers/scsi/ufs/ufs-hisi=2Ec | 4 +---
-> 1 file changed, 1 insertion(+), 3 deletions(-)
->
->diff --git a/drivers/scsi/ufs/ufs-hisi=2Ec b/drivers/scsi/ufs/ufs-hisi=2E=
-c
->index f4d1dca=2E=2E6bbb167 100644
->--- a/drivers/scsi/ufs/ufs-hisi=2Ec
->+++ b/drivers/scsi/ufs/ufs-hisi=2Ec
->@@ -447,13 +447,11 @@ static int ufs_hisi_resume(struct ufs_hba *hba,
->enum ufs_pm_op pm_op)
->=20
-> static int ufs_hisi_get_resource(struct ufs_hisi_host *host)
-> {
->-	struct resource *mem_res;
-> 	struct device *dev =3D host->hba->dev;
-> 	struct platform_device *pdev =3D to_platform_device(dev);
->=20
-> 	/* get resource of ufs sys ctrl */
->-	mem_res =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
->-	host->ufs_sys_ctrl =3D devm_ioremap_resource(dev, mem_res);
->+	host->ufs_sys_ctrl =3D devm_platform_ioremap_resource(pdev, 1);
-> 	if (IS_ERR(host->ufs_sys_ctrl))
-> 		return PTR_ERR(host->ufs_sys_ctrl);
->=20
+I think you are passing a u16. So why not 0xfffe and 0xffff?  We also
+need to make it clear what the units are for interval. This file
+specifies the contract between the kernel and user space. So we need
+to clearly define what we mean here. Lots of comments are better than
+no comments.
 
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+   Andrew
