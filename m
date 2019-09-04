@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D28A8F3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3C66A8F21
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388776AbfIDSCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:02:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42524 "EHLO mail.kernel.org"
+        id S2388323AbfIDSB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:01:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388750AbfIDSCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:02:31 -0400
+        id S2388657AbfIDSBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:01:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E4C223401;
-        Wed,  4 Sep 2019 18:02:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26D6123400;
+        Wed,  4 Sep 2019 18:01:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620150;
-        bh=Ywm29xgR2yTj4RcVM92DdMlNq/nCgVyDWXEKNz9+NSI=;
+        s=default; t=1567620113;
+        bh=0VB7BqRu9KN/fVUW3w2ZNmm1np0Ey2vWM69YPY/eu8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nXQZvIySMxkGWz1FW5+XtT7iEtOu1M+eoWeUzZCc8pmHOgq25o5SRa5JNGWt/KlEy
-         3EyiJTbkIL8tp8J8RQeAeb6GJQZCXl6e8eli3yyEGWxmdrEUKQMmIvLV6spFnYzLv+
-         0v1Pem2tDUY2shVK+lX5wF0jxvvSWmuhLHWKa6+E=
+        b=qFf3l95b74H8bWw60f0lNIi5FeC41BC0FLX2OYjpD91sFwHSOEvtSOjsVsr18EE6b
+         Wk7nVNmCg3ywUSxAueTsHwjHJDgdZn+GkOCNUXjpoJRA8J5Cv8VcN/w0uxc3rt4DUR
+         YDgFRLNvieqm+bWqTPsKP9TiQK6PHCo17Il/zZhU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 01/57] dmaengine: ste_dma40: fix unneeded variable warning
+        stable@vger.kernel.org, ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.9 37/83] dm btree: fix order of block initialization in btree_split_beneath
 Date:   Wed,  4 Sep 2019 19:53:29 +0200
-Message-Id: <20190904175302.158134911@linuxfoundation.org>
+Message-Id: <20190904175307.155331427@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,54 +43,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5d6fb560729a5d5554e23db8d00eb57cd0021083 ]
+From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 
-clang-9 points out that there are two variables that depending on the
-configuration may only be used in an ARRAY_SIZE() expression but not
-referenced:
+commit e4f9d6013820d1eba1432d51dd1c5795759aa77f upstream.
 
-drivers/dma/ste_dma40.c:145:12: error: variable 'd40_backup_regs' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
-static u32 d40_backup_regs[] = {
-           ^
-drivers/dma/ste_dma40.c:214:12: error: variable 'd40_backup_regs_chan' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
-static u32 d40_backup_regs_chan[] = {
+When btree_split_beneath() splits a node to two new children, it will
+allocate two blocks: left and right.  If right block's allocation
+failed, the left block will be unlocked and marked dirty.  If this
+happened, the left block'ss content is zero, because it wasn't
+initialized with the btree struct before the attempot to allocate the
+right block.  Upon return, when flushing the left block to disk, the
+validator will fail when check this block.  Then a BUG_ON is raised.
 
-Mark these __maybe_unused to shut up the warning.
+Fix this by completely initializing the left block before allocating and
+initializing the right block.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/20190712091357.744515-1-arnd@arndb.de
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 4dcb8b57df359 ("dm btree: fix leak of bufio-backed block in btree_split_beneath error path")
+Cc: stable@vger.kernel.org
+Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/dma/ste_dma40.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/persistent-data/dm-btree.c |   31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index c2b089af04208..90feb6a05e59b 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -142,7 +142,7 @@ enum d40_events {
-  * when the DMA hw is powered off.
-  * TODO: Add save/restore of D40_DREG_GCC on dma40 v3 or later, if that works.
-  */
--static u32 d40_backup_regs[] = {
-+static __maybe_unused u32 d40_backup_regs[] = {
- 	D40_DREG_LCPA,
- 	D40_DREG_LCLA,
- 	D40_DREG_PRMSE,
-@@ -211,7 +211,7 @@ static u32 d40_backup_regs_v4b[] = {
+--- a/drivers/md/persistent-data/dm-btree.c
++++ b/drivers/md/persistent-data/dm-btree.c
+@@ -623,39 +623,40 @@ static int btree_split_beneath(struct sh
  
- #define BACKUP_REGS_SZ_V4B ARRAY_SIZE(d40_backup_regs_v4b)
+ 	new_parent = shadow_current(s);
  
--static u32 d40_backup_regs_chan[] = {
-+static __maybe_unused u32 d40_backup_regs_chan[] = {
- 	D40_CHAN_REG_SSCFG,
- 	D40_CHAN_REG_SSELT,
- 	D40_CHAN_REG_SSPTR,
--- 
-2.20.1
-
++	pn = dm_block_data(new_parent);
++	size = le32_to_cpu(pn->header.flags) & INTERNAL_NODE ?
++		sizeof(__le64) : s->info->value_type.size;
++
++	/* create & init the left block */
+ 	r = new_block(s->info, &left);
+ 	if (r < 0)
+ 		return r;
+ 
++	ln = dm_block_data(left);
++	nr_left = le32_to_cpu(pn->header.nr_entries) / 2;
++
++	ln->header.flags = pn->header.flags;
++	ln->header.nr_entries = cpu_to_le32(nr_left);
++	ln->header.max_entries = pn->header.max_entries;
++	ln->header.value_size = pn->header.value_size;
++	memcpy(ln->keys, pn->keys, nr_left * sizeof(pn->keys[0]));
++	memcpy(value_ptr(ln, 0), value_ptr(pn, 0), nr_left * size);
++
++	/* create & init the right block */
+ 	r = new_block(s->info, &right);
+ 	if (r < 0) {
+ 		unlock_block(s->info, left);
+ 		return r;
+ 	}
+ 
+-	pn = dm_block_data(new_parent);
+-	ln = dm_block_data(left);
+ 	rn = dm_block_data(right);
+-
+-	nr_left = le32_to_cpu(pn->header.nr_entries) / 2;
+ 	nr_right = le32_to_cpu(pn->header.nr_entries) - nr_left;
+ 
+-	ln->header.flags = pn->header.flags;
+-	ln->header.nr_entries = cpu_to_le32(nr_left);
+-	ln->header.max_entries = pn->header.max_entries;
+-	ln->header.value_size = pn->header.value_size;
+-
+ 	rn->header.flags = pn->header.flags;
+ 	rn->header.nr_entries = cpu_to_le32(nr_right);
+ 	rn->header.max_entries = pn->header.max_entries;
+ 	rn->header.value_size = pn->header.value_size;
+-
+-	memcpy(ln->keys, pn->keys, nr_left * sizeof(pn->keys[0]));
+ 	memcpy(rn->keys, pn->keys + nr_left, nr_right * sizeof(pn->keys[0]));
+-
+-	size = le32_to_cpu(pn->header.flags) & INTERNAL_NODE ?
+-		sizeof(__le64) : s->info->value_type.size;
+-	memcpy(value_ptr(ln, 0), value_ptr(pn, 0), nr_left * size);
+ 	memcpy(value_ptr(rn, 0), value_ptr(pn, nr_left),
+ 	       nr_right * size);
+ 
 
 
