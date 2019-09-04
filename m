@@ -2,150 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7224BA7DF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97ADBA7DFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:37:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbfIDIff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 04:35:35 -0400
-Received: from mga04.intel.com ([192.55.52.120]:38543 "EHLO mga04.intel.com"
+        id S1727144AbfIDIh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 04:37:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbfIDIff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:35:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 01:35:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
-   d="scan'208";a="194654077"
-Received: from shbuild999.sh.intel.com (HELO localhost) ([10.239.147.113])
-  by orsmga002.jf.intel.com with ESMTP; 04 Sep 2019 01:35:32 -0700
-Date:   Wed, 4 Sep 2019 16:35:58 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Rong Chen <rong.a.chen@intel.com>,
-        Michel =?utf-8?Q?D=C3=A4nzer?= <michel@daenzer.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, LKP <lkp@01.org>
-Subject: Re: [LKP] [drm/mgag200] 90f479ae51: vm-scalability.median -18.8%
- regression
-Message-ID: <20190904083558.GD5541@shbuild999.sh.intel.com>
-References: <64d41701-55a4-e526-17ae-8936de4bc1ef@suse.de>
- <20190824051605.GA63850@shbuild999.sh.intel.com>
- <1b897bfe-fd40-3ae3-d867-424d1fc08c44@suse.de>
- <d114b0b6-6b64-406e-6c3f-a8b8d5502413@intel.com>
- <44029e80-ba00-8246-dec0-fda122d53f5e@suse.de>
- <90e78ce8-d46a-5154-c324-a05aa1743c98@intel.com>
- <2e1b4d65-d477-f571-845d-fa0a670859af@suse.de>
- <20190904062716.GC5541@shbuild999.sh.intel.com>
- <72c33bf1-9184-e24a-c084-26d9c8b6f9b7@suse.de>
- <CAKMK7uGdOtyDHZMSzY8J45bX57EFKo=DWNUi+WL+GVOzoBpUhw@mail.gmail.com>
+        id S1725774AbfIDIh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 04:37:26 -0400
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9440823400;
+        Wed,  4 Sep 2019 08:37:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567586244;
+        bh=hoAius6REhdbGBpQkFZpk5CeOOmO3Yn/3gIEtQoNWWg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=m8/PRsxKuktjjE9T7/5NZ0LBzGps6QBKzHzUtzjZnjv5htkPdHVQh8+sFQbJXM+oV
+         wJ9auiMz/imRsYyTJZzMVOUpYLK52y7ldef2H7SbULXf2DGzZeSjMAiHGgkwtzOxk2
+         m2m2Wt89goHMOd58PZStIh0ngFEFvAtWbIeFgFKk=
+Received: by mail-lf1-f41.google.com with SMTP id j4so15186608lfh.8;
+        Wed, 04 Sep 2019 01:37:24 -0700 (PDT)
+X-Gm-Message-State: APjAAAXK37eov+qy74V/wuO7vUpgxIpcxH/ci7iiVqbfFdkRR4dTilma
+        p1SPmJI10/HsqXYfksUkBNJaHVQr0TsCjMkPKCI=
+X-Google-Smtp-Source: APXvYqynl8t4zpgSOSPhgXGm6urGPD6YD5RT2LviyIZz5LcMF3/ZNtjnIiHi6xBSeCZLQGGW5B0TO2IWt+JPxz/llZY=
+X-Received: by 2002:ac2:4853:: with SMTP id 19mr16484011lfy.69.1567586242704;
+ Wed, 04 Sep 2019 01:37:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKMK7uGdOtyDHZMSzY8J45bX57EFKo=DWNUi+WL+GVOzoBpUhw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190816163042.6604-1-krzk@kernel.org> <CAJKOXPcgZ2_ofZyAeTSxALkALaP-SFNfvNmNPYSPyLzuhpGZ0w@mail.gmail.com>
+ <20190822183519.GA23735@kozik-lap> <CAK8P3a1_Qw=OB31yOCrpPs8Ys+=9tt4Pnyd=3+2JGzRXJV1KAw@mail.gmail.com>
+In-Reply-To: <CAK8P3a1_Qw=OB31yOCrpPs8Ys+=9tt4Pnyd=3+2JGzRXJV1KAw@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 4 Sep 2019 10:37:11 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfRMXkm_pT560Ry5k-zFWpkRDmFHSs2Fb3RL7d4h=ka9g@mail.gmail.com>
+Message-ID: <CAJKOXPfRMXkm_pT560Ry5k-zFWpkRDmFHSs2Fb3RL7d4h=ka9g@mail.gmail.com>
+Subject: Re: [GIT PULL 1/3] soc: samsung: Exynos for v5.4
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
+        SoC Team <soc@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
-
-On Wed, Sep 04, 2019 at 10:11:11AM +0200, Daniel Vetter wrote:
-> On Wed, Sep 4, 2019 at 8:53 AM Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> >
-> > Hi
-> >
-> > Am 04.09.19 um 08:27 schrieb Feng Tang:
-> > >> Thank you for testing. But don't get too excited, because the patch
-> > >> simulates a bug that was present in the original mgag200 code. A
-> > >> significant number of frames are simply skipped. That is apparently the
-> > >> reason why it's faster.
+On Tue, 3 Sep 2019 at 19:21, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Thu, Aug 22, 2019 at 8:35 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > On Wed, Aug 21, 2019 at 09:51:09AM +0200, Krzysztof Kozlowski wrote:
+> > > On Fri, 16 Aug 2019 at 18:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > >
+> > > > The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+> > > >
+> > > >   Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+> > > >
+> > > > are available in the Git repository at:
+> > > >
+> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-5.4
+> > > >
+> > > > for you to fetch changes up to 40d8aff614f71ab3cab20785b4f213e3802d4e87:
+> > > >
+> > > >   soc: samsung: chipid: Convert exynos-chipid driver to use the regmap API (2019-08-15 20:25:25 +0200)
+> > > >
+> > > > ----------------------------------------------------------------
+> > > > Samsung soc drivers changes for v5.4
+> > > >
+> > > > Add Exynos Chipid driver for identification of product IDs and SoC
+> > > > revisions.  The driver also exposes chipid regmap, later to be used by
+> > > > Exynos Adaptive Supply Voltage driver (adjusting voltages to different
+> > > > revisions of same SoC).
 > > >
-> > > Thanks for the detailed info, so the original code skips time-consuming
-> > > work inside atomic context on purpose. Is there any space to optmise it?
-> > > If 2 scheduled update worker are handled at almost same time, can one be
-> > > skipped?
-> >
-> > To my knowledge, there's only one instance of the worker. Re-scheduling
-> > the worker before a previous instance started, will not create a second
-> > instance. The worker's instance will complete all pending updates. So in
-> > some way, skipping workers already happens.
-> 
-> So I think that the most often fbcon update from atomic context is the
-> blinking cursor. If you disable that one you should be back to the old
-> performance level I think, since just writing to dmesg is from process
-> context, so shouldn't change.
-
-Hmm, then for the old driver, it should also do the most update in
-non-atomic context? 
-
-One other thing is, I profiled that updating a 3MB shadow buffer needs
-20 ms, which transfer to 150 MB/s bandwidth. Could it be related with
-the cache setting of DRM shadow buffer? say the orginal code use a
-cachable buffer?
-
-
-> 
-> https://unix.stackexchange.com/questions/3759/how-to-stop-cursor-from-blinking
-> 
-> Bunch of tricks, but tbh I haven't tested them.
-
-Thomas has suggested to disable curson by
-	echo 0 > /sys/devices/virtual/graphics/fbcon/cursor_blink
-
-We tried that way, and no change for the performance data.
-
-Thanks,
-Feng
-
-> 
-> In any case, I still strongly advice you don't print anything to dmesg
-> or fbcon while benchmarking, because dmesg/printf are anything but
-> fast, especially if a gpu driver is involved. There's some efforts to
-> make the dmesg/printk side less painful (untangling the console_lock
-> from printk), but fundamentally printing to the gpu from the kernel
-> through dmesg/fbcon won't be cheap. It's just not something we
-> optimize beyond "make sure it works for emergencies".
-> -Daniel
-> 
-> >
-> > Best regards
-> > Thomas
-> >
+> > > It turns out that it brings troubles (code is executed on every
+> > > platform polluting logs because it is an initcall, not a driver) so
+> > > Sylwester (submitter) asked to skip the submission.
 > > >
-> > > Thanks,
-> > > Feng
-> > >
-> > >>
-> > >> Best regards
-> > >> Thomas
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > >
+> > > Please ignore the pull request.
 > >
-> > --
-> > Thomas Zimmermann
-> > Graphics Driver Developer
-> > SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
-> > GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-> > HRB 21284 (AG Nürnberg)
-> >
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> 
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> > I talked with Sylwester and Bartlomiej who contributed the chipid driver
+> > and they provided small incremental fixes. The driver is still useful
+> > and in the future it will be expanded towards AVS. Therefore please pull
+> > it or optionally wait a week and I will send incremental pull request
+> > with fixes.
+>
+> Pulled into arm/drivers for now.
+>
+> I have drafted a related patch recently, regarding the related
+> arch/arm/plat-samsung/cpu.c file. This is part of a longer series
+> I'm working on, see https://pastebin.com/ZqeU3Mth for the
+> current version of this patch.
+
+You can then also adjust the include path in arch/arm/mach-exynos/Makefile.
+
+> The observation is that mach-exynos
+> is almost completely independent of plat-samsung these days, and my
+> patch removes the last obstacle from separating the two. I have
+> another set of patches to do the same for mach-s5pv210 (which shares
+> half of its pm.c with plat-samsung, but nothing else).
+
+Great!
+
+Best regards,
+Krzysztof
