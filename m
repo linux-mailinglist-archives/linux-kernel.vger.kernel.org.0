@@ -2,132 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5B90A7BE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87189A7BED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:46:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbfIDGow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 02:44:52 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40103 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfIDGow (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 02:44:52 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 7so8951841ljw.7
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 23:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9PV59x0jONCn6oZH/Jt37mkqxwJDrEsrzpgLl+0g6yY=;
-        b=qtB5oJYMCrvZltHTV+MM+PBEQ+p+R0XM5ahn+0OUrNvTXlST91Cn+Stqm4/EExX0Zk
-         u+0eyh0ncZDZLUSB3JL6zwE4I/0y6APYbgOaFjvw1z/tKVmSFVO1gjdUJcOfNrzfg7c/
-         KWLmUlCsEI5lSqNgl37KlIWKlRMeprOBhyDjSg5OADtA9LsRa8J7CL99Q+u9dbTI7bRl
-         rm4tvEmQDRB8k4vzyid3kmj/eDctx9juHwtwRrCaGzHzoJFDHDCfo7yCTtEMcaws9OuS
-         DKk58CO69SNf17Co8m/gpxSy4f3P9TC7eaqIClCSW9sxCaHzRdoSo0BTKSQQ8IjE2FnY
-         uU0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9PV59x0jONCn6oZH/Jt37mkqxwJDrEsrzpgLl+0g6yY=;
-        b=KRagJjoXxG6w88DJsosTHXHL6Ve5Qw+FxO/y2lyJyrU/fC9dmVcfXAJbZ2oVwzC5yG
-         z3ici/3yO6Bmu4w0aHCUmvImcHmFf58ZgajnRNV+++Vc4mGg9U67qySYS9U64bIuawr1
-         I5ibe552Fk5rweqrKe1bZ/KgKIU9Nn1zQg2uiyaCp3AaV3HGWAk8W7jAvp6AfGkFY0G0
-         bYhC9uVnCU6kEzn2fCmbXB62mPx20oPq5Cu2D/vBjlQ80wTZB5ZZlU5qcgiw5b3NmNfE
-         4hb9u1Opwq44dW7t+DRFIt1u16KYoAZLMi8VNUB7PXTxrv152iUd9qYLfWXq7psi3bIe
-         3t0w==
-X-Gm-Message-State: APjAAAX/MijO9jayvDOcd1a7/4dspTHFC2E5Ol4aeKbsYBe3g63+xOEb
-        7n2B2yQxzWhzoGCfsfBlhX3kPJSA+43ffPb27x6SAw==
-X-Google-Smtp-Source: APXvYqwKz8Cx4FBN7z4mOn4CvKemj1SoODI9SWAUoCW2WdW9oF/tMHmShuBFA5/zXOSv7GYcUc6yauljLoPNYNchYZE=
-X-Received: by 2002:a2e:94cd:: with SMTP id r13mr13090247ljh.24.1567579490798;
- Tue, 03 Sep 2019 23:44:50 -0700 (PDT)
+        id S1728769AbfIDGqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 02:46:33 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:52195 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727168AbfIDGq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 02:46:28 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46NZ9D5dXFz9s7T;
+        Wed,  4 Sep 2019 16:46:24 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1567579585;
+        bh=/9Z2sNkRT/o08P4aiLvvwhSdCvWMznDFuM2DsfxuXjw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qpsN4vYxsxNjngjD8lHP8pmaiuwazbhwfLCnCIis4F7wejqKJCyZojUlexWVanwOM
+         A0Iy61TYSgszKS7XTHRgpDWQrRIEAzEHFnN7PN/hmLTRMczB9/8l/ar7AXG/Vyo7Qs
+         Jfbw8b4EGmP8iLk0Qj9fUizCE6AK0jLeU0kRE7oXWBVbmWhkL99Z7I6KIgmgCMPeX4
+         GYdBbanjXMIy/jYIzLsOg1ar306FdNdynuliwriGJ1yzsgaRGUB75X0k6e4mlnLybO
+         H2b0M9PR55CT8+kyowzRsQhwTNAuHRk/yL0eEvfIIR1cfS0SlpGOBc8ccgdoPxIbvK
+         OTgR5Jcy+EcJQ==
+Date:   Wed, 4 Sep 2019 16:46:22 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: linux-next: manual merge of the drm tree with the kbuild tree
+Message-ID: <20190904164622.57f69595@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190822021740.15554-1-riel@surriel.com> <20190822021740.15554-10-riel@surriel.com>
- <CAKfTPtAw1f89d4Sv+vSfytP8pJy-fy1hvpcz-=hoz4nrZXQV6A@mail.gmail.com> <6d07046810f4a490960d0124e99fe9cf546e9d10.camel@surriel.com>
-In-Reply-To: <6d07046810f4a490960d0124e99fe9cf546e9d10.camel@surriel.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 4 Sep 2019 08:44:39 +0200
-Message-ID: <CAKfTPtDbpd_FgPX21QDLSm=S7FL9z2HbS2b96aGOTAUw_bcxmg@mail.gmail.com>
-Subject: Re: [PATCH 09/15] sched,fair: refactor enqueue/dequeue_entity
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>, Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mel Gorman <mgorman@techsingularity.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/jUz8nlZ8JiYQFsxYrK+5AeD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Sep 2019 at 22:27, Rik van Riel <riel@surriel.com> wrote:
->
-> On Tue, 2019-09-03 at 17:38 +0200, Vincent Guittot wrote:
-> > Hi Rik,
-> >
-> > On Thu, 22 Aug 2019 at 04:18, Rik van Riel <riel@surriel.com> wrote:
-> > > Refactor enqueue_entity, dequeue_entity, and update_load_avg, in
-> > > order
-> > > to split out the things we still want to happen at every level in
-> > > the
-> > > cgroup hierarchy with a flat runqueue from the things we only need
-> > > to
-> > > happen once.
-> > >
-> > > No functional changes.
-> > >
-> > > Signed-off-by: Rik van Riel <riel@surriel.com>
-> > > ---
-> > >  kernel/sched/fair.c | 64 +++++++++++++++++++++++++++++----------
-> > > ------
-> > >  1 file changed, 42 insertions(+), 22 deletions(-)
-> > >
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index 74ee22c59d13..7b0d95f2e3a8 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -3502,7 +3502,7 @@ static void detach_entity_load_avg(struct
-> > > cfs_rq *cfs_rq, struct sched_entity *s
-> > >  #define DO_ATTACH      0x4
-> > >
-> > >  /* Update task and its cfs_rq load average */
-> > > -static inline void update_load_avg(struct cfs_rq *cfs_rq, struct
-> > > sched_entity *se, int flags)
-> > > +static inline bool update_load_avg(struct cfs_rq *cfs_rq, struct
-> > > sched_entity *se, int flags)
-> > >  {
-> > >         u64 now = cfs_rq_clock_pelt(cfs_rq);
-> > >         int decayed;
-> > > @@ -3531,6 +3531,8 @@ static inline void update_load_avg(struct
-> > > cfs_rq *cfs_rq, struct sched_entity *s
-> > >
-> > >         } else if (decayed && (flags & UPDATE_TG))
-> > >                 update_tg_load_avg(cfs_rq, 0);
-> > > +
-> > > +       return decayed;
-> >
-> > This is a functional change, isn't it ?
-> > update_cfs_group is now called only if decayed but we can we attach a
-> > task during the enqueue and there is no decay
->
-> Yes, it is, and patch 11 changes the way this functional
-> change is done.
->
-> If you want, I can change this patch to not have the
-> functional change, though in the end it should not make
-> any difference.
+--Sig_/jUz8nlZ8JiYQFsxYrK+5AeD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It's mainly that the code is not aligned with the commit message
+Hi all,
 
-I will continue to review other patch and will come back to this one
-after reviewing patch 11
+Today's linux-next merge of the drm tree got conflicts in:
 
-Thanks
-Vincent
->
-> --
-> All Rights Reversed.
+  drivers/gpu/drm/amd/display/dc/calcs/Makefile
+  drivers/gpu/drm/amd/display/dc/dml/Makefile
+  drivers/gpu/drm/amd/display/dc/dsc/Makefile
+
+between commit:
+
+  30851871d5ab ("kbuild: change *FLAGS_<basetarget>.o to take the path rela=
+tive to $(obj)")
+
+from the kbuild tree and commit:
+
+  0f0727d971f6 ("drm/amd/display: readd -msse2 to prevent Clang from emitti=
+ng libcalls to undefined SW FP routines")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/amd/display/dc/calcs/Makefile
+index d930df63772c,16614d73a5fc..000000000000
+--- a/drivers/gpu/drm/amd/display/dc/calcs/Makefile
++++ b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+@@@ -32,9 -32,13 +32,13 @@@ endi
+ =20
+  calcs_ccflags :=3D -mhard-float -msse $(cc_stack_align)
+ =20
++ ifdef CONFIG_CC_IS_CLANG
++ calcs_ccflags +=3D -msse2
++ endif
++=20
+ -CFLAGS_dcn_calcs.o :=3D $(calcs_ccflags)
+ -CFLAGS_dcn_calc_auto.o :=3D $(calcs_ccflags)
+ -CFLAGS_dcn_calc_math.o :=3D $(calcs_ccflags) -Wno-tautological-compare
+ +CFLAGS_$(AMDDALPATH)/dc/calcs/dcn_calcs.o :=3D $(calcs_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/calcs/dcn_calc_auto.o :=3D $(calcs_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/calcs/dcn_calc_math.o :=3D $(calcs_ccflags) -Wno-=
+tautological-compare
+ =20
+  BW_CALCS =3D dce_calcs.o bw_fixed.o custom_float.o
+ =20
+diff --cc drivers/gpu/drm/amd/display/dc/dml/Makefile
+index 83792e2c0f0e,95fd2beca80c..000000000000
+--- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
++++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+@@@ -32,16 -32,25 +32,20 @@@ endi
+ =20
+  dml_ccflags :=3D -mhard-float -msse $(cc_stack_align)
+ =20
++ ifdef CONFIG_CC_IS_CLANG
++ dml_ccflags +=3D -msse2
++ endif
++=20
+ -CFLAGS_display_mode_lib.o :=3D $(dml_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/dml/display_mode_lib.o :=3D $(dml_ccflags)
+ =20
+  ifdef CONFIG_DRM_AMD_DC_DCN2_0
+ -CFLAGS_display_mode_vba.o :=3D $(dml_ccflags)
+ -CFLAGS_display_mode_vba_20.o :=3D $(dml_ccflags)
+ -CFLAGS_display_rq_dlg_calc_20.o :=3D $(dml_ccflags)
+ -CFLAGS_display_mode_vba_20v2.o :=3D $(dml_ccflags)
+ -CFLAGS_display_rq_dlg_calc_20v2.o :=3D $(dml_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/dml/display_mode_vba.o :=3D $(dml_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_mode_vba_20.o :=3D $(dml_ccflag=
+s)
+ +CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_rq_dlg_calc_20.o :=3D $(dml_ccf=
+lags)
+  endif
+ -ifdef CONFIG_DRM_AMD_DCN3AG
+ -CFLAGS_display_mode_vba_3ag.o :=3D $(dml_ccflags)
+ -endif
+ -CFLAGS_dml1_display_rq_dlg_calc.o :=3D $(dml_ccflags)
+ -CFLAGS_display_rq_dlg_helpers.o :=3D $(dml_ccflags)
+ -CFLAGS_dml_common_defs.o :=3D $(dml_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/dml/dml1_display_rq_dlg_calc.o :=3D $(dml_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/dml/display_rq_dlg_helpers.o :=3D $(dml_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/dml/dml_common_defs.o :=3D $(dml_ccflags)
+ =20
+  DML =3D display_mode_lib.o display_rq_dlg_helpers.o dml1_display_rq_dlg_c=
+alc.o \
+  	dml_common_defs.o
+diff --cc drivers/gpu/drm/amd/display/dc/dsc/Makefile
+index c3922d6e7696,17db603f2d1f..000000000000
+--- a/drivers/gpu/drm/amd/display/dc/dsc/Makefile
++++ b/drivers/gpu/drm/amd/display/dc/dsc/Makefile
+@@@ -9,9 -9,14 +9,13 @@@ endi
+ =20
+  dsc_ccflags :=3D -mhard-float -msse $(cc_stack_align)
+ =20
++ ifdef CONFIG_CC_IS_CLANG
++ dsc_ccflags +=3D -msse2
++ endif
++=20
+ -CFLAGS_rc_calc.o :=3D $(dsc_ccflags)
+ -CFLAGS_rc_calc_dpi.o :=3D $(dsc_ccflags)
+ -CFLAGS_codec_main_amd.o :=3D $(dsc_ccflags)
+ -CFLAGS_dc_dsc.o :=3D $(dsc_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/dsc/rc_calc.o :=3D $(dsc_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/dsc/rc_calc_dpi.o :=3D $(dsc_ccflags)
+ +CFLAGS_$(AMDDALPATH)/dc/dsc/dc_dsc.o :=3D $(dsc_ccflags)
+ =20
+  DSC =3D dc_dsc.o rc_calc.o rc_calc_dpi.o
+ =20
+
+--Sig_/jUz8nlZ8JiYQFsxYrK+5AeD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1vXb4ACgkQAVBC80lX
+0Gyl1gf/T4Q64/PkBZgiqA96i3WZIdEakmu3YfXXK8oNnifXzASlIhm1lJHpfOB0
+8h4lRzBAdPv3TpwNQdS1feaClA15b7WbyNheU8owBzhHruhNGXraVeuLVY09sELX
+T74qyxl8WKa2fiTATkhouwozUL/iUiCuUn2EQi1O50JdgJXqzn1kUeLiSSh/XtBV
+bAXnV9hxA6Ydjq6L2PZNfOJA3CCJqqNCVL+L4haU4uulQeg31mjJfeDCc7Z1aKDl
+6+p9qYYEMN4RmZLsS8ERd+7XbwyL23j/y0OnNV6g01hCDKBXWyvyFpFMM5s3KdsO
+/gu4M9CAvMLl9JcD/0+TbAY2vcqivA==
+=4QMz
+-----END PGP SIGNATURE-----
+
+--Sig_/jUz8nlZ8JiYQFsxYrK+5AeD--
