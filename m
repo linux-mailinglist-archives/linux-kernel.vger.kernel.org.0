@@ -2,60 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E08A802B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 12:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAF08A8030
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 12:17:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbfIDKQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 06:16:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42742 "EHLO mail.kernel.org"
+        id S1729425AbfIDKRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 06:17:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725840AbfIDKQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 06:16:24 -0400
-Received: from oasis.local.home (bl11-233-114.dsl.telepac.pt [85.244.233.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728402AbfIDKRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 06:17:06 -0400
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF72E21881;
-        Wed,  4 Sep 2019 10:16:20 +0000 (UTC)
-Date:   Wed, 4 Sep 2019 06:16:16 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alessio Balsini <balsini@android.com>, mingo@kernel.org,
-        juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
-        dietmar.eggemann@arm.com, luca.abeni@santannapisa.it,
-        bristot@redhat.com, dvyukov@google.com, tglx@linutronix.de,
-        vpillai@digitalocean.com, kernel-team@android.com
-Subject: Re: [RFC][PATCH 01/13] sched/deadline: Impose global limits on
- sched_attr::sched_period
-Message-ID: <20190904061616.25ce79e1@oasis.local.home>
-In-Reply-To: <20190902091623.GQ2349@hirez.programming.kicks-ass.net>
-References: <20190726145409.947503076@infradead.org>
-        <20190726161357.397880775@infradead.org>
-        <20190802172104.GA134279@google.com>
-        <20190805115309.GJ2349@hirez.programming.kicks-ass.net>
-        <20190822122949.GA245353@google.com>
-        <20190822165125.GW2369@hirez.programming.kicks-ass.net>
-        <20190831144117.GA133727@google.com>
-        <20190902091623.GQ2349@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 758B023404;
+        Wed,  4 Sep 2019 10:17:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567592224;
+        bh=2ey6sZwUX3qIGq8j1u1XlvD+weBFrsvta/y2/SgRYO8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ExpbtXwSbOkrsScqxyE87tz7tqmgZLb2I90CCXpW7DgMs9twdX+SkUOWtBesX7NOR
+         K0QMCVtyQ4MEDsxy3zdAoDWl100jhhg4EfEAnlOVaGmVW2w7j2c63lQDLfvXUULcXo
+         tTNEhkGa6Bg2QuDejirO+Ver4giFQmYlU2cflQ3E=
+Received: by mail-lf1-f52.google.com with SMTP id c12so15442251lfh.5;
+        Wed, 04 Sep 2019 03:17:04 -0700 (PDT)
+X-Gm-Message-State: APjAAAV7dg8YGnf35dE0X68d8hJBffbAJiaKOXV/JELe2fStdb0lDwcY
+        UGRp7A9pQHnBLAWoAV8yQX6mPLEPKRayD2BKLao=
+X-Google-Smtp-Source: APXvYqw/hwDzA5Mu4tWRBQjAR/A6Fp0eSBoYcr/oqkFnq3lt9L037MV1NoD9n2ZI6fGV9aSMAJqoKj9sszzXPIbkXyw=
+X-Received: by 2002:ac2:4853:: with SMTP id 19mr16737669lfy.69.1567592222558;
+ Wed, 04 Sep 2019 03:17:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CGME20190821104316eucas1p2ecd715f3105921ec83e0acf1291201f8@eucas1p2.samsung.com>
+ <20190821104303.32079-1-l.luba@partner.samsung.com>
+In-Reply-To: <20190821104303.32079-1-l.luba@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 4 Sep 2019 12:16:51 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPehHNDasNQDgTC+WtVpb_h-s0iTxXiDQY1WT=+zEdB18A@mail.gmail.com>
+Message-ID: <CAJKOXPehHNDasNQDgTC+WtVpb_h-s0iTxXiDQY1WT=+zEdB18A@mail.gmail.com>
+Subject: Re: [PATCH v13 0/8] Exynos5 Dynamic Memory Controller driver
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        kyungmin.park@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
+        willy.mh.wolff.ml@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Sep 2019 11:16:23 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Wed, 21 Aug 2019 at 12:43, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>
+> Hi all,
+>
+> This is v13 which makes cosmetic changes. It is based on current mainline
+> (v5.3-rc5) with with devfreq/for-next where there is a PPMU patch [1].
+>
+> The patch set adds support of Dynamic Memory Controller for Exynos5422 SoC.
+> The driver supports Dynamic Voltage and Frequency Scaling
+> for the DMC and DRAM. It also provides needed timings for different
+> speed operations of the DRAM memory.
+> There is also new generic code in of_memory and headers which allows to parse
+> LPDDR3 memories defined in device-tree.
+>
+> Here are the last changes suggested by Krzysztof during his review.
+> For the previous changes in older revisions please refer to [2], there is
+> more detailed change log.
+>
+> changes:
+> v13:
+> - skipped patch with chipID changes in DT, since it is not used anymore,
+> - removed license comment in of_memory.c since SPDX has been merged,
+> - aligned comment to the current fields in the structure,
+> - changed printed warning when timings are not found,
+>
+> Regards,
+> Lukasz Luba
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git/commit/?h=for-next&id=b617376df8f01c975dee66802f4da16291f92079
+> [2] https://lkml.org/lkml/2019/7/22/251
+>
 
-> in sched_dl_period_handler(). And do:
-> 
-> +	preempt_disable();
-> 	max = (u64)READ_ONCE(sysctl_sched_dl_period_max) * NSEC_PER_USEC;
-> 	min = (u64)READ_ONCE(sysctl_sched_dl_period_min) * NSEC_PER_USEC;
-> +	preempt_enable();
+Hi Lukasz,
 
-Hmm, I'm curious. Doesn't the preempt_disable/enable() also add
-compiler barriers which would remove the need for the READ_ONCE()s here?
+Thanks for the effort and work on this patchset. The text-based
+bindings are slowly converted to JSON-schema but your patches were
+developed some time ago and have Rob's review. It would be nice if you
+or someone converted it to JSON schema later.
+Anyway, I'll pick up everything today evening either for this merge
+window or eventually postponed till next one. It is quite late in the
+cycle and I want the patches to sit in linux-next for some time.
 
--- Steve
+Best regards,
+Krzysztof
