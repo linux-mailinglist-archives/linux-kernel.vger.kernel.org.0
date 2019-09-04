@@ -2,64 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63BFAA93AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 890B6A93AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbfIDU0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 16:26:45 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44803 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfIDU0p (ORCPT
+        id S1730289AbfIDU1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 16:27:00 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42317 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727900AbfIDU1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 16:26:45 -0400
-Received: by mail-ed1-f67.google.com with SMTP id a21so259682edt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 13:26:44 -0700 (PDT)
+        Wed, 4 Sep 2019 16:27:00 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p3so35825pgb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 13:26:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=OePZof0TnTaVIAKR6oUjppFbmARVEgOx3q/5e7+F0DI=;
-        b=KcdGq5Uxy0Ye1I61KSTr3lN08Pw4/doKj6vcWSJMeQ3OszqE4ltEGwsO4Id5uH54J7
-         7u9c435NVva30Y6XmlIhKgtkzFPFBU2q0PyCHP+2IWK9c12c7hm6ZbaVn+eSF45O8xPo
-         AhlzOWfMB/XURqYLr3VkiUvkV+8mII5WZFH0jCNQlOvObfPa2BDGDeo+0FCOTHYe+jpr
-         WE4JVLf49nl/DfBuZPGRqIQTj/8kDz3HR/GlV3IcmAWljIxjZK3dnex42kCq9kuGmTLG
-         rlk9FQdAHTDsxKLLgRdE1rrP4a4/TlfBYX9RLj+/24ferYymx15qfe5cMG8nho9RljUm
-         aTaw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gHXopKFHzfE49twF88UvtmDlbMN38YDZW1AoH7082oE=;
+        b=DLUsWH99wenvPEpVvVSfF1d0qo3YVU2SKaU3twQDF4nwTd/7vJuMNynkyGX3R6VOse
+         SqIGJx0ao5UDaFQ6u8d4ybCAMVVZ2n0wH3v0tY2XkqWJGQeZ88YWs+8sexlyUHS9n4yx
+         t5FdYBhkD3lP1E7k+nc75Ex0NDzJZOplSjl6q9N9j9vQw/7jadVr9gXaNx7ff4cGoRf1
+         icrBkr3XgeQVMoU3SIm+i96fdWRSHRwOrGxip2CjAELbyoAm1wZM+E7YMSpkZ8PYwNoe
+         loRuEBKLEPVRn2BBWmx7mSyTi0uwGCrbIU91woKz9C8RpojEkGNN01LdP+ieI/H1QVxW
+         RpBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=OePZof0TnTaVIAKR6oUjppFbmARVEgOx3q/5e7+F0DI=;
-        b=j6K/1xidD7gQXPB7ToUusEmZKsc8RLkGT9JbJiHsp2gM7Y0OtE8xHZkwjBbHHqys2t
-         JaZYHaZf5X+Q1JoE3i2zOhQpAcQw7ck9GtYL6I2ZQnFz1rvrw7Q0zUf0UjhZLUN5NgTB
-         4VjCR7AW+kqJWEGv76GQjdOxUW/oF96WWFfLAY+offw70h5jgl7dHleCRoOndzdj5MuP
-         7pkJV4O0eTo3ufDy5N/klR3fMwW0/CMCKZTXr9lJlcqydI4aZHY0hLvoiV+ZtZHFmMF8
-         MSbxJfIDNm3yyjS9UsxvU+S0Urp/YwKtuGjs243XWLCy6sm0uk072Af+nO4mz1Ba10Vp
-         Dbsg==
-X-Gm-Message-State: APjAAAUGv1GC7JCB2hflbrFvTymVJD1j7ZJTnfXti+SqHXilWHeYIzzr
-        CNbwvt3S8Ul03C3Y2808C3jRwrb7hUuUwtQImIhd1mJLFjtzmHme
-X-Google-Smtp-Source: APXvYqzD+fWaekDBJKt/WEwTuXItJYbAIsVld5yo/aawKMJj7ooWTaGe9OVV7eKZ0fAFYeD9bbseoI63utJOPIFAGuQ=
-X-Received: by 2002:a17:906:1dd6:: with SMTP id v22mr35101171ejh.277.1567628803961;
- Wed, 04 Sep 2019 13:26:43 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gHXopKFHzfE49twF88UvtmDlbMN38YDZW1AoH7082oE=;
+        b=eYu2edmDsO3gNm745Qrst1QzqC/TasTPxI3bCO6tF3ZhH+C7uekMJ48Rb5afQQPIPC
+         WYm+fGwGOgb/GTlGypozmJ9ivSfEf5wgFnt7sUVXte/XgtQGNmhTGooKpmyDGi66UaMW
+         YhD6sRzC18ABqLZo2LIbxYHEPg2pikCjzNTQ3GhyKdRSm8Ct3Qy+TPWq/DRjTgWSL89W
+         4b1s4P5mkuG37uXy/ptMUMjpuBkzc1T+6o+w0LNP3iQX4O0Q0JUSonjEIyzekO3N2P0V
+         SD9Vy5aNV67SU7Pasm5NVnnoOtfgQiuDcHyxC9d5fUDqDaVBnoocFoplnC7NzHMhI29S
+         egUA==
+X-Gm-Message-State: APjAAAXqMmMEgUwRBi01N1ARCsv1+rpO2v2UOjJ57P19GizVfKFhrKHe
+        8cLAHbkUP24ryHeynFOijmzMwg==
+X-Google-Smtp-Source: APXvYqxFPUmP/jYPMT2DzWP/8rdwbetVerpvv8p9rtrq4YREH6sU5CzRKastQRxLomV0nVAQjILaYw==
+X-Received: by 2002:a62:1955:: with SMTP id 82mr32346422pfz.256.1567628819360;
+        Wed, 04 Sep 2019 13:26:59 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y194sm660594pfg.186.2019.09.04.13.26.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 13:26:58 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 13:26:56 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     agross@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/1] soc: qcom: geni: Provide parameter error checking
+Message-ID: <20190904202656.GB580@tuxbook-pro>
+References: <20190903135052.13827-1-lee.jones@linaro.org>
+ <20190904031922.GC574@tuxbook-pro>
+ <20190904084554.GF26880@dell>
+ <20190904182732.GE574@tuxbook-pro>
+ <20190904200130.GT26880@dell>
 MIME-Version: 1.0
-Reply-To: abdulwahidelmira1984@gmail.com
-Received: by 2002:a50:c355:0:0:0:0:0 with HTTP; Wed, 4 Sep 2019 13:26:43 -0700 (PDT)
-From:   Elmira Abdulwahid <elmiraabdulwahid79@gmail.com>
-Date:   Wed, 4 Sep 2019 13:26:43 -0700
-X-Google-Sender-Auth: j2J59-h28N7J74-2Y4RSrZJbDy8
-Message-ID: <CAAvtDjk_1KzQS-qZJyTr0eVRw+dADwWVXW=zeK9H4Tf=Cz28Bg@mail.gmail.com>
-Subject: Hello Dear
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190904200130.GT26880@dell>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  I'm  bank manager here in Turkey i have  important
-  business proposal that will benefit both of us greatly if
-  you indicate your interest  Please
-  get back to me immediately so we can proceed.
+On Wed 04 Sep 13:01 PDT 2019, Lee Jones wrote:
 
-  Yours sincerely,
+> On Wed, 04 Sep 2019, Bjorn Andersson wrote:
+> 
+> > On Wed 04 Sep 01:45 PDT 2019, Lee Jones wrote:
+> > 
+> > > On Tue, 03 Sep 2019, Bjorn Andersson wrote:
+> > > 
+> > > > On Tue 03 Sep 06:50 PDT 2019, Lee Jones wrote:
+[..]
+> > > With this simple parameter checking patch, the SE falls back to using
+> > > FIFO mode to transmit data and continues to work flawlessly.  IMHO
+> > > this should be applied in the first instance, as it fixes a real (null
+> > > dereference) bug which currently resides in the Mainline kernel.
+> > > 
+> > 
+> > Per the current driver design the wrapper device is the parent of the
+> > SE, I should have seen that 8bc529b25354 was the beginning of a game of
+> > whac-a-mole circumventing this design. Sorry for not spotting this
+> > earlier.
+> 
+> Right, but that doesn't mean that the current driver design is
+> correct.  ACPI, which is in theory a description of the hardware
+> doesn't seem to think so.  It looks more like we do this in Linux as a
+> convenience function to link the devices.  Instead this 'parent' seems
+> to be represented as a very small register space at the end of the SE
+> banks.
+> 
 
-  Elmira Abdulwahid
+There's a larger register window containing one block of common
+registers followed by register blocks for each serial engine.
+
+I don't know if we will need more of the common registers in the future,
+but for now you at least have the requirement that in order to operate
+the SEs you need to clock the wrapper. So the current DT model
+represents the hardware and the power/clocking topology.
+
+The fact that you managed to boot the system with just ignoring all
+clocks is a surprise to me.
+
+> > But if this is the one whack left to get the thing to boot then I think
+> > we should merge it.
+> 
+> Amazing, thank you!
+> 
+> Do you know how we go about getting this merged?  We only potentially
+> have 0.5 weeks (1.5 weeks if there is an -rc8 [doubtful]), so we need
+> to move fast.  Would you be prepared to send it to Linus for -fixes?
+> I'd do it myself, but this is a little out of my remit.
+> 
+
+The "offending" commit was picked up mid June and no one noticed that it
+doesn't work until this week?
+
+Let's slap a Cc: stable@ on it and get it into v5.4-rc1 and it will show
+up in v5.3.1.
+
+Regards,
+Bjorn
