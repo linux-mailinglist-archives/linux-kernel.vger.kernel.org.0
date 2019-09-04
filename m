@@ -2,123 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D03A9457
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:00:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E56A9469
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:03:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730764AbfIDVA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 17:00:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35390 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbfIDVAY (ORCPT
+        id S1730451AbfIDVDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 17:03:33 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40575 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfIDVDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 17:00:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1C4yzaFGm2dwE00FHfKi5dL3sc9qq3Dq1frkLdiVUqw=; b=smx+9n2brd7Qen+GYWPQQhIKw
-        LsHXOmj6SJXN6ngq2DhawrUsC2Js4WfXdX4ZCTTqAZpLgAXuwwv2iT7jrmJ5neLvsb4eJAcXkjrNL
-        AjcV2dvIxzryFJAMSCU0CqPtwgVNzjJzkFqk8pl+N02nYRjfbk78ICCZGJxX+THHzwwK2RqinrIdD
-        9yxD1/vsztHWf3zNok/bRboi810c1iXKTUCmtyphRgggRgYvXeuRTiAcxecMn7/DvwvvWuYJeSpQm
-        cVgxdDB+FARin5F4v3LjFiWqWLAFNLSXU9BsExHoAQR6AFxACk2w46ZMfB7yt+5oa4qMhcZIdJav2
-        nmnU8O9PQ==;
-Received: from [2601:1c0:6200:6e8::e2a8]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5cO6-0002LK-Qx; Wed, 04 Sep 2019 21:00:23 +0000
-Subject: Re: [PATCH v12 11/12] open: openat2(2) syscall
-To:     Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>
-Cc:     Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-References: <20190904201933.10736-1-cyphar@cyphar.com>
- <20190904201933.10736-12-cyphar@cyphar.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5e31b450-75b8-f037-dca7-b1bd547cf339@infradead.org>
-Date:   Wed, 4 Sep 2019 14:00:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 4 Sep 2019 17:03:32 -0400
+Received: by mail-qt1-f196.google.com with SMTP id g4so139970qtq.7
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CzEDh/TsIq7upWl5Yv4giE6ogitNU/Rn6EYmhnKlYvk=;
+        b=oNH2euNPlkfsmgsbVWioFIdW/n5Zsqzl3Xc42ZsNtjCeEXUBg47otMMdcUkPnpAVeq
+         fSYRdgt/3W0BQMYCwvFNN88AczjtCFjXr4iMki7BjJk+cuGkWJytORNuhmWSNBVh7CGN
+         r1pPapMWW4MdJiPK45JbSB3idS16Kazwy6D+S7mhUIytq+2+zUAmksQjRzAMfe9xkmLt
+         +zZ/8NcM53m5NFTwk400QeODytz4F8l30idy13m6BbHs56HtLEzq/uYEWL79u6i+lNkk
+         RSbVGU0l3NARncpWYVOpRPerW03Ma9wvaOhOo/W+2eeufNqnodfid9F92qhWaubQl3b8
+         DiTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CzEDh/TsIq7upWl5Yv4giE6ogitNU/Rn6EYmhnKlYvk=;
+        b=OD/jrEtopg2PGxLZyHG40GcT0BvrUj7dR3d12TdoNWlh1xlqYq2nSD2ZfZ26WWpWqW
+         Au6fKxl/4QchA9HOHvQvp2TDoVFDiWjkarcA2AcYK2AXAkh+AVIYlp59UlF5F+BLEJvJ
+         Jbb1Ez3eEciSm930j4a9hkFcYrLkmOZS2QTyovdDzm951qXn1XbXPkt+LFFIBXgG+hFH
+         Kp5RWJe81weuelUmhGH+a/GtZKPishmxH280W4wlueL0MLBRMVrZsCavt/88Z0ejTcLJ
+         U1i3S7UXXE4qf/sjclzW9+k3218wMCDL69D6Z3bVmDHav3FhQWtxzVuXsMqk0uzrdujM
+         1yNQ==
+X-Gm-Message-State: APjAAAVRlYNbEGsLmOnEd40uoR9jjLp8mU2TprwlvtWNij9W2hxJ3zAM
+        Xbzst3jKJo+2f568PTAui6U=
+X-Google-Smtp-Source: APXvYqyiG8Lc/uvqk95Uzde1T+GxJ7uHvZpxs0K5bY6Y8JzN3eTEDKj2o6jwgMg/OfQN/pNR4g2eJA==
+X-Received: by 2002:ac8:2b82:: with SMTP id m2mr69263qtm.35.1567631011842;
+        Wed, 04 Sep 2019 14:03:31 -0700 (PDT)
+Received: from 657840b88179.ic.unicamp.br (wifi-177-220-84-123.wifi.ic.unicamp.br. [177.220.84.123])
+        by smtp.gmail.com with ESMTPSA id t55sm81669qth.6.2019.09.04.14.03.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 14:03:31 -0700 (PDT)
+From:   Beatriz Martins de Carvalho <martinsdecarvalhobeatriz@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        lkcamp@lists.libreplanet.br.org
+Subject: [PATCH] staging: rtl8192e: remove unnecessary blank line
+Date:   Wed,  4 Sep 2019 21:03:26 +0000
+Message-Id: <20190904210326.17983-1-martinsdecarvalhobeatriz@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190904201933.10736-12-cyphar@cyphar.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-just noisy nits here:
+Fix checkpath error "CHECK: Blank lines aren't necessary after an open
+brace '{'"
+in rtllib.h:482.
 
-On 9/4/19 1:19 PM, Aleksa Sarai wrote:
+Signed-off-by: Beatriz Martins de Carvalho <martinsdecarvalhobeatriz@gmail.com>
+---
+ drivers/staging/rtl8192e/rtllib.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 1d338357df8a..479baf2da10e 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -93,5 +93,47 @@
->  
->  #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
->  
-> +/**
-
-/** means "the following is kernel-doc", but it's not, so please either make
-it kernel-doc format or just use /* to begin the comment.
-
-> + * Arguments for how openat2(2) should open the target path. If @resolve is
-> + * zero, then openat2(2) operates identically to openat(2).
-> + *
-> + * However, unlike openat(2), unknown bits in @flags result in -EINVAL rather
-> + * than being silently ignored. In addition, @mode (or @upgrade_mask) must be
-> + * zero unless one of {O_CREAT, O_TMPFILE, O_PATH} are set.
-> + *
-> + * @flags: O_* flags.
-> + * @mode: O_CREAT/O_TMPFILE file mode.
-> + * @upgrade_mask: UPGRADE_* flags (to restrict O_PATH re-opening).
-> + * @resolve: RESOLVE_* flags.
-> + */
-> +struct open_how {
-> +	__u32 flags;
-> +	union {
-> +		__u16 mode;
-> +		__u16 upgrade_mask;
-> +	};
-> +	__u16 resolve;
-> +};
-
-
+diff --git a/drivers/staging/rtl8192e/rtllib.h b/drivers/staging/rtl8192e/rtllib.h
+index 7a0128815..328f410da 100644
+--- a/drivers/staging/rtl8192e/rtllib.h
++++ b/drivers/staging/rtl8192e/rtllib.h
+@@ -479,7 +479,6 @@ enum wireless_mode {
+ #define P80211_OUI_LEN 3
+ 
+ struct rtllib_snap_hdr {
+-
+ 	u8    dsap;   /* always 0xAA */
+ 	u8    ssap;   /* always 0xAA */
+ 	u8    ctrl;   /* always 0x03 */
 -- 
-~Randy
+2.20.1
+
