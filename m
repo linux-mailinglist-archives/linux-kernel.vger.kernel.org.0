@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C52A8E03
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6578A9080
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732730AbfIDRzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:55:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60634 "EHLO mail.kernel.org"
+        id S2389709AbfIDSKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:10:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732659AbfIDRzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:55:33 -0400
+        id S2390032AbfIDSKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:10:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA6AE22CEA;
-        Wed,  4 Sep 2019 17:55:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDBEF208E4;
+        Wed,  4 Sep 2019 18:10:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619732;
-        bh=hHHjSbiQsAjEEctleSS533vZ2M8xIgEBQTPowA2D9+g=;
+        s=default; t=1567620601;
+        bh=ewCJZV8Vixq4xGts43VedgHqguAgWQMen+I8V0h/bS0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eCeuUo/OnwnRSc7kPZPszNJ0Kx4wBMOKS/4VKS06t4jEfWJmWqckBJPck2OUyDqcy
-         3ud2AWmhZLMrM+kln764gjZljwojlpVi8SMpL+DOYBvq48IT7ITIawPmQ2Ldx/gcFG
-         VUdj2B7zUf9QpYZWlaeegfFpL6lWMtfbIfeJXqfw=
+        b=EE79A7e+R0uSm1aAW8WBCS/yv5x8pKb0KwksiAOVX+VWwYJAyaE3QiDMXiViezOKo
+         q1NNfUd4otaeNAtHZoSN2WoGRL7na1bssV2UOOLXAhdCE8IgyzVqWwtVFX4qX4S9A1
+         iUxJiCLy0oVdFhOUm2qlmeZeJ2JcU6qlFP1Iwlbg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 02/77] MIPS: kernel: only use i8253 clocksource with periodic clockevent
+Subject: [PATCH 5.2 026/143] usb: gadget: composite: Clear "suspended" on reset/disconnect
 Date:   Wed,  4 Sep 2019 19:52:49 +0200
-Message-Id: <20190904175303.589784339@linuxfoundation.org>
+Message-Id: <20190904175315.087355422@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,36 +45,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a07e3324538a989b7cdbf2c679be6a7f9df2544f ]
+[ Upstream commit 602fda17c7356bb7ae98467d93549057481d11dd ]
 
-i8253 clocksource needs a free running timer. This could only
-be used, if i8253 clockevent is set up as periodic.
+In some cases, one can get out of suspend with a reset or
+a disconnect followed by a reconnect. Previously we would
+leave a stale suspended flag set.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/kernel/i8253.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/gadget/composite.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/mips/kernel/i8253.c b/arch/mips/kernel/i8253.c
-index c5bc344fc745c..73039746ae364 100644
---- a/arch/mips/kernel/i8253.c
-+++ b/arch/mips/kernel/i8253.c
-@@ -31,7 +31,8 @@ void __init setup_pit_timer(void)
- 
- static int __init init_pit_clocksource(void)
- {
--	if (num_possible_cpus() > 1) /* PIT does not scale! */
-+	if (num_possible_cpus() > 1 || /* PIT does not scale! */
-+	    !clockevent_state_periodic(&i8253_clockevent))
- 		return 0;
- 
- 	return clocksource_i8253_init();
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index b8a15840b4ffd..dfcabadeed01b 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1976,6 +1976,7 @@ void composite_disconnect(struct usb_gadget *gadget)
+ 	 * disconnect callbacks?
+ 	 */
+ 	spin_lock_irqsave(&cdev->lock, flags);
++	cdev->suspended = 0;
+ 	if (cdev->config)
+ 		reset_config(cdev);
+ 	if (cdev->driver->disconnect)
 -- 
 2.20.1
 
