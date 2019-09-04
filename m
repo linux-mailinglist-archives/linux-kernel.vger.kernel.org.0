@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E10A8E66
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EB47A90AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387927AbfIDR5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:57:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35858 "EHLO mail.kernel.org"
+        id S2390226AbfIDSLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:11:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387914AbfIDR5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:57:46 -0400
+        id S2390218AbfIDSLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:11:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2082821883;
-        Wed,  4 Sep 2019 17:57:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0632222CEA;
+        Wed,  4 Sep 2019 18:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619865;
-        bh=/mFmzPbd3juMcm6VDHNUUEZx9ufgU59RFS4262VaNy4=;
+        s=default; t=1567620662;
+        bh=PzqeueoE6W0jH8ZAn7V6GTCB6qOAVp98CDXFEjW9JAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H89UAnkejuvptQxNFroZIBf7e8QxvTJZlWNAkTyf0CqGfF2VjRecy+o5sOLwA0SsA
-         zt4gKg5W1iXlS5Y3ZRdslcKd4EInc6ylwtzfZAh90hA+KslmGQyHqnEK62kIY9mdb3
-         uWKAfaulXCFE0rMIdNNWv6DVTAWTOfZIFLi5v4Vk=
+        b=PUo6hFHWNKXQd2RtseXwmYEFj2xniTBA1LxGssKa8q4tP5k3YfjFfibGFCAtr7ojY
+         HkyF56amqfOv0ElGR7pZlX7hHALsODMifZqZw25paeKOzBbyj76VVcKlPlXPEvr5hd
+         l8JmWXxr+g1dv7AS9+yHa9jJxERCh1VfTO9yVksM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Aaron Armstrong Skomra <aaron.skomra@wacom.com>,
-        Ping Cheng <ping.cheng@wacom.com>,
-        Jason Gerecke <jason.gerecke@wacom.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.4 23/77] HID: wacom: correct misreported EKR ring values
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 047/143] drm/bridge: tfp410: fix memleak in get_modes()
 Date:   Wed,  4 Sep 2019 19:53:10 +0200
-Message-Id: <20190904175305.738304285@linuxfoundation.org>
+Message-Id: <20190904175315.910263027@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron Armstrong Skomra <skomra@gmail.com>
+[ Upstream commit c08f99c39083ab55a9c93b3e93cef48711294dad ]
 
-commit fcf887e7caaa813eea821d11bf2b7619a37df37a upstream.
+We don't free the edid blob allocated by the call to drm_get_edid(),
+causing a memleak. Fix this by calling kfree(edid) at the end of the
+get_modes().
 
-The EKR ring claims a range of 0 to 71 but actually reports
-values 1 to 72. The ring is used in relative mode so this
-change should not affect users.
-
-Signed-off-by: Aaron Armstrong Skomra <aaron.skomra@wacom.com>
-Fixes: 72b236d60218f ("HID: wacom: Add support for Express Key Remote.")
-Cc: <stable@vger.kernel.org> # v4.3+
-Reviewed-by: Ping Cheng <ping.cheng@wacom.com>
-Reviewed-by: Jason Gerecke <jason.gerecke@wacom.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190610135739.6077-1-tomi.valkeinen@ti.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/wacom_wac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/ti-tfp410.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -674,7 +674,7 @@ static int wacom_remote_irq(struct wacom
- 	input_report_key(input, BTN_BASE2, (data[11] & 0x02));
+diff --git a/drivers/gpu/drm/bridge/ti-tfp410.c b/drivers/gpu/drm/bridge/ti-tfp410.c
+index 3a8af9978ebdf..791f164bdadc8 100644
+--- a/drivers/gpu/drm/bridge/ti-tfp410.c
++++ b/drivers/gpu/drm/bridge/ti-tfp410.c
+@@ -66,7 +66,12 @@ static int tfp410_get_modes(struct drm_connector *connector)
  
- 	if (data[12] & 0x80)
--		input_report_abs(input, ABS_WHEEL, (data[12] & 0x7f));
-+		input_report_abs(input, ABS_WHEEL, (data[12] & 0x7f) - 1);
- 	else
- 		input_report_abs(input, ABS_WHEEL, 0);
+ 	drm_connector_update_edid_property(connector, edid);
  
+-	return drm_add_edid_modes(connector, edid);
++	ret = drm_add_edid_modes(connector, edid);
++
++	kfree(edid);
++
++	return ret;
++
+ fallback:
+ 	/* No EDID, fallback on the XGA standard modes */
+ 	ret = drm_add_modes_noedid(connector, 1920, 1200);
+-- 
+2.20.1
+
 
 
