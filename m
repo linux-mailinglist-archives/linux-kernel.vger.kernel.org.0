@@ -2,142 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48549A8BA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 090C2A8BA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:28:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732853AbfIDQEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:04:09 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44112 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387668AbfIDQD1 (ORCPT
+        id S1733065AbfIDQDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:03:52 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46576 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731541AbfIDQDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:03:27 -0400
-Received: by mail-pl1-f196.google.com with SMTP id k1so2411359pls.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 09:03:26 -0700 (PDT)
+        Wed, 4 Sep 2019 12:03:49 -0400
+Received: by mail-lf1-f66.google.com with SMTP id t8so3927783lfc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 09:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HUu7jEYknwWvPxSIww3cGcFcBMCEyjRD/qWIx9TD3dM=;
-        b=aXZuvHa1hI0zECNodigCdK/AztketBGpB5KRo99bRJAegKGh23AkFftnjVgCaQaYDV
-         r/MAFpjbZKtw9yEBG0/c5KTGKhI4RAykuTQl84poX4lM48t1KTqUSsYBOFHljnO4qmam
-         XteiWsbMMNyhozK6Rdt5paMH9GLgojCUbIjRKbMfNQDmCPIzw3DlVI6wSKYqYvkOWA/A
-         ag8XUqXeofKviz4dFZpvsV3nGBLYTvOOv38pvtGLJaUEx173EZABiusTJYLp92JpW39J
-         OQn62QVMk4ShDqUgPZZArtPwKtwpydm0NbYHM+MHTzTZuELA9GfQ5RFLZWipxWu7w4Yy
-         Tltw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qdkpjv/bZ2lIEk5X+tFdEgL+mJhBRPFpnDdvWwMX9Xc=;
+        b=N8gFXNfwqngfpITkERemx7Ltu0Dlkimbs/trkm5uy96D6tIWPHX+pNnCgQH1JxBihu
+         IUrf7jLBw1JFSWWDRnalf9mB+yNxxdG069bZzIjwJ4zwb/qe7WxIcKRgxPPfGKgR6AGk
+         4cnEy7ibBSOP6zo70HU5OxGp7HUKh81yvJsJ2YsMSEHK6/LXkPSokNqCrVMYSD3+bB4e
+         kS75lVIGNArGDrvZt0feVALLQxuzWS+xVJQxen3vpDfiaItT/4Y+cy1RBN1sxFZ96kAI
+         E9/nkH2UsoZHaIdiXJmDlCysFakZHUVnixHRNlY6m99sKIXP1K2Iej7CxYqjC5k4ZoQJ
+         d98g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HUu7jEYknwWvPxSIww3cGcFcBMCEyjRD/qWIx9TD3dM=;
-        b=BX/wQpwfhBid4vraza3Mjqm1Ir9uD/bc/zX2/gcxWzG9dnAvxXiDRxVINySxi3pbTW
-         YN5m82XUdOwyyUHaJKhBCi2obI9Ow6biVGR8ns58HxfNQReKzjzzSTd7BtaZzBy+UOOH
-         Ccuq7qXnWnN3fbvpiEj72pZMRfR8ok8ENl2yjDuV613EIjo7SO7rDLVapHMpZbfn0XfY
-         FWOQCaOSVx7jSdF8AnmAgrwxtmQQhSz7ug9tvmp6w8Uzr+clVOh+59mpp7NYfriRT8MY
-         T2y6AjqWFxvi7SyMEqOelpXyXnu/cWtNUd33PO16zizUg9FI5G2pX1pTx3tmWzS++HCA
-         7Pew==
-X-Gm-Message-State: APjAAAV2fC2EGTZuMedKk7KW0OvAbu9XfzHLnKd8ysNhXVMo2ZzEaxr6
-        FF8qDRLumyQxer6E7Dh8muioY7p8hw6vS3toxVzIkQ==
-X-Google-Smtp-Source: APXvYqyh8FzyyXaEHkm20wLHSSAh7U+934bzlwlLUUm/+rv9EcqnfWWn+NUpe56pQBjtLrshWi/RV1TYMuNAiJdPfH0=
-X-Received: by 2002:a17:902:8484:: with SMTP id c4mr41196596plo.223.1567613005847;
- Wed, 04 Sep 2019 09:03:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qdkpjv/bZ2lIEk5X+tFdEgL+mJhBRPFpnDdvWwMX9Xc=;
+        b=Qa80BenDG4+gBaDdLh8e1waXmm3zptqv149IY3bLsGs43n3lWxUFBimAluIaKjSvhD
+         /Z92eC/JKuRATcj3yp/5730aq0Veaq4iBa/LJ3OOXdQH4W5ZkR+WrzG3anj+vIsitR5g
+         F+AmvsRlRipfsxyfPZj1KbBFEN1Mu8kv7eHhkLZM71BDb+sK2QDrKeE3yy5KxGLxzCs1
+         O6KwqZvxAAtu46erw9k5+OcV60U/GSpaOQhcWVzPvpySg67whoMr6/Idr8s07H6SxSOp
+         wTMagVXhHwVWitUA1xgaQPfCBE4CGM6zpUd8hVLQFbM83ueRBZMGSn1tysG9vBhpNGWd
+         5NdQ==
+X-Gm-Message-State: APjAAAUna2PIO4IoK6TppRgT04EGYRq0eL0b83ScTn0KXMyrj+cZuPKH
+        xZf2dH/kuBVpOcSQlrm/xSY+FA==
+X-Google-Smtp-Source: APXvYqxcl6N2Os+hsM2CmBabXDD2UjVXYfZOm8va/9JhvYkTJcOmfYODnBTLkrUxHpBd/2Gc/balpg==
+X-Received: by 2002:a19:6549:: with SMTP id c9mr3188567lfj.99.1567613027790;
+        Wed, 04 Sep 2019 09:03:47 -0700 (PDT)
+Received: from localhost.localdomain (ua-84-219-138-247.bbcust.telenor.se. [84.219.138.247])
+        by smtp.gmail.com with ESMTPSA id r8sm556064lfm.71.2019.09.04.09.03.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 09:03:47 -0700 (PDT)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: dwc: fix find_next_bit() usage
+Date:   Wed,  4 Sep 2019 18:03:38 +0200
+Message-Id: <20190904160339.2800-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190904160039.3350229-1-arnd@arndb.de>
-In-Reply-To: <20190904160039.3350229-1-arnd@arndb.de>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 4 Sep 2019 09:03:13 -0700
-Message-ID: <CAKwvOd=udH0NLaz_+PbJ4ANyoJ3gGKZ-gsfTJ3xDJOqpsO1y0g@mail.gmail.com>
-Subject: Re: [PATCH] bus: imx-weim: remove incorrect __init annotations
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Ilie Halip <ilie.halip@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 9:00 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> The probe function is no longer __init, so anything it calls now
-> must also be available at runtime, as Kbuild points out when building
-> with clang-9:
+find_next_bit() takes a parameter of size long, and performs arithmetic
+that assumes that the argument is of size long.
 
-Thanks for the patch, this has already been addressed in:
-https://patchwork.kernel.org/patch/11114307/
-https://github.com/ClangBuiltLinux/linux/issues/645
+Therefore we cannot pass a u32, since this will cause find_next_bit()
+to read outside the stack buffer and will produce the following print:
+BUG: KASAN: stack-out-of-bounds in find_next_bit+0x38/0xb0
 
->
-> WARNING: vmlinux.o(.text+0x6e7040): Section mismatch in reference from the function weim_probe() to the function .init.text:imx_weim_gpr_setup()
-> The function weim_probe() references
-> the function __init imx_weim_gpr_setup().
-> This is often because weim_probe lacks a __init
-> annotation or the annotation of imx_weim_gpr_setup is wrong.
->
-> WARNING: vmlinux.o(.text+0x6e70f0): Section mismatch in reference from the function weim_probe() to the function .init.text:weim_timing_setup()
-> The function weim_probe() references
-> the function __init weim_timing_setup().
-> This is often because weim_probe lacks a __init
-> annotation or the annotation of weim_timing_setup is wrong.
->
-> Remove the remaining __init markings that are now wrong.
->
-> Fixes: 4a92f07816ba ("bus: imx-weim: use module_platform_driver()")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I applied this on top of the patch taht introduced the build error
->
->  drivers/bus/imx-weim.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
-> index 79af0c27f5a3..28bb65a5613f 100644
-> --- a/drivers/bus/imx-weim.c
-> +++ b/drivers/bus/imx-weim.c
-> @@ -76,7 +76,7 @@ static const struct of_device_id weim_id_table[] = {
->  };
->  MODULE_DEVICE_TABLE(of, weim_id_table);
->
-> -static int __init imx_weim_gpr_setup(struct platform_device *pdev)
-> +static int imx_weim_gpr_setup(struct platform_device *pdev)
->  {
->         struct device_node *np = pdev->dev.of_node;
->         struct property *prop;
-> @@ -126,10 +126,10 @@ static int __init imx_weim_gpr_setup(struct platform_device *pdev)
->  }
->
->  /* Parse and set the timing for this device. */
-> -static int __init weim_timing_setup(struct device *dev,
-> -                                   struct device_node *np, void __iomem *base,
-> -                                   const struct imx_weim_devtype *devtype,
-> -                                   struct cs_timing_state *ts)
-> +static int weim_timing_setup(struct device *dev,
-> +                            struct device_node *np, void __iomem *base,
-> +                            const struct imx_weim_devtype *devtype,
-> +                            struct cs_timing_state *ts)
->  {
->         u32 cs_idx, value[MAX_CS_REGS_COUNT];
->         int i, ret;
-> --
-> 2.20.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20190904160039.3350229-1-arnd%40arndb.de.
+Fixes: 1b497e6493c4 ("PCI: dwc: Fix uninitialized variable in dw_handle_msi_irq()")
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+ drivers/pci/controller/dwc/pcie-designware-host.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-
-
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index d3156446ff27..45f21640c977 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -78,7 +78,8 @@ static struct msi_domain_info dw_pcie_msi_domain_info = {
+ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
+ {
+ 	int i, pos, irq;
+-	u32 val, num_ctrls;
++	unsigned long val;
++	u32 status, num_ctrls;
+ 	irqreturn_t ret = IRQ_NONE;
+ 
+ 	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+@@ -86,14 +87,14 @@ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
+ 	for (i = 0; i < num_ctrls; i++) {
+ 		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS +
+ 					(i * MSI_REG_CTRL_BLOCK_SIZE),
+-				    4, &val);
+-		if (!val)
++				    4, &status);
++		if (!status)
+ 			continue;
+ 
+ 		ret = IRQ_HANDLED;
++		val = status;
+ 		pos = 0;
+-		while ((pos = find_next_bit((unsigned long *) &val,
+-					    MAX_MSI_IRQS_PER_CTRL,
++		while ((pos = find_next_bit(&val, MAX_MSI_IRQS_PER_CTRL,
+ 					    pos)) != MAX_MSI_IRQS_PER_CTRL) {
+ 			irq = irq_find_mapping(pp->irq_domain,
+ 					       (i * MAX_MSI_IRQS_PER_CTRL) +
 -- 
-Thanks,
-~Nick Desaulniers
+2.21.0
+
