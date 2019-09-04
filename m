@@ -2,77 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A443A954D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B680A956B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:45:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbfIDVjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 17:39:36 -0400
-Received: from ozlabs.org ([203.11.71.1]:45437 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726495AbfIDVjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 17:39:36 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46Nxzp1JR6z9sDB;
-        Thu,  5 Sep 2019 07:39:34 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1567633174;
-        bh=Nkc0HkYO/x0RTv0Alngals51mJgcrSX+X+cmXRsFX4Q=;
-        h=Date:From:To:Cc:Subject:From;
-        b=L6nO0WxcEpwQPWOzj753nKDQDuXP7dgWWe8m3pebiJQqHvcl8mzSMCJdFVtsTaOfN
-         JCDfl0ERKIUnR1bWOMnky3LMf5wZzFnmQn0/4t8dOx0anJ2aXtQkJc45ueTC89rCTP
-         PKHnb8e33Jp8PifITe1kftv3idyEW6eYib/sft/yTcO5TrsMmuvMhlKfvwxJSBtz82
-         lBSQm/GV1qYKLNL8nBumF5em/9Fy7CkgDvnxG/fRHdqP+xRUqllpemn2OO+JYI1F5R
-         MR9T8zKoDzRQ1XcYbmeyLIGRlMbTjjLvCx6FEz9efRV9NiMN5PJSbLEoDLixSXGH+G
-         1lfw3FIHnVIew==
-Date:   Thu, 5 Sep 2019 07:39:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the ext4 tree
-Message-ID: <20190905073931.642040db@canb.auug.org.au>
+        id S1730371AbfIDVpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 17:45:18 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37628 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbfIDVpS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 17:45:18 -0400
+Received: by mail-lj1-f194.google.com with SMTP id t14so246492lji.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:45:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=afyKDAGEEGBbAV94gj2UOZt2XiwokGAAZY9fEg48q/g=;
+        b=NaaXzsE03/A0aggT0JGsMPgqMPOgw689sbkH2wUyL6Wp3qKaZ1pKjDt9q3nSCqMPah
+         2e4dX/SHASPLfri+fuLDS7WlObVzMB0uCQ613gb+lr0h/VEtc5FGRP26lR62YK8De+Ct
+         /QjcaW9K7a4FCLT2Siyb/L/tVCZoNkYi2RP38=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=afyKDAGEEGBbAV94gj2UOZt2XiwokGAAZY9fEg48q/g=;
+        b=IMdju0b+UyxLRqxZm9j55H5qUBzYHxXLTZAd8UXF64NAFEqQvnvyow/XYufFqk9i+x
+         v37ik4IJg9v7W/vV8sa8kzkHsvV5S+s5aFjUHiZIukxFTR3rWGGREkLn/qPY5wOMDRU2
+         4NtfENJbtqcgYgF3XeGi4/Ew9sjtyt8dEqiCQ0YcAxuNn+Oh8hF4XVaeGbX/Kl/bgEq9
+         N52m/4nIyedkSCq4zomLFZELn5ATLTn+Ny5vpYFkHR3E1bRxlFuuk2oBGefRTS0X8yjg
+         qeU8Of7jU0KmBGKlfpnDJqIuru6+VrnR3yc6TTwbNzu8jkaplzfE2cjR3Eq4UY9sTHUs
+         DO6Q==
+X-Gm-Message-State: APjAAAUcZ0Pipf6y/8q/4v0ohRYUP2txRc36RXbRAqkf4fRkNB1DCl4o
+        +0BrX0KUSzwx13ZXNnSp+Nmrcb5+QDY=
+X-Google-Smtp-Source: APXvYqwz92fAW9fe7hVWQI+K9lri8pCuEemgLDG06mgW150jnCxewNNrOEvvyoUoHR4EVfiXrKv0Mg==
+X-Received: by 2002:a05:651c:292:: with SMTP id b18mr8210270ljo.131.1567633515907;
+        Wed, 04 Sep 2019 14:45:15 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id i21sm17242lfl.44.2019.09.04.14.45.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2019 14:45:15 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id u13so202255lfm.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:45:15 -0700 (PDT)
+X-Received: by 2002:a05:6512:512:: with SMTP id o18mr154625lfb.170.1567633024273;
+ Wed, 04 Sep 2019 14:37:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/n+F5DPF.84nTp=gmxp1S+eV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-11-cyphar@cyphar.com>
+ <CAHk-=wiod1rQMU+6Zew=cLE8uX4tUdf42bM5eKngMnNVS2My7g@mail.gmail.com> <CAHk-=wiHRW3Z9xPRiExi9jLjB0cdGhM=3vaW+b80mjuRcbORyw@mail.gmail.com>
+In-Reply-To: <CAHk-=wiHRW3Z9xPRiExi9jLjB0cdGhM=3vaW+b80mjuRcbORyw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 4 Sep 2019 14:36:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiExfaVhUTvKj7hR6DG4C2+oy6usz0Sa6QbPr5EgDH28w@mail.gmail.com>
+Message-ID: <CAHk-=wiExfaVhUTvKj7hR6DG4C2+oy6usz0Sa6QbPr5EgDH28w@mail.gmail.com>
+Subject: Re: [PATCH v12 10/12] namei: aggressively check for nd->root escape
+ on ".." resolution
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/n+F5DPF.84nTp=gmxp1S+eV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 4, 2019 at 2:35 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, Sep 4, 2019 at 2:09 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > So you'd have three stages:
+> >
+> >  1) ".." always returns -EXDEV
+> >
+> >  2) ".." returns -EXDEV if there was a concurrent rename/mount
+> >
+> >  3) ".." returns -EXDEV if there was a concurrent rename/mount and we
+> > reset the sequence numbers and check if you escaped.
+>
+> In fact, I wonder if this should return -EAGAIN instead - to say that
+> "retrying may work".
 
-Hi all,
+And here "this" was meant to be "case 2" - I was moving the quoted
+text around and didn't fix my wording, so now it is ambiguous or
+implies #3, which would be crazy.
 
-Commit
+Sorry for the confusion,
 
-  520f897a3554 ("ext4: use percpu_counters for extent_status cache hits/mis=
-ses")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/n+F5DPF.84nTp=gmxp1S+eV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1wLxMACgkQAVBC80lX
-0Gy4YQf/WNd1yRKkMO3FjbneNAOYtXwzvBFUH0ikK0SoVvX2JyOujxH796T1UFs0
-N9r4Gl5beCGWeRaLiZ1krII2ESUmR8aVsNz0WN4rVhNYojUSdUNFBSwjOs6VZy60
-S0qGoGyqPHHCSMiXppQGud6fltRKJBaL80k86wnf1qn3WrLJpKY5Tiumo2UJYleS
-6yb6kBTdYSKfyM+y20/t9sGVl2mT44L5FAxLR47rfzyT8ORBXWQfFX8dug/UyFiC
-dyP7lwx/QG6QuEfzv+PpKld1YuhsIW7c2ZxbuBANOhSNy0OyzfdSCtbs+rfWiBfr
-ipgqK8fAlTzzCdX7NeWIk3A/bwCX9Q==
-=1y0J
------END PGP SIGNATURE-----
-
---Sig_/n+F5DPF.84nTp=gmxp1S+eV--
+            Linus
