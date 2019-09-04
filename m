@@ -2,129 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E997AA8C87
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE656A8C82
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:30:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387523AbfIDQOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:14:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52014 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732481AbfIDQOS (ORCPT
+        id S2387519AbfIDQOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:14:14 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:2511 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732881AbfIDQOL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:14:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1EyANVYB8OYlB3yXu3/GSCY+3MXUWjqGnAuH+zG2V+8=; b=oeJSTcdIDcOk3Y6i6oSHYnqaK
-        mbpR6uQLQflGkucJXLK1X+2eg2NvuIzkQ2cgHhhXiK+gq+r57luFLU1d+pYjzappehwqj8iyH2FRH
-        3UVBQP5H5gwc2TmttChlxUCjhqE0xghi0XAtJFdsAa7iqj1fNovs+5a+x0opvYVUoIEAo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i5Xun-0006R9-Ad; Wed, 04 Sep 2019 16:13:49 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 67FED2742B45; Wed,  4 Sep 2019 17:13:48 +0100 (BST)
-Date:   Wed, 4 Sep 2019 17:13:48 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     YueHaibing <yuehaibing@huawei.com>, f.fainelli@gmail.com,
-        rjui@broadcom.com, sbranden@broadcom.com, eric@anholt.net,
-        wahrenst@gmx.net, shc_work@mail.ru, agross@kernel.org,
-        khilman@baylibre.com, matthias.bgg@gmail.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, avifishman70@gmail.com, tmaimon77@gmail.com,
-        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
-        benjaminfair@google.com, kgene@kernel.org,
-        Andi Shyti <andi@etezian.org>, palmer@sifive.com,
-        paul.walmsley@sifive.com, baohua@kernel.org, mripard@kernel.org,
-        wens@csie.org, ldewangan@nvidia.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, yamada.masahiro@socionext.com,
-        michal.simek@xilinx.com, bcm-kernel-feedback-list@broadcom.com,
-        linux-spi@vger.kernel.org,
+        Wed, 4 Sep 2019 12:14:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1567613651; x=1599149651;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=X9hkofyoP2OZily7lf39BRn9zHH+YrLfiRwafePdYaE=;
+  b=Yq4T/ZmQywohw7DB9dcscF3Ki+wJF2WEghsfEWvOWCLuGWDpSZpvlJwm
+   MAcavy+IMjyvAFcHy8MENL8P+r1FKePxDYGsptSsieQN7og9ZzclkZBeq
+   yqulhUkcHb+b8PzfgXzcNG38sDz9rHEEPU0WDeuCztmYMd1tqZYV6tg0R
+   xj6axV/WIoois9romD8DxR+6AGRs6HhJgliAW/qExQYt7gD0W1GbFHzQw
+   98I/TcPs/FW9dDUbHrYiSUXGzNt4QedQiJVBDqs8eStnDvMWPrV5HSBwY
+   0R/oHrAvdE7crjyn1rCQCoaB2WPbiW1VfWq3mxJEqijG5BLvmtQ8WX1To
+   w==;
+IronPort-SDR: xFrvMRfqCYfpy71xqgeYeihRNQ1mtJRaWLELtN8WB/s5noZQPoF7R+ni+s+ODPSyDb0XDAV1Jo
+ U4Skc4l78xpcnSSwA3y4aL6Yp5KboFEOpcoCK7OPCnK9qKaIUkrZTZGS6FoxZmJCq70iybkdIN
+ RNkLH6lMkoWKvQ1vSsUyNCV0weNgtFAzRhylfIG7RsMBQ3jsVncqigLuVZqaOjmx2TygqFtBRC
+ lM7/Z4JoN1BRuwJnihGR66V1sLU0z7z7ocU5+RPEYBdo+eDX60DVJgCGOzftvp/bxcyJgf2Rix
+ EvQ=
+X-IronPort-AV: E=Sophos;i="5.64,467,1559491200"; 
+   d="scan'208";a="118323808"
+Received: from mail-sn1nam01lp2051.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([104.47.32.51])
+  by ob1.hgst.iphmx.com with ESMTP; 05 Sep 2019 00:14:09 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lkP/n6XSGROBDG7xkuBWFBWMvWeRLdlpkG3CW32c5lSPBDqFY1KcpOs0UaH2GLCDCyR3tCJF3/JQ3jFrwTvCNEoPC2rk9fdwhWDWpPSdA0hfAxPCu9rc5650TwTz64miQGwG3HWPZi+gxOhtaQmLeqqktGY78jyQqyGnZsfXLeG74SgoOrt1pd/tdw7CPthQIGQUm+JuTu8AsyrsHxMu49K8iXUFR+Vy6gS76Y7j5djW/g4NGND/+IO+Y52xu0df3pp/FTzSShssR4n1JGArAvCJRWXKhDHhNkHepS2dw+RnOOOmLMUuZhN4osHUAGYUqFaIOTbFZmaCWP/hvVGZyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BmFd30wxWYwm0fcXiaDqdfEaAcsVFZewx7xCBZ1Std4=;
+ b=XLVs0SYza/16AYTOHl1JVJalnjroGwCVvTMqEA5Ws7qQCy9BUziWkLq91di5V+JGHlZ2GLc3JLSf37lJdVBIGQQt8lVAlcCwWLGGUuVo6SCEy04369sVWLYL1LIbhSpa+kghPrzlLI1N3P73nDBDt4BMR3zsrhD/Gh7tKxWDPVBFWlUKT2Tzevuxouvc6hxmgl4iE1kHkcvXtrMvG1KSxTwFQRjZZ4PFe8CmpOL4LOHxytr8iCDI01b3wuEsrY4OeYlKYcOmZgnso9WVb2IgYDNvrprnLS22GwWe+iZC5qZIEijsYhGpbrUYKWmRsIKzIW7101X8ntivMC4JTZf7Mg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BmFd30wxWYwm0fcXiaDqdfEaAcsVFZewx7xCBZ1Std4=;
+ b=sYYuMI+vwNGR1lIgG4iEe91H24Iuut1sxg9h9UUd7xZGM11Un3/0AZ0GXiPzftvADs/Wy8GlgK/zxmfPyWkCxWPiGmyGDfDZrbnYDTH419w+bT+2qcPhjlE++ZlfIqqz0P8WZbF3KXnsgOWm92TLGEYkN45Mik2luOa8IJcD5sQ=
+Received: from MN2PR04MB6061.namprd04.prod.outlook.com (20.178.246.15) by
+ MN2PR04MB5504.namprd04.prod.outlook.com (20.178.247.210) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Wed, 4 Sep 2019 16:14:07 +0000
+Received: from MN2PR04MB6061.namprd04.prod.outlook.com
+ ([fe80::e1a5:8de2:c3b1:3fb0]) by MN2PR04MB6061.namprd04.prod.outlook.com
+ ([fe80::e1a5:8de2:c3b1:3fb0%7]) with mapi id 15.20.2220.022; Wed, 4 Sep 2019
+ 16:14:07 +0000
+From:   Anup Patel <Anup.Patel@wdc.com>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim K <rkrcmar@redhat.com>
+CC:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Graf <graf@amazon.com>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Anup Patel <anup@brainfault.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-riscv@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH -next 25/36] spi: s3c24xx: use
- devm_platform_ioremap_resource() to simplify code
-Message-ID: <20190904161348.GE4348@sirena.co.uk>
-References: <20190904135918.25352-1-yuehaibing@huawei.com>
- <20190904135918.25352-26-yuehaibing@huawei.com>
- <CAJKOXPdq4as1Oe3U+9znkvP0RA=sxUoiWVBCSbzf_wq_um2t=w@mail.gmail.com>
- <20190904143928.GB4348@sirena.co.uk>
- <CAJKOXPeRtbAvmR-=8Qa8ukGXt-cCj3ud_7y1Z4LgRpX3YCeumg@mail.gmail.com>
+        Anup Patel <Anup.Patel@wdc.com>
+Subject: [PATCH v7 03/21] RISC-V: Export few kernel symbols
+Thread-Topic: [PATCH v7 03/21] RISC-V: Export few kernel symbols
+Thread-Index: AQHVYzvG318mjS9q1kmSmXA7VQ4Ybg==
+Date:   Wed, 4 Sep 2019 16:14:06 +0000
+Message-ID: <20190904161245.111924-5-anup.patel@wdc.com>
+References: <20190904161245.111924-1-anup.patel@wdc.com>
+In-Reply-To: <20190904161245.111924-1-anup.patel@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MA1PR01CA0084.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00::24)
+ To MN2PR04MB6061.namprd04.prod.outlook.com (2603:10b6:208:d8::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Anup.Patel@wdc.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [49.207.53.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9a25a020-8064-4f44-0847-08d73152e91b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MN2PR04MB5504;
+x-ms-traffictypediagnostic: MN2PR04MB5504:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR04MB5504EE3BC55BCEA5EA10B9BD8DB80@MN2PR04MB5504.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:510;
+x-forefront-prvs: 0150F3F97D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(136003)(396003)(346002)(366004)(39860400002)(199004)(189003)(66556008)(66446008)(7416002)(7736002)(8676002)(478600001)(25786009)(386003)(66946007)(99286004)(256004)(14444005)(50226002)(14454004)(66476007)(64756008)(6506007)(6512007)(102836004)(6436002)(8936002)(54906003)(6116002)(3846002)(486006)(26005)(55236004)(86362001)(1076003)(53936002)(476003)(316002)(71200400001)(71190400001)(81156014)(76176011)(52116002)(305945005)(5660300002)(6486002)(36756003)(186003)(11346002)(2616005)(66066001)(44832011)(4744005)(4326008)(2906002)(446003)(81166006)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB5504;H:MN2PR04MB6061.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: e4yymypeLM7Qk8hOgzobkGAoRStZv9QJDY/7rGGCg6ZYwfvTItVE06ktMl0iS3znB8GUKsjaD5eDt+8/ep87516ywg0DEMD2auP54iLCXejXVlJDdczyKB0Q+wL6Hn1uHwkGydHUCb2l47FN0dIaopZZK63ukd6aiB+fWOL8BRWp7QI9Wu1ZIjSt0PdDrjdlnqJDudJ0uavwk7NpacPEoJd/3+hpxRwLbpMzu7vgD6qTiWR3cOeRfccBiGWP2fmQUqaIkXTFtf8us2bP1qYwmxYmS0ZF5t6loVWWMnQ0ZNmJmJgeGyMD3lEoFppfE7nHT48Q+nnX1U46Xr4BKWLnCmIwt4+WRQvFlQE4o5/MykUCwMmGSJ2wBNTZ1d2LhqFEoRFW02lbEGIrySUvnk91vMjy3BXhp5b0rWsp+oPl8xE=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="N1GIdlSm9i+YlY4t"
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPeRtbAvmR-=8Qa8ukGXt-cCj3ud_7y1Z4LgRpX3YCeumg@mail.gmail.com>
-X-Cookie: Help fight continental drift.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a25a020-8064-4f44-0847-08d73152e91b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2019 16:14:06.8324
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3T6TVZF5nshrwhu+r4okoiMz9NGQgZtCsTt6i/XHuxdUYF0J5G2P5puIbejPGEHJ4JHyMYkho85xo+u7UIB+jw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB5504
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Atish Patra <atish.patra@wdc.com>
 
---N1GIdlSm9i+YlY4t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Export few symbols used by kvm module. Without this, kvm cannot
+be compiled as a module.
 
-On Wed, Sep 04, 2019 at 05:09:45PM +0200, Krzysztof Kozlowski wrote:
-> On Wed, 4 Sep 2019 at 16:39, Mark Brown <broonie@kernel.org> wrote:
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Signed-off-by: Anup Patel <anup.patel@wdc.com>
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Alexander Graf <graf@amazon.com>
+---
+ arch/riscv/kernel/smp.c  | 2 +-
+ arch/riscv/kernel/time.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-> > I think it's reasonable, it's giving credit to the automated system
-> > they've got running coccinelle (which they do mention in their commit
-> > logs).  It doesn't really hurt anyone and lets people see their system
-> > is finding stuff.
+diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+index 5a9834503a2f..402979f575de 100644
+--- a/arch/riscv/kernel/smp.c
++++ b/arch/riscv/kernel/smp.c
+@@ -193,4 +193,4 @@ void smp_send_reschedule(int cpu)
+ {
+ 	send_ipi_message(cpumask_of(cpu), IPI_RESCHEDULE);
+ }
+-
++EXPORT_SYMBOL_GPL(smp_send_reschedule);
+diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
+index 541a2b885814..9dd1f2e64db1 100644
+--- a/arch/riscv/kernel/time.c
++++ b/arch/riscv/kernel/time.c
+@@ -9,6 +9,7 @@
+ #include <asm/sbi.h>
+=20
+ unsigned long riscv_timebase;
++EXPORT_SYMBOL_GPL(riscv_timebase);
+=20
+ void __init time_init(void)
+ {
+--=20
+2.17.1
 
-> Running internally coccinelle is already credited with commit author.
-> The credits are coming with "From:" field.
-
-I guess if other people look at the same CI and send patches as well
-then there's some use tying them all together.
-
-> Otherwise for commits I send I could use:
->   From: krzk
->   ...
->   Reported-by: www.krzk.eu
->   Signed-off-by: krzk
-> To me it is ridiculous.
-
-Sure, on the other hand it doesn't really cost anyone anything if you do
-that.
-
-> Different thing is that Reported-by is for fixing bugs or issues.
-> There is no bug here. There is no problem solved except making the
-> code smaller. That's not what is Reported-by for.
-
-That is true, this one isn't fixing any bug but then the line does get a
-bit fuzzy all round with things like warnings and coccinelle output -
-even just having the warning pop up is noise for people looking at the
-output even if there's no concrete problem.  Again I don't see it as
-something that's worth getting worked up over.
-
---N1GIdlSm9i+YlY4t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1v4rsACgkQJNaLcl1U
-h9ADfQf/V7pUFkik9p4ok45W4iQXJ+1Wee9ghMi2ut+nuRzX8NRSwWYnFgK3w119
-nf1YXfJsWCcs9af+DjcSoEyJWq/wegSyF/egvEd36QdqtaJJbMs/J5Kl+TEcglDA
-uRJW6F/zevMcwamDE2I6UqdQjTIa2R8QG2S9yaw36Hd2b0k38lLq2Z1knHnQNbX7
-6mFEqyt+sTaFjsBtlkgeUiTkMp36WsnTY7oRzGr/RKAd9ByHDmQKtPTuJl4eQTx6
-zzkUK0PzNpBPqNyILAt7MYr01EyZfO3gjxnRNIH8yKl+80mkhiV2Td6DJehCuNqE
-F30QD0NUhsOuqyDT26hqXFcIWtym6A==
-=GPj9
------END PGP SIGNATURE-----
-
---N1GIdlSm9i+YlY4t--
