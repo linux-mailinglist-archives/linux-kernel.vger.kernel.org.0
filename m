@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2580BA8EFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15015A8E8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388508AbfIDSBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40464 "EHLO mail.kernel.org"
+        id S2387726AbfIDR6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:58:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387794AbfIDSBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:04 -0400
+        id S2388083AbfIDR6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:58:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A148B21883;
-        Wed,  4 Sep 2019 18:01:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E607422CEA;
+        Wed,  4 Sep 2019 17:58:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620063;
-        bh=7LvryOPVQ85u9ljKGUfOFG5GY5a76heXj07kDXgMsf8=;
+        s=default; t=1567619916;
+        bh=MWE9vv4fO0Kg1gazq0Cd+/PxOqmJ/Wh+Uhc1UGKMuu8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mVVtJDVV2CTN7A8tNqGs9Qq5POJ6PWAlFO7dchN/pDID8LSbGrsf73UjDh330KmKp
-         SmgblSsuCVFGBn8zpFXFACbCQMNjm+pws93HZuVydC9Mhdxs3QuLjLMvw84Ao24Tuk
-         rl4Q7gzRXhWbdATX7W2DpkoiUZhmIx0YGSbbtqas=
+        b=V2zABf5HYqrgcG6tlsEOOO+EK6N7B8fG3RFRiYrpwXJneyZz+A+OGmBAyXaY69F1s
+         2JiWvj4MLxxHuoUPnQgad/Jcd+Yn2rUbOpl7/xj9LKmtj97MVIFcu3RGDlL+JEpcZd
+         c01ymzWnTFmP2ltLvRI9wBYkEEcoqDAH+ZgHCN7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Vladimir Rutsky <rutsky@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 58/83] tcp: make sure EPOLLOUT wont be missed
-Date:   Wed,  4 Sep 2019 19:53:50 +0200
-Message-Id: <20190904175308.674735011@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Henk van der Laan <opensource@henkvdlaan.com>
+Subject: [PATCH 4.4 64/77] usb-storage: Add new JMS567 revision to unusual_devs
+Date:   Wed,  4 Sep 2019 19:53:51 +0200
+Message-Id: <20190904175309.366973964@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,82 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Henk van der Laan <opensource@henkvdlaan.com>
 
-[ Upstream commit ef8d8ccdc216f797e66cb4a1372f5c4c285ce1e4 ]
+commit 08d676d1685c2a29e4d0e1b0242324e564d4589e upstream.
 
-As Jason Baron explained in commit 790ba4566c1a ("tcp: set SOCK_NOSPACE
-under memory pressure"), it is crucial we properly set SOCK_NOSPACE
-when needed.
+Revision 0x0117 suffers from an identical issue to earlier revisions,
+therefore it should be added to the quirks list.
 
-However, Jason patch had a bug, because the 'nonblocking' status
-as far as sk_stream_wait_memory() is concerned is governed
-by MSG_DONTWAIT flag passed at sendmsg() time :
-
-    long timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT);
-
-So it is very possible that tcp sendmsg() calls sk_stream_wait_memory(),
-and that sk_stream_wait_memory() returns -EAGAIN with SOCK_NOSPACE
-cleared, if sk->sk_sndtimeo has been set to a small (but not zero)
-value.
-
-This patch removes the 'noblock' variable since we must always
-set SOCK_NOSPACE if -EAGAIN is returned.
-
-It also renames the do_nonblock label since we might reach this
-code path even if we were in blocking mode.
-
-Fixes: 790ba4566c1a ("tcp: set SOCK_NOSPACE under memory pressure")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Jason Baron <jbaron@akamai.com>
-Reported-by: Vladimir Rutsky  <rutsky@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Jason Baron <jbaron@akamai.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Henk van der Laan <opensource@henkvdlaan.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190816200847.21366-1-opensource@henkvdlaan.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/stream.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/net/core/stream.c
-+++ b/net/core/stream.c
-@@ -118,7 +118,6 @@ int sk_stream_wait_memory(struct sock *s
- 	int err = 0;
- 	long vm_wait = 0;
- 	long current_timeo = *timeo_p;
--	bool noblock = (*timeo_p ? false : true);
- 	DEFINE_WAIT(wait);
+---
+ drivers/usb/storage/unusual_devs.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -2006,7 +2006,7 @@ UNUSUAL_DEV(  0x14cd, 0x6600, 0x0201, 0x
+ 		US_FL_IGNORE_RESIDUE ),
  
- 	if (sk_stream_memory_free(sk))
-@@ -131,11 +130,8 @@ int sk_stream_wait_memory(struct sock *s
- 
- 		if (sk->sk_err || (sk->sk_shutdown & SEND_SHUTDOWN))
- 			goto do_error;
--		if (!*timeo_p) {
--			if (noblock)
--				set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
--			goto do_nonblock;
--		}
-+		if (!*timeo_p)
-+			goto do_eagain;
- 		if (signal_pending(current))
- 			goto do_interrupted;
- 		sk_clear_bit(SOCKWQ_ASYNC_NOSPACE, sk);
-@@ -167,7 +163,13 @@ out:
- do_error:
- 	err = -EPIPE;
- 	goto out;
--do_nonblock:
-+do_eagain:
-+	/* Make sure that whenever EAGAIN is returned, EPOLLOUT event can
-+	 * be generated later.
-+	 * When TCP receives ACK packets that make room, tcp_check_space()
-+	 * only calls tcp_new_space() if SOCK_NOSPACE is set.
-+	 */
-+	set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
- 	err = -EAGAIN;
- 	goto out;
- do_interrupted:
+ /* Reported by Michael Büsch <m@bues.ch> */
+-UNUSUAL_DEV(  0x152d, 0x0567, 0x0114, 0x0116,
++UNUSUAL_DEV(  0x152d, 0x0567, 0x0114, 0x0117,
+ 		"JMicron",
+ 		"USB to ATA/ATAPI Bridge",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
 
 
