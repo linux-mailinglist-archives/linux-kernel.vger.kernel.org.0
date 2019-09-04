@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA22A9002
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0FBCA8F68
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389589AbfIDSHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:07:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49466 "EHLO mail.kernel.org"
+        id S2388947AbfIDSD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:03:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388067AbfIDSHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:07:09 -0400
+        id S2388934AbfIDSD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:03:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0656F233FF;
-        Wed,  4 Sep 2019 18:07:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED20523400;
+        Wed,  4 Sep 2019 18:03:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620427;
-        bh=RwAewO1EypVLVJLkigioLHmRtyVfLIej5e1mBvm8MZg=;
+        s=default; t=1567620206;
+        bh=KyYFRC2YPlV7RJJS1Qd06yJJTT56vE789LqQGqj3ijE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PP/K7Jk/BqNpoBy57YhhgjFtxwACUdf0IJbEt1WP5AElhvc1oyIKgfuqcvEGSHyll
-         IyfUQlvuOpXhKKxdYcwfS6BsCnCaFJWWIS0559qWjwGevBUWEw6lu99/r4v9HEDMgs
-         UlyVEdqkrDzDcWy34Buhe4tC7TYYA/5XymZp3s9g=
+        b=l77NWAKcb7ImgOMPnuywIqQcPi+k6wJHBlemkOUgnJWGeMCbf05CRApqDdq60SXqf
+         bKLo/Uugn1fe9wseSOgDqtBTHrNqEE5lGD26/mxLaK4Yhu+q9GJgWT56cpncFftsmh
+         xXPtiSKeP+Gntn15QGb3dqsHwA4jilf8P1aoAIas=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+d232cca6ec42c2edb3fc@syzkaller.appspotmail.com,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.19 55/93] USB: cdc-wdm: fix race between write and disconnect due to flag abuse
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 29/57] ftrace: Check for successful allocation of hash
 Date:   Wed,  4 Sep 2019 19:53:57 +0200
-Message-Id: <20190904175307.799477736@linuxfoundation.org>
+Message-Id: <20190904175304.759175558@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,64 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 
-commit 1426bd2c9f7e3126e2678e7469dca9fd9fc6dd3e upstream.
+commit 5b0022dd32b7c2e15edf1827ba80aa1407edf9ff upstream.
 
-In case of a disconnect an ongoing flush() has to be made fail.
-Nevertheless we cannot be sure that any pending URB has already
-finished, so although they will never succeed, they still must
-not be touched.
-The clean solution for this is to check for WDM_IN_USE
-and WDM_DISCONNECTED in flush(). There is no point in ever
-clearing WDM_IN_USE, as no further writes make sense.
+In register_ftrace_function_probe(), we are not checking the return
+value of alloc_and_copy_ftrace_hash(). The subsequent call to
+ftrace_match_records() may end up dereferencing the same. Add a check to
+ensure this doesn't happen.
 
-The issue is as old as the driver.
+Link: http://lkml.kernel.org/r/26e92574f25ad23e7cafa3cf5f7a819de1832cbe.1562249521.git.naveen.n.rao@linux.vnet.ibm.com
 
-Fixes: afba937e540c9 ("USB: CDC WDM driver")
-Reported-by: syzbot+d232cca6ec42c2edb3fc@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190827103436.21143-1-oneukum@suse.com
+Cc: stable@vger.kernel.org
+Fixes: 1ec3a81a0cf42 ("ftrace: Have each function probe use its own ftrace_ops")
+Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-wdm.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ kernel/trace/ftrace.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/usb/class/cdc-wdm.c
-+++ b/drivers/usb/class/cdc-wdm.c
-@@ -587,10 +587,20 @@ static int wdm_flush(struct file *file,
- {
- 	struct wdm_device *desc = file->private_data;
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -4390,6 +4390,11 @@ register_ftrace_function_probe(char *glo
+ 	old_hash = *orig_hash;
+ 	hash = alloc_and_copy_ftrace_hash(FTRACE_HASH_DEFAULT_BITS, old_hash);
  
--	wait_event(desc->wait, !test_bit(WDM_IN_USE, &desc->flags));
-+	wait_event(desc->wait,
-+			/*
-+			 * needs both flags. We cannot do with one
-+			 * because resetting it would cause a race
-+			 * with write() yet we need to signal
-+			 * a disconnect
-+			 */
-+			!test_bit(WDM_IN_USE, &desc->flags) ||
-+			test_bit(WDM_DISCONNECTING, &desc->flags));
++	if (!hash) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
+ 	ret = ftrace_match_records(hash, glob, strlen(glob));
  
- 	/* cannot dereference desc->intf if WDM_DISCONNECTING */
--	if (desc->werr < 0 && !test_bit(WDM_DISCONNECTING, &desc->flags))
-+	if (test_bit(WDM_DISCONNECTING, &desc->flags))
-+		return -ENODEV;
-+	if (desc->werr < 0)
- 		dev_err(&desc->intf->dev, "Error in flush path: %d\n",
- 			desc->werr);
- 
-@@ -974,8 +984,6 @@ static void wdm_disconnect(struct usb_in
- 	spin_lock_irqsave(&desc->iuspin, flags);
- 	set_bit(WDM_DISCONNECTING, &desc->flags);
- 	set_bit(WDM_READ, &desc->flags);
--	/* to terminate pending flushes */
--	clear_bit(WDM_IN_USE, &desc->flags);
- 	spin_unlock_irqrestore(&desc->iuspin, flags);
- 	wake_up_all(&desc->wait);
- 	mutex_lock(&desc->rlock);
+ 	/* Nothing found? */
 
 
