@@ -2,118 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 696E1A8DF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15D1CA8FC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732401AbfIDRxq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:53:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49838 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731633AbfIDRxq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:53:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=/sL2DCmUGJPlR66hzIWdV5il3VK8mgt+9vHWqn8XlBw=; b=UtPmvZ+CWci9
-        F0vyuzTNzs5PLdD0wcRP6VRCNvcwjRuEfKWSUfmTTJu88ATlVciC27f7gYmkJVl9tEnVYX310ksYA
-        alKmNzuIeUwDQ+rSDXMhCPIxb/GKMrcTn6HEmluwRO5+3VT+C3rHEM7iHZ6/I8uFcrLszo3FkyCf2
-        cQSH4=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i5ZTC-0006h7-7t; Wed, 04 Sep 2019 17:53:26 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id B218C2742D07; Wed,  4 Sep 2019 18:53:25 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     allison@lohutok.net, alsa-devel@alsa-project.org,
-        baohua@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
-        Hulk Robot <hulkci@huawei.com>, kstewart@linuxfoundation.org,
-        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        pakki001@umn.edu, perex@perex.cz, tglx@linutronix.de,
-        tiwai@suse.com, yuehaibing@huawei.com
-Subject: Applied "ASoC: sirf-audio: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-In-Reply-To: <20190904083412.18700-1-yuehaibing@huawei.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190904175325.B218C2742D07@ypsilon.sirena.org.uk>
-Date:   Wed,  4 Sep 2019 18:53:25 +0100 (BST)
+        id S2389323AbfIDSFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:05:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389315AbfIDSFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:05:46 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAAD9206B8;
+        Wed,  4 Sep 2019 18:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567620345;
+        bh=KjgzAgObt+LH3gTEUmL2iFES4O6uq6NbqBIm2PA4h/E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YAAd1h1nKpJ1RyCBNtpSXwMnX5yAJO/pUvzhGsESebnqosorzLwuJV5lEVibroHI5
+         /h5YURmNYrcMXBJXj8vga73wUMFmLEtF1GYxcVlziuMrpb15dgxJh16CqY/flvDxfn
+         VDPUcPG7fIJ6dpcdQ2lx3BeGpv3Z9zBrgJOsLP00=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 23/93] usb: host: fotg2: restart hcd after port reset
+Date:   Wed,  4 Sep 2019 19:53:25 +0200
+Message-Id: <20190904175305.292139421@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+[ Upstream commit 777758888ffe59ef754cc39ab2f275dc277732f4 ]
 
-   ASoC: sirf-audio: use devm_platform_ioremap_resource() to simplify code
+On the Gemini SoC the FOTG2 stalls after port reset
+so restart the HCD after each port reset.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 2f302d476c960fdf8481399a46b8df92408d06e2 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 4 Sep 2019 16:34:12 +0800
-Subject: [PATCH] ASoC: sirf-audio: use devm_platform_ioremap_resource() to
- simplify code
-
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190904083412.18700-1-yuehaibing@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/20190810150458.817-1-linus.walleij@linaro.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/sirf-audio-codec.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/usb/host/fotg210-hcd.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/sound/soc/codecs/sirf-audio-codec.c b/sound/soc/codecs/sirf-audio-codec.c
-index 9009a7407b7a..a061d78473ac 100644
---- a/sound/soc/codecs/sirf-audio-codec.c
-+++ b/sound/soc/codecs/sirf-audio-codec.c
-@@ -459,7 +459,6 @@ static int sirf_audio_codec_driver_probe(struct platform_device *pdev)
- 	int ret;
- 	struct sirf_audio_codec *sirf_audio_codec;
- 	void __iomem *base;
--	struct resource *mem_res;
+diff --git a/drivers/usb/host/fotg210-hcd.c b/drivers/usb/host/fotg210-hcd.c
+index e64eb47770c8b..2d5a72c15069e 100644
+--- a/drivers/usb/host/fotg210-hcd.c
++++ b/drivers/usb/host/fotg210-hcd.c
+@@ -1627,6 +1627,10 @@ static int fotg210_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+ 			/* see what we found out */
+ 			temp = check_reset_complete(fotg210, wIndex, status_reg,
+ 					fotg210_readl(fotg210, status_reg));
++
++			/* restart schedule */
++			fotg210->command |= CMD_RUN;
++			fotg210_writel(fotg210, fotg210->command, &fotg210->regs->command);
+ 		}
  
- 	sirf_audio_codec = devm_kzalloc(&pdev->dev,
- 		sizeof(struct sirf_audio_codec), GFP_KERNEL);
-@@ -468,8 +467,7 @@ static int sirf_audio_codec_driver_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, sirf_audio_codec);
- 
--	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, mem_res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
+ 		if (!(temp & (PORT_RESUME|PORT_RESET))) {
 -- 
 2.20.1
+
+
 
