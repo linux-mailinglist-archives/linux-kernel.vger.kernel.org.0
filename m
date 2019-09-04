@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DADCA8EC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6DB1A8E68
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388318AbfIDR75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:59:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38928 "EHLO mail.kernel.org"
+        id S2387937AbfIDR5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:57:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732467AbfIDR7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:59:54 -0400
+        id S2387914AbfIDR5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:57:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A692A208E4;
-        Wed,  4 Sep 2019 17:59:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DADB822CED;
+        Wed,  4 Sep 2019 17:57:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619994;
-        bh=V1T2FamzhMWmbIN+x5SXn0ar1Ks6oD9mnMmDqzKgv44=;
+        s=default; t=1567619868;
+        bh=wfm3p1mSjCIv3JJ5U8S/ye/6/qwD8rPoPH5Qc/F+lTQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wy0QXMzpxYzeEZYoqZTGWdi6vFyR4xjNOKRamVmOlgXlSvdo3az2soVvnSUOJ9qL5
-         86lPq2oz0z2xEBVzT7VBur0ceMdgtk+/4pEqsLtUi0ujLGuECQqorpLScuUsK9yLJ4
-         LLOy2w9R71tc8aKpJSZw5D3/BRnFagaRM0w+v8xc=
+        b=V9ww5E2SBzU9ueiFIiI8z3i5ywjP5aJb8v3eQGyf/cG+mjPClF0731/nymWGUGQFu
+         BsWPizDxHxObXtrSnTpaRx/CTyKjrSgYZbGKYcRsGIksjJR7kWSSFXU774EfHLNqE8
+         0MDG/bJVExN7d6PwUKCGtnOCmD8LwsMdjCTDM9ZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Wang Xiayang <xywang.sjtu@sjtu.edu.cn>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 08/83] st21nfca_connectivity_event_received: null check the allocation
-Date:   Wed,  4 Sep 2019 19:53:00 +0200
-Message-Id: <20190904175304.477118124@linuxfoundation.org>
+Subject: [PATCH 4.4 14/77] can: sja1000: force the string buffer NULL-terminated
+Date:   Wed,  4 Sep 2019 19:53:01 +0200
+Message-Id: <20190904175305.037468625@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,30 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9891d06836e67324c9e9c4675ed90fc8b8110034 ]
+[ Upstream commit cd28aa2e056cd1ea79fc5f24eed0ce868c6cab5c ]
 
-devm_kzalloc may fail and return null. So the null check is needed.
+strncpy() does not ensure NULL-termination when the input string size
+equals to the destination buffer size IFNAMSIZ. The output string
+'name' is passed to dev_info which relies on NULL-termination.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Use strlcpy() instead.
+
+This issue is identified by a Coccinelle script.
+
+Signed-off-by: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/st21nfca/se.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/can/sja1000/peak_pcmcia.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/st21nfca/se.c b/drivers/nfc/st21nfca/se.c
-index 3a98563d4a121..eac608a457f03 100644
---- a/drivers/nfc/st21nfca/se.c
-+++ b/drivers/nfc/st21nfca/se.c
-@@ -326,6 +326,8 @@ int st21nfca_connectivity_event_received(struct nfc_hci_dev *hdev, u8 host,
+diff --git a/drivers/net/can/sja1000/peak_pcmcia.c b/drivers/net/can/sja1000/peak_pcmcia.c
+index dd56133cc4616..fc9f8b01ecae2 100644
+--- a/drivers/net/can/sja1000/peak_pcmcia.c
++++ b/drivers/net/can/sja1000/peak_pcmcia.c
+@@ -487,7 +487,7 @@ static void pcan_free_channels(struct pcan_pccard *card)
+ 		if (!netdev)
+ 			continue;
  
- 		transaction = (struct nfc_evt_transaction *)devm_kzalloc(dev,
- 						   skb->len - 2, GFP_KERNEL);
-+		if (!transaction)
-+			return -ENOMEM;
+-		strncpy(name, netdev->name, IFNAMSIZ);
++		strlcpy(name, netdev->name, IFNAMSIZ);
  
- 		transaction->aid_len = skb->data[1];
- 		memcpy(transaction->aid, &skb->data[2],
+ 		unregister_sja1000dev(netdev);
+ 
 -- 
 2.20.1
 
