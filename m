@@ -2,95 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 309F1A8C0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAACFA8C2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387428AbfIDQJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:09:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36666 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732986AbfIDQBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:01:21 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CFF52087E;
-        Wed,  4 Sep 2019 16:01:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567612880;
-        bh=ix26fsK7D4gXS7MYTftBSEpBES8KJRSKDp4hwHMbAA4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=neYmQCrK4VHzmjDN5VFNm4B50AJ20OBHtNWmCKE4vXPXA5noUn+nvV6YR7UIRELsr
-         JhJcfqJSMfPw3BMv9krXRCtrlnzDTS4DxeRSUNTf0rHkuy1ofDp/s2C6YHSAEh6Gu/
-         +ZEowFmytxWVwRiIsqcKT14EMU5CVgVa8LNS0GhE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 52/52] net: seeq: Fix the function used to release some memory in an error handling path
-Date:   Wed,  4 Sep 2019 12:00:04 -0400
-Message-Id: <20190904160004.3671-52-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190904160004.3671-1-sashal@kernel.org>
-References: <20190904160004.3671-1-sashal@kernel.org>
+        id S2387468AbfIDQK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:10:29 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:59031 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731766AbfIDQA4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:00:56 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MryKp-1iYq7A0YsP-00o0MA; Wed, 04 Sep 2019 18:00:41 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH] bus: imx-weim: remove incorrect __init annotations
+Date:   Wed,  4 Sep 2019 18:00:21 +0200
+Message-Id: <20190904160039.3350229-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:edSQpPbQz2i0QyQuA+gpW63iqvRaqDAQVKOzJ3suKf+nyFqMcMI
+ RKLBf7wmMBsX3B6VL98jLw9HvRgEXOWqAn0lir9QaQkdbIqWjGOdCwOzCesPsKPDZpAPytU
+ Clh0eqK029q8ih2vNOnoAQcxDdYCdoX9GBgduNipzMpBvbnC+VHkNDTahUYu0rgxX8Hic0R
+ SlBCpbELBaATcVxUwqyPg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/BMWc4WL1IA=:UQx49a3M/46yAIqufq86VM
+ 21sdTV7pJuWwJq7AbtHv9HfmlMBrqz8vmUsYWa39y97opPHXoyc1sIXe97gV0XC/kGnKj+Nd1
+ Tt/oIBVkzFJ4LMbmMpntZdjy/pJiN1CfmTv1McQjMJdiFfZ2hpuk/6vNEEkVChe8MbHabbQ7V
+ t8uH+4XMeyvvUkYoih/aDjRlXcsMwnHuu7boacviY0LDxIcAs7Umgb19jGciq+vemPjpfeOHR
+ XbygfneBE2EpgJ2g3HZpqmA9zV1ouaUo4egHuag854s/+a+fxsYtaA5/pROTuEDTW5hq42gZy
+ 7tU3hYKuirDFCj3hRlcRMavDS7JTPi631dG7krtkUwds1iH9heTV7C6aAoFifpBpPJ9uHVrmT
+ jqTp9kjYaUfnLpTbf29yLKXksB7vxKPWYa+YKyBaw7UpZJxpZ1VCbVEZd/xC3/1vI6IZFpnEs
+ P4u4Fmj4wBTfC0BTmXuicKjIEZkCUnhgK6Ly6rYQFf2lX8zkoENzntEx9yPbpyDbOB5fnizXv
+ oSPM1o30Cv2Cu7bDnicaflr7Etgh6CWuEdmrEsn1C03dRvsIawfFuB3t15y48Sxa8tmHartHF
+ 66RgCYPZZfNMhFNslVM9pK4Z4UgNHkFujrxCXdY9X2m4XhklZTRwc0CQCo8q6s0LLHH8sL77R
+ CzckQD7lBVVuh8YqsM0HwQO+gdwTsYe8B0glWp8SjiGMh5wsjT3lGufB28kVHNOEDnmh+Vg13
+ jLbk+CBHS6AgfQmVIClUAseuUJ2m54DCWQ/uBYAkSgE5MqLLPZQmJkr8nsIVdApZj1WHBvv2B
+ 828SZegT19VN2u1ywaaOouOFK8e+gX21cMHH44rYiESsKjdsCg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The probe function is no longer __init, so anything it calls now
+must also be available at runtime, as Kbuild points out when building
+with clang-9:
 
-[ Upstream commit e1e54ec7fb55501c33b117c111cb0a045b8eded2 ]
+WARNING: vmlinux.o(.text+0x6e7040): Section mismatch in reference from the function weim_probe() to the function .init.text:imx_weim_gpr_setup()
+The function weim_probe() references
+the function __init imx_weim_gpr_setup().
+This is often because weim_probe lacks a __init
+annotation or the annotation of imx_weim_gpr_setup is wrong.
 
-In commit 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv"),
-a call to 'get_zeroed_page()' has been turned into a call to
-'dma_alloc_coherent()'. Only the remove function has been updated to turn
-the corresponding 'free_page()' into 'dma_free_attrs()'.
-The error hndling path of the probe function has not been updated.
+WARNING: vmlinux.o(.text+0x6e70f0): Section mismatch in reference from the function weim_probe() to the function .init.text:weim_timing_setup()
+The function weim_probe() references
+the function __init weim_timing_setup().
+This is often because weim_probe lacks a __init
+annotation or the annotation of weim_timing_setup is wrong.
 
-Fix it now.
+Remove the remaining __init markings that are now wrong.
 
-Rename the corresponding label to something more in line.
-
-Fixes: 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 4a92f07816ba ("bus: imx-weim: use module_platform_driver()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/ethernet/seeq/sgiseeq.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+I applied this on top of the patch taht introduced the build error
 
-diff --git a/drivers/net/ethernet/seeq/sgiseeq.c b/drivers/net/ethernet/seeq/sgiseeq.c
-index 696037d5ac3d5..ad557f457b2ce 100644
---- a/drivers/net/ethernet/seeq/sgiseeq.c
-+++ b/drivers/net/ethernet/seeq/sgiseeq.c
-@@ -793,15 +793,16 @@ static int sgiseeq_probe(struct platform_device *pdev)
- 		printk(KERN_ERR "Sgiseeq: Cannot register net device, "
- 		       "aborting.\n");
- 		err = -ENODEV;
--		goto err_out_free_page;
-+		goto err_out_free_attrs;
- 	}
+ drivers/bus/imx-weim.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
+index 79af0c27f5a3..28bb65a5613f 100644
+--- a/drivers/bus/imx-weim.c
++++ b/drivers/bus/imx-weim.c
+@@ -76,7 +76,7 @@ static const struct of_device_id weim_id_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, weim_id_table);
  
- 	printk(KERN_INFO "%s: %s %pM\n", dev->name, sgiseeqstr, dev->dev_addr);
+-static int __init imx_weim_gpr_setup(struct platform_device *pdev)
++static int imx_weim_gpr_setup(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct property *prop;
+@@ -126,10 +126,10 @@ static int __init imx_weim_gpr_setup(struct platform_device *pdev)
+ }
  
- 	return 0;
- 
--err_out_free_page:
--	free_page((unsigned long) sp->srings);
-+err_out_free_attrs:
-+	dma_free_attrs(&pdev->dev, sizeof(*sp->srings), sp->srings,
-+		       sp->srings_dma, DMA_ATTR_NON_CONSISTENT);
- err_out_free_dev:
- 	free_netdev(dev);
- 
+ /* Parse and set the timing for this device. */
+-static int __init weim_timing_setup(struct device *dev,
+-				    struct device_node *np, void __iomem *base,
+-				    const struct imx_weim_devtype *devtype,
+-				    struct cs_timing_state *ts)
++static int weim_timing_setup(struct device *dev,
++			     struct device_node *np, void __iomem *base,
++			     const struct imx_weim_devtype *devtype,
++			     struct cs_timing_state *ts)
+ {
+ 	u32 cs_idx, value[MAX_CS_REGS_COUNT];
+ 	int i, ret;
 -- 
-2.20.1
+2.20.0
 
