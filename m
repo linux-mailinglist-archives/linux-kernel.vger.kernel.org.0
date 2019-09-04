@@ -2,71 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE3FA7D03
+	by mail.lfdr.de (Postfix) with ESMTP id 5D47BA7D02
 	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:48:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbfIDHsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 03:48:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55556 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727787AbfIDHsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 03:48:33 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C67FC83F3B;
-        Wed,  4 Sep 2019 07:48:32 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-72.ams2.redhat.com [10.36.117.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D888219C4F;
-        Wed,  4 Sep 2019 07:48:29 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id EBBCA93E3; Wed,  4 Sep 2019 09:48:28 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     olvaffe@gmail.com, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/virtio: fix command submission with objects but without fence.
-Date:   Wed,  4 Sep 2019 09:48:28 +0200
-Message-Id: <20190904074828.32502-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 04 Sep 2019 07:48:32 +0000 (UTC)
+        id S1729146AbfIDHsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 03:48:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46328 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727787AbfIDHsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 03:48:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E7216B67C;
+        Wed,  4 Sep 2019 07:48:30 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 793BC1E37A2; Wed,  4 Sep 2019 09:48:30 +0200 (CEST)
+Date:   Wed, 4 Sep 2019 09:48:30 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] fs-udf: Delete an unnecessary check before brelse()
+Message-ID: <20190904074830.GD8225@quack2.suse.cz>
+References: <a254c1d1-0109-ab51-c67a-edc5c1c4b4cd@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a254c1d1-0109-ab51-c67a-edc5c1c4b4cd@web.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only call virtio_gpu_array_add_fence if we actually have a fence.
+On Tue 03-09-19 21:15:58, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 3 Sep 2019 21:12:09 +0200
+> 
+> The brelse() function tests whether its argument is NULL
+> and then returns immediately.
+> Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Fixes: da758d51968a ("drm/virtio: rework virtio_gpu_execbuffer_ioctl fencing")
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_vq.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Thanks for the patch. Added to my tree.
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 595fa6ec2d58..7fd2851f7b97 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -339,11 +339,12 @@ static void virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
- 		goto again;
- 	}
- 
--	if (fence)
-+	if (fence) {
- 		virtio_gpu_fence_emit(vgdev, hdr, fence);
--	if (vbuf->objs) {
--		virtio_gpu_array_add_fence(vbuf->objs, &fence->f);
--		virtio_gpu_array_unlock_resv(vbuf->objs);
-+		if (vbuf->objs) {
-+			virtio_gpu_array_add_fence(vbuf->objs, &fence->f);
-+			virtio_gpu_array_unlock_resv(vbuf->objs);
-+		}
- 	}
- 	notify = virtio_gpu_queue_ctrl_buffer_locked(vgdev, vbuf);
- 	spin_unlock(&vgdev->ctrlq.qlock);
+								Honza
+
+> ---
+>  fs/udf/super.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/udf/super.c b/fs/udf/super.c
+> index 56da1e1680ea..0cd0be642a2f 100644
+> --- a/fs/udf/super.c
+> +++ b/fs/udf/super.c
+> @@ -273,8 +273,7 @@ static void udf_sb_free_bitmap(struct udf_bitmap *bitmap)
+>  	int nr_groups = bitmap->s_nr_groups;
+> 
+>  	for (i = 0; i < nr_groups; i++)
+> -		if (bitmap->s_block_bitmap[i])
+> -			brelse(bitmap->s_block_bitmap[i]);
+> +		brelse(bitmap->s_block_bitmap[i]);
+> 
+>  	kvfree(bitmap);
+>  }
+> --
+> 2.23.0
+> 
+> 
 -- 
-2.18.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
