@@ -2,109 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70D1DA8D60
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 276A9A8D66
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:31:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732082AbfIDQuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:50:09 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33062 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731599AbfIDQuJ (ORCPT
+        id S1732365AbfIDQvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:51:47 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42478 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731829AbfIDQvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:50:09 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q10so8548858pfl.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 09:50:08 -0700 (PDT)
+        Wed, 4 Sep 2019 12:51:47 -0400
+Received: by mail-ot1-f68.google.com with SMTP id c10so9928835otd.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 09:51:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=wMapkRhSgN1SGL2l9oMWf44cELAHaLmXe43jUFl8ge4=;
-        b=QbfmzLpBBM1tiB62I45Rx0ioISKADbOrKugzWvi1lErH0hXEbE9ZS6kJgkezaWKNVj
-         lTl3usJiczDBZsEGMnQ/Iw+6QF1tSNnmZXu6xX56afwUgzjXrlzuFU6b1Z3SfpxaJQqm
-         jlf7EXX6hFJzjdaMWPtSy2VmMZTZE7iikopsA=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MlIv6DeXLkg4uR1/sPKQNkLhMSuShpHchXiSAIDmZ0E=;
+        b=N8PIZnJHFOI8JoHe9sxqWDMgOn4GZ6iQqYjA020wCxu3o7sOm/6bIQk9/8EoQ+OeZa
+         AKLFKYYU9+YgR34WalofuXjHVk6yw6IoIL/Fa+YtH3YhWpsdBH7FzVe7fsFuvrCQEccM
+         mHW9Zd3+Rsd8IZLmjvjy1WCd/QoQ/gIbtTdIArWVI8DqvE6tfdZaK9Rb/8sy6Ko7Q2l7
+         O0vbYxXouuJ3S45WM6Wj2vdWqPqDplGZJCnyPjhwGI2HRdgKWyAouB0OFCvt3NiuPEqQ
+         WxMXHJU7nUBKYXRaaM02KRIQoeMN+HtidM91MfhREDtcBhB71gvzzc8Nx78tAhdmlFfu
+         Pvww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wMapkRhSgN1SGL2l9oMWf44cELAHaLmXe43jUFl8ge4=;
-        b=PnrcNsPrl5hbKJC1PAsGfJcUnebEk2gqFgKm7bE/onJr9RqI2bm68pD2oWe2xxyaiR
-         Jc6TCCoTNK1FWed28NFhCT1ZhS7I3Hp6vS35pou79wHs1sWKFre+MbbqRa3445apho2e
-         0AbPtYzogp1/Z3r4rg10YsW7XWfD7p9SLlOqdjZbij2NEHfVkpImwPwHX/Daf5dra6Uj
-         4Iki89PFzwxnSEPWqWIPdyzoB5uIuS1NEWoFCiDoJD9DxhL0MmDiPstLD+IQs59PIZHj
-         uQs1wgCMkVOAMSjGKpspxH7X6JFI2a9zrl9ukzzW2aNnxxVU5sjH6B8W+wZ6O4udpb2P
-         Q1GA==
-X-Gm-Message-State: APjAAAUZEPPMeLzy4SXBf9/a45TFGU+tmWP8bBSe4VrpVMTsYR7h2VJX
-        dc6sjCgVCR+7yQC1eb25T3pGRw==
-X-Google-Smtp-Source: APXvYqx7Efgt6IKBu7pQKwH/Ba598K0d/IYdrQkM02/A9jX3xglkigZo/az7B7A1FSYMbGjy/P7/ug==
-X-Received: by 2002:a17:90a:9409:: with SMTP id r9mr6017500pjo.10.1567615808064;
-        Wed, 04 Sep 2019 09:50:08 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h4sm12456231pfg.159.2019.09.04.09.50.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2019 09:50:07 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 09:50:06 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, "H.J. Lu" <hjl.tools@gmail.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH v2 2/2] ELF: Add ELF program property parsing support
-Message-ID: <201909040942.7BC809C5E@keescook>
-References: <1566581020-9953-1-git-send-email-Dave.Martin@arm.com>
- <1566581020-9953-3-git-send-email-Dave.Martin@arm.com>
- <201908292224.007EB4D5@keescook>
- <20190830083415.GI27757@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MlIv6DeXLkg4uR1/sPKQNkLhMSuShpHchXiSAIDmZ0E=;
+        b=FhRhSkhN53Rdp1/GKhBRD5YPQq7ZZyLEOCoufjakkXdHqzGnxg8nkezaFaNH1MQwzs
+         ZiS9e8BBIrSY37HNXqVYtaQnwOYEPgwrEvRK+ftypcm1rDg0Lswq9HoN/48VgLvl4J2I
+         sJn7yOijDmbrFENaniUIVUz1cktu/3oiys8WFaVQWTHK1bM6vpT514mCVjNWOmZjACmk
+         9J6MsMumotSmte+a691rKOov2YlPldO9COeQjL+ls3y1sdO5fpLl31JTarNbLdW5itqk
+         jgk824qotnoJ2UNAjtHByFsgKgBOWPrgLAw1l4XwsnVZzB5+p403J4BRe44+VQkCzi5l
+         cH0w==
+X-Gm-Message-State: APjAAAVeDLz+T/xzl6oAGE5L/ploD3ygNBzG3TA35Y7rrjN9WREeAQMx
+        jQdmSBq1JxtSG6PS6Eo9iQNqUVUgY8/SciZFnxD4EQ==
+X-Google-Smtp-Source: APXvYqydoIKXu3gB6t4ZJpZ6BjNALeXpBGBsWdQ9ycCVnj7lK23s91IiGy8iCWh0qHMq+IHITd+wqHt/tVATfORbQoA=
+X-Received: by 2002:a05:6830:1bc3:: with SMTP id v3mr14369770ota.97.1567615906001;
+ Wed, 04 Sep 2019 09:51:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190830083415.GI27757@arm.com>
+References: <20190903161655.107408-1-hridya@google.com> <20190904111934.ya37tlzqjqvt7h6a@wittgenstein>
+ <CAEXW_YSj5tdykM8txae66zd0jX_aJujrnS4jG=fHWRvCH7aR7w@mail.gmail.com>
+ <20190904144903.GA30432@kroah.com> <20190904151212.wolcug25ozytp4bw@wittgenstein>
+In-Reply-To: <20190904151212.wolcug25ozytp4bw@wittgenstein>
+From:   Hridya Valsaraju <hridya@google.com>
+Date:   Wed, 4 Sep 2019 09:51:09 -0700
+Message-ID: <CA+wgaPNGPtxVUTBeNKYTd3R8uJdY8jmD8PA=uR1vvAYG2R_Ebw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Add binder state and statistics to binderfs
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        kernel-team <kernel-team@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Martijn Coenen <maco@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 09:34:18AM +0100, Dave Martin wrote:
-> Do you have any thoughts on Yu-Cheng Yu's comments?  It would be nice to
-> early-terminate the scan if we can, but my feeling so far was that the
-> scan is cheap, the number of properties is unlikely to be more than a
-> smallish integer, and the code separation benefits of just calling the
-> arch code for every property probably likely outweigh the costs of
-> having to iterate over every property.  We could always optimise it
-> later if necessary.
+On Wed, Sep 4, 2019 at 8:12 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Wed, Sep 04, 2019 at 04:49:03PM +0200, Greg Kroah-Hartman wrote:
+> > On Wed, Sep 04, 2019 at 10:20:32AM -0400, Joel Fernandes wrote:
+> > > On September 4, 2019 7:19:35 AM EDT, Christian Brauner
+> > > <christian.brauner@ubuntu.com> wrote:
+> > > >On Tue, Sep 03, 2019 at 09:16:51AM -0700, Hridya Valsaraju wrote:
+> > > >> Currently, the only way to access binder state and
+> > > >> statistics is through debugfs. We need a way to
+> > > >> access the same even when debugfs is not mounted.
+> > > >> These patches add a mount option to make this
+> > > >> information available in binderfs without affecting
+> > > >> its presence in debugfs. The following debugfs nodes
+> > > >> will be made available in a binderfs instance when
+> > > >> mounted with the mount option 'stats=global' or 'stats=local'.
+> > > >>
+> > > >>  /sys/kernel/debug/binder/failed_transaction_log
+> > > >>  /sys/kernel/debug/binder/proc
+> > > >>  /sys/kernel/debug/binder/state
+> > > >>  /sys/kernel/debug/binder/stats
+> > > >>  /sys/kernel/debug/binder/transaction_log
+> > > >>  /sys/kernel/debug/binder/transactions
+> > > >
+> > > >Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > >
+> > > >Btw, I think your counting is off-by-one. :) We usually count the
+> > > >initial send of a series as 0 and the first rework of that series as
+> > > >v1.
+> > > >I think you counted your initial send as v1 and the first rework as v2.
+> > >
+> > > Which is fine. I have done it both ways. Is this a rule written somewhere?
+> >
+> > No where, I can count both ways, it's not a big deal :)
+>
+> It isn't documented (as many things we still do are) and it's not a big
+> deal. But most people seem to be counting revisions starting from 0 it
+> seems. I went looking for previous version to link to in the patch cover
+> letter and was confused because I was missing a v1. :)
+>
+> Anyway, I'm happy that Hridya landed this! It was fun helping her the
+> last couple of weeks on- and off-list. Thanks for getting this done! I
+> hope we'll see even more patches in the future. :)
 
-I feel like there are already a lot of ways to burn CPU time with
-mangled ELF files, so this potential inefficiently doesn't seem bad to
-me. If we want to add limits here, perhaps cap the property scan depth
-(right now, IIRC, the count is u32, which is big...)
+Thank you so much Christian and Todd for the guidance and thorough
+reviews on the many patches I sent your way both on and off-list :) I
+really appreciate it!
 
-> I need to double-check that there's no way we can get stuck in an
-> infinite loop with the current code, though I've not seen it in my
-> testing.  I should throw some malformed notes at it though.
-
-I think the cursor only performs forward movement, yes? I didn't see a
-loop, but maybe there's something with the program headers that I
-missed.
-
-> Do you have any objection to merging patch 1 with this one?  For
-> upstreaming purposes, it seems overkill for that to be a separate patch.
-
-I don't _object_ to it, but I did like having it separate for review.
-
-> Do you have any opinion on the WARN_ON()s?  They should be un-hittable,
-> so they're documenting assumptions rather than protecting against
-> anything real.  Maybe I should replace them with comments.
-
-I think they're fine as self-documentation. My rule of thumb has been:
-
-- don't use BUG*() unless you can defend it to Linus who wants 0 BUG()s.
-- don't use WARN*() if userspace can reach it (and if you're not sure,
-  use the WARN*ONCE() version)
-- use pr_*_ratelimited() if unprivileged userspace can reach it.
-
--- 
-Kees Cook
+>
+> Christian
