@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3287A8FA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2086BA912C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389174AbfIDSE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:04:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46118 "EHLO mail.kernel.org"
+        id S2389685AbfIDSN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:13:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389143AbfIDSEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:04:55 -0400
+        id S2390146AbfIDSNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:13:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE7FB206B8;
-        Wed,  4 Sep 2019 18:04:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A72C8206BA;
+        Wed,  4 Sep 2019 18:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620294;
-        bh=/c0E3IhlUuK29sMKO5Ld2wcLO2NHBouIlgrO37+mFDo=;
+        s=default; t=1567620833;
+        bh=lrCFZBgs7taAitb//K8nDjMil3QsaNgZqYnMNkSRP94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nklbeQGzP9xjR1u0cmIkFl4PFyGC/IQC8kEzl3us5hu9gt7rLf0CyfsptJCa8/EOn
-         o6cTnqZBxAbiCRDFrr06uzBB/YY+zzQ4fos8fMhf1kK7K5qAwJOXaF9Dws/GxdAx4B
-         kN9ngAav3qF2B/CftxvwpFiHHceFI+cYWN0XhoJE=
+        b=BgtmedK53JzJLQgmypoDy+AFI6MTim1xoIxhDrSxhB1mBzyQGJ+0jutqApXfaidAn
+         cSnpQJll97QlbZ5/NMV62kMYs3m8UIxI5Qo+zvkNw3Bw9aiaqNxVtqDMTROPYqbVHf
+         HSSZ547pqzC21PXufYVPuEqGuWbYezfPmkh3hdXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 48/57] mac80211: fix possible sta leak
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 5.2 113/143] drm/i915: Call dma_set_max_seg_size() in i915_driver_hw_probe()
 Date:   Wed,  4 Sep 2019 19:54:16 +0200
-Message-Id: <20190904175306.641592543@linuxfoundation.org>
+Message-Id: <20190904175318.818342280@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,47 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 5fd2f91ad483baffdbe798f8a08f1b41442d1e24 upstream.
+commit 32f0a982650b123bdab36865617d3e03ebcacf3b upstream.
 
-If TDLS station addition is rejected, the sta memory is leaked.
-Avoid this by moving the check before the allocation.
+Currently, we don't call dma_set_max_seg_size() for i915 because we
+intentionally do not limit the segment length that the device supports.
+However, this results in a warning being emitted if we try to map
+anything larger than SZ_64K on a kernel with CONFIG_DMA_API_DEBUG_SG
+enabled:
 
-Cc: stable@vger.kernel.org
-Fixes: 7ed5285396c2 ("mac80211: don't initiate TDLS connection if station is not associated to AP")
-Link: https://lore.kernel.org/r/20190801073033.7892-1-johannes@sipsolutions.net
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+[    7.751926] DMA-API: i915 0000:00:02.0: mapping sg segment longer
+than device claims to support [len=98304] [max=65536]
+[    7.751934] WARNING: CPU: 5 PID: 474 at kernel/dma/debug.c:1220
+debug_dma_map_sg+0x20f/0x340
+
+This was originally brought up on
+https://bugs.freedesktop.org/show_bug.cgi?id=108517 , and the consensus
+there was it wasn't really useful to set a limit (and that dma-debug
+isn't really all that useful for i915 in the first place). Unfortunately
+though, CONFIG_DMA_API_DEBUG_SG is enabled in the debug configs for
+various distro kernels. Since a WARN_ON() will disable automatic problem
+reporting (and cause any CI with said option enabled to start
+complaining), we really should just fix the problem.
+
+Note that as me and Chris Wilson discussed, the other solution for this
+would be to make DMA-API not make such assumptions when a driver hasn't
+explicitly set a maximum segment size. But, taking a look at the commit
+which originally introduced this behavior, commit 78c47830a5cb
+("dma-debug: check scatterlist segments"), there is an explicit mention
+of this assumption and how it applies to devices with no segment size:
+
+	Conversely, devices which are less limited than the rather
+	conservative defaults, or indeed have no limitations at all
+	(e.g. GPUs with their own internal MMU), should be encouraged to
+	set appropriate dma_parms, as they may get more efficient DMA
+	mapping performance out of it.
+
+So unless there's any concerns (I'm open to discussion!), let's just
+follow suite and call dma_set_max_seg_size() with UINT_MAX as our limit
+to silence any warnings.
+
+Changes since v3:
+* Drop patch for enabling CONFIG_DMA_API_DEBUG_SG in CI. It looks like
+  just turning it on causes the kernel to spit out bogus WARN_ONs()
+  during some igt tests which would otherwise require teaching igt to
+  disable the various DMA-API debugging options causing this. This is
+  too much work to be worth it, since DMA-API debugging is useless for
+  us. So, we'll just settle with this single patch to squelch WARN_ONs()
+  during driver load for users that have CONFIG_DMA_API_DEBUG_SG turned
+  on for some reason.
+* Move dma_set_max_seg_size() call into i915_driver_hw_probe() - Chris
+  Wilson
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: <stable@vger.kernel.org> # v4.18+
+Link: https://patchwork.freedesktop.org/patch/msgid/20190823205251.14298-1-lyude@redhat.com
+(cherry picked from commit acd674af95d3f627062007429b9c195c6b32361d)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/cfg.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/i915_drv.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -1459,6 +1459,11 @@ static int ieee80211_add_station(struct
- 	if (is_multicast_ether_addr(mac))
- 		return -EINVAL;
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -1569,6 +1569,12 @@ static int i915_driver_init_hw(struct dr
  
-+	if (params->sta_flags_set & BIT(NL80211_STA_FLAG_TDLS_PEER) &&
-+	    sdata->vif.type == NL80211_IFTYPE_STATION &&
-+	    !sdata->u.mgd.associated)
-+		return -EINVAL;
+ 	pci_set_master(pdev);
+ 
++	/*
++	 * We don't have a max segment size, so set it to the max so sg's
++	 * debugging layer doesn't complain
++	 */
++	dma_set_max_seg_size(&pdev->dev, UINT_MAX);
 +
- 	sta = sta_info_alloc(sdata, mac, GFP_KERNEL);
- 	if (!sta)
- 		return -ENOMEM;
-@@ -1466,10 +1471,6 @@ static int ieee80211_add_station(struct
- 	if (params->sta_flags_set & BIT(NL80211_STA_FLAG_TDLS_PEER))
- 		sta->sta.tdls = true;
- 
--	if (sta->sta.tdls && sdata->vif.type == NL80211_IFTYPE_STATION &&
--	    !sdata->u.mgd.associated)
--		return -EINVAL;
--
- 	err = sta_apply_parameters(local, sta, params);
- 	if (err) {
- 		sta_info_free(local, sta);
+ 	/* overlay on gen2 is broken and can't address above 1G */
+ 	if (IS_GEN(dev_priv, 2)) {
+ 		ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(30));
 
 
