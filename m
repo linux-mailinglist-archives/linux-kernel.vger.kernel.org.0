@@ -2,90 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5E9DA8C3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AD0EA8C6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733080AbfIDQLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:11:01 -0400
-Received: from mga14.intel.com ([192.55.52.115]:62815 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732057AbfIDQK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:10:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 09:10:56 -0700
-X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
-   d="scan'208";a="183951504"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 09:10:54 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 07921204A6; Wed,  4 Sep 2019 19:10:52 +0300 (EEST)
-Date:   Wed, 4 Sep 2019 19:10:51 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH v5 11/11] lib/test_printf: Add tests for %pfw printk
- modifier
-Message-ID: <20190904161051.GX5475@paasikivi.fi.intel.com>
-References: <20190902135732.23455-1-sakari.ailus@linux.intel.com>
- <20190902135732.23455-12-sakari.ailus@linux.intel.com>
- <20190902161352.GS2680@smile.fi.intel.com>
+        id S1733222AbfIDQNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:13:21 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42534 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733110AbfIDQLU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:11:20 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 3B2232A7BDB;
+        Wed,  4 Sep 2019 12:11:19 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id WrxUKyOHNboE; Wed,  4 Sep 2019 12:11:18 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id B92512A7BD6;
+        Wed,  4 Sep 2019 12:11:18 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B92512A7BD6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1567613478;
+        bh=UvCTGqUCf4urIjnb3JtMZ9hbarJ4G87XaD/J1JfL2Sk=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=rixIuGRs3W8jXvPj13DrndaJXHwzFAXleVU6uHQ7aEkcBXVsSui0yny6uR/JL9o5i
+         XTT17NiofQOSaweia9Arc7eYXjqJgK6Ln79A0hJNTwT0kJQI4TQFcGmiF5IYHc/xjq
+         bekFPTzEbTz/H3uVi9odF/6UvG0ikUnj48ZYo+pWNzMgSjKdskh3xzfe6TSMKoGDxN
+         NFGWe3ok1JD00qZ4jbh6CQ9sxKU/I4cZFtKHJszfkOKOAy652Y3WoPXQec2fZqt7Uj
+         Ex6SnUMIIGG8O1Y009s37H7zG9J35F1dlQwzu6MAEMYzbsKmKHc+nL2qb0O0iTykGd
+         f29PGkg3up6vQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id R42Tsp5JXwDz; Wed,  4 Sep 2019 12:11:18 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 9E1712A7BBC;
+        Wed,  4 Sep 2019 12:11:18 -0400 (EDT)
+Date:   Wed, 4 Sep 2019 12:11:18 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     paulmck <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
+        Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Message-ID: <1457548021.1684.1567613478460.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20190904111126.GB24568@redhat.com>
+References: <20190903201135.1494-1-mathieu.desnoyers@efficios.com> <20190904111126.GB24568@redhat.com>
+Subject: Re: [RFC PATCH 1/2] Fix: sched/membarrier: p->mm->membarrier_state
+ racy load
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902161352.GS2680@smile.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - FF68 (Linux)/8.8.15_GA_3829)
+Thread-Topic: sched/membarrier: p->mm->membarrier_state racy load
+Thread-Index: hfEVYLcRG2Y34JmTkaLiqVjU31tDtw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+----- On Sep 4, 2019, at 7:11 AM, Oleg Nesterov oleg@redhat.com wrote:
 
-On Mon, Sep 02, 2019 at 07:13:52PM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 02, 2019 at 04:57:32PM +0300, Sakari Ailus wrote:
-> > Add a test for the %pfw printk modifier using software nodes.
+> with or without these changes...
 > 
-> > +static void __init fwnode_pointer(void)
-> > +{
-> > +	const struct software_node softnodes[] = {
-> > +		{ .name = "first", },
-> > +		{ .name = "second", .parent = &softnodes[0], },
-> > +		{ .name = "third", .parent = &softnodes[1], },
-> > +		{ NULL /* Guardian */ },
-> 
-> Comma is still here :-)
+> Why do membarrier_register_*_expedited() check get_nr_threads() == 1?
+> This makes no sense to me, atomic_read(mm_users) == 1 should be enough.
 
-Oops. I ended up removing the comma in a wrong patch which wasn't submitted
-to the list. Will fix for v6.
+Indeed, if every thread within a process hold a mm_users refcount, then
+the get_nr_threads() == 1 check becomes redundant.
 
-> 
-> > +	};
-> 
-> > +	test(full_name_second, "%pfw",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-> > +	test(full_name, "%pfw",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> > +	test(full_name, "%pfwf",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> > +	test(second_name, "%pfwP",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-> > +	test(third_name, "%pfwP",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> 
-> I have another thought about these. The test cases will fail in either of
-> adding, inserting or removing items in softnodes array. So, using the above
-> "protective" scheme doesn't bring any value except making readability worse.
+AFAIR, this check started out as "get_nr_threads() == 1", and then I changed
+the code to also cover the multi-process CLONE_VM use-case by adding the
+additional check.
 
-Agreed, to be addressed in v6.
+> And I am not sure I understand membarrier_mm_sync_core_before_usermode().
+> OK, membarrier_private_expedited() can race with user -> kernel -> user
+> transition, but we do not care unless both user's above have the same mm?
+> Shouldn't membarrier_mm_sync_core_before_usermode() do
+> 
+>	if (current->mm != mm)
+>		return;
+> 
+> at the start to make it more clear and avoid sync_core_before_usermode()
+> if possible?
+
+Indeed, if we have taskA -> kernel -> taskB, it implies that we go through
+switch_mm() when scheduling taskB, which provides the required core serializing
+guarantees.
+
+Moreover, if we look closely at the call to membarrier_mm_sync_core_before_usermode(),
+the mm it receives as parameter is the rq->prev_mm. So using the prev_mm membarrier
+state to decide whether we need to issue a sync_core before returning to a
+different next mm is not really relevant unless the next mm == rq->prev_mm.
+
+Nothing there seem to be actively buggy, but those are indeed nice cleanups.
+
+Thanks,
+
+Mathieu
 
 -- 
-Regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
