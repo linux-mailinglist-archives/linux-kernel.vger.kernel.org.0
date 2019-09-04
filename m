@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E4BAA9119
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 307BCA8F19
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390702AbfIDSNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:13:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58364 "EHLO mail.kernel.org"
+        id S2388636AbfIDSBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:01:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390694AbfIDSN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:13:29 -0400
+        id S1732774AbfIDSBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:01:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B057208E4;
-        Wed,  4 Sep 2019 18:13:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47A72208E4;
+        Wed,  4 Sep 2019 18:01:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620808;
-        bh=XpVMRruxLN1E2XX5gewbcsvYWzPngDOtSDaa0SDg7os=;
+        s=default; t=1567620102;
+        bh=0003ByG6b9O5NZSVw/xKA5MKM+Ca8Yf80dbdGezGKPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YH0YKlYcxsY+5nsxOdkin2OTSdERyUtoNTWwuJycj5ark1YOK8D2ger4TbJL8ijY+
-         EE1/6Lw4Jei4c0a8yrFyHASKXOpiwoviVtMBwCEpdCboeIEnD2YSLP0zLL5vkbujdM
-         zPRHQRFojN5Sj60YzLJ+m6P+wJl0EhYoJNzaA6II=
+        b=CuU4zEbXru2Sa3Y/2NmFN/gj22eZPhwE65vr+wbaPyds4YTahjwmBZIWE62BFije/
+         QE/Uq9rk5GkvDxyeEev2K2bdn42MDQt0fEAe+0i27LX54E71M3SxX0C5Ww0vOgSZJX
+         2atspVPbac9578EPz/de3jWhCv4q6rfW+pOgvlDA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.2 062/143] ALSA: line6: Fix memory leak at line6_init_pcm() error path
+        stable@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: [PATCH 4.9 33/83] x86/retpoline: Dont clobber RFLAGS during CALL_NOSPEC on i386
 Date:   Wed,  4 Sep 2019 19:53:25 +0200
-Message-Id: <20190904175316.499042936@linuxfoundation.org>
+Message-Id: <20190904175306.726785502@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,57 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 1bc8d18c75fef3b478dbdfef722aae09e2a9fde7 upstream.
+commit b63f20a778c88b6a04458ed6ffc69da953d3a109 upstream.
 
-I forgot to release the allocated object at the early error path in
-line6_init_pcm().  For addressing it, slightly shuffle the code so
-that the PCM destructor (pcm->private_free) is assigned properly
-before all error paths.
+Use 'lea' instead of 'add' when adjusting %rsp in CALL_NOSPEC so as to
+avoid clobbering flags.
 
-Fixes: 3450121997ce ("ALSA: line6: Fix write on zero-sized buffer")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+KVM's emulator makes indirect calls into a jump table of sorts, where
+the destination of the CALL_NOSPEC is a small blob of code that performs
+fast emulation by executing the target instruction with fixed operands.
+
+  adcb_al_dl:
+     0x000339f8 <+0>:   adc    %dl,%al
+     0x000339fa <+2>:   ret
+
+A major motiviation for doing fast emulation is to leverage the CPU to
+handle consumption and manipulation of arithmetic flags, i.e. RFLAGS is
+both an input and output to the target of CALL_NOSPEC.  Clobbering flags
+results in all sorts of incorrect emulation, e.g. Jcc instructions often
+take the wrong path.  Sans the nops...
+
+  asm("push %[flags]; popf; " CALL_NOSPEC " ; pushf; pop %[flags]\n"
+     0x0003595a <+58>:  mov    0xc0(%ebx),%eax
+     0x00035960 <+64>:  mov    0x60(%ebx),%edx
+     0x00035963 <+67>:  mov    0x90(%ebx),%ecx
+     0x00035969 <+73>:  push   %edi
+     0x0003596a <+74>:  popf
+     0x0003596b <+75>:  call   *%esi
+     0x000359a0 <+128>: pushf
+     0x000359a1 <+129>: pop    %edi
+     0x000359a2 <+130>: mov    %eax,0xc0(%ebx)
+     0x000359b1 <+145>: mov    %edx,0x60(%ebx)
+
+  ctxt->eflags = (ctxt->eflags & ~EFLAGS_MASK) | (flags & EFLAGS_MASK);
+     0x000359a8 <+136>: mov    -0x10(%ebp),%eax
+     0x000359ab <+139>: and    $0x8d5,%edi
+     0x000359b4 <+148>: and    $0xfffff72a,%eax
+     0x000359b9 <+153>: or     %eax,%edi
+     0x000359bd <+157>: mov    %edi,0x4(%ebx)
+
+For the most part this has gone unnoticed as emulation of guest code
+that can trigger fast emulation is effectively limited to MMIO when
+running on modern hardware, and MMIO is rarely, if ever, accessed by
+instructions that affect or consume flags.
+
+Breakage is almost instantaneous when running with unrestricted guest
+disabled, in which case KVM must emulate all instructions when the guest
+has invalid state, e.g. when the guest is in Big Real Mode during early
+BIOS.
+
+Fixes: 776b043848fd2 ("x86/retpoline: Add initial retpoline support")
+Fixes: 1a29b5b7f347a ("KVM: x86: Make indirect calls in emulator speculation safe")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190822211122.27579-1-sean.j.christopherson@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/line6/pcm.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/line6/pcm.c
-+++ b/sound/usb/line6/pcm.c
-@@ -550,6 +550,15 @@ int line6_init_pcm(struct usb_line6 *lin
- 	line6pcm->volume_monitor = 255;
- 	line6pcm->line6 = line6;
- 
-+	spin_lock_init(&line6pcm->out.lock);
-+	spin_lock_init(&line6pcm->in.lock);
-+	line6pcm->impulse_period = LINE6_IMPULSE_DEFAULT_PERIOD;
-+
-+	line6->line6pcm = line6pcm;
-+
-+	pcm->private_data = line6pcm;
-+	pcm->private_free = line6_cleanup_pcm;
-+
- 	line6pcm->max_packet_size_in =
- 		usb_maxpacket(line6->usbdev,
- 			usb_rcvisocpipe(line6->usbdev, ep_read), 0);
-@@ -562,15 +571,6 @@ int line6_init_pcm(struct usb_line6 *lin
- 		return -EINVAL;
- 	}
- 
--	spin_lock_init(&line6pcm->out.lock);
--	spin_lock_init(&line6pcm->in.lock);
--	line6pcm->impulse_period = LINE6_IMPULSE_DEFAULT_PERIOD;
--
--	line6->line6pcm = line6pcm;
--
--	pcm->private_data = line6pcm;
--	pcm->private_free = line6_cleanup_pcm;
--
- 	err = line6_create_audio_out_urbs(line6pcm);
- 	if (err < 0)
- 		return err;
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -196,7 +196,7 @@
+ 	"    	lfence;\n"					\
+ 	"       jmp    902b;\n"					\
+ 	"       .align 16\n"					\
+-	"903:	addl   $4, %%esp;\n"				\
++	"903:	lea    4(%%esp), %%esp;\n"			\
+ 	"       pushl  %[thunk_target];\n"			\
+ 	"       ret;\n"						\
+ 	"       .align 16\n"					\
 
 
