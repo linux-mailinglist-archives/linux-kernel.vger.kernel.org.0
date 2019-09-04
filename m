@@ -2,69 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BAB1A84B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 161CDA8769
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:20:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730225AbfIDNs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 09:48:27 -0400
-Received: from mga05.intel.com ([192.55.52.43]:31668 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728941AbfIDNs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 09:48:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 06:48:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
-   d="scan'208";a="212397283"
-Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Sep 2019 06:48:23 -0700
-Date:   Wed, 4 Sep 2019 21:49:25 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
-        mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        yu.c.zhang@intel.com, alazar@bitdefender.com
-Subject: Re: [PATCH RESEND v4 8/9] KVM: MMU: Enable Lazy mode SPPT setup
-Message-ID: <20190904134925.GA25149@local-michael-cet-test.sh.intel.com>
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
- <20190814070403.6588-9-weijiang.yang@intel.com>
- <63f8952b-2497-16ec-ff55-1da017c50a8c@redhat.com>
- <20190820131214.GD4828@local-michael-cet-test.sh.intel.com>
+        id S1729921AbfIDNxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 09:53:13 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:59224 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726304AbfIDNxM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 09:53:12 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 5723E2E1AF9;
+        Wed,  4 Sep 2019 16:53:09 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id VODvC8jeNf-r9Nu2Lhc;
+        Wed, 04 Sep 2019 16:53:09 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1567605189; bh=9NG/dDnFeKeZHp7gq4Bt3jk12l8IcLQ6rwdO1YD1xvQ=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=Ai2bzEbJdK+baGdRKLO3SHZG+trevrPdYggz78BEbE91uKDRhP/r9odOJkZ2Dga3G
+         FRTz0fb1uTJTZwcwqMnA44/U1x/ocUIpHSlF7wqoKjKBtWlvjg/cs2pLxaO+QAOYKF
+         ZnbqrmTnFEbaAXSvZhbTEvvJhjBU5YXvFV3SbSTs=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:c142:79c2:9d86:677a])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id qxrH47Cxp8-r8D0XNmB;
+        Wed, 04 Sep 2019 16:53:09 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH v1 0/7] mm/memcontrol: recharge mlocked pages
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Cc:     Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Date:   Wed, 04 Sep 2019 16:53:08 +0300
+Message-ID: <156760509382.6560.17364256340940314860.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820131214.GD4828@local-michael-cet-test.sh.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 09:12:14PM +0800, Yang Weijiang wrote:
-> On Mon, Aug 19, 2019 at 04:46:54PM +0200, Paolo Bonzini wrote:
-> > On 14/08/19 09:04, Yang Weijiang wrote:
-> > > +
-> > > +	if (vcpu->kvm->arch.spp_active && level == PT_PAGE_TABLE_LEVEL)
-> > > +		kvm_enable_spp_protection(vcpu->kvm, gfn);
-> > > +
-> > 
-> > This would not enable SPP if the guest is backed by huge pages.
-> > Instead, either the PT_PAGE_TABLE_LEVEL level must be forced for all
-> > pages covered by SPP ranges, or (better) kvm_enable_spp_protection must
-> > be able to cover multiple pages at once.
-> > 
-> > Paolo
-> OK, I'll figure out how to make it, thanks!
-Hi, Paolo,
-Regarding this change, I have some concerns, splitting EPT huge page
-entries(e.g., 1GB page)will take long time compared with normal EPT page
-fault processing, especially for multiple vcpus/pages,so the in-flight time increases,
-but HW walks EPT for translations in the meantime, would it bring any side effect? 
-or there's a way to mitigate it?
+Currently mlock keeps pages in cgroups where they were accounted.
+This way one container could affect another if they share file cache.
+Typical case is writing (downloading) file in one container and then
+locking in another. After that first container cannot get rid of cache.
+Also removed cgroup stays pinned by these mlocked pages.
 
-Thanks!
+This patchset implements recharging pages to cgroup of mlock user.
 
+There are three cases:
+* recharging at first mlock
+* recharging at munlock to any remaining mlock
+* recharging at 'culling' in reclaimer to any existing mlock
+
+To keep things simple recharging ignores memory limit. After that memory
+usage temporary could be higher than limit but cgroup will reclaim memory
+later or trigger oom, which is valid outcome when somebody mlock too much.
+
+---
+
+Konstantin Khlebnikov (7):
+      mm/memcontrol: move locking page out of mem_cgroup_move_account
+      mm/memcontrol: add mem_cgroup_recharge
+      mm/mlock: add vma argument for mlock_vma_page()
+      mm/mlock: recharge memory accounting to first mlock user
+      mm/mlock: recharge memory accounting to second mlock user at munlock
+      mm/vmscan: allow changing page memory cgroup during reclaim
+      mm/mlock: recharge mlocked pages at culling by vmscan
+
+
+ Documentation/admin-guide/cgroup-v1/memory.rst |    5 +
+ include/linux/memcontrol.h                     |    9 ++
+ include/linux/rmap.h                           |    3 -
+ mm/gup.c                                       |    2 
+ mm/huge_memory.c                               |    4 -
+ mm/internal.h                                  |    6 +
+ mm/ksm.c                                       |    2 
+ mm/memcontrol.c                                |  104 ++++++++++++++++--------
+ mm/migrate.c                                   |    2 
+ mm/mlock.c                                     |   14 +++
+ mm/rmap.c                                      |    5 +
+ mm/vmscan.c                                    |   17 ++--
+ 12 files changed, 121 insertions(+), 52 deletions(-)
+
+--
+Signature
