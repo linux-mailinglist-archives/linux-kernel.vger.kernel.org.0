@@ -2,63 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9307FA7FC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:51:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96535A7FC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729806AbfIDJvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 05:51:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725840AbfIDJvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:51:05 -0400
-Received: from localhost (unknown [122.182.201.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3ACF22CF7;
-        Wed,  4 Sep 2019 09:51:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567590664;
-        bh=cWumTrUCWby2RFMQQ87i5+/dEWefDyNawluwiyL0n3s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gq05tX4MsH75NEnfoomECduDUpW2wgJt/to/w0nCfJX3GyJx2fdZxyrIs6XDUmTRO
-         bVrzmOsP03hofoZ+aKx8Ta7FWzNVpvjjjj//h1N2YrnyBho2cog9/jYfuefO4489kL
-         TESY896jfACtG/BoceM+AOuwziakfG1yMbHS1yGI=
-Date:   Wed, 4 Sep 2019 15:19:56 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     robh+dt@kernel.org, dan.j.williams@intel.com,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH 0/5] dmaengine: ti: edma: Multicore usage related fixes
-Message-ID: <20190904094956.GT2672@vkoul-mobl>
-References: <20190823125618.8133-1-peter.ujfalusi@ti.com>
+        id S1729763AbfIDJvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 05:51:01 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37354 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725840AbfIDJvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 05:51:00 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2F27C1FEC3B03BC2C546;
+        Wed,  4 Sep 2019 17:50:59 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
+ 17:50:51 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <yuehaibing@huawei.com>, <swboyd@chromium.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] usb: gadget: s3c-hsudc: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 4 Sep 2019 17:50:22 +0800
+Message-ID: <20190904095022.24528-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190823125618.8133-1-peter.ujfalusi@ti.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-08-19, 15:56, Peter Ujfalusi wrote:
-> Hi,
-> 
-> When other cores want to use EDMA for their use cases Linux was not playing
-> nicely.
-> By design EDMA is supporting shared use with shadow regions. Linux is using
-> region0, others can be used by other cores.
-> 
-> In order to not break multicore shared usage of EDMA:
-> - do not reset paRAM slots which is not allocated for Linux (reserved paRAM
->   slots)
-> - Only reset region0 access registers, do not touch other regions
-> - Add option for reserved channels which should not be used by Linux in a similar
->   fashion as we already have for reserved paRAM slots.
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Applied 1 to 3, thanks
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/usb/gadget/udc/s3c-hsudc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
+diff --git a/drivers/usb/gadget/udc/s3c-hsudc.c b/drivers/usb/gadget/udc/s3c-hsudc.c
+index 858993c..21252fb 100644
+--- a/drivers/usb/gadget/udc/s3c-hsudc.c
++++ b/drivers/usb/gadget/udc/s3c-hsudc.c
+@@ -1263,7 +1263,6 @@ static const struct usb_gadget_ops s3c_hsudc_gadget_ops = {
+ static int s3c_hsudc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 	struct s3c_hsudc *hsudc;
+ 	struct s3c24xx_hsudc_platdata *pd = dev_get_platdata(&pdev->dev);
+ 	int ret, i;
+@@ -1290,9 +1289,7 @@ static int s3c_hsudc_probe(struct platform_device *pdev)
+ 		goto err_supplies;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-
+-	hsudc->regs = devm_ioremap_resource(&pdev->dev, res);
++	hsudc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hsudc->regs)) {
+ 		ret = PTR_ERR(hsudc->regs);
+ 		goto err_res;
 -- 
-~Vinod
+2.7.4
+
+
