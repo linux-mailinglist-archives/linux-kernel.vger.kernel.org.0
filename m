@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49EC5A8F2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 188B2A91A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388179AbfIDSCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:02:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41898 "EHLO mail.kernel.org"
+        id S2389989AbfIDSUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:20:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388696AbfIDSCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:02:07 -0400
+        id S2389500AbfIDSHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:07:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FEE822CF7;
-        Wed,  4 Sep 2019 18:02:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 386F92087E;
+        Wed,  4 Sep 2019 18:07:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620126;
-        bh=W7okh1u7Oy6Sx8YpUmujwLy4mkFhhOq0pDmWqnfj42E=;
+        s=default; t=1567620456;
+        bh=umZgLcx4LyDobcUqiPkXfOxFI+Pw5k7wzlTFOTD1aLk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AIX/tKj243U8UKxjWjbNAu4jKMSdcTVrcLzMyoL5BTBkAFN4QtqlpsgUYPZa6Ja7b
-         JOd0lSkP+2Z6BNAPRAR1BwIlJV5F35TuLK3sm1+JhN0mhrMoalmCfv+RycPu9B5IaX
-         XKzQ/tqhLWhCzAYp3B3ZI4P2Oc++PdtQ0B6Ni4Rs=
+        b=Xv0QWF4EeKej/3gIDEyteIMtV52DrS6vuci6nSqHuvTYDmnPAGNSuo3cj7hpWAMZh
+         zIyzEN8fzG5P6B8MvqTD8ZqgNVHIxf7qx/z6UMDNTxrIifPAH0bpZ9tjFV2xzDyWNJ
+         UJm43juAwRS29SDG7MnPk8bbTM545R+Gv9zGrF80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.9 74/83] mmc: sdhci-of-at91: add quirk for broken HS200
-Date:   Wed,  4 Sep 2019 19:54:06 +0200
-Message-Id: <20190904175310.124805937@linuxfoundation.org>
+        Ding Xiang <dingxiang@cmss.chinamobile.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 4.19 65/93] stm class: Fix a double free of stm_source_device
+Date:   Wed,  4 Sep 2019 19:54:07 +0200
+Message-Id: <20190904175308.602533755@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Ding Xiang <dingxiang@cmss.chinamobile.com>
 
-commit 7871aa60ae0086fe4626abdf5ed13eeddf306c61 upstream.
+commit 961b6ffe0e2c403b09a8efe4a2e986b3c415391a upstream.
 
-HS200 is not implemented in the driver, but the controller claims it
-through caps. Remove it via a quirk, to make sure the mmc core do not try
-to enable HS200, as it causes the eMMC initialization to fail.
+In the error path of stm_source_register_device(), the kfree is
+unnecessary, as the put_device() before it ends up calling
+stm_source_device_release() to free stm_source_device, leading to
+a double free at the outer kfree() call. Remove it.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Fixes: bb5f8ea4d514 ("mmc: sdhci-of-at91: introduce driver for the Atmel SDMMC")
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Fixes: 7bd1d4093c2fa ("stm class: Introduce an abstraction for System Trace Module devices")
+Link: https://lore.kernel.org/linux-arm-kernel/1563354988-23826-1-git-send-email-dingxiang@cmss.chinamobile.com/
 Cc: stable@vger.kernel.org # v4.4+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://lore.kernel.org/r/20190821074955.3925-2-alexander.shishkin@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-of-at91.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hwtracing/stm/core.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/mmc/host/sdhci-of-at91.c
-+++ b/drivers/mmc/host/sdhci-of-at91.c
-@@ -317,6 +317,9 @@ static int sdhci_at91_probe(struct platf
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
- 	pm_runtime_use_autosuspend(&pdev->dev);
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -1098,7 +1098,6 @@ int stm_source_register_device(struct de
  
-+	/* HS200 is broken at this moment */
-+	host->quirks2 = SDHCI_QUIRK2_BROKEN_HS200;
-+
- 	ret = sdhci_add_host(host);
- 	if (ret)
- 		goto pm_runtime_disable;
+ err:
+ 	put_device(&src->dev);
+-	kfree(src);
+ 
+ 	return err;
+ }
 
 
