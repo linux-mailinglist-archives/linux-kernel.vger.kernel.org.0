@@ -2,86 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6864A9094
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE21A917F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390118AbfIDSKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:10:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49898 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390085AbfIDSKb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:10:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qV05ywLNhkw5oOxBhEEGmA7EY58+l2bVgOq9K+RRCSE=; b=l8T7UEE/HS8sg7kowfz/+EUNp
-        9rpWmbF/Qzo07zEp3UqHIucDuX4ZAeP2kp6diPbi8Wsk+DZ2cFY7Bk9J5b7sPmoyDdaSKpcRerpHp
-        2lK0P5MhN3gg81oFYzzV1YTMhy3SXTtrU1vVM7x3wmqssW4GXWqH6XPwLuCx9sP0BMetA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i5Zjf-0006oF-Ms; Wed, 04 Sep 2019 18:10:27 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 3D6B52742B45; Wed,  4 Sep 2019 19:10:27 +0100 (BST)
-Date:   Wed, 4 Sep 2019 19:10:27 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ricard Wanderlof <ricardw@axis.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.9 07/83] ASoC: Fail card instantiation if DAI format
- setup fails
-Message-ID: <20190904181027.GG4348@sirena.co.uk>
-References: <20190904175303.488266791@linuxfoundation.org>
- <20190904175304.389271806@linuxfoundation.org>
+        id S2389893AbfIDSQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:16:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59088 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730269AbfIDSQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:16:41 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A1812307D971;
+        Wed,  4 Sep 2019 18:16:40 +0000 (UTC)
+Received: from localhost (ovpn-116-88.ams2.redhat.com [10.36.116.88])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A8B505C22F;
+        Wed,  4 Sep 2019 18:16:31 +0000 (UTC)
+Date:   Wed, 4 Sep 2019 19:16:30 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v4 15/16] virtio-fs: add virtiofs filesystem
+Message-ID: <20190904181630.GB26826@stefanha-x1.localdomain>
+References: <20190903113640.7984-1-mszeredi@redhat.com>
+ <20190903114203.8278-10-mszeredi@redhat.com>
+ <20190903092222-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="QWpDgw58+k1mSFBj"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uZ3hkaAS1mZxFaxD"
 Content-Disposition: inline
-In-Reply-To: <20190904175304.389271806@linuxfoundation.org>
-X-Cookie: Help fight continental drift.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190903092222-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 04 Sep 2019 18:16:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---QWpDgw58+k1mSFBj
+--uZ3hkaAS1mZxFaxD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2019 at 07:52:59PM +0200, Greg Kroah-Hartman wrote:
-> [ Upstream commit 40aa5383e393d72f6aa3943a4e7b1aae25a1e43b ]
+On Tue, Sep 03, 2019 at 09:55:49AM -0400, Michael S. Tsirkin wrote:
+> On Tue, Sep 03, 2019 at 01:42:02PM +0200, Miklos Szeredi wrote:
+> Endian-ness for fuse header also looks wrong.
+[...]
+> > +struct virtio_fs_forget {
+> > +	struct fuse_in_header ih;
+> > +	struct fuse_forget_in arg;
 >=20
-> If the DAI format setup fails, there is no valid communication format
-> between CPU and CODEC, so fail card instantiation, rather than continue
-> with a card that will most likely not function properly.
+> These structures are all native endian.
+>=20
+> Passing them to host will make cross-endian setups painful to support,
+> and hardware implementations impossible.
+>=20
+> How about converting everything to LE?
 
-I nacked this patch when Sasha posted it - it only improves diagnostics
-and might make systems that worked by accident break since it turns=20
-things into a hard failure, it won't make anything that didn't work
-previously work.
+The driver dictates the endianness of the FUSE protocol session.  The
+virtio-fs device specification states that the device looks at the first
+request's fuse_in_header::opcode field to detect the guest endianness.
 
---QWpDgw58+k1mSFBj
+If it sees FUSE_INIT in its native endianness then no byte-swapping is
+necessary.  If it sees FUSE_INIT in the opposite endianness then
+byte-swapping is necessary on the device side.
+
+--uZ3hkaAS1mZxFaxD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1v/hIACgkQJNaLcl1U
-h9Dkowf+KbjSSQVbjapxEa9i0Tmjpe8K9MpYCABj4iB/aertfFsfF7lruARygQLs
-JLqr5Rdf/lmK5Acn+3UKnkVvJOrFWnasjMZsgZW5oZ47CdjaWIuQ76BAclHtwUCr
-7DoyuUnAHbZPXWw7BbKv6zt/wb++RdWuweuzUa2LE6YwVQCqixGpXmYz7RRhfcDm
-SMPYuYMczBvj8iONtRILTZc40DtYsPkc7jXvk67bwjImQceyuq4uW4/jTerTgzfm
-s0ZnoSOxopHUwoJ6V/Va+ae7DweWi/+bOqBbo69ff6lD6gZ2miKg3Wxb5tN5mAwh
-UsPNYX9fBwy9tJvNRwq0aAvOf4fGEA==
-=2RWa
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1v/34ACgkQnKSrs4Gr
+c8i/Ngf/avxJID8kUoTNNjfyRoLArYmKGT1yBKp6x5LN822UCgyyHpur20MmX6XI
+zFrzqnp+AlNkaQu9P9RKeh2mhdnZNjHx9KSg/UezvIHG055WKJ2WTw2SQDhuAY5q
+Yz4+5Se2gV8OeNDIPoqBFXM+yLLJpXATZGrtKSoAQd5x8Q/ll6ctpzcM71rCDVla
+2kbcqDNOBo+A45A8cfHLJ8a4ppNOKoFbWPp+DLsyHPiifbdFAxxMbG4SgsnN6i59
+1n/+Y6Nz/92n6kL/czYdZ6kwovv9IUdO0DFzn/lQpgRYL3dLO/qS5G7/korqfnyf
+JUECay8lk+EPxVOJPt9HFaen8QA2xw==
+=sBLJ
 -----END PGP SIGNATURE-----
 
---QWpDgw58+k1mSFBj--
+--uZ3hkaAS1mZxFaxD--
