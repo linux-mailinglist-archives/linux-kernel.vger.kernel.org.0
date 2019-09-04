@@ -2,107 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47AC7A8415
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87149A840F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:49:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbfIDNCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 09:02:25 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53664 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730257AbfIDNCY (ORCPT
+        id S1730222AbfIDNCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 09:02:15 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37403 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727929AbfIDNCP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 09:02:24 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q19so3228023wmc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 06:02:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XYc/WH2seI0xG53pu04DpOsVrDgCeSJvzPVy1Wb7xbc=;
-        b=OpobEe6f+1X770rq3d1rRf53pMVcgDaDEKe/WovlDp2hG/tqPnfNk5zQL1yR5IXJYF
-         1MOTewq98YCQHq/Qu51mnCqQgtFbvHRRrMZ1+RGH0XfLfY6vCw6Dlf98UjtK/a+kDkuk
-         nNsbIV8a1uNN66skhbYXIn4MVV0MeZM/TnE/j0BzdJTkbG0Nzg0kOh4ZJUZQtOh7vC/h
-         bIEWGp3OWkoRDE2kZoGRRjicvsFXw0aeLn0495+eVPjpkaUDvVQNEfgQ3uSgctfx0TPl
-         D8364k+W38v403LkqfHJzbpKJHFHRtkk4JMoBJI0YcJJFrX68HXQqL7xURr3fLiOJNV9
-         6UKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XYc/WH2seI0xG53pu04DpOsVrDgCeSJvzPVy1Wb7xbc=;
-        b=PYrNTbO7P8tqrkLfbCcovqHEHVCMIlh2CqOQy4eGsg6688uKw4O5mvwc+n5L5sqKyk
-         7qHztmXqwB2rXWBi1IY2RW35ioLwY5cxpM2ZpN965gqSnyS3LWRR9X+LjIhvhrRxEvKL
-         ExEC2rKztKDSA+RNUgEk9yJ7pdA0QyQyrZrsQeGSDHtC65bd1KH95UWr6T4vht/eNYCl
-         eYqkSNZhs5YyEXsn7BkcihsITiRN9c8f367Z/heM/UnLZfL105JsW9iBSZvhA+ljnF3U
-         4aHwDetvO8gYjWK5+Y+wXGwlVJauFUleuMSdO6G7lXsgJK3OOi7yKwINIwu3zcNj3C+H
-         5ZIw==
-X-Gm-Message-State: APjAAAUGWbKK5JyawaLxT5Dup3r0iCtgQwXF52+QFgYvvqYhO/KjqJGr
-        9oVS6eP+TH1ErJxjBGwh3mUeCjg9tQNJgrDwjFEnFA==
-X-Google-Smtp-Source: APXvYqyCgK6btzLgwwnSgv74jEoWQoHI8ozi7jcw7cQUQdxzdOcrwHxKh0kRXd8ctiQN4glkzmopK4ioCeAsyCa3ItY=
-X-Received: by 2002:a1c:3cc3:: with SMTP id j186mr4129045wma.119.1567602141735;
- Wed, 04 Sep 2019 06:02:21 -0700 (PDT)
+        Wed, 4 Sep 2019 09:02:15 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-96.corp.google.com [104.133.0.96] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x84D29pR023350
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 4 Sep 2019 09:02:11 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 2D04142049E; Wed,  4 Sep 2019 09:02:09 -0400 (EDT)
+Date:   Wed, 4 Sep 2019 09:02:09 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     zhao.hang1@zte.com.cn
+Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, jiang.xuexin@zte.com.cn
+Subject: Re: [PATCH] fs:ext4:remove unused including <linux/version.h>
+Message-ID: <20190904130209.GB3044@mit.edu>
+References: <201909041536282215333@zte.com.cn>
 MIME-Version: 1.0
-References: <20190901203532.2615-1-hdegoede@redhat.com>
-In-Reply-To: <20190901203532.2615-1-hdegoede@redhat.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 4 Sep 2019 06:02:09 -0700
-Message-ID: <CAKv+Gu8zQd982BH=WRzJC_acU5d+JR2vYzwm9cs4Zrp5Y3FzrQ@mail.gmail.com>
-Subject: Re: [PATCH 0/9] crypto: sha256 - Merge crypto/sha256.h into crypto/sha.h
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Atul Gupta <atul.gupta@chelsio.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201909041536282215333@zte.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 1 Sep 2019 at 13:35, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi All,
->
-> As promised here is a follow-up series to my earlier sha256 series.
->
-> Note I have only compiled and tested this series on x86_64 !!
->
-> All changes to architecture specific code on other archs have not even
-> been tested to compile! With that said most of these changes were done
-> using my editors search - replace function so things should be fine...
-> (and FWIW I did do a Kconfig hack to compile test the ccree change).
->
-> The first patch in this series rename various file local functions /
-> arrays to avoid conflicts with the new include/crypto/sha256.h, followed
-> by a patch merging include/crypto/sha256.h into include/crypto/sha.h.
->
-> The last patch makes use of this merging to remove a bit more code
-> duplication, making sha256_generic use sha256_init and sha224_init from
-> lib/crypto/sha256.c. An added advantage of this, is that this gives these
-> 2 functions coverage by the crypto selftests.
->
+On Wed, Sep 04, 2019 at 03:36:28PM +0800, zhao.hang1@zte.com.cn wrote:
+> fix compiler error in ext4.hfs/ext4/ext4.h:30:27: fatal error: linux/version.h: No such file or directorySigned-off-by: Zhao Hang <zhao.hang1@zte.com.cn> --- fs/ext4/ext4.h | 1 - 1 file changed, 1 deletion(-)diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.hindex 1cb6785..9baa4cf 100644--- a/fs/ext4/ext4.h+++ b/fs/ext4/ext4.h@@ -27,7 +27,6 @@ #include <linux/seqlock.h>  #include <linux/mutex.h>  #include <linux/timer.h> -#include <linux/version.h>  #include <linux/wait.h>  #include <linux/sched/signal.h>  #include <linux/blockgroup_lock.h> --  2.15.2
 
-For the series,
+First of all, this patch is completely white space namaged.
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Secondly, this is a problem in how you are building your kernel (or
+ext4 as a module, if you are trying to build ext4 as some kind of out
+of tree module or some such).  When you do a kernel build, the file
+include/linux/version.h is automatically generated.  It will look
+something like this.
 
-Thanks Hans.
+% cat /build/ext4-64/usr/include/linux/version.h
+#define LINUX_VERSION_CODE 327936
+#define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+
+			      	       	     - Ted
