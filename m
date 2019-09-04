@@ -2,82 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D9BA7DCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D04B7A7DD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 10:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbfIDIYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 04:24:48 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1225 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729398AbfIDIYq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:24:46 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d6f74d00000>; Wed, 04 Sep 2019 01:24:48 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 04 Sep 2019 01:24:45 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 04 Sep 2019 01:24:45 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Sep
- 2019 08:24:45 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 4 Sep 2019 08:24:45 +0000
-Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.65.118]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d6f74ca0000>; Wed, 04 Sep 2019 01:24:45 -0700
-From:   Nagarjuna Kristam <nkristam@nvidia.com>
-To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [Patch V8 8/8] arm64: defconfig: Enable tegra XUDC driver
-Date:   Wed, 4 Sep 2019 13:54:00 +0530
-Message-ID: <1567585440-13751-9-git-send-email-nkristam@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567585440-13751-1-git-send-email-nkristam@nvidia.com>
-References: <1567585440-13751-1-git-send-email-nkristam@nvidia.com>
-X-NVConfidentiality: public
+        id S1729204AbfIDIZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 04:25:56 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5753 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727054AbfIDIZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 04:25:55 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 77C2C866E5C9B334EF1E;
+        Wed,  4 Sep 2019 16:25:53 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
+ 16:25:43 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <olof@lixom.net>, <info@metux.net>,
+        <alexander.sverdlin@gmail.com>, <tglx@linutronix.de>,
+        <hsweeten@visionengravers.com>, <yuehaibing@huawei.com>,
+        <arnd@arndb.de>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] ASoC: ep93xx: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 4 Sep 2019 16:25:07 +0800
+Message-ID: <20190904082507.24300-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1567585488; bh=GvS3ClGd1yzL7EF3nm32RdBaX4FqGGNeXUuW2nQkYeo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=GXSPnWZ3/7AKUZ5Qlpb80Jve1KPVWGNOoPuBlsG+mHLbssAsasdb++2IN4k3c9nkB
-         1yYa+DhA8mbtDZkBfpFo2mSWoLSvybIoxIzlaoy/Z18ZiL4aclxx0rk4WVRP5zy8n/
-         ATipVP/EltyKP6SStbhyyC+lC59NTuVwJmXmYVoF6nXjzBtYQoTi7zHQvUcej3zHBI
-         2RDUGgT8r+EBqU4dl98PgH1CFR8mISdNT/wFfHmp5iy4bKHfADO+4cpwbfQX7zs0fE
-         JtljEPg2ok423di079Wz9bTYTysHN8Mz81dX1Pde0eR/uUu7hsbEmI5qrGt867Fj+u
-         Zi4xj+xNoPpLA==
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable support for Nvidia XUSB device mode controller driver.
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/cirrus/ep93xx-ac97.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 358b163..e9233df 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -600,6 +600,7 @@ CONFIG_USB_ULPI=y
- CONFIG_USB_GADGET=y
- CONFIG_USB_RENESAS_USBHS_UDC=m
- CONFIG_USB_RENESAS_USB3=m
-+CONFIG_USB_TEGRA_XUDC=m
- CONFIG_TYPEC=m
- CONFIG_TYPEC_HD3SS3220=m
- CONFIG_MMC=y
+diff --git a/sound/soc/cirrus/ep93xx-ac97.c b/sound/soc/cirrus/ep93xx-ac97.c
+index 84c967f..e21eaa1 100644
+--- a/sound/soc/cirrus/ep93xx-ac97.c
++++ b/sound/soc/cirrus/ep93xx-ac97.c
+@@ -362,7 +362,6 @@ static const struct snd_soc_component_driver ep93xx_ac97_component = {
+ static int ep93xx_ac97_probe(struct platform_device *pdev)
+ {
+ 	struct ep93xx_ac97_info *info;
+-	struct resource *res;
+ 	int irq;
+ 	int ret;
+ 
+@@ -370,8 +369,7 @@ static int ep93xx_ac97_probe(struct platform_device *pdev)
+ 	if (!info)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	info->regs = devm_ioremap_resource(&pdev->dev, res);
++	info->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(info->regs))
+ 		return PTR_ERR(info->regs);
+ 
 -- 
 2.7.4
+
 
