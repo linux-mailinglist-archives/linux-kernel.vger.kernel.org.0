@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EB92A8E64
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0297A8EA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387915AbfIDR5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:57:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35796 "EHLO mail.kernel.org"
+        id S2388199AbfIDR7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:59:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387898AbfIDR5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:57:43 -0400
+        id S1733180AbfIDR7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:59:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63E3721883;
-        Wed,  4 Sep 2019 17:57:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AB72208E4;
+        Wed,  4 Sep 2019 17:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619862;
-        bh=fp7pC5A6v8DesicfVH1brRId9ycSV71FJmTtEnSVlJ0=;
+        s=default; t=1567619948;
+        bh=/vl8O0bc9Wc17DWin3Bn7d3rT4P4Ss6k0ItKG2xe9Bg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aAhysD7GptrDMtLnBW4/95ANR+hOIJyiHUyjPlyOZQOjqcKHSNmu4e0KW16Mkvvf2
-         iJ14JTLQ4SWhpq60QVaflmbYo+w+vBAuQCm4sTaHu5W4gWRI3fljpTeUflSutND3QE
-         R3JC1nG+QdXxJeTB2WrE8g3dNzaYJ6svYgjVpeLU=
+        b=KOtvTi/3xa1x3W2aaey5/aaonzSfWbyhWb/eEVLYH/pkpFQ1R/Qb+dROVm1rS+fm8
+         H430hU28lCWdd5IAKIWKJ0TvhBBl+49VcKTMP91T//ZPjXadNO1bCYk0qvhokzFbOu
+         iUv24QG7/hhA8O6BcsEvKmGdIDxNORpFBh+28EVA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 22/77] selftests: kvm: Adding config fragments
+Subject: [PATCH 4.9 17/83] NFSv4: Fix a potential sleep while atomic in nfs4_do_reclaim()
 Date:   Wed,  4 Sep 2019 19:53:09 +0200
-Message-Id: <20190904175305.676613129@linuxfoundation.org>
+Message-Id: <20190904175305.430416704@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,28 +44,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c096397c78f766db972f923433031f2dec01cae0 ]
+[ Upstream commit c77e22834ae9a11891cb613bd9a551be1b94f2bc ]
 
-selftests kvm test cases need pre-required kernel configs for the test
-to get pass.
+John Hubbard reports seeing the following stack trace:
 
-Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+nfs4_do_reclaim
+   rcu_read_lock /* we are now in_atomic() and must not sleep */
+       nfs4_purge_state_owners
+           nfs4_free_state_owner
+               nfs4_destroy_seqid_counter
+                   rpc_destroy_wait_queue
+                       cancel_delayed_work_sync
+                           __cancel_work_timer
+                               __flush_work
+                                   start_flush_work
+                                       might_sleep:
+                                        (kernel/workqueue.c:2975: BUG)
+
+The solution is to separate out the freeing of the state owners
+from nfs4_purge_state_owners(), and perform that outside the atomic
+context.
+
+Reported-by: John Hubbard <jhubbard@nvidia.com>
+Fixes: 0aaaf5c424c7f ("NFS: Cache state owners after files are closed")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/kvm/config | 3 +++
- 1 file changed, 3 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/config
+ fs/nfs/nfs4_fs.h    |  3 ++-
+ fs/nfs/nfs4client.c |  5 ++++-
+ fs/nfs/nfs4state.c  | 27 ++++++++++++++++++++++-----
+ 3 files changed, 28 insertions(+), 7 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
-new file mode 100644
-index 0000000000000..63ed533f73d6e
---- /dev/null
-+++ b/tools/testing/selftests/kvm/config
-@@ -0,0 +1,3 @@
-+CONFIG_KVM=y
-+CONFIG_KVM_INTEL=y
-+CONFIG_KVM_AMD=y
+diff --git a/fs/nfs/nfs4_fs.h b/fs/nfs/nfs4_fs.h
+index 1452177c822db..c719389381dc4 100644
+--- a/fs/nfs/nfs4_fs.h
++++ b/fs/nfs/nfs4_fs.h
+@@ -434,7 +434,8 @@ static inline void nfs4_schedule_session_recovery(struct nfs4_session *session,
+ 
+ extern struct nfs4_state_owner *nfs4_get_state_owner(struct nfs_server *, struct rpc_cred *, gfp_t);
+ extern void nfs4_put_state_owner(struct nfs4_state_owner *);
+-extern void nfs4_purge_state_owners(struct nfs_server *);
++extern void nfs4_purge_state_owners(struct nfs_server *, struct list_head *);
++extern void nfs4_free_state_owners(struct list_head *head);
+ extern struct nfs4_state * nfs4_get_open_state(struct inode *, struct nfs4_state_owner *);
+ extern void nfs4_put_open_state(struct nfs4_state *);
+ extern void nfs4_close_state(struct nfs4_state *, fmode_t);
+diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
+index 43f42cc30a606..1ec6dd4f3e2e4 100644
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -781,9 +781,12 @@ found:
+ 
+ static void nfs4_destroy_server(struct nfs_server *server)
+ {
++	LIST_HEAD(freeme);
++
+ 	nfs_server_return_all_delegations(server);
+ 	unset_pnfs_layoutdriver(server);
+-	nfs4_purge_state_owners(server);
++	nfs4_purge_state_owners(server, &freeme);
++	nfs4_free_state_owners(&freeme);
+ }
+ 
+ /*
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 6f474b0670323..4e63daeef6339 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -611,24 +611,39 @@ void nfs4_put_state_owner(struct nfs4_state_owner *sp)
+ /**
+  * nfs4_purge_state_owners - Release all cached state owners
+  * @server: nfs_server with cached state owners to release
++ * @head: resulting list of state owners
+  *
+  * Called at umount time.  Remaining state owners will be on
+  * the LRU with ref count of zero.
++ * Note that the state owners are not freed, but are added
++ * to the list @head, which can later be used as an argument
++ * to nfs4_free_state_owners.
+  */
+-void nfs4_purge_state_owners(struct nfs_server *server)
++void nfs4_purge_state_owners(struct nfs_server *server, struct list_head *head)
+ {
+ 	struct nfs_client *clp = server->nfs_client;
+ 	struct nfs4_state_owner *sp, *tmp;
+-	LIST_HEAD(doomed);
+ 
+ 	spin_lock(&clp->cl_lock);
+ 	list_for_each_entry_safe(sp, tmp, &server->state_owners_lru, so_lru) {
+-		list_move(&sp->so_lru, &doomed);
++		list_move(&sp->so_lru, head);
+ 		nfs4_remove_state_owner_locked(sp);
+ 	}
+ 	spin_unlock(&clp->cl_lock);
++}
+ 
+-	list_for_each_entry_safe(sp, tmp, &doomed, so_lru) {
++/**
++ * nfs4_purge_state_owners - Release all cached state owners
++ * @head: resulting list of state owners
++ *
++ * Frees a list of state owners that was generated by
++ * nfs4_purge_state_owners
++ */
++void nfs4_free_state_owners(struct list_head *head)
++{
++	struct nfs4_state_owner *sp, *tmp;
++
++	list_for_each_entry_safe(sp, tmp, head, so_lru) {
+ 		list_del(&sp->so_lru);
+ 		nfs4_free_state_owner(sp);
+ 	}
+@@ -1764,12 +1779,13 @@ static int nfs4_do_reclaim(struct nfs_client *clp, const struct nfs4_state_recov
+ 	struct nfs4_state_owner *sp;
+ 	struct nfs_server *server;
+ 	struct rb_node *pos;
++	LIST_HEAD(freeme);
+ 	int status = 0;
+ 
+ restart:
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
+-		nfs4_purge_state_owners(server);
++		nfs4_purge_state_owners(server, &freeme);
+ 		spin_lock(&clp->cl_lock);
+ 		for (pos = rb_first(&server->state_owners);
+ 		     pos != NULL;
+@@ -1798,6 +1814,7 @@ restart:
+ 		spin_unlock(&clp->cl_lock);
+ 	}
+ 	rcu_read_unlock();
++	nfs4_free_state_owners(&freeme);
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
