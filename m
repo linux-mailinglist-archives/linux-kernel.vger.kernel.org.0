@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB79BA7821
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 03:44:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0225A7825
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 03:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbfIDBoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 21:44:18 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:55862 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726009AbfIDBoS (ORCPT
+        id S1727827AbfIDBor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 21:44:47 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:50842 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726009AbfIDBor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 21:44:18 -0400
-X-UUID: 9601f760e38440418cadeb7ac1cffc09-20190904
-X-UUID: 9601f760e38440418cadeb7ac1cffc09-20190904
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        Tue, 3 Sep 2019 21:44:47 -0400
+X-UUID: eabea19c6d69486186c290d34bf6f155-20190904
+X-UUID: eabea19c6d69486186c290d34bf6f155-20190904
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
         (envelope-from <ck.hu@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1155643741; Wed, 04 Sep 2019 09:44:11 +0800
+        with ESMTP id 1255011092; Wed, 04 Sep 2019 09:44:39 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 4 Sep 2019 09:44:08 +0800
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 4 Sep 2019 09:44:34 +0800
 Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 4 Sep 2019 09:44:08 +0800
-Message-ID: <1567561448.6949.0.camel@mtksdaap41>
-Subject: Re: [PATCH v5, 02/32] dt-bindings: mediatek: add ovl_2l description
+ Transport; Wed, 4 Sep 2019 09:44:34 +0800
+Message-ID: <1567561475.6949.1.camel@mtksdaap41>
+Subject: Re: [PATCH v5, 03/32] dt-bindings: mediatek: add ccorr description
  for mt8183 display
 From:   CK Hu <ck.hu@mediatek.com>
 To:     <yongqiang.niu@mediatek.com>
@@ -38,15 +38,15 @@ CC:     Philipp Zabel <p.zabel@pengutronix.de>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>
-Date:   Wed, 4 Sep 2019 09:44:08 +0800
-In-Reply-To: <1567090254-15566-3-git-send-email-yongqiang.niu@mediatek.com>
+Date:   Wed, 4 Sep 2019 09:44:35 +0800
+In-Reply-To: <1567090254-15566-4-git-send-email-yongqiang.niu@mediatek.com>
 References: <1567090254-15566-1-git-send-email-yongqiang.niu@mediatek.com>
-         <1567090254-15566-3-git-send-email-yongqiang.niu@mediatek.com>
+         <1567090254-15566-4-git-send-email-yongqiang.niu@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 8264C2D1E11AEA1A4F44BD0DDA0F68C7BD70E9D873AA0FEFE7B33B2BA55FEC962000:8
+X-TM-SNTS-SMTP: 1E6931ECFD1B2E8E6D7DD6F395901224FABA8A85FBB7C0518DFB1CC95358D1B02000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -71,48 +71,22 @@ CK
 
 > 
 > Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Rob Herring <robh at kernel.org>
 > ---
->  .../bindings/display/mediatek/mediatek,disp.txt    | 27 +++++++++++-----------
->  1 file changed, 14 insertions(+), 13 deletions(-)
+>  Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 > diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> index 464b92f..8c4700f 100644
+> index 8c4700f..cf5fb08 100644
 > --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
 > +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> @@ -27,19 +27,20 @@ Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt.
->  
->  Required properties (all function blocks):
->  - compatible: "mediatek,<chip>-disp-<function>", one of
-> -	"mediatek,<chip>-disp-ovl"   - overlay (4 layers, blending, csc)
-> -	"mediatek,<chip>-disp-rdma"  - read DMA / line buffer
-> -	"mediatek,<chip>-disp-wdma"  - write DMA
-> -	"mediatek,<chip>-disp-color" - color processor
-> -	"mediatek,<chip>-disp-aal"   - adaptive ambient light controller
-> -	"mediatek,<chip>-disp-gamma" - gamma correction
-> -	"mediatek,<chip>-disp-merge" - merge streams from two RDMA sources
-> -	"mediatek,<chip>-disp-split" - split stream to two encoders
-> -	"mediatek,<chip>-disp-ufoe"  - data compression engine
-> -	"mediatek,<chip>-dsi"        - DSI controller, see mediatek,dsi.txt
-> -	"mediatek,<chip>-dpi"        - DPI controller, see mediatek,dpi.txt
-> -	"mediatek,<chip>-disp-mutex" - display mutex
-> -	"mediatek,<chip>-disp-od"    - overdrive
-> +	"mediatek,<chip>-disp-ovl"   		- overlay (4 layers, blending, csc)
-> +	"mediatek,<chip>-disp-ovl-2l"           - overlay (2 layers, blending, csc)
-> +	"mediatek,<chip>-disp-rdma"  		- read DMA / line buffer
-> +	"mediatek,<chip>-disp-wdma"  		- write DMA
-> +	"mediatek,<chip>-disp-color" 		- color processor
-> +	"mediatek,<chip>-disp-aal"   		- adaptive ambient light controller
-> +	"mediatek,<chip>-disp-gamma" 		- gamma correction
-> +	"mediatek,<chip>-disp-merge" 		- merge streams from two RDMA sources
-> +	"mediatek,<chip>-disp-split" 		- split stream to two encoders
-> +	"mediatek,<chip>-disp-ufoe"  		- data compression engine
-> +	"mediatek,<chip>-dsi"        		- DSI controller, see mediatek,dsi.txt
-> +	"mediatek,<chip>-dpi"        		- DPI controller, see mediatek,dpi.txt
-> +	"mediatek,<chip>-disp-mutex" 		- display mutex
-> +	"mediatek,<chip>-disp-od"    		- overdrive
->    the supported chips are mt2701, mt2712 and mt8173.
->  - reg: Physical base address and length of the function block register space
->  - interrupts: The interrupt signal from the function block (required, except for
+> @@ -31,6 +31,7 @@ Required properties (all function blocks):
+>  	"mediatek,<chip>-disp-ovl-2l"           - overlay (2 layers, blending, csc)
+>  	"mediatek,<chip>-disp-rdma"  		- read DMA / line buffer
+>  	"mediatek,<chip>-disp-wdma"  		- write DMA
+> +	"mediatek,<chip>-disp-ccorr"            - color correction
+>  	"mediatek,<chip>-disp-color" 		- color processor
+>  	"mediatek,<chip>-disp-aal"   		- adaptive ambient light controller
+>  	"mediatek,<chip>-disp-gamma" 		- gamma correction
 
 
