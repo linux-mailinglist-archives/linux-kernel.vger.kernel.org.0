@@ -2,59 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F26A7FFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 12:06:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F337A8009
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 12:10:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729394AbfIDKGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 06:06:31 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6640 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726495AbfIDKGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 06:06:30 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D7F48FD5C2E9101ECC8A;
-        Wed,  4 Sep 2019 18:06:28 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 4 Sep 2019 18:06:22 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>
-CC:     <linux-kernel@vger.kernel.org>, <zhongjiang@huawei.com>
-Subject: [PATCH] staging: exfat: remove the redundant check when kfree an object in exfat_destroy_inode
-Date:   Wed, 4 Sep 2019 18:03:28 +0800
-Message-ID: <1567591408-24268-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1729423AbfIDKKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 06:10:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726528AbfIDKKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 06:10:03 -0400
+Received: from localhost.localdomain (unknown [122.182.201.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A466221881;
+        Wed,  4 Sep 2019 10:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567591802;
+        bh=Aw79mLTqa2kwkYl2YhNG5h7HCrO6r1u9MxIbyMHIMGQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ouggbG2sksRb3hDfkIcZCU2V/9FmlXAZRgl+X+p35vZPVJNXzp5JYq7AJ2xm7488V
+         eDavLnbEw+ugBjndvzO3yXtUd1s7DXNDCriLfH8FWuHrHQC/50G4Ruto9kGfVviL/8
+         bOohPunHHdQVWMs5mSUwBCiFed/Aj6y9tfoBweS8=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Evan Green <evgreen@chromium.org>,
+        Can Guo <cang@codeaurora.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: [PATCH 0/3] UFS: Add support for SM8150 UFS
+Date:   Wed,  4 Sep 2019 15:38:32 +0530
+Message-Id: <20190904100835.6099-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kfree has taken the null check in account. hence it is unnecessary to add the
-null check before kfree the object. Just remove it.
+This series adds compatible strings for ufs hc and ufs qmp phy found in
+Qualcomm SM8150 SoC. Also update the qmp phy driver with version 4 and
+support for ufs phy.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/staging/exfat/exfat_super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Vinod Koul (3):
+  dt-bindings: ufs: Add sm8150 compatible string
+  dt-bindings: phy-qcom-qmp: Add sm8150 UFS phy compatible string
+  phy: qcom-qmp: Add SM8150 QMP UFS PHY support
 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 5b5c2ca..87f858b 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -3487,8 +3487,7 @@ static struct inode *exfat_alloc_inode(struct super_block *sb)
- 
- static void exfat_destroy_inode(struct inode *inode)
- {
--	if (EXFAT_I(inode)->target)
--		kfree(EXFAT_I(inode)->target);
-+	kfree(EXFAT_I(inode)->target);
- 	EXFAT_I(inode)->target = NULL;
- 
- 	kmem_cache_free(exfat_inode_cachep, EXFAT_I(inode));
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt  |   7 +-
+ .../devicetree/bindings/ufs/ufshcd-pltfrm.txt |   1 +
+ drivers/phy/qualcomm/phy-qcom-qmp.c           | 125 ++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp.h           |  96 ++++++++++++++
+ 4 files changed, 228 insertions(+), 1 deletion(-)
+
 -- 
-1.7.12.4
+2.20.1
 
