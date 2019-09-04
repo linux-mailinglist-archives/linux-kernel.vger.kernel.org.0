@@ -2,84 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3714A830B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0533BA82D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 14:51:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730348AbfIDMfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 08:35:07 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:32800 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729996AbfIDMfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:35:05 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C8C813E6C863CC25DDB0;
-        Wed,  4 Sep 2019 20:35:03 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
- 20:34:56 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <miquel.raynal@bootlin.com>, <rui.zhang@intel.com>,
-        <edubezval@gmail.com>, <daniel.lezcano@linaro.org>,
-        <amit.kucheria@verdurent.com>, <eric@anholt.net>,
-        <wahrenst@gmx.net>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
-        <sbranden@broadcom.com>, <mmayer@broadcom.com>,
-        <computersforpeace@gmail.com>, <gregory.0xf0@gmail.com>,
-        <matthias.bgg@gmail.com>, <agross@kernel.org>, <heiko@sntech.de>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <marc.w.gonzalez@free.fr>, <mans@mansr.com>, <talel@amazon.com>,
-        <jun.nie@linaro.org>, <shawnguo@kernel.org>,
-        <phil@raspberrypi.org>, <yuehaibing@huawei.com>,
-        <gregkh@linuxfoundation.org>, <david.hernandezsanchez@st.com>,
-        <horms+renesas@verge.net.au>, <wsa+renesas@sang-engineering.com>
-CC:     <bcm-kernel-feedback-list@broadcom.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH -next 15/15] thermal: rcar: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 4 Sep 2019 20:29:39 +0800
-Message-ID: <20190904122939.23780-16-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190904122939.23780-1-yuehaibing@huawei.com>
-References: <20190904122939.23780-1-yuehaibing@huawei.com>
+        id S1729863AbfIDMaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 08:30:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43282 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbfIDMaj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 08:30:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=g/BsOG3t1AtJ5lMidOZwhIOXQj5VBbo4erwS718yjdc=; b=R+3E/74urBfbdKLa0LkBouwQU
+        82f/5/S15HmEO89PYuLHVCX06uO6Wz8UzeBYsQbrmSvLx4fZx7caz6juXIO0MA9kbjanRyfwYwk1t
+        X60CYJj2Yx19r7Z29FAOmwm/jdiM7aUtzU5NmSCtATR9jMg38QTczNdolNhSUKms3sMyk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1i5UQk-0005VG-SA; Wed, 04 Sep 2019 12:30:34 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 9E7B92742B45; Wed,  4 Sep 2019 13:30:33 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH] drm/panfrost: Fix regulator_get_optional() misuse
+Date:   Wed,  4 Sep 2019 13:30:32 +0100
+Message-Id: <20190904123032.23263-1-broonie@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+The panfrost driver requests a supply using regulator_get_optional()
+but both the name of the supply and the usage pattern suggest that it is
+being used for the main power for the device and is not at all optional
+for the device for function, there is no meaningful handling for absent
+supplies.  Such regulators should use the vanilla regulator_get()
+interface, it will ensure that even if a supply is not described in the
+system integration one will be provided in software.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/thermal/rcar_thermal.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/panfrost/panfrost_device.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index d0873de..d7f6aab 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -523,9 +523,8 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 			 * Then, driver uses common registers
- 			 * rcar_has_irq_support() will be enabled
- 			 */
--			res = platform_get_resource(pdev, IORESOURCE_MEM,
--						    mres++);
--			common->base = devm_ioremap_resource(dev, res);
-+			common->base = devm_platform_ioremap_resource(pdev,
-+								      mres++);
- 			if (IS_ERR(common->base))
- 				return PTR_ERR(common->base);
+diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
+index 46b0b02e4289..238fb6d54df4 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_device.c
++++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+@@ -89,12 +89,9 @@ static int panfrost_regulator_init(struct panfrost_device *pfdev)
+ {
+ 	int ret;
  
+-	pfdev->regulator = devm_regulator_get_optional(pfdev->dev, "mali");
++	pfdev->regulator = devm_regulator_get(pfdev->dev, "mali");
+ 	if (IS_ERR(pfdev->regulator)) {
+ 		ret = PTR_ERR(pfdev->regulator);
+-		pfdev->regulator = NULL;
+-		if (ret == -ENODEV)
+-			return 0;
+ 		dev_err(pfdev->dev, "failed to get regulator: %d\n", ret);
+ 		return ret;
+ 	}
+@@ -110,8 +107,7 @@ static int panfrost_regulator_init(struct panfrost_device *pfdev)
+ 
+ static void panfrost_regulator_fini(struct panfrost_device *pfdev)
+ {
+-	if (pfdev->regulator)
+-		regulator_disable(pfdev->regulator);
++	regulator_disable(pfdev->regulator);
+ }
+ 
+ int panfrost_device_init(struct panfrost_device *pfdev)
 -- 
-2.7.4
-
+2.20.1
 
