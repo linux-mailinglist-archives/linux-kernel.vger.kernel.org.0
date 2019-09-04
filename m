@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62B90A9058
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36823A9154
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388988AbfIDSJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:09:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52178 "EHLO mail.kernel.org"
+        id S2390582AbfIDSOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:14:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389883AbfIDSJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:09:05 -0400
+        id S2390861AbfIDSOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:14:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31A3F206B8;
-        Wed,  4 Sep 2019 18:09:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8FDF2087E;
+        Wed,  4 Sep 2019 18:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620544;
-        bh=nyHFDJKYzA+t0neNF48mnqaUBiG7rN3n6CQ7J3o0yIo=;
+        s=default; t=1567620886;
+        bh=BVH+rLpmZ6neUJNJuRdO+TPWnwygrLavAPvcbkHC5iQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LlG3LUkpcsJyTdWxzkpBjQhJsuoIxCFjsrJIR5f/hrSi8A2t1o7Q2Wk7vNrcfOBtR
-         updofmwLrY6PWbT+TpY/7fz1hJ8hTQCFPXnJSbMBQbI3DStOXlGE3fCUwLFlzyOPg2
-         Xo2dyyTDffTOb2Hbhu67xUMMUaGDpimpMWRXcRj8=
+        b=Mb6+fTKYUdxr7H88ZKVVOrM6/6Kf7KlCvvDFJqCfUlTPZ7HEspX7m03taCkA6/aXB
+         gyoDPaiGY4D8wj/ug5mKjMMRLMtgnkGD4KhYmwYmoePU8yM/Mug9+Dk3BiARbHmIdI
+         qnGZ7yngyNl4uWKkUOy7sStHhQOzOVTnwSlTKtPA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Cooks <andrew.cooks@opengear.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 91/93] i2c: piix4: Fix port selection for AMD Family 16h Model 30h
-Date:   Wed,  4 Sep 2019 19:54:33 +0200
-Message-Id: <20190904175310.979552507@linuxfoundation.org>
+Subject: [PATCH 5.2 131/143] mmc: sdhci-sprd: add get_ro hook function
+Date:   Wed,  4 Sep 2019 19:54:34 +0200
+Message-Id: <20190904175319.529783933@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,93 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c7c06a1532f3fe106687ac82a13492c6a619ff1c ]
+[ Upstream commit 4eae8cbdff942a423926486be4e781a77d619966 ]
 
-Family 16h Model 30h SMBus controller needs the same port selection fix
-as described and fixed in commit 0fe16195f891 ("i2c: piix4: Fix SMBus port
-selection for AMD Family 17h chips")
+sprd's sd host controller doesn't support write protect to sd card.
 
-commit 6befa3fde65f ("i2c: piix4: Support alternative port selection
-register") also fixed the port selection for Hudson2, but unfortunately
-this is not the exact same device and the AMD naming and PCI Device IDs
-aren't particularly helpful here.
-
-The SMBus port selection register is common to the following Families
-and models, as documented in AMD's publicly available BIOS and Kernel
-Developer Guides:
-
- 50742 - Family 15h Model 60h-6Fh (PCI_DEVICE_ID_AMD_KERNCZ_SMBUS)
- 55072 - Family 15h Model 70h-7Fh (PCI_DEVICE_ID_AMD_KERNCZ_SMBUS)
- 52740 - Family 16h Model 30h-3Fh (PCI_DEVICE_ID_AMD_HUDSON2_SMBUS)
-
-The Hudson2 PCI Device ID (PCI_DEVICE_ID_AMD_HUDSON2_SMBUS) is shared
-between Bolton FCH and Family 16h Model 30h, but the location of the
-SmBus0Sel port selection bits are different:
-
- 51192 - Bolton Register Reference Guide
-
-We distinguish between Bolton and Family 16h Model 30h using the PCI
-Revision ID:
-
-  Bolton is device 0x780b, revision 0x15
-  Family 16h Model 30h is device 0x780b, revision 0x1F
-  Family 15h Model 60h and 70h are both device 0x790b, revision 0x4A.
-
-The following additional public AMD BKDG documents were checked and do
-not share the same port selection register:
-
- 42301 - Family 15h Model 00h-0Fh doesn't mention any
- 42300 - Family 15h Model 10h-1Fh doesn't mention any
- 49125 - Family 15h Model 30h-3Fh doesn't mention any
-
- 48751 - Family 16h Model 00h-0Fh uses the previously supported
-         index register SB800_PIIX4_PORT_IDX_ALT at 0x2e
-
-Signed-off-by: Andrew Cooks <andrew.cooks@opengear.com>
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Cc: stable@vger.kernel.org [v4.6+]
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host controller")
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+Tested-by: Baolin Wang <baolin.wang@linaro.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-piix4.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/mmc/host/sdhci-sprd.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
-index 90946a8b9a75a..9ff3371ec385d 100644
---- a/drivers/i2c/busses/i2c-piix4.c
-+++ b/drivers/i2c/busses/i2c-piix4.c
-@@ -98,7 +98,7 @@
- #define SB800_PIIX4_PORT_IDX_MASK	0x06
- #define SB800_PIIX4_PORT_IDX_SHIFT	1
+diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+index 1c5e6b77ca641..fc892a8d882fd 100644
+--- a/drivers/mmc/host/sdhci-sprd.c
++++ b/drivers/mmc/host/sdhci-sprd.c
+@@ -291,6 +291,11 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
+ 	return 1 << 31;
+ }
  
--/* On kerncz, SmBus0Sel is at bit 20:19 of PMx00 DecodeEn */
-+/* On kerncz and Hudson2, SmBus0Sel is at bit 20:19 of PMx00 DecodeEn */
- #define SB800_PIIX4_PORT_IDX_KERNCZ		0x02
- #define SB800_PIIX4_PORT_IDX_MASK_KERNCZ	0x18
- #define SB800_PIIX4_PORT_IDX_SHIFT_KERNCZ	3
-@@ -362,18 +362,16 @@ static int piix4_setup_sb800(struct pci_dev *PIIX4_dev,
++static unsigned int sdhci_sprd_get_ro(struct sdhci_host *host)
++{
++	return 0;
++}
++
+ static struct sdhci_ops sdhci_sprd_ops = {
+ 	.read_l = sdhci_sprd_readl,
+ 	.write_l = sdhci_sprd_writel,
+@@ -303,6 +308,7 @@ static struct sdhci_ops sdhci_sprd_ops = {
+ 	.set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
+ 	.hw_reset = sdhci_sprd_hw_reset,
+ 	.get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
++	.get_ro = sdhci_sprd_get_ro,
+ };
  
- 	/* Find which register is used for port selection */
- 	if (PIIX4_dev->vendor == PCI_VENDOR_ID_AMD) {
--		switch (PIIX4_dev->device) {
--		case PCI_DEVICE_ID_AMD_KERNCZ_SMBUS:
-+		if (PIIX4_dev->device == PCI_DEVICE_ID_AMD_KERNCZ_SMBUS ||
-+		    (PIIX4_dev->device == PCI_DEVICE_ID_AMD_HUDSON2_SMBUS &&
-+		     PIIX4_dev->revision >= 0x1F)) {
- 			piix4_port_sel_sb800 = SB800_PIIX4_PORT_IDX_KERNCZ;
- 			piix4_port_mask_sb800 = SB800_PIIX4_PORT_IDX_MASK_KERNCZ;
- 			piix4_port_shift_sb800 = SB800_PIIX4_PORT_IDX_SHIFT_KERNCZ;
--			break;
--		case PCI_DEVICE_ID_AMD_HUDSON2_SMBUS:
--		default:
-+		} else {
- 			piix4_port_sel_sb800 = SB800_PIIX4_PORT_IDX_ALT;
- 			piix4_port_mask_sb800 = SB800_PIIX4_PORT_IDX_MASK;
- 			piix4_port_shift_sb800 = SB800_PIIX4_PORT_IDX_SHIFT;
--			break;
- 		}
- 	} else {
- 		if (!request_muxed_region(SB800_PIIX4_SMB_IDX, 2,
+ static void sdhci_sprd_request(struct mmc_host *mmc, struct mmc_request *mrq)
 -- 
 2.20.1
 
