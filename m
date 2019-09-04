@@ -2,315 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF6CA7EA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:01:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 349A3A7EC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbfIDJA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 05:00:58 -0400
-Received: from mga07.intel.com ([134.134.136.100]:50594 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfIDJA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:00:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 02:00:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
-   d="scan'208";a="198980839"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Sep 2019 02:00:54 -0700
-Subject: Re: [PATCH V9 2/3] mmc: sdhci-pci-o2micro: Move functions in
- preparation to fix DLL lock phase shift issue
-To:     "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
-        "Shaper Liu (WH)" <shaper.liu@bayhubtech.com>,
-        "Louis Lu (TP)" <louis.lu@bayhubtech.com>,
-        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
-        "Max Huang (SC)" <max.huang@bayhubtech.com>
-References: <1567100454-5905-1-git-send-email-shirley.her@bayhubtech.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <d4030287-1cf4-2e8a-a02a-10d2e40d230b@intel.com>
-Date:   Wed, 4 Sep 2019 11:59:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729217AbfIDJEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 05:04:16 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38600 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727348AbfIDJEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 05:04:15 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B7284D2997AFA66EF863;
+        Wed,  4 Sep 2019 17:04:12 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
+ 17:04:02 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>, <hariprasad.kelam@gmail.com>,
+        <yuehaibing@huawei.com>
+CC:     <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] usb: gadget: at91_udc: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 4 Sep 2019 17:02:39 +0800
+Message-ID: <20190904090239.23920-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <1567100454-5905-1-git-send-email-shirley.her@bayhubtech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/08/19 8:40 PM, Shirley Her (SC) wrote:
-> Move functions in preparation to fix DLL lock phase shift issue
-> 
-> Signed-off-by: Shirley Her <shirley.her@bayhubtech.com>
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/usb/gadget/udc/at91_udc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-So that is all 3 patches acked now.
+diff --git a/drivers/usb/gadget/udc/at91_udc.c b/drivers/usb/gadget/udc/at91_udc.c
+index 194ffb1..1b2b548 100644
+--- a/drivers/usb/gadget/udc/at91_udc.c
++++ b/drivers/usb/gadget/udc/at91_udc.c
+@@ -1808,7 +1808,6 @@ static int at91udc_probe(struct platform_device *pdev)
+ 	struct device	*dev = &pdev->dev;
+ 	struct at91_udc	*udc;
+ 	int		retval;
+-	struct resource	*res;
+ 	struct at91_ep	*ep;
+ 	int		i;
+ 
+@@ -1839,8 +1838,7 @@ static int at91udc_probe(struct platform_device *pdev)
+ 			ep->is_pingpong = 1;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	udc->udp_baseaddr = devm_ioremap_resource(dev, res);
++	udc->udp_baseaddr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(udc->udp_baseaddr))
+ 		return PTR_ERR(udc->udp_baseaddr);
+ 
+-- 
+2.7.4
 
-> ---
-> change in V9:
->  1. modify subject and commit message to match the patch
-> 
-> change in V8:
->  1. fix patch format error
-> 
-> change in V7:
->  1. change subject to match the patch
->  2. move functions in preparation to fix DLL lock phase shift issue
-> 
-> change in V6:
->  1. change subject and commit message to match the patch
->  2. modify the get CD status function
->  3. re-arrange the order of some functions
-> 
-> change in V5:
->  1. split 2 patches into 3 patches
->  2. make dll_adjust_count start from 0
->  3. fix ret overwritten issue
->  4. use break instead of goto
-> 
-> change in V4:
->  1. add a bug fix for V3
-> 
-> change in V3:
->  1. add more explanation in dll_recovery and execute_tuning function
->  2. move dll_adjust_count to O2_host struct
->  3. fix some coding style error
->  4. renaming O2_PLL_WDT_CONTROL1 TO O2_PLL_DLL_WDT_CONTROL1
-> 
-> change in V2:
->  1. use usleep_range instead of udelay
->  2. move dll_adjust_count to sdhci-pci-o2micro.c
-> 
-> chagne in V1:
->  1. add error recovery function to relock DLL with correct phase
->  2. retuning HS200 after DLL locked
-> ---
->  drivers/mmc/host/sdhci-pci-o2micro.c | 187 ++++++++++++++++++-----------------
->  1 file changed, 94 insertions(+), 93 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index b3a33d9..57c8b83 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -58,6 +58,100 @@
->  
->  #define O2_SD_DETECT_SETTING 0x324
->  
-> +static void sdhci_o2_wait_card_detect_stable(struct sdhci_host *host)
-> +{
-> +	ktime_t timeout;
-> +	u32 scratch32;
-> +
-> +	/* Wait max 50 ms */
-> +	timeout = ktime_add_ms(ktime_get(), 50);
-> +	while (1) {
-> +		bool timedout = ktime_after(ktime_get(), timeout);
-> +
-> +		scratch32 = sdhci_readl(host, SDHCI_PRESENT_STATE);
-> +		if ((scratch32 & SDHCI_CARD_PRESENT) >> SDHCI_CARD_PRES_SHIFT
-> +		    == (scratch32 & SDHCI_CD_LVL) >> SDHCI_CD_LVL_SHIFT)
-> +			break;
-> +
-> +		if (timedout) {
-> +			pr_err("%s: Card Detect debounce never finished.\n",
-> +			       mmc_hostname(host->mmc));
-> +			sdhci_dumpregs(host);
-> +			return;
-> +		}
-> +		udelay(10);
-> +	}
-> +}
-> +
-> +static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
-> +{
-> +	ktime_t timeout;
-> +	u16 scratch;
-> +	u32 scratch32;
-> +
-> +	/* PLL software reset */
-> +	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
-> +	scratch32 |= O2_PLL_SOFT_RESET;
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> +	udelay(1);
-> +	scratch32 &= ~(O2_PLL_SOFT_RESET);
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> +
-> +	/* PLL force active */
-> +	scratch32 |= O2_PLL_FORCE_ACTIVE;
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> +
-> +	/* Wait max 20 ms */
-> +	timeout = ktime_add_ms(ktime_get(), 20);
-> +	while (1) {
-> +		bool timedout = ktime_after(ktime_get(), timeout);
-> +
-> +		scratch = sdhci_readw(host, O2_PLL_DLL_WDT_CONTROL1);
-> +		if (scratch & O2_PLL_LOCK_STATUS)
-> +			break;
-> +		if (timedout) {
-> +			pr_err("%s: Internal clock never stabilised.\n",
-> +			       mmc_hostname(host->mmc));
-> +			sdhci_dumpregs(host);
-> +			goto out;
-> +		}
-> +		udelay(10);
-> +	}
-> +
-> +	/* Wait for card detect finish */
-> +	udelay(1);
-> +	sdhci_o2_wait_card_detect_stable(host);
-> +
-> +out:
-> +	/* Cancel PLL force active */
-> +	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
-> +	scratch32 &= ~O2_PLL_FORCE_ACTIVE;
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> +}
-> +
-> +static int sdhci_o2_get_cd(struct mmc_host *mmc)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +
-> +	sdhci_o2_enable_internal_clock(host);
-> +
-> +	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
-> +}
-> +
-> +static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
-> +{
-> +	u32 scratch_32;
-> +
-> +	pci_read_config_dword(chip->pdev,
-> +			      O2_SD_PLL_SETTING, &scratch_32);
-> +
-> +	scratch_32 &= 0x0000FFFF;
-> +	scratch_32 |= value;
-> +
-> +	pci_write_config_dword(chip->pdev,
-> +			       O2_SD_PLL_SETTING, scratch_32);
-> +}
-> +
->  static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
->  {
->  	u16 reg;
-> @@ -136,19 +230,6 @@ static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  	return 0;
->  }
->  
-> -static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
-> -{
-> -	u32 scratch_32;
-> -	pci_read_config_dword(chip->pdev,
-> -			      O2_SD_PLL_SETTING, &scratch_32);
-> -
-> -	scratch_32 &= 0x0000FFFF;
-> -	scratch_32 |= value;
-> -
-> -	pci_write_config_dword(chip->pdev,
-> -			       O2_SD_PLL_SETTING, scratch_32);
-> -}
-> -
->  static void o2_pci_led_enable(struct sdhci_pci_chip *chip)
->  {
->  	int ret;
-> @@ -284,86 +365,6 @@ static void sdhci_pci_o2_enable_msi(struct sdhci_pci_chip *chip,
->  	host->irq = pci_irq_vector(chip->pdev, 0);
->  }
->  
-> -static void sdhci_o2_wait_card_detect_stable(struct sdhci_host *host)
-> -{
-> -	ktime_t timeout;
-> -	u32 scratch32;
-> -
-> -	/* Wait max 50 ms */
-> -	timeout = ktime_add_ms(ktime_get(), 50);
-> -	while (1) {
-> -		bool timedout = ktime_after(ktime_get(), timeout);
-> -
-> -		scratch32 = sdhci_readl(host, SDHCI_PRESENT_STATE);
-> -		if ((scratch32 & SDHCI_CARD_PRESENT) >> SDHCI_CARD_PRES_SHIFT
-> -		    == (scratch32 & SDHCI_CD_LVL) >> SDHCI_CD_LVL_SHIFT)
-> -			break;
-> -
-> -		if (timedout) {
-> -			pr_err("%s: Card Detect debounce never finished.\n",
-> -			       mmc_hostname(host->mmc));
-> -			sdhci_dumpregs(host);
-> -			return;
-> -		}
-> -		udelay(10);
-> -	}
-> -}
-> -
-> -static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
-> -{
-> -	ktime_t timeout;
-> -	u16 scratch;
-> -	u32 scratch32;
-> -
-> -	/* PLL software reset */
-> -	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
-> -	scratch32 |= O2_PLL_SOFT_RESET;
-> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> -	udelay(1);
-> -	scratch32 &= ~(O2_PLL_SOFT_RESET);
-> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> -
-> -	/* PLL force active */
-> -	scratch32 |= O2_PLL_FORCE_ACTIVE;
-> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> -
-> -	/* Wait max 20 ms */
-> -	timeout = ktime_add_ms(ktime_get(), 20);
-> -	while (1) {
-> -		bool timedout = ktime_after(ktime_get(), timeout);
-> -
-> -		scratch = sdhci_readw(host, O2_PLL_DLL_WDT_CONTROL1);
-> -		if (scratch & O2_PLL_LOCK_STATUS)
-> -			break;
-> -		if (timedout) {
-> -			pr_err("%s: Internal clock never stabilised.\n",
-> -			       mmc_hostname(host->mmc));
-> -			sdhci_dumpregs(host);
-> -			goto out;
-> -		}
-> -		udelay(10);
-> -	}
-> -
-> -	/* Wait for card detect finish */
-> -	udelay(1);
-> -	sdhci_o2_wait_card_detect_stable(host);
-> -
-> -out:
-> -	/* Cancel PLL force active */
-> -	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
-> -	scratch32 &= ~O2_PLL_FORCE_ACTIVE;
-> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> -}
-> -
-> -static int sdhci_o2_get_cd(struct mmc_host *mmc)
-> -{
-> -	struct sdhci_host *host = mmc_priv(mmc);
-> -
-> -	sdhci_o2_enable_internal_clock(host);
-> -
-> -	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
-> -}
-> -
->  static void sdhci_o2_enable_clk(struct sdhci_host *host, u16 clk)
->  {
->  	/* Enable internal clock */
-> 
 
