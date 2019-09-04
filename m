@@ -2,81 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E63FBA8986
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5193A898A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731359AbfIDP1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 11:27:05 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34512 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbfIDP1F (ORCPT
+        id S1730513AbfIDPa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 11:30:27 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34716 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729888AbfIDPa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 11:27:05 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z21so16315347lfe.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 08:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kv+2wLnUgOif3ThoOBB61ROD4VGFmjn42c/IHIPsCvo=;
-        b=pXDD4U/igN/ckHfDYvEalA2WyC5R9b/soOpEWiHB1bt1n/s8CaSjzE1pqhHvu4xh+4
-         AkmR5U4BpcQHmoCwI/KVdv1aeYQZdTBuuggCoJayY+k/IsM/WktDwOGue13H9dezTIu1
-         +YXAj53T+tpxetS+VOAAJXswWLtMHZDF+pWmO83F5UNIxsFBwrFRjequBqYumqxyLqQC
-         HOHxd47G4he3ee/kJMlpTXE+qu/iJcv1Svfmm1LSD/AwdY7LLj4rcgOpjQhBwSDuAash
-         o3j5VnzSHaPI8Z7veJ6Vr8WvT9zhwzoKsPTkIn3FRKAQn53xhYyFnH+5UddR6jcee8Th
-         QoWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kv+2wLnUgOif3ThoOBB61ROD4VGFmjn42c/IHIPsCvo=;
-        b=mg2Zyj/u/eAxGiEEqNhHj81s/VmASOiCvCt9wGGOawEs/t4axX2wyuJPRZmlydMH4B
-         mZZc68FOY/4lPRokkH/KUKoCTXy4SWCA80aIsUjVkLX8jPDZZR7BdB5TvpiDz55ilNrs
-         lzH437PLhIs0k5GzrebseEo2cZvAmuYkBtXGoUR5WFFbcKaEHZBDT+MhoM2NEs7Z5xPj
-         O4oCaLNwmm1Ehz1ZC+rrJQC2sCoY/NSmRSlnVnfRIYujVVXEaDih02Lc7QOj4/swrxjA
-         +IGDHNT4w71DihfZKPNxzHKrXj7aN6DsNlUGVDMXkRmTA18u45duWAoUoEwLkgygkXe+
-         gEfA==
-X-Gm-Message-State: APjAAAUwoDNFes0OgCZL/5HhfWAJ/o1rjpKI2h0u7zt3voUBGb5FxxQ9
-        0vStDRHaLSe68x1pOPYh+f+ol0JglohJ039AT5k=
-X-Google-Smtp-Source: APXvYqwJMcWK+hsiNyl5imyLDP69KNM91uSgCzrhW/1FVA4Th0151mRDUss+5abEYcbz3f5P8NA5+daOLdcovMTZXa0=
-X-Received: by 2002:ac2:4257:: with SMTP id m23mr4424389lfl.6.1567610823532;
- Wed, 04 Sep 2019 08:27:03 -0700 (PDT)
+        Wed, 4 Sep 2019 11:30:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=c7U5Te26OOkpWZh++wRipeOwfTU9MW2rO16f03qANlE=; b=TtnIL2Lvf76PRgjjGcjO5m6CT
+        f9WndgysisoyfcXDGr8r7su7K21pY4RLBjQ2+AdhVLc0xJvh/Qo9olW1hKGj5gx5NPvEYQBPdcYUL
+        6/PFPA+2dCs9UR5RTMY5S4XsBi5V+gygEqJmxvsKerAKIB0llRn11ACJgLET5EFHJctAQ=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1i5XEf-0006KI-Me; Wed, 04 Sep 2019 15:30:17 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id D94FC2742B45; Wed,  4 Sep 2019 16:30:16 +0100 (BST)
+Date:   Wed, 4 Sep 2019 16:30:16 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Cc:     David Yang <yangxiaohua@everest-semi.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] ASoC: es8316: judge PCM rate at later timing
+Message-ID: <20190904153016.GD4348@sirena.co.uk>
+References: <20190903165322.20791-1-katsuhiro@katsuster.net>
+ <20190903174801.GD7916@sirena.co.uk>
+ <85c717bf-d875-016c-a303-867bdca9a645@katsuster.net>
 MIME-Version: 1.0
-References: <20190903154340.860299-1-rkrcmar@redhat.com> <20190903154340.860299-3-rkrcmar@redhat.com>
- <a2924d91-df68-42de-0709-af53649346d5@arm.com> <20190904042310.GA159235@google.com>
- <20190904081448.GZ2349@hirez.programming.kicks-ass.net> <20190904131154.GF144846@google.com>
-In-Reply-To: <20190904131154.GF144846@google.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Wed, 4 Sep 2019 08:26:52 -0700
-Message-ID: <CAADnVQL3CsB6z98BFWd8wn7WKk+W4UVH2NbzrhJgeaU-D-n3ug@mail.gmail.com>
-Subject: Re: [PATCH 2/2] sched/debug: add sched_update_nr_running tracepoint
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        =?UTF-8?Q?Jirka_Hladk=C3=BD?= <jhladky@redhat.com>,
-        =?UTF-8?B?SmnFmcOtIFZvesOhcg==?= <jvozar@redhat.com>,
-        X86 ML <x86@kernel.org>, Qais Yousef <qais.yousef@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="eqp4TxRxnD4KrmFZ"
+Content-Disposition: inline
+In-Reply-To: <85c717bf-d875-016c-a303-867bdca9a645@katsuster.net>
+X-Cookie: Help fight continental drift.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 6:14 AM Joel Fernandes <joel@joelfernandes.org> wrote:
->
-> True. However, for kprobes-based BPF program - it does check for kernel
-> version to ensure that the BPF program is built against the right kernel
-> version (in order to ensure the program is built against the right set of
-> kernel headers). If it is not, then BPF refuses to load the program.
 
-This is not true anymore. Users found few ways to workaround that check
-in practice. It became useless and it was deleted some time ago.
+--eqp4TxRxnD4KrmFZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Sep 05, 2019 at 12:06:23AM +0900, Katsuhiro Suzuki wrote:
+
+> Would you tell me one more thing. I don't understand who sets MCLK to 0.
+> Is it needed original machine driver instead of audio-graph-card?
+
+> On my test environment (audio-graph-card + Rockchip I2S + ES8316), it
+> seems audio-graph-card has never called set_sysclk() with freq = 0 after
+> stop play/capture sound. So my env will go to bad scenario as I described in
+> this patch.
+
+You shouldn't need a custom machine driver - you'll just be the first
+person who ran into this with audio-graph-card.  I'd just add this
+support to the audio-graph-card, either with custom startup and shutdown
+callbacks or using a set_bias_level() callback (both get used, I'd guess
+the set_bias_level() is easier since you don't need to reference count
+anything).
+
+--eqp4TxRxnD4KrmFZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1v2IgACgkQJNaLcl1U
+h9CzYQgAgkCVkBPAUDivm6m1Ys+xPGbqYO85zw38TRTqnQ8UMpCzpJd0DV1P8jAb
+xx3AaPskCUVjVjY8Nf9ejibjh3Bv0EF75kTr+qcuSCSm1gHjzNOsYym05tMtVOEJ
+wO6Kf95ga1nFkJdUzMlnPYY7Ifsybx29HfT0qdaWny4G6c1JnciMRAqRQx457ZAU
+a2beSvFPAoNAxB2l2N/mUxWM5OkhnYQ+hoy02agR9LoMsYGO3YxVfBRictMw1e8W
+fw3Hq9jULyMR4rY0tIObdsog2kHlwsCQrFzbQ1e4j25r1UntY9whHlctZKJX0onX
+jxre3OCp7c1jZLxxjsU9vsacKvYRxQ==
+=YJma
+-----END PGP SIGNATURE-----
+
+--eqp4TxRxnD4KrmFZ--
