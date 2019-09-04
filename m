@@ -2,91 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D7A2A970D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 01:23:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5DABA9720
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 01:30:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730485AbfIDXXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 19:23:08 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36782 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729471AbfIDXXH (ORCPT
+        id S1730517AbfIDXaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 19:30:06 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:54178 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727156AbfIDXaF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 19:23:07 -0400
-Received: by mail-pg1-f193.google.com with SMTP id l21so290295pgm.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 16:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:subject:to:from:user-agent:date;
-        bh=lphsBie2JSPrEUQ5VneXuMojjEkJzSMY/OrsBG/BydQ=;
-        b=a8j7VVK8er6IJw91u+NvdDPk2ijqJGtLrIv1MkWa0sCQf5kqLdJYUZ/SWNW12ydLao
-         zCvU8l9hw5aKSe1mvG/BPwT1yuVIEVuPnun0X7NC9b5mWL5//gVpFBPtlVOmytZo91px
-         ETFMKqh9wU1Ttq/T1Yx+3KL8kytlWVgUJQbfU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
-         :user-agent:date;
-        bh=lphsBie2JSPrEUQ5VneXuMojjEkJzSMY/OrsBG/BydQ=;
-        b=hEzuXtO6YSPFbcem1fGqmc2l8beHyWa5Ext2t277YU9YUlCFwtyS07hSdqNCjbmHps
-         UAJmE+Zaa3+2vjODt0o2CvbeYOiJLln3hvOICwJrmI0jbnVaHR5hqUQLL9SeGfp8zEgL
-         tp612jvbV2Y8laIk2iGqUakgCuDGhGkcv92RSV8sK6KuZlhMHEx/Dgu5gKpA/vH/H3Ds
-         42whXgaKlLkK5NsrR5N1rk8m+ZI3IQwlNJ6Fln5U2KnlzEKNKFMVqZFuyyOEunO/WHzH
-         90GltT6ReYB0i/hejmOPytYfQ3TUxgtOkxBM54iNTjk4yQfiF7F22EfAEAHbsl3IS0L1
-         oIfA==
-X-Gm-Message-State: APjAAAUObj76sIBgAgtX+E8dhtOSUpbbeuSOkDkCE3kSMEhiKi6jUlNv
-        8jLwuRLY1svKCSXOCRIO+Qq5wQ==
-X-Google-Smtp-Source: APXvYqxu+d8OGsxHVrHtrfwnaDEw2e+JR8t1WqEtXjbxB5d/zhpcvmj7dPTA26D0ItyguUMbrdtT2Q==
-X-Received: by 2002:a62:168e:: with SMTP id 136mr255170pfw.144.1567639386396;
-        Wed, 04 Sep 2019 16:23:06 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id y13sm144265pfm.164.2019.09.04.16.23.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2019 16:23:06 -0700 (PDT)
-Message-ID: <5d70475a.1c69fb81.650ed.0ad0@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Wed, 4 Sep 2019 19:30:05 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.1 #3 (Red Hat Linux))
+        id 1i5ei7-0005kV-RM; Wed, 04 Sep 2019 23:29:12 +0000
+Date:   Thu, 5 Sep 2019 00:29:11 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 10/12] namei: aggressively check for nd->root escape
+ on ".." resolution
+Message-ID: <20190904232911.GN1131@ZenIV.linux.org.uk>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-11-cyphar@cyphar.com>
+ <CAHk-=wiod1rQMU+6Zew=cLE8uX4tUdf42bM5eKngMnNVS2My7g@mail.gmail.com>
+ <20190904214856.vnvom7h5xontvngq@yavin.dot.cyphar.com>
+ <CAHk-=wgcJq21Hydh7Tx5-o8empoPp7ULDBw0Am-du_Pa+fcftQ@mail.gmail.com>
+ <20592.1567636276@warthog.procyon.org.uk>
+ <CAHk-=wg7Wq1kj8kZ+SSpfU_o991woW60NWca9yBA2ccs2eNx8Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190904100835.6099-4-vkoul@kernel.org>
-References: <20190904100835.6099-1-vkoul@kernel.org> <20190904100835.6099-4-vkoul@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] phy: qcom-qmp: Add SM8150 QMP UFS PHY support
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 04 Sep 2019 16:23:05 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg7Wq1kj8kZ+SSpfU_o991woW60NWca9yBA2ccs2eNx8Q@mail.gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vinod Koul (2019-09-04 03:08:35)
-> @@ -878,6 +883,93 @@ static const struct qmp_phy_init_tbl msm8998_usb3_pc=
-s_tbl[] =3D {
->         QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
->  };
-> =20
-> +static const struct qmp_phy_init_tbl sm8150_ufsphy_serdes_tbl[] =3D {
-> +       QMP_PHY_INIT_CFG(QPHY_POWER_DOWN_CONTROL, 0x01),
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_SYSCLK_EN_SEL, 0xD9),
+On Wed, Sep 04, 2019 at 03:38:20PM -0700, Linus Torvalds wrote:
+> On Wed, Sep 4, 2019 at 3:31 PM David Howells <dhowells@redhat.com> wrote:
+> >
+> > It ought to be reasonably easy to make them per-sb at least, I think.  We
+> > don't allow cross-super rename, right?
+> 
+> Right now the sequence count handling very much depends on it being a
+> global entity on the reader side, at least.
+> 
+> And while the rename sequence count could (and probably should) be
+> per-sb, the same is very much not true of the mount one.
 
-Can you use lowercase hex?
-
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_HSCLK_SEL, 0x11),
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_HSCLK_HS_SWITCH_SEL, 0x00),
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_LOCK_CMP_EN, 0x01),
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_VCO_TUNE_MAP, 0x02),
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_PLL_IVCO, 0x0F),
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_VCO_TUNE_INITVAL2, 0x00),
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_BIN_VCOCAL_HSCLK_SEL, 0x11),
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_DEC_START_MODE0, 0x82),
-> +       QMP_PHY_INIT_CFG(QSERDES_COM_V4_CP_CTRL_MODE0, 0x06),
-
-Gotta love the pile of numbers and register writes...
-
+Huh?  That will cost us having to have a per-superblock dentry
+hash table; recall that lockless lockup can give false negatives
+if something gets moved from chain to chain, and rename_lock is
+first and foremost used to catch those and retry.  If we split
+it on per-superblock basis, we can't have dentries from different
+superblocks in the same chain anymore...
