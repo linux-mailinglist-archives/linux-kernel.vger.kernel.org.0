@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9891EA90A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 647B5A8FD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390177AbfIDSKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:10:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54608 "EHLO mail.kernel.org"
+        id S2389383AbfIDSGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:06:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390154AbfIDSKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:10:50 -0400
+        id S2389007AbfIDSGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:06:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCBB72087E;
-        Wed,  4 Sep 2019 18:10:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71D52208E4;
+        Wed,  4 Sep 2019 18:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620649;
-        bh=8D0XYH/BP7WlnI0S1acI+G0Wdhg7xl/oa49+rw9yleY=;
+        s=default; t=1567620364;
+        bh=awKC4Bz62hBmNN8GYGsbiOOk001llEw8zxKsLuVc8Pg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xunm3hnPfZ+iMt1qVPoCoOp07H6fLyLkv6F355StdGLtrzsUdv8cOscE/BMRz7wKt
-         Jfn7dso7GfcTIJbNFEw3FN510Ihx1unGJJ9aCMLKGWeg0v2YQx6xX/Hfsjj5PaERAb
-         Mxs4znMQaRVxXGiIE1O5DSSvStD+ReURsF1RN/F4=
+        b=sIkUXu//LOCuhBChLqOCYozJcFmUOkU+yGcNAqmJVsPkCHWfHOTzPGC/BUHdsRQ52
+         +1ltd5rXtlcBB/ccZT/G46lG1jSCyKHki8jSwTItBokINTdpXcu48W5ML/qUJmc65W
+         V84HdavP73TvRjEJwQjbwafsS6WXJfpunKxMecsg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Adrian Vladu <avladu@cloudbasesolutions.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Alessandro Pilotti <apilotti@cloudbasesolutions.com>
-Subject: [PATCH 5.2 042/143] tools: hv: fix KVP and VSS daemons exit code
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Jeffrey Altman <jaltman@auristor.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 03/93] afs: Fix the CB.ProbeUuid service handler to reply correctly
 Date:   Wed,  4 Sep 2019 19:53:05 +0200
-Message-Id: <20190904175315.705362983@linuxfoundation.org>
+Message-Id: <20190904175303.213488999@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,50 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b0995156071b0ff29a5902964a9dc8cfad6f81c0 ]
+[ Upstream commit 2067b2b3f4846402a040286135f98f46f8919939 ]
 
-HyperV KVP and VSS daemons should exit with 0 when the '--help'
-or '-h' flags are used.
+Fix the service handler function for the CB.ProbeUuid RPC call so that it
+replies in the correct manner - that is an empty reply for success and an
+abort of 1 for failure.
 
-Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+Putting 0 or 1 in an integer in the body of the reply should result in the
+fileserver throwing an RX_PROTOCOL_ERROR abort and discarding its record of
+the client; older servers, however, don't necessarily check that all the
+data got consumed, and so might incorrectly think that they got a positive
+response and associate the client with the wrong host record.
 
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Alessandro Pilotti <apilotti@cloudbasesolutions.com>
+If the client is incorrectly associated, this will result in callbacks
+intended for a different client being delivered to this one and then, when
+the other client connects and responds positively, all of the callback
+promises meant for the client that issued the improper response will be
+lost and it won't receive any further change notifications.
+
+Fixes: 9396d496d745 ("afs: support the CB.ProbeUuid RPC op")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/hv/hv_kvp_daemon.c | 2 ++
- tools/hv/hv_vss_daemon.c | 2 ++
- 2 files changed, 4 insertions(+)
+ fs/afs/cmservice.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index d7e06fe0270ee..0ce50c319cfd6 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -1386,6 +1386,8 @@ int main(int argc, char *argv[])
- 			daemonize = 0;
- 			break;
- 		case 'h':
-+			print_usage(argv);
-+			exit(0);
- 		default:
- 			print_usage(argv);
- 			exit(EXIT_FAILURE);
-diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
-index efe1e34dd91b4..8f813f5233d48 100644
---- a/tools/hv/hv_vss_daemon.c
-+++ b/tools/hv/hv_vss_daemon.c
-@@ -218,6 +218,8 @@ int main(int argc, char *argv[])
- 			daemonize = 0;
- 			break;
- 		case 'h':
-+			print_usage(argv);
-+			exit(0);
- 		default:
- 			print_usage(argv);
- 			exit(EXIT_FAILURE);
+diff --git a/fs/afs/cmservice.c b/fs/afs/cmservice.c
+index 9e51d6fe7e8f9..40c6860d4c632 100644
+--- a/fs/afs/cmservice.c
++++ b/fs/afs/cmservice.c
+@@ -423,18 +423,14 @@ static void SRXAFSCB_ProbeUuid(struct work_struct *work)
+ 	struct afs_call *call = container_of(work, struct afs_call, work);
+ 	struct afs_uuid *r = call->request;
+ 
+-	struct {
+-		__be32	match;
+-	} reply;
+-
+ 	_enter("");
+ 
+ 	if (memcmp(r, &call->net->uuid, sizeof(call->net->uuid)) == 0)
+-		reply.match = htonl(0);
++		afs_send_empty_reply(call);
+ 	else
+-		reply.match = htonl(1);
++		rxrpc_kernel_abort_call(call->net->socket, call->rxcall,
++					1, 1, "K-1");
+ 
+-	afs_send_simple_reply(call, &reply, sizeof(reply));
+ 	afs_put_call(call);
+ 	_leave("");
+ }
 -- 
 2.20.1
 
