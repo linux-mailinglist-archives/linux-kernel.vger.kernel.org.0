@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A16CCA9136
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA677A8F92
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390736AbfIDSOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:14:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59174 "EHLO mail.kernel.org"
+        id S2389103AbfIDSEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:04:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390193AbfIDSOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:14:07 -0400
+        id S2389082AbfIDSE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:04:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C49E206BA;
-        Wed,  4 Sep 2019 18:14:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 847F822CEA;
+        Wed,  4 Sep 2019 18:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620846;
-        bh=AijjDcw+bDNa2gdFvNVN9OG3Ed0uGHSfKxuUEJK5c9c=;
+        s=default; t=1567620268;
+        bh=azGO1qmg/UaSPqmktxHgfqCnVRUIkWMbvB4vhJz8qWw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vZH+OapStm/CKo2eQrYaS56zs1nQU2fIrRVqsxNwuXuvk1tqorVuhTNT+7l4mVNFO
-         LCfVA7DPRVQxFfu2La8yuu/mbZUhkcr3oQ0gSwUn6f+6XywaxrZLCZQ46OOyHIszaj
-         YtoB0lpsoXwtdmz5AlEMPzKdL3+kYMr0mSzL9UGE=
+        b=MCJrQehFKgElasCJ96d1B4H+/WIq6ljdbQGr2vV5dy9A3D7/20AR3PTu7yFw8ZV4V
+         oNl8ddM48A18bXn9GfWV9fljEi2stCzSp/NNxzFVCE60HAajSye0NsODNfI46fWLo7
+         5ngZnD1+gczgieLysWJWNY4Wum0euL6+hF9Y8LAM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gary R Hook <gary.hook@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.2 118/143] crypto: ccp - Ignore unconfigured CCP device on suspend/resume
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 53/57] NFSv4/pnfs: Fix a page lock leak in nfs_pageio_resend()
 Date:   Wed,  4 Sep 2019 19:54:21 +0200
-Message-Id: <20190904175319.015719586@linuxfoundation.org>
+Message-Id: <20190904175307.112494039@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gary R Hook <gary.hook@amd.com>
+[ Upstream commit f4340e9314dbfadc48758945f85fc3b16612d06f ]
 
-commit 5871cd93692c8071fb9358daccb715b5081316ac upstream.
+If the attempt to resend the pages fails, we need to ensure that we
+clean up those pages that were not transmitted.
 
-If a CCP is unconfigured (e.g. there are no available queues) then
-there will be no data structures allocated for the device. Thus, we
-must check for validity of a pointer before trying to access structure
-members.
-
-Fixes: 720419f01832f ("crypto: ccp - Introduce the AMD Secure Processor device")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: d600ad1f2bdb ("NFS41: pop some layoutget errors to application")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org # v4.5+
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ccp/ccp-dev.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/nfs/pagelist.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/drivers/crypto/ccp/ccp-dev.c
-+++ b/drivers/crypto/ccp/ccp-dev.c
-@@ -540,6 +540,10 @@ int ccp_dev_suspend(struct sp_device *sp
- 	unsigned long flags;
- 	unsigned int i;
+diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
+index a7aa028a5b0bb..ae598e45b2df0 100644
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -1231,20 +1231,22 @@ static void nfs_pageio_complete_mirror(struct nfs_pageio_descriptor *desc,
+ int nfs_pageio_resend(struct nfs_pageio_descriptor *desc,
+ 		      struct nfs_pgio_header *hdr)
+ {
+-	LIST_HEAD(failed);
++	LIST_HEAD(pages);
  
-+	/* If there's no device there's nothing to do */
-+	if (!ccp)
-+		return 0;
-+
- 	spin_lock_irqsave(&ccp->cmd_lock, flags);
+ 	desc->pg_io_completion = hdr->io_completion;
+ 	desc->pg_dreq = hdr->dreq;
+-	while (!list_empty(&hdr->pages)) {
+-		struct nfs_page *req = nfs_list_entry(hdr->pages.next);
++	list_splice_init(&hdr->pages, &pages);
++	while (!list_empty(&pages)) {
++		struct nfs_page *req = nfs_list_entry(pages.next);
  
- 	ccp->suspending = 1;
-@@ -564,6 +568,10 @@ int ccp_dev_resume(struct sp_device *sp)
- 	unsigned long flags;
- 	unsigned int i;
- 
-+	/* If there's no device there's nothing to do */
-+	if (!ccp)
-+		return 0;
-+
- 	spin_lock_irqsave(&ccp->cmd_lock, flags);
- 
- 	ccp->suspending = 0;
+ 		if (!nfs_pageio_add_request(desc, req))
+-			nfs_list_move_request(req, &failed);
++			break;
+ 	}
+ 	nfs_pageio_complete(desc);
+-	if (!list_empty(&failed)) {
+-		list_move(&failed, &hdr->pages);
+-		return desc->pg_error < 0 ? desc->pg_error : -EIO;
++	if (!list_empty(&pages)) {
++		int err = desc->pg_error < 0 ? desc->pg_error : -EIO;
++		hdr->completion_ops->error_cleanup(&pages, err);
++		return err;
+ 	}
+ 	return 0;
+ }
+-- 
+2.20.1
+
 
 
