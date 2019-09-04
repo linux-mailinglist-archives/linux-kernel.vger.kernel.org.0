@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F06FBA9125
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2BACA8F35
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390340AbfIDSNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:13:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58644 "EHLO mail.kernel.org"
+        id S2388742AbfIDSC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:02:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389972AbfIDSNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:13:43 -0400
+        id S2388738AbfIDSCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:02:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC79D208E4;
-        Wed,  4 Sep 2019 18:13:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4671622CEA;
+        Wed,  4 Sep 2019 18:02:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620822;
-        bh=izBRRnXiw9mOfutHNB06OnVP5gsPFMTfZ8E+HUYKFVE=;
+        s=default; t=1567620142;
+        bh=Dtb2xlJUXaI7h1jTZ4aYV373tHKBE5AMbf5Ac85jxRs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g53H2+YvJ7V0o1HGulFNEvw7tbfyLiR0ZHtfNKayhX74uZud4ELH1mJM5EtaEGhJN
-         xW1zRsn1BRi2nIOv2t1qYReK3SPFWtx9LcAKI8hATFnE4AKIMItTvvSLtnbbAsc0W9
-         uGni6C+5Jz4XFwhdpotxQhyn3ble3uxF4vSc8OHs=
+        b=Nva/gb+kuXpOzuusUE1ui5RSfmjUpumLjT/VL6cMO71rGT5ffaftJWxYDJm7yUqq5
+         2/GyfRoh8foUnpm7mKb/jkIRNZF0ytX8JeibUFdSweQ2vsH+Z+p3+Qi74ztNKSX5m8
+         ajDRaBrkrBrMMH1zMWVUxg03HbeLksPk10CcMuII=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Wei Xu <xuwei5@hisilicon.com>
-Subject: [PATCH 5.2 109/143] lib: logic_pio: Add logic_pio_unregister_range()
+        stable@vger.kernel.org, Zenghui Yu <yuzenghui@huawei.com>,
+        Heyi Guo <guoheyi@huawei.com>, Marc Zyngier <maz@kernel.org>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 80/83] KVM: arm/arm64: vgic: Fix potential deadlock when ap_list is long
 Date:   Wed,  4 Sep 2019 19:54:12 +0200
-Message-Id: <20190904175318.668350121@linuxfoundation.org>
+Message-Id: <20190904175310.676208472@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,59 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+[ Upstream commit d4a8061a7c5f7c27a2dc002ee4cb89b3e6637e44 ]
 
-commit b884e2de2afc68ce30f7093747378ef972dde253 upstream.
+If the ap_list is longer than 256 entries, merge_final() in list_sort()
+will call the comparison callback with the same element twice, causing
+a deadlock in vgic_irq_cmp().
 
-Add a function to unregister a logical PIO range.
+Fix it by returning early when irqa == irqb.
 
-Logical PIO space can still be leaked when unregistering certain
-LOGIC_PIO_CPU_MMIO regions, but this acceptable for now since there are no
-callers to unregister LOGIC_PIO_CPU_MMIO regions, and the logical PIO
-region allocation scheme would need significant work to improve this.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable@vger.kernel.org # 4.7+
+Fixes: 8e4447457965 ("KVM: arm/arm64: vgic-new: Add IRQ sorting")
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Heyi Guo <guoheyi@huawei.com>
+[maz: massaged commit log and patch, added Fixes and Cc-stable]
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/logic_pio.h |    1 +
- lib/logic_pio.c           |   14 ++++++++++++++
- 2 files changed, 15 insertions(+)
+ virt/kvm/arm/vgic/vgic.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/include/linux/logic_pio.h
-+++ b/include/linux/logic_pio.h
-@@ -117,6 +117,7 @@ struct logic_pio_hwaddr *find_io_range_b
- unsigned long logic_pio_trans_hwaddr(struct fwnode_handle *fwnode,
- 			resource_size_t hw_addr, resource_size_t size);
- int logic_pio_register_range(struct logic_pio_hwaddr *newrange);
-+void logic_pio_unregister_range(struct logic_pio_hwaddr *range);
- resource_size_t logic_pio_to_hwaddr(unsigned long pio);
- unsigned long logic_pio_trans_cpuaddr(resource_size_t hw_addr);
+diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
+index 6440b56ec90e2..1934dc8a2ce09 100644
+--- a/virt/kvm/arm/vgic/vgic.c
++++ b/virt/kvm/arm/vgic/vgic.c
+@@ -196,6 +196,13 @@ static int vgic_irq_cmp(void *priv, struct list_head *a, struct list_head *b)
+ 	bool penda, pendb;
+ 	int ret;
  
---- a/lib/logic_pio.c
-+++ b/lib/logic_pio.c
-@@ -99,6 +99,20 @@ end_register:
- }
- 
- /**
-+ * logic_pio_unregister_range - unregister a logical PIO range for a host
-+ * @range: pointer to the IO range which has been already registered.
-+ *
-+ * Unregister a previously-registered IO range node.
-+ */
-+void logic_pio_unregister_range(struct logic_pio_hwaddr *range)
-+{
-+	mutex_lock(&io_range_mutex);
-+	list_del_rcu(&range->list);
-+	mutex_unlock(&io_range_mutex);
-+	synchronize_rcu();
-+}
++	/*
++	 * list_sort may call this function with the same element when
++	 * the list is fairly long.
++	 */
++	if (unlikely(irqa == irqb))
++		return 0;
 +
-+/**
-  * find_io_range_by_fwnode - find logical PIO range for given FW node
-  * @fwnode: FW node handle associated with logical PIO range
-  *
+ 	spin_lock(&irqa->irq_lock);
+ 	spin_lock_nested(&irqb->irq_lock, SINGLE_DEPTH_NESTING);
+ 
+-- 
+2.20.1
+
 
 
