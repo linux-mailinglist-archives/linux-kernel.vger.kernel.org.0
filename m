@@ -2,73 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7522EA91BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 509E1A8DF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388227AbfIDSYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:24:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40912 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388551AbfIDSBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C7C0233FF;
-        Wed,  4 Sep 2019 18:01:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620081;
-        bh=Agm7Gx9JZ79sv3rkp+il6lu4tb27ryMPb3LzsWceM2w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DMqZv7Ubhw/gn0neI7KNFhZ978vkRwCd7NDqjljykGap3TR7N1Djc4wf8YEO04P4O
-         JMHEKvgX8tszkBjQ4B5ynZltWoXCW+P5odMQQDJVNrqWB3IclbZuC5eVJXZxiItxP7
-         DdMpTBzKKre6iPbJM14Ngp7p0uAqZht4jbs8RKGM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Henk van der Laan <opensource@henkvdlaan.com>
-Subject: [PATCH 4.9 65/83] usb-storage: Add new JMS567 revision to unusual_devs
-Date:   Wed,  4 Sep 2019 19:53:57 +0200
-Message-Id: <20190904175309.343129768@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1732502AbfIDRyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:54:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35715 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731633AbfIDRyC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:54:02 -0400
+Received: by mail-wr1-f67.google.com with SMTP id g7so22269674wrx.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 10:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZqXCk5KX1lKBB5KfBUnA9fP6d+VfeiwpyxR9UeQIid0=;
+        b=C17cXKGlO2CS3202OtJVhSRM0yivbeK5q8wrudl5l2p7PRLWO6t02XaKPSgn+/NKy/
+         2VdLclCJorKzweIVxEsz4QM9a93P0K0d9HIPfFKX4U9fEpb4sy5KOLHmBvsh1FLBU5RS
+         Qv9OkBq6z5LOcj6JIJoXVS3Kc7poANRTPgE+sEusHkhp34GL0W524vf4V7NQHWkDFeey
+         IWm/6Uw3qXNll05tOM1iPHpbt0LXWYDvfsCro5Hd2Rmc1vGeg9WMM5PS9g1NrOTuytwM
+         xlOgFpDmc+R6DqNfcg2bPCQbnfN7+tbX7/rIQaWK7y74OkSO+KyOWjtApXoIotYGP21u
+         SYiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZqXCk5KX1lKBB5KfBUnA9fP6d+VfeiwpyxR9UeQIid0=;
+        b=RcgQNc2paIgmWLoGG+dmAA++/P8MM9TLYAFoS3hma3fHHQNowP6Yvne/+0IWbGQT8K
+         JgLz248iKg2ZBdDr0ZOnBYTGGGitcR04a3Gx+ZOFu6wlTl//jaxKR+CbzpGQH/bzsh4K
+         MBYfZdDfxGGeyMHV4CQ2mDyX1QBTJfk3cD3P4eL8jc74K2UCIdDycSbB5mchsQXlnHIr
+         +QWbaugCZ+HMkinJ3+DbChXplu/mui5rPCi5cb1VvBSaNQDZMPoWZy5IxiWY9Udkx9/T
+         gdYCryM1XTXg5VZunxIeXSkiZCyH/VeJtiscrPnjQfqUzZegrAMGB6QwKBL0G+xD1o9n
+         OWHw==
+X-Gm-Message-State: APjAAAXiXudSl4yjnM6BIPq0ULRcwCPwC1uy8lSXtkQbFUjlJyctEBQE
+        J0F+gYfUxA+lhpgKEXaI8vLz53MK
+X-Google-Smtp-Source: APXvYqyCl9pb46pi8COBra5uUbYIVNUB2iVzimilPbJncvo+uDfpS9W0Kuc5Nc4NoUEK8S0EAlKpOg==
+X-Received: by 2002:adf:e68a:: with SMTP id r10mr3213270wrm.63.1567619640531;
+        Wed, 04 Sep 2019 10:54:00 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id q192sm4812978wme.23.2019.09.04.10.53.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 10:53:59 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 19:53:57 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH v3] sched/core: Fix uclamp ABI bug, clean up and
+ robustify sched_read_attr() ABI logic and code
+Message-ID: <20190904175357.GA110926@gmail.com>
+References: <20190903171645.28090-1-cascardo@canonical.com>
+ <20190903171645.28090-2-cascardo@canonical.com>
+ <20190904075532.GA26751@gmail.com>
+ <20190904084934.GA117671@gmail.com>
+ <20190904085519.GA127156@gmail.com>
+ <db065b81-c373-f291-ad48-f556a209cc95@arm.com>
+ <20190904103925.GA60962@gmail.com>
+ <20190904131932.GG4101@calabresa>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190904131932.GG4101@calabresa>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Henk van der Laan <opensource@henkvdlaan.com>
 
-commit 08d676d1685c2a29e4d0e1b0242324e564d4589e upstream.
+* Thadeu Lima de Souza Cascardo <cascardo@canonical.com> wrote:
 
-Revision 0x0117 suffers from an identical issue to earlier revisions,
-therefore it should be added to the quirks list.
+> There is one odd behaviour now, which is whenever size is set between 
+> VER0 and VER1, we will have a partial struct filled up, instead of 
+> getting E2BIG or EINVAL.
 
-Signed-off-by: Henk van der Laan <opensource@henkvdlaan.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190816200847.21366-1-opensource@henkvdlaan.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Well, that's pretty much by design: user-space is asking for 'usize' 
+bytes of information, and the kernel provides it if it can.
 
----
- drivers/usb/storage/unusual_devs.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This way the kernel can keep backwards compatibility indefinitely, 
+without new kernels having to be aware of the zillions of prior ABI 
+versions that were due to slow expansion of the ABI. (This actually 
+happened to the perf ABI, which was expanded dozens of times already.)
 
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -2119,7 +2119,7 @@ UNUSUAL_DEV(  0x14cd, 0x6600, 0x0201, 0x
- 		US_FL_IGNORE_RESIDUE ),
- 
- /* Reported by Michael Büsch <m@bues.ch> */
--UNUSUAL_DEV(  0x152d, 0x0567, 0x0114, 0x0116,
-+UNUSUAL_DEV(  0x152d, 0x0567, 0x0114, 0x0117,
- 		"JMicron",
- 		"USB to ATA/ATAPI Bridge",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+> > +static int
+> > +sched_attr_copy_to_user(struct sched_attr __user *uattr,
+> > +			struct sched_attr *kattr,
+> > +			unsigned int usize)
+> >  {
+> > -	int ret;
+> > +	unsigned int ksize = sizeof(*kattr);
+> >  
+> > -	if (!access_ok(uattr, usize))
+> > +	if (!access_ok(uattr, ksize))
+> >  		return -EFAULT;
+> >  
+> 
+> I believe this should be either usize or kattr->size and moved below 
+> (or just reuse min(usize,ksize)).
+> 
+> Otherwise, an old binary that uses the old ABI (that is, VER0 as size) 
+> may get EFAULT here. This should almost never in practice. I tried, but 
+> I could hardly use an address that would fail access_ok. But, 
+> theoretically, that still breaks ABI.
 
+I agree that this is mostly theoretical, as currently these sizes are 
+limited between VER0 and PAGE_SIZE - and hardly anyone puts these 
+structures near the very end of virtual memory.
 
+But checking 'usize' is arguably the more correct value, as that's the 
+size of the user-space buffer. I've done this change in the latest 
+version of the fix.
+
+Thanks,
+
+	Ingo
