@@ -2,187 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42C14A80E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 13:11:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 206AFA80EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 13:11:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbfIDLJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 07:09:22 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54285 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbfIDLJW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 07:09:22 -0400
-Received: by mail-wm1-f66.google.com with SMTP id k2so2816508wmj.4;
-        Wed, 04 Sep 2019 04:09:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sIOd0MuDnfj87B/FqKAPDluIjsWQPUM9aaqhRZ0bJws=;
-        b=aBQ/mzBv92LVsEYtD/af016oft/3nD6ld0mcxbE5Y2xiUP1KehAH0S/MRbaSPT9hxh
-         R5BWzoWPVPUUy15zoFq28mabmqic7S3dNCXhrapNv9x9J2Y5aL3XHXGNEnv3SjcMf+dw
-         QyiNinW9lfztPAuqWPjgWH9QxBq3ZGKn/N/YiIXVFoLyk850amAG18uVGafYvzH8ta9w
-         1gaUYN6b7kfcowCzSFxlMy8w4vlRG3q9nTk0032WhcTl9RnAC4AJ+sStJp5TkyKPVg9c
-         wJd8dy7Uxt8IE1jo5Eu03aFVMmyANMo0Y8Zg71kUL7aZIydSlYqCjyuUxuBQWYQ66QnT
-         zxHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sIOd0MuDnfj87B/FqKAPDluIjsWQPUM9aaqhRZ0bJws=;
-        b=L7KeubbrI73QSBJuTAUpUn5fWEjXzcNYTznU4WkCKnnbrJR7k04Gjrw2L6EiFNUHtA
-         lQnceP7cP+wMWsFyy7czLJWlAmvHV81PSE7nzkShRCAQx2hipfbVW0wv+Q+EfKx9JpH9
-         je3zk5FnHtxIZYeS/v1EWfozSr7CDbSicxZ+/RWAdLujLbEUIqKwgSmTGA2CCVBUt3FZ
-         Gzg6Z+0aWfk7cKLSVBiErk4x7Pd5BMnYjQxPE7VnFjKyyNh3ppxZdKDpdFVEG8HLmOg0
-         dnIodH5/DQ4qYrLWmkG/ICqCftm0LDHXs4Mt5xrZ4dyBFpEeEGc+t1RK0DQO8uKzEmx/
-         uwfA==
-X-Gm-Message-State: APjAAAVvIriVZ0NaMVg9V9KsJ/EUUmWRnOhdzH6/A6xi8wimwb73IPtv
-        dH36thE6LJyxmlkH9pNREEN5iNMSlGo=
-X-Google-Smtp-Source: APXvYqxEJDfwjcP23hJH0xu5WSvauV5r7xgP+gXLFvs8HgKoNnxvyZ3Ch6on0sEn1mW2+TwfvJQyZA==
-X-Received: by 2002:a1c:cfc9:: with SMTP id f192mr3646204wmg.85.1567595359553;
-        Wed, 04 Sep 2019 04:09:19 -0700 (PDT)
-Received: from localhost ([194.105.145.90])
-        by smtp.gmail.com with ESMTPSA id i93sm28412998wri.57.2019.09.04.04.09.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Sep 2019 04:09:18 -0700 (PDT)
-From:   Igor Opaniuk <igor.opaniuk@gmail.com>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     m.felsch@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, marcel@ziswiler.com,
-        marcel.ziswiler@toradex.com, stefan@agner.ch
-Subject: [PATCH v3 1/1] ARM: dts: colibri: introduce dts with UHS-I support enabled
-Date:   Wed,  4 Sep 2019 14:09:18 +0300
-Message-Id: <20190904110918.25009-1-igor.opaniuk@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729727AbfIDLKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 07:10:11 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:58342 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725966AbfIDLKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 07:10:10 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id C990020C7E;
+        Wed,  4 Sep 2019 13:10:08 +0200 (CEST)
+Received: from [192.168.108.37] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id AE9C920103;
+        Wed,  4 Sep 2019 13:10:08 +0200 (CEST)
+Subject: Re: [PATCH RFC 2/2] interconnect: qcom: add msm8974 driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brian Masney <masneyb@onstation.org>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190902211925.27169-1-masneyb@onstation.org>
+ <20190902211925.27169-3-masneyb@onstation.org>
+ <20190904053952.GF3081@tuxbook-pro>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <8f1a25aa-6dc6-b94a-fc58-e944bdfae939@free.fr>
+Date:   Wed, 4 Sep 2019 13:10:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190904053952.GF3081@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Sep  4 13:10:08 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Opaniuk <igor.opaniuk@toradex.com>
+On 04/09/2019 07:39, Bjorn Andersson wrote:
 
-Introduce DTS for Colibri iMX6S/DL V1.1x re-design, where UHS-I support was
-added. Provide proper configuration for VGEN3, which allows that rail to
-be automatically switched to 1.8 volts for proper UHS-I operation mode.
+> On Mon 02 Sep 14:19 PDT 2019, Brian Masney wrote:
+> 
+>> +DEFINE_QNODE(mas_ampss_m0, MSM8974_BIMC_MAS_AMPSS_M0, 8, 0, -1);
+>> +DEFINE_QNODE(mas_ampss_m1, MSM8974_BIMC_MAS_AMPSS_M1, 8, 0, -1);
+>> +DEFINE_QNODE(mas_mss_proc, MSM8974_BIMC_MAS_MSS_PROC, 8, 1, -1);
+>> +DEFINE_QNODE(bimc_to_mnoc, MSM8974_BIMC_TO_MNOC, 8, 2, -1,
+>> +	     MSM8974_BIMC_SLV_EBI_CH0);
+> 
+> None of these looks excessive, so please ignore the 80-char rule to
+> improve readability.
 
-Signed-off-by: Igor Opaniuk <igor.opaniuk@toradex.com>
----
-
-v3:
-- change hierarchy according to Marco's suggestions [Marco Felsch]
-- adjust compatible string adding v1.1 [Stefan Agner]
-
-v2:
-- rework hierarchy of dts files, and a separate dtsi for Colibri
-  iMX6S/DL V1.1x re-design, where UHS-I was added [Marcel Ziswiler]
-- add comments about vgen3 power rail [Marcel Ziswiler]
-- fix other minor issues, addressing Marcel's comments. [Marcel Ziswiler]
-
- arch/arm/boot/dts/Makefile                    |  1 +
- .../boot/dts/imx6dl-colibri-v1_1-eval-v3.dts  | 59 +++++++++++++++++++
- arch/arm/boot/dts/imx6qdl-colibri.dtsi        | 11 +++-
- 3 files changed, 70 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/imx6dl-colibri-v1_1-eval-v3.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 9159fa2cea90..87dfc3db4343 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -401,6 +401,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6dl-aristainetos2_4.dtb \
- 	imx6dl-aristainetos2_7.dtb \
- 	imx6dl-colibri-eval-v3.dtb \
-+	imx6dl-colibri-v1_1-eval-v3.dtb \
- 	imx6dl-cubox-i.dtb \
- 	imx6dl-cubox-i-emmc-som-v15.dtb \
- 	imx6dl-cubox-i-som-v15.dtb \
-diff --git a/arch/arm/boot/dts/imx6dl-colibri-v1_1-eval-v3.dts b/arch/arm/boot/dts/imx6dl-colibri-v1_1-eval-v3.dts
-new file mode 100644
-index 000000000000..92fcf4e62ba2
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6dl-colibri-v1_1-eval-v3.dts
-@@ -0,0 +1,59 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
-+/*
-+ * Copyright 2019 Toradex AG
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx6dl-colibri-eval-v3.dts"
-+
-+/ {
-+	model = "Toradex Colibri iMX6DL/S V1.1 on Colibri Evaluation Board V3";
-+	compatible = "toradex,colibri_imx6dl-v1_1-eval-v3",
-+		     "toradex,colibri_imx6dl-v1_1",
-+		     "toradex,colibri_imx6dl-eval-v3",
-+		     "toradex,colibri_imx6dl",
-+		     "fsl,imx6dl";
-+};
-+
-+&iomuxc {
-+	pinctrl_usdhc1_100mhz: usdhc1grp100mhz {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD1_CMD__SD1_CMD    0x170b1
-+			MX6QDL_PAD_SD1_CLK__SD1_CLK    0x100b1
-+			MX6QDL_PAD_SD1_DAT0__SD1_DATA0 0x170b1
-+			MX6QDL_PAD_SD1_DAT1__SD1_DATA1 0x170b1
-+			MX6QDL_PAD_SD1_DAT2__SD1_DATA2 0x170b1
-+			MX6QDL_PAD_SD1_DAT3__SD1_DATA3 0x170b1
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_200mhz: usdhc1grp200mhz {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD1_CMD__SD1_CMD    0x170f1
-+			MX6QDL_PAD_SD1_CLK__SD1_CLK    0x100f1
-+			MX6QDL_PAD_SD1_DAT0__SD1_DATA0 0x170f1
-+			MX6QDL_PAD_SD1_DAT1__SD1_DATA1 0x170f1
-+			MX6QDL_PAD_SD1_DAT2__SD1_DATA2 0x170f1
-+			MX6QDL_PAD_SD1_DAT3__SD1_DATA3 0x170f1
-+		>;
-+	};
-+};
-+
-+/* Colibri MMC */
-+&usdhc1 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc1 &pinctrl_mmc_cd>;
-+	pinctrl-1 = <&pinctrl_usdhc1_100mhz &pinctrl_mmc_cd>;
-+	pinctrl-2 = <&pinctrl_usdhc1_200mhz &pinctrl_mmc_cd>;
-+	vmmc-supply = <&reg_module_3v3>;
-+	vqmmc-supply = <&vgen3_reg>;
-+	enable-sdio-wakeup;
-+	keep-power-in-suspend;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+	/delete-property/no-1-8-v;
-+};
-diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-index 1beac22266ed..27097ab5eaab 100644
---- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-@@ -215,7 +215,16 @@
- 				regulator-always-on;
- 			};
- 
--			/* vgen3: unused */
-+			/*
-+			 * +V3.3_1.8_SD1 coming off VGEN3 and supplying
-+			 * the i.MX 6 NVCC_SD1.
-+			 */
-+			vgen3_reg: vgen3 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
- 
- 			vgen4_reg: vgen4 {
- 				regulator-min-microvolt = <1800000>;
--- 
-2.17.1
-
+Indeed!
