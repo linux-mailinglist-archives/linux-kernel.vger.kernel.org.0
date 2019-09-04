@@ -2,92 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56A9EA94DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A77B1A950E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729968AbfIDVWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 17:22:20 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35882 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727809AbfIDVWU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 17:22:20 -0400
-Received: by mail-io1-f65.google.com with SMTP id b136so23556196iof.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Nm692qk4LNmOHZMyj1jVHOcSSuFyCUnTdIF+X/Nubik=;
-        b=C2B2dNYdSzXJxH9VlS6QeY936qliwaicI+yJm/i6LNpGDvf1jocEMbplE0QRaj8Gds
-         Se1YBeenhuMe0CwSs5mRe41ywWpNYB/rAsRcPFh8q3C1YzKTOqqHk5+CLSG0De9gxYCd
-         +IPILNkX8Tvli3QVTjOmjP87J1mQHRgWavjMSOn1Yu370HPoPgbWAG3qYd0+dk46TKDU
-         +gtWzTEs3wLDGQloXGmVWAIj/TIA5MZXjpSVUY28J/OnDCBlWE8k5w0u+zktLkMZu+qS
-         VomIe0Nsy5aT+79e9B1fx4NtX4bopyBv/MGZ+p7ZVZMdPieM7rwOUW1vVHPhP5aluLZ7
-         74dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Nm692qk4LNmOHZMyj1jVHOcSSuFyCUnTdIF+X/Nubik=;
-        b=pIc+YtS5oFoH60lMD91E5fJ09wrGLHzI99XCek5Klzy5qDGQjiYoxuGJ17LnjksSA8
-         Izf19q78/jtwXMxBHeUS2VjVbY/+lDWU5C0A99/kRlqqO0Kpl4ws9KNSttbqQQUjzBku
-         9qby1x2Vds2IcjrYvIAk1NxEx18ThYo58BLUIPq64m6T6IolweZMWWvGJ/lBEqxEiIyg
-         dZ0p+tptHWbPiz4xF/Ib0k5+XGFjw3JJUXiy7Pe6Lw5PeFilvVxRpkYpykdxWzwS4xqT
-         Gsnb5T41xAIJa3DOzBt14sVS1Mb/bXZix5UdVhA5JNPsseeVYfjhH9/ifKRnPti9dUi+
-         NOAg==
-X-Gm-Message-State: APjAAAWO8jffUKuR5RDnoryRDF68wMRiP3r8DBNcB8b7U/O9nSDXbCfB
-        nOuc97+VWnJJbJadfY+C/rozLds3K8I=
-X-Google-Smtp-Source: APXvYqx3kV34KAQ1WdbjpS3AwyBLMr0HwcwCXpIRa03VFOZwIm8yjheyzlOGwLq5YOPzaFPXtHoFRQ==
-X-Received: by 2002:a6b:bc47:: with SMTP id m68mr102783iof.70.1567632139657;
-        Wed, 04 Sep 2019 14:22:19 -0700 (PDT)
-Received: from localhost (75-161-11-128.albq.qwest.net. [75.161.11.128])
-        by smtp.gmail.com with ESMTPSA id m25sm109477iol.12.2019.09.04.14.22.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2019 14:22:19 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 14:22:18 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Mao Han <han_mao@c-sky.com>
-cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-csky@vger.kernel.org, Greentime Hu <green.hu@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Christoph Hellwig <hch@lst.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH V6 2/3] riscv: Add support for perf registers sampling
-In-Reply-To: <0179424c5edc166273d5fe261f70b1a4c13a90f8.1567060834.git.han_mao@c-sky.com>
-Message-ID: <alpine.DEB.2.21.9999.1909041420270.13502@viisi.sifive.com>
-References: <cover.1567060834.git.han_mao@c-sky.com> <0179424c5edc166273d5fe261f70b1a4c13a90f8.1567060834.git.han_mao@c-sky.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1728878AbfIDVXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 17:23:44 -0400
+Received: from sauhun.de ([88.99.104.3]:46340 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730863AbfIDVXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 17:23:40 -0400
+Received: from localhost (p54B337F1.dip0.t-ipconnect.de [84.179.55.241])
+        by pokefinder.org (Postfix) with ESMTPSA id 285352C08C3;
+        Wed,  4 Sep 2019 23:23:38 +0200 (CEST)
+Date:   Wed, 4 Sep 2019 23:23:37 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Lee Jones <lee.jones@linaro.org>, alokc@codeaurora.org,
+        agross@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: qcom-geni: Provide an option to select FIFO
+ processing
+Message-ID: <20190904212337.GF23608@ninjato>
+References: <20190904113613.14997-1-lee.jones@linaro.org>
+ <20190904203548.GC580@tuxbook-pro>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kbCYTQG2MZjuOjyn"
+Content-Disposition: inline
+In-Reply-To: <20190904203548.GC580@tuxbook-pro>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mao Han,
 
-On Thu, 29 Aug 2019, Mao Han wrote:
+--kbCYTQG2MZjuOjyn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> This patch implements the perf registers sampling and validation API
-> for riscv arch. The valid registers and their register ID are defined in
-> perf_regs.h. Perf tool can backtrace in userspace with unwind library
-> and the registers/user stack dump support.
+On Wed, Sep 04, 2019 at 01:35:48PM -0700, Bjorn Andersson wrote:
+> On Wed 04 Sep 04:36 PDT 2019, Lee Jones wrote:
+>=20
+> The subject implies that we select FIFO mode instead of DMA, but that's
+> not really true, because with DMA enabled we still fall back to FIFO for
+> messages below 32 bytes.=20
+>=20
+> So what this does it to disable DMA, which neither the subject or the DT
+> property describes.
+>=20
+> Also missing is a description of why this is needed.
 
-[ ... ]
+Yes.
 
-> diff --git a/arch/riscv/include/uapi/asm/perf_regs.h b/arch/riscv/include/uapi/asm/perf_regs.h
-> new file mode 100644
-> index 0000000..df1a581
-> --- /dev/null
-> +++ b/arch/riscv/include/uapi/asm/perf_regs.h
-> @@ -0,0 +1,42 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
+I am willing to help to get this resolved soonish. However, I have
+issues with the approach.
 
-All of the other Linux architectures use "GPL-2.0 WITH Linux-syscall-note" 
-for their license for the perf uapi files.  Could you please change this 
-license string to match the standard Linux practice?  Then I think it 
-should be good to merge.
+It looks like a workaround to me. It would be interesting to hear which
+I2C client breaks with DMA and if it's driver can't be fixed somehow
+instead. But even if we agree on a workaround short term, adding a
+binding for this workaround seems like a no-go to me. We have to live
+with this binding forever. Sidenote: I could think of a generic
+'disable-dma' which could be reused everywhere but we probably won't get
+that upstream that late in the cycle.
 
+Is there no other way to disable DMA which is local to this driver so we
+can easily revert the workaround later?
 
-- Paul
+>=20
+> Regards,
+> Bjorn
+>=20
+> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > ---
+> >  drivers/i2c/busses/i2c-qcom-geni.c | 14 ++++++++++----
+> >  1 file changed, 10 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2=
+c-qcom-geni.c
+> > index a89bfce5388e..dfdbce067827 100644
+> > --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> > +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> > @@ -353,13 +353,16 @@ static void geni_i2c_tx_fsm_rst(struct geni_i2c_d=
+ev *gi2c)
+> >  static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_m=
+sg *msg,
+> >  				u32 m_param)
+> >  {
+> > +	struct device_node *np =3D gi2c->se.dev->of_node;
+> >  	dma_addr_t rx_dma;
+> >  	unsigned long time_left;
+> > -	void *dma_buf;
+> > +	void *dma_buf =3D NULL;
+> >  	struct geni_se *se =3D &gi2c->se;
+> >  	size_t len =3D msg->len;
+> > =20
+> > -	dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
+> > +	if (!of_property_read_bool(np, "qcom,geni-se-fifo"))
+> > +		dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
+> > +
+> >  	if (dma_buf)
+> >  		geni_se_select_mode(se, GENI_SE_DMA);
+> >  	else
+> > @@ -392,13 +395,16 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_de=
+v *gi2c, struct i2c_msg *msg,
+> >  static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_m=
+sg *msg,
+> >  				u32 m_param)
+> >  {
+> > +	struct device_node *np =3D gi2c->se.dev->of_node;
+> >  	dma_addr_t tx_dma;
+> >  	unsigned long time_left;
+> > -	void *dma_buf;
+> > +	void *dma_buf =3D NULL;
+> >  	struct geni_se *se =3D &gi2c->se;
+> >  	size_t len =3D msg->len;
+> > =20
+> > -	dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
+> > +	if (!of_property_read_bool(np, "qcom,geni-se-fifo"))
+> > +		dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
+> > +
+> >  	if (dma_buf)
+> >  		geni_se_select_mode(se, GENI_SE_DMA);
+> >  	else
+> > --=20
+> > 2.17.1
+> >=20
+
+--kbCYTQG2MZjuOjyn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1wK1kACgkQFA3kzBSg
+KbYdkBAAgFs9RXf2jczJ4+RRvtmpQ2kMs/T+w039wUaHrptyk1cujtkKBxIzzaQ5
+PuTTxkEAxUQdfp8NX2fpjFDU9OJZPMwtXJ6kDLDINm/o35+dVZeJ/d2OealTBHwn
+v3yDd7w6vR/ilOUW395nT0RF5ngxXMKOr9Mcy1qUPygIf7WJmhSUqL8Ps0jLai2F
+xgV3dSHPAXjtciwzNwV7uhsSGEQl19COjYxG/CeQqRQrWy31i/3Pr71xYiTEre0K
+mgg0O23T7h0TZvoXFYrWb62XqpM/kk2z5YCgYx2d3Zy9mVMCBVhoZkAnlzZ8aigb
+nvPaO6y25m6kFeI4NlgMxqQH7IhCqCHWGx5Y2fdGFOqCt/2nTYwBmzaQvRozrXoa
+q6oL30dW5dewd8sTN9RMH0C43TXApsPOOUFieARIIcszOZPJBRWuvAx69UEMEYdw
+/U9Q5uknA9K72KMoNfQwRmK1SlQur5sZ0obxir8hvbDdg3+11oek+2h90fom2ZZy
+Jdcg9i51an87RBRHe6YIXwOVstFWuq0GwOvB8gTT0m9v8TcnoFALWNrYlGaCmt1a
+HvBw24Ds4n25HfcM4OCPnsxDJ1LN9/kAaupXUGwUbo6X1XVKRPQG1OzrYxhehQW8
+N4v1tQBpjvVEN5DK5+hfU8zJozEAu8kqOVBWQJ4s12GvFYy18/0=
+=Qcw2
+-----END PGP SIGNATURE-----
+
+--kbCYTQG2MZjuOjyn--
