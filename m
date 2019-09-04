@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73CA0A90B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD360A91AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:40:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390235AbfIDSLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:11:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55040 "EHLO mail.kernel.org"
+        id S2387817AbfIDSWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:22:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390218AbfIDSLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:11:08 -0400
+        id S2389198AbfIDSFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:05:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4849922CEA;
-        Wed,  4 Sep 2019 18:11:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F3CB206BA;
+        Wed,  4 Sep 2019 18:05:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620667;
-        bh=56xJezm7lAXrT8d3Ze0+Y4GyCi8LcSm62OVfEg/l9BY=;
+        s=default; t=1567620307;
+        bh=JVMkUiNi1mC+2p6+ITIHy1TPRAyipRK4jUwnLWfxZTM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J51wImASU42SVUzhdu4lCVUEQ7lKhr3ttJE4cLklKHJtNgJx+KDaBXn6jBZQhm+QJ
-         +ZgUbKLKJ854LG8PL1QnStLUea3lRYAkDT/aqxXsHjKjF7nEezcuGGI8TCQTd7cadv
-         mrvHOiQD3J+560rkon535VS1AO7UDxXMCvaF+mWo=
+        b=XpfiAzIx88tHk2+p95Ielc5RM7BasT28+Tx78E8enXs6ogL478vdB44y6fYLa0VHn
+         1f0K6yB/XeCt0AUcsdkIi9JnVYyAKd8Vi8jZp6s945aTQPq3SSVi7Gt3bGDd4TcYCc
+         nRUEwqdpsgWkGmOpYNBTLC7R0L8uCpwVDoPPorKs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 049/143] ipv6/addrconf: allow adding multicast addr if IFA_F_MCAUTOJOIN is set
+        stable@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 10/93] soundwire: cadence_master: fix register definition for SLAVE_STATE
 Date:   Wed,  4 Sep 2019 19:53:12 +0200
-Message-Id: <20190904175315.989326532@linuxfoundation.org>
+Message-Id: <20190904175304.057403828@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+[ Upstream commit b07dd9b400981f487940a4d84292d3a0e7cd9362 ]
 
-[ Upstream commit f17f7648a49aa6728649ddf79bdbcac4f1970ce4 ]
+wrong prefix and wrong macro.
 
-In commit 93a714d6b53d ("multicast: Extend ip address command to enable
-multicast group join/leave on") we added a new flag IFA_F_MCAUTOJOIN
-to make user able to add multicast address on ethernet interface.
-
-This works for IPv4, but not for IPv6. See the inet6_addr_add code.
-
-static int inet6_addr_add()
-{
-	...
-	if (cfg->ifa_flags & IFA_F_MCAUTOJOIN) {
-		ipv6_mc_config(net->ipv6.mc_autojoin_sk, true...)
-	}
-
-	ifp = ipv6_add_addr(idev, cfg, true, extack); <- always fail with maddr
-	if (!IS_ERR(ifp)) {
-		...
-	} else if (cfg->ifa_flags & IFA_F_MCAUTOJOIN) {
-		ipv6_mc_config(net->ipv6.mc_autojoin_sk, false...)
-	}
-}
-
-But in ipv6_add_addr() it will check the address type and reject multicast
-address directly. So this feature is never worked for IPv6.
-
-We should not remove the multicast address check totally in ipv6_add_addr(),
-but could accept multicast address only when IFA_F_MCAUTOJOIN flag supplied.
-
-v2: update commit description
-
-Fixes: 93a714d6b53d ("multicast: Extend ip address command to enable multicast group join/leave on")
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20190725234032.21152-14-pierre-louis.bossart@linux.intel.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/addrconf.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/soundwire/cadence_master.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -1045,7 +1045,8 @@ ipv6_add_addr(struct inet6_dev *idev, st
- 	int err = 0;
+diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
+index cb6a331f448ab..d3d7de5a319c5 100644
+--- a/drivers/soundwire/cadence_master.c
++++ b/drivers/soundwire/cadence_master.c
+@@ -81,8 +81,8 @@
  
- 	if (addr_type == IPV6_ADDR_ANY ||
--	    addr_type & IPV6_ADDR_MULTICAST ||
-+	    (addr_type & IPV6_ADDR_MULTICAST &&
-+	     !(cfg->ifa_flags & IFA_F_MCAUTOJOIN)) ||
- 	    (!(idev->dev->flags & IFF_LOOPBACK) &&
- 	     !netif_is_l3_master(idev->dev) &&
- 	     addr_type & IPV6_ADDR_LOOPBACK))
+ #define CDNS_MCP_INTSET				0x4C
+ 
+-#define CDNS_SDW_SLAVE_STAT			0x50
+-#define CDNS_MCP_SLAVE_STAT_MASK		BIT(1, 0)
++#define CDNS_MCP_SLAVE_STAT			0x50
++#define CDNS_MCP_SLAVE_STAT_MASK		GENMASK(1, 0)
+ 
+ #define CDNS_MCP_SLAVE_INTSTAT0			0x54
+ #define CDNS_MCP_SLAVE_INTSTAT1			0x58
+-- 
+2.20.1
+
 
 
