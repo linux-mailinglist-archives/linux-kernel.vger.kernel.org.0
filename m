@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2607FA8F8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86FB7A90DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388710AbfIDSET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:04:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45224 "EHLO mail.kernel.org"
+        id S2390459AbfIDSMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:12:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389065AbfIDSEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:04:15 -0400
+        id S1731429AbfIDSMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:12:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27B9C22CF7;
-        Wed,  4 Sep 2019 18:04:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C56C2087E;
+        Wed,  4 Sep 2019 18:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620254;
-        bh=j6slQnB2uX1cLMO5glRZ80zlNukpq06xFmMrLsE6Dh0=;
+        s=default; t=1567620728;
+        bh=koAIJkUdUSSuqVjfYC76UrPAJthYulamgGKUFle+VMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aRZaibZ2MUXljfSGixhx7L3eQvfvQaQWu5nF4L8bwkH/4V012XrKM9rnduTcSCeH5
-         8l9E8TEuIGw29waffIhYS8RbuF1CzgFmBbmspmCOZMINmU2jNZTkpfQtHtrq5ayXDL
-         ckrQQgqNu5u/a+lfXUJVv2zTekkigj7XzjoTXM4w=
+        b=KbjHXUjWCGI4M3fHvd4A4kBSgYhUHFXpremCSCoN8wf5DkC6fG3Y1nihw/NyOhfM/
+         tctQdmto+k5ljMVn29XDIu1/ZUKsTdIiHfzCzuCvGYg/JFEk1msKKCFss8kP6qI/SC
+         z4WtkDyDsc1LFZFHWHvY5tHXlxzQ0mgqO6yVXfxc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Y.C. Chen" <yc_chen@aspeedtech.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dave Airlie <airlied@redhat.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 09/57] drm/ast: Fixed reboot test may cause system hanged
+Subject: [PATCH 5.2 074/143] HID: logitech-hidpp: remove support for the G700 over USB
 Date:   Wed,  4 Sep 2019 19:53:37 +0200
-Message-Id: <20190904175302.858386534@linuxfoundation.org>
+Message-Id: <20190904175316.949077684@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,72 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 05b439711f6ff8700e8660f97a1179650778b9cb ]
+[ Upstream commit a3384b8d9f63cc042711293bb97bdc92dca0391d ]
 
-There is another thread still access standard VGA I/O while loading drm driver.
-Disable standard VGA I/O decode to avoid this issue.
+The G700 suffers from the same issue than the G502:
+when plugging it in, the driver tries to contact it but it fails.
 
-Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
-Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1523410059-18415-1-git-send-email-yc_chen@aspeedtech.com
+This timeout is problematic as it introduce a delay in the boot,
+and having only the mouse event node means that the hardware
+macros keys can not be relayed to the userspace.
+
+Link: https://github.com/libratbag/libratbag/issues/797
+Fixes: 91cf9a98ae41 ("HID: logitech-hidpp: make .probe usbhid capable")
+Cc: stable@vger.kernel.org # v5.2
+Reviewed-by: Filipe Laíns <lains@archlinux.org>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/ast/ast_main.c | 5 ++++-
- drivers/gpu/drm/ast/ast_mode.c | 2 +-
- drivers/gpu/drm/ast/ast_post.c | 2 +-
- 3 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/hid/hid-logitech-hidpp.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/ast/ast_main.c b/drivers/gpu/drm/ast/ast_main.c
-index 373700c05a00f..224fa1ef87ff9 100644
---- a/drivers/gpu/drm/ast/ast_main.c
-+++ b/drivers/gpu/drm/ast/ast_main.c
-@@ -131,8 +131,8 @@ static int ast_detect_chip(struct drm_device *dev, bool *need_post)
- 
- 
- 	/* Enable extended register access */
--	ast_enable_mmio(dev);
- 	ast_open_key(ast);
-+	ast_enable_mmio(dev);
- 
- 	/* Find out whether P2A works or whether to use device-tree */
- 	ast_detect_config_mode(dev, &scu_rev);
-@@ -576,6 +576,9 @@ void ast_driver_unload(struct drm_device *dev)
- {
- 	struct ast_private *ast = dev->dev_private;
- 
-+	/* enable standard VGA decode */
-+	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xa1, 0x04);
-+
- 	ast_release_firmware(dev);
- 	kfree(ast->dp501_fw_addr);
- 	ast_mode_fini(dev);
-diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
-index 343867b182dd8..a09fafa270822 100644
---- a/drivers/gpu/drm/ast/ast_mode.c
-+++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -600,7 +600,7 @@ static int ast_crtc_mode_set(struct drm_crtc *crtc,
- 		return -EINVAL;
- 	ast_open_key(ast);
- 
--	ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xa1, 0xff, 0x04);
-+	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xa1, 0x06);
- 
- 	ast_set_std_reg(crtc, adjusted_mode, &vbios_mode);
- 	ast_set_crtc_reg(crtc, adjusted_mode, &vbios_mode);
-diff --git a/drivers/gpu/drm/ast/ast_post.c b/drivers/gpu/drm/ast/ast_post.c
-index f7d421359d564..c1d1ac51d1c20 100644
---- a/drivers/gpu/drm/ast/ast_post.c
-+++ b/drivers/gpu/drm/ast/ast_post.c
-@@ -46,7 +46,7 @@ void ast_enable_mmio(struct drm_device *dev)
- {
- 	struct ast_private *ast = dev->dev_private;
- 
--	ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xa1, 0xff, 0x04);
-+	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xa1, 0x06);
- }
- 
- 
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index 34e2b3f9d540d..4effce12607b0 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -3769,8 +3769,6 @@ static const struct hid_device_id hidpp_devices[] = {
+ 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC332) },
+ 	{ /* Logitech G502 Hero Gaming Mouse over USB */
+ 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC08B) },
+-	{ /* Logitech G700 Gaming Mouse over USB */
+-	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC06B) },
+ 	{ /* Logitech G700s Gaming Mouse over USB */
+ 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC07C) },
+ 	{ /* Logitech G703 Gaming Mouse over USB */
 -- 
 2.20.1
 
