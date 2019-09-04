@@ -2,71 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 672E0A7EDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:07:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BE5A7ED6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbfIDJHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 05:07:10 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42046 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727144AbfIDJHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:07:09 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D006A3AF71769D996D23;
-        Wed,  4 Sep 2019 17:07:07 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
- 17:06:58 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <yuehaibing@huawei.com>,
-        <tiny.windzz@gmail.com>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] usb: isp1362-hcd: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 4 Sep 2019 17:05:49 +0800
-Message-ID: <20190904090549.24456-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1729496AbfIDJG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 05:06:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727144AbfIDJG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 05:06:28 -0400
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 199892339E;
+        Wed,  4 Sep 2019 09:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567587987;
+        bh=EOQcGVJ6OuDmcoR+UhqLOItk6Uldp6Kp+u0aoDcoTrc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SbUL5oScju8aqdkKXaEH+CLZTc/GskaW/IOHPyNgRiBmDNvDEJwzQgaBZ0zTfOL5z
+         +vqeoa1MgUs+FrLTyZcHaiy8NltzgewYw2/Z2dvhdPqrlV3CRcpuXJp3mE565N4M+i
+         FrDdqHCVZ6e9f6fLxpH4FxNRVBtKdI4WHTMRZvtI=
+Received: by mail-qk1-f177.google.com with SMTP id f13so18842922qkm.9;
+        Wed, 04 Sep 2019 02:06:27 -0700 (PDT)
+X-Gm-Message-State: APjAAAWglR6rpNcHI8m+gZCitflQGJpP+A12fXUz3t5pfwA49fm2ymSI
+        RqKhFhmsg5mQ/h1J4QwQNtB1kaEbHeDmbe98SQ==
+X-Google-Smtp-Source: APXvYqwsUjYioCkp7chtGIyXBeWPxAmAYYRHsnnUJEmm0tjJuP13a/87Fssk2rAEhdN6wQH59jQzx/qASdFezPeBZ/Q=
+X-Received: by 2002:a05:620a:1356:: with SMTP id c22mr18142847qkl.119.1567587986249;
+ Wed, 04 Sep 2019 02:06:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20190903080336.32288-1-philippe.schenker@toradex.com>
+ <20190903080336.32288-4-philippe.schenker@toradex.com> <CAL_JsqLnqZ80soGVMvZjAMZvu+K=ebDUz2bM_ZodPp7YRvUnDw@mail.gmail.com>
+ <e64429ba4b86411da1741ab54176fb5b4b7a36de.camel@toradex.com>
+In-Reply-To: <e64429ba4b86411da1741ab54176fb5b4b7a36de.camel@toradex.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 4 Sep 2019 10:06:14 +0100
+X-Gmail-Original-Message-ID: <CAL_JsqLLSUWhkguCx2mc2oyV-0MHp4RWwJr5oTWRUvQiovn4Gw@mail.gmail.com>
+Message-ID: <CAL_JsqLLSUWhkguCx2mc2oyV-0MHp4RWwJr5oTWRUvQiovn4Gw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dt-bindings: regulator: add regulator-fixed-clock binding
+To:     Philippe Schenker <philippe.schenker@toradex.com>
+Cc:     Max Krummenacher <max.krummenacher@toradex.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Luka Pivk <luka.pivk@toradex.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Stefan Agner <stefan.agner@toradex.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Wed, Sep 4, 2019 at 9:07 AM Philippe Schenker
+<philippe.schenker@toradex.com> wrote:
+>
+> On Tue, 2019-09-03 at 09:45 +0100, Rob Herring wrote:
+> > On Tue, Sep 3, 2019 at 9:03 AM Philippe Schenker
+> > <philippe.schenker@toradex.com> wrote:
+> > > This adds the documentation to the compatible regulator-fixed-clock
+> >
+> > Please explain what that is in this patch.
+>
+> Hi Rob and thanks for your comments. I will change this commit message
+> for a possible v2 into this:
+>
+> This adds the documentation to the compatible regulator-fixed-clock.
+> This binding is a special binding of regulator-fixed and adds the
+> ability to add a clock to regulator-fixed, so the regulator can be
+> enabled and disabled with that clock.
+> If the special compatible regulator-fixed-clock is used it is mandatory
+> to supply a clock.
+>
+> > >
+> >
+> > > Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+> > >
+> > > ---
+> > >
+> > >  .../bindings/regulator/fixed-regulator.yaml    | 18
+> > > +++++++++++++++++-
+> > >  1 file changed, 17 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/regulator/fixed-
+> > > regulator.yaml b/Documentation/devicetree/bindings/regulator/fixed-
+> > > regulator.yaml
+> > > index a650b457085d..5fd081e80b43 100644
+> > > --- a/Documentation/devicetree/bindings/regulator/fixed-
+> > > regulator.yaml
+> > > +++ b/Documentation/devicetree/bindings/regulator/fixed-
+> > > regulator.yaml
+> > > @@ -19,9 +19,19 @@ description:
+> > >  allOf:
+> > >    - $ref: "regulator.yaml#"
+> > >
+> > > +select:
+> > > +  properties:
+> > > +    compatible:
+> > > +      contains:
+> > > +        const: regulator-fixed-clock
+> > > +  required:
+> > > +    - clocks
+> >
+> > You don't need this.
+> >
+> > If you add a new compatible, then this should probably be a new schema
+> > doc. Is the 'gpio' property valid in this case as if a clock is the
+> > enable, can you also have a gpio enable? That said, it seems like the
+> > new compatible is only for validating the DT in the driver. You could
+> > just use a clock if present and default to current behavior if not.
+> > It's not the kernel's job to validate DTs.
+>
+> The gpio property is valid with this compatible. I added regulator-
+> fixed-clock to regulator-fixed hence I also don't want to create a new
+> schema file.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/usb/host/isp1362-hcd.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Okay, if all the other properties are valid then adding to this file is fine.
 
-diff --git a/drivers/usb/host/isp1362-hcd.c b/drivers/usb/host/isp1362-hcd.c
-index 96f8daa..4a3a285 100644
---- a/drivers/usb/host/isp1362-hcd.c
-+++ b/drivers/usb/host/isp1362-hcd.c
-@@ -2627,7 +2627,7 @@ static int isp1362_probe(struct platform_device *pdev)
- {
- 	struct usb_hcd *hcd;
- 	struct isp1362_hcd *isp1362_hcd;
--	struct resource *addr, *data, *irq_res;
-+	struct resource *data, *irq_res;
- 	void __iomem *addr_reg;
- 	void __iomem *data_reg;
- 	int irq;
-@@ -2651,8 +2651,7 @@ static int isp1362_probe(struct platform_device *pdev)
- 
- 	irq = irq_res->start;
- 
--	addr = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	addr_reg = devm_ioremap_resource(&pdev->dev, addr);
-+	addr_reg = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(addr_reg))
- 		return PTR_ERR(addr_reg);
- 
--- 
-2.7.4
+> With the above select statement I wanted to state clocks as required
+> when the compatible regulator-fixed-clock is given.
 
+select is not the right way to do that. select is for whether to apply
+the schema to a node or not. What you have will silently not apply the
+schema if 'clocks' is missing or compatible is 'regulator-fixed'.
+Essentially what you need to do here is:
 
+if:
+  properties:
+    compatible:
+      contains:
+        const: regulator-fixed-clock
+then:
+  required:
+    - clocks
+
+Rob
