@@ -2,99 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 801D0A95C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 00:11:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AC9AA95CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 00:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbfIDWLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 18:11:15 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38814 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbfIDWLP (ORCPT
+        id S1730106AbfIDWMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 18:12:42 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38939 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfIDWMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 18:11:15 -0400
-Received: by mail-pf1-f196.google.com with SMTP id h195so255977pfe.5;
-        Wed, 04 Sep 2019 15:11:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g+6XpI5kpbmJFvx+kn5E+7tLpc2ZjDJn4kNPVnStE2E=;
-        b=e1kzHrrhLu3H38c3RIvFv3KFtEH9I0ixuhaalyVNjtJ9R9aUU9517BP85uBp4c3dZa
-         6DzLL79w3ZVR5oUpFF/Hw+HQ2RxOZQDPC4namhjt2TAkIKilTLiQFyR+o1Yj1In2zXDy
-         9561wWBcfEh/Zda6ZBhNy8ZYUbEjDEGuuVxdntn6eA19ptbxtScB4jIDbgcIcsKHJIZ1
-         6opBQ9JuYPHFhzVctBZsgYo4yGvrC/82132vAGrfZQnOnHxDOQVUV1WH8OPdd1L0DUNY
-         WmBC0oBFQP6xLAELnWxBOYfrAUFMrzCd0Yz/tso+7YQkzY4u3U6ofekBVa0W6M1OSYGG
-         qZoQ==
+        Wed, 4 Sep 2019 18:12:42 -0400
+Received: by mail-wr1-f68.google.com with SMTP id t16so403078wra.6
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 15:12:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=g+6XpI5kpbmJFvx+kn5E+7tLpc2ZjDJn4kNPVnStE2E=;
-        b=fFXaeSowFzFKieC96Y+qeHGi2+JWVDwI+nIInjR/Iotw4FsZvgF1bWwZvxVLyaejSY
-         z3QR0TplrKjRSL5qtpRyJsnKML/PdTP3crxXPM8wdp+Dmg63BeASDTrliIEKZTZTlJHa
-         A2wfAxwvkCfmE0Yel+ivtuO7vMXJ66dPPyhebQZn4rNtnMwA/yRlPLZI15CMB5GTS/Q6
-         lBDIzEUphrq8ribwGnc0WFqlpWTpYRM3juh9099S0Svq7P3Q3kWcL0Nmn0JTtPuSE5eb
-         L/xqs1K8DXY76Dr/VwDFkYN19cagN62L022Hm/io7tGRXXcDHTfuoeSl5s0Kcya4NJey
-         YvCw==
-X-Gm-Message-State: APjAAAVg8rk1MGVaaNRt79TVdiO8/hnON+TG1sf4Wb3yN6meGVjWiq1r
-        qC41cZMvJ+atC/zc5kXWTbh0pbF8MWo=
-X-Google-Smtp-Source: APXvYqzpBWtpxdm0bH8OBicigR1zPs24mRFeZDv7CLPJ6+TDtcXf9xj9XjfGvwWIe6hpB9xzS3uiMw==
-X-Received: by 2002:a63:7a01:: with SMTP id v1mr330595pgc.310.1567635073535;
-        Wed, 04 Sep 2019 15:11:13 -0700 (PDT)
-Received: from [10.230.7.147] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id e192sm55781pfh.83.2019.09.04.15.11.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Sep 2019 15:11:12 -0700 (PDT)
-Subject: Re: [PATCH -next 07/36] spi: bcm63xx-hsspi: use
- devm_platform_ioremap_resource() to simplify code
-To:     YueHaibing <yuehaibing@huawei.com>, broonie@kernel.org,
-        rjui@broadcom.com, sbranden@broadcom.com, eric@anholt.net,
-        wahrenst@gmx.net, shc_work@mail.ru, agross@kernel.org,
-        khilman@baylibre.com, matthias.bgg@gmail.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, avifishman70@gmail.com, tmaimon77@gmail.com,
-        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
-        benjaminfair@google.com, kgene@kernel.org, krzk@kernel.org,
-        andi@etezian.org, palmer@sifive.com, paul.walmsley@sifive.com,
-        baohua@kernel.org, mripard@kernel.org, wens@csie.org,
-        ldewangan@nvidia.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, yamada.masahiro@socionext.com,
-        michal.simek@xilinx.com
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-References: <20190904135918.25352-1-yuehaibing@huawei.com>
- <20190904135918.25352-8-yuehaibing@huawei.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <d36f7e5f-d629-dcad-61c5-fcf896cbd91e@gmail.com>
-Date:   Wed, 4 Sep 2019 15:10:57 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        bh=RVYDeHbKBGun4f+UKrUmf76hgNLAoFPf0BMYGjpN1us=;
+        b=eJecNKUFSF4Sj5nDpm6pK6SgQLRG3WSWZuOf6y6esFn/dBQM7GBUNpNSd6uJ36Id98
+         OHjhUTTO91S+6jpvxaZvzJB15nSxrFu2z5zy6eeQ8nJqg5TuZryc74OjbPtTqNSrBhNx
+         0/Gl+CdJQBVNpvRa1u/ugW0LRAsprPHBDe0VEo0qADkqxCAuZipJRLlaJSBb7Kn1azf1
+         aSxuszAyH8L58+V5/OhKzH8pcP+MFXjuyeo9RIFeB7mBmlNVliTRFOQb87yVx6p2VfNK
+         hZY6lzHt3t3efTp93Jhnq2JlgvvTMRirGnxx4jasX0oaIcSrTkGvZGRrDsq6BRi7oVhV
+         eShA==
+X-Gm-Message-State: APjAAAUvwx/vNYNwljmU0KEQdaCtlH+0vYi3h8qxVwnR9T/T9H54/Hwk
+        YbWGYi9al2Pp5lmgoKmkmynZ2aZH
+X-Google-Smtp-Source: APXvYqwx/VEL317aGfMsOhxPHNUnAy4qJ7vMCUuU8iNMdlAiHwrZVzZ+6jROGhNfejzqOW44J8VZ+A==
+X-Received: by 2002:adf:f011:: with SMTP id j17mr34814430wro.131.1567635160085;
+        Wed, 04 Sep 2019 15:12:40 -0700 (PDT)
+Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
+        by smtp.googlemail.com with ESMTPSA id s26sm156204wrs.63.2019.09.04.15.12.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 15:12:39 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+To:     Coccinelle <cocci@systeme.lip6.fr>
+Cc:     Denis Efremov <efremov@linux.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] coccinelle: check for integer overflow in binary search
+Date:   Thu,  5 Sep 2019 01:12:23 +0300
+Message-Id: <20190904221223.5281-1-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190904135918.25352-8-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an RFC. I will resend the patch after feedback. Currently
+I'm preparing big patchset with bsearch warnings fixed. The rule will
+be a part of this patchset if it will be considered good enough for
+checking.
 
+There is a known integer overflow error [1] in the binary search
+algorithm. Google faced it in 2006 [2]. This rule checks midpoint
+calculation in binary search for overflow, i.e., (l + h) / 2.
+Not every match is an actual error since the array could be small
+enough. However, a custom implementation of binary search is
+error-prone and it's better to use the library function (lib/bsearch.c)
+or to apply defensive programming for midpoint calculation.
 
-On 9/4/2019 6:58 AM, YueHaibing wrote:
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+[1] https://en.wikipedia.org/wiki/Binary_search_algorithm#Implementation_issues
+[2] https://ai.googleblog.com/2006/06/extra-extra-read-all-about-it-nearly.html
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Denis Efremov <efremov@linux.com>
+---
+ scripts/coccinelle/misc/bsearch.cocci | 80 +++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+ create mode 100644 scripts/coccinelle/misc/bsearch.cocci
+
+diff --git a/scripts/coccinelle/misc/bsearch.cocci b/scripts/coccinelle/misc/bsearch.cocci
+new file mode 100644
+index 000000000000..a99d9a8d3ee5
+--- /dev/null
++++ b/scripts/coccinelle/misc/bsearch.cocci
+@@ -0,0 +1,80 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/// Check midpoint calculation in binary search algorithm for integer overflow
++/// error [1]. Google faced it in 2006 [2]. Not every match is an actual error
++/// since the array can be small enough. However, a custom implementation of
++/// binary search is error-prone and it's better to use the library function
++/// (lib/bsearch.c) or to apply defensive programming for midpoint calculation.
++///
++/// [1] https://en.wikipedia.org/wiki/Binary_search_algorithm#Implementation_issues
++/// [2] https://ai.googleblog.com/2006/06/extra-extra-read-all-about-it-nearly.html
++//
++// Confidence: Medium
++// Copyright: (C) 2019 Denis Efremov, ISPRAS
++// Comments:
++// Options: --no-includes --include-headers
++
++virtual report
++virtual org
++
++@r depends on org || report@
++identifier l, h, m;
++statement S;
++position p;
++// to match 1 in <<
++// to match 2 in /
++// Can't use exact values, e.g. 2, because it fails to match 2L.
++// TODO: Is there an isomorphism for 2, 2L, 2U, 2UL, 2ULL, etc?
++constant c;
++// TODO: Is there an isomorphism for (a / 2) === (a >> 1)?
++@@
++(
++ while (\(l < h\|l <= h\|(h - l) > 1\|(l + 1) < h\|l < (h - 1)\)) {
++  ...
++(
++  ((l + h)@p / c)
++|
++  ((l + h)@p >> c)
++)
++  ...
++ }
++//TODO: Is it possible to match "do {} while ();" loops?
++// |
++//  do {
++//   ...
++// (
++//   ((l + h)@p / c)
++// |
++//   ((l + h)@p >> c)
++// )
++//   ...
++//  } while (\(l < h\|l <= h\|(h - l) > 1\|(l + 1) < h\|l < (h - 1)\));
++|
++ for (...; \(l < h\|l <= h\|(h - l) > 1\|(l + 1) < h\|l < (h - 1)\);
++      m = \(((l + h)@p / c)\|((l + h)@p >> c)\)) S
++|
++ for (...; \(l < h\|l <= h\|(h - l) > 1\|(l + 1) < h\|l < (h - 1)\); ...) {
++  ...
++(
++  ((l + h)@p / c)
++|
++  ((l + h)@p >> c)
++)
++  ...
++ }
++)
++
++@script:python depends on org@
++p << r.p;
++@@
++
++coccilib.org.print_todo(p[0], "WARNING opportunity for bsearch() or 'm = l + (h - l) / 2;'")
++
++@script:python depends on report@
++p << r.p;
++@@
++
++msg="WARNING: custom implementation of bsearch is error-prone. "
++msg+="Consider using lib/bsearch.c or fix the midpoint calculation "
++msg+="as 'm = l + (h - l) / 2;' to prevent the arithmetic overflow."
++coccilib.report.print_report(p[0], msg)
++
 -- 
-Florian
+2.21.0
+
