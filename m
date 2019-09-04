@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF511A8ECC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D997A8FC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387970AbfIDSAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:00:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39100 "EHLO mail.kernel.org"
+        id S2389299AbfIDSFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:05:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731612AbfIDSAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:00:03 -0400
+        id S2389282AbfIDSFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:05:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F116208E4;
-        Wed,  4 Sep 2019 18:00:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 926862339E;
+        Wed,  4 Sep 2019 18:05:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620002;
-        bh=eNH3i2y7roWiXsi/UjHR77xvjZRes21W6t2db1K5t/I=;
+        s=default; t=1567620337;
+        bh=xpTxZ5R8eAcpX66aYu+28hbqAixej81lEhoB0dUZzuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gg/jKpf4ssVGUoUCOi64aHBS1WrwMNUzp7GVFVo5dNUZMjHiQJ+DTTPTcNBr91TVb
-         a+eQQ/w5JKEhbjb6v0n6EPDSCXvyOZwTG+tR48MgDgtA9zb0mu+s5Ww4Dnaeje1cvJ
-         eAleZvHwEC3josYetfr6TK4aWVP0EtLnEE6bJLlg=
+        b=SBxburqJv2LYJ91kCKtHSSppR96afD/fNZStWWaBjaC8Vj59qqZGhPrMiS5zGtLMY
+         6UhdP8aFtjp0eJ2AKPq+4dm4uBm8T3u1r+ANfxkmjJRheDOXUydh+cApUtWqrrzCez
+         aof2oEpyM+UTLRPL+2WYbBuaEnNOCTLWZpY1+fmo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.9 29/83] HID: wacom: Correct distance scale for 2nd-gen Intuos devices
-Date:   Wed,  4 Sep 2019 19:53:21 +0200
-Message-Id: <20190904175306.465260713@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 20/93] i2c: rcar: avoid race when unregistering slave client
+Date:   Wed,  4 Sep 2019 19:53:22 +0200
+Message-Id: <20190904175305.072864866@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +46,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gerecke <jason.gerecke@wacom.com>
+[ Upstream commit 7b814d852af6944657c2961039f404c4490771c0 ]
 
-commit b72fb1dcd2ea9d29417711cb302cef3006fa8d5a upstream.
+After we disabled interrupts, there might still be an active one
+running. Sync before clearing the pointer to the slave device.
 
-Distance values reported by 2nd-gen Intuos tablets are on an inverted
-scale (0 == far, 63 == near). We need to change them over to a normal
-scale before reporting to userspace or else userspace drivers and
-applications can get confused.
-
-Ref: https://github.com/linuxwacom/input-wacom/issues/98
-Fixes: eda01dab53 ("HID: wacom: Add four new Intuos devices")
-Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
-Cc: <stable@vger.kernel.org> # v4.4+
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: de20d1857dd6 ("i2c: rcar: add slave support")
+Reported-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/wacom_wac.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/i2c/busses/i2c-rcar.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -949,6 +949,8 @@ static int wacom_intuos_general(struct w
- 		y >>= 1;
- 		distance >>= 1;
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 254e6219e5389..2c29f901d3090 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -139,6 +139,7 @@ struct rcar_i2c_priv {
+ 	enum dma_data_direction dma_direction;
+ 
+ 	struct reset_control *rstc;
++	int irq;
+ };
+ 
+ #define rcar_i2c_priv_to_dev(p)		((p)->adap.dev.parent)
+@@ -859,9 +860,11 @@ static int rcar_unreg_slave(struct i2c_client *slave)
+ 
+ 	WARN_ON(!priv->slave);
+ 
++	/* disable irqs and ensure none is running before clearing ptr */
+ 	rcar_i2c_write(priv, ICSIER, 0);
+ 	rcar_i2c_write(priv, ICSCR, 0);
+ 
++	synchronize_irq(priv->irq);
+ 	priv->slave = NULL;
+ 
+ 	pm_runtime_put(rcar_i2c_priv_to_dev(priv));
+@@ -916,7 +919,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 	struct i2c_adapter *adap;
+ 	struct device *dev = &pdev->dev;
+ 	struct i2c_timings i2c_t;
+-	int irq, ret;
++	int ret;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(struct rcar_i2c_priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -979,10 +982,10 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 		pm_runtime_put(dev);
+ 
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	ret = devm_request_irq(dev, irq, rcar_i2c_irq, 0, dev_name(dev), priv);
++	priv->irq = platform_get_irq(pdev, 0);
++	ret = devm_request_irq(dev, priv->irq, rcar_i2c_irq, 0, dev_name(dev), priv);
+ 	if (ret < 0) {
+-		dev_err(dev, "cannot get irq %d\n", irq);
++		dev_err(dev, "cannot get irq %d\n", priv->irq);
+ 		goto out_pm_disable;
  	}
-+	if (features->type == INTUOSHT2)
-+		distance = features->distance_max - distance;
- 	input_report_abs(input, ABS_X, x);
- 	input_report_abs(input, ABS_Y, y);
- 	input_report_abs(input, ABS_DISTANCE, distance);
+ 
+-- 
+2.20.1
+
 
 
