@@ -2,86 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D98EA7A70
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 06:52:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E73BCA7A76
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 06:56:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfIDEv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 00:51:58 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42403 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfIDEv6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 00:51:58 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c10so7954072otd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 21:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7g70nxojyvqUevqcEcO6mWCw0Mvt89bDYJhasa/z5qU=;
-        b=hs+FLQG6hGil7CYHLEApAe+DDoHHrAAtp1/JipuDuY8CocVM/VhO4r46fSAaxkUPwW
-         jfgpF+yVf3J8Mf9YQ0ZAlPlOZ0A56ZAZ70qFOGRPTLphjJlwyfY+cSJp1zI6vTkgbXFx
-         AfqWtOBJHOq+4Fh/kl3zIYgvG02nI+be3NSIuL6+YJKwXIZHCOkjru+yQFKbu4ASyL9c
-         5UQSHyY79bcthVT5/tI+YhyiHG3+QNotwCWQGyAfvXx0lCxjybk3f5IsNyINleiDZ7hE
-         DHjNoewPDDBABrSPOJDev1gJlnWtk2e9s15h1hSlQ5FAow4I0vAeygMk/zyREM4CCJFX
-         K9kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7g70nxojyvqUevqcEcO6mWCw0Mvt89bDYJhasa/z5qU=;
-        b=MGqPj9ZEjZFTnYcXClm4mMaF6rMg+iZa6PzGX81hyMwIN8MDHVGGdo1So1lOKAyNHj
-         faSxlutOw2QUl6dttJ9O2Tdpvn4lUVQOQ+H6s1IPvsu4AsA9wsRueqHw1gR2wLN3QJol
-         a0qxuj3kDax4Eas1Oyv+pniSTwAK+6c9IUdXpKw6LItTpG+7JSoEtKesAY0BRbetV9Db
-         1jvMNdsAHoGX0ebMSrAESWRcLmJkEKMHaOvhfQb4m2Kb1jVoCwSU/ikt+9DxVAyIXokF
-         bUxKU665e6btQhTfl5QwaLENgpYH50H5YYvLhht5gszYeuXTiRTUb/FwNhguZCJoxV3k
-         ztrw==
-X-Gm-Message-State: APjAAAUi/gRcOUnBoY1WVRWVHrcdC+hjiZWi3qLWnCDgO5JqxK3rYLFi
-        FPEtHh5ogIdaGy9SyiSh03npnpiS0wEQixT0homMSQ==
-X-Google-Smtp-Source: APXvYqwK+0TQHzt1dZYPeNvE5yh0ZFEy9YeCqwtmvVYM2AZU4/vDh4rMtpicZrlbHi4Qc6hV8mY9VZENn/jerJ7RoBk=
-X-Received: by 2002:a9d:7343:: with SMTP id l3mr31638937otk.268.1567572716918;
- Tue, 03 Sep 2019 21:51:56 -0700 (PDT)
+        id S1728108AbfIDE42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 00:56:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726046AbfIDE42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 00:56:28 -0400
+Received: from localhost (unknown [122.182.201.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4AB12077B;
+        Wed,  4 Sep 2019 04:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567572987;
+        bh=xkQZikYEyY3c7L/C+i3x3dyZJTWQdFUTYOzei9xlyQk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qru4PME1plSqZSD3Y0yICIVW9mG8C6MIOggnFtQeOImhWC+FBN6IDZmu3YNXSXfsp
+         /CtM4d+VWQw/4xbdRL1f5E/kqn+X8vqamBF55CBzDkJAaWkH6pNZU4tRZd+X+E6DqX
+         V7Xgvu0JOuirnwEN3Hsu9poD7z85dNhWmTT4l4mg=
+Date:   Wed, 4 Sep 2019 10:25:19 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        dmaengine@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] dmaengine: stm32-dma: Use struct_size() helper
+Message-ID: <20190904045519.GZ2672@vkoul-mobl>
+References: <20190830161423.GA3483@embeddedor>
 MIME-Version: 1.0
-References: <20190903200905.198642-1-joel@joelfernandes.org> <CAJuCfpEXpYq2i3zNbJ3w+R+QXTuMyzwL6S9UpiGEDvTioKORhQ@mail.gmail.com>
-In-Reply-To: <CAJuCfpEXpYq2i3zNbJ3w+R+QXTuMyzwL6S9UpiGEDvTioKORhQ@mail.gmail.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Tue, 3 Sep 2019 21:51:20 -0700
-Message-ID: <CAKOZuesWV9yxbS9+T5+p1Ty1-=vFeYcHuO=6MgzTY8akMhbFbQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: emit tracepoint when RSS changes by threshold
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Carmen Jackson <carmenjackson@google.com>,
-        Mayank Gupta <mayankgupta@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kernel-team <kernel-team@android.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190830161423.GA3483@embeddedor>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 9:45 PM Suren Baghdasaryan <surenb@google.com> wrote:
->
-> On Tue, Sep 3, 2019 at 1:09 PM Joel Fernandes (Google)
-> <joel@joelfernandes.org> wrote:
-> >
-> > Useful to track how RSS is changing per TGID to detect spikes in RSS and
-> > memory hogs. Several Android teams have been using this patch in various
-> > kernel trees for half a year now. Many reported to me it is really
-> > useful so I'm posting it upstream.
+On 30-08-19, 11:14, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+> 
+> struct stm32_dma_desc {
+> 	...
+>         struct stm32_dma_sg_req sg_req[];
+> };
+> 
+> 
+> Make use of the struct_size() helper instead of an open-coded version
+> in order to avoid any potential type mistakes.
+> 
+> So, replace the following function:
+> 
+> static struct stm32_dma_desc *stm32_dma_alloc_desc(u32 num_sgs)
+> {
+>        return kzalloc(sizeof(struct stm32_dma_desc) +
+>                       sizeof(struct stm32_dma_sg_req) * num_sgs, GFP_NOWAIT);
+> }
+> 
+> with:
+> 
+> kzalloc(struct_size(desc, sg_req, num_sgs), GFP_NOWAIT)
+> 
+> This code was detected with the help of Coccinelle.
 
-It's also worth being able to turn off the per-task memory counter
-caching, otherwise you'll have two levels of batching before the
-counter gets updated, IIUC.
+Applied, thanks
+
+-- 
+~Vinod
