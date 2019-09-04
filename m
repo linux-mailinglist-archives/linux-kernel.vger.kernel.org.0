@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A736A90F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E886A8FBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390557AbfIDSMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:12:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57190 "EHLO mail.kernel.org"
+        id S2389278AbfIDSFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:05:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733228AbfIDSMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:12:41 -0400
+        id S2387532AbfIDSFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:05:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B778206BA;
-        Wed,  4 Sep 2019 18:12:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 401DE2339E;
+        Wed,  4 Sep 2019 18:05:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620760;
-        bh=9j13SR6PFoGHS9DU6kXVZT3HtgNT+HZ/YvMRajqX1co=;
+        s=default; t=1567620331;
+        bh=0Fw/6tbnF5dPuAkSNbGV3kjnBEsH029C3qwRVjq48pA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S/aFSJHOxyK+rNYtQX7lDG4CCSKzHaaynUVJW/elX4v25VM5r5aiLHZBMx1Yu6hC6
-         /1nY9zSOf771JrVl4YO2jt4efcVGnhqEMVfF5jNf4uKNs9Wvm/OBMM2GZt+sVqesv2
-         wchixQAJNL1p/C4dfw/omwcI8W1ZkbTy3VRN/s6M=
+        b=c+4k6kKFgdgu2izGj1QiJaXdLvClq4WFDvQqzo2Pi8vfc4HP49g2Ayj4c4ObNLy8a
+         SaJrhGD9LBWdhI5+GuXtwAwjtA+g34pQlRVv7aNNf2NV4sxtB+fkClDpzQ6guVFaTd
+         86yyl3KMLzesy1s6F+wiZ6E9ZwDRQd5cO2NgOY+o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 058/143] xfrm/xfrm_policy: fix dst dev null pointer dereference in collect_md mode
+        stable@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 19/93] arm64: cpufeature: Dont treat granule sizes as strict
 Date:   Wed,  4 Sep 2019 19:53:21 +0200
-Message-Id: <20190904175316.343523033@linuxfoundation.org>
+Message-Id: <20190904175305.025246804@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +48,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+[ Upstream commit 5717fe5ab38f9ccb32718bcb03bea68409c9cce4 ]
 
-[ Upstream commit c3b4c3a47e05d5fecf7354d75824a9d1b37f3e84 ]
+If a CPU doesn't support the page size for which the kernel is
+configured, then we will complain and refuse to bring it online. For
+secondary CPUs (and the boot CPU on a system booting with EFI), we will
+also print an error identifying the mismatch.
 
-In decode_session{4,6} there is a possibility that the skb dst dev is NULL,
-e,g, with tunnel collect_md mode, which will cause kernel crash.
-Here is what the code path looks like, for GRE:
+Consequently, the only time that the cpufeature code can detect a
+granule size mismatch is for a granule other than the one that is
+currently being used. Although we would rather such systems didn't
+exist, we've unfortunately lost that battle and Kevin reports that
+on his amlogic S922X (odroid-n2 board) we end up warning and taining
+with defconfig because 16k pages are not supported by all of the CPUs.
 
-- ip6gre_tunnel_xmit
-  - ip6gre_xmit_ipv6
-    - __gre6_xmit
-      - ip6_tnl_xmit
-        - if skb->len - t->tun_hlen - eth_hlen > mtu; return -EMSGSIZE
-    - icmpv6_send
-      - icmpv6_route_lookup
-        - xfrm_decode_session_reverse
-          - decode_session4
-            - oif = skb_dst(skb)->dev->ifindex; <-- here
-          - decode_session6
-            - oif = skb_dst(skb)->dev->ifindex; <-- here
+In such a situation, we don't actually care about the feature mismatch,
+particularly now that KVM only exposes the sanitised view of the CPU
+registers (commit 93390c0a1b20 - "arm64: KVM: Hide unsupported AArch64
+CPU features from guests"). Treat the granule fields as non-strict and
+let Kevin run without a tainted kernel.
 
-The reason is __metadata_dst_init() init dst->dev to NULL by default.
-We could not fix it in __metadata_dst_init() as there is no dev supplied.
-On the other hand, the skb_dst(skb)->dev is actually not needed as we
-called decode_session{4,6} via xfrm_decode_session_reverse(), so oif is not
-used by: fl4->flowi4_oif = reverse ? skb->skb_iif : oif;
-
-So make a dst dev check here should be clean and safe.
-
-v4: No changes.
-
-v3: No changes.
-
-v2: fix the issue in decode_session{4,6} instead of updating shared dst dev
-in {ip_md, ip6}_tunnel_xmit.
-
-Fixes: 8d79266bc48c ("ip6_tunnel: add collect_md mode to IPv6 tunnels")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Tested-by: Jonathan Lemon <jonathan.lemon@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Marc Zyngier <maz@kernel.org>
+Reported-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+[catalin.marinas@arm.com: changelog updated with KVM sanitised regs commit]
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_policy.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/cpufeature.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -3272,7 +3272,7 @@ decode_session4(struct sk_buff *skb, str
- 	struct flowi4 *fl4 = &fl->u.ip4;
- 	int oif = 0;
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index bce06083685dc..94babc3d0ec2c 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -165,9 +165,17 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
+ };
  
--	if (skb_dst(skb))
-+	if (skb_dst(skb) && skb_dst(skb)->dev)
- 		oif = skb_dst(skb)->dev->ifindex;
- 
- 	memset(fl4, 0, sizeof(struct flowi4));
-@@ -3390,7 +3390,7 @@ decode_session6(struct sk_buff *skb, str
- 
- 	nexthdr = nh[nhoff];
- 
--	if (skb_dst(skb))
-+	if (skb_dst(skb) && skb_dst(skb)->dev)
- 		oif = skb_dst(skb)->dev->ifindex;
- 
- 	memset(fl6, 0, sizeof(struct flowi6));
+ static const struct arm64_ftr_bits ftr_id_aa64mmfr0[] = {
+-	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN4_SHIFT, 4, ID_AA64MMFR0_TGRAN4_NI),
+-	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN64_SHIFT, 4, ID_AA64MMFR0_TGRAN64_NI),
+-	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN16_SHIFT, 4, ID_AA64MMFR0_TGRAN16_NI),
++	/*
++	 * We already refuse to boot CPUs that don't support our configured
++	 * page size, so we can only detect mismatches for a page size other
++	 * than the one we're currently using. Unfortunately, SoCs like this
++	 * exist in the wild so, even though we don't like it, we'll have to go
++	 * along with it and treat them as non-strict.
++	 */
++	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN4_SHIFT, 4, ID_AA64MMFR0_TGRAN4_NI),
++	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN64_SHIFT, 4, ID_AA64MMFR0_TGRAN64_NI),
++	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_TGRAN16_SHIFT, 4, ID_AA64MMFR0_TGRAN16_NI),
++
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_BIGENDEL0_SHIFT, 4, 0),
+ 	/* Linux shouldn't care about secure memory */
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64MMFR0_SNSMEM_SHIFT, 4, 0),
+-- 
+2.20.1
+
 
 
