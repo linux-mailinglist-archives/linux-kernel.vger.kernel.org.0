@@ -2,86 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE8F8A8D61
+	by mail.lfdr.de (Postfix) with ESMTP id 70D1DA8D60
 	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732185AbfIDQuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:50:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731599AbfIDQuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:50:37 -0400
-Received: from localhost (unknown [122.182.201.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB1BF2087E;
-        Wed,  4 Sep 2019 16:50:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567615836;
-        bh=b/x7QUROWv0yxoBVITIFYudbm4LpCcqr2OJ2VY0gqq8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jOM2Hxu4umgWpQLtVXuFiGxx/FAXv3Gc+0G9Scdok9NzK6wiXb7aZyhPC86JhhrP4
-         ijcxucrMe5zDGbFGP5vOjqO71gAR9JVMAP4mVLfHiWe+fa/AjDnmrlRHK8kte29lSP
-         6PMctjjHWvLuhrkRDCt3sRRoRiHn4upxzLqmSh00=
-Date:   Wed, 4 Sep 2019 22:19:26 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [alsa-devel] [PATCH 2/6] soundwire: cadence_master: add hw_reset
- capability in debugfs
-Message-ID: <20190904164926.GA2672@vkoul-mobl>
-References: <20190813213227.5163-1-pierre-louis.bossart@linux.intel.com>
- <20190813213227.5163-3-pierre-louis.bossart@linux.intel.com>
- <20190904071317.GJ2672@vkoul-mobl>
- <71411347-93cf-2617-4edd-f6b401fe7a9b@linux.intel.com>
+        id S1732082AbfIDQuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:50:09 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33062 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731599AbfIDQuJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:50:09 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q10so8548858pfl.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 09:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wMapkRhSgN1SGL2l9oMWf44cELAHaLmXe43jUFl8ge4=;
+        b=QbfmzLpBBM1tiB62I45Rx0ioISKADbOrKugzWvi1lErH0hXEbE9ZS6kJgkezaWKNVj
+         lTl3usJiczDBZsEGMnQ/Iw+6QF1tSNnmZXu6xX56afwUgzjXrlzuFU6b1Z3SfpxaJQqm
+         jlf7EXX6hFJzjdaMWPtSy2VmMZTZE7iikopsA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wMapkRhSgN1SGL2l9oMWf44cELAHaLmXe43jUFl8ge4=;
+        b=PnrcNsPrl5hbKJC1PAsGfJcUnebEk2gqFgKm7bE/onJr9RqI2bm68pD2oWe2xxyaiR
+         Jc6TCCoTNK1FWed28NFhCT1ZhS7I3Hp6vS35pou79wHs1sWKFre+MbbqRa3445apho2e
+         0AbPtYzogp1/Z3r4rg10YsW7XWfD7p9SLlOqdjZbij2NEHfVkpImwPwHX/Daf5dra6Uj
+         4Iki89PFzwxnSEPWqWIPdyzoB5uIuS1NEWoFCiDoJD9DxhL0MmDiPstLD+IQs59PIZHj
+         uQs1wgCMkVOAMSjGKpspxH7X6JFI2a9zrl9ukzzW2aNnxxVU5sjH6B8W+wZ6O4udpb2P
+         Q1GA==
+X-Gm-Message-State: APjAAAUZEPPMeLzy4SXBf9/a45TFGU+tmWP8bBSe4VrpVMTsYR7h2VJX
+        dc6sjCgVCR+7yQC1eb25T3pGRw==
+X-Google-Smtp-Source: APXvYqx7Efgt6IKBu7pQKwH/Ba598K0d/IYdrQkM02/A9jX3xglkigZo/az7B7A1FSYMbGjy/P7/ug==
+X-Received: by 2002:a17:90a:9409:: with SMTP id r9mr6017500pjo.10.1567615808064;
+        Wed, 04 Sep 2019 09:50:08 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h4sm12456231pfg.159.2019.09.04.09.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 09:50:07 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 09:50:06 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>, "H.J. Lu" <hjl.tools@gmail.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH v2 2/2] ELF: Add ELF program property parsing support
+Message-ID: <201909040942.7BC809C5E@keescook>
+References: <1566581020-9953-1-git-send-email-Dave.Martin@arm.com>
+ <1566581020-9953-3-git-send-email-Dave.Martin@arm.com>
+ <201908292224.007EB4D5@keescook>
+ <20190830083415.GI27757@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <71411347-93cf-2617-4edd-f6b401fe7a9b@linux.intel.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190830083415.GI27757@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04-09-19, 08:18, Pierre-Louis Bossart wrote:
-> On 9/4/19 2:13 AM, Vinod Koul wrote:
-> > On 13-08-19, 16:32, Pierre-Louis Bossart wrote:
-> > > Provide debugfs capability to kick link and devices into hard-reset
-> > > (as defined by MIPI). This capability is really useful when some
-> > > devices are no longer responsive and/or to check the software handling
-> > > of resynchronization.
-> > > 
-> > > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> > > ---
-> > >   drivers/soundwire/cadence_master.c | 20 ++++++++++++++++++++
-> > >   1 file changed, 20 insertions(+)
-> > > 
-> > > diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-> > > index 046622e4b264..bd58d80ff636 100644
-> > > --- a/drivers/soundwire/cadence_master.c
-> > > +++ b/drivers/soundwire/cadence_master.c
-> > > @@ -340,6 +340,23 @@ static int cdns_reg_show(struct seq_file *s, void *data)
-> > >   }
-> > >   DEFINE_SHOW_ATTRIBUTE(cdns_reg);
-> > > +static int cdns_hw_reset(void *data, u64 value)
-> > > +{
-> > > +	struct sdw_cdns *cdns = data;
-> > > +	int ret;
-> > > +
-> > > +	if (value != 1)
-> > > +		return 0;
-> > 
-> > Should this not be EINVAL to indicate invalid value passed?
-> 
-> Maybe. I must admit I don't know what -EINVAL would do, this is used for
-> debugfs so it's not clear to me if the user will see a difference?
+On Fri, Aug 30, 2019 at 09:34:18AM +0100, Dave Martin wrote:
+> Do you have any thoughts on Yu-Cheng Yu's comments?  It would be nice to
+> early-terminate the scan if we can, but my feeling so far was that the
+> scan is cheap, the number of properties is unlikely to be more than a
+> smallish integer, and the code separation benefits of just calling the
+> arch code for every property probably likely outweigh the costs of
+> having to iterate over every property.  We could always optimise it
+> later if necessary.
 
-Well user should see "write error: Invalid argument" when he writes
-anything other than valid values :)
+I feel like there are already a lot of ways to burn CPU time with
+mangled ELF files, so this potential inefficiently doesn't seem bad to
+me. If we want to add limits here, perhaps cap the property scan depth
+(right now, IIRC, the count is u32, which is big...)
+
+> I need to double-check that there's no way we can get stuck in an
+> infinite loop with the current code, though I've not seen it in my
+> testing.  I should throw some malformed notes at it though.
+
+I think the cursor only performs forward movement, yes? I didn't see a
+loop, but maybe there's something with the program headers that I
+missed.
+
+> Do you have any objection to merging patch 1 with this one?  For
+> upstreaming purposes, it seems overkill for that to be a separate patch.
+
+I don't _object_ to it, but I did like having it separate for review.
+
+> Do you have any opinion on the WARN_ON()s?  They should be un-hittable,
+> so they're documenting assumptions rather than protecting against
+> anything real.  Maybe I should replace them with comments.
+
+I think they're fine as self-documentation. My rule of thumb has been:
+
+- don't use BUG*() unless you can defend it to Linus who wants 0 BUG()s.
+- don't use WARN*() if userspace can reach it (and if you're not sure,
+  use the WARN*ONCE() version)
+- use pr_*_ratelimited() if unprivileged userspace can reach it.
 
 -- 
-~Vinod
+Kees Cook
