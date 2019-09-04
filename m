@@ -2,88 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D7EAA7B3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B65AA7B64
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:15:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbfIDGKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 02:10:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53470 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfIDGKF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 02:10:05 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D482D6119D; Wed,  4 Sep 2019 06:10:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567577404;
-        bh=F5sXdp2HFRFRyPdk3dQOYFx1vtSHFJAa+zl8mZ6v0h4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=htTJrfdL5OwahU2sPxDzyDGV1iMmr/gZDBwkllEEJXHHe65vm2SuHAIOhfaqnstmy
-         6/FItbcyATdK+zkAcLN1tVr/mthZqDdocDAE+hOfNsE+9HueUbux0Jn+uQoMGo/krS
-         EffivWzjqWW1UhnSuqgL/RA4iyZ3NJc2+Xu65nTk=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2B36460C72;
-        Wed,  4 Sep 2019 06:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567577403;
-        bh=F5sXdp2HFRFRyPdk3dQOYFx1vtSHFJAa+zl8mZ6v0h4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=nJ/czposdCMZLkxI+okMPpLMVuHBf8ktvL36/tn0cjGJ8I1Vgam0SlnDZ8utv2HCZ
-         gqLDeXrI3rXsnih23LLPDT/xrcK9K54wpM5GR9zjwcPGnAZBj/hR9X/6kyZWaq22Z6
-         Sf/qV/A2YDPj1rJg0zwViE3VDq/wnjFXqwVQTI4Y=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B36460C72
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        id S1728864AbfIDGP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 02:15:56 -0400
+Received: from mga05.intel.com ([192.55.52.43]:60359 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725938AbfIDGP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 02:15:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 23:15:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
+   d="scan'208";a="173462883"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.43.44])
+  by orsmga007.jf.intel.com with ESMTP; 03 Sep 2019 23:15:53 -0700
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Cc:     Xiaoyao Li <xiaoyao.li@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] doc: kvm: Fix return description of KVM_SET_MSRS
+Date:   Wed,  4 Sep 2019 14:01:18 +0800
+Message-Id: <20190904060118.43851-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH -next] carl9170: remove set but not used variable 'udev'
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190702141207.47552-1-yuehaibing@huawei.com>
-References: <20190702141207.47552-1-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <chunkeey@googlemail.com>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-        <davem@davemloft.net>, YueHaibing <yuehaibing@huawei.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190904061004.D482D6119D@smtp.codeaurora.org>
-Date:   Wed,  4 Sep 2019 06:10:04 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+Userspace can use ioctl KVM_SET_MSRS to update a set of MSRs of guest.
+This ioctl sets specified MSRs one by one. Once it fails to set an MSR
+due to setting reserved bits, the MSR is not supported/emulated by kvm,
+or violating other restrictions, it stops further processing and returns
+the number of MSRs have been set successfully.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/ath/carl9170/usb.c: In function carl9170_usb_disconnect:
-> drivers/net/wireless/ath/carl9170/usb.c:1110:21:
->  warning: variable udev set but not used [-Wunused-but-set-variable]
-> 
-> It is not use since commit feb09b293327 ("carl9170:
-> fix misuse of device driver API")
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Christian Lamparter <chunkeey@gmail.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+---
+v2:
+  elaborate the changelog and description of ioctl KVM_SET_MSRS based on
+  Sean's comments.
 
-Patch applied to ath-next branch of ath.git, thanks.
+---
+ Documentation/virt/kvm/api.txt | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-68092f9cf932 carl9170: remove set but not used variable 'udev'
-
+diff --git a/Documentation/virt/kvm/api.txt b/Documentation/virt/kvm/api.txt
+index 2d067767b617..4638e893dec0 100644
+--- a/Documentation/virt/kvm/api.txt
++++ b/Documentation/virt/kvm/api.txt
+@@ -586,7 +586,7 @@ Capability: basic
+ Architectures: x86
+ Type: vcpu ioctl
+ Parameters: struct kvm_msrs (in)
+-Returns: 0 on success, -1 on error
++Returns: number of msrs successfully set (see below), -1 on error
+ 
+ Writes model-specific registers to the vcpu.  See KVM_GET_MSRS for the
+ data structures.
+@@ -595,6 +595,11 @@ Application code should set the 'nmsrs' member (which indicates the
+ size of the entries array), and the 'index' and 'data' members of each
+ array entry.
+ 
++It tries to set the MSRs in array entries[] one by one. Once failing to
++set an MSR (due to setting reserved bits, the MSR is not supported/emulated
++by kvm, or violating other restrctions), it stops setting following MSRs
++and returns the number of MSRs have been set successfully.
++
+ 
+ 4.20 KVM_SET_CPUID
+ 
 -- 
-https://patchwork.kernel.org/patch/11027909/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.19.1
 
