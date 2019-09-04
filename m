@@ -2,112 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29508A7D1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC02A7D20
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:55:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729249AbfIDHyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 03:54:36 -0400
-Received: from mga14.intel.com ([192.55.52.115]:20282 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728526AbfIDHyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 03:54:36 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 00:54:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
-   d="asc'?scan'208";a="185033564"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by orsmga003.jf.intel.com with ESMTP; 04 Sep 2019 00:54:32 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Jacky.Cao@sony.com, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>
-Cc:     Kento.A.Kobayashi@sony.com, Jacky.Cao@sony.com
-Subject: Re: [PATCH] USB: dummy-hcd: fix power budget for SuperSpeed mode
-In-Reply-To: <16EA1F625E922C43B00B9D82250220500871C862@APYOKXMS108.ap.sony.com>
-References: <16EA1F625E922C43B00B9D82250220500871C862@APYOKXMS108.ap.sony.com>
-Date:   Wed, 04 Sep 2019 10:54:28 +0300
-Message-ID: <87sgpcmr7v.fsf@gmail.com>
+        id S1729093AbfIDHy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 03:54:57 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:6610 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728526AbfIDHy4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 03:54:56 -0400
+X-UUID: 1efd1c7eb3e042c095d333210c7fff4b-20190904
+X-UUID: 1efd1c7eb3e042c095d333210c7fff4b-20190904
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <chaotian.jing@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 322975283; Wed, 04 Sep 2019 15:54:50 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 4 Sep 2019 15:54:46 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 4 Sep 2019 15:54:45 +0800
+From:   Chaotian Jing <chaotian.jing@mediatek.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ming Lei <ming.lei@redhat.com>, Chris Boot <bootc@bootc.net>,
+        Zachary Hays <zhays@lexmark.com>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Subject: fix device in programming state after ioctl() 
+Date:   Wed, 4 Sep 2019 15:54:42 +0800
+Message-ID: <20190904075444.2163-1-chaotian.jing@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+the user space program may access eMMC by ioctl(), after the ioctl() was
+completed, it should ensure that eMMC is in transfer state, or it will
+cause other thread which access eMMC got timeout error, as it assume that
+card was in transfer state.
+
+this patch add CMD13 polling for R1B command to avoid this issue.
+
+Chaotian Jing (2):
+  mmc: block: make the card_busy_detect() more generic
+  mmc: block: add CMD13 polling for ioctl() cmd with R1B response
+
+ drivers/mmc/core/block.c | 111 ++++++++++++++++++++-------------------
+ 1 file changed, 57 insertions(+), 54 deletions(-)
+
+-- 
+2.18.0
 
 
-Hi,
-
-<Jacky.Cao@sony.com> writes:
-
-> The power budget for SuperSpeed mode should be 900 mA
-> according to USB3.0 specification, so set the power
-> budget to 900 mA for dummy_start_ss which is only used
-> for SuperSpeed mode.
->
-> If the max power consumption of SuperSpeed device is
-> larger than 500 mA, insufficient available bus power
-> error happens in usb_choose_configuration function
-> when the device connects to dummy hcd.
->
-> Signed-off-by: Jacky Cao <Jacky.Cao@sony.com>
-> ---
-> drivers/usb/gadget/udc/dummy_hcd.c | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/=
-dummy_hcd.c
-> index 8414fac..52f2cf5 100644
-> --- a/drivers/usb/gadget/udc/dummy_hcd.c
-> +++ b/drivers/usb/gadget/udc/dummy_hcd.c
-> @@ -48,6 +48,7 @@
-> #define DRIVER_VERSION "02 May 2005"
->
->  #define POWER_BUDGET  500  /* in mA; use 8 for low-power port testing */
-> +#define POWER_BUDGET_3_0  900  /* in mA */
->
->  static const char  driver_name[] =3D "dummy_hcd";
-> static const char  driver_desc[] =3D "USB Host+Gadget Emulator";
-> @@ -2432,7 +2433,7 @@ static int dummy_start_ss(struct dummy_hcd *dum_hcd)
->      dum_hcd->rh_state =3D DUMMY_RH_RUNNING;
->      dum_hcd->stream_en_ep =3D 0;
->      INIT_LIST_HEAD(&dum_hcd->urbp_list);
-> -     dummy_hcd_to_hcd(dum_hcd)->power_budget =3D POWER_BUDGET;
-> +     dummy_hcd_to_hcd(dum_hcd)->power_budget =3D POWER_BUDGET_3_0;
->      dummy_hcd_to_hcd(dum_hcd)->state =3D HC_STATE_RUNNING;
->      dummy_hcd_to_hcd(dum_hcd)->uses_new_polling =3D 1;
-> #ifdef CONFIG_USB_OTG
-
-Alan, I suppose you're okay with this change?
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl1vbbQACgkQzL64meEa
-mQYEag/8CNh1XxPX+xromrb3wEL2ptcSNpiSoaTbtGEGO0NrebNOWnfyQIJGP9OR
-p9eEMlQuTSulxCi+bsDORBhxZ+f/hlEK/ix/7U6g+BzeW0ex8U0DIpOFXa3Q0riS
-f7h5vPDYGy+HZMBiGZQc4J4A8ejh5XCRLo7fOf9RgL7tUOoT1ud9vi0J/unIsFmc
-zoz3Bt3SVMtKJf86L1x5/EP7U5V2QM/dZhYzW6Ux+++zqYlYm3IEocHYLeZ2OmYc
-b81z9yePo1xjavtZ1wX39xhdJpV4GqDVnJkqjPeut9sJQSntsSQcVsXh49Vk9s5l
-lTalG0+BwIAqvHKkQAoT8kXnSYQbShGF7qIlGoO7sHDs0btvcBQAE+PKPcm1M5W4
-iryECIsp2T5DowXbw3eukXS3EoMT+fIbVuNn41I4owwRDlgeP7FFUnDdqwINjHBu
-I0Fg37W9x2FLqJx+5cETMlUo11BgDkd0wo/QOG0t5kqL/c4zyKpyJxtAjLM2jxkU
-/al2yuL0okMNS23cZxNdjGIeVA5wsAsjzWbYHIGa9ZAfUCyQpdtkoIL0NSDDeOXm
-PRc3LYXNRshYawW1pTx917u2iFz/gKl8VrECgXiOd1tuzd+uIU6wCiZRGnVyEPe1
-HGBvfsMl9E76IbGkNCYd+W+uBsG0Diq7NQ9uMGnEgiI+eZVn/gw=
-=NvCb
------END PGP SIGNATURE-----
---=-=-=--
