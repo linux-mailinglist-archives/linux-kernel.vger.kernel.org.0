@@ -2,43 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1FFDA8E5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B8EFA8FE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731643AbfIDR5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:57:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35398 "EHLO mail.kernel.org"
+        id S2389540AbfIDSGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:06:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387849AbfIDR51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:57:27 -0400
+        id S2388704AbfIDSGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:06:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 560E92339D;
-        Wed,  4 Sep 2019 17:57:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC82222CF7;
+        Wed,  4 Sep 2019 18:06:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619846;
-        bh=uqRNqJi62a3YoLQc/RalojxQDLtQI6ctcSZ1ziYJuHU=;
+        s=default; t=1567620390;
+        bh=EXJFMCe0j7c1JE5xw+Ox8ar2HYLuO+hkBy9PQix63Jw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A7QfU+WVKLz7W2RbYTrBZlWdtfhT1QafkarFzzsTH8fNU1ACbHpC1GmMGrMIZrv/9
-         /k9sBNEQWlKcBuEtHYbmjAemyQ1CN+2zf9HtdQ/fUARHySd7skhvUKgIGr7sZV2XB5
-         cjZA6/EEACXDnvQCHGctC5h01D3TsDrg0wKN4uAE=
+        b=pDZBwTh3KhbQgIe92iJKdoIOcEIm8pLnb9tuj0fniIVU8bnOMNwrieunxxPH6FfFp
+         p3HIIlkpcw9jk7t0J8pQ/UtTEpeIGWqVBGa+lNMt5HdnlUW8m5hVAvvfuVAHobY3Uy
+         F5ilOOSjB9Y612tXRAW91dL/nxLe4Tiiz4BHX8ys=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Adrian Vladu <avladu@cloudbasesolutions.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Alessandro Pilotti <apilotti@cloudbasesolutions.com>
-Subject: [PATCH 4.4 54/77] tools: hv: fix KVP and VSS daemons exit code
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Henry Burns <henrywolfeburns@gmail.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 39/93] mm/zsmalloc.c: fix build when CONFIG_COMPACTION=n
 Date:   Wed,  4 Sep 2019 19:53:41 +0200
-Message-Id: <20190904175308.393391175@linuxfoundation.org>
+Message-Id: <20190904175306.592082075@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,52 +49,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b0995156071b0ff29a5902964a9dc8cfad6f81c0 ]
+From: Andrew Morton <akpm@linux-foundation.org>
 
-HyperV KVP and VSS daemons should exit with 0 when the '--help'
-or '-h' flags are used.
+commit 441e254cd40dc03beec3c650ce6ce6074bc6517f upstream.
 
-Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+Fixes: 701d678599d0c1 ("mm/zsmalloc.c: fix race condition in zs_destroy_pool")
+Link: http://lkml.kernel.org/r/201908251039.5oSbEEUT%25lkp@intel.com
+Reported-by: kbuild test robot <lkp@intel.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Henry Burns <henrywolfeburns@gmail.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Jonathan Adams <jwadams@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Alessandro Pilotti <apilotti@cloudbasesolutions.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/hv/hv_kvp_daemon.c | 2 ++
- tools/hv/hv_vss_daemon.c | 2 ++
- 2 files changed, 4 insertions(+)
+ mm/zsmalloc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index 1774800668168..fffc7c4184599 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -1379,6 +1379,8 @@ int main(int argc, char *argv[])
- 			daemonize = 0;
- 			break;
- 		case 'h':
-+			print_usage(argv);
-+			exit(0);
- 		default:
- 			print_usage(argv);
- 			exit(EXIT_FAILURE);
-diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
-index 5d51d6ff08e6a..b5465f92ed50e 100644
---- a/tools/hv/hv_vss_daemon.c
-+++ b/tools/hv/hv_vss_daemon.c
-@@ -164,6 +164,8 @@ int main(int argc, char *argv[])
- 			daemonize = 0;
- 			break;
- 		case 'h':
-+			print_usage(argv);
-+			exit(0);
- 		default:
- 			print_usage(argv);
- 			exit(EXIT_FAILURE);
--- 
-2.20.1
-
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -2432,7 +2432,9 @@ struct zs_pool *zs_create_pool(const cha
+ 	if (!pool->name)
+ 		goto err;
+ 
++#ifdef CONFIG_COMPACTION
+ 	init_waitqueue_head(&pool->migration_wait);
++#endif
+ 
+ 	if (create_cache(pool))
+ 		goto err;
 
 
