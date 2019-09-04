@@ -2,39 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D690A8F64
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76977A8E70
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388928AbfIDSDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:03:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43896 "EHLO mail.kernel.org"
+        id S2387972AbfIDR6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:58:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387960AbfIDSDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:03:24 -0400
+        id S2387966AbfIDR6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:58:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FFD92339E;
-        Wed,  4 Sep 2019 18:03:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80495208E4;
+        Wed,  4 Sep 2019 17:57:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620203;
-        bh=b+rBF7V5rIqgAolUvI7hLO0r5ZRszQitsSUesKsGlZ4=;
+        s=default; t=1567619879;
+        bh=zoRprk2V8Tx3nRetmgk8Ms+4yAZgUhFm9LnvQgur+3I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oX6k8AYZcL/NseSQoPmfPGMsC+sYzSaFAXmDkEWxWsaHav24CebxRw0LRHng5zcJh
-         NoeNGAC7sGIsAT0NgM9bJin2S04mSuKQoZBd/KLY7XIKPEXcnMWAVjugVSf+PNHVQW
-         Du/YN+AavzOh5w47bKN1fIW7+qVm7mSOZ0QaZKZE=
+        b=lzPAYsW0WUWbtB7JMCgQSDho5ry1gm3q2K0MU4o6uweFsJfvFSRRs8rWvKOnYeyD+
+         rNA3BXMmKBW4KoXait0NsWTWwQZ6AR+Z2tyAgK/RXPPm6SOECutSZRL1vhaTW6ZHe4
+         UeyY8VuAJJeEyQg2uSHHOLPssx+onVaBIVsHj7Ec=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 28/57] ftrace: Fix NULL pointer dereference in t_probe_next()
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        ricardo.neri@intel.com, Adrian Hunter <adrian.hunter@intel.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Qiaowei Ren <qiaowei.ren@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, Jiri Slaby <jslaby@suse.cz>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        Chen Yucong <slaoub@gmail.com>,
+        Adam Buchbinder <adam.buchbinder@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 69/77] ptrace,x86: Make user_64bit_mode() available to 32-bit builds
 Date:   Wed,  4 Sep 2019 19:53:56 +0200
-Message-Id: <20190904175304.700046585@linuxfoundation.org>
+Message-Id: <20190904175309.806860827@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,77 +70,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+[ Upstream commit e27c310af5c05cf876d9cad006928076c27f54d4 ]
 
-commit 7bd46644ea0f6021dc396a39a8bfd3a58f6f1f9f upstream.
+In its current form, user_64bit_mode() can only be used when CONFIG_X86_64
+is selected. This implies that code built with CONFIG_X86_64=n cannot use
+it. If a piece of code needs to be built for both CONFIG_X86_64=y and
+CONFIG_X86_64=n and wants to use this function, it needs to wrap it in
+an #ifdef/#endif; potentially, in multiple places.
 
-LTP testsuite on powerpc results in the below crash:
+This can be easily avoided with a single #ifdef/#endif pair within
+user_64bit_mode() itself.
 
-  Unable to handle kernel paging request for data at address 0x00000000
-  Faulting instruction address: 0xc00000000029d800
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  LE SMP NR_CPUS=2048 NUMA PowerNV
-  ...
-  CPU: 68 PID: 96584 Comm: cat Kdump: loaded Tainted: G        W
-  NIP:  c00000000029d800 LR: c00000000029dac4 CTR: c0000000001e6ad0
-  REGS: c0002017fae8ba10 TRAP: 0300   Tainted: G        W
-  MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 28022422  XER: 20040000
-  CFAR: c00000000029d90c DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0
-  ...
-  NIP [c00000000029d800] t_probe_next+0x60/0x180
-  LR [c00000000029dac4] t_mod_start+0x1a4/0x1f0
-  Call Trace:
-  [c0002017fae8bc90] [c000000000cdbc40] _cond_resched+0x10/0xb0 (unreliable)
-  [c0002017fae8bce0] [c0000000002a15b0] t_start+0xf0/0x1c0
-  [c0002017fae8bd30] [c0000000004ec2b4] seq_read+0x184/0x640
-  [c0002017fae8bdd0] [c0000000004a57bc] sys_read+0x10c/0x300
-  [c0002017fae8be30] [c00000000000b388] system_call+0x5c/0x70
-
-The test (ftrace_set_ftrace_filter.sh) is part of ftrace stress tests
-and the crash happens when the test does 'cat
-$TRACING_PATH/set_ftrace_filter'.
-
-The address points to the second line below, in t_probe_next(), where
-filter_hash is dereferenced:
-  hash = iter->probe->ops.func_hash->filter_hash;
-  size = 1 << hash->size_bits;
-
-This happens due to a race with register_ftrace_function_probe(). A new
-ftrace_func_probe is created and added into the func_probes list in
-trace_array under ftrace_lock. However, before initializing the filter,
-we drop ftrace_lock, and re-acquire it after acquiring regex_lock. If
-another process is trying to read set_ftrace_filter, it will be able to
-acquire ftrace_lock during this window and it will end up seeing a NULL
-filter_hash.
-
-Fix this by just checking for a NULL filter_hash in t_probe_next(). If
-the filter_hash is NULL, then this probe is just being added and we can
-simply return from here.
-
-Link: http://lkml.kernel.org/r/05e021f757625cbbb006fad41380323dbe4e3b43.1562249521.git.naveen.n.rao@linux.vnet.ibm.com
-
-Cc: stable@vger.kernel.org
-Fixes: 7b60f3d876156 ("ftrace: Dynamically create the probe ftrace_ops for the trace_array")
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Suggested-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: ricardo.neri@intel.com
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Huang Rui <ray.huang@amd.com>
+Cc: Qiaowei Ren <qiaowei.ren@intel.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
+Cc: Chris Metcalf <cmetcalf@mellanox.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: Chen Yucong <slaoub@gmail.com>
+Cc: Adam Buchbinder <adam.buchbinder@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Lorenzo Stoakes <lstoakes@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Garnier <thgarnie@google.com>
+Link: https://lkml.kernel.org/r/1509135945-13762-4-git-send-email-ricardo.neri-calderon@linux.intel.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/ftrace.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/include/asm/ptrace.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -3184,6 +3184,10 @@ t_probe_next(struct seq_file *m, loff_t
- 		hnd = &iter->probe_entry->hlist;
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index 6271281f947d8..0d8e0831b1a07 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -121,9 +121,9 @@ static inline int v8086_mode(struct pt_regs *regs)
+ #endif
+ }
  
- 	hash = iter->probe->ops.func_hash->filter_hash;
-+
-+	if (!hash)
-+		return NULL;
-+
- 	size = 1 << hash->size_bits;
+-#ifdef CONFIG_X86_64
+ static inline bool user_64bit_mode(struct pt_regs *regs)
+ {
++#ifdef CONFIG_X86_64
+ #ifndef CONFIG_PARAVIRT
+ 	/*
+ 	 * On non-paravirt systems, this is the only long mode CPL 3
+@@ -134,8 +134,12 @@ static inline bool user_64bit_mode(struct pt_regs *regs)
+ 	/* Headers are too twisted for this to go in paravirt.h. */
+ 	return regs->cs == __USER_CS || regs->cs == pv_info.extra_user_64bit_cs;
+ #endif
++#else /* !CONFIG_X86_64 */
++	return false;
++#endif
+ }
  
-  retry:
++#ifdef CONFIG_X86_64
+ #define current_user_stack_pointer()	current_pt_regs()->sp
+ #define compat_user_stack_pointer()	current_pt_regs()->sp
+ #endif
+-- 
+2.20.1
+
 
 
