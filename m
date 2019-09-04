@@ -2,37 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17376A8F58
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2580BA8EFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388887AbfIDSDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:03:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43486 "EHLO mail.kernel.org"
+        id S2388508AbfIDSBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:01:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388867AbfIDSDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:03:08 -0400
+        id S2387794AbfIDSBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:01:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31F3F2339D;
-        Wed,  4 Sep 2019 18:03:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A148B21883;
+        Wed,  4 Sep 2019 18:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620187;
-        bh=fi+kolDLinVLp769w8IN7noDpuUcqcKOXvDbumYGMhA=;
+        s=default; t=1567620063;
+        bh=7LvryOPVQ85u9ljKGUfOFG5GY5a76heXj07kDXgMsf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ac+qzT6eZ8KbFTkh5W1c0P0JPhutffgYlOUBSzs2b5g8crdq3eI3JJW0LSZfpdd1h
-         PT6TupUMrYCdICNPWBFqOu+/QW3rEsAF/sJjwEhpLD1NWqpG/m50XmziG0r/fo486n
-         t9i+sUCOB/4gr+O9WM5cTaYT63a8hNl6V37lTP/k=
+        b=mVVtJDVV2CTN7A8tNqGs9Qq5POJ6PWAlFO7dchN/pDID8LSbGrsf73UjDh330KmKp
+         SmgblSsuCVFGBn8zpFXFACbCQMNjm+pws93HZuVydC9Mhdxs3QuLjLMvw84Ao24Tuk
+         rl4Q7gzRXhWbdATX7W2DpkoiUZhmIx0YGSbbtqas=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 22/57] ALSA: line6: Fix memory leak at line6_init_pcm() error path
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Vladimir Rutsky <rutsky@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 58/83] tcp: make sure EPOLLOUT wont be missed
 Date:   Wed,  4 Sep 2019 19:53:50 +0200
-Message-Id: <20190904175304.167359849@linuxfoundation.org>
+Message-Id: <20190904175308.674735011@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,57 +47,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 1bc8d18c75fef3b478dbdfef722aae09e2a9fde7 upstream.
+[ Upstream commit ef8d8ccdc216f797e66cb4a1372f5c4c285ce1e4 ]
 
-I forgot to release the allocated object at the early error path in
-line6_init_pcm().  For addressing it, slightly shuffle the code so
-that the PCM destructor (pcm->private_free) is assigned properly
-before all error paths.
+As Jason Baron explained in commit 790ba4566c1a ("tcp: set SOCK_NOSPACE
+under memory pressure"), it is crucial we properly set SOCK_NOSPACE
+when needed.
 
-Fixes: 3450121997ce ("ALSA: line6: Fix write on zero-sized buffer")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+However, Jason patch had a bug, because the 'nonblocking' status
+as far as sk_stream_wait_memory() is concerned is governed
+by MSG_DONTWAIT flag passed at sendmsg() time :
+
+    long timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT);
+
+So it is very possible that tcp sendmsg() calls sk_stream_wait_memory(),
+and that sk_stream_wait_memory() returns -EAGAIN with SOCK_NOSPACE
+cleared, if sk->sk_sndtimeo has been set to a small (but not zero)
+value.
+
+This patch removes the 'noblock' variable since we must always
+set SOCK_NOSPACE if -EAGAIN is returned.
+
+It also renames the do_nonblock label since we might reach this
+code path even if we were in blocking mode.
+
+Fixes: 790ba4566c1a ("tcp: set SOCK_NOSPACE under memory pressure")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Jason Baron <jbaron@akamai.com>
+Reported-by: Vladimir Rutsky  <rutsky@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Jason Baron <jbaron@akamai.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/usb/line6/pcm.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ net/core/stream.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/sound/usb/line6/pcm.c
-+++ b/sound/usb/line6/pcm.c
-@@ -552,6 +552,15 @@ int line6_init_pcm(struct usb_line6 *lin
- 	line6pcm->volume_monitor = 255;
- 	line6pcm->line6 = line6;
+--- a/net/core/stream.c
++++ b/net/core/stream.c
+@@ -118,7 +118,6 @@ int sk_stream_wait_memory(struct sock *s
+ 	int err = 0;
+ 	long vm_wait = 0;
+ 	long current_timeo = *timeo_p;
+-	bool noblock = (*timeo_p ? false : true);
+ 	DEFINE_WAIT(wait);
  
-+	spin_lock_init(&line6pcm->out.lock);
-+	spin_lock_init(&line6pcm->in.lock);
-+	line6pcm->impulse_period = LINE6_IMPULSE_DEFAULT_PERIOD;
-+
-+	line6->line6pcm = line6pcm;
-+
-+	pcm->private_data = line6pcm;
-+	pcm->private_free = line6_cleanup_pcm;
-+
- 	line6pcm->max_packet_size_in =
- 		usb_maxpacket(line6->usbdev,
- 			usb_rcvisocpipe(line6->usbdev, ep_read), 0);
-@@ -564,15 +573,6 @@ int line6_init_pcm(struct usb_line6 *lin
- 		return -EINVAL;
- 	}
+ 	if (sk_stream_memory_free(sk))
+@@ -131,11 +130,8 @@ int sk_stream_wait_memory(struct sock *s
  
--	spin_lock_init(&line6pcm->out.lock);
--	spin_lock_init(&line6pcm->in.lock);
--	line6pcm->impulse_period = LINE6_IMPULSE_DEFAULT_PERIOD;
--
--	line6->line6pcm = line6pcm;
--
--	pcm->private_data = line6pcm;
--	pcm->private_free = line6_cleanup_pcm;
--
- 	err = line6_create_audio_out_urbs(line6pcm);
- 	if (err < 0)
- 		return err;
+ 		if (sk->sk_err || (sk->sk_shutdown & SEND_SHUTDOWN))
+ 			goto do_error;
+-		if (!*timeo_p) {
+-			if (noblock)
+-				set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
+-			goto do_nonblock;
+-		}
++		if (!*timeo_p)
++			goto do_eagain;
+ 		if (signal_pending(current))
+ 			goto do_interrupted;
+ 		sk_clear_bit(SOCKWQ_ASYNC_NOSPACE, sk);
+@@ -167,7 +163,13 @@ out:
+ do_error:
+ 	err = -EPIPE;
+ 	goto out;
+-do_nonblock:
++do_eagain:
++	/* Make sure that whenever EAGAIN is returned, EPOLLOUT event can
++	 * be generated later.
++	 * When TCP receives ACK packets that make room, tcp_check_space()
++	 * only calls tcp_new_space() if SOCK_NOSPACE is set.
++	 */
++	set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
+ 	err = -EAGAIN;
+ 	goto out;
+ do_interrupted:
 
 
