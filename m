@@ -2,151 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A3C7A93D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E97A4A93D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 22:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730122AbfIDUiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 16:38:07 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34390 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbfIDUiG (ORCPT
+        id S1730271AbfIDUif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 16:38:35 -0400
+Received: from mail-qk1-f169.google.com ([209.85.222.169]:42076 "EHLO
+        mail-qk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727562AbfIDUif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 16:38:06 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n9so74809pgc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 13:38:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Bk5pYovWj1N2NE+OOJaoyRA6cWmgvTKyUM/n3n02nPQ=;
-        b=EVu2/qM4dkFpjXBhv301WHW37bP6fyBlIs/gRq15bdIjJoMt6wfKjpMdCcxDV8HOM2
-         UguTb66swmlioFkQdeJH4/MnKxuoTGxU5p+4kVOniyj6OVDbHd1SkZoTYBQx3KHPe8XN
-         3G9Yy4DaGHQe46NHOUlg+hTOdrZ3CaSyEC104=
+        Wed, 4 Sep 2019 16:38:35 -0400
+Received: by mail-qk1-f169.google.com with SMTP id f13so20966596qkm.9;
+        Wed, 04 Sep 2019 13:38:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Bk5pYovWj1N2NE+OOJaoyRA6cWmgvTKyUM/n3n02nPQ=;
-        b=i7GAJZzs2Wp7qgwVZ0SuKEGu4/uNQ+9xRdcpSDTEbtkm9D9U/q+r6qF3gWQrto/r+j
-         97ZoIELvbo7dl5GFE5Hve8OhEtGyNkr5GWmSRnFLQ3DM752xTTQPXyUiYTDxherIh5hQ
-         MQteYjbj5+xDCkIe6WMJtU6Vt04JatQ14E7NE5nUfDlSB0uNRkaweSaUv2N3em1kmoXH
-         vhxf8IGkxMt6KXBeOPnJ74M2DPlF9I9YiOj53eSzGq0q1Isgps2rtPhNyRtxYIS39NTn
-         Zj3GXHUmuaC+3cPOMkz64iXvZyfaL24yh+7PCjUBsP7Wr5ePYPxKtbeaL+Ai4tPvoSz6
-         7/wQ==
-X-Gm-Message-State: APjAAAXx72RACoGknqY3rewUZDU9cxcP61cDkFH6YbNaKxGKZhR89RIx
-        hIryLieOKa4zt0iyQT/bJ5e7Ng==
-X-Google-Smtp-Source: APXvYqxBAXwOFmTw+wOpWeWmjPDDuL6B0POG2q8/5EaDnRs7jT8FbA4qXcZTsJJx0WPcTea4f0YBpw==
-X-Received: by 2002:a62:7a12:: with SMTP id v18mr4855828pfc.205.1567629485983;
-        Wed, 04 Sep 2019 13:38:05 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x22sm5737362pfi.139.2019.09.04.13.38.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2019 13:38:05 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 13:38:04 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] efi/libstub/arm64: Report meaningful relocation errors
-Message-ID: <201909041336.E6DE4B69@keescook>
-References: <201908141353.043EF60B@keescook>
- <20190904103803.iv7agcw2suv6fcib@willie-the-truck>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nQ+TZt2xAU6ARjfRCiqVZR2trBRpvvDn7We+sIvH1zE=;
+        b=guCZC1c2M05CSE/89yIJjIbNd/jmBITex+uFcN1L5nHD7lOs/QGH79CqProkENYsCt
+         3HSkZbZBiFk/anM7x1xXnudh7u1Dp/C8oAdTTZZs2Wgh966NYttfyVN6D5/rQWFrs3X2
+         aJPIin+nVWC8S3cOi/PxGm/Dg3q/MO7aY/4G1h9s2ARb5+0fm3/7FbDBD9+88LOzZuLk
+         H69H8k72MD4R8SPXvdy+WAvNTyNfJL47ocK3W4VqkuZ1TGJlub3rJsDpm8A35r23/G8q
+         cstvhe3y1ReRkYl9ML0yqBDULVQE8CmvQ98Spk67yLf+3EFd0AJ/ftiM5SfKFMco8FO7
+         OzZQ==
+X-Gm-Message-State: APjAAAWcQ+KJDydsF6IO0Nez/V69UABnnnoyvOZfgkDLP39UIu1IrZze
+        r4BXnJmUpluDpIl3aB/QsKLsO5gvTnZUUWM1nsg=
+X-Google-Smtp-Source: APXvYqx9uD7UtlRyqsCOqQGbbg7AQnv4dWGAqV8gWQixfO/xjWBKsLWBDyCZMABQgbs3kg00uBUNX8YKi+rJXXEYHFs=
+X-Received: by 2002:a37:4fcf:: with SMTP id d198mr41434701qkb.394.1567629514068;
+ Wed, 04 Sep 2019 13:38:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904103803.iv7agcw2suv6fcib@willie-the-truck>
+References: <20190904175002.10487-1-krzk@kernel.org> <20190904175002.10487-2-krzk@kernel.org>
+In-Reply-To: <20190904175002.10487-2-krzk@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 4 Sep 2019 22:38:17 +0200
+Message-ID: <CAK8P3a0N1C7+_vpAhhmqVv9A+jd4bOXNEgPj_=fdPZTqy-93ng@mail.gmail.com>
+Subject: Re: [GIT PULL 1/5] ARM: defconfig: exynos for v5.4
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
+        SoC Team <soc@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 11:38:03AM +0100, Will Deacon wrote:
-> Hi Kees,
-> 
-> On Wed, Aug 14, 2019 at 01:55:50PM -0700, Kees Cook wrote:
-> > When UEFI booting, if allocate_pages() fails (either via KASLR or
-> > regular boot), efi_low_alloc() is used for fall back. If it, too, fails,
-> > it reports "Failed to relocate kernel". Then handle_kernel_image()
-> > reports the failure to its caller, which unhelpfully reports exactly
-> > the same string again:
-> > 
-> > EFI stub: ERROR: Failed to relocate kernel
-> > EFI stub: ERROR: Failed to relocate kernel
-> > 
-> > While debugging linker errors in the UEFI code that created insane memory
-> > sizes that all the allocation attempts would fail at, this was a cause
-> > for confusion. Knowing each allocation had failed would have helped me
-> > isolate the issue sooner. To that end, this improves the error messages
-> > to detail which specific allocations have failed.
-> > 
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
-> >  drivers/firmware/efi/libstub/arm64-stub.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/firmware/efi/libstub/arm64-stub.c b/drivers/firmware/efi/libstub/arm64-stub.c
-> > index 1550d244e996..24022f956e01 100644
-> > --- a/drivers/firmware/efi/libstub/arm64-stub.c
-> > +++ b/drivers/firmware/efi/libstub/arm64-stub.c
-> > @@ -111,6 +111,8 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
-> >  		status = efi_random_alloc(sys_table_arg, *reserve_size,
-> >  					  MIN_KIMG_ALIGN, reserve_addr,
-> >  					  (u32)phys_seed);
-> > +		if (status != EFI_SUCCESS)
-> > +			pr_efi_err(sys_table_arg, "KASLR allocate_pages() failed\n");
-> >  
-> >  		*image_addr = *reserve_addr + offset;
-> >  	} else {
-> > @@ -135,6 +137,8 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
-> >  					EFI_LOADER_DATA,
-> >  					*reserve_size / EFI_PAGE_SIZE,
-> >  					(efi_physical_addr_t *)reserve_addr);
-> > +		if (status != EFI_SUCCESS)
-> > +			pr_efi_err(sys_table_arg, "regular allocate_pages() failed\n");
-> >  	}
-> 
-> Not sure I see the need to distinsuish the 'KASLR' case from the 'regular'
-> case -- only one should run, right?  That also didn't seem to be part of
-> the use-case in the commit, unless I'm missing something.
+On Wed, Sep 4, 2019 at 7:50 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Samsung defconfig changes for v5.4
+>
+> 1. Enable AHCI platform driver on exynos defconfig for Exynos5250-based
+>    Arndale board,
+> 2. Make Max77802 PMIC regulator driver a built-in on multi_v7 defconfig
+>    as it is essential early during boot.
 
-I just did that to help with differentiating the cases. Maybe something
-was special about KASLR picking the wrong location that triggered the
-failure, etc.
+Pulled into arm/defconfig, thanks!
 
-> Maybe combine the prints as per the diff below?
-
-That could work. If you're against the KASLR vs regular thing, I can
-respin the patch?
-
--Kees
-
-> 
-> Will
-> 
-> --->8
-> 
-> diff --git a/drivers/firmware/efi/libstub/arm64-stub.c b/drivers/firmware/efi/libstub/arm64-stub.c
-> index 1550d244e996..820c58cc149e 100644
-> --- a/drivers/firmware/efi/libstub/arm64-stub.c
-> +++ b/drivers/firmware/efi/libstub/arm64-stub.c
-> @@ -143,13 +143,15 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
->  				       MIN_KIMG_ALIGN, reserve_addr);
->  
->  		if (status != EFI_SUCCESS) {
-> -			pr_efi_err(sys_table_arg, "Failed to relocate kernel\n");
-> +			pr_efi_err(sys_table_arg, "efi_low_alloc() failed\n");
->  			*reserve_size = 0;
->  			return status;
->  		}
->  		*image_addr = *reserve_addr + TEXT_OFFSET;
-> +	} else {
-> +		pr_efi_err(sys_table_arg, "allocate_pages() failed\n");
->  	}
-> -	memcpy((void *)*image_addr, old_image_addr, kernel_size);
->  
-> +	memcpy((void *)*image_addr, old_image_addr, kernel_size);
->  	return EFI_SUCCESS;
->  }
-
--- 
-Kees Cook
+     Arnd
