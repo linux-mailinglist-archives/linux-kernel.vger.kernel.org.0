@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 560D7A8F86
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73C21A8FDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388325AbfIDSEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:04:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45040 "EHLO mail.kernel.org"
+        id S2389413AbfIDSGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:06:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389058AbfIDSEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:04:07 -0400
+        id S2389408AbfIDSGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:06:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D12322CF7;
-        Wed,  4 Sep 2019 18:04:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E81A523400;
+        Wed,  4 Sep 2019 18:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620246;
-        bh=UCZZizavb/RPzN5GuYOlI/PuCcWJPuHtHFmlKoqNlWA=;
+        s=default; t=1567620374;
+        bh=/W9B7Sno1Cvi2aD3B8vReKUaPG7Au4vT5P3cEEHE2l4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=izQjw6YP8ys1cF1Kx1iAkP6uQH5F9Q0f1d1IGii+aGyQQSE9XZT8fc6+mjwe+wAYT
-         EdAL2nIsuS9yrL1CGc8vfQY9ajvj9c7ut74XavPT6xqwAZgqC9/vzbsEx0tSvq9Mgq
-         u0s7oX6euC8wDY/r0BuSug/43JOUtM3PYwzGViAo=
+        b=XFV9wuQWWSsmckZBB9Cy47dyxw9sDoIkEihgUVVSmzbV/00GX7sxDUo4Jn42zd9oe
+         XUJZWLQE5wmSO8uqMRBQFBaNY7CcoePGZ46uagnZTjJXJiAI96pOPfTI4WdY/M04nu
+         WqPA2BkFW6r6C7SceIgifAX2bU1wjD9imWGmWWno=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Wenwen Wang <wenwen@cs.uga.edu>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 06/57] xen/blkback: fix memory leaks
-Date:   Wed,  4 Sep 2019 19:53:34 +0200
-Message-Id: <20190904175302.568239872@linuxfoundation.org>
+        stable@vger.kernel.org, Hillf Danton <hdanton@sina.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 33/93] net: tls, fix sk_write_space NULL write when tx disabled
+Date:   Wed,  4 Sep 2019 19:53:35 +0200
+Message-Id: <20190904175306.180232159@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
-References: <20190904175301.777414715@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,56 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ae78ca3cf3d9e9f914bfcd0bc5c389ff18b9c2e0 ]
+From: John Fastabend <john.fastabend@gmail.com>
 
-In read_per_ring_refs(), after 'req' and related memory regions are
-allocated, xen_blkif_map() is invoked to map the shared frame, irq, and
-etc. However, if this mapping process fails, no cleanup is performed,
-leading to memory leaks. To fix this issue, invoke the cleanup before
-returning the error.
+[ Upstream commit d85f01775850a35eae47a0090839baf510c1ef12 ]
 
-Acked-by: Roger Pau Monné <roger.pau@citrix.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The ctx->sk_write_space pointer is only set when TLS tx mode is enabled.
+When running without TX mode its a null pointer but we still set the
+sk sk_write_space pointer on close().
+
+Fix the close path to only overwrite sk->sk_write_space when the current
+pointer is to the tls_write_space function indicating the tls module should
+clean it up properly as well.
+
+Reported-by: Hillf Danton <hdanton@sina.com>
+Cc: Ying Xue <ying.xue@windriver.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>
+Fixes: 57c722e932cfb ("net/tls: swap sk_write_space on close")
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/xen-blkback/xenbus.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/tls/tls_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index 21c1be1eb2260..ed4e807791243 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -973,6 +973,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -301,7 +301,8 @@ static void tls_sk_proto_close(struct so
+ #else
+ 	{
+ #endif
+-		sk->sk_write_space = ctx->sk_write_space;
++		if (sk->sk_write_space == tls_write_space)
++			sk->sk_write_space = ctx->sk_write_space;
+ 		tls_ctx_free(ctx);
+ 		ctx = NULL;
  	}
- 	blkif->nr_ring_pages = nr_grefs;
- 
-+	err = -ENOMEM;
- 	for (i = 0; i < nr_grefs * XEN_BLKIF_REQS_PER_PAGE; i++) {
- 		req = kzalloc(sizeof(*req), GFP_KERNEL);
- 		if (!req)
-@@ -995,7 +996,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
- 	err = xen_blkif_map(ring, ring_ref, nr_grefs, evtchn);
- 	if (err) {
- 		xenbus_dev_fatal(dev, err, "mapping ring-ref port %u", evtchn);
--		return err;
-+		goto fail;
- 	}
- 
- 	return 0;
-@@ -1015,8 +1016,7 @@ fail:
- 		}
- 		kfree(req);
- 	}
--	return -ENOMEM;
--
-+	return err;
- }
- 
- static int connect_ring(struct backend_info *be)
--- 
-2.20.1
-
 
 
