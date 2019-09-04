@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4568BA908C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 380A0A8EBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390081AbfIDSKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:10:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53866 "EHLO mail.kernel.org"
+        id S2388280AbfIDR7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:59:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390071AbfIDSKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:10:20 -0400
+        id S2388271AbfIDR7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:59:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6280B208E4;
-        Wed,  4 Sep 2019 18:10:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC80822CEA;
+        Wed,  4 Sep 2019 17:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620619;
-        bh=jhaaG0FSfHAZnceMxY8dpHpbGb3lwOtzwFAxl2ten4E=;
+        s=default; t=1567619983;
+        bh=tB8hZZLTRyVlHXribobIoKvzLcGtcR5wqsf4cKX4VkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oNtDOvSEq2VS/gnlTvZ6RzBVFgGKWCN8GuvxS3ak+WQ8Snv4GVIS2kliWmIfS9OKz
-         fOirk90NpOaS9+EC8w8en9QVkHlONyFx011x1D3OpLqIhyslfGvmwz9FrfgT7/A58z
-         KoF8Y7LJ7S23g6cEtXnWUw3FsZvNXZWF09x08Hig=
+        b=rJa9tTYqVl+3TcMOg7O+LTQbbnlrjCAecoJj4jPCFTTfxcInnH5k+Z76qsBjckV79
+         iF6g5ujQd8Xa9VOzi/YQWVq+F3XCEYuTE0EZCSkVeVUur8Y3XNUdMCI1wXeoU9zX7U
+         XboodobdYZk6X3mGjJgBG9tpLls/N76uaDOLi6yA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Segal <bpsegal20@gmail.com>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
+        stable@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 032/143] habanalabs: fix device IRQ unmasking for BE host
-Date:   Wed,  4 Sep 2019 19:52:55 +0200
-Message-Id: <20190904175315.310835376@linuxfoundation.org>
+Subject: [PATCH 4.9 04/83] ASoC: dapm: Fix handling of custom_stop_condition on DAPM graph walks
+Date:   Wed,  4 Sep 2019 19:52:56 +0200
+Message-Id: <20190904175304.059475061@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b421d83a3947369fd5718824aecfaebe1efbf7ed ]
+[ Upstream commit 8dd26dff00c0636b1d8621acaeef3f6f3a39dd77 ]
 
-When unmasking IRQs inside the ASIC, the driver passes an array of all the
-IRQ to unmask. The ASIC's CPU is working in LE so when running in a BE
-host, the driver needs to do the proper endianness swapping when preparing
-this array.
+DPCM uses snd_soc_dapm_dai_get_connected_widgets to build a
+list of the widgets connected to a specific front end DAI so it
+can search through this list for available back end DAIs. The
+custom_stop_condition was added to is_connected_ep to facilitate this
+list not containing more widgets than is necessary. Doing so both
+speeds up the DPCM handling as less widgets need to be searched and
+avoids issues with CODEC to CODEC links as these would be confused
+with back end DAIs if they appeared in the list of available widgets.
 
-In addition, this patch also fixes the endianness of a couple of kernel log
-debug messages that print values of packets
+custom_stop_condition was implemented by aborting the graph walk
+when the condition is triggered, however there is an issue with this
+approach. Whilst walking the graph is_connected_ep should update the
+endpoints cache on each widget, if the walk is aborted the number
+of attached end points is unknown for that sub-graph. When the stop
+condition triggered, the original patch ignored the triggering widget
+and returned zero connected end points; a later patch updated this
+to set the triggering widget's cache to 1 and return that. Both of
+these approaches result in inaccurate values being stored in various
+end point caches as the values propagate back through the graph,
+which can result in later issues with widgets powering/not powering
+unexpectedly.
 
-Signed-off-by: Ben Segal <bpsegal20@gmail.com>
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+As the original goal was to reduce the size of the widget list passed
+to the DPCM code, the simplest solution is to limit the functionality
+of the custom_stop_condition to the widget list. This means the rest
+of the graph will still be processed resulting in correct end point
+caches, but only widgets up to the stop condition will be added to the
+returned widget list.
+
+Fixes: 6742064aef7f ("ASoC: dapm: support user-defined stop condition in dai_get_connected_widgets")
+Fixes: 5fdd022c2026 ("ASoC: dpcm: play nice with CODEC<->CODEC links")
+Fixes: 09464974eaa8 ("ASoC: dapm: Fix to return correct path list in is_connected_ep.")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Link: https://lore.kernel.org/r/20190718084333.15598-1-ckeepax@opensource.cirrus.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/habanalabs/goya/goya.c | 33 +++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+ sound/soc/soc-dapm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 9216cc3599178..ac6b252a1ddcb 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -3311,9 +3311,11 @@ static int goya_validate_dma_pkt_no_mmu(struct hl_device *hdev,
- 	int rc;
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index ab647f1fe11bd..08bfc91c686f0 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -1104,8 +1104,8 @@ static __always_inline int is_connected_ep(struct snd_soc_dapm_widget *widget,
+ 		list_add_tail(&widget->work_list, list);
  
- 	dev_dbg(hdev->dev, "DMA packet details:\n");
--	dev_dbg(hdev->dev, "source == 0x%llx\n", user_dma_pkt->src_addr);
--	dev_dbg(hdev->dev, "destination == 0x%llx\n", user_dma_pkt->dst_addr);
--	dev_dbg(hdev->dev, "size == %u\n", user_dma_pkt->tsize);
-+	dev_dbg(hdev->dev, "source == 0x%llx\n",
-+		le64_to_cpu(user_dma_pkt->src_addr));
-+	dev_dbg(hdev->dev, "destination == 0x%llx\n",
-+		le64_to_cpu(user_dma_pkt->dst_addr));
-+	dev_dbg(hdev->dev, "size == %u\n", le32_to_cpu(user_dma_pkt->tsize));
+ 	if (custom_stop_condition && custom_stop_condition(widget, dir)) {
+-		widget->endpoints[dir] = 1;
+-		return widget->endpoints[dir];
++		list = NULL;
++		custom_stop_condition = NULL;
+ 	}
  
- 	ctl = le32_to_cpu(user_dma_pkt->ctl);
- 	user_dir = (ctl & GOYA_PKT_LIN_DMA_CTL_DMA_DIR_MASK) >>
-@@ -3342,9 +3344,11 @@ static int goya_validate_dma_pkt_mmu(struct hl_device *hdev,
- 				struct packet_lin_dma *user_dma_pkt)
- {
- 	dev_dbg(hdev->dev, "DMA packet details:\n");
--	dev_dbg(hdev->dev, "source == 0x%llx\n", user_dma_pkt->src_addr);
--	dev_dbg(hdev->dev, "destination == 0x%llx\n", user_dma_pkt->dst_addr);
--	dev_dbg(hdev->dev, "size == %u\n", user_dma_pkt->tsize);
-+	dev_dbg(hdev->dev, "source == 0x%llx\n",
-+		le64_to_cpu(user_dma_pkt->src_addr));
-+	dev_dbg(hdev->dev, "destination == 0x%llx\n",
-+		le64_to_cpu(user_dma_pkt->dst_addr));
-+	dev_dbg(hdev->dev, "size == %u\n", le32_to_cpu(user_dma_pkt->tsize));
- 
- 	/*
- 	 * WA for HW-23.
-@@ -3384,7 +3388,8 @@ static int goya_validate_wreg32(struct hl_device *hdev,
- 
- 	dev_dbg(hdev->dev, "WREG32 packet details:\n");
- 	dev_dbg(hdev->dev, "reg_offset == 0x%x\n", reg_offset);
--	dev_dbg(hdev->dev, "value      == 0x%x\n", wreg_pkt->value);
-+	dev_dbg(hdev->dev, "value      == 0x%x\n",
-+		le32_to_cpu(wreg_pkt->value));
- 
- 	if (reg_offset != (mmDMA_CH_0_WR_COMP_ADDR_LO & 0x1FFF)) {
- 		dev_err(hdev->dev, "WREG32 packet with illegal address 0x%x\n",
-@@ -4252,6 +4257,8 @@ static int goya_unmask_irq_arr(struct hl_device *hdev, u32 *irq_arr,
- 	size_t total_pkt_size;
- 	long result;
- 	int rc;
-+	int irq_num_entries, irq_arr_index;
-+	__le32 *goya_irq_arr;
- 
- 	total_pkt_size = sizeof(struct armcp_unmask_irq_arr_packet) +
- 			irq_arr_size;
-@@ -4269,8 +4276,16 @@ static int goya_unmask_irq_arr(struct hl_device *hdev, u32 *irq_arr,
- 	if (!pkt)
- 		return -ENOMEM;
- 
--	pkt->length = cpu_to_le32(irq_arr_size / sizeof(irq_arr[0]));
--	memcpy(&pkt->irqs, irq_arr, irq_arr_size);
-+	irq_num_entries = irq_arr_size / sizeof(irq_arr[0]);
-+	pkt->length = cpu_to_le32(irq_num_entries);
-+
-+	/* We must perform any necessary endianness conversation on the irq
-+	 * array being passed to the goya hardware
-+	 */
-+	for (irq_arr_index = 0, goya_irq_arr = (__le32 *) &pkt->irqs;
-+			irq_arr_index < irq_num_entries ; irq_arr_index++)
-+		goya_irq_arr[irq_arr_index] =
-+				cpu_to_le32(irq_arr[irq_arr_index]);
- 
- 	pkt->armcp_pkt.ctl = cpu_to_le32(ARMCP_PACKET_UNMASK_RAZWI_IRQ_ARRAY <<
- 						ARMCP_PKT_CTL_OPCODE_SHIFT);
+ 	if ((widget->is_ep & SND_SOC_DAPM_DIR_TO_EP(dir)) && widget->connected) {
+@@ -1142,8 +1142,8 @@ static __always_inline int is_connected_ep(struct snd_soc_dapm_widget *widget,
+  *
+  * Optionally, can be supplied with a function acting as a stopping condition.
+  * This function takes the dapm widget currently being examined and the walk
+- * direction as an arguments, it should return true if the walk should be
+- * stopped and false otherwise.
++ * direction as an arguments, it should return true if widgets from that point
++ * in the graph onwards should not be added to the widget list.
+  */
+ static int is_connected_output_ep(struct snd_soc_dapm_widget *widget,
+ 	struct list_head *list,
 -- 
 2.20.1
 
