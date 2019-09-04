@@ -2,92 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 051AEA7B97
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF41A7B9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:23:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbfIDGVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 02:21:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38192 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfIDGVr (ORCPT
+        id S1728883AbfIDGXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 02:23:04 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:39348 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfIDGXD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 02:21:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B6D60611C5; Wed,  4 Sep 2019 06:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567578106;
-        bh=TPgwvKctOwymLvmyyZZR51ik0MV3E88Ok8sQi1Pt0ik=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=ISfgP38VuLvEgqxm7IFujKsnfnYGs/t8g3hKuPggbeTb+t5rtdE40G6/1cnQV3r/I
-         Jh78KqRzTzKFiPQ3gq7PiiPBRP3eplxlMLFoQNfFuUIA047CRQ8ktfLNJa2m5Ud4R1
-         wKsWXvYQ8Zaei8K2m2uElNGHp74EA7v1Hidp3Lqw=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 78032602A7;
-        Wed,  4 Sep 2019 06:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567578106;
-        bh=TPgwvKctOwymLvmyyZZR51ik0MV3E88Ok8sQi1Pt0ik=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=CZKc/atyhx0Bz9SPu1S3FG5C0jMBpRU3ENSWD0EpysigTTM9J37BVmTea8Y4ya0U9
-         d8pLxn9NOavUJHkDBxBny/ZXv9VwGmOreFWb2qQXeV/KC8PHfRvi2UPd4YlzVUchuO
-         CLcATN06vJ7T63Vi0OOyyMkphPMsx+j0s5JEUMHQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78032602A7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Wed, 4 Sep 2019 02:23:03 -0400
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x846MjSa007900;
+        Wed, 4 Sep 2019 15:22:46 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x846MjSa007900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567578166;
+        bh=f/Vt6AfJ/h0GmLP4nlGQ6fG5Sb31T5I6KrbEB4uL3XQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=klSroD0qCQpZ5U6pxi2/qRowXcLbgDr38bNgsFdq09oA5xRagfY68AYymJmL2UKlZ
+         AdN3EX+pOaZXFigtquwmXFnvIz3YR5SyvpELIcqwh15t9FojM4OT3w//5DNBllrIS6
+         8jcWank4fplhHLSRIv52JaVQuXE5k/O5ezpgG5ovUix9gr7t72Y2U85WCK6zchNNJI
+         IGep9b/kvtqmmEuB+oOySx5SD5G4+ClVDvd1oagm+uuBhiKUFk40Yrf9WaJNoy0z1a
+         NNwxMd4a2bXNJgvA3NvxjGlIrwB+ZlBl4kmYV1maLKxeec0WoF6e/8B3E0jIXdQNVi
+         GUbzyrXAys9UQ==
+X-Nifty-SrcIP: [209.85.222.46]
+Received: by mail-ua1-f46.google.com with SMTP id u18so2480760uap.2;
+        Tue, 03 Sep 2019 23:22:46 -0700 (PDT)
+X-Gm-Message-State: APjAAAXmjG0wAViQZJiZZVD4ViCOYzE0bTlAmHaEhT/5Imq3Vsn9JUxM
+        sPFYEV7uTykDw1/7OcHReJ49uoEVO4UsVr1MdD4=
+X-Google-Smtp-Source: APXvYqwXqIiEkpz8t5zX3CwWA0I7b3aQl9vXC5xpQV6eLWDVUn+QwNnliorr9pE1hNc0I8hJVRq/h0Tg+eKQL9tTnI0=
+X-Received: by 2002:a9f:2213:: with SMTP id 19mr6836107uad.25.1567578165238;
+ Tue, 03 Sep 2019 23:22:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath6kl: Fix a possible null-pointer dereference in
- ath6kl_htc_mbox_create()
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190729030305.18410-1-baijiaju1990@gmail.com>
-References: <20190729030305.18410-1-baijiaju1990@gmail.com>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     davem@davemloft.net, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190904062146.B6D60611C5@smtp.codeaurora.org>
-Date:   Wed,  4 Sep 2019 06:21:46 +0000 (UTC)
+References: <20190904101259.2687cea4@canb.auug.org.au> <CAK7LNAT=qUi76cF776GcT=UYce5QBo+_24gLwXH7ra15=1xLvQ@mail.gmail.com>
+In-Reply-To: <CAK7LNAT=qUi76cF776GcT=UYce5QBo+_24gLwXH7ra15=1xLvQ@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 4 Sep 2019 15:22:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ8VJz8fxecnEWmbFCpD0rgt4tjoipOX0g3oY0xU8xt5w@mail.gmail.com>
+Message-ID: <CAK7LNAQ8VJz8fxecnEWmbFCpD0rgt4tjoipOX0g3oY0xU8xt5w@mail.gmail.com>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+On Wed, Sep 4, 2019 at 10:00 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Hi Stephen,
+>
+> On Wed, Sep 4, 2019 at 9:13 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
 
-> In ath6kl_htc_mbox_create(), when kzalloc() on line 2855 fails,
-> target->dev is assigned to NULL, and ath6kl_htc_mbox_cleanup(target) is
-> called on line 2885.
-> 
-> In ath6kl_htc_mbox_cleanup(), target->dev is used on line 2895:
->     ath6kl_hif_cleanup_scatter(target->dev->ar);
-> 
-> Thus, a null-pointer dereference may occur.
-> 
-> To fix this bug, kfree(target) is called and NULL is returned when
-> kzalloc() on line 2855 fails.
-> 
-> This bug is found by a static analysis tool STCheck written by us.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+For today's linux-next, please squash the following too.
 
-Patch applied to ath-next branch of ath.git, thanks.
+(This is my fault, since scripts/mkuboot.sh is a bash script)
 
-0e7bf23e4967 ath6kl: Fix a possible null-pointer dereference in ath6kl_htc_mbox_create()
+
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 41c50f9461e5..2d72327417a9 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -374,7 +374,7 @@ UIMAGE_ENTRYADDR ?= $(UIMAGE_LOADADDR)
+ UIMAGE_NAME ?= 'Linux-$(KERNELRELEASE)'
+
+ quiet_cmd_uimage = UIMAGE  $@
+-      cmd_uimage = $(CONFIG_SHELL) $(MKIMAGE) -A $(UIMAGE_ARCH) -O linux \
++      cmd_uimage = $(BASE) $(MKIMAGE) -A $(UIMAGE_ARCH) -O linux \
+                        -C $(UIMAGE_COMPRESSION) $(UIMAGE_OPTS-y) \
+                        -T $(UIMAGE_TYPE) \
+                        -a $(UIMAGE_LOADADDR) -e $(UIMAGE_ENTRYADDR) \
+
+
+
+
 
 -- 
-https://patchwork.kernel.org/patch/11063157/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Best Regards
+Masahiro Yamada
