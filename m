@@ -2,78 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E74BAA7EAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D782A7ECC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:05:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbfIDJBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 05:01:18 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:33978 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfIDJBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:01:18 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 93A33200096;
-        Wed,  4 Sep 2019 11:01:16 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C5B312003B1;
-        Wed,  4 Sep 2019 11:01:12 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 28776402F0;
-        Wed,  4 Sep 2019 17:01:08 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
-Subject: arm64: ls1028a-qds: correct bus of rtc
-Date:   Wed,  4 Sep 2019 16:51:04 +0800
-Message-Id: <20190904085104.44709-1-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729434AbfIDJFV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Sep 2019 05:05:21 -0400
+Received: from tralee.bonsecours.ie ([213.190.149.3]:59645 "EHLO
+        BSHSSOPHOSVEA.bonsecours.ie" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726240AbfIDJFU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 05:05:20 -0400
+Received: from BSHSSOPHOSVEA.bonsecours.ie (localhost.localdomain [127.0.0.1])
+        by localhost (Email Security Appliance) with SMTP id EABE8266235_D6F7BEFB;
+        Wed,  4 Sep 2019 08:55:11 +0000 (GMT)
+Received: from bscexccashub01.bonsecours.ie (bscexccashub01.bonsecours.ie [10.1.4.106])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "webmail.bonsecours.ie", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by BSHSSOPHOSVEA.bonsecours.ie (Sophos Email Appliance) with ESMTPS id AC399264991_D6F7BEFF;
+        Wed,  4 Sep 2019 08:55:11 +0000 (GMT)
+Received: from BSCEXCMAIL01.BONSECOURS.IE ([fe80::9cc5:4b62:bcf9:3590]) by
+ BSCEXCCASHUB01.BONSECOURS.IE ([::1]) with mapi id 14.03.0408.000; Wed, 4 Sep
+ 2019 09:55:10 +0100
+From:   James Forde <jamesforde@bonsecours.ie>
+To:     "NO-REPLY@MICROSOFT.NET" <NO-REPLY@MICROSOFT.NET>
+Subject: 15 of your incoming messages has been suspended
+Thread-Topic: 15 of your incoming messages has been suspended
+Thread-Index: AdVi/nSmvro8FKaQQUab/pI23sMCNg==
+Date:   Wed, 4 Sep 2019 08:55:09 +0000
+Message-ID: <F9DF1CD3F70C2A4C9BFBA3CE1A4EA99587EB679B@BSCEXCMAIL01.BONSECOURS.IE>
+Accept-Language: en-IE, en-US
+Content-Language: en-IE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [196.171.179.88]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rtc is on i2c2 bus(hardware), not on i2c1 channel 3,
-so correct it
+MICROSOFT NOTIFICATION MEMO
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+15 of your incoming messages has been suspended because your email box account needs to be verify now. Do Verify<http://bbg58.000webhostapp.com/> now to release your messages
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-index de6ef39f3118..6c0540ad9c59 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-@@ -133,11 +133,6 @@
- 				vcc-supply = <&sb_3v3>;
- 			};
- 
--			rtc@51 {
--				compatible = "nxp,pcf2129";
--				reg = <0x51>;
--			};
--
- 			eeprom@56 {
- 				compatible = "atmel,24c512";
- 				reg = <0x56>;
-@@ -166,6 +161,14 @@
- 	};
- };
- 
-+&i2c1 {
-+	status = "okay";
-+	rtc@51 {
-+		compatible = "nxp,pcf2129";
-+		reg = <0x51>;
-+	};
-+};
-+
- &sai1 {
- 	status = "okay";
- };
--- 
-2.17.1
+Microsoft Verification Team
+
+
+Microsoft Webmail .Inc . © 2019
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bon Secours Health System Ltd, Registered in Ireland No. 198596.
+Registered Office - College Road, Cork
+
+This e-mail and any files transmitted with it are confidential and
+intended solely for the use of the individual or entity to whom
+they are addressed.
+
+If you have received this e-mail in error please notify the
+originator of the message. This footer also confirms that this
+e-mail message has been scanned for the presence of computer viruses.
+
+Any views expressed in this message are those of the individual
+sender, except where the sender specifies and with authority,
+states them to be the views of Bon Secours Health System Limited .
+
+Please consider the environment before printing this e-mail.
 
