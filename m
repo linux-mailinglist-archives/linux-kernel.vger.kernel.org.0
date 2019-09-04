@@ -2,95 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DCDA8B9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48549A8BA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387725AbfIDQDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:03:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40280 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731482AbfIDQDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:03:35 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6844B2070C;
-        Wed,  4 Sep 2019 16:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567613014;
-        bh=HQVLVihA9ng0KNu2loCHAgQaGkrPun9sOzN75JWuSiE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cuAE4VhAr8GZgoWK3u33QHKo7D/K+LzaMaPBGvByGuNN5E8pUeMBG2/gmIsctWO60
-         YeLbo1HjIDCrdFtSUyKw4Gm3MTyKGbvaqn8Gq0FU0b0+WQeGqo7N8xn+N0kknOc1CK
-         YfFKsVJ21SjWICT3trSZuLpZ0VKMVo3nO3aqT4F8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 20/20] net: seeq: Fix the function used to release some memory in an error handling path
-Date:   Wed,  4 Sep 2019 12:03:03 -0400
-Message-Id: <20190904160303.5062-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190904160303.5062-1-sashal@kernel.org>
-References: <20190904160303.5062-1-sashal@kernel.org>
+        id S1732853AbfIDQEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:04:09 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44112 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387668AbfIDQD1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:03:27 -0400
+Received: by mail-pl1-f196.google.com with SMTP id k1so2411359pls.11
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 09:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HUu7jEYknwWvPxSIww3cGcFcBMCEyjRD/qWIx9TD3dM=;
+        b=aXZuvHa1hI0zECNodigCdK/AztketBGpB5KRo99bRJAegKGh23AkFftnjVgCaQaYDV
+         r/MAFpjbZKtw9yEBG0/c5KTGKhI4RAykuTQl84poX4lM48t1KTqUSsYBOFHljnO4qmam
+         XteiWsbMMNyhozK6Rdt5paMH9GLgojCUbIjRKbMfNQDmCPIzw3DlVI6wSKYqYvkOWA/A
+         ag8XUqXeofKviz4dFZpvsV3nGBLYTvOOv38pvtGLJaUEx173EZABiusTJYLp92JpW39J
+         OQn62QVMk4ShDqUgPZZArtPwKtwpydm0NbYHM+MHTzTZuELA9GfQ5RFLZWipxWu7w4Yy
+         Tltw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HUu7jEYknwWvPxSIww3cGcFcBMCEyjRD/qWIx9TD3dM=;
+        b=BX/wQpwfhBid4vraza3Mjqm1Ir9uD/bc/zX2/gcxWzG9dnAvxXiDRxVINySxi3pbTW
+         YN5m82XUdOwyyUHaJKhBCi2obI9Ow6biVGR8ns58HxfNQReKzjzzSTd7BtaZzBy+UOOH
+         Ccuq7qXnWnN3fbvpiEj72pZMRfR8ok8ENl2yjDuV613EIjo7SO7rDLVapHMpZbfn0XfY
+         FWOQCaOSVx7jSdF8AnmAgrwxtmQQhSz7ug9tvmp6w8Uzr+clVOh+59mpp7NYfriRT8MY
+         T2y6AjqWFxvi7SyMEqOelpXyXnu/cWtNUd33PO16zizUg9FI5G2pX1pTx3tmWzS++HCA
+         7Pew==
+X-Gm-Message-State: APjAAAV2fC2EGTZuMedKk7KW0OvAbu9XfzHLnKd8ysNhXVMo2ZzEaxr6
+        FF8qDRLumyQxer6E7Dh8muioY7p8hw6vS3toxVzIkQ==
+X-Google-Smtp-Source: APXvYqyh8FzyyXaEHkm20wLHSSAh7U+934bzlwlLUUm/+rv9EcqnfWWn+NUpe56pQBjtLrshWi/RV1TYMuNAiJdPfH0=
+X-Received: by 2002:a17:902:8484:: with SMTP id c4mr41196596plo.223.1567613005847;
+ Wed, 04 Sep 2019 09:03:25 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20190904160039.3350229-1-arnd@arndb.de>
+In-Reply-To: <20190904160039.3350229-1-arnd@arndb.de>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 4 Sep 2019 09:03:13 -0700
+Message-ID: <CAKwvOd=udH0NLaz_+PbJ4ANyoJ3gGKZ-gsfTJ3xDJOqpsO1y0g@mail.gmail.com>
+Subject: Re: [PATCH] bus: imx-weim: remove incorrect __init annotations
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Ilie Halip <ilie.halip@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Wed, Sep 4, 2019 at 9:00 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The probe function is no longer __init, so anything it calls now
+> must also be available at runtime, as Kbuild points out when building
+> with clang-9:
 
-[ Upstream commit e1e54ec7fb55501c33b117c111cb0a045b8eded2 ]
+Thanks for the patch, this has already been addressed in:
+https://patchwork.kernel.org/patch/11114307/
+https://github.com/ClangBuiltLinux/linux/issues/645
 
-In commit 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv"),
-a call to 'get_zeroed_page()' has been turned into a call to
-'dma_alloc_coherent()'. Only the remove function has been updated to turn
-the corresponding 'free_page()' into 'dma_free_attrs()'.
-The error hndling path of the probe function has not been updated.
+>
+> WARNING: vmlinux.o(.text+0x6e7040): Section mismatch in reference from the function weim_probe() to the function .init.text:imx_weim_gpr_setup()
+> The function weim_probe() references
+> the function __init imx_weim_gpr_setup().
+> This is often because weim_probe lacks a __init
+> annotation or the annotation of imx_weim_gpr_setup is wrong.
+>
+> WARNING: vmlinux.o(.text+0x6e70f0): Section mismatch in reference from the function weim_probe() to the function .init.text:weim_timing_setup()
+> The function weim_probe() references
+> the function __init weim_timing_setup().
+> This is often because weim_probe lacks a __init
+> annotation or the annotation of weim_timing_setup is wrong.
+>
+> Remove the remaining __init markings that are now wrong.
+>
+> Fixes: 4a92f07816ba ("bus: imx-weim: use module_platform_driver()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> I applied this on top of the patch taht introduced the build error
+>
+>  drivers/bus/imx-weim.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
+> index 79af0c27f5a3..28bb65a5613f 100644
+> --- a/drivers/bus/imx-weim.c
+> +++ b/drivers/bus/imx-weim.c
+> @@ -76,7 +76,7 @@ static const struct of_device_id weim_id_table[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, weim_id_table);
+>
+> -static int __init imx_weim_gpr_setup(struct platform_device *pdev)
+> +static int imx_weim_gpr_setup(struct platform_device *pdev)
+>  {
+>         struct device_node *np = pdev->dev.of_node;
+>         struct property *prop;
+> @@ -126,10 +126,10 @@ static int __init imx_weim_gpr_setup(struct platform_device *pdev)
+>  }
+>
+>  /* Parse and set the timing for this device. */
+> -static int __init weim_timing_setup(struct device *dev,
+> -                                   struct device_node *np, void __iomem *base,
+> -                                   const struct imx_weim_devtype *devtype,
+> -                                   struct cs_timing_state *ts)
+> +static int weim_timing_setup(struct device *dev,
+> +                            struct device_node *np, void __iomem *base,
+> +                            const struct imx_weim_devtype *devtype,
+> +                            struct cs_timing_state *ts)
+>  {
+>         u32 cs_idx, value[MAX_CS_REGS_COUNT];
+>         int i, ret;
+> --
+> 2.20.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20190904160039.3350229-1-arnd%40arndb.de.
 
-Fix it now.
 
-Rename the corresponding label to something more in line.
 
-Fixes: 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/seeq/sgiseeq.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/seeq/sgiseeq.c b/drivers/net/ethernet/seeq/sgiseeq.c
-index ca73366057486..2e5f7bbd30bfa 100644
---- a/drivers/net/ethernet/seeq/sgiseeq.c
-+++ b/drivers/net/ethernet/seeq/sgiseeq.c
-@@ -792,15 +792,16 @@ static int sgiseeq_probe(struct platform_device *pdev)
- 		printk(KERN_ERR "Sgiseeq: Cannot register net device, "
- 		       "aborting.\n");
- 		err = -ENODEV;
--		goto err_out_free_page;
-+		goto err_out_free_attrs;
- 	}
- 
- 	printk(KERN_INFO "%s: %s %pM\n", dev->name, sgiseeqstr, dev->dev_addr);
- 
- 	return 0;
- 
--err_out_free_page:
--	free_page((unsigned long) sp->srings);
-+err_out_free_attrs:
-+	dma_free_attrs(&pdev->dev, sizeof(*sp->srings), sp->srings,
-+		       sp->srings_dma, DMA_ATTR_NON_CONSISTENT);
- err_out_free_dev:
- 	free_netdev(dev);
- 
 -- 
-2.20.1
-
+Thanks,
+~Nick Desaulniers
