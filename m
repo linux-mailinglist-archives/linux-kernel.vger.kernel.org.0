@@ -2,65 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 243C0A7C61
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:14:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7A3A7CAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:22:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbfIDHOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 03:14:12 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:47746 "EHLO inva020.nxp.com"
+        id S1728961AbfIDHWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 03:22:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbfIDHOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 03:14:12 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 85BFE1A0063;
-        Wed,  4 Sep 2019 09:14:10 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EC30A1A0194;
-        Wed,  4 Sep 2019 09:14:05 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 09A5540296;
-        Wed,  4 Sep 2019 15:13:59 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, daniel.baluta@nxp.com, aisheng.dong@nxp.com,
-        abel.vesa@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] soc: imx: imx-scu: Getting UID from SCU should have response
-Date:   Wed,  4 Sep 2019 15:13:14 -0400
-Message-Id: <1567624394-25023-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725840AbfIDHWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 03:22:41 -0400
+Received: from localhost (unknown [122.182.201.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89E3E23402;
+        Wed,  4 Sep 2019 07:22:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567581760;
+        bh=x6bRQXtE+JuINtFNse5ZrkGOp3vWHxjVq//MaaJDsH8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y0KAzybOASAf9aiT777mX8X2qRWKoYVns4JaOMKfOQ6yz2uD5WDOz/S8r3Rt4QWbN
+         ivIguFUliKCQmQHzd+JsEUtCGAeeWVpx8ZBs7rPLspzJO5uyWMeffVR4qDtHE3AV7A
+         CW5RI/OV7L0J6wQ44dO2//RR542gdkKHyJbck8J8=
+Date:   Wed, 4 Sep 2019 12:51:31 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+        Keyon Jie <yang.jie@linux.intel.com>,
+        Pan Xiuli <xiuli.pan@linux.intel.com>,
+        Fred Oh <fred.oh@linux.intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: Re: [RFC PATCH 3/5] ASoC: SOF: Intel: hda: add SoundWire IP support
+Message-ID: <20190904072131.GK2672@vkoul-mobl>
+References: <20190821201720.17768-1-pierre-louis.bossart@linux.intel.com>
+ <20190821201720.17768-4-pierre-louis.bossart@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821201720.17768-4-pierre-louis.bossart@linux.intel.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SCU firmware API for getting UID should have response,
-otherwise, the message stored in function stack could be
-released and then the response data received from SCU will be
-stored into that released stack and cause kernel NULL pointer
-dump.
+On 21-08-19, 15:17, Pierre-Louis Bossart wrote:
+> The Core0 needs to be powered before the SoundWire IP is initialized.
+> 
+> Call sdw_intel_init/exit and store the context. We only have one
+> context, but depending on the hardware capabilities and BIOS settings
+> may enable multiple SoundWire links.
+> 
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>  sound/soc/sof/intel/hda.c | 40 +++++++++++++++++++++++++++++++++------
+>  sound/soc/sof/intel/hda.h |  5 +++++
+>  2 files changed, 39 insertions(+), 6 deletions(-)
+> 
+> diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+> index a968890d0754..e754058e3679 100644
+> --- a/sound/soc/sof/intel/hda.c
+> +++ b/sound/soc/sof/intel/hda.c
+> @@ -57,6 +57,8 @@ static int hda_sdw_init(struct snd_sof_dev *sdev)
+>  {
+>  	acpi_handle handle;
+>  	struct sdw_intel_res res;
+> +	struct sof_intel_hda_dev *hdev;
+> +	void *sdw;
+>  
+>  	handle = ACPI_HANDLE(sdev->dev);
+>  
+> @@ -66,23 +68,32 @@ static int hda_sdw_init(struct snd_sof_dev *sdev)
+>  	res.irq = sdev->ipc_irq;
+>  	res.parent = sdev->dev;
+>  
+> -	hda_sdw_int_enable(sdev, true);
+> -
+> -	sdev->sdw = sdw_intel_init(handle, &res);
+> -	if (!sdev->sdw) {
+> +	sdw = sdw_intel_init(handle, &res);
 
-Fixes: 73feb4d0f8f1 ("soc: imx-scu: Add SoC UID(unique identifier) support")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/soc/imx/soc-imx-scu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+should this be called for platforms without sdw, I was hoping that some
+checks would be performed.. For example how would skl deal with this?
 
-diff --git a/drivers/soc/imx/soc-imx-scu.c b/drivers/soc/imx/soc-imx-scu.c
-index 50831eb..c68882e 100644
---- a/drivers/soc/imx/soc-imx-scu.c
-+++ b/drivers/soc/imx/soc-imx-scu.c
-@@ -46,7 +46,7 @@ static ssize_t soc_uid_show(struct device *dev,
- 	hdr->func = IMX_SC_MISC_FUNC_UNIQUE_ID;
- 	hdr->size = 1;
- 
--	ret = imx_scu_call_rpc(soc_ipc_handle, &msg, false);
-+	ret = imx_scu_call_rpc(soc_ipc_handle, &msg, true);
- 	if (ret) {
- 		pr_err("%s: get soc uid failed, ret %d\n", __func__, ret);
- 		return ret;
+> +	if (!sdw) {
+>  		dev_err(sdev->dev, "SDW Init failed\n");
+>  		return -EIO;
+>  	}
+>  
+> +	hda_sdw_int_enable(sdev, true);
+> +
+> +	/* save context */
+> +	hdev = sdev->pdata->hw_pdata;
+> +	hdev->sdw = sdw;
+> +
+>  	return 0;
+>  }
+>  
+>  static int hda_sdw_exit(struct snd_sof_dev *sdev)
+>  {
+> +	struct sof_intel_hda_dev *hdev;
+> +
+> +	hdev = sdev->pdata->hw_pdata;
+> +
+>  	hda_sdw_int_enable(sdev, false);
+>  
+> -	if (sdev->sdw)
+> -		sdw_intel_exit(sdev->sdw);
+
+this looks suspect, you are adding sdw calls here so how is this getting
+removed? Did I miss something...
+
+> +	if (hdev->sdw)
+> +		sdw_intel_exit(hdev->sdw);
+> +	hdev->sdw = NULL;
+>  
+>  	return 0;
+>  }
+> @@ -713,6 +724,21 @@ int hda_dsp_probe(struct snd_sof_dev *sdev)
+>  	/* set default mailbox offset for FW ready message */
+>  	sdev->dsp_box.offset = HDA_DSP_MBOX_UPLINK_OFFSET;
+>  
+> +	/* need to power-up core before setting-up capabilities */
+> +	ret = hda_dsp_core_power_up(sdev, HDA_DSP_CORE_MASK(0));
+> +	if (ret < 0) {
+> +		dev_err(sdev->dev, "error: could not power-up DSP subsystem\n");
+> +		goto free_ipc_irq;
+> +	}
+> +
+> +	/* initialize SoundWire capabilities */
+> +	ret = hda_sdw_init(sdev);
+> +	if (ret < 0) {
+> +		dev_err(sdev->dev, "error: SoundWire get caps error\n");
+> +		hda_dsp_core_power_down(sdev, HDA_DSP_CORE_MASK(0));
+> +		goto free_ipc_irq;
+> +	}
+> +
+>  	return 0;
+>  
+>  free_ipc_irq:
+> @@ -744,6 +770,8 @@ int hda_dsp_remove(struct snd_sof_dev *sdev)
+>  	snd_hdac_ext_bus_device_remove(bus);
+>  #endif
+>  
+> +	hda_sdw_exit(sdev);
+> +
+>  	if (!IS_ERR_OR_NULL(hda->dmic_dev))
+>  		platform_device_unregister(hda->dmic_dev);
+>  
+> diff --git a/sound/soc/sof/intel/hda.h b/sound/soc/sof/intel/hda.h
+> index c8f93317aeb4..48e09b7daf0a 100644
+> --- a/sound/soc/sof/intel/hda.h
+> +++ b/sound/soc/sof/intel/hda.h
+> @@ -399,6 +399,11 @@ struct sof_intel_hda_dev {
+>  
+>  	/* DMIC device */
+>  	struct platform_device *dmic_dev;
+> +
+> +#if IS_ENABLED(CONFIG_SOUNDWIRE_INTEL)
+
+is this really required, context is a void pointer
+
+> +	/* sdw context */
+> +	void *sdw;
+
+> +#endif
+>  };
+>  
+>  static inline struct hdac_bus *sof_to_bus(struct snd_sof_dev *s)
+> -- 
+> 2.20.1
+
 -- 
-2.7.4
-
+~Vinod
