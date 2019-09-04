@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AEF7A8FEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BF29A8E5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389085AbfIDSGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:06:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48640 "EHLO mail.kernel.org"
+        id S2387877AbfIDR5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:57:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388511AbfIDSGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:06:36 -0400
+        id S1732887AbfIDR53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:57:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2053B208E4;
-        Wed,  4 Sep 2019 18:06:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C8DC208E4;
+        Wed,  4 Sep 2019 17:57:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620395;
-        bh=Y3WTWkG85/3eRaBnKPhC5oucDyL+QcYVnYaPUi5pWaI=;
+        s=default; t=1567619849;
+        bh=dcaqcO9mLUUazwdb/kOqZqc5ACX4WaYdFZexRkEKmcs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e9gDpulvItrcrU35YaG0j37brLd2IxGZFNpZIqt7r+K16h1QC+4cJvctGIOnVXvO8
-         cMectUaNgPdxRiW4iVywJlIy67yYGF5mqLwKak7lZb6Cxjgd7ALer/AP6y2s7iR7PZ
-         Kn97lnx1AM7/0J9ZK7imgXRi09BtzgUqxu71q7ZQ=
+        b=lzBczznWbuOAA9d4f0jldl0L44EeQl+i0XhseKmnhYJecK9mwHj2qRJlIgJHsOmhL
+         ZUWjh+EapXelDdEwsiN+62fWE/rD/SGZjPsK4x2jRNDqmRMljs5VdAxWgWbgbk2f8k
+         p9XWEQTPftxdXaB0zIAcDFSMHHIL3zGDe2FBlwdQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 40/93] ALSA: usb-audio: Check mixer unit bitmap yet more strictly
+        stable@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 55/77] watchdog: bcm2835_wdt: Fix module autoload
 Date:   Wed,  4 Sep 2019 19:53:42 +0200
-Message-Id: <20190904175306.656801287@linuxfoundation.org>
+Message-Id: <20190904175308.468141923@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,96 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+[ Upstream commit 215e06f0d18d5d653d6ea269e4dfc684854d48bf ]
 
-commit f9f0e9ed350e15d51ad07364b4cf910de50c472a upstream.
+The commit 5e6acc3e678e ("bcm2835-pm: Move bcm2835-watchdog's DT probe
+to an MFD.") broke module autoloading on Raspberry Pi. So add a
+module alias this fix this.
 
-The bmControls (for UAC1) or bmMixerControls (for UAC2/3) bitmap has a
-variable size depending on both input and output pins.  Its size is to
-fit with input * output bits.  The problem is that the input size
-can't be determined simply from the unit descriptor itself but it
-needs to parse the whole connected sources.  Although the
-uac_mixer_unit_get_channels() tries to check some possible overflow of
-this bitmap, it's incomplete due to the lack of the  evaluation of
-input pins.
-
-For covering possible overflows, this patch adds the bitmap overflow
-check in the loop of input pins in parse_audio_mixer_unit().
-
-Fixes: 0bfe5e434e66 ("ALSA: usb-audio: Check mixer unit descriptors more strictly")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/mixer.c |   36 ++++++++++++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 8 deletions(-)
+ drivers/watchdog/bcm2835_wdt.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -754,7 +754,6 @@ static int uac_mixer_unit_get_channels(s
- 				       struct uac_mixer_unit_descriptor *desc)
- {
- 	int mu_channels;
--	void *c;
+diff --git a/drivers/watchdog/bcm2835_wdt.c b/drivers/watchdog/bcm2835_wdt.c
+index 8a5ce5b5a0b6f..199b1fb3669c0 100644
+--- a/drivers/watchdog/bcm2835_wdt.c
++++ b/drivers/watchdog/bcm2835_wdt.c
+@@ -248,6 +248,7 @@ module_param(nowayout, bool, 0);
+ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+ 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
  
- 	if (desc->bLength < sizeof(*desc))
- 		return -EINVAL;
-@@ -777,13 +776,6 @@ static int uac_mixer_unit_get_channels(s
- 		break;
- 	}
- 
--	if (!mu_channels)
--		return 0;
--
--	c = uac_mixer_unit_bmControls(desc, state->mixer->protocol);
--	if (c - (void *)desc + (mu_channels - 1) / 8 >= desc->bLength)
--		return 0; /* no bmControls -> skip */
--
- 	return mu_channels;
- }
- 
-@@ -2028,6 +2020,31 @@ static int parse_audio_feature_unit(stru
-  * Mixer Unit
-  */
- 
-+/* check whether the given in/out overflows bmMixerControls matrix */
-+static bool mixer_bitmap_overflow(struct uac_mixer_unit_descriptor *desc,
-+				  int protocol, int num_ins, int num_outs)
-+{
-+	u8 *hdr = (u8 *)desc;
-+	u8 *c = uac_mixer_unit_bmControls(desc, protocol);
-+	size_t rest; /* remaining bytes after bmMixerControls */
-+
-+	switch (protocol) {
-+	case UAC_VERSION_1:
-+	default:
-+		rest = 1; /* iMixer */
-+		break;
-+	case UAC_VERSION_2:
-+		rest = 2; /* bmControls + iMixer */
-+		break;
-+	case UAC_VERSION_3:
-+		rest = 6; /* bmControls + wMixerDescrStr */
-+		break;
-+	}
-+
-+	/* overflow? */
-+	return c + (num_ins * num_outs + 7) / 8 + rest > hdr + hdr[0];
-+}
-+
- /*
-  * build a mixer unit control
-  *
-@@ -2156,6 +2173,9 @@ static int parse_audio_mixer_unit(struct
- 		if (err < 0)
- 			return err;
- 		num_ins += iterm.channels;
-+		if (mixer_bitmap_overflow(desc, state->mixer->protocol,
-+					  num_ins, num_outs))
-+			break;
- 		for (; ich < num_ins; ich++) {
- 			int och, ich_has_controls = 0;
- 
++MODULE_ALIAS("platform:bcm2835-wdt");
+ MODULE_AUTHOR("Lubomir Rintel <lkundrak@v3.sk>");
+ MODULE_DESCRIPTION("Driver for Broadcom BCM2835 watchdog timer");
+ MODULE_LICENSE("GPL");
+-- 
+2.20.1
+
 
 
