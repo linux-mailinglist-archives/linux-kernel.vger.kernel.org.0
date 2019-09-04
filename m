@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC305A8F1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB16A918C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388660AbfIDSBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41546 "EHLO mail.kernel.org"
+        id S2387775AbfIDSSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:18:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388652AbfIDSBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:51 -0400
+        id S2388806AbfIDSLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:11:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65502208E4;
-        Wed,  4 Sep 2019 18:01:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DE9322DBF;
+        Wed,  4 Sep 2019 18:11:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620110;
-        bh=YaezAtlfkEaTi5ezWg9Y7/KVHwZlyo5nraWPbkLVsaE=;
+        s=default; t=1567620705;
+        bh=khsVp9cYfjAoDIzzdFzI30k+Zpgo/KBMB8i/V8V/Kx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g9Q0bpZTgqKcZot2nxClbz8LznvRBzhPa2R4l9+wzbT4ND2LLrebrNEg/YHaLf2y9
-         /FZzexnIXgSLbUZ7ZrHDwtooJQxxqRwXX7WI9OW5v+YFzlrGL6jhtK8BAwyl6KSIYf
-         Ix1qSVNPQh6Bg/hfvFTYAzDLcXUG1pVctulGOM+A=
+        b=YcR7kqhDX02s4ehywRrgZWCMZERdQqiIa52VRnp0wBVxSeX/r7GbjWjZ3QAyXyTgZ
+         yBdMMUHrK4sHFcDRwCJPmorpOb0C5o1I5r45kFfWclbJHvgH8za+8Vp9yeXITrZq8K
+         BN87+6Hw98Ee4WZWt+CEcSLp7JQX7nga8UV7UQNA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil MacLeod <neil@nmacleod.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 4.9 36/83] x86/boot: Fix boot regression caused by bootparam sanitizing
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.2 065/143] ALSA: usb-audio: Fix invalid NULL check in snd_emuusb_set_samplerate()
 Date:   Wed,  4 Sep 2019 19:53:28 +0200
-Message-Id: <20190904175307.095286436@linuxfoundation.org>
+Message-Id: <20190904175316.613456974@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +42,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 7846f58fba964af7cb8cf77d4d13c33254725211 upstream.
+commit 6de3c9e3f6b3eaf66859e1379b3f35dda781416b upstream.
 
-commit a90118c445cc ("x86/boot: Save fields explicitly, zero out everything
-else") had two errors:
+The quirk function snd_emuusb_set_samplerate() has a NULL check for
+the mixer element, but this is useless in the current code.  It used
+to be a check against mixer->id_elems[unitid] but it was changed later
+to the value after mixer_eleme_list_to_info() which is always non-NULL
+due to the container_of() usage.
 
-    * It preserved boot_params.acpi_rsdp_addr, and
-    * It failed to preserve boot_params.hdr
+This patch fixes the check before the conversion.
 
-Therefore, zero out acpi_rsdp_addr, and preserve hdr.
+While we're at it, correct a typo in the comment in the function,
+too.
 
-Fixes: a90118c445cc ("x86/boot: Save fields explicitly, zero out everything else")
-Reported-by: Neil MacLeod <neil@nmacleod.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Neil MacLeod <neil@nmacleod.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190821192513.20126-1-jhubbard@nvidia.com
+Fixes: 8c558076c740 ("ALSA: usb-audio: Clean up mixer element list traverse")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/bootparam_utils.h |    1 +
- 1 file changed, 1 insertion(+)
+ sound/usb/mixer_quirks.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/include/asm/bootparam_utils.h
-+++ b/arch/x86/include/asm/bootparam_utils.h
-@@ -70,6 +70,7 @@ static void sanitize_boot_params(struct
- 			BOOT_PARAM_PRESERVE(eddbuf_entries),
- 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buf_entries),
- 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buffer),
-+			BOOT_PARAM_PRESERVE(hdr),
- 			BOOT_PARAM_PRESERVE(eddbuf),
- 		};
+--- a/sound/usb/mixer_quirks.c
++++ b/sound/usb/mixer_quirks.c
+@@ -1155,17 +1155,17 @@ void snd_emuusb_set_samplerate(struct sn
+ {
+ 	struct usb_mixer_interface *mixer;
+ 	struct usb_mixer_elem_info *cval;
+-	int unitid = 12; /* SamleRate ExtensionUnit ID */
++	int unitid = 12; /* SampleRate ExtensionUnit ID */
+ 
+ 	list_for_each_entry(mixer, &chip->mixer_list, list) {
+-		cval = mixer_elem_list_to_info(mixer->id_elems[unitid]);
+-		if (cval) {
++		if (mixer->id_elems[unitid]) {
++			cval = mixer_elem_list_to_info(mixer->id_elems[unitid]);
+ 			snd_usb_mixer_set_ctl_value(cval, UAC_SET_CUR,
+ 						    cval->control << 8,
+ 						    samplerate_id);
+ 			snd_usb_mixer_notify_id(mixer, unitid);
++			break;
+ 		}
+-		break;
+ 	}
+ }
  
 
 
