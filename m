@@ -2,103 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D89A7C62
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:14:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29B76A7C7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728976AbfIDHO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 03:14:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33552 "EHLO mail.kernel.org"
+        id S1728911AbfIDHQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 03:16:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbfIDHO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 03:14:26 -0400
-Received: from localhost (unknown [122.182.201.156])
+        id S1727787AbfIDHQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 03:16:44 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3A6D22CEA;
-        Wed,  4 Sep 2019 07:14:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F4972339D;
+        Wed,  4 Sep 2019 07:16:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567581265;
-        bh=NNC+RkkJ+eyITyoMs4o1gFL0TAFukDFGUWCl2aimc18=;
+        s=default; t=1567581403;
+        bh=f8EZZerqx22BqB3RzsXbmB/o3MYtSOE4T3XPD3UXaF4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XhBTLeuw97W8DprCY1IMVU6AdWo9PaTC7PJNuXO6HzMcs8KiXB+r/kBYAe39/5zir
-         sPdcD6rlDeUxYQxDEk+mwM/j6EEXXjljTJX8YSfpZNvbLVdpcinoL2U9CQkPLszhz3
-         VuVt9dCMUtswZmUlmQ428EVv4SMmMXfeV75K8qCk=
-Date:   Wed, 4 Sep 2019 12:43:17 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [PATCH 2/6] soundwire: cadence_master: add hw_reset capability
- in debugfs
-Message-ID: <20190904071317.GJ2672@vkoul-mobl>
-References: <20190813213227.5163-1-pierre-louis.bossart@linux.intel.com>
- <20190813213227.5163-3-pierre-louis.bossart@linux.intel.com>
+        b=zOH9JjFruJCTTp6kIevTzvliq7OO6RNlAwGbxMUKh1HPeKn6iGeK7F5qysATWd/MA
+         1mb63cLoc7GFYiZaVbE4/QFb6uqSKTiUUfrZIN+fcJN00gJCbVebCy7ZfVliaTw2fX
+         C1F/6C8502bHkcoajUicecgDdGdYoCHK8gGfazwg=
+Date:   Wed, 4 Sep 2019 09:16:41 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Matthias Maennich <maennich@google.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        arnd@arndb.de, jeyu@kernel.org, joel@joelfernandes.org,
+        lucas.de.marchi@gmail.com, maco@android.com, sspatil@google.com,
+        will@kernel.org, yamada.masahiro@socionext.com,
+        linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v4 09/12] docs: Add documentation for Symbol Namespaces
+Message-ID: <20190904071641.GD18791@kroah.com>
+References: <20180716122125.175792-1-maco@android.com>
+ <20190903150638.242049-1-maennich@google.com>
+ <20190903150638.242049-10-maennich@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813213227.5163-3-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190903150638.242049-10-maennich@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-08-19, 16:32, Pierre-Louis Bossart wrote:
-> Provide debugfs capability to kick link and devices into hard-reset
-> (as defined by MIPI). This capability is really useful when some
-> devices are no longer responsive and/or to check the software handling
-> of resynchronization.
+On Tue, Sep 03, 2019 at 04:06:35PM +0100, Matthias Maennich wrote:
+> Describe using Symbol Namespaces from a perspective of a user. I.e.
+> module authors or subsystem maintainers.
 > 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/cadence_master.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-> index 046622e4b264..bd58d80ff636 100644
-> --- a/drivers/soundwire/cadence_master.c
-> +++ b/drivers/soundwire/cadence_master.c
-> @@ -340,6 +340,23 @@ static int cdns_reg_show(struct seq_file *s, void *data)
->  }
->  DEFINE_SHOW_ATTRIBUTE(cdns_reg);
->  
-> +static int cdns_hw_reset(void *data, u64 value)
-> +{
-> +	struct sdw_cdns *cdns = data;
-> +	int ret;
-> +
-> +	if (value != 1)
-> +		return 0;
+> Signed-off-by: Matthias Maennich <maennich@google.com>
 
-Should this not be EINVAL to indicate invalid value passed?
+Nice, it's good to have stuff to point people at.
 
-> +
-> +	ret = sdw_cdns_exit_reset(cdns);
-> +
-> +	dev_dbg(cdns->dev, "link hw_reset done: %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +DEFINE_DEBUGFS_ATTRIBUTE(cdns_hw_reset_fops, NULL, cdns_hw_reset, "%llu\n");
-> +
->  /**
->   * sdw_cdns_debugfs_init() - Cadence debugfs init
->   * @cdns: Cadence instance
-> @@ -348,6 +365,9 @@ DEFINE_SHOW_ATTRIBUTE(cdns_reg);
->  void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root)
->  {
->  	debugfs_create_file("cdns-registers", 0400, root, cdns, &cdns_reg_fops);
-> +
-> +	debugfs_create_file("cdns-hw-reset", 0200, root, cdns,
-> +			    &cdns_hw_reset_fops);
->  }
->  EXPORT_SYMBOL_GPL(sdw_cdns_debugfs_init);
->  
-> -- 
-> 2.20.1
-
--- 
-~Vinod
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
