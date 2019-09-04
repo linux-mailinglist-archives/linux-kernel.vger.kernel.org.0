@@ -2,93 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CFAAA8A0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C041AA89CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731862AbfIDP6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 11:58:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731812AbfIDP6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 11:58:14 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89EF22341C;
-        Wed,  4 Sep 2019 15:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567612693;
-        bh=h2IhLcindbILDhqXojQbO6MMiUWRO4pjB7tV4EHYZ90=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h6B0JrN1rekJ9wgrzlyoGi0m03QXMbUEGygDkFsOimY215OoYMFcL+/XOvS9BwSj7
-         gE9vfNvibQhUIQ1qQg7tAMfBy6Xc6n3SOAmInCY7sDl+1GZ6Y6naMDvm8xS9uQ56Fg
-         QarWhggB4I3I/1A7I/tP0VFLJCb5bJbRb01y4TkM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Phil Reid <preid@electromag.com.au>,
-        Moritz Fischer <mdf@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fpga@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 21/94] fpga: altera-ps-spi: Fix getting of optional confd gpio
-Date:   Wed,  4 Sep 2019 11:56:26 -0400
-Message-Id: <20190904155739.2816-21-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190904155739.2816-1-sashal@kernel.org>
-References: <20190904155739.2816-1-sashal@kernel.org>
+        id S1731524AbfIDP43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 11:56:29 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:47132 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1731408AbfIDP42 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 11:56:28 -0400
+Received: (qmail 5016 invoked by uid 2102); 4 Sep 2019 11:56:27 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 4 Sep 2019 11:56:27 -0400
+Date:   Wed, 4 Sep 2019 11:56:27 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Greg KH <greg@kroah.com>
+cc:     Thinh.Nguyen@synopsys.com, <andreyknvl@google.com>,
+        <dianders@chromium.org>, <jflat@chromium.org>,
+        <kai.heng.feng@canonical.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>, <malat@debian.org>,
+        <mathias.nyman@linux.intel.com>, <nsaenzjulienne@suse.de>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] USB: usbcore: Fix slab-out-of-bounds bug during device reset
+In-Reply-To: <000000000000318cba0591a4f143@google.com>
+Message-ID: <Pine.LNX.4.44L0.1909041154260.1722-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Reid <preid@electromag.com.au>
+The syzbot fuzzer provoked a slab-out-of-bounds error in the USB core:
 
-[ Upstream commit dec43da46f63eb71f519d963ba6832838e4262a3 ]
+BUG: KASAN: slab-out-of-bounds in memcmp+0xa6/0xb0 lib/string.c:904
+Read of size 1 at addr ffff8881d175bed6 by task kworker/0:3/2746
 
-Currently the driver does not handle EPROBE_DEFER for the confd gpio.
-Use devm_gpiod_get_optional() instead of devm_gpiod_get() and return
-error codes from altera_ps_probe().
+CPU: 0 PID: 2746 Comm: kworker/0:3 Not tainted 5.3.0-rc5+ #28
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  print_address_description+0x6a/0x32c mm/kasan/report.c:351
+  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
+  kasan_report+0xe/0x12 mm/kasan/common.c:612
+  memcmp+0xa6/0xb0 lib/string.c:904
+  memcmp include/linux/string.h:400 [inline]
+  descriptors_changed drivers/usb/core/hub.c:5579 [inline]
+  usb_reset_and_verify_device+0x564/0x1300 drivers/usb/core/hub.c:5729
+  usb_reset_device+0x4c1/0x920 drivers/usb/core/hub.c:5898
+  rt2x00usb_probe+0x53/0x7af
+drivers/net/wireless/ralink/rt2x00/rt2x00usb.c:806
 
-Fixes: 5692fae0742d ("fpga manager: Add altera-ps-spi driver for Altera FPGAs")
-Signed-off-by: Phil Reid <preid@electromag.com.au>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The error occurs when the descriptors_changed() routine (called during
+a device reset) attempts to compare the old and new BOS and capability
+descriptors.  The length it uses for the comparison is the
+wTotalLength value stored in BOS descriptor, but this value is not
+necessarily the same as the length actually allocated for the
+descriptors.  If it is larger the routine will call memcmp() with a
+length that is too big, thus reading beyond the end of the allocated
+region and leading to this fault.
+
+The kernel reads the BOS descriptor twice: first to get the total
+length of all the capability descriptors, and second to read it along
+with all those other descriptors.  A malicious (or very faulty) device
+may send different values for the BOS descriptor fields each time.
+The memory area will be allocated using the wTotalLength value read
+the first time, but stored within it will be the value read the second
+time.
+
+To prevent this possibility from causing any errors, this patch
+modifies the BOS descriptor after it has been read the second time:
+It sets the wTotalLength field to the actual length of the descriptors
+that were read in and validated.  Then the memcpy() call, or any other
+code using these descriptors, will be able to rely on wTotalLength
+being valid.
+
+Reported-and-tested-by: syzbot+35f4d916c623118d576e@syzkaller.appspotmail.com
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: <stable@vger.kernel.org>
+
 ---
- drivers/fpga/altera-ps-spi.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/fpga/altera-ps-spi.c b/drivers/fpga/altera-ps-spi.c
-index a13f224303c69..0221dee8dd4c6 100644
---- a/drivers/fpga/altera-ps-spi.c
-+++ b/drivers/fpga/altera-ps-spi.c
-@@ -210,7 +210,7 @@ static int altera_ps_write_complete(struct fpga_manager *mgr,
- 		return -EIO;
+
+[as1912]
+
+
+ drivers/usb/core/config.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+Index: usb-devel/drivers/usb/core/config.c
+===================================================================
+--- usb-devel.orig/drivers/usb/core/config.c
++++ usb-devel/drivers/usb/core/config.c
+@@ -921,7 +921,7 @@ int usb_get_bos_descriptor(struct usb_de
+ 	struct usb_bos_descriptor *bos;
+ 	struct usb_dev_cap_header *cap;
+ 	struct usb_ssp_cap_descriptor *ssp_cap;
+-	unsigned char *buffer;
++	unsigned char *buffer, *buffer0;
+ 	int length, total_len, num, i, ssac;
+ 	__u8 cap_type;
+ 	int ret;
+@@ -966,10 +966,12 @@ int usb_get_bos_descriptor(struct usb_de
+ 			ret = -ENOMSG;
+ 		goto err;
  	}
++
++	buffer0 = buffer;
+ 	total_len -= length;
++	buffer += length;
  
--	if (!IS_ERR(conf->confd)) {
-+	if (conf->confd) {
- 		if (!gpiod_get_raw_value_cansleep(conf->confd)) {
- 			dev_err(&mgr->dev, "CONF_DONE is inactive!\n");
- 			return -EIO;
-@@ -289,10 +289,13 @@ static int altera_ps_probe(struct spi_device *spi)
- 		return PTR_ERR(conf->status);
+ 	for (i = 0; i < num; i++) {
+-		buffer += length;
+ 		cap = (struct usb_dev_cap_header *)buffer;
+ 
+ 		if (total_len < sizeof(*cap) || total_len < cap->bLength) {
+@@ -983,8 +985,6 @@ int usb_get_bos_descriptor(struct usb_de
+ 			break;
+ 		}
+ 
+-		total_len -= length;
+-
+ 		if (cap->bDescriptorType != USB_DT_DEVICE_CAPABILITY) {
+ 			dev_warn(ddev, "descriptor type invalid, skip\n");
+ 			continue;
+@@ -1019,7 +1019,11 @@ int usb_get_bos_descriptor(struct usb_de
+ 		default:
+ 			break;
+ 		}
++
++		total_len -= length;
++		buffer += length;
  	}
++	dev->bos->desc->wTotalLength = cpu_to_le16(buffer - buffer0);
  
--	conf->confd = devm_gpiod_get(&spi->dev, "confd", GPIOD_IN);
-+	conf->confd = devm_gpiod_get_optional(&spi->dev, "confd", GPIOD_IN);
- 	if (IS_ERR(conf->confd)) {
--		dev_warn(&spi->dev, "Not using confd gpio: %ld\n",
--			 PTR_ERR(conf->confd));
-+		dev_err(&spi->dev, "Failed to get confd gpio: %ld\n",
-+			PTR_ERR(conf->confd));
-+		return PTR_ERR(conf->confd);
-+	} else if (!conf->confd) {
-+		dev_warn(&spi->dev, "Not using confd gpio");
- 	}
+ 	return 0;
  
- 	/* Register manager with unique name */
--- 
-2.20.1
 
