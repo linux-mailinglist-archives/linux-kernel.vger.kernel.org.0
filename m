@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 652EBA9145
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAF91A9148
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390802AbfIDSOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:14:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59728 "EHLO mail.kernel.org"
+        id S2389981AbfIDSOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:14:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732094AbfIDSO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:14:29 -0400
+        id S2390529AbfIDSOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:14:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A29BB208E4;
-        Wed,  4 Sep 2019 18:14:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 581DB22CF7;
+        Wed,  4 Sep 2019 18:14:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620868;
-        bh=QS2EO+bz72QZXczxXVN/e5/PS+AuqMibVBLItVH+2uw=;
+        s=default; t=1567620870;
+        bh=Gv3o9jc/CWvLdaxVZ2vJNVBL76ADaBp67Nglqgg26R8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cwDWkr5zK4HVV++Awmn03bzHkHfNJNteIP9qkUQo8bzY9rDAu3+KzDtIVcRHACEjC
-         WpIS8OC1/30V0uyqYwzg+jmEostpFTe6NRT1TV6fWtIsb5MkZJEecm4IDexpfL1RaQ
-         ol/LWBOgsTlNnfg/8zlOwjQAs6lM38k3SxmAAq1Q=
+        b=tfd520Jq6G91u7LACHuJf0GiA1tV5YnkgSSOuNeqdTepCjH7T4aVDMMQ2dNH37X06
+         3L8gz07to8wwaDS32ShWWhekrbsCygDKgn2TGCn7AzAphea4YwA9VMoNi73ryDQ16Y
+         lpdlgSScP8EGK5UbYkzatxOn4nXAYMZGfe+8a7Hg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 5.2 125/143] mac80211: fix possible sta leak
-Date:   Wed,  4 Sep 2019 19:54:28 +0200
-Message-Id: <20190904175319.298497697@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Wetzel <alexander@wetzel-home.de>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 5.2 126/143] cfg80211: Fix Extended Key ID key install checks
+Date:   Wed,  4 Sep 2019 19:54:29 +0200
+Message-Id: <20190904175319.336774224@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
 References: <20190904175314.206239922@linuxfoundation.org>
@@ -42,47 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Alexander Wetzel <alexander@wetzel-home.de>
 
-commit 5fd2f91ad483baffdbe798f8a08f1b41442d1e24 upstream.
+commit b67fd72e84a88cae64cea8ab47ccdaab3bb3094d upstream.
 
-If TDLS station addition is rejected, the sta memory is leaked.
-Avoid this by moving the check before the allocation.
+Fix two shortcomings in the Extended Key ID API:
 
-Cc: stable@vger.kernel.org
-Fixes: 7ed5285396c2 ("mac80211: don't initiate TDLS connection if station is not associated to AP")
-Link: https://lore.kernel.org/r/20190801073033.7892-1-johannes@sipsolutions.net
+ 1) Allow the userspace to install pairwise keys using keyid 1 without
+    NL80211_KEY_NO_TX set. This allows the userspace to install and
+    activate pairwise keys with keyid 1 in the same way as for keyid 0,
+    simplifying the API usage for e.g. FILS and FT key installs.
+
+ 2) IEEE 802.11 - 2016 restricts Extended Key ID usage to CCMP/GCMP
+    ciphers in IEEE 802.11 - 2016 "9.4.2.25.4 RSN capabilities".
+    Enforce that when installing a key.
+
+Cc: stable@vger.kernel.org # 5.2
+Fixes: 6cdd3979a2bd ("nl80211/cfg80211: Extended Key ID support")
+Signed-off-by: Alexander Wetzel <alexander@wetzel-home.de>
+Link: https://lore.kernel.org/r/20190805123400.51567-1-alexander@wetzel-home.de
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/cfg.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ net/wireless/util.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -1543,6 +1543,11 @@ static int ieee80211_add_station(struct
- 	if (is_multicast_ether_addr(mac))
- 		return -EINVAL;
+--- a/net/wireless/util.c
++++ b/net/wireless/util.c
+@@ -233,25 +233,30 @@ int cfg80211_validate_key_settings(struc
  
-+	if (params->sta_flags_set & BIT(NL80211_STA_FLAG_TDLS_PEER) &&
-+	    sdata->vif.type == NL80211_IFTYPE_STATION &&
-+	    !sdata->u.mgd.associated)
-+		return -EINVAL;
-+
- 	sta = sta_info_alloc(sdata, mac, GFP_KERNEL);
- 	if (!sta)
- 		return -ENOMEM;
-@@ -1550,10 +1555,6 @@ static int ieee80211_add_station(struct
- 	if (params->sta_flags_set & BIT(NL80211_STA_FLAG_TDLS_PEER))
- 		sta->sta.tdls = true;
- 
--	if (sta->sta.tdls && sdata->vif.type == NL80211_IFTYPE_STATION &&
--	    !sdata->u.mgd.associated)
--		return -EINVAL;
--
- 	err = sta_apply_parameters(local, sta, params);
- 	if (err) {
- 		sta_info_free(local, sta);
+ 	switch (params->cipher) {
+ 	case WLAN_CIPHER_SUITE_TKIP:
++		/* Extended Key ID can only be used with CCMP/GCMP ciphers */
++		if ((pairwise && key_idx) ||
++		    params->mode != NL80211_KEY_RX_TX)
++			return -EINVAL;
++		break;
+ 	case WLAN_CIPHER_SUITE_CCMP:
+ 	case WLAN_CIPHER_SUITE_CCMP_256:
+ 	case WLAN_CIPHER_SUITE_GCMP:
+ 	case WLAN_CIPHER_SUITE_GCMP_256:
+-		/* IEEE802.11-2016 allows only 0 and - when using Extended Key
+-		 * ID - 1 as index for pairwise keys.
++		/* IEEE802.11-2016 allows only 0 and - when supporting
++		 * Extended Key ID - 1 as index for pairwise keys.
+ 		 * @NL80211_KEY_NO_TX is only allowed for pairwise keys when
+ 		 * the driver supports Extended Key ID.
+ 		 * @NL80211_KEY_SET_TX can't be set when installing and
+ 		 * validating a key.
+ 		 */
+-		if (params->mode == NL80211_KEY_NO_TX) {
+-			if (!wiphy_ext_feature_isset(&rdev->wiphy,
+-						     NL80211_EXT_FEATURE_EXT_KEY_ID))
+-				return -EINVAL;
+-			else if (!pairwise || key_idx < 0 || key_idx > 1)
++		if ((params->mode == NL80211_KEY_NO_TX && !pairwise) ||
++		    params->mode == NL80211_KEY_SET_TX)
++			return -EINVAL;
++		if (wiphy_ext_feature_isset(&rdev->wiphy,
++					    NL80211_EXT_FEATURE_EXT_KEY_ID)) {
++			if (pairwise && (key_idx < 0 || key_idx > 1))
+ 				return -EINVAL;
+-		} else if ((pairwise && key_idx) ||
+-			   params->mode == NL80211_KEY_SET_TX) {
++		} else if (pairwise && key_idx) {
+ 			return -EINVAL;
+ 		}
+ 		break;
 
 
