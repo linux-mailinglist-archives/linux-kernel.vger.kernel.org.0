@@ -2,190 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 552C6A7CBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:25:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00316A7CC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 09:27:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbfIDHZw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Sep 2019 03:25:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41378 "EHLO mx1.redhat.com"
+        id S1729079AbfIDH10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 03:27:26 -0400
+Received: from mga05.intel.com ([192.55.52.43]:1839 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725840AbfIDHZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 03:25:52 -0400
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 78D3BC04D293
-        for <linux-kernel@vger.kernel.org>; Wed,  4 Sep 2019 07:25:51 +0000 (UTC)
-Received: by mail-qt1-f198.google.com with SMTP id x11so21748451qtm.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 00:25:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=qGt7/Asvjla5NLjhNtTVWV76tKsaxhQMsyUh6I8J27A=;
-        b=ZLNOvsnVjlqzydQtbqOEVGPEuYk99mgR0IqKLZlIIyUaL5E0mOGWNADjvgVLLMpUpm
-         eBXvvGQkIdtZD3epMQRy6YOf6UoEV8+fw/Puaaj8JQc8UdA2UHM7I9YVnQbAeUqopIf7
-         3nCABoMSts3GVwVpOq6G4Dzjkk88Ftq/rLv5Ss3aYzR2lQghAKw/Hh8ZSDs8lyRNux5g
-         /GxZJl+3osm9AFmCZOfnoRPipxQ/mV/VCZch4Bt0hgeZK4L1hZZ3ST5H6UriLc2wMX6Q
-         6f9br/Qz+05YyCMqJtrxOZZ4YXUegKx35m2sddP1pqOTd7MflhBw3nkqXWvBfOkGsbdL
-         SmgQ==
-X-Gm-Message-State: APjAAAXWNpKzedQ1wYPKMXwjBY8aI7AKLVY/vYM7/BzrP4Nf3+tcEAkh
-        SBLpiU5CoaIQttxnMMLXwyDaL8mO0SuhrdktSvADFsxQu12cS3A48kquajrS4YtMXqION8lPO8N
-        z20mdr5bODaJvUiqcRr6zBvbWHyqrPm7PoKfz4P6K
-X-Received: by 2002:a0c:afe6:: with SMTP id t35mr7541973qvc.29.1567581950732;
-        Wed, 04 Sep 2019 00:25:50 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqy0M8yUCb0WYixzLgIMORz7xhZ11Kr5p8HFZwGTG6xWd+7Qxtmg+iNn2bUV+vuS1zR+c+tR1J0zYys01uH0UmQ=
-X-Received: by 2002:a0c:afe6:: with SMTP id t35mr7541962qvc.29.1567581950479;
- Wed, 04 Sep 2019 00:25:50 -0700 (PDT)
+        id S1725840AbfIDH1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 03:27:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 00:27:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
+   d="scan'208";a="198965380"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Sep 2019 00:27:21 -0700
+Subject: Re: [PATCH v5] perf machine: arm/arm64: Improve completeness for
+ kernel address space
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suzuki Poulouse <suzuki.poulose@arm.com>,
+        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+References: <20190815082521.16885-1-leo.yan@linaro.org>
+ <d874e6b3-c115-6c8c-bb12-160cfd600505@intel.com>
+ <20190815113242.GA28881@leoy-ThinkPad-X240s>
+ <e0919e39-7607-815b-3a12-96f098e45a5f@intel.com>
+ <20190816014541.GA17960@leoy-ThinkPad-X240s>
+ <363577f1-097e-eddd-a6ca-b23f644dd8ce@intel.com>
+ <20190826125105.GA3288@leoy-ThinkPad-X240s>
+ <20190902141511.GF4931@leoy-ThinkPad-X240s>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <c16ee888-73cc-588d-6156-bb5528d635cf@intel.com>
+Date:   Wed, 4 Sep 2019 10:26:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190903144632.26299-1-benjamin.tissoires@redhat.com> <CAHxFc3SXM6hkbpTGZCsWOk70tByHE8af59ftOBwahY4fL0Sz=g@mail.gmail.com>
-In-Reply-To: <CAHxFc3SXM6hkbpTGZCsWOk70tByHE8af59ftOBwahY4fL0Sz=g@mail.gmail.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Wed, 4 Sep 2019 09:25:39 +0200
-Message-ID: <CAO-hwJLunZZr0f2u8TMV8REbq-nCGyJtMmWzTo6F2yTMcUbnEQ@mail.gmail.com>
-Subject: Re: [PATCH v2] HID: apple: Fix stuck function keys when using FN
-To:     =?UTF-8?B?Sm/Do28gTW9yZW5v?= <mail@joaomoreno.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190902141511.GF4931@leoy-ThinkPad-X240s>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 8:33 PM João Moreno <mail@joaomoreno.com> wrote:
->
-> Hi Benjamin,
->
-> On Tue, 3 Sep 2019 at 16:46, Benjamin Tissoires
-> <benjamin.tissoires@redhat.com> wrote:
-> >
-> > From: Joao Moreno <mail@joaomoreno.com>
-> >
-> > This fixes an issue in which key down events for function keys would be
-> > repeatedly emitted even after the user has raised the physical key. For
-> > example, the driver fails to emit the F5 key up event when going through
-> > the following steps:
-> > - fnmode=1: hold FN, hold F5, release FN, release F5
-> > - fnmode=2: hold F5, hold FN, release F5, release FN
-> >
-> > The repeated F5 key down events can be easily verified using xev.
-> >
-> > Signed-off-by: Joao Moreno <mail@joaomoreno.com>
-> > Co-developed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> > ---
-> >
-> > Hi Joao,
-> >
-> > last chance to pull back :)
-> >
-> > If you are still happy, I'll push this version
-> >
-> > Cheers,
-> > Benjamin
-> >
->
-> Looks great. Thanks a bunch for your help!
->
+On 2/09/19 5:15 PM, Leo Yan wrote:
+> Hi Adrian,
+> 
+> On Mon, Aug 26, 2019 at 08:51:05PM +0800, Leo Yan wrote:
+>> Hi Adrian,
+>>
+>> On Fri, Aug 16, 2019 at 04:00:02PM +0300, Adrian Hunter wrote:
+>>> On 16/08/19 4:45 AM, Leo Yan wrote:
+>>>> Hi Adrian,
+>>>>
+>>>> On Thu, Aug 15, 2019 at 02:45:57PM +0300, Adrian Hunter wrote:
+>>>>
+>>>> [...]
+>>>>
+>>>>>>> How come you cannot use kallsyms to get the information?
+>>>>>>
+>>>>>> Thanks for pointing out this.  Sorry I skipped your comment "I don't
+>>>>>> know how you intend to calculate ARM_PRE_START_SIZE" when you reviewed
+>>>>>> the patch v3, I should use that chance to elaborate the detailed idea
+>>>>>> and so can get more feedback/guidance before procceed.
+>>>>>>
+>>>>>> Actually, I have considered to use kallsyms when worked on the previous
+>>>>>> patch set.
+>>>>>>
+>>>>>> As mentioned in patch set v4's cover letter, I tried to implement
+>>>>>> machine__create_extra_kernel_maps() for arm/arm64, the purpose is to
+>>>>>> parse kallsyms so can find more kernel maps and thus also can fixup
+>>>>>> the kernel start address.  But I found the 'perf script' tool directly
+>>>>>> calls machine__get_kernel_start() instead of running into the flow for
+>>>>>> machine__create_extra_kernel_maps();
+>>>>>
+>>>>> Doesn't it just need to loop through each kernel map to find the lowest
+>>>>> start address?
+>>>>
+>>>> Based on your suggestion, I worked out below change and verified it
+>>>> can work well on arm64 for fixing up start address; please let me know
+>>>> if the change works for you?
+>>>
+>>> How does that work if take a perf.data file to a machine with a different
+>>> architecture?
+>>
+>> Sorry I delayed so long to respond to your question; I didn't have
+>> confidence to give out very reasonale answer and this is the main reason
+>> for delaying.
+> 
+> Could you take chance to review my below replying?  I'd like to get
+> your confirmation before I send out offical patch.
 
-Thanks.
+It is not necessary to do kallsyms__parse for x86_64, so it would be better
+to check the arch before calling that.
 
-Applied to for-5.4/apple
+However in general, having to copy and use kallsyms with perf.data if on a
+different arch does not seem very user friendly.  But really that is up to
+Arnaldo.
 
-Cheers,
-Benjamin
+> 
+> Thanks,
+> Leo Yan
+> 
+>>
+>> For your question for taking a perf.data file to a machine with a
+>> different architecture, we can firstly use command 'perf buildid-list'
+>> to print out the buildid for kallsyms, based on the dumped buildid we
+>> can find out the location for the saved kallsyms file; then we can use
+>> option '--kallsyms' to specify the offline kallsyms file and use the
+>> offline kallsyms to fixup kernel start address.  The detailed commands
+>> are listed as below:
+>>
+>> root@debian:~# perf buildid-list
+>> 7b36dfca8317ef74974ebd7ee5ec0a8b35c97640 [kernel.kallsyms]
+>> 56b84aa88a1bcfe222a97a53698b92723a3977ca /usr/lib/systemd/systemd
+>> 0956b952e9cd673d48ff2cfeb1a9dbd0c853e686 /usr/lib/aarch64-linux-gnu/libm-2.28.so
+>> [...]
+>>
+>> root@debian:~# perf script --kallsyms ~/.debug/\[kernel.kallsyms\]/7b36dfca8317ef74974ebd7ee5ec0a8b35c97640/kallsyms
+>>
+>> The amended patch is as below, please review and always welcome
+>> any suggestions or comments!
+>>
+>> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+>> index 5734460fc89e..593f05cc453f 100644
+>> --- a/tools/perf/util/machine.c
+>> +++ b/tools/perf/util/machine.c
+>> @@ -2672,9 +2672,26 @@ int machine__nr_cpus_avail(struct machine *machine)
+>>  	return machine ? perf_env__nr_cpus_avail(machine->env) : 0;
+>>  }
+>>  
+>> +static int machine__fixup_kernel_start(void *arg,
+>> +				       const char *name __maybe_unused,
+>> +				       char type,
+>> +				       u64 start)
+>> +{
+>> +	struct machine *machine = arg;
+>> +
+>> +	type = toupper(type);
+>> +
+>> +	/* Fixup for text, weak, data and bss sections. */
+>> +	if (type == 'T' || type == 'W' || type == 'D' || type == 'B')
+>> +		machine->kernel_start = min(machine->kernel_start, start);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  int machine__get_kernel_start(struct machine *machine)
+>>  {
+>>  	struct map *map = machine__kernel_map(machine);
+>> +	char filename[PATH_MAX];
+>>  	int err = 0;
+>>  
+>>  	/*
+>> @@ -2696,6 +2713,22 @@ int machine__get_kernel_start(struct machine *machine)
+>>  		if (!err && !machine__is(machine, "x86_64"))
+>>  			machine->kernel_start = map->start;
+>>  	}
+>> +
+>> +	if (symbol_conf.kallsyms_name != NULL) {
+>> +		strncpy(filename, symbol_conf.kallsyms_name, PATH_MAX);
+>> +	} else {
+>> +		machine__get_kallsyms_filename(machine, filename, PATH_MAX);
+>> +
+>> +		if (symbol__restricted_filename(filename, "/proc/kallsyms"))
+>> +			goto out;
+>> +	}
+>> +
+>> +	if (kallsyms__parse(filename, machine, machine__fixup_kernel_start))
+>> +		pr_warning("Fail to fixup kernel start address. skipping...\n");
+>> +
+>> +out:
+>>  	return err;
+>>  }
+>>  
+>>
+>> Thanks,
+>> Leo Yan
+> 
 
-> Cheers,
-> João
->
-> >  drivers/hid/hid-apple.c | 49 +++++++++++++++++++++++------------------
-> >  1 file changed, 28 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-> > index 81df62f48c4c..6ac8becc2372 100644
-> > --- a/drivers/hid/hid-apple.c
-> > +++ b/drivers/hid/hid-apple.c
-> > @@ -54,7 +54,6 @@ MODULE_PARM_DESC(swap_opt_cmd, "Swap the Option (\"Alt\") and Command (\"Flag\")
-> >  struct apple_sc {
-> >         unsigned long quirks;
-> >         unsigned int fn_on;
-> > -       DECLARE_BITMAP(pressed_fn, KEY_CNT);
-> >         DECLARE_BITMAP(pressed_numlock, KEY_CNT);
-> >  };
-> >
-> > @@ -181,6 +180,8 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
-> >  {
-> >         struct apple_sc *asc = hid_get_drvdata(hid);
-> >         const struct apple_key_translation *trans, *table;
-> > +       bool do_translate;
-> > +       u16 code = 0;
-> >
-> >         if (usage->code == KEY_FN) {
-> >                 asc->fn_on = !!value;
-> > @@ -189,8 +190,6 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
-> >         }
-> >
-> >         if (fnmode) {
-> > -               int do_translate;
-> > -
-> >                 if (hid->product >= USB_DEVICE_ID_APPLE_WELLSPRING4_ANSI &&
-> >                                 hid->product <= USB_DEVICE_ID_APPLE_WELLSPRING4A_JIS)
-> >                         table = macbookair_fn_keys;
-> > @@ -202,25 +201,33 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
-> >                 trans = apple_find_translation (table, usage->code);
-> >
-> >                 if (trans) {
-> > -                       if (test_bit(usage->code, asc->pressed_fn))
-> > -                               do_translate = 1;
-> > -                       else if (trans->flags & APPLE_FLAG_FKEY)
-> > -                               do_translate = (fnmode == 2 && asc->fn_on) ||
-> > -                                       (fnmode == 1 && !asc->fn_on);
-> > -                       else
-> > -                               do_translate = asc->fn_on;
-> > -
-> > -                       if (do_translate) {
-> > -                               if (value)
-> > -                                       set_bit(usage->code, asc->pressed_fn);
-> > -                               else
-> > -                                       clear_bit(usage->code, asc->pressed_fn);
-> > -
-> > -                               input_event(input, usage->type, trans->to,
-> > -                                               value);
-> > -
-> > -                               return 1;
-> > +                       if (test_bit(trans->from, input->key))
-> > +                               code = trans->from;
-> > +                       else if (test_bit(trans->to, input->key))
-> > +                               code = trans->to;
-> > +
-> > +                       if (!code) {
-> > +                               if (trans->flags & APPLE_FLAG_FKEY) {
-> > +                                       switch (fnmode) {
-> > +                                       case 1:
-> > +                                               do_translate = !asc->fn_on;
-> > +                                               break;
-> > +                                       case 2:
-> > +                                               do_translate = asc->fn_on;
-> > +                                               break;
-> > +                                       default:
-> > +                                               /* should never happen */
-> > +                                               do_translate = false;
-> > +                                       }
-> > +                               } else {
-> > +                                       do_translate = asc->fn_on;
-> > +                               }
-> > +
-> > +                               code = do_translate ? trans->to : trans->from;
-> >                         }
-> > +
-> > +                       input_event(input, usage->type, code, value);
-> > +                       return 1;
-> >                 }
-> >
-> >                 if (asc->quirks & APPLE_NUMLOCK_EMULATION &&
-> > --
-> > 2.19.2
-> >
