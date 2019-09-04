@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CD5AA901A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72BB9A916D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389623AbfIDSHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:07:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50190 "EHLO mail.kernel.org"
+        id S2390964AbfIDSPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:15:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389470AbfIDSHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:07:39 -0400
+        id S2390456AbfIDSPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:15:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9E14206B8;
-        Wed,  4 Sep 2019 18:07:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A60442087E;
+        Wed,  4 Sep 2019 18:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620459;
-        bh=NAGu2uXx3izH6nY+ZY+vsnuDgYMEGTjhht2lnU6uQfM=;
+        s=default; t=1567620921;
+        bh=nDjyrpOByM6yY5SDXXalE77u9RzjwGi6LBtIAPqrq+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RWmdkToDKY5wVJG+aZSJ7M7zz3BP1qcdKn1jgSNQ5hSgzH/BbhhPV4q41thQNYamE
-         j77cb3DxT7zjjAinOICJGOqClGvMG3GsJGHVNYneUrsA+iYVAXsEi60jw5paxOfNRc
-         fT1f3o3tzOnN6ecUxtPhaLE2ZAa+klmvl+ttTZIU=
+        b=AH33CiOyq2wR14QKuT8uPOY383Lngl6AYklG+v6z3zy/8fRixOmdkdD5A022Gzr9/
+         ch/7UNX40AfIvj7Li8iwEICN7y+xAWfHH69FGMSbkAbkVlniBLK3s4O4FsQcpXv8Ha
+         ApQQtkt5gvHt1z8XKo4/5ig6AvWd3qPODLwL8ka4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.19 66/93] intel_th: pci: Add support for another Lewisburg PCH
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 5.2 105/143] NFS: Ensure O_DIRECT reports an error if the bytes read/written is 0
 Date:   Wed,  4 Sep 2019 19:54:08 +0200
-Message-Id: <20190904175308.704253201@linuxfoundation.org>
+Message-Id: <20190904175318.483862880@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
+References: <20190904175314.206239922@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +43,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit 164eb56e3b64f3a816238d410c9efec7567a82ef upstream.
+commit eb2c50da9e256dbbb3ff27694440e4c1900cfef8 upstream.
 
-Add support for the Trace Hub in another Lewisburg PCH.
+If the attempt to resend the I/O results in no bytes being read/written,
+we must ensure that we report the error.
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: stable@vger.kernel.org # v4.14+
-Link: https://lore.kernel.org/r/20190821074955.3925-4-alexander.shishkin@linux.intel.com
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Fixes: 0a00b77b331a ("nfs: mirroring support for direct io")
+Cc: stable@vger.kernel.org # v3.20+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/pci.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ fs/nfs/direct.c   |   27 ++++++++++++++++++---------
+ fs/nfs/pagelist.c |    1 +
+ 2 files changed, 19 insertions(+), 9 deletions(-)
 
---- a/drivers/hwtracing/intel_th/pci.c
-+++ b/drivers/hwtracing/intel_th/pci.c
-@@ -141,6 +141,11 @@ static const struct pci_device_id intel_
- 		.driver_data = (kernel_ulong_t)0,
- 	},
- 	{
-+		/* Lewisburg PCH */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0xa226),
-+		.driver_data = (kernel_ulong_t)0,
-+	},
-+	{
- 		/* Gemini Lake */
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x318e),
- 		.driver_data = (kernel_ulong_t)&intel_th_2x,
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -401,15 +401,21 @@ static void nfs_direct_read_completion(s
+ 	unsigned long bytes = 0;
+ 	struct nfs_direct_req *dreq = hdr->dreq;
+ 
+-	if (test_bit(NFS_IOHDR_REDO, &hdr->flags))
+-		goto out_put;
+-
+ 	spin_lock(&dreq->lock);
+-	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags) && (hdr->good_bytes == 0))
++	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags))
+ 		dreq->error = hdr->error;
+-	else
++
++	if (test_bit(NFS_IOHDR_REDO, &hdr->flags)) {
++		spin_unlock(&dreq->lock);
++		goto out_put;
++	}
++
++	if (hdr->good_bytes != 0)
+ 		nfs_direct_good_bytes(dreq, hdr);
+ 
++	if (test_bit(NFS_IOHDR_EOF, &hdr->flags))
++		dreq->error = 0;
++
+ 	spin_unlock(&dreq->lock);
+ 
+ 	while (!list_empty(&hdr->pages)) {
+@@ -782,16 +788,19 @@ static void nfs_direct_write_completion(
+ 	bool request_commit = false;
+ 	struct nfs_page *req = nfs_list_entry(hdr->pages.next);
+ 
+-	if (test_bit(NFS_IOHDR_REDO, &hdr->flags))
+-		goto out_put;
+-
+ 	nfs_init_cinfo_from_dreq(&cinfo, dreq);
+ 
+ 	spin_lock(&dreq->lock);
+ 
+ 	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags))
+ 		dreq->error = hdr->error;
+-	if (dreq->error == 0) {
++
++	if (test_bit(NFS_IOHDR_REDO, &hdr->flags)) {
++		spin_unlock(&dreq->lock);
++		goto out_put;
++	}
++
++	if (hdr->good_bytes != 0) {
+ 		nfs_direct_good_bytes(dreq, hdr);
+ 		if (nfs_write_need_commit(hdr)) {
+ 			if (dreq->flags == NFS_ODIRECT_RESCHED_WRITES)
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -1268,6 +1268,7 @@ int nfs_pageio_resend(struct nfs_pageio_
+ 	if (!list_empty(&pages)) {
+ 		int err = desc->pg_error < 0 ? desc->pg_error : -EIO;
+ 		hdr->completion_ops->error_cleanup(&pages, err);
++		nfs_set_pgio_error(hdr, err, hdr->io_start);
+ 		return err;
+ 	}
+ 	return 0;
 
 
