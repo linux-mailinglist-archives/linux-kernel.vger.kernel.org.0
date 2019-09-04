@@ -2,131 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B680A956B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6B42A9552
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 23:40:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbfIDVpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 17:45:18 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37628 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbfIDVpS (ORCPT
+        id S1730210AbfIDVkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 17:40:46 -0400
+Received: from mail-pg1-f171.google.com ([209.85.215.171]:33359 "EHLO
+        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfIDVkq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 17:45:18 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t14so246492lji.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:45:16 -0700 (PDT)
+        Wed, 4 Sep 2019 17:40:46 -0400
+Received: by mail-pg1-f171.google.com with SMTP id n190so161879pgn.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:40:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=afyKDAGEEGBbAV94gj2UOZt2XiwokGAAZY9fEg48q/g=;
-        b=NaaXzsE03/A0aggT0JGsMPgqMPOgw689sbkH2wUyL6Wp3qKaZ1pKjDt9q3nSCqMPah
-         2e4dX/SHASPLfri+fuLDS7WlObVzMB0uCQ613gb+lr0h/VEtc5FGRP26lR62YK8De+Ct
-         /QjcaW9K7a4FCLT2Siyb/L/tVCZoNkYi2RP38=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=0MXlNdDRrqJRDTO11X2I0qzQabr7EuyoaDjlEW34sB0=;
+        b=lLktABICp/dvvtoR977IgPSzkDXv4FGqn/UXm18OEzW4/3HhYg/BmIbVEJkyQYN2Ug
+         u/jrBaW67FFBDe5RJ6c6c/jJWQHUe53l0qwGkkp72YDS8XB02+xGC6j13I9X4yZ0Gqhq
+         /5EDhlLzBcgJ/j4QgPKhYwEdHDogbBDjowAsXbYMGMSGCnoryjDu8Lx+6I1S86yFaiZS
+         V9EEbi7L0eFN2ZaVFA9dNOEJSCJEPKPJJMhAcqBKzQ1/vnLMlWl9vZW9RAwCfNtiphBy
+         zMa/fg6MSD2SP921/BC2v9vUe3NKDMrrMXBIi5v3U7BGXcb/6N68Imvz46imZVO23unc
+         20nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=afyKDAGEEGBbAV94gj2UOZt2XiwokGAAZY9fEg48q/g=;
-        b=IMdju0b+UyxLRqxZm9j55H5qUBzYHxXLTZAd8UXF64NAFEqQvnvyow/XYufFqk9i+x
-         v37ik4IJg9v7W/vV8sa8kzkHsvV5S+s5aFjUHiZIukxFTR3rWGGREkLn/qPY5wOMDRU2
-         4NtfENJbtqcgYgF3XeGi4/Ew9sjtyt8dEqiCQ0YcAxuNn+Oh8hF4XVaeGbX/Kl/bgEq9
-         N52m/4nIyedkSCq4zomLFZELn5ATLTn+Ny5vpYFkHR3E1bRxlFuuk2oBGefRTS0X8yjg
-         qeU8Of7jU0KmBGKlfpnDJqIuru6+VrnR3yc6TTwbNzu8jkaplzfE2cjR3Eq4UY9sTHUs
-         DO6Q==
-X-Gm-Message-State: APjAAAUcZ0Pipf6y/8q/4v0ohRYUP2txRc36RXbRAqkf4fRkNB1DCl4o
-        +0BrX0KUSzwx13ZXNnSp+Nmrcb5+QDY=
-X-Google-Smtp-Source: APXvYqwz92fAW9fe7hVWQI+K9lri8pCuEemgLDG06mgW150jnCxewNNrOEvvyoUoHR4EVfiXrKv0Mg==
-X-Received: by 2002:a05:651c:292:: with SMTP id b18mr8210270ljo.131.1567633515907;
-        Wed, 04 Sep 2019 14:45:15 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id i21sm17242lfl.44.2019.09.04.14.45.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2019 14:45:15 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id u13so202255lfm.9
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 14:45:15 -0700 (PDT)
-X-Received: by 2002:a05:6512:512:: with SMTP id o18mr154625lfb.170.1567633024273;
- Wed, 04 Sep 2019 14:37:04 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=0MXlNdDRrqJRDTO11X2I0qzQabr7EuyoaDjlEW34sB0=;
+        b=kREKzd59gOxTr8cXrzwFxkBdO0gXlqqh9qBeMG1la33l+H4Fw8jzqPw6We/DkbVIPp
+         nfnGp/yjgETVVPhGHtNB+3fdQV6NY6NnDrKXVvOD5e+BeZWH8MpUygxDS0HXFSa2O34K
+         zEWb39gLujCc2dym/ZpzJWgXl24Y30TEdNs9caZcdLoUWmB5ChSTt1lNltfVhBjg3YWY
+         Ykt+mbbiqXcCvy4DLKSL0z+GEM60cwUXbJff4EchkpXHLbyxjo5BKagYMY+bbkwEfgBA
+         0OOAoQZwWLwpOqeZwfpyDOQpyitGm7VbNVIfy1i1ZbFVLeF/lH7gYh69R2HnKvozDNhi
+         XrgQ==
+X-Gm-Message-State: APjAAAVW7tHHe8kcVsFEcO4ztd/IJhG8GhwVb7LZTb5S1uMNA8dKVBah
+        oNQ4Q9NhS8h7E7pJiHVcUQrDSw==
+X-Google-Smtp-Source: APXvYqzgqxcDS/3kwLs9oS5rKLMFhs47ZSC86NAbK0PWE7yQUEFAd7iJ6VmtRJsrjqXK00DlDo3DBA==
+X-Received: by 2002:a62:cf82:: with SMTP id b124mr28032810pfg.159.1567633245566;
+        Wed, 04 Sep 2019 14:40:45 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id b5sm17228pfp.38.2019.09.04.14.40.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 14:40:44 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 14:40:44 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Tom Lendacky <thomas.lendacky@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ming Lei <ming.lei@redhat.com>
+cc:     Peter Gonda <pgonda@google.com>, Jianxiong Gao <jxgao@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: [bug] __blk_mq_run_hw_queue suspicious rcu usage
+Message-ID: <alpine.DEB.2.21.1909041434580.160038@chino.kir.corp.google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-11-cyphar@cyphar.com>
- <CAHk-=wiod1rQMU+6Zew=cLE8uX4tUdf42bM5eKngMnNVS2My7g@mail.gmail.com> <CAHk-=wiHRW3Z9xPRiExi9jLjB0cdGhM=3vaW+b80mjuRcbORyw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiHRW3Z9xPRiExi9jLjB0cdGhM=3vaW+b80mjuRcbORyw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 4 Sep 2019 14:36:48 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiExfaVhUTvKj7hR6DG4C2+oy6usz0Sa6QbPr5EgDH28w@mail.gmail.com>
-Message-ID: <CAHk-=wiExfaVhUTvKj7hR6DG4C2+oy6usz0Sa6QbPr5EgDH28w@mail.gmail.com>
-Subject: Re: [PATCH v12 10/12] namei: aggressively check for nd->root escape
- on ".." resolution
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 2:35 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Wed, Sep 4, 2019 at 2:09 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > So you'd have three stages:
-> >
-> >  1) ".." always returns -EXDEV
-> >
-> >  2) ".." returns -EXDEV if there was a concurrent rename/mount
-> >
-> >  3) ".." returns -EXDEV if there was a concurrent rename/mount and we
-> > reset the sequence numbers and check if you escaped.
->
-> In fact, I wonder if this should return -EAGAIN instead - to say that
-> "retrying may work".
+Hi Christoph, Jens, and Ming,
 
-And here "this" was meant to be "case 2" - I was moving the quoted
-text around and didn't fix my wording, so now it is ambiguous or
-implies #3, which would be crazy.
+While booting a 5.2 SEV-enabled guest we have encountered the following 
+WARNING that is followed up by a BUG because we are in atomic context 
+while trying to call set_memory_decrypted:
 
-Sorry for the confusion,
+ WARNING: suspicious RCU usage
+ 5.2.0 #1 Not tainted
+ -----------------------------
+ include/linux/rcupdate.h:266 Illegal context switch in RCU read-side critical section!
+ 
+ other info that might help us debug this:
+ 
+ 
+ rcu_scheduler_active = 2, debug_locks = 1
+ 3 locks held by kworker/0:1H/97:
+  #0: 0000000016e1b654 ((wq_completion)kblockd){+.+.}, at: process_one_work+0x1b5/0x5e0
+  #1: 00000000002674ff ((work_completion)(&(&hctx->run_work)->work)){+.+.}, at: process_one_work+0x1b5/0x5e0
+  #2: 00000000addb6aba (rcu_read_lock){....}, at: hctx_lock+0x17/0xe0
+ 
+ stack backtrace:
+ CPU: 0 PID: 97 Comm: kworker/0:1H Not tainted 5.2.0 #1
+ Workqueue: kblockd blk_mq_run_work_fn
+ Call Trace:
+  dump_stack+0x67/0x90
+  ___might_sleep+0xfb/0x180
+  _vm_unmap_aliases+0x3e/0x1f0
+  __set_memory_enc_dec+0x7b/0x120
+  dma_direct_alloc_pages+0xcc/0x100
+  dma_pool_alloc+0xcf/0x1e0
+  nvme_queue_rq+0x5fb/0x9f0
+  blk_mq_dispatch_rq_list+0x350/0x5a0
+  blk_mq_do_dispatch_sched+0x76/0x110
+  blk_mq_sched_dispatch_requests+0x119/0x170
+  __blk_mq_run_hw_queue+0x6c/0xf0
+  process_one_work+0x23b/0x5e0
+  worker_thread+0x3d/0x390
+  kthread+0x121/0x140
+  ret_from_fork+0x27/0x50
 
-            Linus
+hctx_lock() in __blk_mq_run_hw_queue() takes rcu_read_lock or 
+srcu_read_lock depending on BLK_MQ_F_BLOCKING.
+
+dma_direct_alloc_pages() can then call set_memory_decrypted() which must 
+be allowed to block.
+
+Any ideas on how to address this?
