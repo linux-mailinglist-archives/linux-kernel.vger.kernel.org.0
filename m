@@ -2,144 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 636B0A918F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 491FEA919E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390393AbfIDSSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:18:25 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36652 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388655AbfIDSSY (ORCPT
+        id S2390048AbfIDSU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:20:29 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46059 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387477AbfIDSUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:18:24 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p13so4932231wmh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:18:22 -0700 (PDT)
+        Wed, 4 Sep 2019 14:20:23 -0400
+Received: by mail-io1-f67.google.com with SMTP id f12so28881918iog.12
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:20:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=a60ULgjhRJwtOcZucq6GxVwzE7uulnTGYLh+jeez4GU=;
-        b=RH0Xe3kiql/ZgfuttY+zTE4+tdinewbznVJJV8YRqDCa8ofnsvnmjNlCMm/vTZ5ziH
-         NsSkquQcfMix6d+6UIHqr594WQAK1bzJt0kpYMwIg9IPFXOGkW/rrMEVwJVskigKV36h
-         EkhngaZk4er6n8jfPUkgQh8aJX7DDQNnbt+5j5sy+dcD2BBhX+eCMkIcv+0LADxN55LQ
-         8yJALzZDdBSf0ypiKdijRlf5ntrrWN1hZARfN6Qb91yUGoCcaYAIMq+O/7SPtVyfnEQK
-         +C2arNPECRmUGDAbEb7K4sfoTm38h1/Jembz2boB7VmQzXLQY4X5BGQFnDrOUT6cxfFI
-         /hwA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D27Zs+STvqIcqPGbkFvSR5YBtl93H53NlQy8TmMQ104=;
+        b=FkPQsG3WR1YbR2JzeHMw/rv9JM87flNUuNo7Y+xbD2DJNytrA9+X8V+7zJ/fmuxtCA
+         8xZJFPVFel2vCew6v0IXDtx5bHrTa4GvDfSh2dNDzCTNthDwmm2YUUl4/gfmcT2VbGtg
+         4ApFszIbB53oyQlY9D4vR8eo4SA7jeAUSVXA4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=a60ULgjhRJwtOcZucq6GxVwzE7uulnTGYLh+jeez4GU=;
-        b=su3qNjoDtCoKdMTJngyLk0FLN5Wpesy5lycAaGLxYHRgHMUfFRO5jYTWy3QKvN3YWL
-         5dyA7kYgpZdqudZ22UV2M0UxY/Dwm0x6jBY7zFFIzo9aV4VAqv41wrZCCB/XNdaN9Q1U
-         CqMR7N0cRdRLYwAiDEfvY9gd+qzQ1yqI0hI5FSZd4j8ECJfrH0Pn6YXpIXjY0bo6OHKx
-         4ShrvR1sqLiSCvy9pCNZo8I3bH70+2xir/JucGUpUmxYp9lqhY6IOmxVl7S+v0OScydy
-         5S+vnkNIDFMPL2vtKx+HNAvT3sbUltcSWiE1OlZ+z3+ohycTTmx93qAz0VqYnAERJIu6
-         KHqQ==
-X-Gm-Message-State: APjAAAVooSakZwmPmwP/lIf82KQynfupskU+NWfE9GWQq2CAR4uOZtoa
-        sAxhrVyYgTZOgzlEpv7Nd6I=
-X-Google-Smtp-Source: APXvYqzHzxKAanNYZpybYtun3jZIblreKYjTz8wBsbjxGBBc2Sucv6Ll3F/oZv9DwUftXNKn1PJ1sA==
-X-Received: by 2002:a05:600c:20c2:: with SMTP id y2mr5850269wmm.68.1567621102363;
-        Wed, 04 Sep 2019 11:18:22 -0700 (PDT)
-Received: from gmail.com ([157.230.19.186])
-        by smtp.gmail.com with ESMTPSA id f66sm4519932wmg.2.2019.09.04.11.18.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Sep 2019 11:18:21 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 20:18:13 +0200
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Will Deacon <will@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Paul Burton <paul.burton@mips.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] compiler-attributes for v5.3-rc8
-Message-ID: <20190904181740.GA19688@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D27Zs+STvqIcqPGbkFvSR5YBtl93H53NlQy8TmMQ104=;
+        b=KmS+PexwhcDjD4afZj4pWYVxTWbiSp59d8I0J+qiw+7uSM547bmgFetSO2I2SsI8Dk
+         DWuVyUeRNIBugGuToBCdbJPQqKu6oLLw7nDTt3BRukexC8fk26cF8qVsp3rvUyYCKm5n
+         bigH/H3FfnJ1ty1Xs3fsicupu1PoiO4kVSeQArtLDhOxiTR4usUDMDuKt/iPT2RndI6K
+         zGLtsNuWRARS9SGmFzwTJCpXCD/FksPELXuf4+FrC5KEUW1YOviGTfJEgXOIeiA4uyIk
+         D+8MSJqfSdVCXe8LOQBzFlKUKhhMXbMgf/3Km7+Ji4vzKnWaMKDkNTY7yss/NJji86Xa
+         EnTA==
+X-Gm-Message-State: APjAAAU0orkfIhzhGZ/3AFPQZpslgy6T/seYRVjHYkPhffXuh2TN0UaG
+        XK8QaEtg2yJYJ2uISv/pnr0A24HdSow=
+X-Google-Smtp-Source: APXvYqx4ksyIz2mp2cVEg7gzmc1wLIVctlBhstO+/w9PNAVcEaLfWYidhI8b/EOywYxqFtJebLyMCQ==
+X-Received: by 2002:a5d:9c0b:: with SMTP id 11mr4273776ioe.192.1567621222620;
+        Wed, 04 Sep 2019 11:20:22 -0700 (PDT)
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com. [209.85.166.53])
+        by smtp.gmail.com with ESMTPSA id p9sm19328035ios.1.2019.09.04.11.20.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2019 11:20:20 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id n197so44426208iod.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:20:19 -0700 (PDT)
+X-Received: by 2002:a6b:581a:: with SMTP id m26mr1356085iob.161.1567621219740;
+ Wed, 04 Sep 2019 11:20:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: elm/2
+References: <20190830160957.GC2634@redhat.com> <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
+ <87o906wimo.fsf@x220.int.ebiederm.org> <20190902134003.GA14770@redhat.com>
+ <87tv9uiq9r.fsf@x220.int.ebiederm.org> <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
+ <87k1aqt23r.fsf_-_@x220.int.ebiederm.org> <87ef0yt221.fsf_-_@x220.int.ebiederm.org>
+ <20190904144415.GB20391@lenoir> <20190904153245.GF24568@redhat.com> <20190904163325.GA22421@lenoir>
+In-Reply-To: <20190904163325.GA22421@lenoir>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 4 Sep 2019 11:20:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whv60YepBaTUWnDvZ1QMezTyHLvCvzF_QgUQ+6LdrpScw@mail.gmail.com>
+Message-ID: <CAHk-=whv60YepBaTUWnDvZ1QMezTyHLvCvzF_QgUQ+6LdrpScw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] task: Add a count of task rcu users
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Wed, Sep 4, 2019 at 9:33 AM Frederic Weisbecker <frederic@kernel.org> wrote:
+>
+> I thought the point of these rcu_users was to be able to do:
+>
+> rcu_read_lock()
+> p = rcu_dereference(task)
+> if (!refcount_inc_not_zero(p->rcu_users)) {
 
-I was going to send this for 5.4 since it is not that trivial, but since
-you are doing an -rc8, and it fixes an oops, please consider pulling it.
+No. Because of the shared state, you can't do that from RCU context.
 
-Cheers,
-Miguel
+But you *could* increase rcu_users from within the process context
+itself (as long as you do it before the exit path, ie during normal
+system call execution), or possibly while holding the tasklist_lock
+and verifying that the task hasn't died yet.
 
-The following changes since commit a55aa89aab90fae7c815b0551b07be37db359d76:
+I'm not sure there is any sensible case for doing that, though. It
+would have to have a similar pattern to the runqueue use, where you
+add a new RCU lookup point for the task. I'm sure something like that
+_could_ exist, I just can't think of any right now.
 
-  Linux 5.3-rc6 (2019-08-25 12:01:23 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/ojeda/linux.git tags/compiler-attributes-for-linus-v5.3-rc8
-
-for you to fetch changes up to c4814af0b75cc6856f60e8a658d829000b156729:
-
-  compiler_attributes.h: add note about __section (2019-08-30 00:56:19 +0200)
-
-----------------------------------------------------------------
-__section cleanup that also fixes an Oops (Nick Desaulniers)
-
-    GCC unescapes escaped string section names while Clang does not. Because
-    __section uses the `#` stringification operator for the section name, it
-    doesn't need to be escaped.
-
-    This fixes an Oops observed in distro's that use systemd and not
-    net.core.bpf_jit_enable=1, when their kernels are compiled with Clang.
-
-----------------------------------------------------------------
-Nick Desaulniers (13):
-      s390/boot: fix section name escaping
-      include/linux/compiler.h: prefer __section from compiler_attributes.h
-      parisc: prefer __section from compiler_attributes.h
-      um: prefer __section from compiler_attributes.h
-      ia64: prefer __section from compiler_attributes.h
-      arm: prefer __section from compiler_attributes.h
-      mips: prefer __section from compiler_attributes.h
-      sparc: prefer __section from compiler_attributes.h
-      x86: prefer __section, __maybe_unused and __aligned from compiler_attributes.h
-      include/asm-generic: prefer __section from compiler_attributes.h
-      include/linux: prefer __section and __aligned from compiler_attributes.h
-      include/linux/compiler.h: remove unused KENTRY macro
-      compiler_attributes.h: add note about __section
-
- arch/arm/include/asm/cache.h          |  2 +-
- arch/arm/include/asm/mach/arch.h      |  4 ++--
- arch/arm/include/asm/setup.h          |  2 +-
- arch/ia64/include/asm/cache.h         |  2 +-
- arch/mips/include/asm/cache.h         |  2 +-
- arch/parisc/include/asm/cache.h       |  2 +-
- arch/parisc/include/asm/ldcw.h        |  2 +-
- arch/s390/boot/startup.c              |  2 +-
- arch/sparc/include/asm/cache.h        |  2 +-
- arch/sparc/kernel/btext.c             |  2 +-
- arch/um/kernel/um_arch.c              |  6 +++---
- arch/x86/include/asm/cache.h          |  2 +-
- arch/x86/include/asm/intel-mid.h      |  2 +-
- arch/x86/include/asm/iommu_table.h    |  5 ++---
- arch/x86/include/asm/irqflags.h       |  2 +-
- arch/x86/include/asm/mem_encrypt.h    |  2 +-
- arch/x86/kernel/cpu/cpu.h             |  3 +--
- include/asm-generic/error-injection.h |  2 +-
- include/asm-generic/kprobes.h         |  5 ++---
- include/linux/cache.h                 |  6 +++---
- include/linux/compiler.h              | 31 ++++---------------------------
- include/linux/compiler_attributes.h   | 10 ++++++++++
- include/linux/cpu.h                   |  2 +-
- include/linux/export.h                |  2 +-
- include/linux/init_task.h             |  4 ++--
- include/linux/interrupt.h             |  5 ++---
- include/linux/sched/debug.h           |  2 +-
- include/linux/srcutree.h              |  2 +-
- 28 files changed, 49 insertions(+), 66 deletions(-)
+             Linus
