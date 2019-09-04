@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 732DAA90BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4125A9120
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390385AbfIDSLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:11:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55446 "EHLO mail.kernel.org"
+        id S2390323AbfIDSNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:13:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390274AbfIDSLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:11:24 -0400
+        id S2388984AbfIDSNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:13:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F999206BA;
-        Wed,  4 Sep 2019 18:11:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7884E208E4;
+        Wed,  4 Sep 2019 18:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620683;
-        bh=H+dch+YFeYG4YZLYOpmbLkkC1J9RsxRQVN+Y3N93/zE=;
+        s=default; t=1567620817;
+        bh=ynBtC09Evgr3eVUFBLyZhJcRTnkYVtUlu6SMzMg/fKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n6uapoh509eTn9a0CtT9aEe1z/+qRr0oh2nlaeIPAc3C3G9KeyI3Sr9+PxBws0Uj2
-         fT4nyAX84bavwIY9jFriFWZ4S/VOPZhuTyS2/eekjRZxmR9VSLI1eE5z6EHRVnIAYX
-         eCSiVGQ2xyW0uOEath5nRtynNp5LZMb6P4CuNkes=
+        b=vQDWHfjwGTCiIfRkVQW+AGVIyr4Na0rzeTneufJKX6LQfa+YJW64imj/2AU9+F3Fx
+         VOWpx9SItVEeI1MSuIMMhtZdYXWpEkiSCoqAz7O3grLo01VrxzESUguZbstgekMR9/
+         0leoVJoHV9PY5ErwXSGNJ3+qBlRZNA/4YqpT1IdQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Vladimir Rutsky <rutsky@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
+        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
+        David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 054/143] tcp: make sure EPOLLOUT wont be missed
-Date:   Wed,  4 Sep 2019 19:53:17 +0200
-Message-Id: <20190904175316.182242667@linuxfoundation.org>
+Subject: [PATCH 5.2 055/143] ipv4: mpls: fix mpls_xmit for iptunnel
+Date:   Wed,  4 Sep 2019 19:53:18 +0200
+Message-Id: <20190904175316.228828422@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
 References: <20190904175314.206239922@linuxfoundation.org>
@@ -47,82 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
-[ Upstream commit ef8d8ccdc216f797e66cb4a1372f5c4c285ce1e4 ]
+[ Upstream commit 803f3e22ae10003a83c781498c0ac34cfe3463ff ]
 
-As Jason Baron explained in commit 790ba4566c1a ("tcp: set SOCK_NOSPACE
-under memory pressure"), it is crucial we properly set SOCK_NOSPACE
-when needed.
+When using mpls over gre/gre6 setup, rt->rt_gw4 address is not set, the
+same for rt->rt_gw_family.  Therefore, when rt->rt_gw_family is checked
+in mpls_xmit(), neigh_xmit() call is skipped. As a result, such setup
+doesn't work anymore.
 
-However, Jason patch had a bug, because the 'nonblocking' status
-as far as sk_stream_wait_memory() is concerned is governed
-by MSG_DONTWAIT flag passed at sendmsg() time :
+This issue was found with LTP mpls03 tests.
 
-    long timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT);
-
-So it is very possible that tcp sendmsg() calls sk_stream_wait_memory(),
-and that sk_stream_wait_memory() returns -EAGAIN with SOCK_NOSPACE
-cleared, if sk->sk_sndtimeo has been set to a small (but not zero)
-value.
-
-This patch removes the 'noblock' variable since we must always
-set SOCK_NOSPACE if -EAGAIN is returned.
-
-It also renames the do_nonblock label since we might reach this
-code path even if we were in blocking mode.
-
-Fixes: 790ba4566c1a ("tcp: set SOCK_NOSPACE under memory pressure")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Jason Baron <jbaron@akamai.com>
-Reported-by: Vladimir Rutsky  <rutsky@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Jason Baron <jbaron@akamai.com>
+Fixes: 1550c171935d ("ipv4: Prepare rtable for IPv6 gateway")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/stream.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ net/mpls/mpls_iptunnel.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/core/stream.c
-+++ b/net/core/stream.c
-@@ -120,7 +120,6 @@ int sk_stream_wait_memory(struct sock *s
- 	int err = 0;
- 	long vm_wait = 0;
- 	long current_timeo = *timeo_p;
--	bool noblock = (*timeo_p ? false : true);
- 	DEFINE_WAIT_FUNC(wait, woken_wake_function);
+--- a/net/mpls/mpls_iptunnel.c
++++ b/net/mpls/mpls_iptunnel.c
+@@ -133,12 +133,12 @@ static int mpls_xmit(struct sk_buff *skb
+ 	mpls_stats_inc_outucastpkts(out_dev, skb);
  
- 	if (sk_stream_memory_free(sk))
-@@ -133,11 +132,8 @@ int sk_stream_wait_memory(struct sock *s
- 
- 		if (sk->sk_err || (sk->sk_shutdown & SEND_SHUTDOWN))
- 			goto do_error;
--		if (!*timeo_p) {
--			if (noblock)
--				set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
--			goto do_nonblock;
--		}
-+		if (!*timeo_p)
-+			goto do_eagain;
- 		if (signal_pending(current))
- 			goto do_interrupted;
- 		sk_clear_bit(SOCKWQ_ASYNC_NOSPACE, sk);
-@@ -169,7 +165,13 @@ out:
- do_error:
- 	err = -EPIPE;
- 	goto out;
--do_nonblock:
-+do_eagain:
-+	/* Make sure that whenever EAGAIN is returned, EPOLLOUT event can
-+	 * be generated later.
-+	 * When TCP receives ACK packets that make room, tcp_check_space()
-+	 * only calls tcp_new_space() if SOCK_NOSPACE is set.
-+	 */
-+	set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
- 	err = -EAGAIN;
- 	goto out;
- do_interrupted:
+ 	if (rt) {
+-		if (rt->rt_gw_family == AF_INET)
+-			err = neigh_xmit(NEIGH_ARP_TABLE, out_dev, &rt->rt_gw4,
+-					 skb);
+-		else if (rt->rt_gw_family == AF_INET6)
++		if (rt->rt_gw_family == AF_INET6)
+ 			err = neigh_xmit(NEIGH_ND_TABLE, out_dev, &rt->rt_gw6,
+ 					 skb);
++		else
++			err = neigh_xmit(NEIGH_ARP_TABLE, out_dev, &rt->rt_gw4,
++					 skb);
+ 	} else if (rt6) {
+ 		if (ipv6_addr_v4mapped(&rt6->rt6i_gateway)) {
+ 			/* 6PE (RFC 4798) */
 
 
