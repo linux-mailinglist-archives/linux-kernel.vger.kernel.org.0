@@ -2,116 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 758D5A911B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E31A8DEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390708AbfIDSNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:13:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390700AbfIDSNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:13:32 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16E9B2341B;
-        Wed,  4 Sep 2019 18:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620811;
-        bh=I9c8+mI73wBB/l3wPqRLRS5mw5uBMutPW2XFFFwYECs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ka28y/ar0RCnu8rXb4eHQjRG76ABXnT+sl6sRjZxVVVvZvBa8f9hHZ76Dk4yoojuz
-         m+Dhpl95JK//DR6IxMo1foWAsmb7DKKBF1Vd02iQjDIMbDJUILMm2WGnaXPnSiXFWD
-         5ipbCtoag7f9MtjUk1+i9AlTGiKXGD4+wAFu3Yzs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Jeronimo Borque <jeronimo@borque.com.ar>
-Subject: [PATCH 5.2 063/143] ALSA: hda - Fixes inverted Conexant GPIO mic mute led
-Date:   Wed,  4 Sep 2019 19:53:26 +0200
-Message-Id: <20190904175316.537139719@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1732164AbfIDRxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:53:42 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49738 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731306AbfIDRxm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:53:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=VCp+GINcdewaFZUB7P8VBjJ5Q+P6scN0GPbH/ZYlu7g=; b=lIUzyIf+Ndxz
+        kAGCdJy6h5VNx3k/w/8/MIzj5BXPlw4K1V4lYvCpfSj68s0pbFh8JlS7qkNbruBjIFeeg2GUvywjL
+        rom9pMG54jZfn3KbbZNssYtylHSzX+ZtZ1GSzb8H0/uSn6FaDgi5S63TzSKj2B6XCLvvT0SDfJABy
+        l8HY4=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1i5ZTC-0006hF-NW; Wed, 04 Sep 2019 17:53:26 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 365752742CDC; Wed,  4 Sep 2019 18:53:26 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     akshu.agrawal@amd.com, alsa-devel@alsa-project.org,
+        broonie@kernel.org, Hulk Robot <hulkci@huawei.com>,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, perex@perex.cz,
+        tglx@linutronix.de, tiwai@suse.com, yuehaibing@huawei.com,
+        yuzhao@google.com
+Subject: Applied "ASoC: amd: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+In-Reply-To: <20190904074833.23572-1-yuehaibing@huawei.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190904175326.365752742CDC@ypsilon.sirena.org.uk>
+Date:   Wed,  4 Sep 2019 18:53:26 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeronimo Borque <jeronimo@borque.com.ar>
+The patch
 
-commit f9ef724d4896763479f3921afd1ee61552fc9836 upstream.
+   ASoC: amd: use devm_platform_ioremap_resource() to simplify code
 
-"enabled" parameter historically referred to the device input or
-output, not to the led indicator. After the changes added with the led
-helper functions the mic mute led logic refers to the led and not to
-the mic input which caused led indicator to be negated.
-Fixing logic in cxt_update_gpio_led and updated
-cxt_fixup_gpio_mute_hook
-Also updated debug messages to ease further debugging if necessary.
+has been applied to the asoc tree at
 
-Fixes: 184e302b46c9 ("ALSA: hda/conexant - Use the mic-mute LED helper")
-Suggested-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Jeronimo Borque <jeronimo@borque.com.ar>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From dfafc1822f6826c9d250223f59ce8c3b227866a6 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 4 Sep 2019 15:48:33 +0800
+Subject: [PATCH] ASoC: amd: use devm_platform_ioremap_resource() to simplify
+ code
+
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20190904074833.23572-1-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/pci/hda/patch_conexant.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ sound/soc/amd/acp-pcm-dma.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -611,18 +611,20 @@ static void cxt_fixup_hp_gate_mic_jack(s
+diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
+index d26653f81416..52225b4b6382 100644
+--- a/sound/soc/amd/acp-pcm-dma.c
++++ b/sound/soc/amd/acp-pcm-dma.c
+@@ -1251,8 +1251,7 @@ static int acp_audio_probe(struct platform_device *pdev)
+ 	if (!audio_drv_data)
+ 		return -ENOMEM;
  
- /* update LED status via GPIO */
- static void cxt_update_gpio_led(struct hda_codec *codec, unsigned int mask,
--				bool enabled)
-+				bool led_on)
- {
- 	struct conexant_spec *spec = codec->spec;
- 	unsigned int oldval = spec->gpio_led;
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	audio_drv_data->acp_mmio = devm_ioremap_resource(&pdev->dev, res);
++	audio_drv_data->acp_mmio = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(audio_drv_data->acp_mmio))
+ 		return PTR_ERR(audio_drv_data->acp_mmio);
  
- 	if (spec->mute_led_polarity)
--		enabled = !enabled;
-+		led_on = !led_on;
- 
--	if (enabled)
--		spec->gpio_led &= ~mask;
--	else
-+	if (led_on)
- 		spec->gpio_led |= mask;
-+	else
-+		spec->gpio_led &= ~mask;
-+	codec_dbg(codec, "mask:%d enabled:%d gpio_led:%d\n",
-+			mask, led_on, spec->gpio_led);
- 	if (spec->gpio_led != oldval)
- 		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DATA,
- 				    spec->gpio_led);
-@@ -633,8 +635,8 @@ static void cxt_fixup_gpio_mute_hook(voi
- {
- 	struct hda_codec *codec = private_data;
- 	struct conexant_spec *spec = codec->spec;
--
--	cxt_update_gpio_led(codec, spec->gpio_mute_led_mask, enabled);
-+	/* muted -> LED on */
-+	cxt_update_gpio_led(codec, spec->gpio_mute_led_mask, !enabled);
- }
- 
- /* turn on/off mic-mute LED via GPIO per capture hook */
-@@ -656,7 +658,6 @@ static void cxt_fixup_mute_led_gpio(stru
- 		{ 0x01, AC_VERB_SET_GPIO_DIRECTION, 0x03 },
- 		{}
- 	};
--	codec_info(codec, "action: %d gpio_led: %d\n", action, spec->gpio_led);
- 
- 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
- 		spec->gen.vmaster_mute.hook = cxt_fixup_gpio_mute_hook;
-
+-- 
+2.20.1
 
