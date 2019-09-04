@@ -2,87 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF224A8963
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32173A8973
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:24:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731334AbfIDPMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 11:12:19 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58119 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730065AbfIDPMT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 11:12:19 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1i5WxC-0006zY-EM; Wed, 04 Sep 2019 15:12:14 +0000
-Date:   Wed, 4 Sep 2019 17:12:13 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        kernel-team <kernel-team@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-        Martijn Coenen <maco@android.com>
-Subject: Re: [PATCH v3 0/4] Add binder state and statistics to binderfs
-Message-ID: <20190904151212.wolcug25ozytp4bw@wittgenstein>
-References: <20190903161655.107408-1-hridya@google.com>
- <20190904111934.ya37tlzqjqvt7h6a@wittgenstein>
- <CAEXW_YSj5tdykM8txae66zd0jX_aJujrnS4jG=fHWRvCH7aR7w@mail.gmail.com>
- <20190904144903.GA30432@kroah.com>
+        id S1731197AbfIDPRx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Sep 2019 11:17:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33346 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729635AbfIDPRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 11:17:52 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 67C7710F23EC;
+        Wed,  4 Sep 2019 15:17:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2EC6560C44;
+        Wed,  4 Sep 2019 15:17:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Pine.LNX.4.44L0.1909031316130.1859-100000@iolanthe.rowland.org>
+References: <Pine.LNX.4.44L0.1909031316130.1859-100000@iolanthe.rowland.org>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     dhowells@redhat.com, Guenter Roeck <linux@roeck-us.net>,
+        viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/11] usb: Add USB subsystem notifications [ver #7]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190904144903.GA30432@kroah.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1500.1567610266.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 04 Sep 2019 16:17:46 +0100
+Message-ID: <1501.1567610266@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Wed, 04 Sep 2019 15:17:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 04:49:03PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Sep 04, 2019 at 10:20:32AM -0400, Joel Fernandes wrote:
-> > On September 4, 2019 7:19:35 AM EDT, Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > >On Tue, Sep 03, 2019 at 09:16:51AM -0700, Hridya Valsaraju wrote:
-> > >> Currently, the only way to access binder state and
-> > >> statistics is through debugfs. We need a way to
-> > >> access the same even when debugfs is not mounted.
-> > >> These patches add a mount option to make this
-> > >> information available in binderfs without affecting
-> > >> its presence in debugfs. The following debugfs nodes
-> > >> will be made available in a binderfs instance when
-> > >> mounted with the mount option 'stats=global' or 'stats=local'.
-> > >>
-> > >>  /sys/kernel/debug/binder/failed_transaction_log
-> > >>  /sys/kernel/debug/binder/proc
-> > >>  /sys/kernel/debug/binder/state
-> > >>  /sys/kernel/debug/binder/stats
-> > >>  /sys/kernel/debug/binder/transaction_log
-> > >>  /sys/kernel/debug/binder/transactions
-> > >
-> > >Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > >
-> > >Btw, I think your counting is off-by-one. :) We usually count the
-> > >initial send of a series as 0 and the first rework of that series as
-> > >v1.
-> > >I think you counted your initial send as v1 and the first rework as v2.
+Alan Stern <stern@rowland.harvard.edu> wrote:
+
+> > > Unfortunately, I don't know how to fix it and don't have much time to
+> > > investigate it right now - and it's something that can be added back later.
 > > 
-> > Which is fine. I have done it both ways. Is this a rule written somewhere?
+> > The cause of your problem is quite simple:
+> > 
+> >  static int usbdev_notify(struct notifier_block *self,
+> >  			       unsigned long action, void *dev)
+> >  {
+> >  	switch (action) {
+> >  	case USB_DEVICE_ADD:
+> > +		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_ADD, 0);
+> >  		break;
+> >  	case USB_DEVICE_REMOVE:
+> > +		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_REMOVE, 0);
+> > +		usbdev_remove(dev);
+> > +		break;
+> > +	case USB_BUS_ADD:
+> > +		post_usb_bus_notification(dev, NOTIFY_USB_BUS_ADD, 0);
+> > +		break;
+> > +	case USB_BUS_REMOVE:
+> > +		post_usb_bus_notification(dev, NOTIFY_USB_BUS_REMOVE, 0);
+> >  		usbdev_remove(dev);
+> >  		break;
+> >  	}
+> > 
+> > The original code had usbdev_remove(dev) under the USB_DEVICE_REMOVE
+> > case.  The patch mistakenly moves it, putting it under the
+> ------------------------------^^^^^
 > 
-> No where, I can count both ways, it's not a big deal :)
+> Sorry, I should have said "duplicates" it.
 
-It isn't documented (as many things we still do are) and it's not a big
-deal. But most people seem to be counting revisions starting from 0 it
-seems. I went looking for previous version to link to in the patch cover
-letter and was confused because I was missing a v1. :)
+Ah, thanks.  I'd already removed the USB bus notifications, so I'll leave them
+out for now.
 
-Anyway, I'm happy that Hridya landed this! It was fun helping her the
-last couple of weeks on- and off-list. Thanks for getting this done! I
-hope we'll see even more patches in the future. :)
-
-Christian
+David
