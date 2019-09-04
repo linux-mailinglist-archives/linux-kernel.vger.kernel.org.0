@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CD55A900E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C25A8F14
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389636AbfIDSHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:07:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49738 "EHLO mail.kernel.org"
+        id S2388624AbfIDSBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:01:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389610AbfIDSHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:07:21 -0400
+        id S2388035AbfIDSBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:01:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B198208E4;
-        Wed,  4 Sep 2019 18:07:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01DAD23401;
+        Wed,  4 Sep 2019 18:01:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620440;
-        bh=z5zPOJAwtuXws16D0TTZ/2gP1HvIBD2bOGos/nDRij0=;
+        s=default; t=1567620097;
+        bh=uzMUGbqSo866fnEf2v/RDdvtr8Vgstf5RdYeh/4G4jI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jWegguNQYY4Gwoh1Zw/Z8scgOm2r+oEgIg5xhkR4hVR8jjGG6bSE2NLqNOxb46xrm
-         cCdxKZMEayymqeeYwAzHdXS2ekp+clH5yA1drsgwaUkN1gfglbBT3EzzLvTsHP4BVq
-         UGqUQiEL0hsQidqYyV0jfuo/TTQMIGEFDRtzknL0=
+        b=vzuiQQruTgC8zVwiS05JhgrjZD2rwNynWf0FxZxBGVZ97PqbS2eUYKZDuTd0h8JFq
+         h0orJnrikJX+mSOMJ7sbiiZ4w4Ia9T2M7QX64UWr8iLyjoOhLWUHJ7MPWjH119uqN4
+         laUl45tdlNbQ5mQ8Mo7r8XrRFt1rsH1NesPGEOig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 4.19 60/93] USB: storage: ums-realtek: Update module parameter description for auto_delink_en
+Subject: [PATCH 4.9 70/83] USB: storage: ums-realtek: Update module parameter description for auto_delink_en
 Date:   Wed,  4 Sep 2019 19:54:02 +0200
-Message-Id: <20190904175308.229250586@linuxfoundation.org>
+Message-Id: <20190904175309.775742975@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -63,7 +63,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/usb/storage/realtek_cr.c
 +++ b/drivers/usb/storage/realtek_cr.c
-@@ -38,7 +38,7 @@ MODULE_LICENSE("GPL");
+@@ -51,7 +51,7 @@ MODULE_VERSION("1.03");
  
  static int auto_delink_en = 1;
  module_param(auto_delink_en, int, S_IRUGO | S_IWUSR);
