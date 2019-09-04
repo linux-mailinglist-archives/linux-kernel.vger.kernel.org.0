@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76832A8E84
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87363A8EF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388059AbfIDR61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:58:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36842 "EHLO mail.kernel.org"
+        id S2388475AbfIDSAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:00:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731727AbfIDR60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:58:26 -0400
+        id S2388465AbfIDSAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:00:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51E7D21883;
-        Wed,  4 Sep 2019 17:58:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E136C21883;
+        Wed,  4 Sep 2019 18:00:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619905;
-        bh=bcEIU991a6u56vkFQDroBatGmE701cverPNcKCh/w6g=;
+        s=default; t=1567620052;
+        bh=NYSo3tHpOyzk/c4oU6zG4Sh2xLXusgKQrgz54bGVhhY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wab2qmTlZgjvym+1BnijIGEhe9RKCtK0K1wfO971V5jf05AYbJ/ciqVe1Mnu1Kbcx
-         kzG/sK7g5VlrVCbuxhMCsZxUxkw1Ehuuw3xJTjmSv3iTT0CXQP96/kVR8FqPWNoh7P
-         3faFHBBRZMS6y5dPxlS0P0N8GlgKEE0MV3Wfe/nM=
+        b=0DU+6o8QtTxwVGuRJdyMqExKztMjcwneSK2kteO3jiIN23Nz7dm2MVgW3qefmdKEE
+         bwmQmc/UCtxm3VT1KzSW9y++q2NRmnwEw9nSJ6y/1OqbIrI+w4O4+e1aPCtszDWmXq
+         7GYFRN7/yLSkv7IlqcLo2y4CCjl5ExTqS5tZT5U0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+4a75454b9ca2777f35c7@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 60/77] ALSA: seq: Fix potential concurrent access to the deleted pool
+        Tim Froidcoeur <tim.froidcoeur@tessares.net>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Christoph Paasch <cpaasch@apple.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 55/83] tcp: fix tcp_rtx_queue_tail in case of empty retransmit queue
 Date:   Wed,  4 Sep 2019 19:53:47 +0200
-Message-Id: <20190904175308.968275603@linuxfoundation.org>
+Message-Id: <20190904175308.426737273@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +46,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+Commit 8c3088f895a0 ("tcp: be more careful in tcp_fragment()")
+triggers following stack trace:
 
-commit 75545304eba6a3d282f923b96a466dc25a81e359 upstream.
+[25244.848046] kernel BUG at ./include/linux/skbuff.h:1406!
+[25244.859335] RIP: 0010:skb_queue_prev+0x9/0xc
+[25244.888167] Call Trace:
+[25244.889182]  <IRQ>
+[25244.890001]  tcp_fragment+0x9c/0x2cf
+[25244.891295]  tcp_write_xmit+0x68f/0x988
+[25244.892732]  __tcp_push_pending_frames+0x3b/0xa0
+[25244.894347]  tcp_data_snd_check+0x2a/0xc8
+[25244.895775]  tcp_rcv_established+0x2a8/0x30d
+[25244.897282]  tcp_v4_do_rcv+0xb2/0x158
+[25244.898666]  tcp_v4_rcv+0x692/0x956
+[25244.899959]  ip_local_deliver_finish+0xeb/0x169
+[25244.901547]  __netif_receive_skb_core+0x51c/0x582
+[25244.903193]  ? inet_gro_receive+0x239/0x247
+[25244.904756]  netif_receive_skb_internal+0xab/0xc6
+[25244.906395]  napi_gro_receive+0x8a/0xc0
+[25244.907760]  receive_buf+0x9a1/0x9cd
+[25244.909160]  ? load_balance+0x17a/0x7b7
+[25244.910536]  ? vring_unmap_one+0x18/0x61
+[25244.911932]  ? detach_buf+0x60/0xfa
+[25244.913234]  virtnet_poll+0x128/0x1e1
+[25244.914607]  net_rx_action+0x12a/0x2b1
+[25244.915953]  __do_softirq+0x11c/0x26b
+[25244.917269]  ? handle_irq_event+0x44/0x56
+[25244.918695]  irq_exit+0x61/0xa0
+[25244.919947]  do_IRQ+0x9d/0xbb
+[25244.921065]  common_interrupt+0x85/0x85
+[25244.922479]  </IRQ>
 
-The input pool of a client might be deleted via the resize ioctl, the
-the access to it should be covered by the proper locks.  Currently the
-only missing place is the call in snd_seq_ioctl_get_client_pool(), and
-this patch papers over it.
+tcp_rtx_queue_tail() (called by tcp_fragment()) can call
+tcp_write_queue_prev() on the first packet in the queue, which will trigger
+the BUG in tcp_write_queue_prev(), because there is no previous packet.
 
-Reported-by: syzbot+4a75454b9ca2777f35c7@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This happens when the retransmit queue is empty, for example in case of a
+zero window.
 
+Commit 8c3088f895a0 ("tcp: be more careful in tcp_fragment()") was not a
+simple cherry-pick of the original one from master (b617158dc096)
+because there is a specific TCP rtx queue only since v4.15. For more
+details, please see the commit message of b617158dc096 ("tcp: be more
+careful in tcp_fragment()").
+
+The BUG() is hit due to the specific code added to versions older than
+v4.15. The comment in skb_queue_prev() (include/linux/skbuff.h:1406),
+just before the BUG_ON() somehow suggests to add a check before using
+it, what Tim did.
+
+In master, this code path causing the issue will not be taken because
+the implementation of tcp_rtx_queue_tail() is different:
+
+    tcp_fragment() → tcp_rtx_queue_tail() → tcp_write_queue_prev() →
+skb_queue_prev() → BUG_ON()
+
+Fixes: 8c3088f895a0 ("tcp: be more careful in tcp_fragment()")
+Signed-off-by: Tim Froidcoeur <tim.froidcoeur@tessares.net>
+Signed-off-by: Matthieu Baerts <matthieu.baerts@tessares.net>
+Reviewed-by: Christoph Paasch <cpaasch@apple.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/seq/seq_clientmgr.c |    3 +--
- sound/core/seq/seq_fifo.c      |   17 +++++++++++++++++
- sound/core/seq/seq_fifo.h      |    2 ++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+ include/net/tcp.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -1906,8 +1906,7 @@ static int snd_seq_ioctl_get_client_pool
- 	if (cptr->type == USER_CLIENT) {
- 		info.input_pool = cptr->data.user.fifo_pool_size;
- 		info.input_free = info.input_pool;
--		if (cptr->data.user.fifo)
--			info.input_free = snd_seq_unused_cells(cptr->data.user.fifo->pool);
-+		info.input_free = snd_seq_fifo_unused_cells(cptr->data.user.fifo);
- 	} else {
- 		info.input_pool = 0;
- 		info.input_free = 0;
---- a/sound/core/seq/seq_fifo.c
-+++ b/sound/core/seq/seq_fifo.c
-@@ -278,3 +278,20 @@ int snd_seq_fifo_resize(struct snd_seq_f
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index a474213ca015b..23814d997e867 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -1609,6 +1609,10 @@ static inline struct sk_buff *tcp_rtx_queue_tail(const struct sock *sk)
+ {
+ 	struct sk_buff *skb = tcp_send_head(sk);
  
- 	return 0;
++	/* empty retransmit queue, for example due to zero window */
++	if (skb == tcp_write_queue_head(sk))
++		return NULL;
++
+ 	return skb ? tcp_write_queue_prev(sk, skb) : tcp_write_queue_tail(sk);
  }
-+
-+/* get the number of unused cells safely */
-+int snd_seq_fifo_unused_cells(struct snd_seq_fifo *f)
-+{
-+	unsigned long flags;
-+	int cells;
-+
-+	if (!f)
-+		return 0;
-+
-+	snd_use_lock_use(&f->use_lock);
-+	spin_lock_irqsave(&f->lock, flags);
-+	cells = snd_seq_unused_cells(f->pool);
-+	spin_unlock_irqrestore(&f->lock, flags);
-+	snd_use_lock_free(&f->use_lock);
-+	return cells;
-+}
---- a/sound/core/seq/seq_fifo.h
-+++ b/sound/core/seq/seq_fifo.h
-@@ -68,5 +68,7 @@ int snd_seq_fifo_poll_wait(struct snd_se
- /* resize pool in fifo */
- int snd_seq_fifo_resize(struct snd_seq_fifo *f, int poolsize);
  
-+/* get the number of unused cells safely */
-+int snd_seq_fifo_unused_cells(struct snd_seq_fifo *f);
- 
- #endif
+-- 
+2.20.1
+
 
 
