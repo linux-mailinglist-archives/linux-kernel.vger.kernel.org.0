@@ -2,70 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C5DA84AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6655BA84B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730349AbfIDNo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 09:44:58 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6648 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730193AbfIDNo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 09:44:58 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E8D62AD8F65EA95B1582;
-        Wed,  4 Sep 2019 21:44:52 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Sep 2019
- 21:44:42 +0800
-Subject: Re: [PATCH -next] scsi: hisi_sas: use
- devm_platform_ioremap_resource() to simplify code
-To:     YueHaibing <yuehaibing@huawei.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>
-References: <20190904130256.24704-1-yuehaibing@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <adab136f-330e-1ce5-2a43-f2e19ed7e92d@huawei.com>
-Date:   Wed, 4 Sep 2019 14:44:38 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1730140AbfIDNt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 09:49:29 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45109 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbfIDNt2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 09:49:28 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y72so5701872pfb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 06:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+p6RR38peQrVv1PKhrGG8NO7Bt9/0+SxJtAUeqEkoto=;
+        b=Nf7bZgM8mdEbmKwjRCrour8SaCg74ZrKw+SpmXqlfKcAGQajEWCuuabuloY4nXrZmf
+         QCxk0gobu4cCn1YuYRos+Eod7P6TD6+1vj8PFxkLu90DN4/ZFSxNPINOortGSSQ+Ce6H
+         mMPI0BoIiFvzOTW2eZk2V8PG3f++AswYk1b6rvTf82GawDUQLmC794fDW7eyIdUPrjG7
+         mYOnKMEdeFdkEROHDvOl7vIe9eeb3k2R2O+OSIel668XhegPMcFdRaQvDiyu3Sj1mS0f
+         gGvOzjeLwbGylGMBpVAUlFet4b3qCztEKmcFJxcAl+Fb6l5GAV/otZqEd7iCXSRU8kYI
+         /22w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+p6RR38peQrVv1PKhrGG8NO7Bt9/0+SxJtAUeqEkoto=;
+        b=JYVWbj4t7Js9OvCOHH6mmoBNXuzavxYhbkDl1SqPzX6uPQX4oXvdKmt6KYbxVYmDGZ
+         rzYGMv8qmD34muC1xOhWGpkOG4RYxgrS8juXHoNuxPMi0K6yuWS2M7L/QnS1xxOAtflE
+         LNjDAFm5j6o8J2E2xX/75fZv/jxyKguog+UupSI7jwYG1CX1t0w3/+odm8/B2nXEfiTZ
+         v6xZP8vLOAxJLi4+Bku6pq/6mBoapgzrfjXBbQaUeVl/7isrI0wQJ1ZFwYNokzQaBgSk
+         n5Zg/HdZLtzT0nOGth3NLQAN6K+3vdUw0YvF5NU0D4Q5Z5WwrifEl0jvZB/ixtEOQFRq
+         rMBw==
+X-Gm-Message-State: APjAAAU/NGWtC64jAheTkVe3Lg0n7+6cOvxJZggNNhLgnWGfDCQKXa8o
+        qsFYxmd41EU5brLPyX3jJQ5VjNLIbjwGcDnI71E=
+X-Google-Smtp-Source: APXvYqyGjj0H1IaJHd1+uKPzC9oFjuz19QOcJsawYhcxEkhQYTyd1ZMRedf9zVScirVCb+IYMMfOgvVOhbznJz1gkBQ=
+X-Received: by 2002:a17:90a:7f81:: with SMTP id m1mr5125780pjl.92.1567604967944;
+ Wed, 04 Sep 2019 06:49:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190904130256.24704-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+References: <20190904005831.153934-1-justin.he@arm.com>
+In-Reply-To: <20190904005831.153934-1-justin.he@arm.com>
+From:   Catalin Marinas <catalin.marinas@arm.com>
+Date:   Wed, 4 Sep 2019 14:49:16 +0100
+Message-ID: <CAHkRjk7jNeoXz_zg6KmTam-pAzO3ALFARS91w+zZHmZN_9JsTg@mail.gmail.com>
+Subject: Re: [PATCH] mm: fix double page fault on arm64 if PTE_AF is cleared
+To:     Jia He <justin.he@arm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Airlie <airlied@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2019 14:02, YueHaibing wrote:
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
+On Wed, 4 Sep 2019 at 01:59, Jia He <justin.he@arm.com> wrote:
+> @@ -2152,20 +2153,30 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
+>          */
+>         if (unlikely(!src)) {
+>                 void *kaddr = kmap_atomic(dst);
+> -               void __user *uaddr = (void __user *)(va & PAGE_MASK);
+> +               void __user *uaddr = (void __user *)(vmf->address & PAGE_MASK);
+> +               pte_t entry;
 >
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>                 /*
+>                  * This really shouldn't fail, because the page is there
+>                  * in the page tables. But it might just be unreadable,
+>                  * in which case we just give up and fill the result with
+> -                * zeroes.
+> +                * zeroes. If PTE_AF is cleared on arm64, it might
+> +                * cause double page fault here. so makes pte young here
+>                  */
+> +               if (!pte_young(vmf->orig_pte)) {
+> +                       entry = pte_mkyoung(vmf->orig_pte);
+> +                       if (ptep_set_access_flags(vmf->vma, vmf->address,
+> +                               vmf->pte, entry, vmf->flags & FAULT_FLAG_WRITE))
 
-Acked-by: John Garry <john.garry@huawei.com>
+I think you need to pass dirty = 0 to ptep_set_access_flags() rather
+than the vmf->flags & FAULT_FLAG_WRITE. This is copying from the user
+address into a kernel mapping and the fault you want to prevent is a
+read access on uaddr via __copy_from_user_inatomic(). The pte will be
+made writable in the wp_page_copy() function.
 
-> ---
->  drivers/scsi/hisi_sas/hisi_sas_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> index d60eaaa..d34e398 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> @@ -2579,8 +2579,7 @@ static struct Scsi_Host *hisi_sas_shost_alloc(struct platform_device *pdev,
->  		goto err_out;
->  	}
->
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	hisi_hba->regs = devm_ioremap_resource(dev, res);
-> +	hisi_hba->regs = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(hisi_hba->regs))
->  		goto err_out;
->
->
-
-
+-- 
+Catalin
