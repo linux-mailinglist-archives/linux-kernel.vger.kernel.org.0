@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31C26A9048
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 564D1A8EF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389840AbfIDSIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:08:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51606 "EHLO mail.kernel.org"
+        id S2388493AbfIDSBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:01:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388873AbfIDSIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:08:39 -0400
+        id S2387777AbfIDSA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:00:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 849A22087E;
-        Wed,  4 Sep 2019 18:08:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D99721883;
+        Wed,  4 Sep 2019 18:00:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620518;
-        bh=/Ikg1oTFgLbWc7CCvacmFabaNNVg+d+9Cq228W4ZDBQ=;
+        s=default; t=1567620057;
+        bh=BfhlLiLUo+otcdw2PhxmxNxKrM1EJHiwJIqAWc5ijxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qbg7sDbeAnp+jQDEZn3BufAWnkAlYKvoYWRoTID0g5y+HcNzBO+PDNTzOl1zWVxGx
-         f1812de9s3Ig9RiihtMzVb8V5kU/nN/WTiSaadFYrKjk7GHo9ss0G5QEHUfYbVf9bc
-         Qgbg1ftUyYLyKCLYYGlhSvl1prMLHyzxLgjmHUEg=
+        b=GQVvVxE+uQqK0KUMvJ/3qNr2D81LH9x35XoD2bsg1us8ys52AZfGHx53Sk8x7nCd6
+         r2ShakgSAbd/KsB2zNn3a+zEFfBR0wWSWWFRxIG2KD1i+c5eW3e9sJEv2rVFF4UBxv
+         7s00dNKAJm4AjwbfOadXEBHfeZI/N2QXKvGRl46c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 4.19 47/93] KVM: x86: Dont update RIP or do single-step on faulting emulation
+        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 57/83] ALSA: usb-audio: Fix an OOB bug in parse_audio_mixer_unit
 Date:   Wed,  4 Sep 2019 19:53:49 +0200
-Message-Id: <20190904175307.189284051@linuxfoundation.org>
+Message-Id: <20190904175308.585489773@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Hui Peng <benquike@gmail.com>
 
-commit 75ee23b30dc712d80d2421a9a547e7ab6e379b44 upstream.
+commit daac07156b330b18eb5071aec4b3ddca1c377f2c upstream.
 
-Don't advance RIP or inject a single-step #DB if emulation signals a
-fault.  This logic applies to all state updates that are conditional on
-clean retirement of the emulation instruction, e.g. updating RFLAGS was
-previously handled by commit 38827dbd3fb85 ("KVM: x86: Do not update
-EFLAGS on faulting emulation").
+The `uac_mixer_unit_descriptor` shown as below is read from the
+device side. In `parse_audio_mixer_unit`, `baSourceID` field is
+accessed from index 0 to `bNrInPins` - 1, the current implementation
+assumes that descriptor is always valid (the length  of descriptor
+is no shorter than 5 + `bNrInPins`). If a descriptor read from
+the device side is invalid, it may trigger out-of-bound memory
+access.
 
-Not advancing RIP is likely a nop, i.e. ctxt->eip isn't updated with
-ctxt->_eip until emulation "retires" anyways.  Skipping #DB injection
-fixes a bug reported by Andy Lutomirski where a #UD on SYSCALL due to
-invalid state with EFLAGS.TF=1 would loop indefinitely due to emulation
-overwriting the #UD with #DB and thus restarting the bad SYSCALL over
-and over.
+```
+struct uac_mixer_unit_descriptor {
+	__u8 bLength;
+	__u8 bDescriptorType;
+	__u8 bDescriptorSubtype;
+	__u8 bUnitID;
+	__u8 bNrInPins;
+	__u8 baSourceID[];
+}
+```
 
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: stable@vger.kernel.org
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Fixes: 663f4c61b803 ("KVM: x86: handle singlestep during emulation")
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+This patch fixes the bug by add a sanity check on the length of
+the descriptor.
+
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ sound/usb/mixer.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6308,12 +6308,13 @@ restart:
- 		unsigned long rflags = kvm_x86_ops->get_rflags(vcpu);
- 		toggle_interruptibility(vcpu, ctxt->interruptibility);
- 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
--		kvm_rip_write(vcpu, ctxt->eip);
--		if (r == EMULATE_DONE && ctxt->tf)
--			kvm_vcpu_do_singlestep(vcpu, &r);
- 		if (!ctxt->have_exception ||
--		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
-+		    exception_type(ctxt->exception.vector) == EXCPT_TRAP) {
-+			kvm_rip_write(vcpu, ctxt->eip);
-+			if (r == EMULATE_DONE && ctxt->tf)
-+				kvm_vcpu_do_singlestep(vcpu, &r);
- 			__kvm_set_rflags(vcpu, ctxt->eflags);
-+		}
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1713,6 +1713,7 @@ static int parse_audio_mixer_unit(struct
+ 	int pin, ich, err;
  
- 		/*
- 		 * For STI, interrupts are shadowed; so KVM_REQ_EVENT will
+ 	if (desc->bLength < 11 || !(input_pins = desc->bNrInPins) ||
++	    desc->bLength < sizeof(*desc) + desc->bNrInPins ||
+ 	    !(num_outs = uac_mixer_unit_bNrChannels(desc))) {
+ 		usb_audio_err(state->chip,
+ 			      "invalid MIXER UNIT descriptor %d\n",
 
 
