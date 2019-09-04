@@ -2,109 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D0C5A8039
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 12:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B826A803F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 12:20:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729512AbfIDKT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 06:19:56 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38925 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbfIDKT4 (ORCPT
+        id S1729594AbfIDKUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 06:20:10 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46492 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729068AbfIDKUJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 06:19:56 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q12so1202621wmj.4;
-        Wed, 04 Sep 2019 03:19:54 -0700 (PDT)
+        Wed, 4 Sep 2019 06:20:09 -0400
+Received: by mail-pg1-f195.google.com with SMTP id m3so10966623pgv.13
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 03:20:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZrAqSL59OLCEzE52HTekg7fPZUlax89btgET9BLQ71E=;
-        b=bhdQaPS9cc30tOzD7DKX0HLVLg2l7AEj2darYht6/SLmp33LqXyhFhPhR8+xHsWcTR
-         CPj5YkAX5Cyji3fF4H6GeRjSTB6xkrVe5vTbpNCg3UABvKRTSIikZyP5isZvuB3xzXq/
-         1Aae6iVhoyFsAwI2m/NDBY7lB0dBOx+Vmx8KGXnDik7Vn2ufcnfP0CTIkJ4KRBYoiRFb
-         +1tILqUkBVG/h8X4052yrUzqJQgJTjgl0io9qBmA5EnF0u8a7dC1tJjTDnbXWfW9v4yg
-         ZGdahtqyRZPEatNPH9a/5EV3MDFd7COUWvQHEwoKIOUtzAY+aheRnrr2eki/oOGdO39u
-         oBjQ==
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=J/+/1jhl4CuoY9Z/mhDhMnmKOIqzxcucbYzyGMDV3bY=;
+        b=CORLaL/CvcphzgxSNJFn4X4v7kP4bDjHR6i/EX1ozp9IxvsGPO5SOgJVs12qRzD9zq
+         9FP+oVjN/1UAwoWfnjwhcQCUem38ccuPN2q9PM+47l+u31chxAQ+QyytYx8QyUj12sVZ
+         yVJSvxJdNti3TuNpf7Fn/Km5A4itymNTEnpIRzEjtvDSJOKJmgZw6bNxmbI5VVkhZyl5
+         iYUqxGHivRS6JP6SO1VcgPMlvtwFaTUdt5bNyqvW7pOp3AKQyA5KdFC3BrJ/RL0wWlve
+         MavDd6/n8d2fbjyajYj1s0NOlOf16VCs+HrORUVsiiwBV2BHKDD5AF0Gp0pVYImxXnC+
+         s5Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZrAqSL59OLCEzE52HTekg7fPZUlax89btgET9BLQ71E=;
-        b=o8lX9rK0vufTIcDpNzZp6cVvhkNnukXbEn2cDOxlR+VVhyCYxoDhw6CBZXLFsS1wv7
-         LXe7vpui5OmerzIcdO3E5UFvAdVAacSyRtJZbsvDZz0p4iIABRsZA9GLV+uvzK6tT1/g
-         6uwshOI5xoiTQyik4hPYIJIeyIlTZnjrumNrIbs2RKAihM/4FnLLODHZdnwZowqrHzEU
-         Es62z/SAIiTU9IrLxDXPJ+TbIPwddSDI5TrGtm9DJYSo8V5UlcknzYeqbKpMaxYk+iUQ
-         ZwEuD6Oyuo/DMQ+nHB7VVODgNRW/p4c4kgRE4eBg7g5fGIr5hgOt4v5ROjTELTWU8zw1
-         Ge2g==
-X-Gm-Message-State: APjAAAX4UQgdhk/TscCDI1FACv3o8n0uv88jwIsaa3OKNQsG6gTzT/YY
-        5z57LUOe5SEA54dXI3+ERpVwClGn
-X-Google-Smtp-Source: APXvYqyvOLR5/S4HFyOVauqNl0jLDWv/prMfE+ba8C4Uavp1L+tmEg3kYirYTz8DGh4eMD4JDgmecA==
-X-Received: by 2002:a1c:a942:: with SMTP id s63mr3712661wme.152.1567592393778;
-        Wed, 04 Sep 2019 03:19:53 -0700 (PDT)
-Received: from [192.168.8.147] (206.165.185.81.rev.sfr.net. [81.185.165.206])
-        by smtp.gmail.com with ESMTPSA id x5sm17823427wrg.69.2019.09.04.03.19.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2019 03:19:52 -0700 (PDT)
-Subject: Re: [PATCH net] net: sonic: remove dev_kfree_skb before return
- NETDEV_TX_BUSY
-To:     Mao Wenan <maowenan@huawei.com>, tsbogend@alpha.franken.de,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20190904094211.117454-1-maowenan@huawei.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <c4a4d1b0-d036-7af7-2b30-117f9fdee9ad@gmail.com>
-Date:   Wed, 4 Sep 2019 12:19:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190904094211.117454-1-maowenan@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=J/+/1jhl4CuoY9Z/mhDhMnmKOIqzxcucbYzyGMDV3bY=;
+        b=cJ7MAwsJLYqsLiWATorIoj9DGqWHqR2ohjF+ktsYWlihYJeVLSiAZ5DPLDTBswgLpr
+         Jmmigciw7zZGQBT772DEY5K+kkWUxYKfgX6jUrgGMa9eChcTd1rl+mY+UHEWbIcieCVK
+         NaAZhvzFDDIH6jgJab+5MeagrOHB0Dm3uPbqvaGCP5pjRcZCDVmTquIfkNWIpNohF8eV
+         CXK2f47slJ6XyXuM8kRfz5qOm2H8sSh9u/KEuQk6nAPpSoXJUPq8j8PPp7psrgMuimxc
+         GmlsXEf9+6sCye62lk/XzjKXru6+0MDQ4ysprsVgE/liP1BIv+t0KqaYoA6xHt1IB6/p
+         +UAg==
+X-Gm-Message-State: APjAAAUWlWLl0+fPPV8i9HNGPR6+dqJ4vW6kqy+c9DlmKktuWjapNmFF
+        AQD2cVvImOWUj/ODV+cM4Grknw==
+X-Google-Smtp-Source: APXvYqwfTQYhLAozNtIm8UdrAyXLSg8j912XKe8r8DrSl6YP/T2n5628nUBZNbwocefVP9R/TCS0Fg==
+X-Received: by 2002:aa7:87d3:: with SMTP id i19mr31973373pfo.57.1567592408536;
+        Wed, 04 Sep 2019 03:20:08 -0700 (PDT)
+Received: from pragneshp.open-silicon.com ([114.143.65.226])
+        by smtp.gmail.com with ESMTPSA id p20sm22806882pgi.81.2019.09.04.03.20.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 04 Sep 2019 03:20:08 -0700 (PDT)
+From:   Pragnesh Patel <pragnesh.patel@sifive.com>
+To:     palmer@sifive.com, paul.walmsley@sifive.com
+Cc:     Pragnesh Patel <pragnesh.patel@sifive.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: serial: Convert riscv,sifive-serial to json-schema
+Date:   Wed,  4 Sep 2019 15:49:11 +0530
+Message-Id: <1567592383-8920-1-git-send-email-pragnesh.patel@sifive.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Convert the riscv,sifive-serial binding to DT schema using json-schema.
 
+Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
+---
 
-On 9/4/19 11:42 AM, Mao Wenan wrote:
-> When dma_map_single is failed to map buffer, skb can't be freed
-> before sonic driver return to stack with NETDEV_TX_BUSY, because
-> this skb may be requeued to qdisc, it might trigger use-after-free.
-> 
-> Fixes: d9fb9f384292 ("*sonic/natsemi/ns83829: Move the National Semi-conductor drivers")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/net/ethernet/natsemi/sonic.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-> index d0a01e8f000a..248a8f22a33b 100644
-> --- a/drivers/net/ethernet/natsemi/sonic.c
-> +++ b/drivers/net/ethernet/natsemi/sonic.c
-> @@ -233,7 +233,6 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
->  	laddr = dma_map_single(lp->device, skb->data, length, DMA_TO_DEVICE);
->  	if (!laddr) {
->  		printk(KERN_ERR "%s: failed to map tx DMA buffer.\n", dev->name);
-> -		dev_kfree_skb(skb);
->  		return NETDEV_TX_BUSY;
->  	}
->  
-> 
+Changes in v2:
+- Replace enum with items in compatible property
 
-That is the wrong way to fix this bug.
+ .../devicetree/bindings/serial/sifive-serial.txt   | 33 ------------
+ .../devicetree/bindings/serial/sifive-serial.yaml  | 62 ++++++++++++++++++++++
+ 2 files changed, 62 insertions(+), 33 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.yaml
 
-What guarantee do we have that the mapping operation will succeed next time we attempt
-the transmit (and the dma_map_single() operation) ?
+diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.txt b/Documentation/devicetree/bindings/serial/sifive-serial.txt
+deleted file mode 100644
+index c86b1e5..0000000
+--- a/Documentation/devicetree/bindings/serial/sifive-serial.txt
++++ /dev/null
+@@ -1,33 +0,0 @@
+-SiFive asynchronous serial interface (UART)
+-
+-Required properties:
+-
+-- compatible: should be something similar to
+-	      "sifive,<chip>-uart" for the UART as integrated
+-	      on a particular chip, and "sifive,uart<version>" for the
+-	      general UART IP block programming model.	Supported
+-	      compatible strings as of the date of this writing are:
+-	      "sifive,fu540-c000-uart" for the SiFive UART v0 as
+-	      integrated onto the SiFive FU540 chip, or "sifive,uart0"
+-	      for the SiFive UART v0 IP block with no chip integration
+-	      tweaks (if any)
+-- reg: address and length of the register space
+-- interrupts: Should contain the UART interrupt identifier
+-- clocks: Should contain a clock identifier for the UART's parent clock
+-
+-
+-UART HDL that corresponds to the IP block version numbers can be found
+-here:
+-
+-https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/uart
+-
+-
+-Example:
+-
+-uart0: serial@10010000 {
+-	compatible = "sifive,fu540-c000-uart", "sifive,uart0";
+-	interrupt-parent = <&plic0>;
+-	interrupts = <80>;
+-	reg = <0x0 0x10010000 0x0 0x1000>;
+-	clocks = <&prci PRCI_CLK_TLCLK>;
+-};
+diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.yaml b/Documentation/devicetree/bindings/serial/sifive-serial.yaml
+new file mode 100644
+index 0000000..e8d3aed
+--- /dev/null
++++ b/Documentation/devicetree/bindings/serial/sifive-serial.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/serial/sifive-serial.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SiFive asynchronous serial interface (UART)
++
++maintainers:
++  - Pragnesh Patel <pragnesh.patel@sifive.com>
++  - Paul Walmsley  <paul.walmsley@sifive.com>
++  - Palmer Dabbelt <palmer@sifive.com>
++
++allOf:
++  - $ref: /schemas/serial.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: sifive,fu540-c000-uart
++      - const: sifive,uart0
++
++    description:
++      Should be something similar to "sifive,<chip>-uart"
++      for the UART as integrated on a particular chip,
++      and "sifive,uart<version>" for the general UART IP
++      block programming model.
++
++      UART HDL that corresponds to the IP block version
++      numbers can be found here -
++
++      https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/uart
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++      #include <dt-bindings/clock/sifive-fu540-prci.h>
++      serial@10010000 {
++        compatible = "sifive,fu540-c000-uart", "sifive,uart0";
++        interrupt-parent = <&plic0>;
++        interrupts = <80>;
++        reg = <0x0 0x10010000 0x0 0x1000>;
++        clocks = <&prci PRCI_CLK_TLCLK>;
++      };
++
++...
+-- 
+2.7.4
 
-NETDEV_TX_BUSY is very dangerous, this might trigger an infinite loop.
-
-I would rather leave the dev_kfree_skb(skb), and return NETDEV_TX_OK
-
-Also the printk(KERN_ERR ...) should be replaced by pr_err_ratelimited(...)
-
-NETDEV_TX_BUSY really should only be used by drivers that call netif_tx_stop_queue()
-at the wrong moment.
