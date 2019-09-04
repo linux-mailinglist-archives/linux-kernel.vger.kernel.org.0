@@ -2,173 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82474A8A25
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CBFEA8C5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731980AbfIDP60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 11:58:26 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:36607 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731920AbfIDP6Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 11:58:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1567612701; x=1599148701;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=wsfWprD0lblrzJogtQSyv9S1R0jZAPO9JjBP0KTAUko=;
-  b=QohgHZWPfFXliMRb9rGT2+CJFUZgq+HqCYnpskuhKSCa48ICOdVv+39T
-   yWLaIXTr4mOCCLKZ8a6jz/YJM61uA25YMLQRiACj4DeFTrd2MeQVDJKuj
-   efCrHkcvyBqvRpRv9XcZUvllM4zsTwP+6x2KTyQ82qGuLB+kXL/2qq/v2
-   Q=;
-X-IronPort-AV: E=Sophos;i="5.64,467,1559520000"; 
-   d="scan'208";a="419445455"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-17c49630.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 04 Sep 2019 15:58:19 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-17c49630.us-east-1.amazon.com (Postfix) with ESMTPS id E6DB8A082B;
-        Wed,  4 Sep 2019 15:58:14 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 4 Sep 2019 15:58:13 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.162.125) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 4 Sep 2019 15:58:10 +0000
-Subject: Re: [PATCH v2 1/2] KVM: VMX: Disable posted interrupts for odd IRQs
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-CC:     <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-References: <20190904133511.17540-1-graf@amazon.com>
- <20190904133511.17540-2-graf@amazon.com>
- <20190904144045.GA24079@linux.intel.com>
- <fcaefade-16c1-6480-aeab-413bcd16dc52@amazon.com>
- <20190904155125.GC24079@linux.intel.com>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <3f15f8d5-6129-e202-f56e-a5809c41782c@amazon.com>
-Date:   Wed, 4 Sep 2019 17:58:08 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S1732986AbfIDQMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:12:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732548AbfIDQAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:00:07 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89A1B2070C;
+        Wed,  4 Sep 2019 16:00:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567612806;
+        bh=Tz/bBLPmDfQREEeBksUkbQs0we+DHjY1Q2zZRjdF394=;
+        h=From:To:Cc:Subject:Date:From;
+        b=S2j+Sc8sBIXn6aUb0rYSy2qovLdZDIyQzfcNEDYStVCjl0pgN0AZ1wk1oqeWpgVy6
+         vCV9Du4hf0ArxAkL71OgouBIOeaaGBEuRVMPD7UffmQ2tIz+XEhKJWsnHeAvWzKTQk
+         oQmbhiR68JwhrtsSSIqFAZ7GuUIc2pf7LAP3X1hw=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Sasha Levin <sashal@kernel.org>, linux-wpan@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 01/52] ieee802154: hwsim: Fix error handle path in hwsim_init_module
+Date:   Wed,  4 Sep 2019 11:59:13 -0400
+Message-Id: <20190904160004.3671-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190904155125.GC24079@linux.intel.com>
-Content-Language: en-US
-X-Originating-IP: [10.43.162.125]
-X-ClientProxiedBy: EX13D02UWC003.ant.amazon.com (10.43.162.199) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: base64
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CgpPbiAwNC4wOS4xOSAxNzo1MSwgU2VhbiBDaHJpc3RvcGhlcnNvbiB3cm90ZToKPiBPbiBXZWQs
-IFNlcCAwNCwgMjAxOSBhdCAwNTozNjozOVBNICswMjAwLCBBbGV4YW5kZXIgR3JhZiB3cm90ZToK
-Pj4KPj4KPj4gT24gMDQuMDkuMTkgMTY6NDAsIFNlYW4gQ2hyaXN0b3BoZXJzb24gd3JvdGU6Cj4+
-PiBPbiBXZWQsIFNlcCAwNCwgMjAxOSBhdCAwMzozNToxMFBNICswMjAwLCBBbGV4YW5kZXIgR3Jh
-ZiB3cm90ZToKPj4+PiBXZSBjYW4gZWFzaWx5IHJvdXRlIGhhcmR3YXJlIGludGVycnVwdHMgZGly
-ZWN0bHkgaW50byBWTSBjb250ZXh0IHdoZW4KPj4+PiB0aGV5IHRhcmdldCB0aGUgIkZpeGVkIiBv
-ciAiTG93UHJpb3JpdHkiIGRlbGl2ZXJ5IG1vZGVzLgo+Pj4+Cj4+Pj4gSG93ZXZlciwgb24gbW9k
-ZXMgc3VjaCBhcyAiU01JIiBvciAiSW5pdCIsIHdlIG5lZWQgdG8gZ28gdmlhIEtWTSBjb2RlCj4+
-Pj4gdG8gYWN0dWFsbHkgcHV0IHRoZSB2Q1BVIGludG8gYSBkaWZmZXJlbnQgbW9kZSBvZiBvcGVy
-YXRpb24sIHNvIHdlIGNhbgo+Pj4+IG5vdCBwb3N0IHRoZSBpbnRlcnJ1cHQKPj4+Pgo+Pj4+IEFk
-ZCBjb2RlIGluIHRoZSBWTVggUEkgbG9naWMgdG8gZXhwbGljaXRseSByZWZ1c2UgdG8gZXN0YWJs
-aXNoIHBvc3RlZAo+Pj4+IG1hcHBpbmdzIGZvciBhZHZhbmNlZCBJUlEgZGVsaXZlciBtb2Rlcy4g
-VGhpcyByZWZsZWN0cyB0aGUgbG9naWMgaW4KPj4+PiBfX2FwaWNfYWNjZXB0X2lycSgpIHdoaWNo
-IGFsc28gb25seSBldmVyIHBhc3NlcyBGaXhlZCBhbmQgTG93UHJpb3JpdHkKPj4+PiBpbnRlcnJ1
-cHRzIGFzIHBvc3RlZCBpbnRlcnJ1cHRzIGludG8gdGhlIGd1ZXN0Lgo+Pj4+Cj4+Pj4gVGhpcyBm
-aXhlcyBhIGJ1ZyBJIGhhdmUgd2l0aCBjb2RlIHdoaWNoIGNvbmZpZ3VyZXMgcmVhbCBoYXJkd2Fy
-ZSB0bwo+Pj4+IGluamVjdCB2aXJ0dWFsIFNNSXMgaW50byBteSBndWVzdC4KPj4+Pgo+Pj4+IFNp
-Z25lZC1vZmYtYnk6IEFsZXhhbmRlciBHcmFmIDxncmFmQGFtYXpvbi5jb20+Cj4+Pj4gUmV2aWV3
-ZWQtYnk6IExpcmFuIEFsb24gPGxpcmFuLmFsb25Ab3JhY2xlLmNvbT4KPj4+Pgo+Pj4+IC0tLQo+
-Pj4+Cj4+Pj4gdjEgLT4gdjI6Cj4+Pj4KPj4+PiAgICAtIE1ha2UgZXJyb3IgbWVzc2FnZSBtb3Jl
-IHVuaXF1ZQo+Pj4+ICAgIC0gVXBkYXRlIGNvbW1pdCBtZXNzYWdlIHRvIHBvaW50IHRvIF9fYXBp
-Y19hY2NlcHRfaXJxKCkKPj4+PiAtLS0KPj4+PiAgIGFyY2gveDg2L2t2bS92bXgvdm14LmMgfCAy
-MiArKysrKysrKysrKysrKysrKysrKysrCj4+Pj4gICAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0
-aW9ucygrKQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2t2bS92bXgvdm14LmMgYi9h
-cmNoL3g4Ni9rdm0vdm14L3ZteC5jCj4+Pj4gaW5kZXggNTcwYTIzM2UyNzJiLi44MDI5ZmU2NThj
-MzAgMTAwNjQ0Cj4+Pj4gLS0tIGEvYXJjaC94ODYva3ZtL3ZteC92bXguYwo+Pj4+ICsrKyBiL2Fy
-Y2gveDg2L2t2bS92bXgvdm14LmMKPj4+PiBAQCAtNzQwMSw2ICs3NDAxLDI4IEBAIHN0YXRpYyBp
-bnQgdm14X3VwZGF0ZV9waV9pcnRlKHN0cnVjdCBrdm0gKmt2bSwgdW5zaWduZWQgaW50IGhvc3Rf
-aXJxLAo+Pj4+ICAgCQkJY29udGludWU7Cj4+Pj4gICAJCX0KPj4+PiArCQlzd2l0Y2ggKGlycS5k
-ZWxpdmVyeV9tb2RlKSB7Cj4+Pj4gKwkJY2FzZSBkZXN0X0ZpeGVkOgo+Pj4+ICsJCWNhc2UgZGVz
-dF9Mb3dlc3RQcmlvOgo+Pj4+ICsJCQlicmVhazsKPj4+PiArCQlkZWZhdWx0Ogo+Pj4+ICsJCQkv
-Kgo+Pj4+ICsJCQkgKiBGb3Igbm9uLXRyaXZpYWwgaW50ZXJydXB0IGV2ZW50cywgd2UgbmVlZCB0
-byBnbwo+Pj4+ICsJCQkgKiB0aHJvdWdoIHRoZSBmdWxsIEtWTSBJUlEgY29kZSwgc28gcmVmdXNl
-IHRvIHRha2UKPj4+PiArCQkJICogYW55IGRpcmVjdCBQSSBhc3NpZ25tZW50cyBoZXJlLgo+Pj4+
-ICsJCQkgKi8KPj4+Cj4+PiBJTU8sIGEgYmVlZnkgY29tbWVudCBpcyB1bm5lY2Vzc2FyeSwgYW55
-b25lIHRoYXQgaXMgZGlnZ2luZyB0aHJvdWdoIHRoaXMKPj4+IGNvZGUgaGFzIGhvcGVmdWxseSBy
-ZWFkIHRoZSBQSSBzcGVjIG9yIGF0IGxlYXN0IHVuZGVyc3RhbmRzIHRoZSBiYXNpYwo+Pj4gY29u
-Y2VwdHMuICBJLmUuIGl0IHNob3VsZCBiZSBvYnZpb3VzIHRoYXQgUEkgY2FuJ3QgYmUgdXNlZCBm
-b3IgU01JLCBldGMuLi4KPj4+Cj4+Pj4gKwkJCXJldCA9IGlycV9zZXRfdmNwdV9hZmZpbml0eSho
-b3N0X2lycSwgTlVMTCk7Cj4+Pj4gKwkJCWlmIChyZXQgPCAwKSB7Cj4+Pj4gKwkJCQlwcmludGso
-S0VSTl9JTkZPCj4+Pj4gKwkJCQkgICAgIm5vbi1zdGQgSVJRIGZhaWxlZCB0byByZWNvdmVyLCBp
-cnE6ICV1XG4iLAo+Pj4+ICsJCQkJICAgIGhvc3RfaXJxKTsKPj4+PiArCQkJCWdvdG8gb3V0Owo+
-Pj4+ICsJCQl9Cj4+Pj4gKwo+Pj4+ICsJCQljb250aW51ZTsKPj4+Cj4+PiBVc2luZyBhIHN3aXRj
-aCB0byBmaWx0ZXIgb3V0IHR3byB0eXBlcyBpcyBhIGJpdCBvZiBvdmVya2lsbC4gIEl0IGFsc28K
-Pj4KPj4gVGhlIHN3aXRjaCBzaG91bGQgY29tcGlsZSBpbnRvIHRoZSBzYW1lIGFzIHRoZSBpZigp
-IGJlbG93LCBpdCdzIGp1c3QgYQo+PiBtYXR0ZXIgb2YgYmVpbmcgbW9yZSB2ZXJib3NlIGluIGNv
-ZGUuCj4+Cj4+PiBwcm9iYWJseSBtYWtlcyBzZW5zZSB0byBwZXJmb3JtIHRoZSBkZWxpdmVyX21v
-ZGUgY2hlY2tzIGJlZm9yZSBjYWxsaW5nCj4+PiBrdm1faW50cl9pc19zaW5nbGVfdmNwdSgpLiAg
-V2h5IG5vdCBzaW1wbHkgc29tZXRoaW5nIGxpa2UgdGhpcz8gIFRoZQo+Pj4gZXhpc3RpbmcgY29t
-bWVudCBhbmQgZXJyb3IgbWVzc2FnZSBhcmUgZXZlbiBnZW5lcmljIGVub3VnaCB0byBrZWVwIGFz
-IGlzLgo+Pgo+PiBPaywgc28gaG93IGFib3V0IHRoaXMsIGV2ZW4gdGhvdWdoIGl0IGdvZXMgYWdh
-aW5zdCBMaXJhbidzIGNvbW1lbnQgb24gdGhlCj4+IGNvbWJpbmVkIGRlYnVnIHByaW50Pwo+IAo+
-IEkgbWlzc2VkIHRoYXQgY29tbWVudC4KPiAKPiBIb3cgb2Z0ZW4gZG8gd2UgZXhwZWN0IGlycV9z
-ZXRfdmNwdV9hZmZpbml0eSgpIHRvIGZhaWw/ICBJZiBpdCdzIGZyZXF1ZW50Cj4gZW5vdWdoIHRo
-YXQgdGhlIGRlYnVnIG1lc3NhZ2UgbWF0dGVycywgbWF5YmUgaXQgc2hvdWxkIGJlIGEgdHJhY2Vw
-b2ludC4KCkkgZG9uJ3QgZXhwZWN0IHRvIGV2ZXIgaGl0IHRoYXQgZGVidWcgcHJpbnQsIHNvIEkg
-ZG9uJ3QgdGhpbmsgaXQgbWF0dGVycyAKcmVhbGx5LgoKPiAgIAo+PiBJZiB5b3UgdGhpbmsgaXQn
-cyByZWFzb25hYmxlIGRlc3BpdGUgdGhlIGJyb2tlbiBmb3JtYXR0aW5nLCBJJ2xsIGJlIGhhcHB5
-IHRvCj4+IGZvbGQgdGhlIHBhdGNoZXMgYW5kIHN1Ym1pdCBhcyB2My4KPj4KPj4KPj4gQWxleAo+
-Pgo+Pgo+PiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20va3ZtX2hvc3QuaAo+PiBi
-L2FyY2gveDg2L2luY2x1ZGUvYXNtL2t2bV9ob3N0LmgKPj4gaW5kZXggNDRhNWNlNTdhOTA1Li41
-NWY2OGZiMGQ3OTEgMTAwNjQ0Cj4+IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2t2bV9ob3N0
-LmgKPj4gKysrIGIvYXJjaC94ODYvaW5jbHVkZS9hc20va3ZtX2hvc3QuaAo+PiBAQCAtMTU4MSw2
-ICsxNTgxLDEyIEBAIGJvb2wga3ZtX2ludHJfaXNfc2luZ2xlX3ZjcHUoc3RydWN0IGt2bSAqa3Zt
-LCBzdHJ1Y3QKPj4ga3ZtX2xhcGljX2lycSAqaXJxLAo+PiAgIHZvaWQga3ZtX3NldF9tc2lfaXJx
-KHN0cnVjdCBrdm0gKmt2bSwgc3RydWN0IGt2bV9rZXJuZWxfaXJxX3JvdXRpbmdfZW50cnkKPj4g
-KmUsCj4+ICAgCQkgICAgIHN0cnVjdCBrdm1fbGFwaWNfaXJxICppcnEpOwo+Pgo+PiArc3RhdGlj
-IGlubGluZSBib29sIGt2bV9pcnFfaXNfZ2VuZXJpYyhzdHJ1Y3Qga3ZtX2xhcGljX2lycSAqaXJx
-KQo+PiArewo+PiArCXJldHVybiAoaXJxLT5kZWxpdmVyeV9tb2RlID09IGRlc3RfRml4ZWQgfHwK
-Pj4gKwkJaXJxLT5kZWxpdmVyeV9tb2RlID09IGRlc3RfTG93ZXN0UHJpbyk7Cj4+ICt9Cj4+ICsK
-Pj4gICBzdGF0aWMgaW5saW5lIHZvaWQga3ZtX2FyY2hfdmNwdV9ibG9ja2luZyhzdHJ1Y3Qga3Zt
-X3ZjcHUgKnZjcHUpCj4+ICAgewo+PiAgIAlpZiAoa3ZtX3g4Nl9vcHMtPnZjcHVfYmxvY2tpbmcp
-Cj4+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rdm0vc3ZtLmMgYi9hcmNoL3g4Ni9rdm0vc3ZtLmMK
-Pj4gaW5kZXggMWYyMjBhODU1MTRmLi4zNGNjNTk1MThjYmIgMTAwNjQ0Cj4+IC0tLSBhL2FyY2gv
-eDg2L2t2bS9zdm0uYwo+PiArKysgYi9hcmNoL3g4Ni9rdm0vc3ZtLmMKPj4gQEAgLTUyNjAsNyAr
-NTI2MCw4IEBAIGdldF9waV92Y3B1X2luZm8oc3RydWN0IGt2bSAqa3ZtLCBzdHJ1Y3QKPj4ga3Zt
-X2tlcm5lbF9pcnFfcm91dGluZ19lbnRyeSAqZSwKPj4KPj4gICAJa3ZtX3NldF9tc2lfaXJxKGt2
-bSwgZSwgJmlycSk7Cj4+Cj4+IC0JaWYgKCFrdm1faW50cl9pc19zaW5nbGVfdmNwdShrdm0sICZp
-cnEsICZ2Y3B1KSkgewo+PiArCWlmICgha3ZtX2ludHJfaXNfc2luZ2xlX3ZjcHUoa3ZtLCAmaXJx
-LCAmdmNwdSkgfHwKPj4gKwkgICAgIWt2bV9pcnFfaXNfZ2VuZXJpYygmaXJxKSkgewo+IAo+IEkn
-dmUgbmV2ZXIgaGVhcmQvc2VlbiB0aGUgdGVybSBnZW5lcmljIHVzZWQgdG8gZGVzY3JpYmUgeDg2
-IGludGVycnVwdHMuCj4gTWF5YmUga3ZtX2lycV9pc19pbnRyKCkgb3Iga3ZtX2lycV9pc192ZWN0
-b3JlZF9pbnRyKCk/CgpJIHdhcyB0cnlpbmcgdG8gY29tZSB1cCB3aXRoIGFueSBuYW1lIHRoYXQg
-ZGVzY3JpYmVzICJpbnRlcnJ1cHQgdGhhdCB3ZSAKY2FuIHBvc3QiLiBJZiAiaW50ciIgaXMgdGhh
-dCwgSSdsbCBiZSBoYXBweSB0byB0YWtlIGl0LiBWZWN0b3JlZF9pbnRyIApzb3VuZHMgZXZlbiB3
-b3JzZSBJTUhPIDopLgoKPiAKPj4gICAJCXByX2RlYnVnKCJTVk06ICVzOiB1c2UgbGVnYWN5IGlu
-dHIgcmVtYXAgbW9kZSBmb3IgaXJxICV1XG4iLAo+PiAgIAkJCSBfX2Z1bmNfXywgaXJxLnZlY3Rv
-cik7Cj4+ICAgCQlyZXR1cm4gLTE7Cj4+IEBAIC01MzE0LDYgKzUzMTUsNyBAQCBzdGF0aWMgaW50
-IHN2bV91cGRhdGVfcGlfaXJ0ZShzdHJ1Y3Qga3ZtICprdm0sCj4+IHVuc2lnbmVkIGludCBob3N0
-X2lycSwKPj4gICAJCSAqIDEuIFdoZW4gY2Fubm90IHRhcmdldCBpbnRlcnJ1cHQgdG8gYSBzcGVj
-aWZpYyB2Y3B1Lgo+PiAgIAkJICogMi4gVW5zZXR0aW5nIHBvc3RlZCBpbnRlcnJ1cHQuCj4+ICAg
-CQkgKiAzLiBBUElDIHZpcnRpYWxpemF0aW9uIGlzIGRpc2FibGVkIGZvciB0aGUgdmNwdS4KPj4g
-KwkJICogNC4gSVJRIGhhcyBleHRlbmRlZCBkZWxpdmVyeSBtb2RlIChTTUksIElOSVQsIGV0YykK
-PiAKPiBTaW1pbGFybHksICdleHRlbmRlZCBkZWxpdmVyeSBtb2RlJyBpc24ndCByZWFsbHkgYSB0
-aGluZywgaXQncyBzaW1wbHkgdGhlCj4gZGVsaXZlcnkgbW9kZS4KCnMvZXh0ZW5kZWQvaW5jb21w
-YXRpYmxlLyBtYXliZT8KCgpBbGV4CgoKCkFtYXpvbiBEZXZlbG9wbWVudCBDZW50ZXIgR2VybWFu
-eSBHbWJICktyYXVzZW5zdHIuIDM4CjEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJ1bmc6IENo
-cmlzdGlhbiBTY2hsYWVnZXIsIFJhbGYgSGVyYnJpY2gKRWluZ2V0cmFnZW4gYW0gQW10c2dlcmlj
-aHQgQ2hhcmxvdHRlbmJ1cmcgdW50ZXIgSFJCIDE0OTE3MyBCClNpdHo6IEJlcmxpbgpVc3QtSUQ6
-IERFIDI4OSAyMzcgODc5CgoK
+From: YueHaibing <yuehaibing@huawei.com>
+
+[ Upstream commit 1cbbbf39efab05fae67f59e6ed01bb85061c69e2 ]
+
+KASAN report this:
+
+BUG: unable to handle kernel paging request at fffffbfff834f001
+PGD 237fe8067 P4D 237fe8067 PUD 237e64067 PMD 1c968d067 PTE 0
+Oops: 0000 [#1] SMP KASAN PTI
+CPU: 1 PID: 8871 Comm: syz-executor.0 Tainted: G         C        5.0.0+ #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+RIP: 0010:strcmp+0x31/0xa0 lib/string.c:328
+Code: 00 00 00 00 fc ff df 55 53 48 83 ec 08 eb 0a 84 db 48 89 ef 74 5a 4c 89 e6 48 89 f8 48 89 fa 48 8d 6f 01 48 c1 e8 03 83 e2 07 <42> 0f b6 04 28 38 d0 7f 04 84 c0 75 50 48 89 f0 48 89 f2 0f b6 5d
+RSP: 0018:ffff8881e0c57800 EFLAGS: 00010246
+RAX: 1ffffffff834f001 RBX: ffffffffc1a78000 RCX: ffffffff827b9503
+RDX: 0000000000000000 RSI: ffffffffc1a40008 RDI: ffffffffc1a78008
+RBP: ffffffffc1a78009 R08: fffffbfff6a92195 R09: fffffbfff6a92195
+R10: ffff8881e0c578b8 R11: fffffbfff6a92194 R12: ffffffffc1a40008
+R13: dffffc0000000000 R14: ffffffffc1a3e470 R15: ffffffffc1a40000
+FS:  00007fdcc02ff700(0000) GS:ffff8881f7300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff834f001 CR3: 00000001b3134003 CR4: 00000000007606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+PKRU: 55555554
+Call Trace:
+ genl_family_find_byname+0x7f/0xf0 net/netlink/genetlink.c:104
+ genl_register_family+0x1e1/0x1070 net/netlink/genetlink.c:333
+ ? 0xffffffffc1978000
+ hwsim_init_module+0x6a/0x1000 [mac802154_hwsim]
+ ? 0xffffffffc1978000
+ ? 0xffffffffc1978000
+ ? 0xffffffffc1978000
+ do_one_initcall+0xbc/0x47d init/main.c:887
+ do_init_module+0x1b5/0x547 kernel/module.c:3456
+ load_module+0x6405/0x8c10 kernel/module.c:3804
+ __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+ do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fdcc02fec58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000020000200 RDI: 0000000000000003
+RBP: 00007fdcc02fec70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fdcc02ff6bc
+R13: 00000000004bcefa R14: 00000000006f6fb0 R15: 0000000000000004
+Modules linked in: mac802154_hwsim(+) mac802154 ieee802154 speakup(C) rc_proteus_2309 rtc_rk808 streebog_generic rds vboxguest madera_spi madera da9052_wdt mISDN_core ueagle_atm usbatm atm ir_imon_decoder scsi_transport_sas rc_dntv_live_dvb_t panel_samsung_s6d16d0 drm drm_panel_orientation_quirks lib80211 fb_agm1264k_fl(C) gspca_pac7302 gspca_main videobuf2_v4l2 soundwire_intel_init i2c_dln2 dln2 usbcore hid_gaff 88pm8607 nfnetlink axp20x_i2c axp20x uio pata_marvell pmbus_core snd_sonicvibes gameport snd_pcm snd_opl3_lib snd_timer snd_hwdep snd_mpu401_uart snd_rawmidi snd_seq_device snd soundcore rtc_ds1511 rtc_ds1742 vsock dwc_xlgmac rtc_rx8010 libphy twofish_x86_64_3way twofish_x86_64 twofish_common ad5696_i2c ad5686 lp8788_charger cxd2880_spi dvb_core videobuf2_common videodev media videobuf2_vmalloc videobuf2_memops fbtft(C) sysimgblt sysfillrect syscopyarea fb_sys_fops janz_ican3 firewire_net firewire_core crc_itu_t spi_slave_system_control i2c_matroxfb i2c_algo_bit
+ matroxfb_base fb fbdev matroxfb_DAC1064 matroxfb_accel cfbcopyarea cfbimgblt cfbfillrect matroxfb_Ti3026 matroxfb_g450 g450_pll matroxfb_misc leds_blinkm ti_dac7311 intel_spi_pci intel_spi spi_nor hid_elan hid async_tx rc_cinergy_1400 rc_core intel_ishtp kxcjk_1013 industrialio_triggered_buffer kfifo_buf can_dev intel_th spi_pxa2xx_platform pata_artop vme_ca91cx42 gb_gbphy(C) greybus(C) industrialio mptbase st_drv cmac ttpci_eeprom via_wdt gpio_xra1403 mtd iptable_security iptable_raw iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_filter bpfilter ip6_vti ip_vti ip_gre ipip sit tunnel4 ip_tunnel hsr veth netdevsim vxcan batman_adv cfg80211 rfkill chnl_net caif nlmon dummy team bonding vcan bridge stp llc ip6_gre gre ip6_tunnel tunnel6 tun joydev mousedev ppdev kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel aesni_intel aes_x86_64 input_leds crypto_simd cryptd glue_helper ide_pci_generic piix psmouse
+ ide_core serio_raw ata_generic i2c_piix4 pata_acpi parport_pc parport floppy rtc_cmos intel_agp intel_gtt agpgart sch_fq_codel ip_tables x_tables sha1_ssse3 sha1_generic ipv6 [last unloaded: speakup]
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+CR2: fffffbfff834f001
+---[ end trace 5aa772c793e0e971 ]---
+RIP: 0010:strcmp+0x31/0xa0 lib/string.c:328
+Code: 00 00 00 00 fc ff df 55 53 48 83 ec 08 eb 0a 84 db 48 89 ef 74 5a 4c 89 e6 48 89 f8 48 89 fa 48 8d 6f 01 48 c1 e8 03 83 e2 07 <42> 0f b6 04 28 38 d0 7f 04 84 c0 75 50 48 89 f0 48 89 f2 0f b6 5d
+RSP: 0018:ffff8881e0c57800 EFLAGS: 00010246
+RAX: 1ffffffff834f001 RBX: ffffffffc1a78000 RCX: ffffffff827b9503
+RDX: 0000000000000000 RSI: ffffffffc1a40008 RDI: ffffffffc1a78008
+RBP: ffffffffc1a78009 R08: fffffbfff6a92195 R09: fffffbfff6a92195
+R10: ffff8881e0c578b8 R11: fffffbfff6a92194 R12: ffffffffc1a40008
+R13: dffffc0000000000 R14: ffffffffc1a3e470 R15: ffffffffc1a40000
+FS:  00007fdcc02ff700(0000) GS:ffff8881f7300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff834f001 CR3: 00000001b3134003 CR4: 00000000007606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+PKRU: 55555554
+
+The error handing path misplace the cleanup in hwsim_init_module,
+switch the two cleanup functions to fix above issues.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: f25da51fdc38 ("ieee802154: hwsim: add replacement for fakelb")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ieee802154/mac802154_hwsim.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ieee802154/mac802154_hwsim.c b/drivers/net/ieee802154/mac802154_hwsim.c
+index f1ed1744801c7..20b4c0c21e36a 100644
+--- a/drivers/net/ieee802154/mac802154_hwsim.c
++++ b/drivers/net/ieee802154/mac802154_hwsim.c
+@@ -920,9 +920,9 @@ static __init int hwsim_init_module(void)
+ 	return 0;
+ 
+ platform_drv:
+-	genl_unregister_family(&hwsim_genl_family);
+-platform_dev:
+ 	platform_device_unregister(mac802154hwsim_dev);
++platform_dev:
++	genl_unregister_family(&hwsim_genl_family);
+ 	return rc;
+ }
+ 
+-- 
+2.20.1
 
