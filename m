@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8E46A9189
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3ED1A8ED7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389926AbfIDSRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:17:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56394 "EHLO mail.kernel.org"
+        id S2388387AbfIDSAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:00:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389848AbfIDSMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:12:06 -0400
+        id S2388004AbfIDSAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:00:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 986142339E;
-        Wed,  4 Sep 2019 18:12:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16F3D21883;
+        Wed,  4 Sep 2019 18:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620726;
-        bh=LUeoebDSkEmkqPZKQIgyABnmVp4brEV6jnYkhq/O4BY=;
+        s=default; t=1567620020;
+        bh=sT01fR+XnH3y3f0Hio8gBB8oGNSugXeFEJqbhWXUlTQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KntBZLugfoTdxV59w8na1C7LmiuqJ/BZR91nhO8ZseKUELnQ0yoFyZ+2u5vCYmzEu
-         YNOHiqUjz8XTO33aWbRE8TVZXz19FQ9ugnoum7aYDxbcvyJC+DITkwJV918zOUqwS/
-         1Mg8CF51WaXvBS01+rOOiDqHKp6RyiX6VtnqRr7g=
+        b=ObKryKXq8Vzoy4t6MfFsrScbMooHdFNQ4bfj27DatMw3BG3jL4+881OBBQTocN7hZ
+         3K1MA5xQ1ph+jz9MS0l5/tr2Fmj1EmO4VNL2gz8gslAAaIAdhJ2MEjoor8TD3l+4eh
+         K3mtNo43cJU0FlfHpL/797teUPZLJJ9GcZg8yuYM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bandan Das <bsd@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 5.2 073/143] x86/apic: Include the LDR when clearing out APIC registers
+        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 44/83] Revert "perf test 6: Fix missing kvm module load for s390"
 Date:   Wed,  4 Sep 2019 19:53:36 +0200
-Message-Id: <20190904175316.912884373@linuxfoundation.org>
+Message-Id: <20190904175307.727656314@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +42,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bandan Das <bsd@redhat.com>
+This reverts commit 9a501cdb05348fa8f85db8df5a82f4b8cd11594e.
 
-commit 558682b5291937a70748d36fd9ba757fb25b99ae upstream.
+Which was upstream commit 53fe307dfd309e425b171f6272d64296a54f4dff.
 
-Although APIC initialization will typically clear out the LDR before
-setting it, the APIC cleanup code should reset the LDR.
+Ben Hutchings reports that this commit depends on new code added in
+v4.18, and so is irrelevant on older kernels, and breaks the build.
 
-This was discovered with a 32-bit KVM guest jumping into a kdump
-kernel. The stale bits in the LDR triggered a bug in the KVM APIC
-implementation which caused the destination mapping for VCPUs to be
-corrupted.
-
-Note that this isn't intended to paper over the KVM APIC bug. The kernel
-has to clear the LDR when resetting the APIC registers except when X2APIC
-is enabled.
-
-This lacks a Fixes tag because missing to clear LDR goes way back into pre
-git history.
-
-[ tglx: Made x2apic_enabled a function call as required ]
-
-Signed-off-by: Bandan Das <bsd@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190826101513.5080-3-bsd@redhat.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/apic/apic.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ tools/perf/tests/parse-events.c | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1152,6 +1152,10 @@ void clear_local_APIC(void)
- 	apic_write(APIC_LVT0, v | APIC_LVT_MASKED);
- 	v = apic_read(APIC_LVT1);
- 	apic_write(APIC_LVT1, v | APIC_LVT_MASKED);
-+	if (!x2apic_enabled()) {
-+		v = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
-+		apic_write(APIC_LDR, v);
-+	}
- 	if (maxlvt >= 4) {
- 		v = apic_read(APIC_LVTPC);
- 		apic_write(APIC_LVTPC, v | APIC_LVT_MASKED);
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index 9134a0c3e99df..aa9276bfe3e9b 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -12,32 +12,6 @@
+ #define PERF_TP_SAMPLE_TYPE (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME | \
+ 			     PERF_SAMPLE_CPU | PERF_SAMPLE_PERIOD)
+ 
+-#if defined(__s390x__)
+-/* Return true if kvm module is available and loaded. Test this
+- * and retun success when trace point kvm_s390_create_vm
+- * exists. Otherwise this test always fails.
+- */
+-static bool kvm_s390_create_vm_valid(void)
+-{
+-	char *eventfile;
+-	bool rc = false;
+-
+-	eventfile = get_events_file("kvm-s390");
+-
+-	if (eventfile) {
+-		DIR *mydir = opendir(eventfile);
+-
+-		if (mydir) {
+-			rc = true;
+-			closedir(mydir);
+-		}
+-		put_events_file(eventfile);
+-	}
+-
+-	return rc;
+-}
+-#endif
+-
+ static int test__checkevent_tracepoint(struct perf_evlist *evlist)
+ {
+ 	struct perf_evsel *evsel = perf_evlist__first(evlist);
+@@ -1619,7 +1593,6 @@ static struct evlist_test test__events[] = {
+ 	{
+ 		.name  = "kvm-s390:kvm_s390_create_vm",
+ 		.check = test__checkevent_tracepoint,
+-		.valid = kvm_s390_create_vm_valid,
+ 		.id    = 100,
+ 	},
+ #endif
+-- 
+2.20.1
+
 
 
