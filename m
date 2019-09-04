@@ -2,75 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE409A7F92
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:39:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6DFCA7F93
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 11:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbfIDJjA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Sep 2019 05:39:00 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:36177 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726045AbfIDJi7 (ORCPT
+        id S1729512AbfIDJjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 05:39:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19924 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726495AbfIDJjq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 05:38:59 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-106-MP-yMEjzODqKT_VQfSISUA-1; Wed, 04 Sep 2019 10:38:55 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 4 Sep 2019 10:38:55 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 4 Sep 2019 10:38:55 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     =?iso-8859-2?Q?=27Valentin_Vidi=E6=27?= 
-        <vvidic@valentin-vidic.from.hr>, Al Viro <viro@zeniv.linux.org.uk>
-CC:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] staging: exfat: cleanup braces for if/else statements
-Thread-Topic: [PATCH] staging: exfat: cleanup braces for if/else statements
-Thread-Index: AQHVYoMgt2lCAY06IEWAL3uRVSEYfacbQ6fg
-Date:   Wed, 4 Sep 2019 09:38:55 +0000
-Message-ID: <d14cda319c584db9b8aa35b15b542f89@AcuMS.aculab.com>
-References: <20190903164732.14194-1-vvidic@valentin-vidic.from.hr>
- <20190903173249.GL1131@ZenIV.linux.org.uk>
- <20190903181208.GA8469@valentin-vidic.from.hr>
-In-Reply-To: <20190903181208.GA8469@valentin-vidic.from.hr>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-MC-Unique: MP-yMEjzODqKT_VQfSISUA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Wed, 4 Sep 2019 05:39:46 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x849d4o1101928
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Sep 2019 05:39:45 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ut0m67w6u-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 05:39:44 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Wed, 4 Sep 2019 10:39:41 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Sep 2019 10:39:38 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x849dDio40960454
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Sep 2019 09:39:13 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE1C1AE04D;
+        Wed,  4 Sep 2019 09:39:36 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5C195AE045;
+        Wed,  4 Sep 2019 09:39:36 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Sep 2019 09:39:36 +0000 (GMT)
+From:   Thomas Richter <tmricht@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc:     brueckner@linux.ibm.com, gor@linux.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf jvmti: Link against tools/lib/string.h to have weak strlcpy()
+Date:   Wed,  4 Sep 2019 11:39:34 +0200
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 19090409-0012-0000-0000-00000346860C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090409-0013-0000-0000-00002180D775
+Message-Id: <20190904093934.10456-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-04_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=903 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909040095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valentin Vidic
-> Sent: 03 September 2019 19:12
-> On Tue, Sep 03, 2019 at 06:32:49PM +0100, Al Viro wrote:
-> > On Tue, Sep 03, 2019 at 06:47:32PM +0200, Valentin Vidic wrote:
-> > > +			} else if (uni == 0xFFFF) {
-> > >  				skip = TRUE;
-> >
-> > While we are at it, could you get rid of that 'TRUE' macro?
-> 
-> Sure, but maybe in a separate patch since TRUE/FALSE has more
-> calls than just this.
+That is needed in systems such some S/390 distros.
 
-I bet you can get rid of the 'skip' variable and simplify the code
-by using continue/break/return (or maybe goto).
+ [root@m35lp76 perf]# readelf -s jvmti/jvmti-in.o | fgrep strlcpy
+   408: 0000000000002bc8   216 FUNC    WEAK   DEFAULT  116 strlcpy
+ [root@m35lp76 perf]#
 
-	David
+Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+---
+ tools/perf/jvmti/Build | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/tools/perf/jvmti/Build b/tools/perf/jvmti/Build
+index eaeb8cb5379b..202cadaaf097 100644
+--- a/tools/perf/jvmti/Build
++++ b/tools/perf/jvmti/Build
+@@ -1,8 +1,21 @@
+ jvmti-y += libjvmti.o
+ jvmti-y += jvmti_agent.o
+ 
++# For strlcpy
++jvmti-y += libstring.o libctype.o
++
+ CFLAGS_jvmti         = -fPIC -DPIC -I$(JDIR)/include -I$(JDIR)/include/linux
+ CFLAGS_REMOVE_jvmti  = -Wmissing-declarations
+ CFLAGS_REMOVE_jvmti += -Wstrict-prototypes
+ CFLAGS_REMOVE_jvmti += -Wextra
+ CFLAGS_REMOVE_jvmti += -Wwrite-strings
++
++CFLAGS_libstring.o += -Wno-unused-parameter -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
++
++$(OUTPUT)jvmti/libstring.o: ../lib/string.c FORCE
++	$(call rule_mkdir)
++	$(call if_changed_dep,cc_o_c)
++
++$(OUTPUT)jvmti/libctype.o: ../lib/ctype.c FORCE
++	$(call rule_mkdir)
++	$(call if_changed_dep,cc_o_c)
+-- 
+2.21.0
 
