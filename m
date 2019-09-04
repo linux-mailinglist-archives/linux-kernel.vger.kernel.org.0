@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9DBA90D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C191A8FE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390450AbfIDSMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:12:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56348 "EHLO mail.kernel.org"
+        id S2387691AbfIDSGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:06:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390442AbfIDSME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:12:04 -0400
+        id S2389009AbfIDSGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:06:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03F7D206BA;
-        Wed,  4 Sep 2019 18:12:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A27DC2341B;
+        Wed,  4 Sep 2019 18:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620723;
-        bh=pfHA4ghX1sdzBre+QSIFvxbGOXnT+CmSpcZh5msUerA=;
+        s=default; t=1567620377;
+        bh=10SmcO7SscMmpFFI6wyywl1ZMi6GyIKfshtpKjOFLMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JX42eqny7++XwhZ/KMIafdmlmEOEZ7cMOF10H+rphqjUtOujAKXrHrm8RN19TUoLI
-         Tj31jt6vHIPIqNZG8abqGYuOdfPrugNwTmiAhlbtVTv9wUhbQngamb5RIzDnfF2cMb
-         3LT/5Dc2AK3QAgzuE59+kbTZCCkd1AMQ10XAyZ5I=
+        b=Ty3uHvett3K5ykwVcs8gp3bMiAKx10y6XWGUbRZWfdklvHsq3hwwNl/mdU/h2hrOF
+         ajNYQlA5A7N2ae/rLTK70J+rlZh95DJzdNhUru05/ZTbI2Cwgr21x8CzcjkFry6Grf
+         ASbBp+Yw78Xy4Vy9FrgMP+JuiEViLlCJMj+SK88E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Bandan Das <bsd@redhat.com>
-Subject: [PATCH 5.2 072/143] x86/apic: Do not initialize LDR and DFR for bigsmp
-Date:   Wed,  4 Sep 2019 19:53:35 +0200
-Message-Id: <20190904175316.874622073@linuxfoundation.org>
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 34/93] ipv6/addrconf: allow adding multicast addr if IFA_F_MCAUTOJOIN is set
+Date:   Wed,  4 Sep 2019 19:53:36 +0200
+Message-Id: <20190904175306.241995841@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,83 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bandan Das <bsd@redhat.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-commit bae3a8d3308ee69a7dbdf145911b18dfda8ade0d upstream.
+[ Upstream commit f17f7648a49aa6728649ddf79bdbcac4f1970ce4 ]
 
-Legacy apic init uses bigsmp for smp systems with 8 and more CPUs. The
-bigsmp APIC implementation uses physical destination mode, but it
-nevertheless initializes LDR and DFR. The LDR even ends up incorrectly with
-multiple bit being set.
+In commit 93a714d6b53d ("multicast: Extend ip address command to enable
+multicast group join/leave on") we added a new flag IFA_F_MCAUTOJOIN
+to make user able to add multicast address on ethernet interface.
 
-This does not cause a functional problem because LDR and DFR are ignored
-when physical destination mode is active, but it triggered a problem on a
-32-bit KVM guest which jumps into a kdump kernel.
+This works for IPv4, but not for IPv6. See the inet6_addr_add code.
 
-The multiple bits set unearthed a bug in the KVM APIC implementation. The
-code which creates the logical destination map for VCPUs ignores the
-disabled state of the APIC and ends up overwriting an existing valid entry
-and as a result, APIC calibration hangs in the guest during kdump
-initialization.
+static int inet6_addr_add()
+{
+	...
+	if (cfg->ifa_flags & IFA_F_MCAUTOJOIN) {
+		ipv6_mc_config(net->ipv6.mc_autojoin_sk, true...)
+	}
 
-Remove the bogus LDR/DFR initialization.
+	ifp = ipv6_add_addr(idev, cfg, true, extack); <- always fail with maddr
+	if (!IS_ERR(ifp)) {
+		...
+	} else if (cfg->ifa_flags & IFA_F_MCAUTOJOIN) {
+		ipv6_mc_config(net->ipv6.mc_autojoin_sk, false...)
+	}
+}
 
-This is not intended to work around the KVM APIC bug. The LDR/DFR
-ininitalization is wrong on its own.
+But in ipv6_add_addr() it will check the address type and reject multicast
+address directly. So this feature is never worked for IPv6.
 
-The issue goes back into the pre git history. The fixes tag is the commit
-in the bitkeeper import which introduced bigsmp support in 2003.
+We should not remove the multicast address check totally in ipv6_add_addr(),
+but could accept multicast address only when IFA_F_MCAUTOJOIN flag supplied.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+v2: update commit description
 
-Fixes: db7b9e9f26b8 ("[PATCH] Clustered APIC setup for >8 CPU systems")
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Bandan Das <bsd@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190826101513.5080-2-bsd@redhat.com
+Fixes: 93a714d6b53d ("multicast: Extend ip address command to enable multicast group join/leave on")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/apic/bigsmp_32.c |   24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+ net/ipv6/addrconf.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/apic/bigsmp_32.c
-+++ b/arch/x86/kernel/apic/bigsmp_32.c
-@@ -38,32 +38,12 @@ static int bigsmp_early_logical_apicid(i
- 	return early_per_cpu(x86_cpu_to_apicid, cpu);
- }
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -995,7 +995,8 @@ ipv6_add_addr(struct inet6_dev *idev, st
+ 	int err = 0;
  
--static inline unsigned long calculate_ldr(int cpu)
--{
--	unsigned long val, id;
--
--	val = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
--	id = per_cpu(x86_bios_cpu_apicid, cpu);
--	val |= SET_APIC_LOGICAL_ID(id);
--
--	return val;
--}
--
- /*
-- * Set up the logical destination ID.
-- *
-- * Intel recommends to set DFR, LDR and TPR before enabling
-- * an APIC.  See e.g. "AP-388 82489DX User's Manual" (Intel
-- * document number 292116).  So here it goes...
-+ * bigsmp enables physical destination mode
-+ * and doesn't use LDR and DFR
-  */
- static void bigsmp_init_apic_ldr(void)
- {
--	unsigned long val;
--	int cpu = smp_processor_id();
--
--	apic_write(APIC_DFR, APIC_DFR_FLAT);
--	val = calculate_ldr(cpu);
--	apic_write(APIC_LDR, val);
- }
- 
- static void bigsmp_setup_apic_routing(void)
+ 	if (addr_type == IPV6_ADDR_ANY ||
+-	    addr_type & IPV6_ADDR_MULTICAST ||
++	    (addr_type & IPV6_ADDR_MULTICAST &&
++	     !(cfg->ifa_flags & IFA_F_MCAUTOJOIN)) ||
+ 	    (!(idev->dev->flags & IFF_LOOPBACK) &&
+ 	     addr_type & IPV6_ADDR_LOOPBACK))
+ 		return ERR_PTR(-EADDRNOTAVAIL);
 
 
