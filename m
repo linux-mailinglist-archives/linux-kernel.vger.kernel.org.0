@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B83EEA9047
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17376A8F58
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389830AbfIDSIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:08:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51670 "EHLO mail.kernel.org"
+        id S2388887AbfIDSDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:03:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389536AbfIDSIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:08:41 -0400
+        id S2388867AbfIDSDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:03:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25FC82339E;
-        Wed,  4 Sep 2019 18:08:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31F3F2339D;
+        Wed,  4 Sep 2019 18:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620520;
-        bh=BUpWZua4Q0BuGJqmrzcOimefWihH3zULKUdnDNsQTDU=;
+        s=default; t=1567620187;
+        bh=fi+kolDLinVLp769w8IN7noDpuUcqcKOXvDbumYGMhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q5wO4ay9simPVTash6j548gB0Fhzj4q14jwWastot8h3XNVjrhEbgxMpjBDDYUBc4
-         sLZ6Jc1nbI02i+wWN3FxbEJ30I1QLK2pvVmlzWGpbssHx0LCLGdayvsQHnhTF+vmDs
-         QvsSNtX86SNf8T5euaSynwQH2PLwd2mOb/6wQc8Y=
+        b=Ac+qzT6eZ8KbFTkh5W1c0P0JPhutffgYlOUBSzs2b5g8crdq3eI3JJW0LSZfpdd1h
+         PT6TupUMrYCdICNPWBFqOu+/QW3rEsAF/sJjwEhpLD1NWqpG/m50XmziG0r/fo486n
+         t9i+sUCOB/4gr+O9WM5cTaYT63a8hNl6V37lTP/k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Mayr <me@sam.st>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Subject: [PATCH 4.19 48/93] uprobes/x86: Fix detection of 32-bit user mode
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 22/57] ALSA: line6: Fix memory leak at line6_init_pcm() error path
 Date:   Wed,  4 Sep 2019 19:53:50 +0200
-Message-Id: <20190904175307.231956862@linuxfoundation.org>
+Message-Id: <20190904175304.167359849@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
-References: <20190904175302.845828956@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,128 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Mayr <me@sam.st>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 9212ec7d8357ea630031e89d0d399c761421c83b upstream.
+commit 1bc8d18c75fef3b478dbdfef722aae09e2a9fde7 upstream.
 
-32-bit processes running on a 64-bit kernel are not always detected
-correctly, causing the process to crash when uretprobes are installed.
+I forgot to release the allocated object at the early error path in
+line6_init_pcm().  For addressing it, slightly shuffle the code so
+that the PCM destructor (pcm->private_free) is assigned properly
+before all error paths.
 
-The reason for the crash is that in_ia32_syscall() is used to determine the
-process's mode, which only works correctly when called from a syscall.
-
-In the case of uretprobes, however, the function is called from a exception
-and always returns 'false' on a 64-bit kernel. In consequence this leads to
-corruption of the process's return address.
-
-Fix this by using user_64bit_mode() instead of in_ia32_syscall(), which
-is correct in any situation.
-
-[ tglx: Add a comment and the following historical info ]
-
-This should have been detected by the rename which happened in commit
-
-  abfb9498ee13 ("x86/entry: Rename is_{ia32,x32}_task() to in_{ia32,x32}_syscall()")
-
-which states in the changelog:
-
-    The is_ia32_task()/is_x32_task() function names are a big misnomer: they
-    suggests that the compat-ness of a system call is a task property, which
-    is not true, the compatness of a system call purely depends on how it
-    was invoked through the system call layer.
-    .....
-
-and then it went and blindly renamed every call site.
-
-Sadly enough this was already mentioned here:
-
-   8faaed1b9f50 ("uprobes/x86: Introduce sizeof_long(), cleanup adjust_ret_addr() and
-arch_uretprobe_hijack_return_addr()")
-
-where the changelog says:
-
-    TODO: is_ia32_task() is not what we actually want, TS_COMPAT does
-    not necessarily mean 32bit. Fortunately syscall-like insns can't be
-    probed so it actually works, but it would be better to rename and
-    use is_ia32_frame().
-
-and goes all the way back to:
-
-    0326f5a94dde ("uprobes/core: Handle breakpoint and singlestep exceptions")
-
-Oh well. 7+ years until someone actually tried a uretprobe on a 32bit
-process on a 64bit kernel....
-
-Fixes: 0326f5a94dde ("uprobes/core: Handle breakpoint and singlestep exceptions")
-Signed-off-by: Sebastian Mayr <me@sam.st>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190728152617.7308-1-me@sam.st
+Fixes: 3450121997ce ("ALSA: line6: Fix write on zero-sized buffer")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/uprobes.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ sound/usb/line6/pcm.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -521,9 +521,12 @@ struct uprobe_xol_ops {
- 	void	(*abort)(struct arch_uprobe *, struct pt_regs *);
- };
+--- a/sound/usb/line6/pcm.c
++++ b/sound/usb/line6/pcm.c
+@@ -552,6 +552,15 @@ int line6_init_pcm(struct usb_line6 *lin
+ 	line6pcm->volume_monitor = 255;
+ 	line6pcm->line6 = line6;
  
--static inline int sizeof_long(void)
-+static inline int sizeof_long(struct pt_regs *regs)
- {
--	return in_ia32_syscall() ? 4 : 8;
-+	/*
-+	 * Check registers for mode as in_xxx_syscall() does not apply here.
-+	 */
-+	return user_64bit_mode(regs) ? 8 : 4;
- }
- 
- static int default_pre_xol_op(struct arch_uprobe *auprobe, struct pt_regs *regs)
-@@ -534,9 +537,9 @@ static int default_pre_xol_op(struct arc
- 
- static int emulate_push_stack(struct pt_regs *regs, unsigned long val)
- {
--	unsigned long new_sp = regs->sp - sizeof_long();
-+	unsigned long new_sp = regs->sp - sizeof_long(regs);
- 
--	if (copy_to_user((void __user *)new_sp, &val, sizeof_long()))
-+	if (copy_to_user((void __user *)new_sp, &val, sizeof_long(regs)))
- 		return -EFAULT;
- 
- 	regs->sp = new_sp;
-@@ -569,7 +572,7 @@ static int default_post_xol_op(struct ar
- 		long correction = utask->vaddr - utask->xol_vaddr;
- 		regs->ip += correction;
- 	} else if (auprobe->defparam.fixups & UPROBE_FIX_CALL) {
--		regs->sp += sizeof_long(); /* Pop incorrect return address */
-+		regs->sp += sizeof_long(regs); /* Pop incorrect return address */
- 		if (emulate_push_stack(regs, utask->vaddr + auprobe->defparam.ilen))
- 			return -ERESTART;
++	spin_lock_init(&line6pcm->out.lock);
++	spin_lock_init(&line6pcm->in.lock);
++	line6pcm->impulse_period = LINE6_IMPULSE_DEFAULT_PERIOD;
++
++	line6->line6pcm = line6pcm;
++
++	pcm->private_data = line6pcm;
++	pcm->private_free = line6_cleanup_pcm;
++
+ 	line6pcm->max_packet_size_in =
+ 		usb_maxpacket(line6->usbdev,
+ 			usb_rcvisocpipe(line6->usbdev, ep_read), 0);
+@@ -564,15 +573,6 @@ int line6_init_pcm(struct usb_line6 *lin
+ 		return -EINVAL;
  	}
-@@ -688,7 +691,7 @@ static int branch_post_xol_op(struct arc
- 	 * "call" insn was executed out-of-line. Just restore ->sp and restart.
- 	 * We could also restore ->ip and try to call branch_emulate_op() again.
- 	 */
--	regs->sp += sizeof_long();
-+	regs->sp += sizeof_long(regs);
- 	return -ERESTART;
- }
  
-@@ -1068,7 +1071,7 @@ bool arch_uprobe_skip_sstep(struct arch_
- unsigned long
- arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr, struct pt_regs *regs)
- {
--	int rasize = sizeof_long(), nleft;
-+	int rasize = sizeof_long(regs), nleft;
- 	unsigned long orig_ret_vaddr = 0; /* clear high bits for 32-bit apps */
- 
- 	if (copy_from_user(&orig_ret_vaddr, (void __user *)regs->sp, rasize))
+-	spin_lock_init(&line6pcm->out.lock);
+-	spin_lock_init(&line6pcm->in.lock);
+-	line6pcm->impulse_period = LINE6_IMPULSE_DEFAULT_PERIOD;
+-
+-	line6->line6pcm = line6pcm;
+-
+-	pcm->private_data = line6pcm;
+-	pcm->private_free = line6_cleanup_pcm;
+-
+ 	err = line6_create_audio_out_urbs(line6pcm);
+ 	if (err < 0)
+ 		return err;
 
 
