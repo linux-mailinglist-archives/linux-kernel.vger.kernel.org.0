@@ -2,39 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8DBA8DD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F62CA8DD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731953AbfIDRsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:48:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:59344 "EHLO foss.arm.com"
+        id S1732113AbfIDRt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:49:27 -0400
+Received: from mga17.intel.com ([192.55.52.151]:54851 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729594AbfIDRsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:48:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96343337;
-        Wed,  4 Sep 2019 10:48:51 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 76BA03F67D;
-        Wed,  4 Sep 2019 10:48:50 -0700 (PDT)
-Subject: Re: [PATCH] sched: make struct task_struct::state 32-bit
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     mingo@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        linux-block@vger.kernel.org, dm-devel@redhat.com, axboe@kernel.dk,
-        aarcange@redhat.com
-References: <20190902210558.GA23013@avx2>
- <d8ad0be1-4ed7-df74-d415-2b1c9a44bac7@arm.com> <20190903181920.GA22358@avx2>
- <92ead22e-0580-c720-1a29-7db79d76f7d7@arm.com>
- <a43fe392-bd6a-71f5-8611-c6b764ba56c3@arm.com>
-Message-ID: <f0328a66-ca9f-974d-3799-e73308fb1d34@arm.com>
-Date:   Wed, 4 Sep 2019 18:48:49 +0100
+        id S1729594AbfIDRt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:49:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 10:49:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,467,1559545200"; 
+   d="scan'208";a="194814550"
+Received: from enagase-mobl1.amr.corp.intel.com (HELO [10.251.133.230]) ([10.251.133.230])
+  by orsmga002.jf.intel.com with ESMTP; 04 Sep 2019 10:49:24 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 4/5] ASoC: SOF: Intel: hda: add SoundWire
+ stream config/free callbacks
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20190821201720.17768-1-pierre-louis.bossart@linux.intel.com>
+ <20190821201720.17768-5-pierre-louis.bossart@linux.intel.com>
+ <20190822071835.GA30262@ubuntu>
+ <f73796d6-fcfa-97c8-69ae-0a183edbbd97@linux.intel.com>
+ <20190904073549.GL2672@vkoul-mobl>
+ <4de9613c-2da4-8d39-6f99-3039811673b8@linux.intel.com>
+ <20190904165522.GC2672@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <b37f7be2-27b4-4ba5-e07a-8993d8c171f2@linux.intel.com>
+Date:   Wed, 4 Sep 2019 12:49:24 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <a43fe392-bd6a-71f5-8611-c6b764ba56c3@arm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190904165522.GC2672@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -42,98 +60,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2019 13:07, Valentin Schneider wrote:
-> [...]
-> Baby steps...
 
 
-There's something regarding coccinelle disjunctions that just can't grasp,
-and this also fails to recognize "current" as being "struct task_struct*".
+On 9/4/19 11:55 AM, Vinod Koul wrote:
+> On 04-09-19, 08:31, Pierre-Louis Bossart wrote:
+>> On 9/4/19 2:35 AM, Vinod Koul wrote:
+>>> On 22-08-19, 08:53, Pierre-Louis Bossart wrote:
+>>>> Thanks for the review Guennadi
+>>>>
+>>>>>> +static int sdw_config_stream(void *arg, void *s, void *dai,
+>>>>>> +			     void *params, int link_id, int alh_stream_id)
+>>>>>
+>>>>> I realise, that these function prototypes aren't being introduced by these
+>>>>> patches, but just wondering whether such overly generic prototype is really
+>>>>> a good idea here, whether some of those "void *" pointers could be given
+>>>>> real types. The first one could be "struct device *" etc.
+>>>>
+>>>> In this case the 'arg' parameter is actually a private 'struct snd_sof_dev',
+>>>> as shown below [1]. We probably want to keep this relatively opaque, this is
+>>>> a context that doesn't need to be exposed to the SoundWire code.
+>>>
+>>> This does look bit ugly.
+>>>
+>>>> The dai and params are indeed cases where we could use stronger types, they
+>>>> are snd_soc_dai and hw_params respectively. I don't recall why the existing
+>>>> code is this way, Vinod and Sanyog may have the history of this.
+>>>
+>>> Yes we wanted to decouple the sdw and audio bits that is the reason why
+>>> none of the audio types are used here, but I think it should be revisited
+>>> and perhaps made as:
+>>>
+>>> sdw_config_stream(struct device *sdw, struct sdw_callback_ctx *ctx)
+>>>
+>>> where the callback context contains all the other args. That would make
+>>> it look lot neater too and of course use real structs if possible
+>>
+>> the suggested sdw_callbback_ctx is really intel-specific at the moment, e.g.
+>> the notion of link_id and alh_stream_id are due to the hardware, it's not
+>> generic at all. And in the latest code we also pass the dai->id.
+> 
+> s/sdw_callback_ctx/intel_sdw_callback_ctx
+> 
+> Yes this code is intel specific and this would be intel specific too
 
-Once I fix these, it's "just" a matter of finding out how to write a rule
-for layered calls (e.g. __kthread_bind() -> __kthread_bind_mask() ->
-wait_task_inactive()), and we should be close to having something somewhat
-usable.
-
----
-virtual patch
-virtual report
-
-@state_access@
-identifier func;
-struct task_struct *p;
-identifier state_var;
-position fpos;
-position epos;
-@@
-
-func(...)@fpos
-{
-	<...
-(
-  p->state & state_var@epos
-|
-  p->state | state_var@epos
-|
-  p->state < state_var@epos
-|
-  p->state > state_var@epos
-|
-  state_var@epos = p->state
-// For some reason adding this disjunction gives us more matches, but causes
-// some to go away :/
-// |
-//   p->state == state_var@epos
-|
-  p->state != state_var@epos
-)
-	...>
-}
-
-@depends on patch@
-identifier fn = state_access.func;
-identifier state_var = state_access.state_var;
-@@
-
-fn(...,
-- long state_var
-+ int state_var
-,...)
-{
-	...
-}
-
-// Should be merged in the above but can't get disjunction to work
-@depends on patch@
-identifier fn = state_access.func;
-identifier state_var = state_access.state_var;
-@@
-
-fn(...,
-- unsigned long state_var
-+ unsigned int state_var
-,...)
-{
-	...
-}
-
-// Is it possible to match without semicolons? :/
-@depends on patch@
-identifier state_var = state_access.state_var;
-expression E;
-@@
-
-(
-- long state_var;
-+ int state_var;
-|
-- long state_var = E;
-+ int state_var = E;
-)
-
-@script:python depends on report@
-fp << state_access.fpos;
-ep << state_access.epos;
-@@
-cocci.print_main("Func at", fp)
-cocci.print_main("Expr at", ep)
+ok, I'll fold all the fields in a structure then. That's a nice cleanup, 
+thanks Guennadi and Vinod for the reviews.
