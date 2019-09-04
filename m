@@ -2,101 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1F0A8F0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D6B8A91B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:40:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387866AbfIDSB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:28 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33730 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388169AbfIDSB0 (ORCPT
+        id S1732925AbfIDSXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:23:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56662 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388764AbfIDSCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:26 -0400
-Received: by mail-qt1-f196.google.com with SMTP id r5so20186104qtd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 11:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I+yojRW69JxaQ1YWeqMffbm7yLHLeYtlezXpC/ayb9A=;
-        b=kbRt0PBSJ48HPVKqYf6ln5xrY0K3tPQUm2vMDVscw9cYbN6byjes7cgfaBiOH/g4Se
-         bSV5QE+ivAav5Lo49RKTpLIuAmKnEIhwOObmqBuh3aDAtAgqiYZUoP025LEG6AO4xfOM
-         Ad4rH+Rj4ColCBhR7VZeM0jzkWvmq5qUjtYyw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I+yojRW69JxaQ1YWeqMffbm7yLHLeYtlezXpC/ayb9A=;
-        b=I0groZ1bagr8gPNVkmdIOVTUFk5j/rN78c0DHVr5C8GOJjgbKW4VJVN6hRTW3IcBjn
-         ypAvVcrkMsQ5wXxyYwYsuHv+urNVyiL/OTyR0dfnt70jXuM41jI33dp/c10cndKr4L8Y
-         UzOeHFDcXVAgmRYWtmYNL68cNFQlT/UwJXDuMFkyBrH9dg485TkEoyNRI1g3wg6W9ZHo
-         eMrnRcLkpAf6fOWk72znsbGgRhUDik9qImEbNJML2fEYQOkMnTBX42h1ObMgiCyl6Q9v
-         DeQ60ijur7L7ZqBuB2c+EvYfVSt/AYcAAeZ69I9VFi2wMOBPIlgFf8Qhfq11TMMPcvMg
-         1oyQ==
-X-Gm-Message-State: APjAAAW9TL6XTWx7papL1uiSmTyMFVt3veP+0YZDLd5A7uzHikPWmAYH
-        CiK8yHDUOAQcKRsCesJp2UhhfqWlry1l40c+OuKtnQ==
-X-Google-Smtp-Source: APXvYqwWC2X+OYzUl5J5ytQJfTXyJbSLc0g6beM03QYuEGvgG0SQAMDJ28TJJEMxAaAsJBpxWqCA1jWIOj3doc4HQKU=
-X-Received: by 2002:ac8:44c7:: with SMTP id b7mr24636084qto.170.1567620084987;
- Wed, 04 Sep 2019 11:01:24 -0700 (PDT)
+        Wed, 4 Sep 2019 14:02:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YWE0H+jTpcN/XC6vFgWxU0Ifm430UGtAcUQBmeqFffU=; b=B68GhDH9ylcTgqElA2r7zjY7O
+        lE6Rf0/LqJ/dbv7yx7jsCmrYsQoXzrSLpLhPKVcAq09WGGtdvjGxnz3fv+EJhtL7AFUeyL4hUtuyt
+        SO8pIA93xdezldWmlYuoV9FK9U45Phywr2f2VSWHYoZWaGJ6vERLfLEyOxy6AI5yugAjiWfw2SeTE
+        zbIU0h3IF2lpVTqWz7YPsRl3U0CE6wMNg2JLLw7DHSeFIaNu7K1T1oDbBlZnpyhAvdSKmvaSu5HCE
+        Pl8vLB1RU4X/IesTI8jJ4p8o22IevZ5TrXbR/ihKRX90p+CdzzdIVoIQQjW6xLbRAVWLBZKQa/0ga
+        ZRDX5wwYQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5Zbi-0004qX-Oq; Wed, 04 Sep 2019 18:02:14 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 32C2D3060BF;
+        Wed,  4 Sep 2019 20:01:35 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CD686201265AF; Wed,  4 Sep 2019 20:02:11 +0200 (CEST)
+Date:   Wed, 4 Sep 2019 20:02:11 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Sagi Grimberg <sagi@grimberg.me>, linux-scsi@vger.kernel.org,
+        Long Li <longli@microsoft.com>,
+        John Garry <john.garry@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, Jens Axboe <axboe@fb.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 1/4] softirq: implement IRQ flood detection mechanism
+Message-ID: <20190904180211.GX2332@hirez.programming.kicks-ass.net>
+References: <alpine.DEB.2.21.1908281605190.23149@nanos.tec.linutronix.de>
+ <20190903033001.GB23861@ming.t460p>
+ <299fb6b5-d414-2e71-1dd2-9d6e34ee1c79@linaro.org>
+ <20190903063125.GA21022@ming.t460p>
+ <6b88719c-782a-4a63-db9f-bf62734a7874@linaro.org>
+ <20190903072848.GA22170@ming.t460p>
+ <dd96def4-1121-afbe-2431-9e516a06850c@linaro.org>
+ <6f3b6557-1767-8c80-f786-1ea667179b39@acm.org>
+ <2a8bd278-5384-d82f-c09b-4fce236d2d95@linaro.org>
+ <de16de12-fa1a-666c-ea19-fea5d096c1ca@acm.org>
 MIME-Version: 1.0
-References: <20190830231817.76862-1-joel@joelfernandes.org>
- <201909041108.RSjNvfDL%lkp@intel.com> <20190904050419.GA102582@google.com> <CAHp75Vdeoc1S_0Dn_vk2ULPRLk_sevWoxs8+Gscv9ki_kkPx4Q@mail.gmail.com>
-In-Reply-To: <CAHp75Vdeoc1S_0Dn_vk2ULPRLk_sevWoxs8+Gscv9ki_kkPx4Q@mail.gmail.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Wed, 4 Sep 2019 14:01:13 -0400
-Message-ID: <CAEXW_YQyXSuT9o6pTdMJBM=7xRhUAGtVoteswY5hNcNZBc9bgg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pci: Convert to use built-in RCU list checking
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Keith Busch <keith.busch@intel.com>, linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de16de12-fa1a-666c-ea19-fea5d096c1ca@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 1:13 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Wed, Sep 4, 2019 at 8:07 AM Joel Fernandes <joel@joelfernandes.org> wrote:
-> >
-> > On Wed, Sep 04, 2019 at 12:06:43PM +0800, kbuild test robot wrote:
-> > > Hi "Joel,
-> > >
-> > > Thank you for the patch! Yet something to improve:
-> > >
-> > > [auto build test ERROR on linus/master]
-> > > [cannot apply to v5.3-rc7 next-20190903]
-> > > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> > >
-> > > url:    https://github.com/0day-ci/linux/commits/Joel-Fernandes-Google/pci-Convert-to-use-built-in-RCU-list-checking/20190901-211013
-> > > config: x86_64-rhel-7.6 (attached as .config)
-> > > compiler: gcc-7 (Debian 7.4.0-11) 7.4.0
-> > > reproduce:
-> > >         # save the attached .config to linux build tree
-> > >         make ARCH=x86_64
-> >
-> > This error seems bogus. I pulled -next and applied this patch and it builds
-> > fine. I am not sure what is wrong with the 0day tree, and the above 0day link
-> > is also dead.
-> >
-> > What's going on with 0day ?!
->
-> I would rather to add Depends-on: ... tag to your patch if the
-> dependency is going thru another tree at the same cycle.
-> kbuildbot absolutely correct here.
+On Wed, Sep 04, 2019 at 10:38:59AM -0700, Bart Van Assche wrote:
+> On 9/4/19 10:31 AM, Daniel Lezcano wrote:
+> > On 04/09/2019 19:07, Bart Van Assche wrote:
+> > > Only if CONFIG_IRQ_TIME_ACCOUNTING has been enabled. However, I don't
+> > > know any Linux distro that enables that option. That's probably because
+> > > that option introduces two rdtsc() calls in each interrupt. Given the
+> > > overhead introduced by this option, I don't think this is the solution
+> > > Ming is looking for.
+> > 
+> > Was this overhead reported somewhere ?
+>  I think it is widely known that rdtsc is a relatively slow x86 instruction.
+> So I expect that using that instruction will cause a measurable overhead if
+> it is called frequently enough. I'm not aware of any publicly available
+> measurement data however.
 
-The dependency is already in -next and I pulled it and applied the
-patch. It is testing -next right?
+https://www.agner.org/optimize/instruction_tables.pdf
 
-thanks,
+RDTSC, Ryzen: ~36
+RDTSC, Skylake: ~20
 
- - Joel
+Sadly those same tables don't list the cost of actual exceptions or even
+IRET :/
