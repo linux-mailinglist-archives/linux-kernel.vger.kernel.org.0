@@ -2,75 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D164A88BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:22:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C960A88BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:22:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731081AbfIDOXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 10:23:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730572AbfIDOXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 10:23:46 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03ED422CED;
-        Wed,  4 Sep 2019 14:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567607025;
-        bh=q4hCRkM7CBlSJ5qN5g57oao1y0pVDCO/sOHQjBQihhY=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=Hp6aanycZdKm59KxYy4A+pXujfEVf/oWNkMVKfp/xIX8ftyzXDe/l4sNuzlwOny+B
-         9s3gfctACIDYIRlj66faWLbQjPtqk7nqrm83ulFHPVPLvXIgkinDIk1DoJf+x0ervO
-         /otWvmmupU9DuhGRi4ikQCrs5YEoltQY9JsDo4no=
-Date:   Wed, 4 Sep 2019 16:23:27 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Dexuan Cui <decui@microsoft.com>
-cc:     "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] HID: hyperv: Use in-place iterator API in the channel
- callback
-In-Reply-To: <KU1P153MB016679060F4360071B751AF0BFB90@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
-Message-ID: <nycvar.YFH.7.76.1909041623050.31470@cbobk.fhfr.pm>
-References: <1566269763-26817-1-git-send-email-decui@microsoft.com> <KU1P153MB016679060F4360071B751AF0BFB90@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1731074AbfIDOXc convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Sep 2019 10:23:32 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:52632 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730880AbfIDOXb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 10:23:31 -0400
+Received: from marcel-macbook.fritz.box (p4FEFC197.dip0.t-ipconnect.de [79.239.193.151])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 8C9A6CECB0;
+        Wed,  4 Sep 2019 16:32:17 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] Bluetooth: btusb: Use cmd_timeout to reset Realtek device
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190903094103.GA10714@laptop-alex>
+Date:   Wed, 4 Sep 2019 16:23:29 +0200
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Max Chou <max.chou@realtek.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <989DBD04-B5DC-4733-8784-93B45BA9FF15@holtmann.org>
+References: <20190903094103.GA10714@laptop-alex>
+To:     Alex Lu <alex_lu@realsil.com.cn>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Sep 2019, Dexuan Cui wrote:
+Hi Alex,
 
-> > Hi Jiri, Benjamin, can this patch go through Sasha's hyperv tree:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git
-> > 
-> > This is a purely Hyper-V specific change.
+> Realtek Bluetooth controller provides a BT_DIS reset pin for hardware
+> reset of it. The cmd_timeout is helpful on Realtek bluetooth controller
+> where the firmware gets stuck.
 > 
-> Hi Jiri, Benjamin,
-> Are you OK if this patch for the Hyper-V HID driver goes through the Hyper-V
-> tree maintained by Sasha Levin? It's a purely Hyper-V change, and I have
-> been using the patch for several months and there is no regression.
+> Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
+> ---
+> drivers/bluetooth/btusb.c | 29 +++++++++++++++++++++--------
+> 1 file changed, 21 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 31d3febed187..a626de3a3f4c 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -489,16 +489,19 @@ struct btusb_data {
+> 	int (*setup_on_usb)(struct hci_dev *hdev);
+> 
+> 	int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
+> -	unsigned cmd_timeout_cnt;
+> +	unsigned int cmd_timeout_cnt;
+> +	unsigned int cmd_timeout_max;
+> +	unsigned int reset_msecs;
+> +	int reset_gpio_value;
+> };
+> 
+> 
+> -static void btusb_intel_cmd_timeout(struct hci_dev *hdev)
+> +static void btusb_cmd_timeout(struct hci_dev *hdev)
+> {
+> 	struct btusb_data *data = hci_get_drvdata(hdev);
+> 	struct gpio_desc *reset_gpio = data->reset_gpio;
+> 
+> -	if (++data->cmd_timeout_cnt < 5)
+> +	if (++data->cmd_timeout_cnt < data->cmd_timeout_max)
+> 		return;
+> 
+> 	if (!reset_gpio) {
+> @@ -519,9 +522,9 @@ static void btusb_intel_cmd_timeout(struct hci_dev *hdev)
+> 	}
+> 
+> 	bt_dev_err(hdev, "Initiating HW reset via gpio");
+> -	gpiod_set_value_cansleep(reset_gpio, 1);
+> -	msleep(100);
+> -	gpiod_set_value_cansleep(reset_gpio, 0);
+> +	gpiod_set_value_cansleep(reset_gpio, data->reset_gpio_value);
+> +	msleep(data->reset_msecs);
+> +	gpiod_set_value_cansleep(reset_gpio, !data->reset_gpio_value);
+> }
 
-No problem with that. Feel free to add
+I really prefer that no Realtek specifics end up in a callback that is meant for Intel hardware. So this needs to be split.
 
-	Acked-by: Jiri Kosina <jkosina@suse.cz>
+So can you just provide a btusb_rtl_cmd_timeout callback and set it in case of Realtek hardware.
 
-in that case.
+Regards
 
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+Marcel
 
