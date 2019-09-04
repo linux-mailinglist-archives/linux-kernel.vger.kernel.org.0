@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F5FA8F13
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5604BA8F72
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:35:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388618AbfIDSBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:01:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41230 "EHLO mail.kernel.org"
+        id S2388250AbfIDSDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:03:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388592AbfIDSBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:01:35 -0400
+        id S2388190AbfIDSDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:03:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6267C2339E;
-        Wed,  4 Sep 2019 18:01:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4772322CEA;
+        Wed,  4 Sep 2019 18:03:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620094;
-        bh=icEiS8cubELpyNGEJlP8+yAruHA3xIZFZjeSfrfEdKE=;
+        s=default; t=1567620219;
+        bh=Jqa7KwWv6RvHZOOVUnA2CoiUjZyNBa6w4CmiEFx6m84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1Z0ehgwdPptRz6H6doDVsNHey//WGCCaaYHV+XGm6xEzFMNnoRVb3azPHL3UhOzyE
-         Mn7IHD9k9GByg5NOdBVU8tpRvRV2AZ6q6sbJ/Se00PTPM5UYGE5CsyFjzJdL4OANrU
-         m744mxpjLOhYPeLPiwC5jZKWHQKz0pcLZvUOOTlc=
+        b=UVBRu01R2eDQSXxrBobg6SCJ7ou8eJlIMtfSqM5vCEjO3ZpB9wRumy+sAvub4bIaq
+         oneFjK5o19Q8qjnr84EYBM2yttub627PIR2Y39KiRHnZmkrpAWLHbhWek/ZzvqNpRi
+         67lQKKjNbwXqbF+ncwava0EhQQwr+zGMxyEsYRos=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4.9 69/83] usb: host: xhci: rcar: Fix typo in compatible string matching
+        stable@vger.kernel.org, Peter Chen <peter.chen@nxp.com>
+Subject: [PATCH 4.14 33/57] usb: chipidea: udc: dont do hardware access if gadget has stopped
 Date:   Wed,  4 Sep 2019 19:54:01 +0200
-Message-Id: <20190904175309.680342174@linuxfoundation.org>
+Message-Id: <20190904175305.227271525@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175301.777414715@linuxfoundation.org>
+References: <20190904175301.777414715@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +42,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Peter Chen <peter.chen@nxp.com>
 
-commit 636bd02a7ba9025ff851d0cfb92768c8fa865859 upstream.
+commit cbe85c88ce80fb92956a0793518d415864dcead8 upstream.
 
-It's spelled "renesas", not "renensas".
+After _gadget_stop_activity is executed, we can consider the hardware
+operation for gadget has finished, and the udc can be stopped and enter
+low power mode. So, any later hardware operations (from usb_ep_ops APIs
+or usb_gadget_ops APIs) should be considered invalid, any deinitializatons
+has been covered at _gadget_stop_activity.
 
-Due to this typo, RZ/G1M and RZ/G1N were not covered by the check.
+I meet this problem when I plug out usb cable from PC using mass_storage
+gadget, my callstack like: vbus interrupt->.vbus_session->
+composite_disconnect ->pm_runtime_put_sync(&_gadget->dev),
+the composite_disconnect will call fsg_disable, but fsg_disable calls
+usb_ep_disable using async way, there are register accesses for
+usb_ep_disable. So sometimes, I get system hang due to visit register
+without clock, sometimes not.
 
-Fixes: 2dc240a3308b ("usb: host: xhci: rcar: retire use of xhci_plat_type_is()")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Link: https://lore.kernel.org/r/20190827125112.12192-1-geert+renesas@glider.be
+The Linux Kernel USB maintainer Alan Stern suggests this kinds of solution.
+See: http://marc.info/?l=linux-usb&m=138541769810983&w=2.
+
+Cc: <stable@vger.kernel.org> #v4.9+
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+Link: https://lore.kernel.org/r/20190820020503.27080-2-peter.chen@nxp.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-rcar.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/chipidea/udc.c |   32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
---- a/drivers/usb/host/xhci-rcar.c
-+++ b/drivers/usb/host/xhci-rcar.c
-@@ -84,7 +84,7 @@ static int xhci_rcar_is_gen2(struct devi
- 	return of_device_is_compatible(node, "renesas,xhci-r8a7790") ||
- 		of_device_is_compatible(node, "renesas,xhci-r8a7791") ||
- 		of_device_is_compatible(node, "renesas,xhci-r8a7793") ||
--		of_device_is_compatible(node, "renensas,rcar-gen2-xhci");
-+		of_device_is_compatible(node, "renesas,rcar-gen2-xhci");
+--- a/drivers/usb/chipidea/udc.c
++++ b/drivers/usb/chipidea/udc.c
+@@ -711,12 +711,6 @@ static int _gadget_stop_activity(struct
+ 	struct ci_hdrc    *ci = container_of(gadget, struct ci_hdrc, gadget);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&ci->lock, flags);
+-	ci->gadget.speed = USB_SPEED_UNKNOWN;
+-	ci->remote_wakeup = 0;
+-	ci->suspended = 0;
+-	spin_unlock_irqrestore(&ci->lock, flags);
+-
+ 	/* flush all endpoints */
+ 	gadget_for_each_ep(ep, gadget) {
+ 		usb_ep_fifo_flush(ep);
+@@ -734,6 +728,12 @@ static int _gadget_stop_activity(struct
+ 		ci->status = NULL;
+ 	}
+ 
++	spin_lock_irqsave(&ci->lock, flags);
++	ci->gadget.speed = USB_SPEED_UNKNOWN;
++	ci->remote_wakeup = 0;
++	ci->suspended = 0;
++	spin_unlock_irqrestore(&ci->lock, flags);
++
+ 	return 0;
  }
  
- static int xhci_rcar_is_gen3(struct device *dev)
+@@ -1305,6 +1305,10 @@ static int ep_disable(struct usb_ep *ep)
+ 		return -EBUSY;
+ 
+ 	spin_lock_irqsave(hwep->lock, flags);
++	if (hwep->ci->gadget.speed == USB_SPEED_UNKNOWN) {
++		spin_unlock_irqrestore(hwep->lock, flags);
++		return 0;
++	}
+ 
+ 	/* only internal SW should disable ctrl endpts */
+ 
+@@ -1394,6 +1398,10 @@ static int ep_queue(struct usb_ep *ep, s
+ 		return -EINVAL;
+ 
+ 	spin_lock_irqsave(hwep->lock, flags);
++	if (hwep->ci->gadget.speed == USB_SPEED_UNKNOWN) {
++		spin_unlock_irqrestore(hwep->lock, flags);
++		return 0;
++	}
+ 	retval = _ep_queue(ep, req, gfp_flags);
+ 	spin_unlock_irqrestore(hwep->lock, flags);
+ 	return retval;
+@@ -1417,8 +1425,8 @@ static int ep_dequeue(struct usb_ep *ep,
+ 		return -EINVAL;
+ 
+ 	spin_lock_irqsave(hwep->lock, flags);
+-
+-	hw_ep_flush(hwep->ci, hwep->num, hwep->dir);
++	if (hwep->ci->gadget.speed != USB_SPEED_UNKNOWN)
++		hw_ep_flush(hwep->ci, hwep->num, hwep->dir);
+ 
+ 	list_for_each_entry_safe(node, tmpnode, &hwreq->tds, td) {
+ 		dma_pool_free(hwep->td_pool, node->ptr, node->dma);
+@@ -1489,6 +1497,10 @@ static void ep_fifo_flush(struct usb_ep
+ 	}
+ 
+ 	spin_lock_irqsave(hwep->lock, flags);
++	if (hwep->ci->gadget.speed == USB_SPEED_UNKNOWN) {
++		spin_unlock_irqrestore(hwep->lock, flags);
++		return;
++	}
+ 
+ 	hw_ep_flush(hwep->ci, hwep->num, hwep->dir);
+ 
+@@ -1557,6 +1569,10 @@ static int ci_udc_wakeup(struct usb_gadg
+ 	int ret = 0;
+ 
+ 	spin_lock_irqsave(&ci->lock, flags);
++	if (ci->gadget.speed == USB_SPEED_UNKNOWN) {
++		spin_unlock_irqrestore(&ci->lock, flags);
++		return 0;
++	}
+ 	if (!ci->remote_wakeup) {
+ 		ret = -EOPNOTSUPP;
+ 		goto out;
 
 
