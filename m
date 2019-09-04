@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7EC2A8EA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0DF1A8FF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387797AbfIDR7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:59:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37968 "EHLO mail.kernel.org"
+        id S2389523AbfIDSGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:06:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733102AbfIDR7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:59:12 -0400
+        id S1732321AbfIDSGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:06:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5AC62339E;
-        Wed,  4 Sep 2019 17:59:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5221B206B8;
+        Wed,  4 Sep 2019 18:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619951;
-        bh=szNqJgC9d5Ndna8YoKeMJQN4lU7/tFfd7KS/NIiUoh4=;
+        s=default; t=1567620408;
+        bh=as9IDoLOXjKLbKXbU0yPfgoS6voJ46GA2f3Iehu/nrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rGol/AB5Ja/qoZ8a748MgbF8+E/fTFSHYnjtRN4aSWStVkVdvlm8mfWIWBRrE+IHv
-         I+Tn4j+NpkRjEUDk59bkFW5d5a339hzKqXgsGaXSQFLJ/0EeRsDl32fdWG5Q9MKstR
-         GihtMrCuTcP1t29G+3Ij24f54aNaX2NXA47i83EE=
+        b=d2+E4bQbk9SvTllTcQ2S861ycwt0pABH01w2F/MJaJDgc4nmNT7N/StZ8ga9HxLwK
+         L1QS1kiMIdTLGP1jv5GgSc/3+IOOCNNajGDsHpvmPA0HG8aibm0ZOFpTSDIyRpHnNt
+         mZe5o+vuB5nHCUQTjFFPxXiFAK/jSCs7kDARjo1E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 18/83] HID: input: fix a4tech horizontal wheel custom usage
-Date:   Wed,  4 Sep 2019 19:53:10 +0200
-Message-Id: <20190904175305.548719888@linuxfoundation.org>
+        stable@vger.kernel.org, Li Zhong <lizhongfs@gmail.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 09/93] nvme-pci: Fix async probe remove race
+Date:   Wed,  4 Sep 2019 19:53:11 +0200
+Message-Id: <20190904175303.925353679@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1c703b53e5bfb5c2205c30f0fb157ce271fd42fb ]
+[ Upstream commit bd46a90634302bfe791e93ad5496f98f165f7ae0 ]
 
-Some a4tech mice use the 'GenericDesktop.00b8' usage to inform whether
-the previous wheel report was horizontal or vertical. Before
-c01908a14bf73 ("HID: input: add mapping for "Toggle Display" key") this
-usage was being mapped to 'Relative.Misc'. After the patch it's simply
-ignored (usage->type == 0 & usage->code == 0). Which ultimately makes
-hid-a4tech ignore the WHEEL/HWHEEL selection event, as it has no
-usage->type.
+Ensure the controller is not in the NEW state when nvme_probe() exits.
+This will always allow a subsequent nvme_remove() to set the state to
+DELETING, fixing a potential race between the initial asynchronous probe
+and device removal.
 
-We shouldn't rely on a mapping for that usage as it's nonstandard and
-doesn't really map to an input event. So we bypass the mapping and make
-sure the custom event handling properly handles both reports.
-
-Fixes: c01908a14bf73 ("HID: input: add mapping for "Toggle Display" key")
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Reported-by: Li Zhong <lizhongfs@gmail.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-a4tech.c | 30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ drivers/nvme/host/pci.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-a4tech.c b/drivers/hid/hid-a4tech.c
-index 9428ea7cdf8a0..c52bd163abb3e 100644
---- a/drivers/hid/hid-a4tech.c
-+++ b/drivers/hid/hid-a4tech.c
-@@ -26,12 +26,36 @@
- #define A4_2WHEEL_MOUSE_HACK_7	0x01
- #define A4_2WHEEL_MOUSE_HACK_B8	0x02
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 0a5d064f82ca3..a64a8bca0d5b9 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2468,7 +2468,7 @@ static void nvme_async_probe(void *data, async_cookie_t cookie)
+ {
+ 	struct nvme_dev *dev = data;
  
-+#define A4_WHEEL_ORIENTATION	(HID_UP_GENDESK | 0x000000b8)
-+
- struct a4tech_sc {
- 	unsigned long quirks;
- 	unsigned int hw_wheel;
- 	__s32 delayed_value;
- };
+-	nvme_reset_ctrl_sync(&dev->ctrl);
++	flush_work(&dev->ctrl.reset_work);
+ 	flush_work(&dev->ctrl.scan_work);
+ 	nvme_put_ctrl(&dev->ctrl);
+ }
+@@ -2535,6 +2535,7 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  
-+static int a4_input_mapping(struct hid_device *hdev, struct hid_input *hi,
-+			    struct hid_field *field, struct hid_usage *usage,
-+			    unsigned long **bit, int *max)
-+{
-+	struct a4tech_sc *a4 = hid_get_drvdata(hdev);
-+
-+	if (a4->quirks & A4_2WHEEL_MOUSE_HACK_B8 &&
-+	    usage->hid == A4_WHEEL_ORIENTATION) {
-+		/*
-+		 * We do not want to have this usage mapped to anything as it's
-+		 * nonstandard and doesn't really behave like an HID report.
-+		 * It's only selecting the orientation (vertical/horizontal) of
-+		 * the previous mouse wheel report. The input_events will be
-+		 * generated once both reports are recorded in a4_event().
-+		 */
-+		return -1;
-+	}
-+
-+	return 0;
-+
-+}
-+
- static int a4_input_mapped(struct hid_device *hdev, struct hid_input *hi,
- 		struct hid_field *field, struct hid_usage *usage,
- 		unsigned long **bit, int *max)
-@@ -53,8 +77,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
- 	struct a4tech_sc *a4 = hid_get_drvdata(hdev);
- 	struct input_dev *input;
+ 	dev_info(dev->ctrl.device, "pci function %s\n", dev_name(&pdev->dev));
  
--	if (!(hdev->claimed & HID_CLAIMED_INPUT) || !field->hidinput ||
--			!usage->type)
-+	if (!(hdev->claimed & HID_CLAIMED_INPUT) || !field->hidinput)
- 		return 0;
++	nvme_reset_ctrl(&dev->ctrl);
+ 	nvme_get_ctrl(&dev->ctrl);
+ 	async_schedule(nvme_async_probe, dev);
  
- 	input = field->hidinput->input;
-@@ -65,7 +88,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,
- 			return 1;
- 		}
- 
--		if (usage->hid == 0x000100b8) {
-+		if (usage->hid == A4_WHEEL_ORIENTATION) {
- 			input_event(input, EV_REL, value ? REL_HWHEEL :
- 					REL_WHEEL, a4->delayed_value);
- 			return 1;
-@@ -129,6 +152,7 @@ MODULE_DEVICE_TABLE(hid, a4_devices);
- static struct hid_driver a4_driver = {
- 	.name = "a4tech",
- 	.id_table = a4_devices,
-+	.input_mapping = a4_input_mapping,
- 	.input_mapped = a4_input_mapped,
- 	.event = a4_event,
- 	.probe = a4_probe,
 -- 
 2.20.1
 
