@@ -2,87 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D339A88AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:22:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ED8CA88B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:22:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730985AbfIDOVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 10:21:42 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:46720 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729993AbfIDOVm (ORCPT
+        id S1731026AbfIDOWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 10:22:16 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39850 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730075AbfIDOWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 10:21:42 -0400
-Received: (qmail 2340 invoked by uid 2102); 4 Sep 2019 10:21:40 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 4 Sep 2019 10:21:40 -0400
-Date:   Wed, 4 Sep 2019 10:21:40 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Felipe Balbi <balbi@kernel.org>
-cc:     Jacky.Cao@sony.com, <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Kento.A.Kobayashi@sony.com>
-Subject: Re: [PATCH] USB: dummy-hcd: fix power budget for SuperSpeed mode
-In-Reply-To: <87sgpcmr7v.fsf@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1909041017180.1722-100000@iolanthe.rowland.org>
+        Wed, 4 Sep 2019 10:22:15 -0400
+Received: by mail-pl1-f193.google.com with SMTP id bd8so3321151plb.6
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 07:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zLfyPE0SwETDkvtq1bsqjNVDjHFo5NFhYLI0JJDHf+U=;
+        b=1snVJDaz07aE2jmpN2RYpCQk1j6M/Srf+5TWc6mM9g3qTtc/LGhpFS8SBr3wKWtEUs
+         2vYCnwXgW9GP8u+jBChNFuPMJ8iwZ9V7Xcr5VSkZ9pwacLNBnQbE0mDlDmHrKh6ex7KU
+         dEWnsOFqHjya8jp54mNersHodjBUqcvphyH7IfadVYLHKiPHrbJWewxG3TVx7nFeFjiN
+         rQk268Xl9j6jNOHV5Tft4pL4TgqePxl2lKQ7MPMfBiNESFOZceoezwFHn8NU4khM2WX0
+         p/zEYa4oRctpb7xuorIQkOq1Zv3b4yQo/bzlGSKATz5xFIwT+rPVQBDntFMkz5DnGdMA
+         4y8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zLfyPE0SwETDkvtq1bsqjNVDjHFo5NFhYLI0JJDHf+U=;
+        b=LUaPhug79zW8m5vSCuZbG9+W16CbaUfROI6+gdEZL8pzwJ5Gk+JwtQcCFb6Isyjv7p
+         OiRmUeNT/JJnoiscM7HEcQo1VE927xuENYfClJcRhn6CnZP28zqGmuYk3YHM5SUN8ut3
+         zy19Cc6XIjQEyUptvBL36cDos12a50rDWGuteScPVa8EU+jaTFwC3QuGFScW6aNf9Vs5
+         RSSkW3JyZyq/o+aksl9+TU9XN30Jv8UNTSjv6Vh76RptuzRO+GaspqyM3Np/YUZdrXJE
+         X3RjVGasTG0ByeQS6isB33OIkZg+TYNmd9GCnaKwVlxIWL3wXnVMXCxDUOn6BwZD//lF
+         zfVg==
+X-Gm-Message-State: APjAAAXVfIk6MenytO7qn9+er4qV9YliE0/EZSFUTg7vUG5aM++UnHIy
+        ZhAE1Es/4V58BwfL9ZC57QXx/cIK0iYVhsCH/yw=
+X-Google-Smtp-Source: APXvYqwXlRS/Ftz/KVLDn4/l/NIOLb/ncyHE2q5troSsqlmTwDtLGgmlgtnwK5RjJr9zJVjSABvjyUk7dHWl92vOS74=
+X-Received: by 2002:a17:902:8a93:: with SMTP id p19mr41493501plo.106.1567606935073;
+ Wed, 04 Sep 2019 07:22:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20190904005831.153934-1-justin.he@arm.com> <fd22d787-3240-fe42-3ca3-9e8a98f86fce@arm.com>
+In-Reply-To: <fd22d787-3240-fe42-3ca3-9e8a98f86fce@arm.com>
+From:   Catalin Marinas <catalin.marinas@arm.com>
+Date:   Wed, 4 Sep 2019 15:22:03 +0100
+Message-ID: <CAHkRjk6cQTu7N+UanTspWm_LyABRhfPHQn1+PPdaHYrTC3PtfQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: fix double page fault on arm64 if PTE_AF is cleared
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Jia He <justin.he@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Airlie <airlied@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Sep 2019, Felipe Balbi wrote:
-
-> 
-> Hi,
-> 
-> <Jacky.Cao@sony.com> writes:
-> 
-> > The power budget for SuperSpeed mode should be 900 mA
-> > according to USB3.0 specification, so set the power
-> > budget to 900 mA for dummy_start_ss which is only used
-> > for SuperSpeed mode.
+On Wed, 4 Sep 2019 at 04:20, Anshuman Khandual
+<anshuman.khandual@arm.com> wrote:
+> On 09/04/2019 06:28 AM, Jia He wrote:
+> > @@ -2152,20 +2153,30 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
+> >        */
+> >       if (unlikely(!src)) {
+> >               void *kaddr = kmap_atomic(dst);
+> > -             void __user *uaddr = (void __user *)(va & PAGE_MASK);
+> > +             void __user *uaddr = (void __user *)(vmf->address & PAGE_MASK);
+> > +             pte_t entry;
 > >
-> > If the max power consumption of SuperSpeed device is
-> > larger than 500 mA, insufficient available bus power
-> > error happens in usb_choose_configuration function
-> > when the device connects to dummy hcd.
-> >
-> > Signed-off-by: Jacky Cao <Jacky.Cao@sony.com>
-> > ---
-> > drivers/usb/gadget/udc/dummy_hcd.c | 3 ++-
-> > 1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/dummy_hcd.c
-> > index 8414fac..52f2cf5 100644
-> > --- a/drivers/usb/gadget/udc/dummy_hcd.c
-> > +++ b/drivers/usb/gadget/udc/dummy_hcd.c
-> > @@ -48,6 +48,7 @@
-> > #define DRIVER_VERSION "02 May 2005"
-> >
-> >  #define POWER_BUDGET  500  /* in mA; use 8 for low-power port testing */
-> > +#define POWER_BUDGET_3_0  900  /* in mA */
-> >
-> >  static const char  driver_name[] = "dummy_hcd";
-> > static const char  driver_desc[] = "USB Host+Gadget Emulator";
-> > @@ -2432,7 +2433,7 @@ static int dummy_start_ss(struct dummy_hcd *dum_hcd)
-> >      dum_hcd->rh_state = DUMMY_RH_RUNNING;
-> >      dum_hcd->stream_en_ep = 0;
-> >      INIT_LIST_HEAD(&dum_hcd->urbp_list);
-> > -     dummy_hcd_to_hcd(dum_hcd)->power_budget = POWER_BUDGET;
-> > +     dummy_hcd_to_hcd(dum_hcd)->power_budget = POWER_BUDGET_3_0;
-> >      dummy_hcd_to_hcd(dum_hcd)->state = HC_STATE_RUNNING;
-> >      dummy_hcd_to_hcd(dum_hcd)->uses_new_polling = 1;
-> > #ifdef CONFIG_USB_OTG
-> 
-> Alan, I suppose you're okay with this change?
+> >               /*
+> >                * This really shouldn't fail, because the page is there
+> >                * in the page tables. But it might just be unreadable,
+> >                * in which case we just give up and fill the result with
+> > -              * zeroes.
+> > +              * zeroes. If PTE_AF is cleared on arm64, it might
+> > +              * cause double page fault here. so makes pte young here
+> >                */
+> > +             if (!pte_young(vmf->orig_pte)) {
+> > +                     entry = pte_mkyoung(vmf->orig_pte);
+> > +                     if (ptep_set_access_flags(vmf->vma, vmf->address,
+> > +                             vmf->pte, entry, vmf->flags & FAULT_FLAG_WRITE))
+> > +                             update_mmu_cache(vmf->vma, vmf->address,
+> > +                                             vmf->pte);
+> > +             }
+> > +
+> >               if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
+>
+> Should not page fault be disabled when doing this ?
 
-Yes.  Except that I think the name POWER_BUDGET_3_0 is a little odd.  
-It implies that this change is specific to USB 3.0 -- but it isn't.  
-USB 3.1 and 3.2 also have a 900 mA limit, right?
+Page faults are already disabled by the kmap_atomic(). But that only
+means that you don't deadlock trying to take the mmap_sem again.
 
-So please consider changing the name to POWER_BUDGET_3.
+> Ideally it should
+> have also called access_ok() on the user address range first.
 
-Alan Stern
+Not necessary, we've already got a vma and the access to the vma checked.
 
+> The point
+> is that the caller of __copy_from_user_inatomic() must make sure that
+> there cannot be any page fault while doing the actual copy.
+
+When you copy from a user address, in general that's not guaranteed,
+more of a best effort.
+
+> But also it
+> should be done in generic way, something like in access_ok(). The current
+> proposal here seems very specific to arm64 case.
+
+The commit log didn't explain the problem properly. On arm64 without
+hardware Access Flag, copying from user will fail because the pte is
+old and cannot be marked young. So we always end up with zeroed page
+after fork() + CoW for pfn mappings.
+
+-- 
+Catalin
