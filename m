@@ -2,87 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A409A8999
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FA28A899C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:24:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731317AbfIDPhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 11:37:12 -0400
-Received: from smtprelay0110.hostedemail.com ([216.40.44.110]:48652 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729773AbfIDPhM (ORCPT
+        id S1731417AbfIDPhg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 11:37:36 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34461 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731360AbfIDPhf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 11:37:12 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id B7BBF180A68D8;
-        Wed,  4 Sep 2019 15:37:10 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2553:2559:2562:2828:2915:3138:3139:3140:3141:3142:3352:3622:3653:3865:3866:3867:3868:3871:3873:3874:4321:5007:6119:6120:8957:10004:10400:10848:11232:11658:11914:12043:12297:12438:12740:12760:12895:13069:13161:13229:13255:13311:13357:13439:14181:14659:21080:21221:21451:21505:21611:21627:21740:30030:30054:30069:30070:30083:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:30,LUA_SUMMARY:none
-X-HE-Tag: tiger34_3e76a9afc5644
-X-Filterd-Recvd-Size: 2411
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  4 Sep 2019 15:37:09 +0000 (UTC)
-Message-ID: <78ccab5e0f07b3acaade1dec1ca3241938ab298f.camel@perches.com>
-Subject: Re: [PATCH v4 10/11] lib/vsprintf: Add %pfw conversion specifier
- for printing fwnode names
-From:   Joe Perches <joe@perches.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
-Date:   Wed, 04 Sep 2019 08:37:08 -0700
-In-Reply-To: <20190904150413.GU5475@paasikivi.fi.intel.com>
-References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
-         <20190902083240.20367-11-sakari.ailus@linux.intel.com>
-         <20190903130607.cf2qv3s3evobbd5g@pathway.suse.cz>
-         <20190904150413.GU5475@paasikivi.fi.intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Wed, 4 Sep 2019 11:37:35 -0400
+Received: by mail-lf1-f65.google.com with SMTP id z21so16344603lfe.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 08:37:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+Ye9YWn7/omSBzztqXrART/0Y1Y+95q9ms0+sQVUL6s=;
+        b=Tu8rI1Kuamg9Y649dTRy6XriM1ep1WSj4qoLBaUx7TjgzUtiI/VEEby+la8mEBB+PG
+         Xob6GPod8Ha5e3Ql6YmSLrIt0VPwwW5obmWhP4XmSFp6kBz55UhtazRKHVcLIhVxZ//7
+         1BPVanhCbQj82kRCTkiF0rX2mWpspkpCTlkh/dXJa0rrJBOulWhJ6SKVbtcJo2Bz8wBs
+         SW0JMWKmqtd74JWL921q4RgUWsjLjeTu/4LlLiIjKU+vdznmtuaGqFQe8FYG2sYFDDHF
+         o4sug+VflmpMgVuiPzwZZ3/hMP9mTRTeuLpolRv5BEMEf7pbBoz9okuIWD5yjYdqyjiB
+         s/ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+Ye9YWn7/omSBzztqXrART/0Y1Y+95q9ms0+sQVUL6s=;
+        b=C3410y6FVNdCKaWsZno9PYaIuJ6Hs+7m+8i177KEwK+MdXoqFMCBSojoJLneNIrQpa
+         Hb4TySesnxecT6eNnBA8m9Am29sL26VTtiSOwo8BKIWMHZ9bkYpho+LtSPAA3fvzLme+
+         xpNq37jJtEVFeKCCR+eq3lD3FktnwkiFh1rBf8oWQhGtZZKluwbCAqx3+H/XJKmJwE2t
+         6jQr79DtWKxrrksIytESnVaxmWErDXpLvB00mL9OUm3ZWRKgc+2uE1waGrxGkGyEbNkh
+         ppZqiK3N2nlTuFwIHcm/L1/LFmmhM4EKpJr0lPumDuaKD3hUTwKl1l5qmVzkbGsH0mVx
+         UqJQ==
+X-Gm-Message-State: APjAAAWCh4QQd6rvlcRu53bM9OTY7pFleS9JzyU3t0zYan3qLehtk3cc
+        0nahkmi+vdBuNA1pUIxSLBljGWRpNh6w6lkAZIE=
+X-Google-Smtp-Source: APXvYqxVMjCIJsj8a0ahcD1Ttkk6UogqOJ9pBT3H31FXsfLdy0wTZNjRvPRuriAaSVEmYEHYFc/9ssoPjOp9pmWdrC8=
+X-Received: by 2002:ac2:558a:: with SMTP id v10mr3132487lfg.162.1567611453657;
+ Wed, 04 Sep 2019 08:37:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190903154340.860299-1-rkrcmar@redhat.com> <20190903154340.860299-3-rkrcmar@redhat.com>
+ <a2924d91-df68-42de-0709-af53649346d5@arm.com> <20190904042310.GA159235@google.com>
+ <20190904081448.GZ2349@hirez.programming.kicks-ass.net> <20190904131154.GF144846@google.com>
+ <CAADnVQL3CsB6z98BFWd8wn7WKk+W4UVH2NbzrhJgeaU-D-n3ug@mail.gmail.com> <20190904153330.GI240514@google.com>
+In-Reply-To: <20190904153330.GI240514@google.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 4 Sep 2019 08:37:22 -0700
+Message-ID: <CAADnVQ+Cwe27pwTwJ3TNiatKe8dXAwXBf_2jJDqxB0RFUbr7_A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] sched/debug: add sched_update_nr_running tracepoint
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        =?UTF-8?Q?Jirka_Hladk=C3=BD?= <jhladky@redhat.com>,
+        =?UTF-8?B?SmnFmcOtIFZvesOhcg==?= <jvozar@redhat.com>,
+        X86 ML <x86@kernel.org>, Qais Yousef <qais.yousef@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-09-04 at 18:04 +0300, Sakari Ailus wrote:
-> On Tue, Sep 03, 2019 at 03:06:07PM +0200, Petr Mladek wrote:
-> > On Mon 2019-09-02 11:32:39, Sakari Ailus wrote:
-[]
-> > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> > > @@ -5995,7 +5995,8 @@ sub process {
-> > >  				while ($fmt =~ /(\%[\*\d\.]*p(\w))/g) {
-> > >  					$specifier = $1;
-> > >  					$extension = $2;
-> > > -					if ($extension !~ /[SsBKRraEhMmIiUDdgVCbGNOxt]/) {
-> > > +					if ($extension !~ /[SsBKRraEhMmIiUDdgVCbGNOxtf]/ ||
-> > > +					    $extension =~ /^f[^w]/) {
-> > 
-> > This does not work. $extension seems to have only one character.
-> 
-> Good catch. \w indeed matches a single letter; I'll change that to \w+ and
-> change the other uses accordingly.
+On Wed, Sep 4, 2019 at 8:33 AM Joel Fernandes <joel@joelfernandes.org> wrote:
+>
+> On Wed, Sep 04, 2019 at 08:26:52AM -0700, Alexei Starovoitov wrote:
+> > On Wed, Sep 4, 2019 at 6:14 AM Joel Fernandes <joel@joelfernandes.org> wrote:
+> > >
+> > > True. However, for kprobes-based BPF program - it does check for kernel
+> > > version to ensure that the BPF program is built against the right kernel
+> > > version (in order to ensure the program is built against the right set of
+> > > kernel headers). If it is not, then BPF refuses to load the program.
+> >
+> > This is not true anymore. Users found few ways to workaround that check
+> > in practice. It became useless and it was deleted some time ago.
+>
+> Wow, Ok! Interesting!
 
-If you want to make changes to checkpatch, please
-send patches to the checkpatch maintainers.
-
-Don't break other parsing of $2/#extension.
-
-If you really need to know whatever follows the specific
-extension letter use another capture group.
-
-			while ($fmt =~  /(\%[\*\d\.]*p(\w)(\w*))/g) {
-				$specifier = $1;
-				$extension = $2;
-				$qualifier = $3;
-
-etc...
-
-Then verify $qualifier or $3 is not undef if necessary
-
-
+the other part of your email says about kernel header requirement.
+This is not true any more as well :)
+BTF relocations are already supported by the kernel, llvm, libbpf,
+bpftool, pahole.
+We'll be posting sample code soon.
