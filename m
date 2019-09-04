@@ -2,90 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40D52A83FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:49:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D69A83F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 15:48:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfIDMy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 08:54:57 -0400
-Received: from wp498.webpack.hosteurope.de ([80.237.130.20]:46840 "EHLO
-        wp498.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725965AbfIDMy4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:54:56 -0400
-X-Greylist: delayed 2250 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Sep 2019 08:54:56 EDT
-Received: from p50937f79.dip0.t-ipconnect.de ([80.147.127.121] helo=ubuntu-VirtualBox.i.sigma-surface-science.com); authenticated
-        by wp498.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA1:128)
-        id 1i5UEh-0001JK-N9; Wed, 04 Sep 2019 14:18:07 +0200
-From:   =?UTF-8?q?Christoph=20Vogtl=C3=A4nder?= 
-        <c.vogtlaender@sigma-surface-science.com>
-Cc:     =?UTF-8?q?Christoph=20Vogtl=C3=A4nder?= 
-        <c.vogtlaender@sigma-surface-science.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] serial: max310x: turn off transmitter before activating AutoCTS or auto transmitter flow control
-Date:   Wed,  4 Sep 2019 14:17:46 +0200
-Message-Id: <20190904121746.4641-1-c.vogtlaender@sigma-surface-science.com>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <20190904073022.GB9729@kroah.com>
-References: <20190904073022.GB9729@kroah.com>
+        id S1730084AbfIDMw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 08:52:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49034 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727083AbfIDMw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 08:52:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1084EAF47;
+        Wed,  4 Sep 2019 12:52:27 +0000 (UTC)
+Date:   Wed, 4 Sep 2019 14:52:26 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     sunqiuyang <sunqiuyang@huawei.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/1] mm/migrate: fix list corruption in migration of
+ non-LRU movable pages
+Message-ID: <20190904125226.GV3838@dhcp22.suse.cz>
+References: <20190903082746.20736-1-sunqiuyang@huawei.com>
+ <20190903131737.GB18939@dhcp22.suse.cz>
+ <157FC541501A9C4C862B2F16FFE316DC190C1B09@dggeml512-mbx.china.huawei.com>
+ <20190904063836.GD3838@dhcp22.suse.cz>
+ <157FC541501A9C4C862B2F16FFE316DC190C2EBD@dggeml512-mbx.china.huawei.com>
+ <20190904081408.GF3838@dhcp22.suse.cz>
+ <157FC541501A9C4C862B2F16FFE316DC190C3402@dggeml512-mbx.china.huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;c.vogtlaender@sigma-surface-science.com;1567601696;333f7ae9;
-X-HE-SMSGID: 1i5UEh-0001JK-N9
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157FC541501A9C4C862B2F16FFE316DC190C3402@dggeml512-mbx.china.huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As documented in the data-sheet, the transmitter must be disabled before
-activating AutoCTS or auto transmitter flow control. Accordingly, the
-transmitter must be enabled after AutoCTS or auto transmitter flow
-control gets deactivated.
+On Wed 04-09-19 12:19:11, sunqiuyang wrote:
+> > Do not top post please
+> > 
+> > On Wed 04-09-19 07:27:25, sunqiuyang wrote:
+> > > isolate_migratepages_block() from another thread may try to isolate the page again:
+> > >
+> > > for (; low_pfn < end_pfn; low_pfn++) {
+> > >   /* ... */
+> > >   page = pfn_to_page(low_pfn);
+> > >  /* ... */
+> > >   if (!PageLRU(page)) {
+> > >     if (unlikely(__PageMovable(page)) && !PageIsolated(page)) {
+> > >         /* ... */
+> > >         if (!isolate_movable_page(page, isolate_mode))
+> > >           goto isolate_success;
+> > >       /*... */
+> > > isolate_success:
+> > >      list_add(&page->lru, &cc->migratepages);
+> > >
+> > > And this page will be added to another list.
+> > > Or, do you see any reason that the page cannot go through this path?
+> > 
+> > The page shouldn't be __PageMovable after the migration is done. All the
+> > state should have been transfered to the new page IIUC.
+> > 
+>
+> I don't see where page->mapping is modified after the migration is done. 
+> 
+> Actually, the last comment in move_to_new_page() says,
+> "Anonymous and movable page->mapping will be cleard by
+> free_pages_prepare so don't reset it here for keeping
+> the type to work PageAnon, for example. "
+> 
+> Or did I miss something? Thanks,
 
-Signed-off-by: Christoph Vogtländer <c.vogtlaender@sigma-surface-science.com>
----
- drivers/tty/serial/max310x.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+This talks about mapping rather than flags stored in the mapping.
+I can see that in tree migration handlers (z3fold_page_migrate,
+vmballoon_migratepage via balloon_page_delete, zs_page_migrate via
+reset_page) all reset the movable flag. I am not sure whether that is a
+documented requirement or just a coincidence. Maybe it should be
+documented. I would like to hear from Minchan.
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index fb5a7e0e58e9..adfef6dae4a7 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -860,6 +860,15 @@ static void max310x_set_termios(struct uart_port *port,
- 	max310x_port_write(port, MAX310X_XON1_REG, termios->c_cc[VSTART]);
- 	max310x_port_write(port, MAX310X_XOFF1_REG, termios->c_cc[VSTOP]);
- 
-+	/* Disable transmitter before enabling AutoCTS or auto transmitter
-+	 * flow control
-+	 */
-+	if (termios->c_cflag & CRTSCTS || termios->c_iflag & IXOFF) {
-+		max310x_port_update(port, MAX310X_MODE1_REG,
-+				    MAX310X_MODE1_TXDIS_BIT,
-+				    MAX310X_MODE1_TXDIS_BIT);
-+	}
-+
- 	port->status &= ~(UPSTAT_AUTOCTS | UPSTAT_AUTORTS | UPSTAT_AUTOXOFF);
- 
- 	if (termios->c_cflag & CRTSCTS) {
-@@ -878,6 +887,15 @@ static void max310x_set_termios(struct uart_port *port,
- 	}
- 	max310x_port_write(port, MAX310X_FLOWCTRL_REG, flow);
- 
-+	/* Enable transmitter after disabling AutoCTS and auto transmitter
-+	 * flow control
-+	 */
-+	if (!(termios->c_cflag & CRTSCTS) && !(termios->c_iflag & IXOFF)) {
-+		max310x_port_update(port, MAX310X_MODE1_REG,
-+				    MAX310X_MODE1_TXDIS_BIT,
-+				    0);
-+	}
-+
- 	/* Get baud rate generator configuration */
- 	baud = uart_get_baud_rate(port, termios, old,
- 				  port->uartclk / 16 / 0xffff,
 -- 
-2.22.1
-
+Michal Hocko
+SUSE Labs
