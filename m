@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A55A8EB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A951A8FB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388242AbfIDR7b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:59:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38336 "EHLO mail.kernel.org"
+        id S2389233AbfIDSFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:05:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731940AbfIDR72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:59:28 -0400
+        id S2389229AbfIDSFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:05:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C017621883;
-        Wed,  4 Sep 2019 17:59:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46D0A2339E;
+        Wed,  4 Sep 2019 18:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619967;
-        bh=2g1bI4KN1ApHiOeyVHDMfszUuoz6nRsnAGam2R0nwMs=;
+        s=default; t=1567620315;
+        bh=uQ7bGFvchbc9uVNyqhK0ba5uN7WzGjOtITWIVobccd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W4JIfQACoxeO7FoDWtR62UsHlm+B1CMLlhgETBvShS6LsJAb/X9wE/+S/gCqf4i3z
-         OsW4PFruXl1y1LSWMEsGENX3FYXpWm1Goekt5cjAIELx9Nozou9V3EU0C9nsQIw6T5
-         WPuRVLIiz0YW8JHBuivcwyUAkD04N2UizysU5ym0=
+        b=q2zV+4epRxb2X8e9hgmjDp5Zx8vcaeAfswmasLcXbktW6JF4LtMo+m3HtmGTAujSK
+         zf2QkMEUz3gAbCB0Cs8cehGmFF86JoJmyqXdkxJn2jGhxJXcUgo84OQKrV9GXCfiEK
+         DlOAN/MVuNbC8M9M4BhCD/yZz1aOeQbdPBUZ6Qh0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 23/83] libata: add SG safety checks in SFF pio transfers
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 13/93] dmaengine: stm32-mdma: Fix a possible null-pointer dereference in stm32_mdma_irq_handler()
 Date:   Wed,  4 Sep 2019 19:53:15 +0200
-Message-Id: <20190904175305.914660523@linuxfoundation.org>
+Message-Id: <20190904175304.282960418@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-References: <20190904175303.488266791@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 752ead44491e8c91e14d7079625c5916b30921c5 ]
+[ Upstream commit 39c71a5b8212f4b502d9a630c6706ac723abd422 ]
 
-Abort processing of a command if we run out of mapped data in the
-SG list. This should never happen, but a previous bug caused it to
-be possible. Play it safe and attempt to abort nicely if we don't
-have more SG segments left.
+In stm32_mdma_irq_handler(), chan is checked on line 1368.
+When chan is NULL, it is still used on line 1369:
+    dev_err(chan2dev(chan), "MDMA channel not initialized\n");
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Thus, a possible null-pointer dereference may occur.
+
+To fix this bug, "dev_dbg(mdma2dev(dmadev), ...)" is used instead.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: a4ffb13c8946 ("dmaengine: Add STM32 MDMA driver")
+Link: https://lore.kernel.org/r/20190729020849.17971-1-baijiaju1990@gmail.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/libata-sff.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/dma/stm32-mdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
-index 8d22acdf90f0b..0e2bc5b9a78c1 100644
---- a/drivers/ata/libata-sff.c
-+++ b/drivers/ata/libata-sff.c
-@@ -703,6 +703,10 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
- 	unsigned int offset;
- 	unsigned char *buf;
+diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+index 06dd1725375e5..8c3c3e5b812a8 100644
+--- a/drivers/dma/stm32-mdma.c
++++ b/drivers/dma/stm32-mdma.c
+@@ -1376,7 +1376,7 @@ static irqreturn_t stm32_mdma_irq_handler(int irq, void *devid)
  
-+	if (!qc->cursg) {
-+		qc->curbytes = qc->nbytes;
-+		return;
-+	}
- 	if (qc->curbytes == qc->nbytes - qc->sect_size)
- 		ap->hsm_task_state = HSM_ST_LAST;
- 
-@@ -742,6 +746,8 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
- 
- 	if (qc->cursg_ofs == qc->cursg->length) {
- 		qc->cursg = sg_next(qc->cursg);
-+		if (!qc->cursg)
-+			ap->hsm_task_state = HSM_ST_LAST;
- 		qc->cursg_ofs = 0;
+ 	chan = &dmadev->chan[id];
+ 	if (!chan) {
+-		dev_err(chan2dev(chan), "MDMA channel not initialized\n");
++		dev_dbg(mdma2dev(dmadev), "MDMA channel not initialized\n");
+ 		goto exit;
  	}
- }
+ 
 -- 
 2.20.1
 
