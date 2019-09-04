@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C4EA9195
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C52A8E03
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390169AbfIDSTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:19:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53402 "EHLO mail.kernel.org"
+        id S1732730AbfIDRzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:55:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390019AbfIDSJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:09:59 -0400
+        id S1732659AbfIDRzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:55:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 245042087E;
-        Wed,  4 Sep 2019 18:09:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA6AE22CEA;
+        Wed,  4 Sep 2019 17:55:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620598;
-        bh=mMUhugRxCVP5bdl6+7j98wwjOy/wromZmzTztlHSIZA=;
+        s=default; t=1567619732;
+        bh=hHHjSbiQsAjEEctleSS533vZ2M8xIgEBQTPowA2D9+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XTxWR2YclJVOYRGd/IIINdiJt1802a2lCNgmNoLBlhimL2J/Vj/4Ogu+kv2EV8Ktu
-         ULgb/lo3zQzarUsJEYU7b3IwapvBOfqGRJJMYWnK5rZBd23svisatjekJmCqdSAg8a
-         nxtPIx+lFPoFeEoDHHuPX/PPoYlwBzT+9ewOozmk=
+        b=eCeuUo/OnwnRSc7kPZPszNJ0Kx4wBMOKS/4VKS06t4jEfWJmWqckBJPck2OUyDqcy
+         3ud2AWmhZLMrM+kln764gjZljwojlpVi8SMpL+DOYBvq48IT7ITIawPmQ2Ldx/gcFG
+         VUdj2B7zUf9QpYZWlaeegfFpL6lWMtfbIfeJXqfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 025/143] dma-direct: dont truncate dma_required_mask to bus addressing capabilities
-Date:   Wed,  4 Sep 2019 19:52:48 +0200
-Message-Id: <20190904175315.051650883@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 02/77] MIPS: kernel: only use i8253 clocksource with periodic clockevent
+Date:   Wed,  4 Sep 2019 19:52:49 +0200
+Message-Id: <20190904175303.589784339@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+References: <20190904175303.317468926@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +47,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d8ad55538abe443919e20e0bb996561bca9cad84 ]
+[ Upstream commit a07e3324538a989b7cdbf2c679be6a7f9df2544f ]
 
-The dma required_mask needs to reflect the actual addressing capabilities
-needed to handle the whole system RAM. When truncated down to the bus
-addressing capabilities dma_addressing_limited() will incorrectly signal
-no limitations for devices which are restricted by the bus_dma_mask.
+i8253 clocksource needs a free running timer. This could only
+be used, if i8253 clockevent is set up as periodic.
 
-Fixes: b4ebe6063204 (dma-direct: implement complete bus_dma_mask handling)
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Tested-by: Atish Patra <atish.patra@wdc.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/dma/direct.c | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/mips/kernel/i8253.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 2c2772e9702ab..9912be7a970de 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -55,9 +55,6 @@ u64 dma_direct_get_required_mask(struct device *dev)
+diff --git a/arch/mips/kernel/i8253.c b/arch/mips/kernel/i8253.c
+index c5bc344fc745c..73039746ae364 100644
+--- a/arch/mips/kernel/i8253.c
++++ b/arch/mips/kernel/i8253.c
+@@ -31,7 +31,8 @@ void __init setup_pit_timer(void)
+ 
+ static int __init init_pit_clocksource(void)
  {
- 	u64 max_dma = phys_to_dma_direct(dev, (max_pfn - 1) << PAGE_SHIFT);
+-	if (num_possible_cpus() > 1) /* PIT does not scale! */
++	if (num_possible_cpus() > 1 || /* PIT does not scale! */
++	    !clockevent_state_periodic(&i8253_clockevent))
+ 		return 0;
  
--	if (dev->bus_dma_mask && dev->bus_dma_mask < max_dma)
--		max_dma = dev->bus_dma_mask;
--
- 	return (1ULL << (fls64(max_dma) - 1)) * 2 - 1;
- }
- 
+ 	return clocksource_i8253_init();
 -- 
 2.20.1
 
