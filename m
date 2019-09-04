@@ -2,83 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECBF7A7BE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:42:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9041A7BEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 08:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728756AbfIDGmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 02:42:39 -0400
-Received: from lizzard.sbs.de ([194.138.37.39]:34391 "EHLO lizzard.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbfIDGmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 02:42:38 -0400
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-        by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id x846gWAq028106
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Sep 2019 08:42:32 +0200
-Received: from [167.87.42.80] ([167.87.42.80])
-        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id x846gVpF006197;
-        Wed, 4 Sep 2019 08:42:31 +0200
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH v2] platform/x86: pmc_atom: Add Siemens SIMATIC IPC227E to
- critclk_systems DMI table
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <c090302a-da38-5764-2a84-399ed6b333f5@siemens.com>
-Date:   Wed, 4 Sep 2019 08:42:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728848AbfIDGrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 02:47:01 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6200 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726033AbfIDGrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 02:47:00 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 16EF720EACC9E19A8E38;
+        Wed,  4 Sep 2019 14:46:50 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 4 Sep 2019 14:46:42 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <kvalo@codeaurora.org>
+CC:     <davem@davemloft.net>, <linux-wireless@vger.kernel.org>,
+        <zhongjiang@huawei.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ath9k: Remove unneeded variable to store return value
+Date:   Wed, 4 Sep 2019 14:43:48 +0800
+Message-ID: <1567579428-16377-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ath9k_reg_rmw_single do not need return value to cope with different
+cases. And change functon return type to void.
 
-The SIMATIC IPC227E uses the PMC clock for on-board components and gets
-stuck during boot if the clock is disabled. Therefore, add this device
-to the critical systems list.
-
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
+ drivers/net/wireless/ath/ath9k/htc_drv_init.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Changes in v2:
- - fixed cut-off subject line (local tooling bug...)
-
-Should go into stable as well, down to 4.19.
-
- drivers/platform/x86/pmc_atom.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-index aa53648a2214..9aca5e7ce6d0 100644
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -415,6 +415,13 @@ static const struct dmi_system_id critclk_systems[] = {
- 			DMI_MATCH(DMI_BOARD_NAME, "CB6363"),
- 		},
- 	},
-+	{
-+		.ident = "SIMATIC IPC227E",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "SIEMENS AG"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "6ES7647-8B"),
-+		},
-+	},
- 	{ /*sentinel*/ }
- };
+diff --git a/drivers/net/wireless/ath/ath9k/htc_drv_init.c b/drivers/net/wireless/ath/ath9k/htc_drv_init.c
+index 214c682..d961095 100644
+--- a/drivers/net/wireless/ath/ath9k/htc_drv_init.c
++++ b/drivers/net/wireless/ath/ath9k/htc_drv_init.c
+@@ -463,7 +463,7 @@ static void ath9k_enable_rmw_buffer(void *hw_priv)
+ 	atomic_inc(&priv->wmi->m_rmw_cnt);
+ }
  
+-static u32 ath9k_reg_rmw_single(void *hw_priv,
++static void ath9k_reg_rmw_single(void *hw_priv,
+ 				 u32 reg_offset, u32 set, u32 clr)
+ {
+ 	struct ath_hw *ah = hw_priv;
+@@ -471,7 +471,6 @@ static u32 ath9k_reg_rmw_single(void *hw_priv,
+ 	struct ath9k_htc_priv *priv = (struct ath9k_htc_priv *) common->priv;
+ 	struct register_rmw buf, buf_ret;
+ 	int ret;
+-	u32 val = 0;
+ 
+ 	buf.reg = cpu_to_be32(reg_offset);
+ 	buf.set = cpu_to_be32(set);
+@@ -485,7 +484,6 @@ static u32 ath9k_reg_rmw_single(void *hw_priv,
+ 		ath_dbg(common, WMI, "REGISTER RMW FAILED:(0x%04x, %d)\n",
+ 			reg_offset, ret);
+ 	}
+-	return val;
+ }
+ 
+ static u32 ath9k_reg_rmw(void *hw_priv, u32 reg_offset, u32 set, u32 clr)
 -- 
+1.7.12.4
 
-2.16.4
-
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
