@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4C43A8E40
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64CFBA8E9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:34:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387752AbfIDR46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 13:56:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34514 "EHLO mail.kernel.org"
+        id S2388160AbfIDR65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 13:58:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387737AbfIDR44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:56:56 -0400
+        id S1732633AbfIDR64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:58:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C61882339E;
-        Wed,  4 Sep 2019 17:56:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A169622CF7;
+        Wed,  4 Sep 2019 17:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619815;
-        bh=hXNgBmLhSvA+800WNKverQyu+RTuxcBFAaJch3/JGUM=;
+        s=default; t=1567619935;
+        bh=sCXRnZIpt207PlAEOn+zbeo+kxsHVsTNdhrxpRS55Ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w7oIcsRetKQwBYeejXNUn+WwPIl8Jh05PYQOVT/zg3KsSsvgeg9PD2VGLzN+mC4un
-         e2U1fqEq9NP0P1pBRDpisH5e8YSxgkOhtRFw+kAHDPJ33YWQoKB05gep0OV6WmcSOs
-         Mf6sASno7SB241lY9knLwwPCex2svcY3TBo0Phwo=
+        b=PWs1s7+/13cY6zQmdx2z6/PjJLt6aEK9j0lNXPK5hJ9viEtohO7PN7VbWqZ2uv7Z/
+         izb3SGfSJ+FT2wIAMjSn921M08Xj3sMucriyO5ieDlfKEBZF8KE4LL3Mhr+vQjfW+L
+         f+3VROnes25prG1FDeZoLa//+LaSwDkGKig0t8B4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 17/77] net: cxgb3_main: Fix a resource leak in a error path in init_one()
+Subject: [PATCH 4.9 12/83] isdn: mISDN: hfcsusb: Fix possible null-pointer dereferences in start_isoc_chain()
 Date:   Wed,  4 Sep 2019 19:53:04 +0200
-Message-Id: <20190904175305.233882308@linuxfoundation.org>
+Message-Id: <20190904175304.893793683@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
-References: <20190904175303.317468926@linuxfoundation.org>
+In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
+References: <20190904175303.488266791@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit debea2cd3193ac868289e8893c3a719c265b0612 ]
+[ Upstream commit a0d57a552b836206ad7705a1060e6e1ce5a38203 ]
 
-A call to 'kfree_skb()' is missing in the error handling path of
-'init_one()'.
-This is already present in 'remove_one()' but is missing here.
+In start_isoc_chain(), usb_alloc_urb() on line 1392 may fail
+and return NULL. At this time, fifo->iso[i].urb is assigned to NULL.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Then, fifo->iso[i].urb is used at some places, such as:
+LINE 1405:    fill_isoc_urb(fifo->iso[i].urb, ...)
+                  urb->number_of_packets = num_packets;
+                  urb->transfer_flags = URB_ISO_ASAP;
+                  urb->actual_length = 0;
+                  urb->interval = interval;
+LINE 1416:    fifo->iso[i].urb->...
+LINE 1419:    fifo->iso[i].urb->...
+
+Thus, possible null-pointer dereferences may occur.
+
+To fix these bugs, "continue" is added to avoid using fifo->iso[i].urb
+when it is NULL.
+
+These bugs are found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/isdn/hardware/mISDN/hfcsusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-index 3dd4c39640dc4..bee615cddbdd8 100644
---- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
-@@ -3260,7 +3260,7 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (!adapter->regs) {
- 		dev_err(&pdev->dev, "cannot map device registers\n");
- 		err = -ENOMEM;
--		goto out_free_adapter;
-+		goto out_free_adapter_nofail;
- 	}
- 
- 	adapter->pdev = pdev;
-@@ -3378,6 +3378,9 @@ out_free_dev:
- 		if (adapter->port[i])
- 			free_netdev(adapter->port[i]);
- 
-+out_free_adapter_nofail:
-+	kfree_skb(adapter->nofail_skb);
-+
- out_free_adapter:
- 	kfree(adapter);
- 
+diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
+index c60c7998af173..6f19530ba2a93 100644
+--- a/drivers/isdn/hardware/mISDN/hfcsusb.c
++++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
+@@ -1402,6 +1402,7 @@ start_isoc_chain(struct usb_fifo *fifo, int num_packets_per_urb,
+ 				printk(KERN_DEBUG
+ 				       "%s: %s: alloc urb for fifo %i failed",
+ 				       hw->name, __func__, fifo->fifonum);
++				continue;
+ 			}
+ 			fifo->iso[i].owner_fifo = (struct usb_fifo *) fifo;
+ 			fifo->iso[i].indx = i;
 -- 
 2.20.1
 
