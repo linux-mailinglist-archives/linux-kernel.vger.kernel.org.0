@@ -2,47 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03BC2A8BCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26564A8B80
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:28:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733182AbfIDQFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:05:48 -0400
-Received: from verein.lst.de ([213.95.11.211]:40471 "EHLO verein.lst.de"
+        id S2387614AbfIDQDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:03:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732345AbfIDQCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:02:42 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 2D7DC227A8C; Wed,  4 Sep 2019 18:02:36 +0200 (CEST)
-Date:   Wed, 4 Sep 2019 18:02:35 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Subject: Re: [PATCH] nvme-core: Fix subsystem instance mismatches
-Message-ID: <20190904160235.GA20691@lst.de>
-References: <20190831000139.7662-1-logang@deltatee.com> <20190831152910.GA29439@localhost.localdomain> <33af4d94-9f6d-9baa-01fa-0f75ccee263e@deltatee.com> <20190903164620.GA20847@localhost.localdomain> <20190904060558.GA10849@lst.de> <20190904144426.GB21302@localhost.localdomain> <20190904154215.GA20422@lst.de> <20190904155445.GD21302@localhost.localdomain>
+        id S1732666AbfIDQDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:03:05 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 654DB2087E;
+        Wed,  4 Sep 2019 16:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567612985;
+        bh=oAccNfbSXfw152/LAL/LhbXvHUYErX5skTH3a8n2azk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Dgo+C948oYreM0S/Gg/y7JuUepTiIXXlTF8ML7FL4CoQt9Cl4TMEHMfV2rbNqrgpo
+         1+lWKwKWw9TsACNNcHNMXpXKJqdXA4lCroyJPTylAo0Eb5+TbqV284EjsNFBWEvRG0
+         ZU57er1qehx2nQhyUqAsbyGOiy26gjYv9nlOaZzs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ilya Leoshkevich <iii@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 01/20] s390/bpf: fix lcgr instruction encoding
+Date:   Wed,  4 Sep 2019 12:02:44 -0400
+Message-Id: <20190904160303.5062-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904155445.GD21302@localhost.localdomain>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 09:54:45AM -0600, Keith Busch wrote:
-> Can we just ensure there is never a matching controller then? This
-> patch will accomplish that and simpler than wrapping the instance in a
-> refcount'ed object:
-> 
-> http://lists.infradead.org/pipermail/linux-nvme/2019-May/024142.html
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-I guess that is fine to.  Btw, what happened to the plan for udev
-rules in that thread?
+[ Upstream commit bb2d267c448f4bc3a3389d97c56391cb779178ae ]
+
+"masking, test in bounds 3" fails on s390, because
+BPF_ALU64_IMM(BPF_NEG, BPF_REG_2, 0) ignores the top 32 bits of
+BPF_REG_2. The reason is that JIT emits lcgfr instead of lcgr.
+The associated comment indicates that the code was intended to
+emit lcgr in the first place, it's just that the wrong opcode
+was used.
+
+Fix by using the correct opcode.
+
+Fixes: 054623105728 ("s390/bpf: Add s390x eBPF JIT compiler backend")
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Acked-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/s390/net/bpf_jit_comp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/s390/net/bpf_jit_comp.c b/arch/s390/net/bpf_jit_comp.c
+index 727693e283da2..e53d410e88703 100644
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -886,7 +886,7 @@ static noinline int bpf_jit_insn(struct bpf_jit *jit, struct bpf_prog *fp, int i
+ 		break;
+ 	case BPF_ALU64 | BPF_NEG: /* dst = -dst */
+ 		/* lcgr %dst,%dst */
+-		EMIT4(0xb9130000, dst_reg, dst_reg);
++		EMIT4(0xb9030000, dst_reg, dst_reg);
+ 		break;
+ 	/*
+ 	 * BPF_FROM_BE/LE
+-- 
+2.20.1
 
