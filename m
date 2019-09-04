@@ -2,74 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC78A8B27
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB9A1A8C18
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733163AbfIDQCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 12:02:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37688 "EHLO mail.kernel.org"
+        id S1733089AbfIDQJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 12:09:27 -0400
+Received: from foss.arm.com ([217.140.110.172]:57760 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733153AbfIDQCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 12:02:01 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8984C2087E;
-        Wed,  4 Sep 2019 16:01:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567612920;
-        bh=XoWVh8zkxqQBH7vyK96N6HQzgw676k1kvoxSzDKHeGA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MZ/vjFM0tRAi22icgSD7JlfwngxZQm8hHFXfrNjhPULzcvHeicldm/ne8p+a1tALQ
-         b/mXc66CKXcPfi8ixKxkzKp0e0qf2glMsv6zW9siCE6Oj87hHiPNSJg4m7/+QYnY7b
-         DMBE7xMcH5hJsn9L8I5U9IlLrWmbMR6NJ3WPal+c=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 24/36] cifs: Use kzfree() to zero out the password
-Date:   Wed,  4 Sep 2019 12:01:10 -0400
-Message-Id: <20190904160122.4179-24-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190904160122.4179-1-sashal@kernel.org>
-References: <20190904160122.4179-1-sashal@kernel.org>
+        id S1731869AbfIDQBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 12:01:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F5CB28;
+        Wed,  4 Sep 2019 09:01:14 -0700 (PDT)
+Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9042B3F246;
+        Wed,  4 Sep 2019 09:01:12 -0700 (PDT)
+Subject: Re: [PATCH v4 10/10] arm64: Retrieve stolen time as paravirtualized
+ guest
+To:     Andrew Jones <drjones@redhat.com>
+Cc:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190830084255.55113-1-steven.price@arm.com>
+ <20190830084255.55113-11-steven.price@arm.com>
+ <20190903084703.hwpelmr7fikb32nj@kamzik.brq.redhat.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <329fa72e-5c92-602e-a010-2083366221d1@arm.com>
+Date:   Wed, 4 Sep 2019 17:01:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190903084703.hwpelmr7fikb32nj@kamzik.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+On 03/09/2019 09:47, Andrew Jones wrote:
+> On Fri, Aug 30, 2019 at 09:42:55AM +0100, Steven Price wrote:
+>> Enable paravirtualization features when running under a hypervisor
+>> supporting the PV_TIME_ST hypercall.
+>>
+>> For each (v)CPU, we ask the hypervisor for the location of a shared
+>> page which the hypervisor will use to report stolen time to us. We set
+>> pv_time_ops to the stolen time function which simply reads the stolen
+>> value from the shared page for a VCPU. We guarantee single-copy
+>> atomicity using READ_ONCE which means we can also read the stolen
+>> time for another VCPU than the currently running one while it is
+>> potentially being updated by the hypervisor.
+>>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>>  arch/arm64/include/asm/paravirt.h |   9 +-
+>>  arch/arm64/kernel/paravirt.c      | 148 ++++++++++++++++++++++++++++++
+>>  arch/arm64/kernel/time.c          |   3 +
+>>  include/linux/cpuhotplug.h        |   1 +
+>>  4 files changed, 160 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/include/asm/paravirt.h b/arch/arm64/include/asm/paravirt.h
+>> index 799d9dd6f7cc..125c26c42902 100644
+>> --- a/arch/arm64/include/asm/paravirt.h
+>> +++ b/arch/arm64/include/asm/paravirt.h
+>> @@ -21,6 +21,13 @@ static inline u64 paravirt_steal_clock(int cpu)
+>>  {
+>>  	return pv_ops.time.steal_clock(cpu);
+>>  }
+>> -#endif
+>> +
+>> +int __init kvm_guest_init(void);
+>> +
+>> +#else
+>> +
+>> +#define kvm_guest_init()
+>> +
+>> +#endif // CONFIG_PARAVIRT
+>>  
+>>  #endif
+>> diff --git a/arch/arm64/kernel/paravirt.c b/arch/arm64/kernel/paravirt.c
+>> index 4cfed91fe256..5bf3be7ccf7e 100644
+>> --- a/arch/arm64/kernel/paravirt.c
+>> +++ b/arch/arm64/kernel/paravirt.c
+>> @@ -6,13 +6,161 @@
+>>   * Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+>>   */
+>>  
+>> +#define pr_fmt(fmt) "kvmarm-pv: " fmt
+>> +
+>> +#include <linux/arm-smccc.h>
+>> +#include <linux/cpuhotplug.h>
+>>  #include <linux/export.h>
+>> +#include <linux/io.h>
+>>  #include <linux/jump_label.h>
+>> +#include <linux/printk.h>
+>> +#include <linux/psci.h>
+>> +#include <linux/reboot.h>
+>> +#include <linux/slab.h>
+>>  #include <linux/types.h>
+>> +
+>>  #include <asm/paravirt.h>
+>> +#include <asm/pvclock-abi.h>
+>> +#include <asm/smp_plat.h>
+>>  
+>>  struct static_key paravirt_steal_enabled;
+>>  struct static_key paravirt_steal_rq_enabled;
+>>  
+>>  struct paravirt_patch_template pv_ops;
+>>  EXPORT_SYMBOL_GPL(pv_ops);
+>> +
+>> +struct kvmarm_stolen_time_region {
+>> +	struct pvclock_vcpu_stolen_time *kaddr;
+>> +};
+>> +
+>> +static DEFINE_PER_CPU(struct kvmarm_stolen_time_region, stolen_time_region);
+>> +
+>> +static bool steal_acc = true;
+>> +static int __init parse_no_stealacc(char *arg)
+>> +{
+>> +	steal_acc = false;
+>> +	return 0;
+>> +}
+>> +
+>> +early_param("no-steal-acc", parse_no_stealacc);
+> 
+> Need to also add an 'ARM64' to the
+> Documentation/admin-guide/kernel-parameters.txt entry for this.
 
-[ Upstream commit 478228e57f81f6cb60798d54fc02a74ea7dd267e ]
+Good point, thanks for the pointer.
 
-It's safer to zero out the password so that it can never be disclosed.
-
-Fixes: 0c219f5799c7 ("cifs: set domainName when a domain-key is used in multiuser")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/cifs/connect.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 699e763ea671a..f523a9ca9574f 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -2662,7 +2662,7 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
- 			rc = -ENOMEM;
- 			kfree(vol->username);
- 			vol->username = NULL;
--			kfree(vol->password);
-+			kzfree(vol->password);
- 			vol->password = NULL;
- 			goto out_key_put;
- 		}
--- 
-2.20.1
+Steve
 
