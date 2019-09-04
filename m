@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7534A9117
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DB78A8FC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 21:36:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390692AbfIDSN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 14:13:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58300 "EHLO mail.kernel.org"
+        id S2388960AbfIDSFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 14:05:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390684AbfIDSN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 14:13:26 -0400
+        id S2388958AbfIDSFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 14:05:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3866208E4;
-        Wed,  4 Sep 2019 18:13:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0734206B8;
+        Wed,  4 Sep 2019 18:05:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567620806;
-        bh=3srGCbj7ekQs7/Q2VMppiRyfVO4nSNJpbhCJvTAUeOo=;
+        s=default; t=1567620342;
+        bh=lnqkE3M+BQ/GONSwSD8tujzQUyv67os8UdwOV/de+ZY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bQ6jIuHHkjof0UuCuGhFbbLEdw6i7CcxMligFjFLwZieznYsa54iezwC/QKoDBEJj
-         ZuNpmX2VSOmdE4wOqgS7eX3KpJ9FX0Cc7hxQEd0LC5P91cJYLYVlguZS7iOZyDwNQU
-         Qf+F8BNMg30BcmNoFhdeLsaZWEsg272DiUcO0+LU=
+        b=geo/HNizvHCsAREb8DPmL7WITOInMURROOUqCzZ0xRVc/+x9FGvqPm3LFUJk5XJRH
+         0c86GQFzbRn1uac7TlPxou8fMbwZKaP3y2/dPRQSPCXFu7cgX4NMtNA7uQqYulgDVN
+         ZInzYegZxsVu2NG8pcfbztrSRJ5XG17wRVulgHgc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Rekowski?= <p.rekowski@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.2 061/143] ALSA: hda/ca0132 - Add new SBZ quirk
+        stable@vger.kernel.org, "Y.C. Chen" <yc_chen@aspeedtech.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Dave Airlie <airlied@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 22/93] drm/ast: Fixed reboot test may cause system hanged
 Date:   Wed,  4 Sep 2019 19:53:24 +0200
-Message-Id: <20190904175316.460609767@linuxfoundation.org>
+Message-Id: <20190904175305.218878328@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190904175314.206239922@linuxfoundation.org>
-References: <20190904175314.206239922@linuxfoundation.org>
+In-Reply-To: <20190904175302.845828956@linuxfoundation.org>
+References: <20190904175302.845828956@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paweł Rekowski <p.rekowski@gmail.com>
+[ Upstream commit 05b439711f6ff8700e8660f97a1179650778b9cb ]
 
-commit 2ca371d847511f97ef991ef612a2ce805489840e upstream.
+There is another thread still access standard VGA I/O while loading drm driver.
+Disable standard VGA I/O decode to avoid this issue.
 
-This patch adds a new PCI subsys ID for the SBZ, as found and tested by
-me and some reddit users.
-
-Link: https://lore.kernel.org/lkml/20190819204008.14426-1-p.rekowski@gmail.com
-Signed-off-by: Paweł Rekowski <p.rekowski@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
+Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1523410059-18415-1-git-send-email-yc_chen@aspeedtech.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_ca0132.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/ast/ast_main.c | 5 ++++-
+ drivers/gpu/drm/ast/ast_mode.c | 2 +-
+ drivers/gpu/drm/ast/ast_post.c | 2 +-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -1175,6 +1175,7 @@ static const struct snd_pci_quirk ca0132
- 	SND_PCI_QUIRK(0x1028, 0x0708, "Alienware 15 R2 2016", QUIRK_ALIENWARE),
- 	SND_PCI_QUIRK(0x1102, 0x0010, "Sound Blaster Z", QUIRK_SBZ),
- 	SND_PCI_QUIRK(0x1102, 0x0023, "Sound Blaster Z", QUIRK_SBZ),
-+	SND_PCI_QUIRK(0x1102, 0x0027, "Sound Blaster Z", QUIRK_SBZ),
- 	SND_PCI_QUIRK(0x1102, 0x0033, "Sound Blaster ZxR", QUIRK_SBZ),
- 	SND_PCI_QUIRK(0x1458, 0xA016, "Recon3Di", QUIRK_R3DI),
- 	SND_PCI_QUIRK(0x1458, 0xA026, "Gigabyte G1.Sniper Z97", QUIRK_R3DI),
+diff --git a/drivers/gpu/drm/ast/ast_main.c b/drivers/gpu/drm/ast/ast_main.c
+index 373700c05a00f..224fa1ef87ff9 100644
+--- a/drivers/gpu/drm/ast/ast_main.c
++++ b/drivers/gpu/drm/ast/ast_main.c
+@@ -131,8 +131,8 @@ static int ast_detect_chip(struct drm_device *dev, bool *need_post)
+ 
+ 
+ 	/* Enable extended register access */
+-	ast_enable_mmio(dev);
+ 	ast_open_key(ast);
++	ast_enable_mmio(dev);
+ 
+ 	/* Find out whether P2A works or whether to use device-tree */
+ 	ast_detect_config_mode(dev, &scu_rev);
+@@ -576,6 +576,9 @@ void ast_driver_unload(struct drm_device *dev)
+ {
+ 	struct ast_private *ast = dev->dev_private;
+ 
++	/* enable standard VGA decode */
++	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xa1, 0x04);
++
+ 	ast_release_firmware(dev);
+ 	kfree(ast->dp501_fw_addr);
+ 	ast_mode_fini(dev);
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index 8bb355d5d43d8..9d92d2d2fcfc7 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -600,7 +600,7 @@ static int ast_crtc_mode_set(struct drm_crtc *crtc,
+ 		return -EINVAL;
+ 	ast_open_key(ast);
+ 
+-	ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xa1, 0xff, 0x04);
++	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xa1, 0x06);
+ 
+ 	ast_set_std_reg(crtc, adjusted_mode, &vbios_mode);
+ 	ast_set_crtc_reg(crtc, adjusted_mode, &vbios_mode);
+diff --git a/drivers/gpu/drm/ast/ast_post.c b/drivers/gpu/drm/ast/ast_post.c
+index f7d421359d564..c1d1ac51d1c20 100644
+--- a/drivers/gpu/drm/ast/ast_post.c
++++ b/drivers/gpu/drm/ast/ast_post.c
+@@ -46,7 +46,7 @@ void ast_enable_mmio(struct drm_device *dev)
+ {
+ 	struct ast_private *ast = dev->dev_private;
+ 
+-	ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xa1, 0xff, 0x04);
++	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xa1, 0x06);
+ }
+ 
+ 
+-- 
+2.20.1
+
 
 
