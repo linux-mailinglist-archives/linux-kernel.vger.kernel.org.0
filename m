@@ -2,56 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9644AAA574
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:10:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBDD2AA57E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:11:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729373AbfIEOKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 10:10:47 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6231 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727914AbfIEOKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 10:10:47 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0FE5E5BA7995343B8379;
-        Thu,  5 Sep 2019 22:10:45 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 5 Sep 2019
- 22:10:41 +0800
-Message-ID: <5D711760.20903@huawei.com>
-Date:   Thu, 5 Sep 2019 22:10:40 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1730020AbfIEOK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 10:10:59 -0400
+Received: from muru.com ([72.249.23.125]:59740 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726048AbfIEOK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 10:10:58 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id D319A810D;
+        Thu,  5 Sep 2019 14:11:26 +0000 (UTC)
+Date:   Thu, 5 Sep 2019 07:10:53 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc:     David Lechner <david@lechnology.com>,
+        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] counter: new TI eQEP driver
+Message-ID: <20190905141053.GU52127@atomide.com>
+References: <20190901225827.12301-1-david@lechnology.com>
+ <20190905133721.GA728346@icarus>
 MIME-Version: 1.0
-To:     Kalle Valo <kvalo@codeaurora.org>
-CC:     <davem@davemloft.net>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] hostap: remove set but not used variable 'copied' in
- prism2_io_debug_proc_read
-References: <1567497430-22539-1-git-send-email-zhongjiang@huawei.com> <5D6E1DF2.1000109@huawei.com> <87zhjij1q6.fsf@tynnyri.adurom.net>
-In-Reply-To: <87zhjij1q6.fsf@tynnyri.adurom.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190905133721.GA728346@icarus>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/5 21:45, Kalle Valo wrote:
-> zhong jiang <zhongjiang@huawei.com> writes:
->
->> Please ignore the patch.  Because  the hostap_proc.c is marked as 'obsolete'.
-> You mean marked in the MAINTAINERS file? I don't see that as a problem,
-> I can (and should) still apply any patches submitted to hostap driver.
->
-I  hit the following issue when checking the patch by checkpatch.pl
+* William Breathitt Gray <vilhelm.gray@gmail.com> [190905 13:38]:
+> On Sun, Sep 01, 2019 at 05:58:21PM -0500, David Lechner wrote:
+> > This series adds device tree bindings and a new counter driver for the Texas
+> > Instruments Enhanced Quadrature Encoder Pulse (eQEP).
+> > 
+> > As mentioned in one of the commit messages, to start with, the driver only
+> > supports reading the current counter value and setting the min/max values.
+> > Other features can be added as the counter subsystem gains support for them.
+...
 
-WARNING: drivers/net/wireless/intersil/hostap/hostap_proc.c is marked as 'obsolete' in the MAINTAINERS hierarchy.
-No unnecessary modifications please.
+> I'm satisfied with this version of the patchset.
+> 
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> 
+> Jonathan, if you have no objections please pick up this up so that it
+> can make it to the 5.4 merge window coming in soon. Alternatively, I can
+> merge it into my repository instead and hold it for a while longer
+> there, if you prefer that route.
 
-I certainly hope it can be appiled to upstream if the above check doesn't matter.
+Looks good to me too:
 
-Thanks,
-zhong jiang
-
+Acked-by: Tony Lindgren <tony@atomide.com>
