@@ -2,199 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B765FAA3C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F4227AA3CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:04:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbfIENDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 09:03:41 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:16212 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388234AbfIENDh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 09:03:37 -0400
-Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x85D2Ton027792;
-        Thu, 5 Sep 2019 13:02:56 GMT
-Received: from g4t3427.houston.hpe.com (g4t3427.houston.hpe.com [15.241.140.73])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2utc421t8n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Sep 2019 13:02:55 +0000
-Received: from stormcage.eag.rdlabs.hpecorp.net (unknown [128.162.236.70])
-        by g4t3427.houston.hpe.com (Postfix) with ESMTP id 1D72E7D;
-        Thu,  5 Sep 2019 13:02:54 +0000 (UTC)
-Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 5508)
-        id A3987201EA1B7; Thu,  5 Sep 2019 08:02:53 -0500 (CDT)
-Message-Id: <20190905130253.556878269@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190905130252.590161292@stormcage.eag.rdlabs.hpecorp.net>
-User-Agent: quilt/0.46-1
-Date:   Thu, 05 Sep 2019 08:03:00 -0500
-From:   Mike Travis <mike.travis@hpe.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH 8/8] x86/platform/uv: Account for UV Hubless in is_uvX_hub Ops
-Content-Disposition: inline; filename=mod-is_uvX_hub
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-05_04:2019-09-04,2019-09-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 adultscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 suspectscore=0 mlxlogscore=655 clxscore=1015 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1909050128
+        id S2389705AbfIENDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 09:03:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388180AbfIENDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 09:03:50 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A0DF21D7F;
+        Thu,  5 Sep 2019 13:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567688628;
+        bh=5A97SrUDUqyVKNx4DSBp3SVRp3CJEByfutDERGx+WWs=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=gEiMjB6HERBAz+GaBgIR5yO9T13FFCRmvjD84jb2uUtvX7vQrw1CCrmq+8gs+DPfv
+         l7l0umFeo2NdYzHiwfgIbhu5BfDHaZnkuloRVqbeoavkh5nUMJsaRjlwBqAPIbcEp9
+         Qr21N097KTIaylGDRz4ZB/0ZQxOUiNvC+jN6NFTU=
+Date:   Thu, 5 Sep 2019 15:03:33 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Alan Stern <stern@rowland.harvard.edu>
+cc:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
+        linux-input@vger.kernel.org,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] HID: hid-prodikeys: Fix general protection fault during
+ probe
+In-Reply-To: <Pine.LNX.4.44L0.1909041149390.1722-100000@iolanthe.rowland.org>
+Message-ID: <nycvar.YFH.7.76.1909051503210.31470@cbobk.fhfr.pm>
+References: <Pine.LNX.4.44L0.1909041149390.1722-100000@iolanthe.rowland.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The references in the is_uvX_hub() function uses the hub_info pointer
-which will be NULL when the system is hubless.  This change avoids
-that NULL dereference.  It is also an optimization in performance.
+On Wed, 4 Sep 2019, Alan Stern wrote:
 
-Signed-off-by: Mike Travis <mike.travis@hpe.com>
-Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
-Reviewed-by: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-To: Ingo Molnar <mingo@redhat.com>
-To: H. Peter Anvin <hpa@zytor.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Borislav Petkov <bp@alien8.de>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Cc: Hedi Berriche <hedi.berriche@hpe.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
----
-v2: Add WARNING that the is UVx supported defines will be removed.
----
- arch/x86/include/asm/uv/.uv_hub.h.swp |binary
- arch/x86/include/asm/uv/uv_hub.h |   61 ++++++++++++---------------------------
- 1 file changed, 20 insertions(+), 41 deletions(-)
+> The syzbot fuzzer provoked a general protection fault in the
+> hid-prodikeys driver:
+> 
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
+> CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.3.0-rc5+ #28
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: usb_hub_wq hub_event
+> RIP: 0010:pcmidi_submit_output_report drivers/hid/hid-prodikeys.c:300  [inline]
+> RIP: 0010:pcmidi_set_operational drivers/hid/hid-prodikeys.c:558 [inline]
+> RIP: 0010:pcmidi_snd_initialise drivers/hid/hid-prodikeys.c:686 [inline]
+> RIP: 0010:pk_probe+0xb51/0xfd0 drivers/hid/hid-prodikeys.c:836
+> Code: 0f 85 50 04 00 00 48 8b 04 24 4c 89 7d 10 48 8b 58 08 e8 b2 53 e4 fc  
+> 48 8b 54 24 20 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
+> 85 13 04 00 00 48 ba 00 00 00 00 00 fc ff df 49 8b
+> 
+> The problem is caused by the fact that pcmidi_get_output_report() will
+> return an error if the HID device doesn't provide the right sort of
+> output report, but pcmidi_set_operational() doesn't bother to check
+> the return code and assumes the function call always succeeds.
+> 
+> This patch adds the missing check and aborts the probe operation if
+> necessary.
+> 
+> Reported-and-tested-by: syzbot+1088533649dafa1c9004@syzkaller.appspotmail.com
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> CC: <stable@vger.kernel.org>
 
-Binary files linux.orig/arch/x86/include/asm/uv/.uv_hub.h.swp and linux/arch/x86/include/asm/uv/.uv_hub.h.swp differ
---- linux.orig/arch/x86/include/asm/uv/uv_hub.h
-+++ linux/arch/x86/include/asm/uv/uv_hub.h
-@@ -19,6 +19,7 @@
- #include <linux/topology.h>
- #include <asm/types.h>
- #include <asm/percpu.h>
-+#include <asm/uv/uv.h>
- #include <asm/uv/uv_mmrs.h>
- #include <asm/uv/bios.h>
- #include <asm/irq_vectors.h>
-@@ -243,83 +244,61 @@ static inline int uv_hub_info_check(int
- #define UV4_HUB_REVISION_BASE		7
- #define UV4A_HUB_REVISION_BASE		8	/* UV4 (fixed) rev 2 */
- 
--#ifdef	UV1_HUB_IS_SUPPORTED
-+/* WARNING: UVx_HUB_IS_SUPPORTED defines are deprecated and will be removed */
- static inline int is_uv1_hub(void)
- {
--	return uv_hub_info->hub_revision < UV2_HUB_REVISION_BASE;
--}
-+#ifdef	UV1_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(1));
- #else
--static inline int is_uv1_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV2_HUB_IS_SUPPORTED
- static inline int is_uv2_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV3_HUB_REVISION_BASE));
--}
-+#ifdef	UV2_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(2));
- #else
--static inline int is_uv2_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV3_HUB_IS_SUPPORTED
- static inline int is_uv3_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV3_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV4_HUB_REVISION_BASE));
--}
-+#ifdef	UV3_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(3));
- #else
--static inline int is_uv3_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- /* First test "is UV4A", then "is UV4" */
--#ifdef	UV4A_HUB_IS_SUPPORTED
--static inline int is_uv4a_hub(void)
--{
--	return (uv_hub_info->hub_revision >= UV4A_HUB_REVISION_BASE);
--}
--#else
- static inline int is_uv4a_hub(void)
- {
-+#ifdef	UV4A_HUB_IS_SUPPORTED
-+	if (is_uv_hubbed(uv(4)))
-+		return (uv_hub_info->hub_revision == UV4A_HUB_REVISION_BASE);
-+#endif
- 	return 0;
- }
--#endif
- 
--#ifdef	UV4_HUB_IS_SUPPORTED
- static inline int is_uv4_hub(void)
- {
--	return uv_hub_info->hub_revision >= UV4_HUB_REVISION_BASE;
--}
-+#ifdef	UV4_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(4));
- #else
--static inline int is_uv4_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- static inline int is_uvx_hub(void)
- {
--	if (uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE)
--		return uv_hub_info->hub_revision;
--
--	return 0;
-+	return (is_uv_hubbed(-2) >= uv(2));
- }
- 
- static inline int is_uv_hub(void)
- {
--#ifdef	UV1_HUB_IS_SUPPORTED
--	return uv_hub_info->hub_revision;
--#endif
--	return is_uvx_hub();
-+	return is_uv1_hub() || is_uvx_hub();
- }
- 
- union uvh_apicid {
+Applied, thanks a lot Alan.
 
 -- 
+Jiri Kosina
+SUSE Labs
+
