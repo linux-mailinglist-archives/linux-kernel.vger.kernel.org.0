@@ -2,72 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5475A9D19
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5BF2A9D2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732708AbfIEIfP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 04:35:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48494 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730753AbfIEIfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 04:35:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 894C7AC93;
-        Thu,  5 Sep 2019 08:35:13 +0000 (UTC)
-From:   Andreas Schwab <schwab@suse.de>
-To:     Anup Patel <Anup.Patel@wdc.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
-        Anup Patel <anup@brainfault.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alexander Graf <graf@amazon.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-riscv\@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v7 18/21] RISC-V: KVM: Add SBI v0.1 support
-References: <20190904161245.111924-1-anup.patel@wdc.com>
-        <20190904161245.111924-20-anup.patel@wdc.com>
-X-Yow:  Now KEN is having a MENTAL CRISIS because his "R.V." PAYMENTS are
- OVER-DUE!!
-Date:   Thu, 05 Sep 2019 10:35:12 +0200
-In-Reply-To: <20190904161245.111924-20-anup.patel@wdc.com> (Anup Patel's
-        message of "Wed, 4 Sep 2019 16:16:02 +0000")
-Message-ID: <mvmef0v87jz.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        id S1732729AbfIEIiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 04:38:20 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:63658 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730914AbfIEIiT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 04:38:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1567672696; x=1599208696;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=JoB5AyJPXadZzdhXc+cFYRaaNL2nQ/XdAjAVfNiK2KA=;
+  b=oIMK4PjLDnLOsgwEoEXlSURrPsxr1v8Plc3z5qnoV/x3x69bFfSJGeAF
+   uIFPn4sqwHGWGoRgKFJUzPorWRjwHvy1iGTogWxxIY/dffs8nurWTmvHi
+   DPiXmg84UsBsRDvxQ9ciH66faVo0EMLp7G2C6+GLnE6h4kMjr3r7v6qHY
+   o=;
+X-IronPort-AV: E=Sophos;i="5.64,470,1559520000"; 
+   d="scan'208";a="749148804"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-53356bf6.us-west-2.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 05 Sep 2019 08:38:14 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2a-53356bf6.us-west-2.amazon.com (Postfix) with ESMTPS id 1092DA26EA;
+        Thu,  5 Sep 2019 08:38:15 +0000 (UTC)
+Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 5 Sep 2019 08:38:14 +0000
+Received: from ua9e4f3715fbc5f.ant.amazon.com (10.43.161.154) by
+ EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 5 Sep 2019 08:38:08 +0000
+From:   Hanna Hawa <hhhawa@amazon.com>
+To:     <bp@alien8.de>, <mchehab@kernel.org>, <james.morse@arm.com>
+CC:     <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dwmw@amazon.co.uk>, <benh@amazon.com>, <ronenk@amazon.com>,
+        <talel@amazon.com>, <jonnyc@amazon.com>, <hanochu@amazon.com>,
+        <hhhawa@amazon.com>
+Subject: [PATCH 1/1] edac: Add an API for edac device to report for multiple errors
+Date:   Thu, 5 Sep 2019 09:37:45 +0100
+Message-ID: <20190905083745.6899-1-hhhawa@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.43.161.154]
+X-ClientProxiedBy: EX13d09UWA001.ant.amazon.com (10.43.160.247) To
+ EX13D19EUB003.ant.amazon.com (10.43.166.69)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sep 04 2019, Anup Patel <Anup.Patel@wdc.com> wrote:
+Add an API for edac device to report multiple errors with same type.
 
-> From: Atish Patra <atish.patra@wdc.com>
->
-> The KVM host kernel running in HS-mode needs to handle SBI calls coming
-> from guest kernel running in VS-mode.
->
-> This patch adds SBI v0.1 support in KVM RISC-V. All the SBI calls are
-> implemented correctly except remote tlb flushes. For remote TLB flushes,
-> we are doing full TLB flush and this will be optimized in future.
+Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
+---
+ drivers/edac/edac_device.c | 66 +++++++++++++++++++++++++++++---------
+ drivers/edac/edac_device.h | 31 ++++++++++++++++--
+ 2 files changed, 79 insertions(+), 18 deletions(-)
 
-Note that this conflicts with
-https://patchwork.kernel.org/patch/11107221/ which removes <asm/sbi.h>
-from <asm/tlbflush.h>.  You should probably include that header
-explicitly in arch/riscv/kvm/vcpu_sbi.c.
-
-Andreas.
-
+diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
+index 65cf2b9355c4..bf6a4fd9831b 100644
+--- a/drivers/edac/edac_device.c
++++ b/drivers/edac/edac_device.c
+@@ -555,12 +555,15 @@ static inline int edac_device_get_panic_on_ue(struct edac_device_ctl_info
+ 	return edac_dev->panic_on_ue;
+ }
+ 
+-void edac_device_handle_ce(struct edac_device_ctl_info *edac_dev,
+-			int inst_nr, int block_nr, const char *msg)
++static void __edac_device_handle_ce(struct edac_device_ctl_info *edac_dev,
++			   u16 error_count, int inst_nr, int block_nr,
++			   const char *msg)
+ {
+ 	struct edac_device_instance *instance;
+ 	struct edac_device_block *block = NULL;
+ 
++	WARN_ON(!error_count);
++
+ 	if ((inst_nr >= edac_dev->nr_instances) || (inst_nr < 0)) {
+ 		edac_device_printk(edac_dev, KERN_ERR,
+ 				"INTERNAL ERROR: 'instance' out of range "
+@@ -582,27 +585,44 @@ void edac_device_handle_ce(struct edac_device_ctl_info *edac_dev,
+ 
+ 	if (instance->nr_blocks > 0) {
+ 		block = instance->blocks + block_nr;
+-		block->counters.ce_count++;
++		block->counters.ce_count += error_count;
+ 	}
+ 
+ 	/* Propagate the count up the 'totals' tree */
+-	instance->counters.ce_count++;
+-	edac_dev->counters.ce_count++;
++	instance->counters.ce_count += error_count;
++	edac_dev->counters.ce_count += error_count;
+ 
+ 	if (edac_device_get_log_ce(edac_dev))
+ 		edac_device_printk(edac_dev, KERN_WARNING,
+-				"CE: %s instance: %s block: %s '%s'\n",
++				"CE: %s instance: %s block: %s count: %d '%s'\n",
+ 				edac_dev->ctl_name, instance->name,
+-				block ? block->name : "N/A", msg);
++				block ? block->name : "N/A", error_count, msg);
++}
++
++void edac_device_handle_ce(struct edac_device_ctl_info *edac_dev,
++			   int inst_nr, int block_nr, const char *msg)
++{
++	__edac_device_handle_ce(edac_dev, 1, inst_nr, block_nr, msg);
+ }
+ EXPORT_SYMBOL_GPL(edac_device_handle_ce);
+ 
+-void edac_device_handle_ue(struct edac_device_ctl_info *edac_dev,
+-			int inst_nr, int block_nr, const char *msg)
++void edac_device_handle_ce_count(struct edac_device_ctl_info *edac_dev,
++				 u16 error_count, int inst_nr, int block_nr,
++				 const char *msg)
++{
++	__edac_device_handle_ce(edac_dev, error_count, inst_nr, block_nr, msg);
++}
++EXPORT_SYMBOL_GPL(edac_device_handle_ce_count);
++
++static void __edac_device_handle_ue(struct edac_device_ctl_info *edac_dev,
++			   u16 error_count, int inst_nr, int block_nr,
++			   const char *msg)
+ {
+ 	struct edac_device_instance *instance;
+ 	struct edac_device_block *block = NULL;
+ 
++	WARN_ON(!error_count);
++
+ 	if ((inst_nr >= edac_dev->nr_instances) || (inst_nr < 0)) {
+ 		edac_device_printk(edac_dev, KERN_ERR,
+ 				"INTERNAL ERROR: 'instance' out of range "
+@@ -624,22 +644,36 @@ void edac_device_handle_ue(struct edac_device_ctl_info *edac_dev,
+ 
+ 	if (instance->nr_blocks > 0) {
+ 		block = instance->blocks + block_nr;
+-		block->counters.ue_count++;
++		block->counters.ue_count += error_count;
+ 	}
+ 
+ 	/* Propagate the count up the 'totals' tree */
+-	instance->counters.ue_count++;
+-	edac_dev->counters.ue_count++;
++	instance->counters.ue_count += error_count;
++	edac_dev->counters.ue_count += error_count;
+ 
+ 	if (edac_device_get_log_ue(edac_dev))
+ 		edac_device_printk(edac_dev, KERN_EMERG,
+-				"UE: %s instance: %s block: %s '%s'\n",
++				"UE: %s instance: %s block: %s count: %d '%s'\n",
+ 				edac_dev->ctl_name, instance->name,
+-				block ? block->name : "N/A", msg);
++				block ? block->name : "N/A", error_count, msg);
+ 
+ 	if (edac_device_get_panic_on_ue(edac_dev))
+-		panic("EDAC %s: UE instance: %s block %s '%s'\n",
++		panic("EDAC %s: UE instance: %s block %s count: %d '%s'\n",
+ 			edac_dev->ctl_name, instance->name,
+-			block ? block->name : "N/A", msg);
++			block ? block->name : "N/A", error_count, msg);
++}
++
++void edac_device_handle_ue(struct edac_device_ctl_info *edac_dev,
++			   int inst_nr, int block_nr, const char *msg)
++{
++	__edac_device_handle_ue(edac_dev, 1, inst_nr, block_nr, msg);
+ }
+ EXPORT_SYMBOL_GPL(edac_device_handle_ue);
++
++void edac_device_handle_ue_count(struct edac_device_ctl_info *edac_dev,
++				 u16 error_count, int inst_nr, int block_nr,
++				 const char *msg)
++{
++	__edac_device_handle_ue(edac_dev, error_count, inst_nr, block_nr, msg);
++}
++EXPORT_SYMBOL_GPL(edac_device_handle_ue_count);
+diff --git a/drivers/edac/edac_device.h b/drivers/edac/edac_device.h
+index 1aaba74ae411..c8dc83eda64f 100644
+--- a/drivers/edac/edac_device.h
++++ b/drivers/edac/edac_device.h
+@@ -287,7 +287,7 @@ extern struct edac_device_ctl_info *edac_device_del_device(struct device *dev);
+ 
+ /**
+  * edac_device_handle_ue():
+- *	perform a common output and handling of an 'edac_dev' UE event
++ *	perform a common output and handling of an 'edac_dev' single UE event
+  *
+  * @edac_dev: pointer to struct &edac_device_ctl_info
+  * @inst_nr: number of the instance where the UE error happened
+@@ -298,7 +298,7 @@ extern void edac_device_handle_ue(struct edac_device_ctl_info *edac_dev,
+ 				int inst_nr, int block_nr, const char *msg);
+ /**
+  * edac_device_handle_ce():
+- *	perform a common output and handling of an 'edac_dev' CE event
++ *	perform a common output and handling of an 'edac_dev' single CE event
+  *
+  * @edac_dev: pointer to struct &edac_device_ctl_info
+  * @inst_nr: number of the instance where the CE error happened
+@@ -308,6 +308,33 @@ extern void edac_device_handle_ue(struct edac_device_ctl_info *edac_dev,
+ extern void edac_device_handle_ce(struct edac_device_ctl_info *edac_dev,
+ 				int inst_nr, int block_nr, const char *msg);
+ 
++/**
++ * edac_device_handle_ue_count():
++ *	perform a common output and handling of an 'edac_dev'
++ *
++ * @edac_dev: pointer to struct &edac_device_ctl_info
++ * @error_count: number of errors of the same type
++ * @inst_nr: number of the instance where the UE error happened
++ * @block_nr: number of the block where the UE error happened
++ * @msg: message to be printed
++ */
++extern void edac_device_handle_ue_count(struct edac_device_ctl_info *edac_dev,
++					u16 error_count, int inst_nr,
++					int block_nr, const char *msg);
++/**
++ * edac_device_handle_ce_count():
++ *	perform a common output and handling of an 'edac_dev'
++ *
++ * @edac_dev: pointer to struct &edac_device_ctl_info
++ * @error_count: number of errors of the same type
++ * @inst_nr: number of the instance where the CE error happened
++ * @block_nr: number of the block where the CE error happened
++ * @msg: message to be printed
++ */
++extern void edac_device_handle_ce_count(struct edac_device_ctl_info *edac_dev,
++					u16 error_count, int inst_nr,
++					int block_nr, const char *msg);
++
+ /**
+  * edac_device_alloc_index: Allocate a unique device index number
+  *
 -- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+2.17.1
+
