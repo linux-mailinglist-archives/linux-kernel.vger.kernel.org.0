@@ -2,46 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F27BFA9F20
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D5CA9F17
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:01:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387786AbfIEKBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:01:06 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:44214 "EHLO
+        id S2387754AbfIEKAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:00:54 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:44204 "EHLO
         smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387712AbfIEKAw (ORCPT
+        by vger.kernel.org with ESMTP id S2387592AbfIEKAw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Sep 2019 06:00:52 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id CCDC1C0DD7;
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 47DFFC0DD6;
         Thu,  5 Sep 2019 10:00:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1567677652; bh=BF0fO1lkWmGVWqAZwytCEmVAOVHGSZEiz4u6292OEiQ=;
+        t=1567677651; bh=Ni9sjBFke5ST6exyzATqN84XzCCoj9ceZGLl4BFE4IY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=PdMj4KCr4t+WQs1GDpf71NtnzhALi5k+FVw9LavtU1rUGMFqn2iBcB0iDjay96qqg
-         zRrlj1a04S0x7l1I7Ot0GCXfzKFHJf47EbNbDfWrF4SmYzFQ6zpg7aq834fPigQOji
-         whSF7xo1crEvXh3mhf5VU9GghyhDAVpo2BBdZW1H6zCckppJT6Sz88St/W4Xw/2Ucf
-         DgXot/ykSRC38Yq3twCAdWGMAHOOHn3cMI+vy/QdcuO+yOuh9VQ19QSwc0K03obS8J
-         WFlhLn3X+yy9PoJd+p/M4JoPwvhe/csHslkO9Ap37EAMwXwe5TlQ6nGX9AxHesH1j0
-         93OvBHXLfnI2g==
-Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 63DCEA005C;
+        b=MIlLrbgSmKUQ05aYWhiOIFaTIOXKQm/drAB6X9hpRl+V3B4CPuBaGcv/fWmlMcdLi
+         iyZCfvdyfk6AVxSNZ1qlC8Dji5jM9rMbWu2YsceW0Q8DvHtlckMTPzGk9JuufZG3J0
+         oxGSUOZb4jtOnRulUBFS+MaqedwCqVfWFo+VRoltCTKUmI66dygQWGMfzZn9zy3uQB
+         CjBHm3Es5P2CFlZf5rMYcLQmWOMNCmpmX8/zQomBTWKA5iojltBZmo1kCYLmOnMzkM
+         rqr8aklEq+maiYWIipu/XoWHdNEayEA4ihb348I14qBzMZNdExjsgN/jrB28AqSA3n
+         fV5AZoZEybQ1g==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 7B74CA005E;
         Thu,  5 Sep 2019 10:00:49 +0000 (UTC)
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 47ECF3F3B2;
+        by de02.synopsys.com (Postfix) with ESMTP id 5E1AC3F3B5;
         Thu,  5 Sep 2019 12:00:49 +0200 (CEST)
 From:   Vitor Soares <Vitor.Soares@synopsys.com>
 To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-i3c@lists.infradead.org
 Cc:     bbrezillon@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         pgaj@cadence.com, Joao.Pinto@synopsys.com,
-        Vitor Soares <Vitor.Soares@synopsys.com>
-Subject: [PATCH v3 1/5] i3c: master: detach/free devices fail on pre_assign_dyn_addr()
-Date:   Thu,  5 Sep 2019 12:00:34 +0200
-Message-Id: <d16914bbe06cf82cdbf9a0480310bd9cc2e4d8a9.1567608245.git.vitor.soares@synopsys.com>
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v3 2/5] i3c: master: make sure ->boardinfo is initialized in add_i3c_dev_locked()
+Date:   Thu,  5 Sep 2019 12:00:35 +0200
+Message-Id: <ed18fd927b5759a6a1edb351113ceca615283189.1567608245.git.vitor.soares@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1567608245.git.vitor.soares@synopsys.com>
 References: <cover.1567608245.git.vitor.soares@synopsys.com>
@@ -52,98 +53,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As for today, the I3C framework is keeping in memory and master->bus.devs
-list the devices that fail during pre_assign_dyn_addr() and send them on
-DEFSLVS command.
+The newdev->boardinfo assignment was missing in
+i3c_master_add_i3c_dev_locked() and hence the ->of_node info isn't
+propagated to i3c_dev_desc.
 
-According to MIPI I3C Bus spec the DEFSLVS command is used to inform any
-Secondary Master about the Dynamic Addresses that were assigned to I3C
-devices and the I2C devices present on the bus.
+Fix this by trying to initialize device i3c_dev_boardinfo if available.
 
-This issue could be fixed by changing i3c_master_defslvs_locked() to
-ignore unaddressed i3c devices but the i3c_dev_desc would be allocated and
-attached to HC unnecessarily. This can cause that some HC aren't able to
-do DAA for HJ capable devices due to lack of space in controller.
-
+Cc: <stable@vger.kernel.org>
+Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
 Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
 ---
-Changes in v3:
-  - Change commit message
+Change in v3:
+  - None
 
 Changes in v2:
-  - Move out detach/free the i3c_dev_desc from pre_assign_dyn_addr()
-  - Convert i3c_master_pre_assign_dyn_addr() to return an int
+  - Change commit message
+  - Change i3c_master_search_i3c_boardinfo(newdev) to
+  i3c_master_init_i3c_dev_boardinfo(newdev)
+  - Add fixes, stable tags
 
- drivers/i3c/master.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ drivers/i3c/master.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 5f4bd52..586e34f 100644
+index 586e34f..9fb99bc 100644
 --- a/drivers/i3c/master.c
 +++ b/drivers/i3c/master.c
-@@ -1426,19 +1426,19 @@ static void i3c_master_detach_i2c_dev(struct i2c_dev_desc *dev)
- 		master->ops->detach_i2c_dev(dev);
+@@ -1798,6 +1798,22 @@ i3c_master_search_i3c_dev_duplicate(struct i3c_dev_desc *refdev)
+ 	return NULL;
  }
  
--static void i3c_master_pre_assign_dyn_addr(struct i3c_dev_desc *dev)
-+static int i3c_master_pre_assign_dyn_addr(struct i3c_dev_desc *dev)
- {
- 	struct i3c_master_controller *master = i3c_dev_get_master(dev);
- 	int ret;
- 
- 	if (!dev->boardinfo || !dev->boardinfo->init_dyn_addr ||
- 	    !dev->boardinfo->static_addr)
--		return;
-+		return 0;
- 
- 	ret = i3c_master_setdasa_locked(master, dev->info.static_addr,
- 					dev->boardinfo->init_dyn_addr);
- 	if (ret)
--		return;
-+		return ret;
- 
- 	dev->info.dyn_addr = dev->boardinfo->init_dyn_addr;
- 	ret = i3c_master_reattach_i3c_dev(dev, 0);
-@@ -1449,10 +1449,12 @@ static void i3c_master_pre_assign_dyn_addr(struct i3c_dev_desc *dev)
- 	if (ret)
- 		goto err_rstdaa;
- 
--	return;
-+	return 0;
- 
- err_rstdaa:
- 	i3c_master_rstdaa_locked(master, dev->boardinfo->init_dyn_addr);
++static void i3c_master_init_i3c_dev_boardinfo(struct i3c_dev_desc *dev)
++{
++	struct i3c_master_controller *master = i3c_dev_get_master(dev);
++	struct i3c_dev_boardinfo *boardinfo;
 +
-+	return ret;
- }
- 
- static void
-@@ -1647,7 +1649,7 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
- 	enum i3c_addr_slot_status status;
- 	struct i2c_dev_boardinfo *i2cboardinfo;
- 	struct i3c_dev_boardinfo *i3cboardinfo;
--	struct i3c_dev_desc *i3cdev;
-+	struct i3c_dev_desc *i3cdev, *i3ctmp;
- 	struct i2c_dev_desc *i2cdev;
- 	int ret;
- 
-@@ -1746,8 +1748,14 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
- 	 * Pre-assign dynamic address and retrieve device information if
- 	 * needed.
- 	 */
--	i3c_bus_for_each_i3cdev(&master->bus, i3cdev)
--		i3c_master_pre_assign_dyn_addr(i3cdev);
-+	list_for_each_entry_safe(i3cdev, i3ctmp, &master->bus.devs.i3c,
-+				 common.node) {
-+		ret = i3c_master_pre_assign_dyn_addr(i3cdev);
-+		if (ret) {
-+			i3c_master_detach_i3c_dev(i3cdev);
-+			i3c_master_free_i3c_dev(i3cdev);
++	if (dev->boardinfo)
++		return;
++
++	list_for_each_entry(boardinfo, &master->boardinfo.i3c, node) {
++		if (dev->info.pid == boardinfo->pid) {
++			dev->boardinfo = boardinfo;
++			return;
 +		}
 +	}
- 
- 	ret = i3c_master_do_daa(master);
++}
++
+ /**
+  * i3c_master_add_i3c_dev_locked() - add an I3C slave to the bus
+  * @master: master used to send frames on the bus
+@@ -1818,8 +1834,9 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
+ 				  u8 addr)
+ {
+ 	struct i3c_device_info info = { .dyn_addr = addr };
+-	struct i3c_dev_desc *newdev, *olddev;
+ 	u8 old_dyn_addr = addr, expected_dyn_addr;
++	enum i3c_addr_slot_status addrstatus;
++	struct i3c_dev_desc *newdev, *olddev;
+ 	struct i3c_ibi_setup ibireq = { };
+ 	bool enable_ibi = false;
+ 	int ret;
+@@ -1878,6 +1895,8 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
  	if (ret)
+ 		goto err_detach_dev;
+ 
++	i3c_master_init_i3c_dev_boardinfo(newdev);
++
+ 	/*
+ 	 * Depending on our previous state, the expected dynamic address might
+ 	 * differ:
+@@ -1895,7 +1914,11 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
+ 	else
+ 		expected_dyn_addr = newdev->info.dyn_addr;
+ 
+-	if (newdev->info.dyn_addr != expected_dyn_addr) {
++	addrstatus = i3c_bus_get_addr_slot_status(&master->bus,
++						  expected_dyn_addr);
++
++	if (newdev->info.dyn_addr != expected_dyn_addr &&
++	    addrstatus == I3C_ADDR_SLOT_FREE) {
+ 		/*
+ 		 * Try to apply the expected dynamic address. If it fails, keep
+ 		 * the address assigned by the master.
 -- 
 2.7.4
 
