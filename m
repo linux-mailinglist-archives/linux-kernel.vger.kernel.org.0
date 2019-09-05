@@ -2,53 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BBE6A9F5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F0EA9F68
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387827AbfIEKQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:16:10 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:44180 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732834AbfIEKQJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 06:16:09 -0400
-Received: from localhost (unknown [89.248.140.11])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 86284153878FA;
-        Thu,  5 Sep 2019 03:16:08 -0700 (PDT)
-Date:   Thu, 05 Sep 2019 12:16:07 +0200 (CEST)
-Message-Id: <20190905.121607.544007284666165538.davem@davemloft.net>
-To:     hayeswang@realtek.com
-Cc:     netdev@vger.kernel.org, nic_swsd@realtek.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] r8152: adjust the settings of ups flags
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1394712342-15778-327-Taiwan-albertk@realtek.com>
-References: <1394712342-15778-327-Taiwan-albertk@realtek.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 05 Sep 2019 03:16:09 -0700 (PDT)
+        id S1732051AbfIEKRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:17:30 -0400
+Received: from foss.arm.com ([217.140.110.172]:41122 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731142AbfIEKR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 06:17:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1121F1576;
+        Thu,  5 Sep 2019 03:17:29 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CE9B3F718;
+        Thu,  5 Sep 2019 03:17:27 -0700 (PDT)
+References: <20190830174944.21741-1-subhra.mazumdar@oracle.com> <20190830174944.21741-4-subhra.mazumdar@oracle.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     subhra mazumdar <subhra.mazumdar@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@redhat.com, tglx@linutronix.de, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, daniel.lezcano@linaro.org,
+        vincent.guittot@linaro.org, viresh.kumar@linaro.org,
+        tim.c.chen@linux.intel.com, mgorman@techsingularity.net,
+        parth@linux.ibm.com
+Subject: Re: [RFC PATCH 3/9] sched: add sched feature to disable idle core search
+In-reply-to: <20190830174944.21741-4-subhra.mazumdar@oracle.com>
+Date:   Thu, 05 Sep 2019 11:17:25 +0100
+Message-ID: <87mufj2gju.fsf@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hayes Wang <hayeswang@realtek.com>
-Date: Wed, 4 Sep 2019 17:34:38 +0800
 
-> The UPS feature only works for runtime suspend, so UPS flags only
-> need to be set before enabling runtime suspend. Therefore, I create
-> a struct to record relative information, and use it before runtime
-> suspend.
-> 
-> All chips could record such information, even though not all of
-> them support the feature of UPS. Then, some functions could be
-> combined.
-> 
-> Signed-off-by: Hayes Wang <hayeswang@realtek.com>
+On Fri, Aug 30, 2019 at 18:49:38 +0100, subhra mazumdar wrote...
 
-This does not apply cleanly to net-next, please respin.
+> Add a new sched feature SIS_CORE to have an option to disable idle core
+> search (select_idle_core).
+>
+> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
+> ---
+>  kernel/sched/features.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+> index 858589b..de4d506 100644
+> --- a/kernel/sched/features.h
+> +++ b/kernel/sched/features.h
+> @@ -57,6 +57,7 @@ SCHED_FEAT(TTWU_QUEUE, true)
+>   */
+>  SCHED_FEAT(SIS_AVG_CPU, false)
+>  SCHED_FEAT(SIS_PROP, true)
+> +SCHED_FEAT(SIS_CORE, true)
+
+Why do we need a sched_feature? If you think there are systems in
+which the usage of latency-nice does not make sense for in "Select Idle
+Sibling", then we should probably better add a new Kconfig option.
+
+If that's the case, you can probably use the init/Kconfig's
+"Scheduler features" section, recently added by:
+
+  commit 69842cba9ace ("sched/uclamp: Add CPU's clamp buckets refcounting")
+
+>  /*
+>   * Issue a WARN when we do multiple update_rq_clock() calls
+
+Best,
+Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
