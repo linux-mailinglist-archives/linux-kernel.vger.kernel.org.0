@@ -2,95 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CEC6AA01A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:43:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0940EAA01B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:44:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732175AbfIEKnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:43:46 -0400
-Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:45020 "EHLO
-        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727900AbfIEKnq (ORCPT
+        id S2387850AbfIEKoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:44:37 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35800 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727900AbfIEKog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 06:43:46 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 7ACD83FBBA;
-        Thu,  5 Sep 2019 12:43:44 +0200 (CEST)
-Authentication-Results: pio-pvt-msa3.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=SDoKa9va;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id cVxj9E_Kx0k8; Thu,  5 Sep 2019 12:43:43 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 2998A3F4F6;
-        Thu,  5 Sep 2019 12:43:43 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id CDF6C360100;
-        Thu,  5 Sep 2019 12:43:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1567680222; bh=3aSlQOqBEa26RhExNsoDCnh6gCRDnU08CAzt/peygzw=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=SDoKa9varg3r/9yg9AsqqUn8xx8qN+fIsHsXWka13aKVAj7BWg4ruG5dshDT63itt
-         VJkYaiK99i/ad1IdebWB4BEfHO5HbWd9ej9R63nt9nCNoPP1OoSc5H5/OCtQJRWoaV
-         yyEpRTlCxhRMdWgg5L4kZzBW4YQHOEFzMA0EqbaM=
-Subject: Re: [PATCH v2 0/4] Have TTM support SEV encryption with coherent
- memory
-To:     dri-devel@lists.freedesktop.org, pv-drivers@vmware.com,
-        linux-graphics-maintainer@vmware.com, linux-kernel@vger.kernel.org
-References: <20190903131504.18935-1-thomas_os@shipmail.org>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <5a41afa1-a1f9-128c-222a-542f102024b9@shipmail.org>
-Date:   Thu, 5 Sep 2019 12:43:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 5 Sep 2019 06:44:36 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n4so1217696pgv.2;
+        Thu, 05 Sep 2019 03:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=54y2QMAiCvInXUhjF/5299Z9zWajcWTy7f1EMF8YUwY=;
+        b=XULESHgX8sjFoyDdlyIWLV5v5m9Tw/PeM50SJp2525wLWiamyvwmGBlQhRfaqM5Hen
+         ThdcDOIqeQa2pjdEqAaYPJrhy5YaG6dSobtLjhY4y0kbeuo3MIQCc35VFmhKZlK0SpFx
+         Bt7lAi0ecdtPsa0jc6pD6XOQPf4FbngItvvYmQwD608bSqgOsxaz1AZEqd5H7AjqN3gp
+         xA64PQeiICbP4OhDHlAkux4FZjU1kolLsyfakLxi01NbOtPWvDUYtzK+vEg0i4xyJiF6
+         Lp9qRUyTnhqdQEBzKA16appGb6w4y6t6sHmT+fwkf5p/lnv5Nkdh1tKSh9H+16nSPoYm
+         sZwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=54y2QMAiCvInXUhjF/5299Z9zWajcWTy7f1EMF8YUwY=;
+        b=IHK7m2scjj9wdhJ5OcOlehkRgYIjMHNcmS6BW85DRb1eMkOeGgJSKv2BlXzJVu7ubA
+         GJ6MgS9X7OWAdkcYkbhsc9aWA1uz8QTbWNwFsP7OBHGk104OU8iKPMVbl3EQfA2HwYlY
+         pudeOHSQfUn/+HHHnCHJ2GCkCQOe++9SrtK/liPYloOKKrDc4m7PiSm8e2fEfY21vSFx
+         LK1QDZyPEDeeyNI3pCmKYc7tM9DgXS/32QYJfMdhEHujzHkE/9oNK70ZMf9Oun9mhbof
+         JizjUXjSkSLymI1IPLH/bR14Y5n0ZN9hgveXc+6frYq0bpqYy64nt600QqeKoSY122HG
+         v3Kg==
+X-Gm-Message-State: APjAAAUPPJbPSKPXsDvDVmZZSIutIyn5MSAOJIrBUcVvBn95XYq/Zcco
+        uWPES5WYmySk9pFPHw43iBR/TxI7
+X-Google-Smtp-Source: APXvYqwtfT4BMVhsNb3sr+Od6dCMm4NoT3zVCcWL1nLDUGzl6n/UlJugCP6NCIDRQP8hQ35ELauoZQ==
+X-Received: by 2002:a62:3887:: with SMTP id f129mr2986497pfa.245.1567680275873;
+        Thu, 05 Sep 2019 03:44:35 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id dw14sm1070779pjb.2.2019.09.05.03.44.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 05 Sep 2019 03:44:35 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH] KVM: LAPIC: Fix SynIC Timers inject timer interrupt w/o LAPIC present
+Date:   Thu,  5 Sep 2019 18:44:30 +0800
+Message-Id: <1567680270-14022-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190903131504.18935-1-thomas_os@shipmail.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/3/19 3:15 PM, Thomas Hellström (VMware) wrote:
-> With SEV memory encryption and in some cases also with SME memory
-> encryption, coherent memory is unencrypted. In those cases, TTM doesn't
-> set up the correct page protection. Fix this by having the TTM
-> coherent page allocator call into the platform code to determine whether
-> coherent memory is encrypted or not, and modify the page protection if
-> it is not.
->
-> v2:
-> - Use force_dma_unencrypted() rather than sev_active() to catch also the
->    special SME encryption cases.
+From: Wanpeng Li <wanpengli@tencent.com>
 
-So, this patchset is obviously withdrawn since
+Reported by syzkaller:
 
-a) We shouldn't have TTM shortcut the dma API in this way.
-b) To reviewers it was pretty unclear why this was needed in the first 
-place, and became
-even more unclear in the context of the TTM fault handler.
+	kasan: GPF could be caused by NULL-ptr deref or user memory access
+	general protection fault: 0000 [#1] PREEMPT SMP KASAN
+	RIP: 0010:__apic_accept_irq+0x46/0x740 arch/x86/kvm/lapic.c:1029
+	Call Trace:
+	kvm_apic_set_irq+0xb4/0x140 arch/x86/kvm/lapic.c:558
+	stimer_notify_direct arch/x86/kvm/hyperv.c:648 [inline]
+	stimer_expiration arch/x86/kvm/hyperv.c:659 [inline]
+	kvm_hv_process_stimers+0x594/0x1650 arch/x86/kvm/hyperv.c:686
+	vcpu_enter_guest+0x2b2a/0x54b0 arch/x86/kvm/x86.c:7896
+	vcpu_run+0x393/0xd40 arch/x86/kvm/x86.c:8152
+	kvm_arch_vcpu_ioctl_run+0x636/0x900 arch/x86/kvm/x86.c:8360
+	kvm_vcpu_ioctl+0x6cf/0xaf0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2765
 
-I've just send out an RFC patchset that basically does the same but in 
-the context of dma_mmap_coherent() I hope this clears things up and we 
-should hopefully be able to use a new
-dma API function from within the TTM fault handler.
+The testcase programs HV_X64_MSR_STIMERn_CONFIG/HV_X64_MSR_STIMERn_COUNT,
+in addition, there is no lapic in the kernel, the counters value are small 
+enough in order that kvm_hv_process_stimers() inject this already-expired 
+timer interrupt into the guest through lapic in the kernel which triggers 
+the NULL deferencing. This patch fixes it by checking lapic_in_kernel, 
+discarding the inject if it is 0.
 
-Thanks,
+Reported-by: syzbot+dff25ee91f0c7d5c1695@syzkaller.appspotmail.com
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ arch/x86/kvm/hyperv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thomas
-
-
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index c10a8b1..461fcc5 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -645,7 +645,9 @@ static int stimer_notify_direct(struct kvm_vcpu_hv_stimer *stimer)
+ 		.vector = stimer->config.apic_vector
+ 	};
+ 
+-	return !kvm_apic_set_irq(vcpu, &irq, NULL);
++	if (lapic_in_kernel(vcpu))
++		return !kvm_apic_set_irq(vcpu, &irq, NULL);
++	return 0;
+ }
+ 
+ static void stimer_expiration(struct kvm_vcpu_hv_stimer *stimer)
+-- 
+2.7.4
 
