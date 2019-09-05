@@ -2,87 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94497AA4E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEF48AA4EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730967AbfIENnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 09:43:41 -0400
-Received: from sauhun.de ([88.99.104.3]:57322 "EHLO pokefinder.org"
+        id S1731437AbfIENpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 09:45:47 -0400
+Received: from gate.crashing.org ([63.228.1.57]:44357 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbfIENnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 09:43:41 -0400
-Received: from localhost (p54B335F6.dip0.t-ipconnect.de [84.179.53.246])
-        by pokefinder.org (Postfix) with ESMTPSA id 881712C00C0;
-        Thu,  5 Sep 2019 15:43:38 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 15:43:38 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     alokc@codeaurora.org, agross@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, bjorn.andersson@linaro.org,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, vkoul@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] i2c: qcom-geni: Provide an option to disable DMA
- processing
-Message-ID: <20190905134338.GF1157@kunai>
-References: <20190905075213.13260-1-lee.jones@linaro.org>
- <20190905075213.13260-2-lee.jones@linaro.org>
- <20190905091800.GD1157@kunai>
- <20190905092816.GD26880@dell>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jkO+KyKz7TfD21mV"
+        id S1727900AbfIENpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 09:45:46 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x85Djarb028469;
+        Thu, 5 Sep 2019 08:45:36 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x85DjZfR028468;
+        Thu, 5 Sep 2019 08:45:35 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Thu, 5 Sep 2019 08:45:35 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "gcc-patches@gcc.gnu.org" <gcc-patches@gcc.gnu.org>
+Subject: Re: [PATCH v2 4/6] compiler-gcc.h: add asm_inline definition
+Message-ID: <20190905134535.GP9749@gate.crashing.org>
+References: <20190829083233.24162-1-linux@rasmusvillemoes.dk> <20190830231527.22304-1-linux@rasmusvillemoes.dk> <20190830231527.22304-5-linux@rasmusvillemoes.dk> <CAKwvOdktYpMH8WnEQwNE2JJdKn4w0CHv3L=YHkqU2JzQ6Qwkew@mail.gmail.com> <a5085133-33da-6c13-6953-d18cbc6ad3f5@rasmusvillemoes.dk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190905092816.GD26880@dell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a5085133-33da-6c13-6953-d18cbc6ad3f5@rasmusvillemoes.dk>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rasmus,
 
---jkO+KyKz7TfD21mV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 05, 2019 at 01:07:11PM +0200, Rasmus Villemoes wrote:
+> On 05/09/2019 02.18, Nick Desaulniers wrote:
+> > Is it too late to ask for a feature test macro? Maybe one already
+> > exists? 
+> 
+> No, not as far as I know.
 
-On Thu, Sep 05, 2019 at 10:28:16AM +0100, Lee Jones wrote:
-> On Thu, 05 Sep 2019, Wolfram Sang wrote:
->=20
-> >=20
-> > > Fixes: 8bc529b25354 ("soc: qcom: geni: Add support for ACPI")
-> >=20
-> > Are you sure? From visual inspection, I don't see a correlation between
-> > this commit and the fix here.
->=20
-> This patch should have been part of the commit, or at the very least,
-> part of the set, alluded to above.  Unfortunately, I was carrying
-> Bjorn's hack which simply returned early from geni_se_rx_dma_prep()
-> with an error, so it masked the issue.
+[ That's not what a feature test macro is; a feature test macro allows the
+  user to select some optional behaviour.  Things like _GNU_SOURCE.  ]
 
-I still don't see why this basic ACPI enabling code (not touching DMA
-but only clocks and pinctrl) causes and additional handling for DMA. Am
-I overlooking something obvious?
+> Perhaps something like below, though that
+> won't affect the already released gcc 9.1 and 9.2, of course.
+
+That is one reason to not want such a predefined macro.  Another reason
+is that you usually need to compile some test programs *anyway*, to see if
+some bug is present for example, or to see if the exact implementation of
+the feature is beneficial (or harmful) to your program in some way.
+
+> gcc maintainers, WDYT? Can we add a feature test macro for asm inline()?
+
+The only comparable existing predefined macro is __PRAGMA_REDEFINE_EXTNAME
+it seems (no, I have no idea either).  Everything else is required by some
+standard (a "standard standard" or a "vendor standard", I'm lumping
+everything together here), or shows whether some target has some feature,
+or how many bits there are in certain types, that kind of thing.
+
+Why would GCC want to have macros for all features it has?  That would be
+quite a few new ones every release.  And what about bug fixes, are bug
+fixes features as well?
+
+I think you need to solve your configuration problems in your
+configuration system.
 
 
---jkO+KyKz7TfD21mV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1xEQoACgkQFA3kzBSg
-KbaP5RAAtJRsAeX9DwqHu6OlUfWtnxeVIUmEceiWZ/k1Ad04csZDAuSKX/zEIIUH
-STPHQiXh5QrNJSnU5Wwxu3GmIqY5xO71X2fHKQn+z9hyi6AKrNdxMnTKz9Sq/vlV
-sl7qnk8IwyFEVlx6jFF10jw0ca50yv8IT4ErQAC+gUgAeF85T8tlxx66S3943qKe
-8Tz9J2dazk4Okf3NZHEm7h/V6WnmxDulwocq+gkm28jfBiusxexwoxiBy83eAYe5
-MbCbGD5eYesY24ZE4iJy/lCVspwe0Bgzj+DuBz0x+nwKf59vhQkjx0bV3UuaFH1/
-8VgnDGl4ocIdi9kJYRpHmVaKnrr9CcvWssm7YwmTzg7L2Zq2rwRcr+hi4sM+02Qn
-9Ki81OVixSgU2b8e+sbhQSh74JIAr6fiVFBBOluaT1SAkYclAzZbMETeCuDHowDB
-Sm2tjXkspsahkMM/+Um+X8rQ3xcULWYAckxwlpJPgdVXBOqOHH4fWQfuCvjo+W/p
-45UiRjFQQJzDAzzvjQT6cywv+nVxO3so5i3LH2QxdU+teccqtgjkbVJny9G1VdUc
-e8JBMtake7qqFdgImuTCOhbqu+9ACQmeKpYVVNSepxX25JMoxr9iDZy1i0W5+pQe
-N5vhQJRs0+i0X1IMG6jSuvmffuJJNIF6hI4rmRkg9//l5eHVlAo=
-=Fazi
------END PGP SIGNATURE-----
-
---jkO+KyKz7TfD21mV--
+Segher
