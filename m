@@ -2,134 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1565CA9E3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:26:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB41A9E4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:27:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732307AbfIEJ0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 05:26:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41950 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730518AbfIEJ0n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 05:26:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=qYSkLdHnvOeolG6VFyI8jlB0wdCU3wLXfgUY07UlKaM=; b=mnTWqmHz60GQYCWyXoAXPg1wJy
-        laNXux2PMwb6UNsbuhn1qpld14vvpOKkA/4YpU5SYUsfBhIlCLOti+pn2JKPoAMHAOzuWroPKlo2g
-        vzt6E7hSxdYVVcfe2VqT/dNVdTHd5TKscWsQnFIiM5QRNvsns6ggUz7a1D9wl39eZFdi2zTpzW7/5
-        NPhKQANvFLzXmTe4XgDcJTyBUkRdOi6JFO+A9vZQecfz8kE26nLFBxvyqg97Zojl16XaiPa51E9DW
-        ak8+ppbL2wdpwkMV1FhlgqQVr2kVq/xSdSjSpjQzks+UfEg+ElXWw/FlGs+dvmcCHkjUyJumeyxMO
-        TmzpbW/Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5o2A-0007fx-4V; Thu, 05 Sep 2019 09:26:30 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S2387417AbfIEJ1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 05:27:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37542 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731740AbfIEJ1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 05:27:07 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 981A7306038;
-        Thu,  5 Sep 2019 11:25:50 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 82BE329C0F166; Thu,  5 Sep 2019 11:26:27 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 11:26:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrew Cooper <andrew.cooper3@citrix.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        xen-devel@lists.xenproject.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: Re: [Xen-devel] [PATCH -tip 0/2] x86: Prohibit kprobes on
- XEN_EMULATE_PREFIX
-Message-ID: <20190905092627.GB2332@hirez.programming.kicks-ass.net>
-References: <156759754770.24473.11832897710080799131.stgit@devnote2>
- <ad6431be-c86e-5ed5-518a-d1e9d1959e80@citrix.com>
- <20190905104937.60aa03f699a9c0fbf1b651b9@kernel.org>
- <1372ce73-e2d8-6144-57df-a98429587826@citrix.com>
- <20190905082647.GZ2332@hirez.programming.kicks-ass.net>
- <4de91a14-2051-197e-6ab0-beb2538c40f9@citrix.com>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9952B21848;
+        Thu,  5 Sep 2019 09:27:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567675626;
+        bh=/v41qPFClF2nhR0vF9NLnbhl2prgKAF/kweG4ZeX8w4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pg8pEJDBI+Tulk12m8DWGmgWMSuO5ZsuyJTqs1vQa5wlf+Aj3F7/IkPW6TjvQzAQo
+         72+wC1S6p5brjxr8PoEL7MGG0GlRU00po2g+i/t3k0WitgUuzE2dpRMfb75RdbCDmP
+         z+ukF5YSSYZZ+QtRlyNN/QgB/YGUgMdkMbKlYBVI=
+Date:   Thu, 5 Sep 2019 11:27:03 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, Jessica Yu <jeyu@kernel.org>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] docs: license-rules.txt: cover SPDX headers on Python
+ scripts
+Message-ID: <20190905092703.GA30899@kroah.com>
+References: <20190905055614.7958918b@coco.lan>
+ <88e638eb959095ab6657d295f9f8c27169569bf2.1567675272.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4de91a14-2051-197e-6ab0-beb2538c40f9@citrix.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <88e638eb959095ab6657d295f9f8c27169569bf2.1567675272.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 09:53:32AM +0100, Andrew Cooper wrote:
-> On 05/09/2019 09:26, Peter Zijlstra wrote:
-> > On Thu, Sep 05, 2019 at 08:54:17AM +0100, Andrew Cooper wrote:
-> >
-> >> I don't know if you've spotted, but the prefix is a ud2a instruction
-> >> followed by 'xen' in ascii.
-> >>
-> >> The KVM version was added in c/s 6c86eedc206dd1f9d37a2796faa8e6f2278215d2
-> > While the Xen one disassebles to valid instructions, that KVM one does
-> > not:
-> >
-> > 	.text
-> > xen:
-> > 	ud2; .ascii "xen"
-> > kvm:
-> > 	ud2; .ascii "kvm"
-> >
-> > disassembles like:
-> >
-> > 0000000000000000 <xen>:
-> >    0:   0f 0b                   ud2
-> >    2:   78 65                   js     69 <kvm+0x64>
-> >    4:   6e                      outsb  %ds:(%rsi),(%dx)
-> > 0000000000000005 <kvm>:
-> >    5:   0f 0b                   ud2
-> >    7:   6b                      .byte 0x6b
-> >    8:   76 6d                   jbe    77 <kvm+0x72>
-> >
-> > Which is a bit unfortunate I suppose. At least they don't appear to
-> > consume further bytes.
+On Thu, Sep 05, 2019 at 06:23:13AM -0300, Mauro Carvalho Chehab wrote:
+> The author of the license-rules.rst file wanted to be very restrict
+> with regards to the location of the SPDX header. It says that
+> the SPDX header "shall be added at the first  possible line in
+> a file which can contain a comment". Not happy with this already
+> restrictive requiement, it goes further:
 > 
-> It does when you give objdump one extra byte to look at.
+> "For the majority  of files this is the first line, except for
+> scripts", opening an exception to have the SPDX header at the
+> second line, if the first line starts with "#!".
 > 
-> 0000000000000005 <kvm>:
->    5:    0f 0b                    ud2   
->    7:    6b 76 6d 00              imul   $0x0,0x6d(%rsi),%esi
+> Well, it turns that this is too restrictive for Python scripts,
+> and may cause regressions if this would be enforced.
 > 
-> I did try to point out that this property should have been checked
-> before settling on 'kvm' as the string.
-
-Bah you're right; when I write:
-
-	ud2; .ascii "kvm"; cpuid
-
-The output is gibberish :/
-
-> but we're 13 years too late to amend this.
-
-Yah, I figured :/
-
-> > I know it is water under the bridge at this point; but you could've used
-> > UD1 with a displacement with some 'unlikely' values. That way it
-> > would've decoded to a single instruction.
-> >
-> > Something like:
-> >
-> > 	ud1    0x6e6578(%rax),%rax
-> >
-> > which spells out "xen\0" in the displacement:
-> >
-> > 	48 0f b9 80 78 65 6e 00
+> As mentioned on:
+> 	https://stackoverflow.com/questions/728891/correct-way-to-define-python-source-code-encoding
 > 
-> :)
+> Python's PEP-263 [1] dictates that an script that needs to default to
+> UTF-8 encoding has to follow this rule:
 > 
-> I seem to recall UD0 and UD1 being very late to the documentation party.
+> 	'Python will default to ASCII as standard encoding if no other
+> 	 encoding hints are given.
+> 
+> 	 To define a source code encoding, a magic comment must be placed
+> 	 into the source files either as first or second line in the file'
+> 
+> And:
+> 	'More precisely, the first or second line must match the following
+> 	 regular expression:
+> 
+> 	 ^[ \t\f]*#.*?coding[:=][ \t]*([-_.a-zA-Z0-9]+)'
+> 
+> [1] https://www.python.org/dev/peps/pep-0263/
+> 
+> If a script has both "#!" and the charset encoding line, we can't place
+> a SPDX tag without either violating license-rules.rst or breaking the
+> script by making it crash with non-ASCII characters.
+> 
+> So, add a sort notice saying that, for Python scripts, the SPDX
+> header may be up to the third line, in order to cover the case
+> where both "#!" and "# .*coding.*UTF-8" lines are found.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  Documentation/process/license-rules.rst | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/process/license-rules.rst b/Documentation/process/license-rules.rst
+> index 2ef44ada3f11..5d23e3498b1c 100644
+> --- a/Documentation/process/license-rules.rst
+> +++ b/Documentation/process/license-rules.rst
+> @@ -64,9 +64,12 @@ License identifier syntax
+>     possible line in a file which can contain a comment.  For the majority
+>     of files this is the first line, except for scripts which require the
+>     '#!PATH_TO_INTERPRETER' in the first line.  For those scripts the SPDX
+> -   identifier goes into the second line.
+> +   identifier goes into the second line\ [1]_.
+>  
+> -|
+> +.. [1] Please notice that Python scripts may also need an encoding rule
+> +   as defined on PEP-263, which should be defined either at the first
+> +   or the second line. So, for such scripts, the SPDX identifier may
+> +   go up to the third line.
+>  
+>  2. Style:
+>  
 
-They were; and the documentation for still UD0 differs between vendors :/
+If you are going to do this, can you also fix up scripts/spdxcheck.py to
+properly catch this, as well as fixing up the location of the spdx tag
+line in the file itself?
+
+thanks,
+
+greg k-h
