@@ -2,96 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E838A9B10
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB125A9B21
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:05:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731717AbfIEHFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 03:05:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42506 "EHLO mx1.redhat.com"
+        id S1731766AbfIEHFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 03:05:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36678 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731492AbfIEHFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 03:05:14 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1731733AbfIEHFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 03:05:17 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AFDCF3083362;
-        Thu,  5 Sep 2019 07:05:14 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 13FBB10F23E3;
+        Thu,  5 Sep 2019 07:05:17 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-117-72.ams2.redhat.com [10.36.117.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6628460126;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 68B576060D;
         Thu,  5 Sep 2019 07:05:14 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id D353331F02; Thu,  5 Sep 2019 09:05:10 +0200 (CEST)
+        id F3FC431F04; Thu,  5 Sep 2019 09:05:10 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Gerd Hoffmann <kraxel@redhat.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        David Airlie <airlied@linux.ie>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 7/8] drm/vmwgfx: switch to own vma manager
-Date:   Thu,  5 Sep 2019 09:05:08 +0200
-Message-Id: <20190905070509.22407-8-kraxel@redhat.com>
+Subject: [PATCH 8/8] drm/ttm: remove embedded vma_offset_manager
+Date:   Thu,  5 Sep 2019 09:05:09 +0200
+Message-Id: <20190905070509.22407-9-kraxel@redhat.com>
 In-Reply-To: <20190905070509.22407-1-kraxel@redhat.com>
 References: <20190905070509.22407-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 05 Sep 2019 07:05:14 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Thu, 05 Sep 2019 07:05:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add struct drm_vma_offset_manager to vma_private, initialize it and
-pass it to ttm_bo_device_init().
-
-With this in place the last user of ttm's embedded vma offset manager
-is gone and we can remove it (in a separate patch).
+No users left.  Drivers either setup vma_offset_manager themself
+(vmwgfx) or pass the gem vma_offset_manager to ttm_bo_device_init
+(all other drivers).
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h | 1 +
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 6 +++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ include/drm/ttm/ttm_bo_driver.h | 4 +---
+ drivers/gpu/drm/ttm/ttm_bo.c    | 9 ++-------
+ 2 files changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-index dbb04dbcf478..adb0436528c7 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-@@ -420,6 +420,7 @@ struct vmw_private {
- 	struct vmw_fifo_state fifo;
+diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
+index e365434f92b3..4e307f65f497 100644
+--- a/include/drm/ttm/ttm_bo_driver.h
++++ b/include/drm/ttm/ttm_bo_driver.h
+@@ -442,7 +442,6 @@ extern struct ttm_bo_global {
+  * @driver: Pointer to a struct ttm_bo_driver struct setup by the driver.
+  * @man: An array of mem_type_managers.
+  * @vma_manager: Address space manager (pointer)
+- * @_vma_manager: Address space manager (enbedded)
+  * lru_lock: Spinlock that protects the buffer+device lru lists and
+  * ddestroy lists.
+  * @dev_mapping: A pointer to the struct address_space representing the
+@@ -466,7 +465,6 @@ struct ttm_bo_device {
+ 	 * Protected by internal locks.
+ 	 */
+ 	struct drm_vma_offset_manager *vma_manager;
+-	struct drm_vma_offset_manager _vma_manager;
  
- 	struct drm_device *dev;
-+	struct drm_vma_offset_manager vma_manager;
- 	unsigned long vmw_chipset;
- 	unsigned int io_start;
- 	uint32_t vram_start;
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index 20bc91214e75..882facd055de 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -827,10 +827,13 @@ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
- 		goto out_no_fman;
- 	}
+ 	/*
+ 	 * Protected by the global:lru lock.
+@@ -587,7 +585,7 @@ int ttm_bo_device_release(struct ttm_bo_device *bdev);
+  * @glob: A pointer to an initialized struct ttm_bo_global.
+  * @driver: A pointer to a struct ttm_bo_driver set up by the caller.
+  * @mapping: The address space to use for this bo.
+- * @vma_manager: A pointer to a vma manager or NULL.
++ * @vma_manager: A pointer to a vma manager.
+  * @file_page_offset: Offset into the device address space that is available
+  * for buffer data. This ensures compatibility with other users of the
+  * address space.
+diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
+index 8dc26babc5cb..881cf26d698e 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -1704,8 +1704,6 @@ int ttm_bo_device_release(struct ttm_bo_device *bdev)
+ 			pr_debug("Swap list %d was clean\n", i);
+ 	spin_unlock(&glob->lru_lock);
  
-+	drm_vma_offset_manager_init(&dev_priv->vma_manager,
-+				    DRM_FILE_PAGE_OFFSET_START,
-+				    DRM_FILE_PAGE_OFFSET_SIZE);
- 	ret = ttm_bo_device_init(&dev_priv->bdev,
- 				 &vmw_bo_driver,
- 				 dev->anon_inode->i_mapping,
--				 NULL,
-+				 &dev_priv->vma_manager,
- 				 false);
- 	if (unlikely(ret != 0)) {
- 		DRM_ERROR("Failed initializing TTM buffer object driver.\n");
-@@ -987,6 +990,7 @@ static void vmw_driver_unload(struct drm_device *dev)
- 	if (dev_priv->has_mob)
- 		(void) ttm_bo_clean_mm(&dev_priv->bdev, VMW_PL_MOB);
- 	(void) ttm_bo_device_release(&dev_priv->bdev);
-+	drm_vma_offset_manager_destroy(&dev_priv->vma_manager);
- 	vmw_release_device_late(dev_priv);
- 	vmw_fence_manager_takedown(dev_priv->fman);
- 	if (dev_priv->capabilities & SVGA_CAP_IRQMASK)
+-	drm_vma_offset_manager_destroy(&bdev->_vma_manager);
+-
+ 	if (!ret)
+ 		ttm_bo_global_release();
+ 
+@@ -1722,8 +1720,8 @@ int ttm_bo_device_init(struct ttm_bo_device *bdev,
+ 	struct ttm_bo_global *glob = &ttm_bo_glob;
+ 	int ret;
+ 
+-	if (!vma_manager)
+-		vma_manager = &bdev->_vma_manager;
++	if (WARN_ON(vma_manager == NULL))
++		return -EINVAL;
+ 
+ 	ret = ttm_bo_global_init();
+ 	if (ret)
+@@ -1742,9 +1740,6 @@ int ttm_bo_device_init(struct ttm_bo_device *bdev,
+ 		goto out_no_sys;
+ 
+ 	bdev->vma_manager = vma_manager;
+-	drm_vma_offset_manager_init(&bdev->_vma_manager,
+-				    DRM_FILE_PAGE_OFFSET_START,
+-				    DRM_FILE_PAGE_OFFSET_SIZE);
+ 	INIT_DELAYED_WORK(&bdev->wq, ttm_bo_delayed_workqueue);
+ 	INIT_LIST_HEAD(&bdev->ddestroy);
+ 	bdev->dev_mapping = mapping;
 -- 
 2.18.1
 
