@@ -2,108 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6638CAA1BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:42:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA8FAA1E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:44:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388641AbfIELku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:40:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44324 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733010AbfIELku (ORCPT
+        id S1732232AbfIELnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:43:22 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:52952 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731584AbfIELnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:40:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/GCMw/eEaPCB+aQnlkEbRw1aCbTfAQklVoBoCdkGQgI=; b=1fcWC1lirPTUsNfUnSlStbwHA
-        myzMYuAcZBgdFdGEOmhPfU8V6h3hyOvitwkcSITI3lcPpUhHzlY/yNQaXB0CvtHaHkzJ9rh3w83HD
-        MlhJzPl8JaJ6xaAt3VYONJbuArO4Q8rUPyWZ8NZ24hvvkCerFWxJvBk9+hczZKaSh2jdvF6yp23rc
-        IqKYKNeoTWWhHlE4ZM2jclqY2ffjkLdEnRqJOBwC6g/aVPa59xF8ZJ6HPBnbwHwIpSBwIQ6LjdORy
-        5TgIL8KAbpeafke6aPPJHoe1zvle22IOfmUkOvuq2fXX+PDVXb+erm8RJ4qNDhfnbpSIaxTRbKMHk
-        Mva9DSx4Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5q7s-0006Z3-NR; Thu, 05 Sep 2019 11:40:32 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DB766306053;
-        Thu,  5 Sep 2019 13:39:53 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D498F29CBE146; Thu,  5 Sep 2019 13:40:30 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 13:40:30 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net, parth@linux.ibm.com
-Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
-Message-ID: <20190905114030.GL2349@hirez.programming.kicks-ass.net>
-References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
- <20190830174944.21741-2-subhra.mazumdar@oracle.com>
- <20190905083127.GA2332@hirez.programming.kicks-ass.net>
- <87r24v2i14.fsf@arm.com>
- <20190905104616.GD2332@hirez.programming.kicks-ass.net>
- <87imq72dpc.fsf@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87imq72dpc.fsf@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 5 Sep 2019 07:43:22 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 92F59C2A1C;
+        Thu,  5 Sep 2019 11:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1567683802; bh=Qjz7X2UzGUnHTi/Vxd8hfhSuMVDRCM9oZteF3iucUAU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=D9ku2U0j2gUu3CQPQ1LegWt0SFGVSTOOriWxGP7M4M68mJORHkM2Gb9P08uVD/pRw
+         gyCHyZTALg6NpglcstFKMPnI6uYW7K496aYK8Z6gr7+H/ZnqR/m8mnYtcbWeE2NlKA
+         et6hmXk3Fc3OXE+RurA6ZuM+MXoicC064lETuIdnMc+d0JWvAJ0V9HnF8hsedwrrkX
+         8kkFhf5yWJfaMfnVodZozevS+07Hu+NRa3xymEz0QRXjVETZz8pF6Hl3fnp5MLp4rj
+         NYSvgTfcyL0TO7jxIaR/LVsEQwfO6SYVRKqaM+hFGN2mttFoexwHdY9+GHrLY4R6Lq
+         NEA7z74W2g3IQ==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 87AE1A005C;
+        Thu,  5 Sep 2019 11:43:17 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: phy: Do not check Link status when loopback is enabled
+Date:   Thu,  5 Sep 2019 13:43:10 +0200
+Message-Id: <7db46f6b1318ec22d45f7e6f6f907eda015a9df6.1567683751.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 12:18:55PM +0100, Patrick Bellasi wrote:
+While running stmmac selftests I found that in my 1G setup some tests
+were failling when running with PHY loopback enabled.
 
-> Right, we have this dualism to deal with and current mainline behaviour
-> is somehow in the middle.
-> 
-> BTW, the FB requirement is the same we have in Android.
-> We want some CFS tasks to have very small latency and a low chance
-> to be preempted by the wake-up of less-important "background" tasks.
-> 
-> I'm not totally against the usage of a signed range, but I'm thinking
-> that since we are introducing a new (non POSIX) concept we can get the
-> chance to make it more human friendly.
+It looks like when loopback is enabled the PHY will report that Link is
+down even though there is a valid connection.
 
-I'm arguing that signed _is_ more human friendly ;-)
+As in loopback mode the data will not be sent anywhere we can bypass the
+logic of checking if Link is valid thus saving unecessary reads.
 
-> Give the two extremes above, would not be much simpler and intuitive to
-> have 0 implementing the FB/Android (no latency) case and 1024 the
-> (max latency) Oracle case?
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 
-See, I find the signed thing more natural, negative is a bias away from
-latency sensitive, positive is a bias towards latency sensitive.
+---
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/net/phy/phy.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Also; 0 is a good default value ;-)
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 35d29a823af8..7c92afd36bbe 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -525,6 +525,12 @@ static int phy_check_link_status(struct phy_device *phydev)
+ 
+ 	WARN_ON(!mutex_is_locked(&phydev->lock));
+ 
++	/* Keep previous state if loopback is enabled because some PHYs
++	 * report that Link is Down when loopback is enabled.
++	 */
++	if (phydev->loopback_enabled)
++		return 0;
++
+ 	err = phy_read_status(phydev);
+ 	if (err)
+ 		return err;
+-- 
+2.7.4
 
-> Moreover, we will never match completely the nice semantic, give that
-> a 1 nice unit has a proper math meaning, isn't something like 10% CPU
-> usage change for each step?
-
-Only because we were nice when implementing it. Posix leaves it
-unspecified and we could change it at any time. The only real semantics
-is a relative 'weight' (opengroup uses the term 'favourable').
-
-> Could changing the name to "latency-tolerance" break the tie by marking
-> its difference wrt prior/nice levels? AFAIR, that was also the original
-> proposal [1] by PaulT during the OSPM discussion.
-
-latency torrerance could still be a signed entity, positive would
-signify we're more tolerant of latency (ie. less sensitive) while
-negative would be less tolerant (ie. more sensitive).
-
-> For latency-nice instead we will likely base our biasing strategies on
-> some predefined (maybe system-wide configurable) const thresholds.
-
-I'm not quite sure; yes, for some of these things, like the idle search
-on wakeup, certainly. But say for wakeup-preemption, we could definitely
-make it a task relative attribute.
