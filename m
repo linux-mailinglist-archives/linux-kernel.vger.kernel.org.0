@@ -2,90 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98166A9CBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:17:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F4023A9CD2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:19:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731828AbfIEIRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 04:17:06 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46958 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730937AbfIEIRG (ORCPT
+        id S1732550AbfIEIT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 04:19:27 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36634 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfIEIT0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 04:17:06 -0400
-Received: by mail-ot1-f65.google.com with SMTP id g19so1260252otg.13
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 01:17:06 -0700 (PDT)
+        Thu, 5 Sep 2019 04:19:26 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y22so1247636pfr.3;
+        Thu, 05 Sep 2019 01:19:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0xPzSESc4AZSzOz8iuenGzI1AlT1OxyaOVK/bXB62NU=;
-        b=OuTz5wvUQ35QYkpSKKPCxxQaaU1HK9r2e88MGLbbYqoqxReti2Duuk8kuS0KYSC1Ip
-         pdHLMs7zhO419UJhHXlo+5eiLjxOlJzvBJvCkJ3krsKonpbm0VX4vie2pR8FyWB7NvC8
-         xwNADNZ++jqxlZ73zV3Fv4RHQ1CtN/gCiJYwY6zC+I9oUFbUzixbhoF1ofdOq8nGsV/x
-         zsdighpHoFIa+hFO9Gfuw4SI4cNG/br0SpICPLmLwP7JT0b8Rw1es+25pX61XTWttPNd
-         pNvFwcXfQACkPtI8sYYB2mxINaHDTZiPwLrnEMjPnV1KdzshSBt/8xJLmUURA816hh65
-         xaDg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9/BdIi9v9vT+sjdaqY5A0ECHD5U3qpWLnzpWXvofxDY=;
+        b=r1nLUBGcm0bfuZZ9Lr7GSA62KRvGRugvYiQ3s1TSi2oyWNKhdrBXHjTf2ZtGebVm1N
+         sh7wZ2uUUHgw84Q64gm7NOKnM0JGC/frypk5e84p9I93pn5Id8i2RviYRI88bsveSHDY
+         ceTGu6jIfXr9Le2TXdJ+7MVGNwyPmLaPPkUmHclpGnhzdzhdqP5K7uzohK6MqPjmYfoN
+         cSif/IsIjUZQxbdq+gMqUnq0Fel1F2/dwk5Bg2aKRRTkuEgPUD0hhrEZmFnxelU/97z/
+         tbLkUGImiJljqmi2Vnf1sUR9WIOiAuluSIlPrsiRQWDY+2lgmJqYpeo+dU8x/kpG06Lx
+         Q2qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0xPzSESc4AZSzOz8iuenGzI1AlT1OxyaOVK/bXB62NU=;
-        b=XDIm8UwLNyHxhlTc7uvTfWNWAkL11RxpARXh4f+miUc+NoPWc2ZoLfLqetz4uxJMJE
-         dwz9KCBq07uWB0X6wUZwnqDFnApOD+9y/ccjqALCKsTm7lnhaPxkFv1d/V510w5Nexk3
-         O/y/tmlswHx+4zgrjUf70iPhVgvzpxjuARXhNMBKYrEiepv7R2KCeOpYmbgrZVH3b0Nm
-         ihTITPhwIPQPe0KYyVeLj5gkvFBEC4mWFDG5C00+yD20++aTnE5qQCtN87AqnSSro8zZ
-         PddLlA2QDo/QfxXHMsBeF4MH/Eh5rvrrEs7H5xDlilDbQs7C6BFaDsPj9FfUWnAvYrNY
-         F1CQ==
-X-Gm-Message-State: APjAAAVm/QPJGb+UaL+NJVtpz0lEYqoYmVN/38GtRkr7gHBQNfDJOW2a
-        i+5wlNp8GEcrQV3pM3/DLYSZvgsxuf2c10W2JQz/lg==
-X-Google-Smtp-Source: APXvYqy24rjXe/FVSgFiU9SxJ4vZK2hJu//H06XcbxMiz2ueKtSmAR0GsP61bsSotW7CRw5je/6qibK/HvRFMTwLvZ0=
-X-Received: by 2002:a9d:5e11:: with SMTP id d17mr1498113oti.135.1567671425605;
- Thu, 05 Sep 2019 01:17:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190904180736.29009-1-xypron.glpk@gmx.de> <86r24vrwyh.wl-maz@kernel.org>
-In-Reply-To: <86r24vrwyh.wl-maz@kernel.org>
-From:   Peter Maydell <peter.maydell@linaro.org>
-Date:   Thu, 5 Sep 2019 09:16:54 +0100
-Message-ID: <CAFEAcA-mc6cLmRGdGNOBR0PC1f_VBjvTdAL6xYtKjApx3NoPgQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] KVM: inject data abort if instruction cannot be decoded
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        =?UTF-8?Q?Daniel_P_=2E_Berrang=C3=A9?= <berrange@redhat.com>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9/BdIi9v9vT+sjdaqY5A0ECHD5U3qpWLnzpWXvofxDY=;
+        b=KfALPtawcr0CiiVOCKYdYLNrVT7+VNXwDrk2PKpvWAn8pCv7wLgPBaBZoxay0vuy0i
+         8kk29AY4KU8THN1SOuTxCw3OqbteTMrxh5bat19+6jpCytvjnSZJ1FWCyyXLGRF9aiKZ
+         qHz69xX0CAAJs3uPkGVjlxzg7d9bqIJId4F+NCJMd3Ouj9ebVLZxSFoyzD/OK+GEuPZg
+         MifxJUQPs0GRnj/gD09zp7doQiHPmwopi2b7kfMBHxdbyxv4Sdt6R0YWQ5bm6hhQ51tH
+         y9l/UU3uMQnTBJoWsYKPEkFjLD9zF0EpyUAWYYnuZ9gGtAt1pQZ7clKO37SI+6lEhrsl
+         aPmA==
+X-Gm-Message-State: APjAAAW8J+Bp25pJjf27bHjE8oYY+UklzriABO28CmzQmXGjH6cevqD4
+        ZZd4dupuDXXorJJjNvLBlJ/pAzG2
+X-Google-Smtp-Source: APXvYqxe1QnHt/X7OsIxUjVUHyE38n/yrBYayr07GhF9bIM7Bs1edEmFMoAIFICZevF1sqQC3j1bCw==
+X-Received: by 2002:a63:e148:: with SMTP id h8mr2013798pgk.275.1567671565558;
+        Thu, 05 Sep 2019 01:19:25 -0700 (PDT)
+Received: from localhost.localdomain ([49.216.8.243])
+        by smtp.gmail.com with ESMTPSA id h9sm1170401pgh.51.2019.09.05.01.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2019 01:19:24 -0700 (PDT)
+From:   jamestai.sky@gmail.com
+X-Google-Original-From: james.tai@realtek.com
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        CY_Huang <cy.huang@realtek.com>,
+        Phinex Hung <phinex@realtek.com>,
+        "james.tai" <james.tai@realtek.com>
+Subject: [PATCH] dt-bindings: arm: Convert Realtek board/soc bindings to json-schema
+Date:   Thu,  5 Sep 2019 16:17:21 +0800
+Message-Id: <20190905081721.1548-1-james.tai@realtek.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019 at 09:04, Marc Zyngier <maz@kernel.org> wrote:
-> How can you tell that the access would fault? You have no idea at that
-> stage (the kernel doesn't know about the MMIO ranges that userspace
-> handles). All you know is that you're faced with a memory access that
-> you cannot emulate in the kernel. Injecting a data abort at that stage
-> is not something that the architecture allows.
+From: "james.tai" <james.tai@realtek.com>
 
-To be fair, locking up the whole CPU (which is effectively
-what the kvm_err/ENOSYS is going to do to the VM) isn't
-something the architecture allows either :-)
+Convert Realtek SoC bindings to DT schema format using json-schema.
 
-> Of course, the best thing would be to actually fix the guest so that
-> it doesn't use non-emulatable MMIO accesses. In general, that the sign
-> of a bug in low-level accessors.
+Signed-off-by: james.tai <james.tai@realtek.com>
+---
+ .../devicetree/bindings/arm/realtek.txt       | 22 -------------------
+ .../devicetree/bindings/arm/realtek.yaml      | 17 ++++++++++++++
+ 2 files changed, 17 insertions(+), 22 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/realtek.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/realtek.yaml
 
-This is true, but the problem is that barfing out to userspace
-makes it harder to debug the guest because it means that
-the VM is immediately destroyed, whereas AIUI if we
-inject some kind of exception then (assuming you're set up
-to do kernel-debug via gdbstub) you can actually examine
-the offending guest code with a debugger because at least
-your VM is still around to inspect...
+diff --git a/Documentation/devicetree/bindings/arm/realtek.txt b/Documentation/devicetree/bindings/arm/realtek.txt
+deleted file mode 100644
+index 95839e19ae92..000000000000
+--- a/Documentation/devicetree/bindings/arm/realtek.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-Realtek platforms device tree bindings
+---------------------------------------
+-
+-
+-RTD1295 SoC
+-===========
+-
+-Required root node properties:
+-
+- - compatible :  must contain "realtek,rtd1295"
+-
+-
+-Root node property compatible must contain, depending on board:
+-
+- - MeLE V9: "mele,v9"
+- - ProBox2 AVA: "probox2,ava"
+- - Zidoo X9S: "zidoo,x9s"
+-
+-
+-Example:
+-
+-    compatible = "zidoo,x9s", "realtek,rtd1295";
+diff --git a/Documentation/devicetree/bindings/arm/realtek.yaml b/Documentation/devicetree/bindings/arm/realtek.yaml
+new file mode 100644
+index 000000000000..ad9b13bc42f0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/realtek.yaml
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/realtek.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Realtek platforms device tree bindings
++
++properties:
++  compatible:
++    oneOf:
++        items:
++          - enum:
++              - mele,v9
++              - probox2,ava
++              - zidoo,x9s
++          - const: realtek,rtd1295
+-- 
+2.17.1
 
-thanks
--- PMM
