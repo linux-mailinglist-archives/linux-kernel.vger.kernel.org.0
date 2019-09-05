@@ -2,88 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D68C4AA728
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:22:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E804BAA739
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390387AbfIEPWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 11:22:30 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38739 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388057AbfIEPWa (ORCPT
+        id S2388276AbfIEPYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 11:24:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54672 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731938AbfIEPYl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 11:22:30 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1i5tad-0007qi-Pw; Thu, 05 Sep 2019 15:22:27 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] staging: rtl8723bs: hal: remove redundant variable n
-Date:   Thu,  5 Sep 2019 16:22:27 +0100
-Message-Id: <20190905152227.4610-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 5 Sep 2019 11:24:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4QFZgq5+nT5oEr4DTI39fauvfzjjEc39wNO2ExmrIoY=; b=KODwrZv8ccEHHsY0uJ8BlzfL7B
+        UtpzVL7jqpuJ/FUxOYe76sI9fzucF0D+jEeZLiKxfGCeaDdRMzOTVYMNFezcEQgqu6rLLB15GAgZ7
+        i7zy+Ofc81azhr5CM7Ok4MaxAXe9T4po8hU44gXx4TnEfneNYMPLBsUEshutsy2pZtKadP6/8evoP
+        2boIUWC6cOGOYlDBdDS/6pvDSBD+yjZ/aYcjp99wUThEcBL3UbgEbVYsektsu9sMYhplkMwZvlorD
+        xeg+mx6QuduxJr/65Dwb8NStJbN07JEWKhTTRfkclF6lYh4TS4myY7SeGZuhw2GiMOt3bXTMNiSAS
+        AHjrlKPA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5tck-0004zu-5S; Thu, 05 Sep 2019 15:24:38 +0000
+Date:   Thu, 5 Sep 2019 08:24:38 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, pv-drivers@vmware.com,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [RFC PATCH 1/2] x86: Don't let pgprot_modify() change the page
+ encryption bit
+Message-ID: <20190905152438.GA18286@infradead.org>
+References: <20190905103541.4161-1-thomas_os@shipmail.org>
+ <20190905103541.4161-2-thomas_os@shipmail.org>
+ <608bbec6-448e-f9d5-b29a-1984225eb078@intel.com>
+ <b84d1dca-4542-a491-e585-a96c9d178466@shipmail.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b84d1dca-4542-a491-e585-a96c9d178466@shipmail.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Sep 05, 2019 at 05:21:24PM +0200, Thomas Hellström (VMware) wrote:
+> On 9/5/19 4:15 PM, Dave Hansen wrote:
+> > Hi Thomas,
+> > 
+> > Thanks for the second batch of patches!  These look much improved on all
+> > fronts.
+> 
+> Yes, although the TTM functionality isn't in yet. Hopefully we won't have to
+> bother you with those though, since this assumes TTM will be using the dma
+> API.
 
-The variable n is being assigned a value that is never read inside
-an if statement block, the assignment is redundant and can be removed.
-With this removed, n is only being used for a constant loop bounds
-check, so replace n with that value instead and remove n completely.
+Please take a look at dma_mmap_prepare and dma_mmap_fault in this
+branch:
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+	http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-mmap-improvements
 
----
-
-V2: remove the variable n completely, thanks to Dan Carpenter for
-    spotting this.
-
----
- drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-index 032d01834f3f..0f3301091258 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-@@ -502,7 +502,7 @@ s32 rtl8723bs_init_recv_priv(struct adapter *padapter)
-  */
- void rtl8723bs_free_recv_priv(struct adapter *padapter)
- {
--	u32 i, n;
-+	u32 i;
- 	struct recv_priv *precvpriv;
- 	struct recv_buf *precvbuf;
- 
-@@ -514,9 +514,8 @@ void rtl8723bs_free_recv_priv(struct adapter *padapter)
- 	/* 3 2. free all recv buffers */
- 	precvbuf = (struct recv_buf *)precvpriv->precv_buf;
- 	if (precvbuf) {
--		n = NR_RECVBUFF;
- 		precvpriv->free_recv_buf_queue_cnt = 0;
--		for (i = 0; i < n ; i++) {
-+		for (i = 0; i < NR_RECVBUFF; i++) {
- 			list_del_init(&precvbuf->list);
- 			rtw_os_recvbuf_resource_free(padapter, precvbuf);
- 			precvbuf++;
-@@ -525,7 +524,6 @@ void rtl8723bs_free_recv_priv(struct adapter *padapter)
- 	}
- 
- 	if (precvpriv->pallocated_recv_buf) {
--		n = NR_RECVBUFF * sizeof(struct recv_buf) + 4;
- 		kfree(precvpriv->pallocated_recv_buf);
- 		precvpriv->pallocated_recv_buf = NULL;
- 	}
--- 
-2.20.1
-
+they should allow to fault dma api pages in the page fault handler.  But
+this is totally hot off the press and not actually tested for the last
+few patches.  Note that I've also included your two patches from this
+series to handle SEV.
