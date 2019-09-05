@@ -2,117 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E80AA650
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B28ACAA665
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:48:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389926AbfIEOrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 10:47:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39791 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389424AbfIEOrB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 10:47:01 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q12so3405262wmj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 07:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zXRGEZPwLtQ5UinxPXKU5BfJwpOCdWN4x79WEBjhqjE=;
-        b=MBtV92rBa45246haRPT8qJPcyhwAnCzGKWvtch+yphLIQemMY/gh8rghP/zBtzfhZM
-         cpNvyMRnAG5QKZHMWcZ9nGFEPxpgrPHlGg7/XLUNNd4u6wM+0FQ2prtdPxZeCyRUYgG/
-         46UJM/NqDtwXc0nJ0q6SAb9xSMl58YKwCFKDbHGX/tVevKx8RK6diHCHAXeOi7MjI2lk
-         PvYvOQTx7+W8Qrmx13NqWuMQHWS6psl1gN95m/d/GLgjEpPk3HC1Stf1IKA/Ps6h4Sa/
-         B5GatoBEuuaROLE0BQKgN++QnG4MC66qo9gYpsjhhVJchmtowGwhpI1s78bjOcQhi51y
-         c6hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zXRGEZPwLtQ5UinxPXKU5BfJwpOCdWN4x79WEBjhqjE=;
-        b=CF/FyemcTaRFV/Xuaa/mMH46/YRIrTDm9JOA3Tf9sL0cXcnqQf/Y81kA9QBaQs+7R0
-         K6AdP2x5uay9TLuYVSlomxl+8j/q9bjN/pBp/We5ZH4+r5H3LnZJGX9qXHWlJDnqsHQg
-         0DId+VqU3swaC5LTzzDPqp9O/gpDhBKIQXCGqYDZ1StRf/mtAIndn/qUrh7YSBUEQljI
-         ngqj5ZRo1wiD4O4+Am6St33HnN4z8C6aWtIKKWZsB2wvYmKBOEq8InWcYXTNUs6PeZl+
-         4Vhj6soBGpw07974Eewrx+eH1yXiRFCf55Y5kuvz6yJG9Da187ZOMAIVc5W5kOrAP+a6
-         g3wQ==
-X-Gm-Message-State: APjAAAUcwhJXzruo7s+aF+4Svatu9IQTTsNSMXQdo4YhqI0lV5wX4ain
-        Q50NjGr8BBLlFSwglW0nHXW3qg==
-X-Google-Smtp-Source: APXvYqxrOWP3uRwxr+KtT9+/rUjsTzf8G+3Pk75+GnyZlEo2O+xCfU34WKNLUgQbN77l6Mtdb/VdMA==
-X-Received: by 2002:a1c:ef13:: with SMTP id n19mr3424489wmh.48.1567694819611;
-        Thu, 05 Sep 2019 07:46:59 -0700 (PDT)
-Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
-        by smtp.gmail.com with ESMTPSA id y3sm3568846wra.88.2019.09.05.07.46.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 07:46:58 -0700 (PDT)
-Date:   Thu, 5 Sep 2019 15:46:55 +0100
-From:   Matthias Maennich <maennich@google.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        maco@android.com, sspatil@google.com,
-        Will Deacon <will@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linux-modules@vger.kernel.org,
-        linux-usb <linux-usb@vger.kernel.org>,
-        usb-storage@lists.one-eyed-alien.net,
-        linux-watchdog@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH v4 08/12] scripts: Coccinelle script for namespace
- dependencies.
-Message-ID: <20190905144655.GB136369@google.com>
-References: <20180716122125.175792-1-maco@android.com>
- <20190903150638.242049-1-maennich@google.com>
- <20190903150638.242049-9-maennich@google.com>
- <CAK7LNARgxoXAABNXhO-LzxAm8rh6NJqAm9-iMo2=t2c_6_KXtQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+        id S2390009AbfIEOrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 10:47:39 -0400
+Received: from gate.crashing.org ([63.228.1.57]:48300 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728590AbfIEOri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 10:47:38 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x85ElRDl031452;
+        Thu, 5 Sep 2019 09:47:27 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x85ElQoY031451;
+        Thu, 5 Sep 2019 09:47:26 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Thu, 5 Sep 2019 09:47:25 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "gcc-patches@gcc.gnu.org" <gcc-patches@gcc.gnu.org>
+Subject: Re: [PATCH v2 4/6] compiler-gcc.h: add asm_inline definition
+Message-ID: <20190905144725.GQ9749@gate.crashing.org>
+References: <20190829083233.24162-1-linux@rasmusvillemoes.dk> <20190830231527.22304-1-linux@rasmusvillemoes.dk> <20190830231527.22304-5-linux@rasmusvillemoes.dk> <CAKwvOdktYpMH8WnEQwNE2JJdKn4w0CHv3L=YHkqU2JzQ6Qwkew@mail.gmail.com> <a5085133-33da-6c13-6953-d18cbc6ad3f5@rasmusvillemoes.dk> <20190905134535.GP9749@gate.crashing.org> <ceb01e88-b172-d6e7-98d4-c14ddeae87d9@rasmusvillemoes.dk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNARgxoXAABNXhO-LzxAm8rh6NJqAm9-iMo2=t2c_6_KXtQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ceb01e88-b172-d6e7-98d4-c14ddeae87d9@rasmusvillemoes.dk>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 06:53:25PM +0900, Masahiro Yamada wrote:
->On Wed, Sep 4, 2019 at 12:07 AM Matthias Maennich <maennich@google.com> wrote:
->>
->> A script that uses the '<module>.ns_deps' files generated by modpost to
->> automatically add the required symbol namespace dependencies to each
->> module.
->>
->> Usage:
->> 1) Move some symbols to a namespace with EXPORT_SYMBOL_NS() or define
->>    DEFAULT_SYMBOL_NAMESPACE
->> 2) Run 'make' (or 'make modules') and get warnings about modules not
->>    importing that namespace.
->> 3) Run 'make nsdeps' to automatically add required import statements
->>    to said modules.
->>
->> This makes it easer for subsystem maintainers to introduce and maintain
->> symbol namespaces into their codebase.
->>
->> Co-developed-by: Martijn Coenen <maco@android.com>
->> Signed-off-by: Martijn Coenen <maco@android.com>
->> Acked-by: Julia Lawall <julia.lawall@lip6.fr>
->> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Signed-off-by: Matthias Maennich <maennich@google.com>
->
->
->Without any correct dependency,
->this does not work.
+On Thu, Sep 05, 2019 at 04:23:11PM +0200, Rasmus Villemoes wrote:
+> On 05/09/2019 15.45, Segher Boessenkool wrote:
+> > On Thu, Sep 05, 2019 at 01:07:11PM +0200, Rasmus Villemoes wrote:
+> >> Perhaps something like below, though that
+> >> won't affect the already released gcc 9.1 and 9.2, of course.
+> > 
+> > That is one reason to not want such a predefined macro.  Another reason
+> > is that you usually need to compile some test programs *anyway*, to see if
+> > some bug is present for example, or to see if the exact implementation of
+> > the feature is beneficial (or harmful) to your program in some way.
+> 
+> OK, I think I'll just use a version check for now, and then switch to a
+> Kconfig test if and when clang grows support.
+> 
+> >> gcc maintainers, WDYT? Can we add a feature test macro for asm inline()?
+> > 
+> > Why would GCC want to have macros for all features it has? 
+> 
+> Well, gcc has implemented __has_attribute() which is similar - one could
+> detect support by compiling a trivial test program.
 
-You are right, 'nsdeps' needs to depend on 'modules' to make that work.
-I will fix that in the next version.
+It is not a macro, it doesn't spill over the place, and it is for
+detecting things that are already fixed strings, much easier to do :-)
 
->$ make clean; make nsdeps
->cat: modules.order: No such file or directory
->cat: ./modules.order: No such file or directory
->
->
->I do not see any point in the Makefile changes.
+> Or the same could be
+> said for many of the predefined macros that are conditionally defined,
+> e.g. __HAVE_SPECULATION_SAFE_VALUE.
+
+That one happened because of the Great Security Scare of 2017/2018, it's
+not a good precedent.  And, how it is set is target-specific, it can
+depend on CPU model selected, target code generation options, or whatnot.
+
+> But I was just throwing the question into the air, I won't pursue this
+> further.
+
+Maybe GCC should have a has_feature thing, it might fit in well there.
+As preprocessor macros, not so much, IMO.
+
+
+Segher
