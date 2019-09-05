@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1288AAA790
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2F37AA786
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390758AbfIEPot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 11:44:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35528 "EHLO mail.kernel.org"
+        id S2390546AbfIEPno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 11:43:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390510AbfIEPnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731518AbfIEPnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Sep 2019 11:43:42 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C73D2137B;
+        by mail.kernel.org (Postfix) with ESMTPSA id B57FD2145D;
         Thu,  5 Sep 2019 15:43:42 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1i5tvA-0007WX-Rx; Thu, 05 Sep 2019 11:43:40 -0400
-Message-Id: <20190905154340.750832943@goodmis.org>
+        id 1i5tvB-0007X1-4K; Thu, 05 Sep 2019 11:43:41 -0400
+Message-Id: <20190905154341.021107049@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 05 Sep 2019 11:43:07 -0400
+Date:   Thu, 05 Sep 2019 11:43:08 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 09/25] tracing/uprobe: Add multi-probe per uprobe event support
+Subject: [for-next][PATCH 10/25] tracing/kprobe: Add per-probe delete from event
 References: <20190905154258.573706229@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -38,139 +38,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Allow user to define several probes on one uprobe event.
-Note that this only support appending method. So deleting
-event will delete all probes on the event.
+Allow user to delete a probe from event. This is done by head
+match. For example, if we have 2 probes on an event
 
-Link: http://lkml.kernel.org/r/156095687876.28024.13840331032234992863.stgit@devnote2
+$ cat kprobe_events
+p:kprobes/testprobe _do_fork r1=%ax r2=%dx
+p:kprobes/testprobe idle_fork r1=%ax r2=%cx
+
+Then you can remove one of them by passing the head of definition
+which identify the probe.
+
+$ echo "-:kprobes/testprobe idle_fork" >> kprobe_events
+
+Link: http://lkml.kernel.org/r/156095688848.28024.15798690082378432435.stgit@devnote2
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c        |  2 +-
- kernel/trace/trace_uprobe.c | 60 ++++++++++++++++++++++++++-----------
- 2 files changed, 43 insertions(+), 19 deletions(-)
+ kernel/trace/trace_kprobe.c | 25 ++++++++++++++++++++++++-
+ kernel/trace/trace_probe.c  | 18 ++++++++++++++++++
+ kernel/trace/trace_probe.h  |  2 ++
+ 3 files changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index a8505d84b76e..c7797a81a37e 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4823,7 +4823,7 @@ static const char readme_msg[] =
- 	"\t\t\t  Write into this file to define/undefine new trace events.\n"
- #endif
- #ifdef CONFIG_UPROBE_EVENTS
--	"  uprobe_events\t\t- Add/remove/show the userspace dynamic events\n"
-+	"  uprobe_events\t\t- Create/append/remove/show the userspace dynamic events\n"
- 	"\t\t\t  Write into this file to define/undefine new trace events.\n"
- #endif
- #if defined(CONFIG_KPROBE_EVENTS) || defined(CONFIG_UPROBE_EVENTS)
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 2862e6829e48..d84e09abb8de 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -364,15 +364,32 @@ static int unregister_trace_uprobe(struct trace_uprobe *tu)
- {
- 	int ret;
- 
-+	if (trace_probe_has_sibling(&tu->tp))
-+		goto unreg;
-+
- 	ret = unregister_uprobe_event(tu);
- 	if (ret)
- 		return ret;
- 
-+unreg:
- 	dyn_event_remove(&tu->devent);
-+	trace_probe_unlink(&tu->tp);
- 	free_trace_uprobe(tu);
- 	return 0;
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index f43098bf62dd..18c4175b6585 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -137,13 +137,36 @@ static bool trace_kprobe_is_busy(struct dyn_event *ev)
+ 	return trace_probe_is_enabled(&tk->tp);
  }
  
-+static int append_trace_uprobe(struct trace_uprobe *tu, struct trace_uprobe *to)
++static bool trace_kprobe_match_command_head(struct trace_kprobe *tk,
++					    int argc, const char **argv)
 +{
-+	int ret;
++	char buf[MAX_ARGSTR_LEN + 1];
 +
-+	/* Append to existing event */
-+	ret = trace_probe_append(&tu->tp, &to->tp);
-+	if (!ret)
-+		dyn_event_add(&tu->devent);
++	if (!argc)
++		return true;
 +
-+	return ret;
++	if (!tk->symbol)
++		snprintf(buf, sizeof(buf), "0x%p", tk->rp.kp.addr);
++	else if (tk->rp.kp.offset)
++		snprintf(buf, sizeof(buf), "%s+%u",
++			 trace_kprobe_symbol(tk), tk->rp.kp.offset);
++	else
++		snprintf(buf, sizeof(buf), "%s", trace_kprobe_symbol(tk));
++	if (strcmp(buf, argv[0]))
++		return false;
++	argc--; argv++;
++
++	return trace_probe_match_command_args(&tk->tp, argc, argv);
 +}
 +
- /*
-  * Uprobe with multiple reference counter is not allowed. i.e.
-  * If inode and offset matches, reference counter offset *must*
-@@ -382,25 +399,21 @@ static int unregister_trace_uprobe(struct trace_uprobe *tu)
-  * as the new one does not conflict with any other existing
-  * ones.
-  */
--static struct trace_uprobe *find_old_trace_uprobe(struct trace_uprobe *new)
-+static int validate_ref_ctr_offset(struct trace_uprobe *new)
+ static bool trace_kprobe_match(const char *system, const char *event,
+ 			int argc, const char **argv, struct dyn_event *ev)
  {
- 	struct dyn_event *pos;
--	struct trace_uprobe *tmp, *old = NULL;
-+	struct trace_uprobe *tmp;
- 	struct inode *new_inode = d_real_inode(new->path.dentry);
+ 	struct trace_kprobe *tk = to_trace_kprobe(ev);
  
--	old = find_probe_event(trace_probe_name(&new->tp),
--				trace_probe_group_name(&new->tp));
--
- 	for_each_trace_uprobe(tmp, pos) {
--		if ((old ? old != tmp : true) &&
--		    new_inode == d_real_inode(tmp->path.dentry) &&
-+		if (new_inode == d_real_inode(tmp->path.dentry) &&
- 		    new->offset == tmp->offset &&
- 		    new->ref_ctr_offset != tmp->ref_ctr_offset) {
- 			pr_warn("Reference counter offset mismatch.");
--			return ERR_PTR(-EINVAL);
-+			return -EINVAL;
- 		}
- 	}
--	return old;
-+	return 0;
+ 	return strcmp(trace_probe_name(&tk->tp), event) == 0 &&
+-	    (!system || strcmp(trace_probe_group_name(&tk->tp), system) == 0);
++	    (!system || strcmp(trace_probe_group_name(&tk->tp), system) == 0) &&
++	    trace_kprobe_match_command_head(tk, argc, argv);
  }
  
- /* Register a trace_uprobe and probe_event */
-@@ -411,18 +424,29 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
+ static nokprobe_inline unsigned long trace_kprobe_nhit(struct trace_kprobe *tk)
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 651a1449acde..f8c3c65c035d 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -1047,3 +1047,21 @@ int trace_probe_compare_arg_type(struct trace_probe *a, struct trace_probe *b)
  
- 	mutex_lock(&event_mutex);
+ 	return 0;
+ }
++
++bool trace_probe_match_command_args(struct trace_probe *tp,
++				    int argc, const char **argv)
++{
++	char buf[MAX_ARGSTR_LEN + 1];
++	int i;
++
++	if (tp->nr_args < argc)
++		return false;
++
++	for (i = 0; i < argc; i++) {
++		snprintf(buf, sizeof(buf), "%s=%s",
++			 tp->args[i].name, tp->args[i].comm);
++		if (strcmp(buf, argv[i]))
++			return false;
++	}
++	return true;
++}
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 39926e8a344b..2dcc4e317787 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -332,6 +332,8 @@ int trace_probe_remove_file(struct trace_probe *tp,
+ struct event_file_link *trace_probe_get_file_link(struct trace_probe *tp,
+ 						struct trace_event_file *file);
+ int trace_probe_compare_arg_type(struct trace_probe *a, struct trace_probe *b);
++bool trace_probe_match_command_args(struct trace_probe *tp,
++				    int argc, const char **argv);
  
--	/* register as an event */
--	old_tu = find_old_trace_uprobe(tu);
--	if (IS_ERR(old_tu)) {
--		ret = PTR_ERR(old_tu);
-+	ret = validate_ref_ctr_offset(tu);
-+	if (ret)
- 		goto end;
--	}
- 
-+	/* register as an event */
-+	old_tu = find_probe_event(trace_probe_name(&tu->tp),
-+				  trace_probe_group_name(&tu->tp));
- 	if (old_tu) {
--		/* delete old event */
--		ret = unregister_trace_uprobe(old_tu);
--		if (ret)
--			goto end;
-+		if (is_ret_probe(tu) != is_ret_probe(old_tu)) {
-+			trace_probe_log_set_index(0);
-+			trace_probe_log_err(0, DIFF_PROBE_TYPE);
-+			ret = -EEXIST;
-+		} else {
-+			ret = trace_probe_compare_arg_type(&tu->tp, &old_tu->tp);
-+			if (ret) {
-+				/* Note that argument starts index = 2 */
-+				trace_probe_log_set_index(ret + 1);
-+				trace_probe_log_err(0, DIFF_ARG_TYPE);
-+				ret = -EEXIST;
-+			} else
-+				ret = append_trace_uprobe(tu, old_tu);
-+		}
-+		goto end;
- 	}
- 
- 	ret = register_uprobe_event(tu);
+ #define trace_probe_for_each_link(pos, tp)	\
+ 	list_for_each_entry(pos, &(tp)->event->files, list)
 -- 
 2.20.1
 
