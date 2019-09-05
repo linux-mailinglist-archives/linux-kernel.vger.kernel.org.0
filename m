@@ -2,134 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73670AADF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E76AADF8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:46:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389398AbfIEVow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 17:44:52 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42180 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbfIEVov (ORCPT
+        id S2390956AbfIEVqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 17:46:16 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:24268 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389650AbfIEVqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 17:44:51 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y23so4028446lje.9;
-        Thu, 05 Sep 2019 14:44:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h2bk3j52P30Q1CTEXW10Z5tA0jiFGXaEQ+rZ6Wp9rtw=;
-        b=f/a2wjUZxmDspNldx7I3qghloHCzwxYNI4xFcoXbdP5KP+eN1RQmq83F9HgVXwJaPX
-         NCinIjm2C0lQAHsiGIAPUUmlErnY/jzThdbblnlCyYU2opwVbOm7x9h/pErfp7SkqiTM
-         a3Kjv89nvO7DVtUTyakUmpPMukfusBraJpzzFcRjSkWtfyZ6AlbIgUu8jo6bIDWQ6N0M
-         5Yb4ayEuktTJzvSgPKBENAc+vnDZTmRBZAjgpB2tnCAyG6RA4lKMc3g2ICHdl1tYh5DR
-         WG/Kg2d9CWerk17gLxqDjJFIh4a+pVYbhl9hSOsBDoD66/J5BGqBG/S8Vph5S/E5irCq
-         +rkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h2bk3j52P30Q1CTEXW10Z5tA0jiFGXaEQ+rZ6Wp9rtw=;
-        b=X9Lhkv3b7x6Bmc74ZexKr8JTBKhaGHeL9Yg1Ld17TwJODtzPiKySURp4cutB1eVS5g
-         sdBGmlw5ekmCQg0n/rnoGRubFe10IqZkmo/Ls5DQsXHKpVeP7pxh9DtAZeKn0YXYRpa5
-         Nt9zECNjuvFXrjNc5Dr7UxauEzN3kd74y3YgRiiqT9dhGfoEbRT7m0QNtnKuSZ8uNk1+
-         g96R1g3fWGgvn7kCnZmR6v+VOS0xded9pbGTZJDSTwTdD7mxdTinUiDfsT1nuARP6Bk0
-         RKrT1I1o5QEN0tbylyCurq4gh6fcIfPmjTt0aLbYUq2OYYtELC+6M6l5yEqqOTe+fzlS
-         N02g==
-X-Gm-Message-State: APjAAAVuP4hqvfNFdNbeHcaTDCd1db3jvKRt6u02FETcSbUXUWHIVEkX
-        ZbqZZSuG067JUaEIueuAuJqaf9nZ2EZyNoSLJ2c=
-X-Google-Smtp-Source: APXvYqyk6skdfl/16FhYXB68WgXTcAV0P1eaA9Y9REhksLUKbhCAx0u0UL9AhebkLoG8ZgVXF2woSJqnHh7LpFzcAho=
-X-Received: by 2002:a2e:4489:: with SMTP id b9mr3613889ljf.17.1567719889033;
- Thu, 05 Sep 2019 14:44:49 -0700 (PDT)
+        Thu, 5 Sep 2019 17:46:12 -0400
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x85LjCGa007194
+        for <linux-kernel@vger.kernel.org>; Thu, 5 Sep 2019 14:46:11 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=6+x6B4MHxrLYAe7QaNtIURxgkLbofTz5KDyctfNFi2k=;
+ b=db5moETJTxmxMRmjEX8PmSCqZrcoPN29twcu753JN6vBw9lTsZ31xABBo5BmhovG2T41
+ 8IRdwcqmL0YQbc2DwiBsRg8qUCUgF4TFsxjm6pXLUzt1U9ErhqQxPpb3AqIEDodUnUuT
+ jGMlB46e5cWUrEmvUhPJoEbNVNAQqxK1cNc= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2utkkxwup9-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:46:11 -0700
+Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 5 Sep 2019 14:46:08 -0700
+Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
+        id A051F17229DF6; Thu,  5 Sep 2019 14:46:06 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
+To:     <linux-mm@kvack.org>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Waiman Long <longman@redhat.com>, Roman Gushchin <guro@fb.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH RFC 00/14] The new slab memory controller
+Date:   Thu, 5 Sep 2019 14:45:44 -0700
+Message-ID: <20190905214553.1643060-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-References: <0000000000005091a70591d3e1d9@google.com>
-In-Reply-To: <0000000000005091a70591d3e1d9@google.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Thu, 5 Sep 2019 14:44:37 -0700
-Message-ID: <CAADnVQK94boXD8Y=g1LsBtNG4wrYQ0Jnjxhq7hdxvyBKZuPwXw@mail.gmail.com>
-Subject: Re: general protection fault in dev_map_hash_update_elem
-To:     syzbot <syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com>
-Cc:     bpf <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-05_08:2019-09-04,2019-09-05 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 priorityscore=1501 phishscore=0
+ mlxlogscore=999 mlxscore=0 clxscore=1015 adultscore=0 suspectscore=0
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1906280000 definitions=main-1909050203
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 5, 2019 at 1:08 PM syzbot
-<syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    6d028043 Add linux-next specific files for 20190830
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=135c1a92600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=82a6bec43ab0cb69
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4e7a85b1432052e8d6f8
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109124e1600000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com
->
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 10235 Comm: syz-executor.0 Not tainted 5.3.0-rc6-next-20190830
-> #75
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:__write_once_size include/linux/compiler.h:203 [inline]
-> RIP: 0010:__hlist_del include/linux/list.h:795 [inline]
-> RIP: 0010:hlist_del_rcu include/linux/rculist.h:475 [inline]
-> RIP: 0010:__dev_map_hash_update_elem kernel/bpf/devmap.c:668 [inline]
-> RIP: 0010:dev_map_hash_update_elem+0x3c8/0x6e0 kernel/bpf/devmap.c:691
-> Code: 48 89 f1 48 89 75 c8 48 c1 e9 03 80 3c 11 00 0f 85 d3 02 00 00 48 b9
-> 00 00 00 00 00 fc ff df 48 8b 53 10 48 89 d6 48 c1 ee 03 <80> 3c 0e 00 0f
-> 85 97 02 00 00 48 85 c0 48 89 02 74 38 48 89 55 b8
-> RSP: 0018:ffff88808d607c30 EFLAGS: 00010046
-> RAX: 0000000000000000 RBX: ffff8880a7f14580 RCX: dffffc0000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a7f14588
-> RBP: ffff88808d607c78 R08: 0000000000000004 R09: ffffed1011ac0f73
-> R10: ffffed1011ac0f72 R11: 0000000000000003 R12: ffff88809f4e9400
-> R13: ffff88809b06ba00 R14: 0000000000000000 R15: ffff88809f4e9528
-> FS:  00007f3a3d50c700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007feb3fcd0000 CR3: 00000000986b9000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   map_update_elem+0xc82/0x10b0 kernel/bpf/syscall.c:966
->   __do_sys_bpf+0x8b5/0x3350 kernel/bpf/syscall.c:2854
->   __se_sys_bpf kernel/bpf/syscall.c:2825 [inline]
->   __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:2825
->   do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x459879
-> Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f3a3d50bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459879
-> RDX: 0000000000000020 RSI: 0000000020000040 RDI: 0000000000000002
-> RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3a3d50c6d4
-> R13: 00000000004bfc86 R14: 00000000004d1960 R15: 00000000ffffffff
-> Modules linked in:
-> ---[ end trace 083223e21dbd0ae5 ]---
-> RIP: 0010:__write_once_size include/linux/compiler.h:203 [inline]
-> RIP: 0010:__hlist_del include/linux/list.h:795 [inline]
-> RIP: 0010:hlist_del_rcu include/linux/rculist.h:475 [inline]
-> RIP: 0010:__dev_map_hash_update_elem kernel/bpf/devmap.c:668 [inline]
-> RIP: 0010:dev_map_hash_update_elem+0x3c8/0x6e0 kernel/bpf/devmap.c:691
+The existing slab memory controller is based on the idea of replicating
+slab allocator internals for each memory cgroup. This approach promises
+a low memory overhead (one pointer per page), and isn't adding too much
+code on hot allocation and release paths. But is has a very serious flaw:
+it leads to a low slab utilization.
 
-Toke,
-please take a look.
-Thanks!
+Using a drgn* script I've got an estimation of slab utilization on
+a number of machines running different production workloads. In most
+cases it was between 45% and 65%, and the best number I've seen was
+around 85%. Turning kmem accounting off brings it to high 90s. Also
+it brings back 30-50% of slab memory. It means that the real price
+of the existing slab memory controller is way bigger than a pointer
+per page.
+
+The real reason why the existing design leads to a low slab utilization
+is simple: slab pages are used exclusively by one memory cgroup.
+If there are only few allocations of certain size made by a cgroup,
+or if some active objects (e.g. dentries) are left after the cgroup is
+deleted, or the cgroup contains a single-threaded application which is
+barely allocating any kernel objects, but does it every time on a new CPU:
+in all these cases the resulting slab utilization is very low.
+If kmem accounting is off, the kernel is able to use free space
+on slab pages for other allocations.
+
+Arguably it wasn't an issue back to days when the kmem controller was
+introduced and was an opt-in feature, which had to be turned on
+individually for each memory cgroup. But now it's turned on by default
+on both cgroup v1 and v2. And modern systemd-based systems tend to
+create a large number of cgroups.
+
+This patchset provides a new implementation of the slab memory controller,
+which aims to reach a much better slab utilization by sharing slab pages
+between multiple memory cgroups. Below is the short description of the new
+design (more details in commit messages).
+
+Accounting is performed per-object instead of per-page. Slab-related
+vmstat counters are converted to bytes. Charging is performed on page-basis,
+with rounding up and remembering leftovers.
+
+Memcg ownership data is stored in a per-slab-page vector: for each slab page
+a vector of corresponding size is allocated. To keep slab memory reparenting
+working, instead of saving a pointer to the memory cgroup directly an
+intermediate object is used. It's simply a pointer to a memcg (which can be
+easily changed to the parent) with a built-in reference counter. This scheme
+allows to reparent all allocated objects without walking them over and changing
+memcg pointer to the parent.
+
+Instead of creating an individual set of kmem_caches for each memory cgroup,
+two global sets are used: the root set for non-accounted and root-cgroup
+allocations and the second set for all other allocations. This allows to
+simplify the lifetime management of individual kmem_caches: they are destroyed
+with root counterparts. It allows to remove a good amount of code and make
+things generally simpler.
+
+The patchset contains a couple of semi-independent parts, which can find their
+usage outside of the slab memory controller too:
+1) subpage charging API, which can be used in the future for accounting of
+   other non-page-sized objects, e.g. percpu allocations.
+2) mem_cgroup_ptr API (refcounted pointers to a memcg, can be reused
+   for the efficient reparenting of other objects, e.g. pagecache.
+
+The patchset has been tested on a number of different workloads in our
+production. In all cases, it saved hefty amounts of memory:
+1) web frontend, 650-700 Mb, ~42% of slab memory
+2) database cache, 750-800 Mb, ~35% of slab memory
+3) dns server, 700 Mb, ~36% of slab memory
+
+So far I haven't found any regression on all tested workloads, but
+potential CPU regression caused by more precise accounting is a concern.
+
+Obviously the amount of saved memory depend on the number of memory cgroups,
+uptime and specific workloads, but overall it feels like the new controller
+saves 30-40% of slab memory, sometimes more. Additionally, it should lead
+to a lower memory fragmentation, just because of a smaller number of
+non-movable pages and also because there is no more need to move all
+slab objects to a new set of pages when a workload is restarted in a new
+memory cgroup.
+
+* https://github.com/osandov/drgn
+
+
+Roman Gushchin (14):
+  mm: memcg: subpage charging API
+  mm: memcg: introduce mem_cgroup_ptr
+  mm: vmstat: use s32 for vm_node_stat_diff in struct per_cpu_nodestat
+  mm: vmstat: convert slab vmstat counter to bytes
+  mm: memcg/slab: allocate space for memcg ownership data for non-root
+    slabs
+  mm: slub: implement SLUB version of obj_to_index()
+  mm: memcg/slab: save memcg ownership data for non-root slab objects
+  mm: memcg: move memcg_kmem_bypass() to memcontrol.h
+  mm: memcg: introduce __mod_lruvec_memcg_state()
+  mm: memcg/slab: charge individual slab objects instead of pages
+  mm: memcg: move get_mem_cgroup_from_current() to memcontrol.h
+  mm: memcg/slab: replace memcg_from_slab_page() with
+    memcg_from_slab_obj()
+  mm: memcg/slab: use one set of kmem_caches for all memory cgroups
+  mm: slab: remove redundant check in memcg_accumulate_slabinfo()
+
+ drivers/base/node.c        |  11 +-
+ fs/proc/meminfo.c          |   4 +-
+ include/linux/memcontrol.h | 102 ++++++++-
+ include/linux/mm_types.h   |   5 +-
+ include/linux/mmzone.h     |  12 +-
+ include/linux/slab.h       |   3 +-
+ include/linux/slub_def.h   |   9 +
+ include/linux/vmstat.h     |   8 +
+ kernel/power/snapshot.c    |   2 +-
+ mm/list_lru.c              |  12 +-
+ mm/memcontrol.c            | 431 +++++++++++++++++++++--------------
+ mm/oom_kill.c              |   2 +-
+ mm/page_alloc.c            |   8 +-
+ mm/slab.c                  |  37 ++-
+ mm/slab.h                  | 300 +++++++++++++------------
+ mm/slab_common.c           | 449 ++++---------------------------------
+ mm/slob.c                  |  12 +-
+ mm/slub.c                  |  63 ++----
+ mm/vmscan.c                |   3 +-
+ mm/vmstat.c                |  38 +++-
+ mm/workingset.c            |   6 +-
+ 21 files changed, 683 insertions(+), 834 deletions(-)
+
+-- 
+2.21.0
+
