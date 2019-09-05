@@ -2,104 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 352F4AA941
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0491CAA94E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387663AbfIEQnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:43:49 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:51694 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728601AbfIEQnt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:43:49 -0400
-Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
-        by mx0a-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x85GfYb0031577;
-        Thu, 5 Sep 2019 16:43:30 GMT
-Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
-        by mx0a-002e3701.pphosted.com with ESMTP id 2uttq6nmyg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Sep 2019 16:43:29 +0000
-Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
-        by g4t3426.houston.hpe.com (Postfix) with ESMTP id E0E4B59;
-        Thu,  5 Sep 2019 16:43:28 +0000 (UTC)
-Received: from [16.116.163.9] (unknown [16.116.163.9])
-        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 9727A4C;
-        Thu,  5 Sep 2019 16:43:27 +0000 (UTC)
-Subject: Re: [PATCH 6/8] x86/platform/uv: Decode UVsystab Info
-From:   Mike Travis <mike.travis@hpe.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20190905130252.590161292@stormcage.eag.rdlabs.hpecorp.net>
- <20190905130253.325911213@stormcage.eag.rdlabs.hpecorp.net>
- <20190905141634.GA25790@kroah.com>
- <ae007007-02cc-0081-22c0-34b2d67f2cd3@hpe.com>
-Message-ID: <d0675e8f-80a2-bba4-888c-90feda085a14@hpe.com>
-Date:   Thu, 5 Sep 2019 09:43:57 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2389819AbfIEQqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:46:46 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:39672 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387586AbfIEQqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 12:46:46 -0400
+Received: from zn.tnic (p200300EC2F0A5F00ED1F85EF3FFCFB3D.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5f00:ed1f:85ef:3ffc:fb3d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3B2811EC026F;
+        Thu,  5 Sep 2019 18:46:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1567702005;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=cHu6QE74CNs1FkmhZ8Lols7/VAMPd2toM7CcVZKn6Vg=;
+        b=ak74pS4L5p6sB45XG4CnsYfZqLntkV7jNgbOMe3CfvjQxe/hnY2OF+kqNLgh+yz1oW6dxX
+        KwSanSC7zkIOS6+Alpct64rE+WcUTFhLBNuDID9HeMjR1mzJZng8m7lk2adOZ26pfdLGB/
+        N1zvxUKSauOxrJUZDyQ/KuVB9akSyAc=
+Date:   Thu, 5 Sep 2019 18:46:39 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Steve Wahl <steve.wahl@hpe.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux@googlegroups.com, vaibhavrustagi@google.com,
+        russ.anderson@hpe.com, dimitri.sivanich@hpe.com,
+        mike.travis@hpe.com
+Subject: Re: [PATCH 1/1] x86/purgatory: Change compiler flags to avoid
+ relocation errors.
+Message-ID: <20190905164639.GG19246@zn.tnic>
+References: <20190904214505.GA15093@swahl-linux>
+ <20190905091514.GA21479@zn.tnic>
+ <20190905150738.GD14263@swahl-linux>
 MIME-Version: 1.0
-In-Reply-To: <ae007007-02cc-0081-22c0-34b2d67f2cd3@hpe.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-05_05:2019-09-04,2019-09-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 adultscore=0 clxscore=1015 suspectscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 mlxlogscore=912 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
- definitions=main-1909050159
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190905150738.GD14263@swahl-linux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 05, 2019 at 10:07:38AM -0500, Steve Wahl wrote:
+> kexec: Overflow in relocation type 11 value 0x11fffd000
 
+That looks like R_X86_64_32S which is:
 
-On 9/5/2019 7:47 AM, Mike Travis wrote:
-> Also, nit:
-> 
->> --- linux.orig/arch/x86/kernel/apic/x2apic_uv_x.c
->> +++ linux/arch/x86/kernel/apic/x2apic_uv_x.c
->> @@ -1303,7 +1303,8 @@ static int __init decode_uv_systab(void)
->>       struct uv_systab *st;
->>       int i;
->> -    if (uv_hub_info->hub_revision < UV4_HUB_REVISION_BASE)
->> +    /* Select only UV4 (hubbed or hubless) and higher */
->> +    if (is_uv_hubbed(-2) < uv(4) && is_uv_hubless(-2) < uv(4))
->>           return 0;    /* No extended UVsystab required */
->>       st = uv_systab;
->> @@ -1554,8 +1555,19 @@ static __init int uv_system_init_hubless
->>       /* Init kernel/BIOS interface */
->>       rc = uv_bios_init();
->> +    if (rc < 0) {
->> +        pr_err("UV: BIOS init error:%d\n", rc);
-> 
-> Why isn't that function printing an error?
-> 
-> 
->> +        return rc;
->> +    }
->> +
->> +    /* Process UVsystab */
->> +    rc = decode_uv_systab();
->> +    if (rc < 0) {
->> +        pr_err("UV: UVsystab decode error:%d\n", rc);
-> 
-> Same here, have the function itself print the error, makes this type of
-> stuff much cleaner.
+"The linker must verify that the generated value for the R_X86_64_32
+(R_X86_64_32S) relocation zero-extends (sign-extends) to the original
+64-bit value."
 
-Turns out both functions already print an error message for each 
-instance of an error.  The only redundancy is the caller also printing 
-an error with just the numeric error code.  Shall I remove that?
+Please add that to the commit message.
+
+> ... when loading the crash kernel.
+> 
+> > What exactly caused those errors, the flags removal from
+> > kexec-purgatory.o?
+> 
+> No, it's the flags for compiling the other objects (purgatory.o,
+> sha256.o, and string.o) that cause the problem.  You may have missed
+> the added initial values for PURGATORY_CFLAGS_REMOVE and
+> PURGATORY_CFLAGS.  This changes -mcmodel=kernel back to
+> -mcmodel=large,
+
+That I missed...
+
+> and adds back -ffreestanding and
+> -fno-zero-initialized-in-bss, to match the previous flags.
+
+... and that I saw. :)
+
+> -mcmodel=kernel is the major cause of the relocation errors, as the
+> code generated contained only 32 bit references to things that can be
+> anywhere in 64 bit address space.
+
+Needs to go into the commit message.
+
+> The remaining flag changes are appropriate for compiling a standalone
+> module, which applies to 3 of the objects compiled from C files in
+> this directory -- they contribute to a standalone piece of code that
+> is not (technically) linked with the rest of the kernel.
+> 
+> (Fine line here: the standalone binary does not get any symbols
+> resolved against the rest of the kernel; which is why I say it's not
+> *linked* with it.  The binary image of this standalone binary does get
+> put into a character array that is pulled into the kernel object code,
+> so it does become part of the kernel, but just as an array of bytes
+> that kexec copies somewhere and eventually jumps to as a standalone
+> program.)
+
+Yes, a shorter version of that should be part of the commit message too.
+
+> kexec-purgatory.o, on the other hand, does get linked with the rest of
+> the kernel and should be compiled with the usual flags, not standalone
+> flags. That is why changes for it are a bit different, which you
+> noticed.
+
+Ok, thanks for explaining.
+
+Now please add that more detailed explanation to your commit message so
+that people doing git archeology in the future can gather from it what
+the problem was and what the solution became and why.
+
+Also, add the reviewed- and tested-by flags you got from people.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
