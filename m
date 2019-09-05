@@ -2,124 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B2FAAAC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC825AAAD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391253AbfIESVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 14:21:05 -0400
-Received: from sauhun.de ([88.99.104.3]:59730 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730926AbfIESVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:21:02 -0400
-Received: from localhost (p54B335F6.dip0.t-ipconnect.de [84.179.53.246])
-        by pokefinder.org (Postfix) with ESMTPSA id 73A6F2C00C0;
-        Thu,  5 Sep 2019 20:20:59 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 20:20:59 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     alokc@codeaurora.org, agross@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, bjorn.andersson@linaro.org, vkoul@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [RESEND v3 1/1] i2c: qcom-geni: Provide an option to disable DMA
- processing
-Message-ID: <20190905182058.GA5281@kunai>
-References: <20190905144122.5689-1-lee.jones@linaro.org>
+        id S2389825AbfIESXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 14:23:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43028 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727764AbfIESXl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 14:23:41 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1i5wPR-00053t-Nn; Thu, 05 Sep 2019 18:23:05 +0000
+Date:   Thu, 5 Sep 2019 20:23:03 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190905182303.7f6bxpa2enbgcegv@wittgenstein>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
+ <20190905180750.GQ1131@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190905144122.5689-1-lee.jones@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190905180750.GQ1131@ZenIV.linux.org.uk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 05, 2019 at 07:07:50PM +0100, Al Viro wrote:
+> On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
+> > +/*
+> > + * "memset(p, 0, size)" but for user space buffers. Caller must have already
+> > + * checked access_ok(p, size).
+> > + */
+> > +static int __memzero_user(void __user *p, size_t s)
+> > +{
+> > +	const char zeros[BUFFER_SIZE] = {};
+> > +	while (s > 0) {
+> > +		size_t n = min(s, sizeof(zeros));
+> > +
+> > +		if (__copy_to_user(p, zeros, n))
+> > +			return -EFAULT;
+> > +
+> > +		p += n;
+> > +		s -= n;
+> > +	}
+> > +	return 0;
+> > +}
+> 
+> That's called clear_user().
+> 
+> > +int copy_struct_to_user(void __user *dst, size_t usize,
+> > +			const void *src, size_t ksize)
+> > +{
+> > +	size_t size = min(ksize, usize);
+> > +	size_t rest = abs(ksize - usize);
+> > +
+> > +	if (unlikely(usize > PAGE_SIZE))
+> > +		return -EFAULT;
+> 
+> Why?
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Sep 05, 2019 at 03:41:22PM +0100, Lee Jones wrote:
-> We have a production-level laptop (Lenovo Yoga C630) which is exhibiting
-> a rather horrific bug.  When I2C HID devices are being scanned for at
-> boot-time the QCom Geni based I2C (Serial Engine) attempts to use DMA.
-> When it does, the laptop reboots and the user never sees the OS.
-
-$subject is still wrong. And a paragraph that you are/were debugging the
-root cause but to no avail so DMA gets disabled for now would be good for a
-hotfix this late in the cycle.
-
->=20
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/i2c/busses/i2c-qcom-geni.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-=
-qcom-geni.c
-> index a89bfce5388e..17abf60c94ae 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -355,11 +355,13 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev =
-*gi2c, struct i2c_msg *msg,
->  {
->  	dma_addr_t rx_dma;
->  	unsigned long time_left;
-> -	void *dma_buf;
-> +	void *dma_buf =3D NULL;
->  	struct geni_se *se =3D &gi2c->se;
->  	size_t len =3D msg->len;
-> =20
-> -	dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
-> +	if (!of_machine_is_compatible("lenovo,yoga-c630"))
-> +		dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
-> +
->  	if (dma_buf)
->  		geni_se_select_mode(se, GENI_SE_DMA);
->  	else
-> @@ -394,11 +396,13 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev =
-*gi2c, struct i2c_msg *msg,
->  {
->  	dma_addr_t tx_dma;
->  	unsigned long time_left;
-> -	void *dma_buf;
-> +	void *dma_buf =3D NULL;
->  	struct geni_se *se =3D &gi2c->se;
->  	size_t len =3D msg->len;
-> =20
-> -	dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
-> +	if (!of_machine_is_compatible("lenovo,yoga-c630"))
-> +		dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
-> +
->  	if (dma_buf)
->  		geni_se_select_mode(se, GENI_SE_DMA);
->  	else
-> --=20
-> 2.17.1
->=20
-
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1xUgcACgkQFA3kzBSg
-KbYXzA/+LjS2mPdsksvarWH8VQNQdqsoNEIn5YCxhi5qXxi0KAdEp5Z3N04ZEOk3
-goSeO/4g2HCWM9myuZ9wunwRgK8ucOiSfkatKYPEKHg8buN9f3QfSlLfENIhtwKc
-yeNOJyakRyJnfzXpFVRmrrTWjJoLTS0ZhNgHFMPbR8cXu1sAW2tnvzYfUVLUBGP4
-w+3ldwl6wzRUvg49x4K4yGmsTJ5NQFPKJnTUUYUJ0IgetTRyGD/3HoEY6k3W12oo
-QenoRNh3MEd/HjG+sQYH1w01/86Oz5L0N5OFQoQtFwCR5fITMP4sjy30dB1/cvyr
-UzXWWfzzRV5Gbz1EodWPOS2dzPj4e8f5TRzKJa86GkPYcm6Fys4ifFWTCD6yxuTe
-A3o2ruGJwaIZ6ALxUAzLfSjbyb3ZKsCJ+JLUeMP7hnTrOI7umYHQKxiAXkC4gL1E
-CzAg3CA0BefETQ0vutbyGemZfq8ThJpFktldowciXZrxo55JoPIW2PNMn9YuLE+h
-7yxkc0NQB2Y1Pzzqyk8dcQrwDOS+4sEiGD2QEgAe7FdMqv181MA7XIH8C05Y/uqV
-gwBYxFuKCc7/dUfKBzHDi5EpWlwGIY7wGTvNzzOwn25+wmUOEidSa3SPuM6ozEnR
-Kc9uu4xw4ZB/1cne5zTkL0BDa14aJt4/lkcWV4TWrs7E6voy05k=
-=Z3pm
------END PGP SIGNATURE-----
-
---zhXaljGHf11kAtnf--
+Because every caller of that function right now has that limit set
+anyway iirc. So we can either remove it from here and place it back for
+the individual callers or leave it in the helper.
+Also, I'm really asking, why not? Is it unreasonable to have an upper
+bound on the size (for a long time probably) or are you disagreeing with
+PAGE_SIZE being used? PAGE_SIZE limit is currently used by sched, perf,
+bpf, and clone3 and in a few other places.
