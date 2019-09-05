@@ -2,143 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B24A0AAD96
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:08:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B7DAADA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391755AbfIEVIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 17:08:04 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44043 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391745AbfIEVID (ORCPT
+        id S2404127AbfIEVL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 17:11:27 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35230 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388578AbfIEVL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 17:08:03 -0400
-Received: by mail-qt1-f196.google.com with SMTP id u40so4572196qth.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:08:02 -0700 (PDT)
+        Thu, 5 Sep 2019 17:11:26 -0400
+Received: by mail-lj1-f193.google.com with SMTP id l14so3994741lje.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:11:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HvoJM9sMGq5xI3RwMvugcMXuusxVFzNWPQZRfU0rEf8=;
-        b=RE1kQcFxWLO+aub3BJU/i/hazoxxbNU/KRFZj4Yf4mDb4K8zmul3vWp/RDVVFMnCaV
-         QX7/TnC7DuZWGLudP8Vwi+KwuJBCSIwq9urMjeXsLuP8SZWja6CfE7N8GK2kQx7f/BCu
-         iAVspylz/WJ1PGnD/M1oDkyUKErs8+PtG8mdpd0mxQefo3dPEcIgsnJvD3ryXtj/LB9r
-         IN0zb+7LzqSvm9a2uSNuUnZ932xeKnGAccrllI9cX+YSR+nlBkR5aQMj6lO2Pa6n9n51
-         /AUIzWhaVCT5TeZcRUkT7uLoxe9JASdBGMnKn3LJ6O9CSsJvlEywBPIqtAoEGHRFAz69
-         TiIQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dJ1viyEd746u1MzO5bkdAZU+71ZT2HJWhvIS6MWOLz4=;
+        b=d4fpCjgqvFKqBijwNopM5Tjl0Abua4COwRNrVEApjvF/wjmS5dLW3m+kZhLhJeWnNu
+         iSfejJzg0trBi/IHb6f2jl/1tb3uJHRcCRTEU7aIX6HTXwYewwZvmYkWtTpA7+5upHD6
+         uWJrxHL1ER3GQibDLiYN4aNmhG5i7+LEzMMxY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HvoJM9sMGq5xI3RwMvugcMXuusxVFzNWPQZRfU0rEf8=;
-        b=Dy6oYIX49a4CTXvsjzjo863ANOXD/r5I5+uRSnNVCEF67DD6o5XOb3I7b8Vu2YBDX/
-         1KDCQ6LsSGxBqJbk10vsZ//G7rnkL2kzD0eMNtZiSaR1QRllCD4QRSTxb+XJTgxWVXQU
-         np9V3wY8oFesLad/tAbBM3rAoiXEjD8kPt1HUcRkdUiLu3p8vb0Qj24CBfCaY/oMY8uO
-         CbJ20eLfO2WSdUt5BOelJn81jqdezIrn9NgdpAhPIVjlaldOY7yVoJ/bc9O4fW+HPqmk
-         i/v875wmsC3CaKpx2U44KoWuDqfZodsGoPTvIwdf78dIK3DshsmIq0eNt5OLnE8jsMo2
-         4GeA==
-X-Gm-Message-State: APjAAAXH/DI7gvqEMEdmvMq/mPwjdI/CQPtRKwNNp3WWwY3fbGnQVj0Q
-        iGtinXpz9fmEggOuHvsGGNVraA==
-X-Google-Smtp-Source: APXvYqxY2ypIf1XfIoVNJF4qwIapFtfKnB7Ak69TdLWw2rUBh9E7c/fsOawf0Iylhmq8cCiBqn8CyA==
-X-Received: by 2002:a05:6214:16cb:: with SMTP id d11mr3355475qvz.241.1567717682191;
-        Thu, 05 Sep 2019 14:08:02 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id k11sm1510843qtp.26.2019.09.05.14.08.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2019 14:08:01 -0700 (PDT)
-Message-ID: <1567717680.5576.104.camel@lca.pw>
-Subject: Re: page_alloc.shuffle=1 + CONFIG_PROVE_LOCKING=y = arm64 hang
-From:   Qian Cai <cai@lca.pw>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date:   Thu, 05 Sep 2019 17:08:00 -0400
-In-Reply-To: <1566509603.5576.10.camel@lca.pw>
-References: <1566509603.5576.10.camel@lca.pw>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dJ1viyEd746u1MzO5bkdAZU+71ZT2HJWhvIS6MWOLz4=;
+        b=gayb1YOR52ct1IUWIDez9tjq4woK7WirpbyAyBP5rhu6jNQOFWXaplpmXtCo6Wzb08
+         TzCc7WdXLqhW+/oI1onVppTKRIgiy17pJ+Yjzr4PlzoZuHlo7RYcUotL94hHptO34Lrv
+         PpsFSGxEaVqKY8+aEQWGZRJSh33KgB4Mvmv0wCMmCoox2AYNyRofHWyELOb3j0tftA6J
+         TrdTtGnKhMR+Mglw1xnjiDmF/S0L9QzjJnmq5GqtwSajEJjbAegADCao3TIuGPvg6xdn
+         yRPZVGHh4saUjhtkuNdG8L1hhRM/knAbfZYFpn6RMfp825owcZTd1WySOL/n3ozIlKhI
+         5Uxg==
+X-Gm-Message-State: APjAAAVx9ctD5cz6HLJmNay8mtigl46V58/pDsA8P5dg0mOtjBY8ZHRq
+        Ip9pkGo8tFlekCV9oGFCpe8i5ymHx/g=
+X-Google-Smtp-Source: APXvYqwbXnYg5haVJT02Ym0reVLR9jbtZtebTezEeTIsDLYke9+J+pxiwhnerUBty3mMl95r4Wp5aA==
+X-Received: by 2002:a2e:8656:: with SMTP id i22mr2445374ljj.32.1567717884844;
+        Thu, 05 Sep 2019 14:11:24 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id t16sm652722lfp.38.2019.09.05.14.11.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2019 14:11:24 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id y23so3642106ljn.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:11:24 -0700 (PDT)
+X-Received: by 2002:a2e:814d:: with SMTP id t13mr3621962ljg.72.1567717580519;
+ Thu, 05 Sep 2019 14:06:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190905101534.9637-1-peterx@redhat.com>
+In-Reply-To: <20190905101534.9637-1-peterx@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Sep 2019 14:06:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgSwiRsT4=q71jnF_5JrUn5qg76VBw+oMJ-e7SQ17Q1QA@mail.gmail.com>
+Message-ID: <CAHk-=wgSwiRsT4=q71jnF_5JrUn5qg76VBw+oMJ-e7SQ17Q1QA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] mm: Page fault enhancements
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>,
+        Marty McFadden <mcfadden8@llnl.gov>, Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Another data point is if change CONFIG_DEBUG_OBJECTS_TIMERS from =y to =n, it
-will also fix it.
+On Thu, Sep 5, 2019 at 3:15 AM Peter Xu <peterx@redhat.com> wrote:
+>
+> This series is split out of userfaultfd-wp series to only cover the
+> general page fault changes, since it seems to make sense itself.
 
-On Thu, 2019-08-22 at 17:33 -0400, Qian Cai wrote:
-> https://raw.githubusercontent.com/cailca/linux-mm/master/arm64.config
-> 
-> Booting an arm64 ThunderX2 server with page_alloc.shuffle=1 [1] +
-> CONFIG_PROVE_LOCKING=y results in hanging.
-> 
-> [1] https://lore.kernel.org/linux-mm/154899811208.3165233.17623209031065121886.s
-> tgit@dwillia2-desk3.amr.corp.intel.com/
-> 
-> ...
-> [  125.142689][    T1] arm-smmu-v3 arm-smmu-v3.2.auto: option mask 0x2
-> [  125.149687][    T1] arm-smmu-v3 arm-smmu-v3.2.auto: ias 44-bit, oas 44-bit
-> (features 0x0000170d)
-> [  125.165198][    T1] arm-smmu-v3 arm-smmu-v3.2.auto: allocated 524288 entries
-> for cmdq
-> [  125.239425][ [  125.251484][    T1] arm-smmu-v3 arm-smmu-v3.3.auto: option
-> mask 0x2
-> [  125.258233][    T1] arm-smmu-v3 arm-smmu-v3.3.auto: ias 44-bit, oas 44-bit
-> (features 0x0000170d)
-> [  125.282750][    T1] arm-smmu-v3 arm-smmu-v3.3.auto: allocated 524288 entries
-> for cmdq
-> [  125.320097][    T1] arm-smmu-v3 arm-smmu-v3.3.auto: allocated 524288 entries
-> for evtq
-> [  125.332667][    T1] arm-smmu-v3 arm-smmu-v3.4.auto: option mask 0x2
-> [  125.339427][    T1] arm-smmu-v3 arm-smmu-v3.4.auto: ias 44-bit, oas 44-bit
-> (features 0x0000170d)
-> [  125.354846][    T1] arm-smmu-v3 arm-smmu-v3.4.auto: allocated 524288 entries
-> for cmdq
-> [  125.375295][    T1] arm-smmu-v3 arm-smmu-v3.4.auto: allocated 524288 entries
-> for evtq
-> [  125.387371][    T1] arm-smmu-v3 arm-smmu-v3.5.auto: option mask 0x2
-> [  125.393955][    T1] arm-smmu-v3 arm-smmu-v3.5.auto: ias 44-bit, oas 44-bit
-> (features 0x0000170d)
-> [  125.522605][    T1] arm-smmu-v3 arm-smmu-v3.5.auto: allocated 524288 entries
-> for cmdq
-> [  125.543338][    T1] arm-smmu-v3 arm-smmu-v3.5.auto: allocated 524288 entries
-> for evtq
-> [  126.694742][    T1] EFI Variables Facility v0.08 2004-May-17
-> [  126.799291][    T1] NET: Registered protocol family 17
-> [  126.978632][    T1] zswap: loaded using pool lzo/zbud
-> [  126.989168][    T1] kmemleak: Kernel memory leak detector initialized
-> [  126.989191][ T1577] kmemleak: Automatic memory scanning thread started
-> [  127.044079][ T1335] pcieport 0000:0f:00.0: Adding to iommu group 0
-> [  127.388074][    T1] Freeing unused kernel memory: 22528K
-> [  133.527005][    T1] Checked W+X mappings: passed, no W+X pages found
-> [  133.533474][    T1] Run /init as init process
-> [  133.727196][    T1] systemd[1]: System time before build time, advancing
-> clock.
-> [  134.576021][ T1587] modprobe (1587) used greatest stack depth: 27056 bytes
-> left
-> [  134.764026][    T1] systemd[1]: systemd 239 running in system mode. (+PAM
-> +AUDIT +SELINUX +IMA -APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT
-> +GNUTLS +ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD +IDN2 -IDN +PCRE2 default-
-> hierarchy=legacy)
-> [  134.799044][    T1] systemd[1]: Detected architecture arm64.
-> [  134.804818][    T1] systemd[1]: Running in initial RAM disk.
-> <...hang...>
-> 
-> Fix it by either set page_alloc.shuffle=0 or CONFIG_PROVE_LOCKING=n which allow
-> it to continue successfully.
-> 
-> 
-> [  121.093846][    T1] systemd[1]: Set hostname to <hpe-apollo-cn99xx>.
-> [  123.157524][    T1] random: systemd: uninitialized urandom read (16 bytes
-> read)
-> [  123.168562][    T1] systemd[1]: Listening on Journal Socket.
-> [  OK  ] Listening on Journal Socket.
-> [  123.203932][    T1] random: systemd: uninitialized urandom read (16 bytes
-> read)
-> [  123.212813][    T1] systemd[1]: Listening on udev Kernel Socket.
-> [  OK  ] Listening on udev Kernel Socket.
-> ...
+The series continues to look sane to me, but I'd like VM people to
+take a look. I see a few reviewed-by's, it would be nice to see more
+comments from people. I'd like to see Andrea in particular say "yeah,
+this looks all good to me".
+
+Also a question on how this will get to me - it smells like Andrew's
+-mm tree to me, both from a VM and a userfaultfd angle (and looking
+around, at least a couple of previous patches by Peter have gone that
+way).
+
+And it would be lovely to have actual _numbers_ for the alleged
+latency improvements. I 100% believe them, but still, numbers rule.
+
+Talking about latency, what about that retry loop in gup()? That's the
+one I'm not at all convinced about. It doesn't check for signals, so
+if there is some retry logic, it loops forever. Hmm?
+
+             Linus
