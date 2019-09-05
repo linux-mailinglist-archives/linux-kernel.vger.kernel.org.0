@@ -2,78 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01E79AA1AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB0A1AA1C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:42:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388615AbfIELkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:40:23 -0400
-Received: from mga05.intel.com ([192.55.52.43]:7598 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730753AbfIELkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:40:22 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2019 04:40:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,470,1559545200"; 
-   d="scan'208";a="187951270"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga006.jf.intel.com with ESMTP; 05 Sep 2019 04:40:17 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1i5q7c-0007GF-5F; Thu, 05 Sep 2019 14:40:16 +0300
-Date:   Thu, 5 Sep 2019 14:40:16 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Dilip Kota <eswara.kota@linux.intel.com>, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, lorenzo.pieralisi@arm.com,
-        robh@kernel.org, martin.blumenstingl@googlemail.com,
-        linux-pci@vger.kernel.org, hch@infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com
-Subject: Re: [PATCH v3 2/2] dwc: PCI: intel: Intel PCIe RC controller driver
-Message-ID: <20190905114016.GF2680@smile.fi.intel.com>
-References: <cover.1567585181.git.eswara.kota@linux.intel.com>
- <35316bac59d3bc681e76d33e0345f4ef950c4414.1567585181.git.eswara.kota@linux.intel.com>
- <20190905104517.GX9720@e119886-lin.cambridge.arm.com>
+        id S2388680AbfIELky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:40:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60615 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730753AbfIELkv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 07:40:51 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1i5q7j-0003X6-1p; Thu, 05 Sep 2019 11:40:23 +0000
+Date:   Thu, 5 Sep 2019 13:40:21 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190905114020.52xaqqgp43wdctbl@wittgenstein>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
+ <20190905110915.4vvhicg4ldmpi5u6@wittgenstein>
+ <20190905112718.ojg3znly6x3m4mjq@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190905104517.GX9720@e119886-lin.cambridge.arm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190905112718.ojg3znly6x3m4mjq@yavin.dot.cyphar.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 11:45:18AM +0100, Andrew Murray wrote:
-> On Wed, Sep 04, 2019 at 06:10:31PM +0800, Dilip Kota wrote:
-> > Add support to PCIe RC controller on Intel Universal
-> > Gateway SoC. PCIe controller is based of Synopsys
-> > Designware pci core.
+On Thu, Sep 05, 2019 at 09:27:18PM +1000, Aleksa Sarai wrote:
+> On 2019-09-05, Christian Brauner <christian.brauner@ubuntu.com> wrote:
+> > On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
+> > > A common pattern for syscall extensions is increasing the size of a
+> > > struct passed from userspace, such that the zero-value of the new fields
+> > > result in the old kernel behaviour (allowing for a mix of userspace and
+> > > kernel vintages to operate on one another in most cases). This is done
+> > > in both directions -- hence two helpers -- though it's more common to
+> > > have to copy user space structs into kernel space.
+> > > 
+> > > Previously there was no common lib/ function that implemented
+> > > the necessary extension-checking semantics (and different syscalls
+> > > implemented them slightly differently or incompletely[1]). A future
+> > > patch replaces all of the common uses of this pattern to use the new
+> > > copy_struct_{to,from}_user() helpers.
+> > > 
+> > > [1]: For instance {sched_setattr,perf_event_open,clone3}(2) all do do
+> > >      similar checks to copy_struct_from_user() while rt_sigprocmask(2)
+> > >      always rejects differently-sized struct arguments.
+> > > 
+> > > Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > 
+> > I would probably split this out into a separate patchset. It can very
+> > well go in before openat2(). Thoughts?
+> 
+> Yeah, I'll split this and the related patches out -- though I will admit
+> I'm not sure how you're supposed to deal with multiple independent
+> patchsets that depend on each other. How will folks reviewing openat2(2)
+> know to include the lib/struct_user.c changes?
 
-> > +config PCIE_INTEL_AXI
+The way I usually deal with this is to make two branches. One with the
+changes the other depends on and then merge this branch into the other
+and put the changes on top. Then you can provide a complete branch that
+people can test when you send the patchset out by just linking to it in
+the cover letter.
+(But if it's too much hazzle just leave it.)
 
-I think that name here is too generic. Classical x86 seems not using this.
+> 
+> Also, whose tree should it go through?
 
-> > +        bool "Intel AHB/AXI PCIe host controller support"
-> > +        depends on PCI_MSI
-> > +        depends on PCI
-> > +        depends on OF
-> > +        select PCIE_DW_HOST
-> > +        help
-> > +          Say 'Y' here to enable support for Intel AHB/AXI PCIe Host
-> > +	  controller driver.
-> > +	  The Intel PCIe controller is based on the Synopsys Designware
-> > +	  pcie core and therefore uses the Designware core functions to
-> > +	  implement the driver.
+If people think splitting it out makes sense and we can settle the
+technical details I can take it and let it stew in linux-next at least
+for a little while.
+I have changes to clone3() in there that touch
+copy_clone_args_from_user() anyway and there are tests for clone3()
+struct copying so we'd catch regressions (for clone3() at least) pretty
+quickly.
+If we don't see any major issues in the next two weeks it might even be
+ok to send for 5.4.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Christian
