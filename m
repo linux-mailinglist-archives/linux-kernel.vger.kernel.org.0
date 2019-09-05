@@ -2,117 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25E8BAA9EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:23:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB10FAA9DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:20:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390843AbfIERXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 13:23:39 -0400
-Received: from us-smtp-delivery-168.mimecast.com ([63.128.21.168]:49250 "EHLO
-        us-smtp-delivery-168.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731361AbfIERXi (ORCPT
+        id S2389490AbfIERUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 13:20:18 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34950 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389117AbfIERUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 13:23:38 -0400
-X-Greylist: delayed 1032 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Sep 2019 13:23:36 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
-        s=mimecast20190405; t=1567704216;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Gf6jfM7rdt5Q4+6guZE62JzUBQ9yVcnMN5zBZSqZvig=;
-        b=ChmBqPy1ItRQNXwlWvDhx815dQdpNoI4IFIHhFKLeC6Z11Kxm+3ux9UtSWIj7NY83axTM0
-        gBcb3pYCY/3ZVcm0OUhlQw4P/tKyAe3aj+BOOBVyLLbvahOJt+EYv51oTSzFABuRMo4ZAB
-        Z3jSBpZ12dX9zFIGZVsgXLs/o4RT+/A=
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com
- (mail-bn3nam01lp2055.outbound.protection.outlook.com [104.47.33.55]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- us-mta-348-BJgYo9w9OjyOHSO1FD-7lw-1; Thu, 05 Sep 2019 13:06:23 -0400
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
- MWHPR0601MB3659.namprd06.prod.outlook.com (10.167.236.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.14; Thu, 5 Sep 2019 17:06:17 +0000
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::60b3:e38a:69b0:3f95]) by MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::60b3:e38a:69b0:3f95%7]) with mapi id 15.20.2241.014; Thu, 5 Sep 2019
- 17:06:17 +0000
-From:   Trent Piepho <tpiepho@impinj.com>
-To:     "vitaly.gaiduk@cloudbear.ru" <vitaly.gaiduk@cloudbear.ru>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/2] net: phy: dp83867: Add documentation for SGMII mode
- type
-Thread-Topic: [PATCH 1/2] net: phy: dp83867: Add documentation for SGMII mode
- type
-Thread-Index: AQHVZAe9yk928RLMPka3wG1dYOEMaacdUGUA
-Date:   Thu, 5 Sep 2019 17:06:17 +0000
-Message-ID: <1567703176.6344.4.camel@impinj.com>
-References: <1567700761-14195-1-git-send-email-vitaly.gaiduk@cloudbear.ru>
-         <1567700761-14195-2-git-send-email-vitaly.gaiduk@cloudbear.ru>
-In-Reply-To: <1567700761-14195-2-git-send-email-vitaly.gaiduk@cloudbear.ru>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [216.207.205.253]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 53904907-2f58-4aca-ee8c-08d732235dce
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR0601MB3659;
-x-ms-traffictypediagnostic: MWHPR0601MB3659:
-x-microsoft-antispam-prvs: <MWHPR0601MB36599C9E052F795EFC031910D3BB0@MWHPR0601MB3659.namprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 015114592F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(346002)(136003)(396003)(39850400004)(376002)(199004)(189003)(71200400001)(64756008)(3846002)(316002)(66446008)(6246003)(53936002)(71190400001)(99286004)(54906003)(256004)(6512007)(66556008)(66476007)(110136005)(66066001)(478600001)(4326008)(14454004)(25786009)(2906002)(6436002)(6486002)(229853002)(5660300002)(36756003)(6506007)(7736002)(8676002)(305945005)(26005)(476003)(11346002)(2616005)(446003)(486006)(76176011)(102836004)(6116002)(91956017)(66946007)(76116006)(14444005)(186003)(2201001)(103116003)(81156014)(81166006)(8936002)(86362001)(2501003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3659;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: y01FR+au3D4natsqwzSZb3wU2I53LAkzRp7w6cfU8yBL2tH52JhNkQjxMg5m3LIsFMii1Eoqk1Tf6tcGknEEoCHXHPv277M773/ExhNJi4cTSOQp+9lwjWg5Vm5Ja08k0VdmM3KMpZZb+zI/Nanpwq2Yb4JGlqE0W8mo1H5u5z/J/SLG8URKDMquXwXq6HnIx+m7f/OO1cQ7g52pS03TjGT3iHfkiH06VTr8rHKHpCv+9lH9UmRcWzcJx2zm61lkIxj2057/6ItNKizmMRnacCZPGwnlV0wYbAKZtb3KPgZ34uYQhHkuSBmOEzhqr6T1YPg6YLkphcMyytfUN7EZe+Ak7vpNl+DDgppw+TmmICxpTHjzr/B24eUWrI6xLhlqWb82gBiCBjcZzuCbs6Eobk+GTb0gpiF8TCPoXHkrMuM=
-x-ms-exchange-transport-forked: True
-Content-ID: <A5BA510434E86445A2548D318A9B8682@namprd06.prod.outlook.com>
+        Thu, 5 Sep 2019 13:20:17 -0400
+Received: by mail-lf1-f68.google.com with SMTP id w6so2711904lfl.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 10:20:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1KYTdnyfvsSaF6SRrjqwQi9Gt/hCAHZIxAtXY6aZZJ0=;
+        b=JGdKASNkgFHvBA05jXqdXX7Gpi6+9NL4cvo+gcNYqUSvjqoKuIvNGkviDlPZtR6WeE
+         TlbHiadWjxZKtu9iPHXIVgBm9c/Q2iEzthUZRUK4NhHiCU4gT3Zrwu7Fj6GF8TOr2PYi
+         RUy/jSH90pSu65c5M/A/XF8yr8GznFTNLI8nc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1KYTdnyfvsSaF6SRrjqwQi9Gt/hCAHZIxAtXY6aZZJ0=;
+        b=BfxtHj2f1yk8BzDvyxwntuAW5/TmOmM50Uz184r/uCp7voYxQqP3WQ0PRqErA5HpyE
+         d0XUz9x3FcpTtuk2aaTP3rs75f/JzX/vFQbM4Yvoxr3erAMp5nhWuKxeLBVUVJldtlbV
+         N+sPWd0nEaGCGq7fzHGbYgMsmhH+tSr4nhIEAMyU703Jv/eZ7hMx0yexFzKwLTClqSm5
+         41wivSaYD5mqBo3/fu54Yd2yo/THMsNg2Z9DvA+SRWUc4ACwtiosMRfG0ayYouVeIDjK
+         dzXbpEBuIWHZuaW15pCGWTf1hm0ko9WciSBPwgim5XRJIdf7LJlGhWNkkLNKFJK5AFjs
+         6EyQ==
+X-Gm-Message-State: APjAAAUpwx8Pgo8SXwGMSAkxSjTm3gMFFxGjzTgb1yxwVol/B1Xsv8jA
+        Je3YCLGDGGM/NF+2kPmzMQeX953Dq/Q=
+X-Google-Smtp-Source: APXvYqzB0TevA5dYjww5CHQdUUnb8j6PZWJt8tYj/np/6tizAJWAhVsnt4VPigc2HuzOABEolPcGCw==
+X-Received: by 2002:a19:8c1d:: with SMTP id o29mr3248912lfd.73.1567704014980;
+        Thu, 05 Sep 2019 10:20:14 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id w1sm551689lfe.67.2019.09.05.10.20.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2019 10:20:14 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id l11so2690893lfk.6
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 10:20:11 -0700 (PDT)
+X-Received: by 2002:ac2:5a4c:: with SMTP id r12mr3118360lfn.52.1567704010099;
+ Thu, 05 Sep 2019 10:20:10 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: impinj.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53904907-2f58-4aca-ee8c-08d732235dce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2019 17:06:17.3532
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jvHCVECOOlmP7xarwEf8MTmkUzibuspuJforPob25HeiwAfk0/O0vWUk59O+KYOtATkqUQ2N64w2Ywg4at25ZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3659
-X-MC-Unique: BJgYo9w9OjyOHSO1FD-7lw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+ <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com> <17703.1567702907@warthog.procyon.org.uk>
+In-Reply-To: <17703.1567702907@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Sep 2019 10:19:54 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+Message-ID: <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+Subject: Re: Why add the general notification queue and its sources
+To:     David Howells <dhowells@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rstrode@redhat.com, swhiteho@redhat.com,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTA5LTA1IGF0IDE5OjI2ICswMzAwLCBWaXRhbHkgR2FpZHVrIHdyb3RlOg0K
-PiBBZGQgZG9jdW1lbnRhdGlvbiBvZiB0aSxzZ21paS10eXBlIHdoaWNoIGNhbiBiZSB1c2VkIHRv
-IHNlbGVjdA0KPiBTR01JSSBtb2RlIHR5cGUgKDQgb3IgNi13aXJlKS4NCj4gDQo+IFNpZ25lZC1v
-ZmYtYnk6IFZpdGFseSBHYWlkdWsgPHZpdGFseS5nYWlkdWtAY2xvdWRiZWFyLnJ1Pg0KPiAtLS0N
-Cj4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9uZXQvdGksZHA4Mzg2Ny50eHQg
-fCAxICsNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiANCj4gZGlmZiAtLWdp
-dCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9uZXQvdGksZHA4Mzg2Ny50eHQg
-Yi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbmV0L3RpLGRwODM4NjcudHh0DQo+
-IGluZGV4IGRiNmFhM2YyMjE1Yi4uMThlN2ZkNTI4OTdmIDEwMDY0NA0KPiAtLS0gYS9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbmV0L3RpLGRwODM4NjcudHh0DQo+ICsrKyBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9uZXQvdGksZHA4Mzg2Ny50eHQNCj4gQEAg
-LTM3LDYgKzM3LDcgQEAgT3B0aW9uYWwgcHJvcGVydHk6DQo+ICAJCQkgICAgICBmb3IgYXBwbGlj
-YWJsZSB2YWx1ZXMuICBUaGUgQ0xLX09VVCBwaW4gY2FuIGFsc28NCj4gIAkJCSAgICAgIGJlIGRp
-c2FibGVkIGJ5IHRoaXMgcHJvcGVydHkuICBXaGVuIG9taXR0ZWQsIHRoZQ0KPiAgCQkJICAgICAg
-UEhZJ3MgZGVmYXVsdCB3aWxsIGJlIGxlZnQgYXMgaXMuDQo+ICsJLSB0aSxzZ21paS10eXBlIC0g
-VGhpcyBkZW5vdGVzIHRoZSBmYWN0IHdoaWNoIFNHTUlJIG1vZGUgaXMgdXNlZCAoNCBvciA2LXdp
-cmUpLg0KDQpSZWFsbHkgc2hvdWxkIGV4cGxhaW4gd2hhdCBraW5kIG9mIHZhbHVlIGl0IGlzIGFu
-ZCB3aGF0IHRoZSB2YWx1ZXMNCm1lYW4uICBJLmUuLCBzaG91bGQgdGhpcyBiZSB0aSxzZ2ltaWkt
-dHlwZSA9IDw0PiB0byBzZWxlY3QgNCB3aXJlPw0KDQpNYXliZSBhIGJvb2xlYW4sICJzZ21paS1j
-bG9jayIsIHRvIGluZGljYXRlIHRoZSBwcmVzZW5jZSBvZiBzZ21paSByeA0KY2xvY2sgbGluZXMs
-IHdvdWxkIG1ha2UgbW9yZSBzZW5zZT8NCg0KSSBhbHNvIHdvbmRlciBpZiBwaHktbW9kZSA9ICJz
-Z21paS1jbGsiIG9yICJzZ21paS02d2lyZSIsIHZzIHRoZQ0KZXhpc3RpbmcgcGh5LW1vZGUgPSAi
-c2dtaWkiLCBtaWdodCBhbHNvIGJlIGEgYmV0dGVyIHdheSB0byBkZXNjcmliZQ0KdGhpcyBpbnN0
-ZWFkIG9mIGEgbmV3IHByb3BlcnR5Lg0K
+On Thu, Sep 5, 2019 at 10:01 AM David Howells <dhowells@redhat.com> wrote:
+> >
+> > I'm just going to be very blunt about this, and say that there is no
+> > way I can merge any of this *ever*, unless other people stand up and
+> > say that
+> >
+> >  (a) they'll use it
+> >
+> > and
+> >
+> >  (b) they'll actively develop it and participate in testing and coding
+>
+> Besides the core notification buffer which ties this together, there are a
+> number of sources that I've implemented, not all of which are in this patch
+> series:
 
+You've at least now answered part of the "Why", but you didn't
+actually answer the whole "another developer" part.
+
+I really don't like how nobody else than you seems to even look at any
+of the key handling patches. Because nobody else seems to care.
+
+This seems to be another new subsystem / driver that has the same
+pattern. If it's all just you, I don't want to merge it, because I
+really want more than just other developers doing "Reviewed-by" after
+looking at somebody elses code that they don't actually use or really
+care about.
+
+See what I'm saying?
+
+New features that go into the kernel should have multiple users. Not a
+single developer who pushes both the kernel feature and the single use
+of that feature.
+
+This very much comes from me reverting the key ACL pull. Not only did
+I revert it, ABSOLUTELY NOBODY even reacted to the revert. Nobody
+stepped up and said they they want that new ACL code, and pushed for a
+fix. There was some very little murmuring about it when Mimi at least
+figured out _why_ it broke, but other than that all the noise I saw
+about the revert was Eric Biggers pointing out it broke other things
+too, and that it had actually broken some test suites. But since it
+hadn't even been in linux-next, that too had been noticed much too
+late.
+
+See what I'm saying? This whole "David Howells does his own features
+that nobody else uses" needs to stop. You need to have a champion. I
+just don't feel safe pulling these kinds of changes from you, because
+I get the feeling that ABSOLUTELY NOBODY ELSE ever really looked at it
+or really cared.
+
+Most of the patches has nobody else even Cc'd, and even the patches
+that do have some "Reviewed-by" feel more like somebody else went "ok,
+the change looks fine to me", without any other real attachment to the
+code.
+
+New kernel features and interfaces really need to have a higher
+barrier of entry than one developer working on his or her own thing.
+
+Is that a change from 25 years ago? Or yes it is. We can point to lots
+of "single developer did a thing" from years past. But things have
+changed. And once bitten, twice shy: I really am a _lot_ more nervous
+about all these key changes now.
+
+                    Linus
