@@ -2,178 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05E3CAA2F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3906AAA310
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389324AbfIEMWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 08:22:11 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41246 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731173AbfIEMWK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 08:22:10 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x85CLTKk016715;
-        Thu, 5 Sep 2019 14:21:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=0ND6yWcbICCLXkEHKUCkaFeaadKXcm5KDuBVNmBow4U=;
- b=toHTMERg4rxITNeAJ0ekGoWn5LtPOceKW4tljc0yNy/2PmGuaikiMEytUod6/cgbCf43
- TBuL2+F5KON7KRvlaeGs0a1LzqCH71koRCGsXLd2CvAoqQi4bYCKi3ZOwprJQfe9wPOG
- UYa14z2D3uoBwQoTznyRJhgWxT1iLpghuTB/x9/nV8/HsYNN9JaMnttfhye1p9Ui8yc9
- xTJIS/7TbLiqOdIFjVmL/kiZhveVLmyioPgNnGF6gdlEJytG4YaLzlVaceoCpRQuWRvZ
- HhdGAByDDOs29bRZckuKxMW3oW51mx3x/CnGldg2RhIrcDRr3LLIfVFld3veU0aFcEJE lg== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2uqec385ep-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 05 Sep 2019 14:21:59 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 957AD22;
-        Thu,  5 Sep 2019 12:21:56 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F1AE42CBDA0;
-        Thu,  5 Sep 2019 14:21:55 +0200 (CEST)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 5 Sep 2019
- 14:21:55 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 5 Sep 2019
- 14:21:54 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V6 3/3] mmc: mmci: sdmmc: add busy_complete callback
-Date:   Thu, 5 Sep 2019 14:21:12 +0200
-Message-ID: <20190905122112.29672-4-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190905122112.29672-1-ludovic.Barre@st.com>
-References: <20190905122112.29672-1-ludovic.Barre@st.com>
+        id S1733128AbfIEMZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 08:25:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57810 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731294AbfIEMZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 08:25:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C94FCAD07;
+        Thu,  5 Sep 2019 12:25:19 +0000 (UTC)
+Subject: Re: [PATCH 0/5] mm, slab: Make kmalloc_info[] contain all types of
+ names
+To:     Pengfei Li <lpf.vector@gmail.com>, akpm@linux-foundation.org
+Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190903160430.1368-1-lpf.vector@gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8641aeba-ab8c-f5a1-a6ad-cf8c0f86baa7@suse.cz>
+Date:   Thu, 5 Sep 2019 14:25:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-05_04:2019-09-04,2019-09-05 signatures=0
+In-Reply-To: <20190903160430.1368-1-lpf.vector@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+On 9/3/19 6:04 PM, Pengfei Li wrote:
+> There are three types of kmalloc, KMALLOC_NORMAL, KMALLOC_RECLAIM
+> and KMALLOC_DMA.
+> 
+> The name of KMALLOC_NORMAL is contained in kmalloc_info[].name,
+> but the names of KMALLOC_RECLAIM and KMALLOC_DMA are dynamically
+> generated by kmalloc_cache_name().
+> 
+> Patch1 predefines the names of all types of kmalloc to save
+> the time spent dynamically generating names.
+> 
+> The other 4 patches did some cleanup work.
+> 
+> These changes make sense, and the time spent by new_kmalloc_cache()
+> has been reduced by approximately 36.3%.
+> 
+>                          Time spent by
+>                          new_kmalloc_cache()
+> 5.3-rc7                       66264
+> 5.3-rc7+patch                 42188
 
-This patch adds a specific busy_complete callback for sdmmc variant.
+Note that the caches are created only once upon boot, so I doubt that
+these time savings (is it in CPU cycles?) will be noticeable at all. But
+diffstat looks ok, and it avoids using kmalloc() (via kasprintf()) to
+allocate names for kmalloc(), so in that sense I think it's worthwhile
+to consider. Thanks.
 
-sdmmc has 2 status flags:
--busyd0: This is a hardware status flag (inverted value of d0 line).
-it does not generate an interrupt.
--busyd0end: This indicates only end of busy following a CMD response.
-On busy to Not busy changes, an interrupt is generated (if unmask)
-and BUSYD0END status flag is set. Status flag is cleared by writing
-corresponding interrupt clear bit in MMCICLEAR.
-
-The legacy busy completion monitors step by step the busy progression
-start/in-progress/end. On sdmmc variant, the monitoring of busy steps
-is difficult and not adapted (the software can miss a step and locks
-the monitoring), the sdmmc has just need to wait the busyd0end bit
-without monitoring all the changes.
-
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- drivers/mmc/host/mmci.c             |  3 +++
- drivers/mmc/host/mmci.h             |  1 +
- drivers/mmc/host/mmci_stm32_sdmmc.c | 38 +++++++++++++++++++++++++++++
- 3 files changed, 42 insertions(+)
-
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index e20164f4354d..a666d826dbbd 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -260,6 +260,9 @@ static struct variant_data variant_stm32_sdmmc = {
- 	.datalength_bits	= 25,
- 	.datactrl_blocksz	= 14,
- 	.stm32_idmabsize_mask	= GENMASK(12, 5),
-+	.busy_timeout		= true,
-+	.busy_detect_flag	= MCI_STM32_BUSYD0,
-+	.busy_detect_mask	= MCI_STM32_BUSYD0ENDMASK,
- 	.init			= sdmmc_variant_init,
- };
- 
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 733f9a035b06..841c5281beb5 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -164,6 +164,7 @@
- #define MCI_ST_CARDBUSY		(1 << 24)
- /* Extended status bits for the STM32 variants */
- #define MCI_STM32_BUSYD0	BIT(20)
-+#define MCI_STM32_BUSYD0END	BIT(21)
- 
- #define MMCICLEAR		0x038
- #define MCI_CMDCRCFAILCLR	(1 << 0)
-diff --git a/drivers/mmc/host/mmci_stm32_sdmmc.c b/drivers/mmc/host/mmci_stm32_sdmmc.c
-index 8e83ae6920ae..bb5499cc9e81 100644
---- a/drivers/mmc/host/mmci_stm32_sdmmc.c
-+++ b/drivers/mmc/host/mmci_stm32_sdmmc.c
-@@ -282,6 +282,43 @@ static u32 sdmmc_get_dctrl_cfg(struct mmci_host *host)
- 	return datactrl;
- }
- 
-+bool sdmmc_busy_complete(struct mmci_host *host, u32 status, u32 err_msk)
-+{
-+	void __iomem *base = host->base;
-+	u32 busy_d0, busy_d0end, mask;
-+
-+	mask = readl_relaxed(base + MMCIMASK0);
-+	busy_d0end = readl_relaxed(base + MMCISTATUS) & MCI_STM32_BUSYD0END;
-+	busy_d0 = readl_relaxed(base + MMCISTATUS) & MCI_STM32_BUSYD0;
-+
-+	/* complete if there is an error or busy_d0end */
-+	if ((status & err_msk) || busy_d0end)
-+		goto complete;
-+
-+	/*
-+	 * On response the busy signaling is reflected in the BUSYD0 flag.
-+	 * if busy_d0 is in-progress we must activate busyd0end interrupt
-+	 * to wait this completion. Else this request has no busy step.
-+	 */
-+	if (busy_d0) {
-+		if (!host->busy_status) {
-+			writel_relaxed(mask | host->variant->busy_detect_mask,
-+				       base + MMCIMASK0);
-+			host->busy_status = status &
-+				(MCI_CMDSENT | MCI_CMDRESPEND);
-+		}
-+		return false;
-+	}
-+
-+complete:
-+	writel_relaxed(mask & ~host->variant->busy_detect_mask,
-+		       base + MMCIMASK0);
-+	writel_relaxed(host->variant->busy_detect_mask, base + MMCICLEAR);
-+	host->busy_status = 0;
-+
-+	return true;
-+}
-+
- static struct mmci_host_ops sdmmc_variant_ops = {
- 	.validate_data = sdmmc_idma_validate_data,
- 	.prep_data = sdmmc_idma_prep_data,
-@@ -292,6 +329,7 @@ static struct mmci_host_ops sdmmc_variant_ops = {
- 	.dma_finalize = sdmmc_idma_finalize,
- 	.set_clkreg = mmci_sdmmc_set_clkreg,
- 	.set_pwrreg = mmci_sdmmc_set_pwrreg,
-+	.busy_complete = sdmmc_busy_complete,
- };
- 
- void sdmmc_variant_init(struct mmci_host *host)
--- 
-2.17.1
+> Pengfei Li (5):
+>   mm, slab: Make kmalloc_info[] contain all types of names
+>   mm, slab_common: Remove unused kmalloc_cache_name()
+>   mm, slab: Remove unused kmalloc_size()
+>   mm, slab_common: Make 'type' is enum kmalloc_cache_type
+>   mm, slab_common: Make initializing KMALLOC_DMA start from 1
+> 
+>  include/linux/slab.h |  20 ---------
+>  mm/slab.c            |   7 +--
+>  mm/slab.h            |   2 +-
+>  mm/slab_common.c     | 101 +++++++++++++++++++++++--------------------
+>  4 files changed, 59 insertions(+), 71 deletions(-)
+> 
 
