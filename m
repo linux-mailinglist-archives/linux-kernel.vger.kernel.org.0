@@ -2,74 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60D7FAAC38
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B99AAC46
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:50:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390294AbfIETtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 15:49:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49358 "EHLO mx1.redhat.com"
+        id S2391466AbfIETuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 15:50:04 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:41570 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388340AbfIETt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 15:49:27 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2391443AbfIETuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 15:50:01 -0400
+Received: from zn.tnic (p200300EC2F0A5F00A978ACDBA8294141.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5f00:a978:acdb:a829:4141])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2CCCC30860B9;
-        Thu,  5 Sep 2019 19:49:27 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 093FD5C1D4;
-        Thu,  5 Sep 2019 19:49:27 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 30FDB2253AA; Thu,  5 Sep 2019 15:49:18 -0400 (EDT)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, miklos@szeredi.hu
-Cc:     linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com,
-        mst@redhat.com
-Subject: [PATCH 18/18] virtiofs: Remove TODO item from virtio_fs_free_devs()
-Date:   Thu,  5 Sep 2019 15:48:59 -0400
-Message-Id: <20190905194859.16219-19-vgoyal@redhat.com>
-In-Reply-To: <20190905194859.16219-1-vgoyal@redhat.com>
-References: <20190905194859.16219-1-vgoyal@redhat.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A9CFA1EC09A0;
+        Thu,  5 Sep 2019 21:49:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1567712996;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=JrDJwXq+Cc2XOF34AEK9Cfp0HAJlcgYu1a0X2xDSA8I=;
+        b=LqwDLrXKMLTBUf/kDKzv7D9YSLhN9Q8yGg5bdChWlIokqKKpAVBEDk+G4N3hXvKxErFMzG
+        WZ2YK5f/Hg5tjz6tYpo6bUol+Pes9HGzT52cX6D9ghfzdi6TXhuXk41heGbC8DQYTgKj2k
+        Gfr3Sv84SlweMVNnkr9TtBCri6zypxQ=
+Date:   Thu, 5 Sep 2019 21:49:50 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Raj, Ashok" <ashok.raj@intel.com>
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jon Grimm <Jon.Grimm@amd.com>, kanth.ghatraju@oracle.com,
+        konrad.wilk@oracle.com, patrick.colp@oracle.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        x86-ml <x86@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/microcode: Add an option to reload microcode even if
+ revision is unchanged
+Message-ID: <20190905194950.GH19246@zn.tnic>
+References: <1567056803-6640-1-git-send-email-ashok.raj@intel.com>
+ <20190829060942.GA1312@zn.tnic>
+ <20190829130213.GA23510@araj-mobl1.jf.intel.com>
+ <20190903164630.GF11641@zn.tnic>
+ <41cee473-321c-2758-032a-ccf0f01359dc@oracle.com>
+ <D8A3D2BD-1FD4-4183-8663-3EF02A6099F3@alien8.de>
+ <20190905002132.GA26568@otc-nc-03>
+ <20190905072029.GB19246@zn.tnic>
+ <20190905194044.GA3663@otc-nc-03>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 05 Sep 2019 19:49:27 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190905194044.GA3663@otc-nc-03>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-virtio_fs_free_devs() is now called from ->kill_sb(). By this time
-all device queues have been quiesced. I am assuming that while
-->kill_sb() is in progress, another mount instance will wait for
-it to finish (sb->s_umount mutex provides mutual exclusion).
+On Thu, Sep 05, 2019 at 12:40:44PM -0700, Raj, Ashok wrote:
+> The original description said to load a new microcode file, the content
+> could have changed, but revision in the header hasn't increased.
 
-W.r.t ->remove path, we should be fine as we are not touching vdev
-or virtqueues. And we have reference on virtio_fs object, so we know
-rest of the data structures are valid.
+How does the hardware even accept a revision which is the same as the
+one already loaded?
 
-So I can't see the need of any additional locking yet.
-
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/fuse/virtio_fs.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index eadaea6eb8e2..61aa3eba7b22 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -200,8 +200,6 @@ static void virtio_fs_free_devs(struct virtio_fs *fs)
- {
- 	unsigned int i;
- 
--	/* TODO lock */
--
- 	for (i = 0; i < fs->nvqs; i++) {
- 		struct virtio_fs_vq *fsvq = &fs->vqs[i];
- 
 -- 
-2.20.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
