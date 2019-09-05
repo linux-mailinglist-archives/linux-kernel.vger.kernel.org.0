@@ -2,77 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14653A9AEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 08:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9DC3A9AF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 08:54:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731572AbfIEGu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 02:50:29 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:48563 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728267AbfIEGu3 (ORCPT
+        id S1731589AbfIEGxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 02:53:37 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37263 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfIEGxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 02:50:29 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1i5lan-0002ZF-Lq; Thu, 05 Sep 2019 08:50:05 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1i5laZ-0001pD-N3; Thu, 05 Sep 2019 08:49:51 +0200
-Date:   Thu, 5 Sep 2019 08:49:51 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        linux-pwm@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        cawa.cheng@mediatek.com, bibby.hsieh@mediatek.com,
-        ck.hu@mediatek.com, stonea168@163.com
-Subject: Re: [PATCH v6 0/7] Support dsi for mt8183
-Message-ID: <20190905064951.mttzwrg7muhfimdw@pengutronix.de>
-References: <20190811104008.53372-1-jitao.shi@mediatek.com>
+        Thu, 5 Sep 2019 02:53:37 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y9so1092095pfl.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Sep 2019 23:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:subject:to:from:user-agent:date;
+        bh=X6bK3rfbzFX8967fDBi6v6AmnIt9qDTHKSROdx1Ey68=;
+        b=TMOXcAZIxeJNHBrueuJKwf8rRmgsDchSIH08Y8UYbPEz8/ML1fe//YAgKorZGuVkQt
+         +qg5tcl4ej3ySxjgGRvHzBszSWI3B8fTOPg6An0WVOwYX1yLkB5tXFC1ASCSCrsLfNvB
+         BCGbTcmoeOcIO7DH/TWi+MXOPrCLE1R49vndg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
+         :user-agent:date;
+        bh=X6bK3rfbzFX8967fDBi6v6AmnIt9qDTHKSROdx1Ey68=;
+        b=RELxIZbiS1/JBRwyaiKrEYTTzvvhesX47x59YsA9rmvpt81K5GNF0Y7tuTPMD9eVrR
+         SPJDV6QoEUTefLaxeEVwzpIC8i6AEUxhakU6FHoqNlJZxUOdhJbO7xjnHUoE2fON80hd
+         wZnuu3fnMy0bSsZY3X8SnKbhDuSO90RofpQzFSt4YMI9hTaWNHKheMnzgUktpjnaJ4nv
+         2/ZDNowehmxIczrhQcxSJYC1jzn9Wv3Ce7Ifp0cHNpKcHrPaleCqjHlG1hJbzTHbgo/B
+         aKiF5QQALFFn6PLy7Y9u+rxm5hVQiIrgNI2uixl/Vhd9rO2IY3/A8WoT9jq97KaEb7vB
+         plJA==
+X-Gm-Message-State: APjAAAUDyA/UZLCmnzT5twclx4SXJVI406tZlqgG0YapgbSH8bQhvwlG
+        rMx+Ny18OaaU/XsTrIW5pNBYbg==
+X-Google-Smtp-Source: APXvYqzTMrxxPrIHi7PSBcBRZ/WFPRHu9P1fN0ROt0DOaHqZK/np3NsB3NYUIyyL3/gMBfrIsrD/wA==
+X-Received: by 2002:a62:1d8a:: with SMTP id d132mr1938054pfd.187.1567666416741;
+        Wed, 04 Sep 2019 23:53:36 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id c15sm1254784pfi.172.2019.09.04.23.53.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 23:53:36 -0700 (PDT)
+Message-ID: <5d70b0f0.1c69fb81.f862a.40e4@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190811104008.53372-1-jitao.shi@mediatek.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190718130238.11324-3-vivek.gautam@codeaurora.org>
+References: <20190718130238.11324-1-vivek.gautam@codeaurora.org> <20190718130238.11324-3-vivek.gautam@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, jcrouse@codeaurora.org,
+        rishabhb@codeaurora.org, evgreen@chromium.org,
+        linux-kernel@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH 2/3] soc: qcom: Rename llcc-slice to llcc-qcom
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 04 Sep 2019 23:53:35 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Quoting Vivek Gautam (2019-07-18 06:02:37)
+> The cleaning up was done without changing the driver file name
+> to ensure a cleaner bisect. Change the file name now to facilitate
+> making the driver generic in subsequent patch.
+>=20
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+>  drivers/soc/qcom/Makefile                      | 2 +-
+>  drivers/soc/qcom/{llcc-slice.c =3D> llcc-qcom.c} | 0
 
-I somehow fail to see how this is relevant for the linux-pwm list. Did
-you add this list to the recipents by accident, or is there something I
-missed?
+qcom/llcc-qcom.c seems sort of redundant. Would have been nice to have
+it named llcc.c but I guess the ship has sailed. <sad face>
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
