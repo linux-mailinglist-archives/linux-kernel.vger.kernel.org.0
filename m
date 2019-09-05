@@ -2,73 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF242A9E6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:31:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C563A9E6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:31:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387445AbfIEJbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 05:31:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53602 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfIEJbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 05:31:01 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B39673C917;
-        Thu,  5 Sep 2019 09:31:01 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-72.ams2.redhat.com [10.36.117.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 64D5519C69;
-        Thu,  5 Sep 2019 09:31:01 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 9C34031E8D; Thu,  5 Sep 2019 11:31:00 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 11:31:00 +0200
-From:   "kraxel@redhat.com" <kraxel@redhat.com>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "airlied@linux.ie" <airlied@linux.ie>
-Subject: Re: [PATCH 7/8] drm/vmwgfx: switch to own vma manager
-Message-ID: <20190905093100.unhknpzio74oqkmw@sirius.home.kraxel.org>
-References: <20190905070509.22407-1-kraxel@redhat.com>
- <20190905070509.22407-8-kraxel@redhat.com>
- <8bec5487c9d698d35297033fe48f6bbd6ad98466.camel@vmware.com>
+        id S2387464AbfIEJbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 05:31:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46110 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731306AbfIEJbg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 05:31:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9RD+YDd+bL9dLE8aDPXeDMgQEDl+xz6cGixfqwcR1Rw=; b=HcCxby0xFotVIfK2DaQ8o2pYU
+        0tWCJ+L+DSDMHFkuNYxZOnExkCtDwDp95W7BxW95bo4qnOFfXxeGEZBLFp9fXgQQ9fHiWs5c23H+u
+        kPjtoeJ5yDaq5o4odJszTQ7iLurIWQPuM5YdjvWbZO8V8DQba7NYVIzZwmXBWmYLPuTAjJugiSPFv
+        mlahJqN6I8Oa0Dia48ONZ/0CZGJn+TR7TJcxxNQP3lvrLbRBAr2bASDQv5ruLvKuT1QE//anFkChN
+        EB4qYQqJfYMyv89CRsK9Sv14WpMYA9u7LrZHiVSgXqnC1NlOyJ2ms7LiloK+JwqvqlpKfZX3dALrb
+        /sGRM0Kkw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5o6z-0002UZ-PM; Thu, 05 Sep 2019 09:31:29 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 040A0305E47;
+        Thu,  5 Sep 2019 11:30:50 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E064820EFA5D9; Thu,  5 Sep 2019 11:31:27 +0200 (CEST)
+Date:   Thu, 5 Sep 2019 11:31:27 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     subhra mazumdar <subhra.mazumdar@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net, parth@linux.ibm.com,
+        patrick.bellasi@arm.com
+Subject: Re: [RFC PATCH 7/9] sched: search SMT before LLC domain
+Message-ID: <20190905093127.GI2349@hirez.programming.kicks-ass.net>
+References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
+ <20190830174944.21741-8-subhra.mazumdar@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8bec5487c9d698d35297033fe48f6bbd6ad98466.camel@vmware.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 05 Sep 2019 09:31:01 +0000 (UTC)
+In-Reply-To: <20190830174944.21741-8-subhra.mazumdar@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 08:31:34AM +0000, Thomas Hellstrom wrote:
-> On Thu, 2019-09-05 at 09:05 +0200, Gerd Hoffmann wrote:
-> > Add struct drm_vma_offset_manager to vma_private, initialize it and
-> > pass it to ttm_bo_device_init().
-> > 
-> > With this in place the last user of ttm's embedded vma offset manager
-> > is gone and we can remove it (in a separate patch).
-> > 
-> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> > ---
-> >  drivers/gpu/drm/vmwgfx/vmwgfx_drv.h | 1 +
-> >  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 6 +++++-
-> >  2 files changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > 
+On Fri, Aug 30, 2019 at 10:49:42AM -0700, subhra mazumdar wrote:
+> Search SMT siblings before all CPUs in LLC domain for idle CPU. This helps
+> in L1 cache locality.
+> ---
+>  kernel/sched/fair.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Reviewed-by: Thomas Hellström <thellstrom@vmware.com>
-> 
-> I assume this will be merged through drm-misc?
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 8856503..94dd4a32 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6274,11 +6274,11 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>  			return i;
+>  	}
+>  
+> -	i = select_idle_cpu(p, sd, target);
+> +	i = select_idle_smt(p, target);
+>  	if ((unsigned)i < nr_cpumask_bits)
+>  		return i;
+>  
+> -	i = select_idle_smt(p, target);
+> +	i = select_idle_cpu(p, sd, target);
+>  	if ((unsigned)i < nr_cpumask_bits)
+>  		return i;
+>  
 
-Yes, that is the plan (after collecting acks for all drivers).
-
-cheers,
-  Gerd
-
+But it is absolutely conceptually wrong. An idle core is a much better
+target than an idle sibling.
