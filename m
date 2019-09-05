@@ -2,99 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CAAFAAE99
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 00:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FBA4AAE9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 00:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390406AbfIEWhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 18:37:19 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33895 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731969AbfIEWhT (ORCPT
+        id S2391209AbfIEWiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 18:38:25 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53212 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbfIEWiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 18:37:19 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r12so2878980pfh.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 15:37:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=GjBspe2tpCYYNWjl2LkWvULdU+0U6Dxr2p5C7+1bhNo=;
-        b=Y1yQmcMalmEQm/Vqme6jPHNnMCdfGOzjjTtdcAIQEZZxyHtB2fOyO9RcDwAenVynP1
-         oU2EWbBV8k3A/zrgzHKlhFl+OCjJA7+iFcROUVfqu0zVQJtdvGeCfe7NjlSjJt95b1D/
-         +sI71E2Mgibu6zo1UdRBXiR6W+COpXDLAoZJKjTAFkblQQyepPHdb4Yw2B60eqK0bc/c
-         5EZFQrraRiPZCgjeT/i0tuIlybmJBkDEeBq26FP+YjU3DIMEx+nkahOJs0NYOvvE8G4b
-         wnhaXgd+jxqZlunLBkPxADJY04Lpuw8sXJbBOQ+cwbRupYKGQyxmFyerDToQmxrK9FHT
-         swJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=GjBspe2tpCYYNWjl2LkWvULdU+0U6Dxr2p5C7+1bhNo=;
-        b=Z3dXioqv6vpxeUPXfvRiQYfAMtP4AyZ1OojN8ulsMN24ofRa8/tcxBSFxAe5LXD+5B
-         wFKIP3X4kcMfvPoIqkbA8lsL50bXTLW1u3Q8dQaIg0PisRhLKUp5VlDllnaM5DmSNcFJ
-         jxgqPLGFjgyBmdFZmzNKunIyMTPv2HT/kSxor4OknlcHLzqMnyHJN12uIPm+4+tP5Gp6
-         qSolNvqYpo4FT+OvOdGtfnnVaIuoHb0rNOdaVX8R2eYnI35e52V2oaw5ztRNYnjz4E9H
-         wqqtNyZPX3y9oqCycO4s6RT802pl8iIeTBt3UeAW13wsbVNWNXJ3uyYwBRy3/zf4rHRA
-         lsvw==
-X-Gm-Message-State: APjAAAV5xjFaDgb0vOKqjKaxYubqaYQyp0fPEnvNr7i5f1XrR2p6mM61
-        WVaKBW68dQ+zLlszVU39S/Q16A==
-X-Google-Smtp-Source: APXvYqzoKno8KkgU8EqN4eXlIDNTHy2pjuloFOR5UxHRMSEDann6aIsDU+iY4ucPt4NGFSgWYqVMFg==
-X-Received: by 2002:a17:90a:32c8:: with SMTP id l66mr6539209pjb.44.1567723038296;
-        Thu, 05 Sep 2019 15:37:18 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id l72sm8557163pjb.7.2019.09.05.15.37.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 15:37:17 -0700 (PDT)
-Date:   Thu, 5 Sep 2019 15:37:16 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Christoph Hellwig <hch@lst.de>
-cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
-        Peter Gonda <pgonda@google.com>,
-        Jianxiong Gao <jxgao@google.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, iommu@lists.linux-foundation.org
-Subject: Re: [bug] __blk_mq_run_hw_queue suspicious rcu usage
-In-Reply-To: <20190905060627.GA1753@lst.de>
-Message-ID: <alpine.DEB.2.21.1909051534050.245316@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1909041434580.160038@chino.kir.corp.google.com> <20190905060627.GA1753@lst.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 5 Sep 2019 18:38:25 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x85MYURF061084;
+        Thu, 5 Sep 2019 22:38:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=SMr5Wa1/JRqleE5iB2SBJYc1hjMDbWANCCSO+yo7+7A=;
+ b=gd36TohFcCgMahV+CDJYj5r05LKAiLCosdVUECyedsnKRj7lvI76xNyOFnwJ3pD3k1s/
+ TZ3Y1N5bvPtBRXU+iOjyRutGjuBjT6iVUucSN9XiWWTHHA6KJEOFTdew7i4AP/pIo/My
+ UiMQYzi3qDaEGZOZMMcTcWQG+1NaaIpjqmyy6NEhazHwdkr23lyjUcdZQ1z8Vc5k6MtG
+ V/H5uDMp1ViiwRU4lm1omUg0rIfspI0K/iTuOmC9TzUMT/Np//KdX4SayiPsuj8W6Cj2
+ fnxM2P9YkyqLCN6UpqLanR/pOiTghYtjmRiZPsVqCjLIw2kE+PqF9T1rWv5wgJYkiUhO hw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2uub5yr117-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Sep 2019 22:38:06 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x85MYHBO035022;
+        Thu, 5 Sep 2019 22:38:05 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2utpmby59r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Sep 2019 22:38:05 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x85Mc3iT012918;
+        Thu, 5 Sep 2019 22:38:03 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Sep 2019 15:38:03 -0700
+Date:   Thu, 5 Sep 2019 18:37:56 -0400
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] padata: make flushing work with async users
+Message-ID: <20190905223756.wmmjkjvztlerjzee@ca-dmjordan1.us.oracle.com>
+References: <20190828221425.22701-1-daniel.m.jordan@oracle.com>
+ <20190828221425.22701-2-daniel.m.jordan@oracle.com>
+ <20190905041734.GA25330@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190905041734.GA25330@gondor.apana.org.au>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909050210
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909050210
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019, Christoph Hellwig wrote:
-
-> > Hi Christoph, Jens, and Ming,
-> > 
-> > While booting a 5.2 SEV-enabled guest we have encountered the following 
-> > WARNING that is followed up by a BUG because we are in atomic context 
-> > while trying to call set_memory_decrypted:
+On Thu, Sep 05, 2019 at 02:17:35PM +1000, Herbert Xu wrote:
+> On Wed, Aug 28, 2019 at 06:14:21PM -0400, Daniel Jordan wrote:
+> >
+> > @@ -453,24 +456,15 @@ static void padata_free_pd(struct parallel_data *pd)
+> >  /* Flush all objects out of the padata queues. */
+> >  static void padata_flush_queues(struct parallel_data *pd)
+> >  {
+> > -	int cpu;
+> > -	struct padata_parallel_queue *pqueue;
+> > -	struct padata_serial_queue *squeue;
+> > -
+> > -	for_each_cpu(cpu, pd->cpumask.pcpu) {
+> > -		pqueue = per_cpu_ptr(pd->pqueue, cpu);
+> > -		flush_work(&pqueue->work);
+> > -	}
+> > -
+> > -	if (atomic_read(&pd->reorder_objects))
+> > -		padata_reorder(pd);
+> > +	if (!(pd->pinst->flags & PADATA_INIT))
+> > +		return;
+> >  
+> > -	for_each_cpu(cpu, pd->cpumask.cbcpu) {
+> > -		squeue = per_cpu_ptr(pd->squeue, cpu);
+> > -		flush_work(&squeue->work);
+> > -	}
+> > +	if (atomic_dec_return(&pd->refcnt) == 0)
+> > +		complete(&pd->flushing_done);
+> >  
+> > -	BUG_ON(atomic_read(&pd->refcnt) != 0);
+> > +	wait_for_completion(&pd->flushing_done);
+> > +	reinit_completion(&pd->flushing_done);
+> > +	atomic_set(&pd->refcnt, 1);
+> >  }
 > 
-> Well, this really is a x86 / DMA API issue unfortunately.  Drivers
-> are allowed to do GFP_ATOMIC dma allocation under locks / rcu critical
-> sections and from interrupts.  And it seems like the SEV case can't
-> handle that.  We have some semi-generic code to have a fixed sized
-> pool in kernel/dma for non-coherent platforms that have similar issues
-> that we could try to wire up, but I wonder if there is a better way
-> to handle the issue, so I've added Tom and the x86 maintainers.
-> 
-> Now independent of that issue using DMA coherent memory for the nvme
-> PRPs/SGLs doesn't actually feel very optional.  We could do with
-> normal kmalloc allocations and just sync it to the device and back.
-> I wonder if we should create some general mempool-like helpers for that.
-> 
+> I don't think waiting is an option.  In a pathological case the
+> hardware may not return at all.  We cannot and should not hold off
+> CPU hotplug for an arbitrary amount of time when the event we are
+> waiting for isn't even occuring on that CPU.
 
-Thanks for looking into this.  I assume it's a non-starter to try to 
-address this in _vm_unmap_aliases() itself, i.e. rely on a purge spinlock 
-to do all synchronization (or trylock if not forced) for 
-purge_vmap_area_lazy() rather than only the vmap_area_lock within it.  In 
-other words, no mutex.
+Ok, I hadn't considered hardware not returning.
 
-If that's the case, and set_memory_encrypted() can't be fixed to not need 
-to sleep by changing _vm_unmap_aliases() locking, then I assume dmapool is 
-our only alternative?  I have no idea with how large this should be.
+> I don't think flushing is needed at all.  All we need to do is
+> maintain consistency before and after the CPU hotplug event.
+
+I could imagine not flushing would work for replacing a pd.  The old pd could
+be freed by whatever drops the last reference and the new pd could be
+installed, all without flushing.
+
+In the case of freeing an instance, though, padata needs to wait for all the
+jobs to complete so they don't use the instance's data after it's been freed.
+Holding the CPU hotplug lock isn't necessary for this, though, so I think we're
+ok to wait here.
