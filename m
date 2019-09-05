@@ -2,114 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A331AA179
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0CFDAA17F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:32:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388489AbfIELa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:30:57 -0400
-Received: from foss.arm.com ([217.140.110.172]:42704 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725921AbfIELa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:30:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83FFF28;
-        Thu,  5 Sep 2019 04:30:56 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3B0E3F718;
-        Thu,  5 Sep 2019 04:30:54 -0700 (PDT)
-References: <20190830174944.21741-1-subhra.mazumdar@oracle.com> <20190830174944.21741-2-subhra.mazumdar@oracle.com> <20190905083127.GA2332@hirez.programming.kicks-ass.net> <87r24v2i14.fsf@arm.com> <20190905104616.GD2332@hirez.programming.kicks-ass.net> <20190905111346.2w6kuqrdvaqvgilu@e107158-lin.cambridge.arm.com>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net, parth@linux.ibm.com
-Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
-In-reply-to: <20190905111346.2w6kuqrdvaqvgilu@e107158-lin.cambridge.arm.com>
-Date:   Thu, 05 Sep 2019 12:30:52 +0100
-Message-ID: <87h85r2d5f.fsf@arm.com>
+        id S2388519AbfIELcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:32:13 -0400
+Received: from mail-eopbgr10076.outbound.protection.outlook.com ([40.107.1.76]:3631
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388500AbfIELcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 07:32:12 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FkGXp3y3Q/2OwyTxRmfjJxI6T0S0wkIKiBujUfZOJdbM1WjJaT21vLU/xpExsGqakI8MXjIJ9oWiZk/rjzu8r1+FReokXGjoaK2tvVb6Bty5iwXOQm+5RPne/Z9q7H8NhaPuhTS+F74MyERO73lKLo6w1XxdsujxwWRyD7JBT8A1oOW7W1Ft6FdBY5WwvGo0fWO9QKPQTMO5cZoMbT/X5ErlshNEirZgN1mdBsSY6Z6KHOAVyhORyMvdtqnZTxPYYBlhmQSIIagfMTJSWpH62iFoJYGUTYWvm0A4UMV7U0q7VdnuJiALPXyHYO+W7HcCLTWy10ox2ppg9Pjqc1Cq3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZBI+FYX1KFSBz1ie9G32vFr88YGL2wi8tUzmwVkl/Ts=;
+ b=nioxZGrDqGAsHbpXXixBMVtqrH0PTNUdrRk1JH3IOItMhdwCBZJxJMFJuMHnpk5K02kw4ORcxvMqjRc1gNEZIN5gGCwMbkx1UMcKhaxzx1B+YIpIZLycSy/ZLF2CJbLmU4pT3nAvgiZ4X8ReohpfXc7c0bYRtTyv2uUz8Bl+sEKxHS+8nwM80uXb4ez15LLe6A+hbOiojD5FaLC4HQi+MNECu7owYui9lSs4fQBnZkr/ZrOrB4MkKy7Lyw6HYWKJOkN2Gp0Gn6rT5A3YxldtwiGxcWJKNZJmAL9OZKxNz0KZEHb4iTiYBpn1jk4KYqKqO9M800TEEiSEMcl2Cofcmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZBI+FYX1KFSBz1ie9G32vFr88YGL2wi8tUzmwVkl/Ts=;
+ b=CVXIwvFz/vhR4PeSfuIT9NX/9uv5rzNL+2WAZG2Evu3yXXZWzqyjIgdMFyzzYfSlUbjCmjxgm2CxN0B+8CiRxJSSmGclpuJqyhM0wKVAH+AAUF3qWQioFneLIKVAOwhu1ivxqEKm0qFjOdUzHZNFqur9UoSpZCfruIy95vqeqno=
+Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com (10.175.20.18) by
+ VI1PR0402MB3549.eurprd04.prod.outlook.com (52.134.4.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2241.14; Thu, 5 Sep 2019 11:32:06 +0000
+Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com
+ ([fe80::19cd:9f82:31ce:fbbb]) by VI1PR0402MB2863.eurprd04.prod.outlook.com
+ ([fe80::19cd:9f82:31ce:fbbb%8]) with mapi id 15.20.2220.022; Thu, 5 Sep 2019
+ 11:32:06 +0000
+From:   Stefan-gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 4/7] serial: fsl_linflexuart: Be consistent with the
+ name
+Thread-Topic: [PATCH v3 4/7] serial: fsl_linflexuart: Be consistent with the
+ name
+Thread-Index: AQHVY92MysyPIFyCEEuEgtvcGJKDEQ==
+Date:   Thu, 5 Sep 2019 11:32:06 +0000
+Message-ID: <VI1PR0402MB2863B0A0D1D12FA9CC2515E2DFBB0@VI1PR0402MB2863.eurprd04.prod.outlook.com>
+References: <20190823191115.18490-1-stefan-gabriel.mirea@nxp.com>
+ <20190823191115.18490-5-stefan-gabriel.mirea@nxp.com>
+ <20190904075259.GA10983@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=stefan-gabriel.mirea@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 47e1512b-c3a7-4c74-72b6-08d731f4ae9d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3549;
+x-ms-traffictypediagnostic: VI1PR0402MB3549:|VI1PR0402MB3549:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB35498FA3B82BAE402303654CDFBB0@VI1PR0402MB3549.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-forefront-prvs: 015114592F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(376002)(396003)(346002)(199004)(189003)(2351001)(53936002)(99286004)(76176011)(52536014)(81156014)(102836004)(74316002)(6506007)(53546011)(54906003)(7416002)(4744005)(81166006)(316002)(66066001)(305945005)(71200400001)(6436002)(26005)(71190400001)(7736002)(1730700003)(8936002)(256004)(6916009)(8676002)(5640700003)(186003)(478600001)(7696005)(229853002)(2501003)(66446008)(2906002)(486006)(64756008)(66476007)(66556008)(91956017)(33656002)(6246003)(5660300002)(76116006)(9686003)(86362001)(14454004)(476003)(3846002)(25786009)(446003)(55016002)(4326008)(66946007)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3549;H:VI1PR0402MB2863.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: YScnS9d/ZqGpteTPFTnJ+IzbzrwEDgKzXgySvYv4RMTxgv9MtIym1wole8sfgfEAOarYF79Gl59+FY+HUuXzN0XaHUZacm3DrrOJEBiGKyXZVNapLHCBOI33W4p7xpLIm7f6dmWJbgfM5Ezg9e2xMG8a4AqIkLFwdCU1jrHqbzLIC3PLW5/T7LQSN2TWjmmk3uh62AsrdoXf+cclF/n30nyy6UpzkB5jR7jZYnb78CrH75SwwgMMK04ccT/qtNWrC6TrvC0f51+KxJiX0+Zcx1Kvlh4S9LliC85GI9aOqKPa8Vs7nJi2IutqPVeJYaKtKNLf872vdpG2As9XV+/lirlwhdtVomFSbqL9ZSmY4XAy5jdB/0/OiT1B6D/Ggt6ccpFWxZpRU/TP+t2g4jF/VltV8kmTyAH5XRtzBeW49eE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47e1512b-c3a7-4c74-72b6-08d731f4ae9d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2019 11:32:06.5650
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OVesSTo2T03B86FCNLPE1Z7ckD0QO5MOIpe0AMvV8z3bvoAi6RWegT3nUl0xPtXkutwBqOKMF+K7xKxyj/D5jo0yh6py+zRFKWUKCSXvDRs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3549
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On Thu, Sep 05, 2019 at 12:13:47 +0100, Qais Yousef wrote...
-
-> On 09/05/19 12:46, Peter Zijlstra wrote:
->> On Thu, Sep 05, 2019 at 10:45:27AM +0100, Patrick Bellasi wrote:
->> 
->> > > From just reading the above, I would expect it to have the range
->> > > [-20,19] just like normal nice. Apparently this is not so.
->> > 
->> > Regarding the range for the latency-nice values, I guess we have two
->> > options:
->> > 
->> >   - [-20..19], which makes it similar to priorities
->> >   downside: we quite likely end up with a kernel space representation
->> >   which does not match the user-space one, e.g. look at
->> >   task_struct::prio.
->> > 
->> >   - [0..1024], which makes it more similar to a "percentage"
->> > 
->> > Being latency-nice a new concept, we are not constrained by POSIX and
->> > IMHO the [0..1024] scale is a better fit.
->> > 
->> > That will translate into:
->> > 
->> >   latency-nice=0 : default (current mainline) behaviour, all "biasing"
->> >   policies are disabled and we wakeup up as fast as possible
->> > 
->> >   latency-nice=1024 : maximum niceness, where for example we can imaging
->> >   to turn switch a CFS task to be SCHED_IDLE?
->> 
->> There's a few things wrong there; I really feel that if we call it nice,
->> it should be like nice. Otherwise we should call it latency-bias and not
->> have the association with nice to confuse people.
->> 
->> Secondly; the default should be in the middle of the range. Naturally
->> this would be a signed range like nice [-(x+1),x] for some x. but if you
->> want [0,1024], then the default really should be 512, but personally I
->> like 0 better as a default, in which case we need negative numbers.
->> 
->> This is important because we want to be able to bias towards less
->> importance to (tail) latency as well as more importantance to (tail)
->> latency.
->> 
->> Specifically, Oracle wants to sacrifice (some) latency for throughput.
->> Facebook OTOH seems to want to sacrifice (some) throughput for latency.
->
-> Another use case I'm considering is using latency-nice to prefer an idle CPU if
-> latency-nice is set otherwise go for the most energy efficient CPU.
->
-> Ie: sacrifice (some) energy for latency.
->
-> The way I see interpreting latency-nice here as a binary switch. But maybe we
-> can use the range to select what (some) energy to sacrifice mean here. Hmmm.
-
-I see this concept possibly evolving into something more then just a
-binary switch. Not yet convinced if it make sense and/or it's possible
-but, in principle, I was thinking about these possible usages for CFS
-tasks:
-
- - dynamically tune the policy of a task among SCHED_{OTHER,BATCH,IDLE}
-   depending on crossing certain pre-configured threshold of latency
-   niceness.
-
- - dynamically bias the vruntime updates we do in place_entity()
-   depending on the actual latency niceness of a task.
-
- - bias the decisions we take in check_preempt_tick() still depending
-   on a relative comparison of the current and wakeup task latency
-   niceness values.
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Hello Greg,=0A=
+=0A=
+On 9/4/2019 10:53 AM, gregkh@linuxfoundation.org wrote:=0A=
+> On Fri, Aug 23, 2019 at 07:11:37PM +0000, Stefan-gabriel Mirea wrote:=0A=
+>> For consistency reasons, spell the controller name as "LINFlexD" in=0A=
+>> comments and documentation.=0A=
+>>=0A=
+>> Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>=0A=
+>> ---=0A=
+>>  Documentation/admin-guide/kernel-parameters.txt | 2 +-=0A=
+>>  drivers/tty/serial/Kconfig                      | 8 ++++----=0A=
+>>  drivers/tty/serial/fsl_linflexuart.c            | 4 ++--=0A=
+>>  include/uapi/linux/serial_core.h                | 4 ++--=0A=
+>>  4 files changed, 9 insertions(+), 9 deletions(-)=0A=
+> =0A=
+> Doesn't apply to my tty-next tree :(=0A=
+=0A=
+Thanks for letting me know; I will fix this in v4.=0A=
+=0A=
+Regards,=0A=
+Stefan=0A=
