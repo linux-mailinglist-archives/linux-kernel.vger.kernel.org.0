@@ -2,171 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70550AA939
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B7BAA946
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389104AbfIEQjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:39:24 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43269 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733199AbfIEQjX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:39:23 -0400
-Received: by mail-pg1-f193.google.com with SMTP id u72so1696994pgb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 09:39:23 -0700 (PDT)
+        id S2389738AbfIEQoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:44:10 -0400
+Received: from mail-eopbgr700064.outbound.protection.outlook.com ([40.107.70.64]:42593
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387726AbfIEQoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 12:44:10 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JFhcfCIwwY2TQredgodRytsKtV10QlRQeWj+d3kXuIAYEBQGGjBgbus3cssFOKMr2uEuIvxVgrSMOX+T7UeevWO0vkF7BI6/d05+d0B+HiSbicp8DXSVrUBw6wOz60Yg0TOaHEube085tfqGzL8V69eCFiVQoqeO5lLA3GR8VE5H4d73WGp4HVoluI+Y/KgWtmmP/9H3cg6+EaCJXwseXE38y0cXC5Y1JruMqZyB8TPnjY+uphwXkcKsmPcyvzyj99MEaz66Cj1sneOFn6SPfOv/P65d96a/5YPs/gNH4J+7Ke506alBQ0sGbbdVwTmKyJ+46zAf9GOVjq20ktEuIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=imU3yJxwD3dnI0IsVH6zCtvtjA4T18YjoeWVTyYYcH8=;
+ b=ocW35/No7q68O6Temmu90fMkqgutS45fcN5Yl9EEbwml7anEiIvyV9gDk2MaqPht4aqts8J6wvxxHCnpzMaVjdTY7MzU/0PQLBMWLRVVqQIWpMYUSrNjwEbAHZ0HlnA8wPmhlzUJvrVYK/Yg06TmmlFVe5nF7w3qd5IbnO2lUTLDkFteU0UwXlmsDd+u27NLfyyqmJAAs8NvhYdGtH1yE+2Icup6cm7M8uZ2AEq3QtN+2Vja5kbaqoXxELvjVKvp7v0J7bbd4YOQh4InWq3jjk9QbdtJfCVO35z0s21+H7Uc2UuCBeNNYSyZR+iN8ddsl4Ij7eM5CxJLZ9sKag30Eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=gmail.com smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/krqdhGD0b6agttkrmWKeFBfqNen0JM8FWwtqdjs3cw=;
-        b=tSExCENsTht85O8+DTFmEOMOf0lhykiTB50x1SrFCcWywLzJJMuri6kj+B18Yh3XT8
-         HvU3rNZbNG1gaptUFVAM7Cl+8BlxJjVQZPeL7ELsPlCfdO/AGDBZogvmirnvjtAo29pF
-         oXS3z5ti5J7IQ7R6RfXbpGdY6uiBEvt7ekKLUoaq+5hVGFnrWyJtYwaM/+Rf+yopeKY6
-         G8FayBlMQR+NZJAnupwcXIBYvtHQECE/aLUMI7AD3/pbHcXO1mV36KS0danTAi2HbHPm
-         Uenrs3oL6hWLm5mXiOFNKzTWGKDXK+6cvv5HLb9upEiwUTXEzA8XR9WFxkTwYqQimeYd
-         dI0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/krqdhGD0b6agttkrmWKeFBfqNen0JM8FWwtqdjs3cw=;
-        b=gAdTerXEccUCR+IpiAnvuz40X7uqh+ZCXOaZymTvqKASjoTcbqnjm3uxRCrpk+wqfY
-         GUAjM/7G+R3N0fEwIIyoSB35j7s7xao9VvvX9cTfC7jgOwovQRvzzrdsayQCvD9EqIPj
-         Obgzgmz5RXvaeSfc7BUQHbfAIsXubA2UsQsauZNLs2SENh+h3jc6u1bjswpUWZ8pFaRS
-         Q+Dz+vBy0m5tQCG5aVoBB0EQqOWaekHSny+7e6AeaThAIbn5nLL4lMM/8GzycG19bBJ7
-         QqdA6E3mfbGeLPOfP0TFKulGKRrePCdZ6KgVbePbDlqwMusLgxAdz3wdNQoXyYR0uRU8
-         LHew==
-X-Gm-Message-State: APjAAAVj+v1CTOatSJy9P6cgvcVy2XDmuGAtRgmPTkeviYFssmZS+Yfu
-        gd/+U5JJtOxM19yXyKNbUHA4ZA==
-X-Google-Smtp-Source: APXvYqz3JIi6hfNGmKeMxI2SJp+cUc+piVJoCHvTLymB3aYHUilJmjuRyQXtrGGhLtIMbxXimYtjmA==
-X-Received: by 2002:a63:e148:: with SMTP id h8mr4021185pgk.275.1567701562585;
-        Thu, 05 Sep 2019 09:39:22 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id j128sm6992208pfg.51.2019.09.05.09.39.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 09:39:21 -0700 (PDT)
-Date:   Thu, 5 Sep 2019 09:39:19 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     agross@kernel.org, wim@linux-watchdog.org,
-        linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog: qcom: add support for the bark interrupt
-Message-ID: <20190905163919.GA1676@tuxbook-pro>
-References: <20190905162135.2618-1-jorge.ramirez-ortiz@linaro.org>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=imU3yJxwD3dnI0IsVH6zCtvtjA4T18YjoeWVTyYYcH8=;
+ b=jk0gpXqvFMtpwMtDt4bCUL0UuLJYepBaaFdVamm2gyjTV781C4gq6xUuSfNmKISJkW+WHWUDLy/hl20JMJ6HuIKHvix2WnuWqATNJXBtYv2xr7SEcs9rhBthHO5nwy+W9M4kNQEorZtqGv9Xi+Y82ZxqwccaUw5Cp487eKIQmFM=
+Received: from MWHPR0201CA0108.namprd02.prod.outlook.com
+ (2603:10b6:301:75::49) by DM6PR02MB5257.namprd02.prod.outlook.com
+ (2603:10b6:5:48::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2220.21; Thu, 5 Sep
+ 2019 16:43:52 +0000
+Received: from CY1NAM02FT020.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::203) by MWHPR0201CA0108.outlook.office365.com
+ (2603:10b6:301:75::49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2241.13 via Frontend
+ Transport; Thu, 5 Sep 2019 16:43:52 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT020.mail.protection.outlook.com (10.152.75.191) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2241.14
+ via Frontend Transport; Thu, 5 Sep 2019 16:43:51 +0000
+Received: from [172.21.6.17] (helo=xir-smtp1.xilinx.com)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1i5urO-00055x-97; Thu, 05 Sep 2019 09:43:50 -0700
+Received: from [127.0.0.1] (helo=xir-smtp-dlp2.xilinx.com)
+        by xir-smtp1.xilinx.com with esmtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1i5uoF-0003dB-Jg; Thu, 05 Sep 2019 17:40:35 +0100
+Received: from xir-pvapsmtp01 (xir-pvapsmtp01.xilinx.com [172.21.6.17])
+        by xir-smtp-dlp2.xilinx.com (8.13.8/8.13.1) with ESMTP id x85GeWpD001919;
+        Thu, 5 Sep 2019 16:40:32 GMT
+Received: from [149.199.38.66] (helo=xsj-pvapsmtp01)
+        by xir-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1i5uoC-0003d5-D9; Thu, 05 Sep 2019 17:40:32 +0100
+Received: from [127.0.0.1] (helo=xsj-smtp-dlp2.xlnx.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1i5ul8-0006xZ-O3; Thu, 05 Sep 2019 09:37:22 -0700
+Received: from xsj-pvapsmtp01 (mailhost.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x85GbL05015586;
+        Thu, 5 Sep 2019 09:37:21 -0700
+Received: from [10.140.184.180] (helo=ubuntu)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <radheys@ubuntu>)
+        id 1i5ul7-0006we-12; Thu, 05 Sep 2019 09:37:21 -0700
+Received: by ubuntu (Postfix, from userid 13245)
+        id 61619101073; Thu,  5 Sep 2019 22:07:19 +0530 (IST)
+From:   Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com,
+        michal.simek@xilinx.com, nick.graumann@gmail.com,
+        andrea.merello@gmail.com, appana.durga.rao@xilinx.com,
+        mcgrof@kernel.org
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Subject: [PATCH -next 7/8] dmaengine: xilinx_dma: Check for both idle and halted state in axidma stop_transfer
+Date:   Thu,  5 Sep 2019 22:07:03 +0530
+Message-Id: <1567701424-25658-8-git-send-email-radhey.shyam.pandey@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1567701424-25658-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+References: <1567701424-25658-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+X-RCIS-Action: ALLOW
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.002
+X-TM-AS-Result: No--2.872-7.0-31-1
+X-imss-scan-details: No--2.872-7.0-31-1;No--2.872-5.0-31-1
+X-TM-AS-User-Approved-Sender: Yes
+X-TM-AS-Result-Xfilter: Match text exemption rules:No
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(39840400004)(396003)(376002)(346002)(2980300002)(199004)(189003)(478600001)(16586007)(316002)(356004)(6666004)(42186006)(4744005)(52956003)(103686004)(107886003)(6266002)(4326008)(305945005)(70586007)(476003)(446003)(126002)(426003)(2616005)(11346002)(486006)(26005)(47776003)(106002)(2906002)(36756003)(5660300002)(51416003)(81156014)(81166006)(8676002)(8936002)(50226002)(76176011)(70206006)(50466002)(186003)(48376002)(336012);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB5257;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190905162135.2618-1-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4ee56902-c49c-43ed-7437-08d732203be6
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(4709080)(1401327)(4618075)(2017052603328);SRVR:DM6PR02MB5257;
+X-MS-TrafficTypeDiagnostic: DM6PR02MB5257:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB52575DBAF4703071B260C393C7BB0@DM6PR02MB5257.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
+X-Forefront-PRVS: 015114592F
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: BywMnVk+n2TU3AuNb7tpmBiIrXB4YF+WkoTUUT51Cp8n7piTRtVLcFKtgYHo9nuzrzXQZ6E4p8Fjw2r+dhOKrq4ZVsfIsGk6/oP8Knjeht1U5QCHMiKayENac9wUCZ0OCJuM93WTT3Vxqe9cfv8y/LdZtf1XKfA37D4OFLBoi31jHfRvCweE5LJNNzNQv7WepdxzuocIG0AHqd3UvHaAToPYxIVgMNZ1P5s99facZ2+OUEHUqW1K0cEzYFRQPu1TmxrTRlQq2o4I2vwDFe3ehibDsFp5GImKL9/6d6NM8fl0cA8kWqXHtVO9vJeym++5IKYPyqTKxdacxLVeiHPF9k2h6TsB9aD/oxm0eyC4nD8S5jGRWuXCnJSH7M9NaIg3lsVa9SD78I5rBWPd8WmMZf9YgqPof8zciWrX+d6Cszg=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2019 16:43:51.7622
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ee56902-c49c-43ed-7437-08d732203be6
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5257
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 05 Sep 09:21 PDT 2019, Jorge Ramirez-Ortiz wrote:
+From: Nicholas Graumann <nick.graumann@gmail.com>
 
-> Use the bark interrupt to notify the bark event. Since the bark and bite
-> timeouts are identical, increase the bite timeout by one second so
-> that the bark event can be logged to the console.
-> 
+When polling for a stopped transfer in AXI DMA mode, in some cases the
+status of the channel may indicate IDLE instead of HALTED if the
+channel was reset due to an error.
 
-Afaict you should tie the bark to the "pretimeout" in the watchdog
-framework , which would allow the user to specify a pretimeout and
-configure what should happen at the bark (just a pr_alert() or panic()).
+Signed-off-by: Nicholas Graumann <nick.graumann@gmail.com>
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+---
+ drivers/dma/xilinx/xilinx_dma.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Regards,
-Bjorn
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index b5dd62a..0896e07 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -1092,8 +1092,9 @@ static int xilinx_dma_stop_transfer(struct xilinx_dma_chan *chan)
+ 
+ 	/* Wait for the hardware to halt */
+ 	return xilinx_dma_poll_timeout(chan, XILINX_DMA_REG_DMASR, val,
+-				       val & XILINX_DMA_DMASR_HALTED, 0,
+-				       XILINX_DMA_LOOP_COUNT);
++				       val | (XILINX_DMA_DMASR_IDLE |
++					      XILINX_DMA_DMASR_HALTED),
++				       0, XILINX_DMA_LOOP_COUNT);
+ }
+ 
+ /**
+-- 
+2.7.4
 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> ---
->  drivers/watchdog/qcom-wdt.c | 42 ++++++++++++++++++++++++++++++++++---
->  1 file changed, 39 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-> index 7be7f87be28f..5eaf92084b93 100644
-> --- a/drivers/watchdog/qcom-wdt.c
-> +++ b/drivers/watchdog/qcom-wdt.c
-> @@ -10,6 +10,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/watchdog.h>
->  #include <linux/of_device.h>
-> +#include <linux/interrupt.h>
->  
->  enum wdt_reg {
->  	WDT_RST,
-> @@ -41,6 +42,8 @@ struct qcom_wdt {
->  	unsigned long		rate;
->  	void __iomem		*base;
->  	const u32		*layout;
-> +	unsigned int		irq;
-> +	const struct device	*dev;
->  };
->  
->  static void __iomem *wdt_addr(struct qcom_wdt *wdt, enum wdt_reg reg)
-> @@ -54,15 +57,37 @@ struct qcom_wdt *to_qcom_wdt(struct watchdog_device *wdd)
->  	return container_of(wdd, struct qcom_wdt, wdd);
->  }
->  
-> +static inline int qcom_wdt_enable(struct qcom_wdt *wdt)
-> +{
-> +	if (wdt->irq < 0)
-> +		return 1;
-> +
-> +	/* enable timeout with interrupt */
-> +	return 3;
-> +}
-> +
-> +static irqreturn_t qcom_wdt_irq(int irq, void *cookie)
-> +{
-> +	struct qcom_wdt *wdt =  (struct qcom_wdt *) cookie;
-> +
-> +	dev_warn(wdt->dev, "barking, one second countdown to reset\n");
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
->  static int qcom_wdt_start(struct watchdog_device *wdd)
->  {
->  	struct qcom_wdt *wdt = to_qcom_wdt(wdd);
-> +	unsigned int bark, bite;
-> +
-> +	bark = wdd->timeout;
-> +	bite = wdt->irq < 0 ? bark : bark + 1;
->  
->  	writel(0, wdt_addr(wdt, WDT_EN));
->  	writel(1, wdt_addr(wdt, WDT_RST));
-> -	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
-> -	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BITE_TIME));
-> -	writel(1, wdt_addr(wdt, WDT_EN));
-> +	writel(bark * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
-> +	writel(bite * wdt->rate, wdt_addr(wdt, WDT_BITE_TIME));
-> +	writel(qcom_wdt_enable(wdt), wdt_addr(wdt, WDT_EN));
->  	return 0;
->  }
->  
-> @@ -210,10 +235,21 @@ static int qcom_wdt_probe(struct platform_device *pdev)
->  	wdt->wdd.max_timeout = 0x10000000U / wdt->rate;
->  	wdt->wdd.parent = dev;
->  	wdt->layout = regs;
-> +	wdt->dev = &pdev->dev;
->  
->  	if (readl(wdt_addr(wdt, WDT_STS)) & 1)
->  		wdt->wdd.bootstatus = WDIOF_CARDRESET;
->  
-> +	wdt->irq = platform_get_irq(pdev, 0);
-> +	if (wdt->irq >= 0) {
-> +		ret = devm_request_irq(&pdev->dev, wdt->irq, qcom_wdt_irq,
-> +				       IRQF_TRIGGER_RISING, "wdog_bark", wdt);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "failed to request irq\n");
-> +			return ret;
-> +		}
-> +	}
-> +
->  	/*
->  	 * If 'timeout-sec' unspecified in devicetree, assume a 30 second
->  	 * default, unless the max timeout is less than 30 seconds, then use
-> -- 
-> 2.23.0
-> 
