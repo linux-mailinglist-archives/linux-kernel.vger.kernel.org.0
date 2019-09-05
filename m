@@ -2,75 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EB2AAAD9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09247AADA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:13:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391760AbfIEVKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 17:10:55 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44656 "EHLO
+        id S2404152AbfIEVNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 17:13:51 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44671 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbfIEVKz (ORCPT
+        with ESMTP id S2404139AbfIEVNu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 17:10:55 -0400
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1i5z1Z-00024X-Hf; Thu, 05 Sep 2019 23:10:37 +0200
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Thu, 5 Sep 2019 17:13:50 -0400
+Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1i5z4e-00026r-Ki; Thu, 05 Sep 2019 23:13:48 +0200
+Date:   Thu, 5 Sep 2019 23:13:47 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Kees Cook <keescook@chromium.org>
+cc:     LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "contact\@linuxplumbersconf.org" <contact@linuxplumbersconf.org>,
-        Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [RFC PATCH v4 0/9] printk: new ringbuffer implementation
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
-        <20190904123531.GA2369@hirez.programming.kicks-ass.net>
-        <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
-        <20190905143118.GP2349@hirez.programming.kicks-ass.net>
-        <alpine.DEB.2.21.1909051736410.1902@nanos.tec.linutronix.de>
-        <20190905121101.60c78422@oasis.local.home>
-Date:   Thu, 05 Sep 2019 23:10:34 +0200
-In-Reply-To: <20190905121101.60c78422@oasis.local.home> (Steven Rostedt's
-        message of "Thu, 5 Sep 2019 12:11:01 -0400")
-Message-ID: <87ef0u4fg5.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [patch 0/6] posix-cpu-timers: Fallout fixes and permission
+ tightening
+In-Reply-To: <201909051329.A630E97F@keescook>
+Message-ID: <alpine.DEB.2.21.1909052310590.1902@nanos.tec.linutronix.de>
+References: <20190905120339.561100423@linutronix.de> <201909051329.A630E97F@keescook>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-09-05, Steven Rostedt <rostedt@goodmis.org> wrote:
->>> But per the above argument of needing the CPU serialization
->>> _anyway_, I don't see a compelling reason not to use it.
->>> 
->>> It is simple, it works. Let's use it.
->>> 
->>> If you really fancy a multi-writer buffer, you can always switch to
->>> one later, if you can convince someone it actually brings benefits
->>> and not just head-aches.
->> 
->> Can we please grab one of the TBD slots at kernel summit next week,
->> sit down in a room and hash that out?
->>
->
-> We should definitely be able to find a room that will be available
-> next week.
+On Thu, 5 Sep 2019, Kees Cook wrote:
+> On Thu, Sep 05, 2019 at 02:03:39PM +0200, Thomas Gleixner wrote:
+> > Sysbot triggered an issue in the posix timer rework which was trivial to
+> > fix, but after running another test case I discovered that the rework broke
+> > the permission checks subtly. That's also a straightforward fix.
+> > 
+> > Though when staring at it I discovered that the permission checks for
+> > process clocks and process timers are completely bonkers. The only
+> > requirement is that the target PID is a group leader. Which means that any
+> > process can read the clocks and attach timers to any other process without
+> > priviledge restrictions.
+> > 
+> > That's just wrong because the clocks and timers can be used to observe
+> > behaviour and both reading the clocks and arming timers adds overhead and
+> > influences runtime performance of the target process.
+> > 
+> > The last 4 patches deal with that and introduce ptrace based permission
+> > checks and also make the behaviour consistent between thread and process
+> > timers/clocks.
+> 
+> I like these changes! Thanks for working on it. :)
+> 
+> Since this is a subtle bit of checking and there are concerns about ABI
+> breaks, can you also write some selftests for this area just to nail
+> down what should work and what should be blocked, etc?
 
-FWIW, on Monday at 12:45 I am giving a talk[0] on the printk
-rework. I'll be dedicating a few slides to presenting the lockless
-multi-writer design, but will also talk about the serialized CPU
-approach from RFCv1.
+Sigh, yes. /me adds it to that append only todo list thingy :)
 
-John Ogness
-
-[0] https://www.linuxplumbersconf.org/event/4/contributions/290/
