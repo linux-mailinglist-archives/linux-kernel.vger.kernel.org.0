@@ -2,72 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20527AA14A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECA07AA151
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:27:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388420AbfIEL0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:26:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37678 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388377AbfIEL0N (ORCPT
+        id S2388435AbfIEL1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:27:01 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:49666 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbfIEL1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:26:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FF586Gx7pagckCQE7fW4rjr03JygAyA2r24BMBu1wCA=; b=cEPuUO3D/lnvG/7YuYlV5fgc2
-        ZxKkpjfOI/M9KXFwqzuDoX4Np91tRGmNAlWTKmaOD9egadePV9Ct5zkXBk3c90dqZQ6jG0qGPJ7im
-        s84I4mjGeKpvQFByHFZlCUB/FmZnj7EkiG+jVHtXDC2pt2xOw6OEMqVypd9TFCAJb0EZdVi8+V2ru
-        MpEIdhdjA9+afAh2c/0tuGoO1q3BpMmB1CuALpwQq3h+UClgy5pfVhEXdedz2xzy2qwn08M9xQWZ6
-        t9Y4dvKyv95VZLaV5hv938Ex6fIrpRkyfPr02P3P63hlE50Zy4s92Bdc/ysMdcQal55wD+xlU38fi
-        IE9KFIIXw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5pty-0005Cr-9h; Thu, 05 Sep 2019 11:26:10 +0000
-Date:   Thu, 5 Sep 2019 04:26:10 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Dilip Kota <eswara.kota@linux.intel.com>, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, lorenzo.pieralisi@arm.com,
-        robh@kernel.org, martin.blumenstingl@googlemail.com,
-        linux-pci@vger.kernel.org, hch@infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Subject: Re: [PATCH v3 2/2] dwc: PCI: intel: Intel PCIe RC controller driver
-Message-ID: <20190905112610.GB10199@infradead.org>
-References: <cover.1567585181.git.eswara.kota@linux.intel.com>
- <35316bac59d3bc681e76d33e0345f4ef950c4414.1567585181.git.eswara.kota@linux.intel.com>
- <20190905104517.GX9720@e119886-lin.cambridge.arm.com>
+        Thu, 5 Sep 2019 07:27:01 -0400
+Received: by mail-io1-f70.google.com with SMTP id j23so2783906iog.16
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 04:27:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=7woNlVISujRJGF9f7Yv9hP0vcjuDeQlRJErmR/nep/s=;
+        b=npyD7RMFcSfqSBSxR+n/FvbwA0lYS1jNQIhWRcyTmsu6iPZwAdpRd77tNoPrNM+DZB
+         wmyJgqydQlYEPlqThAnOkF+ohZKQyAo1YI4ctHJ6WnhAcY+QhoHtaP1nU8X2C1Ze63Tl
+         88OyJcyHLISf3ExVOD1S+UXDRcmfwYvQPZUA0Je2AwvEIt58B6Q8XQmpn5hBoIEcmA5H
+         /ateAwJOIVQmfbluyebWY7WjKE1hU0OuCyeEHbNsWAemt45zDsSGpvuugWbWwsWCAdHt
+         TCtqYQbwrjpDYGE77aERtmkjYazBMY+fYq22cP4TrfJkI1lrrb2HbQQ7J+anQ1tCmUhO
+         +89A==
+X-Gm-Message-State: APjAAAUSDBiVKhPxOKXOfDkR9wza4/YoErcTldTgKN32Qyz2gpvMWUvS
+        3moFSaFt1ihXWlRVxQIovW4p+zQwiO3cAg1jusViwyxhGSfj
+X-Google-Smtp-Source: APXvYqzrPWl90MY6xFLW6kE5r7FYbX5PnvVkgsNXXwiFcVSlOrXw4c1TUHRlr2M/2Ww7NwqWIs7UZ4UFqMX/6zQlqsJJFcJYxnZm
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190905104517.GX9720@e119886-lin.cambridge.arm.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Received: by 2002:a02:9a12:: with SMTP id b18mr3575178jal.70.1567682820439;
+ Thu, 05 Sep 2019 04:27:00 -0700 (PDT)
+Date:   Thu, 05 Sep 2019 04:27:00 -0700
+In-Reply-To: <CAAeHK+xJrv1hCbO5qOGTBu=c8STo+-obatOGZ4cHkbuhqmEvrg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a2044d0591cc99b2@google.com>
+Subject: Re: WARNING: ODEBUG bug in usbhid_disconnect (2)
+From:   syzbot <syzbot+14b53bfeb17f2b210eb7@syzkaller.appspotmail.com>
+To:     Roderick.Colenbrander@sony.com, andreyknvl@google.com,
+        benjamin.tissoires@redhat.com, jikos@kernel.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, stern@rowland.harvard.edu,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 11:45:18AM +0100, Andrew Murray wrote:
-> > +        depends on OF
-> > +        select PCIE_DW_HOST
-> > +        help
-> > +          Say 'Y' here to enable support for Intel AHB/AXI PCIe Host
-> > +	  controller driver.
-> > +	  The Intel PCIe controller is based on the Synopsys Designware
-> > +	  pcie core and therefore uses the Designware core functions to
-> > +	  implement the driver.
-> 
-> I can see this description is similar to others in the same Kconfig,
-> however I'm not sure what value a user gains by knowing implementation
-> details - it's helpful to know that PCIE_INTEL_AXI is based on the
-> Designware core, but is it helpful to know that the Designware core
-> functions are used?
+Hello,
 
-Not really.  What would be extremely useful for a user is what Intel
-SOC contains this IP block, or the fact that most of those were
-actually produced by Lantiq, a company bought by Intel.
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
+
+Reported-and-tested-by:  
+syzbot+14b53bfeb17f2b210eb7@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         eea39f24 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d0c62209eedfd54e
+dashboard link: https://syzkaller.appspot.com/bug?extid=14b53bfeb17f2b210eb7
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b6944e600000
+
+Note: testing is done by a robot and is best-effort only.
