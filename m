@@ -2,137 +2,321 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D703AA1A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A35CAA1C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:42:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732924AbfIELjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:39:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36178 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730753AbfIELjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:39:37 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB3FB1DA2;
-        Thu,  5 Sep 2019 11:39:36 +0000 (UTC)
-Received: from [10.10.125.234] (ovpn-125-234.rdu2.redhat.com [10.10.125.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 01BA0600F8;
-        Thu,  5 Sep 2019 11:39:35 +0000 (UTC)
-Subject: Re: [RFC PATCH 2/2] livepatch: Clear relocation targets on a module
- removal
-To:     Petr Mladek <pmladek@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     jikos@kernel.org, Miroslav Benes <mbenes@suse.cz>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-References: <20190814151244.5xoaxib5iya2qjco@treble>
- <20190816094608.3p2z73oxcoqavnm4@pathway.suse.cz>
- <20190822223649.ptg6e7qyvosrljqx@treble>
- <20190823081306.kbkm7b4deqrare2v@pathway.suse.cz>
- <20190826145449.wyo7avwpqyriem46@treble>
- <alpine.LSU.2.21.1909021802180.29987@pobox.suse.cz>
- <5c649320-a9bf-ae7f-5102-483bc34d219f@redhat.com>
- <alpine.LSU.2.21.1909031447140.3872@pobox.suse.cz>
- <20190904084932.gndrtewubqiaxmzy@pathway.suse.cz>
- <20190905025055.36loaatxtkhdo4q5@treble>
- <20190905110955.wl4lwjbnpqybhkcn@pathway.suse.cz>
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-Message-ID: <de73b9c6-fa57-8893-d7ae-5256bbb603b5@redhat.com>
-Date:   Thu, 5 Sep 2019 07:39:35 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388669AbfIELky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:40:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50664 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733010AbfIELkv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 07:40:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=EWNScfWDMyrvxl4YkL1REfmmjq71emAlpbDmA+Ece6c=; b=YAz6TZlYaFH5Yk7mw92FLMNIfT
+        h3wo5Y5MVVeIdU/4jJtQ8nPvW/Qgbe0iSreVyQ2tweXEWN70cegq4neGZHLR9ntvmNH8T8nBQrcXG
+        ngdapn6wkQfjTbEm+0rts5ZSTdDRsamSS5disgDUBY5gEYl5kUvaSpYKMC8KaxmoxU7s3qTSsfzDp
+        fVvYmWUyvLlRzPx+0QUWiG4S2TwsTqFicO3toar4abGbKAyXlLSzN9H5YO2xnTqZ8Hd2lpL61mOG5
+        uizMAGRTGQ9hA9Vzvh4oa20Pdx6hEzMW80Dsg7bJnkPIWiLrM7Ox6W+Y7RAS7BagJyMTfklMy8zk0
+        ShFeYJeA==;
+Received: from 213-225-38-191.nat.highway.a1.net ([213.225.38.191] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5q87-0004qN-0k; Thu, 05 Sep 2019 11:40:47 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Stefano Stabellini <sstabellini@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        gross@suse.com, boris.ostrovsky@oracle.com
+Cc:     x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 02/11] xen/arm: consolidate page-coherent.h
+Date:   Thu,  5 Sep 2019 13:33:59 +0200
+Message-Id: <20190905113408.3104-3-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190905113408.3104-1-hch@lst.de>
+References: <20190905113408.3104-1-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20190905110955.wl4lwjbnpqybhkcn@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Thu, 05 Sep 2019 11:39:36 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/5/19 7:09 AM, Petr Mladek wrote:
-> On Wed 2019-09-04 21:50:55, Josh Poimboeuf wrote:
->> On Wed, Sep 04, 2019 at 10:49:32AM +0200, Petr Mladek wrote:
->>> I wonder what is necessary for a productive discussion on Plumbers:
->>>
->>>    + Josh would like to see what code can get removed when late
->>>      handling of modules gets removed. I think that it might be
->>>      partially visible from Joe's blue-sky patches.
->>
->> Yes, and I like what I see.  Especially the removal of the .klp.arch
->> nastiness!
-> 
-> Could we get rid of it?
-> 
-> Is there any other way to get access to static variables
-> and functions from the livepatched code?
-> 
+Shared the duplicate arm/arm64 code in include/xen/arm/page-coherent.h.
 
-Hi Petr,
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/arm/include/asm/xen/page-coherent.h   | 75 --------------------
+ arch/arm64/include/asm/xen/page-coherent.h | 75 --------------------
+ include/xen/arm/page-coherent.h            | 80 ++++++++++++++++++++++
+ 3 files changed, 80 insertions(+), 150 deletions(-)
 
-I think the question is whether .klp (not-arch specific) relocations 
-would be sufficient (without late module patching).  If it would a great 
-simplification if those were all we needed.  I'm not 100% sure about 
-this quite yet, but am hoping that is the case.
+diff --git a/arch/arm/include/asm/xen/page-coherent.h b/arch/arm/include/asm/xen/page-coherent.h
+index 602ac02f154c..27e984977402 100644
+--- a/arch/arm/include/asm/xen/page-coherent.h
++++ b/arch/arm/include/asm/xen/page-coherent.h
+@@ -1,77 +1,2 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _ASM_ARM_XEN_PAGE_COHERENT_H
+-#define _ASM_ARM_XEN_PAGE_COHERENT_H
+-
+-#include <linux/dma-mapping.h>
+-#include <asm/page.h>
+ #include <xen/arm/page-coherent.h>
+-
+-static inline void *xen_alloc_coherent_pages(struct device *hwdev, size_t size,
+-		dma_addr_t *dma_handle, gfp_t flags, unsigned long attrs)
+-{
+-	return dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
+-}
+-
+-static inline void xen_free_coherent_pages(struct device *hwdev, size_t size,
+-		void *cpu_addr, dma_addr_t dma_handle, unsigned long attrs)
+-{
+-	dma_direct_free(hwdev, size, cpu_addr, dma_handle, attrs);
+-}
+-
+-static inline void xen_dma_sync_single_for_cpu(struct device *hwdev,
+-		dma_addr_t handle, size_t size, enum dma_data_direction dir)
+-{
+-	unsigned long pfn = PFN_DOWN(handle);
+-
+-	if (pfn_valid(pfn))
+-		dma_direct_sync_single_for_cpu(hwdev, handle, size, dir);
+-	else
+-		__xen_dma_sync_single_for_cpu(hwdev, handle, size, dir);
+-}
+-
+-static inline void xen_dma_sync_single_for_device(struct device *hwdev,
+-		dma_addr_t handle, size_t size, enum dma_data_direction dir)
+-{
+-	unsigned long pfn = PFN_DOWN(handle);
+-	if (pfn_valid(pfn))
+-		dma_direct_sync_single_for_device(hwdev, handle, size, dir);
+-	else
+-		__xen_dma_sync_single_for_device(hwdev, handle, size, dir);
+-}
+-
+-static inline void xen_dma_map_page(struct device *hwdev, struct page *page,
+-	     dma_addr_t dev_addr, unsigned long offset, size_t size,
+-	     enum dma_data_direction dir, unsigned long attrs)
+-{
+-	unsigned long page_pfn = page_to_xen_pfn(page);
+-	unsigned long dev_pfn = XEN_PFN_DOWN(dev_addr);
+-	unsigned long compound_pages =
+-		(1<<compound_order(page)) * XEN_PFN_PER_PAGE;
+-	bool local = (page_pfn <= dev_pfn) &&
+-		(dev_pfn - page_pfn < compound_pages);
+-
+-	if (local)
+-		dma_direct_map_page(hwdev, page, offset, size, dir, attrs);
+-	else
+-		__xen_dma_map_page(hwdev, page, dev_addr, offset, size, dir, attrs);
+-}
+-
+-static inline void xen_dma_unmap_page(struct device *hwdev, dma_addr_t handle,
+-		size_t size, enum dma_data_direction dir, unsigned long attrs)
+-{
+-	unsigned long pfn = PFN_DOWN(handle);
+-	/*
+-	 * Dom0 is mapped 1:1, while the Linux page can be spanned accross
+-	 * multiple Xen page, it's not possible to have a mix of local and
+-	 * foreign Xen page. Dom0 is mapped 1:1, so calling pfn_valid on a
+-	 * foreign mfn will always return false. If the page is local we can
+-	 * safely call the native dma_ops function, otherwise we call the xen
+-	 * specific function.
+-	 */
+-	if (pfn_valid(pfn))
+-		dma_direct_unmap_page(hwdev, handle, size, dir, attrs);
+-	else
+-		__xen_dma_unmap_page(hwdev, handle, size, dir, attrs);
+-}
+-
+-#endif /* _ASM_ARM_XEN_PAGE_COHERENT_H */
+diff --git a/arch/arm64/include/asm/xen/page-coherent.h b/arch/arm64/include/asm/xen/page-coherent.h
+index d88e56b90b93..27e984977402 100644
+--- a/arch/arm64/include/asm/xen/page-coherent.h
++++ b/arch/arm64/include/asm/xen/page-coherent.h
+@@ -1,77 +1,2 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _ASM_ARM64_XEN_PAGE_COHERENT_H
+-#define _ASM_ARM64_XEN_PAGE_COHERENT_H
+-
+-#include <linux/dma-mapping.h>
+-#include <asm/page.h>
+ #include <xen/arm/page-coherent.h>
+-
+-static inline void *xen_alloc_coherent_pages(struct device *hwdev, size_t size,
+-		dma_addr_t *dma_handle, gfp_t flags, unsigned long attrs)
+-{
+-	return dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
+-}
+-
+-static inline void xen_free_coherent_pages(struct device *hwdev, size_t size,
+-		void *cpu_addr, dma_addr_t dma_handle, unsigned long attrs)
+-{
+-	dma_direct_free(hwdev, size, cpu_addr, dma_handle, attrs);
+-}
+-
+-static inline void xen_dma_sync_single_for_cpu(struct device *hwdev,
+-		dma_addr_t handle, size_t size, enum dma_data_direction dir)
+-{
+-	unsigned long pfn = PFN_DOWN(handle);
+-
+-	if (pfn_valid(pfn))
+-		dma_direct_sync_single_for_cpu(hwdev, handle, size, dir);
+-	else
+-		__xen_dma_sync_single_for_cpu(hwdev, handle, size, dir);
+-}
+-
+-static inline void xen_dma_sync_single_for_device(struct device *hwdev,
+-		dma_addr_t handle, size_t size, enum dma_data_direction dir)
+-{
+-	unsigned long pfn = PFN_DOWN(handle);
+-	if (pfn_valid(pfn))
+-		dma_direct_sync_single_for_device(hwdev, handle, size, dir);
+-	else
+-		__xen_dma_sync_single_for_device(hwdev, handle, size, dir);
+-}
+-
+-static inline void xen_dma_map_page(struct device *hwdev, struct page *page,
+-	     dma_addr_t dev_addr, unsigned long offset, size_t size,
+-	     enum dma_data_direction dir, unsigned long attrs)
+-{
+-	unsigned long page_pfn = page_to_xen_pfn(page);
+-	unsigned long dev_pfn = XEN_PFN_DOWN(dev_addr);
+-	unsigned long compound_pages =
+-		(1<<compound_order(page)) * XEN_PFN_PER_PAGE;
+-	bool local = (page_pfn <= dev_pfn) &&
+-		(dev_pfn - page_pfn < compound_pages);
+-
+-	if (local)
+-		dma_direct_map_page(hwdev, page, offset, size, dir, attrs);
+-	else
+-		__xen_dma_map_page(hwdev, page, dev_addr, offset, size, dir, attrs);
+-}
+-
+-static inline void xen_dma_unmap_page(struct device *hwdev, dma_addr_t handle,
+-		size_t size, enum dma_data_direction dir, unsigned long attrs)
+-{
+-	unsigned long pfn = PFN_DOWN(handle);
+-	/*
+-	 * Dom0 is mapped 1:1, while the Linux page can be spanned accross
+-	 * multiple Xen page, it's not possible to have a mix of local and
+-	 * foreign Xen page. Dom0 is mapped 1:1, so calling pfn_valid on a
+-	 * foreign mfn will always return false. If the page is local we can
+-	 * safely call the native dma_ops function, otherwise we call the xen
+-	 * specific function.
+-	 */
+-	if (pfn_valid(pfn))
+-		dma_direct_unmap_page(hwdev, handle, size, dir, attrs);
+-	else
+-		__xen_dma_unmap_page(hwdev, handle, size, dir, attrs);
+-}
+-
+-#endif /* _ASM_ARM64_XEN_PAGE_COHERENT_H */
+diff --git a/include/xen/arm/page-coherent.h b/include/xen/arm/page-coherent.h
+index 2ca9164a79bf..a840d6949a87 100644
+--- a/include/xen/arm/page-coherent.h
++++ b/include/xen/arm/page-coherent.h
+@@ -2,6 +2,9 @@
+ #ifndef _XEN_ARM_PAGE_COHERENT_H
+ #define _XEN_ARM_PAGE_COHERENT_H
+ 
++#include <linux/dma-mapping.h>
++#include <asm/page.h>
++
+ void __xen_dma_map_page(struct device *hwdev, struct page *page,
+ 	     dma_addr_t dev_addr, unsigned long offset, size_t size,
+ 	     enum dma_data_direction dir, unsigned long attrs);
+@@ -13,4 +16,81 @@ void __xen_dma_sync_single_for_cpu(struct device *hwdev,
+ void __xen_dma_sync_single_for_device(struct device *hwdev,
+ 		dma_addr_t handle, size_t size, enum dma_data_direction dir);
+ 
++static inline void *xen_alloc_coherent_pages(struct device *hwdev, size_t size,
++		dma_addr_t *dma_handle, gfp_t flags, unsigned long attrs)
++{
++	return dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
++}
++
++static inline void xen_free_coherent_pages(struct device *hwdev, size_t size,
++		void *cpu_addr, dma_addr_t dma_handle, unsigned long attrs)
++{
++	dma_direct_free(hwdev, size, cpu_addr, dma_handle, attrs);
++}
++
++static inline void xen_dma_sync_single_for_cpu(struct device *hwdev,
++		dma_addr_t handle, size_t size, enum dma_data_direction dir)
++{
++	unsigned long pfn = PFN_DOWN(handle);
++
++	if (pfn_valid(pfn))
++		dma_direct_sync_single_for_cpu(hwdev, handle, size, dir);
++	else
++		__xen_dma_sync_single_for_cpu(hwdev, handle, size, dir);
++}
++
++static inline void xen_dma_sync_single_for_device(struct device *hwdev,
++		dma_addr_t handle, size_t size, enum dma_data_direction dir)
++{
++	unsigned long pfn = PFN_DOWN(handle);
++	if (pfn_valid(pfn))
++		dma_direct_sync_single_for_device(hwdev, handle, size, dir);
++	else
++		__xen_dma_sync_single_for_device(hwdev, handle, size, dir);
++}
++
++static inline void xen_dma_map_page(struct device *hwdev, struct page *page,
++	     dma_addr_t dev_addr, unsigned long offset, size_t size,
++	     enum dma_data_direction dir, unsigned long attrs)
++{
++	unsigned long page_pfn = page_to_xen_pfn(page);
++	unsigned long dev_pfn = XEN_PFN_DOWN(dev_addr);
++	unsigned long compound_pages =
++		(1<<compound_order(page)) * XEN_PFN_PER_PAGE;
++	bool local = (page_pfn <= dev_pfn) &&
++		(dev_pfn - page_pfn < compound_pages);
++
++	/*
++	 * Dom0 is mapped 1:1, while the Linux page can span across
++	 * multiple Xen pages, it's not possible for it to contain a
++	 * mix of local and foreign Xen pages. So if the first xen_pfn
++	 * == mfn the page is local otherwise it's a foreign page
++	 * grant-mapped in dom0. If the page is local we can safely
++	 * call the native dma_ops function, otherwise we call the xen
++	 * specific function.
++	 */
++	if (local)
++		dma_direct_map_page(hwdev, page, offset, size, dir, attrs);
++	else
++		__xen_dma_map_page(hwdev, page, dev_addr, offset, size, dir, attrs);
++}
++
++static inline void xen_dma_unmap_page(struct device *hwdev, dma_addr_t handle,
++		size_t size, enum dma_data_direction dir, unsigned long attrs)
++{
++	unsigned long pfn = PFN_DOWN(handle);
++	/*
++	 * Dom0 is mapped 1:1, while the Linux page can be spanned accross
++	 * multiple Xen page, it's not possible to have a mix of local and
++	 * foreign Xen page. Dom0 is mapped 1:1, so calling pfn_valid on a
++	 * foreign mfn will always return false. If the page is local we can
++	 * safely call the native dma_ops function, otherwise we call the xen
++	 * specific function.
++	 */
++	if (pfn_valid(pfn))
++		dma_direct_unmap_page(hwdev, handle, size, dir, attrs);
++	else
++		__xen_dma_unmap_page(hwdev, handle, size, dir, attrs);
++}
++
+ #endif /* _XEN_ARM_PAGE_COHERENT_H */
+-- 
+2.20.1
 
->>>        Anyway, it might rule out some variants so that we could better
->>>        concentrate on the acceptable ones. Or come with yet another
->>>        proposal that would avoid the real blockers.
->>
->> I'd like to hear more specific negatives about Joe's recent patches,
->> which IMO, are the best option we've discussed so far.
-> 
-> I discussed this approach with our project manager. He was not much
-> excited about this solution. His first idea was that it would block
-> attaching USB devices. They are used by admins when taking care of
-> the servers. And there might be other scenarios where a new module
-> might need loading to solve some situation.
-> > Customers understand Livepatching as a way how to secure system
-> without immediate reboot and with minimal (invisible) effect
-> on the workload. They might get pretty surprised when the system > suddenly blocks their "normal" workflow.
-
-FWIW the complete blue-sky idea was that the package delivered to the 
-customer (RPM, deb, whatever) would provide:
-
-  - livepatch .ko, blacklists known vulnerable srcversions
-  - updated .ko's for the blacklisted modules
-
-The second part would maintain module loading workflow, albeit with a 
-new set .ko files.
-
-> As Miroslav said. No solution is perfect. We need to find the most
-> acceptable compromise. It seems that you are more concerned about
-> saving code, reducing complexity and risk. I am more concerned
-> about user satisfaction.
-> 
-> It is almost impossible to predict effects on user satisfaction
-> because they have different workflow, use case, expectation,
-> and tolerance.
-> 
-> We could better estimate the technical side of each solution:
-> 
->     + implementation cost
->     + maintenance cost
->     + risks
->     + possible improvements and hardening
->     + user visible effects
->     + complication and limits with creating livepatches
-> 
-> 
->  From my POV, the most problematic is the arch-specific code.
-> It is hard to maintain and we do not have it fully under
-> control.
-> 
-> And I do not believe that we could remove all arch specific code
-> when we do not allow delayed livepatching of modules.
-> 
-
-No doubt there will probably always be some arch-specific code, and even 
-my blue-sky branch didn't move all that much.  But I think the idea 
-could be a bigger simplification in terms of the mental model, should 
-the solution be acceptable by criteria you mention above.
-
--- Joe
