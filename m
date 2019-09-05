@@ -2,125 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFC4FAA17B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B1DFAA16D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:30:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388502AbfIELcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:32:09 -0400
-Received: from dd10532.kasserver.com ([85.13.133.80]:50680 "EHLO
-        dd10532.kasserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729366AbfIELcJ (ORCPT
+        id S2388484AbfIELae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:30:34 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60466 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbfIELad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:32:09 -0400
-X-Greylist: delayed 566 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Sep 2019 07:32:07 EDT
-Received: from odsus.home.arpa (p57B0B64C.dip0.t-ipconnect.de [87.176.182.76])
-        by dd10532.kasserver.com (Postfix) with ESMTPSA id B21111F430B7;
-        Thu,  5 Sep 2019 13:22:39 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by odsus.home.arpa (Postfix) with ESMTP id E9E943C97F;
-        Thu,  5 Sep 2019 13:22:38 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at home.arpa
-Received: from odsus.home.arpa ([127.0.0.1])
-        by localhost (odsus.home.arpa [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id PbkwYIGYv5fO; Thu,  5 Sep 2019 13:22:35 +0200 (CEST)
-Received: from [192.168.201.4] (unknown [192.168.201.4])
-        by odsus.home.arpa (Postfix) with ESMTP id A18A43C5BF;
-        Thu,  5 Sep 2019 13:22:35 +0200 (CEST)
-To:     linux-amlogic@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@vger.kernel.org
-From:   Otto Meier <gf435@gmx.net>
-Subject: [BUG] wrong pinning definition or uart_c in pinctrl-meson-gxbb.c
-Message-ID: <b5370b4b-3347-1b95-aba2-1841f786b5a8@gmx.net>
-Date:   Thu, 5 Sep 2019 13:22:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 5 Sep 2019 07:30:33 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1i5pxg-0002oG-P2; Thu, 05 Sep 2019 11:30:00 +0000
+Date:   Thu, 5 Sep 2019 13:29:59 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190905112958.ldzyzyuqn5akkhzy@wittgenstein>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
+ <20190905110544.d6c5t7rx25kvywmi@wittgenstein>
+ <ae415ea8-4442-d81c-3b46-2ae5fb35bbdf@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------C12424836F50E32A0F35C7C7"
-Content-Language: de-DE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ae415ea8-4442-d81c-3b46-2ae5fb35bbdf@rasmusvillemoes.dk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------C12424836F50E32A0F35C7C7
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Thu, Sep 05, 2019 at 01:17:38PM +0200, Rasmus Villemoes wrote:
+> On 05/09/2019 13.05, Christian Brauner wrote:
+> > On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
+> 
+> >> +	if (unlikely(!access_ok(dst, usize)))
+> >> +		return -EFAULT;
+> >> +
+> >> +	/* Deal with trailing bytes. */
+> >> +	if (usize < ksize) {
+> >> +		if (memchr_inv(src + size, 0, rest))
+> >> +			return -EFBIG;
+> >> +	} else if (usize > ksize) {
+> >> +		if (__memzero_user(dst + size, rest))
+> >> +			return -EFAULT;
+> > 
+> > Is zeroing that memory really our job? Seems to me we should just check
+> > it is zeroed.
+> 
+> Of course it is, otherwise you'd require userspace to clear the output
+> buffer it gives us, which in the majority of cases is wasted work. It's
+> much easier to reason about if we just say "the kernel populates [uaddr,
+> uaddr + usize)".
 
-Hi i tried to use uart_C of the the odroid-c2.
-
-I enabled it int the dts file. During boot it crashed when the
-the sdcard slot is addressd.
-
-After long search in the net i found this:
-
-https://forum.odroid.com/viewtopic.php?f=139&t=25371&p=194370&hilit=uart_C#p177856
-
-
-After changing the pin definitios accordingly erverything works.
-
-Uart_c is functioning and sdcard ist working.
-
-Patch attached
-
-Bye Otto
-
-
-
-
---------------C12424836F50E32A0F35C7C7
-Content-Type: text/x-patch;
- name="uart_c_pins.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="uart_c_pins.diff"
-
-Hi i tried to use uart_C of the the odroid-c2.
-
-I enabled it int the dts file. During boot it crashed when the
-the sdcard slot is addressd.
-
-After long search in the net i found this:
-
-https://forum.odroid.com/viewtopic.php?f=139&t=25371&p=194370&hilit=uart_C#p177856
-
-
-After changing the pin definitios accordingly erverything works.
-
-Uart_c is functioning and sdcard ist working.
-
-
-
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c        2019-08-26 18:24:45.450089334 +0200
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c        2019-09-05 13:07:38.518637214 +0200
-@@ -192,8 +192,8 @@ static const unsigned int uart_rts_b_pin
- 
- static const unsigned int uart_tx_c_pins[]     = { GPIOY_13 };
- static const unsigned int uart_rx_c_pins[]     = { GPIOY_14 };
--static const unsigned int uart_cts_c_pins[]    = { GPIOX_11 };
--static const unsigned int uart_rts_c_pins[]    = { GPIOX_12 };
-+static const unsigned int uart_cts_c_pins[]    = { GPIOY_11 };
-+static const unsigned int uart_rts_c_pins[]    = { GPIOY_12 };
- 
- static const unsigned int i2c_sck_a_pins[]     = { GPIODV_25 };
- static const unsigned int i2c_sda_a_pins[]     = { GPIODV_24 };
-@@ -439,10 +439,10 @@ static struct meson_pmx_group meson_gxbb
-        GROUP(pwm_f_x,          3,      18),
- 
-        /* Bank Y */
--       GROUP(uart_cts_c,       1,      19),
--       GROUP(uart_rts_c,       1,      18),
--       GROUP(uart_tx_c,        1,      17),
--       GROUP(uart_rx_c,        1,      16),
-+       GROUP(uart_cts_c,       1,      17),
-+       GROUP(uart_rts_c,       1,      16),
-+       GROUP(uart_tx_c,        1,      19),
-+       GROUP(uart_rx_c,        1,      18),
-        GROUP(pwm_a_y,          1,      21),
-        GROUP(pwm_f_y,          1,      20),
-        GROUP(i2s_out_ch23_y,   1,      5),
-
-signed off Otto Meier gf435@gmx.net
-
---------------C12424836F50E32A0F35C7C7--
+I don't really mind either way so sure. :)
