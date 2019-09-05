@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA2A7A9B0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E52A9B22
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731699AbfIEHFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 03:05:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49144 "EHLO mx1.redhat.com"
+        id S1731779AbfIEHF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 03:05:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38816 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfIEHFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 03:05:13 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1731731AbfIEHFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 03:05:17 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8D2D03175285;
-        Thu,  5 Sep 2019 07:05:13 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 00A66302C060;
+        Thu,  5 Sep 2019 07:05:17 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-117-72.ams2.redhat.com [10.36.117.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 374E13CC8;
-        Thu,  5 Sep 2019 07:05:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5DA6E60606;
+        Thu,  5 Sep 2019 07:05:14 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 8021B31EFC; Thu,  5 Sep 2019 09:05:10 +0200 (CEST)
+        id 9855531EFF; Thu,  5 Sep 2019 09:05:10 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Gerd Hoffmann <kraxel@redhat.com>,
@@ -31,13 +31,13 @@ Cc:     Gerd Hoffmann <kraxel@redhat.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/8] drm/radeon: switch to gem vma offset manager
-Date:   Thu,  5 Sep 2019 09:05:05 +0200
-Message-Id: <20190905070509.22407-5-kraxel@redhat.com>
+Subject: [PATCH 5/8] drm/amdgpu: switch to gem vma offset manager
+Date:   Thu,  5 Sep 2019 09:05:06 +0200
+Message-Id: <20190905070509.22407-6-kraxel@redhat.com>
 In-Reply-To: <20190905070509.22407-1-kraxel@redhat.com>
 References: <20190905070509.22407-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 05 Sep 2019 07:05:13 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 05 Sep 2019 07:05:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,20 @@ instead of its own embedded struct.  This makes some gem functions
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/radeon/radeon_ttm.c | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/radeon/radeon_ttm.c
-index e2c12e59704d..a46bb3067863 100644
---- a/drivers/gpu/drm/radeon/radeon_ttm.c
-+++ b/drivers/gpu/drm/radeon/radeon_ttm.c
-@@ -794,7 +794,7 @@ int radeon_ttm_init(struct radeon_device *rdev)
- 	r = ttm_bo_device_init(&rdev->mman.bdev,
- 			       &radeon_bo_driver,
- 			       rdev->ddev->anon_inode->i_mapping,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index 34ee5d725faf..513dd8456945 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -1728,7 +1728,7 @@ int amdgpu_ttm_init(struct amdgpu_device *adev)
+ 	r = ttm_bo_device_init(&adev->mman.bdev,
+ 			       &amdgpu_bo_driver,
+ 			       adev->ddev->anon_inode->i_mapping,
 -			       NULL,
-+			       rdev->ddev->vma_offset_manager,
- 			       rdev->need_dma32);
++			       adev->ddev->vma_offset_manager,
+ 			       adev->need_dma32);
  	if (r) {
  		DRM_ERROR("failed initializing buffer object driver(%d).\n", r);
 -- 
