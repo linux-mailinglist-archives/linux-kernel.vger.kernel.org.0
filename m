@@ -2,104 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27732AAA8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AF6AAAA8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:07:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403831AbfIESGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 14:06:23 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47228 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388822AbfIESGW (ORCPT
+        id S2403841AbfIESHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 14:07:11 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34937 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfIESHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:06:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bjhBgn/hu4sBX3UF8vmjwc0zdzuNyTJ7pUGOwliYdOc=; b=p7jUDGlXDe3A/y79FGALT/xcU
-        iN849LCtT7DwcUsiVXQT7PP9H7NoBfRhvNSCN5UbGsGNM4XCvgMMOU41EwbYBOsGZRUdXGW7Bbryh
-        Tapwa2dMrSWw1IR+Pt5MVCXzZGfOp3/TQb5S6/d7p+jiMBN76391ukY6EV/uh8jDQQ0Ck=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i5w9A-0005Tm-H8; Thu, 05 Sep 2019 18:06:16 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 90F1D2742D07; Thu,  5 Sep 2019 19:06:15 +0100 (BST)
-Date:   Thu, 5 Sep 2019 19:06:15 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Philippe Schenker <philippe.schenker@toradex.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stefan Agner <stefan.agner@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Luka Pivk <luka.pivk@toradex.com>
-Subject: Re: [PATCH 1/3] regulator: fixed: add possibility to enable by clock
-Message-ID: <20190905180615.GG4053@sirena.co.uk>
-References: <20190903080336.32288-1-philippe.schenker@toradex.com>
- <20190903080336.32288-2-philippe.schenker@toradex.com>
+        Thu, 5 Sep 2019 14:07:11 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n10so4181654wmj.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 11:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eQx8LFwZEFLFHsOp6JVQ136wPiDCvxTvsHmYT44VyoI=;
+        b=ZJv5I+4JMEy7c+i65ipPMvQ3ao0PJLdsjSW4Z4AWhUpYsQn1x9l2q+DA2kgvlqskbs
+         xLjtUbzbvYq++1MekuMRihek+riXpl52V1TWEUQHNWw5fcyJbg3mau2uczjDdozYuSv2
+         L5RcmY7Q0Ebn1f25EOGmJoKJAs62svd2/xDJ5vcFAj/ymSlfZkFlSabdaw/vZotgq7Fp
+         G2/o1GHwx09jjoQ09hfMEkWRaUHmGwWR9TBsMOLF5Nwzvk2iwbZztrISJUjBGQwNyC8Q
+         M9dW8HVPRMRmdYQW+D0ynq6IF4SuuLsWm8ZhAcRKVF5FUb8gaJqmaQKr/JNUiwQFOuXJ
+         wFxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eQx8LFwZEFLFHsOp6JVQ136wPiDCvxTvsHmYT44VyoI=;
+        b=jxUq1DVc85wZEDOym/CTxP/kt7qf8fCqUKOTsEDuAiVs6x53d9I+x7NZ2A0nMqFDSu
+         Nl3TL3MdNFf4IU+MFgLfR/YW/DzvbmgAq9eSXBjn4hY+SlMV9rf9tmUWHAxQdZSFy1K+
+         8q4tALBayWE85/1lsXphvfQ4dzIqf4YmZYSXd4I9qFHb7JzuHOnzlY/ppybwRTvyDKuB
+         Gv/6xkzpecV0lGj38TaAE/sfpfJl0MoH7XQrydE7Gr0FjdBSeNEzJW6QYpCFqSwaaFJh
+         X7XmqeBwLpfd4RvnIVY8IlM+fmhRsoTjd1Te7TRk1tOr0OHG+vpM1LpvUHtWWp/NMz1X
+         2qUg==
+X-Gm-Message-State: APjAAAXLy84kW6ApJfqHvficMafIt1KhmV3wYb/DZTbi0Z0FNGs1bmDJ
+        3voS6knszNbsQP7Cp/su3vdMKA==
+X-Google-Smtp-Source: APXvYqyoCJP+hufbel7IHFFpjOBVJKMRMRdizMAZ2CDtvCYnOSibtyDdCrMfZO7qr75g028g9qUGcw==
+X-Received: by 2002:a05:600c:214c:: with SMTP id v12mr4002689wml.28.1567706828344;
+        Thu, 05 Sep 2019 11:07:08 -0700 (PDT)
+Received: from localhost.localdomain (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
+        by smtp.gmail.com with ESMTPSA id h12sm3238489wrp.51.2019.09.05.11.07.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 05 Sep 2019 11:07:07 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, agross@kernel.org,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        bjorn.andersson@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject:  
+Date:   Thu,  5 Sep 2019 20:07:05 +0200
+Message-Id: <20190905180705.30910-1-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="MiFvc8Vo6wRSORdP"
-Content-Disposition: inline
-In-Reply-To: <20190903080336.32288-2-philippe.schenker@toradex.com>
-X-Cookie: You humans are all alike.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use the bark interrupt as the pre-timeout notifier whenever this
+interrupt is available.
 
---MiFvc8Vo6wRSORdP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+By default, the pretimeout notification shall occur one second earlier
+than the timeout.
 
-On Tue, Sep 03, 2019 at 08:03:46AM +0000, Philippe Schenker wrote:
-> This commit adds the possibility to choose the compatible
-> "regulator-fixed-clock" in devicetree.
->=20
-> This is a special regulator-fixed that has to have a clock, from which
-> the regulator gets switched on and off.
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+---
+ drivers/watchdog/qcom-wdt.c | 63 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 58 insertions(+), 5 deletions(-)
 
-This seems conceptually fine.  Minor issues though:
+diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
+index 7be7f87be28f..2dd36914aa82 100644
+--- a/drivers/watchdog/qcom-wdt.c
++++ b/drivers/watchdog/qcom-wdt.c
+@@ -10,6 +10,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/watchdog.h>
+ #include <linux/of_device.h>
++#include <linux/interrupt.h>
++#include <linux/watchdog.h>
+ 
+ enum wdt_reg {
+ 	WDT_RST,
+@@ -41,6 +43,7 @@ struct qcom_wdt {
+ 	unsigned long		rate;
+ 	void __iomem		*base;
+ 	const u32		*layout;
++	const struct device	*dev;
+ };
+ 
+ static void __iomem *wdt_addr(struct qcom_wdt *wdt, enum wdt_reg reg)
+@@ -54,15 +57,37 @@ struct qcom_wdt *to_qcom_wdt(struct watchdog_device *wdd)
+ 	return container_of(wdd, struct qcom_wdt, wdd);
+ }
+ 
++static inline int qcom_wdt_enable(struct qcom_wdt *wdt)
++{
++	/* enable the bark interrupt */
++	if (wdt->wdd.info->options & WDIOF_PRETIMEOUT)
++		return 3;
++
++	return 1;
++}
++
++static irqreturn_t qcom_wdt_irq(int irq, void *cookie)
++{
++	struct watchdog_device *wdd = (struct watchdog_device *) cookie;
++
++	watchdog_notify_pretimeout(wdd);
++
++	return IRQ_HANDLED;
++}
++
+ static int qcom_wdt_start(struct watchdog_device *wdd)
+ {
+ 	struct qcom_wdt *wdt = to_qcom_wdt(wdd);
++	unsigned int bark = wdd->pretimeout;
++
++	if (!(wdd->info->options & WDIOF_PRETIMEOUT))
++		bark = wdd->timeout;
+ 
+ 	writel(0, wdt_addr(wdt, WDT_EN));
+ 	writel(1, wdt_addr(wdt, WDT_RST));
+-	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
++	writel(bark * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
+ 	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BITE_TIME));
+-	writel(1, wdt_addr(wdt, WDT_EN));
++	writel(qcom_wdt_enable(wdt), wdt_addr(wdt, WDT_EN));
+ 	return 0;
+ }
+ 
+@@ -86,9 +111,18 @@ static int qcom_wdt_set_timeout(struct watchdog_device *wdd,
+ 				unsigned int timeout)
+ {
+ 	wdd->timeout = timeout;
++
+ 	return qcom_wdt_start(wdd);
+ }
+ 
++static int qcom_wdt_set_pretimeout(struct watchdog_device *wdd,
++				   unsigned int timeout)
++{
++	wdd->pretimeout = timeout;
++
++	return 0;
++}
++
+ static int qcom_wdt_restart(struct watchdog_device *wdd, unsigned long action,
+ 			    void *data)
+ {
+@@ -105,7 +139,7 @@ static int qcom_wdt_restart(struct watchdog_device *wdd, unsigned long action,
+ 	writel(1, wdt_addr(wdt, WDT_RST));
+ 	writel(timeout, wdt_addr(wdt, WDT_BARK_TIME));
+ 	writel(timeout, wdt_addr(wdt, WDT_BITE_TIME));
+-	writel(1, wdt_addr(wdt, WDT_EN));
++	writel(qcom_wdt_enable(wdt), wdt_addr(wdt, WDT_EN));
+ 
+ 	/*
+ 	 * Actually make sure the above sequence hits hardware before sleeping.
+@@ -121,11 +155,12 @@ static const struct watchdog_ops qcom_wdt_ops = {
+ 	.stop		= qcom_wdt_stop,
+ 	.ping		= qcom_wdt_ping,
+ 	.set_timeout	= qcom_wdt_set_timeout,
++	.set_pretimeout	= qcom_wdt_set_pretimeout,
+ 	.restart        = qcom_wdt_restart,
+ 	.owner		= THIS_MODULE,
+ };
+ 
+-static const struct watchdog_info qcom_wdt_info = {
++static struct watchdog_info qcom_wdt_info = {
+ 	.options	= WDIOF_KEEPALIVEPING
+ 			| WDIOF_MAGICCLOSE
+ 			| WDIOF_SETTIMEOUT
+@@ -146,7 +181,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
+ 	struct device_node *np = dev->of_node;
+ 	const u32 *regs;
+ 	u32 percpu_offset;
+-	int ret;
++	int irq, ret;
+ 
+ 	regs = of_device_get_match_data(dev);
+ 	if (!regs) {
+@@ -210,6 +245,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
+ 	wdt->wdd.max_timeout = 0x10000000U / wdt->rate;
+ 	wdt->wdd.parent = dev;
+ 	wdt->layout = regs;
++	wdt->dev = &pdev->dev;
+ 
+ 	if (readl(wdt_addr(wdt, WDT_STS)) & 1)
+ 		wdt->wdd.bootstatus = WDIOF_CARDRESET;
+@@ -222,6 +258,23 @@ static int qcom_wdt_probe(struct platform_device *pdev)
+ 	wdt->wdd.timeout = min(wdt->wdd.max_timeout, 30U);
+ 	watchdog_init_timeout(&wdt->wdd, 0, dev);
+ 
++	irq = platform_get_irq(pdev, 0);
++	if (irq >= 0) {
++		/* enable the pre-timeout notification */
++		qcom_wdt_info.options |= WDIOF_PRETIMEOUT;
++
++		ret = devm_request_irq(&pdev->dev, irq, qcom_wdt_irq,
++				       IRQF_TRIGGER_RISING, "wdog_bark",
++				       &wdt->wdd);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to request irq\n");
++			return ret;
++		}
++	}
++
++	if (qcom_wdt_info.options & WDIOF_PRETIMEOUT)
++		wdt->wdd.pretimeout = wdt->wdd.timeout - 1;
++
+ 	ret = devm_watchdog_register_device(dev, &wdt->wdd);
+ 	if (ret)
+ 		return ret;
+-- 
+2.23.0
 
-> +static int reg_clock_is_enabled(struct regulator_dev *rdev)
-> +{
-> +	struct fixed_voltage_data *priv =3D rdev_get_drvdata(rdev);
-> +
-> +	if (priv->clk_enable_counter > 0)
-> +		return 1;
-> +
-> +	return 0;
-> +}
-
-This could just be return priv->clk_enable_counter > 0 - ideally the
-clock API would let us query if the clock is enabled but that might be a
-bit confused anyway given that it's possibly shared.
-
---MiFvc8Vo6wRSORdP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1xTpYACgkQJNaLcl1U
-h9AsqAf/caqc82p8eTjLhI9qV1ov43qSU0Lx+x0l1/34fodrmhwX+985ieiCqPdK
-YcQ+SBMd4NxLjLcIW7g6JNEhl7jK9Rf/JCdFqzTfLwH5PtuU9N7/NSkDVnHJT+Il
-7vZxg1enEl9P7kopxqGJeWD9TIdwrLbLTrHeT+k65BfrXkYZqdCFwgRySuA2bJv1
-ReQyGwWgKs9dHDKvFOcMUuFN8NII62VgdZ3v5nhNVtzsBqDjDpId9rk/2HhTUB6O
-Cxandr5b4mTQ2E2XZ4zNY++IFnMACM+Jk82jFpbaBX6faVMdJnb2TobZt2C+pGOp
-xTpfGM2727C2Yx2TU0BTn9qgDEHuNg==
-=FHl0
------END PGP SIGNATURE-----
-
---MiFvc8Vo6wRSORdP--
