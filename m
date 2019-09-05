@@ -2,234 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C2DA9CB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98166A9CBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732466AbfIEIQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 04:16:16 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43801 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730849AbfIEIQP (ORCPT
+        id S1731828AbfIEIRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 04:17:06 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46958 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730937AbfIEIRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 04:16:15 -0400
-Received: by mail-pf1-f195.google.com with SMTP id d15so1220518pfo.10
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 01:16:15 -0700 (PDT)
+        Thu, 5 Sep 2019 04:17:06 -0400
+Received: by mail-ot1-f65.google.com with SMTP id g19so1260252otg.13
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 01:17:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9n12LoDC4iyQEQhSfvrYLmsN/jTJxbwGE2x1rInuHng=;
-        b=mfvDNzvUA14ba5ndLu6rEnyLMfdTvutWp7jgl4Uz8Tj0KkXdvQ9mepDv3Q0JZLqj5g
-         tdaPQnTm+CiDSzL/6duSkVkKy5bimCc2bgP+lFjNet2erbTdwN6NwrxDezk/NAZeDRft
-         htSU/TxkBZT5c7zo/xpFicxxPFnpxtb3O1VGE=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0xPzSESc4AZSzOz8iuenGzI1AlT1OxyaOVK/bXB62NU=;
+        b=OuTz5wvUQ35QYkpSKKPCxxQaaU1HK9r2e88MGLbbYqoqxReti2Duuk8kuS0KYSC1Ip
+         pdHLMs7zhO419UJhHXlo+5eiLjxOlJzvBJvCkJ3krsKonpbm0VX4vie2pR8FyWB7NvC8
+         xwNADNZ++jqxlZ73zV3Fv4RHQ1CtN/gCiJYwY6zC+I9oUFbUzixbhoF1ofdOq8nGsV/x
+         zsdighpHoFIa+hFO9Gfuw4SI4cNG/br0SpICPLmLwP7JT0b8Rw1es+25pX61XTWttPNd
+         pNvFwcXfQACkPtI8sYYB2mxINaHDTZiPwLrnEMjPnV1KdzshSBt/8xJLmUURA816hh65
+         xaDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9n12LoDC4iyQEQhSfvrYLmsN/jTJxbwGE2x1rInuHng=;
-        b=pmxG54KrJ9kJfEG6183Rd8lzwUptThkS2v6D1X2Bi0aAYwtlV23A7jm3JVBsgnB6KM
-         uqEhpqUgm1mGyKKR8cM0dUL2fTS2v3kbvP3S0gnZEld9c2LE5Lyp76QEA8sSBdbaAOrE
-         1DfgzW2BMnPA2unNDY9k/I/8L0y1Ht1dxonT8b2d+iC4hIYsn6rSCsd+vre0y/xP/inM
-         u7uxrwGWnMIUdCQYVDIKY4PnZWUAujXxQqLKlFvZB5gRcUKT++q9Eh5ai5VC1FX+wEf9
-         SboQ/lRzLvotmXQPOcog+/LC6ZNV3o4Hff/kSWAMBsjexM8zlIY+G27kwt0K83l55QKy
-         npmw==
-X-Gm-Message-State: APjAAAXHY7KxJVPnZMgyQE1cDqSVGdByw/yY6nqTkMPM2jvyc6CW6oDl
-        0vhW+et5UO4C2Lq5elXwK7x6sg==
-X-Google-Smtp-Source: APXvYqxegqPyfGwrsPeKCe2Fc5b+coPbLD+CyOyetuPlandyNKc5R4rscY0tB/vIdMYg0qC49XRILQ==
-X-Received: by 2002:a63:6d8d:: with SMTP id i135mr2003284pgc.303.1567671374527;
-        Thu, 05 Sep 2019 01:16:14 -0700 (PDT)
-Received: from drinkcat2.tpe.corp.google.com ([2401:fa00:1:b:d8b7:33af:adcb:b648])
-        by smtp.gmail.com with ESMTPSA id h186sm3490145pfb.63.2019.09.05.01.16.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 01:16:13 -0700 (PDT)
-From:   Nicolas Boichat <drinkcat@chromium.org>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nick Fan <nick.fan@mediatek.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>
-Subject: [PATCH] arm64: dts: mt8183: Add node for the Mali GPU
-Date:   Thu,  5 Sep 2019 16:15:46 +0800
-Message-Id: <20190905081546.42716-1-drinkcat@chromium.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0xPzSESc4AZSzOz8iuenGzI1AlT1OxyaOVK/bXB62NU=;
+        b=XDIm8UwLNyHxhlTc7uvTfWNWAkL11RxpARXh4f+miUc+NoPWc2ZoLfLqetz4uxJMJE
+         dwz9KCBq07uWB0X6wUZwnqDFnApOD+9y/ccjqALCKsTm7lnhaPxkFv1d/V510w5Nexk3
+         O/y/tmlswHx+4zgrjUf70iPhVgvzpxjuARXhNMBKYrEiepv7R2KCeOpYmbgrZVH3b0Nm
+         ihTITPhwIPQPe0KYyVeLj5gkvFBEC4mWFDG5C00+yD20++aTnE5qQCtN87AqnSSro8zZ
+         PddLlA2QDo/QfxXHMsBeF4MH/Eh5rvrrEs7H5xDlilDbQs7C6BFaDsPj9FfUWnAvYrNY
+         F1CQ==
+X-Gm-Message-State: APjAAAVm/QPJGb+UaL+NJVtpz0lEYqoYmVN/38GtRkr7gHBQNfDJOW2a
+        i+5wlNp8GEcrQV3pM3/DLYSZvgsxuf2c10W2JQz/lg==
+X-Google-Smtp-Source: APXvYqy24rjXe/FVSgFiU9SxJ4vZK2hJu//H06XcbxMiz2ueKtSmAR0GsP61bsSotW7CRw5je/6qibK/HvRFMTwLvZ0=
+X-Received: by 2002:a9d:5e11:: with SMTP id d17mr1498113oti.135.1567671425605;
+ Thu, 05 Sep 2019 01:17:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190904180736.29009-1-xypron.glpk@gmx.de> <86r24vrwyh.wl-maz@kernel.org>
+In-Reply-To: <86r24vrwyh.wl-maz@kernel.org>
+From:   Peter Maydell <peter.maydell@linaro.org>
+Date:   Thu, 5 Sep 2019 09:16:54 +0100
+Message-ID: <CAFEAcA-mc6cLmRGdGNOBR0PC1f_VBjvTdAL6xYtKjApx3NoPgQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] KVM: inject data abort if instruction cannot be decoded
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        =?UTF-8?Q?Daniel_P_=2E_Berrang=C3=A9?= <berrange@redhat.com>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a basic GPU node and opp table for mt8183.
+On Thu, 5 Sep 2019 at 09:04, Marc Zyngier <maz@kernel.org> wrote:
+> How can you tell that the access would fault? You have no idea at that
+> stage (the kernel doesn't know about the MMIO ranges that userspace
+> handles). All you know is that you're faced with a memory access that
+> you cannot emulate in the kernel. Injecting a data abort at that stage
+> is not something that the architecture allows.
 
-The binding we use with out-of-tree Mali drivers includes more
-clocks, I assume this would be required eventually if we have an
-in-tree driver:
-clocks =
-        <&topckgen CLK_TOP_MFGPLL_CK>,
-        <&topckgen CLK_TOP_MUX_MFG>,
-        <&clk26m>,
-        <&mfgcfg CLK_MFG_BG3D>;
-clock-names =
-        "clk_main_parent",
-        "clk_mux",
-        "clk_sub_parent",
-        "subsys_mfg_cg";
+To be fair, locking up the whole CPU (which is effectively
+what the kvm_err/ENOSYS is going to do to the VM) isn't
+something the architecture allows either :-)
 
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> Of course, the best thing would be to actually fix the guest so that
+> it doesn't use non-emulatable MMIO accesses. In general, that the sign
+> of a bug in low-level accessors.
 
----
-Upstreaming what matches existing bindings from our Chromium OS tree:
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.19/arch/arm64/boot/dts/mediatek/mt8183.dtsi#1348
+This is true, but the problem is that barfing out to userspace
+makes it harder to debug the guest because it means that
+the VM is immediately destroyed, whereas AIUI if we
+inject some kind of exception then (assuming you're set up
+to do kernel-debug via gdbstub) you can actually examine
+the offending guest code with a debugger because at least
+your VM is still around to inspect...
 
-The evb part of this change depends on this patch to add PMIC dtsi:
-https://patchwork.kernel.org/patch/10928161/
-
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts |   7 ++
- arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 103 ++++++++++++++++++++
- 2 files changed, 110 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-index 1fb195c683c3d01..200d8e65a6368a1 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-@@ -7,6 +7,7 @@
- 
- /dts-v1/;
- #include "mt8183.dtsi"
-+#include "mt6358.dtsi"
- 
- / {
- 	model = "MediaTek MT8183 evaluation board";
-@@ -30,6 +31,12 @@
- 	status = "okay";
- };
- 
-+&gpu {
-+	supply-names = "mali", "mali_sram";
-+	mali-supply = <&mt6358_vgpu_reg>;
-+	mali_sram-supply = <&mt6358_vsram_gpu_reg>;
-+};
-+
- &i2c0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c_pins_0>;
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 97f84aa9fc6e1c1..8ea548a762ea252 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -579,6 +579,109 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		gpu: mali@13040000 {
-+			compatible = "mediatek,mt8183-mali", "arm,mali-bifrost";
-+			reg = <0 0x13040000 0 0x4000>;
-+			interrupts =
-+				<GIC_SPI 280 IRQ_TYPE_LEVEL_LOW>,
-+				<GIC_SPI 279 IRQ_TYPE_LEVEL_LOW>,
-+				<GIC_SPI 278 IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-names = "job", "mmu", "gpu";
-+
-+			clocks = <&topckgen CLK_TOP_MFGPLL_CK>;
-+			power-domains =
-+				<&scpsys MT8183_POWER_DOMAIN_MFG_CORE0>,
-+				<&scpsys MT8183_POWER_DOMAIN_MFG_CORE1>,
-+				<&scpsys MT8183_POWER_DOMAIN_MFG_2D>;
-+
-+			operating-points-v2 = <&gpu_opp_table>;
-+		};
-+
-+		gpu_opp_table: opp_table0 {
-+			compatible = "operating-points-v2";
-+			opp-shared;
-+
-+			opp-300000000 {
-+				opp-hz = /bits/ 64 <300000000>;
-+				opp-microvolt = <625000>, <850000>;
-+			};
-+
-+			opp-320000000 {
-+				opp-hz = /bits/ 64 <320000000>;
-+				opp-microvolt = <631250>, <850000>;
-+			};
-+
-+			opp-340000000 {
-+				opp-hz = /bits/ 64 <340000000>;
-+				opp-microvolt = <637500>, <850000>;
-+			};
-+
-+			opp-360000000 {
-+				opp-hz = /bits/ 64 <360000000>;
-+				opp-microvolt = <643750>, <850000>;
-+			};
-+
-+			opp-380000000 {
-+				opp-hz = /bits/ 64 <380000000>;
-+				opp-microvolt = <650000>, <850000>;
-+			};
-+
-+			opp-400000000 {
-+				opp-hz = /bits/ 64 <400000000>;
-+				opp-microvolt = <656250>, <850000>;
-+			};
-+
-+			opp-420000000 {
-+				opp-hz = /bits/ 64 <420000000>;
-+				opp-microvolt = <662500>, <850000>;
-+			};
-+
-+			opp-460000000 {
-+				opp-hz = /bits/ 64 <460000000>;
-+				opp-microvolt = <675000>, <850000>;
-+			};
-+
-+			opp-500000000 {
-+				opp-hz = /bits/ 64 <500000000>;
-+				opp-microvolt = <687500>, <850000>;
-+			};
-+
-+			opp-540000000 {
-+				opp-hz = /bits/ 64 <540000000>;
-+				opp-microvolt = <700000>, <850000>;
-+			};
-+
-+			opp-580000000 {
-+				opp-hz = /bits/ 64 <580000000>;
-+				opp-microvolt = <712500>, <850000>;
-+			};
-+
-+			opp-620000000 {
-+				opp-hz = /bits/ 64 <620000000>;
-+				opp-microvolt = <725000>, <850000>;
-+			};
-+
-+			opp-653000000 {
-+				opp-hz = /bits/ 64 <653000000>;
-+				opp-microvolt = <743750>, <850000>;
-+			};
-+
-+			opp-698000000 {
-+				opp-hz = /bits/ 64 <698000000>;
-+				opp-microvolt = <768750>, <868750>;
-+			};
-+
-+			opp-743000000 {
-+				opp-hz = /bits/ 64 <743000000>;
-+				opp-microvolt = <793750>, <893750>;
-+			};
-+
-+			opp-800000000 {
-+				opp-hz = /bits/ 64 <800000000>;
-+				opp-microvolt = <825000>, <925000>;
-+			};
-+		};
-+
- 		mmsys: syscon@14000000 {
- 			compatible = "mediatek,mt8183-mmsys", "syscon";
- 			reg = <0 0x14000000 0 0x1000>;
--- 
-2.23.0.187.g17f5b7556c-goog
-
+thanks
+-- PMM
