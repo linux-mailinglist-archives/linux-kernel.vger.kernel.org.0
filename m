@@ -2,140 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41BFDAA051
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51D54AA045
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:47:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388156AbfIEKqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:46:42 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10052 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727900AbfIEKql (ORCPT
+        id S2388106AbfIEKq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:46:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48654 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727900AbfIEKq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 06:46:41 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d70e7930000>; Thu, 05 Sep 2019 03:46:43 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 05 Sep 2019 03:46:40 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 05 Sep 2019 03:46:40 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 5 Sep
- 2019 10:46:39 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 5 Sep
- 2019 10:46:39 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 5 Sep 2019 10:46:39 +0000
-Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.38]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d70e78a0002>; Thu, 05 Sep 2019 03:46:38 -0700
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <andrew.murray@arm.com>
-CC:     <kishon@ti.com>, <gustavo.pimentel@synopsys.com>,
-        <digetx@gmail.com>, <mperttunen@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V4 6/6] arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
-Date:   Thu, 5 Sep 2019 16:15:53 +0530
-Message-ID: <20190905104553.2884-7-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190905104553.2884-1-vidyas@nvidia.com>
-References: <20190905104553.2884-1-vidyas@nvidia.com>
-X-NVConfidentiality: public
+        Thu, 5 Sep 2019 06:46:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gnHLwW18GHsqNY1glFxvL0YT/FOtfFV2qvtzl/muhyA=; b=kjXCf0+cZaU+Uq4bITC4armFQ
+        MW7ezSuVSJtE2ZoY7h58hQqHDrjLDLjuKfTk7DyOdKxRCUNPAXr0kE29b0n1cD3XU+2x6RdNnw/Xz
+        kZHQKf+mqmtlxM0Z0r7fDc3hTdEQ9kKnhphBO96TfYHgBYE8152nHFtF7PZ2pxyvsHxzn0FSUfx7Z
+        kxVXBKgZLlPpJuX3s/zdg7TfEWEmujqd2WM6oZaxSHO7uBmJwddV/siCASyURpVqOYoHcbe4B8dHw
+        gBCQ3ytjTSqx5VhyzCvBx3HV4C41STeowQf85ATCcX/O5GanboG5w04KHaGUPrxQzOliuy4coy9+w
+        tbWu+tDaQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5pHO-0002CN-Uk; Thu, 05 Sep 2019 10:46:19 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6113530604E;
+        Thu,  5 Sep 2019 12:45:39 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2FBD229BB14BE; Thu,  5 Sep 2019 12:46:16 +0200 (CEST)
+Date:   Thu, 5 Sep 2019 12:46:16 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net, parth@linux.ibm.com
+Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
+Message-ID: <20190905104616.GD2332@hirez.programming.kicks-ass.net>
+References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
+ <20190830174944.21741-2-subhra.mazumdar@oracle.com>
+ <20190905083127.GA2332@hirez.programming.kicks-ass.net>
+ <87r24v2i14.fsf@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1567680403; bh=nyKuLeTIA5lFQ8rcT43LcJOlCizLUussQKLCCIzlvfo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=hzV6ALI355TWeEPqn6T7xLHvqVSAxU74dLqT+pV/Kcea/ZsooTSOUtcDbaMQWCeOD
-         ydYD5sVkR1bGEFx3PMeqkxsd1WB1FL9ucjTXhBxPFT4skFzQW06Eu1O8ycqrgUpgwX
-         5eivCxxulCYGwBX6XPPP0wlUvLINQDthFtU0PxTDTXC/XvkwHQxoXKRN7F8nNLMgqc
-         wbhbEjrENY2R9Tp31eUkpScCltajay6/xHIhk6EFsEbJhAy0JA/oi0V4MDEY5uZUAm
-         JBmOvl/VsHpXWhygpSfSVU7//0m7Fk1kxgGnUHf0sOXJsSA6LwNMynoFVcmq6eb2Mu
-         Pmc25iyP0WJ5Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87r24v2i14.fsf@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add 3.3V and 12V supplies regulators information of x16 PCIe slot in
-p2972-0000 platform which is owned by C5 controller and also enable C5
-controller.
+On Thu, Sep 05, 2019 at 10:45:27AM +0100, Patrick Bellasi wrote:
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
----
-V4:
-* None
+> > From just reading the above, I would expect it to have the range
+> > [-20,19] just like normal nice. Apparently this is not so.
+> 
+> Regarding the range for the latency-nice values, I guess we have two
+> options:
+> 
+>   - [-20..19], which makes it similar to priorities
+>   downside: we quite likely end up with a kernel space representation
+>   which does not match the user-space one, e.g. look at
+>   task_struct::prio.
+> 
+>   - [0..1024], which makes it more similar to a "percentage"
+> 
+> Being latency-nice a new concept, we are not constrained by POSIX and
+> IMHO the [0..1024] scale is a better fit.
+> 
+> That will translate into:
+> 
+>   latency-nice=0 : default (current mainline) behaviour, all "biasing"
+>   policies are disabled and we wakeup up as fast as possible
+> 
+>   latency-nice=1024 : maximum niceness, where for example we can imaging
+>   to turn switch a CFS task to be SCHED_IDLE?
 
-V3:
-* None
+There's a few things wrong there; I really feel that if we call it nice,
+it should be like nice. Otherwise we should call it latency-bias and not
+have the association with nice to confuse people.
 
-V2:
-* None
+Secondly; the default should be in the middle of the range. Naturally
+this would be a signed range like nice [-(x+1),x] for some x. but if you
+want [0,1024], then the default really should be 512, but personally I
+like 0 better as a default, in which case we need negative numbers.
 
- .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 24 +++++++++++++++++++
- .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  4 +++-
- 2 files changed, 27 insertions(+), 1 deletion(-)
+This is important because we want to be able to bias towards less
+importance to (tail) latency as well as more importantance to (tail)
+latency.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-index 62e07e1197cc..4c38426a6969 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -289,5 +289,29 @@
- 			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 3) GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
-+
-+		vdd_3v3_pcie: regulator@2 {
-+			compatible = "regulator-fixed";
-+			reg = <2>;
-+
-+			regulator-name = "PEX_3V3";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			gpio = <&gpio TEGRA194_MAIN_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
-+			regulator-boot-on;
-+			enable-active-high;
-+		};
-+
-+		vdd_12v_pcie: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+
-+			regulator-name = "VDD_12V";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 1) GPIO_ACTIVE_LOW>;
-+			regulator-boot-on;
-+			enable-active-low;
-+		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 23597d53c9c9..d47cd8c4dd24 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -93,9 +93,11 @@
- 	};
- 
- 	pcie@141a0000 {
--		status = "disabled";
-+		status = "okay";
- 
- 		vddio-pex-ctl-supply = <&vdd_1v8ao>;
-+		vpcie3v3-supply = <&vdd_3v3_pcie>;
-+		vpcie12v-supply = <&vdd_12v_pcie>;
- 
- 		phys = <&p2u_nvhs_0>, <&p2u_nvhs_1>, <&p2u_nvhs_2>,
- 		       <&p2u_nvhs_3>, <&p2u_nvhs_4>, <&p2u_nvhs_5>,
--- 
-2.17.1
-
+Specifically, Oracle wants to sacrifice (some) latency for throughput.
+Facebook OTOH seems to want to sacrifice (some) throughput for latency.
