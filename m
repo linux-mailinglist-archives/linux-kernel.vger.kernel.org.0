@@ -2,94 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E45AA283
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8952EAA285
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389120AbfIEMD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 08:03:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35510 "EHLO mx1.redhat.com"
+        id S2389134AbfIEMDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 08:03:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42408 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389092AbfIEMD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 08:03:26 -0400
+        id S2389099AbfIEMD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 08:03:27 -0400
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 84445335D9;
-        Thu,  5 Sep 2019 12:03:26 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 59D97307D96F;
+        Thu,  5 Sep 2019 12:03:27 +0000 (UTC)
 Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CBFCF1001947;
-        Thu,  5 Sep 2019 12:03:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A44A2100194E;
+        Thu,  5 Sep 2019 12:03:26 +0000 (UTC)
 From:   Prarit Bhargava <prarit@redhat.com>
 To:     platform-driver-x86@vger.kernel.org
 Cc:     andriy.shevchenko@intel.com, Prarit Bhargava <prarit@redhat.com>,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
         David Arcari <darcari@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/9] tools/power/x86/intel-speed-select: Output success/failed for command output
-Date:   Thu,  5 Sep 2019 08:03:10 -0400
-Message-Id: <20190905120311.15286-9-prarit@redhat.com>
+Subject: [PATCH v2 9/9] tools/power/x86/intel-speed-select: Fix memory leak
+Date:   Thu,  5 Sep 2019 08:03:11 -0400
+Message-Id: <20190905120311.15286-10-prarit@redhat.com>
 In-Reply-To: <20190905120311.15286-1-prarit@redhat.com>
 References: <20190905120311.15286-1-prarit@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 05 Sep 2019 12:03:26 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 05 Sep 2019 12:03:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Command output has confusing data, returning "0" on success.  For example
+cpumasks are allocated by calling the alloc_cpu_mask() function and are
+never free'd.  They should be free'd after the commands have run.
 
-|# ./intel-speed-select -c 14 turbo-freq enable
-Intel(R) Speed Select Technology
-Executing on CPU model:106[0x6a]
- package-1
-   die-0
-     cpu-14
-       turbo-freq
-         enable:0
-
-To avoid confusion change the command output to 'success' or 'failed'.
-
-v2: Remove help output line.
+Fix the memory leaks by calling free_cpu_set().
 
 Signed-off-by: Prarit Bhargava <prarit@redhat.com>
 Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 Cc: David Arcari <darcari@redhat.com>
 Cc: linux-kernel@vger.kernel.org
 ---
- tools/power/x86/intel-speed-select/isst-config.c  | 1 -
- tools/power/x86/intel-speed-select/isst-display.c | 5 ++++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ tools/power/x86/intel-speed-select/isst-config.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index f81a28c6b586..78f0cebda1da 100644
+index 78f0cebda1da..59753b3917bb 100644
 --- a/tools/power/x86/intel-speed-select/isst-config.c
 +++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -1514,7 +1514,6 @@ static void usage(void)
- 	printf("\tResult display uses a common format for each command:\n");
- 	printf("\tResults are formatted in text/JSON with\n");
- 	printf("\t\tPackage, Die, CPU, and command specific results.\n");
--	printf("\t\t\tFor Set commands, status is 0 for success and rest for failures\n");
- 	exit(1);
+@@ -603,6 +603,10 @@ static int isst_fill_platform_info(void)
+ 
+ 	close(fd);
+ 
++	if (isst_platform_info.api_version > supported_api_ver) {
++		printf("Incompatible API versions; Upgrade of tool is required\n");
++		return -1;
++	}
+ 	return 0;
  }
  
-diff --git a/tools/power/x86/intel-speed-select/isst-display.c b/tools/power/x86/intel-speed-select/isst-display.c
-index 890a01bfee4b..8500cf2997a6 100644
---- a/tools/power/x86/intel-speed-select/isst-display.c
-+++ b/tools/power/x86/intel-speed-select/isst-display.c
-@@ -519,7 +519,10 @@ void isst_display_result(int cpu, FILE *outf, char *feature, char *cmd,
- 	snprintf(header, sizeof(header), "%s", feature);
- 	format_and_print(outf, 4, header, NULL);
- 	snprintf(header, sizeof(header), "%s", cmd);
--	snprintf(value, sizeof(value), "%d", result);
-+	if (!result)
-+		snprintf(value, sizeof(value), "success");
-+	else
-+		snprintf(value, sizeof(value), "failed(error %d)", result);
- 	format_and_print(outf, 5, header, value);
+@@ -1528,6 +1532,7 @@ static void cmdline(int argc, char **argv)
+ {
+ 	int opt;
+ 	int option_index = 0;
++	int ret;
  
- 	format_and_print(outf, 1, NULL, NULL);
+ 	static struct option long_options[] = {
+ 		{ "cpu", required_argument, 0, 'c' },
+@@ -1589,13 +1594,14 @@ static void cmdline(int argc, char **argv)
+ 	set_max_cpu_num();
+ 	set_cpu_present_cpu_mask();
+ 	set_cpu_target_cpu_mask();
+-	isst_fill_platform_info();
+-	if (isst_platform_info.api_version > supported_api_ver) {
+-		printf("Incompatible API versions; Upgrade of tool is required\n");
+-		exit(0);
+-	}
++	ret = isst_fill_platform_info();
++	if (ret)
++		goto out;
+ 
+ 	process_command(argc, argv);
++out:
++	free_cpu_set(present_cpumask);
++	free_cpu_set(target_cpumask);
+ }
+ 
+ int main(int argc, char **argv)
 -- 
 2.21.0
 
