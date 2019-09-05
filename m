@@ -2,72 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C068AA2E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54FEBAA2FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389304AbfIEMVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 08:21:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40292 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387522AbfIEMVN (ORCPT
+        id S2389354AbfIEMWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 08:22:22 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:29330 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726498AbfIEMWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 08:21:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XxjNlzSh4Idu5yXZCZUqJQ0HxpndVHuWT8vcHQ66Uxw=; b=ghGPFq1Yqlxm6/HHyDi2mP656
-        mn4vc5Iiky/79SM9AWLU0wM5+3bbLallTOVW6khFCmIImfN4dgYPgfYBxeTky3hnM1P8R80bskdB9
-        KR7/KpAboHiP/zCA62zBKopVtUZsOS24u4P7Ytx/W3d9kGCFyxKTKdLwWaeYBf+WH7NgGu0ZEGPrW
-        eGLGB5MdJEcT2WXZIROxvaxY7JD8cFliORszSaG9hQhbpLg+ti/OOyOozPkttYXSZext6bN0FGbU3
-        9ZxnzceoMGa9KBG7BEQmTkXV9Y6dWsKK0wafqq32iUPZ786ALJy5p5Rh2jbcuPwtK7qf7oYS0bKWZ
-        Xrah31sVg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5qlC-0007wK-Gv; Thu, 05 Sep 2019 12:21:10 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C1300303121;
-        Thu,  5 Sep 2019 14:20:31 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BB7E429CD33B9; Thu,  5 Sep 2019 14:21:08 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 14:21:08 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch 5/6] posix-cpu-timers: Sanitize thread clock permissions
-Message-ID: <20190905122108.GO2349@hirez.programming.kicks-ass.net>
-References: <20190905120339.561100423@linutronix.de>
- <20190905120540.068959005@linutronix.de>
+        Thu, 5 Sep 2019 08:22:21 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x85CM7CR009310;
+        Thu, 5 Sep 2019 14:22:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=CFc7V5XirXSeitPE35aKToc2Pe4j/3PUS9ILTMJMjb8=;
+ b=J5xdMWbzdXsLGs+8QgJxl4949aVCBtI0VaFF9K1UybUOaNQUqcjnHceD4Y5PwT+s3pTF
+ p9lvGaHny750VUu5JLo4hYYgoVsxw/aevHGYqj0dDJ6Y8RBIUyRQOh1kfc9GlrMkTTs5
+ kv+6GgPh4S4K0xSgeXiShAKbo3f/QRvWObOfOsA/NMHPIuqdVd4p5CKdXzvtXhVPYkQ6
+ XiL4uWFNpRVKD4s4qwI1OK0Fa3dh4pT2zk/WxlsYhy5eGSbmjPEvAjbNJUiT7jkuR17t
+ Li4gp9O86TmEOQMVSNVbc2t2Ovou30VssSQ/WnP9AK5c4LBL9sSjgFcQ7S7jzn6Yubjl 4w== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2uqe1a09eg-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 05 Sep 2019 14:22:10 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 34E3654;
+        Thu,  5 Sep 2019 12:21:51 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D28ED2CBDA8;
+        Thu,  5 Sep 2019 14:21:49 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 5 Sep 2019
+ 14:21:49 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 5 Sep 2019
+ 14:21:49 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V6 0/3] mmc: mmci: add busy detect for stm32 sdmmc variant
+Date:   Thu, 5 Sep 2019 14:21:09 +0200
+Message-ID: <20190905122112.29672-1-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190905120540.068959005@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-05_04:2019-09-04,2019-09-05 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 02:03:44PM +0200, Thomas Gleixner wrote:
-> The thread clock permissions are restricted to tasks of the same thread
-> group, but that also prevents a ptracer from reading them. This is
-> inconsistent vs. the process restrictions and unnecessary strict.
-> 
-> Relax it to ptrace permissions in the same way as process permissions are
-> handled.
+From: Ludovic Barre <ludovic.barre@st.com>
 
-More of a meta comment on the added permission checking; so where
-clock_getcpuclockid() is allowed to return -EPERM, it doesn't because
-that's in glibc and it has no clue.
+This patch series adds busy detect for stm32 sdmmc variant.
+Some adaptations are required:
+-On sdmmc the data timer is started on data transfert
+and busy state, so we must add hardware busy timeout support.
+-Add busy_complete callback at mmci_host_ops to allow to define
+a specific busy completion by variant.
+-Add sdmmc busy_complete callback.
 
-And these patches implement the ptrace checks and result in -EINVAL for
-timer_create() and clock_gettime(), even though it should arguably be
--EPERM, but we're not allowed to return that here.
+V6:
+-mmci_start_command: set datatimer only on rsp_busy flag
+(remove host->mrq->data).
+-move max_busy_timeout in set_ios callback.
+-typo fix: err_msk, clks on one lines.
+
+V5:
+-Replaces !cmd->data to !host->mrq->data to avoid overwrite
+ of datatimer register by the first command (cmd23, without data) of
+ SBC request.
+
+V4:
+-Re-work with busy_complete callback
+-In series, move "mmc: mmci: add hardware busy timeout feature" in
+first to simplify busy_complete prototype with err_msk parameter.
+
+V3:
+-rebase on latest mmc next
+-replace re-read by status parameter. 
+
+V2:
+-mmci_cmd_irq cleanup in separate patch.
+-simplify the busy_detect_flag exclude
+-replace sdmmc specific comment in
+"mmc: mmci: avoid fake busy polling in mmci_irq"
+to focus on common behavior
+
+Ludovic Barre (3):
+  mmc: mmci: add hardware busy timeout feature
+  mmc: mmci: add busy_complete callback
+  mmc: mmci: sdmmc: add busy_complete callback
+
+ drivers/mmc/host/mmci.c             | 183 +++++++++++++++++-----------
+ drivers/mmc/host/mmci.h             |   7 +-
+ drivers/mmc/host/mmci_stm32_sdmmc.c |  38 ++++++
+ 3 files changed, 156 insertions(+), 72 deletions(-)
+
+-- 
+2.17.1
+
