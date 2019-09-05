@@ -2,221 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F4224AAAA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F012AAAB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:19:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391218AbfIESNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 14:13:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45055 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbfIESNE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:13:04 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 30so3831051wrk.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 11:13:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eQx8LFwZEFLFHsOp6JVQ136wPiDCvxTvsHmYT44VyoI=;
-        b=eVM7TV5SOQ6FWjx9D+/wdXDdUZvKjsK3uwzSWmGCt3y5Xl6OGfFQk+D7+mqdwdMoQS
-         lxypCMfFn+mxeQcySxr9XZbygsD9Vc9WQuhN6U1CTlHCJzA1ygCiCGOHhhcjAIbjcKGF
-         AedqpmHiO+FVSlkuSiYDMxruocmwTLaw12KGRsEViDxdw3gTccgUAxMQkR93DwRrzp/1
-         hhFAupdfJxpjlOBdODCLFyFdMF1/Pi4V3RMxehfuAHgtaDq+E8kwGGmyP5IpuzB4vVut
-         r9FeuBdmERwmVt1aOsBrqcPqdejkhT2uIiN0TcyFRHDXHP4G2XjnABm9s5WuQIBZYTtv
-         zGmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eQx8LFwZEFLFHsOp6JVQ136wPiDCvxTvsHmYT44VyoI=;
-        b=GG3oLkWQGlXhvZrCKlicohIT4DeuId4Kv0YiKCRQ8g5p14puB1Kcn7SVMJyI41hrrU
-         35xn6sVuHfUm3LEqglfAHxUklcJ1psTviIX79tkKd7NOaupdfBYHSYEtBRwrMgzP7W2+
-         un6wBsedFpBkHkAw1bMooBPCNUxyfAaZ+PF1/Pq9v2fG0AsAT+dbEmEiDWoB4qiSqh+9
-         OBEW5/x0MMWgqxiBpEVOGoeRDL3hAmXaqKeXB4MISGhaLqxZGkgrtOtbji4zTpB/Fjpt
-         OujXO2N7mfTwjFH8c8GThg0fDRSm/CHkRS9u+bR0ClrmEK3O3VvMFeY23yy6Ps1irRA4
-         EcUg==
-X-Gm-Message-State: APjAAAUtnnLJDKj7JxrVPV3y6uVfSqDJvPsGmpPvnq0JIrlQebr8v27p
-        +RYC7u6j3/BdPB28i6B02xB7pQ==
-X-Google-Smtp-Source: APXvYqzpr0bFIpXcmfHGs4sIrFHm6dNvdMik+ugY86ATlE+okNXm7Ke46M/YG3EhgL/hDPoRwHyY7A==
-X-Received: by 2002:a5d:5402:: with SMTP id g2mr4031639wrv.291.1567707181379;
-        Thu, 05 Sep 2019 11:13:01 -0700 (PDT)
-Received: from localhost.localdomain (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
-        by smtp.gmail.com with ESMTPSA id w8sm8783173wmc.1.2019.09.05.11.13.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Sep 2019 11:13:00 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, agross@kernel.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        bjorn.andersson@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] watchdog: qcom: support pre-timeout when the bark irq is available
-Date:   Thu,  5 Sep 2019 20:12:57 +0200
-Message-Id: <20190905181257.31949-1-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.23.0
+        id S2403861AbfIESTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 14:19:35 -0400
+Received: from mail-eopbgr730080.outbound.protection.outlook.com ([40.107.73.80]:14541
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388864AbfIESTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 14:19:34 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ixon2Oi2kCIeSgJnhY+E9SMWL661H4vWWWT4xsmUnhoBublDDWxHQK+H51IIOu1IZ77EKrA0TGQGF8XJUHlxWmm1DjWXFJxoeL6QL4T676Q+Tcle8kP6ZSQH+M2d0vjvx5/5i7ZrKPPfHVKP6tywnN/aa2LPH8sbRv7XAilxOKoa2oUzWNLCSaBzMLLSHgCL+6CiyVmU0lFPE3ysI5rGAU1DBa4XumeV2U8GMcFDXG0jSmIct/+nsSITQCSyCQW7yBV9h5wAir/L9N746zhIGszEuvWqe7vbDisu/L0CyzQ6I1sZShUklzbqQ3c/cX0WAZH+ls8tIH1bjEOxhKLWow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6FGHFWFwG/whq08uAwbvkCRHDkovXpoCkdsZh1yRnBQ=;
+ b=lSRtOJML4CKvwxYZynornN2iOxKH79N4bY/oqhhrIef1tZSuOnxLL6MD6l7cGv7O4zkHWBn8zjxOs2u4pgodNzoyo4dh9grVwuyYIkiI8AA8cVQw/kfq6s8s0vWfGJmoR69bhxh2ZPqsWt59vWCvsQapMh1DmsCtMBHhpR+7NxMbbeLC3SHZZq/wPm54ohe/t7kk73uuha4Asf6Qgey3qU+SSnMX7uDM8D/JZ3VjdZZk7/0DMbyXTS7HnHATZKqis11X1K6NlhJtOlEeo32klV5Tw4c8sRZCUenXyZJQjQU009e769r1hf479+Jh7qgevqBZIrouyuPFxi0Wm1Cu0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6FGHFWFwG/whq08uAwbvkCRHDkovXpoCkdsZh1yRnBQ=;
+ b=cTFYuPMh51HhkwPXkVFA2aj0sSjykNTvPqLDRfimDIQYn8EjXo05XjpbvsmIXUxA4bnpq6RlvcO5wQUY1+b8WFmu/13xP9I0bicoUKsQPaYyUQRKdYzE0Xda1qVF8MGeZoBKVQ09oVUtDkGtfPVuhDXetN/1wCmnAdk4bsP8W4E=
+Received: from BY5PR19MB3176.namprd19.prod.outlook.com (10.255.160.21) by
+ BY5PR19MB3858.namprd19.prod.outlook.com (10.186.133.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2241.13; Thu, 5 Sep 2019 18:19:29 +0000
+Received: from BY5PR19MB3176.namprd19.prod.outlook.com
+ ([fe80::844f:102f:5181:c074]) by BY5PR19MB3176.namprd19.prod.outlook.com
+ ([fe80::844f:102f:5181:c074%3]) with mapi id 15.20.2241.014; Thu, 5 Sep 2019
+ 18:19:29 +0000
+From:   Matt Lupfer <mlupfer@ddn.com>
+To:     "mst@redhat.com" <mst@redhat.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "stefanha@redhat.com" <stefanha@redhat.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+CC:     "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matt Lupfer <mlupfer@ddn.com>
+Subject: [PATCH v2] scsi: virtio_scsi: unplug LUNs when events missed
+Thread-Topic: [PATCH v2] scsi: virtio_scsi: unplug LUNs when events missed
+Thread-Index: AQHVZBZ0SBt+68s4cE6LCFp/gX3vQA==
+Date:   Thu, 5 Sep 2019 18:19:28 +0000
+Message-ID: <20190905181903.29756-1-mlupfer@ddn.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BN6PR13CA0036.namprd13.prod.outlook.com
+ (2603:10b6:404:13e::22) To BY5PR19MB3176.namprd19.prod.outlook.com
+ (2603:10b6:a03:184::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mlupfer@ddn.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.23.0
+x-originating-ip: [107.128.241.61]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6ceb08d0-c8c8-475c-e387-08d7322d9725
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BY5PR19MB3858;
+x-ms-traffictypediagnostic: BY5PR19MB3858:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BY5PR19MB385867D2E7CFCE9C320C7327AEBB0@BY5PR19MB3858.namprd19.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 015114592F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39850400004)(366004)(136003)(396003)(346002)(199004)(189003)(26005)(6512007)(186003)(7736002)(53936002)(3846002)(6116002)(316002)(36756003)(54906003)(110136005)(2201001)(478600001)(6486002)(25786009)(5660300002)(256004)(5024004)(2906002)(2501003)(6506007)(386003)(66556008)(66476007)(66446008)(66946007)(4326008)(64756008)(86362001)(1076003)(305945005)(6436002)(14454004)(102836004)(66066001)(71200400001)(486006)(71190400001)(476003)(81166006)(81156014)(8676002)(99286004)(52116002)(8936002)(50226002)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:BY5PR19MB3858;H:BY5PR19MB3176.namprd19.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: ddn.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: itk4S/Yj9AA8oVjql+PPu1GaFYEOKJYMeeOEBOjaqOeNfTWzRyYDn9OsAZKlZ9KViQW9g7CjQ6hvWT0JKqtnb5PSFs9BSJPYcbPYo5f2S8p2uEAzrS60rbCvUSQTRvAIK64p7367xDr4MIHFIbgsEN9GIja0zvyWrC2eqoTEBHEmeNrbqOtprM5uip18QHNhVyTn1+c3Gz+XCy86qYFFPxT/Rb8Vi1MSa51CdM5JZzGBvfSU6DncyRPgZuDmFvVz1cq6daBxkZAdXFzf9DcdbIBAVMvykKlaSf5F9qUKpZDXXb/DFVcHr9NZdoM6fa9sotLdKuL4wvDDpD8Y94BJ1O/X77WWpxnY5tWVNovIQziPw6H/RqbNXk2mJbaeJct3Zq3BN+jWW7bSAxprHRE5ySwBtSQl5T5q7L4fdF884L0=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ceb08d0-c8c8-475c-e387-08d7322d9725
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2019 18:19:28.9223
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ExUThHPH46dwCIMgb01MnNnJP+4IJTwg1VwMjALmAzXKewGga48GFFmzlJDi/LKi
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR19MB3858
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the bark interrupt as the pre-timeout notifier whenever this
-interrupt is available.
+The event handler calls scsi_scan_host() when events are missed, which
+will hotplug new LUNs.  However, this function won't remove any
+unplugged LUNs.  The result is that hotunplug doesn't work properly when
+the number of unplugged LUNs exceeds the event queue size (currently 8).
 
-By default, the pretimeout notification shall occur one second earlier
-than the timeout.
+Scan existing LUNs when events are missed to check if they are still
+present.  If not, remove them.
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Signed-off-by: Matt Lupfer <mlupfer@ddn.com>
 ---
- drivers/watchdog/qcom-wdt.c | 63 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 58 insertions(+), 5 deletions(-)
+ drivers/scsi/virtio_scsi.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-index 7be7f87be28f..2dd36914aa82 100644
---- a/drivers/watchdog/qcom-wdt.c
-+++ b/drivers/watchdog/qcom-wdt.c
-@@ -10,6 +10,8 @@
- #include <linux/platform_device.h>
- #include <linux/watchdog.h>
- #include <linux/of_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/watchdog.h>
- 
- enum wdt_reg {
- 	WDT_RST,
-@@ -41,6 +43,7 @@ struct qcom_wdt {
- 	unsigned long		rate;
- 	void __iomem		*base;
- 	const u32		*layout;
-+	const struct device	*dev;
- };
- 
- static void __iomem *wdt_addr(struct qcom_wdt *wdt, enum wdt_reg reg)
-@@ -54,15 +57,37 @@ struct qcom_wdt *to_qcom_wdt(struct watchdog_device *wdd)
- 	return container_of(wdd, struct qcom_wdt, wdd);
+diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
+index 297e1076e571..13a82b94b27b 100644
+--- a/drivers/scsi/virtio_scsi.c
++++ b/drivers/scsi/virtio_scsi.c
+@@ -30,6 +30,8 @@
+ #include <linux/seqlock.h>
+ #include <linux/blk-mq-virtio.h>
+=20
++#include "sd.h"
++
+ #define VIRTIO_SCSI_MEMPOOL_SZ 64
+ #define VIRTIO_SCSI_EVENT_LEN 8
+ #define VIRTIO_SCSI_VQ_BASE 2
+@@ -324,6 +326,36 @@ static void virtscsi_handle_param_change(struct virtio=
+_scsi *vscsi,
+ 	scsi_device_put(sdev);
  }
- 
-+static inline int qcom_wdt_enable(struct qcom_wdt *wdt)
+=20
++static void virtscsi_rescan_hotunplug(struct virtio_scsi *vscsi)
 +{
-+	/* enable the bark interrupt */
-+	if (wdt->wdd.info->options & WDIOF_PRETIMEOUT)
-+		return 3;
++	struct scsi_device *sdev;
++	struct Scsi_Host *shost =3D virtio_scsi_host(vscsi->vdev);
++	unsigned char scsi_cmd[MAX_COMMAND_SIZE];
++	int result, inquiry_len, inq_result_len =3D 256;
++	char *inq_result =3D kmalloc(inq_result_len, GFP_KERNEL);
 +
-+	return 1;
-+}
++	shost_for_each_device(sdev, shost) {
++		inquiry_len =3D sdev->inquiry_len ? sdev->inquiry_len : 36;
 +
-+static irqreturn_t qcom_wdt_irq(int irq, void *cookie)
-+{
-+	struct watchdog_device *wdd = (struct watchdog_device *) cookie;
++		memset(scsi_cmd, 0, sizeof(scsi_cmd));
++		scsi_cmd[0] =3D INQUIRY;
++		scsi_cmd[4] =3D (unsigned char) inquiry_len;
 +
-+	watchdog_notify_pretimeout(wdd);
++		memset(inq_result, 0, inq_result_len);
 +
-+	return IRQ_HANDLED;
-+}
++		result =3D scsi_execute_req(sdev, scsi_cmd, DMA_FROM_DEVICE,
++					  inq_result, inquiry_len, NULL,
++					  SD_TIMEOUT, SD_MAX_RETRIES, NULL);
 +
- static int qcom_wdt_start(struct watchdog_device *wdd)
- {
- 	struct qcom_wdt *wdt = to_qcom_wdt(wdd);
-+	unsigned int bark = wdd->pretimeout;
-+
-+	if (!(wdd->info->options & WDIOF_PRETIMEOUT))
-+		bark = wdd->timeout;
- 
- 	writel(0, wdt_addr(wdt, WDT_EN));
- 	writel(1, wdt_addr(wdt, WDT_RST));
--	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
-+	writel(bark * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
- 	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BITE_TIME));
--	writel(1, wdt_addr(wdt, WDT_EN));
-+	writel(qcom_wdt_enable(wdt), wdt_addr(wdt, WDT_EN));
- 	return 0;
- }
- 
-@@ -86,9 +111,18 @@ static int qcom_wdt_set_timeout(struct watchdog_device *wdd,
- 				unsigned int timeout)
- {
- 	wdd->timeout = timeout;
-+
- 	return qcom_wdt_start(wdd);
- }
- 
-+static int qcom_wdt_set_pretimeout(struct watchdog_device *wdd,
-+				   unsigned int timeout)
-+{
-+	wdd->pretimeout = timeout;
-+
-+	return 0;
-+}
-+
- static int qcom_wdt_restart(struct watchdog_device *wdd, unsigned long action,
- 			    void *data)
- {
-@@ -105,7 +139,7 @@ static int qcom_wdt_restart(struct watchdog_device *wdd, unsigned long action,
- 	writel(1, wdt_addr(wdt, WDT_RST));
- 	writel(timeout, wdt_addr(wdt, WDT_BARK_TIME));
- 	writel(timeout, wdt_addr(wdt, WDT_BITE_TIME));
--	writel(1, wdt_addr(wdt, WDT_EN));
-+	writel(qcom_wdt_enable(wdt), wdt_addr(wdt, WDT_EN));
- 
- 	/*
- 	 * Actually make sure the above sequence hits hardware before sleeping.
-@@ -121,11 +155,12 @@ static const struct watchdog_ops qcom_wdt_ops = {
- 	.stop		= qcom_wdt_stop,
- 	.ping		= qcom_wdt_ping,
- 	.set_timeout	= qcom_wdt_set_timeout,
-+	.set_pretimeout	= qcom_wdt_set_pretimeout,
- 	.restart        = qcom_wdt_restart,
- 	.owner		= THIS_MODULE,
- };
- 
--static const struct watchdog_info qcom_wdt_info = {
-+static struct watchdog_info qcom_wdt_info = {
- 	.options	= WDIOF_KEEPALIVEPING
- 			| WDIOF_MAGICCLOSE
- 			| WDIOF_SETTIMEOUT
-@@ -146,7 +181,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	const u32 *regs;
- 	u32 percpu_offset;
--	int ret;
-+	int irq, ret;
- 
- 	regs = of_device_get_match_data(dev);
- 	if (!regs) {
-@@ -210,6 +245,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	wdt->wdd.max_timeout = 0x10000000U / wdt->rate;
- 	wdt->wdd.parent = dev;
- 	wdt->layout = regs;
-+	wdt->dev = &pdev->dev;
- 
- 	if (readl(wdt_addr(wdt, WDT_STS)) & 1)
- 		wdt->wdd.bootstatus = WDIOF_CARDRESET;
-@@ -222,6 +258,23 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	wdt->wdd.timeout = min(wdt->wdd.max_timeout, 30U);
- 	watchdog_init_timeout(&wdt->wdd, 0, dev);
- 
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq >= 0) {
-+		/* enable the pre-timeout notification */
-+		qcom_wdt_info.options |= WDIOF_PRETIMEOUT;
-+
-+		ret = devm_request_irq(&pdev->dev, irq, qcom_wdt_irq,
-+				       IRQF_TRIGGER_RISING, "wdog_bark",
-+				       &wdt->wdd);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to request irq\n");
-+			return ret;
++		if (result =3D=3D 0 && inq_result[0] >> 5) {
++			/* PQ indicates the LUN is not attached */
++			scsi_remove_device(sdev);
 +		}
 +	}
 +
-+	if (qcom_wdt_info.options & WDIOF_PRETIMEOUT)
-+		wdt->wdd.pretimeout = wdt->wdd.timeout - 1;
++	kfree(inq_result);
++}
 +
- 	ret = devm_watchdog_register_device(dev, &wdt->wdd);
- 	if (ret)
- 		return ret;
--- 
+ static void virtscsi_handle_event(struct work_struct *work)
+ {
+ 	struct virtio_scsi_event_node *event_node =3D
+@@ -335,6 +367,7 @@ static void virtscsi_handle_event(struct work_struct *w=
+ork)
+ 	    cpu_to_virtio32(vscsi->vdev, VIRTIO_SCSI_T_EVENTS_MISSED)) {
+ 		event->event &=3D ~cpu_to_virtio32(vscsi->vdev,
+ 						   VIRTIO_SCSI_T_EVENTS_MISSED);
++		virtscsi_rescan_hotunplug(vscsi);
+ 		scsi_scan_host(virtio_scsi_host(vscsi->vdev));
+ 	}
+=20
+--=20
 2.23.0
 
