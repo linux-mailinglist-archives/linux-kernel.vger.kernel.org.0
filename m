@@ -2,137 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA77AAD6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:54:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95596AAD6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:53:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388096AbfIEUyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 16:54:55 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42738 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbfIEUyy (ORCPT
+        id S1733104AbfIEUxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 16:53:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40259 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbfIEUxq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 16:54:54 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x85KsKcK178893;
-        Thu, 5 Sep 2019 20:54:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=LobIa40dQfX3Mwk3VFS2lCym9vgLwHXTJbr7YdB/OiA=;
- b=dYXtS8J5HRY0+pbcFqRdELFbQADyrvTgmyjjhgpNUDBxJkELpMVJKW/v/6I9NqgO1y3I
- gdXlqffIQzIsV2OLfzm6zJJElL2AbcAvOxhb/TubR/3Osmy90aqIhAUlCo1momVjqFl8
- vt5eM6ct4a8jGgKg9V8FIoJ3NfZcWLU1ermXvHlERSnZRb45cV20aDqt2HGgFcp8OcWH
- Fv+DnnZE/Uo8rQLvHNQCEjVszwKZzbqQNBvn6m9bTAJTwAZGE4zBMT7Ro15Nq+ieCnUP
- T7pAnBSo8qnixoQvDaV1vNzxc8YUcEo1DN55jaWKDRgNnRZrhhuZVOMKKwv8ehjX7EIN zg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2uu9h3g30u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Sep 2019 20:54:39 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x85KsP1M065217;
-        Thu, 5 Sep 2019 20:54:38 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2utvr46tna-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Sep 2019 20:54:38 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x85KrWxF014027;
-        Thu, 5 Sep 2019 20:53:32 GMT
-Received: from [192.168.1.222] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 05 Sep 2019 13:53:31 -0700
-Subject: Re: [rfc 3/4] mm, page_alloc: avoid expensive reclaim when compaction
- may not succeed
-To:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <alpine.DEB.2.21.1909041252230.94813@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1909041253390.94813@chino.kir.corp.google.com>
- <20190905090009.GF3838@dhcp22.suse.cz>
- <fab91766-da33-d62f-59fb-c226e4790a91@suse.cz>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <3468b605-a3a9-6978-9699-57c52a90bd7e@oracle.com>
-Date:   Thu, 5 Sep 2019 13:53:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 5 Sep 2019 16:53:46 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w10so2125517pgj.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 13:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zC0/57npOmt+dOpZmEb/ZyaW4qHXbxDhalCy6UVFU7Q=;
+        b=FGMHra+lvE2SSwC9Z/lkwAAeP8xs2E+lrrvEzwdjnfzAs4mh4ikvYacBY8OeByIBxe
+         ym/15OYgVjRtw1BS0/EC1gmsg6Gf48I7OdX7eRuJvqOFApmBOrAnSd5Kq+n6zRGtzdx2
+         6+h6s6DcXYIhFlvo1olIDgjzsHoGmKH9Srrgk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zC0/57npOmt+dOpZmEb/ZyaW4qHXbxDhalCy6UVFU7Q=;
+        b=DsBuJ1nnVdlsnBB91yzf0Hv4X1qJY1xKaOYrj53tq5HBJ/a9TIt6cKmEcD31VdweTi
+         rSTJ7sL8AgTqIHj05ZfqFNwJms/uncV+yFw7Jtu+kiKXQK7j4ufYnyt7I05E5zrKVSAs
+         PtmUckE+o0c5hSWumTsU9MyJ1N7E5bv6sGyWXn85M+4dx/y8dbThvjqXmR8qoeet/SRl
+         fpv/0Bpbr1C6VTdSgY1rauZT4DNtmSnpuCC7Fwrr0O0Y+sfUHU2N6Da9rIe/C1igjxrJ
+         i4iysJb5aSzmwOWNp4KYSUcZb3zxrpXIagxnoVKU6Vg0jZn1SROan8HAGwJvbLQNUP0m
+         WhnQ==
+X-Gm-Message-State: APjAAAVmmVY14IUA6Vb+EDiuLuqIh1pbNBHUcEXfNwq3XnrOuGUUOUyx
+        mtn/4dFWdz0SsPk4Q/i6usbqcA==
+X-Google-Smtp-Source: APXvYqzDDeOXKIhEbitMJqFPcWuGHxXdaazfPczjFoZEt+rWmSnZ7h55GJQB5jL/4cvjAtYY0/MxSA==
+X-Received: by 2002:a17:90a:cb88:: with SMTP id a8mr5905991pju.111.1567716825766;
+        Thu, 05 Sep 2019 13:53:45 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id s5sm3241807pfm.97.2019.09.05.13.53.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2019 13:53:45 -0700 (PDT)
+Date:   Thu, 5 Sep 2019 13:53:43 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "J. Bruce Fields" <bfields@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] rtl8192*: display ESSIDs using %pE
+Message-ID: <201909051352.89D121A4@keescook>
+References: <20190905193604.GC31247@fieldses.org>
+ <1567712673-1629-1-git-send-email-bfields@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <fab91766-da33-d62f-59fb-c226e4790a91@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909050195
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909050195
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1567712673-1629-1-git-send-email-bfields@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/5/19 4:22 AM, Vlastimil Babka wrote:
-> On 9/5/19 11:00 AM, Michal Hocko wrote:
->> [Ccing Mike for checking on the hugetlb side of this change]
->> On Wed 04-09-19 12:54:22, David Rientjes wrote:
->>> @@ -4458,6 +4458,28 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
->>>  		if (page)
->>>  			goto got_pg;
->>>  
->>> +		 if (order >= pageblock_order && (gfp_mask & __GFP_IO)) {
->>> +			/*
->>> +			 * If allocating entire pageblock(s) and compaction
->>> +			 * failed because all zones are below low watermarks
->>> +			 * or is prohibited because it recently failed at this
->>> +			 * order, fail immediately.
->>> +			 *
->>> +			 * Reclaim is
->>> +			 *  - potentially very expensive because zones are far
->>> +			 *    below their low watermarks or this is part of very
->>> +			 *    bursty high order allocations,
->>> +			 *  - not guaranteed to help because isolate_freepages()
->>> +			 *    may not iterate over freed pages as part of its
->>> +			 *    linear scan, and
->>> +			 *  - unlikely to make entire pageblocks free on its
->>> +			 *    own.
->>> +			 */
->>> +			if (compact_result == COMPACT_SKIPPED ||
->>> +			    compact_result == COMPACT_DEFERRED)
->>> +				goto nopage;
+On Thu, Sep 05, 2019 at 03:44:25PM -0400, J. Bruce Fields wrote:
+> From: "J. Bruce Fields" <bfields@redhat.com>
 > 
-> As I said, I expect this will make hugetlbfs reservations fail
-> prematurely - Mike can probably confirm or disprove that.
+> Everywhere else in the kernel ESSIDs are printed using %pE, and I can't
+> see why there should be an exception here.
 
-I don't have a specific test for this.  It is somewhat common for people
-to want to allocate "as many hugetlb pages as possible".  Therefore, they
-will try to allocate more pages than reasonable for their environment and
-take what they can get.  I 'tested' by simply creating some background
-activity and then seeing how many hugetlb pages could be allocated.  Of
-course, many tries over time in a loop.
+I would expand this rationale slightly: using "n" here makes no sense
+because they are already NUL-terminated strings. The "n" modifier could
+only be used with string_escape_mem() which takes a "length" argument.
 
-This patch did not cause premature allocation failures in my limited testing.
-The number of pages which could be allocated with and without patch were
-pretty much the same.
+Regardless:
 
-Do note that I tested on top of Andrew's tree which contains this series:
-http://lkml.kernel.org/r/20190806014744.15446-1-mike.kravetz@oracle.com
-Patch 3 in that series causes allocations to fail sooner in the case of
-COMPACT_DEFERRED:
-http://lkml.kernel.org/r/20190806014744.15446-4-mike.kravetz@oracle.com
+Acked-by: Kees Cook <keescook@chromium.org>
 
-hugetlb allocations have the __GFP_RETRY_MAYFAIL flag set.  They are willing
-to retry and wait and callers are aware of this.  Even though my limited
-testing did not show regressions caused by this patch, I would prefer if the
-quick exit did not apply to __GFP_RETRY_MAYFAIL requests.
+-Kees
+
+> 
+> Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+> ---
+>  drivers/staging/rtl8192e/rtllib.h              | 2 +-
+>  drivers/staging/rtl8192u/ieee80211/ieee80211.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8192e/rtllib.h b/drivers/staging/rtl8192e/rtllib.h
+> index 2dd57e88276e..096254e422b3 100644
+> --- a/drivers/staging/rtl8192e/rtllib.h
+> +++ b/drivers/staging/rtl8192e/rtllib.h
+> @@ -2132,7 +2132,7 @@ static inline const char *escape_essid(const char *essid, u8 essid_len)
+>  		return escaped;
+>  	}
+>  
+> -	snprintf(escaped, sizeof(escaped), "%*pEn", essid_len, essid);
+> +	snprintf(escaped, sizeof(escaped), "%*pE", essid_len, essid);
+>  	return escaped;
+>  }
+>  
+> diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211.h b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+> index d36963469015..3963a08b9eb2 100644
+> --- a/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+> +++ b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+> @@ -2426,7 +2426,7 @@ static inline const char *escape_essid(const char *essid, u8 essid_len)
+>  		return escaped;
+>  	}
+>  
+> -	snprintf(escaped, sizeof(escaped), "%*pEn", essid_len, essid);
+> +	snprintf(escaped, sizeof(escaped), "%*pE", essid_len, essid);
+>  	return escaped;
+>  }
+>  
+> -- 
+> 2.21.0
+> 
+
 -- 
-Mike Kravetz
+Kees Cook
