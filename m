@@ -2,199 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84DCDAADFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:46:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E51DAAE02
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:47:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404096AbfIEVqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 17:46:23 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54560 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732646AbfIEVqL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 17:46:11 -0400
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x85Lhr30032677
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Sep 2019 14:46:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=SigM+i1toavMqTPh1qC3TfkVYP0HGpMJnAT2A/4oDIs=;
- b=KVrfu9CkBaur46aD/cHEmbEqERZE7J2QdSzmIO8FItCMn8BwDW15rYqMGmTavwiNVxLr
- kYC+h7RYjOn+Gm3A1sZW6SK6chgynstaMGoEAB65qFQw1KR6xpDBXvt+TrLcsVicFAZ9
- EwD2zZC0xee6Wlcs53akE+QJ61E8OtsbwRk= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2utksg62eu-7
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:46:10 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 5 Sep 2019 14:46:09 -0700
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id C4A0717229E08; Thu,  5 Sep 2019 14:46:06 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     <linux-mm@kvack.org>
-CC:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Waiman Long <longman@redhat.com>, Roman Gushchin <guro@fb.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH RFC 09/14] mm: memcg: introduce __mod_lruvec_memcg_state()
-Date:   Thu, 5 Sep 2019 14:45:53 -0700
-Message-ID: <20190905214553.1643060-10-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190905214553.1643060-1-guro@fb.com>
-References: <20190905214553.1643060-1-guro@fb.com>
-X-FB-Internal: Safe
+        id S2391851AbfIEVrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 17:47:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726323AbfIEVrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 17:47:14 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A939206DE;
+        Thu,  5 Sep 2019 21:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567720034;
+        bh=kfe2TGoSTMVF1/lVPOYosFc6NnbRFTGJzAeJes9ucdY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lJrk1arZaeNOtOpuajdQpPAcomvfAw0ARumnmmzubiwh+8xg/NmKgMjIy6AU98gg4
+         YCaEtpw71IjfGteEK2wL6fnZ6vySMSYo/GmDlBh89oZXh01azrjYFs2R6C4rV8i9gI
+         /Xym/nOejdfvTsNlZPhXXqirp8wOWajjR0oqhdvU=
+Date:   Thu, 5 Sep 2019 16:47:12 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        YueHaibing <yuehaibing@huawei.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] PCI: Use GFP_ATOMIC in resource_alignment_store()
+Message-ID: <20190905214712.GJ103977@google.com>
+References: <20190831124932.18759-1-yuehaibing@huawei.com>
+ <20190902075006.GB754@infradead.org>
+ <9d2094f7-eb71-4975-eb9b-166a1483afa0@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-05_08:2019-09-04,2019-09-05 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 malwarescore=0
- clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=704 priorityscore=1501 suspectscore=3 phishscore=0
- adultscore=0 bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1906280000 definitions=main-1909050203
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9d2094f7-eb71-4975-eb9b-166a1483afa0@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To prepare for per-object accounting of slab objects, let's introduce
-__mod_lruvec_memcg_state() and mod_lruvec_memcg_state() helpers,
-which are similar to mod_lruvec_state(), but do not update global
-node counters, only lruvec and per-cgroup.
+On Tue, Sep 03, 2019 at 09:51:05AM -0600, Logan Gunthorpe wrote:
+> 
+> 
+> On 2019-09-02 1:50 a.m., Christoph Hellwig wrote:
+> > On Sat, Aug 31, 2019 at 12:49:32PM +0000, YueHaibing wrote:
+> >> When allocating memory, the GFP_KERNEL cannot be used during the
+> >> spin_lock period. It may cause scheduling when holding spin_lock.
+> >>
+> >> Fixes: f13755318675 ("PCI: Move pci_[get|set]_resource_alignment_param() into their callers")
+> >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> >> ---
+> >>  drivers/pci/pci.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> >> index 484e35349565..0b5fc6736f3f 100644
+> >> --- a/drivers/pci/pci.c
+> >> +++ b/drivers/pci/pci.c
+> >> @@ -6148,7 +6148,7 @@ static ssize_t resource_alignment_store(struct bus_type *bus,
+> >>  	spin_lock(&resource_alignment_lock);
+> >>  
+> >>  	kfree(resource_alignment_param);
+> >> -	resource_alignment_param = kstrndup(buf, count, GFP_KERNEL);
+> >> +	resource_alignment_param = kstrndup(buf, count, GFP_ATOMIC);
+> >>  
+> >>  	spin_unlock(&resource_alignment_lock);
+> > 
+> > Why not move the allocation outside the lock? Something like this
+> > seems much more sensible:
+> 
+> Yes, that seems like a good way to do it. Bjorn, can you squash
+> Christoph's patch or do you want me to resend a new one?
 
-It's necessary because soon node slab counters will be used for
-accounting of all memory used by slab pages, however on memcg level
-only the actually used memory will be counted. Free space will be
-shared between all cgroups, so it can't be accounted to any.
+I folded Christoph's fix into it, thanks!
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
----
- include/linux/memcontrol.h | 22 ++++++++++++++++++++++
- mm/memcontrol.c            | 37 +++++++++++++++++++++++++++----------
- 2 files changed, 49 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 8f1d7161579f..cef8a9c51482 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -739,6 +739,8 @@ static inline unsigned long lruvec_page_state_local(struct lruvec *lruvec,
- 
- void __mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
- 			int val);
-+void __mod_lruvec_memcg_state(struct lruvec *lruvec, enum node_stat_item idx,
-+			      int val);
- void __mod_lruvec_slab_state(void *p, enum node_stat_item idx, int val);
- 
- static inline void mod_lruvec_state(struct lruvec *lruvec,
-@@ -751,6 +753,16 @@ static inline void mod_lruvec_state(struct lruvec *lruvec,
- 	local_irq_restore(flags);
- }
- 
-+static inline void mod_lruvec_memcg_state(struct lruvec *lruvec,
-+					  enum node_stat_item idx, int val)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	__mod_lruvec_memcg_state(lruvec, idx, val);
-+	local_irq_restore(flags);
-+}
-+
- static inline void __mod_lruvec_page_state(struct page *page,
- 					   enum node_stat_item idx, int val)
- {
-@@ -1143,6 +1155,16 @@ static inline void mod_lruvec_state(struct lruvec *lruvec,
- 	mod_node_page_state(lruvec_pgdat(lruvec), idx, val);
- }
- 
-+static inline void __mod_lruvec_memcg_state(struct lruvec *lruvec,
-+					    enum node_stat_item idx, int val)
-+{
-+}
-+
-+static inline void mod_lruvec_memcg_state(struct lruvec *lruvec,
-+					  enum node_stat_item idx, int val)
-+{
-+}
-+
- static inline void __mod_lruvec_page_state(struct page *page,
- 					   enum node_stat_item idx, int val)
- {
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index d57f95177aec..89a892ef7699 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -795,16 +795,16 @@ parent_nodeinfo(struct mem_cgroup_per_node *pn, int nid)
- }
- 
- /**
-- * __mod_lruvec_state - update lruvec memory statistics
-+ * __mod_lruvec_memcg_state - update lruvec memory statistics
-  * @lruvec: the lruvec
-  * @idx: the stat item
-  * @val: delta to add to the counter, can be negative
-  *
-  * The lruvec is the intersection of the NUMA node and a cgroup. This
-- * function updates the all three counters that are affected by a
-- * change of state at this level: per-node, per-cgroup, per-lruvec.
-+ * function updates the two of three counters that are affected by a
-+ * change of state at this level: per-cgroup and per-lruvec.
-  */
--void __mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
-+void __mod_lruvec_memcg_state(struct lruvec *lruvec, enum node_stat_item idx,
- 			int val)
- {
- 	pg_data_t *pgdat = lruvec_pgdat(lruvec);
-@@ -812,12 +812,6 @@ void __mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
- 	struct mem_cgroup *memcg;
- 	long x, threshold = MEMCG_CHARGE_BATCH;
- 
--	/* Update node */
--	__mod_node_page_state(pgdat, idx, val);
--
--	if (mem_cgroup_disabled())
--		return;
--
- 	pn = container_of(lruvec, struct mem_cgroup_per_node, lruvec);
- 	memcg = pn->memcg;
- 
-@@ -841,6 +835,29 @@ void __mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
- 	__this_cpu_write(pn->lruvec_stat_cpu->count[idx], x);
- }
- 
-+/**
-+ * __mod_lruvec_state - update lruvec memory statistics
-+ * @lruvec: the lruvec
-+ * @idx: the stat item
-+ * @val: delta to add to the counter, can be negative
-+ *
-+ * The lruvec is the intersection of the NUMA node and a cgroup. This
-+ * function updates the all three counters that are affected by a
-+ * change of state at this level: per-node, per-cgroup, per-lruvec.
-+ */
-+void __mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
-+			int val)
-+{
-+	pg_data_t *pgdat = lruvec_pgdat(lruvec);
-+
-+	/* Update node */
-+	__mod_node_page_state(pgdat, idx, val);
-+
-+	/* Update per-cgroup and per-lruvec stats */
-+	if (!mem_cgroup_disabled())
-+		__mod_lruvec_memcg_state(lruvec, idx, val);
-+}
-+
- void __mod_lruvec_slab_state(void *p, enum node_stat_item idx, int val)
- {
- 	struct page *page = virt_to_head_page(p);
--- 
-2.21.0
-
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index 484e35349565..fe205829f676 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -6145,14 +6145,16 @@ static ssize_t resource_alignment_show(struct bus_type *bus, char *buf)
+> >  static ssize_t resource_alignment_store(struct bus_type *bus,
+> >  					const char *buf, size_t count)
+> >  {
+> > -	spin_lock(&resource_alignment_lock);
+> > +	char *param = kstrndup(buf, count, GFP_KERNEL);
+> >  
+> > -	kfree(resource_alignment_param);
+> > -	resource_alignment_param = kstrndup(buf, count, GFP_KERNEL);
+> > +	if (!param)
+> > +		return -ENOMEM;
+> >  
+> > +	spin_lock(&resource_alignment_lock);
+> > +	kfree(resource_alignment_param);
+> > +	resource_alignment_param = param;
+> >  	spin_unlock(&resource_alignment_lock);
+> > -
+> > -	return resource_alignment_param ? count : -ENOMEM;
+> > +	return count;
+> >  }
+> >  
+> >  static BUS_ATTR_RW(resource_alignment);
+> > 
