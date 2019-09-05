@@ -2,116 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65964A994D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 06:18:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01D0EA9985
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 06:28:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730973AbfIEESb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 00:18:31 -0400
-Received: from mail-eopbgr720092.outbound.protection.outlook.com ([40.107.72.92]:37152
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        id S1731124AbfIEE2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 00:28:43 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6673 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730892AbfIEESa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 00:18:30 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EBWNi0WnAQhFjLMUBy2Vj5dUtjWfrUVeWTYFfrAcm9EOCWiglIt36rlhmoqceHnA4KYyM20azh9rsu7PU/mXO5upyWYeTJCBRBlRGKr4R6YS4OWsE7G+qOJOYE3LQRzrFQHZltzkt2V6e/pxGibyAqXk2/K2am7DL8hCVJQhdUeWVouQfCFJkZOAillFi/ayS/zctTZRbz3FcYeF8fW7kMIsZvfz/uwvc4mw3yUSQblfAUxx29WHpupae7AUCn1s6vo04E8XMXA+6tgixyPulViFC6mJqXQItDAQFux163Vu0in5tl/zZ4Vu39DdynLcgTKiOOH/bdCYbUaOHDekHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FKSKUntckuEnNBKQwI3aHoDI8QOHxasATl27Ew3WKjg=;
- b=UTXrMAroY9G/FGViIAoAzvmoH4e2O+5zoXsAqirnBMio+JWxHAcI0EYmpz7qt3/Hd4/DPMvUTnyM4QA7OQqcKwwjGyScnIqP72M4fWsaxLcZ6cTUPhDXTziyf/IH72teynXj9JG3hVPLY2WJR2IhiRv2fPim4Cxb+2YTtWr+ZqVYO4msCbRnIDUE6oRt9OqzsIxvRbjvujIvka8k5vYQ5YH7vkuPc56tLJjqq0onxbvh4sw3Sns2pN3CnP9maNv0bljf7TmbbxdXhy1fW3G+cUv0Siu0sXekqaQNhhaNxH731sbbGdTc676s6XFoaJeA4QyAv7artRx2ulYHfSJLtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 117.103.190.105) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=sony.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=sony.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Sony.onmicrosoft.com;
- s=selector2-Sony-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FKSKUntckuEnNBKQwI3aHoDI8QOHxasATl27Ew3WKjg=;
- b=Nod9DXaY2fyDaBYfNqxMW+jLsbjV7pTA/8IE0ppde6/zWCKaWDbzqxqE0shoYpk7TbxD4JgFR6iwvj54Zi6ltYbXHgh6A1AxW8i6RKzyfwAy/E3TV33VOeqtH0AUpPAnn1ZkC9Zyu1ncvIKZSZpauNNekVJkAoSj+ASGKblcKxw=
-Received: from CY4PR13CA0010.namprd13.prod.outlook.com (2603:10b6:903:32::20)
- by DM5PR13MB1595.namprd13.prod.outlook.com (2603:10b6:3:124::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.6; Thu, 5 Sep
- 2019 04:18:27 +0000
-Received: from SN1NAM02FT042.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::200) by CY4PR13CA0010.outlook.office365.com
- (2603:10b6:903:32::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.6 via Frontend
- Transport; Thu, 5 Sep 2019 04:18:27 +0000
-Authentication-Results: spf=pass (sender IP is 117.103.190.105)
- smtp.mailfrom=sony.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=pass action=none header.from=sony.com;
-Received-SPF: Pass (protection.outlook.com: domain of sony.com designates
- 117.103.190.105 as permitted sender) receiver=protection.outlook.com;
- client-ip=117.103.190.105; helo=ap.sony.com;
-Received: from ap.sony.com (117.103.190.105) by
- SN1NAM02FT042.mail.protection.outlook.com (10.152.73.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2220.16 via Frontend Transport; Thu, 5 Sep 2019 04:18:26 +0000
-Received: from APYOKXHT102.ap.sony.com (117.103.191.215) by
- APYOKXEG101.ap.sony.com (117.103.190.105) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Thu, 5 Sep 2019 04:18:25 +0000
-Received: from APYOKXMS108.ap.sony.com ([169.254.3.47]) by
- APYOKXHT102.ap.sony.com ([117.103.191.215]) with mapi id 14.03.0468.000; Thu,
- 5 Sep 2019 04:18:24 +0000
-From:   <Jacky.Cao@sony.com>
-To:     <stern@rowland.harvard.edu>, <balbi@kernel.org>
-CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <Kento.A.Kobayashi@sony.com>,
-        <Jacky.Cao@sony.com>
-Subject: RE: [PATCH] USB: dummy-hcd: fix power budget for SuperSpeed mode
-Thread-Topic: [PATCH] USB: dummy-hcd: fix power budget for SuperSpeed mode
-Thread-Index: AdVi9W5+0ODcBoGLQOCjqUMWZobPywAAIucAAA2F1wAAHP/DkA==
-Date:   Thu, 5 Sep 2019 04:18:24 +0000
-Message-ID: <16EA1F625E922C43B00B9D82250220500871CDF9@APYOKXMS108.ap.sony.com>
-References: <87sgpcmr7v.fsf@gmail.com>
- <Pine.LNX.4.44L0.1909041017180.1722-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1909041017180.1722-100000@iolanthe.rowland.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [43.82.17.73]
-Content-Type: text/plain; charset="us-ascii"
+        id S1729941AbfIEE2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 00:28:42 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4BD539422B7EA727F921;
+        Thu,  5 Sep 2019 12:28:40 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 5 Sep 2019 12:28:32 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <johannes@sipsolutions.net>, <davem@davemloft.net>
+CC:     <linux-wireless@vger.kernel.org>, <zhongjiang@huawei.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] cfg80211: Do not compare with boolean in nl80211_common_reg_change_event
+Date:   Thu, 5 Sep 2019 12:25:37 +0800
+Message-ID: <1567657537-65472-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:117.103.190.105;IPV:NLI;CTRY:JP;EFV:NLI;SFV:NSPM;SFS:(10019020)(376002)(396003)(136003)(346002)(39860400002)(2980300002)(189003)(199004)(476003)(486006)(26005)(246002)(446003)(11346002)(126002)(37786003)(55846006)(305945005)(8676002)(7736002)(7636002)(426003)(86362001)(33656002)(336012)(50466002)(46406003)(8936002)(97756001)(102836004)(76176011)(186003)(6116002)(7696005)(14444005)(70206006)(70586007)(316002)(16586007)(356004)(107886003)(2171002)(110136005)(54906003)(66066001)(6246003)(23726003)(3846002)(106002)(2906002)(229853002)(2876002)(5660300002)(4326008)(47776003)(478600001)(55016002)(4744005);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR13MB1595;H:ap.sony.com;FPR:;SPF:Pass;LANG:en;PTR:apyokxeg101.ap.sony.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 38ab3fb1-2856-45ba-d89b-08d731b819b4
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(4709080)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR13MB1595;
-X-MS-TrafficTypeDiagnostic: DM5PR13MB1595:
-X-Microsoft-Antispam-PRVS: <DM5PR13MB1595D891978737BAEE5A190F87BB0@DM5PR13MB1595.namprd13.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-Forefront-PRVS: 015114592F
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: puM7E76h0U1laVc/Rik8jFT8FdnDug8exg3as42mJPTsSFuBsdwvXpGYSzsvS62P+raWCFWpQ8tq+21bnOwkyIIPizbfWPjjN6xQDVLD3Dck1S4J5I+gPFiAt+1TIIsi8YF8H1NRNc/rHXuVjQJ/0rYa1lVEKvxHL6EMsyGnxocfrHRTBx4BGwwLi2ykHY7E5cZ+ydwyB/2onFkQzqUPpvrNdCzfB1AeNrW8W4FglVlJdFSHDZgUGE7BDGQyIQYZwOA/ZKu8Oa6VhaN9ny2cxjNJ6fjxTLQ577NMdaZAwQ485rORVcjT84GGhSVaUY0dhfgx6e/DD5pSjjz571TePJ+DNOjoJ4LcQnSI2pE8WxIdu+EbDpVIhDpFG55fo8eHesUr7JXJxCFKcuStCvm3IS54rkH322WKhDJCQEOq9xs=
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2019 04:18:26.6466
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38ab3fb1-2856-45ba-d89b-08d731b819b4
-X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[117.103.190.105];Helo=[ap.sony.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR13MB1595
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi 
+With the help of boolinit.cocci, we use !nl80211_reg_change_event_fill
+instead of (nl80211_reg_change_event_fill == false). Meanwhile, Clean
+up the code.
 
-> Yes.  Except that I think the name POWER_BUDGET_3_0 is a little odd.
-> It implies that this change is specific to USB 3.0 -- but it isn't.
-> USB 3.1 and 3.2 also have a 900 mA limit, right?
-> 
-> So please consider changing the name to POWER_BUDGET_3.
-> 
-> Alan Stern
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ net/wireless/nl80211.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Thank you for your comment.
-I updated the name from POWER_BUDGET_3_0 to POWER_BUDGET_3 in PATCH v3
-and submitted it just now.
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 3e30e18..0c7fa60 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -14997,12 +14997,10 @@ void nl80211_common_reg_change_event(enum nl80211_commands cmd_id,
+ 		return;
+ 
+ 	hdr = nl80211hdr_put(msg, 0, 0, 0, cmd_id);
+-	if (!hdr) {
+-		nlmsg_free(msg);
+-		return;
+-	}
++	if (!hdr)
++		goto nla_put_failure;
+ 
+-	if (nl80211_reg_change_event_fill(msg, request) == false)
++	if (!nl80211_reg_change_event_fill(msg, request))
+ 		goto nla_put_failure;
+ 
+ 	genlmsg_end(msg, hdr);
+-- 
+1.7.12.4
 
-Regards
-Jacky
