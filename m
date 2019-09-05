@@ -2,81 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07C1EAA80C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:13:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97BC4AA8A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731438AbfIEQN1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:13:27 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38323 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbfIEQN0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:13:26 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y23so2782778ljn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 09:13:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j8yKc9SHJAoYLzBrn3BT3OVSk2JhvmmAFDyBdCdHQDQ=;
-        b=BM+ek/d3V9T6GKREugYTLjnPwoLY87hw+TftOCbo0oTZp5p0Qpt3Uze1Oz0p6viGqj
-         94KLegS8mri/SGOpqrLeNW7YOyCOB4kP90Un6kzSr8WBpOdH925KmCgl7t/5pd38ji+4
-         v37BX55Lpk3GaWdgORhcSzxWYqTZBLTFbpqpeRs2dgIPKMruBEp6k+WI+8dBDqVGI5MH
-         VsOUzyBIttSKNaWSooyeI8tvfISBqHx/McEurKNuBCpBgqn40bHKGUFk/dGYPU0RyPqs
-         DfXW/IPuSPN6cyHjDYgE3RxzBIeTs91yLBXcE/f1bzWwu8SHEIJH2g3tEPMoTI5qNBfQ
-         lFhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j8yKc9SHJAoYLzBrn3BT3OVSk2JhvmmAFDyBdCdHQDQ=;
-        b=X9IE9L08EFriRfLylIt/Z4Sq9zXUOTzhh3in5c2e4Piay20JmynwEgBUuyUMdpt5Jt
-         VIiTlSB2iXompSCneanFONFP8jJH8jaV4W9XOY7kEhVJNbNuWYoupQhr2KkLcgRMmRsd
-         GMMX/AZs/AHZpcSISKddaiECGECGbeVlin6p0B+RqpiDQgp9BSubTYVSt6i8TffK44IH
-         N9QjnS7DHdyJVNTSAyR4y60SkoQUC/U48j0Nc7kXtsy2qU/d2WXpj3wgplbMLaQSk8p6
-         G5KSOCkGPRtZBxwwjnQsbaGnnw+yi9Xu8aDelyMbX0c27V+BsqXewDiSFQ2E42Iw1y5P
-         3Odg==
-X-Gm-Message-State: APjAAAXzjrgL1mE6qNOOEAnzAQIinyuPr1/m+uAMJerTe5kS/Nez0W8a
-        VHgnacxsaIxuK0y1aB05+eV4LIHXSiJ814g4Ke8=
-X-Google-Smtp-Source: APXvYqzCTJkFJfiZRgqh5jU9AOsfmAvYm1fHOp9MWUc9KkIpke8TwJqseKNrFfCUzEiq7/yLXkENRlHrZUvUktncius=
-X-Received: by 2002:a2e:9555:: with SMTP id t21mr2605931ljh.93.1567700004732;
- Thu, 05 Sep 2019 09:13:24 -0700 (PDT)
+        id S1730909AbfIEQTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:19:51 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6687 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733030AbfIEQSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 12:18:07 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BFCCC1B9BB529B7BE769;
+        Fri,  6 Sep 2019 00:18:00 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 6 Sep 2019 00:18:36 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <mchehab@kernel.org>
+CC:     <hansverk@cisco.com>, <daniel.vetter@ffwll.ch>,
+        <zhongjiang@huawei.com>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/4] media: Use DIV_ROUND_CLOSEST directly
+Date:   Fri, 6 Sep 2019 00:14:48 +0800
+Message-ID: <1567700092-27769-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-References: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
- <20190830231527.22304-1-linux@rasmusvillemoes.dk> <20190830231527.22304-5-linux@rasmusvillemoes.dk>
- <CAKwvOdktYpMH8WnEQwNE2JJdKn4w0CHv3L=YHkqU2JzQ6Qwkew@mail.gmail.com>
- <a5085133-33da-6c13-6953-d18cbc6ad3f5@rasmusvillemoes.dk> <20190905134535.GP9749@gate.crashing.org>
- <CANiq72nXXBgwKcs36R+uau2o1YypfSFKAYWV2xmcRZgz8LRQww@mail.gmail.com>
-In-Reply-To: <CANiq72nXXBgwKcs36R+uau2o1YypfSFKAYWV2xmcRZgz8LRQww@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 5 Sep 2019 18:13:13 +0200
-Message-ID: <CANiq72ne3TWt7ydmt9eZsawMfAs-qgPoM92-c1EJ=zfFTdcBQw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] compiler-gcc.h: add asm_inline definition
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "gcc-patches@gcc.gnu.org" <gcc-patches@gcc.gnu.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 5, 2019 at 5:52 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> Yes and no. GNU libc defines feature test macros like you say, but
-> C++'s feature macros are like Rasmus/Nick are saying. I think libc's
-> definition is weird, I would call those "feature selection macros"
-> instead, because the user is selecting between some features (whether
-> to enable or not, for instance), rather than testing for the features.
+With the following help of Coccinelle. I find out some place can be replaced.
 
-By the way, this is not to criticize libc, I imagine they employed that
-nomenclature since that is what some standards used, but still, the
-naming is not great from the users' perspective vs. the header
-writer's perspective, IMO.
+-(((x) + ((__divisor) / 2)) / (__divisor))
++ DIV_ROUND_CLOSEST(x,__divisor)
 
-Cheers,
-Miguel
+zhong jiang (4):
+  media: dvb-frontends: Use DIV_ROUND_CLOSEST directly to make it
+    readable
+  media: tuners/qm1d1c0042: Use DIV_ROUND_CLOSEST directly to make it
+    readable
+  media: uvcvideo: Use DIV_ROUND_CLOSEST directly to make it readable
+  media: v4l2-dv-timings: Use DIV_ROUND_CLOSEST directly to make it
+    readable
+
+ drivers/media/dvb-frontends/mt312.c       | 2 +-
+ drivers/media/tuners/qm1d1c0042.c         | 2 +-
+ drivers/media/usb/uvc/uvc_ctrl.c          | 4 ++--
+ drivers/media/v4l2-core/v4l2-dv-timings.c | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+-- 
+1.7.12.4
+
