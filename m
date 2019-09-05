@@ -2,155 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB88EAA40B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC23AA41D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388494AbfIENN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 09:13:28 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56019 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388243AbfIENN1 (ORCPT
+        id S2388658AbfIENPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 09:15:01 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36354 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388385AbfIENPA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 09:13:27 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 9B3B7C0006;
-        Thu,  5 Sep 2019 13:13:19 +0000 (UTC)
-Date:   Thu, 5 Sep 2019 15:14:53 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli@fpond.eu, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        VenkataRajesh.Kalakodima@in.bosch.com,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/14] drm: rcar-du: Add support for CMM
-Message-ID: <20190905131453.7ortosddn4afxd5j@uno.localdomain>
-References: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
- <20190825135154.11488-9-jacopo+renesas@jmondi.org>
- <20190827002422.GQ5031@pendragon.ideasonboard.com>
- <20190827145619.33s7gkv7tgtsr6nz@uno.localdomain>
- <20190827163423.GB5054@pendragon.ideasonboard.com>
- <20190905095757.gg6s5pse5tvivxbs@uno.localdomain>
- <20190905111712.GG5035@pendragon.ideasonboard.com>
+        Thu, 5 Sep 2019 09:15:00 -0400
+Received: by mail-lf1-f68.google.com with SMTP id x80so2001929lff.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 06:14:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X6liaIL8n/K+qZNHyRxBvsG3aE56VnalzfSINEJsXSQ=;
+        b=b+63NMLiO6uu9ngd3jzIr8Dsw188HJm9sNb07rlJMnX80r7/h5LUN3/Lpbh3bxpJ9z
+         xYJqjXXgagt+VDuvA3yKvH7qp7A2+W1iv5h1mRb24Jb2adl7EuLWgyNX1JPnrepTNa9Q
+         goCuPYhfmvTDmiz0qWuVckEjqgfqRDoltmXHgdBIf8vad80BD+OtqWFql1CSBxLD7jDL
+         PWs9E6CwQdu80zJAOHSJX+PJNszKu0Zwaywda1OI5fC9bc/t0il8d+aa4SI03VA65BG0
+         pqsIykPn5ko3cJwLwAXbf0ErZ98Dsu+DqnGqOb8fcfaBo5zLC2Uk4FyM9xYDgLnBUVyl
+         HiPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X6liaIL8n/K+qZNHyRxBvsG3aE56VnalzfSINEJsXSQ=;
+        b=Cs3+78NdjWHudoLgbgaFRb/J5i2iPvAUxinQ/JRcHIOPqAl3DrhpAMfTWI4kFwHEzF
+         xK27cgNPWgxdWzBX9L45wZdKUNQqvgwoaX26tPzRJgs9uL+5aqfxST43Rc3lkbDzKK2E
+         ro/FyN8+R1UeidGmHGHqpE5jtfOTW3nbvz3uz5bsiqP0CO8lB6B49BIBTp05BN5cF8VU
+         hwaCw3GZ8+Ws1gAP0Rw++GE9hlCf7VIIz9j3YH6FpxGBsNa+2fwyHvq1Rc20fOLXtIa9
+         3oGnzBl1o5RhWJLXn3zfFXTOVkm4j5PKmHJfTJLu8rzXE48iTS5gvWI0Z2LJa3Oue+aY
+         FWug==
+X-Gm-Message-State: APjAAAUOZSYz+EGvctkwED6POHv23AbivirzEUsCzIFQc45TYeMlo8T4
+        C+B0W4fXhQTH4xBpwXaKBxUuKw==
+X-Google-Smtp-Source: APXvYqzbCMnjO//eiTEa0kZuQw26H3btOjLN9fQPzx/MdOvkhMnN7oM0V3sFQZMv6aa2tmtB3chimQ==
+X-Received: by 2002:a19:4912:: with SMTP id w18mr2283793lfa.93.1567689298714;
+        Thu, 05 Sep 2019 06:14:58 -0700 (PDT)
+Received: from centauri (ua-84-219-138-247.bbcust.telenor.se. [84.219.138.247])
+        by smtp.gmail.com with ESMTPSA id b25sm486140lfa.90.2019.09.05.06.14.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2019 06:14:58 -0700 (PDT)
+Date:   Thu, 5 Sep 2019 15:14:56 +0200
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH] rpmsg: glink-smem: Name the edge based on parent
+ remoteproc
+Message-ID: <20190905131456.GA26674@centauri>
+References: <20190820041656.17197-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="iuoqgpboxu2vm3n7"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190905111712.GG5035@pendragon.ideasonboard.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190820041656.17197-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 19, 2019 at 09:16:56PM -0700, Bjorn Andersson wrote:
+> Naming the glink edge device on the parent of_node short name causes
+> collisions when multiple remoteproc instances with only different unit
+> address are described on the platform_bus in DeviceTree.
+> 
+> Base the edge's name on the parent remoteproc's name instead, to ensure
+> that it's unique.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/rpmsg/qcom_glink_smem.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+> index 64a5ce324c7f..4238383d8685 100644
+> --- a/drivers/rpmsg/qcom_glink_smem.c
+> +++ b/drivers/rpmsg/qcom_glink_smem.c
+> @@ -201,7 +201,7 @@ struct qcom_glink *qcom_glink_smem_register(struct device *parent,
+>  	dev->parent = parent;
+>  	dev->of_node = node;
+>  	dev->release = qcom_glink_smem_release;
+> -	dev_set_name(dev, "%pOFn:%pOFn", node->parent, node);
+> +	dev_set_name(dev, "%s:%pOFn", dev_name(parent->parent), node);
+>  	ret = device_register(dev);
+>  	if (ret) {
+>  		pr_err("failed to register glink edge\n");
+> -- 
+> 2.18.0
+> 
 
---iuoqgpboxu2vm3n7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Laurent,
-
-On Thu, Sep 05, 2019 at 02:17:12PM +0300, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> > >>>> +/**
-> > >>>> + * rcar_cmm_enable() - enable the CMM unit
-> > >>>> + *
-> > >>>> + * @pdev: The platform device associated with the CMM instance
-> > >>>> + *
-> > >>>> + * Enable the CMM unit by enabling the parent clock and enabling =
-the CMM
-> > >>>> + * components, such as 1-D LUT, if requested.
-> > >>>> + */
-> > >>>> +int rcar_cmm_enable(struct platform_device *pdev)
-> > >>>> +{
-> > >>>> +	struct rcar_cmm *rcmm =3D platform_get_drvdata(pdev);
-> > >>>> +	int ret;
-> > >>>> +
-> > >>>> +	if (!rcmm)
-> > >>>> +		return -EPROBE_DEFER;
-> > >>>
-> > >>> This function is called in rcar_du_crtc_atomic_enable(), so that's =
-not
-> > >>> the right error code. It seems we need another function for the CMM=
- API
-> > >>> to defer probing :-/ I would call it rcar_cmm_init(). This check wo=
-uld
-> > >>> then be removed.
-> > >>
-> > >> I agree about the return code, but not the name, as this function
-> > >> actually enables the CMM.
-> > >
-> > > I meant creating a new rcar_cmm_init() function that would just have =
-the
-> > > !rcmm check.
-> > >
-> > >> PROBE_DEFER does not make any sense here, I
-> > >> wonder where it come from, as the probing of CMM and DU has long
-> > >> happened once we get here (at least, I assume so, if we receive a
-> > >> gamma_table, userspace has already been running, and both DU and CMM
-> > >> should have probed. Otherwise, we can exploit the newly created devi=
-ce
-> > >> link, and make sure DU probes after the CMM).
-> > >>
-> > >> I would just change the return value here, and possibly use the devi=
-ce
-> > >> link to ensure the correct probing sequence.
-> > >
-> > > How does device link help here ?
-> >
-> > Currently it doesn't, as we are creating a stateless link.
-> >
-> > But if we go for a managed device link (which is the default, by the
-> > way, you have to opt-out from it) we can guarantee the CMM has probed
-> > before the DU probes, so that we have a guarantee when we get here
-> > !rcmm cannot happen.
-> >
-> > https://www.kernel.org/doc/html/v5.2-rc7/driver-api/device_link.html
-> > "The consumer devices are not probed before the supplier is bound to a =
-driver,
-> >  and they=E2=80=99re unbound before the supplier is unbound."
-> >
-> > As we create the link, the CMM is the supplier of DU, so we could just
-> > drop the DL_FLAG_STATELESS flag in device_link_add() in 10/14.
-> >
-> > Does this match your understanding ?
->
-> Except there's a bit of a chicken and egg issue, as you call
-> device_link_add() from rcar_du_cmm_init(), which thus require the DU
-> driver to probe first :-) For this to work we would probably need an
-> early initcall in the DU driver.
->
-
-Yes indeed, the point where the link is created at the moment is too
-late... Is it worth an early initcall, or should we just assume that
-at the point where the LUT is operated userspace has already been
-running and both the CMM and the DU have probed already?
-
---iuoqgpboxu2vm3n7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1xCk0ACgkQcjQGjxah
-Vjy4WhAAs0hFWf0KGDxzpxaW2Is+PYr+7r9FJJCvIRLtHJrvMMa7ZiUHu6snKcwi
-c1af164xRrIBq9jUAnWlDfDACdyVgZIAZm1sKTXF8Y7lulTX8prColnNv9PbJkSf
-GFPk2NS60LnPYPDLxa5YnD/wCEluH6zZP0Iec0F60xCs288jmWasZUk1GE/nt6en
-tYOPmEtnGL74VYbqVzx9cYXQ/x/NEwpVRvTGTb5Z8JAWw0fiKoJcbWVNklfy++VE
-up2vaz4OSOJ5LT+KPIGqXW0FrTPHYVyu6FYHrxDzM+/IKmXWtWCNq4iRypltPd5R
-iixHQkqBq/G8aedqIzJbpeVFW/v2LowO/HlDwo2LmLmXkaJeBfX4V7/HK8dGNCjc
-XCnefTL1pFgJ0kP+pO8rybOtt74T/gcjcU3Yxj0EcOUXauzUiFYyKyt0pgyhfJxl
-8AYzAfmLAdQDawPntPIZ011LYVa5oF27Wek05zw3oWRC98VtJMro5CxX8vebKFrA
-gtqfZB2pz6MzO8IbNeAPr+LLcSjgHhSe13JlO9iAxJ0bDYHtnT9TEKxu49LagXnN
-xsKlzgRajJCcJEf5ldjFu0Ew9UM+BoiLuR7AKMiFdxCpCGlsBiUSGMWgEAtfbs4e
-TQ8x0CruiKbwXTirVnSU/mlf6+oh3fJ4CPB1+AhH7Mjjn4L5kXE=
-=ww4d
------END PGP SIGNATURE-----
-
---iuoqgpboxu2vm3n7--
+Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
