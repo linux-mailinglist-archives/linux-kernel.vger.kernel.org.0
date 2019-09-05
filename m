@@ -2,221 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AF6AAAA8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:07:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C75AAA97
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:08:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403841AbfIESHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 14:07:11 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34937 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfIESHL (ORCPT
+        id S2403860AbfIESIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 14:08:25 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39314 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfIESIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:07:11 -0400
-Received: by mail-wm1-f67.google.com with SMTP id n10so4181654wmj.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 11:07:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eQx8LFwZEFLFHsOp6JVQ136wPiDCvxTvsHmYT44VyoI=;
-        b=ZJv5I+4JMEy7c+i65ipPMvQ3ao0PJLdsjSW4Z4AWhUpYsQn1x9l2q+DA2kgvlqskbs
-         xLjtUbzbvYq++1MekuMRihek+riXpl52V1TWEUQHNWw5fcyJbg3mau2uczjDdozYuSv2
-         L5RcmY7Q0Ebn1f25EOGmJoKJAs62svd2/xDJ5vcFAj/ymSlfZkFlSabdaw/vZotgq7Fp
-         G2/o1GHwx09jjoQ09hfMEkWRaUHmGwWR9TBsMOLF5Nwzvk2iwbZztrISJUjBGQwNyC8Q
-         M9dW8HVPRMRmdYQW+D0ynq6IF4SuuLsWm8ZhAcRKVF5FUb8gaJqmaQKr/JNUiwQFOuXJ
-         wFxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eQx8LFwZEFLFHsOp6JVQ136wPiDCvxTvsHmYT44VyoI=;
-        b=jxUq1DVc85wZEDOym/CTxP/kt7qf8fCqUKOTsEDuAiVs6x53d9I+x7NZ2A0nMqFDSu
-         Nl3TL3MdNFf4IU+MFgLfR/YW/DzvbmgAq9eSXBjn4hY+SlMV9rf9tmUWHAxQdZSFy1K+
-         8q4tALBayWE85/1lsXphvfQ4dzIqf4YmZYSXd4I9qFHb7JzuHOnzlY/ppybwRTvyDKuB
-         Gv/6xkzpecV0lGj38TaAE/sfpfJl0MoH7XQrydE7Gr0FjdBSeNEzJW6QYpCFqSwaaFJh
-         X7XmqeBwLpfd4RvnIVY8IlM+fmhRsoTjd1Te7TRk1tOr0OHG+vpM1LpvUHtWWp/NMz1X
-         2qUg==
-X-Gm-Message-State: APjAAAXLy84kW6ApJfqHvficMafIt1KhmV3wYb/DZTbi0Z0FNGs1bmDJ
-        3voS6knszNbsQP7Cp/su3vdMKA==
-X-Google-Smtp-Source: APXvYqyoCJP+hufbel7IHFFpjOBVJKMRMRdizMAZ2CDtvCYnOSibtyDdCrMfZO7qr75g028g9qUGcw==
-X-Received: by 2002:a05:600c:214c:: with SMTP id v12mr4002689wml.28.1567706828344;
-        Thu, 05 Sep 2019 11:07:08 -0700 (PDT)
-Received: from localhost.localdomain (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
-        by smtp.gmail.com with ESMTPSA id h12sm3238489wrp.51.2019.09.05.11.07.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Sep 2019 11:07:07 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, agross@kernel.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        bjorn.andersson@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject:  
-Date:   Thu,  5 Sep 2019 20:07:05 +0200
-Message-Id: <20190905180705.30910-1-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.23.0
+        Thu, 5 Sep 2019 14:08:24 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.1 #3 (Red Hat Linux))
+        id 1i5wAg-000437-LE; Thu, 05 Sep 2019 18:07:51 +0000
+Date:   Thu, 5 Sep 2019 19:07:50 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190905180750.GQ1131@ZenIV.linux.org.uk>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190904201933.10736-2-cyphar@cyphar.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the bark interrupt as the pre-timeout notifier whenever this
-interrupt is available.
+On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
+> +/*
+> + * "memset(p, 0, size)" but for user space buffers. Caller must have already
+> + * checked access_ok(p, size).
+> + */
+> +static int __memzero_user(void __user *p, size_t s)
+> +{
+> +	const char zeros[BUFFER_SIZE] = {};
+> +	while (s > 0) {
+> +		size_t n = min(s, sizeof(zeros));
+> +
+> +		if (__copy_to_user(p, zeros, n))
+> +			return -EFAULT;
+> +
+> +		p += n;
+> +		s -= n;
+> +	}
+> +	return 0;
+> +}
 
-By default, the pretimeout notification shall occur one second earlier
-than the timeout.
+That's called clear_user().
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
- drivers/watchdog/qcom-wdt.c | 63 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 58 insertions(+), 5 deletions(-)
+> +int copy_struct_to_user(void __user *dst, size_t usize,
+> +			const void *src, size_t ksize)
+> +{
+> +	size_t size = min(ksize, usize);
+> +	size_t rest = abs(ksize - usize);
+> +
+> +	if (unlikely(usize > PAGE_SIZE))
+> +		return -EFAULT;
 
-diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-index 7be7f87be28f..2dd36914aa82 100644
---- a/drivers/watchdog/qcom-wdt.c
-+++ b/drivers/watchdog/qcom-wdt.c
-@@ -10,6 +10,8 @@
- #include <linux/platform_device.h>
- #include <linux/watchdog.h>
- #include <linux/of_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/watchdog.h>
- 
- enum wdt_reg {
- 	WDT_RST,
-@@ -41,6 +43,7 @@ struct qcom_wdt {
- 	unsigned long		rate;
- 	void __iomem		*base;
- 	const u32		*layout;
-+	const struct device	*dev;
- };
- 
- static void __iomem *wdt_addr(struct qcom_wdt *wdt, enum wdt_reg reg)
-@@ -54,15 +57,37 @@ struct qcom_wdt *to_qcom_wdt(struct watchdog_device *wdd)
- 	return container_of(wdd, struct qcom_wdt, wdd);
- }
- 
-+static inline int qcom_wdt_enable(struct qcom_wdt *wdt)
-+{
-+	/* enable the bark interrupt */
-+	if (wdt->wdd.info->options & WDIOF_PRETIMEOUT)
-+		return 3;
-+
-+	return 1;
-+}
-+
-+static irqreturn_t qcom_wdt_irq(int irq, void *cookie)
-+{
-+	struct watchdog_device *wdd = (struct watchdog_device *) cookie;
-+
-+	watchdog_notify_pretimeout(wdd);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int qcom_wdt_start(struct watchdog_device *wdd)
- {
- 	struct qcom_wdt *wdt = to_qcom_wdt(wdd);
-+	unsigned int bark = wdd->pretimeout;
-+
-+	if (!(wdd->info->options & WDIOF_PRETIMEOUT))
-+		bark = wdd->timeout;
- 
- 	writel(0, wdt_addr(wdt, WDT_EN));
- 	writel(1, wdt_addr(wdt, WDT_RST));
--	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
-+	writel(bark * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
- 	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BITE_TIME));
--	writel(1, wdt_addr(wdt, WDT_EN));
-+	writel(qcom_wdt_enable(wdt), wdt_addr(wdt, WDT_EN));
- 	return 0;
- }
- 
-@@ -86,9 +111,18 @@ static int qcom_wdt_set_timeout(struct watchdog_device *wdd,
- 				unsigned int timeout)
- {
- 	wdd->timeout = timeout;
-+
- 	return qcom_wdt_start(wdd);
- }
- 
-+static int qcom_wdt_set_pretimeout(struct watchdog_device *wdd,
-+				   unsigned int timeout)
-+{
-+	wdd->pretimeout = timeout;
-+
-+	return 0;
-+}
-+
- static int qcom_wdt_restart(struct watchdog_device *wdd, unsigned long action,
- 			    void *data)
- {
-@@ -105,7 +139,7 @@ static int qcom_wdt_restart(struct watchdog_device *wdd, unsigned long action,
- 	writel(1, wdt_addr(wdt, WDT_RST));
- 	writel(timeout, wdt_addr(wdt, WDT_BARK_TIME));
- 	writel(timeout, wdt_addr(wdt, WDT_BITE_TIME));
--	writel(1, wdt_addr(wdt, WDT_EN));
-+	writel(qcom_wdt_enable(wdt), wdt_addr(wdt, WDT_EN));
- 
- 	/*
- 	 * Actually make sure the above sequence hits hardware before sleeping.
-@@ -121,11 +155,12 @@ static const struct watchdog_ops qcom_wdt_ops = {
- 	.stop		= qcom_wdt_stop,
- 	.ping		= qcom_wdt_ping,
- 	.set_timeout	= qcom_wdt_set_timeout,
-+	.set_pretimeout	= qcom_wdt_set_pretimeout,
- 	.restart        = qcom_wdt_restart,
- 	.owner		= THIS_MODULE,
- };
- 
--static const struct watchdog_info qcom_wdt_info = {
-+static struct watchdog_info qcom_wdt_info = {
- 	.options	= WDIOF_KEEPALIVEPING
- 			| WDIOF_MAGICCLOSE
- 			| WDIOF_SETTIMEOUT
-@@ -146,7 +181,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	const u32 *regs;
- 	u32 percpu_offset;
--	int ret;
-+	int irq, ret;
- 
- 	regs = of_device_get_match_data(dev);
- 	if (!regs) {
-@@ -210,6 +245,7 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	wdt->wdd.max_timeout = 0x10000000U / wdt->rate;
- 	wdt->wdd.parent = dev;
- 	wdt->layout = regs;
-+	wdt->dev = &pdev->dev;
- 
- 	if (readl(wdt_addr(wdt, WDT_STS)) & 1)
- 		wdt->wdd.bootstatus = WDIOF_CARDRESET;
-@@ -222,6 +258,23 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	wdt->wdd.timeout = min(wdt->wdd.max_timeout, 30U);
- 	watchdog_init_timeout(&wdt->wdd, 0, dev);
- 
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq >= 0) {
-+		/* enable the pre-timeout notification */
-+		qcom_wdt_info.options |= WDIOF_PRETIMEOUT;
-+
-+		ret = devm_request_irq(&pdev->dev, irq, qcom_wdt_irq,
-+				       IRQF_TRIGGER_RISING, "wdog_bark",
-+				       &wdt->wdd);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to request irq\n");
-+			return ret;
-+		}
-+	}
-+
-+	if (qcom_wdt_info.options & WDIOF_PRETIMEOUT)
-+		wdt->wdd.pretimeout = wdt->wdd.timeout - 1;
-+
- 	ret = devm_watchdog_register_device(dev, &wdt->wdd);
- 	if (ret)
- 		return ret;
--- 
-2.23.0
+Why?
 
+> +	} else if (usize > ksize) {
+> +		if (__memzero_user(dst + size, rest))
+> +			return -EFAULT;
+> +	}
+> +	/* Copy the interoperable parts of the struct. */
+> +	if (__copy_to_user(dst, src, size))
+> +		return -EFAULT;
+
+Why not simply clear_user() and copy_to_user()?
+
+> +int copy_struct_from_user(void *dst, size_t ksize,
+> +			  const void __user *src, size_t usize)
+> +{
+> +	size_t size = min(ksize, usize);
+> +	size_t rest = abs(ksize - usize);
+
+Cute, but... you would be just as well without that 'rest' thing.
+
+> +
+> +	if (unlikely(usize > PAGE_SIZE))
+> +		return -EFAULT;
+
+Again, why?
+
+> +	if (unlikely(!access_ok(src, usize)))
+> +		return -EFAULT;
+
+Why not simply copy_from_user() here?
+
+> +	/* Deal with trailing bytes. */
+> +	if (usize < ksize)
+> +		memset(dst + size, 0, rest);
+> +	else if (usize > ksize) {
+> +		const void __user *addr = src + size;
+> +		char buffer[BUFFER_SIZE] = {};
+> +
+> +		while (rest > 0) {
+> +			size_t bufsize = min(rest, sizeof(buffer));
+> +
+> +			if (__copy_from_user(buffer, addr, bufsize))
+> +				return -EFAULT;
+> +			if (memchr_inv(buffer, 0, bufsize))
+> +				return -E2BIG;
+
+Frankly, that looks like a candidate for is_all_zeroes_user().
+With the loop like above serving as a dumb default.  And on
+badly alighed address it _will_ be dumb.  Probably too much
+so - something like
+	if ((unsigned long)addr & 1) {
+		u8 v;
+		if (get_user(v, (__u8 __user *)addr))
+			return -EFAULT;
+		if (v)
+			return -E2BIG;
+		addr++;
+	}
+	if ((unsigned long)addr & 2) {
+		u16 v;
+		if (get_user(v, (__u16 __user *)addr))
+			return -EFAULT;
+		if (v)
+			return -E2BIG;
+		addr +=2;
+	}
+	if ((unsigned long)addr & 4) {
+		u32 v;
+		if (get_user(v, (__u32 __user *)addr))
+			return -EFAULT;
+		if (v)
+			return -E2BIG;
+	}
+	<read the rest like you currently do>
+would be saner, and things like x86 could trivially add an
+asm variant - it's not hard.  Incidentally, memchr_inv() is
+an overkill in this case...
