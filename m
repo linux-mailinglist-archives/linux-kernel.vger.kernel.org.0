@@ -2,93 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1C8AAA1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C08FAAA36
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391035AbfIERiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 13:38:16 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34349 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729017AbfIERiQ (ORCPT
+        id S2391147AbfIERjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 13:39:32 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58364 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391131AbfIERj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 13:38:16 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d3so1657477plr.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 10:38:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KZtEeWQvjAbW4RpXx5Rs391kaT1lN+fLEO9kJk7Fxys=;
-        b=Tpv2lsp4ZSX1/DDksSNxod7O8sssf87giKmImdkfKrYTvSGHFs3sT35VSHoMs3cYRi
-         7gHbtoMEE6KbCyDUhhPDkXYnu2oW1AUfIu8fqBgIUNKb/jiqlkHPsP0Gi8PGXejv+8Uh
-         VdQgYO0NEyVCFXYB4Vkk7vVo+rEOI9+mk0ztU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KZtEeWQvjAbW4RpXx5Rs391kaT1lN+fLEO9kJk7Fxys=;
-        b=FKya8KPXYGCNr3bZOuyGOSgOTGycY8x9h4Ho6hIWpehE7bhVHr4dAGhoO6gG2Gl1IR
-         h/EHRU9vcqXKHhZSkzwafQF3gxjKtFzI5GfZBds2oLc1WwQRdVQnZRrHTiwGYmPm1U8g
-         lC04R6DN4z1aFVGmArcx2fJr8nvY1w/e3T2zoUu0iclSsvAIUXIhGNhW5vnFc9EWjwzq
-         FV2U2r6C1vZ2N23NGER1BSiqIxzVEZzWo6oZ2T9uqfx/whnUlIqFmWcPSr3E2HjouxR8
-         iFmx2OkxAiYu0n+n2JWcs4T9cZ4a8+HrtBmHUQ1jTRQZLXECRDH3LrmMHAwNJXTpEkIv
-         ttSw==
-X-Gm-Message-State: APjAAAXVQGb9jTPl1p/hLMYBeMLroQvrKa+yPtWM+ay0wIqJOdNq3Zsh
-        TAAumx1/EocbS2o9BPX0mVg0Dg==
-X-Google-Smtp-Source: APXvYqzppQYLVqSQxNu0WP8Ij9s84K1CSFUQ+cCcQwDX8geaiRWH3nZwKL16gKlY7J3Px/24N6L3Aw==
-X-Received: by 2002:a17:902:8b85:: with SMTP id ay5mr1652431plb.120.1567705095379;
-        Thu, 05 Sep 2019 10:38:15 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id n185sm2632568pga.16.2019.09.05.10.38.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2019 10:38:14 -0700 (PDT)
-Date:   Thu, 5 Sep 2019 10:38:13 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Yong Mao <yong.mao@mediatek.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] mmc: core: WARN if SDIO IRQs are enabled for
- non-powered card in suspend
-Message-ID: <20190905173813.GL70797@google.com>
-References: <20190903142207.5825-1-ulf.hansson@linaro.org>
- <20190903142207.5825-8-ulf.hansson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190903142207.5825-8-ulf.hansson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 5 Sep 2019 13:39:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=AP3QXYgc2oODBwjsiyyDTEmHz/ojfNEQngmM1GZg4jc=; b=ZSyEwwWkzeYr
+        ciXUA8MJrAoSIFRCwbqGVE9a/25h+JPRZPLQ+ADVW9nMktvi70e2pFva1ZWtmK+aXjOrstXWTAICc
+        n3r/D9FuOGayRr9FafsbqFzw1g1EqHgMcBuvONYDzUxd5jZIm+n4uKI1plXOpYQFoI0pAzZtmgOnE
+        6KAMQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1i5vie-0005Ge-5O; Thu, 05 Sep 2019 17:38:52 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 3861B2742D07; Thu,  5 Sep 2019 18:38:51 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        daniel.baluta@nxp.com, festevam@gmail.com,
+        Hulk Robot <hulkci@huawei.com>, kernel@pengutronix.de,
+        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, perex@perex.cz,
+        pierre-louis.bossart@linux.intel.com, s.hauer@pengutronix.de,
+        shawnguo@kernel.org, tiwai@suse.com, yuehaibing@huawei.com
+Subject: Applied "ASoC: SOF: imx8: Fix COMPILE_TEST error" to the asoc tree
+In-Reply-To: <20190905064400.24800-1-yuehaibing@huawei.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190905173851.3861B2742D07@ypsilon.sirena.org.uk>
+Date:   Thu,  5 Sep 2019 18:38:51 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 04:22:03PM +0200, Ulf Hansson wrote:
-> To make sure SDIO func drivers behaves correctly during system
-> suspend/resume, let add a WARN_ON in case the condition is a non-powered
-> SDIO card and there are some SDIO IRQs still being claimed.
-> 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/mmc/core/sdio.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mmc/core/sdio.c b/drivers/mmc/core/sdio.c
-> index 8dd8fc32ecca..c557f1519b77 100644
-> --- a/drivers/mmc/core/sdio.c
-> +++ b/drivers/mmc/core/sdio.c
-> @@ -951,6 +951,8 @@ static int mmc_sdio_pre_suspend(struct mmc_host *host)
->   */
->  static int mmc_sdio_suspend(struct mmc_host *host)
->  {
-> +	WARN_ON(host->sdio_irqs && !mmc_card_keep_power(host));
-> +
->  	/* Prevent processing of SDIO IRQs in suspended state. */
->  	mmc_card_set_suspended(host->card);
->  	cancel_delayed_work_sync(&host->sdio_irq_work);
+The patch
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+   ASoC: SOF: imx8: Fix COMPILE_TEST error
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From f4df4e4042b045c6ddbaff878a17ae169fe68ba6 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 5 Sep 2019 14:44:00 +0800
+Subject: [PATCH] ASoC: SOF: imx8: Fix COMPILE_TEST error
+
+When do compile test, if SND_SOC_SOF_OF is not set, we get:
+
+sound/soc/sof/imx/imx8.o: In function `imx8_dsp_handle_request':
+imx8.c:(.text+0xb0): undefined reference to `snd_sof_ipc_msgs_rx'
+sound/soc/sof/imx/imx8.o: In function `imx8_ipc_msg_data':
+imx8.c:(.text+0xf4): undefined reference to `sof_mailbox_read'
+sound/soc/sof/imx/imx8.o: In function `imx8_dsp_handle_reply':
+imx8.c:(.text+0x160): undefined reference to `sof_mailbox_read'
+
+Make SND_SOC_SOF_IMX_TOPLEVEL always depends on SND_SOC_SOF_OF
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 202acc565a1f ("ASoC: SOF: imx: Add i.MX8 HW support")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20190905064400.24800-1-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sof/imx/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/sof/imx/Kconfig b/sound/soc/sof/imx/Kconfig
+index fd73d8402dbf..5acae75f5750 100644
+--- a/sound/soc/sof/imx/Kconfig
++++ b/sound/soc/sof/imx/Kconfig
+@@ -2,7 +2,8 @@
+ 
+ config SND_SOC_SOF_IMX_TOPLEVEL
+ 	bool "SOF support for NXP i.MX audio DSPs"
+-	depends on ARM64 && SND_SOC_SOF_OF || COMPILE_TEST
++	depends on ARM64|| COMPILE_TEST
++	depends on SND_SOC_SOF_OF
+ 	help
+           This adds support for Sound Open Firmware for NXP i.MX platforms.
+           Say Y if you have such a device.
+-- 
+2.20.1
+
