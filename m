@@ -2,105 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD2ABAACBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:07:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8807AACC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733113AbfIEUHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 16:07:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60896 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbfIEUHi (ORCPT
+        id S2388502AbfIEUIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 16:08:09 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:51189 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfIEUIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 16:07:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/RMKG1VmtC2gPGmK7VWh8EaeDGToHpuMmS1djuPjg9Y=; b=HzCrgT9ZhXEE69qWsnIA75rFg
-        HxRqmevdQ9RBjSwPeI87YRf+S1bIDVVH5G0EfMlgu2VA1y5WfwjouHPvNEXRKeSUVOhwzqDXqmgCT
-        yENCkE1gW9Np8oGYRMMN8EwCjOZfzjLEyBmOorojrxuVyCunW1dlaaW/iFBU4kaKvWy7sfYoQTqZQ
-        Emo+v0sAFKOH/cOlD+I3bHDXb0y2QC2Ua4dsXJW2sAsQ1RQnWFJ05m6dhtBG2ieV5aWAjg0se3IUQ
-        Rck8s0t0SOcN4UwdOM/FJ2kCLYsf5LiDMJDRp1r+pYH92BSJWhKqBblQB+30wDbY83pBTZqQ41rvi
-        n9yBeNflg==;
-Received: from [177.159.253.249] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5y2c-0003S4-Cm; Thu, 05 Sep 2019 20:07:38 +0000
-Date:   Thu, 5 Sep 2019 17:07:33 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        Jessica Yu <jeyu@kernel.org>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] docs: license-rules.txt: cover SPDX headers on Python
- scripts
-Message-ID: <20190905170733.3a25dee8@coco.lan>
-In-Reply-To: <20190905134008.57cd3e89@lwn.net>
-References: <20190905055614.7958918b@coco.lan>
-        <88e638eb959095ab6657d295f9f8c27169569bf2.1567675272.git.mchehab+samsung@kernel.org>
-        <20190905065701.4744e66a@lwn.net>
-        <20190905162810.2388d532@coco.lan>
-        <20190905134008.57cd3e89@lwn.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 5 Sep 2019 16:08:09 -0400
+Received: by mail-io1-f70.google.com with SMTP id z12so3837444iop.17
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 13:08:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Abbd0TSs66/zCB2hcq/kRDumBVAAFLe4IOeLRBtvGas=;
+        b=tAFiVni7EJuRl3NlKn4zyjnQ21kXW9Gzb2ImCAYB9/2UlzarZbSlJ8G8zz0r9hh7sq
+         0WPseVQTiS9wpGbJsTicbgUKdD7/OaQ71fItaidvw4wZYN3AQ/VJ3NtayEef11NkNnzY
+         cim7r96r8o0VbydQLtlAmJ342DfKDhSlwSpX4Pi+4/1nHYUrOON5K/VDNrkz8BVqZemX
+         O+ojjfRMzJ10b0hLDbfcpUP5pl0dSTNg12w1P6v6hStSYhSRdenndjruHFl30XUvn1Lk
+         zs5a9FU1zAKkiuWneiXg/b6xF1TV/Y8X0feu3e9JhuUeSxKLgNFvLszy5j25CfmFNSTO
+         8MlA==
+X-Gm-Message-State: APjAAAVLorPmWUBvYUnbh/rhVvO5IZlkxEykkSGGThAnQYLr1mU6n5p0
+        c5DL9/lpUx3leVfJ4IPYdiB5ajVMU14RE5BYzdo/nidw26yH
+X-Google-Smtp-Source: APXvYqwemc/4NDS04xk5eP5U95GqM6jnkkJWflKsban4wQWb879YYrAVRiYPmeVbK5uR5ZL4Kr7i98jSqkgtPCBagdaJpO0QD/58
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a5d:9591:: with SMTP id a17mr6266918ioo.303.1567714087830;
+ Thu, 05 Sep 2019 13:08:07 -0700 (PDT)
+Date:   Thu, 05 Sep 2019 13:08:07 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005091a70591d3e1d9@google.com>
+Subject: general protection fault in dev_map_hash_update_elem
+From:   syzbot <syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com>
+To:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
+        davem@davemloft.net, hawk@kernel.org, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com, kafai@fb.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 5 Sep 2019 13:40:08 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+Hello,
 
-> On Thu, 5 Sep 2019 16:28:10 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> 
-> > I don't think we can count that python 3 uses utf-8 per default.
-> > 
-> > I strongly suspect that, if one uses a Python3 version < 3.7, it will
-> > still default to ASCII.
-> > 
-> > On a quick look, the new UTF-8 mode was added on PEP-540:
-> > 
-> > 	https://www.python.org/dev/peps/pep-0540/
-> > 
-> > Such change happened at Python 3.7.   
-> 
-> That PEP is to override the locale and use utf8 unconditionally.  It
-> says, with regard to the pre-PEP state:
-> 
-> 	UTF-8 is also the default encoding of Python scripts, XML and JSON
-> 	file formats.
-> 
-> Unicode was the reason for much of the Python 3 pain; it seems unlikely
-> that many installations are defaulting to ASCII anyway...?
+syzbot found the following crash on:
 
-Yeah, but I remember that UTF-8 handling changed a few times during python 3
-releases. I didn't really tracked what happened, as I don't usually program
-in Python. So, I'm actually relying on what I can find about that.
+HEAD commit:    6d028043 Add linux-next specific files for 20190830
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=135c1a92600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=82a6bec43ab0cb69
+dashboard link: https://syzkaller.appspot.com/bug?extid=4e7a85b1432052e8d6f8
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109124e1600000
 
-Looking at Python 3.0 release[1], it says:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com
 
-	"In many cases, but not all, the system default is UTF-8;
-	 you should never count on this default."
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 10235 Comm: syz-executor.0 Not tainted 5.3.0-rc6-next-20190830  
+#75
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__write_once_size include/linux/compiler.h:203 [inline]
+RIP: 0010:__hlist_del include/linux/list.h:795 [inline]
+RIP: 0010:hlist_del_rcu include/linux/rculist.h:475 [inline]
+RIP: 0010:__dev_map_hash_update_elem kernel/bpf/devmap.c:668 [inline]
+RIP: 0010:dev_map_hash_update_elem+0x3c8/0x6e0 kernel/bpf/devmap.c:691
+Code: 48 89 f1 48 89 75 c8 48 c1 e9 03 80 3c 11 00 0f 85 d3 02 00 00 48 b9  
+00 00 00 00 00 fc ff df 48 8b 53 10 48 89 d6 48 c1 ee 03 <80> 3c 0e 00 0f  
+85 97 02 00 00 48 85 c0 48 89 02 74 38 48 89 55 b8
+RSP: 0018:ffff88808d607c30 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffff8880a7f14580 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a7f14588
+RBP: ffff88808d607c78 R08: 0000000000000004 R09: ffffed1011ac0f73
+R10: ffffed1011ac0f72 R11: 0000000000000003 R12: ffff88809f4e9400
+R13: ffff88809b06ba00 R14: 0000000000000000 R15: ffff88809f4e9528
+FS:  00007f3a3d50c700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007feb3fcd0000 CR3: 00000000986b9000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  map_update_elem+0xc82/0x10b0 kernel/bpf/syscall.c:966
+  __do_sys_bpf+0x8b5/0x3350 kernel/bpf/syscall.c:2854
+  __se_sys_bpf kernel/bpf/syscall.c:2825 [inline]
+  __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:2825
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459879
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f3a3d50bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459879
+RDX: 0000000000000020 RSI: 0000000020000040 RDI: 0000000000000002
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3a3d50c6d4
+R13: 00000000004bfc86 R14: 00000000004d1960 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace 083223e21dbd0ae5 ]---
+RIP: 0010:__write_once_size include/linux/compiler.h:203 [inline]
+RIP: 0010:__hlist_del include/linux/list.h:795 [inline]
+RIP: 0010:hlist_del_rcu include/linux/rculist.h:475 [inline]
+RIP: 0010:__dev_map_hash_update_elem kernel/bpf/devmap.c:668 [inline]
+RIP: 0010:dev_map_hash_update_elem+0x3c8/0x6e0 kernel/bpf/devmap.c:691
+Code: 48 89 f1 48 89 75 c8 48 c1 e9 03 80 3c 11 00 0f 85 d3 02 00 00 48 b9  
+00 00 00 00 00 fc ff df 48 8b 53 10 48 89 d6 48 c1 ee 03 <80> 3c 0e 00 0f  
+85 97 02 00 00 48 85 c0 48 89 02 74 38 48 89 55 b8
+RSP: 0018:ffff88808d607c30 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffff8880a7f14580 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a7f14588
+RBP: ffff88808d607c78 R08: 0000000000000004 R09: ffffed1011ac0f73
+R10: ffffed1011ac0f72 R11: 0000000000000003 R12: ffff88809f4e9400
+R13: ffff88809b06ba00 R14: 0000000000000000 R15: ffff88809f4e9528
+FS:  00007f3a3d50c700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007feb3fcd0000 CR3: 00000000986b9000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-[1] https://docs.python.org/3.0/whatsnew/3.0.html
 
-So, at least on early Python 3 releases, the default may not be UTF-8.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I don't know about you, but, from time to time, people complain about
-UTF-8 chars when I'm handling patches (last time was on a patch series
-for Kernel 5.3 by a core dev in Australia, with was unable to apply a
-patch from me with had some UTF-8 chars). 
-
-So, I'm pretty sure that some devs don't set the locale to UTF8 even
-those days.
-
-Thanks,
-Mauro
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
