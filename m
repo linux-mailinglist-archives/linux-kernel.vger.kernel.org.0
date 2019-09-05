@@ -2,105 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D215A97D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 03:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4F00A97E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 03:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbfIEBL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 21:11:58 -0400
-Received: from mga04.intel.com ([192.55.52.120]:56241 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727162AbfIEBL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 21:11:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 18:11:57 -0700
-X-IronPort-AV: E=Sophos;i="5.64,468,1559545200"; 
-   d="scan'208";a="173767401"
-Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.239.13.123]) ([10.239.13.123])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 04 Sep 2019 18:11:55 -0700
-Subject: Re: [PATCH v2] doc: kvm: Fix return description of KVM_SET_MSRS
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190904060118.43851-1-xiaoyao.li@intel.com>
- <20190904174122.GK24079@linux.intel.com>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-Message-ID: <5e61463e-b389-4393-81f9-a154ee4688be@intel.com>
-Date:   Thu, 5 Sep 2019 09:11:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730112AbfIEBQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 21:16:09 -0400
+Received: from mail-pg1-f172.google.com ([209.85.215.172]:33868 "EHLO
+        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbfIEBQJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 21:16:09 -0400
+Received: by mail-pg1-f172.google.com with SMTP id n9so423309pgc.1;
+        Wed, 04 Sep 2019 18:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z3Ei8FyHzXCEAswMjYYL2sgHBCg2TC7hkQhTjvYG8KY=;
+        b=mzLpXBBSjIfPoEznzDVi8hEGCoi8iPdVtV8Hzs4xr0PPj03usX/NK85vi1/SC3DNJ8
+         cbZm8aJV/muvSP7U5x2czXSHfhO8XhBRtYzUArCTgPG2U9p6fC9vhcLGmJCOq9QXy/9t
+         CqH78HGJ00MSIcznSifqNso3bpZsBijFDPVDgPHJ6++c9yIaodj1B+YLBgFe+97RUrOJ
+         sxIpfha+z/sQQqJAKYoxfeq+BT3sVV1vSsS5gEArAfjltMN1X7UnOWbwlraaWgwArNeq
+         UoQiewIqDIxmx42RFeNT2rw7VX8+4GIdY0qDdLSI2SIDPTkhU7xpEkVJGYxnEmFYLjP1
+         waRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z3Ei8FyHzXCEAswMjYYL2sgHBCg2TC7hkQhTjvYG8KY=;
+        b=GLLNn92FgYIYBZbnqNlMFAUaQRpGIUVx2SEFhCedixYy/8fxhU4eh4wPoDp/CNjgsw
+         WlMFRIJ4eFrwB07Cond4OldNMQHOnKj4KfT/KYmNFSxSvSaMcF18e3M0W5jcb9vJP8U/
+         I3dNKbqfltC5enmySZR+wj9nCUSNeCYuIZW4rzk9N5icv1uPzqWvOg31xKYzGBncmHSj
+         Y04wSX08M1RzU+CKniboNFxfuwiiPot4W0GFpd3MOafVrETl1kr4WkbOlrV0O73cLfiQ
+         cz3+DkhpZQjpJMyCPZOrU0YSgA+GfowtFKCRYHsAToyY3pMJYa+uNHmCtKhp+thCc2Rw
+         4UqA==
+X-Gm-Message-State: APjAAAXbz00WEH9wG/FyA6BLxtUlzbCoVhP9JFrKtj6f8ZiAA5HzssXC
+        xrJIqyK44Ol6j9cNCTkjLE4=
+X-Google-Smtp-Source: APXvYqzTqKmk34vcZ/2Fksg66IicendpcLZGFN0xLJvxlsd5PmuspSmVqBJQBYhJ3l6UV1K7WLBbzA==
+X-Received: by 2002:a65:4304:: with SMTP id j4mr837941pgq.419.1567646168290;
+        Wed, 04 Sep 2019 18:16:08 -0700 (PDT)
+Received: from rashmica.ozlabs.ibm.com ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id v43sm6300914pjb.1.2019.09.04.18.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2019 18:16:07 -0700 (PDT)
+From:   Rashmica Gupta <rashmica.g@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     Rashmica Gupta <rashmica.g@gmail.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] Add ast2600 gpio support 
+Date:   Thu,  5 Sep 2019 11:16:00 +1000
+Message-Id: <20190905011600.15821-1-rashmica.g@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190904174122.GK24079@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/5/2019 1:41 AM, Sean Christopherson wrote:
-> On Wed, Sep 04, 2019 at 02:01:18PM +0800, Xiaoyao Li wrote:
->> Userspace can use ioctl KVM_SET_MSRS to update a set of MSRs of guest.
->> This ioctl sets specified MSRs one by one. Once it fails to set an MSR
->> due to setting reserved bits, the MSR is not supported/emulated by kvm,
->> or violating other restrictions, it stops further processing and returns
->> the number of MSRs have been set successfully.
->>
->> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
->> ---
->> v2:
->>    elaborate the changelog and description of ioctl KVM_SET_MSRS based on
->>    Sean's comments.
->>
->> ---
->>   Documentation/virt/kvm/api.txt | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/virt/kvm/api.txt b/Documentation/virt/kvm/api.txt
->> index 2d067767b617..4638e893dec0 100644
->> --- a/Documentation/virt/kvm/api.txt
->> +++ b/Documentation/virt/kvm/api.txt
->> @@ -586,7 +586,7 @@ Capability: basic
->>   Architectures: x86
->>   Type: vcpu ioctl
->>   Parameters: struct kvm_msrs (in)
->> -Returns: 0 on success, -1 on error
->> +Returns: number of msrs successfully set (see below), -1 on error
->>   
->>   Writes model-specific registers to the vcpu.  See KVM_GET_MSRS for the
->>   data structures.
->> @@ -595,6 +595,11 @@ Application code should set the 'nmsrs' member (which indicates the
->>   size of the entries array), and the 'index' and 'data' members of each
->>   array entry.
->>   
->> +It tries to set the MSRs in array entries[] one by one. Once failing to
-> 
-> Probably better to say 'If' as opposed to 'Once', don't want to imply that
-> userspace is incompetent :)
-> 
->> +set an MSR (due to setting reserved bits, the MSR is not supported/emulated
->> +by kvm, or violating other restrctions),
-> 
-> Make it clear the list is not exhaustive, e.g.:
-> 
-> It tries to set the MSRs in array entries[] one by one.  If setting an MSR
-> fails, e.g. due to setting reserved bits, the MSR isn't supported/emulated by
-> KVM, etc..., it stops processing the MSR list and returns the number of MSRs
-> that have been set successfully.
->
+v2: More verbose commit messages, using DIV_ROUND_UP().
 
-Refine it as you commented and send out v3, thanks.
+Rashmica Gupta (4):
+  gpio/aspeed: Fix incorrect number of banks
+  gpio/aspeed: Setup irqchip dynamically
+  gpio: Add in ast2600 details to Aspeed driver
+  gpio: dt-bindings: Update documentation with ast2600 controllers
 
->> it stops setting following MSRs
->> +and returns the number of MSRs have been set successfully.
->> +
->>   
->>   4.20 KVM_SET_CPUID
->>   
->> -- 
->> 2.19.1
->>
+ drivers/gpio/gpio-aspeed.c                    | 48 ++++++++++++++-----
+ .../devicetree/bindings/gpio/gpio-aspeed.txt  |  3 +-
+ 2 files changed, 38 insertions(+), 13 deletions(-)
+
+-- 
+2.20.1
+
