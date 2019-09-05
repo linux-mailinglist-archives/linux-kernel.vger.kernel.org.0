@@ -2,133 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F155AA988
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:01:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27E1BAA998
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:01:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390898AbfIERBO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 13:01:14 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46499 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389399AbfIERBO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 13:01:14 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t1so1560270plq.13
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 10:01:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pWzNKsO9zb4GfvkoVMf49hr5/cgM+ei8Wv313+DROpk=;
-        b=LzNGTOauQrHL8MgHfATX9kP+LQnVabOjtX19bA41tJYj7E/AQDKVK3Mw7SgrDXfrPk
-         pR1gYD9RPWuGNNNFkvCQBUcuHzYj/FTESTp/6MgslZKgafzGZ1r1kVQnZmzLJkPsiwq2
-         gEFW10B/Otte/51sBE0aheCGTCtVkXOLNxN8A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pWzNKsO9zb4GfvkoVMf49hr5/cgM+ei8Wv313+DROpk=;
-        b=TRqgGkImPnVqCXDi9nSg5lK3kxsAqhvssXZVdmpkxYt0L1AzCSxo0Qx8r6FFy7X5er
-         wIrMESEiP80AL5SiuSdRKeEQ0NK4mA+43RNk0AGF6H6Mtlnhg/37o/Yi4+xXG+o/YjFV
-         wVjX7CXGDGP3ruXvSedbZDyw7ija6IBQ0DOwLGbbKwEImkWdzEH57Je6aBHVrak6ZIhG
-         bnRm5SM6iigk4T8eLqcvtEWZOosN4m8WIhKFJZzReKMXpmcSw3K10lCuG3dWqK8//fKn
-         fHwhEqaCxHLlOHNNI5LkQjTsBbdSbFOlGcGfmgUiNCSpU+pxL6tMIpAP6xKogS2yWv7x
-         0liQ==
-X-Gm-Message-State: APjAAAXSZYsDm0eX06vrdIXkCckc3vyPld0Wqk5pX/UgjSLzy5Gi4z7e
-        8d9PFU3rmEBlfLMEZluQWfY57w==
-X-Google-Smtp-Source: APXvYqzqBP0/xDOKZMoJ1A0W/FYXyPFuwldBZjTH7Fwg0uT3cNgFMlhwfEzDkrzdSQwzhipHzrqD7w==
-X-Received: by 2002:a17:902:8342:: with SMTP id z2mr4529187pln.343.1567702873480;
-        Thu, 05 Sep 2019 10:01:13 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id q20sm7207195pfg.85.2019.09.05.10.01.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2019 10:01:12 -0700 (PDT)
-Date:   Thu, 5 Sep 2019 10:01:10 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Yong Mao <yong.mao@mediatek.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 02/11] mmc: dw_mmc: Re-store SDIO IRQs mask at system
- resume
-Message-ID: <20190905170110.GJ70797@google.com>
-References: <20190903142207.5825-1-ulf.hansson@linaro.org>
- <20190903142207.5825-3-ulf.hansson@linaro.org>
- <20190905001422.GH70797@google.com>
- <CAPDyKFryCPu+VWGoc2CV3dgUN+aLNjH8BC5qPjsbCBpUKN=GqQ@mail.gmail.com>
+        id S2403798AbfIERBw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 5 Sep 2019 13:01:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:64759 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733299AbfIERBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 13:01:52 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 62DF07FDF4;
+        Thu,  5 Sep 2019 17:01:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E24AE60BE1;
+        Thu,  5 Sep 2019 17:01:47 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
+References: <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com> <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rstrode@redhat.com, swhiteho@redhat.com, nicolas.dichtel@6wind.com,
+        raven@themaw.net, keyrings@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Why add the general notification queue and its sources
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFryCPu+VWGoc2CV3dgUN+aLNjH8BC5qPjsbCBpUKN=GqQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <17702.1567702907.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 05 Sep 2019 18:01:47 +0100
+Message-ID: <17703.1567702907@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 05 Sep 2019 17:01:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 09:29:04AM +0200, Ulf Hansson wrote:
-> On Thu, 5 Sep 2019 at 02:14, Matthias Kaehlcke <mka@chromium.org> wrote:
-> >
-> > On Tue, Sep 03, 2019 at 04:21:58PM +0200, Ulf Hansson wrote:
-> > > In cases when SDIO IRQs have been enabled, runtime suspend is prevented by
-> > > the driver. However, this still means dw_mci_runtime_suspend|resume() gets
-> > > called during system suspend/resume, via pm_runtime_force_suspend|resume().
-> > > This means during system suspend/resume, the register context of the dw_mmc
-> > > device most likely loses its register context, even in cases when SDIO IRQs
-> > > have been enabled.
-> > >
-> > > To re-enable the SDIO IRQs during system resume, the dw_mmc driver
-> > > currently relies on the mmc core to re-enable the SDIO IRQs when it resumes
-> > > the SDIO card, but this isn't the recommended solution. Instead, it's
-> > > better to deal with this locally in the dw_mmc driver, so let's do that.
-> > >
-> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > ---
-> > >  drivers/mmc/host/dw_mmc.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> > > index eea52e2c5a0c..f114710e82b4 100644
-> > > --- a/drivers/mmc/host/dw_mmc.c
-> > > +++ b/drivers/mmc/host/dw_mmc.c
-> > > @@ -3460,6 +3460,10 @@ int dw_mci_runtime_resume(struct device *dev)
-> > >       /* Force setup bus to guarantee available clock output */
-> > >       dw_mci_setup_bus(host->slot, true);
-> > >
-> > > +     /* Re-enable SDIO interrupts. */
-> > > +     if (sdio_irq_enabled(host->slot->mmc))
-> > > +             __dw_mci_enable_sdio_irq(host->slot, 1);
-> > > +
-> > >       /* Now that slots are all setup, we can enable card detect */
-> > >       dw_mci_enable_cd(host);
-> >
-> > Looks reasonable to me, besides the bikeshedding over
-> > 'sdio_irq_enabled' (in "mmc: core: Add helper function to indicate
-> > if SDIO IRQs is enabled").
-> >
-> > One thing I wonder is why this change is only needed for dw_mmc and
-> > mtk-sd, but not for others like sunxi_mmc. Any insights for a SDIO
-> > newb?
-> 
-> mtk-sd and dw_mmc is using MMC_CAP2_SDIO_IRQ_NOTHREAD and
-> sdio_signal_irq(). This is also the case for sdhci, but sdhci is
-> already internally dealing restoring SDIO IRQs during system resume.
-> 
-> The other host drivers haven't yet converted to
-> MMC_CAP2_SDIO_IRQ_NOTHREAD. I have a series for that, not yet
-> completed and thus not ready to be posted. Once that happens, all host
-> drivers needs to care about re-enabling SDIO IRQs durings system
-> resume as well.
-> 
-> For those host that currently doesn't use MMC_CAP2_SDIO_IRQ_NOTHREAD,
-> the core wakes up the sdio_irq_thread from mmc_sdio_resume(), which
-> later will calls the ->enable_sdio_irq().
-> 
-> Perhaps I should add some information about this in the changelog, let
-> me think about it for the next version.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-It makes sense now, thanks for the clarification!
+> > Here's a set of patches to add a general notification queue concept and to
+> > add event sources such as:
+> 
+> Why?
+> 
+> I'm just going to be very blunt about this, and say that there is no
+> way I can merge any of this *ever*, unless other people stand up and
+> say that
+> 
+>  (a) they'll use it
+> 
+> and
+> 
+>  (b) they'll actively develop it and participate in testing and coding
+
+Besides the core notification buffer which ties this together, there are a
+number of sources that I've implemented, not all of which are in this patch
+series:
+
+ (1) Key/keyring notifications.
+
+     If you have your kerberos tickets in a file/directory, your gnome desktop
+     will monitor that using something like fanotify and tell you if your
+     credentials cache changes.
+
+     We also have the ability to cache your kerberos tickets in the session,
+     user or persistent keyring so that it isn't left around on disk across a
+     reboot or logout.  Keyrings, however, cannot currently be monitored
+     asynchronously, so the desktop has to poll for it - not so good on a
+     laptop.
+
+     This source will allow the desktop to avoid the need to poll.
+
+ (2) USB notifications.
+
+     GregKH was looking for a way to do USB notifications as I was looking to
+     find additional sources to implement.  I'm not sure how he wants to use
+     them, but I'll let him speak to that himself.
+
+ (3) Block notifications.
+
+     This one I was thinking that I could make something like ddrescue better
+     by letting it get notifications this way.  This was a target of
+     convenience since I had a dodgy disk I was trying to rescue.
+
+     It could also potentially be used help systemd, say, detect broken
+     devices and avoid trying to unmount them when trying to reboot the machine.
+
+     I can drop this for now if you prefer.
+
+ (4) Mount notifications.
+
+     This one is wanted to avoid repeated trawling of /proc/mounts or similar
+     to work out changes to the mount object attributes and mount topology.
+     I'm told that the proc file holding the namespace_sem is a point of
+     contention, especially as the process of generating the text descriptions
+     of the mounts/superblocks can be quite involved.
+
+     The notifications directly indicate the mounts involved in any particular
+     event and what the change was.  You can poll /proc/mounts, but all you
+     know is that something changed; you don't know what and you don't know
+     how and reading that file may race with multiple changed being effected.
+
+     I pair this with a new fsinfo() system call that allows, amongst other
+     things, the ability to retrieve in one go an { id, change counter } tuple
+     from all the children of a specified mount, allowing buffer overruns to
+     be cleaned up quickly.
+
+     It's not just Red Hat that's potentially interested in this:
+
+	https://lore.kernel.org/linux-fsdevel/293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com/
+
+ (5) Superblock notifications.
+
+     This one is provided to allow systemd or the desktop to more easily
+     detect events such as I/O errors and EDQUOT/ENOSPC.
+
+I've tried to make the core multipurpose so that the price of the code
+footprint is mitigated.
+
+David
