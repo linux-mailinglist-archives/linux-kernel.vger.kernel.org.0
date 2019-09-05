@@ -2,159 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 655D1AA916
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAADBAA91D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388757AbfIEQe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:34:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33672 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbfIEQe0 (ORCPT
+        id S2389031AbfIEQgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:36:43 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53170 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388234AbfIEQgn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:34:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZAP4dBUwNvF31JJCVYPj21XLRrWDYvgUrqBRmt8DcDE=; b=hsBj26+0w9LJlDJX5zkkEFrAg
-        Sn4pMSUj958UFFJMPEuKQna0DD71l/bJ4jFnZ4xneMBDw07Q0k2jlc4W5Kn18peibSbsPU0Qt0r/M
-        Z7udtZu8eRhlBRNm9PwO5OqS6i7KkbPrB/p+YnUjLMjHRaFZYtcr91H3XyPyjNUeTWFCE=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i5uiD-00053J-SL; Thu, 05 Sep 2019 16:34:21 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 175282742D07; Thu,  5 Sep 2019 17:34:21 +0100 (BST)
-Date:   Thu, 5 Sep 2019 17:34:20 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Steven Price <steven.price@arm.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/panfrost: Fix regulator_get_optional() misuse
-Message-ID: <20190905163420.GD4053@sirena.co.uk>
-References: <20190904123032.23263-1-broonie@kernel.org>
- <CAL_JsqK8hn8aHa0e-QhT5=dMqCd0_HzNWMHM1YbEC_2z8n-tXg@mail.gmail.com>
- <feaf7338-9aa1-5065-7a83-028aeadd5578@arm.com>
- <20190905124014.GA4053@sirena.co.uk>
- <93b8910d-fc01-4c16-fd7e-86abfc3cc617@arm.com>
+        Thu, 5 Sep 2019 12:36:43 -0400
+Received: by mail-wm1-f68.google.com with SMTP id t17so3567580wmi.2;
+        Thu, 05 Sep 2019 09:36:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AkGp5CuoZ7+DBs4HS2vxktRn4TIDGSJOXm8qEsfnCug=;
+        b=CHYo7f5m6VPqE9QLpkVzXSD6hkAvDyeC6o/nT2cG/NAlupPoCvxlSNJ9WJ/fCabKX+
+         RuCXNuBcezQ3NyxM5dr4EGNeqH/Vr7iq4+1Uv9WVYVP7jiMVUHSG/lNjw3yToh3SUGfA
+         pkQRvFNI0bmaECFdIGhrz40A/qnK6in/WB92eNHldOZL75D89eby2AKCD7fM75DwJdM0
+         CxrozoYT5B6FvgVgeGrmDS83v474qTxvRsSWPmmz0NZpSJxEZKaIRVE1sPyabVSxZO3k
+         P185atT0E4KK2sM9dbue//XvVONoE9Re9KIcvwJUbAtowkAHQT8dvSVjS+7Z/H6zhMU5
+         a1gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AkGp5CuoZ7+DBs4HS2vxktRn4TIDGSJOXm8qEsfnCug=;
+        b=tqlvcaG6mpy+8NTIXIMXKZFq/2XSngycG9TzVATmsRt22df4lO7lGwPhYG+azdy4hz
+         TH4A2a7RjV6/AzUI4wOIJLk6u1urDt1ESPf6kv0Z7sWpP0bFm1ktqsyBzSqfnrCN4JOP
+         9uwWpt9Zun3hWRydU5BsQ/02k1t7SvJ6av94cmCbFmfCCF3fEcBB4GlR4RGeOkw38lDL
+         rWscrJBB0/sRoI3mdf99gf3GKGO1y6EZajOQZzffdhlqP/BGVF3dcPdWo5R4N7pu1o8m
+         2X6V2qbrLITtu6GCwcHwmK9PkYk5N0n5QGHJ/PWFgoPKGN2TBeWGCqliNTCC216LbgcO
+         Aevg==
+X-Gm-Message-State: APjAAAV938DTBxVnX6DEx8xvF9k4vL3QIunZgawweGIoOgLI+9UHjZUW
+        5NIVZJBY1fzfF1cniZEKbr3rGAIZoYumZxAnzbg=
+X-Google-Smtp-Source: APXvYqz9hFfnXxS5LgTBQz7g+RYOpjxUXfn5LexEg3DPsbwv7ynAv2O9TVtk+V6OTPQbyewJo1sVCMTYFV0YBT0Qo5E=
+X-Received: by 2002:a7b:c8d6:: with SMTP id f22mr2086098wml.67.1567701400749;
+ Thu, 05 Sep 2019 09:36:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a2FkP9tdjPU2nyhF"
-Content-Disposition: inline
-In-Reply-To: <93b8910d-fc01-4c16-fd7e-86abfc3cc617@arm.com>
-X-Cookie: You humans are all alike.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190814213118.28473-1-kherbst@redhat.com> <20190814213118.28473-2-kherbst@redhat.com>
+ <CAPM=9ty7yEUqKrcixV1tTuWCpyh6UikA3rxX8BF1E3fDb6WLQQ@mail.gmail.com>
+ <2215840.qs0dBhReda@kreacher> <CACO55ttC-o9bKU7nHNcfjm2YnffiupQ7UHUt7BYL3fu+yEyTbw@mail.gmail.com>
+In-Reply-To: <CACO55ttC-o9bKU7nHNcfjm2YnffiupQ7UHUt7BYL3fu+yEyTbw@mail.gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 5 Sep 2019 12:35:56 -0400
+Message-ID: <CADnq5_NSY=usXHcX8UqBiTbenPE8K3+yZ5Ujnu3vSWziVTr_QQ@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI string to
+ enable dGPU direct output"
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Alex Hung <alex.hung@canonical.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Dave Airlie <airlied@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 5, 2019 at 11:51 AM Karol Herbst <kherbst@redhat.com> wrote:
+>
+> is there any update on the testing with my patches? On the hardware I
+> had access to those patches helped, but I can't know if it also helped
+> on the hardware for which those workarounds where actually added.
+>
+> On Mon, Aug 19, 2019 at 11:52 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> >
+> > On Thursday, August 15, 2019 12:47:35 AM CEST Dave Airlie wrote:
+> > > On Thu, 15 Aug 2019 at 07:31, Karol Herbst <kherbst@redhat.com> wrote:
+> > > >
+> > > > This reverts commit 28586a51eea666d5531bcaef2f68e4abbd87242c.
+> > > >
+> > > > The original commit message didn't even make sense. AMD _does_ support it and
+> > > > it works with Nouveau as well.
+> > > >
+> > > > Also what was the issue being solved here? No references to any bugs and not
+> > > > even explaining any issue at all isn't the way we do things.
+> > > >
+> > > > And even if it means a muxed design, then the fix is to make it work inside the
+> > > > driver, not adding some hacky workaround through ACPI tricks.
+> > > >
+> > > > And what out of tree drivers do or do not support we don't care one bit anyway.
+> > > >
+> > >
+> > > I think the reverts should be merged via Rafael's tree as the original
+> > > patches went in via there, and we should get them in asap.
+> > >
+> > > Acked-by: Dave Airlie <airlied@redhat.com>
+> >
+> > The _OSI strings are to be dropped when all of the needed support is there in
+> > drivers, so they should go away along with the requisite driver changes.
+> >
+>
+> that goes beside the point. firmware level workarounds for GPU driver
+> issues were pushed without consulting with upstream GPU developers.
+> That's something which shouldn't have happened in the first place. And
+> yes, I am personally annoyed by the fact, that people know about
+> issues, but instead of contacting the proper persons and working on a
+> proper fix, we end up with stupid firmware level workarounds. I can't
+> see why we ever would have wanted such workarounds in the first place.
+>
+> And I would be much happier if the next time something like that comes
+> up, that the drm mailing list will be contacted as well or somebody
+> involved.
+>
+> We could have also just disable the feature inside the driver (and
+> probably we should have done that a long time ago, so that is
+> essentially our fault, but still....)
 
---a2FkP9tdjPU2nyhF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Generally these conversations happen between the OEM, the relevant
+distro, and hw vendor prior to production so they can't always be
+discussed in public.  These programs have power, feature, and distro
+targets and not all of those align.  Sometimes fixing this at the
+firmware level is the best way to make the product work well at launch
+given the state of Linux at a particular time.  Windows already does
+similar stuff so that older versions of windows will work properly on
+newer hardware.  I agree that we should all strive to fix stuff
+properly, but that's not always possible.
 
-On Thu, Sep 05, 2019 at 02:02:38PM +0100, Steven Price wrote:
-> On 05/09/2019 13:40, Mark Brown wrote:
+Alex
 
-> > Is that safe?  You can't rely on being able to change voltages even if
-> > there's a physical regulator available, system constraints or the
-> > results of sharing the regulator with other users may prevent changes.
-
-> Perhaps I didn't express myself clearly. I mean that in the case of the
-> Hikey960 it would be convenient to have a "dummy regulator" that simply
-> accepted any change because ultimately Linux doesn't have direct control
-> of the voltages but simply requests a particular operating frequency via
-> the mailbox.
-
-There's more platforms than just HiKey supported here though, I'm pretty
-sure some of them don't have the regulator under firmware control (and
-HiKey doesn't seem to have this device enabled upstream at all?).
-
-> > I guess at the minute the code is assuming that if you can't vary the
-> > regulator it's fixed at the maximum voltage and that it's safe to run at
-> > a lower clock with a higher voltage (some devices don't like doing that).
-
-> No - at the moment if the regulator reports an error then the function
-> bails out and doesn't change the frequency.
-
-I'm talking about the case where you didn't get a regulator at all where
-it won't even try to set anything (ie, current behaviour).
-
-> > I do note that the current code requires exactly specified voltages with
-> > no variation which doesn't match the behaviour you say you're OK with
-> > here, what you're describing sounds like the driver should be specifying
-> > a voltage range from the hardware specified maximum down to whatever the
-> > minimum the OPP supports rather than exactly the OPP voltage.  As things
-> > are you might also run into voltages that can't be hit exactly (eg, in
-> > the Exynos 5433 case in mainline a regulator that only offers steps of
-> > 2mV will error out trying to set several of the OPPs).
-
-> Perhaps there's a better way of doing devfreq? Panfrost itself doesn't
-> really care must about this - we just need to be able to scaling up/down
-> the operating point depending on load.
-
-The idiomatic thing for this sort of usage would be to set the voltage
-to a range between the minimum voltage the OPP can support and the
-maximum the hardware can support.  That's basically saying "try to set
-the voltage to the lowest thing between this minimum and maximum" which
-seems to be about what you're asking for here.
-
-> On many platforms to set the frequency it's necessary to do the dance to
-> set an appropriate voltage before/afterwards, but on the Hikey960
-> because this is handled via a mailbox we don't actually have a regulator
-> to set the voltage on. My commit[1] supports this by simply not listing
-> the regulator in the DT and assuming that nothing is needed when
-> switching frequency. I'm happy for some other way of handling this if
-> there's a better method.
-
-> At the moment your change from devm_regulator_get_optional() to
-> devm_regulator_get() is a regression on this platform because it means
-> there is now a dummy regulator which will always fail the
-> regulator_set_voltage() calls preventing frequency changes. And I can't
-> see anything I can do in the DT to fix that.
-
-Like I say that system doesn't have any enablement at all for thse
-devices upstream that I can see, the only thing with any OPPs is the
-Exynos 5433 which does have a regulator.
-
-The simplest thing to do what you're trying to do inside the driver is
-the approach I suggested in my previous mail with checking to see what
-voltages are actually supported on the system and do something with
-that information, I'd recommend eliminating individual OPPs if some are
-supported or just never doing any regulator configuration if none can be
-set.
-
-However you're probably better off hiding all this stuff with the
-generic OPP code rather than open coding it - this already has much
-better handling for this, it supports voltage ranges rather than single
-voltages and optional regulators already.  I'm not 100% clear why this
-is open coded TBH but I might be missing something, if there's some
-restriction preventing the generic code being used it seems like those
-sohuld be fixed.
-
-In the short term I'd also strongly suggest adding documentation to the
-code so it's clear that there's some intentionality to this, at the
-minute it does not appear at all intentional.
-
---a2FkP9tdjPU2nyhF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1xOQwACgkQJNaLcl1U
-h9C9QQf/WGTGTJRj3jwUDw92Aky2sWURbEACxMg0OER49fGjoSLZHNAP3azn5D9u
-NXJbucWZ2h7vD4nBCd1NKI26XV0jneXvhkqSFCkzr398hB9lLuN1xWTJmsXDxq6e
-2FPJryKgvipHrQziIrlkACbqDXDixoeQyZqQZuNYiEXCCQTVB8xjWsIECYebQ7tN
-as2X/lPFU6IyKzdavIWw7UYKi/+RL4nL8z1TycgT1L8QjKmmbjj/94QdcXrK/T6h
-CaelahRm0nETWOsgWUln1wWPK7C+H5CDJlFqxWpiWKm04yPL+BdmWo9t9Wim4bkj
-mumvg57YRLi4iwhj/aAJyNju9XaAAA==
-=9OEU
------END PGP SIGNATURE-----
-
---a2FkP9tdjPU2nyhF--
+>
+> > I'm all for dropping then when that's the case, so please feel free to add ACKs
+> > from me to the patches in question at that point.
+> >
+> > Cheers,
+> > Rafael
+> >
+> >
+> >
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
