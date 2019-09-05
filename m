@@ -2,155 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05383AA18B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:35:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D703AA1A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:39:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388577AbfIELfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:35:00 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:60981 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732741AbfIELe7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:34:59 -0400
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Ajay.Kathat@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Ajay.Kathat@microchip.com";
-  x-sender="Ajay.Kathat@microchip.com"; x-conformance=spf_only;
-  x-record-type="v=spf1"; x-record-text="v=spf1 mx
-  a:ushub1.microchip.com a:smtpout.microchip.com
-  a:mx1.microchip.iphmx.com a:mx2.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Ajay.Kathat@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Ajay.Kathat@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: PtPIRUosD9LyyRb75RUDAqPif8RNDAC6fNYr0P84QzhhFS1w/i2950s2C5u/tdw0Gme8AkG++q
- K6N2OHqQ4VSyYK+REbKpD/t9hd8uPs3zDyc+94HUuXN1sjyCyfkVXc1ogfJmYWqHPEcns//cO5
- GMZPShSYr6DbwE7DW2KVJu1giIfxcK9XgQxkt7W0MuPiPk7e5T3kMbFt8pBlvz+3uEX2LuWByM
- TT3u0EoIJEH87Lryjzj7mp0fsmavTqt1DesiwKRa22PHuy29oYG0KmA0GUm1nFuZljJG9hrU/W
- 8fk=
-X-IronPort-AV: E=Sophos;i="5.64,470,1559545200"; 
-   d="scan'208";a="47936976"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 05 Sep 2019 04:34:59 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 5 Sep 2019 04:34:58 -0700
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
- Transport; Thu, 5 Sep 2019 04:34:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jX4nwhnWSqOgsWso4ocCYETqcb7bIAvC4ap0WbDwM+hDx22vgaFkzhx7g5SLQa4/XbkxjgR+VcXU1y4Qo/hUGGYR1GYNLW8F3fykCfEUB3KWClZY6NTwWtdPVJiJU7eeuTw+yc7DyuRC3RpfPt6h7FFZ8W2gvEU6+fFnnPYH19TqzqS4ubhPOWaTDiVVSxYykf5r2cfJCMf0jI9+jrsPpEpYKpJym5AbjdqNaWunTYw9KfSaQZYDNHomkhsS9GfmD4OgXx34J5BhmlPXLf70NAEGOPFPWKnwHgsGZZVm+Qd8QMCiGHXcJAmSXbNRAbVv2Hy+xw0/8MT3CMX9s5u2yQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=29FwnydSVZa44ay7U18Q8Q3QOvBIPCZSaJ2UQrkSOvQ=;
- b=mE+Hw3Zi6ZANcbfAS1D+pjiUrdUdHhBLCRxHGmbjd/CnQekkkL2NDuuzJ0MT79Q4EGhuKP3rCWSDjynr0YzF4tzS9DEx0Y4UvlW5ZcLCP1XiFS/tJXBgkgPeqVvE3ioSvKlicmHKlwxgK9gbaEsWb3OZRy+1oe4kMZ6HsMnIl2znDfS0xZmuRvg4yhheZp6Q0LFXJV0cXW9cOQdEzx2t+hlUJigeXG4XiELt2q/ghaNF6bV5Kbyb0BvWd4Pp7xVXK55GiaDGdWLFFDTf8Sn1rg6v5RSpQOiVhLCQdsTdr3PE0ys34khdo1dX0pNK56DagvsjJVn2qN+wxOAj0b5IrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=29FwnydSVZa44ay7U18Q8Q3QOvBIPCZSaJ2UQrkSOvQ=;
- b=qDpJAt9Y49vLpLu4I4hHGD0IC80I/oFfr8o0tYOuc6yUb3swLCuTojZb/7Fg+WTB+c6MIE1isFaA1fO2/t2h+M/HZphgiIDNhpOEQamLzMspJa0eRUdQecP5O6OgndZNJMQo4mdAx3P81VHSXwzqAR5Jk/u8caCXyeqGx9xxeyo=
-Received: from BN6PR11MB3985.namprd11.prod.outlook.com (10.255.129.78) by
- BN6PR11MB1489.namprd11.prod.outlook.com (10.172.22.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.20; Thu, 5 Sep 2019 11:34:56 +0000
-Received: from BN6PR11MB3985.namprd11.prod.outlook.com
- ([fe80::5864:dae1:9b7e:ff83]) by BN6PR11MB3985.namprd11.prod.outlook.com
- ([fe80::5864:dae1:9b7e:ff83%4]) with mapi id 15.20.2220.022; Thu, 5 Sep 2019
- 11:34:56 +0000
-From:   <Ajay.Kathat@microchip.com>
-To:     <greg@kroah.com>
-CC:     <Eugen.Hristev@microchip.com>, <Adham.Abozaeid@microchip.com>,
-        <linux-wireless@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] staging: dt-bindings: wilc1000: add optional rtc_clk
- property
-Thread-Topic: [PATCH 1/2] staging: dt-bindings: wilc1000: add optional rtc_clk
- property
-Thread-Index: AQHVYyVmBkghZ7w+IkiStodl6jvpxKccmquAgAAYcQCAAEJxAA==
-Date:   Thu, 5 Sep 2019 11:34:56 +0000
-Message-ID: <5878d3a6-65b7-0f02-2810-57f5c060b931@microchip.com>
-References: <1567603548-13355-1-git-send-email-eugen.hristev@microchip.com>
- <da5ea898-d8da-a6e2-97a0-4662b7d70b31@microchip.com>
- <20190905073700.GA30339@kroah.com>
-In-Reply-To: <20190905073700.GA30339@kroah.com>
-Reply-To: <Ajay.Kathat@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR05CA0012.namprd05.prod.outlook.com
- (2603:10b6:a03:c0::25) To BN6PR11MB3985.namprd11.prod.outlook.com
- (2603:10b6:405:7b::14)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [121.244.27.38]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 999e74f4-3326-4f8d-401b-08d731f513c3
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN6PR11MB1489;
-x-ms-traffictypediagnostic: BN6PR11MB1489:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN6PR11MB14898052B1CBCB84189969C5E3BB0@BN6PR11MB1489.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 015114592F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39850400004)(136003)(376002)(346002)(396003)(189003)(199004)(52116002)(6246003)(53936002)(66066001)(31696002)(86362001)(256004)(6116002)(3846002)(2616005)(229853002)(66446008)(11346002)(64756008)(476003)(446003)(66476007)(305945005)(7736002)(6512007)(6436002)(31686004)(486006)(6306002)(36756003)(66946007)(66556008)(71190400001)(6486002)(81166006)(76176011)(3450700001)(478600001)(14454004)(81156014)(8676002)(5660300002)(6916009)(54906003)(966005)(71200400001)(316002)(2906002)(43066004)(102836004)(53546011)(6506007)(386003)(4326008)(186003)(8936002)(99286004)(25786009)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1489;H:BN6PR11MB3985.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: p1CuM5RoWcW0AbAn/paFHiBLK4gZblthm6N43cF4qAD0fQ0JTFTsh6mFvKJGAGhJ8iOOVA0gIPEfcTZkdiknNKUb2dGG3lFwL3/1mU7ajE/GD9kvnrp6W5DAo9fK4YV15LB9y6eF0p9Yt3DsxgTAwoQkrgY37mni1TFpop4UmO7fnEbieOzhEBw9TVZ13OStoz507ud3BfbbHAyu1XSQ2soehh9LLA0L8ypx3KeWm4SK2/qoFdUtF2wfo7hbBcE4JqBgtSoypeKlxJcE2Cetj7yF9PeSqDZo3W+Hi+qoBg5dV+AJ9/yEiDSLKYfUG3m3ycZg9agaBWklc739P2H5osRUFzR5bbO1p3Xz7Z0jp44NOgpvY2Tzi2imiUihoXmtaenq4tn1AXe3VhgrOYWGxgHAKrJQyvNwzWJ0cjENRr8=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <25DBC010746EEB4F8B6A46E4EBFD80F4@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1732924AbfIELjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:39:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36178 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730753AbfIELjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 07:39:37 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BB3FB1DA2;
+        Thu,  5 Sep 2019 11:39:36 +0000 (UTC)
+Received: from [10.10.125.234] (ovpn-125-234.rdu2.redhat.com [10.10.125.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 01BA0600F8;
+        Thu,  5 Sep 2019 11:39:35 +0000 (UTC)
+Subject: Re: [RFC PATCH 2/2] livepatch: Clear relocation targets on a module
+ removal
+To:     Petr Mladek <pmladek@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     jikos@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+References: <20190814151244.5xoaxib5iya2qjco@treble>
+ <20190816094608.3p2z73oxcoqavnm4@pathway.suse.cz>
+ <20190822223649.ptg6e7qyvosrljqx@treble>
+ <20190823081306.kbkm7b4deqrare2v@pathway.suse.cz>
+ <20190826145449.wyo7avwpqyriem46@treble>
+ <alpine.LSU.2.21.1909021802180.29987@pobox.suse.cz>
+ <5c649320-a9bf-ae7f-5102-483bc34d219f@redhat.com>
+ <alpine.LSU.2.21.1909031447140.3872@pobox.suse.cz>
+ <20190904084932.gndrtewubqiaxmzy@pathway.suse.cz>
+ <20190905025055.36loaatxtkhdo4q5@treble>
+ <20190905110955.wl4lwjbnpqybhkcn@pathway.suse.cz>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Message-ID: <de73b9c6-fa57-8893-d7ae-5256bbb603b5@redhat.com>
+Date:   Thu, 5 Sep 2019 07:39:35 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 999e74f4-3326-4f8d-401b-08d731f513c3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2019 11:34:56.5745
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0NIB7JrzKfcIfl6b3wTVI7sOEHKf1lmBtIml5WPSbnn/8KAewUZY1GJZwGkd0QSwexcbehS7IfCpbehdLqF7LbS6YqePP0pfM/hZqR496EI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1489
+In-Reply-To: <20190905110955.wl4lwjbnpqybhkcn@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Thu, 05 Sep 2019 11:39:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR3JlZywNCg0KT24gMDUtU2VwLTE5IDE6MDcgUE0sIEdyZWcgS0ggd3JvdGU6DQo+IE9uIFRo
-dSwgU2VwIDA1LCAyMDE5IGF0IDA2OjA5OjQzQU0gKzAwMDAsIEFqYXkuS2F0aGF0QG1pY3JvY2hp
-cC5jb20gd3JvdGU6DQo+PiBIaSBFdWdlbiwNCj4+DQo+PiBPbiAwNC1TZXAtMTkgNzowMyBQTSwg
-RXVnZW4gSHJpc3RldiAtIE0xODI4MiB3cm90ZToNCj4+PiBGcm9tOiBFdWdlbiBIcmlzdGV2IDxl
-dWdlbi5ocmlzdGV2QG1pY3JvY2hpcC5jb20+DQo+Pj4NCj4+PiBBZGQgYmluZGluZ3MgZm9yIG9w
-dGlvbmFsIHJ0YyBjbG9jayBwaW4uDQo+Pj4NCj4+PiBTaWduZWQtb2ZmLWJ5OiBFdWdlbiBIcmlz
-dGV2IDxldWdlbi5ocmlzdGV2QG1pY3JvY2hpcC5jb20+DQo+Pg0KPj4gVGhhbmtzIGZvciBzZW5k
-aW5nIHRoZSBwYXRjaCBzZXJpZXMuIFRoZSBjaGFuZ2VzIGluIHRoaXMgc2VyaWVzIGxvb2tzDQo+
-PiBnb29kIHRvIG1lLg0KPj4NCj4+IEFja2VkLWJ5OiBBamF5IFNpbmdoIDxhamF5LmthdGhhdEBt
-aWNyb2NoaXAuY29tPg0KPiANCj4gVGhpcyBpcyBnb29kLCBidXQsIHlvdSBhcmUgYWRkaW5nIG5l
-dyBmZWF0dXJlcyB0byB0aGUgZHJpdmVyLCB3aGVuIGl0IGlzDQo+IHN0aWxsIGluIHRoZSBzdGFn
-aW5nIGRpcmVjdG9yeS4gIFdoYXQncyB0aGUgcGxhbiBvbiBnZXR0aW5nIGl0IG91dCBvZg0KPiBo
-ZXJlPyAgV2hhdCBpcyBsZWZ0IHRvIGRvPw0KPiANCg0KVGhlIHBsYW4gaXMgdG8gZ2V0IHRoaXMg
-ZHJpdmVyIHJldmlld2VkIGFuZCBpZGVudGlmeSBpZiB0aGVyZSBhcmUgYW55DQptb3JlIFRPRE8g
-aXRlbXMuIFdhaXRpbmcgZm9yIHRoZSByZXZpZXcgdG8gY29tcGxldGUuDQoNCkR1cmluZyB0aGUg
-bGFzdCByZXZpZXcgWzFdLCB3ZSBoYXZlIHJlY2VpdmVkIGNvbW1lbnQgdG8gc2ltcGxpZnkgdGhl
-DQpwYWNraW5nIG9mIFdJRCBjb21tYW5kcyBieSBhdm9pZGluZyB0aGUgdHJhbnNsYXRpb24gbGF5
-ZXIuIFdlIGhhZCBkb25lDQpzb21lIGltcHJvdmVtZW50cyBpbiB0aGlzIGJ1dCBzdGlsbCwgdGhl
-cmUgYXJlIGZldyBpdGVtcyB1bmRlciBkaXNjdXNzaW9uLg0KQnV0IEkgYW0gbm90IHN1cmUgaWYg
-dGhpcyBpcyBhIGJsb2NrZXIgZm9yIG1haW5saW5lIG9yIGNhbiBiZSBhZGRyZXNzZWQNCmxhdGVy
-Lg0KQXQgdGhpcyB0aW1lLCBJIGRvbid0IGtub3cgaWYgdGhlcmUgYXJlIGFueSBtb3JlIFRPRE8g
-Zm9yIHRoaXMgZHJpdmVyLg0KQ3VycmVudGx5IGFsc28gd29ya2luZyBvbiB0ZXN0aW5nIGFuZCBm
-aXhpbmcgYnVncy4NCg0KWzFdLg0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtd2lyZWxl
-c3MvMTU2Mjg5NjY5Ny04MDAyLTEtZ2l0LXNlbmQtZW1haWwtYWpheS5rYXRoYXRAbWljcm9jaGlw
-LmNvbS8NCg0KUmVnYXJkcywNCkFqYXkNCg==
+On 9/5/19 7:09 AM, Petr Mladek wrote:
+> On Wed 2019-09-04 21:50:55, Josh Poimboeuf wrote:
+>> On Wed, Sep 04, 2019 at 10:49:32AM +0200, Petr Mladek wrote:
+>>> I wonder what is necessary for a productive discussion on Plumbers:
+>>>
+>>>    + Josh would like to see what code can get removed when late
+>>>      handling of modules gets removed. I think that it might be
+>>>      partially visible from Joe's blue-sky patches.
+>>
+>> Yes, and I like what I see.  Especially the removal of the .klp.arch
+>> nastiness!
+> 
+> Could we get rid of it?
+> 
+> Is there any other way to get access to static variables
+> and functions from the livepatched code?
+> 
+
+Hi Petr,
+
+I think the question is whether .klp (not-arch specific) relocations 
+would be sufficient (without late module patching).  If it would a great 
+simplification if those were all we needed.  I'm not 100% sure about 
+this quite yet, but am hoping that is the case.
+
+>>>        Anyway, it might rule out some variants so that we could better
+>>>        concentrate on the acceptable ones. Or come with yet another
+>>>        proposal that would avoid the real blockers.
+>>
+>> I'd like to hear more specific negatives about Joe's recent patches,
+>> which IMO, are the best option we've discussed so far.
+> 
+> I discussed this approach with our project manager. He was not much
+> excited about this solution. His first idea was that it would block
+> attaching USB devices. They are used by admins when taking care of
+> the servers. And there might be other scenarios where a new module
+> might need loading to solve some situation.
+> > Customers understand Livepatching as a way how to secure system
+> without immediate reboot and with minimal (invisible) effect
+> on the workload. They might get pretty surprised when the system > suddenly blocks their "normal" workflow.
+
+FWIW the complete blue-sky idea was that the package delivered to the 
+customer (RPM, deb, whatever) would provide:
+
+  - livepatch .ko, blacklists known vulnerable srcversions
+  - updated .ko's for the blacklisted modules
+
+The second part would maintain module loading workflow, albeit with a 
+new set .ko files.
+
+> As Miroslav said. No solution is perfect. We need to find the most
+> acceptable compromise. It seems that you are more concerned about
+> saving code, reducing complexity and risk. I am more concerned
+> about user satisfaction.
+> 
+> It is almost impossible to predict effects on user satisfaction
+> because they have different workflow, use case, expectation,
+> and tolerance.
+> 
+> We could better estimate the technical side of each solution:
+> 
+>     + implementation cost
+>     + maintenance cost
+>     + risks
+>     + possible improvements and hardening
+>     + user visible effects
+>     + complication and limits with creating livepatches
+> 
+> 
+>  From my POV, the most problematic is the arch-specific code.
+> It is hard to maintain and we do not have it fully under
+> control.
+> 
+> And I do not believe that we could remove all arch specific code
+> when we do not allow delayed livepatching of modules.
+> 
+
+No doubt there will probably always be some arch-specific code, and even 
+my blue-sky branch didn't move all that much.  But I think the idea 
+could be a bigger simplification in terms of the mental model, should 
+the solution be acceptable by criteria you mention above.
+
+-- Joe
