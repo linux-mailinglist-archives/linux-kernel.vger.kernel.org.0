@@ -2,108 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8D6AA182
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:32:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A11E2AA197
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:36:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388548AbfIELca (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:32:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35538 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733226AbfIELca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:32:30 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A0B92070C;
-        Thu,  5 Sep 2019 11:32:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567683149;
-        bh=Y+myvtaL/wVtidX/HGF2iJ5MxtkmherpGfkJw9XyNpI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fQ2pxKWhksD2CMPVfQNcHYobKtpPfkh2PKa4YujwIMyaCVYwLoqBvhennaA8SVflm
-         R9qs0Vv7rIyRfbig0j3hXq/kINB3MvWzLvOzxi68MnM/ekvP7JK/QJJ7LLKSiIBvt5
-         2XV21+pxjeh1LIhtWyY4qv3ZlRFs2OtjL6I20LdA=
-Date:   Thu, 5 Sep 2019 20:32:24 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andrew Cooper <andrew.cooper3@citrix.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, Juergen Gross <jgross@suse.com>,
-        "Stefano Stabellini" <sstabellini@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        <xen-devel@lists.xenproject.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
-Subject: Re: [Xen-devel] [PATCH -tip 0/2] x86: Prohibit kprobes on
- XEN_EMULATE_PREFIX
-Message-Id: <20190905203224.e41d7f3dfbf918c5031f9766@kernel.org>
-In-Reply-To: <1372ce73-e2d8-6144-57df-a98429587826@citrix.com>
-References: <156759754770.24473.11832897710080799131.stgit@devnote2>
-        <ad6431be-c86e-5ed5-518a-d1e9d1959e80@citrix.com>
-        <20190905104937.60aa03f699a9c0fbf1b651b9@kernel.org>
-        <1372ce73-e2d8-6144-57df-a98429587826@citrix.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2388589AbfIELg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:36:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45728 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732712AbfIELg0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 07:36:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PcPa5IlnDPH8tm4OAmhfwwgRlNISzvs+UWn9umBpAfg=; b=oHktuR8r49WzS31A+UiLvH2Z1
+        NOyMpC+gF++rhCh0op7LqLwwAWVUNUm2SQ9KmfLw9Pn/jUxylg5DwsGYh3+9dzQi14KQdNMBbj9oc
+        doMl3phBErpwrkl1GIePI1UGZRc2kIdHNs44uBX4QikSp831ZWfdwCW4SV0WZ2Dnd43ncD/uZM+J2
+        /Rw7f9H5PeR8pjZMTjToV/ZWxAE/xpX2xJSe5VGnQdi5AWvDDfwFt8fHgPIJMw1JPMcO2WHpzvs14
+        eaEIYtaQygNOOsdigW27oG6DgRt17ieKZVa5HK7Ouw9qXpBM1CF3SwzHnSMOjBiYRp+Lhz2szCjNB
+        xKIvE8g0w==;
+Received: from 213-225-38-191.nat.highway.a1.net ([213.225.38.191] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5q3o-0001wn-Rm; Thu, 05 Sep 2019 11:36:21 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Stefano Stabellini <sstabellini@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        gross@suse.com, boris.ostrovsky@oracle.com
+Cc:     x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: swiotlb-xen cleanups v4
+Date:   Thu,  5 Sep 2019 13:33:57 +0200
+Message-Id: <20190905113408.3104-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019 08:54:17 +0100
-Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+Hi Xen maintainers and friends,
 
-> On 05/09/2019 02:49, Masami Hiramatsu wrote:
-> > On Wed, 4 Sep 2019 12:54:55 +0100
-> > Andrew Cooper <andrew.cooper3@citrix.com> wrote:
-> >
-> >> On 04/09/2019 12:45, Masami Hiramatsu wrote:
-> >>> Hi,
-> >>>
-> >>> These patches allow x86 instruction decoder to decode
-> >>> xen-cpuid which has XEN_EMULATE_PREFIX, and prohibit
-> >>> kprobes to probe on it.
-> >>>
-> >>> Josh reported that the objtool can not decode such special
-> >>> prefixed instructions, and I found that we also have to
-> >>> prohibit kprobes to probe on such instruction.
-> >>>
-> >>> This series can be applied on -tip master branch which
-> >>> has merged Josh's objtool/perf sharing common x86 insn
-> >>> decoder series.
-> >> The paravirtualised xen-cpuid is were you'll see it most in a regular
-> >> kernel, but be aware that it is also used for testing purposes in other
-> >> circumstances, and there is an equivalent KVM prefix which is used for
-> >> KVM testing.
-> > Good catch! I didn't notice that. Is that really same sequance or KVM uses
-> > another sequence of instructions for KVM prefix?
-> 
-> I don't know if you've spotted, but the prefix is a ud2a instruction
-> followed by 'xen' in ascii.
-> 
-> The KVM version was added in c/s 6c86eedc206dd1f9d37a2796faa8e6f2278215d2
-> 
-
-Ah, OK. I see it. But it seems that another ud0/ud1 can be used by
-other (new) virtualization. So at this moment I will just add a sequence
-as a pattern of prefix. Not use a fixed ud2 + sig.
-
-Thank you,
-
-> >
-> >> It might be better to generalise the decode support to "virtualisation
-> >> escape prefix" or something slightly more generic.
-> > Agreed, it is easy to expand it, we can switch the prefix template.
-> > Could you tell me where I should look? I will add it.
-> 
-> These are the only two I'm aware of.
+please take a look at this series that cleans up the parts of swiotlb-xen
+that deal with non-coherent caches.
 
 
+Changes since v3:
+ - don't use dma_direct_alloc on x86
 
-> 
-> ~Andrew
+Changes since v2:
+ - further dma_cache_maint improvements
+ - split the previous patch 1 into 3 patches
 
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Changes since v1:
+ - rewrite dma_cache_maint to be much simpler
+ - improve various comments and commit logs
+ - remove page-coherent.h entirely
