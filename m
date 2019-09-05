@@ -2,116 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52FEEAA1F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:47:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C3E0AA1F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732451AbfIELqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:46:43 -0400
-Received: from foss.arm.com ([217.140.110.172]:43226 "EHLO foss.arm.com"
+        id S1733149AbfIELrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:47:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:43252 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730780AbfIELqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:46:43 -0400
+        id S1730780AbfIELrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 07:47:08 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FB3B28;
-        Thu,  5 Sep 2019 04:46:40 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C3B523F718;
-        Thu,  5 Sep 2019 04:46:38 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
-To:     Patrick Bellasi <patrick.bellasi@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57BF8337;
+        Thu,  5 Sep 2019 04:47:07 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A4BB63F718;
+        Thu,  5 Sep 2019 04:47:05 -0700 (PDT)
+References: <20190830174944.21741-1-subhra.mazumdar@oracle.com> <20190830174944.21741-2-subhra.mazumdar@oracle.com> <20190905083127.GA2332@hirez.programming.kicks-ass.net> <87r24v2i14.fsf@arm.com> <20190905104616.GD2332@hirez.programming.kicks-ass.net> <87imq72dpc.fsf@arm.com> <20190905114030.GL2349@hirez.programming.kicks-ass.net>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Subhra Mazumdar <subhra.mazumdar@oracle.com>,
         linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
         steven.sistare@oracle.com, dhaval.giani@oracle.com,
         daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
         viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
         mgorman@techsingularity.net, parth@linux.ibm.com
-References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
- <20190830174944.21741-2-subhra.mazumdar@oracle.com>
- <20190905083127.GA2332@hirez.programming.kicks-ass.net>
- <87r24v2i14.fsf@arm.com>
- <20190905104616.GD2332@hirez.programming.kicks-ass.net>
- <87imq72dpc.fsf@arm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <df69627e-8aa0-e2cb-044e-fb392f34efa5@arm.com>
-Date:   Thu, 5 Sep 2019 12:46:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
+In-reply-to: <20190905114030.GL2349@hirez.programming.kicks-ass.net>
+Date:   Thu, 05 Sep 2019 12:46:57 +0100
+Message-ID: <87ef0v2cem.fsf@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <87imq72dpc.fsf@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/09/2019 12:18, Patrick Bellasi wrote:
->> There's a few things wrong there; I really feel that if we call it nice,
->> it should be like nice. Otherwise we should call it latency-bias and not
->> have the association with nice to confuse people.
->>
->> Secondly; the default should be in the middle of the range. Naturally
->> this would be a signed range like nice [-(x+1),x] for some x. but if you
->> want [0,1024], then the default really should be 512, but personally I
->> like 0 better as a default, in which case we need negative numbers.
->>
->> This is important because we want to be able to bias towards less
->> importance to (tail) latency as well as more importantance to (tail)
->> latency.
->>
->> Specifically, Oracle wants to sacrifice (some) latency for throughput.
->> Facebook OTOH seems to want to sacrifice (some) throughput for latency.
-> 
-> Right, we have this dualism to deal with and current mainline behaviour
-> is somehow in the middle.
-> 
-> BTW, the FB requirement is the same we have in Android.
-> We want some CFS tasks to have very small latency and a low chance
-> to be preempted by the wake-up of less-important "background" tasks.
-> 
-> I'm not totally against the usage of a signed range, but I'm thinking
-> that since we are introducing a new (non POSIX) concept we can get the
-> chance to make it more human friendly.
-> 
-> Give the two extremes above, would not be much simpler and intuitive to
-> have 0 implementing the FB/Android (no latency) case and 1024 the
-> (max latency) Oracle case?
-> 
 
-For something like latency-<whatever>, I don't see the point of having
-such a wide range. The nice range is probably more than enough - and before
-even bothering about the range, we should probably agree on what the range
-should represent.
+On Thu, Sep 05, 2019 at 12:40:30 +0100, Peter Zijlstra wrote...
 
-If it's niceness, I read it as: positive latency-nice value means we're
-nice to latency, means we reduce it. So the further up you go, the more you
-restrict your wakeup scan. I think it's quite easy to map that into the
-code: current behaviour at 0, with a decreasing scan mask size as we go
-towards +19. I don't think anyone needs 512 steps to tune this.
+> On Thu, Sep 05, 2019 at 12:18:55PM +0100, Patrick Bellasi wrote:
+>
+>> Right, we have this dualism to deal with and current mainline behaviour
+>> is somehow in the middle.
+>> 
+>> BTW, the FB requirement is the same we have in Android.
+>> We want some CFS tasks to have very small latency and a low chance
+>> to be preempted by the wake-up of less-important "background" tasks.
+>> 
+>> I'm not totally against the usage of a signed range, but I'm thinking
+>> that since we are introducing a new (non POSIX) concept we can get the
+>> chance to make it more human friendly.
+>
+> I'm arguing that signed _is_ more human friendly ;-)
 
-I don't know what logic we'd follow for negative values though. Maybe
-latency-nice -20 means always going through the slowpath, but what of the
-intermediate values?
+... but you are not human. :)
 
-AFAICT this RFC only looks at wakeups, but I guess latency-nice can be
-applied elsewhere (e.g. load-balance, something like task_hot() and its
-use of sysctl_sched_migration_cost).
+>> Give the two extremes above, would not be much simpler and intuitive to
+>> have 0 implementing the FB/Android (no latency) case and 1024 the
+>> (max latency) Oracle case?
+>
+> See, I find the signed thing more natural, negative is a bias away from
+> latency sensitive, positive is a bias towards latency sensitive.
+>
+> Also; 0 is a good default value ;-)
 
-> Moreover, we will never match completely the nice semantic, give that
-> a 1 nice unit has a proper math meaning, isn't something like 10% CPU
-> usage change for each step?
-> 
-> For latency-nice instead we will likely base our biasing strategies on
-> some predefined (maybe system-wide configurable) const thresholds.
-> 
-> Could changing the name to "latency-tolerance" break the tie by marking
-> its difference wrt prior/nice levels? AFAIR, that was also the original
-> proposal [1] by PaulT during the OSPM discussion.
-> 
-> Best,
-> Patrick
-> 
-> [1] https://youtu.be/oz43thSFqmk?t=1302
-> 
+Yes, that's appealing indeed.
+
+>> Moreover, we will never match completely the nice semantic, give that
+>> a 1 nice unit has a proper math meaning, isn't something like 10% CPU
+>> usage change for each step?
+>
+> Only because we were nice when implementing it. Posix leaves it
+> unspecified and we could change it at any time. The only real semantics
+> is a relative 'weight' (opengroup uses the term 'favourable').
+
+Good to know, I was considering it a POXIS requirement.
+
+>> Could changing the name to "latency-tolerance" break the tie by marking
+>> its difference wrt prior/nice levels? AFAIR, that was also the original
+>> proposal [1] by PaulT during the OSPM discussion.
+>
+> latency torrerance could still be a signed entity, positive would
+> signify we're more tolerant of latency (ie. less sensitive) while
+> negative would be less tolerant (ie. more sensitive).
+
+Right.
+
+>> For latency-nice instead we will likely base our biasing strategies on
+>> some predefined (maybe system-wide configurable) const thresholds.
+>
+> I'm not quite sure; yes, for some of these things, like the idle search
+> on wakeup, certainly. But say for wakeup-preemption, we could definitely
+> make it a task relative attribute.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
