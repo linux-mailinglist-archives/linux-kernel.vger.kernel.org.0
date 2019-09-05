@@ -2,168 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25883AA13E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72532AA14F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388368AbfIELYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:24:36 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44166 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfIELYe (ORCPT
+        id S2388430AbfIEL0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:26:16 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:53056 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732049AbfIEL0O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:24:34 -0400
-Received: by mail-pl1-f195.google.com with SMTP id k1so1139010pls.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 04:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oautEYXJNPg/LAxxq6KlzXzuc7s3EzH8MSqml3mnlFM=;
-        b=LBAX7V6D1Th2QUfX/hRQEHFvGDknVdyFkdXkIGgUFkxAk71cJS7G6lToozs2iu8Mu8
-         IQTQRSRqI+MDORXMr1YoTANBKUF9rZYD55NsSR7xubUHPn/sanRnQw/RSlfnvoEyfpzk
-         DsWs4tEgDfO6hnU9U9z5vTyNFILRWeenXG8IP/D+2Y9DHv8+KxklGSvCJDobVsdLzwbf
-         pnsqLg/MeGCE0evJfnekkkkUrBQPaO2jyzEMoKp5p7+W59kPOzCkq1W2a7hPII36GUs0
-         n+Yx9VprJg/gWKbZz+kda/jHxDOGXMZRgVkj7CPp2//Roi+nGzE/ckhwkFRGyiINfNc+
-         5OsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oautEYXJNPg/LAxxq6KlzXzuc7s3EzH8MSqml3mnlFM=;
-        b=f0yUrSgQaarpMSeE/kHD2XQWz3923Kuc0e1HdBH/0/Ea7xCiQpkafMwV039IRrN0rP
-         khKUSSRD2xmIBuZ8DRODUL2jkqV/QfXj0TXcUGsKMybRkor6dE1m8z/AlqvNJYs5G26U
-         gr2tCjDH5NrwHkBbQvG6o0YbtT3h1Brp/+yd4tp0FVqSTn9c9IPQ9lBECIWJswkniUje
-         Evv9S7dTI29hTK/kwFZxB4fDM7qtY8trU2F53McgaJYOsirKzvFPFCPRXSLTqbdm98tZ
-         sI6c0ygCO45lh6EpiFLc1pNF2Vk50fK4P2zMmGLKb+vjoKX5hPIp8/+H1BqXeikQKz3p
-         AQUA==
-X-Gm-Message-State: APjAAAUUUJSSmPfCr70pOJOJXLcWyJihpQ+dXrQRhaUzJVyjEPtJp7mk
-        Dqa3Vk7tuhpHjU/WKVtoWi8m0lts+J0fNtU4/dtWUw==
-X-Google-Smtp-Source: APXvYqzYlJ+6XFJMLoIVm5KsjILP4hj1Nh+pP6z9kQbgaMFL3BtoAq5YkC9z3vteSvPXzaBhc1WHdlr4zCbLtT7lfnU=
-X-Received: by 2002:a17:902:8c92:: with SMTP id t18mr277036plo.147.1567682673098;
- Thu, 05 Sep 2019 04:24:33 -0700 (PDT)
+        Thu, 5 Sep 2019 07:26:14 -0400
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x85BQ83R019832;
+        Thu, 5 Sep 2019 20:26:09 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x85BQ83R019832
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567682769;
+        bh=eYLn272Sy9fhUXrERxsg5RcSmedtHOfjBVG9VJ4bb5Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iCjY2UfL6jd45sNhs0jxhiNCQWLUr3ZcSneQD6AKR9pu+jxMrDLKVOlLj/ycVHIT1
+         jyvVrPsWl//7r7yQBeXkQbAZxbmtWgERcc7lzJnxg046ZgTqiOSxcxJqO6ozlmOhiP
+         I4Wa/6r9IgYuYFO0hno/hl3yQ6Dv/1MYv7o1DOY8eV3urCwhYHsyowxzRyllHTIg4p
+         AGmLdOdydztJHV/2uGG3KVSIhr5d5hDbpAJNMjlLIdwYSQSUvvcug8rr7VfhfLxbJ/
+         glDa8jIUnR2yrPKmX398FPHc+uyBvh4d8Y79UOjq9fptnzGb8fIHWT5JU6FXpWLvPe
+         /cgK/xB8Z01LA==
+X-Nifty-SrcIP: [209.85.217.44]
+Received: by mail-vs1-f44.google.com with SMTP id w195so1288686vsw.11;
+        Thu, 05 Sep 2019 04:26:09 -0700 (PDT)
+X-Gm-Message-State: APjAAAXnjgeUux9E4OjdThVuQg342h4JzZl1Td5dLZq87Pv0m9K7ngBY
+        knYZTc0+y34BWjXAwrYHBEu3su986gcQz3mYRnM=
+X-Google-Smtp-Source: APXvYqwOMv33jlhvXcxrJswfOYxSINojKomiw5PHTIePxV8kcg4TNPSESzrAsXtvN5eyFhUDcaxoE1yimV3bVbvTnwM=
+X-Received: by 2002:a67:e9cc:: with SMTP id q12mr1416862vso.181.1567682768019;
+ Thu, 05 Sep 2019 04:26:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <0000000000002a95df0591a4f114@google.com> <d6e4d2da-66c6-a8fe-2fea-a3435fa7cb54@gmail.com>
- <20190904154140.45dfb398@hermes.lan> <285edb24-01f9-3f9d-4946-b2f41ccd0774@gmail.com>
-In-Reply-To: <285edb24-01f9-3f9d-4946-b2f41ccd0774@gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 5 Sep 2019 13:24:21 +0200
-Message-ID: <CAAeHK+y3eQ7bXvo1tiAkwLCsFkbSU5B+6hsKbdEzkSXP2_Jyzg@mail.gmail.com>
-Subject: Re: WARNING in hso_free_net_device
-To:     Hui Peng <benquike@gmail.com>
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        syzbot+44d53c7255bb1aea22d2@syzkaller.appspotmail.com,
-        alexios.zavras@intel.com, "David S. Miller" <davem@davemloft.net>,
+References: <20180716122125.175792-1-maco@android.com> <20190903150638.242049-1-maennich@google.com>
+ <20190903150638.242049-13-maennich@google.com> <20190903161045.GA22754@roeck-us.net>
+ <CAK7LNARYqqCSCc0G4FL7_bj80iMoLLJrUJ7B3+huD25EUkrttA@mail.gmail.com>
+ <c6ac941c-06a4-e5dc-5cb9-fca7b40d7e9a@roeck-us.net> <CAA6KcBBeP9xYbVws4=RMFNA4kyrodE-R3mifhbkee-Q+jFRcoQ@mail.gmail.com>
+ <20190905104147.GA27788@linux-8ccs> <CAK8P3a0rf0PhXK1RdF1mWTyGggBJeH0h0YOCxDvJFgxu8wmWKw@mail.gmail.com>
+ <20190905111617.GB27788@linux-8ccs>
+In-Reply-To: <20190905111617.GB27788@linux-8ccs>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 5 Sep 2019 20:25:32 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATBWCTJ-FXydob5FUYMymsqCxhenBynb2_NfJdSC2yGDQ@mail.gmail.com>
+Message-ID: <CAK7LNATBWCTJ-FXydob5FUYMymsqCxhenBynb2_NfJdSC2yGDQ@mail.gmail.com>
+Subject: Re: [usb-storage] Re: [PATCH v4 12/12] RFC: watchdog: export core
+ symbols in WATCHDOG_CORE namespace
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Matthew Dharm <mdharm-usb@one-eyed-alien.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Matthias Maennich <maennich@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        netdev <netdev@vger.kernel.org>, rfontana@redhat.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oliver Neukum <oneukum@suse.com>
-Content-Type: multipart/mixed; boundary="000000000000dabb730591cc9008"
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Martijn Coenen <maco@android.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Will Deacon <will@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-modules@vger.kernel.org,
+        linux-usb <linux-usb@vger.kernel.org>,
+        USB Mass Storage on Linux 
+        <usb-storage@lists.one-eyed-alien.net>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000dabb730591cc9008
-Content-Type: text/plain; charset="UTF-8"
-
-On Thu, Sep 5, 2019 at 4:20 AM Hui Peng <benquike@gmail.com> wrote:
+On Thu, Sep 5, 2019 at 8:16 PM Jessica Yu <jeyu@kernel.org> wrote:
 >
-> Can you guys have  a look at the attached patch?
-
-Let's try it:
-
-#syz test: https://github.com/google/kasan.git eea39f24
-
-FYI: there are two more reports coming from this driver, which might
-(or might not) have the same root cause. One of them has a suggested
-fix by Oliver.
-
-https://syzkaller.appspot.com/bug?extid=67b2bd0e34f952d0321e
-https://syzkaller.appspot.com/bug?extid=93f2f45b19519b289613
-
->
-> On 9/4/19 6:41 PM, Stephen Hemminger wrote:
-> > On Wed, 4 Sep 2019 16:27:50 -0400
-> > Hui Peng <benquike@gmail.com> wrote:
+> +++ Arnd Bergmann [05/09/19 12:52 +0200]:
+> >On Thu, Sep 5, 2019 at 12:41 PM Jessica Yu <jeyu@kernel.org> wrote:
+> >> +++ Matthew Dharm [04/09/19 09:16 -0700]:
+> >> >On Wed, Sep 4, 2019 at 5:12 AM Guenter Roeck <linux@roeck-us.net> wrote:
 > >
-> >> Hi, all:
+> >> >HOWEVER, I have one question:  If these patches are included, and
+> >> >someone wants to introduce a bit of code which needs to use two
+> >> >symbols from different namespaces but with the same name, can that be
+> >> >done?  That is, if driver A has symbol 'foo' and driver B has symbol
+> >> >'foo' (both in their respective namespaces), and driver C wants to use
+> >> >A.foo and B.foo, can that be supported?
 > >>
-> >> I looked at the bug a little.
-> >>
-> >> The issue is that in the error handling code, hso_free_net_device
-> >> unregisters
-> >>
-> >> the net_device (hso_net->net)  by calling unregister_netdev. In the
-> >> error handling code path,
-> >>
-> >> hso_net->net has not been registered yet.
-> >>
-> >> I think there are two ways to solve the issue:
-> >>
-> >> 1. fix it in drivers/net/usb/hso.c to avoiding unregistering the
-> >> net_device when it is still not registered
-> >>
-> >> 2. fix it in unregister_netdev. We can add a field in net_device to
-> >> record whether it is registered, and make unregister_netdev return if
-> >> the net_device is not registered yet.
-> >>
-> >> What do you guys think ?
-> > #1
+> >> As of now, we currently don't support this - modpost will warn if a
+> >> symbol is exported more than once (across modules + vmlinux), and the
+> >> module loader currently assumes exported symbol names are unique.  Do
+> >> you have a concrete use case? If there is a strong need for this, I
+> >> don't think it'd be too hard to implement.
+> >
+> >I think what would prevent this from working in general is that having
+> >two modules with the same exported symbol in different namespaces
+> >won't link if you try to build both modules into the kernel itself.
+> >
+> >      Arnd
+>
+> Ah yeah, you are right. I only tried building an identically named
+> exported symbol in a module and in the kernel, and there I got away
+> with a modpost warning. But this breaks when building the module into
+> the kernel, so I guess this is out of the question.
+>
+> Thanks,
+>
+> Jessica
+>
 
---000000000000dabb730591cc9008
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-Fix-a-wrong-unregistering-bug-in-hso_free_net_device.patch"
-Content-Disposition: attachment; 
-	filename="0001-Fix-a-wrong-unregistering-bug-in-hso_free_net_device.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k06lry3b0>
-X-Attachment-Id: f_k06lry3b0
 
-RnJvbSBmM2ZkZWU4ZmMwM2FhMmJjOTgyZjIyZGExZDI5YmJmNmJjYTcyOTM1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQ0KRnJvbTogSHVpIFBlbmcgPGJlbnF1aWtlQGdtYWlsLmNvbT4NCkRhdGU6
-IFdlZCwgNCBTZXAgMjAxOSAyMTozODozNSAtMDQwMA0KU3ViamVjdDogW1BBVENIXSBGaXggYSB3
-cm9uZyB1bnJlZ2lzdGVyaW5nIGJ1ZyBpbiBoc29fZnJlZV9uZXRfZGV2aWNlDQoNCkFzIHNob3du
-IGJlbG93LCBoc29fY3JlYXRlX25ldF9kZXZpY2UgbWF5IGNhbGwgaHNvX2ZyZWVfbmV0X2Rldmlj
-ZQ0KYmVmb3JlIHRoZSBuZXRfZGV2aWNlIGlzIHJlZ2lzdGVyZWQuIGhzb19mcmVlX25ldF9kZXZp
-Y2Ugd2lsbA0KdW5yZWdpc3RlciB0aGUgbmV0d29yayBkZXZpY2Ugbm8gbWF0dGVyIGl0IGlzIHJl
-Z2lzdGVyZWQgb3Igbm90LA0KdW5yZWdpc3Rlcl9uZXRkZXYgaXMgbm90IGFibGUgdG8gaGFuZGxl
-IHVucmVnaXN0ZXJlZCBuZXRfZGV2aWNlLA0KcmVzdWx0aW5nIGluIHRoZSBidWcgcmVwb3J0ZWQg
-YnkgdGhlIHN5emJvdC4NCg0KYGBgDQpzdGF0aWMgc3RydWN0IGhzb19kZXZpY2UgKmhzb19jcmVh
-dGVfbmV0X2RldmljZShzdHJ1Y3QgdXNiX2ludGVyZmFjZSAqaW50ZXJmYWNlLA0KCQkJCQkgICAg
-ICAgaW50IHBvcnRfc3BlYykNCnsNCgkuLi4uLi4NCgluZXQgPSBhbGxvY19uZXRkZXYoc2l6ZW9m
-KHN0cnVjdCBoc29fbmV0KSwgImhzbyVkIiwgTkVUX05BTUVfVU5LTk9XTiwNCiAgICAgIAkJCSAg
-ICBoc29fbmV0X2luaXQpOw0KCS4uLi4uLg0KCWlmICghaHNvX25ldC0+b3V0X2VuZHApIHsNCiAg
-IAkgICAJZGV2X2VycigmaW50ZXJmYWNlLT5kZXYsICJDYW4ndCBmaW5kIEJVTEsgT1VUIGVuZHBv
-aW50XG4iKTsNCgkJZ290byBleGl0Ow0KCX0NCg0KCS4uLi4uLg0KCXJlc3VsdCA9IHJlZ2lzdGVy
-X25ldGRldihuZXQpOw0KCS4uLi4uLg0KZXhpdDoNCgloc29fZnJlZV9uZXRfZGV2aWNlKGhzb19k
-ZXYpOw0KCXJldHVybiBOVUxMOw0KfQ0KDQpzdGF0aWMgdm9pZCBoc29fZnJlZV9uZXRfZGV2aWNl
-KHN0cnVjdCBoc29fZGV2aWNlICpoc29fZGV2KQ0Kew0KCS4uLi4uLg0KCWlmIChoc29fbmV0LT5u
-ZXQpDQoJCXVucmVnaXN0ZXJfbmV0ZGV2KGhzb19uZXQtPm5ldCk7DQoJLi4uLi4uDQp9DQoNCmBg
-YA0KDQpUaGlzIHBhdGNoIGFkZHMgYSBuZXRfcmVnaXN0ZXJlZCBmaWVsZCBpbiBzdHJ1Y3QgaHNv
-X25ldCB0byByZWNvcmQgd2hldGhlcg0KdGhlIGNvbnRhaW5pbmcgbmV0X2RldmljZSBpcyByZWdp
-c3RlcmVkIG9yIG5vdCwgYW5kIGF2b2lkIHVucmVnaXN0ZXJpbmcgaXQNCmlmIGl0IGlzIG5vdCBy
-ZWdpc3RlcmVkIHlldC4NCg0KUmVwb3J0ZWQtYnk6IHN5emJvdCs0NGQ1M2M3MjU1YmIxYWVhMjJk
-MkBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tDQpTaWduZWQtb2ZmLWJ5OiBIdWkgUGVuZyA8YmVu
-cXVpa2VAZ21haWwuY29tPg0KLS0tDQogZHJpdmVycy9uZXQvdXNiL2hzby5jIHwgNCArKystDQog
-MSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9uZXQvdXNiL2hzby5jIGIvZHJpdmVycy9uZXQvdXNiL2hzby5jDQppbmRl
-eCBjZTc4NzE0Li41YjNkZjMzIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9uZXQvdXNiL2hzby5jDQor
-KysgYi9kcml2ZXJzL25ldC91c2IvaHNvLmMNCkBAIC0xMjgsNiArMTI4LDcgQEAgc3RydWN0IGhz
-b19zaGFyZWRfaW50IHsNCiBzdHJ1Y3QgaHNvX25ldCB7DQogCXN0cnVjdCBoc29fZGV2aWNlICpw
-YXJlbnQ7DQogCXN0cnVjdCBuZXRfZGV2aWNlICpuZXQ7DQorCWJvb2wgbmV0X3JlZ2lzdGVyZWQ7
-DQogCXN0cnVjdCByZmtpbGwgKnJma2lsbDsNCiAJY2hhciBuYW1lWzI0XTsNCiANCkBAIC0yMzYy
-LDcgKzIzNjMsNyBAQCBzdGF0aWMgdm9pZCBoc29fZnJlZV9uZXRfZGV2aWNlKHN0cnVjdCBoc29f
-ZGV2aWNlICpoc29fZGV2KQ0KIA0KIAlyZW1vdmVfbmV0X2RldmljZShoc29fbmV0LT5wYXJlbnQp
-Ow0KIA0KLQlpZiAoaHNvX25ldC0+bmV0KQ0KKwlpZiAoaHNvX25ldC0+bmV0ICYmIGhzb19uZXQt
-Pm5ldF9yZWdpc3RlcmVkKQ0KIAkJdW5yZWdpc3Rlcl9uZXRkZXYoaHNvX25ldC0+bmV0KTsNCiAN
-CiAJLyogc3RhcnQgZnJlZWluZyAqLw0KQEAgLTI1NDQsNiArMjU0NSw3IEBAIHN0YXRpYyBzdHJ1
-Y3QgaHNvX2RldmljZSAqaHNvX2NyZWF0ZV9uZXRfZGV2aWNlKHN0cnVjdCB1c2JfaW50ZXJmYWNl
-ICppbnRlcmZhY2UsDQogCQlkZXZfZXJyKCZpbnRlcmZhY2UtPmRldiwgIkZhaWxlZCB0byByZWdp
-c3RlciBkZXZpY2VcbiIpOw0KIAkJZ290byBleGl0Ow0KIAl9DQorCWhzb19uZXQtPm5ldF9yZWdp
-c3RlcmVkID0gdHJ1ZTsNCiANCiAJaHNvX2xvZ19wb3J0KGhzb19kZXYpOw0KIA0KLS0gDQoyLjcu
-NA0KDQo=
---000000000000dabb730591cc9008--
+The cover letter starts with
+"As of Linux 5.3-rc7, there are 31207 [1] exported symbols in the kernel".
+
+Whether or not we apply this patch set,
+we will have to carefully maintain them
+so that 31207 symbols are unique, anyway.
+(And, we can do this with allmodconfig + modpost)
+
+So, what is the point of the namespace,
+where it does not loosen the scope of uniqueness?
+
+
+
+--
+Best Regards
+Masahiro Yamada
