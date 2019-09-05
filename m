@@ -2,314 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97035AB39F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C296AB3D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:17:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389194AbfIFIBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 04:01:34 -0400
-Received: from retiisi.org.uk ([95.216.213.190]:54980 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727816AbfIFIBe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 04:01:34 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 353D0634C87;
-        Fri,  6 Sep 2019 11:01:19 +0300 (EEST)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1i69BH-0000kb-9U; Fri, 06 Sep 2019 11:01:19 +0300
-Date:   Fri, 6 Sep 2019 11:01:19 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Jan Kotas <jank@cadence.com>
-Cc:     maxime.ripard@bootlin.com, mchehab@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, rafalc@cadence.com,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] media: Add support for Cadence CSI2RX 2.1
-Message-ID: <20190906080119.GF1586@valkosipuli.retiisi.org.uk>
-References: <20190905105601.27034-1-jank@cadence.com>
- <20190905105601.27034-4-jank@cadence.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190905105601.27034-4-jank@cadence.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2390262AbfIFIRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 04:17:22 -0400
+Received: from mga11.intel.com ([192.55.52.93]:23720 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389928AbfIFIRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 04:17:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2019 01:17:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,472,1559545200"; 
+   d="scan'208";a="383186101"
+Received: from yiliu-dev.bj.intel.com ([10.238.156.139])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Sep 2019 01:17:19 -0700
+From:   Liu Yi L <yi.l.liu@intel.com>
+To:     alex.williamson@redhat.com, kwankhede@nvidia.com
+Cc:     kevin.tian@intel.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
+        yi.y.sun@intel.com, joro@8bytes.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, yan.y.zhao@intel.com, shaopeng.he@intel.com,
+        chenbo.xia@intel.com, jun.j.tian@intel.com
+Subject: [PATCH v2 00/13] vfio_pci: wrap pci device as a mediated device
+Date:   Thu,  5 Sep 2019 15:59:17 +0800
+Message-Id: <1567670370-4484-1-git-send-email-yi.l.liu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan,
+This patchset aims to add a vfio-pci-like meta driver as a demo
+user of the vfio changes introduced in "vfio/mdev: IOMMU aware
+mediated device" patchset from Baolu Lu. Besides the test purpose,
+per Alex's comments, it could also be a good base driver for
+experimenting with device specific mdev migration.
 
-On Thu, Sep 05, 2019 at 11:56:01AM +0100, Jan Kotas wrote:
-> This patch adds support for CSI2RX v2.1 version of the controller.
-> 
-> Signed-off-by: Jan Kotas <jank@cadence.com>
-> ---
->  drivers/media/platform/cadence/cdns-csi2rx.c | 139 ++++++++++++++++++++++-----
->  1 file changed, 116 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c b/drivers/media/platform/cadence/cdns-csi2rx.c
-> index 97ec09e72..aa1d46111 100644
-> --- a/drivers/media/platform/cadence/cdns-csi2rx.c
-> +++ b/drivers/media/platform/cadence/cdns-csi2rx.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0+
->  /*
-> - * Driver for Cadence MIPI-CSI2 RX Controller v1.3
-> + * Driver for Cadence MIPI-CSI2 RX Controller
->   *
->   * Copyright (C) 2017-2019 Cadence Design Systems Inc.
->   */
-> @@ -26,6 +26,9 @@
->  #define CSI2RX_SOFT_RESET_PROTOCOL			BIT(1)
->  #define CSI2RX_SOFT_RESET_FRONT				BIT(0)
->  
-> +#define CSI2RX_V2_CORE_CTRL_REG			0x004
-> +#define CSI2RX_V2_CORE_CTRL_START			BIT(0)
-> +
->  #define CSI2RX_STATIC_CFG_REG			0x008
->  #define CSI2RX_STATIC_CFG_DLANE_MAP(llane, plane)	((plane) << (16 + (llane) * 4))
->  #define CSI2RX_STATIC_CFG_LANES_MASK			GENMASK(11, 8)
-> @@ -54,6 +57,15 @@ enum csi2rx_pads {
->  	CSI2RX_PAD_MAX,
->  };
->  
-> +struct csi2rx_priv;
-> +
-> +/* CSI2RX Variant Operations */
-> +struct csi2rx_vops {
-> +	void (*get_dev_cfg)(struct csi2rx_priv *csi2rx);
-> +	void (*reset)(struct csi2rx_priv *csi2rx);
-> +	void (*map_static)(struct csi2rx_priv *csi2rx);
-> +};
-> +
->  struct csi2rx_priv {
->  	struct device			*dev;
->  	unsigned int			count;
-> @@ -69,6 +81,7 @@ struct csi2rx_priv {
->  	struct clk			*p_clk;
->  	struct clk			*pixel_clk[CSI2RX_STREAMS_MAX];
->  	struct phy			*dphy;
-> +	struct csi2rx_vops		*vops;
+Specific interface tested in this proposal:
+ *) int mdev_set_iommu_device(struct device *dev,
+ 				struct device *iommu_device)
+    introduced in the patch as below:
+    "[PATCH v5 6/8] vfio/mdev: Add iommu related member in mdev_device"
 
-const?
+Patch Overview:
+ *) patch 1 ~ 7: code refactor for existing vfio-pci module
+                 move the common codes from vfio_pci.c to
+                 vfio_pci_common.c
+ *) patch 8: add protection to perm_bits alloc/free
+ *) patch 9: add vfio-mdev-pci sample driver
+ *) patch 10: refine the sample driver
+ *) patch 11 - 13: make the sample driver work for non-singleton groups
+                   also work for vfio-pci and vfio-mdev-pci mixed usage
+                   includes vfio-mdev-pci driver change and vfio_iommu_type1
+                   changes.
 
->  
->  	u8				lanes[CSI2RX_LANES_MAX];
->  	u8				num_lanes;
-> @@ -92,6 +105,32 @@ struct csi2rx_priv *v4l2_subdev_to_csi2rx(struct v4l2_subdev *subdev)
->  	return container_of(subdev, struct csi2rx_priv, subdev);
->  }
->  
-> +static void csi2rx_get_dev_cfg(struct csi2rx_priv *csi2rx)
-> +{
-> +	u32 dev_cfg;
-> +
-> +	clk_prepare_enable(csi2rx->p_clk);
-> +	dev_cfg = readl(csi2rx->base + CSI2RX_DEVICE_CFG_REG);
-> +	clk_disable_unprepare(csi2rx->p_clk);
-> +
-> +	csi2rx->max_lanes = dev_cfg & 7;
-> +	csi2rx->max_streams = (dev_cfg >> 4) & 7;
-> +	csi2rx->has_internal_dphy = dev_cfg & BIT(3) ? true : false;
+Links:
+ *) Link of "vfio/mdev: IOMMU aware mediated device"
+         https://lwn.net/Articles/780522/
+ *) Previous versions:
+         RFC v1: https://lkml.org/lkml/2019/3/4/529
+         RFC v2: https://lkml.org/lkml/2019/3/13/113
+         RFC v3: https://lkml.org/lkml/2019/4/24/495
+         Patch v1: https://www.spinics.net/lists/kvm/msg188952.html
+ *) may try it with the codes in below repo
+    current version is branch "v5.3-rc7-pci-mdev":
+         https://github.com/luxis1999/vfio-mdev-pci-sample-driver.git
 
-Could you spell out these a little, by adding #defines for the register
-bits? Same below.
+Test done on two NICs which share an iommu group.
 
-> +}
-> +
-> +static void csi2rx_v2_get_dev_cfg(struct csi2rx_priv *csi2rx)
-> +{
-> +	u32 dev_cfg;
-> +
-> +	clk_prepare_enable(csi2rx->p_clk);
-> +	dev_cfg = readl(csi2rx->base + CSI2RX_DEVICE_CFG_REG);
-> +	clk_disable_unprepare(csi2rx->p_clk);
-> +
-> +	csi2rx->max_lanes = dev_cfg & 0xF;
-> +	csi2rx->max_streams = (dev_cfg >> 5) & 0xF;
-> +	csi2rx->has_internal_dphy = dev_cfg & BIT(4) ? true : false;
-> +}
-> +
->  static void csi2rx_reset(struct csi2rx_priv *csi2rx)
->  {
->  	writel(CSI2RX_SOFT_RESET_PROTOCOL | CSI2RX_SOFT_RESET_FRONT,
-> @@ -102,18 +141,21 @@ static void csi2rx_reset(struct csi2rx_priv *csi2rx)
->  	writel(0, csi2rx->base + CSI2RX_SOFT_RESET_REG);
->  }
->  
-> -static int csi2rx_start(struct csi2rx_priv *csi2rx)
-> +static void csi2rx_v2_reset(struct csi2rx_priv *csi2rx)
-> +{
-> +	writel(0, csi2rx->base + CSI2RX_V2_CORE_CTRL_REG);
-> +
-> +	udelay(10);
-> +
-> +	writel(CSI2RX_V2_CORE_CTRL_START,
-> +	       csi2rx->base + CSI2RX_V2_CORE_CTRL_REG);
-> +}
-> +
-> +static void csi2rx_map_static(struct csi2rx_priv *csi2rx)
->  {
->  	unsigned int i;
->  	unsigned long lanes_used = 0;
->  	u32 reg;
-> -	int ret;
-> -
-> -	ret = clk_prepare_enable(csi2rx->p_clk);
-> -	if (ret)
-> -		return ret;
-> -
-> -	csi2rx_reset(csi2rx);
->  
->  	reg = csi2rx->num_lanes << 8;
->  	for (i = 0; i < csi2rx->num_lanes; i++) {
-> @@ -135,6 +177,32 @@ static int csi2rx_start(struct csi2rx_priv *csi2rx)
->  	}
->  
->  	writel(reg, csi2rx->base + CSI2RX_STATIC_CFG_REG);
-> +}
-> +
-> +static void csi2rx_v2_map_static(struct csi2rx_priv *csi2rx)
-> +{
-> +	u32 reg;
-> +
-> +	reg = csi2rx->num_lanes << 4;
-> +	writel(reg, csi2rx->base + CSI2RX_STATIC_CFG_REG);
-> +}
-> +
-> +static int csi2rx_start(struct csi2rx_priv *csi2rx)
-> +{
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(csi2rx->p_clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (csi2rx->vops) {
-> +		if (csi2rx->vops->reset)
-> +			csi2rx->vops->reset(csi2rx);
-> +
-> +		if (csi2rx->vops->map_static)
-> +			csi2rx->vops->map_static(csi2rx);
-> +	}
->  
->  	ret = v4l2_subdev_call(csi2rx->source_subdev, video, s_stream, true);
->  	if (ret)
-> @@ -282,7 +350,6 @@ static int csi2rx_get_resources(struct csi2rx_priv *csi2rx,
->  {
->  	struct resource *res;
->  	unsigned char i;
-> -	u32 dev_cfg;
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	csi2rx->base = devm_ioremap_resource(&pdev->dev, res);
-> @@ -316,26 +383,25 @@ static int csi2rx_get_resources(struct csi2rx_priv *csi2rx,
->  		return -EINVAL;
->  	}
->  
-> -	clk_prepare_enable(csi2rx->p_clk);
-> -	dev_cfg = readl(csi2rx->base + CSI2RX_DEVICE_CFG_REG);
-> -	clk_disable_unprepare(csi2rx->p_clk);
-> +	if (csi2rx->vops && csi2rx->vops->get_dev_cfg) {
-> +		csi2rx->vops->get_dev_cfg(csi2rx);
-> +	} else {
-> +		dev_err(&pdev->dev, "Couldn't get device configuration\n");
-> +		return -EINVAL;
-> +	}
->  
-> -	csi2rx->max_lanes = dev_cfg & 7;
->  	if (csi2rx->max_lanes > CSI2RX_LANES_MAX) {
->  		dev_err(&pdev->dev, "Invalid number of lanes: %u\n",
->  			csi2rx->max_lanes);
->  		return -EINVAL;
->  	}
->  
-> -	csi2rx->max_streams = (dev_cfg >> 4) & 7;
->  	if (csi2rx->max_streams > CSI2RX_STREAMS_MAX) {
->  		dev_err(&pdev->dev, "Invalid number of streams: %u\n",
->  			csi2rx->max_streams);
->  		return -EINVAL;
->  	}
->  
-> -	csi2rx->has_internal_dphy = dev_cfg & BIT(3) ? true : false;
-> -
->  	/*
->  	 * FIXME: Once we'll have internal D-PHY support, the check
->  	 * will need to be removed.
-> @@ -426,9 +492,39 @@ static int csi2rx_parse_dt(struct csi2rx_priv *csi2rx)
->  	return ret;
->  }
->  
-> +static const struct csi2rx_vops csi2rx_vops = {
-> +	.get_dev_cfg = csi2rx_get_dev_cfg,
-> +	.reset = csi2rx_reset,
-> +	.map_static = csi2rx_map_static
-> +};
-> +
-> +static const struct csi2rx_vops csi2rx_v2_vops = {
-> +	.get_dev_cfg = csi2rx_v2_get_dev_cfg,
-> +	.reset = csi2rx_v2_reset,
-> +	.map_static = csi2rx_v2_map_static
-> +};
-> +
-> +static const struct of_device_id csi2rx_of_table[] = {
-> +	{
-> +		.compatible = "cdns,csi2rx",
-> +		.data = &csi2rx_vops
-> +	},
-> +	{
-> +		.compatible = "cdns,csi2rx-1.3",
-> +		.data = &csi2rx_vops
-> +	},
-> +	{
-> +		.compatible = "cdns,csi2rx-2.1",
-> +		.data = &csi2rx_v2_vops
-> +	},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, csi2rx_of_table);
-> +
->  static int csi2rx_probe(struct platform_device *pdev)
->  {
->  	struct csi2rx_priv *csi2rx;
-> +	const struct of_device_id *of_id;
->  	unsigned int i;
->  	int ret;
->  
-> @@ -439,6 +535,9 @@ static int csi2rx_probe(struct platform_device *pdev)
->  	csi2rx->dev = &pdev->dev;
->  	mutex_init(&csi2rx->lock);
->  
-> +	of_id = of_match_node(csi2rx_of_table, pdev->dev.of_node);
-> +	csi2rx->vops = (struct csi2rx_vops *)of_id->data;
+-------------------------------------------------------------------
+         |  NIC0           |  NIC1      | vIOMMU  | VMs  | Passtrhu
+-------------------------------------------------------------------
+  Test#0 |  vfio-pci       |  vfio-pci  | no      |  1   | pass
+-------------------------------------------------------------------
+  Test#1 |  vfio-pci       |  vfio-pci  | no      |  2   | fail[1]
+-------------------------------------------------------------------
+  Test#2 |  vfio-pci       |  vfio-pci  | yes     |  1   | fail[2]
+-------------------------------------------------------------------
+  Test#3 |  vfio-pci-mdev  |  vfio-pci  | no      |  1   | pass
+-------------------------------------------------------------------
+  Test#4 |  vfio-pci-mdev  |  vfio-pci  | no      |  2   | fail[3]
+-------------------------------------------------------------------
+  Test#5 |  vfio-pci-mdev  |  vfio-pci  | yes     |  1   | fail[4]
+-------------------------------------------------------------------
+Tips:
+[1] qemu-system-x86_64: -device vfio-pci,host=01:00.1,id=hostdev0,addr=0x6: 
+     vfio 0000:01:00.1: failed to open /dev/vfio/1: Device or resource busy
+[2] qemu-system-x86_64: -device vfio-pci,host=01:00.1,id=hostdev0,addr=0x6:
+     vfio 0000:01:00.1: group 1 used in multiple address spaces
+[3] qemu-system-x86_64: -device vfio-pci,host=01:00.1,id=hostdev0,addr=0x6:
+     vfio 0000:01:00.1: failed to setup container for group 1: Failed to set
+     iommu for container: Device or resource busy
+[4] qemu-system-x86_64: -device vfio-pci,host=01:00.1,id=hostdev0,addr=0x6:
+     vfio 0000:01:00.1: failed to setup container for group 1: Failed to set
+     iommu for container: Device or resource busy
+    Or
+    qemu-system-x86_64: -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/
+     83b8f4f2-509f-382f-3c1e-e6bfe0fa1003: vfio 83b8f4f2-509f-382f-3c1e-
+     e6bfe0fa1003: failed to setup container for group 11: Failed to set iommu
+     for container: Device or resource busy
+Some other tests are not listed. Like bind NIC0 to vfio-pci-mdev and try to
+passthru it with "vfio-pci,host=01:00.0", kernel will throw a warn log and
+fail the operation.
 
-The cast isn't needed, is it?
+Please feel free give your comments.
 
-> +
->  	ret = csi2rx_get_resources(csi2rx, pdev);
->  	if (ret)
->  		goto err_free_priv;
-> @@ -493,12 +592,6 @@ static int csi2rx_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -static const struct of_device_id csi2rx_of_table[] = {
-> -	{ .compatible = "cdns,csi2rx" },
-> -	{ },
-> -};
-> -MODULE_DEVICE_TABLE(of, csi2rx_of_table);
-> -
->  static struct platform_driver csi2rx_driver = {
->  	.probe	= csi2rx_probe,
->  	.remove	= csi2rx_remove,
+Thanks,
+Yi Liu
+
+Change log:
+  patch v1 -> patch v2:
+  - the sample driver implementation refined
+  - the sample driver can work on non-singleton iommu groups
+  - the sample driver can work with vfio-pci, devices from a non-singleton
+    group can either be bound to vfio-mdev-pci or vfio-pci, and the
+    assignment of this group still follows current vfio assignment rule.
+
+  RFC v3 -> patch v1:
+  - split the patchset from 3 patches to 9 patches to better demonstrate
+    the changes step by step
+
+  v2->v3:
+  - use vfio-mdev-pci instead of vfio-pci-mdev
+  - place the new driver under drivers/vfio/pci while define
+    Kconfig in samples/Kconfig to clarify it is a sample driver
+
+  v1->v2:
+  - instead of adding kernel option to existing vfio-pci
+    module in v1, v2 follows Alex's suggestion to add a
+    separate vfio-pci-mdev module.
+  - new patchset subject: "vfio/pci: wrap pci device as a mediated device"
+
+Alex Williamson (1):
+  samples: refine vfio-mdev-pci driver
+
+Liu Yi L (12):
+  vfio_pci: move vfio_pci_is_vga/vfio_vga_disabled to header
+  vfio_pci: refine user config reference in vfio-pci module
+  vfio_pci: refine vfio_pci_driver reference in vfio_pci.c
+  vfio_pci: make common functions be extern
+  vfio_pci: duplicate vfio_pci.c
+  vfio_pci: shrink vfio_pci_common.c
+  vfio_pci: shrink vfio_pci.c
+  vfio/pci: protect cap/ecap_perm bits alloc/free with atomic op
+  samples: add vfio-mdev-pci driver
+  samples/vfio-mdev-pci: call vfio_add_group_dev()
+  vfio/type1: use iommu_attach_group() for wrapping PF/VF as mdev
+  vfio/type1: track iommu backed group attach
+
+ drivers/vfio/pci/Makefile           |    9 +-
+ drivers/vfio/pci/vfio_mdev_pci.c    |  497 ++++++++++++
+ drivers/vfio/pci/vfio_pci.c         | 1449 +---------------------------------
+ drivers/vfio/pci/vfio_pci_common.c  | 1455 +++++++++++++++++++++++++++++++++++
+ drivers/vfio/pci/vfio_pci_config.c  |    9 +
+ drivers/vfio/pci/vfio_pci_private.h |   36 +
+ drivers/vfio/vfio_iommu_type1.c     |  185 ++++-
+ samples/Kconfig                     |   11 +
+ 8 files changed, 2194 insertions(+), 1457 deletions(-)
+ create mode 100644 drivers/vfio/pci/vfio_mdev_pci.c
+ create mode 100644 drivers/vfio/pci/vfio_pci_common.c
 
 -- 
-Kind regards,
+2.7.4
 
-Sakari Ailus
