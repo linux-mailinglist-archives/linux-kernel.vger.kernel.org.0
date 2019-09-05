@@ -2,88 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D53C5A9CB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8303A9CAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:14:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732493AbfIEIQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 04:16:41 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40335 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730849AbfIEIQk (ORCPT
+        id S1732454AbfIEIO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 04:14:56 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4608 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730849AbfIEIOz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 04:16:40 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w10so988755pgj.7;
-        Thu, 05 Sep 2019 01:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=8sJIwjC+uTMQQ+j3BpVe6IaoEgx2I750V29nK1aOgcw=;
-        b=EwqSn6HdrjkflUwwwTPz+oNB7PSPSe1vzzqd8PzgpQ/x4PVHPQhQTuJmL1GtfuNYCG
-         WG9pEel7UOok2H1UdGT8TNmDuS+4WPW0U5f3Udewev1VWDGKB70vF/N1tMk6VcDCiFLE
-         e5mnQaIVqBmWxrH9zL2Jd1kSOzbKTK9oO4sfABX7VcZ2KTXFhKZll11ir2LHIW2aKr+q
-         mOpjOA2gVj8KLBOIUq4S4Q5/m6Lgu9pRAPq0NXrsnQf7yGvOiRsI7x22zpTFxuOTdQ8O
-         t4sEB6JUmZjJ3rzT7E1ZqL1CG6EqADbK5eM7uJDe64PgDmWEQ9nZFI/2EXJgiuDLU4mc
-         nt5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8sJIwjC+uTMQQ+j3BpVe6IaoEgx2I750V29nK1aOgcw=;
-        b=GB/srr46ucUzcx2ZCsHqg4LDRm2TuD20Jt8boAUkhFo1ZB0M73X3/KWxQjm2kOnOGN
-         JmJV90yAuCghl0yZFCwoCuyrtjv15sRYs9Iw32dx8Dj/PizHaI2OeM1ZkhG49GZS9XTx
-         c8Lhv1kt+/E/kvRvMeq0vIPgRWLTr1TfwDEFxLmGdbrnDoV3RLYplKGFFOmo1WZbDGu+
-         RjpfJLCFK8BODlb1rSczVhCYDw2uLvkvXbu7joFk9ZAvTc1RUKuX8nkaSRsfH9JGFzt1
-         E7pBm996hO4LOn79cnQdmzNz9YuYq1EMSfa0TxTqKX5DCCOnunesl+SCgmPYuYimD7pW
-         hvMA==
-X-Gm-Message-State: APjAAAWM6IO2S9BmUyYPeKMxk4kcCgPYvIhrQvv2CZwRwhf+1ZULqJyk
-        WI6HRs3cleF266YSCvTwFV+iKIzj
-X-Google-Smtp-Source: APXvYqyymixaC/4ZmoAYVHw421NBXUFa1C+1zeteo7JioReZqYjJQ9yGnohHAF0A+fKrMjxJZR5TfQ==
-X-Received: by 2002:aa7:8dc9:: with SMTP id j9mr2305645pfr.233.1567671400065;
-        Thu, 05 Sep 2019 01:16:40 -0700 (PDT)
-Received: from localhost.localdomain ([49.216.8.243])
-        by smtp.gmail.com with ESMTPSA id g26sm1621121pfi.103.2019.09.05.01.16.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 01:16:39 -0700 (PDT)
-From:   jamestai.sky@gmail.com
-X-Google-Original-From: james.tai@realtek.com
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Olof Johansson <olof@lixom.net>,
-        CY_Huang <cy.huang@realtek.com>,
-        Phinex Hung <phinex@realtek.com>,
-        "james.tai" <james.tai@realtek.com>
-Subject: [PATCH] dt-bindings: cpu: Add a support cpu type for cortex-a55
-Date:   Thu,  5 Sep 2019 16:14:35 +0800
-Message-Id: <20190905081435.1492-1-james.tai@realtek.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 5 Sep 2019 04:14:55 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d70c3ff0000>; Thu, 05 Sep 2019 01:14:55 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 05 Sep 2019 01:14:54 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 05 Sep 2019 01:14:54 -0700
+Received: from [10.24.45.110] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 5 Sep
+ 2019 08:14:49 +0000
+Subject: Re: [PATCH V3 0/6] PCI: tegra: Enable PCIe C5 controller of Tegra194
+ in p2972-0000 platform
+To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <andrew.murray@arm.com>
+CC:     <kishon@ti.com>, <gustavo.pimentel@synopsys.com>,
+        <digetx@gmail.com>, <mperttunen@nvidia.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
+References: <20190828172850.19871-1-vidyas@nvidia.com>
+X-Nvconfidentiality: public
+From:   Vidya Sagar <vidyas@nvidia.com>
+Message-ID: <7751a77d-5812-49b7-0c6b-00e6740e209b@nvidia.com>
+Date:   Thu, 5 Sep 2019 13:44:46 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190828172850.19871-1-vidyas@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1567671295; bh=PhBJxOMrfevbbVmLua/ziqr5zxQ+sCG62W4DYI/Bgpo=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=faj0pebruq92ZjPws0k6DdY21Mz3rgNGoE0m7xwpk6hVdEl2wk3kMoSovWx/x/o64
+         /iM7ABBr57k5e+bIUGoD/aJnbPCJnF9jW0Zhm11eY5bIDiaaCqyi8XFcQYYFK3C+VF
+         m6q8GOBWo3D8uP72yBRwDZ4gDP7XlazfiGdbN2WxcnyfKCSwAN7NMDWEFWpZeahdgB
+         bRmBFzQlhN9q8iCcYlnrDaYjLPj5rywGSi+DDgWQ1z9M3UVD48TMZYsuYC1zg0EEzA
+         9y+e+wQYi/8W7oomavqJzHRtoOY8SzMDL23ry2TiweI5R6ejfHda+tXY3Zw9e/19uD
+         T7VpBgRy94rGA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "james.tai" <james.tai@realtek.com>
+Hi Lorenzo / Bjorn,
+Can you please review this series?
+I have Reviewed-by and Acked-by from Rob, Thierry and Andrew already.
 
-Add arm cpu type cortex-a55.
+Thanks,
+Vidya Sagar
 
-Signed-off-by: james.tai <james.tai@realtek.com>
----
- Documentation/devicetree/bindings/arm/cpus.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
-index aa40b074b864..1fc7c8effd25 100644
---- a/Documentation/devicetree/bindings/arm/cpus.yaml
-+++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-@@ -124,6 +124,7 @@ properties:
-       - arm,cortex-a15
-       - arm,cortex-a17
-       - arm,cortex-a53
-+      - arm,cortex-a55
-       - arm,cortex-a57
-       - arm,cortex-a72
-       - arm,cortex-a73
--- 
-2.17.1
+On 8/28/2019 10:58 PM, Vidya Sagar wrote:
+> This patch series enables Tegra194's C5 controller which owns x16 slot in
+> p2972-0000 platform. C5 controller's PERST# and CLKREQ# are not configured as
+> output and bi-directional signals by default and hence they need to be
+> configured explicitly. Also, x16 slot's 3.3V and 12V supplies are controlled
+> through GPIOs and hence they need to be enabled through regulator framework.
+> This patch series adds required infrastructural support to address both the
+> aforementioned requirements.
+> Testing done on p2972-0000 platform
+> - Able to enumerate devices connected to x16 slot (owned by C5 controller)
+> - Enumerated device's functionality verified
+> - Suspend-Resume sequence is verified with device connected to x16 slot
+> 
+> V3:
+> * Addressed some more review comments from Andrew Murray and Thierry Reding
+> 
+> V2:
+> * Changed the order of patches in the series for easy merging
+> * Addressed review comments from Thierry Reding and Andrew Murray
+> 
+> Vidya Sagar (6):
+>    dt-bindings: PCI: tegra: Add sideband pins configuration entries
+>    dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
+>    PCI: tegra: Add support to configure sideband pins
+>    PCI: tegra: Add support to enable slot regulators
+>    arm64: tegra: Add configuration for PCIe C5 sideband signals
+>    arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
+> 
+>   .../bindings/pci/nvidia,tegra194-pcie.txt     | 16 ++++
+>   .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 24 +++++
+>   .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  4 +-
+>   arch/arm64/boot/dts/nvidia/tegra194.dtsi      | 38 +++++++-
+>   drivers/pci/controller/dwc/pcie-tegra194.c    | 94 ++++++++++++++++++-
+>   5 files changed, 172 insertions(+), 4 deletions(-)
+> 
 
