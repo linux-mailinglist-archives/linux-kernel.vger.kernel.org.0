@@ -2,165 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13055AADAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08485AADB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:15:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391816AbfIEVPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 17:15:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44679 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391791AbfIEVPL (ORCPT
+        id S2404057AbfIEVPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 17:15:36 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:39983 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391791AbfIEVPg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 17:15:11 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i5z5x-00028k-3X; Thu, 05 Sep 2019 23:15:09 +0200
-Date:   Thu, 5 Sep 2019 23:15:08 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Frederic Weisbecker <frederic@kernel.org>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [patch V2 2/6] posix-cpu-timers: Fix permission check regression
-In-Reply-To: <alpine.DEB.2.21.1909052054200.1902@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1909052314110.1902@nanos.tec.linutronix.de>
-References: <20190905120339.561100423@linutronix.de> <20190905120539.797994508@linutronix.de> <20190905173148.GE18251@lenoir> <alpine.DEB.2.21.1909052054200.1902@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Thu, 5 Sep 2019 17:15:36 -0400
+Received: by mail-pf1-f202.google.com with SMTP id v15so2801474pfe.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:15:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=5OIWaQS8XUylUqWEOLvRcQ6wvtAGUWcmHb4qQooXQU4=;
+        b=sqoOcBxZdlqGDWySWP2Y/co94HGedfimwCSXcJFCDa2CSHTgUIbVs4Pv6YfiqW989D
+         qwxLXD2E6ccpMCJrXFqhjsQ8KvKmii4DOcdayDCxOPHgZnS3MYlw7VykblxC7tziuiWg
+         TGPazBMqwY4jU9+ikaAjXWzQA567E4smuiqVvfBzdgaMlJPhw+KkxBjnb4RpotPIP0yv
+         4To4Fb74sAf5hCcy3mrBjhnNGk5/27rRSbZnG99BZMVY57d6quzmuw/KdICvu3J8iC9a
+         ndMLLbyFrE67/RIXYeSI2gDac9o0MrmV7qytiMO9xmjTphHOMt5lwQ4Jjd8n6/kFiDV6
+         qRhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=5OIWaQS8XUylUqWEOLvRcQ6wvtAGUWcmHb4qQooXQU4=;
+        b=BKxGwImCyS3oVlF7B2xb+6AM7QU9186yLgiI/g1bSZn/fv7b1Bk1mGSjh4OCViwWhp
+         6nI2J/MHIN1Vpr4b77ooeCj4Exzisn8azcqHi5BYZa5oBeGSN3BMc7OT2qMYXXH60mBv
+         VAIKEYW9PZqh8Kc/2edpArPobICFgpMi2EMUrSC8GqRtyhHO4Bch6o6TwzSktyDq6mfF
+         2mNoo+175QV1QbyL4hpMO+qGfzW27ZIaVH95YT22sh8fKRAaje/FItygTFPvhjRXDTL9
+         kxEDf+ayw61P7h4uc3PLx3v0P+Zm2Usum+zVrS8Q1Y+XVfahbDMNsyhBvj3BmcZqZ8P5
+         Mq0w==
+X-Gm-Message-State: APjAAAVNeXmWA+g6Jz93X8bfmjNcEucR9r1APdrvZSaKKv4llZf+0jqy
+        1UKo9i1mLy45ZvwmMjtKAsqrkVB2FRmPUMHZpB8=
+X-Google-Smtp-Source: APXvYqwZtsOP4oeCbgdcEYz4SC/6uGacnOnUYdFPlg0VekmO8GAS2KcyDuLyw3ItW3lkQRTZoimV43SVKTXC9aSch7E=
+X-Received: by 2002:a63:2252:: with SMTP id t18mr5065062pgm.5.1567718135010;
+ Thu, 05 Sep 2019 14:15:35 -0700 (PDT)
+Date:   Thu,  5 Sep 2019 14:15:28 -0700
+Message-Id: <20190905211528.97828-1-samitolvanen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+Subject: [PATCH] kcm: use BPF_PROG_RUN
+From:   Sami Tolvanen <samitolvanen@google.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Tom Herbert <tom@herbertland.com>
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sami Tolvanen <samitolvanen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The recent consolidation of the three permission checks introduced a subtle
-regression. For timer_create() with a process wide timer it returns the
-current task if the lookup through the PID which is encoded into the
-clockid results in returning current.
+Instead of invoking struct bpf_prog::bpf_func directly, use the
+BPF_PROG_RUN macro.
 
-That's broken because it does not validate whether the current task is the
-group leader.
-
-That was caused by the two different variants of permission checks:
-
-  - posix_cpu_timer_get() allowed access to the process wide clock when the
-    looked up task is current. That's not an issue because the process wide
-    clock is in the shared sighand.
-
-  - posix_cpu_timer_create() made sure that the looked up task is the group
-    leader.
-
-Restore the previous state.
-
-Note, that these permission checks are more than questionable, but that's
-subject to follow up changes.
-
-Fixes: 6ae40e3fdcd3 ("posix-cpu-timers: Provide task validation functions")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 ---
-V2: Updated comment. Note the following patches need updates as well
-    to fixup the trivial conflicts...
----
- kernel/time/posix-cpu-timers.c |   44 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 35 insertions(+), 9 deletions(-)
+ net/kcm/kcmsock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -47,25 +47,46 @@ void update_rlimit_cpu(struct task_struc
- /*
-  * Functions for validating access to tasks.
-  */
--static struct task_struct *lookup_task(const pid_t pid, bool thread)
-+static struct task_struct *lookup_task(const pid_t pid, bool thread,
-+				       bool gettime)
- {
- 	struct task_struct *p;
+diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
+index 5dbc0c48f8cb..f350c613bd7d 100644
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -379,7 +379,7 @@ static int kcm_parse_func_strparser(struct strparser *strp, struct sk_buff *skb)
+ 	struct kcm_psock *psock = container_of(strp, struct kcm_psock, strp);
+ 	struct bpf_prog *prog = psock->bpf_prog;
  
-+	/*
-+	 * If the encoded PID is 0, then the timer is targeted at current
-+	 * or the process to which current belongs.
-+	 */
- 	if (!pid)
- 		return thread ? current : current->group_leader;
- 
- 	p = find_task_by_vpid(pid);
--	if (!p || p == current)
-+	if (!p)
- 		return p;
-+
- 	if (thread)
- 		return same_thread_group(p, current) ? p : NULL;
--	if (p == current)
--		return p;
-+
-+	if (gettime) {
-+		/*
-+		 * For clock_gettime(PROCESS) the task does not need to be
-+		 * the actual group leader. tsk->sighand gives
-+		 * access to the group's clock.
-+		 *
-+		 * Timers need the group leader because they take a
-+		 * reference on it and store the task pointer until the
-+		 * timer is destroyed.
-+		 */
-+		return (p == current || thread_group_leader(p)) ? p : NULL;
-+	}
-+
-+	/*
-+	 * For processes require that p is group leader.
-+	 */
- 	return has_group_leader_pid(p) ? p : NULL;
+-	return (*prog->bpf_func)(skb, prog->insnsi);
++	return BPF_PROG_RUN(prog, skb);
  }
  
- static struct task_struct *__get_task_for_clock(const clockid_t clock,
--						bool getref)
-+						bool getref, bool gettime)
- {
- 	const bool thread = !!CPUCLOCK_PERTHREAD(clock);
- 	const pid_t pid = CPUCLOCK_PID(clock);
-@@ -75,7 +96,7 @@ static struct task_struct *__get_task_fo
- 		return NULL;
- 
- 	rcu_read_lock();
--	p = lookup_task(pid, thread);
-+	p = lookup_task(pid, thread, gettime);
- 	if (p && getref)
- 		get_task_struct(p);
- 	rcu_read_unlock();
-@@ -84,12 +105,17 @@ static struct task_struct *__get_task_fo
- 
- static inline struct task_struct *get_task_for_clock(const clockid_t clock)
- {
--	return __get_task_for_clock(clock, true);
-+	return __get_task_for_clock(clock, true, false);
-+}
-+
-+static inline struct task_struct *get_task_for_clock_get(const clockid_t clock)
-+{
-+	return __get_task_for_clock(clock, true, true);
- }
- 
- static inline int validate_clock_permissions(const clockid_t clock)
- {
--	return __get_task_for_clock(clock, false) ? 0 : -EINVAL;
-+	return __get_task_for_clock(clock, false, false) ? 0 : -EINVAL;
- }
- 
- /*
-@@ -339,7 +365,7 @@ static int posix_cpu_clock_get(const clo
- 	struct task_struct *tsk;
- 	u64 t;
- 
--	tsk = get_task_for_clock(clock);
-+	tsk = get_task_for_clock_get(clock);
- 	if (!tsk)
- 		return -EINVAL;
- 
+ static int kcm_read_sock_done(struct strparser *strp, int err)
+-- 
+2.23.0.187.g17f5b7556c-goog
+
