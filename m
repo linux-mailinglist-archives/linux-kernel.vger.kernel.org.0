@@ -2,69 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD331AAC5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB2AAAC67
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403991AbfIETuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 15:50:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:9778 "EHLO mx1.redhat.com"
+        id S2391536AbfIETuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 15:50:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60344 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732721AbfIETt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732510AbfIETt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Sep 2019 15:49:26 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 581453082E03;
-        Thu,  5 Sep 2019 19:49:26 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id F071E3175295;
+        Thu,  5 Sep 2019 19:49:25 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3BC1360C18;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 44F1B100194E;
         Thu,  5 Sep 2019 19:49:18 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id BD853220CEE; Thu,  5 Sep 2019 15:49:17 -0400 (EDT)
+        id D06FE22539C; Thu,  5 Sep 2019 15:49:17 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org,
         virtualization@lists.linux-foundation.org, miklos@szeredi.hu
 Cc:     linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
         vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com,
         mst@redhat.com
-Subject: [PATCH 01/18] virtiofs: Remove request from processing list before calling end
-Date:   Thu,  5 Sep 2019 15:48:42 -0400
-Message-Id: <20190905194859.16219-2-vgoyal@redhat.com>
+Subject: [PATCH 04/18] virtiofs: Check connected state for VQ_REQUEST queue as well
+Date:   Thu,  5 Sep 2019 15:48:45 -0400
+Message-Id: <20190905194859.16219-5-vgoyal@redhat.com>
 In-Reply-To: <20190905194859.16219-1-vgoyal@redhat.com>
 References: <20190905194859.16219-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 05 Sep 2019 19:49:26 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 05 Sep 2019 19:49:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In error path we are calling fuse_request_end() but we need to clear
-FR_SENT bit as well as remove request from processing queue. Otherwise
-fuse_request_end() triggers a warning as well as other issues show up.
+Right now we are checking ->connected state only for VQ_HIPRIO. Now we want
+to make use of this method for all queues. So check it for VQ_REQUEST as
+well.
+
+This will be helpful if device has been removed and virtqueue is gone. In
+that case ->connected will be false and request can't be submitted anymore
+and user space will see error -ENOTCONN.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/virtio_fs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/fuse/virtio_fs.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 197e79e536f9..a708ccb65662 100644
+index 9d30530e3ca9..c46dd4d284d6 100644
 --- a/fs/fuse/virtio_fs.c
 +++ b/fs/fuse/virtio_fs.c
-@@ -826,6 +826,10 @@ __releases(fiq->waitq.lock)
- 		}
- 		req->out.h.error = ret;
- 		pr_err("virtio-fs: virtio_fs_enqueue_req() failed %d\n", ret);
-+		spin_lock(&fpq->lock);
-+		clear_bit(FR_SENT, &req->flags);
-+		list_del_init(&req->list);
-+		spin_unlock(&fpq->lock);
- 		fuse_request_end(fc, req);
- 		return;
- 	}
+@@ -755,6 +755,12 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 
+ 	spin_lock(&fsvq->lock);
+ 
++	if (!fsvq->connected) {
++		spin_unlock(&fsvq->lock);
++		ret = -ENOTCONN;
++		goto out;
++	}
++
+ 	vq = fsvq->vq;
+ 	ret = virtqueue_add_sgs(vq, sgs, out_sgs, in_sgs, req, GFP_ATOMIC);
+ 	if (ret < 0) {
 -- 
 2.20.1
 
