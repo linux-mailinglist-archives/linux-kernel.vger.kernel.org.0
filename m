@@ -2,198 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45AEEAAB6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2BAAAB88
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 20:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391407AbfIESsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 14:48:25 -0400
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:2604 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391351AbfIESsM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:48:12 -0400
-Received: from pps.filterd (m0134424.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x85IkkEK009547;
-        Thu, 5 Sep 2019 18:47:43 GMT
-Received: from g2t2352.austin.hpe.com (g2t2352.austin.hpe.com [15.233.44.25])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2utnxkg4hu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Sep 2019 18:47:43 +0000
-Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
-        by g2t2352.austin.hpe.com (Postfix) with ESMTP id 9A7E1A1;
-        Thu,  5 Sep 2019 18:47:42 +0000 (UTC)
-Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 5508)
-        id 76BA6201EAAA8; Thu,  5 Sep 2019 13:47:42 -0500 (CDT)
-Message-Id: <20190905184742.326657295@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190905184741.256857552@stormcage.eag.rdlabs.hpecorp.net>
-User-Agent: quilt/0.46-1
-Date:   Thu, 05 Sep 2019 13:47:49 -0500
-From:   Mike Travis <mike.travis@hpe.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH 8/8] x86/platform/uv: Account for UV Hubless in is_uvX_hub Ops
-Content-Disposition: inline; filename=mod-is_uvX_hub
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-05_06:2019-09-04,2019-09-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 spamscore=0 mlxlogscore=517 suspectscore=0 phishscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 bulkscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1909050176
+        id S2390537AbfIESv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 14:51:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40970 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388700AbfIESvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 14:51:53 -0400
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B6E972A09AB
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2019 18:51:52 +0000 (UTC)
+Received: by mail-wm1-f72.google.com with SMTP id 124so2107512wmz.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 11:51:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/+X/R0y41DuJD8stDaaFF/mk4jlVxfRDTjRBOtakznc=;
+        b=ovfOlj/Y9rrqv86QUtJMWqeJl0m9/ZpDm8tLrd2bckA40FRqlN+bMlI4uUO6l4vSvR
+         xvLjBkawVSa0FkiodjP4zJcix6yQ4a5NPGjHpYLNZAZqm88bQ1ojH8V5nXQypE5WukJ6
+         1jy0XV+VQBySeyzpbjGk67GTjhcc65EsqsUyACK6vVO1mG68QJmYao5PUQ3NJQqfrHdE
+         vjs/z7a/0OgiXV31A9D6z2JT990BEr0FBp7KjLSD3lYA/AkIIpKlSa06D2CauvCY+5m5
+         aeOYW3abKEhY3w4zxwwOcNrKIH6vAKMj7bjRoEQflD3pfKsNZS2LJnl97vaP9P/Bl8CO
+         MxNg==
+X-Gm-Message-State: APjAAAWQwZ3VHXaQzZEkcqGrQsnci0eyf/53U2KeW+tmLjQPWJJDbIBY
+        qBB226ZiDD6lECIFY7+8UlhnDxB00s4S8rlccHXE+rUy42abklkJMeGSIWkaghl5SzA8cnpEkNb
+        Gcs348bbSGLG/y0hMtfVSUcEm1l0dpyXGzP6SrCYk
+X-Received: by 2002:a05:600c:21d1:: with SMTP id x17mr3763562wmj.123.1567709511264;
+        Thu, 05 Sep 2019 11:51:51 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxxppOJbXRzr0HT1qBIm7hjC+zxuRCss37FvJwDjsHuKSxoe+byuVe16izziNYRTPD8dFxdzcLlPcTR/VI7zzA=
+X-Received: by 2002:a05:600c:21d1:: with SMTP id x17mr3763540wmj.123.1567709510985;
+ Thu, 05 Sep 2019 11:51:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
+ <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
+ <17703.1567702907@warthog.procyon.org.uk> <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
+ <11667f69-fbb5-28d2-3c31-7f865f2b93e5@redhat.com>
+In-Reply-To: <11667f69-fbb5-28d2-3c31-7f865f2b93e5@redhat.com>
+From:   Ray Strode <rstrode@redhat.com>
+Date:   Thu, 5 Sep 2019 14:51:14 -0400
+Message-ID: <CAKCoTu7ms4ckwDA_-onuJg+famnMzGZE9gGUcqqMz0kCAAECRg@mail.gmail.com>
+Subject: Re: Why add the general notification queue and its sources
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        David Lehman <dlehman@redhat.com>, Ian Kent <ikent@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The references in the is_uvX_hub() function uses the hub_info pointer
-which will be NULL when the system is hubless.  This change avoids
-that NULL dereference.  It is also an optimization in performance.
+Hi,
 
-Signed-off-by: Mike Travis <mike.travis@hpe.com>
-Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
-Reviewed-by: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-To: Ingo Molnar <mingo@redhat.com>
-To: H. Peter Anvin <hpa@zytor.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Borislav Petkov <bp@alien8.de>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Cc: Hedi Berriche <hedi.berriche@hpe.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
----
-v2: Add WARNING that the is UVx supported defines will be removed.
----
- arch/x86/include/asm/uv/.uv_hub.h.swp |binary
- arch/x86/include/asm/uv/uv_hub.h |   61 ++++++++++++---------------------------
- 1 file changed, 20 insertions(+), 41 deletions(-)
+On Thu, Sep 5, 2019 at 2:37 PM Steven Whitehouse <swhiteho@redhat.com> wrote:
+> The original reason for the mount notification mechanism was so that we
+> are able to provide information to GUIs and similar filesystem and
+> storage management tools, matching the state of the filesystem with the
+> state of the underlying devices. This is part of a larger project
+> entitled "Project Springfield" to try and provide better management
+> tools for storage and filesystems. I've copied David Lehman in, since he
+> can provide a wider view on this topic.
+So one problem that I've heard discussed before is what happens in a thinp
+setup when the disk space is overallocated and gets used up. IIRC, the
+volumes just sort of eat themselves?
 
-Binary files linux.orig/arch/x86/include/asm/uv/.uv_hub.h.swp and linux/arch/x86/include/asm/uv/.uv_hub.h.swp differ
---- linux.orig/arch/x86/include/asm/uv/uv_hub.h
-+++ linux/arch/x86/include/asm/uv/uv_hub.h
-@@ -19,6 +19,7 @@
- #include <linux/topology.h>
- #include <asm/types.h>
- #include <asm/percpu.h>
-+#include <asm/uv/uv.h>
- #include <asm/uv/uv_mmrs.h>
- #include <asm/uv/bios.h>
- #include <asm/irq_vectors.h>
-@@ -243,83 +244,61 @@ static inline int uv_hub_info_check(int
- #define UV4_HUB_REVISION_BASE		7
- #define UV4A_HUB_REVISION_BASE		8	/* UV4 (fixed) rev 2 */
- 
--#ifdef	UV1_HUB_IS_SUPPORTED
-+/* WARNING: UVx_HUB_IS_SUPPORTED defines are deprecated and will be removed */
- static inline int is_uv1_hub(void)
- {
--	return uv_hub_info->hub_revision < UV2_HUB_REVISION_BASE;
--}
-+#ifdef	UV1_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(1));
- #else
--static inline int is_uv1_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV2_HUB_IS_SUPPORTED
- static inline int is_uv2_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV3_HUB_REVISION_BASE));
--}
-+#ifdef	UV2_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(2));
- #else
--static inline int is_uv2_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV3_HUB_IS_SUPPORTED
- static inline int is_uv3_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV3_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV4_HUB_REVISION_BASE));
--}
-+#ifdef	UV3_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(3));
- #else
--static inline int is_uv3_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- /* First test "is UV4A", then "is UV4" */
--#ifdef	UV4A_HUB_IS_SUPPORTED
--static inline int is_uv4a_hub(void)
--{
--	return (uv_hub_info->hub_revision >= UV4A_HUB_REVISION_BASE);
--}
--#else
- static inline int is_uv4a_hub(void)
- {
-+#ifdef	UV4A_HUB_IS_SUPPORTED
-+	if (is_uv_hubbed(uv(4)))
-+		return (uv_hub_info->hub_revision == UV4A_HUB_REVISION_BASE);
-+#endif
- 	return 0;
- }
--#endif
- 
--#ifdef	UV4_HUB_IS_SUPPORTED
- static inline int is_uv4_hub(void)
- {
--	return uv_hub_info->hub_revision >= UV4_HUB_REVISION_BASE;
--}
-+#ifdef	UV4_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(4));
- #else
--static inline int is_uv4_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- static inline int is_uvx_hub(void)
- {
--	if (uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE)
--		return uv_hub_info->hub_revision;
--
--	return 0;
-+	return (is_uv_hubbed(-2) >= uv(2));
- }
- 
- static inline int is_uv_hub(void)
- {
--#ifdef	UV1_HUB_IS_SUPPORTED
--	return uv_hub_info->hub_revision;
--#endif
--	return is_uvx_hub();
-+	return is_uv1_hub() || is_uvx_hub();
- }
- 
- union uvh_apicid {
+Getting proper notification of looming catastrophic failure to the
+workstation user
+before it's too late would be useful, indeed.
 
--- 
+I don't know if this new mechanism dhowells has development can help with that,
+and/or if solving that problem is part of the Project Springfield
+initiative or not. Do you
+know off hand?
+
+--Ray
