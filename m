@@ -2,103 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B7DAADA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EB2AAAD9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:10:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404127AbfIEVL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 17:11:27 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35230 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388578AbfIEVL0 (ORCPT
+        id S2391760AbfIEVKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 17:10:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44656 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbfIEVKz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 17:11:26 -0400
-Received: by mail-lj1-f193.google.com with SMTP id l14so3994741lje.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:11:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dJ1viyEd746u1MzO5bkdAZU+71ZT2HJWhvIS6MWOLz4=;
-        b=d4fpCjgqvFKqBijwNopM5Tjl0Abua4COwRNrVEApjvF/wjmS5dLW3m+kZhLhJeWnNu
-         iSfejJzg0trBi/IHb6f2jl/1tb3uJHRcCRTEU7aIX6HTXwYewwZvmYkWtTpA7+5upHD6
-         uWJrxHL1ER3GQibDLiYN4aNmhG5i7+LEzMMxY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dJ1viyEd746u1MzO5bkdAZU+71ZT2HJWhvIS6MWOLz4=;
-        b=gayb1YOR52ct1IUWIDez9tjq4woK7WirpbyAyBP5rhu6jNQOFWXaplpmXtCo6Wzb08
-         TzCc7WdXLqhW+/oI1onVppTKRIgiy17pJ+Yjzr4PlzoZuHlo7RYcUotL94hHptO34Lrv
-         PpsFSGxEaVqKY8+aEQWGZRJSh33KgB4Mvmv0wCMmCoox2AYNyRofHWyELOb3j0tftA6J
-         TrdTtGnKhMR+Mglw1xnjiDmF/S0L9QzjJnmq5GqtwSajEJjbAegADCao3TIuGPvg6xdn
-         yRPZVGHh4saUjhtkuNdG8L1hhRM/knAbfZYFpn6RMfp825owcZTd1WySOL/n3ozIlKhI
-         5Uxg==
-X-Gm-Message-State: APjAAAVx9ctD5cz6HLJmNay8mtigl46V58/pDsA8P5dg0mOtjBY8ZHRq
-        Ip9pkGo8tFlekCV9oGFCpe8i5ymHx/g=
-X-Google-Smtp-Source: APXvYqwbXnYg5haVJT02Ym0reVLR9jbtZtebTezEeTIsDLYke9+J+pxiwhnerUBty3mMl95r4Wp5aA==
-X-Received: by 2002:a2e:8656:: with SMTP id i22mr2445374ljj.32.1567717884844;
-        Thu, 05 Sep 2019 14:11:24 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id t16sm652722lfp.38.2019.09.05.14.11.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2019 14:11:24 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id y23so3642106ljn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:11:24 -0700 (PDT)
-X-Received: by 2002:a2e:814d:: with SMTP id t13mr3621962ljg.72.1567717580519;
- Thu, 05 Sep 2019 14:06:20 -0700 (PDT)
+        Thu, 5 Sep 2019 17:10:55 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1i5z1Z-00024X-Hf; Thu, 05 Sep 2019 23:10:37 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "contact\@linuxplumbersconf.org" <contact@linuxplumbersconf.org>,
+        Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [RFC PATCH v4 0/9] printk: new ringbuffer implementation
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+        <20190904123531.GA2369@hirez.programming.kicks-ass.net>
+        <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
+        <20190905143118.GP2349@hirez.programming.kicks-ass.net>
+        <alpine.DEB.2.21.1909051736410.1902@nanos.tec.linutronix.de>
+        <20190905121101.60c78422@oasis.local.home>
+Date:   Thu, 05 Sep 2019 23:10:34 +0200
+In-Reply-To: <20190905121101.60c78422@oasis.local.home> (Steven Rostedt's
+        message of "Thu, 5 Sep 2019 12:11:01 -0400")
+Message-ID: <87ef0u4fg5.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-References: <20190905101534.9637-1-peterx@redhat.com>
-In-Reply-To: <20190905101534.9637-1-peterx@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 5 Sep 2019 14:06:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgSwiRsT4=q71jnF_5JrUn5qg76VBw+oMJ-e7SQ17Q1QA@mail.gmail.com>
-Message-ID: <CAHk-=wgSwiRsT4=q71jnF_5JrUn5qg76VBw+oMJ-e7SQ17Q1QA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] mm: Page fault enhancements
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Marty McFadden <mcfadden8@llnl.gov>, Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 5, 2019 at 3:15 AM Peter Xu <peterx@redhat.com> wrote:
+On 2019-09-05, Steven Rostedt <rostedt@goodmis.org> wrote:
+>>> But per the above argument of needing the CPU serialization
+>>> _anyway_, I don't see a compelling reason not to use it.
+>>> 
+>>> It is simple, it works. Let's use it.
+>>> 
+>>> If you really fancy a multi-writer buffer, you can always switch to
+>>> one later, if you can convince someone it actually brings benefits
+>>> and not just head-aches.
+>> 
+>> Can we please grab one of the TBD slots at kernel summit next week,
+>> sit down in a room and hash that out?
+>>
 >
-> This series is split out of userfaultfd-wp series to only cover the
-> general page fault changes, since it seems to make sense itself.
+> We should definitely be able to find a room that will be available
+> next week.
 
-The series continues to look sane to me, but I'd like VM people to
-take a look. I see a few reviewed-by's, it would be nice to see more
-comments from people. I'd like to see Andrea in particular say "yeah,
-this looks all good to me".
+FWIW, on Monday at 12:45 I am giving a talk[0] on the printk
+rework. I'll be dedicating a few slides to presenting the lockless
+multi-writer design, but will also talk about the serialized CPU
+approach from RFCv1.
 
-Also a question on how this will get to me - it smells like Andrew's
--mm tree to me, both from a VM and a userfaultfd angle (and looking
-around, at least a couple of previous patches by Peter have gone that
-way).
+John Ogness
 
-And it would be lovely to have actual _numbers_ for the alleged
-latency improvements. I 100% believe them, but still, numbers rule.
-
-Talking about latency, what about that retry loop in gup()? That's the
-one I'm not at all convinced about. It doesn't check for signals, so
-if there is some retry logic, it loops forever. Hmm?
-
-             Linus
+[0] https://www.linuxplumbersconf.org/event/4/contributions/290/
