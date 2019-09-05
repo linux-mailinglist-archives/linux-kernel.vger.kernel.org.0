@@ -2,123 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC0AA9C1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C4FA9C21
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:42:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732220AbfIEHko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 03:40:44 -0400
-Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25521 "EHLO
-        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730769AbfIEHkn (ORCPT
+        id S1732228AbfIEHm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 03:42:28 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42437 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732148AbfIEHm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 03:40:43 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1567669138; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=bbyvOXRs9Tcc7kCLTdH0JOWp66Ask/teV8N0yAkNv48JTvvEUDgEhhnXrQodA10ECo4qAoybzPdOKU7HuRIINfedgwsGu7ddyEKPwKroxZtidaGrMcHd3UYHV0UhPMsglZPxPg6fDEZAhAZg2sM6+7bh4fg6a6usIRrJXGKh3Ng=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1567669138; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=I5Jl+lRwVJSmYK5N04Ftz1awAcGGAYjkgicsp1LfCyk=; 
-        b=T69p+TdOmZIXKkTIxE6daC9rT68eKWGSI7M4Qw1Gg4XZBkfAcuRPg5v7VTzt4JGiy8jBiPqh6UhPYs++ZpGj8ajN94RQ969HQR8cYmknPiX87lHtCxDAkZDGVzTwHekpqYq2QJjn2axa8ym7Ebpig37hjLD4B9obON1g/hAbC/4=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=EJYjrjBwwp5bhvwJq7W/6i9l8gYEDG/kQEHJI7Rm5ndzu6VEyqW7m5E/mdYOox0/BEqKrtqWtM8A
-    Eu7A26gfmN9kVyprQG+uEeicCp8eJKNswoXiAnB2Wc+bg1kJKBgW  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1567669138;
-        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=1944; bh=I5Jl+lRwVJSmYK5N04Ftz1awAcGGAYjkgicsp1LfCyk=;
-        b=dUSE5lByWPHkV4P5NSPYSBiFnFagA3tbZyL/er/zkLkExddUjgqzZ3DiY8GHPhUR
-        mtHNy0WggqLNGv2OiQZvNNBaODLDFfH6HThC8BQleFsPuiOTMDl0aLfxQPWQlNbCcvg
-        m7AcmotbrC9O2ZKYH6GwKXmCOrYW9n3vE8q6GWnY=
-Received: from zhouyanjie-virtual-machine.localdomain (125.71.5.36 [125.71.5.36]) by mx.zohomail.com
-        with SMTPS id 1567669136703108.89236573844028; Thu, 5 Sep 2019 00:38:56 -0700 (PDT)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, ulf.hansson@linaro.org,
-        paul.burton@mips.com, linus.walleij@linaro.org,
-        paul@crapouillou.net, malat@debian.org, yuehaibing@huawei.com,
-        ezequiel@collabora.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        syq@debian.org, jiaxun.yang@flygoat.com
-Subject: [PATCH 4/4] MMC: Ingenic: Add support for JZ4760 and support for LPM.
-Date:   Thu,  5 Sep 2019 15:38:09 +0800
-Message-Id: <1567669089-88693-5-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567669089-88693-1-git-send-email-zhouyanjie@zoho.com>
-References: <1567669089-88693-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        Thu, 5 Sep 2019 03:42:27 -0400
+Received: by mail-pl1-f195.google.com with SMTP id y1so865040plp.9;
+        Thu, 05 Sep 2019 00:42:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rBvvS8Ifgerj64qNxAVniHlq7uYFZXu02QIX7Pp36ko=;
+        b=hl8cg9pclBKf75yEQ+msalibhdyY9q5LWoTXIs+1N7KckJ3pGTQedG4HmXLAvSYKgS
+         FpfPBCyrHLVc7T+hCJyyC/PQgOxGhloNN3OrR9zlp87irsupRrcp1oq6V49Eflq1c+6C
+         SWyJVdfn91hYcXTorcIpiBmaJyyRhtYyv9RHlJ0beXH4JZXm1NDLAY+FnoX2hZjd2ggp
+         7tYsWeAMSw0P3UxSPXfcfkzR3daB7Ze9HjrG/aNW+d8Jsc5LuXjZt2WuBTeINpxxt1Ks
+         WfDrZZTqkFP2VQaVhULP9RoXJtLvsqhCtqvslirdlYcGIznFwik1/GL0LNbEvrg5e4ds
+         wO9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rBvvS8Ifgerj64qNxAVniHlq7uYFZXu02QIX7Pp36ko=;
+        b=dDvZOIMOFzmxv4S+cjsv/TK+D7Eg2ETjazVhoK3275N5ynoAMgQw+/c8vmPNBXhRff
+         hDU8KwdCelYb+snf9NRXuMOx5UiWU0Bwh/5FnMnD6S/hvXuZlJVe9aL17Obw3t+nja2c
+         PIdfomRUfn60F2r2bmn96QUhySrWd1vWoygtdsODhouTJ73swlGPZYBaYazVmMGzwpU7
+         J+oOkTEaH46kHoUjvxA/ki4NT/pBPgaYGlR6UdplsT/IiCWT88DEHJ3ibB6X00g8IiX+
+         B56nDLXo6v/Nmpyg2YlUvI0n3xu/Znxx80rQ1TRSCOxVkSjNfnl+00n3r4mLEc8okKb7
+         obbA==
+X-Gm-Message-State: APjAAAUNP4Cva0EiOwXcoE0jExiB8mRCYbeBVgysZusoYBa6DLS9jJ7A
+        JOYp9ZZiRT5f6HT8qqrG9es=
+X-Google-Smtp-Source: APXvYqxdmtveZ3KQEVhgFRZfS/cuFePwXE7S0QmrtMkNGj3TaeJ8XraBevqCTwyIF+IRKVC7nyXtMQ==
+X-Received: by 2002:a17:902:7449:: with SMTP id e9mr1980377plt.242.1567669347125;
+        Thu, 05 Sep 2019 00:42:27 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id k5sm1058919pjs.1.2019.09.05.00.42.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2019 00:42:26 -0700 (PDT)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH] serial: sprd: correct the wrong sequence of arguments
+Date:   Thu,  5 Sep 2019 15:41:51 +0800
+Message-Id: <20190905074151.5268-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1.add support for probing mmc driver on the JZ4760 Soc from Ingenic.
-2.add support for Low Power Mode of Ingenic's MMC/SD Controller.
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+The sequence of arguments which was passed to handle_lsr_errors() didn't
+match the parameters defined in that function, &lsr was passed to flag
+and &flag was passed to lsr, this patch fixed that.
+
+Fixes: b7396a38fb28 ("tty/serial: Add Spreadtrum sc9836-uart driver support")
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
 ---
- drivers/mmc/host/jz4740_mmc.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/tty/serial/sprd_serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
-index d6811a7..1e61f1b 100644
---- a/drivers/mmc/host/jz4740_mmc.c
-+++ b/drivers/mmc/host/jz4740_mmc.c
-@@ -43,6 +43,7 @@
- #define JZ_REG_MMC_RES		0x34
- #define JZ_REG_MMC_RXFIFO	0x38
- #define JZ_REG_MMC_TXFIFO	0x3C
-+#define JZ_REG_MMC_LPM		0x40
- #define JZ_REG_MMC_DMAC		0x44
+diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
+index c4d8c77c1261..4eb5dbfbc46d 100644
+--- a/drivers/tty/serial/sprd_serial.c
++++ b/drivers/tty/serial/sprd_serial.c
+@@ -609,7 +609,7 @@ static inline void sprd_rx(struct uart_port *port)
  
- #define JZ_MMC_STRPCL_EXIT_MULTIPLE BIT(7)
-@@ -102,11 +103,15 @@
- #define JZ_MMC_DMAC_DMA_SEL BIT(1)
- #define JZ_MMC_DMAC_DMA_EN BIT(0)
- 
-+#define	JZ_MMC_LPM_DRV_RISING BIT(31)
-+#define	JZ_MMC_LPM_LOW_POWER_MODE_EN BIT(0)
-+
- #define JZ_MMC_CLK_RATE 24000000
- 
- enum jz4740_mmc_version {
- 	JZ_MMC_JZ4740,
- 	JZ_MMC_JZ4725B,
-+	JZ_MMC_JZ4760,
- 	JZ_MMC_JZ4780,
- };
- 
-@@ -858,6 +863,16 @@ static int jz4740_mmc_set_clock_rate(struct jz4740_mmc_host *host, int rate)
- 	}
- 
- 	writew(div, host->base + JZ_REG_MMC_CLKRT);
-+
-+	if (host->version >= JZ_MMC_JZ4760) {
-+		if (real_rate > 25000000)
-+			writel(JZ_MMC_LPM_DRV_RISING |
-+				   JZ_MMC_LPM_LOW_POWER_MODE_EN,
-+				   host->base + JZ_REG_MMC_LPM);
-+	} else if (host->version >= JZ_MMC_JZ4725B)
-+		writel(JZ_MMC_LPM_LOW_POWER_MODE_EN,
-+			   host->base + JZ_REG_MMC_LPM);
-+
- 	return real_rate;
- }
- 
-@@ -935,6 +950,7 @@ static const struct mmc_host_ops jz4740_mmc_ops = {
- static const struct of_device_id jz4740_mmc_of_match[] = {
- 	{ .compatible = "ingenic,jz4740-mmc", .data = (void *) JZ_MMC_JZ4740 },
- 	{ .compatible = "ingenic,jz4725b-mmc", .data = (void *)JZ_MMC_JZ4725B },
-+	{ .compatible = "ingenic,jz4760-mmc", .data = (void *) JZ_MMC_JZ4760 },
- 	{ .compatible = "ingenic,jz4780-mmc", .data = (void *) JZ_MMC_JZ4780 },
- 	{},
- };
+ 		if (lsr & (SPRD_LSR_BI | SPRD_LSR_PE |
+ 			   SPRD_LSR_FE | SPRD_LSR_OE))
+-			if (handle_lsr_errors(port, &lsr, &flag))
++			if (handle_lsr_errors(port, &flag, &lsr))
+ 				continue;
+ 		if (uart_handle_sysrq_char(port, ch))
+ 			continue;
 -- 
-2.7.4
-
+2.20.1
 
