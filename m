@@ -2,158 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0EE0AA94A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:44:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5251BAA93B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:41:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389793AbfIEQoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:44:34 -0400
-Received: from mail-eopbgr820041.outbound.protection.outlook.com ([40.107.82.41]:36096
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728601AbfIEQoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:44:34 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=llen5VqxdLkS3wCNMHF9n2qCsyBu+qZIqDh+3iUXzdqVcRgKpRtGJse6dyL6MTXRcIwdAepl1ddo3IeXq1YVlLCi/24JSNi7GPGDEU/ohSUOEhex2JVd19F9AO6pNU7BSI4ZS/2iLrMBRBfSyfO3KHtK56908CW3WpMYpG2bif3yjE5ohLsvawPKyjcwbup5/Fa0aYkbNFAH+tZ7fOyX9zCfY7LOLGuTi/du8flvCJF0nE2j8YvCnB97dPOLww2S4YFkjX4Bun4oFTMpsGcNYvTGTb/RIZWU/Kx9PKFAFdj3olTWF7XNcLheSABi3dmeywzWdFlWzC4zYJmoT7igNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7XeiAuPaLEVFIz8TRH6ejTMOetWQ5SdX+IQ3VEFER50=;
- b=oU4Skg9ojBUTQyvxDNX6Hy+yvsCLeXXHJ+XzVlWmjbed3WA/yxlfYYUrBmg3AQqbF1Kbz1yqdfYaHZH+8S7Nb8BPypr/FopfwIU3yZNT5QiEjjz4ch5hgUDUExOzck7oPpO5lTJtczYfDZmffV6w9Ci/myshK6sxrLAndrnRp4o1QezRephjEGOJTue+eO+nIJLO7X8it3lg/3kMNJQEJpF+wF2ZrVshxwjda4Gfg28k0LSWEwAIxYh6Rvn666hWQFDRJZ9BuRbVd//+FL5mxeCyo4x26WmX/EQOSuXKDGnbnBDSz0ms8TAjs3OLArXT7QqPwoWCXiZ8f86MMlkpdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=gmail.com smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7XeiAuPaLEVFIz8TRH6ejTMOetWQ5SdX+IQ3VEFER50=;
- b=kX4vetgvBFzPF3Ljn38dpC4Ozv1xje7WfDPdwgqi8dnQBdSlEVcT9doapdYg3uN3jT1HAv14Vcx+7x90Y0A85PA8eC5u3f8Y9X6AxYDIlMXVPcRVNXA4jywYTviEX9QKaEGRXnIpNqBg+3KXoUjharF7I19pQPYQD3D7sc0jqvk=
-Received: from BN6PR02CA0074.namprd02.prod.outlook.com (2603:10b6:405:60::15)
- by DM6PR02MB5338.namprd02.prod.outlook.com (2603:10b6:5:47::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2241.15; Thu, 5 Sep
- 2019 16:43:52 +0000
-Received: from BL2NAM02FT011.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::205) by BN6PR02CA0074.outlook.office365.com
- (2603:10b6:405:60::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2199.21 via Frontend
- Transport; Thu, 5 Sep 2019 16:43:52 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT011.mail.protection.outlook.com (10.152.77.5) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2241.14
- via Frontend Transport; Thu, 5 Sep 2019 16:43:51 +0000
-Received: from [172.21.6.17] (helo=xir-smtp1.xilinx.com)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <radhey.shyam.pandey@xilinx.com>)
-        id 1i5urO-00055y-Ak; Thu, 05 Sep 2019 09:43:50 -0700
-Received: from [127.0.0.1] (helo=xir-smtp-dlp2.xilinx.com)
-        by xir-smtp1.xilinx.com with esmtp (Exim 4.63)
-        (envelope-from <radhey.shyam.pandey@xilinx.com>)
-        id 1i5uoF-0003dC-KL; Thu, 05 Sep 2019 17:40:35 +0100
-Received: from xir-pvapsmtp01 (smtp-fallback.xilinx.com [172.21.6.17] (may be forged))
-        by xir-smtp-dlp2.xilinx.com (8.13.8/8.13.1) with ESMTP id x85GeW61001920;
-        Thu, 5 Sep 2019 16:40:32 GMT
-Received: from [149.199.38.66] (helo=xsj-pvapsmtp01)
-        by xir-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <radhey.shyam.pandey@xilinx.com>)
-        id 1i5uoC-0003d4-CJ; Thu, 05 Sep 2019 17:40:32 +0100
-Received: from [127.0.0.1] (helo=xsj-smtp-dlp2.xlnx.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <radhey.shyam.pandey@xilinx.com>)
-        id 1i5ul8-0006xd-Mh; Thu, 05 Sep 2019 09:37:22 -0700
-Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x85GbLWm015589;
-        Thu, 5 Sep 2019 09:37:21 -0700
-Received: from [10.140.184.180] (helo=ubuntu)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <radheys@ubuntu>)
-        id 1i5ul7-0006wf-1I; Thu, 05 Sep 2019 09:37:21 -0700
-Received: by ubuntu (Postfix, from userid 13245)
-        id 67FF3101074; Thu,  5 Sep 2019 22:07:19 +0530 (IST)
-From:   Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-To:     vkoul@kernel.org, dan.j.williams@intel.com,
-        michal.simek@xilinx.com, nick.graumann@gmail.com,
-        andrea.merello@gmail.com, appana.durga.rao@xilinx.com,
-        mcgrof@kernel.org
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Subject: [PATCH -next 8/8] dmaengine: xilinx_dma: Clear desc_pendingcount in xilinx_dma_reset
-Date:   Thu,  5 Sep 2019 22:07:04 +0530
-Message-Id: <1567701424-25658-9-git-send-email-radhey.shyam.pandey@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567701424-25658-1-git-send-email-radhey.shyam.pandey@xilinx.com>
-References: <1567701424-25658-1-git-send-email-radhey.shyam.pandey@xilinx.com>
-X-RCIS-Action: ALLOW
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.002
-X-TM-AS-Result: No--4.495-7.0-31-1
-X-imss-scan-details: No--4.495-7.0-31-1;No--4.495-5.0-31-1
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-Result-Xfilter: Match text exemption rules:No
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(136003)(376002)(346002)(2980300002)(189003)(199004)(11346002)(446003)(70206006)(126002)(6266002)(107886003)(2616005)(316002)(4326008)(486006)(476003)(305945005)(2906002)(8936002)(47776003)(50226002)(106002)(26005)(52956003)(51416003)(186003)(6666004)(356004)(36756003)(76176011)(14444005)(336012)(5660300002)(103686004)(426003)(70586007)(81166006)(81156014)(8676002)(478600001)(16586007)(50466002)(48376002)(42186006)(42866002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB5338;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+        id S2389117AbfIEQlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:41:10 -0400
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:57322 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728601AbfIEQlK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 12:41:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 3CBE9402D7;
+        Thu,  5 Sep 2019 18:41:03 +0200 (CEST)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=YRaz4L/H;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id M_JX_DVyuU9R; Thu,  5 Sep 2019 18:41:01 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id AEC0A3F3E6;
+        Thu,  5 Sep 2019 18:40:59 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 455FE360160;
+        Thu,  5 Sep 2019 18:40:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1567701659; bh=ayKRPYZ+CmfcKZJe9cQlEdmv7Yf28QhP6pPc0p/MAdo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=YRaz4L/H+NNuyFpurOwnxOfHXmulBAkLeXmItetqYzC4E7rqKx8k0Uw/t3SKSD1pL
+         ZsUvgpEG5ZbTfCmjnH5Q35hAsqPbYLh+e7fqHf55bmYxDHNj9SJ3a30I4G/hmRK21P
+         lzI6GdGknYhzyoH/q0GuT2tG/IKXRpB7fZk0uqOw=
+Subject: Re: [RFC PATCH 1/2] x86: Don't let pgprot_modify() change the page
+ encryption bit
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, pv-drivers@vmware.com,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+References: <20190905103541.4161-1-thomas_os@shipmail.org>
+ <20190905103541.4161-2-thomas_os@shipmail.org>
+ <608bbec6-448e-f9d5-b29a-1984225eb078@intel.com>
+ <b84d1dca-4542-a491-e585-a96c9d178466@shipmail.org>
+ <20190905152438.GA18286@infradead.org>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <86b48953-69a2-c211-2b48-b796c07426bc@shipmail.org>
+Date:   Thu, 5 Sep 2019 18:40:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4268fe91-8d9b-4ca3-a4a5-08d732203bae
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(4709080)(1401327)(4618075)(2017052603328);SRVR:DM6PR02MB5338;
-X-MS-TrafficTypeDiagnostic: DM6PR02MB5338:
-X-Microsoft-Antispam-PRVS: <DM6PR02MB53387E3626B6C04C52665F84C7BB0@DM6PR02MB5338.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-Forefront-PRVS: 015114592F
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: UCKnd18Uq6gneVKGaUwQY3mKl3x15ZXTXEpvAlM8yr5IPomyZhuSgJPl5kiKFfZuBjPJG46KveZ9qGlrzSRjS9azWMhncICsbi9ts82E7zFP1A9aIwhWAElBYSErUaOY8g9467yBWEVAV2P+nfbv07y9XC+EL7o07ymo5C2/R8ciZDMbtRBbMVuVFm2ceDSi+zBKTBg9EujvOBVL/2gUBH/iuGW09GYh1CAV4A2+Y92REqSu6cKYr2FuTzo40bHxuYOszd7I82j5BEPT/T9yLYsWx5xcwSCO7mpfXRcuCM9l247i1OaYUohGlamDSSTkYQrWq/iTExzK5VxcNqZbry4xyzy1wKuWYj+vk5foK/K6EmA1TcBKpPfMbmKhN7yHiT54qHk69gJU6GG+x//+ymu7XP/nhTajkg8PInbhS1s=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2019 16:43:51.6106
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4268fe91-8d9b-4ca3-a4a5-08d732203bae
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5338
+In-Reply-To: <20190905152438.GA18286@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Graumann <nick.graumann@gmail.com>
+On 9/5/19 5:24 PM, Christoph Hellwig wrote:
+> On Thu, Sep 05, 2019 at 05:21:24PM +0200, Thomas Hellström (VMware) wrote:
+>> On 9/5/19 4:15 PM, Dave Hansen wrote:
+>>> Hi Thomas,
+>>>
+>>> Thanks for the second batch of patches!  These look much improved on all
+>>> fronts.
+>> Yes, although the TTM functionality isn't in yet. Hopefully we won't have to
+>> bother you with those though, since this assumes TTM will be using the dma
+>> API.
+> Please take a look at dma_mmap_prepare and dma_mmap_fault in this
+> branch:
+>
+> 	http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-mmap-improvements
+>
+> they should allow to fault dma api pages in the page fault handler.  But
+> this is totally hot off the press and not actually tested for the last
+> few patches.  Note that I've also included your two patches from this
+> series to handle SEV.
 
-Whenever we reset the channel, we need to clear desc_pendingcount
-along with desc_submitcount. Otherwise when a new transaction is
-submitted, the irq coalesce level could be programmed to an incorrect
-value in the axidma case.
+Thanks, Christoph.
 
-This behavior can be observed when terminating pending transactions
-with xilinx_dma_terminate_all() and then submitting new transactions
-without releasing and requesting the channel.
+I'll get to this tomorrow.
 
-Signed-off-by: Nicholas Graumann <nick.graumann@gmail.com>
-Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
----
- drivers/dma/xilinx/xilinx_dma.c | 1 +
- 1 file changed, 1 insertion(+)
+/Thomas
 
-diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
-index 0896e07..010baed 100644
---- a/drivers/dma/xilinx/xilinx_dma.c
-+++ b/drivers/dma/xilinx/xilinx_dma.c
-@@ -1480,6 +1480,7 @@ static int xilinx_dma_reset(struct xilinx_dma_chan *chan)
- 
- 	chan->err = false;
- 	chan->idle = true;
-+	chan->desc_pendingcount = 0;
- 	chan->desc_submitcount = 0;
- 
- 	return err;
--- 
-2.7.4
 
