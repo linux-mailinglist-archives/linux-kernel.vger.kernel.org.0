@@ -2,67 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59AC2A9BFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD688A9C06
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:39:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732110AbfIEHiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 03:38:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730809AbfIEHiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 03:38:07 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E3002145D;
-        Thu,  5 Sep 2019 07:38:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567669086;
-        bh=ZjDzOuega+mZVAiWkRReiyj0ameJrbOP0VlkJ/bmbHo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O8EEpYh9e5eOQ0wS8ipE22a+dMMtSpWPNldVVR276PKiAfZtE5krHTBVib/he7UGR
-         8ZB5MmdGAKuDwNjKsZarYVv30EwTDE1QIsooaPofhpz5+29BD40+6q7eNplCHDyRE+
-         GUlYOJT4hPOJpZdl+vRomxQ2256a0wbzTp7JFs0o=
-Date:   Thu, 5 Sep 2019 09:38:04 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Eugen.Hristev@microchip.com
-Cc:     Adham.Abozaeid@microchip.com, Ajay.Kathat@microchip.com,
-        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] staging: wilc1000: look for rtc_clk clock
-Message-ID: <20190905073804.GA30881@kroah.com>
-References: <1567603548-13355-1-git-send-email-eugen.hristev@microchip.com>
- <1567603548-13355-2-git-send-email-eugen.hristev@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1567603548-13355-2-git-send-email-eugen.hristev@microchip.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1732130AbfIEHi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 03:38:57 -0400
+Received: from sender4-pp-o94.zoho.com ([136.143.188.94]:25441 "EHLO
+        sender4-pp-o94.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729809AbfIEHi5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 03:38:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1567669108; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=JD0RJDc1y1nbgEDoFeWUP1aa+1E2q9cUCgmHftygJWttkWU0ij0FSN0agcqXn8mGLRaSZzmN57MaN6cehFmvpEG1fwFbMz20hfcBzT+WlS4UP4KGPqqw5fK1Qq8lqKc9tMDUxG6YiZFCjKCZP03oolXP6ohtRKJSZzI5sSEoE2Q=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1567669108; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=YMRu90FAXl9d4UtZOuk31CTU2wRDKadQhbA6lJKKfN0=; 
+        b=Gg/Y8QVU8tw+PUl15qldJfTEYw5r0HK0HGAQn4NaBBAJvfX60bRAaUp3TJ0tT61RVS766n1N6TLjLE0AHt4jUXTsjlVnldN5L7jCEm6Qk6OydmPTjxZ08TV5TlsslA7+c+URm8kfeqnlyMM6kKZNsor2jh3f4CvE2Oi4GwLLALk=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=K2Kxbxy7Q9eU1GWFRAstrHfd4MkTobYbU5Ye0GoeNjVPgKxfMp0akXKHawnHEHiIaVahiFqR8zXU
+    xQNHR/DkSxHFQ/KMsQQSewxGWAidp4A+08ut7tYMtfwro9lmjBJi  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1567669108;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id; l=298;
+        bh=YMRu90FAXl9d4UtZOuk31CTU2wRDKadQhbA6lJKKfN0=;
+        b=c6TILrT4jx+L+K9sBldgDVbZLSg+wVByx/GjF2G8ruBjIAGxzVZc7xp32p4KB7jm
+        YJlleqgemKPDLGGYB7qGfm2hmBGs6G9ax6fjJo1PxiPWibI7VYDK+9kMmsvyAI5Mnhi
+        4ZYn7904ROGq0oyza/XTbsCQ0Ob/nMpbnRwOzEn8=
+Received: from zhouyanjie-virtual-machine.localdomain (125.71.5.36 [125.71.5.36]) by mx.zohomail.com
+        with SMTPS id 1567669107399529.6408512576533; Thu, 5 Sep 2019 00:38:27 -0700 (PDT)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, ulf.hansson@linaro.org,
+        paul.burton@mips.com, linus.walleij@linaro.org,
+        paul@crapouillou.net, malat@debian.org, yuehaibing@huawei.com,
+        ezequiel@collabora.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        syq@debian.org, jiaxun.yang@flygoat.com
+Subject: MMC: Ingenic: Add support for 8bit mode and LPM and JZ4760 Soc
+Date:   Thu,  5 Sep 2019 15:38:05 +0800
+Message-Id: <1567669089-88693-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 01:34:01PM +0000, Eugen.Hristev@microchip.com wrote:
-> From: Eugen Hristev <eugen.hristev@microchip.com>
-> 
-> If rtc_clk is provided from DT, use it and enable it.
-> This is optional.
-> The signal may be hardcoded and no need to be requested,
-> but if DT provides it, use it.
-> 
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> Acked-by: Ajay Singh <ajay.kathat@microchip.com>
-> ---
->  drivers/staging/wilc1000/wilc_sdio.c          | 14 ++++++++++++++
->  drivers/staging/wilc1000/wilc_wfi_netdevice.h |  1 +
->  2 files changed, 15 insertions(+)
+1.adjust the macro definition name to match the corresponding
+  register name in the datasheet.
+2.add support for 8bit mode, now supports 1bit/4bit/8bit modes.
+3.add support for probing mmc driver on the JZ4760 Soc from Ingenic.
+4.add support for Low Power Mode of Ingenic's MMC/SD Controller.
 
-This patch does not apply to my tree at all.
 
-Please redo it against staging-next and resend the series, with Ajay's
-ack added to it.
-
-thanks,
-
-greg k-h
