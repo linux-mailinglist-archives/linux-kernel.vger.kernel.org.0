@@ -2,199 +2,325 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D7F7A9E3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56317A9E45
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:27:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733299AbfIEJZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 05:25:56 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:44247 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730872AbfIEJZz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 05:25:55 -0400
-Received: by mail-oi1-f196.google.com with SMTP id w6so1210909oie.11;
-        Thu, 05 Sep 2019 02:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VFHJ387P8zR9bXIGHUXV1cLigtt/phW3cSnanO7IPXo=;
-        b=hOjanp9PqcJlXoE4DwMUXVTq96Tvl75q1CFpmRg4tmPWT4CDwiszxWwXqcQ5X/aYg0
-         ++oQWrQqbuUAF4MRRxF9zz2THSbSRJW/cimvodRL7RqVh6eIRj1x4f031utdXkubGf+o
-         uNR2a+m+TbzfF1zktJKQfmxVs/ZhAmGDjU9uw9a+rmKjeu4wKM1bPmEzy6Bqcp2z+EvL
-         OWno06os//ixUIJfuBK2NMHHdbPZRXkRgjEK0ZgAn2hM+qvtGmHSqmKmaxihC32d/NPd
-         3j6wP4rh3nO3UCQsxfZS4AwdL3oNMH4onNnKA0Sby7AImQNNhMZXyWMxiqKjkKYMC2Vq
-         oXew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VFHJ387P8zR9bXIGHUXV1cLigtt/phW3cSnanO7IPXo=;
-        b=bo8fqE22Yso2VpUlT5YKOmuwpgCUR34t9RwrcWeMFb+3dOIt2X1Fc7kqhOt3iePtWE
-         VuJlbmQjZe2qHFI2k+UvGiQpfPqrPlORKc77JIpYLmb1FUKSCTQ6+v5sHjQXnBFsZoIg
-         SuLinvrEU9JEHxSKVoKqVXXBfjwQaUSbFNJ39cRyRivQ2Ltx8ZTaAHWAVpNHMEeI8GMW
-         274d7n2wryXkFQSSELjBtyXDxj+kcSqvKkcMMB34rUtwcI4SpmrkTzBJ6+afWsViaWlq
-         ZvKgfW5x+lH/tlWE8qeEQuOAPAjBnlF9fMv6cPwP7JW0n5kILAweXMjUv5juG5kHpIFz
-         OvSg==
-X-Gm-Message-State: APjAAAVHXxDLxQEJKlDz6iEFIYUoL406+MsTLUYE6gkVILEfvAEChhRo
-        wPwTBMDApGOTEmpCJXp5vR0JJI2U2cBMbv9OeUk=
-X-Google-Smtp-Source: APXvYqzD2sX0jdF8eMqAF3mbE5fLEECJkC7+LQzqc4bMkc2UN1eib0nN6IgUL88mx5bMYDL9FesnvWiYY74WU+F9KXM=
-X-Received: by 2002:aca:49cf:: with SMTP id w198mr1739510oia.141.1567675554276;
- Thu, 05 Sep 2019 02:25:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000e3072b0591ca1937@google.com>
-In-Reply-To: <000000000000e3072b0591ca1937@google.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Thu, 5 Sep 2019 17:25:41 +0800
-Message-ID: <CANRm+CxBdFjVrYzAe_Rs=v6BMSq9Gx+ngDrEitK6aez=kMq2XQ@mail.gmail.com>
-Subject: Re: general protection fault in __apic_accept_irq
-To:     syzbot <syzbot+dff25ee91f0c7d5c1695@syzkaller.appspotmail.com>
-Cc:     Borislav Petkov <bp@alien8.de>, devel@linuxdriverproject.org,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm <kvm@vger.kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        LKML <linux-kernel@vger.kernel.org>, mikelley@microsoft.com,
+        id S1733311AbfIEJ1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 05:27:02 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:61728 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731550AbfIEJ1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 05:27:00 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 572C6A167F;
+        Thu,  5 Sep 2019 11:26:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id A-4M1Owl_Xlc; Thu,  5 Sep 2019 11:26:48 +0200 (CEST)
+Date:   Thu, 5 Sep 2019 19:26:22 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         Ingo Molnar <mingo@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190905092622.tlb6nn3uisssdfbu@yavin.dot.cyphar.com>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
+ <20190905073205.GY2332@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ctyxwo5xz342v75e"
+Content-Disposition: inline
+In-Reply-To: <20190905073205.GY2332@hirez.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019 at 16:53, syzbot
-<syzbot+dff25ee91f0c7d5c1695@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    3b47fd5c Merge tag 'nfs-for-5.3-4' of git://git.linux-nfs...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=124af12a600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=144488c6c6c6d2b6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=dff25ee91f0c7d5c1695
-> compiler:       clang version 9.0.0 (/home/glider/llvm/clang
-> 80fee25776c2fb61e74c1ecb1a523375c2500b69)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10954676600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1752fe0a600000
->
-> The bug was bisected to:
->
-> commit 0aa67255f54df192d29aec7ac6abb1249d45bda7
-> Author: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Date:   Mon Nov 26 15:47:29 2018 +0000
->
->      x86/hyper-v: move synic/stimer control structures definitions to
-> hyperv-tlfs.h
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=156128c1600000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=136128c1600000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+dff25ee91f0c7d5c1695@syzkaller.appspotmail.com
-> Fixes: 0aa67255f54d ("x86/hyper-v: move synic/stimer control structures
-> definitions to hyperv-tlfs.h")
->
-> kvm [9347]: vcpu0, guest rIP: 0xcc Hyper-V uhandled wrmsr: 0x40000004 data
-> 0x94
-> kvm [9347]: vcpu0, guest rIP: 0xcc Hyper-V uhandled wrmsr: 0x40000004 data
-> 0x48c
-> kvm [9347]: vcpu0, guest rIP: 0xcc Hyper-V uhandled wrmsr: 0x40000004 data
-> 0x4ac
-> kvm [9347]: vcpu0, guest rIP: 0xcc Hyper-V uhandled wrmsr: 0x40000005 data
-> 0x1520
-> kvm [9347]: vcpu0, guest rIP: 0xcc Hyper-V uhandled wrmsr: 0x40000006 data
-> 0x15d4
-> kvm [9347]: vcpu0, guest rIP: 0xcc Hyper-V uhandled wrmsr: 0x40000007 data
-> 0x15c4
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 9347 Comm: syz-executor665 Not tainted 5.3.0-rc7+ #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:__apic_accept_irq+0x46/0x740 arch/x86/kvm/lapic.c:1029
 
-Thanks for the report, I found the root cause, will send a patch soon.
+--ctyxwo5xz342v75e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Code: 89 55 cc 41 89 f4 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 5c c9 5d
-> 00 48 89 5d c0 4c 8d b3 98 00 00 00 4d 89 f7 49 c1 ef 03 <43> 80 3c 2f 00
-> 74 08 4c 89 f7 e8 6b c4 96 00 49 8b 06 48 89 45 d0
-> RSP: 0018:ffff88808a30f9b0 EFLAGS: 00010202
-> RAX: ffffffff8115c384 RBX: 0000000000000000 RCX: ffff8880977f2140
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffff88808a30fa10 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffffed1011461f64 R11: 0000000000000000 R12: 0000000000000000
-> R13: dffffc0000000000 R14: 0000000000000098 R15: 0000000000000013
-> FS:  0000555555e35880(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000008f96d000 CR4: 00000000001426f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   kvm_apic_set_irq+0xb4/0x140 arch/x86/kvm/lapic.c:558
->   stimer_notify_direct arch/x86/kvm/hyperv.c:648 [inline]
->   stimer_expiration arch/x86/kvm/hyperv.c:659 [inline]
->   kvm_hv_process_stimers+0x594/0x1650 arch/x86/kvm/hyperv.c:686
->   vcpu_enter_guest+0x2b2a/0x54b0 arch/x86/kvm/x86.c:7896
->   vcpu_run+0x393/0xd40 arch/x86/kvm/x86.c:8152
->   kvm_arch_vcpu_ioctl_run+0x636/0x900 arch/x86/kvm/x86.c:8360
->   kvm_vcpu_ioctl+0x6cf/0xaf0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2765
->   do_vfs_ioctl+0x744/0x1730 fs/ioctl.c:46
->   ksys_ioctl fs/ioctl.c:713 [inline]
->   __do_sys_ioctl fs/ioctl.c:720 [inline]
->   __se_sys_ioctl fs/ioctl.c:718 [inline]
->   __x64_sys_ioctl+0xe3/0x120 fs/ioctl.c:718
->   do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x442a19
-> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 1b 0c fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffca3d2a208 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000442a19
-> RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
-> RBP: 00000000006cd018 R08: 00000000004002c8 R09: 00000000004002c8
-> R10: 00000000004002c8 R11: 0000000000000246 R12: 0000000000403ac0
-> R13: 0000000000403b50 R14: 0000000000000000 R15: 0000000000000000
-> Modules linked in:
-> ---[ end trace 8515c4c18eb55117 ]---
-> RIP: 0010:__apic_accept_irq+0x46/0x740 arch/x86/kvm/lapic.c:1029
-> Code: 89 55 cc 41 89 f4 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 5c c9 5d
-> 00 48 89 5d c0 4c 8d b3 98 00 00 00 4d 89 f7 49 c1 ef 03 <43> 80 3c 2f 00
-> 74 08 4c 89 f7 e8 6b c4 96 00 49 8b 06 48 89 45 d0
-> RSP: 0018:ffff88808a30f9b0 EFLAGS: 00010202
-> RAX: ffffffff8115c384 RBX: 0000000000000000 RCX: ffff8880977f2140
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffff88808a30fa10 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffffed1011461f64 R11: 0000000000000000 R12: 0000000000000000
-> R13: dffffc0000000000 R14: 0000000000000098 R15: 0000000000000013
-> FS:  0000555555e35880(0000) GS:ffff8880aea00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000008f96d000 CR4: 00000000001426f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+On 2019-09-05, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
+> > +/**
+> > + * copy_struct_to_user: copy a struct to user space
+> > + * @dst:   Destination address, in user space.
+> > + * @usize: Size of @dst struct.
+> > + * @src:   Source address, in kernel space.
+> > + * @ksize: Size of @src struct.
+> > + *
+> > + * Copies a struct from kernel space to user space, in a way that guar=
+antees
+> > + * backwards-compatibility for struct syscall arguments (as long as fu=
+ture
+> > + * struct extensions are made such that all new fields are *appended* =
+to the
+> > + * old struct, and zeroed-out new fields have the same meaning as the =
+old
+> > + * struct).
+> > + *
+> > + * @ksize is just sizeof(*dst), and @usize should've been passed by us=
+er space.
+> > + * The recommended usage is something like the following:
+> > + *
+> > + *   SYSCALL_DEFINE2(foobar, struct foo __user *, uarg, size_t, usize)
+> > + *   {
+> > + *      int err;
+> > + *      struct foo karg =3D {};
+> > + *
+> > + *      // do something with karg
+> > + *
+> > + *      err =3D copy_struct_to_user(uarg, usize, &karg, sizeof(karg));
+> > + *      if (err)
+> > + *        return err;
+> > + *
+> > + *      // ...
+> > + *   }
+> > + *
+> > + * There are three cases to consider:
+> > + *  * If @usize =3D=3D @ksize, then it's copied verbatim.
+> > + *  * If @usize < @ksize, then kernel space is "returning" a newer str=
+uct to an
+> > + *    older user space. In order to avoid user space getting incomplete
+> > + *    information (new fields might be important), all trailing bytes =
+in @src
+> > + *    (@ksize - @usize) must be zerored
+>=20
+> s/zerored/zero/, right?
+
+It should've been "zeroed".
+
+> >                                          , otherwise -EFBIG is returned.
+>=20
+> 'Funny' that, copy_struct_from_user() below seems to use E2BIG.
+
+This is a copy of the semantics that sched_[sg]etattr(2) uses -- E2BIG for
+a "too big" struct passed to the kernel, and EFBIG for a "too big"
+struct passed to user-space. I would personally have preferred EMSGSIZE
+instead of EFBIG, but felt using the existing error codes would be less
+confusing.
+
+>=20
+> > + *  * If @usize > @ksize, then the kernel is "returning" an older stru=
+ct to a
+> > + *    newer user space. The trailing bytes in @dst (@usize - @ksize) w=
+ill be
+> > + *    zero-filled.
+> > + *
+> > + * Returns (in all cases, some data may have been copied):
+> > + *  * -EFBIG:  (@usize < @ksize) and there are non-zero trailing bytes=
+ in @src.
+> > + *  * -EFAULT: access to user space failed.
+> > + */
+> > +int copy_struct_to_user(void __user *dst, size_t usize,
+> > +			const void *src, size_t ksize)
+> > +{
+> > +	size_t size =3D min(ksize, usize);
+> > +	size_t rest =3D abs(ksize - usize);
+> > +
+> > +	if (unlikely(usize > PAGE_SIZE))
+> > +		return -EFAULT;
+>=20
+> Not documented above. Implementation consistent with *from*, but see
+> below.
+
+Will update the kernel-doc.
+
+> > +	if (unlikely(!access_ok(dst, usize)))
+> > +		return -EFAULT;
+> > +
+> > +	/* Deal with trailing bytes. */
+> > +	if (usize < ksize) {
+> > +		if (memchr_inv(src + size, 0, rest))
+> > +			return -EFBIG;
+> > +	} else if (usize > ksize) {
+> > +		if (__memzero_user(dst + size, rest))
+> > +			return -EFAULT;
+> > +	}
+> > +	/* Copy the interoperable parts of the struct. */
+> > +	if (__copy_to_user(dst, src, size))
+> > +		return -EFAULT;
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL(copy_struct_to_user);
+> > +
+> > +/**
+> > + * copy_struct_from_user: copy a struct from user space
+> > + * @dst:   Destination address, in kernel space. This buffer must be @=
+ksize
+> > + *         bytes long.
+> > + * @ksize: Size of @dst struct.
+> > + * @src:   Source address, in user space.
+> > + * @usize: (Alleged) size of @src struct.
+> > + *
+> > + * Copies a struct from user space to kernel space, in a way that guar=
+antees
+> > + * backwards-compatibility for struct syscall arguments (as long as fu=
+ture
+> > + * struct extensions are made such that all new fields are *appended* =
+to the
+> > + * old struct, and zeroed-out new fields have the same meaning as the =
+old
+> > + * struct).
+> > + *
+> > + * @ksize is just sizeof(*dst), and @usize should've been passed by us=
+er space.
+> > + * The recommended usage is something like the following:
+> > + *
+> > + *   SYSCALL_DEFINE2(foobar, const struct foo __user *, uarg, size_t, =
+usize)
+> > + *   {
+> > + *      int err;
+> > + *      struct foo karg =3D {};
+> > + *
+> > + *      err =3D copy_struct_from_user(&karg, sizeof(karg), uarg, size);
+> > + *      if (err)
+> > + *        return err;
+> > + *
+> > + *      // ...
+> > + *   }
+> > + *
+> > + * There are three cases to consider:
+> > + *  * If @usize =3D=3D @ksize, then it's copied verbatim.
+> > + *  * If @usize < @ksize, then the user space has passed an old struct=
+ to a
+> > + *    newer kernel. The rest of the trailing bytes in @dst (@ksize - @=
+usize)
+> > + *    are to be zero-filled.
+> > + *  * If @usize > @ksize, then the user space has passed a new struct =
+to an
+> > + *    older kernel. The trailing bytes unknown to the kernel (@usize -=
+ @ksize)
+> > + *    are checked to ensure they are zeroed, otherwise -E2BIG is retur=
+ned.
+> > + *
+> > + * Returns (in all cases, some data may have been copied):
+> > + *  * -E2BIG:  (@usize > @ksize) and there are non-zero trailing bytes=
+ in @src.
+> > + *  * -E2BIG:  @usize is "too big" (at time of writing, >PAGE_SIZE).
+> > + *  * -EFAULT: access to user space failed.
+> > + */
+> > +int copy_struct_from_user(void *dst, size_t ksize,
+> > +			  const void __user *src, size_t usize)
+> > +{
+> > +	size_t size =3D min(ksize, usize);
+> > +	size_t rest =3D abs(ksize - usize);
+> > +
+> > +	if (unlikely(usize > PAGE_SIZE))
+> > +		return -EFAULT;
+>=20
+> Documented above as returning -E2BIG.
+
+I will switch this (and to) back to -E2BIG -- I must've had a brain-fart
+when doing some refactoring.
+
+>=20
+> > +	if (unlikely(!access_ok(src, usize)))
+> > +		return -EFAULT;
+> > +
+> > +	/* Deal with trailing bytes. */
+> > +	if (usize < ksize)
+> > +		memset(dst + size, 0, rest);
+> > +	else if (usize > ksize) {
+> > +		const void __user *addr =3D src + size;
+> > +		char buffer[BUFFER_SIZE] =3D {};
+>=20
+> Isn't that too big for on-stack?
+
+Is a 64-byte buffer too big? I picked the number "at random" to be the
+size of a cache line, but I could shrink it down to 32 bytes if the size
+is an issue (I wanted to avoid needless allocations -- hence it being
+on-stack).
+
+> > +
+> > +		while (rest > 0) {
+> > +			size_t bufsize =3D min(rest, sizeof(buffer));
+> > +
+> > +			if (__copy_from_user(buffer, addr, bufsize))
+> > +				return -EFAULT;
+> > +			if (memchr_inv(buffer, 0, bufsize))
+> > +				return -E2BIG;
+> > +
+> > +			addr +=3D bufsize;
+> > +			rest -=3D bufsize;
+> > +		}
+>=20
+> The perf implementation uses get_user(); but if that is too slow, surely
+> we can do something with uaccess_try() here?
+
+Is there a non-x86-specific way to do that (unless I'm mistaken only x86
+has uaccess_try() or the other *_try() wrappers)? The main "performance
+improvement" (if you can even call it that) is that we use memchr_inv()
+which finds non-matching characters more efficiently than just doing a
+loop.
+
+> > +	}
+> > +	/* Copy the interoperable parts of the struct. */
+> > +	if (__copy_from_user(dst, src, size))
+> > +		return -EFAULT;
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL(copy_struct_from_user);
+>=20
+> And personally I'm not a big fan of EXPORT_SYMBOL().
+
+I don't have much of an opinion (after all, it only really makes sense a
+lot of sense for syscalls) -- though out-of-tree modules that define
+ioctl()s wouldn't be able to make use of them.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--ctyxwo5xz342v75e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXDUuwAKCRCdlLljIbnQ
+EkuOAP40xlR/F06o1fNB6rvD1iKaBJIRC05rW3WDn2pxUoltnAD/bSvjzMtd1lc1
+JInrmBQUHIPZa+Rk1zPMB2BFjgHRZAA=
+=mJdv
+-----END PGP SIGNATURE-----
+
+--ctyxwo5xz342v75e--
