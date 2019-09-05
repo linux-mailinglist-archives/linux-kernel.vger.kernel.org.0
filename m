@@ -2,158 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333AEAA9B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF538AA9BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387700AbfIERGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 13:06:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11540 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731289AbfIERGy (ORCPT
+        id S2389496AbfIERJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 13:09:16 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:55850 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732403AbfIERJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 13:06:54 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x85H6g4N053820
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Sep 2019 13:06:53 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ut0m81emx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 13:06:51 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gerald.schaefer@de.ibm.com>;
-        Thu, 5 Sep 2019 18:06:42 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 5 Sep 2019 18:06:33 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x85H68Tu33030630
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 5 Sep 2019 17:06:08 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 104054C050;
-        Thu,  5 Sep 2019 17:06:32 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0017A4C044;
-        Thu,  5 Sep 2019 17:06:30 +0000 (GMT)
-Received: from thinkpad (unknown [9.152.96.45])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  5 Sep 2019 17:06:30 +0000 (GMT)
-Date:   Thu, 5 Sep 2019 19:06:29 +0200
-From:   Gerald Schaefer <gerald.schaefer@de.ibm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thu, 5 Sep 2019 13:09:16 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x85H3tji168969;
+        Thu, 5 Sep 2019 17:07:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=TFj6m5l1ONKxOpEbsJmE/2UNSnom/9p9C9uWukqia2o=;
+ b=nCscRghQMASXQeAZgxSV2ZLBWeoUL7k9/YQ+5Or7S+h4NoVd2RBQYHQ3EzRwmRMiVioq
+ ghWLHxwzcdivg3Dv2QGzet9ZE3rK+RXjdzvIv/sRhZa1AaK9ovLhIJfgmTqz0Mmzfnt3
+ sD+IZA+iNDeVVNPOSwk6SC7jTTY++/SRx3cUsK02i+EBIdGcJiMMNgNsHOczhEBCp/pg
+ MUTlv5x4RXaq6Z3WPDcLGgY3t4z8YOc7gkuNgLUus0P8Q17zxHtxnuserLdqo138hJnH
+ gm08jSvtTgDE8eCS5emmT0wCm81XYfJPsmnVgDCmWdWj1AJAlgD1eO0V2yb4uSstBm3K TQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2uu66e03pp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Sep 2019 17:07:17 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x85H3jJs094501;
+        Thu, 5 Sep 2019 17:07:17 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2uthq1yb9s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Sep 2019 17:07:17 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x85H7DQV003379;
+        Thu, 5 Sep 2019 17:07:13 GMT
+Received: from [192.168.14.112] (/79.182.237.80)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Sep 2019 10:07:13 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH v3] KVM: x86: Disable posted interrupts for odd IRQs
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <20190905125818.22395-1-graf@amazon.com>
+Date:   Thu, 5 Sep 2019 20:07:07 +0300
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] mm/pgtable/debug: Add test validating architecture
- page table helpers
-In-Reply-To: <20e3044d-2af5-b27b-7653-cec53bdec941@arm.com>
-References: <1567497706-8649-1-git-send-email-anshuman.khandual@arm.com>
-        <1567497706-8649-2-git-send-email-anshuman.khandual@arm.com>
-        <20190904221618.1b624a98@thinkpad>
-        <20e3044d-2af5-b27b-7653-cec53bdec941@arm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19090517-0012-0000-0000-000003471F7D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19090517-0013-0000-0000-000021817691
-Message-Id: <20190905190629.523bdb87@thinkpad>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-05_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909050164
+        Joerg Roedel <joro@8bytes.org>,
+        Jim Mattson <jmattson@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <867E8A7D-645B-45BE-A6C8-8D59C3D09C53@oracle.com>
+References: <20190905125818.22395-1-graf@amazon.com>
+To:     Alexander Graf <graf@amazon.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909050163
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909050163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019 14:48:14 +0530
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 
-> > [...]  
-> >> +
-> >> +#if !defined(__PAGETABLE_PMD_FOLDED) && !defined(__ARCH_HAS_4LEVEL_HACK)
-> >> +static void pud_clear_tests(pud_t *pudp)
-> >> +{
-> >> +	memset(pudp, RANDOM_NZVALUE, sizeof(pud_t));
-> >> +	pud_clear(pudp);
-> >> +	WARN_ON(!pud_none(READ_ONCE(*pudp)));
-> >> +}  
-> > 
-> > For pgd/p4d/pud_clear(), we only clear if the page table level is present
-> > and not folded. The memset() here overwrites the table type bits, so
-> > pud_clear() will not clear anything on s390 and the pud_none() check will
-> > fail.
-> > Would it be possible to OR a (larger) random value into the table, so that
-> > the lower 12 bits would be preserved?  
-> 
-> So the suggestion is instead of doing memset() on entry with RANDOM_NZVALUE,
-> it should OR a large random value preserving lower 12 bits. Hmm, this should
-> still do the trick for other platforms, they just need non zero value. So on
-> s390, the lower 12 bits on the page table entry already has valid value while
-> entering this function which would make sure that pud_clear() really does
-> clear the entry ?
 
-Yes, in theory the table entry on s390 would have the type set in the last
-4 bits, so preserving those would be enough. If it does not conflict with
-others, I would still suggest preserving all 12 bits since those would contain
-arch-specific flags in general, just to be sure. For s390, the pte/pmd tests
-would also work with the memset, but for consistency I think the same logic
-should be used in all pxd_clear_tests.
+> On 5 Sep 2019, at 15:58, Alexander Graf <graf@amazon.com> wrote:
+>=20
+> We can easily route hardware interrupts directly into VM context when
+> they target the "Fixed" or "LowPriority" delivery modes.
+>=20
+> However, on modes such as "SMI" or "Init", we need to go via KVM code
+> to actually put the vCPU into a different mode of operation, so we can
+> not post the interrupt
+>=20
+> Add code in the VMX and SVM PI logic to explicitly refuse to establish
+> posted mappings for advanced IRQ deliver modes. This reflects the =
+logic
+> in __apic_accept_irq() which also only ever passes Fixed and =
+LowPriority
+> interrupts as posted interrupts into the guest.
+>=20
+> This fixes a bug I have with code which configures real hardware to
+> inject virtual SMIs into my guest.
+>=20
+> Signed-off-by: Alexander Graf <graf@amazon.com>
 
-However, there is another issue on s390 which will make this only work
-for pud_clear_tests(), and not for the p4d/pgd_tests. The problem is that
-mm_alloc() will only give you a 3-level page table initially on s390.
-This means that pudp == p4dp == pgdp, and so the p4d/pgd_tests will
-both see the pud level (of course this also affects other tests).
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
 
-Not sure yet how to fix this, i.e. how to initialize/update the page table
-to 5 levels. We can handle 5 level page tables, and it would be good if
-all levels could be tested, but using mm_alloc() to establish the page
-tables might not work on s390. One option could be to provide an arch-hook
-or weak function to allocate/initialize the mm.
-
-IIUC, the (dummy) mm is really only needed to provide an mm->pgd as starting
-point, right?
-
-Regards,
-Gerald
+>=20
+> ---
+>=20
+> v1 -> v2:
+>=20
+>  - Make error message more unique
+>  - Update commit message to point to __apic_accept_irq()
+>=20
+> v2 -> v3:
+>=20
+>  - Use if() rather than switch()
+>  - Move abort logic into existing if() branch for broadcast irqs
+>  -> remove the updated error message again (thus remove R-B tag from =
+Liran)
+>  - Fold VMX and SVM changes into single commit
+>  - Combine postability check into helper function =
+kvm_irq_is_postable()
+> ---
+> arch/x86/include/asm/kvm_host.h | 7 +++++++
+> arch/x86/kvm/svm.c              | 4 +++-
+> arch/x86/kvm/vmx/vmx.c          | 6 +++++-
+> 3 files changed, 15 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/x86/include/asm/kvm_host.h =
+b/arch/x86/include/asm/kvm_host.h
+> index 44a5ce57a905..5b14aa1fbeeb 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1581,6 +1581,13 @@ bool kvm_intr_is_single_vcpu(struct kvm *kvm, =
+struct kvm_lapic_irq *irq,
+> void kvm_set_msi_irq(struct kvm *kvm, struct =
+kvm_kernel_irq_routing_entry *e,
+> 		     struct kvm_lapic_irq *irq);
+>=20
+> +static inline bool kvm_irq_is_postable(struct kvm_lapic_irq *irq)
+> +{
+> +	/* We can only post Fixed and LowPrio IRQs */
+> +	return (irq->delivery_mode =3D=3D dest_Fixed ||
+> +		irq->delivery_mode =3D=3D dest_LowestPrio);
+> +}
+> +
+> static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu)
+> {
+> 	if (kvm_x86_ops->vcpu_blocking)
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 1f220a85514f..f5b03d0c9bc6 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -5260,7 +5260,8 @@ get_pi_vcpu_info(struct kvm *kvm, struct =
+kvm_kernel_irq_routing_entry *e,
+>=20
+> 	kvm_set_msi_irq(kvm, e, &irq);
+>=20
+> -	if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu)) {
+> +	if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu) ||
+> +	    !kvm_irq_is_postable(&irq)) {
+> 		pr_debug("SVM: %s: use legacy intr remap mode for irq =
+%u\n",
+> 			 __func__, irq.vector);
+> 		return -1;
+> @@ -5314,6 +5315,7 @@ static int svm_update_pi_irte(struct kvm *kvm, =
+unsigned int host_irq,
+> 		 * 1. When cannot target interrupt to a specific vcpu.
+> 		 * 2. Unsetting posted interrupt.
+> 		 * 3. APIC virtialization is disabled for the vcpu.
+> +		 * 4. IRQ has incompatible delivery mode (SMI, INIT, =
+etc)
+> 		 */
+> 		if (!get_pi_vcpu_info(kvm, e, &vcpu_info, &svm) && set =
+&&
+> 		    kvm_vcpu_apicv_active(&svm->vcpu)) {
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 570a233e272b..63f3d88b36cc 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -7382,10 +7382,14 @@ static int vmx_update_pi_irte(struct kvm *kvm, =
+unsigned int host_irq,
+> 		 * irqbalance to make the interrupts single-CPU.
+> 		 *
+> 		 * We will support full lowest-priority interrupt later.
+> +		 *
+> +		 * In addition, we can only inject generic interrupts =
+using
+> +		 * the PI mechanism, refuse to route others through it.
+> 		 */
+>=20
+> 		kvm_set_msi_irq(kvm, e, &irq);
+> -		if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu)) {
+> +		if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu) ||
+> +		    !kvm_irq_is_postable(&irq)) {
+> 			/*
+> 			 * Make sure the IRTE is in remapped mode if
+> 			 * we don't handle it in posted mode.
+> --=20
+> 2.17.1
+>=20
+>=20
+>=20
+>=20
+> Amazon Development Center Germany GmbH
+> Krausenstr. 38
+> 10117 Berlin
+> Geschaeftsfuehrung: Christian Schlaeger, Ralf Herbrich
+> Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
+> Sitz: Berlin
+> Ust-ID: DE 289 237 879
+>=20
+>=20
+>=20
 
