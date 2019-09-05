@@ -2,228 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCBE4AA9B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A6BAA9BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389168AbfIERIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 13:08:31 -0400
-Received: from mail-io1-f41.google.com ([209.85.166.41]:42001 "EHLO
-        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732403AbfIERIb (ORCPT
+        id S2389623AbfIERJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 13:09:51 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40502 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731215AbfIERJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 13:08:31 -0400
-Received: by mail-io1-f41.google.com with SMTP id n197so6433755iod.9
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 10:08:30 -0700 (PDT)
+        Thu, 5 Sep 2019 13:09:50 -0400
+Received: by mail-ot1-f67.google.com with SMTP id y39so2931774ota.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 10:09:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=labbott.name; s=google;
-        h=from:content-transfer-encoding:mime-version:subject:date:references
-         :to:in-reply-to:message-id;
-        bh=uFRmeqr4ImXzE2YrX6PwPkXowk12+Bgtqx8az+3QeJM=;
-        b=s8B3vn/sw0hKicQLnoGbAzczXLHh0zknu3IXAjJWmChdcLzCzignHdddivGx1Fj0kj
-         /D4GrVBMuFbyFQBZyafWTs/Eyv7le0hwjZmj0fonm6NGaeWipdWXvSU3DmYle6eE3uHN
-         yGs9QNAMEa3/L9uFsg/2jkxTgBmgQBRpR6q54=
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=zvuZJm/OeGnitqg6mopzWwdjJ0Sb1OWjOsDK5ScpN2k=;
+        b=fm92g6MJUiNSxClpUlSh5+9QxkTe9Rh6e+PN6S0HdCgK1xYCEHylPDWfFgsXzbSzVY
+         8tic8eObcyj6QB4OGaqYMR4F+jAqIOecKiDKfOk69dUs5tbdt4MD1Pmle3ypkjcUOF6C
+         swexo56txxBOz0g++imEeemrFWDsG135wPPweBXrlulhzJGbK9yqHYoycVPku+PHJrfA
+         1TY767slE0gfetOwrAVel0tqMZnuoEMMjhAVFEcC+SwUvQzTg3t7grtqShIuShmYfrw7
+         7tMV+ktncJrXHJK1cU+oTbA1O1hC150dGKuz+mgVa3IGffGWcu2d+XnBtjQkMe86xo5H
+         rzPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:date:references:to:in-reply-to:message-id;
-        bh=uFRmeqr4ImXzE2YrX6PwPkXowk12+Bgtqx8az+3QeJM=;
-        b=ZdQZb9PzZm1xBmWfWd0/vnwx3eW54LfqmBu7ExftEH0TfPikL4oUgxdn8LL3SLM9KA
-         tfRYSTbt222C1L3/0PrHUTgSCBKR9iNIsW4IjDiP29GiRBng1mamjBuSNJJHhhXPoqhY
-         vV8fkrE16UOAnluMhyHDrT6eVkhQLSkmVM86Y4XIkf5OE5fztQcEnnqbU54dcxhs1Fop
-         BiV+DoatCek5YOgYujEUIFZbid0Nc0+gWzMpJI5RKMYcoKWd5xo+pmXY99WyatJUwVx2
-         /srQB6BR7T6FzeASHtg1anwoyvI7PNEBWZgdqrdeZ2qIXfLs1g0ChJixWqUQFHIfQ/zv
-         JSAA==
-X-Gm-Message-State: APjAAAWCzVAbKyMOA8gH8PzoBMHT3dhTOBvvatv0DEB63M/YTs7Jrnwr
-        NMERPrR7T00IvOyWF9Wi5auiKg==
-X-Google-Smtp-Source: APXvYqxPNqY25iZOGsF3Yc/WFp8cLpdVc2X/x4i/PAysDfU6fITl8EbcyM6u18QQyy7iblF/G814kA==
-X-Received: by 2002:a5e:d90e:: with SMTP id n14mr5279937iop.29.1567703310144;
-        Thu, 05 Sep 2019 10:08:30 -0700 (PDT)
-Received: from [172.20.41.33] ([12.116.165.10])
-        by smtp.gmail.com with ESMTPSA id m67sm4107925iof.21.2019.09.05.10.08.28
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=zvuZJm/OeGnitqg6mopzWwdjJ0Sb1OWjOsDK5ScpN2k=;
+        b=uAJIGdyPNtp6S6RRckwrpIJnI7EI9jv0ndeCjtYz5JZjpgxS7qAXJw/68OdyGk0dhc
+         cQhYh/HsiLF86Zx8JacL6Zvx9Q5mYYxe1F4BIEd01klzioIAZYIB1WFrlw447vS1LqvM
+         mX0x0nrUHcwJNBiF9l5YrSLFHoxn8ndrmgLduBDJfsGbHpp0IX7WGhe9llEUuNVtCaAm
+         L69iCWl20ZZ1wkSieqwdFVQEjfucYqb9r39H1hLuAtdfxP29vM6cHatFLI+UrNXDdl9M
+         HXcrrcLwcFMCDss81JpbERYjG+WgZTmJ6JF+ed+CWzfpE8PDTQxPAVqtuJvKjFkEOpCb
+         YeKg==
+X-Gm-Message-State: APjAAAVGkDnQEDj6PVbhsuxES58zY2Q++rxXJ0QhYBa9zbkKPvj1I+t9
+        A8pmddyRcHtzN5ef/Np2vrk=
+X-Google-Smtp-Source: APXvYqw3BxLF96Sw44HP46EvQNq1DGMg29f4vt4sDfe3puJSl55/vBXNEzcOWlxI+Vt4PHHLENUNxQ==
+X-Received: by 2002:a05:6830:6:: with SMTP id c6mr3285609otp.331.1567703389824;
+        Thu, 05 Sep 2019 10:09:49 -0700 (PDT)
+Received: from [100.71.96.87] ([143.166.81.254])
+        by smtp.gmail.com with ESMTPSA id b10sm669790oie.27.2019.09.05.10.09.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2019 10:08:29 -0700 (PDT)
-From:   Laura Abbott <laura@labbott.name>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: Linux Foundation Technical Advisory Board Elections -- voting
- procedures
-Date:   Thu, 5 Sep 2019 13:08:23 -0400
-References: <0F702CB8-6D0C-4550-9EA7-EE86B4D96073@labbott.name>
-To:     ksummit-discuss@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <0F702CB8-6D0C-4550-9EA7-EE86B4D96073@labbott.name>
-Message-Id: <C232C11A-D3FA-476C-8F71-58F675246D37@labbott.name>
-X-Mailer: Apple Mail (2.3273)
+        Thu, 05 Sep 2019 10:09:49 -0700 (PDT)
+From:   Stuart Hayes <stuart.w.hayes@gmail.com>
+Subject: [PATCH] amd/iommu: flush old domains in kdump kernel
+To:     jroedel@suse.de
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org
+Message-ID: <9d271f88-949a-7356-c516-be95b1566c94@gmail.com>
+Date:   Thu, 5 Sep 2019 12:09:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When devices are attached to the amd_iommu in a kdump kernel, the old device
+table entries (DTEs), which were copied from the crashed kernel, will be
+overwritten with a new domain number.  When the new DTE is written, the IOMMU
+is told to flush the DTE from its internal cache--but it is not told to flush
+the translation cache entries for the old domain number.
 
-> On Sep 3, 2019, at 7:13 AM, Laura Abbott <laura@labbott.name> wrote:
->=20
-> Hi,
->=20
-> On behalf of the Linux Foundation Technical Advisory Board (TAB), I'd =
-like to
-> take this opportunity to announce the voting procedures for the 2019 =
-TAB
-> elections. As was announced[1], this year we are moving to electronic =
-voting.
->=20
-> Everyone who is registered for kernel summit (co-located with Linux =
-Plumbers
-> Conference in Lisbon this year) by September 8th 2019 is eligible to =
-vote in
-> this year's TAB elections. This includes everyone registered for =
-Plumbers and
-> Maintainers summit. All eligible voters will receive a link from
-> Condorcet Internet Voting Service (https://civs.cs.cornell.edu) by the
-> start of the first Plumbers session (September 9th 10am UTC+1). The =
-voting
-> will run until September 11th at 10am UTC+1.
->=20
-> The list of all candidates and their platform is available at the =
-following
-> Google doc
->=20
-> =
-https://docs.google.com/document/d/1E3_W1c-xJMx9o2PCnKiGt3vqs-mPh77yNO4GSq=
-NipOQ/edit?usp=3Dsharing
->=20
-> We will also be hosting an open TAB session at Plumbers on Monday
-> September 9th at 18:30. A more detailed FAQ about voting procedures is
-> below.
->=20
-> If you have any questions, feel free to reach out to
-> tab@lists.linux-foundation.org .
->=20
-> Thanks,
-> Laura
->=20
-> P.S. Please consider this a reminder to send in your TAB nominations!
->=20
-> [1] =
-https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2019-July/0065=
-82.html
->=20
-> ---
->=20
-> Q: Why are we making this change?
-> A: As explained in the previous announcement,
-> =
-https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2019-July/0065=
-82.html
-> In person voting has a number of limitations. We'd like to move to =
-electronic
-> voting with the objective of giving more members of our community a =
-voice in
-> the membership of the TAB
->=20
-> Q: Who is eligible to vote?
-> A: All registered attendees of Plumbers and Kernel Maintainers Summit =
-are
-> eligible.
->=20
-> Q: If I am registered for Plumbers but not attending can I still vote?
-> A: We will be sending the e-mail to all registered attendees before =
-confirming
-> they are present.
->=20
-> Q: Can I register for Plumbers just to vote?
-> A: Plumbers is sold out this year.
->=20
-> Q: Why bother with electronic voting if the voting pool is still =
-conference
-> attendees?
-> A: The kernel philosophy is small incremental changes. Based on =
-discussions
-> with the TAB, changing the voting method and widening the voting pool
-> simultaneously was too much for one year. The goal is to run the =
-electronic
-> voting this year with the same voting pool and then discuss how voting =
-will
-> work in subsequent years.
->=20
-> Q: When does voting start?
-> A: E-mails with the voting link will be sent out before the start of =
-the
-> first Plumbers session on Monday September 9th at 10am UTC+1
->=20
-> Q: When does voting end?
-> A: Voting ends on September 11th at 10am UTC+1
->=20
-> Q: What's the software used for voting?
-> A: We will be using the hosted version of the Condorcet Internet =
-Voting Service
-> (CIVS) at https://civs.cs.cornell.edu
->=20
-> Q: Is this code open source?
-> A: Yes. The code is available under a BSD-like research license
->=20
-> Q: How do I vote?
-> A: You will receive an e-mail by Monday September 9th at 10am UTC+1 =
-with
-> a link to vote.
->=20
-> Q: Is this method of voting secure?
-> A: Privacy and security is a focus of CIVS. See
-> https://civs.cs.cornell.edu/sec_priv.html for more information.
->=20
-> Q: The website mentions ranked choice voting. What is this?
-> A: In ranked choice voting, you rank your preferred choices from most
-> to least liked. The theory is this results in a more accurate =
-representation
-> of what the voter pool wants. This is a different method than we've =
-used
-> for TAB elections in the past where you indicated your preferred $n =
-out
-> of $m candidates. Because we are using the hosted version of CIVS, we =
-did
-> not have the option to use our old method of voting.
->=20
-> Q: The description mentions an 'election supervisor'. What is this =
-role?
-> A: The election supervisor's role is to start and stop the poll, send
-> links to voters, and set various options for the poll. A single e-mail
-> address is used to e-mail the link to manage the election, after which
-> anyone with the link can manage the poll.
->=20
-> Q: Who is the election supervisor for the TAB elections?
-> A: We have created a mailing list for election management. This =
-mailing
-> list contains individuals from the kernel community who are not =
-running
-> for the TAB this year, similar to in-person proctors from past years.
-> We are still working on getting the mailing list set up, the address =
-will
-> be announced when it is ready.
->=20
-> Q: What if I lose the e-mail before I vote?
-> A: Please e-mail the election list, address to be announced
->=20
-> Q: What if I want to change my vote?
-> A: This is not possible, please make sure you've made your final =
-choices
-> when you click submit.
->=20
-> Q: What if I want to practice voting?
-> A: CIVS has a number of sample polls available. Feel free to vote in =
-those
-> to see how the process works.
->=20
-> Q: What if something unforeseen happens with electronic voting and we =
-don't
-> end up with results?
-> A: We will arrange an in person vote similar to previous years.
->=20
-> Q: What if I have questions not addressed here?
-> A: E-mail tab@lists.linuxfoundation.org for the current Technical =
-Advisory
-> Board or the election list, address to be announced
->=20
+Without this patch, AMD systems using the tg3 network driver fail when kdump
+tries to save the vmcore to a network system, showing network timeouts and
+(sometimes) IOMMU errors in the kernel log.
 
-The mailing list for questions about elections is =
-tab-elections@lists.linuxfoundation.org
+This patch will flush IOMMU translation cache entries for the old domain when
+a DTE gets overwritten with a new domain number.
+
+
+Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+
+---
+
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index b607a92..f853b96 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -1143,6 +1143,17 @@ static void amd_iommu_flush_tlb_all(struct amd_iommu *iommu)
+ 	iommu_completion_wait(iommu);
+ }
+ 
++static void amd_iommu_flush_tlb_domid(struct amd_iommu *iommu, u32 dom_id)
++{
++	struct iommu_cmd cmd;
++
++	build_inv_iommu_pages(&cmd, 0, CMD_INV_IOMMU_ALL_PAGES_ADDRESS,
++			      dom_id, 1);
++	iommu_queue_command(iommu, &cmd);
++
++	iommu_completion_wait(iommu);
++}
++
+ static void amd_iommu_flush_all(struct amd_iommu *iommu)
+ {
+ 	struct iommu_cmd cmd;
+@@ -1873,6 +1884,7 @@ static void set_dte_entry(u16 devid, struct protection_domain *domain,
+ {
+ 	u64 pte_root = 0;
+ 	u64 flags = 0;
++	u32 old_domid;
+ 
+ 	if (domain->mode != PAGE_MODE_NONE)
+ 		pte_root = iommu_virt_to_phys(domain->pt_root);
+@@ -1922,8 +1934,20 @@ static void set_dte_entry(u16 devid, struct protection_domain *domain,
+ 	flags &= ~DEV_DOMID_MASK;
+ 	flags |= domain->id;
+ 
++	old_domid = amd_iommu_dev_table[devid].data[1] & DEV_DOMID_MASK;
+ 	amd_iommu_dev_table[devid].data[1]  = flags;
+ 	amd_iommu_dev_table[devid].data[0]  = pte_root;
++
++	/*
++	 * A kdump kernel might be replacing a domain ID that was copied from
++	 * the previous kernel--if so, it needs to flush the translation cache
++	 * entries for the old domain ID that is being overwritten
++	 */
++	if (old_domid) {
++		struct amd_iommu *iommu = amd_iommu_rlookup_table[devid];
++
++		amd_iommu_flush_tlb_domid(iommu, old_domid);
++	}
+ }
+ 
+ static void clear_dte_entry(u16 devid)
+
 
