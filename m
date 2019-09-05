@@ -2,158 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4A5AA8D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73BA2AA8F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:27:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729945AbfIEQVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:21:42 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39960 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfIEQVl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:21:41 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w13so3505213wru.7
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 09:21:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+9iLVBaa77JA8FyvG+ioZMPXcw60MqtuvgoQBEbIVQs=;
-        b=IiMddi9XvQ+WhSZ/tO/2VdQVWHIifwCGUsJHL8xdl+HVbJw73QtadzdFxVoc7b8lCt
-         LfpjaOnqC/L+IcJ/9IYr9kUTYkluemZQtJWpEoN3DIs4YDXXShm1Ugmyxok55XqovOJM
-         IHqSdYIMkcB/X2NcnFtomsciSyvLxMQLI1zs9XTp7OnCecrOezcZHl3w7XaNEA7v0hGU
-         HmlhGS+QkdpfWDYKJD2blpohVRa7Y0r+964nsxfNGlzvFvszzjkSAyRaE8UJrsMoC3uP
-         XXYkRFe+njHAhSI7FKiWqFybTT9CJRsbmfhrryUXS/EieDGxrghx8pHrlaC1rWnn8SVr
-         q3Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+9iLVBaa77JA8FyvG+ioZMPXcw60MqtuvgoQBEbIVQs=;
-        b=CTg87jKCz3A5tKzmaNF0DjJaLYjUcFbH9oze/Zpzq+GwHO/pE31LbTRC2Tkkjfx49U
-         OKNsoOHTjcVJuVQttO/gbpw2vonF6fNx1JTNFKH9njkMvrXAHPWZQOIelI6qMgEnibh4
-         b78IQMj/B7m4oKqXYKAEzcUjvMo+Z8GcqXCRpWWjaFRt1gHzw/jZgRnx8zYM7az03DwB
-         1EMdBUU8ie1pXCGGTNLkqnAZj+uuReBbdjKudTdSxLiwu6tEBGKNIkdnLoCaIaLJVI0E
-         9afIHh5jdjer5zhwOJFcf5iCVPX1/7EyUo6ZQ9OWXxlYDfMuyC4TXnGttam+8id1UHzK
-         ULZA==
-X-Gm-Message-State: APjAAAV5ORTHI/gf7RFF16REY3XNmfedCtNZtb/QGXPcvtLM32lxZVSy
-        1/wDPZ3Rp8SZqKLlXi+VS70rvg==
-X-Google-Smtp-Source: APXvYqxbB0DIJUksWhec8m1//rRloZbcmMNo09mRdk1QtT2YzBbOxuggDjgDCCiFlgO4AyooKsqU7g==
-X-Received: by 2002:a5d:4a81:: with SMTP id o1mr3143492wrq.328.1567700499515;
-        Thu, 05 Sep 2019 09:21:39 -0700 (PDT)
-Received: from localhost.localdomain (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
-        by smtp.gmail.com with ESMTPSA id i73sm4183550wmg.33.2019.09.05.09.21.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Sep 2019 09:21:38 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, agross@kernel.org,
-        wim@linux-watchdog.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org
-Subject: [PATCH] watchdog: qcom: add support for the bark interrupt
-Date:   Thu,  5 Sep 2019 18:21:35 +0200
-Message-Id: <20190905162135.2618-1-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.23.0
+        id S1732966AbfIEQ1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:27:15 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46374 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729136AbfIEQ1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 12:27:15 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 60E7CD4EAD94FA4432E6;
+        Fri,  6 Sep 2019 00:27:11 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 6 Sep 2019 00:27:03 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <kvalo@codeaurora.org>
+CC:     <davem@davemloft.net>, <zhongjiang@huawei.com>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] brcmsmac: Use DIV_ROUND_CLOSEST directly to make it readable
+Date:   Fri, 6 Sep 2019 00:24:08 +0800
+Message-ID: <1567700648-28162-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the bark interrupt to notify the bark event. Since the bark and bite
-timeouts are identical, increase the bite timeout by one second so
-that the bark event can be logged to the console.
+The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
+but is perhaps more readable.
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
- drivers/watchdog/qcom-wdt.c | 42 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
+ .../net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c   | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-index 7be7f87be28f..5eaf92084b93 100644
---- a/drivers/watchdog/qcom-wdt.c
-+++ b/drivers/watchdog/qcom-wdt.c
-@@ -10,6 +10,7 @@
- #include <linux/platform_device.h>
- #include <linux/watchdog.h>
- #include <linux/of_device.h>
-+#include <linux/interrupt.h>
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
+index 07f61d6..3bf152d 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
+@@ -17748,7 +17748,7 @@ static void wlc_phy_txpwrctrl_pwr_setup_nphy(struct brcms_phy *pi)
+ 			num = 8 *
+ 			      (16 * b0[tbl_id - 26] + b1[tbl_id - 26] * idx);
+ 			den = 32768 + a1[tbl_id - 26] * idx;
+-			pwr_est = max(((4 * num + den / 2) / den), -8);
++			pwr_est = max(DIV_ROUND_CLOSEST(4 * num, den), -8);
+ 			if (NREV_LT(pi->pubpi.phy_rev, 3)) {
+ 				if (idx <=
+ 				    (uint) (31 - idle_tssi[tbl_id - 26] + 1))
+@@ -26990,8 +26990,8 @@ static void wlc_phy_rxcal_phycleanup_nphy(struct brcms_phy *pi, u8 rx_core)
+ 				     NPHY_RXCAL_TONEAMP, 0, cal_type, false);
  
- enum wdt_reg {
- 	WDT_RST,
-@@ -41,6 +42,8 @@ struct qcom_wdt {
- 	unsigned long		rate;
- 	void __iomem		*base;
- 	const u32		*layout;
-+	unsigned int		irq;
-+	const struct device	*dev;
- };
+ 		wlc_phy_rx_iq_est_nphy(pi, est, num_samps, 32, 0);
+-		i_pwr = (est[rx_core].i_pwr + num_samps / 2) / num_samps;
+-		q_pwr = (est[rx_core].q_pwr + num_samps / 2) / num_samps;
++		i_pwr = DIV_ROUND_CLOSEST(est[rx_core].i_pwr, num_samps);
++		q_pwr = DIV_ROUND_CLOSEST(est[rx_core].q_pwr, num_samps);
+ 		curr_pwr = i_pwr + q_pwr;
  
- static void __iomem *wdt_addr(struct qcom_wdt *wdt, enum wdt_reg reg)
-@@ -54,15 +57,37 @@ struct qcom_wdt *to_qcom_wdt(struct watchdog_device *wdd)
- 	return container_of(wdd, struct qcom_wdt, wdd);
- }
+ 		switch (gainctrl_dirn) {
+@@ -27673,10 +27673,10 @@ static int wlc_phy_cal_rxiq_nphy_rev3(struct brcms_phy *pi,
+ 					wlc_phy_rx_iq_est_nphy(pi, est,
+ 							       num_samps, 32,
+ 							       0);
+-					i_pwr =	(est[rx_core].i_pwr +
+-						 num_samps / 2) / num_samps;
+-					q_pwr =	(est[rx_core].q_pwr +
+-						 num_samps / 2) / num_samps;
++					i_pwr = DIV_ROUND_CLOSEST(est[rx_core].i_pwr,
++									 num_samps);
++					q_pwr = DIV_ROUND_CLOSEST(est[rx_core].q_pwr,
++									 num_samps);
+ 					tot_pwr[gain_pass] = i_pwr + q_pwr;
+ 				} else {
  
-+static inline int qcom_wdt_enable(struct qcom_wdt *wdt)
-+{
-+	if (wdt->irq < 0)
-+		return 1;
-+
-+	/* enable timeout with interrupt */
-+	return 3;
-+}
-+
-+static irqreturn_t qcom_wdt_irq(int irq, void *cookie)
-+{
-+	struct qcom_wdt *wdt =  (struct qcom_wdt *) cookie;
-+
-+	dev_warn(wdt->dev, "barking, one second countdown to reset\n");
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int qcom_wdt_start(struct watchdog_device *wdd)
- {
- 	struct qcom_wdt *wdt = to_qcom_wdt(wdd);
-+	unsigned int bark, bite;
-+
-+	bark = wdd->timeout;
-+	bite = wdt->irq < 0 ? bark : bark + 1;
- 
- 	writel(0, wdt_addr(wdt, WDT_EN));
- 	writel(1, wdt_addr(wdt, WDT_RST));
--	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
--	writel(wdd->timeout * wdt->rate, wdt_addr(wdt, WDT_BITE_TIME));
--	writel(1, wdt_addr(wdt, WDT_EN));
-+	writel(bark * wdt->rate, wdt_addr(wdt, WDT_BARK_TIME));
-+	writel(bite * wdt->rate, wdt_addr(wdt, WDT_BITE_TIME));
-+	writel(qcom_wdt_enable(wdt), wdt_addr(wdt, WDT_EN));
- 	return 0;
- }
- 
-@@ -210,10 +235,21 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	wdt->wdd.max_timeout = 0x10000000U / wdt->rate;
- 	wdt->wdd.parent = dev;
- 	wdt->layout = regs;
-+	wdt->dev = &pdev->dev;
- 
- 	if (readl(wdt_addr(wdt, WDT_STS)) & 1)
- 		wdt->wdd.bootstatus = WDIOF_CARDRESET;
- 
-+	wdt->irq = platform_get_irq(pdev, 0);
-+	if (wdt->irq >= 0) {
-+		ret = devm_request_irq(&pdev->dev, wdt->irq, qcom_wdt_irq,
-+				       IRQF_TRIGGER_RISING, "wdog_bark", wdt);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to request irq\n");
-+			return ret;
-+		}
-+	}
-+
- 	/*
- 	 * If 'timeout-sec' unspecified in devicetree, assume a 30 second
- 	 * default, unless the max timeout is less than 30 seconds, then use
 -- 
-2.23.0
+1.7.12.4
 
