@@ -2,89 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD0EAA164
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC4FAA17B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:32:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388457AbfIEL3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:29:09 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38677 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731402AbfIEL3J (ORCPT
+        id S2388502AbfIELcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:32:09 -0400
+Received: from dd10532.kasserver.com ([85.13.133.80]:50680 "EHLO
+        dd10532.kasserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729366AbfIELcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:29:09 -0400
-Received: by mail-pf1-f194.google.com with SMTP id h195so1561457pfe.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 04:29:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dwvIUziP4fafPY2JOrWPat/xl7RaGutjpB8YJJC4H/U=;
-        b=Rd8SyujrfWfPhmweQ/RJpVjX7e1PVKJ0VbLka9+S335G3HYRFRoBxdeY1BkSk7d56l
-         CpSzg4J/QPMDvXevEgvsbeIm2Zcw4AK9XCKCvTQoszi1k2GHkvtc2ZaKSgceUELVOMSO
-         HiNAdx2jqp0qcdFzYitX2LA7VBvHqTP/cLYzAC+xSvOXDt6CzB/wXIUbu8/tKHVtWAeu
-         qndhi9r7KxCR6gq/NoBh1NftR0yqbfYgluIX/MAqTmdNIZ0iQ2WzgioJ4ktpk61A8e3C
-         fIreFqJnN3harixIOCjxhHoUwnSUa5GY/AoTZlkYJnKPw/1Ct29Lw3fYX+uMIqvTD9Y/
-         4CMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dwvIUziP4fafPY2JOrWPat/xl7RaGutjpB8YJJC4H/U=;
-        b=UN/iTwE6NsqmQ1Vx+0CkIJ8wPJWL+C+X7/gRbkPxUmLQqVeZMWyXkONAFIrz8KVxgi
-         1+K66e8t8z6DzdqhoIxfttIOFBrqTSsYyoZnMevoNtMTPMWEFWZqx+JNwjd+h7AOMblz
-         BRg45vmoC87T7+eO3YErATRiXMaZo0WyLhA+NWD1/UHOJiZMeHQBxXsUdIxLlhLRATQ3
-         t0D3P5sndXlqwZ371KGBif3No+r4NaBVyhJiK4HgdxOGmLPsFIW9hxbI1his/Uzug+JB
-         snET8a1Xx+vnDMnyjd6j+WFrQRXFOQ2+B2+KoiXMZXJUf3D+ePMq8EhOgH9VaYGszZmG
-         FjFg==
-X-Gm-Message-State: APjAAAWsrH5OSfKGFR+XfJvag2o5/1tKXlkVaq3fDybSR9jY3mBzRuk3
-        2K0pP/fgEaUDtLfnBtm9cXi4DfJZdbHfVesmZDZWJg==
-X-Google-Smtp-Source: APXvYqwnHdnf6mymYYDnuovI2OIh+2HMDn+StpZViGrapDrf3a2ZOlbCfC6vrMHEwUlGjl1xvu5Ub0MThTVq0k0Lh94=
-X-Received: by 2002:a65:4b8b:: with SMTP id t11mr2697306pgq.130.1567682948307;
- Thu, 05 Sep 2019 04:29:08 -0700 (PDT)
+        Thu, 5 Sep 2019 07:32:09 -0400
+X-Greylist: delayed 566 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Sep 2019 07:32:07 EDT
+Received: from odsus.home.arpa (p57B0B64C.dip0.t-ipconnect.de [87.176.182.76])
+        by dd10532.kasserver.com (Postfix) with ESMTPSA id B21111F430B7;
+        Thu,  5 Sep 2019 13:22:39 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by odsus.home.arpa (Postfix) with ESMTP id E9E943C97F;
+        Thu,  5 Sep 2019 13:22:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at home.arpa
+Received: from odsus.home.arpa ([127.0.0.1])
+        by localhost (odsus.home.arpa [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id PbkwYIGYv5fO; Thu,  5 Sep 2019 13:22:35 +0200 (CEST)
+Received: from [192.168.201.4] (unknown [192.168.201.4])
+        by odsus.home.arpa (Postfix) with ESMTP id A18A43C5BF;
+        Thu,  5 Sep 2019 13:22:35 +0200 (CEST)
+To:     linux-amlogic@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@vger.kernel.org
+From:   Otto Meier <gf435@gmx.net>
+Subject: [BUG] wrong pinning definition or uart_c in pinctrl-meson-gxbb.c
+Message-ID: <b5370b4b-3347-1b95-aba2-1841f786b5a8@gmx.net>
+Date:   Thu, 5 Sep 2019 13:22:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CAAeHK+xJrv1hCbO5qOGTBu=c8STo+-obatOGZ4cHkbuhqmEvrg@mail.gmail.com>
- <000000000000a2044d0591cc99b2@google.com>
-In-Reply-To: <000000000000a2044d0591cc99b2@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 5 Sep 2019 13:28:57 +0200
-Message-ID: <CAAeHK+xVqvBGJ9dXTijuHusJr6vq85DVnKZbHsdyE8-pbWf-9Q@mail.gmail.com>
-Subject: Re: WARNING: ODEBUG bug in usbhid_disconnect (2)
-To:     syzbot <syzbot+14b53bfeb17f2b210eb7@syzkaller.appspotmail.com>
-Cc:     Roderick.Colenbrander@sony.com,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed;
+ boundary="------------C12424836F50E32A0F35C7C7"
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 5, 2019 at 1:27 PM syzbot
-<syzbot+14b53bfeb17f2b210eb7@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot has tested the proposed patch and the reproducer did not trigger
-> crash:
->
-> Reported-and-tested-by:
-> syzbot+14b53bfeb17f2b210eb7@syzkaller.appspotmail.com
->
-> Tested on:
->
-> commit:         eea39f24 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d0c62209eedfd54e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=14b53bfeb17f2b210eb7
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b6944e600000
->
-> Note: testing is done by a robot and is best-effort only.
+This is a multi-part message in MIME format.
+--------------C12424836F50E32A0F35C7C7
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Nice! Let's mark this one as fixed:
+Hi i tried to use uart_C of the the odroid-c2.
 
-#syz fix: HID: sony: Fix memory corruption issue on cleanup.
+I enabled it int the dts file. During boot it crashed when the
+the sdcard slot is addressd.
+
+After long search in the net i found this:
+
+https://forum.odroid.com/viewtopic.php?f=139&t=25371&p=194370&hilit=uart_C#p177856
+
+
+After changing the pin definitios accordingly erverything works.
+
+Uart_c is functioning and sdcard ist working.
+
+Patch attached
+
+Bye Otto
+
+
+
+
+--------------C12424836F50E32A0F35C7C7
+Content-Type: text/x-patch;
+ name="uart_c_pins.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="uart_c_pins.diff"
+
+Hi i tried to use uart_C of the the odroid-c2.
+
+I enabled it int the dts file. During boot it crashed when the
+the sdcard slot is addressd.
+
+After long search in the net i found this:
+
+https://forum.odroid.com/viewtopic.php?f=139&t=25371&p=194370&hilit=uart_C#p177856
+
+
+After changing the pin definitios accordingly erverything works.
+
+Uart_c is functioning and sdcard ist working.
+
+
+
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c        2019-08-26 18:24:45.450089334 +0200
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c        2019-09-05 13:07:38.518637214 +0200
+@@ -192,8 +192,8 @@ static const unsigned int uart_rts_b_pin
+ 
+ static const unsigned int uart_tx_c_pins[]     = { GPIOY_13 };
+ static const unsigned int uart_rx_c_pins[]     = { GPIOY_14 };
+-static const unsigned int uart_cts_c_pins[]    = { GPIOX_11 };
+-static const unsigned int uart_rts_c_pins[]    = { GPIOX_12 };
++static const unsigned int uart_cts_c_pins[]    = { GPIOY_11 };
++static const unsigned int uart_rts_c_pins[]    = { GPIOY_12 };
+ 
+ static const unsigned int i2c_sck_a_pins[]     = { GPIODV_25 };
+ static const unsigned int i2c_sda_a_pins[]     = { GPIODV_24 };
+@@ -439,10 +439,10 @@ static struct meson_pmx_group meson_gxbb
+        GROUP(pwm_f_x,          3,      18),
+ 
+        /* Bank Y */
+-       GROUP(uart_cts_c,       1,      19),
+-       GROUP(uart_rts_c,       1,      18),
+-       GROUP(uart_tx_c,        1,      17),
+-       GROUP(uart_rx_c,        1,      16),
++       GROUP(uart_cts_c,       1,      17),
++       GROUP(uart_rts_c,       1,      16),
++       GROUP(uart_tx_c,        1,      19),
++       GROUP(uart_rx_c,        1,      18),
+        GROUP(pwm_a_y,          1,      21),
+        GROUP(pwm_f_y,          1,      20),
+        GROUP(i2s_out_ch23_y,   1,      5),
+
+signed off Otto Meier gf435@gmx.net
+
+--------------C12424836F50E32A0F35C7C7--
