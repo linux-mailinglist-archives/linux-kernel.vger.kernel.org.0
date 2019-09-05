@@ -2,95 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3022EA9BA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 095F4A9BBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731965AbfIEHWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 03:22:17 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44678 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730778AbfIEHWQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 03:22:16 -0400
-Received: by mail-lf1-f67.google.com with SMTP id y4so1072158lfe.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 00:22:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JR81XguHf8NA2x2LS/6JeusAt8AO3fo+lEK825RiQgY=;
-        b=MPS8NIXkFZvp12JMyV80xqKgl/7yYcgLFHV49k+7eER2cSsl+6KhlYPa7zKLQj6aDv
-         0UYIq2HZgdxQ/VPzlxFIlNw9Y14la1t1KK+AKqirIq2uKwoA0xJUqfFKmUAlU7Kqxq8c
-         GquXPx8JVl6Gs1mYjRPelZ6bLh/wolothedqDVm2HTXPSnXb8x0NYxnPozRUsSMD4/Mb
-         eDrhx5jNFswMBXlnWBwqR+LfaH7ez58oKC7g2VzDGfwsXcbIsOGhazbD7ae91mQosGtJ
-         teZ2sJ2bBUHrz5NeTRr62pMlhlCU426EQI+3WMzVJtOYwbcFdMcIHMxtxYJZnD9RPGF9
-         ZkFA==
-X-Gm-Message-State: APjAAAUPl+3ZUXrZZnBQfuYytaldhwcEracDw1eL6GLAXiU6Qd9d+yfC
-        mxbP2TbBa0dAc/yXW/QijjU=
-X-Google-Smtp-Source: APXvYqxIZVBiVFBRq6W7rWWvNIi8E2DVFJEM7Yp7Sa+BMdKA5rA5QwsF3dvCQYTsOCRV/mfCpqQwgg==
-X-Received: by 2002:ac2:4352:: with SMTP id o18mr1354078lfl.164.1567668134676;
-        Thu, 05 Sep 2019 00:22:14 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id f22sm266655lfa.41.2019.09.05.00.22.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2019 00:22:14 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92)
-        (envelope-from <johan@kernel.org>)
-        id 1i5m5o-0007l4-Ng; Thu, 05 Sep 2019 09:22:08 +0200
-Date:   Thu, 5 Sep 2019 09:22:08 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Julio Faracco <jcfaracco@gmail.com>
-Cc:     greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        elder@kernel.org, johan@kernel.org, lkcamp@lists.libreplanetbr.org
-Subject: Re: [PATCH] staging: greybus: Adding missing brackets into if..else
- block.
-Message-ID: <20190905072208.GD1701@localhost>
-References: <20190904203209.8669-1-jcfaracco@gmail.com>
+        id S1731981AbfIEH0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 03:26:08 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6680 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730716AbfIEH0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 03:26:07 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 791E84E5E855BABD024E;
+        Thu,  5 Sep 2019 15:26:04 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Thu, 5 Sep 2019
+ 15:25:57 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <broonie@kernel.org>
+CC:     <openbmc@lists.ozlabs.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] spi: npcm-fiu: remove set but not used variable 'retlen'
+Date:   Thu, 5 Sep 2019 15:24:36 +0800
+Message-ID: <20190905072436.23932-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904203209.8669-1-jcfaracco@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 08:32:09PM +0000, Julio Faracco wrote:
-> Inside a block of if..else conditional, else structure does not contain
-> brackets. This is not following regular policies of good coding style.
+drivers/spi/spi-npcm-fiu.c: In function npcm_fiu_read:
+drivers/spi/spi-npcm-fiu.c:472:9: warning:
+ variable retlen set but not used [-Wunused-but-set-variable]
 
-s/good/kernel/ ?
+It is never used, so remove it.
 
-> All parts of this conditional blocks should respect brackets inclusion.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/spi/spi-npcm-fiu.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Did you check that there aren't further instances of this style
-issue in this file? If so, please them all in one go.
+diff --git a/drivers/spi/spi-npcm-fiu.c b/drivers/spi/spi-npcm-fiu.c
+index d9e2f58..cb52fd8 100644
+--- a/drivers/spi/spi-npcm-fiu.c
++++ b/drivers/spi/spi-npcm-fiu.c
+@@ -469,7 +469,6 @@ static int npcm_fiu_read(struct spi_mem *mem, const struct spi_mem_op *op)
+ {
+ 	u8 *data = op->data.buf.in;
+ 	int i, readlen, currlen;
+-	size_t retlen = 0;
+ 	u8 *buf_ptr;
+ 	u32 addr;
+ 	int ret;
+@@ -494,8 +493,6 @@ static int npcm_fiu_read(struct spi_mem *mem, const struct spi_mem_op *op)
+ 		currlen -= 16;
+ 	} while (currlen > 0);
+ 
+-	retlen = i;
+-
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
 
-Also please include greybus component you are changing in your subject
-prefix:
 
-	staging: greybus: loopback_test: ...
-
-> Signed-off-by: Julio Faracco <jcfaracco@gmail.com>
-> ---
->  drivers/staging/greybus/tools/loopback_test.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/greybus/tools/loopback_test.c b/drivers/staging/greybus/tools/loopback_test.c
-> index ba6f905f2..d46721502 100644
-> --- a/drivers/staging/greybus/tools/loopback_test.c
-> +++ b/drivers/staging/greybus/tools/loopback_test.c
-> @@ -801,8 +801,9 @@ static void prepare_devices(struct loopback_test *t)
->  			write_sysfs_val(t->devices[i].sysfs_entry,
->  					"outstanding_operations_max",
->  					t->async_outstanding_operations);
-> -		} else
-> +		} else {
->  			write_sysfs_val(t->devices[i].sysfs_entry, "async", 0);
-> +		}
->  	}
->  }
-
-Johan
