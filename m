@@ -2,125 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD712AA3DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5136AA3E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388379AbfIENFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 09:05:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50764 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726097AbfIENFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 09:05:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6BD8DAD4B;
-        Thu,  5 Sep 2019 13:05:14 +0000 (UTC)
-Date:   Thu, 5 Sep 2019 15:05:13 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     John Ogness <john.ogness@linutronix.de>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 0/9] printk: new ringbuffer implementation
-Message-ID: <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
- <20190904123531.GA2369@hirez.programming.kicks-ass.net>
+        id S1732496AbfIENH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 09:07:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:44802 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726097AbfIENH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 09:07:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27A4728;
+        Thu,  5 Sep 2019 06:07:58 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 57CE53F67D;
+        Thu,  5 Sep 2019 06:07:56 -0700 (PDT)
+References: <20190830174944.21741-1-subhra.mazumdar@oracle.com> <20190830174944.21741-2-subhra.mazumdar@oracle.com> <20190905083127.GA2332@hirez.programming.kicks-ass.net> <87r24v2i14.fsf@arm.com> <20190905104616.GD2332@hirez.programming.kicks-ass.net> <87imq72dpc.fsf@arm.com> <df69627e-8aa0-e2cb-044e-fb392f34efa5@arm.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net, parth@linux.ibm.com
+Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
+In-reply-to: <df69627e-8aa0-e2cb-044e-fb392f34efa5@arm.com>
+Date:   Thu, 05 Sep 2019 14:07:54 +0100
+Message-ID: <87d0ge3n85.fsf@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904123531.GA2369@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2019-09-04 14:35:31, Peter Zijlstra wrote:
-> On Thu, Aug 08, 2019 at 12:32:25AM +0206, John Ogness wrote:
-> > Hello,
-> > 
-> > This is a follow-up RFC on the work to re-implement much of
-> > the core of printk. The threads for the previous RFC versions
-> > are here: v1[0], v2[1], v3[2].
-> > 
-> > This series only builds upon v3 (i.e. the first part of this
-> > series is exactly v3). The main purpose of this series is to
-> > replace the current printk ringbuffer with the new
-> > ringbuffer. As was discussed[3], this is a conservative
-> > first step to rework printk. For example, all logbuf_lock
-> > usage is kept even though the new ringbuffer does not
-> > require it. This avoids any side-effect bugs in case the
-> > logbuf_lock is (unintentionally) synchronizing more than
-> > just the ringbuffer. However, this also means that the
-> > series does not bring any improvements, just swapping out
-> > implementations. A future patch will remove the logbuf_lock.
-> 
-> So after reading most of the first patch (and it look _much_ better than
-> previous times), I'm left wondering *why* ?!
-> 
-> That is, why do we need this complexity, as compared to that
-> CPU serialized approach?
 
-The serialized approach used a lock. It was re-entrant and thus less
-error-prone but still a lock.
+On Thu, Sep 05, 2019 at 12:46:37 +0100, Valentin Schneider wrote...
 
-The lock was planed to be used not only to access the buffer but also
-for eventual locking inside lockless consoles. It might allow to
-have some synchronization even in lockless consoles. But it
-would be big-kernel-lock-like style. It might create yet
-another maze of problems.
+> On 05/09/2019 12:18, Patrick Bellasi wrote:
+>>> There's a few things wrong there; I really feel that if we call it nice,
+>>> it should be like nice. Otherwise we should call it latency-bias and not
+>>> have the association with nice to confuse people.
+>>>
+>>> Secondly; the default should be in the middle of the range. Naturally
+>>> this would be a signed range like nice [-(x+1),x] for some x. but if you
+>>> want [0,1024], then the default really should be 512, but personally I
+>>> like 0 better as a default, in which case we need negative numbers.
+>>>
+>>> This is important because we want to be able to bias towards less
+>>> importance to (tail) latency as well as more importantance to (tail)
+>>> latency.
+>>>
+>>> Specifically, Oracle wants to sacrifice (some) latency for throughput.
+>>> Facebook OTOH seems to want to sacrifice (some) throughput for latency.
+>> 
+>> Right, we have this dualism to deal with and current mainline behaviour
+>> is somehow in the middle.
+>> 
+>> BTW, the FB requirement is the same we have in Android.
+>> We want some CFS tasks to have very small latency and a low chance
+>> to be preempted by the wake-up of less-important "background" tasks.
+>> 
+>> I'm not totally against the usage of a signed range, but I'm thinking
+>> that since we are introducing a new (non POSIX) concept we can get the
+>> chance to make it more human friendly.
+>> 
+>> Give the two extremes above, would not be much simpler and intuitive to
+>> have 0 implementing the FB/Android (no latency) case and 1024 the
+>> (max latency) Oracle case?
+>> 
+>
+> For something like latency-<whatever>, I don't see the point of having
+> such a wide range. The nice range is probably more than enough - and before
+> even bothering about the range, we should probably agree on what the range
+> should represent.
+>
+> If it's niceness, I read it as: positive latency-nice value means we're
+> nice to latency, means we reduce it. So the further up you go, the more you
+> restrict your wakeup scan. I think it's quite easy to map that into the
+> code: current behaviour at 0, with a decreasing scan mask size as we go
+> towards +19. I don't think anyone needs 512 steps to tune this.
+>
+> I don't know what logic we'd follow for negative values though. Maybe
+> latency-nice -20 means always going through the slowpath, but what of the
+> intermediate values?
 
-If we remove per-CPU buffers in NMI. We would need to synchronize
-again printing backtraces from all CPUs. Otherwise they would get
-mixed and hard to read. It might be solved by some prefix and
-sorting in userspace but...
+Yep, I think so fare we are all converging towards the idea to use the
+a signed range. Regarding the range itself, yes: 1024 looks very
+oversized, but +-20 is still something which leave room for a bit of
+flexibility and it also better matches the idea that we don't want to
+"enumerate behaviours" but just expose a knob. To map certain "bias" we
+could benefit from a slightly larger range.
 
-This why I asked to see a fully lockless code to see how
-more complicated it was. John told me that he had an early
-version of it around.
+> AFAICT this RFC only looks at wakeups, but I guess latency-nice can be
 
+For the wakeup path there is also the TurboSched proposal by Parth:
 
-I agree that this lockless variant is really complicated. I am not
-able to prove that it is race free as it is now. I understand
-the algorithm. But there are too many synchronization points.
+   Message-ID: <20190725070857.6639-1-parth@linux.ibm.com> 
+   https://lore.kernel.org/lkml/20190725070857.6639-1-parth@linux.ibm.com/
 
-Peter, have you seen my alternative approach, please. See
-https://lore.kernel.org/lkml/20190704103321.10022-1-pmladek@suse.com/
+we should keep in mind.
 
-It uses two tricks:
+> applied elsewhere (e.g. load-balance, something like task_hot() and its
+> use of sysctl_sched_migration_cost).
 
-   1. Two bits in the sequence number are used to track the state
-      of the related data. It allows to implement the entire
-      life cycle of each entry using atomic operation on a single
-      variable.
+For LB can you come up with some better description of what usages you
+see could benefit from a "per task" or "per task-group" latency niceness?
 
-   2. There is a helper function to read valid data for each entry,
-      see prb_read_desc(). It checks the state before and after
-      reading the data to make sure that they are valid. And
-      it includes the needed read barriers. As a result there
-      are only three explicit barriers in the code. All other
-      are implicitly done by cmpxchg() atomic operations.
+Best,
+Patrick
 
-The alternative lockless approach is still more complicated than
-the serialized one. But I think that it is manageable thanks to
-the simplified state tracking. And I might safe use some pain
-in the long term.
+-- 
+#include <best/regards.h>
 
-
-> In my book simpler is better here. printk() is an absolute utter slow
-> path anyway, nobody cares about the performance much, and I'm thinking
-> that it should be plenty fast enough as long as you don't run a
-> synchronous serial output (which is exactly what I do do/require
-> anyway).
-
-I fully agree.
-
-Best Regards,
-Petr
+Patrick Bellasi
