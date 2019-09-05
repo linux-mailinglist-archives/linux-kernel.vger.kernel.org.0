@@ -2,61 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1471A9872
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 04:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC6DA9878
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 04:41:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbfIECil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 22:38:41 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51090 "EHLO huawei.com"
+        id S1730727AbfIEClA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 22:41:00 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53932 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727162AbfIECik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 22:38:40 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 097C614384E2028EF01C;
-        Thu,  5 Sep 2019 10:38:39 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 5 Sep 2019 10:38:28 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     YueHaibing <yuehaibing@huawei.com>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] staging: exfat: remove unused including <linux/version.h>
-Date:   Thu, 5 Sep 2019 02:56:23 +0000
-Message-ID: <20190905025623.63210-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727162AbfIEClA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 22:41:00 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B0203874C53B39768FF9;
+        Thu,  5 Sep 2019 10:40:58 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Thu, 5 Sep 2019
+ 10:40:56 +0800
+Message-ID: <5D7075B7.3080400@huawei.com>
+Date:   Thu, 5 Sep 2019 10:40:55 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
+To:     Markus Elfring <Markus.Elfring@web.de>
+CC:     Anna Schumaker <anna.schumaker@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: Re: NFS: remove the redundant check when kfree an object in nfs_netns_client_release
+References: <1567490688-17872-1-git-send-email-zhongjiang@huawei.com> <ee684073-bd3e-9a1c-4d38-702f55affba4@web.de>
+In-Reply-To: <ee684073-bd3e-9a1c-4d38-702f55affba4@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove including <linux/version.h> that don't need it.
+On 2019/9/4 23:11, Markus Elfring wrote:
+>> kfree has taken the null check in account.
+> I suggest to take another look at a similar patch.
+How to fast find out the similar patch. Search the key word doesn't work well.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/staging/exfat/exfat_super.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 5b5c2ca8c9aa..cb43a39864af 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -3,7 +3,6 @@
-  *  Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
-  */
- 
--#include <linux/version.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/time.h>
-
-
-
+Thanks,
+zhong jiang
+> NFS: fix ifnullfree.cocci warnings
+> https://lkml.org/lkml/2019/7/7/73
+> https://lore.kernel.org/patchwork/patch/1098005/
+> https://lore.kernel.org/r/alpine.DEB.2.21.1907071844310.2521@hadrien/
+>
+> Regards,
+> Markus
+>
+> .
+>
 
 
