@@ -2,65 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB9C8AA580
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A0CFAA585
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:13:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730223AbfIEOLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 10:11:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:43047 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfIEOLP (ORCPT
+        id S1730469AbfIEONQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 10:13:16 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:43949 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbfIEONQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 10:11:15 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i5sTf-0002A9-IN; Thu, 05 Sep 2019 16:11:11 +0200
-Date:   Thu, 5 Sep 2019 16:11:10 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch 5/6] posix-cpu-timers: Sanitize thread clock
- permissions
-In-Reply-To: <20190905122108.GO2349@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1909051610200.1902@nanos.tec.linutronix.de>
-References: <20190905120339.561100423@linutronix.de> <20190905120540.068959005@linutronix.de> <20190905122108.GO2349@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 5 Sep 2019 10:13:16 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id DF4D72002B;
+        Thu,  5 Sep 2019 14:13:13 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] pinctrl: at91-pio4: implement .get_multiple and .set_multiple
+Date:   Thu,  5 Sep 2019 16:13:04 +0200
+Message-Id: <20190905141304.22005-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019, Peter Zijlstra wrote:
+Implement .get_multiple and .set_multiple to allow reading or setting
+multiple pins simultaneously. Pins in the same bank will all be switched at
+the same time, improving synchronization and performances.
 
-> On Thu, Sep 05, 2019 at 02:03:44PM +0200, Thomas Gleixner wrote:
-> > The thread clock permissions are restricted to tasks of the same thread
-> > group, but that also prevents a ptracer from reading them. This is
-> > inconsistent vs. the process restrictions and unnecessary strict.
-> > 
-> > Relax it to ptrace permissions in the same way as process permissions are
-> > handled.
-> 
-> More of a meta comment on the added permission checking; so where
-> clock_getcpuclockid() is allowed to return -EPERM, it doesn't because
-> that's in glibc and it has no clue.
-> 
-> And these patches implement the ptrace checks and result in -EINVAL for
-> timer_create() and clock_gettime(), even though it should arguably be
-> -EPERM, but we're not allowed to return that here.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/pinctrl/pinctrl-at91-pio4.c | 60 +++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-Yeah. Maybe we should nevertheless.
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index d6de4d360cd4..488a302a60d4 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -328,6 +328,35 @@ static int atmel_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	return !!(reg & BIT(pin->line));
+ }
+ 
++static int atmel_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
++				   unsigned long *bits)
++{
++	struct atmel_pioctrl *atmel_pioctrl = gpiochip_get_data(chip);
++	unsigned int bank;
++
++	bitmap_zero(bits, atmel_pioctrl->npins);
++
++	for (bank = 0; bank < atmel_pioctrl->nbanks; bank++) {
++		unsigned int word = bank;
++		unsigned int offset = 0;
++		unsigned int reg;
++
++#if ATMEL_PIO_NPINS_PER_BANK != BITS_PER_LONG
++		word = BIT_WORD(bank * ATMEL_PIO_NPINS_PER_BANK);
++		offset = bank * ATMEL_PIO_NPINS_PER_BANK % BITS_PER_LONG;
++#endif
++		if (!mask[word])
++			continue;
++
++		reg = atmel_gpio_read(atmel_pioctrl, bank, ATMEL_PIO_PDSR);
++		bits[word] |= mask[word] & (reg << offset);
++
++		pr_err("ABE: %d %08x\n", bank, bits[word]);
++	}
++
++	return 0;
++}
++
+ static int atmel_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 				       int value)
+ {
+@@ -358,11 +387,42 @@ static void atmel_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+ 			 BIT(pin->line));
+ }
+ 
++static void atmel_gpio_set_multiple(struct gpio_chip *chip, unsigned long *mask,
++				    unsigned long *bits)
++{
++	struct atmel_pioctrl *atmel_pioctrl = gpiochip_get_data(chip);
++	unsigned int bank;
++
++	for (bank = 0; bank < atmel_pioctrl->nbanks; bank++) {
++		unsigned int bitmask;
++		unsigned int word = bank;
++
++#if ATMEL_PIO_NPINS_PER_BANK != BITS_PER_LONG
++		word = BIT_WORD(bank * ATMEL_PIO_NPINS_PER_BANK);
++#endif
++		if (!mask[word])
++			continue;
++
++		bitmask = mask[word] & bits[word];
++		atmel_gpio_write(atmel_pioctrl, bank, ATMEL_PIO_SODR, bitmask);
++
++		bitmask = mask[word] & ~bits[word];
++		atmel_gpio_write(atmel_pioctrl, bank, ATMEL_PIO_CODR, bitmask);
++
++#if ATMEL_PIO_NPINS_PER_BANK != BITS_PER_LONG
++		mask[word] >>= ATMEL_PIO_NPINS_PER_BANK;
++		bits[word] >>= ATMEL_PIO_NPINS_PER_BANK;
++#endif
++	}
++}
++
+ static struct gpio_chip atmel_gpio_chip = {
+ 	.direction_input        = atmel_gpio_direction_input,
+ 	.get                    = atmel_gpio_get,
++	.get_multiple           = atmel_gpio_get_multiple,
+ 	.direction_output       = atmel_gpio_direction_output,
+ 	.set                    = atmel_gpio_set,
++	.set_multiple           = atmel_gpio_set_multiple,
+ 	.to_irq                 = atmel_gpio_to_irq,
+ 	.base                   = 0,
+ };
+-- 
+2.21.0
 
-Thanks,
-
-	tglx
