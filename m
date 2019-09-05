@@ -2,116 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA08FA9F4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5DBEA9F58
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:15:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732826AbfIEKNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:13:04 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42958 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfIEKND (ORCPT
+        id S1733023AbfIEKPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:15:07 -0400
+Received: from outbound4mad.lav.puc.rediris.es ([130.206.19.146]:16868 "EHLO
+        mx01.puc.rediris.es" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732504AbfIEKPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 06:13:03 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y23so1821630lje.9
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 03:13:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WM4svmPInntGde0Mb4h49CeOyrkMQizTssxeoRTCMZs=;
-        b=vRnmheRVRIyNu1yOxwrrhCtj/3kZ1d0t5JyKsRuOscwUyBBy5Pen7wUCNYp6TyopQk
-         w2rxw6vPsm17LHzDCBNT332TPFMbfozti2ysHnKH3+7FWmvupoa0+YDyizlOQQkePcy2
-         oADtXPAeLdN/7Z84sFKLuro+l6/WEm4W9nHiUTTkcyZ4tUCSlsN9OLzu3ARVvnGjLGaQ
-         4rbITO+SdwYFNpYHbiVRAOx2MbYvSIDDhzP0/TIUqIogBHKFiRLNX/Ql0TbNy0woI2Op
-         CnnPVM92pl0riCp3TInQGvtHDW9+8kaeObZ1UR58Olez4CoE/d0ZCHLN3BzEYtZBtUH1
-         wXmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WM4svmPInntGde0Mb4h49CeOyrkMQizTssxeoRTCMZs=;
-        b=FcmUQE53+lLERFLWxd9HguUfPxlAYVEwwwD1i8PV7oSY0r29sqIy8k5MJP92dYk1Hy
-         o/BoEr1TIjWkCp13GTZOs74zF8GYab7wtGUohLylwxqw3SUnF19PHW5iA7UoHg9bm1J9
-         VVP2rn0w2A+y3R/OD1TLRfoLHpKYhI7/XAdu8+NdgmYYSPYxqj5UxfWEtsM/P0UwpoK+
-         Vs46COYzsf8r8xoTgd2SstpjqZXsGJz68Rl4hmbJSTS5H1eMl/qgtt+aAUA0FUQum/U1
-         JvF0dspiJdTKNtPjcNJzrpuLhW7Fiki+jsOVA3nZLERjZwOZGSijGonHaQN3t54ugxF1
-         q/vw==
-X-Gm-Message-State: APjAAAVhUY9UjkOoP2gyW6I5bXIXUJzWzWOfRLenoLSbX3O1v0Ulmzt2
-        c14IxL1SlilredHS6IRAuj6KNQ==
-X-Google-Smtp-Source: APXvYqy3A+azbPbg/1KwTZbN5fOs8mzxKRC4QS8uK+LhfmrAK7TY/oNz5c8RHtwqX0w9skwFxCyxQQ==
-X-Received: by 2002:a2e:878a:: with SMTP id n10mr1526787lji.117.1567678381628;
-        Thu, 05 Sep 2019 03:13:01 -0700 (PDT)
-Received: from ?IPv6:2a00:1fa0:413:7297:c53b:e0f7:7608:d21c? ([2a00:1fa0:413:7297:c53b:e0f7:7608:d21c])
-        by smtp.gmail.com with ESMTPSA id w1sm349824lfe.67.2019.09.05.03.13.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2019 03:13:00 -0700 (PDT)
-Subject: Re: [PATCH net-next 4/7] net: hns3: add client node validity judgment
-To:     Huazhong Tan <tanhuazhong@huawei.com>, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
-        linuxarm@huawei.com, jakub.kicinski@netronome.com,
-        Peng Li <lipeng321@huawei.com>
-References: <1567606006-39598-1-git-send-email-tanhuazhong@huawei.com>
- <1567606006-39598-5-git-send-email-tanhuazhong@huawei.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <b0aa6da6-cd42-dd31-8ff7-ca3f48de58ff@cogentembedded.com>
-Date:   Thu, 5 Sep 2019 13:12:51 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 5 Sep 2019 06:15:06 -0400
+Received: from mta-out02.sim.rediris.es (mta-out02.sim.rediris.es [130.206.24.44])
+        by mx01.puc.rediris.es  with ESMTP id x85ADag1012008-x85ADag3012008
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 5 Sep 2019 12:13:36 +0200
+Received: from mta-out02.sim.rediris.es (localhost.localdomain [127.0.0.1])
+        by mta-out02.sim.rediris.es (Postfix) with ESMTPS id 655BCC7BE2B;
+        Thu,  5 Sep 2019 12:13:30 +0200 (CEST)
+Received: from mta-out02.sim.rediris.es (localhost.localdomain [127.0.0.1])
+        by mta-out02.sim.rediris.es (Postfix) with ESMTPS id 40229C7BE2C;
+        Thu,  5 Sep 2019 12:13:27 +0200 (CEST)
+Received: from lt-gp.iram.es (mrt-fw.iram.es [150.214.224.223])
+        by mta-out02.sim.rediris.es (Postfix) with ESMTPA id 95D21C7BE2B;
+        Thu,  5 Sep 2019 12:13:19 +0200 (CEST)
+Date:   Thu, 5 Sep 2019 12:13:15 +0200
+From:   Gabriel Paubert <paubert@iram.es>
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>, linux-ia64@vger.kernel.org,
+        linux-sh@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org,
+        linux-s390@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
+        Aleksa Sarai <asarai@suse.de>, Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-m68k@lists.linux-m68k.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Drysdale <drysdale@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        linux-parisc@vger.kernel.org, linux-api@vger.kernel.org,
+        Chanho Min <chanho.min@lge.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-alpha@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to, from}_user
+ helpers
+Message-ID: <20190905101315.GA25637@lt-gp.iram.es>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
+ <mvma7bj85yo.fsf@linux-m68k.org>
 MIME-Version: 1.0
-In-Reply-To: <1567606006-39598-5-git-send-email-tanhuazhong@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mvma7bj85yo.fsf@linux-m68k.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-FEAS-CONTENT-MODIFICATION:      
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.09.2019 17:06, Huazhong Tan wrote:
-
-> From: Peng Li <lipeng321@huawei.com>
+On Thu, Sep 05, 2019 at 11:09:35AM +0200, Andreas Schwab wrote:
+> On Sep 05 2019, Aleksa Sarai <cyphar@cyphar.com> wrote:
 > 
-> HNS3 driver can only unregister client which included in hnae3_client_list.
-> This patch adds the client node validity judgment.
+> > diff --git a/lib/struct_user.c b/lib/struct_user.c
+> > new file mode 100644
+> > index 000000000000..7301ab1bbe98
+> > --- /dev/null
+> > +++ b/lib/struct_user.c
+> > @@ -0,0 +1,182 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * Copyright (C) 2019 SUSE LLC
+> > + * Copyright (C) 2019 Aleksa Sarai <cyphar@cyphar.com>
+> > + */
+> > +
+> > +#include <linux/types.h>
+> > +#include <linux/export.h>
+> > +#include <linux/uaccess.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/string.h>
+> > +
+> > +#define BUFFER_SIZE 64
+> > +
+> > +/*
+> > + * "memset(p, 0, size)" but for user space buffers. Caller must have already
+> > + * checked access_ok(p, size).
+> > + */
+> > +static int __memzero_user(void __user *p, size_t s)
+> > +{
+> > +	const char zeros[BUFFER_SIZE] = {};
 > 
-> Signed-off-by: Peng Li <lipeng321@huawei.com>
-> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-> ---
->   drivers/net/ethernet/hisilicon/hns3/hnae3.c | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
+> Perhaps make that static?
+
+On SMP? It should at least be per cpu, and I'm not even sure
+with preemption.
+
+	Gabriel
+
 > 
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.c b/drivers/net/ethernet/hisilicon/hns3/hnae3.c
-> index 528f624..6aa5257 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hnae3.c
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.c
-> @@ -138,12 +138,28 @@ EXPORT_SYMBOL(hnae3_register_client);
->   
->   void hnae3_unregister_client(struct hnae3_client *client)
->   {
-> +	struct hnae3_client *client_tmp;
->   	struct hnae3_ae_dev *ae_dev;
-> +	bool existed = false;
->   
->   	if (!client)
->   		return;
->   
->   	mutex_lock(&hnae3_common_lock);
-> +
-> +	list_for_each_entry(client_tmp, &hnae3_client_list, node) {
-> +		if (client_tmp->type == client->type) {
-> +			existed = true;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!existed) {
-> +		mutex_unlock(&hnae3_common_lock);
-> +		pr_err("client %s not existed!\n", client->name);
-
-    Did not exist, you mean?
-
-[...]
-
-MBR, Sergei
+> Andreas.
+> 
+> -- 
+> Andreas Schwab, schwab@linux-m68k.org
+> GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+> "And now for something completely different."
