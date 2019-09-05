@@ -2,111 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62255AAC23
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4E25AAC26
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:44:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390048AbfIETmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 15:42:06 -0400
-Received: from mga06.intel.com ([134.134.136.31]:40846 "EHLO mga06.intel.com"
+        id S2391407AbfIETog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 15:44:36 -0400
+Received: from fieldses.org ([173.255.197.46]:56692 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727171AbfIETmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 15:42:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2019 12:42:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,471,1559545200"; 
-   d="scan'208";a="182924968"
-Received: from mlamm-mobl1.amr.corp.intel.com (HELO spandruv-mobl3.jf.intel.com) ([10.251.22.142])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Sep 2019 12:42:05 -0700
-Message-ID: <f12560e59427ce7e038334a3b59bf084a748d998.camel@linux.intel.com>
-Subject: Re: [PATCH v2 9/9] tools/power/x86/intel-speed-select: Fix memory
- leak
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Prarit Bhargava <prarit@redhat.com>,
-        platform-driver-x86@vger.kernel.org
-Cc:     andriy.shevchenko@intel.com, David Arcari <darcari@redhat.com>,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 05 Sep 2019 12:42:05 -0700
-In-Reply-To: <20190905120311.15286-10-prarit@redhat.com>
-References: <20190905120311.15286-1-prarit@redhat.com>
-         <20190905120311.15286-10-prarit@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726462AbfIETof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 15:44:35 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id AFF2C1CE6; Thu,  5 Sep 2019 15:44:34 -0400 (EDT)
+From:   "J. Bruce Fields" <bfields@redhat.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 1/9] rtl8192*: display ESSIDs using %pE
+Date:   Thu,  5 Sep 2019 15:44:25 -0400
+Message-Id: <1567712673-1629-1-git-send-email-bfields@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20190905193604.GC31247@fieldses.org>
+References: <20190905193604.GC31247@fieldses.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-09-05 at 08:03 -0400, Prarit Bhargava wrote:
-> cpumasks are allocated by calling the alloc_cpu_mask() function and
-> are
-> never free'd.  They should be free'd after the commands have run.
-> 
-> Fix the memory leaks by calling free_cpu_set().
-Good to fix this. But after one command execution the process will
-exit.
+From: "J. Bruce Fields" <bfields@redhat.com>
 
-Thanks,
-Srinivas
+Everywhere else in the kernel ESSIDs are printed using %pE, and I can't
+see why there should be an exception here.
 
-> 
-> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Cc: David Arcari <darcari@redhat.com>
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  tools/power/x86/intel-speed-select/isst-config.c | 16 +++++++++++---
-> --
->  1 file changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/power/x86/intel-speed-select/isst-config.c
-> b/tools/power/x86/intel-speed-select/isst-config.c
-> index 78f0cebda1da..59753b3917bb 100644
-> --- a/tools/power/x86/intel-speed-select/isst-config.c
-> +++ b/tools/power/x86/intel-speed-select/isst-config.c
-> @@ -603,6 +603,10 @@ static int isst_fill_platform_info(void)
->  
->  	close(fd);
->  
-> +	if (isst_platform_info.api_version > supported_api_ver) {
-> +		printf("Incompatible API versions; Upgrade of tool is
-> required\n");
-> +		return -1;
-> +	}
->  	return 0;
->  }
->  
-> @@ -1528,6 +1532,7 @@ static void cmdline(int argc, char **argv)
->  {
->  	int opt;
->  	int option_index = 0;
-> +	int ret;
->  
->  	static struct option long_options[] = {
->  		{ "cpu", required_argument, 0, 'c' },
-> @@ -1589,13 +1594,14 @@ static void cmdline(int argc, char **argv)
->  	set_max_cpu_num();
->  	set_cpu_present_cpu_mask();
->  	set_cpu_target_cpu_mask();
-> -	isst_fill_platform_info();
-> -	if (isst_platform_info.api_version > supported_api_ver) {
-> -		printf("Incompatible API versions; Upgrade of tool is
-> required\n");
-> -		exit(0);
-> -	}
-> +	ret = isst_fill_platform_info();
-> +	if (ret)
-> +		goto out;
->  
->  	process_command(argc, argv);
-> +out:
-> +	free_cpu_set(present_cpumask);
-> +	free_cpu_set(target_cpumask);
->  }
->  
->  int main(int argc, char **argv)
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+---
+ drivers/staging/rtl8192e/rtllib.h              | 2 +-
+ drivers/staging/rtl8192u/ieee80211/ieee80211.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8192e/rtllib.h b/drivers/staging/rtl8192e/rtllib.h
+index 2dd57e88276e..096254e422b3 100644
+--- a/drivers/staging/rtl8192e/rtllib.h
++++ b/drivers/staging/rtl8192e/rtllib.h
+@@ -2132,7 +2132,7 @@ static inline const char *escape_essid(const char *essid, u8 essid_len)
+ 		return escaped;
+ 	}
+ 
+-	snprintf(escaped, sizeof(escaped), "%*pEn", essid_len, essid);
++	snprintf(escaped, sizeof(escaped), "%*pE", essid_len, essid);
+ 	return escaped;
+ }
+ 
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211.h b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+index d36963469015..3963a08b9eb2 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211.h
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+@@ -2426,7 +2426,7 @@ static inline const char *escape_essid(const char *essid, u8 essid_len)
+ 		return escaped;
+ 	}
+ 
+-	snprintf(escaped, sizeof(escaped), "%*pEn", essid_len, essid);
++	snprintf(escaped, sizeof(escaped), "%*pE", essid_len, essid);
+ 	return escaped;
+ }
+ 
+-- 
+2.21.0
 
