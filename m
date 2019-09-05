@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B36AA3A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 305DFAA3B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389625AbfIENAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 09:00:08 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37264 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389597AbfIENAG (ORCPT
+        id S2389681AbfIENA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 09:00:26 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38058 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389611AbfIENAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 09:00:06 -0400
-Received: by mail-wm1-f68.google.com with SMTP id r195so2927553wme.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 06:00:05 -0700 (PDT)
+        Thu, 5 Sep 2019 09:00:07 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l11so2680273wrx.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 06:00:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9o518Q9M+VA62cCsQMBXOXpf3ntmSugaTgtOZlotIoo=;
-        b=h/8tLCzMrNIiSCKb1hq3bANqq0O7NXfwEbtD1KjJQJdIo9X0zm4Sg6VlbVIyFJa22D
-         fzT9tMGKti05cgQ7H5y55cnhLBYmX1S6TUg3vFz7rEoF8Gqmyfy/9JM5lYKBYHNkeTHb
-         uMznWW0jHU57LOQa9ej99KKjg/geC2wnY8xK4m/1czGaQlWrzt5H4bDJzFfpXz/sXqF3
-         o7MKD0cGl24WBul/wImWbW2Vrb0tnQeJTwwZziBEeyzu2C1ttCJRsS0fH+F3bUFgMUFd
-         NSrIRGELQk+/+zzLzSuQGkzCmQrV2T2Sdx08DtmDLkGGgBeU3X9BoAo5X12pB+hwIEBw
-         4ZYA==
+        bh=to9nPxGvpAjI2vmBY6hiBkK0HN4KqohuKcK/qXqDNPY=;
+        b=SnuwT5mIhn9C8R/kG87+eslWK4M08z27tnIDQ/toGWNx0ojS1cWn09AJM87Ul8otC7
+         syKEujMS+EpLHYDEiwjuyN/zVqjk1XKNHnRjjFPN4NW+7Hy7872vp62w8rS/Q4JF3qkg
+         rs98UZRdufTi7TKufZ9JeOQe450oKBOy4WUSlTUQcdNKLHTvUI86418VWK+TXUEx1z8P
+         LlT1Wfexo1rLCmmkX8GIWWbLAOiv/YPzM7Zg4HEVtTLcYMkV7iMRt/AGmQMuxWQfs5TL
+         ZdT0b4OU5F1WaXI7hc3EZ7lsKR3Tj50eg6jkJSMHVWQyLtuZR5BaxpMWMSpsNNgeyOIa
+         SoJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9o518Q9M+VA62cCsQMBXOXpf3ntmSugaTgtOZlotIoo=;
-        b=bRZ5u0P71cAK8ruF4UxtAXBEe+paDmdbxV4Zut6ENZbuxU+5wzRn9vedp+7hkM4M6e
-         8jPotONPeS3s5hl8Z0bpoMXvvoj1RL7cox5amo2lUCHPUuwshReR/I7fm8XPSPhdFZSn
-         Ryi4Xo5kJDQje6vS8H3UDUzdYQ2lpzxCfUVh2lAnRcMN2O1U314HGXN1NPZ/aTMwHKqP
-         TQg3oR4f57Ouv86wny3Cdkzt8BM8NATr3IC5U9HiPRev3eUyZG2lRwBtbKfvDhv5Swpt
-         PYkxddNc+rkDEawJNae2pYwtSTeBSL4Eb8VgGS4jeLz81x72jWoro09t8d5edNlTVAeY
-         MxyA==
-X-Gm-Message-State: APjAAAVFK5rNTzEvr5LW1jQ5nZI7zTicKAC69vkpXy5gY7HGJ90srkzD
-        97PmgO4T3Ib9Un+VFRJTDTq5ZQ==
-X-Google-Smtp-Source: APXvYqwTs4hlT/F1FYODJLFlYoxd4c+WS6plu/pzJAf6EYVvYB882hNz9pcfxd/K5ReyoWJJ4fwRQw==
-X-Received: by 2002:a1c:c911:: with SMTP id f17mr2880993wmb.73.1567688404367;
-        Thu, 05 Sep 2019 06:00:04 -0700 (PDT)
+        bh=to9nPxGvpAjI2vmBY6hiBkK0HN4KqohuKcK/qXqDNPY=;
+        b=A09Oo9X3Il78nw0iOQbCVhUGmfl9cI1bFwKhdbUnq+ojDbqKYS3+ZwDyxxeQa/GWtg
+         tPnalVQkOhK+zB8pn+4hjHt04chDr2ahXxgKBBEEvdKMG53Yt5ozRFf+u8UQggzGK7Ww
+         etTgX8jVEtXc8SbN44rH7rXiFs+38X0uQhOajrD2fwqmfVQ7vN/hcfNwWA6xTMGrfdVH
+         74pkRlgBnb9XoMCEUsQBtVNCNtnzEyMhIuhjUlu8vXF6OBpaI7DCf5FO4Gyl2WzRYjKL
+         yqNweT3EvyYNLKjG0zreGIoeK1aSO2aVsIIjc3+ORjlGAbuweqCqTC4BkxCHFCmMd86S
+         fA5A==
+X-Gm-Message-State: APjAAAXGl02yQDMn1c2mw1sTavmh/mE1oQRXxqX3m/3ybcSTwkgAwXX9
+        Fka2RHFxX4Au7BrPnvtRs/7W2w==
+X-Google-Smtp-Source: APXvYqyWLZJ5ptNeLjAU/5Y4+RE4paQzv79ZLTG/PR8hFu5o1WDdkpKLnFc5q7mcqJc3J1ZSrLAgjA==
+X-Received: by 2002:a05:6000:12d1:: with SMTP id l17mr2510949wrx.91.1567688405327;
+        Thu, 05 Sep 2019 06:00:05 -0700 (PDT)
 Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id z189sm3727903wmc.25.2019.09.05.06.00.03
+        by smtp.googlemail.com with ESMTPSA id z189sm3727903wmc.25.2019.09.05.06.00.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 06:00:03 -0700 (PDT)
+        Thu, 05 Sep 2019 06:00:04 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] arm64: dts: meson: axg: fix audio fifo reg size
-Date:   Thu,  5 Sep 2019 14:59:52 +0200
-Message-Id: <20190905125956.4384-2-jbrunet@baylibre.com>
+Subject: [PATCH 2/5] arm64: dts: meson: g12: fix audio fifo reg size
+Date:   Thu,  5 Sep 2019 14:59:53 +0200
+Message-Id: <20190905125956.4384-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190905125956.4384-1-jbrunet@baylibre.com>
 References: <20190905125956.4384-1-jbrunet@baylibre.com>
@@ -67,70 +67,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 The register region size initially is too small to access all
 the fifo registers.
 
-Fixes: f2b8f6a93357 ("arm64: dts: meson-axg: add audio fifos")
+Fixes: c59b7fe5aafd ("arm64: dts: meson: g12a: add audio fifos")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 12 ++++++------
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 12 ++++++------
  1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 82919b106010..bb4a2acb9970 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -1162,7 +1162,7 @@
- 
- 			toddr_a: audio-controller@100 {
- 				compatible = "amlogic,axg-toddr";
--				reg = <0x0 0x100 0x0 0x1c>;
-+				reg = <0x0 0x100 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "TODDR_A";
- 				interrupts = <GIC_SPI 84 IRQ_TYPE_EDGE_RISING>;
-@@ -1173,7 +1173,7 @@
- 
- 			toddr_b: audio-controller@140 {
- 				compatible = "amlogic,axg-toddr";
--				reg = <0x0 0x140 0x0 0x1c>;
-+				reg = <0x0 0x140 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "TODDR_B";
- 				interrupts = <GIC_SPI 85 IRQ_TYPE_EDGE_RISING>;
-@@ -1184,7 +1184,7 @@
- 
- 			toddr_c: audio-controller@180 {
- 				compatible = "amlogic,axg-toddr";
--				reg = <0x0 0x180 0x0 0x1c>;
-+				reg = <0x0 0x180 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "TODDR_C";
- 				interrupts = <GIC_SPI 86 IRQ_TYPE_EDGE_RISING>;
-@@ -1195,7 +1195,7 @@
- 
- 			frddr_a: audio-controller@1c0 {
- 				compatible = "amlogic,axg-frddr";
--				reg = <0x0 0x1c0 0x0 0x1c>;
-+				reg = <0x0 0x1c0 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "FRDDR_A";
- 				interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
-@@ -1206,7 +1206,7 @@
- 
- 			frddr_b: audio-controller@200 {
- 				compatible = "amlogic,axg-frddr";
--				reg = <0x0 0x200 0x0 0x1c>;
-+				reg = <0x0 0x200 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "FRDDR_B";
- 				interrupts = <GIC_SPI 89 IRQ_TYPE_EDGE_RISING>;
-@@ -1217,7 +1217,7 @@
- 
- 			frddr_c: audio-controller@240 {
- 				compatible = "amlogic,axg-frddr";
--				reg = <0x0 0x240 0x0 0x1c>;
-+				reg = <0x0 0x240 0x0 0x2c>;
- 				#sound-dai-cells = <0>;
- 				sound-name-prefix = "FRDDR_C";
- 				interrupts = <GIC_SPI 90 IRQ_TYPE_EDGE_RISING>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 3f39e020f74e..0ee8a369c547 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -1509,7 +1509,7 @@
+ 				toddr_a: audio-controller@100 {
+ 					compatible = "amlogic,g12a-toddr",
+ 						     "amlogic,axg-toddr";
+-					reg = <0x0 0x100 0x0 0x1c>;
++					reg = <0x0 0x100 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "TODDR_A";
+ 					interrupts = <GIC_SPI 148 IRQ_TYPE_EDGE_RISING>;
+@@ -1521,7 +1521,7 @@
+ 				toddr_b: audio-controller@140 {
+ 					compatible = "amlogic,g12a-toddr",
+ 						     "amlogic,axg-toddr";
+-					reg = <0x0 0x140 0x0 0x1c>;
++					reg = <0x0 0x140 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "TODDR_B";
+ 					interrupts = <GIC_SPI 149 IRQ_TYPE_EDGE_RISING>;
+@@ -1533,7 +1533,7 @@
+ 				toddr_c: audio-controller@180 {
+ 					compatible = "amlogic,g12a-toddr",
+ 						     "amlogic,axg-toddr";
+-					reg = <0x0 0x180 0x0 0x1c>;
++					reg = <0x0 0x180 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "TODDR_C";
+ 					interrupts = <GIC_SPI 150 IRQ_TYPE_EDGE_RISING>;
+@@ -1545,7 +1545,7 @@
+ 				frddr_a: audio-controller@1c0 {
+ 					compatible = "amlogic,g12a-frddr",
+ 						     "amlogic,axg-frddr";
+-					reg = <0x0 0x1c0 0x0 0x1c>;
++					reg = <0x0 0x1c0 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "FRDDR_A";
+ 					interrupts = <GIC_SPI 152 IRQ_TYPE_EDGE_RISING>;
+@@ -1557,7 +1557,7 @@
+ 				frddr_b: audio-controller@200 {
+ 					compatible = "amlogic,g12a-frddr",
+ 						     "amlogic,axg-frddr";
+-					reg = <0x0 0x200 0x0 0x1c>;
++					reg = <0x0 0x200 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "FRDDR_B";
+ 					interrupts = <GIC_SPI 153 IRQ_TYPE_EDGE_RISING>;
+@@ -1569,7 +1569,7 @@
+ 				frddr_c: audio-controller@240 {
+ 					compatible = "amlogic,g12a-frddr",
+ 						     "amlogic,axg-frddr";
+-					reg = <0x0 0x240 0x0 0x1c>;
++					reg = <0x0 0x240 0x0 0x2c>;
+ 					#sound-dai-cells = <0>;
+ 					sound-name-prefix = "FRDDR_C";
+ 					interrupts = <GIC_SPI 154 IRQ_TYPE_EDGE_RISING>;
 -- 
 2.21.0
 
