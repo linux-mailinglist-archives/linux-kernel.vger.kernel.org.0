@@ -2,169 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A312BA9DF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39BE2A9E24
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733080AbfIEJMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 05:12:38 -0400
-Received: from twhmllg4.macronix.com ([211.75.127.132]:37968 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfIEJMi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 05:12:38 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id x859CUVe079311;
-        Thu, 5 Sep 2019 17:12:31 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     miquel.raynal@bootlin.com, richard@nod.at, marek.vasut@gmail.com,
-        dwmw2@infradead.org, bbrezillon@kernel.org,
-        computersforpeace@gmail.com, vigneshr@ti.com
-Cc:     juliensu@mxic.com.tw, linux-kernel@vger.kernel.org,
-        frieder.schrempf@kontron.de, linux-mtd@lists.infradead.org,
-        tglx@linutronix.de, masonccyang@mxic.com.tw
-Subject: [PATCH v3] mtd: rawnand: Add support for Macronix NAND randomizer
-Date:   Thu,  5 Sep 2019 17:37:09 +0800
-Message-Id: <1567676229-23414-1-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-X-MAIL: TWHMLLG4.macronix.com x859CUVe079311
+        id S1733220AbfIEJUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 05:20:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41074 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732407AbfIEJUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 05:20:42 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D6C28300BEAD;
+        Thu,  5 Sep 2019 09:20:41 +0000 (UTC)
+Received: from localhost (ovpn-117-222.ams2.redhat.com [10.36.117.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3589119C6A;
+        Thu,  5 Sep 2019 09:20:41 +0000 (UTC)
+Date:   Thu, 5 Sep 2019 10:20:39 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] KVM: inject data abort if instruction cannot be
+ decoded
+Message-ID: <20190905092039.GG32415@stefanha-x1.localdomain>
+References: <20190904180736.29009-1-xypron.glpk@gmx.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="E69HUUNAyIJqGpVn"
+Content-Disposition: inline
+In-Reply-To: <20190904180736.29009-1-xypron.glpk@gmx.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 05 Sep 2019 09:20:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Macronix NANDs support randomizer operation for user data scrambled,
-which can be enabled with a SET_FEATURE.
 
-User data written to the NAND device without randomizer is still readable
-after randomizer function enabled.
-The penalty of randomizer are subpage accesses prohibited and more time
-period is needed in program operation and entering deep power-down mode.
-i.e., tPROG 300us to 340us(randomizer enabled)
+--E69HUUNAyIJqGpVn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For more high-reliability concern, if subpage write not available with
-hardware ECC and then to enable randomizer is recommended by default.
-Driver checks byte 167 of Vendor Blocks in ONFI parameter page table
-to see if this high-reliability function is supported. By adding a new
-specific DT property in children nodes to enable randomizer function.
-i.e.,
+On Wed, Sep 04, 2019 at 08:07:36PM +0200, Heinrich Schuchardt wrote:
+> If an application tries to access memory that is not mapped, an error
+> ENOSYS, "load/store instruction decoding not implemented" may occur.
+> QEMU will hang with a register dump.
+>=20
+> Instead create a data abort that can be handled gracefully by the
+> application running in the virtual environment.
+>=20
+> Now the virtual machine can react to the event in the most appropriate
+> way - by recovering, by writing an informative log, or by rebooting.
+>=20
+> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+> ---
+>  virt/kvm/arm/mmio.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/virt/kvm/arm/mmio.c b/virt/kvm/arm/mmio.c
+> index a8a6a0c883f1..0cbed7d6a0f4 100644
+> --- a/virt/kvm/arm/mmio.c
+> +++ b/virt/kvm/arm/mmio.c
+> @@ -161,8 +161,8 @@ int io_mem_abort(struct kvm_vcpu *vcpu, struct kvm_ru=
+n *run,
+>  		if (ret)
+>  			return ret;
+>  	} else {
+> -		kvm_err("load/store instruction decoding not implemented\n");
+> -		return -ENOSYS;
+> +		kvm_inject_dabt(vcpu, kvm_vcpu_get_hfar(vcpu));
+> +		return 1;
 
-	nand: nand-controller@unit-address {
+I see this more as a temporary debugging hack than something to merge.
 
-		nand@0 {
-			reg = <0>;
-			mxic,enable-randomizer-otp;
-		};
-	};
+It sounds like in your case the guest environment provided good
+debugging information and you preferred it over debugging this from the
+host side.  That's fine, but allowing the guest to continue running in
+the general case makes it much harder to track down the root cause of a
+problem because many guest CPU instructions may be executed after the
+original problem occurs.  Other guest software may fail silently in
+weird ways.  IMO it's best to fail early.
 
---
-changelog
-v3:
-To enable randomizer by specific DT property in children nodes,
-mxic,enable-randomizer-otp;
+Stefan
 
-v2:
-To enable randomizer by checking chip options NAND_NO_SUBPAGE_WRITE
+--E69HUUNAyIJqGpVn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-v1:
-To enable randomizer by sys-fs
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- drivers/mtd/nand/raw/nand_macronix.c | 64 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1w02cACgkQnKSrs4Gr
+c8iE9ggAkVjIf2fI/kBs4N9RcmSgCefJV12cMWzxOU0i+Z3Z6eMCCf3aDRvN5Znu
+AO5aNxnimfSJ/yP1Zp1qZjeSdPpsMs5ox3CXdHmNOAEtzTb5tC4NeSvVeP1MaCi8
+LzpKOB7uZpZVulFwf9vuWcMww/LBIP0AwJSQ9MWUJncQ3UMZd3vNXXfD8QlnECVd
+alfe2r6hsp3ijEdkLLx92pNOl3/sgeFiK7WRQ07hrQHh2jJ9h2kZslsEZHeEsaj5
+CLuPe76KL4o25UFhS17Cg3hTsROX2BBgYub5uY+K02b54bVY2X3ypNE80H91ip+k
+VKuTCZk89Bpnyb3Shu6NIhJskSO1PA==
+=tj/0
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/mtd/nand/raw/nand_macronix.c b/drivers/mtd/nand/raw/nand_macronix.c
-index 58511ae..d5df09a 100644
---- a/drivers/mtd/nand/raw/nand_macronix.c
-+++ b/drivers/mtd/nand/raw/nand_macronix.c
-@@ -11,6 +11,13 @@
- #define MACRONIX_READ_RETRY_BIT BIT(0)
- #define MACRONIX_NUM_READ_RETRY_MODES 6
- 
-+#define MACRONIX_RANDOMIZER_BIT BIT(1)
-+#define ONFI_FEATURE_ADDR_MXIC_RANDOMIZER 0xB0
-+#define MACRONIX_RANDOMIZER_ENPGM BIT(0)
-+#define MACRONIX_RANDOMIZER_RANDEN BIT(1)
-+#define MACRONIX_RANDOMIZER_RANDOPT BIT(2)
-+#define MACRONIX_RANDOMIZER_MODE_EXIT ~MACRONIX_RANDOMIZER_ENPGM
-+
- struct nand_onfi_vendor_macronix {
- 	u8 reserved;
- 	u8 reliability_func;
-@@ -29,15 +36,72 @@ static int macronix_nand_setup_read_retry(struct nand_chip *chip, int mode)
- 	return nand_set_features(chip, ONFI_FEATURE_ADDR_READ_RETRY, feature);
- }
- 
-+static void macronix_nand_randomizer_check_enable(struct nand_chip *chip)
-+{
-+	u8 feature[ONFI_SUBFEATURE_PARAM_LEN];
-+	int ret;
-+
-+	ret = nand_get_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
-+				feature);
-+	if (feature[0]) {
-+		pr_info("Macronix NAND randomizer enabled:0x%x\n", feature[0]);
-+		return;
-+	}
-+
-+	feature[0] = MACRONIX_RANDOMIZER_ENPGM | MACRONIX_RANDOMIZER_RANDEN |
-+		     MACRONIX_RANDOMIZER_RANDOPT;
-+	ret = nand_set_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
-+				feature);
-+	if (ret)
-+		goto err;
-+
-+	feature[0] = 0x0;
-+	ret = nand_prog_page_op(chip, 0, 0, feature, 1);
-+	if (ret)
-+		goto err;
-+
-+	ret = nand_get_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
-+				feature);
-+	if (ret)
-+		goto err;
-+
-+	feature[0] &= MACRONIX_RANDOMIZER_MODE_EXIT;
-+	ret = nand_set_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
-+				feature);
-+	if (ret)
-+		goto err;
-+
-+	pr_info("Macronix NAND randomizer enable ok\n");
-+	return;
-+err:
-+	pr_err("Macronix NAND randomizer enable failed\n");
-+}
-+
- static void macronix_nand_onfi_init(struct nand_chip *chip)
- {
- 	struct nand_parameters *p = &chip->parameters;
- 	struct nand_onfi_vendor_macronix *mxic;
-+	struct device_node *dn = nand_get_flash_node(chip);
-+	int rand_otp = 0;
- 
- 	if (!p->onfi)
- 		return;
- 
-+	if (of_find_property(dn, "mxic,enable-randomizer-otp", NULL))
-+		rand_otp = 1;
-+
- 	mxic = (struct nand_onfi_vendor_macronix *)p->onfi->vendor;
-+	if (rand_otp && chip->options & NAND_NO_SUBPAGE_WRITE &&
-+	    mxic->reliability_func & MACRONIX_RANDOMIZER_BIT) {
-+		if (p->supports_set_get_features) {
-+			bitmap_set(p->set_feature_list,
-+				   ONFI_FEATURE_ADDR_MXIC_RANDOMIZER, 1);
-+			bitmap_set(p->get_feature_list,
-+				   ONFI_FEATURE_ADDR_MXIC_RANDOMIZER, 1);
-+			macronix_nand_randomizer_check_enable(chip);
-+		}
-+	}
-+
- 	if ((mxic->reliability_func & MACRONIX_READ_RETRY_BIT) == 0)
- 		return;
- 
--- 
-1.9.1
-
+--E69HUUNAyIJqGpVn--
