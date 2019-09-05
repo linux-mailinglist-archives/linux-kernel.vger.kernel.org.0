@@ -2,115 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32896A9CD0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD702A9CE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732535AbfIEITU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 04:19:20 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34612 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfIEITT (ORCPT
+        id S1732583AbfIEIWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 04:22:48 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43659 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732065AbfIEIWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 04:19:19 -0400
-Received: by mail-wr1-f66.google.com with SMTP id s18so1623926wrn.1;
-        Thu, 05 Sep 2019 01:19:17 -0700 (PDT)
+        Thu, 5 Sep 2019 04:22:48 -0400
+Received: by mail-pf1-f196.google.com with SMTP id d15so1231740pfo.10;
+        Thu, 05 Sep 2019 01:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7vrD1vbAUmCFFfdIktyw4RQaBVS3ITim3VvuBMdETos=;
-        b=KrDqJT9pnaYjHlbMev2uN7ZQDpp4ATsX7iMQbyUVPvh7Zyex0SB+oyInc5ZZRKBALx
-         4YRvbckrzDpG1nT0XswKerNPGvzMEe96kQY98ITPkN1mU8xw6tQ+n+6G+Qkg/woR77cR
-         dpwgv3K4VnnE7KSKhZztW2gDMM/V1eLAOj//dDnEsk0KMmqU5SW+ozed1YDFze7sBquI
-         t/o38y4o/EoxKILmRM9AjLqvfG15+z8QFT594yanB9ivEOtf5VoPDpS83cFQvmYHLwUV
-         ZDsK0Y5NrSflQS+FbewoBw9/ke2FDkPsRlHPTWAmvY/hwLtW/GNXiBeMJTeHsk++Uoi9
-         4CMg==
+        h=from:to:cc:subject:date:message-id;
+        bh=OR+2oUf84ahdL/gVaL83KcJgug8/1OAXHF+oo7QgYic=;
+        b=bwtpstSAkOACZBbe+Nv57N21Dz2M9GUhBRRV05iZb1fTtxh6mrFXkz2SCEV8dZcWtp
+         DAwfvDgENT4ySZBGNChnQAx7D7jxtcqPgkLsxbTF9s2e2vJ6K4CdIbATHDCc0lSAFsvJ
+         Qn8cZ7Tq8nzmPNw8Z4iFyf44omZi4lbePC8iJRa4iZLTTfjylBova4mnoNQW4ZAnLH0J
+         E87DTxqATv5fvHEqWfJ1lbSbKzcvU6oXwP3c9EK0U7f8ZkPhOqlHHdKJdH7dH2tQFy2b
+         cpg2xi+sRX3QQ3UJUKz2dMF3AoshIsYC0fnudFqtdnq2vZxwHAxk/QMrYNMyFCQNi1Cm
+         WXPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7vrD1vbAUmCFFfdIktyw4RQaBVS3ITim3VvuBMdETos=;
-        b=NfT4JWcBDQs35Nd5WW4sZ2LhxrYUr+BfCmUcnBioaGXN3Up2C4Ccl6nPgLClX20UJg
-         /ijZaCmGP4ZBGRndVgMpLXSRjOr386ZTfpKIr9UbI3WHMjelqtU11JEvMOtgFcIHfUPO
-         uFnetJdv/jWEPcbjDa6OfvIgd8nJ4sTDZhdoIP0PiiWmeU80Tz3Ie7fSk97iIGCve1TP
-         BKfpiSRDsc4x1SRYAPkGeghKV66YHj2016pRyHINowPcvA0TDuz+gktsTimI00Qoa2gF
-         Z9giminJ+RdiVpt7Uj/H68dwaAgLMSYCoBRlBCiKvVYKm0YWZAGs551zH9q5gbyPgdvB
-         /ZkA==
-X-Gm-Message-State: APjAAAXrrF18CTn30BlcOI8BXylfw8UfK0FJ8wCHUMnsZSZE84IGmBRq
-        3h0sZ8bxtzYH2Tz+M4U/Q5s=
-X-Google-Smtp-Source: APXvYqypRpPI1L8/VzXxqLP6zlec8VR5j0yZcibllXCpQiOHKv1zx3kMkVX/NbRsKv7XAOtrZMasCw==
-X-Received: by 2002:adf:e392:: with SMTP id e18mr1587213wrm.87.1567671557098;
-        Thu, 05 Sep 2019 01:19:17 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id o22sm3223544wra.96.2019.09.05.01.19.15
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=OR+2oUf84ahdL/gVaL83KcJgug8/1OAXHF+oo7QgYic=;
+        b=X2t5NUAgogEQD0VEoP9tj957rh8oCtt4xQK58z9MnujuI27kXQiMC2rZUZBMNYef5b
+         o4nXP5F230LCZXfUZUgACwhvtJ8J8ELp+TUrxWttRmDTnO2RYGBeqYPG1q+YpCYVtipj
+         p4+Q+2LIBjxl6KtYKKjwj99wUCYIHxZnyLknGoNjw2+MrQjcg1yNlnmLAuVECp037n8q
+         VCEiK4oa+QPY5PHp1VfkVRlwcRnfbRDUZlsJ8LUaFhNea9vOX1n06Irr+ResDp8TWkn/
+         dJ8OP1zAP8bl5dhMQyrA2gKFmeJ2DTHRZG2mqZmv9QrqN36p0ZX/B2a5I+UtPDSVfRDK
+         FLZA==
+X-Gm-Message-State: APjAAAXaliEM+Rt8Zzo+A0GJIu3qodv7fvNhlICv4U9R4Gty8KX1/aww
+        9P54UP7pXGoXDb8nHKV8OXt2548I
+X-Google-Smtp-Source: APXvYqzHdSq7YdOvWnTnvzsz0Rhi1kScrNnkmtPlpLjJnsTgvZv6ahcq/gOI1BQ9DW9Fu+eOPqPkDg==
+X-Received: by 2002:a63:ec48:: with SMTP id r8mr1939805pgj.387.1567671767306;
+        Thu, 05 Sep 2019 01:22:47 -0700 (PDT)
+Received: from localhost.localdomain ([49.216.8.243])
+        by smtp.gmail.com with ESMTPSA id o35sm1178608pgm.29.2019.09.05.01.22.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 01:19:16 -0700 (PDT)
-Date:   Thu, 5 Sep 2019 10:19:14 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Mike Travis <mike.travis@hpe.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 0/8] x86/platform/UV: Update UV Hubless System Support
-Message-ID: <20190905081914.GA28060@gmail.com>
-References: <20190903001815.504418099@stormcage.eag.rdlabs.hpecorp.net>
- <20190903074717.GA34890@gmail.com>
- <481b2921-760a-c0f3-489b-2b9c5f792883@hpe.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <481b2921-760a-c0f3-489b-2b9c5f792883@hpe.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 05 Sep 2019 01:22:46 -0700 (PDT)
+From:   jamestai.sky@gmail.com
+X-Google-Original-From: james.tai@realtek.com
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        CY_Huang <cy.huang@realtek.com>,
+        Phinex Hung <phinex@realtek.com>,
+        "james.tai" <james.tai@realtek.com>
+Subject: [PATCH] dt-bindings: arm: Add bindings for Realtek RTD16XX SoC
+Date:   Thu,  5 Sep 2019 16:20:42 +0800
+Message-Id: <20190905082042.1601-1-james.tai@realtek.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "james.tai" <james.tai@realtek.com>
 
-* Mike Travis <mike.travis@hpe.com> wrote:
+This patch adds dt-binding documentation for Realtek RTD16XX platform.
 
-> 
-> 
-> On 9/3/2019 12:47 AM, Ingo Molnar wrote:
-> > 
-> > * Mike Travis <mike.travis@hpe.com> wrote:
-> > 
-> > > 
-> > > These patches support upcoming UV systems that do not have a UV HUB.
-> > > 
-> > > 	* Save OEM_ID from ACPI MADT probe
-> > > 	* Return UV Hubless System Type
-> > > 	* Add return code to UV BIOS Init function
-> > > 	* Setup UV functions for Hubless UV Systems
-> > > 	* Add UV Hubbed/Hubless Proc FS Files
-> > > 	* Decode UVsystab Info
-> > > 	* Account for UV Hubless in is_uvX_hub Ops
-> > 
-> > Beyond addressing Christoph's feedback, please also make sure the series
-> > applies cleanly to tip:master, because right now it doesn't.
-> > 
-> > Thanks,
-> > 
-> > 	Ingo
-> > 
-> 
-> I will do this, and retest.  Currently we are using the latest upstream
-> version but obviously that thinking is flawed, since we are hoping to
-> get into the next merge period.
+Signed-off-by: james.tai <james.tai@realtek.com>
+---
+ Documentation/devicetree/bindings/arm/realtek.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-You are really cutting it close timing-wise ... unless by 'next' you mean 
-not v5.4 but v5.5?
+diff --git a/Documentation/devicetree/bindings/arm/realtek.yaml b/Documentation/devicetree/bindings/arm/realtek.yaml
+index ad9b13bc42f0..4d4ac23acab0 100644
+--- a/Documentation/devicetree/bindings/arm/realtek.yaml
++++ b/Documentation/devicetree/bindings/arm/realtek.yaml
+@@ -15,3 +15,5 @@ properties:
+               - probox2,ava
+               - zidoo,x9s
+           - const: realtek,rtd1295
++        items:
++          - const: realtek,rtd1619
+-- 
+2.17.1
 
-> I also noticed that the MAINTAINERS list for UV is out of date, I will 
-> tend to that too.
-
-Thanks!
-
-	Ingo
