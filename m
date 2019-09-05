@@ -2,118 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE557AA77F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B6EEAA78E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:44:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390670AbfIEPn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 11:43:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35672 "EHLO mail.kernel.org"
+        id S2390733AbfIEPom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 11:44:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390573AbfIEPnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 11:43:45 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S2390713AbfIEPoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 11:44:32 -0400
+Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFAFB21D56;
-        Thu,  5 Sep 2019 15:43:45 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1i5tvE-0007eH-9O; Thu, 05 Sep 2019 11:43:44 -0400
-Message-Id: <20190905154344.177680295@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Thu, 05 Sep 2019 11:43:23 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Zhengjun Xing <zhengjun.xing@linux.intel.com>,
-        Tom Zanussi <zanussi@kernel.org>
-Subject: [for-next][PATCH 25/25] tracing: Add "gfp_t" support in synthetic_events
-References: <20190905154258.573706229@goodmis.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B69C2082C;
+        Thu,  5 Sep 2019 15:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567698272;
+        bh=7a2Kh0bbur1P82JOpkA0aiw3kRggM0voFXBHaO7YY/c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ml7qLSuNqjg1UBZnkxl1oKa+hyxi1Xdf8QCcw+SUVhrjATDzr427/gLMAq+X2bDHS
+         n22hdd5dr+OpDLiJq5UldHzbbuWQVKWwKRF+LOfUje8LV6P6XND14QvUI/bEh3hxWT
+         vVFnWnDlWgZlQZ1nYS5wxamIpSqlZhvt4YvBIi3o=
+Date:   Thu, 5 Sep 2019 11:44:29 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Dexuan Cui <decui@microsoft.com>
+Cc:     "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 01/12] x86/hyper-v: Suspend/resume the hypercall page
+ for hibernation
+Message-ID: <20190905154429.GC1616@sasha-vm>
+References: <1567470139-119355-1-git-send-email-decui@microsoft.com>
+ <1567470139-119355-2-git-send-email-decui@microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1567470139-119355-2-git-send-email-decui@microsoft.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+On Tue, Sep 03, 2019 at 12:23:16AM +0000, Dexuan Cui wrote:
+>This is needed for hibernation, e.g. when we resume the old kernel, we need
+>to disable the "current" kernel's hypercall page and then resume the old
+>kernel's.
+>
+>Signed-off-by: Dexuan Cui <decui@microsoft.com>
+>Reviewed-by: Michael Kelley <mikelley@microsoft.com>
 
-Add "gfp_t" support in synthetic_events, then the "gfp_t" type
-parameter in some functions can be traced.
+Hi Dexuan,
 
-Prints the gfp flags as hex in addition to the human-readable flag
-string.  Example output:
+When sending patches upstream, please make sure you send them to all
+maintainers and mailing lists that it needs to go to according to
+MAINTAINERS/get_maintainers.py rather than cherry-picking names off the
+list.
 
-  whoopsie-630 [000] ...1 78.969452: testevent: bar=b20 (GFP_ATOMIC|__GFP_ZERO)
-    rcuc/0-11  [000] ...1 81.097555: testevent: bar=a20 (GFP_ATOMIC)
-    rcuc/0-11  [000] ...1 81.583123: testevent: bar=a20 (GFP_ATOMIC)
+This is specially important in subsystems like x86 where it's a group
+maintainers model, and it's very possible that Thomas is sipping
+margaritas on a beach while one of the other x86 maintainers is covering
+the tree.
 
-Link: http://lkml.kernel.org/r/20190712015308.9908-1-zhengjun.xing@linux.intel.com
+This is quite easy with git-send-email and get_maintainers.py, something
+like this:
 
-Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
-[ Added printing of flag names ]
-Signed-off-by: Tom Zanussi <zanussi@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_events_hist.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+	git send-email --cc-cmd="scripts/get_maintainer.pl --separator=, --no-rolestats" your-work.patch
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 65e7d071ed28..3a6e42aa08e6 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -13,6 +13,10 @@
- #include <linux/rculist.h>
- #include <linux/tracefs.h>
- 
-+/* for gfp flag names */
-+#include <linux/trace_events.h>
-+#include <trace/events/mmflags.h>
-+
- #include "tracing_map.h"
- #include "trace.h"
- #include "trace_dynevent.h"
-@@ -752,6 +756,8 @@ static int synth_field_size(char *type)
- 		size = sizeof(unsigned long);
- 	else if (strcmp(type, "pid_t") == 0)
- 		size = sizeof(pid_t);
-+	else if (strcmp(type, "gfp_t") == 0)
-+		size = sizeof(gfp_t);
- 	else if (synth_field_is_string(type))
- 		size = synth_field_string_size(type);
- 
-@@ -792,6 +798,8 @@ static const char *synth_field_fmt(char *type)
- 		fmt = "%lu";
- 	else if (strcmp(type, "pid_t") == 0)
- 		fmt = "%d";
-+	else if (strcmp(type, "gfp_t") == 0)
-+		fmt = "%x";
- 	else if (synth_field_is_string(type))
- 		fmt = "%s";
- 
-@@ -834,9 +842,20 @@ static enum print_line_t print_synth_event(struct trace_iterator *iter,
- 					 i == se->n_fields - 1 ? "" : " ");
- 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
- 		} else {
-+			struct trace_print_flags __flags[] = {
-+			    __def_gfpflag_names, {-1, NULL} };
-+
- 			trace_seq_printf(s, print_fmt, se->fields[i]->name,
- 					 entry->fields[n_u64],
- 					 i == se->n_fields - 1 ? "" : " ");
-+
-+			if (strcmp(se->fields[i]->type, "gfp_t") == 0) {
-+				trace_seq_puts(s, " (");
-+				trace_print_flags_seq(s, "|",
-+						      entry->fields[n_u64],
-+						      __flags);
-+				trace_seq_putc(s, ')');
-+			}
- 			n_u64++;
- 		}
- 	}
--- 
-2.20.1
+Will do all of that automatically for you.
 
-
+--
+Thanks,
+Sasha
