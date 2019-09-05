@@ -2,70 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEDB5AA1F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C6D2AA1F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732595AbfIELrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:47:01 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:53009 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730780AbfIELrB (ORCPT
+        id S1733243AbfIELrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:47:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38212 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730780AbfIELrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:47:01 -0400
-Received: by mail-io1-f72.google.com with SMTP id q5so2844138iof.19
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 04:47:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Nuyvp9vyMVnR3ZMhOYe+0oKwj4ltt2pST6dZGPPFdDs=;
-        b=rPSWWM0dElxyJVszR9CjIkp9yU5JGp9dTUP+yEo9BIMdnnLizmBMk53tIu866bpKkC
-         cCoJPBKWCRVSf1yRVWXXEav306Jm6GJBxqfTpbOSeyFMp77VGRauPHb9MqConC3NDUN2
-         JnuyhGmDebJtPX+k/d70OPyQa5kP4E00uMLMYnT/YtFNzHsRK5KnFVzkXA0+I98fjxYS
-         uFX5vdrRX6HmyroZ8zHjmYRm7FjtvXhPD3pkB0UtzkZe1gn9lWGxnB63DITWDXqsrqAx
-         gIi4U4Ck1c84KcqOQkk+VzdZ7Fk86EXgJUsZOnwTxfZsZCet4TOvsoiEQgkvxr7ZlacA
-         Somw==
-X-Gm-Message-State: APjAAAU4zdMS8BS/fw0Z2G579drt81YIpd0+pyfXc6VS3awI64X2j0Nb
-        qkD0zSXamFBJakLoMWNI4uHas1mckXquY3GzinHUAmShp16N
-X-Google-Smtp-Source: APXvYqwXx5xVREHqN2GcbqE+Tt8E1onLoKBKAcj+sRYuDGmkwww2a9nv2C6YStKt8wJGXh8WFQyP/WmdeP9MEZWuHR92/vOHwLjw
+        Thu, 5 Sep 2019 07:47:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wCf+8T9FwWLVElgSE2buhC9xG+AjGiAQMHH/+zCWqL4=; b=rnhMtwdD7GHMrK3Kzf0HiydsM
+        M/IMsl5QMdPZJ5FAkwVpwZt6jf3xBitErWSZs7CK7lywSx1dxipp1An20/GWKZ6sSjrooEnDlr8dp
+        eMRROklD0+x7lQu4PwSRnfxRsXSs00JNN/s0KyDLC18Siy53pYa2VJuUXwfx1BDefLTzsfdjzbj+a
+        TVFzYb5zKEdqwIQ3Z4/YVYug4xUvjGhWV4zhkaWIol2mEXK0S1SnhBvFmvByedU313g6BZAAFugf0
+        oohw9OBSZu0R5EoSz3+yTSJ9uF6LvjlEbvYo+bsG4xI01i88wX1yGL2aQ0iPDMtuL09PPbTj0/srB
+        8wwgpfyqw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5qEJ-0000nr-No; Thu, 05 Sep 2019 11:47:11 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E654F3011DF;
+        Thu,  5 Sep 2019 13:46:32 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E608229CBE15F; Thu,  5 Sep 2019 13:47:09 +0200 (CEST)
+Date:   Thu, 5 Sep 2019 13:47:09 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Qais Yousef <qais.yousef@arm.com>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net, parth@linux.ibm.com
+Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
+Message-ID: <20190905114709.GM2349@hirez.programming.kicks-ass.net>
+References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
+ <20190830174944.21741-2-subhra.mazumdar@oracle.com>
+ <20190905083127.GA2332@hirez.programming.kicks-ass.net>
+ <87r24v2i14.fsf@arm.com>
+ <20190905104616.GD2332@hirez.programming.kicks-ass.net>
+ <20190905111346.2w6kuqrdvaqvgilu@e107158-lin.cambridge.arm.com>
+ <87h85r2d5f.fsf@arm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8599:: with SMTP id f25mr3413002ioj.265.1567684020483;
- Thu, 05 Sep 2019 04:47:00 -0700 (PDT)
-Date:   Thu, 05 Sep 2019 04:47:00 -0700
-In-Reply-To: <CAAeHK+y3eQ7bXvo1tiAkwLCsFkbSU5B+6hsKbdEzkSXP2_Jyzg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000293ed00591cce18a@google.com>
-Subject: Re: WARNING in hso_free_net_device
-From:   syzbot <syzbot+44d53c7255bb1aea22d2@syzkaller.appspotmail.com>
-To:     alexios.zavras@intel.com, andreyknvl@google.com,
-        benquike@gmail.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, mathias.payer@nebelwelt.net,
-        netdev@vger.kernel.org, oneukum@suse.com, rfontana@redhat.com,
-        stephen@networkplumber.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h85r2d5f.fsf@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Sep 05, 2019 at 12:30:52PM +0100, Patrick Bellasi wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger  
-crash:
+> I see this concept possibly evolving into something more then just a
+> binary switch. Not yet convinced if it make sense and/or it's possible
+> but, in principle, I was thinking about these possible usages for CFS
+> tasks:
+> 
+>  - dynamically tune the policy of a task among SCHED_{OTHER,BATCH,IDLE}
+>    depending on crossing certain pre-configured threshold of latency
+>    niceness.
 
-Reported-and-tested-by:  
-syzbot+44d53c7255bb1aea22d2@syzkaller.appspotmail.com
+A big part of BATCH is wakeup preemption (batch doesn't preempt itself),
+and wakeup preemption is a task-task propery and can thus be completely
+relative.
 
-Tested on:
+>  - dynamically bias the vruntime updates we do in place_entity()
+>    depending on the actual latency niceness of a task.
 
-commit:         eea39f24 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d0c62209eedfd54e
-dashboard link: https://syzkaller.appspot.com/bug?extid=44d53c7255bb1aea22d2
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1188fcc6600000
+That is dangerous; theory says we should keep track of the 0-lag point
+and place it back where we found it. BFQ does this correctly IIRC, but
+for CFS I've never done that because 'expensive'.
 
-Note: testing is done by a robot and is best-effort only.
+But yes, we could (carefully) fumble a bit there.
+
+>  - bias the decisions we take in check_preempt_tick() still depending
+>    on a relative comparison of the current and wakeup task latency
+>    niceness values.
+
+Ack.
+
+Placing relative and absolute behaviour on the same scale is going to be
+'fun' :-)
