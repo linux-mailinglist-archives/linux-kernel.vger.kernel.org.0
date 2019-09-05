@@ -2,143 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7D98A9DC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C82A9DCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732977AbfIEJId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 05:08:33 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47180 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732160AbfIEJId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 05:08:33 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AA81243F6A79C6D72018;
-        Thu,  5 Sep 2019 17:08:31 +0800 (CST)
-Received: from [127.0.0.1] (10.74.191.121) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 5 Sep 2019
- 17:08:22 +0800
-Subject: Re: [PATCH RFC] driver core: ensure a device has valid node id in
- device_add()
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <rafael@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <peterz@infradead.org>, <mingo@kernel.org>, <mhocko@kernel.org>,
-        <linuxarm@huawei.com>
-References: <1567647230-166903-1-git-send-email-linyunsheng@huawei.com>
- <20190905055727.GB23826@kroah.com>
- <e5905af2-5a8d-7b00-d2a6-a961f3eee120@huawei.com>
- <20190905073334.GA29933@kroah.com>
- <d282774f-29fb-cffb-d606-ab678f792565@huawei.com>
- <20190905090249.GA28356@kroah.com>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <ccf18baf-096d-b78d-4d5b-bfb8bcd35ba9@huawei.com>
-Date:   Thu, 5 Sep 2019 17:07:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1733009AbfIEJJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 05:09:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60548 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731421AbfIEJJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 05:09:32 -0400
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 850DD22DD3;
+        Thu,  5 Sep 2019 09:09:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567674570;
+        bh=2y9QrdwzmfA0llHSctFl2m6ifgKdca76hgM46s40Jqo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=A7jbPfgz7iDbyfAh7FRh4lNexG/TXF3ScTCKO8nMsMseEaD3FIekJ4V75JBPjnXPE
+         KmGQfiJzMgv3dMSkoJYtCd6C2HlnVFXxuIfvlr5/IStZ6CYCzDY//Pu4c5uPuYVn4N
+         gUsQAoZ4hc0w2Kyrr7B4+iz9yJaMProOHVGOIhS0=
+Received: by mail-qk1-f170.google.com with SMTP id i78so1361685qke.11;
+        Thu, 05 Sep 2019 02:09:30 -0700 (PDT)
+X-Gm-Message-State: APjAAAUORPLO6NRoX0/WTFWWcA0FKoogAcgrG8SUJY0lfmlUTxmKnnTP
+        Pa8jwq4aVVEq340KNTLHng9tczSr+B5dZcZeVg==
+X-Google-Smtp-Source: APXvYqyCZ1JFPrFdkdY4EtQAOam5zWRzs7tCzxtp5nMv/9gUEkXp5uEHLWxNb2B7T4bytKsL8PG/Xdv5F/1FvYv7IIE=
+X-Received: by 2002:a05:620a:1356:: with SMTP id c22mr1583635qkl.119.1567674569634;
+ Thu, 05 Sep 2019 02:09:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190905090249.GA28356@kroah.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+References: <20190905081546.42716-1-drinkcat@chromium.org>
+In-Reply-To: <20190905081546.42716-1-drinkcat@chromium.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 5 Sep 2019 10:09:18 +0100
+X-Gmail-Original-Message-ID: <CAL_JsqJCO2G90TTT9Mpy4kjVKQyXWw4aXEEnbRp_SE8X=EGc5g@mail.gmail.com>
+Message-ID: <CAL_JsqJCO2G90TTT9Mpy4kjVKQyXWw4aXEEnbRp_SE8X=EGc5g@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: mt8183: Add node for the Mali GPU
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nick Fan <nick.fan@mediatek.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/5 17:02, Greg KH wrote:
-> On Thu, Sep 05, 2019 at 04:57:00PM +0800, Yunsheng Lin wrote:
->> On 2019/9/5 15:33, Greg KH wrote:
->>> On Thu, Sep 05, 2019 at 02:48:24PM +0800, Yunsheng Lin wrote:
->>>> On 2019/9/5 13:57, Greg KH wrote:
->>>>> On Thu, Sep 05, 2019 at 09:33:50AM +0800, Yunsheng Lin wrote:
->>>>>> Currently a device does not belong to any of the numa nodes
->>>>>> (dev->numa_node is NUMA_NO_NODE) when the FW does not provide
->>>>>> the node id and the device has not no parent device.
->>>>>>
->>>>>> According to discussion in [1]:
->>>>>> Even if a device's numa node is not set by fw, the device
->>>>>> really does belong to a node.
->>>>>>
->>>>>> This patch sets the device node to node 0 in device_add() if
->>>>>> the fw has not specified the node id and it either has no
->>>>>> parent device, or the parent device also does not have a valid
->>>>>> node id.
->>>>>>
->>>>>> There may be explicit handling out there relying on NUMA_NO_NODE,
->>>>>> like in nvme_probe().
->>>>>>
->>>>>> [1] https://lkml.org/lkml/2019/9/2/466
->>>>>>
->>>>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->>>>>> ---
->>>>>>  drivers/base/core.c  | 17 ++++++++++++++---
->>>>>>  include/linux/numa.h |  2 ++
->>>>>>  2 files changed, 16 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/base/core.c b/drivers/base/core.c
->>>>>> index 1669d41..466b8ff 100644
->>>>>> --- a/drivers/base/core.c
->>>>>> +++ b/drivers/base/core.c
->>>>>> @@ -2107,9 +2107,20 @@ int device_add(struct device *dev)
->>>>>>  	if (kobj)
->>>>>>  		dev->kobj.parent = kobj;
->>>>>>  
->>>>>> -	/* use parent numa_node */
->>>>>> -	if (parent && (dev_to_node(dev) == NUMA_NO_NODE))
->>>>>> -		set_dev_node(dev, dev_to_node(parent));
->>>>>> +	/* use parent numa_node or default node 0 */
->>>>>> +	if (!numa_node_valid(dev_to_node(dev))) {
->>>>>> +		int nid = parent ? dev_to_node(parent) : NUMA_NO_NODE;
->>>>>
->>>>> Can you expand this to be a "real" if statement please?
->>>>
->>>> Sure. May I ask why "? :" is not appropriate here?
->>>
->>> Because it is a pain to read, just spell it out and make it obvious what
->>> is happening.  You write code for developers first, and the compiler
->>> second, and in this case, either way is identical to the compiler.
->>>
->>>>>> +
->>>>>> +		if (numa_node_valid(nid)) {
->>>>>> +			set_dev_node(dev, nid);
->>>>>> +		} else {
->>>>>> +			if (nr_node_ids > 1U)
->>>>>> +				pr_err("device: '%s': has invalid NUMA node(%d)\n",
->>>>>> +				       dev_name(dev), dev_to_node(dev));
->>>>>
->>>>> dev_err() will show you the exact device properly, instead of having to
->>>>> rely on dev_name().
->>>>>
->>>>> And what is a user to do if this message happens?  How do they fix this?
->>>>> If they can not, what good is this error message?
->>>>
->>>> If user know about their system's topology well enough and node 0
->>>> is not the nearest node to the device, maybe user can readjust that by
->>>> writing the nearest node to /sys/class/pci_bus/XXXX/device/numa_node,
->>>> if not, then maybe user need to contact the vendor for info or updates.
->>>>
->>>> Maybe print error message as below:
->>>>
->>>> dev_err(dev, FW_BUG "has invalid NUMA node(%d). Readjust it by writing to sysfs numa_node or contact your vendor for updates.\n",
->>>> 	dev_to_node(dev));
->>>
->>> FW_BUG?
->>
->> The sysfs numa_node writing interface does print FW_BUG error.
->> Maybe it is a way of telling the user to contact the vendors, which
->> pushing the vendors to update the FW.
-> 
-> But is this always going to be caused by a firmware bug?  If so, ok, if
-> not, and it's a driver/bus kernel issue, we should not say this.
+On Thu, Sep 5, 2019 at 9:16 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
+>
+> Add a basic GPU node and opp table for mt8183.
+>
+> The binding we use with out-of-tree Mali drivers includes more
+> clocks, I assume this would be required eventually if we have an
+> in-tree driver:
 
-Ok, Make sense. Will not add the FW_BUG printing.
+We have an in-tree driver...
 
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> .
-> 
+> clocks =
+>         <&topckgen CLK_TOP_MFGPLL_CK>,
+>         <&topckgen CLK_TOP_MUX_MFG>,
+>         <&clk26m>,
+>         <&mfgcfg CLK_MFG_BG3D>;
+> clock-names =
+>         "clk_main_parent",
+>         "clk_mux",
+>         "clk_sub_parent",
+>         "subsys_mfg_cg";
+>
+> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+>
+> ---
+> Upstreaming what matches existing bindings from our Chromium OS tree:
+> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.19/arch/arm64/boot/dts/mediatek/mt8183.dtsi#1348
+>
+> The evb part of this change depends on this patch to add PMIC dtsi:
+> https://patchwork.kernel.org/patch/10928161/
+>
+>  arch/arm64/boot/dts/mediatek/mt8183-evb.dts |   7 ++
+>  arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 103 ++++++++++++++++++++
+>  2 files changed, 110 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+> index 1fb195c683c3d01..200d8e65a6368a1 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+> @@ -7,6 +7,7 @@
+>
+>  /dts-v1/;
+>  #include "mt8183.dtsi"
+> +#include "mt6358.dtsi"
+>
+>  / {
+>         model = "MediaTek MT8183 evaluation board";
+> @@ -30,6 +31,12 @@
+>         status = "okay";
+>  };
+>
+> +&gpu {
+> +       supply-names = "mali", "mali_sram";
+> +       mali-supply = <&mt6358_vgpu_reg>;
+> +       mali_sram-supply = <&mt6358_vsram_gpu_reg>;
 
+Not documented. Just 'sram-supply' is enough.
+
+Note that the binding doc queued up for 5.4 has been converted to DT schema.
+
+> +};
+> +
+>  &i2c0 {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&i2c_pins_0>;
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> index 97f84aa9fc6e1c1..8ea548a762ea252 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> @@ -579,6 +579,109 @@
+>                         #clock-cells = <1>;
+>                 };
+>
+> +               gpu: mali@13040000 {
+
+gpu@...
+
+> +                       compatible = "mediatek,mt8183-mali", "arm,mali-bifrost";
+
+You need to add this compatible string too.
+
+> +                       reg = <0 0x13040000 0 0x4000>;
+> +                       interrupts =
+> +                               <GIC_SPI 280 IRQ_TYPE_LEVEL_LOW>,
+> +                               <GIC_SPI 279 IRQ_TYPE_LEVEL_LOW>,
+> +                               <GIC_SPI 278 IRQ_TYPE_LEVEL_LOW>;
+> +                       interrupt-names = "job", "mmu", "gpu";
+> +
+> +                       clocks = <&topckgen CLK_TOP_MFGPLL_CK>;
+> +                       power-domains =
+> +                               <&scpsys MT8183_POWER_DOMAIN_MFG_CORE0>,
+> +                               <&scpsys MT8183_POWER_DOMAIN_MFG_CORE1>,
+> +                               <&scpsys MT8183_POWER_DOMAIN_MFG_2D>;
+
+This needs to be documented too.
+
+> +
+> +                       operating-points-v2 = <&gpu_opp_table>;
+> +               };
+> +
+> +               gpu_opp_table: opp_table0 {
+> +                       compatible = "operating-points-v2";
+> +                       opp-shared;
+> +
+> +                       opp-300000000 {
+> +                               opp-hz = /bits/ 64 <300000000>;
+> +                               opp-microvolt = <625000>, <850000>;
+> +                       };
+> +
+> +                       opp-320000000 {
+> +                               opp-hz = /bits/ 64 <320000000>;
+> +                               opp-microvolt = <631250>, <850000>;
+> +                       };
+> +
+> +                       opp-340000000 {
+> +                               opp-hz = /bits/ 64 <340000000>;
+> +                               opp-microvolt = <637500>, <850000>;
+> +                       };
+> +
+> +                       opp-360000000 {
+> +                               opp-hz = /bits/ 64 <360000000>;
+> +                               opp-microvolt = <643750>, <850000>;
+> +                       };
+> +
+> +                       opp-380000000 {
+> +                               opp-hz = /bits/ 64 <380000000>;
+> +                               opp-microvolt = <650000>, <850000>;
+> +                       };
+> +
+> +                       opp-400000000 {
+> +                               opp-hz = /bits/ 64 <400000000>;
+> +                               opp-microvolt = <656250>, <850000>;
+> +                       };
+> +
+> +                       opp-420000000 {
+> +                               opp-hz = /bits/ 64 <420000000>;
+> +                               opp-microvolt = <662500>, <850000>;
+> +                       };
+> +
+> +                       opp-460000000 {
+> +                               opp-hz = /bits/ 64 <460000000>;
+> +                               opp-microvolt = <675000>, <850000>;
+> +                       };
+> +
+> +                       opp-500000000 {
+> +                               opp-hz = /bits/ 64 <500000000>;
+> +                               opp-microvolt = <687500>, <850000>;
+> +                       };
+> +
+> +                       opp-540000000 {
+> +                               opp-hz = /bits/ 64 <540000000>;
+> +                               opp-microvolt = <700000>, <850000>;
+> +                       };
+> +
+> +                       opp-580000000 {
+> +                               opp-hz = /bits/ 64 <580000000>;
+> +                               opp-microvolt = <712500>, <850000>;
+> +                       };
+> +
+> +                       opp-620000000 {
+> +                               opp-hz = /bits/ 64 <620000000>;
+> +                               opp-microvolt = <725000>, <850000>;
+> +                       };
+> +
+> +                       opp-653000000 {
+> +                               opp-hz = /bits/ 64 <653000000>;
+> +                               opp-microvolt = <743750>, <850000>;
+> +                       };
+> +
+> +                       opp-698000000 {
+> +                               opp-hz = /bits/ 64 <698000000>;
+> +                               opp-microvolt = <768750>, <868750>;
+> +                       };
+> +
+> +                       opp-743000000 {
+> +                               opp-hz = /bits/ 64 <743000000>;
+> +                               opp-microvolt = <793750>, <893750>;
+> +                       };
+> +
+> +                       opp-800000000 {
+> +                               opp-hz = /bits/ 64 <800000000>;
+> +                               opp-microvolt = <825000>, <925000>;
+> +                       };
+
+Okay, but I seriously doubt the OPP selection logic is sophisticated
+enough or will ever be to use all these levels...
+
+> +               };
+> +
+>                 mmsys: syscon@14000000 {
+>                         compatible = "mediatek,mt8183-mmsys", "syscon";
+>                         reg = <0 0x14000000 0 0x1000>;
+> --
+> 2.23.0.187.g17f5b7556c-goog
+>
