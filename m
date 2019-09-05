@@ -2,101 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D76AA5A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02FBBAA5AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388286AbfIEOUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 10:20:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47510 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725290AbfIEOUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 10:20:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A5554AF92;
-        Thu,  5 Sep 2019 14:20:11 +0000 (UTC)
-Date:   Thu, 5 Sep 2019 16:20:10 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Tim Murray <timmurray@google.com>,
-        carmenjackson@google.com, mayankgupta@google.com,
-        dancol@google.com, rostedt@goodmis.org, minchan@kernel.org,
-        akpm@linux-foundation.org, kernel-team@android.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jerome Glisse <jglisse@redhat.com>, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v2] mm: emit tracepoint when RSS changes by threshold
-Message-ID: <20190905142010.GC3838@dhcp22.suse.cz>
-References: <20190903200905.198642-1-joel@joelfernandes.org>
- <20190904084508.GL3838@dhcp22.suse.cz>
- <20190904153258.GH240514@google.com>
- <20190904153759.GC3838@dhcp22.suse.cz>
- <20190904162808.GO240514@google.com>
- <20190905105424.GG3838@dhcp22.suse.cz>
- <20190905141452.GA26466@google.com>
+        id S2388300AbfIEOW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 10:22:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49186 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725290AbfIEOW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 10:22:56 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E825C206A5;
+        Thu,  5 Sep 2019 14:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567693376;
+        bh=Y49Pw93Kmg/6UZTb9gRSuwQkNuuRJuxwKt59AgHDvnY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iQjp9uB35mLrCL1slK8xqZAF7vrVPh7ARF93psDG/8IsVX/ikoMRD2ElVCOaoc7jX
+         +YxLAAasHaDsg+bcjtOuV0NmezKPcIIOh//Q+Utxd/iBn7hMX172TLRm24+zbCk/Q/
+         OTLxwQMYEU2ZJ+hyX/GmYBEp+JDD728PaqL8fWhg=
+Subject: Re: [PATCH 4.4 00/77] 4.4.191-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190904175303.317468926@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <6320937d-1730-39f3-2af4-447e04079739@kernel.org>
+Date:   Thu, 5 Sep 2019 08:22:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190905141452.GA26466@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190904175303.317468926@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 05-09-19 10:14:52, Joel Fernandes wrote:
-> On Thu, Sep 05, 2019 at 12:54:24PM +0200, Michal Hocko wrote:
-> > On Wed 04-09-19 12:28:08, Joel Fernandes wrote:
-> > > On Wed, Sep 4, 2019 at 11:38 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > > >
-> > > > On Wed 04-09-19 11:32:58, Joel Fernandes wrote:
-> > > > > On Wed, Sep 04, 2019 at 10:45:08AM +0200, Michal Hocko wrote:
-> > > > > > On Tue 03-09-19 16:09:05, Joel Fernandes (Google) wrote:
-> > > > > > > Useful to track how RSS is changing per TGID to detect spikes in RSS and
-> > > > > > > memory hogs. Several Android teams have been using this patch in various
-> > > > > > > kernel trees for half a year now. Many reported to me it is really
-> > > > > > > useful so I'm posting it upstream.
-> > > > > > >
-> > > > > > > Initial patch developed by Tim Murray. Changes I made from original patch:
-> > > > > > > o Prevent any additional space consumed by mm_struct.
-> > > > > > > o Keep overhead low by checking if tracing is enabled.
-> > > > > > > o Add some noise reduction and lower overhead by emitting only on
-> > > > > > >   threshold changes.
-> > > > > >
-> > > > > > Does this have any pre-requisite? I do not see trace_rss_stat_enabled in
-> > > > > > the Linus tree (nor in linux-next).
-> > > > >
-> > > > > No, this is generated automatically by the tracepoint infrastructure when a
-> > > > > tracepoint is added.
-> > > >
-> > > > OK, I was not aware of that.
-> > > >
-> > > > > > Besides that why do we need batching in the first place. Does this have a
-> > > > > > measurable overhead? How does it differ from any other tracepoints that we
-> > > > > > have in other hotpaths (e.g.  page allocator doesn't do any checks).
-> > > > >
-> > > > > We do need batching not only for overhead reduction,
-> > > >
-> > > > What is the overhead?
-> > > 
-> > > The overhead is occasionally higher without the threshold (that is if we
-> > > trace every counter change). I would classify performance benefit to be
-> > > almost the same and within the noise.
-> > 
-> > OK, so the additional code is not really justified.
+On 9/4/19 11:52 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.191 release.
+> There are 77 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> It is really justified. Did you read the whole of the last email?
+> Responses should be made by Fri 06 Sep 2019 05:50:23 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.191-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Of course I have. The information that numbers are in noise with some
-outliers (without any details about the underlying reason) is simply
-showing that you are optimizing something probably not worth it.
+Compiled and booted on my test system. No dmesg regressions.
 
-I would recommend adding a simple tracepoint. That should be pretty non
-controversial. And if you want to add an optimization on top then
-provide data to justify it.
--- 
-Michal Hocko
-SUSE Labs
+thanks,
+-- Shuah
+
