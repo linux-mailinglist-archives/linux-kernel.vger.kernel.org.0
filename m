@@ -2,106 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C41A9873
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 04:39:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD452A986B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 04:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730914AbfIECiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 22:38:54 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:53172 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727162AbfIECiy (ORCPT
+        id S1730836AbfIECid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 22:38:33 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:39694 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728008AbfIECic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 22:38:54 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x852cXBX027863, This message is accepted by code: ctloc85258
-Received: from RS-CAS02.realsil.com.cn (doc.realsil.com.cn[172.29.17.3](maybeforged))
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x852cXBX027863
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 5 Sep 2019 10:38:39 +0800
-Received: from laptop-alex (172.29.36.155) by RS-CAS02.realsil.com.cn
- (172.29.17.3) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 5 Sep 2019
- 10:36:48 +0800
-Date:   Thu, 5 Sep 2019 10:36:31 +0800
-From:   Alex Lu <alex_lu@realsil.com.cn>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     Johan Hedberg <johan.hedberg@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Max Chou <max.chou@realtek.com>
-Subject: [PATCH v2] Bluetooth: btusb: Use cmd_timeout to reset Realtek device
-Message-ID: <20190905023631.GA29398@laptop-alex>
+        Wed, 4 Sep 2019 22:38:32 -0400
+X-UUID: 85662b706e4842e9829949980f2aa41f-20190905
+X-UUID: 85662b706e4842e9829949980f2aa41f-20190905
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1277019290; Thu, 05 Sep 2019 10:38:24 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS33N1.mediatek.inc (172.27.4.75) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 5 Sep 2019 10:38:19 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 5 Sep 2019 10:38:19 +0800
+Message-ID: <1567651100.13330.1.camel@mtksdaap41>
+Subject: Re: [PATCH v6 0/3] Support mipitx for mt8183
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Jitao Shi <jitao.shi@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Thierry Reding" <treding@nvidia.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        "Inki Dae" <inki.dae@samsung.com>,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        "Sean Paul" <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        "Andy Yan" <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
+        <stonea168@163.com>
+Date:   Thu, 5 Sep 2019 10:38:20 +0800
+In-Reply-To: <20190807084645.63738-1-jitao.shi@mediatek.com>
+References: <20190807084645.63738-1-jitao.shi@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [172.29.36.155]
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 6FC0B6C8ACCBF84F2E1844C1B7B45B0403D54D0812C4D28F17CDBF053DE0F48D2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Lu <alex_lu@realsil.com.cn>
+Hi, Jitao:
 
-Realtek Bluetooth controller provides a BT_DIS reset pin for hardware
-reset of it. The cmd_timeout is helpful on Realtek bluetooth controller
-where the firmware gets stuck.
+For this series, applied to mediatek-drm-next-5.5 [1], thanks.
 
-Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
----
-Changes in v2
-  - Provide a dedicated btusb_rtl_cmd_timeout in case of Realtek hardware
+[1]
+https://github.com/ckhu-mediatek/linux.git-tags/commits/mediatek-drm-next-5.5
 
- drivers/bluetooth/btusb.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Regards,
+CK
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 31d3febed187..4ac012df5666 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -524,6 +524,36 @@ static void btusb_intel_cmd_timeout(struct hci_dev *hdev)
- 	gpiod_set_value_cansleep(reset_gpio, 0);
- }
- 
-+static void btusb_rtl_cmd_timeout(struct hci_dev *hdev)
-+{
-+	struct btusb_data *data = hci_get_drvdata(hdev);
-+	struct gpio_desc *reset_gpio = data->reset_gpio;
-+
-+	if (++data->cmd_timeout_cnt < 5)
-+		return;
-+
-+	if (!reset_gpio) {
-+		bt_dev_err(hdev, "No gpio to reset Realtek device, ignoring");
-+		return;
-+	}
-+
-+	/*
-+	 * Toggle the hard reset line. The Realtek device is going to yank
-+	 * itself off the USB and then replug. The cleanup is handled correctly
-+	 * on the way out(standard USB disconnect), and the new device is
-+	 * detected cleanly and bound to the driver again like it should be.
-+	 */
-+	if (test_and_set_bit(BTUSB_HW_RESET_ACTIVE, &data->flags)) {
-+		bt_dev_err(hdev, "last reset failed? Not resetting again");
-+		return;
-+	}
-+
-+	bt_dev_err(hdev, "Reset Realtek device via gpio");
-+	gpiod_set_value_cansleep(reset_gpio, 0);
-+	msleep(200);
-+	gpiod_set_value_cansleep(reset_gpio, 1);
-+}
-+
- static inline void btusb_free_frags(struct btusb_data *data)
- {
- 	unsigned long flags;
-@@ -3783,6 +3813,7 @@ static int btusb_probe(struct usb_interface *intf,
- 	if (id->driver_info & BTUSB_REALTEK) {
- 		hdev->setup = btrtl_setup_realtek;
- 		hdev->shutdown = btrtl_shutdown_realtek;
-+		hdev->cmd_timeout = btusb_rtl_cmd_timeout;
- 
- 		/* Realtek devices lose their updated firmware over global
- 		 * suspend that means host doesn't send SET_FEATURE
--- 
-2.21.0
+On Wed, 2019-08-07 at 16:46 +0800, Jitao Shi wrote:
+> Change since v5:
+>  - remove mipi_tx->ref_clk
+>  - remove mt8183 pll prepare unprepare
+> 
+> Change since v4:
+>  - fine tune the mipi_tx->ref_clk and mipi_tx->pll sequence
+>    1. Prepare mipi_tx->ref_clk
+>    2. Prepare mipi_tx->pll
+>    3. Enable mipi_tx->ref_clk
+>    4. Enable mipi_tx->pll
+> 
+> Changes since v3:
+>  - turn off PLL before setting PLL parameters.
+> 
+> Changes since v2:
+>  - update Acked-by: Rob Herring <robh@kernel.org>
+>  - update mt8183 max bit rate support
+> 
+> Changes since v1:
+>  - update dt-bindings document for mt8183 mipitx.
+>  - remove mtk_mipitx_clk_get_ops and assign clk_ops in probe.
+>  - fix the lincence
+>  - remove txdiv1 from mtk_mipi_tx_pll_prepare
+> 
+> Jitao Shi (3):
+>   dt-bindings: display: mediatek: update dsi supported chips
+>   drm/mediatek: separate mipi_tx to different file
+>   drm/mediatek: add mipi_tx driver for mt8183
+> 
+>  .../display/mediatek/mediatek,dsi.txt         |   4 +-
+>  drivers/gpu/drm/mediatek/Makefile             |   2 +
+>  drivers/gpu/drm/mediatek/mtk_mipi_tx.c        | 338 ++----------------
+>  drivers/gpu/drm/mediatek/mtk_mipi_tx.h        |  49 +++
+>  drivers/gpu/drm/mediatek/mtk_mt8173_mipi_tx.c | 289 +++++++++++++++
+>  drivers/gpu/drm/mediatek/mtk_mt8183_mipi_tx.c | 150 ++++++++
+>  6 files changed, 515 insertions(+), 317 deletions(-)
+>  create mode 100644 drivers/gpu/drm/mediatek/mtk_mipi_tx.h
+>  create mode 100644 drivers/gpu/drm/mediatek/mtk_mt8173_mipi_tx.c
+>  create mode 100644 drivers/gpu/drm/mediatek/mtk_mt8183_mipi_tx.c
+> 
+
 
