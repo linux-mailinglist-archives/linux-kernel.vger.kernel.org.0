@@ -2,119 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 642DCAA8FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:29:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 207C5AA90D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733254AbfIEQ3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:29:37 -0400
-Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:43220 "EHLO
-        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730777AbfIEQ3g (ORCPT
+        id S2388207AbfIEQdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:33:23 -0400
+Received: from forward100p.mail.yandex.net ([77.88.28.100]:41664 "EHLO
+        forward100p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387514AbfIEQdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:29:36 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 352D23FBBA;
-        Thu,  5 Sep 2019 18:29:29 +0200 (CEST)
-Authentication-Results: pio-pvt-msa3.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=GLdXXnhL;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id GkcQmJL962Gx; Thu,  5 Sep 2019 18:29:28 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 99AC53FA34;
-        Thu,  5 Sep 2019 18:29:26 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 25A64360160;
-        Thu,  5 Sep 2019 18:29:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1567700966; bh=pG0TnA/QjvfGPWD0SGrgVkNWASVfS3us4YRoLbkZweY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GLdXXnhLdXo93d/AM7fRLLrTjXj3fu7aaTaeuCI4iZREMNJ+ZsgPjdeS+6AT+ixkt
-         q/8CIqkJRBuS6OlPPSCqjgoZkgt4cCoaKZDdmjMMVfXUudhhI2HDTmuR+MtVxeJuXc
-         lD1eDeynjNfo15bMPuyzhaC240h/m3KKT/sg0wcc=
-Subject: Re: [RFC PATCH 1/2] x86: Don't let pgprot_modify() change the page
- encryption bit
-To:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, pv-drivers@vmware.com
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "Shutemov, Kirill" <kirill.shutemov@intel.com>
-References: <20190905103541.4161-1-thomas_os@shipmail.org>
- <20190905103541.4161-2-thomas_os@shipmail.org>
- <608bbec6-448e-f9d5-b29a-1984225eb078@intel.com>
- <b84d1dca-4542-a491-e585-a96c9d178466@shipmail.org>
- <1badd275-91aa-45a6-0a89-ded65c7c3829@intel.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <1ceb9abc-7a11-eaa1-b286-11647211e2fc@shipmail.org>
-Date:   Thu, 5 Sep 2019 18:29:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <1badd275-91aa-45a6-0a89-ded65c7c3829@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 5 Sep 2019 12:33:22 -0400
+X-Greylist: delayed 408 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Sep 2019 12:33:20 EDT
+Received: from mxback15g.mail.yandex.net (mxback15g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:94])
+        by forward100p.mail.yandex.net (Yandex) with ESMTP id 080B0598193A;
+        Thu,  5 Sep 2019 19:26:31 +0300 (MSK)
+Received: from smtp1j.mail.yandex.net (smtp1j.mail.yandex.net [2a02:6b8:0:801::ab])
+        by mxback15g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 1DG2Bauavx-QUN8eCZb;
+        Thu, 05 Sep 2019 19:26:30 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cloudbear.ru; s=mail; t=1567700791;
+        bh=fAmjxskCyCm86n6Sp07wqD96KSRVJRrJH7sQMnmMMPI=;
+        h=Subject:To:From:Cc:Date:Message-Id;
+        b=ZRCto/nkTmO5vzLjka2QulQGcaaoGR1Bopxh+htlFipa7MYGFywO62yfYktZKhGYZ
+         AtTfl+iEJ/hZp95XddAomWyV48+ssBjFKEFlHhUiulpdzOm0eRynEmd/VNsvEu2euM
+         aey97L94eb7iNT8BzExmGfH+dLFxH3eeYiYY4WjI=
+Authentication-Results: mxback15g.mail.yandex.net; dkim=pass header.i=@cloudbear.ru
+Received: by smtp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id ymy8epsrG0-QTQqYZb0;
+        Thu, 05 Sep 2019 19:26:29 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (Client certificate not present)
+From:   Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>
+To:     davem@davemloft.net, robh+dt@kernel.org, f.fainelli@gmail.com
+Cc:     Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Trent Piepho <tpiepho@impinj.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] net: phy: dp83867: Add SGMII mode type switching
+Date:   Thu,  5 Sep 2019 19:25:59 +0300
+Message-Id: <1567700761-14195-1-git-send-email-vitaly.gaiduk@cloudbear.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/5/19 5:59 PM, Dave Hansen wrote:
-> On 9/5/19 8:21 AM, Thomas Hellström (VMware) wrote:
->>>>    #define pgprot_modify pgprot_modify
->>>>    static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t
->>>> newprot)
->>>>    {
->>>> -    pgprotval_t preservebits = pgprot_val(oldprot) & _PAGE_CHG_MASK;
->>>> -    pgprotval_t addbits = pgprot_val(newprot);
->>>> +    pgprotval_t preservebits = pgprot_val(oldprot) &
->>>> +        (_PAGE_CHG_MASK | sme_me_mask);
->>>> +    pgprotval_t addbits = pgprot_val(newprot) & ~sme_me_mask;
->>>>        return __pgprot(preservebits | addbits);
->>>>    }
->>> _PAGE_CHG_MASK is claiming similar functionality about preserving bits
->>> when changing PTEs:
-> ...
->>>> #define _PAGE_CHG_MASK  (PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT
->>>> |         \
->>>>                            _PAGE_SPECIAL | _PAGE_ACCESSED |
->>>> _PAGE_DIRTY | \
->>>>                            _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
->>> This makes me wonder if we should be including sme_me_mask in
->>> _PAGE_CHG_MASK (logically).
->> I was thinking the same. But what confuses me is that addbits isn't
->> masked with ~_PAGE_CHG_MASK, which is needed for sme_me_mask, since the
->> problem otherwise is typically that the encryption bit is incorrectly
->> set in addbits. I wonder whether it's an optimization or intentional.
-> I think there's a built-in assumption that 'newprot' won't have any of
-> the _PAGE_CHG_MASK bits set.  That makes sense because there are no
-> protection bits in the mask.  But, the code certainly doesn't enforce that.
->
-> Are you seeing 'sme_me_mask' bits set in 'newprot'?
+This patch adds ability to switch beetween two PHY SGMII modes.
+Some hardware, for example, FPGA IP designs may use 6-wire mode
+which enables differential SGMII clock to MAC.
 
-Yes. AFAIK it's only one bit, and typically always set.
+Signed-off-by: Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>
+---
+ drivers/net/phy/dp83867.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-/Thomas
-
+diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
+index 1f1ecee0ee2f..3efb33e7523f 100644
+--- a/drivers/net/phy/dp83867.c
++++ b/drivers/net/phy/dp83867.c
+@@ -37,6 +37,7 @@
+ #define DP83867_STRAP_STS2	0x006f
+ #define DP83867_RGMIIDCTL	0x0086
+ #define DP83867_IO_MUX_CFG	0x0170
++#define DP83867_SGMIICTL	0x00D3
+ #define DP83867_10M_SGMII_CFG   0x016F
+ #define DP83867_10M_SGMII_RATE_ADAPT_MASK BIT(7)
+ 
+@@ -61,6 +62,9 @@
+ #define DP83867_RGMII_TX_CLK_DELAY_EN		BIT(1)
+ #define DP83867_RGMII_RX_CLK_DELAY_EN		BIT(0)
+ 
++/* SGMIICTL bits */
++#define DP83867_SGMII_TYPE		BIT(14)
++
+ /* STRAP_STS1 bits */
+ #define DP83867_STRAP_STS1_RESERVED		BIT(11)
+ 
+@@ -109,6 +113,7 @@ struct dp83867_private {
+ 	bool rxctrl_strap_quirk;
+ 	bool set_clk_output;
+ 	u32 clk_output_sel;
++	bool sgmii_type;
+ };
+ 
+ static int dp83867_ack_interrupt(struct phy_device *phydev)
+@@ -197,6 +202,8 @@ static int dp83867_of_init(struct phy_device *phydev)
+ 	dp83867->rxctrl_strap_quirk = of_property_read_bool(of_node,
+ 					"ti,dp83867-rxctrl-strap-quirk");
+ 
++	dp83867->sgmii_type = of_property_read_bool(of_node, "ti,sgmii-type");
++
+ 	/* Existing behavior was to use default pin strapping delay in rgmii
+ 	 * mode, but rgmii should have meant no delay.  Warn existing users.
+ 	 */
+@@ -389,6 +396,14 @@ static int dp83867_config_init(struct phy_device *phydev)
+ 
+ 		if (ret)
+ 			return ret;
++
++		/* SGMII type is set to 4-wire mode by default */
++		if (dp83867->sgmii_type) {
++			/* Switch-on 6-wire mode */
++			val = phy_read_mmd(phydev, DP83867_DEVADDR, DP83867_SGMIICTL);
++			val |= DP83867_SGMII_TYPE;
++			phy_write_mmd(phydev, DP83867_DEVADDR, DP83867_SGMIICTL, val);
++		}
+ 	}
+ 
+ 	/* Enable Interrupt output INT_OE in CFG3 register */
+-- 
+2.16.4
 
