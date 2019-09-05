@@ -2,298 +2,291 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74139AA45E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB19AA461
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:26:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389721AbfIENZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 09:25:59 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40954 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730867AbfIENZ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 09:25:57 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w13so2780322wru.7
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 06:25:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=brUjqazn51qZQWutIoNO/3rb/5jGGfXs+roM1dmtD1k=;
-        b=HXTbbiGCJluWX4cgKUBh5bchn4pBXK5q/iaDi2+jv+AaMRREp5q2MTM4wRGR5TaFoh
-         pApd9gggbNaj0webPt9nulwSHCWuekbSRD++kcmevMO3iJAC2ec6nFmISw+MgXeptZPp
-         e9w28JP+C2K1CtAY3wqMWgf+i5GJz1etpkOLJeqbKM+HMxTzHBiuziYe4pVGbZLPhPMF
-         TxPVq9dsGwhYnroCWNbC7taS0Ac6Hsq4KJZ0bHbTBdWFCQyisEgXfaLXXwiyP+/L17v3
-         EgGmuhaly072jMIN8FGmQmfQot422g/suQiMSrjEkfNznL9+mBkal3V0kvDXn/JWYkPu
-         RHhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=brUjqazn51qZQWutIoNO/3rb/5jGGfXs+roM1dmtD1k=;
-        b=ljRHsOzaKf3h4U2eRczNuCbrNuhi/wHrpW/pmKprPrxK1RfBi7QLlFNoN53wjIzoMz
-         Ze6rkvvHwMiBIf8Avr+zsYQRgSZT2+7BzjLf0gScrl4ZZkZraTaHCNwnXFqkB/SwPEgR
-         2SxksILsk61tI8MPLikcdWYIUv9v4mJzaJe6L7d1BgTlfbOK57Lq4xfMS0bGYeYJqaS/
-         4Z25HTJW4FTlCs5VyA6wZRRJZfCGYJaCYutG50OizTLLH3NY9XdUfMlmDAgaE/M+gJDM
-         POTJYq4r4O0DMukxh5ZDNwFmX8uNdOotAcZCBHEI06z/bpSbHEngJvV1Ey/Iujeuf/63
-         gVLQ==
-X-Gm-Message-State: APjAAAUouohE4f0CT/wdYlG++aPpHTIs1RXM/AJh1PpKBMvtbDL/rPBa
-        NgdHMA3sR1X0FkTQaHVM8Q==
-X-Google-Smtp-Source: APXvYqxY8/kQPgBY1y0SolEYWneeQoRUS6BlHqUQk33hm3ggdDAbJmvDuKf8SHNlBUprbitwkPCoDg==
-X-Received: by 2002:adf:e607:: with SMTP id p7mr2832973wrm.230.1567689954365;
-        Thu, 05 Sep 2019 06:25:54 -0700 (PDT)
-Received: from buster-jangle.bmw-carit.intra ([212.118.206.70])
-        by smtp.gmail.com with ESMTPSA id y3sm8652635wmg.2.2019.09.05.06.25.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 06:25:53 -0700 (PDT)
-From:   Viktor Rosendahl <viktor.rosendahl@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Viktor Rosendahl <viktor.rosendahl@gmail.com>
-Subject: [PATCH v6 2/4] preemptirq_delay_test: Add the burst feature and a sysfs trigger
-Date:   Thu,  5 Sep 2019 15:25:46 +0200
-Message-Id: <20190905132548.5116-3-viktor.rosendahl@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190905132548.5116-1-viktor.rosendahl@gmail.com>
-References: <20190905132548.5116-1-viktor.rosendahl@gmail.com>
+        id S2389773AbfIEN0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 09:26:12 -0400
+Received: from mout.gmx.net ([212.227.15.18]:35181 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388929AbfIEN0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 09:26:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1567689950;
+        bh=8y/7Rn2Q/sCZoUWIjkr8JSlJhz1QlFmMJmiEmNtcNBA=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=AIX+GgyXFKEN47Ebrgb0vMJm9aSIdt4XxD618BUFZnFs1GYhCQdcMJemNUQhtQx/l
+         6CWtzU9FobmpsZJrW2fGEcTyqMLU1bc+VEaHxCsSZs2xnvJqT09YkRgUyrWEFPJCXw
+         0lPgnrInBjREcSY0aWr5gFJT6MaBf6P+2lvt3hHQ=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.123.51] ([84.118.159.3]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MF5FT-1hvBjC2uct-00GJ6A; Thu, 05
+ Sep 2019 15:25:49 +0200
+Subject: Re: [PATCH 1/1] KVM: inject data abort if instruction cannot be
+ decoded
+To:     Christoffer Dall <christoffer.dall@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        =?UTF-8?Q?Daniel_P=2e_Berrang=c3=a9?= <berrange@redhat.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        kvmarm@lists.cs.columbia.edu,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>
+References: <20190904180736.29009-1-xypron.glpk@gmx.de>
+ <86r24vrwyh.wl-maz@kernel.org>
+ <CAFEAcA-mc6cLmRGdGNOBR0PC1f_VBjvTdAL6xYtKjApx3NoPgQ@mail.gmail.com>
+ <86mufjrup7.wl-maz@kernel.org>
+ <CAFEAcA9qkqkOTqSVrhTpt-NkZSNXomSBNiWo_D6Kr=QKYRRf=w@mail.gmail.com>
+ <20190905092223.GC4320@e113682-lin.lund.arm.com>
+From:   Heinrich Schuchardt <xypron.glpk@gmx.de>
+Message-ID: <27e7edd6-1c4f-c970-3395-ecb4f176f858@gmx.de>
+Date:   Thu, 5 Sep 2019 15:25:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190905092223.GC4320@e113682-lin.lund.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zdxGmKFENsBA+qE6S4APrpcJ37s9l/AODdwSdsCBQ9kboQpLqPT
+ BM52n5AtD/uxnPFURdkUkgsOXcE5kpRanuMFQp54daLQ4DVpq9WlcXGeuC4u1/Xpy2DFbj3
+ /E/P3imzBPtMgBPFkxYtFtBDRvxgHwV07c/7O/RMiiyWqWWKcX2AZJDJVHREUcidGzPNuXi
+ BhhwwgoO4i7QDMncjWa8g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6kHwODvgLlQ=:JlCFpXwOrc10MEosM8vhnE
+ kH1aHggSn/LP39B71F2FFfuXZgHqEQvC4RT+BRn1By7IrDIoWpRWnp1vMDlK9ZPM9YNJpj/ws
+ fyu6CWAaoCf74OydqU2OFYojJzGmeBjipLaKzFb7cMS+WjsC/W0dHUZ/IkUSjJnfqfudZSv0O
+ dToyNGjbwW4G04Y1Ew1ht82Mc4eNI5alYguUhWWrZJ1PEevbdnEqHglAjrNHE3Vg4fFfffFux
+ nzZJ5/bA3hAMov6Rslb1xmRm7/iz/7tfI6MuW54JW5zG0+GpnfGclglAKds7VJG5O83oibC8y
+ g5tcVW1cJjBuo7p/okdJ3GFGXJtxQd1RYzuLb3h6a1dbyWK0CfLuz9avDIXHQGz7mekeGwr1u
+ buMQm8wNUBvZrJ3WL7azroCbKYCXZr+PTH+OvbBT2EjnhrTXUvuLK/z2e7cM9TyLp19W8HuII
+ l1w95mgX2lOkibMKPmXjrILuBDqzHfJaLdyUo3Ye3IWjfh0DT/wO49MwtrVzbVRoHDL1HFm3Q
+ ryvqlSybAzMnEfl1RBWO3gwbizkEiCy5hJHl2laElR0yecTj5y+4Dhxsq8juo1PPEYTjKWBgw
+ p+VotYPyMlyAAz9X5vLfoP9sVldQ+Ge3rrnV1qrxGq5j3I/E1lbN+QVJHX8Rn9jmhOwMteRiN
+ LMWfOJv6WuNRNRHJe7WPRq1S4KBfMMFV7G5XwKOVCqjK/oN8Y9Te0jscQcnH662z7/wZ9RkOJ
+ HBQ1RgMhMxXPchorK/J4ziumywIhQgEfW9KHS2dl+JadGknfWGqLe9Zw1TfvMtHWhZEFwURrc
+ S38oIZGt+nIZDNtk3TInb9JdH8BEj47J5q0a8K5e0sXQryfwje0X04tI/SFzh6YVepdXfwj7F
+ ozGP4vHxEi4+wjVpPSzrMsnmckM2IJ08qGuGAiSCJxZXibVNbuwqDNYP3WkDka/+bwCbp8+sx
+ IssWWBPCfejQFhIfAPH0+GiyCz/VB2pRPfG18kt8kRMHpahe2513K+2ltvMoHXAkCr9HFzOmF
+ PNEJpJPt+IiSVsXRSFzG24NfcijR5w0MDuWUbke5eJG7+dy0aRvrKUcmBooxcYFK7XBhJtquF
+ 9je0hNAZv6PS1xClM01WALp1nBV2PO5MkEaYasNC5YQ4/V4luLC+DGo5Sr3FLB5EEjTDeGXVU
+ OYF+PyBm769KvTsyyM0Qgk7Grre9IFuU+RivmknUYxZZMDXpFUnPcr4a2hNrUOJprJ/XiNbNU
+ AeJcjNssAc0L4x6X+
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This burst feature enables the user to generate a burst of
-preempt/irqsoff latencies. This makes it possible to test whether we
-are able to detect latencies that systematically occur very close to
-each other.
+On 9/5/19 11:22 AM, Christoffer Dall wrote:
+> On Thu, Sep 05, 2019 at 09:56:44AM +0100, Peter Maydell wrote:
+>> On Thu, 5 Sep 2019 at 09:52, Marc Zyngier <maz@kernel.org> wrote:
+>>>
+>>> On Thu, 05 Sep 2019 09:16:54 +0100,
+>>> Peter Maydell <peter.maydell@linaro.org> wrote:
+>>>> This is true, but the problem is that barfing out to userspace
+>>>> makes it harder to debug the guest because it means that
+>>>> the VM is immediately destroyed, whereas AIUI if we
+>>>> inject some kind of exception then (assuming you're set up
+>>>> to do kernel-debug via gdbstub) you can actually examine
+>>>> the offending guest code with a debugger because at least
+>>>> your VM is still around to inspect...
+>>>
+>>> To Christoffer's point, I find the benefit a bit dubious. Yes, you get
+>>> an exception, but the instruction that caused it may be completely
+>>> legal (store with post-increment, for example), leading to an even
+>>> more puzzled developer (that exception should never have been
+>>> delivered the first place).
+>>
+>> Right, but the combination of "host kernel prints a message
+>> about an unsupported load/store insn" and "within-guest debug
+>> dump/stack trace/etc" is much more useful than just having
+>> "host kernel prints message" and "QEMU exits"; and it requires
+>> about 3 lines of code change...
+>>
+>>> I'm far more in favour of dumping the state of the access in the run
+>>> structure (much like we do for a MMIO access) and let userspace do
+>>> something about it (such as dumping information on the console or
+>>> breaking). It could even inject an exception *if* the user has asked
+>>> for it.
+>>
+>> ...whereas this requires agreement on a kernel-userspace API,
+>> larger changes in the kernel, somebody to implement the userspace
+>> side of things, and the user to update both the kernel and QEMU.
+>> It's hard for me to see that the benefit here over the 3-line
+>> approach really outweighs the extra effort needed. In practice
+>> saying "we should do this" is saying "we're going to do nothing",
+>> based on the historical record.
+>>
+>
+> How about something like the following (completely untested, liable for
+> ABI discussions etc. etc., but for illustration purposes).
+>
+> I think it raises the question (and likely many other) of whether we can
+> break the existing 'ABI' and change behavior for missing ISV
+> retrospectively for legacy user space when the issue has occurred?
+>
+> Someone might have written code that reacts to the -ENOSYS, so I've
+> taken the conservative approach for this for the time being.
+>
+>
+> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_=
+host.h
+> index 8a37c8e89777..19a92c49039c 100644
+> --- a/arch/arm/include/asm/kvm_host.h
+> +++ b/arch/arm/include/asm/kvm_host.h
+> @@ -76,6 +76,14 @@ struct kvm_arch {
+>
+>   	/* Mandated version of PSCI */
+>   	u32 psci_version;
+> +
+> +	/*
+> +	 * If we encounter a data abort without valid instruction syndrome
+> +	 * information, report this to user space.  User space can (and
+> +	 * should) opt in to this feature if KVM_CAP_ARM_NISV_TO_USER is
+> +	 * supported.
+> +	 */
+> +	bool return_nisv_io_abort_to_user;
+>   };
+>
+>   #define KVM_NR_MEM_OBJS     40
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/=
+kvm_host.h
+> index f656169db8c3..019bc560edc1 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -83,6 +83,14 @@ struct kvm_arch {
+>
+>   	/* Mandated version of PSCI */
+>   	u32 psci_version;
+> +
+> +	/*
+> +	 * If we encounter a data abort without valid instruction syndrome
+> +	 * information, report this to user space.  User space can (and
+> +	 * should) opt in to this feature if KVM_CAP_ARM_NISV_TO_USER is
+> +	 * supported.
+> +	 */
+> +	bool return_nisv_io_abort_to_user;
 
-The maximum burst size is 10. We also create 10 identical test
-functions, so that we get 10 different backtraces; this is useful
-when we want to test whether we can detect all the latencies in a
-burst. Otherwise, there would be no easy way of differentiating
-between which latency in a burst was captured by the tracer.
+How about 32bit ARM?
 
-In addition, there is a sysfs trigger, so that it's not necessary to
-reload the module to repeat the test. The trigger will appear as
-/sys/kernel/preemptirq_delay_test/trigger in sysfs.
+>   };
+>
+>   #define KVM_NR_MEM_OBJS     40
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 5e3f12d5359e..a4dd004d0db9 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -235,6 +235,7 @@ struct kvm_hyperv_exit {
+>   #define KVM_EXIT_S390_STSI        25
+>   #define KVM_EXIT_IOAPIC_EOI       26
+>   #define KVM_EXIT_HYPERV           27
+> +#define KVM_EXIT_ARM_NISV         28
+>
+>   /* For KVM_EXIT_INTERNAL_ERROR */
+>   /* Emulate instruction failed. */
+> @@ -996,6 +997,7 @@ struct kvm_ppc_resize_hpt {
+>   #define KVM_CAP_ARM_PTRAUTH_ADDRESS 171
+>   #define KVM_CAP_ARM_PTRAUTH_GENERIC 172
+>   #define KVM_CAP_PMU_EVENT_FILTER 173
+> +#define KVM_CAP_ARM_NISV_TO_USER 174
+>
+>   #ifdef KVM_CAP_IRQ_ROUTING
+>
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index 35a069815baf..2ce94bd9d4a9 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -98,6 +98,26 @@ int kvm_arch_check_processor_compat(void)
+>   	return 0;
+>   }
+>
+> +int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+> +			    struct kvm_enable_cap *cap)
 
-Signed-off-by: Viktor Rosendahl <viktor.rosendahl@gmail.com>
----
- kernel/trace/Kconfig                 |   6 +-
- kernel/trace/preemptirq_delay_test.c | 147 +++++++++++++++++++++++----
- 2 files changed, 131 insertions(+), 22 deletions(-)
+This overrides the weak implementation in virt/kvm/kvm_main.c. OK.
 
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 98da8998c25c..5ff573d844e4 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -751,9 +751,9 @@ config PREEMPTIRQ_DELAY_TEST
- 	  configurable delay. The module busy waits for the duration of the
- 	  critical section.
- 
--	  For example, the following invocation forces a one-time irq-disabled
--	  critical section for 500us:
--	  modprobe preemptirq_delay_test test_mode=irq delay=500000
-+	  For example, the following invocation generates a burst of three
-+	  irq-disabled critical sections for 500us:
-+	  modprobe preemptirq_delay_test test_mode=irq delay=500 burst_size=3
- 
- 	  If unsure, say N
- 
-diff --git a/kernel/trace/preemptirq_delay_test.c b/kernel/trace/preemptirq_delay_test.c
-index d8765c952fab..96bf6b4858bc 100644
---- a/kernel/trace/preemptirq_delay_test.c
-+++ b/kernel/trace/preemptirq_delay_test.c
-@@ -3,6 +3,9 @@
-  * Preempt / IRQ disable delay thread to test latency tracers
-  *
-  * Copyright (C) 2018 Joel Fernandes (Google) <joel@joelfernandes.org>
-+ * Copyright (C) 2018, 2019 BMW Car IT GmbH
-+ * Author: Viktor Rosendahl (viktor.rosendahl@bmw.de)
-+ * - Added the burst feature and the sysfs trigger
-  */
- 
- #include <linux/trace_clock.h>
-@@ -10,18 +13,25 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/kernel.h>
-+#include <linux/kobject.h>
- #include <linux/kthread.h>
- #include <linux/module.h>
- #include <linux/printk.h>
- #include <linux/string.h>
-+#include <linux/sysfs.h>
- 
- static ulong delay = 100;
--static char test_mode[10] = "irq";
-+static char test_mode[12] = "irq";
-+static uint burst_size = 1;
- 
--module_param_named(delay, delay, ulong, S_IRUGO);
--module_param_string(test_mode, test_mode, 10, S_IRUGO);
--MODULE_PARM_DESC(delay, "Period in microseconds (100 uS default)");
--MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt or irq (default irq)");
-+module_param_named(delay, delay, ulong, 0444);
-+module_param_string(test_mode, test_mode, 12, 0444);
-+module_param_named(burst_size, burst_size, uint, 0444);
-+MODULE_PARM_DESC(delay, "Period in microseconds (100 us default)");
-+MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt, irq, or alternate (default irq)");
-+MODULE_PARM_DESC(burst_size, "The size of a burst (default 1)");
-+
-+#define MIN(x, y) ((x) < (y) ? (x) : (y))
- 
- static void busy_wait(ulong time)
- {
-@@ -34,37 +44,136 @@ static void busy_wait(ulong time)
- 	} while ((end - start) < (time * 1000));
- }
- 
--static int preemptirq_delay_run(void *data)
-+static __always_inline void irqoff_test(void)
- {
- 	unsigned long flags;
-+	local_irq_save(flags);
-+	busy_wait(delay);
-+	local_irq_restore(flags);
-+}
- 
--	if (!strcmp(test_mode, "irq")) {
--		local_irq_save(flags);
--		busy_wait(delay);
--		local_irq_restore(flags);
--	} else if (!strcmp(test_mode, "preempt")) {
--		preempt_disable();
--		busy_wait(delay);
--		preempt_enable();
-+static __always_inline void preemptoff_test(void)
-+{
-+	preempt_disable();
-+	busy_wait(delay);
-+	preempt_enable();
-+}
-+
-+static void execute_preemptirqtest(int idx)
-+{
-+	if (!strcmp(test_mode, "irq"))
-+		irqoff_test();
-+	else if (!strcmp(test_mode, "preempt"))
-+		preemptoff_test();
-+	else if (!strcmp(test_mode, "alternate")) {
-+		if (idx % 2 == 0)
-+			irqoff_test();
-+		else
-+			preemptoff_test();
- 	}
-+}
-+
-+#define DECLARE_TESTFN(POSTFIX)				\
-+	static void preemptirqtest_##POSTFIX(int idx)	\
-+	{						\
-+		execute_preemptirqtest(idx);		\
-+	}						\
- 
-+/*
-+ * We create 10 different functions, so that we can get 10 different
-+ * backtraces.
-+ */
-+DECLARE_TESTFN(0)
-+DECLARE_TESTFN(1)
-+DECLARE_TESTFN(2)
-+DECLARE_TESTFN(3)
-+DECLARE_TESTFN(4)
-+DECLARE_TESTFN(5)
-+DECLARE_TESTFN(6)
-+DECLARE_TESTFN(7)
-+DECLARE_TESTFN(8)
-+DECLARE_TESTFN(9)
-+
-+static void (*testfuncs[])(int)  = {
-+	preemptirqtest_0,
-+	preemptirqtest_1,
-+	preemptirqtest_2,
-+	preemptirqtest_3,
-+	preemptirqtest_4,
-+	preemptirqtest_5,
-+	preemptirqtest_6,
-+	preemptirqtest_7,
-+	preemptirqtest_8,
-+	preemptirqtest_9,
-+};
-+
-+#define NR_TEST_FUNCS ARRAY_SIZE(testfuncs)
-+
-+static int preemptirq_delay_run(void *data)
-+{
-+	int i;
-+	int s = MIN(burst_size, NR_TEST_FUNCS);
-+
-+	for (i = 0; i < s; i++)
-+		(testfuncs[i])(i);
- 	return 0;
- }
- 
--static int __init preemptirq_delay_init(void)
-+static struct task_struct *preemptirq_start_test(void)
- {
- 	char task_name[50];
--	struct task_struct *test_task;
- 
- 	snprintf(task_name, sizeof(task_name), "%s_test", test_mode);
-+	return kthread_run(preemptirq_delay_run, NULL, task_name);
-+}
-+
-+
-+static ssize_t trigger_store(struct kobject *kobj, struct kobj_attribute *attr,
-+			 const char *buf, size_t count)
-+{
-+	preemptirq_start_test();
-+	return count;
-+}
-+
-+static struct kobj_attribute trigger_attribute =
-+	__ATTR(trigger, 0200, NULL, trigger_store);
-+
-+static struct attribute *attrs[] = {
-+	&trigger_attribute.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group attr_group = {
-+	.attrs = attrs,
-+};
-+
-+static struct kobject *preemptirq_delay_kobj;
-+
-+static int __init preemptirq_delay_init(void)
-+{
-+	struct task_struct *test_task;
-+	int retval;
-+
-+	test_task = preemptirq_start_test();
-+	retval = PTR_ERR_OR_ZERO(test_task);
-+	if (retval != 0)
-+		return retval;
-+
-+	preemptirq_delay_kobj = kobject_create_and_add("preemptirq_delay_test",
-+						       kernel_kobj);
-+	if (!preemptirq_delay_kobj)
-+		return -ENOMEM;
-+
-+	retval = sysfs_create_group(preemptirq_delay_kobj, &attr_group);
-+	if (retval)
-+		kobject_put(preemptirq_delay_kobj);
- 
--	test_task = kthread_run(preemptirq_delay_run, NULL, task_name);
--	return PTR_ERR_OR_ZERO(test_task);
-+	return retval;
- }
- 
- static void __exit preemptirq_delay_exit(void)
- {
--	return;
-+	kobject_put(preemptirq_delay_kobj);
- }
- 
- module_init(preemptirq_delay_init)
--- 
-2.17.1
+> +{
+> +	int r;
+> +
+> +	if (cap->flags)
+> +		return -EINVAL;
+> +
+> +	switch (cap->cap) {
+> +	case KVM_CAP_ARM_NISV_TO_USER:
+> +		r =3D 0;
+> +		kvm->arch.return_nisv_io_abort_to_user =3D true;
+> +		break;
+> +	default:
+> +		r =3D -EINVAL;
+> +		break;
+> +	}
+> +
+> +	return r;
+> +}
+>
+>   /**
+>    * kvm_arch_init_vm - initializes a VM data structure
+> @@ -196,6 +216,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, lo=
+ng ext)
+>   	case KVM_CAP_MP_STATE:
+>   	case KVM_CAP_IMMEDIATE_EXIT:
+>   	case KVM_CAP_VCPU_EVENTS:
+> +	case KVM_CAP_ARM_NISV_TO_USER:
+>   		r =3D 1;
+>   		break;
+>   	case KVM_CAP_ARM_SET_DEVICE_ADDR:
+> @@ -673,6 +694,8 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, s=
+truct kvm_run *run)
+>   		ret =3D kvm_handle_mmio_return(vcpu, vcpu->run);
+>   		if (ret)
+>   			return ret;
+> +	} else if (run->exit_reason =3D=3D KVM_EXIT_ARM_NISV) {
+> +		kvm_inject_undefined(vcpu);
+
+So QEMU can try to enable the feature via IOCTL. And here you would
+raise the 'undefined instruction' exception which QEMU will have to
+handle in the loop calling KVM either by trying to make sense of the
+instruction or by passing it on to the guest.
+
+Conceptually this looks good to me and meets the requirements of my
+application.
+
+Thanks a lot for your suggestion.
+
+Regards
+
+Heinrich
+
+>   	}
+>
+>   	if (run->immediate_exit)
+> diff --git a/virt/kvm/arm/mmio.c b/virt/kvm/arm/mmio.c
+> index 6af5c91337f2..62e6ef47a6de 100644
+> --- a/virt/kvm/arm/mmio.c
+> +++ b/virt/kvm/arm/mmio.c
+> @@ -167,8 +167,15 @@ int io_mem_abort(struct kvm_vcpu *vcpu, struct kvm_=
+run *run,
+>   		if (ret)
+>   			return ret;
+>   	} else {
+> -		kvm_err("load/store instruction decoding not implemented\n");
+> -		return -ENOSYS;
+> +		if (vcpu->kvm->arch.return_nisv_io_abort_to_user) {
+> +			run->exit_reason =3D KVM_EXIT_ARM_NISV;
+> +			run->mmio.phys_addr =3D fault_ipa;
+> +			vcpu->stat.mmio_exit_user++;
+> +			return 0;
+> +		} else {
+> +			kvm_info("encountered data abort without syndrome info\n");
+> +			return -ENOSYS;
+> +		}
+>   	}
+>
+>   	rt =3D vcpu->arch.mmio_decode.rt;
+>
+>
+> Thanks,
+>
+>      Christoffer
+>
 
