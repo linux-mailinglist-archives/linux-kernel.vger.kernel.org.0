@@ -2,110 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A79D9AA980
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1056AA986
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:00:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390858AbfIEQ7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:59:55 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49736 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728507AbfIEQ7y (ORCPT
+        id S2390884AbfIERAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 13:00:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49786 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733299AbfIERAu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:59:54 -0400
+        Thu, 5 Sep 2019 13:00:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=X5UwKiV0EAfKocHoGuK5g2l4qyHfAtt7HoIzvyAXWSA=; b=WtxX3fE0Uyw2f5b4XVSLt+wIz
-        qFCLxTnl56DKA5FNK2xcVKHI4eEMAN8z2unfeuhZrjlgrs+StxHpf6wqBuELm8DahSn+ZupIi1NKp
-        2gORG5YFv5PCJV+hXeRDCXH8oYJbrmpHqeRhMr24zrWV7vSNQpiljq901rCcOy6nfnO7w6vOie/2X
-        ICpBdn0nHpNr2EJtj2d8IAUe7BQKnjA4z1YkE1OopjohDVnG7P+m38U/EtkA4T9SlDYV8KhBbG/P8
-        ntAFx+2yxjumH6lYSssEfJH3iBXHJZ8uclIgxBHa/LzTzsNbgB6Bv/DLlfBoZA1O+8ViFIVPQfyrj
-        jH41PJwNQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40032)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1i5v6q-0003WW-0p; Thu, 05 Sep 2019 17:59:48 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1i5v6m-0005hy-3o; Thu, 05 Sep 2019 17:59:44 +0100
-Date:   Thu, 5 Sep 2019 17:59:44 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     stefanc@marvell.com
-Cc:     davem@davemloft.net, andrew@lunn.ch, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shaulb@marvell.com,
-        nadavh@marvell.com, ymarkman@marvell.com, marcin@marvell.com
-Subject: Re: [PATCH] net: phylink: Fix flow control resolution
-Message-ID: <20190905165943.GL13294@shell.armlinux.org.uk>
-References: <1567701978-16056-1-git-send-email-stefanc@marvell.com>
+         bh=RMR7yLB7eLVOGQ40Lw2gegmrpDn0f2yyxFNY+57x51Y=; b=OhQEtYy5rpuuDT9cChMUICtrE
+        V0tW7BD+A9HX+F/z9hBZQftsPGgvm/R5izgSEJ5VVldr9cr5p9E+7tESNq+lMRmSejsru2MBm8ut0
+        yXuPoNi1M9cL7+OeNlgKQa3w/+b5U2esN4wwxhLSiHfRzBf23qdvo7ilXoRjkGdoCuptI=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1i5v79-00055J-N9; Thu, 05 Sep 2019 17:00:07 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 3D7032742D07; Thu,  5 Sep 2019 18:00:06 +0100 (BST)
+Date:   Thu, 5 Sep 2019 18:00:06 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "shifu0704@thundersoft.com" <shifu0704@thundersoft.com>
+Cc:     lgirdwood <lgirdwood@gmail.com>, perex <perex@perex.cz>,
+        tiwai <tiwai@suse.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        alsa-devel <alsa-devel@alsa-project.org>,
+        Dan?Murphy <dmurphy@ti.com>,
+        "Navada Kanyana, Mukund" <navada@ti.com>
+Subject: Re: [PATCH]Add tas2770 driver code
+Message-ID: <20190905170006.GF4053@sirena.co.uk>
+References: <201909051335040840918@thundersoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="MZf7D3rAEoQgPanC"
 Content-Disposition: inline
-In-Reply-To: <1567701978-16056-1-git-send-email-stefanc@marvell.com>
+In-Reply-To: <201909051335040840918@thundersoft.com>
+X-Cookie: You humans are all alike.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 07:46:18PM +0300, stefanc@marvell.com wrote:
-> From: Stefan Chulski <stefanc@marvell.com>
-> 
-> Regarding to IEEE 802.3-2015 standard section 2
-> 28B.3 Priority resolution - Table 28-3 - Pause resolution
-> 
-> In case of Local device Pause=1 AsymDir=0, Link partner
-> Pause=1 AsymDir=1, Local device resolution should be enable PAUSE
-> transmit, disable PAUSE receive.
-> And in case of Local device Pause=1 AsymDir=1, Link partner
-> Pause=1 AsymDir=0, Local device resolution should be enable PAUSE
-> receive, disable PAUSE transmit.
-> 
-> Signed-off-by: Stefan Chulski <stefanc@marvell.com>
-> Reported-by: Shaul Ben-Mayor <shaulb@marvell.com>
 
-Good catch, thanks for the patch.
+--MZf7D3rAEoQgPanC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
-Fixes: 9525ae83959b ("phylink: add phylink infrastructure")
-
+On Thu, Sep 05, 2019 at 01:35:04PM +0800, shifu0704@thundersoft.com wrote:
+> From 5b539e7dbebebf7e58c38a6b54f222bc116d63f3 Mon Sep 17 00:00:00 2001
+> From: Shi Fu <shifu0704@thundersoft.com>
+> Date: Mon, 1 Jul 2019 11:00:13 +0800
+> Signed-off-by: Shi Fu <shifu0704@thundersoft.com>
+> Subject: [PATCH v5] dt: tas2770: Add tas2770 smart PA dt bindings.
+>=20
+> Add tas2770 smart PA dt bindings.
 > ---
->  drivers/net/phy/phylink.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-> index a45c5de..a5a57ca 100644
-> --- a/drivers/net/phy/phylink.c
-> +++ b/drivers/net/phy/phylink.c
-> @@ -376,8 +376,8 @@ static void phylink_get_fixed_state(struct phylink *pl, struct phylink_link_stat
->   *  Local device  Link partner
->   *  Pause AsymDir Pause AsymDir Result
->   *    1     X       1     X     TX+RX
-> - *    0     1       1     1     RX
-> - *    1     1       0     1     TX
-> + *    0     1       1     1     TX
-> + *    1     1       0     1     RX
->   */
->  static void phylink_resolve_flow(struct phylink *pl,
->  				 struct phylink_link_state *state)
-> @@ -398,7 +398,7 @@ static void phylink_resolve_flow(struct phylink *pl,
->  			new_pause = MLO_PAUSE_TX | MLO_PAUSE_RX;
->  		else if (pause & MLO_PAUSE_ASYM)
->  			new_pause = state->pause & MLO_PAUSE_SYM ?
-> -				 MLO_PAUSE_RX : MLO_PAUSE_TX;
-> +				 MLO_PAUSE_TX : MLO_PAUSE_RX;
->  	} else {
->  		new_pause = pl->link_config.pause & MLO_PAUSE_TXRX_MASK;
->  	}
-> -- 
-> 1.9.1
-> 
-> 
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+This looks like it's a whole patch series sent as a single mail, and
+there's some confusing with things like Signed-off-by and general
+formatting.  Please see submitting-patches.rst in the kernel source for
+how to send patches, it's worth taking a look at other posts on the list
+and trying to ensure that your mails look the same as them.  As things
+stand it's really hard to read this since whatever happened with the way
+this has been sent seems to have mangled the indention so it doesn't
+look like normal kernel code unfortunately.
+
+--MZf7D3rAEoQgPanC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1xPxUACgkQJNaLcl1U
+h9Auqwf9FZZMYjmrZdhmxYDfmduqhmJnimUlRbiugyYCzlakQ7QRyMF9tIfOOgtt
+RENe5mq1GM1/FQHJyCvbc8Ws4+98/6YIVqKuMoV4FtvOP9Tyfr2t33FgWWtfsy6u
+jbOYYpI8i4pTO9xaKSrovleO0se/6l8idMr71swiwLuzmByhS63/jBeiQNf1oTi+
+iC617tpwGRmTdPOppZXBvcBby+SOS6I9DkmhdHDhtjLQUHw/rE3umFxsL0hGwCDJ
+ePJIjWF7pQWvflzNTbD+lE/JdzqU0u9emaO4Lq9qC/uAJ3QXxRzlFnqJjnG2dC+T
+TBowIwKHWmZ5r26JpGhbWkVS2ZUicw==
+=K8ao
+-----END PGP SIGNATURE-----
+
+--MZf7D3rAEoQgPanC--
