@@ -2,71 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22341AA66A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E80AA650
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390045AbfIEOru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 10:47:50 -0400
-Received: from forward106p.mail.yandex.net ([77.88.28.109]:45269 "EHLO
-        forward106p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389773AbfIEOru (ORCPT
+        id S2389926AbfIEOrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 10:47:01 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39791 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389424AbfIEOrB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 10:47:50 -0400
-Received: from mxback23o.mail.yandex.net (mxback23o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::74])
-        by forward106p.mail.yandex.net (Yandex) with ESMTP id 99C801C811AA;
-        Thu,  5 Sep 2019 17:47:47 +0300 (MSK)
-Received: from smtp2o.mail.yandex.net (smtp2o.mail.yandex.net [2a02:6b8:0:1a2d::26])
-        by mxback23o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id A9CRhuXvjK-ll3GAu2K;
-        Thu, 05 Sep 2019 17:47:47 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1567694867;
-        bh=8aD9dO3AAn4axkTRS17W2/QjWZFlCar4FyR3QVxMvuY=;
-        h=In-Reply-To:Subject:To:From:Cc:References:Date:Message-Id;
-        b=IwNKxOS+GX0MbDQSkMUPJAL/M3ZSTQhKCQTZZpQ+5sm6OpXyuUWXYItXDtkab7aG1
-         bMcXLkEBMN9HjJ3Q0Q3WtQt9cM4Lz4ghNnHcQp/3/0tzzBrWemZFtJjDoUtX4Lib3L
-         70hbtDON22/ewUKLUuWIgVysQAkL/K8+ynycbMfM=
-Authentication-Results: mxback23o.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Received: by smtp2o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id zkoybIaMjG-lexWkLJH;
-        Thu, 05 Sep 2019 17:47:45 +0300
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client certificate not present)
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     linux-mips@vger.kernel.org
-Cc:     chenhc@lemote.com, paul.burton@mips.com, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.co,
-        devicetree@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH v2 19/19] MAINTAINERS: Add myself as maintainer of LOONGSON64
-Date:   Thu,  5 Sep 2019 22:43:16 +0800
-Message-Id: <20190905144316.12527-20-jiaxun.yang@flygoat.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190905144316.12527-1-jiaxun.yang@flygoat.com>
-References: <20190905144316.12527-1-jiaxun.yang@flygoat.com>
+        Thu, 5 Sep 2019 10:47:01 -0400
+Received: by mail-wm1-f66.google.com with SMTP id q12so3405262wmj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 07:47:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zXRGEZPwLtQ5UinxPXKU5BfJwpOCdWN4x79WEBjhqjE=;
+        b=MBtV92rBa45246haRPT8qJPcyhwAnCzGKWvtch+yphLIQemMY/gh8rghP/zBtzfhZM
+         cpNvyMRnAG5QKZHMWcZ9nGFEPxpgrPHlGg7/XLUNNd4u6wM+0FQ2prtdPxZeCyRUYgG/
+         46UJM/NqDtwXc0nJ0q6SAb9xSMl58YKwCFKDbHGX/tVevKx8RK6diHCHAXeOi7MjI2lk
+         PvYvOQTx7+W8Qrmx13NqWuMQHWS6psl1gN95m/d/GLgjEpPk3HC1Stf1IKA/Ps6h4Sa/
+         B5GatoBEuuaROLE0BQKgN++QnG4MC66qo9gYpsjhhVJchmtowGwhpI1s78bjOcQhi51y
+         c6hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zXRGEZPwLtQ5UinxPXKU5BfJwpOCdWN4x79WEBjhqjE=;
+        b=CF/FyemcTaRFV/Xuaa/mMH46/YRIrTDm9JOA3Tf9sL0cXcnqQf/Y81kA9QBaQs+7R0
+         K6AdP2x5uay9TLuYVSlomxl+8j/q9bjN/pBp/We5ZH4+r5H3LnZJGX9qXHWlJDnqsHQg
+         0DId+VqU3swaC5LTzzDPqp9O/gpDhBKIQXCGqYDZ1StRf/mtAIndn/qUrh7YSBUEQljI
+         ngqj5ZRo1wiD4O4+Am6St33HnN4z8C6aWtIKKWZsB2wvYmKBOEq8InWcYXTNUs6PeZl+
+         4Vhj6soBGpw07974Eewrx+eH1yXiRFCf55Y5kuvz6yJG9Da187ZOMAIVc5W5kOrAP+a6
+         g3wQ==
+X-Gm-Message-State: APjAAAUcwhJXzruo7s+aF+4Svatu9IQTTsNSMXQdo4YhqI0lV5wX4ain
+        Q50NjGr8BBLlFSwglW0nHXW3qg==
+X-Google-Smtp-Source: APXvYqxrOWP3uRwxr+KtT9+/rUjsTzf8G+3Pk75+GnyZlEo2O+xCfU34WKNLUgQbN77l6Mtdb/VdMA==
+X-Received: by 2002:a1c:ef13:: with SMTP id n19mr3424489wmh.48.1567694819611;
+        Thu, 05 Sep 2019 07:46:59 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
+        by smtp.gmail.com with ESMTPSA id y3sm3568846wra.88.2019.09.05.07.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2019 07:46:58 -0700 (PDT)
+Date:   Thu, 5 Sep 2019 15:46:55 +0100
+From:   Matthias Maennich <maennich@google.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        maco@android.com, sspatil@google.com,
+        Will Deacon <will@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-modules@vger.kernel.org,
+        linux-usb <linux-usb@vger.kernel.org>,
+        usb-storage@lists.one-eyed-alien.net,
+        linux-watchdog@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [PATCH v4 08/12] scripts: Coccinelle script for namespace
+ dependencies.
+Message-ID: <20190905144655.GB136369@google.com>
+References: <20180716122125.175792-1-maco@android.com>
+ <20190903150638.242049-1-maennich@google.com>
+ <20190903150638.242049-9-maennich@google.com>
+ <CAK7LNARgxoXAABNXhO-LzxAm8rh6NJqAm9-iMo2=t2c_6_KXtQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARgxoXAABNXhO-LzxAm8rh6NJqAm9-iMo2=t2c_6_KXtQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm going to help with LOONGSON64 maintainance as well.
+On Wed, Sep 04, 2019 at 06:53:25PM +0900, Masahiro Yamada wrote:
+>On Wed, Sep 4, 2019 at 12:07 AM Matthias Maennich <maennich@google.com> wrote:
+>>
+>> A script that uses the '<module>.ns_deps' files generated by modpost to
+>> automatically add the required symbol namespace dependencies to each
+>> module.
+>>
+>> Usage:
+>> 1) Move some symbols to a namespace with EXPORT_SYMBOL_NS() or define
+>>    DEFAULT_SYMBOL_NAMESPACE
+>> 2) Run 'make' (or 'make modules') and get warnings about modules not
+>>    importing that namespace.
+>> 3) Run 'make nsdeps' to automatically add required import statements
+>>    to said modules.
+>>
+>> This makes it easer for subsystem maintainers to introduce and maintain
+>> symbol namespaces into their codebase.
+>>
+>> Co-developed-by: Martijn Coenen <maco@android.com>
+>> Signed-off-by: Martijn Coenen <maco@android.com>
+>> Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+>> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Signed-off-by: Matthias Maennich <maennich@google.com>
+>
+>
+>Without any correct dependency,
+>this does not work.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+You are right, 'nsdeps' needs to depend on 'modules' to make that work.
+I will fix that in the next version.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 836b21baeb20..36b656ded1b7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10753,6 +10753,7 @@ F:	drivers/*/*/*loongson2*
- 
- MIPS/LOONGSON64 ARCHITECTURE
- M:	Huacai Chen <chenhc@lemote.com>
-+M:	Jiaxun Yang <jiaxun.yang@flygoat.com>
- L:	linux-mips@vger.kernel.org
- S:	Maintained
- F:	arch/mips/boot/dts/loongson/
--- 
-2.22.0
-
+>$ make clean; make nsdeps
+>cat: modules.order: No such file or directory
+>cat: ./modules.order: No such file or directory
+>
+>
+>I do not see any point in the Makefile changes.
