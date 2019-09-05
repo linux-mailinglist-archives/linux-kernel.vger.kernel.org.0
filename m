@@ -2,80 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 243DAA9E58
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB6A3A9E5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:28:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387424AbfIEJ2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 05:28:09 -0400
-Received: from smtprelay0038.hostedemail.com ([216.40.44.38]:55489 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727900AbfIEJ2J (ORCPT
+        id S2387444AbfIEJ2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 05:28:21 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44738 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731084AbfIEJ2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 05:28:09 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 714A418224D73;
-        Thu,  5 Sep 2019 09:28:07 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2731:2828:3138:3139:3140:3141:3142:3352:3622:3653:3865:3866:3867:3868:3870:4250:4321:4361:4605:5007:6117:7901:7903:9121:10004:10400:10848:11232:11658:11914:12049:12297:12740:12760:12895:13069:13184:13229:13311:13357:13439:14181:14659:14721:21080:21220:21627:30054:30070:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:39,LUA_SUMMARY:none
-X-HE-Tag: silk22_63dfa8e714b22
-X-Filterd-Recvd-Size: 2042
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  5 Sep 2019 09:28:06 +0000 (UTC)
-Message-ID: <f65bf8e7bc3234358d5956f94e3b4df81bc204e6.camel@perches.com>
-Subject: Re: [PATCH] media: siano: Use the correct style for SPDX License
- Identifier
-From:   Joe Perches <joe@perches.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nishad Kamdar <nishadkamdar@gmail.com>,
-        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 05 Sep 2019 02:28:05 -0700
-In-Reply-To: <20190905055614.7958918b@coco.lan>
-References: <20190831151147.GA7082@nishad>
-         <20190904153432.7fb54f02@coco.lan> <20190904183608.GA495@kroah.com>
-         <20190904160010.4532c3f5@coco.lan> <20190905055430.GA23826@kroah.com>
-         <20190905055614.7958918b@coco.lan>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Thu, 5 Sep 2019 05:28:20 -0400
+Received: by mail-wr1-f67.google.com with SMTP id 30so1834595wrk.11
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 02:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ZSFUJO3Cl5xfTH0Oz2n3wB3n0rI8IaAXjOBMneGW988=;
+        b=pfkV95Bv0UZfPijf04Lw+S5gWyPrZBf6nMW16xOvbNgBkOqbuTXKqhjFYAv9E+FprC
+         642QNfMlNoxFq2F0pUWRVLDLWtQL7aLFtrD6IJKWfeyGn3AkKPJwPOFVJ8qunlmtFhMp
+         GKKYEIOvFTsJKHXCODaxCEyFcLgMBLlDjFYCqomKC9NKxAyn9Q72U1ovQrgfqEmTUG8o
+         cYVriYNXSKLlGpnAn4pKQiheoN5zetXQ5lk4piehoTmcslfppIi5ZIQJdodEIIMRMZTE
+         uvjWfyt0nD1xjB3h3EBMWIFAJvJyWlLFfsoGRS4tTUQzwhypCN4lrWEl8Ms7o4ipyBNB
+         Yn4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ZSFUJO3Cl5xfTH0Oz2n3wB3n0rI8IaAXjOBMneGW988=;
+        b=J8bK799fChH2nWZuc0AqpZY0eFzZL7zEVpmgrAKh5j5Hs18JPtjCg/cEoFZsIwNPiC
+         6dRsGlGUMfmoCKzmv+2mjluUn1lXzYaW3Pws/c4IFRp4AsOnYEYOns6nR6+J3f4S1747
+         nDGcaLuIc0RtyM74MbMowU9VQuIleuT3zKInxX6jNDaWBt8G2IlTkFZ8qoxgONhI+hLd
+         0lJPAhGRYlKcMPnTkYXp7zR1rYj72gjLw9FUxdMF6kL/aIFCEgDr4xtG5wZPlZXTbdGI
+         mZYEUNSrYIYl2ZOTyXdaoV0HC9tp2aTKuoEvTTo33NFFT2oOexk8JNgUDNgvaLD4qTLP
+         kEjw==
+X-Gm-Message-State: APjAAAX5fmSIZ13xdOrwi17GL8JCqM9ZBMQ+xa5lWZTv6BhgHvbIE0oS
+        dS6PVtM9tRTV0pzDC7z9CxDa6w==
+X-Google-Smtp-Source: APXvYqzXqv86R+TXN5EBeFSzsw4TbvqcdMpFUJoJuOdwhoetcsejRn2RxvT5UuPS+bGgwEyO0gPGzw==
+X-Received: by 2002:adf:e7cc:: with SMTP id e12mr1706018wrn.299.1567675698218;
+        Thu, 05 Sep 2019 02:28:18 -0700 (PDT)
+Received: from dell ([95.147.198.36])
+        by smtp.gmail.com with ESMTPSA id t7sm1796620wrr.37.2019.09.05.02.28.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Sep 2019 02:28:17 -0700 (PDT)
+Date:   Thu, 5 Sep 2019 10:28:16 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     alokc@codeaurora.org, agross@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, bjorn.andersson@linaro.org,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, vkoul@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: qcom-geni: Provide an option to disable DMA
+ processing
+Message-ID: <20190905092816.GD26880@dell>
+References: <20190905075213.13260-1-lee.jones@linaro.org>
+ <20190905075213.13260-2-lee.jones@linaro.org>
+ <20190905091800.GD1157@kunai>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190905091800.GD1157@kunai>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-09-05 at 05:56 -0300, Mauro Carvalho Chehab wrote:
-> I'll accept
-> this patch and keep such rule in mind for next SPDX changes.
+On Thu, 05 Sep 2019, Wolfram Sang wrote:
+
 > 
-> Anyway, with regards to script, we need to change the rules in order to
-> allow adding SPDX for python scripts, as otherwise the addition of SPDX
-> headers may cause regressions.
+> > Fixes: 8bc529b25354 ("soc: qcom: geni: Add support for ACPI")
+> 
+> Are you sure? From visual inspection, I don't see a correlation between
+> this commit and the fix here.
 
-Not really.
+This patch should have been part of the commit, or at the very least,
+part of the set, alluded to above.  Unfortunately, I was carrying
+Bjorn's hack which simply returned early from geni_se_rx_dma_prep()
+with an error, so it masked the issue.
 
-$ git grep -n '^# SPDX-License-Identifier' -- '*.py' | wc -l
-62
-$ git grep -n '^# SPDX-License-Identifier' -- '*.py' | \
-  cut -f2 -d: | sort | uniq -c
-     32 1
-     27 2
-      3 3
-$ git grep -n '^# SPDX-License-Identifier' -- '*.py' | \
-  cut -f1 -d: | xargs ./scripts/spdxcheck.py --verbose
+> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> > ---
+> >  drivers/i2c/busses/i2c-qcom-geni.c | 14 ++++++++++----
+> >  1 file changed, 10 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> > index a89bfce5388e..8822dea82980 100644
+> > --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> > +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> > @@ -353,13 +353,16 @@ static void geni_i2c_tx_fsm_rst(struct geni_i2c_dev *gi2c)
+> >  static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+> >  				u32 m_param)
+> >  {
+> > +	struct device_node *np = gi2c->se.dev->of_node;
+> >  	dma_addr_t rx_dma;
+> >  	unsigned long time_left;
+> > -	void *dma_buf;
+> > +	void *dma_buf = NULL;
+> >  	struct geni_se *se = &gi2c->se;
+> >  	size_t len = msg->len;
+> >  
+> > -	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
+> > +	if (!of_property_read_bool(np, "qcom,geni-se-no-dma"))
+> > +		dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
+> > +
+> >  	if (dma_buf)
+> >  		geni_se_select_mode(se, GENI_SE_DMA);
+> >  	else
+> > @@ -392,13 +395,16 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+> >  static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+> >  				u32 m_param)
+> >  {
+> > +	struct device_node *np = gi2c->se.dev->of_node;
+> >  	dma_addr_t tx_dma;
+> >  	unsigned long time_left;
+> > -	void *dma_buf;
+> > +	void *dma_buf = NULL;
+> >  	struct geni_se *se = &gi2c->se;
+> >  	size_t len = msg->len;
+> >  
+> > -	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
+> > +	if (!of_property_read_bool(np, "qcom,geni-se-no-dma"))
+> > +		dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
+> > +
+> >  	if (dma_buf)
+> >  		geni_se_select_mode(se, GENI_SE_DMA);
+> >  	else
 
-License files:               14
-Exception files:              2
-License IDs                  19
-Exception IDs                 2
-
-Files checked:               62
-Lines checked:               95
-Files with SPDX:             62
-Files with errors:            0
 
 
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
