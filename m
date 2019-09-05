@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D5CAAADFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52F54AADF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 23:46:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404171AbfIEVqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 17:46:32 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:52030 "EHLO
+        id S2389635AbfIEVqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 17:46:10 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:25528 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390941AbfIEVqP (ORCPT
+        by vger.kernel.org with ESMTP id S1732646AbfIEVqK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 17:46:15 -0400
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x85LjAkW007158
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Sep 2019 14:46:14 -0700
+        Thu, 5 Sep 2019 17:46:10 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x85LgktF016046
+        for <linux-kernel@vger.kernel.org>; Thu, 5 Sep 2019 14:46:09 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=F6+Y/3KaVJP+sTReowVqRgiVYePOKXbKfRKu1OS1cQw=;
- b=CNOo37C+wR2FT9w55v9ic/fR2lcHK0+5ibSpi3gCiet14MHztSwdQmTCxECKpkawlFrz
- cNT48JxVG1xWiacjxiu3FP4NIufgJ4FrCOm9jbaZw1XwFfP/ds34no/uvndPhO90KziS
- cd7Ko/mbtQPu4baCb4DIyzvuRUP8vLq0Q84= 
+ content-type; s=facebook; bh=jUYA9V6/76PQuUuUoRBz8Z4hZkBQOhxwB/mAKjBuibo=;
+ b=b0xo5seiQRBzPeolJLt20bUGceN0SA+D2w/06RSqqA+HMXoaYd6WRwRbLZYWDneA149q
+ VPBE0N6l+ymMTHo1prbnguhUIGr1kM2zd/X5hGkOuv81ZHRzn5vbm1n0TlqELpIW/tRh
+ PZaFZPhk3kh5CbM+NrCTLNRCVc5vYyEvHxo= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2utkkxwup2-13
+        by mx0a-00082601.pphosted.com with ESMTP id 2uu93b0drb-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:46:14 -0700
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 14:46:09 -0700
 Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 5 Sep 2019 14:46:08 -0700
+ 15.1.1713.5; Thu, 5 Sep 2019 14:46:07 -0700
 Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id A2A7A17229DF8; Thu,  5 Sep 2019 14:46:06 -0700 (PDT)
+        id A65A717229DFA; Thu,  5 Sep 2019 14:46:06 -0700 (PDT)
 Smtp-Origin-Hostprefix: devvm
 From:   Roman Gushchin <guro@fb.com>
 Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
@@ -42,9 +42,9 @@ CC:     Michal Hocko <mhocko@kernel.org>,
         Vladimir Davydov <vdavydov.dev@gmail.com>,
         Waiman Long <longman@redhat.com>, Roman Gushchin <guro@fb.com>
 Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH RFC 01/14] mm: memcg: subpage charging API
-Date:   Thu, 5 Sep 2019 14:45:45 -0700
-Message-ID: <20190905214553.1643060-2-guro@fb.com>
+Subject: [PATCH RFC 02/14] mm: memcg: introduce mem_cgroup_ptr
+Date:   Thu, 5 Sep 2019 14:45:46 -0700
+Message-ID: <20190905214553.1643060-3-guro@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190905214553.1643060-1-guro@fb.com>
 References: <20190905214553.1643060-1-guro@fb.com>
@@ -53,307 +53,265 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
  definitions=2019-09-05_08:2019-09-04,2019-09-05 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 phishscore=0
- mlxlogscore=999 mlxscore=0 clxscore=1015 adultscore=0 suspectscore=1
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1906280000 definitions=main-1909050203
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ spamscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=4
+ impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1909050202
 X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce an API to charge subpage objects to the memory cgroup.
-The API will be used by the new slab memory controller. Later it
-can also be used to implement percpu memory accounting.
-In both cases, a single page can be shared between multiple cgroups
-(and in percpu case a single allocation is split over multiple pages),
-so it's not possible to use page-based accounting.
+This commit introduces mem_cgroup_ptr structure and corresponding API.
+It implements a pointer to a memory cgroup with a built-in reference
+counter. The main goal of it is to implement reparenting efficiently.
 
-The implementation is based on percpu stocks. Memory cgroups are still
-charged in pages, and the residue is stored in perpcu stock, or on the
-memcg itself, when it's necessary to flush the stock.
+If a number of objects (e.g. slab pages) have to keep a pointer and
+a reference to a memory cgroup, they can use mem_cgroup_ptr instead.
+On reparenting, only one mem_cgroup_ptr->memcg pointer has to be
+changed, instead of walking over all accounted objects.
 
-Please, note, that unlike the generic page charging API, a subpage
-object is not holding a reference to the memory cgroup. It's because
-a more complicated indirect scheme is required in order to implement
-cheap reparenting. The percpu stock holds a single reference to the
-cached cgroup though.
+mem_cgroup_ptr holds a single reference to the corresponding memory
+cgroup. Because it's initialized before the css reference counter,
+css's refcounter can't be bumped at allocation time. Instead, it's
+bumped on reparenting which happens during offlining. A cgroup is
+never released online, so it's fine.
+
+mem_cgroup_ptr is released using rcu, so memcg->kmem_memcg_ptr can
+be accessed in a rcu read section. On reparenting it's atomically
+switched to NULL. If the reader gets NULL, it can just read parent's
+kmem_memcg_ptr instead.
+
+Each memory cgroup contains a list of kmem_memcg_ptrs. On reparenting
+the list is spliced into the parent's list. The list is protected
+using the css set lock.
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 ---
- include/linux/memcontrol.h |   4 ++
- mm/memcontrol.c            | 129 +++++++++++++++++++++++++++++++++----
- 2 files changed, 119 insertions(+), 14 deletions(-)
+ include/linux/memcontrol.h | 50 ++++++++++++++++++++++
+ mm/memcontrol.c            | 87 ++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 133 insertions(+), 4 deletions(-)
 
 diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 0c762e8ca6a6..120d39066148 100644
+index 120d39066148..dd5ebfe5a86c 100644
 --- a/include/linux/memcontrol.h
 +++ b/include/linux/memcontrol.h
-@@ -214,6 +214,7 @@ struct mem_cgroup {
- 	/* Accounted resources */
- 	struct page_counter memory;
- 	struct page_counter swap;
-+	atomic_t nr_stocked_bytes;
+@@ -23,6 +23,7 @@
+ #include <linux/page-flags.h>
  
- 	/* Legacy consumer-oriented counters */
- 	struct page_counter memsw;
-@@ -1370,6 +1371,9 @@ int __memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
- 			      struct mem_cgroup *memcg);
- void __memcg_kmem_uncharge_memcg(struct mem_cgroup *memcg,
- 				 unsigned int nr_pages);
-+int __memcg_kmem_charge_subpage(struct mem_cgroup *memcg, size_t size,
-+				gfp_t gfp);
-+void __memcg_kmem_uncharge_subpage(struct mem_cgroup *memcg, size_t size);
+ struct mem_cgroup;
++struct mem_cgroup_ptr;
+ struct page;
+ struct mm_struct;
+ struct kmem_cache;
+@@ -197,6 +198,22 @@ struct memcg_cgwb_frn {
+ 	int memcg_id;			/* memcg->css.id of foreign inode */
+ 	u64 at;				/* jiffies_64 at the time of dirtying */
+ 	struct wb_completion done;	/* tracks in-flight foreign writebacks */
++}
++
++/*
++ * A pointer to a memory cgroup with a built-in reference counter.
++ * For a use as an intermediate object to simplify reparenting of
++ * objects charged to the cgroup. The memcg pointer can be switched
++ * to the parent cgroup without a need to modify all objects
++ * which hold the reference to the cgroup.
++ */
++struct mem_cgroup_ptr {
++	struct percpu_ref refcnt;
++	struct mem_cgroup *memcg;
++	union {
++		struct list_head list;
++		struct rcu_head rcu;
++	};
+ };
  
- extern struct static_key_false memcg_kmem_enabled_key;
- extern struct workqueue_struct *memcg_kmem_cache_wq;
+ /*
+@@ -312,6 +329,8 @@ struct mem_cgroup {
+ 	int kmemcg_id;
+ 	enum memcg_kmem_state kmem_state;
+ 	struct list_head kmem_caches;
++	struct mem_cgroup_ptr __rcu *kmem_memcg_ptr;
++	struct list_head kmem_memcg_ptr_list;
+ #endif
+ 
+ 	int last_scanned_node;
+@@ -440,6 +459,21 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
+ 	return css ? container_of(css, struct mem_cgroup, css) : NULL;
+ }
+ 
++static inline bool mem_cgroup_ptr_tryget(struct mem_cgroup_ptr *ptr)
++{
++	return percpu_ref_tryget(&ptr->refcnt);
++}
++
++static inline void mem_cgroup_ptr_get(struct mem_cgroup_ptr *ptr)
++{
++	percpu_ref_get(&ptr->refcnt);
++}
++
++static inline void mem_cgroup_ptr_put(struct mem_cgroup_ptr *ptr)
++{
++	percpu_ref_put(&ptr->refcnt);
++}
++
+ static inline void mem_cgroup_put(struct mem_cgroup *memcg)
+ {
+ 	if (memcg)
+@@ -1433,6 +1467,22 @@ static inline int memcg_cache_id(struct mem_cgroup *memcg)
+ 	return memcg ? memcg->kmemcg_id : -1;
+ }
+ 
++static inline struct mem_cgroup_ptr *
++mem_cgroup_get_kmem_ptr(struct mem_cgroup *memcg)
++{
++	struct mem_cgroup_ptr *memcg_ptr;
++
++	rcu_read_lock();
++	do {
++		memcg_ptr = rcu_dereference(memcg->kmem_memcg_ptr);
++		if (memcg_ptr && mem_cgroup_ptr_tryget(memcg_ptr))
++			break;
++	} while ((memcg = parent_mem_cgroup(memcg)));
++	rcu_read_unlock();
++
++	return memcg_ptr;
++}
++
+ #else
+ 
+ static inline int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 1c4c08b45e44..effefcec47b3 100644
+index effefcec47b3..cb9adb31360e 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -2149,6 +2149,10 @@ EXPORT_SYMBOL(unlock_page_memcg);
- struct memcg_stock_pcp {
- 	struct mem_cgroup *cached; /* this never be root cgroup */
- 	unsigned int nr_pages;
-+
-+	struct mem_cgroup *subpage_cached;
-+	unsigned int nr_bytes;
-+
- 	struct work_struct work;
- 	unsigned long flags;
- #define FLUSHING_CACHED_CHARGE	0
-@@ -2189,6 +2193,29 @@ static bool consume_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
- 	return ret;
+@@ -266,6 +266,77 @@ struct cgroup_subsys_state *vmpressure_to_css(struct vmpressure *vmpr)
  }
  
-+static bool consume_subpage_stock(struct mem_cgroup *memcg,
-+				  unsigned int nr_bytes)
-+{
-+	struct memcg_stock_pcp *stock;
-+	unsigned long flags;
-+	bool ret = false;
+ #ifdef CONFIG_MEMCG_KMEM
++extern spinlock_t css_set_lock;
 +
-+	if (nr_bytes > (MEMCG_CHARGE_BATCH << PAGE_SHIFT))
++static void memcg_ptr_release(struct percpu_ref *ref)
++{
++	struct mem_cgroup_ptr *ptr = container_of(ref, struct mem_cgroup_ptr,
++						  refcnt);
++	unsigned long flags;
++
++	spin_lock_irqsave(&css_set_lock, flags);
++	list_del(&ptr->list);
++	spin_unlock_irqrestore(&css_set_lock, flags);
++
++	mem_cgroup_put(ptr->memcg);
++	percpu_ref_exit(ref);
++	kfree_rcu(ptr, rcu);
++}
++
++static int memcg_init_kmem_memcg_ptr(struct mem_cgroup *memcg)
++{
++	struct mem_cgroup_ptr *kmem_memcg_ptr;
++	int ret;
++
++	kmem_memcg_ptr = kmalloc(sizeof(struct mem_cgroup_ptr), GFP_KERNEL);
++	if (!kmem_memcg_ptr)
++		return -ENOMEM;
++
++	ret = percpu_ref_init(&kmem_memcg_ptr->refcnt, memcg_ptr_release,
++			      0, GFP_KERNEL);
++	if (ret) {
++		kfree(kmem_memcg_ptr);
 +		return ret;
-+
-+	local_irq_save(flags);
-+
-+	stock = this_cpu_ptr(&memcg_stock);
-+	if (memcg == stock->subpage_cached && stock->nr_bytes >= nr_bytes) {
-+		stock->nr_bytes -= nr_bytes;
-+		ret = true;
 +	}
 +
-+	local_irq_restore(flags);
++	kmem_memcg_ptr->memcg = memcg;
++	INIT_LIST_HEAD(&kmem_memcg_ptr->list);
++	rcu_assign_pointer(memcg->kmem_memcg_ptr, kmem_memcg_ptr);
++	list_add(&kmem_memcg_ptr->list, &memcg->kmem_memcg_ptr_list);
++	return 0;
++}
 +
-+	return ret;
++static void memcg_reparent_kmem_memcg_ptr(struct mem_cgroup *memcg,
++					  struct mem_cgroup *parent)
++{
++	unsigned int nr_reparented = 0;
++	struct mem_cgroup_ptr *memcg_ptr = NULL;
++
++	rcu_swap_protected(memcg->kmem_memcg_ptr, memcg_ptr, true);
++	percpu_ref_kill(&memcg_ptr->refcnt);
++
++	/*
++	 * kmem_memcg_ptr is initialized before css refcounter, so until now
++	 * it doesn't hold a reference to the memcg. Bump it here.
++	 */
++	css_get(&memcg->css);
++
++	spin_lock_irq(&css_set_lock);
++	list_for_each_entry(memcg_ptr, &memcg->kmem_memcg_ptr_list, list) {
++		xchg(&memcg_ptr->memcg, parent);
++		nr_reparented++;
++	}
++	if (nr_reparented)
++		list_splice(&memcg->kmem_memcg_ptr_list,
++			    &parent->kmem_memcg_ptr_list);
++	spin_unlock_irq(&css_set_lock);
++
++	if (nr_reparented) {
++		css_get_many(&parent->css, nr_reparented);
++		css_put_many(&memcg->css, nr_reparented);
++	}
 +}
 +
  /*
-  * Returns stocks cached in percpu and reset cached information.
-  */
-@@ -2206,6 +2233,27 @@ static void drain_stock(struct memcg_stock_pcp *stock)
- 	stock->cached = NULL;
- }
- 
-+static void drain_subpage_stock(struct memcg_stock_pcp *stock)
-+{
-+	struct mem_cgroup *old = stock->subpage_cached;
-+
-+	if (stock->nr_bytes) {
-+		unsigned int nr_pages = stock->nr_bytes >> PAGE_SHIFT;
-+		unsigned int nr_bytes = stock->nr_bytes & (PAGE_SIZE - 1);
-+
-+		page_counter_uncharge(&old->memory, nr_pages);
-+		if (do_memsw_account())
-+			page_counter_uncharge(&old->memsw, nr_pages);
-+
-+		atomic_add(nr_bytes, &old->nr_stocked_bytes);
-+		stock->nr_bytes = 0;
-+	}
-+	if (stock->subpage_cached) {
-+		css_put(&old->css);
-+		stock->subpage_cached = NULL;
-+	}
-+}
-+
- static void drain_local_stock(struct work_struct *dummy)
+  * This will be the memcg's index in each cache's ->memcg_params.memcg_caches.
+  * The main reason for not using cgroup id for this:
+@@ -3554,7 +3625,7 @@ static void memcg_flush_percpu_vmevents(struct mem_cgroup *memcg)
+ #ifdef CONFIG_MEMCG_KMEM
+ static int memcg_online_kmem(struct mem_cgroup *memcg)
  {
- 	struct memcg_stock_pcp *stock;
-@@ -2218,8 +2266,11 @@ static void drain_local_stock(struct work_struct *dummy)
- 	local_irq_save(flags);
+-	int memcg_id;
++	int memcg_id, ret;
  
- 	stock = this_cpu_ptr(&memcg_stock);
--	drain_stock(stock);
--	clear_bit(FLUSHING_CACHED_CHARGE, &stock->flags);
-+	if (test_bit(FLUSHING_CACHED_CHARGE, &stock->flags)) {
-+		drain_stock(stock);
-+		drain_subpage_stock(stock);
-+		clear_bit(FLUSHING_CACHED_CHARGE, &stock->flags);
-+	}
- 
- 	local_irq_restore(flags);
- }
-@@ -2248,6 +2299,29 @@ static void refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
- 	local_irq_restore(flags);
- }
- 
-+static void refill_subpage_stock(struct mem_cgroup *memcg,
-+				 unsigned int nr_bytes)
-+{
-+	struct memcg_stock_pcp *stock;
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+
-+	stock = this_cpu_ptr(&memcg_stock);
-+	if (stock->subpage_cached != memcg) { /* reset if necessary */
-+		drain_subpage_stock(stock);
-+		css_get(&memcg->css);
-+		stock->subpage_cached = memcg;
-+		stock->nr_bytes = atomic_xchg(&memcg->nr_stocked_bytes, 0);
-+	}
-+	stock->nr_bytes += nr_bytes;
-+
-+	if (stock->nr_bytes > (MEMCG_CHARGE_BATCH << PAGE_SHIFT))
-+		drain_subpage_stock(stock);
-+
-+	local_irq_restore(flags);
-+}
-+
- /*
-  * Drains all per-CPU charge caches for given root_memcg resp. subtree
-  * of the hierarchy under it.
-@@ -2276,6 +2350,9 @@ static void drain_all_stock(struct mem_cgroup *root_memcg)
- 		if (memcg && stock->nr_pages &&
- 		    mem_cgroup_is_descendant(memcg, root_memcg))
- 			flush = true;
-+		memcg = stock->subpage_cached;
-+		if (memcg && mem_cgroup_is_descendant(memcg, root_memcg))
-+			flush = true;
- 		rcu_read_unlock();
- 
- 		if (flush &&
-@@ -2500,8 +2577,9 @@ void mem_cgroup_handle_over_high(void)
- }
- 
- static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
--		      unsigned int nr_pages)
-+		      unsigned int amount, bool subpage)
- {
-+	unsigned int nr_pages = subpage ? ((amount >> PAGE_SHIFT) + 1) : amount;
- 	unsigned int batch = max(MEMCG_CHARGE_BATCH, nr_pages);
- 	int nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
- 	struct mem_cgroup *mem_over_limit;
-@@ -2514,7 +2592,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	if (mem_cgroup_is_root(memcg))
+ 	if (cgroup_memory_nokmem)
  		return 0;
- retry:
--	if (consume_stock(memcg, nr_pages))
-+	if (subpage && consume_subpage_stock(memcg, amount))
-+		return 0;
-+	else if (!subpage && consume_stock(memcg, nr_pages))
- 		return 0;
+@@ -3566,6 +3637,12 @@ static int memcg_online_kmem(struct mem_cgroup *memcg)
+ 	if (memcg_id < 0)
+ 		return memcg_id;
  
- 	if (!do_memsw_account() ||
-@@ -2632,14 +2712,22 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	page_counter_charge(&memcg->memory, nr_pages);
- 	if (do_memsw_account())
- 		page_counter_charge(&memcg->memsw, nr_pages);
--	css_get_many(&memcg->css, nr_pages);
-+
-+	if (subpage)
-+		refill_subpage_stock(memcg, (nr_pages << PAGE_SHIFT) - amount);
-+	else
-+		css_get_many(&memcg->css, nr_pages);
- 
- 	return 0;
- 
- done_restock:
--	css_get_many(&memcg->css, batch);
--	if (batch > nr_pages)
--		refill_stock(memcg, batch - nr_pages);
-+	if (subpage && (batch << PAGE_SHIFT) > amount) {
-+		refill_subpage_stock(memcg, (batch << PAGE_SHIFT) - amount);
-+	} else if (!subpage) {
-+		css_get_many(&memcg->css, batch);
-+		if (batch > nr_pages)
-+			refill_stock(memcg, batch - nr_pages);
++	ret = memcg_init_kmem_memcg_ptr(memcg);
++	if (ret) {
++		memcg_free_cache_id(memcg_id);
++		return ret;
 +	}
++
+ 	static_branch_inc(&memcg_kmem_enabled_key);
+ 	/*
+ 	 * A memory cgroup is considered kmem-online as soon as it gets
+@@ -3601,12 +3678,13 @@ static void memcg_offline_kmem(struct mem_cgroup *memcg)
+ 		parent = root_mem_cgroup;
  
  	/*
- 	 * If the hierarchy is above the normal consumption range, schedule
-@@ -2942,7 +3030,7 @@ int __memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
- 	struct page_counter *counter;
- 	int ret;
+-	 * Deactivate and reparent kmem_caches. Then flush percpu
+-	 * slab statistics to have precise values at the parent and
+-	 * all ancestor levels. It's required to keep slab stats
++	 * Deactivate and reparent kmem_caches and reparent kmem_memcg_ptr.
++	 * Then flush percpu slab statistics to have precise values at the
++	 * parent and all ancestor levels. It's required to keep slab stats
+ 	 * accurate after the reparenting of kmem_caches.
+ 	 */
+ 	memcg_deactivate_kmem_caches(memcg, parent);
++	memcg_reparent_kmem_memcg_ptr(memcg, parent);
+ 	memcg_flush_percpu_vmstats(memcg, true);
  
--	ret = try_charge(memcg, gfp, nr_pages);
-+	ret = try_charge(memcg, gfp, nr_pages, false);
- 	if (ret)
- 		return ret;
- 
-@@ -3020,6 +3108,18 @@ void __memcg_kmem_uncharge(struct page *page, int order)
- 
- 	css_put_many(&memcg->css, nr_pages);
- }
-+
-+int __memcg_kmem_charge_subpage(struct mem_cgroup *memcg, size_t size,
-+				gfp_t gfp)
-+{
-+	return try_charge(memcg, gfp, size, true);
-+}
-+
-+void __memcg_kmem_uncharge_subpage(struct mem_cgroup *memcg, size_t size)
-+{
-+	refill_subpage_stock(memcg, size);
-+}
-+
- #endif /* CONFIG_MEMCG_KMEM */
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-@@ -5267,7 +5367,8 @@ static int mem_cgroup_do_precharge(unsigned long count)
- 	int ret;
- 
- 	/* Try a single bulk charge without reclaim first, kswapd may wake */
--	ret = try_charge(mc.to, GFP_KERNEL & ~__GFP_DIRECT_RECLAIM, count);
-+	ret = try_charge(mc.to, GFP_KERNEL & ~__GFP_DIRECT_RECLAIM, count,
-+			 false);
- 	if (!ret) {
- 		mc.precharge += count;
- 		return ret;
-@@ -5275,7 +5376,7 @@ static int mem_cgroup_do_precharge(unsigned long count)
- 
- 	/* Try charges one by one with reclaim, but do not retry */
- 	while (count--) {
--		ret = try_charge(mc.to, GFP_KERNEL | __GFP_NORETRY, 1);
-+		ret = try_charge(mc.to, GFP_KERNEL | __GFP_NORETRY, 1, false);
- 		if (ret)
- 			return ret;
- 		mc.precharge++;
-@@ -6487,7 +6588,7 @@ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
- 	if (!memcg)
- 		memcg = get_mem_cgroup_from_mm(mm);
- 
--	ret = try_charge(memcg, gfp_mask, nr_pages);
-+	ret = try_charge(memcg, gfp_mask, nr_pages, false);
- 
- 	css_put(&memcg->css);
- out:
-@@ -6866,10 +6967,10 @@ bool mem_cgroup_charge_skmem(struct mem_cgroup *memcg, unsigned int nr_pages)
- 
- 	mod_memcg_state(memcg, MEMCG_SOCK, nr_pages);
- 
--	if (try_charge(memcg, gfp_mask, nr_pages) == 0)
-+	if (try_charge(memcg, gfp_mask, nr_pages, false) == 0)
- 		return true;
- 
--	try_charge(memcg, gfp_mask|__GFP_NOFAIL, nr_pages);
-+	try_charge(memcg, gfp_mask|__GFP_NOFAIL, nr_pages, false);
- 	return false;
- }
- 
+ 	kmemcg_id = memcg->kmemcg_id;
+@@ -5171,6 +5249,7 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+ 	memcg->socket_pressure = jiffies;
+ #ifdef CONFIG_MEMCG_KMEM
+ 	memcg->kmemcg_id = -1;
++	INIT_LIST_HEAD(&memcg->kmem_memcg_ptr_list);
+ #endif
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 	INIT_LIST_HEAD(&memcg->cgwb_list);
 -- 
 2.21.0
 
