@@ -2,85 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76911A9C5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A83C1A9C64
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731867AbfIEHzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 03:55:31 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:41204 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731154AbfIEHza (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 03:55:30 -0400
-Received: by mail-io1-f68.google.com with SMTP id r26so2651472ioh.8
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 00:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=C5c7K1Hw4FjCF2xV5vuGtI/cNoltJZ5oqSBi17hs6i0=;
-        b=I2t+igV+hg/20Cs7tSHvQRhOdgxcKrBFnKFMkbgfAOGGLKQ5rD53Fyq8x08c4hM38u
-         rQujPpaXuKkVSUOHjfVYjTCq8fMWUZMAxXQfjZ3g6Mpk2o38aAJEKPYW0v9nO4B8WITq
-         ki+UPop151pYxHkpNWOg3HyrlfnXCyZ/41la7iMsOo3512dJvfjfLGEHw339fTc2xZ9J
-         CLssR4wQHnqV4w26NYHbPTFZ2s2NShfg+5RHYHYKXAug6EZtEtTPSMb1JYElI+BptV2J
-         wKT9lhhK0YFtImBGIKPryVgP7cdfdGw5hDLJuYGJvbzjKjXN95cjimp4Cndqiv7HYVMa
-         O/Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=C5c7K1Hw4FjCF2xV5vuGtI/cNoltJZ5oqSBi17hs6i0=;
-        b=Lu3sYSpY1qRkXIvocPpSVwImZwQS28bEOx02pwVh+PUs7Iicz12zpnlf3Vlad6iCeD
-         wL/HvhieouiYSpJ70XCufUEZQ+Om6kU3pxy/mgZKy8DNegf2+53YfwioOWYPriBHHh4Y
-         Eb1nNp6BKcRm7ma62sdIgg/nvX3LuQreSgwMe/QGvCoUrzjOzZAN147ihPiSTxdOwpj3
-         B4JyOqE6JIwN/bD67gMioJC8Kv/LGI7/Mup0uaa94yVs1fTkLt/R5BEEKbLcyoyXX0NO
-         CMIjjvqdhRD0Y4ptnCCMQCpztv4RbIzVjN7dZG9WTkbo5n0hogDYPi9jIERmWVgR5hpD
-         ZEwg==
-X-Gm-Message-State: APjAAAXBiVaTWo083OMlbK7405Ex+AeA5nx43b2LF0stVYGotOuf2L5o
-        1N7M0/WCYwqWxX4Gbhu01YnA9RHMifA=
-X-Google-Smtp-Source: APXvYqyFpbub+uXlwt/4a1kSj0KNHkUibFYHOqfSUlNcIlDIps2KWkPgcOc3xfU2wvTsHUeYG7GTrQ==
-X-Received: by 2002:a6b:f806:: with SMTP id o6mr271583ioh.213.1567670129077;
-        Thu, 05 Sep 2019 00:55:29 -0700 (PDT)
-Received: from localhost ([2601:8c4:0:9294:cb6f:4cf:b239:2fee])
-        by smtp.gmail.com with ESMTPSA id z20sm1319236iof.38.2019.09.05.00.55.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 00:55:28 -0700 (PDT)
-Date:   Thu, 5 Sep 2019 00:55:26 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Mao Han <han_mao@c-sky.com>
-cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-csky@vger.kernel.org, Greentime Hu <green.hu@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Christoph Hellwig <hch@lst.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH V7 2/2] riscv: Add support for libdw
-In-Reply-To: <e30754638a4eabce6f26ecca9d5292cc7dfa2633.1567653632.git.han_mao@c-sky.com>
-Message-ID: <alpine.DEB.2.21.9999.1909050054170.27305@viisi.sifive.com>
-References: <cover.1567653632.git.han_mao@c-sky.com> <e30754638a4eabce6f26ecca9d5292cc7dfa2633.1567653632.git.han_mao@c-sky.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1731173AbfIEH5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 03:57:43 -0400
+Received: from foss.arm.com ([217.140.110.172]:38734 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726089AbfIEH5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 03:57:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0521128;
+        Thu,  5 Sep 2019 00:57:42 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A29863F67D;
+        Thu,  5 Sep 2019 00:57:40 -0700 (PDT)
+Date:   Thu, 5 Sep 2019 08:57:38 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>, "H.J. Lu" <hjl.tools@gmail.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH v2 2/2] ELF: Add ELF program property parsing support
+Message-ID: <20190905075735.GC27757@arm.com>
+References: <1566581020-9953-1-git-send-email-Dave.Martin@arm.com>
+ <1566581020-9953-3-git-send-email-Dave.Martin@arm.com>
+ <201908292224.007EB4D5@keescook>
+ <20190830083415.GI27757@arm.com>
+ <201909040942.7BC809C5E@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201909040942.7BC809C5E@keescook>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019, Mao Han wrote:
-
-> This patch adds support for DWARF register mappings and libdw registers
-> initialization, which is used by perf callchain analyzing when
-> --call-graph=dwarf is given.
+On Wed, Sep 04, 2019 at 05:50:06PM +0100, Kees Cook wrote:
+> On Fri, Aug 30, 2019 at 09:34:18AM +0100, Dave Martin wrote:
+> > Do you have any thoughts on Yu-Cheng Yu's comments?  It would be nice to
+> > early-terminate the scan if we can, but my feeling so far was that the
+> > scan is cheap, the number of properties is unlikely to be more than a
+> > smallish integer, and the code separation benefits of just calling the
+> > arch code for every property probably likely outweigh the costs of
+> > having to iterate over every property.  We could always optimise it
+> > later if necessary.
 > 
-> Signed-off-by: Mao Han <han_mao@c-sky.com>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Greentime Hu <green.hu@gmail.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: linux-riscv <linux-riscv@lists.infradead.org>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Guo Ren <guoren@kernel.org>
+> I feel like there are already a lot of ways to burn CPU time with
+> mangled ELF files, so this potential inefficiently doesn't seem bad to
+> me. If we want to add limits here, perhaps cap the property scan depth
+> (right now, IIRC, the count is u32, which is big...)
 
-Thanks, queued for v5.4-rc1 with Greentime's Tested-by: (since the changes 
-from v6 to v7 had no functional impact).
+I was thinking more of valid ELF files where the number of properties is
+large.
 
+I feel that the GNU properties system will have become unfit for purpose
+if the number of defined properties gets large enough for this to be an
+issue though.
 
-- Paul
+I'll keep this code as-is for now.
+
+> > I need to double-check that there's no way we can get stuck in an
+> > infinite loop with the current code, though I've not seen it in my
+> > testing.  I should throw some malformed notes at it though.
+> 
+> I think the cursor only performs forward movement, yes? I didn't see a
+> loop, but maybe there's something with the program headers that I
+> missed.
+
+That's the principle: always step forward, always by a non-zero amount.
+So forward progress should be guaranteed...
+
+> > Do you have any objection to merging patch 1 with this one?  For
+> > upstreaming purposes, it seems overkill for that to be a separate patch.
+> 
+> I don't _object_ to it, but I did like having it separate for review.
+
+I'm equally happy to leave them separate; I just wasn't sure how much
+they made sense as separate patches.  I'll have a think when I respin.
+
+> > Do you have any opinion on the WARN_ON()s?  They should be un-hittable,
+> > so they're documenting assumptions rather than protecting against
+> > anything real.  Maybe I should replace them with comments.
+> 
+> I think they're fine as self-documentation. My rule of thumb has been:
+> 
+> - don't use BUG*() unless you can defend it to Linus who wants 0 BUG()s.
+> - don't use WARN*() if userspace can reach it (and if you're not sure,
+>   use the WARN*ONCE() version)
+> - use pr_*_ratelimited() if unprivileged userspace can reach it.
+
+OK, I'll probably keep them for now, then.
+
+This isn't a super-hot path, and with multiple kernel_read() calls in
+the mix already it's hard to imagine the WARN_ON() calls being a
+significant part of the overall cost.
+
+Cheers
+---Dave
