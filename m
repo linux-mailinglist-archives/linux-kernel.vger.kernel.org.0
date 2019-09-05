@@ -2,61 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3DA7AA2C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:12:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AAD3AA2C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389222AbfIEMMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 08:12:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42701 "EHLO
+        id S2389234AbfIEMMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 08:12:06 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42703 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732003AbfIEMME (ORCPT
+        with ESMTP id S2387662AbfIEMME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Sep 2019 08:12:04 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1i5qcM-0007t8-7r; Thu, 05 Sep 2019 14:12:02 +0200
-Message-Id: <20190905120339.561100423@linutronix.de>
+        id 1i5qcM-0007tB-No; Thu, 05 Sep 2019 14:12:02 +0200
+Message-Id: <20190905120539.707986830@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Thu, 05 Sep 2019 14:03:39 +0200
+Date:   Thu, 05 Sep 2019 14:03:40 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Frederic Weisbecker <fweisbec@gmail.com>,
         Oleg Nesterov <oleg@redhat.com>,
         Ingo Molnar <mingo@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [patch 0/6] posix-cpu-timers: Fallout fixes and permission tightening
+        Kees Cook <keescook@chromium.org>,
+        syzbot+55acd54b57bb4b3840a4@syzkaller.appspotmail.com
+Subject: [patch 1/6] posix-cpu-timers: Always clear head pointer on dequeue
+References: <20190905120339.561100423@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sysbot triggered an issue in the posix timer rework which was trivial to
-fix, but after running another test case I discovered that the rework broke
-the permission checks subtly. That's also a straightforward fix.
+The head pointer in struct cpu_timer is checked to be NULL in
+posix_cpu_timer_del() when the delete raced with the exit cleanup. The
+works correctly as long as the timer is actually dequeued via
+posix_cpu_timers_exit*().
 
-Though when staring at it I discovered that the permission checks for
-process clocks and process timers are completely bonkers. The only
-requirement is that the target PID is a group leader. Which means that any
-process can read the clocks and attach timers to any other process without
-priviledge restrictions.
+But if the timer was dequeued due to expiry the head pointer is still set
+and triggers the warning.
 
-That's just wrong because the clocks and timers can be used to observe
-behaviour and both reading the clocks and arming timers adds overhead and
-influences runtime performance of the target process.
+In fact keeping the head pointer around after any dequeue is pointless as
+is has no meaning at all after that.
 
-The last 4 patches deal with that and introduce ptrace based permission
-checks and also make the behaviour consistent between thread and process
-timers/clocks.
+Clear the head pointer always on dequeue and remove the unused requeue
+function while at it.
 
-Thanks,
-
-	tglx
+Fixes: 60bda037f1dd ("posix-cpu-timers: Utilize timerqueue for storage")
+Reported-by: syzbot+55acd54b57bb4b3840a4@syzkaller.appspotmail.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/posix-timers.h   |    9 +---
- kernel/time/posix-cpu-timers.c |   78 ++++++++++++++++++++++++++++++++++-------
- 2 files changed, 69 insertions(+), 18 deletions(-)
+ include/linux/posix-timers.h |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
+--- a/include/linux/posix-timers.h
++++ b/include/linux/posix-timers.h
+@@ -74,11 +74,6 @@ struct cpu_timer {
+ 	int			firing;
+ };
+ 
+-static inline bool cpu_timer_requeue(struct cpu_timer *ctmr)
+-{
+-	return timerqueue_add(ctmr->head, &ctmr->node);
+-}
+-
+ static inline bool cpu_timer_enqueue(struct timerqueue_head *head,
+ 				     struct cpu_timer *ctmr)
+ {
+@@ -88,8 +83,10 @@ static inline bool cpu_timer_enqueue(str
+ 
+ static inline void cpu_timer_dequeue(struct cpu_timer *ctmr)
+ {
+-	if (!RB_EMPTY_NODE(&ctmr->node.node))
++	if (ctmr->head) {
+ 		timerqueue_del(ctmr->head, &ctmr->node);
++		ctmr->head = NULL;
++	}
+ }
+ 
+ static inline u64 cpu_timer_getexpires(struct cpu_timer *ctmr)
 
 
