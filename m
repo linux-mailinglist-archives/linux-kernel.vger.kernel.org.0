@@ -2,124 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD66AA9EBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF69A9EBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 11:46:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732504AbfIEJpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 05:45:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:40542 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731806AbfIEJpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 05:45:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E17121576;
-        Thu,  5 Sep 2019 02:45:34 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38E7B3F67D;
-        Thu,  5 Sep 2019 02:45:33 -0700 (PDT)
-References: <20190830174944.21741-1-subhra.mazumdar@oracle.com> <20190830174944.21741-2-subhra.mazumdar@oracle.com> <20190905083127.GA2332@hirez.programming.kicks-ass.net>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net, parth@linux.ibm.com
-Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
-In-reply-to: <20190905083127.GA2332@hirez.programming.kicks-ass.net>
-Date:   Thu, 05 Sep 2019 10:45:27 +0100
-Message-ID: <87r24v2i14.fsf@arm.com>
+        id S2387603AbfIEJqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 05:46:08 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:33673 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731806AbfIEJqH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 05:46:07 -0400
+Received: by mail-ua1-f66.google.com with SMTP id g11so575538uak.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 02:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UvRuIiqr/iKDV9aDWNlA8RrVDzREyScOlO/Z/R/SMk4=;
+        b=WvjhViaVgl8x/auA7N3QoKa0pWASaXMpbqUiOjnZ1p3FYEgVVpJk0NHs6ARa3J/Mxc
+         XbKEEFE7HfHLJL9pmMO/200PoywVrY3+4VKXW1BHqK01NlXD7cac0nZ89ATICbDRVbNB
+         u+NLABTZnHIlKpb9pp2K/1XSrdisQsUgmUjeo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UvRuIiqr/iKDV9aDWNlA8RrVDzREyScOlO/Z/R/SMk4=;
+        b=pDdW/zxV23naISXHnYeKbsPk0sUDReuXA5jrjwu2giABTHxkfe7SouL/pUnOS9sHFA
+         6GDmWEcBvVCdC8kQxmXEDz8LKYefcoX2iB6ik7Wo5r/2nSu+hbY8CbCCISg8qfXiVjjV
+         UW864Ib1IXz4E8s9MuxmlZiq0rAIoPvaQf8YQ7yeQNtJapZPRIZ9B2DEUaXU9oB1H+R8
+         1LCANIh+tUgyCvIog9A9fwqfCRcsanQ+QSxJHDg8E40MJsXTRTcFSLaiCTqg3+JqSNFe
+         GP4AHcxIVH8pdPcVE65k2DvEq9+femaC6KJnDgk0SYceuObfdtvix517/cY/FEud2hpa
+         gw5A==
+X-Gm-Message-State: APjAAAWwLtJRkgdi81nNV3KvvU/RjFhfqgezqWCQKH1ijG4Whxbp9m3l
+        2dwYnXofCRCYzHe8WCRWbzSqrdDGnpGSAE3kYqzGO1aLWbnjiw==
+X-Google-Smtp-Source: APXvYqwTvrQBn97z7rYT9ixy7UM/J7TliVkIaqrac8Xre+AMHO1uYOYzHMZzz7mlfTa7CsgN/vA8J0CGaj70IMm0CYI=
+X-Received: by 2002:a9f:2924:: with SMTP id t33mr921037uat.69.1567676765459;
+ Thu, 05 Sep 2019 02:46:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190905094325.33156-1-cychiang@chromium.org>
+In-Reply-To: <20190905094325.33156-1-cychiang@chromium.org>
+From:   Cheng-yi Chiang <cychiang@chromium.org>
+Date:   Thu, 5 Sep 2019 17:45:38 +0800
+Message-ID: <CAFv8NwJ_3OQgNsim74u-Z3UHyY4OyTJ8Y8JeBSx9m0aWvnmNZA@mail.gmail.com>
+Subject: Re: [PATCH v2] drm: bridge/dw_hdmi: add audio sample channel status setting
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        kuninori.morimoto.gx@renesas.com, sam@ravnborg.org,
+        Doug Anderson <dianders@chromium.org>,
+        Dylan Reid <dgreid@chromium.org>, tzungbi@chromium.org,
+        Xing Zheng <zhengxing@rock-chips.com>, cain.cai@rock-chips.com,
+        =?UTF-8?B?6JSh5p6r?= <eddie.cai@rock-chips.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>, kuankuan.y@gmail.com,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        dri-devel@lists.freedesktop.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Yakir Yang <ykk@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sorry for the noise.
+Removed original author ykk@rock-chips.com from the thread because
+that mail is obsolete.
+Yakir is now using kuankuan.y@gmail.com.
 
-On Thu, Sep 05, 2019 at 09:31:27 +0100, Peter Zijlstra wrote...
 
-> On Fri, Aug 30, 2019 at 10:49:36AM -0700, subhra mazumdar wrote:
->> Add Cgroup interface for latency-nice. Each CPU Cgroup adds a new file
->> "latency-nice" which is shared by all the threads in that Cgroup.
+On Thu, Sep 5, 2019 at 5:43 PM Cheng-Yi Chiang <cychiang@chromium.org> wrote:
 >
-> *sigh*, no. We start with a normal per task attribute, and then later,
-> if it is needed and makes sense, we add it to cgroups.
-
-FWIW, to add on top of what Peter says, we used this same approach for
-uclamp and it proved to be a very effective way to come up with a good
-design. General principles have been:
-
- - a system wide API [1] (under /proc/sys/kernel/sched_*) defines
-   default values for all tasks affected by that feature.
-   This interface has to define also upper bounds for task specific
-   values. Thus, in the case of latency-nice, it should be set by
-   default to the MIN value, since that's the current mainline
-   behaviour: all tasks are latency sensitive.
-
- - a per-task API [2] (via the sched_setattr() syscall) can be used to
-   relax the system wide setting thus implementing a "nice" policy.
-
- - a per-taskgroup API [3] (via cpu controller's attributes) can be used
-   to relax the system-wide settings and restrict the per-task API.
-
-The above features are worth to be added in that exact order.
-
-> Also, your Changelog fails on pretty much every point. It doesn't
-> explain why, it doesn't describe anything and so on.
-
-On the description side, I guess it's worth to mention somewhere to
-which scheduling classes this feature can be useful for. It's worth to
-mention that it can apply only to:
-
- - CFS tasks: for example, at wakeup time a task with an high
-   latency-nice should avoid to preempt a low latency-nice task.
-   Maybe by mapping the latency nice value into proper vruntime
-   normalization value?
-
- - RT tasks: for example, at wakeup time a task with an high
-   latency-nice value could avoid to preempt a CFS task.
-
-I'm sure there will be discussion about some of these features, that's
-why it's important in the proposal presentation to keep a well defined
-distinction among the "mechanisms and API" and how we use the new
-concept to "bias" some scheduler policies.
-
-> From just reading the above, I would expect it to have the range
-> [-20,19] just like normal nice. Apparently this is not so.
-
-Regarding the range for the latency-nice values, I guess we have two
-options:
-
-  - [-20..19], which makes it similar to priorities
-  downside: we quite likely end up with a kernel space representation
-  which does not match the user-space one, e.g. look at
-  task_struct::prio.
-
-  - [0..1024], which makes it more similar to a "percentage"
-
-Being latency-nice a new concept, we are not constrained by POSIX and
-IMHO the [0..1024] scale is a better fit.
-
-That will translate into:
-
-  latency-nice=0 : default (current mainline) behaviour, all "biasing"
-  policies are disabled and we wakeup up as fast as possible
-
-  latency-nice=1024 : maximum niceness, where for example we can imaging
-  to turn switch a CFS task to be SCHED_IDLE?
-
-Best,
-Patrick
-
-[1] commit e8f14172c6b1 ("sched/uclamp: Add system default clamps")
-[2] commit a509a7cd7974 ("sched/uclamp: Extend sched_setattr() to support utilization clamping")
-[3] 5 patches in today's tip/sched/core up to:
-    commit babbe170e053 ("sched/uclamp: Update CPU's refcount on TG's clamp changes")
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+> From: Yakir Yang <ykk@rock-chips.com>
+>
+> When transmitting IEC60985 linear PCM audio, we configure the
+> Aduio Sample Channel Status information of all the channel
+> status bits in the IEC60958 frame.
+> Refer to 60958-3 page 10 for frequency, original frequency, and
+> wordlength setting.
+>
+> This fix the issue that audio does not come out on some monitors
+> (e.g. LG 22CV241)
+>
+> Note that these registers are only for interfaces:
+> I2S audio interface, General Purpose Audio (GPA), or AHB audio DMA
+> (AHBAUDDMA).
+> For S/PDIF interface this information comes from the stream.
+>
+> Currently this function dw_hdmi_set_channel_status is only called
+> from dw-hdmi-i2s-audio in I2S setup.
+>
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> ---
+>  Original patch by Yakir Yang is at
+>
+>  https://lore.kernel.org/patchwork/patch/539653/
+>
+>  Change from v1 to v2:
+>  1. Remove the version check because this will only be called by
+>     dw-hdmi-i2s-audio, and the registers are available in I2S setup.
+>  2. Set these registers in dw_hdmi_i2s_hw_params.
+>  3. Fix the sample width setting so it can use 16 or 24 bits.
+>
+>  .../drm/bridge/synopsys/dw-hdmi-i2s-audio.c   |  1 +
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     | 70 +++++++++++++++++++
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h     | 20 ++++++
+>  include/drm/bridge/dw_hdmi.h                  |  2 +
+>  4 files changed, 93 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+> index 34d8e837555f..b801a28b0f17 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+> @@ -102,6 +102,7 @@ static int dw_hdmi_i2s_hw_params(struct device *dev, void *data,
+>         }
+>
+>         dw_hdmi_set_sample_rate(hdmi, hparms->sample_rate);
+> +       dw_hdmi_set_channel_status(hdmi, hparms->sample_width);
+>         dw_hdmi_set_channel_count(hdmi, hparms->channels);
+>         dw_hdmi_set_channel_allocation(hdmi, hparms->cea.channel_allocation);
+>
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> index bd65d0479683..d1daa369c8ae 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -582,6 +582,76 @@ static unsigned int hdmi_compute_n(unsigned int freq, unsigned long pixel_clk)
+>         return n;
+>  }
+>
+> +/*
+> + * When transmitting IEC60958 linear PCM audio, these registers allow to
+> + * configure the channel status information of all the channel status
+> + * bits in the IEC60958 frame. For the moment this configuration is only
+> + * used when the I2S audio interface, General Purpose Audio (GPA),
+> + * or AHB audio DMA (AHBAUDDMA) interface is active
+> + * (for S/PDIF interface this information comes from the stream).
+> + */
+> +void dw_hdmi_set_channel_status(struct dw_hdmi *hdmi,
+> +                               unsigned int sample_width)
+> +{
+> +       u8 aud_schnl_samplerate;
+> +       u8 aud_schnl_8;
+> +       u8 word_length_bits;
+> +
+> +       switch (hdmi->sample_rate) {
+> +       case 32000:
+> +               aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_32K;
+> +               break;
+> +       case 44100:
+> +               aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_44K1;
+> +               break;
+> +       case 48000:
+> +               aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_48K;
+> +               break;
+> +       case 88200:
+> +               aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_88K2;
+> +               break;
+> +       case 96000:
+> +               aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_96K;
+> +               break;
+> +       case 176400:
+> +               aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_176K4;
+> +               break;
+> +       case 192000:
+> +               aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_192K;
+> +               break;
+> +       case 768000:
+> +               aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_768K;
+> +               break;
+> +       default:
+> +               dev_warn(hdmi->dev, "Unsupported audio sample rate (%u)\n",
+> +                        hdmi->sample_rate);
+> +               return;
+> +       }
+> +
+> +       /* set channel status register */
+> +       hdmi_modb(hdmi, aud_schnl_samplerate, HDMI_FC_AUDSCHNLS7_SMPRATE_MASK,
+> +                 HDMI_FC_AUDSCHNLS7);
+> +
+> +       /*
+> +        * Set original frequency to be the same as frequency.
+> +        * Use one-complement value as stated in IEC60958-3 page 13.
+> +        */
+> +       aud_schnl_8 = (~aud_schnl_samplerate) <<
+> +                       HDMI_FC_AUDSCHNLS8_ORIGSAMPFREQ_OFFSET;
+> +
+> +       /*
+> +        * Refer to IEC60958-3 page 12. We can accept 16 bits or 24 bits.
+> +        * Otherwise, set the register to 0t o indicate using default value.
+> +        */
+> +       word_length_bits = (sample_width == 16) ? 0x2 :
+> +                           ((sample_width == 24) ? 0xb : 0);
+> +
+> +       aud_schnl_8 |= word_length_bits << HDMI_FC_AUDSCHNLS8_WORDLEGNTH_OFFSET;
+> +
+> +       hdmi_writeb(hdmi, aud_schnl_8, HDMI_FC_AUDSCHNLS8);
+> +}
+> +EXPORT_SYMBOL_GPL(dw_hdmi_set_channel_status);
+> +
+>  static void hdmi_set_clk_regenerator(struct dw_hdmi *hdmi,
+>         unsigned long pixel_clk, unsigned int sample_rate)
+>  {
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> index 6988f12d89d9..619ebc1c8354 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> @@ -158,6 +158,17 @@
+>  #define HDMI_FC_SPDDEVICEINF                    0x1062
+>  #define HDMI_FC_AUDSCONF                        0x1063
+>  #define HDMI_FC_AUDSSTAT                        0x1064
+> +#define HDMI_FC_AUDSV                           0x1065
+> +#define HDMI_FC_AUDSU                           0x1066
+> +#define HDMI_FC_AUDSCHNLS0                      0x1067
+> +#define HDMI_FC_AUDSCHNLS1                      0x1068
+> +#define HDMI_FC_AUDSCHNLS2                      0x1069
+> +#define HDMI_FC_AUDSCHNLS3                      0x106a
+> +#define HDMI_FC_AUDSCHNLS4                      0x106b
+> +#define HDMI_FC_AUDSCHNLS5                      0x106c
+> +#define HDMI_FC_AUDSCHNLS6                      0x106d
+> +#define HDMI_FC_AUDSCHNLS7                      0x106e
+> +#define HDMI_FC_AUDSCHNLS8                      0x106f
+>  #define HDMI_FC_DATACH0FILL                     0x1070
+>  #define HDMI_FC_DATACH1FILL                     0x1071
+>  #define HDMI_FC_DATACH2FILL                     0x1072
+> @@ -706,6 +717,15 @@ enum {
+>  /* HDMI_FC_AUDSCHNLS7 field values */
+>         HDMI_FC_AUDSCHNLS7_ACCURACY_OFFSET = 4,
+>         HDMI_FC_AUDSCHNLS7_ACCURACY_MASK = 0x30,
+> +       HDMI_FC_AUDSCHNLS7_SMPRATE_MASK = 0x0f,
+> +       HDMI_FC_AUDSCHNLS7_SMPRATE_192K = 0xe,
+> +       HDMI_FC_AUDSCHNLS7_SMPRATE_176K4 = 0xc,
+> +       HDMI_FC_AUDSCHNLS7_SMPRATE_96K = 0xa,
+> +       HDMI_FC_AUDSCHNLS7_SMPRATE_768K = 0x9,
+> +       HDMI_FC_AUDSCHNLS7_SMPRATE_88K2 = 0x8,
+> +       HDMI_FC_AUDSCHNLS7_SMPRATE_32K = 0x3,
+> +       HDMI_FC_AUDSCHNLS7_SMPRATE_48K = 0x2,
+> +       HDMI_FC_AUDSCHNLS7_SMPRATE_44K1 = 0x0,
+>
+>  /* HDMI_FC_AUDSCHNLS8 field values */
+>         HDMI_FC_AUDSCHNLS8_ORIGSAMPFREQ_MASK = 0xf0,
+> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+> index cf528c289857..12144d2f80f4 100644
+> --- a/include/drm/bridge/dw_hdmi.h
+> +++ b/include/drm/bridge/dw_hdmi.h
+> @@ -156,6 +156,8 @@ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense);
+>
+>  void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
+>  void dw_hdmi_set_channel_count(struct dw_hdmi *hdmi, unsigned int cnt);
+> +void dw_hdmi_set_channel_status(struct dw_hdmi *hdmi,
+> +                               unsigned int sample_width);
+>  void dw_hdmi_set_channel_allocation(struct dw_hdmi *hdmi, unsigned int ca);
+>  void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
+>  void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
+> --
+> 2.23.0.187.g17f5b7556c-goog
+>
