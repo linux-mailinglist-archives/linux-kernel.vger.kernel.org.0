@@ -2,71 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8368AA912
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:34:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58E2FAA905
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:32:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388601AbfIEQd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:33:59 -0400
-Received: from forward105p.mail.yandex.net ([77.88.28.108]:48784 "EHLO
-        forward105p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387514AbfIEQd7 (ORCPT
+        id S2387690AbfIEQb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:31:56 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35634 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730500AbfIEQb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:33:59 -0400
-Received: from mxback16j.mail.yandex.net (mxback16j.mail.yandex.net [IPv6:2a02:6b8:0:1619::92])
-        by forward105p.mail.yandex.net (Yandex) with ESMTP id 5F81D4D4116C;
-        Thu,  5 Sep 2019 19:26:36 +0300 (MSK)
-Received: from smtp1j.mail.yandex.net (smtp1j.mail.yandex.net [2a02:6b8:0:801::ab])
-        by mxback16j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id ukY2D8Egdj-QZhOW1bl;
-        Thu, 05 Sep 2019 19:26:36 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cloudbear.ru; s=mail; t=1567700796;
-        bh=hOkCN7931vzjt0l3Tqx48TfioEIidz03weA0TYCaeLY=;
-        h=In-Reply-To:Subject:To:From:Cc:References:Date:Message-Id;
-        b=FX6x16BP0+aTF2FOvU3gWtNNrEBC+jlU0R/kyvMsmiivbOBwlI1+6oWTar3yNcDqH
-         BM0AmdeTHpgRD2HdD9u6CpwUNKPpHkIaAg4fXqgWv1BhoRE3KJkpPA8zzd1iXxDMNy
-         V1lQn1v7knTCbZVrq82yp67G0+hcTkDaqElaIsQs=
-Authentication-Results: mxback16j.mail.yandex.net; dkim=pass header.i=@cloudbear.ru
-Received: by smtp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id ymy8epsrG0-QYQqHnll;
-        Thu, 05 Sep 2019 19:26:35 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (Client certificate not present)
-From:   Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>
-To:     davem@davemloft.net, robh+dt@kernel.org, f.fainelli@gmail.com
-Cc:     Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] net: phy: dp83867: Add documentation for SGMII mode type
-Date:   Thu,  5 Sep 2019 19:26:00 +0300
-Message-Id: <1567700761-14195-2-git-send-email-vitaly.gaiduk@cloudbear.ru>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567700761-14195-1-git-send-email-vitaly.gaiduk@cloudbear.ru>
-References: <1567700761-14195-1-git-send-email-vitaly.gaiduk@cloudbear.ru>
+        Thu, 5 Sep 2019 12:31:56 -0400
+Received: by mail-pf1-f194.google.com with SMTP id 205so2106487pfw.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 09:31:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:subject:to:from:user-agent:date;
+        bh=SZRwWiwkgh1GK9Bkb/9Pdeq8WDYShoyhFDPtRHfeWLM=;
+        b=MWKovpwW8zTqMdmJ6SnU7bXm40Ky35yU73fI4bDwvGgxd2s8/Xi5imkfpb/SMKDLGD
+         sQ/CqCU7EsSTI11Ky2b1tigH/UCjk3cUgZim0eRbgflNIQ12hnhmSCO9H6FNoFUe+PgG
+         t3oQAlTtwlMWoTHLG7EFoVEpGTrLCyVTM+cAc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
+         :user-agent:date;
+        bh=SZRwWiwkgh1GK9Bkb/9Pdeq8WDYShoyhFDPtRHfeWLM=;
+        b=ub3EBCuWTNQF98bWVblkoSPvNZadoO1woL1h3rWusmgN6uni3jOLfoF+20wGhyODA3
+         TnxhvpsiMGkn0XbFWPhDU0wJA1WtXw+fyHc9inr9gTM7LJQcM3/MBh7R7QmBG/jjwYs/
+         F7soeP4UIK1oB7YH76a0gutvGDhwm4eeoH4ZxsuVs8sWSRk0ieIe2yJMpv1i+3CFtcT2
+         W32nT+2nANa3/y7pkvsozGDfHdOe4hSso2nnOc+bV9gZuufIh0QhvElOu5t+NvIT/Zs9
+         fjjJQyJtR7qElRtzdtQ/zM80ZWpYm8ffi5/shmOpccoMpEA4UOIh5gmfsppAJiVfpaLp
+         3q6w==
+X-Gm-Message-State: APjAAAUX1ptTpBmKbU/xQbpSA+GcdceYwzuxTOWyxU+tmFmMbe7mU7jK
+        jRGMKEWR3xOIrw5Etmxx73mmgA==
+X-Google-Smtp-Source: APXvYqyTceuhZnqbPWbDs3R8tZnE3eh1qj5gCXK7x6cT0077/9SMY7ws5QIdPLCSvBrgo6pYO+Lw5A==
+X-Received: by 2002:a63:3006:: with SMTP id w6mr4043307pgw.440.1567701115407;
+        Thu, 05 Sep 2019 09:31:55 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id em21sm2302534pjb.31.2019.09.05.09.31.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2019 09:31:54 -0700 (PDT)
+Message-ID: <5d71387a.1c69fb81.4fb28.5e25@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190905074152.3oufn7yqr4flu3yc@linutronix.de>
+References: <20190904110038.2bx25byitrejlteu@flow> <5d700756.1c69fb81.77c08.9c82@mx.google.com> <20190905074152.3oufn7yqr4flu3yc@linutronix.de>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-crypto@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
+        Keerthy <j-keerthy@ti.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] random: Support freezable kthreads in add_hwgenerator_randomness()
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 05 Sep 2019 09:31:53 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation of ti,sgmii-type which can be used to select
-SGMII mode type (4 or 6-wire).
+Quoting Sebastian Andrzej Siewior (2019-09-05 00:41:52)
+> On 2019-09-04 11:49:57 [-0700], Stephen Boyd wrote:
+> > Can you try this?
+>=20
+> yes, works.
+>=20
 
-Signed-off-by: Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>
----
- Documentation/devicetree/bindings/net/ti,dp83867.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/net/ti,dp83867.txt b/Documentation/devicetree/bindings/net/ti,dp83867.txt
-index db6aa3f2215b..18e7fd52897f 100644
---- a/Documentation/devicetree/bindings/net/ti,dp83867.txt
-+++ b/Documentation/devicetree/bindings/net/ti,dp83867.txt
-@@ -37,6 +37,7 @@ Optional property:
- 			      for applicable values.  The CLK_OUT pin can also
- 			      be disabled by this property.  When omitted, the
- 			      PHY's default will be left as is.
-+	- ti,sgmii-type - This denotes the fact which SGMII mode is used (4 or 6-wire).
- 
- Note: ti,min-output-impedance and ti,max-output-impedance are mutually
-       exclusive. When both properties are present ti,max-output-impedance
--- 
-2.16.4
+Cool thanks. I'll send a proper patch with your tested-by then?
+Alternatively this can be squashed into this previous patch because it
+was all wrong and is basically reverting the patch and changing the
+wait_event call to be freezable.
 
