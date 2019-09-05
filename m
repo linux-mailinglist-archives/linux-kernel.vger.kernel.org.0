@@ -2,90 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C99E6A9A0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 07:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA179A9A12
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 07:26:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731067AbfIEFXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 01:23:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:28749 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbfIEFXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 01:23:43 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 343963090FD1;
-        Thu,  5 Sep 2019 05:23:43 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-72.ams2.redhat.com [10.36.117.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AE9AF60606;
-        Thu,  5 Sep 2019 05:23:41 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 84C01784F; Thu,  5 Sep 2019 07:23:40 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 07:23:40 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Chia-I Wu <olvaffe@gmail.com>
-Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/virtio: fix command submission with objects but
- without fence.
-Message-ID: <20190905052340.gfwmzkqwcpxtvzvu@sirius.home.kraxel.org>
-References: <20190904074828.32502-1-kraxel@redhat.com>
- <CAPaKu7RWiEr5n_DWcg0H2PPnRs9CUn-ZgQV3NYe8VrdZgEAhTQ@mail.gmail.com>
+        id S1731127AbfIEF0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 01:26:44 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:34162 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725290AbfIEF0o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 01:26:44 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x855QZIP019987, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x855QZIP019987
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 5 Sep 2019 13:26:35 +0800
+Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
+ RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0468.000; Thu, 5 Sep
+ 2019 13:26:34 +0800
+From:   Max Chou <max.chou@realtek.com>
+To:     "marcel@holtmann.org" <marcel@holtmann.org>,
+        "johan.hedberg@gmail.com" <johan.hedberg@gmail.com>,
+        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     alex_lu <alex_lu@realsil.com.cn>, Max Chou <max.chou@realtek.com>
+Subject: =?big5?B?pl6mrDogW1BBVENIXSBCbHVldG9vdGg6IGJ0cnRsOiBGaXggYW4gaXNzdWUgdGhh?= =?big5?B?dCBmYWlsaW5nIHRvIGRvd25sb2FkIHRoZSBGVyB3aGljaCBzaXplIGlzIG92ZXIg?= =?big5?Q?32K_bytes?=
+Thread-Topic: [PATCH] Bluetooth: btrtl: Fix an issue that failing to
+ download the FW which size is over 32K bytes
+Thread-Index: AdVjqntCvzeidYOQmk+GP6Vie4JmjA==
+X-CallingTelephoneNumber: IPM.Note
+X-VoiceMessageDuration: 35
+X-FaxNumberOfPages: 0
+Date:   Thu, 5 Sep 2019 05:26:34 +0000
+Message-ID: <805C62CFCC3D8947A436168B9486C77DEE3AAA84@RTITMBSVM03.realtek.com.tw>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.83.214]
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPaKu7RWiEr5n_DWcg0H2PPnRs9CUn-ZgQV3NYe8VrdZgEAhTQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 05 Sep 2019 05:23:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 04:10:30PM -0700, Chia-I Wu wrote:
-> On Wed, Sep 4, 2019 at 12:48 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
-> >
-> > Only call virtio_gpu_array_add_fence if we actually have a fence.
-> >
-> > Fixes: da758d51968a ("drm/virtio: rework virtio_gpu_execbuffer_ioctl fencing")
-> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> > ---
-> >  drivers/gpu/drm/virtio/virtgpu_vq.c | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> > index 595fa6ec2d58..7fd2851f7b97 100644
-> > --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-> > +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> > @@ -339,11 +339,12 @@ static void virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
-> >                 goto again;
-> >         }
-> >
-> > -       if (fence)
-> > +       if (fence) {
-> >                 virtio_gpu_fence_emit(vgdev, hdr, fence);
-> > -       if (vbuf->objs) {
-> > -               virtio_gpu_array_add_fence(vbuf->objs, &fence->f);
-> > -               virtio_gpu_array_unlock_resv(vbuf->objs);
-> > +               if (vbuf->objs) {
-> > +                       virtio_gpu_array_add_fence(vbuf->objs, &fence->f);
-> > +                       virtio_gpu_array_unlock_resv(vbuf->objs);
-> > +               }
-> This leaks when fence == NULL and vbuf->objs != NULL (which can really
-> happen IIRC... not at my desk to check).
-
-Yes, it can happen, for example when flushing dumb buffers.
-
-But I don't think we leak in this case.  The code paths which don't need
-a fence also do not call virtio_gpu_array_lock_resv(), so things are
-balanced.  The actual release of the objs happens in
-virtio_gpu_dequeue_ctrl_func() via virtio_gpu_array_put_free_delayed().
-
-cheers,
-  Gerd
-
+TWF4IENob3Ugp8ax5qZepqyzb6vKtmyl8yBbW1BBVENIXSBCbHVldG9vdGg6IGJ0cnRsOiBGaXgg
+YW4gaXNzdWUgdGhhdCBmYWlsaW5nIHRvIGRvd25sb2FkIHRoZSBGVyB3aGljaCBzaXplIGlzIG92
+ZXIgMzJLIGJ5dGVzXaFD
