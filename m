@@ -2,123 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E692CAA37D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:50:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB559AA38C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:54:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388027AbfIEMuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 08:50:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33126 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730864AbfIEMuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 08:50:00 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE61620640;
-        Thu,  5 Sep 2019 12:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567687797;
-        bh=u5/6CYSwJw54q2AdpCKJ0XMdCuQlD+4IdreRDjcYlFU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=k4CnjkwX+6Si0MYUHHzfDMUELVvp1IkFYzD9ZdviGrsA2kdvXZzSBCuFt/Wo2GhwY
-         il7E7xBY6+mHeqgsUJlT/faJnGPZCotfc23DstGh4xAVo/oh5yy9/Eo7xUYiM7GXDP
-         Qz25ZpkefgCcyYKHgMwCUqA8y4m30TW7c7lqVkP0=
-Date:   Thu, 5 Sep 2019 21:49:53 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andrew Cooper <andrew.cooper3@citrix.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        <xen-devel@lists.xenproject.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
-Subject: [OT] Re: [Xen-devel] [PATCH -tip 0/2] x86: Prohibit kprobes on
- XEN_EMULATE_PREFIX
-Message-Id: <20190905214953.e4ad9af6e83a911a141c8a11@kernel.org>
-In-Reply-To: <4de91a14-2051-197e-6ab0-beb2538c40f9@citrix.com>
-References: <156759754770.24473.11832897710080799131.stgit@devnote2>
-        <ad6431be-c86e-5ed5-518a-d1e9d1959e80@citrix.com>
-        <20190905104937.60aa03f699a9c0fbf1b651b9@kernel.org>
-        <1372ce73-e2d8-6144-57df-a98429587826@citrix.com>
-        <20190905082647.GZ2332@hirez.programming.kicks-ass.net>
-        <4de91a14-2051-197e-6ab0-beb2538c40f9@citrix.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S2389548AbfIEMyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 08:54:49 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6685 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389065AbfIEMyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 08:54:47 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 682E3CF7E511B6EE1AA3;
+        Thu,  5 Sep 2019 20:54:43 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 5 Sep 2019 20:54:34 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>, <mareklindner@neomailbox.ch>,
+        <mchehab@kernel.org>, <leon@kernel.org>
+CC:     <dledford@redhat.com>, <sakari.ailus@linux.intel.com>,
+        <a@unstable.cc>, <sw@simonwunderlich.de>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <zhongjiang@huawei.com>
+Subject: [PATCH 0/3] replace code with FIELD_SIZEOF
+Date:   Thu, 5 Sep 2019 20:51:33 +0800
+Message-ID: <1567687896-19996-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019 09:53:32 +0100
-Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+FIELD_SIZEOF() has implemented sizeof().  Hence use FIELD_SIZEOF
+directly.
 
-> On 05/09/2019 09:26, Peter Zijlstra wrote:
-> > On Thu, Sep 05, 2019 at 08:54:17AM +0100, Andrew Cooper wrote:
-> >
-> >> I don't know if you've spotted, but the prefix is a ud2a instruction
-> >> followed by 'xen' in ascii.
-> >>
-> >> The KVM version was added in c/s 6c86eedc206dd1f9d37a2796faa8e6f2278215d2
-> > While the Xen one disassebles to valid instructions, that KVM one does
-> > not:
-> >
-> > 	.text
-> > xen:
-> > 	ud2; .ascii "xen"
-> > kvm:
-> > 	ud2; .ascii "kvm"
-> >
-> > disassembles like:
-> >
-> > 0000000000000000 <xen>:
-> >    0:   0f 0b                   ud2
-> >    2:   78 65                   js     69 <kvm+0x64>
-> >    4:   6e                      outsb  %ds:(%rsi),(%dx)
-> > 0000000000000005 <kvm>:
-> >    5:   0f 0b                   ud2
-> >    7:   6b                      .byte 0x6b
-> >    8:   76 6d                   jbe    77 <kvm+0x72>
-> >
-> > Which is a bit unfortunate I suppose. At least they don't appear to
-> > consume further bytes.
-> 
-> It does when you give objdump one extra byte to look at.
-> 
-> 0000000000000005 <kvm>:
->    5:    0f 0b                    ud2   
->    7:    6b 76 6d 00              imul   $0x0,0x6d(%rsi),%esi
-> 
+zhong jiang (3):
+  batman-adv: Use FIELD_SIZEOF directly
+  media: v4l2: Use FIELD_SIZEOF directly
+  IB/mlx5: Use FIELD_SIZEOF directly
 
-Hmm, that consumes the first byte of the next instruction.
-For example, 
-
-  .text
-xen:
-  ud2; .ascii "xen"; cpuid
-kvm:
-  ud2; .ascii "kvm"; cpuid
-
-0000000000000000 <xen>:
-   0:	0f 0b                	ud2    
-   2:	78 65                	js     69 <kvm+0x62>
-   4:	6e                   	outsb  %ds:(%rsi),(%dx)
-   5:	0f a2                	cpuid  
-
-0000000000000007 <kvm>:
-   7:	0f 0b                	ud2    
-   9:	6b 76 6d 0f          	imul   $0xf,0x6d(%rsi),%esi
-   d:	a2                   	.byte 0xa2
-
-This will disturbe decoding bytestream. Anyway, with the next version
-it will be fixed in x86 insn decoder.
-
-Thanks,
+ drivers/infiniband/hw/mlx5/mlx5_ib.h   | 2 +-
+ drivers/media/v4l2-core/v4l2-ioctl.c   | 2 +-
+ net/batman-adv/distributed-arp-table.c | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+1.7.12.4
+
