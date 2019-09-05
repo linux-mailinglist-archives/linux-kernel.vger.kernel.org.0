@@ -2,123 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39139AA72E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BB82AA723
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:21:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388185AbfIEPXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 11:23:45 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:44019 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731609AbfIEPXo (ORCPT
+        id S2388711AbfIEPVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 11:21:37 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:61181 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388057AbfIEPVg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 11:23:44 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M7ehh-1i4XD309vh-0084hW; Thu, 05 Sep 2019 17:22:24 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-arch@vger.kernel.org, y2038@lists.linaro.org,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Vincent Chen <deanbo422@gmail.com>, stable@vger.kernel.org,
-        Greentime Hu <green.hu@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        Stafford Horne <shorne@gmail.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Ley Foon Tan <lftan@altera.com>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        Guo Ren <guoren@kernel.org>,
-        Christian Brauner <christian@brauner.io>
-Subject: [PATCH 1/2] ipc: fix semtimedop for generic 32-bit architectures
-Date:   Thu,  5 Sep 2019 17:21:24 +0200
-Message-Id: <20190905152155.1392871-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:XxUJwrw3CMdgDWeLKiHcQFwqG5kArJ+fThzxITIBUQnV8GTJRWt
- 5s/+x2+IS6LxshP4ageYlrALYSVCMMbn4PLCj6JVtmn07dladMa73O7CfYJKZfYPGAzhpaE
- Pg5AORkHt/hlQHTDkRhl39XOdHBkuqe1JAub8P59iFIHmEoaBgT/xQhHoIlyBmADQH9/9rg
- aSIYL4xMi85ktbTYty2bw==
+        Thu, 5 Sep 2019 11:21:36 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id D8C7F3F478;
+        Thu,  5 Sep 2019 17:21:28 +0200 (CEST)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=KAkWOu+x;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BqtXUM4orE8=:z5RarZPHyTyTUSIZCnz00G
- BafFSMNtWu5vOpkk7WY2l+3hQiUGyMuMcQiP4S3Mq7sfX3GIG+wzlTy+40cDK6a+U96qePVSI
- dZBfwCA4/hoIVwenR+mHi0Na31lTyJzpRkcXpwiGI4CdKYz2biMZCsQMTrj/EfFt0q/k2nrqe
- AnzO7KWgvVlA1GFvDAN2ufVxcA4bmiSh0uAcIRvU8Uo65fOih3pvc4syPcXuzgUrIRaaMb7zo
- y0ViwslBnFMIDYwCSOBZkLrq+2xyh1tYBNuwjUNjrjSs+ibojKIfXdqg3rPvZSQ+wqvqucKig
- 32juvrsEVHPzMVuwzNgP/oF4pVjZvC7UdHWFosZh+5YM969U8OT6Qd+JoN2lfq09JYm8CluZl
- 6fjxAdwNfdWUQ0HsQhtXuYcCIq760Cbb1aq293gV3H9Fp81WIUuC3RdL+AA7GZs0AGFz0lyfT
- bmnOLsfnWJThKRD/iFyoZklx2qHHjT/n+f+2Nr9XZMCTrSRIBy7Q1OECrqqey0m9KG8MH8Wlg
- zKjA2K74yZqlPQwMrVYaxDvn00bUo1Y4Lnn9HD5CHTOMR47ME3MZuZiXzh6QvWgRmtFyPsYg0
- +tqba4W0T196wcnCz+EC8FAP4cObPa8KWCrM6xjtnVTPEbmmamuNne73GDf+dLQhFzZWOxv0P
- G1AiXW23hUDg4deXhFfV1Vb2+9Hi+679hl+lRQEK4FDRl35UHAqTuzrRaGNwSWhiwqr2Apjih
- W/lUMDExLP1uhmqmeuMoU4rWD0x5wgkL3jBHgczvJQX2TwotmtJUOPxqgb1ccMRWEwxtr65oM
- qW98ig3lwLo7Q2dIZtrFLGt1Mz3xkqvyw7GX5hDY/opDRGiM0s=
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WTG1gvVG6mPF; Thu,  5 Sep 2019 17:21:27 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id B49B73F6DE;
+        Thu,  5 Sep 2019 17:21:24 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 40C64360160;
+        Thu,  5 Sep 2019 17:21:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1567696884; bh=NG8liGCrurC3Kiw5aHunM7ayFbaO22LNknP8UX20R8A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KAkWOu+xaC7GJBsRMY4xoJkMaq6SYn/mhV+QeVqOHLj/AZGAbCSmFa+29JWCp4jNY
+         hsM9PrQd/CgGI1evlVZ0n3opn8VR7YSQudWfMfFKBNYRnikSuGdIbkJK91RDncpdD5
+         FDyyTmK+JjSyGOcuFr7Y/vhb+2fdEKmfzPIocJ7Q=
+Subject: Re: [RFC PATCH 1/2] x86: Don't let pgprot_modify() change the page
+ encryption bit
+To:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, pv-drivers@vmware.com
+Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+References: <20190905103541.4161-1-thomas_os@shipmail.org>
+ <20190905103541.4161-2-thomas_os@shipmail.org>
+ <608bbec6-448e-f9d5-b29a-1984225eb078@intel.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <b84d1dca-4542-a491-e585-a96c9d178466@shipmail.org>
+Date:   Thu, 5 Sep 2019 17:21:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <608bbec6-448e-f9d5-b29a-1984225eb078@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Vincent noticed, the y2038 conversion of semtimedop in linux-5.1
-broke when commit 00bf25d693e7 ("y2038: use time32 syscall names on
-32-bit") changed all system calls on all architectures that take
-a 32-bit time_t to point to the _time32 implementation, but left out
-semtimedop in the asm-generic header.
+On 9/5/19 4:15 PM, Dave Hansen wrote:
+> Hi Thomas,
+>
+> Thanks for the second batch of patches!  These look much improved on all
+> fronts.
 
-This affects all 32-bit architectures using asm-generic/unistd.h:
-h8300, unicore32, openrisc, nios2, hexagon, c6x, arc, nds32 and csky.
+Yes, although the TTM functionality isn't in yet. Hopefully we won't 
+have to bother you with those though, since this assumes TTM will be 
+using the dma API.
 
-The notable exception is riscv32, which has dropped support for the
-time32 system calls entirely.
+> On 9/5/19 3:35 AM, Thomas Hellström (VMware) wrote:
+>> -/* mprotect needs to preserve PAT bits when updating vm_page_prot */
+>> +/*
+>> + * mprotect needs to preserve PAT and encryption bits when updating
+>> + * vm_page_prot
+>> + */
+>>   #define pgprot_modify pgprot_modify
+>>   static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
+>>   {
+>> -	pgprotval_t preservebits = pgprot_val(oldprot) & _PAGE_CHG_MASK;
+>> -	pgprotval_t addbits = pgprot_val(newprot);
+>> +	pgprotval_t preservebits = pgprot_val(oldprot) &
+>> +		(_PAGE_CHG_MASK | sme_me_mask);
+>> +	pgprotval_t addbits = pgprot_val(newprot) & ~sme_me_mask;
+>>   	return __pgprot(preservebits | addbits);
+>>   }
+> _PAGE_CHG_MASK is claiming similar functionality about preserving bits
+> when changing PTEs:
+>
+>> /*
+>>   * Set of bits not changed in pte_modify.  The pte's
+>>   * protection key is treated like _PAGE_RW, for
+>>   * instance, and is *not* included in this mask since
+>>   * pte_modify() does modify it.
+>>   */
+>> #define _PAGE_CHG_MASK  (PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |         \
+>>                           _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY | \
+>>                           _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
+> This makes me wonder if we should be including sme_me_mask in
+> _PAGE_CHG_MASK (logically).
 
-Reported-by: Vincent Chen <deanbo422@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: Vincent Chen <deanbo422@gmail.com>
-Cc: Greentime Hu <green.hu@gmail.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Guan Xuetao <gxt@pku.edu.cn>
-Cc: Stafford Horne <shorne@gmail.com>
-Cc: Jonas Bonn <jonas@southpole.se>
-Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-Cc: Ley Foon Tan <lftan@altera.com>
-Cc: Richard Kuo <rkuo@codeaurora.org>
-Cc: Mark Salter <msalter@redhat.com>
-Cc: Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
-Cc: Guo Ren <guoren@kernel.org>
-Fixes: 00bf25d693e7 ("y2038: use time32 syscall names on 32-bit")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Hi Vincent,
+I was thinking the same. But what confuses me is that addbits isn't 
+masked with ~_PAGE_CHG_MASK, which is needed for sme_me_mask, since the 
+problem otherwise is typically that the encryption bit is incorrectly 
+set in addbits. I wonder whether it's an optimization or intentional.
 
-Sorry for the delay since your report. Does this address your
-problem?
+/Thomas
 
-Anyone else, please note that this patch is required since
-5.1 to make sysvipc work on the listed architectures.
----
- include/uapi/asm-generic/unistd.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 1be0e798e362..1fc8faa6e973 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -569,7 +569,7 @@ __SYSCALL(__NR_semget, sys_semget)
- __SC_COMP(__NR_semctl, sys_semctl, compat_sys_semctl)
- #if defined(__ARCH_WANT_TIME32_SYSCALLS) || __BITS_PER_LONG != 32
- #define __NR_semtimedop 192
--__SC_COMP(__NR_semtimedop, sys_semtimedop, sys_semtimedop_time32)
-+__SC_3264(__NR_semtimedop, sys_semtimedop_time32, sys_semtimedop)
- #endif
- #define __NR_semop 193
- __SYSCALL(__NR_semop, sys_semop)
--- 
-2.20.0
 
