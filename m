@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA13AA793
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91285AA78F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:44:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390713AbfIEPor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 11:44:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35754 "EHLO mail.kernel.org"
+        id S2390748AbfIEPos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 11:44:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390525AbfIEPnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390527AbfIEPnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Sep 2019 11:43:43 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71C13218AE;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B47021906;
         Thu,  5 Sep 2019 15:43:43 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1i5tvB-0007Yx-WE; Thu, 05 Sep 2019 11:43:42 -0400
-Message-Id: <20190905154341.880663956@goodmis.org>
+        id 1i5tvC-0007ZR-5A; Thu, 05 Sep 2019 11:43:42 -0400
+Message-Id: <20190905154342.047670545@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 05 Sep 2019 11:43:12 -0400
+Date:   Thu, 05 Sep 2019 11:43:13 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 14/25] selftests/ftrace: Add a testcase for kprobe multiprobe event
+Subject: [for-next][PATCH 15/25] selftests/ftrace: Add syntax error test for immediates
 References: <20190905154258.573706229@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -38,58 +38,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Add a testcase for kprobe event with multi-probe.
+Add syntax error test cases for immediate value and
+immediate string.
 
-Link: http://lkml.kernel.org/r/156095692637.28024.17188971794698768977.stgit@devnote2
+Link: http://lkml.kernel.org/r/156095693553.28024.7730929892585591691.stgit@devnote2
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../ftrace/test.d/kprobe/kprobe_multiprobe.tc | 35 +++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
+ .../selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc   | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
-new file mode 100644
-index 000000000000..44494bac86d1
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
-@@ -0,0 +1,35 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Create/delete multiprobe on kprobe event
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+index 29faaec942c6..aa59944bcace 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+@@ -41,6 +41,11 @@ check_error 'p vfs_read ^%none_reg'	# BAD_REG_NAME
+ check_error 'p vfs_read ^@12345678abcde'	# BAD_MEM_ADDR
+ check_error 'p vfs_read ^@+10'		# FILE_ON_KPROBE
+ 
++grep -q "imm-value" README && \
++check_error 'p vfs_read arg1=\^x'	# BAD_IMM
++grep -q "imm-string" README && \
++check_error 'p vfs_read arg1=\"abcd^'	# IMMSTR_NO_CLOSE
 +
-+[ -f kprobe_events ] || exit_unsupported
-+
-+grep -q "Create/append/" README || exit_unsupported
-+
-+# Choose 2 symbols for target
-+SYM1=_do_fork
-+SYM2=do_exit
-+EVENT_NAME=kprobes/testevent
-+
-+DEF1="p:$EVENT_NAME $SYM1"
-+DEF2="p:$EVENT_NAME $SYM2"
-+
-+:;: "Define an event which has 2 probes" ;:
-+echo $DEF1 >> kprobe_events
-+echo $DEF2 >> kprobe_events
-+cat kprobe_events | grep "$DEF1"
-+cat kprobe_events | grep "$DEF2"
-+
-+:;: "Remove the event by name (should remove both)" ;:
-+echo "-:$EVENT_NAME" >> kprobe_events
-+test `cat kprobe_events | wc -l` -eq 0
-+
-+:;: "Remove just 1 event" ;:
-+echo $DEF1 >> kprobe_events
-+echo $DEF2 >> kprobe_events
-+echo "-:$EVENT_NAME $SYM1" >> kprobe_events
-+! cat kprobe_events | grep "$DEF1"
-+cat kprobe_events | grep "$DEF2"
-+
-+:;: "Appending different type must fail" ;:
-+! echo "$DEF1 \$stack" >> kprobe_events
+ check_error 'p vfs_read ^+0@0)'		# DEREF_NEED_BRACE
+ check_error 'p vfs_read ^+0ab1(@0)'	# BAD_DEREF_OFFS
+ check_error 'p vfs_read +0(+0(@0^)'	# DEREF_OPEN_BRACE
 -- 
 2.20.1
 
