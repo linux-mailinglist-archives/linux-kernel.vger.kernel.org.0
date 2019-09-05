@@ -2,187 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB036AA8AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF858AA8C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730193AbfIEQUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:20:00 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41641 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387421AbfIEQSF (ORCPT
+        id S1731361AbfIEQUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:20:36 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42664 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729825AbfIEQUe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:18:05 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b13so2060847pfo.8
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 09:18:05 -0700 (PDT)
+        Thu, 5 Sep 2019 12:20:34 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y23so3124390lje.9
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 09:20:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=L8hOfhOr51aqScCCWWbh9I9oRm+jyZZGT7N1Ouypdt4=;
-        b=Kf9BCxH5tyFR8Sxb6davF0tw/g0BJcQ2LTgqYDRkCXe99lige8xFTOyajGrEfuPQ/R
-         I0jfW+xyceHiuUmlk5yy9H/wHaQBHzqM6/NCd+6TYi2hTFJcP+V9Qy+4KG7IN1UQJXhm
-         SHxD8duKsNPol28y9SdpztaPVTFslQB1ZJ4shENKHGBsNtllukJz/Fvv4h2tEY0T/gDA
-         A2nAqicaFTIrh+VxqbojFsyy6M/2eC5AmJiZLPVyY+LXna6RGps4ro7SxWrWHOr8M3f3
-         r5tzdOU8n4cY0b4Asgrm+yIMVuJn8WX1xgQ9ScuHQJtGCR5wLKwPCsSipBa/U9NOB1IX
-         2SLA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=skj/g6oI6dabfQCpUUc6UBPVoF5aAw3D1EkLoYv5aGM=;
+        b=dAeCR5atGe5w1X5iRAO1B4+ZEuHNKoKyZ9C5iFeqNWytBiNaQXx25ttFaeOzuire+V
+         uAG2P3uQnj0g012k0rh9UsuhLmIHx9D6cpl4Z4xbKJNAVgo2gxcChtkI8ATisZpFuMRQ
+         turD2jy3tEjQKnr27iHENSiLzWM20us23E8ps=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=L8hOfhOr51aqScCCWWbh9I9oRm+jyZZGT7N1Ouypdt4=;
-        b=gdSPhaLfauyGR9fohqq6IwYl1+Pdmow6AF2d24mwJ+NBTRsOIpmpXw/jsC6hT0+yGC
-         +UkvhTEFKtbglBp702hUraVzsMPOAiaCW93b/q0wHTRE7yicTs1RKTWmPMAdExGECa7f
-         Yr9tDYvxFd/IfD4iPGLX0ZMnihjhep2Rpf3mPdi50XR64c/Gz+04oFHbCGYlCoIIa1Mk
-         QMa/h0agH7/Y3rYC4bIiLDAyHWFJ5k8TnbTdqVT0UHsQJhElogyk5FYo5v1zs4d0bqiP
-         kLxNOJjPP3d8Yw06tx+J+OYQPKWqqA3289Ls/2DrvehmzbXB2BFTXZSiIDXnk9I+9zUs
-         xYlw==
-X-Gm-Message-State: APjAAAWQJDt3z5uYAYsGYrcinH1wEYxVMu7LibpZ9HKrHNkSVJPCvvV1
-        0dOddwxcx/sDyQFzQgZaKXvEyg==
-X-Google-Smtp-Source: APXvYqzPIZoynm5wH2XSzFsQu6YuhHmdV6ACJ/jbefAUC4vneQ0qioQJzoA1wj/k15d4/pVhs+puhw==
-X-Received: by 2002:a63:df06:: with SMTP id u6mr3817337pgg.96.1567700284680;
-        Thu, 05 Sep 2019 09:18:04 -0700 (PDT)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id m129sm6324005pga.39.2019.09.05.09.18.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 09:18:04 -0700 (PDT)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     stable@vger.kernel.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: [BACKPORT 4.14.y 03/18] drm/omap: panel-dsi-cm: fix driver
-Date:   Thu,  5 Sep 2019 10:17:44 -0600
-Message-Id: <20190905161759.28036-4-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190905161759.28036-1-mathieu.poirier@linaro.org>
-References: <20190905161759.28036-1-mathieu.poirier@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=skj/g6oI6dabfQCpUUc6UBPVoF5aAw3D1EkLoYv5aGM=;
+        b=o7155bA+nB3I/K10tO5EwhOEWeCvqNTDwc8tRVXNar/1gNdjMI2xpb/80QUoFomLbr
+         mBYnXNQ20MDNonBiWqHfW6l65j+k/toz9Wter0Yw99xZtfA6/aJy33vnd6giL+kQa3OW
+         +WQyI0jzkcuc9JxZVheGVjJIwl+8dZ5d/7FGdInITeIvuYZWa+pAfObXO+yzOPVOU5u9
+         l6dJFSdqwAnsbP4HC7uLjyQ6Y2rfEaTPWx0DpUWpN2fS2j2eLYWEfOQOJmxoi8gtTT11
+         vh7oTYFBQO9B8lYHPSFxK67mdVyKELmZFn7/hbbCeUgAKLSasJSrxgY//LQhW2JN0JpY
+         R2OA==
+X-Gm-Message-State: APjAAAWHtAcDqwTbE0J92yvpoovQT+eHZilTcMYGFP0X3toIVKWbRiOV
+        ssZSYEuDaJiloZB9v7oFR3UnI9ma+a8=
+X-Google-Smtp-Source: APXvYqyKjwRdqaEUbW6bKoy9EwXN6OpMutMfIad45JwjpPTxs0ClIoIyK38Mes6NRJFDX5jHBiF4DQ==
+X-Received: by 2002:a2e:90c6:: with SMTP id o6mr2726366ljg.144.1567700432856;
+        Thu, 05 Sep 2019 09:20:32 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id p22sm456936ljp.69.2019.09.05.09.20.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2019 09:20:32 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id y23so2806938ljn.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 09:20:31 -0700 (PDT)
+X-Received: by 2002:a2e:814d:: with SMTP id t13mr2767373ljg.72.1567700431469;
+ Thu, 05 Sep 2019 09:20:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190904181740.GA19688@gmail.com>
+In-Reply-To: <20190904181740.GA19688@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Sep 2019 09:20:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi2VOPoweqnDhxXKJ9fcLQzkV1oEDjteV=z-C7KXrpomg@mail.gmail.com>
+Message-ID: <CAHk-=wi2VOPoweqnDhxXKJ9fcLQzkV1oEDjteV=z-C7KXrpomg@mail.gmail.com>
+Subject: Re: [GIT PULL] compiler-attributes for v5.3-rc8
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Will Deacon <will@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Paul Burton <paul.burton@mips.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+On Wed, Sep 4, 2019 at 11:18 AM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> I was going to send this for 5.4 since it is not that trivial, but since
+> you are doing an -rc8, and it fixes an oops, please consider pulling it.
 
-commit e128310ddd379b0fdd21dc41d176c3b3505a0832 upstream
+I looked at this, and while it seems safe, I end up worrying.
 
-This adds support for get_timings() and check_timings()
-to get the driver working and properly initializes the
-timing information from DT.
+Macro stringification isn't entirely obvious, and an unquoted string
+could become corrupted if the stringification ends up not happening
+immediately.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- .../gpu/drm/omapdrm/displays/panel-dsi-cm.c   | 56 +++++++++++++++++--
- 1 file changed, 51 insertions(+), 5 deletions(-)
+It does seem safe just because we do
 
-diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-index 92c556ac22c7..905b71719d65 100644
---- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-+++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-@@ -25,6 +25,7 @@
- #include <linux/of_gpio.h>
- 
- #include <video/mipi_display.h>
-+#include <video/of_display_timing.h>
- 
- #include "../dss/omapdss.h"
- 
-@@ -1099,6 +1100,36 @@ static void dsicm_ulps_work(struct work_struct *work)
- 	mutex_unlock(&ddata->lock);
- }
- 
-+static void dsicm_get_timings(struct omap_dss_device *dssdev,
-+			      struct videomode *vm)
-+{
-+	struct panel_drv_data *ddata = to_panel_data(dssdev);
-+
-+	*vm = ddata->vm;
-+}
-+
-+static int dsicm_check_timings(struct omap_dss_device *dssdev,
-+			       struct videomode *vm)
-+{
-+	struct panel_drv_data *ddata = to_panel_data(dssdev);
-+	int ret = 0;
-+
-+	if (vm->hactive != ddata->vm.hactive)
-+		ret = -EINVAL;
-+
-+	if (vm->vactive != ddata->vm.vactive)
-+		ret = -EINVAL;
-+
-+	if (ret) {
-+		dev_warn(dssdev->dev, "wrong resolution: %d x %d",
-+			 vm->hactive, vm->vactive);
-+		dev_warn(dssdev->dev, "panel resolution: %d x %d",
-+			 ddata->vm.hactive, ddata->vm.vactive);
-+	}
-+
-+	return ret;
-+}
-+
- static struct omap_dss_driver dsicm_ops = {
- 	.connect	= dsicm_connect,
- 	.disconnect	= dsicm_disconnect,
-@@ -1109,6 +1140,9 @@ static struct omap_dss_driver dsicm_ops = {
- 	.update		= dsicm_update,
- 	.sync		= dsicm_sync,
- 
-+	.get_timings	= dsicm_get_timings,
-+	.check_timings	= dsicm_check_timings,
-+
- 	.enable_te	= dsicm_enable_te,
- 	.get_te		= dsicm_get_te,
- 
-@@ -1120,7 +1154,8 @@ static int dsicm_probe_of(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
- 	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
- 	struct omap_dss_device *in;
--	int gpio;
-+	struct display_timing timing;
-+	int gpio, err;
- 
- 	gpio = of_get_named_gpio(node, "reset-gpios", 0);
- 	if (!gpio_is_valid(gpio)) {
-@@ -1137,6 +1172,17 @@ static int dsicm_probe_of(struct platform_device *pdev)
- 		return gpio;
- 	}
- 
-+	err = of_get_display_timing(node, "panel-timing", &timing);
-+	if (!err) {
-+		videomode_from_timing(&timing, &ddata->vm);
-+		if (!ddata->vm.pixelclock)
-+			ddata->vm.pixelclock =
-+				ddata->vm.hactive * ddata->vm.vactive * 60;
-+	} else {
-+		dev_warn(&pdev->dev,
-+			 "failed to get video timing, using defaults\n");
-+	}
-+
- 	in = omapdss_of_find_source_for_first_ep(node);
- 	if (IS_ERR(in)) {
- 		dev_err(&pdev->dev, "failed to find video source\n");
-@@ -1171,14 +1217,14 @@ static int dsicm_probe(struct platform_device *pdev)
- 	if (!pdev->dev.of_node)
- 		return -ENODEV;
- 
--	r = dsicm_probe_of(pdev);
--	if (r)
--		return r;
--
- 	ddata->vm.hactive = 864;
- 	ddata->vm.vactive = 480;
- 	ddata->vm.pixelclock = 864 * 480 * 60;
- 
-+	r = dsicm_probe_of(pdev);
-+	if (r)
-+		return r;
-+
- 	dssdev = &ddata->dssdev;
- 	dssdev->dev = dev;
- 	dssdev->driver = &dsicm_ops;
--- 
-2.17.1
+  #define __section(S)   __attribute__((__section__(#S)))
 
+but I had to go _check_ that we do, because it wouldn't have been safe
+if there had been another level of macro expansion, because then the
+argument in turn could have been expanded before it was stringified.
+
+So sometimes you actually _want_ to pass in a string to be
+stringified, because it's safer. I realize it then gets string-quoted,
+but this has worked for gcc. Even if I suspect nobody really _thought_
+about it.
+
+So I'm not unhappy about the patch, but it's the kind of thing I'd
+really prefer not to do at this stage.
+
+Particularly since it seems to do other things too than just fix
+double quoting. As far as I can tell, it doesn't just fix double
+string quoting, it changes a lot of singly-quoted strings to use the
+macro and unquotes them, ie
+
+  - __attribute__((__section__(".arch.info.init"))) = {   \
+  + __section(.arch.info.init) = {        \
+
+doesn't actually "fix" anything that I can see, it just uses the simpler form.
+
+               Linus
