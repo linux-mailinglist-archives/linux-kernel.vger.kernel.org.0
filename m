@@ -2,69 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43901AAD61
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE069AAD60
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:50:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404125AbfIEUu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 16:50:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404044AbfIEUuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 16:50:20 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09B26206CD;
-        Thu,  5 Sep 2019 20:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567716620;
-        bh=BS5DK9GBdZOzJUMu/R6EbA8/+V27Y9jP64qS0hGDPkI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lD4VubIrzE/48xBJAIjwzyGN4/bKumoNZppPFl9EkYr/HPs0YWnFNdzjzwiVSxaLO
-         ogOhUKz8KSUOa7rjxbP96XIWct20hXalZGL0GV8RNB4Iti7SBg10sD37aoAymGGG+L
-         xkVPVVbW/uZhreNy2JttY/Bvku0g1sTv+R1ntWE4=
-Date:   Thu, 5 Sep 2019 22:50:17 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [git pull] habanalabs pull request for kernel 5.4
-Message-ID: <20190905205017.GA25089@kroah.com>
-References: <20190905121934.GA31853@ogabbay-VM>
+        id S2404116AbfIEUuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 16:50:24 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38596 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404110AbfIEUuW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 16:50:22 -0400
+Received: by mail-wr1-f66.google.com with SMTP id l11so4292107wrx.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 13:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Avg8QM6aPfWwX5AoBSBFNIlTtI2x7nEGXCQk3lEb/fc=;
+        b=EojOhlSjiJk8y6EJeNppFrahboogV9SnwNJf0VVPvj9yW7Vq17+tZV1p3tUjYh/zzn
+         eQ9R5aIm8Pqf/LEcARwdoX6n0VD2ghT8SwLkb3axshTZ5X2u1d17r2IMg5ucPfiraQFj
+         /I0RSEMx5k/paxbsKQ28uPeRkRjbW+5qDU+2IKnTr0NP71dqHorDFBF04ebs4ogFj5pR
+         sa42t8sSaxPjB2pmqKJpUcm6gvM4EDtdwESfWjL/xPyr66Tff8rszZyTJ9R8ia9vWAcl
+         9OnLStXajERrE2mIAJut0X5KTQK3F8fyYJP9E6YsREIMWXzF7CyrQtYmToM52YC08TFm
+         HIRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Avg8QM6aPfWwX5AoBSBFNIlTtI2x7nEGXCQk3lEb/fc=;
+        b=LRufIfCZLCY2G7DihVzjiV/YXTy/4R+iHxQYYLD2i77a9FZvgY3oEd6rhqbBYDTaph
+         aetftMlkb16GCpOpR5MST4o9Ir1TJl0JpeerRjbFL6Dm1IcMeD2bKZmQXK4nGogFlViZ
+         aLOAXT6qFIWF5YIjKeEKlEPFKt9C8gZJkNP1XMXxupxBpHEqQ1C+K+G1cUtJEwXSJweR
+         uiF4EeBFHm86WAh55uaEQqzxdVq63qYChR8SddJUdLexF+gOCNGydgHaiy7zTv5V/aiB
+         UEuaegTQHNSeJWeexqmlH7+3xbklAQmxr0cCvSpoxjy/4poKlrkmNnsgNJFOAxqI5lAN
+         qFBA==
+X-Gm-Message-State: APjAAAUMHQp05XVBSWl0uBgcHcvmss9jX2dct6U6/Wvile53miWgbJxo
+        lW7aenlfxjyPDFfy3EiK4qjx48qEsFc=
+X-Google-Smtp-Source: APXvYqwi/+00SHE3kxRqKt+uOC1fnKiZKCYTRd+lO9y4jlGHsH2+knmmV2EW7SfCJPj5yMwzkXM97g==
+X-Received: by 2002:adf:dc0f:: with SMTP id t15mr4596106wri.258.1567716620556;
+        Thu, 05 Sep 2019 13:50:20 -0700 (PDT)
+Received: from [192.168.1.6] (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
+        by smtp.gmail.com with ESMTPSA id k6sm5932699wrg.0.2019.09.05.13.50.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Sep 2019 13:50:19 -0700 (PDT)
+Subject: Re: [PATCH v3] watchdog: qcom: support pre-timeout when the bark irq
+ is available
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
+        wim@linux-watchdog.org, linux-arm-msm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190905182419.26539-1-jorge.ramirez-ortiz@linaro.org>
+ <20190905183456.GA29500@roeck-us.net>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <97c57a8a-545e-f5de-0756-e8ce054aa036@linaro.org>
+Date:   Thu, 5 Sep 2019 22:50:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190905121934.GA31853@ogabbay-VM>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190905183456.GA29500@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 03:19:34PM +0300, Oded Gabbay wrote:
-> Hello Greg,
+On 9/5/19 20:34, Guenter Roeck wrote:
+> On Thu, Sep 05, 2019 at 08:24:19PM +0200, Jorge Ramirez-Ortiz wrote:
+>> Use the bark interrupt as the pre-timeout notifier whenever this
+>> interrupt is available.
+>>
+>> By default, the pretimeout notification shall occur one second earlier
+>> than the timeout.
+>>
+>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 > 
-> This is the pull request for habanalabs driver for kernel 5.4.
-> 
-> It contains one major change, the creation of an additional char device
-> per PCI device. In addition, there are some small changes and
-> improvements.
-> 
-> Please see the tag message for details on what this pull request contains.
-> 
-> Thanks,
-> Oded
-> 
-> The following changes since commit 25ec8710d9c2cd4d0446ac60a72d388000d543e6:
-> 
->   w1: add DS2501, DS2502, DS2505 EPROM device driver (2019-09-04 14:34:31 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-next-2019-09-05
+> Can you please give people time to reply before flooding the mailing list
+> with revisions ? This is getting annoying quite rapidly. I am going to
+> reply to v2, as I had started on that already (and to the one without
+> subject before).
 
-Is that a signed tag?  It doesn't seem to me like it is, have you always
-sent unsigned tags?
+yes, sorry about it. it is not frequent that someone gives a review so
+quickly though so I thought I had time to sneak in some reworks - thanks
+and apologies again.
 
-thanks,
+I am about to send v4 addressing the issues you raised.
 
-greg k-h
+> 
+> Guenter
+> .
+> 
+
