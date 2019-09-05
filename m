@@ -2,82 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F596AA96C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:55:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64938AA972
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:55:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390647AbfIEQzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:55:24 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38757 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728254AbfIEQzX (ORCPT
+        id S2390768AbfIEQzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:55:46 -0400
+Received: from mail-qt1-f169.google.com ([209.85.160.169]:39423 "EHLO
+        mail-qt1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731492AbfIEQzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:55:23 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d10so1735192pgo.5;
-        Thu, 05 Sep 2019 09:55:23 -0700 (PDT)
+        Thu, 5 Sep 2019 12:55:45 -0400
+Received: by mail-qt1-f169.google.com with SMTP id n7so3615939qtb.6;
+        Thu, 05 Sep 2019 09:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=9Iu+90P+XBQtWwq8jZrry/xtl3By2pETxjT+u3DO+OM=;
-        b=SHPCVEE3HhBl4aZFgkPKS0dEoNKnwdTf4VtsatZeohq+Oj6Ty3/BdN60MRB0QsJN+e
-         ztX+6xbslxdVrY26pRaDHU0fnx6PKyioDbN3zKuKnUDpR23xZjtWdKvJjnz8vUCecEFx
-         0Y1O80CefzCEF7phLhM0YYBkCZDR9mHexTMFE/03/6PX38cZWe5alHowmPGOm1/QCjOw
-         gfYM7nmMzGtw7/MlvF93TXeed3oq/DbSavTx9gpIJatTEudrNVKpYxS3jgBNdkJGqRsK
-         7nK4wcl4SFYFdFKzArUrC1IlrjVIEQ+W5L3eta/YSZ1m+sXyJodkDacri13PRMgpo70T
-         EeGQ==
+        bh=U86ZblmgaF4eBV4iyqRJf/CbV9WbHkWYMeJ0zFkqIu0=;
+        b=TyUOTJJGoo8GODrCt/6YB1x/8aj4n9IE8jT/v+K7tCsOLINcESeyD/Ij4NXtMIB6Sy
+         17L6qDvWQyCyeC7XEmXxoOnrWrvCkDJaDG0IEmRd9h3bbbHGAAp7YN0Z5zIHZIZQLjXo
+         e7R4fvWV6g6XW9aD+hLJiCg7Lmv5aeBV8tuo+o7VsPjG3fXt7UmiwBwDqQNJlFXWk3TH
+         5zwtfxF6mzHV0xMeRObFu3TfF099rR2GJ8US0yfbmsALUGRng05iBs5g6jzYHGRvKk8h
+         FRvrTCHS5oUC5grWyibA9V7qghdaMk9oAmt6exGDzNOXAJpBRPdCLJ0cj/yBZJkPaFfd
+         sbuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9Iu+90P+XBQtWwq8jZrry/xtl3By2pETxjT+u3DO+OM=;
-        b=bKDYlrAuOf8KuFqdfMSxGexjT4Xo2n8rdn3R/FvUmyKECUN3vFRRBiTWJJDpspAjMO
-         eOl3edPqWlVj6Mk692vwn1kfXHid5/Tm1pEHZf0N09Lla7DJDl3pvDWb98XZq9gm0ERZ
-         K51D1X1hYTtJtPO1nJ0VfVuE1MJRCpTRo+jrLBiHNgbuzy99Vg/q2lFLyIaaAkK425xZ
-         zw2uyvHtZ9ShuljG1bN/E6jHNvcO38/1JzTsSiDQJBl+SZrIlNJJbihLJ1cr/LNAnQ1i
-         4BIhPGQMuVR+UXK7LnOFYak9Hhq+Rph5ZAC0obnMEN+HPGt8ck+7vkzGZPheJ7lJ9XWz
-         kw3g==
-X-Gm-Message-State: APjAAAXnN/uVni5z6v/nTCTDX41pjiKRI/RxgXuBzg6qgNxdPywqSqxw
-        XFqacPGPtkIgjIahpI4LDtA=
-X-Google-Smtp-Source: APXvYqz3ind6qTZjey5AjK8BfOtQdVhkUj0hVs04MKmXrAC9RghtNsK78KldAAIi6OpNeI7u8j5sgQ==
-X-Received: by 2002:a17:90a:c386:: with SMTP id h6mr4904376pjt.122.1567702523027;
-        Thu, 05 Sep 2019 09:55:23 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e6sm6478518pfl.146.2019.09.05.09.55.22
+        bh=U86ZblmgaF4eBV4iyqRJf/CbV9WbHkWYMeJ0zFkqIu0=;
+        b=AaGh5aAxS1kkttwlWW1hzOrtLI04mgCTsJuuHe/KUgC6l7CNGVlFoGPKxQY3ibD06M
+         SCSC8X+4RRoEDzGI6q36Stpv+YyyKV2Uip9jN10hOteMbSMN4P1pZNZGw7QFRgg59SwG
+         lXnKMoDmohrsgXZpwrR8m/HevTmN134AU2EUOwZnmsQ7A991TtHQV6s57IA0qwAxsZPQ
+         UxuQzbK1g0M4j4KkjffyPFv0n9I4Wx/q3SDwH9sEG/K9kxBtUS9eQhBwEK9SwlspDL12
+         0qerDkdbz/MXVX3b/Sz5iRqqPsJSsN8d3e24K7YJKCr7n2AsR4efrlUbW4OlPTV0y/z+
+         PzTA==
+X-Gm-Message-State: APjAAAU9ptiZiNXOtCObdJWOrdGF8URMTjPe2nFnDjAm8y3UWh5M+8K2
+        n0vHJVdEe9NZbdwsc7zVwbY=
+X-Google-Smtp-Source: APXvYqxWVpg+iwFh32fbJZ2IVVdvSiiBQD6AcEmV0uXtGrMn3YPk/UP/cg4q73bDG/04BT3T30UTyg==
+X-Received: by 2002:ac8:2914:: with SMTP id y20mr4722757qty.150.1567702543675;
+        Thu, 05 Sep 2019 09:55:43 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:5196])
+        by smtp.gmail.com with ESMTPSA id e7sm1083953qto.43.2019.09.05.09.55.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2019 09:55:22 -0700 (PDT)
-Date:   Thu, 5 Sep 2019 09:55:21 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/83] 4.9.191-stable review
-Message-ID: <20190905165521.GC23158@roeck-us.net>
-References: <20190904175303.488266791@linuxfoundation.org>
+        Thu, 05 Sep 2019 09:55:42 -0700 (PDT)
+Date:   Thu, 5 Sep 2019 09:55:40 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, newella@fb.com, clm@fb.com,
+        Josef Bacik <josef@toxicpanda.com>, dennisz@fb.com,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, kernel-team@fb.com,
+        cgroups@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        bpf@vger.kernel.org
+Subject: Re: [PATCHSET block/for-next] IO cost model based work-conserving
+ porportional controller
+Message-ID: <20190905165540.GJ2263813@devbig004.ftw2.facebook.com>
+References: <20190614015620.1587672-1-tj@kernel.org>
+ <20190614175642.GA657710@devbig004.ftw2.facebook.com>
+ <5A63F937-F7B5-4D09-9DB4-C73D6F571D50@linaro.org>
+ <B5E431F7-549D-4FC4-A098-D074DF9586A1@linaro.org>
+ <20190820151903.GH2263813@devbig004.ftw2.facebook.com>
+ <9EB760CE-0028-4766-AE9D-6E90028D8579@linaro.org>
+ <20190831065358.GF2263813@devbig004.ftw2.facebook.com>
+ <88C7DC68-680E-49BB-9699-509B9B0B12A0@linaro.org>
+ <20190902155652.GH2263813@devbig004.ftw2.facebook.com>
+ <D9F6BC6D-FEB3-40CA-A33C-F501AE4434F0@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190904175303.488266791@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <D9F6BC6D-FEB3-40CA-A33C-F501AE4434F0@linaro.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 07:52:52PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.191 release.
-> There are 83 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri 06 Sep 2019 05:50:23 PM UTC.
-> Anything received after that time might be too late.
-> 
+Hello, Paolo.
 
-Build results:
-	total: 172 pass: 172 fail: 0
-Qemu test results:
-	total: 356 pass: 356 fail: 0
+So, I'm currently verifying iocost in the FB fleet.  Around three
+thousand machines running v5.2 (+ some backports) with btrfs on a
+handful of different models of consumer grade SSDs.  I haven't seen
+complete loss of control as you're reporting.  Given that you're
+reporting the same thing on io.latency, which is deployed on multiple
+orders of magnitude more machines at this point, it's likely that
+there's something common affecting your test setup.  Can you please
+describe your test configuration and if you aren't already try testing
+on btrfs?
 
-Guenter
+Thanks.
+
+-- 
+tejun
