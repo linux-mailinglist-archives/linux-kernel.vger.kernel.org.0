@@ -2,220 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DEF2AA26B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:02:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B497DAA274
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:02:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388992AbfIEMBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 08:01:40 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36175 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388977AbfIEMBi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 08:01:38 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p13so2684935wmh.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 05:01:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=klSkJhbs0NB+xI0c1ebxNosV7pVJl7beazxfFo4LBZg=;
-        b=qVswcN+PucNQH6v4EQigxCZdHKTEzMwj6G2zSXUlL9Q3vyaySUauYMtEwxR5tBfkTX
-         Vl/wABaSlML2K61iULZEg9ci45M0aAYXwsUTPRKD55tXQk4EtDd41q/6q033f5nkHvfJ
-         +qHF+b/8Kowqxp9iuzSOMwteKYzNFPmUoAVTW0FBnhdvtWeVvCGHIFLNS+b55o5njqS4
-         2EVfcQ5qtdUqtDgwR9T7GbXyUujllGe+DCGRPCI9M5s0RC35d/GTQ9b+eHNo/BPRTHAs
-         109aM4zFeYs3qeABFt6PzFK8FWOj5EyNdbvW3NeM23Ykr/vHc2xeAA3Q5sFRzOaJ6WV9
-         yi3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=klSkJhbs0NB+xI0c1ebxNosV7pVJl7beazxfFo4LBZg=;
-        b=M0Q3BMuKLECDShgdIWIfvcfTdg+FM0Z2Im1s/0Pqi1pPkbl+lB3w0jPHtcxJqSvax0
-         razwTAkRzmb/NycPjOrVx71SfmYVgDzuEt4bP3VnS+/7iJu9jipOcSx4C3bqrt/3XCH1
-         JNzAzTc9G7uT/8+WSU/wkhyWryYslhQs23OOVA67EQ0X0lyXc4d79HME42wwi0Levdas
-         nowfehE99EUOC54UecK0EYdhhjitIfiunR3UScEnGxig5hhMdqNRw+HdhV9+u2ig+B9k
-         Qp8iBP68zWUskCseMQEUbyM/vUkEIOZKsxp2RlyWNAofSDrJ9vDMwNr9jPQkEW47fC9v
-         9xpQ==
-X-Gm-Message-State: APjAAAUEDB+/fDFjXx19PMHqfaUOD7Da0GOsGixDym1zvvWbBDhn9Vvg
-        QDmG4ZhnerqcHk0sPeiMIEOvxlpFYFtnGw==
-X-Google-Smtp-Source: APXvYqzMpRsgyQhdaXkYR6VhupFXcKpJSMlYFG0Sb+nF3uP8ydsPZns1A+Qc1CimphV2UL/tqKaqyQ==
-X-Received: by 2002:a1c:2b85:: with SMTP id r127mr2607200wmr.30.1567684896038;
-        Thu, 05 Sep 2019 05:01:36 -0700 (PDT)
-Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id a18sm3436311wrh.25.2019.09.05.05.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 05:01:35 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 8/8] ASoC: meson: tdmout: add sm1 support
-Date:   Thu,  5 Sep 2019 14:01:20 +0200
-Message-Id: <20190905120120.31752-9-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190905120120.31752-1-jbrunet@baylibre.com>
-References: <20190905120120.31752-1-jbrunet@baylibre.com>
+        id S2389044AbfIEMCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 08:02:14 -0400
+Received: from mout.gmx.net ([212.227.15.15]:55991 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733146AbfIEMCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 08:02:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1567684918;
+        bh=Ifg8ScrvmDwqe6DT0xc5FKzrFMpkjXP2CoDGAqSR8Kw=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=JU8ZtJW7Cs/y7o84KN46w39L+ZCoR7OPTknfmpuCV5OD8V53+MXH7NXMWAWQkaF8q
+         oDhmBH8rbONkCNzjnFPMYT+Zzyb5xSE75ivlSHgkeNxOtPAB5rwW7yOX8M9m/KmODh
+         z/a74375T9cydsM86Hw0vbMyI4fte5OTKpNn0q1Q=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.123.51] ([84.118.159.3]) by mail.gmx.com (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mj8qd-1ibrou3xmX-00fDo3; Thu, 05
+ Sep 2019 14:01:58 +0200
+Subject: Re: [PATCH 1/1] KVM: inject data abort if instruction cannot be
+ decoded
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        =?UTF-8?Q?Daniel_P=2e_Berrang=c3=a9?= <berrange@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+References: <20190904180736.29009-1-xypron.glpk@gmx.de>
+ <20190905092039.GG32415@stefanha-x1.localdomain>
+From:   Heinrich Schuchardt <xypron.glpk@gmx.de>
+Message-ID: <561eae08-c5f1-9543-275c-0da0a85cd7df@gmx.de>
+Date:   Thu, 5 Sep 2019 14:01:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190905092039.GG32415@stefanha-x1.localdomain>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:CajlwCQ/dFSIPb9BoBQWcuZxEtLDjozJAje3PZp6uiuat15ZNyn
+ FUaYmh7XqHvansuNFN3EW9g1BL3iSOv26VEPD/OHNNPfz6yRrPAWseemeuNoa2Db4u8FgU4
+ hRR9abF3JReiH5UubK9R9bDE1itGIlfDiAPGxa+lS6RSJdCZ0Q7uUEqcdnrSYjI2tV0lM2B
+ zhEgrfWIk4Jf6ijAXnw7A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2BnKRf1R0is=:dW6bd8F7Kb6/NPNuN6OFhb
+ GOEJaRTw800UZN5LtZ2/IFZOLl+53OjXKhKUTr+cOxiqTLiwdIW6pYtJmh7GWde/N5YqKVkGF
+ y7Qoxu5j40FTU3g7qcQl+ZVOg0XGAyxFADTVnXg4Tu7bp76exom2rJ7oTut+/2P2sQCFJGE6g
+ 2nLaCmGH759OQxnDtJk2ldc6ELEkkAa7PynWqW+029ojHdKCqrIXCY6t9OjVuVUYXBE0dbNA1
+ LR11OS9HtfgR8yVkdw2KBB5v6VOPl0aYLBP64mtaoiydjnDI4SK6ye6l5z0wq/hya9fq46yrQ
+ 5u5JGxk17epcB2AheMwd2hto76WAcdoQv2OZzGQWG2mO98a4cvBWOJf8XORqePrsghgfArHMw
+ STaTLU9/6f5GBWAggapSZJ5M7ON8lwNTLtuWtw+UEK3aHBbNrn5C1lWasf8h5z8YN+iYmiApj
+ FBY6rZprcN2uvoPKzetlwrzAmWfszRAGqQZXdC3wn54/gKuWd0TmyZ0uQizxj1EBZM9KINbPb
+ ONbLtRIYz5j+XyAr8HTPyz0IepeyPSGha7vFGl5q91tHBUwV1a0hb/VevmLOUM0nn91a12hX4
+ VgPst8PWjMarExnQiJvyjF/IcZ0zJukQzfgtJABCME+6vrpmpBlcyUw9Ah5nXzcJ5f+q0S2Xr
+ Pul5BbpiLstYWYwAyF4h9tVzpI0z5+rhWayV9Esm8Yn5wc6WEPR2EOrYMr3zzgNTZeFM+YBsN
+ Aa4/B6dIaKILhaup0bW8Zyr4E5AW3r6nX2kjmGOJ2ZU9y4swBA0zSunaYTr/xjcmBa8SgblSi
+ lSEkmdctrX5G/a6lmMcROX5rRXiKjMDPcXmHxnzGPFIYr4VQwe7UnJ2xwlY5Uk+j0c2PmB/Ni
+ 1gAGaGftPPj3D5T4jqxtJbKWnaJHgzJxvb43gOAbBOc5tZKbeVLeLRxEpuikr5GBYRMYazimZ
+ co5vjpUJI+p0z/1S6b/3bnmMnb82DlWVzB2M8ihBGLeuyQKraZZWsDxBmcR1RkHORgURkeHK/
+ Bo3NLJOB36l/+YwDzfcUY3gXOldMxcnj97lJM4327ZJR5ucIVo8QJnVArHkeAgEX0wPScvhps
+ xzTBUQVaPfGQqQkPgv0Xl+tvdXUQKYAGn2qiQLtoKgZciv58hCY2QGI7mtuAiS4spWGCuQvDf
+ ldtDCuxobhlc09zMg0OmAMjBYYRYhcQyy5LpKIPFHd10Y3SomZG8bGQvQT/KdSGTveRDwPRnN
+ Yd7f70iAK5o4000W7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the sm1, the TDMOUT number of input is extended and the
-the gain enable bit moved to accommodate this extension
+On 9/5/19 11:20 AM, Stefan Hajnoczi wrote:
+> On Wed, Sep 04, 2019 at 08:07:36PM +0200, Heinrich Schuchardt wrote:
+>> If an application tries to access memory that is not mapped, an error
+>> ENOSYS, "load/store instruction decoding not implemented" may occur.
+>> QEMU will hang with a register dump.
+>>
+>> Instead create a data abort that can be handled gracefully by the
+>> application running in the virtual environment.
+>>
+>> Now the virtual machine can react to the event in the most appropriate
+>> way - by recovering, by writing an informative log, or by rebooting.
+>>
+>> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+>> ---
+>>   virt/kvm/arm/mmio.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/virt/kvm/arm/mmio.c b/virt/kvm/arm/mmio.c
+>> index a8a6a0c883f1..0cbed7d6a0f4 100644
+>> --- a/virt/kvm/arm/mmio.c
+>> +++ b/virt/kvm/arm/mmio.c
+>> @@ -161,8 +161,8 @@ int io_mem_abort(struct kvm_vcpu *vcpu, struct kvm_=
+run *run,
+>>   		if (ret)
+>>   			return ret;
+>>   	} else {
+>> -		kvm_err("load/store instruction decoding not implemented\n");
+>> -		return -ENOSYS;
+>> +		kvm_inject_dabt(vcpu, kvm_vcpu_get_hfar(vcpu));
+>> +		return 1;
+>
+> I see this more as a temporary debugging hack than something to merge.
+>
+> It sounds like in your case the guest environment provided good
+> debugging information and you preferred it over debugging this from the
+> host side.  That's fine, but allowing the guest to continue running in
+> the general case makes it much harder to track down the root cause of a
+> problem because many guest CPU instructions may be executed after the
+> original problem occurs.  Other guest software may fail silently in
+> weird ways.  IMO it's best to fail early.
+>
+> Stefan
+>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- sound/soc/meson/axg-tdmout.c | 103 ++++++++++++++++++++++++++++-------
- 1 file changed, 84 insertions(+), 19 deletions(-)
+As virtual machine are ubiquitous, expect also mission critical system
+to run on them. At development time halting a machine may be a good
+idea. In production this is often the worst solution. Rebooting may be
+essential for survival.
 
-diff --git a/sound/soc/meson/axg-tdmout.c b/sound/soc/meson/axg-tdmout.c
-index 86537fc0ecb5..418ec314b37d 100644
---- a/sound/soc/meson/axg-tdmout.c
-+++ b/sound/soc/meson/axg-tdmout.c
-@@ -24,6 +24,7 @@
- #define TDMOUT_CTRL1			0x04
- #define  TDMOUT_CTRL1_TYPE_MASK		GENMASK(6, 4)
- #define  TDMOUT_CTRL1_TYPE(x)		((x) << 4)
-+#define  SM1_TDMOUT_CTRL1_GAIN_EN	7
- #define  TDMOUT_CTRL1_MSB_POS_MASK	GENMASK(12, 8)
- #define  TDMOUT_CTRL1_MSB_POS(x)	((x) << 8)
- #define  TDMOUT_CTRL1_SEL_SHIFT		24
-@@ -51,25 +52,6 @@ static const struct regmap_config axg_tdmout_regmap_cfg = {
- 	.max_register	= TDMOUT_MASK_VAL,
- };
- 
--static const struct snd_kcontrol_new axg_tdmout_controls[] = {
--	SOC_DOUBLE("Lane 0 Volume", TDMOUT_GAIN0,  0,  8, 255, 0),
--	SOC_DOUBLE("Lane 1 Volume", TDMOUT_GAIN0, 16, 24, 255, 0),
--	SOC_DOUBLE("Lane 2 Volume", TDMOUT_GAIN1,  0,  8, 255, 0),
--	SOC_DOUBLE("Lane 3 Volume", TDMOUT_GAIN1, 16, 24, 255, 0),
--	SOC_SINGLE("Gain Enable Switch", TDMOUT_CTRL1,
--		   TDMOUT_CTRL1_GAIN_EN, 1, 0),
--};
--
--static const char * const tdmout_sel_texts[] = {
--	"IN 0", "IN 1", "IN 2",
--};
--
--static SOC_ENUM_SINGLE_DECL(axg_tdmout_sel_enum, TDMOUT_CTRL1,
--			    TDMOUT_CTRL1_SEL_SHIFT, tdmout_sel_texts);
--
--static const struct snd_kcontrol_new axg_tdmout_in_mux =
--	SOC_DAPM_ENUM("Input Source", axg_tdmout_sel_enum);
--
- static struct snd_soc_dai *
- axg_tdmout_get_be(struct snd_soc_dapm_widget *w)
- {
-@@ -197,6 +179,25 @@ static int axg_tdmout_prepare(struct regmap *map,
- 	return axg_tdm_formatter_set_channel_masks(map, ts, TDMOUT_MASK0);
- }
- 
-+static const struct snd_kcontrol_new axg_tdmout_controls[] = {
-+	SOC_DOUBLE("Lane 0 Volume", TDMOUT_GAIN0,  0,  8, 255, 0),
-+	SOC_DOUBLE("Lane 1 Volume", TDMOUT_GAIN0, 16, 24, 255, 0),
-+	SOC_DOUBLE("Lane 2 Volume", TDMOUT_GAIN1,  0,  8, 255, 0),
-+	SOC_DOUBLE("Lane 3 Volume", TDMOUT_GAIN1, 16, 24, 255, 0),
-+	SOC_SINGLE("Gain Enable Switch", TDMOUT_CTRL1,
-+		   TDMOUT_CTRL1_GAIN_EN, 1, 0),
-+};
-+
-+static const char * const axg_tdmout_sel_texts[] = {
-+	"IN 0", "IN 1", "IN 2",
-+};
-+
-+static SOC_ENUM_SINGLE_DECL(axg_tdmout_sel_enum, TDMOUT_CTRL1,
-+			    TDMOUT_CTRL1_SEL_SHIFT, axg_tdmout_sel_texts);
-+
-+static const struct snd_kcontrol_new axg_tdmout_in_mux =
-+	SOC_DAPM_ENUM("Input Source", axg_tdmout_sel_enum);
-+
- static const struct snd_soc_dapm_widget axg_tdmout_dapm_widgets[] = {
- 	SND_SOC_DAPM_AIF_IN("IN 0", NULL, 0, SND_SOC_NOPM, 0, 0),
- 	SND_SOC_DAPM_AIF_IN("IN 1", NULL, 0, SND_SOC_NOPM, 0, 0),
-@@ -252,6 +253,67 @@ static const struct axg_tdm_formatter_driver g12a_tdmout_drv = {
- 	},
- };
- 
-+static const struct snd_kcontrol_new sm1_tdmout_controls[] = {
-+	SOC_DOUBLE("Lane 0 Volume", TDMOUT_GAIN0,  0,  8, 255, 0),
-+	SOC_DOUBLE("Lane 1 Volume", TDMOUT_GAIN0, 16, 24, 255, 0),
-+	SOC_DOUBLE("Lane 2 Volume", TDMOUT_GAIN1,  0,  8, 255, 0),
-+	SOC_DOUBLE("Lane 3 Volume", TDMOUT_GAIN1, 16, 24, 255, 0),
-+	SOC_SINGLE("Gain Enable Switch", TDMOUT_CTRL1,
-+		   SM1_TDMOUT_CTRL1_GAIN_EN, 1, 0),
-+};
-+
-+static const char * const sm1_tdmout_sel_texts[] = {
-+	"IN 0", "IN 1", "IN 2", "IN 3", "IN 4",
-+};
-+
-+static SOC_ENUM_SINGLE_DECL(sm1_tdmout_sel_enum, TDMOUT_CTRL1,
-+			    TDMOUT_CTRL1_SEL_SHIFT, sm1_tdmout_sel_texts);
-+
-+static const struct snd_kcontrol_new sm1_tdmout_in_mux =
-+	SOC_DAPM_ENUM("Input Source", sm1_tdmout_sel_enum);
-+
-+static const struct snd_soc_dapm_widget sm1_tdmout_dapm_widgets[] = {
-+	SND_SOC_DAPM_AIF_IN("IN 0", NULL, 0, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("IN 1", NULL, 0, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("IN 2", NULL, 0, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("IN 3", NULL, 0, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("IN 4", NULL, 0, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_MUX("SRC SEL", SND_SOC_NOPM, 0, 0, &sm1_tdmout_in_mux),
-+	SND_SOC_DAPM_PGA_E("ENC", SND_SOC_NOPM, 0, 0, NULL, 0,
-+			   axg_tdm_formatter_event,
-+			   (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_PRE_PMD)),
-+	SND_SOC_DAPM_AIF_OUT("OUT", NULL, 0, SND_SOC_NOPM, 0, 0),
-+};
-+
-+static const struct snd_soc_dapm_route sm1_tdmout_dapm_routes[] = {
-+	{ "SRC SEL", "IN 0", "IN 0" },
-+	{ "SRC SEL", "IN 1", "IN 1" },
-+	{ "SRC SEL", "IN 2", "IN 2" },
-+	{ "SRC SEL", "IN 3", "IN 3" },
-+	{ "SRC SEL", "IN 4", "IN 4" },
-+	{ "ENC", NULL, "SRC SEL" },
-+	{ "OUT", NULL, "ENC" },
-+};
-+
-+static const struct snd_soc_component_driver sm1_tdmout_component_drv = {
-+	.controls		= sm1_tdmout_controls,
-+	.num_controls		= ARRAY_SIZE(sm1_tdmout_controls),
-+	.dapm_widgets		= sm1_tdmout_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(sm1_tdmout_dapm_widgets),
-+	.dapm_routes		= sm1_tdmout_dapm_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(sm1_tdmout_dapm_routes),
-+};
-+
-+static const struct axg_tdm_formatter_driver sm1_tdmout_drv = {
-+	.component_drv	= &sm1_tdmout_component_drv,
-+	.regmap_cfg	= &axg_tdmout_regmap_cfg,
-+	.ops		= &axg_tdmout_ops,
-+	.quirks		= &(const struct axg_tdm_formatter_hw) {
-+		.invert_sclk = true,
-+		.skew_offset = 2,
-+	},
-+};
-+
- static const struct of_device_id axg_tdmout_of_match[] = {
- 	{
- 		.compatible = "amlogic,axg-tdmout",
-@@ -259,6 +321,9 @@ static const struct of_device_id axg_tdmout_of_match[] = {
- 	}, {
- 		.compatible = "amlogic,g12a-tdmout",
- 		.data = &g12a_tdmout_drv,
-+	}, {
-+		.compatible = "amlogic,sm1-tdmout",
-+		.data = &sm1_tdmout_drv,
- 	}, {}
- };
- MODULE_DEVICE_TABLE(of, axg_tdmout_of_match);
--- 
-2.21.0
+For an anecdotal example see:
+https://www.hq.nasa.gov/alsj/a11/a11.1201-pa.html
 
+I am convinced that leaving it to the guest to decide how to react is
+the best choice.
+
+Best regards
+
+Heinrich
