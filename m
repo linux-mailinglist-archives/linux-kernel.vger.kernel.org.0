@@ -2,101 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D54AA045
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:47:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA777AA055
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:47:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388106AbfIEKq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:46:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48654 "EHLO
+        id S2388172AbfIEKrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:47:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53848 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727900AbfIEKq1 (ORCPT
+        with ESMTP id S1727160AbfIEKrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 06:46:27 -0400
+        Thu, 5 Sep 2019 06:47:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gnHLwW18GHsqNY1glFxvL0YT/FOtfFV2qvtzl/muhyA=; b=kjXCf0+cZaU+Uq4bITC4armFQ
-        MW7ezSuVSJtE2ZoY7h58hQqHDrjLDLjuKfTk7DyOdKxRCUNPAXr0kE29b0n1cD3XU+2x6RdNnw/Xz
-        kZHQKf+mqmtlxM0Z0r7fDc3hTdEQ9kKnhphBO96TfYHgBYE8152nHFtF7PZ2pxyvsHxzn0FSUfx7Z
-        kxVXBKgZLlPpJuX3s/zdg7TfEWEmujqd2WM6oZaxSHO7uBmJwddV/siCASyURpVqOYoHcbe4B8dHw
-        gBCQ3ytjTSqx5VhyzCvBx3HV4C41STeowQf85ATCcX/O5GanboG5w04KHaGUPrxQzOliuy4coy9+w
-        tbWu+tDaQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+         bh=V5q/iL6TQFKVRLriXs4u0ENevVfl5lZEb9F1LrjSnaU=; b=O+IWbsCkCVXK9KTwSY02xtniD
+        E/AQb3HztIGacw60JxZ5g60jfqlK9/jNbdEHUt42IKCKSoYewPk6xCOHKqKfJoP0Dm2YhgrRh7QrT
+        C485qzCUrAKr8jc9SnVDV3N/e3OLwJlte5pPqcmWwL+lRSyEKzFABHU7qau6BzcB8mFlEbjMxM18W
+        JV10fkKGJkwqML0AYvTP2tZauLU8GCTwTtPhDtW33AhfT1m+4qkyYKeDuQKKsbSQL5DE9Kih3/Ar0
+        uz/DMPNUlNe4fWd/LOV/KCJqawnv6Hgeos5N6OlvFKvZVDP51IPqatR6CKJ28/5RNqpz+tsZ84aLr
+        DGJ9qd9Yg==;
+Received: from 177.17.137.173.dynamic.adsl.gvt.net.br ([177.17.137.173] helo=coco.lan)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5pHO-0002CN-Uk; Thu, 05 Sep 2019 10:46:19 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6113530604E;
-        Thu,  5 Sep 2019 12:45:39 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2FBD229BB14BE; Thu,  5 Sep 2019 12:46:16 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 12:46:16 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net, parth@linux.ibm.com
-Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
-Message-ID: <20190905104616.GD2332@hirez.programming.kicks-ass.net>
-References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
- <20190830174944.21741-2-subhra.mazumdar@oracle.com>
- <20190905083127.GA2332@hirez.programming.kicks-ass.net>
- <87r24v2i14.fsf@arm.com>
+        id 1i5pI6-0003BZ-P7; Thu, 05 Sep 2019 10:47:03 +0000
+Date:   Thu, 5 Sep 2019 07:46:58 -0300
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nishad Kamdar <nishadkamdar@gmail.com>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: siano: Use the correct style for SPDX License
+ Identifier
+Message-ID: <20190905074658.0f229587@coco.lan>
+In-Reply-To: <f65bf8e7bc3234358d5956f94e3b4df81bc204e6.camel@perches.com>
+References: <20190831151147.GA7082@nishad>
+        <20190904153432.7fb54f02@coco.lan>
+        <20190904183608.GA495@kroah.com>
+        <20190904160010.4532c3f5@coco.lan>
+        <20190905055430.GA23826@kroah.com>
+        <20190905055614.7958918b@coco.lan>
+        <f65bf8e7bc3234358d5956f94e3b4df81bc204e6.camel@perches.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r24v2i14.fsf@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 10:45:27AM +0100, Patrick Bellasi wrote:
+Em Thu, 05 Sep 2019 02:28:05 -0700
+Joe Perches <joe@perches.com> escreveu:
 
-> > From just reading the above, I would expect it to have the range
-> > [-20,19] just like normal nice. Apparently this is not so.
+> On Thu, 2019-09-05 at 05:56 -0300, Mauro Carvalho Chehab wrote:
+> > I'll accept
+> > this patch and keep such rule in mind for next SPDX changes.
+> > 
+> > Anyway, with regards to script, we need to change the rules in order to
+> > allow adding SPDX for python scripts, as otherwise the addition of SPDX
+> > headers may cause regressions.  
 > 
-> Regarding the range for the latency-nice values, I guess we have two
-> options:
+> Not really.
 > 
->   - [-20..19], which makes it similar to priorities
->   downside: we quite likely end up with a kernel space representation
->   which does not match the user-space one, e.g. look at
->   task_struct::prio.
+> $ git grep -n '^# SPDX-License-Identifier' -- '*.py' | wc -l
+> 62
+> $ git grep -n '^# SPDX-License-Identifier' -- '*.py' | \
+>   cut -f2 -d: | sort | uniq -c
+>      32 1
+>      27 2
+>       3 3
+> $ git grep -n '^# SPDX-License-Identifier' -- '*.py' | \
+>   cut -f1 -d: | xargs ./scripts/spdxcheck.py --verbose
 > 
->   - [0..1024], which makes it more similar to a "percentage"
+> License files:               14
+> Exception files:              2
+> License IDs                  19
+> Exception IDs                 2
 > 
-> Being latency-nice a new concept, we are not constrained by POSIX and
-> IMHO the [0..1024] scale is a better fit.
-> 
-> That will translate into:
-> 
->   latency-nice=0 : default (current mainline) behaviour, all "biasing"
->   policies are disabled and we wakeup up as fast as possible
-> 
->   latency-nice=1024 : maximum niceness, where for example we can imaging
->   to turn switch a CFS task to be SCHED_IDLE?
+> Files checked:               62
+> Lines checked:               95
+> Files with SPDX:             62
+> Files with errors:            0
 
-There's a few things wrong there; I really feel that if we call it nice,
-it should be like nice. Otherwise we should call it latency-bias and not
-have the association with nice to confuse people.
+Not quite sure what you're meant with the above, but:
 
-Secondly; the default should be in the middle of the range. Naturally
-this would be a signed range like nice [-(x+1),x] for some x. but if you
-want [0,1024], then the default really should be 512, but personally I
-like 0 better as a default, in which case we need negative numbers.
+1) this won't cover all python scripts, as there are some without
+.py extension:
 
-This is important because we want to be able to bias towards less
-importance to (tail) latency as well as more importantance to (tail)
-latency.
+	$ git grep -lE "\#\!.*python"|grep -v \.py$
+	drivers/staging/greybus/tools/lbtest
+	scripts/bloat-o-meter
+	scripts/diffconfig
+	scripts/show_delta
+	tools/hv/lsvmbus
+	tools/kvm/kvm_stat/kvm_stat
 
-Specifically, Oracle wants to sacrifice (some) latency for throughput.
-Facebook OTOH seems to want to sacrifice (some) throughput for latency.
+2) we have already some files that are violating PEP-263 due to
+SPDX headers. On a quick look at the results of:
+
+	$ git grep -lE "^\#.*coding" $(git grep -lE "\#\!.*python")
+	Documentation/sphinx/kernel_include.py
+	Documentation/sphinx/rstFlatTable.py
+	tools/perf/python/tracepoint.py
+	tools/perf/python/twatch.py
+	tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
+
+Those three files already have such problem:
+
+	tools/perf/python/tracepoint.py
+	tools/perf/python/twatch.py
+	tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
+
+On those scripts, the coding line is not at the right place, and will be
+silently ignored by python, causing them to crash with UTF-8 encoding
+chars, if any.
+
+And the other two doesn't have a SPDX header file. Adding a SPDX header
+there would violate the "up to the second line" rule.
+
+Thanks,
+Mauro
