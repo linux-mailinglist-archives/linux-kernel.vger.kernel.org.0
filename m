@@ -2,200 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09D04A9F8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2139A9FAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732403AbfIEKYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:24:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61440 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730973AbfIEKYR (ORCPT
+        id S1733293AbfIEKag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:30:36 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36854 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731058AbfIEKag (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 06:24:17 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x85AOGd5099859
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Sep 2019 06:24:16 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2uu0k2g01v-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 06:24:16 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Thu, 5 Sep 2019 11:24:14 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 5 Sep 2019 11:24:12 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x85ANjFO29426076
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 5 Sep 2019 10:23:45 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 284064C046;
-        Thu,  5 Sep 2019 10:24:09 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6F724C040;
-        Thu,  5 Sep 2019 10:24:08 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.224.123])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  5 Sep 2019 10:24:08 +0000 (GMT)
-Date:   Thu, 5 Sep 2019 12:24:07 +0200
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, freude@de.ibm.com, cohuck@redhat.com,
-        pasic@linux.vnet.ibm.com, frankja@linux.ibm.com,
-        jjherne@linux.ibm.com
-Subject: Re: [PATCH v2] s390: vfio-ap: remove unnecessary calls to disable
- queue interrupts
-In-Reply-To: <f3e8d65e-bad4-c639-c53e-57585b90986d@de.ibm.com>
-References: <1566236929-18995-1-git-send-email-akrowiak@linux.ibm.com>
-        <20190830180250.79804f76.pasic@linux.ibm.com>
-        <f3e8d65e-bad4-c639-c53e-57585b90986d@de.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Thu, 5 Sep 2019 06:30:36 -0400
+Received: by mail-pg1-f195.google.com with SMTP id l21so1194537pgm.3;
+        Thu, 05 Sep 2019 03:30:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1a0i1FIb88gFlL2LY0yW1IKgiASu6yccQldhMUKcVI4=;
+        b=ewjY1d/eI/d1WpFLLyyh/e54luM1Z+5SrqttbaMINV6aPH1LaCxJMwELmgZyHNa8Ji
+         hTy4AedszETLQRrBegWPbyClgtlqD7e0WcL4rCH3YQfFbjEZ5BoPDNJmMOW/8QUV2yZW
+         QZ+5F0YBFFfkqFmr9eDPo7Xc3m9R5vHplhR1h6ri07PPuPQVuf8jpP0SJutwzXWGT0m2
+         nWngyjQSSrM6+mW9cjloZFJIYvta3ouZwJOMvMr5Jh15xZTetz8KuUqL/IRwG2U9CJ5a
+         EiVxRbRRuoPvGYB8x8Ew10WT+22j9JaOw4g3ZUqVdZ9ryNuXSIiPoSJg6Dg+Tx6H6Rvt
+         pMpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1a0i1FIb88gFlL2LY0yW1IKgiASu6yccQldhMUKcVI4=;
+        b=ad3VJvjIagtXYDcKeOYqhynb+ElkHAE0w7wVaIQ6S0EQCSlm2UgiaGkmeBrtyZUcgm
+         1dnY7CVksbvo6P5wdX90t+XAQitrX1SI6nihVY0jVKbeMaxDH9OtYJ/8+Nbh6N++dHEp
+         zljREs9JHPZ1SqDRxsm5gEfxDAn8BfWVxJIsJWz8DGeFB9YBJFuE+mqkPg5aejocx25v
+         3k9Mi9dQQDxoauUEypOwqN4tFgzX9RhHQ7b6JETzFwWuW0E5dwrbH7KensrXo++ouxSI
+         0X6+5+wD39hT4Ortp4f4ozYO5m7WvdnjpzG3uUh6MaPDPTID3RR9NX0cWo5/eTTAhWnI
+         Y80Q==
+X-Gm-Message-State: APjAAAWMb5snghPyB8FKf9FlK3KK6rvfEw0nmaJR6ob6NFwLJ4wiyAyO
+        L2MBTGrWpzX/0fiucK1DM5L1K+fm
+X-Google-Smtp-Source: APXvYqyvG17prXzc53bcEE+eqwnBHjWNLYaoPtRRdOT9mg9cNMeKZhb10I4duan0O6cshyXgGQaWsA==
+X-Received: by 2002:aa7:8013:: with SMTP id j19mr2963257pfi.184.1567679435325;
+        Thu, 05 Sep 2019 03:30:35 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id v43sm9291955pjb.1.2019.09.05.03.30.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2019 03:30:34 -0700 (PDT)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH] clk: sprd: add missing kfree
+Date:   Thu,  5 Sep 2019 18:30:09 +0800
+Message-Id: <20190905103009.27166-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19090510-4275-0000-0000-0000036175CA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19090510-4276-0000-0000-00003873BDAE
-Message-Id: <20190905122407.5fa02121.pasic@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-05_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909050104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Sep 2019 09:35:47 +0200
-Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-> Halil,
-> 
-> can you also send this patch as a separate mail. This also requires a much better
-> patch description about the why and it certainly should also have an agreement from
-> Anthony.
-> 
+The number of config registers for different pll clocks probably are not
+same, so we have to use malloc, and should free the memory before return.
 
+Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
+---
+ drivers/clk/sprd/pll.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-IMHO this patch only makes sense when the objective of Tony's patch is
-accomplished. We do have to wait when we need to give up resources or do
-stuff like subsystem reset. But I don't think we should introduce
-artificial waits when interpreting AQIC: it should be up to the guest to
-handle this stuff, as it is in LPAR.
-
-Sure I can send a separate patch and state in the cover lette that it
-builds on top of 'vfio-ap: remove unnecessary calls to disable queue
-interrupts'.
-
-And yes the commit message is sloppy. Was not meant to end up in the
-changelog. Just a quick and dirty explanation.
-
-> On 30.08.19 18:02, Halil Pasic wrote:
-> > From: Halil Pasic <pasic@linux.ibm.com>
-> > Date: Fri, 30 Aug 2019 17:39:47 +0200
-> > Subject: [PATCH 2/2] s390: vfio-ap: don't wait after AQIC interpretation
-> > 
-> > Waiting for the asynchronous part of AQIC to complete as a part
-> > AQIC implementation is unnecessary and silly.
-
-s/implementation/interpretation/
-
-Regards,
-Halil
-
-> > 
-> > Let's get rid of vfio_ap_wait_for_irqclear().
-> > 
-> > Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-> > ---
-> >  drivers/s390/crypto/vfio_ap_ops.c | 50 ++-------------------------------------
-> >  1 file changed, 2 insertions(+), 48 deletions(-)
-> > 
-> > diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> > index dd07ebf..8d098f0 100644
-> > --- a/drivers/s390/crypto/vfio_ap_ops.c
-> > +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> > @@ -68,47 +68,6 @@ static struct vfio_ap_queue *vfio_ap_get_queue(
-> >  }
-> >  
-> >  /**
-> > - * vfio_ap_wait_for_irqclear
-> > - * @apqn: The AP Queue number
-> > - *
-> > - * Checks the IRQ bit for the status of this APQN using ap_tapq.
-> > - * Returns if the ap_tapq function succeeded and the bit is clear.
-> > - * Returns if ap_tapq function failed with invalid, deconfigured or
-> > - * checkstopped AP.
-> > - * Otherwise retries up to 5 times after waiting 20ms.
-> > - *
-> > - */
-> > -static void vfio_ap_wait_for_irqclear(int apqn)
-> > -{
-> > -	struct ap_queue_status status;
-> > -	int retry = 5;
-> > -
-> > -	do {
-> > -		status = ap_tapq(apqn, NULL);
-> > -		switch (status.response_code) {
-> > -		case AP_RESPONSE_NORMAL:
-> > -		case AP_RESPONSE_RESET_IN_PROGRESS:
-> > -			if (!status.irq_enabled)
-> > -				return;
-> > -			/* Fall through */
-> > -		case AP_RESPONSE_BUSY:
-> > -			msleep(20);
-> > -			break;
-> > -		case AP_RESPONSE_Q_NOT_AVAIL:
-> > -		case AP_RESPONSE_DECONFIGURED:
-> > -		case AP_RESPONSE_CHECKSTOPPED:
-> > -		default:
-> > -			WARN_ONCE(1, "%s: tapq rc %02x: %04x\n", __func__,
-> > -				  status.response_code, apqn);
-> > -			return;
-> > -		}
-> > -	} while (--retry);
-> > -
-> > -	WARN_ONCE(1, "%s: tapq rc %02x: %04x could not clear IR bit\n",
-> > -		  __func__, status.response_code, apqn);
-> > -}
-> > -
-> > -/**
-> >   * vfio_ap_free_aqic_resources
-> >   * @q: The vfio_ap_queue
-> >   *
-> > @@ -133,14 +92,10 @@ static void vfio_ap_free_aqic_resources(struct vfio_ap_queue *q)
-> >   * @q: The vfio_ap_queue
-> >   *
-> >   * Uses ap_aqic to disable the interruption and in case of success, reset
-> > - * in progress or IRQ disable command already proceeded: calls
-> > - * vfio_ap_wait_for_irqclear() to check for the IRQ bit to be clear
-> > - * and calls vfio_ap_free_aqic_resources() to free the resources associated
-> > + * in progress or IRQ disable command already proceeded :calls
-> > + * vfio_ap_free_aqic_resources() to free the resources associated
-> >   * with the AP interrupt handling.
-> >   *
-> > - * In the case the AP is busy, or a reset is in progress,
-> > - * retries after 20ms, up to 5 times.
-> > - *
-> >   * Returns if ap_aqic function failed with invalid, deconfigured or
-> >   * checkstopped AP.
-> >   */
-> > @@ -155,7 +110,6 @@ struct ap_queue_status vfio_ap_irq_disable(struct vfio_ap_queue *q)
-> >  		switch (status.response_code) {
-> >  		case AP_RESPONSE_OTHERWISE_CHANGED:
-> >  		case AP_RESPONSE_NORMAL:
-> > -			vfio_ap_wait_for_irqclear(q->apqn);
-> >  			goto end_free;
-> >  		case AP_RESPONSE_RESET_IN_PROGRESS:
-> >  		case AP_RESPONSE_BUSY:
-> > -- 2.5.5
+diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
+index 36b4402bf09e..640270f51aa5 100644
+--- a/drivers/clk/sprd/pll.c
++++ b/drivers/clk/sprd/pll.c
+@@ -136,6 +136,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
+ 					 k2 + refin * nint * CLK_PLL_1M;
+ 	}
+ 
++	kfree(cfg);
+ 	return rate;
+ }
+ 
+@@ -222,6 +223,7 @@ static int _sprd_pll_set_rate(const struct sprd_pll *pll,
+ 	if (!ret)
+ 		udelay(pll->udelay);
+ 
++	kfree(cfg);
+ 	return ret;
+ }
+ 
+-- 
+2.20.1
 
