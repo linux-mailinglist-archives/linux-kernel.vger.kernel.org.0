@@ -2,46 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3827A9982
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 06:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8683BA999D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 06:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731091AbfIEE1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 00:27:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:37038 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731002AbfIEE1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 00:27:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0854728;
-        Wed,  4 Sep 2019 21:27:23 -0700 (PDT)
-Received: from [10.162.41.136] (p8cg001049571a15.blr.arm.com [10.162.41.136])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EE723F718;
-        Wed,  4 Sep 2019 21:27:16 -0700 (PDT)
-Subject: Re: [PATCH V7 1/3] mm/hotplug: Reorder memblock_[free|remove]() calls
- in try_remove_memory()
-To:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        akpm@linux-foundation.org, catalin.marinas@arm.com, will@kernel.org
-Cc:     mark.rutland@arm.com, mhocko@suse.com, ira.weiny@intel.com,
-        cai@lca.pw, logang@deltatee.com, cpandya@codeaurora.org,
-        arunks@codeaurora.org, dan.j.williams@intel.com,
-        mgorman@techsingularity.net, osalvador@suse.de,
-        ard.biesheuvel@arm.com, steve.capper@arm.com, broonie@kernel.org,
-        valentin.schneider@arm.com, Robin.Murphy@arm.com,
-        steven.price@arm.com, suzuki.poulose@arm.com
-References: <1567503958-25831-1-git-send-email-anshuman.khandual@arm.com>
- <1567503958-25831-2-git-send-email-anshuman.khandual@arm.com>
- <e98f2950-bef9-3672-81a8-f9593354fffe@redhat.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <49c2a682-97c5-5eef-6635-9fe75e4677f7@arm.com>
-Date:   Thu, 5 Sep 2019 09:57:23 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1731173AbfIEEap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 00:30:45 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12812 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbfIEEao (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 00:30:44 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d708f740000>; Wed, 04 Sep 2019 21:30:44 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 04 Sep 2019 21:30:43 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 04 Sep 2019 21:30:43 -0700
+Received: from [10.24.193.88] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 5 Sep
+ 2019 04:30:40 +0000
+Subject: Re: [Patch V8 6/8] arm64: tegra: Enable xudc on Jetson TX1
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1567585440-13751-1-git-send-email-nkristam@nvidia.com>
+ <1567585440-13751-7-git-send-email-nkristam@nvidia.com>
+ <1567590435.7317.55.camel@mhfsdcap03>
+X-Nvconfidentiality: public
+From:   Nagarjuna Kristam <nkristam@nvidia.com>
+Message-ID: <cac7603a-ba64-5ce1-edd9-43bdad729f61@nvidia.com>
+Date:   Thu, 5 Sep 2019 10:02:16 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <e98f2950-bef9-3672-81a8-f9593354fffe@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1567590435.7317.55.camel@mhfsdcap03>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1567657844; bh=UD9f/D9VyQKio7JMo+pBG9krt73CQjyUYKHYsPw7ZK4=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=lYLMDrnBHlM4+wYCJRstqpuMx7/VzVSZNqMhJGHBhl7+6+0eEth7KBqeouZIBDfbc
+         qqW/gqBupgzthOLNhDPXSwmOZfkAfN/34ZPF483FJmiQYV6uyTEZyyj6eex4GAP7DT
+         BHMMsmMrlvZR/qZ7DT3QbTQNrtXcOgWKmAkVJg3+TEHlPsAZBmsHHjq8JpJ5QShC5g
+         JzjfqESElcEpGkaRzy7r0kcatuLw0gDl9rGrlv2xLk6YOOZzJ/MIAcCV53RkZ2SE3g
+         fLxkBA6dN8fAgJ49bHu2wfEas6N+kwLyeEVDHx8CQbfIZ09B3mHpKhqfBC0WYui952
+         kEfj3bGgDzIAg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,38 +65,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 09/04/2019 01:46 PM, David Hildenbrand wrote:
-> On 03.09.19 11:45, Anshuman Khandual wrote:
->> Memory hot remove uses get_nid_for_pfn() while tearing down linked sysfs
->> entries between memory block and node. It first checks pfn validity with
->> pfn_valid_within() before fetching nid. With CONFIG_HOLES_IN_ZONE config
->> (arm64 has this enabled) pfn_valid_within() calls pfn_valid().
+On 04-09-2019 15:17, Chunfeng Yun wrote:
+> On Wed, 2019-09-04 at 13:53 +0530, Nagarjuna Kristam wrote:
+>> Enable XUSB device mode driver for USB0 slot on Jetson TX1.
 >>
->> pfn_valid() is an arch implementation on arm64 (CONFIG_HAVE_ARCH_PFN_VALID)
->> which scans all mapped memblock regions with memblock_is_map_memory(). This
->> creates a problem in memory hot remove path which has already removed given
->> memory range from memory block with memblock_[remove|free] before arriving
->> at unregister_mem_sect_under_nodes(). Hence get_nid_for_pfn() returns -1
->> skipping subsequent sysfs_remove_link() calls leaving node <-> memory block
->> sysfs entries as is. Subsequent memory add operation hits BUG_ON() because
->> of existing sysfs entries.
-> Since
+>> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+>> Reviewed-by: JC Kuo <jckuo@nvidia.com>
+>> ---
+>>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 31 +++++++++++++++++++++++++-
+>>  1 file changed, 30 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>> index a7dc319..6aba1ba 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>> @@ -1362,7 +1362,7 @@
+>>  				status = "okay";
+>>  
+>>  				lanes {
+>> -					usb2-0 {
+>> +					micro_b: usb2-0 {
+>>  						nvidia,function = "xusb";
+>>  						status = "okay";
+>>  					};
+>> @@ -1483,6 +1483,21 @@
+>>  		vmmc-supply = <&vdd_3v3_sd>;
+>>  	};
+>>  
+>> +	usb@700d0000 {
+>> +		status = "okay";
+>> +		phys = <&micro_b>;
+>> +		phy-names = "usb2";
+>> +		avddio-usb-supply = <&vdd_3v3_sys>;
+>> +		hvdd-usb-supply = <&vdd_1v8>;
+>> +		usb-role-switch;
+>> +
+>> +		port {
+>> +			usb_role_switch: endpoint {
+>> +				remote-endpoint = <&usb_b_conn_ep>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>>  	regulators {
+>>  		compatible = "simple-bus";
+>>  		#address-cells = <1>;
+>> @@ -1641,4 +1656,18 @@
+>>  			linux,code = <KEY_VOLUMEUP>;
+>>  		};
+>>  	};
+>> +
+>> +	usb_type_b: connector {
+>> +		compatible = "linux,usb-conn-gpio", "gpio-usb-b-connector";
+> please use "gpio-usb-b-connector" and "usb-b-connector", due to
+> "linux,usb-conn-gpio" is not supported now
 > 
-> commit 60bb462fc7adb06ebee3beb5a4af6c7e6182e248
-> Author: David Hildenbrand <david@redhat.com>
-> Date:   Wed Aug 28 13:57:15 2019 +1000
 > 
->     drivers/base/node.c: simplify unregister_memory_block_under_nodes()
-> 
-> that problem should be gone. There is no get_nid_for_pfn() call anymore.
 
-Yes, the problem is gone. The above commit is still not present on arm64
-tree against which this series was rebased and tested while posting.
+Thanks for info, will update accordingly.
 
+>> +		label = "micro-USB";
+>> +		type = "micro";
+>> +		vbus-gpio = <&gpio TEGRA_GPIO(Z, 0) GPIO_ACTIVE_LOW>;
+>> +
+>> +		port {
+>> +			usb_b_conn_ep: endpoint {
+>> +				remote-endpoint = <&usb_role_switch>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>>  };
 > 
-> So this patch should no longer be necessary - but as I said during
-> earlier versions of this patch, the re-ordering might still make sense
-> for consistency (removing stuff in the reverse order they were added).
-> You'll have to rephrase the description then.
-
-Sure will reword the commit message on these lines.
+> 
