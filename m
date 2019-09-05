@@ -2,84 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 119EDAA95D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A59A2AA960
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 18:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390096AbfIEQwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 12:52:36 -0400
-Received: from foss.arm.com ([217.140.110.172]:47510 "EHLO foss.arm.com"
+        id S2390178AbfIEQx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 12:53:28 -0400
+Received: from foss.arm.com ([217.140.110.172]:47530 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728254AbfIEQwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 12:52:35 -0400
+        id S1728254AbfIEQx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 12:53:28 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D10D28;
-        Thu,  5 Sep 2019 09:52:34 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4354C3F718;
-        Thu,  5 Sep 2019 09:52:33 -0700 (PDT)
-Subject: Re: sched: make struct task_struct::state 32-bit
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        Alexey Dobriyan <adobriyan@gmail.com>, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <a43fe392-bd6a-71f5-8611-c6b764ba56c3@arm.com>
- <7e3e784c-e8e6-f9ba-490f-ec3bf956d96b@web.de>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <0c4dcb91-4830-0013-b8c6-64b9e1ce47d4@arm.com>
-Date:   Thu, 5 Sep 2019 17:52:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A06128;
+        Thu,  5 Sep 2019 09:53:27 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 529E83F718;
+        Thu,  5 Sep 2019 09:53:25 -0700 (PDT)
+Date:   Thu, 5 Sep 2019 17:53:16 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Jonathan Chocron <jonnyc@amazon.com>, bhelgaas@google.com
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, andrew.murray@arm.com,
+        dwmw@amazon.co.uk, benh@kernel.crashing.org, alisaidi@amazon.com,
+        ronenk@amazon.com, barakw@amazon.com, talel@amazon.com,
+        hanochu@amazon.com, hhhawa@amazon.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 0/7] Amazon's Annapurna Labs DT-based PCIe host
+ controller driver
+Message-ID: <20190905165309.GA10248@e121166-lin.cambridge.arm.com>
+References: <20190905140018.5139-1-jonnyc@amazon.com>
 MIME-Version: 1.0
-In-Reply-To: <7e3e784c-e8e6-f9ba-490f-ec3bf956d96b@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190905140018.5139-1-jonnyc@amazon.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 05, 2019 at 05:00:14PM +0300, Jonathan Chocron wrote:
+> This series adds support for Amazon's Annapurna Labs DT-based PCIe host
+> controller driver.
+> Additionally, it adds 3 quirks (ACS, VPD and MSI-X) and 2 generic DWC patches.
+> 
+> Changes since v4:
+> - Moved the HEADER_TYPE validations to after pp->ops->host_init() and
+>   ep->ops->ep_init()
+> - Changed to dw_pcie_rd_own_conf() instead of dw_pcie_readb_dbi() for
+>   reading the HEADER_TYPE
+> - Used exsitng quirk_blacklist_vpd() instead of quirk_al_vpd_release()
+> - Added a newline in ACS quirk comment
+> 
+> Changes since v3:
+> - Removed PATCH 8/8 since the usage of the PCI flags will be discussed
+>   in the upcoming LPC
+> - Align commit subject with the folder convention
+> - Added explanation regarding ECAM "overload" mechanism
+> - Switched to read/write{_relaxed} APIs
+> - Modified a dev_err to dev_dbg
+> - Removed unnecessary variable
+> - Removed driver details from dt-binding description
+> - Changed to SoC specific compatibles
+> - Fixed typo in a commit message
+> - Added comment regarding MSI in the MSI-X quirk
+> 
+> Changes since v2:
+> - Added al_pcie_controller_readl/writel() wrappers
+> - Reorganized local vars in several functions according to reverse
+>   tree structure
+> - Removed unnecessary check of ret value
+> - Changed return type of al_pcie_config_prepare() from int to void
+> - Removed check if link is up from probe() [done internally in
+>   dw_pcie_rd/wr_conf()]
+> 
+> Changes since v1:
+> - Added comment regarding 0x0031 being used as a dev_id for non root-port devices as well
+> - Fixed different message/comment/print wordings
+> - Added panic stacktrace to commit message of MSI-x quirk patch
+> - Changed to pci_warn() instead of dev_warn()
+> - Added unit_address after node_name in dt-binding
+> - Updated Kconfig help description
+> - Used GENMASK and FIELD_PREP/GET where appropriate
+> - Removed leftover field from struct al_pcie and moved all ptrs to
+>   the beginning
+> - Re-wrapped function definitions and invocations to use fewer lines
+> - Change %p to %px in dbg prints in rd/wr_conf() functions
+> - Removed validation that the port is configured to RC mode (as this is
+>   added generically in PATCH 7/8)
+> - Removed unnecessary variable initializations
+> - Swtiched to %pR for printing resources
+> 
+> 
+> Ali Saidi (1):
+>   PCI: Add ACS quirk for Amazon Annapurna Labs root ports
+> 
+> Jonathan Chocron (6):
+>   PCI: Add Amazon's Annapurna Labs vendor ID
+>   PCI/VPD: Prevent VPD access for Amazon's Annapurna Labs Root Port
+>   PCI: Add quirk to disable MSI-X support for Amazon's Annapurna Labs
+>     Root Port
+>   dt-bindings: PCI: Add Amazon's Annapurna Labs PCIe host bridge binding
+>   PCI: dwc: al: Add support for DW based driver type
+>   PCI: dwc: Add validation that PCIe core is set to correct mode
+> 
+>  .../devicetree/bindings/pci/pcie-al.txt       |  46 +++
+>  MAINTAINERS                                   |   3 +-
+>  drivers/pci/controller/dwc/Kconfig            |  12 +
+>  drivers/pci/controller/dwc/pcie-al.c          | 365 ++++++++++++++++++
+>  .../pci/controller/dwc/pcie-designware-ep.c   |   8 +
+>  .../pci/controller/dwc/pcie-designware-host.c |  16 +
+>  drivers/pci/quirks.c                          |  38 ++
+>  drivers/pci/vpd.c                             |   6 +
+>  include/linux/pci_ids.h                       |   2 +
+>  9 files changed, 495 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/pcie-al.txt
 
+Hi Bjorn,
 
-On 05/09/2019 16:51, Markus Elfring wrote:
-> Can a transformation approach like the following work also
-> for your software?
-> 
-> @replacement@
-> 
-> identifier func, p, state_var;
-> 
-> @@
-> 
->  func(...,
->       struct task_struct *p,
->       ...
-> ,
-> -     long
-> +     int
->       state_var
-> ,
->       ...)
-> 
->  {
-> 
->  ...
-> 
->  }
-> 
-> 
+I would like to queue this series for v5.4 but I need your ACK on
+patches 2/3/4 for that to happen, please let me know.
 
-I actually got rid of the task_struct* parameter and now just match
-against task_struct.p accesses in the function body, which has the
-added bonus of not caring about the order of the parameters.
-
-Still not there yet but making progress in the background, hope it's
-passable entertainment to see me struggle my way there :)
-
-> 
-> Regards,
-> Markus
-> 
+Thanks,
+Lorenzo
