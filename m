@@ -2,185 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9EB2AA45F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45088AA469
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:27:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389734AbfIEN0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 09:26:02 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34648 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388932AbfIENZ6 (ORCPT
+        id S1727110AbfIEN0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 09:26:46 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:45428 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726843AbfIEN0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 09:25:58 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s18so2803552wrn.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 06:25:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=j2yVL8mBemo05QH7CxyB4zOelueafnjrSiUZKuU/Pdo=;
-        b=bGfPFephOlzSbyBzIS7ORhaStZVvZV9K+s+w/NnW2+OfIs67r41RWpxkM0dsZ48zNx
-         L1IOM7djbgJW9I1Bpi2CV6JZhickV1n/T7jxInZv4sZwbGCYe7RcFC6Y2Ny+/+BlNpAa
-         vMU9oNFj7PxA9Sj61iJbQHiiA1tu6L16KJqjYSqGsp3HloEmvczbTmELNcs3jncN+WRL
-         ixizMTImxwuwnRskkDC3G6IgMsywVG3UVbZw4KJ64emdqClmfCGRYGv0Q7ldwOkbsggJ
-         r2k4fkJ22X0lTdYzSRr5jCuMM4LRfzFjmddEksx8oy/Db1rEUs6u/gHkQ9DiBiKMk291
-         lDkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=j2yVL8mBemo05QH7CxyB4zOelueafnjrSiUZKuU/Pdo=;
-        b=c7r0+tTZtlPbVezBAePrLTNezztftm3N6gEwVf1OsBtepkNOJUtljmi6RqnvdXCg5E
-         6Qq57OBgib08pKmApYXQAzCWaofXRk/j7qkwshkdEWt8wsGJYhJC3HHd7Z5SdEhj6pYp
-         Zr1Z3YJBzVpg2sDjl60w+FgMpbg0kHhc1exfGwb1oRpGlNoutiOv2rwdU8sF3tE7y3XR
-         XYJtD//EpLzBdnCPTGGpufD0qlmWf6eBKHW3mIAMLSPs8C7I/oVmE7KEHHh8Ri9wC+OC
-         1zhnxWC4s7Kyn4VTxeJByRjWJYPmWjw01HBVlE3uH+84KtKHVtm/HRJ2j9ROAIdSH2Kx
-         igLQ==
-X-Gm-Message-State: APjAAAX1boN67ZkhnSnMC+muMwaHBzHyxRFxRzWdItAL/zIjuhGjgmRd
-        0M9YFvP3jvUxmKGvfpDscA==
-X-Google-Smtp-Source: APXvYqzn7fCgGpjKOsRvGBrsEPk4l3oS+9h4BB7hG4NEEiSun19NqhaLsUgLjDMYFvfI5BbVpHiQug==
-X-Received: by 2002:a5d:5389:: with SMTP id d9mr2771606wrv.119.1567689956109;
-        Thu, 05 Sep 2019 06:25:56 -0700 (PDT)
-Received: from buster-jangle.bmw-carit.intra ([212.118.206.70])
-        by smtp.gmail.com with ESMTPSA id y3sm8652635wmg.2.2019.09.05.06.25.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 06:25:55 -0700 (PDT)
-From:   Viktor Rosendahl <viktor.rosendahl@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Viktor Rosendahl <viktor.rosendahl@gmail.com>
-Subject: [PATCH v6 4/4] ftrace: Add an option for tracing console latencies
-Date:   Thu,  5 Sep 2019 15:25:48 +0200
-Message-Id: <20190905132548.5116-5-viktor.rosendahl@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190905132548.5116-1-viktor.rosendahl@gmail.com>
-References: <20190905132548.5116-1-viktor.rosendahl@gmail.com>
+        Thu, 5 Sep 2019 09:26:46 -0400
+X-UUID: fa9d2b8632594392bb4a756e24b54930-20190905
+X-UUID: fa9d2b8632594392bb4a756e24b54930-20190905
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <jing-ting.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 424018845; Thu, 05 Sep 2019 21:26:40 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 5 Sep 2019 21:26:37 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 5 Sep 2019 21:26:36 +0800
+Message-ID: <1567689999.2389.5.camel@mtkswgap22>
+Subject: Re: [PATCH 1/1] sched/rt: avoid contend with CFS task
+From:   Jing-Ting Wu <jing-ting.wu@mediatek.com>
+To:     Qais Yousef <qais.yousef@arm.com>
+CC:     Valentin Schneider <valentin.schneider@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <wsd_upstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 5 Sep 2019 21:26:39 +0800
+In-Reply-To: <20190830145501.zadfv2ffuu7j46ft@e107158-lin.cambridge.arm.com>
+References: <1567048502-6064-1-git-send-email-jing-ting.wu@mediatek.com>
+         <d5100b2d-46c4-5811-8274-8b06710d2594@arm.com>
+         <20190830145501.zadfv2ffuu7j46ft@e107158-lin.cambridge.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This new trace option "console-latency" will enable the latency
-tracers to trace the console latencies. Previously this has always been
-implicitely disabled. I guess this is because they are considered
-to be well known and unavoidable.
+On Fri, 2019-08-30 at 15:55 +0100, Qais Yousef wrote:
+> On 08/29/19 11:38, Valentin Schneider wrote:
+> > On 29/08/2019 04:15, Jing-Ting Wu wrote:
+> > > At original linux design, RT & CFS scheduler are independent.
+> > > Current RT task placement policy will select the first cpu in
+> > > lowest_mask, even if the first CPU is running a CFS task.
+> > > This may put RT task to a running cpu and let CFS task runnable.
+> > > 
+> > > So we select idle cpu in lowest_mask first to avoid preempting
+> > > CFS task.
+> > > 
+> > 
+> > Regarding the RT & CFS thing, that's working as intended. RT is a whole
+> > class above CFS, it shouldn't have to worry about CFS.
+> > 
+> > On the other side of things, CFS does worry about RT. We have the concept
+> > of RT-pressure in the CFS scheduler, where RT tasks will reduce a CPU's
+> > capacity (see fair.c::scale_rt_capacity()).
+> > 
+> > CPU capacity is looked at on CFS wakeup (see wake_cap() and
+> > find_idlest_cpu()), and the periodic load balancer tries to spread load
+> > over capacity, so it'll tend to put less things on CPUs that are also
+> > running RT tasks.
+> > 
+> > If RT were to start avoiding rqs with CFS tasks, we'd end up with a nasty
+> > situation were both are avoiding each other. It's even more striking when
+> > you see that RT pressure is done with a rq-wide RT util_avg, which
+> > *doesn't* get migrated when a RT task migrates. So if you decide to move
+> > a RT task to an idle CPU "B" because CPU "A" had runnable CFS tasks, the
+> > CFS scheduler will keep seeing CPU "B" as not significantly RT-pressured
+> > while that util_avg signal ramps up, whereas it would correctly see CPU
+> > "A" as RT-pressured if the RT task previously ran there.
+> > 
+> > So overall I think this is the wrong approach.
+> 
+> I like the idea, but yeah tend to agree the current approach might not be
+> enough.
+> 
+> I think the major problem here is that on generic systems where CFS is a first
+> class citizen, RT tasks can be hostile to them - not always necessarily for a
+> good reason.
+> 
+> To further complicate the matter, even among CFS tasks we can't tell which are
+> more important than the others - though hopefully latency-nice proposal will
+> make the situation better.
+> 
+> So I agree we have a problem here, but I think this patch is just a temporary
+> band aid and we need to do better. Though I have no concrete suggestion yet on
+> how to do that.
+> 
+> Another thing I couldn't quantify yet how common and how severe this problem is
+> yet. Jing-Ting, if you can share the details of your use case that'd be great.
+> 
+> Cheers
+> 
+> --
+> Qais Yousef
 
-However, for some organizations it may nevertheless be desirable to
-trace them. Basically, we want to be able to tell that there are
-latencies in the system under test because someone has incorrectly
-enabled the serial console.
 
-Signed-off-by: Viktor Rosendahl <viktor.rosendahl@gmail.com>
----
- include/linux/irqflags.h     | 22 ++++++++++++++++++++++
- kernel/printk/printk.c       |  6 ++++--
- kernel/trace/trace.h         |  1 +
- kernel/trace/trace_irqsoff.c | 12 ++++++++++++
- 4 files changed, 39 insertions(+), 2 deletions(-)
+I agree that the nasty situation will happen.The current approach and this patch might not be enough.
+But for requirement of performance, I think it is better to differentiate between idle CPU and CPU has CFS task.
 
-diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index 21619c92c377..3de891723331 100644
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -13,6 +13,7 @@
- #define _LINUX_TRACE_IRQFLAGS_H
- 
- #include <linux/typecheck.h>
-+#include <linux/types.h>
- #include <asm/irqflags.h>
- 
- /* Currently trace_softirqs_on/off is used only by lockdep */
-@@ -68,9 +69,30 @@ do {						\
- 	defined(CONFIG_PREEMPT_TRACER)
-  extern void stop_critical_timings(void);
-  extern void start_critical_timings(void);
-+ extern bool console_tracing_disabled(void);
-+
-+# define console_stop_critical_timings(flag)		\
-+	do {						\
-+		typecheck(bool, flag);			\
-+		flag = console_tracing_disabled();	\
-+		if (flag)				\
-+			stop_critical_timings();	\
-+	} while (0)
-+
-+# define console_start_critical_timings(flag)		 \
-+	do {						 \
-+		typecheck(bool, flag);			 \
-+		if (flag)				 \
-+			start_critical_timings();	 \
-+	} while (0)
-+
- #else
- # define stop_critical_timings() do { } while (0)
- # define start_critical_timings() do { } while (0)
-+# define console_stop_critical_timings(flag)	\
-+	do { typecheck(bool, flag); } while (0)
-+# define console_start_critical_timings(flag)	\
-+	do { typecheck(bool, flag); } while (0)
- #endif
- 
- /*
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 1888f6a3b694..036460a7e4cd 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2359,6 +2359,7 @@ void console_unlock(void)
- 	static char ext_text[CONSOLE_EXT_LOG_MAX];
- 	static char text[LOG_LINE_MAX + PREFIX_MAX];
- 	unsigned long flags;
-+	bool cflag;
- 	bool do_cond_resched, retry;
- 
- 	if (console_suspended) {
-@@ -2459,9 +2460,10 @@ void console_unlock(void)
- 		 */
- 		console_lock_spinning_enable();
- 
--		stop_critical_timings();	/* don't trace print latency */
-+		/* don't trace print latency if it's disabled */
-+		console_stop_critical_timings(cflag);
- 		call_console_drivers(ext_text, ext_len, text, len);
--		start_critical_timings();
-+		console_start_critical_timings(cflag);
- 
- 		if (console_lock_spinning_disable_and_check()) {
- 			printk_safe_exit_irqrestore(flags);
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 4913ed1138aa..93a8b82c27e4 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1262,6 +1262,7 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		C(PRINTK_MSGONLY,	"printk-msg-only"),	\
- 		C(CONTEXT_INFO,		"context-info"),   /* Print pid/cpu/time */ \
- 		C(LATENCY_FMT,		"latency-format"),	\
-+		C(CONSOLE_LATENCY,	"console-latency"),	\
- 		C(RECORD_CMD,		"record-cmd"),		\
- 		C(RECORD_TGID,		"record-tgid"),		\
- 		C(OVERWRITE,		"overwrite"),		\
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index a745b0cee5d3..bc02be207a7a 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -456,6 +456,18 @@ void stop_critical_timings(void)
- EXPORT_SYMBOL_GPL(stop_critical_timings);
- NOKPROBE_SYMBOL(stop_critical_timings);
- 
-+bool console_tracing_disabled(void)
-+{
-+	struct trace_array *tr = irqsoff_trace;
-+	int pc = preempt_count();
-+
-+	if (!preempt_trace(pc) && !irq_trace())
-+		return false;
-+
-+	return !(tr->trace_flags & TRACE_ITER_CONSOLE_LATENCY);
-+}
-+EXPORT_SYMBOL_GPL(console_tracing_disabled);
-+
- #ifdef CONFIG_FUNCTION_TRACER
- static bool function_enabled;
- 
--- 
-2.17.1
+For example, we use rt-app to evaluate runnable time on non-patched environment.
+There are (NR_CPUS-1) heavy CFS tasks and 1 RT Task. When a CFS task is running, the RT task wakes up and choose the same CPU.
+The CFS task will be preempted and keep runnable until it is migrated to another cpu by load balance.
+But load balance is not triggered immediately, it will be triggered until timer tick hits with some condition satisfied(ex. rq->next_balance).
+CFS tasks may be runnable for a long time. In this test case, it increase 332.091 ms runnable time for CFS task.
+
+The detailed log is shown as following, CFS task(thread1-6580) is preempted by RT task(thread0-6674) about 332ms:
+thread1-6580  [003] dnh2    94.452898: sched_wakeup: comm=thread0 pid=6674 prio=89 target_cpu=003 
+thread1-6580  [003] d..2    94.452916: sched_switch: prev_comm=thread1 prev_pid=6580 prev_prio=120 prev_state=R ==> next_comm=thread0 next_pid=6674 next_prio=89
+.... 332.091ms
+krtatm-1930  [001] d..2    94.785007: sched_migrate_task: comm=thread1 pid=6580 prio=120 orig_cpu=3 dest_cpu=1
+krtatm-1930  [001] d..2    94.785020: sched_switch: prev_comm=krtatm prev_pid=1930 prev_prio=100 prev_state=S ==> next_comm=thread1 next_pid=6580 next_prio=120
+
+So I think choose idle CPU at RT wake up flow could reduce the CFS runnable time. 
+
+
+Best regards,
+Jing-Ting Wu
+
 
