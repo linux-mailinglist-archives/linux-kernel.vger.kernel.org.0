@@ -2,96 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE069AAD60
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EBD2AAD68
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:53:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404116AbfIEUuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 16:50:24 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38596 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404110AbfIEUuW (ORCPT
+        id S1732135AbfIEUxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 16:53:33 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43972 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729109AbfIEUxc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 16:50:22 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l11so4292107wrx.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 13:50:21 -0700 (PDT)
+        Thu, 5 Sep 2019 16:53:32 -0400
+Received: by mail-lj1-f194.google.com with SMTP id d5so3910675lja.10
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 13:53:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Avg8QM6aPfWwX5AoBSBFNIlTtI2x7nEGXCQk3lEb/fc=;
-        b=EojOhlSjiJk8y6EJeNppFrahboogV9SnwNJf0VVPvj9yW7Vq17+tZV1p3tUjYh/zzn
-         eQ9R5aIm8Pqf/LEcARwdoX6n0VD2ghT8SwLkb3axshTZ5X2u1d17r2IMg5ucPfiraQFj
-         /I0RSEMx5k/paxbsKQ28uPeRkRjbW+5qDU+2IKnTr0NP71dqHorDFBF04ebs4ogFj5pR
-         sa42t8sSaxPjB2pmqKJpUcm6gvM4EDtdwESfWjL/xPyr66Tff8rszZyTJ9R8ia9vWAcl
-         9OnLStXajERrE2mIAJut0X5KTQK3F8fyYJP9E6YsREIMWXzF7CyrQtYmToM52YC08TFm
-         HIRw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iPEZjEgURFMOpZcOpmz6NV2rlqMAKb/Tvj6hXKO9NUc=;
+        b=Tru6iuAtxJ4Nbpda4z7UjfkFGHF0OYfFwBtmVZhCqXZ/9ppwjshhlmflUcapGH+Vkc
+         fo2foyLXPY7Zp8XV7b3hMsVwIvua7ZIFWz2leYihFOzUrbTAf8kYutdZ2eo3/tHakM6Q
+         BQit8+/lAms0l/Pks0MDXDhD8Frh3JqCk1FSE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Avg8QM6aPfWwX5AoBSBFNIlTtI2x7nEGXCQk3lEb/fc=;
-        b=LRufIfCZLCY2G7DihVzjiV/YXTy/4R+iHxQYYLD2i77a9FZvgY3oEd6rhqbBYDTaph
-         aetftMlkb16GCpOpR5MST4o9Ir1TJl0JpeerRjbFL6Dm1IcMeD2bKZmQXK4nGogFlViZ
-         aLOAXT6qFIWF5YIjKeEKlEPFKt9C8gZJkNP1XMXxupxBpHEqQ1C+K+G1cUtJEwXSJweR
-         uiF4EeBFHm86WAh55uaEQqzxdVq63qYChR8SddJUdLexF+gOCNGydgHaiy7zTv5V/aiB
-         UEuaegTQHNSeJWeexqmlH7+3xbklAQmxr0cCvSpoxjy/4poKlrkmNnsgNJFOAxqI5lAN
-         qFBA==
-X-Gm-Message-State: APjAAAUMHQp05XVBSWl0uBgcHcvmss9jX2dct6U6/Wvile53miWgbJxo
-        lW7aenlfxjyPDFfy3EiK4qjx48qEsFc=
-X-Google-Smtp-Source: APXvYqwi/+00SHE3kxRqKt+uOC1fnKiZKCYTRd+lO9y4jlGHsH2+knmmV2EW7SfCJPj5yMwzkXM97g==
-X-Received: by 2002:adf:dc0f:: with SMTP id t15mr4596106wri.258.1567716620556;
-        Thu, 05 Sep 2019 13:50:20 -0700 (PDT)
-Received: from [192.168.1.6] (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
-        by smtp.gmail.com with ESMTPSA id k6sm5932699wrg.0.2019.09.05.13.50.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2019 13:50:19 -0700 (PDT)
-Subject: Re: [PATCH v3] watchdog: qcom: support pre-timeout when the bark irq
- is available
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
-        wim@linux-watchdog.org, linux-arm-msm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190905182419.26539-1-jorge.ramirez-ortiz@linaro.org>
- <20190905183456.GA29500@roeck-us.net>
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <97c57a8a-545e-f5de-0756-e8ce054aa036@linaro.org>
-Date:   Thu, 5 Sep 2019 22:50:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iPEZjEgURFMOpZcOpmz6NV2rlqMAKb/Tvj6hXKO9NUc=;
+        b=g/PAZi4SwAMm2b4cRDNFoCZri13Q3dY8ybwJ7iXEM2WcOcAXMlDQKTZ8c2rzHHy8q1
+         GKRN/BAYRjQdCVYJ9/4T12ON5rlMmtFT/TZLJKz/wTa1026b6PrLqTPETXXBcPp9DkWm
+         hTBCoYlmq7t8H19yIB34IlJxXTXvtOyC2ZxOgSHAIlwPQWJc5NjeqnQXn0kS46q3AFGj
+         gLS+uNitIt+1XoQbSPos+3gCmrIAq9M7gGPOSbY7a/aTGAp/YgdJVnnQT/5o7Lb0CP8x
+         ckGBWgw0VTG+CUCXX5BusmEKPnUoRQlT4ff1lfuvwaNYTrQTTnwd7kWmkGwepw6g68nQ
+         qXog==
+X-Gm-Message-State: APjAAAWNHvztiIskfgxPmi5/097VqU91A9Br7IclDYMwoYO5I8VE8Pzq
+        8BJZZ4vxUhGPxwrZ3lCsANbtGIB+6Dg=
+X-Google-Smtp-Source: APXvYqxPeCuNiCz3S06ENCLMdxTi/hEtxa6biatl3KYlckrhfoZCtQkjNac9I9rePsC/H9szvwA5CA==
+X-Received: by 2002:a2e:9bc1:: with SMTP id w1mr3485227ljj.168.1567716810004;
+        Thu, 05 Sep 2019 13:53:30 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id u8sm650563lfq.61.2019.09.05.13.53.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2019 13:53:29 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id u13so3161905lfm.9
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 13:53:28 -0700 (PDT)
+X-Received: by 2002:a19:741a:: with SMTP id v26mr3835623lfe.79.1567716808552;
+ Thu, 05 Sep 2019 13:53:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190905183456.GA29500@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190904181740.GA19688@gmail.com> <CAHk-=wi2VOPoweqnDhxXKJ9fcLQzkV1oEDjteV=z-C7KXrpomg@mail.gmail.com>
+ <CANiq72mXLbaefVBqZzz1vSREi0=HiBUgR1KU3iRjOCum7rvfrw@mail.gmail.com>
+In-Reply-To: <CANiq72mXLbaefVBqZzz1vSREi0=HiBUgR1KU3iRjOCum7rvfrw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Sep 2019 13:53:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiNksYaQ5zRFgTdY4TMHkxRi3aOcTC2zMMS6+aVSx+yeQ@mail.gmail.com>
+Message-ID: <CAHk-=wiNksYaQ5zRFgTdY4TMHkxRi3aOcTC2zMMS6+aVSx+yeQ@mail.gmail.com>
+Subject: Re: [GIT PULL] compiler-attributes for v5.3-rc8
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Will Deacon <will@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Paul Burton <paul.burton@mips.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/5/19 20:34, Guenter Roeck wrote:
-> On Thu, Sep 05, 2019 at 08:24:19PM +0200, Jorge Ramirez-Ortiz wrote:
->> Use the bark interrupt as the pre-timeout notifier whenever this
->> interrupt is available.
->>
->> By default, the pretimeout notification shall occur one second earlier
->> than the timeout.
->>
->> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> 
-> Can you please give people time to reply before flooding the mailing list
-> with revisions ? This is getting annoying quite rapidly. I am going to
-> reply to v2, as I had started on that already (and to the one without
-> subject before).
+On Thu, Sep 5, 2019 at 12:41 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> Nick, Linus: shouldn't we just simply go for no stringifying at all,
+> i.e. changing it to:
+>
+>     #define __section(S)   __attribute__((__section__(S)))
 
-yes, sorry about it. it is not frequent that someone gives a review so
-quickly though so I thought I had time to sneak in some reworks - thanks
-and apologies again.
+That's probably what we should have done originally, avoiding all the
+issues with "what if we have multi-part strings" etc.
 
-I am about to send v4 addressing the issues you raised.
+But it's not what we did, probably because it looked slightly simpler
+to do the stringification in the macro for the usual case.
 
-> 
-> Guenter
-> .
-> 
+So now we have (according to a quick grep) eight users that have a
+constant string, and about one hundred users that use the unquoted
+section name and expect the automatic stringification. I say "about",
+because I didn't check if any of them might be doing tricks, I really
+just did a stupid grep.
 
+And we have that _one_ insane KENTRY thing that was apparently never
+actually used.
+
+So I think the minimal fix is to just accept that it's what it is,
+remove the unnecessary quotes from the 8 existing users, and _if_
+somebody wants to build the string  by hand (like the KENTRY code
+did), then just use "__attribute__((section(x)))" for that.
+
+But yeah, we could just remove the stringification and make the users do it.
+
+But for the current late rc (and presumably -stable?), I definitely
+want the absolute minimal thing that fixes the oops.
+
+                     Linus
