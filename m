@@ -2,120 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AD3FAA360
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:40:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 090CEAA36A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:45:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387931AbfIEMkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 08:40:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35752 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730959AbfIEMkV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 08:40:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=T3FCFMN2z9Bt1GK8k3lpSyj2uENPY0dUEXr7VygNtFI=; b=G2bixAfMhR1u99XuvPXclaQZA
-        EDcHSToBuaWXxAm/tT74GMleq2mBrO1d4/MaIah/qObMNDAFDiAslubrLpAaKnCUIsPZNU42io1u8
-        EAOo7eDdGzWpvlL6oX+L22CxJLkFbFdHtCzvNTcFWOrnLlJwCVLxEspaRDt7lU5ZVJ0WI=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i5r3g-0004X8-0K; Thu, 05 Sep 2019 12:40:16 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 0F1422742D07; Thu,  5 Sep 2019 13:40:14 +0100 (BST)
-Date:   Thu, 5 Sep 2019 13:40:14 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Steven Price <steven.price@arm.com>
-Cc:     Rob Herring <robh@kernel.org>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/panfrost: Fix regulator_get_optional() misuse
-Message-ID: <20190905124014.GA4053@sirena.co.uk>
-References: <20190904123032.23263-1-broonie@kernel.org>
- <CAL_JsqK8hn8aHa0e-QhT5=dMqCd0_HzNWMHM1YbEC_2z8n-tXg@mail.gmail.com>
- <feaf7338-9aa1-5065-7a83-028aeadd5578@arm.com>
+        id S2389445AbfIEMpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 08:45:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40652 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731301AbfIEMpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 08:45:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 75543B653;
+        Thu,  5 Sep 2019 12:45:16 +0000 (UTC)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     jikos@kernel.org, jpoimboe@redhat.com, pmladek@suse.com
+Cc:     joe.lawrence@redhat.com, nstange@suse.de,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Miroslav Benes <mbenes@suse.cz>
+Subject: [RFC PATCH v2 0/3] livepatch: Clear relocation targets on a module removal
+Date:   Thu,  5 Sep 2019 14:45:11 +0200
+Message-Id: <20190905124514.8944-1-mbenes@suse.cz>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
-Content-Disposition: inline
-In-Reply-To: <feaf7338-9aa1-5065-7a83-028aeadd5578@arm.com>
-X-Cookie: You humans are all alike.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Updated version with Petr's feedback. It looks a bit different and
+better now (I would say). Not that it should be considered before we
+decide what to do with late module patching, but I finished it before
+the discussion started and someone could be interested.
 
---tThc/1wpZn/ma/RB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+v1: http://lore.kernel.org/r/20190719122840.15353-1-mbenes@suse.cz
 
-On Thu, Sep 05, 2019 at 10:37:53AM +0100, Steven Price wrote:
+Tested on x86_64, ppc64le and s390x. Cross-compiled on arm64 to verify
+that nothing is broken.
 
-> Ah, I didn't realise that regulator_get() will return a dummy regulator
-> if none is provided in the DT. In theory that seems like a nicer
-> solution to my two commits. However there's still a problem - the dummy
-> regulator returned from regulator_get() reports errors when
-> regulator_set_voltage() is called. So I get errors like this:
+[1] 20180602161151.apuhs2dygsexmcg2@treble
+[2] 1561019068-132672-1-git-send-email-cj.chengjian@huawei.com
+[3] 20180607092949.1706-1-mbenes@suse.cz
 
-> [  299.861165] panfrost e82c0000.mali: Cannot set voltage 1100000 uV
-> [  299.867294] devfreq devfreq0: dvfs failed with (-22) error
+Miroslav Benes (3):
+  livepatch: Clear relocation targets on a module removal
+  livepatch: Unify functions for writing and clearing object relocations
+  livepatch: Clean up klp_update_object_relocations() return paths
 
-> (And therefore the frequency isn't being changed)
+ arch/powerpc/kernel/module_64.c | 45 +++++++++++++++++++++++++
+ arch/s390/kernel/module.c       |  8 +++++
+ arch/x86/kernel/module.c        | 43 ++++++++++++++++++++++++
+ include/linux/moduleloader.h    |  7 ++++
+ kernel/livepatch/core.c         | 58 ++++++++++++++++++++++++---------
+ 5 files changed, 146 insertions(+), 15 deletions(-)
 
-> Ideally we want a dummy regulator that will silently ignore any
-> regulator_set_voltage() calls.
+-- 
+2.23.0
 
-Is that safe?  You can't rely on being able to change voltages even if
-there's a physical regulator available, system constraints or the
-results of sharing the regulator with other users may prevent changes.
-I guess at the minute the code is assuming that if you can't vary the
-regulator it's fixed at the maximum voltage and that it's safe to run at
-a lower clock with a higher voltage (some devices don't like doing that).
-If the device always starts up at full speed I guess that's OK.  It's
-certainly in general a bad idea to do this in general, we can't tell how
-important it is to the consumer that they actually get the voltage that
-they asked for - for some applications like this it's just adding to the
-power saving it's likely fine but for others it might break things.
-
-If you're happy to change the frequency without the ability to vary the
-voltage you can query what's supported through the API (the simplest
-interface is regulator_is_supported_voltage()).  You should do the
-regulator API queries at initialization time since they can be a bit
-expensive, the usual pattern would be to go through your OPP table and
-disable states where you can't support the voltage but you *could* also
-flag states where you just don't set the voltage.  That seems especially
-reasonable if no voltages in the range the device supports can be set.
-
-I do note that the current code requires exactly specified voltages with
-no variation which doesn't match the behaviour you say you're OK with
-here, what you're describing sounds like the driver should be specifying
-a voltage range from the hardware specified maximum down to whatever the
-minimum the OPP supports rather than exactly the OPP voltage.  As things
-are you might also run into voltages that can't be hit exactly (eg, in
-the Exynos 5433 case in mainline a regulator that only offers steps of
-2mV will error out trying to set several of the OPPs).
-
---tThc/1wpZn/ma/RB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1xAisACgkQJNaLcl1U
-h9Dktwf/cU2P46lDZKOxus22wJ39FsrKnSMmarYUxJuVwMOvHiUCedJgRxcjMSJG
-8qxD91/c5mLJn2adGdZx/3Wrf0RbY/EEjpk/Ru3sbFl/LEow2OwsAWLG9U/RBmJV
-GfPwPTRgCOcKIJIEnrCkJV/XjaJhVdAQ6akUaOQtE8N5/+UAgi1qnmDkwndsLPcJ
-SPvfK7oVN4/xtwxmwomTqz92oCIlcfwubjEl07jZB/DZARaN6LjhGFj18aHSiZqM
-HV/6gNWaxeVMUpQktnuKzW5fGhAPmutN/+67cx0S9pUXIOeHENz8pE/H9RGeLKo0
-oiXGbcDp/ied1I8DHJF8j5PiQ0qUdw==
-=aLW0
------END PGP SIGNATURE-----
-
---tThc/1wpZn/ma/RB--
