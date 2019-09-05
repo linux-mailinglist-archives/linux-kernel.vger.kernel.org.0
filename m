@@ -2,64 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B177AACB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC79CAACBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732754AbfIEUFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 16:05:48 -0400
-Received: from mail-wm1-f51.google.com ([209.85.128.51]:51362 "EHLO
-        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbfIEUFs (ORCPT
+        id S2387822AbfIEUHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 16:07:44 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41223 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbfIEUHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 16:05:48 -0400
-Received: by mail-wm1-f51.google.com with SMTP id k1so4172093wmi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 13:05:47 -0700 (PDT)
+        Thu, 5 Sep 2019 16:07:42 -0400
+Received: by mail-oi1-f195.google.com with SMTP id h4so2986773oih.8
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 13:07:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6k7PZuJzGWrD6r0C7js2ghL9hn4vXg63+nMGa3lc03Q=;
+        b=fEPR9+4FnJ/Wuh5lAs7l0q7dg8u+29rxGa1vObZGAYxHLXpMJmWtvQm0WI7yFHpbA9
+         sotwZ5fvHtmhbOOjsGD4XdRWAE+6AYb3s0hVUcTs0ij1ac4cvAJs5swoW2m9fu57OadR
+         o7BrkXPdVisi/74Qj4Up0mSJKh8d9sLEmWMfy0aV0iHYtAC5JGXFYDT9kmIBY8JKcNFQ
+         WvzUvTWDjYTc+t0UA+BITLbIMNqKrTmCn661eeX0fPI9t70tskNE478AIBdUgubiXhlJ
+         3kroS/4vY/n8ro+zwulHYVAcsEsu6RBGxZdPvkeg1EPaxxG7BNg55LP1WNtcedAtAJlo
+         YeMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=u7j6bRp6tgNAxHJKMuhoBeblo7uaqvEtq73jUP1ye78=;
-        b=gASahD/1KxtxUpvS/okKWD3KVkxcoxCwn3YWgCMItWQjcdNjhp171FpY+F2Pd/D7uo
-         YqAkQ1LQ/FEeOtW6QBwQDSPKiYHkVhBz1qbc6IQFIYhz2c/6xBitR4SJVyUSt7zG5TBM
-         nzxDPykOdrWpTEvZowNNuzEEdoCw+K1y15j1DOu3P6D4X2gI4/VUzCgUuGCMqqyT+sGm
-         C8exg/DxY/uMI0I3qvL+bslJQuVplwUKcHJ1+qQwMtRHSJCOA9ZGp4fnZbSKwYQA16KI
-         labmAHLKf2TFhFTQb+H0MtyC5POdJ3cuTRFeopN9yj0GcU4X6tCsBRdT6eGJ1YZ6Ak49
-         iOGw==
-X-Gm-Message-State: APjAAAUwQ7uJ1+eWzRn5KRmMi9zFhYLMmdP2xZgIslAD1XlmG1ZQZ8kC
-        jHGnrWl5cOL6mHAxVUWtdhg=
-X-Google-Smtp-Source: APXvYqwl4RwjiRyawN+y0OPGL+qW2tlPnNBWfsrd8ZA6SuH6V0ry+V4h28ZET6fPiFdUc1gXT1PMbw==
-X-Received: by 2002:a05:600c:24cb:: with SMTP id 11mr4269994wmu.94.1567713946456;
-        Thu, 05 Sep 2019 13:05:46 -0700 (PDT)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id m62sm5168268wmm.35.2019.09.05.13.05.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Sep 2019 13:05:45 -0700 (PDT)
-Subject: Re: [PATCHv2] nvme: Assign subsy instance from first ctrl
-To:     Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        linux-nvme@lists.infradead.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, Jens Axboe <axboe@fb.com>
-References: <20190905163354.25139-1-kbusch@kernel.org>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <b47de61c-c61e-359b-416e-28d8db0813f8@grimberg.me>
-Date:   Thu, 5 Sep 2019 13:05:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6k7PZuJzGWrD6r0C7js2ghL9hn4vXg63+nMGa3lc03Q=;
+        b=WxkpD6D5jptQecZeN2h8VLBYJdxHQ8msh34nTGD+1IkepKf2ewVymvY2Ee1c/OCnru
+         reS9WYEtpZ2NYAxiI3B3HXGW5E7qjrXxJ1dkV/uGvTKuZiUcWl4zEUf1IKC2BwF+2EMx
+         GL18BvdD0nIXDbz6wxU/X+Q6CeP8ayGBcV7w7Po69G/AhGNGKA1LGizH4DjXruPkP+MR
+         tMqdn6GJpeJOm4/Wz7hfZf4K8lyPmoReAP9T6bjlvD7LWgMiYQFXNRm9K80jCyhnR/yS
+         VSPCekwhkRVUtrUAUQdzjXH+NQnIbxT58x9ABZxn7FXkuZyU+yeJ1BdKiGH1jp3K/60G
+         gULg==
+X-Gm-Message-State: APjAAAWZk1qGPH+9D2Mxe353JmPMx3a3uSyQI8O0zqU8xp50YFYaqRLX
+        G+Z8TooQ8+n0kri50plKT9eWTe+4ycSDXlqpTyXEew==
+X-Google-Smtp-Source: APXvYqzyY+dI8j4oksYtUG/bs6k+iiXfYPjfr4iAtUt+sQklxzS+bW2yptWP0sznueZLxU0tmkvtO8vWY8nAzmtJJEY=
+X-Received: by 2002:aca:da86:: with SMTP id r128mr4287079oig.103.1567714061086;
+ Thu, 05 Sep 2019 13:07:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190905163354.25139-1-kbusch@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190826233240.11524-1-almasrymina@google.com>
+ <20190828112340.GB7466@dhcp22.suse.cz> <CAHS8izPPhPoqh-J9LJ40NJUCbgTFS60oZNuDSHmgtMQiYw72RA@mail.gmail.com>
+ <20190829071807.GR28313@dhcp22.suse.cz> <cb7ebcce-05c5-3384-5632-2bbac9995c15@oracle.com>
+ <e7f91a50-5957-249c-8756-25ea87c77fc4@oracle.com>
+In-Reply-To: <e7f91a50-5957-249c-8756-25ea87c77fc4@oracle.com>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Thu, 5 Sep 2019 13:07:30 -0700
+Message-ID: <CAHS8izMCA9+sY+dxHxuFgANCLD2oNznPqGYvi1+C2xOkv=7EYw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] hugetlb_cgroup: Add hugetlb_cgroup reservation limits
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, shuah <shuah@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        khalid.aziz@oracle.com, open list <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        cgroups@vger.kernel.org,
+        Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>,
+        =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+        Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Li Zefan <lizefan@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
+On Tue, Sep 3, 2019 at 4:46 PM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>
+> On 9/3/19 10:57 AM, Mike Kravetz wrote:
+> > On 8/29/19 12:18 AM, Michal Hocko wrote:
+> >> [Cc cgroups maintainers]
+> >>
+> >> On Wed 28-08-19 10:58:00, Mina Almasry wrote:
+> >>> On Wed, Aug 28, 2019 at 4:23 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >>>>
+> >>>> On Mon 26-08-19 16:32:34, Mina Almasry wrote:
+> >>>>>  mm/hugetlb.c                                  | 493 ++++++++++++------
+> >>>>>  mm/hugetlb_cgroup.c                           | 187 +++++--
+> >>>>
+> >>>> This is a lot of changes to an already subtle code which hugetlb
+> >>>> reservations undoubly are.
+> >>>
+> >>> For what it's worth, I think this patch series is a net decrease in
+> >>> the complexity of the reservation code, especially the region_*
+> >>> functions, which is where a lot of the complexity lies. I removed the
+> >>> race between region_del and region_{add|chg}, refactored the main
+> >>> logic into smaller code, moved common code to helpers and deleted the
+> >>> duplicates, and finally added lots of comments to the hard to
+> >>> understand pieces. I hope that when folks review the changes they will
+> >>> see that! :)
+> >>
+> >> Post those improvements as standalone patches and sell them as
+> >> improvements. We can talk about the net additional complexity of the
+> >> controller much easier then.
+> >
+> > All such changes appear to be in patch 4 of this series.  The commit message
+> > says "region_add() and region_chg() are heavily refactored to in this commit
+> > to make the code easier to understand and remove duplication.".  However, the
+> > modifications were also added to accommodate the new cgroup reservation
+> > accounting.  I think it would be helpful to explain why the existing code does
+> > not work with the new accounting.  For example, one change is because
+> > "existing code coalesces resv_map entries for shared mappings.  new cgroup
+> > accounting requires that resv_map entries be kept separate for proper
+> > uncharging."
+> >
+> > I am starting to review the changes, but it would help if there was a high
+> > level description.  I also like Michal's idea of calling out the region_*
+> > changes separately.  If not a standalone patch, at least the first patch of
+> > the series.  This new code will be exercised even if cgroup reservation
+> > accounting not enabled, so it is very important than no subtle regressions
+> > be introduced.
+>
+> While looking at the region_* changes, I started thinking about this no
+> coalesce change for shared mappings which I think is necessary.  Am I
+> mistaken, or is this a requirement?
+>
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+No coalesce is a requirement, yes. The idea is that task A can reseve
+range [0-1], and task B can reserve range [1-2]. We want the code to
+put in 2 regions:
 
-Applied to nvme-5.4
+1. [0-1], with cgroup information that points to task A's cgroup.
+2. [1-2], with cgroup information that points to task B's cgroup.
+
+If coalescing is happening, then you end up with one region [0-2] with
+cgroup information for one of those cgroups, and someone gets
+uncharged wrong when the reservation is freed.
+
+Technically we can still coalesce if the cgroup information is the
+same and I can do that, but the region_* code becomes more
+complicated, and you mentioned on an earlier patchset that you were
+concerned with how complicated the region_* functions are as is.
+
+> If it is a requirement, then think about some of the possible scenarios
+> such as:
+> - There is a hugetlbfs file of size 10 huge pages.
+> - Task A has reservations for pages at offset 1 3 5 7 and 9
+> - Task B then mmaps the entire file which should result in reservations
+>   at 0 2 4 6 and 8.
+> - region_chg will return 5, but will also need to allocate 5 resv_map
+>   entries for the subsequent region_add which can not fail.  Correct?
+>   The code does not appear to handle this.
+>
+
+I thought the code did handle this. region_chg calls
+allocate_enough_cache_for_range_and_lock(), which in this scenario
+will put 5 entries in resv_map->region_cache. region_add will use
+these 5 region_cache entries to do its business.
+
+I'll add a test in my suite to test this case to make sure.
+
+> BTW, this series will BUG when running libhugetlbfs test suite.  It will
+> hit this in resv_map_release().
+>
+>         VM_BUG_ON(resv_map->adds_in_progress);
+>
+
+Sorry about that, I've been having trouble running the libhugetlbfs
+tests, but I'm still on it. I'll get to the bottom of this by next
+patch series.
+
+> --
+> Mike Kravetz
