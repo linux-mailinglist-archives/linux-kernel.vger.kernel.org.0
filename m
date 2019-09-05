@@ -2,42 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00096AA168
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A331AA179
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 13:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730785AbfIELaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 07:30:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41174 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbfIELaN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 07:30:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3Z6GGxQtw6kGZ90rRUAsKRrfp8SLjkfWxpfQA5HECNQ=; b=kST9SkasBfRkvNAy3jwGSEqAx
-        L5hV5CM0qO23/QJaoYSxUxpqMwhdekI9KbVAvA3Q3J+LOMm6kjJf0t+4RQP0yxfp/J1v1Irv7p20L
-        JU15zzpLAoEiiP/7USl6oOLXMdnYwFAz2UsKeP/b8pvcQOW8izmbSYkTbk4DXe3sel3WoDhE8R0Of
-        9KXIolpsXvHQjfhOeCT9kvsEJEqaN8rMbZyADLjSJ2I2tlfzZ7qfgLEnGSG/HmzjHCs0aTguKxmOl
-        dR7dQMuSw88uIJHMEOx2pLmtfHbKcN9xgJfpxa/gdCymyCSUGNtJkyr2sXlABmPKFWZghNOT5gcpp
-        jIRvB213A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5pxk-0006sr-BV; Thu, 05 Sep 2019 11:30:04 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 549A4305E47;
-        Thu,  5 Sep 2019 13:29:25 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4B6E829CBE121; Thu,  5 Sep 2019 13:30:02 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 13:30:02 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
+        id S2388489AbfIELa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 07:30:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:42704 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725921AbfIELa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 07:30:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83FFF28;
+        Thu,  5 Sep 2019 04:30:56 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3B0E3F718;
+        Thu,  5 Sep 2019 04:30:54 -0700 (PDT)
+References: <20190830174944.21741-1-subhra.mazumdar@oracle.com> <20190830174944.21741-2-subhra.mazumdar@oracle.com> <20190905083127.GA2332@hirez.programming.kicks-ass.net> <87r24v2i14.fsf@arm.com> <20190905104616.GD2332@hirez.programming.kicks-ass.net> <20190905111346.2w6kuqrdvaqvgilu@e107158-lin.cambridge.arm.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Patrick Bellasi <patrick.bellasi@arm.com>,
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         Subhra Mazumdar <subhra.mazumdar@oracle.com>,
         linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
         steven.sistare@oracle.com, dhaval.giani@oracle.com,
@@ -45,50 +29,87 @@ Cc:     Patrick Bellasi <patrick.bellasi@arm.com>,
         viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
         mgorman@techsingularity.net, parth@linux.ibm.com
 Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
-Message-ID: <20190905113002.GK2349@hirez.programming.kicks-ass.net>
-References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
- <20190830174944.21741-2-subhra.mazumdar@oracle.com>
- <20190905083127.GA2332@hirez.programming.kicks-ass.net>
- <87r24v2i14.fsf@arm.com>
- <20190905104616.GD2332@hirez.programming.kicks-ass.net>
- <20190905111346.2w6kuqrdvaqvgilu@e107158-lin.cambridge.arm.com>
+In-reply-to: <20190905111346.2w6kuqrdvaqvgilu@e107158-lin.cambridge.arm.com>
+Date:   Thu, 05 Sep 2019 12:30:52 +0100
+Message-ID: <87h85r2d5f.fsf@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190905111346.2w6kuqrdvaqvgilu@e107158-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 12:13:47PM +0100, Qais Yousef wrote:
-> On 09/05/19 12:46, Peter Zijlstra wrote:
 
-> > This is important because we want to be able to bias towards less
-> > importance to (tail) latency as well as more importantance to (tail)
-> > latency.
-> > 
-> > Specifically, Oracle wants to sacrifice (some) latency for throughput.
-> > Facebook OTOH seems to want to sacrifice (some) throughput for latency.
-> 
+On Thu, Sep 05, 2019 at 12:13:47 +0100, Qais Yousef wrote...
+
+> On 09/05/19 12:46, Peter Zijlstra wrote:
+>> On Thu, Sep 05, 2019 at 10:45:27AM +0100, Patrick Bellasi wrote:
+>> 
+>> > > From just reading the above, I would expect it to have the range
+>> > > [-20,19] just like normal nice. Apparently this is not so.
+>> > 
+>> > Regarding the range for the latency-nice values, I guess we have two
+>> > options:
+>> > 
+>> >   - [-20..19], which makes it similar to priorities
+>> >   downside: we quite likely end up with a kernel space representation
+>> >   which does not match the user-space one, e.g. look at
+>> >   task_struct::prio.
+>> > 
+>> >   - [0..1024], which makes it more similar to a "percentage"
+>> > 
+>> > Being latency-nice a new concept, we are not constrained by POSIX and
+>> > IMHO the [0..1024] scale is a better fit.
+>> > 
+>> > That will translate into:
+>> > 
+>> >   latency-nice=0 : default (current mainline) behaviour, all "biasing"
+>> >   policies are disabled and we wakeup up as fast as possible
+>> > 
+>> >   latency-nice=1024 : maximum niceness, where for example we can imaging
+>> >   to turn switch a CFS task to be SCHED_IDLE?
+>> 
+>> There's a few things wrong there; I really feel that if we call it nice,
+>> it should be like nice. Otherwise we should call it latency-bias and not
+>> have the association with nice to confuse people.
+>> 
+>> Secondly; the default should be in the middle of the range. Naturally
+>> this would be a signed range like nice [-(x+1),x] for some x. but if you
+>> want [0,1024], then the default really should be 512, but personally I
+>> like 0 better as a default, in which case we need negative numbers.
+>> 
+>> This is important because we want to be able to bias towards less
+>> importance to (tail) latency as well as more importantance to (tail)
+>> latency.
+>> 
+>> Specifically, Oracle wants to sacrifice (some) latency for throughput.
+>> Facebook OTOH seems to want to sacrifice (some) throughput for latency.
+>
 > Another use case I'm considering is using latency-nice to prefer an idle CPU if
 > latency-nice is set otherwise go for the most energy efficient CPU.
-> 
+>
 > Ie: sacrifice (some) energy for latency.
-> 
-> The way I see interpreting latency-nice here as a binary switch. But
-> maybe we can use the range to select what (some) energy to sacrifice
-> mean here. Hmmm.
+>
+> The way I see interpreting latency-nice here as a binary switch. But maybe we
+> can use the range to select what (some) energy to sacrifice mean here. Hmmm.
 
-It cannot be binary, per definition is must be ternary, that is, <0, ==0
-and >0 (or middle value if you're of that persuasion).
+I see this concept possibly evolving into something more then just a
+binary switch. Not yet convinced if it make sense and/or it's possible
+but, in principle, I was thinking about these possible usages for CFS
+tasks:
 
-In your case, I'm thinking you mean >0, we want to lower the latency.
+ - dynamically tune the policy of a task among SCHED_{OTHER,BATCH,IDLE}
+   depending on crossing certain pre-configured threshold of latency
+   niceness.
 
-Anyway; there were a number of things mentioned at OSPM that we could
-tie into this thing and finding sensible mappings is going to be a bit
-of trial and error I suppose.
+ - dynamically bias the vruntime updates we do in place_entity()
+   depending on the actual latency niceness of a task.
 
-But as patrick said; we're very much exporting a BIAS knob, not a set of
-behaviours.
+ - bias the decisions we take in check_preempt_tick() still depending
+   on a relative comparison of the current and wakeup task latency
+   niceness values.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
