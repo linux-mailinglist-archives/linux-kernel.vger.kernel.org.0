@@ -2,166 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED18AA0AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8766AAA09F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbfIEK6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:58:51 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44004 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732028AbfIEK6u (ORCPT
+        id S2388002AbfIEK4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:56:45 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:41635 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731857AbfIEK4m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 06:58:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+Sinl1C05/gcXMERfRM/CU0CjBg4xK+OsBSdZDx7CWA=; b=IjEDEzxQ6IOLkFjkqA8G4weVr
-        2ix5c/aN4vGafnJXRf8rm/lgF5V/h8pr9d+f7e8f9OSp80GpF3zbO7SWy+3CyteSdnLqJ6Ic01Eck
-        Qw45hjOn6CGILdH7NYdlX3QNlS6oBhbtjqOQIJ4pNdWA6KkcZlyOT+79D27wNXhjHRMhibB3VXOyP
-        sAJWusCKmntCRiDFHFAB8StBwMoFAeeUSuWFHvMRXj5LbGacMCNuzaOlSVL9EYzyssCtUNWwPs/OK
-        0uzjRDmNrV/qRN36OfkME7aOIHLiHj9z0OGY4db+OtNKgaMRhA1yiHliWNZazO5KpD60UvZM6wqyK
-        PFVlbiYIA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5pSc-00065U-Lb; Thu, 05 Sep 2019 10:57:55 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C8326303121;
-        Thu,  5 Sep 2019 12:57:12 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B4C5529E3BB8C; Thu,  5 Sep 2019 12:57:49 +0200 (CEST)
-Date:   Thu, 5 Sep 2019 12:57:49 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org,
-        patrick.bellasi@arm.com
-Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
- helpers
-Message-ID: <20190905105749.GW2386@hirez.programming.kicks-ass.net>
-References: <20190904201933.10736-1-cyphar@cyphar.com>
- <20190904201933.10736-2-cyphar@cyphar.com>
- <20190905073205.GY2332@hirez.programming.kicks-ass.net>
- <20190905092622.tlb6nn3uisssdfbu@yavin.dot.cyphar.com>
- <20190905094305.GJ2349@hirez.programming.kicks-ass.net>
+        Thu, 5 Sep 2019 06:56:42 -0400
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id A2B11240017;
+        Thu,  5 Sep 2019 10:56:35 +0000 (UTC)
+Date:   Thu, 5 Sep 2019 12:58:09 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, uli@fpond.eu, airlied@linux.ie,
+        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 14/14] drm: rcar-du: Force CMM enablement when resuming
+Message-ID: <20190905105809.iguzoqenlcriqegk@uno.localdomain>
+References: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
+ <20190825135154.11488-15-jacopo+renesas@jmondi.org>
+ <20190827000517.GC5274@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hfnxteadwhag5ubx"
 Content-Disposition: inline
-In-Reply-To: <20190905094305.GJ2349@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190827000517.GC5274@pendragon.ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 11:43:05AM +0200, Peter Zijlstra wrote:
-> On Thu, Sep 05, 2019 at 07:26:22PM +1000, Aleksa Sarai wrote:
-> > On 2019-09-05, Peter Zijlstra <peterz@infradead.org> wrote:
-> > > On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
-> > > > +/**
-> > > > + * copy_struct_to_user: copy a struct to user space
-> > > > + * @dst:   Destination address, in user space.
-> > > > + * @usize: Size of @dst struct.
-> > > > + * @src:   Source address, in kernel space.
-> > > > + * @ksize: Size of @src struct.
-> > > > + *
-> > > > + * Copies a struct from kernel space to user space, in a way that guarantees
-> > > > + * backwards-compatibility for struct syscall arguments (as long as future
-> > > > + * struct extensions are made such that all new fields are *appended* to the
-> > > > + * old struct, and zeroed-out new fields have the same meaning as the old
-> > > > + * struct).
-> > > > + *
-> > > > + * @ksize is just sizeof(*dst), and @usize should've been passed by user space.
-> > > > + * The recommended usage is something like the following:
-> > > > + *
-> > > > + *   SYSCALL_DEFINE2(foobar, struct foo __user *, uarg, size_t, usize)
-> > > > + *   {
-> > > > + *      int err;
-> > > > + *      struct foo karg = {};
-> > > > + *
-> > > > + *      // do something with karg
-> > > > + *
-> > > > + *      err = copy_struct_to_user(uarg, usize, &karg, sizeof(karg));
-> > > > + *      if (err)
-> > > > + *        return err;
-> > > > + *
-> > > > + *      // ...
-> > > > + *   }
-> > > > + *
-> > > > + * There are three cases to consider:
-> > > > + *  * If @usize == @ksize, then it's copied verbatim.
-> > > > + *  * If @usize < @ksize, then kernel space is "returning" a newer struct to an
-> > > > + *    older user space. In order to avoid user space getting incomplete
-> > > > + *    information (new fields might be important), all trailing bytes in @src
-> > > > + *    (@ksize - @usize) must be zerored
-> > > 
-> > > s/zerored/zero/, right?
-> > 
-> > It should've been "zeroed".
-> 
-> That reads wrong to me; that way it reads like this function must take
-> that action and zero out the 'rest'; which is just wrong.
-> 
-> This function must verify those bytes are zero, not make them zero.
-> 
-> > > >                                          , otherwise -EFBIG is returned.
-> > > 
-> > > 'Funny' that, copy_struct_from_user() below seems to use E2BIG.
-> > 
-> > This is a copy of the semantics that sched_[sg]etattr(2) uses -- E2BIG for
-> > a "too big" struct passed to the kernel, and EFBIG for a "too big"
-> > struct passed to user-space. I would personally have preferred EMSGSIZE
-> > instead of EFBIG, but felt using the existing error codes would be less
-> > confusing.
-> 
-> Sadly a recent commit:
-> 
->   1251201c0d34 ("sched/core: Fix uclamp ABI bug, clean up and robustify sched_read_attr() ABI logic and code")
-> 
-> Made the situation even 'worse'.
 
-And thinking more about things; I'm not convinced the above patch is
-actually right.
+--hfnxteadwhag5ubx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Do we really want to simply truncate all the attributes of the task?
+Hi Laurent,
 
-And should we not at least set sched_flags when there are non-default
-clamp values applied?
+On Tue, Aug 27, 2019 at 03:05:17AM +0300, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> (Question for Daniel below)
+>
+> Thank you for the patch.
+>
+> On Sun, Aug 25, 2019 at 03:51:54PM +0200, Jacopo Mondi wrote:
+> > When resuming from system suspend, the DU driver is responsible for
+> > reprogramming and enabling the CMM unit if it was in use at the time
+> > the system entered the suspend state.
+> >
+> > Force the color_mgmt_changed flag to true if any of the DRM color
+> > transformation properties was set in the CRTC state duplicated at
+> > suspend time, as the CMM gets reprogrammed only if said flag is active in
+> > the rcar_du_atomic_commit_update_cmm() method.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 +++++++++++++++++++++
+> >  1 file changed, 21 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> > index 018480a8f35c..6e38495fb78f 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/wait.h>
+> >
+> > +#include <drm/drm_atomic.h>
+> >  #include <drm/drm_atomic_helper.h>
+> >  #include <drm/drm_fb_cma_helper.h>
+> >  #include <drm/drm_fb_helper.h>
+> > @@ -482,6 +483,26 @@ static int rcar_du_pm_suspend(struct device *dev)
+> >  static int rcar_du_pm_resume(struct device *dev)
+> >  {
+> >  	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> > +	struct drm_atomic_state *state = rcdu->ddev->mode_config.suspend_state;
+> > +	unsigned int i;
+> > +
+> > +	for (i = 0; i < rcdu->num_crtcs; ++i) {
+> > +		struct drm_crtc *crtc = &rcdu->crtcs[i].crtc;
+> > +		struct drm_crtc_state *crtc_state;
+> > +
+> > +		crtc_state = drm_atomic_get_existing_crtc_state(state, crtc);
+> > +		if (!crtc_state)
+> > +			continue;
+>
+> Shouldn't you get the new state here ?
+>
 
-See; that is I think the primary bug that had chrt failing; we tried to
-publish the default clamp values as !0.
+I have followed the drm_atomic_helper_suspend() call stack, that calls
+drm_atomic_helper_duplicate_state() which then assign the crtct state
+with drm_atomic_get_crtc_state(), where I read:
+
+       	crtc_state = drm_atomic_get_existing_crtc_state(state, crtc);
+        ...
+	state->crtcs[index].state = crtc_state;
+	state->crtcs[index].old_state = crtc->state;
+	state->crtcs[index].new_state = crtc_state;
+
+So state or new_state for the purpose of getting back the crtc state
+are the same if I'm not mistaken.
+
+> > +
+> > +		/*
+> > +		 * Force re-enablement of CMM after system resume if any
+> > +		 * of the DRM color transformation properties was set in
+> > +		 * the state saved at system suspend time.
+> > +		 */
+> > +		if (crtc_state->gamma_lut || crtc_state->degamma_lut ||
+> > +		    crtc_state->ctm)
+>
+> We don't support degamma_lut or crm, so I would drop those.
+
+yeah, I added them as it was less code to change when we'll support
+them. But for now they could be removed.
+
+>
+> With these small issues addressed,
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> Shouldn't we however squash this with the previous patch to avoid
+> bisection issues ?
+>
+
+Which one in your opinion?
+"drm: rcar-du: kms: Update CMM in atomic commit tail" ?
+It seems to me they do quite different things though..
+
+Thanks
+  j
+
+> > +			crtc_state->color_mgmt_changed = true;
+>
+> Daniel, is this something that would make sense in the KMS core (or
+> helpers) ?
+>
+> > +	}
+> >
+> >  	return drm_mode_config_helper_resume(rcdu->ddev);
+> >  }
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+
+--hfnxteadwhag5ubx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1w6kEACgkQcjQGjxah
+Vjw/ow//VHod5FHf7HpW3IVX+Y9nNCb2gUnLLQn3ogK+Bh1+QwkuX7aoEGWta/J3
+WMZcgrtgq4uTo8ltszjDkUxProrGq7f24J5JQ2CJRPcs0GxW04wWx5KLBe4cuerV
+/TUgyx3xv6Wj513ApwKF1uIzx7r41Cms9esjvpHknFLTmOsL2ig1dRuvjg5nY4JJ
+YUcG3nO+zUwWMoSMt+KrUrTSvKMvdjjQ3ui0r9BsBV6RJGd00WXEOfi3bbwvPbZm
+869/ZBDePiC29nccN3iD8zilZxygzhQ2hrqY/0aIID6vsAifqo8sw5p+xO3plet/
+npLOwHfm7JriaoUQOZsWQDvAUdumQ63VOLiB2XmPuBkMnNvXz545v2/tMJisQlXP
+rlfcyO39wVUVNvusp5iIzqmfxAfXFhWRPDtXqmtwfTFWA1CZehApDTvF2ZgZzJSw
+GePRn9dkt+EE5hDfq/5ashOp8yWMdQCtiPrQ+ufkRfQzyWizR0k79UMUEuQHgKYh
+kDveSbFpGpeWP3fU4HqtP7kfSOEM9N06UEtCij0U3/7+FUpqsPU63gDG6VVGWBoF
++sChRWL8rWibJVrFblWusSb9va1yqjAm4hfNcISlbaATRKH+HkCnByGViBnoOau4
+u8Md+g2UtbDJRTNoSDfdpZnp+CyZ2+eNUkQJy/IL8HGUpHgpA6k=
+=msos
+-----END PGP SIGNATURE-----
+
+--hfnxteadwhag5ubx--
