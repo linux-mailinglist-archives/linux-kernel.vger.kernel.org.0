@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1A2AABFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E51AAC03
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:31:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390553AbfIETad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 15:30:33 -0400
-Received: from mga05.intel.com ([192.55.52.43]:49262 "EHLO mga05.intel.com"
+        id S2389945AbfIETby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 15:31:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389110AbfIETaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 15:30:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2019 12:30:22 -0700
-X-IronPort-AV: E=Sophos;i="5.64,471,1559545200"; 
-   d="scan'208";a="177408337"
-Received: from agluck-desk2.sc.intel.com ([10.3.52.68])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2019 12:30:21 -0700
-From:   Tony Luck <tony.luck@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Rahul Tanwar <rahul.tanwar@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Gayatri Kammela <gayatri.kammela@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] x86/cpu: Update init data for new Airmont CPU model
-Date:   Thu,  5 Sep 2019 12:30:20 -0700
-Message-Id: <20190905193020.14707-5-tony.luck@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190905193020.14707-1-tony.luck@intel.com>
-References: <20190905193020.14707-1-tony.luck@intel.com>
+        id S1731375AbfIETby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 15:31:54 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6EC920825;
+        Thu,  5 Sep 2019 19:31:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567711913;
+        bh=vpEUxGMHAf/IZKdEnN0AVHGhOIJh13hxhGq6QD32AIA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mtmNm4f2C3bDvKw/fOPXkcLy+qSsyhoU9NqZWjS31GG7Ptsq9B2CjabHulSzRZGfv
+         H5Iofq355Tn744bFe3o/bBKkN7dPMjsxCM3Ibe8xZxrBdd8LqLqYnYAGGOOTWVsmb4
+         A2opSfWJR8YlCIULz+Vf+2De5mz52GjDb5y5mzJM=
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc:     Ashok Raj <ashok.raj@intel.com>,
+        Keith Busch <keith.busch@intel.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v8 0/5] Fix PF/VF dependency issue
+Date:   Thu,  5 Sep 2019 14:31:41 -0500
+Message-Id: <20190905193146.90250-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -38,65 +40,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Update properties for newly added Airmont CPU variant.
+The current implementation of ATS, PASID, and PRI does not handle VF
+dependencies correctly.  These are essentially Kuppuswamy's patches; I
+reordered and tweaked them slightly.
 
-Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- arch/x86/kernel/cpu/common.c | 1 +
- arch/x86/kernel/cpu/intel.c  | 1 +
- arch/x86/kernel/tsc_msr.c    | 5 +++++
- 3 files changed, 7 insertions(+)
+Please treat this as a proposal, not a done deal, and post a v9 with any
+changes needed.
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 5cedb679215e..9ae7d1bcd4f4 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1059,6 +1059,7 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
- 	VULNWL_INTEL(CORE_YONAH,		NO_SSB),
- 
- 	VULNWL_INTEL(ATOM_AIRMONT_MID,		NO_L1TF | MSBDS_ONLY | NO_SWAPGS),
-+	VULNWL_INTEL(ATOM_AIRMONT_NP,		NO_L1TF | NO_SWAPGS),
- 
- 	VULNWL_INTEL(ATOM_GOLDMONT,		NO_MDS | NO_L1TF | NO_SWAPGS),
- 	VULNWL_INTEL(ATOM_GOLDMONT_D,		NO_MDS | NO_L1TF | NO_SWAPGS),
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index e2082ccccf13..c2fdc00df163 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -268,6 +268,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
- 		case INTEL_FAM6_ATOM_SALTWELL_MID:
- 		case INTEL_FAM6_ATOM_SALTWELL_TABLET:
- 		case INTEL_FAM6_ATOM_SILVERMONT_MID:
-+		case INTEL_FAM6_ATOM_AIRMONT_NP:
- 			set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC_S3);
- 			break;
- 		default:
-diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
-index 067858fe4db8..e0cbe4f2af49 100644
---- a/arch/x86/kernel/tsc_msr.c
-+++ b/arch/x86/kernel/tsc_msr.c
-@@ -58,6 +58,10 @@ static const struct freq_desc freq_desc_ann = {
- 	1, { 83300, 100000, 133300, 100000, 0, 0, 0, 0 }
- };
- 
-+static const struct freq_desc freq_desc_lgm = {
-+	1, { 78000, 78000, 78000, 78000, 78000, 78000, 78000, 78000 }
-+};
-+
- static const struct x86_cpu_id tsc_msr_cpu_ids[] = {
- 	INTEL_CPU_FAM6(ATOM_SALTWELL_MID,	freq_desc_pnw),
- 	INTEL_CPU_FAM6(ATOM_SALTWELL_TABLET,	freq_desc_clv),
-@@ -65,6 +69,7 @@ static const struct x86_cpu_id tsc_msr_cpu_ids[] = {
- 	INTEL_CPU_FAM6(ATOM_SILVERMONT_MID,	freq_desc_tng),
- 	INTEL_CPU_FAM6(ATOM_AIRMONT,		freq_desc_cht),
- 	INTEL_CPU_FAM6(ATOM_AIRMONT_MID,	freq_desc_ann),
-+	INTEL_CPU_FAM6(ATOM_AIRMONT_NP,		freq_desc_lgm),
- 	{}
- };
- 
+Changes since v7:
+ * Moved PRI & PASID capability offset caching to last since they're just
+   optimizations
+ * Cached offsets at first use instead of adding _init() functions
+ * Dropped complicated pci_prg_resp_pasid_required() #ifdefs by just
+   searching for the capability again
+ * Dropped EA/VF validation since it only enforces spec language without
+   fixing any known issues
+
+Changes since v6:
+ * Removed locking interfaces used in v6.
+ * Made necessary changes to PRI/PASID enable/disable calls to allow
+   register changes only for PF.
+
+Changes since v5:
+ * Created new patches for PRI/PASID capability caching.
+ * Removed individual locks (pri_lock, pasid_lock) and added common
+   resource lock to synchronize PRI/PASID updates between PF/VF.
+ * Addressed comments from Bjorn Helgaas.
+
+Changes since v4:
+ * Defined empty functions for pci_pri_init() and pci_pasid_init() for cases
+   where CONFIG_PCI_PRI and CONFIG_PCI_PASID are not enabled.
+
+Changes since v3:
+ * Fixed critical path (lock context) in pci_restore_*_state functions.
+
+Changes since v2:
+ * Added locking mechanism to synchronize accessing PF registers in VF.
+ * Removed spec compliance checks in patches.
+ * Addressed comments from Bjorn Helgaas.
+
+Changes since v1:
+ * Added more details about the patches in commit log.
+ * Removed bulk spec check patch.
+ * Addressed comments from Bjorn Helgaas.
+
+
+Link: https://lore.kernel.org/r/cover.1567029860.git.sathyanarayanan.kuppuswamy@linux.intel.com v7
+
+Kuppuswamy Sathyanarayanan (5):
+  PCI/ATS: Handle sharing of PF PRI Capability with all VFs
+  PCI/ATS: Handle sharing of PF PASID Capability with all VFs
+  PCI/ATS: Disable PF/VF ATS service independently
+  PCI/ATS: Cache PRI Capability offset
+  PCI/ATS: Cache PASID Capability offset
+
+ drivers/pci/ats.c   | 153 +++++++++++++++++++++++++++-----------------
+ include/linux/pci.h |   3 +-
+ 2 files changed, 96 insertions(+), 60 deletions(-)
+
 -- 
-2.20.1
+2.23.0.187.g17f5b7556c-goog
 
