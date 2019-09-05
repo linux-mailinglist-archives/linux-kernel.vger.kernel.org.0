@@ -2,117 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76AEBAA984
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:00:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E55AA98B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:01:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390873AbfIERAb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 5 Sep 2019 13:00:31 -0400
-Received: from mga01.intel.com ([192.55.52.88]:5869 "EHLO mga01.intel.com"
+        id S2403789AbfIERBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 13:01:41 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:61604 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389197AbfIERAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 13:00:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2019 10:00:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,470,1559545200"; 
-   d="scan'208";a="182883502"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Sep 2019 10:00:30 -0700
-Received: from fmsmsx116.amr.corp.intel.com (10.18.116.20) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 5 Sep 2019 10:00:30 -0700
-Received: from fmsmsx125.amr.corp.intel.com ([169.254.2.49]) by
- fmsmsx116.amr.corp.intel.com ([169.254.2.181]) with mapi id 14.03.0439.000;
- Thu, 5 Sep 2019 10:00:30 -0700
-From:   "Brown, Len" <len.brown@intel.com>
-To:     Sasha Levin <sashal@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: RE: [PATCH AUTOSEL 5.2 82/94] tools/power turbostat: fix file
- descriptor leaks
-Thread-Topic: [PATCH AUTOSEL 5.2 82/94] tools/power turbostat: fix file
- descriptor leaks
-Thread-Index: AQHVYznN/Ro8M0co9U+Uq7T0wLP1CKcdTlTA
-Date:   Thu, 5 Sep 2019 17:00:30 +0000
-Message-ID: <1A7043D5F58CCB44A599DFD55ED4C9486D97C3FA@FMSMSX125.amr.corp.intel.com>
-References: <20190904155739.2816-1-sashal@kernel.org>
- <20190904155739.2816-82-sashal@kernel.org>
-In-Reply-To: <20190904155739.2816-82-sashal@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmU5M2FlNmUtODZkZC00ZWQ1LWIxODgtNmM2YWVmNzcwZDU4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWG5wb1wvM0tnU0FRdmt5cG5aRW11MjJmK2J0WnB2ZW1pSlNBZURvbGY1VlE1aHpSK3FqNVRDeko1K2RcLzh4T1wvQiJ9
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1733299AbfIERBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 13:01:40 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id A0FCBA01CE;
+        Thu,  5 Sep 2019 19:01:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id l96lis2EinZ8; Thu,  5 Sep 2019 19:01:30 +0200 (CEST)
+Date:   Fri, 6 Sep 2019 03:01:06 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v12 01/12] lib: introduce copy_struct_{to,from}_user
+ helpers
+Message-ID: <20190905170106.7j4nmgwnvkcwn6md@yavin.dot.cyphar.com>
+References: <20190904201933.10736-1-cyphar@cyphar.com>
+ <20190904201933.10736-2-cyphar@cyphar.com>
+ <20190905073205.GY2332@hirez.programming.kicks-ass.net>
+ <20190905092622.tlb6nn3uisssdfbu@yavin.dot.cyphar.com>
+ <20190905094305.GJ2349@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kmvm5dxbzyhfjvqj"
+Content-Disposition: inline
+In-Reply-To: <20190905094305.GJ2349@hirez.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FWIW,
 
-The latest turbostat and x86_energy_perf_policy utilities in the upstream kernel tree should always be backward compatible with all old kernels.  If that is EVER not the case, I want to know about it.
+--kmvm5dxbzyhfjvqj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I know that some distros ship old versions of these utilities built out of their matching kernel tree snapshots.
-Yes, applying upstream fixes to .stable for such distros is a good thing.
+On 2019-09-05, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Thu, Sep 05, 2019 at 07:26:22PM +1000, Aleksa Sarai wrote:
+> > On 2019-09-05, Peter Zijlstra <peterz@infradead.org> wrote:
+> > > On Thu, Sep 05, 2019 at 06:19:22AM +1000, Aleksa Sarai wrote:
+> > > > +
+> > > > +		while (rest > 0) {
+> > > > +			size_t bufsize =3D min(rest, sizeof(buffer));
+> > > > +
+> > > > +			if (__copy_from_user(buffer, addr, bufsize))
+> > > > +				return -EFAULT;
+> > > > +			if (memchr_inv(buffer, 0, bufsize))
+> > > > +				return -E2BIG;
+> > > > +
+> > > > +			addr +=3D bufsize;
+> > > > +			rest -=3D bufsize;
+> > > > +		}
+> > >=20
+> > > The perf implementation uses get_user(); but if that is too slow, sur=
+ely
+> > > we can do something with uaccess_try() here?
+> >=20
+> > Is there a non-x86-specific way to do that (unless I'm mistaken only x86
+> > has uaccess_try() or the other *_try() wrappers)? The main "performance
+> > improvement" (if you can even call it that) is that we use memchr_inv()
+> > which finds non-matching characters more efficiently than just doing a
+> > loop.
+>=20
+> Oh, you're right, that's x86 only :/
 
-However, the better solution for these particular utilities, is that they simply always use upstream utilities -- even with old kernels.
+Though, I just had an idea -- am I wrong to think that the following
+would work just as well (without the need for an intermediate buffer)?
 
-When somebody reports a problem and I need them to run these tools, 100% of the time, I start by sending them the latest upstream version to replace the old version shipped by the distro.
+   if (memchr_inv((const char __force *) src + size, 0, rest))
+     return -E2BIG;
 
-Cheers,
--Len
+Or is this type of thing very much frowned upon? What if it was a
+separate memchr_inv_user() instead -- I feel as though there's not a
+strong argument for needing to use a buffer when we're single-passing
+the __user buffer and doing a basic boolean check.
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
+--kmvm5dxbzyhfjvqj
+Content-Type: application/pgp-signature; name="signature.asc"
 
------Original Message-----
-From: Sasha Levin [mailto:sashal@kernel.org] 
-Sent: Wednesday, September 04, 2019 11:57 AM
-To: linux-kernel@vger.kernel.org; stable@vger.kernel.org
-Cc: Gustavo A. R. Silva <gustavo@embeddedor.com>; Prarit Bhargava <prarit@redhat.com>; Brown, Len <len.brown@intel.com>; Sasha Levin <sashal@kernel.org>; linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 82/94] tools/power turbostat: fix file descriptor leaks
+-----BEGIN PGP SIGNATURE-----
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXXE/TgAKCRCdlLljIbnQ
+Eo4lAP4vz7qxi6aZbZTeed0ZbnEtPkuMnCkFo0v18rHfgnM6xgD/bV/SICkzrufH
+DwNHgRAu5z8daivqeybakfQqvQMhpA4=
+=SteT
+-----END PGP SIGNATURE-----
 
-[ Upstream commit 605736c6929d541c78a85dffae4d33a23b6b2149 ]
-
-Fix file descriptor leaks by closing fp before return.
-
-Addresses-Coverity-ID: 1444591 ("Resource leak")
-Addresses-Coverity-ID: 1444592 ("Resource leak")
-Fixes: 5ea7647b333f ("tools/power turbostat: Warn on bad ACPI LPIT data")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Prarit Bhargava <prarit@redhat.com>
-Signed-off-by: Len Brown <len.brown@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/power/x86/turbostat/turbostat.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 71a931813de00..066bd43ed6c9f 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -2912,6 +2912,7 @@ int snapshot_cpu_lpi_us(void)
- 	if (retval != 1) {
- 		fprintf(stderr, "Disabling Low Power Idle CPU output\n");
- 		BIC_NOT_PRESENT(BIC_CPU_LPI);
-+		fclose(fp);
- 		return -1;
- 	}
- 
--- 
-2.20.1
-
+--kmvm5dxbzyhfjvqj--
