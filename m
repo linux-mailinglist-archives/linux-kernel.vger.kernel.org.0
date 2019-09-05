@@ -2,109 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BCA3AA615
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF75AA621
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 16:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389490AbfIEOl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 10:41:29 -0400
-Received: from mail-wm1-f52.google.com ([209.85.128.52]:53825 "EHLO
-        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387471AbfIEOl2 (ORCPT
+        id S2389721AbfIEOmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 10:42:20 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42769 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbfIEOmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 10:41:28 -0400
-Received: by mail-wm1-f52.google.com with SMTP id q19so3115735wmc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 07:41:26 -0700 (PDT)
+        Thu, 5 Sep 2019 10:42:19 -0400
+Received: by mail-io1-f67.google.com with SMTP id n197so5378463iod.9;
+        Thu, 05 Sep 2019 07:42:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=gvXZWVwHpbdck37kQtyWXbSqSEeeYIFeArcoXQY5L9I=;
-        b=mB3Sko2ifz0tOSCJAHjX283XAID1lWJHxJ8+5TDxf+6IIqPTfr+z/PPEttOLXQQH+b
-         8VhpLSs2Xx38CdkqQN3H01l2xCICqrXkssFgkSPUbXJ7w82PFNTO/EflDqdaBZrjTBr4
-         OPh0RTFzOYZ9LW56DmIi7VmHRBlGKptwDvVx48791iI0/CHvG7SloF7JfIgzVPVxd9SI
-         Rs/Blwyl15h0QvyK0ESbbrFGhGmV1HOpEJtqRhDWTDXP8pDPRI+cycCzopj1+4fHb/Dm
-         IQ1Epwi19TWJKlDbg2Ewvh51NYJmGcEGrfcOJBcKHYIVsbxVndIy9Vz+arcpx4sv7wik
-         J4KQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bdAudQZ0HCJ8TRBm9ijNYepraRe/QpJqgeTn8uQsQX8=;
+        b=BIontiK2DTv/qpkcw8bqo+nSW7AR/xoHc7DGBgv5kPqhit+aqYI4uEyMy/Ss6RSaK5
+         hmWpjMQ9lfx7I0535vhSC3ozL00wKYYG5TSEaDh5y1MS7n/m0GkpcsbpLw+EjYfGS6rW
+         +nHaGhOCacxctPQGekqTXVouPBMX5i4VlYb++4o/GQSyiogo2erqjE7dYL7ho0IOYQhe
+         +1Bosh4NY01j5tPmU+lrHJkAyw2dMmGuI6RmMLaMrnc0UJMA5g4oCZ1xVHG4f1O1cG3N
+         h5Kq7PuHfOedJ/uZYlRHf+nxz1eyncsLhwmH5eGZ7wO60AXazvUiqrC4F+QNc35/SPSu
+         w3Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=gvXZWVwHpbdck37kQtyWXbSqSEeeYIFeArcoXQY5L9I=;
-        b=VlPxL9/Rvth56nkcZFDwm+2E7KTtqyMgZCFTHAZWjUBTraNvzfwLxPGzxZJn8TiQj2
-         6TP4GJwXH8ix84pEY19XWXb9aTJv48OC6ja8IGAQLS8ux98Fwylm50kgdyJ2s5SA8SS6
-         HpqvIrkLSyPVBT5BPVg1YdY0k23N3FlXv2OaMHVdoqPIiuB02a1zHuV0otJjwJw7DE4Q
-         08iHavoJ5To4Q27HDAZau2UVjuUz/eR3S5pBOTaOG7onksZ85Sj+DuppSe98DEtDmLQa
-         GepWuHLzgkRWtgswEp90c+RA2zAqwdZ+P1ChkDyOx5Rs3iNMZjH5qmAJCLSgnBSSpEEf
-         2Xrw==
-X-Gm-Message-State: APjAAAUcAHn/31VFNXL7Oeo9dzXtsH4BcbCJqs+QknzB+B2bGsXOMe/9
-        FRlhR6OOqKb38V8NeU5Gea6Mjg==
-X-Google-Smtp-Source: APXvYqwSsdzWd7u9Fz8nhhPSzaTVwwrjIYP4HGLSO8rAw+8XajRcLI9Thgj6+E2e/hZXiqvdsbjQ7w==
-X-Received: by 2002:a1c:be04:: with SMTP id o4mr3387448wmf.60.1567694485991;
-        Thu, 05 Sep 2019 07:41:25 -0700 (PDT)
-Received: from localhost.localdomain ([95.147.198.36])
-        by smtp.gmail.com with ESMTPSA id c132sm4191392wme.27.2019.09.05.07.41.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 07:41:25 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     alokc@codeaurora.org, agross@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, bjorn.andersson@linaro.org, vkoul@kernel.org,
-        wsa@the-dreams.de
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Subject: [RESEND v3 1/1] i2c: qcom-geni: Provide an option to disable DMA processing
-Date:   Thu,  5 Sep 2019 15:41:22 +0100
-Message-Id: <20190905144122.5689-1-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bdAudQZ0HCJ8TRBm9ijNYepraRe/QpJqgeTn8uQsQX8=;
+        b=fCB7YinBVO9uzr56IJMESH2PA8nMXzXHApVFy5DPTPpkj6mwIUZZEG8PuI6oQQxZv5
+         zpVoz03L1vGgla7tygbzBhiQfDBoFnyrR6PXl4IEDJi7joerh56F6z0F2010M6Yzi7vf
+         Gpwfi56Czg5clD0qetLTguQxVkbkQa+OaDJ8/owYMQiebvE7TOaEBNvN5wbTamdt/GpM
+         3a1xzyhbOYRpKpbEGpsUfgQstJTxvMY1YqzRQosHk32YirvRj0rwzGjFUpfiYxVTvgW6
+         VM5cx65z912MnaZMGWDi3xvPii2wRFyYWlMSQOfPDVb94VtXT1aRul9EvYpqqBNpsrat
+         4ZzA==
+X-Gm-Message-State: APjAAAXNegE5ULNr9wMafUs3qnpT1XO53fXo0yd8xlSCGFokx3/AG+UL
+        eUPhiO8zaebOMAx4UoV9kHHxNHZUbvQUbRsPOBQ=
+X-Google-Smtp-Source: APXvYqyX2pWhcTrhvray5HVD4t5UgZhCevIB50IwYtht6X5wox9aszGhaDh07sqZYAAepAbIq9CCwMnECTOlso4Ws3A=
+X-Received: by 2002:a02:a90a:: with SMTP id n10mr4223757jam.140.1567694539038;
+ Thu, 05 Sep 2019 07:42:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com> <1567693630-27544-2-git-send-email-arnaud.pouliquen@st.com>
+In-Reply-To: <1567693630-27544-2-git-send-email-arnaud.pouliquen@st.com>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Thu, 5 Sep 2019 08:42:08 -0600
+Message-ID: <CAOCk7Nrja=31soMB+MhcrxhGHMT+bj9U+3_h6cTLo3+AAsFKqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] rpmsg: core: add API to get message length
+To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        MSM <linux-arm-msm@vger.kernel.org>, Suman Anna <s-anna@ti.com>,
+        Fabien DESSENNE <fabien.dessenne@st.com>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have a production-level laptop (Lenovo Yoga C630) which is exhibiting
-a rather horrific bug.  When I2C HID devices are being scanned for at
-boot-time the QCom Geni based I2C (Serial Engine) attempts to use DMA.
-When it does, the laptop reboots and the user never sees the OS.
+On Thu, Sep 5, 2019 at 8:35 AM Arnaud Pouliquen <arnaud.pouliquen@st.com> wrote:
+>
+> Return the rpmsg buffer size for sending message, so rpmsg users
+> can split a long message in several sub rpmsg buffers.
+>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> ---
+>  drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
+>  drivers/rpmsg/rpmsg_internal.h   |  2 ++
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
+>  include/linux/rpmsg.h            | 10 ++++++++++
+>  4 files changed, 43 insertions(+)
+>
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index e330ec4dfc33..a6ef54c4779a 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>  }
+>  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+>
+> +/**
+> + * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
+> + * @ept: the rpmsg endpoint
+> + *
+> + * This function returns maximum buffer size available for a single message.
+> + *
+> + * Return: the maximum transmission size on success and an appropriate error
+> + * value on failure.
+> + */
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/i2c/busses/i2c-qcom-geni.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+What is the intent of this?
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index a89bfce5388e..17abf60c94ae 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -355,11 +355,13 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- {
- 	dma_addr_t rx_dma;
- 	unsigned long time_left;
--	void *dma_buf;
-+	void *dma_buf = NULL;
- 	struct geni_se *se = &gi2c->se;
- 	size_t len = msg->len;
- 
--	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
-+	if (!of_machine_is_compatible("lenovo,yoga-c630"))
-+		dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
-+
- 	if (dma_buf)
- 		geni_se_select_mode(se, GENI_SE_DMA);
- 	else
-@@ -394,11 +396,13 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- {
- 	dma_addr_t tx_dma;
- 	unsigned long time_left;
--	void *dma_buf;
-+	void *dma_buf = NULL;
- 	struct geni_se *se = &gi2c->se;
- 	size_t len = msg->len;
- 
--	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
-+	if (!of_machine_is_compatible("lenovo,yoga-c630"))
-+		dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
-+
- 	if (dma_buf)
- 		geni_se_select_mode(se, GENI_SE_DMA);
- 	else
--- 
-2.17.1
+The term "mtu" is "maximum transfer unit" - ie the largest payload of
+data that could possibly be sent, however at any one point in time,
+that might not be able to be accommodated.
 
+I don't think this is implemented correctly.  In GLINK and SMD, you've
+not implemented MTU, you've implemented "how much can I send at this
+point in time".  To me, this is not mtu.
+
+In the case of SMD, you could get the fifo size and return that as the
+mtu, but since you seem to be wanting to use this from the TTY layer
+to determine how much can be sent at a particular point in time, I
+don't think you actually want mtu.
+
+For GLINK, I don't actually think you can get a mtu based on the
+design, but I'm trying to remember from 5-6 years ago when we designed
+it.  It would be possible that a larger intent would be made available
+later.
+
+I think you need to first determine if you are actually looking for
+mtu, or "how much data can I send right now", because right now, it
+isn't clear.
