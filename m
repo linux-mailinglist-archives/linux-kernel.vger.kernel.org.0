@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ADAAAA2C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06F3BAA2C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 14:12:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387623AbfIEMMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 08:12:24 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42705 "EHLO
+        id S2389245AbfIEMMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 08:12:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42708 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387775AbfIEMMF (ORCPT
+        with ESMTP id S2388911AbfIEMME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 08:12:05 -0400
+        Thu, 5 Sep 2019 08:12:04 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1i5qcN-0007tE-56; Thu, 05 Sep 2019 14:12:03 +0200
-Message-Id: <20190905120539.797994508@linutronix.de>
+        id 1i5qcN-0007tP-Mf; Thu, 05 Sep 2019 14:12:03 +0200
+Message-Id: <20190905120539.888798188@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Thu, 05 Sep 2019 14:03:41 +0200
+Date:   Thu, 05 Sep 2019 14:03:42 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -26,7 +26,7 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Oleg Nesterov <oleg@redhat.com>,
         Ingo Molnar <mingo@kernel.org>,
         Kees Cook <keescook@chromium.org>
-Subject: [patch 2/6] posix-cpu-timers: Fix permission check regression
+Subject: [patch 3/6] posix-cpu-timers: Restrict timer_create() permissions
 References: <20190905120339.561100423@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -35,121 +35,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The recent consolidation of the three permission checks introduced a subtle
-regression. For timer_create() with a process wide timer it returns the
-current task if the lookup through the PID which is encoded into the
-clockid results in returning current.
+Right now there is no restriction at all to attach a Posix CPU timer to any
+process in the system. Per thread CPU timers are limited to be created by
+threads in the same thread group.
 
-That's broken because it does not validate whether the current task is the
-group leader.
+Timers can be used to observe activity of tasks and also impose overhead on
+the process to which they are attached because that process needs to do the
+fine grained CPU time accounting.
 
-That was caused by the two different variants of permission checks:
+Limit the ability to attach timers to a process by checking whether the
+task which is creating the timer has permissions to attach ptrace on the
+target process.
 
-  - posix_cpu_timer_get() allowed access to the process wide clock when the
-    looked up task is current. That's not an issue because the process wide
-    clock is in the shared sighand.
-
-  - posix_cpu_timer_create() made sure that the looked up task is the group
-    leader.
-
-Restore the previous state.
-
-Note, that these permission checks are more than questionable, but that's
-subject to follow up changes.
-
-Fixes: 6ae40e3fdcd3 ("posix-cpu-timers: Provide task validation functions")
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/time/posix-cpu-timers.c |   40 +++++++++++++++++++++++++++++++---------
- 1 file changed, 31 insertions(+), 9 deletions(-)
+ kernel/time/posix-cpu-timers.c |   18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
 --- a/kernel/time/posix-cpu-timers.c
 +++ b/kernel/time/posix-cpu-timers.c
-@@ -47,25 +47,42 @@ void update_rlimit_cpu(struct task_struc
- /*
-  * Functions for validating access to tasks.
-  */
--static struct task_struct *lookup_task(const pid_t pid, bool thread)
-+static struct task_struct *lookup_task(const pid_t pid, bool thread,
-+				       bool gettime)
- {
- 	struct task_struct *p;
- 
-+	/*
-+	 * If the encoded PID is 0, then the timer is targeted at current
-+	 * or the process to which current belongs.
-+	 */
- 	if (!pid)
- 		return thread ? current : current->group_leader;
- 
- 	p = find_task_by_vpid(pid);
--	if (!p || p == current)
-+	if (!p)
- 		return p;
-+
- 	if (thread)
- 		return same_thread_group(p, current) ? p : NULL;
--	if (p == current)
--		return p;
-+
-+	if (gettime) {
-+		/*
-+		 * For clock_gettime() the task does not need to be the
-+		 * actual group leader. tsk->sighand gives access to the
-+		 * group's clock.
-+		 */
-+		return (p == current || thread_group_leader(p)) ? p : NULL;
-+	}
+@@ -6,6 +6,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/sched/cputime.h>
+ #include <linux/posix-timers.h>
++#include <linux/ptrace.h>
+ #include <linux/errno.h>
+ #include <linux/math64.h>
+ #include <linux/uaccess.h>
+@@ -78,7 +79,22 @@ static struct task_struct *lookup_task(c
+ 	/*
+ 	 * For processes require that p is group leader.
+ 	 */
+-	return has_group_leader_pid(p) ? p : NULL;
++	if (!has_group_leader_pid(p))
++		return NULL;
 +
 +	/*
-+	 * For processes require that p is group leader.
++	 * Avoid the ptrace overhead when this is current's process
 +	 */
- 	return has_group_leader_pid(p) ? p : NULL;
++	if (same_thread_group(p, current))
++		return p;
++
++	/*
++	 * Creating timers on processes which cannot be ptraced is not
++	 * permitted:
++	 */
++	if (!ptrace_may_access(p, PTRACE_MODE_ATTACH_REALCREDS))
++		return NULL;
++	return p;
  }
  
  static struct task_struct *__get_task_for_clock(const clockid_t clock,
--						bool getref)
-+						bool getref, bool gettime)
- {
- 	const bool thread = !!CPUCLOCK_PERTHREAD(clock);
- 	const pid_t pid = CPUCLOCK_PID(clock);
-@@ -75,7 +92,7 @@ static struct task_struct *__get_task_fo
- 		return NULL;
- 
- 	rcu_read_lock();
--	p = lookup_task(pid, thread);
-+	p = lookup_task(pid, thread, gettime);
- 	if (p && getref)
- 		get_task_struct(p);
- 	rcu_read_unlock();
-@@ -84,12 +101,17 @@ static struct task_struct *__get_task_fo
- 
- static inline struct task_struct *get_task_for_clock(const clockid_t clock)
- {
--	return __get_task_for_clock(clock, true);
-+	return __get_task_for_clock(clock, true, false);
-+}
-+
-+static inline struct task_struct *get_task_for_clock_get(const clockid_t clock)
-+{
-+	return __get_task_for_clock(clock, true, true);
- }
- 
- static inline int validate_clock_permissions(const clockid_t clock)
- {
--	return __get_task_for_clock(clock, false) ? 0 : -EINVAL;
-+	return __get_task_for_clock(clock, false, false) ? 0 : -EINVAL;
- }
- 
- /*
-@@ -339,7 +361,7 @@ static int posix_cpu_clock_get(const clo
- 	struct task_struct *tsk;
- 	u64 t;
- 
--	tsk = get_task_for_clock(clock);
-+	tsk = get_task_for_clock_get(clock);
- 	if (!tsk)
- 		return -EINVAL;
- 
 
 
