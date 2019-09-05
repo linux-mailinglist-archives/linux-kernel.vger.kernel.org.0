@@ -2,129 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D19E3AAC2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:44:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB00AAC31
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:49:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403936AbfIETou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 15:44:50 -0400
-Received: from fieldses.org ([173.255.197.46]:56752 "EHLO fieldses.org"
+        id S1733020AbfIETt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 15:49:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59138 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390054AbfIETog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 15:44:36 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id F03084116; Thu,  5 Sep 2019 15:44:34 -0400 (EDT)
-From:   "J. Bruce Fields" <bfields@redhat.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 9/9] Remove string_escape_mem_ascii
-Date:   Thu,  5 Sep 2019 15:44:33 -0400
-Message-Id: <1567712673-1629-9-git-send-email-bfields@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1567712673-1629-1-git-send-email-bfields@redhat.com>
-References: <20190905193604.GC31247@fieldses.org>
- <1567712673-1629-1-git-send-email-bfields@redhat.com>
+        id S1732060AbfIETt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 15:49:26 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ED7973082DDD;
+        Thu,  5 Sep 2019 19:49:25 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3DAFA5C1D4;
+        Thu,  5 Sep 2019 19:49:18 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id C154F22539A; Thu,  5 Sep 2019 15:49:17 -0400 (EDT)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, miklos@szeredi.hu
+Cc:     linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
+        vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com,
+        mst@redhat.com
+Subject: [PATCH 02/18] virtiofs: Check whether hiprio queue is connected at submission time
+Date:   Thu,  5 Sep 2019 15:48:43 -0400
+Message-Id: <20190905194859.16219-3-vgoyal@redhat.com>
+In-Reply-To: <20190905194859.16219-1-vgoyal@redhat.com>
+References: <20190905194859.16219-1-vgoyal@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 05 Sep 2019 19:49:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "J. Bruce Fields" <bfields@redhat.com>
+For hiprio queue (forget requests), we are keeping a state in queue whether
+queue is connected or not. If queue is not connected, do not try to submit
+request and return error instead.
 
-It's easier to do this in string_escape_mem now.
+As of now, we are checking for this state only in path where worker tries
+to submit forget after first attempt failed. Check this state even in
+the path when request is being submitted first time.
 
-Might also consider non-ascii and quote-mark sprintf modifiers and then
-we might make do with seq_printk.
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/seq_file.c                  |  3 ++-
- include/linux/string_helpers.h |  3 +--
- lib/string_helpers.c           | 24 ++++--------------------
- 3 files changed, 7 insertions(+), 23 deletions(-)
+ fs/fuse/virtio_fs.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 63e5a7c4dbf7..0e45a25523ad 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -390,7 +390,8 @@ void seq_escape_mem_ascii(struct seq_file *m, const char *src, size_t isz)
- 	size_t size = seq_get_buf(m, &buf);
- 	int ret;
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index a708ccb65662..e9497b565dd8 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -577,9 +577,16 @@ __releases(fiq->waitq.lock)
+ 	sg_init_one(&sg, forget, sizeof(*forget));
  
--	ret = string_escape_mem_ascii(src, isz, buf, size);
-+	ret = string_escape_mem(src, isz, buf, size, ESCAPE_NP|ESCAPE_NONASCII|
-+				ESCAPE_STYLE_SLASH|ESCAPE_STYLE_HEX, "\"\\");
- 	seq_commit(m, ret < size ? ret : -1);
- }
- EXPORT_SYMBOL(seq_escape_mem_ascii);
-diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.h
-index 5d350f7f6874..f3388591d83f 100644
---- a/include/linux/string_helpers.h
-+++ b/include/linux/string_helpers.h
-@@ -43,6 +43,7 @@ static inline int string_unescape_any_inplace(char *buf)
+ 	/* Enqueue the request */
++	spin_lock(&fsvq->lock);
++
++	if (!fsvq->connected) {
++		kfree(forget);
++		spin_unlock(&fsvq->lock);
++		goto out;
++	}
++
+ 	vq = fsvq->vq;
+ 	dev_dbg(&vq->vdev->dev, "%s\n", __func__);
+-	spin_lock(&fsvq->lock);
  
- #define ESCAPE_SPECIAL		0x01
- #define ESCAPE_NP		0x02
-+#define ESCAPE_NONASCII		0x04
- #define ESCAPE_ANY_NP		(ESCAPE_SPECIAL | ESCAPE_NP)
- #define ESCAPE_STYLE_SLASH	0x20
- #define ESCAPE_STYLE_OCTAL	0x40
-@@ -52,8 +53,6 @@ static inline int string_unescape_any_inplace(char *buf)
- int string_escape_mem(const char *src, size_t isz, char *dst, size_t osz,
- 		unsigned int flags, const char *only);
- 
--int string_escape_mem_ascii(const char *src, size_t isz, char *dst,
--					size_t osz);
- static inline int string_escape_str(const char *src, char *dst, size_t sz,
- 		unsigned int flags, const char *only)
- {
-diff --git a/lib/string_helpers.c b/lib/string_helpers.c
-index 6f553f893fda..1dacf76eada0 100644
---- a/lib/string_helpers.c
-+++ b/lib/string_helpers.c
-@@ -439,6 +439,8 @@ static bool is_special(char c)
-  *		'\a' - alert (BEL)
-  *		'\e' - escape
-  *		'\0' - null
-+ *	%ESCAPE_NONASCII:
-+ *		escape characters with the high bit set
-  *	%ESCAPE_NP:
-  *		escape only non-printable characters (checked by isprint)
-  *	%ESCAPE_ANY_NP:
-@@ -468,7 +470,8 @@ int string_escape_mem(const char *src, size_t isz, char *dst, size_t osz,
- 
- 		if ((is_dict && strchr(esc, c)) ||
- 		    (flags & ESCAPE_NP && !isprint(c)) ||
--		    (flags & ESCAPE_SPECIAL && is_special(c))) {
-+		    (flags & ESCAPE_SPECIAL && is_special(c)) ||
-+		    (flags & ESCAPE_NONASCII && !isascii(c))) {
- 
- 			if (flags & ESCAPE_STYLE_SLASH &&
- 					escape_special(c, &p, end))
-@@ -491,25 +494,6 @@ int string_escape_mem(const char *src, size_t isz, char *dst, size_t osz,
- }
- EXPORT_SYMBOL(string_escape_mem);
- 
--int string_escape_mem_ascii(const char *src, size_t isz, char *dst,
--					size_t osz)
--{
--	char *p = dst;
--	char *end = p + osz;
--
--	while (isz--) {
--		unsigned char c = *src++;
--
--		if (!isprint(c) || !isascii(c) || c == '"' || c == '\\')
--			escape_hex(c, &p, end);
--		else
--			escape_passthrough(c, &p, end);
--	}
--
--	return p - dst;
--}
--EXPORT_SYMBOL(string_escape_mem_ascii);
--
- /*
-  * Return an allocated string that has been escaped of special characters
-  * and double quotes, making it safe to log in quotes.
+ 	ret = virtqueue_add_sgs(vq, sgs, 1, 0, forget, GFP_ATOMIC);
+ 	if (ret < 0) {
 -- 
-2.21.0
+2.20.1
 
