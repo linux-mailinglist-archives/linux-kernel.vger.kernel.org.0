@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0188AA9F1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 000BBA9F22
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:01:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387720AbfIEKAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:00:52 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:44176 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726115AbfIEKAv (ORCPT
+        id S2387798AbfIEKBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:01:12 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:49716 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387698AbfIEKAw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 06:00:51 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        Thu, 5 Sep 2019 06:00:52 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 04CEFC0DD3;
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 53ACFC29A4;
         Thu,  5 Sep 2019 10:00:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1567677651; bh=GosWZM2QU8S12Kgv9mW7HdYKBOJWFoe+3pD+Un3G66o=;
+        t=1567677651; bh=jpITmRkSQ88mmTqXmv0bcx69vjIs1qPZ/IAyeZ+eQaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=ExqotPmXtPyrttYl0egCKAjoHy9K3A8M6MiMfU7TFhvGai2DEmP5d1TOunCx7WhsA
-         bX/GnJnv1VfJMFtbFDRdN4gssi2BYXCTPQlYC70C2+asnrlOjoLQ1ZNgyRxIWobJDe
-         rVyL2GEi/k7VN0bRoa6+QT+6F2pPczzRRDSXH7RYBjAj1tl8SBeCIbHd3i+9ysOLZD
-         hE4U3OjOjWVs+wqf70sAlHGL4p5llwvdm1A5ZodZ2N5eHp1LTag1JfbKvxhkeTLgrk
-         8R+WoNjcQTefQyM8qzXAVM+kK/a860lcqFq4C1w8ozE4F6B6DXLJ7FaTjyO+zeHW0Q
-         ab8UtiEl4ayVg==
+        b=alkwKZZbijz8D15wvpQoRDEUHSvPmmf4FLJlRs5Ui0rBfAr1TTmU/P9T/Ji9qqv+m
+         EusdrrFJtRD0CyyrcVlRpNYnsc7F1TudS2mU37F9pYirZcBoXBJoAOkXfmlZci7n0w
+         YmldJqxB9bCUsG1zVOuHmpaKbHp4BB72PYT1KqnuEqNuHGGdOHphnoNamdiq7RGKZ8
+         yBD+mCvvGk0yxtNe8lXXsPZxzSfhN6MySVUdOzTZtvQS7uT5wXlyCYON60CjrJ+/GF
+         UChPioNmcFtjHCf4QeeWZxFSSdQaqLurzB7XWhbVgtbyg361q2W7UcKDysOLg2ZS09
+         4hPOw9ftUsYuA==
 Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9989BA0061;
+        by mailhost.synopsys.com (Postfix) with ESMTP id B2110A0064;
         Thu,  5 Sep 2019 10:00:49 +0000 (UTC)
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 826F43F3BC;
+        by de02.synopsys.com (Postfix) with ESMTP id 9374F3F3BF;
         Thu,  5 Sep 2019 12:00:49 +0200 (CEST)
 From:   Vitor Soares <Vitor.Soares@synopsys.com>
 To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
@@ -39,9 +39,9 @@ To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
 Cc:     bbrezillon@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         pgaj@cadence.com, Joao.Pinto@synopsys.com,
         Vitor Soares <Vitor.Soares@synopsys.com>
-Subject: [PATCH v3 4/5] dt-bindings: i3c: add a note for no guarantee of 'assigned-address' use
-Date:   Thu,  5 Sep 2019 12:00:37 +0200
-Message-Id: <f8a0cbc92605dbf5f41a28edd7691c3e90087554.1567608245.git.vitor.soares@synopsys.com>
+Subject: [PATCH v3 5/5] i3c: master: dw: reattach device on first available location of address table
+Date:   Thu,  5 Sep 2019 12:00:38 +0200
+Message-Id: <245de28c177b3169ce5b8c26d807f5fd46c2921c.1567608245.git.vitor.soares@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1567608245.git.vitor.soares@synopsys.com>
 References: <cover.1567608245.git.vitor.soares@synopsys.com>
@@ -52,34 +52,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default, the framework will try to assign the 'assigned-address' to the
-device but if the address is already in use the device dynamic address
-will be different.
+For today the reattach function only update the device address on the
+controller.
+
+Update the location to the first available too, will optimize the
+enumeration process avoiding additional checks to keep the available
+positions on address table consecutive.
 
 Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 ---
 Change in v3:
-  - Add Rob rb-tag
+  - None
 
- Documentation/devicetree/bindings/i3c/i3c.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Change in v2:
+  - Add Boris rb-tag
 
-diff --git a/Documentation/devicetree/bindings/i3c/i3c.txt b/Documentation/devicetree/bindings/i3c/i3c.txt
-index c851e75..e777f09 100644
---- a/Documentation/devicetree/bindings/i3c/i3c.txt
-+++ b/Documentation/devicetree/bindings/i3c/i3c.txt
-@@ -98,7 +98,9 @@ Required properties
+ drivers/i3c/master/dw-i3c-master.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+index 1d83c97..62261ac 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -898,6 +898,22 @@ static int dw_i3c_master_reattach_i3c_dev(struct i3c_dev_desc *dev,
+ 	struct dw_i3c_i2c_dev_data *data = i3c_dev_get_master_data(dev);
+ 	struct i3c_master_controller *m = i3c_dev_get_master(dev);
+ 	struct dw_i3c_master *master = to_dw_i3c_master(m);
++	int pos;
++
++	pos = dw_i3c_master_get_free_pos(master);
++
++	if (data->index > pos && pos > 0) {
++		writel(0,
++		       master->regs +
++		       DEV_ADDR_TABLE_LOC(master->datstartaddr, data->index));
++
++		master->addrs[data->index] = 0;
++		master->free_pos |= BIT(data->index);
++
++		data->index = pos;
++		master->addrs[pos] = dev->info.dyn_addr;
++		master->free_pos &= ~BIT(pos);
++	}
  
- Optional properties
- -------------------
--- assigned-address: dynamic address to be assigned to this device.
-+- assigned-address: dynamic address to be assigned to this device. The framework
-+		    will try to assign this dynamic address but if something
-+		    fails the device dynamic address will be different.
- 
- 
- Example:
+ 	writel(DEV_ADDR_TABLE_DYNAMIC_ADDR(dev->info.dyn_addr),
+ 	       master->regs +
 -- 
 2.7.4
 
