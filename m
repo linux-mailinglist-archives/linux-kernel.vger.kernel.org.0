@@ -2,62 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95FD4A9F50
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8806AA9F5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 12:15:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732949AbfIEKNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 06:13:32 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:44158 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfIEKNc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 06:13:32 -0400
-Received: from localhost (unknown [89.248.140.11])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DE683153878EF;
-        Thu,  5 Sep 2019 03:13:30 -0700 (PDT)
-Date:   Thu, 05 Sep 2019 12:13:29 +0200 (CEST)
-Message-Id: <20190905.121329.764571693233274743.davem@davemloft.net>
-To:     suyj.fnst@cn.fujitsu.com
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] ipv4: fix ifa_flags reuse problem in using
- ifconfig tool
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1567582667-56549-1-git-send-email-suyj.fnst@cn.fujitsu.com>
-References: <1567582667-56549-1-git-send-email-suyj.fnst@cn.fujitsu.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 05 Sep 2019 03:13:32 -0700 (PDT)
+        id S2387659AbfIEKPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 06:15:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37518 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733028AbfIEKPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 06:15:50 -0400
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 829838830A
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Sep 2019 10:15:49 +0000 (UTC)
+Received: by mail-pl1-f200.google.com with SMTP id c14so1169385plo.12
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 03:15:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sGQuWQQe8fDlEhpLmREf75/mh3j/W3ajLyehA5owUl8=;
+        b=UJGhpLyq2DfLcq2K49Ud4Jyf0sft8raWbig7Gk13J9Pu0fRVe88/QhLPqrUNNcz74+
+         NKcMToROw0MNKKJiKwYzmn+nPnR51aj873GsBl8TjP4EvKyPE4Ulm1uo6Yz4vqVCe9Bp
+         XJeaTsq/6W/KeBMVbEe46SqCsuEG439eGpNw89Yx+9ZtNvTdUrjNWaOy5uvD1cLkGQy5
+         TR23VmQD+Bb6Hxn2ESAcJ6cxUfRtspAMc3K3WVXPUZQ/q/C1DDkOA8O+69Bh89sN6e+7
+         0lYhC/zEiFCrtvLqQJqR2/hBdlutEyEjKBBvZyN3mu5KmT+8MxPLfm+M35L1zoDOGBxA
+         BDWQ==
+X-Gm-Message-State: APjAAAUfBvldXV8WKSkxZO7eS8kb8051WwvjOpDFWUfNfnEjjD4GCkpR
+        FKk5HhLKL7tTVMLK/29BNxOVF2WLNS6XjT52bQf+xJbUmleo4nEtDBmc/pWx+70uRUOfI2GJ0Aj
+        UsjMD5hveDyBV85QuMt/u6Mzt
+X-Received: by 2002:a17:902:8a81:: with SMTP id p1mr2465944plo.71.1567678549045;
+        Thu, 05 Sep 2019 03:15:49 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwgSRo4NDJ7ab9oov6zo1BxyCr5I28O4Qdk/qqHUJDnK0Sb3P39/6OhZUQ34zMdEKMPdKxa2A==
+X-Received: by 2002:a17:902:8a81:: with SMTP id p1mr2465913plo.71.1567678548782;
+        Thu, 05 Sep 2019 03:15:48 -0700 (PDT)
+Received: from xz-x1.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id a20sm413852pfo.33.2019.09.05.03.15.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2019 03:15:48 -0700 (PDT)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, peterx@redhat.com,
+        Martin Cracauer <cracauer@cons.org>,
+        Marty McFadden <mcfadden8@llnl.gov>, Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: [PATCH v2 0/7] mm: Page fault enhancements
+Date:   Thu,  5 Sep 2019 18:15:27 +0800
+Message-Id: <20190905101534.9637-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
-Date: Wed, 4 Sep 2019 15:37:47 +0800
+v2:
+- resent previous version, rebase only
 
-> When NetworkManager has already set ipv4 address then uses
-> ifconfig set another ipv4 address. It will use previous ifa_flags
-> that will cause device route not be inserted.
-> 
-> As NetworkManager has already support IFA_F_NOPREFIXROUTE flag [1],
-> but ifconfig will reuse the ifa_flags. It's weird especially
-> some old scripts or program [2]  still  use ifconfig.
-> 
-> [1] https://gitlab.freedesktop.org/NetworkManager/NetworkManager/
-> commit/fec80e7473ad16979af75ed299d68103e7aa3fe9
-> 
-> [2] LTP or TAHI
-> 
-> Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+This series is split out of userfaultfd-wp series to only cover the
+general page fault changes, since it seems to make sense itself.
 
-I don't know about this.
+Basically it does two things:
 
-This will lose things like IFA_F_SECONDARY as well.
+  (a) Allows the page fault handlers to be more interactive on not
+      only SIGKILL, but also the rest of userspace signals (especially
+      for user-mode faults), and,
 
-Sorry, I am not convinced that this change is correct nor safe.
+  (b) Allows the page fault retry (VM_FAULT_RETRY) to happen for more
+      than once.
+
+I'm keeping the CC list as in uffd-wp v5, hopefully I'm not sending
+too much spams...
+
+And, instead of writting again the cover letter, I'm just copy-pasting
+my previous link here which has more details on why we do this:
+
+  https://patchwork.kernel.org/cover/10691991/
+
+The major change from that latest version should be that we introduced
+a new page fault flag FAULT_FLAG_INTERRUPTIBLE as suggested by Linus
+[1] to represents that we would like the fault handler to respond to
+non-fatal signals.  Also, we're more careful now on when to do the
+immediate return of the page fault for such signals.  For example, now
+we'll only check against signal_pending() for user-mode page faults
+and we keep the kernel-mode page fault patch untouched for it.  More
+information can be found in separate patches.
+
+The patchset is only lightly tested on x86.
+
+All comments are greatly welcomed.  Thanks,
+
+[1] https://lkml.org/lkml/2019/6/25/1382
+
+Peter Xu (7):
+  mm/gup: Rename "nonblocking" to "locked" where proper
+  mm: Introduce FAULT_FLAG_DEFAULT
+  mm: Introduce FAULT_FLAG_INTERRUPTIBLE
+  mm: Return faster for non-fatal signals in user mode faults
+  userfaultfd: Don't retake mmap_sem to emulate NOPAGE
+  mm: Allow VM_FAULT_RETRY for multiple times
+  mm/gup: Allow VM_FAULT_RETRY for multiple times
+
+ arch/alpha/mm/fault.c           |  7 +--
+ arch/arc/mm/fault.c             |  8 +++-
+ arch/arm/mm/fault.c             | 14 +++---
+ arch/arm64/mm/fault.c           | 16 +++----
+ arch/hexagon/mm/vm_fault.c      |  6 +--
+ arch/ia64/mm/fault.c            |  6 +--
+ arch/m68k/mm/fault.c            | 10 ++--
+ arch/microblaze/mm/fault.c      |  6 +--
+ arch/mips/mm/fault.c            |  6 +--
+ arch/nds32/mm/fault.c           | 12 ++---
+ arch/nios2/mm/fault.c           |  8 ++--
+ arch/openrisc/mm/fault.c        |  6 +--
+ arch/parisc/mm/fault.c          |  9 ++--
+ arch/powerpc/mm/fault.c         | 10 ++--
+ arch/riscv/mm/fault.c           | 12 ++---
+ arch/s390/mm/fault.c            | 11 ++---
+ arch/sh/mm/fault.c              |  7 ++-
+ arch/sparc/mm/fault_32.c        |  5 +-
+ arch/sparc/mm/fault_64.c        |  6 +--
+ arch/um/kernel/trap.c           |  7 +--
+ arch/unicore32/mm/fault.c       | 11 ++---
+ arch/x86/mm/fault.c             |  6 +--
+ arch/xtensa/mm/fault.c          |  6 +--
+ drivers/gpu/drm/ttm/ttm_bo_vm.c | 12 +++--
+ fs/userfaultfd.c                | 28 +-----------
+ include/linux/mm.h              | 81 +++++++++++++++++++++++++++++----
+ include/linux/sched/signal.h    | 12 +++++
+ mm/filemap.c                    |  2 +-
+ mm/gup.c                        | 61 ++++++++++++++-----------
+ mm/hugetlb.c                    | 14 +++---
+ mm/shmem.c                      |  2 +-
+ 31 files changed, 227 insertions(+), 180 deletions(-)
+
+-- 
+2.21.0
+
