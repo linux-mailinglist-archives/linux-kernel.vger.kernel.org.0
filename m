@@ -2,107 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C50F0AA71A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39139AA72E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 17:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390359AbfIEPOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 11:14:20 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51958 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732265AbfIEPOT (ORCPT
+        id S2388185AbfIEPXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 11:23:45 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:44019 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731609AbfIEPXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 11:14:19 -0400
-Received: by mail-wm1-f68.google.com with SMTP id k1so3274687wmi.1;
-        Thu, 05 Sep 2019 08:14:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dfUO9a7E9R+fOWFokuwHNXPizB7LWxoWz7TwHKPJeKA=;
-        b=f4csicVeVdbTjTLkGvuU0mio8k0xnxfoLTmb8gdYb5QJnAEFROnPSH7xc73HYN+ixy
-         e7gsFYRoSkO7Br2jflzTOhyh3rBXVyvrUz6DglZJyLAz55fNeDFqYRKseYc5o5YYmG9X
-         9EH6/ZINv9WZapt2Lac5IXHUER+zSZ8KE5NYwoWAMtg+lG2QKlwMyc5entzeSaE+ljVK
-         SaVxAbTmwbe+Lz2ctOldV92jLUOuBjwE6ipjqOdeWVnYpT2TFYkopT5bgHkmRtBU3hPo
-         PrrkIH3ne82+4DNJs2FLPJ3tAQarRkLp+JhsT7jjovcykTPt5+3w0RpXc3x76k90mUlq
-         CFCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dfUO9a7E9R+fOWFokuwHNXPizB7LWxoWz7TwHKPJeKA=;
-        b=sz2JrCrAlOdU1Hdd7FVZEqKC0I2bUkQZzV1fPLHHPAc3ojuS7VCbu6YFo5whsbQT+r
-         9VuI3LRK7zp6msfgku4bQl/6KCujxmZatB7U6KaxygHqgyVVaD40MkiNQF7xJfwOGnhU
-         YxP89niruZ7j87GTCOIKCIEC2iEHTYWpG6jKcVAEvv50QGc+/IF3xk2jr/QLbyPPMiPa
-         U3T5e0kETZ6627X+E1ddLf1kF9/bqXyaYk//CcJ+I/izXJA0hfs9UChvySTLCHe2wgkk
-         mH6krs65WhtyRZY0fByfTtSqcUHDu3jQtb/M9SvDPqn9sKo4yYPmtuuND+Ygl/cIykeJ
-         mKPw==
-X-Gm-Message-State: APjAAAVENdsbhUoxdc1Y/pI8z0vG6G7XnYff5RL5X1cwAkOIOnWy/elt
-        0js7ZSu0jJQhnauUKo8sk14=
-X-Google-Smtp-Source: APXvYqzYIkx/gnO7fVC7G+fRVIplybcIMoud+HvMrsXB+dAIK4P1jN6ol9+wQvapxKMmcT0X7chTUA==
-X-Received: by 2002:a1c:9950:: with SMTP id b77mr3552791wme.46.1567696457429;
-        Thu, 05 Sep 2019 08:14:17 -0700 (PDT)
-Received: from [192.168.8.147] (163.175.185.81.rev.sfr.net. [81.185.175.163])
-        by smtp.gmail.com with ESMTPSA id y14sm3817913wrd.84.2019.09.05.08.14.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Sep 2019 08:14:16 -0700 (PDT)
-Subject: Re: [PATCH] net/skbuff: silence warnings under memory pressure
-To:     Qian Cai <cai@lca.pw>, Eric Dumazet <eric.dumazet@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <20190903132231.GC18939@dhcp22.suse.cz>
- <1567525342.5576.60.camel@lca.pw> <20190903185305.GA14028@dhcp22.suse.cz>
- <1567546948.5576.68.camel@lca.pw> <20190904061501.GB3838@dhcp22.suse.cz>
- <20190904064144.GA5487@jagdpanzerIV> <20190904065455.GE3838@dhcp22.suse.cz>
- <20190904071911.GB11968@jagdpanzerIV> <20190904074312.GA25744@jagdpanzerIV>
- <1567599263.5576.72.camel@lca.pw> <20190904144850.GA8296@tigerII.localdomain>
- <1567629737.5576.87.camel@lca.pw>
- <165827b5-6783-f4f8-69d6-b088dd97eb45@gmail.com>
- <1567692555.5576.91.camel@lca.pw>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <5405caf6-805b-d459-c447-15a23d0d71dd@gmail.com>
-Date:   Thu, 5 Sep 2019 17:14:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 5 Sep 2019 11:23:44 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1M7ehh-1i4XD309vh-0084hW; Thu, 05 Sep 2019 17:22:24 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-arch@vger.kernel.org, y2038@lists.linaro.org,
+        Manfred Spraul <manfred@colorfullife.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vincent Chen <deanbo422@gmail.com>, stable@vger.kernel.org,
+        Greentime Hu <green.hu@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Stafford Horne <shorne@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Ley Foon Tan <lftan@altera.com>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        Guo Ren <guoren@kernel.org>,
+        Christian Brauner <christian@brauner.io>
+Subject: [PATCH 1/2] ipc: fix semtimedop for generic 32-bit architectures
+Date:   Thu,  5 Sep 2019 17:21:24 +0200
+Message-Id: <20190905152155.1392871-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <1567692555.5576.91.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:XxUJwrw3CMdgDWeLKiHcQFwqG5kArJ+fThzxITIBUQnV8GTJRWt
+ 5s/+x2+IS6LxshP4ageYlrALYSVCMMbn4PLCj6JVtmn07dladMa73O7CfYJKZfYPGAzhpaE
+ Pg5AORkHt/hlQHTDkRhl39XOdHBkuqe1JAub8P59iFIHmEoaBgT/xQhHoIlyBmADQH9/9rg
+ aSIYL4xMi85ktbTYty2bw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:BqtXUM4orE8=:z5RarZPHyTyTUSIZCnz00G
+ BafFSMNtWu5vOpkk7WY2l+3hQiUGyMuMcQiP4S3Mq7sfX3GIG+wzlTy+40cDK6a+U96qePVSI
+ dZBfwCA4/hoIVwenR+mHi0Na31lTyJzpRkcXpwiGI4CdKYz2biMZCsQMTrj/EfFt0q/k2nrqe
+ AnzO7KWgvVlA1GFvDAN2ufVxcA4bmiSh0uAcIRvU8Uo65fOih3pvc4syPcXuzgUrIRaaMb7zo
+ y0ViwslBnFMIDYwCSOBZkLrq+2xyh1tYBNuwjUNjrjSs+ibojKIfXdqg3rPvZSQ+wqvqucKig
+ 32juvrsEVHPzMVuwzNgP/oF4pVjZvC7UdHWFosZh+5YM969U8OT6Qd+JoN2lfq09JYm8CluZl
+ 6fjxAdwNfdWUQ0HsQhtXuYcCIq760Cbb1aq293gV3H9Fp81WIUuC3RdL+AA7GZs0AGFz0lyfT
+ bmnOLsfnWJThKRD/iFyoZklx2qHHjT/n+f+2Nr9XZMCTrSRIBy7Q1OECrqqey0m9KG8MH8Wlg
+ zKjA2K74yZqlPQwMrVYaxDvn00bUo1Y4Lnn9HD5CHTOMR47ME3MZuZiXzh6QvWgRmtFyPsYg0
+ +tqba4W0T196wcnCz+EC8FAP4cObPa8KWCrM6xjtnVTPEbmmamuNne73GDf+dLQhFzZWOxv0P
+ G1AiXW23hUDg4deXhFfV1Vb2+9Hi+679hl+lRQEK4FDRl35UHAqTuzrRaGNwSWhiwqr2Apjih
+ W/lUMDExLP1uhmqmeuMoU4rWD0x5wgkL3jBHgczvJQX2TwotmtJUOPxqgb1ccMRWEwxtr65oM
+ qW98ig3lwLo7Q2dIZtrFLGt1Mz3xkqvyw7GX5hDY/opDRGiM0s=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As Vincent noticed, the y2038 conversion of semtimedop in linux-5.1
+broke when commit 00bf25d693e7 ("y2038: use time32 syscall names on
+32-bit") changed all system calls on all architectures that take
+a 32-bit time_t to point to the _time32 implementation, but left out
+semtimedop in the asm-generic header.
 
+This affects all 32-bit architectures using asm-generic/unistd.h:
+h8300, unicore32, openrisc, nios2, hexagon, c6x, arc, nds32 and csky.
 
-On 9/5/19 4:09 PM, Qian Cai wrote:
+The notable exception is riscv32, which has dropped support for the
+time32 system calls entirely.
 
-> Instead of repeatedly make generalize statements, could you enlighten me with
-> some concrete examples that have the similar properties which would trigger a
-> livelock,
-> 
-> - guaranteed GFP_ATOMIC allocations when processing softirq batches.
-> - the allocation has a fallback mechanism that is unnecessary to warn a failure.
-> 
-> I thought "skb" is a special-case here as every packet sent or received is
-> handled using this data structure.
->
+Reported-by: Vincent Chen <deanbo422@gmail.com>
+Cc: stable@vger.kernel.org
+Cc: Vincent Chen <deanbo422@gmail.com>
+Cc: Greentime Hu <green.hu@gmail.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Guan Xuetao <gxt@pku.edu.cn>
+Cc: Stafford Horne <shorne@gmail.com>
+Cc: Jonas Bonn <jonas@southpole.se>
+Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+Cc: Ley Foon Tan <lftan@altera.com>
+Cc: Richard Kuo <rkuo@codeaurora.org>
+Cc: Mark Salter <msalter@redhat.com>
+Cc: Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
+Cc: Guo Ren <guoren@kernel.org>
+Fixes: 00bf25d693e7 ("y2038: use time32 syscall names on 32-bit")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Hi Vincent,
 
-Just  'git grep GFP_ATOMIC -- net' and carefully study all the places.
+Sorry for the delay since your report. Does this address your
+problem?
 
-You will discover many allocations done for incoming packets.
+Anyone else, please note that this patch is required since
+5.1 to make sysvipc work on the listed architectures.
+---
+ include/uapi/asm-generic/unistd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All of them can fail and trigger a trace.
-
-Please fix the problem for good, do not pretend addressing the skb allocations
-will solve it.
-
-The skb allocation can succeed, then the following allocation might fail.
-
-skb are one of the many objects that networking need to allocate dynamically.
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 1be0e798e362..1fc8faa6e973 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -569,7 +569,7 @@ __SYSCALL(__NR_semget, sys_semget)
+ __SC_COMP(__NR_semctl, sys_semctl, compat_sys_semctl)
+ #if defined(__ARCH_WANT_TIME32_SYSCALLS) || __BITS_PER_LONG != 32
+ #define __NR_semtimedop 192
+-__SC_COMP(__NR_semtimedop, sys_semtimedop, sys_semtimedop_time32)
++__SC_3264(__NR_semtimedop, sys_semtimedop_time32, sys_semtimedop)
+ #endif
+ #define __NR_semop 193
+ __SYSCALL(__NR_semop, sys_semop)
+-- 
+2.20.0
 
