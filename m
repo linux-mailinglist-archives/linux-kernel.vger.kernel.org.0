@@ -2,91 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2195DAAD5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43901AAD61
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 22:50:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404082AbfIEUuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 16:50:12 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44596 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404065AbfIEUuJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 16:50:09 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i5yhg-0001lw-R4; Thu, 05 Sep 2019 22:50:04 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5DF261C0895;
-        Thu,  5 Sep 2019 22:50:04 +0200 (CEST)
-Date:   Thu, 05 Sep 2019 20:50:04 -0000
-From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: refs/heads/x86/mm] x86/mm: Fix cpumask_of_node() error condition
-Cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
+        id S2404125AbfIEUu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 16:50:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35760 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404044AbfIEUuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 16:50:20 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09B26206CD;
+        Thu,  5 Sep 2019 20:50:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567716620;
+        bh=BS5DK9GBdZOzJUMu/R6EbA8/+V27Y9jP64qS0hGDPkI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lD4VubIrzE/48xBJAIjwzyGN4/bKumoNZppPFl9EkYr/HPs0YWnFNdzjzwiVSxaLO
+         ogOhUKz8KSUOa7rjxbP96XIWct20hXalZGL0GV8RNB4Iti7SBg10sD37aoAymGGG+L
+         xkVPVVbW/uZhreNy2JttY/Bvku0g1sTv+R1ntWE4=
+Date:   Thu, 5 Sep 2019 22:50:17 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Oded Gabbay <oded.gabbay@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [git pull] habanalabs pull request for kernel 5.4
+Message-ID: <20190905205017.GA25089@kroah.com>
+References: <20190905121934.GA31853@ogabbay-VM>
 MIME-Version: 1.0
-Message-ID: <156771660431.12994.3113518520786620054.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190905121934.GA31853@ogabbay-VM>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the refs/heads/x86/mm branch of tip:
+On Thu, Sep 05, 2019 at 03:19:34PM +0300, Oded Gabbay wrote:
+> Hello Greg,
+> 
+> This is the pull request for habanalabs driver for kernel 5.4.
+> 
+> It contains one major change, the creation of an additional char device
+> per PCI device. In addition, there are some small changes and
+> improvements.
+> 
+> Please see the tag message for details on what this pull request contains.
+> 
+> Thanks,
+> Oded
+> 
+> The following changes since commit 25ec8710d9c2cd4d0446ac60a72d388000d543e6:
+> 
+>   w1: add DS2501, DS2502, DS2505 EPROM device driver (2019-09-04 14:34:31 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-next-2019-09-05
 
-Commit-ID:     bc04a049f058a472695aa22905d57e2b1f4c77d9
-Gitweb:        https://git.kernel.org/tip/bc04a049f058a472695aa22905d57e2b1f4c77d9
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Tue, 03 Sep 2019 09:53:52 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 05 Sep 2019 13:03:04 +02:00
+Is that a signed tag?  It doesn't seem to me like it is, have you always
+sent unsigned tags?
 
-x86/mm: Fix cpumask_of_node() error condition
+thanks,
 
-When CONFIG_DEBUG_PER_CPU_MAPS=y we validate that the @node argument of
-cpumask_of_node() is a valid node_id. It however forgets to check for
-negative numbers. Fix this by explicitly casting to unsigned int.
-
-  (unsigned)node >= nr_node_ids
-
-verifies: 0 <= node < nr_node_ids
-
-Also ammend the error message to match the condition.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Yunsheng Lin <linyunsheng@huawei.com>
-Link: https://lkml.kernel.org/r/20190903075352.GY2369@hirez.programming.kicks-ass.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/numa.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-index e6dad60..4123100 100644
---- a/arch/x86/mm/numa.c
-+++ b/arch/x86/mm/numa.c
-@@ -861,9 +861,9 @@ void numa_remove_cpu(int cpu)
-  */
- const struct cpumask *cpumask_of_node(int node)
- {
--	if (node >= nr_node_ids) {
-+	if ((unsigned)node >= nr_node_ids) {
- 		printk(KERN_WARNING
--			"cpumask_of_node(%d): node > nr_node_ids(%u)\n",
-+			"cpumask_of_node(%d): (unsigned)node >= nr_node_ids(%u)\n",
- 			node, nr_node_ids);
- 		dump_stack();
- 		return cpu_none_mask;
+greg k-h
