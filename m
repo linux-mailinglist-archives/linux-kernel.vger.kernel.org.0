@@ -2,71 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B99AAC46
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C3CBAAC69
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:51:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391466AbfIETuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 15:50:04 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:41570 "EHLO mail.skyhub.de"
+        id S2404008AbfIETu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 15:50:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55848 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391443AbfIETuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 15:50:01 -0400
-Received: from zn.tnic (p200300EC2F0A5F00A978ACDBA8294141.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5f00:a978:acdb:a829:4141])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732081AbfIETt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 15:49:26 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A9CFA1EC09A0;
-        Thu,  5 Sep 2019 21:49:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1567712996;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=JrDJwXq+Cc2XOF34AEK9Cfp0HAJlcgYu1a0X2xDSA8I=;
-        b=LqwDLrXKMLTBUf/kDKzv7D9YSLhN9Q8yGg5bdChWlIokqKKpAVBEDk+G4N3hXvKxErFMzG
-        WZ2YK5f/Hg5tjz6tYpo6bUol+Pes9HGzT52cX6D9ghfzdi6TXhuXk41heGbC8DQYTgKj2k
-        Gfr3Sv84SlweMVNnkr9TtBCri6zypxQ=
-Date:   Thu, 5 Sep 2019 21:49:50 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Raj, Ashok" <ashok.raj@intel.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jon Grimm <Jon.Grimm@amd.com>, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, patrick.colp@oracle.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        x86-ml <x86@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/microcode: Add an option to reload microcode even if
- revision is unchanged
-Message-ID: <20190905194950.GH19246@zn.tnic>
-References: <1567056803-6640-1-git-send-email-ashok.raj@intel.com>
- <20190829060942.GA1312@zn.tnic>
- <20190829130213.GA23510@araj-mobl1.jf.intel.com>
- <20190903164630.GF11641@zn.tnic>
- <41cee473-321c-2758-032a-ccf0f01359dc@oracle.com>
- <D8A3D2BD-1FD4-4183-8663-3EF02A6099F3@alien8.de>
- <20190905002132.GA26568@otc-nc-03>
- <20190905072029.GB19246@zn.tnic>
- <20190905194044.GA3663@otc-nc-03>
+        by mx1.redhat.com (Postfix) with ESMTPS id EDE0A883823;
+        Thu,  5 Sep 2019 19:49:25 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D6B46012D;
+        Thu,  5 Sep 2019 19:49:18 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id B6929220292; Thu,  5 Sep 2019 15:49:17 -0400 (EDT)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, miklos@szeredi.hu
+Cc:     linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
+        vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com,
+        mst@redhat.com
+Subject: [PATCH 00/18] virtiofs: Fix various races and cleanups round 1
+Date:   Thu,  5 Sep 2019 15:48:41 -0400
+Message-Id: <20190905194859.16219-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190905194044.GA3663@otc-nc-03>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Thu, 05 Sep 2019 19:49:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 12:40:44PM -0700, Raj, Ashok wrote:
-> The original description said to load a new microcode file, the content
-> could have changed, but revision in the header hasn't increased.
+Hi,
 
-How does the hardware even accept a revision which is the same as the
-one already loaded?
+Michael Tsirkin pointed out issues w.r.t various locking related TODO
+items and races w.r.t device removal. 
+
+In this first round of cleanups, I have taken care of most pressing
+issues.
+
+These patches apply on top of following.
+
+git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#virtiofs-v4
+
+I have tested these patches with mount/umount and device removal using
+qemu monitor. For example.
+
+virsh qemu-monitor-command --hmp vm9-f28 device_del myvirtiofs
+
+Now a mounted device can be removed and file system will return errors
+-ENOTCONN and one can unmount it.
+
+Miklos, if you are fine with the patches, I am fine if you fold these
+all into existing patch. I kept them separate so that review is easier.
+
+Any feedback or comments are welcome.
+
+Thanks
+Vivek
+
+
+Vivek Goyal (18):
+  virtiofs: Remove request from processing list before calling end
+  virtiofs: Check whether hiprio queue is connected at submission time
+  virtiofs: Pass fsvq instead of vq as parameter to
+    virtio_fs_enqueue_req
+  virtiofs: Check connected state for VQ_REQUEST queue as well
+  Maintain count of in flight requests for VQ_REQUEST queue
+  virtiofs: ->remove should not clean virtiofs fuse devices
+  virtiofs: Stop virtiofs queues when device is being removed
+  virtiofs: Drain all pending requests during ->remove time
+  virtiofs: Add an helper to start all the queues
+  virtiofs: Do not use device managed mem for virtio_fs and virtio_fs_vq
+  virtiofs: stop and drain queues after sending DESTROY
+  virtiofs: Use virtio_fs_free_devs() in error path
+  virtiofs: Do not access virtqueue in request submission path
+  virtiofs: Add a fuse_iqueue operation to put() reference
+  virtiofs: Make virtio_fs object refcounted
+  virtiofs: Use virtio_fs_mutex for races w.r.t ->remove and mount path
+  virtiofs: Remove TODO to quiesce/end_requests
+  virtiofs: Remove TODO item from virtio_fs_free_devs()
+
+ fs/fuse/fuse_i.h    |   5 +
+ fs/fuse/inode.c     |   6 +
+ fs/fuse/virtio_fs.c | 259 ++++++++++++++++++++++++++++++++------------
+ 3 files changed, 198 insertions(+), 72 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
