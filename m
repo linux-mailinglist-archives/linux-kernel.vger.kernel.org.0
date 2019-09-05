@@ -2,116 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05175AAA2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E5D8AAA3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 19:40:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391116AbfIERjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 13:39:16 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57744 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391089AbfIERjH (ORCPT
+        id S2391153AbfIERjy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 13:39:54 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39058 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbfIERjx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 13:39:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=u/jyKCR0c7O6hZK0BTOZC8fGSA/TBitpvpVeuX5oSeg=; b=X1aHfL7dDGT4
-        4sdiGhPr11mNXThpPVHqTtxeO0JqBg4a8hCYnY6CHEJ9OkelbhUTd+PVE4Dr7sAMWtfzvu4iYkI8B
-        XAo9rw+yB8C2qvPzEOJGG1VQukRA7Tml9rh6TMr59379boExPf1R/lr+FzTDuYdPU0rzNH5JnYszs
-        eFIzg=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i5vim-0005I9-PM; Thu, 05 Sep 2019 17:39:00 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 4B98F2742D17; Thu,  5 Sep 2019 18:39:00 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     avifishman70@gmail.com, benjaminfair@google.com,
-        broonie@kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        openbmc@lists.ozlabs.org, tali.perry1@gmail.com,
-        tmaimon77@gmail.com, venture@google.com, yuenn@google.com
-Subject: Applied "spi: npcm-fiu: remove set but not used variable 'retlen'" to the spi tree
-In-Reply-To: <20190905072436.23932-1-yuehaibing@huawei.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190905173900.4B98F2742D17@ypsilon.sirena.org.uk>
-Date:   Thu,  5 Sep 2019 18:39:00 +0100 (BST)
+        Thu, 5 Sep 2019 13:39:53 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q12so4080136wmj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 10:39:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oHaIgZ+QyOTSQuPWv07Wdi8uuPiW8MfzbAABFbSnd3w=;
+        b=HIC37gy16K0TPOUajtDzmEc5zZSn8ifcV0CdwZEt2UG2lAt1BDvAx2vslZsVJVs9ch
+         YE3q79onfyftOBvNiJ9wSZLbRYg01lgsdj6JvQGP/bxsVqTC9DgPtE1RXmYViynnQBPd
+         9xjzb5Z/rxvZdep6cgKBDS3876jQQz6xqTsOe7jbcPYdBcM9AIJJlAYnZHBGUw4MuX5K
+         XwgHXQORth3+vMh0B5gQC5bopaOCzM/zRdRHfwLv2eGgYxixfNVWXCpgjyBBFaWA3OO2
+         r0eSUbfDeZ6k8biG/IbGzkfPisoVtsFqk0+RazXoRzClIidmdbfFzSMZe5joiGjIa9KV
+         x2ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oHaIgZ+QyOTSQuPWv07Wdi8uuPiW8MfzbAABFbSnd3w=;
+        b=HS5YcuouJwy3oStyssYnyRs2VoL/faX+FWpmt0ASglXiAdH+PRettcJBIh9EPlzCPq
+         TPrqKwNNYhY8kQADpbnMvi2WfrThvQinrUANDL5cV2ZDgdrx7Q5VL39ma6lpVKNh7hXD
+         Q72PXh/2evxJeHMDELyGEqSeYqE0FEEHZnB3qLc18N/eoWEPhxO5S+6R/d2MMavAxz3x
+         8l0wUG7597d5A/UcjraTxW9YTkHR9Iv36eAQhkIEzbRECU+AQMO2oygXq36j+UuBjRQ0
+         45kTTBqianlAH5Eo58Z/NLCiLZLuCXIqGFxkgmaezJ+KUR/xC8hHFm1vxYvJANFllDPl
+         LNhQ==
+X-Gm-Message-State: APjAAAVMJHF6jNg496craEsEFeH8cpSKuLH5+uFZCtisPTgELMktU6vy
+        wZNwhIxuNDzjIvFbOvp08pOm+xv6nX7wnTFMtjds8w==
+X-Google-Smtp-Source: APXvYqwnk9SZLeXmt0DPPOvUyd0JD3bs5o/I4Q4Vf+1BPtPTSwu/Y4O3dmRg/1fFeKJx7zcWFuuR/SIyEVpqKh7SHf8=
+X-Received: by 2002:a1c:f417:: with SMTP id z23mr1878827wma.77.1567705191475;
+ Thu, 05 Sep 2019 10:39:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190903200905.198642-1-joel@joelfernandes.org>
+ <20190904084508.GL3838@dhcp22.suse.cz> <20190904153258.GH240514@google.com>
+ <20190904153759.GC3838@dhcp22.suse.cz> <20190904162808.GO240514@google.com>
+ <20190905144310.GA14491@dhcp22.suse.cz> <CAJuCfpFve2v7d0LX20btk4kAjEpgJ4zeYQQSpqYsSo__CY68xw@mail.gmail.com>
+ <20190905133507.783c6c61@oasis.local.home>
+In-Reply-To: <20190905133507.783c6c61@oasis.local.home>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Thu, 5 Sep 2019 10:39:40 -0700
+Message-ID: <CAJuCfpH42yDwf8HzM-2Wt=sUQc3qhro2yXdRvQXEqengh0ZvNQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: emit tracepoint when RSS changes by threshold
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Carmen Jackson <carmenjackson@google.com>,
+        Mayank Gupta <mayankgupta@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kernel-team <kernel-team@android.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Tom Zanussi <zanussi@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Thu, Sep 5, 2019 at 10:35 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+>
+>
+> [ Added Tom ]
+>
+> On Thu, 5 Sep 2019 09:03:01 -0700
+> Suren Baghdasaryan <surenb@google.com> wrote:
+>
+> > On Thu, Sep 5, 2019 at 7:43 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > >
+> > > [Add Steven]
+> > >
+> > > On Wed 04-09-19 12:28:08, Joel Fernandes wrote:
+> > > > On Wed, Sep 4, 2019 at 11:38 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > > > >
+> > > > > On Wed 04-09-19 11:32:58, Joel Fernandes wrote:
+> > > [...]
+> > > > > > but also for reducing
+> > > > > > tracing noise. Flooding the traces makes it less useful for long traces and
+> > > > > > post-processing of traces. IOW, the overhead reduction is a bonus.
+> > > > >
+> > > > > This is not really anything special for this tracepoint though.
+> > > > > Basically any tracepoint in a hot path is in the same situation and I do
+> > > > > not see a point why each of them should really invent its own way to
+> > > > > throttle. Maybe there is some way to do that in the tracing subsystem
+> > > > > directly.
+> > > >
+> > > > I am not sure if there is a way to do this easily. Add to that, the fact that
+> > > > you still have to call into trace events. Why call into it at all, if you can
+> > > > filter in advance and have a sane filtering default?
+> > > >
+> > > > The bigger improvement with the threshold is the number of trace records are
+> > > > almost halved by using a threshold. The number of records went from 4.6K to
+> > > > 2.6K.
+> > >
+> > > Steven, would it be feasible to add a generic tracepoint throttling?
+> >
+> > I might misunderstand this but is the issue here actually throttling
+> > of the sheer number of trace records or tracing large enough changes
+> > to RSS that user might care about? Small changes happen all the time
+> > but we are likely not interested in those. Surely we could postprocess
+> > the traces to extract changes large enough to be interesting but why
+> > capture uninteresting information in the first place? IOW the
+> > throttling here should be based not on the time between traces but on
+> > the amount of change of the traced signal. Maybe a generic facility
+> > like that would be a good idea?
+>
+> You mean like add a trigger (or filter) that only traces if a field has
+> changed since the last time the trace was hit?
 
-   spi: npcm-fiu: remove set but not used variable 'retlen'
+Almost... I mean emit a trace if a field has changed by more than X
+amount since the last time the trace was hit.
 
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From a0ce1fd11e587be803eb2f299d478c962df3706f Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 5 Sep 2019 15:24:36 +0800
-Subject: [PATCH] spi: npcm-fiu: remove set but not used variable 'retlen'
-
-drivers/spi/spi-npcm-fiu.c: In function npcm_fiu_read:
-drivers/spi/spi-npcm-fiu.c:472:9: warning:
- variable retlen set but not used [-Wunused-but-set-variable]
-
-It is never used, so remove it.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190905072436.23932-1-yuehaibing@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-npcm-fiu.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/spi/spi-npcm-fiu.c b/drivers/spi/spi-npcm-fiu.c
-index d9e2f58b104b..cb52fd8008d0 100644
---- a/drivers/spi/spi-npcm-fiu.c
-+++ b/drivers/spi/spi-npcm-fiu.c
-@@ -469,7 +469,6 @@ static int npcm_fiu_read(struct spi_mem *mem, const struct spi_mem_op *op)
- {
- 	u8 *data = op->data.buf.in;
- 	int i, readlen, currlen;
--	size_t retlen = 0;
- 	u8 *buf_ptr;
- 	u32 addr;
- 	int ret;
-@@ -494,8 +493,6 @@ static int npcm_fiu_read(struct spi_mem *mem, const struct spi_mem_op *op)
- 		currlen -= 16;
- 	} while (currlen > 0);
- 
--	retlen = i;
--
- 	return 0;
- }
- 
--- 
-2.20.1
-
+> Hmm, I think we could
+> possibly do that. Perhaps even now with histogram triggers?
+>
+> -- Steve
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>
