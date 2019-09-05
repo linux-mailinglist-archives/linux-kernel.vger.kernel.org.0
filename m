@@ -2,104 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF006A985D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 04:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3C41A9873
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 04:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730767AbfIECcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Sep 2019 22:32:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34246 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbfIECcK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Sep 2019 22:32:10 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F0A062D1CE;
-        Thu,  5 Sep 2019 02:32:09 +0000 (UTC)
-Received: from treble (ovpn-121-98.rdu2.redhat.com [10.10.121.98])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4EE5260852;
-        Thu,  5 Sep 2019 02:32:03 +0000 (UTC)
-Date:   Wed, 4 Sep 2019 21:32:02 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
-        Petr Mladek <pmladek@suse.com>, jikos@kernel.org,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] livepatch: Clear relocation targets on a module
- removal
-Message-ID: <20190905023202.ed7fecc22xze4pwj@treble>
-References: <20190728200427.dbrojgu7hafphia7@treble>
- <alpine.LSU.2.21.1908141256150.16696@pobox.suse.cz>
- <20190814151244.5xoaxib5iya2qjco@treble>
- <20190816094608.3p2z73oxcoqavnm4@pathway.suse.cz>
- <20190822223649.ptg6e7qyvosrljqx@treble>
- <20190823081306.kbkm7b4deqrare2v@pathway.suse.cz>
- <20190826145449.wyo7avwpqyriem46@treble>
- <alpine.LSU.2.21.1909021802180.29987@pobox.suse.cz>
- <5c649320-a9bf-ae7f-5102-483bc34d219f@redhat.com>
- <alpine.LSU.2.21.1909031447140.3872@pobox.suse.cz>
+        id S1730914AbfIECiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Sep 2019 22:38:54 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:53172 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfIECiy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Sep 2019 22:38:54 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x852cXBX027863, This message is accepted by code: ctloc85258
+Received: from RS-CAS02.realsil.com.cn (doc.realsil.com.cn[172.29.17.3](maybeforged))
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x852cXBX027863
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 5 Sep 2019 10:38:39 +0800
+Received: from laptop-alex (172.29.36.155) by RS-CAS02.realsil.com.cn
+ (172.29.17.3) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 5 Sep 2019
+ 10:36:48 +0800
+Date:   Thu, 5 Sep 2019 10:36:31 +0800
+From:   Alex Lu <alex_lu@realsil.com.cn>
+To:     Marcel Holtmann <marcel@holtmann.org>
+CC:     Johan Hedberg <johan.hedberg@gmail.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Max Chou <max.chou@realtek.com>
+Subject: [PATCH v2] Bluetooth: btusb: Use cmd_timeout to reset Realtek device
+Message-ID: <20190905023631.GA29398@laptop-alex>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1909031447140.3872@pobox.suse.cz>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 05 Sep 2019 02:32:10 +0000 (UTC)
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [172.29.36.155]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 03:02:34PM +0200, Miroslav Benes wrote:
-> On Mon, 2 Sep 2019, Joe Lawrence wrote:
-> 
-> > On 9/2/19 12:13 PM, Miroslav Benes wrote:
-> > >> I can easily foresee more problems like those in the future.  Going
-> > >> forward we have to always keep track of which special sections are
-> > >> needed for which architectures.  Those special sections can change over
-> > >> time, or can simply be overlooked for a given architecture.  It's
-> > >> fragile.
-> > > 
-> > > Indeed. It bothers me a lot. Even x86 "port" is not feature complete in
-> > > this regard (jump labels, alternatives,...) and who knows what lurks in
-> > > the corners of the other architectures we support.
-> > > 
-> > > So it is in itself reason enough to do something about late module
-> > > patching.
-> > > 
-> > 
-> > Hi Miroslav,
-> > 
-> > I was tinkering with the "blue-sky" ideas that I mentioned to Josh the other
-> > day.
-> 
-> > I dunno if you had a chance to look at what removing that code looks
-> > like, but I can continue to flesh out that idea if it looks interesting:
-> 
-> Unfortunately no and I don't think I'll come up with something useful 
-> before LPC, so anything is really welcome.
-> 
-> > 
-> >   https://github.com/joe-lawrence/linux/tree/blue-sky
+From: Alex Lu <alex_lu@realsil.com.cn>
 
-I like this a lot.
+Realtek Bluetooth controller provides a BT_DIS reset pin for hardware
+reset of it. The cmd_timeout is helpful on Realtek bluetooth controller
+where the firmware gets stuck.
 
-> > A full demo would require packaging up replacement .ko's with a livepatch, as
-> > well as "blacklisting" those deprecated .kos, etc.  But that's all I had time
-> > to cook up last week before our holiday weekend here.
-> 
-> Frankly, I'm not sure about this approach. I'm kind of torn. The current 
-> solution is far from ideal, but I'm not excited about the other options 
-> either. It seems like the choice is basically between "general but 
-> technically complicated fragile solution with nontrivial maintenance 
-> burden", or "something safer and maybe cleaner, but limiting for 
-> users/distros". Of course it depends on whether the limitation is even 
-> real and how big it is. Unfortunately we cannot quantify it much and that 
-> is probably why our opinions (in the email thread) differ.
+Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
+---
+Changes in v2
+  - Provide a dedicated btusb_rtl_cmd_timeout in case of Realtek hardware
 
-How would this option be "limiting for users/distros"?  If the packaging
-part of the solution is done correctly then I don't see how it would be
-limiting.
+ drivers/bluetooth/btusb.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 31d3febed187..4ac012df5666 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -524,6 +524,36 @@ static void btusb_intel_cmd_timeout(struct hci_dev *hdev)
+ 	gpiod_set_value_cansleep(reset_gpio, 0);
+ }
+ 
++static void btusb_rtl_cmd_timeout(struct hci_dev *hdev)
++{
++	struct btusb_data *data = hci_get_drvdata(hdev);
++	struct gpio_desc *reset_gpio = data->reset_gpio;
++
++	if (++data->cmd_timeout_cnt < 5)
++		return;
++
++	if (!reset_gpio) {
++		bt_dev_err(hdev, "No gpio to reset Realtek device, ignoring");
++		return;
++	}
++
++	/*
++	 * Toggle the hard reset line. The Realtek device is going to yank
++	 * itself off the USB and then replug. The cleanup is handled correctly
++	 * on the way out(standard USB disconnect), and the new device is
++	 * detected cleanly and bound to the driver again like it should be.
++	 */
++	if (test_and_set_bit(BTUSB_HW_RESET_ACTIVE, &data->flags)) {
++		bt_dev_err(hdev, "last reset failed? Not resetting again");
++		return;
++	}
++
++	bt_dev_err(hdev, "Reset Realtek device via gpio");
++	gpiod_set_value_cansleep(reset_gpio, 0);
++	msleep(200);
++	gpiod_set_value_cansleep(reset_gpio, 1);
++}
++
+ static inline void btusb_free_frags(struct btusb_data *data)
+ {
+ 	unsigned long flags;
+@@ -3783,6 +3813,7 @@ static int btusb_probe(struct usb_interface *intf,
+ 	if (id->driver_info & BTUSB_REALTEK) {
+ 		hdev->setup = btrtl_setup_realtek;
+ 		hdev->shutdown = btrtl_shutdown_realtek;
++		hdev->cmd_timeout = btusb_rtl_cmd_timeout;
+ 
+ 		/* Realtek devices lose their updated firmware over global
+ 		 * suspend that means host doesn't send SET_FEATURE
 -- 
-Josh
+2.21.0
+
