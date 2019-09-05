@@ -2,53 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60BC4A9BFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59AC2A9BFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 09:38:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732089AbfIEHhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 03:37:24 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:42770 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730809AbfIEHhX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 03:37:23 -0400
-Received: from localhost (unknown [62.21.130.100])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 876E815383DDF;
-        Thu,  5 Sep 2019 00:37:21 -0700 (PDT)
-Date:   Thu, 05 Sep 2019 00:37:19 -0700 (PDT)
-Message-Id: <20190905.003719.181800411074203471.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        id S1732110AbfIEHiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 03:38:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730809AbfIEHiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 03:38:07 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E3002145D;
+        Thu,  5 Sep 2019 07:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567669086;
+        bh=ZjDzOuega+mZVAiWkRReiyj0ameJrbOP0VlkJ/bmbHo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O8EEpYh9e5eOQ0wS8ipE22a+dMMtSpWPNldVVR276PKiAfZtE5krHTBVib/he7UGR
+         8ZB5MmdGAKuDwNjKsZarYVv30EwTDE1QIsooaPofhpz5+29BD40+6q7eNplCHDyRE+
+         GUlYOJT4hPOJpZdl+vRomxQ2256a0wbzTp7JFs0o=
+Date:   Thu, 5 Sep 2019 09:38:04 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Eugen.Hristev@microchip.com
+Cc:     Adham.Abozaeid@microchip.com, Ajay.Kathat@microchip.com,
+        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net/sched: cbs: remove redundant assignment to
- variable port_rate
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190902182637.22167-1-colin.king@canonical.com>
-References: <20190902182637.22167-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 05 Sep 2019 00:37:23 -0700 (PDT)
+Subject: Re: [PATCH 2/2] staging: wilc1000: look for rtc_clk clock
+Message-ID: <20190905073804.GA30881@kroah.com>
+References: <1567603548-13355-1-git-send-email-eugen.hristev@microchip.com>
+ <1567603548-13355-2-git-send-email-eugen.hristev@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1567603548-13355-2-git-send-email-eugen.hristev@microchip.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon,  2 Sep 2019 19:26:37 +0100
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Sep 04, 2019 at 01:34:01PM +0000, Eugen.Hristev@microchip.com wrote:
+> From: Eugen Hristev <eugen.hristev@microchip.com>
 > 
-> Variable port_rate is being initialized with a value that is never read
-> and is being re-assigned a little later on. The assignment is redundant
-> and hence can be removed.
+> If rtc_clk is provided from DT, use it and enable it.
+> This is optional.
+> The signal may be hardcoded and no need to be requested,
+> but if DT provides it, use it.
 > 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> Acked-by: Ajay Singh <ajay.kathat@microchip.com>
+> ---
+>  drivers/staging/wilc1000/wilc_sdio.c          | 14 ++++++++++++++
+>  drivers/staging/wilc1000/wilc_wfi_netdevice.h |  1 +
+>  2 files changed, 15 insertions(+)
 
-Applied.
+This patch does not apply to my tree at all.
+
+Please redo it against staging-next and resend the series, with Ajay's
+ack added to it.
+
+thanks,
+
+greg k-h
