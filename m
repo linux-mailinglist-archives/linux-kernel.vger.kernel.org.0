@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC89FAAC2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4755FAAC2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 21:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403956AbfIETpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 15:45:00 -0400
-Received: from fieldses.org ([173.255.197.46]:56714 "EHLO fieldses.org"
+        id S2403945AbfIETox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 15:44:53 -0400
+Received: from fieldses.org ([173.255.197.46]:56748 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389775AbfIETog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390052AbfIETog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Sep 2019 15:44:36 -0400
 Received: by fieldses.org (Postfix, from userid 2815)
-        id D38384120; Thu,  5 Sep 2019 15:44:34 -0400 (EDT)
+        id DEEB66849; Thu,  5 Sep 2019 15:44:34 -0400 (EDT)
 From:   "J. Bruce Fields" <bfields@redhat.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 5/9] Remove unused %*pE[achnops] formats
-Date:   Thu,  5 Sep 2019 15:44:29 -0400
-Message-Id: <1567712673-1629-5-git-send-email-bfields@redhat.com>
+Subject: [PATCH 6/9] Eliminate unused ESCAPE_NULL, ESCAPE_SPACE flags
+Date:   Thu,  5 Sep 2019 15:44:30 -0400
+Message-Id: <1567712673-1629-6-git-send-email-bfields@redhat.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1567712673-1629-1-git-send-email-bfields@redhat.com>
 References: <20190905193604.GC31247@fieldses.org>
@@ -31,145 +31,282 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "J. Bruce Fields" <bfields@redhat.com>
 
-The [achnops] are confusing, and in practice the only one anyone seems
-to need is the bare %*pE.
+I can see how some finer-grained flags could be useful, but for now I'm
+trying to simplify, so let's just remove these unused ones.
 
-I think some set of modifiers here might actually be useful, but the
-ones we have are confusing and unused, so let's just toss these out and
-then rethink what we might want to add back later.
+Note the trickiest part is actually the tests, and I still need to check
+them.
 
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 ---
- Documentation/core-api/printk-formats.rst | 23 ++---------
- lib/vsprintf.c                            | 50 ++---------------------
- 2 files changed, 7 insertions(+), 66 deletions(-)
+ fs/proc/array.c                |  2 +-
+ include/linux/string_helpers.h |  6 ++--
+ lib/string_helpers.c           | 54 +++----------------------------
+ lib/test-string_helpers.c      | 58 ++++------------------------------
+ 4 files changed, 14 insertions(+), 106 deletions(-)
 
-diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-index c6224d039bcb..4f9d20dfb342 100644
---- a/Documentation/core-api/printk-formats.rst
-+++ b/Documentation/core-api/printk-formats.rst
-@@ -180,35 +180,20 @@ Raw buffer as an escaped string
- 
- ::
- 
--	%*pE[achnops]
-+	%*pE
- 
- For printing raw buffer as an escaped string. For the following buffer::
- 
- 		1b 62 20 5c 43 07 22 90 0d 5d
- 
--A few examples show how the conversion would be done (excluding surrounding
-+An example shows how the conversion would be done (excluding surrounding
- quotes)::
- 
- 		%*pE		"\eb \C\a"\220\r]"
--		%*pEhp		"\x1bb \C\x07"\x90\x0d]"
--		%*pEa		"\e\142\040\\\103\a\042\220\r\135"
- 
--The conversion rules are applied according to an optional combination
--of flags (see :c:func:`string_escape_mem` kernel documentation for the
--details):
-+See :c:func:`string_escape_mem` kernel documentation for the details.
- 
--	- a - ESCAPE_ANY
--	- c - ESCAPE_SPECIAL
--	- h - ESCAPE_HEX
--	- n - ESCAPE_NULL
--	- o - ESCAPE_OCTAL
--	- p - ESCAPE_NP
--	- s - ESCAPE_SPACE
--
--By default ESCAPE_ANY_NP is used.
--
--ESCAPE_ANY_NP is the sane choice for many cases, in particularly for
--printing SSIDs.
-+This is used, for example, for printing SSIDs.
- 
- If field width is omitted then 1 byte only will be escaped.
- 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index b0967cf17137..5522d2a052e1 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1537,9 +1537,6 @@ static noinline_for_stack
- char *escaped_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
- 		     const char *fmt)
- {
--	bool found = true;
--	int count = 1;
--	unsigned int flags = 0;
- 	int len;
- 
- 	if (spec.field_width == 0)
-@@ -1548,38 +1545,6 @@ char *escaped_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
- 	if (check_pointer(&buf, end, addr, spec))
- 		return buf;
- 
--	do {
--		switch (fmt[count++]) {
--		case 'a':
--			flags |= ESCAPE_ANY;
--			break;
--		case 'c':
--			flags |= ESCAPE_SPECIAL;
--			break;
--		case 'h':
--			flags |= ESCAPE_HEX;
--			break;
--		case 'n':
--			flags |= ESCAPE_NULL;
--			break;
--		case 'o':
--			flags |= ESCAPE_OCTAL;
--			break;
--		case 'p':
--			flags |= ESCAPE_NP;
--			break;
--		case 's':
--			flags |= ESCAPE_SPACE;
--			break;
--		default:
--			found = false;
--			break;
--		}
--	} while (found);
--
--	if (!flags)
--		flags = ESCAPE_ANY_NP;
--
- 	len = spec.field_width < 0 ? 1 : spec.field_width;
- 
- 	/*
-@@ -1587,7 +1552,8 @@ char *escaped_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
- 	 * the given buffer, and returns the total size of the output
- 	 * had the buffer been big enough.
- 	 */
--	buf += string_escape_mem(addr, len, buf, buf < end ? end - buf : 0, flags, NULL);
-+	buf += string_escape_mem(addr, len, buf, buf < end ? end - buf : 0,
-+				 ESCAPE_ANY_NP, NULL);
- 
- 	return buf;
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 46dcb6f0eccf..982c95d09176 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -111,7 +111,7 @@ void proc_task_name(struct seq_file *m, struct task_struct *p, bool escape)
+ 	size = seq_get_buf(m, &buf);
+ 	if (escape) {
+ 		ret = string_escape_str(tcomm, buf, size,
+-					ESCAPE_SPACE | ESCAPE_SPECIAL, "\n\\");
++					ESCAPE_SPECIAL, "\n\\");
+ 		if (ret >= size)
+ 			ret = -1;
+ 	} else {
+diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.h
+index 8a299a29b767..7bf0d137373d 100644
+--- a/include/linux/string_helpers.h
++++ b/include/linux/string_helpers.h
+@@ -41,15 +41,13 @@ static inline int string_unescape_any_inplace(char *buf)
+ 	return string_unescape_any(buf, buf, 0);
  }
-@@ -2038,17 +2004,7 @@ static char *kobject_string(char *buf, char *end, void *ptr,
-  * - '[Ii][4S][hnbl]' IPv4 addresses in host, network, big or little endian order
-  * - 'I[6S]c' for IPv6 addresses printed as specified by
-  *       http://tools.ietf.org/html/rfc5952
-- * - 'E[achnops]' For an escaped buffer, where rules are defined by combination
-- *                of the following flags (see string_escape_mem() for the
-- *                details):
-- *                  a - ESCAPE_ANY
-- *                  c - ESCAPE_SPECIAL
-- *                  h - ESCAPE_HEX
-- *                  n - ESCAPE_NULL
-- *                  o - ESCAPE_OCTAL
-- *                  p - ESCAPE_NP
-- *                  s - ESCAPE_SPACE
-- *                By default ESCAPE_ANY_NP is used.
-+ * - 'E[achnops]' For an escaped buffer (see string_escape_mem()
-  * - 'U' For a 16 byte UUID/GUID, it prints the UUID/GUID in the form
-  *       "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  *       Options for %pU are:
+ 
+-#define ESCAPE_SPACE		0x01
+ #define ESCAPE_SPECIAL		0x02
+-#define ESCAPE_NULL		0x04
+ #define ESCAPE_OCTAL		0x08
+-#define ESCAPE_ANY		\
+-	(ESCAPE_SPACE | ESCAPE_OCTAL | ESCAPE_SPECIAL | ESCAPE_NULL)
++#define ESCAPE_ANY		(ESCAPE_OCTAL | ESCAPE_SPECIAL)
+ #define ESCAPE_NP		0x10
+ #define ESCAPE_ANY_NP		(ESCAPE_ANY | ESCAPE_NP)
+ #define ESCAPE_HEX		0x20
++#define ESCAPE_FLAG_MASK	0x3a
+ 
+ int string_escape_mem(const char *src, size_t isz, char *dst, size_t osz,
+ 		unsigned int flags, const char *only);
+diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+index 963050c0283e..ac72159d3980 100644
+--- a/lib/string_helpers.c
++++ b/lib/string_helpers.c
+@@ -310,7 +310,7 @@ static bool escape_passthrough(unsigned char c, char **dst, char *end)
+ 	return true;
+ }
+ 
+-static bool escape_space(unsigned char c, char **dst, char *end)
++static bool escape_special(unsigned char c, char **dst, char *end)
+ {
+ 	char *out = *dst;
+ 	unsigned char to;
+@@ -331,27 +331,6 @@ static bool escape_space(unsigned char c, char **dst, char *end)
+ 	case '\f':
+ 		to = 'f';
+ 		break;
+-	default:
+-		return false;
+-	}
+-
+-	if (out < end)
+-		*out = '\\';
+-	++out;
+-	if (out < end)
+-		*out = to;
+-	++out;
+-
+-	*dst = out;
+-	return true;
+-}
+-
+-static bool escape_special(unsigned char c, char **dst, char *end)
+-{
+-	char *out = *dst;
+-	unsigned char to;
+-
+-	switch (c) {
+ 	case '\\':
+ 		to = '\\';
+ 		break;
+@@ -361,6 +340,9 @@ static bool escape_special(unsigned char c, char **dst, char *end)
+ 	case '\e':
+ 		to = 'e';
+ 		break;
++	case '\0':
++		to = '0';
++		break;
+ 	default:
+ 		return false;
+ 	}
+@@ -376,24 +358,6 @@ static bool escape_special(unsigned char c, char **dst, char *end)
+ 	return true;
+ }
+ 
+-static bool escape_null(unsigned char c, char **dst, char *end)
+-{
+-	char *out = *dst;
+-
+-	if (c)
+-		return false;
+-
+-	if (out < end)
+-		*out = '\\';
+-	++out;
+-	if (out < end)
+-		*out = '0';
+-	++out;
+-
+-	*dst = out;
+-	return true;
+-}
+-
+ static bool escape_octal(unsigned char c, char **dst, char *end)
+ {
+ 	char *out = *dst;
+@@ -465,17 +429,15 @@ static bool escape_hex(unsigned char c, char **dst, char *end)
+  * destination buffer will not be NULL-terminated, thus caller have to append
+  * it if needs.   The supported flags are::
+  *
+- *	%ESCAPE_SPACE: (special white space, not space itself)
++ *	%ESCAPE_SPECIAL:
+  *		'\f' - form feed
+  *		'\n' - new line
+  *		'\r' - carriage return
+  *		'\t' - horizontal tab
+  *		'\v' - vertical tab
+- *	%ESCAPE_SPECIAL:
+  *		'\\' - backslash
+  *		'\a' - alert (BEL)
+  *		'\e' - escape
+- *	%ESCAPE_NULL:
+  *		'\0' - null
+  *	%ESCAPE_OCTAL:
+  *		'\NNN' - byte with octal value NNN (3 digits)
+@@ -519,15 +481,9 @@ int string_escape_mem(const char *src, size_t isz, char *dst, size_t osz,
+ 		    (is_dict && !strchr(only, c))) {
+ 			/* do nothing */
+ 		} else {
+-			if (flags & ESCAPE_SPACE && escape_space(c, &p, end))
+-				continue;
+-
+ 			if (flags & ESCAPE_SPECIAL && escape_special(c, &p, end))
+ 				continue;
+ 
+-			if (flags & ESCAPE_NULL && escape_null(c, &p, end))
+-				continue;
+-
+ 			/* ESCAPE_OCTAL and ESCAPE_HEX always go last */
+ 			if (flags & ESCAPE_OCTAL && escape_octal(c, &p, end))
+ 				continue;
+diff --git a/lib/test-string_helpers.c b/lib/test-string_helpers.c
+index 25b5cbfb7615..0da3c195a327 100644
+--- a/lib/test-string_helpers.c
++++ b/lib/test-string_helpers.c
+@@ -124,20 +124,6 @@ struct test_string_2 {
+ 
+ #define	TEST_STRING_2_DICT_0		NULL
+ static const struct test_string_2 escape0[] __initconst = {{
+-	.in = "\f\\ \n\r\t\v",
+-	.s1 = {{
+-		.out = "\\f\\ \\n\\r\\t\\v",
+-		.flags = ESCAPE_SPACE,
+-	},{
+-		.out = "\\f\\134\\040\\n\\r\\t\\v",
+-		.flags = ESCAPE_SPACE | ESCAPE_OCTAL,
+-	},{
+-		.out = "\\f\\x5c\\x20\\n\\r\\t\\v",
+-		.flags = ESCAPE_SPACE | ESCAPE_HEX,
+-	},{
+-		/* terminator */
+-	}},
+-},{
+ 	.in = "\\h\\\"\a\e\\",
+ 	.s1 = {{
+ 		.out = "\\\\h\\\\\"\\a\\e\\\\",
+@@ -154,48 +140,26 @@ static const struct test_string_2 escape0[] __initconst = {{
+ },{
+ 	.in = "\eb \\C\007\"\x90\r]",
+ 	.s1 = {{
+-		.out = "\eb \\C\007\"\x90\\r]",
+-		.flags = ESCAPE_SPACE,
+-	},{
+-		.out = "\\eb \\\\C\\a\"\x90\r]",
+-		.flags = ESCAPE_SPECIAL,
+-	},{
+ 		.out = "\\eb \\\\C\\a\"\x90\\r]",
+-		.flags = ESCAPE_SPACE | ESCAPE_SPECIAL,
++		.flags = ESCAPE_SPECIAL,
+ 	},{
+ 		.out = "\\033\\142\\040\\134\\103\\007\\042\\220\\015\\135",
+ 		.flags = ESCAPE_OCTAL,
+-	},{
+-		.out = "\\033\\142\\040\\134\\103\\007\\042\\220\\r\\135",
+-		.flags = ESCAPE_SPACE | ESCAPE_OCTAL,
+-	},{
+-		.out = "\\e\\142\\040\\\\\\103\\a\\042\\220\\015\\135",
+-		.flags = ESCAPE_SPECIAL | ESCAPE_OCTAL,
+ 	},{
+ 		.out = "\\e\\142\\040\\\\\\103\\a\\042\\220\\r\\135",
+-		.flags = ESCAPE_SPACE | ESCAPE_SPECIAL | ESCAPE_OCTAL,
++		.flags = ESCAPE_SPECIAL | ESCAPE_OCTAL,
+ 	},{
+ 		.out = "\eb \\C\007\"\x90\r]",
+ 		.flags = ESCAPE_NP,
+-	},{
+-		.out = "\eb \\C\007\"\x90\\r]",
+-		.flags = ESCAPE_SPACE | ESCAPE_NP,
+-	},{
+-		.out = "\\eb \\C\\a\"\x90\r]",
+-		.flags = ESCAPE_SPECIAL | ESCAPE_NP,
+ 	},{
+ 		.out = "\\eb \\C\\a\"\x90\\r]",
+-		.flags = ESCAPE_SPACE | ESCAPE_SPECIAL | ESCAPE_NP,
++		.flags = ESCAPE_SPECIAL | ESCAPE_NP,
+ 	},{
+ 		.out = "\\033b \\C\\007\"\\220\\015]",
+ 		.flags = ESCAPE_OCTAL | ESCAPE_NP,
+-	},{
+-		.out = "\\033b \\C\\007\"\\220\\r]",
+-		.flags = ESCAPE_SPACE | ESCAPE_OCTAL | ESCAPE_NP,
+ 	},{
+ 		.out = "\\eb \\C\\a\"\\220\\r]",
+-		.flags = ESCAPE_SPECIAL | ESCAPE_SPACE | ESCAPE_OCTAL |
+-			 ESCAPE_NP,
++		.flags = ESCAPE_SPECIAL ESCAPE_OCTAL | ESCAPE_NP,
+ 	},{
+ 		.out = "\\x1bb \\C\\x07\"\\x90\\x0d]",
+ 		.flags = ESCAPE_NP | ESCAPE_HEX,
+@@ -247,9 +211,6 @@ static __init const char *test_string_find_match(const struct test_string_2 *s2,
+ 	if (!flags)
+ 		return s2->in;
+ 
+-	/* Test cases are NULL-aware */
+-	flags &= ~ESCAPE_NULL;
+-
+ 	/* ESCAPE_OCTAL has a higher priority */
+ 	if (flags & ESCAPE_OCTAL)
+ 		flags &= ~ESCAPE_HEX;
+@@ -290,13 +251,6 @@ static __init void test_string_escape(const char *name,
+ 		const char *out;
+ 		int len;
+ 
+-		/* NULL injection */
+-		if (flags & ESCAPE_NULL) {
+-			in[p++] = '\0';
+-			out_test[q_test++] = '\\';
+-			out_test[q_test++] = '0';
+-		}
+-
+ 		/* Don't try strings that have no output */
+ 		out = test_string_find_match(s2, flags);
+ 		if (!out)
+@@ -401,11 +355,11 @@ static int __init test_string_helpers_init(void)
+ 			     get_random_int() % (UNESCAPE_ANY + 1), true);
+ 
+ 	/* Without dictionary */
+-	for (i = 0; i < (ESCAPE_ANY_NP | ESCAPE_HEX) + 1; i++)
++	for (i = 0; i < ESCAPE_FLAG_MASK + 1; i++)
+ 		test_string_escape("escape 0", escape0, i, TEST_STRING_2_DICT_0);
+ 
+ 	/* With dictionary */
+-	for (i = 0; i < (ESCAPE_ANY_NP | ESCAPE_HEX) + 1; i++)
++	for (i = 0; i < ESCAPE_FLAG_MASK + 1; i++)
+ 		test_string_escape("escape 1", escape1, i, TEST_STRING_2_DICT_1);
+ 
+ 	/* Test string_get_size() */
 -- 
 2.21.0
 
