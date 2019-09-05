@@ -2,77 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF48AA4EC
+	by mail.lfdr.de (Postfix) with ESMTP id 07199AA4EA
 	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 15:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731437AbfIENpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 09:45:47 -0400
-Received: from gate.crashing.org ([63.228.1.57]:44357 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727900AbfIENpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 09:45:46 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x85Djarb028469;
-        Thu, 5 Sep 2019 08:45:36 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id x85DjZfR028468;
-        Thu, 5 Sep 2019 08:45:35 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Thu, 5 Sep 2019 08:45:35 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "gcc-patches@gcc.gnu.org" <gcc-patches@gcc.gnu.org>
-Subject: Re: [PATCH v2 4/6] compiler-gcc.h: add asm_inline definition
-Message-ID: <20190905134535.GP9749@gate.crashing.org>
-References: <20190829083233.24162-1-linux@rasmusvillemoes.dk> <20190830231527.22304-1-linux@rasmusvillemoes.dk> <20190830231527.22304-5-linux@rasmusvillemoes.dk> <CAKwvOdktYpMH8WnEQwNE2JJdKn4w0CHv3L=YHkqU2JzQ6Qwkew@mail.gmail.com> <a5085133-33da-6c13-6953-d18cbc6ad3f5@rasmusvillemoes.dk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a5085133-33da-6c13-6953-d18cbc6ad3f5@rasmusvillemoes.dk>
-User-Agent: Mutt/1.4.2.3i
+        id S1731256AbfIENpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 09:45:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33038 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbfIENpo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 09:45:44 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3F7506058E; Thu,  5 Sep 2019 13:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567691143;
+        bh=w/3IIFOS8nQCteH4ddE4gwv4ezqYRxVFmhWF+d+7VVo=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Th/mutnX9LoQy2L+Z2WxUuvkvxHhhZ7Mm7O/CGwZJMHjB86g/C/f4PA1XjaycV9PV
+         U3B7/n8G19cBWyfSOwXEal5vD5gyjeoZEARHBoPulvNndDj5nxkk+4S51SxEQH3jPb
+         hWXKrY+/8tV9xOjkAEhG8jjSPziXnCSyC+Q6NNlc=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from tynnyri.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F0148606E1;
+        Thu,  5 Sep 2019 13:45:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567691141;
+        bh=w/3IIFOS8nQCteH4ddE4gwv4ezqYRxVFmhWF+d+7VVo=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=LRz+KeonYRJHD+DyRA20Bu+pgLL9j/vsbUaKJ1ZP7Ag6GRwlJdDuNNnOeQ/oZk+aj
+         y/50pCEp9lgl9poE40jH8uXGLxlucvMp8HKF+DCjV28XEw1U2G8FYNG9/icUxf4wP9
+         Mqw0Haixr+BmHHHq+FSO0TdRi0Mk6PozxfUFvfzw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F0148606E1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <kvalo@codeaurora.org>, <davem@davemloft.net>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] hostap: remove set but not used variable 'copied' in prism2_io_debug_proc_read
+References: <1567497430-22539-1-git-send-email-zhongjiang@huawei.com>
+        <5D6E1DF2.1000109@huawei.com>
+Date:   Thu, 05 Sep 2019 16:45:37 +0300
+In-Reply-To: <5D6E1DF2.1000109@huawei.com> (zhong jiang's message of "Tue, 3
+        Sep 2019 16:01:54 +0800")
+Message-ID: <87zhjij1q6.fsf@tynnyri.adurom.net>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rasmus,
+zhong jiang <zhongjiang@huawei.com> writes:
 
-On Thu, Sep 05, 2019 at 01:07:11PM +0200, Rasmus Villemoes wrote:
-> On 05/09/2019 02.18, Nick Desaulniers wrote:
-> > Is it too late to ask for a feature test macro? Maybe one already
-> > exists? 
-> 
-> No, not as far as I know.
+> Please ignore the patch.  Because  the hostap_proc.c is marked as 'obsolete'.
 
-[ That's not what a feature test macro is; a feature test macro allows the
-  user to select some optional behaviour.  Things like _GNU_SOURCE.  ]
+You mean marked in the MAINTAINERS file? I don't see that as a problem,
+I can (and should) still apply any patches submitted to hostap driver.
 
-> Perhaps something like below, though that
-> won't affect the already released gcc 9.1 and 9.2, of course.
-
-That is one reason to not want such a predefined macro.  Another reason
-is that you usually need to compile some test programs *anyway*, to see if
-some bug is present for example, or to see if the exact implementation of
-the feature is beneficial (or harmful) to your program in some way.
-
-> gcc maintainers, WDYT? Can we add a feature test macro for asm inline()?
-
-The only comparable existing predefined macro is __PRAGMA_REDEFINE_EXTNAME
-it seems (no, I have no idea either).  Everything else is required by some
-standard (a "standard standard" or a "vendor standard", I'm lumping
-everything together here), or shows whether some target has some feature,
-or how many bits there are in certain types, that kind of thing.
-
-Why would GCC want to have macros for all features it has?  That would be
-quite a few new ones every release.  And what about bug fixes, are bug
-fixes features as well?
-
-I think you need to solve your configuration problems in your
-configuration system.
-
-
-Segher
+-- 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
