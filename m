@@ -2,110 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B4F3A9CAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:13:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D53C5A9CB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Sep 2019 10:16:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731960AbfIEINQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 04:13:16 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36472 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730864AbfIEINP (ORCPT
+        id S1732493AbfIEIQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 04:16:41 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40335 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730849AbfIEIQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 04:13:15 -0400
-Received: by mail-wm1-f68.google.com with SMTP id p13so1751116wmh.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 01:13:14 -0700 (PDT)
+        Thu, 5 Sep 2019 04:16:40 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so988755pgj.7;
+        Thu, 05 Sep 2019 01:16:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2o/1YFznLwjV3F8hw+vjLNUnsNfENj5CCyIBGxY1daM=;
-        b=QBTwnI40rOBh5j4QFkUbcDyDSPIS8IiSzfmmBZo2mUizQqXiSkFvJE4gFfoXzuVlV5
-         1PrBh/IZ+ea5PRVyv/cC0ccviNZWlbHWP4sG+Yqi9gcco0j7v20pNv6HSl12YdzsnVun
-         r4U9lfPClmyWBHaPfVMMYSQfKyuiXFS+auWTEW7GnjZ0qniacDOD/v6fX3R8/NkEYqdj
-         hPCilQbUMLg4EBxacqbbbJu35nljeAwJPxmfXcdk9FaUnBl7uMMIeTd0m11TQQDJhpaX
-         usGeCfceJoA94et6qeTtONBOUMwJmwTchcEWZRT3fAQ1NWj2RqzpkfpU6w2m5pVOIM9n
-         1+KA==
+        h=from:to:cc:subject:date:message-id;
+        bh=8sJIwjC+uTMQQ+j3BpVe6IaoEgx2I750V29nK1aOgcw=;
+        b=EwqSn6HdrjkflUwwwTPz+oNB7PSPSe1vzzqd8PzgpQ/x4PVHPQhQTuJmL1GtfuNYCG
+         WG9pEel7UOok2H1UdGT8TNmDuS+4WPW0U5f3Udewev1VWDGKB70vF/N1tMk6VcDCiFLE
+         e5mnQaIVqBmWxrH9zL2Jd1kSOzbKTK9oO4sfABX7VcZ2KTXFhKZll11ir2LHIW2aKr+q
+         mOpjOA2gVj8KLBOIUq4S4Q5/m6Lgu9pRAPq0NXrsnQf7yGvOiRsI7x22zpTFxuOTdQ8O
+         t4sEB6JUmZjJ3rzT7E1ZqL1CG6EqADbK5eM7uJDe64PgDmWEQ9nZFI/2EXJgiuDLU4mc
+         nt5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2o/1YFznLwjV3F8hw+vjLNUnsNfENj5CCyIBGxY1daM=;
-        b=aZiS4OB4BLxeC6Gz5ztIuwgFON9RNdcPgWDYRxjAHhqN53cWac75YyvfPSKrTAHy19
-         MTnYZzm6TOehujMLcZJuria2a6OK3M+5ByaPreox+4paptUe5hpENwo4/VYNy602UqjT
-         Nrb8M3QUIl9+hrIzEIiLgBWTUXbLvcJ62pRk3CMX4f1PaHRBEOBBAtKLJgLruoqBJEtd
-         sqKVHOlN+DJUFtJv3rZOUWVHAS9Bh5As2/9jGQkDdkEpX7kEr4D8Nl4Mj8fgt//WC7ZW
-         3iJUYUHVYhyU2GJOImIg57DJoe7lqlFfhFHMP50/rtuHwxmjEzqTcrVKmASn7aJAkgti
-         3REg==
-X-Gm-Message-State: APjAAAWcuy6qtaXkCS8DTr3/NZzSa/ZiMp9OVBGaYuAQ1NEEAQW60gCg
-        OJlUPW56TU4smoCZhbniC0s=
-X-Google-Smtp-Source: APXvYqwigSNUr/U++R/UjraGEXmAABPisGmBPQx06e+pxK1ev5HaH5FE2Wy+sKcOymRYenFqiLUf4g==
-X-Received: by 2002:a1c:4e09:: with SMTP id g9mr1733036wmh.157.1567671193801;
-        Thu, 05 Sep 2019 01:13:13 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id q25sm1342343wmj.22.2019.09.05.01.13.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8sJIwjC+uTMQQ+j3BpVe6IaoEgx2I750V29nK1aOgcw=;
+        b=GB/srr46ucUzcx2ZCsHqg4LDRm2TuD20Jt8boAUkhFo1ZB0M73X3/KWxQjm2kOnOGN
+         JmJV90yAuCghl0yZFCwoCuyrtjv15sRYs9Iw32dx8Dj/PizHaI2OeM1ZkhG49GZS9XTx
+         c8Lhv1kt+/E/kvRvMeq0vIPgRWLTr1TfwDEFxLmGdbrnDoV3RLYplKGFFOmo1WZbDGu+
+         RjpfJLCFK8BODlb1rSczVhCYDw2uLvkvXbu7joFk9ZAvTc1RUKuX8nkaSRsfH9JGFzt1
+         E7pBm996hO4LOn79cnQdmzNz9YuYq1EMSfa0TxTqKX5DCCOnunesl+SCgmPYuYimD7pW
+         hvMA==
+X-Gm-Message-State: APjAAAWM6IO2S9BmUyYPeKMxk4kcCgPYvIhrQvv2CZwRwhf+1ZULqJyk
+        WI6HRs3cleF266YSCvTwFV+iKIzj
+X-Google-Smtp-Source: APXvYqyymixaC/4ZmoAYVHw421NBXUFa1C+1zeteo7JioReZqYjJQ9yGnohHAF0A+fKrMjxJZR5TfQ==
+X-Received: by 2002:aa7:8dc9:: with SMTP id j9mr2305645pfr.233.1567671400065;
+        Thu, 05 Sep 2019 01:16:40 -0700 (PDT)
+Received: from localhost.localdomain ([49.216.8.243])
+        by smtp.gmail.com with ESMTPSA id g26sm1621121pfi.103.2019.09.05.01.16.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 01:13:13 -0700 (PDT)
-Date:   Thu, 5 Sep 2019 10:13:10 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Qais Yousef <qais.yousef@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jirka =?iso-8859-1?Q?Hladk=FD?= <jhladky@redhat.com>,
-        =?utf-8?B?SmnFmcOtIFZvesOhcg==?= <jvozar@redhat.com>,
-        X86 ML <x86@kernel.org>
-Subject: Re: [PATCH 2/2] sched/debug: add sched_update_nr_running tracepoint
-Message-ID: <20190905081310.GA46285@gmail.com>
-References: <20190903154340.860299-3-rkrcmar@redhat.com>
- <a2924d91-df68-42de-0709-af53649346d5@arm.com>
- <20190904042310.GA159235@google.com>
- <20190904104332.ogsjtbtuadhsglxh@e107158-lin.cambridge.arm.com>
- <20190904130628.GE144846@google.com>
- <CAADnVQJzgTRWUAaH+L6qwJvHk0vsLPX3eWdZNUr5X77TuEgvPw@mail.gmail.com>
- <20190904154000.GJ240514@google.com>
- <CAADnVQK+bSzFdZmgTnDSgibhJ81pR19P6hFArqmZa_xKA1r1VQ@mail.gmail.com>
- <20190904174707.GV2332@hirez.programming.kicks-ass.net>
- <CAADnVQJFXq0n1J+vFMwhNgGNBYXK+EsFaE_Zebp84wMOLN8TNA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAADnVQJFXq0n1J+vFMwhNgGNBYXK+EsFaE_Zebp84wMOLN8TNA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 05 Sep 2019 01:16:39 -0700 (PDT)
+From:   jamestai.sky@gmail.com
+X-Google-Original-From: james.tai@realtek.com
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Olof Johansson <olof@lixom.net>,
+        CY_Huang <cy.huang@realtek.com>,
+        Phinex Hung <phinex@realtek.com>,
+        "james.tai" <james.tai@realtek.com>
+Subject: [PATCH] dt-bindings: cpu: Add a support cpu type for cortex-a55
+Date:   Thu,  5 Sep 2019 16:14:35 +0800
+Message-Id: <20190905081435.1492-1-james.tai@realtek.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "james.tai" <james.tai@realtek.com>
 
-* Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+Add arm cpu type cortex-a55.
 
-> On Wed, Sep 4, 2019 at 10:47 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Wed, Sep 04, 2019 at 08:51:21AM -0700, Alexei Starovoitov wrote:
-> > > Anything in tracing can be deleted.
-> > > Tracing is about debugging and introspection.
-> > > When underlying kernel code changes the introspection points change as well.
-> >
-> > Right; except when it breaks widely used tools; like say powertop. Been
-> > there, done that.
-> 
-> powertop was a lesson learned, but it's not a relevant example anymore.
-> There are more widely used tools today. Like bcc tools.
-> And bpftrace is quickly gaining momentum and large user base.
-> bcc tools did break already several times and people fixed them.
+Signed-off-by: james.tai <james.tai@realtek.com>
+---
+ Documentation/devicetree/bindings/arm/cpus.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Are these tools using libtraceevents?
+diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
+index aa40b074b864..1fc7c8effd25 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.yaml
++++ b/Documentation/devicetree/bindings/arm/cpus.yaml
+@@ -124,6 +124,7 @@ properties:
+       - arm,cortex-a15
+       - arm,cortex-a17
+       - arm,cortex-a53
++      - arm,cortex-a55
+       - arm,cortex-a57
+       - arm,cortex-a72
+       - arm,cortex-a73
+-- 
+2.17.1
 
-Thanks,
-
-	Ingo
