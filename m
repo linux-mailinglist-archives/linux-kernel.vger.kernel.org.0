@@ -2,64 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40BECABD22
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB0BDABD2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 18:00:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388210AbfIFP7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:59:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35396 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727762AbfIFP7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:59:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C101CAF77;
-        Fri,  6 Sep 2019 15:59:46 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] ARM: xen: unexport HYPERVISOR_platform_op
- function
-To:     Andrew Cooper <andrew.cooper3@citrix.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Denis Efremov <efremov@linux.com>,
-        linux-arm-kernel@lists.infradead.org,
-        xen-devel@lists.xenproject.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-References: <20190906153948.2160342-1-arnd@arndb.de>
- <7abad95e-ea47-c068-d91c-ba503f2530b9@citrix.com>
-From:   Jan Beulich <jbeulich@suse.com>
-Message-ID: <742b216d-9219-7ba5-553b-6445513ccedd@suse.com>
-Date:   Fri, 6 Sep 2019 17:59:55 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2395018AbfIFQAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 12:00:37 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:38243 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbfIFQAg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 12:00:36 -0400
+Received: by mail-qk1-f195.google.com with SMTP id x5so6082095qkh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 09:00:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ES4SaHURAaJC01GAaptDev9SfTdpvqyq6m4yX4fQcB8=;
+        b=VXwqctCfDR+6l2dQ+0vcQB16a0N6tJqPs19kOPRxudsB91+TLVdI0k8GAZH/WfCFx6
+         tqO9t7VPmhMq3jIznqzmZgrwg4btKdDVGoyy2F9BCVHO94yjoonCifqiY+CiRRFsUEOS
+         KyHVntxUwpeb2Beho8TlUxCERaVc1Nw5aiylqqYlB7TbAB92MQSM/Ig8tlUzCGLXMspt
+         VhL1/tv43/sz0RU3GOycUS4Dq35I0w/fvMHsyRTVQz8xVG5Dws2XzWPz1nglcI6rKWZ1
+         ShKdYb+gtBW567ZXNhHbUFKuIgV6HmHBdNE8kAlxqK0Y0OxPPWi7E5P3V29kap3fIkuZ
+         /6/Q==
+X-Gm-Message-State: APjAAAWcrGAqG8xj5fEdYCVQzdzJIQfyrPuzgrKN8tgnh1NThtMJk/A6
+        HWYqvGW11rglllAnLzT0cICG+EfkO5Nbg5gaj64=
+X-Google-Smtp-Source: APXvYqz3LSRyVLYYD4QDIyXNudChhzjqkuMLsRlKHB4VakqREofKG/STxaa6LfsgS6WjUsYS6TRljEVwYTs6CmUAbq0=
+X-Received: by 2002:a37:4b0d:: with SMTP id y13mr9297353qka.3.1567785635669;
+ Fri, 06 Sep 2019 09:00:35 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190906153948.2160342-1-arnd@arndb.de> <7abad95e-ea47-c068-d91c-ba503f2530b9@citrix.com>
 In-Reply-To: <7abad95e-ea47-c068-d91c-ba503f2530b9@citrix.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 6 Sep 2019 18:00:19 +0200
+Message-ID: <CAK8P3a1qkMLW_Wnn-N0seUw4N5bPwTU7Dy7CwOWxzS6NTnTmiQ@mail.gmail.com>
+Subject: Re: [Xen-devel] [PATCH] ARM: xen: unexport HYPERVISOR_platform_op function
+To:     Andrew Cooper <andrew.cooper3@citrix.com>
+Cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Denis Efremov <efremov@linux.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.09.2019 17:55, Andrew Cooper wrote:
+On Fri, Sep 6, 2019 at 5:55 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+>
 > On 06/09/2019 16:39, Arnd Bergmann wrote:
->> HYPERVISOR_platform_op() is an inline function and should not
->> be exported. Since commit 15bfc2348d54 ("modpost: check for
->> static EXPORT_SYMBOL* functions"), this causes a warning:
->>
->> WARNING: "HYPERVISOR_platform_op" [vmlinux] is a static EXPORT_SYMBOL_GPL
->>
->> Remove the extraneous export.
->>
->> Fixes: 15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> Something is wonky.  That symbol is (/ really ought to be) in the
+> > HYPERVISOR_platform_op() is an inline function and should not
+> > be exported. Since commit 15bfc2348d54 ("modpost: check for
+> > static EXPORT_SYMBOL* functions"), this causes a warning:
+> >
+> > WARNING: "HYPERVISOR_platform_op" [vmlinux] is a static EXPORT_SYMBOL_GPL
+> >
+> > Remove the extraneous export.
+> >
+> > Fixes: 15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Something is wonky.  That symbol is (/ really ought to be) in the
 > hypercall page and most definitely not inline.
+>
+> Which tree is that changeset from?  I can't find the SHA.
 
-It's HYPERVISOR_platform_op_raw that's in the hypercall page afaics.
+This is from linux-next, I think from the kbuild tree.
 
-Jan
+       Arnd
