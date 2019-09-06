@@ -2,132 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A245FAB353
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 09:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE22AAB359
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 09:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392528AbfIFHjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 03:39:37 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34420 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728769AbfIFHjh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 03:39:37 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x867dRJB053866;
-        Fri, 6 Sep 2019 02:39:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1567755567;
-        bh=z6Nh68YYvTDDh5HiSd5ce/6VHBCPMMXmMgbKOM1slds=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=iT3e59oWcC9/GWHtEvNJFERDlEd0VDsMZpqKav5auCLqqTQwYdbZs8EqQFLsI8XrU
-         SXq+HElmMR2X3k2eAlJiw/9PISXTbdHV2qiKjDSy6p68s2Y/5sQfQBKhxd+rYVubVD
-         tfqhQNMpcmlE5XUW7wOdQ6USYzAY9iKr+slbYk7g=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x867dRN6029677;
-        Fri, 6 Sep 2019 02:39:27 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 6 Sep
- 2019 02:39:26 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 6 Sep 2019 02:39:26 -0500
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x867dNc9078451;
-        Fri, 6 Sep 2019 02:39:23 -0500
-Subject: Re: [PATCH] bus: ti-sysc: Fix handling of invalid clocks
-To:     Tony Lindgren <tony@atomide.com>, <linux-omap@vger.kernel.org>
-CC:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
+        id S2392552AbfIFHl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 03:41:26 -0400
+Received: from mout.web.de ([217.72.192.78]:36267 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390377AbfIFHlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 03:41:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1567755650;
+        bh=n0kCz4gwZlDRbUarj51SXfpdtpwYXmwh0XFzK+Po7+I=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=eSy3bF1AoR2d2lu5eeNXKFR1C1FAHVUxx7/RIsnr+Lhv96crhhwhgVH7uMg5eDOTm
+         uyQrRMB/8+ex/ULAwCy791EQO2xAdGPH3TAuMF1BFNppnAchode5RUz92Xevvhs5+K
+         /v+bnjQYzqO/uPJ2nXZHCyoOcGmdj1/QiCHfThRA=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.135.58.4]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M3Bdr-1iOli243mx-00srq8; Fri, 06
+ Sep 2019 09:40:50 +0200
+Subject: Re: [PATCH -next] coccinelle: platform_get_irq: Fix parse error
+To:     Julia Lawall <julia.lawall@lip6.fr>,
+        kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Denis Efremov <efremov@linux.com>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190905215356.8168-1-tony@atomide.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <3c9f7340-f17f-cecd-3ae4-ec8a1af7c2bf@ti.com>
-Date:   Fri, 6 Sep 2019 10:39:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+References: <5d71eb6f.1c69fb81.31bc8.da2d@mx.google.com>
+ <7818ad20-615c-2ce9-c0d1-3f7a09bedf34@web.de>
+ <alpine.DEB.2.21.1909060857290.2975@hadrien>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <970643a9-5f19-29ee-dde6-5b81c9038a04@web.de>
+Date:   Fri, 6 Sep 2019 09:40:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-In-Reply-To: <20190905215356.8168-1-tony@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <alpine.DEB.2.21.1909060857290.2975@hadrien>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:IuJd6zRlAs4NG7jeVC9h33Px6Op1gSYNKfFrNP4/fPCEUg6CTU/
+ j7eFsXAq3YoNZY8dGkltdNqjeIpghjh1aXE3yPnPqIyqUov1VtodfDWUl1CnNfF+O6U4sIQ
+ NP3OZBG7vrFwknE+9DcdaPzqhy79i63Ll5yodGoa+7RyD0Ta2eRumvUe8QLub0EnodXgGM2
+ 3+SYzNdZduWUsDYfIFXKg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hC2i8+3wG0s=:Vg0P4geFXVAEl5IJtumNDN
+ aGR6RgGCafwDDbwG4nFWYQPwZgCp4ixfyypPKb/d5ClUXYitJbqxA6IXy9mJN0IaIH0SSwnI3
+ WTDlYa04kyV06htmzMJC0BH6t7EdCXQnpevmEJRT4+v/9P2uj2jHhNrXsDdUe7bYC8VJtGPc5
+ gg5p5Q0RCFeDkuRqWOR5DrEOA+Iq/aaMbpGI51xD+h9jnPwTdSRwSU8zzq4zsZnbAU6MxExqb
+ uZtnBXvEvtR8w/wVZzHOT8Nk+csBc3M/agJ6VPB7HNGTSLyN88k8hgTSJLIq7GgxqeWTjFrFF
+ VcPcWQSC1i7p/NPgcCNmiv2+Atc8oJ/FKqVREmJfxDbNdVMTuwYOZhT4ZYM14CuuxsMu4XsGz
+ jD7dDIbbeprRfx+RH6usTKsiomw+0Df69SWmZUTd8w3N3fgNilpHmn6QOqbJz38mWCFek/51N
+ Am4xOAsbrMmiVb/V5qE25cpIMVseqcW7w9jV8zl/XwjDGjyoY71XyXmk7ggcHOMo11wGRMQwP
+ Uln086gvHeKgPr5U6lNCsFcyPK728LI0xmVItfVXKrxhPDiA8x1q7WUAgmTK8O5z35nzq/AKh
+ KRIYh2LJQD4vKBZjAPGe0BCKVc8EtONtF7lyGxKFgKB6JnNBgEr68cKS211pSayfx1dpPTUJb
+ yWGeZLLPkj4iUpvwEGcJhpp2VDzMyxe2hybQF8Zy8PPT6MYm59tK9SvsQnWHc7ICi59v55zbE
+ AZDqocm4qYCOAH9Ta81Hje9/jlqDdTPZCjSV9+WYZDsBZDc9JVgzLGKRTDQeWd/lWn/aM0Yy3
+ pCwEO8YibH1gfFuSZBUSmzYDI3IfnxFMTqT1LPWf3eh+iEIh8MlrWwYStTj/ywFfpc2iUAgZB
+ IhPYfqHou47fEPMmy4LOoN0DH9EkZ19vnOxXPvYxL3FllZaaZmj/4cTNJSrBvX0IdZHnTp4/+
+ 8UYhWBqZYsII6hGNEHrugpFbI328Hhomu5hh8aKJtMZ/G1xKHTVG1KPc4MQ2JKTD0L35uLGCs
+ /Cxeuspgb+j+Dst38t4ITNVkNTPHoWWmtImHansjOf1K7qA1aBCNnZNFMF09vZa6tPIVgdxh6
+ cnshGCP88vXQF/v5ig7MsO3pRF1OYAUYHYgtRWpaopFp5XuPRGsh0vK96jRSfnax1ashp38f1
+ DkT5Kg/DPOAfvBt37Cuv+F2TbdA3SIsMTHPCOfj2rKvhKWThqidV4znOFG0sKdl0ziOkNPl64
+ z8+iVgZKbKDsM9riz
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/09/2019 00:53, Tony Lindgren wrote:
-> We can currently get "Unable to handle kernel paging request at
-> virtual address" for invalid clocks with dts node but no driver:
-> 
-> (__clk_get_hw) from [<c0138ebc>] (ti_sysc_find_one_clockdomain+0x18/0x34)
-> (ti_sysc_find_one_clockdomain) from [<c0138f0c>] (ti_sysc_clkdm_init+0x34/0xdc)
-> (ti_sysc_clkdm_init) from [<c0584660>] (sysc_probe+0xa50/0x10e8)
-> (sysc_probe) from [<c065c6ac>] (platform_drv_probe+0x58/0xa8)
-> 
-> Let's add IS_ERR checks to ti_sysc_clkdm_init() as And let's start treating
-> clk_get() with -ENOENT as a proper error. If the clock name is specified
-> in device tree we must succeed with clk_get() to continue. For modules with
-> no clock names specified in device tree we will just ignore the clocks.
-> 
-> Fixes: 2b2f7def058a ("bus: ti-sysc: Add support for missing clockdomain handling")
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+>> I proposed something also during the development for this SmPL script.
+>> https://lkml.org/lkml/2019/7/24/274
+>> https://lore.kernel.org/r/c98b8f50-1adf-ea95-a91c-ec451e9fefe2@web.de/
+>
+> Markus,
+>
+> This is not the first time you have suggested to someone to do something
+> that was simply incorrect.
 
-Acked-by: Roger Quadros <rogerq@ti.com>
+We come along different application expectations.
 
-> ---
->   arch/arm/mach-omap2/pdata-quirks.c | 4 ++--
->   drivers/bus/ti-sysc.c              | 5 +----
->   2 files changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
-> --- a/arch/arm/mach-omap2/pdata-quirks.c
-> +++ b/arch/arm/mach-omap2/pdata-quirks.c
-> @@ -491,11 +491,11 @@ static int ti_sysc_clkdm_init(struct device *dev,
->   			      struct clk *fck, struct clk *ick,
->   			      struct ti_sysc_cookie *cookie)
->   {
-> -	if (fck)
-> +	if (!IS_ERR(fck))
->   		cookie->clkdm = ti_sysc_find_one_clockdomain(fck);
->   	if (cookie->clkdm)
->   		return 0;
-> -	if (ick)
-> +	if (!IS_ERR(ick))
->   		cookie->clkdm = ti_sysc_find_one_clockdomain(ick);
->   	if (cookie->clkdm)
->   		return 0;
-> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-> --- a/drivers/bus/ti-sysc.c
-> +++ b/drivers/bus/ti-sysc.c
-> @@ -280,9 +280,6 @@ static int sysc_get_one_clock(struct sysc *ddata, const char *name)
->   
->   	ddata->clocks[index] = devm_clk_get(ddata->dev, name);
->   	if (IS_ERR(ddata->clocks[index])) {
-> -		if (PTR_ERR(ddata->clocks[index]) == -ENOENT)
-> -			return 0;
-> -
->   		dev_err(ddata->dev, "clock get error for %s: %li\n",
->   			name, PTR_ERR(ddata->clocks[index]));
->   
-> @@ -357,7 +354,7 @@ static int sysc_get_clocks(struct sysc *ddata)
->   			continue;
->   
->   		error = sysc_get_one_clock(ddata, name);
-> -		if (error && error != -ENOENT)
-> +		if (error)
->   			return error;
->   	}
->   
-> 
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> Please actually test your suggestions before proposing them.
+
+I dare to express also =E2=80=9Cquestionable=E2=80=9D development ideas.
+
+
+>> Should disjunctions eventually work in the semantic patch language also=
+ together with
+>> comparison operators?
+>> https://github.com/coccinelle/coccinelle/issues/40
+>
+> No.
+
+Can a similar effect be achieved by using a SmPL constraint for
+a metavariable of the type =E2=80=9Cbinary operator=E2=80=9D?
+https://github.com/coccinelle/coccinelle/blob/b4509f6e7fb06d5616bb19dd5a11=
+0b203fd0e566/docs/manual/cocci_syntax.tex#L266
+
+
+>> Will any additional software adjustments be taken into account?
+>
+> No.
+
+I imagine that this view can change over time according to remaining featu=
+re requests.
+
+Regards,
+Markus
