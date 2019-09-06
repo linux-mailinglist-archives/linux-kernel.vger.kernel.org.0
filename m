@@ -2,285 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D60DABBD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:10:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD82DABBE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:11:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394709AbfIFPJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:09:45 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:48965 "EHLO
+        id S1733279AbfIFPKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:10:48 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:33453 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbfIFPJo (ORCPT
+        with ESMTP id S1728377AbfIFPKr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:09:44 -0400
+        Fri, 6 Sep 2019 11:10:47 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MIxBa-1hqFBB1WFm-00KR0F; Fri, 06 Sep 2019 17:09:31 +0200
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N7Qkv-1iEFdy0ONB-017jD5; Fri, 06 Sep 2019 17:10:31 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Valentin Vidic <vvidic@valentin-vidic.from.hr>,
-        Colin Ian King <colin.king@canonical.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] exfat: stop using 32-bit time_t
-Date:   Fri,  6 Sep 2019 17:09:05 +0200
-Message-Id: <20190906150917.1025250-2-arnd@arndb.de>
+To:     Bernard Metzler <bmt@zurich.ibm.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@mellanox.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] rdma/siw: fix NOMMU build
+Date:   Fri,  6 Sep 2019 17:10:10 +0200
+Message-Id: <20190906151028.1064531-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190906150917.1025250-1-arnd@arndb.de>
-References: <20190906150917.1025250-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:UIMrIG7mtL2D3EjfnDs7nzByw34qqSgASrD2j2WILhDOKSfQ0t3
- /43vTZJ0IVYmAdA4Y99oPOKLDsm+X6klu6XtGWpemjllvc3IEaAJNRnKsS0AJGFRpVa2EWJ
- Upblf01PURlRK7I2J/uYVP++Fz5+rdTnsh1hJ+XMw1H2ECnN8kuIHvNULaMcvpyaT0M3Xdv
- 66tsssxwcBzEBkbwVrDMQ==
+X-Provags-ID: V03:K1:svnOKkIwvMMN2TxIk68gqKt+i1qDuao/nvUUaSm/PJwqOnp+jxZ
+ FRL3NKODlVWYldlmMkjhkWkhBFWYySN3Lqy+N17P9/LUGuUZQqx43KD4zEyMw2Nr0WGHZVN
+ nTlusUYKmQfhofqMp7rDc23pa4DBTPRMmSGtLZzmCD3Zt9aWbpDk//Q9p7Ynm2VgJMVWq7k
+ 2xxfn4CAxM9aLzBIy91Kw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:g0SVBQh1K0k=:D/s+8TRAHcIpv7CTzMytoX
- +Wr/iT3PpbPL28nNgwctNOMvK+hs5KKI80ErECKnhJuMUXdD1CfC8NIKO3n8K5BRMbsa6B1GG
- Sd6fkJoZT5QbbeOo6QdcLMpykuK+FgeuSYLXyRYnLAdZ7/RJyi6bZcpJVTh8xDzSccy7Ju/fF
- ubTqFabPvo7ruIRh/GHedTKX/qMCx15QZQS8n9aPgWmoiexBXujWXqITaiOxcPARnnHuF4Ni9
- NJzGE6xMIqEQzmSzxBLgeohPp8rX3vxhK1yafo1/5ZB/AhilHU0L5jY6+Y6cJhob/1zja/I+C
- xXN31KFpjK9MW4/7VbNRcgNhkpRFYtNGHGE7FB9JbixY2+RyGnbYWe5W3skDEvz34aOk/CgG9
- UYXtxsDUtEplsTkR+yjoCR9RMYlEwXqzZmlQ2IldwlagY/UnQdlBKE8S4WPHzbL71ZFrsRbKU
- aA1xuzXLyjQP6EsDS1k/ABLmO/1Ggt6OBqVLykvEgCvGrajtWLf95A809MUBZ40iQSDTZb4Ph
- 3tptzTZPci+mpqgvQ500/quazMMb1ywN/LOHxL/psK5MGjCE/5ZybFpitznBEYfosVLobKA2/
- 8fHO+4WAmPRcRpNfZ1j9PPLgupszcqatHHq/5FyuGMZ/jmwKCZgl4oG2Gn+HUbiYpRK0EQFGP
- Y6cn2xTSoxNzRhkTa7icU69fXcTeahDe6g/dwGBH9oRnF8SNetZXwrVQaTYLUyEje+oitx1DR
- /SR4KUoAVAdm+qyfTO87a1P29bARdqw2wCTrR3UzU8XWU/qTWWQoxbvPYKhXg9VZfY54tK6X6
- jgzijJVWG+KPSyhrGZDiyc27vD/1FPB19tcOF1V1hDBF9ccFQU=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:YvGC+Z3bvOY=:BV6BpiMQShEh3d1hmzWknQ
+ IHO/49nosEcLepL0ERAotL3z4HUhFWqzzn2hwUkBO8qttq7As+E7x6fvQ2P6kiwjC71LteDJV
+ Ym6O8PuVMzTRV+He5JYY7OTws8Vdj/CgPUigLJ/F2qDtV9reQ3LHTpkvY6GKK+eOxHVuVjN6q
+ oys8Dz/HQR7JLvzoMgX7lrt9IMBNoFmbQqs346/3VfL7GGEuyPrbKu3UD7BkkoJzQ+/1zKKwU
+ 7NKjPDxPMocy9V2EyuE0RvKUCFSyvyC1t1av2TRwAnPb/03u8W1nWb6ldmuzI7p/PElczYMsb
+ 9PgXlVqq6ZWplUWOuTFld3q3g8pw8v9vC0YhOTQ6tV6vtnEE1V7dduTB6r1MWncL7M1pYC/jf
+ 4ZNCpLwPPDRHmkb88t3LiV96TSSWoqtIsKP4EpkGmfaaBkBaTWt7g+tRe2DbQPSYlsfqU7ARq
+ I6n3eyyN2euNZASADbgkdax180Vki0w48HyoEARNqeVaKP8DqLqDxllKET8wCMdhz9af89Co4
+ 002wVbkDT9eMCfBIo7+C6s+mw/fJ32CI9K9o8E3SeIDwQ6zpQY03XAKYTrurRpTHgDucNGdbx
+ fJozbT7doO533cGGqP0eZNHH7MraDBH1zn+lZFhRK9ItoTcRrYdzjZoX1io55PA7YqMDzo2aw
+ pjHfdMz/FFNOY9a4TM+V5+yVbIhQA+D+9PCkEd6ooPsG+YXJXJciEynZELSUt5K1hMZEgeo+z
+ QUUOWbPsQ3LaCxjRey1DOQDXtPcm/fzYLSPjgCAr2a8A24GmXLHOjO2N7jmJMFfVdJMJL5l0Q
+ 15KEpk93ekCEUIzD+zLf93uWD6M6o6i/cds3OZHbQsC73EwzBA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-time_t suffers from overflow problems and should not be used.
+On kernels without CONFIG_MMU, we get a link error for the siw
+driver:
 
-In exfat, it is currently used in two open-coded time64_to_tm()
-implementations. Changes those to use the existing function instead.
+drivers/infiniband/sw/siw/siw_mem.o: In function `siw_umem_get':
+siw_mem.c:(.text+0x4c8): undefined reference to `can_do_mlock'
 
+I don't know whether this driver is able to work at all without
+an MMU, but it's easy to avoid the link problem by adding another
+compile-time check.
+
+Fixes: 2251334dcac9 ("rdma/siw: application buffer management")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/staging/exfat/exfat_super.c | 164 +++++++---------------------
- 1 file changed, 38 insertions(+), 126 deletions(-)
+ drivers/infiniband/sw/siw/siw_mem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 37e78620723f..7fd56654498f 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -55,129 +55,65 @@ static int exfat_write_inode(struct inode *inode,
- static void exfat_write_super(struct super_block *sb);
+diff --git a/drivers/infiniband/sw/siw/siw_mem.c b/drivers/infiniband/sw/siw/siw_mem.c
+index e99983f07663..b3b614c07fdb 100644
+--- a/drivers/infiniband/sw/siw/siw_mem.c
++++ b/drivers/infiniband/sw/siw/siw_mem.c
+@@ -374,7 +374,7 @@ struct siw_umem *siw_umem_get(u64 start, u64 len, bool writable)
+ 	unsigned int foll_flags = FOLL_WRITE;
+ 	int num_pages, num_chunks, i, rv = 0;
  
- #define UNIX_SECS_1980    315532800L
--
--#if BITS_PER_LONG == 64
- #define UNIX_SECS_2108    4354819200L
--#endif
--
--/* days between 1.1.70 and 1.1.80 (2 leap days) */
--#define DAYS_DELTA_DECADE    (365 * 10 + 2)
--/* 120 (2100 - 1980) isn't leap year */
--#define NO_LEAP_YEAR_2100    (120)
--#define IS_LEAP_YEAR(y)    (!((y) & 0x3) && (y) != NO_LEAP_YEAR_2100)
--
--#define SECS_PER_MIN    (60)
--#define SECS_PER_HOUR   (60 * SECS_PER_MIN)
--#define SECS_PER_DAY    (24 * SECS_PER_HOUR)
--
--#define MAKE_LEAP_YEAR(leap_year, year)                         \
--	do {                                                    \
--		if (unlikely(year > NO_LEAP_YEAR_2100))         \
--			leap_year = ((year + 3) / 4) - 1;       \
--		else                                            \
--			leap_year = ((year + 3) / 4);           \
--	} while (0)
--
--/* Linear day numbers of the respective 1sts in non-leap years. */
--static time_t accum_days_in_year[] = {
--	/* Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec */
--	0,   0,  31,  59,  90, 120, 151, 181, 212, 243, 273, 304, 334, 0, 0, 0,
--};
+-	if (!can_do_mlock())
++	if (!IS_ENABLED(CONFIG_MMU) || !can_do_mlock())
+ 		return ERR_PTR(-EPERM);
  
- /* Convert a FAT time/date pair to a UNIX date (seconds since 1 1 70). */
- static void exfat_time_fat2unix(struct exfat_sb_info *sbi,
- 				struct timespec64 *ts, struct date_time_t *tp)
- {
--	time_t year = tp->Year;
--	time_t ld;
--
--	MAKE_LEAP_YEAR(ld, year);
--
--	if (IS_LEAP_YEAR(year) && (tp->Month) > 2)
--		ld++;
--
--	ts->tv_sec = tp->Second +
--		     tp->Minute * SECS_PER_MIN +
--		     tp->Hour * SECS_PER_HOUR +
--		     (ld + accum_days_in_year[(tp->Month)] +
--		      (tp->Day - 1)) * SECS_PER_DAY +
--		     (year * 365 + DAYS_DELTA_DECADE) * SECS_PER_DAY +
--		     sys_tz.tz_minuteswest * SECS_PER_MIN;
-+	ts->tv_sec = mktime64(tp->Year + 1980, tp->Month + 1, tp->Day,
-+			      tp->Hour, tp->Minute, tp->Second);
- 
--	ts->tv_nsec = 0;
-+	ts->tv_nsec = tp->MilliSecond * NSEC_PER_MSEC;
- }
- 
- /* Convert linear UNIX date to a FAT time/date pair. */
- static void exfat_time_unix2fat(struct exfat_sb_info *sbi,
- 				struct timespec64 *ts, struct date_time_t *tp)
- {
--	time_t second = ts->tv_sec;
--	time_t day, month, year;
--	time_t ld;
-+	time64_t second = ts->tv_sec;
-+	struct tm tm;
- 
--	second -= sys_tz.tz_minuteswest * SECS_PER_MIN;
-+	time64_to_tm(second, 0, &tm);
- 
--	/* Jan 1 GMT 00:00:00 1980. But what about another time zone? */
- 	if (second < UNIX_SECS_1980) {
--		tp->Second  = 0;
--		tp->Minute  = 0;
--		tp->Hour = 0;
--		tp->Day  = 1;
--		tp->Month  = 1;
--		tp->Year = 0;
-+		tp->MilliSecond = 0;
-+		tp->Second	= 0;
-+		tp->Minute	= 0;
-+		tp->Hour	= 0;
-+		tp->Day		= 1;
-+		tp->Month	= 1;
-+		tp->Year	= 0;
- 		return;
- 	}
--#if (BITS_PER_LONG == 64)
-+
- 	if (second >= UNIX_SECS_2108) {
--		tp->Second  = 59;
--		tp->Minute  = 59;
--		tp->Hour = 23;
--		tp->Day  = 31;
--		tp->Month  = 12;
--		tp->Year = 127;
-+		tp->MilliSecond = 999;
-+		tp->Second	= 59;
-+		tp->Minute	= 59;
-+		tp->Hour	= 23;
-+		tp->Day		= 31;
-+		tp->Month	= 12;
-+		tp->Year	= 127;
- 		return;
- 	}
--#endif
--	day = second / SECS_PER_DAY - DAYS_DELTA_DECADE;
--	year = day / 365;
--	MAKE_LEAP_YEAR(ld, year);
--	if (year * 365 + ld > day)
--		year--;
--
--	MAKE_LEAP_YEAR(ld, year);
--	day -= year * 365 + ld;
- 
--	if (IS_LEAP_YEAR(year) && day == accum_days_in_year[3]) {
--		month = 2;
--	} else {
--		if (IS_LEAP_YEAR(year) && day > accum_days_in_year[3])
--			day--;
--		for (month = 1; month < 12; month++) {
--			if (accum_days_in_year[month + 1] > day)
--				break;
--		}
--	}
--	day -= accum_days_in_year[month];
--
--	tp->Second  = second % SECS_PER_MIN;
--	tp->Minute  = (second / SECS_PER_MIN) % 60;
--	tp->Hour = (second / SECS_PER_HOUR) % 24;
--	tp->Day  = day + 1;
--	tp->Month  = month;
--	tp->Year = year;
-+	tp->MilliSecond = ts->tv_nsec / NSEC_PER_MSEC;
-+	tp->Second	= tm.tm_sec;
-+	tp->Minute	= tm.tm_min;
-+	tp->Hour	= tm.tm_hour;
-+	tp->Day		= tm.tm_mday;
-+	tp->Month	= tm.tm_mon + 1;
-+	tp->Year	= tm.tm_year + 1900 - 1980;
- }
- 
- struct timestamp_t *tm_current(struct timestamp_t *tp)
- {
--	struct timespec64 ts;
--	time_t second, day, leap_day, month, year;
--
--	ktime_get_real_ts64(&ts);
-+	time64_t second = ktime_get_real_seconds();
-+	struct tm tm;
- 
--	second = ts.tv_sec;
--	second -= sys_tz.tz_minuteswest * SECS_PER_MIN;
-+	time64_to_tm(second, 0, &tm);
- 
--	/* Jan 1 GMT 00:00:00 1980. But what about another time zone? */
- 	if (second < UNIX_SECS_1980) {
- 		tp->sec  = 0;
- 		tp->min  = 0;
-@@ -187,7 +123,7 @@ struct timestamp_t *tm_current(struct timestamp_t *tp)
- 		tp->year = 0;
- 		return tp;
- 	}
--#if BITS_PER_LONG == 64
-+
- 	if (second >= UNIX_SECS_2108) {
- 		tp->sec  = 59;
- 		tp->min  = 59;
-@@ -197,37 +133,13 @@ struct timestamp_t *tm_current(struct timestamp_t *tp)
- 		tp->year = 127;
- 		return tp;
- 	}
--#endif
--
--	day = second / SECS_PER_DAY - DAYS_DELTA_DECADE;
--	year = day / 365;
--
--	MAKE_LEAP_YEAR(leap_day, year);
--	if (year * 365 + leap_day > day)
--		year--;
- 
--	MAKE_LEAP_YEAR(leap_day, year);
--
--	day -= year * 365 + leap_day;
--
--	if (IS_LEAP_YEAR(year) && day == accum_days_in_year[3]) {
--		month = 2;
--	} else {
--		if (IS_LEAP_YEAR(year) && day > accum_days_in_year[3])
--			day--;
--		for (month = 1; month < 12; month++) {
--			if (accum_days_in_year[month + 1] > day)
--				break;
--		}
--	}
--	day -= accum_days_in_year[month];
--
--	tp->sec  = second % SECS_PER_MIN;
--	tp->min  = (second / SECS_PER_MIN) % 60;
--	tp->hour = (second / SECS_PER_HOUR) % 24;
--	tp->day  = day + 1;
--	tp->mon  = month;
--	tp->year = year;
-+	tp->sec  = tm.tm_sec;
-+	tp->min  = tm.tm_min;
-+	tp->hour = tm.tm_hour;
-+	tp->day  = tm.tm_mday;
-+	tp->mon  = tm.tm_mon + 1;
-+	tp->year = tm.tm_year + 1900 - 1980;
- 
- 	return tp;
- }
+ 	if (!len)
 -- 
 2.20.0
 
