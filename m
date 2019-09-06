@@ -2,104 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A607CAC009
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AF1DAC00F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:02:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405217AbfIFTAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 15:00:44 -0400
-Received: from mga11.intel.com ([192.55.52.93]:19366 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405197AbfIFTAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 15:00:44 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2019 12:00:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,474,1559545200"; 
-   d="scan'208";a="384313381"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Sep 2019 12:00:41 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i6JTM-0004KJ-BX; Fri, 06 Sep 2019 22:00:40 +0300
-Date:   Fri, 6 Sep 2019 22:00:40 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Jean Delvare <jdelvare@suse.de>, kexec@lists.infradead.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        matt@codeblueprint.co.uk, ard.biesheuvel@linaro.org
-Subject: Re: [PATCH v1 2/2] firmware: dmi_scan: Pass dmi_entry_point to
- kexec'ed kernel
-Message-ID: <20190906190040.GA16211@smile.fi.intel.com>
-References: <20161202195416.58953-1-andriy.shevchenko@linux.intel.com>
- <20161202195416.58953-3-andriy.shevchenko@linux.intel.com>
- <20161215122856.7d24b7a8@endymion>
- <20161216023213.GA4505@dhcp-128-65.nay.redhat.com>
- <1481890738.9552.70.camel@linux.intel.com>
- <20161216143330.69e9c8ee@endymion>
- <20161217105721.GB6922@dhcp-128-65.nay.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20161217105721.GB6922@dhcp-128-65.nay.redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2405322AbfIFTCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 15:02:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57782 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731568AbfIFTCH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 15:02:07 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 711C36115D; Fri,  6 Sep 2019 19:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567796526;
+        bh=fHlSdGoTTdUuPm+ZMeSUpg6AMfOrhFJdRH0w4GFu9Gc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=L3OOwEaZgKQRgFZCzGd74o4Yub9X9Oy+XviqQOq+p4nQRbc5fFpx7fEXAy+6C+z1V
+         E3VVV6gS+q8y3EM6ZvOiaAprr4+hEk4RkD/4w6x72mGr3Lvu65MT3PlqD4JnodIQVZ
+         kYmlEdSC0tTonETyuQuGINM6dmnyqQFQOMeMHK1U=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from tsoni-linux1.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tsoni@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1A7D8602DC;
+        Fri,  6 Sep 2019 19:02:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567796525;
+        bh=fHlSdGoTTdUuPm+ZMeSUpg6AMfOrhFJdRH0w4GFu9Gc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KtfJ+x+ZRwWOIbRQpROvYVrVDWjYHV43rHrna8mA54tOkAthogDyPba8/Bw9PrH0z
+         rS8r32ovlsV14JCAX9YJLJp4AozEJzccyNaJhwPWJKZbxo6Fe1Cf2A02JqGTnS8hHd
+         6eZH3/jdheyCJyA54vktSlOOwl+4p7bMMwhJhjiI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A7D8602DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tsoni@codeaurora.org
+From:   Trilok Soni <tsoni@codeaurora.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        corbet@lwn.net, tyhicks@canonical.com, jkosina@suse.cz,
+        konrad.wilk@oracle.com, labbott@redhat.com, tglx@linutronix.de,
+        tsoni@quicinc.com, Trilok Soni <tsoni@codeaurora.org>
+Subject: [PATCH] Documentation/process: Add Qualcomm process ambassador for hardware security issues
+Date:   Fri,  6 Sep 2019 12:01:57 -0700
+Message-Id: <1567796517-8964-1-git-send-email-tsoni@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 17, 2016 at 06:57:21PM +0800, Dave Young wrote:
-> On 12/16/16 at 02:33pm, Jean Delvare wrote:
-> > On Fri, 16 Dec 2016 14:18:58 +0200, Andy Shevchenko wrote:
-> > > On Fri, 2016-12-16 at 10:32 +0800, Dave Young wrote:
-> > > > On 12/15/16 at 12:28pm, Jean Delvare wrote:
-> > > > > I am no kexec expert but this confuses me. Shouldn't the second
-> > > > > kernel have access to the EFI systab as the first kernel does? It
-> > > > > includes many more pointers than just ACPI and DMI tables, and it
-> > > > > would seem inconvenient to have to pass all these addresses
-> > > > > individually explicitly.
-> > > > 
-> > > > Yes, in modern linux kernel, kexec has the support for EFI, I think it
-> > > > should work naturally at least in x86_64.
-> > > 
-> > > Thanks for this good news!
-> > > 
-> > > Unfortunately Intel Galileo is 32-bit platform.
-> > 
-> > If it was done for X86_64 then maybe it can be generalized to X86?
-> 
-> For X86_64, we have a new way for efi runtime memmory mapping, in i386
-> code it still use old ioremap way. It is impossible to use same way as
-> the X86_64 since the virtual address space is limited.
-> 
-> But maybe for 32bit, kexec kernel can run in physical mode, but I'm not
-> sure, I would suggest Andy to do a test first with efi=noruntime for
-> kexec 2nd kernel.
+Add Trilok Soni as process ambassador for hardware security issues
+from Qualcomm.
 
-Sorry for a delay.
-Eventually I found time to check this.
+Signed-off-by: Trilok Soni <tsoni@codeaurora.org>
+---
+ Documentation/process/embargoed-hardware-issues.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Unfortunately the efi=noruntime didn't help:
-
-# uname -a
-Linux buildroot 5.3.0-rc7+ #17 Thu Sep 5 16:08:22 EEST 2019 i586 GNU/Linux
-# dmidecode
-# dmidecode 4.2
-Scanning /dev/mem for entry point.
-# No SMBIOS nor DMI entry point found, sorry.
-#
-# cat /proc/cmdline
-... ignore_loglevel efi=noruntime earlycon=efifb acpi_rsdp=0xf01e014
-
-So, I am all ears to anything else to try.
-
+diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
+index d37cbc5..0416751 100644
+--- a/Documentation/process/embargoed-hardware-issues.rst
++++ b/Documentation/process/embargoed-hardware-issues.rst
+@@ -217,7 +217,7 @@ an involved disclosed party. The current ambassadors list:
+   AMD
+   IBM
+   Intel
+-  Qualcomm
++  Qualcomm	Trilok Soni <tsoni@codeaurora.org>
+ 
+   Microsoft
+   VMware
 -- 
-With Best Regards,
-Andy Shevchenko
-
+1.9.1
 
