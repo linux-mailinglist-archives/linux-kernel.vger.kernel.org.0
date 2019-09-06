@@ -2,131 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB2AABCD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:45:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB2FABCE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405822AbfIFPpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:45:14 -0400
-Received: from mail-eopbgr820093.outbound.protection.outlook.com ([40.107.82.93]:13088
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2392814AbfIFPpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:45:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IkNC+ner05qpQg22/GgjdptqF3fZJ9Eu/ANkD3N9bmCkIQv2KSjb0rAiUPelcfLWBMply+xLII3JVeTZDXHJfHYGa6AcQRx1RCK5P0IlH3yzwJKzC0KhjfMFTy+7zrHJTTUgVhN0C4PgrJqRhJWTWa/ocGkuv5t1UZA8ebq/GxVdFhQwOoN5AVC2urak0ReEwSj2LB4Ux3IEVr7pAjNX7dixqXc9A+cvoyMSW7FtyTBnnXMgrDLjrdFZWegZJ04X5k/Dpg9Bix/Nyuu8KhtBuLypH4F2bQHhRSey+TW9rMbbqMFi4EySkmIogGKgr6OFsz0hhd4Fsh3ZGgPK53G87g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l9mSFKhiEWfZ5+OE/Mn+M5DQMe57kqyu4N0lRW9mnFs=;
- b=PvNwEaCorrP5mIqCy+6s3n7lecdOkaazIjoo/7Sy1P9X9gCKoup4oKa5vOxvW2Be6LlHMgdARoQlw2FE2muca1hQJ3tsPDVCVAbOc2iJz+soxlPFelfVOI1wklDbveNoQF+dZnM20HbLdPZmDdyeKWftkyireE4JnbkgoxpTGuFx0dKHt697dPCFRIi7ETJU//0SqxpYjrCY+b/I3vkJUAi0sqdDZnqjU+S9Bp32PsKM4EsdbDwYhKo/+iQo6j7AAx1y4zqw3ubwZwE15YkY7YAw4u/eeHEmgAwmbBZhl7oosIc7K1vEAWAcqCYRSBM6YBaTa/AUoQcZZENtGjlLjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l9mSFKhiEWfZ5+OE/Mn+M5DQMe57kqyu4N0lRW9mnFs=;
- b=NIt+eG7L900FijgZ0g/t0CZZByOvR+RKg1JsDB4b9Pqfj4ycRG5UkvCWFbASTikLj8QbMo1KDg3A/ef3kyneqxpI5JD927hBoWgIRmD7688IWZ3CIf0EZuBIr+Esk8iNG08l1Eqve8M7etg8EQqS8Gz6pzkcH/u4wDJ/fog0sSA=
-Received: from DM5PR21MB0137.namprd21.prod.outlook.com (10.173.173.12) by
- DM5PR21MB0777.namprd21.prod.outlook.com (10.173.172.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2263.4; Fri, 6 Sep 2019 15:45:09 +0000
-Received: from DM5PR21MB0137.namprd21.prod.outlook.com
- ([fe80::c437:6219:efcc:fb8a]) by DM5PR21MB0137.namprd21.prod.outlook.com
- ([fe80::c437:6219:efcc:fb8a%7]) with mapi id 15.20.2263.004; Fri, 6 Sep 2019
- 15:45:09 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     Long Li <longli@microsoft.com>,
-        "longli@linuxonhyperv.com" <longli@linuxonhyperv.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [Patch v3] storvsc: setup 1:1 mapping between hardware queue and
- CPU queue
-Thread-Topic: [Patch v3] storvsc: setup 1:1 mapping between hardware queue and
- CPU queue
-Thread-Index: AQHVZDzovSuzxYYkAEeci8JFnGV5zKcdtlHwgABJPwCAAMvU8A==
-Date:   Fri, 6 Sep 2019 15:45:09 +0000
-Message-ID: <DM5PR21MB0137ABFD8778BC94EAFF835ED7BA0@DM5PR21MB0137.namprd21.prod.outlook.com>
-References: <1567724073-30192-1-git-send-email-longli@linuxonhyperv.com>
- <DM5PR21MB013716CEE8942CB769E236F2D7BB0@DM5PR21MB0137.namprd21.prod.outlook.com>
- <CY4PR21MB074110983075A3BC91D73AE4CEBA0@CY4PR21MB0741.namprd21.prod.outlook.com>
-In-Reply-To: <CY4PR21MB074110983075A3BC91D73AE4CEBA0@CY4PR21MB0741.namprd21.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-09-05T23:18:53.2998445Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=8c8ad67e-2337-47ff-9485-b53edfd6eb3e;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 981ec6ad-ebcc-48b6-ac6a-08d732e13285
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM5PR21MB0777;
-x-ms-traffictypediagnostic: DM5PR21MB0777:|DM5PR21MB0777:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM5PR21MB0777B282E1D6294FA3967E2BD7BA0@DM5PR21MB0777.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0152EBA40F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(136003)(39860400002)(376002)(346002)(366004)(199004)(189003)(4744005)(14454004)(2501003)(2201001)(3846002)(6116002)(2906002)(5660300002)(10290500003)(10090500001)(6436002)(229853002)(186003)(446003)(99286004)(305945005)(486006)(74316002)(7736002)(476003)(11346002)(26005)(8990500004)(25786009)(316002)(66446008)(66556008)(76116006)(64756008)(66476007)(22452003)(66066001)(81166006)(81156014)(8676002)(66946007)(6246003)(33656002)(9686003)(55016002)(52536014)(110136005)(102836004)(76176011)(6506007)(7696005)(86362001)(256004)(71190400001)(71200400001)(478600001)(8936002)(53936002)(1511001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0777;H:DM5PR21MB0137.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: CSm/NAfg21rsImD3DoJH3UylwRHK7sMGIMXaGyGtHLrK8RD97kHiCrS1w2p/RQSTax5mT/RqrP1lZ45GcmclIdiiap6Ezhxu3vvTvpC7Yk1qWpQFPtGeZZ9w0/H7ckzIrvgDwSuQV2er/xKKAefPeRaCLdWXoWr6nKgx91kk6JULlNuUnvoE8u2qTflOxKcbJlPDevD4JyGMfZhY9sE19QFxtirkcPob2pT/ERhYatD0RaBcp52rgs/TkrOA3w8i+qEme6HyJy6/cQV0wQzyPwyF5XZDR2IC9yVKNw3ZdQEoRgWT2vlCAaG9K/v30NxpLG6jVmZnJ5dZfzTnD3v6LSfriRaLXqj0129wiMJjBCC9+FCKXT+FXZFzVQdmmImVYf2KAgTHONcjJb9qfe/tvkep23qRSyxmXAakcJE+9rA=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2405842AbfIFPrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:47:10 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:41265 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394889AbfIFPrK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 11:47:10 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N1M4p-1iH0lp1SZ9-012o5x; Fri, 06 Sep 2019 17:46:14 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [RFC] Revert "iio: hid-sensor-attributes: Convert to use int_pow()"
+Date:   Fri,  6 Sep 2019 17:45:55 +0200
+Message-Id: <20190906154609.2421410-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 981ec6ad-ebcc-48b6-ac6a-08d732e13285
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2019 15:45:09.1076
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: y6rmFNm9MaEyySNbSHSBmTYagccpFULvLjv2jRYdTMW5iBvipSsCMBHDoVWR12I/RiXC1Wal0onMG47Owge1y79J1YjKmXGOpGEP05JfDmg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0777
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:RxAflYvFSgC4AQPKdZewqxKzyuLVpknAeQFNbvbpm4IWXhrJKE5
+ ngA/qm5vcdBarsSA3ksUO+wW2JDquIuxHZeBCggIIdMe9ausS26Mr+sls8Fv2q5OKnQfy7t
+ 4RORQsBJIifBebjRCcr2jZUzxAt0Y/2sxEfm+xh8c+8nVyP2dud9U97619dGjF/P3I6kJFg
+ EVW1oWZ0e5XaSwQuiR32w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9rRET29UyqE=:HHigNeMrYT6DOSZg/T67ZP
+ zmPQGlUUEekOSFfotQvcxTShBrC1j6gqX/oZrkGM0528Xk+bVpy3VQ9aEXo4JHpPpiSCNmiwB
+ 6b3wyFiGX/spxJvaXlzCQgEq72Oo7LiahyBgz/EilX1dptyMi9X/7LV23aBikB3l/kM8gwsne
+ XzzNHWNsNcSXXBfWlsahtcf3xMXk/GPJ7bj8pxqbb12nlXnUID/PlLSdAgCc7S64Pab/8ih4G
+ phIEZs4Z1xLJ8P+8QiUOp9iF9s5UpVBtbow7ge07+cmkdQTsWevPLtIkifO3OMZHRXAuNFoav
+ ZJI4Thqh5TOleh22pJ8LxjgDB1jvBmR3Am2jjZmGGPEMsWmDIY2M32Iikp1IxnjDsryqB0UIM
+ b+AxbPyregLyhPMJam/oYbogTOaFbThCN7DaM2mlkZ81QKbGOXy8PEDF+HbyNvhNccZ5zCSPi
+ z53oYZOS8dAjG71gccCv4zUVVdtAQgB1FAEvYwhS6iI+0ghnB/fLMQ3Mwiv4fjmxpeG6+X2tO
+ x82N5ByY+0zf2v3pZVKLDLb5Tu9o7ghsYpycY6EVGbqHFDRlHYlj1poScvmHSL+nKYFT14Iet
+ 4EURBt2SCAUktCVBDi94UwRvm9geTZWddsQCxXojRhhl0G/z1tAYMaURjpmKsjoeG1r1v6eM5
+ NrWBH8UFqy/d2K6uRn4ciC5CQqVq/pMdA49IpfpvXj22VW5MHmYQFv5E/QUiDS73FX27jTyQj
+ +gxHhxuyed83f/OG/dYY/1CJfGAw0Vz7g7OiXpvB2ua7fdxP9z84VnusVd1MbnzSxMjZr2/Ay
+ hcHh2MyMN/35zwwfzBA03hfg345QABAhe8ISXo49fD4pKiEV20=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com> Sent: Thursday, September 5, 2019 8:35=
- PM
-> >>
-> >> Changes:
-> >> v2: rely on default upper layer function to map queues. (suggested by
-> >> Ming Lei
-> >> <tom.leiming@gmail.com>)
-> >> v3: use num_present_cpus() instead of num_online_cpus(). Hyper-v
-> >> doesn't support hot-add CPUs. (suggested by Michael Kelley
-> >> <mikelley@microsoft.com>)
-> >
-> >I've mostly seen the "Changes:" section placed below the "---" so that i=
-t
-> >doesn't clutter up the commit log.  But maybe there's not a strong
-> >requirement one way or the other as I didn't find anything called out in=
- the
-> >"Documentation/process"
-> >directory.
->=20
-> Should I resubmit the patch (but keep it v3)?
->=20
+The change to use the generic int_pow instead of the private version
+caused a number of build issues on 32-bit architectures and makes
+it generally less efficient because of the 64-bit math:
 
-I would say do a quick resubmit as v4 so there's no confusion.
+drivers/iio/common/hid-sensors/hid-sensor-attributes.o: In function `hid_sensor_write_samp_freq_value':
+hid-sensor-attributes.c:(.text+0x29c): undefined reference to `__aeabi_uldivmod'
+drivers/iio/common/hid-sensors/hid-sensor-attributes.o: In function `hid_sensor_read_raw_hyst_value':
+hid-sensor-attributes.c:(.text+0x420): undefined reference to `__aeabi_uldivmod'
+hid-sensor-attributes.c:(.text+0x448): undefined reference to `__aeabi_uldivmod'
+drivers/iio/common/hid-sensors/hid-sensor-attributes.o: In function `hid_sensor_write_raw_hyst_value':
+hid-sensor-attributes.c:(.text+0x570): undefined reference to `__aeabi_uldivmod'
 
-Michael
+There is probably a nicer solution to this, but for the moment,
+the revert makes it compile again.
+
+Fixes: 473d12f7638c ("iio: hid-sensor-attributes: Convert to use int_pow()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ .../hid-sensors/hid-sensor-attributes.c       | 53 +++++++++++--------
+ 1 file changed, 31 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
+index b9dd19b34267..a8a3fe428d8d 100644
+--- a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
++++ b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
+@@ -8,7 +8,6 @@
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+-#include <linux/kernel.h>
+ #include <linux/slab.h>
+ #include <linux/hid-sensor-hub.h>
+ #include <linux/iio/iio.h>
+@@ -69,6 +68,16 @@ static struct {
+ 	{HID_USAGE_SENSOR_HUMIDITY, 0, 1000, 0},
+ };
+ 
++static int pow_10(unsigned power)
++{
++	int i;
++	int ret = 1;
++	for (i = 0; i < power; ++i)
++		ret = ret * 10;
++
++	return ret;
++}
++
+ static void simple_div(int dividend, int divisor, int *whole,
+ 				int *micro_frac)
+ {
+@@ -87,14 +96,14 @@ static void simple_div(int dividend, int divisor, int *whole,
+ 			rem *= 10;
+ 			exp++;
+ 		}
+-		*micro_frac = (rem / divisor) * int_pow(10, 6 - exp);
++		*micro_frac = (rem / divisor) * pow_10(6-exp);
+ 	}
+ }
+ 
+ static void split_micro_fraction(unsigned int no, int exp, int *val1, int *val2)
+ {
+-	*val1 = no / int_pow(10, exp);
+-	*val2 = no % int_pow(10, exp) * int_pow(10, 6 - exp);
++	*val1 = no/pow_10(exp);
++	*val2 = no%pow_10(exp) * pow_10(6-exp);
+ }
+ 
+ /*
+@@ -116,7 +125,7 @@ static void convert_from_vtf_format(u32 value, int size, int exp,
+ 	}
+ 	exp = hid_sensor_convert_exponent(exp);
+ 	if (exp >= 0) {
+-		*val1 = sign * value * int_pow(10, exp);
++		*val1 = sign * value * pow_10(exp);
+ 		*val2 = 0;
+ 	} else {
+ 		split_micro_fraction(value, -exp, val1, val2);
+@@ -136,10 +145,10 @@ static u32 convert_to_vtf_format(int size, int exp, int val1, int val2)
+ 		sign = -1;
+ 	exp = hid_sensor_convert_exponent(exp);
+ 	if (exp < 0) {
+-		value = abs(val1) * int_pow(10, -exp);
+-		value += abs(val2) / int_pow(10, 6 + exp);
++		value = abs(val1) * pow_10(-exp);
++		value += abs(val2) / pow_10(6+exp);
+ 	} else
+-		value = abs(val1) / int_pow(10, exp);
++		value = abs(val1) / pow_10(exp);
+ 	if (sign < 0)
+ 		value =  ((1LL << (size * 8)) - value);
+ 
+@@ -202,12 +211,12 @@ int hid_sensor_write_samp_freq_value(struct hid_sensor_common *st,
+ 	if (val1 < 0 || val2 < 0)
+ 		return -EINVAL;
+ 
+-	value = val1 * int_pow(10, 6) + val2;
++	value = val1 * pow_10(6) + val2;
+ 	if (value) {
+ 		if (st->poll.units == HID_USAGE_SENSOR_UNITS_MILLISECOND)
+-			value = int_pow(10, 9) / value;
++			value = pow_10(9)/value;
+ 		else if (st->poll.units == HID_USAGE_SENSOR_UNITS_SECOND)
+-			value = int_pow(10, 6) / value;
++			value = pow_10(6)/value;
+ 		else
+ 			value = 0;
+ 	}
+@@ -302,34 +311,34 @@ static void adjust_exponent_nano(int *val0, int *val1, int scale0,
+ 	int rem;
+ 
+ 	if (exp > 0) {
+-		*val0 = scale0 * int_pow(10, exp);
++		*val0 = scale0 * pow_10(exp);
+ 		res = 0;
+ 		if (exp > 9) {
+ 			*val1 = 0;
+ 			return;
+ 		}
+ 		for (i = 0; i < exp; ++i) {
+-			x = scale1 / int_pow(10, 8 - i);
+-			res += int_pow(10, exp - 1 - i) * x;
+-			scale1 = scale1 % int_pow(10, 8 - i);
++			x = scale1 / pow_10(8 - i);
++			res += (pow_10(exp - 1 - i) * x);
++			scale1 = scale1 % pow_10(8 - i);
+ 		}
+ 		*val0 += res;
+-		*val1 = scale1 * int_pow(10, exp);
++		*val1 = scale1 * pow_10(exp);
+ 	} else if (exp < 0) {
+ 		exp = abs(exp);
+ 		if (exp > 9) {
+ 			*val0 = *val1 = 0;
+ 			return;
+ 		}
+-		*val0 = scale0 / int_pow(10, exp);
+-		rem = scale0 % int_pow(10, exp);
++		*val0 = scale0 / pow_10(exp);
++		rem = scale0 % pow_10(exp);
+ 		res = 0;
+ 		for (i = 0; i < (9 - exp); ++i) {
+-			x = scale1 / int_pow(10, 8 - i);
+-			res += int_pow(10, 8 - exp - i) * x;
+-			scale1 = scale1 % int_pow(10, 8 - i);
++			x = scale1 / pow_10(8 - i);
++			res += (pow_10(8 - exp - i) * x);
++			scale1 = scale1 % pow_10(8 - i);
+ 		}
+-		*val1 = rem * int_pow(10, 9 - exp) + res;
++		*val1 = rem * pow_10(9 - exp) + res;
+ 	} else {
+ 		*val0 = scale0;
+ 		*val1 = scale1;
+-- 
+2.20.0
+
