@@ -2,54 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D8E5ABB4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2102ABB51
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394576AbfIFOr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:47:56 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:32950 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394559AbfIFOrz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:47:55 -0400
-Received: from localhost (unknown [88.214.184.128])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D24F115355C4A;
-        Fri,  6 Sep 2019 07:47:53 -0700 (PDT)
-Date:   Fri, 06 Sep 2019 16:47:52 +0200 (CEST)
-Message-Id: <20190906.164752.2021789297971211632.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lan743x: remove redundant assignment to variable
- rx_process_result
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190905140135.26951-1-colin.king@canonical.com>
-References: <20190905140135.26951-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 06 Sep 2019 07:47:55 -0700 (PDT)
+        id S2394585AbfIFOsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:48:38 -0400
+Received: from fieldses.org ([173.255.197.46]:57420 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730799AbfIFOsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:48:38 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id C0C951C9D; Fri,  6 Sep 2019 10:48:37 -0400 (EDT)
+Date:   Fri, 6 Sep 2019 10:48:37 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Jason L Tibbitts III <tibbs@math.uh.edu>
+Cc:     Wolfgang Walter <linux@stwm.de>, linux-nfs@vger.kernel.org,
+        km@cm4all.com, linux-kernel@vger.kernel.org
+Subject: Re: Regression in 5.1.20: Reading long directory fails
+Message-ID: <20190906144837.GD17204@fieldses.org>
+References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
+ <4418877.15LTP4gqqJ@stwm.de>
+ <ufapnkhqjwm.fsf@epithumia.math.uh.edu>
+ <4198657.JbNDGbLXiX@h2o.as.studentenwerk.mhn.de>
+ <ufad0ggrfrk.fsf@epithumia.math.uh.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ufad0ggrfrk.fsf@epithumia.math.uh.edu>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Thu,  5 Sep 2019 15:01:35 +0100
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Tue, Sep 03, 2019 at 08:50:39PM -0500, Jason L Tibbitts III wrote:
+> I asked the XFS folks who mentioned that the issues with 64 bit inodes
+> are old, constrained to larger filesystems than what I'm using, not an
+> issue with nfsv4, and not present on anything but 32bit clients with old
+> userspace.
 > 
-> The variable rx_process_result is being initialized with a value that
-> is never read and is being re-assigned immediately afterwards. The
-> assignment is redundant, so replace it with the return from function
-> lan743x_rx_process_packet.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> In any case, I have been experimenting a bit and somehow the issue seems
+> to be related to exporting with sec=krb5i:krb5p or sec=krb5i.  If I
+> export with just sec=krb5p, things magically begin to work.
 
-Applied to net-next, thanks.
+That's interesting!
+
+We've occasionally had bugs that are rare corner cases in the xdr
+code--e.g. if the encoded directory data hits some limit at the same
+time that we reach the end of a page, and the end of the page falls at
+some offset with respect to the entry we're encoding.
+
+Something like switching between krb5i and krb5p could affect the
+offsets in a way that affected the likelihood of hitting such a case.
+That's one guess, anyway.
+
+> Anyway, I hope this helps to pinpoint the problem.  I now have a really
+> easy way to reproduce this without having to kick people off of the
+> server, and if the successes aren't just some kind of false positives
+> then I guess I also have a workaround.  I'm still at a loss as to why a
+> revert of the readdir changes makes any difference at all here.
+
+Those readdir changes were client-side, right?  Based on that I'd been
+assuming a client bug, but maybe it'd be worth getting a full packet
+capture of the readdir reply to make sure it's legit.  Looking at it in
+wireshark should tell us quickly whether it's corrupted somehow.
+
+--b.
