@@ -2,104 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06816ABCDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F370AABCE4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405830AbfIFPqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:46:20 -0400
-Received: from out.bound.email ([141.193.244.10]:46721 "EHLO out.bound.email"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392834AbfIFPqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:46:20 -0400
-Received: from mail.sventech.com (localhost [127.0.0.1])
-        by out.bound.email (Postfix) with ESMTP id 233EB8A30DF;
-        Fri,  6 Sep 2019 08:46:19 -0700 (PDT)
-Received: by mail.sventech.com (Postfix, from userid 1000)
-        id 0841C16001D9; Fri,  6 Sep 2019 08:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=erdfelt.com;
-        s=default; t=1567784779;
-        bh=eBlOVLfggcwOPxI4VN9G8ioY2gar25PrXIsBZRxpLxs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i0IQ2nfNoO1DT3lznsrNlpQJeuJ2LVZtgy0gHfA31FcEkTne/nOalwG6ojr0OeZ1I
-         978u89+rUiJVkYZmluwK/xtbBsRoFf4zednw75DIvvskcUIWcA9L2XDv5vDGCG9Ugo
-         ybW9yY7u7wBoUOXMyeRRn66IYENpZkIhxnf7F6qs=
-Date:   Fri, 6 Sep 2019 08:46:18 -0700
-From:   Johannes Erdfelt <johannes@erdfelt.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jon Grimm <Jon.Grimm@amd.com>, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, patrick.colp@oracle.com,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        x86-ml <x86@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/microcode: Add an option to reload microcode even if
- revision is unchanged
-Message-ID: <20190906154618.GB29569@sventech.com>
-References: <41cee473-321c-2758-032a-ccf0f01359dc@oracle.com>
- <D8A3D2BD-1FD4-4183-8663-3EF02A6099F3@alien8.de>
- <20190905002132.GA26568@otc-nc-03>
- <20190905072029.GB19246@zn.tnic>
- <20190905194044.GA3663@otc-nc-03>
- <alpine.DEB.2.21.1909052316130.1902@nanos.tec.linutronix.de>
- <20190905222706.GA4422@otc-nc-03>
- <alpine.DEB.2.21.1909061431330.1902@nanos.tec.linutronix.de>
- <20190906144039.GA29569@sventech.com>
- <20190906151617.GE19008@zn.tnic>
+        id S2405856AbfIFPrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:47:22 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:38231 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405844AbfIFPrV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 11:47:21 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MiaLn-1ic0673Twl-00fnCZ; Fri, 06 Sep 2019 17:47:08 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Enrico Weigelt <info@metux.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: don't export unused return_address()
+Date:   Fri,  6 Sep 2019 17:46:55 +0200
+Message-Id: <20190906154706.2449696-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906151617.GE19008@zn.tnic>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:KxXBdm+ZdB2njEOuHI0sI2x2LTlMTwa/9hKBgBDFyvjWMqurBar
+ 1eeQnRx0c2Ox7iIBg3bLDT3e+A5wv8//Hw8vhKUVdHCQTetfQSdrjrsU4gUPPAVUYMq8iZT
+ KWgNizZG8M5JX8N3+1xp6Vcd4jLYGRQ83Jo27tXlyvYsVLbkW7W6om1aPaGGEKSRE9rkBZj
+ QoIsM81fh05SMxn2RkQuw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vdoyMlLfLcU=:2DVor/2vufbs+2xiNNaRoY
+ fWU05+ahmmEOb9gMmRI4XWFn9VIEylv0+DmficJNI3Krbstw87f3wOIrlEFkWOCdWdG/YRvnS
+ EfZPjYBJQAsFo5UkRNXPQDFrwKcCOcZGJI56UApZdhCAysBgKjHEHx6mFAagdxE4/0MprqVsr
+ rKFOPTuBJO2JtHEXCAHRQg8X2Ihiy7pvRV9AvOgm3OhbCzC87ZVsqJdqCVaQdxheA5hBRvSA6
+ EGZuy18hFF2+RyjHnFKf0Gj65cAdfGMbkh9S83qBMI26tBaEV0UmjELm3sgXfv0t2D7aiA0xH
+ HjwNLRQATNkk+YjodkxGlK4Jez+3kgbFtFHXLEkl4u0+zZFouJJ7K8gBrvaNXTVQUeYes5nQs
+ vxi6Pn5vXCsFjGbL/Syj9H+9jI548oYiMo4IGvb7TwV5CjKQnJ473bKpWcXxEGhfm5I1wdOEq
+ fe+G5UgO+xo7nfXQymwg+GugThSksgQKEp6nScmJq7dwoGb2yYASvI3IxRPLu3NMshjgpFan8
+ 6RqnYGncFrUL0qfG/sdsAbuCnt2h+XwfSHIrotMJGF7XBex2CmX9x9oXFQH832A8U7RQc30sY
+ DiWK9WZn2kQsl6Vw8NTd9bADyW6qob4mDnQtJkrHSbMO8qxY4TPYCgLk9TA1fHggPxk6C5FJR
+ 1blQiqgk244xS49SOFkqL94iruf3zffktlDkzjDwKq5jP3KBQlf8ZvXDLt5BXO2gQKqhdaM0n
+ zNCKzIdwQvS3SDWlGgbtA9XQuvo7yXs2lXMToBNNodcqmUfc0uQfgfCZ5EapqjXq8YVFCWxiV
+ +JNrPBbpP6nuUpksqgzACYDRugBpQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019, Borislav Petkov <bp@alien8.de> wrote:
-> On Fri, Sep 06, 2019 at 07:40:39AM -0700, Johannes Erdfelt wrote:
-> > I ask because we have successfully used late microcode loading on tens
-> > of thousands of hosts.
-> 
-> How do you deal with all the mitigations microcode loaded late?
+Without the frame pointer enabled, return_address() is an inline
+function and does not need to be exported, as shown by this warning:
 
-We developed livepatches to add the necessary support. I understand we
-aren't the typical Linux user. We do custom development and validation
-to support our use case.
+WARNING: "return_address" [vmlinux] is a static EXPORT_SYMBOL_GPL
 
-That said, we very much rely on late microcode loading and it has helped
-us and our customers significantly.
+Move the EXPORT_SYMBOL_GPL() into the #ifdef as well.
 
-> > I'm a bit worried to see that there is a push to remove a feature that
-> > we currently rely on.
-> 
-> I'd love to remove it. And the fact that people rely on it more instead
-> of fixing their infrastructure to reboot machines and do early microcode
-> updates is making it worse. Microcode update should be batched with
-> kernel updates and that's it. They happen normally once-twice per year -
-> except the last two years but the last two years are not normal anyway
-> - and done. No need to do some crazy CPUID features reloading dances in
-> the kernel and making sure cores will see the updated paths and so on.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/kernel/return_address.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-It's really easy to say "fix your infrastructure" when you're not
-running that infrastructure.
-
-Reboots suck. Customers hate it. Operations hates it. When you get into
-the number of hosts we have, you run into all kinds of weird failure
-scenarios. (What do you mean that the NIC that was working just fine
-before the reboot is no longer seen on the PCI bus?)
-
-The more reboots we can avoid, the better it is for us and our
-customers.
-
-I understand that it could be unsafe to late load some rare microcode
-updates (theoretical or not). However, that is certainly the exception.
-We have done this multiple times on our fleet and we plan to continue
-doing so in the future.
-
-There just aren't any good alternatives currently.
-
-JE
+diff --git a/arch/arm/kernel/return_address.c b/arch/arm/kernel/return_address.c
+index b0d2f1fe891d..fb0fc1910102 100644
+--- a/arch/arm/kernel/return_address.c
++++ b/arch/arm/kernel/return_address.c
+@@ -53,6 +53,7 @@ void *return_address(unsigned int level)
+ 		return NULL;
+ }
+ 
++EXPORT_SYMBOL_GPL(return_address);
++
+ #endif /* if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND) */
+ 
+-EXPORT_SYMBOL_GPL(return_address);
+-- 
+2.20.0
 
