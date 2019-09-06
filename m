@@ -2,247 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5EFAABBEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93CD5ABBF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:13:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388468AbfIFPMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:12:50 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40774 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbfIFPMu (ORCPT
+        id S2389073AbfIFPNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:13:34 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:42545 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729088AbfIFPNd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:12:50 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10so3672153pgj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 08:12:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:to:from:cc:subject:user-agent:date;
-        bh=Xb6VwDjoplmWmuetAQCvzqk0SmPHJLjBpgM4hHIYCII=;
-        b=ZHOv+RZQ3aLmqgmsd5zyET7umQYE10jQO9DyLmBi7gmXaBD/zsKVo+gYs46PZcAdJX
-         TM3rMdk2kGkm9oV51CI9U1unCD6cNDTNdjaApnOAqojhXZp71CwST9cw1aBWzIZauQxK
-         RpsP1NITVP9z8h6SB0dNNBxLbHKkMZvZr94+s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:to:from:cc:subject
-         :user-agent:date;
-        bh=Xb6VwDjoplmWmuetAQCvzqk0SmPHJLjBpgM4hHIYCII=;
-        b=owMp0yPiNL6W9WEkmu32t+xJFk4C2WdwOqQrgKT0BT6EzQ1mcJAiIUOBsXgO189EFP
-         1s9BCbSp1ACWunUotDkDT5saZ+G6wVLQw7pCRVxjTcZwJdzN54z6qj3i73wW7v9lNWYh
-         PZ+jmCBkD3pw6uWN6BPsN+o7M6Ff4JV9c0ULkBIToSrCxPhVoIOy6Yz+6r9w8pedi+ea
-         BKceDdfuMVTWWKSwEIUuTmlK0P64hPZAOsMFvPKZr/40QufDBWuaV2IEcGw76bT9q3gl
-         sNh9ACMkbPUCxLInha4YPPrDwr+69YFWvGquo0rMGklNri9E8rM4kaDCHE76EPw4bp8/
-         3aZw==
-X-Gm-Message-State: APjAAAWCOMDU7rzGWJep0tCvxYyaLeFNOedd9YHbLCF4JJAHd3BbbKJ8
-        NcI7Gi9vfpTOYmdtIf9WiOsqlw==
-X-Google-Smtp-Source: APXvYqx5APO82PFexcy027FfVJXJBg/BMStPKFD+PoK1ECUmgX6ZblpH7mM8DpzNko7+Kif7xTbz/Q==
-X-Received: by 2002:a63:a302:: with SMTP id s2mr8404939pge.125.1567782768983;
-        Fri, 06 Sep 2019 08:12:48 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id u5sm5336849pfl.25.2019.09.06.08.12.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2019 08:12:48 -0700 (PDT)
-Message-ID: <5d727770.1c69fb81.c9062.ce60@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Fri, 6 Sep 2019 11:13:33 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1M1aQN-1i8BbC4BGV-0036MD; Fri, 06 Sep 2019 17:13:10 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fbdev/sa1100fb: Remove even more dead code
+Date:   Fri,  6 Sep 2019 17:13:00 +0200
+Message-Id: <20190906151307.1127187-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190823063248.13295-2-vivek.gautam@codeaurora.org>
-References: <20190823063248.13295-1-vivek.gautam@codeaurora.org> <20190823063248.13295-2-vivek.gautam@codeaurora.org>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>, agross@kernel.org,
-        iommu@lists.linux-foundation.org, joro@8bytes.org,
-        robin.murphy@arm.com, will.deacon@arm.com
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH v4 1/3] firmware: qcom_scm-64: Add atomic version of qcom_scm_call
-User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 08:12:47 -0700
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:I6rpL7gCiCsYUlp6FQGbVholK0223LnZWj/mxxwbsh2wD5HPO0Y
+ MgVBcVUFLW1dBmdRHCg4XJVf13q17fakxkds8ehcBiRyzFyuzAUTxekyquLBSQNqi73GnuK
+ sZ1vOwTnwrszmg9WFHWB62ED8ONFwcWv3gEjZGuyAsYaw9u5kWcwqrkY49JhR48ELym/ShX
+ ICERUva5XHQeD9P6oD39g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KwBM+j6sNhA=:23ZTg/QTnEz4XrkmDljwtB
+ MBdqWImY+6RZZCY1helSoVRJQZLQtlx5auA31z4ZCkerN2bGZpU1wJzHJyS3eYxPG3j8s1cQD
+ fwfXNzSeCwMmx/WjnOUNHcoCdV4+0gdvurE0600hcdX36SAuuDPb39EvvtNkQn9nCUlv3cviV
+ o1q20+yQjrQMmNgBeF/vknJhKykartW1vGh8Go+HJMheA49YbbEP5jT2f6IaGHKQ+7wMUB5HD
+ EV3WDLIEnB7WWU1NqamJj2LKye4Q64TKReDxf4krxrJ2ACBRdI5TqFGwOhUv3opeDxrJBkun6
+ eru8GRr9+SV18fjXTaYfQmDR0HFFn29T6v9fyddJGpyiu8ou2tYFrm7o5mTsjoLa8sV2Ga6eQ
+ Eptf6a90avgIWO1+exad423axv8jx+SqSBZgcgsDogwLoyJ8a3N7xN1Z9SWHpQv8HclVxBcyJ
+ 5+8PcsWHxGtm+TL3aXhbz4yX471/4N7MC93cHi4RRdow7KtK/0ZdOWHJmD8Gwv56KzXcu1XB7
+ tohcl6x0mR/GV+7S0mt/6CoKp/jIrBvH7AkMP5pDk7+1e3nLdFyGeHo0Sjk43MsrGjrV35k6W
+ 90mdy/DlvYvQ031hrGQPt1PDYmTEIDjRj10g+X3euhe7eJoZBgRU+nM1bMSUBZ3nALhfOB23K
+ C+DXCT5KqzCzX1msEBVRROa50EsIZdnaGgn2PJVgF7kfbLNhpj9ZpkVoj89XFuguvAriVISPe
+ 0JB8/EcOeSJWhIzpcv3pe6G3s1sE3xH9t6aNDZWlG2LNjoLkvDpei0IwViHbimKzmXngWNfs8
+ e6r4WtvvxVl0i9gPzIkF1IjltyWgQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vivek Gautam (2019-08-22 23:32:46)
-> There are scnenarios where drivers are required to make a
-> scm call in atomic context, such as in one of the qcom's
-> arm-smmu-500 errata [1].
->=20
-> [1] ("https://source.codeaurora.org/quic/la/kernel/msm-4.9/
->       tree/drivers/iommu/arm-smmu.c?h=3Dmsm-4.9#n4842")
->=20
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/firmware/qcom_scm-64.c | 136 ++++++++++++++++++++++++++++-------=
-------
->  1 file changed, 92 insertions(+), 44 deletions(-)
->=20
-> diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-6=
-4.c
-> index 91d5ad7cf58b..b6dca32c5ac4 100644
-> --- a/drivers/firmware/qcom_scm-64.c
-> +++ b/drivers/firmware/qcom_scm-64.c
-> @@ -62,32 +62,71 @@ static DEFINE_MUTEX(qcom_scm_lock);
->  #define FIRST_EXT_ARG_IDX 3
->  #define N_REGISTER_ARGS (MAX_QCOM_SCM_ARGS - N_EXT_QCOM_SCM_ARGS + 1)
-> =20
-> -/**
-> - * qcom_scm_call() - Invoke a syscall in the secure world
-> - * @dev:       device
-> - * @svc_id:    service identifier
-> - * @cmd_id:    command identifier
-> - * @desc:      Descriptor structure containing arguments and return valu=
-es
-> - *
-> - * Sends a command to the SCM and waits for the command to finish proces=
-sing.
-> - * This should *only* be called in pre-emptible context.
-> -*/
-> -static int qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
-> -                        const struct qcom_scm_desc *desc,
-> -                        struct arm_smccc_res *res)
-> +static void __qcom_scm_call_do(const struct qcom_scm_desc *desc,
-> +                              struct arm_smccc_res *res, u32 fn_id,
-> +                              u64 x5, u32 type)
-> +{
-> +       u64 cmd;
-> +       struct arm_smccc_quirk quirk =3D {.id =3D ARM_SMCCC_QUIRK_QCOM_A6=
-};
+This function lost its only call site as part of
+earlier dead code removal, so remove it as well:
 
-Nitpick: Put spaces around braces please.
+drivers/video/fbdev/sa1100fb.c:975:21: error: unused function 'sa1100fb_min_dma_period' [-Werror,-Wunused-function]
 
-> +
-> +       cmd =3D ARM_SMCCC_CALL_VAL(type, qcom_smccc_convention,
-> +                                ARM_SMCCC_OWNER_SIP, fn_id);
-> +
-> +       quirk.state.a6 =3D 0;
-> +
-> +       do {
-> +               arm_smccc_smc_quirk(cmd, desc->arginfo, desc->args[0],
-> +                                   desc->args[1], desc->args[2], x5,
-> +                                   quirk.state.a6, 0, res, &quirk);
-> +
-> +               if (res->a0 =3D=3D QCOM_SCM_INTERRUPTED)
-> +                       cmd =3D res->a0;
-> +
-> +       } while (res->a0 =3D=3D QCOM_SCM_INTERRUPTED);
-> +}
-> +
-> +static void qcom_scm_call_do(const struct qcom_scm_desc *desc,
-> +                            struct arm_smccc_res *res, u32 fn_id,
-> +                            u64 x5, bool atomic)
-> +{
-> +       int retry_count =3D 0;
-> +
-> +       if (!atomic) {
-> +               do {
-> +                       mutex_lock(&qcom_scm_lock);
-> +
-> +                       __qcom_scm_call_do(desc, res, fn_id, x5,
-> +                                          ARM_SMCCC_STD_CALL);
-> +
-> +                       mutex_unlock(&qcom_scm_lock);
-> +
-> +                       if (res->a0 =3D=3D QCOM_SCM_V2_EBUSY) {
-> +                               if (retry_count++ > QCOM_SCM_EBUSY_MAX_RE=
-TRY)
-> +                                       break;
-> +                               msleep(QCOM_SCM_EBUSY_WAIT_MS);
-> +                       }
-> +               }  while (res->a0 =3D=3D QCOM_SCM_V2_EBUSY);
-> +       } else {
-> +               __qcom_scm_call_do(desc, res, fn_id, x5, ARM_SMCCC_FAST_C=
-ALL);
-> +       }
+Fixes: 390e5de11284 ("fbdev/sa1100fb: Remove dead code")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/video/fbdev/sa1100fb.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-To save on some indentation maybe you could write it like:
+diff --git a/drivers/video/fbdev/sa1100fb.c b/drivers/video/fbdev/sa1100fb.c
+index ae2bcfee338a..81ad3aa1ca06 100644
+--- a/drivers/video/fbdev/sa1100fb.c
++++ b/drivers/video/fbdev/sa1100fb.c
+@@ -967,19 +967,6 @@ static void sa1100fb_task(struct work_struct *w)
+ }
+ 
+ #ifdef CONFIG_CPU_FREQ
+-/*
+- * Calculate the minimum DMA period over all displays that we own.
+- * This, together with the SDRAM bandwidth defines the slowest CPU
+- * frequency that can be selected.
+- */
+-static unsigned int sa1100fb_min_dma_period(struct sa1100fb_info *fbi)
+-{
+-	/*
+-	 * FIXME: we need to verify _all_ consoles.
+-	 */
+-	return sa1100fb_display_dma_period(&fbi->fb.var);
+-}
+-
+ /*
+  * CPU clock speed change handler.  We need to adjust the LCD timing
+  * parameters when the CPU clock is adjusted by the power management
+-- 
+2.20.0
 
-	if (atomic) {
-		__qcom_scm_call_do(..)
-		return;
-	}
-
-	do {
-		mutex_lock(..)
-		...
-	} while (..);
-
-> +}
-> +
-> +static int ___qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
-> +                           const struct qcom_scm_desc *desc,
-> +                           struct arm_smccc_res *res, bool atomic)
->  {
->         int arglen =3D desc->arginfo & 0xf;
-> -       int retry_count =3D 0, i;
-> +       int i;
->         u32 fn_id =3D QCOM_SCM_FNID(svc_id, cmd_id);
-> -       u64 cmd, x5 =3D desc->args[FIRST_EXT_ARG_IDX];
-> +       u64 x5 =3D desc->args[FIRST_EXT_ARG_IDX];
->         dma_addr_t args_phys =3D 0;
->         void *args_virt =3D NULL;
->         size_t alloc_len;
-> -       struct arm_smccc_quirk quirk =3D {.id =3D ARM_SMCCC_QUIRK_QCOM_A6=
-};
-> +       gfp_t flag =3D atomic ? GFP_ATOMIC : GFP_KERNEL;
-> =20
->         if (unlikely(arglen > N_REGISTER_ARGS)) {
->                 alloc_len =3D N_EXT_QCOM_SCM_ARGS * sizeof(u64);
-> -               args_virt =3D kzalloc(PAGE_ALIGN(alloc_len), GFP_KERNEL);
-> +               args_virt =3D kzalloc(PAGE_ALIGN(alloc_len), flag);
-> =20
->                 if (!args_virt)
->                         return -ENOMEM;
-> @@ -156,6 +169,41 @@ static int qcom_scm_call(struct device *dev, u32 svc=
-_id, u32 cmd_id,
->         return 0;
->  }
-> =20
-> +/**
-> + * qcom_scm_call() - Invoke a syscall in the secure world
-> + * @dev:       device
-> + * @svc_id:    service identifier
-> + * @cmd_id:    command identifier
-> + * @desc:      Descriptor structure containing arguments and return valu=
-es
-> + *
-> + * Sends a command to the SCM and waits for the command to finish proces=
-sing.
-> + * This should *only* be called in pre-emptible context.
-
-Add a might_sleep() then?
-
-> + */
-> +static int qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
-> +                        const struct qcom_scm_desc *desc,
-> +                        struct arm_smccc_res *res)
-> +{
-> +       return ___qcom_scm_call(dev, svc_id, cmd_id, desc, res, false);
-> +}
-> +
-> +/**
-> + * qcom_scm_call_atomic() - atomic variation of qcom_scm_call()
-> + * @dev:       device
-> + * @svc_id:    service identifier
-> + * @cmd_id:    command identifier
-> + * @desc:      Descriptor structure containing arguments and return valu=
-es
-> + * @res:       Structure containing results from SMC/HVC call
-> + *
-> + * Sends a command to the SCM and waits for the command to finish proces=
-sing.
-> + * This should be called in atomic context only.
-=20
-Maybe add a cant_sleep()?
-
-> + */
-> +static int qcom_scm_call_atomic(struct device *dev, u32 svc_id, u32 cmd_=
-id,
-> +                               const struct qcom_scm_desc *desc,
-> +                               struct arm_smccc_res *res)
-> +{
-> +       return ___qcom_scm_call(dev, svc_id, cmd_id, desc, res, true);
-> +}
-> +
