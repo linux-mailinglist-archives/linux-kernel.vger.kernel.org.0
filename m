@@ -2,116 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48DFDAB652
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39AF4AB628
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390276AbfIFKrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 06:47:19 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:34920 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbfIFKrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 06:47:18 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EC6331A0216;
-        Fri,  6 Sep 2019 12:47:15 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F00A21A0BC3;
-        Fri,  6 Sep 2019 12:47:10 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8E114402FB;
-        Fri,  6 Sep 2019 18:47:04 +0800 (SGT)
-From:   Hui Song <hui.song_1@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Song Hui <hui.song_1@nxp.com>
-Subject: [PATCH] gpio/mpc8xxx: change irq handler from chained to normal
-Date:   Fri,  6 Sep 2019 18:37:00 +0800
-Message-Id: <20190906103700.2034-1-hui.song_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1732205AbfIFKk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 06:40:29 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40182 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728269AbfIFKk3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 06:40:29 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 7so5527339ljw.7;
+        Fri, 06 Sep 2019 03:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DnJ87hIg+L1soXqzK+F25qs93DUI2WPEksuGAxLMiCg=;
+        b=mharq59n+r5qjSdEntYwXvnT+ExtPjvbWik0d4+O74MQf1tqAh5eJeAjWA1uEadW0F
+         HdmodOWAFbFf+iwZonCqgrY8IL/8bDX4HFJwwrIGI8n9iQBrBEmfSc07WrFgAPTrFx5P
+         UqJbOXZVrmOjsJ9Bf70sOnFq2U1dBFxDtknIR1tmHddw+AkeYRDXoDgzPGmi81XmZ6Qp
+         u8aO9ADtOB+EbeSx1YErPF6mNU16YZ12CV+cQHmXhd8yVFhSoQglDClbm0hxWEB+1xd9
+         6wjHjq0Lln6XleGgxxqOJ/+ZYJ9YfmwlJTn1ldBEVW1b2irRKAQbYJMw9L/vIMTMragV
+         P0xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DnJ87hIg+L1soXqzK+F25qs93DUI2WPEksuGAxLMiCg=;
+        b=AujuKOLTjVMfrsm/0pezolefAWLstQa9U+0Ha1WD0QpaiiX7Llqea9U2pQDT8O8eEK
+         zViymWElhzZz3lr+kaqqEARAf/VdTkYzLnv1kwioAs58Ja+hzIgFLNxq6wOJ9KtL2Jeb
+         uwkhgA0TRm89HXA3D2oBD0amsiUMmMq8uAJNYr/wZ2QB6+wBbXN9FysmzwfwBepwwECi
+         vlq/QtZdinMe+5+Q5ANKFpCCPKaLoT7EDutEw0Zsd9R+BwVV/CFMbmZwIy08ngFIrbpw
+         FYi9frinr/aMMUKpDxtg2qXaJDlQO5Y0LEOcdHfPXgfmuqkpWFXQVTt8BJWKrcFB3hjZ
+         Lk7g==
+X-Gm-Message-State: APjAAAUnhwfNhNIt7Vk4Z57Lo8eN8OGUhcEmll2RnXNz9eaDgYT0yuTp
+        ZAQS1Kwt9yT2AYqX2gtyN+uWbXFmUwklnnq0WmU=
+X-Google-Smtp-Source: APXvYqxmyBlLRondxqnNbPMJl7+HmdFnfXdetIxT6mvbyOG6g+JATnG+njQGRWZouNhBl1mciLaGDoHDt1xiEhZVZeU=
+X-Received: by 2002:a2e:974c:: with SMTP id f12mr5309332ljj.15.1567766426819;
+ Fri, 06 Sep 2019 03:40:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190906094158.8854-1-streetwalkermc@gmail.com> <20190906101306.GA12017@kadam>
+In-Reply-To: <20190906101306.GA12017@kadam>
+From:   Dan Elkouby <streetwalkermc@gmail.com>
+Date:   Fri, 6 Sep 2019 13:40:15 +0300
+Message-ID: <CANnEQ3HX0SNG+Hzs2b+BzLwuewsC8-3sF2urWV+bqUahXq0hVA@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hidp: Fix error checks in hidp_get/set_raw_report
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Fabian Henneke <fabian.henneke@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Hui <hui.song_1@nxp.com>
+On Fri, Sep 6, 2019 at 1:14 PM Dan Carpenter wrote:
+> I think we also need to update update ms_ff_worker() which assumes that
+> hid_hw_output_report() returns zero on success.
 
-more one gpio controller use share one interrupt,
-make request interrupt to be shared.
+Yes, it looks like that's the case. Should I amend my patch to include
+this fix, or should it be a separate patch? I don't have access to any
+hardware covered by hid-microsoft, so I won't be able to test it.
 
-Signed-off-by: Laurentiu Tudor <Laurentiu.Tudor@nxp.com>
-Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
-Signed-off-by: Song Hui <hui.song_1@nxp.com>
----
- drivers/gpio/gpio-mpc8xxx.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+> Please use the Fixes
+> tag for this since a lot of scripts rely on it to decide what to
+> backport.
+>
+> Fixes: 48d9cc9d85dd ("Bluetooth: hidp: Let hidp_send_message return number of queued bytes")
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 1a680aa..4006250 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -22,6 +22,7 @@
- #include <linux/irq.h>
- #include <linux/gpio/driver.h>
- #include <linux/bitops.h>
-+#include <linux/interrupt.h>
- 
- #define MPC8XXX_GPIO_PINS	32
- 
-@@ -127,10 +128,9 @@ static int mpc8xxx_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
- 		return -ENXIO;
- }
- 
--static void mpc8xxx_gpio_irq_cascade(struct irq_desc *desc)
-+static irqreturn_t mpc8xxx_gpio_irq_cascade(int irq, void *data)
- {
--	struct mpc8xxx_gpio_chip *mpc8xxx_gc = irq_desc_get_handler_data(desc);
--	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct mpc8xxx_gpio_chip *mpc8xxx_gc = (struct mpc8xxx_gpio_chip *)data;
- 	struct gpio_chip *gc = &mpc8xxx_gc->gc;
- 	unsigned int mask;
- 
-@@ -139,8 +139,8 @@ static void mpc8xxx_gpio_irq_cascade(struct irq_desc *desc)
- 	if (mask)
- 		generic_handle_irq(irq_linear_revmap(mpc8xxx_gc->irq,
- 						     32 - ffs(mask)));
--	if (chip->irq_eoi)
--		chip->irq_eoi(&desc->irq_data);
-+
-+	return IRQ_HANDLED;
- }
- 
- static void mpc8xxx_irq_unmask(struct irq_data *d)
-@@ -319,6 +319,7 @@ static const struct of_device_id mpc8xxx_gpio_ids[] = {
- 	{ .compatible = "fsl,mpc5125-gpio", .data = &mpc5125_gpio_devtype, },
- 	{ .compatible = "fsl,pq3-gpio",     },
- 	{ .compatible = "fsl,ls1028a-gpio", .data = &ls1028a_gpio_devtype, },
-+	{ .compatible = "fsl,ls1088a-gpio", .data = &ls1028a_gpio_devtype, },
- 	{ .compatible = "fsl,qoriq-gpio",   },
- 	{}
- };
-@@ -408,8 +409,14 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- 	if (devtype->gpio_dir_in_init)
- 		devtype->gpio_dir_in_init(gc);
- 
--	irq_set_chained_handler_and_data(mpc8xxx_gc->irqn,
--					 mpc8xxx_gpio_irq_cascade, mpc8xxx_gc);
-+	ret = request_irq(mpc8xxx_gc->irqn, mpc8xxx_gpio_irq_cascade,
-+		IRQF_NO_THREAD | IRQF_SHARED, "gpio-cascade", mpc8xxx_gc);
-+	if (ret) {
-+		pr_err("%s: failed to request_irq(%d), ret = %d\n",
-+				np->full_name, mpc8xxx_gc->irqn, ret);
-+		goto err;
-+	}
-+
- 	return 0;
- err:
- 	iounmap(mpc8xxx_gc->regs);
--- 
-2.9.5
+Will do.
 
+> Otherwise, it looks good.  Thanks for catching this.
+
+Thanks for taking a look!
+
+(Sorry for sending this twice, I'm not used to mailing lists and forgot
+to reply to all.)
