@@ -2,100 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EB60AB59D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B59CAB58E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391859AbfIFKOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 06:14:17 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34744 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391487AbfIFKON (ORCPT
+        id S2391444AbfIFKOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 06:14:09 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35012 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388923AbfIFKOI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 06:14:13 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86ADnO6003918;
-        Fri, 6 Sep 2019 10:13:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=9ZMm+KBPOZqRS75mZ7031RkVZwnvS9z1Wx5ZMZLh53E=;
- b=IHImL/hkpYOt1DBem1nyKiRma41Tt63AdsBBMTsHoMHCrk4qYIyF8MEAUudo0LBszc00
- EuEYKFG28HacWSmOii8pkGPNVO5KH4N+ogm3MKctbmUOAe8XSffQPwjpR/djF0MeTS43
- qu7y5p/eZMCCzVW+Nxo48gHxAPrZTUsg01mGXwRysBu7ECLmGLWehZc36MYaFRjmrRxZ
- JW0axSSHVkyH6JbOyFgFvTvHmvAOdYybAC1pT3cv218pWD73PQBNAdPm8eHYogsrDIjR
- qVkeHtFBEToIrfgdFEQjQVSaT5P2qs7nRImhdOdknH7ihjx/pXX5mv3gIGky60w4eZ8Q pQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2uungtg02d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Sep 2019 10:13:59 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86ADoDW032312;
-        Fri, 6 Sep 2019 10:13:58 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2uum4gu7f3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Sep 2019 10:13:58 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x86ADINC020397;
-        Fri, 6 Sep 2019 10:13:18 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 06 Sep 2019 03:13:18 -0700
-Date:   Fri, 6 Sep 2019 13:13:06 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Dan Elkouby <streetwalkermc@gmail.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Fabian Henneke <fabian.henneke@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Bluetooth: hidp: Fix error checks in
- hidp_get/set_raw_report
-Message-ID: <20190906101306.GA12017@kadam>
-References: <20190906094158.8854-1-streetwalkermc@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906094158.8854-1-streetwalkermc@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=927
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909060108
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=992 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909060108
+        Fri, 6 Sep 2019 06:14:08 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190906101406euoutp0271ce5029a278bfcdf4df86eaa0c8d1b6~B0dJUgyh81064010640euoutp02d
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2019 10:14:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190906101406euoutp0271ce5029a278bfcdf4df86eaa0c8d1b6~B0dJUgyh81064010640euoutp02d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1567764846;
+        bh=Kzrq6TtMniLqfkpCssxFYyHeVXo+wZF34M5omxU8qLc=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=g7i3e1QwSYKHAd7ru/54j9tKHbKNAHbDG8uE/G5ImyUUfgLzQ5f4/LdPm96cT3cw2
+         3ooXXmcSOOu+JsdsVsh/fLhGcU9f7S/JYKQ0hs1ajTM0LWrGNHJUpjfkI8n23IDzjI
+         kn4CgSidcyZNQkfyLyWQpBDAtYkSVcgNCUGAFvMI=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190906101405eucas1p25daaa4fd16991d3d21ea009e93e31cff~B0dIkFNVc0427904279eucas1p2E;
+        Fri,  6 Sep 2019 10:14:05 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 1E.C3.04309.D61327D5; Fri,  6
+        Sep 2019 11:14:05 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190906101404eucas1p1d11e26276bfdacb7748f1391e29f45d0~B0dHpX-eF0273402734eucas1p1q;
+        Fri,  6 Sep 2019 10:14:04 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190906101404eusmtrp1a7e86bafb12b2904aa43d0fcd6cf6fe5~B0dHa4cwR1272412724eusmtrp1Y;
+        Fri,  6 Sep 2019 10:14:04 +0000 (GMT)
+X-AuditID: cbfec7f4-afbff700000010d5-96-5d72316d7fb1
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C8.9E.04166.C61327D5; Fri,  6
+        Sep 2019 11:14:04 +0100 (BST)
+Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190906101403eusmtip129df3b1b4a9abaffb33ce8897f21dab8~B0dGjgp4j3023530235eusmtip10;
+        Fri,  6 Sep 2019 10:14:03 +0000 (GMT)
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        willy.mh.wolff.ml@gmail.com,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH 0/3] Exynos5 DMC minor fixes
+Date:   Fri,  6 Sep 2019 12:13:41 +0200
+Message-Id: <20190906101344.3535-1-l.luba@partner.samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSaUhUURjtzpv35imNPMfQzyWlgTYp04i4mEhF1PsRYdGPMiSnfKnkjDZP
+        zY0aBXPJPcu0NKVMcXccxSVb1DJwGU1zK8M0JkhTYiYpjcjxTfXvfOc753yHy6UJWTnpRIeq
+        Ijm1ShEmp6zFLa9+6ncrvdQBniuJjrjxbj2Jx02fSfygZ5DE2XPzBNbrGyR4IGlBgqc0Llg7
+        N0bikfb7FDZm9iB8V/9UhGt7piW4fHxYhN8lVlI4ubNHgrsXUki8/HoWHbRla0pqENtWNC1h
+        tVVpFNv06Dr7YvGJiM3SVSHWqHX1k/hb+wRxYaHRnHqPb6B1iCl3iIgwUDFjpZ0iDeol05EV
+        Dcw+aC+botKRNS1jKhFUF+dZBhOCGzkjhDAYEfwY0In+WgbHV0lhUYHgV9mC+J9l8r1xTUXT
+        FOMBrVVXzIZNzEMEy93+ZkwwLSLI/O5iltgxu8CUFWemxcxW0KQkITOWMr4w1NRPCbfcoLrh
+        +XoJYOokUNr8kjJ7gTkCZXVugsYOvvTqJAJ2gb5bGWIB86DJLEMCToC57GKL5gB09w6T5hiC
+        2Qn17XsE+hDcLkq2pNvAxFdbobAN5LUUEAIthdQbMkG9A3QZQ5YHsYeKmjuWcBZWs2fXy8uY
+        AHiVuYhykGvR/1ulCFUhBy6KVwZz/F4Vd9WDVyj5KFWwx8VwpRatfZ6+372mVtT+60IXYmgk
+        3yhlTBEBMlIRzccquxDQhHyTtL5xjZIGKWLjOHX4eXVUGMd3IWdaLHeQxm+YOSdjghWR3GWO
+        i+DUf7ci2spJg7Rk4dF8x1pIqT6uKkhYKrmnf+v4xl55aeXQJdd7ncS30bQY6qb7B/JY82i/
+        3/R0LhvXllrpc9jq2ZLIoNv8MeHxdkNFk8xqmxbPn5zYr9scWN7tOXy4Mb7j1EFja26hcwyD
+        O06XnzVEGk5kOBVeS/XLyZ/cMuOt+lR8xs3bMa5aLuZDFF7uhJpX/AGHLXmpOAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsVy+t/xu7o5hkWxBpMPylhsnLGe1eL6l+es
+        FvOPnGO16H/8mtni/PkN7BZnm96wW9xqkLHY9Pgaq8XlXXPYLD73HmG0mHF+H5PF2iN32S2W
+        Xr/IZHG7cQWbReveI+wWh9+0s1p8O/GI0UHQY828NYweO2fdZffYtKqTzWPzknqPg+/2MHn0
+        bVnF6PF5k1wAe5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZ
+        apG+XYJexpeJF5gLnrFVXFuwl6mB8ThrFyMnh4SAicS567+BbC4OIYGljBJ/Hp5ggkiISUza
+        t50dwhaW+HOtiw2i6BOjRNetxUAdHBxsAnoSO1YVgsRFBJYzShxb9ZYZxGEWOMIk0b9rHliR
+        sICOxJe+KpBBLAKqEg3tTYwgNq+AncSFzWfYIBbIS6zecIB5AiPPAkaGVYwiqaXFuem5xYZ6
+        xYm5xaV56XrJ+bmbGIGBv+3Yz807GC9tDD7EKMDBqMTDK/ClIFaINbGsuDL3EKMEB7OSCO/6
+        jUAh3pTEyqrUovz4otKc1OJDjKZAyycyS4km5wOjMq8k3tDU0NzC0tDc2NzYzEJJnLdD4GCM
+        kEB6YklqdmpqQWoRTB8TB6dUAyO/EF/JUa7vT6yfP5yqlB+nx8R091O4yYEJb40eVLQ8WuL0
+        4MiSmiCLi4F+Tvcex309V/zwdtly0ZRrF/g2hE/Pj57ULbnukK818+lVxrMmJwn/litNDb+Z
+        XaEiMtPpeX2nd0bzRsvqB1oKxv8Ddu923NJ66uNHNcvYx4/yvh4+Xjx9icze/QZKLMUZiYZa
+        zEXFiQDL1ZfikgIAAA==
+X-CMS-MailID: 20190906101404eucas1p1d11e26276bfdacb7748f1391e29f45d0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190906101404eucas1p1d11e26276bfdacb7748f1391e29f45d0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190906101404eucas1p1d11e26276bfdacb7748f1391e29f45d0
+References: <CGME20190906101404eucas1p1d11e26276bfdacb7748f1391e29f45d0@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 12:41:57PM +0300, Dan Elkouby wrote:
-> Commit 48d9cc9d85dd ("Bluetooth: hidp: Let hidp_send_message return
-> number of queued bytes") changed hidp_send_message to return non-zero
-> values on success, which some other bits did not expect. This caused
-> spurious errors to be propagated through the stack, breaking some (all?)
-> drivers, such as hid-sony for the Dualshock 4 in Bluetooth mode.
-> 
-> Signed-off-by: Dan Elkouby <streetwalkermc@gmail.com>
+Hi all,
 
-I think we also need to update update ms_ff_worker() which assumes that
-hid_hw_output_report() returns zero on success.  Please use the Fixes
-tag for this since a lot of scripts rely on it to decide what to
-backport.
+This is a follow up patch set for the Exynos5 Dynamic Memory Controller
+driver v13 [1]. The patches are based on Krzysztof's 'for-next' branch [2].
+There are a few minor fixes captured during static analysis and a new
+binding for 'samsung,K3QF2F20DB' LPDDR3 memory.
 
-Fixes: 48d9cc9d85dd ("Bluetooth: hidp: Let hidp_send_message return number of queued bytes")
+Regards,
+Lukasz Luba
 
-Otherwise, it looks good.  Thanks for catching this.
+[1] https://lkml.org/lkml/2019/8/21/283
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=for-next
 
-regards,
-dan carpenter
+Lukasz Luba (3):
+  memory: Exynos5422: minor fixes in DMC
+  ARM: dts: exynos: fix too long line in memory device
+  dt-bindings: ddr: Add bindings for Samsung LPDDR3 memories
+
+ .../devicetree/bindings/ddr/lpddr3.txt        | 29 +++++++++++++++++--
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  3 +-
+ drivers/memory/samsung/exynos5422-dmc.c       |  4 +--
+ 3 files changed, 31 insertions(+), 5 deletions(-)
+
+-- 
+2.17.1
 
