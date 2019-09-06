@@ -2,137 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81CACAB31F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 09:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3228CAB322
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 09:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391821AbfIFHSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 03:18:49 -0400
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:42505 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727031AbfIFHSs (ORCPT
+        id S2392486AbfIFHUy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Sep 2019 03:20:54 -0400
+Received: from m4a0041g.houston.softwaregrp.com ([15.124.2.87]:39904 "EHLO
+        m4a0041g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392442AbfIFHUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 03:18:48 -0400
-Received: by mail-lf1-f46.google.com with SMTP id u13so4127943lfm.9
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 00:18:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=CMTMu4cP8lqBEnOq+3yeUECTCt8Q5F1tZFVsCniXU+k=;
-        b=TQMP5Ag5MmlfO77ESC5/eimx3Un9coIWQbCLG9MB2wN1F4LG0lllG/BTlzullTR10e
-         E2HZYXEfIEzrYg1I8gpfSCgKkTUW9n4mzps1lL9rMjkDYsEhIacgFsEMZaffZj3wAau7
-         GCHYmytQyhIaf/ddDUDgJXpcHGDki6E0OtERzBDiirjZ/fGc9wjDkKU7VHnOlG0Vy+qN
-         3mbpSq4yr6F4EUqCarBkPEWMQuahQd7AlXQq3UEg6B9v1hfEu5bZ8NzLB909HjklRMa0
-         cCrUAidFW5OKY1gaUjX2BTjppnDXPfzIoRl8dI1OuxAcF//CzB6PFY1S9rUkZLFrDC92
-         fc6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=CMTMu4cP8lqBEnOq+3yeUECTCt8Q5F1tZFVsCniXU+k=;
-        b=Kl+dzALxu1Dexaqt6ZWNd+RncSTfPdjlsoAWatSOI5jyq/Gs/lqlL3WSFy7rruj8ve
-         n8116Xu8d3o1ewJzti7OGnAEzPYiI4h9XusAnsrARKl/VN5GUN6rs/xKXjkvz622lHXq
-         5S9+XDnXVkOq6tKfk5SySB2V7/u3JW7sNLfWmfbKsFNU8qObzYvOGyZ/jaJnqYKQJjAX
-         S0KwKSxsqIRdwMYppsYIl2UuJis0C3dJBocjwL72eQjauTB7cnboPLaFGw/kM67hfOKU
-         KjpnFhIMdGBbDE549h7kKXULDq64hzGr3uMVAG+hfyyquVKqlzAgBeHYpptcICLKnQnO
-         U1lQ==
-X-Gm-Message-State: APjAAAXTf6NfET7oMp8dUHdeRGHxqnZ2Zf6fXBK0sBPfz02zaknTInk3
-        PWVH78k8goYEQJ5UEBVfdrV9g9e5qIVrSjqKSMcizm0FKCE=
-X-Google-Smtp-Source: APXvYqxOUF1RH3914HcjSUiThBqloJ8m7nn7h3+HnW6H5vy8XViijHHhIEIAyUEaHmgEoBu+flzQ5ebd18lJgF9Mzi4=
-X-Received: by 2002:a19:7715:: with SMTP id s21mr5045709lfc.98.1567754326284;
- Fri, 06 Sep 2019 00:18:46 -0700 (PDT)
+        Fri, 6 Sep 2019 03:20:54 -0400
+Received: FROM m4a0041g.houston.softwaregrp.com (15.120.17.146) BY m4a0041g.houston.softwaregrp.com WITH ESMTP;
+ Fri,  6 Sep 2019 07:18:05 +0000
+Received: from M4W0334.microfocus.com (2002:f78:1192::f78:1192) by
+ M4W0334.microfocus.com (2002:f78:1192::f78:1192) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Fri, 6 Sep 2019 07:17:17 +0000
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (15.124.8.12) by
+ M4W0334.microfocus.com (15.120.17.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Fri, 6 Sep 2019 07:17:17 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y6ce23scdtxLdc7y8abArsDracMcB/50HMaLfL2v+nya54iF0KWdOxUpucp3wJpr+VtiCwwTl44Zx95/Psj5lIlgNgnMZLfEhFc0Vt7msktLOnevl9WqBRDY/MgeMBihD9oUCCl9kZ7Oy3dlTmycBXiTUmbOjlyzUF54yUldT+P8oQ9Clirjq95KL7wDgH0q8iJiFbfn0bqv0KfOadAminID5o8ur5dlkyaq+LAMi5Oeu5jDe84nsozuBecCu6tj3JJNyOnm49gd9Qs/D1AqLge7q6yUGtd4YyXqvEaOWyxd6O6SGtAIV7tnHEdb0CIpqjUIEHBsyHeYasD3q+jsHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MTdPGuCoAiG0yJYCZE89xJMOVWPqp009nAHsu3p4EP0=;
+ b=D9WEk9fvrjBYMiNjWrzQkeZgbrQl0+Lxpp7leoeYfeo8t2L1gDsRUUTD+LfuANsV7aqz1PVBxFSujMQA0RzRf4LZPL4fv5gcvP+80+m5AaArrqIlDYmiyBC3Y7IpNq/5TGjkPJCNAgWr19tG7alcLHbvLbGliudzuj2V20KFynAPO0J0D/O3m1cfOXpO4peZyYQ/btEA8Ej5BiKFkwFu/RAkyOEerC3HDZz+JMNfVNQfZi0a/H+pNfnBICADtm9/3/aXcugZ3unozMlXOODIFsu//kLTilj7Lmo9kqY5XFJcZoDSTJvH9A//i5jJsw8kjxYEThgyoU00BwAanY3ggw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from BY5PR18MB3283.namprd18.prod.outlook.com (10.255.139.203) by
+ BY5PR18MB3139.namprd18.prod.outlook.com (10.255.136.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2241.13; Fri, 6 Sep 2019 07:17:16 +0000
+Received: from BY5PR18MB3283.namprd18.prod.outlook.com
+ ([fe80::a46b:1f66:8378:b25e]) by BY5PR18MB3283.namprd18.prod.outlook.com
+ ([fe80::a46b:1f66:8378:b25e%3]) with mapi id 15.20.2241.014; Fri, 6 Sep 2019
+ 07:17:16 +0000
+From:   Chester Lin <clin@suse.com>
+To:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "merker@debian.org" <merker@debian.org>,
+        "atish.patra@wdc.com" <atish.patra@wdc.com>,
+        "Anup.Patel@wdc.com" <Anup.Patel@wdc.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rick@andestech.com" <rick@andestech.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        Chester Lin <clin@suse.com>
+Subject: [PATCH] riscv: save space on the magic number field of image header
+Thread-Topic: [PATCH] riscv: save space on the magic number field of image
+ header
+Thread-Index: AQHVZIMcNduMKr0kk0WFNI6AGCbw5w==
+Date:   Fri, 6 Sep 2019 07:17:15 +0000
+Message-ID: <20190906071631.23695-1-clin@suse.com>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK0PR03CA0119.apcprd03.prod.outlook.com
+ (2603:1096:203:b0::35) To BY5PR18MB3283.namprd18.prod.outlook.com
+ (2603:10b6:a03:196::11)
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=clin@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.22.0
+x-originating-ip: [60.251.47.116]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f46e4041-a95f-4c1c-8a73-08d7329a3e95
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BY5PR18MB3139;
+x-ms-traffictypediagnostic: BY5PR18MB3139:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BY5PR18MB3139EF69604CACB6E7D7C6DCADBA0@BY5PR18MB3139.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-forefront-prvs: 0152EBA40F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(346002)(396003)(376002)(39860400002)(136003)(189003)(199004)(256004)(36756003)(486006)(2616005)(14454004)(476003)(2501003)(478600001)(6486002)(186003)(386003)(6506007)(50226002)(8936002)(71200400001)(71190400001)(66946007)(26005)(7416002)(66556008)(81166006)(81156014)(5660300002)(8676002)(102836004)(6116002)(3846002)(52116002)(66476007)(55236004)(6436002)(64756008)(99286004)(66446008)(2906002)(86362001)(6512007)(1076003)(2201001)(110136005)(54906003)(2171002)(316002)(305945005)(4326008)(107886003)(66066001)(7736002)(25786009)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR18MB3139;H:BY5PR18MB3283.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: gwOxo58LCPBFLmm0855bKAeXkUICZfL26NTt0HGsjCnEXntS7OC7RJbl00OHEIKYFntU1RQcwNMHwFSI+qf4K7wDq5nYSYwlHmocHamboW+MzrY0M/jw3duYVGNsNhzjY5oUW65Own5ulibQ74hqrtzf3ECaIbhzDiIGFPLHZLX1Xvy8fP0R1CXlhqLKv/fcHOqyyp9EQfCt+M0OfTLo2H8K+2GJHZO8r0GOBjYzXb4gtnL1myFpry4Gb2j/H2KBrgWSuo6SNLbxsgT9/vRS+HZxoTCI4Tb9XqciPHYNqj+tuPunQfY8wA5C2V216Ypy8qbxrZsffpGA5UPHvhG0ewNp//Jw9dPLAik6y7aMrrNlY04f8XQLTUnzEfGtJg94Uw+hYx3BKU45RTOjhssyUhyrU2mqX+yJMFatZMdlI5I=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 6 Sep 2019 17:18:34 +1000
-Message-ID: <CAPM=9twnS=MQzLZM6sJ5wCtS5reFqd7715DtceP-6+=h2JoKLg@mail.gmail.com>
-Subject: [git pull] drm fixes for 5.3-rc8 (or final)
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: f46e4041-a95f-4c1c-8a73-08d7329a3e95
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2019 07:17:15.5812
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +jVT5rwHENlXecm0yziQHeIBI/AN5q8u9tIgpXrOwJW/eM8wbExr6Xud5BL5O93Q
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR18MB3139
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Linus,
+Change the symbol from "RISCV" to "RSCV" so the magic number can be 32-bit
+long, which is consistent with other architectures.
 
-Live from my friend's couch in Barcelona. Latest round of drm fixes,
-the command line parser regression fixes look a bit larger because
-they come with selftests included for the bugs they fix. Otherwise a
-single nouveau, single ingenic and single vmwgfx fix.
+Signed-off-by: Chester Lin <clin@suse.com>
+---
+ arch/riscv/include/asm/image.h | 9 +++++----
+ arch/riscv/kernel/head.S       | 5 ++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-Dave.
+diff --git a/arch/riscv/include/asm/image.h b/arch/riscv/include/asm/image.h
+index ef28e106f247..ec8bbfe86dde 100644
+--- a/arch/riscv/include/asm/image.h
++++ b/arch/riscv/include/asm/image.h
+@@ -3,7 +3,8 @@
+ #ifndef __ASM_IMAGE_H
+ #define __ASM_IMAGE_H
+ 
+-#define RISCV_IMAGE_MAGIC	"RISCV"
++#define RISCV_IMAGE_MAGIC	"RSCV"
++
+ 
+ #define RISCV_IMAGE_FLAG_BE_SHIFT	0
+ #define RISCV_IMAGE_FLAG_BE_MASK	0x1
+@@ -39,9 +40,9 @@
+  * @version:		version
+  * @res1:		reserved
+  * @res2:		reserved
+- * @magic:		Magic number
+  * @res3:		reserved (will be used for additional RISC-V specific
+  *			header)
++ * @magic:		Magic number
+  * @res4:		reserved (will be used for PE COFF offset)
+  *
+  * The intention is for this header format to be shared between multiple
+@@ -57,8 +58,8 @@ struct riscv_image_header {
+ 	u32 version;
+ 	u32 res1;
+ 	u64 res2;
+-	u64 magic;
+-	u32 res3;
++	u64 res3;
++	u32 magic;
+ 	u32 res4;
+ };
+ #endif /* __ASSEMBLY__ */
+diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+index 0f1ba17e476f..1f8fffbecf68 100644
+--- a/arch/riscv/kernel/head.S
++++ b/arch/riscv/kernel/head.S
+@@ -39,9 +39,8 @@ ENTRY(_start)
+ 	.word RISCV_HEADER_VERSION
+ 	.word 0
+ 	.dword 0
+-	.asciz RISCV_IMAGE_MAGIC
+-	.word 0
+-	.balign 4
++	.dword 0
++	.ascii RISCV_IMAGE_MAGIC
+ 	.word 0
+ 
+ .global _start_kernel
+-- 
+2.22.0
 
-drm-fixes-2019-09-06:
-drm fixes for 5.3-rc8 (or final)
-
-nouveau:
-- add missing MODULE_FIRMWARE definitions
-
-igenic:
-- hardcode panel type DPI
-
-vmwgfx:
-- double free fix
-
-core:
-- command line mode parser fixes
-The following changes since commit 089cf7f6ecb266b6a4164919a2e69bd2f938374a:
-
-  Linux 5.3-rc7 (2019-09-02 09:57:40 -0700)
-
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-09-06
-
-for you to fetch changes up to 1e19ec6c3c417a0893fcfae7abfba623e781d876:
-
-  Merge tag 'drm-misc-fixes-2019-09-05' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes (2019-09-06
-16:27:46 +1000)
-
-----------------------------------------------------------------
-drm fixes for 5.3-rc8 (or final)
-
-nouveau:
-- add missing MODULE_FIRMWARE definitions
-
-igenic:
-- hardcode panel type DPI
-
-vmwgfx:
-- double free fix
-
-core:
-- command line mode parser fixes
-
-----------------------------------------------------------------
-Ben Skeggs (1):
-      drm/nouveau/sec2/gp102: add missing MODULE_FIRMWAREs
-
-Dan Carpenter (1):
-      drm/vmwgfx: Fix double free in vmw_recv_msg()
-
-Dave Airlie (3):
-      Merge branch 'linux-5.3' of git://github.com/skeggsb/linux into drm-fixes
-      Merge branch 'vmwgfx-fixes-5.3' of
-git://people.freedesktop.org/~thomash/linux into drm-fixes
-      Merge tag 'drm-misc-fixes-2019-09-05' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-
-Laurent Pinchart (1):
-      drm/ingenic: Hardcode panel type to DPI
-
-Maxime Ripard (4):
-      drm/modes: Add a switch to differentiate free standing options
-      drm/modes: Fix the command line parser to take force options into account
-      drm/modes: Introduce a whitelist for the named modes
-      drm/selftests: modes: Add more unit tests for the cmdline parser
-
- drivers/gpu/drm/drm_modes.c                        |  54 ++++++++-
- drivers/gpu/drm/ingenic/ingenic-drm.c              |   5 +-
- .../gpu/drm/nouveau/nvkm/subdev/secboot/gp102.c    |  12 ++
- drivers/gpu/drm/selftests/drm_cmdline_selftests.h  |   7 ++
- .../gpu/drm/selftests/test-drm_cmdline_parser.c    | 130 +++++++++++++++++++++
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.c                |   8 +-
- 6 files changed, 202 insertions(+), 14 deletions(-)
