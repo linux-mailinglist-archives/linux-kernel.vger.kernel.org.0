@@ -2,95 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62B61AB6DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 480BBAB6E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732265AbfIFLJy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Sep 2019 07:09:54 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40942 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731527AbfIFLJv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:09:51 -0400
-Received: by mail-ot1-f67.google.com with SMTP id y39so5341311ota.7;
-        Fri, 06 Sep 2019 04:09:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YjIOTnA7AJrnGQlF0RtRVuR7iIuADp5iAhDiCUvFbDY=;
-        b=RsTS3VcxF55/+90ijx30BBcgmTMDLDJcPW2gE/p8rcYNRNamg8aaKkVQldvzDht5PM
-         7xuua/7XK8Nq+SbjZVOe901eYb6z54Eve0ioYJtlxvFf0eG0yjUmjAnNC+NT62Y1QzRB
-         Jjk7hxGtGY8OVQE8cftrMhKIhEVLirmpD5OslKJdkt1Plhl0K+4EMGBawDIe6pPpeRjU
-         R/pFbRQC+hNL42JWaC9LVwT1ae0H9i1Oigd0o7iURelqJDcvbKzE3z9BF71j8W+LAQ77
-         uBiTc7ZECucv7fVDWXs5TkYy7fwe0/YfSrVIMId85UFnwpqDbNBiiHkdSo70T4T1lGKL
-         G2ig==
-X-Gm-Message-State: APjAAAWeEoU31d3ZGKoHuPQ5h6RoHE8wC/sPZ7dUG8noMbeJVtoUylBj
-        oz8wBrYRMo3I98elF/eu9EcBf5v9PFqbx8LeDGo=
-X-Google-Smtp-Source: APXvYqycNpCL4JLDQsajFhUn38P3soOaWnlH2I8lUg6IR7dOErT/aqJzV4mupZNPg2j96MybcS6x7VN9KphMVsGGLLA=
-X-Received: by 2002:a05:6830:1196:: with SMTP id u22mr6795961otq.39.1567768190812;
- Fri, 06 Sep 2019 04:09:50 -0700 (PDT)
+        id S2388461AbfIFLKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:10:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50658 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727816AbfIFLKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 07:10:54 -0400
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24E3721670
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2019 11:10:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567768253;
+        bh=8J7vhVPmmaH9VUTrqUcBmnghWw79eGkl8RkGxlSWzfo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2tH17ab0r7UVbqybsCAzXSFz8s8fx7N0RDZLd3K3qEf2t1BWCGA/kbbgRnRvE2I0R
+         CsWBkREnQKOV+3gBw5jsQUirVldIY5NrEkrZsOv2D9bJo7AMBBw5dl0x4aG7tHd5F4
+         hUPkkn/5KWLiZrnEQsQNjA+iXd1wJTbzI67l+YmE=
+Received: by mail-qt1-f169.google.com with SMTP id l22so6508177qtp.10
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 04:10:53 -0700 (PDT)
+X-Gm-Message-State: APjAAAXuNe8D/Jjs6KK/rAN/WKM9c9uz7H+SuolVx1hhGtove05YIxyP
+        pZVBZ/DRW7EXKbOM0pLl/cJjL2l4lme19GeIjg==
+X-Google-Smtp-Source: APXvYqwxtJ2nxLsP9EuH4mMTLaDZPmidxeZD/Ez80LDFh4lXToL9ygmYpFYBKD1c0/Epcj8dt9cSUuE4W77RloAjVnY=
+X-Received: by 2002:a0c:f70c:: with SMTP id w12mr4284929qvn.200.1567768252224;
+ Fri, 06 Sep 2019 04:10:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190705160536.12047-1-geert+renesas@glider.be>
- <CAMpxmJXOrDLdw6ZPBHxzsDRYiLmhRNCb-s_Z=Gu=Ecg1XA5ONQ@mail.gmail.com>
- <CAMuHMdWdb0dcS8Nvk-Poz2dT7nuHjFhqpsRPZZnSKsc3VffcRA@mail.gmail.com> <CAMpxmJUF1s1zyXVtoUGfbV7Yk+heua4rNjY=DrX=jr-v8UfNxA@mail.gmail.com>
-In-Reply-To: <CAMpxmJUF1s1zyXVtoUGfbV7Yk+heua4rNjY=DrX=jr-v8UfNxA@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 6 Sep 2019 13:09:39 +0200
-Message-ID: <CAMuHMdXOhrc1o5Jh3TN+JT4VFSSMg8Wy-rsgH=b8hNZQd8rXiA@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: Add Virtual Aggregator GPIO Driver
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20190905121141.42820-1-steven.price@arm.com>
+In-Reply-To: <20190905121141.42820-1-steven.price@arm.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 6 Sep 2019 12:10:41 +0100
+X-Gmail-Original-Message-ID: <CAL_JsqKyKUBOK7+fSpr+ShjUz72oXC91ySOKCST9WyWjd0nqww@mail.gmail.com>
+Message-ID: <CAL_JsqKyKUBOK7+fSpr+ShjUz72oXC91ySOKCST9WyWjd0nqww@mail.gmail.com>
+Subject: Re: [PATCH] drm/panfrost: Prevent race when handling page fault
+To:     Steven Price <steven.price@arm.com>
+Cc:     Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 4:59 PM Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
-> pon., 8 lip 2019 o 12:24 Geert Uytterhoeven <geert@linux-m68k.org> napisał(a):
-> > On Mon, Jul 8, 2019 at 11:45 AM Bartosz Golaszewski
-> > <bgolaszewski@baylibre.com> wrote:
-> > > pt., 5 lip 2019 o 18:05 Geert Uytterhoeven <geert+renesas@glider.be> napisał(a):
-> > > > +static int gpio_virt_agg_set_config(struct gpio_chip *chip,
-> > > > +                                   unsigned int offset, unsigned long config)
-> > > > +{
-> > > > +       struct gpio_virt_agg_priv *priv = gpiochip_get_data(chip);
-> > > > +
-> > > > +       chip = priv->desc[offset]->gdev->chip;
-> > > > +       if (chip->set_config)
-> > > > +               return chip->set_config(chip, offset, config);
-> > > > +
-> > > > +       // FIXME gpiod_set_transitory() expects success if not implemented
-> >
-> > BTW, do you have a comment about this FIXME?
+On Thu, Sep 5, 2019 at 1:11 PM Steven Price <steven.price@arm.com> wrote:
 >
-> Ha! Interesting. I'll give it a thought and respond elsewhere as it's
-> a different subject.
+> When handling a GPU page fault addr_to_drm_mm_node() is used to
+> translate the GPU address to a buffer object. However it is possible for
+> the buffer object to be freed after the function has returned resulting
+> in a use-after-free of the BO.
 >
-> > > > +       return -ENOTSUPP;
+> Change addr_to_drm_mm_node to return the panfrost_gem_object with an
+> extra reference on it, preventing the BO from being freed until after
+> the page fault has been handled.
+>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>
+> I've managed to trigger this, generating the following stack trace.
 
-Upon closer look, this turns out to be a red herring: gpiod_set_transitory()
-converts -ENOTSUPP to zero, so there is no issue.
+Humm, the assumption was that a fault could only happen during a job
+and so a reference would already be held. Otherwise, couldn't the GPU
+also be accessing the BO after it is freed?
 
-Gr{oetje,eeting}s,
+Also, looking at this again, I think we need to hold the mm_lock
+around the drm_mm_for_each_node().
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
