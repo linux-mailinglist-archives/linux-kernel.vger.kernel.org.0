@@ -2,143 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5F7ABE52
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED662ABE4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:08:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405989AbfIFRIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 13:08:20 -0400
-Received: from mail-lj1-f175.google.com ([209.85.208.175]:43117 "EHLO
-        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395137AbfIFRIT (ORCPT
+        id S2405966AbfIFRIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 13:08:12 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:54132 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbfIFRIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:08:19 -0400
-Received: by mail-lj1-f175.google.com with SMTP id d5so6656278lja.10
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 10:08:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=px6LlxUmzkx1m0e18cjKznO/fFTclAviZPrgSZRKBVI=;
-        b=MCWoYx3wwPNe3ejnJN5r5oIxq9QPmZRawZ44NCyAtTl3MEC96N3xYQha1TuJooW6hy
-         9YlTT61GP1L5xuTti11KucisLSfvTL5wG4swlhrjsZCCW2j7m8wFJW8y7EMIvNgAYJy+
-         xzirKOyunebm6EAqZhhsgW62bHn0OrSMJb0FQ=
+        Fri, 6 Sep 2019 13:08:12 -0400
+Received: by mail-io1-f72.google.com with SMTP id l21so8389181iob.20
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 10:08:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=px6LlxUmzkx1m0e18cjKznO/fFTclAviZPrgSZRKBVI=;
-        b=M0I+YjUsuBZhUdgO3UVAl0ynzWiPW7HetPnmKY5c/L14Jj1GpqU/0DwBUiB1BRixtX
-         ARmEnpQh2GCGcF3q6slnKSJk+vSELM+Xz0ZqzMpaNa8OYWzHVM6oXhCGTsX+px7uayd/
-         G5YkehQvJM5CISf8lPUMsnl0aGYv9M4dy7UfniDbbsIQNEEDNYbTdaOItYT2N5SIrSGH
-         R5XlX9+1yuleWOkmAkVA5JSXxSv/K9a3qLosacuzZmHMF7l5/fxKSQSSy2vn0Nr2JmsT
-         nHcADXZzf1TtyD8y00GIaitsrumWIB2lBlxb0IEGO8v8DvgNm13fCZdxf5fx0MbX+tr1
-         an4g==
-X-Gm-Message-State: APjAAAX8A1w5AG+N3Y+3Y2wSAZyoV4GfTADiIJhrdA0f3Gn5pf2OhJPU
-        BR2KsoS/xTB7K+fhJkOO3orr3TRfRzI=
-X-Google-Smtp-Source: APXvYqx7pHc1CuHdXvWwyaZbn6Ej/5j0hIBRACXE1VM/DAKYjVpr90ZJCBvXR+tsS8BI5WEHLgGwew==
-X-Received: by 2002:a2e:780c:: with SMTP id t12mr6255391ljc.226.1567789696543;
-        Fri, 06 Sep 2019 10:08:16 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id w77sm1218168lff.49.2019.09.06.10.08.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2019 10:08:15 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id l1so6639569lji.12
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 10:08:15 -0700 (PDT)
-X-Received: by 2002:a2e:3a0e:: with SMTP id h14mr6369908lja.180.1567789694898;
- Fri, 06 Sep 2019 10:08:14 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=q8OkoEi+GgJ9/q6d/Q9AdtdIt7JwUh/xgslJcUrjLWU=;
+        b=WywYCohD/nbMOWK1RcVXQ60qCfPhZa80hfT/2h9zNmpNYbI6iBIwAJcs7kh8FRz1Ai
+         AY62wrr/oiX3tn12Gf/hL1n1yrJxBmsfswESayht3g7RgUUqrJLRx+Rs4mdYBRlKzZh9
+         QMRNxhL282SO0GAgqE4GtuuijPCX+gH3KVAfnUkX39jaP5S+dXmgG/3vRwJ6XGozxsrS
+         0VntAcsZFIpIzCr8Nc1bJV+EBeg7j4rQmWuyjQjiyUrkQ/CJGxSDB1F+ogIQzFQWCB7s
+         JjfwdSR7uX58mEGKjd1nGnVRHTmuCOmmK4NA8HUCprx2QVD6WzGE9kBZekfcoAGIvVPZ
+         jX3w==
+X-Gm-Message-State: APjAAAXzMuhwrvOF0YbsDNHwJjDg/lOWyuMVAEEoi6x6bzsTtnILSaMk
+        dnsmuIeo+8kT+gxEZAzUNPC69JxRpFAW9Jbzhem98PPB6VZt
+X-Google-Smtp-Source: APXvYqxq9lFbaa7rIg62dtip3JkaDW3dot2lG41o2i7UeccV9NumUayL9rzEyecN8Uafq7zcSeGbik42IxMAYgTf+f5QLedVTxzb
 MIME-Version: 1.0
-References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
- <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
- <17703.1567702907@warthog.procyon.org.uk> <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
- <CAKCoTu7ms_Mr-q08d9XB3uascpzwBa5LF9JTT2aq8uUsoFE8aQ@mail.gmail.com>
- <CAHk-=wjcsxQ8QB_v=cwBQw4pkJg7pp-bBsdWyPivFO_OeF-y+g@mail.gmail.com>
- <5396.1567719164@warthog.procyon.org.uk> <CAHk-=wgbCXea1a9OTWgMMvcsCGGiNiPp+ty-edZrBWn63NCYdw@mail.gmail.com>
- <14883.1567725508@warthog.procyon.org.uk> <CAHk-=wjt2Eb+yEDOcQwCa0SrZ4cWu967OtQG8Vz21c=n5ZP1Nw@mail.gmail.com>
- <27732.1567764557@warthog.procyon.org.uk> <CAHk-=wiR1fpahgKuxSOQY6OfgjWD+MKz8UF6qUQ6V_y2TC_V6w@mail.gmail.com>
- <CAHk-=wioHmz69394xKRqFkhK8si86P_704KgcwjKxawLAYAiug@mail.gmail.com> <8e60555e-9247-e03f-e8b4-1d31f70f1221@redhat.com>
-In-Reply-To: <8e60555e-9247-e03f-e8b4-1d31f70f1221@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 6 Sep 2019 10:07:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg6=qhw0-F=2_8y=VdT+fj8k7G1+t2XNSkRYimXhampVg@mail.gmail.com>
-Message-ID: <CAHk-=wg6=qhw0-F=2_8y=VdT+fj8k7G1+t2XNSkRYimXhampVg@mail.gmail.com>
-Subject: Re: Why add the general notification queue and its sources
-To:     Steven Whitehouse <swhiteho@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Ray Strode <rstrode@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Ray, Debarshi" <debarshi.ray@gmail.com>,
-        Robbie Harwood <rharwood@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a02:920b:: with SMTP id x11mr11516568jag.17.1567789690508;
+ Fri, 06 Sep 2019 10:08:10 -0700 (PDT)
+Date:   Fri, 06 Sep 2019 10:08:10 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009611470591e57be6@google.com>
+Subject: possible deadlock in __mmu_notifier_invalidate_range_end
+From:   syzbot <syzbot+aaedc50d99a03250fe1f@syzkaller.appspotmail.com>
+To:     airlied@linux.ie, akpm@linux-foundation.org, bhelgaas@google.com,
+        bskeggs@redhat.com, dan.j.williams@intel.com,
+        daniel.vetter@ffwll.ch, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, jean-philippe@linaro.org,
+        jgg@ziepe.ca, jglisse@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, logang@deltatee.com, mhocko@suse.com,
+        nouveau@lists.freedesktop.org, rcampbell@nvidia.com,
+        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 9:12 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
->
-> The events are generally not independent - we would need ordering either
-> implicit in the protocol or explicit in the messages.
+Hello,
 
-Note that pipes certainly would never re-order messages. It's just
-that _if_ you have two independent and concurrent readers of the same
-pipe, they could read one message each, and you couldn't tell which
-was first in user space.
+syzbot found the following crash on:
 
-Of course, I would suggest that anything that actually has
-non-independent messages should always use a sequence number or
-something like that in the message anyway. But then it would have to
-be on a protocol level.
+HEAD commit:    6d028043 Add linux-next specific files for 20190830
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16cbf22a600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=82a6bec43ab0cb69
+dashboard link: https://syzkaller.appspot.com/bug?extid=aaedc50d99a03250fe1f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15269876600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12685092600000
 
-And it's not clear that all notifications need it. If it's just a
-random "things changed" notification, mnaybe that doesn't need a
-sequence number or anything else. So being on a protocol/data stream
-level might be the right thing regardless.
+The bug was bisected to:
 
-Another possibility is to just say "don't do that then". If you want
-multiple concurrent readers, open multiple pipes for them and use
-separate events, and be happy in the knowledge that you don't have any
-complicated cases.
+commit e58b341134ca751d9c12bacded12a8b4dd51368d
+Author: Stephen Rothwell <sfr@canb.auug.org.au>
+Date:   Fri Aug 30 09:42:14 2019 +0000
 
->  We also need to
-> know in case messages are dropped too - doesn't need to be anything
-> fancy, just some idea that since we last did a read, there are messages
-> that got lost, most likely due to buffer overrun.
+     Merge remote-tracking branch 'hmm/hmm'
 
-Pipes don't have that, but another flag certainly wouldn't be _hard_ to add.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11ea65ea600000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=13ea65ea600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ea65ea600000
 
-But one problem (and this is fundamental) is that while O_DIRECT works
-today (and works with kernels going back years), any new features like
-overflow notification would obviously not work with legacy kernels.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+aaedc50d99a03250fe1f@syzkaller.appspotmail.com
+Fixes: e58b341134ca ("Merge remote-tracking branch 'hmm/hmm'")
 
-On the user write side, with an O_NONBLOCK pipe, you currently just
-get an -EAGAIN, so you _see_ the drop happening. But (again) there's
-no sticky flag for it anywhere else, and there's no clean automatic
-way for the reader to see "ok, the writer overflowed".
+============================================
+WARNING: possible recursive locking detected
+5.3.0-rc6-next-20190830 #75 Not tainted
+--------------------------------------------
+oom_reaper/1065 is trying to acquire lock:
+ffffffff8904ff60 (mmu_notifier_invalidate_range_start){+.+.}, at:  
+__mmu_notifier_invalidate_range_end+0x0/0x360 mm/mmu_notifier.c:169
 
-That's not a problem for any future extensions - the feature sounds
-like a new flag and a couple of lines to do it - but it's a problem
-for the whole "prototype in user space using existing pipe support"
-that I personally find so nice, and which I think is such a good way
-to prove the user space _need_ for anything like this.
+but task is already holding lock:
+ffffffff8904ff60 (mmu_notifier_invalidate_range_start){+.+.}, at:  
+__oom_reap_task_mm+0x196/0x490 mm/oom_kill.c:542
 
-But if people are ok with the pipe model in theory, _that_ kind of
-small and directed feature I have absolutely no problem with adding.
-It's just whole new untested character mode drivers with odd semantics
-that I find troublesome.
+other info that might help us debug this:
+  Possible unsafe locking scenario:
 
-Hmm. Maybe somebody can come up with a good legacy signaling solution
-(and "just use another pipe for error notification and OOB data" for
-the first one may _work_, but that sounds pretty hacky and just not
-very convenient).
+        CPU0
+        ----
+   lock(mmu_notifier_invalidate_range_start);
+   lock(mmu_notifier_invalidate_range_start);
 
-               Linus
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+2 locks held by oom_reaper/1065:
+  #0: ffff888094ad3990 (&mm->mmap_sem#2){++++}, at: oom_reap_task_mm  
+mm/oom_kill.c:570 [inline]
+  #0: ffff888094ad3990 (&mm->mmap_sem#2){++++}, at: oom_reap_task  
+mm/oom_kill.c:613 [inline]
+  #0: ffff888094ad3990 (&mm->mmap_sem#2){++++}, at: oom_reaper+0x3a7/0x1320  
+mm/oom_kill.c:651
+  #1: ffffffff8904ff60 (mmu_notifier_invalidate_range_start){+.+.}, at:  
+__oom_reap_task_mm+0x196/0x490 mm/oom_kill.c:542
+
+stack backtrace:
+CPU: 1 PID: 1065 Comm: oom_reaper Not tainted 5.3.0-rc6-next-20190830 #75
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_deadlock_bug kernel/locking/lockdep.c:2371 [inline]
+  check_deadlock kernel/locking/lockdep.c:2412 [inline]
+  validate_chain kernel/locking/lockdep.c:2955 [inline]
+  __lock_acquire.cold+0x15d/0x385 kernel/locking/lockdep.c:3955
+  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
+  __mmu_notifier_invalidate_range_end+0x3c/0x360 mm/mmu_notifier.c:193
+  mmu_notifier_invalidate_range_end include/linux/mmu_notifier.h:375 [inline]
+  __oom_reap_task_mm+0x3fa/0x490 mm/oom_kill.c:552
+  oom_reap_task_mm mm/oom_kill.c:589 [inline]
+  oom_reap_task mm/oom_kill.c:613 [inline]
+  oom_reaper+0x2b2/0x1320 mm/oom_kill.c:651
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+oom_reaper: reaped process 10145 (syz-executor282), now anon-rss:16480kB,  
+file-rss:872kB, shmem-rss:0kB
+oom_reaper: reaped process 10144 (syz-executor282), now anon-rss:0kB,  
+file-rss:0kB, shmem-rss:0kB
+oom_reaper: reaped process 10158 (syz-executor282), now anon-rss:16824kB,  
+file-rss:872kB, shmem-rss:0kB
+oom_reaper: reaped process 10187 (syz-executor282), now anon-rss:0kB,  
+file-rss:0kB, shmem-rss:0kB
+oom_reaper: reaped process 10173 (syz-executor282), now anon-rss:0kB,  
+file-rss:0kB, shmem-rss:0kB
+oom_reaper: reaped process 10139 (syz-executor282), now anon-rss:0kB,  
+file-rss:0kB, shmem-rss:0kB
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
