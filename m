@@ -2,106 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 974F4AB019
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 03:27:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56695AB015
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 03:24:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390647AbfIFB1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 21:27:47 -0400
-Received: from mga05.intel.com ([192.55.52.43]:12199 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729366AbfIFB1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 21:27:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2019 18:27:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,471,1559545200"; 
-   d="scan'208";a="383094043"
-Received: from brentlu-desk0.itwn.intel.com ([10.5.253.11])
-  by fmsmga005.fm.intel.com with ESMTP; 05 Sep 2019 18:27:44 -0700
-From:   Brent Lu <brent.lu@intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     cezary.rojewski@intel.com, pierre-louis.bossart@linux.intel.com,
-        liam.r.girdwood@linux.intel.com, yang.jie@linux.intel.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        brent.lu@intel.com, kuninori.morimoto.gx@renesas.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: bdw-rt5677: channel constraint support
-Date:   Fri,  6 Sep 2019 09:24:18 +0800
-Message-Id: <1567733058-9561-1-git-send-email-brent.lu@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S2403958AbfIFBYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 21:24:36 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46360 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731742AbfIFBYg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 21:24:36 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q5so3139624pfg.13
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 18:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DVF2xhHbHg2j29LblU1CgBEDCkpvcBZ4AEHewXas5gw=;
+        b=MseIdCPTJrTQJXOW2UzidBAhUmOeTrXnBtOR+3fZX0Z7OI2kykLR9y//15fPmkKV9a
+         jR/BczxeqD7rUjgQQtjkNUcxys3QOUJc7m8djl78qIGtAVV9LZ6bm9aWXdUCqLgInU6o
+         i9r57ZkOn4/OhHPgZ5D3aGFe0fmySrPPszYeYdqfpbD/SDAyfBbzX/yXBFHXcpGU0IKo
+         GfLNTt5RHSp9N+2sNsG4vC44jSkL6ecF30cXzAYX5XPTNB2vJC2ShzAre40QKDu+lAKf
+         fvN95tMY86KO3LdrIPbdYE/dMaKSziOm04axHBWu3fD3UGgRb4ouDRgQ4KIgNpgnrbRg
+         H4pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DVF2xhHbHg2j29LblU1CgBEDCkpvcBZ4AEHewXas5gw=;
+        b=JrgpTKGj1LkewhhJYg+Ky/9HLUKl2xdZW9iIRQj2b42GVDBKBtFum+sr9UozOylGQY
+         NFIu9kbozFJcwSI4S8BcVPKsl56VzcAkECoeWRTJQE0Qc5X/M9lSlm2nidt5/uniev/B
+         0uQlr43Xqca8DrMOs6ZPKrDWwJ672r4DiPwVwT146DFe5H4GiW2GSnT7msgT1a7PRzox
+         pQt0APZ7umxlt9UNjEDKH8beUNP4FdTqkTSCZvQIYRmZbNJ89kJJOufIr9wa/mBLNj7o
+         Gz6/X0VGA7u/kVEf/VRxntsjiW9PyQPk6GEZ+Df115H3gGWrdQ20aoE+0hxUA+1kDPQb
+         AGzw==
+X-Gm-Message-State: APjAAAUmfv03+Sy3rtxKAosoKz9+q/kv+Fej00QmL4/qWwQYsbyzV5MK
+        bqvXdIjrbToCzANYA5BYLEs=
+X-Google-Smtp-Source: APXvYqwqglByW+NsVpmNz31XHRSPZh2xUQuRAXEuUO67Oz/RsBaNjU+V97Dds8Akz3dZzec4uAhMGg==
+X-Received: by 2002:a62:26c4:: with SMTP id m187mr7721569pfm.49.1567733075155;
+        Thu, 05 Sep 2019 18:24:35 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id r18sm3222688pfc.3.2019.09.05.18.24.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Sep 2019 18:24:34 -0700 (PDT)
+Date:   Thu, 5 Sep 2019 18:24:39 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     broonie@kernel.org, festevam@gmail.com, Xiubo.Lee@gmail.com,
+        shengjiu.wang@nxp.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, timur@kernel.org,
+        mihai.serban@gmail.com, Mihai Serban <mihai.serban@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Subject: Re: [PATCH] ASoC: fsl_sai: Fix noise when using EDMA
+Message-ID: <20190906012438.GA17926@Asurada-Nvidia.nvidia.com>
+References: <20190830200900.19668-1-daniel.baluta@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190830200900.19668-1-daniel.baluta@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BDW boards using this machine driver supports only stereo capture and
-playback. Implement a constraint to enforce it.
+On Fri, Aug 30, 2019 at 11:09:00PM +0300, Daniel Baluta wrote:
+> From: Mihai Serban <mihai.serban@nxp.com>
+> 
+> EDMA requires the period size to be multiple of maxburst. Otherwise the
+> remaining bytes are not transferred and thus noise is produced.
+> 
+> We can handle this issue by adding a constraint on
+> SNDRV_PCM_HW_PARAM_PERIOD_SIZE to be multiple of tx/rx maxburst value.
+> 
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Signed-off-by: Mihai Serban <mihai.serban@nxp.com>
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  sound/soc/fsl/fsl_sai.c | 15 +++++++++++++++
+>  sound/soc/fsl/fsl_sai.h |  1 +
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+> index 728307acab90..fe126029f4e3 100644
+> --- a/sound/soc/fsl/fsl_sai.c
+> +++ b/sound/soc/fsl/fsl_sai.c
+> @@ -612,6 +612,16 @@ static int fsl_sai_startup(struct snd_pcm_substream *substream,
+>  			   FSL_SAI_CR3_TRCE_MASK,
+>  			   FSL_SAI_CR3_TRCE);
+>  
+> +	/*
+> +	 * some DMA controllers need period size to be a multiple of
+> +	 * tx/rx maxburst
+> +	 */
+> +	if (sai->soc_data->use_constraint_period_size)
+> +		snd_pcm_hw_constraint_step(substream->runtime, 0,
+> +					   SNDRV_PCM_HW_PARAM_PERIOD_SIZE,
+> +					   tx ? sai->dma_params_tx.maxburst :
+> +					   sai->dma_params_rx.maxburst);
 
-Signed-off-by: Brent Lu <brent.lu@intel.com>
----
- sound/soc/intel/boards/bdw-rt5677.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+I feel that PERIOD_SIZE could be used for some other cases than
+being related to maxburst....
+  
+>  static const struct of_device_id fsl_sai_ids[] = {
+> diff --git a/sound/soc/fsl/fsl_sai.h b/sound/soc/fsl/fsl_sai.h
+> index b89b0ca26053..3a3f6f8e5595 100644
+> --- a/sound/soc/fsl/fsl_sai.h
+> +++ b/sound/soc/fsl/fsl_sai.h
+> @@ -157,6 +157,7 @@
+>  
+>  struct fsl_sai_soc_data {
+>  	bool use_imx_pcm;
+> +	bool use_constraint_period_size;
 
-diff --git a/sound/soc/intel/boards/bdw-rt5677.c b/sound/soc/intel/boards/bdw-rt5677.c
-index 4a4d335..a312b55 100644
---- a/sound/soc/intel/boards/bdw-rt5677.c
-+++ b/sound/soc/intel/boards/bdw-rt5677.c
-@@ -22,6 +22,8 @@
- 
- #include "../../codecs/rt5677.h"
- 
-+#define DUAL_CHANNEL 2
-+
- struct bdw_rt5677_priv {
- 	struct gpio_desc *gpio_hp_en;
- 	struct snd_soc_component *component;
-@@ -245,6 +247,36 @@ static int bdw_rt5677_init(struct snd_soc_pcm_runtime *rtd)
- 	return 0;
- }
- 
-+static const unsigned int channels[] = {
-+	DUAL_CHANNEL,
-+};
-+
-+static const struct snd_pcm_hw_constraint_list constraints_channels = {
-+	.count = ARRAY_SIZE(channels),
-+	.list = channels,
-+	.mask = 0,
-+};
-+
-+static int bdw_fe_startup(struct snd_pcm_substream *substream)
-+{
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+
-+	/*
-+	 * On this platform for PCM device we support,
-+	 * stereo
-+	 */
-+
-+	runtime->hw.channels_max = DUAL_CHANNEL;
-+	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
-+					   &constraints_channels);
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_ops bdw_rt5677_fe_ops = {
-+	.startup = bdw_fe_startup,
-+};
-+
- /* broadwell digital audio interface glue - connects codec <--> CPU */
- SND_SOC_DAILINK_DEF(dummy,
- 	DAILINK_COMP_ARRAY(COMP_DUMMY()));
-@@ -273,6 +305,7 @@ static struct snd_soc_dai_link bdw_rt5677_dais[] = {
- 		},
- 		.dpcm_capture = 1,
- 		.dpcm_playback = 1,
-+		.ops = &bdw_rt5677_fe_ops,
- 		SND_SOC_DAILINK_REG(fe, dummy, platform),
- 	},
- 
--- 
-2.7.4
+....so maybe the soc specific flag here could be something like
+	bool use_edma;
 
+What do you think?
