@@ -2,102 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CCE7AB0DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 05:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52499AB0EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 05:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390199AbfIFDPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 23:15:42 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:25926 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731938AbfIFDPm (ORCPT
+        id S2392100AbfIFDZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 23:25:57 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59308 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391320AbfIFDZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 23:15:42 -0400
-X-UUID: 0c52a1504d08462fa88399dd2eb2bb08-20190906
-X-UUID: 0c52a1504d08462fa88399dd2eb2bb08-20190906
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <walter-zh.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 791673129; Fri, 06 Sep 2019 11:15:34 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 6 Sep 2019 11:15:31 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 6 Sep 2019 11:15:31 +0800
-Message-ID: <1567739734.32522.67.camel@mtksdccf07>
-Subject: Re: [PATCH 1/2] mm/kasan: dump alloc/free stack for page allocator
-From:   Walter Wu <walter-zh.wu@mediatek.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-CC:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, <kasan-dev@googlegroups.com>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
-Date:   Fri, 6 Sep 2019 11:15:34 +0800
-In-Reply-To: <99913463-0e2c-7dab-c1eb-8b9e149b3ee3@suse.cz>
-References: <20190904065133.20268-1-walter-zh.wu@mediatek.com>
-         <401064ae-279d-bef3-a8d5-0fe155d0886d@suse.cz>
-         <1567605965.32522.14.camel@mtksdccf07>
-         <7998e8f1-e5e2-da84-ea1f-33e696015dce@suse.cz>
-         <1567607063.32522.24.camel@mtksdccf07>
-         <99913463-0e2c-7dab-c1eb-8b9e149b3ee3@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Sep 2019 23:25:57 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x863PACX068165;
+        Fri, 6 Sep 2019 03:25:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2019-08-05;
+ bh=XW7Ojx+pUK0p5QiMONWXWBE8OOEMf80urxVFCJSXtuQ=;
+ b=cqX6p5IDFND77MqTG5i+hn/gGBFt0oKpLb1RFhNaJ+VDUNN4hzKhwnRu6b8D38wdAxZ3
+ DyHTCsSKp5IgJ+sNGO2IBnKx48ClR7jM08uM0XtC90mSWxGDDynb91WCufdwo2Ze2trU
+ MkamE10IQy2TdCofgYF8TJADAjZT6JfEX7y3kRWD8WiSPCGM087NoQHw9LuqC4EX9WfF
+ ALP10dU36EHgyI3cVQGP5M17JV1Rwmjo46t6OVhcrj+2birt7V5kstMYg3uw3VWMZUga
+ wBGmbfk1jYEdmB+42D51Ns7VgeGqaaQCACpEcXc2YfCCpJIbPUQUZ4UbwofgwkxadKJb Xw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2uuf51g2c1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 03:25:39 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x861ciol071292;
+        Fri, 6 Sep 2019 01:40:45 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2utvr4fve4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 01:40:45 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x861ei7Q021721;
+        Fri, 6 Sep 2019 01:40:44 GMT
+Received: from localhost.localdomain (/98.229.125.203)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Sep 2019 18:40:44 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH v3 9/9] padata: remove cpu_index from the parallel_queue
+Date:   Thu,  5 Sep 2019 21:40:29 -0400
+Message-Id: <20190906014029.3345-10-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190906014029.3345-1-daniel.m.jordan@oracle.com>
+References: <20190906014029.3345-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909060015
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909060037
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-09-05 at 10:03 +0200, Vlastimil Babka wrote:
-> On 9/4/19 4:24 PM, Walter Wu wrote:
-> > On Wed, 2019-09-04 at 16:13 +0200, Vlastimil Babka wrote:
-> >> On 9/4/19 4:06 PM, Walter Wu wrote:
-> >>
-> >> The THP fix is not required for the rest of the series, it was even merged to
-> >> mainline separately.
-> >>
-> >>> And It looks like something is different, because we only need last
-> >>> stack of page, so it can decrease memory overhead.
-> >>
-> >> That would save you depot_stack_handle_t (which is u32) per page. I guess that's
-> >> nothing compared to KASAN overhead?
-> >>
-> > If we can use less memory, we can achieve what we want. Why not?
-> 
-> In my experience to solve some UAFs, it's important to know not only the
-> freeing stack, but also the allocating stack. Do they make sense together,
-> or not? In some cases, even longer history of alloc/free would be nice :)
-> 
-We think it only has free stack to find out the root cause. Maybe we can
-refer to other people's experience and ideas.
+With the removal of the ENODATA case from padata_get_next, the cpu_index
+field is no longer useful, so it can go away.
 
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Acked-by: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ include/linux/padata.h |  2 --
+ kernel/padata.c        | 13 ++-----------
+ 2 files changed, 2 insertions(+), 13 deletions(-)
 
-> Also by simply recording the free stack in the existing depot handle,
-> you might confuse existing page_owner file consumers, who won't know
-> that this is a freeing stack.
-> 
-Don't worry it.
-1. Our feature option has this description about last stack of page.
-when consumer enable our feature, they should know the changing.
-2. We add to print text message for alloc or free stack before dump the
-stack of page. so consumers should know what is it.
-
-> All that just doesn't seem to justify saving an u32 per page.
-
-Actually, We want to slim memory usage instead of increasing the memory
-usage at another mail discussion. Maybe, maintainer or reviewer can
-provide some ideas. That will be great.
-
-> > 
-> > 
-> 
-
+diff --git a/include/linux/padata.h b/include/linux/padata.h
+index 43d3fd9d17fc..23717eeaad23 100644
+--- a/include/linux/padata.h
++++ b/include/linux/padata.h
+@@ -75,14 +75,12 @@ struct padata_serial_queue {
+  * @swork: work struct for serialization.
+  * @work: work struct for parallelization.
+  * @num_obj: Number of objects that are processed by this cpu.
+- * @cpu_index: Index of the cpu.
+  */
+ struct padata_parallel_queue {
+        struct padata_list    parallel;
+        struct padata_list    reorder;
+        struct work_struct    work;
+        atomic_t              num_obj;
+-       int                   cpu_index;
+ };
+ 
+ /**
+diff --git a/kernel/padata.c b/kernel/padata.c
+index 832224dcf2e1..c3fec1413295 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -400,21 +400,12 @@ static void padata_init_squeues(struct parallel_data *pd)
+ /* Initialize all percpu queues used by parallel workers */
+ static void padata_init_pqueues(struct parallel_data *pd)
+ {
+-	int cpu_index, cpu;
++	int cpu;
+ 	struct padata_parallel_queue *pqueue;
+ 
+-	cpu_index = 0;
+-	for_each_possible_cpu(cpu) {
++	for_each_cpu(cpu, pd->cpumask.pcpu) {
+ 		pqueue = per_cpu_ptr(pd->pqueue, cpu);
+ 
+-		if (!cpumask_test_cpu(cpu, pd->cpumask.pcpu)) {
+-			pqueue->cpu_index = -1;
+-			continue;
+-		}
+-
+-		pqueue->cpu_index = cpu_index;
+-		cpu_index++;
+-
+ 		__padata_list_init(&pqueue->reorder);
+ 		__padata_list_init(&pqueue->parallel);
+ 		INIT_WORK(&pqueue->work, padata_parallel_worker);
+-- 
+2.23.0
 
