@@ -2,248 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 989C7AB86E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:53:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DD81AB877
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:54:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392726AbfIFMxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 08:53:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50808 "EHLO mx1.redhat.com"
+        id S2404832AbfIFMyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 08:54:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55915 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732774AbfIFMxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 08:53:21 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S2404811AbfIFMyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 08:54:18 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50914883820;
-        Fri,  6 Sep 2019 12:53:20 +0000 (UTC)
-Received: from [10.36.117.162] (ovpn-117-162.ams2.redhat.com [10.36.117.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF36E60BF1;
-        Fri,  6 Sep 2019 12:53:13 +0000 (UTC)
-Subject: Re: [PATCH v2 3/7] mm: Introduce FAULT_FLAG_INTERRUPTIBLE
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Marty McFadden <mcfadden8@llnl.gov>, Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-References: <20190905101534.9637-1-peterx@redhat.com>
- <20190905101534.9637-4-peterx@redhat.com>
- <0d45ffaf-0588-a068-d361-6a9cb6c71413@redhat.com>
- <20190906123851.GB8813@xz-x1>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <df8cc623-617f-f14f-d23e-312dbdf05d2e@redhat.com>
-Date:   Fri, 6 Sep 2019 14:53:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by mx1.redhat.com (Postfix) with ESMTPS id A28B630A56B0;
+        Fri,  6 Sep 2019 12:54:17 +0000 (UTC)
+Received: from carbon (ovpn-200-55.brq.redhat.com [10.40.200.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 29E0760126;
+        Fri,  6 Sep 2019 12:54:11 +0000 (UTC)
+Date:   Fri, 6 Sep 2019 14:54:08 +0200
+From:   Jesper Dangaard Brouer <jbrouer@redhat.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     syzbot <syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com>,
+        bpf <bpf@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdl?= =?UTF-8?B?bnNlbg==?= 
+        <toke@redhat.com>
+Subject: Re: general protection fault in dev_map_hash_update_elem
+Message-ID: <20190906145408.05406b0f@carbon>
+In-Reply-To: <CAADnVQK94boXD8Y=g1LsBtNG4wrYQ0Jnjxhq7hdxvyBKZuPwXw@mail.gmail.com>
+References: <0000000000005091a70591d3e1d9@google.com>
+        <CAADnVQK94boXD8Y=g1LsBtNG4wrYQ0Jnjxhq7hdxvyBKZuPwXw@mail.gmail.com>
+Organization: Red Hat Inc.
 MIME-Version: 1.0
-In-Reply-To: <20190906123851.GB8813@xz-x1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Fri, 06 Sep 2019 12:53:21 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 06 Sep 2019 12:54:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.09.19 14:38, Peter Xu wrote:
-> On Fri, Sep 06, 2019 at 11:02:22AM +0200, David Hildenbrand wrote:
->> On 05.09.19 12:15, Peter Xu wrote:
->>> handle_userfaultfd() is currently the only one place in the kernel
->>> page fault procedures that can respond to non-fatal userspace signals.
->>> It was trying to detect such an allowance by checking against USER &
->>> KILLABLE flags, which was "un-official".
->>>
->>> In this patch, we introduced a new flag (FAULT_FLAG_INTERRUPTIBLE) to
->>> show that the fault handler allows the fault procedure to respond even
->>> to non-fatal signals.  Meanwhile, add this new flag to the default
->>> fault flags so that all the page fault handlers can benefit from the
->>> new flag.  With that, replacing the userfault check to this one.
->>>
->>> Since the line is getting even longer, clean up the fault flags a bit
->>> too to ease TTY users.
->>>
->>> Although we've got a new flag and applied it, we shouldn't have any
->>> functional change with this patch so far.
->>>
->>> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
->>> Signed-off-by: Peter Xu <peterx@redhat.com>
->>> ---
->>>  fs/userfaultfd.c   |  4 +---
->>>  include/linux/mm.h | 39 ++++++++++++++++++++++++++++-----------
->>>  2 files changed, 29 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
->>> index ccbdbd62f0d8..4a8ad2dc2b6f 100644
->>> --- a/fs/userfaultfd.c
->>> +++ b/fs/userfaultfd.c
->>> @@ -462,9 +462,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
->>>  	uwq.ctx = ctx;
->>>  	uwq.waken = false;
->>>  
->>> -	return_to_userland =
->>> -		(vmf->flags & (FAULT_FLAG_USER|FAULT_FLAG_KILLABLE)) ==
->>> -		(FAULT_FLAG_USER|FAULT_FLAG_KILLABLE);
->>> +	return_to_userland = vmf->flags & FAULT_FLAG_INTERRUPTIBLE;
->>>  	blocking_state = return_to_userland ? TASK_INTERRUPTIBLE :
->>>  			 TASK_KILLABLE;
->>>  
->>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>> index 57fb5c535f8e..53ec7abb8472 100644
->>> --- a/include/linux/mm.h
->>> +++ b/include/linux/mm.h
->>> @@ -383,22 +383,38 @@ extern unsigned int kobjsize(const void *objp);
->>>   */
->>>  extern pgprot_t protection_map[16];
->>>  
->>> -#define FAULT_FLAG_WRITE	0x01	/* Fault was a write access */
->>> -#define FAULT_FLAG_MKWRITE	0x02	/* Fault was mkwrite of existing pte */
->>> -#define FAULT_FLAG_ALLOW_RETRY	0x04	/* Retry fault if blocking */
->>> -#define FAULT_FLAG_RETRY_NOWAIT	0x08	/* Don't drop mmap_sem and wait when retrying */
->>> -#define FAULT_FLAG_KILLABLE	0x10	/* The fault task is in SIGKILL killable region */
->>> -#define FAULT_FLAG_TRIED	0x20	/* Second try */
->>> -#define FAULT_FLAG_USER		0x40	/* The fault originated in userspace */
->>> -#define FAULT_FLAG_REMOTE	0x80	/* faulting for non current tsk/mm */
->>> -#define FAULT_FLAG_INSTRUCTION  0x100	/* The fault was during an instruction fetch */
->>> +/**
->>> + * Fault flag definitions.
->>> + *
->>> + * @FAULT_FLAG_WRITE: Fault was a write fault.
->>> + * @FAULT_FLAG_MKWRITE: Fault was mkwrite of existing PTE.
->>> + * @FAULT_FLAG_ALLOW_RETRY: Allow to retry the fault if blocked.
->>> + * @FAULT_FLAG_RETRY_NOWAIT: Don't drop mmap_sem and wait when retrying.
->>> + * @FAULT_FLAG_KILLABLE: The fault task is in SIGKILL killable region.
->>> + * @FAULT_FLAG_TRIED: The fault has been tried once.
->>> + * @FAULT_FLAG_USER: The fault originated in userspace.
->>> + * @FAULT_FLAG_REMOTE: The fault is not for current task/mm.
->>> + * @FAULT_FLAG_INSTRUCTION: The fault was during an instruction fetch.
->>> + * @FAULT_FLAG_INTERRUPTIBLE: The fault can be interrupted by non-fatal signals.
->>> + */
->>> +#define FAULT_FLAG_WRITE			0x01
->>> +#define FAULT_FLAG_MKWRITE			0x02
->>> +#define FAULT_FLAG_ALLOW_RETRY			0x04
->>> +#define FAULT_FLAG_RETRY_NOWAIT			0x08
->>> +#define FAULT_FLAG_KILLABLE			0x10
->>> +#define FAULT_FLAG_TRIED			0x20
->>> +#define FAULT_FLAG_USER				0x40
->>> +#define FAULT_FLAG_REMOTE			0x80
->>> +#define FAULT_FLAG_INSTRUCTION  		0x100
->>> +#define FAULT_FLAG_INTERRUPTIBLE		0x200
->>>  
->>
->> I'd probably split off the unrelated doc changes. Just a matter of taste.
-> 
-> The thing is that it's not really a document change but only a format
-> change (when I wanted to add the new macro it's easily getting out of
-> 80 chars so I simply reformatted all the rest to make them look
-> similar).  I'm afraid that could be too trivial to change the format
-> as a single patch, but I can do it if anyone else also thinks it
-> proper.
-> 
->>
->>>  /*
->>>   * The default fault flags that should be used by most of the
->>>   * arch-specific page fault handlers.
->>>   */
->>>  #define FAULT_FLAG_DEFAULT  (FAULT_FLAG_ALLOW_RETRY | \
->>> -			     FAULT_FLAG_KILLABLE)
->>> +			     FAULT_FLAG_KILLABLE | \
->>> +			     FAULT_FLAG_INTERRUPTIBLE)
->>
->> So by default, all faults are marked interruptible, also
->> !FAULT_FLAG_USER. I assume the trick right now is that
->> handle_userfault() will indeed only be called on user faults and the
->> flag is used nowhere else ;)
-> 
-> Sorry if this is confusing, but FAULT_FLAG_DEFAULT is just a macro to
-> make the patchset easier so we define this initial flags for most of
-> the archs (say, there can be some arch that does not use this default
-> value, but the fact is most archs are indeed using the same flags
-> hence we define it here now).
-> 
-> And, userfaultfd can also handle kernel faults.  For FAULT_FLAG_USER,
-> it will be set if the fault comes from userspace (in
-> do_user_addr_fault()).
-> 
-Got it, sounds sane to me then.
+On Thu, 5 Sep 2019 14:44:37 -0700
+Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
 
->>
->> Would it make sense to name it FAULT_FLAG_USER_INTERRUPTIBLE, to stress
->> that the flag only applies to user faults? (or am I missing something
->> and this could also apply to !user faults somewhen in the future?
+> On Thu, Sep 5, 2019 at 1:08 PM syzbot
+> <syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    6d028043 Add linux-next specific files for 20190830
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=135c1a92600000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=82a6bec43ab0cb69
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=4e7a85b1432052e8d6f8
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109124e1600000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com
+> >
+> > kasan: CONFIG_KASAN_INLINE enabled
+> > kasan: GPF could be caused by NULL-ptr deref or user memory access
+> > general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> > CPU: 1 PID: 10235 Comm: syz-executor.0 Not tainted 5.3.0-rc6-next-20190830
+> > #75
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > RIP: 0010:__write_once_size include/linux/compiler.h:203 [inline]
+> > RIP: 0010:__hlist_del include/linux/list.h:795 [inline]
+> > RIP: 0010:hlist_del_rcu include/linux/rculist.h:475 [inline]
+> > RIP: 0010:__dev_map_hash_update_elem kernel/bpf/devmap.c:668 [inline]
+> > RIP: 0010:dev_map_hash_update_elem+0x3c8/0x6e0 kernel/bpf/devmap.c:691
+> > Code: 48 89 f1 48 89 75 c8 48 c1 e9 03 80 3c 11 00 0f 85 d3 02 00 00 48 b9
+> > 00 00 00 00 00 fc ff df 48 8b 53 10 48 89 d6 48 c1 ee 03 <80> 3c 0e 00 0f
+> > 85 97 02 00 00 48 85 c0 48 89 02 74 38 48 89 55 b8
+> > RSP: 0018:ffff88808d607c30 EFLAGS: 00010046
+> > RAX: 0000000000000000 RBX: ffff8880a7f14580 RCX: dffffc0000000000
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a7f14588
+> > RBP: ffff88808d607c78 R08: 0000000000000004 R09: ffffed1011ac0f73
+> > R10: ffffed1011ac0f72 R11: 0000000000000003 R12: ffff88809f4e9400
+> > R13: ffff88809b06ba00 R14: 0000000000000000 R15: ffff88809f4e9528
+> > FS:  00007f3a3d50c700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007feb3fcd0000 CR3: 00000000986b9000 CR4: 00000000001406e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >   map_update_elem+0xc82/0x10b0 kernel/bpf/syscall.c:966
+> >   __do_sys_bpf+0x8b5/0x3350 kernel/bpf/syscall.c:2854
+> >   __se_sys_bpf kernel/bpf/syscall.c:2825 [inline]
+> >   __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:2825
+> >   do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x459879
+> > Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007f3a3d50bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459879
+> > RDX: 0000000000000020 RSI: 0000000020000040 RDI: 0000000000000002
+> > RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3a3d50c6d4
+> > R13: 00000000004bfc86 R14: 00000000004d1960 R15: 00000000ffffffff
+> > Modules linked in:
+> > ---[ end trace 083223e21dbd0ae5 ]---
+> > RIP: 0010:__write_once_size include/linux/compiler.h:203 [inline]
+> > RIP: 0010:__hlist_del include/linux/list.h:795 [inline]
+> > RIP: 0010:hlist_del_rcu include/linux/rculist.h:475 [inline]
+> > RIP: 0010:__dev_map_hash_update_elem kernel/bpf/devmap.c:668 [inline]
+> > RIP: 0010:dev_map_hash_update_elem+0x3c8/0x6e0 kernel/bpf/devmap.c:691  
 > 
-> As mentioned above, uffd can handle kernel faults.  And, for what I
-> understand, it's not really directly related to user fault or not at
-> all, instead its more or less match with TASK_{INTERRUPTIBLE|KILLABLE}
-> on what kind of signals we care about during the fault processing.  So
-> it seems to me that it's two different things.
-> 
->>
->> (I am no expert on the fault paths yet, so sorry for the silly questions)
-> 
-> (I only hope that I'm not providing silly answers. :)
+> Toke,
+> please take a look.
+> Thanks!
 
-I highly doubt it :) Thanks!
+Hi Toke,
+
+I think the problem is that you read:
+ old_dev = __dev_map_hash_lookup_elem(map, idx);
+
+Before holding the lock dtab->index_lock... 
+
+I'm not sure this is the correct fix, but I think below change should
+solve the issue (not even compile tested):
+
+[bpf-next]$ git diff
+
+diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+index 9af048a932b5..c41854a68e9e 100644
+--- a/kernel/bpf/devmap.c
++++ b/kernel/bpf/devmap.c
+@@ -664,6 +664,9 @@ static int __dev_map_hash_update_elem(struct net *net, struct bpf_map *map,
+ 
+        spin_lock_irqsave(&dtab->index_lock, flags);
+ 
++       /* Re-read old_dev while holding lock*/
++       old_dev = __dev_map_hash_lookup_elem(map, idx);
++
+        if (old_dev) {
+                hlist_del_rcu(&old_dev->index_hlist);
+        } else {
+
 
 -- 
-
-Thanks,
-
-David / dhildenb
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
