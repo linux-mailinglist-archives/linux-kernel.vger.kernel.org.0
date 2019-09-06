@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B90EAB6D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A4BAB6E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392204AbfIFLIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:08:20 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:46992 "EHLO
+        id S2389909AbfIFLKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:10:15 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47012 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbfIFLIT (ORCPT
+        with ESMTP id S2392228AbfIFLIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:08:19 -0400
+        Fri, 6 Sep 2019 07:08:23 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i6C6B-00072h-LB; Fri, 06 Sep 2019 13:08:15 +0200
+        id 1i6C6A-00072C-Qa; Fri, 06 Sep 2019 13:08:14 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C9A7C1C0E20;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 299391C0DE8;
         Fri,  6 Sep 2019 13:08:14 +0200 (CEST)
 Date:   Fri, 06 Sep 2019 11:08:14 -0000
-From:   "tip-bot2 for Lubomir Rintel" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Masahiro Yamada" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/mmp: Add missing chained_irq_{enter,exit}()
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Marc Zyngier <maz@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20190822092643.593488-8-lkundrak@v3.sk>
-References: <20190822092643.593488-8-lkundrak@v3.sk>
+Subject: [tip: irq/core] irqchip/uniphier-aidet: Use devm_platform_ioremap_resource()
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <20190905034932.12587-1-yamada.masahiro@socionext.com>
+References: <20190905034932.12587-1-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Message-ID: <156776809474.24167.8447201645063845818.tip-bot2@tip-bot2>
+Message-ID: <156776809407.24167.7594401755357124629.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,68 +47,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     a46bc5fd8b205050ebbdccc6d5ca4124edb8dc6c
-Gitweb:        https://git.kernel.org/tip/a46bc5fd8b205050ebbdccc6d5ca4124edb8dc6c
-Author:        Lubomir Rintel <lkundrak@v3.sk>
-AuthorDate:    Thu, 22 Aug 2019 11:26:30 +02:00
+Commit-ID:     e89327f659dd517f30b6232b1fabd6f6c6777c3e
+Gitweb:        https://git.kernel.org/tip/e89327f659dd517f30b6232b1fabd6f6c6777c3e
+Author:        Masahiro Yamada <yamada.masahiro@socionext.com>
+AuthorDate:    Thu, 05 Sep 2019 12:49:32 +09:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Fri, 30 Aug 2019 15:23:30 +01:00
+CommitterDate: Thu, 05 Sep 2019 09:28:13 +01:00
 
-irqchip/mmp: Add missing chained_irq_{enter,exit}()
+irqchip/uniphier-aidet: Use devm_platform_ioremap_resource()
 
-The lack of chained_irq_exit() leaves the muxed interrupt masked on MMP3.
-For reasons unknown this is not a problem on MMP2.
+Replace the chain of platform_get_resource() and devm_ioremap_resource()
+with devm_platform_ioremap_resource().
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+This allows to remove the local variable for (struct resource *), and
+have one function call less.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20190822092643.593488-8-lkundrak@v3.sk
+Link: https://lore.kernel.org/r/20190905034932.12587-1-yamada.masahiro@socionext.com
 ---
- drivers/irqchip/irq-mmp.c |  9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-uniphier-aidet.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index f60e52b..fa23947 100644
---- a/drivers/irqchip/irq-mmp.c
-+++ b/drivers/irqchip/irq-mmp.c
-@@ -13,6 +13,7 @@
- #include <linux/init.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
-+#include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
-@@ -132,11 +133,14 @@ struct irq_chip icu_irq_chip = {
- static void icu_mux_irq_demux(struct irq_desc *desc)
- {
- 	unsigned int irq = irq_desc_get_irq(desc);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	struct irq_domain *domain;
- 	struct icu_chip_data *data;
- 	int i;
- 	unsigned long mask, status, n;
+diff --git a/drivers/irqchip/irq-uniphier-aidet.c b/drivers/irqchip/irq-uniphier-aidet.c
+index ed7b4f4..89121b3 100644
+--- a/drivers/irqchip/irq-uniphier-aidet.c
++++ b/drivers/irqchip/irq-uniphier-aidet.c
+@@ -166,7 +166,6 @@ static int uniphier_aidet_probe(struct platform_device *pdev)
+ 	struct device_node *parent_np;
+ 	struct irq_domain *parent_domain;
+ 	struct uniphier_aidet_priv *priv;
+-	struct resource *res;
  
-+	chained_irq_enter(chip, desc);
-+
- 	for (i = 1; i < max_icu_nr; i++) {
- 		if (irq == icu_data[i].cascade_irq) {
- 			domain = icu_data[i].domain;
-@@ -146,7 +150,7 @@ static void icu_mux_irq_demux(struct irq_desc *desc)
- 	}
- 	if (i >= max_icu_nr) {
- 		pr_err("Spurious irq %d in MMP INTC\n", irq);
--		return;
-+		goto out;
- 	}
+ 	parent_np = of_irq_find_parent(dev->of_node);
+ 	if (!parent_np)
+@@ -181,8 +180,7 @@ static int uniphier_aidet_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
  
- 	mask = readl_relaxed(data->reg_mask);
-@@ -158,6 +162,9 @@ static void icu_mux_irq_demux(struct irq_desc *desc)
- 			generic_handle_irq(icu_data[i].virq_base + n);
- 		}
- 	}
-+
-+out:
-+	chained_irq_exit(chip, desc);
- }
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->reg_base = devm_ioremap_resource(dev, res);
++	priv->reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->reg_base))
+ 		return PTR_ERR(priv->reg_base);
  
- static int mmp_irq_domain_map(struct irq_domain *d, unsigned int irq,
