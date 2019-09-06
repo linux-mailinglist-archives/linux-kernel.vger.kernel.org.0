@@ -2,24 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A06AAABC0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:17:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AC09ABC0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:18:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390428AbfIFPRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:17:44 -0400
-Received: from foss.arm.com ([217.140.110.172]:57948 "EHLO foss.arm.com"
+        id S2390623AbfIFPR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:17:58 -0400
+Received: from foss.arm.com ([217.140.110.172]:57982 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726168AbfIFPRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:17:43 -0400
+        id S1726168AbfIFPR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 11:17:58 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 211D71576;
-        Fri,  6 Sep 2019 08:17:43 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B9CE1596;
+        Fri,  6 Sep 2019 08:17:57 -0700 (PDT)
 Received: from [10.1.196.105] (unknown [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C75063F59C;
-        Fri,  6 Sep 2019 08:17:40 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D1163F59C;
+        Fri,  6 Sep 2019 08:17:54 -0700 (PDT)
 From:   James Morse <james.morse@arm.com>
-Subject: Re: [PATCH v3 04/17] arm64, hibernate: rename dst to page in
- create_safe_exec_page
+Subject: Re: [PATCH v3 05/17] arm64, hibernate: check pgd table allocation
 To:     Pavel Tatashin <pasha.tatashin@soleen.com>
 Cc:     jmorris@namei.org, sashal@kernel.org, ebiederm@xmission.com,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -28,13 +27,13 @@ Cc:     jmorris@namei.org, sashal@kernel.org, ebiederm@xmission.com,
         vladimir.murzin@arm.com, matthias.bgg@gmail.com,
         bhsharma@redhat.com, linux-mm@kvack.org, mark.rutland@arm.com
 References: <20190821183204.23576-1-pasha.tatashin@soleen.com>
- <20190821183204.23576-5-pasha.tatashin@soleen.com>
-Message-ID: <2e826560-4005-fa16-8bbb-fc0e25763dcc@arm.com>
-Date:   Fri, 6 Sep 2019 16:17:38 +0100
+ <20190821183204.23576-6-pasha.tatashin@soleen.com>
+Message-ID: <ddd81093-89fc-5146-0b33-ad3bd9a1c10c@arm.com>
+Date:   Fri, 6 Sep 2019 16:17:53 +0100
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190821183204.23576-5-pasha.tatashin@soleen.com>
+In-Reply-To: <20190821183204.23576-6-pasha.tatashin@soleen.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -46,26 +45,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi Pavel,
 
 On 21/08/2019 19:31, Pavel Tatashin wrote:
-> create_safe_exec_page() allocates a safe page and maps it at a
-> specific location, also this function returns the physical address
-> of newly allocated page.
+> There is a bug in create_safe_exec_page(), when page table is allocated
+> it is not checked that table is allocated successfully:
 > 
-> The destination VA, and PA are specified in arguments: dst_addr,
-> phys_dst_addr
-> 
-> However, within the function it uses "dst" which has unsigned long
-> type, but is actually a pointers in the current virtual space. This
-> is confusing to read.
+> But it is dereferenced in: pgd_none(READ_ONCE(*pgdp)).
 
-The type? There are plenty of places in the kernel that an unsigned-long is actually a
-pointer. This isn't unusual.
+If there is a bug, it shouldn't be fixed part way through a series. This makes it
+difficult to backport the fix.
+
+Please split this out as an independent patch with a 'Fixes:' tag for the commit that
+introduced the bug.
 
 
-> Rename dst to more appropriate page (page that is created), and also
-> change its time to "void *"
+> Another issue,
 
-If you think its clearer,
-Reviewed-by: James Morse <james.morse@arm.com>
+So this patch does two things? That is rarely a good idea. Again, this makes it difficult
+to backport the fix.
+
+
+> is that phys_to_ttbr() uses an offset in page table instead
+> of pgd directly.
+
+If you were going to reuse this, that would be a bug. But because the only page that is
+being mapped, is mapped to PAGE_SIZE, all the top bits will be 0. The offset calls are
+boiler-plate. It doesn't look intentional, but its harmless.
+
+
+Please separate out the potential NULL-dereference bits so there is a clean stand-alone
+fix that can be sent to the stable trees.
 
 
 Thanks,
