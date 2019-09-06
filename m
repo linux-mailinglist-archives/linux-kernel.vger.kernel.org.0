@@ -2,154 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 650E8AB06F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 03:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E92AB080
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 04:06:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404287AbfIFByh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 21:54:37 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46955 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730991AbfIFByh (ORCPT
+        id S2404324AbfIFCF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 22:05:57 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41320 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729121AbfIFCF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 21:54:37 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g19so4230236otg.13;
-        Thu, 05 Sep 2019 18:54:36 -0700 (PDT)
+        Thu, 5 Sep 2019 22:05:56 -0400
+Received: by mail-io1-f65.google.com with SMTP id r26so9244135ioh.8;
+        Thu, 05 Sep 2019 19:05:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=K4IFwD6VM+XLab7BYsbQN6PVDmVS6cIQkZE+YPWUOPU=;
-        b=WrLJm/MW5tbyw7TlKFFlM2O2CiNTHVtwpxcgm0nmNCI9be7PPZbHhtNkHYn5/eceZT
-         A0IRWAJAZEa4Ipem66aHvsFLLW6NXJmX4xS/n7twVXWUkCkeXvdo8HEC/P37Lqt9SuC2
-         qXDv22KnGWOp/mtuGE3/V0MzR9ukygUrBvFf1xzoPk/xVsEGGFjQppAt+oMHfXB9KDON
-         W+9fT6k7bWM7GwPOFjJSYkUVDHS3+8ZNGcflYJD0p7tGgYotZzTGrq6KRsE0kn54e4NH
-         tA0fbfg4JMPSLMmBzpVDuSUuAYht/fuFECkkNVZixWIGPFfHrAJ974GDQ6YgfI6GWf3Y
-         xh+w==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fNjAO7w9eS/oFTIrN8hMdx8IAfL3ao3OhGwC/h4NODs=;
+        b=t8Bh4xj2REDoF1VC5A1yXzR++DYfGZ2hBOftZzOlHWjxGCJP3not1J15Q9nahr5wGS
+         GIYP1R3pfOUEsxJNJlJIgGEbHuwblu+RbJWWIdC/x3zeLvf6PfcJ848aS8zqBkEY7ipN
+         vitdSOSdFhgJ+zDY2bhyN0X1q9tgyIwj/vvFMG3O9VTzzj9Tt/6qEaaOCfi2S30ZOyXh
+         9knxO2u+VvMhjNgdcamqQW67xPRedv/uj62VB/ygLGFQ+ZN5i7Cee1yLbF1X8JirI0d2
+         3PjFnEel04uTrbagLUQ2hlmVit1hfe1M0mWzmsUNxQmta3kRX0JhzoCL2ZYrUy5aEYug
+         olZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=K4IFwD6VM+XLab7BYsbQN6PVDmVS6cIQkZE+YPWUOPU=;
-        b=eIxoqjMHbsHhbE+dIEVC+8umb7s9nQYd+IBwIMNlPNXqkgokv+bjgDFAKHxA5+Vr+e
-         +gdoqrhYlkLcT6PGn67/bdes+pFKpzWNprxaDTXuFaSMtnQVGec4Tg+avJoKiVow/lEe
-         WiTj3o/KYwAuolnzJb767AWhywQQ1gStM5nfOGsqYqL7zq5nOI9A0mJxQUCKSqWnfqf8
-         hsb9EEEGCbAtgJp6ISwbU8a1qV8GLIWhYV56djD5PqqlGKiGyM/Qe+qxj2sCfmBjmDol
-         XRqhJwI+FtZkH/2H7JRj0VF4mFrap9DErS0ujlQyRKZIPRxm1xojlZkMSXCfBBkO8nax
-         1s9g==
-X-Gm-Message-State: APjAAAUSFwF7Le7L+cp4oNcgHelt+Wrsvn5sgBd8KF2eBkJF+h8Z5PWy
-        eEkr6VCBDhRN6LDuwCzW64sdqsytkGsiV1JwMu4=
-X-Google-Smtp-Source: APXvYqyfziUSAkRNvffX8M48//3wAYR9dKmOeDSPAKVir2eFp79YrLdsxiD2iIxxWfguu0ZSJzJmQ2d0M3HpFcgZcKE=
-X-Received: by 2002:a9d:3ae:: with SMTP id f43mr4081296otf.254.1567734875909;
- Thu, 05 Sep 2019 18:54:35 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fNjAO7w9eS/oFTIrN8hMdx8IAfL3ao3OhGwC/h4NODs=;
+        b=NQ3KqUeAUkAo8MGt2Oy8pHGOdhFGBuLCqBY+7Db3kd95D64Ql9xkDCRCiB2bPZdv81
+         htYlNEdMlbdwWU2vZSzpgVSEaCOTeOakFmVLqRsg93iAaSDISstS4+YjGM8dKZjhqS8D
+         t07Q7fs8hQ6xXqorcnFhiFrbUnIYSSlGMmxAlvmUG9ZR4+9ypSOyPZLY2O1Ukk/aWGq5
+         aGBb6pbHDoIhYKZy3X5GULGeVUVtXlpvKTP6jwCUQ++fh6uFb2egE1lP6+esBzYmQvGZ
+         f4+SO9bu9Lfy3rmSCMEIXupGo49LHFqI4Qg34XAjl+3+1yALCcuJpjAi8yk/WyNLFtaT
+         Tt6A==
+X-Gm-Message-State: APjAAAVJKj36NMQ+ktehxGUF9u9aKZjZys/A3wpFgfyuNMZNX9Jy3cJ6
+        we/O8Amc3mcoe+ruEPNhNaQ=
+X-Google-Smtp-Source: APXvYqzrvldW3ojU/x20+y7cTaP88HXbmpOoRGCbe7AKvjRaefPQMetR6tFq1AYrY2esgO5umdzJJg==
+X-Received: by 2002:a02:cbad:: with SMTP id v13mr6827583jap.69.1567735555412;
+        Thu, 05 Sep 2019 19:05:55 -0700 (PDT)
+Received: from [10.186.170.145] ([128.210.107.81])
+        by smtp.gmail.com with ESMTPSA id k6sm2489169ioh.28.2019.09.05.19.05.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Sep 2019 19:05:54 -0700 (PDT)
+Subject: Re: WARNING in hso_free_net_device
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Stephen Hemminger <stephen@networkplumber.org>,
+        syzbot+44d53c7255bb1aea22d2@syzkaller.appspotmail.com,
+        alexios.zavras@intel.com, "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        netdev <netdev@vger.kernel.org>, rfontana@redhat.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oliver Neukum <oneukum@suse.com>
+References: <0000000000002a95df0591a4f114@google.com>
+ <d6e4d2da-66c6-a8fe-2fea-a3435fa7cb54@gmail.com>
+ <20190904154140.45dfb398@hermes.lan>
+ <285edb24-01f9-3f9d-4946-b2f41ccd0774@gmail.com>
+ <CAAeHK+y3eQ7bXvo1tiAkwLCsFkbSU5B+6hsKbdEzkSXP2_Jyzg@mail.gmail.com>
+From:   Hui Peng <benquike@gmail.com>
+Message-ID: <02ef64cc-5053-e6da-fc59-9970f48064c5@gmail.com>
+Date:   Thu, 5 Sep 2019 22:05:54 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-References: <1567680270-14022-1-git-send-email-wanpengli@tencent.com> <87ftlakhn6.fsf@vitty.brq.redhat.com>
-In-Reply-To: <87ftlakhn6.fsf@vitty.brq.redhat.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Fri, 6 Sep 2019 09:54:23 +0800
-Message-ID: <CANRm+CyPxb+ZY2cTdbLL_LBKMJSOaMqnPGKc_ATc6-TMHW-rJw@mail.gmail.com>
-Subject: Re: [PATCH] KVM: LAPIC: Fix SynIC Timers inject timer interrupt w/o
- LAPIC present
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAAeHK+y3eQ7bXvo1tiAkwLCsFkbSU5B+6hsKbdEzkSXP2_Jyzg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019 at 21:16, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> Wanpeng Li <kernellwp@gmail.com> writes:
->
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > Reported by syzkaller:
-> >
-> >       kasan: GPF could be caused by NULL-ptr deref or user memory acces=
-s
-> >       general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> >       RIP: 0010:__apic_accept_irq+0x46/0x740 arch/x86/kvm/lapic.c:1029
-> >       Call Trace:
-> >       kvm_apic_set_irq+0xb4/0x140 arch/x86/kvm/lapic.c:558
-> >       stimer_notify_direct arch/x86/kvm/hyperv.c:648 [inline]
-> >       stimer_expiration arch/x86/kvm/hyperv.c:659 [inline]
-> >       kvm_hv_process_stimers+0x594/0x1650 arch/x86/kvm/hyperv.c:686
-> >       vcpu_enter_guest+0x2b2a/0x54b0 arch/x86/kvm/x86.c:7896
-> >       vcpu_run+0x393/0xd40 arch/x86/kvm/x86.c:8152
-> >       kvm_arch_vcpu_ioctl_run+0x636/0x900 arch/x86/kvm/x86.c:8360
-> >       kvm_vcpu_ioctl+0x6cf/0xaf0 arch/x86/kvm/../../../virt/kvm/kvm_mai=
-n.c:2765
-> >
-> > The testcase programs HV_X64_MSR_STIMERn_CONFIG/HV_X64_MSR_STIMERn_COUN=
-T,
-> > in addition, there is no lapic in the kernel, the counters value are sm=
-all
-> > enough in order that kvm_hv_process_stimers() inject this already-expir=
-ed
-> > timer interrupt into the guest through lapic in the kernel which trigge=
-rs
-> > the NULL deferencing. This patch fixes it by checking lapic_in_kernel,
-> > discarding the inject if it is 0.
-> >
-> > Reported-by: syzbot+dff25ee91f0c7d5c1695@syzkaller.appspotmail.com
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> >  arch/x86/kvm/hyperv.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-> > index c10a8b1..461fcc5 100644
-> > --- a/arch/x86/kvm/hyperv.c
-> > +++ b/arch/x86/kvm/hyperv.c
-> > @@ -645,7 +645,9 @@ static int stimer_notify_direct(struct kvm_vcpu_hv_=
-stimer *stimer)
-> >               .vector =3D stimer->config.apic_vector
-> >       };
-> >
-> > -     return !kvm_apic_set_irq(vcpu, &irq, NULL);
-> > +     if (lapic_in_kernel(vcpu))
-> > +             return !kvm_apic_set_irq(vcpu, &irq, NULL);
-> > +     return 0;
-> >  }
-> >
-> >  static void stimer_expiration(struct kvm_vcpu_hv_stimer *stimer)
->
-> Hm, but this basically means direct mode synthetic timers won't work
-> when LAPIC is not in kernel but the feature will still be advertised to
-> the guest, not good. Shall we stop advertizing it? Something like
-> (completely untested):
->
-> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-> index 3f5ad84853fb..1dfa594eaab6 100644
-> --- a/arch/x86/kvm/hyperv.c
-> +++ b/arch/x86/kvm/hyperv.c
-> @@ -1856,7 +1856,13 @@ int kvm_vcpu_ioctl_get_hv_cpuid(struct kvm_vcpu *v=
-cpu, struct kvm_cpuid2 *cpuid,
->
->                         ent->edx |=3D HV_FEATURE_FREQUENCY_MSRS_AVAILABLE=
-;
->                         ent->edx |=3D HV_FEATURE_GUEST_CRASH_MSR_AVAILABL=
-E;
-> -                       ent->edx |=3D HV_STIMER_DIRECT_MODE_AVAILABLE;
-> +
-> +                       /*
-> +                        * Direct Synthetic timers only make sense with i=
-n-kernel
-> +                        * LAPIC
-> +                        */
-> +                       if (lapic_in_kernel(vcpu))
-> +                               ent->edx |=3D HV_STIMER_DIRECT_MODE_AVAIL=
-ABLE;
->
->                         break;
 
-Thanks, I fold this into v2, syzkaller even didn't check the cpuid, so
-I still keep the discard inject part.
 
-                                                                   Wanpeng
+On 9/5/2019 7:24 AM, Andrey Konovalov wrote:
+> On Thu, Sep 5, 2019 at 4:20 AM Hui Peng <benquike@gmail.com> wrote:
+>>
+>> Can you guys have  a look at the attached patch?
+> 
+> Let's try it:
+> 
+> #syz test: https://github.com/google/kasan.git eea39f24
+> 
+> FYI: there are two more reports coming from this driver, which might
+> (or might not) have the same root cause. One of them has a suggested
+> fix by Oliver.
+> 
+> https://syzkaller.appspot.com/bug?extid=67b2bd0e34f952d0321e
+> https://syzkaller.appspot.com/bug?extid=93f2f45b19519b289613
+> 
+
+I think they are different, though similar.
+This one is resulted from unregistering a network device.
+These 2 are resulted from unregistering a tty device.
+
+>>
+>> On 9/4/19 6:41 PM, Stephen Hemminger wrote:
+>>> On Wed, 4 Sep 2019 16:27:50 -0400
+>>> Hui Peng <benquike@gmail.com> wrote:
+>>>
+>>>> Hi, all:
+>>>>
+>>>> I looked at the bug a little.
+>>>>
+>>>> The issue is that in the error handling code, hso_free_net_device
+>>>> unregisters
+>>>>
+>>>> the net_device (hso_net->net)  by calling unregister_netdev. In the
+>>>> error handling code path,
+>>>>
+>>>> hso_net->net has not been registered yet.
+>>>>
+>>>> I think there are two ways to solve the issue:
+>>>>
+>>>> 1. fix it in drivers/net/usb/hso.c to avoiding unregistering the
+>>>> net_device when it is still not registered
+>>>>
+>>>> 2. fix it in unregister_netdev. We can add a field in net_device to
+>>>> record whether it is registered, and make unregister_netdev return if
+>>>> the net_device is not registered yet.
+>>>>
+>>>> What do you guys think ?
+>>> #1
