@@ -2,74 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65DCCABA91
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:17:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56AF7ABA88
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:17:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394249AbfIFORR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:17:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51324 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394071AbfIFORQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:17:16 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B9DD910F23F8;
-        Fri,  6 Sep 2019 14:17:16 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EE185D9D3;
-        Fri,  6 Sep 2019 14:17:06 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 95BB4220292; Fri,  6 Sep 2019 10:17:05 -0400 (EDT)
-Date:   Fri, 6 Sep 2019 10:17:05 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, miklos@szeredi.hu,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        dgilbert@redhat.com, mst@redhat.com
-Subject: Re: [PATCH 08/18] virtiofs: Drain all pending requests during
- ->remove time
-Message-ID: <20190906141705.GF22083@redhat.com>
-References: <20190905194859.16219-1-vgoyal@redhat.com>
- <20190905194859.16219-9-vgoyal@redhat.com>
- <20190906105210.GP5900@stefanha-x1.localdomain>
+        id S2394133AbfIFORB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:17:01 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:33784 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729017AbfIFORA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:17:00 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x86EGvd7033627;
+        Fri, 6 Sep 2019 09:16:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1567779417;
+        bh=+L55aTwWGyUbvaaXfZF0uAs4AUymc3puZPlhVMgEnt8=;
+        h=From:To:CC:Subject:Date;
+        b=dNTsJlMUUD6VqosfnnTAlbfQHS4eZt7K2vopJ1oJAmBClpbH/cYWGLr/1m/yYmL/e
+         JkpvlK1hcNLgPkthtNnB8F3QOpxRUum/DFgDTlxXLwR3AloROK7IZ91AYFJLroVoxd
+         dJbKTm9wjQaUjJbohIwJ2MhJkdAiAIzqfnNu/LGs=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x86EGvha127778;
+        Fri, 6 Sep 2019 09:16:57 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 6 Sep
+ 2019 09:16:51 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 6 Sep 2019 09:16:51 -0500
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x86EGmac042400;
+        Fri, 6 Sep 2019 09:16:49 -0500
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <vinod.koul@intel.com>, <robh+dt@kernel.org>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dan.j.williams@intel.com>, <devicetree@vger.kernel.org>
+Subject: [RFC 0/3] dmaengine: Support for DMA domain controllers
+Date:   Fri, 6 Sep 2019 17:17:14 +0300
+Message-ID: <20190906141717.23859-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906105210.GP5900@stefanha-x1.localdomain>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Fri, 06 Sep 2019 14:17:16 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 11:52:10AM +0100, Stefan Hajnoczi wrote:
-> On Thu, Sep 05, 2019 at 03:48:49PM -0400, Vivek Goyal wrote:
-> > +static void virtio_fs_drain_queue(struct virtio_fs_vq *fsvq)
-> > +{
-> > +	WARN_ON(fsvq->in_flight < 0);
-> > +
-> > +	/* Wait for in flight requests to finish.*/
-> > +	while (1) {
-> > +		spin_lock(&fsvq->lock);
-> > +		if (!fsvq->in_flight) {
-> > +			spin_unlock(&fsvq->lock);
-> > +			break;
-> > +		}
-> > +		spin_unlock(&fsvq->lock);
-> > +		usleep_range(1000, 2000);
-> > +	}
-> 
-> I think all contexts that call this allow sleeping so we could avoid
-> usleep here.
+Hi,
 
-usleep_range() is supposed to be used from non-atomic context.
+More and more SoC have more than one DMA controller integrated.
 
-https://github.com/torvalds/linux/blob/master/Documentation/timers/timers-howto.rst
+If a device needs none slave DMA channel for operation (block copy from/to
+memory mapped regions for example) at the moment when they request a channel it
+is going to be taken from the first DMA controller which was registered, but
+this might be not optimal for the device.
 
-What construct you are thinking of?
+For example on AM654 we have two DMAs: main_udmap and mcu_udmap.
+DDR to DDR memcpy is twice as fast on main_udmap compared to mcu_udmap, while
+devices on MCU domain (OSPI for example) are more than twice as fast on
+mcu_udmap than with main_udmap.
 
-Vivek
+Because of probing order (mcu_udmap is probing first) modules would use
+mcu_udmap instead of the better main_udmap. Currently the only solution is to
+make a choice and disable the MEM_TO_MEM functionality on one of them which is
+not a great solution.
+
+With the introduction of DMA domain controllers we can utilize the best DMA
+controller for the job around the SoC without the need to degrade performance.
+
+If the dma-domain-controller is not present in DT or booted w/o DT the none
+slave channel request will work as it does today.
+
+The last patch introduces a new dma_domain_request_chan_by_mask() function and
+I have a define for dma_request_chan_by_mask() to avoid breaking users of the
+dma_request_chan_by_mask, but looking at the kernel we have small amount of
+users:
+drivers/gpu/drm/vc4/vc4_dsi.c
+drivers/media/platform/omap/omap_vout_vrfb.c
+drivers/media/platform/omap3isp/isphist.c
+drivers/mtd/spi-nor/cadence-quadspi.c
+drivers/spi/spi-ti-qspi.c
+
+If it is acceptable we can modify the parameters of dma_request_chan_by_mask()
+to include ther device pointer and at the same time change all of the clients
+by giving NULL or in case of the last two their dev.
+
+Regards,
+Peter
+---
+Peter Ujfalusi (3):
+  dt-bindings: dma: Add documentation for DMA domains
+  dmaengine: of_dma: Function to look up the DMA domain of a client
+  dmaengine: Support for requesting channels preferring DMA domain
+    controller
+
+ .../devicetree/bindings/dma/dma-domain.yaml   | 59 +++++++++++++++++++
+ drivers/dma/dmaengine.c                       | 17 ++++--
+ drivers/dma/of-dma.c                          | 42 +++++++++++++
+ include/linux/dmaengine.h                     |  9 ++-
+ include/linux/of_dma.h                        |  7 +++
+ 5 files changed, 126 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/dma-domain.yaml
+
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
