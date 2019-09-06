@@ -2,140 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04DADAC228
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 23:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 204EDAC23B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 23:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404694AbfIFVrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 17:47:10 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46830 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404449AbfIFVrJ (ORCPT
+        id S2404791AbfIFVvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 17:51:04 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42159 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404236AbfIFVvE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 17:47:09 -0400
-Received: by mail-ot1-f68.google.com with SMTP id g19so7114098otg.13;
-        Fri, 06 Sep 2019 14:47:08 -0700 (PDT)
+        Fri, 6 Sep 2019 17:51:04 -0400
+Received: by mail-pg1-f196.google.com with SMTP id p3so4244987pgb.9;
+        Fri, 06 Sep 2019 14:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=eDpX53pV2w3525Sfc++y574jdtjcTxKRU6k4wrPYJJE=;
+        b=R7tJANYP9RC8vMxjaiQJQysGREeC4SukBKwQay9FF+AMJE+MvsYVBFrsati6KaggWM
+         VWkpRA7WPb67hbvt9c4rmHWNClvfUZwODODfoY+fH9crahdylzEddDD/2NidH2MKqLAp
+         Iapm/hiz0A2mDeZEclyVm+SdU1bJGoc8FP6NklRbcl5IksRx0lwTVYI5cealjOhS7XYM
+         gitoGxs4V3Z1Ekpym5seReRqr8Hs7DrGi6GbW553Hr4d3wKFAx1oTU7V3ez1y5WfY1gc
+         2nf2SwaiX5AwY5cE+npxZbJaQLMTapIZxsY6RSypeBRKrquK9OECMgG8670DMSeZaHyp
+         Vsrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AxdmH4Las6LxoPzUkRRDSuUEuP8kEFd6s6/nV6yfxfg=;
-        b=kJ8V6SKUgTMBpZVLUgCBoDhLUAbrxohNBnGKYz5ADglBM8cRRC1XNgOxTfO09Ao0wV
-         8BQczCd7yaJz8hbUKtmym+hsPhNtnOH6VfJeyhMLJf02rJj5kcMcbVCoYJgL7w8JymdV
-         a6sIuJJnXC+WYQdwJkTwB6KlZCMRFOWZypKUDrlCRYHXJoLcgWFawqoYD0FEll+HRcQv
-         lkATQM/e/CxseNcd8hAOhXPWzrxqvEV0H7/8NRqkwJypKjzjRzJqRcBjmMkcJFX3W1b/
-         C/0/IwQcNBLmREJ6IoFqK1nu6D1qlhUj5yGseVzABJBooBmDdzzhqbXnPPEcsP1Hp0uL
-         X+MQ==
-X-Gm-Message-State: APjAAAWgjKQBs5F/JE9VoVTCxiSHM7wQu1Ja2vZUveWaudQtNON2ZItc
-        4GvN8WaC3vXjWsrTRisWOlj07Tds
-X-Google-Smtp-Source: APXvYqyKdkJy2UYmQBEftN3cVDKDxGk7OkLkrI9pGAnrPLPlQPtaJfgj/TAw7lpHUajBdykqy4i+wg==
-X-Received: by 2002:a9d:127:: with SMTP id 36mr3127123otu.64.1567806427609;
-        Fri, 06 Sep 2019 14:47:07 -0700 (PDT)
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
-        by smtp.gmail.com with ESMTPSA id b21sm2544627otl.12.2019.09.06.14.47.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2019 14:47:06 -0700 (PDT)
-Received: by mail-oi1-f182.google.com with SMTP id t84so6244575oih.10;
-        Fri, 06 Sep 2019 14:47:06 -0700 (PDT)
-X-Received: by 2002:a54:4492:: with SMTP id v18mr25801oiv.175.1567806426189;
- Fri, 06 Sep 2019 14:47:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=eDpX53pV2w3525Sfc++y574jdtjcTxKRU6k4wrPYJJE=;
+        b=sZ9nmtGoUKt/aa0fefSOhnURt5p7IOqXJsH1cmcprbc9kTIeD/HXaa7MLC2/z4RHC/
+         2RQIcFXMbvd06KMJI1Esdf22VC5lFe6UsriE2iCLnKAjs2ApTd+zyD/SwsH6Y9OeGztr
+         oDDK1z8KerqH5BGcUpLriGXc+yRjQovk+KTEuc7ys+Y5PlebfjFqEDukciwi/t0XL8V3
+         4WUvXyvdqjwE/LLFpbu3cVWOhLR+3ALF6Gu9/0ZWVWyi04/lq4Fu/s2CgOVRyyTpBVUH
+         BckYg8xBp6V0UrB4at3YgM2jiH5L88FIYN0Ex0L98RbMsdAj4ada6+9nzPTJxJhhapRs
+         OfbQ==
+X-Gm-Message-State: APjAAAWTJ7moDPoouKPlFasFpUKN893OA7B/kq2Won1ZV3Uy+Q3h+ciB
+        egcvBOx5X7gtDR2JACIjFaE=
+X-Google-Smtp-Source: APXvYqxxmn9ULbrQFMLJEtMySO7JBNQkpSXC7k9Y2QPcQyK5SFcavLc7RGYi6hNSQ6p9Iz352cwvcQ==
+X-Received: by 2002:a63:484d:: with SMTP id x13mr9803253pgk.122.1567806663646;
+        Fri, 06 Sep 2019 14:51:03 -0700 (PDT)
+Received: from localhost ([100.118.89.196])
+        by smtp.gmail.com with ESMTPSA id g14sm6823936pfo.133.2019.09.06.14.51.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 14:51:03 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     iommu@lists.linux-foundation.org
+Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        Bruce Wang <bzwang@chromium.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Enrico Weigelt <info@metux.net>,
+        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
+        GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 2/2] drm/msm: mark devices where iommu is managed by driver
+Date:   Fri,  6 Sep 2019 14:44:02 -0700
+Message-Id: <20190906214409.26677-3-robdclark@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190906214409.26677-1-robdclark@gmail.com>
+References: <20190906214409.26677-1-robdclark@gmail.com>
 MIME-Version: 1.0
-References: <20190906115614.5645-1-hui.song_1@nxp.com>
-In-Reply-To: <20190906115614.5645-1-hui.song_1@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Fri, 6 Sep 2019 16:46:54 -0500
-X-Gmail-Original-Message-ID: <CADRPPNSjOV4RvJiFU2krj_-0gwcvw07x27Ku9t7h+VKNd=BStQ@mail.gmail.com>
-Message-ID: <CADRPPNSjOV4RvJiFU2krj_-0gwcvw07x27Ku9t7h+VKNd=BStQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio/mpc8xxx: change irq handler from chained to normal
-To:     Hui Song <hui.song_1@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 10:20 AM Hui Song <hui.song_1@nxp.com> wrote:
->
-> From: Song Hui <hui.song_1@nxp.com>
->
+From: Rob Clark <robdclark@chromium.org>
 
-The English below need to be fixed.
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/msm/adreno/adreno_device.c | 1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c    | 1 +
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c   | 1 +
+ drivers/gpu/drm/msm/msm_drv.c              | 1 +
+ 4 files changed, 4 insertions(+)
 
-> more one gpio controller use share one interrupt,
-> make request interrupt to be shared.
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+index 7f750a9510a5..19f2bd2d6cb4 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_device.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+@@ -452,6 +452,7 @@ static struct platform_driver adreno_driver = {
+ 		.name = "adreno",
+ 		.of_match_table = dt_match,
+ 		.pm = &adreno_pm_ops,
++		.driver_manages_iommu = true,
+ 	},
+ };
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+index 5751815a26d7..dec8cc6b64dc 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+@@ -1094,6 +1094,7 @@ static struct platform_driver dpu_driver = {
+ 		.name = "msm_dpu",
+ 		.of_match_table = dpu_dt_match,
+ 		.pm = &dpu_pm_ops,
++		.driver_manages_iommu = true,
+ 	},
+ };
+ 
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+index d93de3a569b4..eff1b000258e 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+@@ -1134,6 +1134,7 @@ static struct platform_driver mdp5_driver = {
+ 		.name = "msm_mdp",
+ 		.of_match_table = mdp5_dt_match,
+ 		.pm = &mdp5_pm_ops,
++		.driver_manages_iommu = true,
+ 	},
+ };
+ 
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 3a4fd20a33e8..336a6d0a4cd3 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -1388,6 +1388,7 @@ static struct platform_driver msm_platform_driver = {
+ 		.name   = "msm",
+ 		.of_match_table = dt_match,
+ 		.pm     = &msm_pm_ops,
++		.driver_manages_iommu = true,
+ 	},
+ };
+ 
+-- 
+2.21.0
 
-More than one gpio controllers can share one interrupt, change the
-driver to request shared irq.
-
->
-> Signed-off-by: Laurentiu Tudor <Laurentiu.Tudor@nxp.com>
-> Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
-> Signed-off-by: Song Hui <hui.song_1@nxp.com>
-> ---
->  drivers/gpio/gpio-mpc8xxx.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-> index 16a47de..4006250 100644
-> --- a/drivers/gpio/gpio-mpc8xxx.c
-> +++ b/drivers/gpio/gpio-mpc8xxx.c
-> @@ -22,6 +22,7 @@
->  #include <linux/irq.h>
->  #include <linux/gpio/driver.h>
->  #include <linux/bitops.h>
-> +#include <linux/interrupt.h>
->
->  #define MPC8XXX_GPIO_PINS      32
->
-> @@ -127,10 +128,9 @@ static int mpc8xxx_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
->                 return -ENXIO;
->  }
->
-> -static void mpc8xxx_gpio_irq_cascade(struct irq_desc *desc)
-> +static irqreturn_t mpc8xxx_gpio_irq_cascade(int irq, void *data)
->  {
-> -       struct mpc8xxx_gpio_chip *mpc8xxx_gc = irq_desc_get_handler_data(desc);
-> -       struct irq_chip *chip = irq_desc_get_chip(desc);
-> +       struct mpc8xxx_gpio_chip *mpc8xxx_gc = (struct mpc8xxx_gpio_chip *)data;
->         struct gpio_chip *gc = &mpc8xxx_gc->gc;
->         unsigned int mask;
->
-> @@ -139,8 +139,8 @@ static void mpc8xxx_gpio_irq_cascade(struct irq_desc *desc)
->         if (mask)
->                 generic_handle_irq(irq_linear_revmap(mpc8xxx_gc->irq,
->                                                      32 - ffs(mask)));
-> -       if (chip->irq_eoi)
-> -               chip->irq_eoi(&desc->irq_data);
-> +
-> +       return IRQ_HANDLED;
->  }
->
->  static void mpc8xxx_irq_unmask(struct irq_data *d)
-> @@ -409,8 +409,14 @@ static int mpc8xxx_probe(struct platform_device *pdev)
->         if (devtype->gpio_dir_in_init)
->                 devtype->gpio_dir_in_init(gc);
->
-> -       irq_set_chained_handler_and_data(mpc8xxx_gc->irqn,
-> -                                        mpc8xxx_gpio_irq_cascade, mpc8xxx_gc);
-> +       ret = request_irq(mpc8xxx_gc->irqn, mpc8xxx_gpio_irq_cascade,
-> +               IRQF_NO_THREAD | IRQF_SHARED, "gpio-cascade", mpc8xxx_gc);
-> +       if (ret) {
-> +               pr_err("%s: failed to request_irq(%d), ret = %d\n",
-> +                               np->full_name, mpc8xxx_gc->irqn, ret);
-> +               goto err;
-> +       }
-> +
->         return 0;
->  err:
->         iounmap(mpc8xxx_gc->regs);
-> --
-> 2.9.5
->
