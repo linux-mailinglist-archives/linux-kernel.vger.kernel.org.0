@@ -2,107 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBD0AC19E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 22:50:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF40FAC1AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 22:53:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391953AbfIFUt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 16:49:56 -0400
-Received: from mail-eopbgr750077.outbound.protection.outlook.com ([40.107.75.77]:35554
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390989AbfIFUtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 16:49:55 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Diu82E9tqGbDtKbMnIEqUADx/exV6cmsLIMRznx0ljiNEivw0UWkq4VWGAzE7IPGCcrSggXPrn7zpji686ppFJ1Y/Iw1RICOSDgAzI9FC7E520fpZR0CxUpsgW7DTN3jnAiVtXc/V9nQJDBgPbY+FcUO2ihHbINLwkxS2/x0cugGZWpCl1aPYxxJCw3JteL4L8+SurQvTLhamVVUrdw2/dnM9L0pDCctl9EtKARRZh7LO9cGbvT+c706pWxaoyY2NE8yEYn53sFtgsgxskpqZK4vn1g1y28OjeUcBct5fYF2U92USU6lpcF4m5okk2REkIy5+yuhezGFIE5CAKXkHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=43mP6q8nsAAmnNlgcLe4zVPQWZvk8jwFyPKnGf+XNFw=;
- b=NQaeR3cK4p//mIRaM6VOLP4ipUP7fNKEnowxKwsyyyPPfmSd4MK/4TdXqrJokcWmnGCm4RT42NrsWci2BBkTZ+CSe9YPl+g//E4up8QkgLUAzB0X5j7+xI8+geayW/MBRVMysZ946TXs0prEX6cqobllowDwVDjHGyx31w9NUKcFydPmXAj34IX5EWDuOjTzL/+of3SIrrBxGGjOQ2KDVCQhDhaw6mEiLpH1haTTst2Cn6wsoWJDTPlRgbCOJR+CeHJVVFCzbzUdOxfQ2LukhkpeDoiXdLpnMU6v5wuwEoaYe5xuz7bYvTANXMuoUYeqvdP0m4KIatoScDZ4BIhBRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=43mP6q8nsAAmnNlgcLe4zVPQWZvk8jwFyPKnGf+XNFw=;
- b=1+4Krb8QeOLCQIuB8zIPZS64xay9hLd7OPqJOVtSPBuVvBFCeFU5nqXAfCv1EovgSq9ETj/Mi8lJDEB0Iqx9SzFWfyuNXldXApZIZTYJvkQisJWBODswEZBBlI+ZC4sOZ0UkNSDDyxh9/y9UBs0m30x0qhQWDLKYWIhk56OWrWE=
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com (52.135.103.16) by
- SN6PR12MB2735.namprd12.prod.outlook.com (52.135.107.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.18; Fri, 6 Sep 2019 20:49:52 +0000
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::307c:a378:f96e:690]) by SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::307c:a378:f96e:690%7]) with mapi id 15.20.2220.020; Fri, 6 Sep 2019
- 20:49:52 +0000
-From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH v3 08/10] EDAC/amd64: Gather hardware information
- early
-Thread-Topic: [RFC PATCH v3 08/10] EDAC/amd64: Gather hardware information
- early
-Thread-Index: AQHVWHyM0yWTJ6Qnuku4Pj6P3bApxacR5aOAgA03aPCAABcugIAAAtag
-Date:   Fri, 6 Sep 2019 20:49:52 +0000
-Message-ID: <SN6PR12MB2639232DF612AD2B02CFAAA4F8BA0@SN6PR12MB2639.namprd12.prod.outlook.com>
-References: <20190821235938.118710-1-Yazen.Ghannam@amd.com>
- <20190821235938.118710-9-Yazen.Ghannam@amd.com>
- <20190829092241.GB1312@zn.tnic>
- <SN6PR12MB26393DDA0F1818DCDD2D7953F8BA0@SN6PR12MB2639.namprd12.prod.outlook.com>
- <20190906203519.GN19008@zn.tnic>
-In-Reply-To: <20190906203519.GN19008@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
-x-originating-ip: [165.204.77.11]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 81eb16da-921d-408c-6d3c-08d7330bc40c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR12MB2735;
-x-ms-traffictypediagnostic: SN6PR12MB2735:
-x-microsoft-antispam-prvs: <SN6PR12MB2735655A14AA337017C4C744F8BA0@SN6PR12MB2735.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0152EBA40F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(396003)(376002)(346002)(39860400002)(189003)(199004)(13464003)(256004)(8676002)(7736002)(74316002)(305945005)(81166006)(6436002)(6916009)(81156014)(55016002)(8936002)(229853002)(33656002)(2906002)(54906003)(316002)(6116002)(3846002)(76116006)(9686003)(486006)(476003)(11346002)(446003)(86362001)(4326008)(25786009)(66066001)(76176011)(5660300002)(66476007)(52536014)(4744005)(7696005)(102836004)(53546011)(6506007)(186003)(66556008)(53936002)(66946007)(64756008)(66446008)(6246003)(71190400001)(71200400001)(99286004)(26005)(478600001)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2735;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: OS9LL9fJbStUiSXAhXvd5Di1hGioqlUfXVhz1E9Z43eN27Yd8Uhu/tiLSBgWtePngtFEopZGgBda9se9aTskhD4l+3CmQvVRvRUNkB5v0pdPEZYlxs2tzSrPTtrwX5M63KLMVuOHC9WwolwQxzpuyeL8HI8FBIzpiE7nsD9+VypIGwHp8KTJQ80qs+isYCwu4JIvWPTgTaizrplI087kabv3+8nc4TBs9TJKcV3Ei29A5y0Z1gcX7bUvKk+Y1X440Y0WN7JVhXVRl7N5ZJxEpb8E0fV3v0uXM9xbm+vRMxAWslV4b9koJHOOMLbBWLRBsAXqMrr7nJQnJ+mmp6536p2AOPL+DZSjbub7KmkUCQ5KFV1VLCDgwYwVPhlUgDb9D03ej6c7hxJRZlwai3OdKUIYLEqXH13FEJp/23Lkck8=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81eb16da-921d-408c-6d3c-08d7330bc40c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2019 20:49:52.1500
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lZehiIMUy564QOuX4qJi/tCOMCbTvOYfCst1CIv1i2zsNzor5pC94t39Vt0FKWWoPn/hQPeX7wlTgFbitWG5WQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2735
+        id S2403932AbfIFUxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 16:53:25 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46242 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728590AbfIFUxZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 16:53:25 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86KnbtS193716;
+        Fri, 6 Sep 2019 20:50:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=mHvw5dftco6c801VEwPpHaMi0k0vHWogr6jdjy+fFQ8=;
+ b=H28owAN25StxO3iaWBOnmLvCgPOKB5zqjEZKoYDp2odxQK2+rhrLPCBzd4Z9Q17LPjjK
+ 0WFZTChDnIdYiTPk5AZo/6h6thww0zdGo5Z466MQUZ8TjtiUwSRG77QAZQGhUuPlUmYQ
+ CXnVr4c1mP3InKy5LDVwS+i/FSW0XGr+sRltMtJ9F7fwfHFKqiNr7pviMGNu/izNB9qH
+ I8+rnTLrAGH6aQy9BnCqwnIPd6iuNggyZ7sk7ydj+J3ZMd6a9icsPwS0buY4sRc7kUsN
+ Yjz8mhWpp2B8dRJa+KNOf9nvxX2YxfO03sJ0ZAZHM0b5dT5S3AJv33wxZEPIJkEStQ0n VQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2uuxmd01wx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 20:50:45 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86Kmpoa018348;
+        Fri, 6 Sep 2019 20:50:44 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2uu1ba4d5g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 20:50:44 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x86KobdM007945;
+        Fri, 6 Sep 2019 20:50:37 GMT
+Received: from anon-dhcp-153.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 06 Sep 2019 13:50:37 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: Regression in 5.1.20: Reading long directory fails
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <ufapnkdw3s3.fsf@epithumia.math.uh.edu>
+Date:   Fri, 6 Sep 2019 16:50:36 -0400
+Cc:     Bruce Fields <bfields@fieldses.org>,
+        Wolfgang Walter <linux@stwm.de>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        km@cm4all.com, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <75F810C6-E99E-40C3-B5E1-34BA2CC42773@oracle.com>
+References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
+ <4418877.15LTP4gqqJ@stwm.de> <ufapnkhqjwm.fsf@epithumia.math.uh.edu>
+ <4198657.JbNDGbLXiX@h2o.as.studentenwerk.mhn.de>
+ <ufad0ggrfrk.fsf@epithumia.math.uh.edu> <20190906144837.GD17204@fieldses.org>
+ <ufapnkdw3s3.fsf@epithumia.math.uh.edu>
+To:     Jason L Tibbitts III <tibbs@math.uh.edu>,
+        Benjamin Coddington <bcodding@redhat.com>
+X-Mailer: Apple Mail (2.3445.104.11)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9372 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909060212
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9372 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909060212
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1lZGFjLW93bmVyQHZn
-ZXIua2VybmVsLm9yZyA8bGludXgtZWRhYy1vd25lckB2Z2VyLmtlcm5lbC5vcmc+IE9uIEJlaGFs
-ZiBPZiBCb3Jpc2xhdiBQZXRrb3YNCj4gU2VudDogRnJpZGF5LCBTZXB0ZW1iZXIgNiwgMjAxOSAz
-OjM1IFBNDQo+IFRvOiBHaGFubmFtLCBZYXplbiA8WWF6ZW4uR2hhbm5hbUBhbWQuY29tPg0KPiBD
-YzogbGludXgtZWRhY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmcNCj4gU3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggdjMgMDgvMTBdIEVEQUMvYW1kNjQ6IEdhdGhl
-ciBoYXJkd2FyZSBpbmZvcm1hdGlvbiBlYXJseQ0KPiANCj4gT24gRnJpLCBTZXAgMDYsIDIwMTkg
-YXQgMDc6MTQ6NTdQTSArMDAwMCwgR2hhbm5hbSwgWWF6ZW4gd3JvdGU6DQo+ID4gVGhpcyBzdHJ1
-Y3QgaXMgdXNlZCBwZXIgY2hhbm5lbCwgc28gd2UgbWF5IGhhdmUgMi04IHBlciBzeXN0ZW0uDQo+
-IA0KPiBBaCwgdHJ1ZS4NCj4gDQo+ID4gV2UgY291bGQgZml4IGl0IGF0IHRoZSBtYXggKDgpLiBX
-aGF0IGRvIHlvdSB0aGluaz8NCj4gDQo+IEFueXRoaW5nIGluIHN0cnVjdCBhbWQ2NF91bWMgdGhh
-dCBpcyBzaGFyZWQgYmV0d2VlbiB0aG9zZSBjaGFubmVscyBvcg0KPiBhbGwgbWF4IDggb2YgdGhl
-bSBjYW4gYmUgZGlzdGluY3Q/DQo+IA0KDQoNCkFsbCB0aGUgZmllbGRzIGFyZSByZWdpc3RlciB2
-YWx1ZXMsIGFuZCB0aGVyZSBhcmUgdW5pcXVlIGluc3RhbmNlcyBmb3IgZWFjaCBjaGFubmVsLiBU
-aGV5IGNhbg0KcG90ZW50aWFsbHkgYWxsIGJlIGRpZmZlcmVudC4NCg0KVGhhbmtzLA0KWWF6ZW4N
-Cg==
+
+
+> On Sep 6, 2019, at 4:47 PM, Jason L Tibbitts III <tibbs@math.uh.edu> =
+wrote:
+>=20
+>>>>>> "JBF" =3D=3D J Bruce Fields <bfields@fieldses.org> writes:
+>=20
+> JBF> Those readdir changes were client-side, right?  Based on that I'd
+> JBF> been assuming a client bug, but maybe it'd be worth getting a =
+full
+> JBF> packet capture of the readdir reply to make sure it's legit.
+>=20
+> I have been working with bcodding on IRC for the past couple of days =
+on
+> this.  Fortunately I was able to come up with way to fill up a =
+directory
+> in such a way that it will fail with certainty and as a bonus doesn't
+> include any user data so I can feel OK about sharing packet captures.  =
+I
+> have a capture alongside a kernel trace of the problematic operation =
+in
+> https://www.math.uh.edu/~tibbs/nfs/.  Not that I can particularly tell
+> anything useful from that, but bcodding says that it seems to point to
+> some issue in sunrpc.
+>=20
+> And because I can easily reproduce this and I was able to do a bisect:
+>=20
+> 2c94b8eca1a26cd46010d6e73a23da5f2e93a19d is the first bad commit
+> commit 2c94b8eca1a26cd46010d6e73a23da5f2e93a19d
+> Author: Chuck Lever <chuck.lever@oracle.com>
+> Date:   Mon Feb 11 11:25:41 2019 -0500
+>=20
+>    SUNRPC: Use au_rslack when computing reply buffer size
+>=20
+>    au_rslack is significantly smaller than (au_cslack << 2). Using
+>    that value results in smaller receive buffers. In some cases this
+>    eliminates an extra segment in Reply chunks (RPC/RDMA).
+>=20
+>    Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>    Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+>=20
+> :040000 040000 d4d1ce2fbe0035c5bd9df976b8c448df85dcb505 =
+7011a792dfe72ff9cd70d66e45d353f3d7817e3e M      net
+>=20
+> But of course, I can't say whether this is the actual bad commit or
+> whether it just introduced a behavior change which alters the =
+conditions
+> under which the problem appears.
+
+The first place I'd start looking is the XDR constants at the head of =
+fs/nfs/nfs4xdr.c
+having to do with READDIR.
+
+The report of behavior changes with the use of krb5p also makes this =
+commit plausible.
+
+
+> And just to make sure that the blame doesn't lie with the old RHEL7
+> kernel, I rsynced over the problematic directory to a machine running
+> something slightly more modern (5.1.11, which I know I need to update,
+> but it's already set up to do kerberised NFS) and the same problem
+> exists, though the directory listing does fail at a different place.
+>=20
+> - J<
+
+--
+Chuck Lever
+
+
+
