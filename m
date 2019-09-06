@@ -2,133 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 119A3AB97E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 15:42:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07AC9AB986
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 15:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393352AbfIFNmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 09:42:36 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:49567 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388784AbfIFNmg (ORCPT
+        id S2393378AbfIFNnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 09:43:40 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:60159 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731568AbfIFNnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 09:42:36 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 1C3CD40015;
-        Fri,  6 Sep 2019 13:42:28 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/9 drm: rcar-du: Add Color Management Module (CMM)
-Date:   Fri,  6 Sep 2019 15:43:32 +0200
-Message-Id: <20190906134341.9879-1-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.23.0
+        Fri, 6 Sep 2019 09:43:40 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 65BD1534;
+        Fri,  6 Sep 2019 09:43:38 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Fri, 06 Sep 2019 09:43:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=ZAuVse+GskgTpwJXEjQafqO32Yo
+        TiH8vSkvU8+lMxxg=; b=QVtPJAR4fpYRxCl7rDZu0RBsomEevfCxJlNLDD55GxD
+        M87U7/kVpsXWDL7Dj94BvMRRxgN2PS3cfbG1g7aYWXgsnO/3TUOdqGDSaXYN4+iq
+        0dR4eE3byP5t1jcmDajZvF3F2upMVNxW6EpUlkrIMI1YoAhCTfTZTrBo+4US1ZpT
+        vBBIFxp/5iwoa6GqJJzjmEGgUXS16JMUr7ltrco+Yu00VoZVNpf80g6KiLShReo5
+        0oJwbwlL1JuBUK6cV7TurXaVuYRxbSzxWbzpWP2ERFJZj9c3ZY8CsAYZ9kU1fR5C
+        r5Cnf8Nxeh9tF6cndbSi5x/yA5NfdR95kkUEet96NXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ZAuVse
+        +GskgTpwJXEjQafqO32YoTiH8vSkvU8+lMxxg=; b=aHTvY8jVSX8OzBPLBg7Fvn
+        ZjqI2gXF0uPqlBMWfgYJCLltxonXqFE6SxEPf7RtdSnH77v+GW/xNHP3EbH2uwpQ
+        xEmmIOrSIvJQUwYugi/WzvI0gXhi+ez6RrEcyW1BZNPxchMwjdUM/tGZc2RKSrbA
+        HpQsz8GUtOv+nK28z80x2kMveEA9PyZv9zk7v3XuJG4iTa+yHbDRoR/yepiPH3bu
+        dyfA1EaxouOWpq8goiu2nd1l2mYHAPi5SWEA3p8meGn/xx/0IsKo1ZAIiK610ft6
+        zb4Bnz+5i0RI76q18fgNTPGGQyJRZ98u/f/D2fv1S8zPP0vg12iHjDundyWxYyDw
+        ==
+X-ME-Sender: <xms:iWJyXXdGbTPVjWuDg9UyyttGMFpTx38e3jrKC4vLJLfbLQUKfNrYEw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudejledgheehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
+    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
+    vehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:iWJyXRC_PoJTWEM_305Dr1K8lhZFe_Ghs06MjuPjGfjFJ3NQuPtwtg>
+    <xmx:iWJyXZkZbSnBKpW_Gq4ud9fllUJ7OXXSwETife6Mjk56OS6TLPbZuw>
+    <xmx:iWJyXce3WWN3bVGgPpxxtpcYTRUtY-PxzZXzEk6yIpQXCpQluNYY2A>
+    <xmx:imJyXeqlzRDk92cjwNa0BM3FeeqUuwDzqbZ0NuyUatBWFsUwFvm9jg>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D2673D60062;
+        Fri,  6 Sep 2019 09:43:36 -0400 (EDT)
+Date:   Fri, 6 Sep 2019 15:43:35 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Saranya Gopal <saranya.gopal@intel.com>,
+        Balaji Manoharan <m.balaji@intel.com>
+Subject: Re: linux-next: manual merge of the usb tree with the pm tree
+Message-ID: <20190906134335.GA5834@kroah.com>
+References: <20190904200929.00cfb98a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190904200929.00cfb98a@canb.auug.org.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, new iteration of CMM support, with quite a few changes compared to
-v3:
+On Wed, Sep 04, 2019 at 08:09:29PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the usb tree got a conflict in:
+> 
+>   drivers/usb/roles/intel-xhci-usb-role-switch.c
+> 
+> between commit:
+> 
+>   d2a90ebb6553 ("usb: roles: intel_xhci: Supplying software node for the role mux")
+> 
+> from the pm tree and commit:
+> 
+>   2be1fb64dfeb ("usb: roles: intel: Enable static DRD mode for role switch")
+> 
+> from the usb tree.
 
-References:
-A reference to the v1 cover letter, with some background on the CMM is
-available here:
-https://lkml.org/lkml/2019/6/6/583
-v2:
-https://lore.kernel.org/linux-renesas-soc/20190706140746.29132-10-jacopo+renesas@jmondi.org/
-v3:
-https://lore.kernel.org/linux-renesas-soc/20190825135154.11488-1-jacopo+renesas@jmondi.org/
+Ick, sorry about that, merge looks good to me, thanks!
 
-Change log:
-
-*Bindings/DT:
-- Rebased on renesas-devel-2019-09-03-v5.3-rc7
-- Bindings converted to yaml: thanks Laurent for help
-- s/'cmms'/'renesas,cmms'/ in DU bindings as suggested by Rob
-- s/cmm-<soctype>/<soctype>-cmm/ as suggested by Geert
-- squashed CMM addition for Gen3 SoCs in a single path at the end of
-  the series
-
-*CMM/DU:
-- Only accept fully populated LUT tables, remove the 'size' from the CMM
-  configuration structure as suggested by Laurent
-- Simplify CMM configuration logic: only rely on color_mgmt_changed flag and
-  unconditionally provide a populated LUT table to the cmm_setup() function
-- Protect against probing order inversion (DU is operation while CMM still has
-  not been probed) by adding rcar_cmm_init() operation as it is done for VSP as
-  suggested by Laurent
-- Add CMM function stubs to fix compilation erros when CONFIG_DRM_RCAR_CMM is
-  not selected
-- Minors in the CMM driver as suggested by Laurent
-  - Remove per-soc strings
-  - Make comments style consistent (not using /** anywhere in the .c file,
-    unify comment style)
-  - s/rcar_cmm_load()/rcar_cmm_write()/
-  - Squash cmm configuration and suspend/resume support in rcar_du_kms.c
-
-Testing:
-I have tested by injecting a color inversion LUT table at test program
-initialization:
-https://jmondi.org/cgit/kmsxx/commit/?h=gamma_lut&id=3c6af4db165e5b3dc8996f0a288746c35dbb1cb9
-And by changing the CMM content to switch between a color inversion table
-and a linear table every 50 frames:
-https://jmondi.org/cgit/kmsxx/commit/?h=gamma_lut&id=fe178a43861da7c8e79618e2a13fa0f19dbcd03d
-
-Pretty happy with the result, which seems to be consistent across system
-suspend/resume.
-
-Testing with real world use cases might be beneficial. Rajesh are you still
-interested in giving this series a spin?
-
-Thanks
-  j
-
-Jacopo Mondi (9):
-  dt-bindings: display: renesas,cmm: Add R-Car CMM documentation
-  dt-bindings: display, renesas,du: Document cmms property
-  drm: rcar-du: Add support for CMM
-  drm: rcar-du: Claim CMM support for Gen3 SoCs
-  drm: rcar-du: kms: Initialize CMM instances
-  drm: rcar-du: crtc: Enable and disable CMMs
-  drm: rcar-du: crtc: Register GAMMA_LUT properties
-  drm: rcar-du: kms: Update CMM in atomic commit tail
-  arm64: dts: renesas: Add CMM units to Gen3 SoCs
-
- .../bindings/display/renesas,cmm.yaml         |  64 +++++
- .../bindings/display/renesas,du.txt           |   5 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi      |  40 ++-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi      |  28 ++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi     |  28 ++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi     |  22 +-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi     |  22 +-
- drivers/gpu/drm/rcar-du/Kconfig               |   7 +
- drivers/gpu/drm/rcar-du/Makefile              |   1 +
- drivers/gpu/drm/rcar-du/rcar_cmm.c            | 251 ++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_cmm.h            |  61 +++++
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c        |  17 ++
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h        |   2 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.c         |  32 ++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h         |   3 +
- drivers/gpu/drm/rcar-du/rcar_du_group.c       |   8 +
- drivers/gpu/drm/rcar-du/rcar_du_group.h       |   2 +
- drivers/gpu/drm/rcar-du/rcar_du_kms.c         | 106 ++++++++
- drivers/gpu/drm/rcar-du/rcar_du_regs.h        |   5 +
- 19 files changed, 697 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/renesas,cmm.yaml
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.c
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.h
-
---
-2.23.0
-
+greg k-h
