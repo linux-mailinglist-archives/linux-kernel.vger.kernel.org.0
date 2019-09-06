@@ -2,95 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 336B0ABA72
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65DCCABA91
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:17:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394070AbfIFONk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:13:40 -0400
-Received: from foss.arm.com ([217.140.110.172]:56916 "EHLO foss.arm.com"
+        id S2394249AbfIFORR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:17:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51324 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731142AbfIFONj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:13:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5E9328;
-        Fri,  6 Sep 2019 07:13:38 -0700 (PDT)
-Received: from [10.0.2.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DFCCD3F718;
-        Fri,  6 Sep 2019 07:13:36 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
-To:     Parth Shah <parth@linux.ibm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net
-References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
- <20190830174944.21741-2-subhra.mazumdar@oracle.com>
- <20190905083127.GA2332@hirez.programming.kicks-ass.net>
- <87r24v2i14.fsf@arm.com>
- <20190905104616.GD2332@hirez.programming.kicks-ass.net>
- <87imq72dpc.fsf@arm.com> <df69627e-8aa0-e2cb-044e-fb392f34efa5@arm.com>
- <87d0ge3n85.fsf@arm.com> <3bb17e15-5492-b78c-20a8-5989519f20e2@linux.ibm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <75e782c7-121d-a0ea-7fbf-efb0c83f50e6@arm.com>
-Date:   Fri, 6 Sep 2019 15:13:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2394071AbfIFORQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:17:16 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B9DD910F23F8;
+        Fri,  6 Sep 2019 14:17:16 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EE185D9D3;
+        Fri,  6 Sep 2019 14:17:06 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 95BB4220292; Fri,  6 Sep 2019 10:17:05 -0400 (EDT)
+Date:   Fri, 6 Sep 2019 10:17:05 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
+        dgilbert@redhat.com, mst@redhat.com
+Subject: Re: [PATCH 08/18] virtiofs: Drain all pending requests during
+ ->remove time
+Message-ID: <20190906141705.GF22083@redhat.com>
+References: <20190905194859.16219-1-vgoyal@redhat.com>
+ <20190905194859.16219-9-vgoyal@redhat.com>
+ <20190906105210.GP5900@stefanha-x1.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <3bb17e15-5492-b78c-20a8-5989519f20e2@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906105210.GP5900@stefanha-x1.localdomain>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Fri, 06 Sep 2019 14:17:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/09/2019 13:45, Parth Shah wrote:> 
-> I guess there is some usecase in case of thermal throttling.
-> If a task is heating up the core then in ideal scenarios POWER systems throttle
-> down to rated frequency.
-> In such case, if the task is latency sensitive (min latency nice), we can move the
-> task around the chip to heat up the chip uniformly allowing me to gain more performance
-> with sustained higher frequency.
-> With this, we will require the help from active load balancer and latency-nice
-> classification on per task and/or group basis.
+On Fri, Sep 06, 2019 at 11:52:10AM +0100, Stefan Hajnoczi wrote:
+> On Thu, Sep 05, 2019 at 03:48:49PM -0400, Vivek Goyal wrote:
+> > +static void virtio_fs_drain_queue(struct virtio_fs_vq *fsvq)
+> > +{
+> > +	WARN_ON(fsvq->in_flight < 0);
+> > +
+> > +	/* Wait for in flight requests to finish.*/
+> > +	while (1) {
+> > +		spin_lock(&fsvq->lock);
+> > +		if (!fsvq->in_flight) {
+> > +			spin_unlock(&fsvq->lock);
+> > +			break;
+> > +		}
+> > +		spin_unlock(&fsvq->lock);
+> > +		usleep_range(1000, 2000);
+> > +	}
 > 
-> Hopefully, this might be useful for other arch as well, right?
-> 
+> I think all contexts that call this allow sleeping so we could avoid
+> usleep here.
 
-Most of the functionality is already there, we're only really missing thermal
-pressure awareness. There was [1] but it seems to have died.
+usleep_range() is supposed to be used from non-atomic context.
 
+https://github.com/torvalds/linux/blob/master/Documentation/timers/timers-howto.rst
 
-At least with CFS load balancing, if thermal throttling is correctly
-reflected as a CPU capacity reduction you will tend to move things away from
-that CPU, since load is balanced over capacities.
+What construct you are thinking of?
 
-
-For active balance, we actually already have a condition that moves a task
-to a less capacity-pressured CPU (although it is somewhat specific). So if
-thermal pressure follows that task (e.g. it's doing tons of vector/float),
-it will be rotated around.
-
-However there should be a point made on latency vs throughput. If you
-care about latency you probably do not want to active balance your task. If
-you care about throughput, it should be specified in some way (util-clamp
-says hello!).
-
-It sort of feels like you'd want an extension of misfit migration (salesman
-hat goes on from here) - misfit moves tasks that are CPU bound (IOW their
-util is >= 80% of the CPU capacity) to CPUs of higher capacity. It's only
-enabled for systems with asymmetric capacities, but could be enabled globally
-for "dynamically-created asymmetric capacities" (IOW RT/IRQ/thermal pressure
-on SMP systems).
-
-On top of that, if we make misfit consider e.g. uclamp.min (I don't think
-that's already the case), then you have your throughput knob to have *some* 
-designated tasks move away from (thermal & else) pressure. 
-
-
-[1]: https://lore.kernel.org/lkml/1555443521-579-1-git-send-email-thara.gopinath@linaro.org/
+Vivek
