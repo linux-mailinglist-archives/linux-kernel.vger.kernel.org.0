@@ -2,160 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2F49ABE58
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C50ABE5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:10:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395137AbfIFRJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 13:09:03 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:34190 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732130AbfIFRJD (ORCPT
+        id S2395094AbfIFRKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 13:10:23 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37790 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733096AbfIFRKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:09:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1567789738;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=rBCaqKNoNCZ9+3F1oh6m+vepb8uT3GJ5XSm5+YAEkEU=;
-        b=QEN5WL28EpXn0/MfyxW2jtAwC8543Mw/SDhdZu9jtwZHp0Z57uE0BsRpwmxnKJcuJj
-        qv4v265RmfIiLmUyWM8EegwGKi6WOE8LGw+CaBRWv096Z4hxUvEnFnCvFG8vLe/upRul
-        CrrOzj5daMuvdQaw2w7iQOyO9e9K169O/3hu2hMMQVRhMD7O3WanVmBTlLK2iIC/DNpL
-        VjFnouyKcXWJe0wg2JVRSWiE32cV0xywAa7bwMrPercwL1i+umUNECV+Sh3md+CPHzEp
-        O4Qvi/ifB99qe6wI5drmH0nFznCMgXjUdb9F0RFwdqbn5eWT/O4GZOV08ihU5Ykr2efP
-        +eLg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/PqwDqp5w=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
-        with ESMTPSA id u036f9v86H8spen
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 6 Sep 2019 19:08:54 +0200 (CEST)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [RFC v2 3/3] ARM: dts: omap3: bulk convert compatible to be explicitly ti,omap3430 or ti,omap36xx
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20190906154732.GC52127@atomide.com>
-Date:   Fri, 6 Sep 2019 19:08:54 +0200
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        =?utf-8?Q?Andr=C3=A9_Roth?= <neolynx@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8C8644AC-FA12-4D26-B96A-76B78798612A@goldelico.com>
-References: <cover.1567587220.git.hns@goldelico.com> <a2b56edcada7b9000a6e906387a02c0ee42681db.1567587220.git.hns@goldelico.com> <20190905142734.GV52127@atomide.com> <4BC39938-D63E-4BDC-BA28-5132F77F602D@goldelico.com> <20190906154732.GC52127@atomide.com>
-To:     Tony Lindgren <tony@atomide.com>
-X-Mailer: Apple Mail (2.3124)
+        Fri, 6 Sep 2019 13:10:22 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x86H7DMK074642
+        for <linux-kernel@vger.kernel.org>; Fri, 6 Sep 2019 13:10:21 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uusdmdy48-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 13:10:20 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
+        Fri, 6 Sep 2019 18:10:18 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 6 Sep 2019 18:10:13 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x86HACop42008614
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 6 Sep 2019 17:10:12 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7642811C04A;
+        Fri,  6 Sep 2019 17:10:12 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F88311C064;
+        Fri,  6 Sep 2019 17:10:08 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.102.0.23])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  6 Sep 2019 17:10:08 +0000 (GMT)
+Subject: Re: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net
+References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
+ <20190830174944.21741-2-subhra.mazumdar@oracle.com>
+ <20190905083127.GA2332@hirez.programming.kicks-ass.net>
+ <87r24v2i14.fsf@arm.com>
+ <20190905104616.GD2332@hirez.programming.kicks-ass.net>
+ <87imq72dpc.fsf@arm.com> <df69627e-8aa0-e2cb-044e-fb392f34efa5@arm.com>
+ <87d0ge3n85.fsf@arm.com> <3bb17e15-5492-b78c-20a8-5989519f20e2@linux.ibm.com>
+ <75e782c7-121d-a0ea-7fbf-efb0c83f50e6@arm.com>
+From:   Parth Shah <parth@linux.ibm.com>
+Date:   Fri, 6 Sep 2019 22:40:07 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <75e782c7-121d-a0ea-7fbf-efb0c83f50e6@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19090617-0008-0000-0000-00000311F001
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090617-0009-0000-0000-00004A304E1F
+Message-Id: <f4d28328-973c-4b94-334d-a68c958f6cc4@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-06_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909060182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
 
-> Am 06.09.2019 um 17:47 schrieb Tony Lindgren <tony@atomide.com>:
->=20
-> * H. Nikolaus Schaller <hns@goldelico.com> [190906 07:53]:
->>> Am 05.09.2019 um 16:27 schrieb Tony Lindgren <tony@atomide.com>:
->>> compatible =3D "ti,omap3-ldp", "ti,omap3430", "ti,omap34xx", =
-"ti,omap3";
->>=20
->> After thinking a little about the whole topic the main rule of this =
-change must be:
->>=20
->> * do not break any existing in-tree DTS
->> 	=3D> only *add* to compatible what we need to distinguish =
-between omap34 and omap36
->>=20
->> * additions shall only follow new scheme
->> 	=3D> we only add "ti,omap34xx" or "ti,omap36xx"
->>           but neither "ti,omap3630" nor "ti,omap3430"
->=20
-> Sorry I don't follow you on this one.. We should always add =
-"ti,omap3630"
-> where "ti,omap36xx" is currently used so we can eventually get rid of
-> "ti,omap36xx". And the same for 34xx.
 
-Ah, ok now I see.
+On 9/6/19 7:43 PM, Valentin Schneider wrote:
+> On 06/09/2019 13:45, Parth Shah wrote:> 
+>> I guess there is some usecase in case of thermal throttling.
+>> If a task is heating up the core then in ideal scenarios POWER systems throttle
+>> down to rated frequency.
+>> In such case, if the task is latency sensitive (min latency nice), we can move the
+>> task around the chip to heat up the chip uniformly allowing me to gain more performance
+>> with sustained higher frequency.
+>> With this, we will require the help from active load balancer and latency-nice
+>> classification on per task and/or group basis.
+>>
+>> Hopefully, this might be useful for other arch as well, right?
+>>
+> 
+> Most of the functionality is already there, we're only really missing thermal
+> pressure awareness. There was [1] but it seems to have died.
+> 
+> 
+> At least with CFS load balancing, if thermal throttling is correctly
+> reflected as a CPU capacity reduction you will tend to move things away from
+> that CPU, since load is balanced over capacities.
+> 
 
-You want to make the "ti,omap3630" the official one and "ti,omap36xx" =
-legacy.
-It is probably an arbitrary choice if we want to get rid of the xx or =
-the 30.
+Right, CPU capacity can solve the problem of indicating the thermal throttle to the scheduler.
+AFAIU, the patchset from Thara changes CPU capacity to reflect Thermal headroom of the CPU.
+This is a nice mitigation but,
+1. Sometimes a single task is responsible for the Thermal heatup of the core, reducing the
+   CPU capacity of all the CPUs in the core is not optimal when just moving such single
+   task to other core can allow us to remain within thermal headroom. This is important
+   for the servers especially where there are upto 8 threads.
+2. Given the implementation in the patches and its integration with EAS, it seems difficult
+   to adapt to servers, where CPU capacity itself is in doubt.
+   https://lkml.org/lkml/2019/5/15/1402
 
-I had thought to do it the other way round because I had done this =
-statistics:
+> 
+> For active balance, we actually already have a condition that moves a task
+> to a less capacity-pressured CPU (although it is somewhat specific). So if
+> thermal pressure follows that task (e.g. it's doing tons of vector/float),
+> it will be rotated around.
 
-for i in 3430 34xx 3630 36xx; do echo $i $(fgrep '"'ti,omap$i'"' =
-arch/arm/boot/dts/*.dts* | wc -l); done
+Agree. But this should break in certain conditions like when we have multiple tasks
+in a core with almost equal utilization among which one is just doing vector operations.
+LB can pick and move any task with equal probability if the capacity is reduced here.
 
-3430 12
-34xx 28
-3630 3
-36xx 23
+> 
+> However there should be a point made on latency vs throughput. If you
+> care about latency you probably do not want to active balance your task. If
 
-which would indicate that 34xx and 36xx are more common.
+Can you please elaborate on why not to consider active balance for latency sensitive tasks?
+Because, sometimes finding a thermally cool core is beneficial when Turbo frequency
+range is around 20% above rated ones.
 
->> * cover some out-of-tree DTS
->> 	=3D> make the ti-cpufreq driver still match "ti,omap3430" or =
-"ti,omap3630"
->> 	   even if this duplicates compatibility
->>=20
->> This would mean that the logicpd-som-lv-37xx-devkit.dts gets the =
-additional "ti,omap36xx"
->> while the omap3-ldp.dts would only get an "ti,omap34xx" but no =
-"ti,omap3430" (since we
->> do not use it anywhere).
->>=20
->> Could you agree on this approach?
->=20
-> Yeah sounds like logicpd-som-lv-37xx-devkit.dts currently still needs
-> "ti,omap36xx" for now.
->=20
-> If modifying omap3-ldp.dts, also add "ti,omap3430" in additon to
-> "ti,omap34xx" that it already has.
->=20
-> So basically let's assume the following:
->=20
-> "ti,omap3430" =3D=3D "ti,omap34xx"
-> "ti,omap3630" =3D=3D "ti,omap36xx"
->=20
-> This means code needs to parse both.
+> you care about throughput, it should be specified in some way (util-clamp
+> says hello!).
+> 
 
-Yes, it already does everywhere.
+yes I do care for latency and throughput both. :-)
+but I'm wondering how uclamp can solve the problem for throughput.
+If I make the thermally hot tasks to appear bigger than other tasks then reducing
+CPU capacity can allow such tasks to move around the chip.
+But this will require the utilization value to be relatively large compared to the other
+tasks in the core. Or other task's uclamp.max can be lowered to make such task rotate.
+If I got it right, then this will be a difficult UCLAMP usecase from user perspective, right?
+I feel like I'm missing something here.
 
-BTW there is also some code that does special SoC detection based on
-soc_device_match(), mainly in omapdrm/dss.
+> It sort of feels like you'd want an extension of misfit migration (salesman
+> hat goes on from here) - misfit moves tasks that are CPU bound (IOW their
+> util is >= 80% of the CPU capacity) to CPUs of higher capacity. It's only
+> enabled for systems with asymmetric capacities, but could be enabled globally
+> for "dynamically-created asymmetric capacities" (IOW RT/IRQ/thermal pressure
+> on SMP systems).> On top of that, if we make misfit consider e.g. uclamp.min (I don't think
+> that's already the case), then you have your throughput knob to have *some* 
+> designated tasks move away from (thermal & else) pressure. 
+> 
+> 
+> [1]: https://lore.kernel.org/lkml/1555443521-579-1-git-send-email-thara.gopinath@linaro.org/
+> 
 
-If we were to use this mechanism in the ti-cpufreq driver we could
-match it to ti,omap3 and could avoid all these changes.
-
-But make it less maintainable and code more complex.
-
->=20
-> And eventually we just drop the "xx" variants.
-
->=20
-> So while patching compatibles, let's also update for this to
-> avoid multiple patches churning the same compatibles over and
-> over.
-
-Ok. I'll rework the patch so that we never add "ti,34xx" or "ti,36xx"
-but add "ti,3430" or "ti,3630" if missing.
-
-I'll also take a look at omap.txt bindings since that likely needs
-an update as well to better describe what the official ones are
-and which are legacy.
-
-BR and thanks,
-Nikolaus
+Thanks,
+Parth
 
