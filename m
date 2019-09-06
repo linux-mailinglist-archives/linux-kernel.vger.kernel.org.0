@@ -2,153 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD854ABFA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 20:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B65CABFCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 20:47:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436628AbfIFSq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 14:46:29 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33475 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436615AbfIFSqZ (ORCPT
+        id S2406146AbfIFSrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 14:47:20 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35278 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405083AbfIFSrT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 14:46:25 -0400
-Received: by mail-io1-f65.google.com with SMTP id m11so15054635ioo.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 11:46:23 -0700 (PDT)
+        Fri, 6 Sep 2019 14:47:19 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 205so5081852pfw.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 11:47:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=QRnJITRgtGPLg2irBHffabraOH6qFTHyLeWEmn2CG4k=;
-        b=fW9yI0r5PaavEuDpO3wqhc1PKV3gT7W2PHr0YvMv8yeRB3SF0rAwRE2BkG1RKIldB5
-         pk0J20GIWh4t241wQZQAl1zHWNJxStYwy5kxUtaiwtqqhZ1ozaqrys8TEuTqNPhLzMt5
-         Zm7do94cFWUwupAl/AOKTQpMgaVyhyVNN+4sksBHKSxv/0mSVTnzzbyVyIbnqt1snF5t
-         iguQSIF5qEqKP9/56X/CjyzTRl1ktsNgpb3jvd0i/WW+d9og8BLCwLR8APIzc18T/0uR
-         OlizzA0soMA5t0+LMz3QvB2o7vOuygMelmEjFL6nD4NQrfX5rILFVMakZMg0djTuN2a5
-         pLkA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=jm07RF4qOusTFQQs40dCbcyWy1wVMhan2978N/Kfrcc=;
+        b=v5tjzjee9XCrwsAWLSx2DbjrGRiM8X6w/A7Nr6rwn9E7619shZjoGo0+eh1YtG0wy5
+         NOydPAc1//zWmgNhxQ0RD9/jUVukWm8Qy/er4VKYJoUVC0oGtfWOcMfyWoW7amQocGuY
+         crNauJ/YBM4g5Hv/nJg9z4FWroXttlb2U3r3GlQH93WyJOB1skX8ZxtZKHYl9+QPfhVl
+         Rv5FCoNuchZlGjgMncrswQpBH59EGVCjKWGdr1WCw7zzNKX7hu4B27+QIdVeBU0mMRrH
+         26VZXFhJXzpwYsVOW91h/mnIzY8pvbzGfPEtC+08tAxioiNn7m+0SgHuPhZID9UkryRg
+         NWdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=QRnJITRgtGPLg2irBHffabraOH6qFTHyLeWEmn2CG4k=;
-        b=YjFD+PhxaeN4kKFgBNiYeygJ9ugCD44AoIb/V/2sw04Mtp6bKF2MGyQKGxT1MAJJFt
-         3sMceYTVlg4JUmnCBWG8a5P/mPwOmNzz8+Zx3FiX/FQ61IuQxSulVmpO4x9NMArrcL0f
-         zRYt8MjhDzHYqn69qhVZJsaJwkO8/14M2fbBSRlItEalCYZVtlpZlzk+UJQlEY40VTdd
-         6QrJQE6lZRY/WeJYzmU03cNjLSXxbT45QTAr1FyWb9sU9Stc2u1AxMrZtiBDY9xwwu3N
-         yBh10Ch25W9KjNmccBX598UAjA/Kr9UErI1YVLv/q5Jyloo84tlMGd25Rcvvm8kjstln
-         9eFQ==
-X-Gm-Message-State: APjAAAUe+yL1rKOgFsyvFr0GpbLFXWaFt4TaKSdO+bLtY9EemOVlGoiN
-        KPucV8b02EOdOcvAiPznni4oFg==
-X-Google-Smtp-Source: APXvYqx8a3vQaJo05FM2AJxDurm67u0wSOJsrKfOs76p1ALl+/al6SlzLMWYqNVPkldCZ7AZ/oWTyQ==
-X-Received: by 2002:a02:ab90:: with SMTP id t16mr12092436jan.110.1567795583168;
-        Fri, 06 Sep 2019 11:46:23 -0700 (PDT)
-Received: from cisco ([2601:282:901:dd7b:49a:5f6f:e06:3c33])
-        by smtp.gmail.com with ESMTPSA id h4sm5578707iok.1.2019.09.06.11.46.21
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jm07RF4qOusTFQQs40dCbcyWy1wVMhan2978N/Kfrcc=;
+        b=bV11sE8hAA37wa0pgJIKDkF9NO4vQWZprl0Vm/BrxsGtBjKBSaL8o3OnVaqof3jOH8
+         HrJc1+zNIjeMRuYOIZIcb+QsH/vnd4/60sdMIlhzDRHk/JOWC0uSCt1EEFyPahnzReI1
+         eheK4No5kQlHomw+BKQ+IIbmiCzg+OtHJFsw45oKDdaAo4p4u12W/AxRZynnbauyhEUv
+         GYUPOkSMaFjGsu/mIPjdt/ybpQ6MxCL++OiNjbXpJ8EFBWVbyQXamSpRlFYMvzt4ZM7I
+         u3SYVE+itG+V9/3IhO4hvHpNZ7Q/dW7PUHhzdenuU845lFzewl5AkfWqpDPz+GSSHuBh
+         jXiw==
+X-Gm-Message-State: APjAAAVIUHGn62WHcXn6sKikWROujJfMTiX09mqpmdOB00JdoSXjhtqC
+        1oTNtzPBBrj31jaDxglZL6msXyAJcjo=
+X-Google-Smtp-Source: APXvYqzwiHW5Dl9BkLPwxd4zUluXR77pWbZha7lV+2J4rKMNHOTMqoQ7Z+jsIz8DW0FLEYRjo59cLA==
+X-Received: by 2002:a62:87c8:: with SMTP id i191mr12487069pfe.133.1567795638125;
+        Fri, 06 Sep 2019 11:47:18 -0700 (PDT)
+Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
+        by smtp.gmail.com with ESMTPSA id o35sm4889462pgm.29.2019.09.06.11.47.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2019 11:46:22 -0700 (PDT)
-Date:   Fri, 6 Sep 2019 12:46:20 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-Message-ID: <20190906184620.GI7627@cisco>
-References: <20190906152455.22757-1-mic@digikod.net>
- <20190906152455.22757-2-mic@digikod.net>
- <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
- <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
- <20190906170739.kk3opr2phidb7ilb@yavin.dot.cyphar.com>
- <20190906172050.v44f43psd6qc6awi@wittgenstein>
- <20190906174041.GH7627@cisco>
- <87v9u5cmb0.fsf@oldenburg2.str.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87v9u5cmb0.fsf@oldenburg2.str.redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 06 Sep 2019 11:47:17 -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        "Andrew F . Davis" <afd@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        dri-devel@lists.freedesktop.org
+Subject: [RESEND][PATCH v8 0/5] DMA-BUF Heaps (destaging ION)
+Date:   Fri,  6 Sep 2019 18:47:07 +0000
+Message-Id: <20190906184712.91980-1-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 08:27:31PM +0200, Florian Weimer wrote:
-> * Tycho Andersen:
-> 
-> > On Fri, Sep 06, 2019 at 07:20:51PM +0200, Christian Brauner wrote:
-> >> On Sat, Sep 07, 2019 at 03:07:39AM +1000, Aleksa Sarai wrote:
-> >> > On 2019-09-06, Mickaël Salaün <mickael.salaun@ssi.gouv.fr> wrote:
-> >> > > 
-> >> > > On 06/09/2019 17:56, Florian Weimer wrote:
-> >> > > > Let's assume I want to add support for this to the glibc dynamic loader,
-> >> > > > while still being able to run on older kernels.
-> >> > > >
-> >> > > > Is it safe to try the open call first, with O_MAYEXEC, and if that fails
-> >> > > > with EINVAL, try again without O_MAYEXEC?
-> >> > > 
-> >> > > The kernel ignore unknown open(2) flags, so yes, it is safe even for
-> >> > > older kernel to use O_MAYEXEC.
-> >> > 
-> >> > Depends on your definition of "safe" -- a security feature that you will
-> >> > silently not enable on older kernels doesn't sound super safe to me.
-> >> > Unfortunately this is a limitation of open(2) that we cannot change --
-> >> > which is why the openat2(2) proposal I've been posting gives -EINVAL for
-> >> > unknown O_* flags.
-> >> > 
-> >> > There is a way to probe for support (though unpleasant), by creating a
-> >> > test O_MAYEXEC fd and then checking if the flag is present in
-> >> > /proc/self/fdinfo/$n.
-> >> 
-> >> Which Florian said they can't do for various reasons.
-> >> 
-> >> It is a major painpoint if there's no easy way for userspace to probe
-> >> for support. Especially if it's security related which usually means
-> >> that you want to know whether this feature works or not.
-> >
-> > What about just trying to violate the policy via fexecve() instead of
-> > looking around in /proc? Still ugly, though.
-> 
-> How would we do this?  This is about opening the main executable as part
-> of an explicit loader invocation.  Typically, an fexecve will succeed
-> and try to run the program, but with the wrong dynamic loader.
+Here is yet another pass at the dma-buf heaps patchset Andrew
+and I have been working on which tries to destage a fair chunk
+of ION functionality.
 
-Yeah, fexecve() was a think-o, sorry, you don't need to go that far. I
-was thinking do what the tests in this series do: create a tmpfs with
-MS_NOEXEC, put an executable file in it, and try and open it with
-O_MAYEXEC. If that works, the kernel doesn't support the flag, and it
-should give you -EACCES if the kernel does support the flag.
+The patchset implements per-heap devices which can be opened
+directly and then an ioctl is used to allocate a dmabuf from the
+heap.
 
-Still a lot of work, though. Seems better to just use openat2.
+The interface is similar, but much simpler then IONs, only
+providing an ALLOC ioctl.
 
-Tycho
+Also, I've provided relatively simple system and cma heaps.
+
+I've booted and tested these patches with AOSP on the HiKey960
+using the kernel tree here:
+  https://git.linaro.org/people/john.stultz/android-dev.git/log/?h=dev/dma-buf-heap
+
+And the userspace changes here:
+  https://android-review.googlesource.com/c/device/linaro/hikey/+/909436
+
+Compared to ION, this patchset is missing the system-contig,
+carveout and chunk heaps, as I don't have a device that uses
+those, so I'm unable to do much useful validation there.
+Additionally we have no upstream users of chunk or carveout,
+and the system-contig has been deprecated in the common/andoid-*
+kernels, so this should be ok.
+
+I've also removed the stats accounting, since any such accounting
+should be implemented by dma-buf core or the heaps themselves.
+
+Most of the changes in this revision are adddressing the more
+concrete feedback from Christoph (many thanks!). Though I'm not
+sure if some of the less specific feedback was completely resolved
+in discussion last time around. Please let me know!
+
+New in v8:
+* Make struct dma_heap_ops consts (Suggested by Christoph)
+* Add flush_kernel_vmap_range/invalidate_kernel_vmap_range calls
+  (suggested by Christoph)
+* Condense dma_heap_buffer and heap_helper_buffer (suggested by
+  Christoph)
+* Get rid of needless struct system_heap (suggested by Christoph)
+* Fix indentation by using shorter argument names (suggested by
+  Christoph)
+* Remove unused private_flags value
+* Add forgotten include file to fix build issue on x86
+* Checkpatch whitespace fixups
+
+Thoughts and feedback would be greatly appreciated!
+
+thanks
+-john
+
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Liam Mark <lmark@codeaurora.org>
+Cc: Pratik Patel <pratikp@codeaurora.org>
+Cc: Brian Starkey <Brian.Starkey@arm.com>
+Cc: Vincent Donnefort <Vincent.Donnefort@arm.com>
+Cc: Sudipto Paul <Sudipto.Paul@arm.com>
+Cc: Andrew F. Davis <afd@ti.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Chenbo Feng <fengc@google.com>
+Cc: Alistair Strachan <astrachan@google.com>
+Cc: Hridya Valsaraju <hridya@google.com>
+Cc: dri-devel@lists.freedesktop.org
+
+
+Andrew F. Davis (1):
+  dma-buf: Add dma-buf heaps framework
+
+John Stultz (4):
+  dma-buf: heaps: Add heap helpers
+  dma-buf: heaps: Add system heap to dmabuf heaps
+  dma-buf: heaps: Add CMA heap to dmabuf heaps
+  kselftests: Add dma-heap test
+
+ MAINTAINERS                                   |  18 ++
+ drivers/dma-buf/Kconfig                       |  11 +
+ drivers/dma-buf/Makefile                      |   2 +
+ drivers/dma-buf/dma-heap.c                    | 250 ++++++++++++++++
+ drivers/dma-buf/heaps/Kconfig                 |  14 +
+ drivers/dma-buf/heaps/Makefile                |   4 +
+ drivers/dma-buf/heaps/cma_heap.c              | 164 +++++++++++
+ drivers/dma-buf/heaps/heap-helpers.c          | 269 ++++++++++++++++++
+ drivers/dma-buf/heaps/heap-helpers.h          |  55 ++++
+ drivers/dma-buf/heaps/system_heap.c           | 122 ++++++++
+ include/linux/dma-heap.h                      |  59 ++++
+ include/uapi/linux/dma-heap.h                 |  55 ++++
+ tools/testing/selftests/dmabuf-heaps/Makefile |   9 +
+ .../selftests/dmabuf-heaps/dmabuf-heap.c      | 230 +++++++++++++++
+ 14 files changed, 1262 insertions(+)
+ create mode 100644 drivers/dma-buf/dma-heap.c
+ create mode 100644 drivers/dma-buf/heaps/Kconfig
+ create mode 100644 drivers/dma-buf/heaps/Makefile
+ create mode 100644 drivers/dma-buf/heaps/cma_heap.c
+ create mode 100644 drivers/dma-buf/heaps/heap-helpers.c
+ create mode 100644 drivers/dma-buf/heaps/heap-helpers.h
+ create mode 100644 drivers/dma-buf/heaps/system_heap.c
+ create mode 100644 include/linux/dma-heap.h
+ create mode 100644 include/uapi/linux/dma-heap.h
+ create mode 100644 tools/testing/selftests/dmabuf-heaps/Makefile
+ create mode 100644 tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
+
+-- 
+2.17.1
+
