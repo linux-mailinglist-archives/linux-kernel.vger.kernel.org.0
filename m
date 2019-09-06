@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8873ABB1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D69B4ABB20
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:39:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394510AbfIFOiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:38:07 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6240 "EHLO huawei.com"
+        id S2394519AbfIFOjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:39:05 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34600 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731943AbfIFOiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:38:06 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D0F2ECCB4E4E46042EED;
-        Fri,  6 Sep 2019 22:38:02 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 6 Sep 2019
- 22:37:57 +0800
+        id S2389288AbfIFOjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:39:05 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id AD6AEA71A989DDBF8958;
+        Fri,  6 Sep 2019 22:39:00 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Fri, 6 Sep 2019
+ 22:38:54 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <will@kernel.org>, <mark.rutland@arm.com>,
-        <khuong@os.amperecomputing.com>
+To:     <will@kernel.org>, <mark.rutland@arm.com>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] perf: xgene: use devm_platform_ioremap_resource() to simplify code
-Date:   Fri, 6 Sep 2019 22:37:35 +0800
-Message-ID: <20190906143735.28272-1-yuehaibing@huawei.com>
+Subject: [PATCH -next] perf/smmuv3: gpio: creg-snps: use devm_platform_ioremap_resource() to simplify code
+Date:   Fri, 6 Sep 2019 22:38:44 +0800
+Message-ID: <20190906143844.27956-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -40,57 +39,32 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/perf/xgene_pmu.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/perf/arm_smmuv3_pmu.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
-index 7e328d6..46ee680 100644
---- a/drivers/perf/xgene_pmu.c
-+++ b/drivers/perf/xgene_pmu.c
-@@ -1282,25 +1282,21 @@ static int acpi_pmu_probe_active_mcb_mcu_l3c(struct xgene_pmu *xgene_pmu,
- 					     struct platform_device *pdev)
+diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
+index abcf54f..773128f 100644
+--- a/drivers/perf/arm_smmuv3_pmu.c
++++ b/drivers/perf/arm_smmuv3_pmu.c
+@@ -727,7 +727,7 @@ static void smmu_pmu_get_acpi_options(struct smmu_pmu *smmu_pmu)
+ static int smmu_pmu_probe(struct platform_device *pdev)
  {
- 	void __iomem *csw_csr, *mcba_csr, *mcbb_csr;
--	struct resource *res;
- 	unsigned int reg;
+ 	struct smmu_pmu *smmu_pmu;
+-	struct resource *res_0, *res_1;
++	struct resource *res_0;
+ 	u32 cfgr, reg_size;
+ 	u64 ceid_64[2];
+ 	int irq, err;
+@@ -764,8 +764,7 @@ static int smmu_pmu_probe(struct platform_device *pdev)
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	csw_csr = devm_ioremap_resource(&pdev->dev, res);
-+	csw_csr = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(csw_csr)) {
- 		dev_err(&pdev->dev, "ioremap failed for CSW CSR resource\n");
- 		return PTR_ERR(csw_csr);
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	mcba_csr = devm_ioremap_resource(&pdev->dev, res);
-+	mcba_csr = devm_platform_ioremap_resource(pdev, 2);
- 	if (IS_ERR(mcba_csr)) {
- 		dev_err(&pdev->dev, "ioremap failed for MCBA CSR resource\n");
- 		return PTR_ERR(mcba_csr);
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 3);
--	mcbb_csr = devm_ioremap_resource(&pdev->dev, res);
-+	mcbb_csr = devm_platform_ioremap_resource(pdev, 3);
- 	if (IS_ERR(mcbb_csr)) {
- 		dev_err(&pdev->dev, "ioremap failed for MCBB CSR resource\n");
- 		return PTR_ERR(mcbb_csr);
-@@ -1332,13 +1328,11 @@ static int acpi_pmu_v3_probe_active_mcb_mcu_l3c(struct xgene_pmu *xgene_pmu,
- 						struct platform_device *pdev)
- {
- 	void __iomem *csw_csr;
--	struct resource *res;
- 	unsigned int reg;
- 	u32 mcb0routing;
- 	u32 mcb1routing;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	csw_csr = devm_ioremap_resource(&pdev->dev, res);
-+	csw_csr = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(csw_csr)) {
- 		dev_err(&pdev->dev, "ioremap failed for CSW CSR resource\n");
- 		return PTR_ERR(csw_csr);
+ 	/* Determine if page 1 is present */
+ 	if (cfgr & SMMU_PMCG_CFGR_RELOC_CTRS) {
+-		res_1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-		smmu_pmu->reloc_base = devm_ioremap_resource(dev, res_1);
++		smmu_pmu->reloc_base = devm_platform_ioremap_resource(pdev, 1);
+ 		if (IS_ERR(smmu_pmu->reloc_base))
+ 			return PTR_ERR(smmu_pmu->reloc_base);
+ 	} else {
 -- 
 2.7.4
 
