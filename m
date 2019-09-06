@@ -2,102 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F79AB78D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 526ECAB758
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:50:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391478AbfIFLz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:55:57 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:52134 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389491AbfIFLzx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:55:53 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86Bs9q1084833;
-        Fri, 6 Sep 2019 11:55:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=UQ7HZzVsUj9ewFhA6fQpQ91lzSpUtdtyloZU6ZAWe04=;
- b=V7YmFi2h8p3HXetZAeZvjZ1vpqxdwMH+sg5CGT4ej4gyFv9iw6jz/10yTXc3ibXht8Gh
- veBX1PGMp6vhAoHHcTBWb3ijpPzgCzSZgv9G0fRmFw94qzO/RPWx2OfWsvufET1ESHFs
- ynKZxtumzwADP/mK1FCFhmWz/dhY+VwOk47YvU+Iu3sMQ7vtFWwRfjBMs5lJ4gDa4u/x
- J3+azWJJcw0qT2tNhonEcFY7CxvD0QNDkzrDIxs0tRRRYknI0Bs/gUxzK1hEJ3BFm3h1
- piDPa42KVtxk3y7d+kngg1+Q2x3d8Uq/k9RinMVcwWO2F5DKxm93yx0hLm+6Egzy2j/2 9w== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2uupvpr1k9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Sep 2019 11:55:41 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86BrvSo047977;
-        Fri, 6 Sep 2019 11:55:40 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2uud7pers0-60
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Sep 2019 11:55:40 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x86AwWeY031955;
-        Fri, 6 Sep 2019 10:58:32 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 06 Sep 2019 03:58:32 -0700
-Date:   Fri, 6 Sep 2019 13:58:24 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Dan Elkouby <streetwalkermc@gmail.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Fabian Henneke <fabian.henneke@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Bluetooth: hidp: Fix error checks in
- hidp_get/set_raw_report
-Message-ID: <20190906105824.GA14147@kadam>
-References: <20190906094158.8854-1-streetwalkermc@gmail.com>
- <20190906101306.GA12017@kadam>
- <CANnEQ3HX0SNG+Hzs2b+BzLwuewsC8-3sF2urWV+bqUahXq0hVA@mail.gmail.com>
+        id S2390912AbfIFLug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:50:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389867AbfIFLug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 07:50:36 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0113F190C106;
+        Fri,  6 Sep 2019 11:50:36 +0000 (UTC)
+Received: from localhost (ovpn-117-208.ams2.redhat.com [10.36.117.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EED2A5D9CA;
+        Fri,  6 Sep 2019 11:50:27 +0000 (UTC)
+Date:   Fri, 6 Sep 2019 12:50:26 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
+        dgilbert@redhat.com, mst@redhat.com
+Subject: Re: [PATCH 11/18] virtiofs: stop and drain queues after sending
+ DESTROY
+Message-ID: <20190906115026.GS5900@stefanha-x1.localdomain>
+References: <20190905194859.16219-1-vgoyal@redhat.com>
+ <20190905194859.16219-12-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6zn93sY2JrH9m7VZ"
 Content-Disposition: inline
-In-Reply-To: <CANnEQ3HX0SNG+Hzs2b+BzLwuewsC8-3sF2urWV+bqUahXq0hVA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909060126
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909060126
+In-Reply-To: <20190905194859.16219-12-vgoyal@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.70]); Fri, 06 Sep 2019 11:50:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 01:40:15PM +0300, Dan Elkouby wrote:
-> On Fri, Sep 6, 2019 at 1:14 PM Dan Carpenter wrote:
-> > I think we also need to update update ms_ff_worker() which assumes that
-> > hid_hw_output_report() returns zero on success.
-> 
-> Yes, it looks like that's the case. Should I amend my patch to include
-> this fix, or should it be a separate patch? I don't have access to any
-> hardware covered by hid-microsoft, so I won't be able to test it.
-> 
 
-Yes.  Please amend the patch.  We all understand that you don't have
-the hardware so it's not a problem.  If you want to blame me in the
-commit message that's fine.  "Dan Carpenter pointed out a related issue
-in ms_ff_worker()".  But we're only silencing a warning so it can't
-really break anything.
+--6zn93sY2JrH9m7VZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You can add my Reviewed-by tag as well when you resend.
+On Thu, Sep 05, 2019 at 03:48:52PM -0400, Vivek Goyal wrote:
+> During virtio_kill_sb() we first stop forget queue and drain it and then
+> call fuse_kill_sb_anon(). This will result in sending DESTROY request to
+> fuse server. Once finished, stop all the queues and drain one more time
+> just to be sure and then free up the devices.
+>=20
+> Given drain queues will call flush_work() on various workers, remove this
+> logic from virtio_free_devs().
+>=20
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/fuse/virtio_fs.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 
-regards,
-dan carpenter
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
+--6zn93sY2JrH9m7VZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1ySAIACgkQnKSrs4Gr
+c8hPCggAqxxAtpxUlxuyJ1JMZVearCJpL7Y98Ts25vXNZJKaGv/Z7w+0b1YNHE04
+RuXVOEqhwAG5VKOIpPYs+SJwTEwWTgsHEdAgtprbwW+v/vrOlf3LEaC9QS7+Z6bZ
+altTVdvWHQiqulsObNYVrgm/alLh75y8skYmwHHAK0EtbLoOwBnwzYNHyuOsH7tk
+YdpXmipXCBBtjQrC9rWXSt0ug0xCm29uK/voTea5mrDVFTpTixcKJ2LM6jnT6r4v
+mXBtZwegQNYew2LLapEqG+GNE2SSbMD765Z/MFyR48cksq/5mEbCOavSmN8S1HfH
+zelxUzsGNaQAsRXvt+wUI8Y94D+aoQ==
+=OYfd
+-----END PGP SIGNATURE-----
+
+--6zn93sY2JrH9m7VZ--
