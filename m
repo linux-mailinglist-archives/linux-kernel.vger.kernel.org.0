@@ -2,73 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBEFEABD3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 18:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B61AABD48
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 18:05:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392036AbfIFQCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 12:02:40 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36518 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730767AbfIFQCk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 12:02:40 -0400
-Received: by mail-qk1-f196.google.com with SMTP id s18so6130875qkj.3;
-        Fri, 06 Sep 2019 09:02:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D2UnQvaWbnmWdR72EwgKASOHbRdH1J70PBC+fpxUSII=;
-        b=qN7r9oC+bbUMGjwHMWIX43aSLN9cHYy67oJoYdwWS1jmJv4eMaUNmCM55CQhUdcFOm
-         2JniVTh1PwkCXZflPACkmAHu4EST1btre0/Pcurvh7L8ZIcSW/Y95z0Oer5+4kjUMO5M
-         TVEjCvhs7tHPch0bAQ4Wg9KyP2wqmbXdq12clyHv74DqHod/rrRdMCZHsVtjZT8dVOTX
-         cQ3p7NckH/LPNQB7wIV0BYcZEc0ccwAyiBykoNz3mo87/D2D3CJUu/1a+Iw5SaSAiVlu
-         +m+xaH7LHBLQLyvaBULokv89M7kxnjb8+6oPpFv64xni8qyRCkyLZBHexVX0wDcj/FFq
-         S3qw==
-X-Gm-Message-State: APjAAAUBW+kk0okMj3QKuVopLpailBNKB8JMgiwKnjLqTEA+l14yY2qw
-        KQr0MZLitKU2GME6bCdozRR4+R7WEo9V+7Jh8OFdsaWA
-X-Google-Smtp-Source: APXvYqyOQtOjLTWW+COZnxCLc8XDIKJXqxS+DIdZttoPgrH1FkwVKGZoRXS19m2B5VoNat7566rsw+ZN+NUSRyoPhUM=
-X-Received: by 2002:a37:4fcf:: with SMTP id d198mr9489423qkb.394.1567785759220;
- Fri, 06 Sep 2019 09:02:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190906152800.1662489-1-arnd@arndb.de> <5dfe1bfc-0236-25cf-756b-ce05f7110136@linuxfoundation.org>
-In-Reply-To: <5dfe1bfc-0236-25cf-756b-ce05f7110136@linuxfoundation.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 6 Sep 2019 18:02:22 +0200
-Message-ID: <CAK8P3a3ynubySZ3A5M7D__B6R+caMjys=v+GVjqA78rppOJQQQ@mail.gmail.com>
-Subject: Re: [PATCH] kunit: add PRINTK dependency
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kunit-dev@googlegroups.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S2405831AbfIFQFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 12:05:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392057AbfIFQFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 12:05:07 -0400
+Subject: Re: [GIT PULL] MMC fixes for v5.3-rc8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567785906;
+        bh=5yaOr2Yil3vt014dyHva3cmCs/812kSoThsrVHyY+ew=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=r+EwSkltEYN70HkKmlZ6u+mPBAPCq0vFEKmkjVA1EZh5aLSSVaTSYzySZbLPE4QTa
+         KfJrzzl+nRoi/tRR8UYTBmk2/5rVdMfi7smWzYoQezPPKcBDWOHwwp1yL936okUcVa
+         Pwfcmqltpj/gmyCxZCiCJae+D/gIhWE9nwOtjKHA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190906102137.637-1-ulf.hansson@linaro.org>
+References: <20190906102137.637-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190906102137.637-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.3-rc7
+X-PR-Tracked-Commit-Id: 8ad8e02c2fa70cfddc1ded53ba9001c9d444075d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0445971000375859008414f87e7c72fa0d809cf8
+Message-Id: <156778590688.8517.16430260265496177921.pr-tracker-bot@kernel.org>
+Date:   Fri, 06 Sep 2019 16:05:06 +0000
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 5:39 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+The pull request you sent on Fri,  6 Sep 2019 12:21:37 +0200:
 
-> >   config KUNIT
-> >       bool "Enable support for unit tests (KUnit)"
-> > +     depends on PRINTK
-> >       help
-> >         Enables support for kernel unit tests (KUnit), a lightweight unit
-> >         testing and mocking framework for the Linux kernel. These tests are
-> >
->
-> Hi Arnd,
->
-> This is found and fixed already. I am just about to apply Berndan's
-> patch that fixes this dependency. All of this vprintk_emit() stuff
-> is redone.
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.3-rc7
 
-Ok, perfect. Unfortunately I only started testing the coming
-linux-next release after Stephen went on his break, so
-I'm missing some updates.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0445971000375859008414f87e7c72fa0d809cf8
 
-    Arnd
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
