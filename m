@@ -2,249 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC791AB45D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:50:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BA8CAB461
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392725AbfIFIuf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Sep 2019 04:50:35 -0400
-Received: from mga07.intel.com ([134.134.136.100]:51284 "EHLO mga07.intel.com"
+        id S2391700AbfIFIux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 04:50:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58384 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392632AbfIFIuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 04:50:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2019 01:50:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,472,1559545200"; 
-   d="scan'208";a="213081645"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Sep 2019 01:50:33 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 6 Sep 2019 01:50:33 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 6 Sep 2019 01:50:33 -0700
-Received: from shsmsx153.ccr.corp.intel.com (10.239.6.53) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Fri, 6 Sep 2019 01:50:33 -0700
-Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.113]) by
- SHSMSX153.ccr.corp.intel.com ([169.254.12.235]) with mapi id 14.03.0439.000;
- Fri, 6 Sep 2019 16:50:31 +0800
-From:   "Wang, Wei W" <wei.w.wang@intel.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>
-CC:     "Liang, Kan" <kan.liang@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "Xu, Like" <like.xu@intel.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
-        "jmattson@google.com" <jmattson@google.com>
-Subject: RE: [PATCH v8 00/14] Guest LBR Enabling
-Thread-Topic: [PATCH v8 00/14] Guest LBR Enabling
-Thread-Index: AQHVTC0a1hHjJr16G0eshMkAiyqYMqcehe4g
-Date:   Fri, 6 Sep 2019 08:50:30 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F73E21BB5C@shsmsx102.ccr.corp.intel.com>
-References: <1565075774-26671-1-git-send-email-wei.w.wang@intel.com>
-In-Reply-To: <1565075774-26671-1-git-send-email-wei.w.wang@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmQ1OGQ2ZTItN2IyNS00YTYyLTg3NDMtODIwZjI5ODcyYzEyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVlExWHdONGZDcWgra0dvenFocUNsUHBlcUwyOTgzZDBKb29pTDVYaUJuRGNZeW5wRWwzT1JGXC9iTHFQaHVWaVIifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S2392632AbfIFIut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 04:50:49 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7801F301A3E3;
+        Fri,  6 Sep 2019 08:50:48 +0000 (UTC)
+Received: from [10.36.117.162] (ovpn-117-162.ams2.redhat.com [10.36.117.162])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 38E31100194E;
+        Fri,  6 Sep 2019 08:50:41 +0000 (UTC)
+Subject: Re: [PATCH v2 1/7] mm/gup: Rename "nonblocking" to "locked" where
+ proper
+To:     Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Hugh Dickins <hughd@google.com>, Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>,
+        Marty McFadden <mcfadden8@llnl.gov>, Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+References: <20190905101534.9637-1-peterx@redhat.com>
+ <20190905101534.9637-2-peterx@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <c25c5756-fd63-b8f6-4d67-d4506052891c@redhat.com>
+Date:   Fri, 6 Sep 2019 10:50:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190905101534.9637-2-peterx@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 06 Sep 2019 08:50:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A polite ping for comments on this version, thanks!
+On 05.09.19 12:15, Peter Xu wrote:
+> There's plenty of places around __get_user_pages() that has a parameter
+> "nonblocking" which does not really mean that "it won't block" (because
+> it can really block) but instead it shows whether the mmap_sem is
+> released by up_read() during the page fault handling mostly when
+> VM_FAULT_RETRY is returned.
+> 
+> We have the correct naming in e.g. get_user_pages_locked() or
+> get_user_pages_remote() as "locked", however there're still many places
+> that are using the "nonblocking" as name.
+> 
+> Renaming the places to "locked" where proper to better suite the
+> functionality of the variable.  While at it, fixing up some of the
+> comments accordingly.
+> 
+> Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Reviewed-by: Jerome Glisse <jglisse@redhat.com>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  mm/gup.c     | 44 +++++++++++++++++++++-----------------------
+>  mm/hugetlb.c |  8 ++++----
+>  2 files changed, 25 insertions(+), 27 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 98f13ab37bac..eddbb95dcb8f 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -622,12 +622,12 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
+>  }
+>  
+>  /*
+> - * mmap_sem must be held on entry.  If @nonblocking != NULL and
+> - * *@flags does not include FOLL_NOWAIT, the mmap_sem may be released.
+> - * If it is, *@nonblocking will be set to 0 and -EBUSY returned.
+> + * mmap_sem must be held on entry.  If @locked != NULL and *@flags
+> + * does not include FOLL_NOWAIT, the mmap_sem may be released.  If it
+> + * is, *@locked will be set to 0 and -EBUSY returned.
+>   */
+>  static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
+> -		unsigned long address, unsigned int *flags, int *nonblocking)
+> +		unsigned long address, unsigned int *flags, int *locked)
+>  {
+>  	unsigned int fault_flags = 0;
+>  	vm_fault_t ret;
+> @@ -639,7 +639,7 @@ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
+>  		fault_flags |= FAULT_FLAG_WRITE;
+>  	if (*flags & FOLL_REMOTE)
+>  		fault_flags |= FAULT_FLAG_REMOTE;
+> -	if (nonblocking)
+> +	if (locked)
+>  		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
+>  	if (*flags & FOLL_NOWAIT)
+>  		fault_flags |= FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT;
+> @@ -665,8 +665,8 @@ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
+>  	}
+>  
+>  	if (ret & VM_FAULT_RETRY) {
+> -		if (nonblocking && !(fault_flags & FAULT_FLAG_RETRY_NOWAIT))
+> -			*nonblocking = 0;
+> +		if (locked && !(fault_flags & FAULT_FLAG_RETRY_NOWAIT))
+> +			*locked = 0;
+>  		return -EBUSY;
+>  	}
+>  
+> @@ -743,7 +743,7 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+>   *		only intends to ensure the pages are faulted in.
+>   * @vmas:	array of pointers to vmas corresponding to each page.
+>   *		Or NULL if the caller does not require them.
+> - * @nonblocking: whether waiting for disk IO or mmap_sem contention
+> + * @locked:     whether we're still with the mmap_sem held
+>   *
+>   * Returns number of pages pinned. This may be fewer than the number
+>   * requested. If nr_pages is 0 or negative, returns 0. If no pages
+> @@ -772,13 +772,11 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+>   * appropriate) must be called after the page is finished with, and
+>   * before put_page is called.
+>   *
+> - * If @nonblocking != NULL, __get_user_pages will not wait for disk IO
+> - * or mmap_sem contention, and if waiting is needed to pin all pages,
+> - * *@nonblocking will be set to 0.  Further, if @gup_flags does not
+> - * include FOLL_NOWAIT, the mmap_sem will be released via up_read() in
+> - * this case.
+> + * If @locked != NULL, *@locked will be set to 0 when mmap_sem is
+> + * released by an up_read().  That can happen if @gup_flags does not
+> + * have FOLL_NOWAIT.
+>   *
+> - * A caller using such a combination of @nonblocking and @gup_flags
+> + * A caller using such a combination of @locked and @gup_flags
+>   * must therefore hold the mmap_sem for reading only, and recognize
+>   * when it's been released.  Otherwise, it must be held for either
+>   * reading or writing and will not be released.
+> @@ -790,7 +788,7 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+>  static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+>  		unsigned long start, unsigned long nr_pages,
+>  		unsigned int gup_flags, struct page **pages,
+> -		struct vm_area_struct **vmas, int *nonblocking)
+> +		struct vm_area_struct **vmas, int *locked)
+>  {
+>  	long ret = 0, i = 0;
+>  	struct vm_area_struct *vma = NULL;
+> @@ -834,7 +832,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+>  			if (is_vm_hugetlb_page(vma)) {
+>  				i = follow_hugetlb_page(mm, vma, pages, vmas,
+>  						&start, &nr_pages, i,
+> -						gup_flags, nonblocking);
+> +						gup_flags, locked);
+>  				continue;
+>  			}
+>  		}
+> @@ -852,7 +850,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+>  		page = follow_page_mask(vma, start, foll_flags, &ctx);
+>  		if (!page) {
+>  			ret = faultin_page(tsk, vma, start, &foll_flags,
+> -					nonblocking);
+> +					   locked);
+>  			switch (ret) {
+>  			case 0:
+>  				goto retry;
+> @@ -1178,7 +1176,7 @@ EXPORT_SYMBOL(get_user_pages_remote);
+>   * @vma:   target vma
+>   * @start: start address
+>   * @end:   end address
+> - * @nonblocking:
+> + * @locked: whether the mmap_sem is still held
+>   *
+>   * This takes care of mlocking the pages too if VM_LOCKED is set.
+>   *
+> @@ -1186,14 +1184,14 @@ EXPORT_SYMBOL(get_user_pages_remote);
+>   *
+>   * vma->vm_mm->mmap_sem must be held.
+>   *
+> - * If @nonblocking is NULL, it may be held for read or write and will
+> + * If @locked is NULL, it may be held for read or write and will
+>   * be unperturbed.
+>   *
+> - * If @nonblocking is non-NULL, it must held for read only and may be
+> - * released.  If it's released, *@nonblocking will be set to 0.
+> + * If @locked is non-NULL, it must held for read only and may be
+> + * released.  If it's released, *@locked will be set to 0.
+>   */
+>  long populate_vma_page_range(struct vm_area_struct *vma,
+> -		unsigned long start, unsigned long end, int *nonblocking)
+> +		unsigned long start, unsigned long end, int *locked)
+>  {
+>  	struct mm_struct *mm = vma->vm_mm;
+>  	unsigned long nr_pages = (end - start) / PAGE_SIZE;
+> @@ -1228,7 +1226,7 @@ long populate_vma_page_range(struct vm_area_struct *vma,
+>  	 * not result in a stack expansion that recurses back here.
+>  	 */
+>  	return __get_user_pages(current, mm, start, nr_pages, gup_flags,
+> -				NULL, NULL, nonblocking);
+> +				NULL, NULL, locked);
+>  }
+>  
+>  /*
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index ede7e7f5d1ab..5f816ee42206 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -4251,7 +4251,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+>  long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  			 struct page **pages, struct vm_area_struct **vmas,
+>  			 unsigned long *position, unsigned long *nr_pages,
+> -			 long i, unsigned int flags, int *nonblocking)
+> +			 long i, unsigned int flags, int *locked)
+>  {
+>  	unsigned long pfn_offset;
+>  	unsigned long vaddr = *position;
+> @@ -4322,7 +4322,7 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  				spin_unlock(ptl);
+>  			if (flags & FOLL_WRITE)
+>  				fault_flags |= FAULT_FLAG_WRITE;
+> -			if (nonblocking)
+> +			if (locked)
+>  				fault_flags |= FAULT_FLAG_ALLOW_RETRY;
+>  			if (flags & FOLL_NOWAIT)
+>  				fault_flags |= FAULT_FLAG_ALLOW_RETRY |
+> @@ -4339,9 +4339,9 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  				break;
+>  			}
+>  			if (ret & VM_FAULT_RETRY) {
+> -				if (nonblocking &&
+> +				if (locked &&
+>  				    !(fault_flags & FAULT_FLAG_RETRY_NOWAIT))
+> -					*nonblocking = 0;
+> +					*locked = 0;
+>  				*nr_pages = 0;
+>  				/*
+>  				 * VM_FAULT_RETRY must not return an
+> 
 
-On Tuesday, August 6, 2019 3:16 PM, Wei Wang wrote:
-> Last Branch Recording (LBR) is a performance monitor unit (PMU) feature on
-> Intel CPUs that captures branch related info. This patch series enables this
-> feature to KVM guests.
-> 
-> Each guest can be configured to expose this LBR feature to the guest via
-> userspace setting the enabling param in KVM_CAP_X86_GUEST_LBR (patch
-> 3).
-> 
-> About the lbr emulation method:
-> Since the vcpu get scheduled in, the lbr related msrs are made interceptible.
-> This makes guest first access to a lbr related msr always vm-exit to kvm, so
-> that kvm can know whether the lbr feature is used during the vcpu time slice.
-> The kvm lbr msr handler does the following
-> things:
->   - create an lbr perf event (task pinned) for the vcpu thread.
->     The perf event mainly serves 2 purposes:
->       -- follow the host perf scheduling rules to manage the vcpu's usage
->          of lbr (e.g. a cpu pinned lbr event could reclaim lbr and thus
->          stopping the vcpu's use);
->       -- have the host perf do context switching of the lbr state on the
->          vcpu thread switching.
->   - pass the lbr related msrs through to the guest.
->     This enables the following guest accesses to the lbr related msrs
->     without vm-exit, as long as the vcpu's lbr event owns the lbr feature.
->     A cpu pinned lbr event on the host could come and take over the lbr
->     feature via IPI calls. In this case, the pass-through will be
->     cancelled (patch 13), and the guest following accesses to the lbr msrs
->     will vm-exit to kvm and accesses will be forbidden in the handler.
-> 
-> If the guest doesn't touch any of the lbr related msrs (likely the guest doesn't
-> need to run lbr in the near future), the vcpu's lbr perf event will be freed
-> (please see patch 12 commit for more details).
-> 
-> * Tests
-> Conclusion: the profiling results on the guest are similar to that on the host.
-> 
-> Run: ./perf -b ./test_program
-> 
-> - Test on the host:
-> Overhead  Command  Source Shared Object  Source Symbol    Target
-> Symbol
->   22.35%  ftest    libc-2.23.so          [.] __random     [.]
-> __random
->    8.20%  ftest    ftest                 [.] qux          [.] qux
->    5.88%  ftest    ftest                 [.] random@plt   [.]
-> __random
->    5.88%  ftest    libc-2.23.so          [.] __random     [.]
-> __random_r
->    5.79%  ftest    ftest                 [.] main         [.]
-> random@plt
->    5.60%  ftest    ftest                 [.] main         [.] foo
->    5.24%  ftest    libc-2.23.so          [.] __random     [.] main
->    5.20%  ftest    libc-2.23.so          [.] __random_r   [.]
-> __random
->    5.00%  ftest    ftest                 [.] foo          [.] qux
->    4.91%  ftest    ftest                 [.] main         [.] bar
->    4.83%  ftest    ftest                 [.] bar          [.] qux
->    4.57%  ftest    ftest                 [.] main         [.] main
->    4.38%  ftest    ftest                 [.] foo          [.] main
->    4.13%  ftest    ftest                 [.] qux          [.] foo
->    3.89%  ftest    ftest                 [.] qux          [.] bar
->    3.86%  ftest    ftest                 [.] bar          [.] main
-> 
-> - Test on the guest:
-> Overhead  Command  Source Shaged Object  Source Symbol    Target
-> Symbol
->   22.36%  ftest    libc-2.23.so          [.] random       [.] random
->    8.55%  ftest    ftest                 [.] qux          [.] qux
->    5.79%  ftest    libc-2.23.so          [.] random       [.]
-> random_r
->    5.64%  ftest    ftest                 [.] random@plt   [.]
-> random
->    5.58%  ftest    ftest                 [.] main         [.]
-> random@plt
->    5.55%  ftest    ftest                 [.] main         [.] foo
->    5.41%  ftest    libc-2.23.so          [.] random       [.] main
->    5.31%  ftest    libc-2.23.so          [.] random_r     [.] random
->    5.11%  ftest    ftest                 [.] foo          [.] qux
->    4.93%  ftest    ftest                 [.] main         [.] main
->    4.59%  ftest    ftest                 [.] qux          [.] bar
->    4.49%  ftest    ftest                 [.] bar          [.] main
->    4.42%  ftest    ftest                 [.] bar          [.] qux
->    4.16%  ftest    ftest                 [.] main         [.] bar
->    3.95%  ftest    ftest                 [.] qux          [.] foo
->    3.79%  ftest    ftest                 [.] foo          [.] main
-> (due to the lib version difference, "random" is equavlent to __random above)
-> 
-> v7->v8 Changelog:
->   - Patch 3:
->     -- document KVM_CAP_X86_GUEST_LBR in api.txt
->     -- make the check of KVM_CAP_X86_GUEST_LBR return the size of
->        struct x86_perf_lbr_stack, to let userspace do a compatibility
->        check.
->   - Patch 7:
->     -- support perf scheduler to not assign a counter for the perf event
->        that has PERF_EV_CAP_NO_COUNTER set (rather than skipping the
-> perf
->        scheduler). This allows the scheduler to detect lbr usage conflicts
->        via get_event_constraints, and lower priority events will finally
->        fail to use lbr.
->     -- define X86_PMC_IDX_NA as "-1", which represents a never assigned
->        counter id. There are other places that use "-1", but could be
->        updated to use the new macro in another patch series.
->   - Patch 8:
->     -- move the event->owner assignment into perf_event_alloc to have it
->        set before event_init is called. Please see this patch's commit for
->        reasons.
->   - Patch 9:
->     -- use "exclude_host" and "is_kernel_event" to decide if the lbr event
->        is used for the vcpu lbr emulation, which doesn't need a counter,
->        and removes the usage of the previous new perf_event_create API.
->     -- remove the unused attr fields.
->   - Patch 10:
->     -- set a hardware reserved bit (bit 62 of LBR_SELECT) to reg->config
->        for the vcpu lbr emulation event. This makes the config different
->        from other host lbr event, so that they don't share the lbr.
->        Please see the comments in the patch for the reasons why they
->        shouldn't share.
->   - Patch 12:
->     -- disable interrupt and check if the vcpu lbr event owns the lbr
->        feature before kvm writing to the lbr related msr. This avoids kvm
->        updating the lbr msrs after lbr has been reclaimed by other events
->        via ipi.
->     -- remove arch v4 related support.
->   - Patch 13:
->     -- double check if the vcpu lbr event owns the lbr feature before
->        vm-entry into the guest. The lbr pass-through will be cancelled if
->        lbr feature has been reclaimed by a cpu pinned lbr event.
-> 
-> Previous:
-> https://lkml.kernel.org/r/1562548999-37095-1-git-send-email-wei.w.wang
-> @intel.com
-> 
-> Wei Wang (14):
->   perf/x86: fix the variable type of the lbr msrs
->   perf/x86: add a function to get the addresses of the lbr stack msrs
->   KVM/x86: KVM_CAP_X86_GUEST_LBR
->   KVM/x86: intel_pmu_lbr_enable
->   KVM/x86/vPMU: tweak kvm_pmu_get_msr
->   KVM/x86: expose MSR_IA32_PERF_CAPABILITIES to the guest
->   perf/x86: support to create a perf event without counter allocation
->   perf/core: set the event->owner before event_init
->   KVM/x86/vPMU: APIs to create/free lbr perf event for a vcpu thread
->   perf/x86/lbr: don't share lbr for the vcpu usage case
->   perf/x86: save/restore LBR_SELECT on vcpu switching
->   KVM/x86/lbr: lbr emulation
->   KVM/x86/vPMU: check the lbr feature before entering guest
->   KVM/x86: remove the common handling of the debugctl msr
-> 
->  Documentation/virt/kvm/api.txt    |  26 +++
->  arch/x86/events/core.c            |  36 ++-
->  arch/x86/events/intel/core.c      |   3 +
->  arch/x86/events/intel/lbr.c       |  95 +++++++-
->  arch/x86/events/perf_event.h      |   6 +-
->  arch/x86/include/asm/kvm_host.h   |   5 +
->  arch/x86/include/asm/perf_event.h |  17 ++
->  arch/x86/kvm/cpuid.c              |   2 +-
->  arch/x86/kvm/pmu.c                |  24 +-
->  arch/x86/kvm/pmu.h                |  11 +-
->  arch/x86/kvm/pmu_amd.c            |   7 +-
->  arch/x86/kvm/vmx/pmu_intel.c      | 476
-> +++++++++++++++++++++++++++++++++++++-
->  arch/x86/kvm/vmx/vmx.c            |   4 +-
->  arch/x86/kvm/vmx/vmx.h            |   2 +
->  arch/x86/kvm/x86.c                |  47 ++--
->  include/linux/perf_event.h        |  18 ++
->  include/uapi/linux/kvm.h          |   1 +
->  kernel/events/core.c              |  19 +-
->  18 files changed, 738 insertions(+), 61 deletions(-)
-> 
-> --
-> 2.7.4
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
+-- 
+
+Thanks,
+
+David / dhildenb
