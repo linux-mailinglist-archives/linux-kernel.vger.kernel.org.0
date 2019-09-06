@@ -2,96 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BAEBAB7D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:08:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C61CAB7E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:13:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390195AbfIFMI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 08:08:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46412 "EHLO mx1.redhat.com"
+        id S2391813AbfIFMNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 08:13:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55274 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732863AbfIFMI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 08:08:27 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1727210AbfIFMNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 08:13:23 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EE7243082137;
-        Fri,  6 Sep 2019 12:08:26 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.137])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 40F4660C18;
-        Fri,  6 Sep 2019 12:08:18 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id CC7AA220292; Fri,  6 Sep 2019 08:08:17 -0400 (EDT)
-Date:   Fri, 6 Sep 2019 08:08:17 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: [PATCH 00/18] virtiofs: Fix various races and cleanups round 1
-Message-ID: <20190906120817.GA22083@redhat.com>
-References: <20190905194859.16219-1-vgoyal@redhat.com>
- <CAJfpegu8POz9gC4MDEcXxDWBD0giUNFgJhMEzntJX_u4+cS9Zw@mail.gmail.com>
- <20190906103613.GH5900@stefanha-x1.localdomain>
- <CAJfpegudNVZitQ5L8gPvA45mRPFDk9fhyboceVW6xShpJ4mLww@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id C44A11DB3;
+        Fri,  6 Sep 2019 12:13:22 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-59.ams2.redhat.com [10.36.117.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3756910016EB;
+        Fri,  6 Sep 2019 12:13:22 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 4417D31EBF; Fri,  6 Sep 2019 14:13:18 +0200 (CEST)
+Date:   Fri, 6 Sep 2019 14:13:18 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org, tzimmermann@suse.de,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 05/17] drm: add mmap() to drm_gem_object_funcs
+Message-ID: <20190906121318.r4nvoacazvwukuun@sirius.home.kraxel.org>
+References: <20190808134417.10610-1-kraxel@redhat.com>
+ <20190808134417.10610-6-kraxel@redhat.com>
+ <20190903094859.GQ2112@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegudNVZitQ5L8gPvA45mRPFDk9fhyboceVW6xShpJ4mLww@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 06 Sep 2019 12:08:27 +0000 (UTC)
+In-Reply-To: <20190903094859.GQ2112@phenom.ffwll.local>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Fri, 06 Sep 2019 12:13:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 01:52:41PM +0200, Miklos Szeredi wrote:
-> On Fri, Sep 6, 2019 at 12:36 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
-> >
-> > On Fri, Sep 06, 2019 at 10:15:14AM +0200, Miklos Szeredi wrote:
-> > > On Thu, Sep 5, 2019 at 9:49 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > Michael Tsirkin pointed out issues w.r.t various locking related TODO
-> > > > items and races w.r.t device removal.
-> > > >
-> > > > In this first round of cleanups, I have taken care of most pressing
-> > > > issues.
-> > > >
-> > > > These patches apply on top of following.
-> > > >
-> > > > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#virtiofs-v4
-> > > >
-> > > > I have tested these patches with mount/umount and device removal using
-> > > > qemu monitor. For example.
-> > >
-> > > Is device removal mandatory?  Can't this be made a non-removable
-> > > device?  Is there a good reason why removing the virtio-fs device
-> > > makes sense?
-> >
-> > Hot plugging and unplugging virtio PCI adapters is common.  I'd very
-> > much like removal to work from the beginning.
-> 
-> Can you give an example use case?
+  Hi,
 
-David Gilbert mentioned this could be useful if daemon stops responding
-or dies. One could remove device. That will fail all future requests
-and allow unmounting filesystem.
+> I think if we do an mmap callback, it should replace all the mmap handling
+> (except the drm_gem_object_get) that drm_gem_mmap_obj does. So maybe
+> something like the below:
 
-Havind said that, current implementation will help in above situation
-only if there are no pending requests. If there are pending requests
-and daemon stops responding, then removal will hang too, as we wait
-for draining the queues.
+[ snip ]
 
-So at some point of time, we also need some sort of timeout functionality
-where we end requests with error after a timeout.
+> Since I remember quite a few discussions where the default vma flag
+> wrangling we're doing is seriously getting in the way of things too.
 
-I feel we should support removing device at some point of time. But its
-not necessarily a must have feature for first round.
+Yep, makes sense.
 
-Thanks
-Vivek
+> I think even better would be if this new ->mmap hook could also be used
+> directly by the dma-buf mmap code, without having to jump through hoops
+> creating a fake file and fake vma offset and everything. I think with that
+> we'd have a really solid case to add this ->mmap hook.
+
+Looks easy on a quick glance.  So something like the patch below (quick
+sketch, not tested yet other than compiling it)?
+
+cheers,
+  Gerd
+
+From c13b30d776fb593a03473fa3bc93baf470cba728 Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Wed, 19 Jun 2019 14:26:51 +0200
+Subject: [PATCH] drm: add mmap() to drm_gem_object_funcs
+
+drm_gem_object_funcs->vm_ops alone can't handle everything which needs
+to be done for mmap(), tweaking vm_flags for example.  So add a new
+mmap() callback to drm_gem_object_funcs where this code can go to.
+
+Note that the vm_ops field is not used in case the mmap callback is
+presnt, it is expected that the callback sets vma->vm_ops instead.
+
+drm_gem_mmap_obj() will use the new callback for object specific mmap
+setup.  With this in place the need for driver-speific fops->mmap
+callbacks goes away, drm_gem_mmap can be hooked instead.
+
+drm_gem_prime_mmap() will use the new callback too to just mmap gem
+objects directly instead of jumping though loops to make
+drm_gem_object_lookup() and fops->mmap work.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/drm/drm_gem.h       | 14 ++++++++++++++
+ drivers/gpu/drm/drm_gem.c   | 26 +++++++++++++++++---------
+ drivers/gpu/drm/drm_prime.c |  9 +++++++++
+ 3 files changed, 40 insertions(+), 9 deletions(-)
+
+diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+index 6aaba14f5972..e71f75a2ab57 100644
+--- a/include/drm/drm_gem.h
++++ b/include/drm/drm_gem.h
+@@ -150,6 +150,20 @@ struct drm_gem_object_funcs {
+ 	 */
+ 	void (*vunmap)(struct drm_gem_object *obj, void *vaddr);
+ 
++	/**
++	 * @mmap:
++	 *
++	 * Handle mmap() of the gem object, setup vma accordingly.
++	 *
++	 * This callback is optional.
++	 *
++	 * The callback is used by by both drm_gem_mmap_obj() and
++	 * drm_gem_prime_mmap().  When @mmap is present @vm_ops is not
++	 * used, the @mmap callback must set vma->vm_ops instead.
++	 *
++	 */
++	int (*mmap)(struct drm_gem_object *obj, struct vm_area_struct *vma);
++
+ 	/**
+ 	 * @vm_ops:
+ 	 *
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 6854f5867d51..aabde003ac4a 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -1099,22 +1099,30 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+ 		     struct vm_area_struct *vma)
+ {
+ 	struct drm_device *dev = obj->dev;
++	int ret;
+ 
+ 	/* Check for valid size. */
+ 	if (obj_size < vma->vm_end - vma->vm_start)
+ 		return -EINVAL;
+ 
+-	if (obj->funcs && obj->funcs->vm_ops)
+-		vma->vm_ops = obj->funcs->vm_ops;
+-	else if (dev->driver->gem_vm_ops)
+-		vma->vm_ops = dev->driver->gem_vm_ops;
+-	else
+-		return -EINVAL;
++	if (obj->funcs && obj->funcs->mmap) {
++		ret = obj->funcs->mmap(obj, vma);
++		if (ret)
++			return ret;
++	} else {
++		if (obj->funcs && obj->funcs->vm_ops)
++			vma->vm_ops = obj->funcs->vm_ops;
++		else if (dev->driver->gem_vm_ops)
++			vma->vm_ops = dev->driver->gem_vm_ops;
++		else
++			return -EINVAL;
++
++		vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
++		vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
++		vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
++	}
+ 
+-	vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
+ 	vma->vm_private_data = obj;
+-	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
+-	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
+ 
+ 	/* Take a ref for this mapping of the object, so that the fault
+ 	 * handler can dereference the mmap offset's pointer to the object.
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 0a2316e0e812..0814211b0f3f 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -713,6 +713,15 @@ int drm_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+ 	struct file *fil;
+ 	int ret;
+ 
++	if (obj->funcs && obj->funcs->mmap) {
++		ret = obj->funcs->mmap(obj, vma);
++		if (ret)
++			return ret;
++		vma->vm_private_data = obj;
++		drm_gem_object_get(obj);
++		return 0;
++	}
++
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	fil = kzalloc(sizeof(*fil), GFP_KERNEL);
+ 	if (!priv || !fil) {
+-- 
+2.18.1
+
