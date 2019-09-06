@@ -2,77 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B80B4AB548
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5791BAB555
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393009AbfIFKDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 06:03:32 -0400
-Received: from mga14.intel.com ([192.55.52.115]:17260 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388537AbfIFKDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 06:03:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2019 03:03:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,472,1559545200"; 
-   d="scan'208";a="177594355"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga008.jf.intel.com with ESMTP; 06 Sep 2019 03:03:30 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i6B5V-0004c4-Bu; Fri, 06 Sep 2019 13:03:29 +0300
-Date:   Fri, 6 Sep 2019 13:03:29 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     "J. Bruce Fields" <bfields@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 5/9] Remove unused %*pE[achnops] formats
-Message-ID: <20190906100329.GM2680@smile.fi.intel.com>
-References: <20190905193604.GC31247@fieldses.org>
- <1567712673-1629-1-git-send-email-bfields@redhat.com>
- <1567712673-1629-5-git-send-email-bfields@redhat.com>
- <20190906100141.GL2680@smile.fi.intel.com>
+        id S2390140AbfIFKFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 06:05:48 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:11213 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728254AbfIFKFq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 06:05:46 -0400
+X-UUID: b3a6b3957d3e4cfe992546802938b40c-20190906
+X-UUID: b3a6b3957d3e4cfe992546802938b40c-20190906
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <roger.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 627805015; Fri, 06 Sep 2019 18:05:37 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 6 Sep 2019 18:05:33 +0800
+Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 6 Sep 2019 18:05:33 +0800
+From:   Roger Lu <roger.lu@mediatek.com>
+To:     Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Boichat <drinkcat@google.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Fan Chen <fan.chen@mediatek.com>,
+        HenryC Chen <HenryC.Chen@mediatek.com>, <yt.lee@mediatek.com>,
+        Angus Lin <Angus.Lin@mediatek.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Nishanth Menon <nm@ti.com>, Roger Lu <roger.lu@mediatek.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: [PATCH v5 0/3] PM / AVS: SVS: Introduce SVS engine
+Date:   Fri, 6 Sep 2019 18:05:12 +0800
+Message-ID: <20190906100514.30803-1-roger.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906100141.GL2680@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 01:01:41PM +0300, Andy Shevchenko wrote:
-> On Thu, Sep 05, 2019 at 03:44:29PM -0400, J. Bruce Fields wrote:
-> > From: "J. Bruce Fields" <bfields@redhat.com>
-> > 
-> > The [achnops] are confusing, and in practice the only one anyone seems
-> > to need is the bare %*pE.
-> > 
-> > I think some set of modifiers here might actually be useful, but the
-> > ones we have are confusing and unused, so let's just toss these out and
-> > then rethink what we might want to add back later.
-> 
-> Have you evaluated potential users of this API. Do they need anything of the
-> existing functionality?
-> 
-> mangle_path()
-> tomoyo_print_bprm()
-> tomoyo_scan_bprm()
-> tomoyo_environ()
-> tomoyo_encode2()
-> tomoyo_const_part_length()
-> 
-> Maybe there are more, I didn't check it carefully.
+1. SVS driver use OPP adjust event in [1] to update OPP table voltage part.
+2. SVS dts node refers to CPU opp table [2] and GPU opp table [3].
+3. SVS dts node refers to thermal efuse [4] and PMIC regulator [5].
 
-This is comment basically to the absent cover letter, means to the entire
-series.
+[1] https://patchwork.kernel.org/patch/11092245/
+[2] https://patchwork.kernel.org/patch/10934123/
+[3] https://patchwork.kernel.org/patch/11132381/
+[4] https://patchwork.kernel.org/patch/11093655/
+[5] https://patchwork.kernel.org/patch/11110493/
 
--- 
-With Best Regards,
-Andy Shevchenko
+Roger Lu (3):
+  dt-bindings: soc: add mtk svs dt-bindings
+  arm64: dts: mt8183: add svs device information
+  PM / AVS: SVS: Introduce SVS engine
 
-
+ .../devicetree/bindings/power/mtk-svs.txt     |   88 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |   16 +
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |   38 +
+ drivers/power/avs/Kconfig                     |   10 +
+ drivers/power/avs/Makefile                    |    1 +
+ drivers/power/avs/mtk_svs.c                   | 2075 +++++++++++++++++
+ include/linux/power/mtk_svs.h                 |   23 +
+ 7 files changed, 2251 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/mtk-svs.txt
+ create mode 100644 drivers/power/avs/mtk_svs.c
+ create mode 100644 include/linux/power/mtk_svs.h
