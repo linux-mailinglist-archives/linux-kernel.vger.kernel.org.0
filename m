@@ -2,87 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74D42AB4B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 11:15:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A310AB4BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 11:17:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391007AbfIFJPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 05:15:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52034 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728356AbfIFJPf (ORCPT
+        id S2404108AbfIFJRX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 05:17:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59987 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728356AbfIFJRW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 05:15:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=A7pQ/2obJSu6glFAN/iZb0WmVvetjWy1D+ZDyW159q0=; b=p6GJr2Au6TrWlxxqLStxIRds3
-        7iFWkUB02Kd6586GkS4LwCk+4pdf5Jt/2Gj/B3rmkyeRULXcns1HeHJlDlGqlDZzXpBPNh1brGotx
-        7PsSj7im9GKrqgL45P5+Ha5uS1MVfyXlLTI6+uV7Mqb1F5+p58D/OlqSyzA8ZDJtApIs2nhF8vIDw
-        qx488sDprcKbJPSiCOum3mRkXLGiCE7aABCz1ljlJq7WoXky41y1BHMskIzL3tkj0hC0gqbhq4Kaa
-        DQ5anAnYz8PPvARMepjD/L8d/dNOmHjpKJY1exF82Q/Am4cxqinCxD5WcntHqcyG9E1vTB9kJOVIX
-        Ww+lODi/w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i6AKm-0004yn-IX; Fri, 06 Sep 2019 09:15:12 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9BC19301A5D;
-        Fri,  6 Sep 2019 11:14:33 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F2DA429E2C316; Fri,  6 Sep 2019 11:15:10 +0200 (CEST)
-Date:   Fri, 6 Sep 2019 11:15:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH -tip v3 1/2] x86: xen: insn: Decode Xen and KVM
- emulate-prefix signature
-Message-ID: <20190906091510.GV2349@hirez.programming.kicks-ass.net>
-References: <156773433821.31441.2905951246664148487.stgit@devnote2>
- <156773434815.31441.12739136439382289412.stgit@devnote2>
- <20190906073436.GS2349@hirez.programming.kicks-ass.net>
- <20190906174519.699b83f08d81b55203212fa1@kernel.org>
- <20190906175143.469287501610cbca73f0abbb@kernel.org>
+        Fri, 6 Sep 2019 05:17:22 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1i6AMp-0002s2-OD; Fri, 06 Sep 2019 09:17:19 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: dw_mmc: hi3798cv200: make array degrees static const, makes object smaller
+Date:   Fri,  6 Sep 2019 10:17:19 +0100
+Message-Id: <20190906091719.24886-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906175143.469287501610cbca73f0abbb@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 05:51:43PM +0900, Masami Hiramatsu wrote:
-> On Fri, 6 Sep 2019 17:45:19 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > > 
-> > > How about we make this asm/virt_prefix.h or something and include:
-> > > 
-> > > /*
-> > >  * Virt escape sequences to trigger instruction emulation;
-> > >  * ideally these would decode to 'whole' instruction and not destroy
-> > >  * the instruction stream; sadly this is not true for the 'kvm' one :/
-> > >  */
-> > > 
-> > > #define __XEN_EMULATE_PREFIX  0x0f,0x0b,0x78,0x65,0x6e  /* ud2 ; .ascii "xen" */
-> > > #define __KVM_EMULATE_PREFIX  0x0f,0x0b,0x6b,0x76,0x6d	/* ud2 ; .ascii "kvm" */
-> 
-> BTW, what should we call it, "emulate prefix" or "virt prefix"?
-> "virt prefix" sounds too generic to me. So I rather like emulate_prefix.h.
+From: Colin Ian King <colin.king@canonical.com>
 
-Works for me; and yeah, just see what is best for the other things. I
-only started down that road because the Xen and KVM 'prefixes' were
-initialized so inconsistently.
+Don't populate the array degrees on the stack but instead make it
+static const. Makes the object code smaller by 46 bytes.
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   5356	   1560	      0	   6916	   1b04	dw_mmc-hi3798cv200.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+   5214	   1656	      0	   6870	   1ad6	dw_mmc-hi3798cv200.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/dw_mmc-hi3798cv200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/dw_mmc-hi3798cv200.c b/drivers/mmc/host/dw_mmc-hi3798cv200.c
+index bc51cef47c47..83e1bad0a008 100644
+--- a/drivers/mmc/host/dw_mmc-hi3798cv200.c
++++ b/drivers/mmc/host/dw_mmc-hi3798cv200.c
+@@ -66,7 +66,7 @@ static void dw_mci_hi3798cv200_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+ static int dw_mci_hi3798cv200_execute_tuning(struct dw_mci_slot *slot,
+ 					     u32 opcode)
+ {
+-	int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
++	static const int degrees[] = { 0, 45, 90, 135, 180, 225, 270, 315 };
+ 	struct dw_mci *host = slot->host;
+ 	struct hi3798cv200_priv *priv = host->priv;
+ 	int raise_point = -1, fall_point = -1;
+-- 
+2.20.1
+
