@@ -2,76 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2586ABA96
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AE49ABA9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:18:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394288AbfIFORv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:17:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58996 "EHLO mx1.redhat.com"
+        id S2391102AbfIFORz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:17:55 -0400
+Received: from foss.arm.com ([217.140.110.172]:56966 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392868AbfIFORv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:17:51 -0400
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3586D11A12
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2019 14:17:51 +0000 (UTC)
-Received: by mail-qt1-f197.google.com with SMTP id x19so6406244qto.16
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 07:17:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tzDszuqoBQ88xDVaM9hs1cwB75PSJweaPTjm/VD0ZjM=;
-        b=DFbubj0wKzg2LMH+TwMezS3jRlWnn7ZrIsrErgEsqnovWlS22W6RatbBqlKxPFfsZl
-         jg1fsj3blg7vlaufxTv04XrvMGWpLtqiWJgPqDlmQknxMt3CR233kYnvt6qTQzOyFlpA
-         rLvjmUixftyMv3LgbAQbi/5gQkHyLbkBTnKFaGjkNC9fqHj8hkmMhu0q8rb0l+7ke2T/
-         ACaw6DgUmGLeNVYZuAQbTPh3xm5YnXB5Ttdv8HZHuWr3zp3GhyJujMm2ukiodCcqFOs2
-         TGeLBxSs+ZR5hj1TiOwYg1ntNC87CJ5HqDnS5QC+N6vyKSaJ7NoOVCEqiLyZPC7YSm/i
-         k8MA==
-X-Gm-Message-State: APjAAAX5JqCmqgh5jYtrslfWqKHC0FA9im80HNROX+8xMbHZJz7zbbBK
-        QHF1iL/6H9mEGeFxuM0JXW7b7QnVzPR4rhtgQh5fEfJLy23lF+023LfRPxLhqIpWcnActwMjIVM
-        /wkh/428E+md+y7S92fyZEkmy
-X-Received: by 2002:ac8:4510:: with SMTP id q16mr8952801qtn.247.1567779470605;
-        Fri, 06 Sep 2019 07:17:50 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxQiC3PC9TmfSYzvcGUcmmMs1BRVachZAgmwDWOQxgs/xawnMqIPU9mszTB1/u4msJYq21W3A==
-X-Received: by 2002:ac8:4510:: with SMTP id q16mr8952787qtn.247.1567779470471;
-        Fri, 06 Sep 2019 07:17:50 -0700 (PDT)
-Received: from redhat.com (bzq-79-176-40-226.red.bezeqint.net. [79.176.40.226])
-        by smtp.gmail.com with ESMTPSA id z5sm3254157qtb.49.2019.09.06.07.17.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2019 07:17:49 -0700 (PDT)
-Date:   Fri, 6 Sep 2019 10:17:44 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH 00/18] virtiofs: Fix various races and cleanups round 1
-Message-ID: <20190906101339-mutt-send-email-mst@kernel.org>
-References: <20190905194859.16219-1-vgoyal@redhat.com>
- <CAJfpegu8POz9gC4MDEcXxDWBD0giUNFgJhMEzntJX_u4+cS9Zw@mail.gmail.com>
- <20190906103613.GH5900@stefanha-x1.localdomain>
- <CAJfpegudNVZitQ5L8gPvA45mRPFDk9fhyboceVW6xShpJ4mLww@mail.gmail.com>
- <20190906120817.GA22083@redhat.com>
- <20190906095428-mutt-send-email-mst@kernel.org>
- <CAJfpeguVvwRCi7+23W2qA+KHeoaYaR7uKsX+JykC3HK00uGSNQ@mail.gmail.com>
+        id S2392868AbfIFORy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:17:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA26E28;
+        Fri,  6 Sep 2019 07:17:53 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E5F33F718;
+        Fri,  6 Sep 2019 07:17:53 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 33851682951; Fri,  6 Sep 2019 15:17:52 +0100 (BST)
+Date:   Fri, 6 Sep 2019 15:17:52 +0100
+From:   Liviu Dudau <liviu.dudau@arm.com>
+To:     Wen He <wen.he_1@nxp.com>
+Cc:     linux-devel@linux.nxdi.nxp.com,
+        Brian Starkey <brian.starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, leoyang.li@nxp.com
+Subject: Re: [v4 2/2] drm/arm/mali-dp: Add display QoS interface
+ configuration for Mali DP500
+Message-ID: <20190906141751.unabowxoglygg4kp@e110455-lin.cambridge.arm.com>
+References: <20190822021135.10288-1-wen.he_1@nxp.com>
+ <20190822021135.10288-2-wen.he_1@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpeguVvwRCi7+23W2qA+KHeoaYaR7uKsX+JykC3HK00uGSNQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190822021135.10288-2-wen.he_1@nxp.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 04:11:45PM +0200, Miklos Szeredi wrote:
-> This is not a drop in replacement for blk and scsi transports.  More
-> for virtio-9p.  Does that have anything similar?
+Hi Wen,
 
-9p seems to supports unplug, yes. It's not great in that it
-blocks until we close the channel, but it's there and
-it does not crash or leak memory.
+On Thu, Aug 22, 2019 at 10:11:35AM +0800, Wen He wrote:
+> Configure the display Quality of service (QoS) levels priority if the
+> optional property node "arm,malidp-aqros-value" is defined in DTS file.
+> 
+> QoS signaling using AQROS and AWQOS AXI interface signals, the AQROS is
+> driven from the "RQOS" register, so needed to program the RQOS register
+> to avoid the high resolutions flicker issue on the LS1028A platform.
+> 
+> Signed-off-by: Wen He <wen.he_1@nxp.com>
+> ---
+>  drivers/gpu/drm/arm/malidp_drv.c  |  6 ++++++
+>  drivers/gpu/drm/arm/malidp_hw.c   | 13 +++++++++++++
+>  drivers/gpu/drm/arm/malidp_hw.h   |  3 +++
+>  drivers/gpu/drm/arm/malidp_regs.h | 10 ++++++++++
+>  4 files changed, 32 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+> index c27ff456eddc..80e8d15760ac 100644
+> --- a/drivers/gpu/drm/arm/malidp_drv.c
+> +++ b/drivers/gpu/drm/arm/malidp_drv.c
+> @@ -815,6 +815,12 @@ static int malidp_bind(struct device *dev)
+>  
+>  	malidp->core_id = version;
+>  
+> +	ret = of_property_read_u32(dev->of_node,
+> +					"arm,malidp-arqos-value",
+> +					&hwdev->arqos_value);
+> +	if (ret)
+> +		hwdev->arqos_value = 0x0;
+> +
+>  	/* set the number of lines used for output of RGB data */
+>  	ret = of_property_read_u8_array(dev->of_node,
+>  					"arm,malidp-output-port-lines",
+> diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+> index 380be66d4c6e..f90a367a5bc9 100644
+> --- a/drivers/gpu/drm/arm/malidp_hw.c
+> +++ b/drivers/gpu/drm/arm/malidp_hw.c
+> @@ -374,6 +374,19 @@ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *
+>  		malidp_hw_setbits(hwdev, MALIDP_DISP_FUNC_ILACED, MALIDP_DE_DISPLAY_FUNC);
+>  	else
+>  		malidp_hw_clearbits(hwdev, MALIDP_DISP_FUNC_ILACED, MALIDP_DE_DISPLAY_FUNC);
+> +
+> +	/*
+> +	 * Program the RQoS register to avoid high resolutions flicker
+> +	 * issue on the LS1028A.
+> +	 */
+> +	if (hwdev->arqos_value) {
+> +		val = hwdev->arqos_value;
+> +
+> +		if (mode->pixelclock > 148500000)
+> +			malidp_hw_setbits(hwdev, val, MALIDP500_RQOS_QUALITY);
+> +		else
+> +			malidp_hw_clearbits(hwdev, val, MALIDP500_RQOS_QUALITY);
+> +	}
+
+This application of the arqos_value based on a pixel clock value bothers me,
+because it has two problems:
+
+1. Some other user of the Mali DP driver can't apply a system QoS value that they can
+now specify in the DT, unless the requested pixel clock is bigger than 145MHz. :(
+
+2. (A guess) The flickering issue shows up on a combination of pixelclock and
+resolution (i.e. it is a bandwidth problem), but you only address one of the
+variables. Haven't tested on the LS1028A yet, but do you know if (theoretically) it
+would have a flicker problem doing 640x480@200MHz without the QoS value?
+
+How about this instead?
+
+--8<---------------------------------------------------------------------
+diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+index 380be66d4c6eb..e2f96dce13850 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -374,6 +374,22 @@ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *
+ 		malidp_hw_setbits(hwdev, MALIDP_DISP_FUNC_ILACED, MALIDP_DE_DISPLAY_FUNC);
+ 	else
+ 		malidp_hw_clearbits(hwdev, MALIDP_DISP_FUNC_ILACED, MALIDP_DE_DISPLAY_FUNC);
++
++	/*
++	 * Program the RQoS register. LS1028A has an issue where screen will
++	 * flicker on pixelclocks higher than 148.5MHz but otherwise doesn't
++	 * want an RQoS value, so special case it for them.
++	 */
++	if (hwdev->arqos_value) {
++		val = hwdev->arqos_value;
++
++#ifdef MALIDP_LS1028A
++		if (mode->pixelclock <= 148500000)
++			malidp_hw_clearbits(hwdev, val, MALIDP500_RQOS_QUALITY);
++		else
++#endif
++			malidp_hw_setbits(hwdev, val, MALIDP500_RQOS_QUALITY);
++	}
+ }
+ 
+ int malidp_format_get_bpp(u32 fmt)
+--8<---------------------------------------------------------------------
+
+And then you need to define a MALIDP_LS1028A in a vendor patch on top of the kernel
+source code.
+
+Best regards,
+Liviu
+
+
+>  }
+>  
+>  int malidp_format_get_bpp(u32 fmt)
+> diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
+> index 968a65eed371..e4c36bc90bda 100644
+> --- a/drivers/gpu/drm/arm/malidp_hw.h
+> +++ b/drivers/gpu/drm/arm/malidp_hw.h
+> @@ -251,6 +251,9 @@ struct malidp_hw_device {
+>  
+>  	/* size of memory used for rotating layers, up to two banks available */
+>  	u32 rotation_memory[2];
+> +
+> +	/* priority level of RQOS register used for driven the ARQOS signal */
+> +	u32 arqos_value;
+>  };
+>  
+>  static inline u32 malidp_hw_read(struct malidp_hw_device *hwdev, u32 reg)
+> diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
+> index 993031542fa1..514c50dcb74d 100644
+> --- a/drivers/gpu/drm/arm/malidp_regs.h
+> +++ b/drivers/gpu/drm/arm/malidp_regs.h
+> @@ -210,6 +210,16 @@
+>  #define MALIDP500_CONFIG_VALID		0x00f00
+>  #define MALIDP500_CONFIG_ID		0x00fd4
+>  
+> +/*
+> + * The quality of service (QoS) register on the DP500. RQOS register values
+> + * are driven by the ARQOS signal, using AXI transacations, dependent on the
+> + * FIFO input level.
+> + * The RQOS register can also set QoS levels for:
+> + *    - RED_ARQOS   @ A 4-bit signal value for close to underflow conditions
+> + *    - GREEN_ARQOS @ A 4-bit signal value for normal conditions
+> + */
+> +#define MALIDP500_RQOS_QUALITY          0x00500
+> +
+>  /* register offsets and bits specific to DP550/DP650 */
+>  #define MALIDP550_ADDR_SPACE_SIZE	0x10000
+>  #define MALIDP550_DE_CONTROL		0x00010
+> -- 
+> 2.17.1
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
