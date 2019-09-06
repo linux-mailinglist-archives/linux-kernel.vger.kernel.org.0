@@ -2,81 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ABA9ABAE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A7B0ABAE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405445AbfIFOaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:30:20 -0400
-Received: from mcegress-30-lw-25.correio.biz ([191.252.30.25]:63064 "EHLO
-        mcegress-30-lw-25.correio.biz" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405433AbfIFOaT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:30:19 -0400
-X-Greylist: delayed 43811 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Sep 2019 10:30:17 EDT
-X-Sender-Id: x-authuser|contato@cortinasvilaprudente.com.br
-Received: from plesksa10.revendedordesite.com (mcingress0007.correio.biz [10.30.225.42])
-        by mcrelay.correio.biz (Postfix) with ESMTP id 7AF321500271;
-        Fri,  6 Sep 2019 11:30:15 -0300 (-03)
-X-Sender-Id: x-authuser|contato@cortinasvilaprudente.com.br
-Received: from plesksa10.revendedordesite.com (plesksa10.email.locaweb.com.br
- [10.30.224.225])
-        by 0.0.0.0:2500 (trex/5.9.14);
-        Fri, 06 Sep 2019 11:30:16 -0300
-X-LW-Relay: Junk
-X-LW-SenderId: x-authuser|contato@cortinasvilaprudente.com.br
-Received: from plesksa10.revendedordesite.com (plesksmtp04.admincontrolpanel.com [187.45.216.237])
-        by plesksa10.revendedordesite.com (Postfix) with ESMTP id 16DDA1643CC;
-        Fri,  6 Sep 2019 11:30:15 -0300 (-03)
-Received: from iuri0032.hospedagemdesites.ws (iuri0032.hospedagemdesites.ws [191.252.107.153])
-        by plesksa10.revendedordesite.com (Postfix) with ESMTP id DFA8D120309;
-        Fri,  6 Sep 2019 11:30:14 -0300 (-03)
-Received: from [::1] (port=38680 helo=iuri0032.hospedagemdesites.ws)
-        by iuri0032.hospedagemdesites.ws with esmtpa (Exim 4.91)
-        (envelope-from <contato@cortinasvilaprudente.com.br>)
-        id 1i6FFd-00077l-OG; Fri, 06 Sep 2019 11:30:13 -0300
+        id S2394458AbfIFOcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:32:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41854 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2392864AbfIFOcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:32:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A9D53B11B;
+        Fri,  6 Sep 2019 14:32:01 +0000 (UTC)
+Date:   Fri, 6 Sep 2019 16:32:01 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     James Byrne <james.byrne@origamienergy.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ABI: Update dev-kmsg documentation to match current
+ kernel behaviour
+Message-ID: <20190906143200.mjvre6x4gppfo2sq@pathway.suse.cz>
+References: <0102016cf1b26630-8e9b337b-da49-43c6-b028-4250c2fac3ef-000000@eu-west-1.amazonses.com>
+ <20190903050220.GB3978@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 06 Sep 2019 11:30:13 -0300
-From:   TRUST LOAN <contato@cortinasvilaprudente.com.br>
-To:     undisclosed-recipients:;
-Subject: LOAN OFFER NOW @ 3% INTEREST RATE
-Reply-To: info_trustloan@mail-on.us
-Mail-Reply-To: info_trustloan@mail-on.us
-Message-ID: <f5a774db90a2186012d45ffb1cea1d23@cortinasvilaprudente.com.br>
-X-Sender: contato@cortinasvilaprudente.com.br
-User-Agent: Roundcube Webmail/1.3.3
-X-AuthUser: contato@cortinasvilaprudente.com.br
-X-Cpanel-Webmail: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190903050220.GB3978@jagdpanzerIV>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue 2019-09-03 14:02:20, Sergey Senozhatsky wrote:
+> On (09/02/19 11:18), James Byrne wrote:
+> > Commit 5aa068ea4082 ("printk: remove games with previous record flags")
+> > abolished the practice of setting the log flag to 'c' for the first
+> > continuation line and '+' for subsequent lines. Now all continuation
+> > lines are flagged with 'c' and '+' is never used.
+> >
+> > Update the 'dev-kmsg' documentation to remove the reference to the
+> > obsolete '+' flag. In addition, state explicitly that only 8 bits of the
+> > <N> syslog prefix are used for the facility number when writing to
+> > /dev/kmsg.
+> >
+> > Signed-off-by: James Byrne <james.byrne@origamienergy.com>
+> 
+> Looks good to me.
+> 
+> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
+The patch has been committed into printk.git, branch for-5.4.
 
--- 
-DEAR SIR / MADAM,
-
-  ARE YOU TIRED OF SEEKING LOANS AND MORTGAGES? OR WERE YOU REJECTED BY
-BANKS AND OTHER FINANCIAL INSTITUTIONS? THIS IS TO INFORM YOU INSTANT 
-TRUST
-LOAN COMPANY OFFERS ALL TYPES OF CREDIT INTEREST @ 3%. CONTACT US WITH 
-THE
-FOLLOWING INFORMATION SO WE CAN MOVE ON TO THE NEXT STEP. OUR SERVICES
-INCLUDE: * PERSONAL LOANS (SECURE AND UNSECURED): * LOANS FOR BUSINESS
-(SECURE AND UNSECURED): * STUDENT LOAN: * DEBT CONSOLIDATION LOAN:
-*COMBINATION LOAN * PLUS: * LOANS XMAS (SECURE AND UNSECURED):
-  PLEASE PROVIDE THE FOLLOWING:
-  FULL NAMES:
-  ADDRESS:
-  AGE:
-  GENDER:
-  MONTHLY INCOME:
-  OCCUPATION:
-  PHONE:
-  AMOUNT OF LOAN:
-  DURATION:
-  PURPOSES OF CREDIT:
-  REGARDS
+Best Regards,
+Petr Mladek
