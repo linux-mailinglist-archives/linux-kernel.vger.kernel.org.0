@@ -2,57 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1728CAB094
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 04:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C46AB09F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 04:30:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404393AbfIFCRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 22:17:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60458 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404382AbfIFCRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 22:17:47 -0400
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 26813C05AA6B
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2019 02:17:47 +0000 (UTC)
-Received: by mail-pl1-f200.google.com with SMTP id j12so2631314pll.14
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 19:17:47 -0700 (PDT)
+        id S2389915AbfIFCaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 22:30:08 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42451 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733236AbfIFCaH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 22:30:07 -0400
+Received: by mail-pf1-f195.google.com with SMTP id w22so3256083pfi.9;
+        Thu, 05 Sep 2019 19:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2G0yOXrVPAYh7NmJFpbd/e4r0uPBCVHqetFGLzHPmbU=;
+        b=fAyXrBd+ZLzH+0G/vsc+aNSrYnX3hRHuFlnGBE9NEfkoM0uIkbfvfJmVFbOY9bi0CX
+         spTrVa/kYzhVEPen64VqqytRXdbEDJrhDWbeaDYifIJnE18u0Da2OcqKZVHHs7O8Spuf
+         Da+pah1Ikon7spjSbb8wSsWOT2/zundMGErh1VN0NGnQSYsxMMAER6Yvx+rC0h760aPf
+         xoe0RcRVDU8Oux4N65mJ2ByuZzWVccUNqmjExj7vCnkn8RUzXc4vekAbtscrLMrNV0bA
+         t7LpS3K1XrcASnbUHeEz1hhYDHxE11zsXtXW2VBqvoqki04+7+zXRUqSAFWtlfiUBadG
+         RItQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HBNEjbH++Cplr+hlTTIn2gJ2guzKt/zMnh4i7J+yi14=;
-        b=dzcoIdNJOgxkeesgMk7XnHnHTu0KxrvMoiVsYkx1FeqVsDGpkruSmnL2LNutsIzsfh
-         zwAJO4qvKctfXrOjZnzznd8TF2QMLKRQOhmhcSJdaWCDC3KkDg665oVmBd+t2I9jhDLF
-         w3cFtIjdU5U0Hmq9vYwp90HkSujFAjIL0+fiWEqbUnKUEFKwSqGTdt6peLDAqr0kwllI
-         lmRKJj9PRm+7q/+1EFZC4H11WdTIUigI8Ni8yeOnkEL38+fyyEILELsBonO85+2PUCD5
-         UdPIzkdTFDFOcBC7X/YFzVnDmzOm/mwVfU7ep8Bn0ikPs+CgP7NNurLDFjMLPIujz7JZ
-         BbLg==
-X-Gm-Message-State: APjAAAUiNTBjbMXPIDpkGFDuiIJH0ktZyp8gIVuReXCTlyLq6Ao5jcTa
-        c+WSpwo1Nv04r8I65QDCikJ6aLsrHHKWXhB5i+n1E+PhuaOAKIsjuhvNlm/LdmTmsFZtxsgvOFd
-        zq1DFTTIG08P+HVUoHXLftut4
-X-Received: by 2002:a63:2043:: with SMTP id r3mr5988063pgm.311.1567736266116;
-        Thu, 05 Sep 2019 19:17:46 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxUec44Alg2d7GbiXyFGAxolQO9nJYnvLN4s2Tf/cBHafByYGpQiuLIicL/1aLfJIR/cNmAwQ==
-X-Received: by 2002:a63:2043:: with SMTP id r3mr5988045pgm.311.1567736265811;
-        Thu, 05 Sep 2019 19:17:45 -0700 (PDT)
-Received: from xz-x1.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id a11sm8212359pfg.94.2019.09.05.19.17.42
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2G0yOXrVPAYh7NmJFpbd/e4r0uPBCVHqetFGLzHPmbU=;
+        b=ZGTeM5EgwyypPvcQdd0WSF5MPr01z5/b1lAU5fJbBZgQOMigtR4evTkpG3204AeCa3
+         Bh2tXw3RkmNUwz0X13cIqzdArrlkNCsY7b48oED2yawOVXoxyZRQAxht+N/1djagNgOg
+         wafLBuIjathv+gHcm4HAjEPzEoT/cgdHskL6+uuzpdoWmwIKGAY4QezQ/iKL2QuJKdxn
+         6uMhPOeiNhqY+JhJzzMYOM44Zp+NgvhSSrewIOHDa/vN3Sn7Y22wBK0jwSosrbF9n5n0
+         oAFqcWH5LD923eE8vtar49QmD09DCN85Nl1PYX/PL3Y330BAuUdpRSESq8Df7ImCFneP
+         nQIg==
+X-Gm-Message-State: APjAAAU3oj+8KCQ9M03qIMkdro+Wtjico8Ck0zJeyX+XatW8ddfiGHef
+        Z0S3/kXm0RsfvqfMb9Ryk1c=
+X-Google-Smtp-Source: APXvYqxGafpQ9wruTnkLR5krKJyzG/Y4xSEmd8WFmEnycydknxTmkQtMTNYyl3lsTQ4qp8Pv+lENVQ==
+X-Received: by 2002:a65:52ca:: with SMTP id z10mr6149814pgp.424.1567737007130;
+        Thu, 05 Sep 2019 19:30:07 -0700 (PDT)
+Received: from gli-arch.genesyslogic.com.tw (60-251-58-169.HINET-IP.hinet.net. [60.251.58.169])
+        by smtp.gmail.com with ESMTPSA id s186sm5344330pfb.126.2019.09.05.19.30.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 19:17:45 -0700 (PDT)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        Krish Sadhukhan <krish.sadhukhan@oracle.com>, peterx@redhat.com
-Subject: [PATCH v4 4/4] KVM: X86: Tune PLE Window tracepoint
-Date:   Fri,  6 Sep 2019 10:17:22 +0800
-Message-Id: <20190906021722.2095-5-peterx@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190906021722.2095-1-peterx@redhat.com>
-References: <20190906021722.2095-1-peterx@redhat.com>
+        Thu, 05 Sep 2019 19:30:06 -0700 (PDT)
+From:   Ben Chuang <benchuanggli@gmail.com>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        johnsonm@danlj.org, ben.chuang@genesyslogic.com.tw,
+        Ben Chuang <benchuanggli@gmail.com>
+Subject: [PATCH V8 0/5] Add Genesys Logic GL975x support
+Date:   Fri,  6 Sep 2019 10:29:41 +0800
+Message-Id: <cover.1567734321.git.benchuanggli@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,158 +61,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PLE window tracepoint triggers even if the window is not changed,
-and the wording can be a bit confusing too.  One example line:
+From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
 
-  kvm_ple_window: vcpu 0: ple_window 4096 (shrink 4096)
+The patches modify internal clock setup to match SD Host Controller
+Simplified Specifications 4.20 and support Genesys Logic GL9750/GL9755
+chipsets.
 
-It easily let people think of "the window now is 4096 which is
-shrinked", but the truth is the value actually didn't change (4096).
+v8:
+ refine codes in sdhci-gli-pci.c
+ - remove duplicate assignment 
+ - remove redundant delay
+ - use '!!'(not not) logical operator to refine the true/false condition
+ - check end condition after outter loop
+ - add comments for delay 5ms in sdhci_gli_voltage_switch()
+ - merge two logical conditions to one line
 
-Let's only dump this message if the value really changed, and we make
-the message even simpler like:
+v7:
+ - remove condition define CONFIG_MMC_SDHCI_IO_ACCESSORS from sdhci-pci-gli.c
+ - making the accessors(MMC_SDHCI_IO_ACCESSORS) always available when selecting
+   MMC_SDHCI_PCI in Kconfig
 
-  kvm_ple_window: vcpu 4 old 4096 new 8192 (growed)
+V6:
+ - export sdhci_abot_tuning() function symbol
+ - use C-style comments
+ - use BIT, FIELD_{GET,PREP} and GENMASK to define bit fields of register
+ - use host->ops->platform_execute_tuning instead of mmc->ops->execute_tuning
+ - call sdhci_reset() instead of duplicating the code in sdhci_gl9750_reset
+ - remove .hw_reset 
+ - use condition define CONFIG_MMC_SDHCI_IO_ACCESSORS for read_l
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- arch/x86/kvm/svm.c     | 16 ++++++++--------
- arch/x86/kvm/trace.h   | 22 ++++++----------------
- arch/x86/kvm/vmx/vmx.c | 14 ++++++++------
- arch/x86/kvm/x86.c     |  2 +-
- 4 files changed, 23 insertions(+), 31 deletions(-)
+V5:
+ - add "change timeout of loop .." to a patch
+ - fix typo "verndor" to "vendor"
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index d685491fce4d..d5cb6b5a9254 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -1269,11 +1269,11 @@ static void grow_ple_window(struct kvm_vcpu *vcpu)
- 							pause_filter_count_grow,
- 							pause_filter_count_max);
+V4:
+ - change name from sdhci_gli_reset to sdhci_gl9750_reset
+ - fix sdhci_reset to sdhci_gl9750_reset in sdhci_gl9750_ops
+ - fix sdhci_gli_reset to sdhci_reset in sdhci_gl9755_ops
  
--	if (control->pause_filter_count != old)
-+	if (control->pause_filter_count != old) {
- 		mark_dirty(svm->vmcb, VMCB_INTERCEPTS);
--
--	trace_kvm_ple_window_grow(vcpu->vcpu_id,
--				  control->pause_filter_count, old);
-+		trace_kvm_ple_window_update(vcpu->vcpu_id,
-+					    control->pause_filter_count, old);
-+	}
- }
- 
- static void shrink_ple_window(struct kvm_vcpu *vcpu)
-@@ -1287,11 +1287,11 @@ static void shrink_ple_window(struct kvm_vcpu *vcpu)
- 						    pause_filter_count,
- 						    pause_filter_count_shrink,
- 						    pause_filter_count);
--	if (control->pause_filter_count != old)
-+	if (control->pause_filter_count != old) {
- 		mark_dirty(svm->vmcb, VMCB_INTERCEPTS);
--
--	trace_kvm_ple_window_shrink(vcpu->vcpu_id,
--				    control->pause_filter_count, old);
-+		trace_kvm_ple_window_update(vcpu->vcpu_id,
-+					    control->pause_filter_count, old);
-+	}
- }
- 
- static __init int svm_hardware_setup(void)
-diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
-index afe8d269c16c..ae924566c401 100644
---- a/arch/x86/kvm/trace.h
-+++ b/arch/x86/kvm/trace.h
-@@ -890,37 +890,27 @@ TRACE_EVENT(kvm_pml_full,
- 	TP_printk("vcpu %d: PML full", __entry->vcpu_id)
- );
- 
--TRACE_EVENT(kvm_ple_window,
--	TP_PROTO(bool grow, unsigned int vcpu_id, unsigned int new,
--		 unsigned int old),
--	TP_ARGS(grow, vcpu_id, new, old),
-+TRACE_EVENT(kvm_ple_window_update,
-+	TP_PROTO(unsigned int vcpu_id, unsigned int new, unsigned int old),
-+	TP_ARGS(vcpu_id, new, old),
- 
- 	TP_STRUCT__entry(
--		__field(                bool,      grow         )
- 		__field(        unsigned int,   vcpu_id         )
- 		__field(        unsigned int,       new         )
- 		__field(        unsigned int,       old         )
- 	),
- 
- 	TP_fast_assign(
--		__entry->grow           = grow;
- 		__entry->vcpu_id        = vcpu_id;
- 		__entry->new            = new;
- 		__entry->old            = old;
- 	),
- 
--	TP_printk("vcpu %u: ple_window %u (%s %u)",
--	          __entry->vcpu_id,
--	          __entry->new,
--	          __entry->grow ? "grow" : "shrink",
--	          __entry->old)
-+	TP_printk("vcpu %u old %u new %u (%s)",
-+	          __entry->vcpu_id, __entry->old, __entry->new,
-+		  __entry->old < __entry->new ? "growed" : "shrinked")
- );
- 
--#define trace_kvm_ple_window_grow(vcpu_id, new, old) \
--	trace_kvm_ple_window(true, vcpu_id, new, old)
--#define trace_kvm_ple_window_shrink(vcpu_id, new, old) \
--	trace_kvm_ple_window(false, vcpu_id, new, old)
--
- TRACE_EVENT(kvm_pvclock_update,
- 	TP_PROTO(unsigned int vcpu_id, struct pvclock_vcpu_time_info *pvclock),
- 	TP_ARGS(vcpu_id, pvclock),
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b172b675d420..1dbb63ffdd6d 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5233,10 +5233,11 @@ static void grow_ple_window(struct kvm_vcpu *vcpu)
- 					    ple_window_grow,
- 					    ple_window_max);
- 
--	if (vmx->ple_window != old)
-+	if (vmx->ple_window != old) {
- 		vmx->ple_window_dirty = true;
--
--	trace_kvm_ple_window_grow(vcpu->vcpu_id, vmx->ple_window, old);
-+		trace_kvm_ple_window_update(vcpu->vcpu_id,
-+					    vmx->ple_window, old);
-+	}
- }
- 
- static void shrink_ple_window(struct kvm_vcpu *vcpu)
-@@ -5248,10 +5249,11 @@ static void shrink_ple_window(struct kvm_vcpu *vcpu)
- 					      ple_window_shrink,
- 					      ple_window);
- 
--	if (vmx->ple_window != old)
-+	if (vmx->ple_window != old) {
- 		vmx->ple_window_dirty = true;
--
--	trace_kvm_ple_window_shrink(vcpu->vcpu_id, vmx->ple_window, old);
-+		trace_kvm_ple_window_update(vcpu->vcpu_id,
-+					    vmx->ple_window, old);
-+	}
- }
- 
- /*
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 93b0bd45ac73..69ad184edc90 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -10082,7 +10082,7 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_invlpga);
- EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_skinit);
- EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_nested_intercepts);
- EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_write_tsc_offset);
--EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_ple_window);
-+EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_ple_window_update);
- EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_pml_full);
- EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_pi_irte_update);
- EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_avic_unaccelerated_access);
+V3:
+ - change usleep_range to udelay
+ - add Genesys Logic PCI Vendor ID to a patch
+ - separate the Genesys Logic specific part to a patch
+
+V2:
+ - change udelay to usleep_range
+
+Ben Chuang (5):
+  mmc: sdhci: Change timeout of loop for checking internal clock stable
+  mmc: sdhci: Add PLL Enable support to internal clock setup
+  PCI: Add Genesys Logic, Inc. Vendor ID
+  mmc: sdhci: Export sdhci_abort_tuning function symbol
+  mmc: host: sdhci-pci: Add Genesys Logic GL975x support
+
+ drivers/mmc/host/Kconfig          |   1 +
+ drivers/mmc/host/Makefile         |   2 +-
+ drivers/mmc/host/sdhci-pci-core.c |   2 +
+ drivers/mmc/host/sdhci-pci-gli.c  | 355 ++++++++++++++++++++++++++++++
+ drivers/mmc/host/sdhci-pci.h      |   5 +
+ drivers/mmc/host/sdhci.c          |  30 ++-
+ drivers/mmc/host/sdhci.h          |   2 +
+ include/linux/pci_ids.h           |   2 +
+ 8 files changed, 395 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/mmc/host/sdhci-pci-gli.c
+
 -- 
-2.21.0
+2.23.0
 
