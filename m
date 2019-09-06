@@ -2,88 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC94ABFA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 20:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C0A3ABFB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 20:46:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436617AbfIFSqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 14:46:24 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42901 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436555AbfIFSqS (ORCPT
+        id S2436639AbfIFSqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 14:46:36 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36140 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436545AbfIFSqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 14:46:18 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q14so7580052wrm.9;
+        Fri, 6 Sep 2019 14:46:17 -0400
+Received: by mail-qk1-f193.google.com with SMTP id s18so6662544qkj.3;
         Fri, 06 Sep 2019 11:46:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mk9iiyM0WHriMjrKTK53bNyVyznn052YfKhoDOFj8+M=;
-        b=ltWL/0NIoHGYNechlthfrItQ9BFEmloFHpTqEw3/M6HvdjFLXytt74OL7kTCA8j1Kt
-         JHn+D+sUBJdHoDRjaVU1YaoFRb38IdxLNfKvEm3kAEKssc+XeChc/duhYWZT1SkRCORu
-         m6U4l5HOC43ynNqIsNp6530iR3Pi9dAh4p9ZOTGjrk1YQE9D8dUsgEtiI3KiZ6wKdd4C
-         M+uwyEpQ3Ouyt6jEaZwpOcoyqgAFr2rRSsungYDLbMAR5Zqe6lCfqZI7g4ZFDcCMhT5H
-         JDNDLv/I8/CbVz6ePJWjHZDgJI6aVkrb2fJoz/1gnqpoLuKUNmpLfIpzNurmi1mCzdC/
-         vR9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mk9iiyM0WHriMjrKTK53bNyVyznn052YfKhoDOFj8+M=;
-        b=mKlcAwernL6r051jN/nR40NP5PaisRxy7rxbiI0cOkNykzHVRrLLzRGiASlqyfM6gi
-         IGPADMwG+4HICJ11wpzA14LjiFVjLx+MI7sMc+J5t4Rtjj/CYGjXDfktSCtF4HSxnf+g
-         Dtn6U8kZs30L4EqDopAgJjQqUJ6eWwxhCi6uQeLT/LjcVMt/YfF6w4NPXJBlXn6htsHH
-         YJYpAType+c+8jhf7RJRNe1NmLNfrC0kCYwYF/2RMCHN+/sgJ1P5ErqEomjt8cRC3/8u
-         bES+RNY+p5JNIeM7th4WzbHqomcuYl1ZGPnBbdEbH6+xCdmue/unVpaMbOG3tkexVH6Q
-         8cYA==
-X-Gm-Message-State: APjAAAW5Va3n+V/KXJXInQOhOOxu8e1fQpAR9ZIApaFnr5AYS0cKK7OS
-        nCIcF1Y027j8baG4IGRoWD0=
-X-Google-Smtp-Source: APXvYqz0nobviNLqKZBy3ZK1oFqnw7zZh1G8l7RuxSpcJpXKnUegVQyaWqWl8zGGBhx++hogOT/Jdw==
-X-Received: by 2002:adf:e392:: with SMTP id e18mr9008949wrm.87.1567795576314;
-        Fri, 06 Sep 2019 11:46:16 -0700 (PDT)
-Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id j1sm8677577wrg.24.2019.09.06.11.46.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Sep 2019 11:46:15 -0700 (PDT)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux@armlinux.org.uk, mark.rutland@arm.com, mripard@kernel.org,
-        robh+dt@kernel.org, wens@csie.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH 9/9] sunxi_defconfig: add new crypto options
-Date:   Fri,  6 Sep 2019 20:45:51 +0200
-Message-Id: <20190906184551.17858-10-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190906184551.17858-1-clabbe.montjoie@gmail.com>
-References: <20190906184551.17858-1-clabbe.montjoie@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LTlygxheqA0ZZNrkDVt9guFUuqGEjiIr9KDMB3qJhbQ=;
+        b=YcJJtbieeTzVLmfL5VW7qavVMuiq6c51Ci8Czq2c5VTnQjZ7pseehJ8KRlQyS/JYi5
+         mXVeRoA/nd217dCC26yJq5axmKlBP8fnPAjI7zCYCd/k2cmB33hGQjurSlPaBu0CIegI
+         2qYJeOulZow6Eug0s4NX9oYTaiOcgkdxDfR31y+4Ub5rs9hrFE7xhbi87LxUS0ACVE1W
+         WW/B+ST9KM320vth5QdRLYD6cPST30tWoevZuqY1O7H/554FeWGsGgnFMo30WKwyXQv9
+         3lM5Ljc70Zw8Qs81wSO+MWuOdVt9FseZZxB6KzEL7zGE6JscwsSeExDkQlRfe7rRwsjY
+         fksA==
+X-Gm-Message-State: APjAAAXKP/sDfaQ0XFHiHHif8TidDea/eifQaVJjkSBpqGZYVq3zbEVl
+        tOExf91rkCW6EbvnLQBpQCKDzRUEYV3WmMM1oLU=
+X-Google-Smtp-Source: APXvYqwe+f4RMkONNgT86kugBZ72qvP1vpX49oBMpid8ck5WPBtzUo7ndLc7rEo7ORmlDBeuo0opYcPQ+aZzocH9T0I=
+X-Received: by 2002:a05:620a:145a:: with SMTP id i26mr10522538qkl.352.1567795576166;
+ Fri, 06 Sep 2019 11:46:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190906154609.2421410-1-arnd@arndb.de> <20190906165527.GW2680@smile.fi.intel.com>
+In-Reply-To: <20190906165527.GW2680@smile.fi.intel.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 6 Sep 2019 20:46:00 +0200
+Message-ID: <CAK8P3a1S2g__qn4LP+z=ah4L2AJCHndn3LWbMkPedsu_HOd1_g@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] Revert "iio: hid-sensor-attributes: Convert to use int_pow()"
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-iio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the new allwinner crypto configs to sunxi_defconfig
+On Fri, Sep 6, 2019 at 6:55 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, Sep 06, 2019 at 05:45:55PM +0200, Arnd Bergmann wrote:
+> > The change to use the generic int_pow instead of the private version
+> > caused a number of build issues on 32-bit architectures and makes
+> > it generally less efficient because of the 64-bit math:
+> >
+> > drivers/iio/common/hid-sensors/hid-sensor-attributes.o: In function `hid_sensor_write_samp_freq_value':
+> > hid-sensor-attributes.c:(.text+0x29c): undefined reference to `__aeabi_uldivmod'
+> > drivers/iio/common/hid-sensors/hid-sensor-attributes.o: In function `hid_sensor_read_raw_hyst_value':
+> > hid-sensor-attributes.c:(.text+0x420): undefined reference to `__aeabi_uldivmod'
+> > hid-sensor-attributes.c:(.text+0x448): undefined reference to `__aeabi_uldivmod'
+> > drivers/iio/common/hid-sensors/hid-sensor-attributes.o: In function `hid_sensor_write_raw_hyst_value':
+> > hid-sensor-attributes.c:(.text+0x570): undefined reference to `__aeabi_uldivmod'
+> >
+> > There is probably a nicer solution to this, but for the moment,
+> > the revert makes it compile again.
+> >
+> > Fixes: 473d12f7638c ("iio: hid-sensor-attributes: Convert to use int_pow()")
+>
+> Does the fix [1] works for you?
+>
+> [1]: https://lore.kernel.org/linux-iio/6851830d050ddb2f27d1e6969755ee4f3293d37c.camel@intel.com/
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- arch/arm/configs/sunxi_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+It looks like a better fix, I applied that on my test build tree now, will
+let you know if I find any remaining unexpected problems with it.
 
-diff --git a/arch/arm/configs/sunxi_defconfig b/arch/arm/configs/sunxi_defconfig
-index df433abfcb02..d0ab8ba7710a 100644
---- a/arch/arm/configs/sunxi_defconfig
-+++ b/arch/arm/configs/sunxi_defconfig
-@@ -150,4 +150,6 @@ CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- CONFIG_PRINTK_TIME=y
- CONFIG_DEBUG_FS=y
-+CONFIG_CRYPTO_DEV_ALLWINNER=y
-+CONFIG_CRYPTO_DEV_SUN8I_CE=y
- CONFIG_CRYPTO_DEV_SUN4I_SS=y
--- 
-2.21.0
-
+       Arnd
