@@ -2,105 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2819ABCBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D340DABCBC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405801AbfIFPjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:39:55 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37539 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405781AbfIFPjy (ORCPT
+        id S2405808AbfIFPkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:40:09 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:58045 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404493AbfIFPkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:39:54 -0400
-Received: by mail-io1-f65.google.com with SMTP id r4so13718403iop.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 08:39:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=S8RHJ4leAR/wkyDpJhQ/x19o61jLbTWUL3D7mVMACPs=;
-        b=OcYaycXHpnVraoNGvlISPzzMWYxqcvr/1roS3d7O7HbVcwJ4iowOYMyvUfToJ7ftkt
-         UeLmnyQx8D4yEcbwd+FXqshQVOimZBvrXLYYQdhjqlRsft6MHtT2jJ+DLV1J6MU+XDW9
-         6qljA7rqLMLqOQNPC2RsUcszjHR6PJiY3QkHs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=S8RHJ4leAR/wkyDpJhQ/x19o61jLbTWUL3D7mVMACPs=;
-        b=N4b6oeKwZXpyXSfe6qwAS11cgKrSe74zwp67n9eewTqEFgd/s/nvj5ncexpB6p+Df9
-         NhyRmwpouzdJORNvQ/OvuK9w+WgzBegXw6QNdOGBnPSpjLYN2FsMdLoc/em6D+KEJqv1
-         2wWSma+jnP4y0b8nyteq4K6mo6LATgfjbqIE7g852LK7kkuTihPY6ohEi8jn5o7fk++0
-         5V4jd4tN3XsqVnYiIJUMsqjAE1w+Yv2xZVUwwId5rNRIXI3CiJ3eimm+i7P6jBDe2Kzq
-         2OHpStm/Lcxwluxz7+SLeZeD6I660Xg6lMgQy+AUBC3fk69KMM5KwkSdUGYQYnX4B7Xo
-         HV0g==
-X-Gm-Message-State: APjAAAWBi33oMFR62E4llOpvevnMZJ/lr+RxZObibL+7OyuZdQj2Eni5
-        Mcy0P/QxuMfMKM8dr73lT7TytUzMnR4=
-X-Google-Smtp-Source: APXvYqyx6+qiaYOFFceX/tUN9jPoZgdAJn3aAZscMtuYCStfnSJ0LEi+f7gjd/wREJQSPji6H8OkEA==
-X-Received: by 2002:a6b:1542:: with SMTP id 63mr8416332iov.35.1567784393342;
-        Fri, 06 Sep 2019 08:39:53 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id l186sm11065424ioa.54.2019.09.06.08.39.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Sep 2019 08:39:52 -0700 (PDT)
-Subject: Re: [PATCH] kunit: add PRINTK dependency
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org,
-        "skh >> Shuah Khan" <skhan@linuxfoundation.org>
-References: <20190906152800.1662489-1-arnd@arndb.de>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <5dfe1bfc-0236-25cf-756b-ce05f7110136@linuxfoundation.org>
-Date:   Fri, 6 Sep 2019 09:39:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 6 Sep 2019 11:40:08 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N49xZ-1iFMyW1Wgz-0103jZ; Fri, 06 Sep 2019 17:39:53 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Stefano Stabellini <sstabellini@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Denis Efremov <efremov@linux.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Russell King <linux@armlinux.org.uk>,
+        xen-devel@lists.xenproject.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: xen: unexport HYPERVISOR_platform_op function
+Date:   Fri,  6 Sep 2019 17:39:38 +0200
+Message-Id: <20190906153948.2160342-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20190906152800.1662489-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:zYODqMtzhmasPBLMaQkekqWiOvuaPVy3IwkWaKwHTMENneYYT8+
+ N9fyWbckJqYWTjYWdmrm2DvtCp7XQn992baONZAioN40gMFhsqvd2U1uMxtDsTxl02EEgMD
+ eI5U3yqi2uT9wI5P/PNjLDsH5KfiyfEyZ9ARZbjNSFbQWMW/PWzRcDJcdeASforR6P2aJOa
+ oSAzLbOAoDT2OMDOiRvsQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Hl3snfylLyw=:F4PGuLMuAxxV6jSAERX2I7
+ YLHkkVVGb5vPqpurr8Bbn+hyuwWdkNKkzFAUJBpSy+D7WHk7gVxbv9HpCnGGfm6NgtD1zTgjs
+ WqyLndj1Q1NoIHOq97vFJK1E5NfCvEK9k2CLN88jTZugyWhrSRmIMpJlo9gYL5VzkBoM13xbe
+ L97IBBuATNa8AplaIqCWcHo/WKK4s6PfwNn1IoigBfpbvRJ/4p4vKT4Ps4c9KEMraRxou/4YO
+ HQpBTXRVmqZ5/Fu1ubNF1z7SS6+MsybqbmmBf4arM//R+Re4Of7p/AIGwGVb5eNPJfPLMov7o
+ eD69Z7Ak+0C5ah/e9vI+a6EOEUGTFWqVmQtCLXjg4CJFXYDrncVnhngBn9tH54hvR3v9cznBt
+ XaCRWMr+Wk1XfBylaOur9Ac/fM1lU/GLDeae1pxYrIt/e/YzUGrs6pBa01J2TFxiAfTs7ffR7
+ d7k+afrQlghEUPhvATCoVBg0NVG4t25SciaXGLKavc4MvEqWswSslxWMcLPAd+fjqthc+Ujkd
+ FpMV7SrwOZ1lhA8UHG+1o8WhALPIVVuIrtZIfRZJty6t9HVahWXkOORwCmjgbZwXrNUuQtjlm
+ Z036DeAY4zkrSUKOAdBKSKDJN/Ehwo7WbC6Wzp2cwqUfwFmUF2Mwh+61GjOanrNAM8cOmXUl6
+ nTMw3EB8A4ev83/WvVY1UVl6nLC4NaVPP1QI9W5cn3+lUEPOdH5r75jP32GLF7CO36I28uRJX
+ j/fBOhn1RJrPYCDLykucNyQcukb/dW7s7RTPh9iJfiYj06Dh2j+AyDwJtTKyqFfirfzZpk8f+
+ HvVavFxfxTs0ElAnhWxOzZFZi9GFQsIQ4oeH6iHEPsqKo7oTqE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/6/19 9:27 AM, Arnd Bergmann wrote:
-> The vprintk_emit() function is not available when CONFIG_PRINTK
-> is disabled:
-> 
-> kunit/test.c:22:9: error: implicit declaration of function 'vprintk_emit' [-Werror,-Wimplicit-function-declaration]
-> 
-> I suppose without printk(), there is not much use in kunit
-> either, so add a Kconfig depenedency here.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   kunit/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/kunit/Kconfig b/kunit/Kconfig
-> index 8541ef95b65a..e80d8af00454 100644
-> --- a/kunit/Kconfig
-> +++ b/kunit/Kconfig
-> @@ -6,6 +6,7 @@ menu "KUnit support"
->   
->   config KUNIT
->   	bool "Enable support for unit tests (KUnit)"
-> +	depends on PRINTK
->   	help
->   	  Enables support for kernel unit tests (KUnit), a lightweight unit
->   	  testing and mocking framework for the Linux kernel. These tests are
-> 
+HYPERVISOR_platform_op() is an inline function and should not
+be exported. Since commit 15bfc2348d54 ("modpost: check for
+static EXPORT_SYMBOL* functions"), this causes a warning:
 
-Hi Arnd,
+WARNING: "HYPERVISOR_platform_op" [vmlinux] is a static EXPORT_SYMBOL_GPL
 
-This is found and fixed already. I am just about to apply Berndan's
-patch that fixes this dependency. All of this vprintk_emit() stuff
-is redone.
+Remove the extraneous export.
 
-thanks,
--- Shuah
+Fixes: 15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/xen/enlighten.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+index 1e57692552d9..845c528acf24 100644
+--- a/arch/arm/xen/enlighten.c
++++ b/arch/arm/xen/enlighten.c
+@@ -437,7 +437,6 @@ EXPORT_SYMBOL_GPL(HYPERVISOR_memory_op);
+ EXPORT_SYMBOL_GPL(HYPERVISOR_physdev_op);
+ EXPORT_SYMBOL_GPL(HYPERVISOR_vcpu_op);
+ EXPORT_SYMBOL_GPL(HYPERVISOR_tmem_op);
+-EXPORT_SYMBOL_GPL(HYPERVISOR_platform_op);
+ EXPORT_SYMBOL_GPL(HYPERVISOR_multicall);
+ EXPORT_SYMBOL_GPL(HYPERVISOR_vm_assist);
+ EXPORT_SYMBOL_GPL(HYPERVISOR_dm_op);
+-- 
+2.20.0
+
