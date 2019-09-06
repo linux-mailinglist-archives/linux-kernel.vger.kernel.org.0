@@ -2,164 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9F69ABAA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:18:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D785ABAAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394392AbfIFOSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:18:01 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33876 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394366AbfIFOR7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:17:59 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x86EHuhx033773;
-        Fri, 6 Sep 2019 09:17:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1567779476;
-        bh=bZLbfyDYIbQSM/yox3v/jl434Vis5vyrJc6A2BOuhBo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=BGINVcZrWYJDFtqENk85aMCsYJaTldLsPhD6XKUPNqzHzjYqtQ97rfBeg7GJXbLhq
-         yZl+worKYby8x3paU8Vc0mxqR19wLczg/6uB6h2+zk+6Qt11w+zSc/OjD1kuxvwDND
-         qeJAcc21tOSMFvwnFKAzgnOy0IlxNKikFrjcC8uE=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x86EHumQ049714
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 6 Sep 2019 09:17:56 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 6 Sep
- 2019 09:17:56 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 6 Sep 2019 09:17:56 -0500
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x86EHlOg032723;
-        Fri, 6 Sep 2019 09:17:54 -0500
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <vkoul@kernel.org>, <robh+dt@kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dan.j.williams@intel.com>, <devicetree@vger.kernel.org>
-Subject: [RFC 3/3] dmaengine: Support for requesting channels preferring DMA domain controller
-Date:   Fri, 6 Sep 2019 17:18:16 +0300
-Message-ID: <20190906141816.24095-4-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190906141816.24095-1-peter.ujfalusi@ti.com>
-References: <20190906141816.24095-1-peter.ujfalusi@ti.com>
+        id S2394402AbfIFOS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:18:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:31823 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732468AbfIFOS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:18:56 -0400
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C64637E79
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2019 14:18:56 +0000 (UTC)
+Received: by mail-qt1-f200.google.com with SMTP id b1so6453146qtj.9
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 07:18:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=741o/xQPcgkh8sbSjiFyBn3gsnAEkmJOCIfqfDhtUBo=;
+        b=c7PsEt7OUX8S6lib30SSkkd4gfMKsrPQwzqAos1d9/Jd3qOPmmIkKi7p/TA3kGhSu9
+         KY0uGcWHx/ezaImZXsZG5gXu5kW5HwvkUeUOwgXE6lYqFSwgmIs3lBClZLttnELtpMga
+         C3W0IOP2UyMmj5FIWeABfmMXD8Mpt1yfOEqITutxSujksUptJf1lyt7sRKemcHr9Tm38
+         4yNTxQKPKulWcBPRFl79L5/LJDrErjioYLpOB8BPH3mdRydiMMgjSXa9Oa00h4TvUiPu
+         NCrkOL7Bgznievc8bB5+zoifgTYrepcCgoG+cdmdSnYYanLGUgyzAqxTncvK9ZiwyyCP
+         zA4Q==
+X-Gm-Message-State: APjAAAUsbcz7hkwNVkNGLf7Ykt5lJG4tVSqpLVt887dnFVjI/sgpsLik
+        n+e2bB04aa8jJGojjKdVdMRal8XmMs/HrUhSYgPphg27JdvvuONnS1+9R1rwWzUk7tQYGNhMkCP
+        m2yCiDPZsbAQmnpcUpGhCA2DA
+X-Received: by 2002:ac8:3195:: with SMTP id h21mr9753403qte.350.1567779535855;
+        Fri, 06 Sep 2019 07:18:55 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxGLpg1Ryu90HpqFQxE1o/aqz1GtskO77HSqagnTOVU8en/4xP+XAgktTlx6GUHLSwh5hScgw==
+X-Received: by 2002:ac8:3195:: with SMTP id h21mr9753390qte.350.1567779535712;
+        Fri, 06 Sep 2019 07:18:55 -0700 (PDT)
+Received: from redhat.com (bzq-79-176-40-226.red.bezeqint.net. [79.176.40.226])
+        by smtp.gmail.com with ESMTPSA id g12sm2422156qkm.25.2019.09.06.07.18.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 07:18:54 -0700 (PDT)
+Date:   Fri, 6 Sep 2019 10:18:49 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
+        dgilbert@redhat.com
+Subject: Re: [PATCH 08/18] virtiofs: Drain all pending requests during
+ ->remove time
+Message-ID: <20190906101819-mutt-send-email-mst@kernel.org>
+References: <20190905194859.16219-1-vgoyal@redhat.com>
+ <20190905194859.16219-9-vgoyal@redhat.com>
+ <20190906105210.GP5900@stefanha-x1.localdomain>
+ <20190906141705.GF22083@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906141705.GF22083@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case the channel is not requested via the slave API, use the
-of_find_dma_domain() to see if a system default DMA controller is
-specified.
+On Fri, Sep 06, 2019 at 10:17:05AM -0400, Vivek Goyal wrote:
+> On Fri, Sep 06, 2019 at 11:52:10AM +0100, Stefan Hajnoczi wrote:
+> > On Thu, Sep 05, 2019 at 03:48:49PM -0400, Vivek Goyal wrote:
+> > > +static void virtio_fs_drain_queue(struct virtio_fs_vq *fsvq)
+> > > +{
+> > > +	WARN_ON(fsvq->in_flight < 0);
+> > > +
+> > > +	/* Wait for in flight requests to finish.*/
+> > > +	while (1) {
+> > > +		spin_lock(&fsvq->lock);
+> > > +		if (!fsvq->in_flight) {
+> > > +			spin_unlock(&fsvq->lock);
+> > > +			break;
+> > > +		}
+> > > +		spin_unlock(&fsvq->lock);
+> > > +		usleep_range(1000, 2000);
+> > > +	}
+> > 
+> > I think all contexts that call this allow sleeping so we could avoid
+> > usleep here.
+> 
+> usleep_range() is supposed to be used from non-atomic context.
+> 
+> https://github.com/torvalds/linux/blob/master/Documentation/timers/timers-howto.rst
+> 
+> What construct you are thinking of?
+> 
+> Vivek
 
-Add new function which can be used by clients to request channels by mask
-from their DMA domain controller if specified.
+completion + signal on vq callback?
 
-Client drivers can take advantage of the domain support by moving from
-dma_request_chan_by_mask() to dma_domain_request_chan_by_mask()
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/dma/dmaengine.c   | 17 ++++++++++++-----
- include/linux/dmaengine.h |  9 ++++++---
- 2 files changed, 18 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index 6baddf7dcbfd..087450eed68c 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -640,6 +640,10 @@ struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
- 	struct dma_device *device, *_d;
- 	struct dma_chan *chan = NULL;
- 
-+	/* If np is not specified, get the default DMA domain controller */
-+	if (!np)
-+		np = of_find_dma_domain(NULL);
-+
- 	/* Find a channel */
- 	mutex_lock(&dma_list_mutex);
- 	list_for_each_entry_safe(device, _d, &dma_device_list, global_node) {
-@@ -751,19 +755,22 @@ struct dma_chan *dma_request_slave_channel(struct device *dev,
- EXPORT_SYMBOL_GPL(dma_request_slave_channel);
- 
- /**
-- * dma_request_chan_by_mask - allocate a channel satisfying certain capabilities
-- * @mask: capabilities that the channel must satisfy
-+ * dma_domain_request_chan_by_mask - allocate a channel by mask from DMA domain
-+ * @dev:	pointer to client device structure
-+ * @mask:	capabilities that the channel must satisfy
-  *
-  * Returns pointer to appropriate DMA channel on success or an error pointer.
-  */
--struct dma_chan *dma_request_chan_by_mask(const dma_cap_mask_t *mask)
-+struct dma_chan *dma_domain_request_chan_by_mask(struct device *dev,
-+						 const dma_cap_mask_t *mask)
- {
- 	struct dma_chan *chan;
- 
- 	if (!mask)
- 		return ERR_PTR(-ENODEV);
- 
--	chan = __dma_request_channel(mask, NULL, NULL, NULL);
-+	chan = __dma_request_channel(mask, NULL, NULL,
-+				     of_find_dma_domain(dev->of_node));
- 	if (!chan) {
- 		mutex_lock(&dma_list_mutex);
- 		if (list_empty(&dma_device_list))
-@@ -775,7 +782,7 @@ struct dma_chan *dma_request_chan_by_mask(const dma_cap_mask_t *mask)
- 
- 	return chan;
- }
--EXPORT_SYMBOL_GPL(dma_request_chan_by_mask);
-+EXPORT_SYMBOL_GPL(dma_domain_request_chan_by_mask);
- 
- void dma_release_channel(struct dma_chan *chan)
- {
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index 3b2e8e302f6c..9f94df81e83f 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -1438,7 +1438,8 @@ struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
- struct dma_chan *dma_request_slave_channel(struct device *dev, const char *name);
- 
- struct dma_chan *dma_request_chan(struct device *dev, const char *name);
--struct dma_chan *dma_request_chan_by_mask(const dma_cap_mask_t *mask);
-+struct dma_chan *dma_domain_request_chan_by_mask(struct device *dev,
-+						 const dma_cap_mask_t *mask);
- 
- void dma_release_channel(struct dma_chan *chan);
- int dma_get_slave_caps(struct dma_chan *chan, struct dma_slave_caps *caps);
-@@ -1475,8 +1476,8 @@ static inline struct dma_chan *dma_request_chan(struct device *dev,
- {
- 	return ERR_PTR(-ENODEV);
- }
--static inline struct dma_chan *dma_request_chan_by_mask(
--						const dma_cap_mask_t *mask)
-+static inline struct dma_chan *dma_domain_request_chan_by_mask(struct device *dev,
-+			const dma_cap_mask_t *mask)
- {
- 	return ERR_PTR(-ENODEV);
- }
-@@ -1537,6 +1538,8 @@ struct dma_chan *dma_get_any_slave_channel(struct dma_device *device);
- 	__dma_request_channel(&(mask), x, y, NULL)
- #define dma_request_slave_channel_compat(mask, x, y, dev, name) \
- 	__dma_request_slave_channel_compat(&(mask), x, y, dev, name)
-+#define dma_request_chan_by_mask(mask) \
-+	dma_domain_request_chan_by_mask(NULL, mask)
- 
- static inline struct dma_chan
- *__dma_request_slave_channel_compat(const dma_cap_mask_t *mask,
 -- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+MST
