@@ -2,83 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3FA7ABD6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 18:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB989ABD74
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 18:14:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbfIFQOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 12:14:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726012AbfIFQOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 12:14:21 -0400
-Received: from localhost (unknown [89.248.140.12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A2E22070C;
-        Fri,  6 Sep 2019 16:14:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567786460;
-        bh=y9GtgGOwH4vNznSBvTW2uCxaFQvMH+B7QogTOs4ApYs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YgK5JZzN0AcN+e3U9Mhn4Mz8GrRDto16mnkATSBxONcuQuo+4bNEbxTtjZPOQIY1D
-         OGKmOxwofC5NqU4nxi2ETXx8uIARC0cu5oEqQWMdI7JXlzKaVTxFnaB6MztepULli+
-         fQ7O/+fojkd3lyeR/uwWbsszmCDqPVgOJnXP9wMk=
-Date:   Fri, 6 Sep 2019 18:13:33 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Sasha Levin <sashal@kernel.org>, tglx@linutronix.de,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        konrad.wilk@oracle.com, jkosina@suse.cz, tyhicks@canonical.com,
-        linux-kernel@microsoft.com,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH] Documentation/process/embargoed-hardware-issues:
- Microsoft ambassador
-Message-ID: <20190906161333.GB10547@kroah.com>
-References: <20190906095852.23568-1-sashal@kernel.org>
- <20190906085728.15af96c3@lwn.net>
+        id S1729316AbfIFQOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 12:14:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52063 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfIFQOa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 12:14:30 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1i6Gs8-0006ps-DW; Fri, 06 Sep 2019 16:14:04 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: ad193x: make two arrays static const, makes object smaller
+Date:   Fri,  6 Sep 2019 17:14:04 +0100
+Message-Id: <20190906161404.1440-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906085728.15af96c3@lwn.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 08:57:28AM -0600, Jonathan Corbet wrote:
-> On Fri,  6 Sep 2019 05:58:52 -0400
-> Sasha Levin <sashal@kernel.org> wrote:
-> 
-> > Add Sasha Levin as Microsoft's process ambassador.
-> > 
-> > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > ---
-> >  Documentation/process/embargoed-hardware-issues.rst | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
-> > index d37cbc502936d..9a92ccdbce74e 100644
-> > --- a/Documentation/process/embargoed-hardware-issues.rst
-> > +++ b/Documentation/process/embargoed-hardware-issues.rst
-> > @@ -219,7 +219,7 @@ an involved disclosed party. The current ambassadors list:
-> >    Intel
-> >    Qualcomm
-> >  
-> > -  Microsoft
-> > +  Microsoft	Sasha Levin <sashal@kernel.org>
-> >    VMware
-> >    XEN
-> 
-> This document went upstream via Greg's tree, so updates are awkward for
-> me to apply without having to explain a late backmerge to Linus.  I can
-> hold them until after the merge window, unless you (Greg) would like to
-> take them sooner?
+From: Colin Ian King <colin.king@canonical.com>
 
-I already have 3 of these queued up in my tree to go to Linus in the
-next few days, so no need to worry about them.
+Don't populate the arrays on the stack but instead make them
+static const. Makes the object code smaller by 37 bytes.
 
-thanks,
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  16253	   7200	      0	  23453	   5b9d	sound/soc/codecs/ad193x.o
 
-greg k-h
+After:
+   text	   data	    bss	    dec	    hex	filename
+  16056	   7360	      0	  23416	   5b78	sound/soc/codecs/ad193x.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/ad193x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
+index fb04c9379b71..980e024a5720 100644
+--- a/sound/soc/codecs/ad193x.c
++++ b/sound/soc/codecs/ad193x.c
+@@ -416,7 +416,7 @@ static struct snd_soc_dai_driver ad193x_no_adc_dai = {
+ /* codec register values to set after reset */
+ static void ad193x_reg_default_init(struct ad193x_priv *ad193x)
+ {
+-	const struct reg_sequence reg_init[] = {
++	static const struct reg_sequence reg_init[] = {
+ 		{  0, 0x99 },	/* PLL_CLK_CTRL0: pll input: mclki/xi 12.288Mhz */
+ 		{  1, 0x04 },	/* PLL_CLK_CTRL1: no on-chip Vref */
+ 		{  2, 0x40 },	/* DAC_CTRL0: TDM mode */
+@@ -432,7 +432,7 @@ static void ad193x_reg_default_init(struct ad193x_priv *ad193x)
+ 		{ 12, 0x00 },	/* DAC_L4_VOL: no attenuation */
+ 		{ 13, 0x00 },	/* DAC_R4_VOL: no attenuation */
+ 	};
+-	const struct reg_sequence reg_adc_init[] = {
++	static const struct reg_sequence reg_adc_init[] = {
+ 		{ 14, 0x03 },	/* ADC_CTRL0: high-pass filter enable */
+ 		{ 15, 0x43 },	/* ADC_CTRL1: sata delay=1, adc aux mode */
+ 		{ 16, 0x00 },	/* ADC_CTRL2: reset */
+-- 
+2.20.1
+
