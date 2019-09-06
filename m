@@ -2,94 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC04FAB63E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BB6AB643
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:45:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733105AbfIFKn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 06:43:59 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52688 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728218AbfIFKn7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 06:43:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uDVMSGf1AOvcOHnkrMI95vWCK7Pdvk5wBh0T9EQX0Ko=; b=bVexAHVxWdRsKDWXY577j+0eM
-        QMU4F5MtSeIFyzH1R+vfsFtE3sJ2K7fHQVVr2/p9sOuFhExyUgRgwwhWOZg1LpNCnJJ7+9GYceEyq
-        RqG2ZWHJmPxTJ4xi8SKw5+8G5zyoTal8/6RS+M5c3Wl/BVwBTmbKaKLGKun40PK1Gn+FZMqq+tfFD
-        n8UhYPbvVNq4prd5/JXb6ZsPFnrOVd6LIY5ptD+NukfEYP2n/+1mfyp27rUUeXlhbYbHllRzpXDLb
-        PZMwDt7F8899XDJ6H/v8KnQHMjTwegfkdVn6TnCxnPgYhHxw8jNJrjd54ltPfXoUI+Uf6mDt6qyFB
-        hY/KQPhRQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i6BiR-0006Kj-GL; Fri, 06 Sep 2019 10:43:43 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S2388477AbfIFKpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 06:45:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34330 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730767AbfIFKpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 06:45:12 -0400
+Received: from localhost (unknown [223.226.32.145])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 28E1C306023;
-        Fri,  6 Sep 2019 12:43:04 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8900129E2C33C; Fri,  6 Sep 2019 12:43:41 +0200 (CEST)
-Date:   Fri, 6 Sep 2019 12:43:41 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Austin Kim <austindh.kim@gmail.com>, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        dvhart@infradead.org, andy@infradead.org, hpa@zytor.com,
-        allison@lohutok.net, armijn@tjaldur.nl, kjlu@umn.edu,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/platform/uv: move kmalloc() NULL check routine
-Message-ID: <20190906104341.GW2349@hirez.programming.kicks-ass.net>
-References: <20190905232951.GA28779@LGEARND20B15>
- <20190906093252.GB16843@kroah.com>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2EFD2084F;
+        Fri,  6 Sep 2019 10:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567766711;
+        bh=8obvABzY456lelT+/+F0iiNkcUGvNaX0PoU7PvA7MHw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IDxctFLgE85TE+lmarvW0ZhIpYuXdofqQrSBdKIrPm3CGWpNYJmjk2lLowearehq3
+         3VMQmSIPx3QAsdwv2bl03ucelgJ+waAVxPmtJJCLjM0DNYYletYyjdRnztifkQ8Vws
+         td1cL8xV+TWdvhE8RDn2cUIkMKPAs+2hb2vFccds=
+Date:   Fri, 6 Sep 2019 16:14:03 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Sanyog Kale <sanyog.r.kale@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] soundwire: add back ACPI dependency
+Message-ID: <20190906104403.GH2672@vkoul-mobl>
+References: <20190905203527.1478314-1-arnd@arndb.de>
+ <20190906043805.GE2672@vkoul-mobl>
+ <CAK8P3a38ywYFaGekbi6_idwrZvaVX8u8giUpK1r26QAbekLp8Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190906093252.GB16843@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAK8P3a38ywYFaGekbi6_idwrZvaVX8u8giUpK1r26QAbekLp8Q@mail.gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 11:32:52AM +0200, Greg KH wrote:
-> On Fri, Sep 06, 2019 at 08:29:51AM +0900, Austin Kim wrote:
-> > The result of kmalloc should have been checked ahead of below statement:
-> > 	pqp = (struct bau_pq_entry *)vp;
-> > 
-> > Move BUG_ON(!vp) before above statement.
-> > 
-> > Signed-off-by: Austin Kim <austindh.kim@gmail.com>
-> > ---
-> >  arch/x86/platform/uv/tlb_uv.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-> > index 20c389a..5f0a96bf 100644
-> > --- a/arch/x86/platform/uv/tlb_uv.c
-> > +++ b/arch/x86/platform/uv/tlb_uv.c
-> > @@ -1804,9 +1804,9 @@ static void pq_init(int node, int pnode)
-> >  
-> >  	plsize = (DEST_Q_SIZE + 1) * sizeof(struct bau_pq_entry);
-> >  	vp = kmalloc_node(plsize, GFP_KERNEL, node);
-> > -	pqp = (struct bau_pq_entry *)vp;
-> > -	BUG_ON(!pqp);
-> > +	BUG_ON(!vp);
+On 06-09-19, 12:02, Arnd Bergmann wrote:
+> On Fri, Sep 6, 2019 at 6:39 AM Vinod Koul <vkoul@kernel.org> wrote:
+> >
+> > On 05-09-19, 22:35, Arnd Bergmann wrote:
+> > > Soundwire gained a warning for randconfig builds without
+> > > CONFIG_ACPI during the linux-5.3-rc cycle:
+> > >
+> > > drivers/soundwire/slave.c:16:12: error: unused function 'sdw_slave_add' [-Werror,-Wunused-function]
+> > >
+> > > Add the CONFIG_ACPI dependency at the top level now.
+> >
+> > Did you run this yesterday or today. I have applied Srini's patches to
+> > add DT support for Soundwire couple of days back so we should not see
+> > this warning anymore
 > 
-> Ick!  Don't crash the whole machine if you are out of memory, that's a
-> totally lazy and broken driver.  Fix this up properly please.
+> This is on the latest linux-next, which is dated 20190904. As Stephen is
+> not releasing any more linux-next kernels until later this month, I'm
+> missing anything that came in afterwards.
 
-This is boot time init; if memory allocation fails, we're in trouble, no
-way forward no way back.
+That is interesting as next-20190904 has the DT changes :) Can you share
+the config you used to get this.
 
-It is not uncommon to have BUG_ON() for alloc failing during boot.
+I have two instances of sdw_slave_add() in next-20190904:
 
-> But the original code is just fine (from a this is doing what I want it
-> to do point of view), I don't see the need to change anything here, you
-> did not modify any logic at all.
+drivers/soundwire/slave.c:              sdw_slave_add(bus, &id, acpi_fwnode_handle(adev));
+drivers/soundwire/slave.c:              sdw_slave_add(bus, &id, of_fwnode_handle(node));
 
-Agreed, the patch seems entirely pointless.
+Thanks
+-- 
+~Vinod
