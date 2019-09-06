@@ -2,95 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37EB8AC0DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61012AC0E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393493AbfIFTs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 15:48:27 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34655 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbfIFTs0 (ORCPT
+        id S2387663AbfIFTvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 15:51:41 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35866 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfIFTvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 15:48:26 -0400
-Received: by mail-qt1-f193.google.com with SMTP id a13so8543211qtj.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 12:48:26 -0700 (PDT)
+        Fri, 6 Sep 2019 15:51:40 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y22so5237879pfr.3;
+        Fri, 06 Sep 2019 12:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eGYgkRZj0NcCUP7h3iCHHFaAC43wNkWYu1G5sWIpzZk=;
+        b=dPHHuipONUA43OXAQtslB0Nstvm9jMsRi2Xwq5hH50w+aW+QvRYutnw/fm+ZG7i0Uh
+         DN6bxh04bPtnh8H+Jckkkjt4tqsrPRncv8LEM/2gGHj3+qgg1UfQcoX+NCedbCemX2hf
+         4pPzfsgB+v74/bibFiX73cVqf4tuH5FLNbguQx/Q9kKkjKrICJwZQoTaocu/szf93MIG
+         2lt4YqC8QUHBNGVldvYf3HiwJK+S5FJD4dDZozPpjAoh3EhBHkaSGy5yErN0Yiy3xoV4
+         fL9Lae/0xrXM1b2WJpTV85MiqBJnBZVNqs+EIjH4ORfj2WDZz5fD77nv4S9gbuWKmMtq
+         4tXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=yxMUYYTEpdgLLHvSUH5Uh9JMJfdGB0yddxYTqYtuf0E=;
-        b=moOcf0JdBWbD6KxLfNXp5DQWDnIHS3Tg5tSVxkMKEBmRWCOqV79Rj6CoTi0FunpjnD
-         4Ib7iumNp9uJp0zqImVYrfUpDdCeV6DmxVJ1iuFeySJVQGRviYzhBRP2IhXJCncoPVXF
-         4yN9NOAqA9LAkpZxAUO9/hWhWt3M9Uj3A91TpzrjgfgygYg+K9qSx7P4URKdMguJY2UR
-         MpNjYjlenOvPVXzKG/0XvvckZkkTiIgVTmVk6pB+JONWJm+MkIVWth4QgtBO/kGuNZYb
-         nJBB7ZC34oe6kzT0LCm9hC5//QNm/90gGORTufIlJipc4CL6V/BSWQ7A/Z2zxO4eAYtm
-         cCPw==
-X-Gm-Message-State: APjAAAV2Lk32pFdyPhnbrJsUwtkZqhEnyNwW+NNfg66WEtyEijf2Uwn2
-        ulrLu8w32jWY/n/XIRmDUpuDxJufi7TrFLbt+lE=
-X-Google-Smtp-Source: APXvYqyH772GapIqmZBvti+w1T7U/d8foRokKXMGEjzPAsmgsLo8wFjr0ZXbWuzLNUK6j9RWLhfMKqxZnaahHTF4IC4=
-X-Received: by 2002:a0c:e0c4:: with SMTP id x4mr6830761qvk.176.1567799305468;
- Fri, 06 Sep 2019 12:48:25 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eGYgkRZj0NcCUP7h3iCHHFaAC43wNkWYu1G5sWIpzZk=;
+        b=pM/zZqd4c2lZbg9IMX9O5ZAofFFJswtj55o2+i3KA8Uylyose98mURroklCX4Jb4//
+         R1yIJmz3/ZsFWG6Fc/ecRH8yHN2za5o1tsRc39EYlHQbvvYbhIjzDtsAQ24r2vK8DoJY
+         hE2aTboIp+9dnFl7jIOKgimQBUoU/qufkBBKBytBlMR+B1u5iM0wvJq1tB8DKjnGnvIt
+         U5mpeQxCTe2Z/gNlN2mE3hpFZXxuAbUwx8n2RWZV52UMuHNpiz4mJM3CUM2nnpS0+vAC
+         ScU1E/b5DJ/nZKRz6oh7dvH2E/DOGc0W9IvTeFOVTgoGBLwLM70U+PWYuTLoN04k+q2s
+         68Qw==
+X-Gm-Message-State: APjAAAXXjnDboY2pYWDUk+jGHTYdI/61JWUw3UgZ6cqJpj9cbKJWCKZw
+        O/8MqurgPrCWNrxdHgKsTdg=
+X-Google-Smtp-Source: APXvYqxeaSSe8RWvGTP+Hhm0gpdZ9DLJYGvzAcdEP1AdGCDSVlIYbrpuZpy0V2v4ywX7STgoWPxd+A==
+X-Received: by 2002:a63:30c6:: with SMTP id w189mr9157795pgw.398.1567799499643;
+        Fri, 06 Sep 2019 12:51:39 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id q4sm7413899pfh.115.2019.09.06.12.51.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 12:51:38 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Sat, 7 Sep 2019 04:51:35 +0900
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Qian Cai <cai@lca.pw>,
+        davem@davemloft.net, Eric Dumazet <eric.dumazet@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] net/skbuff: silence warnings under memory pressure
+Message-ID: <20190906195135.GA69785@tigerII.localdomain>
+References: <20190904061501.GB3838@dhcp22.suse.cz>
+ <20190904064144.GA5487@jagdpanzerIV>
+ <20190904065455.GE3838@dhcp22.suse.cz>
+ <20190904071911.GB11968@jagdpanzerIV>
+ <20190904074312.GA25744@jagdpanzerIV>
+ <1567599263.5576.72.camel@lca.pw>
+ <20190904144850.GA8296@tigerII.localdomain>
+ <1567629737.5576.87.camel@lca.pw>
+ <20190905113208.GA521@jagdpanzerIV>
+ <20190906145533.4uw43a5pvsawmdov@pathway.suse.cz>
 MIME-Version: 1.0
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 6 Sep 2019 21:48:09 +0200
-Message-ID: <CAK8P3a0MsTFjqChoz+DLSC8nVnBuvqQdYx6V0SuCybg7MZ79mQ@mail.gmail.com>
-Subject: [GIT PULL] ARM: SoC fixes for -rc8
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        SoC Team <soc@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906145533.4uw43a5pvsawmdov@pathway.suse.cz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 089cf7f6ecb266b6a4164919a2e69bd2f938374a:
+On (09/06/19 16:55), Petr Mladek wrote:
+> > I think we can queue significantly much less irq_work-s from printk().
+> > 
+> > Petr, Steven, what do you think?
+> > 
+> > Something like this. Call wake_up_interruptible(), switch to
+> > wake_up_klogd() only when called from sched code.
+> 
+> Replacing irq_work_queue() with wake_up_interruptible() looks
+> dangerous to me.
+> 
+> As a result, all "normal" printk() calls from the scheduler
+> code will deadlock. There is almost always a userspace
+> logger registered.
 
-  Linux 5.3-rc7 (2019-09-02 09:57:40 -0700)
+I don't see why all printk()-s should deadlock.
 
-are available in the Git repository at:
+A "normal" printk() call will deadlock only when scheduler calls
+"normal" printk() under rq or pi locks. But this is illegal anyway,
+because console_sem up() calls wake_up_process() - the same function
+wake_up_interruptible() calls. IOW "normal" printk() calls from
+scheduler end up in scheduler, via console_sem->sched chain. We
+already execute wake_up_process()->try_to_wake_up() in printk(),
+even when a non-LOGLEVEL_SCHED printk() comes from scheduler.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
+What am I missing something?
 
-for you to fetch changes up to 8928e917aeafaf38d65cc5cbc1f11e952dbed062:
-
-  soc: qcom: geni: Provide parameter error checking (2019-09-06 11:08:08 +0200)
-
-----------------------------------------------------------------
-ARM: SoC fixes
-
-There are three more fixes for this week:
-
-- The Windows-on-ARM laptops require a workaround to
-  prevent crashing at boot from ACPI
-- The Renesas "draak" board needs one bugfix for
-  the backlight regulator
-- Also for Renesas, the "hihope" board accidentally
-  had its eMMC turned off in the 5.3 merge window.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-----------------------------------------------------------------
-Arnd Bergmann (2):
-      Merge tag 'renesas-fixes-for-v5.3' of
-git://git.kernel.org/.../horms/renesas into arm/fixes
-      Merge tag 'renesas-fixes2-for-v5.3' of
-git://git.kernel.org/.../horms/renesas into arm/fixes
-
-Fabrizio Castro (1):
-      arm64: dts: renesas: hihope-common: Fix eMMC status
-
-Geert Uytterhoeven (1):
-      arm64: dts: renesas: r8a77995: draak: Fix backlight regulator name
-
-Lee Jones (1):
-      soc: qcom: geni: Provide parameter error checking
-
- arch/arm64/boot/dts/renesas/hihope-common.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 6 +++---
- drivers/soc/qcom/qcom-geni-se.c                | 6 ++++++
- 3 files changed, 10 insertions(+), 3 deletions(-)
+	-ss
