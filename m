@@ -2,79 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5FEAC083
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:26:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5171AC069
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:23:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393006AbfIFT0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 15:26:51 -0400
-Received: from mxout012.mail.hostpoint.ch ([217.26.49.172]:60420 "EHLO
-        mxout012.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726931AbfIFT0u (ORCPT
+        id S2388545AbfIFTXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 15:23:53 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41751 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731943AbfIFTXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 15:26:50 -0400
-X-Greylist: delayed 2921 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Sep 2019 15:26:49 EDT
-Received: from [10.0.2.45] (helo=asmtp012.mail.hostpoint.ch)
-        by mxout012.mail.hostpoint.ch with esmtp (Exim 4.92.2 (FreeBSD))
-        (envelope-from <sandro@volery.com>)
-        id 1i6J7T-000Jjb-HO; Fri, 06 Sep 2019 20:38:03 +0200
-Received: from 145-126.cable.senselan.ch ([83.222.145.126] helo=volery)
-        by asmtp012.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92.2 (FreeBSD))
-        (envelope-from <sandro@volery.com>)
-        id 1i6J7T-000Axi-Dk; Fri, 06 Sep 2019 20:38:03 +0200
-X-Authenticated-Sender-Id: sandro@volery.com
-Date:   Fri, 6 Sep 2019 20:38:01 +0200
-From:   volery <sandro@volery.com>
-To:     rspringer@google.com, toddpoynor@google.com, benchan@chromium.org,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Fixed parentheses malpractice in apex_driver.c
-Message-ID: <20190906183801.GA2456@volery>
+        Fri, 6 Sep 2019 15:23:53 -0400
+Received: by mail-io1-f65.google.com with SMTP id r26so15184011ioh.8
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 12:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AE6/toJbSfVkr1wiQ76oTdfqTgHlpEwnqu8Dl52qybo=;
+        b=Yr22SN8b0+6K0mLDWoC2RcAMt2BSA+g2SJIZhWjnemfnUIXzIb9OfP5pwLy2SunBV0
+         1mA0dkaunKNZD6NnQTCgqpZ+kfi0Kz3khBQI59IZsUPZ2n+ATm6MmAz9fG81bQHXpHwA
+         DxRwDMxvuIrw2OwIStmmkKuWrbKeB04MPeufs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AE6/toJbSfVkr1wiQ76oTdfqTgHlpEwnqu8Dl52qybo=;
+        b=mnwnWMoDNcJrUwDjI6LhUrfjT7x0spTA3eXTparE0CX0WxbAdR0jKxf8Nq7GmlX/3N
+         TkqmUaHIVb+UKCn5XlUkZcdWrVSwxQn4p4b++9D3sKTY8nyfjMrFjo6p+QuA1dc83miF
+         b1woegnDTRqocuGaWS6I4eTd6GsMkPTl1evnPZb234U6Y4w0m38znDwuGmBbvxKAogq2
+         spPRIrkljTOJg2eD9PevyHosuWvNLYfSnkR4XhNdfwZMheJdH9C2JVUBxIq2MACEkqdX
+         aBJurtmn33JWN2gDUzkinsguRCdnhGr7OjFvMR/6EtQqq1TU56PJXYDST6GEZmdoFmTI
+         jJSA==
+X-Gm-Message-State: APjAAAUQjAQ3VAYmRJwUpfwXMqmGevPQadhPPk9cUCc0JWFc3JhkwkGr
+        iJ7Q3AJJWJoiAUNsLI8TBTiW/Q==
+X-Google-Smtp-Source: APXvYqxNdgUM84LcEYFHrtVVCkCw4B+04vJZJSOxcLjqGkPJJF2PCpuIaKSujUu3oHwmwt5ZIOC3fQ==
+X-Received: by 2002:a5e:9509:: with SMTP id r9mr3806096ioj.100.1567797832607;
+        Fri, 06 Sep 2019 12:23:52 -0700 (PDT)
+Received: from ddavenport4.bld.corp.google.com ([2620:15c:183:0:92f:a80a:519d:f777])
+        by smtp.gmail.com with ESMTPSA id h70sm10931804iof.48.2019.09.06.12.23.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 06 Sep 2019 12:23:52 -0700 (PDT)
+From:   Drew Davenport <ddavenport@chromium.org>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Drew Davenport <ddavenport@chromium.org>,
+        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
+        Bruce Wang <bzwang@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Fritz Koenig <frkoenig@google.com>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH 1/6] drm/msm/dpu: Remove unused variables
+Date:   Fri,  6 Sep 2019 13:23:39 -0600
+Message-Id: <20190906192344.223694-1-ddavenport@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There were some parentheses at the end of lines, which I took care of.
-This is my first patch.
-
-Signed-off-by: Sandro Volery <sandro@volery.com>
+Signed-off-by: Drew Davenport <ddavenport@chromium.org>
 ---
- drivers/staging/gasket/apex_driver.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-index 464648ee2036..78ebd590f877 100644
---- a/drivers/staging/gasket/apex_driver.c
-+++ b/drivers/staging/gasket/apex_driver.c
-@@ -527,17 +527,20 @@ static ssize_t sysfs_show(struct device *device, struct device_attribute *attr,
- 	switch (type) {
- 	case ATTR_KERNEL_HIB_PAGE_TABLE_SIZE:
- 		ret = scnprintf(buf, PAGE_SIZE, "%u\n",
--				gasket_page_table_num_entries(
-+				gasket_page_table_num_entries
-+				(
- 					gasket_dev->page_table[0]));
- 		break;
- 	case ATTR_KERNEL_HIB_SIMPLE_PAGE_TABLE_SIZE:
- 		ret = scnprintf(buf, PAGE_SIZE, "%u\n",
--				gasket_page_table_num_simple_entries(
-+				gasket_page_table_num_simple_entries
-+				(
- 					gasket_dev->page_table[0]));
- 		break;
- 	case ATTR_KERNEL_HIB_NUM_ACTIVE_PAGES:
- 		ret = scnprintf(buf, PAGE_SIZE, "%u\n",
--				gasket_page_table_num_active_pages(
-+				gasket_page_table_num_active_pages
-+				(
- 					gasket_dev->page_table[0]));
- 		break;
- 	default:
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 5 -----
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 7 -------
+ 2 files changed, 12 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index ce59adff06aa..2ece11262943 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -1288,13 +1288,8 @@ struct drm_crtc *dpu_crtc_init(struct drm_device *dev, struct drm_plane *plane,
+ {
+ 	struct drm_crtc *crtc = NULL;
+ 	struct dpu_crtc *dpu_crtc = NULL;
+-	struct msm_drm_private *priv = NULL;
+-	struct dpu_kms *kms = NULL;
+ 	int i;
+ 
+-	priv = dev->dev_private;
+-	kms = to_dpu_kms(priv->kms);
+-
+ 	dpu_crtc = kzalloc(sizeof(*dpu_crtc), GFP_KERNEL);
+ 	if (!dpu_crtc)
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index d82ea994063f..4d2cacd0ce3d 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -1914,8 +1914,6 @@ static int _dpu_encoder_debugfs_status_open(struct inode *inode,
+ static int _dpu_encoder_init_debugfs(struct drm_encoder *drm_enc)
+ {
+ 	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
+-	struct msm_drm_private *priv;
+-	struct dpu_kms *dpu_kms;
+ 	int i;
+ 
+ 	static const struct file_operations debugfs_status_fops = {
+@@ -1932,9 +1930,6 @@ static int _dpu_encoder_init_debugfs(struct drm_encoder *drm_enc)
+ 		return -EINVAL;
+ 	}
+ 
+-	priv = drm_enc->dev->dev_private;
+-	dpu_kms = to_dpu_kms(priv->kms);
+-
+ 	snprintf(name, DPU_NAME_SIZE, "encoder%u", drm_enc->base.id);
+ 
+ 	/* create overall sub-directory for the encoder */
+@@ -2133,14 +2128,12 @@ static void dpu_encoder_frame_done_timeout(struct timer_list *t)
+ 	struct dpu_encoder_virt *dpu_enc = from_timer(dpu_enc, t,
+ 			frame_done_timer);
+ 	struct drm_encoder *drm_enc = &dpu_enc->base;
+-	struct msm_drm_private *priv;
+ 	u32 event;
+ 
+ 	if (!drm_enc->dev || !drm_enc->dev->dev_private) {
+ 		DPU_ERROR("invalid parameters\n");
+ 		return;
+ 	}
+-	priv = drm_enc->dev->dev_private;
+ 
+ 	if (!dpu_enc->frame_busy_mask[0] || !dpu_enc->crtc_frame_event_cb) {
+ 		DRM_DEBUG_KMS("id:%u invalid timeout frame_busy_mask=%lu\n",
 -- 
-2.23.0
+2.20.1
 
