@@ -2,62 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E33CABA22
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D254ABA36
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:05:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393928AbfIFOCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:02:02 -0400
-Received: from nautica.notk.org ([91.121.71.147]:53183 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388583AbfIFOCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:02:02 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 74656C009; Fri,  6 Sep 2019 16:02:00 +0200 (CEST)
-Date:   Fri, 6 Sep 2019 16:01:45 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        v9fs-developer@lists.sourceforge.net,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 9p: make two arrays static const, makes object smaller
-Message-ID: <20190906140145.GA16910@nautica>
-References: <20190906133812.17196-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190906133812.17196-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S2392566AbfIFOFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:05:53 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45028 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729719AbfIFOFv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:05:51 -0400
+Received: by mail-wr1-f67.google.com with SMTP id 30so6701593wrk.11;
+        Fri, 06 Sep 2019 07:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=YhOPiGQ/jKMfAKNMmBIBmilg3dwIp+IShaOpXqxWprg=;
+        b=FjxI57jI6z0XPsMkktNq3JpEyfAjsH53bwf7ysTuNIDKxiHvFK9CWMakQdziG6QSXg
+         /4kn9zNNpDKtusr+UVNL1ITjHOZ5Abmb+g2ErAiWIUiSJXWgJpo7nsJspE7WNZEDmIbf
+         OcXX6vIsGNb9E8MJZbTw/9+6Zvc6NQ4vMgKFnjslN5XJFBxIHZ9fVc5o/3cwK7zU/AH2
+         sh7pzhElxBpPxFj61sWwAOYILB+WnlUSxUbmZlJL7Tj2g8x9NnDV6B2i16CuYcl35RbW
+         lAHpzEykJcI69j0BW7NWuyluAsy1Pf12NlAULs8krx3jjoZ6YlgOp0TMwFqebdRi9GKb
+         ng5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YhOPiGQ/jKMfAKNMmBIBmilg3dwIp+IShaOpXqxWprg=;
+        b=GQ4oWgpTlTbciRvtvY214opWHgzni/icDv/EHU9+r3VahIYay19VtRhtLJZMNv+2Bo
+         5+h1NcBknO1aob5MV7KBAVqTUAzBHc/5yWFWihXRJAa98YG6jKL9gyQ0kjCpboaZKCOJ
+         6UXlyXKa5oStB5L59PQbQDXy8nigLznzCuq9Dle9EIeCUYU0Ae3Q38nzXlPEieXxrJl9
+         RUkFw7+jCiHFDvlsyhiqzznU4d0MCKc24ERnKN4OYnmrr3Qms2vcd+tldG2RkYF7YZr/
+         qhyMxjIVWEHdXttxY6W8+W0Iys1GKJ2I0HLVuRQxL90snq4JwKCpj/16pHI+uNizvoBq
+         7MFw==
+X-Gm-Message-State: APjAAAXD3geY6Fa5dox+UO4bFIjxrXQONImWVXdAynNKG5MHR57mLqnF
+        nHaVoI8nSWuWxWHrm8F0IOA=
+X-Google-Smtp-Source: APXvYqyour3/+Klmag/nD1xyNEEijuh9OxYfZsVW8R9vEdtv/6UIzhNd9mDLPuW0JOIbs21O/mlgFQ==
+X-Received: by 2002:adf:dec8:: with SMTP id i8mr7527923wrn.286.1567778749916;
+        Fri, 06 Sep 2019 07:05:49 -0700 (PDT)
+Received: from localhost.localdomain ([94.204.252.234])
+        by smtp.gmail.com with ESMTPSA id e20sm7480542wrc.34.2019.09.06.07.05.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 06 Sep 2019 07:05:49 -0700 (PDT)
+From:   Christian Hewitt <christianshewitt@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Chrisitian Hewitt <christianshewitt@gmail.com>,
+        Oleg Ivanov <balbes-150@yandex.ru>
+Subject: [PATCH v3 0/3] arm64: meson-g12b: Add support for the Ugoos AM6
+Date:   Fri,  6 Sep 2019 18:04:56 +0400
+Message-Id: <1567778699-59231-1-git-send-email-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King wrote on Fri, Sep 06, 2019:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the arrays on the stack but instead make them
-> static const. Makes the object code smaller by 386 bytes.
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   17443	   2076	      0	  19519	   4c3f	fs/9p/vfs_inode_dotl.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   16897	   2236	      0	  19133	   4abd	fs/9p/vfs_inode_dotl.o
-> 
-> (gcc version 9.2.1, amd64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This patchset adds support for the Ugoos AM6, an Android STB based on
+the Amlogic W400 reference design with the S922X chipset.
 
-Fine with me, I'll pick it up for the next cycle.
+v2: correction of minor nits
 
-There are a couple of static structs in net/9p that aren't const (but
-could be); I guess the static is all that matters here?
-(I'll try to go through and make the rest const when I have time
-though, no harm there)
+v3: address regulator and GPIO corrections from Neil Armstrong (using
+schematic excerpts from Ugoos) and related v2 comments from Martin
+Blumenstingle. Add acks on patches 1/2 from Rob Herring.
 
-Thanks,
+Christian Hewitt (3):
+  dt-bindings: Add vendor prefix for Ugoos
+  dt-bindings: arm: amlogic: Add support for the Ugoos AM6
+  arm64: dts: meson-g12b-ugoos-am6: add initial device-tree
+
+ Documentation/devicetree/bindings/arm/amlogic.yaml |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ arch/arm64/boot/dts/amlogic/Makefile               |   1 +
+ .../boot/dts/amlogic/meson-g12b-ugoos-am6.dts      | 557 +++++++++++++++++++++
+ 4 files changed, 561 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
+
 -- 
-Dominique
+2.7.4
+
