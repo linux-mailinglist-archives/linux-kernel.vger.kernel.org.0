@@ -2,160 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3644AC2F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 01:22:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CFC3AC30A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 01:30:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392926AbfIFXWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 19:22:22 -0400
-Received: from mail-eopbgr810083.outbound.protection.outlook.com ([40.107.81.83]:22336
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732131AbfIFXWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 19:22:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gf9N1PVtaEj3367MxIdqHrMXBdkVL2zBR2e9kLhv1JSXYMui2SUZKnLMoeHeSuZPCJ+UNAfGRrTghv/zIzODMV6EM5CM66YBgTHz1Bxu2RKR5hFK7ZbaWZa6HC+CQX5rQSk94nj4TXp5ZEpOkiXXxmtsPZiBNmGXk4DeUAfqjAdhsSXYmdDOjRoMPS0xH7269cv448YFZEt1bfErlhDnFbmMGrcRRVUIBGsjy6UTXoXLcfK9KubRzJzhiTDU0kN6j1hfaXzCvHqO9C0MVV9wnE6xKHhLya8ciPRxYNMtx0vstZLzcLdc7ja2+7YO2IYEl3Isiljm+toezigbkQ9UYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Re/OxUZbzUXGhJHaZBJOdblBhtvrLl9KrKFh7RLbwc=;
- b=NA+pXC/OdmZW+CbAKMKLxgJ86fbEKsF2ophsEwXjXhWXWUJwqUoSWPZ2fZSYiolCQYYPtTG5qSXFz1MenIrVZ4/waFg96P6F24E4Hh6ywzjT+oaKDRr+CTDLE7yS2N87fx/G9BLNQxvBskBw8fsuqcJoON+7GNjB75jgU1kPAoNqhPX6RFWjPrfUknMIQqfR2ZXVeTqMUa/dAzzQaD+LWbzUvM/m3fa4Nj3BIOpLniJC0GrcGL1u9+O20fVlrMqrkpJAHrPd04A9Ny81JQjUlSm6yF6FL0+NJFJeoi6snWg3as7sJ6L62em+jIaM0XKlZORhqB3evR1cWOE0RLnrFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=knights.ucf.edu; dmarc=pass action=none
- header.from=knights.ucf.edu; dkim=pass header.d=knights.ucf.edu; arc=none
+        id S2392886AbfIFXaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 19:30:06 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39531 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392731AbfIFXaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 19:30:06 -0400
+Received: by mail-ed1-f65.google.com with SMTP id u6so7998746edq.6
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 16:30:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=knightsucfedu39751.onmicrosoft.com;
- s=selector2-knightsucfedu39751-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Re/OxUZbzUXGhJHaZBJOdblBhtvrLl9KrKFh7RLbwc=;
- b=IHs+bNP8gtUhObk2W7cadhT4/kC/06bvpZQHMgVJiTpjjypTOo8XqqgbaIA3d4S8LLQkGdGQQrtj4AFLwhCFL9wvtf0PAwSqTKML2B3LR8npILsez/4D0Ynn/hyIp2YxvnjbAKiOcG8ctJCsrCmrczz4qqb7gqfKe49IqqhDE/w=
-Received: from BN7PR07MB5186.namprd07.prod.outlook.com (20.176.176.155) by
- BN7PR07MB4258.namprd07.prod.outlook.com (52.135.242.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.15; Fri, 6 Sep 2019 23:21:38 +0000
-Received: from BN7PR07MB5186.namprd07.prod.outlook.com
- ([fe80::682e:801a:5227:668f]) by BN7PR07MB5186.namprd07.prod.outlook.com
- ([fe80::682e:801a:5227:668f%7]) with mapi id 15.20.2220.022; Fri, 6 Sep 2019
- 23:21:38 +0000
-From:   Isaac Vaughn <isaac.vaughn@Knights.ucf.edu>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] Add PCI device IDs for family 17h, model 70h
-Thread-Topic: [PATCH] Add PCI device IDs for family 17h, model 70h
-Thread-Index: AQHVZQnUh7Ebv130M0alIHUhtmAMhQ==
-Date:   Fri, 6 Sep 2019 23:21:38 +0000
-Message-ID: <20190906192131.8ced0ca112146f32d82b6cae@knights.ucf.edu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BN6PR1801CA0023.namprd18.prod.outlook.com
- (2603:10b6:405:5f::36) To BN7PR07MB5186.namprd07.prod.outlook.com
- (2603:10b6:408:2a::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=isaac.vaughn@Knights.ucf.edu; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-unknown-linux-gnu)
-x-originating-ip: [132.170.61.99]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: cb535556-763d-464b-c48c-08d73320f76c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN7PR07MB4258;
-x-ms-traffictypediagnostic: BN7PR07MB4258:
-x-microsoft-antispam-prvs: <BN7PR07MB4258B4E44F63B9E8E63070C2CEBA0@BN7PR07MB4258.namprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1850;
-x-forefront-prvs: 0152EBA40F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(376002)(396003)(366004)(199004)(189003)(75432002)(71200400001)(71190400001)(66066001)(50226002)(186003)(1076003)(86362001)(66946007)(256004)(5660300002)(6512007)(6916009)(53936002)(6436002)(14454004)(478600001)(66476007)(25786009)(3846002)(4326008)(64756008)(66446008)(66556008)(476003)(2906002)(6486002)(6116002)(305945005)(88552002)(8936002)(6506007)(386003)(26005)(102836004)(99286004)(316002)(786003)(8676002)(81156014)(52116002)(2616005)(54906003)(44832011)(486006)(81166006)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4258;H:BN7PR07MB5186.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: Knights.ucf.edu does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7F+ESkwvq4P13Hp7BemchKMCBg3TnP+kcrfU7VaTSReqLThU7lPJEFMqZSNNyI62pQANX5Q+uvCGQfXmbwYpF2JncvHmfzfnGcievGvpM1mPeGZ7iSkEylLcZ/heYGBIo1Bp0dTUBI8KYkRnfZ5ed9kPgTAjIU0zLqZC301BDHY10Fhns0jLuQS0OSzdt4QuLy6TxdlmQ46BgDPexk21hAqvYWNLoKaqeDs/rhno6f7M1b+bB5jvoXCNxR7zaKm9qsL5tpypd3GenuJ8G0tSo/8iPQaGFxQyo7EzM7IHY2RMA9OxVyAuXAsdUhXbX9e1V7XaSemLhmRcEpsIt4Nt7bbJsOX5v9eJzeBGMGupIjJmcH1IVGp/dpXElKa2F03Z0RmVeRuPz1MG3SgNRCHUg2DMCNIxdbuTOVVtkjdaeqA=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4864796329BE3247A31201B95777A322@namprd07.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Eqinxltb4P+tBqyuO4WEtRUcfdT4qbszA3gfVj1CVng=;
+        b=CfxhObTVAmcNKpN/uttdeqMFFuot/dgQ8oBhunu1p3A2/KXMdnJc7eTmTJi6e2ocMn
+         NDFZD/Qh8ub6N+V6n8nGKJNHUKm6leUg+lflNX9keuez69bvdXFvHkCOlVvCSi5FCwQp
+         GqpsxbxIXF0lypQ9v5DbU9u4VRzHE/ky6Ttco=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Eqinxltb4P+tBqyuO4WEtRUcfdT4qbszA3gfVj1CVng=;
+        b=aP99GEvRuTWDaxdHxa9xqgjredvn0X56FzgD5OEepPkgwMDs6NMhoV2THneB9PJIyl
+         SwlxKhPzGIO/f2ErvCkrn5oEiLiV4msLM7U4HbvQB2DljWW3Q8U+oFa2vTAzCvRsnckD
+         UB2jDc7dtkCPyBWWTkttIocraWCeeB2tZOYzj4xO3tqbGVkxWMTk2fPEUiN+6iD09kLB
+         jObYIOQZT38Cyi3Omqkg5+G72h7mqV90i05XEwUNjKn3MKXk3IyhdLL+5yR8DEbdKA2d
+         kxY5wiF08if8B1SlG8/E8KpHO7nriG3BxZK5kIylYwidcxb3kJV9eQcDyjP6BKO4gpQ7
+         Eb/A==
+X-Gm-Message-State: APjAAAVlwbrcb1Oy1glGLsD1tQNFItsAYqIW9w5hrgc0Kd/7AGJ3wIur
+        6XebCU0tM1b1oRpSEGpmXigOJ2cXN/E=
+X-Google-Smtp-Source: APXvYqzBJlh78K+G/YRwwriM/LbVv76Xk764DtnFxcOl7k0QHK+IiwYAY+meGonR5FZ/vHsm5MfsuA==
+X-Received: by 2002:a50:9438:: with SMTP id p53mr12476291eda.291.1567812604206;
+        Fri, 06 Sep 2019 16:30:04 -0700 (PDT)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
+        by smtp.gmail.com with ESMTPSA id g21sm1216793edv.0.2019.09.06.16.30.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2019 16:30:04 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id w13so8144825wru.7
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 16:30:03 -0700 (PDT)
+X-Received: by 2002:adf:de08:: with SMTP id b8mr8516944wrm.200.1567812179254;
+ Fri, 06 Sep 2019 16:22:59 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: knights.ucf.edu
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb535556-763d-464b-c48c-08d73320f76c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2019 23:21:38.2753
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5b16e182-78b3-412c-9196-68342689eeb7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gRYRJvabhRhbFnRvyJx+T+i4ylXDiUCTAXd0tqskJ0m89tawYxCNA/CvemMRY5n1gnzYrdKJKFLa+DM2T5dUrI9jFaiDLdOsqiuTttJpKyk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4258
+References: <20190730191303.206365-1-thgarnie@chromium.org>
+ <20190806154347.GD25897@zn.tnic> <20190806155034.GP2349@hirez.programming.kicks-ass.net>
+ <CAJcbSZETvvQYmh6U_Oauptdsrp-emmSG_QsAZzKLv+0-b2Yxig@mail.gmail.com>
+In-Reply-To: <CAJcbSZETvvQYmh6U_Oauptdsrp-emmSG_QsAZzKLv+0-b2Yxig@mail.gmail.com>
+From:   Thomas Garnier <thgarnie@chromium.org>
+Date:   Fri, 6 Sep 2019 16:22:47 -0700
+X-Gmail-Original-Message-ID: <CAJcbSZEc07UJtWyM5i-DGRpNTtoxoY7cDpdyDh3N-Bb+G3s0gA@mail.gmail.com>
+Message-ID: <CAJcbSZEc07UJtWyM5i-DGRpNTtoxoY7cDpdyDh3N-Bb+G3s0gA@mail.gmail.com>
+Subject: Re: [PATCH v9 00/11] x86: PIE support to extend KASLR randomization
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Nadav Amit <namit@vmware.com>, Jann Horn <jannh@google.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Maran Wilson <maran.wilson@oracle.com>,
+        Enrico Weigelt <info@metux.net>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the new Family 17h Model 70h PCI IDs (device 18h functions 0 and 6)
-to the AMD64 EDAC module.
+On Thu, Aug 29, 2019 at 12:55 PM Thomas Garnier <thgarnie@chromium.org> wrote:
+>
+> On Tue, Aug 6, 2019 at 8:51 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Tue, Aug 06, 2019 at 05:43:47PM +0200, Borislav Petkov wrote:
+> > > On Tue, Jul 30, 2019 at 12:12:44PM -0700, Thomas Garnier wrote:
+> > > > These patches make some of the changes necessary to build the kernel as
+> > > > Position Independent Executable (PIE) on x86_64. Another patchset will
+> > > > add the PIE option and larger architecture changes.
+> > >
+> > > Yeah, about this: do we have a longer writeup about the actual benefits
+> > > of all this and why we should take this all? After all, after looking
+> > > at the first couple of asm patches, it is posing restrictions to how
+> > > we deal with virtual addresses in asm (only RIP-relative addressing in
+> > > 64-bit mode, MOVs with 64-bit immediates, etc, for example) and I'm
+> > > willing to bet money that some future unrelated change will break PIE
+> > > sooner or later.
+>
+> The goal is being able to extend the range of addresses where the
+> kernel can be placed with KASLR. I will look at clarifying that in the
+> future.
+>
+> >
+> > Possibly objtool can help here; it should be possible to teach it about
+> > these rules, and then it will yell when violated. That should avoid
+> > regressions.
+> >
+>
+> I will look into that as well.
 
-Cc: Borislav Petkov <bp@alien8.de> (maintainer:EDAC-AMD64)
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org> (supporter:EDAC-CORE)
-Cc: James Morse <james.morse@arm.com> (reviewer:EDAC-CORE)
-Cc: linux-edac@vger.kernel.org (open list:EDAC-AMD64)
-Cc: linux-kernel@vger.kernel.org (open list)
-Signed-off-by: Isaac Vaughn <isaac.vaughn@knights.ucf.edu>
----
- drivers/edac/amd64_edac.c | 13 +++++++++++++
- drivers/edac/amd64_edac.h |  3 +++
- 2 files changed, 16 insertions(+)
-
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index 873437be86d9..a35c97f9100a 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -2253,6 +2253,15 @@ static struct amd64_family_type family_types[] =3D {
- 			.dbam_to_cs		=3D f17_base_addr_to_cs_size,
- 		}
- 	},
-+	[F17_M70H_CPUS] =3D {
-+		.ctl_name =3D "F17h_M70h",
-+		.f0_id =3D PCI_DEVICE_ID_AMD_17H_M70H_DF_F0,
-+		.f6_id =3D PCI_DEVICE_ID_AMD_17H_M70H_DF_F6,
-+		.ops =3D {
-+			.early_channel_count	=3D f17_early_channel_count,
-+			.dbam_to_cs		=3D f17_base_addr_to_cs_size,
-+		}
-+	},
- };
-=20
- /*
-@@ -3241,6 +3250,10 @@ static struct amd64_family_type *per_family_init(str=
-uct amd64_pvt *pvt)
- 			fam_type =3D &family_types[F17_M30H_CPUS];
- 			pvt->ops =3D &family_types[F17_M30H_CPUS].ops;
- 			break;
-+		} else if (pvt->model >=3D 0x70 && pvt->model <=3D 0x7f) {
-+			fam_type =3D &family_types[F17_M70H_CPUS];
-+			pvt->ops =3D &family_types[F17_M70H_CPUS].ops;
-+			break;
- 		}
- 		/* fall through */
- 	case 0x18:
-diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-index 8f66472f7adc..1adf7ddbf744 100644
---- a/drivers/edac/amd64_edac.h
-+++ b/drivers/edac/amd64_edac.h
-@@ -119,6 +119,8 @@
- #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F6 0x15ee
- #define PCI_DEVICE_ID_AMD_17H_M30H_DF_F0 0x1490
- #define PCI_DEVICE_ID_AMD_17H_M30H_DF_F6 0x1496
-+#define PCI_DEVICE_ID_AMD_17H_M70H_DF_F0 0x1440
-+#define PCI_DEVICE_ID_AMD_17H_M70H_DF_F6 0x1446
-=20
- /*
-  * Function 1 - Address Map
-@@ -285,6 +287,7 @@ enum amd_families {
- 	F17_CPUS,
- 	F17_M10H_CPUS,
- 	F17_M30H_CPUS,
-+	F17_M70H_CPUS,
- 	NUM_FAMILIES,
- };
-=20
---=20
-2.23.0
+Following a discussion with Kees. I will explore objtool in the
+follow-up patchset as we still have more elaborate pie changes in the
+second set. I like the idea overall and I think it would be great if
+it works.
