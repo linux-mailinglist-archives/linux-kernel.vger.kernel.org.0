@@ -2,295 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52554AB9EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 15:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 489D2AB9F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 15:55:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393630AbfIFNxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 09:53:54 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:58949 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393553AbfIFNxw (ORCPT
+        id S2393698AbfIFNze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 09:55:34 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41008 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731037AbfIFNzd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 09:53:52 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 909E4FF80D;
-        Fri,  6 Sep 2019 13:53:47 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 9/9] arm64: dts: renesas: Add CMM units to Gen3 SoCs
-Date:   Fri,  6 Sep 2019 15:54:36 +0200
-Message-Id: <20190906135436.10622-10-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190906135436.10622-1-jacopo+renesas@jmondi.org>
-References: <20190906135436.10622-1-jacopo+renesas@jmondi.org>
+        Fri, 6 Sep 2019 09:55:33 -0400
+Received: by mail-io1-f65.google.com with SMTP id r26so12836698ioh.8
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 06:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dcmyyYxsqdiEv0SNbtEtPLVRqtn2jGS9PqXA4dwbE3U=;
+        b=B4OSDpddWZe47ugichOkX/imLBvNKswCV0dbKstPAw/+U+9vciLm6xStunfZCickyP
+         Ho3A6tqbPWmU/Ws8P02JF3IyY4fVNkq6SEkJ4pKqhntGCsLpsEcOFwtH17Hn6ejrIZWE
+         eBWLNXul50+Hjrpq1Th64M8qE4oAdLPO1tk9c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dcmyyYxsqdiEv0SNbtEtPLVRqtn2jGS9PqXA4dwbE3U=;
+        b=AS9mZv8qTaQpaqmI2Spa0MPmAu120W2E73sZujsmpHnIOT3uMnvzP8T+m8x6MN4+uh
+         Uo0J+o2wyNegGjZPNi/OtEybA7t3xIzEqhtNxu8yTGECAuHK4wzbsof3/xzSE7FWAIGD
+         6sBXxDIftInGR3+PW2gnWxCS4Vck6mmdE4eknJyHyhJLJ6DSiqbwEDKYfOGxWxSB+Mrt
+         WDqhdSxjwANS0m8T0kJBqU9dV4XYF1G5hpU5EFwMe9F5XZeoqxMjTn63tQxauuAAXOjp
+         l3hOazydH1CgksJTnwXWP+aGB9TGRnhe5EWkjl5/j3qMWyMNH8JHhMvfO66myfiS3Z/M
+         n73g==
+X-Gm-Message-State: APjAAAU3GXvJMEALbYwbqo8/q3fx1y+oMUsnp8IyMQFHeUEKqZF81GTq
+        hNSZR8bsdx8CNI/T6sI9LvYDpDKF+jXo5CyWkvaSwg==
+X-Google-Smtp-Source: APXvYqyesOafui7EisCf65he+vGO+0RObENd8TxztxTIE83r8g7dcjMJNn1jevJ3E/uacv0hS5BHmUm7+QCoL/L1zKs=
+X-Received: by 2002:a6b:bec6:: with SMTP id o189mr10035532iof.62.1567778132891;
+ Fri, 06 Sep 2019 06:55:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190905194859.16219-1-vgoyal@redhat.com> <CAJfpegu8POz9gC4MDEcXxDWBD0giUNFgJhMEzntJX_u4+cS9Zw@mail.gmail.com>
+ <20190906103613.GH5900@stefanha-x1.localdomain> <CAJfpegudNVZitQ5L8gPvA45mRPFDk9fhyboceVW6xShpJ4mLww@mail.gmail.com>
+ <20190906120817.GA22083@redhat.com>
+In-Reply-To: <20190906120817.GA22083@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 6 Sep 2019 15:55:21 +0200
+Message-ID: <CAJfpegsL4PLvROr58vtjmyvQu-F17X3xoKCztP2H0fog0xUXhA@mail.gmail.com>
+Subject: Re: [PATCH 00/18] virtiofs: Fix various races and cleanups round 1
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add CMM units to Renesas R-Car Gen3 SoC that support it, and reference them
-from the Display Unit they are connected to.
+On Fri, Sep 6, 2019 at 2:08 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Fri, Sep 06, 2019 at 01:52:41PM +0200, Miklos Szeredi wrote:
+> > On Fri, Sep 6, 2019 at 12:36 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+> > >
+> > > On Fri, Sep 06, 2019 at 10:15:14AM +0200, Miklos Szeredi wrote:
+> > > > On Thu, Sep 5, 2019 at 9:49 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > Michael Tsirkin pointed out issues w.r.t various locking related TODO
+> > > > > items and races w.r.t device removal.
+> > > > >
+> > > > > In this first round of cleanups, I have taken care of most pressing
+> > > > > issues.
+> > > > >
+> > > > > These patches apply on top of following.
+> > > > >
+> > > > > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#virtiofs-v4
+> > > > >
+> > > > > I have tested these patches with mount/umount and device removal using
+> > > > > qemu monitor. For example.
+> > > >
+> > > > Is device removal mandatory?  Can't this be made a non-removable
+> > > > device?  Is there a good reason why removing the virtio-fs device
+> > > > makes sense?
+> > >
+> > > Hot plugging and unplugging virtio PCI adapters is common.  I'd very
+> > > much like removal to work from the beginning.
+> >
+> > Can you give an example use case?
+>
+> David Gilbert mentioned this could be useful if daemon stops responding
+> or dies. One could remove device. That will fail all future requests
+> and allow unmounting filesystem.
+>
+> Havind said that, current implementation will help in above situation
+> only if there are no pending requests. If there are pending requests
+> and daemon stops responding, then removal will hang too, as we wait
+> for draining the queues.
+>
+> So at some point of time, we also need some sort of timeout functionality
+> where we end requests with error after a timeout.
+>
+> I feel we should support removing device at some point of time. But its
+> not necessarily a must have feature for first round.
 
-Sort the 'vsps' and 'renesas,cmm' entries in the DU unit consistently
-in all the involved DTS.
+If there's no compelling reason to do it in the first round, than I'd
+prefer to not do it.   More complexity -> more bugs.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 40 ++++++++++++++++++++++-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 28 ++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 28 ++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 22 ++++++++++++-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 22 ++++++++++++-
- 5 files changed, 137 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 6675462f7585..67c242a447bc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2939,6 +2939,42 @@
- 			iommus = <&ipmmu_vi1 10>;
- 		};
- 
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a7795-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
-+
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a7795-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
-+
-+		cmm2: cmm@fea60000 {
-+			compatible = "renesas,r8a7795-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea60000 0 0x1000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 709>;
-+			resets = <&cpg 709>;
-+		};
-+
-+		cmm3: cmm@fea70000 {
-+			compatible = "renesas,r8a7795-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea70000 0 0x1000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 708>;
-+			resets = <&cpg 708>;
-+		};
-+
- 		csi20: csi2@fea80000 {
- 			compatible = "renesas,r8a7795-csi2";
- 			reg = <0 0xfea80000 0 0x10000>;
-@@ -3142,9 +3178,11 @@
- 				 <&cpg CPG_MOD 722>,
- 				 <&cpg CPG_MOD 721>;
- 			clock-names = "du.0", "du.1", "du.2", "du.3";
--			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
- 			status = "disabled";
- 
-+			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
-+			renesas,cmms = <&cmm0 &cmm1 &cmm2 &cmm3>;
-+
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 822c96601d3c..837c3b2da773 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2641,6 +2641,33 @@
- 			renesas,fcp = <&fcpvi0>;
- 		};
- 
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a7796-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
-+
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a7796-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
-+
-+		cmm2: cmm@fea60000 {
-+			compatible = "renesas,r8a7796-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea60000 0 0x1000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 709>;
-+			resets = <&cpg 709>;
-+		};
-+
- 		csi20: csi2@fea80000 {
- 			compatible = "renesas,r8a7796-csi2";
- 			reg = <0 0xfea80000 0 0x10000>;
-@@ -2794,6 +2821,7 @@
- 			status = "disabled";
- 
- 			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>;
-+			renesas,cmms = <&cmm0 &cmm1 &cmm2>;
- 
- 			ports {
- 				#address-cells = <1>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 4ae163220f60..c7635e8b261c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -2320,6 +2320,33 @@
- 			resets = <&cpg 611>;
- 		};
- 
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a77965-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
-+
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a77965-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
-+
-+		cmm3: cmm@fea70000 {
-+			compatible = "renesas,r8a77965-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea70000 0 0x1000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 708>;
-+			resets = <&cpg 708>;
-+		};
-+
- 		csi20: csi2@fea80000 {
- 			compatible = "renesas,r8a77965-csi2";
- 			reg = <0 0xfea80000 0 0x10000>;
-@@ -2470,6 +2497,7 @@
- 			status = "disabled";
- 
- 			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd0 1>;
-+			renesas,cmms = <&cmm0 &cmm1 &cmm3>;
- 
- 			ports {
- 				#address-cells = <1>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 455954c3d98e..5e3d758a033f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -1727,6 +1727,24 @@
- 			iommus = <&ipmmu_vi0 9>;
- 		};
- 
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a77990-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
-+
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a77990-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
-+
- 		csi40: csi2@feaa0000 {
- 			compatible = "renesas,r8a77990-csi2";
- 			reg = <0 0xfeaa0000 0 0x10000>;
-@@ -1768,9 +1786,11 @@
- 			clock-names = "du.0", "du.1";
- 			resets = <&cpg 724>;
- 			reset-names = "du.0";
--			vsps = <&vspd0 0>, <&vspd1 0>;
- 			status = "disabled";
- 
-+			vsps = <&vspd0 0>, <&vspd1 0>;
-+			renesas,cmms = <&cmm0 &cmm1>;
-+
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 183fef86cf7c..6838a81f5caa 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -993,6 +993,24 @@
- 			iommus = <&ipmmu_vi0 9>;
- 		};
- 
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a77995-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
-+
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a77995-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a77995";
- 			reg = <0 0xfeb00000 0 0x40000>;
-@@ -1003,9 +1021,11 @@
- 			clock-names = "du.0", "du.1";
- 			resets = <&cpg 724>;
- 			reset-names = "du.0";
--			vsps = <&vspd0 0>, <&vspd1 0>;
- 			status = "disabled";
- 
-+			vsps = <&vspd0 0>, <&vspd1 0>;
-+			renesas,cmms = <&cmm0 &cmm1>;
-+
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
--- 
-2.23.0
-
+Thanks,
+Miklos
