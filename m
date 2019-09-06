@@ -2,163 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FF8FABA86
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E27BABA95
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394183AbfIFORD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:17:03 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:54202 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394120AbfIFORC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:17:02 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x86EGv2l021991;
-        Fri, 6 Sep 2019 09:16:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1567779417;
-        bh=bZLbfyDYIbQSM/yox3v/jl434Vis5vyrJc6A2BOuhBo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=I3hUmqTWTT2+3Lcq+H5M1u5aluKQ3nndK2yTjytWxqAFPZk/uapYGeo/HeBQ3/Ir+
-         VMa8Nn9Mm3CrN6ZppvJM8Zwr+3NSeTuo4jpBH2qPiGjn4GXSr1hGFkXRKStJO5O19g
-         Y+aPtXFaOqYQW2nB3kVLYiOWlecwavFePZczCX2A=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x86EGvZa127784;
-        Fri, 6 Sep 2019 09:16:57 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 6 Sep
- 2019 09:16:57 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 6 Sep 2019 09:16:57 -0500
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x86EGmaf042400;
-        Fri, 6 Sep 2019 09:16:55 -0500
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <vinod.koul@intel.com>, <robh+dt@kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dan.j.williams@intel.com>, <devicetree@vger.kernel.org>
-Subject: [RFC 3/3] dmaengine: Support for requesting channels preferring DMA domain controller
-Date:   Fri, 6 Sep 2019 17:17:17 +0300
-Message-ID: <20190906141717.23859-4-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190906141717.23859-1-peter.ujfalusi@ti.com>
-References: <20190906141717.23859-1-peter.ujfalusi@ti.com>
+        id S2394273AbfIFORs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:17:48 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:41046 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2392868AbfIFORs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:17:48 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 893DF1D8CAAEA04C5933;
+        Fri,  6 Sep 2019 22:17:45 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 6 Sep 2019
+ 22:17:36 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <oulijun@huawei.com>, <xavier.huwei@huawei.com>,
+        <dledford@redhat.com>, <jgg@ziepe.ca>
+CC:     <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] RDMA/hns: use devm_platform_ioremap_resource() to simplify code
+Date:   Fri, 6 Sep 2019 22:17:27 +0800
+Message-ID: <20190906141727.26552-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case the channel is not requested via the slave API, use the
-of_find_dma_domain() to see if a system default DMA controller is
-specified.
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Add new function which can be used by clients to request channels by mask
-from their DMA domain controller if specified.
-
-Client drivers can take advantage of the domain support by moving from
-dma_request_chan_by_mask() to dma_domain_request_chan_by_mask()
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/dma/dmaengine.c   | 17 ++++++++++++-----
- include/linux/dmaengine.h |  9 ++++++---
- 2 files changed, 18 insertions(+), 8 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_hw_v1.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index 6baddf7dcbfd..087450eed68c 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -640,6 +640,10 @@ struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
- 	struct dma_device *device, *_d;
- 	struct dma_chan *chan = NULL;
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+index dc9a1cd..5f74bf5 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+@@ -4511,7 +4511,6 @@ static int hns_roce_get_cfg(struct hns_roce_dev *hr_dev)
+ 	struct platform_device *pdev = NULL;
+ 	struct net_device *netdev = NULL;
+ 	struct device_node *net_node;
+-	struct resource *res;
+ 	int port_cnt = 0;
+ 	u8 phy_port;
+ 	int ret;
+@@ -4550,8 +4549,7 @@ static int hns_roce_get_cfg(struct hns_roce_dev *hr_dev)
+ 	}
  
-+	/* If np is not specified, get the default DMA domain controller */
-+	if (!np)
-+		np = of_find_dma_domain(NULL);
-+
- 	/* Find a channel */
- 	mutex_lock(&dma_list_mutex);
- 	list_for_each_entry_safe(device, _d, &dma_device_list, global_node) {
-@@ -751,19 +755,22 @@ struct dma_chan *dma_request_slave_channel(struct device *dev,
- EXPORT_SYMBOL_GPL(dma_request_slave_channel);
+ 	/* get the mapped register base address */
+-	res = platform_get_resource(hr_dev->pdev, IORESOURCE_MEM, 0);
+-	hr_dev->reg_base = devm_ioremap_resource(dev, res);
++	hr_dev->reg_base = devm_platform_ioremap_resource(hr_dev->pdev, 0);
+ 	if (IS_ERR(hr_dev->reg_base))
+ 		return PTR_ERR(hr_dev->reg_base);
  
- /**
-- * dma_request_chan_by_mask - allocate a channel satisfying certain capabilities
-- * @mask: capabilities that the channel must satisfy
-+ * dma_domain_request_chan_by_mask - allocate a channel by mask from DMA domain
-+ * @dev:	pointer to client device structure
-+ * @mask:	capabilities that the channel must satisfy
-  *
-  * Returns pointer to appropriate DMA channel on success or an error pointer.
-  */
--struct dma_chan *dma_request_chan_by_mask(const dma_cap_mask_t *mask)
-+struct dma_chan *dma_domain_request_chan_by_mask(struct device *dev,
-+						 const dma_cap_mask_t *mask)
- {
- 	struct dma_chan *chan;
- 
- 	if (!mask)
- 		return ERR_PTR(-ENODEV);
- 
--	chan = __dma_request_channel(mask, NULL, NULL, NULL);
-+	chan = __dma_request_channel(mask, NULL, NULL,
-+				     of_find_dma_domain(dev->of_node));
- 	if (!chan) {
- 		mutex_lock(&dma_list_mutex);
- 		if (list_empty(&dma_device_list))
-@@ -775,7 +782,7 @@ struct dma_chan *dma_request_chan_by_mask(const dma_cap_mask_t *mask)
- 
- 	return chan;
- }
--EXPORT_SYMBOL_GPL(dma_request_chan_by_mask);
-+EXPORT_SYMBOL_GPL(dma_domain_request_chan_by_mask);
- 
- void dma_release_channel(struct dma_chan *chan)
- {
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index 3b2e8e302f6c..9f94df81e83f 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -1438,7 +1438,8 @@ struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
- struct dma_chan *dma_request_slave_channel(struct device *dev, const char *name);
- 
- struct dma_chan *dma_request_chan(struct device *dev, const char *name);
--struct dma_chan *dma_request_chan_by_mask(const dma_cap_mask_t *mask);
-+struct dma_chan *dma_domain_request_chan_by_mask(struct device *dev,
-+						 const dma_cap_mask_t *mask);
- 
- void dma_release_channel(struct dma_chan *chan);
- int dma_get_slave_caps(struct dma_chan *chan, struct dma_slave_caps *caps);
-@@ -1475,8 +1476,8 @@ static inline struct dma_chan *dma_request_chan(struct device *dev,
- {
- 	return ERR_PTR(-ENODEV);
- }
--static inline struct dma_chan *dma_request_chan_by_mask(
--						const dma_cap_mask_t *mask)
-+static inline struct dma_chan *dma_domain_request_chan_by_mask(struct device *dev,
-+			const dma_cap_mask_t *mask)
- {
- 	return ERR_PTR(-ENODEV);
- }
-@@ -1537,6 +1538,8 @@ struct dma_chan *dma_get_any_slave_channel(struct dma_device *device);
- 	__dma_request_channel(&(mask), x, y, NULL)
- #define dma_request_slave_channel_compat(mask, x, y, dev, name) \
- 	__dma_request_slave_channel_compat(&(mask), x, y, dev, name)
-+#define dma_request_chan_by_mask(mask) \
-+	dma_domain_request_chan_by_mask(NULL, mask)
- 
- static inline struct dma_chan
- *__dma_request_slave_channel_compat(const dma_cap_mask_t *mask,
 -- 
-Peter
+2.7.4
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
