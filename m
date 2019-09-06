@@ -2,114 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A567FAC20C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 23:31:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93D40AC210
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 23:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404351AbfIFVbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 17:31:44 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43866 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404164AbfIFVbc (ORCPT
+        id S2404371AbfIFVeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 17:34:06 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37748 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731289AbfIFVeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 17:31:32 -0400
-Received: by mail-io1-f66.google.com with SMTP id u185so15991214iod.10;
-        Fri, 06 Sep 2019 14:31:32 -0700 (PDT)
+        Fri, 6 Sep 2019 17:34:05 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b10so3806288plr.4;
+        Fri, 06 Sep 2019 14:34:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=26yRkKngdeGZdYrj7tLUW2NHxKx3LhkS3JePK0gY+8A=;
-        b=eQaw1beEZr2GTZtMQnwD4KoxcrO7wW+xNyWWkrP2z15GUpMkkEapVjQ5w4SEAkrgCO
-         JX4dYw7L8W1ldVldtUTF1hOTmCYawc2cJF4QqsVbi7Z/6m/I3RzqmfWu/aIJjLV7Udpv
-         0OT0FkVKdko1sg8GJUu5/LuSqn5bFMptposIKM54yDJR2zsnmeV6koBfyVkTDZxmd6py
-         u4yrGx/h2XPaHO1twcAz4NfRFPGfDQL0RWq2/he7dLycoq64oF2Mu7FOjvJWdEJfBLHv
-         2tX90211ztFSB1Os14T6P2lbrWzDWeu8tzMmjGPpzRLtz805qGw5UHORPK8fzVI439Ya
-         J2jw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/RyWa89NW2CDbmflnwIpgsMIqDN+1KFBG0Q30EjlOnc=;
+        b=AxDF8NaMGcmYQw5D4ipAwssIfm08RvYyYk/14DHiB6AUe2zyxJoyBvNOxMzxgOgKsZ
+         zqbiW9BZjc5vAP6Q3JBzuihYo+ZHrp5NFkq6I7Hph40sfolO+AUnWuPS3kop0qJAkFd/
+         Sw8Q9FuFCSz4znMB1tRww41XtW54Z1iDf5vfHKHymz0HFSdg7DGAOFQYvqpAavZWX23L
+         Jrp+TagrPwSRUBKRzgR8EJqH1TDh1atHds/j8WbF2cux8fpaUmKLG4AI8EAfi59kNBno
+         qrNPSyjPF0Wcr8hE/5CILmsF9NBMRa5/KdLddxmja0qEnpwTTqn8Ha+IYOjpjRIhspMn
+         Nd5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=26yRkKngdeGZdYrj7tLUW2NHxKx3LhkS3JePK0gY+8A=;
-        b=ta7TGR0+XX28UXXyvtgiPBemPQHeKmTTbMntpZttrInz9JB4QSdfs1grruOY3080iS
-         A3kq7ZUIknSqDNvr76x/zu4NGTE9TVa9Q8GBaw3V4SdP/Vj3mjMoMnzxWvQTWyIiCPcB
-         0NRx3VmjJlEItChgrcUyv0n/mJ0ZtVdNWfhvStPXMAQDVsCSzp9jL/Vw2Cm5LxeosJ1p
-         C1wHYqnSt+KNmSwof0DIN4oyfFGTyLufnbW8YhSrwqztSeurm8IlAdx+KWnsN1KciS2b
-         Y5/bq8PX10vqq3Eg2kS34HXSTcOM3NodW4yOjlueiPVQ5Xi4arqZhyg8aJ1JXgwWCuEt
-         iUkw==
-X-Gm-Message-State: APjAAAV0P+cDNtskwiHEWHl8YAGpV058o5m8AtEqbu3j3yYQuPAZ7444
-        BcuonO+AW+KGn/g2E7iExn2yItO5+g==
-X-Google-Smtp-Source: APXvYqzcCiaPEcke/zEYQ0pYn1CgYsKteKJ06NbqPe0dchKECo4QjXZDiChHP9gfa1tKb+fBtG9SVA==
-X-Received: by 2002:a5d:8506:: with SMTP id q6mr598789ion.43.1567805491405;
-        Fri, 06 Sep 2019 14:31:31 -0700 (PDT)
-Received: from threadripper.novatech-llc.local ([216.21.169.52])
-        by smtp.gmail.com with ESMTPSA id r2sm4158110ioh.61.2019.09.06.14.31.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Sep 2019 14:31:31 -0700 (PDT)
-From:   George McCollister <george.mccollister@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Woojung Huh <woojung.huh@microchip.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Tristram Ha <Tristram.Ha@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Marek Vasut <marex@denx.de>, linux-kernel@vger.kernel.org,
-        George McCollister <george.mccollister@gmail.com>
-Subject: [PATCH net-next 3/3] net: dsa: microchip: remove NET_DSA_TAG_KSZ_COMMON
-Date:   Fri,  6 Sep 2019 16:30:54 -0500
-Message-Id: <20190906213054.48908-4-george.mccollister@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190906213054.48908-1-george.mccollister@gmail.com>
-References: <20190906213054.48908-1-george.mccollister@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/RyWa89NW2CDbmflnwIpgsMIqDN+1KFBG0Q30EjlOnc=;
+        b=bJ3m0GWNqdvkPedyGPBMp7hLgNnJkaLKSV7DyE6tys7NY0xyucnBSrfyRLmFQMokL/
+         H43SCvoUlgl5WprJ2goeBLZcWrOJNjMt9VJdAvq/pkdMor1O88nwts2cXvQGrUqdGAuz
+         Z+Y8RLe3qC8oj5XCPmVOoa55g6AfwROnXa8+UOhWtr8UTVdP9dLyj0KodxznP7GsJhEG
+         vPQ9/7SrZEmODOIsmZ8mOrlUnDOG8CsgTtcOyr2NOe5GEk/0RkLZAgth3Beon859BqZ2
+         dHNm4DcSMgohEXqGhF+763c8Z+dP5YkKNoBAKnKjxnkT0Zmu3NJPc3GVVQdTuHuOJmzY
+         zBdw==
+X-Gm-Message-State: APjAAAX82TsvsB6UcuDtXm41g80stNuWiYTWAoEwXuI4fWAdEoZ3B+pe
+        MutJEVt0nW3VJf3o4luwXXU=
+X-Google-Smtp-Source: APXvYqyeYAOWNBxwXf8u0zHDpw8+eAGTebm69GRrvObCOy2+nktKHhwJkGEjB1E4T4pbmDEIufZ+3g==
+X-Received: by 2002:a17:902:690c:: with SMTP id j12mr479860plk.132.1567805644741;
+        Fri, 06 Sep 2019 14:34:04 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id v12sm6778693pff.40.2019.09.06.14.34.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 14:34:03 -0700 (PDT)
+Date:   Fri, 6 Sep 2019 14:34:01 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 2/3] platform/x86: intel_cht_int33fe: use inline
+ reference properties
+Message-ID: <20190906213401.GS187474@dtor-ws>
+References: <20190906043809.18990-1-dmitry.torokhov@gmail.com>
+ <20190906043809.18990-2-dmitry.torokhov@gmail.com>
+ <20190906112243.GB30048@kuha.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906112243.GB30048@kuha.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the superfluous NET_DSA_TAG_KSZ_COMMON and just use the existing
-NET_DSA_TAG_KSZ. Update the description to mention the three switch
-families it supports. No functional change.
+On Fri, Sep 06, 2019 at 02:22:43PM +0300, Heikki Krogerus wrote:
+> Hi,
+> 
+> On Thu, Sep 05, 2019 at 09:38:08PM -0700, Dmitry Torokhov wrote:
+> > Now that static device properties allow defining reference properties
+> > together with all other types of properties, instead of managing them
+> > separately, let's adjust the driver.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> > 
+> > Heikki, I do not have this hardware, so if you could try this out
+> > it would be really great.
+> > 
+> >  drivers/platform/x86/intel_cht_int33fe.c | 46 ++++++++++++------------
+> >  1 file changed, 22 insertions(+), 24 deletions(-)
+> > 
+> > diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
+> > index 4fbdff48a4b5..91f3c8840fd8 100644
+> > --- a/drivers/platform/x86/intel_cht_int33fe.c
+> > +++ b/drivers/platform/x86/intel_cht_int33fe.c
+> > @@ -50,28 +50,8 @@ struct cht_int33fe_data {
+> >  
+> >  static const struct software_node nodes[];
+> 
+> I think you can remove that.
 
-Signed-off-by: George McCollister <george.mccollister@gmail.com>
----
- net/dsa/Kconfig  | 9 ++-------
- net/dsa/Makefile | 2 +-
- 2 files changed, 3 insertions(+), 8 deletions(-)
+Not really, as there is still circular dependency between nodes and
+properties. I moved it down closer to properties though.
 
-diff --git a/net/dsa/Kconfig b/net/dsa/Kconfig
-index 2f69d4b53d46..29e2bd5cc5af 100644
---- a/net/dsa/Kconfig
-+++ b/net/dsa/Kconfig
-@@ -73,16 +73,11 @@ config NET_DSA_TAG_MTK
- 	  Say Y or M if you want to enable support for tagging frames for
- 	  Mediatek switches.
- 
--config NET_DSA_TAG_KSZ_COMMON
--	tristate
--	default n
--
- config NET_DSA_TAG_KSZ
--	tristate "Tag driver for Microchip 9893 family of switches"
--	select NET_DSA_TAG_KSZ_COMMON
-+	tristate "Tag driver for Microchip 8795/9477/9893 families of switches"
- 	help
- 	  Say Y if you want to enable support for tagging frames for the
--	  Microchip 9893 family of switches.
-+	  Microchip 8795/9477/9893 families of switches.
- 
- config NET_DSA_TAG_QCA
- 	tristate "Tag driver for Qualcomm Atheros QCA8K switches"
-diff --git a/net/dsa/Makefile b/net/dsa/Makefile
-index c342f54715ba..2c6d286f0511 100644
---- a/net/dsa/Makefile
-+++ b/net/dsa/Makefile
-@@ -9,7 +9,7 @@ obj-$(CONFIG_NET_DSA_TAG_BRCM_COMMON) += tag_brcm.o
- obj-$(CONFIG_NET_DSA_TAG_DSA) += tag_dsa.o
- obj-$(CONFIG_NET_DSA_TAG_EDSA) += tag_edsa.o
- obj-$(CONFIG_NET_DSA_TAG_GSWIP) += tag_gswip.o
--obj-$(CONFIG_NET_DSA_TAG_KSZ_COMMON) += tag_ksz.o
-+obj-$(CONFIG_NET_DSA_TAG_KSZ) += tag_ksz.o
- obj-$(CONFIG_NET_DSA_TAG_LAN9303) += tag_lan9303.o
- obj-$(CONFIG_NET_DSA_TAG_MTK) += tag_mtk.o
- obj-$(CONFIG_NET_DSA_TAG_QCA) += tag_qca.o
+> 
+> > -static const struct software_node_ref_args pi3usb30532_ref = {
+> > -	&nodes[INT33FE_NODE_PI3USB30532]
+> > -};
+> > -
+> > -static const struct software_node_ref_args dp_ref = {
+> > -	&nodes[INT33FE_NODE_DISPLAYPORT]
+> > -};
+> > -
+> >  static struct software_node_ref_args mux_ref;
+> 
+> I'm pretty sure you should now drop that one.
+
+I ended up reworking things a bit and still using a form of this to
+reach in and change data, as properties ended up being constants.
+
+> 
+> > -static const struct software_node_reference usb_connector_refs[] = {
+> > -	{ "orientation-switch", 1, &pi3usb30532_ref},
+> > -	{ "mode-switch", 1, &pi3usb30532_ref},
+> > -	{ "displayport", 1, &dp_ref},
+> > -	{ }
+> > -};
+> > -
+> > -static const struct software_node_reference fusb302_refs[] = {
+> > -	{ "usb-role-switch", 1, &mux_ref},
+> > -	{ }
+> > -};
+> > -
+> >  /*
+> >   * Grrr I severly dislike buggy BIOS-es. At least one BIOS enumerates
+> >   * the max17047 both through the INT33FE ACPI device (it is right there
+> > @@ -107,7 +87,13 @@ static const struct property_entry max17047_props[] = {
+> >  	{ }
+> >  };
+> >  
+> > -static const struct property_entry fusb302_props[] = {
+> > +/* Not const because we need to update "usb-role-switch" property. */
+> > +static struct property_entry fusb302_props[] = {
+> > +	/*
+> > +	 * usb-role-switch property must be first as we rely on fixed
+> > +	 * position to adjust it once we know the real node.
+> > +	 */
+> > +	PROPERTY_ENTRY_REF("usb-role-switch", NULL),
+> >  	PROPERTY_ENTRY_STRING("linux,extcon-name", "cht_wcove_pwrsrc"),
+> >  	{ }
+> >  };
+> > @@ -131,16 +117,22 @@ static const struct property_entry usb_connector_props[] = {
+> >  	PROPERTY_ENTRY_U32_ARRAY("source-pdos", src_pdo),
+> >  	PROPERTY_ENTRY_U32_ARRAY("sink-pdos", snk_pdo),
+> >  	PROPERTY_ENTRY_U32("op-sink-microwatt", 2500000),
+> > +	PROPERTY_ENTRY_REF("orientation-switch",
+> > +			   &nodes[INT33FE_NODE_PI3USB30532]),
+> > +	PROPERTY_ENTRY_REF("mode-switch",
+> > +			   &nodes[INT33FE_NODE_PI3USB30532]),
+> > +	PROPERTY_ENTRY_REF("displayport",
+> > +			   &nodes[INT33FE_NODE_DISPLAYPORT]),
+> >  	{ }
+> >  };
+> >  
+> >  static const struct software_node nodes[] = {
+> > -	{ "fusb302", NULL, fusb302_props, fusb302_refs },
+> > +	{ "fusb302", NULL, fusb302_props },
+> >  	{ "max17047", NULL, max17047_props },
+> >  	{ "pi3usb30532" },
+> >  	{ "displayport" },
+> >  	{ "usb-role-switch" },
+> > -	{ "connector", &nodes[0], usb_connector_props, usb_connector_refs },
+> > +	{ "connector", &nodes[0], usb_connector_props },
+> >  	{ }
+> >  };
+> >  
+> > @@ -174,7 +166,13 @@ static int cht_int33fe_setup_mux(struct cht_int33fe_data *data)
+> >  
+> >  	data->mux = fwnode_handle_get(dev->fwnode);
+> >  	put_device(dev);
+> > -	mux_ref.node = to_software_node(data->mux);
+> > +
+> > +	/*
+> > +	 * Update "usb-role-switch" property with real node. Note that we
+> > +	 * rely on software_node_register_nodes() to use the original
+> > +	 * instance of properties instead of copying them.
+> > +	 */
+> > +	fusb302_props[0].value.ref.node = to_software_node(data->mux);
+> 
+> There are other changes to this driver and to swnode.c in Rafael's
+> tree, so if you send v2 soon, then please rebase on top of his devprop
+> branch, or alternatively linux-next.
+
+Yep, did that, will re-post series shortly.
+
 -- 
-2.11.0
-
+Dmitry
