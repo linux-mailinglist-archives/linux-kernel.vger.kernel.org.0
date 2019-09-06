@@ -2,107 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6837AB357
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 09:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0F57AB360
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 09:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392538AbfIFHlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 03:41:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48824 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390377AbfIFHlV (ORCPT
+        id S2392586AbfIFHlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 03:41:36 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:33342 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2391079AbfIFHl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 03:41:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iJtXmWMKcn3iCXNa/Hctfd9mlp3VUMAuUJlQTpyeJJY=; b=Ko0EMTSFOIYfVQMqXEm3XgbLG
-        s/6LDJnSDqs9gv/GTg44o8jGYklcj5DNtuR8z5TwUhn0dGyIQ2jB1Cf6mm/zlLHQCJrhGpMYFzidf
-        OW6I0m1MSYLv623ElCTNPgMQprOz1+J9IgClyyYKZwb8NQEvp7NzGBm+W07L99QOGu8KHMQ/ul/lU
-        0zOukNii4FV56Ep1Sf6zFAbcvgTWqnmLRm4mu+GEfxQ0Jz7z9AYD6ExKjbInyM7LnD074x91weZtm
-        wAenRl5Df9j5VCoEnOdO6UlX6k+y9oXeAypXtDbVX60HIabxaaeWqS5DuYhHpjBYyHFQwhpLKoNjV
-        6K6dJpwhw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i68rj-0005fp-7T; Fri, 06 Sep 2019 07:41:07 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A6B4D303121;
-        Fri,  6 Sep 2019 09:40:27 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 044B229DE780A; Fri,  6 Sep 2019 09:41:04 +0200 (CEST)
-Date:   Fri, 6 Sep 2019 09:41:04 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 3/4] Cleanup: sched/membarrier: only sync_core before
- usermode for same mm
-Message-ID: <20190906074104.GT2349@hirez.programming.kicks-ass.net>
-References: <20190906031300.1647-1-mathieu.desnoyers@efficios.com>
- <20190906031300.1647-4-mathieu.desnoyers@efficios.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906031300.1647-4-mathieu.desnoyers@efficios.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 6 Sep 2019 03:41:29 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 23988C0E35;
+        Fri,  6 Sep 2019 07:41:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1567755688; bh=4FNcbwGO762eeiYuWoydSpxazMahLxkBYcFUNjeJ3so=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QV3sTkQjRq3+DWj4SAq7M3ARw0wOD88Y820JB4aK6VQ3BqbtO+ozEBJg5jkZxP6ba
+         3K3PfEsnZAFP8beQSbvbq4rYsxCaqGuqw8h9pPqMiS6RCdbZ0eax/vPBjpPQJO3fpn
+         4GOoFgI8P87xZ6bFcQt0szF2m6kys4oWjegPndcukIUo4cRGrBYIT79WQrcuzC9ip9
+         4+AT6uXZ1T2NKq8mP+IAI4DwvUSgoSG5aniE63bpRkwW+wF/luxd0JWIyWzZQsXLIu
+         EiPm2rX5BcbHPhAqfeLgzesocBttjgJAAkBystKy36O3f9cHmcsjU3truRAWoxfcIF
+         40D7xgWd5/dhw==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 001F5A005C;
+        Fri,  6 Sep 2019 07:41:25 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/5] net: stmmac: Improvements and fixes for -next
+Date:   Fri,  6 Sep 2019 09:41:12 +0200
+Message-Id: <cover.1567755423.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 05, 2019 at 11:12:59PM -0400, Mathieu Desnoyers wrote:
-> When the prev and next task's mm change, switch_mm() provides the core
-> serializing guarantees before returning to usermode. The only case
-> where an explicit core serialization is needed is when the scheduler
-> keeps the same mm for prev and next.
-> 
-> Suggested-by: Oleg Nesterov <oleg@redhat.com>
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-> Cc: Chris Metcalf <cmetcalf@ezchip.com>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Kirill Tkhai <tkhai@yandex.ru>
-> Cc: Mike Galbraith <efault@gmx.de>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> ---
->  include/linux/sched/mm.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index 4a7944078cc3..8557ec664213 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -362,6 +362,8 @@ enum {
->  
->  static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
->  {
-> +	if (current->mm != mm)
-> +		return;
->  	if (likely(!(atomic_read(&mm->membarrier_state) &
->  		     MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE)))
->  		return;
+Improvements and fixes for recently introduced features. All for -next tree.
+More info in commit logs.
 
-So SYNC_CORE is about I$ coherency and funny thing like that. Now it
-seems 'natural' that if we flip the address space, that I$ also gets
-wiped/updated, because the whole text mapping changes.
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
 
-But did we just assume that, or did we verify the truth of this? (I'm
-just being paranoid here)
+Jose Abreu (5):
+  net: stmmac: selftests: Add missing checks for support of SA
+  net: stmmac: selftests: Set RX tail pointer in Flow Control test
+  net: stmmac: dwmac4: Enable RX Jumbo frame support
+  net: stmmac: selftests: Add Split Header test
+  net: stmmac: Limit max speeds of XGMAC if asked to
+
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |  3 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  6 ---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 25 +++++----
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 60 ++++++++++++++++++++++
+ 4 files changed, 78 insertions(+), 16 deletions(-)
+
+-- 
+2.7.4
+
