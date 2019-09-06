@@ -2,185 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF1A6AB43B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5CBAB450
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:47:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391788AbfIFIpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 04:45:44 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:50668 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391675AbfIFIpn (ORCPT
+        id S2391639AbfIFIre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 04:47:34 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40753 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388846AbfIFIre (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 04:45:43 -0400
-Received: from ramsan ([84.194.98.4])
-        by andre.telenet-ops.be with bizsmtp
-        id y8lh2000405gfCL018lhM0; Fri, 06 Sep 2019 10:45:41 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1i69sD-0003NA-0D; Fri, 06 Sep 2019 10:45:41 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1i69sC-0005hC-VA; Fri, 06 Sep 2019 10:45:40 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] gpio: devres: Switch to EXPORT_SYMBOL_GPL()
-Date:   Fri,  6 Sep 2019 10:45:39 +0200
-Message-Id: <20190906084539.21838-5-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190906084539.21838-1-geert+renesas@glider.be>
-References: <20190906084539.21838-1-geert+renesas@glider.be>
+        Fri, 6 Sep 2019 04:47:34 -0400
+Received: by mail-wr1-f65.google.com with SMTP id w13so5663175wru.7
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 01:47:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=CfSPQ11gyL7LqqJg+RfxL7pUmtUK1NuleIgsu8AI50g=;
+        b=HjBx0MkBebOyrjQ51slXLTQOOyqLUMka35p52q5dCPEkOoeD78IHBI/Z9AEP4+vIcn
+         OKBCX5MjwA0GrX2TYkMksZqvUEugNCv1NXQ/JTaxgrnUROcRsv0B8q/knrOWVg36nk5t
+         rRVrQSgEggtShsP10h9DIhud+PuQ9d6gytfJ6ETRD8ZfsBnWDu15NZwVBLFk7U8etroK
+         y0RLEA6oDQGlxCqHF7iU5DzO6Xnh8b5QT7P4XG7MpEEXNxiahCeuH1viypdP7zyyVrDJ
+         os8CGeBSYPLOEilqK7Y3jAQ1lBuiGHKlx6/PHUtTReUrz2v2QtJPp8cHX3HOzoLCxcC/
+         +jiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=CfSPQ11gyL7LqqJg+RfxL7pUmtUK1NuleIgsu8AI50g=;
+        b=ZyaSIfkd9EkYoG2vkC47PW80dV3b7j87cEbQqDYYEgwfKDNQAEAL9V1jFZEf2yMG1B
+         68UBYKqCTQ9cu9xASpz/hXMu//KOP6mK3ASAubXyNTHDoXpTzn0lf+AZRC63AcjzDAQx
+         4axxzApHvR2flbzUnUhOznrI8yYnJDKGIccv6rr9+y+oDCt29dKJlAp2sCc6dLi42F4f
+         rNzRUIR9CBMvmt6LN5VhZMTpkwYhLsP0C3jCgl2O73bVYHZCgEI3Ysq5r67c0qDV71eh
+         rrwsCTR0n1YK+SoyfqPqMZDCEbiWtXl5m3Xm0Mwd2SlQ8lB7JARJHlMcvETxNV7Yll78
+         VE2A==
+X-Gm-Message-State: APjAAAXx8lP7WbU+569liPiVE5KjNdsxP3Bxx5QHG66U/Q2xeiL5G7m3
+        YZOHm9UUn8DEXUvf2LpXqAu2+g==
+X-Google-Smtp-Source: APXvYqzgyU/+indOnTNrg+U/5WDAdwju1MgsP1cT9PecaBiEJfZB6rRcN63enCexjtj7BJZDawOwAQ==
+X-Received: by 2002:adf:f2cd:: with SMTP id d13mr4964942wrp.143.1567759652033;
+        Fri, 06 Sep 2019 01:47:32 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id n1sm6222078wrg.67.2019.09.06.01.47.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 01:47:31 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: meson: sm1: set gpio interrupt controller compatible
+In-Reply-To: <7hpnkeqxxy.fsf@baylibre.com>
+References: <20190902160334.14321-1-jbrunet@baylibre.com> <7hpnkeqxxy.fsf@baylibre.com>
+Date:   Fri, 06 Sep 2019 10:47:30 +0200
+Message-ID: <1jmufh3j6l.fsf@starbuckisacylon.baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change all exported symbols for managed GPIO functions from
-EXPORT_SYMBOL() to EXPORT_SYMBOL_GPL(), like is used for their
-non-managed counterparts.
+On Thu 05 Sep 2019 at 13:40, Kevin Hilman <khilman@baylibre.com> wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-The only exception was gpiod_get_from_of_node(), as everything in
-drivers/gpio/gpiolib-of.c used EXPORT_SYMBOL(), until the previous
-patch.
----
- drivers/gpio/gpiolib-devres.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+> Jerome Brunet <jbrunet@baylibre.com> writes:
+>
+>> Set the appropriate gpio interrupt controller compatible for the
+>> sm1 SoC family. This newer version of the controller can now
+>> trig irq on both edge of the input signal
+>>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>
+> Queued.
+>
+> I may do a late round for the dev cycle of v5.4, otherwise this will go
+> for v5.5.
 
-diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-index 0acc2cc6e868fdef..98e3c20d9730e66a 100644
---- a/drivers/gpio/gpiolib-devres.c
-+++ b/drivers/gpio/gpiolib-devres.c
-@@ -59,7 +59,7 @@ struct gpio_desc *__must_check devm_gpiod_get(struct device *dev,
- {
- 	return devm_gpiod_get_index(dev, con_id, 0, flags);
- }
--EXPORT_SYMBOL(devm_gpiod_get);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get);
- 
- /**
-  * devm_gpiod_get_optional - Resource-managed gpiod_get_optional()
-@@ -77,7 +77,7 @@ struct gpio_desc *__must_check devm_gpiod_get_optional(struct device *dev,
- {
- 	return devm_gpiod_get_index_optional(dev, con_id, 0, flags);
- }
--EXPORT_SYMBOL(devm_gpiod_get_optional);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_optional);
- 
- /**
-  * devm_gpiod_get_index - Resource-managed gpiod_get_index()
-@@ -127,7 +127,7 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_gpiod_get_index);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_index);
- 
- /**
-  * devm_gpiod_get_from_of_node() - obtain a GPIO from an OF node
-@@ -182,7 +182,7 @@ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_gpiod_get_from_of_node);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_from_of_node);
- 
- /**
-  * devm_fwnode_get_index_gpiod_from_child - get a GPIO descriptor from a
-@@ -239,7 +239,7 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_fwnode_get_index_gpiod_from_child);
-+EXPORT_SYMBOL_GPL(devm_fwnode_get_index_gpiod_from_child);
- 
- /**
-  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
-@@ -268,7 +268,7 @@ struct gpio_desc *__must_check devm_gpiod_get_index_optional(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_gpiod_get_index_optional);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_index_optional);
- 
- /**
-  * devm_gpiod_get_array - Resource-managed gpiod_get_array()
-@@ -303,7 +303,7 @@ struct gpio_descs *__must_check devm_gpiod_get_array(struct device *dev,
- 
- 	return descs;
- }
--EXPORT_SYMBOL(devm_gpiod_get_array);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_array);
- 
- /**
-  * devm_gpiod_get_array_optional - Resource-managed gpiod_get_array_optional()
-@@ -328,7 +328,7 @@ devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
- 
- 	return descs;
- }
--EXPORT_SYMBOL(devm_gpiod_get_array_optional);
-+EXPORT_SYMBOL_GPL(devm_gpiod_get_array_optional);
- 
- /**
-  * devm_gpiod_put - Resource-managed gpiod_put()
-@@ -344,7 +344,7 @@ void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
- 	WARN_ON(devres_release(dev, devm_gpiod_release, devm_gpiod_match,
- 		&desc));
- }
--EXPORT_SYMBOL(devm_gpiod_put);
-+EXPORT_SYMBOL_GPL(devm_gpiod_put);
- 
- /**
-  * devm_gpiod_unhinge - Remove resource management from a gpio descriptor
-@@ -374,7 +374,7 @@ void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc)
- 	/* Anything else we should warn about */
- 	WARN_ON(ret);
- }
--EXPORT_SYMBOL(devm_gpiod_unhinge);
-+EXPORT_SYMBOL_GPL(devm_gpiod_unhinge);
- 
- /**
-  * devm_gpiod_put_array - Resource-managed gpiod_put_array()
-@@ -390,7 +390,7 @@ void devm_gpiod_put_array(struct device *dev, struct gpio_descs *descs)
- 	WARN_ON(devres_release(dev, devm_gpiod_release_array,
- 			       devm_gpiod_match_array, &descs));
- }
--EXPORT_SYMBOL(devm_gpiod_put_array);
-+EXPORT_SYMBOL_GPL(devm_gpiod_put_array);
- 
- 
- 
-@@ -444,7 +444,7 @@ int devm_gpio_request(struct device *dev, unsigned gpio, const char *label)
- 
- 	return 0;
- }
--EXPORT_SYMBOL(devm_gpio_request);
-+EXPORT_SYMBOL_GPL(devm_gpio_request);
- 
- /**
-  *	devm_gpio_request_one - request a single GPIO with initial setup
-@@ -474,7 +474,7 @@ int devm_gpio_request_one(struct device *dev, unsigned gpio,
- 
- 	return 0;
- }
--EXPORT_SYMBOL(devm_gpio_request_one);
-+EXPORT_SYMBOL_GPL(devm_gpio_request_one);
- 
- /**
-  *      devm_gpio_free - free a GPIO
-@@ -492,4 +492,4 @@ void devm_gpio_free(struct device *dev, unsigned int gpio)
- 	WARN_ON(devres_release(dev, devm_gpio_release, devm_gpio_match,
- 		&gpio));
- }
--EXPORT_SYMBOL(devm_gpio_free);
-+EXPORT_SYMBOL_GPL(devm_gpio_free);
--- 
-2.17.1
+No problem
 
+> If it goes for v5.5, it should probably have a Fixes tag, no?
+
+Maybe, but then every change to meson-sm1.dtsi would be some kind of fix
+on what is provided by meson-g12-common.dtsi.
+
+Not sure this really qualify as a fix but I'll do as you prefer, just
+let me know
+
+
+>
+> Kevin
+>
+>> ---
+>>  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+>> index 521573f3a5ba..6152e928aef2 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+>> @@ -134,6 +134,11 @@
+>>  	power-domains = <&pwrc PWRC_SM1_ETH_ID>;
+>>  };
+>>  
+>> +&gpio_intc {
+>> +	compatible = "amlogic,meson-sm1-gpio-intc",
+>> +		     "amlogic,meson-gpio-intc";
+>> +};
+>> +
+>>  &pwrc {
+>>  	compatible = "amlogic,meson-sm1-pwrc";
+>>  };
+>> -- 
+>> 2.21.0
