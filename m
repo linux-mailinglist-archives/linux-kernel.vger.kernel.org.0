@@ -2,91 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FE2EAB811
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:22:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB38AB816
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392302AbfIFMWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 08:22:47 -0400
-Received: from smtprelay0064.hostedemail.com ([216.40.44.64]:54045 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728509AbfIFMWq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 08:22:46 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 06CFD182CED5B;
-        Fri,  6 Sep 2019 12:22:45 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,
-X-HE-Tag: blow41_51b7c3cbb5603
-X-Filterd-Recvd-Size: 2838
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  6 Sep 2019 12:22:41 +0000 (UTC)
-Message-ID: <f7a18164a366a53f0234664f234c66fefdc3bc64.camel@perches.com>
-Subject: Re: [PATCH 0/6] Address issues with SPDX requirements and PEP-263
-From:   Joe Perches <joe@perches.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Sven Eckelmann <sven@narfation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Doug Smythies <doug.smythies@gmail.com>,
-        =?ISO-8859-1?Q?Aur=E9lien?= Cedeyn <aurelien.cedeyn@gmail.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-doc@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Armijn Hemel <armijn@tjaldur.nl>, Jiri Olsa <jolsa@redhat.com>,
-        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Allison Randal <allison@lohutok.net>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Date:   Fri, 06 Sep 2019 05:22:40 -0700
-In-Reply-To: <20190906090228.1971ede9@coco.lan>
-References: <cover.1567712829.git.mchehab+samsung@kernel.org>
-         <20daa66d58e01f33a248b8703aa8e37933ef4154.camel@perches.com>
-         <20190906090228.1971ede9@coco.lan>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S2403972AbfIFMX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 08:23:59 -0400
+Received: from gate.crashing.org ([63.228.1.57]:51751 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731928AbfIFMX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 08:23:58 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x86CNoUZ027069;
+        Fri, 6 Sep 2019 07:23:50 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x86CNnID027066;
+        Fri, 6 Sep 2019 07:23:49 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Fri, 6 Sep 2019 07:23:49 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "gcc-patches@gcc.gnu.org" <gcc-patches@gcc.gnu.org>
+Subject: Re: [PATCH v2 4/6] compiler-gcc.h: add asm_inline definition
+Message-ID: <20190906122349.GZ9749@gate.crashing.org>
+References: <20190829083233.24162-1-linux@rasmusvillemoes.dk> <20190830231527.22304-1-linux@rasmusvillemoes.dk> <20190830231527.22304-5-linux@rasmusvillemoes.dk> <CAKwvOdktYpMH8WnEQwNE2JJdKn4w0CHv3L=YHkqU2JzQ6Qwkew@mail.gmail.com> <a5085133-33da-6c13-6953-d18cbc6ad3f5@rasmusvillemoes.dk> <20190905134535.GP9749@gate.crashing.org> <CANiq72nXXBgwKcs36R+uau2o1YypfSFKAYWV2xmcRZgz8LRQww@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiq72nXXBgwKcs36R+uau2o1YypfSFKAYWV2xmcRZgz8LRQww@mail.gmail.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-09-06 at 09:02 -0300, Mauro Carvalho Chehab wrote:
-> Em Thu, 05 Sep 2019 13:05:08 -0700
-> Joe Perches <joe@perches.com> escreveu:
+On Thu, Sep 05, 2019 at 05:52:44PM +0200, Miguel Ojeda wrote:
+> On Thu, Sep 5, 2019 at 3:45 PM Segher Boessenkool
+> <segher@kernel.crashing.org> wrote:
+> >
+> > [ That's not what a feature test macro is; a feature test macro allows the
+> >   user to select some optional behaviour.  Things like _GNU_SOURCE.  ]
 > 
-> > On Thu, 2019-09-05 at 16:57 -0300, Mauro Carvalho Chehab wrote:
-> > > The  description at Documentation/process/license-rules.rst is very strict
-> > > with regards to the position where the SPDX tags should be.  
-> > []
-> > > PS.: I sent already a RFC version for those patches along with this
-> > > thread:
-> > > 
-> > >     https://lore.kernel.org/lkml/b32c2e46b91e7bcda2a9bd140673f06d71b2487a.camel@perches.com/  
-> > 
-> > Nice, thanks.
-> > 
-> > Now I guess I have to update checkpatch too.
-> > (unless you want to... ;)
-> 
-> Yeah, it makes sense to update checkpatch too. Perhaps it could be
-> changed to use the "-s" flag on the check, instead of implementing
-> its own logic to handle the position.
+> Yes and no. GNU libc defines feature test macros like you say, but
+> C++'s feature macros are like Rasmus/Nick are saying. I think libc's
 
-I think checkpatch needs its own logic as its
-source input is a patch file.
+I can't find anything with "feature" and "macros" in the C++ standard,
+it's "predefined macros" there I guess?  In C, it is also "predefined
+macros" in general, and there is "conditional feature macros".
+
+> definition is weird, I would call those "feature selection macros"
+> instead, because the user is selecting between some features (whether
+> to enable or not, for instance), rather than testing for the features.
+
+Sure.  But the name is traditional, many decades old, it predates glibc.
+Using an established name to mean pretty much the opposite of what it
+normally does is a bit confusing, never mind if that usage makes much
+sense ;-)
 
 
+Segher
