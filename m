@@ -2,89 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C42D1ABEAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D34ABABEB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:24:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404182AbfIFRYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 13:24:08 -0400
-Received: from muru.com ([72.249.23.125]:60044 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729928AbfIFRYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:24:08 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 560A580CC;
-        Fri,  6 Sep 2019 17:24:36 +0000 (UTC)
-Date:   Fri, 6 Sep 2019 10:24:03 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        =?utf-8?B?QW5kcsOp?= Roth <neolynx@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
-Subject: Re: [RFC v2 3/3] ARM: dts: omap3: bulk convert compatible to be
- explicitly ti,omap3430 or ti,omap36xx
-Message-ID: <20190906172403.GG52127@atomide.com>
-References: <cover.1567587220.git.hns@goldelico.com>
- <a2b56edcada7b9000a6e906387a02c0ee42681db.1567587220.git.hns@goldelico.com>
- <20190905142734.GV52127@atomide.com>
- <4BC39938-D63E-4BDC-BA28-5132F77F602D@goldelico.com>
- <20190906154732.GC52127@atomide.com>
- <8C8644AC-FA12-4D26-B96A-76B78798612A@goldelico.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8C8644AC-FA12-4D26-B96A-76B78798612A@goldelico.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S2406082AbfIFRYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 13:24:36 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:56654 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404294AbfIFRYa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 13:24:30 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1004)
+        id 974CE20B7186; Fri,  6 Sep 2019 10:24:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 974CE20B7186
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+        s=default; t=1567790669;
+        bh=FKTihZNngFvRRCwA/80i7qZ10cRQB8xfMfzWyjeanNQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Wj15W/uwgnIhIASmA0wYAVO28Gnt9Tj19L+q3dSbVXvz//EWt5esXzNDpFaJLrfSK
+         vGigB9zgYDJpgNH+GTRpJsVtVsPOxNmywCk7y/GW8ksD5js3fvWncIu4B0ceRuN6Jo
+         avtqN2sIdN7k1e/eMfucZsQMmSg4gtKaBZXt9Z9s=
+From:   longli@linuxonhyperv.com
+To:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-hyperv@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Long Li <longli@microsoft.com>
+Subject: [Patch v4] storvsc: setup 1:1 mapping between hardware queue and CPU queue
+Date:   Fri,  6 Sep 2019 10:24:20 -0700
+Message-Id: <1567790660-48142-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* H. Nikolaus Schaller <hns@goldelico.com> [190906 17:09]:
-> for i in 3430 34xx 3630 36xx; do echo $i $(fgrep '"'ti,omap$i'"' arch/arm/boot/dts/*.dts* | wc -l); done
-> 
-> 3430 12
-> 34xx 28
-> 3630 3
-> 36xx 23
-> 
-> which would indicate that 34xx and 36xx are more common.
+From: Long Li <longli@microsoft.com>
 
-Right, but the xx variants are against the device tree naming and
-that's why we should get rid of them in the dts. The compatible
-should be named after the first instance like "ti,omap3430" and
-similar devices can just use that.
+storvsc doesn't use a dedicated hardware queue for a given CPU queue. When
+issuing I/O, it selects returning CPU (hardware queue) dynamically based on
+vmbus channel usage across all channels.
 
-> BTW there is also some code that does special SoC detection based on
-> soc_device_match(), mainly in omapdrm/dss.
-> 
-> If we were to use this mechanism in the ti-cpufreq driver we could
-> match it to ti,omap3 and could avoid all these changes.
-> 
-> But make it less maintainable and code more complex.
+This patch advertises num_present_cpus() as number of hardware queues. This
+will have upper layer setup 1:1 mapping between hardware queue and CPU queue
+and avoid unnecessary locking when issuing I/O.
 
-Hmm right, yeah using soc_device_match() would remove this issue.
-It might be worth doing as these SoC variants do not change
-much and the code should not need updating. Up to you to
-decide.
+Signed-off-by: Long Li <longli@microsoft.com>
+---
 
-> I'll also take a look at omap.txt bindings since that likely needs
-> an update as well to better describe what the official ones are
-> and which are legacy.
+Changes:
+v2: rely on default upper layer function to map queues. (suggested by Ming Lei
+<tom.leiming@gmail.com>)
+v3: use num_present_cpus() instead of num_online_cpus(). Hyper-v doesn't
+support hot-add CPUs. (suggested by Michael Kelley <mikelley@microsoft.com>)
+v4: move change logs to after Signed-of-by
 
-OK. Just limit the compatible changes to the ones that
-need to be modified for this series, the rest can be
-done with a separate patches.
+ drivers/scsi/storvsc_drv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Regards,
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index b89269120a2d..cf987712041a 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -1836,8 +1836,7 @@ static int storvsc_probe(struct hv_device *device,
+ 	/*
+ 	 * Set the number of HW queues we are supporting.
+ 	 */
+-	if (stor_device->num_sc != 0)
+-		host->nr_hw_queues = stor_device->num_sc + 1;
++	host->nr_hw_queues = num_present_cpus();
+ 
+ 	/*
+ 	 * Set the error handler work queue.
+-- 
+2.17.1
 
-Tony
