@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E717AB895
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBEA7AB890
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404951AbfIFM61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 08:58:27 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7138 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404920AbfIFM6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404939AbfIFM6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 6 Sep 2019 08:58:17 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7133 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404902AbfIFM6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 08:58:14 -0400
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E81A1300CF5314035A46;
+        by Forcepoint Email with ESMTP id D2D1013A5BD820EA3CEE;
         Fri,  6 Sep 2019 20:58:10 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 6 Sep 2019 20:58:02 +0800
+ 14.3.439.0; Fri, 6 Sep 2019 20:58:03 +0800
 From:   John Garry <john.garry@huawei.com>
 To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>,
         Xiang Chen <chenxiang66@hisilicon.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 06/13] scsi: hisi_sas: Update all the registers after suspend and resume
-Date:   Fri, 6 Sep 2019 20:55:30 +0800
-Message-ID: <1567774537-20003-7-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 07/13] scsi: hisi_sas: Assign NCQ tag for all NCQ commands
+Date:   Fri, 6 Sep 2019 20:55:31 +0800
+Message-ID: <1567774537-20003-8-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
 References: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
@@ -40,45 +40,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xiang Chen <chenxiang66@hisilicon.com>
 
-After suspend and resume, the HW registers will be set back to their
-initial value. We use init_reg_v3_hw() to set some registers, but some
-registers are set via firmware in ACPI "_RST" method, so add reset
-handler before init_reg_v3_hw().
+Currently the NCQ tag is only assigned for FPDMA READ and FPDMA WRITE
+commands, and for other NCQ commands (such as FPDMA SEND), their NCQ
+tags are set in the delivery command to 0.
+
+So for all the NCQ commands, we also need to assign normal NCQ tag for
+them, so drop the command type check in hisi_sas_get_ncq_tag() [drop
+hisi_sas_get_ncq_tag() altogether actually], and always use the ATA
+command NCQ tag when appropriate.
 
 Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas.h       |  1 -
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 15 ---------------
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |  5 ++++-
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |  5 ++++-
+ 4 files changed, 8 insertions(+), 18 deletions(-)
 
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index fd998d07ffcd..a72d06d973ff 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -559,7 +559,6 @@ extern u8 hisi_sas_get_ata_protocol(struct host_to_dev_fis *fis,
+ extern struct hisi_sas_port *to_hisi_sas_port(struct asd_sas_port *sas_port);
+ extern void hisi_sas_sata_done(struct sas_task *task,
+ 			    struct hisi_sas_slot *slot);
+-extern int hisi_sas_get_ncq_tag(struct sas_task *task, u32 *tag);
+ extern int hisi_sas_get_fw_info(struct hisi_hba *hisi_hba);
+ extern int hisi_sas_probe(struct platform_device *pdev,
+ 			  const struct hisi_sas_hw *ops);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 4c279a285c20..efd0ddf24e99 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -118,21 +118,6 @@ void hisi_sas_sata_done(struct sas_task *task,
+ }
+ EXPORT_SYMBOL_GPL(hisi_sas_sata_done);
+ 
+-int hisi_sas_get_ncq_tag(struct sas_task *task, u32 *tag)
+-{
+-	struct ata_queued_cmd *qc = task->uldd_task;
+-
+-	if (qc) {
+-		if (qc->tf.command == ATA_CMD_FPDMA_WRITE ||
+-			qc->tf.command == ATA_CMD_FPDMA_READ) {
+-			*tag = qc->tag;
+-			return 1;
+-		}
+-	}
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(hisi_sas_get_ncq_tag);
+-
+ /*
+  * This function assumes linkrate mask fits in 8 bits, which it
+  * does for all HW versions supported.
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index fba4fcad4735..9d316f28c74c 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -2534,7 +2534,10 @@ static void prep_ata_v2_hw(struct hisi_hba *hisi_hba,
+ 	hdr->dw1 = cpu_to_le32(dw1);
+ 
+ 	/* dw2 */
+-	if (task->ata_task.use_ncq && hisi_sas_get_ncq_tag(task, &hdr_tag)) {
++	if (task->ata_task.use_ncq) {
++		struct ata_queued_cmd *qc = task->uldd_task;
++
++		hdr_tag = qc->tag;
+ 		task->ata_task.fis.sector_count |= (u8) (hdr_tag << 3);
+ 		dw2 |= hdr_tag << CMD_HDR_NCQ_TAG_OFF;
+ 	}
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 2adb5c93bd81..4c32088b9199 100644
+index 4c32088b9199..cd901213a59b 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -3283,15 +3283,21 @@ static int hisi_sas_v3_resume(struct pci_dev *pdev)
- 	pci_enable_wake(pdev, PCI_D0, 0);
- 	pci_restore_state(pdev);
- 	rc = pci_enable_device(pdev);
--	if (rc)
-+	if (rc) {
- 		dev_err(dev, "enable device failed during resume (%d)\n", rc);
-+		return rc;
-+	}
+@@ -1356,7 +1356,10 @@ static void prep_ata_v3_hw(struct hisi_hba *hisi_hba,
+ 	hdr->dw1 = cpu_to_le32(dw1);
  
- 	pci_set_master(pdev);
- 	scsi_unblock_requests(shost);
- 	clear_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags);
- 
- 	sas_prep_resume_ha(sha);
--	init_reg_v3_hw(hisi_hba);
-+	rc = hw_init_v3_hw(hisi_hba);
-+	if (rc) {
-+		scsi_remove_host(shost);
-+		pci_disable_device(pdev);
-+	}
- 	hisi_hba->hw->phys_init(hisi_hba);
- 	sas_resume_ha(sha);
- 	clear_bit(HISI_SAS_RESET_BIT, &hisi_hba->flags);
+ 	/* dw2 */
+-	if (task->ata_task.use_ncq && hisi_sas_get_ncq_tag(task, &hdr_tag)) {
++	if (task->ata_task.use_ncq) {
++		struct ata_queued_cmd *qc = task->uldd_task;
++
++		hdr_tag = qc->tag;
+ 		task->ata_task.fis.sector_count |= (u8) (hdr_tag << 3);
+ 		dw2 |= hdr_tag << CMD_HDR_NCQ_TAG_OFF;
+ 	}
 -- 
 2.17.1
 
