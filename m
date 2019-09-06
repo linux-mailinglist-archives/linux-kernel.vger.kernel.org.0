@@ -2,87 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C5CEAB65C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77A08AB662
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390682AbfIFKuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 06:50:10 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52746 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731717AbfIFKuJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 06:50:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=d9eCsVlOV0qwfpo9c1jVQsAQiCp5Qrb/vwvQlXE2I0k=; b=oK6KBT4OdGd26VgBA2+t1oj5P
-        ZFyVJGP0t1PlQxinX44Idet+6CmIzNMrl8IeDbIo7+hvBbRxq3UQCuIHF2yBo+uYiRWfPG4nrX2QB
-        5QcKF1W2VZLBYtyma9rY9P1IexmPyczHnayaG8bUFtrJWgK01kMwUwCaURCIX27RF9yGc05P+XFbw
-        LK9RwdhfYbCxntWy08cxn9ubnTtP+gnNms/Ic01jE/VxQvMFfg5qUFIbFUCCUgQR1Oyt9QlEVfoGw
-        EYhfCGnoux81FR0kY7UadcdJRfCmUi/aZpxYRccn3L3RSFeleCMLzxRpUlfHjnDJVJ9Z/XSlUjUQM
-        HYfIWchkQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i6BoM-0006RL-Ca; Fri, 06 Sep 2019 10:49:50 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 03CAF3011DF;
-        Fri,  6 Sep 2019 12:49:10 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 599DC29E2D2F9; Fri,  6 Sep 2019 12:49:48 +0200 (CEST)
-Date:   Fri, 6 Sep 2019 12:49:48 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 0/9] printk: new ringbuffer implementation
-Message-ID: <20190906104948.GX2349@hirez.programming.kicks-ass.net>
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
- <20190904123531.GA2369@hirez.programming.kicks-ass.net>
- <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
- <20190905143118.GP2349@hirez.programming.kicks-ass.net>
- <20190906090627.GX2386@hirez.programming.kicks-ass.net>
- <20190906100943.GB10876@jagdpanzerIV>
+        id S2390931AbfIFKvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 06:51:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725946AbfIFKvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 06:51:15 -0400
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D51F7214E0;
+        Fri,  6 Sep 2019 10:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567767075;
+        bh=F40/vyERzL2PLT+u7CNuLPRmvSEYRMi6jl/F1YioOow=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XC7BjD4hpWNrKK1pOpCRX02SjWQJCOK5gbUvFoli/8DoHFwcrigpVQp1QjIv24WpF
+         3hJfKMDgOn65XmIZDcVCGO/8Sr3r8YzUkIFTLavQgHRoyJu9StYgFHDfQQAjBcVc19
+         ARQKYejAHq4EGjxZetUnrB+vwDkoilM7UE3eDMcE=
+Received: by mail-lj1-f173.google.com with SMTP id x18so5611106ljh.1;
+        Fri, 06 Sep 2019 03:51:14 -0700 (PDT)
+X-Gm-Message-State: APjAAAUh3hVUqSUtvNoPL9Hvk3wMzH3mgRGf+L8EaQysZkHZ9arQVoot
+        jxTyhOuiAabRMC2SAg8vm0gG6SQ1YA731I0QBIk=
+X-Google-Smtp-Source: APXvYqwz+PkOkcsh+hE8+0p+GyRXl5rEBYk6E+6at+bWRa6Bvz54E4CXhRKX/zpdsB3GgFZGBaVFW3t88k1Ohu8cSYo=
+X-Received: by 2002:a2e:8785:: with SMTP id n5mr1760238lji.210.1567767072972;
+ Fri, 06 Sep 2019 03:51:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906100943.GB10876@jagdpanzerIV>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CGME20190906101405eucas1p2e3da7b461810a3a520e76c636a06e486@eucas1p2.samsung.com>
+ <20190906101344.3535-1-l.luba@partner.samsung.com> <20190906101344.3535-2-l.luba@partner.samsung.com>
+In-Reply-To: <20190906101344.3535-2-l.luba@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 6 Sep 2019 12:51:01 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdLhrvqR==k4a9w9cmdnwGRYaTXC1ya+vOeVaGpML0zcQ@mail.gmail.com>
+Message-ID: <CAJKOXPdLhrvqR==k4a9w9cmdnwGRYaTXC1ya+vOeVaGpML0zcQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] memory: Exynos5422: minor fixes in DMC
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        kyungmin.park@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        willy.mh.wolff.ml@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 07:09:43PM +0900, Sergey Senozhatsky wrote:
+On Fri, 6 Sep 2019 at 12:14, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>
+> Small fixes captured by static analyzes.
 
+Explain please what are the errors being fixed. Additionally error
+message from tool might be useful.
+
+Also:
+Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
+
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
-> diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
-> index 139c310049b1..9c73eb6259ce 100644
-> --- a/kernel/printk/printk_safe.c
-> +++ b/kernel/printk/printk_safe.c
-> @@ -103,7 +103,10 @@ static __printf(2, 0) int printk_safe_log_store(struct printk_safe_seq_buf *s,
->         if (atomic_cmpxchg(&s->len, len, len + add) != len)
->                 goto again;
->  
-> -       queue_flush_work(s);
-> +       if (early_console)
-> +               early_console->write(early_console, s->buffer + len, add);
-> +       else
-> +               queue_flush_work(s);
->         return add;
->  }
-
-You've not been following along, that generates absolutely unreadable
-garbage.
+>  drivers/memory/samsung/exynos5422-dmc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+> index 8c2ec29a7d57..a809fa997c03 100644
+> --- a/drivers/memory/samsung/exynos5422-dmc.c
+> +++ b/drivers/memory/samsung/exynos5422-dmc.c
+> @@ -269,7 +269,7 @@ static int exynos5_init_freq_table(struct exynos5_dmc *dmc,
+>         return 0;
+>
+>  err_free_tables:
+> -       kfree(dmc->opp);
+> +       devm_kfree(dmc->dev, dmc->opp);
+>  err_opp:
+>         dev_pm_opp_of_remove_table(dmc->dev);
+>
+> @@ -732,7 +732,7 @@ static struct devfreq_dev_profile exynos5_dmc_df_profile = {
+>   * statistics engine which supports only registered values. Thus, some alignment
+>   * must be made.
+>   */
+> -unsigned long
+> +static unsigned long
+>  exynos5_dmc_align_init_freq(struct exynos5_dmc *dmc,
+>                             unsigned long bootloader_init_freq)
+>  {
+> --
+> 2.17.1
+>
