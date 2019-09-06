@@ -2,139 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F528ABEAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64533ABEB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406070AbfIFRYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 13:24:30 -0400
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:54986 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729928AbfIFRY3 (ORCPT
+        id S2405843AbfIFR0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 13:26:46 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40924 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731974AbfIFR0p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:24:29 -0400
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 96E93D0007D;
-        Fri,  6 Sep 2019 19:24:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1567790667;
-        bh=KJUuECIANqpK6TruuSChflkPQxJqxFhMngqPuIjpheg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=sbpxnjcUU1rtFVaIRuPkdkOxATfyY/Uuz9hBbitRqUg2lVqhrqGbOJpx02hf+klvN
-         lipJTmGLxWXJjfdA9E+9OX5GuyYNFdgOFtw8HQtPxFJWbgCcS8OnqQWYreCRK7Ex4l
-         y8S5jKXHQ2fxJr/QfhDuHJTiBRubESRjpTOhRkr9MQY9npRBSgO2UTTVKkbHbi+DYn
-         k+anbqV9S//kmngzANIoe2fnFS4Bz9LaLeRvsQWZcLIFChC+1BVQ41w4dvDME/hJUI
-         /PgjsbUDqxTgb3bAG7/Psis5hSOMHi4lDb3Un2k/tvw6xVbk5TTDcBxsJwb39kegw0
-         iqZZAYov54cpA==
-Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>
-CC:     Florian Weimer <fweimer@redhat.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20190906152455.22757-1-mic@digikod.net>
- <20190906152455.22757-2-mic@digikod.net>
- <87ef0te7v3.fsf@oldenburg2.str.redhat.com>
- <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>
- <20190906170739.kk3opr2phidb7ilb@yavin.dot.cyphar.com>
- <20190906172050.v44f43psd6qc6awi@wittgenstein>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <062c25e2-1996-c32c-46a1-aa831d69930f@ssi.gouv.fr>
-Date:   Fri, 6 Sep 2019 19:24:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Fri, 6 Sep 2019 13:26:45 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x127so4938030pfb.7
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 10:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tjTFPsf2DNxsjE2a8i9G461OudiUTTXZgFUmeTRYsOE=;
+        b=g+kiLp3az9CyjTc6pxcyGvJcUmtfHu6/Pb78/cJdv6XEo9ckaguTCF/9/EagFdvnCo
+         jPUDiZuxJze1xG/wj0Xrk0SxtxbYayWzf2xgBvWqusIPD8xk2NMphiwZmc1tkOkghM4r
+         JgbY4nksDcpfoiJWmk9B7Sx0dn15waEhL5iHg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tjTFPsf2DNxsjE2a8i9G461OudiUTTXZgFUmeTRYsOE=;
+        b=tmDaERgN67W+5IS300rc1uWJR7KrlIkEjIESqZxxpRv8Fnl63dxEDNWNx2Et0S3yyO
+         uV6ToNZe7/cEqls/fZLXnUVc2DxfZAdxmh/eJR0LhUI0pLXIax7eNeT2uq3poVKQ+LxU
+         gy+gqZFlOghA0lk9M2aPFVy8PqNbOeGObTlS3GQre+cijH+jdgoffWOCwbdto+Cxv/zx
+         3MKRl7IwejfmdoXkiqL6HAf3fXijpqYwRMdntFhFzgKu4pkpPACl6ExXqf0njd7ZYAFE
+         a0I8OwBsPb7hKDhteLimJL8JQN3Pt1o+5+RODz1qbnJUnvw07+R8H4VnI/B7YQ5UkM+b
+         uGIQ==
+X-Gm-Message-State: APjAAAU3UjO9bZg7xnDJVblqttpLB3kkJ8qVoG/B4Ui6cg4+Z96cFS5p
+        Z4xi1q7LbGChxckmOp9Aqxt/Ag==
+X-Google-Smtp-Source: APXvYqxUjh8vYhfUkzzHghKc6iGyrAQB8idr1czO4uE7him1Zaxi0rWcC03ts8w3NLYgI4Sk7bXGFQ==
+X-Received: by 2002:a62:52d0:: with SMTP id g199mr12269924pfb.120.1567790804635;
+        Fri, 06 Sep 2019 10:26:44 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id a12sm4974891pgv.48.2019.09.06.10.26.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 10:26:43 -0700 (PDT)
+Date:   Fri, 6 Sep 2019 13:26:42 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Petr Mladek <pmladek@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: Re: [PATCH -rcu dev 1/2] Revert b8c17e6664c4 ("rcu: Maintain special
+ bits at bottom of ->dynticks counter")
+Message-ID: <20190906172642.GB40876@google.com>
+References: <20190904135420.GB240514@google.com>
+ <20190904231308.GB4125@linux.ibm.com>
+ <20190905153620.GG26466@google.com>
+ <20190905164329.GT4125@linux.ibm.com>
+ <20190906000137.GA224720@google.com>
+ <20190906150806.GA11355@google.com>
+ <20190906152144.GF4051@linux.ibm.com>
+ <20190906152753.GA18734@linux.ibm.com>
+ <20190906165751.GA40876@google.com>
+ <20190906171646.GI4051@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190906172050.v44f43psd6qc6awi@wittgenstein>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906171646.GI4051@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 06, 2019 at 10:16:47AM -0700, Paul E. McKenney wrote:
+> On Fri, Sep 06, 2019 at 12:57:51PM -0400, Joel Fernandes wrote:
+> > On Fri, Sep 06, 2019 at 08:27:53AM -0700, Paul E. McKenney wrote:
+> > > On Fri, Sep 06, 2019 at 08:21:44AM -0700, Paul E. McKenney wrote:
+> > > > On Fri, Sep 06, 2019 at 11:08:06AM -0400, Joel Fernandes wrote:
+> > > > > On Thu, Sep 05, 2019 at 08:01:37PM -0400, Joel Fernandes wrote:
+> > > > > [snip] 
+> > > > > > > > > @@ -3004,7 +3007,7 @@ static int rcu_pending(void)
+> > > > > > > > >  		return 0;
+> > > > > > > > >  
+> > > > > > > > >  	/* Is the RCU core waiting for a quiescent state from this CPU? */
+> > > > > > > > > -	if (rdp->core_needs_qs && !rdp->cpu_no_qs.b.norm)
+> > > > > > > > > +	if (READ_ONCE(rdp->core_needs_qs) && !rdp->cpu_no_qs.b.norm)
+> > > > > > > > >  		return 1;
+> > > > > > > > >  
+> > > > > > > > >  	/* Does this CPU have callbacks ready to invoke? */
+> > > > > > > > > @@ -3244,7 +3247,6 @@ int rcutree_prepare_cpu(unsigned int cpu)
+> > > > > > > > >  	rdp->gp_seq = rnp->gp_seq;
+> > > > > > > > >  	rdp->gp_seq_needed = rnp->gp_seq;
+> > > > > > > > >  	rdp->cpu_no_qs.b.norm = true;
+> > > > > > > > > -	rdp->core_needs_qs = false;
+> > > > > > > > 
+> > > > > > > > How about calling the new hint-clearing function here as well? Just for
+> > > > > > > > robustness and consistency purposes?
+> > > > > > > 
+> > > > > > > This and the next function are both called during a CPU-hotplug online
+> > > > > > > operation, so there is little robustness or consistency to be had by
+> > > > > > > doing it twice.
+> > > > > > 
+> > > > > > Ok, sorry I missed you are clearing it below in the next function. That's
+> > > > > > fine with me.
+> > > > > > 
+> > > > > > This patch looks good to me and I am Ok with merging of these changes into
+> > > > > > the original patch with my authorship as you mentioned. Or if you wanted to
+> > > > > > be author, that's fine too :)
+> > > > > 
+> > > > > Paul, does it make sense to clear these urgency hints in rcu_qs() as well?
+> > > > > After all, we are clearing atleast one urgency hint there: the
+> > > > > rcu_read_unlock_special::need_qs bit.
+> > 
+> > Makes sense.
+> > 
+> > > > We certainly don't want to turn off the scheduling-clock interrupt until
+> > > > after the quiescent state has been reported to the RCU core.  And it might
+> > > > still be useful to have a heavy quiescent state because the grace-period
+> > > > kthread can detect that.  Just in case the CPU that just called rcu_qs()
+> > > > is slow about actually reporting that quiescent state to the RCU core.
+> > > 
+> > > Hmmm...  Should ->need_qs ever be cleared from FQS to begin with?
+> > 
+> > I did not see the FQS loop clearing ->need_qs in the rcu_read_unlock_special
+> > union after looking for a few minutes. Could you clarify which path this?
+> > 
+> > Or do you mean ->core_needs_qs? If so, I feel the FQS loop should clear it as
+> > I think your patch does, since the FQS loop is essentially doing heavy-weight
+> > RCU core processing right?
+> > 
+> > Also, where does FQS loop clear rdp.cpu_no_qs? Shouldn't it clear that as
+> > well for the dyntick-idle CPUs?
+> 
+> Synchronization?
 
-On 06/09/2019 19:20, Christian Brauner wrote:
-> On Sat, Sep 07, 2019 at 03:07:39AM +1000, Aleksa Sarai wrote:
->> On 2019-09-06, Micka=C3=ABl Sala=C3=BCn <mickael.salaun@ssi.gouv.fr> wro=
-te:
->>>
->>> On 06/09/2019 17:56, Florian Weimer wrote:
->>>> Let's assume I want to add support for this to the glibc dynamic loade=
-r,
->>>> while still being able to run on older kernels.
->>>>
->>>> Is it safe to try the open call first, with O_MAYEXEC, and if that fai=
-ls
->>>> with EINVAL, try again without O_MAYEXEC?
->>>
->>> The kernel ignore unknown open(2) flags, so yes, it is safe even for
->>> older kernel to use O_MAYEXEC.
->>
->> Depends on your definition of "safe" -- a security feature that you will
->> silently not enable on older kernels doesn't sound super safe to me.
->> Unfortunately this is a limitation of open(2) that we cannot change --
->> which is why the openat2(2) proposal I've been posting gives -EINVAL for
->> unknown O_* flags.
->>
->> There is a way to probe for support (though unpleasant), by creating a
->> test O_MAYEXEC fd and then checking if the flag is present in
->> /proc/self/fdinfo/$n.
->
-> Which Florian said they can't do for various reasons.
->
-> It is a major painpoint if there's no easy way for userspace to probe
-> for support. Especially if it's security related which usually means
-> that you want to know whether this feature works or not.
+Didn't follow. Probably I am asking silly questions. There's too many hints
+so it is confusing. I will trace this out later and study it more.
 
-I used "safe" deliberately (not "secure" which didn't make sense in this
-sentence). According to the threat model, if the kernel doesn't support
-the feature, it should be ignored by userland. In this case, it fit well
-with the current behavior of open(2). I agree that the openat2(2)
-behavior handling flags is the good way to do it (whitelisting), but the
-O_MAYEXEC flag should not change the userland behavior on its own,
-because it depend on a global policy. Even being able to probe for
-O_MAYEXEC support does not make sense because it would not be enough to
-know the system policy (either this flag is enforced or not=E2=80=A6).
+Doing by best,  ;-)
 
-Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
-es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
-=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
-nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
-=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
-tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
-acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
-eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
-t de d=C3=A9truire le message. The personal data collected and processed du=
-ring this exchange aims solely at completing a business relationship and is=
- limited to the necessary duration of that relationship. If you wish to use=
- your rights of consultation, rectification and deletion of your data, plea=
-se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
-n error, we thank you for informing the sender and destroying the message.
+thanks,
+
+ - Joel
+
