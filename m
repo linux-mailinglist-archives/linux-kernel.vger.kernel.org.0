@@ -2,131 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC9BABE4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2F49ABE58
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 19:09:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405976AbfIFRIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 13:08:15 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:55184 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730223AbfIFRIM (ORCPT
+        id S2395137AbfIFRJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 13:09:03 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:34190 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732130AbfIFRJD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:08:12 -0400
-Received: by mail-io1-f71.google.com with SMTP id a20so8368144iok.21
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 10:08:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=3njUJ/0K0qrTjvC4IVkpaDi9DWyHseTccD0yHkZDLBs=;
-        b=rc/QGLSalfe7NNG9qc0A3buBwDTXnIRWAfARGcp3JTPrdaqhmt3WCin7ZcePw9FgB6
-         FK98e53lnexaBJTy8R9n0mbKQo05s6AgZPve4MjgmJjVi3O5wbF9XpxUv9X0fTvONkHR
-         fXlToz643+4onYLhzcMrBqydSnC81QFJrkAlxVA58wMvKufvv/AeRAW7Arb518+if7xl
-         68ViUrGr02X7EcyXFh54Fjie2LasdesQTK2d43n0PpVK3SU7RkuKsk0TAiMSS4OfeCB/
-         y4jTBFrm3QqSHKlzWFce+s2ZEyNa5sikWkSeDKVaKX6FE1b62oE8P29agfpuchGWaf16
-         7UWg==
-X-Gm-Message-State: APjAAAUgV8D7NaGQMiuxa+HDd5RCOIjeggWeZjoCyVkEJ5A4czhfrxW4
-        it2szkBZPP2asqvpPdLhZki2sbn6iY2XI/h2nocNoVs8DW5R
-X-Google-Smtp-Source: APXvYqz9DzyEOIuFEOWT1ID4gU21+TU8AcogcmcruNwfteNhsHUn/47ie2zC7VAaiNoCcRLtp+EuV9DagCJQWPfB8T4QNoRDZ2WA
-MIME-Version: 1.0
-X-Received: by 2002:a02:9994:: with SMTP id a20mr4651152jal.107.1567789691067;
- Fri, 06 Sep 2019 10:08:11 -0700 (PDT)
-Date:   Fri, 06 Sep 2019 10:08:11 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009e73be0591e57b89@google.com>
-Subject: WARNING in xfrm_policy_insert_list (2)
-From:   syzbot <syzbot+2714fa4a72156aa7e18a@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Fri, 6 Sep 2019 13:09:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1567789738;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=rBCaqKNoNCZ9+3F1oh6m+vepb8uT3GJ5XSm5+YAEkEU=;
+        b=QEN5WL28EpXn0/MfyxW2jtAwC8543Mw/SDhdZu9jtwZHp0Z57uE0BsRpwmxnKJcuJj
+        qv4v265RmfIiLmUyWM8EegwGKi6WOE8LGw+CaBRWv096Z4hxUvEnFnCvFG8vLe/upRul
+        CrrOzj5daMuvdQaw2w7iQOyO9e9K169O/3hu2hMMQVRhMD7O3WanVmBTlLK2iIC/DNpL
+        VjFnouyKcXWJe0wg2JVRSWiE32cV0xywAa7bwMrPercwL1i+umUNECV+Sh3md+CPHzEp
+        O4Qvi/ifB99qe6wI5drmH0nFznCMgXjUdb9F0RFwdqbn5eWT/O4GZOV08ihU5Ykr2efP
+        +eLg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/PqwDqp5w=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v86H8spen
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 6 Sep 2019 19:08:54 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [RFC v2 3/3] ARM: dts: omap3: bulk convert compatible to be explicitly ti,omap3430 or ti,omap36xx
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20190906154732.GC52127@atomide.com>
+Date:   Fri, 6 Sep 2019 19:08:54 +0200
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        =?utf-8?Q?Andr=C3=A9_Roth?= <neolynx@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8C8644AC-FA12-4D26-B96A-76B78798612A@goldelico.com>
+References: <cover.1567587220.git.hns@goldelico.com> <a2b56edcada7b9000a6e906387a02c0ee42681db.1567587220.git.hns@goldelico.com> <20190905142734.GV52127@atomide.com> <4BC39938-D63E-4BDC-BA28-5132F77F602D@goldelico.com> <20190906154732.GC52127@atomide.com>
+To:     Tony Lindgren <tony@atomide.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Tony,
 
-syzbot found the following crash on:
+> Am 06.09.2019 um 17:47 schrieb Tony Lindgren <tony@atomide.com>:
+>=20
+> * H. Nikolaus Schaller <hns@goldelico.com> [190906 07:53]:
+>>> Am 05.09.2019 um 16:27 schrieb Tony Lindgren <tony@atomide.com>:
+>>> compatible =3D "ti,omap3-ldp", "ti,omap3430", "ti,omap34xx", =
+"ti,omap3";
+>>=20
+>> After thinking a little about the whole topic the main rule of this =
+change must be:
+>>=20
+>> * do not break any existing in-tree DTS
+>> 	=3D> only *add* to compatible what we need to distinguish =
+between omap34 and omap36
+>>=20
+>> * additions shall only follow new scheme
+>> 	=3D> we only add "ti,omap34xx" or "ti,omap36xx"
+>>           but neither "ti,omap3630" nor "ti,omap3430"
+>=20
+> Sorry I don't follow you on this one.. We should always add =
+"ti,omap3630"
+> where "ti,omap36xx" is currently used so we can eventually get rid of
+> "ti,omap36xx". And the same for 34xx.
 
-HEAD commit:    0e5b36bc r8152: adjust the settings of ups flags
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17932ec6600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=67b69b427c3b2dbf
-dashboard link: https://syzkaller.appspot.com/bug?extid=2714fa4a72156aa7e18a
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e5cb2a600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14eba03e600000
+Ah, ok now I see.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2714fa4a72156aa7e18a@syzkaller.appspotmail.com
+You want to make the "ti,omap3630" the official one and "ti,omap36xx" =
+legacy.
+It is probably an arbitrary choice if we want to get rid of the xx or =
+the 30.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8725 at net/xfrm/xfrm_policy.c:1541  
-xfrm_policy_insert_list.cold+0x11/0x90 net/xfrm/xfrm_policy.c:1541
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 8725 Comm: syz-executor575 Not tainted 5.3.0-rc7+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2dc/0x755 kernel/panic.c:219
-  __warn.cold+0x20/0x4c kernel/panic.c:576
-  report_bug+0x263/0x2b0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:xfrm_policy_insert_list.cold+0x11/0x90 net/xfrm/xfrm_policy.c:1541
-Code: f0 79 fb e9 67 fa ff ff 88 55 c0 e8 e9 f0 79 fb 0f b6 55 c0 e9 83 fa  
-ff ff e8 9b cc 3f fb 48 c7 c7 a0 20 52 88 e8 e3 6b 29 fb <0f> 0b 48 8b 45  
-b8 42 0f b6 14 20 48 8b 45 d0 83 e0 07 83 c0 03 38
-RSP: 0018:ffff88808f7ff3a0 EFLAGS: 00010282
-RAX: 0000000000000024 RBX: ffff8880a1ac0040 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815c26f6 RDI: ffffed1011effe66
-RBP: ffff88808f7ff420 R08: 0000000000000024 R09: ffffed1015d060d1
-R10: ffffed1015d060d0 R11: ffff8880ae830687 R12: dffffc0000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff8880a410b240
-  xfrm_policy_inexact_insert+0xec/0x1000 net/xfrm/xfrm_policy.c:1188
-  xfrm_policy_insert+0x530/0x750 net/xfrm/xfrm_policy.c:1574
-  xfrm_add_policy+0x28f/0x530 net/xfrm/xfrm_user.c:1670
-  xfrm_user_rcv_msg+0x459/0x770 net/xfrm/xfrm_user.c:2676
-  netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
-  xfrm_netlink_rcv+0x70/0x90 net/xfrm/xfrm_user.c:2684
-  netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-  netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
-  netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:637 [inline]
-  sock_sendmsg+0xd7/0x130 net/socket.c:657
-  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
-  __do_sys_sendmsg net/socket.c:2365 [inline]
-  __se_sys_sendmsg net/socket.c:2363 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
-  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x442209
-Code: e8 fc ab 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 9b 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffceda47ad8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004a3298 RCX: 0000000000442209
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000005
-RBP: 000000000000f970 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000246 R12: 0000000000403030
-R13: 00000000004030c0 R14: 0000000000000000 R15: 0000000000000000
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+I had thought to do it the other way round because I had done this =
+statistics:
 
+for i in 3430 34xx 3630 36xx; do echo $i $(fgrep '"'ti,omap$i'"' =
+arch/arm/boot/dts/*.dts* | wc -l); done
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+3430 12
+34xx 28
+3630 3
+36xx 23
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+which would indicate that 34xx and 36xx are more common.
+
+>> * cover some out-of-tree DTS
+>> 	=3D> make the ti-cpufreq driver still match "ti,omap3430" or =
+"ti,omap3630"
+>> 	   even if this duplicates compatibility
+>>=20
+>> This would mean that the logicpd-som-lv-37xx-devkit.dts gets the =
+additional "ti,omap36xx"
+>> while the omap3-ldp.dts would only get an "ti,omap34xx" but no =
+"ti,omap3430" (since we
+>> do not use it anywhere).
+>>=20
+>> Could you agree on this approach?
+>=20
+> Yeah sounds like logicpd-som-lv-37xx-devkit.dts currently still needs
+> "ti,omap36xx" for now.
+>=20
+> If modifying omap3-ldp.dts, also add "ti,omap3430" in additon to
+> "ti,omap34xx" that it already has.
+>=20
+> So basically let's assume the following:
+>=20
+> "ti,omap3430" =3D=3D "ti,omap34xx"
+> "ti,omap3630" =3D=3D "ti,omap36xx"
+>=20
+> This means code needs to parse both.
+
+Yes, it already does everywhere.
+
+BTW there is also some code that does special SoC detection based on
+soc_device_match(), mainly in omapdrm/dss.
+
+If we were to use this mechanism in the ti-cpufreq driver we could
+match it to ti,omap3 and could avoid all these changes.
+
+But make it less maintainable and code more complex.
+
+>=20
+> And eventually we just drop the "xx" variants.
+
+>=20
+> So while patching compatibles, let's also update for this to
+> avoid multiple patches churning the same compatibles over and
+> over.
+
+Ok. I'll rework the patch so that we never add "ti,34xx" or "ti,36xx"
+but add "ti,3430" or "ti,3630" if missing.
+
+I'll also take a look at omap.txt bindings since that likely needs
+an update as well to better describe what the official ones are
+and which are legacy.
+
+BR and thanks,
+Nikolaus
+
