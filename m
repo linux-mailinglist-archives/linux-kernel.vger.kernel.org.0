@@ -2,83 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AF1DAC00F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:02:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9885EAC021
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405322AbfIFTCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 15:02:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57782 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731568AbfIFTCH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 15:02:07 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 711C36115D; Fri,  6 Sep 2019 19:02:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567796526;
-        bh=fHlSdGoTTdUuPm+ZMeSUpg6AMfOrhFJdRH0w4GFu9Gc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=L3OOwEaZgKQRgFZCzGd74o4Yub9X9Oy+XviqQOq+p4nQRbc5fFpx7fEXAy+6C+z1V
-         E3VVV6gS+q8y3EM6ZvOiaAprr4+hEk4RkD/4w6x72mGr3Lvu65MT3PlqD4JnodIQVZ
-         kYmlEdSC0tTonETyuQuGINM6dmnyqQFQOMeMHK1U=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from tsoni-linux1.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tsoni@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1A7D8602DC;
-        Fri,  6 Sep 2019 19:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567796525;
-        bh=fHlSdGoTTdUuPm+ZMeSUpg6AMfOrhFJdRH0w4GFu9Gc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KtfJ+x+ZRwWOIbRQpROvYVrVDWjYHV43rHrna8mA54tOkAthogDyPba8/Bw9PrH0z
-         rS8r32ovlsV14JCAX9YJLJp4AozEJzccyNaJhwPWJKZbxo6Fe1Cf2A02JqGTnS8hHd
-         6eZH3/jdheyCJyA54vktSlOOwl+4p7bMMwhJhjiI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A7D8602DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tsoni@codeaurora.org
-From:   Trilok Soni <tsoni@codeaurora.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        corbet@lwn.net, tyhicks@canonical.com, jkosina@suse.cz,
-        konrad.wilk@oracle.com, labbott@redhat.com, tglx@linutronix.de,
-        tsoni@quicinc.com, Trilok Soni <tsoni@codeaurora.org>
-Subject: [PATCH] Documentation/process: Add Qualcomm process ambassador for hardware security issues
-Date:   Fri,  6 Sep 2019 12:01:57 -0700
-Message-Id: <1567796517-8964-1-git-send-email-tsoni@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S2406236AbfIFTEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 15:04:52 -0400
+Received: from namei.org ([65.99.196.166]:43022 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729074AbfIFTEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 15:04:52 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x86J3QSE019203;
+        Fri, 6 Sep 2019 19:03:26 GMT
+Date:   Fri, 6 Sep 2019 12:03:26 -0700 (PDT)
+From:   James Morris <jmorris@namei.org>
+To:     Jeff Layton <jlayton@kernel.org>
+cc:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Florian Weimer <fweimer@redhat.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
+ sys_open()
+In-Reply-To: <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org>
+Message-ID: <alpine.LRH.2.21.1909061202070.18660@namei.org>
+References: <20190906152455.22757-1-mic@digikod.net>  <20190906152455.22757-2-mic@digikod.net>  <87ef0te7v3.fsf@oldenburg2.str.redhat.com>  <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>  <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org> 
+ <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr> <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Trilok Soni as process ambassador for hardware security issues
-from Qualcomm.
+On Fri, 6 Sep 2019, Jeff Layton wrote:
 
-Signed-off-by: Trilok Soni <tsoni@codeaurora.org>
----
- Documentation/process/embargoed-hardware-issues.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The fact that open and openat didn't vet unknown flags is really a bug.
+> 
+> Too late to fix it now, of course, and as Aleksa points out, we've
+> worked around that in the past. Now though, we have a new openat2
+> syscall on the horizon. There's little need to continue these sorts of
+> hacks.
+> 
+> New open flags really have no place in the old syscalls, IMO.
 
-diff --git a/Documentation/process/embargoed-hardware-issues.rst b/Documentation/process/embargoed-hardware-issues.rst
-index d37cbc5..0416751 100644
---- a/Documentation/process/embargoed-hardware-issues.rst
-+++ b/Documentation/process/embargoed-hardware-issues.rst
-@@ -217,7 +217,7 @@ an involved disclosed party. The current ambassadors list:
-   AMD
-   IBM
-   Intel
--  Qualcomm
-+  Qualcomm	Trilok Soni <tsoni@codeaurora.org>
- 
-   Microsoft
-   VMware
+Agree here. It's unfortunate but a reality and Linus will reject any such 
+changes which break existing userspace.
+
+
 -- 
-1.9.1
+James Morris
+<jmorris@namei.org>
 
