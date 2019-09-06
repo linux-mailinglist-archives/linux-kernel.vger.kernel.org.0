@@ -2,119 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A06F1ABC3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 300D9ABC46
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394763AbfIFPX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:23:29 -0400
-Received: from foss.arm.com ([217.140.110.172]:58326 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbfIFPX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:23:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E0ED1576;
-        Fri,  6 Sep 2019 08:23:28 -0700 (PDT)
-Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D3603F59C;
-        Fri,  6 Sep 2019 08:23:27 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-Subject: Re: [PATCH] drm/panfrost: Fix regulator_get_optional() misuse
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20190904123032.23263-1-broonie@kernel.org>
-Message-ID: <ccd81530-2dbd-3c02-ca0a-1085b00663b5@arm.com>
-Date:   Fri, 6 Sep 2019 16:23:26 +0100
+        id S2394758AbfIFPYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:24:33 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:60974 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbfIFPYd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 11:24:33 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x86FOLWJ098120;
+        Fri, 6 Sep 2019 10:24:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1567783461;
+        bh=gVipEgoxrF27DsHGbInXS36lsJpOtNNkdk6SgXikS5k=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=mPrzJ9MMOKQiSbr5BfacTf0AU7NQs/27P5s2ZRYa/4hcc9y7atf0wbKOncIvwpNYE
+         s/QZ8fBvyAVRR1R8kP3VS5HMFEJnVLiOByu3xcKoIpkCHaK0VmKmVp71XFBvJcctFB
+         HPG09dKcYuOoRPrCRcp0aY5KBfTtEugcu/kDtEXc=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x86FOLrm000639
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Sep 2019 10:24:21 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 6 Sep
+ 2019 10:24:20 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 6 Sep 2019 10:24:19 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x86FOJgV033402;
+        Fri, 6 Sep 2019 10:24:19 -0500
+Subject: Re: [PATCH] iommu: omap: mark pm functions __maybe_unused
+To:     Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>
+CC:     Joerg Roedel <jroedel@suse.de>, Tero Kristo <t-kristo@ti.com>,
+        Will Deacon <will@kernel.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <20190906151551.1192788-1-arnd@arndb.de>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <20150686-f14c-389b-7345-699cee191116@ti.com>
+Date:   Fri, 6 Sep 2019 10:24:19 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190904123032.23263-1-broonie@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <20190906151551.1192788-1-arnd@arndb.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2019 13:30, Mark Brown wrote:
-> The panfrost driver requests a supply using regulator_get_optional()
-> but both the name of the supply and the usage pattern suggest that it is
-> being used for the main power for the device and is not at all optional
-> for the device for function, there is no meaningful handling for absent
-> supplies.  Such regulators should use the vanilla regulator_get()
-> interface, it will ensure that even if a supply is not described in the
-> system integration one will be provided in software.
+Hi Arnd,
+
+On 9/6/19 10:15 AM, Arnd Bergmann wrote:
+> The runtime_pm functions are unused when CONFIG_PM is disabled:
 > 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> drivers/iommu/omap-iommu.c:1022:12: error: unused function 'omap_iommu_runtime_suspend' [-Werror,-Wunused-function]
+> static int omap_iommu_runtime_suspend(struct device *dev)
+> drivers/iommu/omap-iommu.c:1064:12: error: unused function 'omap_iommu_runtime_resume' [-Werror,-Wunused-function]
+> static int omap_iommu_runtime_resume(struct device *dev)
+> 
+> Mark them as __maybe_unused to let gcc silently drop them
+> instead of warning.
 
-Tested-by: Steven Price <steven.price@arm.com>
+Curious, what defconfig is this? OMAP drivers won't be functional in
+general without pm_runtime, so CONFIG_PM is mandatory. But from just a
+CONFIG_PM option point of view, agree with the patch.
 
-Looks like my approach to this was wrong - so we should also revert the
-changes I made previously.
+> 
+> Fixes: db8918f61d51 ("iommu/omap: streamline enable/disable through runtime pm callbacks")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-----8<----
-From fe20f8abcde8444bb41a8f72fb35de943a27ec5c Mon Sep 17 00:00:00 2001
-From: Steven Price <steven.price@arm.com>
-Date: Fri, 6 Sep 2019 15:20:53 +0100
-Subject: [PATCH] drm/panfrost: Revert changes to cope with NULL regulator
+Acked-by: Suman Anna <s-anna@ti.com>
 
-Handling a NULL return from devm_regulator_get_optional() doesn't seem
-like the correct way of handling this. Instead revert the changes in
-favour of switching to using devm_regulator_get() which will return a
-dummy regulator instead.
-
-Reverts commit 52282163dfa6 ("drm/panfrost: Add missing check for pfdev->regulator")
-Reverts commit e21dd290881b ("drm/panfrost: Enable devfreq to work without regulator")
-
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- drivers/gpu/drm/panfrost/panfrost_devfreq.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-index a1f5fa6a742a..076983071e58 100644
---- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-@@ -39,7 +39,7 @@ static int panfrost_devfreq_target(struct device *dev, unsigned long *freq,
- 	 * If frequency scaling from low to high, adjust voltage first.
- 	 * If frequency scaling from high to low, adjust frequency first.
- 	 */
--	if (old_clk_rate < target_rate && pfdev->regulator) {
-+	if (old_clk_rate < target_rate) {
- 		err = regulator_set_voltage(pfdev->regulator, target_volt,
- 					    target_volt);
- 		if (err) {
-@@ -53,14 +53,12 @@ static int panfrost_devfreq_target(struct device *dev, unsigned long *freq,
- 	if (err) {
- 		dev_err(dev, "Cannot set frequency %lu (%d)\n", target_rate,
- 			err);
--		if (pfdev->regulator)
--			regulator_set_voltage(pfdev->regulator,
--					      pfdev->devfreq.cur_volt,
--					      pfdev->devfreq.cur_volt);
-+		regulator_set_voltage(pfdev->regulator, pfdev->devfreq.cur_volt,
-+				      pfdev->devfreq.cur_volt);
- 		return err;
- 	}
- 
--	if (old_clk_rate > target_rate && pfdev->regulator) {
-+	if (old_clk_rate > target_rate) {
- 		err = regulator_set_voltage(pfdev->regulator, target_volt,
- 					    target_volt);
- 		if (err)
-@@ -138,6 +136,9 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
- 	int ret;
- 	struct dev_pm_opp *opp;
- 
-+	if (!pfdev->regulator)
-+		return 0;
-+
- 	ret = dev_pm_opp_of_add_table(&pfdev->pdev->dev);
- 	if (ret == -ENODEV) /* Optional, continue without devfreq */
- 		return 0;
--- 
-2.20.1
+> ---
+>  drivers/iommu/omap-iommu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
+> index 451e3c98ab2d..09c6e1c680db 100644
+> --- a/drivers/iommu/omap-iommu.c
+> +++ b/drivers/iommu/omap-iommu.c
+> @@ -1019,7 +1019,7 @@ EXPORT_SYMBOL_GPL(omap_iommu_domain_activate);
+>   * reset line. This function also saves the context of any
+>   * locked TLBs if suspending.
+>   **/
+> -static int omap_iommu_runtime_suspend(struct device *dev)
+> +static __maybe_unused int omap_iommu_runtime_suspend(struct device *dev)
+>  {
+>  	struct platform_device *pdev = to_platform_device(dev);
+>  	struct iommu_platform_data *pdata = dev_get_platdata(dev);
+> @@ -1061,7 +1061,7 @@ static int omap_iommu_runtime_suspend(struct device *dev)
+>   * reset line. The function also restores any locked TLBs if
+>   * resuming after a suspend.
+>   **/
+> -static int omap_iommu_runtime_resume(struct device *dev)
+> +static __maybe_unused int omap_iommu_runtime_resume(struct device *dev)
+>  {
+>  	struct platform_device *pdev = to_platform_device(dev);
+>  	struct iommu_platform_data *pdata = dev_get_platdata(dev);
+> 
 
