@@ -2,388 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CD2DAB3EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:18:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD5BCAB3D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:17:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392672AbfIFIR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 04:17:58 -0400
-Received: from mga11.intel.com ([192.55.52.93]:23747 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392657AbfIFIR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 04:17:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2019 01:17:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,472,1559545200"; 
-   d="scan'208";a="383186227"
-Received: from yiliu-dev.bj.intel.com ([10.238.156.139])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Sep 2019 01:17:53 -0700
-From:   Liu Yi L <yi.l.liu@intel.com>
-To:     alex.williamson@redhat.com, kwankhede@nvidia.com
-Cc:     kevin.tian@intel.com, baolu.lu@linux.intel.com, yi.l.liu@intel.com,
-        yi.y.sun@intel.com, joro@8bytes.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, yan.y.zhao@intel.com, shaopeng.he@intel.com,
-        chenbo.xia@intel.com, jun.j.tian@intel.com
-Subject: [PATCH v2 13/13] vfio/type1: track iommu backed group attach
-Date:   Thu,  5 Sep 2019 15:59:30 +0800
-Message-Id: <1567670370-4484-14-git-send-email-yi.l.liu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567670370-4484-1-git-send-email-yi.l.liu@intel.com>
-References: <1567670370-4484-1-git-send-email-yi.l.liu@intel.com>
+        id S2389887AbfIFIRR convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Sep 2019 04:17:17 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:58818 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfIFIRR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 04:17:17 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x868GoAD017898
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 6 Sep 2019 17:16:50 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x868Gn8O006386;
+        Fri, 6 Sep 2019 17:16:49 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x868F0sx023285;
+        Fri, 6 Sep 2019 17:16:49 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-8242729; Fri, 6 Sep 2019 17:09:54 +0900
+Received: from BPXM20GP.gisp.nec.co.jp ([10.38.151.212]) by
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Fri, 6
+ Sep 2019 17:09:54 +0900
+From:   Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+To:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "longman@redhat.com" <longman@redhat.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "mst@redhat.com" <mst@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Junichi Nomura <j-nomura@ce.jp.nec.com>,
+        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+Subject: [RFC PATCH v2] mm: initialize struct pages reserved by ZONE_DEVICE
+ driver.
+Thread-Topic: [RFC PATCH v2] mm: initialize struct pages reserved by
+ ZONE_DEVICE driver.
+Thread-Index: AQHVZIp2xk1cU6nEkk+ez7kL5reVFA==
+Date:   Fri, 6 Sep 2019 08:09:52 +0000
+Message-ID: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.135]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the introduction of iommu aware mdev group, user may wrap a PF/VF
-as a mdev. Such mdevs will be called as wrapped PF/VF mdevs in following
-statements. If it's applied on a non-singleton iommu group, there would
-be multiple domain attach on an iommu_device group (equal to iommu backed
-group). Reason is that mdev group attaches is finally an iommu_device
-group attach in the end. And existing vfio_domain.gorup_list has no idea
-about it. Thus multiple attach would happen.
+A kernel panic is observed during reading
+/proc/kpage{cgroup,count,flags} for first few pfns allocated by
+pmem namespace:
 
-What's more, under default domain policy, group attach is allowed only
-when its in-use domain is equal to its default domain as the code below:
+BUG: unable to handle page fault for address: fffffffffffffffe
+[  114.495280] #PF: supervisor read access in kernel mode
+[  114.495738] #PF: error_code(0x0000) - not-present page
+[  114.496203] PGD 17120e067 P4D 17120e067 PUD 171210067 PMD 0
+[  114.496713] Oops: 0000 [#1] SMP PTI
+[  114.497037] CPU: 9 PID: 1202 Comm: page-types Not tainted 5.3.0-rc1
+[  114.497621] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
+[  114.498706] RIP: 0010:stable_page_flags+0x27/0x3f0
+[  114.499142] Code: 82 66 90 66 66 66 66 90 48 85 ff 0f 84 d1 03 00 00 41 54 55 48 89 fd 53 48 8b 57 08 48 8b 1f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 02 0f 84 57 03 00 00 45 31 e4 48 8b 55 08 48 89 ef
+[  114.500788] RSP: 0018:ffffa5e601a0fe60 EFLAGS: 00010202
+[  114.501373] RAX: fffffffffffffffe RBX: ffffffffffffffff RCX: 0000000000000000
+[  114.502009] RDX: 0000000000000001 RSI: 00007ffca13a7310 RDI: ffffd07489000000
+[  114.502637] RBP: ffffd07489000000 R08: 0000000000000001 R09: 0000000000000000
+[  114.503270] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000240000
+[  114.503896] R13: 0000000000080000 R14: 00007ffca13a7310 R15: ffffa5e601a0ff08
+[  114.504530] FS:  00007f0266c7f540(0000) GS:ffff962dbbac0000(0000) knlGS:0000000000000000
+[  114.505245] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  114.505754] CR2: fffffffffffffffe CR3: 000000023a204000 CR4: 00000000000006e0
+[  114.506401] Call Trace:
+[  114.506660]  kpageflags_read+0xb1/0x130
+[  114.507051]  proc_reg_read+0x39/0x60
+[  114.507387]  vfs_read+0x8a/0x140
+[  114.507686]  ksys_pread64+0x61/0xa0
+[  114.508021]  do_syscall_64+0x5f/0x1a0
+[  114.508372]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  114.508844] RIP: 0033:0x7f0266ba426b
 
-static int __iommu_attach_group(struct iommu_domain *domain, ..)
-{
-	..
-	if (group->default_domain && group->domain != group->default_domain)
-		return -EBUSY;
-	...
-}
+The first few pages of ZONE_DEVICE expressed as the range
+(altmap->base_pfn) to (altmap->base_pfn + altmap->reserve) are
+skipped by struct page initialization. Some pfn walkers like
+/proc/kpage{cgroup, count, flags} can't handle these uninitialized
+struct pages, which causes the error.
 
-So for the above scenario, only the first group attach on the
-non-singleton iommu group will be successful. Subsequent group
-attaches will be failed. However, this is a fairly valid usage case
-if the wrapped PF/VF mdevs and other devices are assigned to a single
-VM. We may want to prevent it. In other words, the subsequent group
-attaches should return success before going to __iommu_attach_group().
+In previous discussion, Dan seemed to have concern that the struct
+page area of some pages indicated by vmem_altmap->reserve may not
+be allocated. (See https://lore.kernel.org/lkml/CAPcyv4i5FjTOnPbXNcTzvt+e6RQYow0JRQwSFuxaa62LSuvzHQ@mail.gmail.com/)
+However, arch_add_memory() called by devm_memremap_pages() allocates
+struct page area for pages containing addresses in the range
+(res.start) to (res.start + resource_size(res)), which include the
+pages indicated by vmem_altmap->reserve. If I read correctly, it is
+allocated as requested at least on x86_64. Also, memmap_init_zone()
+initializes struct pages in the same range.
+So I think the struct pages should be initialized.
 
-However, if user tries to assign the wrapped PF/VF mdevs and other
-devices to different VMs, the subsequent group attaches on a single
-iommu_device group should be failed. This means the subsequent group
-attach should finally calls into __iommu_attach_group() and be failed.
-
-To meet the above requirements, this patch introduces vfio_group_object
-structure to track the group attach of an iommu_device group (a.ka.
-iommu backed group). Each vfio_domain will have a group_obj_list to
-record the vfio_group_objects. The search of the group_obj_list should
-use iommu_device group if a group is mdev group.
-
-	struct vfio_group_object {
-		atomic_t		count;
-		struct iommu_group	*iommu_group;
-		struct vfio_domain	*domain;
-		struct list_head	next;
-	};
-
-Each time, a successful group attach should either have a new
-vfio_group_object created or count increasing of an existing
-vfio_group_object instance. Details can be found in
-vfio_domain_attach_group_object().
-
-For group detach, should have count decreasing. Please check
-vfio_domain_detach_group_object().
-
-As the vfio_domain.group_obj_list is within vfio container(vfio_iommu)
-scope, if user wants to passthru a non-singleton to multiple VMs, it
-will be failed as VMs will have separate vfio containers. Also, if
-vIOMMU is exposed, it will also fail the attempts of assigning multiple
-devices (via vfio-pci or PF/VF wrapped mdev) to a single VM. This is
-aligned with current vfio passthru rules.
-
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>
-Suggested-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+Signed-off-by: Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+Cc: stable@vger.kernel.org
 ---
- drivers/vfio/vfio_iommu_type1.c | 167 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 154 insertions(+), 13 deletions(-)
+Changes since rev 1:
+ Instead of avoiding uninitialized pages on the pfn walker side,
+ we initialize struct pages.
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 317430d..6a67bd6 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -75,6 +75,7 @@ struct vfio_domain {
- 	struct iommu_domain	*domain;
- 	struct list_head	next;
- 	struct list_head	group_list;
-+	struct list_head	group_obj_list;
- 	int			prot;		/* IOMMU_CACHE */
- 	bool			fgsp;		/* Fine-grained super pages */
- };
-@@ -97,6 +98,13 @@ struct vfio_group {
- 	bool			mdev_group;	/* An mdev group */
- };
+mm/page_alloc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 9c91949..6d180ae 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5846,8 +5846,7 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
  
-+struct vfio_group_object {
-+	atomic_t		count;
-+	struct iommu_group	*iommu_group;
-+	struct vfio_domain	*domain;
-+	struct list_head	next;
-+};
-+
- /*
-  * Guest RAM pinning working set or DMA target
-  */
-@@ -1263,6 +1271,85 @@ static struct vfio_group *find_iommu_group(struct vfio_domain *domain,
- 	return NULL;
- }
+ #ifdef CONFIG_ZONE_DEVICE
+ 	/*
+-	 * Honor reservation requested by the driver for this ZONE_DEVICE
+-	 * memory. We limit the total number of pages to initialize to just
++	 * We limit the total number of pages to initialize to just
+ 	 * those that might contain the memory mapping. We will defer the
+ 	 * ZONE_DEVICE page initialization until after we have released
+ 	 * the hotplug lock.
+@@ -5856,8 +5855,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 		if (!altmap)
+ 			return;
  
-+static struct vfio_group_object *find_iommu_group_object(
-+		struct vfio_domain *domain, struct iommu_group *iommu_group)
-+{
-+	struct vfio_group_object *g;
-+
-+	list_for_each_entry(g, &domain->group_obj_list, next) {
-+		if (g->iommu_group == iommu_group)
-+			return g;
-+	}
-+
-+	return NULL;
-+}
-+
-+static void vfio_init_iommu_group_object(struct vfio_group_object *group_obj,
-+		struct vfio_domain *domain, struct iommu_group *iommu_group)
-+{
-+	if (!group_obj || !domain || !iommu_group) {
-+		WARN_ON(1);
-+		return;
-+	}
-+	atomic_set(&group_obj->count, 1);
-+	group_obj->iommu_group = iommu_group;
-+	group_obj->domain = domain;
-+	list_add(&group_obj->next, &domain->group_obj_list);
-+}
-+
-+static int vfio_domain_attach_group_object(
-+		struct vfio_domain *domain, struct iommu_group *iommu_group)
-+{
-+	struct vfio_group_object *group_obj;
-+
-+	group_obj = find_iommu_group_object(domain, iommu_group);
-+	if (group_obj) {
-+		atomic_inc(&group_obj->count);
-+		return 0;
-+	}
-+	group_obj = kzalloc(sizeof(*group_obj), GFP_KERNEL);
-+	vfio_init_iommu_group_object(group_obj, domain, iommu_group);
-+	return iommu_attach_group(domain->domain, iommu_group);
-+}
-+
-+static int vfio_domain_detach_group_object(
-+		struct vfio_domain *domain, struct iommu_group *iommu_group)
-+{
-+	struct vfio_group_object *group_obj;
-+
-+	group_obj = find_iommu_group_object(domain, iommu_group);
-+	if (!group_obj) {
-+		WARN_ON(1);
-+		return -EINVAL;
-+	}
-+	if (atomic_dec_if_positive(&group_obj->count) == 0) {
-+		list_del(&group_obj->next);
-+		kfree(group_obj);
-+	}
-+	iommu_detach_group(domain->domain, iommu_group);
-+	return 0;
-+}
-+
-+/*
-+ * Check if an iommu backed group has been attached to a domain within
-+ * a specific container (vfio_iommu). If yes, return the vfio_group_object
-+ * which tracks the previous domain attach for this group. Caller of this
-+ * function should hold vfio_iommu->lock.
-+ */
-+static struct vfio_group_object *vfio_iommu_group_object_check(
-+		struct vfio_iommu *iommu, struct iommu_group *iommu_group)
-+{
-+	struct vfio_domain *d;
-+	struct vfio_group_object *group_obj;
-+
-+	list_for_each_entry(d, &iommu->domain_list, next) {
-+		group_obj = find_iommu_group_object(d, iommu_group);
-+		if (group_obj)
-+			return group_obj;
-+	}
-+	return NULL;
-+}
-+
- static bool vfio_iommu_has_sw_msi(struct iommu_group *group, phys_addr_t *base)
- {
- 	struct list_head group_resv_regions;
-@@ -1310,21 +1397,23 @@ static struct device *vfio_mdev_get_iommu_device(struct device *dev)
- 
- static int vfio_mdev_attach_domain(struct device *dev, void *data)
- {
--	struct iommu_domain *domain = data;
-+	struct vfio_domain *domain = data;
- 	struct device *iommu_device;
- 	struct iommu_group *group;
- 
- 	iommu_device = vfio_mdev_get_iommu_device(dev);
- 	if (iommu_device) {
- 		if (iommu_dev_feature_enabled(iommu_device, IOMMU_DEV_FEAT_AUX))
--			return iommu_aux_attach_device(domain, iommu_device);
-+			return iommu_aux_attach_device(domain->domain,
-+							iommu_device);
- 		else {
- 			group = iommu_group_get(iommu_device);
- 			if (!group) {
- 				WARN_ON(1);
- 				return -EINVAL;
- 			}
--			return iommu_attach_group(domain, group);
-+			return vfio_domain_attach_group_object(
-+							domain, group);
- 		}
+-		if (start_pfn == altmap->base_pfn)
+-			start_pfn += altmap->reserve;
+ 		end_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
  	}
- 
-@@ -1333,21 +1422,22 @@ static int vfio_mdev_attach_domain(struct device *dev, void *data)
- 
- static int vfio_mdev_detach_domain(struct device *dev, void *data)
- {
--	struct iommu_domain *domain = data;
-+	struct vfio_domain *domain = data;
- 	struct device *iommu_device;
- 	struct iommu_group *group;
- 
- 	iommu_device = vfio_mdev_get_iommu_device(dev);
- 	if (iommu_device) {
- 		if (iommu_dev_feature_enabled(iommu_device, IOMMU_DEV_FEAT_AUX))
--			iommu_aux_detach_device(domain, iommu_device);
-+			iommu_aux_detach_device(domain->domain, iommu_device);
- 		else {
- 			group = iommu_group_get(iommu_device);
- 			if (!group) {
- 				WARN_ON(1);
- 				return -EINVAL;
- 			}
--			iommu_detach_group(domain, group);
-+			return vfio_domain_detach_group_object(
-+							domain, group);
- 		}
- 	}
- 
-@@ -1359,20 +1449,27 @@ static int vfio_iommu_attach_group(struct vfio_domain *domain,
- {
- 	if (group->mdev_group)
- 		return iommu_group_for_each_dev(group->iommu_group,
--						domain->domain,
-+						domain,
- 						vfio_mdev_attach_domain);
- 	else
--		return iommu_attach_group(domain->domain, group->iommu_group);
-+		return vfio_domain_attach_group_object(domain,
-+							group->iommu_group);
- }
- 
- static void vfio_iommu_detach_group(struct vfio_domain *domain,
- 				    struct vfio_group *group)
- {
-+	int ret;
-+
- 	if (group->mdev_group)
--		iommu_group_for_each_dev(group->iommu_group, domain->domain,
-+		iommu_group_for_each_dev(group->iommu_group, domain,
- 					 vfio_mdev_detach_domain);
--	else
--		iommu_detach_group(domain->domain, group->iommu_group);
-+	else {
-+		ret = vfio_domain_detach_group_object(
-+						domain, group->iommu_group);
-+		if (ret)
-+			pr_warn("%s, deatch failed!! ret: %d", __func__, ret);
-+	}
- }
- 
- static bool vfio_bus_is_mdev(struct bus_type *bus)
-@@ -1412,6 +1509,10 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 	int ret;
- 	bool resv_msi, msi_remap;
- 	phys_addr_t resv_msi_base;
-+	struct vfio_group_object *group_obj = NULL;
-+	struct device *iommu_device = NULL;
-+	struct iommu_group *iommu_device_group;
-+
- 
- 	mutex_lock(&iommu->lock);
- 
-@@ -1438,14 +1539,20 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 
- 	group->iommu_group = iommu_group;
- 
-+	group_obj = vfio_iommu_group_object_check(iommu, group->iommu_group);
-+	if (group_obj) {
-+		atomic_inc(&group_obj->count);
-+		list_add(&group->next, &group_obj->domain->group_list);
-+		mutex_unlock(&iommu->lock);
-+		return 0;
-+	}
-+
- 	/* Determine bus_type in order to allocate a domain */
- 	ret = iommu_group_for_each_dev(iommu_group, &bus, vfio_bus_type);
- 	if (ret)
- 		goto out_free;
- 
- 	if (vfio_bus_is_mdev(bus)) {
--		struct device *iommu_device = NULL;
--
- 		group->mdev_group = true;
- 
- 		/* Determine the isolation type */
-@@ -1469,6 +1576,39 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 		bus = iommu_device->bus;
- 	}
- 
-+	/*
-+	 * Check if iommu backed group attached to a domain within current
-+	 * container. If yes, increase the count; If no, go ahead with a
-+	 * new domain attach process.
-+	 */
-+	group_obj = NULL;
-+	if (iommu_device) {
-+		iommu_device_group = iommu_group_get(iommu_device);
-+		if (!iommu_device_group) {
-+			WARN_ON(1);
-+			kfree(domain);
-+			mutex_unlock(&iommu->lock);
-+			return -EINVAL;
-+		}
-+		group_obj = vfio_iommu_group_object_check(iommu,
-+							iommu_device_group);
-+	} else
-+		group_obj = vfio_iommu_group_object_check(iommu,
-+							group->iommu_group);
-+
-+	if (group_obj) {
-+		atomic_inc(&group_obj->count);
-+		list_add(&group->next, &group_obj->domain->group_list);
-+		kfree(domain);
-+		mutex_unlock(&iommu->lock);
-+		return 0;
-+	}
-+
-+	/*
-+	 * Now we are sure we want to initialize a new vfio_domain.
-+	 * First step is to alloc an iommu_domain from iommu abstract
-+	 * layer.
-+	 */
- 	domain->domain = iommu_domain_alloc(bus);
- 	if (!domain->domain) {
- 		ret = -EIO;
-@@ -1484,6 +1624,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 			goto out_domain;
- 	}
- 
-+	INIT_LIST_HEAD(&domain->group_obj_list);
- 	ret = vfio_iommu_attach_group(domain, group);
- 	if (ret)
- 		goto out_domain;
+ #endif
 -- 
-2.7.4
+1.8.3.1
 
