@@ -2,65 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45853AC078
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 633DCAC07A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391961AbfIFTYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 15:24:04 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33226 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391133AbfIFTX7 (ORCPT
+        id S2393259AbfIFTYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 15:24:12 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39062 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392997AbfIFTYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 15:23:59 -0400
-Received: by mail-io1-f66.google.com with SMTP id m11so15308623ioo.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 12:23:59 -0700 (PDT)
+        Fri, 6 Sep 2019 15:24:10 -0400
+Received: by mail-pf1-f194.google.com with SMTP id s12so5152092pfe.6
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 12:24:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cLz5QC5EJYd9kp9XKMbuAGHR5fi2TN9ydlWG4VtkjSA=;
-        b=NstWgQZ/kGHFe9FYzpcxJAoLl0QS/jip/BCw1gAy/CCYENThy4U6g23kiiYOQK/kVn
-         0X/DbN0TY/m/cX9ji0Ncb6bMYIVtOngPXcAqvqX9CwryexCMz9JorS8jHwK2n7ME2PM9
-         vaekQfgj4Sh0PBK63tRWpOfBmTafeNJfgrgvs=
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=no7kS2T1qNHP9Zpdwy1E09Unjz4x2T2LCFjYktICQgk=;
+        b=EvVkZs2J1AZ9GTp9kf0rnbiW9t2ITXImmd49lXjLrxM2btzrl5yd/T4Hcqo/dKLr6y
+         Q5j5C5pCfxhbgmewV0/bNfJQ11TPyEMOE3jrODvA82aEojWf9Qagh/WFcF6vaHbvq6Pv
+         ev3h/NdCyySH/YJt+JjM3K4bz5MFm47zXRTobzyogztVYzdQs9Ly0u15OSUf5Lk/j6SB
+         RG9fVhihQPPSJt2EGqZ3gtgMX2daLtUNhaDhavGZdofleGMAejroOkOi4OGSv8cP+w2i
+         XxbWLbE+QmfgowhG25brlvJTcvLuXFDfSOxclhU2h1c30ee7cuEd8IGt1UjKfFDGlYwa
+         Rd3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cLz5QC5EJYd9kp9XKMbuAGHR5fi2TN9ydlWG4VtkjSA=;
-        b=r3qwH8gqreA3HFCUv8vSWq9P9lguRVwQyWoWSHMOt+9kSlbtqv/pyUsGsbQdN/6diA
-         0svg8NxSitSezbYC5uyW5XJrYl+pvCH5CbwQPaAwS7CrLxwWJHKy186CdzqMQkn5Xj+B
-         dTNYCAPXW9gS/ct2e4lagfHc4JKkwBcbb+o5wb45SY/TAPzliI9IeBvCB5JYfZFE/vG0
-         oCTm9X04ZchoS93Z+CeneQyhiqx0AJE2KGZ4vg+hCzfhVsYQBu/NgB0myqPlFeNwrU1F
-         OfS508d9KIJqecURoeRF5YwuFTfwqT+g/YfGqNJF3F2tlJ13A43pkA3G/dZUnuQyyTWJ
-         Jk3g==
-X-Gm-Message-State: APjAAAU8SZK1fMhumH9JeLwAql0cpHE6EzrcZt3buXs+ljbG4Ns5F72L
-        4a6RkIqClyCQdaMg8/Oo0/HqRg==
-X-Google-Smtp-Source: APXvYqxCifj8cFirPG/j36LsIQyAzJ2ccqGM/ZpMfWoiy9BssNUvOklUn/BM//2ijxdKxIj3Cl5Mxg==
-X-Received: by 2002:a6b:d812:: with SMTP id y18mr2222166iob.73.1567797838855;
-        Fri, 06 Sep 2019 12:23:58 -0700 (PDT)
-Received: from ddavenport4.bld.corp.google.com ([2620:15c:183:0:92f:a80a:519d:f777])
-        by smtp.gmail.com with ESMTPSA id h70sm10931804iof.48.2019.09.06.12.23.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 06 Sep 2019 12:23:58 -0700 (PDT)
-From:   Drew Davenport <ddavenport@chromium.org>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Drew Davenport <ddavenport@chromium.org>,
-        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
-        Bruce Wang <bzwang@chromium.org>,
-        Allison Randal <allison@lohutok.net>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH 6/6] drm/msm/dpu: Remove unnecessary NULL checks
-Date:   Fri,  6 Sep 2019 13:23:44 -0600
-Message-Id: <20190906192344.223694-6-ddavenport@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190906192344.223694-1-ddavenport@chromium.org>
-References: <20190906192344.223694-1-ddavenport@chromium.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=no7kS2T1qNHP9Zpdwy1E09Unjz4x2T2LCFjYktICQgk=;
+        b=oyOzdiTnB7wFEvPZ07dynuWebXGZ36f9nQbqlkETmDylKb2j9iLBH43t2QHHAmSUi7
+         zF+aMwFclMUd93hKlIvOyKCXuQR8QNFHeVV7lktz5YvjtrgzgO+rbLLa8nve4sJO5VOr
+         7+yyljPBQHZwJn/yBig0y+KlET1Jcww70mri262hvlX8wXH0dFHT0bGv4aCCuFgYWI4W
+         YxPJrbqDdfWT19KE5wrou8HdErywHCGccfH5yHJKX9FU7gpvcdrFLWsP64YnyuXmwQm4
+         p7zFshBt52C10bnezdhF5QrtUTyWlWr78w8W64/044+UuwHt+qdPCH/vhRVUZ2o0J0+s
+         FnSg==
+X-Gm-Message-State: APjAAAUBOvbi1QDXuaBcV4otZGeYFbHPdwRhM6ZqizauTA/3rb9kCqe4
+        Q5eGtP6tL6mff4UsealkyMBdeiGDddEZQw==
+X-Google-Smtp-Source: APXvYqxHNghJveR3zrEVoimn0Wso+4JUVbYfHGnGsGo9B8NC/uWVASyxOZhZvPVLoA9ALyNt2tAvJw==
+X-Received: by 2002:a65:64c5:: with SMTP id t5mr9650538pgv.168.1567797849694;
+        Fri, 06 Sep 2019 12:24:09 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.gmail.com with ESMTPSA id b24sm7024169pfi.75.2019.09.06.12.24.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 12:24:09 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH v2] net: enable wireless core features with LEGACY_WEXT_ALLCONFIG
+Date:   Fri,  6 Sep 2019 12:24:00 -0700
+Message-Id: <20190906192403.195620-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,154 +64,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dpu_kms.dev will never be NULL, so don't bother checking.
+In embedded environments the requirements are to be able to pick and
+chose which features one requires built into the kernel.  If an
+embedded environment wants to supports loading modules that have been
+kbuilt out of tree, there is a need to enable hidden configurations
+for legacy wireless core features to provide the API surface for
+them to load.
 
-Signed-off-by: Drew Davenport <ddavenport@chromium.org>
+Introduce CONFIG_LEGACY_WEXT_ALLCONFIG to select all legacy wireless
+extension core features by activating in turn all the associated
+hidden configuration options, without having to specifically select
+any wireless module(s).
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: kernel-team@android.com
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: linux-wireless@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # 4.19
 ---
+v2: change name and documentation to CONFIG_LEGACY_WEXT_ALLCONFIG
+---
+ net/wireless/Kconfig | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
- drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c  |  8 -----
- .../drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c  |  4 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       | 30 +------------------
- 3 files changed, 1 insertion(+), 41 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c
-index a53517abf15c..283d5a48fd13 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c
-@@ -343,10 +343,6 @@ void dpu_core_irq_preinstall(struct dpu_kms *dpu_kms)
- 	struct msm_drm_private *priv;
- 	int i;
+diff --git a/net/wireless/Kconfig b/net/wireless/Kconfig
+index 67f8360dfcee..0d646cf28de5 100644
+--- a/net/wireless/Kconfig
++++ b/net/wireless/Kconfig
+@@ -17,6 +17,20 @@ config WEXT_SPY
+ config WEXT_PRIV
+ 	bool
  
--	if (!dpu_kms->dev) {
--		DPU_ERROR("invalid drm device\n");
--		return;
--	}
- 	priv = dpu_kms->dev->dev_private;
- 
- 	pm_runtime_get_sync(&dpu_kms->pdev->dev);
-@@ -376,10 +372,6 @@ void dpu_core_irq_uninstall(struct dpu_kms *dpu_kms)
- 	struct msm_drm_private *priv;
- 	int i;
- 
--	if (!dpu_kms->dev) {
--		DPU_ERROR("invalid drm device\n");
--		return;
--	}
- 	priv = dpu_kms->dev->dev_private;
- 
- 	pm_runtime_get_sync(&dpu_kms->pdev->dev);
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
-index 39fc39cd2439..d5532836b5b9 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
-@@ -373,10 +373,6 @@ static void dpu_encoder_phys_cmd_tearcheck_config(
- 	}
- 
- 	dpu_kms = phys_enc->dpu_kms;
--	if (!dpu_kms->dev) {
--		DPU_ERROR("invalid device\n");
--		return;
--	}
- 	priv = dpu_kms->dev->dev_private;
- 
- 	/*
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 9d6429fa6229..fbb154d7c81c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -72,7 +72,7 @@ static int _dpu_danger_signal_status(struct seq_file *s,
- 	struct dpu_danger_safe_status status;
- 	int i;
- 
--	if (!kms->dev || !kms->hw_mdp) {
-+	if (!kms->hw_mdp) {
- 		DPU_ERROR("invalid arg(s)\n");
- 		return 0;
- 	}
-@@ -153,9 +153,6 @@ static int _dpu_debugfs_show_regset32(struct seq_file *s, void *data)
- 		return 0;
- 
- 	dev = dpu_kms->dev;
--	if (!dev)
--		return 0;
--
- 	priv = dev->dev_private;
- 	base = dpu_kms->mmio + regset->offset;
- 
-@@ -288,9 +285,6 @@ static void dpu_kms_prepare_commit(struct msm_kms *kms,
- 		return;
- 	dpu_kms = to_dpu_kms(kms);
- 	dev = dpu_kms->dev;
--
--	if (!dev)
--		return;
- 	priv = dev->dev_private;
- 
- 	/* Call prepare_commit for all affected encoders */
-@@ -461,10 +455,6 @@ static void _dpu_kms_drm_obj_destroy(struct dpu_kms *dpu_kms)
- 	struct msm_drm_private *priv;
- 	int i;
- 
--	if (!dpu_kms->dev) {
--		DPU_ERROR("invalid dev\n");
--		return;
--	}
- 	priv = dpu_kms->dev->dev_private;
- 
- 	for (i = 0; i < priv->num_crtcs; i++)
-@@ -496,7 +486,6 @@ static int _dpu_kms_drm_obj_init(struct dpu_kms *dpu_kms)
- 
- 	int primary_planes_idx = 0, cursor_planes_idx = 0, i, ret;
- 	int max_crtc_count;
--
- 	dev = dpu_kms->dev;
- 	priv = dev->dev_private;
- 	catalog = dpu_kms->catalog;
-@@ -576,8 +565,6 @@ static void _dpu_kms_hw_destroy(struct dpu_kms *dpu_kms)
- 	int i;
- 
- 	dev = dpu_kms->dev;
--	if (!dev)
--		return;
- 
- 	if (dpu_kms->hw_intr)
- 		dpu_hw_intr_destroy(dpu_kms->hw_intr);
-@@ -794,11 +781,6 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
- 
- 	dpu_kms = to_dpu_kms(kms);
- 	dev = dpu_kms->dev;
--	if (!dev) {
--		DPU_ERROR("invalid device\n");
--		return rc;
--	}
--
- 	priv = dev->dev_private;
- 
- 	atomic_set(&dpu_kms->bandwidth_ref, 0);
-@@ -1051,11 +1033,6 @@ static int __maybe_unused dpu_runtime_suspend(struct device *dev)
- 	struct dss_module_power *mp = &dpu_kms->mp;
- 
- 	ddev = dpu_kms->dev;
--	if (!ddev) {
--		DPU_ERROR("invalid drm_device\n");
--		return rc;
--	}
--
- 	rc = msm_dss_enable_clk(mp->clk_config, mp->num_clk, false);
- 	if (rc)
- 		DPU_ERROR("clock disable failed rc:%d\n", rc);
-@@ -1073,11 +1050,6 @@ static int __maybe_unused dpu_runtime_resume(struct device *dev)
- 	struct dss_module_power *mp = &dpu_kms->mp;
- 
- 	ddev = dpu_kms->dev;
--	if (!ddev) {
--		DPU_ERROR("invalid drm_device\n");
--		return rc;
--	}
--
- 	rc = msm_dss_enable_clk(mp->clk_config, mp->num_clk, true);
- 	if (rc) {
- 		DPU_ERROR("clock enable failed rc:%d\n", rc);
++config LEGACY_WEXT_ALLCONFIG
++	bool "allconfig for legacy wireless extensions"
++	select WIRELESS_EXT
++	select WEXT_CORE
++	select WEXT_PROC
++	select WEXT_SPY
++	select WEXT_PRIV
++	help
++	  Config option used to enable all the legacy wireless extensions to
++	  the core functionality used by add-in modules.
++
++	  If you are not building a kernel to be used for a variety of
++	  out-of-kernel built wireless modules, say N here.
++
+ config CFG80211
+ 	tristate "cfg80211 - wireless configuration API"
+ 	depends on RFKILL || !RFKILL
 -- 
-2.20.1
+2.23.0.187.g17f5b7556c-goog
 
