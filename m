@@ -2,201 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25A41ABCA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:36:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED060ABC9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:36:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404842AbfIFPgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:36:08 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37166 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404775AbfIFPgI (ORCPT
+        id S2404767AbfIFPgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:36:00 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44720 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404705AbfIFPgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:36:08 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t14so6418709lji.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 08:36:06 -0700 (PDT)
+        Fri, 6 Sep 2019 11:36:00 -0400
+Received: by mail-ed1-f65.google.com with SMTP id p2so5497532edx.11
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 08:35:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=soleen.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kXqD3C73hqZbQh8+pyGdwCZwxnrqPGKEEp+0kRpG5I8=;
-        b=DYc6W/hyCfxAxHbkWTmDrh+ODKc6x42+38HNklF0/ptlANxl7RT8hSgyEdfrQHi6Xh
-         5ChSGqRSbxC9ue8UUxHuvt5x60DSZdetyLFMHeKirW5J2qmzjwoayW12EsnqZorry25V
-         3FxxQI4aE2n0uiQzkRk4wz84DwPGTYa2AbbHg=
+        bh=A4FYq6BYAh9kLfOqN+BJBL7FeQsVNJ/SlbY8XN9CwA8=;
+        b=Ef0Hr3tJqLTPZXz5nKn/QZlVlv/EccVcAXv+2/UUOF6Mg5R+fHj87YhuLGsxjwYppU
+         W3/rHKML8xuucTp2rSpU2M2xqVOAPB2zE2P5SzCfGRnmQUckNHc9bFtZKPELKdLRUP2f
+         JG+u003rO5+i6SD1pmAO0U6edTrVhdAnswlfGrKlbFjZaunsV/07suyfBhpVyRaKAqPz
+         kgoeUTaq1QPmlw+R60+UxKe7BthBtS34DA2HkxeU86dVp7bcstmFCe/Kk5FE9Q+vkfgM
+         O4sRgA1GIDIYLWe3+HSMgP8M/j2LiKmEcd/yTovL3oK0UfXa3QpI0BHSrg+ZS8481Rrp
+         O53Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kXqD3C73hqZbQh8+pyGdwCZwxnrqPGKEEp+0kRpG5I8=;
-        b=qU2fzupFJ6l54Ay84gKBU6MlkpDo3Mb6WNHL6jBOpe9oiflYB1pPvEiq8osR0nladf
-         yy2y8rfNu7kk8Ws5HkRxtCQFD5z35hxgctHJ1OxtUizFfKLQ3BbB8sLRSwXtDxb5aOm2
-         MhkPvtiZYX+kiorj6T3aUryd854w3C6sMUhQsBLX2fGbcHpcFY+FDZHqct5J3P8bYR0h
-         G5vOrjiCRA3xk6rLAYgSur9QjkFPcpvuu+OkT3lgbU9atBYwDGr2aQttwzP5JibbC1AD
-         o/mcMHqrGhh6AQevDoOJdadDe7W3n/LAAQziJzByxHwNnrkR2CCSwmSgJN7rzPi6gt5X
-         6ZFQ==
-X-Gm-Message-State: APjAAAVkJ8C2Lcs8DEgG6bkwaHujwIj+syov3sUF78EmBfmeo3RLR0rS
-        W8GoaXxDNU9HhmqfhOI4it0I8RwZsUs=
-X-Google-Smtp-Source: APXvYqwk4G9eIdEJg/75qX4HmF7BYuiVBrWSX89wJ+NNL7XGmRJaL44pcxf4ObKOPHVbwXHm58KikQ==
-X-Received: by 2002:a2e:9117:: with SMTP id m23mr6253221ljg.43.1567784164614;
-        Fri, 06 Sep 2019 08:36:04 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id u8sm1356155lfb.36.2019.09.06.08.36.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2019 08:36:02 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id x80so5425196lff.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 08:36:02 -0700 (PDT)
-X-Received: by 2002:ac2:47f8:: with SMTP id b24mr6833712lfp.134.1567784162071;
- Fri, 06 Sep 2019 08:36:02 -0700 (PDT)
+        bh=A4FYq6BYAh9kLfOqN+BJBL7FeQsVNJ/SlbY8XN9CwA8=;
+        b=pWtGaX1jqiSrNUq0LtJzZ5nNHZHH3/aGdTkMAfuWR9ZHzrUFoMw4uEsTZLN8uVq3k7
+         YWUcRocBpjFk/v4vfDHPGpB10dLDemJoQAe9+cHnsveBW/jGEt0EgodpBWn3Ipc0Pdl6
+         Cl4/COR1avOImO7qNDfizNKDeUufBmi4GSf2nrB4LjYvnzoZPo0itWtyscDJbUs28TQl
+         hf2sUF+utJgVeqeEph4kbqoPoc1MY8F3UNYdr/iVKhZSiFkJxeY1Xg+mJABmcGkwpzxN
+         d1C0Z59aDXRoK63hKiQaNA7BxgrThuQ/E6TbIVFOwDJdzvdUmCHmanmXZyXr7HhnyHhW
+         lHBQ==
+X-Gm-Message-State: APjAAAUgzFXjPL0oqo30ho4xUKeuVIjzunDP59dNr+sPXzKc89s592Cn
+        +/m1O0csaVxx6liXEWv6FXPH/w3F3ZextO/2tp6Yaw==
+X-Google-Smtp-Source: APXvYqwSiKKOKWP/h3a0ZsF+Oo9rceIyMqvsTBtnjeEonE2/Oyyhql11Q3k8Zm0qLFs0EuLz3YWma2Khwt65rF7/etA=
+X-Received: by 2002:a05:6402:17ae:: with SMTP id j14mr10209564edy.219.1567784158621;
+ Fri, 06 Sep 2019 08:35:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <156763534546.18676.3530557439501101639.stgit@warthog.procyon.org.uk>
- <CAHk-=wh5ZNE9pBwrnr5MX3iqkUP4nspz17rtozrSxs5-OGygNw@mail.gmail.com>
- <17703.1567702907@warthog.procyon.org.uk> <CAHk-=wjQ5Fpv0D7rxX0W=obx9xoOAxJ_Cr+pGCYOAi2S9FiCNg@mail.gmail.com>
- <CAKCoTu7ms_Mr-q08d9XB3uascpzwBa5LF9JTT2aq8uUsoFE8aQ@mail.gmail.com>
- <CAHk-=wjcsxQ8QB_v=cwBQw4pkJg7pp-bBsdWyPivFO_OeF-y+g@mail.gmail.com>
- <5396.1567719164@warthog.procyon.org.uk> <CAHk-=wgbCXea1a9OTWgMMvcsCGGiNiPp+ty-edZrBWn63NCYdw@mail.gmail.com>
- <14883.1567725508@warthog.procyon.org.uk> <CAHk-=wjt2Eb+yEDOcQwCa0SrZ4cWu967OtQG8Vz21c=n5ZP1Nw@mail.gmail.com>
- <27732.1567764557@warthog.procyon.org.uk>
-In-Reply-To: <27732.1567764557@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 6 Sep 2019 08:35:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiR1fpahgKuxSOQY6OfgjWD+MKz8UF6qUQ6V_y2TC_V6w@mail.gmail.com>
-Message-ID: <CAHk-=wiR1fpahgKuxSOQY6OfgjWD+MKz8UF6qUQ6V_y2TC_V6w@mail.gmail.com>
-Subject: Re: Why add the general notification queue and its sources
-To:     David Howells <dhowells@redhat.com>
-Cc:     Ray Strode <rstrode@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Ray, Debarshi" <debarshi.ray@gmail.com>,
-        Robbie Harwood <rharwood@redhat.com>
+References: <20190821183204.23576-1-pasha.tatashin@soleen.com>
+ <20190821183204.23576-2-pasha.tatashin@soleen.com> <0f83b70e-2f8f-aa05-84d8-41290679003b@arm.com>
+In-Reply-To: <0f83b70e-2f8f-aa05-84d8-41290679003b@arm.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Fri, 6 Sep 2019 11:35:47 -0400
+Message-ID: <CA+CK2bBzCnxk8X8R=_70ECT=kn8QRm7OioZP4LNJioTNXYDhXQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/17] kexec: quiet down kexec reboot
+To:     James Morse <james.morse@arm.com>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Mark Rutland <mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 3:09 AM David Howells <dhowells@redhat.com> wrote:
+On Fri, Sep 6, 2019 at 11:17 AM James Morse <james.morse@arm.com> wrote:
 >
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> Hi Pavel,
 >
-> > But it's *literally* just finding the places that work with
-> > pipe->curbuf/nrbufs and making them use atomic updates.
+> On 21/08/2019 19:31, Pavel Tatashin wrote:
+> > Here is a regular kexec command sequence and output:
+> > =====
+> > $ kexec --reuse-cmdline -i --load Image
+> > $ kexec -e
+> > [  161.342002] kexec_core: Starting new kernel
+> >
+> > Welcome to Buildroot
+> > buildroot login:
+> > =====
+> >
+> > Even when "quiet" kernel parameter is specified, "kexec_core: Starting
+> > new kernel" is printed.
+> >
+> > This message has  KERN_EMERG level, but there is no emergency, it is a
+> > normal kexec operation, so quiet it down to appropriate KERN_NOTICE.
 >
-> No.  It really isn't.  That's two variables that describe the occupied section
-> of the buffer.  Unless you have something like a 68020 with CAS2, or put them
-> next to each other so you can use CMPXCHG8, you can't do that.
->
-> They need converting to head/tail pointers first.
+> As this doesn't have a dependency with the rest of the series, you may want to post it
+> independently so it can be picked up independently.
 
-You misunderstand - because I phrased it badly. I meant "atomic" in
-the traditional kernel sense, as in "usable in not thread context" (eg
-GFP_ATOMIC etc).
+Hi James,
 
-I'd start out just using a spinlock.
+I have posted it previously, but it has not been picked up. So, I
+decided to include it together with this series. Is this alright with
+you, otherwise I can remove it from this series.
 
-I do agree that we could try to be fancy and do it entirely locklessly
-too, and I mentioned that in another part:
-
- "[..] it should not
-  be all that hard to just make the whole "curbuf/nrbufs" handling use
-  its own locking (maybe even some lockless atomics and cmpxchg)"
-
-but I also very much agree that it's much more complex.
-
-The main complexity of a lockless thing is actually almost certainly
-not in curbuf/nrbufs, because those could easily be packed as two
-16-bit values in a 32-bit entity and then regular cmpxchg works fine.
-
-No, the complexity in the lockless model is that then you have to be
-very careful with the "buf[]" array update too.  Maybe that's trivial
-(just make sure that they are NULL when not used), but it just looks
-less than wonderfully easy.
-
-So a lockless update I'm sure is _doable_ with some cleverness, but is
-probably not really worth it.
-
-That's particularly true since we already *have* a spinlock that we
-would take anyway: the we could strive to use the waitqueue spinlock
-in pipe->wait, and not even really add any new locking. That would
-require a bit of cleverness too and re-ordering things more, but we do
-that in other places (eg completions, but the fs_pin code does it too,
-and a few other cases.
-
-Look for "wake_up_locked()" and friends, which is a sure-fire sign
-that somebody is playing games and taking the wait-queue lock manually
-for their own nefarious reasons.
-
-> > They really would work with almost anything. You could even mix-and-match
-> > "data generated by kernel" and "data done by 'write()' or 'splice()' by a
-> > user process".
->
-> Imagine that userspace writes a large message and takes the mutex.  At the
-> same time something in softirq context decides *it* wants to write a message -
-> it can't take the mutex and it can't wait, so the userspace write would have
-> to cause the kernel message to be dropped.
-
-No. You're missing the point entirely.
-
-The mutex is entirely immaterial for the "insert a message". It is
-only used for user-space synchronization. The "add message to the pipe
-buffers" would only do the low-level buffer updates (whether using a
-new spinlock, re-using the pipe waitqueue lock, or entirely
-locklessly, ends up being then just an implementation detail).
-
-Note that user-space writes are defined to be atomic, but they are (a)
-not ordered and (b) only atomic up to a single buffer entry (which is
-that PIPE_BUF limit). So you can always put in a new buffer entry at
-any time.
-
-Obviously if a user space write just fills up the whole queue (or
-_other_ messages fill up the whole queue) you'd have to drop the
-notification. But that's always true. That's true even in your thing.
-The only difference is that we _allow_ other user spaces to write to
-the notification queue too.
-
-But if you don't want to allow that, then don't give out the write
-side of the pipe to any untrusted user space.
-
-But in *general*, allowing user space to write to the pipe is a great
-feature: it means that your notification source *can* be a user space
-daemon that you gave the write side of the pipe to (possibly using fd
-passing, possibly by just forking your own user-space child or cloning
-a thread).
-
-So for example, from a consumer standpoint, you can start off doing
-these things in user space with a helper thread that feeds the pipe
-(for example, polling /proc/mounts every second), and then when you've
-prototyped it and are happy with it, you can add the system call (or
-ioctl or whatever) to make the kernel generate the messages so that
-you don't have to poll.
-
-But now, once you have the kernel patch, you already have a proven
-user, and you can show numbers ("My user-space thing works, but it
-uses up 0.1% CPU time and has that nasty up-to-one-second latency
-because of polling"). Ta-daa!
-
-End result: it's backwards compatible, it's prototypable, and it's
-fairly easily extensible. Want to add a new source of events? Just
-pass the pipe to any random piece of code you want. It needs kernel
-support only when you've proven the concept _and_ you can show that
-"yeah, this user space polling model is a real performance or
-complexity problem" or whatever.
-
-This is why I like pipes. You can use them today. They are simple, and
-extensible, and you don't need to come up with a new subsystem and
-some untested ad-hoc thing that nobody has actually used.
-
-And they work automatically with all the existing infrastructure. They
-work with whatever perl or shell scripts, they work with poll/select
-loops, they work with user-space sources of events, they are just very
-flexible.
-
-                     Linus
+Thank you,
+Pasha
