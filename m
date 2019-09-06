@@ -2,162 +2,289 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54E0DAB05E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 03:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64CD0AB077
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 03:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404280AbfIFBsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 21:48:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42136 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404265AbfIFBsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 21:48:45 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A106218C4266;
-        Fri,  6 Sep 2019 01:48:44 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8744860C18;
-        Fri,  6 Sep 2019 01:48:26 +0000 (UTC)
-Date:   Fri, 6 Sep 2019 09:48:21 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Keith Busch <keith.busch@intel.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-scsi@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Long Li <longli@microsoft.com>,
-        John Garry <john.garry@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, Jens Axboe <axboe@fb.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Subject: Re: [PATCH 1/4] softirq: implement IRQ flood detection mechanism
-Message-ID: <20190906014819.GB27116@ming.t460p>
-References: <20190903033001.GB23861@ming.t460p>
- <299fb6b5-d414-2e71-1dd2-9d6e34ee1c79@linaro.org>
- <20190903063125.GA21022@ming.t460p>
- <6b88719c-782a-4a63-db9f-bf62734a7874@linaro.org>
- <20190903072848.GA22170@ming.t460p>
- <dd96def4-1121-afbe-2431-9e516a06850c@linaro.org>
- <6f3b6557-1767-8c80-f786-1ea667179b39@acm.org>
- <2a8bd278-5384-d82f-c09b-4fce236d2d95@linaro.org>
- <20190905090617.GB4432@ming.t460p>
- <6a36ccc7-24cd-1d92-fef1-2c5e0f798c36@linaro.org>
+        id S2404305AbfIFB6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 21:58:22 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:45866 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730991AbfIFB6V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 21:58:21 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x861raFa033912;
+        Fri, 6 Sep 2019 01:58:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2019-08-05;
+ bh=wZpwXmqOxWqhR0DvbaLn0ZKC1APUcFkWjxi8qiwEj3Q=;
+ b=cxFDaBTvJY4QV40tWKe5huskppZMGPOy1Ng581AUIopGsUO31D2jk/w9sgGsV8uMemZz
+ kqm/uuQyiWnDkaa7WlAFZSmtmEZZTjqQsWVOt9iNOPtQaWf+rsFQyLwlN4oTlCHxAhDY
+ rJQcOb693wFCW2Z//ckf5IMSr0+IPwJ2FJo5lgmqFQsLQXydmNb/E4DrebAXv9CTpBID
+ MhMptBdztG5RfSvaLLhJXi5OlXee6Yg8BoSMFP7+fL3gFduZxDd5a9qBRblt2+e6pQW4
+ 99AAiaAAoLy1bLlvz76NN2DBitibB9dTRAZ3lYEfYg962ddNuxSmRY/QXgj84hqTxhVs Gw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2uue1f81am-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 01:58:07 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x861cYhL188476;
+        Fri, 6 Sep 2019 01:40:44 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2utpmc44wk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 01:40:44 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x861efrg004045;
+        Fri, 6 Sep 2019 01:40:41 GMT
+Received: from localhost.localdomain (/98.229.125.203)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Sep 2019 18:40:41 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH v3 5/9] pcrypt: remove padata cpumask notifier
+Date:   Thu,  5 Sep 2019 21:40:25 -0400
+Message-Id: <20190906014029.3345-6-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190906014029.3345-1-daniel.m.jordan@oracle.com>
+References: <20190906014029.3345-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a36ccc7-24cd-1d92-fef1-2c5e0f798c36@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Fri, 06 Sep 2019 01:48:44 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909060015
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909060019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+Now that padata_do_parallel takes care of finding an alternate callback
+CPU, there's no need for pcrypt's callback cpumask, so remove it and the
+notifier callback that keeps it in sync.
 
-On Thu, Sep 05, 2019 at 12:37:13PM +0200, Daniel Lezcano wrote:
-> 
-> Hi Ming,
-> 
-> On 05/09/2019 11:06, Ming Lei wrote:
-> > On Wed, Sep 04, 2019 at 07:31:48PM +0200, Daniel Lezcano wrote:
-> >> Hi,
-> >>
-> >> On 04/09/2019 19:07, Bart Van Assche wrote:
-> >>> On 9/3/19 12:50 AM, Daniel Lezcano wrote:
-> >>>> On 03/09/2019 09:28, Ming Lei wrote:
-> >>>>> On Tue, Sep 03, 2019 at 08:40:35AM +0200, Daniel Lezcano wrote:
-> >>>>>> It is a scheduler problem then ?
-> >>>>>
-> >>>>> Scheduler can do nothing if the CPU is taken completely by handling
-> >>>>> interrupt & softirq, so seems not a scheduler problem, IMO.
-> >>>>
-> >>>> Why? If there is a irq pressure on one CPU reducing its capacity, the
-> >>>> scheduler will balance the tasks on another CPU, no?
-> >>>
-> >>> Only if CONFIG_IRQ_TIME_ACCOUNTING has been enabled. However, I don't
-> >>> know any Linux distro that enables that option. That's probably because
-> >>> that option introduces two rdtsc() calls in each interrupt. Given the
-> >>> overhead introduced by this option, I don't think this is the solution
-> >>> Ming is looking for.
-> >>
-> >> Was this overhead reported somewhere ?
-> > 
-> > The syscall of gettimeofday() calls ktime_get_real_ts64() which finally
-> > calls tk_clock_read() which calls rdtsc too.
-> > 
-> > But gettimeofday() is often used in fast path, and block IO_STAT needs to
-> > read it too.
-> > 
-> >>
-> >>> See also irqtime_account_irq() in kernel/sched/cputime.c.
-> >>
-> >> From my POV, this framework could be interesting to detect this situation.
-> > 
-> > Now we are talking about IRQ_TIME_ACCOUNTING instead of IRQ_TIMINGS, and the
-> > former one could be used to implement the detection. And the only sharing
-> > should be the read of timestamp.
-> 
-> You did not share yet the analysis of the problem (the kernel warnings
-> give the symptoms) and gave the reasoning for the solution. It is hard
-> to understand what you are looking for exactly and how to connect the dots.
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Acked-by: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ crypto/pcrypt.c | 125 +++++++-----------------------------------------
+ 1 file changed, 18 insertions(+), 107 deletions(-)
 
-Let me explain it one more time:
+diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
+index efca962ab12a..2ec36e6a132f 100644
+--- a/crypto/pcrypt.c
++++ b/crypto/pcrypt.c
+@@ -18,33 +18,8 @@
+ #include <linux/cpu.h>
+ #include <crypto/pcrypt.h>
+ 
+-struct padata_pcrypt {
+-	struct padata_instance *pinst;
+-
+-	/*
+-	 * Cpumask for callback CPUs. It should be
+-	 * equal to serial cpumask of corresponding padata instance,
+-	 * so it is updated when padata notifies us about serial
+-	 * cpumask change.
+-	 *
+-	 * cb_cpumask is protected by RCU. This fact prevents us from
+-	 * using cpumask_var_t directly because the actual type of
+-	 * cpumsak_var_t depends on kernel configuration(particularly on
+-	 * CONFIG_CPUMASK_OFFSTACK macro). Depending on the configuration
+-	 * cpumask_var_t may be either a pointer to the struct cpumask
+-	 * or a variable allocated on the stack. Thus we can not safely use
+-	 * cpumask_var_t with RCU operations such as rcu_assign_pointer or
+-	 * rcu_dereference. So cpumask_var_t is wrapped with struct
+-	 * pcrypt_cpumask which makes possible to use it with RCU.
+-	 */
+-	struct pcrypt_cpumask {
+-		cpumask_var_t mask;
+-	} *cb_cpumask;
+-	struct notifier_block nblock;
+-};
+-
+-static struct padata_pcrypt pencrypt;
+-static struct padata_pcrypt pdecrypt;
++static struct padata_instance *pencrypt;
++static struct padata_instance *pdecrypt;
+ static struct kset           *pcrypt_kset;
+ 
+ struct pcrypt_instance_ctx {
+@@ -128,7 +103,7 @@ static int pcrypt_aead_encrypt(struct aead_request *req)
+ 			       req->cryptlen, req->iv);
+ 	aead_request_set_ad(creq, req->assoclen);
+ 
+-	err = padata_do_parallel(pencrypt.pinst, padata, &ctx->cb_cpu);
++	err = padata_do_parallel(pencrypt, padata, &ctx->cb_cpu);
+ 	if (!err)
+ 		return -EINPROGRESS;
+ 
+@@ -170,7 +145,7 @@ static int pcrypt_aead_decrypt(struct aead_request *req)
+ 			       req->cryptlen, req->iv);
+ 	aead_request_set_ad(creq, req->assoclen);
+ 
+-	err = padata_do_parallel(pdecrypt.pinst, padata, &ctx->cb_cpu);
++	err = padata_do_parallel(pdecrypt, padata, &ctx->cb_cpu);
+ 	if (!err)
+ 		return -EINPROGRESS;
+ 
+@@ -317,36 +292,6 @@ static int pcrypt_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	return -EINVAL;
+ }
+ 
+-static int pcrypt_cpumask_change_notify(struct notifier_block *self,
+-					unsigned long val, void *data)
+-{
+-	struct padata_pcrypt *pcrypt;
+-	struct pcrypt_cpumask *new_mask, *old_mask;
+-	struct padata_cpumask *cpumask = (struct padata_cpumask *)data;
+-
+-	if (!(val & PADATA_CPU_SERIAL))
+-		return 0;
+-
+-	pcrypt = container_of(self, struct padata_pcrypt, nblock);
+-	new_mask = kmalloc(sizeof(*new_mask), GFP_KERNEL);
+-	if (!new_mask)
+-		return -ENOMEM;
+-	if (!alloc_cpumask_var(&new_mask->mask, GFP_KERNEL)) {
+-		kfree(new_mask);
+-		return -ENOMEM;
+-	}
+-
+-	old_mask = pcrypt->cb_cpumask;
+-
+-	cpumask_copy(new_mask->mask, cpumask->cbcpu);
+-	rcu_assign_pointer(pcrypt->cb_cpumask, new_mask);
+-	synchronize_rcu();
+-
+-	free_cpumask_var(old_mask->mask);
+-	kfree(old_mask);
+-	return 0;
+-}
+-
+ static int pcrypt_sysfs_add(struct padata_instance *pinst, const char *name)
+ {
+ 	int ret;
+@@ -359,63 +304,29 @@ static int pcrypt_sysfs_add(struct padata_instance *pinst, const char *name)
+ 	return ret;
+ }
+ 
+-static int pcrypt_init_padata(struct padata_pcrypt *pcrypt,
+-			      const char *name)
++static int pcrypt_init_padata(struct padata_instance **pinst, const char *name)
+ {
+ 	int ret = -ENOMEM;
+-	struct pcrypt_cpumask *mask;
+ 
+ 	get_online_cpus();
+ 
+-	pcrypt->pinst = padata_alloc_possible(name);
+-	if (!pcrypt->pinst)
+-		goto err;
+-
+-	mask = kmalloc(sizeof(*mask), GFP_KERNEL);
+-	if (!mask)
+-		goto err_free_padata;
+-	if (!alloc_cpumask_var(&mask->mask, GFP_KERNEL)) {
+-		kfree(mask);
+-		goto err_free_padata;
+-	}
+-
+-	cpumask_and(mask->mask, cpu_possible_mask, cpu_online_mask);
+-	rcu_assign_pointer(pcrypt->cb_cpumask, mask);
+-
+-	pcrypt->nblock.notifier_call = pcrypt_cpumask_change_notify;
+-	ret = padata_register_cpumask_notifier(pcrypt->pinst, &pcrypt->nblock);
+-	if (ret)
+-		goto err_free_cpumask;
++	*pinst = padata_alloc_possible(name);
++	if (!*pinst)
++		return ret;
+ 
+-	ret = pcrypt_sysfs_add(pcrypt->pinst, name);
++	ret = pcrypt_sysfs_add(*pinst, name);
+ 	if (ret)
+-		goto err_unregister_notifier;
++		padata_free(*pinst);
+ 
+ 	put_online_cpus();
+ 
+-	return ret;
+-
+-err_unregister_notifier:
+-	padata_unregister_cpumask_notifier(pcrypt->pinst, &pcrypt->nblock);
+-err_free_cpumask:
+-	free_cpumask_var(mask->mask);
+-	kfree(mask);
+-err_free_padata:
+-	padata_free(pcrypt->pinst);
+-err:
+-	put_online_cpus();
+-
+ 	return ret;
+ }
+ 
+-static void pcrypt_fini_padata(struct padata_pcrypt *pcrypt)
++static void pcrypt_fini_padata(struct padata_instance *pinst)
+ {
+-	free_cpumask_var(pcrypt->cb_cpumask->mask);
+-	kfree(pcrypt->cb_cpumask);
+-
+-	padata_stop(pcrypt->pinst);
+-	padata_unregister_cpumask_notifier(pcrypt->pinst, &pcrypt->nblock);
+-	padata_free(pcrypt->pinst);
++	padata_stop(pinst);
++	padata_free(pinst);
+ }
+ 
+ static struct crypto_template pcrypt_tmpl = {
+@@ -440,13 +351,13 @@ static int __init pcrypt_init(void)
+ 	if (err)
+ 		goto err_deinit_pencrypt;
+ 
+-	padata_start(pencrypt.pinst);
+-	padata_start(pdecrypt.pinst);
++	padata_start(pencrypt);
++	padata_start(pdecrypt);
+ 
+ 	return crypto_register_template(&pcrypt_tmpl);
+ 
+ err_deinit_pencrypt:
+-	pcrypt_fini_padata(&pencrypt);
++	pcrypt_fini_padata(pencrypt);
+ err_unreg_kset:
+ 	kset_unregister(pcrypt_kset);
+ err:
+@@ -455,8 +366,8 @@ static int __init pcrypt_init(void)
+ 
+ static void __exit pcrypt_exit(void)
+ {
+-	pcrypt_fini_padata(&pencrypt);
+-	pcrypt_fini_padata(&pdecrypt);
++	pcrypt_fini_padata(pencrypt);
++	pcrypt_fini_padata(pdecrypt);
+ 
+ 	kset_unregister(pcrypt_kset);
+ 	crypto_unregister_template(&pcrypt_tmpl);
+-- 
+2.23.0
 
-When one IRQ flood happens on one CPU:
-
-1) softirq handling on this CPU can't make progress
-
-2) kernel thread bound to this CPU can't make progress
-
-For example, network may require softirq to xmit packets, or another irq
-thread for handling keyboards/mice or whatever, or rcu_sched may depend
-on that CPU for making progress, then the irq flood stalls the whole
-system.
-
-> 
-> AFAIU, there are fast medium where the responses to requests are faster
-> than the time to process them, right?
-
-Usually medium may not be faster than CPU, now we are talking about
-interrupts, which can be originated from lots of devices concurrently,
-for example, in Long Li'test, there are 8 NVMe drives involved.
-
-> 
-> I don't see how detecting IRQ flooding and use a threaded irq is the
-> solution, can you explain?
-
-When IRQ flood is detected, we reserve a bit little time for providing
-chance to make softirq/threads scheduled by scheduler, then the above
-problem can be avoided.
-
-> 
-> If the responses are coming at a very high rate, whatever the solution
-> (interrupts, threaded interrupts, polling), we are still in the same
-> situation.
-
-When we moving the interrupt handling into irq thread, other softirq/
-threaded interrupt/thread gets chance to be scheduled, so we can avoid
-to stall the whole system.
-
-> 
-> My suggestion was initially to see if the interrupt load will be taken
-> into accounts in the cpu load and favorize task migration with the
-> scheduler load balance to a less loaded CPU, thus the CPU processing
-> interrupts will end up doing only that while other CPUs will handle the
-> "threaded" side.
-> 
-> Beside that, I'm wondering if the block scheduler should be somehow
-> involved in that [1]
-
-For NVMe or any multi-queue storage, the default scheduler is 'none',
-which basically does nothing except for submitting IO asap.
-
-
-Thanks,
-Ming
