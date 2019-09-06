@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B798AB6AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:08:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61BA0AB6B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393157AbfIFLIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:08:43 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47073 "EHLO
+        id S2393197AbfIFLIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:08:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47110 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392373AbfIFLIc (ORCPT
+        with ESMTP id S2392313AbfIFLIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:08:32 -0400
+        Fri, 6 Sep 2019 07:08:38 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i6C6P-0007BT-Lx; Fri, 06 Sep 2019 13:08:29 +0200
+        id 1i6C6V-0007Ce-7p; Fri, 06 Sep 2019 13:08:35 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E55A21C0E2F;
-        Fri,  6 Sep 2019 13:08:17 +0200 (CEST)
-Date:   Fri, 06 Sep 2019 11:08:17 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 51E701C0E32;
+        Fri,  6 Sep 2019 13:08:18 +0200 (CEST)
+Date:   Fri, 06 Sep 2019 11:08:18 -0000
 From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/ixp4xx: Register the base PA instead of its
- VA in fwnode
+Subject: [tip: irq/core] irqchip/gic-v3-its: Register the ITS' PA instead of
+ its VA in fwnode
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <156776809786.24167.1522028379821628567.tip-bot2@tip-bot2>
+Message-ID: <156776809830.24167.204482072593720465.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,35 +46,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     9adc54d4e8c56ed5851bb51314ffcbaebdfbf17e
-Gitweb:        https://git.kernel.org/tip/9adc54d4e8c56ed5851bb51314ffcbaebdfbf17e
+Commit-ID:     5778cc77111f09fd2033c66cdf1654f542771ed0
+Gitweb:        https://git.kernel.org/tip/5778cc77111f09fd2033c66cdf1654f542771ed0
 Author:        Marc Zyngier <maz@kernel.org>
 AuthorDate:    Wed, 31 Jul 2019 16:13:42 +01:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Wed, 07 Aug 2019 14:24:41 +01:00
+CommitterDate: Wed, 07 Aug 2019 14:24:28 +01:00
 
-irqchip/ixp4xx: Register the base PA instead of its VA in fwnode
+irqchip/gic-v3-its: Register the ITS' PA instead of its VA in fwnode
 
-Do not expose the base VA (it appears in debugfs). Instead,
-record the PA, which at least can be used to precisely identify
-the associated irqchip and domain.
+Do not expose the ITS' VA (it appears in debugfs). Instead, record
+the PA, which at least can be used to precisely identify the associated
+irqchip and domain.
 
 Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-ixp4xx.c | 2 +-
+ drivers/irqchip/irq-gic-v3-its.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-ixp4xx.c b/drivers/irqchip/irq-ixp4xx.c
-index 6751c35..37e0749 100644
---- a/drivers/irqchip/irq-ixp4xx.c
-+++ b/drivers/irqchip/irq-ixp4xx.c
-@@ -319,7 +319,7 @@ void __init ixp4xx_irq_init(resource_size_t irqbase,
- 		pr_crit("IXP4XX: could not ioremap interrupt controller\n");
- 		return;
- 	}
--	fwnode = irq_domain_alloc_fwnode(base);
-+	fwnode = irq_domain_alloc_fwnode(&irqbase);
- 	if (!fwnode) {
- 		pr_crit("IXP4XX: no domain handle\n");
- 		return;
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 1b5c367..8eeb0e2 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -3921,7 +3921,7 @@ static int __init gic_acpi_parse_madt_its(union acpi_subtable_headers *header,
+ 	res.end = its_entry->base_address + ACPI_GICV3_ITS_MEM_SIZE - 1;
+ 	res.flags = IORESOURCE_MEM;
+ 
+-	dom_handle = irq_domain_alloc_fwnode((void *)its_entry->base_address);
++	dom_handle = irq_domain_alloc_fwnode(&res.start);
+ 	if (!dom_handle) {
+ 		pr_err("ITS@%pa: Unable to allocate GICv3 ITS domain token\n",
+ 		       &res.start);
