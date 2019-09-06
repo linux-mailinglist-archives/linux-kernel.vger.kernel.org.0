@@ -2,69 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DEA6ABAE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:30:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ABA9ABAE4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405431AbfIFOaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:30:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46547 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390975AbfIFOaQ (ORCPT
+        id S2405445AbfIFOaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:30:20 -0400
+Received: from mcegress-30-lw-25.correio.biz ([191.252.30.25]:63064 "EHLO
+        mcegress-30-lw-25.correio.biz" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405433AbfIFOaT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:30:16 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1i6FFc-0005RF-IG; Fri, 06 Sep 2019 14:30:12 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Hugh Dickins <hughd@google.com>, linux-mm@kvack.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/shmem.c: make array 'values' static const, makes object smaller
-Date:   Fri,  6 Sep 2019 15:30:12 +0100
-Message-Id: <20190906143012.28698-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 6 Sep 2019 10:30:19 -0400
+X-Greylist: delayed 43811 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Sep 2019 10:30:17 EDT
+X-Sender-Id: x-authuser|contato@cortinasvilaprudente.com.br
+Received: from plesksa10.revendedordesite.com (mcingress0007.correio.biz [10.30.225.42])
+        by mcrelay.correio.biz (Postfix) with ESMTP id 7AF321500271;
+        Fri,  6 Sep 2019 11:30:15 -0300 (-03)
+X-Sender-Id: x-authuser|contato@cortinasvilaprudente.com.br
+Received: from plesksa10.revendedordesite.com (plesksa10.email.locaweb.com.br
+ [10.30.224.225])
+        by 0.0.0.0:2500 (trex/5.9.14);
+        Fri, 06 Sep 2019 11:30:16 -0300
+X-LW-Relay: Junk
+X-LW-SenderId: x-authuser|contato@cortinasvilaprudente.com.br
+Received: from plesksa10.revendedordesite.com (plesksmtp04.admincontrolpanel.com [187.45.216.237])
+        by plesksa10.revendedordesite.com (Postfix) with ESMTP id 16DDA1643CC;
+        Fri,  6 Sep 2019 11:30:15 -0300 (-03)
+Received: from iuri0032.hospedagemdesites.ws (iuri0032.hospedagemdesites.ws [191.252.107.153])
+        by plesksa10.revendedordesite.com (Postfix) with ESMTP id DFA8D120309;
+        Fri,  6 Sep 2019 11:30:14 -0300 (-03)
+Received: from [::1] (port=38680 helo=iuri0032.hospedagemdesites.ws)
+        by iuri0032.hospedagemdesites.ws with esmtpa (Exim 4.91)
+        (envelope-from <contato@cortinasvilaprudente.com.br>)
+        id 1i6FFd-00077l-OG; Fri, 06 Sep 2019 11:30:13 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 06 Sep 2019 11:30:13 -0300
+From:   TRUST LOAN <contato@cortinasvilaprudente.com.br>
+To:     undisclosed-recipients:;
+Subject: LOAN OFFER NOW @ 3% INTEREST RATE
+Reply-To: info_trustloan@mail-on.us
+Mail-Reply-To: info_trustloan@mail-on.us
+Message-ID: <f5a774db90a2186012d45ffb1cea1d23@cortinasvilaprudente.com.br>
+X-Sender: contato@cortinasvilaprudente.com.br
+User-Agent: Roundcube Webmail/1.3.3
+X-AuthUser: contato@cortinasvilaprudente.com.br
+X-Cpanel-Webmail: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the array 'values' on the stack but instead make it
-static const. Makes the object code smaller by 111 bytes.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
- 108612	  11169	    512	 120293	  1d5e5	mm/shmem.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
- 108437	  11233	    512	 120182	  1d576	mm/shmem.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- mm/shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 77d2df011c0e..30e1de87bdca 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3934,7 +3934,7 @@ int __init shmem_init(void)
- static ssize_t shmem_enabled_show(struct kobject *kobj,
- 		struct kobj_attribute *attr, char *buf)
- {
--	int values[] = {
-+	static const int values[] = {
- 		SHMEM_HUGE_ALWAYS,
- 		SHMEM_HUGE_WITHIN_SIZE,
- 		SHMEM_HUGE_ADVISE,
 -- 
-2.20.1
+DEAR SIR / MADAM,
 
+  ARE YOU TIRED OF SEEKING LOANS AND MORTGAGES? OR WERE YOU REJECTED BY
+BANKS AND OTHER FINANCIAL INSTITUTIONS? THIS IS TO INFORM YOU INSTANT 
+TRUST
+LOAN COMPANY OFFERS ALL TYPES OF CREDIT INTEREST @ 3%. CONTACT US WITH 
+THE
+FOLLOWING INFORMATION SO WE CAN MOVE ON TO THE NEXT STEP. OUR SERVICES
+INCLUDE: * PERSONAL LOANS (SECURE AND UNSECURED): * LOANS FOR BUSINESS
+(SECURE AND UNSECURED): * STUDENT LOAN: * DEBT CONSOLIDATION LOAN:
+*COMBINATION LOAN * PLUS: * LOANS XMAS (SECURE AND UNSECURED):
+  PLEASE PROVIDE THE FOLLOWING:
+  FULL NAMES:
+  ADDRESS:
+  AGE:
+  GENDER:
+  MONTHLY INCOME:
+  OCCUPATION:
+  PHONE:
+  AMOUNT OF LOAN:
+  DURATION:
+  PURPOSES OF CREDIT:
+  REGARDS
