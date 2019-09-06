@@ -2,154 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF58AB0C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 05:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80848AB0C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 05:01:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392091AbfIFDB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 23:01:57 -0400
-Received: from alln-iport-5.cisco.com ([173.37.142.92]:22445 "EHLO
-        alln-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731491AbfIFDBz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 23:01:55 -0400
-X-Greylist: delayed 423 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Sep 2019 23:01:54 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=3688; q=dns/txt; s=iport;
-  t=1567738914; x=1568948514;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=29g/MjG/SRZo9iSryE61I7U40l+EK7iDhodwVw1msDc=;
-  b=NkgqaJCONYmFd3y8/zjtuYSX2CRaYkC2/3M6jfHtLiq+8D9H5MEogpKO
-   uN68DM8tx/skeXF1MyXFl4Czm57rQdMm4c5g0O7vPt5zx0YsdlnibwTXO
-   ENId8STpGETnjknyxWoFyHs3KeHpLxBdeN5jRNEOxhXZ51KXF++GbxsXP
-   A=;
-X-IronPort-AV: E=Sophos;i="5.64,472,1559520000"; 
-   d="scan'208";a="325908215"
-Received: from rcdn-core-8.cisco.com ([173.37.93.144])
-  by alln-iport-5.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 06 Sep 2019 02:54:50 +0000
-Received: from sjc-ads-4595.cisco.com (sjc-ads-4595.cisco.com [10.28.38.115])
-        by rcdn-core-8.cisco.com (8.15.2/8.15.2) with ESMTP id x862snTN032447;
-        Fri, 6 Sep 2019 02:54:49 GMT
-Received: by sjc-ads-4595.cisco.com (Postfix, from userid 19784)
-        id 8FB421223; Thu,  5 Sep 2019 19:54:49 -0700 (PDT)
-From:   Enke Chen <enkechen@cisco.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netdev@vger.kernel.org
-Cc:     enkechen@cisco.com, linux-kernel@vger.kernel.org,
-        xe-linux-external@cisco.com
-Subject: [PATCH] net: Remove the source address setting in connect() for UDP
-Date:   Thu,  5 Sep 2019 19:54:37 -0700
-Message-Id: <20190906025437.613-1-enkechen@cisco.com>
-X-Mailer: git-send-email 2.19.1
+        id S2392065AbfIFDBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 23:01:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389424AbfIFDBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 23:01:41 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29D0F206DE;
+        Fri,  6 Sep 2019 03:01:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567738901;
+        bh=SzGojQzToRqxCpfmdL86DOZQu8Y6O9dT8W5aQVfbQtM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z1Be55gNDfWeThG1FWdE+yvMpl2tizqjHZX1hjRMeSA1xDz17abFKiO0cSKIBepey
+         ho2Lettv6EyOoj87WTit0tPc+j4w4RxDIKigQxK+DMSO4p+w3fu0gUWceZllTsfIZc
+         92lXiMjeXPSSqqyUrJSAwleXJCOJkKIDrL8wCyDU=
+Date:   Thu, 5 Sep 2019 20:01:39 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        syzbot+5aca688dac0796c56129@syzkaller.appspotmail.com
+Subject: Re: [PATCH vfs/for-next] vfs: fix vfs_get_single_reconf_super error
+ handling
+Message-ID: <20190906030139.GC803@sol.localdomain>
+Mail-Followup-To: Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzbot+5aca688dac0796c56129@syzkaller.appspotmail.com
+References: <0000000000003675ae05915a9fd3@google.com>
+ <20190831031024.26008-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.28.38.115, sjc-ads-4595.cisco.com
-X-Outbound-Node: rcdn-core-8.cisco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190831031024.26008-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The connect() system call for a UDP socket is for setting the destination
-address and port. But the current code mistakenly sets the source address
-for the socket as well. Remove the source address setting in connect() for
-UDP in this patch.
+On Fri, Aug 30, 2019 at 10:10:24PM -0500, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> syzbot reported an invalid free in debugfs_release_dentry().  The
+> reproducer tries to mount debugfs with the 'dirsync' option, which is
+> not allowed.  The bug is that if reconfigure_super() fails in
+> vfs_get_super(), deactivate_locked_super() is called, but also
+> fs_context::root is left non-NULL which causes deactivate_super() to be
+> called again later.
+> 
+> Fix it by releasing fs_context::root in the error path.
+> 
+> Reported-by: syzbot+5aca688dac0796c56129@syzkaller.appspotmail.com
+> Fixes: e478b48498a7 ("vfs: Add a single-or-reconfig keying to vfs_get_super()")
+> Cc: David Howells <dhowells@redhat.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/super.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 0f913376fc4c..99195e15be05 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1194,8 +1194,11 @@ int vfs_get_super(struct fs_context *fc,
+>  		fc->root = dget(sb->s_root);
+>  		if (keying == vfs_get_single_reconf_super) {
+>  			err = reconfigure_super(fc);
+> -			if (err < 0)
+> +			if (err < 0) {
+> +				dput(fc->root);
+> +				fc->root = NULL;
+>  				goto error;
+> +			}
+>  		}
+>  	}
+>  
 
-Implications of the bug:
+Ping.  This is still broken in linux-next.
 
-  - Packet drop:
-
-    On a multi-homed device, an address assigned to any interface may
-    qualify as a source address when originating a packet. If needed, the
-    IP_PKTINFO option can be used to explicitly specify the source address.
-    But with the source address being mistakenly set for the socket in
-    connect(), a return packet (for the socket) destined to an interface
-    address different from that source address would be wrongly dropped
-    due to address mismatch.
-
-    This can be reproduced easily. The dropped packets are shown in the
-    following output by "netstat -s" for UDP:
-
-          xxx packets to unknown port received
-
-  - Source address selection:
-
-    The source address, if unspecified via "bind()" or IP_PKTINFO, should
-    be determined by routing at the time of packet origination, and not at
-    the time when the connect() call is made. The difference matters as
-    routing can change, e.g., by interface down/up events, and using a
-    source address of an "down" interface is known to be problematic.
-
-There is no backward compatibility issue here as the source address setting
-in connect() is not needed anyway.
-
-  - No impact on the source address selection when the source address
-    is explicitly specified by "bind()", or by the "IP_PKTINFO" option.
-
-  - In the case that the source address is not explicitly specified,
-    the selection of the source address would be more accurate and
-    reliable based on the up-to-date routing table.
-
-Signed-off-by: Enke Chen <enkechen@cisco.com>
----
- net/ipv4/datagram.c |  7 -------
- net/ipv6/datagram.c | 15 +--------------
- 2 files changed, 1 insertion(+), 21 deletions(-)
-
-diff --git a/net/ipv4/datagram.c b/net/ipv4/datagram.c
-index f915abff1350..4065808ec6c1 100644
---- a/net/ipv4/datagram.c
-+++ b/net/ipv4/datagram.c
-@@ -64,13 +64,6 @@ int __ip4_datagram_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len
- 		err = -EACCES;
- 		goto out;
- 	}
--	if (!inet->inet_saddr)
--		inet->inet_saddr = fl4->saddr;	/* Update source address */
--	if (!inet->inet_rcv_saddr) {
--		inet->inet_rcv_saddr = fl4->saddr;
--		if (sk->sk_prot->rehash)
--			sk->sk_prot->rehash(sk);
--	}
- 	inet->inet_daddr = fl4->daddr;
- 	inet->inet_dport = usin->sin_port;
- 	sk->sk_state = TCP_ESTABLISHED;
-diff --git a/net/ipv6/datagram.c b/net/ipv6/datagram.c
-index ecf440a4f593..80388cd50dc3 100644
---- a/net/ipv6/datagram.c
-+++ b/net/ipv6/datagram.c
-@@ -197,19 +197,6 @@ int __ip6_datagram_connect(struct sock *sk, struct sockaddr *uaddr,
- 			goto out;
- 
- 		ipv6_addr_set_v4mapped(inet->inet_daddr, &sk->sk_v6_daddr);
--
--		if (ipv6_addr_any(&np->saddr) ||
--		    ipv6_mapped_addr_any(&np->saddr))
--			ipv6_addr_set_v4mapped(inet->inet_saddr, &np->saddr);
--
--		if (ipv6_addr_any(&sk->sk_v6_rcv_saddr) ||
--		    ipv6_mapped_addr_any(&sk->sk_v6_rcv_saddr)) {
--			ipv6_addr_set_v4mapped(inet->inet_rcv_saddr,
--					       &sk->sk_v6_rcv_saddr);
--			if (sk->sk_prot->rehash)
--				sk->sk_prot->rehash(sk);
--		}
--
- 		goto out;
- 	}
- 
-@@ -247,7 +234,7 @@ int __ip6_datagram_connect(struct sock *sk, struct sockaddr *uaddr,
- 	 *	destination cache for it.
- 	 */
- 
--	err = ip6_datagram_dst_update(sk, true);
-+	err = ip6_datagram_dst_update(sk, false);
- 	if (err) {
- 		/* Restore the socket peer info, to keep it consistent with
- 		 * the old socket state
--- 
-2.19.1
-
+- Eric
