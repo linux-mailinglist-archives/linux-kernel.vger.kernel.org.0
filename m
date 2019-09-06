@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BBC8AB6E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01B6DAB6D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393247AbfIFLKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:10:09 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47013 "EHLO
+        id S2392279AbfIFLIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:08:24 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47003 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392237AbfIFLIX (ORCPT
+        with ESMTP id S2392195AbfIFLIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:08:23 -0400
+        Fri, 6 Sep 2019 07:08:22 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i6C6A-00072D-Qk; Fri, 06 Sep 2019 13:08:14 +0200
+        id 1i6C6B-00072g-QV; Fri, 06 Sep 2019 13:08:15 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4A2AE1C0E04;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 966EC1C0E1C;
         Fri,  6 Sep 2019 13:08:14 +0200 (CEST)
 Date:   Fri, 06 Sep 2019 11:08:14 -0000
-From:   "tip-bot2 for Dexuan Cui" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Andres Salomon" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqdomain: Add the missing assignment of
- domain->fwnode for named fwnode
-Cc:     Lili Deng <v-lide@microsoft.com>, Dexuan Cui <decui@microsoft.com>,
-        Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3CPU1P153MB01694D9AF625AC335C600C5FBFBE0=40PU1P153MB?=
- =?utf-8?q?0169=2EAPCP153=2EPROD=2EOUTLOOK=2ECOM=3E?=
-References: =?utf-8?q?=3CPU1P153MB01694D9AF625AC335C600C5FBFBE0=40PU1P153M?=
- =?utf-8?q?B0169=2EAPCP153=2EPROD=2EOUTLOOK=2ECOM=3E?=
+Subject: [tip: irq/core] irqchip/mmp: Mask off interrupts from other cores
+Cc:     Andres Salomon <dilinger@queued.net>,
+        Lubomir Rintel <lkundrak@v3.sk>, Marc Zyngier <maz@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20190822092643.593488-9-lkundrak@v3.sk>
+References: <20190822092643.593488-9-lkundrak@v3.sk>
 MIME-Version: 1.0
-Message-ID: <156776809424.24167.4172013274250164395.tip-bot2@tip-bot2>
+Message-ID: <156776809457.24167.5698425115585991112.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,59 +48,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     711419e504ebd68c8f03656616829c8ad7829389
-Gitweb:        https://git.kernel.org/tip/711419e504ebd68c8f03656616829c8ad7829389
-Author:        Dexuan Cui <decui@microsoft.com>
-AuthorDate:    Mon, 02 Sep 2019 23:14:56 
+Commit-ID:     9e8e8912b05f276dd02d39cb596dc3cf03718377
+Gitweb:        https://git.kernel.org/tip/9e8e8912b05f276dd02d39cb596dc3cf03718377
+Author:        Andres Salomon <dilinger@queued.net>
+AuthorDate:    Thu, 22 Aug 2019 11:26:31 +02:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Tue, 03 Sep 2019 09:16:50 +01:00
+CommitterDate: Fri, 30 Aug 2019 15:23:30 +01:00
 
-irqdomain: Add the missing assignment of domain->fwnode for named fwnode
+irqchip/mmp: Mask off interrupts from other cores
 
-Recently device pass-through stops working for Linux VM running on Hyper-V.
+On mmp3, there's an extra set of ICU registers (ICU2) that handle
+interrupts on the extra cores.  When masking off interrupts on MP1,
+these should be masked as well.
 
-git-bisect shows the regression is caused by the recent commit
-467a3bb97432 ("PCI: hv: Allocate a named fwnode ..."), but the root cause
-is that the commit d59f6617eef0 forgets to set the domain->fwnode for
-IRQCHIP_FWNODE_NAMED*, and as a result:
+We add a new interrupt controller via device tree to identify when we're
+looking at an mmp3 machine via compatible field of "marvell,mmp3-intc".
 
-1. The domain->fwnode remains to be NULL.
+[lkundrak@v3.sk: Changed "mrvl,mmp3-intc" compatible strings to
+"marvell,mmp3-intc". Tidied up the subject line a bit.]
 
-2. irq_find_matching_fwspec() returns NULL since "h->fwnode == fwnode" is
-false, and pci_set_bus_msi_domain() sets the Hyper-V PCI root bus's
-msi_domain to NULL.
-
-3. When the device is added onto the root bus, the device's dev->msi_domain
-is set to NULL in pci_set_msi_domain().
-
-4. When a device driver tries to enable MSI-X, pci_msi_setup_msi_irqs()
-calls arch_setup_msi_irqs(), which uses the native MSI chip (i.e.
-arch/x86/kernel/apic/msi.c: pci_msi_controller) to set up the irqs, but
-actually pci_msi_setup_msi_irqs() is supposed to call
-msi_domain_alloc_irqs() with the hbus->irq_domain, which is created in
-hv_pcie_init_irq_domain() and is associated with the Hyper-V chip
-hv_msi_irq_chip. Consequently, the irq line is not properly set up, and
-the device driver can not receive any interrupt.
-
-Fixes: d59f6617eef0 ("genirq: Allow fwnode to carry name information only")
-Fixes: 467a3bb97432 ("PCI: hv: Allocate a named fwnode instead of an address-based one")
-Reported-by: Lili Deng <v-lide@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Andres Salomon <dilinger@queued.net>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/PU1P153MB01694D9AF625AC335C600C5FBFBE0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
----
- kernel/irq/irqdomain.c | 1 +
- 1 file changed, 1 insertion(+)
+Link: https://lore.kernel.org/r/20190822092643.593488-9-lkundrak@v3.sk
+--
+Changes since v1:
+- Moved mmp3-specific mmp_icu2_base initialization from mmp_init_bases() to
+  mmp3_of_init() so that we don't have to check for marvell,mmp3-intc
+  compatibility twice.
+- Drop an superfluous call to irq_set_default_host()
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index e7bbab1..132672b 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -149,6 +149,7 @@ struct irq_domain *__irq_domain_add(struct fwnode_handle *fwnode, int size,
- 		switch (fwid->type) {
- 		case IRQCHIP_FWNODE_NAMED:
- 		case IRQCHIP_FWNODE_NAMED_ID:
-+			domain->fwnode = fwnode;
- 			domain->name = kstrdup(fwid->name, GFP_KERNEL);
- 			if (!domain->name) {
- 				kfree(domain);
+ arch/arm/mach-mmp/regs-icu.h |  3 +++
+ drivers/irqchip/irq-mmp.c    | 48 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
+
+Signed-off-by: Andres Salomon <dilinger@queued.net>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/20190822092643.593488-9-lkundrak@v3.sk
+---
+ arch/arm/mach-mmp/regs-icu.h |  3 ++-
+ drivers/irqchip/irq-mmp.c    | 48 +++++++++++++++++++++++++++++++++++-
+ 2 files changed, 51 insertions(+)
+
+diff --git a/arch/arm/mach-mmp/regs-icu.h b/arch/arm/mach-mmp/regs-icu.h
+index 0375d5a..410743d 100644
+--- a/arch/arm/mach-mmp/regs-icu.h
++++ b/arch/arm/mach-mmp/regs-icu.h
+@@ -11,6 +11,9 @@
+ #define ICU_VIRT_BASE	(AXI_VIRT_BASE + 0x82000)
+ #define ICU_REG(x)	(ICU_VIRT_BASE + (x))
+ 
++#define ICU2_VIRT_BASE	(AXI_VIRT_BASE + 0x84000)
++#define ICU2_REG(x)	(ICU2_VIRT_BASE + (x))
++
+ #define ICU_INT_CONF(n)		ICU_REG((n) << 2)
+ #define ICU_INT_CONF_MASK	(0xf)
+ 
+diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+index fa23947..da290d8 100644
+--- a/drivers/irqchip/irq-mmp.c
++++ b/drivers/irqchip/irq-mmp.c
+@@ -44,6 +44,7 @@ struct icu_chip_data {
+ 	unsigned int		conf_enable;
+ 	unsigned int		conf_disable;
+ 	unsigned int		conf_mask;
++	unsigned int		conf2_mask;
+ 	unsigned int		clr_mfp_irq_base;
+ 	unsigned int		clr_mfp_hwirq;
+ 	struct irq_domain	*domain;
+@@ -53,9 +54,11 @@ struct mmp_intc_conf {
+ 	unsigned int	conf_enable;
+ 	unsigned int	conf_disable;
+ 	unsigned int	conf_mask;
++	unsigned int	conf2_mask;
+ };
+ 
+ static void __iomem *mmp_icu_base;
++static void __iomem *mmp_icu2_base;
+ static struct icu_chip_data icu_data[MAX_ICU_NR];
+ static int max_icu_nr;
+ 
+@@ -98,6 +101,16 @@ static void icu_mask_irq(struct irq_data *d)
+ 		r &= ~data->conf_mask;
+ 		r |= data->conf_disable;
+ 		writel_relaxed(r, mmp_icu_base + (hwirq << 2));
++
++		if (data->conf2_mask) {
++			/*
++			 * ICU1 (above) only controls PJ4 MP1; if using SMP,
++			 * we need to also mask the MP2 and MM cores via ICU2.
++			 */
++			r = readl_relaxed(mmp_icu2_base + (hwirq << 2));
++			r &= ~data->conf2_mask;
++			writel_relaxed(r, mmp_icu2_base + (hwirq << 2));
++		}
+ 	} else {
+ 		r = readl_relaxed(data->reg_mask) | (1 << hwirq);
+ 		writel_relaxed(r, data->reg_mask);
+@@ -201,6 +214,14 @@ static const struct mmp_intc_conf mmp2_conf = {
+ 			  MMP2_ICU_INT_ROUTE_PJ4_FIQ,
+ };
+ 
++static struct mmp_intc_conf mmp3_conf = {
++	.conf_enable	= 0x20,
++	.conf_disable	= 0x0,
++	.conf_mask	= MMP2_ICU_INT_ROUTE_PJ4_IRQ |
++			  MMP2_ICU_INT_ROUTE_PJ4_FIQ,
++	.conf2_mask	= 0xf0,
++};
++
+ static void __exception_irq_entry mmp_handle_irq(struct pt_regs *regs)
+ {
+ 	int hwirq;
+@@ -426,6 +447,33 @@ static int __init mmp2_of_init(struct device_node *node,
+ }
+ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_init);
+ 
++static int __init mmp3_of_init(struct device_node *node,
++			       struct device_node *parent)
++{
++	int ret;
++
++	mmp_icu2_base = of_iomap(node, 1);
++	if (!mmp_icu2_base) {
++		pr_err("Failed to get interrupt controller register #2\n");
++		return -ENODEV;
++	}
++
++	ret = mmp_init_bases(node);
++	if (ret < 0) {
++		iounmap(mmp_icu2_base);
++		return ret;
++	}
++
++	icu_data[0].conf_enable = mmp3_conf.conf_enable;
++	icu_data[0].conf_disable = mmp3_conf.conf_disable;
++	icu_data[0].conf_mask = mmp3_conf.conf_mask;
++	icu_data[0].conf2_mask = mmp3_conf.conf2_mask;
++	set_handle_irq(mmp2_handle_irq);
++	max_icu_nr = 1;
++	return 0;
++}
++IRQCHIP_DECLARE(mmp3_intc, "marvell,mmp3-intc", mmp3_of_init);
++
+ static int __init mmp2_mux_of_init(struct device_node *node,
+ 				   struct device_node *parent)
+ {
