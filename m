@@ -2,81 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9885EAC021
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59D80AC013
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 21:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406236AbfIFTEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 15:04:52 -0400
-Received: from namei.org ([65.99.196.166]:43022 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729074AbfIFTEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 15:04:52 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x86J3QSE019203;
-        Fri, 6 Sep 2019 19:03:26 GMT
-Date:   Fri, 6 Sep 2019 12:03:26 -0700 (PDT)
-From:   James Morris <jmorris@namei.org>
-To:     Jeff Layton <jlayton@kernel.org>
-cc:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Florian Weimer <fweimer@redhat.com>,
-        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Chiang <ericchiang@google.com>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-In-Reply-To: <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org>
-Message-ID: <alpine.LRH.2.21.1909061202070.18660@namei.org>
-References: <20190906152455.22757-1-mic@digikod.net>  <20190906152455.22757-2-mic@digikod.net>  <87ef0te7v3.fsf@oldenburg2.str.redhat.com>  <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr>  <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org> 
- <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr> <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S2406196AbfIFTDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 15:03:39 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37104 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727031AbfIFTDi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 15:03:38 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d1so3994920pgp.4;
+        Fri, 06 Sep 2019 12:03:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eP3K9C+a0WJSsOs9mVffcSxyE8S/h9yJQdln/ulQd7A=;
+        b=PoiSyRqQ7P7WAM7/fEZmm18vcQ//YPivLqHWC2cvRwMRH8iQ0Zz4/e4O0AX5xM/4to
+         QGEqSo3uU41o03uq/FDTZUpWB4he2HmHG9QpdvS29EF5xqWZdz3czz0988fSkfzhzPFL
+         E3k0igrfQFCFy0m591XUZ6TL/TS6+ua1s2N7sQEJb5K+Zm24wzOwwdu7wpXYgcoFLN15
+         jnUnRcP6ktl8PiYJv6CDBAcp+qVYCs9PhJx7zVQh+kJS5Neise97EXk6HPjiX4TAp6WO
+         HlvLvyI999EoQj4O3LAEK2G5Rg8tXHQIyejSvs1pFVsft4IqPzzCDr1Q9+qDEoZEDSbk
+         MKZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eP3K9C+a0WJSsOs9mVffcSxyE8S/h9yJQdln/ulQd7A=;
+        b=PJainBLAC1aPyQxQ1nRHpJv34/6rCS8i8KphNKtdOFnjd5cBONuCNVROeBGCnXqDUY
+         UZtLi5V0u0klGUVHKAQ/k5roIpS2+JKCdav7g7V0GQHG36RsDNcNsxjj6pwkcfZzJ2wc
+         idSCXMbJXlkXHrPwCBcOmX6H9MUczZ/l3ZVq45w4U8lc+akoKMDCyqkhr/22JB+7tt5G
+         caGNd3rdctjTEdQGeEfr04bofGNlVi2iVM9arFv3EuOw3MhDO0WUzcx92ZMdMOCqeYkV
+         jd3oL0bWSyuLofasLyE4PXy/We4hrZk3phuPxIEaserm3QhjRiAiiuOX2QT6MH4Kwo79
+         +XfA==
+X-Gm-Message-State: APjAAAUnCkZA5e4MNEhZiWLfFk2Onc/xQQqOlD1mrnilRl7lvKaGZB+w
+        J8T0YA1t13jl78APRIlTViUixqyJ
+X-Google-Smtp-Source: APXvYqwDWOJmceMdZV0sbwGP/UBr6whtV3TnUAwdGJtLuFcwGAXpKRJdvfrNBb4JVqw5UpuLzJlK4A==
+X-Received: by 2002:a63:31cc:: with SMTP id x195mr9194849pgx.147.1567796617255;
+        Fri, 06 Sep 2019 12:03:37 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id v18sm6703309pfn.24.2019.09.06.12.03.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 12:03:36 -0700 (PDT)
+Date:   Fri, 6 Sep 2019 12:03:34 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input - elan_i2c: remove Lenovo Legion Y7000 PnpID
+Message-ID: <20190906190334.GP187474@dtor-ws>
+References: <20190906085948.27470-1-benjamin.tissoires@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906085948.27470-1-benjamin.tissoires@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 6 Sep 2019, Jeff Layton wrote:
-
-> The fact that open and openat didn't vet unknown flags is really a bug.
+On Fri, Sep 06, 2019 at 10:59:48AM +0200, Benjamin Tissoires wrote:
+> Looks like the Bios of the Lenovo Legion Y7000 is using ELAN061B
+> when the actual device is supposed to be used with hid-multitouch.
 > 
-> Too late to fix it now, of course, and as Aleksa points out, we've
-> worked around that in the past. Now though, we have a new openat2
-> syscall on the horizon. There's little need to continue these sorts of
-> hacks.
+> Remove it from the list of the supported device, hoping that
+> no one will complain about the loss in functionality.
 > 
-> New open flags really have no place in the old syscalls, IMO.
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=203467
+> Fixes: Fixes: 738c06d0e456 ("Input: elan_i2c - add hardware ID for multiple Lenovo laptops")
+> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-Agree here. It's unfortunate but a reality and Linus will reject any such 
-changes which break existing userspace.
+I suppose this one should go to stable?
 
+> ---
+> 
+> Note to self: once this gets in, we need to send a similar patch
+> to stable, as there are a few stable branches with this PnpID.
+> 
+> 
+>  include/linux/input/elan-i2c-ids.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/input/elan-i2c-ids.h b/include/linux/input/elan-i2c-ids.h
+> index ceabb01a6a7d..1ecb6b45812c 100644
+> --- a/include/linux/input/elan-i2c-ids.h
+> +++ b/include/linux/input/elan-i2c-ids.h
+> @@ -48,7 +48,7 @@ static const struct acpi_device_id elan_acpi_id[] = {
+>  	{ "ELAN0618", 0 },
+>  	{ "ELAN0619", 0 },
+>  	{ "ELAN061A", 0 },
+> -	{ "ELAN061B", 0 },
+> +/*	{ "ELAN061B", 0 }, not working on the Lenovo Legion Y7000 */
+>  	{ "ELAN061C", 0 },
+>  	{ "ELAN061D", 0 },
+>  	{ "ELAN061E", 0 },
+> -- 
+> 2.21.0
+> 
 
 -- 
-James Morris
-<jmorris@namei.org>
-
+Dmitry
