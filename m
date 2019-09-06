@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37B75AB6A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:08:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E067AB6CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392369AbfIFLIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:08:30 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47042 "EHLO
+        id S2392347AbfIFLJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:09:50 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47035 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392291AbfIFLI0 (ORCPT
+        with ESMTP id S2392277AbfIFLIZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:08:26 -0400
+        Fri, 6 Sep 2019 07:08:25 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i6C6F-00075Y-65; Fri, 06 Sep 2019 13:08:19 +0200
+        id 1i6C6H-00073S-CR; Fri, 06 Sep 2019 13:08:21 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E45A61C0E20;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9385A1C0E04;
         Fri,  6 Sep 2019 13:08:15 +0200 (CEST)
 Date:   Fri, 06 Sep 2019 11:08:15 -0000
-From:   "tip-bot2 for Zenghui Yu" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Masahiro Yamada" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v3-its: Remove the redundant set_bit for lpi_map
-Cc:     Zenghui Yu <yuzenghui@huawei.com>, Marc Zyngier <maz@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
+Subject: [tip: irq/core] irqchip: Add include guard to irq-partition-percpu.h
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <156776809587.24167.5393741851076816633.tip-bot2@tip-bot2>
+Message-ID: <156776809546.24167.16607497136307365643.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,44 +45,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     342be1068d9b5b1fd364d270b4f731764e23de2b
-Gitweb:        https://git.kernel.org/tip/342be1068d9b5b1fd364d270b4f731764e23de2b
-Author:        Zenghui Yu <yuzenghui@huawei.com>
-AuthorDate:    Sat, 27 Jul 2019 06:14:22 
+Commit-ID:     a512584abd7ab860560ac21e6daac1aaebc1c14f
+Gitweb:        https://git.kernel.org/tip/a512584abd7ab860560ac21e6daac1aaebc1c14f
+Author:        Masahiro Yamada <yamada.masahiro@socionext.com>
+AuthorDate:    Mon, 19 Aug 2019 16:45:34 +09:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Tue, 20 Aug 2019 10:34:34 +01:00
+CommitterDate: Tue, 20 Aug 2019 10:35:46 +01:00
 
-irqchip/gic-v3-its: Remove the redundant set_bit for lpi_map
+irqchip: Add include guard to irq-partition-percpu.h
 
-We try to find a free LPI region in device's lpi_map and allocate them
-(set them to 1) when we want to allocate LPIs for this device. This is
-what bitmap_find_free_region() has done for us. The following set_bit
-is redundant and a bit confusing (since we only set_bit against the first
-allocated LPI idx). Remove it, and make the set_bit explicit by comment.
+Add a header include guard just in case.
 
-Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/irqchip/irq-partition-percpu.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 8eeb0e2..9380aa4 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2464,6 +2464,7 @@ static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number
- {
- 	int idx;
+diff --git a/include/linux/irqchip/irq-partition-percpu.h b/include/linux/irqchip/irq-partition-percpu.h
+index a783ddb..2f6ae75 100644
+--- a/include/linux/irqchip/irq-partition-percpu.h
++++ b/include/linux/irqchip/irq-partition-percpu.h
+@@ -4,6 +4,9 @@
+  * Author: Marc Zyngier <marc.zyngier@arm.com>
+  */
  
-+	/* Find a free LPI region in lpi_map and allocate them. */
- 	idx = bitmap_find_free_region(dev->event_map.lpi_map,
- 				      dev->event_map.nr_lpis,
- 				      get_count_order(nvecs));
-@@ -2471,7 +2472,6 @@ static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number
- 		return -ENOSPC;
- 
- 	*hwirq = dev->event_map.lpi_base + idx;
--	set_bit(idx, dev->event_map.lpi_map);
- 
- 	return 0;
++#ifndef __LINUX_IRQCHIP_IRQ_PARTITION_PERCPU_H
++#define __LINUX_IRQCHIP_IRQ_PARTITION_PERCPU_H
++
+ #include <linux/fwnode.h>
+ #include <linux/cpumask.h>
+ #include <linux/irqdomain.h>
+@@ -46,3 +49,5 @@ struct irq_domain *partition_get_domain(struct partition_desc *dsc)
+ 	return NULL;
  }
+ #endif
++
++#endif /* __LINUX_IRQCHIP_IRQ_PARTITION_PERCPU_H */
