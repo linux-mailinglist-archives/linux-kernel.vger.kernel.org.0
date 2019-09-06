@@ -2,113 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 227D4ABBEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A53D1ABBF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388096AbfIFPM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:12:29 -0400
-Received: from 8bytes.org ([81.169.241.247]:53380 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730926AbfIFPM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:12:29 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id C25EB2D9; Fri,  6 Sep 2019 17:12:27 +0200 (CEST)
-Date:   Fri, 6 Sep 2019 17:12:26 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [git pull] IOMMU Fixes for Linux v5.3-rc7
-Message-ID: <20190906151220.GA8420@8bytes.org>
+        id S2388889AbfIFPM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:12:59 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:54149 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbfIFPM7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 11:12:59 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1McY0L-1ijAZ70D9h-00cviz; Fri, 06 Sep 2019 17:12:44 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        wenxu <wenxu@ucloud.cn>, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] netfilter: nf_tables: avoid excessive stack usage
+Date:   Fri,  6 Sep 2019 17:12:30 +0200
+Message-Id: <20190906151242.1115282-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:H4wBtVZNbYT58k3ooZMgp+mPB1WUVSJqouzTOP8MFKlvBbGsWfC
+ CXKQuDBiBcnfb240Ianbu5O/iTJjNIwyMe9ub9lwbE4JlIUx1X8zg1/DjN1srdPSE1C/KQU
+ Trz0oDCkLw+4aCZC1cB7J/h6CF0wFXT3sY+XhPtH1nST6si02Rj6Hq8j7o2yMg3uMA4vUoO
+ MznQIClCOUcPSv3K49Mxg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dgvyv05Zu8g=:eRZphasKugh5xr/DCQ5H9T
+ fNRZ+EXkGK7DYHkdeUs6ZF+q0Y7143WFsoJDKxotd0ykN5nCyaKrGCZSkpSqO7NCO/na2t7bx
+ hMkSD0CR2+qf8e1wCQSI98w8VUDkpy1UgPyzGPekwo109R0FJ4yqFZbwCq0IqSYr1YaTynAov
+ 7YHmV37ox7mzMA4SIVtIUZ6YWUrnN/O8+itm7rvyeU7yYaSYL4ih8ddtXaTrDJ5zzYbjDBb+4
+ IMdNdhYVI2zjc+UjpFvx9hJczdz613IQdXEYlG9XkIlLGecBZIwDbeZj3Nx5XPBnIxTuWrHcL
+ FWH7sppW//4BztL9Dz2UMvCEqDSNEP+asDftnusmJDN7vnRIAKoOyY52yOKvMxDIsv/3fYLsy
+ tABpcEVapheu8pzQZatM1zMGbWwL+4bbfQBmBmT6RemRVTvJj0SVPhWJ7aZoJhsSZH9Zn54R7
+ axZvSWBKtb0gVq9k68aEEH3pS6OudQWql0+NYBtEXHJqHngiwntA/LPhBy44BoWYETWikGCCw
+ Vc1cdKbr7D636SysLHXyLc5KGViNXOSEYucYWn3OPRx00e+DA2JxqZ4ObxSMfcqbOhq3JawpQ
+ 4GyHdJ16jiArJZWtmFTqggn/+YHkD8F5bRSTFAAptjd0HnTm7VePYWPr8XBB2kxR+2ic9ekEV
+ GO2hVMXX7WD6w6GpqqiEnsdXofbgTdePbrijzJQ0KtOFEcN85jTfgDxUJHdbGSlYoi00uAwg9
+ b5LX5nW3SRDHSu31Egllt2TMT5FA+iLFsBPS2Wvs44Jq346tuA95Suve8MNFTZuAFHLC+QmM8
+ TSSeQQt98Sh5pXMhV5FJnuRgaslWg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The nft_offload_ctx structure is much too large to put on the
+stack:
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+net/netfilter/nf_tables_offload.c:31:23: error: stack frame size of 1200 bytes in function 'nft_flow_rule_create' [-Werror,-Wframe-larger-than=]
 
-Hi Linus,
+Use dynamic allocation here, as we do elsewhere in the same
+function.
 
-The following changes since commit a55aa89aab90fae7c815b0551b07be37db359d76:
+Fixes: c9626a2cbdb2 ("netfilter: nf_tables: add hardware offload support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Since we only really care about two members of the structure, an
+alternative would be a larger rewrite, but that is probably too
+late for v5.4.
+---
+ net/netfilter/nf_tables_offload.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-  Linux 5.3-rc6 (2019-08-25 12:01:23 -0700)
+diff --git a/net/netfilter/nf_tables_offload.c b/net/netfilter/nf_tables_offload.c
+index 3c2725ade61b..c94331aae552 100644
+--- a/net/netfilter/nf_tables_offload.c
++++ b/net/netfilter/nf_tables_offload.c
+@@ -30,15 +30,13 @@ static struct nft_flow_rule *nft_flow_rule_alloc(int num_actions)
+ 
+ struct nft_flow_rule *nft_flow_rule_create(const struct nft_rule *rule)
+ {
+-	struct nft_offload_ctx ctx = {
+-		.dep	= {
+-			.type	= NFT_OFFLOAD_DEP_UNSPEC,
+-		},
+-	};
++	struct nft_offload_ctx *ctx;
++
+ 	struct nft_flow_rule *flow;
+ 	int num_actions = 0, err;
+ 	struct nft_expr *expr;
+ 
++
+ 	expr = nft_expr_first(rule);
+ 	while (expr->ops && expr != nft_expr_last(rule)) {
+ 		if (expr->ops->offload_flags & NFT_OFFLOAD_F_ACTION)
+@@ -52,21 +50,31 @@ struct nft_flow_rule *nft_flow_rule_create(const struct nft_rule *rule)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	expr = nft_expr_first(rule);
++
++	ctx = kzalloc(sizeof(struct nft_offload_ctx), GFP_KERNEL);
++	if (!ctx) {
++		err = -ENOMEM;
++		goto err_out;
++	}
++	ctx->dep.type = NFT_OFFLOAD_DEP_UNSPEC;
++
+ 	while (expr->ops && expr != nft_expr_last(rule)) {
+ 		if (!expr->ops->offload) {
+ 			err = -EOPNOTSUPP;
+ 			goto err_out;
+ 		}
+-		err = expr->ops->offload(&ctx, flow, expr);
++		err = expr->ops->offload(ctx, flow, expr);
+ 		if (err < 0)
+ 			goto err_out;
+ 
+ 		expr = nft_expr_next(expr);
+ 	}
+-	flow->proto = ctx.dep.l3num;
++	flow->proto = ctx->dep.l3num;
++	kfree(ctx);
+ 
+ 	return flow;
+ err_out:
++	kfree(ctx);
+ 	nft_flow_rule_destroy(flow);
+ 
+ 	return ERR_PTR(err);
+-- 
+2.20.0
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fixes-v5.3-rc7
-
-for you to fetch changes up to 754265bcab78a9014f0f99cd35e0d610fcd7dfa7:
-
-  iommu/amd: Fix race in increase_address_space() (2019-09-06 10:55:51 +0200)
-
-----------------------------------------------------------------
-IOMMU Fixes for Linux v5.3-rc7
-
-Including:
-
-	* Revert for an Intel VT-d patch that caused problems for some
-	  users.
-
-	* Removal of a feature in the Intel VT-d driver that was never
-	  supported in hardware. This qualifies as a fix because the
-	  code for this feature sets reserved bits in the invalidation
-	  queue descriptor, causing failed invalidations on real
-	  hardware.
-
-	* Two fixes for AMD IOMMU driver to fix a race condition and to
-	  add a missing IOTLB flush when kernel is booted in kdump mode.
-
-----------------------------------------------------------------
-Jacob Pan (1):
-      iommu/vt-d: Remove global page flush support
-
-Joerg Roedel (1):
-      iommu/amd: Fix race in increase_address_space()
-
-Lu Baolu (1):
-      Revert "iommu/vt-d: Avoid duplicated pci dma alias consideration"
-
-Stuart Hayes (1):
-      iommu/amd: Flush old domains in kdump kernel
-
- drivers/iommu/amd_iommu.c   | 40 ++++++++++++++++++++++++++++-----
- drivers/iommu/intel-iommu.c | 55 +++++++++++++++++++++++++++++++++++++++++++--
- drivers/iommu/intel-svm.c   | 36 +++++++++++++----------------
- include/linux/intel-iommu.h |  3 ---
- 4 files changed, 103 insertions(+), 31 deletions(-)
-
-Please pull.
-
-Thanks,
-
-	Joerg
-
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEr9jSbILcajRFYWYyK/BELZcBGuMFAl1yd1QACgkQK/BELZcB
-GuPzJw/9Fovs43Zte02ZZuzwcYPEkErhLi6mwB37Oj0u0MTzPf0zrYn6u0dn320N
-xzTEfGYWFRp/PRIfwR5JiJsDU8BvlfCAJZEGp8sAnOTMto2AGG5rgZ4ZxVypK6vm
-6bM92eSESQJjseyZTva4IZOF4qeWTgzO7voox84IgWHrWCoem5aS8Y1EVC69+uxa
-EOH1TSb3TJLfOf0TKW3aDrftrTbtsvvliOFYLNHoUOx9iOkBzb/0XpL71r6x71dP
-n9jNEpxVAJJNuM/oYK9j1UDASHH8Vxdqh0Joy47hhysiBlI9Nnv6rrE06BvVXq0O
-ap4PSK9h3fNrDCvpF7G0gGapesieMzJH1Ogu9I1egm3sbD6VJZHz1XK2ynY69y+X
-8ZMlPnQu1MDedmYcUj8WixJxTDZO69+nSUhVJF7VG4pmnizKjsjoBDjTpPnv1vwj
-E23R4BvStG/44vNPYEps879U5xpjAKrnaq4JwVQD9C5fsiTFlmwcbZrFifllyhae
-YpjNMzeifbhx+YQi8mq/4rBgSOZ4rh9qRxaN6iVs9lbN6WQvwMCI23g6Y3onZaIW
-+RhJhq6d96yl/CzbUdesk7SWEBxI7INoPpmsKN2Z6+uolIBuRbM3amv4CH4G7IV/
-czphzdovKPPmj625crlzchFg+rDOhVWjdcQEmdnBVQXeCTjt48o=
-=DD9K
------END PGP SIGNATURE-----
-
---azLHFNyN32YCQGCU--
