@@ -2,146 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD5BCAB3D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7624DAB3BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 10:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389887AbfIFIRR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Sep 2019 04:17:17 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:58818 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfIFIRR (ORCPT
+        id S2388352AbfIFILg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 04:11:36 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58450 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbfIFILg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 04:17:17 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x868GoAD017898
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 6 Sep 2019 17:16:50 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x868Gn8O006386;
-        Fri, 6 Sep 2019 17:16:49 +0900
-Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x868F0sx023285;
-        Fri, 6 Sep 2019 17:16:49 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-8242729; Fri, 6 Sep 2019 17:09:54 +0900
-Received: from BPXM20GP.gisp.nec.co.jp ([10.38.151.212]) by
- BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Fri, 6
- Sep 2019 17:09:54 +0900
-From:   Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-To:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "longman@redhat.com" <longman@redhat.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-Subject: [RFC PATCH v2] mm: initialize struct pages reserved by ZONE_DEVICE
- driver.
-Thread-Topic: [RFC PATCH v2] mm: initialize struct pages reserved by
- ZONE_DEVICE driver.
-Thread-Index: AQHVZIp2xk1cU6nEkk+ez7kL5reVFA==
-Date:   Fri, 6 Sep 2019 08:09:52 +0000
-Message-ID: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.135]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+        Fri, 6 Sep 2019 04:11:36 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1i69LB-0005py-VI; Fri, 06 Sep 2019 08:11:34 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: s3c-camif: make array 'registers' static const, makes object smaller
+Date:   Fri,  6 Sep 2019 09:11:33 +0100
+Message-Id: <20190906081133.22543-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A kernel panic is observed during reading
-/proc/kpage{cgroup,count,flags} for first few pfns allocated by
-pmem namespace:
+From: Colin Ian King <colin.king@canonical.com>
 
-BUG: unable to handle page fault for address: fffffffffffffffe
-[  114.495280] #PF: supervisor read access in kernel mode
-[  114.495738] #PF: error_code(0x0000) - not-present page
-[  114.496203] PGD 17120e067 P4D 17120e067 PUD 171210067 PMD 0
-[  114.496713] Oops: 0000 [#1] SMP PTI
-[  114.497037] CPU: 9 PID: 1202 Comm: page-types Not tainted 5.3.0-rc1
-[  114.497621] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
-[  114.498706] RIP: 0010:stable_page_flags+0x27/0x3f0
-[  114.499142] Code: 82 66 90 66 66 66 66 90 48 85 ff 0f 84 d1 03 00 00 41 54 55 48 89 fd 53 48 8b 57 08 48 8b 1f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 02 0f 84 57 03 00 00 45 31 e4 48 8b 55 08 48 89 ef
-[  114.500788] RSP: 0018:ffffa5e601a0fe60 EFLAGS: 00010202
-[  114.501373] RAX: fffffffffffffffe RBX: ffffffffffffffff RCX: 0000000000000000
-[  114.502009] RDX: 0000000000000001 RSI: 00007ffca13a7310 RDI: ffffd07489000000
-[  114.502637] RBP: ffffd07489000000 R08: 0000000000000001 R09: 0000000000000000
-[  114.503270] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000240000
-[  114.503896] R13: 0000000000080000 R14: 00007ffca13a7310 R15: ffffa5e601a0ff08
-[  114.504530] FS:  00007f0266c7f540(0000) GS:ffff962dbbac0000(0000) knlGS:0000000000000000
-[  114.505245] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  114.505754] CR2: fffffffffffffffe CR3: 000000023a204000 CR4: 00000000000006e0
-[  114.506401] Call Trace:
-[  114.506660]  kpageflags_read+0xb1/0x130
-[  114.507051]  proc_reg_read+0x39/0x60
-[  114.507387]  vfs_read+0x8a/0x140
-[  114.507686]  ksys_pread64+0x61/0xa0
-[  114.508021]  do_syscall_64+0x5f/0x1a0
-[  114.508372]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  114.508844] RIP: 0033:0x7f0266ba426b
+Don't populate the array 'registers' on the stack but instead make it
+static const. Makes the object code smaller by 45 bytes.
 
-The first few pages of ZONE_DEVICE expressed as the range
-(altmap->base_pfn) to (altmap->base_pfn + altmap->reserve) are
-skipped by struct page initialization. Some pfn walkers like
-/proc/kpage{cgroup, count, flags} can't handle these uninitialized
-struct pages, which causes the error.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  17364	   5000	      0	  22364	   575c	platform/s3c-camif/camif-regs.o
 
-In previous discussion, Dan seemed to have concern that the struct
-page area of some pages indicated by vmem_altmap->reserve may not
-be allocated. (See https://lore.kernel.org/lkml/CAPcyv4i5FjTOnPbXNcTzvt+e6RQYow0JRQwSFuxaa62LSuvzHQ@mail.gmail.com/)
-However, arch_add_memory() called by devm_memremap_pages() allocates
-struct page area for pages containing addresses in the range
-(res.start) to (res.start + resource_size(res)), which include the
-pages indicated by vmem_altmap->reserve. If I read correctly, it is
-allocated as requested at least on x86_64. Also, memmap_init_zone()
-initializes struct pages in the same range.
-So I think the struct pages should be initialized.
+After:
+   text	   data	    bss	    dec	    hex	filename
+  17255	   5064	      0	  22319	   572f	platform/s3c-camif/camif-regs.o
 
-Signed-off-by: Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-Cc: stable@vger.kernel.org
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Changes since rev 1:
- Instead of avoiding uninitialized pages on the pfn walker side,
- we initialize struct pages.
+ drivers/media/platform/s3c-camif/camif-regs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-mm/page_alloc.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 9c91949..6d180ae 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5846,8 +5846,7 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+diff --git a/drivers/media/platform/s3c-camif/camif-regs.c b/drivers/media/platform/s3c-camif/camif-regs.c
+index 1a65532dc36d..e80204f5720c 100644
+--- a/drivers/media/platform/s3c-camif/camif-regs.c
++++ b/drivers/media/platform/s3c-camif/camif-regs.c
+@@ -553,7 +553,7 @@ void camif_hw_disable_capture(struct camif_vp *vp)
  
- #ifdef CONFIG_ZONE_DEVICE
- 	/*
--	 * Honor reservation requested by the driver for this ZONE_DEVICE
--	 * memory. We limit the total number of pages to initialize to just
-+	 * We limit the total number of pages to initialize to just
- 	 * those that might contain the memory mapping. We will defer the
- 	 * ZONE_DEVICE page initialization until after we have released
- 	 * the hotplug lock.
-@@ -5856,8 +5855,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 		if (!altmap)
- 			return;
- 
--		if (start_pfn == altmap->base_pfn)
--			start_pfn += altmap->reserve;
- 		end_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
- 	}
- #endif
+ void camif_hw_dump_regs(struct camif_dev *camif, const char *label)
+ {
+-	struct {
++	static const struct {
+ 		u32 offset;
+ 		const char * const name;
+ 	} registers[] = {
 -- 
-1.8.3.1
+2.20.1
 
