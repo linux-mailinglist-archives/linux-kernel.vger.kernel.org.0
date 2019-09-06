@@ -2,327 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACFA7ABB3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B3DCABB35
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:42:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405577AbfIFOmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:42:20 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45917 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfIFOmT (ORCPT
+        id S2405547AbfIFOmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:42:01 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:37186 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727481AbfIFOmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:42:19 -0400
-Received: by mail-lf1-f67.google.com with SMTP id r134so5229459lff.12;
-        Fri, 06 Sep 2019 07:42:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pZoRXCZst6C7y64t3Asa8zuind9Mzc97gPBagXLdLqQ=;
-        b=e6FSNYZoImokVCSugQN4SqFbAhmmz5FLDm8WmVPlDroLK2duWN1tEC1nAqdX7+IDtP
-         wNVCx1EjafdoGivLXZcNXfrgR/l3GieyhQufC4iOPgvPLLcTUU3oNS2MsFZDxORXfBY2
-         eyzr+qrbweNzmCFmi3Pgy7hQBNSSgA+ajsEd18xNPbi14J08nG6NcCtSLXCF5q4biZ7l
-         t1ViGlDv7yj6lyXpFy+S+pbNR/ngJmEKd/jKm434SMQba5pUdWxdmDfizF+DS961ed6d
-         1fQyQ+IPomfY3uVkb3j+u/wSHhBKkZATJg8H76Tm8t/bCOlgs78PDaDMWQmKQaSTsa+4
-         ZL6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pZoRXCZst6C7y64t3Asa8zuind9Mzc97gPBagXLdLqQ=;
-        b=L0eOYuTAHQ+mXtGIKpYS0LF+e2hByRMQ+Gp4Gz9Ijv4owxg3+FlSl1eVSyrULudyAD
-         3YN8vjOZuUmKfJvABFkZbRfnMv82QDqsCdDz1qbbJcLg1Q2CzG6gfyi30FitO/ZYHKoQ
-         rzNk+fQ566s8k122bB8eDpgRqZ+RW+W/02RUE12a+f93Y7/E7uYHWktULikagLSRkTBQ
-         5TMo+JvVhZkv/VHiSbX95IsGfyUcSUi+qukVrqI9EWe4skvdHg8wpa/1WBBdIbxGI5/w
-         GIP10oDz/WWtRQymgOpvKI3+jLpuHyvrl4jnkLByIct7lZ81pX3S0fc5WBYUYYPTkuUm
-         Io8A==
-X-Gm-Message-State: APjAAAUi7RWciGkheUdkMSMYrkWMgX+n+J0I1ZmAjrAu77Vu5c14j68v
-        JpN6RDOQ27qO/Z80vdErBZk=
-X-Google-Smtp-Source: APXvYqzk7B+ryUA/FFKRzrginAl5Yr57r/Jv1mQtsQNS4ph5q/+KmGRhzRe3unCvANKcHtecMKYN1Q==
-X-Received: by 2002:a19:6549:: with SMTP id c9mr6101209lfj.99.1567780936439;
-        Fri, 06 Sep 2019 07:42:16 -0700 (PDT)
-Received: from localhost.localdomain (mm-82-227-122-178.mgts.dynamic.pppoe.byfly.by. [178.122.227.82])
-        by smtp.gmail.com with ESMTPSA id z30sm1325077lfj.63.2019.09.06.07.42.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2019 07:42:15 -0700 (PDT)
-From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, josef@toxicpanda.com
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH v2 2/2] blk-stats: Introduce explicit stat staging buffers
-Date:   Fri,  6 Sep 2019 17:42:04 +0300
-Message-Id: <dee635c6a2a1e66c9ef367689815171c5462a021.1567780718.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <cover.1567780718.git.asml.silence@gmail.com>
-References: <cover.1567780718.git.asml.silence@gmail.com>
+        Fri, 6 Sep 2019 10:42:01 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86Ed6m5079684;
+        Fri, 6 Sep 2019 14:41:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=y8TtBHLyh9FaXB7YWA2oSVkXqqAPTbDmmbDnNI16F7o=;
+ b=DOF557n5O1G3LePDNwr0JmO+vUm1GxrH6KN/LwtR3hkP3O/j3iy8egyMpJJWrEE044Ms
+ 63u4oumZ8oks/ZQRt7gfi0pK7vIAlULQAqYOtlGhhrRO2AZGGB3aE1kS0SNn+hXG9h2j
+ 0e2sQGNUvzrsaDZFQ6WFwgwhQrFW5urHG0xRcT9U5UnygFZRpuhg1toZ5VtMpqbhEJdX
+ KtuV4y/6mgxs7wmro5Da451nB8UjHcp+oaXbc6Bq5IEq+BnYuuiB0W22oulaN3NFJ5sQ
+ nCF9axdCfZyMG1fkwd20WASjft3Kw2kS6qExeFXgNQ6OKHyjfNOrCMLbrU9vRwOEetaz OQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2uus55048m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 14:41:20 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86Ed28j110378;
+        Fri, 6 Sep 2019 14:41:20 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2uum4h555m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 14:41:20 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x86EfIvV032549;
+        Fri, 6 Sep 2019 14:41:18 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 06 Sep 2019 07:41:17 -0700
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id BD96F6A00C1; Fri,  6 Sep 2019 10:43:00 -0400 (EDT)
+Date:   Fri, 6 Sep 2019 10:43:00 -0400
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Juergen Gross <jgross@suse.com>, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] swiotlb-xen: simplify cache maintainance
+Message-ID: <20190906144300.GD7824@char.us.oracle.com>
+References: <20190905113408.3104-1-hch@lst.de>
+ <20190905113408.3104-10-hch@lst.de>
+ <e4f9b393-2631-57cd-f42f-3581e75ab9a3@oracle.com>
+ <20190906140123.GA9894@lst.de>
+ <ca88e7b8-08ca-51b2-0c77-c828d92da0db@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca88e7b8-08ca-51b2-0c77-c828d92da0db@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9372 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=829
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909060155
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9372 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=893 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909060155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Fri, Sep 06, 2019 at 10:19:01AM -0400, Boris Ostrovsky wrote:
+> On 9/6/19 10:01 AM, Christoph Hellwig wrote:
+> > On Fri, Sep 06, 2019 at 09:52:12AM -0400, Boris Ostrovsky wrote:
+> >> We need nop definitions of these two for x86.
+> >>
+> >> Everything builds now but that's probably because the calls are under
+> >> 'if (!dev_is_dma_coherent(dev))' which is always false so compiler
+> >> optimized is out. I don't think we should rely on that.
+> > That is how a lot of the kernel works.  Provide protypes only for code
+> > that is semantically compiled, but can't ever be called due to
+> > IS_ENABLED() checks.  It took me a while to get used to it, but it
+> > actually is pretty nice as the linker does the work for you to check
+> > that it really is never called.  Much better than say a BUILD_BUG_ON().
+> 
+> 
+> (with corrected Juergen's email)
+> 
+> I know about IS_ENABLED() but I didn't realize that this is allowed for
+> compile-time inlines and such as well.
+> 
+> Anyway, for non-ARM bits
+> 
+> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-Split struct blk_rq_stat into 2:
-1. struct blk_rq_stat_staging is for intermediate/staging stats.
-These are usually per-cpu and in a hot-path
-2. struct blk_rq_stat for accumulating staging stats
+Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-That duplicates code, but
-1. prevents misuses (compile-time check by type-system)
-2. reduces memory needed (inc. per-cpu)
-3. makes it easier to extend stats
+as well.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- block/blk-iolatency.c     | 41 +++++++++++++++++++++++++++++----------
- block/blk-stat.c          | 30 +++++++++++++++++-----------
- block/blk-stat.h          |  8 +++++---
- include/linux/blk_types.h |  6 ++++++
- 4 files changed, 61 insertions(+), 24 deletions(-)
+Albeit folks have tested this under x86 Xen with 'swiotlb=force' right?
 
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index 895c6e955f97..08a32dc4a7d6 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -130,9 +130,16 @@ struct latency_stat {
- 	};
- };
- 
-+struct latency_stat_staging {
-+	union {
-+		struct percentile_stats ps;
-+		struct blk_rq_stat_staging rqs;
-+	};
-+};
-+
- struct iolatency_grp {
- 	struct blkg_policy_data pd;
--	struct latency_stat __percpu *stats;
-+	struct latency_stat_staging __percpu *stats;
- 	struct latency_stat cur_stat;
- 	struct blk_iolatency *blkiolat;
- 	struct rq_depth rq_depth;
-@@ -199,6 +206,16 @@ static inline void latency_stat_init(struct iolatency_grp *iolat,
- 		blk_rq_stat_init(&stat->rqs);
- }
- 
-+static inline void latency_stat_init_staging(struct iolatency_grp *iolat,
-+					     struct latency_stat_staging *stat)
-+{
-+	if (iolat->ssd) {
-+		stat->ps.total = 0;
-+		stat->ps.missed = 0;
-+	} else
-+		blk_rq_stat_init_staging(&stat->rqs);
-+}
-+
- static inline void latency_stat_merge(struct iolatency_grp *iolat,
- 				    struct latency_stat *sum,
- 				    struct latency_stat *stat)
-@@ -212,7 +229,7 @@ static inline void latency_stat_merge(struct iolatency_grp *iolat,
- 
- static inline void latency_stat_collect(struct iolatency_grp *iolat,
- 					struct latency_stat *sum,
--					struct latency_stat *stat)
-+					struct latency_stat_staging *stat)
- {
- 	if (iolat->ssd) {
- 		sum->ps.total += stat->ps.total;
-@@ -224,7 +241,8 @@ static inline void latency_stat_collect(struct iolatency_grp *iolat,
- static inline void latency_stat_record_time(struct iolatency_grp *iolat,
- 					    u64 req_time)
- {
--	struct latency_stat *stat = get_cpu_ptr(iolat->stats);
-+	struct latency_stat_staging *stat = get_cpu_ptr(iolat->stats);
-+
- 	if (iolat->ssd) {
- 		if (req_time >= iolat->min_lat_nsec)
- 			stat->ps.missed++;
-@@ -540,10 +558,11 @@ static void iolatency_check_latencies(struct iolatency_grp *iolat, u64 now)
- 	latency_stat_init(iolat, &stat);
- 	preempt_disable();
- 	for_each_online_cpu(cpu) {
--		struct latency_stat *s;
-+		struct latency_stat_staging *s;
-+
- 		s = per_cpu_ptr(iolat->stats, cpu);
- 		latency_stat_collect(iolat, &stat, s);
--		latency_stat_init(iolat, s);
-+		latency_stat_init_staging(iolat, s);
- 	}
- 	preempt_enable();
- 
-@@ -905,7 +924,8 @@ static size_t iolatency_ssd_stat(struct iolatency_grp *iolat, char *buf,
- 	latency_stat_init(iolat, &stat);
- 	preempt_disable();
- 	for_each_online_cpu(cpu) {
--		struct latency_stat *s;
-+		struct latency_stat_staging *s;
-+
- 		s = per_cpu_ptr(iolat->stats, cpu);
- 		latency_stat_collect(iolat, &stat, s);
- 	}
-@@ -954,8 +974,8 @@ static struct blkg_policy_data *iolatency_pd_alloc(gfp_t gfp,
- 	iolat = kzalloc_node(sizeof(*iolat), gfp, q->node);
- 	if (!iolat)
- 		return NULL;
--	iolat->stats = __alloc_percpu_gfp(sizeof(struct latency_stat),
--				       __alignof__(struct latency_stat), gfp);
-+	iolat->stats = __alloc_percpu_gfp(sizeof(struct latency_stat_staging),
-+				__alignof__(struct latency_stat_staging), gfp);
- 	if (!iolat->stats) {
- 		kfree(iolat);
- 		return NULL;
-@@ -978,9 +998,10 @@ static void iolatency_pd_init(struct blkg_policy_data *pd)
- 		iolat->ssd = false;
- 
- 	for_each_possible_cpu(cpu) {
--		struct latency_stat *stat;
-+		struct latency_stat_staging *stat;
-+
- 		stat = per_cpu_ptr(iolat->stats, cpu);
--		latency_stat_init(iolat, stat);
-+		latency_stat_init_staging(iolat, stat);
- 	}
- 
- 	latency_stat_init(iolat, &iolat->cur_stat);
-diff --git a/block/blk-stat.c b/block/blk-stat.c
-index 78389182b5d0..d892ad2cb938 100644
---- a/block/blk-stat.c
-+++ b/block/blk-stat.c
-@@ -18,15 +18,22 @@ struct blk_queue_stats {
- 	bool enable_accounting;
- };
- 
-+void blk_rq_stat_init_staging(struct blk_rq_stat_staging *stat)
-+{
-+	stat->min = -1ULL;
-+	stat->max = 0;
-+	stat->batch = 0;
-+	stat->nr_samples = 0;
-+}
-+
- void blk_rq_stat_init(struct blk_rq_stat *stat)
- {
- 	stat->min = -1ULL;
- 	stat->max = stat->nr_samples = stat->mean = 0;
--	stat->batch = 0;
- }
- 
--/* src is a per-cpu stat, mean isn't initialized */
--void blk_rq_stat_collect(struct blk_rq_stat *dst, struct blk_rq_stat *src)
-+void blk_rq_stat_collect(struct blk_rq_stat *dst,
-+			 struct blk_rq_stat_staging *src)
- {
- 	if (!src->nr_samples)
- 		return;
-@@ -55,7 +62,7 @@ void blk_rq_stat_merge(struct blk_rq_stat *dst, struct blk_rq_stat *src)
- 	dst->nr_samples += src->nr_samples;
- }
- 
--void blk_rq_stat_add(struct blk_rq_stat *stat, u64 value)
-+void blk_rq_stat_add(struct blk_rq_stat_staging *stat, u64 value)
- {
- 	stat->min = min(stat->min, value);
- 	stat->max = max(stat->max, value);
-@@ -67,7 +74,7 @@ void blk_stat_add(struct request *rq, u64 now)
- {
- 	struct request_queue *q = rq->q;
- 	struct blk_stat_callback *cb;
--	struct blk_rq_stat *stat;
-+	struct blk_rq_stat_staging *stat;
- 	int bucket;
- 	u64 value;
- 
-@@ -101,13 +108,13 @@ static void blk_stat_timer_fn(struct timer_list *t)
- 		blk_rq_stat_init(&cb->stat[bucket]);
- 
- 	for_each_online_cpu(cpu) {
--		struct blk_rq_stat *cpu_stat;
-+		struct blk_rq_stat_staging *cpu_stat;
- 
- 		cpu_stat = per_cpu_ptr(cb->cpu_stat, cpu);
- 		for (bucket = 0; bucket < cb->buckets; bucket++) {
- 			blk_rq_stat_collect(&cb->stat[bucket],
- 					    &cpu_stat[bucket]);
--			blk_rq_stat_init(&cpu_stat[bucket]);
-+			blk_rq_stat_init_staging(&cpu_stat[bucket]);
- 		}
- 	}
- 
-@@ -131,8 +138,9 @@ blk_stat_alloc_callback(void (*timer_fn)(struct blk_stat_callback *),
- 		kfree(cb);
- 		return NULL;
- 	}
--	cb->cpu_stat = __alloc_percpu(buckets * sizeof(struct blk_rq_stat),
--				      __alignof__(struct blk_rq_stat));
-+	cb->cpu_stat = __alloc_percpu(
-+				buckets * sizeof(struct blk_rq_stat_staging),
-+				__alignof__(struct blk_rq_stat_staging));
- 	if (!cb->cpu_stat) {
- 		kfree(cb->stat);
- 		kfree(cb);
-@@ -155,11 +163,11 @@ void blk_stat_add_callback(struct request_queue *q,
- 	int cpu;
- 
- 	for_each_possible_cpu(cpu) {
--		struct blk_rq_stat *cpu_stat;
-+		struct blk_rq_stat_staging *cpu_stat;
- 
- 		cpu_stat = per_cpu_ptr(cb->cpu_stat, cpu);
- 		for (bucket = 0; bucket < cb->buckets; bucket++)
--			blk_rq_stat_init(&cpu_stat[bucket]);
-+			blk_rq_stat_init_staging(&cpu_stat[bucket]);
- 	}
- 
- 	spin_lock(&q->stats->lock);
-diff --git a/block/blk-stat.h b/block/blk-stat.h
-index 5597ecc34ef5..e5c753fbd6e6 100644
---- a/block/blk-stat.h
-+++ b/block/blk-stat.h
-@@ -30,7 +30,7 @@ struct blk_stat_callback {
- 	/**
- 	 * @cpu_stat: Per-cpu statistics buckets.
- 	 */
--	struct blk_rq_stat __percpu *cpu_stat;
-+	struct blk_rq_stat_staging __percpu *cpu_stat;
- 
- 	/**
- 	 * @bucket_fn: Given a request, returns which statistics bucket it
-@@ -164,9 +164,11 @@ static inline void blk_stat_activate_msecs(struct blk_stat_callback *cb,
- 	mod_timer(&cb->timer, jiffies + msecs_to_jiffies(msecs));
- }
- 
--void blk_rq_stat_add(struct blk_rq_stat *, u64);
--void blk_rq_stat_collect(struct blk_rq_stat *dst, struct blk_rq_stat *src);
-+void blk_rq_stat_add(struct blk_rq_stat_staging *stat, u64);
-+void blk_rq_stat_collect(struct blk_rq_stat *dst,
-+			 struct blk_rq_stat_staging *src);
- void blk_rq_stat_merge(struct blk_rq_stat *dst, struct blk_rq_stat *src);
- void blk_rq_stat_init(struct blk_rq_stat *);
-+void blk_rq_stat_init_staging(struct blk_rq_stat_staging *stat);
- 
- #endif
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 6f7a8647cefb..5a7d8b70fcf0 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -452,7 +452,13 @@ struct blk_rq_stat {
- 	u64 min;
- 	u64 max;
- 	u32 nr_samples;
-+};
-+
-+struct blk_rq_stat_staging {
-+	u64 min;
-+	u64 max;
- 	u64 batch;
-+	u32 nr_samples;
- };
- 
- #endif /* __LINUX_BLK_TYPES_H */
--- 
-2.22.0
-
+I can test it myself but it will take a couple of days.
+> 
+> If this goes via Xen tree then the first couple of patches need an ack
+> from ARM maintainers.
+> 
+> -boris
