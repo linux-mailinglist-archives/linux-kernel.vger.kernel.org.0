@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01B6DAB6D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33588AB6DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392279AbfIFLIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:08:24 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47003 "EHLO
+        id S2393241AbfIFLKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:10:05 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47029 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392195AbfIFLIW (ORCPT
+        with ESMTP id S2392255AbfIFLIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:08:22 -0400
+        Fri, 6 Sep 2019 07:08:24 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i6C6B-00072g-QV; Fri, 06 Sep 2019 13:08:15 +0200
+        id 1i6C6H-00073O-8q; Fri, 06 Sep 2019 13:08:21 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 966EC1C0E1C;
-        Fri,  6 Sep 2019 13:08:14 +0200 (CEST)
-Date:   Fri, 06 Sep 2019 11:08:14 -0000
-From:   "tip-bot2 for Andres Salomon" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3FAE81C0744;
+        Fri,  6 Sep 2019 13:08:15 +0200 (CEST)
+Date:   Fri, 06 Sep 2019 11:08:15 -0000
+From:   "tip-bot2 for Jerome Brunet" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/mmp: Mask off interrupts from other cores
-Cc:     Andres Salomon <dilinger@queued.net>,
-        Lubomir Rintel <lkundrak@v3.sk>, Marc Zyngier <maz@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20190822092643.593488-9-lkundrak@v3.sk>
-References: <20190822092643.593488-9-lkundrak@v3.sk>
+Subject: [tip: irq/core] dt-bindings: interrupt-controller: New binding for
+ the meson sm1 SoCs
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <20190829161635.25067-2-jbrunet@baylibre.com>
+References: <20190829161635.25067-2-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Message-ID: <156776809457.24167.5698425115585991112.tip-bot2@tip-bot2>
+Message-ID: <156776809521.24167.11608140259251300270.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,150 +48,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     9e8e8912b05f276dd02d39cb596dc3cf03718377
-Gitweb:        https://git.kernel.org/tip/9e8e8912b05f276dd02d39cb596dc3cf03718377
-Author:        Andres Salomon <dilinger@queued.net>
-AuthorDate:    Thu, 22 Aug 2019 11:26:31 +02:00
+Commit-ID:     abc08aac82af0c71e30b446575f5810c9cc11640
+Gitweb:        https://git.kernel.org/tip/abc08aac82af0c71e30b446575f5810c9cc11640
+Author:        Jerome Brunet <jbrunet@baylibre.com>
+AuthorDate:    Thu, 29 Aug 2019 18:16:34 +02:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Fri, 30 Aug 2019 15:23:30 +01:00
+CommitterDate: Fri, 30 Aug 2019 15:01:06 +01:00
 
-irqchip/mmp: Mask off interrupts from other cores
+dt-bindings: interrupt-controller: New binding for the meson sm1 SoCs
 
-On mmp3, there's an extra set of ICU registers (ICU2) that handle
-interrupts on the extra cores.  When masking off interrupts on MP1,
-these should be masked as well.
+Update the dt-binding to add support for the sm1 SoC family in the
+amlogic GPIO interrupt controller driver.
 
-We add a new interrupt controller via device tree to identify when we're
-looking at an mmp3 machine via compatible field of "marvell,mmp3-intc".
-
-[lkundrak@v3.sk: Changed "mrvl,mmp3-intc" compatible strings to
-"marvell,mmp3-intc". Tidied up the subject line a bit.]
-
-Signed-off-by: Andres Salomon <dilinger@queued.net>
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20190822092643.593488-9-lkundrak@v3.sk
---
-Changes since v1:
-- Moved mmp3-specific mmp_icu2_base initialization from mmp_init_bases() to
-  mmp3_of_init() so that we don't have to check for marvell,mmp3-intc
-  compatibility twice.
-- Drop an superfluous call to irq_set_default_host()
-
- arch/arm/mach-mmp/regs-icu.h |  3 +++
- drivers/irqchip/irq-mmp.c    | 48 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+)
-
-Signed-off-by: Andres Salomon <dilinger@queued.net>
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20190822092643.593488-9-lkundrak@v3.sk
+Link: https://lore.kernel.org/r/20190829161635.25067-2-jbrunet@baylibre.com
 ---
- arch/arm/mach-mmp/regs-icu.h |  3 ++-
- drivers/irqchip/irq-mmp.c    | 48 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 51 insertions(+)
+ Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-mmp/regs-icu.h b/arch/arm/mach-mmp/regs-icu.h
-index 0375d5a..410743d 100644
---- a/arch/arm/mach-mmp/regs-icu.h
-+++ b/arch/arm/mach-mmp/regs-icu.h
-@@ -11,6 +11,9 @@
- #define ICU_VIRT_BASE	(AXI_VIRT_BASE + 0x82000)
- #define ICU_REG(x)	(ICU_VIRT_BASE + (x))
- 
-+#define ICU2_VIRT_BASE	(AXI_VIRT_BASE + 0x84000)
-+#define ICU2_REG(x)	(ICU2_VIRT_BASE + (x))
-+
- #define ICU_INT_CONF(n)		ICU_REG((n) << 2)
- #define ICU_INT_CONF_MASK	(0xf)
- 
-diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index fa23947..da290d8 100644
---- a/drivers/irqchip/irq-mmp.c
-+++ b/drivers/irqchip/irq-mmp.c
-@@ -44,6 +44,7 @@ struct icu_chip_data {
- 	unsigned int		conf_enable;
- 	unsigned int		conf_disable;
- 	unsigned int		conf_mask;
-+	unsigned int		conf2_mask;
- 	unsigned int		clr_mfp_irq_base;
- 	unsigned int		clr_mfp_hwirq;
- 	struct irq_domain	*domain;
-@@ -53,9 +54,11 @@ struct mmp_intc_conf {
- 	unsigned int	conf_enable;
- 	unsigned int	conf_disable;
- 	unsigned int	conf_mask;
-+	unsigned int	conf2_mask;
- };
- 
- static void __iomem *mmp_icu_base;
-+static void __iomem *mmp_icu2_base;
- static struct icu_chip_data icu_data[MAX_ICU_NR];
- static int max_icu_nr;
- 
-@@ -98,6 +101,16 @@ static void icu_mask_irq(struct irq_data *d)
- 		r &= ~data->conf_mask;
- 		r |= data->conf_disable;
- 		writel_relaxed(r, mmp_icu_base + (hwirq << 2));
-+
-+		if (data->conf2_mask) {
-+			/*
-+			 * ICU1 (above) only controls PJ4 MP1; if using SMP,
-+			 * we need to also mask the MP2 and MM cores via ICU2.
-+			 */
-+			r = readl_relaxed(mmp_icu2_base + (hwirq << 2));
-+			r &= ~data->conf2_mask;
-+			writel_relaxed(r, mmp_icu2_base + (hwirq << 2));
-+		}
- 	} else {
- 		r = readl_relaxed(data->reg_mask) | (1 << hwirq);
- 		writel_relaxed(r, data->reg_mask);
-@@ -201,6 +214,14 @@ static const struct mmp_intc_conf mmp2_conf = {
- 			  MMP2_ICU_INT_ROUTE_PJ4_FIQ,
- };
- 
-+static struct mmp_intc_conf mmp3_conf = {
-+	.conf_enable	= 0x20,
-+	.conf_disable	= 0x0,
-+	.conf_mask	= MMP2_ICU_INT_ROUTE_PJ4_IRQ |
-+			  MMP2_ICU_INT_ROUTE_PJ4_FIQ,
-+	.conf2_mask	= 0xf0,
-+};
-+
- static void __exception_irq_entry mmp_handle_irq(struct pt_regs *regs)
- {
- 	int hwirq;
-@@ -426,6 +447,33 @@ static int __init mmp2_of_init(struct device_node *node,
- }
- IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_init);
- 
-+static int __init mmp3_of_init(struct device_node *node,
-+			       struct device_node *parent)
-+{
-+	int ret;
-+
-+	mmp_icu2_base = of_iomap(node, 1);
-+	if (!mmp_icu2_base) {
-+		pr_err("Failed to get interrupt controller register #2\n");
-+		return -ENODEV;
-+	}
-+
-+	ret = mmp_init_bases(node);
-+	if (ret < 0) {
-+		iounmap(mmp_icu2_base);
-+		return ret;
-+	}
-+
-+	icu_data[0].conf_enable = mmp3_conf.conf_enable;
-+	icu_data[0].conf_disable = mmp3_conf.conf_disable;
-+	icu_data[0].conf_mask = mmp3_conf.conf_mask;
-+	icu_data[0].conf2_mask = mmp3_conf.conf2_mask;
-+	set_handle_irq(mmp2_handle_irq);
-+	max_icu_nr = 1;
-+	return 0;
-+}
-+IRQCHIP_DECLARE(mmp3_intc, "marvell,mmp3-intc", mmp3_of_init);
-+
- static int __init mmp2_mux_of_init(struct device_node *node,
- 				   struct device_node *parent)
- {
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+index 7d531d5..684bb1c 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+@@ -16,6 +16,7 @@ Required properties:
+     "amlogic,meson-gxl-gpio-intc" for GXL SoCs (S905X, S912)
+     "amlogic,meson-axg-gpio-intc" for AXG SoCs (A113D, A113X)
+     "amlogic,meson-g12a-gpio-intc" for G12A SoCs (S905D2, S905X2, S905Y2)
++    "amlogic,meson-sm1-gpio-intc" for SM1 SoCs (S905D3, S905X3, S905Y3)
+ - reg : Specifies base physical address and size of the registers.
+ - interrupt-controller : Identifies the node as an interrupt controller.
+ - #interrupt-cells : Specifies the number of cells needed to encode an
