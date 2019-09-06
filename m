@@ -2,82 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D296DABD94
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 18:20:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C574EABD99
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 18:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732110AbfIFQUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 12:20:40 -0400
-Received: from smtprelay0113.hostedemail.com ([216.40.44.113]:47720 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727391AbfIFQUj (ORCPT
+        id S2387588AbfIFQVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 12:21:53 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39319 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727391AbfIFQVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 12:20:39 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 10FFD18026B11;
-        Fri,  6 Sep 2019 16:20:38 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2560:2564:2682:2685:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3868:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:7901:7903:8985:9025:10004:10400:10848:10967:11232:11658:11854:11914:12043:12297:12438:12555:12740:12760:12895:13019:13069:13311:13357:13439:14096:14097:14181:14659:14721:21067:21080:21433:21627:21811:30054:30060:30070:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: jump19_79b02ed939a5d
-X-Filterd-Recvd-Size: 2482
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  6 Sep 2019 16:20:36 +0000 (UTC)
-Message-ID: <38bf64245d173d0de4452cac1c6cf028ad0490d8.camel@perches.com>
-Subject: Re: [PATCH] docs: license-rules.txt: cover SPDX headers on Python
- scripts
-From:   Joe Perches <joe@perches.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jessica Yu <jeyu@kernel.org>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-doc@vger.kernel.org
-Date:   Fri, 06 Sep 2019 09:20:35 -0700
-In-Reply-To: <20190906114552.524d0d50@coco.lan>
-References: <20190905055614.7958918b@coco.lan>
-         <88e638eb959095ab6657d295f9f8c27169569bf2.1567675272.git.mchehab+samsung@kernel.org>
-         <20190905092703.GA30899@kroah.com> <20190905090701.37dcf75e@coco.lan>
-         <b32c2e46b91e7bcda2a9bd140673f06d71b2487a.camel@perches.com>
-         <20190906083457.7e7934ec@coco.lan>
-         <a610efdd3bf488d407dc1130fa8ed090019ccffd.camel@perches.com>
-         <20190906114552.524d0d50@coco.lan>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Fri, 6 Sep 2019 12:21:53 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t16so7208213wra.6
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 09:21:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YyFs4U3ikiTAqwiYM1xeX9g2LY/fcWKN2WJ80eqPNSk=;
+        b=nHKWzwJEcTwkpSy9DqLd/W0PNW9yq9keDn8HaEhnQtavg8cilXdEnbWvLslHAA5abG
+         lfbkSWbbrKXzggI1zIngcIGFzSBueAOcK3+DWIurRaxv4D7UtpC70KKetSaSFiwW+Ju/
+         53Oelg2UFISt+6tnyIQKvzSvDZZvVrsuU+Asmmj2FprhNSM4N7NeOSv8D5zWIHoDJAW6
+         mC/Q3RcFEN+KKtM3O2TSIB0B/Ws7nXX39oAdCSMOJXvuwjvbcguUSzFE/2L0GoPutl+J
+         7ankZ4lE2yeh25jwvHX9yYsIrrImxqTEitFpj8DhKIi1vRJ0eslnTnaeUS/KV3DYqITH
+         pZVg==
+X-Gm-Message-State: APjAAAUdze6lNzLLBylltrs6IygJKRv1THqVc+mRAYiZN9IBKMPMIo5S
+        gaoHKxTb36LHnPDGAsA8w1fp4yhL4GI=
+X-Google-Smtp-Source: APXvYqy+srdRIn/GNan0TyQsI3oyjlCYapvUe8TDap4339AXwUgcqrzM4pXnKGs7D7Xp5xlMGWplwA==
+X-Received: by 2002:adf:ec41:: with SMTP id w1mr8382828wrn.215.1567786911095;
+        Fri, 06 Sep 2019 09:21:51 -0700 (PDT)
+Received: from [10.68.32.192] (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
+        by smtp.gmail.com with ESMTPSA id c6sm10994479wrb.60.2019.09.06.09.21.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Sep 2019 09:21:50 -0700 (PDT)
+Subject: Re: [PATCH] lz4: make LZ4HC_setExternalDict as non-static
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Emil Velikov <emil.l.velikov@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+References: <20190906153700.2061625-1-arnd@arndb.de>
+From:   Denis Efremov <efremov@linux.com>
+Message-ID: <5ce4f4c7-f764-8937-75bf-83a4d4c57fa7@linux.com>
+Date:   Fri, 6 Sep 2019 19:21:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
+In-Reply-To: <20190906153700.2061625-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-09-06 at 11:45 -0300, Mauro Carvalho Chehab wrote:
-> Em Fri, 06 Sep 2019 05:20:30 -0700
-> Joe Perches <joe@perches.com> escreveu:
+Hi,
+
+> kbuild warns for exported static symbols. This one seems to
+> be meant as an external API but does not have any in-kernel
+> users:
 > 
-> > On Fri, 2019-09-06 at 08:34 -0300, Mauro Carvalho Chehab wrote:
-> > > I did some changes on it, plus one change at the pedantic mode of
-> > > scripts/spdxcheck.py, and placed the corresponding patches at:
-> > > 
-> > > 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=spdx_pedantic  
-> > 
-> > Overall seems very nice, thanks.
-> > 
-> > Couple nits.
-> > 
-> > Some of the scripts and py files move the author
-> > block into a description or add unnecessary blank
-> > comments.  These may use some manual fixups.
+> WARNING: "LZ4HC_setExternalDict" [vmlinux] is a static EXPORT_SYMBOL
 > 
-> True. I noticed that too. I suspect that fixing this automatically would 
-> make the script too complex.
-> 
-> Anyway, the point is: who will apply it? Linus? Each maintainer?
+> I suppose the function should not just get removed since it would
+> be nice to stay close to the upstream version of lz4hc, so just
+> make it global.
 
-I have been advocating for a treewide scripted mechanism for awhile.
-https://lore.kernel.org/lkml/4398924f28a58fca296d101dae11e7accce80656.camel@perches.com/
+I'm not sure what is better here. But just in case, I sent a different
+patch that removes EXPORT_SYMBOL from this function some time ago:
+https://lkml.org/lkml/2019/7/8/842
 
+I checked first that this functions is indeed static in the original lib[1]
+and this symbol is not used in kernel.
 
+[1] https://github.com/lz4/lz4/blob/dev/lib/lz4hc.c#L1054
 
+Thanks,
+Denis
