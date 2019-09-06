@@ -2,86 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 146E5ABB54
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C63BCABB37
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:42:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394596AbfIFOsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:48:51 -0400
-Received: from out.bound.email ([141.193.244.10]:38215 "EHLO out.bound.email"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730799AbfIFOsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:48:51 -0400
-X-Greylist: delayed 490 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Sep 2019 10:48:50 EDT
-Received: from mail.sventech.com (localhost [127.0.0.1])
-        by out.bound.email (Postfix) with ESMTP id C36368A30DF;
-        Fri,  6 Sep 2019 07:40:39 -0700 (PDT)
-Received: by mail.sventech.com (Postfix, from userid 1000)
-        id A540016001D9; Fri,  6 Sep 2019 07:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=erdfelt.com;
-        s=default; t=1567780839;
-        bh=qFCKmF98sxj89IxjUAyQ/fJTX4Sbri4zk3r9SCHTo9s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GxRJcKNKVbvW9eXHrii2JC70Hd94BQyeseRNJnztRKicbLXvWI78VbJ4PzUF/39I2
-         yEnhhgK5GpiflbbM8LVUrqC8jBwfum1ec70kfJfNb+e5NM8eXw5uq+y/nKUOZaF6MY
-         crcKcughqT5gkEh85T3nY0oRBjQOlviwroRmkQuw=
-Date:   Fri, 6 Sep 2019 07:40:39 -0700
-From:   Johannes Erdfelt <johannes@erdfelt.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Raj, Ashok" <ashok.raj@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jon Grimm <Jon.Grimm@amd.com>, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, patrick.colp@oracle.com,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        x86-ml <x86@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/microcode: Add an option to reload microcode even if
- revision is unchanged
-Message-ID: <20190906144039.GA29569@sventech.com>
-References: <20190829130213.GA23510@araj-mobl1.jf.intel.com>
- <20190903164630.GF11641@zn.tnic>
- <41cee473-321c-2758-032a-ccf0f01359dc@oracle.com>
- <D8A3D2BD-1FD4-4183-8663-3EF02A6099F3@alien8.de>
- <20190905002132.GA26568@otc-nc-03>
- <20190905072029.GB19246@zn.tnic>
- <20190905194044.GA3663@otc-nc-03>
- <alpine.DEB.2.21.1909052316130.1902@nanos.tec.linutronix.de>
- <20190905222706.GA4422@otc-nc-03>
- <alpine.DEB.2.21.1909061431330.1902@nanos.tec.linutronix.de>
+        id S2405557AbfIFOmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:42:16 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46420 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727481AbfIFOmQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:42:16 -0400
+Received: by mail-lj1-f193.google.com with SMTP id e17so6187925ljf.13;
+        Fri, 06 Sep 2019 07:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gsLD90QQ2kfBi7SEjiUF7Lk3XMy3Rd3c6KDoYev3+Ck=;
+        b=eR9grB12OmR+vvbmxLg3a64CtG4a95DWsaFHq1FQTzLLoTq7tqMHivszSYiDGnZSMC
+         iMSUJnnc/RRdlmpTITtFAKHkLtqspRpo38q874TF+FHp25buJm50gne2LE6A2B0wW8p7
+         haXf5iR7MMT28CBVyAcpF/28cH29UO5iorAxLAMsGAhrYEIo5eryofFhp4KAJ5Wdj2jf
+         aKYv7goULDOQELlNrnnqWvR16sck5srMOuC5cNfMJR0eWVbMLZCx+h0P4sBwGJwo4Z6/
+         98z7ej9VLOsIbLWLjy5DaJ8GRrcKI7xR8SC/chNXZYb95AkBn2SR5kxGhO1FqjoVjyyQ
+         zfSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gsLD90QQ2kfBi7SEjiUF7Lk3XMy3Rd3c6KDoYev3+Ck=;
+        b=Kg+KjKBEZDtwOt3JTjrkCDKM3nxIsV2liHQK0JbwM8vnTtHBJMcl6axyHTbDBRvBGi
+         3BeQsgEC/Cpd/8qr9wV6X+3ekEefGJV9XouLIwz2m7vkXCx4e57A+TZ4vEulUJWtjgDl
+         S7pfAQNOPeKJEQbIsuHiGi3K1EDG7g/mSlNuis3AMBiaAvMvs6A6wDrjjahnOt6o5AAZ
+         6JTC6BrCcW5LTsOCUb9KteaJz2m6J9v+/vyEXmlOKfEY2nyKDlMe+4nKt+X/ocleX7+C
+         ZvX8LC5fQm8aDP32eeS0+DA42gdD663crotQAArnU+HHBXWuvxVOntlCpzhx9BX4BHGz
+         2AgQ==
+X-Gm-Message-State: APjAAAUPwa0gKwCmFAFYlnYHHnr0nxkrs+ePjGdeMR0n1zj3MyqycOZO
+        I6IVPPOtpEEXbi4tTnmp6AtLynwX
+X-Google-Smtp-Source: APXvYqzLBXIY8RmKyRDCfVgJOXx8XL55kA5VFNyBeZKF5quWQUlHvUux4Njr843frSuxsmG7O7T8JA==
+X-Received: by 2002:a2e:9117:: with SMTP id m23mr6087948ljg.43.1567780933698;
+        Fri, 06 Sep 2019 07:42:13 -0700 (PDT)
+Received: from localhost.localdomain (mm-82-227-122-178.mgts.dynamic.pppoe.byfly.by. [178.122.227.82])
+        by smtp.gmail.com with ESMTPSA id z30sm1325077lfj.63.2019.09.06.07.42.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 07:42:13 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, josef@toxicpanda.com
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [RESEND][PATCH v2 0/2] Fix misuse of blk_rq_stats in blk-iolatency
+Date:   Fri,  6 Sep 2019 17:42:02 +0300
+Message-Id: <cover.1567780718.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1909061431330.1902@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019, Thomas Gleixner <tglx@linutronix.de> wrote:
-> What your customers are asking for is a receipe for disaster. They can
-> check the safety of late loading forever, it will not magically become safe
-> because they do so.
-> 
-> If you want late loading, then the whole approach needs to be reworked from
-> ground up. You need to make sure that all CPUs are in a safe state,
-> i.e. where switching of CPU feature bits of all sorts can be done with the
-> guarantee that no CPU will return to the wrong code path after coming out
-> of safe state and that any kernel internal state which depends on the
-> previous set of CPU feature bits has been mopped up and switched over
-> before CPUs are released.
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-You say that switching of CPU feature bits is problematic, but adding
-new features should result only in a warning ("x86/CPU: CPU features
-have changed after loading microcode, but might not take effect.").
+There are implicit assumptions about struct blk_rq_stats, which make
+it's very easy to misuse. The first patch fixes a bug caused by that.
+The second employs type-system to prevent recurrences.
 
-Removing a CPU feature bit could be problematic. Other than HLE being
-removed on Haswell (which the kernel shouldn't use anyway), have there
-been any other cases?
+v2: rebase + reformulate commit messages (no code changes)
 
-I ask because we have successfully used late microcode loading on tens
-of thousands of hosts. I'm a bit worried to see that there is a push to
-remove a feature that we currently rely on.
+Acked-by: Josef Bacik <josef@toxicpanda.com>
 
-JE
+Pavel Begunkov (2):
+  blk-iolatency: Fix zero mean in previous stats
+  blk-stats: Introduce explicit stat staging buffers
+
+ block/blk-iolatency.c     | 60 ++++++++++++++++++++++++++++++---------
+ block/blk-stat.c          | 48 +++++++++++++++++++++++--------
+ block/blk-stat.h          |  9 ++++--
+ include/linux/blk_types.h |  6 ++++
+ 4 files changed, 94 insertions(+), 29 deletions(-)
+
+-- 
+2.22.0
 
