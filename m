@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1AE1AB896
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE16AB8AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392370AbfIFM6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 08:58:33 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6694 "EHLO huawei.com"
+        id S2405064AbfIFM7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 08:59:18 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6696 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404925AbfIFM6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 08:58:17 -0400
+        id S2404884AbfIFM6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 08:58:13 -0400
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id BD62D6FC6103E3B89F76;
+        by Forcepoint Email with ESMTP id C61FA35816A01BA2A796;
         Fri,  6 Sep 2019 20:58:10 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
@@ -23,9 +23,9 @@ CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>,
         Luo Jiaxing <luojiaxing@huawei.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 02/13] scsi: hisi_sas: Use true/false as input parameter of sas_phy_reset()
-Date:   Fri, 6 Sep 2019 20:55:26 +0800
-Message-ID: <1567774537-20003-3-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 03/13] scsi: hisi_sas: Directly return when running I_T_nexus reset if phy disabled
+Date:   Fri, 6 Sep 2019 20:55:27 +0800
+Message-ID: <1567774537-20003-4-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
 References: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
@@ -40,37 +40,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Luo Jiaxing <luojiaxing@huawei.com>
 
-When calling sas_phy_reset(), we need to specify whether the reset type
-is hard reset or link reset - use true/false for clarity.
+At hisi_sas_debug_I_T_nexus_reset(), we call sas_phy_reset() to reset a
+phy. But if the phy is disabled, sas_phy_reset() will directly return
+-ENODEV without issue a phy reset request.
+
+If so, We can directly return -ENODEV to libsas before issue a phy
+reset.
 
 Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 03e953862412..47faa283312e 100644
+index 47faa283312e..5642c53cccae 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -1762,7 +1762,7 @@ static int hisi_sas_debug_I_T_nexus_reset(struct domain_device *device)
- 	}
+@@ -1752,6 +1752,11 @@ static int hisi_sas_debug_I_T_nexus_reset(struct domain_device *device)
+ 	DECLARE_COMPLETION_ONSTACK(phyreset);
+ 	int rc, reset_type;
  
- 	reset_type = (sas_dev->dev_status == HISI_SAS_DEV_INIT ||
--		      !dev_is_sata(device)) ? 1 : 0;
-+		      !dev_is_sata(device)) ? true : false;
- 
- 	rc = sas_phy_reset(local_phy, reset_type);
- 	sas_put_local_phy(local_phy);
-@@ -1843,7 +1843,7 @@ static int hisi_sas_lu_reset(struct domain_device *device, u8 *lun)
- 
- 		phy = sas_get_local_phy(device);
- 
--		rc = sas_phy_reset(phy, 1);
-+		rc = sas_phy_reset(phy, true);
- 
- 		if (rc == 0)
- 			hisi_sas_release_task(hisi_hba, device);
++	if (!local_phy->enabled) {
++		sas_put_local_phy(local_phy);
++		return -ENODEV;
++	}
++
+ 	if (scsi_is_sas_phy_local(local_phy)) {
+ 		struct asd_sas_phy *sas_phy =
+ 			sas_ha->sas_phy[local_phy->number];
 -- 
 2.17.1
 
