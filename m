@@ -2,69 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2102ABB51
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84C59ABB59
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:50:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394585AbfIFOsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:48:38 -0400
-Received: from fieldses.org ([173.255.197.46]:57420 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730799AbfIFOsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:48:38 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id C0C951C9D; Fri,  6 Sep 2019 10:48:37 -0400 (EDT)
-Date:   Fri, 6 Sep 2019 10:48:37 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Jason L Tibbitts III <tibbs@math.uh.edu>
-Cc:     Wolfgang Walter <linux@stwm.de>, linux-nfs@vger.kernel.org,
-        km@cm4all.com, linux-kernel@vger.kernel.org
-Subject: Re: Regression in 5.1.20: Reading long directory fails
-Message-ID: <20190906144837.GD17204@fieldses.org>
-References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
- <4418877.15LTP4gqqJ@stwm.de>
- <ufapnkhqjwm.fsf@epithumia.math.uh.edu>
- <4198657.JbNDGbLXiX@h2o.as.studentenwerk.mhn.de>
- <ufad0ggrfrk.fsf@epithumia.math.uh.edu>
+        id S2394616AbfIFOt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:49:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53612 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730799AbfIFOt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:49:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CBD20B628;
+        Fri,  6 Sep 2019 14:49:55 +0000 (UTC)
+Date:   Fri, 6 Sep 2019 16:50:04 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] eeprom: Deprecate the legacy eeprom driver
+Message-ID: <20190906165004.5e5748cc@endymion>
+In-Reply-To: <20190904075729.GA22307@kroah.com>
+References: <20190902104838.058725c2@endymion>
+        <20190904075729.GA22307@kroah.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ufad0ggrfrk.fsf@epithumia.math.uh.edu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 08:50:39PM -0500, Jason L Tibbitts III wrote:
-> I asked the XFS folks who mentioned that the issues with 64 bit inodes
-> are old, constrained to larger filesystems than what I'm using, not an
-> issue with nfsv4, and not present on anything but 32bit clients with old
-> userspace.
+Hi Greg,
+
+On Wed, 4 Sep 2019 09:57:29 +0200, Greg Kroah-Hartman wrote:
+> On Mon, Sep 02, 2019 at 10:48:38AM +0200, Jean Delvare wrote:
+> > Time has come to get rid of the old eeprom driver. The at24 driver
+> > should be used instead. So mark the eeprom driver as deprecated and
+> > give users some time to migrate. Then we can remove the legacy
+> > eeprom driver completely.
+> > 
+> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  drivers/misc/eeprom/Kconfig |    5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)  
 > 
-> In any case, I have been experimenting a bit and somehow the issue seems
-> to be related to exporting with sec=krb5i:krb5p or sec=krb5i.  If I
-> export with just sec=krb5p, things magically begin to work.
+> You might also want to add a big printk() message when the driver is
+> loaded that it shouldn't be used.
 
-That's interesting!
+Good idea, although unfortunately this means expanding
+module_i2c_driver. Or maybe I can use printk_once() in eeprom_probe().
+Or even just a dev_warn() there to really spam the kernel log in a very
+visible way.
 
-We've occasionally had bugs that are rare corner cases in the xdr
-code--e.g. if the encoded directory data hits some limit at the same
-time that we reach the end of a page, and the end of the page falls at
-some offset with respect to the entry we're encoding.
+Would you prefer a v2 of this patch including that change, or a
+separate, incremental patch?
 
-Something like switching between krb5i and krb5p could affect the
-offsets in a way that affected the likelihood of hitting such a case.
-That's one guess, anyway.
-
-> Anyway, I hope this helps to pinpoint the problem.  I now have a really
-> easy way to reproduce this without having to kick people off of the
-> server, and if the successes aren't just some kind of false positives
-> then I guess I also have a workaround.  I'm still at a loss as to why a
-> revert of the readdir changes makes any difference at all here.
-
-Those readdir changes were client-side, right?  Based on that I'd been
-assuming a client bug, but maybe it'd be worth getting a full packet
-capture of the readdir reply to make sure it's legit.  Looking at it in
-wireshark should tell us quickly whether it's corrupted somehow.
-
---b.
+Thanks,
+-- 
+Jean Delvare
+SUSE L3 Support
