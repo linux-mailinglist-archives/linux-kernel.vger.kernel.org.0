@@ -2,55 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6345BAC11F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 22:00:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6213AC125
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 22:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391103AbfIFUAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 16:00:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725846AbfIFUAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 16:00:02 -0400
-Subject: Re: [GIT PULL] configfs fixes for 5.3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567800001;
-        bh=Mp/oAOjhpYcaOkvUcbGV3VSePN/KAkSXNpuCoN72zu8=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=IOnfz48kFnBSz+ag/5Xn4p2DJZEpDdeZdqOqPzq1OFDZZvkAChbAfQTFH284W9Pbb
-         ok2KJF0ruL+l5R1vnOJlTK8szRvvgEGX7gmAzR2N7jLyhE0BI9Hv8Dtga8o19DVzRf
-         5m+E/bOKMvtHhR4UqvW7qJiHXyrVmzw9bINJLF+Y=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190906155650.GA32004@infradead.org>
-References: <20190906155650.GA32004@infradead.org>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190906155650.GA32004@infradead.org>
-X-PR-Tracked-Remote: git://git.infradead.org/users/hch/configfs.git
- tags/configfs-for-5.3
-X-PR-Tracked-Commit-Id: b0841eefd9693827afb9888235e26ddd098f9cef
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 30d7030b2fb39d9b53270b2fe0caac8e8792890c
-Message-Id: <156780000153.21952.2583030971241850317.pr-tracker-bot@kernel.org>
-Date:   Fri, 06 Sep 2019 20:00:01 +0000
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Joel Becker <jlbec@evilplan.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S2394185AbfIFUAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 16:00:13 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38184 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394121AbfIFUAM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 16:00:12 -0400
+Received: by mail-ot1-f66.google.com with SMTP id h17so3038335otn.5
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 13:00:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=a797GSlScu7TceDm8JT9sMdOWrDRiCOoWgKbIGvEAOE=;
+        b=ivjq879MyPjXeuWLQbzp6PpkI+gFVrJF92I5JYQYSOI7wweZURIWNxqsrewFxIlMjl
+         YWKsMn04ooxcUoTEoyfzZg6SR3Aq0v8gQo+aZA8xLWmZaxq73KIaJg9LwlKONx3AW1we
+         mG2Y6UFWVxanzI+wywN8oQndM4KFLqAuxL4DIJCVrnqvPuq+NVj7Op69hqa+CvdR20ko
+         Weyv5tkeJ3jU88p17+WpZqAGcDQo0/aSzZuymFCRk7RhW7VXHcbZ6zfozPz8JukXPI8t
+         +r3h58TsR9m5aFf1qMlPJ8+9FsNEWK3id0TM/FzBlZbnb7bzujkLIAVOiAh0nhH242/t
+         Wx+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=a797GSlScu7TceDm8JT9sMdOWrDRiCOoWgKbIGvEAOE=;
+        b=YMgk3T4PrsLi98HIh2ogF+MChXoEr5OAT97RuKYeWz749uVj33W3sxuPg5nuKqURLY
+         36miMBFgDRwnoUGdG7J5yOntuRbGzOnfcIUlEsHGtba6yIhgZV1ELbYdCIxVOWhgv9Xu
+         M4bd5tHdFpal2sUA/pOPfllJKIewcxHFfaT21Q0UMwGIstrD6/h5woNI4LTm8tWS0cNh
+         YethAaruO5O1mf4hQ5KQbjjUB8+4gxKOim5YLeC39Omv24tLxlXzNUBIHcPWd0i+4xof
+         ziYBmPkiLWZrPW3cs5FxWK8dvg94vSMKip1ByN/gfxC1fCzwwVhy9t+ukpYEzDbH4KsD
+         NxxA==
+X-Gm-Message-State: APjAAAVyfSfrs+c+kyeRWGPQgjuXiWvJ7NmjJF4wNzmMibsEaXGJVWU1
+        gAX9kfagC4+5Q4DgfzsSFiizoybQc+z25T/VDp0k5A==
+X-Google-Smtp-Source: APXvYqwwyf89TmMvDL8rpbSvr9eAas+QJDsbwLJoO4zMfL6iQ4m63v0JMuzagoFlmJsftEQgCE1iprUTYWm3zoEVJcU=
+X-Received: by 2002:a9d:6d15:: with SMTP id o21mr9234698otp.363.1567800011694;
+ Fri, 06 Sep 2019 13:00:11 -0700 (PDT)
+MIME-Version: 1.0
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 6 Sep 2019 13:00:00 -0700
+Message-ID: <CAPcyv4jDWgZDJTAgghrFX1MQXPJX_6jiqsmx9sQUOL7ZaWtk+w@mail.gmail.com>
+Subject: [GIT PULL] libnvdimm fix for v5.3-rc8
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        jmoyer <jmoyer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 6 Sep 2019 17:56:50 +0200:
+Hi Linus, please pull from:
 
-> git://git.infradead.org/users/hch/configfs.git tags/configfs-for-5.3
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
+tags/libnvdimm-fix-5.3-rc8
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/30d7030b2fb39d9b53270b2fe0caac8e8792890c
+...to receive a fix for a regression introduced in v5.3-rc1. The
+latest version has shipped in -next with no reported issues.
 
-Thank you!
+---
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+The following changes since commit a55aa89aab90fae7c815b0551b07be37db359d76:
+
+  Linux 5.3-rc6 (2019-08-25 12:01:23 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
+tags/libnvdimm-fix-5.3-rc8
+
+for you to fetch changes up to 274b924088e93593c76fb122d24bc0ef18d0ddf4:
+
+  libnvdimm/pfn: Fix namespace creation on misaligned addresses
+(2019-08-28 10:33:13 -0700)
+
+----------------------------------------------------------------
+libnvdimm fix v5.3-rc8
+
+- Restore support for 1GB alignment namespaces, truncate the end of
+  misaligned namespaces.
+
+----------------------------------------------------------------
+Jeff Moyer (1):
+      libnvdimm/pfn: Fix namespace creation on misaligned addresses
+
+ drivers/nvdimm/pfn_devs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
