@@ -2,34 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90CE8AB6AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:08:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4F12AB6A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393148AbfIFLIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:08:39 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47068 "EHLO
+        id S2392404AbfIFLId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:08:33 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47043 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392362AbfIFLIb (ORCPT
+        with ESMTP id S1731969AbfIFLI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:08:31 -0400
+        Fri, 6 Sep 2019 07:08:27 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i6C6N-00077J-8o; Fri, 06 Sep 2019 13:08:27 +0200
+        id 1i6C6J-000772-0Q; Fri, 06 Sep 2019 13:08:23 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B372C1C0E26;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7C76A1C0E24;
         Fri,  6 Sep 2019 13:08:16 +0200 (CEST)
 Date:   Fri, 06 Sep 2019 11:08:16 -0000
 From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v3: Dynamically allocate PPI partition
- descriptors
+Subject: [tip: irq/core] irqchip/gic-v3: Add EPPI range support
 Cc:     Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <156776809671.24167.4067545080989857248.tip-bot2@tip-bot2>
+Message-ID: <156776809646.24167.9421399920046079540.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,73 +44,185 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     52085d3f2028d853f8d6ce7ead2f8a504f6077fa
-Gitweb:        https://git.kernel.org/tip/52085d3f2028d853f8d6ce7ead2f8a504f6077fa
+Commit-ID:     5f51f803826e4f4aedff415ddaf14efa707be5a7
+Gitweb:        https://git.kernel.org/tip/5f51f803826e4f4aedff415ddaf14efa707be5a7
 Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Thu, 18 Jul 2019 13:05:17 +01:00
+AuthorDate:    Thu, 18 Jul 2019 13:19:25 +01:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Tue, 20 Aug 2019 10:23:34 +01:00
+CommitterDate: Tue, 20 Aug 2019 10:23:35 +01:00
 
-irqchip/gic-v3: Dynamically allocate PPI partition descriptors
+irqchip/gic-v3: Add EPPI range support
 
-Again, PPIs are becoming a variable set. Let's hack the PPI partition
-code to make the top-level array dynamically allocated.
+Expand the pre-existing PPI support to be able to deal with the
+Extended PPI range (EPPI). This includes obtaining the number of PPIs
+from each individual redistributor, and compute the minimum set
+(just in case someone builds something really clever...).
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-gic-v3.c       | 42 ++++++++++++++++++++++++-----
+ include/linux/irqchip/arm-gic-v3.h | 12 ++++++++-
+ 2 files changed, 47 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 869a805..f5dbdbf 100644
+index f5dbdbf..d3727e8 100644
 --- a/drivers/irqchip/irq-gic-v3.c
 +++ b/drivers/irqchip/irq-gic-v3.c
-@@ -52,7 +52,7 @@ struct gic_chip_data {
- 	u64			flags;
- 	bool			has_rss;
- 	unsigned int		ppi_nr;
--	struct partition_desc	*ppi_descs[16];
-+	struct partition_desc	**ppi_descs;
- };
+@@ -104,6 +104,7 @@ static DEFINE_PER_CPU(bool, has_rss);
+ enum gic_intid_range {
+ 	PPI_RANGE,
+ 	SPI_RANGE,
++	EPPI_RANGE,
+ 	ESPI_RANGE,
+ 	LPI_RANGE,
+ 	__INVALID_RANGE__
+@@ -116,6 +117,8 @@ static enum gic_intid_range __get_intid_range(irq_hw_number_t hwirq)
+ 		return PPI_RANGE;
+ 	case 32 ... 1019:
+ 		return SPI_RANGE;
++	case EPPI_BASE_INTID ... (EPPI_BASE_INTID + 63):
++		return EPPI_RANGE;
+ 	case ESPI_BASE_INTID ... (ESPI_BASE_INTID + 1023):
+ 		return ESPI_RANGE;
+ 	case 8192 ... GENMASK(23, 0):
+@@ -137,13 +140,15 @@ static inline unsigned int gic_irq(struct irq_data *d)
  
- static struct gic_chip_data gic_data __read_mostly;
-@@ -1354,7 +1354,8 @@ static int gic_irq_domain_select(struct irq_domain *d,
- 	 * then we need to match the partition domain.
- 	 */
- 	if (fwspec->param_count >= 4 &&
--	    fwspec->param[0] == 1 && fwspec->param[3] != 0)
-+	    fwspec->param[0] == 1 && fwspec->param[3] != 0 &&
-+	    gic_data.ppi_descs)
- 		return d == partition_get_domain(gic_data.ppi_descs[fwspec->param[1]]);
+ static inline int gic_irq_in_rdist(struct irq_data *d)
+ {
+-	return get_intid_range(d) == PPI_RANGE;
++	enum gic_intid_range range = get_intid_range(d);
++	return range == PPI_RANGE || range == EPPI_RANGE;
+ }
  
- 	return d == gic_data.domain;
-@@ -1375,6 +1376,9 @@ static int partition_domain_translate(struct irq_domain *d,
- 	struct device_node *np;
- 	int ret;
+ static inline void __iomem *gic_dist_base(struct irq_data *d)
+ {
+ 	switch (get_intid_range(d)) {
+ 	case PPI_RANGE:
++	case EPPI_RANGE:
+ 		/* SGI+PPI -> SGI_base for this CPU */
+ 		return gic_data_rdist_sgi_base();
  
-+	if (!gic_data.ppi_descs)
-+		return -ENOMEM;
-+
- 	np = of_find_node_by_phandle(fwspec->param[3]);
- 	if (WARN_ON(!np))
+@@ -242,6 +247,14 @@ static u32 convert_offset_index(struct irq_data *d, u32 offset, u32 *index)
+ 	case SPI_RANGE:
+ 		*index = d->hwirq;
+ 		return offset;
++	case EPPI_RANGE:
++		/*
++		 * Contrary to the ESPI range, the EPPI range is contiguous
++		 * to the PPI range in the registers, so let's adjust the
++		 * displacement accordingly. Consistency is overrated.
++		 */
++		*index = d->hwirq - EPPI_BASE_INTID + 32;
++		return offset;
+ 	case ESPI_RANGE:
+ 		*index = d->hwirq - ESPI_BASE_INTID;
+ 		switch (offset) {
+@@ -414,6 +427,8 @@ static u32 gic_get_ppi_index(struct irq_data *d)
+ 	switch (get_intid_range(d)) {
+ 	case PPI_RANGE:
+ 		return d->hwirq - 16;
++	case EPPI_RANGE:
++		return d->hwirq - EPPI_BASE_INTID + 16;
+ 	default:
+ 		unreachable();
+ 	}
+@@ -507,6 +522,7 @@ static void gic_eoimode1_eoi_irq(struct irq_data *d)
+ 
+ static int gic_set_type(struct irq_data *d, unsigned int type)
+ {
++	enum gic_intid_range range;
+ 	unsigned int irq = gic_irq(d);
+ 	void (*rwp_wait)(void);
+ 	void __iomem *base;
+@@ -517,9 +533,11 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
+ 	if (irq < 16)
  		return -EINVAL;
-@@ -1531,6 +1535,10 @@ static void __init gic_populate_ppi_partitions(struct device_node *gic_node)
- 	if (!parts_node)
- 		return;
  
-+	gic_data.ppi_descs = kcalloc(gic_data.ppi_nr, sizeof(*gic_data.ppi_descs), GFP_KERNEL);
-+	if (!gic_data.ppi_descs)
-+		return;
++	range = get_intid_range(d);
 +
- 	nr_parts = of_get_child_count(parts_node);
+ 	/* SPIs have restrictions on the supported types */
+-	if (irq >= 32 && type != IRQ_TYPE_LEVEL_HIGH &&
+-			 type != IRQ_TYPE_EDGE_RISING)
++	if ((range == SPI_RANGE || range == ESPI_RANGE) &&
++	    type != IRQ_TYPE_LEVEL_HIGH && type != IRQ_TYPE_EDGE_RISING)
+ 		return -EINVAL;
  
- 	if (!nr_parts)
-@@ -1582,7 +1590,7 @@ static void __init gic_populate_ppi_partitions(struct device_node *gic_node)
- 		part_idx++;
+ 	if (gic_irq_in_rdist(d)) {
+@@ -533,9 +551,9 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
+ 	offset = convert_offset_index(d, GICD_ICFGR, &index);
+ 
+ 	ret = gic_configure_irq(index, type, base + offset, rwp_wait);
+-	if (ret && irq < 32) {
++	if (ret && (range == PPI_RANGE || range == EPPI_RANGE)) {
+ 		/* Misconfigured PPIs are usually not fatal */
+-		pr_warn("GIC: PPI%d is secure or misconfigured\n", irq - 16);
++		pr_warn("GIC: PPI INTID%d is secure or misconfigured\n", irq);
+ 		ret = 0;
  	}
  
--	for (i = 0; i < 16; i++) {
-+	for (i = 0; i < gic_data.ppi_nr; i++) {
- 		unsigned int irq;
- 		struct partition_desc *desc;
- 		struct irq_fwspec ppi_fwspec = {
+@@ -833,7 +851,7 @@ static int __gic_update_rdist_properties(struct redist_region *region,
+ 	u64 typer = gic_read_typer(ptr + GICR_TYPER);
+ 	gic_data.rdists.has_vlpis &= !!(typer & GICR_TYPER_VLPIS);
+ 	gic_data.rdists.has_direct_lpi &= !!(typer & GICR_TYPER_DirectLPIS);
+-	gic_data.ppi_nr = 16;
++	gic_data.ppi_nr = min(GICR_TYPER_NR_PPIS(typer), gic_data.ppi_nr);
+ 
+ 	return 1;
+ }
+@@ -1222,6 +1240,7 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 
+ 	switch (__get_intid_range(hw)) {
+ 	case PPI_RANGE:
++	case EPPI_RANGE:
+ 		irq_set_percpu_devid(irq);
+ 		irq_domain_set_info(d, irq, hw, chip, d->host_data,
+ 				    handle_percpu_devid_irq, NULL, NULL);
+@@ -1266,15 +1285,24 @@ static int gic_irq_domain_translate(struct irq_domain *d,
+ 			*hwirq = fwspec->param[1] + 32;
+ 			break;
+ 		case 1:			/* PPI */
+-		case GIC_IRQ_TYPE_PARTITION:
+ 			*hwirq = fwspec->param[1] + 16;
+ 			break;
+ 		case 2:			/* ESPI */
+ 			*hwirq = fwspec->param[1] + ESPI_BASE_INTID;
+ 			break;
++		case 3:			/* EPPI */
++			*hwirq = fwspec->param[1] + EPPI_BASE_INTID;
++			break;
+ 		case GIC_IRQ_TYPE_LPI:	/* LPI */
+ 			*hwirq = fwspec->param[1];
+ 			break;
++		case GIC_IRQ_TYPE_PARTITION:
++			*hwirq = fwspec->param[1];
++			if (fwspec->param[1] >= 16)
++				*hwirq += EPPI_BASE_INTID - 16;
++			else
++				*hwirq += 16;
++			break;
+ 		default:
+ 			return -EINVAL;
+ 		}
+diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+index c523bf1..9ec3349 100644
+--- a/include/linux/irqchip/arm-gic-v3.h
++++ b/include/linux/irqchip/arm-gic-v3.h
+@@ -124,6 +124,18 @@
+ 
+ #define GICR_TYPER_CPU_NUMBER(r)	(((r) >> 8) & 0xffff)
+ 
++#define EPPI_BASE_INTID			1056
++
++#define GICR_TYPER_NR_PPIS(r)						\
++	({								\
++		unsigned int __ppinum = ((r) >> 27) & 0x1f;		\
++		unsigned int __nr_ppis = 16;				\
++		if (__ppinum == 1 || __ppinum == 2)			\
++			__nr_ppis +=  __ppinum * 32;			\
++									\
++		__nr_ppis;						\
++	 })
++
+ #define GICR_WAKER_ProcessorSleep	(1U << 1)
+ #define GICR_WAKER_ChildrenAsleep	(1U << 2)
+ 
