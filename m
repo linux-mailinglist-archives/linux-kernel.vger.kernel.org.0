@@ -2,157 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD81AB877
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:54:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B30AB8A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:59:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404832AbfIFMyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 08:54:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55915 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404811AbfIFMyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 08:54:18 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A28B630A56B0;
-        Fri,  6 Sep 2019 12:54:17 +0000 (UTC)
-Received: from carbon (ovpn-200-55.brq.redhat.com [10.40.200.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 29E0760126;
-        Fri,  6 Sep 2019 12:54:11 +0000 (UTC)
-Date:   Fri, 6 Sep 2019 14:54:08 +0200
-From:   Jesper Dangaard Brouer <jbrouer@redhat.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     syzbot <syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com>,
-        bpf <bpf@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdl?= =?UTF-8?B?bnNlbg==?= 
-        <toke@redhat.com>
-Subject: Re: general protection fault in dev_map_hash_update_elem
-Message-ID: <20190906145408.05406b0f@carbon>
-In-Reply-To: <CAADnVQK94boXD8Y=g1LsBtNG4wrYQ0Jnjxhq7hdxvyBKZuPwXw@mail.gmail.com>
-References: <0000000000005091a70591d3e1d9@google.com>
-        <CAADnVQK94boXD8Y=g1LsBtNG4wrYQ0Jnjxhq7hdxvyBKZuPwXw@mail.gmail.com>
-Organization: Red Hat Inc.
+        id S2405044AbfIFM7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 08:59:06 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6695 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404861AbfIFM6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 08:58:14 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C1D5743A757ADCF7B11C;
+        Fri,  6 Sep 2019 20:58:10 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 6 Sep 2019 20:58:00 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>
+Subject: [PATCH 00/13] hisi_sas: Some misc patches
+Date:   Fri, 6 Sep 2019 20:55:24 +0800
+Message-ID: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 06 Sep 2019 12:54:18 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019 14:44:37 -0700
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+This patchset includes support for some more minor features, a bit of
+tidying, and a few patches to make the driver a bit more robust.
 
-> On Thu, Sep 5, 2019 at 1:08 PM syzbot
-> <syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    6d028043 Add linux-next specific files for 20190830
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=135c1a92600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=82a6bec43ab0cb69
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=4e7a85b1432052e8d6f8
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109124e1600000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+4e7a85b1432052e8d6f8@syzkaller.appspotmail.com
-> >
-> > kasan: CONFIG_KASAN_INLINE enabled
-> > kasan: GPF could be caused by NULL-ptr deref or user memory access
-> > general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> > CPU: 1 PID: 10235 Comm: syz-executor.0 Not tainted 5.3.0-rc6-next-20190830
-> > #75
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > RIP: 0010:__write_once_size include/linux/compiler.h:203 [inline]
-> > RIP: 0010:__hlist_del include/linux/list.h:795 [inline]
-> > RIP: 0010:hlist_del_rcu include/linux/rculist.h:475 [inline]
-> > RIP: 0010:__dev_map_hash_update_elem kernel/bpf/devmap.c:668 [inline]
-> > RIP: 0010:dev_map_hash_update_elem+0x3c8/0x6e0 kernel/bpf/devmap.c:691
-> > Code: 48 89 f1 48 89 75 c8 48 c1 e9 03 80 3c 11 00 0f 85 d3 02 00 00 48 b9
-> > 00 00 00 00 00 fc ff df 48 8b 53 10 48 89 d6 48 c1 ee 03 <80> 3c 0e 00 0f
-> > 85 97 02 00 00 48 85 c0 48 89 02 74 38 48 89 55 b8
-> > RSP: 0018:ffff88808d607c30 EFLAGS: 00010046
-> > RAX: 0000000000000000 RBX: ffff8880a7f14580 RCX: dffffc0000000000
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a7f14588
-> > RBP: ffff88808d607c78 R08: 0000000000000004 R09: ffffed1011ac0f73
-> > R10: ffffed1011ac0f72 R11: 0000000000000003 R12: ffff88809f4e9400
-> > R13: ffff88809b06ba00 R14: 0000000000000000 R15: ffff88809f4e9528
-> > FS:  00007f3a3d50c700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007feb3fcd0000 CR3: 00000000986b9000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >   map_update_elem+0xc82/0x10b0 kernel/bpf/syscall.c:966
-> >   __do_sys_bpf+0x8b5/0x3350 kernel/bpf/syscall.c:2854
-> >   __se_sys_bpf kernel/bpf/syscall.c:2825 [inline]
-> >   __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:2825
-> >   do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x459879
-> > Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> > ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> > RSP: 002b:00007f3a3d50bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459879
-> > RDX: 0000000000000020 RSI: 0000000020000040 RDI: 0000000000000002
-> > RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3a3d50c6d4
-> > R13: 00000000004bfc86 R14: 00000000004d1960 R15: 00000000ffffffff
-> > Modules linked in:
-> > ---[ end trace 083223e21dbd0ae5 ]---
-> > RIP: 0010:__write_once_size include/linux/compiler.h:203 [inline]
-> > RIP: 0010:__hlist_del include/linux/list.h:795 [inline]
-> > RIP: 0010:hlist_del_rcu include/linux/rculist.h:475 [inline]
-> > RIP: 0010:__dev_map_hash_update_elem kernel/bpf/devmap.c:668 [inline]
-> > RIP: 0010:dev_map_hash_update_elem+0x3c8/0x6e0 kernel/bpf/devmap.c:691  
-> 
-> Toke,
-> please take a look.
-> Thanks!
+Notables:
+- BIST phy loopback support
+- Fix for NCQ tags
+- Correctly config registers after controller reset
 
-Hi Toke,
+Luo Jiaxing (7):
+  scsi: hisi_sas: add debugfs auto-trigger for internal abort time out
+  scsi: hisi_sas: Use true/false as input parameter of sas_phy_reset()
+  scsi: hisi_sas: Directly return when running I_T_nexus reset if phy
+    disabled
+  scsi: hisi_sas: Remove sleep after issue phy reset if
+    sas_smp_phy_control() fails
+  scsi: hisi_sas: Remove hisi_sas_hw.slot_complete
+  scsi: hisi_sas: Remove some unused function arguments
+  scsi: hisi_sas: Add hisi_sas_debugfs_alloc() to centralise allocation
 
-I think the problem is that you read:
- old_dev = __dev_map_hash_lookup_elem(map, idx);
+Xiang Chen (6):
+  scsi: hisi_sas: Retry 3 times TMF IO for SAS disks when init device
+  scsi: hisi_sas: Update all the registers after suspend and resume
+  scsi: hisi_sas: Assign NCQ tag for all NCQ commands
+  scsi: hisi_sas: Remove redundant work declaration
+  scsi: hisi_sas: Add BIST support for phy loopback
+  scsi: hisi_sas: Fix the conflict between device gone and host reset
 
-Before holding the lock dtab->index_lock... 
-
-I'm not sure this is the correct fix, but I think below change should
-solve the issue (not even compile tested):
-
-[bpf-next]$ git diff
-
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 9af048a932b5..c41854a68e9e 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -664,6 +664,9 @@ static int __dev_map_hash_update_elem(struct net *net, struct bpf_map *map,
- 
-        spin_lock_irqsave(&dtab->index_lock, flags);
- 
-+       /* Re-read old_dev while holding lock*/
-+       old_dev = __dev_map_hash_lookup_elem(map, idx);
-+
-        if (old_dev) {
-                hlist_del_rcu(&old_dev->index_hlist);
-        } else {
-
+ drivers/scsi/hisi_sas/hisi_sas.h       |  18 +-
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 569 +++++++++++++++++++++----
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |   1 -
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |  17 +-
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 159 ++++++-
+ 5 files changed, 661 insertions(+), 103 deletions(-)
 
 -- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+2.17.1
+
