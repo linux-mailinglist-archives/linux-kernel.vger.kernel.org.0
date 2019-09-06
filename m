@@ -2,151 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1662EABAB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96F34ABACF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:28:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393019AbfIFOT0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:19:26 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:51410 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732468AbfIFOTZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:19:25 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86EDfAw042820;
-        Fri, 6 Sep 2019 14:19:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=hN8hZ6HuMup1PhkKBqnf3LK/a8llinuYBo/9CxNyLFg=;
- b=FHeTL963J3lbam1Nr23h9B3euapMCROjnQkGXwqSvQq/whZtZa2nerD3Wu4aOnfCA9g/
- sepYvmIGHMlQ460vp272CrJfBWkRg+LGtYTq9YLVqxYq2+jS3Lw1IxmuwuMeuWSi1CIX
- 1Cjo2QRI6ghxKKQrq0g7yPakOz49a9p2iF/mRiL7CiPJZ9s9YZ3WbKCYSbEU5Ho7Mb8c
- +mNPEsI4bsKqtQrKJpxIns8YMV1zQHmUOE1KtLVvjk2mR3M6KuD3mL7albPG3yVLhhOM
- 5UkcUuoRKH90y7nXFlpaFph+9n7++VG+gaQPgyjqaZsKbgjGMaH7lzUTziiEQKijvRWb Ig== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2uurpy85fx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Sep 2019 14:19:09 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86EDakf150702;
-        Fri, 6 Sep 2019 14:19:09 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2uujte8cxs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Sep 2019 14:19:08 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x86EJ64P030721;
-        Fri, 6 Sep 2019 14:19:06 GMT
-Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 06 Sep 2019 07:19:06 -0700
-Subject: Re: [PATCH 09/11] swiotlb-xen: simplify cache maintainance
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Stefano Stabellini <sstabellini@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Juergen Gross <jgross@suse.com>, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20190905113408.3104-1-hch@lst.de>
- <20190905113408.3104-10-hch@lst.de>
- <e4f9b393-2631-57cd-f42f-3581e75ab9a3@oracle.com>
- <20190906140123.GA9894@lst.de>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <ca88e7b8-08ca-51b2-0c77-c828d92da0db@oracle.com>
-Date:   Fri, 6 Sep 2019 10:19:01 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2394440AbfIFO2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:28:01 -0400
+Received: from mga03.intel.com ([134.134.136.65]:63411 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731142AbfIFO2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:28:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2019 07:28:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,473,1559545200"; 
+   d="scan'208";a="188327645"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga006.jf.intel.com with ESMTP; 06 Sep 2019 07:27:59 -0700
+Date:   Fri, 6 Sep 2019 08:18:58 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-scsi@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Long Li <longli@microsoft.com>,
+        John Garry <john.garry@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, Jens Axboe <axboe@fb.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>
+Subject: Re: [PATCH 1/4] softirq: implement IRQ flood detection mechanism
+Message-ID: <20190906141858.GA3953@localhost.localdomain>
+References: <299fb6b5-d414-2e71-1dd2-9d6e34ee1c79@linaro.org>
+ <20190903063125.GA21022@ming.t460p>
+ <6b88719c-782a-4a63-db9f-bf62734a7874@linaro.org>
+ <20190903072848.GA22170@ming.t460p>
+ <dd96def4-1121-afbe-2431-9e516a06850c@linaro.org>
+ <6f3b6557-1767-8c80-f786-1ea667179b39@acm.org>
+ <2a8bd278-5384-d82f-c09b-4fce236d2d95@linaro.org>
+ <20190905090617.GB4432@ming.t460p>
+ <6a36ccc7-24cd-1d92-fef1-2c5e0f798c36@linaro.org>
+ <20190906014819.GB27116@ming.t460p>
 MIME-Version: 1.0
-In-Reply-To: <20190906140123.GA9894@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9372 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=623
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909060152
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9372 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=676 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909060152
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906014819.GB27116@ming.t460p>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/6/19 10:01 AM, Christoph Hellwig wrote:
-> On Fri, Sep 06, 2019 at 09:52:12AM -0400, Boris Ostrovsky wrote:
->> We need nop definitions of these two for x86.
->>
->> Everything builds now but that's probably because the calls are under
->> 'if (!dev_is_dma_coherent(dev))' which is always false so compiler
->> optimized is out. I don't think we should rely on that.
-> That is how a lot of the kernel works.  Provide protypes only for code
-> that is semantically compiled, but can't ever be called due to
-> IS_ENABLED() checks.  It took me a while to get used to it, but it
-> actually is pretty nice as the linker does the work for you to check
-> that it really is never called.  Much better than say a BUILD_BUG_ON().
+On Fri, Sep 06, 2019 at 09:48:21AM +0800, Ming Lei wrote:
+> When one IRQ flood happens on one CPU:
+> 
+> 1) softirq handling on this CPU can't make progress
+> 
+> 2) kernel thread bound to this CPU can't make progress
+> 
+> For example, network may require softirq to xmit packets, or another irq
+> thread for handling keyboards/mice or whatever, or rcu_sched may depend
+> on that CPU for making progress, then the irq flood stalls the whole
+> system.
+> 
+> > 
+> > AFAIU, there are fast medium where the responses to requests are faster
+> > than the time to process them, right?
+> 
+> Usually medium may not be faster than CPU, now we are talking about
+> interrupts, which can be originated from lots of devices concurrently,
+> for example, in Long Li'test, there are 8 NVMe drives involved.
 
-
-(with corrected Juergen's email)
-
-I know about IS_ENABLED() but I didn't realize that this is allowed for
-compile-time inlines and such as well.
-
-Anyway, for non-ARM bits
-
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-
-If this goes via Xen tree then the first couple of patches need an ack
-from ARM maintainers.
-
--boris
+Why are all 8 nvmes sharing the same CPU for interrupt handling?
+Shouldn't matrix_find_best_cpu_managed() handle selecting the least used
+CPU from the cpumask for the effective interrupt handling?
