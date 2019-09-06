@@ -2,77 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1BB6AB643
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:45:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6BF7AB63F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:44:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388477AbfIFKpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 06:45:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34330 "EHLO mail.kernel.org"
+        id S2387802AbfIFKoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 06:44:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730767AbfIFKpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 06:45:12 -0400
-Received: from localhost (unknown [223.226.32.145])
+        id S1733174AbfIFKoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 06:44:25 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2EFD2084F;
-        Fri,  6 Sep 2019 10:45:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D2D22084F;
+        Fri,  6 Sep 2019 10:44:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567766711;
-        bh=8obvABzY456lelT+/+F0iiNkcUGvNaX0PoU7PvA7MHw=;
+        s=default; t=1567766664;
+        bh=oPAhurO0ALmu/C/6NOdjj83pRyv0Wb9DoTwwsAJYlVo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IDxctFLgE85TE+lmarvW0ZhIpYuXdofqQrSBdKIrPm3CGWpNYJmjk2lLowearehq3
-         3VMQmSIPx3QAsdwv2bl03ucelgJ+waAVxPmtJJCLjM0DNYYletYyjdRnztifkQ8Vws
-         td1cL8xV+TWdvhE8RDn2cUIkMKPAs+2hb2vFccds=
-Date:   Fri, 6 Sep 2019 16:14:03 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Sanyog Kale <sanyog.r.kale@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] soundwire: add back ACPI dependency
-Message-ID: <20190906104403.GH2672@vkoul-mobl>
-References: <20190905203527.1478314-1-arnd@arndb.de>
- <20190906043805.GE2672@vkoul-mobl>
- <CAK8P3a38ywYFaGekbi6_idwrZvaVX8u8giUpK1r26QAbekLp8Q@mail.gmail.com>
+        b=rIMVemDEyXaAuskc8ewY7x+fhcG45AS08U0OBPKvgArIe26Qut3LEXAIrd2WipGP2
+         iZmoKBHhiTVPo7UWvCBOQUxxcvuzAFW06wgbT/7cvSClsFBvW9wpaW+LnNrRxAjs0W
+         W85saJY+M/jWusrJJDIP/Ha+SA+YByuw9zDQBAf0=
+Date:   Fri, 6 Sep 2019 11:44:20 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] efi/libstub/arm64: Report meaningful relocation errors
+Message-ID: <20190906104419.cyewsrnwcks7cbny@willie-the-truck>
+References: <201908141353.043EF60B@keescook>
+ <20190904103803.iv7agcw2suv6fcib@willie-the-truck>
+ <201909041336.E6DE4B69@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a38ywYFaGekbi6_idwrZvaVX8u8giUpK1r26QAbekLp8Q@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <201909041336.E6DE4B69@keescook>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-09-19, 12:02, Arnd Bergmann wrote:
-> On Fri, Sep 6, 2019 at 6:39 AM Vinod Koul <vkoul@kernel.org> wrote:
-> >
-> > On 05-09-19, 22:35, Arnd Bergmann wrote:
-> > > Soundwire gained a warning for randconfig builds without
-> > > CONFIG_ACPI during the linux-5.3-rc cycle:
-> > >
-> > > drivers/soundwire/slave.c:16:12: error: unused function 'sdw_slave_add' [-Werror,-Wunused-function]
-> > >
-> > > Add the CONFIG_ACPI dependency at the top level now.
-> >
-> > Did you run this yesterday or today. I have applied Srini's patches to
-> > add DT support for Soundwire couple of days back so we should not see
-> > this warning anymore
+On Wed, Sep 04, 2019 at 01:38:04PM -0700, Kees Cook wrote:
+> On Wed, Sep 04, 2019 at 11:38:03AM +0100, Will Deacon wrote:
+> > On Wed, Aug 14, 2019 at 01:55:50PM -0700, Kees Cook wrote:
+> > > diff --git a/drivers/firmware/efi/libstub/arm64-stub.c b/drivers/firmware/efi/libstub/arm64-stub.c
+> > > index 1550d244e996..24022f956e01 100644
+> > > --- a/drivers/firmware/efi/libstub/arm64-stub.c
+> > > +++ b/drivers/firmware/efi/libstub/arm64-stub.c
+> > > @@ -111,6 +111,8 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
+> > >  		status = efi_random_alloc(sys_table_arg, *reserve_size,
+> > >  					  MIN_KIMG_ALIGN, reserve_addr,
+> > >  					  (u32)phys_seed);
+> > > +		if (status != EFI_SUCCESS)
+> > > +			pr_efi_err(sys_table_arg, "KASLR allocate_pages() failed\n");
+> > >  
+> > >  		*image_addr = *reserve_addr + offset;
+> > >  	} else {
+> > > @@ -135,6 +137,8 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
+> > >  					EFI_LOADER_DATA,
+> > >  					*reserve_size / EFI_PAGE_SIZE,
+> > >  					(efi_physical_addr_t *)reserve_addr);
+> > > +		if (status != EFI_SUCCESS)
+> > > +			pr_efi_err(sys_table_arg, "regular allocate_pages() failed\n");
+> > >  	}
+> > 
+> > Not sure I see the need to distinsuish the 'KASLR' case from the 'regular'
+> > case -- only one should run, right?  That also didn't seem to be part of
+> > the use-case in the commit, unless I'm missing something.
 > 
-> This is on the latest linux-next, which is dated 20190904. As Stephen is
-> not releasing any more linux-next kernels until later this month, I'm
-> missing anything that came in afterwards.
+> I just did that to help with differentiating the cases. Maybe something
+> was special about KASLR picking the wrong location that triggered the
+> failure, etc.
+> 
+> > Maybe combine the prints as per the diff below?
+> 
+> That could work. If you're against the KASLR vs regular thing, I can
+> respin the patch?
 
-That is interesting as next-20190904 has the DT changes :) Can you share
-the config you used to get this.
+Happy to Ack it with that change, although I suppose it's ultimately up
+to Ard :)
 
-I have two instances of sdw_slave_add() in next-20190904:
-
-drivers/soundwire/slave.c:              sdw_slave_add(bus, &id, acpi_fwnode_handle(adev));
-drivers/soundwire/slave.c:              sdw_slave_add(bus, &id, of_fwnode_handle(node));
-
-Thanks
--- 
-~Vinod
+Will
