@@ -2,70 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E97F5ABA30
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:05:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E90ABA45
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:06:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391838AbfIFOFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:05:33 -0400
-Received: from mail-lj1-f174.google.com ([209.85.208.174]:41041 "EHLO
-        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729217AbfIFOFd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:05:33 -0400
-Received: by mail-lj1-f174.google.com with SMTP id a4so6116630ljk.8;
-        Fri, 06 Sep 2019 07:05:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=182E5sg6St3sZx9J5F9ld4St4yIHLxY1HEKoKECXpBc=;
-        b=JEKLD6Udpjv3dyPimpG7jJ8zyUiraLdGh8lpj9iw4UrbRtK+ogpYKJqP5a8Y5+2MHo
-         I60inS7EdBPXh6sDqxXVGgwa8yM3rBrv4gPIzD1MPe3hKmQF8Ro3+4eMl8tkyL4fqPL1
-         +twutwosG4z0d9J7exny7YWaOzCfLjgGEFquLOd9/goy84KdDo2eIK+S0noPFP+d5ZKb
-         NLaFD8dIv/sz/t8Q1lwxYXOKj8CUv6zCvpAlXzZC0zUBEi0fDb5EEVFqZH5WPf6f7InK
-         fEaPfDAS7dDrGt5q97FSMzRDC4Rz06xlyNkVw8wEORspzUj+vuQ8Cjgcr0kFcxcN1Iww
-         n8Qg==
+        id S2393943AbfIFOGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:06:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44758 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730753AbfIFOGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:06:44 -0400
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B286351EF1
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2019 14:06:43 +0000 (UTC)
+Received: by mail-qk1-f197.google.com with SMTP id b143so6550794qkg.9
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 07:06:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=182E5sg6St3sZx9J5F9ld4St4yIHLxY1HEKoKECXpBc=;
-        b=udzZzEt/ySEIaXpCHYNNTJsU+FisgCruRXb2XJtbtEo0qTusHosDyi81srGzqq8RVK
-         UqoOAD1oSm/f89uYvtRAaETq8X7pJk0OTut2SQpQSYuuW64bPzoyt/rEudWOXOr5UZCy
-         Gs6x+6n7+mdSuvY4A+N/pviVUmZmIU2GCc7hX6cznTnE8WW7jESUagXS4DLzoIcswyjt
-         lHMp2akxZYCarK4o/87VtL0cpih7/G4I9DYag7iug4WKrY1GS7Tjhz/kjm7pJQgGuud5
-         /v2PQ12JEQGfMUq0+K2Fg/yA7sc6mv+W6v+66bL6mymA2+iQOKR2u69iE9V0Z8wT13A4
-         FmZA==
-X-Gm-Message-State: APjAAAULrh20L3X2WWTx5EV2x2pnNqL/wOcTFfp2KB408uMkncNYkGXj
-        WvSNqGuxsNOE6EE1y8WTy7SnEE6Ue0eZMgBqQMY=
-X-Google-Smtp-Source: APXvYqwMa/CMglE9NosfpBvYlVJ8HfjTa5yYJ6yVe+BtVtxjN6t3qJ+3wsWhuYk7gmwDLc1Y3nFcpTcjl69x+v4UdVg=
-X-Received: by 2002:a2e:7d0d:: with SMTP id y13mr5869218ljc.191.1567778730893;
- Fri, 06 Sep 2019 07:05:30 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XVlBYwWWxYZBuj80Wo4VR566is8MJKIph81f4lPbuDU=;
+        b=cdehknMzRkh7tnPOcRnCnXH5AZel0TuXb+JvIUn4244fPtT3ghVSW1ldKgi9iNJTo+
+         A5D0MW/Y+h7S6IEBh4/KY6JBjR88qgc0gboLjhRL5TJ2Y0l3XeXP0nX2/KZ//TNib12E
+         rNMd03CS3fQkzo9QpNOvOBh6rtBFu9JnNiylsnYW7ss8sCaA7Oodfj4645HY/2yeiD5X
+         eGpP1VJh9SJYOEqeKZOqxRa8gntfH1Ika5PUXb8WmVmXzUQ5InKlvbPoiploYbLGna3N
+         gBAb6GaytaHzbBCJGVV15YorR7kyN5YEPj1XOekCOeCReurlNryTZ4EWZK8nkAQVORM5
+         1+EA==
+X-Gm-Message-State: APjAAAU1uBDYKfE5p/i93LQVJb9uwTkZSM72D+XJIOOmreU0wNlT8C50
+        PV5CUSCmAHxElZj7KaLHBCM3PVrD4Y7ndN+E+1ysGoec4W5U6O91MuVzk2fie3BopIS/jSRdQ4T
+        /vDx+J1pQwCLafOgiw5am2kyT
+X-Received: by 2002:a05:620a:1592:: with SMTP id d18mr8385850qkk.468.1567778802400;
+        Fri, 06 Sep 2019 07:06:42 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyFfHmt4BAMm3zXYOXNtxtGGgrko1UO/aCARKEq+SvfmFdpDLoU/MFEaF1sYtHtlkBh4NqgIw==
+X-Received: by 2002:a05:620a:1592:: with SMTP id d18mr8385838qkk.468.1567778802258;
+        Fri, 06 Sep 2019 07:06:42 -0700 (PDT)
+Received: from redhat.com (bzq-79-176-40-226.red.bezeqint.net. [79.176.40.226])
+        by smtp.gmail.com with ESMTPSA id l22sm2186175qtp.8.2019.09.06.07.06.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 07:06:41 -0700 (PDT)
+Date:   Fri, 6 Sep 2019 10:06:36 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Matej Genci <matej.genci@nutanix.com>
+Cc:     "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] virtio: add VIRTIO_RING_NO_LEGACY
+Message-ID: <20190906100456-mutt-send-email-mst@kernel.org>
+References: <20190906124130.129870-1-matej.genci@nutanix.com>
 MIME-Version: 1.0
-References: <20190906094158.8854-1-streetwalkermc@gmail.com> <440C3662-1870-44D8-B4E3-C290CE154F1E@holtmann.org>
-In-Reply-To: <440C3662-1870-44D8-B4E3-C290CE154F1E@holtmann.org>
-From:   Dan Elkouby <streetwalkermc@gmail.com>
-Date:   Fri, 6 Sep 2019 17:05:19 +0300
-Message-ID: <CANnEQ3HbaH9c7OD1CZU0KMubsqFQT5ZpUTG_W1H8uXJzahV7ag@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hidp: Fix error checks in hidp_get/set_raw_report
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Fabian Henneke <fabian.henneke@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906124130.129870-1-matej.genci@nutanix.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 4:56 PM Marcel Holtmann <marcel@holtmann.org> wrote:
-> patch has been applied to bluetooth-next tree.
->
+On Fri, Sep 06, 2019 at 12:42:14PM +0000, Matej Genci wrote:
+> Add macro to disable legacy functions vring_init and vring_size.
+> 
+> Signed-off-by: Matej Genci <matej.genci@nutanix.com>
+> ---
+>  include/uapi/linux/virtio_ring.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
+> index 4c4e24c291a5..496db2f33830 100644
+> --- a/include/uapi/linux/virtio_ring.h
+> +++ b/include/uapi/linux/virtio_ring.h
+> @@ -164,6 +164,8 @@ struct vring {
+>  #define vring_used_event(vr) ((vr)->avail->ring[(vr)->num])
+>  #define vring_avail_event(vr) (*(__virtio16 *)&(vr)->used->ring[(vr)->num])
+>  
+> +#ifndef VIRTIO_RING_NO_LEGACY
+> +
+>  static inline void vring_init(struct vring *vr, unsigned int num, void *p,
+>  			      unsigned long align)
+>  {
+> @@ -181,6 +183,8 @@ static inline unsigned vring_size(unsigned int num, unsigned long align)
+>  		+ sizeof(__virtio16) * 3 + sizeof(struct vring_used_elem) * num;
+>  }
+>  
+> +#endif
+> +
+>  /* The following is used with USED_EVENT_IDX and AVAIL_EVENT_IDX */
+>  /* Assuming a given event_idx value from the other side, if
+>   * we have just incremented index from old to new_idx,
 
-Thanks a lot!
+Thanks!
+I am guessing vring_used_event/vring_avail_event should be within
+this ifndef too? How about struct vring?
+
+
+> -- 
+> 2.22.0
+> 
