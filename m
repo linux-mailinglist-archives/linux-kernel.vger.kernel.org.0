@@ -2,85 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A064AC20E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 23:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0870BAC21C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 23:42:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391942AbfIFVdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 17:33:52 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37606 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731289AbfIFVdv (ORCPT
+        id S2404521AbfIFVmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 17:42:45 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:35967 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404330AbfIFVmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 17:33:51 -0400
-Received: by mail-wm1-f68.google.com with SMTP id r195so8568495wme.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 14:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kragniz.eu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8lEHoZAxZRxpTMRYBgPVsjVs/tSBcLbaOLSEdPXXZZc=;
-        b=JS1TGHU5NCROSoRlcU+zIbbKnd6aj8LivEAdS2CcVkX0z1qQVenhkOeRmkvYTN6Guw
-         rJ6hvVPBAuVge5tk/EsMUzgG74J2krUU/QOyTIY3V2AI+9To9NVX2sjcz3Wwk04pJS7j
-         a9n9fg/8vOvU+Kc6nqnzKHh93EYlccRCPvl2A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8lEHoZAxZRxpTMRYBgPVsjVs/tSBcLbaOLSEdPXXZZc=;
-        b=bgI4w128yuzOqxv2gosNn5daySaDqMMf038dcXjAekWDaykILZdYw2HlxdbAFmhW/H
-         OucZdwPQ0qq5+nfnxdb4s4Tu2oNvrbI7wEaI7AnUukxN+t0lx6PFEJPjZoXa5vCZAgQP
-         b367VYq9Ovt/FQTpWiOtVaYYJeowAySXJ8Ygdy3cVr0EHqpC7QcAZTiX1WNDz09qHZmO
-         O69TXMC0BteyzbnNMuOWceeTopx9HAIqic+lATtJQ8Z5otEdKWkAwDveNCOzrmz/l32f
-         mMsVjiTEy2VPCGiqK2tUm+kUMu5ZvrbOHLUr/Ttg0uzyBspcemdfZoXKuZNHOjP2I2Hz
-         zMzA==
-X-Gm-Message-State: APjAAAUBiPuubXRCXgUqu/bb6prxjPyvPpa+Dr4HJ3+NU5xMmy2HDLRG
-        AZWOVmgdjJBei5+v5z9mTauIiQ==
-X-Google-Smtp-Source: APXvYqwtwcDoMFYDRFk3ANIzceYfQKr1FNj3yo8H7jd6Uy/Qvcr77d1HfLaTahHYQ1RunFQCZxvVtQ==
-X-Received: by 2002:a1c:a8cb:: with SMTP id r194mr8842529wme.156.1567805629375;
-        Fri, 06 Sep 2019 14:33:49 -0700 (PDT)
-Received: from gmail.com ([2.31.167.169])
-        by smtp.gmail.com with ESMTPSA id 189sm9895231wmz.19.2019.09.06.14.33.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2019 14:33:48 -0700 (PDT)
-Date:   Fri, 6 Sep 2019 22:37:29 +0100
-From:   Louis Taylor <louis@kragniz.eu>
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-doc@vger.kernel.org, corbet@lwn.net,
+        Fri, 6 Sep 2019 17:42:45 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 46Q9yV3rdlz1rBnG;
+        Fri,  6 Sep 2019 23:42:42 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 46Q9yT6wDbz1qqkL;
+        Fri,  6 Sep 2019 23:42:41 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id t9OQ9xgR4JfV; Fri,  6 Sep 2019 23:42:40 +0200 (CEST)
+X-Auth-Info: XI9LOAh4ifYqfsMPbJx/yTDhFQxMQ7fjF21BOqFvQ+A=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Fri,  6 Sep 2019 23:42:40 +0200 (CEST)
+From:   Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH net-next 1/3] net: dsa: microchip: add KSZ9477 I2C driver
+To:     George McCollister <george.mccollister@gmail.com>,
+        netdev@vger.kernel.org
+Cc:     Woojung Huh <woojung.huh@microchip.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Tristram Ha <Tristram.Ha@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: printk-formats: Stop encouraging use of
- unnecessary %h[xudi] and %hh[xudi]
-Message-ID: <20190906213729.GA18504@gmail.com>
-References: <a68114afb134b8633905f5a25ae7c4e6799ce8f1.camel@perches.com>
+References: <20190906213054.48908-1-george.mccollister@gmail.com>
+ <20190906213054.48908-2-george.mccollister@gmail.com>
+Message-ID: <b1e98d5e-50b7-1f2f-6874-9515fcf2b540@denx.de>
+Date:   Fri, 6 Sep 2019 23:39:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a68114afb134b8633905f5a25ae7c4e6799ce8f1.camel@perches.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190906213054.48908-2-george.mccollister@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 02:11:51PM -0700, Joe Perches wrote:
-> Standard integer promotion is already done and %hx and %hhx is useless
-> so do not encourage the use of %hh[xudi] or %h[xudi].
-> 
-> As Linus said in:
-> Link: https://lore.kernel.org/lkml/CAHk-=wgoxnmsj8GEVFJSvTwdnWm8wVJthefNk2n6+4TC=20e0Q@mail.gmail.com/
-> 
-> It's a pointless warning, making for more complex code, and
-> making people remember esoteric printf format details that have no
-> reason for existing.
-> 
-> The "h" and "hh" things should never be used. The only reason for them
-> being used if if you have an "int", but you want to print it out as a
-> "char" (and honestly, that is a really bad reason, you'd be better off
-> just using a proper cast to make the code more obvious).
-> 
-> So if what you have a "char" (or unsigned char) you should always just
-> print it out as an "int", knowing that the compiler already did the
-> proper type conversion.
+On 9/6/19 11:30 PM, George McCollister wrote:
 
-Yeah, makes sense. Sorry for adding these in the first place.
+[...]
 
-Reviewed-by: Louis Taylor <louis@kragniz.eu>
+> --- /dev/null
+> +++ b/drivers/net/dsa/microchip/ksz9477_i2c.c
+> @@ -0,0 +1,100 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Microchip KSZ9477 series register access through I2C
+> + *
+> + * Copyright (C) 2018-2019 Microchip Technology Inc.
+
+Doesn't the copyright need update ?
+
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/i2c.h>
+
+Please keep the headers sorted.
+
+> +#include "ksz_common.h"
+> +
+> +KSZ_REGMAP_TABLE(ksz9477, not_used, 16, 0, 0);
+> +
+
+The rest looks good.
+
+[...]
+
+-- 
+Best regards,
+Marek Vasut
