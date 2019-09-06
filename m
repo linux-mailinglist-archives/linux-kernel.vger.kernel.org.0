@@ -2,82 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96F34ABACF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABD83ABAB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:20:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394440AbfIFO2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:28:01 -0400
-Received: from mga03.intel.com ([134.134.136.65]:63411 "EHLO mga03.intel.com"
+        id S2404574AbfIFOUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:20:38 -0400
+Received: from mga18.intel.com ([134.134.136.126]:46030 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731142AbfIFO2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:28:01 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1732020AbfIFOUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 10:20:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2019 07:28:00 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2019 07:20:37 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,473,1559545200"; 
-   d="scan'208";a="188327645"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga006.jf.intel.com with ESMTP; 06 Sep 2019 07:27:59 -0700
-Date:   Fri, 6 Sep 2019 08:18:58 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-scsi@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Long Li <longli@microsoft.com>,
-        John Garry <john.garry@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, Jens Axboe <axboe@fb.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Subject: Re: [PATCH 1/4] softirq: implement IRQ flood detection mechanism
-Message-ID: <20190906141858.GA3953@localhost.localdomain>
-References: <299fb6b5-d414-2e71-1dd2-9d6e34ee1c79@linaro.org>
- <20190903063125.GA21022@ming.t460p>
- <6b88719c-782a-4a63-db9f-bf62734a7874@linaro.org>
- <20190903072848.GA22170@ming.t460p>
- <dd96def4-1121-afbe-2431-9e516a06850c@linaro.org>
- <6f3b6557-1767-8c80-f786-1ea667179b39@acm.org>
- <2a8bd278-5384-d82f-c09b-4fce236d2d95@linaro.org>
- <20190905090617.GB4432@ming.t460p>
- <6a36ccc7-24cd-1d92-fef1-2c5e0f798c36@linaro.org>
- <20190906014819.GB27116@ming.t460p>
+   d="scan'208";a="384226932"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Sep 2019 07:20:36 -0700
+Received: from ravisha1-mobl1.amr.corp.intel.com (unknown [10.255.36.89])
+        by linux.intel.com (Postfix) with ESMTP id 29AA35800FE;
+        Fri,  6 Sep 2019 07:20:35 -0700 (PDT)
+Subject: Re: [alsa-devel] [PATCH] ASoC: bdw-rt5677: channel constraint support
+To:     Brent Lu <brent.lu@intel.com>, alsa-devel@alsa-project.org
+Cc:     cezary.rojewski@intel.com, liam.r.girdwood@linux.intel.com,
+        yang.jie@linux.intel.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, kuninori.morimoto.gx@renesas.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org
+References: <1567733058-9561-1-git-send-email-brent.lu@intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <391e8f6c-7e35-deb4-4f4d-c39396b778ba@linux.intel.com>
+Date:   Fri, 6 Sep 2019 09:20:31 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906014819.GB27116@ming.t460p>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1567733058-9561-1-git-send-email-brent.lu@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 09:48:21AM +0800, Ming Lei wrote:
-> When one IRQ flood happens on one CPU:
-> 
-> 1) softirq handling on this CPU can't make progress
-> 
-> 2) kernel thread bound to this CPU can't make progress
-> 
-> For example, network may require softirq to xmit packets, or another irq
-> thread for handling keyboards/mice or whatever, or rcu_sched may depend
-> on that CPU for making progress, then the irq flood stalls the whole
-> system.
-> 
-> > 
-> > AFAIU, there are fast medium where the responses to requests are faster
-> > than the time to process them, right?
-> 
-> Usually medium may not be faster than CPU, now we are talking about
-> interrupts, which can be originated from lots of devices concurrently,
-> for example, in Long Li'test, there are 8 NVMe drives involved.
+On 9/5/19 8:24 PM, Brent Lu wrote:
+> BDW boards using this machine driver supports only stereo capture and
+> playback. Implement a constraint to enforce it.
 
-Why are all 8 nvmes sharing the same CPU for interrupt handling?
-Shouldn't matrix_find_best_cpu_managed() handle selecting the least used
-CPU from the cpumask for the effective interrupt handling?
+Humm, can you clarify what problem/error this patch fixes?
+
+There are already constraints on the hsw_dais[] where the channels are 
+stereo only.
+
+Thanks
+-Pierre
+
+> 
+> Signed-off-by: Brent Lu <brent.lu@intel.com>
+> ---
+>   sound/soc/intel/boards/bdw-rt5677.c | 33 +++++++++++++++++++++++++++++++++
+>   1 file changed, 33 insertions(+)
+> 
+> diff --git a/sound/soc/intel/boards/bdw-rt5677.c b/sound/soc/intel/boards/bdw-rt5677.c
+> index 4a4d335..a312b55 100644
+> --- a/sound/soc/intel/boards/bdw-rt5677.c
+> +++ b/sound/soc/intel/boards/bdw-rt5677.c
+> @@ -22,6 +22,8 @@
+>   
+>   #include "../../codecs/rt5677.h"
+>   
+> +#define DUAL_CHANNEL 2
+> +
+>   struct bdw_rt5677_priv {
+>   	struct gpio_desc *gpio_hp_en;
+>   	struct snd_soc_component *component;
+> @@ -245,6 +247,36 @@ static int bdw_rt5677_init(struct snd_soc_pcm_runtime *rtd)
+>   	return 0;
+>   }
+>   
+> +static const unsigned int channels[] = {
+> +	DUAL_CHANNEL,
+> +};
+> +
+> +static const struct snd_pcm_hw_constraint_list constraints_channels = {
+> +	.count = ARRAY_SIZE(channels),
+> +	.list = channels,
+> +	.mask = 0,
+> +};
+> +
+> +static int bdw_fe_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_pcm_runtime *runtime = substream->runtime;
+> +
+> +	/*
+> +	 * On this platform for PCM device we support,
+> +	 * stereo
+> +	 */
+> +
+> +	runtime->hw.channels_max = DUAL_CHANNEL;
+> +	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
+> +					   &constraints_channels);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct snd_soc_ops bdw_rt5677_fe_ops = {
+> +	.startup = bdw_fe_startup,
+> +};
+> +
+>   /* broadwell digital audio interface glue - connects codec <--> CPU */
+>   SND_SOC_DAILINK_DEF(dummy,
+>   	DAILINK_COMP_ARRAY(COMP_DUMMY()));
+> @@ -273,6 +305,7 @@ static struct snd_soc_dai_link bdw_rt5677_dais[] = {
+>   		},
+>   		.dpcm_capture = 1,
+>   		.dpcm_playback = 1,
+> +		.ops = &bdw_rt5677_fe_ops,
+>   		SND_SOC_DAILINK_REG(fe, dummy, platform),
+>   	},
+>   
+> 
+
