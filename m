@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6CDAB090
+	by mail.lfdr.de (Postfix) with ESMTP id C5609AB091
 	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 04:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404368AbfIFCRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Sep 2019 22:17:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45064 "EHLO mx1.redhat.com"
+        id S2404378AbfIFCRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Sep 2019 22:17:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55812 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404334AbfIFCRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Sep 2019 22:17:40 -0400
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+        id S2404360AbfIFCRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Sep 2019 22:17:44 -0400
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 574683DE0B
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2019 02:17:40 +0000 (UTC)
-Received: by mail-pl1-f197.google.com with SMTP id v4so2623331plp.23
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 19:17:40 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id 87F2D7EBB1
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2019 02:17:43 +0000 (UTC)
+Received: by mail-pf1-f198.google.com with SMTP id v15so3371850pfe.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Sep 2019 19:17:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=U9X2ocg4xLLzJVV8u6FR7s0StrvzfFTOD0TsbOAZvYI=;
-        b=Vv2DwtocUDNYX0iMpMKEpTxAOLnH+jJ21jow1Y52ERgeQ7eN4YlMhpA9GKRC1vJ61K
-         MKqF9LMM06ggI2hNhTISQDXu8XpN/cTPXvL+lkszTLtAmqQ+0FVCrkjol3f8JFpeC+0O
-         nu+2KrP87LsXG2Hr9TWgxoV4PmTAVKSByByjPpFTX1ccCF1M13KW2RXx1MbEYBiXLQB8
-         Xva/ut40jJ/OhwYqFUl5MVvJqZ9jjaaujnpOnk4D0JPcdkvG+gaQl1AUJ/0BIVllwLbS
-         /qHf7hmeV/o00dEHmhhvLvIqw+f1JqiDAJla4CRYLiBYUSn5RJNya9KRmrhDShQTFrBt
-         RPFg==
-X-Gm-Message-State: APjAAAVoC9pRnktYTePl2/RTIbLX2sS1FqXQoNx/kYbT7nJUpdxyxhWp
-        EIcqo8m9GYtTBv9KiD7KBAYQmMwSRZtw9mco8ppBz3h9EdwJzr+AEvYcC//VfnD/HpdMcVXasOr
-        biQpnx2lIsLCoJXlq1pqbUaWR
-X-Received: by 2002:a17:902:e584:: with SMTP id cl4mr6712913plb.160.1567736259394;
-        Thu, 05 Sep 2019 19:17:39 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzA7XI63VxKtVoT9lqWgBy/9HesvkQuEH5lLydx5b5gBH692ZTbf+VCfENgHvilhjZtCmHvMQ==
-X-Received: by 2002:a17:902:e584:: with SMTP id cl4mr6712905plb.160.1567736259246;
-        Thu, 05 Sep 2019 19:17:39 -0700 (PDT)
+        bh=kaVd3OQltvocaICCaNdt1dKy4a2qSML25Bhj/yWBYnU=;
+        b=QP59Tg1+6MCiCWvpY/HIfShWmCnXL7Nx7Fv/dnFBiLctjKrZGeRdhHyVwWBl+aQlKj
+         vOMpRBwh5GL2cJIU6bBe8uPs8oT7LBb9dY3BpEfHdbkIBrUW/Yc64byFD5pSBm+WpGBm
+         izTsDuBWLxU8Wym7Rtu4+G32GPickTRMh1nSUSjNDk2vuDXLY+InqabEChMATFoMv4bH
+         0vhvVR4VQ5x6xnt/cO2EEgK4GChBAzvfllQiBzA9KenlECZeaPw5JS8DNNVXeCT2yNUd
+         qwu89moW2T5rmffzOQzhLIrKaU5wDVWsBfbCRV4r8bAuxNl33oIM7e279hU5nyLyGCNP
+         uLLg==
+X-Gm-Message-State: APjAAAXL5niCZ+JHiVqIv8BrkYv5DYxl//HcvDcloYxYdLEevzcf9Tn/
+        c49NB1hxnzijAngt7XhnXoHFGlVLLjBleJQudfLcn15Rajh4XdU41M0KwpEl6+TQsXotpv6KMUj
+        5f3yijOTpgbkSmm2vOuuCf/c+
+X-Received: by 2002:a63:c70d:: with SMTP id n13mr5894829pgg.171.1567736262657;
+        Thu, 05 Sep 2019 19:17:42 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqw7tCMCiTYtonlv5aU6ntwW21CQCMXwSpkGQ7RtzncHXfkgelMohyB6SmVihEwweFhDyPJ17g==
+X-Received: by 2002:a63:c70d:: with SMTP id n13mr5894815pgg.171.1567736262401;
+        Thu, 05 Sep 2019 19:17:42 -0700 (PDT)
 Received: from xz-x1.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id a11sm8212359pfg.94.2019.09.05.19.17.36
+        by smtp.gmail.com with ESMTPSA id a11sm8212359pfg.94.2019.09.05.19.17.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2019 19:17:38 -0700 (PDT)
+        Thu, 05 Sep 2019 19:17:41 -0700 (PDT)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Wanpeng Li <kernellwp@gmail.com>,
         Krish Sadhukhan <krish.sadhukhan@oracle.com>, peterx@redhat.com
-Subject: [PATCH v4 2/4] KVM: X86: Remove tailing newline for tracepoints
-Date:   Fri,  6 Sep 2019 10:17:20 +0800
-Message-Id: <20190906021722.2095-3-peterx@redhat.com>
+Subject: [PATCH v4 3/4] KVM: VMX: Change ple_window type to unsigned int
+Date:   Fri,  6 Sep 2019 10:17:21 +0800
+Message-Id: <20190906021722.2095-4-peterx@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190906021722.2095-1-peterx@redhat.com>
 References: <20190906021722.2095-1-peterx@redhat.com>
@@ -60,37 +60,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's done by TP_printk() already.
+The VMX ple_window is 32 bits wide, so logically it can overflow with
+an int.  The module parameter is declared as unsigned int which is
+good, however the dynamic variable is not.  Switching all the
+ple_window references to use unsigned int.
 
-Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+The tracepoint changes will also affect SVM, but SVM is using an even
+smaller width (16 bits) so it's always fine.
+
+Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- arch/x86/kvm/trace.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kvm/trace.h   | 9 +++++----
+ arch/x86/kvm/vmx/vmx.c | 4 ++--
+ arch/x86/kvm/vmx/vmx.h | 2 +-
+ 3 files changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
-index 20d6cac9f157..8a7570f8c943 100644
+index 8a7570f8c943..afe8d269c16c 100644
 --- a/arch/x86/kvm/trace.h
 +++ b/arch/x86/kvm/trace.h
-@@ -1323,7 +1323,7 @@ TRACE_EVENT(kvm_avic_incomplete_ipi,
- 		__entry->index = index;
- 	),
- 
--	TP_printk("vcpu=%u, icrh:icrl=%#010x:%08x, id=%u, index=%u\n",
-+	TP_printk("vcpu=%u, icrh:icrl=%#010x:%08x, id=%u, index=%u",
- 		  __entry->vcpu, __entry->icrh, __entry->icrl,
- 		  __entry->id, __entry->index)
+@@ -891,14 +891,15 @@ TRACE_EVENT(kvm_pml_full,
  );
-@@ -1348,7 +1348,7 @@ TRACE_EVENT(kvm_avic_unaccelerated_access,
- 		__entry->vec = vec;
+ 
+ TRACE_EVENT(kvm_ple_window,
+-	TP_PROTO(bool grow, unsigned int vcpu_id, int new, int old),
++	TP_PROTO(bool grow, unsigned int vcpu_id, unsigned int new,
++		 unsigned int old),
+ 	TP_ARGS(grow, vcpu_id, new, old),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(                bool,      grow         )
+ 		__field(        unsigned int,   vcpu_id         )
+-		__field(                 int,       new         )
+-		__field(                 int,       old         )
++		__field(        unsigned int,       new         )
++		__field(        unsigned int,       old         )
  	),
  
--	TP_printk("vcpu=%u, offset=%#x(%s), %s, %s, vec=%#x\n",
-+	TP_printk("vcpu=%u, offset=%#x(%s), %s, %s, vec=%#x",
- 		  __entry->vcpu,
- 		  __entry->offset,
- 		  __print_symbolic(__entry->offset, kvm_trace_symbol_apic),
+ 	TP_fast_assign(
+@@ -908,7 +909,7 @@ TRACE_EVENT(kvm_ple_window,
+ 		__entry->old            = old;
+ 	),
+ 
+-	TP_printk("vcpu %u: ple_window %d (%s %d)",
++	TP_printk("vcpu %u: ple_window %u (%s %u)",
+ 	          __entry->vcpu_id,
+ 	          __entry->new,
+ 	          __entry->grow ? "grow" : "shrink",
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 42ed3faa6af8..b172b675d420 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5227,7 +5227,7 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
+ static void grow_ple_window(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+-	int old = vmx->ple_window;
++	unsigned int old = vmx->ple_window;
+ 
+ 	vmx->ple_window = __grow_ple_window(old, ple_window,
+ 					    ple_window_grow,
+@@ -5242,7 +5242,7 @@ static void grow_ple_window(struct kvm_vcpu *vcpu)
+ static void shrink_ple_window(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+-	int old = vmx->ple_window;
++	unsigned int old = vmx->ple_window;
+ 
+ 	vmx->ple_window = __shrink_ple_window(old, ple_window,
+ 					      ple_window_shrink,
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 82d0bc3a4d52..64d5a4890aa9 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -253,7 +253,7 @@ struct vcpu_vmx {
+ 	struct nested_vmx nested;
+ 
+ 	/* Dynamic PLE window. */
+-	int ple_window;
++	unsigned int ple_window;
+ 	bool ple_window_dirty;
+ 
+ 	bool req_immediate_exit;
 -- 
 2.21.0
 
