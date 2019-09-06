@@ -2,58 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2685ABCEC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A40DABCFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 17:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393053AbfIFPtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 11:49:06 -0400
-Received: from muru.com ([72.249.23.125]:59988 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727762AbfIFPtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 11:49:06 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 42C2180CC;
-        Fri,  6 Sep 2019 15:49:35 +0000 (UTC)
-Date:   Fri, 6 Sep 2019 08:49:01 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        =?utf-8?B?QW5kcsOp?= Roth <neolynx@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Subject: Re: [RFC v2 1/3] cpufreq: ti-cpufreq: add support for omap34xx and
- omap36xx
-Message-ID: <20190906154901.GD52127@atomide.com>
-References: <cover.1567587220.git.hns@goldelico.com>
- <a889b10386bebfbfd6cdb5491367235290d53247.1567587220.git.hns@goldelico.com>
- <20190905143226.GW52127@atomide.com>
- <20190906030444.lklvvpbdqesatohb@vireshk-i7>
+        id S2394895AbfIFPuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 11:50:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60642 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726654AbfIFPuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 11:50:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 432B5B0E2;
+        Fri,  6 Sep 2019 15:50:52 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id D58D2DA8F3; Fri,  6 Sep 2019 17:51:15 +0200 (CEST)
+Date:   Fri, 6 Sep 2019 17:51:15 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, nborisov@suse.com,
+        dsterba@suse.com, linux-btrfs@vger.kernel.org,
+        chandan <chandan@linux.vnet.ibm.com>, josef@toxicpanda.com,
+        mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>,
+        Brian King <brking@linux.vnet.ibm.com>
+Subject: Re: [mainline][BUG][PPC][btrfs][bisected 00801a] kernel BUG at
+ fs/btrfs/locking.c:71!
+Message-ID: <20190906155115.GD2850@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, nborisov@suse.com,
+        dsterba@suse.com, linux-btrfs@vger.kernel.org,
+        chandan <chandan@linux.vnet.ibm.com>, josef@toxicpanda.com,
+        mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>,
+        Brian King <brking@linux.vnet.ibm.com>
+References: <1567500907.5082.12.camel@abdul>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190906030444.lklvvpbdqesatohb@vireshk-i7>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <1567500907.5082.12.camel@abdul>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Viresh Kumar <viresh.kumar@linaro.org> [190906 03:05]:
-> On 05-09-19, 07:32, Tony Lindgren wrote:
-> > Acked-by: Tony Lindgren <tony@atomide.com>
+On Tue, Sep 03, 2019 at 02:25:07PM +0530, Abdul Haleem wrote:
+> Greeting's
 > 
-> Do you want to pick the series instead as this has lots of DT changes
-> ?
+> Mainline kernel panics with LTP/fs_fill-dir tests for btrfs file
+> system on my P9 box running mainline kernel 5.3.0-rc5
 
-It unlikely these dts changes will conflict with anything so I
-have no problem acking them for you for the next set of patches.
-
-Regards,
-
-Tony
+Is the issue reproducible? And if yes, how reliably? Thanks.
