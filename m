@@ -2,76 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 480BBAB6E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B03FAB6EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:12:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388461AbfIFLKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:10:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50658 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727816AbfIFLKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:10:54 -0400
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24E3721670
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Sep 2019 11:10:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567768253;
-        bh=8J7vhVPmmaH9VUTrqUcBmnghWw79eGkl8RkGxlSWzfo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2tH17ab0r7UVbqybsCAzXSFz8s8fx7N0RDZLd3K3qEf2t1BWCGA/kbbgRnRvE2I0R
-         CsWBkREnQKOV+3gBw5jsQUirVldIY5NrEkrZsOv2D9bJo7AMBBw5dl0x4aG7tHd5F4
-         hUPkkn/5KWLiZrnEQsQNjA+iXd1wJTbzI67l+YmE=
-Received: by mail-qt1-f169.google.com with SMTP id l22so6508177qtp.10
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 04:10:53 -0700 (PDT)
-X-Gm-Message-State: APjAAAXuNe8D/Jjs6KK/rAN/WKM9c9uz7H+SuolVx1hhGtove05YIxyP
-        pZVBZ/DRW7EXKbOM0pLl/cJjL2l4lme19GeIjg==
-X-Google-Smtp-Source: APXvYqwxtJ2nxLsP9EuH4mMTLaDZPmidxeZD/Ez80LDFh4lXToL9ygmYpFYBKD1c0/Epcj8dt9cSUuE4W77RloAjVnY=
-X-Received: by 2002:a0c:f70c:: with SMTP id w12mr4284929qvn.200.1567768252224;
- Fri, 06 Sep 2019 04:10:52 -0700 (PDT)
+        id S1732936AbfIFLMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:12:00 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:36336 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbfIFLL7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 07:11:59 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86BAO2i049604;
+        Fri, 6 Sep 2019 11:11:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=s6bUfn3M2Qn5f9zJCGuo2O8BMmS1pPdybKqDEQJQR8I=;
+ b=IbIDBCZAqSX8jfrLOR18B81k6LaArCdkzP+8NvfFJRCeOgYpZismgpKtkigWzaWCVAhh
+ wkpcElO//ht2C9fCyLFRI+nBQnFtI1UDU6H85IE2X1IpINoqbDZG6MDclCoYB6LLt39o
+ es7cTWiHDNVBnLTj9iXtRmLVeL1/S84FBTzNy02mM0sBlhNkXkS7OeHXSyiRm9Es8/P0
+ DDVFq+yDTeBw5jL6ZV5oTWCyc31Nc59EJ4MV5vXKBT/OMXB+5jmO6kV8Uy4/RK9Ma4rV
+ 7CFx1aHHS+eLTixvyqYq1uqSLurdQAo7fWbo3pign/GYV42c6V9hlqKLctDK66r2USJx ZQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2uupbd00b9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 11:11:33 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x86B9PRv156389;
+        Fri, 6 Sep 2019 11:11:32 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2uum4gwaqs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Sep 2019 11:11:32 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x86BBSxK024021;
+        Fri, 6 Sep 2019 11:11:28 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 06 Sep 2019 04:11:28 -0700
+Date:   Fri, 6 Sep 2019 14:11:17 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Dan Elkouby <streetwalkermc@gmail.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Fabian Henneke <fabian.henneke@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] Bluetooth: hidp: Fix assumptions on the return value of
+ hidp_send_message
+Message-ID: <20190906111117.GB14147@kadam>
+References: <20190906101306.GA12017@kadam>
+ <20190906110645.27601-1-streetwalkermc@gmail.com>
 MIME-Version: 1.0
-References: <20190905121141.42820-1-steven.price@arm.com>
-In-Reply-To: <20190905121141.42820-1-steven.price@arm.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 6 Sep 2019 12:10:41 +0100
-X-Gmail-Original-Message-ID: <CAL_JsqKyKUBOK7+fSpr+ShjUz72oXC91ySOKCST9WyWjd0nqww@mail.gmail.com>
-Message-ID: <CAL_JsqKyKUBOK7+fSpr+ShjUz72oXC91ySOKCST9WyWjd0nqww@mail.gmail.com>
-Subject: Re: [PATCH] drm/panfrost: Prevent race when handling page fault
-To:     Steven Price <steven.price@arm.com>
-Cc:     Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906110645.27601-1-streetwalkermc@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=884
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909060117
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9371 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=949 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909060117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 5, 2019 at 1:11 PM Steven Price <steven.price@arm.com> wrote:
->
-> When handling a GPU page fault addr_to_drm_mm_node() is used to
-> translate the GPU address to a buffer object. However it is possible for
-> the buffer object to be freed after the function has returned resulting
-> in a use-after-free of the BO.
->
-> Change addr_to_drm_mm_node to return the panfrost_gem_object with an
-> extra reference on it, preventing the BO from being freed until after
-> the page fault has been handled.
->
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->
-> I've managed to trigger this, generating the following stack trace.
+On Fri, Sep 06, 2019 at 02:06:44PM +0300, Dan Elkouby wrote:
+> hidp_send_message was changed to return non-zero values on success,
+> which some other bits did not expect. This caused spurious errors to be
+> propagated through the stack, breaking some drivers, such as hid-sony
+> for the Dualshock 4 in Bluetooth mode.
+> 
+> As pointed out by Dan Carpenter, hid-microsoft directly relied on that
+> assumption as well.
+> 
+> Fixes: 48d9cc9d85dd ("Bluetooth: hidp: Let hidp_send_message return number of queued bytes")
+> 
+> Signed-off-by: Dan Elkouby <streetwalkermc@gmail.com>
 
-Humm, the assumption was that a fault could only happen during a job
-and so a reference would already be held. Otherwise, couldn't the GPU
-also be accessing the BO after it is freed?
+Thanks!
 
-Also, looking at this again, I think we need to hold the mm_lock
-around the drm_mm_for_each_node().
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Rob
+regards,
+dan carpenter
+
