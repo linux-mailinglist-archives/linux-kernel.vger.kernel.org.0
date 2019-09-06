@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDEE1AB6A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB15CAB6BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:09:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392253AbfIFLIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:08:22 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:46993 "EHLO
+        id S2393222AbfIFLJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 07:09:10 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47109 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732465AbfIFLIV (ORCPT
+        with ESMTP id S2392487AbfIFLIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:08:21 -0400
+        Fri, 6 Sep 2019 07:08:38 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i6C6C-000730-PB; Fri, 06 Sep 2019 13:08:16 +0200
+        id 1i6C6H-00073P-8r; Fri, 06 Sep 2019 13:08:21 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 248DD1C0E22;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5AC241C0DE8;
         Fri,  6 Sep 2019 13:08:15 +0200 (CEST)
 Date:   Fri, 06 Sep 2019 11:08:15 -0000
-From:   "tip-bot2 for Jerome Brunet" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Stephen Boyd" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/meson-gpio: Add support for meson sm1 SoCs
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20190829161635.25067-3-jbrunet@baylibre.com>
-References: <20190829161635.25067-3-jbrunet@baylibre.com>
+Subject: [tip: irq/core] irqchip: Remove dev_err() usage after platform_get_irq()
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Marc Zyngier <maz@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <156776809510.24167.14866614709961308411.tip-bot2@tip-bot2>
+Message-ID: <156776809532.24167.9145068577595923086.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,169 +49,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     b2fb4b77994abc1107c35547f3e123dce8e9f67d
-Gitweb:        https://git.kernel.org/tip/b2fb4b77994abc1107c35547f3e123dce8e9f67d
-Author:        Jerome Brunet <jbrunet@baylibre.com>
-AuthorDate:    Thu, 29 Aug 2019 18:16:35 +02:00
+Commit-ID:     6c9050a73469268c4c82129e2c840f33d4333bd5
+Gitweb:        https://git.kernel.org/tip/6c9050a73469268c4c82129e2c840f33d4333bd5
+Author:        Stephen Boyd <swboyd@chromium.org>
+AuthorDate:    Tue, 30 Jul 2019 11:15:23 -07:00
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Fri, 30 Aug 2019 15:01:06 +01:00
+CommitterDate: Tue, 20 Aug 2019 10:35:55 +01:00
 
-irqchip/meson-gpio: Add support for meson sm1 SoCs
+irqchip: Remove dev_err() usage after platform_get_irq()
 
-The meson sm1 SoCs uses the same type of GPIO interrupt controller IP
-block as the other meson SoCs, A total of 100 pins can be spied on:
+We don't need dev_err() messages when platform_get_irq() fails now that
+platform_get_irq() prints an error message itself when something goes
+wrong. Let's remove these prints with a simple semantic patch.
 
-- 223:100 undefined (no interrupt)
-- 99:97   3 pins on bank GPIOE
-- 96:77   20 pins on bank GPIOX
-- 76:61   16 pins on bank GPIOA
-- 60:53   8 pins on bank GPIOC
-- 52:37   16 pins on bank BOOT
-- 36:28   9 pins on bank GPIOH
-- 27:12   16 pins on bank GPIOZ
-- 11:0    12 pins in the AO domain
+// <smpl>
+@@
+expression ret;
+struct platform_device *E;
+@@
 
-Mapping is the same as the g12a family but the sm1 controller
-allows to trig an irq on both edges of the input signal. This was
-not possible with the previous SoCs families
+ret =
+(
+platform_get_irq(E, ...)
+|
+platform_get_irq_byname(E, ...)
+);
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+if ( \( ret < 0 \| ret <= 0 \) )
+{
+(
+-if (ret != -EPROBE_DEFER)
+-{ ...
+-dev_err(...);
+-... }
+|
+...
+-dev_err(...);
+)
+...
+}
+// </smpl>
+
+While we're here, remove braces on if statements that only have one
+statement (manually).
+
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Link: https://lore.kernel.org/r/20190829161635.25067-3-jbrunet@baylibre.com
 ---
- drivers/irqchip/irq-meson-gpio.c | 52 ++++++++++++++++++++++---------
- 1 file changed, 38 insertions(+), 14 deletions(-)
+ drivers/irqchip/irq-imgpdc.c        | 8 ++------
+ drivers/irqchip/irq-keystone.c      | 4 +---
+ drivers/irqchip/qcom-irq-combiner.c | 4 +---
+ 3 files changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
-index dcdc23b..829084b 100644
---- a/drivers/irqchip/irq-meson-gpio.c
-+++ b/drivers/irqchip/irq-meson-gpio.c
-@@ -24,14 +24,25 @@
- #define REG_PIN_47_SEL	0x08
- #define REG_FILTER_SEL	0x0c
+diff --git a/drivers/irqchip/irq-imgpdc.c b/drivers/irqchip/irq-imgpdc.c
+index d00489a..698d07f 100644
+--- a/drivers/irqchip/irq-imgpdc.c
++++ b/drivers/irqchip/irq-imgpdc.c
+@@ -362,10 +362,8 @@ static int pdc_intc_probe(struct platform_device *pdev)
+ 	}
+ 	for (i = 0; i < priv->nr_perips; ++i) {
+ 		irq = platform_get_irq(pdev, 1 + i);
+-		if (irq < 0) {
+-			dev_err(&pdev->dev, "cannot find perip IRQ #%u\n", i);
++		if (irq < 0)
+ 			return irq;
+-		}
+ 		priv->perip_irqs[i] = irq;
+ 	}
+ 	/* check if too many were provided */
+@@ -376,10 +374,8 @@ static int pdc_intc_probe(struct platform_device *pdev)
  
--#define REG_EDGE_POL_MASK(x)	(BIT(x) | BIT(16 + (x)))
-+/*
-+ * Note: The S905X3 datasheet reports that BOTH_EDGE is controlled by
-+ * bits 24 to 31. Tests on the actual HW show that these bits are
-+ * stuck at 0. Bits 8 to 15 are responsive and have the expected
-+ * effect.
-+ */
- #define REG_EDGE_POL_EDGE(x)	BIT(x)
- #define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
-+#define REG_BOTH_EDGE(x)	BIT(8 + (x))
-+#define REG_EDGE_POL_MASK(x)    (	\
-+		REG_EDGE_POL_EDGE(x) |	\
-+		REG_EDGE_POL_LOW(x)  |	\
-+		REG_BOTH_EDGE(x))
- #define REG_PIN_SEL_SHIFT(x)	(((x) % 4) * 8)
- #define REG_FILTER_SEL_SHIFT(x)	((x) * 4)
+ 	/* Get syswake IRQ number */
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "cannot find syswake IRQ\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+ 	priv->syswake_irq = irq;
  
- struct meson_gpio_irq_params {
- 	unsigned int nr_hwirq;
-+	bool support_edge_both;
- };
- 
- static const struct meson_gpio_irq_params meson8_params = {
-@@ -54,6 +65,11 @@ static const struct meson_gpio_irq_params axg_params = {
- 	.nr_hwirq = 100,
- };
- 
-+static const struct meson_gpio_irq_params sm1_params = {
-+	.nr_hwirq = 100,
-+	.support_edge_both = true,
-+};
-+
- static const struct of_device_id meson_irq_gpio_matches[] = {
- 	{ .compatible = "amlogic,meson8-gpio-intc", .data = &meson8_params },
- 	{ .compatible = "amlogic,meson8b-gpio-intc", .data = &meson8b_params },
-@@ -61,11 +77,12 @@ static const struct of_device_id meson_irq_gpio_matches[] = {
- 	{ .compatible = "amlogic,meson-gxl-gpio-intc", .data = &gxl_params },
- 	{ .compatible = "amlogic,meson-axg-gpio-intc", .data = &axg_params },
- 	{ .compatible = "amlogic,meson-g12a-gpio-intc", .data = &axg_params },
-+	{ .compatible = "amlogic,meson-sm1-gpio-intc", .data = &sm1_params },
- 	{ }
- };
- 
- struct meson_gpio_irq_controller {
--	unsigned int nr_hwirq;
-+	const struct meson_gpio_irq_params *params;
- 	void __iomem *base;
- 	u32 channel_irqs[NUM_CHANNEL];
- 	DECLARE_BITMAP(channel_map, NUM_CHANNEL);
-@@ -168,14 +185,22 @@ static int meson_gpio_irq_type_setup(struct meson_gpio_irq_controller *ctl,
- 	 */
- 	type &= IRQ_TYPE_SENSE_MASK;
- 
--	if (type == IRQ_TYPE_EDGE_BOTH)
--		return -EINVAL;
-+	/*
-+	 * New controller support EDGE_BOTH trigger. This setting takes
-+	 * precedence over the other edge/polarity settings
-+	 */
-+	if (type == IRQ_TYPE_EDGE_BOTH) {
-+		if (!ctl->params->support_edge_both)
-+			return -EINVAL;
- 
--	if (type & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING))
--		val |= REG_EDGE_POL_EDGE(idx);
-+		val |= REG_BOTH_EDGE(idx);
-+	} else {
-+		if (type & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING))
-+			val |= REG_EDGE_POL_EDGE(idx);
- 
--	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING))
--		val |= REG_EDGE_POL_LOW(idx);
-+		if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING))
-+			val |= REG_EDGE_POL_LOW(idx);
-+	}
- 
- 	spin_lock(&ctl->lock);
- 
-@@ -199,7 +224,7 @@ static unsigned int meson_gpio_irq_type_output(unsigned int type)
- 	 */
- 	if (sense & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
- 		type |= IRQ_TYPE_LEVEL_HIGH;
--	else if (sense & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING))
-+	else
- 		type |= IRQ_TYPE_EDGE_RISING;
- 
- 	return type;
-@@ -328,15 +353,13 @@ static int __init meson_gpio_irq_parse_dt(struct device_node *node,
- 					  struct meson_gpio_irq_controller *ctl)
- {
- 	const struct of_device_id *match;
--	const struct meson_gpio_irq_params *params;
- 	int ret;
- 
- 	match = of_match_node(meson_irq_gpio_matches, node);
- 	if (!match)
- 		return -ENODEV;
- 
--	params = match->data;
--	ctl->nr_hwirq = params->nr_hwirq;
-+	ctl->params = match->data;
- 
- 	ret = of_property_read_variable_u32_array(node,
- 						  "amlogic,channel-interrupts",
-@@ -385,7 +408,8 @@ static int __init meson_gpio_irq_of_init(struct device_node *node,
- 	if (ret)
- 		goto free_channel_irqs;
- 
--	domain = irq_domain_create_hierarchy(parent_domain, 0, ctl->nr_hwirq,
-+	domain = irq_domain_create_hierarchy(parent_domain, 0,
-+					     ctl->params->nr_hwirq,
- 					     of_node_to_fwnode(node),
- 					     &meson_gpio_irq_domain_ops,
- 					     ctl);
-@@ -396,7 +420,7 @@ static int __init meson_gpio_irq_of_init(struct device_node *node,
+ 	/* Set up an IRQ domain */
+diff --git a/drivers/irqchip/irq-keystone.c b/drivers/irqchip/irq-keystone.c
+index efbcf84..8118ebe 100644
+--- a/drivers/irqchip/irq-keystone.c
++++ b/drivers/irqchip/irq-keystone.c
+@@ -164,10 +164,8 @@ static int keystone_irq_probe(struct platform_device *pdev)
  	}
  
- 	pr_info("%d to %d gpio interrupt mux initialized\n",
--		ctl->nr_hwirq, NUM_CHANNEL);
-+		ctl->params->nr_hwirq, NUM_CHANNEL);
+ 	kirq->irq = platform_get_irq(pdev, 0);
+-	if (kirq->irq < 0) {
+-		dev_err(dev, "no irq resource %d\n", kirq->irq);
++	if (kirq->irq < 0)
+ 		return kirq->irq;
+-	}
  
- 	return 0;
+ 	kirq->dev = dev;
+ 	kirq->mask = ~0x0;
+diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
+index d88e993..abfe592 100644
+--- a/drivers/irqchip/qcom-irq-combiner.c
++++ b/drivers/irqchip/qcom-irq-combiner.c
+@@ -248,10 +248,8 @@ static int __init combiner_probe(struct platform_device *pdev)
+ 		return err;
  
+ 	combiner->parent_irq = platform_get_irq(pdev, 0);
+-	if (combiner->parent_irq <= 0) {
+-		dev_err(&pdev->dev, "Error getting IRQ resource\n");
++	if (combiner->parent_irq <= 0)
+ 		return -EPROBE_DEFER;
+-	}
+ 
+ 	combiner->domain = irq_domain_create_linear(pdev->dev.fwnode, combiner->nirqs,
+ 						    &domain_ops, combiner);
