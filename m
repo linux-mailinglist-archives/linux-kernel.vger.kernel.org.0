@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07088AB8A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1AE1AB896
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404898AbfIFM6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 08:58:13 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7132 "EHLO huawei.com"
+        id S2392370AbfIFM6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 08:58:33 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6694 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404861AbfIFM6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 08:58:12 -0400
+        id S2404925AbfIFM6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 08:58:17 -0400
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CEEA82A4FE2AF703E393;
+        by Forcepoint Email with ESMTP id BD62D6FC6103E3B89F76;
         Fri,  6 Sep 2019 20:58:10 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 6 Sep 2019 20:58:00 +0800
+ 14.3.439.0; Fri, 6 Sep 2019 20:58:01 +0800
 From:   John Garry <john.garry@huawei.com>
 To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>,
         Luo Jiaxing <luojiaxing@huawei.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 01/13] scsi: hisi_sas: add debugfs auto-trigger for internal abort time out
-Date:   Fri, 6 Sep 2019 20:55:25 +0800
-Message-ID: <1567774537-20003-2-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 02/13] scsi: hisi_sas: Use true/false as input parameter of sas_phy_reset()
+Date:   Fri, 6 Sep 2019 20:55:26 +0800
+Message-ID: <1567774537-20003-3-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
 References: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
@@ -40,28 +40,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Luo Jiaxing <luojiaxing@huawei.com>
 
-This trigger is add at _hisi_sas_internal_task_abort()
+When calling sas_phy_reset(), we need to specify whether the reset type
+is hard reset or link reset - use true/false for clarity.
 
 Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index d60eaaa4c5e8..03e953862412 100644
+index 03e953862412..47faa283312e 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -2060,6 +2060,9 @@ _hisi_sas_internal_task_abort(struct hisi_hba *hisi_hba,
+@@ -1762,7 +1762,7 @@ static int hisi_sas_debug_I_T_nexus_reset(struct domain_device *device)
+ 	}
  
- 	/* Internal abort timed out */
- 	if ((task->task_state_flags & SAS_TASK_STATE_ABORTED)) {
-+		if (hisi_sas_debugfs_enable && hisi_hba->debugfs_itct)
-+			queue_work(hisi_hba->wq, &hisi_hba->debugfs_work);
-+
- 		if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
- 			struct hisi_sas_slot *slot = task->lldd_task;
+ 	reset_type = (sas_dev->dev_status == HISI_SAS_DEV_INIT ||
+-		      !dev_is_sata(device)) ? 1 : 0;
++		      !dev_is_sata(device)) ? true : false;
  
+ 	rc = sas_phy_reset(local_phy, reset_type);
+ 	sas_put_local_phy(local_phy);
+@@ -1843,7 +1843,7 @@ static int hisi_sas_lu_reset(struct domain_device *device, u8 *lun)
+ 
+ 		phy = sas_get_local_phy(device);
+ 
+-		rc = sas_phy_reset(phy, 1);
++		rc = sas_phy_reset(phy, true);
+ 
+ 		if (rc == 0)
+ 			hisi_sas_release_task(hisi_hba, device);
 -- 
 2.17.1
 
