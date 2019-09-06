@@ -2,87 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39AF4AB628
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B312AB62F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 12:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732205AbfIFKk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 06:40:29 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40182 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728269AbfIFKk3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 06:40:29 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 7so5527339ljw.7;
-        Fri, 06 Sep 2019 03:40:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DnJ87hIg+L1soXqzK+F25qs93DUI2WPEksuGAxLMiCg=;
-        b=mharq59n+r5qjSdEntYwXvnT+ExtPjvbWik0d4+O74MQf1tqAh5eJeAjWA1uEadW0F
-         HdmodOWAFbFf+iwZonCqgrY8IL/8bDX4HFJwwrIGI8n9iQBrBEmfSc07WrFgAPTrFx5P
-         UqJbOXZVrmOjsJ9Bf70sOnFq2U1dBFxDtknIR1tmHddw+AkeYRDXoDgzPGmi81XmZ6Qp
-         u8aO9ADtOB+EbeSx1YErPF6mNU16YZ12CV+cQHmXhd8yVFhSoQglDClbm0hxWEB+1xd9
-         6wjHjq0Lln6XleGgxxqOJ/+ZYJ9YfmwlJTn1ldBEVW1b2irRKAQbYJMw9L/vIMTMragV
-         P0xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DnJ87hIg+L1soXqzK+F25qs93DUI2WPEksuGAxLMiCg=;
-        b=AujuKOLTjVMfrsm/0pezolefAWLstQa9U+0Ha1WD0QpaiiX7Llqea9U2pQDT8O8eEK
-         zViymWElhzZz3lr+kaqqEARAf/VdTkYzLnv1kwioAs58Ja+hzIgFLNxq6wOJ9KtL2Jeb
-         uwkhgA0TRm89HXA3D2oBD0amsiUMmMq8uAJNYr/wZ2QB6+wBbXN9FysmzwfwBepwwECi
-         vlq/QtZdinMe+5+Q5ANKFpCCPKaLoT7EDutEw0Zsd9R+BwVV/CFMbmZwIy08ngFIrbpw
-         FYi9frinr/aMMUKpDxtg2qXaJDlQO5Y0LEOcdHfPXgfmuqkpWFXQVTt8BJWKrcFB3hjZ
-         Lk7g==
-X-Gm-Message-State: APjAAAUnhwfNhNIt7Vk4Z57Lo8eN8OGUhcEmll2RnXNz9eaDgYT0yuTp
-        ZAQS1Kwt9yT2AYqX2gtyN+uWbXFmUwklnnq0WmU=
-X-Google-Smtp-Source: APXvYqxmyBlLRondxqnNbPMJl7+HmdFnfXdetIxT6mvbyOG6g+JATnG+njQGRWZouNhBl1mciLaGDoHDt1xiEhZVZeU=
-X-Received: by 2002:a2e:974c:: with SMTP id f12mr5309332ljj.15.1567766426819;
- Fri, 06 Sep 2019 03:40:26 -0700 (PDT)
+        id S1732734AbfIFKke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 06:40:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35716 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728269AbfIFKkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 06:40:33 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0BB7285363;
+        Fri,  6 Sep 2019 10:40:33 +0000 (UTC)
+Received: from localhost (ovpn-117-208.ams2.redhat.com [10.36.117.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B74D19C70;
+        Fri,  6 Sep 2019 10:40:25 +0000 (UTC)
+Date:   Fri, 6 Sep 2019 11:40:24 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
+        dgilbert@redhat.com, mst@redhat.com
+Subject: Re: [PATCH 01/18] virtiofs: Remove request from processing list
+ before calling end
+Message-ID: <20190906104024.GI5900@stefanha-x1.localdomain>
+References: <20190905194859.16219-1-vgoyal@redhat.com>
+ <20190905194859.16219-2-vgoyal@redhat.com>
 MIME-Version: 1.0
-References: <20190906094158.8854-1-streetwalkermc@gmail.com> <20190906101306.GA12017@kadam>
-In-Reply-To: <20190906101306.GA12017@kadam>
-From:   Dan Elkouby <streetwalkermc@gmail.com>
-Date:   Fri, 6 Sep 2019 13:40:15 +0300
-Message-ID: <CANnEQ3HX0SNG+Hzs2b+BzLwuewsC8-3sF2urWV+bqUahXq0hVA@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hidp: Fix error checks in hidp_get/set_raw_report
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Fabian Henneke <fabian.henneke@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UthUFkbMtH2ceUK2"
+Content-Disposition: inline
+In-Reply-To: <20190905194859.16219-2-vgoyal@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 06 Sep 2019 10:40:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 1:14 PM Dan Carpenter wrote:
-> I think we also need to update update ms_ff_worker() which assumes that
-> hid_hw_output_report() returns zero on success.
 
-Yes, it looks like that's the case. Should I amend my patch to include
-this fix, or should it be a separate patch? I don't have access to any
-hardware covered by hid-microsoft, so I won't be able to test it.
+--UthUFkbMtH2ceUK2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Please use the Fixes
-> tag for this since a lot of scripts rely on it to decide what to
-> backport.
->
-> Fixes: 48d9cc9d85dd ("Bluetooth: hidp: Let hidp_send_message return number of queued bytes")
+On Thu, Sep 05, 2019 at 03:48:42PM -0400, Vivek Goyal wrote:
+> In error path we are calling fuse_request_end() but we need to clear
+> FR_SENT bit as well as remove request from processing queue. Otherwise
+> fuse_request_end() triggers a warning as well as other issues show up.
+>=20
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/fuse/virtio_fs.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Will do.
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-> Otherwise, it looks good.  Thanks for catching this.
+--UthUFkbMtH2ceUK2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks for taking a look!
+-----BEGIN PGP SIGNATURE-----
 
-(Sorry for sending this twice, I'm not used to mailing lists and forgot
-to reply to all.)
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1yN5gACgkQnKSrs4Gr
+c8iH2Qf9FDlsSyo3aEDCwVuW5ufQrOhFl5xJgIrwu9zF7Q8xWoHeRxDRnuXqrpy0
+IBO3sm8mijVdTypCJ8zrFIER28OnXnmNmRuZFPxmlDoSf1/G74BAX7qaLH8NTikF
+CwJC4TUljhUvvGNKo9/jRu6qVKNcNxz8BXmxjIGBSWWGu90lmDwarFxX6arkWn+x
+N8E6/S9dUi6f6jiEy0k0zNUUZ+i4bXhM3SsGXaNuoI/GzZQUG8016CUbYKDSxRxo
+ov0FV+U9gy9GEDbuhy5LI5DrlYOzlpSe8OiNiw031NIlcrGmty1o75Dw4j0Bxzwr
+zMlTa2f77G2tmrCucSRxbNT2u2u6xw==
+=1d2m
+-----END PGP SIGNATURE-----
+
+--UthUFkbMtH2ceUK2--
