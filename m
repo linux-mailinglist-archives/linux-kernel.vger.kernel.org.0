@@ -2,86 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFED2AB6E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62B61AB6DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 13:11:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390580AbfIFLKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 07:10:21 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47006 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392227AbfIFLIW (ORCPT
+        id S1732265AbfIFLJy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Sep 2019 07:09:54 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40942 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731527AbfIFLJv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 07:08:22 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i6C6E-00074K-Ec; Fri, 06 Sep 2019 13:08:18 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C1A841C0E06;
-        Fri,  6 Sep 2019 13:08:15 +0200 (CEST)
-Date:   Fri, 06 Sep 2019 11:08:15 -0000
-From:   "tip-bot2 for Lubomir Rintel" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/mmp: Do not call irq_set_default_host() on DT
- platforms
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Marc Zyngier <maz@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
+        Fri, 6 Sep 2019 07:09:51 -0400
+Received: by mail-ot1-f67.google.com with SMTP id y39so5341311ota.7;
+        Fri, 06 Sep 2019 04:09:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YjIOTnA7AJrnGQlF0RtRVuR7iIuADp5iAhDiCUvFbDY=;
+        b=RsTS3VcxF55/+90ijx30BBcgmTMDLDJcPW2gE/p8rcYNRNamg8aaKkVQldvzDht5PM
+         7xuua/7XK8Nq+SbjZVOe901eYb6z54Eve0ioYJtlxvFf0eG0yjUmjAnNC+NT62Y1QzRB
+         Jjk7hxGtGY8OVQE8cftrMhKIhEVLirmpD5OslKJdkt1Plhl0K+4EMGBawDIe6pPpeRjU
+         R/pFbRQC+hNL42JWaC9LVwT1ae0H9i1Oigd0o7iURelqJDcvbKzE3z9BF71j8W+LAQ77
+         uBiTc7ZECucv7fVDWXs5TkYy7fwe0/YfSrVIMId85UFnwpqDbNBiiHkdSo70T4T1lGKL
+         G2ig==
+X-Gm-Message-State: APjAAAWeEoU31d3ZGKoHuPQ5h6RoHE8wC/sPZ7dUG8noMbeJVtoUylBj
+        oz8wBrYRMo3I98elF/eu9EcBf5v9PFqbx8LeDGo=
+X-Google-Smtp-Source: APXvYqycNpCL4JLDQsajFhUn38P3soOaWnlH2I8lUg6IR7dOErT/aqJzV4mupZNPg2j96MybcS6x7VN9KphMVsGGLLA=
+X-Received: by 2002:a05:6830:1196:: with SMTP id u22mr6795961otq.39.1567768190812;
+ Fri, 06 Sep 2019 04:09:50 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <156776809574.24167.17474658256308027802.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20190705160536.12047-1-geert+renesas@glider.be>
+ <CAMpxmJXOrDLdw6ZPBHxzsDRYiLmhRNCb-s_Z=Gu=Ecg1XA5ONQ@mail.gmail.com>
+ <CAMuHMdWdb0dcS8Nvk-Poz2dT7nuHjFhqpsRPZZnSKsc3VffcRA@mail.gmail.com> <CAMpxmJUF1s1zyXVtoUGfbV7Yk+heua4rNjY=DrX=jr-v8UfNxA@mail.gmail.com>
+In-Reply-To: <CAMpxmJUF1s1zyXVtoUGfbV7Yk+heua4rNjY=DrX=jr-v8UfNxA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 6 Sep 2019 13:09:39 +0200
+Message-ID: <CAMuHMdXOhrc1o5Jh3TN+JT4VFSSMg8Wy-rsgH=b8hNZQd8rXiA@mail.gmail.com>
+Subject: Re: [PATCH RFC] gpio: Add Virtual Aggregator GPIO Driver
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the irq/core branch of tip:
+On Tue, Jul 9, 2019 at 4:59 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+> pon., 8 lip 2019 o 12:24 Geert Uytterhoeven <geert@linux-m68k.org> napisał(a):
+> > On Mon, Jul 8, 2019 at 11:45 AM Bartosz Golaszewski
+> > <bgolaszewski@baylibre.com> wrote:
+> > > pt., 5 lip 2019 o 18:05 Geert Uytterhoeven <geert+renesas@glider.be> napisał(a):
+> > > > +static int gpio_virt_agg_set_config(struct gpio_chip *chip,
+> > > > +                                   unsigned int offset, unsigned long config)
+> > > > +{
+> > > > +       struct gpio_virt_agg_priv *priv = gpiochip_get_data(chip);
+> > > > +
+> > > > +       chip = priv->desc[offset]->gdev->chip;
+> > > > +       if (chip->set_config)
+> > > > +               return chip->set_config(chip, offset, config);
+> > > > +
+> > > > +       // FIXME gpiod_set_transitory() expects success if not implemented
+> >
+> > BTW, do you have a comment about this FIXME?
+>
+> Ha! Interesting. I'll give it a thought and respond elsewhere as it's
+> a different subject.
+>
+> > > > +       return -ENOTSUPP;
 
-Commit-ID:     7224cec4e76c8d8169e328923597e659b705760d
-Gitweb:        https://git.kernel.org/tip/7224cec4e76c8d8169e328923597e659b705760d
-Author:        Lubomir Rintel <lkundrak@v3.sk>
-AuthorDate:    Fri, 16 Aug 2019 20:18:49 +02:00
-Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Tue, 20 Aug 2019 10:34:34 +01:00
+Upon closer look, this turns out to be a red herring: gpiod_set_transitory()
+converts -ENOTSUPP to zero, so there is no issue.
 
-irqchip/mmp: Do not call irq_set_default_host() on DT platforms
+Gr{oetje,eeting}s,
 
-Using a default domain on DT platforms is unnecessary, as the firmware
-tables describe the full topology, and nothing is implicit.
+                        Geert
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-[maz: wrote an actual changelog]
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-mmp.c | 2 --
- 1 file changed, 2 deletions(-)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index 14618dc..0671c3b 100644
---- a/drivers/irqchip/irq-mmp.c
-+++ b/drivers/irqchip/irq-mmp.c
-@@ -395,7 +395,6 @@ static int __init mmp_of_init(struct device_node *node,
- 	icu_data[0].conf_enable = mmp_conf.conf_enable;
- 	icu_data[0].conf_disable = mmp_conf.conf_disable;
- 	icu_data[0].conf_mask = mmp_conf.conf_mask;
--	irq_set_default_host(icu_data[0].domain);
- 	set_handle_irq(mmp_handle_irq);
- 	max_icu_nr = 1;
- 	return 0;
-@@ -414,7 +413,6 @@ static int __init mmp2_of_init(struct device_node *node,
- 	icu_data[0].conf_enable = mmp2_conf.conf_enable;
- 	icu_data[0].conf_disable = mmp2_conf.conf_disable;
- 	icu_data[0].conf_mask = mmp2_conf.conf_mask;
--	irq_set_default_host(icu_data[0].domain);
- 	set_handle_irq(mmp2_handle_irq);
- 	max_icu_nr = 1;
- 	return 0;
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
