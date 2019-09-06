@@ -2,66 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD4FCABA50
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF06CABA5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 16:10:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394005AbfIFOI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 10:08:59 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:46086 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730909AbfIFOI6 (ORCPT
+        id S2394063AbfIFOK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 10:10:29 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44702 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728978AbfIFOK3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 10:08:58 -0400
-Received: by mail-vs1-f67.google.com with SMTP id z14so4106166vsz.13
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 07:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=uzkBPRXvCt/DLxmv4J4lMqCgFgNyDxmGoOdWkPBD3nk=;
-        b=lPDnHa4k++KWqy4K4UZL1T9nsmf19GYdV4f+Gu/ok8fflzg9cVKbZakVRUSqDrYZgk
-         6rHwDeEo90DnB2Rw2UbhRk0JeT2mTKv8hxYD74qpd14+8iqXeJ2c1qKYq7ip9rX7Tnof
-         eCTKeg8Qj7UDxTvEj9WPlBnsE8S4gprUEBkm0n7igWjwXvZZ/goVJfgZjMr0O0C40RoT
-         VQmQZeWPUxrm2SrXTafzRsI+q2tzDIZE1fM9F0saK8BYNpVuO7AM3iRa5/MWPbE0Hnec
-         xPZZ9L1wut8ybcID602/kmpMcOGv5no/1jEYcIsgXJO1DbSC2RrkUVhd6Es+SkoUou5z
-         l3Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=uzkBPRXvCt/DLxmv4J4lMqCgFgNyDxmGoOdWkPBD3nk=;
-        b=pNPxtgJGtovKLd0deZB88jjYGGSy+EUHUp14EK/uWcGJEoiuBbtbAqrxKC2l7LFSOs
-         of0GIFJFx5t3jXwzOQISH0bK/s7SPKd0VI3SAudjp8JormS9eoFMEKmVcK7NMjisS+xO
-         Oh+gSNbfGmtEqeC+AOBcwV8VPRwpbBoPwUaYT4jE60g3pAkEZmzpjooCtDRCc7lJhBAU
-         EXUkyCnz6eTytVmHvi4jLCgAhkBXeMjx09DRZESEkOJvwWA9AdeOY5L1BJoGMRLx7KoZ
-         uzkBg5bIyz9wjlXvCtgUJCAMfHGUBdk7rl6/VqIeGPIvHc5BwagN48trbHmFEKKu2jKN
-         l6DA==
-X-Gm-Message-State: APjAAAVGyRUldqCrM5iXDlNgjrNbR/hXNluHd7V/5HkxGGqyQEzxPVot
-        Knu+hOVwA1YdL29H+owpGz9uNtl9OTCtFihbf6w=
-X-Google-Smtp-Source: APXvYqyElsgcklYqknw6lQyhN8W7/moz8qiG4FO1fI8DeavvnEjdvTFo6S3VwPu/MymM9KhfOFUWgQNQNS9vZN7Fqng=
-X-Received: by 2002:a67:6746:: with SMTP id b67mr4984321vsc.135.1567778937798;
- Fri, 06 Sep 2019 07:08:57 -0700 (PDT)
+        Fri, 6 Sep 2019 10:10:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 898D76115B; Fri,  6 Sep 2019 14:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567779028;
+        bh=feH1EvpOenhl2IGvjR9dljrk5cvxpWB/HARVbpGVAN0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=Ez1yUFu1Fgmpvd5G6H+wdWAIcs5EaWqKd8arPaUpsDc2kk47aAZU6kKvAGW3bdwZk
+         4CXbQHg6GT0Vcbvycc8WQrxLLN3TqLNRk7K7DmWSsVku1CZW3LMnzMgdvui3m+dYLw
+         BE8GTmWGOrVXZ9UbomOl/7E26webKgg73eG0cvRs=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 53CBD607F4;
+        Fri,  6 Sep 2019 14:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567779027;
+        bh=feH1EvpOenhl2IGvjR9dljrk5cvxpWB/HARVbpGVAN0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=ZUGx+jQAkcNoXXo+DGw9/K6eTWQoqojqiFVvT2e3u5/fhjpS6EqcNmJLcaLpmY3Qm
+         yxrfOCRE+3VNgEx91mn/dBdlU+lpPBEiJWyN29nMpZ9XB0ez6iCZgBZJQ2/p2TkLZ/
+         Q2L/yYjB+Sy/Wy4jzqIuMtVaKEJhF4PRJ4MG7r2k=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53CBD607F4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:ab0:e01:0:0:0:0:0 with HTTP; Fri, 6 Sep 2019 07:08:57 -0700 (PDT)
-From:   alfasasi kelani <alfaksasi1960@gmail.com>
-Date:   Fri, 6 Sep 2019 15:08:57 +0100
-Message-ID: <CAHwWizd7--GKXHgscWis21PbVCw2k=5hxC1CTHJPTM23P7msEA@mail.gmail.com>
-Subject: hope
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] hostap: remove set but not used variable 'copied' in
+ prism2_io_debug_proc_read
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1567497430-22539-1-git-send-email-zhongjiang@huawei.com>
+References: <1567497430-22539-1-git-send-email-zhongjiang@huawei.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <davem@davemloft.net>, <zhongjiang@huawei.com>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190906141028.898D76115B@smtp.codeaurora.org>
+Date:   Fri,  6 Sep 2019 14:10:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day , i write to inform you as auditor onbehalf of ORABANK.
+zhong jiang <zhongjiang@huawei.com> wrote:
 
-Transaction number 000399577OBK have been approved for release
-through VISA ELECTRON ATM Card.
+> Obviously, variable 'copied' is initialized to zero. But it is not used.
+> hence just remove it.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-Note that you are required to reconfirm your complete mailing address
-for delivery.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Reconfirm code 000399577OBK to the Director Mr. Patrick Masrellet on ( (
-atm.orabank@iname.com )) for further action.
+64827a6ac049 hostap: remove set but not used variable 'copied' in prism2_io_debug_proc_read
 
-Regards.
-Kelani Alfasasi( Esq)
+-- 
+https://patchwork.kernel.org/patch/11127357/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
