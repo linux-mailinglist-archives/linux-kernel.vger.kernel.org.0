@@ -2,100 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CCFAB216
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 07:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 094CEAB21C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 07:42:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392396AbfIFFiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 01:38:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390255AbfIFFiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 01:38:54 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0D57207FC;
-        Fri,  6 Sep 2019 05:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567748334;
-        bh=T3bW+kIZ2qASQ0APwTcYaCPfdfVDJZoKLoksIdyI/VA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g6BFHFaOrn7loH77l7tKedXvfHBiiPjUPTV5fsPUg/+gK3RuL84leDYBLWLwZz7lR
-         UyWSp74bOEoR/faQeQaE0AmTbUsJcNNfH2YrDZnRgDejV7Z0zOs0730cIjWzcC31ky
-         RZ0BjKV7nLYCJsz94WDgWG8Je1uCURQpDShzzpn8=
-Date:   Fri, 6 Sep 2019 07:38:51 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Subject: Re: [git pull] habanalabs pull request for kernel 5.4
-Message-ID: <20190906053851.GA23838@kroah.com>
-References: <20190905121934.GA31853@ogabbay-VM>
- <20190905205017.GA25089@kroah.com>
- <CAFCwf12VtkZd-cd7A+dznWx70ydjdxX7ahi7tn5CSGPoEcjexA@mail.gmail.com>
- <CAFCwf12LurmKz0ek-fN-uCh5tXq95hHtkzRJ7_bxzvEK-mMsnA@mail.gmail.com>
+        id S2404510AbfIFFmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 01:42:13 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45578 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404005AbfIFFmM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 01:42:12 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1i670a-0008Cw-Fh; Fri, 06 Sep 2019 07:42:08 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 02C341C0E06;
+        Fri,  6 Sep 2019 07:42:08 +0200 (CEST)
+Date:   Fri, 06 Sep 2019 05:42:07 -0000
+From:   "tip-bot2 for Gayatri Kammela" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpu: Add Tiger Lake to Intel family
+Cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFCwf12LurmKz0ek-fN-uCh5tXq95hHtkzRJ7_bxzvEK-mMsnA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Message-ID: <156774852796.13152.15401340758436507030.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 07:54:41AM +0300, Oded Gabbay wrote:
-> On Fri, Sep 6, 2019 at 7:38 AM Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> >
-> > On Thu, Sep 5, 2019 at 11:50 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Thu, Sep 05, 2019 at 03:19:34PM +0300, Oded Gabbay wrote:
-> > > > Hello Greg,
-> > > >
-> > > > This is the pull request for habanalabs driver for kernel 5.4.
-> > > >
-> > > > It contains one major change, the creation of an additional char device
-> > > > per PCI device. In addition, there are some small changes and
-> > > > improvements.
-> > > >
-> > > > Please see the tag message for details on what this pull request contains.
-> > > >
-> > > > Thanks,
-> > > > Oded
-> > > >
-> > > > The following changes since commit 25ec8710d9c2cd4d0446ac60a72d388000d543e6:
-> > > >
-> > > >   w1: add DS2501, DS2502, DS2505 EPROM device driver (2019-09-04 14:34:31 +0200)
-> > > >
-> > > > are available in the Git repository at:
-> > > >
-> > > >   git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-next-2019-09-05
-> > >
-> > > Is that a signed tag?  It doesn't seem to me like it is, have you always
-> > > sent unsigned tags?
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > It is unsigned. I have never sent you a signed tag.
-> >
-> > Thanks,
-> > Oded
-> 
-> Just to clarify. I have never sent a signed pull request. I'll look
-> now how to do it and re-send this pull request to you.
-> My only question is how do you verify my GPG key ? Do I need to
-> authenticate it somewhere ?
+The following commit has been merged into the x86/cpu branch of tip:
 
-Ok, for some reason I thought you had sent signed tags in the past, my
-fault, sorry about that.
+Commit-ID:     6e1c32c5dbb4b90eea8f964c2869d0bde050dbe0
+Gitweb:        https://git.kernel.org/tip/6e1c32c5dbb4b90eea8f964c2869d0bde050dbe0
+Author:        Gayatri Kammela <gayatri.kammela@intel.com>
+AuthorDate:    Thu, 05 Sep 2019 12:30:17 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 06 Sep 2019 07:30:39 +02:00
 
-If at all possible, it would be good to get your gpg key into the
-kernel.org "web of trust" by having it signed by a kernel.org developer
-so that I "know" this is you in some form :)
+x86/cpu: Add Tiger Lake to Intel family
 
-Now pulled and pushed out.
+Add the model numbers/CPUIDs of Tiger Lake mobile and desktop to the
+Intel family.
 
-thanks,
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190905193020.14707-2-tony.luck@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/intel-family.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-greg k-h
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 5c05b2d..7c2ef2e 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -80,6 +80,9 @@
+ #define INTEL_FAM6_ICELAKE_L		0x7E
+ #define INTEL_FAM6_ICELAKE_NNPI		0x9D
+ 
++#define INTEL_FAM6_TIGERLAKE_L		0x8C
++#define INTEL_FAM6_TIGERLAKE		0x8D
++
+ /* "Small Core" Processors (Atom) */
+ 
+ #define INTEL_FAM6_ATOM_BONNELL		0x1C /* Diamondville, Pineview */
