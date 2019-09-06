@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94C8DAB89F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56911AB891
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Sep 2019 14:58:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405017AbfIFM6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 08:58:52 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7139 "EHLO huawei.com"
+        id S2404957AbfIFM6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 08:58:20 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7137 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404923AbfIFM6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404921AbfIFM6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 6 Sep 2019 08:58:17 -0400
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EC04DF22272FF64F6E53;
+        by Forcepoint Email with ESMTP id E47001F02828A4D1F5CC;
         Fri,  6 Sep 2019 20:58:10 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
@@ -21,11 +21,11 @@ From:   John Garry <john.garry@huawei.com>
 To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>,
-        Luo Jiaxing <luojiaxing@huawei.com>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 08/13] scsi: hisi_sas: Remove hisi_sas_hw.slot_complete
-Date:   Fri, 6 Sep 2019 20:55:32 +0800
-Message-ID: <1567774537-20003-9-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 09/13] scsi: hisi_sas: Remove redundant work declaration
+Date:   Fri, 6 Sep 2019 20:55:33 +0800
+Message-ID: <1567774537-20003-10-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
 References: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
@@ -38,68 +38,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luo Jiaxing <luojiaxing@huawei.com>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-We never call hisi_sas_hw.slot_complete, so remove it.
+Remove redundant work declaration in HISI_SAS_DECLARE_RST_WORK_ON_STACK
 
-Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas.h       | 2 --
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 1 -
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 1 -
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 1 -
- 4 files changed, 5 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas.h | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index a72d06d973ff..a6b53d29a8a1 100644
+index a6b53d29a8a1..d02ab2699b9b 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas.h
 +++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -289,8 +289,6 @@ struct hisi_sas_hw {
- 	void (*prep_abort)(struct hisi_hba *hisi_hba,
- 			  struct hisi_sas_slot *slot,
- 			  int device_id, int abort_flag, int tag_to_abort);
--	int (*slot_complete)(struct hisi_hba *hisi_hba,
--			     struct hisi_sas_slot *slot);
- 	void (*phys_init)(struct hisi_hba *hisi_hba);
- 	void (*phy_start)(struct hisi_hba *hisi_hba, int phy_no);
- 	void (*phy_disable)(struct hisi_hba *hisi_hba, int phy_no);
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-index 3a584feca843..b861a0f14c9d 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-@@ -1782,7 +1782,6 @@ static const struct hisi_sas_hw hisi_sas_v1_hw = {
- 	.prep_smp = prep_smp_v1_hw,
- 	.prep_ssp = prep_ssp_v1_hw,
- 	.start_delivery = start_delivery_v1_hw,
--	.slot_complete = slot_complete_v1_hw,
- 	.phys_init = phys_init_v1_hw,
- 	.phy_start = start_phy_v1_hw,
- 	.phy_disable = disable_phy_v1_hw,
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 9d316f28c74c..b01ccb38b00a 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -3561,7 +3561,6 @@ static const struct hisi_sas_hw hisi_sas_v2_hw = {
- 	.prep_stp = prep_ata_v2_hw,
- 	.prep_abort = prep_abort_v2_hw,
- 	.start_delivery = start_delivery_v2_hw,
--	.slot_complete = slot_complete_v2_hw,
- 	.phys_init = phys_init_v2_hw,
- 	.phy_start = start_phy_v2_hw,
- 	.phy_disable = disable_phy_v2_hw,
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index cd901213a59b..0a159df87d7b 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2961,7 +2961,6 @@ static const struct hisi_sas_hw hisi_sas_v3_hw = {
- 	.prep_stp = prep_ata_v3_hw,
- 	.prep_abort = prep_abort_v3_hw,
- 	.start_delivery = start_delivery_v3_hw,
--	.slot_complete = slot_complete_v3_hw,
- 	.phys_init = phys_init_v3_hw,
- 	.phy_start = start_phy_v3_hw,
- 	.phy_disable = disable_phy_v3_hw,
+@@ -134,7 +134,6 @@ struct hisi_sas_rst {
+ 
+ #define HISI_SAS_DECLARE_RST_WORK_ON_STACK(r) \
+ 	DECLARE_COMPLETION_ONSTACK(c); \
+-	DECLARE_WORK(w, hisi_sas_sync_rst_work_handler); \
+ 	struct hisi_sas_rst r = HISI_SAS_RST_WORK_INIT(r, c)
+ 
+ enum hisi_sas_bit_err_type {
 -- 
 2.17.1
 
