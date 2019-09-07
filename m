@@ -2,114 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6DDCAC4CD
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 07:51:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C430AC4E4
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 08:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394446AbfIGFuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 01:50:07 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46639 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394351AbfIGFuH (ORCPT
+        id S2405730AbfIGGNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 02:13:55 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:20535 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729409AbfIGGNy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 01:50:07 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h7so8571382wrt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 22:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=rAHu/cSAYCVs27fp3q0UmPkjyf2rH/LgmFmZg+hAKyM=;
-        b=BDJPAvy+0nDI9ZIOq2mVYJrFX0QCi6OJvS0BYFAyzpg9nxVc6vvXACHJQR4ZtkbBI8
-         ec58qA7asMSTFwHOe9xtWLgcGm0gxrFJkt21XMlGtfyX/1mc8wk6KMQUseggqkeXehkL
-         LEGmHnvQBKpwoIEuvvSJTh+vSAZGjkkNof/UPcpV4wlSj+cuQfuThBhKhQGLaW1wHWRW
-         ixt3bxwEURROxVz6nDHMVwN2f6yguBfvR8BrxygwvY+YAsAhyKd3CYtT7wdAgkxySy6o
-         zpvKBYIHIBo1c+oMnjNZPu2wOdo6Ji01zOR+dZHrAg4uVweDZvKBrJbmR+dAXS9ktrhA
-         4srQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=rAHu/cSAYCVs27fp3q0UmPkjyf2rH/LgmFmZg+hAKyM=;
-        b=MjTta7gc2ggI5n+ECfQ/sxExRF9s6KGJjFuBIDxedcLg+kd08LDztyM4yr8EYZyL92
-         2XIKHy1ejOWwJ1bdi03jYwNQo9ozq+BV9pltyCXk4hzPlmwyoEq9Ioo2Zx29Lha1Hf9Z
-         ym0UTlQtNAkmqdCyzVBFdZU8gY1t2QD+z23jWXVJqayl/7odjX6LaDyKWeqP/ZeYsOY2
-         rHzqG5aT/N09C5wBJxNqBjrv6h+v2AQGOIXxwcT7/Of01WKyJWSa3DKuGtcEiy7VX6if
-         WdpIfoZ7w9vgpMbsy8y5t5cEyEcWg7Zg02tXLc0rUxXMCfQPLtM6gMU6AuZ6VQ/deqMk
-         xQWg==
-X-Gm-Message-State: APjAAAUmM9G2tOvn3MOndcLeOvsvbC8Mq1qUPggnh2NEi/t6SNO+enaA
-        ZIbhvnyT5fccjXTZTEMI9DoL/RdHADNbDFp5J7c=
-X-Google-Smtp-Source: APXvYqyBSWvYprvDU2ClDBrDU+yqGRK8FU/KXz8KkeFblKtdyVpezCMhX+PqWb+OBYgHK8cMEk5wkdWWJdQZc0O3OuI=
-X-Received: by 2002:adf:e390:: with SMTP id e16mr10418212wrm.29.1567835405086;
- Fri, 06 Sep 2019 22:50:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190904181740.GA19688@gmail.com> <CAHk-=wi2VOPoweqnDhxXKJ9fcLQzkV1oEDjteV=z-C7KXrpomg@mail.gmail.com>
- <CANiq72mXLbaefVBqZzz1vSREi0=HiBUgR1KU3iRjOCum7rvfrw@mail.gmail.com>
- <CAHk-=wiNksYaQ5zRFgTdY4TMHkxRi3aOcTC2zMMS6+aVSx+yeQ@mail.gmail.com>
- <CANiq72kyk6uzxS3LRvcOs9zgYYh7V7V2yPtAFkDwpHmyYcsz_Q@mail.gmail.com>
- <CAKwvOdkodVFxUr_Xc-qeUHnpxEmofENDhNdvCuiRzcGXQ54QkQ@mail.gmail.com>
- <CAHk-=wg+PD-+FEdKJuRVrrsgnFFLoAgU4Uz7tnohq_TgsEcNig@mail.gmail.com>
- <CAKwvOdmCBgKMLkXt29=vgvws_ek4XY3urMdfBUzbREH8Bj3uYA@mail.gmail.com>
- <CAHk-=whZ-ac4jm9zt=805xWsXaDAFWn2Bwn2PNtOBVx1vUmVvQ@mail.gmail.com>
- <CAKwvOdkWcB6jhqpr6p3LQkJOOt2si3i=bTGM11Poz8cZypS5EA@mail.gmail.com> <CAHk-=wiyxKDMW2fPumh2WyP3tP1BHpispjGfTWQ-we8keZ=q7Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wiyxKDMW2fPumh2WyP3tP1BHpispjGfTWQ-we8keZ=q7Q@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Sat, 7 Sep 2019 07:52:21 +0000
-Message-ID: <CA+icZUVNATrXZ7SDTrKa10cK8xtrRiC6VeXjkP6e9WyeKstMnA@mail.gmail.com>
-Subject: Re: [GIT PULL] compiler-attributes for v5.3-rc8
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Paul Burton <paul.burton@mips.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Behan Webster <behanw@gmail.com>,
-        Behan Webster <behanw@converseincode.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 7 Sep 2019 02:13:54 -0400
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190907061352epoutp029a5631d5a3b6c7cdcaf332f822ff2e55~CE0rO_aMK2816828168epoutp02g
+        for <linux-kernel@vger.kernel.org>; Sat,  7 Sep 2019 06:13:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190907061352epoutp029a5631d5a3b6c7cdcaf332f822ff2e55~CE0rO_aMK2816828168epoutp02g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1567836832;
+        bh=RHAhUw8JyYTsJvg4vmUzKRzM78YLPUMEpN/OZDtpePc=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=MCVfr7wVX4d+qWJL9zLWZo4/jFrUZ14QgyxGlGkTyLePdHh91jyTK7FC4jlmLK5P/
+         KHxX6BHyc5rqyf8qsnxsSRDq53TFb2Qlw+WgCkHgKr5H5jgMpeE/NQMhfbS5FXfoRg
+         TCnW8JUtSicwg7D1Z72ynYSahBWxBn3k0Ac69QYo=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20190907061351epcas2p1c289b7660c2cb94b4edcce4d6fb1f592~CE0qNW_id0282402824epcas2p1L;
+        Sat,  7 Sep 2019 06:13:51 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.40.188]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 46QPJG0HvrzMqYkV; Sat,  7 Sep
+        2019 06:13:50 +0000 (GMT)
+X-AuditID: b6c32a46-fedff70000001035-5a-5d734a9d573f
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6B.F8.04149.D9A437D5; Sat,  7 Sep 2019 15:13:49 +0900 (KST)
+Mime-Version: 1.0
+Subject: Re: [PATCHv2] nvme: Assign subsy instance from first ctrl
+Reply-To: minwoo.im@samsung.com
+From:   Minwoo Im <minwoo.im@samsung.com>
+To:     Keith Busch <kbusch@kernel.org>, Minwoo Im <minwoo.im@samsung.com>
+CC:     Christoph Hellwig <hch@lst.de>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@fb.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20190905163354.25139-1-kbusch@kernel.org>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20190907061349epcms2p76a7cba4689b2ff2bd5a65640f5529605@epcms2p7>
+Date:   Sat, 07 Sep 2019 15:13:49 +0900
+X-CMS-MailID: 20190907061349epcms2p76a7cba4689b2ff2bd5a65640f5529605
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUgUaRzHe3bG2VGbmDazXwa1TEVXZO0u7jpZRmQnk5ckRP9cmTe4DyrO
+        7k4za5TBJUlZ9kIGxt1e5dJtSRqJ24uL28uxWQvVJdgZrNFWkAZaSmUvx1XejqPUfx++fJ/n
+        +/s+LzRh6qAy6Aq3FytuUeKoFPLqrcX2zFMFarGl/cxKfuzaHYr3v7pO8edbbxv445FHiH/Y
+        eZLim871G/nAvijFN0e/GviBe38R/MWhEXJNijDQO4CEhtpho9AdbyeFYMtBSrgU2COEYzWU
+        8Ka/jxSOXm5BQtvlXlJ4F5xblPKztKoci06smLG71OOscJflcj9tKskrsTss1kzrCj6bM7tF
+        F87l1m0oysyvkBLTcuYdolSVkIpEVeWWr16leKq82FzuUb25HJadkmy1ystU0aVWucuWlXpc
+        OVaLxWZPOH+Ryp/4D1FyF73zw+h7Qw0ao+pRMg1sFoQf9pP1KIU2sSEEv9/oNtYjmmbY6fAl
+        NEPzzGDXwp+HjyZpsomdB58GLbq8GIbD95M0pthFUNM4SGqcxubDgaefCG1Lgn1pgCMHIxNZ
+        DPxW10/qPAc6mq8gjZPZbAifOD7hmQmx1tfGSR6504R0ToN98b8JnafDs3/DSJsHWID48God
+        axF8ztMdhxG0txXonA3/PQ2Pj8mwhfD20ZBBs5PsQrgyquiWdRC9e3Y8lEgU7Hh9ktAsRKJh
+        W+dyffP50NVH6o5pcODWF+NkpdDpFwad58ObSGRixNnQ3DM0UUmAax96xnUT+ytEfbfJY8js
+        +3bIvu9yfd9y/YhoQelYVl1lWLXJtu/vNYjGH+2S/BAKPNgQQSyNuKkMn6cUm5LEHeouVwQB
+        TXBpTFu7XGxinOKuaqx4SpQqCasRZE+0byAyZpZ6El/A7S2x2m0Oh2WFnbc7bDw3iwmmxraa
+        2DLRiysxlrEyuc5AJ2fUoC11OUJh6n5m/UWxxe6rrnuXGtgdM7Y27R0b2bTgx42nJEnpOrFt
+        s7M7nhGK45ybS9N/6OrrUxd0Ev7qusbRwu3yP717Bl95Yg6LUPtH5QPvc8fd65sLwj3pj/kL
+        AfBkBT+nq/KUtcnUhUZ29kd/Gm6sFBqiTNbc6vP3O/MwR6rlonUJoaji/+Pv3vXKAwAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190905163547epcas5p185b3455e7f33cff005c48a0f25745bab
+References: <20190905163354.25139-1-kbusch@kernel.org>
+        <CGME20190905163547epcas5p185b3455e7f33cff005c48a0f25745bab@epcms2p7>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 7, 2019 at 12:59 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, Sep 6, 2019 at 5:45 PM Nick Desaulniers <ndesaulniers@google.com> wrote:
-> >
-> > > Yes. With the appropriate test cycle
-> >
-> > Sedat reported the issue and already tested/verified the fix.  How
-> > long should it sit in -next before sending a PR for inclusion to 5.3
-> > (as opposed to letting it ride out to 5.4)?
->
-> If the original patch was already in -next, I wouldn't worry about it,
-> as long as you do enough local testing that there's nothing stupid
-> going on.
->
+> Subject: [PATCHv2] nvme: Assign subsy instance from first ctrl
 
-I am the original reporter and tester of the ClangBuiltLinux issue
-#619 and highly appreciate to have the single fix in Linux v5.3 final.
+I'm not sure but, I have not seen 'subsy' thing before.  Maybe
+s/sybsy/subsys/ ?
 
-The compiler-attribute patchset sit for some weeks in linux-next, so I
-have not seen any complains.
+> 
+> The namespace disk names must be unique for the lifetime of the
+> subsystem. This was accomplished by using their parent subsystems'
+> instances which were allocated independently from the controllers
+> connected to that subsystem. This allowed name prefixes assigned to
+> namespaces to match a controller from an unrelated subsystem, and has
+> created confusion among users examining device nodes.
+> 
+> Ensure a namespace's subsystem instance never clashes with a controller
+> instance of another subsystem by transferring the instance ownership
+> to the parent subsystem from the first controller discovered in that
+> subsystem.
+> 
+> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
 
-What I still prefer is to re-integrate the arm64 and sh arch related
-patches which went through maintainer's trees in linux-next.
-AFAICS some massage of the commit messages were missing, too.
+Keith, Thanks for this patch.  I really like this concept which can
+avoid from instance mistakes.
 
-devil's OMG dileks used compiler and linker: LLVM/Clang and LLD v9.0.0-rc3
+Otherwise looks good to me.
 
-> The -next cycle is a few days, and even with an rc8 we're getting
-> close enough to release that I'd rather get it earlier than later.  So
-> I'd rather get a pull request this weekend than then have to deal with
-> it when traveling next week.
->
-
-+1 for ASAPISSIMO
-
-Thanks for taking care.
-
-- Sedat -
+Reviewed-by: Minwoo Im <minwoo.im@samsung.com>
