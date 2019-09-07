@@ -2,135 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67D04AC7A5
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 18:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDB6FAC7A8
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 18:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394933AbfIGQcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 12:32:45 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46328 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392683AbfIGQco (ORCPT
+        id S2394999AbfIGQhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 12:37:24 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:16955 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392062AbfIGQhX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 12:32:44 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q5so6522326pfg.13;
-        Sat, 07 Sep 2019 09:32:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OWKMTVEpcjEgU67HpPrX0ZG66N8BrYaoMAyOS7ISkKw=;
-        b=YAACSMo4u3WzOCuq9vZYRponMeG5TUtWEDgBWfe/TC9c4cqYfea+DvSZObHWa6pdj7
-         Pe8jbcM+PEovYy1lKjoUxBiZYaYIF2jZGHHmEh08NcFiDNhAYRS3W+4aLhqYjaJ/cnk/
-         2BOlurNIp59gDSJdp0JD5HmeYez6Yb78SbbheEH4qZANHgT6lvSmgJf5huBLfWN1Sh8i
-         bxXUvaaPRY3dgHI5J9yXD1T2Zcs6pzy7Zc/IaIhWdvpwu7Z8eFUYW9N25Slu9gw520SP
-         v0QDigl/lOLbSkWYwausocQxD6JAdD+cyDPToU2QOohsVZJoj1itwxDh6SWbTZ8Bu6mc
-         /AaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OWKMTVEpcjEgU67HpPrX0ZG66N8BrYaoMAyOS7ISkKw=;
-        b=VIidkEbtriuXV2gL5lvzba3vUYXs9VcFCU8CWPoPwZALYO1QnzeEJ6bfoy3aULdwLP
-         VE4XXrZIAXAcNxrGnw3SOyw6MnhDjJioG8eWRIKOQmquBQLq4TTuWdtTvAoIsrINHKuj
-         kGsSVPe65EaZ7/R48wogddP98EcMZJharPmdtGxTX8xn/WSjnHwC6Bu6tRdHvWnZ0YbY
-         UNldEv4YT/YJr7YS1enT1N66JHAYuKhjBNZJbHx/23OAYTubDyTuCtvInbNs1DsziKb2
-         ueq2HWh48LpFr/M0VkABUfJf9I/Muc545F9OfvpdBgZ2bSbYFubJ64gLl1D20xAItgiz
-         QaOw==
-X-Gm-Message-State: APjAAAV7vYnaAlduUkTHLaGz+hwkS4GYyiDVZ6neHeXUVj4jw2m6aolg
-        AH7CaVNJfa2g+XGxxm5er5w=
-X-Google-Smtp-Source: APXvYqzHa92DDO9jXGHTroP2d6b2wkphlnLlSVKLHITC01IKwgahaaAGNPHPJsuQ6/zKIPGyykwEFA==
-X-Received: by 2002:a63:5648:: with SMTP id g8mr13024920pgm.81.1567873963790;
-        Sat, 07 Sep 2019 09:32:43 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id c125sm13601189pfa.107.2019.09.07.09.32.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2019 09:32:43 -0700 (PDT)
-Date:   Sat, 7 Sep 2019 09:32:40 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] software node: implement reference properties
-Message-ID: <20190907163240.GA27112@dtor-ws>
-References: <20190906222611.223532-1-dmitry.torokhov@gmail.com>
- <20190907160819.GH2680@smile.fi.intel.com>
+        Sat, 7 Sep 2019 12:37:23 -0400
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x87GawEt091896;
+        Sun, 8 Sep 2019 01:36:58 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Sun, 08 Sep 2019 01:36:58 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from localhost.localdomain (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x87GatL2091872
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sun, 8 Sep 2019 01:36:57 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Mark Brown <broonie@kernel.org>,
+        David Yang <yangxiaohua@everest-semi.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Subject: [PATCH 1/2] ASoC: es8316: fix redundant codes of clock
+Date:   Sun,  8 Sep 2019 01:36:52 +0900
+Message-Id: <20190907163653.9382-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190907160819.GH2680@smile.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 07, 2019 at 07:08:19PM +0300, Andy Shevchenko wrote:
-> On Fri, Sep 06, 2019 at 03:26:09PM -0700, Dmitry Torokhov wrote:
-> > It is possible to store references to software nodes in the same fashion as
-> > other static properties, so that users do not need to define separate
-> > structures:
-> > 
-> > static const struct software_node gpio_bank_b_node = {
-> > 	.name = "B",
-> > };
-> > 
-> > static const struct property_entry simone_key_enter_props[] = {
-> > 	PROPERTY_ENTRY_U32("linux,code", KEY_ENTER),
-> > 	PROPERTY_ENTRY_STRING("label", "enter"),
-> > 	PROPERTY_ENTRY_REF("gpios", &gpio_bank_b_node, 123, GPIO_ACTIVE_LOW),
-> > 	{ }
-> > };
-> > 
-> 
-> Thanks for an update, my comments below.
-> 
-> > +	} else if (src->type == DEV_PROP_REF) {
-> > +		/* All reference properties must be arrays */
-> > +		return -EINVAL;
-> 
-> Hmm... What about to duplicate pointer under value union and use is_array to
-> distinguish which one to use? Because...
+This patch removes redundant null checks for optional MCLK clock.
+And fix DT binding document for changing clock property to optional
+from required.
 
-Then we have to special-case copying this entry, similar to the pains we
-are going with the strings.
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+---
+ .../bindings/sound/everest,es8316.txt         |  3 ++
+ sound/soc/codecs/es8316.c                     | 31 ++++++++-----------
+ 2 files changed, 16 insertions(+), 18 deletions(-)
 
-> 
-> 
-> > @@ -240,6 +254,7 @@ struct property_entry {
-> >  			const u32 *u32_data;
-> >  			const u64 *u64_data;
-> >  			const char * const *str;
-> > +			const struct software_node_ref_args *ref;
-> >  		} pointer;
-> 
-> > +#define PROPERTY_ENTRY_REF(_name_, _ref_, ...)				\
-> > +(struct property_entry) {						\
-> > +	.name = _name_,							\
-> 
-> > +	.length = sizeof(struct software_node_ref_args),		\
-> 
-> Is it correct?
-
-Yes, we length is element size * number of elements.
-
-> 
-> > +	.type = DEV_PROP_REF,						\
-> 
-> > +	.is_array = true,						\
-> 
-> I really don't like this "cheating".
-
-This is not cheating. Any single value can be represented as an array of
-one element. Actually, the only reason we have this "is_array" business
-is because for scalar values and short strings it is much cheaper to
-store single value in-line instead of out of line + pointer, especially
-on 64 bit arches.
-
-If you want we can change is_array into is_inline.
-
-Thanks.
-
+diff --git a/Documentation/devicetree/bindings/sound/everest,es8316.txt b/Documentation/devicetree/bindings/sound/everest,es8316.txt
+index aefcff9c48a2..1bf03c5f2af4 100644
+--- a/Documentation/devicetree/bindings/sound/everest,es8316.txt
++++ b/Documentation/devicetree/bindings/sound/everest,es8316.txt
+@@ -6,6 +6,9 @@ Required properties:
+ 
+   - compatible  : should be "everest,es8316"
+   - reg : the I2C address of the device for I2C
++
++Optional properties:
++
+   - clocks : a list of phandle, should contain entries for clock-names
+   - clock-names : should include as follows:
+          "mclk" : master clock (MCLK) of the device
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index d07d50f51b28..1424ecd6952c 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -373,11 +373,9 @@ static int es8316_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 	if (freq == 0)
+ 		return 0;
+ 
+-	if (es8316->mclk) {
+-		ret = clk_set_rate(es8316->mclk, freq);
+-		if (ret)
+-			return ret;
+-	}
++	ret = clk_set_rate(es8316->mclk, freq);
++	if (ret)
++		return ret;
+ 
+ 	/* Limit supported sample rates to ones that can be autodetected
+ 	 * by the codec running in slave mode.
+@@ -712,20 +710,18 @@ static int es8316_probe(struct snd_soc_component *component)
+ 
+ 	es8316->component = component;
+ 
+-	es8316->mclk = devm_clk_get(component->dev, "mclk");
+-	if (PTR_ERR(es8316->mclk) == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	es8316->mclk = devm_clk_get_optional(component->dev, "mclk");
+ 	if (IS_ERR(es8316->mclk)) {
+-		dev_err(component->dev, "clock is invalid, ignored\n");
+-		es8316->mclk = NULL;
++		dev_err(component->dev, "unable to get mclk\n");
++		return PTR_ERR(es8316->mclk);
+ 	}
++	if (!es8316->mclk)
++		dev_warn(component->dev, "assuming static mclk\n");
+ 
+-	if (es8316->mclk) {
+-		ret = clk_prepare_enable(es8316->mclk);
+-		if (ret) {
+-			dev_err(component->dev, "unable to enable clock\n");
+-			return ret;
+-		}
++	ret = clk_prepare_enable(es8316->mclk);
++	if (ret) {
++		dev_err(component->dev, "unable to enable mclk\n");
++		return ret;
+ 	}
+ 
+ 	/* Reset codec and enable current state machine */
+@@ -754,8 +750,7 @@ static void es8316_remove(struct snd_soc_component *component)
+ {
+ 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
+ 
+-	if (es8316->mclk)
+-		clk_disable_unprepare(es8316->mclk);
++	clk_disable_unprepare(es8316->mclk);
+ }
+ 
+ static const struct snd_soc_component_driver soc_component_dev_es8316 = {
 -- 
-Dmitry
+2.23.0.rc1
+
