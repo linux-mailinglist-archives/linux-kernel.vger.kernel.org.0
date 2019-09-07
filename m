@@ -2,122 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB699AC6F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 16:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0F0AC6FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 16:39:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394632AbfIGOgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 10:36:46 -0400
-Received: from smtp1.goneo.de ([85.220.129.30]:42288 "EHLO smtp1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388202AbfIGOgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 10:36:45 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp1.goneo.de (Postfix) with ESMTP id 1845123F3DE;
-        Sat,  7 Sep 2019 16:36:41 +0200 (CEST)
-X-Virus-Scanned: by goneo
-X-Spam-Flag: NO
-X-Spam-Score: -2.877
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.877 tagged_above=-999 tests=[ALL_TRUSTED=-1,
-        AWL=0.023, BAYES_00=-1.9] autolearn=ham
-Received: from smtp1.goneo.de ([127.0.0.1])
-        by localhost (smtp1.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id b-iajWqFRVuP; Sat,  7 Sep 2019 16:36:39 +0200 (CEST)
-Received: from [192.168.1.127] (dyndsl-178-142-129-167.ewe-ip-backbone.de [178.142.129.167])
-        by smtp1.goneo.de (Postfix) with ESMTPSA id 3B3ED23F6E3;
-        Sat,  7 Sep 2019 16:36:37 +0200 (CEST)
-Subject: Re: [PATCH 0/6] Address issues with SPDX requirements and PEP-263
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Sven Eckelmann <sven@narfation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Doug Smythies <doug.smythies@gmail.com>,
-        =?UTF-8?Q?Aur=c3=a9lien_Cedeyn?= <aurelien.cedeyn@gmail.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-doc@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Armijn Hemel <armijn@tjaldur.nl>, Jiri Olsa <jolsa@redhat.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Allison Randal <allison@lohutok.net>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-References: <cover.1567712829.git.mchehab+samsung@kernel.org>
- <20190907073419.6a88e318@lwn.net>
-From:   Markus Heiser <markus.heiser@darmarit.de>
-Message-ID: <be329f0e-ec5b-f5ec-823d-66e58699da73@darmarit.de>
-Date:   Sat, 7 Sep 2019 16:36:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2406001AbfIGOjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 10:39:32 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:42866 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbfIGOjb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Sep 2019 10:39:31 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x87EdQQl082101;
+        Sat, 7 Sep 2019 14:39:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=s9aXxI7sA4me/ycb0JLeHZ2uDjHcFtgU9B3Kh9Cf838=;
+ b=iSuHLhQJwF9e7CB3TviGpt1E4HkfhqMvBAPwkCPFb4jMd40mMwZ+PeAAQk3bJSKJ7nFS
+ yznndfF+cG5gcqz/2EK9GJ5Pq4xM/dv5GCpqMsZ1DN57/h6hHTDDFXC0KbXFYPPUjojH
+ sZ4XHpgXho2gnAga45cd3ykizzgHz1aXuoQKrYSZxfnQuw4Qqv65uNaZSH9mBYzQ7uYC
+ PlBZVAl+zN8W4ljOiq5X5bbynr/fXjHeBfuVACUw9IOlMHImcmGA04+Avw4krAnpRY24
+ OrgyuPmTpDMpU0x7WW2ScygnPyGHbii+QI9Bkv3JzGow4zpqH5VNSs5Ck8tR/wW99H/l jQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2uve1c01rm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 07 Sep 2019 14:39:26 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x87EdN8K127952;
+        Sat, 7 Sep 2019 14:39:25 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2uve9b0a34-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 07 Sep 2019 14:39:24 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x87Ecudq009512;
+        Sat, 7 Sep 2019 14:38:56 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 07 Sep 2019 07:38:55 -0700
+Date:   Sat, 7 Sep 2019 17:38:49 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     volery <sandro@volery.com>
+Cc:     rspringer@google.com, toddpoynor@google.com, benchan@chromium.org,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fixed parentheses malpractice in apex_driver.c
+Message-ID: <20190907143849.GA30834@kadam>
+References: <20190906183801.GA2456@volery>
 MIME-Version: 1.0
-In-Reply-To: <20190907073419.6a88e318@lwn.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906183801.GA2456@volery>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9373 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909070157
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9373 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909070157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+You need a subject prefix.  It should be something like:
 
-Am 07.09.19 um 15:34 schrieb Jonathan Corbet:
-> On Thu,  5 Sep 2019 16:57:47 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> 
->> The  description at Documentation/process/license-rules.rst is very strict
->> with regards to the position where the SPDX tags should be.
->>
->> In the past several developers and maintainers interpreted it on a
->> more permissive way, placing the SPDX header between lines 1 to 15,
->> with are the ones which the  scripts/spdxcheck.py script verifies.
->>
->> However, recently, devs are becoming more strict about such
->> requirement and want it to strictly follow the rule, with states that
->> the SPDX rule should be at the first line ever on most files, and
->> at the second line for scripts.
->>
->> Well, for Python script, such requirement causes violation to PEP-263,
->> making regressions on scripts that contain encoding lines, as PEP-263
->> also states about the same.
->>
->> This series addresses it.
-> 
-> So I really don't want to be overly difficult here, but I would like to
-> approach this from yet another angle...
-> 
->> Patches 1 to 3 fix some Python scripts that violates PEP-263;
-> 
-> I just checked all of those scripts, and they are all just plain ASCII.
-> So it really doesn't matter whether the environment defaults to UTF-8 or
-> ASCII here.  So, in other words, we really shouldn't need to define the
-> encoding at all.
-> 
+[PATCH] Staging: gasket: Fix parentheses malpractice in apex_driver.c
 
-Thats what I mean [1] .. lets patch the description in the license-rules.rst::
+Generally "Fix" is considered better style than "Fixed".  We aren't
+going to care about that in staging, but the patch prefix is mandatory
+so you will need to redo it anyway and might as well fix that as well.
 
-- first line for the OS (shebang)
-- second line for environment (python-encoding, editor-mode, ...)
-- third and more lines for application (SPDX use) ..
+On Fri, Sep 06, 2019 at 08:38:01PM +0200, volery wrote:
+> There were some parentheses at the end of lines, which I took care of.
+> This is my first patch.
+  ^^^^^^^^^^^^^^^^^^^^^^
 
-[1] https://www.mail-archive.com/linux-doc@vger.kernel.org/msg33240.html
+Put this sort of comments after the --- cut off line
 
--- Markus --
+> 
+> Signed-off-by: Sandro Volery <sandro@volery.com>
+> ---
+  ^^^
+Put it here.  It will be removed when we apply the patch so it won't
+be recorded in the git log.
 
-> This suggests to me that we're adding a bunch of complications that we
-> don't necessarily need.  What am I missing here?
-> 
-> Educate me properly and I'll not try to stand in the way of all this...
-> 
-> Thanks,
-> 
-> jon
-> 
+>  drivers/staging/gasket/apex_driver.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+
+Joe's comments are, of course, correct as well.
+
+regards,
+dan carpenter
+
