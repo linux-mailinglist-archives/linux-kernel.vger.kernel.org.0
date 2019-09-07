@@ -2,69 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E69DFAC7DA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 19:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F6B6AC7E0
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 19:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395086AbfIGREX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 13:04:23 -0400
-Received: from mga02.intel.com ([134.134.136.20]:9392 "EHLO mga02.intel.com"
+        id S2395104AbfIGRHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 13:07:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395025AbfIGREX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 13:04:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2019 10:04:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,478,1559545200"; 
-   d="scan'208";a="186081125"
-Received: from perezfra-mobl.ger.corp.intel.com ([10.249.34.186])
-  by orsmga003.jf.intel.com with ESMTP; 07 Sep 2019 10:04:17 -0700
-Message-ID: <8a6f05b76c37968d494fce9e555f9c21cca83003.camel@linux.intel.com>
-Subject: Re: [PATCH v6 4/4] tpm: tpm_tis_spi: Support cr50 devices
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stephen Boyd <swboyd@chromium.org>, Peter Huewe <peterhuewe@gmx.de>
-Cc:     Andrey Pronin <apronin@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Date:   Sat, 07 Sep 2019 20:04:15 +0300
-In-Reply-To: <5d6e9a38.1c69fb81.ad03c.cb4c@mx.google.com>
-References: <20190829224110.91103-1-swboyd@chromium.org>
-         <20190829224110.91103-5-swboyd@chromium.org>
-         <a950f3986375ee4893dff156dc2f9554338c27d8.camel@linux.intel.com>
-         <5d6e9a38.1c69fb81.ad03c.cb4c@mx.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2-1 
+        id S2389011AbfIGRHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Sep 2019 13:07:48 -0400
+Received: from localhost (unknown [80.251.162.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8CF321835;
+        Sat,  7 Sep 2019 17:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567876067;
+        bh=W6F7Mkf6oMUfeq/tnd7a5zhL8K7SHq1XA/JZa7RAXhs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aYaWtn/du38ppga6SBpybBH2UzNkMh9ANBwr9nC+7wT2mekgO83TwU3imN0qZLmyg
+         Sh5uMOYbjfO4WqptFtvnYKeQ6lr1kSg80o3wPN6mMYsumqHxlqv/cUtBMz33QagT/N
+         ZDv6a5a/nedqM2VdwLvdRG8+UCH1i/4SoegeXpKs=
+Date:   Sat, 7 Sep 2019 18:07:44 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     volery <sandro@volery.com>
+Cc:     jslaby@suse.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fixed most indent issues in tty_io.c
+Message-ID: <20190907170744.GA17100@kroah.com>
+References: <20190907090948.GA5824@volery>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190907090948.GA5824@volery>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-03 at 09:52 -0700, Stephen Boyd wrote:
-> That's fair. I'll put the Kconfig option back. There's still the small
-> issue of what to do about the module name. Should I rename the
-> tpm_tis_spi.c file to something else so that the module can keep the
-> same name? Or was the tpm_tis_spi_mod.ko trick from v5 good enough?
+On Sat, Sep 07, 2019 at 11:09:48AM +0200, volery wrote:
+> There were a lot of styling problems using space then tab or spaces
+> instead of tabs in that file. Especially the entire function at line
+> 2677.
+> Also added a space before the : on line 2221.
+> 
+> Signed-off-by: Sandro Volery <sandro@volery.com>
+> ---
+>  drivers/tty/tty_io.c | 60 ++++++++++++++++++++++----------------------
+>  1 file changed, 30 insertions(+), 30 deletions(-)
 
-Not sure I understood the question correctly but how I think
-this should be deployed is:
+Hi,
 
-- A boolean CONFIG_TCG_TIS_SPI_CR50.
-- tpm_tis_spi_cr50.c that gets compiled in as part of tpm_tis_spi
-  when the config option is selected.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-I think this would best follow the conventions that are in place
-already. Please tell if I got something wrong or if there is some
-bottleneck in this framework but this is anyway what I would prefer
-with the knowledge I have...
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-/Jarkko
+- Your patch breaks the build.
 
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what is needed in order to
+  properly describe the change.
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what a proper Subject: line should
+  look like.
+
+- It looks like you did not use your "real" name for the patch on either
+  the Signed-off-by: line, or the From: line (both of which have to
+  match).  Please read the kernel file, Documentation/SubmittingPatches
+  for how to do this correctly.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
