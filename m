@@ -2,164 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0028BAC502
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 08:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C38AC50E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 08:58:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406549AbfIGG4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 02:56:55 -0400
-Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.173]:30486 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406535AbfIGG4s (ORCPT
+        id S2394487AbfIGG6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 02:58:51 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40227 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392638AbfIGG6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 02:56:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1567839402;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Q3Og36PsgnBdMWhYQfPSlLzKb9zKps/UuApN14KynqU=;
-        b=ncZmiKmdc8p3NI4YFLLoTxXeRyizX4H79hDZa4wWREvqSFeac7gVnxCgfF1XojSLXr
-        s3s15jRoAGFUvsvEOfDOCOOlYbBD1cSg35FAjzvvotqKq4x0sNoLfbTGsrMgYfz84etP
-        sKzYwVuwcWseTb48NZAZIG7HG//bjHTwhfz8rOPb/anWka6O6PQPCh6l1tNcFQyw/n8s
-        yT6Hj23t6lhRvrdK74SOMkHIOrkG/sEgFiusonKCO/3K3DU+aUbLQZjwDJT6Qep7Gl98
-        cL6nhXbiLa4AS1iKBtkq06vyIKsMrLvCpPr9WCZ5k3FQ0rneqWZSvOfdCcVMztp2zIVD
-        bAPA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXL8GTntuxg="
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
-        with ESMTPSA id u036f9v876uKqXH
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Sat, 7 Sep 2019 08:56:20 +0200 (CEST)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        =?UTF-8?q?Andr=C3=A9=20Roth?= <neolynx@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Enric Balletbo i Serra <eballetbo@gmail.com>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Roger Quadros <rogerq@ti.com>,
-        Teresa Remmet <t.remmet@phytec.de>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/4] DTS: bindings: omap: update bindings documentation
-Date:   Sat,  7 Sep 2019 08:56:15 +0200
-Message-Id: <3063019699f21e161221897e14c124a4e5366fa0.1567839375.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.1567839375.git.hns@goldelico.com>
-References: <cover.1567839375.git.hns@goldelico.com>
+        Sat, 7 Sep 2019 02:58:50 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w10so4784402pgj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Sep 2019 23:58:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N02a6SJaJeYR37VzYoDKnadMvJWEcIznSEEE8d04rEE=;
+        b=Qf5Doi01nKGhv7f3si1yFpTepVFa5JxTA2UqN4wP/dJfHftsEloVB6XKK3GcM3XAb7
+         DP72ege/1iO6QSzha/ans+5zh7VXW1IoGl6ru0NjcSJ4KAulwjSVtX8RH9IA2qkSf8jF
+         Rg1kxlu6nJdi5J2k14OrCtUPhAknHidGbUcpdiX/9ZuHJjWzEb9cysmjzNdYZOv0uI4n
+         pci+Nj2TvS2sXpqAWZC3fezKdHLT91bJaXmdYYICCvg+42gh8Yo5wpUNSwX6QfidBZCT
+         slQvr9BAsKuL/rqoY6Aa3RHLQXBVAd8F7Q0pRg6GVmgJu/+0d8yxUzJrm1i1zfUhXyrj
+         QSLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N02a6SJaJeYR37VzYoDKnadMvJWEcIznSEEE8d04rEE=;
+        b=hj7tAhVSujEE9XLIaRjBaGpKV7BUmq9UDiYWxAPcUU9deBh9rHwTof8v5dTU0OP0Vp
+         Tg+gIVRF0YZTPG5yGoeEwL3HDVdCan1hyBPnd2MGonSSt16A5MT3ZKpBm/WvK83uKgdr
+         uMyfPrDcTXiaD8srTCU9Dfs0Sz/aJse7DTCCYVMRuBzZgHWg7pJiub6pkwwTPWBaW8rJ
+         9LyhHmQ2DYcsJcrTtPW4Ac3BaVsGQjmZeJ2kKtDzINbOgWS5gilog9pWE6n3dnzjJERj
+         L+q/r7R2+IvGTnQ+gChakdo52UAmGvKopiL/Wd7oRB990ILLLAr+Tw/B7h/ym3n4JjME
+         rG+A==
+X-Gm-Message-State: APjAAAVnfUBGN48/SoYAUWPIUZ+GCEFJQYLgEbsgw89E7qSTbAwI9/CV
+        vuFJE69wocRAeMLwvnQIcxs=
+X-Google-Smtp-Source: APXvYqxOOt+yaEGgywJTK0jRWElyhevOBHqFAv/XWvIyqlht6wV30m4joc2tTqddtHjKRYjKSOGIxw==
+X-Received: by 2002:a63:484d:: with SMTP id x13mr11267132pgk.122.1567839529962;
+        Fri, 06 Sep 2019 23:58:49 -0700 (PDT)
+Received: from localhost.localdomain (ip-103-85-38-221.syd.xi.com.au. [103.85.38.221])
+        by smtp.gmail.com with ESMTPSA id l31sm10084629pgm.63.2019.09.06.23.58.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2019 23:58:49 -0700 (PDT)
+From:   Adam Zerella <adam.zerella@gmail.com>
+Cc:     joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, adam.zerella@gmail.com
+Subject: [PATCH] iommu/amd: Fix sparse warnings
+Date:   Sat,  7 Sep 2019 16:58:12 +1000
+Message-Id: <20190907065812.19505-1-adam.zerella@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* clarify that we now need either "ti,omap3430" or "ti,omap3630" or "ti,am3517" for omap3 chips
-* clarify that "ti,omap3" has no default
-* clarify that AM33x is not an "ti,omap3"
-* clarify that the list of boards is incomplete
-* remove some "ti,am33xx", "ti,omap3"
-* add some missing "ti,omap4"
+There was some simple Sparse warnings related to making some
+signatures static.
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Signed-off-by: Adam Zerella <adam.zerella@gmail.com>
 ---
- .../devicetree/bindings/arm/omap/omap.txt     | 30 +++++++++++--------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+ drivers/iommu/amd_iommu.c      |  4 ++--
+ drivers/iommu/amd_iommu_init.c | 12 ++++++------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/omap/omap.txt b/Documentation/devicetree/bindings/arm/omap/omap.txt
-index b301f753ed2c..e77635c5422c 100644
---- a/Documentation/devicetree/bindings/arm/omap/omap.txt
-+++ b/Documentation/devicetree/bindings/arm/omap/omap.txt
-@@ -43,7 +43,7 @@ SoC Families:
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index b607a92791d3..a9e40001720a 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -84,7 +84,7 @@ LIST_HEAD(acpihid_map);
+  * Domain for untranslated devices - only allocated
+  * if iommu=pt passed on kernel cmd line.
+  */
+-const struct iommu_ops amd_iommu_ops;
++static const struct iommu_ops amd_iommu_ops;
  
- - OMAP2 generic - defaults to OMAP2420
-   compatible = "ti,omap2"
--- OMAP3 generic - defaults to OMAP3430
-+- OMAP3 generic
-   compatible = "ti,omap3"
- - OMAP4 generic - defaults to OMAP4430
-   compatible = "ti,omap4"
-@@ -51,6 +51,8 @@ SoC Families:
-   compatible = "ti,omap5"
- - DRA7 generic - defaults to DRA742
-   compatible = "ti,dra7"
-+- AM33x generic
-+  compatible = "ti,am33xx"
- - AM43x generic - defaults to AM4372
-   compatible = "ti,am43"
+ static ATOMIC_NOTIFIER_HEAD(ppr_notifier);
+ int amd_iommu_max_glx_val = -1;
+@@ -3201,7 +3201,7 @@ static void amd_iommu_iotlb_range_add(struct iommu_domain *domain,
+ {
+ }
  
-@@ -63,12 +65,14 @@ SoCs:
+-const struct iommu_ops amd_iommu_ops = {
++static const struct iommu_ops amd_iommu_ops = {
+ 	.capable = amd_iommu_capable,
+ 	.domain_alloc = amd_iommu_domain_alloc,
+ 	.domain_free  = amd_iommu_domain_free,
+diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+index 4413aa67000e..f32627cadfd7 100644
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -3050,7 +3050,7 @@ bool amd_iommu_v2_supported(void)
+ }
+ EXPORT_SYMBOL(amd_iommu_v2_supported);
  
- - OMAP3430
-   compatible = "ti,omap3430", "ti,omap3"
-+  legacy: "ti,omap34xx" - please do not use any more
- - AM3517
-   compatible = "ti,am3517", "ti,omap3"
- - OMAP3630
--  compatible = "ti,omap36xx", "ti,omap3"
--- AM33xx
--  compatible = "ti,am33xx", "ti,omap3"
-+  compatible = "ti,omap3630", "ti,omap3"
-+  legacy: "ti,omap36xx" - please do not use any more
-+- AM335x
-+  compatible = "ti,am33xx"
+-struct amd_iommu *get_amd_iommu(unsigned int idx)
++static struct amd_iommu *get_amd_iommu(unsigned int idx)
+ {
+ 	unsigned int i = 0;
+ 	struct amd_iommu *iommu;
+@@ -3069,7 +3069,7 @@ EXPORT_SYMBOL(get_amd_iommu);
+  *
+  ****************************************************************************/
  
- - OMAP4430
-   compatible = "ti,omap4430", "ti,omap4"
-@@ -110,19 +114,19 @@ SoCs:
- - AM4372
-   compatible = "ti,am4372", "ti,am43"
+-u8 amd_iommu_pc_get_max_banks(unsigned int idx)
++static u8 amd_iommu_pc_get_max_banks(unsigned int idx)
+ {
+ 	struct amd_iommu *iommu = get_amd_iommu(idx);
  
--Boards:
-+Boards (incomplete list of examples):
+@@ -3080,13 +3080,13 @@ u8 amd_iommu_pc_get_max_banks(unsigned int idx)
+ }
+ EXPORT_SYMBOL(amd_iommu_pc_get_max_banks);
  
- - OMAP3 BeagleBoard : Low cost community board
--  compatible = "ti,omap3-beagle", "ti,omap3"
-+  compatible = "ti,omap3-beagle", "ti,omap3430", "ti,omap3"
+-bool amd_iommu_pc_supported(void)
++static bool amd_iommu_pc_supported(void)
+ {
+ 	return amd_iommu_pc_present;
+ }
+ EXPORT_SYMBOL(amd_iommu_pc_supported);
  
- - OMAP3 Tobi with Overo : Commercial expansion board with daughter board
--  compatible = "gumstix,omap3-overo-tobi", "gumstix,omap3-overo", "ti,omap3"
-+  compatible = "gumstix,omap3-overo-tobi", "gumstix,omap3-overo", "ti,omap3430", "ti,omap3"
+-u8 amd_iommu_pc_get_max_counters(unsigned int idx)
++static u8 amd_iommu_pc_get_max_counters(unsigned int idx)
+ {
+ 	struct amd_iommu *iommu = get_amd_iommu(idx);
  
- - OMAP4 SDP : Software Development Board
--  compatible = "ti,omap4-sdp", "ti,omap4430"
-+  compatible = "ti,omap4-sdp", "ti,omap4430", "ti,omap4"
+@@ -3135,7 +3135,7 @@ static int iommu_pc_get_set_reg(struct amd_iommu *iommu, u8 bank, u8 cntr,
+ 	return 0;
+ }
  
- - OMAP4 PandaBoard : Low cost community board
--  compatible = "ti,omap4-panda", "ti,omap4430"
-+  compatible = "ti,omap4-panda", "ti,omap4430", "ti,omap4"
+-int amd_iommu_pc_get_reg(struct amd_iommu *iommu, u8 bank, u8 cntr, u8 fxn, u64 *value)
++static int amd_iommu_pc_get_reg(struct amd_iommu *iommu, u8 bank, u8 cntr, u8 fxn, u64 *value)
+ {
+ 	if (!iommu)
+ 		return -EINVAL;
+@@ -3144,7 +3144,7 @@ int amd_iommu_pc_get_reg(struct amd_iommu *iommu, u8 bank, u8 cntr, u8 fxn, u64
+ }
+ EXPORT_SYMBOL(amd_iommu_pc_get_reg);
  
- - OMAP4 DuoVero with Parlor : Commercial expansion board with daughter board
-   compatible = "gumstix,omap4-duovero-parlor", "gumstix,omap4-duovero", "ti,omap4430", "ti,omap4";
-@@ -134,16 +138,16 @@ Boards:
-   compatible = "variscite,var-dvk-om44", "variscite,var-som-om44", "ti,omap4460", "ti,omap4";
- 
- - OMAP3 EVM : Software Development Board for OMAP35x, AM/DM37x
--  compatible = "ti,omap3-evm", "ti,omap3"
-+  compatible = "ti,omap3-evm", "ti,omap3630", "ti,omap3"
- 
- - AM335X EVM : Software Development Board for AM335x
--  compatible = "ti,am335x-evm", "ti,am33xx", "ti,omap3"
-+  compatible = "ti,am335x-evm", "ti,am33xx"
- 
- - AM335X Bone : Low cost community board
--  compatible = "ti,am335x-bone", "ti,am33xx", "ti,omap3"
-+  compatible = "ti,am335x-bone", "ti,am33xx"
- 
- - AM3359 ICEv2 : Low cost Industrial Communication Engine EVM.
--  compatible = "ti,am3359-icev2", "ti,am33xx", "ti,omap3"
-+  compatible = "ti,am3359-icev2", "ti,am33xx"
- 
- - AM335X OrionLXm : Substation Automation Platform
-   compatible = "novatech,am335x-lxm", "ti,am33xx"
+-int amd_iommu_pc_set_reg(struct amd_iommu *iommu, u8 bank, u8 cntr, u8 fxn, u64 *value)
++static int amd_iommu_pc_set_reg(struct amd_iommu *iommu, u8 bank, u8 cntr, u8 fxn, u64 *value)
+ {
+ 	if (!iommu)
+ 		return -EINVAL;
 -- 
-2.19.1
+2.21.0
 
