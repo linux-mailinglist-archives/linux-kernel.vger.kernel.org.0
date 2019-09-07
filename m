@@ -2,54 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 833B5AC7F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 19:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0040FAC7FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 19:12:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395125AbfIGRKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 13:10:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58556 "EHLO mail.kernel.org"
+        id S2395086AbfIGRMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 13:12:55 -0400
+Received: from mga12.intel.com ([192.55.52.136]:50196 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388342AbfIGRKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 13:10:06 -0400
-Subject: Re: [GIT PULL] dmaengine late fixes for 5.3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567876206;
-        bh=aYcXLOxOn6Vq5mK3hc79BWRFLFT5aG9wBRLHuuBxzMk=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=N/NkGnFye+YPPV3PM1y/xDPOGl+rbOBqMNpDYTXBZhUkAVg6XIjDSActF/iIA5vQo
-         A75QPq49JiNF8k/r+2qGGtBLeWEgUy9KLQV7rDSujoBq66cmdnwAYLNB3dFrnY/SsO
-         78BzClIvd28Pv6cvmuUqLyrYKcyq0G2zX22Kg7WI=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190907081234.GJ2672@vkoul-mobl>
-References: <20190907081234.GJ2672@vkoul-mobl>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190907081234.GJ2672@vkoul-mobl>
-X-PR-Tracked-Remote: git://git.infradead.org/users/vkoul/slave-dma.git
- tags/dmaengine-fix-5.3
-X-PR-Tracked-Commit-Id: cf24aac38698bfa1d021afd3883df3c4c65143a4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d3464ccd105b42f87302572ee1f097e6e0b432c6
-Message-Id: <156787620592.5460.514855460056718529.pr-tracker-bot@kernel.org>
-Date:   Sat, 07 Sep 2019 17:10:05 +0000
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        dma <dmaengine@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        id S1731167AbfIGRMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Sep 2019 13:12:55 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2019 10:12:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,478,1559545200"; 
+   d="scan'208";a="199750399"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Sep 2019 10:12:52 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1i6eGZ-00008r-D3; Sat, 07 Sep 2019 20:12:51 +0300
+Date:   Sat, 7 Sep 2019 20:12:51 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] software node: implement reference properties
+Message-ID: <20190907171251.GL2680@smile.fi.intel.com>
+References: <20190906222611.223532-1-dmitry.torokhov@gmail.com>
+ <20190907160819.GH2680@smile.fi.intel.com>
+ <20190907163240.GA27112@dtor-ws>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190907163240.GA27112@dtor-ws>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 7 Sep 2019 13:42:34 +0530:
+On Sat, Sep 07, 2019 at 09:32:40AM -0700, Dmitry Torokhov wrote:
+> On Sat, Sep 07, 2019 at 07:08:19PM +0300, Andy Shevchenko wrote:
+> > On Fri, Sep 06, 2019 at 03:26:09PM -0700, Dmitry Torokhov wrote:
 
-> git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-5.3
+> > > +	} else if (src->type == DEV_PROP_REF) {
+> > > +		/* All reference properties must be arrays */
+> > > +		return -EINVAL;
+> > 
+> > Hmm... What about to duplicate pointer under value union and use is_array to
+> > distinguish which one to use? Because...
+> 
+> Then we have to special-case copying this entry, similar to the pains we
+> are going with the strings.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d3464ccd105b42f87302572ee1f097e6e0b432c6
+I can't see it as a pain. Simple do the same kmemdup() for the case when
+is_array = false and DEV_TYPE_REF?
 
-Thank you!
+By the way, don't we need to update property_entry_{get,set}_pointer()?
+
+> > > +	.is_array = true,						\
+> > 
+> > I really don't like this "cheating".
+> 
+> This is not cheating. Any single value can be represented as an array of
+> one element. Actually, the only reason we have this "is_array" business
+> is because for scalar values and short strings it is much cheaper to
+> store single value in-line instead of out of line + pointer, especially
+> on 64 bit arches.
+
+Yes, and this is a lot of benefit!
+
+> If you want we can change is_array into is_inline.
+
+Nope, is_array is exactly what it tells us about the content. Its functional
+load is to distinguish which union (value vs. pointer) we are using.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+With Best Regards,
+Andy Shevchenko
+
+
