@@ -2,124 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF83AC998
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 23:49:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E07DAC99C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 23:54:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728298AbfIGVtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 17:49:16 -0400
-Received: from mga05.intel.com ([192.55.52.43]:28678 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727632AbfIGVtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 17:49:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2019 14:49:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,478,1559545200"; 
-   d="scan'208";a="177970505"
-Received: from dpotapen-mobl1.ger.corp.intel.com ([10.252.53.110])
-  by orsmga008.jf.intel.com with ESMTP; 07 Sep 2019 14:49:12 -0700
-Message-ID: <180a3a0fd33cbac9df8adf65999c53a9ddc20bf5.camel@linux.intel.com>
-Subject: Re: [PATCH] tpm_crb: fix fTPM on AMD Zen+ CPUs
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     ivan.lazeev@gmail.com
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sun, 08 Sep 2019 00:49:11 +0300
-In-Reply-To: <20190904190332.25019-1-ivan.lazeev@gmail.com>
-References: <20190904190332.25019-1-ivan.lazeev@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2-1 
+        id S2392508AbfIGVyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 17:54:39 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36231 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732629AbfIGVyj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Sep 2019 17:54:39 -0400
+Received: by mail-lf1-f67.google.com with SMTP id x80so7714726lff.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2019 14:54:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=hN0jvl6j8u77xJuBLL+drjAkq7rIZstscMwxbKXGlcs=;
+        b=Y0VUMba/EE15vXulSXl2mxGRwdoD8hekjpQ0XAZvudLdaxUEO/Ge/oXviEphe1theu
+         sUaRjpJT0zZpnLyRhFM+SQykvCseGKhgRgQDuCCLPqXmVC2O2xq+XNBEeQnsAT8GXQYi
+         luck/JO5XIqX8+mF3bzUOXyelhH1kDPgywPCkr5xF1IWZECOa+Ibv2wMo6obhXPk0chd
+         uXmij8AkNkR9v1AIlo7G8yqzQQoN9NC5KHI1YB+D2PwcxixSXYg1WJbujKXpxjURTXQC
+         zoOOQYXN82m2sMyFVPwOXvEDOmA8+L9HBgN9YZ47QR4qO3KXFbQrhBCSgRTiWrlt69uk
+         IZxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=hN0jvl6j8u77xJuBLL+drjAkq7rIZstscMwxbKXGlcs=;
+        b=lsRyqbAdTGQ+Y7D50f4yXdzl2sCLB273RvSnAC5PQG/7TW7ABYW5sPn1hEufCNd9pH
+         5XbDch2U4rxL/oeT8aubozxUjsjrNAu9mAhN1qrDJ54wZoRO5xd4LLMUr6IlYDvWZ+Yp
+         5Ckn33OMrsK09h1uBPW6LM5/GXWtFyrNnG4yo61nxLe9ENJ7XWpGuTczjBzuLQdpkFUa
+         Vp7bObOBWfPOdufQvk/uVK7SuZAR7wfXxgJf+0U63qerxWwGXUUFccmXGkFTVqrEey3+
+         U/+u+AGByBBoZP0f/6On803TgV24efJbgYsJFv/XiZkTn1FkIOGiPvp5G5tep/pEt2z7
+         LblQ==
+X-Gm-Message-State: APjAAAVEqE7cU4cgk05nov7Jp2xKVrNV6HqQkEkW1HjHwG5rA3YcM34Z
+        lyteqae903CzABJot/3I9XT7f9MXh4yZ8Ut59yI=
+X-Google-Smtp-Source: APXvYqyuc4Lco5oov5IVteYjknAaU6u9YdKTWpAcCVaAmL99zWloe3DrvKUkypqV2DEDLFXvmhZzQTIR7FsJ0XdrRL4=
+X-Received: by 2002:ac2:5a07:: with SMTP id q7mr10507449lfn.177.1567893277169;
+ Sat, 07 Sep 2019 14:54:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab3:6d37:0:0:0:0:0 with HTTP; Sat, 7 Sep 2019 14:54:36 -0700 (PDT)
+From:   Mariam Kabore <mrsmmkb@gmail.com>
+Date:   Sat, 7 Sep 2019 14:54:36 -0700
+X-Google-Sender-Auth: s49JvPemMAvYC-HIYGBe-n2hp1Q
+Message-ID: <CAL+mA0etRTuuQzibAJ5Ay5E7D6hDEobzjZsJ+oKjQz=WFu9vsg@mail.gmail.com>
+Subject: Attention please
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-09-04 at 22:03 +0300, ivan.lazeev@gmail.com wrote:
-> From: Ivan Lazeev <ivan.lazeev@gmail.com>
-> 
-> Bug link: https://bugzilla.kernel.org/show_bug.cgi?id=195657
-> 
-> cmd/rsp buffers are expected to be in the same ACPI region.
-> For Zen+ CPUs BIOS's might report two different regions, some of
-> them also report region sizes inconsistent with values from TPM
-> registers.
-> 
-> Work around the issue by storing ACPI regions declared for the
-> device in a list, then using it to find entry corresponding
-> to each buffer. Use information from the entry to map each resource
-> at most once and make buffer size consistent with the length of the
-> region.
-> 
-> Signed-off-by: Ivan Lazeev <ivan.lazeev@gmail.com>
+Dear sir/madam
 
-Can you add the relevant pieces of /proc/iomem output to the commit
-message so we can see the memory configuration? I don't have the
-hardware available where this kind of situation occurs.
+My name is Mrs. Mariam Kabore. I have decided to seek a confidential
+co-operation with you for the execution of the deal described
+hereunder for our mutual benefit. I Hope you will keep it a secret due
+to the nature of the transaction. During the course of our audit last
+month, I discovered an unclaimed/abandoned fund total US$3.5 million
+in a bank account that belongs to a customer who unfortunately lost
+his life and entire family in a car accident.
 
-> ---
-> 
-> Tested on ASRock x470 ITX motherboard with Ryzen 2600X CPU.
-> However, I don't have any other hardware to test the changes on and no
-> expertise to be sure that other TPMs won't break as a result.
+Now our bank has been waiting for any of the relatives to come-up for
+the claim but nobody has done that. I personally has been unsuccessful
+in locating any of the relatives, now, I sincerely seek your consent
+to present you as the next of kin / Will Beneficiary to the deceased
+so that the proceeds of this account valued at {US$3.5 Million United
+State Dollars} can be paid to you, which we will share in these
+percentages ratio, 60% to me and 40% to you. All I request is your
+utmost sincere co- operation; trust and maximum confidentiality to
+achieve this project successfully. I have carefully mapped out the
+moralities for execution of this transaction under a legitimate
+arrangement to protect you from any breach of the law both in your
+country and here in my country when the fund is being transferred to
+your bank account.
 
-You can still ask yourself that if the hardware describes the memory
-with only one region do the code flows reduce mostly to do the same as
-before this patch. It is not the same as testing with such hardware but
-it is still a good mental exercise.
+I will have to provide the entire relevant document that will be
+requested to indicate that you are the rightful beneficiary of this
+legacy and our bank will release the fund to you without any further
+delay, upon your consideration and acceptance of this offer, please
+send me the following information as stated below so we can proceed
+and get this fund transferred to your designated bank account
+immediately. I, know much about the existence of this fund and the
+secrets surrounding this money.
 
-To summarize, I do get "not having hardware" part but completely
-disqualify "not having expertise" part as the expertise needed here has
-nothing specific to do with TPMs :-)
+-Your Full Name:
+-Your Contact Address:
+-Your direct Mobile telephone Number:
+-Your Date of Birth:
+-Your occupation:
+I await your swift response and re-assurance so we commence this
+transaction immediately.
 
-> 
->  drivers/char/tpm/tpm_crb.c | 137 +++++++++++++++++++++++++++----------
->  1 file changed, 101 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-> index e59f1f91d7f3..0bcfe52db5d6 100644
-> --- a/drivers/char/tpm/tpm_crb.c
-> +++ b/drivers/char/tpm/tpm_crb.c
-> @@ -91,7 +91,6 @@ enum crb_status {
->  struct crb_priv {
->  	u32 sm;
->  	const char *hid;
-> -	void __iomem *iobase;
->  	struct crb_regs_head __iomem *regs_h;
->  	struct crb_regs_tail __iomem *regs_t;
->  	u8 __iomem *cmd;
-> @@ -108,6 +107,12 @@ struct tpm2_crb_smc {
->  	u32 smc_func_id;
->  };
->  
-> +struct crb_resource {
-> +	struct resource io_res;
-> +	void __iomem *iobase;
-> +	struct list_head node;
-> +};
-
-Please rename 'node' as 'list' for the sake of coherency with the rest
-of the kernel and io_res as iores for the sake of coherency with the
-other fields.
-
-I think it would be cleaner to do the following:
-
-1. Start with empty resource list.
-2. Everytime crb_map_res() is called it does check the existing
-   resources and does a ACPI walk on need basis at most adding
-   one new entry.
-
-In other words, crb_map_res() gets the list and appends one entry when
-necessary.
-
-Overhead of doing multiple walks is irrelevant here. The simplicity and
-clarity win.
-
-/Jarkko
-
+Best regards,
+Mrs Mariam Kabore
