@@ -2,154 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22CC7AC4BE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 07:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 677F0AC4D6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 07:59:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733303AbfIGF2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 01:28:20 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38278 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729409AbfIGF2U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 01:28:20 -0400
-Received: by mail-wm1-f68.google.com with SMTP id o184so9152604wme.3;
-        Fri, 06 Sep 2019 22:28:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bt3oijoWvAOEh03WYLlldB6hYRNYY3O8b2uPfoxZoNk=;
-        b=EtznzTmLSlM5CNoUxGGrhPHLpP1M8iQCqEwiDIDwaacXzHAqcxaJz0g8PiBZ/PmSGN
-         KwIoihzRvm5Kr+ktystoL8IJKury1nGoxtdl1nGgUFmzg+SzoZmtdTJy4hMoZxcixWrq
-         kG3pSl4D2JKStv6qTR6d+r3GS9/rgEJAOd64s/Tk81FhX8GuNQVe48e4BM6xCqe8lak1
-         +6xPxVQXa1taAmKrMmibLFDmkjZEJzc2VV+cDMXfIaOzF/zCiYEYGNYwy3aqwyZPTqtk
-         hv7yUVNYRR86FZCRk71MyrZMXB9w5uV4Mv33AiLAv9qSO1HVZ9WANxPaxVqHCuWwWhkS
-         irZw==
-X-Gm-Message-State: APjAAAXKLFXcbMw78eX2gY3BwA6Z3M+LDEgpnBaFctEZHe2cvirk9RyH
-        IzUzkWkuf7GkVqbQ4ipIOlvvGnQp
-X-Google-Smtp-Source: APXvYqxdPBh5b9x/+TgH0lYPPyu6z0h4wvwg9UJYfVUYrW97GEkj4StuAz96t2EjImcrgpDPxeExjQ==
-X-Received: by 2002:a7b:cc86:: with SMTP id p6mr9330019wma.136.1567834097793;
-        Fri, 06 Sep 2019 22:28:17 -0700 (PDT)
-Received: from [10.68.32.192] (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
-        by smtp.gmail.com with ESMTPSA id r9sm11541452wra.19.2019.09.06.22.28.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2019 22:28:17 -0700 (PDT)
-Subject: Re: [PATCH] mostpost: don't warn about symbols from another file
-From:   Denis Efremov <efremov@linux.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc:     Emil Velikov <emil.l.velikov@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        WANG Chao <chao.wang@ucloud.cn>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190906151059.1077708-1-arnd@arndb.de>
- <7fc19dd4-93fb-fa15-3d36-3079cd42cf7c@linux.com>
-Message-ID: <17ee4877-d24a-12ad-5836-411e3e525933@linux.com>
-Date:   Sat, 7 Sep 2019 08:28:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.0
+        id S2394454AbfIGF7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 01:59:30 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:52384 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733303AbfIGF7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Sep 2019 01:59:30 -0400
+Received: from zn.tnic (p200300EC2F2077001838F3417D010484.dip0.t-ipconnect.de [IPv6:2003:ec:2f20:7700:1838:f341:7d01:484])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A4D141EC0528;
+        Sat,  7 Sep 2019 07:59:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1567835968;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=d7NMox/+dvpQNLkfYKsBZgqhLe96vIyuMuvL3ccHE8Y=;
+        b=QmoNlYv89oH7ItOnb6zNYqxucE75zFzjD1m2c+Afag6O87zWDq3Cl/7JZg5Dpet4crdRNI
+        ufKYD4GbCiz361/96Zwsby7BmBUjXhvXv2UpPxDvZ7dc65+J0l2sb/4VfqX1A6S4rAboMU
+        CGkWwEZelNvALYJnxGftt1eEdgAMjCA=
+Date:   Sat, 7 Sep 2019 07:59:17 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Isaac Vaughn <isaac.vaughn@Knights.ucf.edu>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Add PCI device IDs for family 17h, model 70h
+Message-ID: <20190907055917.GA10446@zn.tnic>
+References: <20190906192131.8ced0ca112146f32d82b6cae@knights.ucf.edu>
 MIME-Version: 1.0
-In-Reply-To: <7fc19dd4-93fb-fa15-3d36-3079cd42cf7c@linux.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20190906192131.8ced0ca112146f32d82b6cae@knights.ucf.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07.09.2019 01:39, Denis Efremov wrote:
-> Hi,
+On Fri, Sep 06, 2019 at 11:21:38PM +0000, Isaac Vaughn wrote:
+> Add the new Family 17h Model 70h PCI IDs (device 18h functions 0 and 6)
+> to the AMD64 EDAC module.
 > 
-> On 06.09.2019 18:10, Arnd Bergmann wrote:
->> On architectures such as ARM that have a list of symbols exported from
->> assembler in a separate C file, we get a lot of new warnings:
->>
->> WARNING: "__ashrdi3" [vmlinux] is a static (unknown)
->> WARNING: "__lshrdi3" [vmlinux] is a static (unknown)
->> WARNING: "__aeabi_llsr" [vmlinux] is a static (unknown)
->> WARNING: "__aeabi_lasr" [vmlinux] is a static (unknown)
->> WARNING: "__aeabi_uidivmod" [vmlinux] is a static (unknown)
->> WARNING: "__udivsi3" [vmlinux] is a static (unknown)
->> WARNING: "_change_bit" [vmlinux] is a static (unknown)
->> WARNING: "__aeabi_idiv" [vmlinux] is a static (unknown)
->> WARNING: "__umodsi3" [vmlinux] is a static (unknown)
->> WARNING: "__aeabi_uidiv" [vmlinux] is a static (unknown)
->> WARNING: "__aeabi_idivmod" [vmlinux] is a static (unknown)
->> WARNING: "__muldi3" [vmlinux] is a static (unknown)
->> WARNING: "__aeabi_ulcmp" [vmlinux] is a static (unknown)
->> WARNING: "__raw_writesb" [vmlinux] is a static (unknown)
->> WARNING: "__raw_readsb" [vmlinux] is a static (unknown)
->> ...
->>
->> This is not helpful, as these are clearly not static symbols
->> at all. Suppress the warning in a case like this.
->>
+> Cc: Borislav Petkov <bp@alien8.de> (maintainer:EDAC-AMD64)
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org> (supporter:EDAC-CORE)
+> Cc: James Morse <james.morse@arm.com> (reviewer:EDAC-CORE)
+> Cc: linux-edac@vger.kernel.org (open list:EDAC-AMD64)
+> Cc: linux-kernel@vger.kernel.org (open list)
+> Signed-off-by: Isaac Vaughn <isaac.vaughn@knights.ucf.edu>
+> ---
+>  drivers/edac/amd64_edac.c | 13 +++++++++++++
+>  drivers/edac/amd64_edac.h |  3 +++
+>  2 files changed, 16 insertions(+)
 > 
-> It looks very similar to this discussion https://lkml.org/lkml/2019/7/30/112
-> 
-> Could you please write the steps to reproduce the warnings?
-> Now, I'm trying to build linux-next (host Ubuntu 19.04 x86_64) with:
-> $ make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabi-
-> But I can't get these warnings.
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index 873437be86d9..a35c97f9100a 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -2253,6 +2253,15 @@ static struct amd64_family_type family_types[] = {
+>  			.dbam_to_cs		= f17_base_addr_to_cs_size,
+>  		}
+>  	},
+> +	[F17_M70H_CPUS] = {
+> +		.ctl_name = "F17h_M70h",
+> +		.f0_id = PCI_DEVICE_ID_AMD_17H_M70H_DF_F0,
+> +		.f6_id = PCI_DEVICE_ID_AMD_17H_M70H_DF_F6,
+> +		.ops = {
+> +			.early_channel_count	= f17_early_channel_count,
+> +			.dbam_to_cs		= f17_base_addr_to_cs_size,
 
-Tried defconfig, allyesconfig.
- 
-> 
-> I would like to check the type of this asm symbols. It seems like they
-> are STT_NOTYPE. In this case the fix could also involve ELF_ST_TYPE check.
-> 
+You still have f17_base_addr_to_cs_size here. If you'd built it against
+the branch I pointed you at:
 
-Ah, I forgot that we don't check the type at all, so this is not the case.
-But still, I would like to test what if the remove binding check at all?
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 76c221dd9b2b..97dbcebf2338 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1987,14 +1987,12 @@ static void read_symbols(const char *modname)
- 	for (sym = info.symtab_start; sym < info.symtab_stop; sym++) {
- 		unsigned char bind = ELF_ST_BIND(sym->st_info);
- 
--		if (bind == STB_GLOBAL || bind == STB_WEAK) {
- 			struct symbol *s =
- 				find_symbol(remove_dot(info.strtab +
- 						       sym->st_name));
- 
- 			if (s)
- 				s->is_static = 0;
--		}
- 	}
- 
- 	if (!is_vmlinux(modname) || vmlinux_section_warnings)
+https://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git/log/?h=edac-for-next
 
+it would have failed.
 
-Thanks,
-Denis
+Anyway, I fixed it up and applied it.
 
-> 
->> Fixes: 15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  scripts/mod/modpost.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
->> index 76c221dd9b2b..4265dd924933 100644
->> --- a/scripts/mod/modpost.c
->> +++ b/scripts/mod/modpost.c
->> @@ -2543,7 +2543,7 @@ int main(int argc, char **argv)
->>  		struct symbol *s = symbolhash[n];
->>  
->>  		while (s) {
->> -			if (s->is_static)
->> +			if (s->is_static && s->export != export_unknown)
->>  				warn("\"%s\" [%s] is a static %s\n",
->>  				     s->name, s->module->name,
->>  				     export_str(s->export));
->>
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
