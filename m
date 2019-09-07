@@ -2,121 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D6EDAC855
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 19:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14CB7AC869
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 19:47:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392530AbfIGRp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 13:45:56 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43644 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbfIGRp4 (ORCPT
+        id S2436678AbfIGRrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 13:47:19 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:26118 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436559AbfIGRrP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 13:45:56 -0400
-Received: by mail-lf1-f66.google.com with SMTP id q27so7470216lfo.10
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2019 10:45:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JJRFoANDdA7LVjR/dXOt13NCYJCwAkkvMBjFRYL2CJk=;
-        b=O0k0d7lqzfAmPEYFzDlOGgQsR12LVtrvxo5oTKj/qTWwdx05EQgXW+UipRXAFcHY7l
-         NJSN5sB8Bd0GzZnsutsLrlnHa03N+sVzppgC400AeuuF3leAik8ua94YYTL1N/jeDSEY
-         p0NLqzIjW/MddvLJPDdxPws4zfzc5nCUgJ+sc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JJRFoANDdA7LVjR/dXOt13NCYJCwAkkvMBjFRYL2CJk=;
-        b=jlFoH77ChZsxxILHou9LH2joFVpkUjZZlxwhZAP5yvUEAaDNubvNL09hVzzIbmCC36
-         6fFgZodt/KlZ2N0FwbDAuvnk1Dov5Ew0VfY6g19MtNq8EczUqVL8SEoMVEQk++JKwU6J
-         d1iG0HoQRJoniUogltFxRlWdSAWCMhmeDEAjk7lWEoru/53bCf0W4qcGIg4cp6My7nFQ
-         1jd4wx2lp0UrzLzsIRsMIKQJPvqZ0/iKA/YEMEHZ5nr1lsu39pong73ifY3iJqUpQ9G5
-         pQ3aY2X8XmI7qKScljeQZCzaXz+aZWIumYkWjdN/9S0MozBCAM3bCTESFa7PkpOd1se3
-         MK7Q==
-X-Gm-Message-State: APjAAAWZ+UD/JCU1MEQRBoP9ZKZmPsOxgqRj4QhY3VNqO5wr4IQ+Pu2r
-        XHYAebo5AART6b0mrOyNvDJU7MN20Do=
-X-Google-Smtp-Source: APXvYqyEbNx6/EyRozWuL1nehgWWvsj31eEMKHNgdsi3sB6j/ySeygyGpUvHdKrTkLZehiehFbH1yA==
-X-Received: by 2002:a19:7609:: with SMTP id c9mr10188686lff.91.1567878353645;
-        Sat, 07 Sep 2019 10:45:53 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id f22sm1824470lfk.56.2019.09.07.10.45.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Sep 2019 10:45:52 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id e17so8856107ljf.13
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2019 10:45:51 -0700 (PDT)
-X-Received: by 2002:a2e:8645:: with SMTP id i5mr9691835ljj.165.1567878349245;
- Sat, 07 Sep 2019 10:45:49 -0700 (PDT)
+        Sat, 7 Sep 2019 13:47:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1567878429;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=VdZPzWaRsWdppRS512gcOPOhKtFiQNInlcWKoWGPsas=;
+        b=XioUFGIoxToHIqd3XtW9PpWs/Jf7bAhg0jsZgndShjI5ril9Wbbs+IjHmp4DD5FgBQ
+        Io5/MStpsw1n0DF3pQKR5lfAyGicTDLuswXX1W8U+1lcgn2ucTyWCCYoIfhY33I/lpZl
+        bzhyFWfYDoY6BofE+WkjQbGWPbnTOi32Irvfb/oslc0/6WpkRGknUTmElLegkW+LfFv+
+        1B/YYcOgaBl+wvAacBVWaXBLh1BggdyjDIu1KIYQXjKXwoIFdFt00auo2ewgAfOLNt13
+        svpWxCvETommEx31Plz+TdJhK0mNck+02wRhN5WrezCRQOP2TAri4OaGZIExxInTjgL7
+        vXOw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXL8GTntuxg="
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v87Hksrbe
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sat, 7 Sep 2019 19:46:54 +0200 (CEST)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        =?UTF-8?q?Andr=C3=A9=20Roth?= <neolynx@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Enric Balletbo i Serra <eballetbo@gmail.com>,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Roger Quadros <rogerq@ti.com>,
+        Teresa Remmet <t.remmet@phytec.de>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/4] OMAP3: convert opp-v1 to opp-v2 and read speed binned / 720MHz grade bits
+Date:   Sat,  7 Sep 2019 19:46:49 +0200
+Message-Id: <cover.1567878413.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20190904201933.10736-1-cyphar@cyphar.com> <20190904201933.10736-12-cyphar@cyphar.com>
- <7236f382d72130f2afbbe8940e72cc67e5c6dce0.camel@kernel.org>
- <CAHk-=whZx97Nm-gUK0ppofj2RA2LLz2vmaDUTKSSV-+yYB9q_Q@mail.gmail.com> <C81D6D29-F6BF-48E6-A15E-3ABCB2C992E5@amacapital.net>
-In-Reply-To: <C81D6D29-F6BF-48E6-A15E-3ABCB2C992E5@amacapital.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 7 Sep 2019 10:45:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whe90Ec_RRrMRLE0=bJOHNS9YmVwcytVxmrfK3oCuZF6A@mail.gmail.com>
-Message-ID: <CAHk-=whe90Ec_RRrMRLE0=bJOHNS9YmVwcytVxmrfK3oCuZF6A@mail.gmail.com>
-Subject: Re: [PATCH v12 11/12] open: openat2(2) syscall
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Jeff Layton <jlayton@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 7, 2019 at 10:42 AM Andy Lutomirski <luto@amacapital.net> wrote:
->
-> Linus, you rejected resolveat() because you wanted a *nice* API
+Changes V2:
+* fix ti-cpufreq to properly describe what compatible string is legacy
+* add some reviewed-by and acked-by Tony Lindgren <tony@atomide.com>
 
-No. I rejected resoveat() because it was a completely broken garbage
-API that couldn't do even basic stuff right (like O_CREAT).
+PATCH V1 2019-09-07 08:56:19:
+* fix typo in omap3-ldp.dts
+  (reported by Tony Lindgren <tony@atomide.com>)
+* extend commit message to describe the bit patterns needed
+  for opp-supported-hw
+* add error check to ioremap()
+  (suggested by Christ van Willegen <cvwillegen@gmail.com>)
+* update Documentation/devicetree/bindings/arm/omap/omap.txt
+* change bulk update to use "ti,omap3430" and "ti,omap3630"
+* update OPP4 of omap3430 to 1275 mV since it was not a valid
+  voltage for the twl4030 driver (reported by Tony Lindgren
+  <tony@atomide.com>)
 
-We have a ton of flag space in the new openat2() model, we might as
-well leave the old flags alone that people are (a) used to and (b) we
-have code to support _anyway_.
+RFC V2 2019-09-04 10:53:43:
+* merge separate patch to remove opp-v1 table from n950-n9 into
+  the general omap3xxx.dtsi patch
+  (suggested by Viresh Kumar <viresh.kumar@linaro.org>)
+* add legacy compatibility to ti,omap3430 and ti,omap3630 for
+  the ti-cpufreq driver
+* make driver and omap3xxx.dtsi patches pass checkpatch
+* add bulk patch to explicitly define compatibility to ti,omap3430
+  and ti,omap36xx in addition to ti,omap3 of all in-tree boards
+  where it was missing
 
-Making up a new flag namespace is only going to cause us - and users -
-more work, and more confusion. For no actual advantage. It's not going
-to be "cleaner". It's just going to be worse.
+RFC V1 2019-09-02 12:55:55:
 
-                 Linus
+This patch set converts the omap3 opp tables to opp-v2 format
+and extends the ti-cpufreq to support omap3.
+
+It adds 720 MHz (omap34xx) and 1 GHz (omap36xx) OPPs but
+tells the ti-cpufreq driver to disable them if the speed
+binned / 720MHz grade eFuse bits indicate that the chip
+is not rated for that speed. 
+
+It has been tested (for chip variant detection, not reliability
+of the high speed OPPs) on:
+
+* BeagleBoard C2 (omap3530 600MHz)
+* BeagleBoard XM B (dm3730 800MHz)
+* GTA04A4 (dm3730 800MHz)
+* GTA04A5 (dm3730 1GHz)
+
+
+H. Nikolaus Schaller (4):
+  cpufreq: ti-cpufreq: add support for omap34xx and omap36xx
+  ARM: dts: replace opp-v1 tables by opp-v2 for omap34xx and omap36xx
+  ARM: dts: omap3: bulk convert compatible to be explicitly ti,omap3430
+    or ti,omap3630 or ti,am3517
+  DTS: bindings: omap: update bindings documentation
+
+ .../devicetree/bindings/arm/omap/omap.txt     | 30 +++---
+ arch/arm/boot/dts/am3517_mt_ventoux.dts       |  2 +-
+ .../boot/dts/logicpd-som-lv-35xx-devkit.dts   |  2 +-
+ .../boot/dts/logicpd-torpedo-35xx-devkit.dts  |  2 +-
+ arch/arm/boot/dts/omap3-beagle-xm.dts         |  2 +-
+ arch/arm/boot/dts/omap3-beagle.dts            |  2 +-
+ arch/arm/boot/dts/omap3-cm-t3530.dts          |  2 +-
+ arch/arm/boot/dts/omap3-cm-t3730.dts          |  2 +-
+ arch/arm/boot/dts/omap3-devkit8000-lcd43.dts  |  2 +-
+ arch/arm/boot/dts/omap3-devkit8000-lcd70.dts  |  2 +-
+ arch/arm/boot/dts/omap3-devkit8000.dts        |  2 +-
+ arch/arm/boot/dts/omap3-gta04.dtsi            |  2 +-
+ arch/arm/boot/dts/omap3-ha-lcd.dts            |  2 +-
+ arch/arm/boot/dts/omap3-ha.dts                |  2 +-
+ arch/arm/boot/dts/omap3-igep0020-rev-f.dts    |  2 +-
+ arch/arm/boot/dts/omap3-igep0020.dts          |  2 +-
+ arch/arm/boot/dts/omap3-igep0030-rev-g.dts    |  2 +-
+ arch/arm/boot/dts/omap3-igep0030.dts          |  2 +-
+ arch/arm/boot/dts/omap3-ldp.dts               |  2 +-
+ arch/arm/boot/dts/omap3-lilly-a83x.dtsi       |  2 +-
+ arch/arm/boot/dts/omap3-lilly-dbb056.dts      |  2 +-
+ arch/arm/boot/dts/omap3-n9.dts                |  2 +-
+ arch/arm/boot/dts/omap3-n950-n9.dtsi          |  7 --
+ arch/arm/boot/dts/omap3-n950.dts              |  2 +-
+ .../arm/boot/dts/omap3-overo-storm-alto35.dts |  2 +-
+ .../boot/dts/omap3-overo-storm-chestnut43.dts |  2 +-
+ .../boot/dts/omap3-overo-storm-gallop43.dts   |  2 +-
+ .../arm/boot/dts/omap3-overo-storm-palo35.dts |  2 +-
+ .../arm/boot/dts/omap3-overo-storm-palo43.dts |  2 +-
+ .../arm/boot/dts/omap3-overo-storm-summit.dts |  2 +-
+ arch/arm/boot/dts/omap3-overo-storm-tobi.dts  |  2 +-
+ .../boot/dts/omap3-overo-storm-tobiduo.dts    |  2 +-
+ arch/arm/boot/dts/omap3-pandora-1ghz.dts      |  2 +-
+ arch/arm/boot/dts/omap3-sbc-t3530.dts         |  2 +-
+ arch/arm/boot/dts/omap3-sbc-t3730.dts         |  2 +-
+ arch/arm/boot/dts/omap3-sniper.dts            |  2 +-
+ arch/arm/boot/dts/omap3-thunder.dts           |  2 +-
+ arch/arm/boot/dts/omap3-zoom3.dts             |  2 +-
+ arch/arm/boot/dts/omap3430-sdp.dts            |  2 +-
+ arch/arm/boot/dts/omap34xx.dtsi               | 65 +++++++++++--
+ arch/arm/boot/dts/omap36xx.dtsi               | 53 +++++++++--
+ drivers/cpufreq/cpufreq-dt-platdev.c          |  2 +-
+ drivers/cpufreq/ti-cpufreq.c                  | 91 ++++++++++++++++++-
+ 43 files changed, 245 insertions(+), 77 deletions(-)
+
+-- 
+2.19.1
+
