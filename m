@@ -2,98 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E07DAC99C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 23:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1D8CAC9A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 00:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392508AbfIGVyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 17:54:39 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36231 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732629AbfIGVyj (ORCPT
+        id S2393417AbfIGWAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 18:00:32 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:33018 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728155AbfIGWAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 17:54:39 -0400
-Received: by mail-lf1-f67.google.com with SMTP id x80so7714726lff.3
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2019 14:54:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=hN0jvl6j8u77xJuBLL+drjAkq7rIZstscMwxbKXGlcs=;
-        b=Y0VUMba/EE15vXulSXl2mxGRwdoD8hekjpQ0XAZvudLdaxUEO/Ge/oXviEphe1theu
-         sUaRjpJT0zZpnLyRhFM+SQykvCseGKhgRgQDuCCLPqXmVC2O2xq+XNBEeQnsAT8GXQYi
-         luck/JO5XIqX8+mF3bzUOXyelhH1kDPgywPCkr5xF1IWZECOa+Ibv2wMo6obhXPk0chd
-         uXmij8AkNkR9v1AIlo7G8yqzQQoN9NC5KHI1YB+D2PwcxixSXYg1WJbujKXpxjURTXQC
-         zoOOQYXN82m2sMyFVPwOXvEDOmA8+L9HBgN9YZ47QR4qO3KXFbQrhBCSgRTiWrlt69uk
-         IZxA==
+        Sat, 7 Sep 2019 18:00:32 -0400
+Received: from mr4.cc.vt.edu (mr4.cc.ipv6.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x87M0UdC028728
+        for <linux-kernel@vger.kernel.org>; Sat, 7 Sep 2019 18:00:30 -0400
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x87M0PlP021097
+        for <linux-kernel@vger.kernel.org>; Sat, 7 Sep 2019 18:00:30 -0400
+Received: by mail-qk1-f198.google.com with SMTP id 11so11296233qkh.15
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2019 15:00:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=hN0jvl6j8u77xJuBLL+drjAkq7rIZstscMwxbKXGlcs=;
-        b=lsRyqbAdTGQ+Y7D50f4yXdzl2sCLB273RvSnAC5PQG/7TW7ABYW5sPn1hEufCNd9pH
-         5XbDch2U4rxL/oeT8aubozxUjsjrNAu9mAhN1qrDJ54wZoRO5xd4LLMUr6IlYDvWZ+Yp
-         5Ckn33OMrsK09h1uBPW6LM5/GXWtFyrNnG4yo61nxLe9ENJ7XWpGuTczjBzuLQdpkFUa
-         Vp7bObOBWfPOdufQvk/uVK7SuZAR7wfXxgJf+0U63qerxWwGXUUFccmXGkFTVqrEey3+
-         U/+u+AGByBBoZP0f/6On803TgV24efJbgYsJFv/XiZkTn1FkIOGiPvp5G5tep/pEt2z7
-         LblQ==
-X-Gm-Message-State: APjAAAVEqE7cU4cgk05nov7Jp2xKVrNV6HqQkEkW1HjHwG5rA3YcM34Z
-        lyteqae903CzABJot/3I9XT7f9MXh4yZ8Ut59yI=
-X-Google-Smtp-Source: APXvYqyuc4Lco5oov5IVteYjknAaU6u9YdKTWpAcCVaAmL99zWloe3DrvKUkypqV2DEDLFXvmhZzQTIR7FsJ0XdrRL4=
-X-Received: by 2002:ac2:5a07:: with SMTP id q7mr10507449lfn.177.1567893277169;
- Sat, 07 Sep 2019 14:54:37 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab3:6d37:0:0:0:0:0 with HTTP; Sat, 7 Sep 2019 14:54:36 -0700 (PDT)
-From:   Mariam Kabore <mrsmmkb@gmail.com>
-Date:   Sat, 7 Sep 2019 14:54:36 -0700
-X-Google-Sender-Auth: s49JvPemMAvYC-HIYGBe-n2hp1Q
-Message-ID: <CAL+mA0etRTuuQzibAJ5Ay5E7D6hDEobzjZsJ+oKjQz=WFu9vsg@mail.gmail.com>
-Subject: Attention please
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=d5RC79Buy5HMk4tZvkA/Hlr/NOCgip4Ja28CcC6gZL0=;
+        b=uGz/qWusjqikKO6PTwGMZ9KYigC9p0gvRARThsO5bsf+AFyFeLFhi2g8LwVBdCFUbV
+         9Ilj83om9oZMbcQCWoyPwc6Eo7NV0tnWRtA6HYYp9AuuHgBlPFmgAmam/mRJ+tSduLCJ
+         EjuGYsHAeggvsM9C7QfApdDbVh/UzfnPQZzXZjyGBqb2yGsYYubOwFI6IXb+Y7BQ5/x4
+         iI/XNJyAs1Y+okT0ULIPcjjToANDUdAhd6ye4strJc+QIhsMSessmzF/goLtOwwrTiu9
+         jrOYpZke+Cfs+BYhEqTl1HKCMss10DeTWhdo5Q+CiZeDQymoBiqeEN1xRIkBZxwRFfi7
+         NnvA==
+X-Gm-Message-State: APjAAAWb/vNNjXy5hvXMWZhHdEtAojd8mP+0rj14jAlkP0YFGdC4Ix96
+        OTrquVAI/F1rrTcSKG98u+5NsbP7D27P0e5chIJz3KN7Sl2xezvYfhDb5S0OIqi4bZG11wXE6Ew
+        p5EUNxPun/JTDJtgdmHcPycGpImjDHTl3mIo=
+X-Received: by 2002:ac8:4787:: with SMTP id k7mr15943212qtq.58.1567893625332;
+        Sat, 07 Sep 2019 15:00:25 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqz6L5IMHBnhHbnmSs5yG97dUOtsTFLjPBVLfrc+3iUsFrpar4JJxW1ohr/+/X7T10ZBULYWSQ==
+X-Received: by 2002:ac8:4787:: with SMTP id k7mr15943194qtq.58.1567893625099;
+        Sat, 07 Sep 2019 15:00:25 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4341::359])
+        by smtp.gmail.com with ESMTPSA id t32sm4064196qtb.64.2019.09.07.15.00.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Sep 2019 15:00:23 -0700 (PDT)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Theodore Dubois <tbodt@google.com>
+Cc:     a.p.zijlstra@chello.nl, linux-kernel@vger.kernel.org,
+        kernelnewbies@kernelnewbies.org
+Subject: Re: perf_event wakeup_events = 0
+In-Reply-To: <123C743E-C322-45DB-8796-BF6B6EE9CA80@google.com>
+References: <CAN3rvwA+Dnqj4O79f6rNfO50VjbAC3YwJ7CW2ze2aBLzkSJRgQ@mail.gmail.com> <943813.1567863629@turing-police>
+ <123C743E-C322-45DB-8796-BF6B6EE9CA80@google.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1567893622_4251P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Sat, 07 Sep 2019 18:00:22 -0400
+Message-ID: <970896.1567893622@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear sir/madam
+--==_Exmh_1567893622_4251P
+Content-Type: text/plain; charset=us-ascii
 
-My name is Mrs. Mariam Kabore. I have decided to seek a confidential
-co-operation with you for the execution of the deal described
-hereunder for our mutual benefit. I Hope you will keep it a secret due
-to the nature of the transaction. During the course of our audit last
-month, I discovered an unclaimed/abandoned fund total US$3.5 million
-in a bank account that belongs to a customer who unfortunately lost
-his life and entire family in a car accident.
+On Sat, 07 Sep 2019 09:14:49 -0700, Theodore Dubois said:
 
-Now our bank has been waiting for any of the relatives to come-up for
-the claim but nobody has done that. I personally has been unsuccessful
-in locating any of the relatives, now, I sincerely seek your consent
-to present you as the next of kin / Will Beneficiary to the deceased
-so that the proceeds of this account valued at {US$3.5 Million United
-State Dollars} can be paid to you, which we will share in these
-percentages ratio, 60% to me and 40% to you. All I request is your
-utmost sincere co- operation; trust and maximum confidentiality to
-achieve this project successfully. I have carefully mapped out the
-moralities for execution of this transaction under a legitimate
-arrangement to protect you from any breach of the law both in your
-country and here in my country when the fund is being transferred to
-your bank account.
+> If I’m reading this right, this is a sampling event which overflows 4000
+> times a second. But perf then does a poll call which wakes up on this FD with
+> POLLIN after 1.637 seconds, instead of 0.00025 seconds.
 
-I will have to provide the entire relevant document that will be
-requested to indicate that you are the rightful beneficiary of this
-legacy and our bank will release the fund to you without any further
-delay, upon your consideration and acceptance of this offer, please
-send me the following information as stated below so we can proceed
-and get this fund transferred to your designated bank account
-immediately. I, know much about the existence of this fund and the
-secrets surrounding this money.
+No, it *takes a sample* 4,000 times a second.  For instance, number of cache line
+misses since the last sample.  You get an overflow when the counter wraps because
+there have been more than 2^32 events since you read the counter.
 
--Your Full Name:
--Your Contact Address:
--Your direct Mobile telephone Number:
--Your Date of Birth:
--Your occupation:
-I await your swift response and re-assurance so we commence this
-transaction immediately.
+At least that's my understanding of it.
 
-Best regards,
-Mrs Mariam Kabore
+--==_Exmh_1567893622_4251P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXXQodQdmEQWDXROgAQJ+QA//Y7bnaoeVIZUihrGcDtSkFVLns70+qzqW
+VaXsX9cgCMTTJqYPRSaIN4+9nmtpQgHJ5eLHgDSg8rL4A8dbEp3hsjIADB4hF8fv
+bkzmM/6WPQ/CWIaXr5kDNCE39LO6iYIIGx9YNc6xoomGocLXGZ/KSpoUUhrumFmP
+s5H7NHk3IbsSTrua2iz5N74WTeLEiKbeQplG/l6VVkCH0FpWNRepzxAuRieThBkN
+qoVMXmxxAdv9J1xcH7NIfLWSfRe5wLelBO8vMTg3FjgJGF9NrNXWfYBMaqj5/6Bx
+FtQfOSpP6Uv1ndlZvoHdmSDPVdvgNdsmFVlm+pKVSfkJYRGHkb7UydVht7mZfUAS
+cHNWYYe66vWTJtV6e2za/FmtWkkYcc9zYvjmPuDRHJ/SWM3z0s6JbmHRdRaUgWoU
+UTkPGbR4arxxdElV6BslNg0ingBz5oTOqbiJNcxh8SbLlyBC/IlLA2w7NSdfuchW
+WTjljZfBaGSk7Aj4b1DDKuZxnJsqGL4rTz63qbGFUOyDB8DirxOH51gNcxe64rBz
+87k5lI8Z9X4jp7sExqZ3GtHj+0MnnZWPXemIOdWzZaO3x95hKjCNNLN7PRuZkUGx
+5a4AgX4VnQPF72KNEsiArKdjT5XE4vOVwkc4Nb8fhhpzGXumFwPEPk40mF+crSm6
+toSJHUUPC3o=
+=5Lt7
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1567893622_4251P--
