@@ -2,253 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D1CEAC391
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 02:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3094AC39C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 02:14:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393497AbfIGAOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Sep 2019 20:14:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15460 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2393438AbfIGAOJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Sep 2019 20:14:09 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8707Hk5071220;
-        Fri, 6 Sep 2019 20:14:01 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uuvjq1tud-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Sep 2019 20:14:01 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8707Jne071333;
-        Fri, 6 Sep 2019 20:14:01 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uuvjq1ttt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Sep 2019 20:14:00 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8709NhY013987;
-        Sat, 7 Sep 2019 00:13:58 GMT
-Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma03dal.us.ibm.com with ESMTP id 2uqgh82ch1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 07 Sep 2019 00:13:58 +0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x870Duhh54526334
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 7 Sep 2019 00:13:56 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0521A124052;
-        Sat,  7 Sep 2019 00:13:56 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C6C7124053;
-        Sat,  7 Sep 2019 00:13:55 +0000 (GMT)
-Received: from oc4221205838.ibm.com (unknown [9.85.134.207])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat,  7 Sep 2019 00:13:55 +0000 (GMT)
-From:   Matthew Rosato <mjrosato@linux.ibm.com>
-To:     sebott@linux.ibm.com
-Cc:     gerald.schaefer@de.ibm.com, pasic@linux.ibm.com,
-        borntraeger@de.ibm.com, walling@linux.ibm.com,
-        linux-s390@vger.kernel.org, iommu@lists.linux-foundation.org,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com, kvm@vger.kernel.org,
-        heiko.carstens@de.ibm.com, robin.murphy@arm.com, gor@linux.ibm.com,
-        cohuck@redhat.com, pmorel@linux.ibm.com
-Subject: [PATCH v4 4/4] vfio: pci: Using a device region to retrieve zPCI information
-Date:   Fri,  6 Sep 2019 20:13:51 -0400
-Message-Id: <1567815231-17940-5-git-send-email-mjrosato@linux.ibm.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1567815231-17940-1-git-send-email-mjrosato@linux.ibm.com>
-References: <1567815231-17940-1-git-send-email-mjrosato@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-06_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909070000
+        id S2393615AbfIGAOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Sep 2019 20:14:35 -0400
+Received: from gate.crashing.org ([63.228.1.57]:60775 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393514AbfIGAOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Sep 2019 20:14:35 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x870ECjk029556;
+        Fri, 6 Sep 2019 19:14:13 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x870EBLS029555;
+        Fri, 6 Sep 2019 19:14:11 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Fri, 6 Sep 2019 19:14:11 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Jakub Jelinek <jakub@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "gcc-patches@gcc.gnu.org" <gcc-patches@gcc.gnu.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Subject: Re: [PATCH v2 4/6] compiler-gcc.h: add asm_inline definition
+Message-ID: <20190907001411.GG9749@gate.crashing.org>
+References: <CANiq72nXXBgwKcs36R+uau2o1YypfSFKAYWV2xmcRZgz8LRQww@mail.gmail.com> <20190906122349.GZ9749@gate.crashing.org> <CANiq72=3Vz-_6ctEzDQgTA44jmfSn_XZTS8wP1GHgm31Xm8ECw@mail.gmail.com> <20190906163028.GC9749@gate.crashing.org> <20190906163918.GJ2120@tucnak> <CAKwvOd=MT_=U250tR+t0jTtj7SxKJjnEZ1FmR3ir_PHjcXFLVw@mail.gmail.com> <20190906220347.GD9749@gate.crashing.org> <CAKwvOdnWBV35SCRHwMwXf+nrFc+D1E7BfRddb20zoyVJSdecCA@mail.gmail.com> <20190906225606.GF9749@gate.crashing.org> <CAKwvOdk-AQVJnD6-=Z0eUQ6KPvDp2eS2zUV=-oL2K2JBCYaOeQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdk-AQVJnD6-=Z0eUQ6KPvDp2eS2zUV=-oL2K2JBCYaOeQ@mail.gmail.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pierre Morel <pmorel@linux.ibm.com>
+On Fri, Sep 06, 2019 at 04:42:58PM -0700, Nick Desaulniers via gcc-patches wrote:
+> On Fri, Sep 6, 2019 at 3:56 PM Segher Boessenkool
+> <segher@kernel.crashing.org> wrote:
+> Oh, I misunderstood.  I see your point.  Define the symbol as a number
+> for what level of output flags you support (ie. the __cplusplus
+> macro).
 
-We define a new configuration entry for VFIO/PCI, VFIO_PCI_ZDEV
+That works if history is linear.  I guess with enough effort we can make
+that work in most cases (for backports it is a problem, if you want to
+support a new feature -- or bugfix! -- you need to support all previous
+ones as well...  Distros are going to hate us, too ;-) )
 
-When the VFIO_PCI_ZDEV feature is configured we initialize
-a new device region, VFIO_REGION_SUBTYPE_ZDEV_CLP, to hold
-the information from the ZPCI device the use
+> > > I don't think so.  Can you show me an example codebase that proves me wrong?
+> >
+> > No, of course not, because we aren't silly enough to implement something
+> > like that.
+> 
+> I still don't think feature detection is worse than version detection
+> (until you find your feature broken in a way that forces the use of
+> version detection).
 
-Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
----
- drivers/vfio/pci/Kconfig            |  7 +++
- drivers/vfio/pci/Makefile           |  1 +
- drivers/vfio/pci/vfio_pci.c         |  9 ++++
- drivers/vfio/pci/vfio_pci_private.h | 10 +++++
- drivers/vfio/pci/vfio_pci_zdev.c    | 85 +++++++++++++++++++++++++++++++++++++
- 5 files changed, 112 insertions(+)
- create mode 100644 drivers/vfio/pci/vfio_pci_zdev.c
+*You* bring up version detection.  I don't.  You want some halfway thing,
+with some macros that say what version some part of your compiler is.
 
-diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
-index ac3c1dd..d4562a8 100644
---- a/drivers/vfio/pci/Kconfig
-+++ b/drivers/vfio/pci/Kconfig
-@@ -45,3 +45,10 @@ config VFIO_PCI_NVLINK2
- 	depends on VFIO_PCI && PPC_POWERNV
- 	help
- 	  VFIO PCI support for P9 Witherspoon machine with NVIDIA V100 GPUs
-+
-+config VFIO_PCI_ZDEV
-+	bool "VFIO PCI Generic for ZPCI devices"
-+	depends on VFIO_PCI && S390
-+	default y
-+	help
-+	  VFIO PCI support for S390 Z-PCI devices
-diff --git a/drivers/vfio/pci/Makefile b/drivers/vfio/pci/Makefile
-index f027f8a..781e080 100644
---- a/drivers/vfio/pci/Makefile
-+++ b/drivers/vfio/pci/Makefile
-@@ -3,5 +3,6 @@
- vfio-pci-y := vfio_pci.o vfio_pci_intrs.o vfio_pci_rdwr.o vfio_pci_config.o
- vfio-pci-$(CONFIG_VFIO_PCI_IGD) += vfio_pci_igd.o
- vfio-pci-$(CONFIG_VFIO_PCI_NVLINK2) += vfio_pci_nvlink2.o
-+vfio-pci-$(CONFIG_VFIO_PCI_ZDEV) += vfio_pci_zdev.o
- 
- obj-$(CONFIG_VFIO_PCI) += vfio-pci.o
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index 703948c..b40544a 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -356,6 +356,15 @@ static int vfio_pci_enable(struct vfio_pci_device *vdev)
- 		}
- 	}
- 
-+	if (IS_ENABLED(CONFIG_VFIO_PCI_ZDEV)) {
-+		ret = vfio_pci_zdev_init(vdev);
-+		if (ret) {
-+			dev_warn(&vdev->pdev->dev,
-+				 "Failed to setup ZDEV regions\n");
-+			goto disable_exit;
-+		}
-+	}
-+
- 	vfio_pci_probe_mmaps(vdev);
- 
- 	return 0;
-diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
-index ee6ee91..08e02f5 100644
---- a/drivers/vfio/pci/vfio_pci_private.h
-+++ b/drivers/vfio/pci/vfio_pci_private.h
-@@ -186,4 +186,14 @@ static inline int vfio_pci_ibm_npu2_init(struct vfio_pci_device *vdev)
- 	return -ENODEV;
- }
- #endif
-+
-+#ifdef CONFIG_VFIO_PCI_ZDEV
-+extern int vfio_pci_zdev_init(struct vfio_pci_device *vdev);
-+#else
-+static inline int vfio_pci_zdev_init(struct vfio_pci_device *vdev)
-+{
-+	return -ENODEV;
-+}
-+#endif
-+
- #endif /* VFIO_PCI_PRIVATE_H */
-diff --git a/drivers/vfio/pci/vfio_pci_zdev.c b/drivers/vfio/pci/vfio_pci_zdev.c
-new file mode 100644
-index 0000000..22e2b60
---- /dev/null
-+++ b/drivers/vfio/pci/vfio_pci_zdev.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * VFIO ZPCI devices support
-+ *
-+ * Copyright (C) IBM Corp. 2019.  All rights reserved.
-+ *	Author: Pierre Morel <pmorel@linux.ibm.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+#include <linux/io.h>
-+#include <linux/pci.h>
-+#include <linux/uaccess.h>
-+#include <linux/vfio.h>
-+#include <linux/vfio_zdev.h>
-+
-+#include "vfio_pci_private.h"
-+
-+static size_t vfio_pci_zdev_rw(struct vfio_pci_device *vdev,
-+			       char __user *buf, size_t count, loff_t *ppos,
-+			       bool iswrite)
-+{
-+	struct vfio_region_zpci_info *region;
-+	struct zpci_dev *zdev;
-+	unsigned int index = VFIO_PCI_OFFSET_TO_INDEX(*ppos);
-+	loff_t pos = *ppos & VFIO_PCI_OFFSET_MASK;
-+
-+	if (!vdev->pdev->bus)
-+		return -ENODEV;
-+
-+	zdev = vdev->pdev->bus->sysdata;
-+	if (!zdev)
-+		return -ENODEV;
-+
-+	if (pos >= sizeof(*region) || iswrite)
-+		return -EINVAL;
-+
-+	region = vdev->region[index - VFIO_PCI_NUM_REGIONS].data;
-+	region->dasm = zdev->dma_mask;
-+	region->start_dma = zdev->start_dma;
-+	region->end_dma = zdev->end_dma;
-+	region->msi_addr = zdev->msi_addr;
-+	region->flags = VFIO_PCI_ZDEV_FLAGS_REFRESH;
-+	region->gid = zdev->pfgid;
-+	region->mui = zdev->fmb_update;
-+	region->noi = zdev->max_msi;
-+	memcpy(region->util_str, zdev->util_str, CLP_UTIL_STR_LEN);
-+
-+	count = min(count, (size_t)(sizeof(*region) - pos));
-+	if (copy_to_user(buf, region, count))
-+		return -EFAULT;
-+
-+	return count;
-+}
-+
-+static void vfio_pci_zdev_release(struct vfio_pci_device *vdev,
-+				  struct vfio_pci_region *region)
-+{
-+	kfree(region->data);
-+}
-+
-+static const struct vfio_pci_regops vfio_pci_zdev_regops = {
-+	.rw		= vfio_pci_zdev_rw,
-+	.release	= vfio_pci_zdev_release,
-+};
-+
-+int vfio_pci_zdev_init(struct vfio_pci_device *vdev)
-+{
-+	struct vfio_region_zpci_info *region;
-+	int ret;
-+
-+	region = kmalloc(sizeof(*region) + CLP_UTIL_STR_LEN, GFP_KERNEL);
-+	if (!region)
-+		return -ENOMEM;
-+
-+	ret = vfio_pci_register_dev_region(vdev,
-+		PCI_VENDOR_ID_IBM | VFIO_REGION_TYPE_PCI_VENDOR_TYPE,
-+		VFIO_REGION_SUBTYPE_ZDEV_CLP,
-+		&vfio_pci_zdev_regops, sizeof(*region) + CLP_UTIL_STR_LEN,
-+		VFIO_REGION_INFO_FLAG_READ, region);
-+
-+	return ret;
-+}
--- 
-1.8.3.1
+I say to just detect the feature you want, and if it actually works the
+way you want it, etc.
 
+> Just to prove my point about version checks being brittle, it looks
+> like Rasmus' version check isn't even right.  GCC supported `asm
+> inline` back in the 8.3 release, not 9.1 as in this patch:
+
+Yes, I backported it so that it is available in 7.5, 8.3, and 9.1, so
+that more users will have this available sooner.  (7.5 has not been
+released yet, but asm inline has been supported in GCC 7 since Jan 2
+this year).
+
+> Or was it "broken" until 9.1?  Lord knows, as `asm inline` wasn't in
+> any release notes or bug reports I can find:
+
+https://gcc.gnu.org/ml/gcc-patches/2019-02/msg01143.html
+
+It never was accepted, and I dropped the ball.
+
+> Ah, here it is:
+> https://github.com/gcc-mirror/gcc/commit/6de46ad5326fc5e6b730a2feb8c62d09c1561f92
+> Which looks like the qualifier was added to this page:
+> https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+
+Sure, it is part of the documentation just fine.  And it works just fine
+too, it is a *very* simple feature.  By design.
+
+> I like many of the GNU C extensions, and I want to help support them
+> in Clang so that they can be used in more places, but the current
+> process (and questions I have when I implement some of them) leaves me
+> with the sense that there's probably room for improvement on some of
+> these things before they go out the door.
+> 
+> Segher, next time there's discussion about new C extensions for the
+> kernel, can you please include me in the discussions?
+
+You can lurk on gcc-patches@ and/or gcc@?  But I'll try to remember, sure.
+Not that I am involved in all such discussions myself, mind.
+
+
+Segher
