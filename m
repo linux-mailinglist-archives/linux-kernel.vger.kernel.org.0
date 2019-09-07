@@ -2,121 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70E13AC77F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 18:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF6A4AC785
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 18:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394858AbfIGQFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 12:05:32 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:38239 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392003AbfIGQFc (ORCPT
+        id S2394828AbfIGQIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 12:08:10 -0400
+Received: from smtprelay0145.hostedemail.com ([216.40.44.145]:46128 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731928AbfIGQIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 12:05:32 -0400
-X-IronPort-AV: E=Sophos;i="5.64,477,1559512800"; 
-   d="scan'208";a="400701616"
-Received: from abo-12-105-68.mrs.modulonet.fr (HELO hadrien) ([85.68.105.12])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2019 18:05:29 +0200
-Date:   Sat, 7 Sep 2019 18:05:29 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     Coccinelle <cocci@systeme.lip6.fr>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <lkml@metux.net>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>
-Subject: =?UTF-8?Q?Re=3A_Adjusting_SmPL_script_=E2=80=9Cptr=5Fret=2Ecocci?=
- =?UTF-8?Q?=E2=80=9D=3F?=
-In-Reply-To: <c8e0db8a-1f96-dac0-791c-43e2d1e1cf05@web.de>
-Message-ID: <alpine.DEB.2.21.1909071804090.2562@hadrien>
-References: <c8e0db8a-1f96-dac0-791c-43e2d1e1cf05@web.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 7 Sep 2019 12:08:09 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 46B9B181D33FB;
+        Sat,  7 Sep 2019 16:08:08 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:152:355:379:599:800:960:973:982:988:989:1252:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:3138:3139:3140:3141:3142:3352:3622:3653:3865:3868:3870:3871:3873:3874:4321:5007:6119:7903:10004:10044:10400:10848:11232:11658:11914:12297:12740:12895:13069:13311:13357:13894:14181:14659:14721:21080:21627:21740:30029:30052:30054:30083:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: boy17_46f3026a4863f
+X-Filterd-Recvd-Size: 1730
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Sat,  7 Sep 2019 16:08:07 +0000 (UTC)
+Message-ID: <8d6586f8772dd68695b9348ef977f2d9afa7645d.camel@perches.com>
+Subject: Re: [PATCH] Fixed parentheses malpractice in apex_driver.c
+From:   Joe Perches <joe@perches.com>
+To:     Sandro Volery <sandro@volery.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 07 Sep 2019 09:08:06 -0700
+In-Reply-To: <10B80D83-A473-4F46-8CCC-C50231DC42EA@volery.com>
+References: <25c248afff16f2b16b1c7ca4209e8ab727113f0d.camel@perches.com>
+         <10B80D83-A473-4F46-8CCC-C50231DC42EA@volery.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-185961993-1567872329=:2562"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Sat, 2019-09-07 at 17:56 +0200, Sandro Volery wrote:
+> > On 7 Sep 2019, at 17:44, Joe Perches <joe@perches.com> wrote:
+> > 
+> > ﻿On Sat, 2019-09-07 at 17:34 +0200, Sandro Volery wrote:
+> > > On patchwork I entered 'volery' as my username because I didn't know better, and now checkpatch always complains when I add 'signed-off-by' with my actual full name.
+> > 
+> > How does checkpatch complain?
+> > There is no connection between patchwork
+> > and checkpatch.
+> 
+> Checkpatch tells me that I haven't used 'volery' as
+> my signed off name.
 
---8323329-185961993-1567872329=:2562
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Please send the both the patch and the actual checkpatch output
+you get when running 'perl ./scripts/checkpatch.pl <patch>'
+
+If this patch is a commit in your own local git tree:
+
+$ git format-patch -1 --stdout <commit_id> > tmp
+$ perl ./scripts/checkpatch.pl --strict tmp
+
+and send tmp and the checkpatch output.
 
 
-
-On Sat, 7 Sep 2019, Markus Elfring wrote:
-
-> Hello,
->
-> I have taken another look at a known script for the semantic patch language.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/coccinelle/api/ptr_ret.cocci?id=1e3778cb223e861808ae0daccf353536e7573eed#n3
->
-> I got the impression that duplicate SmPL code can be reduced here.
-> So I tried the following approach out.
->
-> …
-> @depends on patch@
-> expression ptr;
-> @@
-> (
-> (
-> - if (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
-> |
-> - if (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
-> )
-> + return PTR_ERR_OR_ZERO(ptr);
-> |
-> - (IS_ERR(ptr) ? PTR_ERR(ptr) : 0)
-> + PTR_ERR_OR_ZERO(ptr)
-> )
-> …
->
->
-> Unfortunately, I got the following information then for a test transformation.
->
-> elfring@Sonne:~/Projekte/Linux/next-patched> spatch -D patch scripts/coccinelle/api/ptr_ret.cocci drivers/spi/spi-gpio.c
-> …
-> 29: no available token to attach to
->
->
-> It seems that the Coccinelle software “1.0.7-00218-gf284bf36” does not like
-> the addition of the shown return statement after a nested SmPL disjunction.
-> But the following SmPL code variant seems to work as expected.
->
->
-> …
-> @depends on patch@
-> expression ptr;
-> @@
-> (
-> - if (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
-> + return PTR_ERR_OR_ZERO(ptr);
-> |
-> - if (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
-> + return PTR_ERR_OR_ZERO(ptr);
-> |
-> - (IS_ERR(ptr) ? PTR_ERR(ptr) : 0)
-> + PTR_ERR_OR_ZERO(ptr)
-> )
-> …
->
->
-> How do you think about to reduce subsequent SmPL rules also according to
-> a possible recombination of affected implementation details?
-
-There is not going to be any change with respect to this issue.  It's fine
-when replacing one statement by another, but introduces complexity when
-removing something more complex.  And there's not point to have something
-that works in only one special case.
-
-julia
---8323329-185961993-1567872329=:2562--
