@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB6FAC7A8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 18:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 182B2AC7A7
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Sep 2019 18:37:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394999AbfIGQhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 7 Sep 2019 12:37:24 -0400
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:16955 "EHLO
+        id S2394981AbfIGQhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 7 Sep 2019 12:37:20 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:16949 "EHLO
         www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392062AbfIGQhX (ORCPT
+        with ESMTP id S2392062AbfIGQhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Sep 2019 12:37:23 -0400
+        Sat, 7 Sep 2019 12:37:20 -0400
 Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x87GawEt091896;
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x87GawhE091901;
         Sun, 8 Sep 2019 01:36:58 +0900 (JST)
         (envelope-from katsuhiro@katsuster.net)
 Received: from www1102.sakura.ne.jp (219.94.129.142)
@@ -22,9 +22,9 @@ Received: from www1102.sakura.ne.jp (219.94.129.142)
 X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
 Received: from localhost.localdomain (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
         (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x87GatL2091872
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x87GatL3091872
         (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 8 Sep 2019 01:36:57 +0900 (JST)
+        Sun, 8 Sep 2019 01:36:58 +0900 (JST)
         (envelope-from katsuhiro@katsuster.net)
 From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
 To:     Mark Brown <broonie@kernel.org>,
@@ -33,10 +33,12 @@ To:     Mark Brown <broonie@kernel.org>,
         Hans de Goede <hdegoede@redhat.com>
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Subject: [PATCH 1/2] ASoC: es8316: fix redundant codes of clock
-Date:   Sun,  8 Sep 2019 01:36:52 +0900
-Message-Id: <20190907163653.9382-1-katsuhiro@katsuster.net>
+Subject: [PATCH 2/2] ASoC: es8316: support fixed and variable both clock rates
+Date:   Sun,  8 Sep 2019 01:36:53 +0900
+Message-Id: <20190907163653.9382-2-katsuhiro@katsuster.net>
 X-Mailer: git-send-email 2.23.0.rc1
+In-Reply-To: <20190907163653.9382-1-katsuhiro@katsuster.net>
+References: <20190907163653.9382-1-katsuhiro@katsuster.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,89 +46,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes redundant null checks for optional MCLK clock.
-And fix DT binding document for changing clock property to optional
-from required.
+This patch supports some type of machine drivers that set 0 to mclk
+when sound device goes to idle state. After applied this patch,
+sysclk == 0 means there is no constraint of sound rate and other
+values will set constraints which is derived by sysclk setting.
+
+Original code refuses sysclk == 0 setting. But some boards and SoC
+(such as RockPro64 and RockChip I2S) has connected SoC MCLK out to
+ES8316 MCLK in. In this case, SoC side I2S will choose suitable
+frequency of MCLK such as fs * mclk-fs when user starts playing or
+capturing.
+
+Bad scenario as follows (mclk-fs = 256):
+  - Initialize sysclk by correct value (Ex. 12.288MHz)
+    - ES8316 set constraints of PCM rate by sysclk
+      48kHz (1/256), 32kHz (1/384), 30.720kHz (1/400),
+      24kHz (1/512), 16kHz (1/768), 12kHz (1/1024)
+  - Play 48kHz sound, it's acceptable
+  - Sysclk is not changed
+
+  - Play 32kHz sound, it's acceptable
+  - Set sysclk by 8.192MHz (= fs * mclk-fs = 32k * 256)
+    - ES8316 set constraints of PCM rate by sysclk
+      32kHz (1/256), 21.33kHz (1/384), 20.48kHz (1/400),
+      16kHz (1/512), 10.66kHz (1/768), 8kHz (1/1024)
+
+  - Play 48kHz again, but it's NOT acceptable because constraints
+    list does not allow 48kHz
 
 Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 ---
- .../bindings/sound/everest,es8316.txt         |  3 ++
- sound/soc/codecs/es8316.c                     | 31 ++++++++-----------
- 2 files changed, 16 insertions(+), 18 deletions(-)
+ sound/soc/codecs/es8316.c | 35 ++++++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/everest,es8316.txt b/Documentation/devicetree/bindings/sound/everest,es8316.txt
-index aefcff9c48a2..1bf03c5f2af4 100644
---- a/Documentation/devicetree/bindings/sound/everest,es8316.txt
-+++ b/Documentation/devicetree/bindings/sound/everest,es8316.txt
-@@ -6,6 +6,9 @@ Required properties:
- 
-   - compatible  : should be "everest,es8316"
-   - reg : the I2C address of the device for I2C
-+
-+Optional properties:
-+
-   - clocks : a list of phandle, should contain entries for clock-names
-   - clock-names : should include as follows:
-          "mclk" : master clock (MCLK) of the device
 diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
-index d07d50f51b28..1424ecd6952c 100644
+index 1424ecd6952c..36eef1fb3d18 100644
 --- a/sound/soc/codecs/es8316.c
 +++ b/sound/soc/codecs/es8316.c
-@@ -373,11 +373,9 @@ static int es8316_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- 	if (freq == 0)
+@@ -370,8 +370,12 @@ static int es8316_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 
+ 	es8316->sysclk = freq;
+ 
+-	if (freq == 0)
++	if (freq == 0) {
++		es8316->sysclk_constraints.list = NULL;
++		es8316->sysclk_constraints.count = 0;
++
  		return 0;
++	}
  
--	if (es8316->mclk) {
--		ret = clk_set_rate(es8316->mclk, freq);
--		if (ret)
--			return ret;
--	}
-+	ret = clk_set_rate(es8316->mclk, freq);
-+	if (ret)
-+		return ret;
- 
- 	/* Limit supported sample rates to ones that can be autodetected
- 	 * by the codec running in slave mode.
-@@ -712,20 +710,18 @@ static int es8316_probe(struct snd_soc_component *component)
- 
- 	es8316->component = component;
- 
--	es8316->mclk = devm_clk_get(component->dev, "mclk");
--	if (PTR_ERR(es8316->mclk) == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	es8316->mclk = devm_clk_get_optional(component->dev, "mclk");
- 	if (IS_ERR(es8316->mclk)) {
--		dev_err(component->dev, "clock is invalid, ignored\n");
--		es8316->mclk = NULL;
-+		dev_err(component->dev, "unable to get mclk\n");
-+		return PTR_ERR(es8316->mclk);
- 	}
-+	if (!es8316->mclk)
-+		dev_warn(component->dev, "assuming static mclk\n");
- 
--	if (es8316->mclk) {
--		ret = clk_prepare_enable(es8316->mclk);
--		if (ret) {
--			dev_err(component->dev, "unable to enable clock\n");
--			return ret;
--		}
-+	ret = clk_prepare_enable(es8316->mclk);
-+	if (ret) {
-+		dev_err(component->dev, "unable to enable mclk\n");
-+		return ret;
- 	}
- 
- 	/* Reset codec and enable current state machine */
-@@ -754,8 +750,7 @@ static void es8316_remove(struct snd_soc_component *component)
- {
+ 	ret = clk_set_rate(es8316->mclk, freq);
+ 	if (ret)
+@@ -450,17 +454,10 @@ static int es8316_pcm_startup(struct snd_pcm_substream *substream,
+ 	struct snd_soc_component *component = dai->component;
  	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
  
--	if (es8316->mclk)
--		clk_disable_unprepare(es8316->mclk);
-+	clk_disable_unprepare(es8316->mclk);
- }
+-	if (es8316->sysclk == 0) {
+-		dev_err(component->dev, "No sysclk provided\n");
+-		return -EINVAL;
+-	}
+-
+-	/* The set of sample rates that can be supported depends on the
+-	 * MCLK supplied to the CODEC.
+-	 */
+-	snd_pcm_hw_constraint_list(substream->runtime, 0,
+-				   SNDRV_PCM_HW_PARAM_RATE,
+-				   &es8316->sysclk_constraints);
++	if (es8316->sysclk_constraints.list)
++		snd_pcm_hw_constraint_list(substream->runtime, 0,
++					   SNDRV_PCM_HW_PARAM_RATE,
++					   &es8316->sysclk_constraints);
  
- static const struct snd_soc_component_driver soc_component_dev_es8316 = {
+ 	return 0;
+ }
+@@ -472,11 +469,19 @@ static int es8316_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_soc_component *component = dai->component;
+ 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
+ 	u8 wordlen = 0;
++	int i;
+ 
+-	if (!es8316->sysclk) {
+-		dev_err(component->dev, "No MCLK configured\n");
+-		return -EINVAL;
++	/* Validate supported sample rates that are autodetected from MCLK */
++	for (i = 0; i < NR_SUPPORTED_MCLK_LRCK_RATIOS; i++) {
++		const unsigned int ratio = supported_mclk_lrck_ratios[i];
++
++		if (es8316->sysclk % ratio != 0)
++			continue;
++		if (es8316->sysclk / ratio == params_rate(params))
++			break;
+ 	}
++	if (i == NR_SUPPORTED_MCLK_LRCK_RATIOS)
++		return -EINVAL;
+ 
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S16_LE:
 -- 
 2.23.0.rc1
 
