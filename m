@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DBACACE91
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0CABACE9E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfIHM6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:58:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34548 "EHLO mail.kernel.org"
+        id S1729913AbfIHMot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:44:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730466AbfIHMqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:46:43 -0400
+        id S1728979AbfIHMoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:44:46 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF0852081B;
-        Sun,  8 Sep 2019 12:46:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BC4C2081B;
+        Sun,  8 Sep 2019 12:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946803;
-        bh=unn06WB5Q3arhJ/2MJCg37Gwfm61AYem3C57a8cNxxc=;
+        s=default; t=1567946685;
+        bh=YC4A5FicODasF8B4WHyElnHgEqlJvrcGPU58B1FKcsY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PoQ8i7KTZCwCHkam02E7VWL+7SVitkuS+cVAZQVj6nkAmkN4eUfaxFmA/5qWvVJGT
-         WiqSL3JXKQP1emsvd5l3pkdsACR41kbOj5svh3iw25Olvr6nIvxe5xFF6FM+r9+FhK
-         GhJeqX54wbxaJB0QXL2JPssu5yMNXaTykBog6Z5M=
+        b=px6YvWiqb3nfw6Mv/5IHeAAgfuyuP8Ub2AN/F7ufKGyTkk4uQndM6Gvyj+mXYiOWy
+         McpFdIXNTrEQ74NvZgxeGa7cWcfO82Px1oRSqwdxoe+AMo9wefOMQ4jSGsioupkGyF
+         2R2AIlo8HTLQ6GMJCdzrdUD93rVNGYmiW4avNDWI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 10/40] cxgb4: fix a memory leak bug
-Date:   Sun,  8 Sep 2019 13:41:43 +0100
-Message-Id: <20190908121119.873316497@linuxfoundation.org>
+Subject: [PATCH 4.9 05/26] gpio: Fix build error of function redefinition
+Date:   Sun,  8 Sep 2019 13:41:44 +0100
+Message-Id: <20190908121058.510766060@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
+References: <20190908121057.216802689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c554336efa9bbc28d6ec14efbee3c7d63c61a34f ]
+[ Upstream commit 68e03b85474a51ec1921b4d13204782594ef7223 ]
 
-In blocked_fl_write(), 't' is not deallocated if bitmap_parse_user() fails,
-leading to a memory leak bug. To fix this issue, free t before returning
-the error.
+when do randbuilding, I got this error:
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In file included from drivers/hwmon/pmbus/ucd9000.c:19:0:
+./include/linux/gpio/driver.h:576:1: error: redefinition of gpiochip_add_pin_range
+ gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+ ^~~~~~~~~~~~~~~~~~~~~~
+In file included from drivers/hwmon/pmbus/ucd9000.c:18:0:
+./include/linux/gpio.h:245:1: note: previous definition of gpiochip_add_pin_range was here
+ gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+ ^~~~~~~~~~~~~~~~~~~~~~
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 964cb341882f ("gpio: move pincontrol calls to <linux/gpio/driver.h>")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20190731123814.46624-1-yuehaibing@huawei.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/linux/gpio.h | 24 ------------------------
+ 1 file changed, 24 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-index 76540b0e082d3..9e5cd18e7358c 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-@@ -2777,8 +2777,10 @@ static ssize_t blocked_fl_write(struct file *filp, const char __user *ubuf,
- 		return -ENOMEM;
+diff --git a/include/linux/gpio.h b/include/linux/gpio.h
+index d12b5d566e4b1..11555bd821b73 100644
+--- a/include/linux/gpio.h
++++ b/include/linux/gpio.h
+@@ -229,30 +229,6 @@ static inline int irq_to_gpio(unsigned irq)
+ 	return -EINVAL;
+ }
  
- 	err = bitmap_parse_user(ubuf, count, t, adap->sge.egr_sz);
--	if (err)
-+	if (err) {
-+		kvfree(t);
- 		return err;
-+	}
- 
- 	bitmap_copy(adap->sge.blocked_fl, t, adap->sge.egr_sz);
- 	kvfree(t);
+-static inline int
+-gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+-		       unsigned int gpio_offset, unsigned int pin_offset,
+-		       unsigned int npins)
+-{
+-	WARN_ON(1);
+-	return -EINVAL;
+-}
+-
+-static inline int
+-gpiochip_add_pingroup_range(struct gpio_chip *chip,
+-			struct pinctrl_dev *pctldev,
+-			unsigned int gpio_offset, const char *pin_group)
+-{
+-	WARN_ON(1);
+-	return -EINVAL;
+-}
+-
+-static inline void
+-gpiochip_remove_pin_ranges(struct gpio_chip *chip)
+-{
+-	WARN_ON(1);
+-}
+-
+ static inline int devm_gpio_request(struct device *dev, unsigned gpio,
+ 				    const char *label)
+ {
 -- 
 2.20.1
 
