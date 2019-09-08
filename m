@@ -2,81 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD0BDAD101
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 00:20:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2DA6AD10E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 00:38:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731096AbfIHWUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 18:20:08 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:46456 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbfIHWUI (ORCPT
+        id S1731155AbfIHWgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 18:36:55 -0400
+Received: from gateway30.websitewelcome.com ([192.185.168.15]:31459 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731098AbfIHWgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 18:20:08 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1i75XG-00036h-AF; Sun, 08 Sep 2019 22:19:54 +0000
-Date:   Sun, 8 Sep 2019 23:19:54 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v10 06/10] bpf,landlock: Add a new map type:
- inode
-Message-ID: <20190908221954.GD1131@ZenIV.linux.org.uk>
-References: <20190721213116.23476-1-mic@digikod.net>
- <20190721213116.23476-7-mic@digikod.net>
- <20190727014048.3czy3n2hi6hfdy3m@ast-mbp.dhcp.thefacebook.com>
- <a870c2c9-d2f7-e0fa-c8cc-35dbf8b5b87d@ssi.gouv.fr>
- <894922a2-1150-366c-3f08-c8b759da0742@digikod.net>
+        Sun, 8 Sep 2019 18:36:55 -0400
+X-Greylist: delayed 1500 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Sep 2019 18:36:55 EDT
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 2B77E1340
+        for <linux-kernel@vger.kernel.org>; Sun,  8 Sep 2019 16:49:53 -0500 (CDT)
+Received: from gator3122.hostgator.com ([50.87.144.157])
+        by cmsmtp with SMTP
+        id 754CiZNGP3Qi0754DiCTPv; Sun, 08 Sep 2019 16:49:53 -0500
+X-Authority-Reason: nr=8
+Received: from csalis75 by gator3122.hostgator.com with local (Exim 4.92)
+        (envelope-from <chestin@time4lifemedia.com>)
+        id 1i7540-0047oM-Pw; Sun, 08 Sep 2019 16:49:40 -0500
+Received: from 197.210.52.224 ([197.210.52.224]) (proxying for
+ 197.210.52.224)
+        (SquirrelMail authenticated user chestin@time4lifemedia.com)
+        by webmail.time4lifemedia.com with HTTP;
+        Sun, 8 Sep 2019 16:49:40 -0500
+Message-ID: <be85ca0798055ae793ed1a27d6a17677.squirrel@webmail.time4lifemedia.com>
+Date:   Sun, 8 Sep 2019 16:49:40 -0500
+Subject: $1,000,000.00 dollars 
+From:   "Chestin Salisbury" <chestin@time4lifemedia.com>
+Reply-To: chestin@time4lifemedia.com
+User-Agent: SquirrelMail/1.5.2 [SVN]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <894922a2-1150-366c-3f08-c8b759da0742@digikod.net>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator3122.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [32731 500] / [47 12]
+X-AntiAbuse: Sender Address Domain - time4lifemedia.com
+X-BWhitelist: no
+X-Source-IP: 
+X-Source-L: No
+X-Exim-ID: 1i7540-0047oM-Pw
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: /usr/local/cpanel/base/3rdparty/squirrelmail/src
+X-Source-Sender: 
+X-Source-Auth: csalis75
+X-Email-Count: 406
+X-Source-Cap: Y3NhbGlzNzU7Y3NhbGlzNzU7Z2F0b3IzMTIyLmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 12:09:57AM +0200, Mickaël Salaün wrote:
-
-> >>> +    rcu_read_lock();
-> >>> +    ptr = htab_map_lookup_elem(map, &inode);
-> >>> +    iput(inode);
-
-Wait a sec.  You are doing _what_ under rcu_read_lock()?
-
-> >>> +    if (IS_ERR(ptr)) {
-> >>> +            ret = PTR_ERR(ptr);
-> >>> +    } else if (!ptr) {
-> >>> +            ret = -ENOENT;
-> >>> +    } else {
-> >>> +            ret = 0;
-> >>> +            copy_map_value(map, value, ptr);
-> >>> +    }
-> >>> +    rcu_read_unlock();
+$1,000,000.00 dollars has been donated to you by Mavis L. Wanczyk who won
+the Powerball Jackpot of $758.7 million Dollars. Contact her via Email:
+maviswl204@gmail.com for more details
