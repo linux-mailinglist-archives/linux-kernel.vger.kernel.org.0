@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C6DACCE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E0CACD16
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbfIHMnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:43:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57304 "EHLO mail.kernel.org"
+        id S1730130AbfIHMpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:45:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729431AbfIHMnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:43:31 -0400
+        id S1730105AbfIHMp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:45:27 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F170218AE;
-        Sun,  8 Sep 2019 12:43:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4EE4216C8;
+        Sun,  8 Sep 2019 12:45:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946610;
-        bh=w2MmB0TGNdTTQo9XjSIhZEyJjp2+5TCwC5sI3zA9Jww=;
+        s=default; t=1567946727;
+        bh=pUdoNrICP2SZo2LI0cSNdDd/xTZ1ndo1yuzh48q9PEg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zPMm0kaerSC95CqJeFOKC2vjEDfGSicc2RrtRMTGetU/g77ZiEGmxCrtwJd2ZMcj1
-         /FI4Cwp/S+V6NFTIKqAiOKHfoeEh8U6IHYDxzIYphvmKB32PXl2lPxhCOEYhbMQbak
-         2A+ZUOnB3XEdrb3MA8l247RFumwTfG6059qoaPHY=
+        b=LITkyuu6IO6P4gGBPvLW+wwn3Wi7DjuNudjEqm4bCg9a4MAHm3Y3E8jMnJ3lyLlDS
+         FPO0ABlOQUfGEutevKXFX2/UGFfJkE3ps/AwHph7/jNf4P3Z9dswYNEothHoJIm9/J
+         bmhaX8fZ/ngDIRD8YHoNIyS1CzDAMXKgGXe2HUtw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luis Henriques <lhenriques@suse.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
+        stable@vger.kernel.org, Tho Vu <tho.vu.wh@rvc.renesas.com>,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 16/23] libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
+Subject: [PATCH 4.14 18/40] ravb: Fix use-after-free ravb_tstamp_skb
 Date:   Sun,  8 Sep 2019 13:41:51 +0100
-Message-Id: <20190908121100.477137033@linuxfoundation.org>
+Message-Id: <20190908121122.295865967@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
-References: <20190908121052.898169328@linuxfoundation.org>
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
+References: <20190908121114.260662089@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,30 +46,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5c498950f730aa17c5f8a2cdcb903524e4002ed2 ]
+[ Upstream commit cfef46d692efd852a0da6803f920cc756eea2855 ]
 
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+When a Tx timestamp is requested, a pointer to the skb is stored in the
+ravb_tstamp_skb struct. This was done without an skb_get. There exists
+the possibility that the skb could be freed by ravb_tx_free (when
+ravb_tx_free is called from ravb_start_xmit) before the timestamp was
+processed, leading to a use-after-free bug.
+
+Use skb_get when filling a ravb_tstamp_skb struct, and add appropriate
+frees/consumes when a ravb_tstamp_skb struct is freed.
+
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+Signed-off-by: Tho Vu <tho.vu.wh@rvc.renesas.com>
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/ceph/buffer.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/ceph/buffer.h b/include/linux/ceph/buffer.h
-index 07ca15e761001..dada47a4360ff 100644
---- a/include/linux/ceph/buffer.h
-+++ b/include/linux/ceph/buffer.h
-@@ -29,7 +29,8 @@ static inline struct ceph_buffer *ceph_buffer_get(struct ceph_buffer *b)
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index ce79af4a7f6fb..d73617cc3b159 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -1,6 +1,6 @@
+ /* Renesas Ethernet AVB device driver
+  *
+- * Copyright (C) 2014-2015 Renesas Electronics Corporation
++ * Copyright (C) 2014-2019 Renesas Electronics Corporation
+  * Copyright (C) 2015 Renesas Solutions Corp.
+  * Copyright (C) 2015-2016 Cogent Embedded, Inc. <source@cogentembedded.com>
+  *
+@@ -513,7 +513,10 @@ static void ravb_get_tx_tstamp(struct net_device *ndev)
+ 			kfree(ts_skb);
+ 			if (tag == tfa_tag) {
+ 				skb_tstamp_tx(skb, &shhwtstamps);
++				dev_consume_skb_any(skb);
+ 				break;
++			} else {
++				dev_kfree_skb_any(skb);
+ 			}
+ 		}
+ 		ravb_modify(ndev, TCCR, TCCR_TFR, TCCR_TFR);
+@@ -1576,7 +1579,7 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 					 DMA_TO_DEVICE);
+ 			goto unmap;
+ 		}
+-		ts_skb->skb = skb;
++		ts_skb->skb = skb_get(skb);
+ 		ts_skb->tag = priv->ts_skb_tag++;
+ 		priv->ts_skb_tag &= 0x3ff;
+ 		list_add_tail(&ts_skb->list, &priv->ts_skb_list);
+@@ -1704,6 +1707,7 @@ static int ravb_close(struct net_device *ndev)
+ 	/* Clear the timestamp list */
+ 	list_for_each_entry_safe(ts_skb, ts_skb2, &priv->ts_skb_list, list) {
+ 		list_del(&ts_skb->list);
++		kfree_skb(ts_skb->skb);
+ 		kfree(ts_skb);
+ 	}
  
- static inline void ceph_buffer_put(struct ceph_buffer *b)
- {
--	kref_put(&b->kref, ceph_buffer_release);
-+	if (b)
-+		kref_put(&b->kref, ceph_buffer_release);
- }
- 
- extern int ceph_decode_buffer(struct ceph_buffer **b, void **p, void *end);
 -- 
 2.20.1
 
