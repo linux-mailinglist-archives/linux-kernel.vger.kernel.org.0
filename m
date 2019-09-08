@@ -2,67 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 045CAAD0AE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 23:00:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ABD0AD0B6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 23:13:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbfIHVAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 17:00:21 -0400
-Received: from smtp.giganet.hu ([193.138.125.44]:54534 "EHLO smtp.giganet.hu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727235AbfIHVAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 17:00:21 -0400
-X-Greylist: delayed 595 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Sep 2019 17:00:19 EDT
-Received: from localhost (unknown [127.0.0.1])
-        by smtp.giganet.hu (Postfix) with ESMTP id EB7FD114D;
-        Sun,  8 Sep 2019 20:50:19 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smtp.giganet.hu
-X-Spam-Flag: NO
-X-Spam-Score: 0.465
-X-Spam-Level: 
-X-Spam-Status: No, score=0.465 tagged_above=-1 required=6.2
-        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, DEAR_SOMETHING=1.973,
-        PYZOR_CHECK=1.392] autolearn=no autolearn_force=no
-Received: from smtp.giganet.hu ([127.0.0.1])
-        by localhost (smtp.giganet.hu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nPvPRCQ3OezY; Sun,  8 Sep 2019 22:50:19 +0200 (CEST)
-Received: from webmail.giganet.hu (unknown [192.168.200.105])
-        by smtp.giganet.hu (Postfix) with ESMTP id E5C711159;
-        Sun,  8 Sep 2019 22:50:18 +0200 (CEST)
+        id S1730304AbfIHVLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 17:11:43 -0400
+Received: from esa6.hc3370-68.iphmx.com ([216.71.155.175]:19249 "EHLO
+        esa6.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729238AbfIHVLm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 17:11:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1567977101;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=I6JRjNC6jGloUsMWw5bRRxRNOT8ykZ15S5WsOIB4YKE=;
+  b=NyzBvW7x//QsR8/LmdrbeW9g4BvkTrbnu8NaFZuXV4kmrnm0FcJt6xf5
+   cKpB4sPiQ1TAs+eYiQPv3V7jzPhV4hmIfGJ3vx+n5jatIMYsIOKj0vnwD
+   sntSV6A/o6WZ/17TxIgo2Z9vfWW1WuCotGjncAsugnUz2AC8xP5pOpp0/
+   w=;
+Authentication-Results: esa6.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=igor.druzhinin@citrix.com; spf=Pass smtp.mailfrom=igor.druzhinin@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  igor.druzhinin@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="igor.druzhinin@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa6.hc3370-68.iphmx.com: domain of
+  igor.druzhinin@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="igor.druzhinin@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="igor.druzhinin@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: QBSdi5HD2a9n4ngJuFf05ktyxatNog/I/LGJqyVA8tONNkpDxNeLmZlzpeB3eU+/ImS1IYCTAP
+ F9WYilOHcrPTrb7yhDKN0+HX0nFZUCVjkhyjbxFX2T3VXvrKCquXYzjGlkHn+7c+JSlkUoQ2m+
+ 8KUoab9XGaRvNf2pONgtnzIZvVfQM3O5GPJf59RowzScX75gAXtkEeTZDCcRyOsIDr0Y6e0y+R
+ 2Xme73dmt1PhOuNPqeuaFxsGOmfita0GF/7Bsr3fk+90zqKEKpkmitkeyMbW92KZiZh0EvI3mi
+ p0c=
+X-SBRS: 2.7
+X-MesageID: 5523475
+X-Ironport-Server: esa6.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.64,481,1559534400"; 
+   d="scan'208";a="5523475"
+Subject: Re: [PATCH] xen/pci: try to reserve MCFG areas earlier
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
+CC:     <jgross@suse.com>
+References: <1567556431-9809-1-git-send-email-igor.druzhinin@citrix.com>
+ <5054ad91-5b87-652c-873a-b31758948bd7@oracle.com>
+ <e3114d56-51cd-b973-1ada-f6a60a7e99cc@citrix.com>
+ <43b7da04-5c42-80d8-898b-470ee1c91ed2@oracle.com>
+From:   Igor Druzhinin <igor.druzhinin@citrix.com>
+Message-ID: <adefac87-c2b3-b67f-fb4d-d763ce920bef@citrix.com>
+Date:   Sun, 8 Sep 2019 22:11:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sun, 08 Sep 2019 20:50:18 +0000
-From:   SELFRIDGES RETAIL LIMITED <robot@ukeess.net>
-To:     undisclosed-recipients:;
-Subject: interested in your products
-Reply-To: info@selfridges-purchasing.co.uk
-Mail-Reply-To: info@selfridges-purchasing.co.uk
-Message-ID: <9bde2b770e623aa6619bd2bd820d3f45@ukeess.net>
-X-Sender: robot@ukeess.net
-User-Agent: Roundcube Webmail/1.3.8
+In-Reply-To: <43b7da04-5c42-80d8-898b-470ee1c91ed2@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/09/2019 19:28, Boris Ostrovsky wrote:
+> On 9/6/19 7:00 PM, Igor Druzhinin wrote:
+>>
+>> On 06/09/2019 23:30, Boris Ostrovsky wrote:
+>>>
+>>> Where is MCFG parsed? pci_arch_init()?
+>>>> It happens twice:
+>> 1) first time early one in pci_arch_init() that is arch_initcall - that
+>> time pci_mmcfg_list will be freed immediately there because MCFG area is
+>> not reserved in E820;
+>> 2) second time late one in acpi_init() which is subsystem_initcall right
+>> before where PCI enumeration starts - this time ACPI tables will be
+>> checked for a reserved resource and pci_mmcfg_list will be finally
+>> populated.
+>>
+>> The problem is that on a system that doesn't have MCFG area reserved in
+>> E820 pci_mmcfg_list is empty before acpi_init() and our PCI hooks are
+>> called in the same place. So MCFG is still not in use by Xen at this
+>> point since we haven't reached our xen_mcfg_late().
+> 
+> 
+> Would it be possible for us to parse MCFG ourselves in pci_xen_init()? I
+> realize that we'd be doing this twice (or maybe even three times since
+> apparently both pci_arch_init()  and acpi_ini() do it).
+> 
 
-Dear Sir/Madam,
+I don't thine it makes sense:
+a) it needs to be done after ACPI is initialized since we need to parse
+it to figure out the exact reserved region - that's why it's currently
+done in acpi_init() (see commit message for the reasons why)
+b) given (a) we cannot do it ourselves before acpi_init and after is too
+late as we're already past ACPI PCI enumeration
+c) we'd have to do it in the same place I call xen_mcfg_late() and it'd
+be code duplication of what's already done by the existing code.
 
-We are looking to buy your products and partner with your company, can 
-you please send us your Catalog or your website to learn more about your 
-products or prices list by email and if we can make some order with you 
-and start a long-term partnership. Can your company supply us? and give 
-us more information about the possibility to become one of your regular 
-Wholesale?
-
-Our Payment terms is by swift within 15 days net.
-
-Waiting for your response.
-
-Best regards.
-
-Sebastian Manes
-buying and merchandising director
-Selfridges & Co.
-www.selfridges.com
+Igor
