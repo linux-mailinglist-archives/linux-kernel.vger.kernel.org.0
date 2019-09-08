@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E76EACE79
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F6FBACEAC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbfIHMpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:45:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60952 "EHLO mail.kernel.org"
+        id S1729751AbfIHMoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:44:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730105AbfIHMpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:45:35 -0400
+        id S1729695AbfIHMoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:44:12 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C121216C8;
-        Sun,  8 Sep 2019 12:45:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81980218DE;
+        Sun,  8 Sep 2019 12:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946735;
-        bh=Nh49n9ilO5Cbv6t5OZ2rdENYqLyCobUsY0/dRk0rxEA=;
+        s=default; t=1567946652;
+        bh=WD7JZOmWMKwETyoeSdIpQDaUzS9OhQQvEvg9UVgNCsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OU4BUEJm3KaIPDnw5xmc3kNIMGHkxXSt/acvPsKrBl7uToSfyGGt9seVdLvJrwmQp
-         ogxzFk1KE61MCPXWpaF/zChtcmsTpMhGQPdoOwSXyrUHV5nrcDiOh78dYAGp4thbvx
-         j7z0/wOECLYmtODz+Re/VwKNTphl4ZMKIE276Mms=
+        b=KYv11BsiFYeyZZbvDYHUPRKjlMbRV1G7z0520SbEzDEKZifIGcq/6tOiTHz0AjHLR
+         uUdAWvBRuhyxMYyqyi85LqbPMm5HBL+nsm86s/y6DRSJHMik6pf9AZxdFGNGYbdIkl
+         YfKh7S2CTV71WO8cE0qTgEVkyZgK+UacHuPQfZpg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 21/40] Input: hyperv-keyboard: Use in-place iterator API in the channel callback
-Date:   Sun,  8 Sep 2019 13:41:54 +0100
-Message-Id: <20190908121122.749934074@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 16/26] KVM: arm/arm64: Only skip MMIO insn once
+Date:   Sun,  8 Sep 2019 13:41:55 +0100
+Message-Id: <20190908121106.124679233@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
+References: <20190908121057.216802689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,71 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d09bc83640d524b8467a660db7b1d15e6562a1de ]
+[ Upstream commit 2113c5f62b7423e4a72b890bd479704aa85c81ba ]
 
-Simplify the ring buffer handling with the in-place API.
+If after an MMIO exit to userspace a VCPU is immediately run with an
+immediate_exit request, such as when a signal is delivered or an MMIO
+emulation completion is needed, then the VCPU completes the MMIO
+emulation and immediately returns to userspace. As the exit_reason
+does not get changed from KVM_EXIT_MMIO in these cases we have to
+be careful not to complete the MMIO emulation again, when the VCPU is
+eventually run again, because the emulation does an instruction skip
+(and doing too many skips would be a waste of guest code :-) We need
+to use additional VCPU state to track if the emulation is complete.
+As luck would have it, we already have 'mmio_needed', which even
+appears to be used in this way by other architectures already.
 
-Also avoid the dynamic allocation and the memory leak in the channel
-callback function.
-
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: 0d640732dbeb ("arm64: KVM: Skip MMIO insn after emulation")
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Andrew Jones <drjones@redhat.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/serio/hyperv-keyboard.c | 35 +++++----------------------
- 1 file changed, 6 insertions(+), 29 deletions(-)
+ arch/arm/kvm/mmio.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/input/serio/hyperv-keyboard.c b/drivers/input/serio/hyperv-keyboard.c
-index 55288a026e4e2..c137ffa6fdec8 100644
---- a/drivers/input/serio/hyperv-keyboard.c
-+++ b/drivers/input/serio/hyperv-keyboard.c
-@@ -245,40 +245,17 @@ static void hv_kbd_handle_received_packet(struct hv_device *hv_dev,
+diff --git a/arch/arm/kvm/mmio.c b/arch/arm/kvm/mmio.c
+index 08443a15e6be8..3caee91bca089 100644
+--- a/arch/arm/kvm/mmio.c
++++ b/arch/arm/kvm/mmio.c
+@@ -98,6 +98,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ 	unsigned int len;
+ 	int mask;
  
- static void hv_kbd_on_channel_callback(void *context)
- {
-+	struct vmpacket_descriptor *desc;
- 	struct hv_device *hv_dev = context;
--	void *buffer;
--	int bufferlen = 0x100; /* Start with sensible size */
- 	u32 bytes_recvd;
- 	u64 req_id;
--	int error;
++	/* Detect an already handled MMIO return */
++	if (unlikely(!vcpu->mmio_needed))
++		return 0;
++
++	vcpu->mmio_needed = 0;
++
+ 	if (!run->mmio.is_write) {
+ 		len = run->mmio.len;
+ 		if (len > sizeof(unsigned long))
+@@ -200,6 +206,7 @@ int io_mem_abort(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 	run->mmio.is_write	= is_write;
+ 	run->mmio.phys_addr	= fault_ipa;
+ 	run->mmio.len		= len;
++	vcpu->mmio_needed	= 1;
  
--	buffer = kmalloc(bufferlen, GFP_ATOMIC);
--	if (!buffer)
--		return;
--
--	while (1) {
--		error = vmbus_recvpacket_raw(hv_dev->channel, buffer, bufferlen,
--					     &bytes_recvd, &req_id);
--		switch (error) {
--		case 0:
--			if (bytes_recvd == 0) {
--				kfree(buffer);
--				return;
--			}
--
--			hv_kbd_handle_received_packet(hv_dev, buffer,
--						      bytes_recvd, req_id);
--			break;
-+	foreach_vmbus_pkt(desc, hv_dev->channel) {
-+		bytes_recvd = desc->len8 * 8;
-+		req_id = desc->trans_id;
- 
--		case -ENOBUFS:
--			kfree(buffer);
--			/* Handle large packet */
--			bufferlen = bytes_recvd;
--			buffer = kmalloc(bytes_recvd, GFP_ATOMIC);
--			if (!buffer)
--				return;
--			break;
--		}
-+		hv_kbd_handle_received_packet(hv_dev, desc, bytes_recvd,
-+					      req_id);
- 	}
- }
- 
+ 	if (!ret) {
+ 		/* We handled the access successfully in the kernel. */
 -- 
 2.20.1
 
