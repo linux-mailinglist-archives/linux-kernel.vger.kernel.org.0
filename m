@@ -2,183 +2,1038 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C56E3ACF7A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 17:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F135ACF85
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 17:28:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbfIHP0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 11:26:25 -0400
-Received: from valentin-vidic.from.hr ([94.229.67.141]:56353 "EHLO
-        valentin-vidic.from.hr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbfIHP0Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 11:26:24 -0400
-X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
-Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
-        id A090A216; Sun,  8 Sep 2019 15:26:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-        d=valentin-vidic.from.hr; s=2017; t=1567956382;
-        bh=otD4YtoGAnYiwKsiyXlPmaPgOS8/hYDsF7LNBx+rN88=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QEwHuc12TN4TaxOWvpJKV97Z6OldPbuuAd5AKsStLBfQrknH5rJ2eev9wQj29lox6
-         LbJ27cq1r5imOorWdAS7ZC6Se7uUilZ6GoWBa4HWu67JwiWPtkKEa7eDFkgQstVy6n
-         KVH+qRNuowFT2FBb0UlCOqG7/VglCBkanjTkN7uCeUONg2A/yfXeYW0PlaZKulxDOj
-         pAoTHf2E0QcVr4d7H8rTW+JK13kGFj8vGZvMGD1abwqYUfc6NwmTujEmWpA0LN4w5d
-         3MMbwM4h8M7TTIY28mTD8OEWs6OlBufG9PQUfHWkCVyL+j7rNQzTm7fN/qZ886rsl/
-         /5iRXZbCYfuQA==
-From:   Valentin Vidic <vvidic@valentin-vidic.from.hr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Valentin Vidic <vvidic@valentin-vidic.from.hr>
-Subject: [PATCH v3 3/3] staging: exfat: use integer constants
-Date:   Sun,  8 Sep 2019 15:26:16 +0000
-Message-Id: <20190908152616.25459-3-vvidic@valentin-vidic.from.hr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190908152616.25459-1-vvidic@valentin-vidic.from.hr>
-References: <20190908152616.25459-1-vvidic@valentin-vidic.from.hr>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729122AbfIHP21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 11:28:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbfIHP21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 11:28:27 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51242214D9;
+        Sun,  8 Sep 2019 15:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567956503;
+        bh=aeG0TGZhGmY1h46HjQSivFvlt/DJz1n/MhK/pwio/2s=;
+        h=From:To:Subject:Date:From;
+        b=bFTz8jOsupp2QKNj1wQPIX2XXF/1Wpozunw6Exyg4GNNmWSE5UyZy1wi+cLiw+CKI
+         ryo24Lb/w8IIdievH/WCfX+xivljLysxbSVST11sE3/UQuBf+y6f3j/l0WhQy5cp7L
+         IkKnAwWnUfmiPqNTD7AyOpOfras8SQd67rqzaHGY=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [RFC 1/2] dt-bindings: power: Convert Generic Power Domain bindings to json-schema
+Date:   Sun,  8 Sep 2019 17:28:12 +0200
+Message-Id: <20190908152813.20646-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace manually generated values with predefined constants.
+Convert Generic Power Domain bindings to DT schema format using
+json-schema.  The consumer bindings are split to separate file.
 
-Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
 ---
-v2: Use constants where possible
-v3: Split up changes of constants
 
- drivers/staging/exfat/exfat_core.c  | 18 +++++++++---------
- drivers/staging/exfat/exfat_super.c |  8 ++++----
- 2 files changed, 13 insertions(+), 13 deletions(-)
+TODO:
+1. How the consumer bindings should match nodes?
+2. Somehow the example complains:
+Documentation/devicetree/bindings/power/power-domain.example.dt.yaml: power-controller@12341000: power-domains:0: [1, 0] is too long
+Documentation/devicetree/bindings/power/power-domain.example.dt.yaml: power-controller@12341000: power-domains:0:1: missing phandle tag in 0
 
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index 8965e8453fcb..6eee2aa06bd7 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -204,7 +204,7 @@ s32 fat_alloc_cluster(struct super_block *sb, s32 num_alloc,
+3. Current matching by node name causes false positives:
+arch/arm/boot/dts/am335x-icev2.dt.yaml: power-controller@2d: '#power-domain-cells' is a required property
+arch/arm/boot/dts/qcom-apq8064-cm-qs600.dt.yaml: power-controller@2099000: '#power-domain-cells' is a required property
+---
+ .../devicetree/bindings/arm/arm,scmi.txt      |   2 +-
+ .../devicetree/bindings/arm/arm,scpi.txt      |   2 +-
+ .../bindings/arm/freescale/fsl,scu.txt        |   2 +-
+ .../bindings/clock/clk-exynos-audss.txt       |   2 +-
+ .../bindings/clock/exynos5433-clock.txt       |   4 +-
+ .../bindings/clock/renesas,cpg-mssr.txt       |   2 +-
+ .../clock/renesas,r8a7778-cpg-clocks.txt      |   2 +-
+ .../clock/renesas,r8a7779-cpg-clocks.txt      |   2 +-
+ .../clock/renesas,rcar-gen2-cpg-clocks.txt    |   2 +-
+ .../bindings/clock/renesas,rz-cpg-clocks.txt  |   2 +-
+ .../bindings/clock/ti/davinci/psc.txt         |   2 +-
+ .../bindings/display/etnaviv/etnaviv-drm.txt  |   2 +-
+ .../devicetree/bindings/display/msm/dpu.txt   |   2 +-
+ .../devicetree/bindings/display/msm/mdp5.txt  |   2 +-
+ .../devicetree/bindings/dsp/fsl,dsp.yaml      |   2 +-
+ .../firmware/nvidia,tegra186-bpmp.txt         |   2 +-
+ .../bindings/media/imx7-mipi-csi2.txt         |   3 +-
+ .../bindings/media/mediatek-jpeg-decoder.txt  |   3 +-
+ .../bindings/media/mediatek-mdp.txt           |   3 +-
+ .../bindings/opp/qcom-nvmem-cpufreq.txt       |   2 +-
+ .../devicetree/bindings/pci/pci-keystone.txt  |   2 +-
+ .../bindings/phy/ti,phy-am654-serdes.txt      |   2 +-
+ .../bindings/power/amlogic,meson-gx-pwrc.txt  |   2 +-
+ .../devicetree/bindings/power/fsl,imx-gpc.txt |   2 +-
+ .../bindings/power/fsl,imx-gpcv2.txt          |   2 +-
+ .../power/power-domain-consumers.yaml         | 124 +++++++++++
+ .../bindings/power/power-domain.yaml          | 136 ++++++++++++
+ .../bindings/power/power_domain.txt           | 205 ------------------
+ .../devicetree/bindings/power/qcom,rpmpd.txt  |   2 +-
+ .../bindings/power/renesas,rcar-sysc.txt      |   2 +-
+ .../bindings/power/renesas,sysc-rmobile.txt   |   2 +-
+ .../bindings/power/xlnx,zynqmp-genpd.txt      |   2 +-
+ .../bindings/soc/bcm/brcm,bcm2835-pm.txt      |   2 +-
+ .../bindings/soc/mediatek/scpsys.txt          |   2 +-
+ .../bindings/soc/ti/sci-pm-domain.txt         |   2 +-
+ .../bindings/usb/nvidia,tegra124-xusb.txt     |   4 +-
+ MAINTAINERS                                   |   2 +-
+ 37 files changed, 299 insertions(+), 241 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/power-domain-consumers.yaml
+ create mode 100644 Documentation/devicetree/bindings/power/power-domain.yaml
+ delete mode 100644 Documentation/devicetree/bindings/power/power_domain.txt
+
+diff --git a/Documentation/devicetree/bindings/arm/arm,scmi.txt b/Documentation/devicetree/bindings/arm/arm,scmi.txt
+index 083dbf96ee00..f493d69e6194 100644
+--- a/Documentation/devicetree/bindings/arm/arm,scmi.txt
++++ b/Documentation/devicetree/bindings/arm/arm,scmi.txt
+@@ -100,7 +100,7 @@ Required sub-node properties:
  
- 			if ((--num_alloc) == 0) {
- 				p_fs->clu_srch_ptr = new_clu;
--				if (p_fs->used_clusters != (u32)~0)
-+				if (p_fs->used_clusters != UINT_MAX)
- 					p_fs->used_clusters += num_clusters;
+ [0] http://infocenter.arm.com/help/topic/com.arm.doc.den0056a/index.html
+ [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-[2] Documentation/devicetree/bindings/power/power_domain.txt
++[2] Documentation/devicetree/bindings/power/power-domain.yaml
+ [3] Documentation/devicetree/bindings/thermal/thermal.txt
+ [4] Documentation/devicetree/bindings/sram/sram.txt
+ [5] Documentation/devicetree/bindings/reset/reset.txt
+diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+index 401831973638..7b83ef43b418 100644
+--- a/Documentation/devicetree/bindings/arm/arm,scpi.txt
++++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+@@ -110,7 +110,7 @@ Required properties:
+ [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+ [2] Documentation/devicetree/bindings/thermal/thermal.txt
+ [3] Documentation/devicetree/bindings/sram/sram.txt
+-[4] Documentation/devicetree/bindings/power/power_domain.txt
++[4] Documentation/devicetree/bindings/power/power-domain.yaml
  
- 				return num_clusters;
-@@ -215,7 +215,7 @@ s32 fat_alloc_cluster(struct super_block *sb, s32 num_alloc,
- 	}
+ Example:
  
- 	p_fs->clu_srch_ptr = new_clu;
--	if (p_fs->used_clusters != (u32)~0)
-+	if (p_fs->used_clusters != UINT_MAX)
- 		p_fs->used_clusters += num_clusters;
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index c149fadc6f47..6c8a61b971f1 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -124,7 +124,7 @@ Required properties for Pinctrl sub nodes:
+ 			CONFIG settings.
  
- 	return num_clusters;
-@@ -273,7 +273,7 @@ s32 exfat_alloc_cluster(struct super_block *sb, s32 num_alloc,
+ [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-[2] Documentation/devicetree/bindings/power/power_domain.txt
++[2] Documentation/devicetree/bindings/power/power-domain.yaml
+ [3] Documentation/devicetree/bindings/pinctrl/fsl,imx-pinctrl.txt
  
- 		if ((--num_alloc) == 0) {
- 			p_fs->clu_srch_ptr = hint_clu;
--			if (p_fs->used_clusters != (u32)~0)
-+			if (p_fs->used_clusters != UINT_MAX)
- 				p_fs->used_clusters += num_clusters;
+ RTC bindings based on SCU Message Protocol
+diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+index 6030afb10b5c..fda095e1fa7a 100644
+--- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
++++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+@@ -36,7 +36,7 @@ Required Properties:
+ Optional Properties:
  
- 			p_chain->size += num_clusters;
-@@ -293,7 +293,7 @@ s32 exfat_alloc_cluster(struct super_block *sb, s32 num_alloc,
- 	}
+   - power-domains: a phandle to respective power domain node as described by
+-    generic PM domain bindings (see power/power_domain.txt for more
++    generic PM domain bindings (see power/power-domain-consumers.yaml for more
+     information).
  
- 	p_fs->clu_srch_ptr = hint_clu;
--	if (p_fs->used_clusters != (u32)~0)
-+	if (p_fs->used_clusters != UINT_MAX)
- 		p_fs->used_clusters += num_clusters;
+ The following is the list of clocks generated by the controller. Each clock is
+diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+index 183c327a7d6b..52880914228d 100644
+--- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+@@ -178,8 +178,8 @@ Required Properties:
  
- 	p_chain->size += num_clusters;
-@@ -337,7 +337,7 @@ void fat_free_cluster(struct super_block *sb, struct chain_t *p_chain,
+ Optional properties:
+   - power-domains: a phandle to respective power domain node as described by
+-	generic PM domain bindings (see power/power_domain.txt for more
+-	information).
++	generic PM domain bindings (see power/power-domain-consumers.yaml
++	for more information).
  
- 	} while (clu != CLUSTER_32(~0));
+ Each clock is assigned an identifier and client nodes can use this identifier
+ to specify the clock which they consume.
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index 916a601b76a7..2def42096886 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -59,7 +59,7 @@ Required Properties:
+ 	power-managed through Module Standby should refer to the CPG device
+ 	node in their "power-domains" property, as documented by the generic PM
+ 	Domain bindings in
+-	Documentation/devicetree/bindings/power/power_domain.txt.
++	Documentation/devicetree/bindings/power/power-domain.yaml.
  
--	if (p_fs->used_clusters != (u32)~0)
-+	if (p_fs->used_clusters != UINT_MAX)
- 		p_fs->used_clusters -= num_clusters;
- }
+   - #reset-cells: Must be 1
+       - The single reset specifier cell must be the module number, as defined
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+index 7cc4c0330b53..be24c2c023a2 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+@@ -17,7 +17,7 @@ Required Properties:
+ SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+ through an MSTP clock should refer to the CPG device node in their
+ "power-domains" property, as documented by the generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
++Documentation/devicetree/bindings/power/power-domain-consumers.yaml.
  
-@@ -396,7 +396,7 @@ void exfat_free_cluster(struct super_block *sb, struct chain_t *p_chain,
- 		} while ((clu != CLUSTER_32(0)) && (clu != CLUSTER_32(~0)));
- 	}
  
--	if (p_fs->used_clusters != (u32)~0)
-+	if (p_fs->used_clusters != UINT_MAX)
- 		p_fs->used_clusters -= num_clusters;
- }
+ Examples
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+index 8c81547c29f5..263d7ef2e6de 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+@@ -19,7 +19,7 @@ Required Properties:
+ SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+ through an MSTP clock should refer to the CPG device node in their
+ "power-domains" property, as documented by the generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
++Documentation/devicetree/bindings/power/power-domain-consumers.yaml.
  
-@@ -3064,7 +3064,7 @@ s32 fat16_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
  
- 	p_fs->vol_flag = VOL_CLEAN;
- 	p_fs->clu_srch_ptr = 2;
--	p_fs->used_clusters = (u32)~0;
-+	p_fs->used_clusters = UINT_MAX;
+ Examples
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+index f8c05bb4116e..8c06a93ab730 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+@@ -28,7 +28,7 @@ Required Properties:
+ SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+ through an MSTP clock should refer to the CPG device node in their
+ "power-domains" property, as documented by the generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
++Documentation/devicetree/bindings/power/power-domain-consumers.yaml.
  
- 	p_fs->fs_func = &fat_fs_func;
  
-@@ -3117,7 +3117,7 @@ s32 fat32_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
+ Examples
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+index 8ff3e2774ed8..56d632165030 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+@@ -21,7 +21,7 @@ Required Properties:
+ SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+ through an MSTP clock should refer to the CPG device node in their
+ "power-domains" property, as documented by the generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
++Documentation/devicetree/bindings/power/power-domain-consumers.yaml.
  
- 	p_fs->vol_flag = VOL_CLEAN;
- 	p_fs->clu_srch_ptr = 2;
--	p_fs->used_clusters = (u32)~0;
-+	p_fs->used_clusters = UINT_MAX;
  
- 	p_fs->fs_func = &fat_fs_func;
+ Examples
+diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+index dae4ad8e198c..5f746ebf7a2c 100644
+--- a/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
++++ b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
+@@ -67,5 +67,5 @@ Examples:
  
-@@ -3192,7 +3192,7 @@ s32 exfat_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
+ Also see:
+ - Documentation/devicetree/bindings/clock/clock-bindings.txt
+-- Documentation/devicetree/bindings/power/power_domain.txt
++- Documentation/devicetree/bindings/power/power-domain.yaml
+ - Documentation/devicetree/bindings/reset/reset.txt
+diff --git a/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt b/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+index 8def11b16a24..6067ef3f108a 100644
+--- a/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
++++ b/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+@@ -20,7 +20,7 @@ Required properties:
  
- 	p_fs->vol_flag = (u32)GET16(p_bpb->vol_flags);
- 	p_fs->clu_srch_ptr = 2;
--	p_fs->used_clusters = (u32)~0;
-+	p_fs->used_clusters = UINT_MAX;
+ Optional properties:
+ - power-domains: a power domain consumer specifier according to
+-  Documentation/devicetree/bindings/power/power_domain.txt
++  Documentation/devicetree/bindings/power/power-domain-consumers.yaml
  
- 	p_fs->fs_func = &exfat_fs_func;
+ example:
  
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 1cb0ec06c54e..610f20683611 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -502,7 +502,7 @@ static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
- 	/* acquire the lock for file system critical section */
- 	down(&p_fs->v_sem);
+diff --git a/Documentation/devicetree/bindings/display/msm/dpu.txt b/Documentation/devicetree/bindings/display/msm/dpu.txt
+index a61dd40f3792..002a3a1270f9 100644
+--- a/Documentation/devicetree/bindings/display/msm/dpu.txt
++++ b/Documentation/devicetree/bindings/display/msm/dpu.txt
+@@ -13,7 +13,7 @@ Required properties:
+ - reg-names: register region names. The following region is required:
+   * "mdss"
+ - power-domains: a power domain consumer specifier according to
+-  Documentation/devicetree/bindings/power/power_domain.txt
++  Documentation/devicetree/bindings/power/power-domain-consumers.yaml
+ - clocks: list of clock specifiers for clocks needed by the device.
+ - clock-names: device clock names, must be in same order as clocks property.
+   The following clocks are required:
+diff --git a/Documentation/devicetree/bindings/display/msm/mdp5.txt b/Documentation/devicetree/bindings/display/msm/mdp5.txt
+index 4e11338548aa..9cbfcdfa46b4 100644
+--- a/Documentation/devicetree/bindings/display/msm/mdp5.txt
++++ b/Documentation/devicetree/bindings/display/msm/mdp5.txt
+@@ -19,7 +19,7 @@ Required properties:
+ - #interrupt-cells: specifies the number of cells needed to encode an interrupt
+   source, should be 1.
+ - power-domains: a power domain consumer specifier according to
+-  Documentation/devicetree/bindings/power/power_domain.txt
++  Documentation/devicetree/bindings/power/power-domain-consumers.yaml
+ - clocks: device clocks. See ../clocks/clock-bindings.txt for details.
+ - clock-names: the following clocks are required.
+   * "iface"
+diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+index 3248595dc93c..d7680b7fbe19 100644
+--- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
++++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+@@ -36,7 +36,7 @@ properties:
+   power-domains:
+     description:
+       List of phandle and PM domain specifier as documented in
+-      Documentation/devicetree/bindings/power/power_domain.txt
++      Documentation/devicetree/bindings/power/power-domain-consumers.yaml
+     maxItems: 4
  
--	if (p_fs->used_clusters == (u32)~0)
-+	if (p_fs->used_clusters == UINT_MAX)
- 		p_fs->used_clusters = p_fs->fs_func->count_used_clusters(sb);
+   mboxes:
+diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+index ff380dadb5f9..e44a13bc06ed 100644
+--- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
++++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+@@ -32,7 +32,7 @@ implemented by this node:
  
- 	info->FatType = p_fs->vol_type;
-@@ -3503,7 +3503,7 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
- 	struct vol_info_t info;
+ - .../clock/clock-bindings.txt
+ - <dt-bindings/clock/tegra186-clock.h>
+-- ../power/power_domain.txt
++- ../power/power-domain.yaml
+ - <dt-bindings/power/tegra186-powergate.h>
+ - .../reset/reset.txt
+ - <dt-bindings/reset/tegra186-reset.h>
+diff --git a/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt b/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
+index 71fd74ed3ec8..7a7a8b672983 100644
+--- a/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
++++ b/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
+@@ -17,7 +17,8 @@ Required properties:
+ - clock-names   : must contain "pclk", "wrap" and "phy" entries, matching
+                   entries in the clock property;
+ - power-domains : a phandle to the power domain, see
+-          Documentation/devicetree/bindings/power/power_domain.txt for details.
++          Documentation/devicetree/bindings/power/power-domain-consumers.yaml
++          for details.
+ - reset-names   : should include following entry "mrst";
+ - resets        : a list of phandle, should contain reset entry of
+                   reset-names;
+diff --git a/Documentation/devicetree/bindings/media/mediatek-jpeg-decoder.txt b/Documentation/devicetree/bindings/media/mediatek-jpeg-decoder.txt
+index 044b11913c49..04c46adaa460 100644
+--- a/Documentation/devicetree/bindings/media/mediatek-jpeg-decoder.txt
++++ b/Documentation/devicetree/bindings/media/mediatek-jpeg-decoder.txt
+@@ -14,7 +14,8 @@ Required properties:
+   Documentation/devicetree/bindings/clock/clock-bindings.txt for details.
+ - clock-names: must contain "jpgdec-smi" and "jpgdec".
+ - power-domains: a phandle to the power domain, see
+-  Documentation/devicetree/bindings/power/power_domain.txt for details.
++  Documentation/devicetree/bindings/power/power-domain-consumers.yaml
++  for details.
+ - mediatek,larb: must contain the local arbiters in the current Socs, see
+   Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
+   for details.
+diff --git a/Documentation/devicetree/bindings/media/mediatek-mdp.txt b/Documentation/devicetree/bindings/media/mediatek-mdp.txt
+index 0d03e3ae2be2..5a8c9ab9b3bd 100644
+--- a/Documentation/devicetree/bindings/media/mediatek-mdp.txt
++++ b/Documentation/devicetree/bindings/media/mediatek-mdp.txt
+@@ -17,7 +17,8 @@ Required properties (all function blocks, child node):
+ - clocks: device clocks, see
+   Documentation/devicetree/bindings/clock/clock-bindings.txt for details.
+ - power-domains: a phandle to the power domain, see
+-  Documentation/devicetree/bindings/power/power_domain.txt for details.
++  Documentation/devicetree/bindings/power/power-domain-consumers.yaml
++  for details.
  
--	if (p_fs->used_clusters == (u32)~0) {
-+	if (p_fs->used_clusters == UINT_MAX) {
- 		if (ffsGetVolInfo(sb, &info) == FFS_MEDIAERR)
- 			return -EIO;
+ Required properties (DMA function blocks, child node):
+ - compatible: Should be one of
+diff --git a/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt b/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+index 4751029b9b74..cb091b2ce5db 100644
+--- a/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
++++ b/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+@@ -27,7 +27,7 @@ In 'cpu' nodes:
+ - power-domains: A phandle pointing to the PM domain specifier which provides
+ 		the performance states available for active state management.
+ 		Please refer to the power-domains bindings
+-		Documentation/devicetree/bindings/power/power_domain.txt
++		Documentation/devicetree/bindings/power/power-domain-consumers.yaml
+ 		and also examples below.
+ - power-domain-names: Should be
+ 	- 'cpr' for qcs404.
+diff --git a/Documentation/devicetree/bindings/pci/pci-keystone.txt b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+index 47202a2938f2..5ee0bf171ce6 100644
+--- a/Documentation/devicetree/bindings/pci/pci-keystone.txt
++++ b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+@@ -88,7 +88,7 @@ num-ob-windows: As specified in
+ num-lanes: As specified in
+ 	   Documentation/devicetree/bindings/pci/designware-pcie.txt
+ power-domains: As documented by the generic PM domain bindings in
+-	       Documentation/devicetree/bindings/power/power_domain.txt.
++	       Documentation/devicetree/bindings/power/power-domain-consumers.yaml.
+ ti,syscon-pcie-mode: phandle to the device control module required to configure
+ 		      PCI in either RC mode or EP mode.
  
-@@ -3678,7 +3678,7 @@ static int parse_options(char *options, int silent, int *debug,
- 	opts->fs_uid = current_uid();
- 	opts->fs_gid = current_gid();
- 	opts->fs_fmask = opts->fs_dmask = current->fs->umask;
--	opts->allow_utime = (unsigned short)-1;
-+	opts->allow_utime = U16_MAX;
- 	opts->codepage = exfat_default_codepage;
- 	opts->iocharset = exfat_default_iocharset;
- 	opts->casesensitive = 0;
-@@ -3770,7 +3770,7 @@ static int parse_options(char *options, int silent, int *debug,
- 	}
+diff --git a/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt b/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt
+index 64b286d2d398..b5f17a3e8dba 100644
+--- a/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt
++++ b/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt
+@@ -17,7 +17,7 @@ Required properties:
+ 		1 - PCIe0 Lane1
+ 		2 - ICSS2 SGMII Lane1
+  - power-domains: As documented by the generic PM domain bindings in
+-	Documentation/devicetree/bindings/power/power_domain.txt.
++	Documentation/devicetree/bindings/power/power-domain-consumers.yaml.
+  - clocks: List of clock-specifiers representing the input to the SERDES.
+ 	Should have 3 items representing the left input clock, external
+ 	reference clock and right input clock in that order.
+diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-gx-pwrc.txt b/Documentation/devicetree/bindings/power/amlogic,meson-gx-pwrc.txt
+index 0fdc3dd1125e..99b5b10cda31 100644
+--- a/Documentation/devicetree/bindings/power/amlogic,meson-gx-pwrc.txt
++++ b/Documentation/devicetree/bindings/power/amlogic,meson-gx-pwrc.txt
+@@ -10,7 +10,7 @@ The Video Processing Unit power domain is controlled by this power controller,
+ but the domain requires some external resources to meet the correct power
+ sequences.
+ The bindings must respect the power domain bindings as described in the file
+-power_domain.txt
++power-domain.yaml
  
- out:
--	if (opts->allow_utime == (unsigned short)-1)
-+	if (opts->allow_utime == U16_MAX)
- 		opts->allow_utime = ~opts->fs_dmask & 0022;
+ Device Tree Bindings:
+ ---------------------
+diff --git a/Documentation/devicetree/bindings/power/fsl,imx-gpc.txt b/Documentation/devicetree/bindings/power/fsl,imx-gpc.txt
+index 726ec2875223..f0f5553a9e74 100644
+--- a/Documentation/devicetree/bindings/power/fsl,imx-gpc.txt
++++ b/Documentation/devicetree/bindings/power/fsl,imx-gpc.txt
+@@ -19,7 +19,7 @@ Required properties:
+   - ipg
  
- 	return 0;
+ The power domains are generic power domain providers as documented in
+-Documentation/devicetree/bindings/power/power_domain.txt. They are described as
++Documentation/devicetree/bindings/power/power-domain.yaml. They are described as
+ subnodes of the power gating controller 'pgc' node of the GPC and should
+ contain the following:
+ 
+diff --git a/Documentation/devicetree/bindings/power/fsl,imx-gpcv2.txt b/Documentation/devicetree/bindings/power/fsl,imx-gpcv2.txt
+index 7c7e972aaa42..61649202f6f5 100644
+--- a/Documentation/devicetree/bindings/power/fsl,imx-gpcv2.txt
++++ b/Documentation/devicetree/bindings/power/fsl,imx-gpcv2.txt
+@@ -17,7 +17,7 @@ Required properties:
+ 
+ Power domains contained within GPC node are generic power domain
+ providers, documented in
+-Documentation/devicetree/bindings/power/power_domain.txt, which are
++Documentation/devicetree/bindings/power/power-domain.yaml, which are
+ described as subnodes of the power gating controller 'pgc' node,
+ which, in turn, is expected to contain the following:
+ 
+diff --git a/Documentation/devicetree/bindings/power/power-domain-consumers.yaml b/Documentation/devicetree/bindings/power/power-domain-consumers.yaml
+new file mode 100644
+index 000000000000..95cc6da1e8a8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/power-domain-consumers.yaml
+@@ -0,0 +1,124 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/power/power-domain-consumers.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: PM domain consumers
++
++maintainers:
++  - Rafael J. Wysocki <rjw@rjwysocki.net>
++  - Kevin Hilman <khilman@kernel.org>
++  - Ulf Hansson <ulf.hansson@linaro.org>
++
++description: |+
++  See power-domain.yaml
++
++allOf:
++  - $ref: /schemas/power-domain/power-domain-consumer.yaml
++
++# TODO: missing select (compatible?)
++
++properties:
++  power-domains:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      A list of PM domain specifiers, as defined by bindings of the power
++      controller that is the PM domain provider.
++
++  power-domain-names:
++    $ref: /schemas/types.yaml#/definitions/string-array
++    description:
++      A list of power domain name strings sorted in the same order
++      as the power-domains property. Consumers drivers will use
++      power-domain-names to match power domains with power-domains specifiers.
++
++  required-opps:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      This contains phandle to an OPP node in another device's OPP table.
++      It may contain an array of phandles, where each phandle points to an OPP
++      of a different device. It should not contain multiple phandles to the OPP
++      nodes in the same OPP table. This specifies the minimum required OPP
++      of the device(s), whose OPP's phandle is present in this property,
++      for the functioning of the current device at the current OPP (where this
++      property is present).
++
++required:
++  - power-domains
++
++dependencies:
++  power-domain-names: [ power-domains ]
++
++examples:
++  - |
++    leaky-device@12350000 {
++      compatible = "foo,i-leak-current";
++      reg = <0x12350000 0x1000>;
++      power-domains = <&power 0>;
++      power-domain-names = "io";
++    };
++
++    leaky-device@12351000 {
++      compatible = "foo,i-leak-current";
++      reg = <0x12351000 0x1000>;
++      power-domains = <&power 0>, <&power 1> ;
++      power-domain-names = "io", "clk";
++    };
++
++    // The first example above defines a typical PM domain consumer device, which is
++    // located inside a PM domain with index 0 of a power controller represented by a
++    // node with the label "power".
++    // In the second example the consumer device are partitioned across two PM domains,
++    // the first with index 0 and the second with index 1, of a power controller that
++    // is represented by a node with the label "power".
++
++  - |
++    // Example with  OPP table for domain provider that provides two domains:
++
++    domain0_opp_table: opp-table0 {
++      compatible = "operating-points-v2";
++
++      domain0_opp_0: opp-1000000000 {
++        opp-hz = /bits/ 64 <1000000000>;
++        opp-microvolt = <975000 970000 985000>;
++      };
++      domain0_opp_1: opp-1100000000 {
++        opp-hz = /bits/ 64 <1100000000>;
++        opp-microvolt = <1000000 980000 1010000>;
++      };
++    };
++
++    domain1_opp_table: opp-table1 {
++      compatible = "operating-points-v2";
++
++      domain1_opp_0: opp-1200000000 {
++        opp-hz = /bits/ 64 <1200000000>;
++        opp-microvolt = <975000 970000 985000>;
++      };
++      domain1_opp_1: opp-1300000000 {
++        opp-hz = /bits/ 64 <1300000000>;
++        opp-microvolt = <1000000 980000 1010000>;
++      };
++    };
++
++    power: power-controller@12340000 {
++      compatible = "foo,power-controller";
++      reg = <0x12340000 0x1000>;
++      #power-domain-cells = <1>;
++      operating-points-v2 = <&domain0_opp_table>, <&domain1_opp_table>;
++    };
++
++    leaky-device0@12350000 {
++      compatible = "foo,i-leak-current";
++      reg = <0x12350000 0x1000>;
++      power-domains = <&power 0>;
++      required-opps = <&domain0_opp_0>;
++    };
++
++    leaky-device1@12350000 {
++      compatible = "foo,i-leak-current";
++      reg = <0x12350000 0x1000>;
++      power-domains = <&power 1>;
++      required-opps = <&domain1_opp_1>;
++    };
+diff --git a/Documentation/devicetree/bindings/power/power-domain.yaml b/Documentation/devicetree/bindings/power/power-domain.yaml
+new file mode 100644
+index 000000000000..9454fdb904ae
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/power-domain.yaml
+@@ -0,0 +1,136 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/power/power-domain.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Generic PM domains
++
++maintainers:
++  - Rafael J. Wysocki <rjw@rjwysocki.net>
++  - Kevin Hilman <khilman@kernel.org>
++  - Ulf Hansson <ulf.hansson@linaro.org>
++
++description: |+
++  System on chip designs are often divided into multiple PM domains that can be
++  used for power gating of selected IP blocks for power saving by reduced leakage
++  current.
++
++  This device tree binding can be used to bind PM domain consumer devices with
++  their PM domains provided by PM domain providers. A PM domain provider can be
++  represented by any node in the device tree and can provide one or more PM
++  domains. A consumer node can refer to the provider by a phandle and a set of
++  phandle arguments (so called PM domain specifiers) of length specified by the
++  \#power-domain-cells property in the PM domain provider node.
++
++properties:
++  $nodename:
++    pattern: "^(power-controller|power-domain)(@.*)?"
++
++  domain-idle-states:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      A phandle of an idle-state that shall be soaked into a generic domain
++      power state. The idle state definitions are compatible with
++      domain-idle-state specified in
++      Documentation/devicetree/bindings/power/domain-idle-state.txt
++      phandles that are not compatible with domain-idle-state will be ignored.
++      The domain-idle-state property reflects the idle state of this PM domain
++      and not the idle states of the devices or sub-domains in the PM domain.
++      Devices and sub-domains have their own idle-states independent
++      of the parent domain's idle states. In the absence of this property,
++      the domain would be considered as capable of being powered-on
++      or powered-off.
++
++  operating-points-v2:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      Phandles to the OPP tables of power domains provided by a power domain
++      provider. If the provider provides a single power domain only or all
++      the power domains provided by the provider have identical OPP tables,
++      then this shall contain a single phandle. Refer to ../opp/opp.txt
++      for more information.
++
++  "#power-domain-cells":
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Number of cells in a PM domain specifier. Typically 0 for nodes
++      representing a single PM domain and 1 for nodes providing multiple PM
++      domains (e.g. power controllers), but can be any value as specified
++      by device tree binding documentation of particular provider.
++
++  power-domains:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++       A phandle and PM domain specifier as defined by bindings of the power
++       controller specified by phandle. Some power domains might be powered
++       from another power domain (or have other hardware specific
++       dependencies). For representing such dependency a standard PM domain
++       consumer binding is used. When provided, all domains created
++       by the given provider should be subdomains of the domain specified
++       by this binding. More details about power domain specifier are
++       available in the power-domain-consumers.yaml.
++
++required:
++  - "#power-domain-cells"
++
++examples:
++  - |
++    power: power-controller@12340000 {
++      compatible = "foo,power-controller";
++      reg = <0x12340000 0x1000>;
++      #power-domain-cells = <1>;
++    };
++
++    // The node above defines a power controller that is a PM domain provider and
++    // expects one cell as its phandle argument.
++
++  - |
++    parent2: power-controller@12340000 {
++      compatible = "foo,power-controller";
++      reg = <0x12340000 0x1000>;
++      #power-domain-cells = <1>;
++    };
++
++    child2: power-controller@12341000 {
++      compatible = "foo,power-controller";
++      reg = <0x12341000 0x1000>;
++      power-domains = <&parent2 0>;
++      #power-domain-cells = <1>;
++    };
++
++    // The nodes above define two power controllers: 'parent' and 'child'.
++    // Domains created by the 'child' power controller are subdomains of '0' power
++    // domain provided by the 'parent' power controller.
++
++  - |
++    parent3: power-controller@12340000 {
++      compatible = "foo,power-controller";
++      reg = <0x12340000 0x1000>;
++      #power-domain-cells = <0>;
++      domain-idle-states = <&DOMAIN_RET>, <&DOMAIN_PWR_DN>;
++    };
++
++    child3: power-controller@12341000 {
++      compatible = "foo,power-controller";
++      reg = <0x12341000 0x1000>;
++      power-domains = <&parent3>;
++      #power-domain-cells = <0>;
++      domain-idle-states = <&DOMAIN_PWR_DN>;
++    };
++
++    DOMAIN_RET: state@0 {
++      compatible = "domain-idle-state";
++      reg = <0x0 0x0>;
++      entry-latency-us = <1000>;
++      exit-latency-us = <2000>;
++      min-residency-us = <10000>;
++    };
++
++    DOMAIN_PWR_DN: state@1 {
++      compatible = "domain-idle-state";
++      reg = <0x1 0x0>;
++      entry-latency-us = <5000>;
++      exit-latency-us = <8000>;
++      min-residency-us = <7000>;
++    };
+diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
+deleted file mode 100644
+index 8f8b25a24b8f..000000000000
+--- a/Documentation/devicetree/bindings/power/power_domain.txt
++++ /dev/null
+@@ -1,205 +0,0 @@
+-* Generic PM domains
+-
+-System on chip designs are often divided into multiple PM domains that can be
+-used for power gating of selected IP blocks for power saving by reduced leakage
+-current.
+-
+-This device tree binding can be used to bind PM domain consumer devices with
+-their PM domains provided by PM domain providers. A PM domain provider can be
+-represented by any node in the device tree and can provide one or more PM
+-domains. A consumer node can refer to the provider by a phandle and a set of
+-phandle arguments (so called PM domain specifiers) of length specified by the
+-#power-domain-cells property in the PM domain provider node.
+-
+-==PM domain providers==
+-
+-Required properties:
+- - #power-domain-cells : Number of cells in a PM domain specifier;
+-   Typically 0 for nodes representing a single PM domain and 1 for nodes
+-   providing multiple PM domains (e.g. power controllers), but can be any value
+-   as specified by device tree binding documentation of particular provider.
+-
+-Optional properties:
+- - power-domains : A phandle and PM domain specifier as defined by bindings of
+-                   the power controller specified by phandle.
+-   Some power domains might be powered from another power domain (or have
+-   other hardware specific dependencies). For representing such dependency
+-   a standard PM domain consumer binding is used. When provided, all domains
+-   created by the given provider should be subdomains of the domain
+-   specified by this binding. More details about power domain specifier are
+-   available in the next section.
+-
+-- domain-idle-states : A phandle of an idle-state that shall be soaked into a
+-                generic domain power state. The idle state definitions are
+-                compatible with domain-idle-state specified in [1]. phandles
+-                that are not compatible with domain-idle-state will be
+-                ignored.
+-  The domain-idle-state property reflects the idle state of this PM domain and
+-  not the idle states of the devices or sub-domains in the PM domain. Devices
+-  and sub-domains have their own idle-states independent of the parent
+-  domain's idle states. In the absence of this property, the domain would be
+-  considered as capable of being powered-on or powered-off.
+-
+-- operating-points-v2 : Phandles to the OPP tables of power domains provided by
+-  a power domain provider. If the provider provides a single power domain only
+-  or all the power domains provided by the provider have identical OPP tables,
+-  then this shall contain a single phandle. Refer to ../opp/opp.txt for more
+-  information.
+-
+-Example:
+-
+-	power: power-controller@12340000 {
+-		compatible = "foo,power-controller";
+-		reg = <0x12340000 0x1000>;
+-		#power-domain-cells = <1>;
+-	};
+-
+-The node above defines a power controller that is a PM domain provider and
+-expects one cell as its phandle argument.
+-
+-Example 2:
+-
+-	parent: power-controller@12340000 {
+-		compatible = "foo,power-controller";
+-		reg = <0x12340000 0x1000>;
+-		#power-domain-cells = <1>;
+-	};
+-
+-	child: power-controller@12341000 {
+-		compatible = "foo,power-controller";
+-		reg = <0x12341000 0x1000>;
+-		power-domains = <&parent 0>;
+-		#power-domain-cells = <1>;
+-	};
+-
+-The nodes above define two power controllers: 'parent' and 'child'.
+-Domains created by the 'child' power controller are subdomains of '0' power
+-domain provided by the 'parent' power controller.
+-
+-Example 3:
+-	parent: power-controller@12340000 {
+-		compatible = "foo,power-controller";
+-		reg = <0x12340000 0x1000>;
+-		#power-domain-cells = <0>;
+-		domain-idle-states = <&DOMAIN_RET>, <&DOMAIN_PWR_DN>;
+-	};
+-
+-	child: power-controller@12341000 {
+-		compatible = "foo,power-controller";
+-		reg = <0x12341000 0x1000>;
+-		power-domains = <&parent>;
+-		#power-domain-cells = <0>;
+-		domain-idle-states = <&DOMAIN_PWR_DN>;
+-	};
+-
+-	DOMAIN_RET: state@0 {
+-		compatible = "domain-idle-state";
+-		reg = <0x0>;
+-		entry-latency-us = <1000>;
+-		exit-latency-us = <2000>;
+-		min-residency-us = <10000>;
+-	};
+-
+-	DOMAIN_PWR_DN: state@1 {
+-		compatible = "domain-idle-state";
+-		reg = <0x1>;
+-		entry-latency-us = <5000>;
+-		exit-latency-us = <8000>;
+-		min-residency-us = <7000>;
+-	};
+-
+-==PM domain consumers==
+-
+-Required properties:
+- - power-domains : A list of PM domain specifiers, as defined by bindings of
+-		the power controller that is the PM domain provider.
+-
+-Optional properties:
+- - power-domain-names : A list of power domain name strings sorted in the same
+-		order as the power-domains property. Consumers drivers will use
+-		power-domain-names to match power domains with power-domains
+-		specifiers.
+-
+-Example:
+-
+-	leaky-device@12350000 {
+-		compatible = "foo,i-leak-current";
+-		reg = <0x12350000 0x1000>;
+-		power-domains = <&power 0>;
+-		power-domain-names = "io";
+-	};
+-
+-	leaky-device@12351000 {
+-		compatible = "foo,i-leak-current";
+-		reg = <0x12351000 0x1000>;
+-		power-domains = <&power 0>, <&power 1> ;
+-		power-domain-names = "io", "clk";
+-	};
+-
+-The first example above defines a typical PM domain consumer device, which is
+-located inside a PM domain with index 0 of a power controller represented by a
+-node with the label "power".
+-In the second example the consumer device are partitioned across two PM domains,
+-the first with index 0 and the second with index 1, of a power controller that
+-is represented by a node with the label "power".
+-
+-Optional properties:
+-- required-opps: This contains phandle to an OPP node in another device's OPP
+-  table. It may contain an array of phandles, where each phandle points to an
+-  OPP of a different device. It should not contain multiple phandles to the OPP
+-  nodes in the same OPP table. This specifies the minimum required OPP of the
+-  device(s), whose OPP's phandle is present in this property, for the
+-  functioning of the current device at the current OPP (where this property is
+-  present).
+-
+-Example:
+-- OPP table for domain provider that provides two domains.
+-
+-	domain0_opp_table: opp-table0 {
+-		compatible = "operating-points-v2";
+-
+-		domain0_opp_0: opp-1000000000 {
+-			opp-hz = /bits/ 64 <1000000000>;
+-			opp-microvolt = <975000 970000 985000>;
+-		};
+-		domain0_opp_1: opp-1100000000 {
+-			opp-hz = /bits/ 64 <1100000000>;
+-			opp-microvolt = <1000000 980000 1010000>;
+-		};
+-	};
+-
+-	domain1_opp_table: opp-table1 {
+-		compatible = "operating-points-v2";
+-
+-		domain1_opp_0: opp-1200000000 {
+-			opp-hz = /bits/ 64 <1200000000>;
+-			opp-microvolt = <975000 970000 985000>;
+-		};
+-		domain1_opp_1: opp-1300000000 {
+-			opp-hz = /bits/ 64 <1300000000>;
+-			opp-microvolt = <1000000 980000 1010000>;
+-		};
+-	};
+-
+-	power: power-controller@12340000 {
+-		compatible = "foo,power-controller";
+-		reg = <0x12340000 0x1000>;
+-		#power-domain-cells = <1>;
+-		operating-points-v2 = <&domain0_opp_table>, <&domain1_opp_table>;
+-	};
+-
+-	leaky-device0@12350000 {
+-		compatible = "foo,i-leak-current";
+-		reg = <0x12350000 0x1000>;
+-		power-domains = <&power 0>;
+-		required-opps = <&domain0_opp_0>;
+-	};
+-
+-	leaky-device1@12350000 {
+-		compatible = "foo,i-leak-current";
+-		reg = <0x12350000 0x1000>;
+-		power-domains = <&power 1>;
+-		required-opps = <&domain1_opp_1>;
+-	};
+-
+-[1]. Documentation/devicetree/bindings/power/domain-idle-state.txt
+diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+index eb35b22f9e23..386eeed6a887 100644
+--- a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
++++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+@@ -12,7 +12,7 @@ Required Properties:
+  - #power-domain-cells: number of cells in Power domain specifier
+ 	must be 1.
+  - operating-points-v2: Phandle to the OPP table for the Power domain.
+-	Refer to Documentation/devicetree/bindings/power/power_domain.txt
++	Refer to Documentation/devicetree/bindings/power/power-domain-consumers.yaml
+ 	and Documentation/devicetree/bindings/opp/opp.txt for more details
+ 
+ Refer to <dt-bindings/power/qcom-rpmpd.h> for the level values for
+diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index eae2a880155a..8cd804980119 100644
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -43,7 +43,7 @@ Example:
+ 
+ Devices residing in a power area must refer to that power area, as documented
+ by the generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
++Documentation/devicetree/bindings/power/power-domain-consumers.yaml.
+ 
+ Required properties:
+   - power-domains: A phandle and symbolic PM domain specifier, as defined in
+diff --git a/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.txt b/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.txt
+index beda7d2efc30..49aba15dff8b 100644
+--- a/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.txt
++++ b/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.txt
+@@ -29,7 +29,7 @@ Optional nodes:
+ 
+ Each of the PM domain nodes represents a PM domain, as documented by the
+ generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
++Documentation/devicetree/bindings/power/power-domain.yaml.
+ 
+ The nodes should be named by the real power area names, and thus their names
+ should be unique.
+diff --git a/Documentation/devicetree/bindings/power/xlnx,zynqmp-genpd.txt b/Documentation/devicetree/bindings/power/xlnx,zynqmp-genpd.txt
+index 8d1b8200ebd0..54b9f9d0f90f 100644
+--- a/Documentation/devicetree/bindings/power/xlnx,zynqmp-genpd.txt
++++ b/Documentation/devicetree/bindings/power/xlnx,zynqmp-genpd.txt
+@@ -4,7 +4,7 @@ Device Tree Bindings for the Xilinx Zynq MPSoC PM domains
+ The binding for zynqmp-power-controller follow the common
+ generic PM domain binding[1].
+ 
+-[1] Documentation/devicetree/bindings/power/power_domain.txt
++[1] Documentation/devicetree/bindings/power/power-domain.yaml
+ 
+ == Zynq MPSoC Generic PM Domain Node ==
+ 
+diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+index 3b7d32956391..72ff033565e5 100644
+--- a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
++++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+@@ -26,7 +26,7 @@ Optional properties:
+     system power.  This node follows the power controller bindings[3].
+ 
+ [1] Documentation/devicetree/bindings/reset/reset.txt
+-[2] Documentation/devicetree/bindings/power/power_domain.txt
++[2] Documentation/devicetree/bindings/power/power-domain.yaml
+ [3] Documentation/devicetree/bindings/power/power-controller.txt
+ 
+ Example:
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index 876693a7ada5..8f469d85833b 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -8,7 +8,7 @@ The System Power Manager (SPM) inside the SCPSYS is for the MTCMOS power
+ domain control.
+ 
+ The driver implements the Generic PM domain bindings described in
+-power/power_domain.txt. It provides the power domains defined in
++power/power-domain.yaml. It provides the power domains defined in
+ - include/dt-bindings/power/mt8173-power.h
+ - include/dt-bindings/power/mt6797-power.h
+ - include/dt-bindings/power/mt2701-power.h
+diff --git a/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt b/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+index f7b00a7c0f68..593cf345fbec 100644
+--- a/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
++++ b/Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+@@ -12,7 +12,7 @@ PM Domain Node
+ ==============
+ The PM domain node represents the global PM domain managed by the PMMC, which
+ in this case is the implementation as documented by the generic PM domain
+-bindings in Documentation/devicetree/bindings/power/power_domain.txt.  Because
++bindings in Documentation/devicetree/bindings/power/power-domain.yaml.  Because
+ this relies on the TI SCI protocol to communicate with the PMMC it must be a
+ child of the pmmc node.
+ 
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+index 5bfcc0b4d6b9..ee0d6c28978f 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+@@ -64,12 +64,12 @@ For Tegra210:
+ For Tegra210 and Tegra186:
+ - power-domains: A list of PM domain specifiers that reference each power-domain
+   used by the xHCI controller. This list must comprise of a specifier for the
+-  XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
++  XUSBA and XUSBC power-domains. See ../power/power-domain-consumers.yaml and
+   ../arm/tegra/nvidia,tegra20-pmc.txt for details.
+ - power-domain-names: A list of names that represent each of the specifiers in
+   the 'power-domains' property. Must include 'xusb_ss' and 'xusb_host' which
+   represent the power-domains XUSBA and XUSBC, respectively. See
+-  ../power/power_domain.txt for details.
++  ../power/power-domain-consumers.yaml for details.
+ 
+ Optional properties:
+ --------------------
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 36c30f31bdf2..c49d35dce088 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6869,7 +6869,7 @@ L:	linux-pm@vger.kernel.org
+ S:	Supported
+ F:	drivers/base/power/domain*.c
+ F:	include/linux/pm_domain.h
+-F:	Documentation/devicetree/bindings/power/power_domain.txt
++F:	Documentation/devicetree/bindings/power/power-domain*.yaml
+ 
+ GENERIC RESISTIVE TOUCHSCREEN ADC DRIVER
+ M:	Eugen Hristev <eugen.hristev@microchip.com>
 -- 
-2.20.1
+2.17.1
 
