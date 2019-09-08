@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D46A4ACDAD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:54:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8671EACDE7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:57:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732947AbfIHMwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:52:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43946 "EHLO mail.kernel.org"
+        id S1730990AbfIHMsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:48:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732856AbfIHMwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:52:01 -0400
+        id S1730945AbfIHMsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:48:17 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D1A82190F;
-        Sun,  8 Sep 2019 12:52:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67E1221A49;
+        Sun,  8 Sep 2019 12:48:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567947120;
+        s=default; t=1567946896;
         bh=DOSF6AukBROLlNk0BEl1Q7MOQ+QargqIcHwxqCxuppA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uOI3r7RKx/f3FnXvW71ZG9NbzRyJm1tm9pY/RlPw2WjcKSJtaQTXlTZymj5WWbFQQ
-         ZDVzHnnf+6taP7wWEM8/vGyB6S8sEGkdMRDGdWnkbLE3tnLdAsHnt/LkowpXUVqFQ2
-         bGybjWEE2RsXZrxdeB36jmWnplsX0JYPh4haW8sc=
+        b=nfirDaDFWgFL4BkqgHfuiA8uXyzuSTUpOzlV8svimKA9Mb4u6uVYliehK1FA9l482
+         BJgoPbyZQx6WXWnRQI7/ly44tl0ELBheEUaQN2yVaBpvf/0uftNfL92t5luM7Im+Wh
+         Lykq43kg+VE7RYzWLyYPfSyH2ktsV8lYeDrciaZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 70/94] Tools: hv: kvp: eliminate may be used uninitialized warning
+Subject: [PATCH 4.19 42/57] Tools: hv: kvp: eliminate may be used uninitialized warning
 Date:   Sun,  8 Sep 2019 13:42:06 +0100
-Message-Id: <20190908121152.436929197@linuxfoundation.org>
+Message-Id: <20190908121144.692262521@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
-References: <20190908121150.420989666@linuxfoundation.org>
+In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
+References: <20190908121125.608195329@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
