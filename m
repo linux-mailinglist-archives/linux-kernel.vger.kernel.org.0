@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97082ACCD1
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D302ACD06
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbfIHMnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:43:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56410 "EHLO mail.kernel.org"
+        id S1729970AbfIHMo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:44:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfIHMm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:42:59 -0400
+        id S1729954AbfIHMo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:44:57 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 087E52081B;
-        Sun,  8 Sep 2019 12:42:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CD85218AE;
+        Sun,  8 Sep 2019 12:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946578;
-        bh=WUYooGrCEDe8VW9BAEf19OtWWMbZj/Ab7oU1AJQaYIA=;
+        s=default; t=1567946696;
+        bh=eA1UmvITMznGUO3OQCWlkolxcB0kVV3odZ9xjZWeUHY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ObvHlIsj4WwBxYvWBZCGUNo1FqDJTOxMFmF7oRm+nLD8UMsY0yYz7JRMictTU0Lep
-         I0PuOXA7y7uBLfvwGaV9OZlTFvzuJJBSCmVAJfe5Q2Z/sEbFY6ZOlX5IBjzBe7wlb4
-         HrUYZEMKWOAbFGagGVmPFeRMB0xiJKQ1vgcZnv74=
+        b=tunCprI/EXKp+G3UWpYmzJ67/TIIIswcBpnIOBLbLqfAS5Ki/+BgpepwjG0U7TPE9
+         wHWrR4Y5vN/FtL7chXWhoMj19N2gSoJhxrWiNnSoMcTBD3twQgrih6oHPhVNWJ/BSv
+         lasLffunLVXBi5nrWfRjCsdoj1q6E+gXVT8VHzi4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 12/23] Tools: hv: kvp: eliminate may be used uninitialized warning
-Date:   Sun,  8 Sep 2019 13:41:47 +0100
-Message-Id: <20190908121058.583528895@linuxfoundation.org>
+Subject: [PATCH 4.9 09/26] net: kalmia: fix memory leaks
+Date:   Sun,  8 Sep 2019 13:41:48 +0100
+Message-Id: <20190908121100.592440132@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
-References: <20190908121052.898169328@linuxfoundation.org>
+In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
+References: <20190908121057.216802689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 89eb4d8d25722a0a0194cf7fa47ba602e32a6da7 ]
+[ Upstream commit f1472cb09f11ddb41d4be84f0650835cb65a9073 ]
 
-When building hv_kvp_daemon GCC-8.3 complains:
+In kalmia_init_and_get_ethernet_addr(), 'usb_buf' is allocated through
+kmalloc(). In the following execution, if the 'status' returned by
+kalmia_send_init_packet() is not 0, 'usb_buf' is not deallocated, leading
+to memory leaks. To fix this issue, add the 'out' label to free 'usb_buf'.
 
-hv_kvp_daemon.c: In function ‘kvp_get_ip_info.constprop’:
-hv_kvp_daemon.c:812:30: warning: ‘ip_buffer’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  struct hv_kvp_ipaddr_value *ip_buffer;
-
-this seems to be a false positive: we only use ip_buffer when
-op == KVP_OP_GET_IP_INFO and it is only unset when op == KVP_OP_ENUMERATE.
-
-Silence the warning by initializing ip_buffer to NULL.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/hv/hv_kvp_daemon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/kalmia.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index fffc7c4184599..834008639c4bb 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -878,7 +878,7 @@ kvp_get_ip_info(int family, char *if_name, int op,
- 	int sn_offset = 0;
- 	int error = 0;
- 	char *buffer;
--	struct hv_kvp_ipaddr_value *ip_buffer;
-+	struct hv_kvp_ipaddr_value *ip_buffer = NULL;
- 	char cidr_mask[5]; /* /xyz */
- 	int weight;
- 	int i;
+diff --git a/drivers/net/usb/kalmia.c b/drivers/net/usb/kalmia.c
+index 3e37724d30ae7..0c4f4190c58ee 100644
+--- a/drivers/net/usb/kalmia.c
++++ b/drivers/net/usb/kalmia.c
+@@ -117,16 +117,16 @@ kalmia_init_and_get_ethernet_addr(struct usbnet *dev, u8 *ethernet_addr)
+ 	status = kalmia_send_init_packet(dev, usb_buf, sizeof(init_msg_1)
+ 		/ sizeof(init_msg_1[0]), usb_buf, 24);
+ 	if (status != 0)
+-		return status;
++		goto out;
+ 
+ 	memcpy(usb_buf, init_msg_2, 12);
+ 	status = kalmia_send_init_packet(dev, usb_buf, sizeof(init_msg_2)
+ 		/ sizeof(init_msg_2[0]), usb_buf, 28);
+ 	if (status != 0)
+-		return status;
++		goto out;
+ 
+ 	memcpy(ethernet_addr, usb_buf + 10, ETH_ALEN);
+-
++out:
+ 	kfree(usb_buf);
+ 	return status;
+ }
 -- 
 2.20.1
 
