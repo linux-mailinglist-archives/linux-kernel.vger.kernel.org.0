@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DD13ACE20
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:57:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96047ACDCF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:54:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732598AbfIHMvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:51:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42614 "EHLO mail.kernel.org"
+        id S2387667AbfIHMxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:53:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732530AbfIHMvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:51:17 -0400
+        id S2387617AbfIHMx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:53:26 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 417D2218AC;
-        Sun,  8 Sep 2019 12:51:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BABB2190F;
+        Sun,  8 Sep 2019 12:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567947076;
-        bh=qiMYYrfTPi075togGcZvOW8cKQL36BR/ZK0ZrlNGj24=;
+        s=default; t=1567947206;
+        bh=2IMqh2I9r0/tQn3n3KrKnfXUTdJBdIYC20ZWkmNy9+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A7OOM72bpwltCJef6EEBxtpWO5t4FW1u7S6rNbF3EmX4va1pdIUjc/ujBeNjUViGR
-         oCFkWeXvYEMwrgPZ9Ehy3st2TQnMkk/1FTnKZLhrxZbKD1QSD1MC831o+/iZvjfzcp
-         gtBSc8ehrtyXaX0+3Rj1tzOJvzCc6sUENpvbI6gg=
+        b=KhVci2Vk6j+R76eKhDgmT6QNwKcnLd76v8sbH06rlTxXsPP/hF8Its7+qfQ0D7EQP
+         ZvEV8QfBX/z2rfGvdQAadjjp7gXcucQMAUPRA2UWxfTdAxXFwcjYj7hEJ22x8GSrwV
+         vpvhkLu58ULOHp12MucdeFyiSn3hmUzFeUzbfpBg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 50/94] selftests: kvm: fix vmx_set_nested_state_test
-Date:   Sun,  8 Sep 2019 13:41:46 +0100
-Message-Id: <20190908121151.871633476@linuxfoundation.org>
+Subject: [PATCH 5.2 51/94] liquidio: add cleanup in octeon_setup_iq()
+Date:   Sun,  8 Sep 2019 13:41:47 +0100
+Message-Id: <20190908121151.899401924@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
 References: <20190908121150.420989666@linuxfoundation.org>
@@ -43,73 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c930e19790bbbff31c018009907c813fa0925f63 ]
+[ Upstream commit 6f967f8b1be7001b31c46429f2ee7d275af2190f ]
 
-vmx_set_nested_state_test is trying to use the KVM_STATE_NESTED_EVMCS without
-enabling enlightened VMCS first.  Correct the outcome of the test, and actually
-test that it succeeds after the capability is enabled.
+If oct->fn_list.enable_io_queues() fails, no cleanup is executed, leading
+to memory/resource leaks. To fix this issue, invoke
+octeon_delete_instr_queue() before returning from the function.
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../kvm/x86_64/vmx_set_nested_state_test.c      | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/cavium/liquidio/request_manager.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
-index a99fc66dafeb6..853e370e8a394 100644
---- a/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
-@@ -25,6 +25,8 @@
- #define VMCS12_REVISION 0x11e57ed0
- #define VCPU_ID 5
+diff --git a/drivers/net/ethernet/cavium/liquidio/request_manager.c b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+index fcf20a8f92d94..6a823710987da 100644
+--- a/drivers/net/ethernet/cavium/liquidio/request_manager.c
++++ b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+@@ -239,8 +239,10 @@ int octeon_setup_iq(struct octeon_device *oct,
+ 	}
  
-+bool have_evmcs;
-+
- void test_nested_state(struct kvm_vm *vm, struct kvm_nested_state *state)
- {
- 	vcpu_nested_state_set(vm, VCPU_ID, state, false);
-@@ -75,8 +77,9 @@ void set_default_vmx_state(struct kvm_nested_state *state, int size)
- {
- 	memset(state, 0, size);
- 	state->flags = KVM_STATE_NESTED_GUEST_MODE  |
--			KVM_STATE_NESTED_RUN_PENDING |
--			KVM_STATE_NESTED_EVMCS;
-+			KVM_STATE_NESTED_RUN_PENDING;
-+	if (have_evmcs)
-+		state->flags |= KVM_STATE_NESTED_EVMCS;
- 	state->format = 0;
- 	state->size = size;
- 	state->hdr.vmx.vmxon_pa = 0x1000;
-@@ -126,13 +129,19 @@ void test_vmx_nested_state(struct kvm_vm *vm)
- 	/*
- 	 * Setting vmxon_pa == -1ull and vmcs_pa == -1ull exits early without
- 	 * setting the nested state but flags other than eVMCS must be clear.
-+	 * The eVMCS flag can be set if the enlightened VMCS capability has
-+	 * been enabled.
- 	 */
- 	set_default_vmx_state(state, state_sz);
- 	state->hdr.vmx.vmxon_pa = -1ull;
- 	state->hdr.vmx.vmcs12_pa = -1ull;
- 	test_nested_state_expect_einval(vm, state);
- 
--	state->flags = KVM_STATE_NESTED_EVMCS;
-+	state->flags &= KVM_STATE_NESTED_EVMCS;
-+	if (have_evmcs) {
-+		test_nested_state_expect_einval(vm, state);
-+		vcpu_enable_evmcs(vm, VCPU_ID);
+ 	oct->num_iqs++;
+-	if (oct->fn_list.enable_io_queues(oct))
++	if (oct->fn_list.enable_io_queues(oct)) {
++		octeon_delete_instr_queue(oct, iq_no);
+ 		return 1;
 +	}
- 	test_nested_state(vm, state);
  
- 	/* It is invalid to have vmxon_pa == -1ull and SMM flags non-zero. */
-@@ -217,6 +226,8 @@ int main(int argc, char *argv[])
- 	struct kvm_nested_state state;
- 	struct kvm_cpuid_entry2 *entry = kvm_get_supported_cpuid_entry(1);
- 
-+	have_evmcs = kvm_check_cap(KVM_CAP_HYPERV_ENLIGHTENED_VMCS);
-+
- 	if (!kvm_check_cap(KVM_CAP_NESTED_STATE)) {
- 		printf("KVM_CAP_NESTED_STATE not available, skipping test\n");
- 		exit(KSFT_SKIP);
+ 	return 0;
+ }
 -- 
 2.20.1
 
