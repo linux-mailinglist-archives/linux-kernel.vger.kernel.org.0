@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E900AACE16
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E452ACE52
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732180AbfIHMug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:50:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41332 "EHLO mail.kernel.org"
+        id S1730882AbfIHMsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:48:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732119AbfIHMu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:50:28 -0400
+        id S1730864AbfIHMsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:48:01 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3E752190F;
-        Sun,  8 Sep 2019 12:50:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3B9F21924;
+        Sun,  8 Sep 2019 12:48:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567947027;
-        bh=t8vTz3bm7817MJk+R8f5YXtg/XCw3/+FCCFUyKitszE=;
+        s=default; t=1567946881;
+        bh=AseTGtoaOnMVx1Y9ccsbVx9ZHHRjZZEswyRIdKubALI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SCvxVucCCWczsMl/hPhqMkeKhphExrOsuqT8oHI1suNXuJYHIRtcp+M2s+DwPf2p7
-         AnoMs9A1K7gI1iPCmB8NXT7EMcJIFjtduE5CNiM4M0PfkxCDq3hZo37xCg3hd8+U5+
-         CLG96OcY2eAY6RFWRttKjEBzarBet57nKdSw2yY8=
+        b=vO5au8Z3458b1/y52lh8YXfLnt2ZBX70C9Y/Tl5afYI6pZ4DgOpST4+JrtAC99IY7
+         1ZYL7DA6wCBqGgau/Auz5qxqQWcSA/t8nsIgX0oud5jnAq2tip2gDT/HFoLLWWVGxX
+         5TqTax0LfNHj52dhx52fVlb8vbf1VHhwue5hd78A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 33/94] ixgbe: fix possible deadlock in ixgbe_service_task()
-Date:   Sun,  8 Sep 2019 13:41:29 +0100
-Message-Id: <20190908121151.386928027@linuxfoundation.org>
+        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 06/57] tcp: inherit timestamp on mtu probe
+Date:   Sun,  8 Sep 2019 13:41:30 +0100
+Message-Id: <20190908121127.673678005@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
-References: <20190908121150.420989666@linuxfoundation.org>
+In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
+References: <20190908121125.608195329@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,41 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8b6381600d59871fbe44d36522272f961ab42410 ]
+From: Willem de Bruijn <willemb@google.com>
 
-ixgbe_service_task() calls unregister_netdev() under rtnl_lock().
-But unregister_netdev() internally calls rtnl_lock().
-So deadlock would occur.
+[ Upstream commit 888a5c53c0d8be6e98bc85b677f179f77a647873 ]
 
-Fixes: 59dd45d550c5 ("ixgbe: firmware recovery mode")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+TCP associates tx timestamp requests with a byte in the bytestream.
+If merging skbs in tcp_mtu_probe, migrate the tstamp request.
+
+Similar to MSG_EOR, do not allow moving a timestamp from any segment
+in the probe but the last. This to avoid merging multiple timestamps.
+
+Tested with the packetdrill script at
+https://github.com/wdebruij/packetdrill/commits/mtu_probe-1
+
+Link: http://patchwork.ozlabs.org/patch/1143278/#2232897
+Fixes: 4ed2d765dfac ("net-timestamp: TCP timestamping")
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ net/ipv4/tcp_output.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 57fd9ee6de665..f7c049559c1a5 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -7893,11 +7893,8 @@ static void ixgbe_service_task(struct work_struct *work)
- 		return;
- 	}
- 	if (ixgbe_check_fw_error(adapter)) {
--		if (!test_bit(__IXGBE_DOWN, &adapter->state)) {
--			rtnl_lock();
-+		if (!test_bit(__IXGBE_DOWN, &adapter->state))
- 			unregister_netdev(adapter->netdev);
--			rtnl_unlock();
--		}
- 		ixgbe_service_event_complete(adapter);
- 		return;
- 	}
--- 
-2.20.1
-
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -2046,7 +2046,7 @@ static bool tcp_can_coalesce_send_queue_
+ 		if (len <= skb->len)
+ 			break;
+ 
+-		if (unlikely(TCP_SKB_CB(skb)->eor))
++		if (unlikely(TCP_SKB_CB(skb)->eor) || tcp_has_tx_tstamp(skb))
+ 			return false;
+ 
+ 		len -= skb->len;
+@@ -2162,6 +2162,7 @@ static int tcp_mtu_probe(struct sock *sk
+ 			 * we need to propagate it to the new skb.
+ 			 */
+ 			TCP_SKB_CB(nskb)->eor = TCP_SKB_CB(skb)->eor;
++			tcp_skb_collapse_tstamp(nskb, skb);
+ 			tcp_unlink_write_queue(skb, sk);
+ 			sk_wmem_free_skb(sk, skb);
+ 		} else {
 
 
