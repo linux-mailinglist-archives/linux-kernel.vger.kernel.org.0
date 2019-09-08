@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 830A3ACD08
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EE0FACD28
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbfIHMpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:45:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60084 "EHLO mail.kernel.org"
+        id S1730340AbfIHMqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:46:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729975AbfIHMpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:45:02 -0400
+        id S1730294AbfIHMqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:46:09 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7C25218AE;
-        Sun,  8 Sep 2019 12:45:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DDBD218AE;
+        Sun,  8 Sep 2019 12:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946701;
-        bh=gdF4uvgwLqBk17amB8Ul2Jm1qxH0Aqoc/x4M99Un1q4=;
+        s=default; t=1567946768;
+        bh=P2/vpRpLgz3ayw3nfoTGsFOCoVxhd8GDMJNmyOIDilk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HPPN7puNM7YCNN1BFd0Co9VxgWmmG2J0x2nNFmMc9f1dYgXuhrIs7Cz6wGao3jXnW
-         /pfOM0AdQdsEk0voPItqVfoZ7i20tEjjddpslVsN0vRM7wUVIafMvEdXpsIDQyy3aO
-         dlJxElaY/IQl/qibKBiISzNvvhul9N1kOwoIDvqM=
+        b=kQvP8lIOUlZ/UBulXeZePJ8Zwxi+T3OGaJB4VTpjeflAyC21GouOcNzCtgb/J7o0C
+         LFZzlT6NAT26ZgjISbw2v+EMkilLF2fF5WH+CchWdOOfNCyx0Zj1c2HJc6KYvWDtKU
+         SBaInOaOjmi7vL43owHwF2EJrdfVA0JYg4E0TY14=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 26/26] mld: fix memory leak in mld_del_delrec()
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bandan Das <bsd@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 32/40] Revert "x86/apic: Include the LDR when clearing out APIC registers"
 Date:   Sun,  8 Sep 2019 13:42:05 +0100
-Message-Id: <20190908121111.344808096@linuxfoundation.org>
+Message-Id: <20190908121128.953017085@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
-References: <20190908121057.216802689@linuxfoundation.org>
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
+References: <20190908121114.260662089@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,71 +46,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+[ Upstream commit 950b07c14e8c59444e2359f15fd70ed5112e11a0 ]
 
-[ Upstream commit a84d016479896b5526a2cc54784e6ffc41c9d6f6 ]
+This reverts commit 558682b5291937a70748d36fd9ba757fb25b99ae.
 
-Similar to the fix done for IPv4 in commit e5b1c6c6277d
-("igmp: fix memory leak in igmpv3_del_delrec()"), we need to
-make sure mca_tomb and mca_sources are not blindly overwritten.
+Chris Wilson reports that it breaks his CPU hotplug test scripts.  In
+particular, it breaks offlining and then re-onlining the boot CPU, which
+we treat specially (and the BIOS does too).
 
-Using swap() then a call to ip6_mc_clear_src() will take care
-of the missing free.
+The symptoms are that we can offline the CPU, but it then does not come
+back online again:
 
-BUG: memory leak
-unreferenced object 0xffff888117d9db00 (size 64):
-  comm "syz-executor247", pid 6918, jiffies 4294943989 (age 25.350s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 fe 88 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<000000005b463030>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<000000005b463030>] slab_post_alloc_hook mm/slab.h:522 [inline]
-    [<000000005b463030>] slab_alloc mm/slab.c:3319 [inline]
-    [<000000005b463030>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3548
-    [<00000000939cbf94>] kmalloc include/linux/slab.h:552 [inline]
-    [<00000000939cbf94>] kzalloc include/linux/slab.h:748 [inline]
-    [<00000000939cbf94>] ip6_mc_add1_src net/ipv6/mcast.c:2236 [inline]
-    [<00000000939cbf94>] ip6_mc_add_src+0x31f/0x420 net/ipv6/mcast.c:2356
-    [<00000000d8972221>] ip6_mc_source+0x4a8/0x600 net/ipv6/mcast.c:449
-    [<000000002b203d0d>] do_ipv6_setsockopt.isra.0+0x1b92/0x1dd0 net/ipv6/ipv6_sockglue.c:748
-    [<000000001f1e2d54>] ipv6_setsockopt+0x89/0xd0 net/ipv6/ipv6_sockglue.c:944
-    [<00000000c8f7bdf9>] udpv6_setsockopt+0x4e/0x90 net/ipv6/udp.c:1558
-    [<000000005a9a0c5e>] sock_common_setsockopt+0x38/0x50 net/core/sock.c:3139
-    [<00000000910b37b2>] __sys_setsockopt+0x10f/0x220 net/socket.c:2084
-    [<00000000e9108023>] __do_sys_setsockopt net/socket.c:2100 [inline]
-    [<00000000e9108023>] __se_sys_setsockopt net/socket.c:2097 [inline]
-    [<00000000e9108023>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2097
-    [<00000000f4818160>] do_syscall_64+0x76/0x1a0 arch/x86/entry/common.c:296
-    [<000000008d367e8f>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+    smpboot: CPU 0 is now offline
+    smpboot: Booting Node 0 Processor 0 APIC 0x0
+    smpboot: do_boot_cpu failed(-1) to wakeup CPU#0
 
-Fixes: 1666d49e1d41 ("mld: do not remove mld souce list info when set link down")
-Fixes: 9c8bb163ae78 ("igmp, mld: Fix memory leak in igmpv3/mld_del_delrec()")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thomas says he knows why it's broken (my personal suspicion: our magic
+handling of the "cpu0_logical_apicid" thing), but for 5.3 the right fix
+is to just revert it, since we've never touched the LDR bits before, and
+it's not worth the risk to do anything else at this stage.
+
+[ Hotpluging of the boot CPU is special anyway, and should be off by
+  default. See the "BOOTPARAM_HOTPLUG_CPU0" config option and the
+  cpu0_hotplug kernel parameter.
+
+  In general you should not do it, and it has various known limitations
+  (hibernate and suspend require the boot CPU, for example).
+
+  But it should work, even if the boot CPU is special and needs careful
+  treatment       - Linus ]
+
+Link: https://lore.kernel.org/lkml/156785100521.13300.14461504732265570003@skylake-alporthouse-com/
+Reported-by: Chris Wilson <chris@chris-wilson.co.uk>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bandan Das <bsd@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/mcast.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kernel/apic/apic.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -772,12 +772,13 @@ static void mld_del_delrec(struct inet6_
- 		im->idev = pmc->idev;
- 		im->mca_crcount = idev->mc_qrv;
- 		if (im->mca_sfmode == MCAST_INCLUDE) {
--			im->mca_tomb = pmc->mca_tomb;
--			im->mca_sources = pmc->mca_sources;
-+			swap(im->mca_tomb, pmc->mca_tomb);
-+			swap(im->mca_sources, pmc->mca_sources);
- 			for (psf = im->mca_sources; psf; psf = psf->sf_next)
- 				psf->sf_crcount = im->mca_crcount;
- 		}
- 		in6_dev_put(pmc->idev);
-+		ip6_mc_clear_src(pmc);
- 		kfree(pmc);
- 	}
- 	spin_unlock_bh(&im->mca_lock);
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 8199b7e4aff94..f8f9cfded97d3 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1148,10 +1148,6 @@ void clear_local_APIC(void)
+ 	apic_write(APIC_LVT0, v | APIC_LVT_MASKED);
+ 	v = apic_read(APIC_LVT1);
+ 	apic_write(APIC_LVT1, v | APIC_LVT_MASKED);
+-	if (!x2apic_enabled()) {
+-		v = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
+-		apic_write(APIC_LDR, v);
+-	}
+ 	if (maxlvt >= 4) {
+ 		v = apic_read(APIC_LVTPC);
+ 		apic_write(APIC_LVTPC, v | APIC_LVT_MASKED);
+-- 
+2.20.1
+
 
 
