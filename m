@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5C71ACD21
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28610ACCFC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbfIHMp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:45:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33152 "EHLO mail.kernel.org"
+        id S1729823AbfIHMob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:44:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727213AbfIHMpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:45:53 -0400
+        id S1729789AbfIHMoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:44:30 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB6EF21924;
-        Sun,  8 Sep 2019 12:45:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61DA92196E;
+        Sun,  8 Sep 2019 12:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946753;
-        bh=cuk9IKddEYJFNC0reOXs5WcbRFOnRLMgpOZPlixQSzk=;
+        s=default; t=1567946669;
+        bh=GpRnmNX5Yy8YYLy/7hh6hDMrhJzNRC4rXonoaYC5ipo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=umm81KxpGozBjKxjNlbwLte/39nqDKVKKKZeXSGrOvp2tj2cwKDtSRfVJ/gnvCVH1
-         ozHpqDPfkhSNzwS0s+RP8gzRyKqfVc4d9zucFy1APQWwfmaSk8sMIyygTPdkTUybQR
-         rhR2oprdfujxbo5zK5clWBxjJSYimhcu7Vj8g58I=
+        b=xB5h6NUq4QINrTOjoHZfhapiLGd4IzoIYgDZZkXKqE61SCZsCIbtpJ4VA+YpTE90u
+         jme3Ivb6u+k8hFuR+dkd24yW7NrpUa4BxI8U9UZyAYBNPYLv6bKusQsGiWpTstIYVJ
+         GqLF2YFojreCJB8UZxO3lNOO7zAr3UfA+rlsRxLs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 27/40] KVM: arm/arm64: Only skip MMIO insn once
-Date:   Sun,  8 Sep 2019 13:42:00 +0100
-Message-Id: <20190908121127.281680454@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bandan Das <bsd@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 22/26] Revert "x86/apic: Include the LDR when clearing out APIC registers"
+Date:   Sun,  8 Sep 2019 13:42:01 +0100
+Message-Id: <20190908121110.627865125@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
+References: <20190908121057.216802689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2113c5f62b7423e4a72b890bd479704aa85c81ba ]
+[ Upstream commit 950b07c14e8c59444e2359f15fd70ed5112e11a0 ]
 
-If after an MMIO exit to userspace a VCPU is immediately run with an
-immediate_exit request, such as when a signal is delivered or an MMIO
-emulation completion is needed, then the VCPU completes the MMIO
-emulation and immediately returns to userspace. As the exit_reason
-does not get changed from KVM_EXIT_MMIO in these cases we have to
-be careful not to complete the MMIO emulation again, when the VCPU is
-eventually run again, because the emulation does an instruction skip
-(and doing too many skips would be a waste of guest code :-) We need
-to use additional VCPU state to track if the emulation is complete.
-As luck would have it, we already have 'mmio_needed', which even
-appears to be used in this way by other architectures already.
+This reverts commit 558682b5291937a70748d36fd9ba757fb25b99ae.
 
-Fixes: 0d640732dbeb ("arm64: KVM: Skip MMIO insn after emulation")
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Andrew Jones <drjones@redhat.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
+Chris Wilson reports that it breaks his CPU hotplug test scripts.  In
+particular, it breaks offlining and then re-onlining the boot CPU, which
+we treat specially (and the BIOS does too).
+
+The symptoms are that we can offline the CPU, but it then does not come
+back online again:
+
+    smpboot: CPU 0 is now offline
+    smpboot: Booting Node 0 Processor 0 APIC 0x0
+    smpboot: do_boot_cpu failed(-1) to wakeup CPU#0
+
+Thomas says he knows why it's broken (my personal suspicion: our magic
+handling of the "cpu0_logical_apicid" thing), but for 5.3 the right fix
+is to just revert it, since we've never touched the LDR bits before, and
+it's not worth the risk to do anything else at this stage.
+
+[ Hotpluging of the boot CPU is special anyway, and should be off by
+  default. See the "BOOTPARAM_HOTPLUG_CPU0" config option and the
+  cpu0_hotplug kernel parameter.
+
+  In general you should not do it, and it has various known limitations
+  (hibernate and suspend require the boot CPU, for example).
+
+  But it should work, even if the boot CPU is special and needs careful
+  treatment       - Linus ]
+
+Link: https://lore.kernel.org/lkml/156785100521.13300.14461504732265570003@skylake-alporthouse-com/
+Reported-by: Chris Wilson <chris@chris-wilson.co.uk>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bandan Das <bsd@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- virt/kvm/arm/mmio.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/kernel/apic/apic.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/virt/kvm/arm/mmio.c b/virt/kvm/arm/mmio.c
-index 08443a15e6be8..3caee91bca089 100644
---- a/virt/kvm/arm/mmio.c
-+++ b/virt/kvm/arm/mmio.c
-@@ -98,6 +98,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
- 	unsigned int len;
- 	int mask;
- 
-+	/* Detect an already handled MMIO return */
-+	if (unlikely(!vcpu->mmio_needed))
-+		return 0;
-+
-+	vcpu->mmio_needed = 0;
-+
- 	if (!run->mmio.is_write) {
- 		len = run->mmio.len;
- 		if (len > sizeof(unsigned long))
-@@ -200,6 +206,7 @@ int io_mem_abort(struct kvm_vcpu *vcpu, struct kvm_run *run,
- 	run->mmio.is_write	= is_write;
- 	run->mmio.phys_addr	= fault_ipa;
- 	run->mmio.len		= len;
-+	vcpu->mmio_needed	= 1;
- 
- 	if (!ret) {
- 		/* We handled the access successfully in the kernel. */
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 37666c5367415..928ffdc21873c 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1067,10 +1067,6 @@ void clear_local_APIC(void)
+ 	apic_write(APIC_LVT0, v | APIC_LVT_MASKED);
+ 	v = apic_read(APIC_LVT1);
+ 	apic_write(APIC_LVT1, v | APIC_LVT_MASKED);
+-	if (!x2apic_enabled()) {
+-		v = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
+-		apic_write(APIC_LDR, v);
+-	}
+ 	if (maxlvt >= 4) {
+ 		v = apic_read(APIC_LVTPC);
+ 		apic_write(APIC_LVTPC, v | APIC_LVT_MASKED);
 -- 
 2.20.1
 
