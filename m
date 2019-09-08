@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BEF4ACC04
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 12:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03325ACC07
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 12:22:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbfIHKUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 06:20:54 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:41980 "EHLO
+        id S1728441AbfIHKWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 06:22:31 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:41984 "EHLO
         mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbfIHKUx (ORCPT
+        with ESMTP id S1727938AbfIHKWa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 06:20:53 -0400
+        Sun, 8 Sep 2019 06:22:30 -0400
 Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 09FB615CBF0;
-        Sun,  8 Sep 2019 19:20:52 +0900 (JST)
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id DFE0E15CBF0;
+        Sun,  8 Sep 2019 19:22:29 +0900 (JST)
 Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-14) with ESMTPS id x88AKoOj022349
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-14) with ESMTPS id x88AMSGl022374
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Sun, 8 Sep 2019 19:20:51 +0900
+        Sun, 8 Sep 2019 19:22:29 +0900
 Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-14) with ESMTPS id x88AKoLY011844
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-14) with ESMTPS id x88AMS95011910
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Sun, 8 Sep 2019 19:20:50 +0900
+        Sun, 8 Sep 2019 19:22:28 +0900
 Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id x88AKnVe011843;
-        Sun, 8 Sep 2019 19:20:49 +0900
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id x88AMRmx011907;
+        Sun, 8 Sep 2019 19:22:27 +0900
 From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Jan Stancek <jstancek@redhat.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fat: fix corruption in fat_alloc_new_dir()
-References: <fc8878aeefea128c105c49671b2a1ac4694e1f48.1567468225.git.jstancek@redhat.com>
-Date:   Sun, 08 Sep 2019 19:20:49 +0900
-In-Reply-To: <fc8878aeefea128c105c49671b2a1ac4694e1f48.1567468225.git.jstancek@redhat.com>
-        (Jan Stancek's message of "Tue, 3 Sep 2019 01:59:36 +0200")
-Message-ID: <87v9u3xf5q.fsf@mail.parknet.co.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] fat: Delete an unnecessary check before brelse()
+References: <cfff3b81-fb5d-af26-7b5e-724266509045@web.de>
+Date:   Sun, 08 Sep 2019 19:22:27 +0900
+In-Reply-To: <cfff3b81-fb5d-af26-7b5e-724266509045@web.de> (Markus Elfring's
+        message of "Tue, 3 Sep 2019 15:00:11 +0200")
+Message-ID: <87r24rxf30.fsf@mail.parknet.co.jp>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -43,92 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jan Stancek <jstancek@redhat.com> writes:
+Markus Elfring <Markus.Elfring@web.de> writes:
 
-> sb_getblk does not guarantee that buffer_head is uptodate. If there is
-> async read running in parallel for same buffer_head, it can overwrite
-> just initialized msdos_dir_entry, leading to corruption:
->   FAT-fs (loop0): error, corrupted directory (invalid entries)
->   FAT-fs (loop0): Filesystem has been set read-only
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 3 Sep 2019 14:56:16 +0200
 >
-> This can happen for example during LTP statx04, which creates loop
-> device, formats it (mkfs.vfat), mounts it and immediately creates
-> a new directory. In parallel, systemd-udevd is probing new block
-> device, which leads to async read.
+> The brelse() function tests whether its argument is NULL
+> and then returns immediately.
+> Thus the test around the call is not needed.
 >
->   do_mkdirat                      ksys_read
->    vfs_mkdir                       vfs_read
->     vfat_mkdir                      __vfs_read
->      fat_alloc_new_dir               new_sync_read
->        /* init de[0], de[1] */        blkdev_read_iter
->                                        generic_file_read_iter
->                                         generic_file_buffered_read
->                                          blkdev_readpage
->                                           block_read_full_page
+> This issue was detected by using the Coccinelle software.
 >
-> Faster reproducer (based on LTP statx04):
->
-> int main(void)
-> {
-> 	int i, j, ret, fd, loop_fd, ctrl_fd;
-> 	int loop_num;
-> 	char loopdev[256], tmp[256], testfile[256];
->
-> 	mkdir("/tmp/mntpoint", 0777);
-> 	for (i = 0; ; i++) {
-> 		printf("Iteration: %d\n", i);
-> 		sprintf(testfile, "/tmp/test.img.%d", getpid());
->
-> 		ctrl_fd = open("/dev/loop-control", O_RDWR);
-> 		loop_num = ioctl(ctrl_fd, LOOP_CTL_GET_FREE);
-> 		close(ctrl_fd);
-> 		sprintf(loopdev, "/dev/loop%d", loop_num);
->
-> 		fd = open(testfile, O_WRONLY|O_CREAT|O_TRUNC, 0600);
-> 		fallocate(fd, 0, 0, 256*1024*1024);
-> 		close(fd);
->
-> 		fd = open(testfile, O_RDWR);
-> 		loop_fd = open(loopdev, O_RDWR);
-> 		ioctl(loop_fd, LOOP_SET_FD, fd);
-> 		close(loop_fd);
-> 		close(fd);
->
-> 		sprintf(tmp, "mkfs.vfat %s", loopdev);
-> 		system(tmp);
-> 		mount(loopdev, "/tmp/mntpoint", "vfat", 0, NULL);
->
-> 		for (j = 0; j < 200; j++) {
-> 			sprintf(tmp, "/tmp/mntpoint/testdir%d", j);
-> 			ret = mkdir(tmp, 0777);
-> 			if (ret) {
-> 				perror("mkdir");
-> 				break;
-> 			}
-> 		}
->
-> 		umount("/tmp/mntpoint");
-> 		loop_fd = open(loopdev, O_RDWR);
-> 		ioctl(loop_fd, LOOP_CLR_FD, fd);
-> 		close(loop_fd);
-> 		unlink(testfile);
->
-> 		if (ret)
-> 			break;
-> 	}
->
-> 	return 0;
-> }
->
-> Issue triggers within minute on HPE Apollo 70 (arm64, 64GB RAM, 224 CPUs).
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Using the device while mounting same device doesn't work reliably like
-this race.  (getblk() is intentionally used to get the buffer to write
-new data.)
-
-mount(2) internally opens the device by EXCL mode, so I guess udev opens
-without EXCL (I dont know if it is intent or not).
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
 Thanks.
+
+> ---
+>  fs/fat/dir.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+> index 1bda2ab6745b..f4bc87a3c98d 100644
+> --- a/fs/fat/dir.c
+> +++ b/fs/fat/dir.c
+> @@ -88,9 +88,7 @@ static int fat__get_entry(struct inode *dir, loff_t *pos,
+>  	int err, offset;
+>
+>  next:
+> -	if (*bh)
+> -		brelse(*bh);
+> -
+> +	brelse(*bh);
+>  	*bh = NULL;
+>  	iblock = *pos >> sb->s_blocksize_bits;
+>  	err = fat_bmap(dir, iblock, &phys, &mapped_blocks, 0, false);
+> --
+> 2.23.0
+>
+
 -- 
 OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
