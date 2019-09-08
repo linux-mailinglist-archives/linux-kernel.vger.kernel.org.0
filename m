@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFDE2ACE95
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2395DACE85
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfIHM7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:59:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33900 "EHLO mail.kernel.org"
+        id S1730416AbfIHMqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:46:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730350AbfIHMqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:46:19 -0400
+        id S1730369AbfIHMqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:46:25 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFC1620644;
-        Sun,  8 Sep 2019 12:46:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04885218AE;
+        Sun,  8 Sep 2019 12:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946779;
-        bh=XxXqfu4Hakr1MISZQjqiwxPuuOb8/u1nB9iqHSJYcNg=;
+        s=default; t=1567946784;
+        bh=6DDScwfq0M2R98a1hKbJLf7PU528/6ltcmq5C0Q0Zrs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=upsckaP11EdzZ1F2F9R2g+PmSRtPzrkqOE4usV+5HE1BphHRDFifpDU8TDZAKRyKE
-         HevtsSNyPDcECrYyYoxPJkkVrWQd0G4rHImnyUoa8kNPTZIVhPO7ostslNRLC0Lq6d
-         84NxiQYW0XmliYxVxSlDeXa8ewuh91AeS5nMjaLo=
+        b=VhCUyrPzqC/d36MpxobTbXjuNmtKo8OWJ5R7LpYtPY1J3+ZFjkEMWu1EakajCm4nY
+         DTjuSEMF7R5QlUu61SRPEi54ZHsjeZZGPp4I0CTWMdoB2kYSphkaea9NhDnTm5lejz
+         Rzqm6LfG1UvUd7vFzF/xhZx1Q+JTm9F2VKc49MYM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Vlad Buslov <vladbu@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 36/40] tcp: inherit timestamp on mtu probe
-Date:   Sun,  8 Sep 2019 13:42:09 +0100
-Message-Id: <20190908121131.936614353@linuxfoundation.org>
+Subject: [PATCH 4.14 38/40] net: sched: act_sample: fix psample group handling on overwrite
+Date:   Sun,  8 Sep 2019 13:42:11 +0100
+Message-Id: <20190908121132.358667202@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
 References: <20190908121114.260662089@linuxfoundation.org>
@@ -44,47 +43,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
+From: Vlad Buslov <vladbu@mellanox.com>
 
-[ Upstream commit 888a5c53c0d8be6e98bc85b677f179f77a647873 ]
+[ Upstream commit dbf47a2a094edf58983265e323ca4bdcdb58b5ee ]
 
-TCP associates tx timestamp requests with a byte in the bytestream.
-If merging skbs in tcp_mtu_probe, migrate the tstamp request.
+Action sample doesn't properly handle psample_group pointer in overwrite
+case. Following issues need to be fixed:
 
-Similar to MSG_EOR, do not allow moving a timestamp from any segment
-in the probe but the last. This to avoid merging multiple timestamps.
+- In tcf_sample_init() function RCU_INIT_POINTER() is used to set
+  s->psample_group, even though we neither setting the pointer to NULL, nor
+  preventing concurrent readers from accessing the pointer in some way.
+  Use rcu_swap_protected() instead to safely reset the pointer.
 
-Tested with the packetdrill script at
-https://github.com/wdebruij/packetdrill/commits/mtu_probe-1
+- Old value of s->psample_group is not released or deallocated in any way,
+  which results resource leak. Use psample_group_put() on non-NULL value
+  obtained with rcu_swap_protected().
 
-Link: http://patchwork.ozlabs.org/patch/1143278/#2232897
-Fixes: 4ed2d765dfac ("net-timestamp: TCP timestamping")
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+- The function psample_group_put() that released reference to struct
+  psample_group pointed by rcu-pointer s->psample_group doesn't respect rcu
+  grace period when deallocating it. Extend struct psample_group with rcu
+  head and use kfree_rcu when freeing it.
+
+Fixes: 5c5670fae430 ("net/sched: Introduce sample tc action")
+Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_output.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/net/psample.h  |    1 +
+ net/psample/psample.c  |    2 +-
+ net/sched/act_sample.c |    5 ++++-
+ 3 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -2025,7 +2025,7 @@ static bool tcp_can_coalesce_send_queue_
- 		if (len <= skb->len)
- 			break;
+--- a/include/net/psample.h
++++ b/include/net/psample.h
+@@ -12,6 +12,7 @@ struct psample_group {
+ 	u32 group_num;
+ 	u32 refcount;
+ 	u32 seq;
++	struct rcu_head rcu;
+ };
  
--		if (unlikely(TCP_SKB_CB(skb)->eor))
-+		if (unlikely(TCP_SKB_CB(skb)->eor) || tcp_has_tx_tstamp(skb))
- 			return false;
+ struct psample_group *psample_group_get(struct net *net, u32 group_num);
+--- a/net/psample/psample.c
++++ b/net/psample/psample.c
+@@ -156,7 +156,7 @@ static void psample_group_destroy(struct
+ {
+ 	psample_group_notify(group, PSAMPLE_CMD_DEL_GROUP);
+ 	list_del(&group->list);
+-	kfree(group);
++	kfree_rcu(group, rcu);
+ }
  
- 		len -= skb->len;
-@@ -2148,6 +2148,7 @@ static int tcp_mtu_probe(struct sock *sk
- 			 * we need to propagate it to the new skb.
- 			 */
- 			TCP_SKB_CB(nskb)->eor = TCP_SKB_CB(skb)->eor;
-+			tcp_skb_collapse_tstamp(nskb, skb);
- 			tcp_unlink_write_queue(skb, sk);
- 			sk_wmem_free_skb(sk, skb);
- 		} else {
+ static struct psample_group *
+--- a/net/sched/act_sample.c
++++ b/net/sched/act_sample.c
+@@ -92,13 +92,16 @@ static int tcf_sample_init(struct net *n
+ 			tcf_idr_release(*a, bind);
+ 		return -ENOMEM;
+ 	}
+-	RCU_INIT_POINTER(s->psample_group, psample_group);
++	rcu_swap_protected(s->psample_group, psample_group,
++			   lockdep_is_held(&s->tcf_lock));
+ 
+ 	if (tb[TCA_SAMPLE_TRUNC_SIZE]) {
+ 		s->truncate = true;
+ 		s->trunc_size = nla_get_u32(tb[TCA_SAMPLE_TRUNC_SIZE]);
+ 	}
+ 
++	if (psample_group)
++		psample_group_put(psample_group);
+ 	if (ret == ACT_P_CREATED)
+ 		tcf_idr_insert(tn, *a);
+ 	return ret;
 
 
