@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8624ACD4A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E7FEACCED
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730754AbfIHMrh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:47:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36066 "EHLO mail.kernel.org"
+        id S1729622AbfIHMny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:43:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730724AbfIHMrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:47:36 -0400
+        id S1729604AbfIHMnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:43:52 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3F26218AC;
-        Sun,  8 Sep 2019 12:47:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C87CA21928;
+        Sun,  8 Sep 2019 12:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946855;
-        bh=8+B21AyeMTarJBVXGnbm/kZ6rmCIgUSHP1j6KmYnzfg=;
+        s=default; t=1567946631;
+        bh=pBTchd+FJKjl+9zSFBuJaV0uBEFHtp2Hbcxz4KfRiV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v9Yxu8AnArmA/rWXcFYPp/Q5O5IVtBxTsW8RWiskJCLJ+Q07KmTtrVyReGZGKujge
-         jjLoiaqCo4XuZsJ2hbLjDGTEob0Sz1Ic6icK6XWG+QBgPzM+xVLoIwVS8SOr4DujUd
-         bzQURXUisB0zmmcFfl76gP/Fm6s8O0y690NMmvSY=
+        b=Qs9e8/6d22FhgFaHSDXhvsyp4ZpdLHoWAUMcsk4nxvZeh2po0hEB7HXeDMk75XMB2
+         HzWDDA3bay3D2/vhArnjf0F95X52chrQyuoSAwFPplU9NBnLdZeZBM+f2tSSnk2Nk9
+         AhCi0McQw25vkLMT0KBPpOhrwm766clZL5QcnWU8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bill Kuzeja <william.kuzeja@stratus.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 25/57] scsi: qla2xxx: Fix gnl.l memory leak on adapter init failure
-Date:   Sun,  8 Sep 2019 13:41:49 +0100
-Message-Id: <20190908121135.695973476@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 15/23] KVM: arm/arm64: Only skip MMIO insn once
+Date:   Sun,  8 Sep 2019 13:41:50 +0100
+Message-Id: <20190908121100.234509696@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
-References: <20190908121125.608195329@linuxfoundation.org>
+In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
+References: <20190908121052.898169328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,78 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 26fa656e9a0cbccddf7db132ea020d2169dbe46e ]
+[ Upstream commit 2113c5f62b7423e4a72b890bd479704aa85c81ba ]
 
-If HBA initialization fails unexpectedly (exiting via probe_failed:), we
-may fail to free vha->gnl.l. So that we don't attempt to double free, set
-this pointer to NULL after a free and check for NULL at probe_failed: so we
-know whether or not to call dma_free_coherent.
+If after an MMIO exit to userspace a VCPU is immediately run with an
+immediate_exit request, such as when a signal is delivered or an MMIO
+emulation completion is needed, then the VCPU completes the MMIO
+emulation and immediately returns to userspace. As the exit_reason
+does not get changed from KVM_EXIT_MMIO in these cases we have to
+be careful not to complete the MMIO emulation again, when the VCPU is
+eventually run again, because the emulation does an instruction skip
+(and doing too many skips would be a waste of guest code :-) We need
+to use additional VCPU state to track if the emulation is complete.
+As luck would have it, we already have 'mmio_needed', which even
+appears to be used in this way by other architectures already.
 
-Signed-off-by: Bill Kuzeja <william.kuzeja@stratus.com>
-Acked-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 0d640732dbeb ("arm64: KVM: Skip MMIO insn after emulation")
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Andrew Jones <drjones@redhat.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_attr.c |  2 ++
- drivers/scsi/qla2xxx/qla_os.c   | 11 ++++++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ arch/arm/kvm/mmio.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
-index f8f4d3ea67f3f..15d493f30810f 100644
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -2191,6 +2191,8 @@ qla24xx_vport_delete(struct fc_vport *fc_vport)
- 	dma_free_coherent(&ha->pdev->dev, vha->gnl.size, vha->gnl.l,
- 	    vha->gnl.ldma);
+diff --git a/arch/arm/kvm/mmio.c b/arch/arm/kvm/mmio.c
+index ae61e2ea7255b..d2efc033ef8b4 100644
+--- a/arch/arm/kvm/mmio.c
++++ b/arch/arm/kvm/mmio.c
+@@ -98,6 +98,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ 	unsigned int len;
+ 	int mask;
  
-+	vha->gnl.l = NULL;
++	/* Detect an already handled MMIO return */
++	if (unlikely(!vcpu->mmio_needed))
++		return 0;
 +
- 	vfree(vha->scan.l);
- 
- 	if (vha->qpair && vha->qpair->vp_idx == vha->vp_idx) {
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 42b8f0d3e580d..02fa81f122c22 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -3395,6 +3395,12 @@ skip_dpc:
- 	return 0;
- 
- probe_failed:
-+	if (base_vha->gnl.l) {
-+		dma_free_coherent(&ha->pdev->dev, base_vha->gnl.size,
-+				base_vha->gnl.l, base_vha->gnl.ldma);
-+		base_vha->gnl.l = NULL;
-+	}
++	vcpu->mmio_needed = 0;
 +
- 	if (base_vha->timer_active)
- 		qla2x00_stop_timer(base_vha);
- 	base_vha->flags.online = 0;
-@@ -3624,7 +3630,7 @@ qla2x00_remove_one(struct pci_dev *pdev)
- 	if (!atomic_read(&pdev->enable_cnt)) {
- 		dma_free_coherent(&ha->pdev->dev, base_vha->gnl.size,
- 		    base_vha->gnl.l, base_vha->gnl.ldma);
--
-+		base_vha->gnl.l = NULL;
- 		scsi_host_put(base_vha->host);
- 		kfree(ha);
- 		pci_set_drvdata(pdev, NULL);
-@@ -3663,6 +3669,8 @@ qla2x00_remove_one(struct pci_dev *pdev)
- 	dma_free_coherent(&ha->pdev->dev,
- 		base_vha->gnl.size, base_vha->gnl.l, base_vha->gnl.ldma);
+ 	if (!run->mmio.is_write) {
+ 		len = run->mmio.len;
+ 		if (len > sizeof(unsigned long))
+@@ -206,6 +212,7 @@ int io_mem_abort(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 	run->mmio.is_write	= is_write;
+ 	run->mmio.phys_addr	= fault_ipa;
+ 	run->mmio.len		= len;
++	vcpu->mmio_needed	= 1;
  
-+	base_vha->gnl.l = NULL;
-+
- 	vfree(base_vha->scan.l);
- 
- 	if (IS_QLAFX00(ha))
-@@ -4602,6 +4610,7 @@ struct scsi_qla_host *qla2x00_create_host(struct scsi_host_template *sht,
- 		    "Alloc failed for scan database.\n");
- 		dma_free_coherent(&ha->pdev->dev, vha->gnl.size,
- 		    vha->gnl.l, vha->gnl.ldma);
-+		vha->gnl.l = NULL;
- 		scsi_remove_host(vha->host);
- 		return NULL;
- 	}
+ 	if (!ret) {
+ 		/* We handled the access successfully in the kernel. */
 -- 
 2.20.1
 
