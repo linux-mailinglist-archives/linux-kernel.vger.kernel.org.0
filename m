@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F21CAACD48
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD75EACCCF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730683AbfIHMr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:47:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35750 "EHLO mail.kernel.org"
+        id S1729304AbfIHMmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:42:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730667AbfIHMrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:47:25 -0400
+        id S1726329AbfIHMmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:42:53 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 075CD2190F;
-        Sun,  8 Sep 2019 12:47:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFF622081B;
+        Sun,  8 Sep 2019 12:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946844;
-        bh=q54WEmURkkkwIjLKPzleqdQLu47tYN82atWMJMqBdwU=;
+        s=default; t=1567946573;
+        bh=mqnRnbDGslsvYo8EJuwu7K/kmlaG/SNDh43N8rER6D4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hgadf7nvMOacRQa8duS5HR9qn+vg5OnRPOD8HYUCb0lk7/Bww8HYpddSsBxzuOsB+
-         XsMdkPghgmJE7Hb+/0cgQgoGFqApC/aph6HtLr0S/FTI/NAdlBdDdiifB5gcMRsK64
-         FprWAfEvJls7DV584aYdPVG7Fg9nca3yC4GaGP4s=
+        b=tWxvkTNABsdX3aY4XSNH0mtf/Y7S2b+ojdLFgz5+np6jl8ROfyVrkCbdIabfAGqrl
+         wnvs3CENhDE+ysNdxCo1vCu19eUGq3ezO5B3d7nhRdWnj0iWE3XaNefvvGBrJ06Oe9
+         1W3ujeord9w4uB5WrI3aNQ8OGUQQ3sP47YoM+3y0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 21/57] gpio: Fix build error of function redefinition
+Subject: [PATCH 4.4 10/23] wimax/i2400m: fix a memory leak bug
 Date:   Sun,  8 Sep 2019 13:41:45 +0100
-Message-Id: <20190908121134.504042593@linuxfoundation.org>
+Message-Id: <20190908121056.869762137@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
-References: <20190908121125.608195329@linuxfoundation.org>
+In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
+References: <20190908121052.898169328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,64 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 68e03b85474a51ec1921b4d13204782594ef7223 ]
+[ Upstream commit 44ef3a03252844a8753479b0cea7f29e4a804bdc ]
 
-when do randbuilding, I got this error:
+In i2400m_barker_db_init(), 'options_orig' is allocated through kstrdup()
+to hold the original command line options. Then, the options are parsed.
+However, if an error occurs during the parsing process, 'options_orig' is
+not deallocated, leading to a memory leak bug. To fix this issue, free
+'options_orig' before returning the error.
 
-In file included from drivers/hwmon/pmbus/ucd9000.c:19:0:
-./include/linux/gpio/driver.h:576:1: error: redefinition of gpiochip_add_pin_range
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
-In file included from drivers/hwmon/pmbus/ucd9000.c:18:0:
-./include/linux/gpio.h:245:1: note: previous definition of gpiochip_add_pin_range was here
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 964cb341882f ("gpio: move pincontrol calls to <linux/gpio/driver.h>")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190731123814.46624-1-yuehaibing@huawei.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/gpio.h | 24 ------------------------
- 1 file changed, 24 deletions(-)
+ drivers/net/wimax/i2400m/fw.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 39745b8bdd65d..b3115d1a7d494 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -240,30 +240,6 @@ static inline int irq_to_gpio(unsigned irq)
- 	return -EINVAL;
- }
+diff --git a/drivers/net/wimax/i2400m/fw.c b/drivers/net/wimax/i2400m/fw.c
+index c9c711dcd0e6b..0e6c665a4de82 100644
+--- a/drivers/net/wimax/i2400m/fw.c
++++ b/drivers/net/wimax/i2400m/fw.c
+@@ -351,13 +351,15 @@ int i2400m_barker_db_init(const char *_options)
+ 			}
+ 			result = i2400m_barker_db_add(barker);
+ 			if (result < 0)
+-				goto error_add;
++				goto error_parse_add;
+ 		}
+ 		kfree(options_orig);
+ 	}
+ 	return 0;
  
--static inline int
--gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
--		       unsigned int gpio_offset, unsigned int pin_offset,
--		       unsigned int npins)
--{
--	WARN_ON(1);
--	return -EINVAL;
--}
--
--static inline int
--gpiochip_add_pingroup_range(struct gpio_chip *chip,
--			struct pinctrl_dev *pctldev,
--			unsigned int gpio_offset, const char *pin_group)
--{
--	WARN_ON(1);
--	return -EINVAL;
--}
--
--static inline void
--gpiochip_remove_pin_ranges(struct gpio_chip *chip)
--{
--	WARN_ON(1);
--}
--
- static inline int devm_gpio_request(struct device *dev, unsigned gpio,
- 				    const char *label)
- {
++error_parse_add:
+ error_parse:
++	kfree(options_orig);
+ error_add:
+ 	kfree(i2400m_barker_db);
+ 	return result;
 -- 
 2.20.1
 
