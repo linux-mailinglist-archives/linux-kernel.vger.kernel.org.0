@@ -2,128 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1324ACEEF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F3CFACEFA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:43:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbfIHNji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 09:39:38 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:38911 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728068AbfIHNji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 09:39:38 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 46RC645Zncz1x;
-        Sun,  8 Sep 2019 15:37:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1567949871; bh=8fLQi36Tz+m6T1IGU2o99fMZH+S8E20nfr7PHNk8hXg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sA/qvg4jwPtwyQevGJ8HoBbpqi6V3OlDj9+oyTk9ViTFrt42rElsXZe0ZB0KW4Nc2
-         F3fjS2Uspan+uk8Kw8qkd9onZTTqRZfnnTC0au7b58hCo21ZZ/GEpi1YP+RG2fnhtw
-         z/txiLBQu53JlibSkErrOOifSnY/fxY52OYA+T8h5KrYNVNVu0b9sX45Cgegjfojx7
-         34MQ062JrKzcrUVDf42VKcU6B8+yMx9PFEApJdmnCy+awabU9gYKPDdX8YGds0p1ug
-         Zf90m1KfXWyWPbu3uoT+S2Gwi66n3HaKQPSZrRR+9TrGqVZmtmidYOInOGW9hUTt6x
-         817f0v4Vx3H9A==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.101.2 at mail
-Date:   Sun, 8 Sep 2019 15:39:30 +0200
-From:   mirq-linux@rere.qmqm.pl
-To:     Codrin.Ciubotariu@microchip.com
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        alexandre.belloni@bootlin.com, arnd@arndb.de, 3chas3@gmail.com,
-        gregkh@linuxfoundation.org, perex@perex.cz, lgirdwood@gmail.com,
-        Ludovic.Desroches@microchip.com, broonie@kernel.org,
-        mark.rutland@arm.com, Nicolas.Ferre@microchip.com,
-        robh-dt@kernel.org, tiwai@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] ASoC: atmel_ssc_dai: Enable shared FSYNC source
- in frame-slave mode
-Message-ID: <20190908133929.GA32003@qmqm.qmqm.pl>
-References: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
- <b56ebac96ad232e2d9871067b13654eb9223f28f.1566677788.git.mirq-linux@rere.qmqm.pl>
- <a42ede6e-4cc9-6dbf-4c58-71d2298fd3d5@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a42ede6e-4cc9-6dbf-4c58-71d2298fd3d5@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728406AbfIHNnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 09:43:11 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55834 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728285AbfIHNnH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 09:43:07 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g207so10916919wmg.5
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2019 06:43:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=bhJiBihaPigA25kWimp1Wuk4duG+A/TW5bOjh0hx7qw=;
+        b=FbLKHFO3sy/P0LsX5o7Lup+JKzur4H4kJ75gquUD3SHLGIczGl85/lWck6sGMnBYAg
+         WuraeQeE84/NeiZuKBQAK7N9H1Tbzjb9ZahlQWMSgcqXezOev7edsEN/PnzMny+AYBbZ
+         xB2juX0GUvpdh55ITRxxgbp9rNzidWkL4rgedFsVY26bwlrT4VdwHUgR1f4Z+IMjWVo8
+         wfL/Xb1j8ivrQWg8m6S3A31KhBx7GmDA9r8KVefF5CBpC11SP2hf2m0wA3dIwsYM+DFx
+         9HGyFtFgiGihd56srnRwjg1StrJz+0jGNE39tXzxd58RyOGF2vZCEGJhfbEsAhWknHlr
+         l12Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bhJiBihaPigA25kWimp1Wuk4duG+A/TW5bOjh0hx7qw=;
+        b=ocL5tm505uePwOi8CEQa3iPUKfZH1VkW8O4/xW/NstfLJ1gRYYNvEqC3lx8ZLhsqTm
+         2Vy71iq4CmpJf3crR9lgxRykX1CQ0rhx9H6PxlgYY41zxWMjUKXPkWdkGSIaDWjRrZma
+         Of6ldc19LoaoNxWN5ALUw3KRQQ14dfBiqWIrpzCfhFrYJEuZZAIzBZKdPVs9uL7WmGo/
+         atyJnBm04IJKqd4B3TD6VW231K5u3NesEudrbRw5J20aEov5REDRovnaNz0XbvbUAWFI
+         2vN72pxfE5mYdrmUVq0SZDVwwFWjlw83U2Xrc4QKJjtB4jq3MWjdh1JxjI1K/L0OtUyu
+         ppCQ==
+X-Gm-Message-State: APjAAAWxNwJQsFzHHSu+IAaHJGyYBiJOdVYTvva1RSaPgCgw/VfUyUg2
+        kP3rYx6LHzREnxNQuTwefDDBbA==
+X-Google-Smtp-Source: APXvYqzZDOffIFpKH0a5IrjJM+OMLi4OoraM+UJVMqR7MJ3TEHLDVrjUVrj3tt8e4i0+UESY/zZsig==
+X-Received: by 2002:a7b:cfd1:: with SMTP id f17mr14578586wmm.146.1567950184183;
+        Sun, 08 Sep 2019 06:43:04 -0700 (PDT)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.gmail.com with ESMTPSA id t203sm14313902wmf.42.2019.09.08.06.43.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 08 Sep 2019 06:43:03 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com, bhelgaas@google.com,
+        lorenzo.pieralisi@arm.com, yue.wang@Amlogic.com, kishon@ti.com
+Cc:     repk@triplefau.lt, Neil Armstrong <narmstrong@baylibre.com>,
+        maz@kernel.org, linux-amlogic@lists.infradead.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] arm64: dts: meson-g12: add support for PCIe
+Date:   Sun,  8 Sep 2019 13:42:52 +0000
+Message-Id: <1567950178-4466-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 03:05:06PM +0000, Codrin.Ciubotariu@microchip.com wrote:
-> On 24.08.2019 23:26, Micha³ Miros³aw wrote:
-> > SSC driver allows only synchronous TX and RX. In slave mode for BCLK
-> > it uses only one of TK or RK pin, but for LRCLK it configured separate
-> > inputs from TF and RF pins. Allow configuration with common FS signal.
-> > 
-> > Signed-off-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
-> > 
-> > ---
-> >   v2: use alternate DT binding
-> >       split DT and drivers/misc changes
-> > 
-> > ---
-> >   sound/soc/atmel/atmel_ssc_dai.c | 26 ++++++++++++++++++++++----
-> >   1 file changed, 22 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-> > index 48e9eef34c0f..035d4da58f2b 100644
-> > --- a/sound/soc/atmel/atmel_ssc_dai.c
-> > +++ b/sound/soc/atmel/atmel_ssc_dai.c
-> > @@ -605,14 +605,32 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
-> >   		return -EINVAL;
-> >   	}
-> >   
-> > -	if (!atmel_ssc_cfs(ssc_p)) {
-> > +	if (atmel_ssc_cfs(ssc_p)) {
-> > +		/*
-> > +		 * SSC provides LRCLK
-> > +		 *
-> > +		 * Both TF and RF are generated, so use them directly.
-> > +		 */
-> > +		rcmr |=	  SSC_BF(RCMR_START, fs_edge);
-> > +		tcmr |=	  SSC_BF(TCMR_START, fs_edge);
-> 
-> Hmm, how would this work if capture and playback start/run at the same time?
+This patchset :
+- updates the Amlogic PCI bindings for G12A
+- reworks the Amlogic PCIe driver to make use of the
+G12a USB3+PCIe Combo PHY instead of directly writing in
+the PHY register
+- adds the necessary operations to the G12a USB3+PCIe Combo PHY driver
+- adds the PCIe Node for G12A, G12B and SM1 SoCs
+- adds the commented support for the S922X, A311D and S905D3 based
+VIM3 boards.
 
-Same as it did before this patch: as there is only one bi-directional link
-between SSC and codec, whichever stream starts first defines the rate.
+This patchset has been tested in a A311D VIM3 using a 128Go
+TS128GMTE110S NVMe PCIe module.
 
-> > +	} else {
-> >   		fslen = fslen_ext = 0;
-> >   		rcmr_period = tcmr_period = 0;
-> >   		fs_osync = SSC_FSOS_NONE;
-> > -	}
-> >   
-> > -	rcmr |=	  SSC_BF(RCMR_START, fs_edge);
-> > -	tcmr |=	  SSC_BF(TCMR_START, fs_edge);
-> > +		if (ssc->lrclk_from_tf_pin) {
-> > +			rcmr |=	  SSC_BF(RCMR_START, SSC_START_TX_RX);
-> > +			tcmr |=	  SSC_BF(TCMR_START, fs_edge);
-> > +		} else if (ssc->lrclk_from_rf_pin) {
-> > +			/* assume RF is to be used when RK is used as BCLK input */
-> 
-> This comment is not longer true...
+For indication, here is a bonnie++ run as ext4 formatted:
+     ------Sequential Output------ --Sequential Input- --Random-
+     -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP /sec %CP
+  4G 93865  99 312837  96 194487  23 102808  97 415501 21 +++++ +++
 
-Removed for next version.
+Neil Armstrong (6):
+  dt-bindings: pci: amlogic,meson-pcie: Add G12A bindings
+  PCI: amlogic: Fix probed clock names
+  PCI: amlogic: meson: Add support for G12A
+  phy: meson-g12a-usb3-pcie: Add support for PCIe mode
+  arm64: dts: meson-g12a: Add PCIe node
+  arm64: dts: khadas-vim3: add commented support for PCIe
 
-> 
-> > +			/* Note: won't work correctly on SAMA5D2 due to errata */
-> > +			rcmr |=	  SSC_BF(RCMR_START, fs_edge);
-> > +			tcmr |=	  SSC_BF(TCMR_START, SSC_START_TX_RX);
-> > +		} else {
-> > +			rcmr |=	  SSC_BF(RCMR_START, fs_edge);
-> > +			tcmr |=	  SSC_BF(TCMR_START, fs_edge);
-> > +		}
-> > +	}
-> >   
-> >   	if (atmel_ssc_cbs(ssc_p)) {
-> >   		/*
-> > 
-> 
-> Thanks and best regards,
-> Codrin
+ .../bindings/pci/amlogic,meson-pcie.txt       |  12 +-
+ .../boot/dts/amlogic/meson-g12-common.dtsi    |  33 ++++++
+ .../amlogic/meson-g12b-a311d-khadas-vim3.dts  |  22 ++++
+ .../amlogic/meson-g12b-s922x-khadas-vim3.dts  |  22 ++++
+ .../boot/dts/amlogic/meson-khadas-vim3.dtsi   |   4 +
+ .../dts/amlogic/meson-sm1-khadas-vim3l.dts    |  22 ++++
+ drivers/pci/controller/dwc/pci-meson.c        | 105 ++++++++++++++----
+ .../phy/amlogic/phy-meson-g12a-usb3-pcie.c    |  70 ++++++++++--
+ 8 files changed, 258 insertions(+), 32 deletions(-)
 
-Best Regards,
-Micha³ Miros³aw
+-- 
+2.17.1
+
