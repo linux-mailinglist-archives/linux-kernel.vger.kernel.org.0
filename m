@@ -2,530 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4743ACD5B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3648ACD71
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731009AbfIHMsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:48:24 -0400
-Received: from valentin-vidic.from.hr ([94.229.67.141]:42609 "EHLO
-        valentin-vidic.from.hr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730954AbfIHMsT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:48:19 -0400
-X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
-Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
-        id 44527212; Sun,  8 Sep 2019 12:48:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-        d=valentin-vidic.from.hr; s=2017; t=1567946893;
-        bh=zp8QcPwkSZobaSC2ux2hJnAR+LBPtkF8kyth8WQzEQs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KamavMSuPxQ/v9Bc2SHnL5zy05VNyv6QONDknRiS2jvKtHnNehJu7stt4Gr2gG7ch
-         ue/Mhd5Xo0SSQ2DzGFuYtu0jGbg/lM0x/6G04vd3fEULQ/TJOKk24fxNKyDpez6iy0
-         g8mwLL3jAXOkjSeIK6R5n70jehKNeBOaZ9gP8i4lzoUM3P+7c5CTAuY3UQ4+m5a+Qe
-         Gj66/nPnwt7isfITvLB6f+aZeLBWDkEBQOid9+82tWJEAp9Oo1KQpE05k+DDhs7Pu1
-         fhUBjX2ezJOfuQuo4ebBOzIWhr/zgmYVQmLzassXCKeRVPx2pOFn7Vu5ol9DYjjD/C
-         bQJRKjt+bpJZg==
-From:   Valentin Vidic <vvidic@valentin-vidic.from.hr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Valentin Vidic <vvidic@valentin-vidic.from.hr>
-Subject: [PATCH] staging: exfat: add millisecond support
-Date:   Sun,  8 Sep 2019 12:48:08 +0000
-Message-Id: <20190908124808.23739-1-vvidic@valentin-vidic.from.hr>
-X-Mailer: git-send-email 2.20.1
+        id S1731576AbfIHMtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:49:36 -0400
+Received: from mout.web.de ([212.227.15.14]:35579 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731526AbfIHMtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:49:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1567946931;
+        bh=64n2i/+x9VuLbn5y3oTsEsYv5qVvKCd8Jhx5xBFFssc=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=II1LDTk9KldM1ji4hrCt6moQ9aNn5H5aQjeeYD2zwgtCZdYAxF3EUcs7s9jbx1oq1
+         s4YzcF/6xit+VspAD/CfuaXyogByNk6+viqc/RwjX6Yd4lygNijBPkE9ei+Toaivp2
+         PYU7/0Fpf63Obv12HC67b6f89i9mN/cau/8++JMg=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.171.128]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MEqOg-1hwR9l2khe-00G2ED; Sun, 08
+ Sep 2019 14:48:51 +0200
+Subject: Re: Coccinelle: pci_free_consistent: Checking when constraints
+To:     Julia Lawall <julia.lawall@lip6.fr>,
+        Coccinelle <cocci@systeme.lip6.fr>
+Cc:     Gilles Muller <Gilles.Muller@lip6.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Petr Strnad <strnape1@fel.cvut.cz>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <lkml@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yi Wang <wang.yi59@zte.com.cn>
+References: <9666134d-0ff6-81eb-b088-f0086a0e61b1@web.de>
+ <alpine.DEB.2.21.1909081019020.3340@hadrien>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <63e433b4-06cf-cecc-46e0-9f31226f71d0@web.de>
+Date:   Sun, 8 Sep 2019 14:48:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1909081019020.3340@hadrien>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:cnUzcmv9Op0ghjjuTrlV117lBDIKYvwwuyfCVyH3UAvZKyJV6B5
+ E47QIPoKZ/UWVUZTGQcnFXTv8TOV5/qPfSGyr/ixIqRZVRfBhX7rF4G4BFsECckIisl/htP
+ 2q6IgoAPBjJDgAaCdXVldWyvRIZ3WQ9WGvFWgZFTM+G9LbZUyEHWnq/VWAS0E7Qu4goTcul
+ yHwYGZltV5+fytDtEpDqQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:MeUWalmLQzg=:UNbC3T7JRvjkSf59YfVk/E
+ ZQr/HDj63eah6c4aMB/C1Gv8wXYv8i3XC2zIY5zCy64lHsh4CAV8UZ1quJugXOBmEbNY0Wtmg
+ aEAtKn9rtSmLHXEIOj0fmE1UfoeBca1jKCjtbmXLID07nIkD7SB9B2/2cv0WBy/zchcrxPAyH
+ dac/2C6K1q5uchsWgYEvKNLh0Z5ZxM2cNB7+/HiTyQAQ63Rdj/eFkFHBqFOlrIMECpnJLqd9e
+ 77j8UMjGnDgJfC4Di0h5a5kfVgOFzOEr6pjP5wRYIpqLSTRXbfwekuJsBXiy/ahA9Gk3y65VE
+ v8I4oXJYwPUGNMYQHLalLR57vqzB71Tae35RPzO93Y5LmSXiv2cLJ8R4/hWy7F4qopn4fE2dn
+ 4gyP+Ng8aEFg8haj9Mnf5upnqJwAqntflt9VfXlTBkjF5kT2aQYJCwoLTPqG5tGEqLZr4WScj
+ oXqdOHlothqsI/wHFlgCLs+OE4Fqcf30fqxM2bkXREA/V/EoGfgCwmvakmudFNWY//yoIo5kK
+ o8Hner3w1joABRlpBojB7OX9jBeugnok5NE0e4wnki/4S4noNZeTGCNsIH3/43xsEoVLDjav5
+ 9GQS0gaN8BKUl75i1dNaj04Vnmy4+litqC3pmZ7tdSiCYj5lXyM0is7t/vS746kI0k/vUQ77N
+ GXFcizzPUTuoe5fLSOYdboOu32frZcy4wbhaq8AZ13hqPq8v9FY4LZ+psrRjHZQn8dtm3dy+y
+ 57qIxqL/itD+I+m00fv6Mv4Cy88UcokH7/QCsUewzWu7uzoMnnExjLqjsSgvaaaYmbQd3Ov33
+ vVPbTjAcLFi7OaWjnckU8phMsvbfID18oPdnhXCr3LQ2pN2T4bmS3zu/pn0nC0hEczp9HcuiL
+ f70otUGlxUWmLlJ3AulaawWS4O0Q0ss4gg/S1zFew1sccsdjBmNEEEAPphjI3R4WUYWrz8xqe
+ TOpVXHtnPzOnh01U0XM//MXdOzMAfrxX5Tv2pnP38nSniMfpotbgOGut0m1erCRAIFW3Rk8MQ
+ y+hAPy3K949o9hvaL4tugzMz3L+zdOf7/B/n+OxBnfJnEMHE8LU9a5ty0RoDjtYCcmfaZlsZc
+ BE5GECy52qLgUn+BMH7GcgNNHqJc2pP4+CVgx3lla2KlXuDIUmEi9mvi0ZGrg77XX782rT/i0
+ +rmNO590jqZ6oPNvMeFFFDr+xPJmjgoDrLsvOujabww0czc5OQr5w70nfgJggEIFZTyucgi+J
+ RE4LJ50fOqg2DCbU2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop duplicated date_time_t struct and add millisecond handling for
-create and modify time. Also drop millisecond field for access time
-since it is not defined in the the spec.
+> The when exists below these lines has an impact.
 
-Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
----
- drivers/staging/exfat/exfat.h       |  38 +++---
- drivers/staging/exfat/exfat_core.c  |  31 ++++-
- drivers/staging/exfat/exfat_super.c | 174 ++++++++--------------------
- 3 files changed, 92 insertions(+), 151 deletions(-)
+This parameter should result in a desirable effect.
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 0aa14dea4e09..6491ea034928 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -241,16 +241,6 @@ static inline u16 get_row_index(u16 i)
- #define UNI_PAR_DIR_NAME        "\0.\0."
- #endif
- 
--struct date_time_t {
--	u16      Year;
--	u16      Month;
--	u16      Day;
--	u16      Hour;
--	u16      Minute;
--	u16      Second;
--	u16      MilliSecond;
--};
--
- struct part_info_t {
- 	u32      Offset;    /* start sector number of the partition */
- 	u32      Size;      /* in sectors */
-@@ -289,6 +279,16 @@ struct file_id_t {
- 	u32      hint_last_clu;
- };
- 
-+struct timestamp_t {
-+	u16      millisec;   /* 0 ~ 999              */
-+	u16      sec;        /* 0 ~ 59               */
-+	u16      min;        /* 0 ~ 59               */
-+	u16      hour;       /* 0 ~ 23               */
-+	u16      day;        /* 1 ~ 31               */
-+	u16      mon;        /* 1 ~ 12               */
-+	u16      year;       /* 0 ~ 127 (since 1980) */
-+};
-+
- struct dir_entry_t {
- 	char Name[MAX_NAME_LENGTH * MAX_CHARSET_SIZE];
- 
-@@ -298,18 +298,9 @@ struct dir_entry_t {
- 	u32 Attr;
- 	u64 Size;
- 	u32 NumSubdirs;
--	struct date_time_t CreateTimestamp;
--	struct date_time_t ModifyTimestamp;
--	struct date_time_t AccessTimestamp;
--};
--
--struct timestamp_t {
--	u16      sec;        /* 0 ~ 59               */
--	u16      min;        /* 0 ~ 59               */
--	u16      hour;       /* 0 ~ 23               */
--	u16      day;        /* 1 ~ 31               */
--	u16      mon;        /* 1 ~ 12               */
--	u16      year;       /* 0 ~ 127 (since 1980) */
-+	struct timestamp_t CreateTimestamp;
-+	struct timestamp_t ModifyTimestamp;
-+	struct timestamp_t AccessTimestamp;
- };
- 
- /* MS_DOS FAT partition boot record (512 bytes) */
-@@ -453,8 +444,7 @@ struct file_dentry_t {
- 	u8       access_date[2];
- 	u8       create_time_ms;
- 	u8       modify_time_ms;
--	u8       access_time_ms;
--	u8       reserved2[9];
-+	u8       reserved2[10];
- };
- 
- /* MS-DOS EXFAT stream extension directory entry (32 bytes) */
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index 995358cc7c79..e87119fa8c0a 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -1139,6 +1139,7 @@ void exfat_set_entry_size(struct dentry_t *p_entry, u64 size)
- void fat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 			u8 mode)
- {
-+	u8 ms = 0;
- 	u16 t = 0x00, d = 0x21;
- 	struct dos_dentry_t *ep = (struct dos_dentry_t *)p_entry;
- 
-@@ -1146,6 +1147,7 @@ void fat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 	case TM_CREATE:
- 		t = GET16_A(ep->create_time);
- 		d = GET16_A(ep->create_date);
-+		ms = ep->create_time_ms * 10;
- 		break;
- 	case TM_MODIFY:
- 		t = GET16_A(ep->modify_time);
-@@ -1159,11 +1161,17 @@ void fat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 	tp->day  = (d & 0x001F);
- 	tp->mon  = (d >> 5) & 0x000F;
- 	tp->year = (d >> 9);
-+
-+	if (ms >= 1000) {
-+		ms -= 1000;
-+		tp->sec++;
-+	}
- }
- 
- void exfat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 			  u8 mode)
- {
-+	u8 ms = 0;
- 	u16 t = 0x00, d = 0x21;
- 	struct file_dentry_t *ep = (struct file_dentry_t *)p_entry;
- 
-@@ -1171,10 +1179,12 @@ void exfat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 	case TM_CREATE:
- 		t = GET16_A(ep->create_time);
- 		d = GET16_A(ep->create_date);
-+		ms = ep->create_time_ms * 10;
- 		break;
- 	case TM_MODIFY:
- 		t = GET16_A(ep->modify_time);
- 		d = GET16_A(ep->modify_date);
-+		ms = ep->modify_time_ms * 10;
- 		break;
- 	case TM_ACCESS:
- 		t = GET16_A(ep->access_time);
-@@ -1188,21 +1198,33 @@ void exfat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 	tp->day  = (d & 0x001F);
- 	tp->mon  = (d >> 5) & 0x000F;
- 	tp->year = (d >> 9);
-+
-+	if (ms >= 1000) {
-+		ms -= 1000;
-+		tp->sec++;
-+	}
- }
- 
- void fat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 			u8 mode)
- {
-+	u8 ms;
- 	u16 t, d;
- 	struct dos_dentry_t *ep = (struct dos_dentry_t *)p_entry;
- 
- 	t = (tp->hour << 11) | (tp->min << 5) | (tp->sec >> 1);
- 	d = (tp->year <<  9) | (tp->mon << 5) |  tp->day;
- 
-+	ms = tp->millisec;
-+	if (tp->sec & 1) {
-+		ms += 1000;
-+	}
-+
- 	switch (mode) {
- 	case TM_CREATE:
- 		SET16_A(ep->create_time, t);
- 		SET16_A(ep->create_date, d);
-+		ep->create_time_ms = ms / 10;
- 		break;
- 	case TM_MODIFY:
- 		SET16_A(ep->modify_time, t);
-@@ -1214,20 +1236,28 @@ void fat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- void exfat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 			  u8 mode)
- {
-+	u8 ms;
- 	u16 t, d;
- 	struct file_dentry_t *ep = (struct file_dentry_t *)p_entry;
- 
- 	t = (tp->hour << 11) | (tp->min << 5) | (tp->sec >> 1);
- 	d = (tp->year <<  9) | (tp->mon << 5) |  tp->day;
- 
-+	ms = tp->millisec;
-+	if (tp->sec & 1) {
-+		ms += 1000;
-+	}
-+
- 	switch (mode) {
- 	case TM_CREATE:
- 		SET16_A(ep->create_time, t);
- 		SET16_A(ep->create_date, d);
-+		ep->create_time_ms = ms / 10;
- 		break;
- 	case TM_MODIFY:
- 		SET16_A(ep->modify_time, t);
- 		SET16_A(ep->modify_date, d);
-+		ep->modify_time_ms = ms / 10;
- 		break;
- 	case TM_ACCESS:
- 		SET16_A(ep->access_time, t);
-@@ -1456,7 +1486,6 @@ void init_file_entry(struct file_dentry_t *ep, u32 type)
- 	exfat_set_entry_time((struct dentry_t *)ep, tp, TM_ACCESS);
- 	ep->create_time_ms = 0;
- 	ep->modify_time_ms = 0;
--	ep->access_time_ms = 0;
- }
- 
- void init_strm_entry(struct strm_dentry_t *ep, u8 flags, u32 start_clu, u64 size)
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 60dfea73a7a4..54b6c2ff3c96 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -56,18 +56,16 @@ static void exfat_write_super(struct super_block *sb);
- #define UNIX_SECS_2108    4354819200L
- 
- /* Convert a FAT time/date pair to a UNIX date (seconds since 1 1 70). */
--static void exfat_time_fat2unix(struct exfat_sb_info *sbi,
--				struct timespec64 *ts, struct date_time_t *tp)
-+static void exfat_time_fat2unix(struct timespec64 *ts, struct timestamp_t *tp)
- {
--	ts->tv_sec = mktime64(tp->Year + 1980, tp->Month + 1, tp->Day,
--			      tp->Hour, tp->Minute, tp->Second);
-+	ts->tv_sec = mktime64(tp->year + 1980, tp->mon + 1, tp->day,
-+			      tp->hour, tp->min, tp->sec);
- 
--	ts->tv_nsec = tp->MilliSecond * NSEC_PER_MSEC;
-+	ts->tv_nsec = tp->millisec * NSEC_PER_MSEC;
- }
- 
- /* Convert linear UNIX date to a FAT time/date pair. */
--static void exfat_time_unix2fat(struct exfat_sb_info *sbi,
--				struct timespec64 *ts, struct date_time_t *tp)
-+static void exfat_time_unix2fat(struct timespec64 *ts, struct timestamp_t *tp)
- {
- 	time64_t second = ts->tv_sec;
- 	struct tm tm;
-@@ -75,69 +73,42 @@ static void exfat_time_unix2fat(struct exfat_sb_info *sbi,
- 	time64_to_tm(second, 0, &tm);
- 
- 	if (second < UNIX_SECS_1980) {
--		tp->MilliSecond = 0;
--		tp->Second	= 0;
--		tp->Minute	= 0;
--		tp->Hour	= 0;
--		tp->Day		= 1;
--		tp->Month	= 1;
--		tp->Year	= 0;
-+		tp->millisec	= 0;
-+		tp->sec		= 0;
-+		tp->min		= 0;
-+		tp->hour	= 0;
-+		tp->day		= 1;
-+		tp->mon		= 1;
-+		tp->year	= 0;
- 		return;
- 	}
- 
- 	if (second >= UNIX_SECS_2108) {
--		tp->MilliSecond = 999;
--		tp->Second	= 59;
--		tp->Minute	= 59;
--		tp->Hour	= 23;
--		tp->Day		= 31;
--		tp->Month	= 12;
--		tp->Year	= 127;
-+		tp->millisec	= 999;
-+		tp->sec		= 59;
-+		tp->min		= 59;
-+		tp->hour	= 23;
-+		tp->day		= 31;
-+		tp->mon		= 12;
-+		tp->year	= 127;
- 		return;
- 	}
- 
--	tp->MilliSecond = ts->tv_nsec / NSEC_PER_MSEC;
--	tp->Second	= tm.tm_sec;
--	tp->Minute	= tm.tm_min;
--	tp->Hour	= tm.tm_hour;
--	tp->Day		= tm.tm_mday;
--	tp->Month	= tm.tm_mon + 1;
--	tp->Year	= tm.tm_year + 1900 - 1980;
-+	tp->millisec	= ts->tv_nsec / NSEC_PER_MSEC;
-+	tp->sec		= tm.tm_sec;
-+	tp->min		= tm.tm_min;
-+	tp->hour	= tm.tm_hour;
-+	tp->day		= tm.tm_mday;
-+	tp->mon		= tm.tm_mon + 1;
-+	tp->year	= tm.tm_year + 1900 - 1980;
- }
- 
- struct timestamp_t *tm_current(struct timestamp_t *tp)
- {
--	time64_t second = ktime_get_real_seconds();
--	struct tm tm;
--
--	time64_to_tm(second, 0, &tm);
-+	struct timespec64 ts;
- 
--	if (second < UNIX_SECS_1980) {
--		tp->sec  = 0;
--		tp->min  = 0;
--		tp->hour = 0;
--		tp->day  = 1;
--		tp->mon  = 1;
--		tp->year = 0;
--		return tp;
--	}
--
--	if (second >= UNIX_SECS_2108) {
--		tp->sec  = 59;
--		tp->min  = 59;
--		tp->hour = 23;
--		tp->day  = 31;
--		tp->mon  = 12;
--		tp->year = 127;
--		return tp;
--	}
--
--	tp->sec  = tm.tm_sec;
--	tp->min  = tm.tm_min;
--	tp->hour = tm.tm_hour;
--	tp->day  = tm.tm_mday;
--	tp->mon  = tm.tm_mon + 1;
--	tp->year = tm.tm_year + 1900 - 1980;
-+	ktime_get_real_ts64(&ts);
-+	exfat_time_unix2fat(&ts, tp);
- 
- 	return tp;
- }
-@@ -1502,7 +1473,6 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 	int ret = FFS_SUCCESS;
- 	struct chain_t dir;
- 	struct uni_name_t uni_name;
--	struct timestamp_t tm;
- 	struct dentry_t *ep, *ep2;
- 	struct super_block *sb = inode->i_sb;
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
-@@ -1520,11 +1490,11 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 		    (fid->entry == -1)) {
- 			info->Attr = ATTR_SUBDIR;
- 			memset((char *)&info->CreateTimestamp, 0,
--			       sizeof(struct date_time_t));
-+			       sizeof(struct timestamp_t));
- 			memset((char *)&info->ModifyTimestamp, 0,
--			       sizeof(struct date_time_t));
-+			       sizeof(struct timestamp_t));
- 			memset((char *)&info->AccessTimestamp, 0,
--			       sizeof(struct date_time_t));
-+			       sizeof(struct timestamp_t));
- 			strcpy(info->ShortName, ".");
- 			strcpy(info->Name, ".");
- 
-@@ -1575,25 +1545,9 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 	/* set FILE_INFO structure using the acquired struct dentry_t */
- 	info->Attr = p_fs->fs_func->get_entry_attr(ep);
- 
--	p_fs->fs_func->get_entry_time(ep, &tm, TM_CREATE);
--	info->CreateTimestamp.Year = tm.year;
--	info->CreateTimestamp.Month = tm.mon;
--	info->CreateTimestamp.Day = tm.day;
--	info->CreateTimestamp.Hour = tm.hour;
--	info->CreateTimestamp.Minute = tm.min;
--	info->CreateTimestamp.Second = tm.sec;
--	info->CreateTimestamp.MilliSecond = 0;
--
--	p_fs->fs_func->get_entry_time(ep, &tm, TM_MODIFY);
--	info->ModifyTimestamp.Year = tm.year;
--	info->ModifyTimestamp.Month = tm.mon;
--	info->ModifyTimestamp.Day = tm.day;
--	info->ModifyTimestamp.Hour = tm.hour;
--	info->ModifyTimestamp.Minute = tm.min;
--	info->ModifyTimestamp.Second = tm.sec;
--	info->ModifyTimestamp.MilliSecond = 0;
--
--	memset((char *) &info->AccessTimestamp, 0, sizeof(struct date_time_t));
-+	p_fs->fs_func->get_entry_time(ep, &info->CreateTimestamp, TM_CREATE);
-+	p_fs->fs_func->get_entry_time(ep, &info->ModifyTimestamp, TM_MODIFY);
-+	memset((char *)&info->AccessTimestamp, 0, sizeof(struct timestamp_t));
- 
- 	*(uni_name.name) = 0x0;
- 	/* XXX this is very bad for exfat cuz name is already included in es.
-@@ -1652,7 +1606,6 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
- {
- 	sector_t sector = 0;
- 	int ret = FFS_SUCCESS;
--	struct timestamp_t tm;
- 	struct dentry_t *ep, *ep2;
- 	struct entry_set_cache_t *es = NULL;
- 	struct super_block *sb = inode->i_sb;
-@@ -1699,22 +1652,8 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
- 	p_fs->fs_func->set_entry_attr(ep, info->Attr);
- 
- 	/* set FILE_INFO structure using the acquired struct dentry_t */
--	tm.sec  = info->CreateTimestamp.Second;
--	tm.min  = info->CreateTimestamp.Minute;
--	tm.hour = info->CreateTimestamp.Hour;
--	tm.day  = info->CreateTimestamp.Day;
--	tm.mon  = info->CreateTimestamp.Month;
--	tm.year = info->CreateTimestamp.Year;
--	p_fs->fs_func->set_entry_time(ep, &tm, TM_CREATE);
--
--	tm.sec  = info->ModifyTimestamp.Second;
--	tm.min  = info->ModifyTimestamp.Minute;
--	tm.hour = info->ModifyTimestamp.Hour;
--	tm.day  = info->ModifyTimestamp.Day;
--	tm.mon  = info->ModifyTimestamp.Month;
--	tm.year = info->ModifyTimestamp.Year;
--	p_fs->fs_func->set_entry_time(ep, &tm, TM_MODIFY);
--
-+	p_fs->fs_func->set_entry_time(ep, &info->CreateTimestamp, TM_CREATE);
-+	p_fs->fs_func->set_entry_time(ep, &info->ModifyTimestamp, TM_MODIFY);
- 	p_fs->fs_func->set_entry_size(ep2, info->Size);
- 
- 	if (p_fs->vol_type != EXFAT) {
-@@ -1941,7 +1880,6 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
- 	sector_t sector;
- 	struct chain_t dir, clu;
- 	struct uni_name_t uni_name;
--	struct timestamp_t tm;
- 	struct dentry_t *ep;
- 	struct super_block *sb = inode->i_sb;
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
-@@ -2038,26 +1976,12 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
- 			buf_lock(sb, sector);
- 			dir_entry->Attr = fs_func->get_entry_attr(ep);
- 
--			fs_func->get_entry_time(ep, &tm, TM_CREATE);
--			dir_entry->CreateTimestamp.Year = tm.year;
--			dir_entry->CreateTimestamp.Month = tm.mon;
--			dir_entry->CreateTimestamp.Day = tm.day;
--			dir_entry->CreateTimestamp.Hour = tm.hour;
--			dir_entry->CreateTimestamp.Minute = tm.min;
--			dir_entry->CreateTimestamp.Second = tm.sec;
--			dir_entry->CreateTimestamp.MilliSecond = 0;
--
--			fs_func->get_entry_time(ep, &tm, TM_MODIFY);
--			dir_entry->ModifyTimestamp.Year = tm.year;
--			dir_entry->ModifyTimestamp.Month = tm.mon;
--			dir_entry->ModifyTimestamp.Day = tm.day;
--			dir_entry->ModifyTimestamp.Hour = tm.hour;
--			dir_entry->ModifyTimestamp.Minute = tm.min;
--			dir_entry->ModifyTimestamp.Second = tm.sec;
--			dir_entry->ModifyTimestamp.MilliSecond = 0;
--
-+			fs_func->get_entry_time(ep, &dir_entry->CreateTimestamp,
-+						TM_CREATE);
-+			fs_func->get_entry_time(ep, &dir_entry->ModifyTimestamp,
-+						TM_MODIFY);
- 			memset((char *)&dir_entry->AccessTimestamp, 0,
--			       sizeof(struct date_time_t));
-+			       sizeof(struct timestamp_t));
- 
- 			*(uni_name.name) = 0x0;
- 			fs_func->get_uni_name_from_ext_entry(sb, &dir, dentry,
-@@ -3349,9 +3273,9 @@ static int exfat_fill_inode(struct inode *inode, struct file_id_t *fid)
- 	inode->i_blocks = ((i_size_read(inode) + (p_fs->cluster_size - 1))
- 				& ~((loff_t)p_fs->cluster_size - 1)) >> 9;
- 
--	exfat_time_fat2unix(sbi, &inode->i_mtime, &info.ModifyTimestamp);
--	exfat_time_fat2unix(sbi, &inode->i_ctime, &info.CreateTimestamp);
--	exfat_time_fat2unix(sbi, &inode->i_atime, &info.AccessTimestamp);
-+	exfat_time_fat2unix(&inode->i_mtime, &info.ModifyTimestamp);
-+	exfat_time_fat2unix(&inode->i_ctime, &info.CreateTimestamp);
-+	exfat_time_fat2unix(&inode->i_atime, &info.AccessTimestamp);
- 
- 	return 0;
- }
-@@ -3412,8 +3336,6 @@ static void exfat_destroy_inode(struct inode *inode)
- 
- static int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
- {
--	struct super_block *sb = inode->i_sb;
--	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	struct dir_entry_t info;
- 
- 	if (inode->i_ino == EXFAT_ROOT_INO)
-@@ -3422,9 +3344,9 @@ static int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
- 	info.Attr = exfat_make_attr(inode);
- 	info.Size = i_size_read(inode);
- 
--	exfat_time_unix2fat(sbi, &inode->i_mtime, &info.ModifyTimestamp);
--	exfat_time_unix2fat(sbi, &inode->i_ctime, &info.CreateTimestamp);
--	exfat_time_unix2fat(sbi, &inode->i_atime, &info.AccessTimestamp);
-+	exfat_time_unix2fat(&inode->i_mtime, &info.ModifyTimestamp);
-+	exfat_time_unix2fat(&inode->i_ctime, &info.CreateTimestamp);
-+	exfat_time_unix2fat(&inode->i_atime, &info.AccessTimestamp);
- 
- 	ffsWriteStat(inode, &info);
- 
--- 
-2.20.1
 
+> I believe that the rule is ok as is.
+
+I wonder about the relevance of the shown double if statement exclusion.
+
+
+> A single path may have no call to pci_free_consistent,
+
+We come along different views around the provided software functionality
+once more.
+
+
+> but if it has that call under one of the mentioned ifs,
+> then the path is still ok,
+
+I find that this information can need further clarification.
+
+
+> and not something that an error should be reported about.
+
+I do not expect an error message from the SmPL script execution here.
+
+I just try again to clarify if the specification of a single function call
+exclusion can (and should) be sufficient also at this place.
+
+Regards,
+Markus
