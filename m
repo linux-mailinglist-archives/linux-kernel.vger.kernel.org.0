@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EE0FACD28
+	by mail.lfdr.de (Postfix) with ESMTP id 7C6FCACD29
 	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbfIHMqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:46:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33618 "EHLO mail.kernel.org"
+        id S1726698AbfIHMqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:46:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730294AbfIHMqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:46:09 -0400
+        id S1730311AbfIHMqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:46:15 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DDBD218AE;
-        Sun,  8 Sep 2019 12:46:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CEFF2190F;
+        Sun,  8 Sep 2019 12:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946768;
-        bh=P2/vpRpLgz3ayw3nfoTGsFOCoVxhd8GDMJNmyOIDilk=;
+        s=default; t=1567946774;
+        bh=N3b8cx/mIDoHF/+s3WY7cC0DTyWiPjI7P/aqHd4nTIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kQvP8lIOUlZ/UBulXeZePJ8Zwxi+T3OGaJB4VTpjeflAyC21GouOcNzCtgb/J7o0C
-         LFZzlT6NAT26ZgjISbw2v+EMkilLF2fF5WH+CchWdOOfNCyx0Zj1c2HJc6KYvWDtKU
-         SBaInOaOjmi7vL43owHwF2EJrdfVA0JYg4E0TY14=
+        b=um/PBhXP1o+iKBlJL2NzEXYVI8vDWdj1+KvbiQu3q3TSWJCfXIm5un9ZaWu6P403G
+         a6uLemYTYVHgqEncaNg/OrMC22mbMJ5V9f5YQzRtX+u+tG8Pl0Z6HGcJ/z4RWizq52
+         /2y1tCfzcZJ+xBK/TAJ86uiTwrOCBHnkVMdf/cJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bandan Das <bsd@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 32/40] Revert "x86/apic: Include the LDR when clearing out APIC registers"
-Date:   Sun,  8 Sep 2019 13:42:05 +0100
-Message-Id: <20190908121128.953017085@linuxfoundation.org>
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, itugrok@yahoo.com
+Subject: [PATCH 4.14 34/40] net_sched: fix a NULL pointer deref in ipt action
+Date:   Sun,  8 Sep 2019 13:42:07 +0100
+Message-Id: <20190908121129.311037592@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
 References: <20190908121114.260662089@linuxfoundation.org>
@@ -46,63 +45,289 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 950b07c14e8c59444e2359f15fd70ed5112e11a0 ]
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-This reverts commit 558682b5291937a70748d36fd9ba757fb25b99ae.
+[ Upstream commit 981471bd3abf4d572097645d765391533aac327d ]
 
-Chris Wilson reports that it breaks his CPU hotplug test scripts.  In
-particular, it breaks offlining and then re-onlining the boot CPU, which
-we treat specially (and the BIOS does too).
+The net pointer in struct xt_tgdtor_param is not explicitly
+initialized therefore is still NULL when dereferencing it.
+So we have to find a way to pass the correct net pointer to
+ipt_destroy_target().
 
-The symptoms are that we can offline the CPU, but it then does not come
-back online again:
+The best way I find is just saving the net pointer inside the per
+netns struct tcf_idrinfo, which could make this patch smaller.
 
-    smpboot: CPU 0 is now offline
-    smpboot: Booting Node 0 Processor 0 APIC 0x0
-    smpboot: do_boot_cpu failed(-1) to wakeup CPU#0
-
-Thomas says he knows why it's broken (my personal suspicion: our magic
-handling of the "cpu0_logical_apicid" thing), but for 5.3 the right fix
-is to just revert it, since we've never touched the LDR bits before, and
-it's not worth the risk to do anything else at this stage.
-
-[ Hotpluging of the boot CPU is special anyway, and should be off by
-  default. See the "BOOTPARAM_HOTPLUG_CPU0" config option and the
-  cpu0_hotplug kernel parameter.
-
-  In general you should not do it, and it has various known limitations
-  (hibernate and suspend require the boot CPU, for example).
-
-  But it should work, even if the boot CPU is special and needs careful
-  treatment       - Linus ]
-
-Link: https://lore.kernel.org/lkml/156785100521.13300.14461504732265570003@skylake-alporthouse-com/
-Reported-by: Chris Wilson <chris@chris-wilson.co.uk>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Bandan Das <bsd@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 0c66dc1ea3f0 ("netfilter: conntrack: register hooks in netns when needed by ruleset")
+Reported-and-tested-by: itugrok@yahoo.com
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/apic/apic.c | 4 ----
- 1 file changed, 4 deletions(-)
+ include/net/act_api.h      |    4 +++-
+ net/sched/act_bpf.c        |    2 +-
+ net/sched/act_connmark.c   |    2 +-
+ net/sched/act_csum.c       |    2 +-
+ net/sched/act_gact.c       |    2 +-
+ net/sched/act_ife.c        |    2 +-
+ net/sched/act_ipt.c        |   11 ++++++-----
+ net/sched/act_mirred.c     |    2 +-
+ net/sched/act_nat.c        |    2 +-
+ net/sched/act_pedit.c      |    2 +-
+ net/sched/act_police.c     |    2 +-
+ net/sched/act_sample.c     |    2 +-
+ net/sched/act_simple.c     |    2 +-
+ net/sched/act_skbedit.c    |    2 +-
+ net/sched/act_skbmod.c     |    2 +-
+ net/sched/act_tunnel_key.c |    2 +-
+ net/sched/act_vlan.c       |    2 +-
+ 17 files changed, 24 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 8199b7e4aff94..f8f9cfded97d3 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1148,10 +1148,6 @@ void clear_local_APIC(void)
- 	apic_write(APIC_LVT0, v | APIC_LVT_MASKED);
- 	v = apic_read(APIC_LVT1);
- 	apic_write(APIC_LVT1, v | APIC_LVT_MASKED);
--	if (!x2apic_enabled()) {
--		v = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
--		apic_write(APIC_LDR, v);
--	}
- 	if (maxlvt >= 4) {
- 		v = apic_read(APIC_LVTPC);
- 		apic_write(APIC_LVTPC, v | APIC_LVT_MASKED);
--- 
-2.20.1
-
+--- a/include/net/act_api.h
++++ b/include/net/act_api.h
+@@ -14,6 +14,7 @@
+ struct tcf_idrinfo {
+ 	spinlock_t	lock;
+ 	struct idr	action_idr;
++	struct net	*net;
+ };
+ 
+ struct tc_action_ops;
+@@ -104,7 +105,7 @@ struct tc_action_net {
+ };
+ 
+ static inline
+-int tc_action_net_init(struct tc_action_net *tn,
++int tc_action_net_init(struct net *net, struct tc_action_net *tn,
+ 		       const struct tc_action_ops *ops)
+ {
+ 	int err = 0;
+@@ -113,6 +114,7 @@ int tc_action_net_init(struct tc_action_
+ 	if (!tn->idrinfo)
+ 		return -ENOMEM;
+ 	tn->ops = ops;
++	tn->idrinfo->net = net;
+ 	spin_lock_init(&tn->idrinfo->lock);
+ 	idr_init(&tn->idrinfo->action_idr);
+ 	return err;
+--- a/net/sched/act_bpf.c
++++ b/net/sched/act_bpf.c
+@@ -402,7 +402,7 @@ static __net_init int bpf_init_net(struc
+ {
+ 	struct tc_action_net *tn = net_generic(net, bpf_net_id);
+ 
+-	return tc_action_net_init(tn, &act_bpf_ops);
++	return tc_action_net_init(net, tn, &act_bpf_ops);
+ }
+ 
+ static void __net_exit bpf_exit_net(struct net *net)
+--- a/net/sched/act_connmark.c
++++ b/net/sched/act_connmark.c
+@@ -206,7 +206,7 @@ static __net_init int connmark_init_net(
+ {
+ 	struct tc_action_net *tn = net_generic(net, connmark_net_id);
+ 
+-	return tc_action_net_init(tn, &act_connmark_ops);
++	return tc_action_net_init(net, tn, &act_connmark_ops);
+ }
+ 
+ static void __net_exit connmark_exit_net(struct net *net)
+--- a/net/sched/act_csum.c
++++ b/net/sched/act_csum.c
+@@ -632,7 +632,7 @@ static __net_init int csum_init_net(stru
+ {
+ 	struct tc_action_net *tn = net_generic(net, csum_net_id);
+ 
+-	return tc_action_net_init(tn, &act_csum_ops);
++	return tc_action_net_init(net, tn, &act_csum_ops);
+ }
+ 
+ static void __net_exit csum_exit_net(struct net *net)
+--- a/net/sched/act_gact.c
++++ b/net/sched/act_gact.c
+@@ -232,7 +232,7 @@ static __net_init int gact_init_net(stru
+ {
+ 	struct tc_action_net *tn = net_generic(net, gact_net_id);
+ 
+-	return tc_action_net_init(tn, &act_gact_ops);
++	return tc_action_net_init(net, tn, &act_gact_ops);
+ }
+ 
+ static void __net_exit gact_exit_net(struct net *net)
+--- a/net/sched/act_ife.c
++++ b/net/sched/act_ife.c
+@@ -837,7 +837,7 @@ static __net_init int ife_init_net(struc
+ {
+ 	struct tc_action_net *tn = net_generic(net, ife_net_id);
+ 
+-	return tc_action_net_init(tn, &act_ife_ops);
++	return tc_action_net_init(net, tn, &act_ife_ops);
+ }
+ 
+ static void __net_exit ife_exit_net(struct net *net)
+--- a/net/sched/act_ipt.c
++++ b/net/sched/act_ipt.c
+@@ -65,12 +65,13 @@ static int ipt_init_target(struct net *n
+ 	return 0;
+ }
+ 
+-static void ipt_destroy_target(struct xt_entry_target *t)
++static void ipt_destroy_target(struct xt_entry_target *t, struct net *net)
+ {
+ 	struct xt_tgdtor_param par = {
+ 		.target   = t->u.kernel.target,
+ 		.targinfo = t->data,
+ 		.family   = NFPROTO_IPV4,
++		.net      = net,
+ 	};
+ 	if (par.target->destroy != NULL)
+ 		par.target->destroy(&par);
+@@ -82,7 +83,7 @@ static void tcf_ipt_release(struct tc_ac
+ 	struct tcf_ipt *ipt = to_ipt(a);
+ 
+ 	if (ipt->tcfi_t) {
+-		ipt_destroy_target(ipt->tcfi_t);
++		ipt_destroy_target(ipt->tcfi_t, a->idrinfo->net);
+ 		kfree(ipt->tcfi_t);
+ 	}
+ 	kfree(ipt->tcfi_tname);
+@@ -172,7 +173,7 @@ static int __tcf_ipt_init(struct net *ne
+ 
+ 	spin_lock_bh(&ipt->tcf_lock);
+ 	if (ret != ACT_P_CREATED) {
+-		ipt_destroy_target(ipt->tcfi_t);
++		ipt_destroy_target(ipt->tcfi_t, net);
+ 		kfree(ipt->tcfi_tname);
+ 		kfree(ipt->tcfi_t);
+ 	}
+@@ -337,7 +338,7 @@ static __net_init int ipt_init_net(struc
+ {
+ 	struct tc_action_net *tn = net_generic(net, ipt_net_id);
+ 
+-	return tc_action_net_init(tn, &act_ipt_ops);
++	return tc_action_net_init(net, tn, &act_ipt_ops);
+ }
+ 
+ static void __net_exit ipt_exit_net(struct net *net)
+@@ -387,7 +388,7 @@ static __net_init int xt_init_net(struct
+ {
+ 	struct tc_action_net *tn = net_generic(net, xt_net_id);
+ 
+-	return tc_action_net_init(tn, &act_xt_ops);
++	return tc_action_net_init(net, tn, &act_xt_ops);
+ }
+ 
+ static void __net_exit xt_exit_net(struct net *net)
+--- a/net/sched/act_mirred.c
++++ b/net/sched/act_mirred.c
+@@ -343,7 +343,7 @@ static __net_init int mirred_init_net(st
+ {
+ 	struct tc_action_net *tn = net_generic(net, mirred_net_id);
+ 
+-	return tc_action_net_init(tn, &act_mirred_ops);
++	return tc_action_net_init(net, tn, &act_mirred_ops);
+ }
+ 
+ static void __net_exit mirred_exit_net(struct net *net)
+--- a/net/sched/act_nat.c
++++ b/net/sched/act_nat.c
+@@ -307,7 +307,7 @@ static __net_init int nat_init_net(struc
+ {
+ 	struct tc_action_net *tn = net_generic(net, nat_net_id);
+ 
+-	return tc_action_net_init(tn, &act_nat_ops);
++	return tc_action_net_init(net, tn, &act_nat_ops);
+ }
+ 
+ static void __net_exit nat_exit_net(struct net *net)
+--- a/net/sched/act_pedit.c
++++ b/net/sched/act_pedit.c
+@@ -458,7 +458,7 @@ static __net_init int pedit_init_net(str
+ {
+ 	struct tc_action_net *tn = net_generic(net, pedit_net_id);
+ 
+-	return tc_action_net_init(tn, &act_pedit_ops);
++	return tc_action_net_init(net, tn, &act_pedit_ops);
+ }
+ 
+ static void __net_exit pedit_exit_net(struct net *net)
+--- a/net/sched/act_police.c
++++ b/net/sched/act_police.c
+@@ -331,7 +331,7 @@ static __net_init int police_init_net(st
+ {
+ 	struct tc_action_net *tn = net_generic(net, police_net_id);
+ 
+-	return tc_action_net_init(tn, &act_police_ops);
++	return tc_action_net_init(net, tn, &act_police_ops);
+ }
+ 
+ static void __net_exit police_exit_net(struct net *net)
+--- a/net/sched/act_sample.c
++++ b/net/sched/act_sample.c
+@@ -249,7 +249,7 @@ static __net_init int sample_init_net(st
+ {
+ 	struct tc_action_net *tn = net_generic(net, sample_net_id);
+ 
+-	return tc_action_net_init(tn, &act_sample_ops);
++	return tc_action_net_init(net, tn, &act_sample_ops);
+ }
+ 
+ static void __net_exit sample_exit_net(struct net *net)
+--- a/net/sched/act_simple.c
++++ b/net/sched/act_simple.c
+@@ -198,7 +198,7 @@ static __net_init int simp_init_net(stru
+ {
+ 	struct tc_action_net *tn = net_generic(net, simp_net_id);
+ 
+-	return tc_action_net_init(tn, &act_simp_ops);
++	return tc_action_net_init(net, tn, &act_simp_ops);
+ }
+ 
+ static void __net_exit simp_exit_net(struct net *net)
+--- a/net/sched/act_skbedit.c
++++ b/net/sched/act_skbedit.c
+@@ -239,7 +239,7 @@ static __net_init int skbedit_init_net(s
+ {
+ 	struct tc_action_net *tn = net_generic(net, skbedit_net_id);
+ 
+-	return tc_action_net_init(tn, &act_skbedit_ops);
++	return tc_action_net_init(net, tn, &act_skbedit_ops);
+ }
+ 
+ static void __net_exit skbedit_exit_net(struct net *net)
+--- a/net/sched/act_skbmod.c
++++ b/net/sched/act_skbmod.c
+@@ -267,7 +267,7 @@ static __net_init int skbmod_init_net(st
+ {
+ 	struct tc_action_net *tn = net_generic(net, skbmod_net_id);
+ 
+-	return tc_action_net_init(tn, &act_skbmod_ops);
++	return tc_action_net_init(net, tn, &act_skbmod_ops);
+ }
+ 
+ static void __net_exit skbmod_exit_net(struct net *net)
+--- a/net/sched/act_tunnel_key.c
++++ b/net/sched/act_tunnel_key.c
+@@ -324,7 +324,7 @@ static __net_init int tunnel_key_init_ne
+ {
+ 	struct tc_action_net *tn = net_generic(net, tunnel_key_net_id);
+ 
+-	return tc_action_net_init(tn, &act_tunnel_key_ops);
++	return tc_action_net_init(net, tn, &act_tunnel_key_ops);
+ }
+ 
+ static void __net_exit tunnel_key_exit_net(struct net *net)
+--- a/net/sched/act_vlan.c
++++ b/net/sched/act_vlan.c
+@@ -271,7 +271,7 @@ static __net_init int vlan_init_net(stru
+ {
+ 	struct tc_action_net *tn = net_generic(net, vlan_net_id);
+ 
+-	return tc_action_net_init(tn, &act_vlan_ops);
++	return tc_action_net_init(net, tn, &act_vlan_ops);
+ }
+ 
+ static void __net_exit vlan_exit_net(struct net *net)
 
 
