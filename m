@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FAABACCDB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 384F8ACD35
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:49:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbfIHMnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:43:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56946 "EHLO mail.kernel.org"
+        id S1730464AbfIHMqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:46:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729384AbfIHMnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:43:14 -0400
+        id S1730424AbfIHMqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:46:36 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFFB1216C8;
-        Sun,  8 Sep 2019 12:43:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23FBE20644;
+        Sun,  8 Sep 2019 12:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946594;
-        bh=YC4A5FicODasF8B4WHyElnHgEqlJvrcGPU58B1FKcsY=;
+        s=default; t=1567946795;
+        bh=yj1L5TzB2zLxXbKr7boJeyCjD2/e8hSz4PmXW/rMXt4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pax/rb2ik4b5hARMo4/QpcEHfdw+eZnVDhzhYHSJaIwAbOFFWxasndn2AdV27PQaS
-         CGce5bGapo8uMA1Xkq9H8rKIMspITBtxKkO7CEVs3ImrR+RIuxinOPEcH2eJUrPD8R
-         mOdlLOlscJAQl/SRxW8wUk27QP5Dn32WSbMBHwrE=
+        b=AaaMLT5ER4D5RUfbq7szyVTxx87iysXobcjGuAid6xXlJtBbXHEtPmLRFktTJR40u
+         ajsD9eb5A9OvW6Tqph76GZ59AdqUFcjs6iXiP9BHD0E0IdUffY7H5ojqOphXR9L9tE
+         shnvBHU7lcAd/X+G6ueofklp5T+HK9rlugcS1inc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         YueHaibing <yuehaibing@huawei.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 05/23] gpio: Fix build error of function redefinition
+Subject: [PATCH 4.14 07/40] gpio: Fix build error of function redefinition
 Date:   Sun,  8 Sep 2019 13:41:40 +0100
-Message-Id: <20190908121055.659392623@linuxfoundation.org>
+Message-Id: <20190908121117.752034732@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
-References: <20190908121052.898169328@linuxfoundation.org>
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
+References: <20190908121114.260662089@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -69,10 +69,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 24 deletions(-)
 
 diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index d12b5d566e4b1..11555bd821b73 100644
+index 8ef7fc0ce0f0c..b2f103b170a97 100644
 --- a/include/linux/gpio.h
 +++ b/include/linux/gpio.h
-@@ -229,30 +229,6 @@ static inline int irq_to_gpio(unsigned irq)
+@@ -230,30 +230,6 @@ static inline int irq_to_gpio(unsigned irq)
  	return -EINVAL;
  }
  
