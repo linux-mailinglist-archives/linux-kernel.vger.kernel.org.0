@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD15ACD17
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD0E3ACCE7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730145AbfIHMpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:45:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60904 "EHLO mail.kernel.org"
+        id S1729530AbfIHMnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:43:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730105AbfIHMpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:45:32 -0400
+        id S1729509AbfIHMng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:43:36 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3170216C8;
-        Sun,  8 Sep 2019 12:45:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC56B21927;
+        Sun,  8 Sep 2019 12:43:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946732;
-        bh=l4gihC0EG1LPrmRUkSJRdFlEevjeyYnCovbSKbMjJJo=;
+        s=default; t=1567946615;
+        bh=WSTuLqsXqlvcR8hsFVkmN87TeOnrEFWdE+TxzTDFBcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LOaYVji4OwvUzU/+RgqZ7AJCIJBQwq2f0T1v3MVUDZodUG2dDG2q6fUjUFb+OuUtC
-         vv9V7hdYss6BUU9ehadG0HhDZoLf1jvwPvc359SSXnALvoxuKAR//90GTWFjIAg8Lw
-         Jvc0tMlELu6tbZdhXrwD5KTJtN3/ufwaN3l7zp0Y=
+        b=0TiP4TY/2Qm+Pwlgy0U4v0Qn8xSGCC0syuABk+udG7LmCK5d3Va0Tb4bPMSvc/la6
+         1yHzyzpD+AJJmOozGWTTdXvfBRhEhsCE/3WWRpbOaOeiDYUc5OqjVduLixZy7V7aeM
+         ebUtQW3Ihq4FXrY8tB5eY00oRgwfwWWXPkVVQBM0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 20/40] HID: cp2112: prevent sleeping function called from invalid context
+        stable@vger.kernel.org, Martin Sperl <kernel@martin.sperl.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 18/23] spi: bcm2835aux: unifying code between polling and interrupt driven code
 Date:   Sun,  8 Sep 2019 13:41:53 +0100
-Message-Id: <20190908121122.560928004@linuxfoundation.org>
+Message-Id: <20190908121101.187172199@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
+References: <20190908121052.898169328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +45,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2d05dba2b25ecb0f8fc3a0b4eb2232da6454a47b ]
+[ Upstream commit 7188a6f0eee3f1fae5d826cfc6d569657ff950ec ]
 
-When calling request_threaded_irq() with a CP2112, the function
-cp2112_gpio_irq_startup() is called in a IRQ context.
+Sharing more code between polling and interrupt-driven mode.
 
-Therefore we can not sleep, and we can not call
-cp2112_gpio_direction_input() there.
-
-Move the call to cp2112_gpio_direction_input() earlier to have a working
-driver.
-
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-cp2112.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/spi/spi-bcm2835aux.c | 51 +++++++++++++-----------------------
+ 1 file changed, 18 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
-index 4e940a096b2ac..abf1079457664 100644
---- a/drivers/hid/hid-cp2112.c
-+++ b/drivers/hid/hid-cp2112.c
-@@ -1149,8 +1149,6 @@ static unsigned int cp2112_gpio_irq_startup(struct irq_data *d)
+diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
+index 6f4c6aa801f14..5b2c2b2e13396 100644
+--- a/drivers/spi/spi-bcm2835aux.c
++++ b/drivers/spi/spi-bcm2835aux.c
+@@ -181,23 +181,13 @@ static void bcm2835aux_spi_reset_hw(struct bcm2835aux_spi *bs)
+ 		      BCM2835_AUX_SPI_CNTL0_CLEARFIFO);
+ }
  
- 	INIT_DELAYED_WORK(&dev->gpio_poll_worker, cp2112_gpio_poll_callback);
- 
--	cp2112_gpio_direction_input(gc, d->hwirq);
+-static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
++static void bcm2835aux_spi_transfer_helper(struct bcm2835aux_spi *bs)
+ {
+-	struct spi_master *master = dev_id;
+-	struct bcm2835aux_spi *bs = spi_master_get_devdata(master);
+-	irqreturn_t ret = IRQ_NONE;
 -
- 	if (!dev->gpio_poll) {
- 		dev->gpio_poll = true;
- 		schedule_delayed_work(&dev->gpio_poll_worker, 0);
-@@ -1198,6 +1196,12 @@ static int __maybe_unused cp2112_allocate_irq(struct cp2112_device *dev,
- 		return PTR_ERR(dev->desc[pin]);
+-	/* IRQ may be shared, so return if our interrupts are disabled */
+-	if (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_CNTL1) &
+-	      (BCM2835_AUX_SPI_CNTL1_TXEMPTY | BCM2835_AUX_SPI_CNTL1_IDLE)))
+-		return ret;
+-
+ 	/* check if we have data to read */
+ 	while (bs->rx_len &&
+ 	       (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT) &
+ 		  BCM2835_AUX_SPI_STAT_RX_EMPTY))) {
+ 		bcm2835aux_rd_fifo(bs);
+-		ret = IRQ_HANDLED;
  	}
  
-+	ret = cp2112_gpio_direction_input(&dev->gc, pin);
-+	if (ret < 0) {
-+		dev_err(dev->gc.parent, "Failed to set GPIO to input dir\n");
-+		goto err_desc;
-+	}
+ 	/* check if we have data to write */
+@@ -206,7 +196,6 @@ static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
+ 	       (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT) &
+ 		  BCM2835_AUX_SPI_STAT_TX_FULL))) {
+ 		bcm2835aux_wr_fifo(bs);
+-		ret = IRQ_HANDLED;
+ 	}
+ 
+ 	/* and check if we have reached "done" */
+@@ -214,8 +203,21 @@ static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
+ 	       (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT) &
+ 		  BCM2835_AUX_SPI_STAT_BUSY))) {
+ 		bcm2835aux_rd_fifo(bs);
+-		ret = IRQ_HANDLED;
+ 	}
++}
 +
- 	ret = gpiochip_lock_as_irq(&dev->gc, pin);
- 	if (ret) {
- 		dev_err(dev->gc.parent, "Failed to lock GPIO as interrupt\n");
++static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
++{
++	struct spi_master *master = dev_id;
++	struct bcm2835aux_spi *bs = spi_master_get_devdata(master);
++
++	/* IRQ may be shared, so return if our interrupts are disabled */
++	if (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_CNTL1) &
++	      (BCM2835_AUX_SPI_CNTL1_TXEMPTY | BCM2835_AUX_SPI_CNTL1_IDLE)))
++		return IRQ_NONE;
++
++	/* do common fifo handling */
++	bcm2835aux_spi_transfer_helper(bs);
+ 
+ 	/* and if rx_len is 0 then wake up completion and disable spi */
+ 	if (!bs->rx_len) {
+@@ -223,8 +225,7 @@ static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
+ 		complete(&master->xfer_completion);
+ 	}
+ 
+-	/* and return */
+-	return ret;
++	return IRQ_HANDLED;
+ }
+ 
+ static int __bcm2835aux_spi_transfer_one_irq(struct spi_master *master,
+@@ -270,7 +271,6 @@ static int bcm2835aux_spi_transfer_one_poll(struct spi_master *master,
+ {
+ 	struct bcm2835aux_spi *bs = spi_master_get_devdata(master);
+ 	unsigned long timeout;
+-	u32 stat;
+ 
+ 	/* configure spi */
+ 	bcm2835aux_wr(bs, BCM2835_AUX_SPI_CNTL1, bs->cntl[1]);
+@@ -281,24 +281,9 @@ static int bcm2835aux_spi_transfer_one_poll(struct spi_master *master,
+ 
+ 	/* loop until finished the transfer */
+ 	while (bs->rx_len) {
+-		/* read status */
+-		stat = bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT);
+-
+-		/* fill in tx fifo with remaining data */
+-		if ((bs->tx_len) && (!(stat & BCM2835_AUX_SPI_STAT_TX_FULL))) {
+-			bcm2835aux_wr_fifo(bs);
+-			continue;
+-		}
+ 
+-		/* read data from fifo for both cases */
+-		if (!(stat & BCM2835_AUX_SPI_STAT_RX_EMPTY)) {
+-			bcm2835aux_rd_fifo(bs);
+-			continue;
+-		}
+-		if (!(stat & BCM2835_AUX_SPI_STAT_BUSY)) {
+-			bcm2835aux_rd_fifo(bs);
+-			continue;
+-		}
++		/* do common fifo handling */
++		bcm2835aux_spi_transfer_helper(bs);
+ 
+ 		/* there is still data pending to read check the timeout */
+ 		if (bs->rx_len && time_after(jiffies, timeout)) {
 -- 
 2.20.1
 
