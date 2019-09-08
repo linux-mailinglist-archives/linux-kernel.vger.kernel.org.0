@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EE41ACD22
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E922ACCFE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730280AbfIHMqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:46:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33308 "EHLO mail.kernel.org"
+        id S1729840AbfIHMog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:44:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730258AbfIHMp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:45:59 -0400
+        id S1729789AbfIHMod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:44:33 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E3CB21A49;
-        Sun,  8 Sep 2019 12:45:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF3CA218DE;
+        Sun,  8 Sep 2019 12:44:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946758;
-        bh=rBYyaw2fFXbK2tMlFMR++K1OgXVKO8FT5BhnKRKLqZg=;
+        s=default; t=1567946672;
+        bh=qVOrtOdpDjM5Dq9VnccAmG5LI4niAYI3RxO3b0EbaIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yfJpDcTtM9R1YDr8nRObhWNu6FCZWftAOlbkQBWmKiaWlxSfTB7/q1U+pvWgJ9gWl
-         EE9HX1Rn564bcZ0YmDZSjMDVmkc7chz84fAwonnUp+N5cSXTben+MDedzS30dFxJrE
-         YGPn3x8ZliRPg2wIDNXklRqsMkXnjJh3Bz6MZB7U=
+        b=fV7JfA4iVcAPxuETP/Tbwkrfrm1wyPTTFa0fKY/9783I9B8WzEZEi9bhsWT/YbJDe
+         bBZNm6YQJ8wjc6FshjfeZ12B/QI1cKxDJ58L6IGDbrRyJ2jXWeA0jofasqh0mBOvLr
+         Yf08lMppwZFNag7X4RVYZOshcAwoYjGgKYDsByJE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Sperl <kernel@martin.sperl.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 29/40] spi: bcm2835aux: unifying code between polling and interrupt driven code
+        stable@vger.kernel.org, Feng Sun <loyou85@gmail.com>,
+        Xiaojun Zhao <xiaojunzhao141@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 23/26] net: fix skb use after free in netpoll
 Date:   Sun,  8 Sep 2019 13:42:02 +0100
-Message-Id: <20190908121128.223401411@linuxfoundation.org>
+Message-Id: <20190908121110.869208347@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
+References: <20190908121057.216802689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,125 +44,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7188a6f0eee3f1fae5d826cfc6d569657ff950ec ]
+From: Feng Sun <loyou85@gmail.com>
 
-Sharing more code between polling and interrupt-driven mode.
+[ Upstream commit 2c1644cf6d46a8267d79ed95cb9b563839346562 ]
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+After commit baeababb5b85d5c4e6c917efe2a1504179438d3b
+("tun: return NET_XMIT_DROP for dropped packets"),
+when tun_net_xmit drop packets, it will free skb and return NET_XMIT_DROP,
+netpoll_send_skb_on_dev will run into following use after free cases:
+1. retry netpoll_start_xmit with freed skb;
+2. queue freed skb in npinfo->txq.
+queue_process will also run into use after free case.
+
+hit netpoll_send_skb_on_dev first case with following kernel log:
+
+[  117.864773] kernel BUG at mm/slub.c:306!
+[  117.864773] invalid opcode: 0000 [#1] SMP PTI
+[  117.864774] CPU: 3 PID: 2627 Comm: loop_printmsg Kdump: loaded Tainted: P           OE     5.3.0-050300rc5-generic #201908182231
+[  117.864775] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  117.864775] RIP: 0010:kmem_cache_free+0x28d/0x2b0
+[  117.864781] Call Trace:
+[  117.864781]  ? tun_net_xmit+0x21c/0x460
+[  117.864781]  kfree_skbmem+0x4e/0x60
+[  117.864782]  kfree_skb+0x3a/0xa0
+[  117.864782]  tun_net_xmit+0x21c/0x460
+[  117.864782]  netpoll_start_xmit+0x11d/0x1b0
+[  117.864788]  netpoll_send_skb_on_dev+0x1b8/0x200
+[  117.864789]  __br_forward+0x1b9/0x1e0 [bridge]
+[  117.864789]  ? skb_clone+0x53/0xd0
+[  117.864790]  ? __skb_clone+0x2e/0x120
+[  117.864790]  deliver_clone+0x37/0x50 [bridge]
+[  117.864790]  maybe_deliver+0x89/0xc0 [bridge]
+[  117.864791]  br_flood+0x6c/0x130 [bridge]
+[  117.864791]  br_dev_xmit+0x315/0x3c0 [bridge]
+[  117.864792]  netpoll_start_xmit+0x11d/0x1b0
+[  117.864792]  netpoll_send_skb_on_dev+0x1b8/0x200
+[  117.864792]  netpoll_send_udp+0x2c6/0x3e8
+[  117.864793]  write_msg+0xd9/0xf0 [netconsole]
+[  117.864793]  console_unlock+0x386/0x4e0
+[  117.864793]  vprintk_emit+0x17e/0x280
+[  117.864794]  vprintk_default+0x29/0x50
+[  117.864794]  vprintk_func+0x4c/0xbc
+[  117.864794]  printk+0x58/0x6f
+[  117.864795]  loop_fun+0x24/0x41 [printmsg_loop]
+[  117.864795]  kthread+0x104/0x140
+[  117.864795]  ? 0xffffffffc05b1000
+[  117.864796]  ? kthread_park+0x80/0x80
+[  117.864796]  ret_from_fork+0x35/0x40
+
+Signed-off-by: Feng Sun <loyou85@gmail.com>
+Signed-off-by: Xiaojun Zhao <xiaojunzhao141@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-bcm2835aux.c | 51 +++++++++++++-----------------------
- 1 file changed, 18 insertions(+), 33 deletions(-)
+ net/core/netpoll.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
-index bd00b7cc8b78b..97cb3beb9cc62 100644
---- a/drivers/spi/spi-bcm2835aux.c
-+++ b/drivers/spi/spi-bcm2835aux.c
-@@ -178,23 +178,13 @@ static void bcm2835aux_spi_reset_hw(struct bcm2835aux_spi *bs)
- 		      BCM2835_AUX_SPI_CNTL0_CLEARFIFO);
- }
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -122,7 +122,7 @@ static void queue_process(struct work_st
+ 		txq = netdev_get_tx_queue(dev, q_index);
+ 		HARD_TX_LOCK(dev, txq, smp_processor_id());
+ 		if (netif_xmit_frozen_or_stopped(txq) ||
+-		    netpoll_start_xmit(skb, dev, txq) != NETDEV_TX_OK) {
++		    !dev_xmit_complete(netpoll_start_xmit(skb, dev, txq))) {
+ 			skb_queue_head(&npinfo->txq, skb);
+ 			HARD_TX_UNLOCK(dev, txq);
+ 			local_irq_restore(flags);
+@@ -357,7 +357,7 @@ void netpoll_send_skb_on_dev(struct netp
  
--static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
-+static void bcm2835aux_spi_transfer_helper(struct bcm2835aux_spi *bs)
- {
--	struct spi_master *master = dev_id;
--	struct bcm2835aux_spi *bs = spi_master_get_devdata(master);
--	irqreturn_t ret = IRQ_NONE;
--
--	/* IRQ may be shared, so return if our interrupts are disabled */
--	if (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_CNTL1) &
--	      (BCM2835_AUX_SPI_CNTL1_TXEMPTY | BCM2835_AUX_SPI_CNTL1_IDLE)))
--		return ret;
--
- 	/* check if we have data to read */
- 	while (bs->rx_len &&
- 	       (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT) &
- 		  BCM2835_AUX_SPI_STAT_RX_EMPTY))) {
- 		bcm2835aux_rd_fifo(bs);
--		ret = IRQ_HANDLED;
+ 				HARD_TX_UNLOCK(dev, txq);
+ 
+-				if (status == NETDEV_TX_OK)
++				if (dev_xmit_complete(status))
+ 					break;
+ 
+ 			}
+@@ -374,7 +374,7 @@ void netpoll_send_skb_on_dev(struct netp
+ 
  	}
  
- 	/* check if we have data to write */
-@@ -203,7 +193,6 @@ static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
- 	       (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT) &
- 		  BCM2835_AUX_SPI_STAT_TX_FULL))) {
- 		bcm2835aux_wr_fifo(bs);
--		ret = IRQ_HANDLED;
+-	if (status != NETDEV_TX_OK) {
++	if (!dev_xmit_complete(status)) {
+ 		skb_queue_tail(&npinfo->txq, skb);
+ 		schedule_delayed_work(&npinfo->tx_work,0);
  	}
- 
- 	/* and check if we have reached "done" */
-@@ -211,8 +200,21 @@ static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
- 	       (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT) &
- 		  BCM2835_AUX_SPI_STAT_BUSY))) {
- 		bcm2835aux_rd_fifo(bs);
--		ret = IRQ_HANDLED;
- 	}
-+}
-+
-+static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
-+{
-+	struct spi_master *master = dev_id;
-+	struct bcm2835aux_spi *bs = spi_master_get_devdata(master);
-+
-+	/* IRQ may be shared, so return if our interrupts are disabled */
-+	if (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_CNTL1) &
-+	      (BCM2835_AUX_SPI_CNTL1_TXEMPTY | BCM2835_AUX_SPI_CNTL1_IDLE)))
-+		return IRQ_NONE;
-+
-+	/* do common fifo handling */
-+	bcm2835aux_spi_transfer_helper(bs);
- 
- 	if (!bs->tx_len) {
- 		/* disable tx fifo empty interrupt */
-@@ -226,8 +228,7 @@ static irqreturn_t bcm2835aux_spi_interrupt(int irq, void *dev_id)
- 		complete(&master->xfer_completion);
- 	}
- 
--	/* and return */
--	return ret;
-+	return IRQ_HANDLED;
- }
- 
- static int __bcm2835aux_spi_transfer_one_irq(struct spi_master *master,
-@@ -273,7 +274,6 @@ static int bcm2835aux_spi_transfer_one_poll(struct spi_master *master,
- {
- 	struct bcm2835aux_spi *bs = spi_master_get_devdata(master);
- 	unsigned long timeout;
--	u32 stat;
- 
- 	/* configure spi */
- 	bcm2835aux_wr(bs, BCM2835_AUX_SPI_CNTL1, bs->cntl[1]);
-@@ -284,24 +284,9 @@ static int bcm2835aux_spi_transfer_one_poll(struct spi_master *master,
- 
- 	/* loop until finished the transfer */
- 	while (bs->rx_len) {
--		/* read status */
--		stat = bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT);
--
--		/* fill in tx fifo with remaining data */
--		if ((bs->tx_len) && (!(stat & BCM2835_AUX_SPI_STAT_TX_FULL))) {
--			bcm2835aux_wr_fifo(bs);
--			continue;
--		}
- 
--		/* read data from fifo for both cases */
--		if (!(stat & BCM2835_AUX_SPI_STAT_RX_EMPTY)) {
--			bcm2835aux_rd_fifo(bs);
--			continue;
--		}
--		if (!(stat & BCM2835_AUX_SPI_STAT_BUSY)) {
--			bcm2835aux_rd_fifo(bs);
--			continue;
--		}
-+		/* do common fifo handling */
-+		bcm2835aux_spi_transfer_helper(bs);
- 
- 		/* there is still data pending to read check the timeout */
- 		if (bs->rx_len && time_after(jiffies, timeout)) {
--- 
-2.20.1
-
 
 
