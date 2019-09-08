@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 384F8ACD35
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4516CACD40
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbfIHMqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:46:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34338 "EHLO mail.kernel.org"
+        id S1730602AbfIHMrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:47:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730424AbfIHMqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:46:36 -0400
+        id S1730580AbfIHMrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:47:09 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23FBE20644;
-        Sun,  8 Sep 2019 12:46:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72168218AC;
+        Sun,  8 Sep 2019 12:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946795;
-        bh=yj1L5TzB2zLxXbKr7boJeyCjD2/e8hSz4PmXW/rMXt4=;
+        s=default; t=1567946828;
+        bh=ckHC48in04SwhmT6ngLQZCD/vhD2yjIy5nX/6DJRkXQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AaaMLT5ER4D5RUfbq7szyVTxx87iysXobcjGuAid6xXlJtBbXHEtPmLRFktTJR40u
-         ajsD9eb5A9OvW6Tqph76GZ59AdqUFcjs6iXiP9BHD0E0IdUffY7H5ojqOphXR9L9tE
-         shnvBHU7lcAd/X+G6ueofklp5T+HK9rlugcS1inc=
+        b=yRroT5hgTeAiCyHn9F/GpZMOjX4MAzV6fDnGjzMJewf5L15PVGRAODVGiMsMl9v2F
+         DywHf3VGot0AdPXGT21XxPoZeovSk1qz3aetp47WnAOcucQJxt1qFhe7kAHFBpIyxa
+         WnGvtY4GWcLwR2io2YslzKsb5ES14LpLThDWtg1E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 07/40] gpio: Fix build error of function redefinition
+Subject: [PATCH 4.19 16/57] hv_netvsc: Fix a warning of suspicious RCU usage
 Date:   Sun,  8 Sep 2019 13:41:40 +0100
-Message-Id: <20190908121117.752034732@linuxfoundation.org>
+Message-Id: <20190908121132.068481992@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
+References: <20190908121125.608195329@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,64 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 68e03b85474a51ec1921b4d13204782594ef7223 ]
+[ Upstream commit 6d0d779dca73cd5acb649c54f81401f93098b298 ]
 
-when do randbuilding, I got this error:
+This fixes a warning of "suspicious rcu_dereference_check() usage"
+when nload runs.
 
-In file included from drivers/hwmon/pmbus/ucd9000.c:19:0:
-./include/linux/gpio/driver.h:576:1: error: redefinition of gpiochip_add_pin_range
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
-In file included from drivers/hwmon/pmbus/ucd9000.c:18:0:
-./include/linux/gpio.h:245:1: note: previous definition of gpiochip_add_pin_range was here
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 964cb341882f ("gpio: move pincontrol calls to <linux/gpio/driver.h>")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190731123814.46624-1-yuehaibing@huawei.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 776e726bfb34 ("netvsc: fix RCU warning in get_stats")
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/gpio.h | 24 ------------------------
- 1 file changed, 24 deletions(-)
+ drivers/net/hyperv/netvsc_drv.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 8ef7fc0ce0f0c..b2f103b170a97 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -230,30 +230,6 @@ static inline int irq_to_gpio(unsigned irq)
- 	return -EINVAL;
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index cc60ef9634db2..6f6c0dbd91fc8 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -1248,12 +1248,15 @@ static void netvsc_get_stats64(struct net_device *net,
+ 			       struct rtnl_link_stats64 *t)
+ {
+ 	struct net_device_context *ndev_ctx = netdev_priv(net);
+-	struct netvsc_device *nvdev = rcu_dereference_rtnl(ndev_ctx->nvdev);
++	struct netvsc_device *nvdev;
+ 	struct netvsc_vf_pcpu_stats vf_tot;
+ 	int i;
+ 
++	rcu_read_lock();
++
++	nvdev = rcu_dereference(ndev_ctx->nvdev);
+ 	if (!nvdev)
+-		return;
++		goto out;
+ 
+ 	netdev_stats_to_stats64(t, &net->stats);
+ 
+@@ -1292,6 +1295,8 @@ static void netvsc_get_stats64(struct net_device *net,
+ 		t->rx_packets	+= packets;
+ 		t->multicast	+= multicast;
+ 	}
++out:
++	rcu_read_unlock();
  }
  
--static inline int
--gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
--		       unsigned int gpio_offset, unsigned int pin_offset,
--		       unsigned int npins)
--{
--	WARN_ON(1);
--	return -EINVAL;
--}
--
--static inline int
--gpiochip_add_pingroup_range(struct gpio_chip *chip,
--			struct pinctrl_dev *pctldev,
--			unsigned int gpio_offset, const char *pin_group)
--{
--	WARN_ON(1);
--	return -EINVAL;
--}
--
--static inline void
--gpiochip_remove_pin_ranges(struct gpio_chip *chip)
--{
--	WARN_ON(1);
--}
--
- static inline int devm_gpio_request(struct device *dev, unsigned gpio,
- 				    const char *label)
- {
+ static int netvsc_set_mac_addr(struct net_device *ndev, void *p)
 -- 
 2.20.1
 
