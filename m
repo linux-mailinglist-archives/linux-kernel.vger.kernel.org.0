@@ -2,213 +2,397 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83CE2ACF92
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 17:51:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF1FAACF9E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 18:10:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbfIHPvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 11:51:45 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42078 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbfIHPvo (ORCPT
+        id S1729305AbfIHQKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 12:10:23 -0400
+Received: from valentin-vidic.from.hr ([94.229.67.141]:47997 "EHLO
+        valentin-vidic.from.hr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729240AbfIHQKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 11:51:44 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x88Fmujm062010;
-        Sun, 8 Sep 2019 15:49:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2019-08-05; bh=GjqYVX5oUfthQW4PL9HWs1FoFR7n9cNhuhRVOx5HQuc=;
- b=esj84nCYsbp9S1I/yys+xT2OKP914u14dIWdU9+jtxjl3Rj5KIsFI5gjsUIjyjvq7+tb
- MYwpiiAvJJqwKiISYnjOasOZaWXnsvkxaHObITXwNLJT9I1OaHGwRh1lP5TJVG8COC/G
- AKQeg01tYK9aHYGWQByWLI6wf7HH34Bh7ui2szjexW37H736YmmQhqTNXIjO/QMKUauS
- A/uN8R0CRrCRt6nrgxkpCeCClHdHyh25/6YzvXu+XPgiJLhl8ai5ZYcJdY1siAKtVr99
- 2oc3GTdErjep+uCkPS3rfZDoaI4StLo63yjnMGJ0ogpIvYfm6i6npL9boQvcyGDDV44J ow== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2uw1jxrbaw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 08 Sep 2019 15:49:04 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x88FhWWx073426;
-        Sun, 8 Sep 2019 15:49:03 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2uv3wkfccs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 08 Sep 2019 15:49:03 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x88FmxVc016315;
-        Sun, 8 Sep 2019 15:48:59 GMT
-Received: from anon-dhcp-153.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 08 Sep 2019 08:48:59 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: Regression in 5.1.20: Reading long directory fails
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <1ebf86cff330eb15c02249f0dac415a8aff99f49.camel@hammerspace.com>
-Date:   Sun, 8 Sep 2019 11:48:58 -0400
-Cc:     "bcodding@redhat.com" <bcodding@redhat.com>,
-        "tibbs@math.uh.edu" <tibbs@math.uh.edu>,
-        Bruce Fields <bfields@fieldses.org>,
-        "linux@stwm.de" <linux@stwm.de>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "km@cm4all.com" <km@cm4all.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3B2EEB3C-3305-4A50-A55B-51093A985284@oracle.com>
-References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
- <4418877.15LTP4gqqJ@stwm.de> <ufapnkhqjwm.fsf@epithumia.math.uh.edu>
- <4198657.JbNDGbLXiX@h2o.as.studentenwerk.mhn.de>
- <ufad0ggrfrk.fsf@epithumia.math.uh.edu> <20190906144837.GD17204@fieldses.org>
- <ufapnkdw3s3.fsf@epithumia.math.uh.edu>
- <75F810C6-E99E-40C3-B5E1-34BA2CC42773@oracle.com>
- <A862CFCD-76A2-4373-8F44-F156DB38E6A5@redhat.com>
- <1ebf86cff330eb15c02249f0dac415a8aff99f49.camel@hammerspace.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-X-Mailer: Apple Mail (2.3445.104.11)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9374 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909080172
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9374 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909080173
+        Sun, 8 Sep 2019 12:10:23 -0400
+X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
+Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
+        id 30DAC214; Sun,  8 Sep 2019 16:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+        d=valentin-vidic.from.hr; s=2017; t=1567959017;
+        bh=sxZx2w1XNWPndSRJ8NNxw7MGGnoe/Lw4VpfMTF/K3ds=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JGykRtoPjtFtyFePhbqXRNlerrWPxrRTzPEJX4G8jWmZxejMfvc5J2Md1aAjy2L5O
+         MpuVdnTTe05jNuYfdYbcwzdo3hqQisqQ4u1z/P8jgBWsv0rXTidyBxYvJq2MfuKHhP
+         MOEP9SY6M6akLwh1ZVT60oFWQPtBW2prdRoKLokA93pxu0qzuwrjRHfpn9WUlCaMgl
+         V32clUMNoag/zFN88Q4YW62MlQ9viKAZXd+RcJpFAki0OhF/zjyVuCs2fpXEWwAW6Y
+         euOGr4MUDz2AOnw3ATZxUiSgxo6JVVZhgo5jt/6yX8hkUOifAkWvBwLM3bVcXsCMZ7
+         dSsOGgWr7nplg==
+From:   Valentin Vidic <vvidic@valentin-vidic.from.hr>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Valentin Vidic <vvidic@valentin-vidic.from.hr>
+Subject: [PATCH v2 1/3] staging: exfat: drop duplicate date_time_t struct
+Date:   Sun,  8 Sep 2019 16:10:13 +0000
+Message-Id: <20190908161015.26000-1-vvidic@valentin-vidic.from.hr>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use timestamp_t for everything and cleanup duplicate code.
 
+Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+---
+v2: split up into multiple patches
 
-> On Sep 8, 2019, at 11:19 AM, Trond Myklebust <trondmy@hammerspace.com> =
-wrote:
->=20
-> On Sun, 2019-09-08 at 07:39 -0400, Benjamin Coddington wrote:
->> On 6 Sep 2019, at 16:50, Chuck Lever wrote:
->>=20
->>>> On Sep 6, 2019, at 4:47 PM, Jason L Tibbitts III <
->>>> tibbs@math.uh.edu>=20
->>>> wrote:
->>>>=20
->>>>>>>>> "JBF" =3D=3D J Bruce Fields <bfields@fieldses.org> writes:
->>>>=20
->>>> JBF> Those readdir changes were client-side, right?  Based on
->>>> that=20
->>>> I'd
->>>> JBF> been assuming a client bug, but maybe it'd be worth getting
->>>> a=20
->>>> full
->>>> JBF> packet capture of the readdir reply to make sure it's legit.
->>>>=20
->>>> I have been working with bcodding on IRC for the past couple of
->>>> days=20
->>>> on
->>>> this.  Fortunately I was able to come up with way to fill up a=20
->>>> directory
->>>> in such a way that it will fail with certainty and as a bonus
->>>> doesn't
->>>> include any user data so I can feel OK about sharing packet
->>>> captures.=20
->>>> I
->>>> have a capture alongside a kernel trace of the problematic
->>>> operation=20
->>>> in
->>>> https://www.math.uh.edu/~tibbs/nfs/.  Not that I can
->>>> particularly=20
->>>> tell
->>>> anything useful from that, but bcodding says that it seems to
->>>> point=20
->>>> to
->>>> some issue in sunrpc.
->>>>=20
->>>> And because I can easily reproduce this and I was able to do a=20
->>>> bisect:
->>>>=20
->>>> 2c94b8eca1a26cd46010d6e73a23da5f2e93a19d is the first bad commit
->>>> commit 2c94b8eca1a26cd46010d6e73a23da5f2e93a19d
->>>> Author: Chuck Lever <chuck.lever@oracle.com>
->>>> Date:   Mon Feb 11 11:25:41 2019 -0500
->>>>=20
->>>>   SUNRPC: Use au_rslack when computing reply buffer size
->>>>=20
->>>>   au_rslack is significantly smaller than (au_cslack << 2).
->>>> Using
->>>>   that value results in smaller receive buffers. In some cases
->>>> this
->>>>   eliminates an extra segment in Reply chunks (RPC/RDMA).
->>>>=20
->>>>   Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
->>>>   Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
->>>>=20
->>>> :040000 040000 d4d1ce2fbe0035c5bd9df976b8c448df85dcb505=20
->>>> 7011a792dfe72ff9cd70d66e45d353f3d7817e3e M      net
->>>>=20
->>>> But of course, I can't say whether this is the actual bad commit
->>>> or
->>>> whether it just introduced a behavior change which alters the=20
->>>> conditions
->>>> under which the problem appears.
->>>=20
->>> The first place I'd start looking is the XDR constants at the head
->>> of=20
->>> fs/nfs/nfs4xdr.c
->>> having to do with READDIR.
->>>=20
->>> The report of behavior changes with the use of krb5p also makes
->>> this=20
->>> commit plausible.
->>=20
->> After sprinkling the printk's, we're coming up one word short in the=20=
+ drivers/staging/exfat/exfat.h       |  35 +++---
+ drivers/staging/exfat/exfat_super.c | 174 ++++++++--------------------
+ 2 files changed, 61 insertions(+), 148 deletions(-)
 
->> receive
->> buffer.  I think we're not accounting for the xdr pad of buf->pages
->> for=20
->> NFS4
->> readdir -- but I need to check the RFCs.  Anyone know if v4 READDIR=20=
-
->> results
->> have to be aligned?
->>=20
->> Also need to check just why krb5i is the only auth that cares..
->>=20
->=20
-> I'm not seeing that. If you look at commit 02ef04e432ba, you'll see
-> that Chuck did add a 'padding term' to decode_readdir_maxsz in the
-> NFSv4 case.
-> The other thing to remember is that a readdir 'dirlist4' entry is
-> always word aligned (irrespective of the length of the filename), so
-> there is no padding that needs to be taken into account.
->=20
-> I think we probably rather want to look at how auth->au_ralign is =
-being
-> calculated for the case of krb5i. I'm really not understanding why
-> auth->au_ralign should not take into account the presence of the mic.
-> Chuck?
-
-I'm looking at gss_unwrap_resp_integ():
-
-1971         auth->au_rslack =3D auth->au_verfsize + 2 + 1 + =
-XDR_QUADLEN(mic.len);
-1972         auth->au_ralign =3D auth->au_verfsize + 2;
-
-au_ralign now sets the alignment of the _start_ of the RPC message body.
-The MIC comes _after_ the RPC message body for krb5i.
-
-If Ben is off by one quad, that's not the MIC, which is typically 32 =
-octets,
-isn't it?
-
-Maybe some variable-length data item in the returned file attributes is =
-missing
-an XDR pad.
-
---
-Chuck Lever
-
-
+diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+index 0aa14dea4e09..58e1e889779f 100644
+--- a/drivers/staging/exfat/exfat.h
++++ b/drivers/staging/exfat/exfat.h
+@@ -241,16 +241,6 @@ static inline u16 get_row_index(u16 i)
+ #define UNI_PAR_DIR_NAME        "\0.\0."
+ #endif
+ 
+-struct date_time_t {
+-	u16      Year;
+-	u16      Month;
+-	u16      Day;
+-	u16      Hour;
+-	u16      Minute;
+-	u16      Second;
+-	u16      MilliSecond;
+-};
+-
+ struct part_info_t {
+ 	u32      Offset;    /* start sector number of the partition */
+ 	u32      Size;      /* in sectors */
+@@ -289,6 +279,16 @@ struct file_id_t {
+ 	u32      hint_last_clu;
+ };
+ 
++struct timestamp_t {
++	u16      millisec;   /* 0 ~ 999              */
++	u16      sec;        /* 0 ~ 59               */
++	u16      min;        /* 0 ~ 59               */
++	u16      hour;       /* 0 ~ 23               */
++	u16      day;        /* 1 ~ 31               */
++	u16      mon;        /* 1 ~ 12               */
++	u16      year;       /* 0 ~ 127 (since 1980) */
++};
++
+ struct dir_entry_t {
+ 	char Name[MAX_NAME_LENGTH * MAX_CHARSET_SIZE];
+ 
+@@ -298,18 +298,9 @@ struct dir_entry_t {
+ 	u32 Attr;
+ 	u64 Size;
+ 	u32 NumSubdirs;
+-	struct date_time_t CreateTimestamp;
+-	struct date_time_t ModifyTimestamp;
+-	struct date_time_t AccessTimestamp;
+-};
+-
+-struct timestamp_t {
+-	u16      sec;        /* 0 ~ 59               */
+-	u16      min;        /* 0 ~ 59               */
+-	u16      hour;       /* 0 ~ 23               */
+-	u16      day;        /* 1 ~ 31               */
+-	u16      mon;        /* 1 ~ 12               */
+-	u16      year;       /* 0 ~ 127 (since 1980) */
++	struct timestamp_t CreateTimestamp;
++	struct timestamp_t ModifyTimestamp;
++	struct timestamp_t AccessTimestamp;
+ };
+ 
+ /* MS_DOS FAT partition boot record (512 bytes) */
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 60dfea73a7a4..54b6c2ff3c96 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -56,18 +56,16 @@ static void exfat_write_super(struct super_block *sb);
+ #define UNIX_SECS_2108    4354819200L
+ 
+ /* Convert a FAT time/date pair to a UNIX date (seconds since 1 1 70). */
+-static void exfat_time_fat2unix(struct exfat_sb_info *sbi,
+-				struct timespec64 *ts, struct date_time_t *tp)
++static void exfat_time_fat2unix(struct timespec64 *ts, struct timestamp_t *tp)
+ {
+-	ts->tv_sec = mktime64(tp->Year + 1980, tp->Month + 1, tp->Day,
+-			      tp->Hour, tp->Minute, tp->Second);
++	ts->tv_sec = mktime64(tp->year + 1980, tp->mon + 1, tp->day,
++			      tp->hour, tp->min, tp->sec);
+ 
+-	ts->tv_nsec = tp->MilliSecond * NSEC_PER_MSEC;
++	ts->tv_nsec = tp->millisec * NSEC_PER_MSEC;
+ }
+ 
+ /* Convert linear UNIX date to a FAT time/date pair. */
+-static void exfat_time_unix2fat(struct exfat_sb_info *sbi,
+-				struct timespec64 *ts, struct date_time_t *tp)
++static void exfat_time_unix2fat(struct timespec64 *ts, struct timestamp_t *tp)
+ {
+ 	time64_t second = ts->tv_sec;
+ 	struct tm tm;
+@@ -75,69 +73,42 @@ static void exfat_time_unix2fat(struct exfat_sb_info *sbi,
+ 	time64_to_tm(second, 0, &tm);
+ 
+ 	if (second < UNIX_SECS_1980) {
+-		tp->MilliSecond = 0;
+-		tp->Second	= 0;
+-		tp->Minute	= 0;
+-		tp->Hour	= 0;
+-		tp->Day		= 1;
+-		tp->Month	= 1;
+-		tp->Year	= 0;
++		tp->millisec	= 0;
++		tp->sec		= 0;
++		tp->min		= 0;
++		tp->hour	= 0;
++		tp->day		= 1;
++		tp->mon		= 1;
++		tp->year	= 0;
+ 		return;
+ 	}
+ 
+ 	if (second >= UNIX_SECS_2108) {
+-		tp->MilliSecond = 999;
+-		tp->Second	= 59;
+-		tp->Minute	= 59;
+-		tp->Hour	= 23;
+-		tp->Day		= 31;
+-		tp->Month	= 12;
+-		tp->Year	= 127;
++		tp->millisec	= 999;
++		tp->sec		= 59;
++		tp->min		= 59;
++		tp->hour	= 23;
++		tp->day		= 31;
++		tp->mon		= 12;
++		tp->year	= 127;
+ 		return;
+ 	}
+ 
+-	tp->MilliSecond = ts->tv_nsec / NSEC_PER_MSEC;
+-	tp->Second	= tm.tm_sec;
+-	tp->Minute	= tm.tm_min;
+-	tp->Hour	= tm.tm_hour;
+-	tp->Day		= tm.tm_mday;
+-	tp->Month	= tm.tm_mon + 1;
+-	tp->Year	= tm.tm_year + 1900 - 1980;
++	tp->millisec	= ts->tv_nsec / NSEC_PER_MSEC;
++	tp->sec		= tm.tm_sec;
++	tp->min		= tm.tm_min;
++	tp->hour	= tm.tm_hour;
++	tp->day		= tm.tm_mday;
++	tp->mon		= tm.tm_mon + 1;
++	tp->year	= tm.tm_year + 1900 - 1980;
+ }
+ 
+ struct timestamp_t *tm_current(struct timestamp_t *tp)
+ {
+-	time64_t second = ktime_get_real_seconds();
+-	struct tm tm;
+-
+-	time64_to_tm(second, 0, &tm);
++	struct timespec64 ts;
+ 
+-	if (second < UNIX_SECS_1980) {
+-		tp->sec  = 0;
+-		tp->min  = 0;
+-		tp->hour = 0;
+-		tp->day  = 1;
+-		tp->mon  = 1;
+-		tp->year = 0;
+-		return tp;
+-	}
+-
+-	if (second >= UNIX_SECS_2108) {
+-		tp->sec  = 59;
+-		tp->min  = 59;
+-		tp->hour = 23;
+-		tp->day  = 31;
+-		tp->mon  = 12;
+-		tp->year = 127;
+-		return tp;
+-	}
+-
+-	tp->sec  = tm.tm_sec;
+-	tp->min  = tm.tm_min;
+-	tp->hour = tm.tm_hour;
+-	tp->day  = tm.tm_mday;
+-	tp->mon  = tm.tm_mon + 1;
+-	tp->year = tm.tm_year + 1900 - 1980;
++	ktime_get_real_ts64(&ts);
++	exfat_time_unix2fat(&ts, tp);
+ 
+ 	return tp;
+ }
+@@ -1502,7 +1473,6 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+ 	int ret = FFS_SUCCESS;
+ 	struct chain_t dir;
+ 	struct uni_name_t uni_name;
+-	struct timestamp_t tm;
+ 	struct dentry_t *ep, *ep2;
+ 	struct super_block *sb = inode->i_sb;
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+@@ -1520,11 +1490,11 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+ 		    (fid->entry == -1)) {
+ 			info->Attr = ATTR_SUBDIR;
+ 			memset((char *)&info->CreateTimestamp, 0,
+-			       sizeof(struct date_time_t));
++			       sizeof(struct timestamp_t));
+ 			memset((char *)&info->ModifyTimestamp, 0,
+-			       sizeof(struct date_time_t));
++			       sizeof(struct timestamp_t));
+ 			memset((char *)&info->AccessTimestamp, 0,
+-			       sizeof(struct date_time_t));
++			       sizeof(struct timestamp_t));
+ 			strcpy(info->ShortName, ".");
+ 			strcpy(info->Name, ".");
+ 
+@@ -1575,25 +1545,9 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+ 	/* set FILE_INFO structure using the acquired struct dentry_t */
+ 	info->Attr = p_fs->fs_func->get_entry_attr(ep);
+ 
+-	p_fs->fs_func->get_entry_time(ep, &tm, TM_CREATE);
+-	info->CreateTimestamp.Year = tm.year;
+-	info->CreateTimestamp.Month = tm.mon;
+-	info->CreateTimestamp.Day = tm.day;
+-	info->CreateTimestamp.Hour = tm.hour;
+-	info->CreateTimestamp.Minute = tm.min;
+-	info->CreateTimestamp.Second = tm.sec;
+-	info->CreateTimestamp.MilliSecond = 0;
+-
+-	p_fs->fs_func->get_entry_time(ep, &tm, TM_MODIFY);
+-	info->ModifyTimestamp.Year = tm.year;
+-	info->ModifyTimestamp.Month = tm.mon;
+-	info->ModifyTimestamp.Day = tm.day;
+-	info->ModifyTimestamp.Hour = tm.hour;
+-	info->ModifyTimestamp.Minute = tm.min;
+-	info->ModifyTimestamp.Second = tm.sec;
+-	info->ModifyTimestamp.MilliSecond = 0;
+-
+-	memset((char *) &info->AccessTimestamp, 0, sizeof(struct date_time_t));
++	p_fs->fs_func->get_entry_time(ep, &info->CreateTimestamp, TM_CREATE);
++	p_fs->fs_func->get_entry_time(ep, &info->ModifyTimestamp, TM_MODIFY);
++	memset((char *)&info->AccessTimestamp, 0, sizeof(struct timestamp_t));
+ 
+ 	*(uni_name.name) = 0x0;
+ 	/* XXX this is very bad for exfat cuz name is already included in es.
+@@ -1652,7 +1606,6 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
+ {
+ 	sector_t sector = 0;
+ 	int ret = FFS_SUCCESS;
+-	struct timestamp_t tm;
+ 	struct dentry_t *ep, *ep2;
+ 	struct entry_set_cache_t *es = NULL;
+ 	struct super_block *sb = inode->i_sb;
+@@ -1699,22 +1652,8 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
+ 	p_fs->fs_func->set_entry_attr(ep, info->Attr);
+ 
+ 	/* set FILE_INFO structure using the acquired struct dentry_t */
+-	tm.sec  = info->CreateTimestamp.Second;
+-	tm.min  = info->CreateTimestamp.Minute;
+-	tm.hour = info->CreateTimestamp.Hour;
+-	tm.day  = info->CreateTimestamp.Day;
+-	tm.mon  = info->CreateTimestamp.Month;
+-	tm.year = info->CreateTimestamp.Year;
+-	p_fs->fs_func->set_entry_time(ep, &tm, TM_CREATE);
+-
+-	tm.sec  = info->ModifyTimestamp.Second;
+-	tm.min  = info->ModifyTimestamp.Minute;
+-	tm.hour = info->ModifyTimestamp.Hour;
+-	tm.day  = info->ModifyTimestamp.Day;
+-	tm.mon  = info->ModifyTimestamp.Month;
+-	tm.year = info->ModifyTimestamp.Year;
+-	p_fs->fs_func->set_entry_time(ep, &tm, TM_MODIFY);
+-
++	p_fs->fs_func->set_entry_time(ep, &info->CreateTimestamp, TM_CREATE);
++	p_fs->fs_func->set_entry_time(ep, &info->ModifyTimestamp, TM_MODIFY);
+ 	p_fs->fs_func->set_entry_size(ep2, info->Size);
+ 
+ 	if (p_fs->vol_type != EXFAT) {
+@@ -1941,7 +1880,6 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
+ 	sector_t sector;
+ 	struct chain_t dir, clu;
+ 	struct uni_name_t uni_name;
+-	struct timestamp_t tm;
+ 	struct dentry_t *ep;
+ 	struct super_block *sb = inode->i_sb;
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+@@ -2038,26 +1976,12 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
+ 			buf_lock(sb, sector);
+ 			dir_entry->Attr = fs_func->get_entry_attr(ep);
+ 
+-			fs_func->get_entry_time(ep, &tm, TM_CREATE);
+-			dir_entry->CreateTimestamp.Year = tm.year;
+-			dir_entry->CreateTimestamp.Month = tm.mon;
+-			dir_entry->CreateTimestamp.Day = tm.day;
+-			dir_entry->CreateTimestamp.Hour = tm.hour;
+-			dir_entry->CreateTimestamp.Minute = tm.min;
+-			dir_entry->CreateTimestamp.Second = tm.sec;
+-			dir_entry->CreateTimestamp.MilliSecond = 0;
+-
+-			fs_func->get_entry_time(ep, &tm, TM_MODIFY);
+-			dir_entry->ModifyTimestamp.Year = tm.year;
+-			dir_entry->ModifyTimestamp.Month = tm.mon;
+-			dir_entry->ModifyTimestamp.Day = tm.day;
+-			dir_entry->ModifyTimestamp.Hour = tm.hour;
+-			dir_entry->ModifyTimestamp.Minute = tm.min;
+-			dir_entry->ModifyTimestamp.Second = tm.sec;
+-			dir_entry->ModifyTimestamp.MilliSecond = 0;
+-
++			fs_func->get_entry_time(ep, &dir_entry->CreateTimestamp,
++						TM_CREATE);
++			fs_func->get_entry_time(ep, &dir_entry->ModifyTimestamp,
++						TM_MODIFY);
+ 			memset((char *)&dir_entry->AccessTimestamp, 0,
+-			       sizeof(struct date_time_t));
++			       sizeof(struct timestamp_t));
+ 
+ 			*(uni_name.name) = 0x0;
+ 			fs_func->get_uni_name_from_ext_entry(sb, &dir, dentry,
+@@ -3349,9 +3273,9 @@ static int exfat_fill_inode(struct inode *inode, struct file_id_t *fid)
+ 	inode->i_blocks = ((i_size_read(inode) + (p_fs->cluster_size - 1))
+ 				& ~((loff_t)p_fs->cluster_size - 1)) >> 9;
+ 
+-	exfat_time_fat2unix(sbi, &inode->i_mtime, &info.ModifyTimestamp);
+-	exfat_time_fat2unix(sbi, &inode->i_ctime, &info.CreateTimestamp);
+-	exfat_time_fat2unix(sbi, &inode->i_atime, &info.AccessTimestamp);
++	exfat_time_fat2unix(&inode->i_mtime, &info.ModifyTimestamp);
++	exfat_time_fat2unix(&inode->i_ctime, &info.CreateTimestamp);
++	exfat_time_fat2unix(&inode->i_atime, &info.AccessTimestamp);
+ 
+ 	return 0;
+ }
+@@ -3412,8 +3336,6 @@ static void exfat_destroy_inode(struct inode *inode)
+ 
+ static int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
+ {
+-	struct super_block *sb = inode->i_sb;
+-	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 	struct dir_entry_t info;
+ 
+ 	if (inode->i_ino == EXFAT_ROOT_INO)
+@@ -3422,9 +3344,9 @@ static int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	info.Attr = exfat_make_attr(inode);
+ 	info.Size = i_size_read(inode);
+ 
+-	exfat_time_unix2fat(sbi, &inode->i_mtime, &info.ModifyTimestamp);
+-	exfat_time_unix2fat(sbi, &inode->i_ctime, &info.CreateTimestamp);
+-	exfat_time_unix2fat(sbi, &inode->i_atime, &info.AccessTimestamp);
++	exfat_time_unix2fat(&inode->i_mtime, &info.ModifyTimestamp);
++	exfat_time_unix2fat(&inode->i_ctime, &info.CreateTimestamp);
++	exfat_time_unix2fat(&inode->i_atime, &info.AccessTimestamp);
+ 
+ 	ffsWriteStat(inode, &info);
+ 
+-- 
+2.20.1
 
