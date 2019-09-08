@@ -2,167 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31407AD036
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 19:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCDD6AD03C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 19:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbfIHRfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 13:35:53 -0400
-Received: from valentin-vidic.from.hr ([94.229.67.141]:52355 "EHLO
-        valentin-vidic.from.hr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730049AbfIHRfw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 13:35:52 -0400
-X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
-Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
-        id 7F20D213; Sun,  8 Sep 2019 17:35:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-        d=valentin-vidic.from.hr; s=2017; t=1567964146;
-        bh=XroL0aeRw1GulK+zsCktbOwBMfaNEGXyCrOVr81n3Zs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UrkkEd0M3eFJNqdMU7revVr1/Nlkteb3l48MdZ/V76mruhDSFwJMivr+rDz9fMGyS
-         K7g6KiwjCCazk9UhjEDq2I1gOlCZ9DpyYyWqkXIArQZaNrIa38W990nn9WOsZsNp52
-         zEokwHupJwz2NSZeN5TyMwRlcMn5Or1mqCpMKHB1T+RIiTxMWZdOtTKh/Jf8mPE0Yf
-         ENnVDwJCANHWVczoCvgxgEmXw93/0mMXuequaMXdMEYcAF5ZhW62mEu0/XaafpZQe1
-         6XJ4CMNNizMrOoWaHfMVG7JV7sSWJMAjY9VamjPQ/zY3f+YJF+qjjXiEyXt87Pb94l
-         8HCQ9aDNGyB6Q==
-From:   Valentin Vidic <vvidic@valentin-vidic.from.hr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Valentin Vidic <vvidic@valentin-vidic.from.hr>
-Subject: [PATCH v3 4/4] staging: exfat: add millisecond support
-Date:   Sun,  8 Sep 2019 17:35:39 +0000
-Message-Id: <20190908173539.26963-4-vvidic@valentin-vidic.from.hr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190908173539.26963-1-vvidic@valentin-vidic.from.hr>
-References: <20190908173539.26963-1-vvidic@valentin-vidic.from.hr>
+        id S1730609AbfIHRp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 13:45:58 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33269 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730562AbfIHRp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 13:45:58 -0400
+Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id F268A903A4D8575F17F8;
+        Sun,  8 Sep 2019 18:45:55 +0100 (IST)
+Received: from A170120444-LP.dc.itaf.eu (10.47.83.4) by smtpsuk.huawei.com
+ (10.201.108.48) with Microsoft SMTP Server (TLS) id 14.3.408.0; Sun, 8 Sep
+ 2019 18:45:49 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3] KEYS: trusted: correctly initialize digests and fix locking issue
+Date:   Sun, 8 Sep 2019 19:45:42 +0200
+Message-ID: <20190908174542.509-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.47.83.4]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use create_time_ms and modify_time_ms fields to store the millisecond
-part of the file timestamp with the precision of 10 ms.
+Commit 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to
+tpm_pcr_extend()") modifies tpm_pcr_extend() to accept a digest for each
+PCR bank. After modification, tpm_pcr_extend() expects that digests are
+passed in the same order as the algorithms set in chip->allocated_banks.
 
-Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+This patch fixes two issues introduced in the last iterations of the patch
+set: missing initialization of the TPM algorithm ID in the tpm_digest
+structures passed to tpm_pcr_extend() by the trusted key module, and
+unreleased locks in the TPM driver due to returning from tpm_pcr_extend()
+without calling tpm_put_ops(). To avoid the second issue, input check is
+done before locks are taken.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Fixes: 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()")
 ---
- drivers/staging/exfat/exfat_core.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Changelog
 
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index d21f68d786b8..d6e33a485d5f 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -1139,6 +1139,7 @@ void exfat_set_entry_size(struct dentry_t *p_entry, u64 size)
- void fat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 			u8 mode)
- {
-+	u8 ms = 0;
- 	u16 t = 0x00, d = 0x21;
- 	struct dos_dentry_t *ep = (struct dos_dentry_t *)p_entry;
+v2:
+- provide explanation of the problem
+
+v1:
+- correct referenced commit
+
+ drivers/char/tpm/tpm-interface.c | 8 ++++----
+ security/keys/trusted.c          | 5 +++++
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1b4f95c13e00..1fffa91fc148 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -316,14 +316,14 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+ 	int rc;
+ 	int i;
  
-@@ -1146,6 +1147,7 @@ void fat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 	case TM_CREATE:
- 		t = GET16_A(ep->create_time);
- 		d = GET16_A(ep->create_date);
-+		ms = ep->create_time_ms * 10;
- 		break;
- 	case TM_MODIFY:
- 		t = GET16_A(ep->modify_time);
-@@ -1159,11 +1161,17 @@ void fat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 	tp->day  = (d & 0x001F);
- 	tp->mon  = (d >> 5) & 0x000F;
- 	tp->year = (d >> 9);
+-	chip = tpm_find_get_ops(chip);
+-	if (!chip)
+-		return -ENODEV;
+-
+ 	for (i = 0; i < chip->nr_allocated_banks; i++)
+ 		if (digests[i].alg_id != chip->allocated_banks[i].alg_id)
+ 			return -EINVAL;
+ 
++	chip = tpm_find_get_ops(chip);
++	if (!chip)
++		return -ENODEV;
 +
-+	if (ms >= 1000) {
-+		ms -= 1000;
-+		tp->sec++;
-+	}
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+ 		rc = tpm2_pcr_extend(chip, pcr_idx, digests);
+ 		tpm_put_ops(chip);
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index ade699131065..1fbd77816610 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -1228,11 +1228,16 @@ static int __init trusted_shash_alloc(void)
+ 
+ static int __init init_digests(void)
+ {
++	int i;
++
+ 	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
+ 			  GFP_KERNEL);
+ 	if (!digests)
+ 		return -ENOMEM;
+ 
++	for (i = 0; i < chip->nr_allocated_banks; i++)
++		digests[i].alg_id = chip->allocated_banks[i].alg_id;
++
+ 	return 0;
  }
  
- void exfat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 			  u8 mode)
- {
-+	u8 ms = 0;
- 	u16 t = 0x00, d = 0x21;
- 	struct file_dentry_t *ep = (struct file_dentry_t *)p_entry;
- 
-@@ -1171,10 +1179,12 @@ void exfat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 	case TM_CREATE:
- 		t = GET16_A(ep->create_time);
- 		d = GET16_A(ep->create_date);
-+		ms = ep->create_time_ms * 10;
- 		break;
- 	case TM_MODIFY:
- 		t = GET16_A(ep->modify_time);
- 		d = GET16_A(ep->modify_date);
-+		ms = ep->modify_time_ms * 10;
- 		break;
- 	case TM_ACCESS:
- 		t = GET16_A(ep->access_time);
-@@ -1188,21 +1198,32 @@ void exfat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 	tp->day  = (d & 0x001F);
- 	tp->mon  = (d >> 5) & 0x000F;
- 	tp->year = (d >> 9);
-+
-+	if (ms >= 1000) {
-+		ms -= 1000;
-+		tp->sec++;
-+	}
- }
- 
- void fat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 			u8 mode)
- {
-+	u8 ms;
- 	u16 t, d;
- 	struct dos_dentry_t *ep = (struct dos_dentry_t *)p_entry;
- 
- 	t = (tp->hour << 11) | (tp->min << 5) | (tp->sec >> 1);
- 	d = (tp->year <<  9) | (tp->mon << 5) |  tp->day;
- 
-+	ms = tp->millisec;
-+	if (tp->sec & 1)
-+		ms += 1000;
-+
- 	switch (mode) {
- 	case TM_CREATE:
- 		SET16_A(ep->create_time, t);
- 		SET16_A(ep->create_date, d);
-+		ep->create_time_ms = ms / 10;
- 		break;
- 	case TM_MODIFY:
- 		SET16_A(ep->modify_time, t);
-@@ -1214,20 +1235,27 @@ void fat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- void exfat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
- 			  u8 mode)
- {
-+	u8 ms;
- 	u16 t, d;
- 	struct file_dentry_t *ep = (struct file_dentry_t *)p_entry;
- 
- 	t = (tp->hour << 11) | (tp->min << 5) | (tp->sec >> 1);
- 	d = (tp->year <<  9) | (tp->mon << 5) |  tp->day;
- 
-+	ms = tp->millisec;
-+	if (tp->sec & 1)
-+		ms += 1000;
-+
- 	switch (mode) {
- 	case TM_CREATE:
- 		SET16_A(ep->create_time, t);
- 		SET16_A(ep->create_date, d);
-+		ep->create_time_ms = ms / 10;
- 		break;
- 	case TM_MODIFY:
- 		SET16_A(ep->modify_time, t);
- 		SET16_A(ep->modify_date, d);
-+		ep->modify_time_ms = ms / 10;
- 		break;
- 	case TM_ACCESS:
- 		SET16_A(ep->access_time, t);
 -- 
-2.20.1
+2.17.1
 
