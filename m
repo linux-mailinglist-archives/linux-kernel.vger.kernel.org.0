@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E8BACD80
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 970DEACD84
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732059AbfIHMuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:50:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40932 "EHLO mail.kernel.org"
+        id S1732088AbfIHMuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:50:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732032AbfIHMuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:50:14 -0400
+        id S1731584AbfIHMuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:50:19 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA27C21920;
-        Sun,  8 Sep 2019 12:50:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A9E12190F;
+        Sun,  8 Sep 2019 12:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567947014;
-        bh=EHlZxpeB92ud3i+I2/8Og07f0T7koJfDGbJ2zG0so2k=;
+        s=default; t=1567947016;
+        bh=oq/+oiyUJyElf9Wc29SfbD7i+AyeyKT8DPGrtYYrP/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X35Wbk/gX/SM1bhdFLv7MHyxebH8PlazmKRPU9FTVa4QjWsomduMYjR+OaIuGwRc9
-         dmwaLAPd5FxBwWLg6gapus+trmuHkxXMWGqwaRqEwyEIIzOxnDRWB3j7F7XhsUUOSN
-         DLzMMAMVegmog3LpWAOqQ2KYB+NOFBkMx9sMGnEE=
+        b=XuB+mp5WoBzNtVTlb2rWLXWWUpC11FH1ZLvH3D1gprPgf/PPxsgsjXW4GZLXJ8W1Y
+         kDikLMGWtdvQwe2QGpP2DfBYu6QkDfbfe9wFJQ6z7DlU1T24MxV/9QeEFTbd9qIVn2
+         lWSloyHF1SeTJZ6QR/6ICFtiapmf8Pmvrc8nLy10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fuqian Huang <huangfq.daxian@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 28/94] net: tundra: tsi108: use spin_lock_irqsave instead of spin_lock_irq in IRQ context
-Date:   Sun,  8 Sep 2019 13:41:24 +0100
-Message-Id: <20190908121151.246734889@linuxfoundation.org>
+Subject: [PATCH 5.2 29/94] netfilter: nf_tables: use-after-free in failing rule with bound set
+Date:   Sun,  8 Sep 2019 13:41:25 +0100
+Message-Id: <20190908121151.274657412@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
 References: <20190908121150.420989666@linuxfoundation.org>
@@ -44,46 +43,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8c25d0887a8bd0e1ca2074ac0c6dff173787a83b ]
+[ Upstream commit 6a0a8d10a3661a036b55af695542a714c429ab7c ]
 
-As spin_unlock_irq will enable interrupts.
-Function tsi108_stat_carry is called from interrupt handler tsi108_irq.
-Interrupts are enabled in interrupt handler.
-Use spin_lock_irqsave/spin_unlock_irqrestore instead of spin_(un)lock_irq
-in IRQ context to avoid this.
+If a rule that has already a bound anonymous set fails to be added, the
+preparation phase releases the rule and the bound set. However, the
+transaction object from the abort path still has a reference to the set
+object that is stale, leading to a use-after-free when checking for the
+set->bound field. Add a new field to the transaction that specifies if
+the set is bound, so the abort path can skip releasing it since the rule
+command owns it and it takes care of releasing it. After this update,
+the set->bound field is removed.
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[   24.649883] Unable to handle kernel paging request at virtual address 0000000000040434
+[   24.657858] Mem abort info:
+[   24.660686]   ESR = 0x96000004
+[   24.663769]   Exception class = DABT (current EL), IL = 32 bits
+[   24.669725]   SET = 0, FnV = 0
+[   24.672804]   EA = 0, S1PTW = 0
+[   24.675975] Data abort info:
+[   24.678880]   ISV = 0, ISS = 0x00000004
+[   24.682743]   CM = 0, WnR = 0
+[   24.685723] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000428952000
+[   24.692207] [0000000000040434] pgd=0000000000000000
+[   24.697119] Internal error: Oops: 96000004 [#1] SMP
+[...]
+[   24.889414] Call trace:
+[   24.891870]  __nf_tables_abort+0x3f0/0x7a0
+[   24.895984]  nf_tables_abort+0x20/0x40
+[   24.899750]  nfnetlink_rcv_batch+0x17c/0x588
+[   24.904037]  nfnetlink_rcv+0x13c/0x190
+[   24.907803]  netlink_unicast+0x18c/0x208
+[   24.911742]  netlink_sendmsg+0x1b0/0x350
+[   24.915682]  sock_sendmsg+0x4c/0x68
+[   24.919185]  ___sys_sendmsg+0x288/0x2c8
+[   24.923037]  __sys_sendmsg+0x7c/0xd0
+[   24.926628]  __arm64_sys_sendmsg+0x2c/0x38
+[   24.930744]  el0_svc_common.constprop.0+0x94/0x158
+[   24.935556]  el0_svc_handler+0x34/0x90
+[   24.939322]  el0_svc+0x8/0xc
+[   24.942216] Code: 37280300 f9404023 91014262 aa1703e0 (f9401863)
+[   24.948336] ---[ end trace cebbb9dcbed3b56f ]---
+
+Fixes: f6ac85858976 ("netfilter: nf_tables: unbind set in rule from commit path")
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/tundra/tsi108_eth.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/net/netfilter/nf_tables.h |  9 +++++++--
+ net/netfilter/nf_tables_api.c     | 15 ++++++++++-----
+ 2 files changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/tundra/tsi108_eth.c b/drivers/net/ethernet/tundra/tsi108_eth.c
-index 78a7de3fb622f..c62f474b6d08e 100644
---- a/drivers/net/ethernet/tundra/tsi108_eth.c
-+++ b/drivers/net/ethernet/tundra/tsi108_eth.c
-@@ -371,9 +371,10 @@ tsi108_stat_carry_one(int carry, int carry_bit, int carry_shift,
- static void tsi108_stat_carry(struct net_device *dev)
- {
- 	struct tsi108_prv_data *data = netdev_priv(dev);
-+	unsigned long flags;
- 	u32 carry1, carry2;
+diff --git a/include/net/netfilter/nf_tables.h b/include/net/netfilter/nf_tables.h
+index 5b8624ae4a27f..930d062940b7d 100644
+--- a/include/net/netfilter/nf_tables.h
++++ b/include/net/netfilter/nf_tables.h
+@@ -419,8 +419,7 @@ struct nft_set {
+ 	unsigned char			*udata;
+ 	/* runtime data below here */
+ 	const struct nft_set_ops	*ops ____cacheline_aligned;
+-	u16				flags:13,
+-					bound:1,
++	u16				flags:14,
+ 					genmask:2;
+ 	u8				klen;
+ 	u8				dlen;
+@@ -1333,12 +1332,15 @@ struct nft_trans_rule {
+ struct nft_trans_set {
+ 	struct nft_set			*set;
+ 	u32				set_id;
++	bool				bound;
+ };
  
--	spin_lock_irq(&data->misclock);
-+	spin_lock_irqsave(&data->misclock, flags);
+ #define nft_trans_set(trans)	\
+ 	(((struct nft_trans_set *)trans->data)->set)
+ #define nft_trans_set_id(trans)	\
+ 	(((struct nft_trans_set *)trans->data)->set_id)
++#define nft_trans_set_bound(trans)	\
++	(((struct nft_trans_set *)trans->data)->bound)
  
- 	carry1 = TSI_READ(TSI108_STAT_CARRY1);
- 	carry2 = TSI_READ(TSI108_STAT_CARRY2);
-@@ -441,7 +442,7 @@ static void tsi108_stat_carry(struct net_device *dev)
- 			      TSI108_STAT_TXPAUSEDROP_CARRY,
- 			      &data->tx_pause_drop);
+ struct nft_trans_chain {
+ 	bool				update;
+@@ -1369,12 +1371,15 @@ struct nft_trans_table {
+ struct nft_trans_elem {
+ 	struct nft_set			*set;
+ 	struct nft_set_elem		elem;
++	bool				bound;
+ };
  
--	spin_unlock_irq(&data->misclock);
-+	spin_unlock_irqrestore(&data->misclock, flags);
- }
+ #define nft_trans_elem_set(trans)	\
+ 	(((struct nft_trans_elem *)trans->data)->set)
+ #define nft_trans_elem(trans)	\
+ 	(((struct nft_trans_elem *)trans->data)->elem)
++#define nft_trans_elem_set_bound(trans)	\
++	(((struct nft_trans_elem *)trans->data)->bound)
  
- /* Read a stat counter atomically with respect to carries.
+ struct nft_trans_obj {
+ 	struct nft_object		*obj;
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index bcf17fb46d965..8e4cdae2c4f14 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -136,9 +136,14 @@ static void nft_set_trans_bind(const struct nft_ctx *ctx, struct nft_set *set)
+ 		return;
+ 
+ 	list_for_each_entry_reverse(trans, &net->nft.commit_list, list) {
+-		if (trans->msg_type == NFT_MSG_NEWSET &&
+-		    nft_trans_set(trans) == set) {
+-			set->bound = true;
++		switch (trans->msg_type) {
++		case NFT_MSG_NEWSET:
++			if (nft_trans_set(trans) == set)
++				nft_trans_set_bound(trans) = true;
++			break;
++		case NFT_MSG_NEWSETELEM:
++			if (nft_trans_elem_set(trans) == set)
++				nft_trans_elem_set_bound(trans) = true;
+ 			break;
+ 		}
+ 	}
+@@ -6849,7 +6854,7 @@ static int __nf_tables_abort(struct net *net)
+ 			break;
+ 		case NFT_MSG_NEWSET:
+ 			trans->ctx.table->use--;
+-			if (nft_trans_set(trans)->bound) {
++			if (nft_trans_set_bound(trans)) {
+ 				nft_trans_destroy(trans);
+ 				break;
+ 			}
+@@ -6861,7 +6866,7 @@ static int __nf_tables_abort(struct net *net)
+ 			nft_trans_destroy(trans);
+ 			break;
+ 		case NFT_MSG_NEWSETELEM:
+-			if (nft_trans_elem_set(trans)->bound) {
++			if (nft_trans_elem_set_bound(trans)) {
+ 				nft_trans_destroy(trans);
+ 				break;
+ 			}
 -- 
 2.20.1
 
