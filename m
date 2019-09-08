@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87208ACD3A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8328BACD47
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbfIHMq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:46:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34780 "EHLO mail.kernel.org"
+        id S1727884AbfIHMrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:47:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730502AbfIHMqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:46:51 -0400
+        id S1730611AbfIHMrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:47:19 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F4A220644;
-        Sun,  8 Sep 2019 12:46:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCAD6218AC;
+        Sun,  8 Sep 2019 12:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946810;
-        bh=eIbeOftyQXBdmxXqS7PwYcLCk+wCf3Iq8ZXhWoYHCfY=;
+        s=default; t=1567946839;
+        bh=qUm4Hz3UlfFJcoxfNGwaaABMr5AHGadsYX+6XAWtEKk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k+ivneOoQYjA+QxgeWMo9dwhSi/TYoAmIp8vlneHhiEq57W/qTXfvz43wH+b5Xi3G
-         nDqB7IYEanrOFALIeQDDhF/YuTRo2nhQTRnfkxkmV7hcluqBbEne+66EM4uKBLG+OM
-         Uqy+8lKwlj6MDnWUnGvbrcVVjVlGONO/Xxlh6YTY=
+        b=yrLQ7IotFCX6xr8AHmA8JeB12CDEbv/OgSdfRlSXxaNm1ybfIZeIHAZRe6pcnoEz/
+         3IVqYU8X6cXMkt3Rz7p8hfMk+haTehSE1qfDcknZzyqcqESayQqcK58kdN50v77OBh
+         7gXwjvwKW2iqodKQ6HPxMDco4upZ99xuBUwTTCms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org, Feng Sun <loyou85@gmail.com>,
+        Xiaojun Zhao <xiaojunzhao141@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 01/57] mld: fix memory leak in mld_del_delrec()
-Date:   Sun,  8 Sep 2019 13:41:25 +0100
-Message-Id: <20190908121125.887269605@linuxfoundation.org>
+Subject: [PATCH 4.19 02/57] net: fix skb use after free in netpoll
+Date:   Sun,  8 Sep 2019 13:41:26 +0100
+Message-Id: <20190908121127.158072530@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
 References: <20190908121125.608195329@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,73 +44,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Feng Sun <loyou85@gmail.com>
 
-[ Upstream commit a84d016479896b5526a2cc54784e6ffc41c9d6f6 ]
+[ Upstream commit 2c1644cf6d46a8267d79ed95cb9b563839346562 ]
 
-Similar to the fix done for IPv4 in commit e5b1c6c6277d
-("igmp: fix memory leak in igmpv3_del_delrec()"), we need to
-make sure mca_tomb and mca_sources are not blindly overwritten.
+After commit baeababb5b85d5c4e6c917efe2a1504179438d3b
+("tun: return NET_XMIT_DROP for dropped packets"),
+when tun_net_xmit drop packets, it will free skb and return NET_XMIT_DROP,
+netpoll_send_skb_on_dev will run into following use after free cases:
+1. retry netpoll_start_xmit with freed skb;
+2. queue freed skb in npinfo->txq.
+queue_process will also run into use after free case.
 
-Using swap() then a call to ip6_mc_clear_src() will take care
-of the missing free.
+hit netpoll_send_skb_on_dev first case with following kernel log:
 
-BUG: memory leak
-unreferenced object 0xffff888117d9db00 (size 64):
-  comm "syz-executor247", pid 6918, jiffies 4294943989 (age 25.350s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 fe 88 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<000000005b463030>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<000000005b463030>] slab_post_alloc_hook mm/slab.h:522 [inline]
-    [<000000005b463030>] slab_alloc mm/slab.c:3319 [inline]
-    [<000000005b463030>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3548
-    [<00000000939cbf94>] kmalloc include/linux/slab.h:552 [inline]
-    [<00000000939cbf94>] kzalloc include/linux/slab.h:748 [inline]
-    [<00000000939cbf94>] ip6_mc_add1_src net/ipv6/mcast.c:2236 [inline]
-    [<00000000939cbf94>] ip6_mc_add_src+0x31f/0x420 net/ipv6/mcast.c:2356
-    [<00000000d8972221>] ip6_mc_source+0x4a8/0x600 net/ipv6/mcast.c:449
-    [<000000002b203d0d>] do_ipv6_setsockopt.isra.0+0x1b92/0x1dd0 net/ipv6/ipv6_sockglue.c:748
-    [<000000001f1e2d54>] ipv6_setsockopt+0x89/0xd0 net/ipv6/ipv6_sockglue.c:944
-    [<00000000c8f7bdf9>] udpv6_setsockopt+0x4e/0x90 net/ipv6/udp.c:1558
-    [<000000005a9a0c5e>] sock_common_setsockopt+0x38/0x50 net/core/sock.c:3139
-    [<00000000910b37b2>] __sys_setsockopt+0x10f/0x220 net/socket.c:2084
-    [<00000000e9108023>] __do_sys_setsockopt net/socket.c:2100 [inline]
-    [<00000000e9108023>] __se_sys_setsockopt net/socket.c:2097 [inline]
-    [<00000000e9108023>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2097
-    [<00000000f4818160>] do_syscall_64+0x76/0x1a0 arch/x86/entry/common.c:296
-    [<000000008d367e8f>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  117.864773] kernel BUG at mm/slub.c:306!
+[  117.864773] invalid opcode: 0000 [#1] SMP PTI
+[  117.864774] CPU: 3 PID: 2627 Comm: loop_printmsg Kdump: loaded Tainted: P           OE     5.3.0-050300rc5-generic #201908182231
+[  117.864775] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  117.864775] RIP: 0010:kmem_cache_free+0x28d/0x2b0
+[  117.864781] Call Trace:
+[  117.864781]  ? tun_net_xmit+0x21c/0x460
+[  117.864781]  kfree_skbmem+0x4e/0x60
+[  117.864782]  kfree_skb+0x3a/0xa0
+[  117.864782]  tun_net_xmit+0x21c/0x460
+[  117.864782]  netpoll_start_xmit+0x11d/0x1b0
+[  117.864788]  netpoll_send_skb_on_dev+0x1b8/0x200
+[  117.864789]  __br_forward+0x1b9/0x1e0 [bridge]
+[  117.864789]  ? skb_clone+0x53/0xd0
+[  117.864790]  ? __skb_clone+0x2e/0x120
+[  117.864790]  deliver_clone+0x37/0x50 [bridge]
+[  117.864790]  maybe_deliver+0x89/0xc0 [bridge]
+[  117.864791]  br_flood+0x6c/0x130 [bridge]
+[  117.864791]  br_dev_xmit+0x315/0x3c0 [bridge]
+[  117.864792]  netpoll_start_xmit+0x11d/0x1b0
+[  117.864792]  netpoll_send_skb_on_dev+0x1b8/0x200
+[  117.864792]  netpoll_send_udp+0x2c6/0x3e8
+[  117.864793]  write_msg+0xd9/0xf0 [netconsole]
+[  117.864793]  console_unlock+0x386/0x4e0
+[  117.864793]  vprintk_emit+0x17e/0x280
+[  117.864794]  vprintk_default+0x29/0x50
+[  117.864794]  vprintk_func+0x4c/0xbc
+[  117.864794]  printk+0x58/0x6f
+[  117.864795]  loop_fun+0x24/0x41 [printmsg_loop]
+[  117.864795]  kthread+0x104/0x140
+[  117.864795]  ? 0xffffffffc05b1000
+[  117.864796]  ? kthread_park+0x80/0x80
+[  117.864796]  ret_from_fork+0x35/0x40
 
-Fixes: 1666d49e1d41 ("mld: do not remove mld souce list info when set link down")
-Fixes: 9c8bb163ae78 ("igmp, mld: Fix memory leak in igmpv3/mld_del_delrec()")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Feng Sun <loyou85@gmail.com>
+Signed-off-by: Xiaojun Zhao <xiaojunzhao141@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/mcast.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/core/netpoll.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -791,14 +791,15 @@ static void mld_del_delrec(struct inet6_
- 	if (pmc) {
- 		im->idev = pmc->idev;
- 		if (im->mca_sfmode == MCAST_INCLUDE) {
--			im->mca_tomb = pmc->mca_tomb;
--			im->mca_sources = pmc->mca_sources;
-+			swap(im->mca_tomb, pmc->mca_tomb);
-+			swap(im->mca_sources, pmc->mca_sources);
- 			for (psf = im->mca_sources; psf; psf = psf->sf_next)
- 				psf->sf_crcount = idev->mc_qrv;
- 		} else {
- 			im->mca_crcount = idev->mc_qrv;
- 		}
- 		in6_dev_put(pmc->idev);
-+		ip6_mc_clear_src(pmc);
- 		kfree(pmc);
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -122,7 +122,7 @@ static void queue_process(struct work_st
+ 		txq = netdev_get_tx_queue(dev, q_index);
+ 		HARD_TX_LOCK(dev, txq, smp_processor_id());
+ 		if (netif_xmit_frozen_or_stopped(txq) ||
+-		    netpoll_start_xmit(skb, dev, txq) != NETDEV_TX_OK) {
++		    !dev_xmit_complete(netpoll_start_xmit(skb, dev, txq))) {
+ 			skb_queue_head(&npinfo->txq, skb);
+ 			HARD_TX_UNLOCK(dev, txq);
+ 			local_irq_restore(flags);
+@@ -335,7 +335,7 @@ void netpoll_send_skb_on_dev(struct netp
+ 
+ 				HARD_TX_UNLOCK(dev, txq);
+ 
+-				if (status == NETDEV_TX_OK)
++				if (dev_xmit_complete(status))
+ 					break;
+ 
+ 			}
+@@ -352,7 +352,7 @@ void netpoll_send_skb_on_dev(struct netp
+ 
  	}
- 	spin_unlock_bh(&im->mca_lock);
+ 
+-	if (status != NETDEV_TX_OK) {
++	if (!dev_xmit_complete(status)) {
+ 		skb_queue_tail(&npinfo->txq, skb);
+ 		schedule_delayed_work(&npinfo->tx_work,0);
+ 	}
 
 
