@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16F02ACCD2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93493ACD13
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbfIHMnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56516 "EHLO mail.kernel.org"
+        id S1730097AbfIHMpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:45:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfIHMnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:43:01 -0400
+        id S1730078AbfIHMpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:45:22 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B67422081B;
-        Sun,  8 Sep 2019 12:43:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83019218AE;
+        Sun,  8 Sep 2019 12:45:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946581;
-        bh=ekry1gRPG2taOM42WYlDVVGVCaymn+PoMA25piqGwJE=;
+        s=default; t=1567946722;
+        bh=9yGX76b0evYWY6ZUDcFqemIAjWAR8z6jIRmJXYOc9c4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zs67MOy6Q8HC2Fw3TBPhCmp0anWQf0Ly7+K4Bf7fnQiGgSN3w898K06X16iSwGxwZ
-         dd5IjxZ4IPKWyoCwcGSsJWKeBbl7kRyvN2z4giaOhsYogxCpA5/BehdUHAtTizlCfi
-         6lVnBEcGAaNL6NlILbO5MNDJIIdWPNNMOno8RYuU=
+        b=DPSavz8ft1Qdqu3Kh3sdKRFJnKkMHUOdZJoM1PgarQxi/pnpWg+YralI6QMDGUHAK
+         Mp+fpN927kPrjXbrFPYJRd2h3dgVcNgFz+pQmxNdj+ahjQ0T72Kg5TmmuCVQt8WOqE
+         fJJSDtt6lUtIXpDIIE+epoNIaRLBXKNjxETN1Y7I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 13/23] IB/mlx4: Fix memory leaks
-Date:   Sun,  8 Sep 2019 13:41:48 +0100
-Message-Id: <20190908121058.697114215@linuxfoundation.org>
+Subject: [PATCH 4.14 16/40] net: kalmia: fix memory leaks
+Date:   Sun,  8 Sep 2019 13:41:49 +0100
+Message-Id: <20190908121121.965144721@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
-References: <20190908121052.898169328@linuxfoundation.org>
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
+References: <20190908121114.260662089@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5c1baaa82cea2c815a5180ded402a7cd455d1810 ]
+[ Upstream commit f1472cb09f11ddb41d4be84f0650835cb65a9073 ]
 
-In mlx4_ib_alloc_pv_bufs(), 'tun_qp->tx_ring' is allocated through
-kcalloc(). However, it is not always deallocated in the following execution
-if an error occurs, leading to memory leaks. To fix this issue, free
-'tun_qp->tx_ring' whenever an error occurs.
+In kalmia_init_and_get_ethernet_addr(), 'usb_buf' is allocated through
+kmalloc(). In the following execution, if the 'status' returned by
+kalmia_send_init_packet() is not 0, 'usb_buf' is not deallocated, leading
+to memory leaks. To fix this issue, add the 'out' label to free 'usb_buf'.
 
 Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Acked-by: Leon Romanovsky <leonro@mellanox.com>
-Link: https://lore.kernel.org/r/1566159781-4642-1-git-send-email-wenwen@cs.uga.edu
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx4/mad.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/usb/kalmia.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index 199a9cdd0d12a..531c985f6fd71 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -1526,8 +1526,6 @@ tx_err:
- 				    tx_buf_size, DMA_TO_DEVICE);
- 		kfree(tun_qp->tx_ring[i].buf.addr);
- 	}
--	kfree(tun_qp->tx_ring);
--	tun_qp->tx_ring = NULL;
- 	i = MLX4_NUM_TUNNEL_BUFS;
- err:
- 	while (i > 0) {
-@@ -1536,6 +1534,8 @@ err:
- 				    rx_buf_size, DMA_FROM_DEVICE);
- 		kfree(tun_qp->ring[i].addr);
- 	}
-+	kfree(tun_qp->tx_ring);
-+	tun_qp->tx_ring = NULL;
- 	kfree(tun_qp->ring);
- 	tun_qp->ring = NULL;
- 	return -ENOMEM;
+diff --git a/drivers/net/usb/kalmia.c b/drivers/net/usb/kalmia.c
+index ce0b0b4e3a57c..c677ec2bae183 100644
+--- a/drivers/net/usb/kalmia.c
++++ b/drivers/net/usb/kalmia.c
+@@ -117,16 +117,16 @@ kalmia_init_and_get_ethernet_addr(struct usbnet *dev, u8 *ethernet_addr)
+ 	status = kalmia_send_init_packet(dev, usb_buf, sizeof(init_msg_1)
+ 		/ sizeof(init_msg_1[0]), usb_buf, 24);
+ 	if (status != 0)
+-		return status;
++		goto out;
+ 
+ 	memcpy(usb_buf, init_msg_2, 12);
+ 	status = kalmia_send_init_packet(dev, usb_buf, sizeof(init_msg_2)
+ 		/ sizeof(init_msg_2[0]), usb_buf, 28);
+ 	if (status != 0)
+-		return status;
++		goto out;
+ 
+ 	memcpy(ethernet_addr, usb_buf + 10, ETH_ALEN);
+-
++out:
+ 	kfree(usb_buf);
+ 	return status;
+ }
 -- 
 2.20.1
 
