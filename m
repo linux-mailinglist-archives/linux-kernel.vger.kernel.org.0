@@ -2,217 +2,329 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16469ACCCC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EBA2ACD5A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729274AbfIHMlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:41:49 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44833 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbfIHMlp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:41:45 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q21so7427343pfn.11;
-        Sun, 08 Sep 2019 05:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HE5U6JyUtqT3NwRJE4X3ABoBrrcNMdRzk5t7Av4Ksr4=;
-        b=ojor0RFQjJ3aC1+TuGbHXGEcRyAJvS0s7Ai4gnw5Sp2nooNT/WeP/AqcYQTvivLpqZ
-         1lMKPpEjTw3sxdtMfwUCU34uX5THV+xAOYz6pf3TEQDeAcsmkATMaT89TEyQTuRtSljy
-         rW5hsJf0wsVsmJUTwXrOyLvKAiwtFdcYVuCl24+Z1ZoIZf9eFkKrmyif4/ooU4I4IM9v
-         qyr4rPhOjkCM8N0Cd4CaO2Bz5/TCI5C1cLOTlnYmlLWOL14V+G8c6WPxP4JOJ+BCi18v
-         RXycl2orxebm6xpuzGQbaxJG5e6CoyIWDS4iQJna1iq3uGWyvak4zbq3/i4nXXbZJZol
-         15aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HE5U6JyUtqT3NwRJE4X3ABoBrrcNMdRzk5t7Av4Ksr4=;
-        b=hSC5wnVLmYW0T0jyIP3FGRe1lNFjcCmBIX2iS/xQ5UewqgYN/qKPk1z4GMH4jP49h1
-         2vyD4R4CMilntMkv+GV2VOIBNH35B1z23jRGbtXvrOLYFlrbY37kA1EWuKYgdpKlAD6q
-         N1kiQh88xqme9i1XbFTyIw+8FQoAeAL7ouWwdxcecybcoMZVhBeiMObJv4jbHdL2/ExZ
-         gqRWZ+8D7ocMvmnk0oB76Nz/kvo2KF5CBoGcQX0UL3Z5CFuSs7PxX2vcEzdFdMwXX8lz
-         RW3yzmXVQ1PossIhuR25h6zguD0Ffe7fSBmxUI+xUfjIIBQR5Mxlv8Wwzj/7NxZ1qfyT
-         pzRQ==
-X-Gm-Message-State: APjAAAU5FByIbIu7EzfNeBl1JTAFiFdphdvDfOkn8CotU9cW6aam7PqV
-        91i1shgmpXZ7F6EJ/25WYKR9LCyH
-X-Google-Smtp-Source: APXvYqy5CNRues1jzvCxwJW6vneg1z60b8kB1MvTx3KVxguzCzTOMp0MT4LRM4zL+4jmDrCfMppUXA==
-X-Received: by 2002:a17:90a:65c9:: with SMTP id i9mr3146246pjs.54.1567946504608;
-        Sun, 08 Sep 2019 05:41:44 -0700 (PDT)
-Received: from localhost.localdomain ([240f:34:212d:1:cae:1d92:a912:df67])
-        by smtp.gmail.com with ESMTPSA id s7sm10879582pjn.8.2019.09.08.05.41.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 08 Sep 2019 05:41:44 -0700 (PDT)
-From:   Akinobu Mita <akinobu.mita@gmail.com>
-To:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH 5/5] leds: add /sys/class/leds/<led>/current-trigger
-Date:   Sun,  8 Sep 2019 21:41:12 +0900
-Message-Id: <1567946472-10075-6-git-send-email-akinobu.mita@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567946472-10075-1-git-send-email-akinobu.mita@gmail.com>
-References: <1567946472-10075-1-git-send-email-akinobu.mita@gmail.com>
+        id S1730975AbfIHMsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:48:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730919AbfIHMsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:48:12 -0400
+Received: from localhost (unknown [62.28.240.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DB6D21920;
+        Sun,  8 Sep 2019 12:48:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567946891;
+        bh=9E1kOCPBT1YAbEtLXU07iRBcfdGRUwZdEkgWYmYjFfY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mtUnfR8H00EGMHQwcxc8CBy29UsJGebpM8B2evE4rRXNpjtWxu0m/Zd2nf3kTcPvV
+         yNAex7I7a3WJl3msjiIIgnOxCKHqaElILtGGu5pnG6wkZYsOZYfxdsDFI7/xrsqwNt
+         ZVxaafbSAAiPPSmuwdB5835ulVQhNoAQNGYZVjBI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.19 00/57] 4.19.72-stable review
+Date:   Sun,  8 Sep 2019 13:41:24 +0100
+Message-Id: <20190908121125.608195329@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.72-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.19.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.19.72-rc1
+X-KernelTest-Deadline: 2019-09-10T12:11+00:00
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reading /sys/class/leds/<led>/trigger returns all available LED triggers.
-However, this violates the "one value per file" rule of sysfs.
+This is the start of the stable review cycle for the 4.19.72 release.
+There are 57 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-This provides /sys/class/leds/<led>/current-trigger which is almost
-identical to /sys/class/leds/<led>/trigger.  The only difference is that
-'current-trigger' only shows the current trigger name.
+Responses should be made by Tue 10 Sep 2019 12:09:36 PM UTC.
+Anything received after that time might be too late.
 
-This new file follows the "one value per file" rule of sysfs.
-We can use the /sys/class/triggers directory to get the list of available
-LED triggers.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.72-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+and the diffstat can be found below.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Dan Murphy <dmurphy@ti.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
----
- Documentation/ABI/testing/sysfs-class-led | 13 +++++++++++
- drivers/leds/led-class.c                  |  7 ++++++
- drivers/leds/led-triggers.c               | 38 +++++++++++++++++++++++++++----
- drivers/leds/leds.h                       |  5 ++++
- 4 files changed, 59 insertions(+), 4 deletions(-)
+thanks,
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 14d91af..1a1be10 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -70,3 +70,16 @@ Description:
- 		This directory contains a number of sub-directories, each
- 		representing an LED trigger. The name of the sub-directory
- 		matches the LED trigger name.
-+
-+What:		/sys/class/leds/<led>/current-trigger
-+Date:		September 2019
-+KernelVersion:	5.5
-+Contact:	linux-leds@vger.kernel.org
-+Description:
-+		Set the trigger for this LED. A trigger is a kernel based source
-+		of LED events.
-+		Writing the trigger name to this file will change the current
-+		trigger. Trigger specific parameters can appear in
-+		/sys/class/leds/<led> once a given trigger is selected. For
-+		their documentation see sysfs-class-led-trigger-*.
-+		Reading this file will return the current LED trigger name.
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 04e6c14..388500b 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -73,12 +73,19 @@ static ssize_t max_brightness_show(struct device *dev,
- static DEVICE_ATTR_RO(max_brightness);
- 
- #ifdef CONFIG_LEDS_TRIGGERS
-+static DEVICE_ATTR(current_trigger, 0644, led_current_trigger_show,
-+		   led_current_trigger_store);
-+static struct attribute *led_current_trigger_attrs[] = {
-+	&dev_attr_current_trigger.attr,
-+	NULL,
-+};
- static BIN_ATTR(trigger, 0644, led_trigger_read, led_trigger_write, 0);
- static struct bin_attribute *led_trigger_bin_attrs[] = {
- 	&bin_attr_trigger,
- 	NULL,
- };
- static const struct attribute_group led_trigger_group = {
-+	.attrs = led_current_trigger_attrs,
- 	.bin_attrs = led_trigger_bin_attrs,
- };
- 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 4a86964..41bcc508 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -27,11 +27,9 @@ LIST_HEAD(trigger_list);
- 
-  /* Used by LED Class */
- 
--ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
--			  struct bin_attribute *bin_attr, char *buf,
--			  loff_t pos, size_t count)
-+static ssize_t led_trigger_store(struct device *dev, const char *buf,
-+				 size_t count)
- {
--	struct device *dev = kobj_to_dev(kobj);
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
- 	struct led_trigger *trig;
- 	int ret = count;
-@@ -67,8 +65,25 @@ ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
- 	mutex_unlock(&led_cdev->led_access);
- 	return ret;
- }
-+
-+ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
-+			  struct bin_attribute *bin_attr, char *buf,
-+			  loff_t pos, size_t count)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+
-+	return led_trigger_store(dev, buf, count);
-+}
- EXPORT_SYMBOL_GPL(led_trigger_write);
- 
-+ssize_t led_current_trigger_store(struct device *dev,
-+				struct device_attribute *attr, const char *buf,
-+				size_t count)
-+{
-+	return led_trigger_store(dev, buf, count);
-+}
-+EXPORT_SYMBOL_GPL(led_current_trigger_store);
-+
- __printf(4, 5)
- static int led_trigger_snprintf(char *buf, size_t size, bool query,
- 				const char *fmt, ...)
-@@ -146,6 +161,21 @@ ssize_t led_trigger_read(struct file *filp, struct kobject *kobj,
- }
- EXPORT_SYMBOL_GPL(led_trigger_read);
- 
-+ssize_t led_current_trigger_show(struct device *dev,
-+				 struct device_attribute *attr, char *buf)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	int len;
-+
-+	down_read(&led_cdev->trigger_lock);
-+	len = scnprintf(buf, PAGE_SIZE, "%s\n", led_cdev->trigger ?
-+			led_cdev->trigger->name : "none");
-+	up_read(&led_cdev->trigger_lock);
-+
-+	return len;
-+}
-+EXPORT_SYMBOL_GPL(led_current_trigger_show);
-+
- /* Caller must ensure led_cdev->trigger_lock held */
- int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
- {
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index 52debe0..e3d04c2 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -29,6 +29,11 @@ ssize_t led_trigger_read(struct file *filp, struct kobject *kobj,
- ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
- 			struct bin_attribute *bin_attr, char *buf,
- 			loff_t pos, size_t count);
-+ssize_t led_current_trigger_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count);
-+ssize_t led_current_trigger_show(struct device *dev,
-+				struct device_attribute *attr, char *buf);
- 
- extern struct rw_semaphore leds_list_lock;
- extern struct list_head leds_list;
--- 
-2.7.4
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.19.72-rc1
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    Revert "x86/apic: Include the LDR when clearing out APIC registers"
+
+Luis Henriques <lhenriques@suse.com>
+    libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
+
+Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+    x86/boot/compressed/64: Fix missing initialization in find_trampoline_placement()
+
+Andre Przywara <andre.przywara@arm.com>
+    KVM: arm/arm64: VGIC: Properly initialise private IRQ affinity
+
+David Howells <dhowells@redhat.com>
+    afs: Fix leak in afs_lookup_cell_rcu()
+
+Andrew Jones <drjones@redhat.com>
+    KVM: arm/arm64: Only skip MMIO insn once
+
+Luis Henriques <lhenriques@suse.com>
+    ceph: fix buffer free while holding i_ceph_lock in fill_inode()
+
+Luis Henriques <lhenriques@suse.com>
+    ceph: fix buffer free while holding i_ceph_lock in __ceph_build_xattrs_blob()
+
+Luis Henriques <lhenriques@suse.com>
+    ceph: fix buffer free while holding i_ceph_lock in __ceph_setxattr()
+
+Vitaly Kuznetsov <vkuznets@redhat.com>
+    selftests/kvm: make platform_info_test pass on AMD
+
+Paolo Bonzini <pbonzini@redhat.com>
+    selftests: kvm: fix state save/load on processors without XSAVE
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    infiniband: hfi1: fix memory leaks
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    infiniband: hfi1: fix a memory leak bug
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    IB/mlx4: Fix memory leaks
+
+Anton Eidelman <anton@lightbitslabs.com>
+    nvme-multipath: fix possible I/O hang when paths are updated
+
+Vitaly Kuznetsov <vkuznets@redhat.com>
+    Tools: hv: kvp: eliminate 'may be used uninitialized' warning
+
+Dexuan Cui <decui@microsoft.com>
+    Input: hyperv-keyboard: Use in-place iterator API in the channel callback
+
+Kirill A. Shutemov <kirill@shutemov.name>
+    x86/boot/compressed/64: Fix boot on machines with broken E820 table
+
+Benjamin Tissoires <benjamin.tissoires@redhat.com>
+    HID: cp2112: prevent sleeping function called from invalid context
+
+Andrea Righi <andrea.righi@canonical.com>
+    kprobes: Fix potential deadlock in kprobe_optimizer()
+
+Tho Vu <tho.vu.wh@rvc.renesas.com>
+    ravb: Fix use-after-free ravb_tstamp_skb
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    wimax/i2400m: fix a memory leak bug
+
+Stephen Hemminger <stephen@networkplumber.org>
+    net: cavium: fix driver name
+
+Thomas Falcon <tlfalcon@linux.ibm.com>
+    ibmvnic: Unmap DMA address of TX descriptor buffers after use
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    net: kalmia: fix memory leaks
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    cx82310_eth: fix a memory leak bug
+
+Darrick J. Wong <darrick.wong@oracle.com>
+    vfs: fix page locking deadlocks when deduping files
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    lan78xx: Fix memory leaks
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    net: myri10ge: fix memory leaks
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    liquidio: add cleanup in octeon_setup_iq()
+
+Wenwen Wang <wenwen@cs.uga.edu>
+    cxgb4: fix a memory leak bug
+
+Dmitry Fomichev <dmitry.fomichev@wdc.com>
+    scsi: target: tcmu: avoid use-after-free after command timeout
+
+Bill Kuzeja <William.Kuzeja@stratus.com>
+    scsi: qla2xxx: Fix gnl.l memory leak on adapter init failure
+
+Alexandre Courbot <acourbot@chromium.org>
+    drm/mediatek: set DMA max segment size
+
+Alexandre Courbot <acourbot@chromium.org>
+    drm/mediatek: use correct device to import PRIME buffers
+
+Pablo Neira Ayuso <pablo@netfilter.org>
+    netfilter: nft_flow_offload: skip tcp rst and fin packets
+
+YueHaibing <yuehaibing@huawei.com>
+    gpio: Fix build error of function redefinition
+
+Thomas Falcon <tlfalcon@linux.ibm.com>
+    ibmveth: Convert multicast list size for little-endian system
+
+Fabian Henneke <fabian.henneke@gmail.com>
+    Bluetooth: hidp: Let hidp_send_message return number of queued bytes
+
+Matthias Kaehlcke <mka@chromium.org>
+    Bluetooth: btqca: Add a short delay before downloading the NVM
+
+Nathan Chancellor <natechancellor@gmail.com>
+    net: tc35815: Explicitly check NET_IP_ALIGN is not zero in tc35815_rx
+
+Dexuan Cui <decui@microsoft.com>
+    hv_netvsc: Fix a warning of suspicious RCU usage
+
+Jakub Kicinski <jakub.kicinski@netronome.com>
+    tools: bpftool: fix error message (prog -> object)
+
+Pablo Neira Ayuso <pablo@netfilter.org>
+    netfilter: nf_tables: use-after-free in failing rule with bound set
+
+Fuqian Huang <huangfq.daxian@gmail.com>
+    net: tundra: tsi108: use spin_lock_irqsave instead of spin_lock_irq in IRQ context
+
+Martin Sperl <kernel@martin.sperl.org>
+    spi: bcm2835aux: fix corruptions for longer spi transfers
+
+Martin Sperl <kernel@martin.sperl.org>
+    spi: bcm2835aux: remove dangerous uncontrolled read of fifo
+
+Martin Sperl <kernel@martin.sperl.org>
+    spi: bcm2835aux: unifying code between polling and interrupt driven code
+
+John S. Gruber <JohnSGruber@gmail.com>
+    x86/boot: Preserve boot_params.secure_boot from sanitizing
+
+Ka-Cheong Poon <ka-cheong.poon@oracle.com>
+    net/rds: Fix info leak in rds6_inc_info_copy()
+
+Eric Dumazet <edumazet@google.com>
+    tcp: remove empty skb from write queue in error cases
+
+Willem de Bruijn <willemb@google.com>
+    tcp: inherit timestamp on mtu probe
+
+Chen-Yu Tsai <wens@csie.org>
+    net: stmmac: dwmac-rk: Don't fail if phy regulator is absent
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    net_sched: fix a NULL pointer deref in ipt action
+
+Vlad Buslov <vladbu@mellanox.com>
+    net: sched: act_sample: fix psample group handling on overwrite
+
+Feng Sun <loyou85@gmail.com>
+    net: fix skb use after free in netpoll
+
+Eric Dumazet <edumazet@google.com>
+    mld: fix memory leak in mld_del_delrec()
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 +-
+ arch/x86/boot/compressed/pgtable_64.c              | 13 +++--
+ arch/x86/include/asm/bootparam_utils.h             |  1 +
+ arch/x86/kernel/apic/apic.c                        |  4 --
+ drivers/bluetooth/btqca.c                          |  3 ++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 49 +++++++++++++++--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h             |  2 +
+ drivers/hid/hid-cp2112.c                           |  8 ++-
+ drivers/infiniband/hw/hfi1/fault.c                 | 12 +++--
+ drivers/infiniband/hw/mlx4/mad.c                   |  4 +-
+ drivers/input/serio/hyperv-keyboard.c              | 35 +++---------
+ drivers/net/ethernet/cavium/common/cavium_ptp.c    |  2 +-
+ .../net/ethernet/cavium/liquidio/request_manager.c |  4 +-
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c |  4 +-
+ drivers/net/ethernet/ibm/ibmveth.c                 |  9 ++--
+ drivers/net/ethernet/ibm/ibmvnic.c                 | 11 +---
+ drivers/net/ethernet/myricom/myri10ge/myri10ge.c   |  2 +-
+ drivers/net/ethernet/renesas/ravb_main.c           |  8 ++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     |  6 +--
+ drivers/net/ethernet/toshiba/tc35815.c             |  2 +-
+ drivers/net/ethernet/tundra/tsi108_eth.c           |  5 +-
+ drivers/net/hyperv/netvsc_drv.c                    |  9 +++-
+ drivers/net/usb/cx82310_eth.c                      |  3 +-
+ drivers/net/usb/kalmia.c                           |  6 +--
+ drivers/net/usb/lan78xx.c                          |  8 +--
+ drivers/net/wimax/i2400m/fw.c                      |  4 +-
+ drivers/nvme/host/multipath.c                      |  1 +
+ drivers/scsi/qla2xxx/qla_attr.c                    |  2 +
+ drivers/scsi/qla2xxx/qla_os.c                      | 11 +++-
+ drivers/spi/spi-bcm2835aux.c                       | 62 +++++++---------------
+ drivers/target/target_core_user.c                  |  9 +++-
+ fs/afs/cell.c                                      |  4 ++
+ fs/ceph/caps.c                                     |  5 +-
+ fs/ceph/inode.c                                    |  7 +--
+ fs/ceph/snap.c                                     |  4 +-
+ fs/ceph/super.h                                    |  2 +-
+ fs/ceph/xattr.c                                    | 19 +++++--
+ fs/read_write.c                                    | 49 ++++++++++++++---
+ include/linux/ceph/buffer.h                        |  3 +-
+ include/linux/gpio.h                               | 24 ---------
+ include/net/act_api.h                              |  4 +-
+ include/net/netfilter/nf_tables.h                  |  9 +++-
+ include/net/psample.h                              |  1 +
+ kernel/kprobes.c                                   |  8 +--
+ net/bluetooth/hidp/core.c                          |  9 +++-
+ net/core/netpoll.c                                 |  6 +--
+ net/ipv4/tcp.c                                     | 29 ++++++----
+ net/ipv4/tcp_output.c                              |  3 +-
+ net/ipv6/mcast.c                                   |  5 +-
+ net/netfilter/nf_tables_api.c                      | 15 ++++--
+ net/netfilter/nft_flow_offload.c                   |  9 ++--
+ net/psample/psample.c                              |  2 +-
+ net/rds/recv.c                                     |  5 +-
+ net/sched/act_bpf.c                                |  2 +-
+ net/sched/act_connmark.c                           |  2 +-
+ net/sched/act_csum.c                               |  2 +-
+ net/sched/act_gact.c                               |  2 +-
+ net/sched/act_ife.c                                |  2 +-
+ net/sched/act_ipt.c                                | 11 ++--
+ net/sched/act_mirred.c                             |  2 +-
+ net/sched/act_nat.c                                |  2 +-
+ net/sched/act_pedit.c                              |  2 +-
+ net/sched/act_police.c                             |  2 +-
+ net/sched/act_sample.c                             |  7 ++-
+ net/sched/act_simple.c                             |  2 +-
+ net/sched/act_skbedit.c                            |  2 +-
+ net/sched/act_skbmod.c                             |  2 +-
+ net/sched/act_tunnel_key.c                         |  2 +-
+ net/sched/act_vlan.c                               |  2 +-
+ tools/bpf/bpftool/common.c                         |  2 +-
+ tools/hv/hv_kvp_daemon.c                           |  2 +-
+ tools/testing/selftests/kvm/lib/x86.c              | 16 +++---
+ tools/testing/selftests/kvm/platform_info_test.c   |  2 +-
+ virt/kvm/arm/mmio.c                                |  7 +++
+ virt/kvm/arm/vgic/vgic-init.c                      | 30 +++++++----
+ 75 files changed, 382 insertions(+), 248 deletions(-)
+
 
