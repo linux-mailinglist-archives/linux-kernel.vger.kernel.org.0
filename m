@@ -2,191 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF64BACEFD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93B74ACF11
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:46:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbfIHNnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 09:43:16 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36954 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728362AbfIHNnN (ORCPT
+        id S1728604AbfIHNqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 09:46:06 -0400
+Received: from mail.efficios.com ([167.114.142.138]:35956 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfIHNqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 09:43:13 -0400
-Received: by mail-wr1-f65.google.com with SMTP id i1so10430947wro.4
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2019 06:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MPMNuIvBDuMpXWllYYYQc+uQUL5Apc6pCcccd/3M7DI=;
-        b=1YogVn8kGos8KYTq7iFgHl8nNKzFAwaR62cZ1BnEPVcRFJF/CtzJpgnRxieBcmpBns
-         BMc+Ppn2v3xM9ZWWG42Iv9Q3g4cpCEhC44zuVO585NDvAuOTD9b19ZhQwh34UD98voaj
-         daaCrnsdN+1Egwx4tVBs5FD/Xy8l2Odfcz1gsIPIhaHoE8jDpfkxr1Vip00kqwk4dDIz
-         LXhm/1DtkeWECYKe1P3ceIHzK57O3oL5PRURDiSYO/WIg1QTpKSZXlwRwamN+hzQ9M3g
-         hNQPVbxrvwxM6klB5rCKV0ZIUA/qOfK49v2dI3LSrgfECoW6bUUlaLUbCExtmLmEc5oc
-         s2AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MPMNuIvBDuMpXWllYYYQc+uQUL5Apc6pCcccd/3M7DI=;
-        b=WrFBfDlwJkta5rtP80/xWZOC5bfakMHMfZdC6JOIQvG+WVCTR+itqMwzHezTn16VrF
-         1G1ENq3YoXfKEtRIIuMhYk2owgc9j5vdhowJGZGTGPAh9y7u0KQdq/m8bp9ZV4BmwRwm
-         cF3Nn9IhkpfFnFO8qi7+yOHGBcahe2ZLg/GTUTo6nm5VIknG12eDJr6PJG3q8EmXgzzQ
-         1BNTmXMEJQ0+r2lNd2P6KlQkpoq4g950AdNYwnp943LunRfdudxx4GM4skn8mk3XIAg8
-         qIu713eLDeAoDwYFrn65JiB+g1dvJT/uvr+1vgFHsG2+l2bLnlGBgjYGPb7qAWnOCfS5
-         LxZA==
-X-Gm-Message-State: APjAAAU7wFdQGnZpbx25Q7wuh1IsbQykuIruOCr71ZQjxk5MpaEfCprJ
-        n3hXjlB5C7Jk9YnyvBDdg5GeWw==
-X-Google-Smtp-Source: APXvYqwNyG0t5TErz2/QR2NwfTw/s/xk+uFaC9e+6aRneeul+t9o7Pn0tGNVJy66USrGio+WoOlNeg==
-X-Received: by 2002:adf:f482:: with SMTP id l2mr15178200wro.103.1567950190158;
-        Sun, 08 Sep 2019 06:43:10 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.gmail.com with ESMTPSA id t203sm14313902wmf.42.2019.09.08.06.43.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 08 Sep 2019 06:43:09 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com, bhelgaas@google.com,
-        lorenzo.pieralisi@arm.com, yue.wang@Amlogic.com, kishon@ti.com
-Cc:     repk@triplefau.lt, Neil Armstrong <narmstrong@baylibre.com>,
-        maz@kernel.org, linux-amlogic@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] arm64: dts: khadas-vim3: add commented support for PCIe
-Date:   Sun,  8 Sep 2019 13:42:58 +0000
-Message-Id: <1567950178-4466-7-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567950178-4466-1-git-send-email-narmstrong@baylibre.com>
-References: <1567950178-4466-1-git-send-email-narmstrong@baylibre.com>
+        Sun, 8 Sep 2019 09:46:06 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id F2997BB6E6;
+        Sun,  8 Sep 2019 09:46:04 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id SDwi9Cc2bS1S; Sun,  8 Sep 2019 09:46:04 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 91283BB6D7;
+        Sun,  8 Sep 2019 09:46:04 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 91283BB6D7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1567950364;
+        bh=RtYW8mNlt4nyumfk2QzAyZTi27oLj8xDc9s9E18+RQc=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=VnkAPl5VLTdBfJxPX5n0N29js1k0OuylSmcf5ZTg5wC3Z16IrvE1dl7ocTrczZxG1
+         9H8dScuRSKmZmVqCNKFldubRgnuGJuHDyDxt4EUflT5wK/pe2RXC0z7Pvb2d5aTbZD
+         RgMXnmjt8DXLqfCZtbcaEkybnKEBYy6wqfWVlb2Nd8VQ0r70z4K3EHPLJjobKwJuTG
+         jp9tytdZEJeqCG4QvOxzFYyNJytaxfEkDjyZVHCcnRJK7m18S5r0UJl4X+95D4cCfb
+         lTmKb5jk17DhvMMA/92ql+jmTG6o0oPIY8Uy/+dZGgNz0bAiK1/ebBGgkSMc7RQZJY
+         X5pjsKoQw8nyg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 8R2v8rLpzIBE; Sun,  8 Sep 2019 09:46:04 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 73183BB6CC;
+        Sun,  8 Sep 2019 09:46:04 -0400 (EDT)
+Date:   Sun, 8 Sep 2019 09:46:04 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     paulmck <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
+        Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Message-ID: <509773035.243.1567950364367.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20190904111126.GB24568@redhat.com>
+References: <20190903201135.1494-1-mathieu.desnoyers@efficios.com> <20190904111126.GB24568@redhat.com>
+Subject: Re: [RFC PATCH 1/2] Fix: sched/membarrier: p->mm->membarrier_state
+ racy load
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - FF68 (Linux)/8.8.15_GA_3829)
+Thread-Topic: sched/membarrier: p->mm->membarrier_state racy load
+Thread-Index: hl0su7l7NtggmKLLVhxEGtpIeL4A9A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VIM3 on-board  MCU can mux the PCIe/USB3.0 shared differential
-lines using a FUSB340TMX USB 3.1 SuperSpeed Data Switch between
-an USB3.0 Type A connector and a M.2 Key M slot.
-The PHY driving these differential lines is shared between
-the USB3.0 controller and the PCIe Controller, thus only
-a single controller can use it.
+----- On Sep 4, 2019, at 12:11 PM, Oleg Nesterov oleg@redhat.com wrote:
 
-The needed DT configuration when the MCU is configured to mux
-the PCIe/USB3.0 differential lines to the M.2 Key M slot is
-added commented and may uncommented to disable USB3.0 from the
-USB Complex and enable the PCIe controller.
+> with or without these changes...
+> 
+> Why do membarrier_register_*_expedited() check get_nr_threads() == 1?
+> This makes no sense to me, atomic_read(mm_users) == 1 should be enough.
+> 
+> 
+> And I am not sure I understand membarrier_mm_sync_core_before_usermode().
+> OK, membarrier_private_expedited() can race with user -> kernel -> user
+> transition, but we do not care unless both user's above have the same mm?
+> Shouldn't membarrier_mm_sync_core_before_usermode() do
+> 
+>	if (current->mm != mm)
+>		return;
+> 
+> at the start to make it more clear and avoid sync_core_before_usermode()
+> if possible?
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../amlogic/meson-g12b-a311d-khadas-vim3.dts  | 22 +++++++++++++++++++
- .../amlogic/meson-g12b-s922x-khadas-vim3.dts  | 22 +++++++++++++++++++
- .../boot/dts/amlogic/meson-khadas-vim3.dtsi   |  4 ++++
- .../dts/amlogic/meson-sm1-khadas-vim3l.dts    | 22 +++++++++++++++++++
- 4 files changed, 70 insertions(+)
+I think I missed replying to your email. Indeed, you are right, I've added
+2 cleanup patches taking care of this in my latest round.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-a311d-khadas-vim3.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-a311d-khadas-vim3.dts
-index 3a6a1e0c1e32..0577b1435cbb 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-a311d-khadas-vim3.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-a311d-khadas-vim3.dts
-@@ -14,3 +14,25 @@
- / {
- 	compatible = "khadas,vim3", "amlogic,a311d", "amlogic,g12b";
- };
-+
-+/*
-+ * The VIM3 on-board  MCU can mux the PCIe/USB3.0 shared differential
-+ * lines using a FUSB340TMX USB 3.1 SuperSpeed Data Switch between
-+ * an USB3.0 Type A connector and a M.2 Key M slot.
-+ * The PHY driving these differential lines is shared between
-+ * the USB3.0 controller and the PCIe Controller, thus only
-+ * a single controller can use it.
-+ * If the MCU is configured to mux the PCIe/USB3.0 differential lines
-+ * to the M.2 Key M slot, uncomment the following block to disable
-+ * USB3.0 from the USB Complex and enable the PCIe controller.
-+ */
-+/*
-+&pcie {
-+	status = "okay";
-+};
-+
-+&usb {
-+	phys = <&usb2_phy0>, <&usb2_phy1>;
-+	phy-names = "usb2-phy0", "usb2-phy1";
-+};
-+ */
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-s922x-khadas-vim3.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-s922x-khadas-vim3.dts
-index b73deb282120..1ef5c2f04f67 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-s922x-khadas-vim3.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-s922x-khadas-vim3.dts
-@@ -14,3 +14,25 @@
- / {
- 	compatible = "khadas,vim3", "amlogic,s922x", "amlogic,g12b";
- };
-+
-+/*
-+ * The VIM3 on-board  MCU can mux the PCIe/USB3.0 shared differential
-+ * lines using a FUSB340TMX USB 3.1 SuperSpeed Data Switch between
-+ * an USB3.0 Type A connector and a M.2 Key M slot.
-+ * The PHY driving these differential lines is shared between
-+ * the USB3.0 controller and the PCIe Controller, thus only
-+ * a single controller can use it.
-+ * If the MCU is configured to mux the PCIe/USB3.0 differential lines
-+ * to the M.2 Key M slot, uncomment the following block to disable
-+ * USB3.0 from the USB Complex and enable the PCIe controller.
-+ */
-+/*
-+&pcie {
-+	status = "okay";
-+};
-+
-+&usb {
-+	phys = <&usb2_phy0>, <&usb2_phy1>;
-+	phy-names = "usb2-phy0", "usb2-phy1";
-+};
-+ */
-diff --git a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
-index 8647da7d6609..eac5720dc15f 100644
---- a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
-@@ -246,6 +246,10 @@
- 	linux,rc-map-name = "rc-khadas";
- };
- 
-+&pcie {
-+	reset-gpios = <&gpio GPIOA_8 GPIO_ACTIVE_LOW>;
-+};
-+
- &pwm_ef {
-         status = "okay";
-         pinctrl-0 = <&pwm_e_pins>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
-index 5233bd7cacfb..d9c7cbedce53 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
-@@ -68,3 +68,25 @@
- 	clock-names = "clkin1";
- 	status = "okay";
- };
-+
-+/*
-+ * The VIM3 on-board  MCU can mux the PCIe/USB3.0 shared differential
-+ * lines using a FUSB340TMX USB 3.1 SuperSpeed Data Switch between
-+ * an USB3.0 Type A connector and a M.2 Key M slot.
-+ * The PHY driving these differential lines is shared between
-+ * the USB3.0 controller and the PCIe Controller, thus only
-+ * a single controller can use it.
-+ * If the MCU is configured to mux the PCIe/USB3.0 differential lines
-+ * to the M.2 Key M slot, uncomment the following block to disable
-+ * USB3.0 from the USB Complex and enable the PCIe controller.
-+ */
-+/*
-+&pcie {
-+	status = "okay";
-+};
-+
-+&usb {
-+	phys = <&usb2_phy0>, <&usb2_phy1>;
-+	phy-names = "usb2-phy0", "usb2-phy1";
-+};
-+ */
+Thanks,
+
+Mathieu
+
+
 -- 
-2.17.1
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
