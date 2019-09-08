@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2621BACDF5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C4DBACDF7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:57:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731237AbfIHMs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:48:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38342 "EHLO mail.kernel.org"
+        id S1731262AbfIHMtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:49:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731219AbfIHMsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:48:54 -0400
+        id S1731239AbfIHMs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:48:56 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAA94218AF;
-        Sun,  8 Sep 2019 12:48:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6568521971;
+        Sun,  8 Sep 2019 12:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946933;
-        bh=27jcVKK/qpC0ilYCPfzWwVPw9oGhG5I+khgjFLMDj+A=;
+        s=default; t=1567946935;
+        bh=SHPKLkyJkeRbcX+FRqPqt5fBERaFbyTjQBQ+1tmaYwo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CuC22lfQUDmkYixF0xDIU5MtCLWVCKUsKgdJTynp2Va+l8SjPd5sUYgTZo6jNE/V+
-         XeSy2V/mYPxD7j8uM+0SLmLqxkct+Fx9U2CDeL4nyqrN9z+WR62ALh83CHN5cs0RbO
-         N2S6TGhILxhhIfD4aIT608Y67YKQq5BIiMI/8TBw=
+        b=B860Rce9j5M7z1xsp1Vy8yFo6XhjhisbgxZlAQMGGzwa7p8XrzA21xjygWJPWcl/t
+         3pfB9Gkq70v+ubTbTXlKc6rjs4cKjvuIacmx8VHshmo1qFfJoS1zSUHmhUr5MJ66vf
+         IGpAzY0iHgyRSNy0ygvVkxJWt6BVH4+IyHBlVQ64=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Luis Henriques <lhenriques@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 55/57] x86/boot/compressed/64: Fix missing initialization in find_trampoline_placement()
-Date:   Sun,  8 Sep 2019 13:42:19 +0100
-Message-Id: <20190908121146.493805918@linuxfoundation.org>
+Subject: [PATCH 4.19 56/57] libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
+Date:   Sun,  8 Sep 2019 13:42:20 +0100
+Message-Id: <20190908121146.582465522@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
 References: <20190908121125.608195329@linuxfoundation.org>
@@ -46,37 +45,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c96e8483cb2da6695c8b8d0896fe7ae272a07b54 ]
+[ Upstream commit 5c498950f730aa17c5f8a2cdcb903524e4002ed2 ]
 
-Gustavo noticed that 'new' can be left uninitialized if 'bios_start'
-happens to be less or equal to 'entry->addr + entry->size'.
-
-Initialize the variable at the begin of the iteration to the current value
-of 'bios_start'.
-
-Fixes: 0a46fff2f910 ("x86/boot/compressed/64: Fix boot on machines with broken E820 table")
-Reported-by: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190826133326.7cxb4vbmiawffv2r@box
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/boot/compressed/pgtable_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/ceph/buffer.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index f0537a1f7fc25..76e1edf5bf12a 100644
---- a/arch/x86/boot/compressed/pgtable_64.c
-+++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -73,7 +73,7 @@ static unsigned long find_trampoline_placement(void)
+diff --git a/include/linux/ceph/buffer.h b/include/linux/ceph/buffer.h
+index 5e58bb29b1a36..11cdc7c60480f 100644
+--- a/include/linux/ceph/buffer.h
++++ b/include/linux/ceph/buffer.h
+@@ -30,7 +30,8 @@ static inline struct ceph_buffer *ceph_buffer_get(struct ceph_buffer *b)
  
- 	/* Find the first usable memory region under bios_start. */
- 	for (i = boot_params->e820_entries - 1; i >= 0; i--) {
--		unsigned long new;
-+		unsigned long new = bios_start;
+ static inline void ceph_buffer_put(struct ceph_buffer *b)
+ {
+-	kref_put(&b->kref, ceph_buffer_release);
++	if (b)
++		kref_put(&b->kref, ceph_buffer_release);
+ }
  
- 		entry = &boot_params->e820_table[i];
- 
+ extern int ceph_decode_buffer(struct ceph_buffer **b, void **p, void *end);
 -- 
 2.20.1
 
