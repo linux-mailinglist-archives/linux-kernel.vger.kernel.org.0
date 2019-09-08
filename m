@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC04FACD3F
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF41BACD25
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730572AbfIHMrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:47:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35034 "EHLO mail.kernel.org"
+        id S1730304AbfIHMqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:46:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730556AbfIHMrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:47:01 -0400
+        id S1729546AbfIHMqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:46:06 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C086F218AC;
-        Sun,  8 Sep 2019 12:47:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0FB6218AF;
+        Sun,  8 Sep 2019 12:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946821;
-        bh=kSqMGHyg1W2oethdFZqZVxeL8kfYmJOhZvlsHmcgIY4=;
+        s=default; t=1567946766;
+        bh=Tk8dIqRke1IbYjoHn69l7nfqUpiVrAjm93Y2qhs4iEs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zw1BV56Hnak2QJVqfgHwDmJbdDttGxWZtdc/JzWa8DIGoMJOPnu5AuP9h3xyVhClQ
-         izm97P40kvCrtG0DhwI352YxUCNkxb+Dw/c/TLp8PLOZ+kwDmOeG+/8z8Plshmlhki
-         PU3K/Qi4+tCVFmR9eyC5hMvGpPlBxVgUKPqnCxgI=
+        b=sHNmXYtlkXIcklvft5B3/GW6uSryojaijvizssE9t8AKXRw5GOaFILg3I1qBNaCo2
+         y8hKXXAC0kpmGebbzvLomwQ5sLbwFXYRb72ZJvF2cdwIdbKDvwSJEEQ1G81HGkBshD
+         IorQY1OvNaev7UkDXf825jKM3DMtbhKvn0UPD40k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fuqian Huang <huangfq.daxian@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Fabian Henneke <fabian.henneke@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 13/57] net: tundra: tsi108: use spin_lock_irqsave instead of spin_lock_irq in IRQ context
-Date:   Sun,  8 Sep 2019 13:41:37 +0100
-Message-Id: <20190908121129.795695286@linuxfoundation.org>
+Subject: [PATCH 4.14 05/40] Bluetooth: hidp: Let hidp_send_message return number of queued bytes
+Date:   Sun,  8 Sep 2019 13:41:38 +0100
+Message-Id: <20190908121115.759608557@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
-References: <20190908121125.608195329@linuxfoundation.org>
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
+References: <20190908121114.260662089@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8c25d0887a8bd0e1ca2074ac0c6dff173787a83b ]
+[ Upstream commit 48d9cc9d85dde37c87abb7ac9bbec6598ba44b56 ]
 
-As spin_unlock_irq will enable interrupts.
-Function tsi108_stat_carry is called from interrupt handler tsi108_irq.
-Interrupts are enabled in interrupt handler.
-Use spin_lock_irqsave/spin_unlock_irqrestore instead of spin_(un)lock_irq
-in IRQ context to avoid this.
+Let hidp_send_message return the number of successfully queued bytes
+instead of an unconditional 0.
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+With the return value fixed to 0, other drivers relying on hidp, such as
+hidraw, can not return meaningful values from their respective
+implementations of write(). In particular, with the current behavior, a
+hidraw device's write() will have different return values depending on
+whether the device is connected via USB or Bluetooth, which makes it
+harder to abstract away the transport layer.
+
+Signed-off-by: Fabian Henneke <fabian.henneke@gmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/tundra/tsi108_eth.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/bluetooth/hidp/core.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/tundra/tsi108_eth.c b/drivers/net/ethernet/tundra/tsi108_eth.c
-index edcd1e60b30d1..f076050c8ad37 100644
---- a/drivers/net/ethernet/tundra/tsi108_eth.c
-+++ b/drivers/net/ethernet/tundra/tsi108_eth.c
-@@ -383,9 +383,10 @@ tsi108_stat_carry_one(int carry, int carry_bit, int carry_shift,
- static void tsi108_stat_carry(struct net_device *dev)
+diff --git a/net/bluetooth/hidp/core.c b/net/bluetooth/hidp/core.c
+index b21fcc838784d..f6bffb3a95116 100644
+--- a/net/bluetooth/hidp/core.c
++++ b/net/bluetooth/hidp/core.c
+@@ -101,6 +101,7 @@ static int hidp_send_message(struct hidp_session *session, struct socket *sock,
  {
- 	struct tsi108_prv_data *data = netdev_priv(dev);
-+	unsigned long flags;
- 	u32 carry1, carry2;
+ 	struct sk_buff *skb;
+ 	struct sock *sk = sock->sk;
++	int ret;
  
--	spin_lock_irq(&data->misclock);
-+	spin_lock_irqsave(&data->misclock, flags);
+ 	BT_DBG("session %p data %p size %d", session, data, size);
  
- 	carry1 = TSI_READ(TSI108_STAT_CARRY1);
- 	carry2 = TSI_READ(TSI108_STAT_CARRY2);
-@@ -453,7 +454,7 @@ static void tsi108_stat_carry(struct net_device *dev)
- 			      TSI108_STAT_TXPAUSEDROP_CARRY,
- 			      &data->tx_pause_drop);
+@@ -114,13 +115,17 @@ static int hidp_send_message(struct hidp_session *session, struct socket *sock,
+ 	}
  
--	spin_unlock_irq(&data->misclock);
-+	spin_unlock_irqrestore(&data->misclock, flags);
+ 	skb_put_u8(skb, hdr);
+-	if (data && size > 0)
++	if (data && size > 0) {
+ 		skb_put_data(skb, data, size);
++		ret = size;
++	} else {
++		ret = 0;
++	}
+ 
+ 	skb_queue_tail(transmit, skb);
+ 	wake_up_interruptible(sk_sleep(sk));
+ 
+-	return 0;
++	return ret;
  }
  
- /* Read a stat counter atomically with respect to carries.
+ static int hidp_send_ctrl_message(struct hidp_session *session,
 -- 
 2.20.1
 
