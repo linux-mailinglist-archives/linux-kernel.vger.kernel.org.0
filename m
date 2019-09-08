@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD75EACCCF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD222ACD11
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729304AbfIHMmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:42:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56216 "EHLO mail.kernel.org"
+        id S1730070AbfIHMpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:45:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfIHMmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:42:53 -0400
+        id S1730024AbfIHMpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:45:12 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFF622081B;
-        Sun,  8 Sep 2019 12:42:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 232B221927;
+        Sun,  8 Sep 2019 12:45:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946573;
-        bh=mqnRnbDGslsvYo8EJuwu7K/kmlaG/SNDh43N8rER6D4=;
+        s=default; t=1567946711;
+        bh=Arer8dkUm8lSgpruEGvxWHMeV2nlWuAorFR9XbNy6OE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tWxvkTNABsdX3aY4XSNH0mtf/Y7S2b+ojdLFgz5+np6jl8ROfyVrkCbdIabfAGqrl
-         wnvs3CENhDE+ysNdxCo1vCu19eUGq3ezO5B3d7nhRdWnj0iWE3XaNefvvGBrJ06Oe9
-         1W3ujeord9w4uB5WrI3aNQ8OGUQQ3sP47YoM+3y0=
+        b=LIDvl5bfntqIGMbrLzYdT9DYvlCAGuOaZ1ZaAAInBGRoHx15ZoZkEWc2wqIa5pxzI
+         rcERjSpsRO140jIVt205V2zjWC5Eu1Sy7DSlUN7VFUaLZsGCA/rSprhH9VxoCqBbhs
+         30qzew/+obywwX8c/GPuG/6dbqU+yVZk6PnqpE9Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 10/23] wimax/i2400m: fix a memory leak bug
+Subject: [PATCH 4.14 12/40] net: myri10ge: fix memory leaks
 Date:   Sun,  8 Sep 2019 13:41:45 +0100
-Message-Id: <20190908121056.869762137@linuxfoundation.org>
+Message-Id: <20190908121120.447555029@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
-References: <20190908121052.898169328@linuxfoundation.org>
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
+References: <20190908121114.260662089@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 44ef3a03252844a8753479b0cea7f29e4a804bdc ]
+[ Upstream commit 20fb7c7a39b5c719e2e619673b5f5729ee7d2306 ]
 
-In i2400m_barker_db_init(), 'options_orig' is allocated through kstrdup()
-to hold the original command line options. Then, the options are parsed.
-However, if an error occurs during the parsing process, 'options_orig' is
-not deallocated, leading to a memory leak bug. To fix this issue, free
-'options_orig' before returning the error.
+In myri10ge_probe(), myri10ge_alloc_slices() is invoked to allocate slices
+related structures. Later on, myri10ge_request_irq() is used to get an irq.
+However, if this process fails, the allocated slices related structures are
+not deallocated, leading to memory leaks. To fix this issue, revise the
+target label of the goto statement to 'abort_with_slices'.
 
 Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wimax/i2400m/fw.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wimax/i2400m/fw.c b/drivers/net/wimax/i2400m/fw.c
-index c9c711dcd0e6b..0e6c665a4de82 100644
---- a/drivers/net/wimax/i2400m/fw.c
-+++ b/drivers/net/wimax/i2400m/fw.c
-@@ -351,13 +351,15 @@ int i2400m_barker_db_init(const char *_options)
- 			}
- 			result = i2400m_barker_db_add(barker);
- 			if (result < 0)
--				goto error_add;
-+				goto error_parse_add;
- 		}
- 		kfree(options_orig);
- 	}
- 	return 0;
+diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+index b171ed2015fe4..a0a555052d8ca 100644
+--- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
++++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+@@ -3922,7 +3922,7 @@ static int myri10ge_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	 * setup (if available). */
+ 	status = myri10ge_request_irq(mgp);
+ 	if (status != 0)
+-		goto abort_with_firmware;
++		goto abort_with_slices;
+ 	myri10ge_free_irq(mgp);
  
-+error_parse_add:
- error_parse:
-+	kfree(options_orig);
- error_add:
- 	kfree(i2400m_barker_db);
- 	return result;
+ 	/* Save configuration space to be restored if the
 -- 
 2.20.1
 
