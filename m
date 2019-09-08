@@ -2,72 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3048BACFD9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 18:51:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B96ACFDF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 18:56:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730011AbfIHQvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 12:51:35 -0400
-Received: from valentin-vidic.from.hr ([94.229.67.141]:35115 "EHLO
-        valentin-vidic.from.hr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729734AbfIHQve (ORCPT
+        id S1730102AbfIHQ46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 12:56:58 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33588 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730015AbfIHQ45 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 12:51:34 -0400
-X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
-Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
-        id 94489214; Sun,  8 Sep 2019 16:51:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-        d=valentin-vidic.from.hr; s=2017; t=1567961491;
-        bh=mF+4NLAhuyJUGqzq9vSqZm83S4VIa0cpRhn2ECd2y4A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=o3OMR4q61kLV0E7oGS9ZGieXIIxu3qYyIlhFWo3OXmO73+qb8cGqTR96bm8K/WYTM
-         aV7BbUA/n4mid/lYQJi+YJgrO8o4tTf/b2Te5FUiS6UVhNfoapq8c9cInhhIoBlPVB
-         QdevGiXPsFeODOkwTHoH8Hn3kw3jI5agSyoDzCt7RxbmCFHTQlVgPMwQfsC7VT1DNV
-         zp9QxVGaUsUsL1m3EnT1Oz+yeD1NOFnzIADxeF5E5UnY8j/VuCQBxz7qGe3A5AvGey
-         uO79kDLHzWuyXCacbj3Z8sETEafbUYnKXY3G+xT8uVa35wSUeFv0t5+Hh1XEsN+H26
-         Q1MeawsruR0dA==
-Date:   Sun, 8 Sep 2019 16:51:31 +0000
-From:   Valentin =?utf-8?B?VmlkacSH?= <vvidic@valentin-vidic.from.hr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] staging: exfat: add millisecond support
-Message-ID: <20190908165131.GC7664@valentin-vidic.from.hr>
-References: <20190908161015.26000-1-vvidic@valentin-vidic.from.hr>
- <20190908161015.26000-3-vvidic@valentin-vidic.from.hr>
- <20190908164040.GA8362@kroah.com>
+        Sun, 8 Sep 2019 12:56:57 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n190so6390670pgn.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2019 09:56:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E2f3KSrZxRio8/FeHv28ONTThNhL2TjtH0LaTd/eJz4=;
+        b=YkxKYH/ERWEtBHeMoD9KlshTjhFsDszVa0tiICeohlWVLEzIcG2mdKPWfiiXIAB9Ep
+         h6QalfbgiFdxT1gwzIyDJP5nWISKWpTHIpT1fN2L7ULPQG419Bbi7XY3FDT2eqv7Pdio
+         H1K5BfueRIQBGq3EqACgol7GvzJZ1eAgnKKZmazjR0LQiP65cCb17u0sJuotvVHS33a6
+         qj4J0lq3fFjn9VBtqa6a2jkRAsYTa2rETqDhPFBFFdRonhlNDlwxzNcmQUhBH77kLi7U
+         AS1qIGirCQTlRgJu1+io8rSZUnDci9vM9xSPVt3khu+byAO8nhRLsYoEOS2YUMuEme9n
+         8jPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E2f3KSrZxRio8/FeHv28ONTThNhL2TjtH0LaTd/eJz4=;
+        b=XVR9SGDZty3Zirakdwm/dSzQjxSYhaL18dSVX+zwwcYWN2pIW75HCa69X4XPG9gWGH
+         Ve2A1QdYcx7+RC5lDlQ1l2WCjBzZuZ/kviQexx5jhFdw0hXIdMjq5AGXPW60eSw+5Jgc
+         iI6V4YiDqP5Q5qupm33gc4PI6qLyPWsubX44U5+fkvgM1CppJXh1Ftwm7YeJPibh8fPW
+         ShVyVyZuI6l3AfsID8x6XpfA+rPt4jRNMiyzEPOnnAWKB9rUjI3CDnxhS6nGjGk12IOv
+         93l43OGeAaKB53ybquAWoNqd93cnWGoUzHCKog/eM7l9esG4EH7mB7+F5egZW1+k98NJ
+         +6HA==
+X-Gm-Message-State: APjAAAX7UDwx97MUvCHAioa8vLZ4HI1eae7OslecZq5rQ83Ngb3NvYMd
+        IJQdyOjZcv+GQkmK/7OARyWdeQ==
+X-Google-Smtp-Source: APXvYqycW5UHspFXzTlIh/iOGVx+SWpR9vq4XdyDpuh90LK48tRDCdIIhjamCNmUiV+Y56F7gJ75Lw==
+X-Received: by 2002:a63:7d05:: with SMTP id y5mr17861065pgc.425.1567961816386;
+        Sun, 08 Sep 2019 09:56:56 -0700 (PDT)
+Received: from localhost.localdomain ([24.244.23.109])
+        by smtp.googlemail.com with ESMTPSA id f188sm13834631pfa.170.2019.09.08.09.56.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2019 09:56:55 -0700 (PDT)
+From:   Tom Murphy <murphyt7@tcd.ie>
+To:     iommu@lists.linux-foundation.org
+Cc:     Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Andy Gross <agross@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH v6 0/5] iommu/amd: Convert the AMD iommu driver to the dma-iommu api
+Date:   Sun,  8 Sep 2019 09:56:36 -0700
+Message-Id: <20190908165642.22253-1-murphyt7@tcd.ie>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190908164040.GA8362@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 08, 2019 at 05:40:40PM +0100, Greg Kroah-Hartman wrote:
-> On Sun, Sep 08, 2019 at 04:10:15PM +0000, Valentin Vidic wrote:
-> >  void fat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
-> >  			u8 mode)
-> >  {
-> > +	u8 ms;
-> >  	u16 t, d;
-> >  	struct dos_dentry_t *ep = (struct dos_dentry_t *)p_entry;
-> >  
-> >  	t = (tp->hour << 11) | (tp->min << 5) | (tp->sec >> 1);
-> >  	d = (tp->year <<  9) | (tp->mon << 5) |  tp->day;
-> >  
-> > +	ms = tp->millisec;
-> > +	if (tp->sec & 1) {
-> > +		ms += 1000;
-> > +	}
-> 
-> checkpatch didn't complain about this { } not being needed?
-> 
-> Same in other parts of this patch, please fix up.
+Convert the AMD iommu driver to the dma-iommu api. Remove the iova
+handling and reserve region code from the AMD iommu driver.
 
-No warnings from checkpatch here, will update the code.
+Change-log:
+V6:
+-add more details to the description of patch 001-iommu-amd-Remove-unnecessary-locking-from-AMD-iommu-.patch
+-rename handle_deferred_device to iommu_dma_deferred_attach
+-fix double tabs in 0003-iommu-dma-iommu-Handle-deferred-devices.patch
+V5:
+-Rebase on top of linux-next
+V4:
+-Rebase on top of linux-next
+-Split the removing of the unnecessary locking in the amd iommu driver into a seperate patch
+-refactor the "iommu/dma-iommu: Handle deferred devices" patch and address comments
+v3:
+-rename dma_limit to dma_mask
+-exit handle_deferred_device early if (!is_kdump_kernel())
+-remove pointless calls to handle_deferred_device
+v2:
+-Rebase on top of this series:
+ http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.3
+-Add a gfp_t parameter to the iommu_ops::map function.
+-Made use of the reserve region code inside the dma-iommu api
+
+Tom Murphy (5):
+  iommu/amd: Remove unnecessary locking from AMD iommu driver
+  iommu: Add gfp parameter to iommu_ops::map
+  iommu/dma-iommu: Handle deferred devices
+  iommu/dma-iommu: Use the dev->coherent_dma_mask
+  iommu/amd: Convert AMD iommu driver to the dma-iommu api
+
+ drivers/iommu/Kconfig           |   1 +
+ drivers/iommu/amd_iommu.c       | 690 ++++----------------------------
+ drivers/iommu/amd_iommu_types.h |   1 -
+ drivers/iommu/arm-smmu-v3.c     |   2 +-
+ drivers/iommu/arm-smmu.c        |   2 +-
+ drivers/iommu/dma-iommu.c       |  43 +-
+ drivers/iommu/exynos-iommu.c    |   2 +-
+ drivers/iommu/intel-iommu.c     |   2 +-
+ drivers/iommu/iommu.c           |  43 +-
+ drivers/iommu/ipmmu-vmsa.c      |   2 +-
+ drivers/iommu/msm_iommu.c       |   2 +-
+ drivers/iommu/mtk_iommu.c       |   2 +-
+ drivers/iommu/mtk_iommu_v1.c    |   2 +-
+ drivers/iommu/omap-iommu.c      |   2 +-
+ drivers/iommu/qcom_iommu.c      |   2 +-
+ drivers/iommu/rockchip-iommu.c  |   2 +-
+ drivers/iommu/s390-iommu.c      |   2 +-
+ drivers/iommu/tegra-gart.c      |   2 +-
+ drivers/iommu/tegra-smmu.c      |   2 +-
+ drivers/iommu/virtio-iommu.c    |   2 +-
+ include/linux/iommu.h           |  21 +-
+ 21 files changed, 178 insertions(+), 651 deletions(-)
 
 -- 
-Valentin
+2.20.1
+
