@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D78AACD1B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B7D1ACCEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730205AbfIHMpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:45:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32882 "EHLO mail.kernel.org"
+        id S1729576AbfIHMnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:43:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730189AbfIHMpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:45:43 -0400
+        id S1729539AbfIHMnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:43:45 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61CB5216C8;
-        Sun,  8 Sep 2019 12:45:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFB4B21971;
+        Sun,  8 Sep 2019 12:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946742;
-        bh=lSgo35euyZz7QBUuY01GXmYbUwFWdCcynZ9Jy3WfGxs=;
+        s=default; t=1567946623;
+        bh=M08pN6U0av6fpQMntlrBxMg+VAGfeSYQQXQfcRbQ7TY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hH0PNbTPTPDxEM6bTwIM8pMaoVkRVb9V7yUloF4weaM7plKs8PbbpgFMAiH/sjaiq
-         A09QuEpSQCAj/zgAo4IWtNnl+Y6+i7voHyJFNDOi2JhvkEA6egeFp/KnPoYZt4FZ1R
-         QSGEJ3qAX5IHewfFR3BZINHbO4I98AGYMfZshbp4=
+        b=DcQx5fHxW4UH2uPUiJ3jZvSvi7s1Subra4N2OY993x/GeMbaAaPs07NqKLKxR5010
+         OInAjx6jEZ/ritQivljl+JLVNhqsw5+Y5hCdv3RXAosfGSXLFhhHeRC+7SQkwRXX+c
+         8qGK5BPYIA19nkJTmv/vYI/jBjgLjEy4ZfHgwcQk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bandan Das <bsd@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 23/40] IB/mlx4: Fix memory leaks
+Subject: [PATCH 4.4 21/23] Revert "x86/apic: Include the LDR when clearing out APIC registers"
 Date:   Sun,  8 Sep 2019 13:41:56 +0100
-Message-Id: <20190908121124.574613231@linuxfoundation.org>
+Message-Id: <20190908121104.672832570@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
+References: <20190908121052.898169328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5c1baaa82cea2c815a5180ded402a7cd455d1810 ]
+[ Upstream commit 950b07c14e8c59444e2359f15fd70ed5112e11a0 ]
 
-In mlx4_ib_alloc_pv_bufs(), 'tun_qp->tx_ring' is allocated through
-kcalloc(). However, it is not always deallocated in the following execution
-if an error occurs, leading to memory leaks. To fix this issue, free
-'tun_qp->tx_ring' whenever an error occurs.
+This reverts commit 558682b5291937a70748d36fd9ba757fb25b99ae.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Acked-by: Leon Romanovsky <leonro@mellanox.com>
-Link: https://lore.kernel.org/r/1566159781-4642-1-git-send-email-wenwen@cs.uga.edu
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Chris Wilson reports that it breaks his CPU hotplug test scripts.  In
+particular, it breaks offlining and then re-onlining the boot CPU, which
+we treat specially (and the BIOS does too).
+
+The symptoms are that we can offline the CPU, but it then does not come
+back online again:
+
+    smpboot: CPU 0 is now offline
+    smpboot: Booting Node 0 Processor 0 APIC 0x0
+    smpboot: do_boot_cpu failed(-1) to wakeup CPU#0
+
+Thomas says he knows why it's broken (my personal suspicion: our magic
+handling of the "cpu0_logical_apicid" thing), but for 5.3 the right fix
+is to just revert it, since we've never touched the LDR bits before, and
+it's not worth the risk to do anything else at this stage.
+
+[ Hotpluging of the boot CPU is special anyway, and should be off by
+  default. See the "BOOTPARAM_HOTPLUG_CPU0" config option and the
+  cpu0_hotplug kernel parameter.
+
+  In general you should not do it, and it has various known limitations
+  (hibernate and suspend require the boot CPU, for example).
+
+  But it should work, even if the boot CPU is special and needs careful
+  treatment       - Linus ]
+
+Link: https://lore.kernel.org/lkml/156785100521.13300.14461504732265570003@skylake-alporthouse-com/
+Reported-by: Chris Wilson <chris@chris-wilson.co.uk>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bandan Das <bsd@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx4/mad.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/apic/apic.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index d604b3d5aa3e4..c69158ccab822 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -1680,8 +1680,6 @@ tx_err:
- 				    tx_buf_size, DMA_TO_DEVICE);
- 		kfree(tun_qp->tx_ring[i].buf.addr);
- 	}
--	kfree(tun_qp->tx_ring);
--	tun_qp->tx_ring = NULL;
- 	i = MLX4_NUM_TUNNEL_BUFS;
- err:
- 	while (i > 0) {
-@@ -1690,6 +1688,8 @@ err:
- 				    rx_buf_size, DMA_FROM_DEVICE);
- 		kfree(tun_qp->ring[i].addr);
- 	}
-+	kfree(tun_qp->tx_ring);
-+	tun_qp->tx_ring = NULL;
- 	kfree(tun_qp->ring);
- 	tun_qp->ring = NULL;
- 	return -ENOMEM;
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 80c94fc8ad5ae..834d1b5b43557 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1031,10 +1031,6 @@ void clear_local_APIC(void)
+ 	apic_write(APIC_LVT0, v | APIC_LVT_MASKED);
+ 	v = apic_read(APIC_LVT1);
+ 	apic_write(APIC_LVT1, v | APIC_LVT_MASKED);
+-	if (!x2apic_enabled()) {
+-		v = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
+-		apic_write(APIC_LDR, v);
+-	}
+ 	if (maxlvt >= 4) {
+ 		v = apic_read(APIC_LVTPC);
+ 		apic_write(APIC_LVTPC, v | APIC_LVT_MASKED);
 -- 
 2.20.1
 
