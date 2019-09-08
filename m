@@ -2,81 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E11AD0AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 23:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 045CAAD0AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 23:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730218AbfIHU7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 16:59:46 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47359 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729973AbfIHU7q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 16:59:46 -0400
-Received: from callcc.thunk.org (110.8.30.213.rev.vodafone.pt [213.30.8.110])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x88KxWoj021687
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 8 Sep 2019 16:59:33 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 8EC6D42049E; Sun,  8 Sep 2019 16:59:31 -0400 (EDT)
-Date:   Sun, 8 Sep 2019 16:59:31 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Sandro Volery <sandro@volery.com>
-Cc:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org,
-        jslaby@suse.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fixed most indent issues in tty_io.c
-Message-ID: <20190908205931.GG23683@mit.edu>
-References: <529940f5dd3ca0426f8e953d232a16b4eccfbfb7.camel@perches.com>
- <C511485C-6194-4B31-BA98-C4C9000062AD@volery.com>
+        id S1730496AbfIHVAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 17:00:21 -0400
+Received: from smtp.giganet.hu ([193.138.125.44]:54534 "EHLO smtp.giganet.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727235AbfIHVAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 17:00:21 -0400
+X-Greylist: delayed 595 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Sep 2019 17:00:19 EDT
+Received: from localhost (unknown [127.0.0.1])
+        by smtp.giganet.hu (Postfix) with ESMTP id EB7FD114D;
+        Sun,  8 Sep 2019 20:50:19 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smtp.giganet.hu
+X-Spam-Flag: NO
+X-Spam-Score: 0.465
+X-Spam-Level: 
+X-Spam-Status: No, score=0.465 tagged_above=-1 required=6.2
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, DEAR_SOMETHING=1.973,
+        PYZOR_CHECK=1.392] autolearn=no autolearn_force=no
+Received: from smtp.giganet.hu ([127.0.0.1])
+        by localhost (smtp.giganet.hu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id nPvPRCQ3OezY; Sun,  8 Sep 2019 22:50:19 +0200 (CEST)
+Received: from webmail.giganet.hu (unknown [192.168.200.105])
+        by smtp.giganet.hu (Postfix) with ESMTP id E5C711159;
+        Sun,  8 Sep 2019 22:50:18 +0200 (CEST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C511485C-6194-4B31-BA98-C4C9000062AD@volery.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sun, 08 Sep 2019 20:50:18 +0000
+From:   SELFRIDGES RETAIL LIMITED <robot@ukeess.net>
+To:     undisclosed-recipients:;
+Subject: interested in your products
+Reply-To: info@selfridges-purchasing.co.uk
+Mail-Reply-To: info@selfridges-purchasing.co.uk
+Message-ID: <9bde2b770e623aa6619bd2bd820d3f45@ukeess.net>
+X-Sender: robot@ukeess.net
+User-Agent: Roundcube Webmail/1.3.8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sandro,
 
-It's not mentioned in the process documentation (but maybe we should
-add this), is that it's up to individual maintainers about whether or
-not whitespace cleanups are accepted outside of the staging tree.
+Dear Sir/Madam,
 
-That's because whitespace cleanups are a great "training wheel" for
-newbies who are learning the ropes, but they do have some costs.  For
-example, for actively developed portions of the kernel whitespace
-cleans can often break other pending changes.  Also, trivial cleanups
-(e.g., spelling and whitespace cleanups) makes it more likely that
-future bug fixes in that portion of the kernel will fail to be
-automatically backported to the stable kernel, thus requiring a manual
-backport effort.  
+We are looking to buy your products and partner with your company, can 
+you please send us your Catalog or your website to learn more about your 
+products or prices list by email and if we can make some order with you 
+and start a long-term partnership. Can your company supply us? and give 
+us more information about the possibility to become one of your regular 
+Wholesale?
 
-As a result, some maintainers will reject trivial cleanups unless they
-are part of a patch series that is making some kind of substantive
-improvement to the kernel (beyond trivial cleanups).
+Our Payment terms is by swift within 15 days net.
 
-There are some good aspects of fixing whitespace issues, of course,
-which is why they are encouraged in the staging tree, but there is not
-consensus amongst maintainers about whether it is a net benefit to do
-clean up patches just for the sake of doing cleanup patches.
+Waiting for your response.
 
-(And of course, sometimes the checkpatch rules change over time --- at
-one point, checkpatch would warn if *any* line was longer than 80
-characters, and so there were tons and tons of trivial cleanups to
-"fix" this, including breaking up strings.  When enough people
-complained that this actually made it harder to find kernel messages
-that got split, checkpatch changed to complain when strings were split
-across lines, and more trivial patches got sent out undoing previous
-trivial patches.  And this caused all of the same downsides of
-breaking automated stable backports, *twice*.  As such, newbies are
-strongly encouraged to restrict their checkpatch cleanups to the
-staging tree, since when such cleanup patches are considered welcome
-very much depends on the kernel subsystem and the maintainers
-involved.)
+Best regards.
 
-Cheers,
-
-						- Ted
+Sebastian Manes
+buying and merchandising director
+Selfridges & Co.
+www.selfridges.com
