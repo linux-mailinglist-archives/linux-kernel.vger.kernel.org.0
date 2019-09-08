@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF41BACD25
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2602BACCD9
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:45:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbfIHMqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:46:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33558 "EHLO mail.kernel.org"
+        id S1729410AbfIHMnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:43:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729546AbfIHMqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:46:06 -0400
+        id S1729384AbfIHMnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:43:12 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0FB6218AF;
-        Sun,  8 Sep 2019 12:46:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5269F216C8;
+        Sun,  8 Sep 2019 12:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946766;
-        bh=Tk8dIqRke1IbYjoHn69l7nfqUpiVrAjm93Y2qhs4iEs=;
+        s=default; t=1567946591;
+        bh=+d6k5KkZu2nEyjC3mot0lfXqh+b4zVEfigYqW+MF7RA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sHNmXYtlkXIcklvft5B3/GW6uSryojaijvizssE9t8AKXRw5GOaFILg3I1qBNaCo2
-         y8hKXXAC0kpmGebbzvLomwQ5sLbwFXYRb72ZJvF2cdwIdbKDvwSJEEQ1G81HGkBshD
-         IorQY1OvNaev7UkDXf825jKM3DMtbhKvn0UPD40k=
+        b=Gm9TTah6Mx+wP3sC96Jm8zaOImWm7SUd44FKlkK5crTsGtj5Ai02rPa4Mvh57CXS/
+         I3FYJbSEcLudDGIYTWgCAdpC+xG+n6fRB10gK7cj15SodAUZlBEAQC02lOWBmZJ4TO
+         c8lPprDmaQ4D00d/5UcH2b5nVGDTAoM3UNDE0QGw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabian Henneke <fabian.henneke@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        Thomas Falcon <tlfalcon@linux.ibm.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 05/40] Bluetooth: hidp: Let hidp_send_message return number of queued bytes
-Date:   Sun,  8 Sep 2019 13:41:38 +0100
-Message-Id: <20190908121115.759608557@linuxfoundation.org>
+Subject: [PATCH 4.4 04/23] ibmveth: Convert multicast list size for little-endian system
+Date:   Sun,  8 Sep 2019 13:41:39 +0100
+Message-Id: <20190908121055.406958921@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
+References: <20190908121052.898169328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 48d9cc9d85dde37c87abb7ac9bbec6598ba44b56 ]
+[ Upstream commit 66cf4710b23ab2adda11155684a2c8826f4fe732 ]
 
-Let hidp_send_message return the number of successfully queued bytes
-instead of an unconditional 0.
+The ibm,mac-address-filters property defines the maximum number of
+addresses the hypervisor's multicast filter list can support. It is
+encoded as a big-endian integer in the OF device tree, but the virtual
+ethernet driver does not convert it for use by little-endian systems.
+As a result, the driver is not behaving as it should on affected systems
+when a large number of multicast addresses are assigned to the device.
 
-With the return value fixed to 0, other drivers relying on hidp, such as
-hidraw, can not return meaningful values from their respective
-implementations of write(). In particular, with the current behavior, a
-hidraw device's write() will have different return values depending on
-whether the device is connected via USB or Bluetooth, which makes it
-harder to abstract away the transport layer.
-
-Signed-off-by: Fabian Henneke <fabian.henneke@gmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Reported-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bluetooth/hidp/core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ibm/ibmveth.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/net/bluetooth/hidp/core.c b/net/bluetooth/hidp/core.c
-index b21fcc838784d..f6bffb3a95116 100644
---- a/net/bluetooth/hidp/core.c
-+++ b/net/bluetooth/hidp/core.c
-@@ -101,6 +101,7 @@ static int hidp_send_message(struct hidp_session *session, struct socket *sock,
- {
- 	struct sk_buff *skb;
- 	struct sock *sk = sock->sk;
-+	int ret;
+diff --git a/drivers/net/ethernet/ibm/ibmveth.c b/drivers/net/ethernet/ibm/ibmveth.c
+index 70b3253e7ed5e..b46fc37c1a947 100644
+--- a/drivers/net/ethernet/ibm/ibmveth.c
++++ b/drivers/net/ethernet/ibm/ibmveth.c
+@@ -1555,7 +1555,7 @@ static int ibmveth_probe(struct vio_dev *dev, const struct vio_device_id *id)
+ 	struct net_device *netdev;
+ 	struct ibmveth_adapter *adapter;
+ 	unsigned char *mac_addr_p;
+-	unsigned int *mcastFilterSize_p;
++	__be32 *mcastFilterSize_p;
+ 	long ret;
+ 	unsigned long ret_attr;
  
- 	BT_DBG("session %p data %p size %d", session, data, size);
- 
-@@ -114,13 +115,17 @@ static int hidp_send_message(struct hidp_session *session, struct socket *sock,
+@@ -1577,8 +1577,9 @@ static int ibmveth_probe(struct vio_dev *dev, const struct vio_device_id *id)
+ 		return -EINVAL;
  	}
  
- 	skb_put_u8(skb, hdr);
--	if (data && size > 0)
-+	if (data && size > 0) {
- 		skb_put_data(skb, data, size);
-+		ret = size;
-+	} else {
-+		ret = 0;
-+	}
+-	mcastFilterSize_p = (unsigned int *)vio_get_attribute(dev,
+-						VETH_MCAST_FILTER_SIZE, NULL);
++	mcastFilterSize_p = (__be32 *)vio_get_attribute(dev,
++							VETH_MCAST_FILTER_SIZE,
++							NULL);
+ 	if (!mcastFilterSize_p) {
+ 		dev_err(&dev->dev, "Can't find VETH_MCAST_FILTER_SIZE "
+ 			"attribute\n");
+@@ -1595,7 +1596,7 @@ static int ibmveth_probe(struct vio_dev *dev, const struct vio_device_id *id)
  
- 	skb_queue_tail(transmit, skb);
- 	wake_up_interruptible(sk_sleep(sk));
+ 	adapter->vdev = dev;
+ 	adapter->netdev = netdev;
+-	adapter->mcastFilterSize = *mcastFilterSize_p;
++	adapter->mcastFilterSize = be32_to_cpu(*mcastFilterSize_p);
+ 	adapter->pool_config = 0;
  
--	return 0;
-+	return ret;
- }
- 
- static int hidp_send_ctrl_message(struct hidp_session *session,
+ 	netif_napi_add(netdev, &adapter->napi, ibmveth_poll, 16);
 -- 
 2.20.1
 
