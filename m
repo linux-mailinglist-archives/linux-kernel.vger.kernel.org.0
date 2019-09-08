@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6F4BAD035
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 19:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31407AD036
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 19:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730428AbfIHRfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 13:35:52 -0400
-Received: from valentin-vidic.from.hr ([94.229.67.141]:35637 "EHLO
+        id S1730496AbfIHRfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 13:35:53 -0400
+Received: from valentin-vidic.from.hr ([94.229.67.141]:52355 "EHLO
         valentin-vidic.from.hr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730062AbfIHRfw (ORCPT
+        with ESMTP id S1730049AbfIHRfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 8 Sep 2019 13:35:52 -0400
 X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
 Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
-        id A3E63217; Sun,  8 Sep 2019 17:35:45 +0000 (UTC)
+        id 7F20D213; Sun,  8 Sep 2019 17:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
         d=valentin-vidic.from.hr; s=2017; t=1567964146;
-        bh=XRcp16eIoyi8ADWHdwIkGyJ9o2KRVxhAjMqhIsYVNgI=;
+        bh=XroL0aeRw1GulK+zsCktbOwBMfaNEGXyCrOVr81n3Zs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SEZqD8xsF4sLEsMEIJaZh5KyxgYhQq/Q/2ZOS0+29nFnqIrNqxtvFSVap7MDTEhle
-         NVqT10IHhfhm7cmlGo22FiJ/1fCEiazkiZkTLfnz9Cm4HW5jI/CuKUYy4/kIQVG1Zx
-         89o0iyG6yCDYqLeajDsrw9UVgdsBRYENwl3jJ/RqH7X1QlKQyVE4t8iB0fNBeM9ZxO
-         z9DFrmb724t00S5eMjrQvWggtM8oHiPuHkkOqJxgxzHn9XJsWQcTm7HO5RQfCXsd/c
-         1/BhOcwBqfxDNF5oHu8wiPruYheR8Zil2pD7AnyXI588oxjponOrcpZDs6ovTARUe/
-         LyOOAfJz4A50w==
+        b=UrkkEd0M3eFJNqdMU7revVr1/Nlkteb3l48MdZ/V76mruhDSFwJMivr+rDz9fMGyS
+         K7g6KiwjCCazk9UhjEDq2I1gOlCZ9DpyYyWqkXIArQZaNrIa38W990nn9WOsZsNp52
+         zEokwHupJwz2NSZeN5TyMwRlcMn5Or1mqCpMKHB1T+RIiTxMWZdOtTKh/Jf8mPE0Yf
+         ENnVDwJCANHWVczoCvgxgEmXw93/0mMXuequaMXdMEYcAF5ZhW62mEu0/XaafpZQe1
+         6XJ4CMNNizMrOoWaHfMVG7JV7sSWJMAjY9VamjPQ/zY3f+YJF+qjjXiEyXt87Pb94l
+         8HCQ9aDNGyB6Q==
 From:   Valentin Vidic <vvidic@valentin-vidic.from.hr>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Valentin Vidic <vvidic@valentin-vidic.from.hr>
-Subject: [PATCH v3 3/4] staging: exfat: drop unused field access_time_ms
-Date:   Sun,  8 Sep 2019 17:35:38 +0000
-Message-Id: <20190908173539.26963-3-vvidic@valentin-vidic.from.hr>
+Subject: [PATCH v3 4/4] staging: exfat: add millisecond support
+Date:   Sun,  8 Sep 2019 17:35:39 +0000
+Message-Id: <20190908173539.26963-4-vvidic@valentin-vidic.from.hr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190908173539.26963-1-vvidic@valentin-vidic.from.hr>
 References: <20190908173539.26963-1-vvidic@valentin-vidic.from.hr>
@@ -43,47 +43,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Spec defines that UtcOffset fields should start in this
-position instead.
+Use create_time_ms and modify_time_ms fields to store the millisecond
+part of the file timestamp with the precision of 10 ms.
 
 Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
 ---
- drivers/staging/exfat/exfat.h      | 6 ++++--
- drivers/staging/exfat/exfat_core.c | 4 +++-
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/staging/exfat/exfat_core.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 58e1e889779f..9b75c5d3f072 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -444,8 +444,10 @@ struct file_dentry_t {
- 	u8       access_date[2];
- 	u8       create_time_ms;
- 	u8       modify_time_ms;
--	u8       access_time_ms;
--	u8       reserved2[9];
-+	u8       create_utc_offset;
-+	u8       modify_utc_offset;
-+	u8       access_utc_offset;
-+	u8       reserved2[7];
- };
- 
- /* MS-DOS EXFAT stream extension directory entry (32 bytes) */
 diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index 995358cc7c79..d21f68d786b8 100644
+index d21f68d786b8..d6e33a485d5f 100644
 --- a/drivers/staging/exfat/exfat_core.c
 +++ b/drivers/staging/exfat/exfat_core.c
-@@ -1456,7 +1456,9 @@ void init_file_entry(struct file_dentry_t *ep, u32 type)
- 	exfat_set_entry_time((struct dentry_t *)ep, tp, TM_ACCESS);
- 	ep->create_time_ms = 0;
- 	ep->modify_time_ms = 0;
--	ep->access_time_ms = 0;
-+	ep->create_utc_offset = 0;
-+	ep->modify_utc_offset = 0;
-+	ep->access_utc_offset = 0;
+@@ -1139,6 +1139,7 @@ void exfat_set_entry_size(struct dentry_t *p_entry, u64 size)
+ void fat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
+ 			u8 mode)
+ {
++	u8 ms = 0;
+ 	u16 t = 0x00, d = 0x21;
+ 	struct dos_dentry_t *ep = (struct dos_dentry_t *)p_entry;
+ 
+@@ -1146,6 +1147,7 @@ void fat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
+ 	case TM_CREATE:
+ 		t = GET16_A(ep->create_time);
+ 		d = GET16_A(ep->create_date);
++		ms = ep->create_time_ms * 10;
+ 		break;
+ 	case TM_MODIFY:
+ 		t = GET16_A(ep->modify_time);
+@@ -1159,11 +1161,17 @@ void fat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
+ 	tp->day  = (d & 0x001F);
+ 	tp->mon  = (d >> 5) & 0x000F;
+ 	tp->year = (d >> 9);
++
++	if (ms >= 1000) {
++		ms -= 1000;
++		tp->sec++;
++	}
  }
  
- void init_strm_entry(struct strm_dentry_t *ep, u8 flags, u32 start_clu, u64 size)
+ void exfat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
+ 			  u8 mode)
+ {
++	u8 ms = 0;
+ 	u16 t = 0x00, d = 0x21;
+ 	struct file_dentry_t *ep = (struct file_dentry_t *)p_entry;
+ 
+@@ -1171,10 +1179,12 @@ void exfat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
+ 	case TM_CREATE:
+ 		t = GET16_A(ep->create_time);
+ 		d = GET16_A(ep->create_date);
++		ms = ep->create_time_ms * 10;
+ 		break;
+ 	case TM_MODIFY:
+ 		t = GET16_A(ep->modify_time);
+ 		d = GET16_A(ep->modify_date);
++		ms = ep->modify_time_ms * 10;
+ 		break;
+ 	case TM_ACCESS:
+ 		t = GET16_A(ep->access_time);
+@@ -1188,21 +1198,32 @@ void exfat_get_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
+ 	tp->day  = (d & 0x001F);
+ 	tp->mon  = (d >> 5) & 0x000F;
+ 	tp->year = (d >> 9);
++
++	if (ms >= 1000) {
++		ms -= 1000;
++		tp->sec++;
++	}
+ }
+ 
+ void fat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
+ 			u8 mode)
+ {
++	u8 ms;
+ 	u16 t, d;
+ 	struct dos_dentry_t *ep = (struct dos_dentry_t *)p_entry;
+ 
+ 	t = (tp->hour << 11) | (tp->min << 5) | (tp->sec >> 1);
+ 	d = (tp->year <<  9) | (tp->mon << 5) |  tp->day;
+ 
++	ms = tp->millisec;
++	if (tp->sec & 1)
++		ms += 1000;
++
+ 	switch (mode) {
+ 	case TM_CREATE:
+ 		SET16_A(ep->create_time, t);
+ 		SET16_A(ep->create_date, d);
++		ep->create_time_ms = ms / 10;
+ 		break;
+ 	case TM_MODIFY:
+ 		SET16_A(ep->modify_time, t);
+@@ -1214,20 +1235,27 @@ void fat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
+ void exfat_set_entry_time(struct dentry_t *p_entry, struct timestamp_t *tp,
+ 			  u8 mode)
+ {
++	u8 ms;
+ 	u16 t, d;
+ 	struct file_dentry_t *ep = (struct file_dentry_t *)p_entry;
+ 
+ 	t = (tp->hour << 11) | (tp->min << 5) | (tp->sec >> 1);
+ 	d = (tp->year <<  9) | (tp->mon << 5) |  tp->day;
+ 
++	ms = tp->millisec;
++	if (tp->sec & 1)
++		ms += 1000;
++
+ 	switch (mode) {
+ 	case TM_CREATE:
+ 		SET16_A(ep->create_time, t);
+ 		SET16_A(ep->create_date, d);
++		ep->create_time_ms = ms / 10;
+ 		break;
+ 	case TM_MODIFY:
+ 		SET16_A(ep->modify_time, t);
+ 		SET16_A(ep->modify_date, d);
++		ep->modify_time_ms = ms / 10;
+ 		break;
+ 	case TM_ACCESS:
+ 		SET16_A(ep->access_time, t);
 -- 
 2.20.1
 
