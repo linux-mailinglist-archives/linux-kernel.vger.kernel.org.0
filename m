@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BAD5ACCFF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41BD6ACD24
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729856AbfIHMoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:44:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59388 "EHLO mail.kernel.org"
+        id S1729138AbfIHMqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:46:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729832AbfIHMof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:44:35 -0400
+        id S1730281AbfIHMqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:46:04 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FA5D218AF;
-        Sun,  8 Sep 2019 12:44:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43D5C20644;
+        Sun,  8 Sep 2019 12:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946675;
-        bh=22Rb2Y7xrw3/Gtts6Ht4aQGQWJUvu8zbil6E54p+okY=;
+        s=default; t=1567946763;
+        bh=eux4fIGlT+5peVgOwVIJoXwTvuLrYXt5ySKlTBOOM2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jK+GT+zmOvMOa22d1pK095qSwEElw0FVDNzAzIHqLTeS31VBDvgAYURVqqpVye2co
-         rgZhl4tE3JZJvh1cdxH7cm0RVs/TUhDeQe5Gl7p6sanVzMuktYg74BfTx805tAW9CH
-         mkZa/1PuZmcgFVhjerMfZtqvrikO9XzUNB4WgrMw=
+        b=Ie5CUb+5EU6OTELYUKnSMThPg8hc+wmBSzMl1wLdv7uPBD+AGW7FBg9SFYAqxv6lg
+         0P6evliIt+BcH3sNCai+LDguoqSfrKID+7tuyDQ/VsnanXdiGVob4MPoevx59BeKYu
+         aASCOxOfLtEF1NZuehgxD+n/POBwJjHLGpohSWQM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 24/26] net: stmmac: dwmac-rk: Dont fail if phy regulator is absent
-Date:   Sun,  8 Sep 2019 13:42:03 +0100
-Message-Id: <20190908121111.064092323@linuxfoundation.org>
+        stable@vger.kernel.org, Hubert Denkmair <h.denkmair@intence.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 31/40] spi: bcm2835aux: fix corruptions for longer spi transfers
+Date:   Sun,  8 Sep 2019 13:42:04 +0100
+Message-Id: <20190908121128.572126490@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
-References: <20190908121057.216802689@linuxfoundation.org>
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
+References: <20190908121114.260662089@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +46,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+[ Upstream commit 73b114ee7db1750c0b535199fae383b109bd61d0 ]
 
-[ Upstream commit 3b25528e1e355c803e73aa326ce657b5606cda73 ]
+On long running tests with a mcp2517fd can controller it showed that
+on rare occations the data read shows corruptions for longer spi transfers.
 
-The devicetree binding lists the phy phy as optional. As such, the
-driver should not bail out if it can't find a regulator. Instead it
-should just skip the remaining regulator related code and continue
-on normally.
+Example of a 22 byte transfer:
 
-Skip the remainder of phy_power_on() if a regulator supply isn't
-available. This also gets rid of the bogus return code.
+expected (as captured on logic analyzer):
+FF FF 78 00 00 00 08 06 00 00 91 20 77 56 84 85 86 87 88 89 8a 8b
 
-Fixes: 2e12f536635f ("net: stmmac: dwmac-rk: Use standard devicetree property for phy regulator")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+read by the driver:
+FF FF 78 00 00 00 08 06 00 00 91 20 77 56 84 88 89 8a 00 00 8b 9b
+
+To fix this use BCM2835_AUX_SPI_STAT_RX_LVL to determine when we may
+read data from the fifo reliably without any corruption.
+
+Surprisingly the only values ever empirically read in
+BCM2835_AUX_SPI_STAT_RX_LVL are 0x00, 0x10, 0x20 and 0x30.
+So whenever the mask is not 0 we can read from the fifo in a safe manner.
+
+The patch has now been tested intensively and we are no longer
+able to reproduce the "RX" issue any longer.
+
+Fixes: 1ea29b39f4c812ec ("spi: bcm2835aux: add bcm2835 auxiliary spi device...")
+Reported-by: Hubert Denkmair <h.denkmair@intence.de>
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/spi/spi-bcm2835aux.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -771,10 +771,8 @@ static int phy_power_on(struct rk_priv_d
- 	int ret;
- 	struct device *dev = &bsp_priv->pdev->dev;
+diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
+index 4454d9c6a3dd4..5c89bbb05441b 100644
+--- a/drivers/spi/spi-bcm2835aux.c
++++ b/drivers/spi/spi-bcm2835aux.c
+@@ -180,12 +180,12 @@ static void bcm2835aux_spi_reset_hw(struct bcm2835aux_spi *bs)
  
--	if (!ldo) {
--		dev_err(dev, "no regulator found\n");
--		return -1;
+ static void bcm2835aux_spi_transfer_helper(struct bcm2835aux_spi *bs)
+ {
++	u32 stat = bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT);
++
+ 	/* check if we have data to read */
+-	while (bs->rx_len &&
+-	       (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT) &
+-		  BCM2835_AUX_SPI_STAT_RX_EMPTY))) {
++	for (; bs->rx_len && (stat & BCM2835_AUX_SPI_STAT_RX_LVL);
++	     stat = bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT))
+ 		bcm2835aux_rd_fifo(bs);
 -	}
-+	if (!ldo)
-+		return 0;
  
- 	if (enable) {
- 		ret = regulator_enable(ldo);
+ 	/* check if we have data to write */
+ 	while (bs->tx_len &&
+-- 
+2.20.1
+
 
 
