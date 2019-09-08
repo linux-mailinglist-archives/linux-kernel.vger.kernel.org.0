@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A394ACD0E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 356FCACCD7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbfIHMpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:45:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60314 "EHLO mail.kernel.org"
+        id S1729379AbfIHMnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:43:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729995AbfIHMpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:45:09 -0400
+        id S1728206AbfIHMnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:43:08 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90D92218AE;
-        Sun,  8 Sep 2019 12:45:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FA16216C8;
+        Sun,  8 Sep 2019 12:43:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946709;
-        bh=GTyJzGWec36HbGl1F9Y+ExAf/bHMcu9a8jpB7Pvlt4Q=;
+        s=default; t=1567946586;
+        bh=J5P7PsZh7obLJvjEXH2ZA/N3bCYBx9+6jbf8RlCj/ng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xyoelmzkhfXlv+Gh71CaV/uY53wFx/zrKrw5pYLjWiDVaen8oqSvWJOxYFs/8GnOj
-         aD6q+ICUfPlcruoV0Udiq1UVHjNbC0gURjjxnR1LF5FLz4ZAbV8hN8JQqdznCNDWSa
-         rOrodTuBpPlzUh0OE8haxioYlvNvwU65p/M2luJY=
+        b=QTwNJ9esZyEC6mFhHmfYYKoA2dD9qLXcGIXumne6+Q6ujvjlPpC6yi/X+aXACIiyN
+         lwsyYP03GN5PHRe4T1KFUzP5nWvuDUSSENiutRAji3z5ezqes9gYyMJMp8UQFL9il6
+         uqNZ31ZwGJr4H52qo6PSPYv+Tm4A7No7CbzaMMxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nathan Chancellor <natechancellor@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 03/40] net: tc35815: Explicitly check NET_IP_ALIGN is not zero in tc35815_rx
-Date:   Sun,  8 Sep 2019 13:41:36 +0100
-Message-Id: <20190908121115.210630056@linuxfoundation.org>
+Subject: [PATCH 4.4 02/23] net: tc35815: Explicitly check NET_IP_ALIGN is not zero in tc35815_rx
+Date:   Sun,  8 Sep 2019 13:41:37 +0100
+Message-Id: <20190908121054.569045553@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
+References: <20190908121052.898169328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -79,10 +79,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/toshiba/tc35815.c b/drivers/net/ethernet/toshiba/tc35815.c
-index cce9c9ed46aa9..9146068979d2c 100644
+index 45ac38d29ed83..868fb6306df02 100644
 --- a/drivers/net/ethernet/toshiba/tc35815.c
 +++ b/drivers/net/ethernet/toshiba/tc35815.c
-@@ -1497,7 +1497,7 @@ tc35815_rx(struct net_device *dev, int limit)
+@@ -1528,7 +1528,7 @@ tc35815_rx(struct net_device *dev, int limit)
  			pci_unmap_single(lp->pci_dev,
  					 lp->rx_skbs[cur_bd].skb_dma,
  					 RX_BUF_SIZE, PCI_DMA_FROMDEVICE);
