@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81F93ACB1D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 08:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05BA6ACB20
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 08:08:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfIHGIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 02:08:10 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:38357 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbfIHGIK (ORCPT
+        id S1727592AbfIHGIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 02:08:12 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:55672 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfIHGIL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 02:08:10 -0400
-Received: by mail-io1-f70.google.com with SMTP id m5so13654194ioj.5
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2019 23:08:09 -0700 (PDT)
+        Sun, 8 Sep 2019 02:08:11 -0400
+Received: by mail-io1-f71.google.com with SMTP id t25so7926350ioj.22
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Sep 2019 23:08:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=bj4+tbcbPbywqjEKabAZDF2vUG9cCMisfKIR7PH3K0Q=;
-        b=jFcTMarnNJElVZy9MYJxNwVA8ZoeiY7WmgBml8YyaUJjcXRwo6rQZoX3pAIOedHGM4
-         EijGYwoEWQYwc9ojBEtLD+PeQrBYOQwqP4eAT7AHNqgbQM8b1DHe9jFd0zGttuBhD9dK
-         fHzDFpt8iia58DVICq2r6C57mmAE4ULVf7gUHySt6X1c5CJ8qiFKPhwJWBxjuqtd0Iqs
-         ix4wNBjDquQ4l7yIKQYFW6hTFCQwPGMnUtpLZfGrC3vaiF0/Ch0E+rmYOeaV4X8FjYva
-         lbEDTvefaMz/tdNdl2XkXM0PnklsjiS2QrXLK+9jQ8Edpu2CR2DXap+XsyY1mTOcVYN6
-         iNew==
-X-Gm-Message-State: APjAAAUSzLKvGcJNCOBHaOk+1We5pKkxsDzOn3J8G5kTdOH/CUGkJo7d
-        e5GJU9IXyxqSV+3aSP+Ry7YiVp5yiVsYEvWwnKS5c2DpeYoJ
-X-Google-Smtp-Source: APXvYqxva32GGs4AWdYjNdgBRdT3CcX8MBoEDzaS5PmZiXjPIKBzmuhF+8rCq5wYh7pmKF07cMEzuBqhF75BU1HyhhmTXMs85sC2
+        bh=yj2YlnjQctkoAeKZE0Ar/EAaQjrJLRb0J232XbUHJfo=;
+        b=jyd0RPH/V81nXPYkEy804v1MSZeBt6U/tx7HKN39COD13dDUg5IsBQEzBjEjTs/G8M
+         rEhydp930qdxjWvql4Bywh1QHF2dRkCZlaHsL6iC0S47m/GZK3JoGt8HDLUIOiE0UFHi
+         uO07CnIjQEF95G81klO0yN2hbT98J5T5rPFZFvx7vVinurKVZVo8hjZKlXZvDnKvRNXk
+         BYCl6BTfbqwjqQnNI/4nzYA2XLF+X/GpymwX1kb5kT+F1RkcTho7hVtW3ybtmhtg2s/N
+         BDe1UlBrfO84NxU7r4resYeCG/zfZeMP4MVqu2mw6H8SfrqBfrQimQmgHrTTgRiFsELU
+         sYjw==
+X-Gm-Message-State: APjAAAV9n5ndTwLvQ6xA5t4CBdNQvsy8oRtA4v/F06Yc1O/SFN6Qo4I5
+        Ap6QKOHb7gv6496ESISPc5tsIpVEedicuG3bwjAg2WHe+fTv
+X-Google-Smtp-Source: APXvYqwmI1aFlAqTwWmQxVB30mGTagesQQ3MCsrUwiIsySxUImRW5PRiDjIoPCzJdoWabpITqQQGkkEQcmU2vCRTdhETnTXOeMKy
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:104:: with SMTP id s4mr4521425iot.125.1567922889145;
+X-Received: by 2002:a5d:9c4c:: with SMTP id 12mr7436761iof.5.1567922889635;
  Sat, 07 Sep 2019 23:08:09 -0700 (PDT)
 Date:   Sat, 07 Sep 2019 23:08:09 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d7c76f0592047ef9@google.com>
-Subject: BUG: unable to handle kernel NULL pointer dereference in tc_bind_tclass
-From:   syzbot <syzbot+21b29db13c065852f64b@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Message-ID: <000000000000df42500592047e0a@google.com>
+Subject: general protection fault in qdisc_put
+From:   syzbot <syzbot+d5870a903591faaca4ae@syzkaller.appspotmail.com>
+To:     akinobu.mita@gmail.com, akpm@linux-foundation.org,
+        davem@davemloft.net, dvyukov@google.com, jhs@mojatatu.com,
+        jiri@resnulli.us, linux-kernel@vger.kernel.org, mhocko@kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        torvalds@linux-foundation.org, xiyou.wangcong@gmail.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,43 +51,60 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    0e5b36bc r8152: adjust the settings of ups flags
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10e5ad76600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=67b69b427c3b2dbf
-dashboard link: https://syzkaller.appspot.com/bug?extid=21b29db13c065852f64b
+HEAD commit:    3b47fd5c Merge tag 'nfs-for-5.3-4' of git://git.linux-nfs...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10244dd6600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b89bb446a3faaba4
+dashboard link: https://syzkaller.appspot.com/bug?extid=d5870a903591faaca4ae
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cebbda600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15fb9d0a600000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174743fe600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f8c43e600000
+
+The bug was bisected to:
+
+commit e41d58185f1444368873d4d7422f7664a68be61d
+Author: Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed Jul 12 21:34:35 2017 +0000
+
+     fault-inject: support systematic fault injection
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f66bc6600000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=100e6bc6600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f66bc6600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+21b29db13c065852f64b@syzkaller.appspotmail.com
+Reported-by: syzbot+d5870a903591faaca4ae@syzkaller.appspotmail.com
+Fixes: e41d58185f14 ("fault-inject: support systematic fault injection")
 
-8021q: adding VLAN 0 to HW filter on device batadv0
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD a9ba0067 P4D a9ba0067 PUD a7851067 PMD 0
-Oops: 0010 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8672 Comm: syz-executor994 Not tainted 5.3.0-rc7+ #0
+RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000001bbbbbb
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000000
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 9699 Comm: syz-executor169 Not tainted 5.3.0-rc7+ #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:0x0
-Code: Bad RIP value.
-RSP: 0018:ffff888097fb74d8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffffffff884a7740 RCX: ffffffff85b55676
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8880a4cd7400
-RBP: ffff888097fb75d0 R08: ffff88808dc2e440 R09: ffff888097fb7658
-R10: ffffed1012ff6ed9 R11: ffff888097fb76cf R12: ffff8880a4cd7400
-R13: 0000000000000001 R14: ffff888097fb75a8 R15: ffffffff884a7740
-FS:  0000555556952880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+RIP: 0010:qdisc_put+0x25/0x90 net/sched/sch_generic.c:983
+Code: 00 00 00 00 00 55 48 89 e5 41 54 49 89 fc 53 e8 c1 52 bf fb 49 8d 7c  
+24 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84  
+c0 74 04 3c 03 7e 54 41 8b 5c 24 10 31 ff 83 e3 01
+RSP: 0018:ffff8880944c7488 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff8880945c8540 RCX: ffffffff85b49e8a
+RDX: 0000000000000002 RSI: ffffffff85b3228f RDI: 0000000000000010
+RBP: ffff8880944c7498 R08: ffff888099d50480 R09: ffffed1012898e45
+R10: ffffed1012898e44 R11: 0000000000000003 R12: 0000000000000000
+R13: ffff8880945c8540 R14: ffff888094894500 R15: ffff8880945c857c
+FS:  0000555557553880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 000000009c578000 CR4: 00000000001406f0
+CR2: 0000000020000610 CR3: 000000008c29d000 CR4: 00000000001406e0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  tc_bind_tclass+0x13e/0x2f0 net/sched/sch_api.c:1923
-  tc_ctl_tclass+0xadb/0xcd0 net/sched/sch_api.c:2059
+  sfb_destroy+0x61/0x80 net/sched/sch_sfb.c:468
+  qdisc_create+0xbc6/0x1210 net/sched/sch_api.c:1285
+  tc_modify_qdisc+0x524/0x1c50 net/sched/sch_api.c:1652
   rtnetlink_rcv_msg+0x463/0xb00 net/core/rtnetlink.c:5223
   netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
   rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5241
@@ -101,30 +120,31 @@ Call Trace:
   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
   do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441cd9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+RIP: 0033:0x4424f9
+Code: e8 9c 07 03 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc9938bcf8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000315f6576616c RCX: 0000000000441cd9
-RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000005
-RBP: 735f656764697262 R08: 0000000001bbbbbb R09: 0000000001bbbbbb
-R10: 0000000001bbbbbb R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000403270 R14: 0000000000000000 R15: 0000000000000000
+ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fffed10bed8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004424f9
+RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000001bbbbbb
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000000
 Modules linked in:
-CR2: 0000000000000000
----[ end trace d5605e2bdb92fab7 ]---
-RIP: 0010:0x0
-Code: Bad RIP value.
-RSP: 0018:ffff888097fb74d8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffffffff884a7740 RCX: ffffffff85b55676
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8880a4cd7400
-RBP: ffff888097fb75d0 R08: ffff88808dc2e440 R09: ffff888097fb7658
-R10: ffffed1012ff6ed9 R11: ffff888097fb76cf R12: ffff8880a4cd7400
-R13: 0000000000000001 R14: ffff888097fb75a8 R15: ffffffff884a7740
-FS:  0000555556952880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+---[ end trace 97e52c48ae7a3cc1 ]---
+RIP: 0010:qdisc_put+0x25/0x90 net/sched/sch_generic.c:983
+Code: 00 00 00 00 00 55 48 89 e5 41 54 49 89 fc 53 e8 c1 52 bf fb 49 8d 7c  
+24 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84  
+c0 74 04 3c 03 7e 54 41 8b 5c 24 10 31 ff 83 e3 01
+RSP: 0018:ffff8880944c7488 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff8880945c8540 RCX: ffffffff85b49e8a
+RDX: 0000000000000002 RSI: ffffffff85b3228f RDI: 0000000000000010
+RBP: ffff8880944c7498 R08: ffff888099d50480 R09: ffffed1012898e45
+R10: ffffed1012898e44 R11: 0000000000000003 R12: 0000000000000000
+R13: ffff8880945c8540 R14: ffff888094894500 R15: ffff8880945c857c
+FS:  0000555557553880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 000000009c578000 CR4: 00000000001406f0
+CR2: 0000000020000610 CR3: 000000008c29d000 CR4: 00000000001406e0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
@@ -136,5 +156,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
