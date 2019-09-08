@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C493FACE60
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB64ACD9E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:53:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730717AbfIHMre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:47:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35890 "EHLO mail.kernel.org"
+        id S1732725AbfIHMvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:51:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730694AbfIHMra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:47:30 -0400
+        id S1732675AbfIHMvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:51:35 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7038C218AF;
-        Sun,  8 Sep 2019 12:47:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C2CC2196F;
+        Sun,  8 Sep 2019 12:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946850;
-        bh=nwkRrgxWKfz0mUWoAEQETgxxEmFC+2XRWGejen9Xk1s=;
+        s=default; t=1567947094;
+        bh=R4TG00Gp+qz4loKg0EFU3QYEx6+A4QxhkV1zPIdgigM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eXQe9hrDbDeEqIqOixZKcopyy8RVc7OCNZmYOtgoLE5pqeqyKNGNCEald9gudq5jz
-         zWp990Ud0gZPX01EUliwBzDFx9VIoVwVvGKhIMsShGVh4mIpRKrX9q/9CEd5UTarmO
-         PDmpEmC9Aedh9Aec+M/7L4TxncbyDAjogZ8ul8ok=
+        b=T1I1ej9dyVDxndFYuVPnyXFJOyS6uxPh1a4LIxm8WOOiTLCsL06RyGlBfjd42NlFW
+         08dXIw5HM+9GWkZeBW9wxJqx0wqPU18LyZF7G5jYHBfNKng28oGXQ/iwpLdNrXibuX
+         q8TjS7eVAvKZ3tRytK+4QhacVufrJVJemTVNSTns=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexandre Courbot <acourbot@chromium.org>,
-        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 23/57] drm/mediatek: use correct device to import PRIME buffers
-Date:   Sun,  8 Sep 2019 13:41:47 +0100
-Message-Id: <20190908121134.861158277@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 52/94] net: myri10ge: fix memory leaks
+Date:   Sun,  8 Sep 2019 13:41:48 +0100
+Message-Id: <20190908121151.926741421@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
-References: <20190908121125.608195329@linuxfoundation.org>
+In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
+References: <20190908121150.420989666@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4c6f3196e6ea111c456c6086dc3f57d4706b0b2d ]
+[ Upstream commit 20fb7c7a39b5c719e2e619673b5f5729ee7d2306 ]
 
-PRIME buffers should be imported using the DMA device. To this end, use
-a custom import function that mimics drm_gem_prime_import_dev(), but
-passes the correct device.
+In myri10ge_probe(), myri10ge_alloc_slices() is invoked to allocate slices
+related structures. Later on, myri10ge_request_irq() is used to get an irq.
+However, if this process fails, the allocated slices related structures are
+not deallocated, leading to memory leaks. To fix this issue, revise the
+target label of the goto statement to 'abort_with_slices'.
 
-Fixes: 119f5173628aa ("drm/mediatek: Add DRM Driver for Mediatek SoC MT8173.")
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index fd83046d8376b..ffb997440851d 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -327,6 +327,18 @@ static const struct file_operations mtk_drm_fops = {
- 	.compat_ioctl = drm_compat_ioctl,
- };
+diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+index d8b7fba96d58e..337b0cbfd153e 100644
+--- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
++++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+@@ -3919,7 +3919,7 @@ static int myri10ge_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	 * setup (if available). */
+ 	status = myri10ge_request_irq(mgp);
+ 	if (status != 0)
+-		goto abort_with_firmware;
++		goto abort_with_slices;
+ 	myri10ge_free_irq(mgp);
  
-+/*
-+ * We need to override this because the device used to import the memory is
-+ * not dev->dev, as drm_gem_prime_import() expects.
-+ */
-+struct drm_gem_object *mtk_drm_gem_prime_import(struct drm_device *dev,
-+						struct dma_buf *dma_buf)
-+{
-+	struct mtk_drm_private *private = dev->dev_private;
-+
-+	return drm_gem_prime_import_dev(dev, dma_buf, private->dma_dev);
-+}
-+
- static struct drm_driver mtk_drm_driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME |
- 			   DRIVER_ATOMIC,
-@@ -338,7 +350,7 @@ static struct drm_driver mtk_drm_driver = {
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
- 	.gem_prime_export = drm_gem_prime_export,
--	.gem_prime_import = drm_gem_prime_import,
-+	.gem_prime_import = mtk_drm_gem_prime_import,
- 	.gem_prime_get_sg_table = mtk_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table = mtk_gem_prime_import_sg_table,
- 	.gem_prime_mmap = mtk_drm_gem_mmap_buf,
+ 	/* Save configuration space to be restored if the
 -- 
 2.20.1
 
