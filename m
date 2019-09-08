@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8B33ACD00
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E98A3ACCE1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729886AbfIHMom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:44:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59528 "EHLO mail.kernel.org"
+        id S1729488AbfIHMna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:43:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729868AbfIHMok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:44:40 -0400
+        id S1729431AbfIHMnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:43:23 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4FCE218AE;
-        Sun,  8 Sep 2019 12:44:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C29E1218AE;
+        Sun,  8 Sep 2019 12:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946680;
-        bh=P8Yd1Sc/SPvquJKLyFn26fzA2S+zk+6qu6FEiDUmT5I=;
+        s=default; t=1567946602;
+        bh=VKIhn3t5HKFT55uxxSW0rh1RrHK5MQdyDgOmvlyntj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UKoiPh4VZb8eFWr+P9FokfcYuaR/x3yTnHqU4DCyrzbV1t+VZtNMf4l0rL+Ns05cw
-         sZ3O7ugO5J+i+UjSXD1tI0rn33/vApyKL01mgFY6fGydAn8S+VPoaknD6+v8B3T05I
-         91swHz5FAIRSDD+3uAmHA/MVQqoIMSadN2dI5k+U=
+        b=KuWwnp5XAL4VzO30OKM2N+mayaYQgpIIlZlpbucWqhIJttcwyXWHBeycdNVwoPcsk
+         AFQgGKOtDKZftUDk77J8eLbydwncdZ+0rDCxQeAlMUHQXd5/Sew2jP+dKPIbyLJoC6
+         xbRmTEX0x0gzdv4Lyq/aSPTED0TIUfZCc2aNCQ6A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 03/26] Bluetooth: btqca: Add a short delay before downloading the NVM
-Date:   Sun,  8 Sep 2019 13:41:42 +0100
-Message-Id: <20190908121058.173792870@linuxfoundation.org>
+Subject: [PATCH 4.4 08/23] cx82310_eth: fix a memory leak bug
+Date:   Sun,  8 Sep 2019 13:41:43 +0100
+Message-Id: <20190908121056.539096222@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
-References: <20190908121057.216802689@linuxfoundation.org>
+In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
+References: <20190908121052.898169328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8059ba0bd0e4694e51c2ee6438a77b325f06c0d5 ]
+[ Upstream commit 1eca92eef18719027d394bf1a2d276f43e7cf886 ]
 
-On WCN3990 downloading the NVM sometimes fails with a "TLV response
-size mismatch" error:
+In cx82310_bind(), 'dev->partial_data' is allocated through kmalloc().
+Then, the execution waits for the firmware to become ready. If the firmware
+is not ready in time, the execution is terminated. However, the allocated
+'dev->partial_data' is not deallocated on this path, leading to a memory
+leak bug. To fix this issue, free 'dev->partial_data' before returning the
+error.
 
-[  174.949955] Bluetooth: btqca.c:qca_download_firmware() hci0: QCA Downloading qca/crnv21.bin
-[  174.958718] Bluetooth: btqca.c:qca_tlv_send_segment() hci0: QCA TLV response size mismatch
-
-It seems the controller needs a short time after downloading the
-firmware before it is ready for the NVM. A delay as short as 1 ms
-seems sufficient, make it 10 ms just in case. No event is received
-during the delay, hence we don't just silently drop an extra event.
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bluetooth/btqca.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/usb/cx82310_eth.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index 28afd5d585f95..b7dfa4afd5169 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -363,6 +363,9 @@ int qca_uart_setup_rome(struct hci_dev *hdev, uint8_t baudrate)
- 		return err;
+diff --git a/drivers/net/usb/cx82310_eth.c b/drivers/net/usb/cx82310_eth.c
+index 947bea81d9241..dfbdea22fbad9 100644
+--- a/drivers/net/usb/cx82310_eth.c
++++ b/drivers/net/usb/cx82310_eth.c
+@@ -175,7 +175,8 @@ static int cx82310_bind(struct usbnet *dev, struct usb_interface *intf)
+ 	}
+ 	if (!timeout) {
+ 		dev_err(&udev->dev, "firmware not ready in time\n");
+-		return -ETIMEDOUT;
++		ret = -ETIMEDOUT;
++		goto err;
  	}
  
-+	/* Give the controller some time to get ready to receive the NVM */
-+	msleep(10);
-+
- 	/* Download NVM configuration */
- 	config.type = TLV_TYPE_NVM;
- 	snprintf(config.fwname, sizeof(config.fwname), "qca/nvm_%08x.bin",
+ 	/* enable ethernet mode (?) */
 -- 
 2.20.1
 
