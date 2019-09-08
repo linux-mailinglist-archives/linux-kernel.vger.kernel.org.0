@@ -2,82 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16EADACC08
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 12:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9FADACC0C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 12:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbfIHK0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 06:26:44 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35341 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727039AbfIHK0n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 06:26:43 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 205so7343422pfw.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2019 03:26:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=QkYYXMpSNzYAnXgT92Zqaztp/WQ//k/Zbw8sD1YwIE8=;
-        b=TDtjLmzMzMYUfGwCMnhxO8O68VZwGA06WS3pvGHpJqsOXHxl0HEZXIiOQMdco1POrN
-         i9ITIc5mJhwJH39EMsgsD7mckU7IOT6B74aBSrVmtFEQQDfepcTJvqdjJl1KGzN1Ydz2
-         LUqgw7lVjf71lx3baw8ZwhYayNgXNpA1Vg0b60IqF0mZfq+RrVaVfNCgQwEbQtTYrbiM
-         mTJhaefFi9EyMQib8v1PXkkHkO/p2T8VTWS19T3B15/W3x2iwUAUoWT9UYI96W4CCfMt
-         HoG6ep48TeyhkzeEog9PpisbiONJ5kVF82qZvC8LO7cNaOj7CkwhLfmODp4wM9xRLMMK
-         9zgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=QkYYXMpSNzYAnXgT92Zqaztp/WQ//k/Zbw8sD1YwIE8=;
-        b=Q5sikDjmN6zL1OJfZ6G5emXr4oOiFKjXQoERmOLPlfT2OBtPUvIC9+4e1YLa48TGa3
-         +Y2coPjtfGc0Za4iB7tIYU4LZ3ef5hBj04ciOI9b2+loOBnqPUunXugX+oHZxIqwMsIg
-         iznjQ0I7y/efDqDf5Omdfd7dLVFB1A4iUUNxkxrfTjePEuA2M8A1bpAK0kpVgwS5iAcR
-         v8PV7Ik3d3FPWs3kaqn2KbNtxv3gW6UQrqUUSQJF3RGBlq1mvAUSSz489pDeX1BF1mJz
-         TqLTHLHJid8prjOskYNMcisKa0A2qYdDesBYE8oTCFEJ+x8i7jJgAvoVabwx7UAlEmIw
-         bBGg==
-X-Gm-Message-State: APjAAAWmMUgK09nVfn2fDYAyb+/6QYhpAoH5fVLofRaS7Sc1Uo8nq4Gk
-        y1XrqphBt1A3Jm0NWJRLX7ZJWN6W
-X-Google-Smtp-Source: APXvYqyRDujvoPwW9nBBykdDv2L/FTGwjyNT49Y0aRum4eOgjc4JqeQa/t7frZl/oUw2wcLNxwXXsw==
-X-Received: by 2002:a62:583:: with SMTP id 125mr22057982pff.69.1567938403196;
-        Sun, 08 Sep 2019 03:26:43 -0700 (PDT)
-Received: from localhost ([203.63.189.78])
-        by smtp.gmail.com with ESMTPSA id u21sm10258837pjn.5.2019.09.08.03.26.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2019 03:26:42 -0700 (PDT)
-Date:   Sun, 08 Sep 2019 20:25:05 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH 0/3] powerpc/ftrace: Enable
- HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1567707399.git.naveen.n.rao@linux.vnet.ibm.com>
-In-Reply-To: <cover.1567707399.git.naveen.n.rao@linux.vnet.ibm.com>
+        id S1728500AbfIHK3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 06:29:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726263AbfIHK3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 06:29:14 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66933207FC;
+        Sun,  8 Sep 2019 10:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567938553;
+        bh=psqnja6Tr2F/VWPHyPCbb2B1np9A5ZDGoR8uGYKZEfs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=qsLmOXxMhGf4eOjY/uN58da01YQ2X9Hp1uO2BsPOyEZUkDZUkALDmmdo31NYdYjas
+         r4FuOdP1i+hBrgk6+0Yy/BRKOoqWdjc6+5BuTemDgfBNqSGQNdQxZIVI6Gthyfw7Uh
+         19ydUgcT7HUoMkT5yjZk5WMjJ/1VcrDd54vhzI4Q=
+Date:   Sun, 8 Sep 2019 11:29:07 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mircea Caprioru <mircea.caprioru@analog.com>,
+        Michael.Hennerich@analog.com, stefan.popa@analog.com,
+        lars@metafoo.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org
+Subject: Re: [PATCH V4 4/4] dt-bindings: iio: adc: ad7192: Add binding
+ documentation for AD7192
+Message-ID: <20190908112907.6d9b8370@archlinux>
+In-Reply-To: <20190903172937.GA15494@bogus>
+References: <20190902130831.23057-1-mircea.caprioru@analog.com>
+        <20190902130831.23057-4-mircea.caprioru@analog.com>
+        <20190903172937.GA15494@bogus>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1567937945.w0h0w8qaz6.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Naveen N. Rao's on September 6, 2019 4:20 am:
-> Enable HAVE_FUNCTION_GRAPH_RET_ADDR_PTR for more robust stack unwinding=20
-> when function graph tracer is in use. Convert powerpc show_stack() to=20
-> use ftrace_graph_ret_addr() for better stack unwinding.
+On Tue, 3 Sep 2019 18:29:37 +0100
+Rob Herring <robh@kernel.org> wrote:
 
-This series improved my case of a WARN_ON triggering in=20
-trace_graph_return, the last return_to_handler entry in the stack
-dump has the caller in parenthesis rather than return_to_handler.
+> On Mon, 2 Sep 2019 16:08:31 +0300, Mircea Caprioru wrote:
+> > This patch add device tree binding documentation for AD7192 adc in YAML
+> > format.
+> > 
+> > Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+It seems that I messed up before and didn't actually revert the v3 patch.
 
-It gives the caller, it would be nice if it could output the actual
-function being traced, and then continue the caller. But at least
-this is a significant improvement. Thanks for the quick turnaround.
+I'll roll a small fix patch to bring the tree inline with this and send out to the
+list.
 
-Tested-by: Nicholas Piggin <npiggin@gmail.com>
+Sorry about this. One of many things that went wrong in that last pull request!
 
-=
+Jonathan
+
+> > ---
+> > Changelog V2:
+> > - no changes here
+> > 
+> > Changelog V3:
+> > - no changes here
+> > 
+> > Changelog V4:
+> > - remove the const value from avdd and dvdd supply
+> > 
+> >  .../bindings/iio/adc/adi,ad7192.yaml          | 119 ++++++++++++++++++
+> >  1 file changed, 119 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+> >   
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
