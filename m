@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49231ACEAA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCEF9ACE80
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbfIHNAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 09:00:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59202 "EHLO mail.kernel.org"
+        id S1730269AbfIHMqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:46:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729797AbfIHMo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:44:27 -0400
+        id S1730231AbfIHMp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:45:56 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD5B121920;
-        Sun,  8 Sep 2019 12:44:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EB2D20644;
+        Sun,  8 Sep 2019 12:45:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946667;
-        bh=eux4fIGlT+5peVgOwVIJoXwTvuLrYXt5ySKlTBOOM2M=;
+        s=default; t=1567946755;
+        bh=SHPKLkyJkeRbcX+FRqPqt5fBERaFbyTjQBQ+1tmaYwo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yt11jyTCjYF1AqEsqaa5uQ4TtzFpFE0wDtOq0HqLIanxXoCwYuQofvS24smqwG2yl
-         MsnxrEzx2np6Xq6/9FG79YU2vMB/xvvimLpfqkS3BsS+VpHTSHYkV6wX6qdLLnrba3
-         ABzMjak4xiPx9YUP4o+jLkWFqvMpi2oJdb7nD4dQ=
+        b=ir57lXJKsP8Vt/kxo901kb0edxfUaFw1sRxNHI6L8FtOj9/mkbKrAuRlpyMqjLxKm
+         bzT+uZ87ZmssvJbrWcFn9fRUK7luo0cDyWCWUIlmzEN5lkRW0gKIaCidcmCtLrnxyy
+         ElIsYrEgO4XjIIQmJoxNbovLOPpZoOd78A96iu98=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hubert Denkmair <h.denkmair@intence.de>,
-        Martin Sperl <kernel@martin.sperl.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Luis Henriques <lhenriques@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 21/26] spi: bcm2835aux: fix corruptions for longer spi transfers
-Date:   Sun,  8 Sep 2019 13:42:00 +0100
-Message-Id: <20190908121110.075802835@linuxfoundation.org>
+Subject: [PATCH 4.14 28/40] libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
+Date:   Sun,  8 Sep 2019 13:42:01 +0100
+Message-Id: <20190908121128.111462356@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121057.216802689@linuxfoundation.org>
-References: <20190908121057.216802689@linuxfoundation.org>
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
+References: <20190908121114.260662089@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,60 +45,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 73b114ee7db1750c0b535199fae383b109bd61d0 ]
+[ Upstream commit 5c498950f730aa17c5f8a2cdcb903524e4002ed2 ]
 
-On long running tests with a mcp2517fd can controller it showed that
-on rare occations the data read shows corruptions for longer spi transfers.
-
-Example of a 22 byte transfer:
-
-expected (as captured on logic analyzer):
-FF FF 78 00 00 00 08 06 00 00 91 20 77 56 84 85 86 87 88 89 8a 8b
-
-read by the driver:
-FF FF 78 00 00 00 08 06 00 00 91 20 77 56 84 88 89 8a 00 00 8b 9b
-
-To fix this use BCM2835_AUX_SPI_STAT_RX_LVL to determine when we may
-read data from the fifo reliably without any corruption.
-
-Surprisingly the only values ever empirically read in
-BCM2835_AUX_SPI_STAT_RX_LVL are 0x00, 0x10, 0x20 and 0x30.
-So whenever the mask is not 0 we can read from the fifo in a safe manner.
-
-The patch has now been tested intensively and we are no longer
-able to reproduce the "RX" issue any longer.
-
-Fixes: 1ea29b39f4c812ec ("spi: bcm2835aux: add bcm2835 auxiliary spi device...")
-Reported-by: Hubert Denkmair <h.denkmair@intence.de>
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-bcm2835aux.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/linux/ceph/buffer.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
-index 4454d9c6a3dd4..5c89bbb05441b 100644
---- a/drivers/spi/spi-bcm2835aux.c
-+++ b/drivers/spi/spi-bcm2835aux.c
-@@ -180,12 +180,12 @@ static void bcm2835aux_spi_reset_hw(struct bcm2835aux_spi *bs)
+diff --git a/include/linux/ceph/buffer.h b/include/linux/ceph/buffer.h
+index 5e58bb29b1a36..11cdc7c60480f 100644
+--- a/include/linux/ceph/buffer.h
++++ b/include/linux/ceph/buffer.h
+@@ -30,7 +30,8 @@ static inline struct ceph_buffer *ceph_buffer_get(struct ceph_buffer *b)
  
- static void bcm2835aux_spi_transfer_helper(struct bcm2835aux_spi *bs)
+ static inline void ceph_buffer_put(struct ceph_buffer *b)
  {
-+	u32 stat = bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT);
-+
- 	/* check if we have data to read */
--	while (bs->rx_len &&
--	       (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT) &
--		  BCM2835_AUX_SPI_STAT_RX_EMPTY))) {
-+	for (; bs->rx_len && (stat & BCM2835_AUX_SPI_STAT_RX_LVL);
-+	     stat = bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT))
- 		bcm2835aux_rd_fifo(bs);
--	}
+-	kref_put(&b->kref, ceph_buffer_release);
++	if (b)
++		kref_put(&b->kref, ceph_buffer_release);
+ }
  
- 	/* check if we have data to write */
- 	while (bs->tx_len &&
+ extern int ceph_decode_buffer(struct ceph_buffer **b, void **p, void *end);
 -- 
 2.20.1
 
