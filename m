@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 040FCACE93
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4974ACE89
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbfIHM66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:58:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34398 "EHLO mail.kernel.org"
+        id S1730479AbfIHMqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:46:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730433AbfIHMqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:46:38 -0400
+        id S1730446AbfIHMql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:46:41 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE4F62081B;
-        Sun,  8 Sep 2019 12:46:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E29D20644;
+        Sun,  8 Sep 2019 12:46:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946798;
-        bh=sQ4dfnDcjH8d9tQ+CCUtld6pKau5HKXGqpYZhRRicCM=;
+        s=default; t=1567946800;
+        bh=ERRG1WAcuwqcV2Fq65t+WAXGXS4wFs2DDWfRyDNA7a8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FvLMX7aHBWutans+0rMzpL/bx6874K36MMI/ofw5MELrnnTC/vUydnP6vqxOnjeB0
-         w7jAAKWTHeHD7kuSL+85KUgARJ80PzTcOzvMjM3TABwDhVhKd4NFnqQLG/DUrcBjjd
-         vbzLBjsUV2S7sLU2iNcfI70//53ICtjnK+XTMEJA=
+        b=WmGrhzCAP2t99K9s7Zclpta2Qp8CjkHrtGSR4QBPXJwLgaNnK70GVLQL8Kisozd6x
+         4ZGc/hyVJpucs1bzDVyHG3fIRkxCbPgDUjz9CSCTN7M1WYWQWKQYtuH6Q3adVOa8Xy
+         2bqLdGzYXoXGF85WgUlLg2id24ls6Myb+5HpCav8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Alexandre Courbot <acourbot@chromium.org>,
-        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 08/40] drm/mediatek: use correct device to import PRIME buffers
-Date:   Sun,  8 Sep 2019 13:41:41 +0100
-Message-Id: <20190908121117.957075712@linuxfoundation.org>
+        Tomasz Figa <tfiga@chromium.org>, CK Hu <ck.hu@mediatek.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 09/40] drm/mediatek: set DMA max segment size
+Date:   Sun,  8 Sep 2019 13:41:42 +0100
+Message-Id: <20190908121118.317307114@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
 References: <20190908121114.260662089@linuxfoundation.org>
@@ -43,52 +44,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4c6f3196e6ea111c456c6086dc3f57d4706b0b2d ]
+[ Upstream commit 070955558e820b9a89c570b91b1f21762f62b288 ]
 
-PRIME buffers should be imported using the DMA device. To this end, use
-a custom import function that mimics drm_gem_prime_import_dev(), but
-passes the correct device.
+This driver requires imported PRIME buffers to appear contiguously in
+its IO address space. Make sure this is the case by setting the maximum
+DMA segment size to a more suitable value than the default 64KB.
 
-Fixes: 119f5173628aa ("drm/mediatek: Add DRM Driver for Mediatek SoC MT8173.")
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 35 ++++++++++++++++++++++++--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h |  2 ++
+ 2 files changed, 35 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index cada1c75c41cd..4a89cd2e4f1c5 100644
+index 4a89cd2e4f1c5..034b50080304f 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -287,6 +287,18 @@ static const struct file_operations mtk_drm_fops = {
- 	.compat_ioctl = drm_compat_ioctl,
+@@ -185,6 +185,7 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+ 	struct mtk_drm_private *private = drm->dev_private;
+ 	struct platform_device *pdev;
+ 	struct device_node *np;
++	struct device *dma_dev;
+ 	int ret;
+ 
+ 	if (!iommu_present(&platform_bus_type))
+@@ -242,7 +243,29 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+ 		goto err_component_unbind;
+ 	}
+ 
+-	private->dma_dev = &pdev->dev;
++	dma_dev = &pdev->dev;
++	private->dma_dev = dma_dev;
++
++	/*
++	 * Configure the DMA segment size to make sure we get contiguous IOVA
++	 * when importing PRIME buffers.
++	 */
++	if (!dma_dev->dma_parms) {
++		private->dma_parms_allocated = true;
++		dma_dev->dma_parms =
++			devm_kzalloc(drm->dev, sizeof(*dma_dev->dma_parms),
++				     GFP_KERNEL);
++	}
++	if (!dma_dev->dma_parms) {
++		ret = -ENOMEM;
++		goto err_component_unbind;
++	}
++
++	ret = dma_set_max_seg_size(dma_dev, (unsigned int)DMA_BIT_MASK(32));
++	if (ret) {
++		dev_err(dma_dev, "Failed to set DMA segment size\n");
++		goto err_unset_dma_parms;
++	}
+ 
+ 	/*
+ 	 * We don't use the drm_irq_install() helpers provided by the DRM
+@@ -252,13 +275,16 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+ 	drm->irq_enabled = true;
+ 	ret = drm_vblank_init(drm, MAX_CRTC);
+ 	if (ret < 0)
+-		goto err_component_unbind;
++		goto err_unset_dma_parms;
+ 
+ 	drm_kms_helper_poll_init(drm);
+ 	drm_mode_config_reset(drm);
+ 
+ 	return 0;
+ 
++err_unset_dma_parms:
++	if (private->dma_parms_allocated)
++		dma_dev->dma_parms = NULL;
+ err_component_unbind:
+ 	component_unbind_all(drm->dev, drm);
+ err_config_cleanup:
+@@ -269,9 +295,14 @@ err_config_cleanup:
+ 
+ static void mtk_drm_kms_deinit(struct drm_device *drm)
+ {
++	struct mtk_drm_private *private = drm->dev_private;
++
+ 	drm_kms_helper_poll_fini(drm);
+ 	drm_atomic_helper_shutdown(drm);
+ 
++	if (private->dma_parms_allocated)
++		private->dma_dev->dma_parms = NULL;
++
+ 	component_unbind_all(drm->dev, drm);
+ 	drm_mode_config_cleanup(drm);
+ }
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index c3378c452c0a0..445dd45e65ebc 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -56,6 +56,8 @@ struct mtk_drm_private {
+ 	} commit;
+ 
+ 	struct drm_atomic_state *suspend_state;
++
++	bool dma_parms_allocated;
  };
  
-+/*
-+ * We need to override this because the device used to import the memory is
-+ * not dev->dev, as drm_gem_prime_import() expects.
-+ */
-+struct drm_gem_object *mtk_drm_gem_prime_import(struct drm_device *dev,
-+						struct dma_buf *dma_buf)
-+{
-+	struct mtk_drm_private *private = dev->dev_private;
-+
-+	return drm_gem_prime_import_dev(dev, dma_buf, private->dma_dev);
-+}
-+
- static struct drm_driver mtk_drm_driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME |
- 			   DRIVER_ATOMIC,
-@@ -298,7 +310,7 @@ static struct drm_driver mtk_drm_driver = {
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
- 	.gem_prime_export = drm_gem_prime_export,
--	.gem_prime_import = drm_gem_prime_import,
-+	.gem_prime_import = mtk_drm_gem_prime_import,
- 	.gem_prime_get_sg_table = mtk_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table = mtk_gem_prime_import_sg_table,
- 	.gem_prime_mmap = mtk_drm_gem_mmap_buf,
+ extern struct platform_driver mtk_ddp_driver;
 -- 
 2.20.1
 
