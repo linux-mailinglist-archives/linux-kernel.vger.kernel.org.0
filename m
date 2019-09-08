@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 998DEACE7B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1000ACEB2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:01:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfIHMpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:45:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32790 "EHLO mail.kernel.org"
+        id S1729396AbfIHMnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:43:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730156AbfIHMpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:45:38 -0400
+        id S1729367AbfIHMnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:43:09 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24D91216C8;
-        Sun,  8 Sep 2019 12:45:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3F32218AE;
+        Sun,  8 Sep 2019 12:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946737;
-        bh=/1+YFRA8MRn5iJdk3k+ittjd4Ien8qJzrzDQDKkmjQg=;
+        s=default; t=1567946589;
+        bh=KeHxyIkBfKzEiV/bSVWp/zpWxx1Ab+ygjQl4NHL3pnE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZaWAG1vaEHqgTalMfBkcKdhSmicmLpQmHRefyLbpZLVKliLWtL41if9UiR4zuacIe
-         VFpDiV0WCCwwKv0w0+oX4EiJk7EUjiEvflGAFJku0sZe0NiyOa3DqMR5usZBkFQ3tG
-         xjB7NRHk2P7bV45tSQ1TbQuheP8qxItmaP9OanJE=
+        b=Zm6ETgf8aWa4AtvO0mRgxpgm6Eixvv+cSnHtPFfKNMblf0WAh6douqC5w/82oOfH4
+         uh5+LXzkDWALA8NwEQnljbqTz86ZIxU0A2rJjU+lvsN9JGSyyYAxvWrZGP9n1mKsCM
+         MjCG7NTbwnu1cVYF9aNThEckw9MxAuJSF9wwOU8o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
         Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 04/40] Bluetooth: btqca: Add a short delay before downloading the NVM
-Date:   Sun,  8 Sep 2019 13:41:37 +0100
-Message-Id: <20190908121115.297090022@linuxfoundation.org>
+Subject: [PATCH 4.4 03/23] Bluetooth: btqca: Add a short delay before downloading the NVM
+Date:   Sun,  8 Sep 2019 13:41:38 +0100
+Message-Id: <20190908121054.821544939@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-References: <20190908121114.260662089@linuxfoundation.org>
+In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
+References: <20190908121052.898169328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -65,7 +65,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+)
 
 diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index 0bbdfcef2aa84..a48a61f22f823 100644
+index 4a62081688501..593fc2a5be0f9 100644
 --- a/drivers/bluetooth/btqca.c
 +++ b/drivers/bluetooth/btqca.c
 @@ -363,6 +363,9 @@ int qca_uart_setup_rome(struct hci_dev *hdev, uint8_t baudrate)
