@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFB9ACE33
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:58:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05A2FACE4F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:58:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387714AbfIHMzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:55:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43242 "EHLO mail.kernel.org"
+        id S1730961AbfIHMsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:48:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732693AbfIHMvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:51:37 -0400
+        id S1730906AbfIHMsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:48:14 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B8C820693;
-        Sun,  8 Sep 2019 12:51:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D069A218AC;
+        Sun,  8 Sep 2019 12:48:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567947097;
-        bh=IqEauNs7qeUy74R3qRiokvDUb9O7TGDvPagbktP5iyk=;
+        s=default; t=1567946894;
+        bh=HcGSro/bVINMTqXcmyDPCbmvI42TSvHeyoJFat3J3Os=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wudm01kpAa9u3eVm5n6yX5CuWtG2uxJENHDEkZyz+1MafKCNT0AB15c5Dqi4ln+fD
-         +MndrkVlhBFRpXDJGBB0Xamg53bSrnafXRBQc4pmcHRMhKIIpaXE7cinAxoociKieH
-         43MqbP/w5mDnEbqxcilb0kXTgrnRJy6/tMJ5H5TA=
+        b=TkYQDLlcy7uSlqlRmldDKvVFlmbgpwK/6StmxD6CMGTe8QAq6E26EYlKjjbxiPtjb
+         r999dA+zDtwxpvMTfyKdTG4Drxc2oGUqtZ+GqM56KxD9/re3DZzS9I0haL7vKmPA8W
+         1yXdsVcmsRPKcHQRcQMv3unKgpOP1lf75C2LgG7U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 61/94] wimax/i2400m: fix a memory leak bug
+Subject: [PATCH 4.19 33/57] net: kalmia: fix memory leaks
 Date:   Sun,  8 Sep 2019 13:41:57 +0100
-Message-Id: <20190908121152.178684260@linuxfoundation.org>
+Message-Id: <20190908121140.283695606@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
-References: <20190908121150.420989666@linuxfoundation.org>
+In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
+References: <20190908121125.608195329@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 44ef3a03252844a8753479b0cea7f29e4a804bdc ]
+[ Upstream commit f1472cb09f11ddb41d4be84f0650835cb65a9073 ]
 
-In i2400m_barker_db_init(), 'options_orig' is allocated through kstrdup()
-to hold the original command line options. Then, the options are parsed.
-However, if an error occurs during the parsing process, 'options_orig' is
-not deallocated, leading to a memory leak bug. To fix this issue, free
-'options_orig' before returning the error.
+In kalmia_init_and_get_ethernet_addr(), 'usb_buf' is allocated through
+kmalloc(). In the following execution, if the 'status' returned by
+kalmia_send_init_packet() is not 0, 'usb_buf' is not deallocated, leading
+to memory leaks. To fix this issue, add the 'out' label to free 'usb_buf'.
 
 Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wimax/i2400m/fw.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/usb/kalmia.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wimax/i2400m/fw.c b/drivers/net/wimax/i2400m/fw.c
-index e9fc168bb7345..489cba9b284d1 100644
---- a/drivers/net/wimax/i2400m/fw.c
-+++ b/drivers/net/wimax/i2400m/fw.c
-@@ -351,13 +351,15 @@ int i2400m_barker_db_init(const char *_options)
- 			}
- 			result = i2400m_barker_db_add(barker);
- 			if (result < 0)
--				goto error_add;
-+				goto error_parse_add;
- 		}
- 		kfree(options_orig);
- 	}
- 	return 0;
+diff --git a/drivers/net/usb/kalmia.c b/drivers/net/usb/kalmia.c
+index bd2ba36590288..0cc6993c279a2 100644
+--- a/drivers/net/usb/kalmia.c
++++ b/drivers/net/usb/kalmia.c
+@@ -117,16 +117,16 @@ kalmia_init_and_get_ethernet_addr(struct usbnet *dev, u8 *ethernet_addr)
+ 	status = kalmia_send_init_packet(dev, usb_buf, ARRAY_SIZE(init_msg_1),
+ 					 usb_buf, 24);
+ 	if (status != 0)
+-		return status;
++		goto out;
  
-+error_parse_add:
- error_parse:
-+	kfree(options_orig);
- error_add:
- 	kfree(i2400m_barker_db);
- 	return result;
+ 	memcpy(usb_buf, init_msg_2, 12);
+ 	status = kalmia_send_init_packet(dev, usb_buf, ARRAY_SIZE(init_msg_2),
+ 					 usb_buf, 28);
+ 	if (status != 0)
+-		return status;
++		goto out;
+ 
+ 	memcpy(ethernet_addr, usb_buf + 10, ETH_ALEN);
+-
++out:
+ 	kfree(usb_buf);
+ 	return status;
+ }
 -- 
 2.20.1
 
