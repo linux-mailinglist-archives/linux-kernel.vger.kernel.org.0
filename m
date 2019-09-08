@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D083AACD2C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30926ACD2F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbfIHMqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:46:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33940 "EHLO mail.kernel.org"
+        id S1730395AbfIHMqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:46:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730361AbfIHMqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:46:22 -0400
+        id S1726687AbfIHMq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:46:27 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8584D218AC;
-        Sun,  8 Sep 2019 12:46:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D0BA20644;
+        Sun,  8 Sep 2019 12:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946781;
-        bh=8cxZQoccA38riXltPcjcux5V2PVhcAp6o3vBVpqBvV4=;
+        s=default; t=1567946786;
+        bh=gdF4uvgwLqBk17amB8Ul2Jm1qxH0Aqoc/x4M99Un1q4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B4zSU3CKkxo452lctryN9nZB3nAUvimCLefJSEl7qLdqE+jFGi+hhR3FTAaY7xNvE
-         OztdnVBBhWAsKD33ORFd6ASzGdjj4aoRbBS7YeyTt+dvJkP+O3L0xL8XHQ4zeenpRt
-         TTivcMUwfnDVn+273TvPrtGZCKP4+7/cvH75gArs=
+        b=MC/KQxFxuef7TzAWbtzMfSOB6pHKJpF2I+ucI0KhwBG/urS5mV7WK4GqFAktWQPI1
+         ZUnbb30rfz6Tf3/60CugURV7DJw5IqDwKTpZGtKjRqeHnGMxTOb5feeUGDSmwFeyI6
+         lMEmu/Lep0v64QQqEx7AkNbR4kC/SctTJcyP/A6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Vladimir Rutsky <rutsky@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 37/40] tcp: remove empty skb from write queue in error cases
-Date:   Sun,  8 Sep 2019 13:42:10 +0100
-Message-Id: <20190908121132.072577101@linuxfoundation.org>
+Subject: [PATCH 4.14 39/40] mld: fix memory leak in mld_del_delrec()
+Date:   Sun,  8 Sep 2019 13:42:12 +0100
+Message-Id: <20190908121132.593371325@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
 References: <20190908121114.260662089@linuxfoundation.org>
@@ -49,87 +46,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit fdfc5c8594c24c5df883583ebd286321a80e0a67 ]
+[ Upstream commit a84d016479896b5526a2cc54784e6ffc41c9d6f6 ]
 
-Vladimir Rutsky reported stuck TCP sessions after memory pressure
-events. Edge Trigger epoll() user would never receive an EPOLLOUT
-notification allowing them to retry a sendmsg().
+Similar to the fix done for IPv4 in commit e5b1c6c6277d
+("igmp: fix memory leak in igmpv3_del_delrec()"), we need to
+make sure mca_tomb and mca_sources are not blindly overwritten.
 
-Jason tested the case of sk_stream_alloc_skb() returning NULL,
-but there are other paths that could lead both sendmsg() and sendpage()
-to return -1 (EAGAIN), with an empty skb queued on the write queue.
+Using swap() then a call to ip6_mc_clear_src() will take care
+of the missing free.
 
-This patch makes sure we remove this empty skb so that
-Jason code can detect that the queue is empty, and
-call sk->sk_write_space(sk) accordingly.
+BUG: memory leak
+unreferenced object 0xffff888117d9db00 (size 64):
+  comm "syz-executor247", pid 6918, jiffies 4294943989 (age 25.350s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 fe 88 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000005b463030>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<000000005b463030>] slab_post_alloc_hook mm/slab.h:522 [inline]
+    [<000000005b463030>] slab_alloc mm/slab.c:3319 [inline]
+    [<000000005b463030>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3548
+    [<00000000939cbf94>] kmalloc include/linux/slab.h:552 [inline]
+    [<00000000939cbf94>] kzalloc include/linux/slab.h:748 [inline]
+    [<00000000939cbf94>] ip6_mc_add1_src net/ipv6/mcast.c:2236 [inline]
+    [<00000000939cbf94>] ip6_mc_add_src+0x31f/0x420 net/ipv6/mcast.c:2356
+    [<00000000d8972221>] ip6_mc_source+0x4a8/0x600 net/ipv6/mcast.c:449
+    [<000000002b203d0d>] do_ipv6_setsockopt.isra.0+0x1b92/0x1dd0 net/ipv6/ipv6_sockglue.c:748
+    [<000000001f1e2d54>] ipv6_setsockopt+0x89/0xd0 net/ipv6/ipv6_sockglue.c:944
+    [<00000000c8f7bdf9>] udpv6_setsockopt+0x4e/0x90 net/ipv6/udp.c:1558
+    [<000000005a9a0c5e>] sock_common_setsockopt+0x38/0x50 net/core/sock.c:3139
+    [<00000000910b37b2>] __sys_setsockopt+0x10f/0x220 net/socket.c:2084
+    [<00000000e9108023>] __do_sys_setsockopt net/socket.c:2100 [inline]
+    [<00000000e9108023>] __se_sys_setsockopt net/socket.c:2097 [inline]
+    [<00000000e9108023>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2097
+    [<00000000f4818160>] do_syscall_64+0x76/0x1a0 arch/x86/entry/common.c:296
+    [<000000008d367e8f>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Fixes: ce5ec440994b ("tcp: ensure epoll edge trigger wakeup when write queue is empty")
+Fixes: 1666d49e1d41 ("mld: do not remove mld souce list info when set link down")
+Fixes: 9c8bb163ae78 ("igmp, mld: Fix memory leak in igmpv3/mld_del_delrec()")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Jason Baron <jbaron@akamai.com>
-Reported-by: Vladimir Rutsky <rutsky@google.com>
-Cc: Soheil Hassas Yeganeh <soheil@google.com>
-Cc: Neal Cardwell <ncardwell@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c |   29 ++++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
+ net/ipv6/mcast.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -914,6 +914,22 @@ static int tcp_send_mss(struct sock *sk,
- 	return mss_now;
- }
- 
-+/* In some cases, both sendpage() and sendmsg() could have added
-+ * an skb to the write queue, but failed adding payload on it.
-+ * We need to remove it to consume less memory, but more
-+ * importantly be able to generate EPOLLOUT for Edge Trigger epoll()
-+ * users.
-+ */
-+static void tcp_remove_empty_skb(struct sock *sk, struct sk_buff *skb)
-+{
-+	if (skb && !skb->len) {
-+		tcp_unlink_write_queue(skb, sk);
-+		if (tcp_write_queue_empty(sk))
-+			tcp_chrono_stop(sk, TCP_CHRONO_BUSY);
-+		sk_wmem_free_skb(sk, skb);
-+	}
-+}
-+
- ssize_t do_tcp_sendpages(struct sock *sk, struct page *page, int offset,
- 			 size_t size, int flags)
- {
-@@ -1034,6 +1050,7 @@ out:
- 	return copied;
- 
- do_error:
-+	tcp_remove_empty_skb(sk, tcp_write_queue_tail(sk));
- 	if (copied)
- 		goto out;
- out_err:
-@@ -1412,17 +1429,11 @@ out_nopush:
- 	sock_zerocopy_put(uarg);
- 	return copied + copied_syn;
- 
-+do_error:
-+	skb = tcp_write_queue_tail(sk);
- do_fault:
--	if (!skb->len) {
--		tcp_unlink_write_queue(skb, sk);
--		/* It is the one place in all of TCP, except connection
--		 * reset, where we can be unlinking the send_head.
--		 */
--		tcp_check_send_head(sk, skb);
--		sk_wmem_free_skb(sk, skb);
--	}
-+	tcp_remove_empty_skb(sk, skb);
- 
--do_error:
- 	if (copied + copied_syn)
- 		goto out;
- out_err:
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -772,12 +772,13 @@ static void mld_del_delrec(struct inet6_
+ 		im->idev = pmc->idev;
+ 		im->mca_crcount = idev->mc_qrv;
+ 		if (im->mca_sfmode == MCAST_INCLUDE) {
+-			im->mca_tomb = pmc->mca_tomb;
+-			im->mca_sources = pmc->mca_sources;
++			swap(im->mca_tomb, pmc->mca_tomb);
++			swap(im->mca_sources, pmc->mca_sources);
+ 			for (psf = im->mca_sources; psf; psf = psf->sf_next)
+ 				psf->sf_crcount = im->mca_crcount;
+ 		}
+ 		in6_dev_put(pmc->idev);
++		ip6_mc_clear_src(pmc);
+ 		kfree(pmc);
+ 	}
+ 	spin_unlock_bh(&im->mca_lock);
 
 
