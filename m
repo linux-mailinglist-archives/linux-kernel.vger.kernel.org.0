@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED657ACDEA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72268ACD5C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731040AbfIHMs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:48:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37518 "EHLO mail.kernel.org"
+        id S1731053AbfIHMsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:48:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730954AbfIHMsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:48:25 -0400
+        id S1731027AbfIHMs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:48:28 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D1EA21924;
-        Sun,  8 Sep 2019 12:48:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B38E8218AC;
+        Sun,  8 Sep 2019 12:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946904;
-        bh=cC6LQjRnHIQNzCIffnzsBRuYfQC1vJcIUY6FOGwSNwE=;
+        s=default; t=1567946907;
+        bh=xk3vxclXRVEDM55Kf+2Kthrd3peq97DDf0Qu8/tVHHk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vGKOid3D3ClGYqtI62yIZP1Y/9c2uwHNX1wE2eDeyWP1LoViRyjL89lRwC0OZ/8BV
-         IS96NQ/N3aHSygZ8hWA4Mgdww5dkegK1tZ69F49dvNdYwGXyZ95RDQU8W2nmWoMPRP
-         E5l3NPIjcokk3FFGlQXaHrr+4DRvZiQNPhylMKQM=
+        b=2jscpywP7GGEzA0HyKjz6UzlY6Z1LU5OUJTlSnd890pdczFF/ZZn/om4sFMMpBthY
+         c7IXdIqVxQuvq6DJ7uFmEKUYthDKCusn3lHTGzRccsUN6BfakY6NZg8+CILM8HIZbK
+         kbPmCDuKPVJrjTKC4WYHar5SHeHsiYjRQfvU8Fss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,9 +31,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dennis Dalessandro <dennis.dalessandro@intel.com>,
         Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 45/57] infiniband: hfi1: fix a memory leak bug
-Date:   Sun,  8 Sep 2019 13:42:09 +0100
-Message-Id: <20190908121145.368492256@linuxfoundation.org>
+Subject: [PATCH 4.19 46/57] infiniband: hfi1: fix memory leaks
+Date:   Sun,  8 Sep 2019 13:42:10 +0100
+Message-Id: <20190908121145.480160111@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
 References: <20190908121125.608195329@linuxfoundation.org>
@@ -46,39 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b08afa064c320e5d85cdc27228426b696c4c8dae ]
+[ Upstream commit 2323d7baab2b18d87d9bc267452e387aa9f0060a ]
 
-In fault_opcodes_read(), 'data' is not deallocated if debugfs_file_get()
-fails, leading to a memory leak. To fix this bug, introduce the 'free_data'
-label to free 'data' before returning the error.
+In fault_opcodes_write(), 'data' is allocated through kcalloc(). However,
+it is not deallocated in the following execution if an error occurs,
+leading to memory leaks. To fix this issue, introduce the 'free_data' label
+to free 'data' before returning the error.
 
 Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
 Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Link: https://lore.kernel.org/r/1566156571-4335-1-git-send-email-wenwen@cs.uga.edu
+Link: https://lore.kernel.org/r/1566154486-3713-1-git-send-email-wenwen@cs.uga.edu
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/fault.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/fault.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/infiniband/hw/hfi1/fault.c b/drivers/infiniband/hw/hfi1/fault.c
-index 7eaff4dcbfd77..72ca0dc5f3b59 100644
+index 72ca0dc5f3b59..5bc811b7e6cf9 100644
 --- a/drivers/infiniband/hw/hfi1/fault.c
 +++ b/drivers/infiniband/hw/hfi1/fault.c
-@@ -214,7 +214,7 @@ static ssize_t fault_opcodes_read(struct file *file, char __user *buf,
+@@ -141,12 +141,14 @@ static ssize_t fault_opcodes_write(struct file *file, const char __user *buf,
+ 	if (!data)
  		return -ENOMEM;
+ 	copy = min(len, datalen - 1);
+-	if (copy_from_user(data, buf, copy))
+-		return -EFAULT;
++	if (copy_from_user(data, buf, copy)) {
++		ret = -EFAULT;
++		goto free_data;
++	}
+ 
  	ret = debugfs_file_get(file->f_path.dentry);
  	if (unlikely(ret))
 -		return ret;
 +		goto free_data;
- 	bit = find_first_bit(fault->opcodes, bitsize);
- 	while (bit < bitsize) {
- 		zero = find_next_zero_bit(fault->opcodes, bitsize, bit);
-@@ -232,6 +232,7 @@ static ssize_t fault_opcodes_read(struct file *file, char __user *buf,
- 	data[size - 1] = '\n';
- 	data[size] = '\0';
- 	ret = simple_read_from_buffer(buf, len, pos, data, size);
+ 	ptr = data;
+ 	token = ptr;
+ 	for (ptr = data; *ptr; ptr = end + 1, token = ptr) {
+@@ -195,6 +197,7 @@ static ssize_t fault_opcodes_write(struct file *file, const char __user *buf,
+ 	ret = len;
+ 
+ 	debugfs_file_put(file->f_path.dentry);
 +free_data:
  	kfree(data);
  	return ret;
