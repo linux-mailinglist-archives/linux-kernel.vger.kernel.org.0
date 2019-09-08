@@ -2,173 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D86CFACEC6
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 998DEACE7B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 15:00:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfIHNBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 09:01:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57242 "EHLO mail.kernel.org"
+        id S1730176AbfIHMpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:45:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729464AbfIHMn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:43:28 -0400
+        id S1730156AbfIHMpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:45:38 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DA042190F;
-        Sun,  8 Sep 2019 12:43:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24D91216C8;
+        Sun,  8 Sep 2019 12:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946607;
-        bh=PnhBP1vWNikRpYfJVvJEstJmOEjb/LN9D5E85rcI69w=;
-        h=From:To:Cc:Subject:Date:From;
-        b=uPeEueIlzSgUwhDsPYJx/I5G5cW8EbAztWFMFFxMdLPw6+ueB90NmkjMqeZE4fnoJ
-         JVlx5t/PEKIdt6OJWeBzOh8XglSZImd/upQhR/unV5nSJ2tE163bwxTzBfqTsi1rH5
-         y/Y9beqJiCjieSK3jMUjtoRF3Q+nY6UGrKDaGBpc=
+        s=default; t=1567946737;
+        bh=/1+YFRA8MRn5iJdk3k+ittjd4Ien8qJzrzDQDKkmjQg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZaWAG1vaEHqgTalMfBkcKdhSmicmLpQmHRefyLbpZLVKliLWtL41if9UiR4zuacIe
+         VFpDiV0WCCwwKv0w0+oX4EiJk7EUjiEvflGAFJku0sZe0NiyOa3DqMR5usZBkFQ3tG
+         xjB7NRHk2P7bV45tSQ1TbQuheP8qxItmaP9OanJE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 00/23] 4.4.192-stable review
-Date:   Sun,  8 Sep 2019 13:41:35 +0100
-Message-Id: <20190908121052.898169328@linuxfoundation.org>
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 04/40] Bluetooth: btqca: Add a short delay before downloading the NVM
+Date:   Sun,  8 Sep 2019 13:41:37 +0100
+Message-Id: <20190908121115.297090022@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
+In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
+References: <20190908121114.260662089@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.192-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.192-rc1
-X-KernelTest-Deadline: 2019-09-10T12:11+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.4.192 release.
-There are 23 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+[ Upstream commit 8059ba0bd0e4694e51c2ee6438a77b325f06c0d5 ]
 
-Responses should be made by Tue 10 Sep 2019 12:09:36 PM UTC.
-Anything received after that time might be too late.
+On WCN3990 downloading the NVM sometimes fails with a "TLV response
+size mismatch" error:
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.192-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
+[  174.949955] Bluetooth: btqca.c:qca_download_firmware() hci0: QCA Downloading qca/crnv21.bin
+[  174.958718] Bluetooth: btqca.c:qca_tlv_send_segment() hci0: QCA TLV response size mismatch
 
-thanks,
+It seems the controller needs a short time after downloading the
+firmware before it is ready for the NVM. A delay as short as 1 ms
+seems sufficient, make it 10 ms just in case. No event is received
+during the delay, hence we don't just silently drop an extra event.
 
-greg k-h
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/bluetooth/btqca.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
--------------
-Pseudo-Shortlog of commits:
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index 0bbdfcef2aa84..a48a61f22f823 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -363,6 +363,9 @@ int qca_uart_setup_rome(struct hci_dev *hdev, uint8_t baudrate)
+ 		return err;
+ 	}
+ 
++	/* Give the controller some time to get ready to receive the NVM */
++	msleep(10);
++
+ 	/* Download NVM configuration */
+ 	config.type = TLV_TYPE_NVM;
+ 	snprintf(config.fwname, sizeof(config.fwname), "qca/nvm_%08x.bin",
+-- 
+2.20.1
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.192-rc1
-
-Chen-Yu Tsai <wens@csie.org>
-    net: stmmac: dwmac-rk: Don't fail if phy regulator is absent
-
-Feng Sun <loyou85@gmail.com>
-    net: fix skb use after free in netpoll
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    Revert "x86/apic: Include the LDR when clearing out APIC registers"
-
-Martin Sperl <kernel@martin.sperl.org>
-    spi: bcm2835aux: fix corruptions for longer spi transfers
-
-Martin Sperl <kernel@martin.sperl.org>
-    spi: bcm2835aux: remove dangerous uncontrolled read of fifo
-
-Martin Sperl <kernel@martin.sperl.org>
-    spi: bcm2835aux: unifying code between polling and interrupt driven code
-
-Rob Herring <robh@kernel.org>
-    spi: bcm2835aux: ensure interrupts are enabled for shared handler
-
-Luis Henriques <lhenriques@suse.com>
-    libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
-
-Andrew Jones <drjones@redhat.com>
-    KVM: arm/arm64: Only skip MMIO insn once
-
-Luis Henriques <lhenriques@suse.com>
-    ceph: fix buffer free while holding i_ceph_lock in __ceph_setxattr()
-
-Wenwen Wang <wenwen@cs.uga.edu>
-    IB/mlx4: Fix memory leaks
-
-Vitaly Kuznetsov <vkuznets@redhat.com>
-    Tools: hv: kvp: eliminate 'may be used uninitialized' warning
-
-Tho Vu <tho.vu.wh@rvc.renesas.com>
-    ravb: Fix use-after-free ravb_tstamp_skb
-
-Wenwen Wang <wenwen@cs.uga.edu>
-    wimax/i2400m: fix a memory leak bug
-
-Wenwen Wang <wenwen@cs.uga.edu>
-    net: kalmia: fix memory leaks
-
-Wenwen Wang <wenwen@cs.uga.edu>
-    cx82310_eth: fix a memory leak bug
-
-Wenwen Wang <wenwen@cs.uga.edu>
-    net: myri10ge: fix memory leaks
-
-Wenwen Wang <wenwen@cs.uga.edu>
-    cxgb4: fix a memory leak bug
-
-YueHaibing <yuehaibing@huawei.com>
-    gpio: Fix build error of function redefinition
-
-Thomas Falcon <tlfalcon@linux.ibm.com>
-    ibmveth: Convert multicast list size for little-endian system
-
-Matthias Kaehlcke <mka@chromium.org>
-    Bluetooth: btqca: Add a short delay before downloading the NVM
-
-Nathan Chancellor <natechancellor@gmail.com>
-    net: tc35815: Explicitly check NET_IP_ALIGN is not zero in tc35815_rx
-
-Fuqian Huang <huangfq.daxian@gmail.com>
-    net: tundra: tsi108: use spin_lock_irqsave instead of spin_lock_irq in IRQ context
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  4 +-
- arch/arm/kvm/mmio.c                                |  7 +++
- arch/x86/kernel/apic/apic.c                        |  4 --
- drivers/bluetooth/btqca.c                          |  3 ++
- drivers/infiniband/hw/mlx4/mad.c                   |  4 +-
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c |  4 +-
- drivers/net/ethernet/ibm/ibmveth.c                 |  9 ++--
- drivers/net/ethernet/myricom/myri10ge/myri10ge.c   |  2 +-
- drivers/net/ethernet/renesas/ravb_main.c           |  8 ++-
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     |  6 +--
- drivers/net/ethernet/toshiba/tc35815.c             |  2 +-
- drivers/net/ethernet/tundra/tsi108_eth.c           |  5 +-
- drivers/net/usb/cx82310_eth.c                      |  3 +-
- drivers/net/usb/kalmia.c                           |  6 +--
- drivers/net/wimax/i2400m/fw.c                      |  4 +-
- drivers/spi/spi-bcm2835aux.c                       | 57 ++++++++--------------
- fs/ceph/xattr.c                                    |  8 ++-
- include/linux/ceph/buffer.h                        |  3 +-
- include/linux/gpio.h                               | 24 ---------
- net/core/netpoll.c                                 |  6 +--
- tools/hv/hv_kvp_daemon.c                           |  2 +-
- 21 files changed, 75 insertions(+), 96 deletions(-)
 
 
