@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2FE4ACDD9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9469ACD66
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733219AbfIHMwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:52:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45174 "EHLO mail.kernel.org"
+        id S1731282AbfIHMtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:49:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733170AbfIHMwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:52:43 -0400
+        id S1731252AbfIHMs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:48:59 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 085DB2190F;
-        Sun,  8 Sep 2019 12:52:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A4E3218AC;
+        Sun,  8 Sep 2019 12:48:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567947162;
-        bh=5f3tIEcfN6OHbaef9X5xk4AMcyhVxSEKQEVstQVO5Lc=;
+        s=default; t=1567946938;
+        bh=uldvdnQtccwzl2Fu+7GwSHUtMFCoTg+WbS+B7cuuhI8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nr0nkbaqUBXLK+0cnNa6GGo8yLCT6SdD6W+3BfA3pBCtnHe4z0HjT1CqKJDF8XMq2
-         B4iZNuVnnvCiiVomzrzaMDwUwQ47UjR9MTNzCpRzxI19viQIyAyMNcoEUBmns1kkUa
-         FPf3Rs7JevYoo+nJ//dwqUicfnmMUx8tum4fFhNE=
+        b=c1xpCyrf63llK37oXJOeUYB9ubLSZ/gUAHWaJGkXd1X/RBbXFKy3TvPDxAEF0QPOC
+         3VWqwBJuOwtpcUwQHr11bjFTBSWuqFa5XtKE3iyxFvAcsELPCdiF2fNBc2eV4AUWsS
+         HpLFFv1OQ0Au6vgFHXW6eJCUDnyZAfSm39zjHuOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bandan Das <bsd@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 84/94] afs: Fix leak in afs_lookup_cell_rcu()
-Date:   Sun,  8 Sep 2019 13:42:20 +0100
-Message-Id: <20190908121152.838191654@linuxfoundation.org>
+Subject: [PATCH 4.19 57/57] Revert "x86/apic: Include the LDR when clearing out APIC registers"
+Date:   Sun,  8 Sep 2019 13:42:21 +0100
+Message-Id: <20190908121146.679875798@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
-References: <20190908121150.420989666@linuxfoundation.org>
+In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
+References: <20190908121125.608195329@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,64 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a5fb8e6c02d6a518fb2b1a2b8c2471fa77b69436 ]
+[ Upstream commit 950b07c14e8c59444e2359f15fd70ed5112e11a0 ]
 
-Fix a leak on the cell refcount in afs_lookup_cell_rcu() due to
-non-clearance of the default error in the case a NULL cell name is passed
-and the workstation default cell is used.
+This reverts commit 558682b5291937a70748d36fd9ba757fb25b99ae.
 
-Also put a bit at the end to make sure we don't leak a cell ref if we're
-going to be returning an error.
+Chris Wilson reports that it breaks his CPU hotplug test scripts.  In
+particular, it breaks offlining and then re-onlining the boot CPU, which
+we treat specially (and the BIOS does too).
 
-This leak results in an assertion like the following when the kafs module is
-unloaded:
+The symptoms are that we can offline the CPU, but it then does not come
+back online again:
 
-	AFS: Assertion failed
-	2 == 1 is false
-	0x2 == 0x1 is false
-	------------[ cut here ]------------
-	kernel BUG at fs/afs/cell.c:770!
-	...
-	RIP: 0010:afs_manage_cells+0x220/0x42f [kafs]
-	...
-	 process_one_work+0x4c2/0x82c
-	 ? pool_mayday_timeout+0x1e1/0x1e1
-	 ? do_raw_spin_lock+0x134/0x175
-	 worker_thread+0x336/0x4a6
-	 ? rescuer_thread+0x4af/0x4af
-	 kthread+0x1de/0x1ee
-	 ? kthread_park+0xd4/0xd4
-	 ret_from_fork+0x24/0x30
+    smpboot: CPU 0 is now offline
+    smpboot: Booting Node 0 Processor 0 APIC 0x0
+    smpboot: do_boot_cpu failed(-1) to wakeup CPU#0
 
-Fixes: 989782dcdc91 ("afs: Overhaul cell database management")
-Signed-off-by: David Howells <dhowells@redhat.com>
+Thomas says he knows why it's broken (my personal suspicion: our magic
+handling of the "cpu0_logical_apicid" thing), but for 5.3 the right fix
+is to just revert it, since we've never touched the LDR bits before, and
+it's not worth the risk to do anything else at this stage.
+
+[ Hotpluging of the boot CPU is special anyway, and should be off by
+  default. See the "BOOTPARAM_HOTPLUG_CPU0" config option and the
+  cpu0_hotplug kernel parameter.
+
+  In general you should not do it, and it has various known limitations
+  (hibernate and suspend require the boot CPU, for example).
+
+  But it should work, even if the boot CPU is special and needs careful
+  treatment       - Linus ]
+
+Link: https://lore.kernel.org/lkml/156785100521.13300.14461504732265570003@skylake-alporthouse-com/
+Reported-by: Chris Wilson <chris@chris-wilson.co.uk>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bandan Das <bsd@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/cell.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kernel/apic/apic.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index a2a87117d2626..fd5133e26a38b 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -74,6 +74,7 @@ struct afs_cell *afs_lookup_cell_rcu(struct afs_net *net,
- 			cell = rcu_dereference_raw(net->ws_cell);
- 			if (cell) {
- 				afs_get_cell(cell);
-+				ret = 0;
- 				break;
- 			}
- 			ret = -EDESTADDRREQ;
-@@ -108,6 +109,9 @@ struct afs_cell *afs_lookup_cell_rcu(struct afs_net *net,
- 
- 	done_seqretry(&net->cells_lock, seq);
- 
-+	if (ret != 0 && cell)
-+		afs_put_cell(net, cell);
-+
- 	return ret == 0 ? cell : ERR_PTR(ret);
- }
- 
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 90be3a1506d3f..b316bd61a6ace 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1140,10 +1140,6 @@ void clear_local_APIC(void)
+ 	apic_write(APIC_LVT0, v | APIC_LVT_MASKED);
+ 	v = apic_read(APIC_LVT1);
+ 	apic_write(APIC_LVT1, v | APIC_LVT_MASKED);
+-	if (!x2apic_enabled()) {
+-		v = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
+-		apic_write(APIC_LDR, v);
+-	}
+ 	if (maxlvt >= 4) {
+ 		v = apic_read(APIC_LVTPC);
+ 		apic_write(APIC_LVTPC, v | APIC_LVT_MASKED);
 -- 
 2.20.1
 
