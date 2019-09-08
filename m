@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD4E2ACE69
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0741DACE3B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbfIHMrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:47:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35308 "EHLO mail.kernel.org"
+        id S2387899AbfIHMz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:55:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730599AbfIHMrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:47:12 -0400
+        id S1732385AbfIHMvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:51:01 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0398621A4C;
-        Sun,  8 Sep 2019 12:47:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D4E821479;
+        Sun,  8 Sep 2019 12:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567946831;
-        bh=GTyJzGWec36HbGl1F9Y+ExAf/bHMcu9a8jpB7Pvlt4Q=;
+        s=default; t=1567947061;
+        bh=8SZwjoZv3NR0lY6S8VHhs1KtMMtLt3oxXNII1RkK9KQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YSEGoMBC6HRBHyYo+5dyhE607NyTmMdQHfW//D0MRnmfX7fPkpmJwbTKrDI+0Yfb2
-         vgnuS6hfAW+GU9/wXZkzo2E2E/HdiTj3H73SkEUq9tf5e75rE70ROagab+2vGI1H3i
-         XikykijcoeAQ4Qc0CYbcV58t908tXtTQPdRHdoYI=
+        b=BdtimrFb9eJ2tWWGfsz2RaWR38SAcUUHaYvNAS++UQkkKnF+4UoYzu47GX4FJ9FwH
+         Q7O00ZBLVsLt0iOV3LrLC/uJb7SZGWaqJNvqgJCtD6AMZNjffhfAF1eC7Y7FHTGrrm
+         ENiydsotg7dt/yBh1pxEOuhz+KBdpsSWrw98DSj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Bill Kuzeja <william.kuzeja@stratus.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 17/57] net: tc35815: Explicitly check NET_IP_ALIGN is not zero in tc35815_rx
+Subject: [PATCH 5.2 45/94] scsi: qla2xxx: Fix gnl.l memory leak on adapter init failure
 Date:   Sun,  8 Sep 2019 13:41:41 +0100
-Message-Id: <20190908121132.413929253@linuxfoundation.org>
+Message-Id: <20190908121151.729595387@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
-References: <20190908121125.608195329@linuxfoundation.org>
+In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
+References: <20190908121150.420989666@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 125b7e0949d4e72b15c2b1a1590f8cece985a918 ]
+[ Upstream commit 26fa656e9a0cbccddf7db132ea020d2169dbe46e ]
 
-clang warns:
+If HBA initialization fails unexpectedly (exiting via probe_failed:), we
+may fail to free vha->gnl.l. So that we don't attempt to double free, set
+this pointer to NULL after a free and check for NULL at probe_failed: so we
+know whether or not to call dma_free_coherent.
 
-drivers/net/ethernet/toshiba/tc35815.c:1507:30: warning: use of logical
-'&&' with constant operand [-Wconstant-logical-operand]
-                        if (!HAVE_DMA_RXALIGN(lp) && NET_IP_ALIGN)
-                                                  ^  ~~~~~~~~~~~~
-drivers/net/ethernet/toshiba/tc35815.c:1507:30: note: use '&' for a
-bitwise operation
-                        if (!HAVE_DMA_RXALIGN(lp) && NET_IP_ALIGN)
-                                                  ^~
-                                                  &
-drivers/net/ethernet/toshiba/tc35815.c:1507:30: note: remove constant to
-silence this warning
-                        if (!HAVE_DMA_RXALIGN(lp) && NET_IP_ALIGN)
-                                                 ~^~~~~~~~~~~~~~~
-1 warning generated.
-
-Explicitly check that NET_IP_ALIGN is not zero, which matches how this
-is checked in other parts of the tree. Because NET_IP_ALIGN is a build
-time constant, this check will be constant folded away during
-optimization.
-
-Fixes: 82a9928db560 ("tc35815: Enable StripCRC feature")
-Link: https://github.com/ClangBuiltLinux/linux/issues/608
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Bill Kuzeja <william.kuzeja@stratus.com>
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/toshiba/tc35815.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_attr.c |  2 ++
+ drivers/scsi/qla2xxx/qla_os.c   | 11 ++++++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/toshiba/tc35815.c b/drivers/net/ethernet/toshiba/tc35815.c
-index cce9c9ed46aa9..9146068979d2c 100644
---- a/drivers/net/ethernet/toshiba/tc35815.c
-+++ b/drivers/net/ethernet/toshiba/tc35815.c
-@@ -1497,7 +1497,7 @@ tc35815_rx(struct net_device *dev, int limit)
- 			pci_unmap_single(lp->pci_dev,
- 					 lp->rx_skbs[cur_bd].skb_dma,
- 					 RX_BUF_SIZE, PCI_DMA_FROMDEVICE);
--			if (!HAVE_DMA_RXALIGN(lp) && NET_IP_ALIGN)
-+			if (!HAVE_DMA_RXALIGN(lp) && NET_IP_ALIGN != 0)
- 				memmove(skb->data, skb->data - NET_IP_ALIGN,
- 					pkt_len);
- 			data = skb_put(skb, pkt_len);
+diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
+index 8d560c562e9c0..6b7b390b2e522 100644
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -2956,6 +2956,8 @@ qla24xx_vport_delete(struct fc_vport *fc_vport)
+ 	dma_free_coherent(&ha->pdev->dev, vha->gnl.size, vha->gnl.l,
+ 	    vha->gnl.ldma);
+ 
++	vha->gnl.l = NULL;
++
+ 	vfree(vha->scan.l);
+ 
+ 	if (vha->qpair && vha->qpair->vp_idx == vha->vp_idx) {
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index d056f5e7cf930..794478e5f7ec8 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3440,6 +3440,12 @@ skip_dpc:
+ 	return 0;
+ 
+ probe_failed:
++	if (base_vha->gnl.l) {
++		dma_free_coherent(&ha->pdev->dev, base_vha->gnl.size,
++				base_vha->gnl.l, base_vha->gnl.ldma);
++		base_vha->gnl.l = NULL;
++	}
++
+ 	if (base_vha->timer_active)
+ 		qla2x00_stop_timer(base_vha);
+ 	base_vha->flags.online = 0;
+@@ -3673,7 +3679,7 @@ qla2x00_remove_one(struct pci_dev *pdev)
+ 	if (!atomic_read(&pdev->enable_cnt)) {
+ 		dma_free_coherent(&ha->pdev->dev, base_vha->gnl.size,
+ 		    base_vha->gnl.l, base_vha->gnl.ldma);
+-
++		base_vha->gnl.l = NULL;
+ 		scsi_host_put(base_vha->host);
+ 		kfree(ha);
+ 		pci_set_drvdata(pdev, NULL);
+@@ -3713,6 +3719,8 @@ qla2x00_remove_one(struct pci_dev *pdev)
+ 	dma_free_coherent(&ha->pdev->dev,
+ 		base_vha->gnl.size, base_vha->gnl.l, base_vha->gnl.ldma);
+ 
++	base_vha->gnl.l = NULL;
++
+ 	vfree(base_vha->scan.l);
+ 
+ 	if (IS_QLAFX00(ha))
+@@ -4817,6 +4825,7 @@ struct scsi_qla_host *qla2x00_create_host(struct scsi_host_template *sht,
+ 		    "Alloc failed for scan database.\n");
+ 		dma_free_coherent(&ha->pdev->dev, vha->gnl.size,
+ 		    vha->gnl.l, vha->gnl.ldma);
++		vha->gnl.l = NULL;
+ 		scsi_remove_host(vha->host);
+ 		return NULL;
+ 	}
 -- 
 2.20.1
 
