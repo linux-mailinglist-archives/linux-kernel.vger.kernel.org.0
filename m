@@ -2,80 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A55A3ACC02
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 12:19:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 859FEACC05
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 12:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbfIHKTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 06:19:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38888 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727945AbfIHKTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 06:19:49 -0400
-Received: from localhost (unknown [80.251.162.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D16207FC;
-        Sun,  8 Sep 2019 10:19:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567937988;
-        bh=6RGr8PQOWyIaRgGxUQE2vaEpQ+DEkWmYACF+abzXrlY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=z21jSOBc7GcRT7upD69/SoJVXAzLu+gFubq/+1gt0mGjPmIgDuwHqITBFp9FO6dxu
-         H6pe8exAT6zC28KhfuWK9yv3SFsdXSO4gJh+r4hwdBoVw7r8pNFIKRyFwonFg6pS3C
-         9w8d6Ck/ePoM9RR6R2qzt4bMWDmNoHNIwDBCoYjg=
-Date:   Sun, 8 Sep 2019 11:19:44 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Francois Rigault <rigault.francois@gmail.com>,
-        Jorgen Hansen <jhansen@vmware.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Vishnu Dasa <vdasa@vmware.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] VMCI: Release resource if the work is already queued
-Message-ID: <20190908101944.GA16596@kroah.com>
-References: <20190820202638.49003-1-namit@vmware.com>
- <20190907184711.GA30206@kroah.com>
- <00CA348F-5ACC-4A17-A5F6-9B36C92A95E7@vmware.com>
+        id S1728413AbfIHKU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 06:20:58 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:35635 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726186AbfIHKU5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 06:20:57 -0400
+X-Greylist: delayed 324 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Sep 2019 06:20:57 EDT
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.west.internal (Postfix) with ESMTP id 22B67486;
+        Sun,  8 Sep 2019 06:15:32 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Sun, 08 Sep 2019 06:15:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=tnq5F9
+        dmfBg3vZC/wKlqDrhdDjTehPEGdyvDq45CR5w=; b=kwQeDugJi32VUoPZ3rZYc2
+        TfN5CH5OcggguFQOq44Hxm3MNRG7imZqEwvDDbWDqbSchb8p142Cx2CAh0jl0u1e
+        eI16AubAU/PSJQpCcq6f2gN+ESAZQb5TCXZ6A+uPQd5opsK3vvca0ZfkmB6TI5Pf
+        3zzpi/Z938XY1blnakqvUF4rPJnmSns3pjYHH6nJjr+sPhk2JrKEQZBbnuec2ZUx
+        SxaaIL0YesEdl+oBlqhSLqfaGgdIcVazjptBO9sJOewZQOqbTx4HIU7cIbmGjXRe
+        fBEIuo1PAe+tsQ3f+MR/oWJNv5uW4/P13jyJqk1fOUFzIVf+COSp5Om5Z60fshJw
+        ==
+X-ME-Sender: <xms:wdR0XWgTv3sTCuEJcbypVDwhfFtXUTv1NfnYNP-Xfkm3ndkT8nhB3g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudekgedgvdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepkfguohcu
+    ufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecukfhppedule
+    efrdegjedrudeihedrvdehudenucfrrghrrghmpehmrghilhhfrhhomhepihguohhstghh
+    sehiughoshgthhdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:wdR0XRhbZhoKNgfEqdBDQTVDuSn_vJWRP79LFlCHaIQng8YEcEXnqg>
+    <xmx:wdR0XbD2sUM1tX8Poi3GjJzTqo2AuUKAJOQEk4pVbPLbVT3FlVy3gA>
+    <xmx:wdR0XR_wFNw4ajXo3qIzr2y5W-0T1lTj0zHJTZppxrkWk-JE9FrQCQ>
+    <xmx:w9R0XWvidP1mR0ticmuVxjwmazfUch98liAB6BYn1-w6mAXqcFqGy3UyJi4>
+Received: from localhost (unknown [193.47.165.251])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 14732D6005A;
+        Sun,  8 Sep 2019 06:15:28 -0400 (EDT)
+Date:   Sun, 8 Sep 2019 13:15:27 +0300
+From:   Ido Schimmel <idosch@idosch.org>
+To:     "Allan W. Nielsen" <allan.nielsen@microchip.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>, David Miller <davem@davemloft.net>,
+        andrew@lunn.ch, horatiu.vultur@microchip.com,
+        alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+        ivecera@redhat.com, f.fainelli@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] net: core: Notify on changes to dev->promiscuity.
+Message-ID: <20190908101527.GA20499@splinter>
+References: <20190829193613.GA23259@splinter>
+ <20190829.151201.940681219080864052.davem@davemloft.net>
+ <20190830053940.GL2312@nanopsycho>
+ <20190829.230233.287975311556641534.davem@davemloft.net>
+ <20190830063624.GN2312@nanopsycho>
+ <20190902174229.uur7r7duq4dvbnqq@lx-anielsen.microsemi.net>
+ <20190903061324.GA6149@splinter>
+ <20190903081410.zpcdm2dzqrxyg43c@lx-anielsen.microsemi.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00CA348F-5ACC-4A17-A5F6-9B36C92A95E7@vmware.com>
+In-Reply-To: <20190903081410.zpcdm2dzqrxyg43c@lx-anielsen.microsemi.net>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 08, 2019 at 04:04:39AM +0000, Nadav Amit wrote:
-> > On Sep 7, 2019, at 9:47 PM, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Tue, Sep 03, 2019 at 10:14:12AM +0200, Allan W. Nielsen wrote:
+> The 09/03/2019 09:13, Ido Schimmel wrote:
+> > On Mon, Sep 02, 2019 at 07:42:31PM +0200, Allan W. Nielsen wrote:
+> > With these patches applied I assume I will see the following traffic
+> > when running tcpdump on one of the netdevs exposed by the ocelot driver:
 > > 
-> > On Tue, Aug 20, 2019 at 01:26:38PM -0700, Nadav Amit wrote:
-> >> Francois reported that VMware balloon gets stuck after a balloon reset,
-> >> when the VMCI doorbell is removed. A similar error can occur when the
-> >> balloon driver is removed with the following splat:
+> > - Ingress: All
+> > - Egress: Only locally generated traffic and traffic forwarded by the
+> >   kernel from interfaces not belonging to the ocelot driver
 > > 
-> > <snip>
-> > 
-> > Note, google thinks your email is spam as you are not sending this from
-> > a valid vmware.com email server.  Please fix this up if you want to make
-> > sure your patches actually make it through...
+> > The above means I will not see any offloaded traffic transmitted by the
+> > port. Is that correct?
+> Correct - but maybe we should change this.
 > 
-> I used gmail servers since I get complaints (mainly from Linus) that our
-> email servers use DMARC, and this causes mailing list postings to be
-> rejected.
+> In Ocelot and in LANxxxx (the part we are working on now), we can come pretty
+> close. We can get the offloaded TX traffic to the CPU, but it will not be
+> re-written (it will look like the ingress frame, which is not always the same as
+> the egress frame, vlan tags an others may be re-written).
 
-Well the email servers might not reject it now, but gmail itself sure
-does as you are lying about what your domain is :(
+Yes, this is the same with mlxsw. You can trap the egress frames, but
+they will reach the CPU unmodified via the ingress port.
 
-> I will check again if our open source people got to a solution, or I
-> would just send it using my gmail identity, while keeping the vmware
-> authorship.
+> In some of our chips we can actually do this (not Ocelot, and not the LANxxxx
+> part we are working on now) after the frame as been re-written.
 
-Please do, this is not a viable workflow.
+Cool.
 
-thanks,
+> > I see that the driver is setting 'offload_fwd_mark' for any traffic trapped
+> > from bridged ports, which means the bridge will drop it before it traverses
+> > the packet taps on egress.
+> Correct.
+> 
+> > Large parts of the discussion revolve around the fact that switch ports
+> > are not any different than other ports. Dave wrote "Please stop
+> > portraying switches as special in this regard" and Andrew wrote "[The
+> > user] just wants tcpdump to work like on their desktop."
+> And we are trying to get as close to this as practical possible, knowing that it
+> may not be exactly the same.
+> 
+> > But if anything, this discussion proves that switch ports are special in
+> > this regard and that tcpdump will not work like on the desktop.
+> I think it can come really close. Some drivers may be able to fix the TX issue
+> you point out, others may not.
+> 
+> > Beside the fact that I don't agree (but gave up) with the new
+> > interpretation of promisc mode, I wonder if we're not asking for trouble
+> > with this patchset. Users will see all offloaded traffic on ingress, but
+> > none of it on egress. This is in contrast to the sever/desktop, where
+> > Linux is much more dominant in comparison to switches (let alone hw
+> > accelerated ones) and where all the traffic is visible through tcpdump.
+> > I can already see myself having to explain this over and over again to
+> > confused users.
+> > 
+> > Now, I understand that showing egress traffic is inherently difficult.
+> > It means one of two things:
+> > 
+> > 1. We allow packets to be forwarded by both the software and the
+> > hardware
+> > 2. We trap all ingressing traffic from all the ports
+> If the HW cannot copy the egress traffic to the CPU (which our HW cannot), then
+> you need to do both. All ingress traffic needs to go to the CPU, you need to
+> make all the forwarding decisions in the CPU, to figure out what traffic happens
+> to go to the port you want to monitor.
+> 
+> I really doubt this will work in real life. Too much traffic, and HW may make
+> different forwarding decision that the SW (tc rules in HW but not in SW), which
+> means that it will not be good for debugging anyway.
 
-greg k-h
+I agree.
+
+> 
+> > Both options can have devastating effects on the network and therefore
+> > should not be triggered by a supposedly innocent invocation of tcpdump.
+> Agree.
+> 
+> > I again wonder if it would not be wiser to solve this by introducing two
+> > new flags to tcpdump for ingress/egress (similar to -Q in/out) capturing
+> > of offloaded traffic. The capturing of egress offloaded traffic can be
+> > documented with the appropriate warnings.
+> Not sure I agree, but I will try to spend some more time considering it.
+> 
+> In the mean while, what TC action was it that Jiri suggestion we should use? The
+> trap action is no good, and it prevents the forwarding in silicon, and I'm not
+> aware of a "COPY-TO-CPU" action.
+
+I agree. We would either need a new or just extend the existing one with
+a new attribute.
+
+> > Anyway, I don't want to hold you up, I merely want to make sure that the
+> > above (assuming it's correct) is considered before the patches are
+> > applied.
+> Sounds good, and thanks for all the time spend on reviewing and asking the
+> critical questions.
+
+Thanks for bringing up these issues. I will be happy to review future
+patches.
