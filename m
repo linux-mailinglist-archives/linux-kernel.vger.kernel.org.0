@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90788ACE2E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3DDACE4D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Sep 2019 14:58:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387845AbfIHMyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 08:54:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44114 "EHLO mail.kernel.org"
+        id S1727588AbfIHM50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 08:57:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732891AbfIHMwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 08:52:06 -0400
+        id S1730985AbfIHMsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 08:48:22 -0400
 Received: from localhost (unknown [62.28.240.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FC4420693;
-        Sun,  8 Sep 2019 12:52:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7022B2190F;
+        Sun,  8 Sep 2019 12:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567947126;
-        bh=AhQPHzaq5nt+1yIqizAqPSmHJXm4UO0QbpW66fd8Kfk=;
+        s=default; t=1567946902;
+        bh=8svUIhnehzzECOzI2oNIKP/CjJxUGqIVc4hLamT4NC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m0/tXrMc/7tEmMFj9MEPDje0+kz3MpavLg8QVSzDObhpatARN/KBXlxK4BaDH6gtO
-         1gToAbJiF4qyDXgNDwsN8Ng1qg5vz71z72wtiFJI/RzAeA670CLXKh3ZxCQYY8FAwa
-         FE3t6B/W9HSyzv3UYFHbgMKcs1WrA+IEvcHjlxwQ=
+        b=k7KhGZ0ZrzoznRRSvlezVlNBUJ39nKwXScAEpXUqcf2MFvvEX2p6I44KMD1OY61CL
+         yYe0Gg1dIuDK8Sa2J/u/sAMqmyx1oJ4qkdC90J7EFuSnof3cOHq1IK45bBRpZDDS82
+         shYZ16x1rPVGtfOUqwmQ0MCPUinrDcnVNg9Klqao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Anton Eidelman <anton@lightbitslabs.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 71/94] nvme-multipath: fix possible I/O hang when paths are updated
-Date:   Sun,  8 Sep 2019 13:42:07 +0100
-Message-Id: <20190908121152.466141598@linuxfoundation.org>
+Subject: [PATCH 4.19 44/57] IB/mlx4: Fix memory leaks
+Date:   Sun,  8 Sep 2019 13:42:08 +0100
+Message-Id: <20190908121145.131812089@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190908121150.420989666@linuxfoundation.org>
-References: <20190908121150.420989666@linuxfoundation.org>
+In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
+References: <20190908121125.608195329@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 504db087aaccdb32af61539916409f7dca31ceb5 ]
+[ Upstream commit 5c1baaa82cea2c815a5180ded402a7cd455d1810 ]
 
-nvme_state_set_live() making a path available triggers requeue_work
-in order to resubmit requests that ended up on requeue_list when no
-paths were available.
+In mlx4_ib_alloc_pv_bufs(), 'tun_qp->tx_ring' is allocated through
+kcalloc(). However, it is not always deallocated in the following execution
+if an error occurs, leading to memory leaks. To fix this issue, free
+'tun_qp->tx_ring' whenever an error occurs.
 
-This requeue_work may race with concurrent nvme_ns_head_make_request()
-that do not observe the live path yet.
-Such concurrent requests may by made by either:
-- New IO submission.
-- Requeue_work triggered by nvme_failover_req() or another ana_work.
-
-A race may cause requeue_work capture the state of requeue_list before
-more requests get onto the list. These requests will stay on the list
-forever unless requeue_work is triggered again.
-
-In order to prevent such race, nvme_state_set_live() should
-synchronize_srcu(&head->srcu) before triggering the requeue_work and
-prevent nvme_ns_head_make_request referencing an old snapshot of the
-path list.
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Acked-by: Leon Romanovsky <leonro@mellanox.com>
+Link: https://lore.kernel.org/r/1566159781-4642-1-git-send-email-wenwen@cs.uga.edu
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/multipath.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/mlx4/mad.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 747c0d4f9ff5b..304aa8a65f2f8 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -420,6 +420,7 @@ static void nvme_mpath_set_live(struct nvme_ns *ns)
- 		srcu_read_unlock(&head->srcu, srcu_idx);
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index e5466d786bb1e..5aaa2a6c431b6 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1668,8 +1668,6 @@ tx_err:
+ 				    tx_buf_size, DMA_TO_DEVICE);
+ 		kfree(tun_qp->tx_ring[i].buf.addr);
  	}
- 
-+	synchronize_srcu(&ns->head->srcu);
- 	kblockd_schedule_work(&ns->head->requeue_work);
- }
- 
+-	kfree(tun_qp->tx_ring);
+-	tun_qp->tx_ring = NULL;
+ 	i = MLX4_NUM_TUNNEL_BUFS;
+ err:
+ 	while (i > 0) {
+@@ -1678,6 +1676,8 @@ err:
+ 				    rx_buf_size, DMA_FROM_DEVICE);
+ 		kfree(tun_qp->ring[i].addr);
+ 	}
++	kfree(tun_qp->tx_ring);
++	tun_qp->tx_ring = NULL;
+ 	kfree(tun_qp->ring);
+ 	tun_qp->ring = NULL;
+ 	return -ENOMEM;
 -- 
 2.20.1
 
