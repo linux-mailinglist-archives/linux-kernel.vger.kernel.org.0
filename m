@@ -2,123 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FE46AD35E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 09:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD4A5AD36A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 09:11:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731713AbfIIHDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 03:03:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:12428 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731607AbfIIHDo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 03:03:44 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8972DIX134820
-        for <linux-kernel@vger.kernel.org>; Mon, 9 Sep 2019 03:03:43 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uwhr18um0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 03:03:42 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mamatha4@linux.vnet.ibm.com>;
-        Mon, 9 Sep 2019 08:03:40 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 9 Sep 2019 08:03:37 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8973aFW50069718
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 9 Sep 2019 07:03:36 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AF73B4C058;
-        Mon,  9 Sep 2019 07:03:36 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24DA34C050;
-        Mon,  9 Sep 2019 07:03:34 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.109.219.151])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  9 Sep 2019 07:03:33 +0000 (GMT)
-Subject: [PATCH]perf vendor events:Remove P8 HW events which are not
- supported
-From:   Mamatha Inamdar <mamatha4@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     ravi.bangoria@linux.ibm.com, maddy@linux.vnet.ibm.com,
-        peterz@infradead.org, mpe@ellerman.id.au, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, mingo@redhat.com,
-        namhyung@kernel.org, jolsa@redhat.com
-Date:   Mon, 09 Sep 2019 12:33:33 +0530
-User-Agent: StGit/0.19
+        id S1731882AbfIIHLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 03:11:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60658 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731421AbfIIHLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 03:11:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E0E7AB655;
+        Mon,  9 Sep 2019 07:11:12 +0000 (UTC)
+Subject: Re: [PATCH 3/8] drm/vram: switch to gem vma offset manager
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
+References: <20190905070509.22407-1-kraxel@redhat.com>
+ <20190905070509.22407-4-kraxel@redhat.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
+ IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
+ AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
+ 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
+ hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
+ YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
+ 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
+ tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
+ R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
+ E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
+ kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
+ 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
+ 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
+ A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
+ NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
+ VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
+ iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
+ VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
+ iNx9uqqx
+Message-ID: <d040188e-5986-8114-1118-10081b2bbda2@suse.de>
+Date:   Mon, 9 Sep 2019 09:11:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19090907-4275-0000-0000-000003631700
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19090907-4276-0000-0000-000038756617
-Message-Id: <20190909065624.11956.3992.stgit@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909090077
+In-Reply-To: <20190905070509.22407-4-kraxel@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="evHEEYnCrnkrpKn1EexwPmjcNWrFjwEZ3"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to remove following hardware events
-from JSON file which are not supported on POWER8.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--evHEEYnCrnkrpKn1EexwPmjcNWrFjwEZ3
+Content-Type: multipart/mixed; boundary="fy5y8dzbOnWfhmhb7UDF0AN0AXYPbOmiN";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+ open list <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+ Sean Paul <sean@poorly.run>
+Message-ID: <d040188e-5986-8114-1118-10081b2bbda2@suse.de>
+Subject: Re: [PATCH 3/8] drm/vram: switch to gem vma offset manager
+References: <20190905070509.22407-1-kraxel@redhat.com>
+ <20190905070509.22407-4-kraxel@redhat.com>
+In-Reply-To: <20190905070509.22407-4-kraxel@redhat.com>
 
-pm_l3_p0_grp_pump
-pm_l3_p0_lco_data
-pm_l3_p0_lco_no_data
-pm_l3_p0_lco_rty
+--fy5y8dzbOnWfhmhb7UDF0AN0AXYPbOmiN
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: c3b4d5c4afb0 ("perf vendor events: Remove P8 HW events which are not supported")
-Note: Unfortunately power8 event list is not publicly available.
-Signed-off-by: Mamatha Inamdar <mamatha4@linux.vnet.ibm.com>
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- .../perf/pmu-events/arch/powerpc/power8/other.json |   24 --------------------
- 1 file changed, 24 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/powerpc/power8/other.json b/tools/perf/pmu-events/arch/powerpc/power8/other.json
-index 9dc2f6b7..b2a3df0 100644
---- a/tools/perf/pmu-events/arch/powerpc/power8/other.json
-+++ b/tools/perf/pmu-events/arch/powerpc/power8/other.json
-@@ -1776,30 +1776,6 @@
-     "PublicDescription": ""
-   },
-   {,
--    "EventCode": "0xa29084",
--    "EventName": "PM_L3_P0_GRP_PUMP",
--    "BriefDescription": "L3 pf sent with grp scope port 0",
--    "PublicDescription": ""
--  },
--  {,
--    "EventCode": "0x528084",
--    "EventName": "PM_L3_P0_LCO_DATA",
--    "BriefDescription": "lco sent with data port 0",
--    "PublicDescription": ""
--  },
--  {,
--    "EventCode": "0x518080",
--    "EventName": "PM_L3_P0_LCO_NO_DATA",
--    "BriefDescription": "dataless l3 lco sent port 0",
--    "PublicDescription": ""
--  },
--  {,
--    "EventCode": "0xa4908c",
--    "EventName": "PM_L3_P0_LCO_RTY",
--    "BriefDescription": "L3 LCO received retry port 0",
--    "PublicDescription": ""
--  },
--  {,
-     "EventCode": "0x84908d",
-     "EventName": "PM_L3_PF0_ALLOC",
-     "BriefDescription": "lifetime, sample of PF machine 0 valid",
 
+Am 05.09.19 um 09:05 schrieb Gerd Hoffmann:
+> Pass gem vma_offset_manager to ttm_bo_device_init(), so ttm uses it
+> instead of its own embedded struct.  This makes some gem functions
+> (specifically drm_gem_object_lookup) work on ttm objects.
+>=20
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/drm_vram_mm_helper.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_vram_mm_helper.c b/drivers/gpu/drm/drm=
+_vram_mm_helper.c
+> index 56fd1519eb35..3b2552bec4e6 100644
+> --- a/drivers/gpu/drm/drm_vram_mm_helper.c
+> +++ b/drivers/gpu/drm/drm_vram_mm_helper.c
+> @@ -172,7 +172,7 @@ int drm_vram_mm_init(struct drm_vram_mm *vmm, struc=
+t drm_device *dev,
+> =20
+>  	ret =3D ttm_bo_device_init(&vmm->bdev, &bo_driver,
+>  				 dev->anon_inode->i_mapping,
+> -				 NULL,
+> +				 dev->vma_offset_manager,
+>  				 true);
+>  	if (ret)
+>  		return ret;
+>=20
+
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG N=C3=BCrnberg)
+
+
+--fy5y8dzbOnWfhmhb7UDF0AN0AXYPbOmiN--
+
+--evHEEYnCrnkrpKn1EexwPmjcNWrFjwEZ3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl11+w8ACgkQaA3BHVML
+eiMMMwf9HCG98d5k5+woxDZUZSpVtQZxqilFr6vp11wxHNQdXMaHJ/WCCwAFZV+5
+K+HA3IAs5vU9Z/K6bg3orBVgZW6Ja9+w/Aetfm3mbJ09txdC4NJAB6ikHNpxEAhL
+qrNHBjRf4MnNdc7iw13KNx0ukL232/yyPyuLQv9CNrbfoFBV/kdweEpUipDHLuVm
+bzEX9dVKkha+Tl9MWlgCAZof8ZRyxNaQdTyjyTYlcEJrrxSIv9rj504evbBEfWCo
+6uwx3hmPxJ/WahsYrCUQtEJNhO3elKMBzKqIDL492oHbEAPT/tJuCTqgCGxF3niJ
+pJtLgO2slITULHYa6k16pznbBa94sQ==
+=klGI
+-----END PGP SIGNATURE-----
+
+--evHEEYnCrnkrpKn1EexwPmjcNWrFjwEZ3--
