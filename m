@@ -2,88 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DED1EAD2D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 07:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80B8BAD2DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 07:54:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfIIFm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 01:42:26 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36548 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbfIIFmZ (ORCPT
+        id S1727202AbfIIFxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 01:53:55 -0400
+Received: from gateway30.websitewelcome.com ([192.185.196.18]:49996 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727181AbfIIFxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 01:42:25 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y22so8445565pfr.3;
-        Sun, 08 Sep 2019 22:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=sNPKiG4f293O1xukhlprF97TRd4tQ/u8W2A8cgfAduc=;
-        b=mitSbrQlq45lqe66coysoEZ9CZFcjROBTC6aTnCdZyTxToUM5CA+2gLVnBxUkmGyqQ
-         GPx2LZlomyvyd846pVL3KcIXWqj6AeTuTTs5Ko32TVwVp9RYr1iJPUuDWDzs4guZI6xK
-         EAiQ5qXNix9ANr5YqmjWHV7z+KIC2gabJEMmPX454jOvB+jx14DXK4rudT5/U0O0B2cs
-         ZCZdv1g2n9Q+Rw05GaaYys7f/jTNDkOlfHL+HPMF9F4+2TLSuprpd2r8w24qv2XtdBcu
-         EDNlW+SFrP8Ykm7ILmHfcB4oiiJ/tqGUbmPfhcOCCFJ8rLv8Biov/OTGqtAhB+2TbHoD
-         BcRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=sNPKiG4f293O1xukhlprF97TRd4tQ/u8W2A8cgfAduc=;
-        b=mcsOXzgClALXSXi26aTEuBKLH0NnAUj6As8k6IEC/9XdKq/FKc2eWaDIPWrTSiZeCS
-         kTxdRlT3IX0p9AMetbYk6o5qFHkV8dfNSfraoy/FLTy9Hvc7FnKJKNQvcD/NXr7+mGkZ
-         HoY5O4wGQFR9/U9qaOpI7Jin8JGnArN63gjFwVB5qFnCp2PapHHwL0cCm6WQGgfxNJ4S
-         uny4oKTON/QDvfko54G+HzXFIN6go+HlXZGRrmNuzr398E6dQyo/bFIzR9vRktByS+iJ
-         uPzqmj7HMSxXHiYf+JWsAgIiUWD3bjEsaLBX4jXBOUWkkLFH0z0S01VuSLLDk+XaorZi
-         EMFg==
-X-Gm-Message-State: APjAAAWcD5iq8wl7iQbGyNPj0OeJUJm0zf3u02Y120dvVfJdF1A2z+nH
-        IIGUr0z7pa8ynRnRCnjqP0M=
-X-Google-Smtp-Source: APXvYqxoacRC+/vSFdUYCrCBb6ycMAA52BjDl92rD7oTqzhufwGKXKqEXJ0K/V3kYnY5i9wy7h1C6Q==
-X-Received: by 2002:a63:b20f:: with SMTP id x15mr20450987pge.453.1568007744641;
-        Sun, 08 Sep 2019 22:42:24 -0700 (PDT)
-Received: from LGEARND20B15 ([27.122.242.75])
-        by smtp.gmail.com with ESMTPSA id h66sm22763016pjb.0.2019.09.08.22.42.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 08 Sep 2019 22:42:24 -0700 (PDT)
-Date:   Mon, 9 Sep 2019 14:42:19 +0900
-From:   Austin Kim <austindh.kim@gmail.com>
-To:     aacraid@microsemi.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: [PATCH] scsi: dpt_i2o: drop unnecessary comparison statement
-Message-ID: <20190909054219.GA119246@LGEARND20B15>
+        Mon, 9 Sep 2019 01:53:54 -0400
+X-Greylist: delayed 1435 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Sep 2019 01:53:54 EDT
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 0ED342736
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2019 00:29:57 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 7CFRi3Kbd2PzO7CFRixu7a; Mon, 09 Sep 2019 00:29:57 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ZeDC3momsOT8YDmWDluDBvJqw1Yr3vZVteUjPazb11I=; b=Um5pUjFoBY6v0BZ8qlZ+WKF0wl
+        k8adoXfVN1zPhyJVO9MqjIguf2vcuZ4qPTS5wVQN/rAYPNPK78j/tJfddGNWlpy7xp8MExbuDJJO1
+        a5HiMfKRoJzyFKVYUtI5qX4WV3zwWgjH9lR2q/oBmcJcj+pXQtuSEfcuYogyVR2ZZQJlUmWXNAAhi
+        hQe15/xbDYVIbCqo18WTqvRmD1Fggv1ARP2eCPVKpeeNzDw0vXPeoC3PtjxeTjZtbOHNirxxMVPJO
+        K67OdD73jDqR3IqhPp7GM9RP6xRxzAeAnoRgEgPIhGty/6Zm2+ShrtzyGg2BWsinqe5sMx503/Ghi
+        GaBOWeDQ==;
+Received: from [148.69.85.38] (port=16527 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1i7CFP-001YEo-QC; Mon, 09 Sep 2019 00:29:55 -0500
+Date:   Mon, 9 Sep 2019 00:29:52 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] crypto: talitos - fix missing break in switch statement
+Message-ID: <20190909052952.GA32131@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 148.69.85.38
+X-Source-L: No
+X-Exim-ID: 1i7CFP-001YEo-QC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [148.69.85.38]:16527
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The type of 'chan' is u32 which contain non-negative value.
-So 'chan < 0' is statment is always false.
+Add missing break statement in order to prevent the code from falling
+through to case CRYPTO_ALG_TYPE_AHASH.
 
-Remove unnecessary comparison statement
-
-Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+Fixes: aeb4c132f33d ("crypto: talitos - Convert to new AEAD interface")
+Cc: stable@vger.kernel.org
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/scsi/dpt_i2o.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/talitos.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index abc74fd..df48ef5 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -1120,7 +1120,7 @@ static struct adpt_device* adpt_find_device(adpt_hba* pHba, u32 chan, u32 id, u6
- {
- 	struct adpt_device* d;
- 
--	if(chan < 0 || chan >= MAX_CHANNEL)
-+	if(chan >= MAX_CHANNEL)
- 		return NULL;
- 	
- 	d = pHba->channel[chan].device[id];
+diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
+index c9d686a0e805..4818ae427098 100644
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -3140,6 +3140,7 @@ static int talitos_remove(struct platform_device *ofdev)
+ 			break;
+ 		case CRYPTO_ALG_TYPE_AEAD:
+ 			crypto_unregister_aead(&t_alg->algt.alg.aead);
++			break;
+ 		case CRYPTO_ALG_TYPE_AHASH:
+ 			crypto_unregister_ahash(&t_alg->algt.alg.hash);
+ 			break;
 -- 
-2.6.2
+2.23.0
 
