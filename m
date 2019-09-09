@@ -2,89 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD0E5AE14C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 00:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD88AAE153
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 01:04:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbfIIW7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 18:59:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59476 "EHLO mail.kernel.org"
+        id S1729957AbfIIXED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 19:04:03 -0400
+Received: from ms3.ystp.ac.ir ([78.39.159.15]:42384 "EHLO ms3.ystp.ac.ir"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726474AbfIIW7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 18:59:32 -0400
-Received: from localhost (unknown [62.28.240.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E334E21479;
-        Mon,  9 Sep 2019 22:59:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568069971;
-        bh=wnGFbFCsHYNvoXpyoyWnpL1YlHr9TO1GLdw1SaXPCGQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mroRduAdLebUkfpP2PySv8Oug2YNSPLDoV0+hXxO+FmI31yayf0HCt4bVcRpqlm0f
-         b8Dgs+SMGaAgD/c5vYd0PQGR2h1J0Tn372p0LK4z/UXySK1WDe5xeuNWIXTst8yAXG
-         kLhYov+tgKolfGqK6TsTsJf7it9XlaexmeacTbWA=
-Date:   Mon, 9 Sep 2019 23:59:29 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Fabian Henneke <fabian.henneke@gmail.com>
-Cc:     Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 19/57] Bluetooth: hidp: Let hidp_send_message return
- number of queued bytes
-Message-ID: <20190909225929.GC26405@kroah.com>
-References: <20190908121125.608195329@linuxfoundation.org>
- <20190908121132.859238319@linuxfoundation.org>
- <20190909121555.GA18869@amd>
- <8e7731e0-f0ad-8cbb-799e-dd585e6b7ed6@gmail.com>
+        id S1729106AbfIIXEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 19:04:02 -0400
+X-Greylist: delayed 10208 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Sep 2019 19:04:02 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by ms3.ystp.ac.ir (Postfix) with ESMTP id 1B7DBA28782;
+        Tue, 10 Sep 2019 00:13:11 +0430 (+0430)
+Received: from ms3.ystp.ac.ir ([127.0.0.1])
+        by localhost (ms3.ystp.ac.ir [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id PHQnXab1LkFt; Tue, 10 Sep 2019 00:13:10 +0430 (+0430)
+Received: from localhost (localhost [127.0.0.1])
+        by ms3.ystp.ac.ir (Postfix) with ESMTP id 5CDF1A2879A;
+        Tue, 10 Sep 2019 00:13:10 +0430 (+0430)
+DKIM-Filter: OpenDKIM Filter v2.10.3 ms3.ystp.ac.ir 5CDF1A2879A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ystp.ac.ir;
+        s=52244776-9648-11E6-8E52-D9F3D0CA04A5; t=1568058190;
+        bh=wPuP1NSjZjUlSu/QMiHkBCTxaZoX8lhWinmOQDpvWHM=;
+        h=To:From:Message-ID:Date:MIME-Version;
+        b=HA3WbcRhMFbGmbV7En5mpYUHZwQ3NHCURGAOTB+uyMkXiJURtmfxyNpNbQDkdwRA+
+         6wekgy6ZBHDCccQGWwx07jMb67Vv1bNBiXA+AYAepQxo2yjxoEDnipcNkbhv8RuHf4
+         q/1d8KI7wSYJyfahwCxg87t+BR3Sh+VdHDf3CefM=
+X-Virus-Scanned: amavisd-new at ms3.ystp.ac.ir
+Received: from ms3.ystp.ac.ir ([127.0.0.1])
+        by localhost (ms3.ystp.ac.ir [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 5HlmT_yIZvdr; Tue, 10 Sep 2019 00:13:10 +0430 (+0430)
+Received: from mail.ystp.ac.ir (unknown [176.12.161.66])
+        by ms3.ystp.ac.ir (Postfix) with ESMTPSA id DA214A28785;
+        Tue, 10 Sep 2019 00:13:04 +0430 (+0430)
+To:     "sweet and hot" <sweet_and_hot@pantiesparadise.de>,
+        "utf 8 B WmRlbsSbayBQb2zDoWNo" <zdenek@kaora.cz>,
+        "linux kernel" <linux-kernel@vger.kernel.org>,
+        "jepar" <jepar@hush.com>, "tdr" <tdr@hush.ai>,
+        "chickabomb" <chickabomb@pantiesparadise.de>,
+        "casting" <casting@spermafreunde.de>,
+        "hobbyhure" <hobbyhure@melideluxe.tv>,
+        "berndweber68" <berndweber68@yahoo.de>
+From:   Bernd Weber <shookuhi@ystp.ac.ir>
+Subject: =?UTF-8?Q?Fw=3A=F0=9F=94=93Na._wie_geht_es_?= =?UTF-8?Q?dir=3F?=
+Message-ID: <65e6e689-259e-4a7b-b111-27174e7c0ab8@ystp.ac.ir>
+Date:   Mon, 9 Sep 2019 11:38:26 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e7731e0-f0ad-8cbb-799e-dd585e6b7ed6@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 03:00:46PM +0200, Fabian Henneke wrote:
-> Hi,
-> 
-> On Mon, Sep 9, 2019 at 2:15 PM Pavel Machek <pavel@denx.de> wrote:
-> 
-> > Hi!
-> >
-> > > [ Upstream commit 48d9cc9d85dde37c87abb7ac9bbec6598ba44b56 ]
-> > >
-> > > Let hidp_send_message return the number of successfully queued bytes
-> > > instead of an unconditional 0.
-> > >
-> > > With the return value fixed to 0, other drivers relying on hidp, such as
-> > > hidraw, can not return meaningful values from their respective
-> > > implementations of write(). In particular, with the current behavior, a
-> > > hidraw device's write() will have different return values depending on
-> > > whether the device is connected via USB or Bluetooth, which makes it
-> > > harder to abstract away the transport layer.
-> >
-> > So, does this change any actual behaviour?
-> >
-> > Is it fixing a bug, or is it just preparation for a patch that is not
-> > going to make it to stable?
-> >
-> 
-> I created this patch specifically in order to ensure that user space
-> applications can use HID devices with hidraw without needing to care about
-> whether the transport is USB or Bluetooth. Without the patch, every
-> hidraw-backed Bluetooth device needs to be treated specially as its write()
-> violates the usual return value contract, which could be viewed as a bug.
-> 
-> Please note that a later patch (
-> https://www.spinics.net/lists/linux-input/msg63291.html) fixes some
-> important error checks that were relying on the old behavior (and were
-> unfortunately missed by me).
+Das ist unvorstellbar! http://dvcvhksp.Sefton158.xyz/index
 
-As that patch doesn't seem to be in Linus's tree yet, we should postpone
-taking this one in the stable tree right now, correct?
 
-thanks,
-
-greg k-h
+___
+Wiederschauen
+Bernd Weber
