@@ -2,43 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB22AD66B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:08:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34800AD669
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729660AbfIIKIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:08:02 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56124 "EHLO
+        id S2390373AbfIIKH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:07:56 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56126 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390204AbfIIKH0 (ORCPT
+        with ESMTP id S1729654AbfIIKH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:07:26 -0400
+        Mon, 9 Sep 2019 06:07:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=7w2LNq0l01blkf8Ovxz57vph2tfWB91hAoQ/F6ph7eU=; b=TsNquHlerb4i
-        uZmGHimJ9xuqN1MjJBI5Byyj2RozKhiZnG0VQXsDJx5d9G5C8Uhdopl5YxBSAiEdOIckgXWFosGPI
-        w1rr2v4lYTlJ8RShwh8ZclKRTnlq1GomakQszRtgWUpiINMi4eUiyherUDNg12B9OUYZlt74goMBh
-        DpNpY=;
+        List-Archive; bh=zt/n4eTpMG9sUtHcd96OLuRnzRxpm+JT0DN15WfWCf4=; b=i7BuxHtRk6Sa
+        iRDp2uZEvLGrY0pa8cfnzwjY9VOGIuYSM6mxUla7k84MFaKCaBytxLhCwojfVdvng6476uUOKAycv
+        2aUfz5YNtiTgmOz3AOn1wRymCyc5nFXe5mAu5Z2AFMLH+URQsA0GtCuVXWgmpU0rHIUeE+ZyiwieS
+        urfRc=;
 Received: from [148.69.85.38] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1i7GZv-0001tn-AF; Mon, 09 Sep 2019 10:07:23 +0000
+        id 1i7GZv-0001tm-7Q; Mon, 09 Sep 2019 10:07:23 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id B5A28D02D1F; Mon,  9 Sep 2019 11:07:22 +0100 (BST)
+        id A00A9D02D18; Mon,  9 Sep 2019 11:07:22 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org,
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Milo Kim <milo.kim@ti.com>
-Subject: Applied "regulator: lp8788-ldo: make array en_mask static const, makes object smaller" to the regulator tree
-In-Reply-To: <20190906130632.6709-1-colin.king@canonical.com>
+        support.opensource@diasemi.com
+Subject: Applied "regulator: slg51000: use devm_gpiod_get_optional() in probe" to the regulator tree
+In-Reply-To: <20190904214200.GA66118@dtor-ws>
 X-Patchwork-Hint: ignore
-Message-Id: <20190909100722.B5A28D02D1F@fitzroy.sirena.org.uk>
+Message-Id: <20190909100722.A00A9D02D18@fitzroy.sirena.org.uk>
 Date:   Mon,  9 Sep 2019 11:07:22 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,7 +48,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: lp8788-ldo: make array en_mask static const, makes object smaller
+   regulator: slg51000: use devm_gpiod_get_optional() in probe
 
 has been applied to the regulator tree at
 
@@ -72,45 +73,64 @@ to this mail.
 Thanks,
 Mark
 
-From 6cbe29c92311ea6ef67a7eac2bc089357412973b Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 6 Sep 2019 14:06:32 +0100
-Subject: [PATCH] regulator: lp8788-ldo: make array en_mask static const, makes
- object smaller
+From c0b913447b75538c3cf4b8016fd2e06509895020 Mon Sep 17 00:00:00 2001
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Wed, 4 Sep 2019 14:42:00 -0700
+Subject: [PATCH] regulator: slg51000: use devm_gpiod_get_optional() in probe
 
-Don't populate the array en_mask on the stack but instead make it
-static const. Makes the object code smaller by 87 bytes.
+The CS GPIO line is clearly optional GPIO (and marked as such in the
+binding document) and we should handle it accordingly. The current code
+treats all errors as meaning that there is no GPIO defined, which is
+wrong, as it does not handle deferrals raised by the underlying code
+properly, nor does it recognize non-existing GPIO from any other
+initialization error.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  12967	   3408	      0	  16375	   3ff7	drivers/regulator/lp8788-ldo.o
+As far as I can see the only reason the driver, unlike all others,
+is using OF-specific devm_gpiod_get_from_of_node() so that it can
+assign a custom label to the selected GPIO line. Given that noone else
+needs that, it should not be doing that either.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  12816	   3472	      0	  16288	   3fa0	drivers/regulator/lp8788-ldo.o
+Let's switch to using more appropriate devm_gpiod_get_optional().
 
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190906130632.6709-1-colin.king@canonical.com
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Link: https://lore.kernel.org/r/20190904214200.GA66118@dtor-ws
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/lp8788-ldo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/slg51000-regulator.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
-index 1b00f3638996..00e9bb92c326 100644
---- a/drivers/regulator/lp8788-ldo.c
-+++ b/drivers/regulator/lp8788-ldo.c
-@@ -464,7 +464,7 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
+diff --git a/drivers/regulator/slg51000-regulator.c b/drivers/regulator/slg51000-regulator.c
+index 4d859fef55e6..a0565daecace 100644
+--- a/drivers/regulator/slg51000-regulator.c
++++ b/drivers/regulator/slg51000-regulator.c
+@@ -447,19 +447,20 @@ static int slg51000_i2c_probe(struct i2c_client *client,
  {
- 	struct lp8788 *lp = ldo->lp;
- 	enum lp8788_ext_ldo_en_id enable_id;
--	u8 en_mask[] = {
-+	static const u8 en_mask[] = {
- 		[EN_ALDO1]   = LP8788_EN_SEL_ALDO1_M,
- 		[EN_ALDO234] = LP8788_EN_SEL_ALDO234_M,
- 		[EN_ALDO5]   = LP8788_EN_SEL_ALDO5_M,
+ 	struct device *dev = &client->dev;
+ 	struct slg51000 *chip;
+-	struct gpio_desc *cs_gpiod = NULL;
++	struct gpio_desc *cs_gpiod;
+ 	int error, ret;
+ 
+ 	chip = devm_kzalloc(dev, sizeof(struct slg51000), GFP_KERNEL);
+ 	if (!chip)
+ 		return -ENOMEM;
+ 
+-	cs_gpiod = devm_gpiod_get_from_of_node(dev, dev->of_node,
+-					       "dlg,cs-gpios", 0,
+-					       GPIOD_OUT_HIGH
+-					       | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+-					       "slg51000-cs");
+-	if (!IS_ERR(cs_gpiod)) {
++	cs_gpiod = devm_gpiod_get_optional(dev, "dlg,cs",
++					   GPIOD_OUT_HIGH |
++						GPIOD_FLAGS_BIT_NONEXCLUSIVE);
++	if (IS_ERR(cs_gpiod))
++		return PTR_ERR(cs_gpiod);
++
++	if (cs_gpiod) {
+ 		dev_info(dev, "Found chip selector property\n");
+ 		chip->cs_gpiod = cs_gpiod;
+ 	}
 -- 
 2.20.1
 
