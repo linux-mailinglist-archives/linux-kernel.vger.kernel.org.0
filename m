@@ -2,83 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E42AD1FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 04:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82761AD20A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 04:50:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733109AbfIIChc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 22:37:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54660 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731928AbfIIChc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 22:37:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4B818AF25;
-        Mon,  9 Sep 2019 02:37:30 +0000 (UTC)
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, bp@suse.de,
-        lenb@kernel.org, rjw@rjwysocki.net
-Cc:     x86@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mgorman@techsingularity.net,
-        matt@codeblueprint.co.uk, viresh.kumar@linaro.org,
-        juri.lelli@redhat.com, pjt@google.com, vincent.guittot@linaro.org,
-        qperret@qperret.net, dietmar.eggemann@arm.com,
-        Giovanni Gherdovich <ggherdovich@suse.cz>
-Subject: [PATCH 2/2] cpufreq: intel_pstate: Conditional frequency invariant accounting
-Date:   Mon,  9 Sep 2019 04:42:16 +0200
-Message-Id: <20190909024216.5942-3-ggherdovich@suse.cz>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190909024216.5942-1-ggherdovich@suse.cz>
-References: <20190909024216.5942-1-ggherdovich@suse.cz>
+        id S1733184AbfIICtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 22:49:40 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:49243 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733062AbfIICtk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 22:49:40 -0400
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x892nRXu066490;
+        Mon, 9 Sep 2019 11:49:27 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
+ Mon, 09 Sep 2019 11:49:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
+Received: from [192.168.1.2] (238.8.232.153.ap.dti.ne.jp [153.232.8.238])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x892nRLX066484
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 9 Sep 2019 11:49:27 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Subject: Re: [PATCH] SoC: simple-card-utils: set 0Hz to sysclk when shutdown
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20190907174501.19833-1-katsuhiro@katsuster.net>
+ <87woei5mzj.wl-kuninori.morimoto.gx@renesas.com>
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Message-ID: <af9678aa-bd38-7cb5-5d25-b133a269f19f@katsuster.net>
+Date:   Mon, 9 Sep 2019 11:49:27 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <87woei5mzj.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+On 2019/09/09 9:31, Kuninori Morimoto wrote:
+> 
+> Hi Katsuhiro
+> 
+>> This patch set 0Hz to sysclk when shutdown the card.
+>>
+>> Some codecs set rate constraints that derives from sysclk. This
+>> mechanism works correctly if machine drivers give fixed frequency.
+>>
+>> But simple-audio and audio-graph card set variable clock rate if
+>> 'mclk-fs' property exists. In this case, rate constraints will go
+>> bad scenario. For example a codec accepts three limited rates
+>> (mclk / 256, mclk / 384, mclk / 512).
+>>
+>> Bad scenario as follows (mclk-fs = 256):
+>>     - Initialize sysclk by correct value (Ex. 12.288MHz)
+>>       - Codec set constraints of PCM rate by sysclk
+>>         48kHz (1/256), 32kHz (1/384), 24kHz (1/512)
+>>     - Play 48kHz sound, it's acceptable
+>>     - Sysclk is not changed
+>>
+>>     - Play 32kHz sound, it's acceptable
+>>     - Set sysclk to 8.192MHz (= fs * mclk-fs = 32k * 256)
+>>       - Codec set constraints of PCM rate by sysclk
+>>         32kHz (1/256), 21.33kHz (1/384), 16kHz (1/512)
+>>
+>>     - Play 48kHz again, but it's NOT acceptable because constraints
+>>       do not allow 48kHz
+>>
+>> So codecs treat 0Hz sysclk as signal of applying no constraints to
+>> avoid this problem.
+>>
+>> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+>> ---
+> 
+> I'm not 100% understand your issue.
+> .hw_params (= set mclk/sysclk) is not called in bad case ??
+> Or it is called but Codec driver ignores it somehow ??
+> 
 
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Ah, sorry for confusing. It's not either. hw_params() of machine
+driver has been called even if constraints don't have a requested
+PCM rate. But it's not expected.
 
-intel_pstate has two operating modes: active and passive. In "active"
-mode, the in-built scaling governor is used and in "passive" mode,
-the driver can be used with any governor like "schedutil". In "active"
-mode the utilization values from schedutil is not used and there is
-a requirement from high performance computing use cases, not to read
-any APERF/MPERF MSRs. In this case no need to use CPU cycles for
-frequency invariant accounting by reading APERF/MPERF MSRs.
-With this change frequency invariant account is only enabled in
-"passive" mode.
+For example, if constraints are 32k, 21.33k, 16k, hw_params() will
+be called with 32k when an user requests to play 48k sounds.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Giovanni Gherdovich <ggherdovich@suse.cz>
----
- drivers/cpufreq/intel_pstate.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index cc27d4c59dca..d55da8604d50 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -2381,6 +2381,8 @@ static int intel_pstate_register_driver(struct cpufreq_driver *driver)
- {
- 	int ret;
- 
-+	x86_arch_scale_freq_tick_disable();
-+
- 	memset(&global, 0, sizeof(global));
- 	global.max_perf_pct = 100;
- 
-@@ -2393,6 +2395,9 @@ static int intel_pstate_register_driver(struct cpufreq_driver *driver)
- 
- 	global.min_perf_pct = min_perf_pct_min();
- 
-+	if (driver == &intel_cpufreq)
-+		x86_arch_scale_freq_tick_enable();
-+
- 	return 0;
- }
- 
--- 
-2.16.4
+> Thank you for your help !!
+> Best regards
+> ---
+> Kuninori Morimoto
+> 
 
+Best Regards,
+Katsuhiro Suzuki
