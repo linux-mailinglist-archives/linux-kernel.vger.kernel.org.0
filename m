@@ -2,112 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D642AD844
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11B19AD853
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:54:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404468AbfIILuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 07:50:09 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42742 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730645AbfIILuI (ORCPT
+        id S2404501AbfIILyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 07:54:07 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39300 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404309AbfIILyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 07:50:08 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c10so12095216otd.9;
-        Mon, 09 Sep 2019 04:50:08 -0700 (PDT)
+        Mon, 9 Sep 2019 07:54:06 -0400
+Received: by mail-io1-f66.google.com with SMTP id d25so27927702iob.6;
+        Mon, 09 Sep 2019 04:54:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tYnsX9gd/pntTIlgQ4B4VyJYL3dGeU36BYiNg93weko=;
-        b=Lf7NSQawSCbhe/k3IJI1TCfhjpU0Y50olZ8SjBlQ9hCwUy6fpOWWBbCPNR+hH4nrVz
-         Hwxk/Tj2RIJhqJgPHUYalGiHKyto6UmbF7nSjZhaSuTalrDaESOrIi4flyE7pjp00Zmo
-         NxUnJaORjgsp6P6ixx7vEhCmzYyCXctFDkPqWKKK1hKrvq6fU4W/vAJqYnXiiucZV4JL
-         68bLHtzxBU1oEEaIt+GfrSrh4hsKV4uvo6OUrzebd/+9wWDCOi3nes1rCtyfokF0TQRJ
-         vYJdeTYOggNaey5ZVKYmMslDrVxRrzbfGO2rCm2tENMJZik9pQbW5QGQlrJmO+ZAMVvM
-         NcPA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q+FVrqN+TPgVuaJbEMEH4wOrjm4xLEXbmHAWOrXAKL4=;
+        b=VDd8X9zcdNLDRoJOUphP05A0tGYAcRtCichkpvkySC3B2yJlXLh6eB6Q5Yc4gCuqej
+         +kA5Rr4Ch0sn1C20GDNoq/Ek7yQTbRsdY6oJyCEoh7acVqLTGppu+Z6BYAKDDP7ECJFe
+         JjpTzBVM8Vo922kxFrZ8NZoCvZ7Cia0mz8utakq7eHe7hsh8gdWoDJuQHNLXfcBHt6Mc
+         1tQ8Ma8U+aBt9hpTILWqwmRgr9IBZsQiI3SXuh6SgTaUtQ9OrqdseupTzVS3T1FXkSiF
+         FXBj55oCIcLNhCZHBPI8Q1qqYcpYmfmDpbM5GuvDoYEF4NeCXSQ43bJMtc08O9FlXe10
+         MRKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tYnsX9gd/pntTIlgQ4B4VyJYL3dGeU36BYiNg93weko=;
-        b=SSpgEuksJQdree50M+ubWC9aBWesfrsr9McCZcAtQopvAyvK9eQgwXutD99D0nOGv1
-         WGvRnBXRt13WAS2Rd5H7NHPeTL0Q2WG7pOsHx7ddvGjztG76pds3IOJU0523qVGaNIhb
-         JnsGjwueSbkzqaEg6mQ6PmdfVqZmACYKGyj59NxYx/eFbo/7wJIV/MnjWywNMcSkluYz
-         n0FjYX3Kph9uZ1VGQibpIuyHZwouYbNvs1xb7W+4yBCqQMScM91R46CGQxfBud4D98pY
-         FzufGV/dyJ/9QbxubJQdZsCpjc++Rx49Dwd/lNPpyQ/5FWYxzuzdCiIyFDSUi4YvFgGc
-         O9xw==
-X-Gm-Message-State: APjAAAUAalRZ0xW4/AGyoo+biHls6XrHHXCEh6KjkMjHBbDIdjNmY+S6
-        EH89LBXw4QeOkLBHPUy6bvA=
-X-Google-Smtp-Source: APXvYqz81/sZ3Pkc0lWDmNidgRCXz5Zv7nL6cj+W80+6srRNn+yisnyhjFJfvIBGQa2+i/z6zOhiWw==
-X-Received: by 2002:a9d:3f4b:: with SMTP id m69mr19038806otc.301.1568029807760;
-        Mon, 09 Sep 2019 04:50:07 -0700 (PDT)
-Received: from sreeram-MS-7B98 (cpe-173-174-83-82.austin.res.rr.com. [173.174.83.82])
-        by smtp.gmail.com with ESMTPSA id o4sm5379170otp.43.2019.09.09.04.50.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 04:50:07 -0700 (PDT)
-Date:   Mon, 9 Sep 2019 06:50:06 -0500
-From:   Sreeram Veluthakkal <srrmvlt@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org,
-        nishadkamdar@gmail.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, payal.s.kshirsagar.98@gmail.com
-Subject: Re: [PATCH] FBTFT: fb_agm1264k: usleep_range is preferred over udelay
-Message-ID: <20190909115006.GB3437@sreeram-MS-7B98>
-References: <20190909012605.15051-1-srrmvlt@gmail.com>
- <20190909095625.GB17624@kroah.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q+FVrqN+TPgVuaJbEMEH4wOrjm4xLEXbmHAWOrXAKL4=;
+        b=k2GQwVSpQTkvJiZ1gsg4PkNlH4LgpUvxu6Grl6x4S7W929fGi3BN1H6ZPCTno9z1vi
+         mWzOU3PoxF+0h79fytvJfRtAhvHDCivOmzFdERf4C0VgQ8UrzQwfpmbTDo6ogkw55E4Z
+         LVg1GtPfpOlP9nPtDySnh2JMNZzNzkO35++arKvywpRUF6cpQF+HVgipH6d8u59e4371
+         biNzSnML6tv3y7zJhEftj50sMjcs04a1RjoA4qzU6YziI0Z4TToVHcJ2Vh3bLEd/Bwwv
+         x3pYdEMBAtyo1pVRUslFS/NQT/F9w+cwwucZptTQ/PGepoUSAEvwwVw4N7lcSOTOB0w1
+         6tcQ==
+X-Gm-Message-State: APjAAAUOABqrjBVW55Ap+8buaWT1aOlxEmEj09e6lJE0ivMptzTBwN6O
+        GSEsMCHXypD29wkwKCi6W1+ZecDqwmivejObGUQ=
+X-Google-Smtp-Source: APXvYqyEx6LU/OST6+fUfCh4+zHDIfeEbtFGTFgt/Tb6wja+aAz6+MPQhsJFSIA+xIrZc/v9eoeTiTaJB7tXTaeJ2VI=
+X-Received: by 2002:a02:3b6f:: with SMTP id i47mr546015jaf.24.1568030046006;
+ Mon, 09 Sep 2019 04:54:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190909095625.GB17624@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Mon, 9 Sep 2019 19:44:04 +0800
+Message-ID: <CAA+hA=QeVphhsmuuM6XQhku7XVi+858nRrJ3jCneP+bRWBbNAw@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 10:56:25AM +0100, Greg KH wrote:
-> On Sun, Sep 08, 2019 at 08:26:05PM -0500, Sreeram Veluthakkal wrote:
-> > This patch fixes the issue:
-> > FILE: drivers/staging/fbtft/fb_agm1264k-fl.c:88:
-> > CHECK: usleep_range is preferred over udelay; see Documentation/timers/timers-howto.rst
-> > +       udelay(20);
-> > 
-> > Signed-off-by: Sreeram Veluthakkal <srrmvlt@gmail.com>
-> > ---
-> >  drivers/staging/fbtft/fb_agm1264k-fl.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/staging/fbtft/fb_agm1264k-fl.c b/drivers/staging/fbtft/fb_agm1264k-fl.c
-> > index eeeeec97ad27..2dece71fd3b5 100644
-> > --- a/drivers/staging/fbtft/fb_agm1264k-fl.c
-> > +++ b/drivers/staging/fbtft/fb_agm1264k-fl.c
-> > @@ -85,7 +85,7 @@ static void reset(struct fbtft_par *par)
-> >  	dev_dbg(par->info->device, "%s()\n", __func__);
-> >  
-> >  	gpiod_set_value(par->gpio.reset, 0);
-> > -	udelay(20);
-> > +	usleep_range(20, 40);
-> 
-> Is it "safe" to wait 40?  This kind of change you can only do if you
-> know this is correct.  Have you tested this with hardware?
-> 
-> thanks,
-> 
-> greg k-h
+On Tue, Aug 27, 2019 at 4:19 PM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> There is hardware issue that:
+> The output clock the LPCG cell will not turn back on as expected,
+> even though a read of the IPG registers in the LPCG indicates that
+> the clock should be enabled.
+>
+> The software workaround is to write twice to enable the LPCG clock
+> output.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Hi Greg, No I haven't tested it, I don't have the hw. I dug depeer in to the usleep_range
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-https://github.com/torvalds/linux/blob/master/kernel/time/timer.c#L1993
-	u64 delta = (u64)(max - min) * NSEC_PER_USEC;
-
- * The @delta argument gives the kernel the freedom to schedule the
- * actual wakeup to a time that is both power and performance friendly.
- * The kernel give the normal best effort behavior for "@expires+@delta",
- * but may decide to fire the timer earlier, but no earlier than @expires.
-
-My understanding is that keeping delta 0 (min=max=20) would be equivalent. 
-I can revise the patch to usleep_range(20, 20) or usleep_range(20, 21) for a 1 usec delta.
-What do you suggest?
-
-thanks,
-Sreeram
+Regards
+Aisheng
