@@ -2,103 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 668CBAD4FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 274D2AD502
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:40:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389412AbfIIIkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 04:40:11 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:51001 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbfIIIkK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 04:40:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1568018410; x=1599554410;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=8HdAfP560DuFfXUXyq4ESO9XpMATN8BUOpZizShWOqI=;
-  b=jN1PE35h6X9aXFVMBsThpubzW6bEMBlbervCeWWKyyiFd6hcycThV7Fl
-   QBzQj8vLDr7I0/8es+H6K7CbEGcKWcGkrhQimYHepXLOjUlFVBlzE8UvI
-   AgobnpcmXS3punp9ok/4HA96gO1DiRClW0lKjHZqdRCz5vjV8HWyZuL2D
-   0=;
-X-IronPort-AV: E=Sophos;i="5.64,484,1559520000"; 
-   d="scan'208";a="829155200"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1d-9ec21598.us-east-1.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 09 Sep 2019 08:39:44 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-9ec21598.us-east-1.amazon.com (Postfix) with ESMTPS id 8B3BBA1C35;
-        Mon,  9 Sep 2019 08:39:43 +0000 (UTC)
-Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 9 Sep 2019 08:39:42 +0000
-Received: from udc4a3e82dbc15a031435.hfa15.amazon.com (10.43.160.149) by
- EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 9 Sep 2019 08:39:36 +0000
-From:   Talel Shenhar <talel@amazon.com>
-To:     <tglx@linutronix.de>, <jason@lakedaemon.net>, <maz@kernel.org>,
-        <talel@amazon.com>, <linux-kernel@vger.kernel.org>
-CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
-        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
-        <hanochu@amazon.com>, <barakw@amazon.com>
-Subject: [PATCH 1/1] irqchip: al-fic: add support for irq retrigger
-Date:   Mon, 9 Sep 2019 11:39:18 +0300
-Message-ID: <1568018358-18985-1-git-send-email-talel@amazon.com>
-X-Mailer: git-send-email 2.7.4
+        id S2389466AbfIIIkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 04:40:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48794 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389418AbfIIIkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 04:40:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8827BAFCC;
+        Mon,  9 Sep 2019 08:40:30 +0000 (UTC)
+Date:   Mon, 9 Sep 2019 10:40:29 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     sunqiuyang <sunqiuyang@huawei.com>,
+        Minchan Kim <minchan@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/1] mm/migrate: fix list corruption in migration of
+ non-LRU movable pages
+Message-ID: <20190909084029.GE27159@dhcp22.suse.cz>
+References: <20190903082746.20736-1-sunqiuyang@huawei.com>
+ <20190903131737.GB18939@dhcp22.suse.cz>
+ <157FC541501A9C4C862B2F16FFE316DC190C1B09@dggeml512-mbx.china.huawei.com>
+ <20190904063836.GD3838@dhcp22.suse.cz>
+ <157FC541501A9C4C862B2F16FFE316DC190C2EBD@dggeml512-mbx.china.huawei.com>
+ <20190904081408.GF3838@dhcp22.suse.cz>
+ <157FC541501A9C4C862B2F16FFE316DC190C3402@dggeml512-mbx.china.huawei.com>
+ <20190904125226.GV3838@dhcp22.suse.cz>
+ <157FC541501A9C4C862B2F16FFE316DC190C5990@dggeml512-mbx.china.huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.160.149]
-X-ClientProxiedBy: EX13D17UWC002.ant.amazon.com (10.43.162.61) To
- EX13D01EUB001.ant.amazon.com (10.43.166.194)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157FC541501A9C4C862B2F16FFE316DC190C5990@dggeml512-mbx.china.huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce interrupts retrigger support for Amazon's Annapurna Labs Fabric
-Interrupt Controller.
+On Thu 05-09-19 01:44:12, sunqiuyang wrote:
+> > 
+> > ________________________________________
+> > From: Michal Hocko [mhocko@kernel.org]
+> > Sent: Wednesday, September 04, 2019 20:52
+> > To: sunqiuyang
+> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org
+> > Subject: Re: [PATCH 1/1] mm/migrate: fix list corruption in migration of non-LRU movable pages
+> > 
+> > On Wed 04-09-19 12:19:11, sunqiuyang wrote:
+> > > > Do not top post please
+> > > >
+> > > > On Wed 04-09-19 07:27:25, sunqiuyang wrote:
+> > > > > isolate_migratepages_block() from another thread may try to isolate the page again:
+> > > > >
+> > > > > for (; low_pfn < end_pfn; low_pfn++) {
+> > > > >   /* ... */
+> > > > >   page = pfn_to_page(low_pfn);
+> > > > >  /* ... */
+> > > > >   if (!PageLRU(page)) {
+> > > > >     if (unlikely(__PageMovable(page)) && !PageIsolated(page)) {
+> > > > >         /* ... */
+> > > > >         if (!isolate_movable_page(page, isolate_mode))
+> > > > >           goto isolate_success;
+> > > > >       /*... */
+> > > > > isolate_success:
+> > > > >      list_add(&page->lru, &cc->migratepages);
+> > > > >
+> > > > > And this page will be added to another list.
+> > > > > Or, do you see any reason that the page cannot go through this path?
+> > > >
+> > > > The page shouldn't be __PageMovable after the migration is done. All the
+> > > > state should have been transfered to the new page IIUC.
+> > > >
+> > >
+> > > I don't see where page->mapping is modified after the migration is done.
+> > >
+> > > Actually, the last comment in move_to_new_page() says,
+> > > "Anonymous and movable page->mapping will be cleard by
+> > > free_pages_prepare so don't reset it here for keeping
+> > > the type to work PageAnon, for example. "
+> > >
+> > > Or did I miss something? Thanks,
+> > 
+> > This talks about mapping rather than flags stored in the mapping.
+> > I can see that in tree migration handlers (z3fold_page_migrate,
+> > vmballoon_migratepage via balloon_page_delete, zs_page_migrate via
+> > reset_page) all reset the movable flag. I am not sure whether that is a
+> > documented requirement or just a coincidence. Maybe it should be
+> > documented. I would like to hear from Minchan.
+> 
+> I checked the three migration handlers and only found __ClearPageMovable,
+> which clears registered address_space val with keeping PAGE_MAPPING_MOVABLE flag,
+> so the page should still be __PageMovable when caught by another migration thread. Right?
 
-Signed-off-by: Talel Shenhar <talel@amazon.com>
----
- drivers/irqchip/irq-al-fic.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/irqchip/irq-al-fic.c b/drivers/irqchip/irq-al-fic.c
-index 1a57cee..0b0a737 100644
---- a/drivers/irqchip/irq-al-fic.c
-+++ b/drivers/irqchip/irq-al-fic.c
-@@ -15,6 +15,7 @@
- 
- /* FIC Registers */
- #define AL_FIC_CAUSE		0x00
-+#define AL_FIC_SET_CAUSE	0x08
- #define AL_FIC_MASK		0x10
- #define AL_FIC_CONTROL		0x28
- 
-@@ -126,6 +127,16 @@ static void al_fic_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(irqchip, desc);
- }
- 
-+static int al_fic_irq_retrigger(struct irq_data *data)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
-+	struct al_fic *fic = gc->private;
-+
-+	writel_relaxed(BIT(data->hwirq), fic->base + AL_FIC_SET_CAUSE);
-+
-+	return 1;
-+}
-+
- static int al_fic_register(struct device_node *node,
- 			   struct al_fic *fic)
- {
-@@ -159,6 +170,7 @@ static int al_fic_register(struct device_node *node,
- 	gc->chip_types->chip.irq_unmask = irq_gc_mask_clr_bit;
- 	gc->chip_types->chip.irq_ack = irq_gc_ack_clr_bit;
- 	gc->chip_types->chip.irq_set_type = al_fic_irq_set_type;
-+	gc->chip_types->chip.irq_retrigger = al_fic_irq_retrigger;
- 	gc->chip_types->chip.flags = IRQCHIP_SKIP_SET_WAKE;
- 	gc->private = fic;
- 
+Minchan, could you have a look at this please? I find __PageMovable
+semantic really awkward and I do not want to make misleading statements
+here.
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
