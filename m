@@ -2,100 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E59A3AD67B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:12:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05ABAAD681
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:14:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729844AbfIIKMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:12:21 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:42633 "EHLO ozlabs.org"
+        id S1729911AbfIIKOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:14:21 -0400
+Received: from namei.org ([65.99.196.166]:43402 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728117AbfIIKMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:12:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46RkVN3cwBz9sNT;
-        Mon,  9 Sep 2019 20:12:12 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1568023938;
-        bh=WtZHNMKTkVbJZEkFoiX0iM3pmN7GlX1AZgEOXkQakSg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Wsyn3E/2zaHCW4VqxqI5PS+I/rnEAQQ5mbiObekuOF7KTH3V19YqcE9FlHOBbZP1v
-         uwq8/fSubckISd2IBOi+fIPEeIlwEN52ulKt2TKMqtAErLXMStfx4Aj4pzNnx/0q3v
-         mxJzHFvjhf3fI5+7JcA69D0p+jmetgPyqMMz8cCqzhsFZxSiZzW5yVuGY2MPhKoijf
-         H8jowi5wc09wIhSfkFMgqUw5Aio4zoEFpAqh0fxJgVddxJ5aJKqbsfLJPQKGdt4o+e
-         W28JDvL6PgoEVkhELNM+wKDDGh7tJg/y3RwF/xHk7Fw0pBJE/SwrorGkZRfC94o20g
-         UyUIA8xDfrrIw==
-Date:   Mon, 9 Sep 2019 20:11:59 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alexander Kapshuk <alexander.kapshuk@gmail.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        sean@poorly.run, airlied@linux.ie
-Subject: Re: Kernel panic during drm/nouveau init 5.3.0-rc7-next-20190903
-Message-ID: <20190909201159.778590a0@canb.auug.org.au>
-In-Reply-To: <20190908141307.GA7115@pc-sasha.localdomain>
-References: <20190907090534.GB1712@pc-sasha.localdomain>
-        <CAKMK7uHYdXwruQxxBM12Q5MVeH9fjFpZvxZz06BSo7YrCQbM2w@mail.gmail.com>
-        <20190908141307.GA7115@pc-sasha.localdomain>
+        id S1728358AbfIIKOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 06:14:20 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x89ACcnh028363;
+        Mon, 9 Sep 2019 10:12:39 GMT
+Date:   Mon, 9 Sep 2019 03:12:38 -0700 (PDT)
+From:   James Morris <jmorris@namei.org>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>
+cc:     Jeff Layton <jlayton@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Eric Chiang <ericchiang@google.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] fs: Add support for an O_MAYEXEC flag on
+ sys_open()
+In-Reply-To: <49e98ece-e85f-3006-159b-2e04ba67019e@ssi.gouv.fr>
+Message-ID: <alpine.LRH.2.21.1909090309260.27895@namei.org>
+References: <20190906152455.22757-1-mic@digikod.net> <20190906152455.22757-2-mic@digikod.net> <87ef0te7v3.fsf@oldenburg2.str.redhat.com> <75442f3b-a3d8-12db-579a-2c5983426b4d@ssi.gouv.fr> <f53ec45fd253e96d1c8d0ea6f9cca7f68afa51e3.camel@kernel.org>
+ <1fbf54f6-7597-3633-a76c-11c4b2481add@ssi.gouv.fr> <5a59b309f9d0603d8481a483e16b5d12ecb77540.camel@kernel.org> <alpine.LRH.2.21.1909061202070.18660@namei.org> <49e98ece-e85f-3006-159b-2e04ba67019e@ssi.gouv.fr>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/x+8al_Rd8L9FcNKBXNLv=W/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/mixed; boundary="1665246916-912656596-1568023960=:27895"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/x+8al_Rd8L9FcNKBXNLv=W/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hi Alexander,
+--1665246916-912656596-1568023960=:27895
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-On Sun, 8 Sep 2019 17:13:07 +0300 Alexander Kapshuk <alexander.kapshuk@gmai=
-l.com> wrote:
->
-> This is my first bisect. Here's what I've tried so far and based on the
-> output I got, I seem to be taken in the opposit direction.
->=20
-> git bisect start
-> git bisect bad				# 7dc4585e0378:next-20190903
-> git bisect good next-20190730	#70f4b4ac1655
+On Mon, 9 Sep 2019, Mickaël Salaün wrote:
 
-If you are bisecting linux-next, I will suggest bisecting between the stabl=
-e branch on linux-next (which is just Linus' tree when I started that day) =
-and the top of the first linux-next that fails.  (Assuming that the stable =
-branch is good).
+> 
+> On 06/09/2019 21:03, James Morris wrote:
+> > On Fri, 6 Sep 2019, Jeff Layton wrote:
+> >
+> >> The fact that open and openat didn't vet unknown flags is really a bug.
+> >>
+> >> Too late to fix it now, of course, and as Aleksa points out, we've
+> >> worked around that in the past. Now though, we have a new openat2
+> >> syscall on the horizon. There's little need to continue these sorts of
+> >> hacks.
+> >>
+> >> New open flags really have no place in the old syscalls, IMO.
+> >
+> > Agree here. It's unfortunate but a reality and Linus will reject any such
+> > changes which break existing userspace.
+> 
+> Do you mean that adding new flags to open(2) is not possible?
+> 
+> Does it means that unspecified behaviors are definitely part of the
+> Linux specification and can't be fixed?
 
-so
+This is my understanding.
 
-git bisect start
-git bisect good stable
-git bisect bad next-20190903
+> 
+> As I said, O_MAYEXEC should be ignored if it is not supported by the
+> kernel, which perfectly fit with the current open(2) flags behavior, and
+> should also behave the same with openat2(2).
 
-and go from there.  It will (unfortunately) be quite a few commits to test
-:-(
+The problem here is programs which are already using the value of 
+O_MAYEXEC, which will break.  Hence, openat2(2).
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/x+8al_Rd8L9FcNKBXNLv=W/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-- 
+James Morris
+<jmorris@namei.org>
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl12JW8ACgkQAVBC80lX
-0Gxqigf+I6xbGgy1s4thi/M2FwgBiKiGnIOia6WQIG+D0OhL0OKh1/YfMema9pzH
-zC2rO39vF53JVihv1MQRe1HfTEj7nMrZjm6BPziPwtFbKjw5f67qkXOr7YhUTx5c
-msTgV9Y0yzD+LHDYBm+CI0Vd29CQmXmFa6UlAaTDFY83yOXAYLUJgvDyPeyWzb3K
-6zWUbV9+VIAY2ygo/YMH+6fFhEMqUm2g4AbzLjatQmhNq9gpUzDRgPnAXqsUPWXY
-i7IDti6k+CbGWwj4w+CtUYwNEm8fA3RzXWgKnF2BxbdpnAURulM0N7dCokblBE9X
-Wy44jyqIFkp/d4fCxxQRX2+dtnxwSA==
-=94Wb
------END PGP SIGNATURE-----
-
---Sig_/x+8al_Rd8L9FcNKBXNLv=W/--
+--1665246916-912656596-1568023960=:27895--
