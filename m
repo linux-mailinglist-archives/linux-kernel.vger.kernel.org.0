@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F23AADB62
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00EDAADB66
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729994AbfIIOpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 10:45:15 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46281 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727191AbfIIOpO (ORCPT
+        id S2387666AbfIIOpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 10:45:20 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45407 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727191AbfIIOpS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 10:45:14 -0400
-Received: by mail-pg1-f195.google.com with SMTP id m3so7938315pgv.13
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 07:45:13 -0700 (PDT)
+        Mon, 9 Sep 2019 10:45:18 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y72so9266025pfb.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 07:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TVzAji3GW1QKfy7eDTvui/A8m2Rjy2R5WVJhQA7E3lY=;
-        b=NX3llKcB9Vfz5GwB3fe8lqYrjLwk+0rBxImcX4jZV11gkkeNnudXWi9WTJ2LsF/dA9
-         DpPaPmh+I8IoYZUHijkhyFRx2sbrMY6BU60KQMM1NngqyI0qEOCywLIbcuP+QO1LHH7y
-         watq9wRRMsMDIBA2+nO9gngjJ+gro0eqYITydnA4HlQHkzAsl6hKnM/85AQoxq0KzdDU
-         jOZlQhsiFaZq0XmEozny47pbhm4BpRC7jtYDEX42fqP6kpB8oMKe8yszFFUfJFbdkpwP
-         5K14pP5MVMJR4UOh82ZlcWGcZtOq8ZFGYuD9LsChM/GPzGyPoNoRsunPaR5Gf7lPFtIF
-         T6lg==
+        bh=qv666E59dTrURX4bKRzC5KjavofhrzL5P4tc/irNvlY=;
+        b=fClGr7iL00eXWgE5KsfejhexidNmnbDJiwd6BZTqLWSXsVrBUyBukK1nce7PtBqKSm
+         SiBCEcRbP9Zstw6tVpUVZ3BTPr5J6aEJAtAm5R7KMfhouxphkjaljm9YohcUld3+hDWv
+         RitGYzQYi71I8imxYBKy+I7e5P3tvrO/SJgYjyBYV++ijigJKToWTDH6RbkGvGwOyeaf
+         WitFlNrGZEdN8Gi8l+Y2r9jfyFNE0QpfRFCQMSSFFL2YYM+1Sgz/tTlmbNN3BTzbkyaP
+         F0CMwnDMYfCXndQe6SM2TD3wSQzW4kBVURFjZLmNvu6jPLAkmYLqpoWGZDQtHXLZjQb4
+         KFoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TVzAji3GW1QKfy7eDTvui/A8m2Rjy2R5WVJhQA7E3lY=;
-        b=Qv/n0qJ31kMEBgo30yFe1n1oXwRGiNObc4Vc6AZ45nEsXjygyJCuHG8bSEDxOLFLas
-         tyxrG+xoMJpW5qx8f/869Aq6dRO/c7MmwXgpkD5guQTPAd9t+hjBd/0yOsr5D38iGdrm
-         qgruzO0CKk3YrqhBDof7S/XNY1V2/6CufdfZOb06YQFuDgRH0rNwHethwa0KddA+SXlr
-         /Yf3d5GDbrHCtz48F8akAZ48tEs1Xxj/SZPwouV1OebSMI1KFvGxeNmkjtgwvG5IWddp
-         s7Q3tsJ2WbQEZDqdKuyBbKkPgIa2NUTFrNG/UMTIA7md/wrGUn6Ip1k5oS7IOYw8wSHk
-         TM3A==
-X-Gm-Message-State: APjAAAUCRXAHY/34gTn+lTPxUgNjQANHxJQmwwjUOf1iMJc6hBrQVYE4
-        wuYnrSCdUaKmhKriH4I035U=
-X-Google-Smtp-Source: APXvYqxiAhEjG4HZ/IFOCSeUKorah3JrKQ5eM6H+PJsFj7IK3XWu4Nsn334GnkakFyQuO6scOh8FsQ==
-X-Received: by 2002:a63:ee08:: with SMTP id e8mr22406175pgi.70.1568040313430;
-        Mon, 09 Sep 2019 07:45:13 -0700 (PDT)
+        bh=qv666E59dTrURX4bKRzC5KjavofhrzL5P4tc/irNvlY=;
+        b=TGS6BP/Pwemkg4ate9TVW31HGMXX2m1/aF3KHTSlSWWofMhupYSHZgav3Lx5TcEITv
+         Fth9ReL0ir/fk1qRUt5oag0C6DqD85H0ikPIRFSzjB26bGsNO9DGomsB5Gd/RYVKW+Oc
+         kaAaaWaFBBlIrVAKmPimD4R5Z9Sw3sFG1btCF3bqiuZMn3hXuK4Y1H+vZH4hHic4f+Qd
+         yqXr5irrdNvJAVOcNSb5OgvRYxJbPWlSLOb/U823UIKV0KBRZSJLRHfCfWw4usm5LGA/
+         92XMKDUjMtt6ww2ZQ3IcDvDr4uTozVOlTJwyMSDTuVyDxhKCNlqgoQxB0nXjTPbTDGrB
+         JRnw==
+X-Gm-Message-State: APjAAAWbXZsITTBybrTmckfzkCiZChqmU+etWMJ8Ex8DKeMZl0vaiqKB
+        8UQE2Vus7FdF+7g/2uXKI1EvQAVocpt1Ew==
+X-Google-Smtp-Source: APXvYqxv5C5pD79JL8tTvr+mbnfBn3WJ/dgLx8mQnFKBsWx95bf8E8lwWx5+1IfAoiPTcjQQWDb98g==
+X-Received: by 2002:a63:4c5a:: with SMTP id m26mr21723218pgl.270.1568040318217;
+        Mon, 09 Sep 2019 07:45:18 -0700 (PDT)
 Received: from localhost.localdomain ([149.28.153.17])
-        by smtp.gmail.com with ESMTPSA id t9sm15334693pgj.89.2019.09.09.07.45.09
+        by smtp.gmail.com with ESMTPSA id t9sm15334693pgj.89.2019.09.09.07.45.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 07:45:13 -0700 (PDT)
+        Mon, 09 Sep 2019 07:45:17 -0700 (PDT)
 From:   Changbin Du <changbin.du@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Randy Dunlap <rdunlap@infradead.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
         Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH v3 1/9] hacking: Group sysrq/kgdb/ubsan into 'Generic Kernel Debugging Instruments'
-Date:   Mon,  9 Sep 2019 22:44:45 +0800
-Message-Id: <20190909144453.3520-2-changbin.du@gmail.com>
+Subject: [PATCH v3 2/9] hacking: Create submenu for arch special debugging options
+Date:   Mon,  9 Sep 2019 22:44:46 +0800
+Message-Id: <20190909144453.3520-3-changbin.du@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190909144453.3520-1-changbin.du@gmail.com>
 References: <20190909144453.3520-1-changbin.du@gmail.com>
@@ -63,51 +63,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Group generic kernel debugging instruments sysrq/kgdb/ubsan together into
-a new submenu.
+The arch special options are a little long, so create a submenu for them.
 
 Signed-off-by: Changbin Du <changbin.du@gmail.com>
 ---
- lib/Kconfig.debug | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ lib/Kconfig.debug | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 10023dbac8e4..bd3938483514 100644
+index bd3938483514..cc4d8e71ae81 100644
 --- a/lib/Kconfig.debug
 +++ b/lib/Kconfig.debug
-@@ -419,6 +419,8 @@ config DEBUG_FORCE_WEAK_PER_CPU
+@@ -2164,6 +2164,10 @@ config DEBUG_AID_FOR_SYZBOT
+        help
+          This option is intended for testing by syzbot.
  
- endmenu # "Compiler options"
++menu "$(SRCARCH) Debugging"
++
+ source "arch/$(SRCARCH)/Kconfig.debug"
  
-+menu "Generic Kernel Debugging Instruments"
-+
- config MAGIC_SYSRQ
- 	bool "Magic SysRq key"
- 	depends on !UML
-@@ -452,6 +454,12 @@ config MAGIC_SYSRQ_SERIAL
- 	  This option allows you to decide whether you want to enable the
- 	  magic SysRq key.
- 
-+source "lib/Kconfig.kgdb"
-+
-+source "lib/Kconfig.ubsan"
-+
 +endmenu
 +
- config DEBUG_KERNEL
- 	bool "Kernel debugging"
- 	help
-@@ -2111,10 +2119,6 @@ config BUG_ON_DATA_CORRUPTION
- 
- source "samples/Kconfig"
- 
--source "lib/Kconfig.kgdb"
--
--source "lib/Kconfig.ubsan"
--
- config ARCH_HAS_DEVMEM_IS_ALLOWED
- 	bool
- 
+ endmenu # Kernel hacking
 -- 
 2.20.1
 
