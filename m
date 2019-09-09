@@ -2,120 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E343EADC9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52478ADCA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfIIQF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 12:05:29 -0400
-Received: from forward105p.mail.yandex.net ([77.88.28.108]:59414 "EHLO
-        forward105p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725263AbfIIQC1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 12:02:27 -0400
-Received: from mxback29j.mail.yandex.net (mxback29j.mail.yandex.net [IPv6:2a02:6b8:0:1619::229])
-        by forward105p.mail.yandex.net (Yandex) with ESMTP id B982D4D40FFA;
-        Mon,  9 Sep 2019 19:02:23 +0300 (MSK)
-Received: from smtp1j.mail.yandex.net (smtp1j.mail.yandex.net [2a02:6b8:0:801::ab])
-        by mxback29j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id vE1n8F662e-2M4WllRU;
-        Mon, 09 Sep 2019 19:02:23 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cloudbear.ru; s=mail; t=1568044943;
-        bh=k8swhfH/56jurkc7C5cLy1ftu0/fKHmRA39ehTChfM8=;
-        h=In-Reply-To:Subject:To:From:Cc:References:Date:Message-Id;
-        b=lrIRuQftEvMD+52NO5XWMRrxWWcE5ZPF/bDQt0/alUTAUNZnO2DZ6SWlqPcyuF3MK
-         o054khqRt+cNWYlM1h0FcI/xcdyMrypyQ0Lfg0ZC5aJqFpzouhtsRhFRzq7sfmLMn9
-         nt14eq+D8kS7YYCI6vVEh8S70lSOIZ+fPcjAbGOQ=
-Authentication-Results: mxback29j.mail.yandex.net; dkim=pass header.i=@cloudbear.ru
-Received: by smtp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 2w9xv2RtrL-2L7KhgjB;
-        Mon, 09 Sep 2019 19:02:22 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (Client certificate not present)
-From:   Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>
-To:     davem@davemloft.net, robh+dt@kernel.org, f.fainelli@gmail.com
-Cc:     Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] net: phy: dp83867: Add SGMII mode type switching
-Date:   Mon,  9 Sep 2019 19:02:16 +0300
-Message-Id: <1568044937-12526-1-git-send-email-vitaly.gaiduk@cloudbear.ru>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568026945-3857-1-git-send-email-vitaly.gaiduk@cloudbear.ru>
-References: <1568026945-3857-1-git-send-email-vitaly.gaiduk@cloudbear.ru>
+        id S1728831AbfIIQFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 12:05:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47736 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727495AbfIIQFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 12:05:33 -0400
+Received: from localhost (110.8.30.213.rev.vodafone.pt [213.30.8.110])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A3A82086D;
+        Mon,  9 Sep 2019 16:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568045131;
+        bh=ZM2RJpTGUpdkPmZfDaBuYdCehqwWhVBMeNBjNenlNDM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qDQpphoWoHCz5dF4oTyXhOcWfXLsHeL2or0Au9FtKYttEZ41CfLbNc9kRtVy0c3Mc
+         Aijpt06shRbWovqPFp1J2E6+XACJx2hd22sMPDSKJP5IbEXLpuJUUierlpqgmjQe8p
+         KfmQyZ5qoXUCaUL0do4+z30SJ6/VN0908wi28x30=
+Date:   Mon, 9 Sep 2019 17:05:28 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.2 00/94] 5.2.14-stable review
+Message-ID: <20190909160528.GA9727@kroah.com>
+References: <20190908121150.420989666@linuxfoundation.org>
+ <20190909150036.GD4050@bharath12345-Inspiron-5559>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190909150036.GD4050@bharath12345-Inspiron-5559>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds ability to switch beetween two PHY SGMII modes.
-Some hardware, for example, FPGA IP designs may use 6-wire mode
-which enables differential SGMII clock to MAC.
+On Mon, Sep 09, 2019 at 08:30:36PM +0530, Bharath Vedartham wrote:
+> Built and booted on my x86 machine. No dmesg regressions found.
 
-Signed-off-by: Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>
----
-Changes in v3:
-- Fixed retaining DP83867_SGMII_TYPE bit
+THanks for testing a bunch of these and letting me know.
 
- drivers/net/phy/dp83867.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
-index 1f1ecee..37fceaf 100644
---- a/drivers/net/phy/dp83867.c
-+++ b/drivers/net/phy/dp83867.c
-@@ -37,6 +37,7 @@
- #define DP83867_STRAP_STS2	0x006f
- #define DP83867_RGMIIDCTL	0x0086
- #define DP83867_IO_MUX_CFG	0x0170
-+#define DP83867_SGMIICTL	0x00D3
- #define DP83867_10M_SGMII_CFG   0x016F
- #define DP83867_10M_SGMII_RATE_ADAPT_MASK BIT(7)
-
-@@ -61,6 +62,9 @@
- #define DP83867_RGMII_TX_CLK_DELAY_EN		BIT(1)
- #define DP83867_RGMII_RX_CLK_DELAY_EN		BIT(0)
-
-+/* SGMIICTL bits */
-+#define DP83867_SGMII_TYPE		BIT(14)
-+
- /* STRAP_STS1 bits */
- #define DP83867_STRAP_STS1_RESERVED		BIT(11)
-
-@@ -109,6 +113,7 @@ struct dp83867_private {
- 	bool rxctrl_strap_quirk;
- 	bool set_clk_output;
- 	u32 clk_output_sel;
-+	bool sgmii_ref_clk_en;
- };
-
- static int dp83867_ack_interrupt(struct phy_device *phydev)
-@@ -197,6 +202,9 @@ static int dp83867_of_init(struct phy_device *phydev)
- 	dp83867->rxctrl_strap_quirk = of_property_read_bool(of_node,
- 					"ti,dp83867-rxctrl-strap-quirk");
-
-+	dp83867->sgmii_ref_clk_en = of_property_read_bool(of_node,
-+					"ti,sgmii-ref-clock-output-enable");
-+
- 	/* Existing behavior was to use default pin strapping delay in rgmii
- 	 * mode, but rgmii should have meant no delay.  Warn existing users.
- 	 */
-@@ -389,6 +397,17 @@ static int dp83867_config_init(struct phy_device *phydev)
-
- 		if (ret)
- 			return ret;
-+
-+		val = phy_read_mmd(phydev, DP83867_DEVADDR, DP83867_SGMIICTL);
-+		/* SGMII type is set to 4-wire mode by default.
-+		 * If we place appropriate property in dts (see above)
-+		 * switch on 6-wire mode.
-+		 */
-+		if (dp83867->sgmii_ref_clk_en)
-+			val |= DP83867_SGMII_TYPE;
-+		else
-+			val &= ~DP83867_SGMII_TYPE;
-+		phy_write_mmd(phydev, DP83867_DEVADDR, DP83867_SGMIICTL, val);
- 	}
-
- 	/* Enable Interrupt output INT_OE in CFG3 register */
---
-2.7.4
-
+greg k-h
