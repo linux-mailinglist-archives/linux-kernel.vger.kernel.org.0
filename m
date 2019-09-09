@@ -2,150 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4A99ADD26
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68520ADD3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:28:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390168AbfIIQ0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 12:26:25 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:54512 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390043AbfIIQ0O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 12:26:14 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x89GQDmB035026;
-        Mon, 9 Sep 2019 11:26:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568046373;
-        bh=+cVmNml5KVK6rLvkrroynMhDmwtXeBL2ANV3q1t//Ag=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=dqiqUml6TS8qU7NNZ2ulOtl48JeZywxU3Wyx4guMumfoqKtMpVL0Ci9i029D9EX0b
-         dyyUFgAi68fXkBaFZNXM39xjIe5LZkxcXYwgyJbv3u22lTtvOWI+X1UfdcG42MFiJx
-         +rGSfxaaH7Jmh+KpmBJpK/qU3KAVuDvMtXgjASpU=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x89GQD0a090394
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Sep 2019 11:26:13 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 9 Sep
- 2019 11:26:13 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 9 Sep 2019 11:26:13 -0500
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x89GPnob056522;
-        Mon, 9 Sep 2019 11:26:13 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
-Subject: [Patch 13/13] media: am437x-vpfe: Switch to SPDX Licensing
-Date:   Mon, 9 Sep 2019 11:27:43 -0500
-Message-ID: <20190909162743.30114-14-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190909162743.30114-1-bparrot@ti.com>
-References: <20190909162743.30114-1-bparrot@ti.com>
+        id S1728326AbfIIQ2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 12:28:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35904 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726148AbfIIQ2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 12:28:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E1F020EF;
+        Mon,  9 Sep 2019 16:28:10 +0000 (UTC)
+Received: from rh2.redhat.com (ovpn-124-7.rdu2.redhat.com [10.10.124.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D2B75D6B7;
+        Mon,  9 Sep 2019 16:28:09 +0000 (UTC)
+From:   Mike Christie <mchristi@redhat.com>
+To:     axboe@kernel.dk, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
+Cc:     Mike Christie <mchristi@redhat.com>
+Subject: [RFC PATCH] Add proc interface to set PF_MEMALLOC flags
+Date:   Mon,  9 Sep 2019 11:28:04 -0500
+Message-Id: <20190909162804.5694-1-mchristi@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Mon, 09 Sep 2019 16:28:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to SPDX licensing and drop the redundant GPL text.
+There are several storage drivers like dm-multipath, iscsi, and nbd that
+have userspace components that can run in the IO path. For example,
+iscsi and nbd's userspace deamons may need to recreate a socket and/or
+send IO on it, and dm-multipath's daemon multipathd may need to send IO
+to figure out the state of paths and re-set them up.
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
+In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the
+memalloc_*_save/restore functions to control the allocation behavior,
+but for userspace we would end up hitting a allocation that ended up
+writing data back to the same device we are trying to allocate for.
+
+This patch allows the userspace deamon to set the PF_MEMALLOC* flags
+through procfs. It currently only supports PF_MEMALLOC_NOIO, but
+depending on what other drivers and userspace file systems need, for
+the final version I can add the other flags for that file or do a file
+per flag or just do a memalloc_noio file.
+
+Signed-off-by: Mike Christie <mchristi@redhat.com>
 ---
- drivers/media/platform/am437x/am437x-vpfe.c      | 14 +-------------
- drivers/media/platform/am437x/am437x-vpfe.h      | 14 +-------------
- drivers/media/platform/am437x/am437x-vpfe_regs.h | 10 +---------
- 3 files changed, 3 insertions(+), 35 deletions(-)
+ Documentation/filesystems/proc.txt |  6 ++++
+ fs/proc/base.c                     | 53 ++++++++++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
 
-diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
-index 9855d4cb1d13..c3f69566423b 100644
---- a/drivers/media/platform/am437x/am437x-vpfe.c
-+++ b/drivers/media/platform/am437x/am437x-vpfe.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0-only
- /*
-  * TI VPFE capture Driver
-  *
-@@ -5,19 +6,6 @@
-  *
-  * Benoit Parrot <bparrot@ti.com>
-  * Lad, Prabhakar <prabhakar.csengg@gmail.com>
-- *
-- * This program is free software; you may redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-- * SOFTWARE.
-  */
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 99ca040e3f90..b5456a61a013 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -46,6 +46,7 @@ Table of Contents
+   3.10  /proc/<pid>/timerslack_ns - Task timerslack value
+   3.11	/proc/<pid>/patch_state - Livepatch patch operation state
+   3.12	/proc/<pid>/arch_status - Task architecture specific information
++  3.13  /proc/<pid>/memalloc - Control task's memory reclaim behavior
  
- #include <linux/delay.h>
-diff --git a/drivers/media/platform/am437x/am437x-vpfe.h b/drivers/media/platform/am437x/am437x-vpfe.h
-index 2c9e89395bea..2a63e378451f 100644
---- a/drivers/media/platform/am437x/am437x-vpfe.h
-+++ b/drivers/media/platform/am437x/am437x-vpfe.h
-@@ -1,21 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
- /*
-  * Copyright (C) 2013 - 2014 Texas Instruments, Inc.
-  *
-  * Benoit Parrot <bparrot@ti.com>
-  * Lad, Prabhakar <prabhakar.csengg@gmail.com>
-- *
-- * This program is free software; you may redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-- * SOFTWARE.
-  */
+   4	Configuring procfs
+   4.1	Mount options
+@@ -1980,6 +1981,11 @@ Example
+  $ cat /proc/6753/arch_status
+  AVX512_elapsed_ms:      8
  
- #ifndef AM437X_VPFE_H
-diff --git a/drivers/media/platform/am437x/am437x-vpfe_regs.h b/drivers/media/platform/am437x/am437x-vpfe_regs.h
-index 0746c48ec23f..63ecdca3b908 100644
---- a/drivers/media/platform/am437x/am437x-vpfe_regs.h
-+++ b/drivers/media/platform/am437x/am437x-vpfe_regs.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
- /*
-  * TI AM437x Image Sensor Interface Registers
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Benoit Parrot <bparrot@ti.com>
-  * Lad, Prabhakar <prabhakar.csengg@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether express or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
++3.13 /proc/<pid>/memalloc - Control task's memory reclaim behavior
++-----------------------------------------------------------------------
++A value of "noio" indicates that when a task allocates memory it will not
++reclaim memory that requires starting phisical IO.
++
+ Description
+ -----------
  
- #ifndef AM437X_VPFE_REGS_H
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..c4faa3464602 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1223,6 +1223,57 @@ static const struct file_operations proc_oom_score_adj_operations = {
+ 	.llseek		= default_llseek,
+ };
+ 
++static ssize_t memalloc_read(struct file *file, char __user *buf, size_t count,
++			     loff_t *ppos)
++{
++	struct task_struct *task;
++	ssize_t rc = 0;
++
++	task = get_proc_task(file_inode(file));
++	if (!task)
++		return -ESRCH;
++
++	if (task->flags & PF_MEMALLOC_NOIO)
++		rc = simple_read_from_buffer(buf, count, ppos, "noio", 4);
++	put_task_struct(task);
++	return rc;
++}
++
++static ssize_t memalloc_write(struct file *file, const char __user *buf,
++			      size_t count, loff_t *ppos)
++{
++	struct task_struct *task;
++	char buffer[5];
++	int rc = count;
++
++	memset(buffer, 0, sizeof(buffer));
++	if (count != sizeof(buffer) - 1)
++		return -EINVAL;
++
++	if (copy_from_user(buffer, buf, count))
++		return -EFAULT;
++	buffer[count] = '\0';
++
++	task = get_proc_task(file_inode(file));
++	if (!task)
++		return -ESRCH;
++
++	if (!strcmp(buffer, "noio")) {
++		task->flags |= PF_MEMALLOC_NOIO;
++	} else {
++		rc = -EINVAL;
++	}
++
++	put_task_struct(task);
++	return rc;
++}
++
++static const struct file_operations proc_memalloc_operations = {
++	.read		= memalloc_read,
++	.write		= memalloc_write,
++	.llseek		= default_llseek,
++};
++
+ #ifdef CONFIG_AUDIT
+ #define TMPBUFLEN 11
+ static ssize_t proc_loginuid_read(struct file * file, char __user * buf,
+@@ -3097,6 +3148,7 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #ifdef CONFIG_PROC_PID_ARCH_STATUS
+ 	ONE("arch_status", S_IRUGO, proc_pid_arch_status),
+ #endif
++	REG("memalloc", S_IRUGO|S_IWUSR, proc_memalloc_operations),
+ };
+ 
+ static int proc_tgid_base_readdir(struct file *file, struct dir_context *ctx)
+@@ -3487,6 +3539,7 @@ static const struct pid_entry tid_base_stuff[] = {
+ #ifdef CONFIG_PROC_PID_ARCH_STATUS
+ 	ONE("arch_status", S_IRUGO, proc_pid_arch_status),
+ #endif
++	REG("memalloc", S_IRUGO|S_IWUSR, proc_memalloc_operations),
+ };
+ 
+ static int proc_tid_base_readdir(struct file *file, struct dir_context *ctx)
 -- 
-2.17.1
+2.21.0
 
