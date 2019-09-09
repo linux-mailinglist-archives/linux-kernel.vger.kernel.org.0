@@ -2,45 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C0BAD65C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF2C6AD668
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390324AbfIIKHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:07:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56220 "EHLO
+        id S2390356AbfIIKHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:07:53 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56116 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390173AbfIIKHa (ORCPT
+        with ESMTP id S1728993AbfIIKH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:07:30 -0400
+        Mon, 9 Sep 2019 06:07:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=9uQmw9sjvz89Eru9ZYv1A879KgTMUISbQLDP31z5hNY=; b=cvRrHwcTIAil
-        qKhcsM7ViyOJjdeKbiNmL53VA81hSIvPIPB1bynw5WGz62uRAKR5GIxKLuajpx/oCapN3N9Ibgya1
-        ml6E+3dhJFSdrOR2g/kaQ45hHnozCucnZmh52VURKw0ETmOwLCKJclva3AzU026q2xE8frw9FD+Ai
-        HfOJU=;
+        List-Archive; bh=qvEqsVB11jXmmerUvV31z20Vlpx17lLYw1fsBAjdagI=; b=pXNo7qq2UWBq
+        spzRhEcGVj6jjCwtX6iq9ax3WlEaALupG2KGNADYj377FRXB5YK4B4iPhuIcB7TK+5I3QetDm0iRm
+        ZVttrfHQEuFTtXHUzTXds1OPS6QUk+fk4ykoDpRgEFTR2APfm+NXYLjMvX5IUAhAJJZqEDQhZQQ0B
+        KE+Z4=;
 Received: from [148.69.85.38] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1i7GZp-0001s2-Uf; Mon, 09 Sep 2019 10:07:18 +0000
+        id 1i7GZq-0001s5-0D; Mon, 09 Sep 2019 10:07:18 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 42504D02D7F; Mon,  9 Sep 2019 11:07:17 +0100 (BST)
+        id 559AED02D83; Mon,  9 Sep 2019 11:07:17 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: codecs: ad193x: make two arrays static const, makes object smaller" to the asoc tree
-In-Reply-To: <20190906161404.1440-1-colin.king@canonical.com>
+To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Cc:     alsa-devel@alsa-project.org, Daniel Drake <drake@endlessm.com>,
+        David Yang <yangxiaohua@everest-semi.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: es8316: support fixed and variable both clock rates" to the asoc tree
+In-Reply-To: <20190907163653.9382-2-katsuhiro@katsuster.net>
 X-Patchwork-Hint: ignore
-Message-Id: <20190909100717.42504D02D7F@fitzroy.sirena.org.uk>
+Message-Id: <20190909100717.559AED02D83@fitzroy.sirena.org.uk>
 Date:   Mon,  9 Sep 2019 11:07:17 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: codecs: ad193x: make two arrays static const, makes object smaller
+   ASoC: es8316: support fixed and variable both clock rates
 
 has been applied to the asoc tree at
 
@@ -74,54 +72,109 @@ to this mail.
 Thanks,
 Mark
 
-From 78b93b04771bdbefe94b84222506ba992f579c98 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 6 Sep 2019 17:14:04 +0100
-Subject: [PATCH] ASoC: codecs: ad193x: make two arrays static const, makes
- object smaller
+From ebe02a5b9ef05e3b812af3d628cdf6206d9ba610 Mon Sep 17 00:00:00 2001
+From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Date: Sun, 8 Sep 2019 01:36:53 +0900
+Subject: [PATCH] ASoC: es8316: support fixed and variable both clock rates
 
-Don't populate the arrays on the stack but instead make them
-static const. Makes the object code smaller by 37 bytes.
+This patch supports some type of machine drivers that set 0 to mclk
+when sound device goes to idle state. After applied this patch,
+sysclk == 0 means there is no constraint of sound rate and other
+values will set constraints which is derived by sysclk setting.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  16253	   7200	      0	  23453	   5b9d	sound/soc/codecs/ad193x.o
+Original code refuses sysclk == 0 setting. But some boards and SoC
+(such as RockPro64 and RockChip I2S) has connected SoC MCLK out to
+ES8316 MCLK in. In this case, SoC side I2S will choose suitable
+frequency of MCLK such as fs * mclk-fs when user starts playing or
+capturing.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  16056	   7360	      0	  23416	   5b78	sound/soc/codecs/ad193x.o
+Bad scenario as follows (mclk-fs = 256):
+  - Initialize sysclk by correct value (Ex. 12.288MHz)
+    - ES8316 set constraints of PCM rate by sysclk
+      48kHz (1/256), 32kHz (1/384), 30.720kHz (1/400),
+      24kHz (1/512), 16kHz (1/768), 12kHz (1/1024)
+  - Play 48kHz sound, it's acceptable
+  - Sysclk is not changed
 
-(gcc version 9.2.1, amd64)
+  - Play 32kHz sound, it's acceptable
+  - Set sysclk by 8.192MHz (= fs * mclk-fs = 32k * 256)
+    - ES8316 set constraints of PCM rate by sysclk
+      32kHz (1/256), 21.33kHz (1/384), 20.48kHz (1/400),
+      16kHz (1/512), 10.66kHz (1/768), 8kHz (1/1024)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190906161404.1440-1-colin.king@canonical.com
+  - Play 48kHz again, but it's NOT acceptable because constraints
+    list does not allow 48kHz
+
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Link: https://lore.kernel.org/r/20190907163653.9382-2-katsuhiro@katsuster.net
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ad193x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/es8316.c | 35 ++++++++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 15 deletions(-)
 
-diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
-index fb04c9379b71..980e024a5720 100644
---- a/sound/soc/codecs/ad193x.c
-+++ b/sound/soc/codecs/ad193x.c
-@@ -416,7 +416,7 @@ static struct snd_soc_dai_driver ad193x_no_adc_dai = {
- /* codec register values to set after reset */
- static void ad193x_reg_default_init(struct ad193x_priv *ad193x)
- {
--	const struct reg_sequence reg_init[] = {
-+	static const struct reg_sequence reg_init[] = {
- 		{  0, 0x99 },	/* PLL_CLK_CTRL0: pll input: mclki/xi 12.288Mhz */
- 		{  1, 0x04 },	/* PLL_CLK_CTRL1: no on-chip Vref */
- 		{  2, 0x40 },	/* DAC_CTRL0: TDM mode */
-@@ -432,7 +432,7 @@ static void ad193x_reg_default_init(struct ad193x_priv *ad193x)
- 		{ 12, 0x00 },	/* DAC_L4_VOL: no attenuation */
- 		{ 13, 0x00 },	/* DAC_R4_VOL: no attenuation */
- 	};
--	const struct reg_sequence reg_adc_init[] = {
-+	static const struct reg_sequence reg_adc_init[] = {
- 		{ 14, 0x03 },	/* ADC_CTRL0: high-pass filter enable */
- 		{ 15, 0x43 },	/* ADC_CTRL1: sata delay=1, adc aux mode */
- 		{ 16, 0x00 },	/* ADC_CTRL2: reset */
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index e9fa4981ccef..9150e7068467 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -367,8 +367,12 @@ static int es8316_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 
+ 	es8316->sysclk = freq;
+ 
+-	if (freq == 0)
++	if (freq == 0) {
++		es8316->sysclk_constraints.list = NULL;
++		es8316->sysclk_constraints.count = 0;
++
+ 		return 0;
++	}
+ 
+ 	ret = clk_set_rate(es8316->mclk, freq);
+ 	if (ret)
+@@ -447,17 +451,10 @@ static int es8316_pcm_startup(struct snd_pcm_substream *substream,
+ 	struct snd_soc_component *component = dai->component;
+ 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
+ 
+-	if (es8316->sysclk == 0) {
+-		dev_err(component->dev, "No sysclk provided\n");
+-		return -EINVAL;
+-	}
+-
+-	/* The set of sample rates that can be supported depends on the
+-	 * MCLK supplied to the CODEC.
+-	 */
+-	snd_pcm_hw_constraint_list(substream->runtime, 0,
+-				   SNDRV_PCM_HW_PARAM_RATE,
+-				   &es8316->sysclk_constraints);
++	if (es8316->sysclk_constraints.list)
++		snd_pcm_hw_constraint_list(substream->runtime, 0,
++					   SNDRV_PCM_HW_PARAM_RATE,
++					   &es8316->sysclk_constraints);
+ 
+ 	return 0;
+ }
+@@ -469,11 +466,19 @@ static int es8316_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_soc_component *component = dai->component;
+ 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
+ 	u8 wordlen = 0;
++	int i;
+ 
+-	if (!es8316->sysclk) {
+-		dev_err(component->dev, "No MCLK configured\n");
+-		return -EINVAL;
++	/* Validate supported sample rates that are autodetected from MCLK */
++	for (i = 0; i < NR_SUPPORTED_MCLK_LRCK_RATIOS; i++) {
++		const unsigned int ratio = supported_mclk_lrck_ratios[i];
++
++		if (es8316->sysclk % ratio != 0)
++			continue;
++		if (es8316->sysclk / ratio == params_rate(params))
++			break;
+ 	}
++	if (i == NR_SUPPORTED_MCLK_LRCK_RATIOS)
++		return -EINVAL;
+ 
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S16_LE:
 -- 
 2.20.1
 
