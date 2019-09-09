@@ -2,43 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2383AAD662
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEB3DAD65B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:07:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390245AbfIIKH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:07:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56084 "EHLO
+        id S2390309AbfIIKHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:07:31 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56186 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390173AbfIIKH0 (ORCPT
+        with ESMTP id S2390246AbfIIKH3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:07:26 -0400
+        Mon, 9 Sep 2019 06:07:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=7tQBabzGFNgFSknyRXUtCVROlUph9aJGvnMwb+EnPnQ=; b=pA8kSDy1/A6k
-        I8FOL+n00KRf7avC/6XYSNm6JEd4M9cG/aul4uSgmNC+jXx5lBWMC/tioDVjCPLn9IeYGKPJ+ChCw
-        R1TYm1K4hVM6uGDlk7K83tbuzrz5xLkfKJw+tBpnovkeGBTWOOMo4pY2DlQcxh2o7fsqgd0kPpgKL
-        +QS4s=;
+        List-Archive; bh=yTK2raRocXmY1SVYBroK1A3JaVMioGcvQYa4SdbdL8k=; b=S5snUQH5yVyC
+        iub7lySHUfCpO7ZlHP7JorXwWyCPV/iJZESBtKcqjrReAjxZ7alvFMcF4d77OaARw3jxI7IIlZ/Bf
+        uxnyrDY8BM+Awf0jmUCty/MX2yumrprbhF8xp2PhQjZO8AP9qZH6H2mzfyR2tt6LCDIylBacyNh75
+        NlThQ=;
 Received: from [148.69.85.38] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1i7GZq-0001sD-1Q; Mon, 09 Sep 2019 10:07:18 +0000
+        id 1i7GZp-0001rj-KO; Mon, 09 Sep 2019 10:07:17 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 6A853D02D59; Mon,  9 Sep 2019 11:07:17 +0100 (BST)
+        id 089F0D02D52; Mon,  9 Sep 2019 11:07:17 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Cc:     alsa-devel@alsa-project.org, Daniel Drake <drake@endlessm.com>,
-        David Yang <yangxiaohua@everest-semi.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: es8316: fix redundant codes of clock" to the asoc tree
-In-Reply-To: <20190907163653.9382-1-katsuhiro@katsuster.net>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: rt1011: make array pd static const, makes object smaller" to the asoc tree
+In-Reply-To: <20190907073717.21632-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190909100717.6A853D02D59@fitzroy.sirena.org.uk>
+Message-Id: <20190909100717.089F0D02D52@fitzroy.sirena.org.uk>
 Date:   Mon,  9 Sep 2019 11:07:17 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: es8316: fix redundant codes of clock
+   ASoC: rt1011: make array pd static const, makes object smaller
 
 has been applied to the asoc tree at
 
@@ -72,96 +75,46 @@ to this mail.
 Thanks,
 Mark
 
-From 0db0c62c88b84b135bbaf784499a08e536354a43 Mon Sep 17 00:00:00 2001
-From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Date: Sun, 8 Sep 2019 01:36:52 +0900
-Subject: [PATCH] ASoC: es8316: fix redundant codes of clock
+From 2b70d5776e8b173e3b36a2ef63d94428c6a80e1f Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sat, 7 Sep 2019 08:37:17 +0100
+Subject: [PATCH] ASoC: rt1011: make array pd static const, makes object
+ smaller
 
-This patch removes redundant null checks for optional MCLK clock.
-And fix DT binding document for changing clock property to optional
-from required.
+Don't populate the array pd on the stack but instead make it
+static const. Makes the object code smaller by 100 bytes.
 
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Link: https://lore.kernel.org/r/20190907163653.9382-1-katsuhiro@katsuster.net
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  51463	  13016	    128	  64607	   fc5f	sound/soc/codecs/rt1011.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  51299	  13080	    128	  64507	   fbfb	sound/soc/codecs/rt1011.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190907073717.21632-1-colin.king@canonical.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../bindings/sound/everest,es8316.txt         |  3 ++
- sound/soc/codecs/es8316.c                     | 31 ++++++++-----------
- 2 files changed, 16 insertions(+), 18 deletions(-)
+ sound/soc/codecs/rt1011.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/everest,es8316.txt b/Documentation/devicetree/bindings/sound/everest,es8316.txt
-index aefcff9c48a2..1bf03c5f2af4 100644
---- a/Documentation/devicetree/bindings/sound/everest,es8316.txt
-+++ b/Documentation/devicetree/bindings/sound/everest,es8316.txt
-@@ -6,6 +6,9 @@ Required properties:
+diff --git a/sound/soc/codecs/rt1011.c b/sound/soc/codecs/rt1011.c
+index fa34565a3938..a92a0bacd812 100644
+--- a/sound/soc/codecs/rt1011.c
++++ b/sound/soc/codecs/rt1011.c
+@@ -1519,7 +1519,8 @@ static const struct snd_soc_dapm_route rt1011_dapm_routes[] = {
  
-   - compatible  : should be "everest,es8316"
-   - reg : the I2C address of the device for I2C
-+
-+Optional properties:
-+
-   - clocks : a list of phandle, should contain entries for clock-names
-   - clock-names : should include as follows:
-          "mclk" : master clock (MCLK) of the device
-diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
-index 6248b01ca049..e9fa4981ccef 100644
---- a/sound/soc/codecs/es8316.c
-+++ b/sound/soc/codecs/es8316.c
-@@ -370,11 +370,9 @@ static int es8316_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- 	if (freq == 0)
- 		return 0;
- 
--	if (es8316->mclk) {
--		ret = clk_set_rate(es8316->mclk, freq);
--		if (ret)
--			return ret;
--	}
-+	ret = clk_set_rate(es8316->mclk, freq);
-+	if (ret)
-+		return ret;
- 
- 	/* Limit supported sample rates to ones that can be autodetected
- 	 * by the codec running in slave mode.
-@@ -709,20 +707,18 @@ static int es8316_probe(struct snd_soc_component *component)
- 
- 	es8316->component = component;
- 
--	es8316->mclk = devm_clk_get(component->dev, "mclk");
--	if (PTR_ERR(es8316->mclk) == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	es8316->mclk = devm_clk_get_optional(component->dev, "mclk");
- 	if (IS_ERR(es8316->mclk)) {
--		dev_err(component->dev, "clock is invalid, ignored\n");
--		es8316->mclk = NULL;
-+		dev_err(component->dev, "unable to get mclk\n");
-+		return PTR_ERR(es8316->mclk);
- 	}
-+	if (!es8316->mclk)
-+		dev_warn(component->dev, "assuming static mclk\n");
- 
--	if (es8316->mclk) {
--		ret = clk_prepare_enable(es8316->mclk);
--		if (ret) {
--			dev_err(component->dev, "unable to enable clock\n");
--			return ret;
--		}
-+	ret = clk_prepare_enable(es8316->mclk);
-+	if (ret) {
-+		dev_err(component->dev, "unable to enable mclk\n");
-+		return ret;
- 	}
- 
- 	/* Reset codec and enable current state machine */
-@@ -751,8 +747,7 @@ static void es8316_remove(struct snd_soc_component *component)
+ static int rt1011_get_clk_info(int sclk, int rate)
  {
- 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
+-	int i, pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
++	int i;
++	static const int pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
  
--	if (es8316->mclk)
--		clk_disable_unprepare(es8316->mclk);
-+	clk_disable_unprepare(es8316->mclk);
- }
- 
- static const struct snd_soc_component_driver soc_component_dev_es8316 = {
+ 	if (sclk <= 0 || rate <= 0)
+ 		return -EINVAL;
 -- 
 2.20.1
 
