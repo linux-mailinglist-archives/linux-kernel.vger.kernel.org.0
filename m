@@ -2,145 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09CB6AD798
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0315AAD79E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:06:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390732AbfIILF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 07:05:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46458 "EHLO mail.kernel.org"
+        id S2403859AbfIILGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 07:06:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41506 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729692AbfIILF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 07:05:57 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730736AbfIILGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 07:06:11 -0400
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCDBB206A5;
-        Mon,  9 Sep 2019 11:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568027156;
-        bh=5pLtNhWjUzk4shrDRq2YPZNtxpgUnPEI/ImOsolN2yk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=k6UPqNn+dI17Ewt5HeMWR5STQJsha9lV3+KMjLJlP4woM+rbSX2xTt0ZJoLW+aahT
-         WZ5RRdrGkpxP49+04gipER2t6CDbloFNX0HW93pCyiKwCsFjtTLlZNXjujBOfgjz+p
-         tn0vrNHFdFMqDfKxFxyzuVRfYVd0CkSferH9TLjY=
-Message-ID: <30c007d0c735cd37121e3c2264c1ec3cfdcfd89f.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: allow object copies across different
- filesystems in the same cluster
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 09 Sep 2019 07:05:54 -0400
-In-Reply-To: <3f838e42a50575595c7310386cf698aca8f89607.camel@kernel.org>
-References: <87k1ahojri.fsf@suse.com>
-         <20190909102834.16246-1-lhenriques@suse.com>
-         <3f838e42a50575595c7310386cf698aca8f89607.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        by mx1.redhat.com (Postfix) with ESMTPS id 16405765BF
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2019 11:06:11 +0000 (UTC)
+Received: by mail-wm1-f69.google.com with SMTP id r187so4411799wme.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 04:06:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7P1L82Hvd2CHZtV3y3+DuSRQWJRg8V37be+Beu7AiBw=;
+        b=UHtq+oTTBnhyLbjPPZv5oI8gNuLirPDd3P+4MIUTe5mIpqk/E1gPK67icjfm/Hfh8m
+         L1Td5JHNSqLiiWYYCuGsx4CtVAfR3Jm340KIq9shUqGR0zdR485aIaU6oT1iaRmgo+TI
+         7BPDGInvYuD79264iB6ssyMmBP1LFyx27f+EkTqIQutdKHklL4BSse3Gasx9mr+TFSV4
+         qElPhFE6DqjIC2JYZZlKC9a6pmQEF4ZHE/KPcbMykHBHzbV8CjqhVRfYC8XjbFbZOUOk
+         kkjs+yWTmzfTHt8ZRBDuPJ7XPO3EQq/2s9InYVLN7d0DhtvtfFno2NY6HFcLutNzvUig
+         xr8Q==
+X-Gm-Message-State: APjAAAWIOJpay6HAd4T2ie9URmQs6UcCbM9pMt+vVm1i8D4EDYlpaKej
+        KohykwBLLpNfzR2biqjOT6owKSmwrX42D14fVNYs3RHQOM83PjLbJ9L8bBdGf8f0/OLVVm3eTZQ
+        MwT5m0fmTEympQhkvoaCDLB0j
+X-Received: by 2002:adf:f284:: with SMTP id k4mr3118596wro.294.1568027169600;
+        Mon, 09 Sep 2019 04:06:09 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwpJObjRb41D20LhnQ/9bC6pyQl1DWX1ZWggr3xyk6OHo4dXPNZEDXNgLaeWrw8SqEtwG9mSQ==
+X-Received: by 2002:adf:f284:: with SMTP id k4mr3118569wro.294.1568027169308;
+        Mon, 09 Sep 2019 04:06:09 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:8dc1:ce1e:4b83:3ab7? ([2001:b07:6468:f312:8dc1:ce1e:4b83:3ab7])
+        by smtp.gmail.com with ESMTPSA id x5sm19207918wrg.69.2019.09.09.04.06.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2019 04:06:08 -0700 (PDT)
+Subject: Re: [PATCH] Revert "locking/pvqspinlock: Don't wait if vCPU is
+ preempted"
+To:     Waiman Long <longman@redhat.com>, Wanpeng Li <kernellwp@gmail.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, loobinliu@tencent.com,
+        stable@vger.kernel.org
+References: <1567993228-23668-1-git-send-email-wanpengli@tencent.com>
+ <29d04ee4-60e7-4df9-0c4f-fc29f2b0c6a8@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <fbf152a5-134b-0540-3345-cb6b0b66f1a1@redhat.com>
+Date:   Mon, 9 Sep 2019 13:06:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <29d04ee4-60e7-4df9-0c4f-fc29f2b0c6a8@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-09-09 at 06:35 -0400, Jeff Layton wrote:
-> On Mon, 2019-09-09 at 11:28 +0100, Luis Henriques wrote:
-> > OSDs are able to perform object copies across different pools.  Thus,
-> > there's no need to prevent copy_file_range from doing remote copies if the
-> > source and destination superblocks are different.  Only return -EXDEV if
-> > they have different fsid (the cluster ID).
-> > 
-> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> > ---
-> >  fs/ceph/file.c | 18 ++++++++++++++----
-> >  1 file changed, 14 insertions(+), 4 deletions(-)
-> > 
-> > Hi,
-> > 
-> > Here's the patch changelog since initial submittion:
-> > 
-> > - Dropped have_fsid checks on client structs
-> > - Use %pU to print the fsid instead of raw hex strings (%*ph)
-> > - Fixed 'To:' field in email so that this time the patch hits vger
-> > 
-> > Cheers,
-> > --
-> > Luis
-> > 
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index 685a03cc4b77..4a624a1dd0bb 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -1904,6 +1904,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >  	struct ceph_inode_info *src_ci = ceph_inode(src_inode);
-> >  	struct ceph_inode_info *dst_ci = ceph_inode(dst_inode);
-> >  	struct ceph_cap_flush *prealloc_cf;
-> > +	struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
-> >  	struct ceph_object_locator src_oloc, dst_oloc;
-> >  	struct ceph_object_id src_oid, dst_oid;
-> >  	loff_t endoff = 0, size;
-> > @@ -1915,8 +1916,17 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >  
-> >  	if (src_inode == dst_inode)
-> >  		return -EINVAL;
-> > -	if (src_inode->i_sb != dst_inode->i_sb)
-> > -		return -EXDEV;
-> > +	if (src_inode->i_sb != dst_inode->i_sb) {
-> > +		struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-> > +
-> > +		if (ceph_fsid_compare(&src_fsc->client->fsid,
-> > +				      &dst_fsc->client->fsid)) {
-> > +			dout("Copying object across different clusters:");
-> > +			dout("  src fsid: %pU dst fsid: %pU\n",
-> > +			     &src_fsc->client->fsid, &dst_fsc->client->fsid);
-> > +			return -EXDEV;
-> > +		}
-> > +	}
+On 09/09/19 12:56, Waiman Long wrote:
+> On 9/9/19 2:40 AM, Wanpeng Li wrote:
+>> From: Wanpeng Li <wanpengli@tencent.com>
+>>
+>> This patch reverts commit 75437bb304b20 (locking/pvqspinlock: Don't wait if 
+>> vCPU is preempted), we found great regression caused by this commit.
+>>
+>> Xeon Skylake box, 2 sockets, 40 cores, 80 threads, three VMs, each is 80 vCPUs.
+>> The score of ebizzy -M can reduce from 13000-14000 records/s to 1700-1800 
+>> records/s with this commit.
+>>
+>>           Host                       Guest                score
+>>
+>> vanilla + w/o kvm optimizes     vanilla               1700-1800 records/s
+>> vanilla + w/o kvm optimizes     vanilla + revert      13000-14000 records/s
+>> vanilla + w/ kvm optimizes      vanilla               4500-5000 records/s
+>> vanilla + w/ kvm optimizes      vanilla + revert      14000-15500 records/s
+>>
+>> Exit from aggressive wait-early mechanism can result in yield premature and 
+>> incur extra scheduling latency in over-subscribe scenario.
+>>
+>> kvm optimizes:
+>> [1] commit d73eb57b80b (KVM: Boost vCPUs that are delivering interrupts)
+>> [2] commit 266e85a5ec9 (KVM: X86: Boost queue head vCPU to mitigate lock waiter preemption)
+>>
+>> Tested-by: loobinliu@tencent.com
+>> Cc: Peter Zijlstra <peterz@infradead.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Ingo Molnar <mingo@kernel.org>
+>> Cc: Waiman Long <longman@redhat.com>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Cc: loobinliu@tencent.com
+>> Cc: stable@vger.kernel.org 
+>> Fixes: 75437bb304b20 (locking/pvqspinlock: Don't wait if vCPU is preempted)
+>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> ---
+>>  kernel/locking/qspinlock_paravirt.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
+>> index 89bab07..e84d21a 100644
+>> --- a/kernel/locking/qspinlock_paravirt.h
+>> +++ b/kernel/locking/qspinlock_paravirt.h
+>> @@ -269,7 +269,7 @@ pv_wait_early(struct pv_node *prev, int loop)
+>>  	if ((loop & PV_PREV_CHECK_MASK) != 0)
+>>  		return false;
+>>  
+>> -	return READ_ONCE(prev->state) != vcpu_running || vcpu_is_preempted(prev->cpu);
+>> +	return READ_ONCE(prev->state) != vcpu_running;
+>>  }
+>>  
+>>  /*
 > 
-> Just to be clear: what happens here if I mount two entirely separate
-> clusters, and their OSDs don't have any access to one another? Will this
-> fail at some later point with an error that we can catch so that we can
-> fall back?
+> There are several possibilities for this performance regression:
 > 
+> 1) Multiple vcpus calling vcpu_is_preempted() repeatedly may cause some
+> cacheline contention issue depending on how that callback is implemented.
 
-Duh, sorry I asked before I had a cup of coffee this morning. The whole
-point is to skip that case.
+Unlikely, it is a single percpu read.
 
-That said...I wonder if it's possible to have an fsid collision across
-two separate clusters and this fail to catch that case? Aren't these
-things just allocated via a simple counter increment?
+> 2) KVM may set the preempt flag for a short period whenver an vmexit
+> happens even if a vmenter is executed shortly after. In this case, we
+> may want to use a more durable vcpu suspend flag that indicates the vcpu
+> won't get a real vcpu back for a longer period of time.
 
-Probably not worth worrying about overmuch, but might be good to
-understand what would happen in that case if only to field mailing list
-reports.
+It sets it for exits to userspace, but they shouldn't really happen on a 
+properly-configured system.
 
-Other than that, this looks fine, modulo Ilya's comment about the two
-dout messages.
+However, it's easy to test this theory:
 
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 2e302e977dac..feb6c75a7a88 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -3368,26 +3368,28 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+ {
+ 	int idx;
+ 
+-	if (vcpu->preempted)
++	if (vcpu->preempted) {
+ 		vcpu->arch.preempted_in_kernel = !kvm_x86_ops->get_cpl(vcpu);
+ 
+-	/*
+-	 * Disable page faults because we're in atomic context here.
+-	 * kvm_write_guest_offset_cached() would call might_fault()
+-	 * that relies on pagefault_disable() to tell if there's a
+-	 * bug. NOTE: the write to guest memory may not go through if
+-	 * during postcopy live migration or if there's heavy guest
+-	 * paging.
+-	 */
+-	pagefault_disable();
+-	/*
+-	 * kvm_memslots() will be called by
+-	 * kvm_write_guest_offset_cached() so take the srcu lock.
+-	 */
+-	idx = srcu_read_lock(&vcpu->kvm->srcu);
+-	kvm_steal_time_set_preempted(vcpu);
+-	srcu_read_unlock(&vcpu->kvm->srcu, idx);
+-	pagefault_enable();
++		/*
++		 * Disable page faults because we're in atomic context here.
++		 * kvm_write_guest_offset_cached() would call might_fault()
++		 * that relies on pagefault_disable() to tell if there's a
++		 * bug. NOTE: the write to guest memory may not go through if
++		 * during postcopy live migration or if there's heavy guest
++		 * paging.
++		 */
++		pagefault_disable();
++		/*
++		 * kvm_memslots() will be called by
++		 * kvm_write_guest_offset_cached() so take the srcu lock.
++		 */
++		idx = srcu_read_lock(&vcpu->kvm->srcu);
++		kvm_steal_time_set_preempted(vcpu);
++		srcu_read_unlock(&vcpu->kvm->srcu, idx);
++		pagefault_enable();
++	}
++
+ 	kvm_x86_ops->vcpu_put(vcpu);
+ 	vcpu->arch.last_host_tsc = rdtsc();
+ 	/*
+
+Wanpeng, can you try?
+
+Paolo
+
+> Perhaps you can add a lock event counter to count the number of
+> wait_early events caused by vcpu_is_preempted() being true to see if it
+> really cause a lot more wait_early than without the vcpu_is_preempted()
+> call.
 > 
-> >  	if (ceph_snap(dst_inode) != CEPH_NOSNAP)
-> >  		return -EROFS;
-> >  
-> > @@ -1928,7 +1938,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >  	 * efficient).
-> >  	 */
-> >  
-> > -	if (ceph_test_mount_opt(ceph_inode_to_client(src_inode), NOCOPYFROM))
-> > +	if (ceph_test_mount_opt(src_fsc, NOCOPYFROM))
-> >  		return -EOPNOTSUPP;
-> >  
-> >  	if ((src_ci->i_layout.stripe_unit != dst_ci->i_layout.stripe_unit) ||
-> > @@ -2044,7 +2054,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >  				dst_ci->i_vino.ino, dst_objnum);
-> >  		/* Do an object remote copy */
-> >  		err = ceph_osdc_copy_from(
-> > -			&ceph_inode_to_client(src_inode)->client->osdc,
-> > +			&src_fsc->client->osdc,
-> >  			src_ci->i_vino.snap, 0,
-> >  			&src_oid, &src_oloc,
-> >  			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
-
--- 
-Jeff Layton <jlayton@kernel.org>
+> I have no objection to this, I just want to find out the root cause of it.
+> 
+> Cheers,
+> Longman
+> 
 
