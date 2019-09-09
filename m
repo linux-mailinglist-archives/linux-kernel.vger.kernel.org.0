@@ -2,90 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFDEEAD652
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE4CAD663
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:08:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390032AbfIIKG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:06:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48224 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728993AbfIIKGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:06:55 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 56B3F3090FC2;
-        Mon,  9 Sep 2019 10:06:55 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-59.ams2.redhat.com [10.36.117.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E8DAA10018F8;
-        Mon,  9 Sep 2019 10:06:54 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 0588916E19; Mon,  9 Sep 2019 12:06:54 +0200 (CEST)
-Date:   Mon, 9 Sep 2019 12:06:53 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 05/17] drm: add mmap() to drm_gem_object_funcs
-Message-ID: <20190909100653.hyo4psakt3ccfwjk@sirius.home.kraxel.org>
-References: <20190808134417.10610-1-kraxel@redhat.com>
- <20190808134417.10610-6-kraxel@redhat.com>
- <20190903094859.GQ2112@phenom.ffwll.local>
- <20190906121318.r4nvoacazvwukuun@sirius.home.kraxel.org>
- <CAKMK7uHFS8uW15NMEzN92POD2hyhkvKFgePdjgL=D-noUAkq3Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uHFS8uW15NMEzN92POD2hyhkvKFgePdjgL=D-noUAkq3Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 09 Sep 2019 10:06:55 +0000 (UTC)
+        id S2390265AbfIIKH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:07:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56118 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390185AbfIIKH0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 06:07:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=jA4gXYie+BdKhsUujJLdEzqs2HgXbuGXYSEnTS8I5N8=; b=oZkReiDhtOT6
+        3qfXntGm8n9OB91NlPFo3VRdM/xnwfV/D8s/gsUeLmLlkqTs3SI2l6UJY/cwaYzcAJMRrv6q3OEyG
+        GfR8L7LlFkLXRpvfoKudwlq+gsJrf3CQrwpDByaJonNcpbc/kCmeMEZYsPm2eX76FV5i1t9ibiDgG
+        pnXoo=;
+Received: from [148.69.85.38] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1i7GZp-0001ra-G3; Mon, 09 Sep 2019 10:07:17 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id D48ECD02D3E; Mon,  9 Sep 2019 11:07:16 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: rt1308: make array pd static const, makes object smaller" to the asoc tree
+In-Reply-To: <20190907074634.22144-1-colin.king@canonical.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190909100716.D48ECD02D3E@fitzroy.sirena.org.uk>
+Date:   Mon,  9 Sep 2019 11:07:16 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+The patch
 
-> > +               vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
-> > +               vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
-> > +               vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
-> > +       }
-> 
-> Totally unrelated discussion around HMM lead me to a bit a chase, and
-> realizing that we probably want a
-> 
->     WARN_ON(!(vma->vm_flags & VM_SPECIAL));
-> 
-> here, to make sure drivers set at least one of the "this is a special
-> vma, don't try to treat it like pagecache/anon memory". Just to be on
-> the safe side. Maybe we also want to keep the entire vma->vm_flags
-> assignment in the common code, but at least the WARN_ON would be a
-> good check I think. Maybe also check for VM_DONTEXPAND while at it
+   ASoC: rt1308: make array pd static const, makes object smaller
 
-Hmm.  VM_SPECIAL is this:
+has been applied to the asoc tree at
 
-  #define VM_SPECIAL (VM_IO | VM_DONTEXPAND | VM_PFNMAP | VM_MIXEDMAP)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
-Requiring VM_DONTEXPAND makes sense for sure.  Dunno about the other
-ones.  For drm_gem_vram_helper VM_IO + VM_PFNMAP are needed.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-But we also have drm_gem_shmem_helper which backs objects with normal
-pages.  In fact drm_gem_shmem_mmap does this:
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-	/* VM_PFNMAP was set by drm_gem_mmap() */
-	vma->vm_flags &= ~VM_PFNMAP;
-	vma->vm_flags |= VM_MIXEDMAP;
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-include/linux/mm.h isn't very helpful in explaining how VM_MIXEDMAP
-should be used, only saying can be both "struct page" and pfnmap, so I'm
-not sure why VM_MIXEDMAP is set here, it should always be "struct page"
-for shmem, no?
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-cheers,
-  Gerd
+Thanks,
+Mark
+
+From 13ab0d1ab8ae4d1b3b247fd5caec2c10e35c7269 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sat, 7 Sep 2019 08:46:34 +0100
+Subject: [PATCH] ASoC: rt1308: make array pd static const, makes object
+ smaller
+
+Don't populate the array pd on the stack but instead make it
+static const. Makes the object code smaller by 82 bytes.
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  26548	   7288	     64	  33900	   846c	sound/soc/codecs/rt1308.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  26370	   7384	     64	  33818	   841a	sound/soc/codecs/rt1308.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190907074634.22144-1-colin.king@canonical.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/rt1308.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/rt1308.c b/sound/soc/codecs/rt1308.c
+index 6f2ee6809dbb..b75931a69a1c 100644
+--- a/sound/soc/codecs/rt1308.c
++++ b/sound/soc/codecs/rt1308.c
+@@ -436,7 +436,8 @@ static const struct snd_soc_dapm_route rt1308_dapm_routes[] = {
+ 
+ static int rt1308_get_clk_info(int sclk, int rate)
+ {
+-	int i, pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
++	int i;
++	static const int pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
+ 
+ 	if (sclk <= 0 || rate <= 0)
+ 		return -EINVAL;
+-- 
+2.20.1
 
