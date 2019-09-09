@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA0AADE7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 20:13:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98571ADE8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 20:13:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405535AbfIISMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 14:12:49 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:35199 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405475AbfIISMl (ORCPT
+        id S2405607AbfIISNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 14:13:15 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35205 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405486AbfIISMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 14:12:41 -0400
-Received: by mail-qt1-f194.google.com with SMTP id k10so17313755qth.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 11:12:40 -0700 (PDT)
+        Mon, 9 Sep 2019 14:12:42 -0400
+Received: by mail-qt1-f195.google.com with SMTP id k10so17313859qth.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 11:12:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=2LohODRye0AXb6pFFAov36EHdB22I7TfTyru75JBhPY=;
-        b=b4JWeuEqNHu1nxwYKfDEsBPTvMMBWZi2cqM0adTfZFS4l+t2aJ3B29NCi9xuB49OSa
-         C77Y9e1TYrSKEeJmNf39D7K4bVy/4ZNWPvYi4dam1Nwsr0JFlQrwCLlmTVBcNdq5YV+8
-         MrgKWmXLLtlYEqTc93GG36FcY0hdxv863oZlRKWBhnek6e0iEXX8ItgAmzFG37ddwOGk
-         Amv6GRDOMInAjA3xefoEOGpOL9a8kveoC8s0a5ApLBvvouNSdofiM0Qs0ltzEq6V/nEi
-         zarysFCuCJY5uzMpcTTKAdeRqmX51hU5bkn5vuS7qY/SeLhaIpVhrZlj3rOjk+qTrY+j
-         iZpg==
+        bh=VDzqkQgnkwsjeSD2sj+xCRv+aPoQdl7/oAUIodozYzI=;
+        b=gEFy66rKgwtrGikuVUBnPyDp5wFXvKrpxJzr2q8Qx3ehi4m93SO+cT8ckPzt3hC8G1
+         5wjKdyCc5YIkYVxz+nYq19eoJQ0rdnxqNJnsnOqZZT/PzPbJu2FhQiaHyxcaNdKXnr09
+         0jnUs37ghN8KKRCsNZnq1V0ltm+b6H7CnXfXZik/8St/OTcFJqQPRi+/6I9Ra8kgjZTm
+         yZfQFlr+97DIgzbJ0FcDnqMXwd4Wdj/tGE00x1RC0STKY6PXXcs1ELvfCOTKQMrVguot
+         oy2uD6HEOhYRGdzg2HchRp5NQ8ML3hZbKNCubNsZaCy/bs/6SVxAEVcXq+z3OiC54hub
+         B0ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2LohODRye0AXb6pFFAov36EHdB22I7TfTyru75JBhPY=;
-        b=UKl1GQOfM4Zpwxgf83jcrolzA+3nkY4UMBOleGC9ggeWrC+JsPka3IpOygvUEte+JR
-         Lzl0QkDo6Tvy/nPOYiqNJb9+4g/q6/oJxnSZ105cWyT99CMQdqAFlAtT+GOa9rXT5FQ+
-         xGY0fGg7QvEt5aW2/Ce526Zv/HceB0Xe1pn2WuIHtn1N6E4v/EZxFNUzsx29HJcED5zV
-         S+I7Y9T3ut1MAIZpKJNh9Sw1QSt50BHAX8Rvbqi4bqRSPjqIeeSqLBlpjfcK7Ja2AMOo
-         fyQoTX+T+QfUOWP4PnDqidW/TaZTqj/R2aqr9dwZ0IzYt8JSj+nXI/ilRxUouQQ++mX1
-         jIow==
-X-Gm-Message-State: APjAAAWFQFhHZp6hnTUQSs/KX+OnHwEZjFizvEAEgno9tDu0qpqAzbco
-        pNNJYq1Ol2G7+SFtEebjA5EgHg==
-X-Google-Smtp-Source: APXvYqwZbXP54u+gMB+FnMTzfwcMtvxaxlwtPafub/S1cyQjKXudNEOHdzHtrwsLKwZy4rWiD0HpCg==
-X-Received: by 2002:a0c:e64e:: with SMTP id c14mr15416016qvn.17.1568052760215;
-        Mon, 09 Sep 2019 11:12:40 -0700 (PDT)
+        bh=VDzqkQgnkwsjeSD2sj+xCRv+aPoQdl7/oAUIodozYzI=;
+        b=C6slbUOd9BlWFIprofQpDGDBkt4RV77+7Q7YhPMydZK7XylySMOdd+oEamtXo2MSJa
+         I0G0W2zk86O93nMGKQ0yI/hLt08sxN8XCU+RBltyOSOIQjg+fMm3LKJAUM5Rq0+Z8j62
+         ChIKExAf0poKJydui6u8v1Bo2KLgl5FgTAwBeZHml/Rv75mIGGt/XJ0rJlK4YBwYaURs
+         dGJBmhYqQPjbRF6Po+uHJh3ro1I7pUArd1xE53LxmgCPJYUIEKXckfy7NZyYQi//605z
+         Gl01Kpyie7Q8TdLpQT+YelyCxAW3GPDHVyW7zaUo6cFkzr3irLurDkSUVqNqSKv/r4ap
+         lM8g==
+X-Gm-Message-State: APjAAAXJUudStZ7VYBh7mXZKVNybXOucC32fjEaJ7GmRTbGKD3pmwTFA
+        +KC95eaGI0sMe5OKUWoCoi1yOA==
+X-Google-Smtp-Source: APXvYqy2DfI9VQoDCC6Va2zmAeWcK9TGmDIi0yl0BgAbKSBK0D91mrY30M5+sJkkAC/vKvqTDaqtSg==
+X-Received: by 2002:ad4:4d8e:: with SMTP id cv14mr7524241qvb.49.1568052761763;
+        Mon, 09 Sep 2019 11:12:41 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id q8sm5611310qtj.76.2019.09.09.11.12.38
+        by smtp.gmail.com with ESMTPSA id q8sm5611310qtj.76.2019.09.09.11.12.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 11:12:39 -0700 (PDT)
+        Mon, 09 Sep 2019 11:12:41 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -54,9 +54,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         james.morse@arm.com, vladimir.murzin@arm.com,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com
-Subject: [PATCH v4 11/17] arm64: trans_pgd: pass allocator trans_pgd_create_copy
-Date:   Mon,  9 Sep 2019 14:12:15 -0400
-Message-Id: <20190909181221.309510-12-pasha.tatashin@soleen.com>
+Subject: [PATCH v4 12/17] arm64: trans_pgd: pass NULL instead of init_mm to *_populate functions
+Date:   Mon,  9 Sep 2019 14:12:16 -0400
+Message-Id: <20190909181221.309510-13-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190909181221.309510-1-pasha.tatashin@soleen.com>
 References: <20190909181221.309510-1-pasha.tatashin@soleen.com>
@@ -67,178 +67,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make trans_pgd_create_copy and its subroutines to use allocator that is
-passed as an argument
+trans_pgd_* should be independent from mm context because the tables that
+are created by this code are used when there are no mm context around, as
+it is between kernels. Simply replace mm_init's with NULL.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 ---
- arch/arm64/include/asm/trans_pgd.h |  7 ++++--
- arch/arm64/kernel/hibernate.c      |  6 ++++-
- arch/arm64/mm/trans_pgd.c          | 35 +++++++++++++++---------------
- 3 files changed, 28 insertions(+), 20 deletions(-)
+ arch/arm64/mm/trans_pgd.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/include/asm/trans_pgd.h b/arch/arm64/include/asm/trans_pgd.h
-index 53f67ec84cdc..61a725fe1093 100644
---- a/arch/arm64/include/asm/trans_pgd.h
-+++ b/arch/arm64/include/asm/trans_pgd.h
-@@ -25,8 +25,11 @@ struct trans_pgd_info {
- 	void *trans_alloc_arg;
- };
- 
--int trans_pgd_create_copy(pgd_t **dst_pgdp, unsigned long start,
--			  unsigned long end);
-+/*
-+ * Create trans_pgd and copy linear map [start, end)
-+ */
-+int trans_pgd_create_copy(struct trans_pgd_info *info, pgd_t **trans_pgd,
-+			  unsigned long start, unsigned long end);
- 
- /*
-  * Add map entry to trans_pgd for a base-size page at PTE level.
-diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
-index 9b75b680ab70..36eccf63629c 100644
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -322,13 +322,17 @@ int swsusp_arch_resume(void)
- 	phys_addr_t phys_hibernate_exit;
- 	void __noreturn (*hibernate_exit)(phys_addr_t, phys_addr_t, void *,
- 					  void *, phys_addr_t, phys_addr_t);
-+	struct trans_pgd_info trans_info = {
-+		.trans_alloc_page	= hibernate_page_alloc,
-+		.trans_alloc_arg	= (void *)GFP_ATOMIC,
-+	};
- 
- 	/*
- 	 * Restoring the memory image will overwrite the ttbr1 page tables.
- 	 * Create a second copy of just the linear map, and use this when
- 	 * restoring.
- 	 */
--	rc = trans_pgd_create_copy(&tmp_pg_dir, PAGE_OFFSET, 0);
-+	rc = trans_pgd_create_copy(&trans_info, &tmp_pg_dir, PAGE_OFFSET, 0);
- 	if (rc)
- 		goto out;
- 
 diff --git a/arch/arm64/mm/trans_pgd.c b/arch/arm64/mm/trans_pgd.c
-index 7521d558a0b9..dfde87159840 100644
+index dfde87159840..e7b8625b3ac3 100644
 --- a/arch/arm64/mm/trans_pgd.c
 +++ b/arch/arm64/mm/trans_pgd.c
-@@ -57,14 +57,14 @@ static void _copy_pte(pte_t *dst_ptep, pte_t *src_ptep, unsigned long addr)
- 	}
- }
- 
--static int copy_pte(pmd_t *dst_pmdp, pmd_t *src_pmdp, unsigned long start,
--		    unsigned long end)
-+static int copy_pte(struct trans_pgd_info *info, pmd_t *dst_pmdp,
-+		    pmd_t *src_pmdp, unsigned long start, unsigned long end)
- {
- 	pte_t *src_ptep;
- 	pte_t *dst_ptep;
- 	unsigned long addr = start;
- 
--	dst_ptep = (pte_t *)get_safe_page(GFP_ATOMIC);
-+	dst_ptep = trans_alloc(info);
+@@ -67,7 +67,7 @@ static int copy_pte(struct trans_pgd_info *info, pmd_t *dst_pmdp,
+ 	dst_ptep = trans_alloc(info);
  	if (!dst_ptep)
  		return -ENOMEM;
- 	pmd_populate_kernel(&init_mm, dst_pmdp, dst_ptep);
-@@ -78,8 +78,8 @@ static int copy_pte(pmd_t *dst_pmdp, pmd_t *src_pmdp, unsigned long start,
- 	return 0;
- }
+-	pmd_populate_kernel(&init_mm, dst_pmdp, dst_ptep);
++	pmd_populate_kernel(NULL, dst_pmdp, dst_ptep);
+ 	dst_ptep = pte_offset_kernel(dst_pmdp, start);
  
--static int copy_pmd(pud_t *dst_pudp, pud_t *src_pudp, unsigned long start,
--		    unsigned long end)
-+static int copy_pmd(struct trans_pgd_info *info, pud_t *dst_pudp,
-+		    pud_t *src_pudp, unsigned long start, unsigned long end)
- {
- 	pmd_t *src_pmdp;
- 	pmd_t *dst_pmdp;
-@@ -87,7 +87,7 @@ static int copy_pmd(pud_t *dst_pudp, pud_t *src_pudp, unsigned long start,
- 	unsigned long addr = start;
- 
- 	if (pud_none(READ_ONCE(*dst_pudp))) {
--		dst_pmdp = (pmd_t *)get_safe_page(GFP_ATOMIC);
-+		dst_pmdp = trans_alloc(info);
+ 	src_ptep = pte_offset_kernel(src_pmdp, start);
+@@ -90,7 +90,7 @@ static int copy_pmd(struct trans_pgd_info *info, pud_t *dst_pudp,
+ 		dst_pmdp = trans_alloc(info);
  		if (!dst_pmdp)
  			return -ENOMEM;
- 		pud_populate(&init_mm, dst_pudp, dst_pmdp);
-@@ -102,7 +102,7 @@ static int copy_pmd(pud_t *dst_pudp, pud_t *src_pudp, unsigned long start,
- 		if (pmd_none(pmd))
- 			continue;
- 		if (pmd_table(pmd)) {
--			if (copy_pte(dst_pmdp, src_pmdp, addr, next))
-+			if (copy_pte(info, dst_pmdp, src_pmdp, addr, next))
- 				return -ENOMEM;
- 		} else {
- 			set_pmd(dst_pmdp,
-@@ -113,7 +113,8 @@ static int copy_pmd(pud_t *dst_pudp, pud_t *src_pudp, unsigned long start,
- 	return 0;
- }
+-		pud_populate(&init_mm, dst_pudp, dst_pmdp);
++		pud_populate(NULL, dst_pudp, dst_pmdp);
+ 	}
+ 	dst_pmdp = pmd_offset(dst_pudp, start);
  
--static int copy_pud(pgd_t *dst_pgdp, pgd_t *src_pgdp, unsigned long start,
-+static int copy_pud(struct trans_pgd_info *info, pgd_t *dst_pgdp,
-+		    pgd_t *src_pgdp, unsigned long start,
- 		    unsigned long end)
- {
- 	pud_t *dst_pudp;
-@@ -122,7 +123,7 @@ static int copy_pud(pgd_t *dst_pgdp, pgd_t *src_pgdp, unsigned long start,
- 	unsigned long addr = start;
- 
- 	if (pgd_none(READ_ONCE(*dst_pgdp))) {
--		dst_pudp = (pud_t *)get_safe_page(GFP_ATOMIC);
-+		dst_pudp = trans_alloc(info);
+@@ -126,7 +126,7 @@ static int copy_pud(struct trans_pgd_info *info, pgd_t *dst_pgdp,
+ 		dst_pudp = trans_alloc(info);
  		if (!dst_pudp)
  			return -ENOMEM;
- 		pgd_populate(&init_mm, dst_pgdp, dst_pudp);
-@@ -137,7 +138,7 @@ static int copy_pud(pgd_t *dst_pgdp, pgd_t *src_pgdp, unsigned long start,
- 		if (pud_none(pud))
- 			continue;
- 		if (pud_table(pud)) {
--			if (copy_pmd(dst_pudp, src_pudp, addr, next))
-+			if (copy_pmd(info, dst_pudp, src_pudp, addr, next))
- 				return -ENOMEM;
- 		} else {
- 			set_pud(dst_pudp,
-@@ -148,8 +149,8 @@ static int copy_pud(pgd_t *dst_pgdp, pgd_t *src_pgdp, unsigned long start,
- 	return 0;
- }
+-		pgd_populate(&init_mm, dst_pgdp, dst_pudp);
++		pgd_populate(NULL, dst_pgdp, dst_pudp);
+ 	}
+ 	dst_pudp = pud_offset(dst_pgdp, start);
  
--static int copy_page_tables(pgd_t *dst_pgdp, unsigned long start,
--			    unsigned long end)
-+static int copy_page_tables(struct trans_pgd_info *info, pgd_t *dst_pgdp,
-+			    unsigned long start, unsigned long end)
- {
- 	unsigned long next;
- 	unsigned long addr = start;
-@@ -160,25 +161,25 @@ static int copy_page_tables(pgd_t *dst_pgdp, unsigned long start,
- 		next = pgd_addr_end(addr, end);
- 		if (pgd_none(READ_ONCE(*src_pgdp)))
- 			continue;
--		if (copy_pud(dst_pgdp, src_pgdp, addr, next))
-+		if (copy_pud(info, dst_pgdp, src_pgdp, addr, next))
+@@ -199,7 +199,7 @@ int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
+ 		pudp = trans_alloc(info);
+ 		if (!pudp)
  			return -ENOMEM;
- 	} while (dst_pgdp++, src_pgdp++, addr = next, addr != end);
- 
- 	return 0;
- }
- 
--int trans_pgd_create_copy(pgd_t **dst_pgdp, unsigned long start,
--			  unsigned long end)
-+int trans_pgd_create_copy(struct trans_pgd_info *info, pgd_t **dst_pgdp,
-+			  unsigned long start, unsigned long end)
- {
- 	int rc;
--	pgd_t *trans_pgd = (pgd_t *)get_safe_page(GFP_ATOMIC);
-+	pgd_t *trans_pgd = trans_alloc(info);
- 
- 	if (!trans_pgd) {
- 		pr_err("Failed to allocate memory for temporary page tables.\n");
- 		return -ENOMEM;
+-		pgd_populate(&init_mm, pgdp, pudp);
++		pgd_populate(NULL, pgdp, pudp);
  	}
  
--	rc = copy_page_tables(trans_pgd, start, end);
-+	rc = copy_page_tables(info, trans_pgd, start, end);
- 	if (!rc)
- 		*dst_pgdp = trans_pgd;
+ 	pudp = pud_offset(pgdp, dst_addr);
+@@ -207,7 +207,7 @@ int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
+ 		pmdp = trans_alloc(info);
+ 		if (!pmdp)
+ 			return -ENOMEM;
+-		pud_populate(&init_mm, pudp, pmdp);
++		pud_populate(NULL, pudp, pmdp);
+ 	}
  
+ 	pmdp = pmd_offset(pudp, dst_addr);
+@@ -215,7 +215,7 @@ int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
+ 		ptep = trans_alloc(info);
+ 		if (!ptep)
+ 			return -ENOMEM;
+-		pmd_populate_kernel(&init_mm, pmdp, ptep);
++		pmd_populate_kernel(NULL, pmdp, ptep);
+ 	}
+ 
+ 	ptep = pte_offset_kernel(pmdp, dst_addr);
 -- 
 2.23.0
 
