@@ -2,93 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B5B4AD776
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E55A8AD76D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:59:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390907AbfIIK76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:59:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:47812 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390885AbfIIK74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:59:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72C9C1000;
-        Mon,  9 Sep 2019 03:59:55 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.194.52])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C01DC3F71F;
-        Mon,  9 Sep 2019 03:59:53 -0700 (PDT)
-Date:   Mon, 9 Sep 2019 11:59:51 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jirka =?utf-8?Q?Hladk=C3=BD?= <jhladky@redhat.com>,
-        =?utf-8?B?SmnFmcOtIFZvesOhcg==?= <jvozar@redhat.com>,
-        x86@kernel.org
-Subject: Re: [PATCH 2/2] sched/debug: add sched_update_nr_running tracepoint
-Message-ID: <20190909105951.rycwzsaome4l5d5f@e107158-lin.cambridge.arm.com>
-References: <20190903154340.860299-1-rkrcmar@redhat.com>
- <20190903154340.860299-3-rkrcmar@redhat.com>
- <20190904143711.zorh2whdapymc5ng@e107158-lin.cambridge.arm.com>
- <20190904174841.GW2332@hirez.programming.kicks-ass.net>
+        id S2390732AbfIIK7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:59:44 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:37036 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390539AbfIIK7o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 06:59:44 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x89AxSho114599;
+        Mon, 9 Sep 2019 05:59:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568026768;
+        bh=KVTZeU9q6U/tm8mHmG6WMtzijKTyoPy7zWy+jYJUN0w=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Z0kR636WsH3wXes0J12PD38D5hFweyoCxpR+fcSAcWqcaqyeR8AjIXhnnBvTZO8J4
+         yPyACWq001MyvsAYus3peKtwX6dQLmuEyzcfdcba/FuVxuwdMwElfDMGTVDMEkAvQH
+         /nfb7SUhIcjDJf//GEdyLAhd0tGpVvmHLFG6OG1s=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x89AxSEJ104990;
+        Mon, 9 Sep 2019 05:59:28 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 9 Sep
+ 2019 05:59:26 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 9 Sep 2019 05:59:25 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x89AxMHW108974;
+        Mon, 9 Sep 2019 05:59:23 -0500
+Subject: Re: [PATCH v2 06/14] dmaengine: ti: Add cppi5 header for UDMA
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     <robh+dt@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>,
+        <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
+        <t-kristo@ti.com>, <tony@atomide.com>, <j-keerthy@ti.com>
+References: <20190730093450.12664-1-peter.ujfalusi@ti.com>
+ <20190730093450.12664-7-peter.ujfalusi@ti.com>
+ <20190908142528.GP2672@vkoul-mobl>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <8699f999-7834-a083-2c7b-3ea909b1e011@ti.com>
+Date:   Mon, 9 Sep 2019 13:59:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190904174841.GW2332@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20190908142528.GP2672@vkoul-mobl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/19 19:48, Peter Zijlstra wrote:
-> On Wed, Sep 04, 2019 at 03:37:11PM +0100, Qais Yousef wrote:
+
+
+On 08/09/2019 17.25, Vinod Koul wrote:
+> On 30-07-19, 12:34, Peter Ujfalusi wrote:
 > 
-> > I managed to hook into sched_switch to get the nr_running of cfs tasks via
-> > eBPF.
-> > 
-> > ```
-> > int on_switch(struct sched_switch_args *args) {
-> >     struct task_struct *prev = (struct task_struct *)bpf_get_current_task();
-> >     struct cgroup *prev_cgroup = prev->cgroups->subsys[cpuset_cgrp_id]->cgroup;
-> >     const char *prev_cgroup_name = prev_cgroup->kn->name;
-> > 
-> >     if (prev_cgroup->kn->parent) {
-> >         bpf_trace_printk("sched_switch_ext: nr_running=%d prev_cgroup=%s\\n",
-> >                          prev->se.cfs_rq->nr_running,
-> >                          prev_cgroup_name);
-> >     } else {
-> >         bpf_trace_printk("sched_switch_ext: nr_running=%d prev_cgroup=/\\n",
-> >                          prev->se.cfs_rq->nr_running);
-> >     }
-> >     return 0;
-> > };
-> > ```
-> > 
-> > You can do something similar by attaching to the sched_switch tracepoint from
-> > a module and a create a new event to get the nr_running.
-> > 
-> > Now this is not as accurate as your proposed new tracepoint in terms where you
-> > sample nr_running, but should be good enough?
+>> +/**
+>> + * Descriptor header, present in all types of descriptors
+>> + */
+>> +struct cppi5_desc_hdr_t {
+>> +	u32 pkt_info0;	/* Packet info word 0 (n/a in Buffer desc) */
+>> +	u32 pkt_info1;	/* Packet info word 1 (n/a in Buffer desc) */
+>> +	u32 pkt_info2;	/* Packet info word 2 Buffer reclamation info */
+>> +	u32 src_dst_tag; /* Packet info word 3 (n/a in Buffer desc) */
 > 
-> The above is after deactivate() and gives an up-to-date count for
-> decrements. Attach something to trace_sched_wakeup() to get the
-> increment update.
+> Can we move these comments to kernel-doc style please
 
-I just remembered that sched_switch and sched_wakeup aren't
-EXPORT_TRACEPOINT*() so can't be attached to via out of tree module. But still
-accessible via eBPF.
+Sure, I'll move all struct and enums.
 
-There has been several attempts to export these tracepoints but they were
-NACKed because there was no in-kernel module that needed them.
+>> +/**
+>> + * cppi5_desc_get_type - get descriptor type
+>> + * @desc_hdr: packet descriptor/TR header
+>> + *
+>> + * Returns descriptor type:
+>> + * CPPI5_INFO0_DESC_TYPE_VAL_HOST
+>> + * CPPI5_INFO0_DESC_TYPE_VAL_MONO
+>> + * CPPI5_INFO0_DESC_TYPE_VAL_TR
+>> + */
+>> +static inline u32 cppi5_desc_get_type(struct cppi5_desc_hdr_t *desc_hdr)
+>> +{
+>> +	WARN_ON(!desc_hdr);
+> 
+> why WARN_ON and not return error!
 
-https://lore.kernel.org/lkml/20150422130052.4996e231@gandalf.local.home/
+these helpers were intended to be as simple as possible.
+I can go through with all of the WARN_ONs and replace them with if()
+pr_warn() and either just return or return with 0.
 
---
-Qais Yousef
+Would that be acceptable?
+
+>> +/**
+>> + * cppi5_hdesc_calc_size - Calculate Host Packet Descriptor size
+>> + * @epib: is EPIB present
+>> + * @psdata_size: PSDATA size
+>> + * @sw_data_size: SWDATA size
+>> + *
+>> + * Returns required Host Packet Descriptor size
+>> + * 0 - if PSDATA > CPPI5_INFO0_HDESC_PSDATA_MAX_SIZE
+>> + */
+>> +static inline u32 cppi5_hdesc_calc_size(bool epib, u32 psdata_size,
+>> +					u32 sw_data_size)
+>> +{
+>> +	u32 desc_size;
+>> +
+>> +	if (psdata_size > CPPI5_INFO0_HDESC_PSDATA_MAX_SIZE)
+>> +		return 0;
+>> +	//TODO_GS: align
+> 
+> :)
+
+Leftover TODO from Grygorii, the align is already done.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
