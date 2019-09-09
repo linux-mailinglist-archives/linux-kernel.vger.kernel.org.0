@@ -2,108 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77A1AD65D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF581AD66F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390347AbfIIKHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:07:36 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56282 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390279AbfIIKHb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:07:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=0BWb9oFNsrzhHRoXjRJsJwhpQNsxpSMWA6Ianh79KG4=; b=kdfGYxagBog3
-        B0uk3QvHNJqgZ5xw0vcglNzkWbAeGRVWdL6/pV38BSZhtOPbuUCzP9jiS2jkT2Paxw/zDKGoLz2SO
-        nNpzN1DL8KuPJmOjOcRI446tBSB/P5cuhxI0sFni4lhLMAa3+Qe+tcD4P+zUuj232Q7SxeRpd3ncM
-        sESsE=;
-Received: from [148.69.85.38] (helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1i7Ga0-0001ub-4U; Mon, 09 Sep 2019 10:07:28 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 86F3BD02D18; Mon,  9 Sep 2019 11:07:27 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Markus Elfring <elfring@users.sourceforge.net>
-Cc:     kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "spi-gpio: Use PTR_ERR_OR_ZERO() in spi_gpio_request()" to the spi tree
-In-Reply-To: <b2dd074a-1693-3aea-42b4-da1f5ec155c4@web.de>
-X-Patchwork-Hint: ignore
-Message-Id: <20190909100727.86F3BD02D18@fitzroy.sirena.org.uk>
-Date:   Mon,  9 Sep 2019 11:07:27 +0100 (BST)
+        id S1729735AbfIIKJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:09:22 -0400
+Received: from mga07.intel.com ([134.134.136.100]:15074 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728554AbfIIKJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 06:09:21 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Sep 2019 03:09:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,484,1559545200"; 
+   d="scan'208";a="196150981"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga002.jf.intel.com with ESMTP; 09 Sep 2019 03:09:19 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1i7Gbm-0006RQ-1z; Mon, 09 Sep 2019 13:09:18 +0300
+Date:   Mon, 9 Sep 2019 13:09:18 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] software node: implement reference properties
+Message-ID: <20190909100918.GS2680@smile.fi.intel.com>
+References: <20190906222611.223532-1-dmitry.torokhov@gmail.com>
+ <20190907160819.GH2680@smile.fi.intel.com>
+ <20190907163240.GA27112@dtor-ws>
+ <20190907171251.GL2680@smile.fi.intel.com>
+ <20190907173724.GA145199@dtor-ws>
+ <20190907180348.GM2680@smile.fi.intel.com>
+ <20190907182335.GB145199@dtor-ws>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190907182335.GB145199@dtor-ws>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Sat, Sep 07, 2019 at 11:23:35AM -0700, Dmitry Torokhov wrote:
+> On Sat, Sep 07, 2019 at 09:03:48PM +0300, Andy Shevchenko wrote:
+> > On Sat, Sep 07, 2019 at 10:37:24AM -0700, Dmitry Torokhov wrote:
+> > > On Sat, Sep 07, 2019 at 08:12:51PM +0300, Andy Shevchenko wrote:
+> > > > On Sat, Sep 07, 2019 at 09:32:40AM -0700, Dmitry Torokhov wrote:
+> > > > > On Sat, Sep 07, 2019 at 07:08:19PM +0300, Andy Shevchenko wrote:
+> > > > > > On Fri, Sep 06, 2019 at 03:26:09PM -0700, Dmitry Torokhov wrote:
+> > > > 
+> > > > > > > +	} else if (src->type == DEV_PROP_REF) {
+> > > > > > > +		/* All reference properties must be arrays */
+> > > > > > > +		return -EINVAL;
+> > > > > > 
+> > > > > > Hmm... What about to duplicate pointer under value union and use is_array to
+> > > > > > distinguish which one to use? Because...
+> > > > > 
+> > > > > Then we have to special-case copying this entry, similar to the pains we
+> > > > > are going with the strings.
+> > > > 
+> > > > I can't see it as a pain. Simple do the same kmemdup() for the case when
+> > > > is_array = false and DEV_TYPE_REF?
+> > > 
+> > > And then you need to make sure it is freed on error paths and when we
+> > > remove property entries. This requires more checks and code. In contrast
+> > > we already know how to handle out of line objects of arbitrary size.
+> > 
+> > We can put it one level up to be a sibling to value / pointer unions.
+> > In that case is_array can be anything (we just don't care).
+> 
+> I think it would be better if you sketched out your proposed data
+> structure(s) so we are talking about the same things. But please note
+> that when you are dealing with property arrays we need to keep the easy
+> way of defining them, which means we should not be splitting individual
+> entries.
 
-   spi-gpio: Use PTR_ERR_OR_ZERO() in spi_gpio_request()
+This one:
 
-has been applied to the spi tree at
+        union {
+                union {
+                        const u8 *u8_data;
+                        const u16 *u16_data;
+                        const u32 *u32_data;
+                        const u64 *u64_data;
+                        const char * const *str;
+                } pointer;
+                union {
+                        u8 u8_data;
+                        u16 u16_data;
+                        u32 u32_data;
+                        u64 u64_data;
+                        const char *str;
+                } value;
+		struct ... *ref;
+        };
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 8995673e6f584c2140b565d9ef20e4e4599aad7e Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 7 Sep 2019 13:51:16 +0200
-Subject: [PATCH] spi-gpio: Use PTR_ERR_OR_ZERO() in spi_gpio_request()
-
-Simplify this function implementation by using a known function.
-
-Generated by: scripts/coccinelle/api/ptr_ret.cocci
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/b2dd074a-1693-3aea-42b4-da1f5ec155c4@web.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-gpio.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
-index 9eb82150666e..1d3e23ec20a6 100644
---- a/drivers/spi/spi-gpio.c
-+++ b/drivers/spi/spi-gpio.c
-@@ -290,10 +290,7 @@ static int spi_gpio_request(struct device *dev, struct spi_gpio *spi_gpio)
- 		return PTR_ERR(spi_gpio->miso);
- 
- 	spi_gpio->sck = devm_gpiod_get(dev, "sck", GPIOD_OUT_LOW);
--	if (IS_ERR(spi_gpio->sck))
--		return PTR_ERR(spi_gpio->sck);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(spi_gpio->sck);
- }
- 
- #ifdef CONFIG_OF
 -- 
-2.20.1
+With Best Regards,
+Andy Shevchenko
+
 
