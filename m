@@ -2,95 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C15EAD92C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:38:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D107AD939
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:40:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404675AbfIIMic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 08:38:32 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:45625 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727967AbfIIMib (ORCPT
+        id S2404772AbfIIMk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 08:40:27 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:42626 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727810AbfIIMk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 08:38:31 -0400
-Received: from localhost ([46.78.15.232]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MsqMq-1iRBEX2R1k-00tA70; Mon, 09 Sep 2019 14:38:09 +0200
-Date:   Mon, 9 Sep 2019 14:38:08 +0200
-From:   Andreas Klinger <ak@it-klinger.de>
-To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] iio: adc: hx711: remove unnecessary returns
-Message-ID: <20190909123806.ewrxc7y5gmh5plmk@arbad>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Provags-ID: V03:K1:sYDxRPyTH6C963S9/gAb7OfPBbNXhNeJ1VYf7nec78X5l8tEuYz
- 89GJ3GsRA3UGY+lHLXgvDVrblbvhsuMpk3tdhjGV9YYmscCDr8C/3RS7cLhaMzcg0CrVjU3
- 1oHubHyyDAvunKH+hjjY1KGERUiW3P7AOfzdjn7CpafTqTJMUl4h82npocnVxPkqQ/cNkQm
- v8N1sbOksdpuhhrvbnr0A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:D1A/xcjwmhE=:2hJiZpX/Ug+t4LH3e2ULTW
- QW6BrjPYoO7hKtZuenuHvoBcsy6l9Bpwf4CW4ZlBjTUr+JVP+jcCHzQZjEmEPFtASvjAq8o7r
- pvR3Z5Ts93bNTsbC0sfIE3KQs2tN5w1xTyOSG19Tj0D3/VBEXTcBXYt190/gzElSbNxrVP7dE
- C/Xf5o5HviXcVwknJWXeZHKuDaIihd+BO4E/1vx6Sc5Y0lN6X5gG+3/6vfvJPmOB6+h01rcnN
- 1bH3MZIUM/RJKMGS/+4YQ3RtepBvxIxc4yhYNRJqigcH5d9ZvvOPNAPzGog+6HDAJyCe4+LKo
- vZJgs5MHfC219paPDGIdsto6xdx/KB3UtknvevYtSw0khpt/mZtHNSr635sOAYIVqNp8B8xBi
- sGWzdDO2eCGczM8U2i62u2olujLErvkTf9/A+LVEfYfsLHNKdnrKc9hxpQMUumHVvQ1Z9PpNb
- 7hXdmk9SrHu9wfOcYWHvO2+jR/u7Z2K7/LFgUI3nT8ev74Sh0oAXaD9M7FS4PU+V48f5i1I98
- HVukkycewsEv07Reh34/BBZ/F//TLPzFzX3oP2p2CQ91Nc4eNvZtz3YndLwuJVhOkrxhX2Iif
- IAgYg6ktZRYEEcoJVMMa6xqUt6QbnBjgCKpHLN0obphipe1eDX6R8xOyg4gHAHHVjuUpO0zZH
- seH3ZSUkw/eNtamEzfH1x0FvObNIuoxRTiDau171iIE+8UOHKQQYCayTfWM1OvDjEdFVX/EXM
- b/u71vAG3p48x7mEfIlzH99dF39Iv8fJ3Pztck/mtc2RpGiKoieeFX9gcEzujGG/FJLhgO+d8
- 4RI6bWnX0LYYSWPrTosoAxaS4yxLQ==
+        Mon, 9 Sep 2019 08:40:27 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x89Ccfih029012;
+        Mon, 9 Sep 2019 15:38:41 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id 23293628F1; Mon,  9 Sep 2019 15:38:41 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de,
+        gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, avifishman70@gmail.com,
+        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
+        benjaminfair@google.com, sumit.garg@linaro.org,
+        jens.wiklander@linaro.org, vkoul@kernel.org, tglx@linutronix.de,
+        joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v2 0/2] hwrng: npcm: add NPCM RNG driver support
+Date:   Mon,  9 Sep 2019 15:38:38 +0300
+Message-Id: <20190909123840.154745-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Optimize use of return in hx711_set_gain_for_channel().
+This patch set adds Randon Number Generator (RNG) support 
+for the Nuvoton NPCM Baseboard Management Controller (BMC).
 
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
----
- drivers/iio/adc/hx711.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+The RNG driver we use power consumption when the RNG 
+is not required.
 
-diff --git a/drivers/iio/adc/hx711.c b/drivers/iio/adc/hx711.c
-index c8686558429b..20c249f502c0 100644
---- a/drivers/iio/adc/hx711.c
-+++ b/drivers/iio/adc/hx711.c
-@@ -213,7 +213,7 @@ static int hx711_reset(struct hx711_data *hx711_data)
- 
- static int hx711_set_gain_for_channel(struct hx711_data *hx711_data, int chan)
- {
--	int ret;
-+	int ret = 0;
- 
- 	if (chan == 0) {
- 		if (hx711_data->gain_set == 32) {
-@@ -224,8 +224,6 @@ static int hx711_set_gain_for_channel(struct hx711_data *hx711_data, int chan)
- 				return ret;
- 
- 			ret = hx711_wait_for_ready(hx711_data);
--			if (ret)
--				return ret;
- 		}
- 	} else {
- 		if (hx711_data->gain_set != 32) {
-@@ -236,12 +234,10 @@ static int hx711_set_gain_for_channel(struct hx711_data *hx711_data, int chan)
- 				return ret;
- 
- 			ret = hx711_wait_for_ready(hx711_data);
--			if (ret)
--				return ret;
- 		}
- 	}
- 
--	return 0;
-+	return ret;
- }
- 
- static int hx711_reset_read(struct hx711_data *hx711_data, int chan)
+The NPCM RNG driver tested on NPCM750 evaluation board.
+
+Addressed comments from:.
+ - Daniel Thompson, Milton Miller II : https://patchwork.ozlabs.org/patch/1154598/ 
+  
+Changes since version 1:
+ - Define timout in real-world units.
+ - Using readl_poll_timeout in rng_read function.
+ - Honor wait parameter in rng_read function.
+ - Using local variable instead of #ifndef.
+ - Remove probe print.
+
+Tomer Maimon (2):
+  dt-binding: hwrng: add NPCM RNG documentation
+  hwrng: npcm: add NPCM RNG driver
+
+ .../bindings/rng/nuvoton,npcm-rng.txt         |  17 ++
+ drivers/char/hw_random/Kconfig                |  13 ++
+ drivers/char/hw_random/Makefile               |   1 +
+ drivers/char/hw_random/npcm-rng.c             | 203 ++++++++++++++++++
+ 4 files changed, 234 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/nuvoton,npcm-rng.txt
+ create mode 100644 drivers/char/hw_random/npcm-rng.c
+
 -- 
-2.11.0
+2.18.0
+
