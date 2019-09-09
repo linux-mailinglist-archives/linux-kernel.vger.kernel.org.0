@@ -2,88 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ACE8ADDCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 19:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EA04ADDD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 19:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405402AbfIIRIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 13:08:36 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44211 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405382AbfIIRIg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 13:08:36 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i18so8146279pgl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 10:08:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=po3z9vVT8yU9vPmX7PJ6RtAkWylGnCZpE16E0o8CVfM=;
-        b=tEqQBjJ3ODXxSMvYG+vcVbfl2luxsciSY2E+CsqLqrqbVjCNyZKwHecdfEmyUpgt3I
-         uha/ukETxtto5BMjuu0dtOR0bYwM3A1N2k9GAforKbjH3v39Y5ea/j9ZpYQ3OCBTtK2j
-         uwwuuHbyjZlL+Bx7dXXGCY658Q/G9QSrYzDYKb3Ns/Sw9adFXQ9rX8iGQvxXsa1RsP88
-         g7wSH3FezbdWKoyybVGvKS9N5w3eDSsmPRcg5IznZHJC25aPpJlNTgg0dvd5BXWv71qP
-         MdpLYxk3Aa1LfwYDJdCMXY7pgZS9dvze3XMZ/8A4hJesCTjq+iB8TYQ/DG3DsyNNxxEH
-         CB1g==
+        id S1728531AbfIIRK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 13:10:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43740 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727332AbfIIRK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 13:10:26 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CDB5D81DEB
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2019 17:10:25 +0000 (UTC)
+Received: by mail-wr1-f71.google.com with SMTP id x12so7672169wrs.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 10:10:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=po3z9vVT8yU9vPmX7PJ6RtAkWylGnCZpE16E0o8CVfM=;
-        b=mD5vjbPGN2BR57tIJz5b+cuS1K//ZwolR6H814gXytujXVePtgBmQd90kGlZlHAqyE
-         1dfGE7TSyH7rBH3E9hSdnOKvywWUrcEi3Vl6gCoX93IViE8zFA//qPAN+EfzEOrQBl1v
-         HOSMVo//Td2a8125HOUeuenk3bJP7ePZyAuRC7bDcUfXiuL9idNGVU3LKQAxR8yXlPX2
-         w/ykk7KbUNkI3Tae1545GJzeq5QtuKZFhvrXA+Ctx/iRQuBgM7Fh6mRe29uhTQvPMmeh
-         7nMXSiF//g+m8U5PCoaGCs60k6jeWj5a6Hq1SgU5mD2uekX6WW+L952XTqH1BJCDBoXZ
-         Mi5A==
-X-Gm-Message-State: APjAAAVjxm4g5BPAIAZI3A5enEG0nA8NNIHxiOIgrEkPfMA2XlosH/0s
-        ywPHjGZAnI76M//NTBEUG7w=
-X-Google-Smtp-Source: APXvYqw8nmtXQB0qB1NLHmAWDmBgZi64O1gEri+HPL1E/k/r0gZ67FyRjZJKK83eJQ2o5MKUrDATJA==
-X-Received: by 2002:aa7:8d8e:: with SMTP id i14mr3798050pfr.262.1568048915686;
-        Mon, 09 Sep 2019 10:08:35 -0700 (PDT)
-Received: from localhost.localdomain.localdomain ([2408:823c:c11:160:b8c3:8577:bf2f:3])
-        by smtp.gmail.com with ESMTPSA id b18sm107015pju.16.2019.09.09.10.08.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 10:08:35 -0700 (PDT)
-From:   Pengfei Li <lpf.vector@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     vbabka@suse.cz, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Pengfei Li <lpf.vector@gmail.com>
-Subject: [PATCH v2 4/4] mm, slab_common: Make initializing KMALLOC_DMA start from 1
-Date:   Tue, 10 Sep 2019 01:07:15 +0800
-Message-Id: <20190909170715.32545-5-lpf.vector@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190909170715.32545-1-lpf.vector@gmail.com>
-References: <20190909170715.32545-1-lpf.vector@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vktWNuZwbJFGpFqKeMcs/0LdSEYrwQogjSjWjrJcDWk=;
+        b=OBoZplGENERX+RPjhjuE60BKlvnxu8ZEAEAb7Yt9ljLBQWaL5ZbcMcBKOYt9JhMnfM
+         jJQnret67hgWo2VA+UJYpYpFaY+QCSWJGUphJaHdUerq1Ia17FkLy/yj0Gfl6RRFNnfw
+         Al2V3bKO87zy8h/bDzbQWzKVPUEklPfEAUFU1cgvRlijcqBkT3Wew3ijlGFlqkZaYpGj
+         4bhUQPV3a1u8XBeFcH6H6GwXab8fSP7ATJwtVsn611KrDMYs9ujfDoETt12AS4zYozys
+         XWWeS7kdxVkVANg0nCkP00bcGtgu9GiTRlXunQJzC96x8Hh7e565rIc6yVT20w0mQ5Df
+         qd9A==
+X-Gm-Message-State: APjAAAVDu5Ay0s6Vr0stEoJhtc3JIfy8mmWmb5THi52lfY9+T79+hYwI
+        K+dQXbLMazJ03I9BqoqqMk4h908VCQh9nHTn/UswzNaJmkqdrivlob0Xi4Go3QWwwE88/YF7/tf
+        ErbE8v55bcgm/M/xFj5v0dxLW
+X-Received: by 2002:a5d:6703:: with SMTP id o3mr19299892wru.335.1568049024382;
+        Mon, 09 Sep 2019 10:10:24 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqz1n8Q55r7pA74Rbm16weqpXyq4cX1HxgIYP07KC/z/TIvITLwn+XU8NsN4rLzMHK0+7mHPAA==
+X-Received: by 2002:a5d:6703:: with SMTP id o3mr19299855wru.335.1568049024123;
+        Mon, 09 Sep 2019 10:10:24 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:4580:a289:2f55:eec1? ([2001:b07:6468:f312:4580:a289:2f55:eec1])
+        by smtp.gmail.com with ESMTPSA id g73sm292338wme.10.2019.09.09.10.10.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2019 10:10:23 -0700 (PDT)
+Subject: Re: [PATCH RESEND v4 8/9] KVM: MMU: Enable Lazy mode SPPT setup
+To:     Yang Weijiang <weijiang.yang@intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sean.j.christopherson@intel.com, mst@redhat.com,
+        rkrcmar@redhat.com, jmattson@google.com, yu.c.zhang@intel.com,
+        alazar@bitdefender.com
+References: <20190814070403.6588-1-weijiang.yang@intel.com>
+ <20190814070403.6588-9-weijiang.yang@intel.com>
+ <63f8952b-2497-16ec-ff55-1da017c50a8c@redhat.com>
+ <20190820131214.GD4828@local-michael-cet-test.sh.intel.com>
+ <20190904134925.GA25149@local-michael-cet-test.sh.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <6cdea038-8d6f-6d75-47b2-bb23ff1c9f15@redhat.com>
+Date:   Mon, 9 Sep 2019 19:10:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190904134925.GA25149@local-michael-cet-test.sh.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmalloc_caches[KMALLOC_NORMAL][0] will never be initialized,
-so the loop should start at 1 instead of 0
+On 04/09/19 15:49, Yang Weijiang wrote:
+>>> This would not enable SPP if the guest is backed by huge pages.
+>>> Instead, either the PT_PAGE_TABLE_LEVEL level must be forced for all
+>>> pages covered by SPP ranges, or (better) kvm_enable_spp_protection must
+>>> be able to cover multiple pages at once.
+>>>
+>>> Paolo
+>> OK, I'll figure out how to make it, thanks!
+> Hi, Paolo,
+> Regarding this change, I have some concerns, splitting EPT huge page
+> entries(e.g., 1GB page)will take long time compared with normal EPT page
+> fault processing, especially for multiple vcpus/pages,so the in-flight time increases,
+> but HW walks EPT for translations in the meantime, would it bring any side effect? 
+> or there's a way to mitigate it?
 
-Signed-off-by: Pengfei Li <lpf.vector@gmail.com>
----
- mm/slab_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sub-page permissions are only defined on EPT PTEs, not on large pages.
+Therefore, in order to allow subpage permissions the EPT page tables
+must already be split.
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index d64a64660f86..6b3e526934d9 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1236,7 +1236,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
- 	slab_state = UP;
- 
- #ifdef CONFIG_ZONE_DMA
--	for (i = 0; i <= KMALLOC_SHIFT_HIGH; i++) {
-+	for (i = 1; i <= KMALLOC_SHIFT_HIGH; i++) {
- 		struct kmem_cache *s = kmalloc_caches[KMALLOC_NORMAL][i];
- 
- 		if (s) {
--- 
-2.21.0
-
+Paolo
