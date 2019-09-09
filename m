@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DDF9AD6EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:35:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 548D2AD6E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:34:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731636AbfIIKfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:35:01 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:58252 "EHLO inva020.nxp.com"
+        id S1731074AbfIIKex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:34:53 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:34772 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730682AbfIIKev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:34:51 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C8ED21A001D;
-        Mon,  9 Sep 2019 12:34:48 +0200 (CEST)
+        id S1730179AbfIIKeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 06:34:50 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BB17A200148;
+        Mon,  9 Sep 2019 12:34:49 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A00171A003B;
-        Mon,  9 Sep 2019 12:34:43 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C12212001C3;
+        Mon,  9 Sep 2019 12:34:44 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 48A2F402F2;
-        Mon,  9 Sep 2019 18:34:37 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 60346402F3;
+        Mon,  9 Sep 2019 18:34:38 +0800 (SGT)
 From:   Shengjiu Wang <shengjiu.wang@nxp.com>
 To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
         festevam@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
         perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] ASoC: fsl_asrc: Use in(out)put_format instead of in(out)put_word_width
-Date:   Mon,  9 Sep 2019 18:33:19 -0400
-Message-Id: <65e96ca15afd4a282b122f3ea8b13642cf4614c7.1568025083.git.shengjiu.wang@nxp.com>
+Subject: [PATCH 2/3] ASoC: fsl_asrc: update supported sample format
+Date:   Mon,  9 Sep 2019 18:33:20 -0400
+Message-Id: <f62fda1f49af8159eb23a978147a321dd6849d1a.1568025083.git.shengjiu.wang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1568025083.git.shengjiu.wang@nxp.com>
 References: <cover.1568025083.git.shengjiu.wang@nxp.com>
@@ -39,144 +39,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-snd_pcm_format_t is more formal than enum asrc_word_width, which has
-two property, width and physical width, which is more accurate than
-enum asrc_word_width. So it is better to use in(out)put_format
-instead of in(out)put_word_width.
+The ASRC support 24bit/16bit/8bit input width, so S20_3LE format
+should not be supported, it is word width is 20bit.
+So replace S20_3LE with S24_3LE in supported list and add S8
+format in TX supported list
 
 Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 ---
- sound/soc/fsl/fsl_asrc.c | 56 +++++++++++++++++++++++++++-------------
- sound/soc/fsl/fsl_asrc.h |  4 +--
- 2 files changed, 40 insertions(+), 20 deletions(-)
+ sound/soc/fsl/fsl_asrc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
-index cfa40ef6b1ca..4d3804a1ea55 100644
+index 4d3804a1ea55..584badf956d2 100644
 --- a/sound/soc/fsl/fsl_asrc.c
 +++ b/sound/soc/fsl/fsl_asrc.c
-@@ -265,6 +265,8 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
- 	struct asrc_config *config = pair->config;
- 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
- 	enum asrc_pair_index index = pair->index;
-+	enum asrc_word_width input_word_width;
-+	enum asrc_word_width output_word_width;
- 	u32 inrate, outrate, indiv, outdiv;
- 	u32 clk_index[2], div[2];
- 	int in, out, channels;
-@@ -283,9 +285,32 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
- 		return -EINVAL;
- 	}
+@@ -624,7 +624,7 @@ static int fsl_asrc_dai_probe(struct snd_soc_dai *dai)
  
--	/* Validate output width */
--	if (config->output_word_width == ASRC_WIDTH_8_BIT) {
--		pair_err("does not support 8bit width output\n");
-+	switch (snd_pcm_format_width(config->input_format)) {
-+	case 8:
-+		input_word_width = ASRC_WIDTH_8_BIT;
-+		break;
-+	case 16:
-+		input_word_width = ASRC_WIDTH_16_BIT;
-+		break;
-+	case 24:
-+		input_word_width = ASRC_WIDTH_24_BIT;
-+		break;
-+	default:
-+		pair_err("does not support this input format, %d\n",
-+			 config->input_format);
-+		return -EINVAL;
-+	}
-+
-+	switch (snd_pcm_format_width(config->output_format)) {
-+	case 16:
-+		output_word_width = ASRC_WIDTH_16_BIT;
-+		break;
-+	case 24:
-+		output_word_width = ASRC_WIDTH_24_BIT;
-+		break;
-+	default:
-+		pair_err("does not support this output format, %d\n",
-+			 config->output_format);
- 		return -EINVAL;
- 	}
+ #define FSL_ASRC_FORMATS	(SNDRV_PCM_FMTBIT_S24_LE | \
+ 				 SNDRV_PCM_FMTBIT_S16_LE | \
+-				 SNDRV_PCM_FMTBIT_S20_3LE)
++				 SNDRV_PCM_FMTBIT_S24_3LE)
  
-@@ -383,8 +408,8 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
- 	/* Implement word_width configurations */
- 	regmap_update_bits(asrc_priv->regmap, REG_ASRMCR1(index),
- 			   ASRMCR1i_OW16_MASK | ASRMCR1i_IWD_MASK,
--			   ASRMCR1i_OW16(config->output_word_width) |
--			   ASRMCR1i_IWD(config->input_word_width));
-+			   ASRMCR1i_OW16(output_word_width) |
-+			   ASRMCR1i_IWD(input_word_width));
- 
- 	/* Enable BUFFER STALL */
- 	regmap_update_bits(asrc_priv->regmap, REG_ASRMCR(index),
-@@ -497,13 +522,13 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
- 				  struct snd_soc_dai *dai)
- {
- 	struct fsl_asrc *asrc_priv = snd_soc_dai_get_drvdata(dai);
--	int width = params_width(params);
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct fsl_asrc_pair *pair = runtime->private_data;
- 	unsigned int channels = params_channels(params);
- 	unsigned int rate = params_rate(params);
- 	struct asrc_config config;
--	int word_width, ret;
-+	snd_pcm_format_t format;
-+	int ret;
- 
- 	ret = fsl_asrc_request_pair(channels, pair);
- 	if (ret) {
-@@ -513,15 +538,10 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
- 
- 	pair->config = &config;
- 
--	if (width == 16)
--		width = ASRC_WIDTH_16_BIT;
--	else
--		width = ASRC_WIDTH_24_BIT;
--
- 	if (asrc_priv->asrc_width == 16)
--		word_width = ASRC_WIDTH_16_BIT;
-+		format = SNDRV_PCM_FORMAT_S16_LE;
- 	else
--		word_width = ASRC_WIDTH_24_BIT;
-+		format = SNDRV_PCM_FORMAT_S24_LE;
- 
- 	config.pair = pair->index;
- 	config.channel_num = channels;
-@@ -529,13 +549,13 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
- 	config.outclk = OUTCLK_ASRCK1_CLK;
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		config.input_word_width   = width;
--		config.output_word_width  = word_width;
-+		config.input_format   = params_format(params);
-+		config.output_format  = format;
- 		config.input_sample_rate  = rate;
- 		config.output_sample_rate = asrc_priv->asrc_rate;
- 	} else {
--		config.input_word_width   = word_width;
--		config.output_word_width  = width;
-+		config.input_format   = format;
-+		config.output_format  = params_format(params);
- 		config.input_sample_rate  = asrc_priv->asrc_rate;
- 		config.output_sample_rate = rate;
- 	}
-diff --git a/sound/soc/fsl/fsl_asrc.h b/sound/soc/fsl/fsl_asrc.h
-index c60075112570..38af485bdd22 100644
---- a/sound/soc/fsl/fsl_asrc.h
-+++ b/sound/soc/fsl/fsl_asrc.h
-@@ -342,8 +342,8 @@ struct asrc_config {
- 	unsigned int dma_buffer_size;
- 	unsigned int input_sample_rate;
- 	unsigned int output_sample_rate;
--	enum asrc_word_width input_word_width;
--	enum asrc_word_width output_word_width;
-+	snd_pcm_format_t input_format;
-+	snd_pcm_format_t output_format;
- 	enum asrc_inclk inclk;
- 	enum asrc_outclk outclk;
- };
+ static struct snd_soc_dai_driver fsl_asrc_dai = {
+ 	.probe = fsl_asrc_dai_probe,
+@@ -635,7 +635,8 @@ static struct snd_soc_dai_driver fsl_asrc_dai = {
+ 		.rate_min = 5512,
+ 		.rate_max = 192000,
+ 		.rates = SNDRV_PCM_RATE_KNOT,
+-		.formats = FSL_ASRC_FORMATS,
++		.formats = FSL_ASRC_FORMATS |
++			   SNDRV_PCM_FMTBIT_S8,
+ 	},
+ 	.capture = {
+ 		.stream_name = "ASRC-Capture",
 -- 
 2.21.0
 
