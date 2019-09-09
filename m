@@ -2,137 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B3AAD40D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 09:41:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8862EAD415
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 09:44:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388232AbfIIHlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 03:41:42 -0400
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:10692 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726026AbfIIHll (ORCPT
+        id S2388278AbfIIHov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 03:44:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34116 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfIIHov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 03:41:41 -0400
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x897arVo027026;
-        Mon, 9 Sep 2019 00:41:24 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=proofpoint;
- bh=MHVhCcjXdi+cD242GqEqgEjKWaUkWkROl8jSDeGEu00=;
- b=YF76NykadJD3f43eU6wXz118c8VCQNTY98ebvzco6yGnjZWRhgM58qaINGkwB7V5+LDj
- s2JvZyFTRyjnjCb2yiR9eUxOoza2COaVfTPta1dQNOdb3ims3fDbAh6F7ZUF5WGy70ea
- CCGzzZYzceEEktf3iRyj+RB+v8CJfjD8DrnMBfVDceONmYGE4uMOqAgqWdUqnzR9Xe7O
- FVUFRCKoELoA7g/JzWqwxoHGezTlqqTQU0SOJjaSxUf7xj0ydulT+5bF3IlLMyLgrjTk
- tjsWe103Tqvg42+elTGUjvCU9NUTspGmhRXaHlXiUDqu4iW+m6V/QdR3zIjvfarSM5BH WA== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=jank@cadence.com
-Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2053.outbound.protection.outlook.com [104.47.37.53])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2uv93y68wb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 09 Sep 2019 00:41:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RVvn3BqdEdWpieXHd0wNl0B9pT9wWeHv0UlkkoiSqakPC2L9+/zQCW+hQ332geYeXJ4FLrVeALSw/UYPg8PC0e4U0V0bq5VV8qPYsx/Ezzk4njkTjx+iIVyspdWCCMGPHa18rhUNfMj9KpbiOpN1RRaiK1NfD+iGo0hKujfu+L6zArNmvNYmiSATqkVz14aqev6nXh0ivhM9NHiAfuDnRxshWZD5245VsneUGQqfJhGpgEX26nsf4Q9D39u5gy2DBtXXMoZxxu8arD4f848EM+WN0NM7fa4PJ1lTNbsyPEOBA9J5BW1V8h8twj7RmgHPFTPEgGNnFhBEHxDoglwO4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MHVhCcjXdi+cD242GqEqgEjKWaUkWkROl8jSDeGEu00=;
- b=ZWm3JGEMfC0bFiWBUk7lMaIu+LHcUok+Q4jKBRQEwonABO19254jyCzcQ+KDgd9sOVtazonFW+z2ZQ5zbvRd1WskfzTEBzFXnYNuOab/YpXcC/Y0xoV5AHqjJKM+9PvW2oTzibkMXYUXPtBG1yxcKxvdkhEHYJc5WxGRtiTPXghJBidR8bbOV+M055yIpQOvdaI+VKfbs+MQUNauq2CAKkgGoRl9/UvjVVigs0UcoW5C3j0j8xhSzJ7rIiyRHl/lV00xMcVHH3hvL1/IueoaLlTU/acD7visXAsCuJYXkDPBKJact4OfIckLITzrh99gRElVpbhicRlTY2l3A0182g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cadence.com; dmarc=pass action=none header.from=cadence.com;
- dkim=pass header.d=cadence.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MHVhCcjXdi+cD242GqEqgEjKWaUkWkROl8jSDeGEu00=;
- b=e1giV9G7RzJFv/n9oQEOsY/NzlQO6UoOwekJNlSg0DAmCoHpWMadt5VPBXn0HjLulH043B6E9Z73CasmO8V6aQ2heqg+7hSNDIKcvH8pBsa0oAr8XZVgwSenWo3xf4eLPiqaO1PTrOlziHao9FYibCaTpkBLaSnOkoCjpK9aHno=
-Received: from CY1PR07MB2521.namprd07.prod.outlook.com (10.167.16.12) by
- CY1PR07MB2490.namprd07.prod.outlook.com (10.167.18.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.18; Mon, 9 Sep 2019 07:41:22 +0000
-Received: from CY1PR07MB2521.namprd07.prod.outlook.com
- ([fe80::1927:7325:2156:bd59]) by CY1PR07MB2521.namprd07.prod.outlook.com
- ([fe80::1927:7325:2156:bd59%10]) with mapi id 15.20.2241.018; Mon, 9 Sep 2019
- 07:41:22 +0000
-From:   Jan Kotas <jank@cadence.com>
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-CC:     Jan Kotas <jank@cadence.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] media: Add lane checks for Cadence CSI2RX
-Thread-Topic: [PATCH v2 2/3] media: Add lane checks for Cadence CSI2RX
-Thread-Index: AQHVY9iTRWpCeBlM0kmgbmtOhXyfuaceSNqAgASzZ4A=
-Date:   Mon, 9 Sep 2019 07:41:21 +0000
-Message-ID: <1D1666FD-CFC6-4DE1-8A2E-1809D1BDEAAB@global.cadence.com>
-References: <20190905105601.27034-1-jank@cadence.com>
- <20190905105601.27034-3-jank@cadence.com>
- <20190906075413.GE1586@valkosipuli.retiisi.org.uk>
-In-Reply-To: <20190906075413.GE1586@valkosipuli.retiisi.org.uk>
-Accept-Language: en-US, pl-PL
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7bb61386-e205-40af-304e-08d734f91c38
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY1PR07MB2490;
-x-ms-traffictypediagnostic: CY1PR07MB2490:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CY1PR07MB2490A3C0B87DE8551179E886D0B70@CY1PR07MB2490.namprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3173;
-x-forefront-prvs: 01559F388D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(39860400002)(376002)(366004)(36092001)(199004)(189003)(51914003)(99286004)(6246003)(14454004)(6116002)(3846002)(4744005)(2906002)(486006)(6916009)(6486002)(6436002)(71200400001)(66066001)(5660300002)(229853002)(446003)(76116006)(91956017)(11346002)(476003)(316002)(54906003)(25786009)(6506007)(53936002)(102836004)(53546011)(186003)(71190400001)(478600001)(76176011)(26005)(33656002)(8936002)(256004)(66946007)(66556008)(64756008)(66446008)(66476007)(8676002)(305945005)(86362001)(6512007)(4326008)(7736002)(81156014)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR07MB2490;H:CY1PR07MB2521.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GyywWoCbdP1W2VsY44S/YoncVNmNfYwPCzFx6odIgEI6zAGLFJj7rJwKibfzcZLSTXWU5IrFmTE/iz7duxi+y6YgSvuNSQaH6wz2uASelA7qf/7b1wVanCugzKArOiKlEZ2RFOhLA5OUzGSv8RWZe02j+l6fbruoq88ayYusH5evnYuODy2yuJ4jHuN+QnGU0//oFrxrifzHHoHZ+bDFkVTY1nSOh2V05HmMZsFf0SG87ZQi84vZlSZP1pY/UygGBascBgyE6gdnTIsbnQEMNmxJJAyzFIKPMuZ09IFm57lNykQVWm1z75x+Sf3CM5GoAEkHsz5dgZw81PX00hVgy45S/6H5fQYsgDef3zHpnlfLSD9KPWwO/dwH2D2+19HIR0dcbDP8Oyubb7O7C5psfaaftF4CSSHo4rUaFB4/YoQ=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <92F0E0B42750394CB426E0B76CE653F7@namprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 9 Sep 2019 03:44:51 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5F2E86119D; Mon,  9 Sep 2019 07:44:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568015089;
+        bh=DT6Puv+VaCuHYQ8jgGXzuP0lzjcwptMaBuGRqDBanlI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CjcCoHAsTOYltQu35Wu16H6kSJTltEG7Y6W89VDceG1k43niJL7FGz8wtKA2Xjwbi
+         YLUGo0dVaCoqWQ/MuR0cMjmGwH1eEGOFg3ZHd708JvNmZNvoSChNcYa6rw4Gfkc2hd
+         q70qdUKRLL78ZU8P7GUZASi9MyRyeGRir/U+g4fM=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B1D9C6115A;
+        Mon,  9 Sep 2019 07:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568015088;
+        bh=DT6Puv+VaCuHYQ8jgGXzuP0lzjcwptMaBuGRqDBanlI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lJbIYUVwHyj4uh+5N4zw4Y51vFTNK1QK8jzJaOoHDru8k4RsHetuBM74ZsZvpJllI
+         YWWaU8ftl8o9dkuMTHSzRAfGjh2GhL3Ob2Mv3C69y4FLXXqVKY7v6WG+1BNYxgTwqY
+         HGKzk+AoLLBJiFR86dOO91Ww4aC8lgQ8Nzqbm6B4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B1D9C6115A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH] clk: qcom: gcc: Use floor ops for SDCC clocks
+Date:   Mon,  9 Sep 2019 13:14:10 +0530
+Message-Id: <20190909074410.18977-1-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bb61386-e205-40af-304e-08d734f91c38
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2019 07:41:21.9590
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BJ3M/jIEhsx+ZVA/hiKv+UBugWY7NZs3TLh+hRq2eD41HNRN4ANSr7jSJ1FgHgAUt9EFM0FCycPmitfSdXS70w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR07MB2490
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
- include:mktomail.com include:spf-0014ca01.pphosted.com
- include:spf.protection.outlook.com include:auth.msgapp.com
- include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-09_04:2019-09-08,2019-09-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 clxscore=1011
- phishscore=0 suspectscore=0 bulkscore=0 impostorscore=0 spamscore=0
- malwarescore=0 mlxlogscore=640 priorityscore=1501 mlxscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1909090084
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCkhlbGxvIFNha2FyaSwNCg0KVGhhbmtzIGZvciB5b3VyIHJlcGx5Lg0KPiBPbiA2IFNlcCAy
-MDE5LCBhdCAwOTo1NCwgU2FrYXJpIEFpbHVzIDxzYWthcmkuYWlsdXNAaWtpLmZpPiB3cm90ZToN
-Cj4gDQo+IEhpIEphbiwNCj4gDQo+IFRoYW5rcyBmb3IgdGhlIHBhdGNoc2V0Lg0KPiANCj4gT24g
-VGh1LCBTZXAgMDUsIDIwMTkgYXQgMTE6NTY6MDBBTSArMDEwMCwgSmFuIEtvdGFzIHdyb3RlOg0K
-Pj4gLyoNCj4+ICAqIERyaXZlciBmb3IgQ2FkZW5jZSBNSVBJLUNTSTIgUlggQ29udHJvbGxlciB2
-MS4zDQo+PiAgKg0KPj4gLSAqIENvcHlyaWdodCAoQykgMjAxNyBDYWRlbmNlIERlc2lnbiBTeXN0
-ZW1zIEluYy4NCj4+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTctMjAxOSBDYWRlbmNlIERlc2lnbiBT
-eXN0ZW1zIEluYy4NCj4+ICAqLw0KPj4gDQo+PiArCWZvciAoaSA9IDA7IGkgPCBjc2kycngtPm51
-bV9sYW5lczsgaSsrKSB7DQo+PiArCQlpZiAoY3NpMnJ4LT5sYW5lc1tpXSA8IDEpIHsNCj4gDQo+
-IERvIHlvdSBuZWVkIHRoaXM/IHY0bDJfZndub2RlX3BhcnNlX2VuZHBvaW50KCkgYWxyZWFkeSBo
-YXMgYSBtb3JlIHRob3JvdWdoDQo+IGNoZWNrIGZvciB0aGUgbGFuZSBudW1iZXJzLg0KDQpJIGxv
-b2tlZCBhdCB0aGUgc291cmNlIGNvZGUgb2YgdjRsMl9md25vZGVfZW5kcG9pbnRfcGFyc2VfY3Np
-Ml9idXMNCmFuZCB0aGlzIHBhcnRpY3VsYXIgY2FzZSBkb2VzbuKAmXQgc2VlbSB0byBiZSBjaGVj
-a2VkLg0KDQo+IA0KPiAtLSANCj4gUmVnYXJkcywNCj4gDQo+IFNha2FyaSBBaWx1cw0KDQpSZWdh
-cmRzLA0KSmFuDQoNCg==
+Update global clock controller SDCC2/4 clocks to use the floor rcg ops,
+so as to use the rounded down clock rates for these clocks.
+
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq8074.c | 2 +-
+ drivers/clk/qcom/gcc-msm8998.c | 4 ++--
+ drivers/clk/qcom/gcc-qcs404.c  | 2 +-
+ drivers/clk/qcom/gcc-sdm660.c  | 2 +-
+ drivers/clk/qcom/gcc-sdm845.c  | 2 +-
+ drivers/clk/qcom/gcc-sm8150.c  | 4 ++--
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 39ade58b4ada..e01f5f591d1e 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -1108,7 +1108,7 @@ static struct clk_rcg2 sdcc2_apps_clk_src = {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll2_gpll0_out_main_div2,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index 033688264c7b..091acd59c1d6 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -1042,7 +1042,7 @@ static struct clk_rcg2 sdcc2_apps_clk_src = {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_parent_names_4,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+
+@@ -1066,7 +1066,7 @@ static struct clk_rcg2 sdcc4_apps_clk_src = {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_parent_names_1,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index e12c04c09a6a..582c1e2cd420 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -1103,7 +1103,7 @@ static struct clk_rcg2 sdcc2_apps_clk_src = {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_parent_names_14,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+
+diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
+index 8827db23066f..bf5730832ef3 100644
+--- a/drivers/clk/qcom/gcc-sdm660.c
++++ b/drivers/clk/qcom/gcc-sdm660.c
+@@ -787,7 +787,7 @@ static struct clk_rcg2 sdcc2_apps_clk_src = {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_parent_names_xo_gpll0_gpll0_early_div_gpll4,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 7131dcf9b060..131160ace79c 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -709,7 +709,7 @@ static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+ 		.name = "gcc_sdcc4_apps_clk_src",
+ 		.parent_names = gcc_parent_names_0,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+
+diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+index 12ca2d14797f..20877214acff 100644
+--- a/drivers/clk/qcom/gcc-sm8150.c
++++ b/drivers/clk/qcom/gcc-sm8150.c
+@@ -803,7 +803,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+ 		.parent_data = gcc_parents_6,
+ 		.num_parents = 5,
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+
+@@ -828,7 +828,7 @@ static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+ 		.parent_data = gcc_parents_3,
+ 		.num_parents = 3,
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
