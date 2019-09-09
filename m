@@ -2,128 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BCF2AD6ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A41CFAD702
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:39:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732122AbfIIKfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:35:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730682AbfIIKfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:35:11 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 350922086D;
-        Mon,  9 Sep 2019 10:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568025309;
-        bh=hRx9yb4pD46+5kN87jkPGzlRP7O/0R+F2wikb+6HcWA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Jo3pPW6/RwscCHhtxZZAfHBiK1LMxpjeeFw824tkKRa1EpEkK6JJk1P6a/zpCgo7V
-         Zhew8jObYvP56NaHXYqlPdIerExsgvVaAQeVQIgl+JH1K8eakg6ddaT8xtVC5JBOdc
-         jCjZxey8Rs6VwIE4kIHHJnstokJ5zHg+B2Tz9qIA=
-Message-ID: <3f838e42a50575595c7310386cf698aca8f89607.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: allow object copies across different
- filesystems in the same cluster
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 09 Sep 2019 06:35:07 -0400
-In-Reply-To: <20190909102834.16246-1-lhenriques@suse.com>
-References: <87k1ahojri.fsf@suse.com>
-         <20190909102834.16246-1-lhenriques@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1729345AbfIIKjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:39:43 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45967 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbfIIKjn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 06:39:43 -0400
+Received: by mail-io1-f66.google.com with SMTP id f12so27400660iog.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 03:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=2ioABLgS41EeEAD7jQodBMM3WfWqooMhGhRREtnMocw=;
+        b=QqvDnS4xdtuk0JZTBib/Iii4woMjCDwIz9dnhwd2I7GfwQQPnWvQbqw5xrAQOxikSo
+         CuVcCUd0Yk9d4MjZfzSamWoFAJOETY3xjVzwNx+RgMi2gj2+26u2G6AcNLsttFnCyNEi
+         OwmQ7RRx+RExqC77m8fR/Yyui7Fwin8iC+v1p7atIp9kQywf2Q3lmtw9kWX0xIqn8zEC
+         275rhT4FXuXwqc12EwV0KQtCxVuoIZzmf713LEmnVV98LBmpCc2nR0/nIewYEvzT1H/0
+         kumd27HXHBSh0XgSoevSOvGCvgEMCvSLDXx1zj/SX4RC8G4axZGmJNBFpBPW2UxMynJu
+         oOKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=2ioABLgS41EeEAD7jQodBMM3WfWqooMhGhRREtnMocw=;
+        b=CvAIZfDA/la1YzipFqthytLcjz40sxtRJuRWLyXamKtG6lbMq1hCaxSpQZBBp9fZol
+         3L9dptf1h01rKWE/8SGYG+8HUgnNqLLPCCmbQPKadap2j6SaanH1ql4drOA19CCfXtNE
+         j9j8r0rPwFQfj3DITjSt14WqvW9+3938K/ItY7jmaYA3qraw4nNpVh7P3Xu3/UU303zj
+         IlzQwEfpzH6UUHXK7FaxGsno0Bqyg9PPzXpiPkd5sz7wtdjTBr8qTAHomFaG3i+4tET+
+         AV46bHh40M8EuH68D2L/GUVor11hvKPbYWVFErZGlwwKdnZ6d4DL6uD1flB3PtUJ8vxD
+         PSJQ==
+X-Gm-Message-State: APjAAAXcYSGwdxyoDDrsQIkMkfmGa0DR9x85cnv5oOeo5O+O6+69aMTg
+        5vmOEqPBhiXzHRmyX6Ls/uK5539jkMnqwGQVi4Q=
+X-Google-Smtp-Source: APXvYqznpMVe+4Ubn7TmYFAahGG8OlBYJH/3XaqzbpN7NunauZ7J9wBKg0cD27pDEzuiuumJs2L0bHscI4+V5PWPYkc=
+X-Received: by 2002:a5d:814f:: with SMTP id f15mr26714944ioo.134.1568025582180;
+ Mon, 09 Sep 2019 03:39:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4f:7188:0:0:0:0:0 with HTTP; Mon, 9 Sep 2019 03:39:41 -0700 (PDT)
+Reply-To: dublonderic11@gmail.com
+From:   Dublond Eric <dublonderic65@gmail.com>
+Date:   Mon, 9 Sep 2019 03:39:41 -0700
+Message-ID: <CAAX1VjdoZJTdJEErp-1AaNJDqmAqHURBq8aPfO4Ezu5iCSwpBw@mail.gmail.com>
+Subject: Greetings
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-09-09 at 11:28 +0100, Luis Henriques wrote:
-> OSDs are able to perform object copies across different pools.  Thus,
-> there's no need to prevent copy_file_range from doing remote copies if the
-> source and destination superblocks are different.  Only return -EXDEV if
-> they have different fsid (the cluster ID).
-> 
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> ---
->  fs/ceph/file.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
-> 
-> Hi,
-> 
-> Here's the patch changelog since initial submittion:
-> 
-> - Dropped have_fsid checks on client structs
-> - Use %pU to print the fsid instead of raw hex strings (%*ph)
-> - Fixed 'To:' field in email so that this time the patch hits vger
-> 
-> Cheers,
-> --
-> Luis
-> 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 685a03cc4b77..4a624a1dd0bb 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1904,6 +1904,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  	struct ceph_inode_info *src_ci = ceph_inode(src_inode);
->  	struct ceph_inode_info *dst_ci = ceph_inode(dst_inode);
->  	struct ceph_cap_flush *prealloc_cf;
-> +	struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
->  	struct ceph_object_locator src_oloc, dst_oloc;
->  	struct ceph_object_id src_oid, dst_oid;
->  	loff_t endoff = 0, size;
-> @@ -1915,8 +1916,17 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  
->  	if (src_inode == dst_inode)
->  		return -EINVAL;
-> -	if (src_inode->i_sb != dst_inode->i_sb)
-> -		return -EXDEV;
-> +	if (src_inode->i_sb != dst_inode->i_sb) {
-> +		struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-> +
-> +		if (ceph_fsid_compare(&src_fsc->client->fsid,
-> +				      &dst_fsc->client->fsid)) {
-> +			dout("Copying object across different clusters:");
-> +			dout("  src fsid: %pU dst fsid: %pU\n",
-> +			     &src_fsc->client->fsid, &dst_fsc->client->fsid);
-> +			return -EXDEV;
-> +		}
-> +	}
+I want to inform you that I contacted another person from England who
+assisted me to conclude the transaction, our bank has done the
+transfer presently, I and my partner travelled to Switzerland for
+investment.
+I discussed with my partner that you assisted me in the past, although
+we were not able to complete the transaction. I cannot forget your
+past assistance, I and my partner agreed to reward you for your past
+effort by offering you a bank ATM card that contains $500,000.00 as
+your compensation for your effort in the past.
+Before traveling to Switzerland, I drop the ATM card with Rev, Davis
+Awugu the parish priest in my church.
+I will advise you to contact Him through his email address For
+delivery of your ATM CARD to you and tell him that i directed you to
+him.
+His email contact's email address is,  rev.davisawugu@yahoo.com
+County, Togo.
 
-Just to be clear: what happens here if I mount two entirely separate
-clusters, and their OSDs don't have any access to one another? Will this
-fail at some later point with an error that we can catch so that we can
-fall back?
-
-
->  	if (ceph_snap(dst_inode) != CEPH_NOSNAP)
->  		return -EROFS;
->  
-> @@ -1928,7 +1938,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  	 * efficient).
->  	 */
->  
-> -	if (ceph_test_mount_opt(ceph_inode_to_client(src_inode), NOCOPYFROM))
-> +	if (ceph_test_mount_opt(src_fsc, NOCOPYFROM))
->  		return -EOPNOTSUPP;
->  
->  	if ((src_ci->i_layout.stripe_unit != dst_ci->i_layout.stripe_unit) ||
-> @@ -2044,7 +2054,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  				dst_ci->i_vino.ino, dst_objnum);
->  		/* Do an object remote copy */
->  		err = ceph_osdc_copy_from(
-> -			&ceph_inode_to_client(src_inode)->client->osdc,
-> +			&src_fsc->client->osdc,
->  			src_ci->i_vino.snap, 0,
->  			&src_oid, &src_oloc,
->  			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Lawyer Eric.
