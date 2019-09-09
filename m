@@ -2,99 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D712AD68F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A51D8AD693
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:18:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbfIIKRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:17:42 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:34167 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730019AbfIIKRm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:17:42 -0400
-Received: by mail-yw1-f67.google.com with SMTP id n126so4588759ywf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 03:17:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=xPARM3R8PRz4iBbWFeLcXWYsH1ZVWEVOZrsGddxK+jE=;
-        b=tyediQ/A2/tgpHyshmXQG1Kmk6dU8smRib86oUsNGF3/b44IX9yhBk/ktlbR3Uzgk0
-         CwHWnrt+sUnHbKsuV81jr89+kaF4+JNfiQr6jtHwE1vud/chlhR8MZEAfEMXMs4lL/Y1
-         jp1St1gy4JYk2r1XgwTsIe9KsuVo9hw3d13VLyEa9X+uJMMAvFYrIBbZU112/6LdeYQa
-         yytnhsv9VGWfqBjPR/AVDSZ0fqzqtaW42uke1fP+QIAK5nk3cF1aNcDKISBjgzXkS/AL
-         /kk+wJ1rzSETJ7M97KFMpCVECo/ZYZj4nPsGmGPLq4SGzvspccvbu/HST/emiOKif2zr
-         BbUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=xPARM3R8PRz4iBbWFeLcXWYsH1ZVWEVOZrsGddxK+jE=;
-        b=WkAKD6G3PBAROpaggFFPDqch+u93C3/b/qZMCukxr4yX13bVLqP36QWmHKNlptWFeo
-         e/XXRlP9OF5SQC0BSmRo3VXk6nWrLv2K/EC5NXP1Ns3G8g2gtf6RmlNNcnONMY+EGY5O
-         v67tcAPg9mWJ3AdOebOjdjeOVeIRtRz2Rr5m36QYY2l/qOd0Oa7R+xp5frIWIZ+yxlK9
-         s3CN/yuZmafRa2Fe2FHYP9eMurXfEneqNIBtXvD0i2/H2Qoz8YjmlgPmpV3yRQUc6dPE
-         odj88anUM4hUfiS/cbdgn69W8F9PaZ6yTcEbKz5QikpWrYsCuF01INYFQXQlkiTti/GQ
-         u3zw==
-X-Gm-Message-State: APjAAAWXpnrOKGkKkywAjJuxdUWsOFA3O0W0MGsrv2ik7DIrZg7UEzbj
-        GISBLsPwLTqnIIIWrJhjlQxdd9a+66yWEvOHqa8=
-X-Google-Smtp-Source: APXvYqxpRKnYBJ8IAmdkFVeEl+BbSaiIO4KF20jRdQma6SQblwm4REwBJ0pj1o2rXHGQZjgjonkjDzjXfqAVfwzQx8U=
-X-Received: by 2002:a81:698b:: with SMTP id e133mr942313ywc.415.1568024259801;
- Mon, 09 Sep 2019 03:17:39 -0700 (PDT)
+        id S2390400AbfIIKSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:18:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390297AbfIIKSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 06:18:12 -0400
+Received: from earth.universe (unknown [148.69.85.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45A8F21924;
+        Mon,  9 Sep 2019 10:18:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568024292;
+        bh=0jzpYrQDQLNG9Dg32tb7hfka498MiOABCqXtbU9Cufg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZiEFFr2wi7KPPr/jhw/rQudOlUYSObafeuP85b44ybynxes97QfXWDi+gATuA/DvG
+         A0HoIyCs4IIHY6VYWPewPtN50qeVJ29y7P8Hq5sj7r8nP310sVrWxDG0gnCJOMG3Oc
+         V+uRmW/NmhE0w7YpYfva4dj5WmydyQMzoA4j1/HQ=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 2E8153C0CFA; Mon,  9 Sep 2019 12:18:10 +0200 (CEST)
+Date:   Mon, 9 Sep 2019 11:18:10 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Nandor Han <nandor.han@vaisala.com>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        kbuild test robot <lkp@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvmem: core: fix nvmem_cell_write inline function
+Message-ID: <20190909101810.gtqouke7vyu63r7e@earth.universe>
+References: <20190908121038.6877-1-sre@kernel.org>
+ <d5017670-5622-283e-1376-8161d6e39dcd@vaisala.com>
 MIME-Version: 1.0
-Received: by 2002:a25:bd8b:0:0:0:0:0 with HTTP; Mon, 9 Sep 2019 03:17:39 -0700 (PDT)
-Reply-To: sunrisfundingsltd@gmail.com
-From:   SUNRISE FUNDING LIMITED <comseinvestments404@gmail.com>
-Date:   Mon, 9 Sep 2019 03:17:39 -0700
-Message-ID: <CAHe-joFnKiL8RpQoOMH3A7gmQrcYREargF7-c3xHjWqj75cK=g@mail.gmail.com>
-Subject: =?UTF-8?Q?L=C3=A5ninvestering_og_finansiering?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qss4xo2ixrxhdmym"
+Content-Disposition: inline
+In-Reply-To: <d5017670-5622-283e-1376-8161d6e39dcd@vaisala.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-God dag
 
-Vi er et registreret Loan Investment Company i England Storbritannien, vi
-ogs=C3=A5 registreret hos det tyrkiske britiske handelskammer og
-Industri (TBCCI) vi opererer i begge lande.
+--qss4xo2ixrxhdmym
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Vi s=C3=B8ger modtagere, der stammer fra en fond til at udvide / flytte
-deres forretningsinteresse i udlandet.
-Vi er klar til at finansiere projekter uden for Tyrkiet og Storbritannien i=
- EU
-form af bl=C3=B8dt l=C3=A5n. Vi yder l=C3=A5n til b=C3=A5de virksomheder og=
- private enheder
-til en lav rente p=C3=A5 2% R.O.I om =C3=A5ret.
+Hi,
 
-Vi kan godt lide at yde l=C3=A5n i f=C3=B8lgende sektorer: olie / gas,
-bankvirksomhed, real
-ejendom, aktiespekulation og minedrift, transport, sundhedssektor og
-tobak, kommunikationstjenester, landbrug skovbrug og fiskeri, s=C3=A5ledes =
-enhver
-sektor.
-Betingelserne er meget fleksible og interessante.
+On Mon, Sep 09, 2019 at 12:26:06PM +0300, Nandor Han wrote:
+> On 9/8/19 3:10 PM, Sebastian Reichel wrote:
+> > From: Sebastian Reichel <sebastian.reichel@collabora.com>
+> >=20
+> > nvmem_cell_write's buf argument uses different types based on
+> > the configuration of CONFIG_NVMEM. The function prototype for
+> > enabled NVMEM uses 'void *' type, but the static dummy function
+> > for disabled NVMEM uses 'const char *' instead. Fix the different
+> > behaviour by always expecting a 'void *' typed buf argument.
+> >=20
+> > Fixes: 7a78a7f7695b ("power: reset: nvmem-reboot-mode: use NVMEM as reb=
+oot mode write interface")
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> > Cc: Han Nandor <nandor.han@vaisala.com>
+> > Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > ---
+> >   include/linux/nvmem-consumer.h | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consu=
+mer.h
+> > index 8f8be5b00060..5c17cb733224 100644
+> > --- a/include/linux/nvmem-consumer.h
+> > +++ b/include/linux/nvmem-consumer.h
+> > @@ -118,7 +118,7 @@ static inline void *nvmem_cell_read(struct nvmem_ce=
+ll *cell, size_t *len)
+> >   }
+> >   static inline int nvmem_cell_write(struct nvmem_cell *cell,
+> > -				    const char *buf, size_t len)
+> > +				   void *buf, size_t len)
+>=20
+> nitpick: alignment issue?
 
-Hvis du er interesseret venligst, udfyld l=C3=A5nedataformularen
+This actually fixes the alignment issue as a side-effect.
+I guess I should have mentioned it in the changelog.
 
-L=C3=A5ntagere DATAFORM
+> Review-By: Han Nandor <nandor.han@vaisala.com>
 
+I suppose you meant to write "Reviewed-by" instead of inventing your
+own tag?
 
-=C2=A0FULLNAVN: ..........
-=C2=A0K=C3=98N:............
-=C2=A0ADRESSE...........
-=C2=A0ALDER:..............
-=C2=A0LAND:...........
-=C2=A0BESK=C3=86FTIGELSE:..............
-=C2=A0MOBILNUMMER:...............
-=C2=A0L=C3=85NETS FORM=C3=85L: ...............
-=C2=A0OVERS=C3=86TTET M=C3=A6ngde: .................
-=C2=A0L=C3=85NEDURATION: ....................
+-- Sebastian
 
+--qss4xo2ixrxhdmym
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Tak for dit samarbejde .
+-----BEGIN PGP SIGNATURE-----
 
-SUNRISE FUNDING LIMITED UK
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl12JtgACgkQ2O7X88g7
++pq+5w//WFTsXR9hQ39fHiyVSsAdYdKNBuhCXUY94CzlZceJYrRB9YwbTP4lInFF
+bTgIrC3myS3qLqEcXEpXOdZZmAw/Y7FjQFDSXaAia8NLOQiBiwhVRPcWKCxk1jKS
+rHm2TIWPnTavtzQLI6m3xEcTpodfyYCrTVGRS12jNhQEokzuLrxEgP5xxX1d2KxT
+esYmPbnOyW95kzLhoHk0Wt1gq7AXDM0xc0HbKxGuyrHFfmwOBEQiIGlZwAjvrIIL
+ZD/EBfye7hNSAArgFz8ynehrj9vyxGPYUj7msIZYSk2u901MG7IaOVZpBYV9VBLe
+CDk+uN/klWJlbBFeV9IMJ4nzgX5H1Rm2iuJ/hMZVcLe8s00IsgDhDOPBfbPlTjVx
+IBZJMXog/ZQJxBsSycTPuT3swLRHvPQwnHjjxJYn6DkJYgY2xaBDwa/3d7t2FZvv
+a02mT3t+AWqylKACzEYuAN/1xCEwJAhLuJACn2YXKtj0J5kOzBxcg4Y8ViW4NEJX
+AFG7nqQ61hKhA0vljqUaWZDcfnNBM0szNISMqkd10YaOqBMRuUMATWsHr8cwd4L9
+28ESIUYSBiapWFoPQByyq/plM25uhU3wCQ3oBqHsZE0cAoMzUE89qLMy9KFXoyvK
+EYaznGEjO2JeRk/dJXgGt8gJD1Wh9nm4XiNtbmCzUUwFPL0Gd+k=
+=5KCd
+-----END PGP SIGNATURE-----
+
+--qss4xo2ixrxhdmym--
