@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 519BAAD49B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:16:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8E6AD489
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:16:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389156AbfIIIQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 04:16:43 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41621 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388916AbfIIIQJ (ORCPT
+        id S2388963AbfIIIQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 04:16:13 -0400
+Received: from mail-pl1-f181.google.com ([209.85.214.181]:39217 "EHLO
+        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388905AbfIIIQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 04:16:09 -0400
-Received: by mail-pg1-f195.google.com with SMTP id x15so7371489pgg.8;
-        Mon, 09 Sep 2019 01:16:08 -0700 (PDT)
+        Mon, 9 Sep 2019 04:16:11 -0400
+Received: by mail-pl1-f181.google.com with SMTP id bd8so6185411plb.6;
+        Mon, 09 Sep 2019 01:16:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vdFrF4kqXfmGSe2ALsY5G2nBL3lyWxDSNKJUbnUAk5Q=;
-        b=jE+X37pVimPNz8wxNG/xCcqLPw36+vaR+nviOmlSI7B6OGNc8BdZfKM0O8tTKkItLF
-         pDpwNLK/bZBp6Hl3vq+TeKufOnCVq2XAo50lFM0r5zBsbDpsJ5z7T9uG858VlQSXDCJC
-         dpiEY8mLoEcnpzT5+q1iGoXJwr3H9zF4awIWvO1t8KDGV2IIbu+Kni6xrg0BQZTMvrc2
-         uC9VI+Qe9swDRw57tcnR7wqgMVJK1qkCClGFLG9LIk27SECWU4LX7xwM4UQmyNaN+0Kq
-         6JUoIjHKTlw0ngo+asoV7zoXQQsEeHPvFsmri9Kbf1PN/WD+qM6KUn8X2Xv2sJzd2Ovs
-         rSow==
+        bh=yuGs0hz5CxIzty752gFKYk0HsyobjL4IUQwm2G4SX64=;
+        b=YMu453yheSlqaOZcSDBv25kKyEMmOOnXyz7xuaMjSZro6TUTELOyphiG1vdeX7usOD
+         kg7SbhTGTBTGzh5Y58/m0JOfhYQzkGz3kNaylO/KAjC2JOcoARZwL2N9uXILXZyhiDx8
+         65Y6thXAoNswbzDlpEeLA7I9U1z8123uOwfRldgA0ay3OcPv7BtQ9FQk11L1GH3ASp2/
+         A9iWi5xabhq5w77qoPjtrNebPu2SLPy9BqC1TeQgJGxFVS4Bf/qOnYtqADiE0Mvfesao
+         GhMemqGDQlHv/aYKc6px+9cFanOHdQCQDnNCchVZ9i61knUfIpbMsybQiSjE+FOXaizb
+         z8sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vdFrF4kqXfmGSe2ALsY5G2nBL3lyWxDSNKJUbnUAk5Q=;
-        b=QLxnC76yAQIuiLHwyOJsldZT66zIr49QU6/7QySXimEMHZpUE8ZcwPzZp4HlpiM+6p
-         wvqRzSg3OoYFNRon7aPnafo3x420lTPqEKCydtNOLSbXmUmr+NolIqXdMiJJGIoQUD1W
-         brvem1h2E7+PZaGxAiARNcPZx8Bk6x/3vBt6jTlPMtzcak4f9oKQ8KuYyivscYU8KGO3
-         322zkX46D5KD1Hts6X14RSy3RzFBiYnEjQlBnDMyhmTKgl7flIsal8IBPCBhv8SA/xSb
-         5osmTzBPwk6dNgePyCE/o0bP+zOejrwUwxhlZE5+stTn2LEIsxcxbE70gI8ZZ3H06bMz
-         DRiQ==
-X-Gm-Message-State: APjAAAUpjVdnVCTPgQveZn8eljWmwX6LCFawtNpKhlBmHxuTJ4Fe5z4l
-        7za/kw8yUzrm77e9gwF1u9k=
-X-Google-Smtp-Source: APXvYqysTwLG9wNm1R6USqSGzJzOoGG9ZxL+ksUkqDLcbdnr4hk7dDyMwM2DxhgnW1PSf9WLPxKZcA==
-X-Received: by 2002:a63:de07:: with SMTP id f7mr21017561pgg.213.1568016968349;
-        Mon, 09 Sep 2019 01:16:08 -0700 (PDT)
+        bh=yuGs0hz5CxIzty752gFKYk0HsyobjL4IUQwm2G4SX64=;
+        b=IM/nl00QRhzeyEsY/vz/FaTSvqmyHxqXWq83U2BU3uRv1yaeqbUpPS47OyPNWlxAFQ
+         5NT5DlKzfhIJvjp9g7mPUf1KIRm9oqUKJM38rAvOdmAmcEi/LAPUZWMhOUeqMYOSAcT0
+         x1WA4YGNqPvY6MMUVRJcRV0oHFxPepPM6LrrdmTOmhkriLfq3vtPUhqKBBDaoNgJVjgC
+         g2IO/GPr7tbp7nN3V38eLvbFleRPE+0BkyFngrQZCTBhuV4J6+M5H9L1owFTGN1mdF3b
+         J2YFcZIuE3+TkxCmJ6IQCEISIsNAEH9dztRIdko2SIoNv4gHq1RcDJGgeAi1QNC6Qvw4
+         FUjg==
+X-Gm-Message-State: APjAAAX1UJketaBVgBhcfxVgyxRM+3xFWeRFz0h+aQwJgYWaWzxS2R22
+        CcJ6JN2Zr/3khoLNEpHSm6Y=
+X-Google-Smtp-Source: APXvYqxUZpku1eu2kZBcGXOGS50scBfF7DPE+BRqiU68g6jFAvCpf52phqxufxvb71erV/+aD1P1Dw==
+X-Received: by 2002:a17:902:7296:: with SMTP id d22mr22627115pll.179.1568016970236;
+        Mon, 09 Sep 2019 01:16:10 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id u65sm12686669pfu.104.2019.09.09.01.16.06
+        by smtp.gmail.com with ESMTPSA id u65sm12686669pfu.104.2019.09.09.01.16.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 01:16:06 -0700 (PDT)
+        Mon, 09 Sep 2019 01:16:08 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: [PATCH v3 05/13] software node: remove property_entry_read_uNN_array functions
-Date:   Mon,  9 Sep 2019 01:15:49 -0700
-Message-Id: <20190909081557.93766-6-dmitry.torokhov@gmail.com>
+Subject: [PATCH v3 06/13] software node: unify PROPERTY_ENTRY_XXX macros
+Date:   Mon,  9 Sep 2019 01:15:50 -0700
+Message-Id: <20190909081557.93766-7-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 In-Reply-To: <20190909081557.93766-1-dmitry.torokhov@gmail.com>
 References: <20190909081557.93766-1-dmitry.torokhov@gmail.com>
@@ -64,121 +64,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is absolutely no reason to have them as we can handle it all nicely in
-property_entry_read_int_array().
+We can unify string properties initializer macros with integer
+initializers.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/base/swnode.c | 85 +++++++------------------------------------
- 1 file changed, 14 insertions(+), 71 deletions(-)
+ include/linux/property.h | 70 +++++++++++++++++-----------------------
+ 1 file changed, 30 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index bedc26189bed..a0629365972d 100644
---- a/drivers/base/swnode.c
-+++ b/drivers/base/swnode.c
-@@ -131,66 +131,6 @@ static const void *property_entry_find(const struct property_entry *props,
- 	return pointer;
+diff --git a/include/linux/property.h b/include/linux/property.h
+index 4943b40d3536..911ace267247 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -257,57 +257,47 @@ struct property_entry {
+  * and structs.
+  */
+ 
+-#define PROPERTY_ENTRY_INTEGER_ARRAY(_name_, _type_, _Type_, _val_)	\
++#define PROPERTY_ENTRY_ELSIZE(_elem_)					\
++	sizeof(*(((struct property_entry *)NULL)->pointer._elem_))
++
++#define PROPERTY_ENTRY_ARRAY(_name_, _elem_, _Type_, _val_)		\
+ (struct property_entry) {						\
+ 	.name = _name_,							\
+-	.length = ARRAY_SIZE(_val_) * sizeof(_type_),			\
++	.length = ARRAY_SIZE(_val_) * PROPERTY_ENTRY_ELSIZE(_elem_),	\
+ 	.is_array = true,						\
+ 	.type = DEV_PROP_##_Type_,					\
+-	{ .pointer = { ._type_##_data = _val_ } },			\
++	.pointer._elem_ = _val_,					\
  }
  
--static int property_entry_read_u8_array(const struct property_entry *props,
--					const char *propname,
--					u8 *values, size_t nval)
--{
--	const void *pointer;
--	size_t length = nval * sizeof(*values);
+-#define PROPERTY_ENTRY_U8_ARRAY(_name_, _val_)			\
+-	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u8, U8, _val_)
+-#define PROPERTY_ENTRY_U16_ARRAY(_name_, _val_)			\
+-	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u16, U16, _val_)
+-#define PROPERTY_ENTRY_U32_ARRAY(_name_, _val_)			\
+-	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u32, U32, _val_)
+-#define PROPERTY_ENTRY_U64_ARRAY(_name_, _val_)			\
+-	PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u64, U64, _val_)
 -
--	pointer = property_entry_find(props, propname, length);
--	if (IS_ERR(pointer))
--		return PTR_ERR(pointer);
--
--	memcpy(values, pointer, length);
--	return 0;
+-#define PROPERTY_ENTRY_STRING_ARRAY(_name_, _val_)		\
++#define PROPERTY_ENTRY_U8_ARRAY(_name_, _val_)				\
++	PROPERTY_ENTRY_ARRAY(_name_, u8_data, U8, _val_)
++#define PROPERTY_ENTRY_U16_ARRAY(_name_, _val_)				\
++	PROPERTY_ENTRY_ARRAY(_name_, u16_data, U16, _val_)
++#define PROPERTY_ENTRY_U32_ARRAY(_name_, _val_)				\
++	PROPERTY_ENTRY_ARRAY(_name_, u32_data, U32, _val_)
++#define PROPERTY_ENTRY_U64_ARRAY(_name_, _val_)				\
++	PROPERTY_ENTRY_ARRAY(_name_, u64_data, U64, _val_)
++#define PROPERTY_ENTRY_STRING_ARRAY(_name_, _val_)			\
++	PROPERTY_ENTRY_ARRAY(_name_, str, STRING, _val_)
++
++#define PROPERTY_ENTRY_ELEMENT(_name_, _elem_, _Type_, _val_)	\
+ (struct property_entry) {					\
+ 	.name = _name_,						\
+-	.length = ARRAY_SIZE(_val_) * sizeof(const char *),	\
+-	.is_array = true,					\
+-	.type = DEV_PROP_STRING,				\
+-	{ .pointer = { .str = _val_ } },			\
 -}
 -
--static int property_entry_read_u16_array(const struct property_entry *props,
--					 const char *propname,
--					 u16 *values, size_t nval)
--{
--	const void *pointer;
--	size_t length = nval * sizeof(*values);
--
--	pointer = property_entry_find(props, propname, length);
--	if (IS_ERR(pointer))
--		return PTR_ERR(pointer);
--
--	memcpy(values, pointer, length);
--	return 0;
--}
--
--static int property_entry_read_u32_array(const struct property_entry *props,
--					 const char *propname,
--					 u32 *values, size_t nval)
--{
--	const void *pointer;
--	size_t length = nval * sizeof(*values);
--
--	pointer = property_entry_find(props, propname, length);
--	if (IS_ERR(pointer))
--		return PTR_ERR(pointer);
--
--	memcpy(values, pointer, length);
--	return 0;
--}
--
--static int property_entry_read_u64_array(const struct property_entry *props,
--					 const char *propname,
--					 u64 *values, size_t nval)
--{
--	const void *pointer;
--	size_t length = nval * sizeof(*values);
--
--	pointer = property_entry_find(props, propname, length);
--	if (IS_ERR(pointer))
--		return PTR_ERR(pointer);
--
--	memcpy(values, pointer, length);
--	return 0;
--}
--
- static int
- property_entry_count_elems_of_size(const struct property_entry *props,
- 				   const char *propname, size_t length)
-@@ -209,21 +149,24 @@ static int property_entry_read_int_array(const struct property_entry *props,
- 					 unsigned int elem_size, void *val,
- 					 size_t nval)
- {
-+	const void *pointer;
-+	size_t length;
-+
- 	if (!val)
- 		return property_entry_count_elems_of_size(props, name,
- 							  elem_size);
--	switch (elem_size) {
--	case sizeof(u8):
--		return property_entry_read_u8_array(props, name, val, nval);
--	case sizeof(u16):
--		return property_entry_read_u16_array(props, name, val, nval);
--	case sizeof(u32):
--		return property_entry_read_u32_array(props, name, val, nval);
--	case sizeof(u64):
--		return property_entry_read_u64_array(props, name, val, nval);
--	}
- 
--	return -ENXIO;
-+	if (!is_power_of_2(elem_size) || elem_size > sizeof(u64))
-+		return -ENXIO;
-+
-+	length = nval * elem_size;
-+
-+	pointer = property_entry_find(props, name, length);
-+	if (IS_ERR(pointer))
-+		return PTR_ERR(pointer);
-+
-+	memcpy(val, pointer, length);
-+	return 0;
+-#define PROPERTY_ENTRY_INTEGER(_name_, _type_, _Type_, _val_)	\
+-(struct property_entry) {					\
+-	.name = _name_,						\
+-	.length = sizeof(_type_),				\
++	.length = PROPERTY_ENTRY_ELSIZE(_elem_),		\
+ 	.type = DEV_PROP_##_Type_,				\
+-	{ .value = { ._type_##_data = _val_ } },		\
++	.value._elem_ = _val_,					\
  }
  
- static int property_entry_read_string_array(const struct property_entry *props,
+-#define PROPERTY_ENTRY_U8(_name_, _val_)		\
+-	PROPERTY_ENTRY_INTEGER(_name_, u8, U8, _val_)
+-#define PROPERTY_ENTRY_U16(_name_, _val_)		\
+-	PROPERTY_ENTRY_INTEGER(_name_, u16, U16, _val_)
+-#define PROPERTY_ENTRY_U32(_name_, _val_)		\
+-	PROPERTY_ENTRY_INTEGER(_name_, u32, U32, _val_)
+-#define PROPERTY_ENTRY_U64(_name_, _val_)		\
+-	PROPERTY_ENTRY_INTEGER(_name_, u64, U64, _val_)
+-
+-#define PROPERTY_ENTRY_STRING(_name_, _val_)		\
+-(struct property_entry) {				\
+-	.name = _name_,					\
+-	.length = sizeof(const char *),			\
+-	.type = DEV_PROP_STRING,			\
+-	{ .value = { .str = _val_ } },			\
+-}
++#define PROPERTY_ENTRY_U8(_name_, _val_)			\
++	PROPERTY_ENTRY_ELEMENT(_name_, u8_data, U8, _val_)
++#define PROPERTY_ENTRY_U16(_name_, _val_)			\
++	PROPERTY_ENTRY_ELEMENT(_name_, u16_data, U16, _val_)
++#define PROPERTY_ENTRY_U32(_name_, _val_)			\
++	PROPERTY_ENTRY_ELEMENT(_name_, u32_data, U32, _val_)
++#define PROPERTY_ENTRY_U64(_name_, _val_)			\
++	PROPERTY_ENTRY_ELEMENT(_name_, u64_data, U64, _val_)
++#define PROPERTY_ENTRY_STRING(_name_, _val_)			\
++	PROPERTY_ENTRY_ELEMENT(_name_, str, STRING, _val_)
+ 
+ #define PROPERTY_ENTRY_BOOL(_name_)		\
+ (struct property_entry) {			\
 -- 
 2.23.0.187.g17f5b7556c-goog
 
