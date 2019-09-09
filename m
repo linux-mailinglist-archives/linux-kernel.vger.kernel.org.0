@@ -2,129 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E55A8AD76D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26EC0AD785
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:01:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390732AbfIIK7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:59:44 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:37036 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390539AbfIIK7o (ORCPT
+        id S2390949AbfIILBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 07:01:03 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:21227 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729481AbfIILBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:59:44 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x89AxSho114599;
-        Mon, 9 Sep 2019 05:59:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568026768;
-        bh=KVTZeU9q6U/tm8mHmG6WMtzijKTyoPy7zWy+jYJUN0w=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Z0kR636WsH3wXes0J12PD38D5hFweyoCxpR+fcSAcWqcaqyeR8AjIXhnnBvTZO8J4
-         yPyACWq001MyvsAYus3peKtwX6dQLmuEyzcfdcba/FuVxuwdMwElfDMGTVDMEkAvQH
-         /nfb7SUhIcjDJf//GEdyLAhd0tGpVvmHLFG6OG1s=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x89AxSEJ104990;
-        Mon, 9 Sep 2019 05:59:28 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 9 Sep
- 2019 05:59:26 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 9 Sep 2019 05:59:25 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x89AxMHW108974;
-        Mon, 9 Sep 2019 05:59:23 -0500
-Subject: Re: [PATCH v2 06/14] dmaengine: ti: Add cppi5 header for UDMA
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     <robh+dt@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>,
-        <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
+        Mon, 9 Sep 2019 07:01:02 -0400
+Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa1.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa1.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 9xll3BMS+TMUyqo+IYQ9PebZVty6ukX2OAoxO7O6xicbl+ZItOjg9+xK32hgPRww+4CeHuqp6M
+ dboQhy1wz01CBmDyKuuDZ6aJvUJ0KMl8iY6XRuVGFvkzWScW/0J+r4NOlInlW82eW+whZbfI3e
+ HUreJqRNcu48WCwHAdSWgdYjBJ9qcsfeDxtxscz5sJLCveh5gx5WIf2DnP/l5bJGb919gWYnEe
+ tVGzwUJRtt19ya4oXbrMoglSXd8rIPXjV5xn6BwZRbI8CB1/EgzDOHXanoUdhJj7sp1rRTYFKr
+ 0Ww=
+X-IronPort-AV: E=Sophos;i="5.64,484,1559545200"; 
+   d="scan'208";a="49728710"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Sep 2019 04:00:42 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 9 Sep 2019 04:00:42 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Mon, 9 Sep 2019 04:00:38 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <tglx@linutronix.de>, <jason@lakedaemon.net>, <maz@kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
-        <t-kristo@ti.com>, <tony@atomide.com>, <j-keerthy@ti.com>
-References: <20190730093450.12664-1-peter.ujfalusi@ti.com>
- <20190730093450.12664-7-peter.ujfalusi@ti.com>
- <20190908142528.GP2672@vkoul-mobl>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <8699f999-7834-a083-2c7b-3ea909b1e011@ti.com>
-Date:   Mon, 9 Sep 2019 13:59:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Sandeep Sheriker Mallikarjun 
+        <sandeepsheriker.mallikarjun@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH] irqchip/atmel-aic5: add support for sam9x60 irqchip
+Date:   Mon, 9 Sep 2019 14:00:35 +0300
+Message-ID: <1568026835-6646-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190908142528.GP2672@vkoul-mobl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>
 
+Add support for SAM9X60 irqchip.
 
-On 08/09/2019 17.25, Vinod Koul wrote:
-> On 30-07-19, 12:34, Peter Ujfalusi wrote:
-> 
->> +/**
->> + * Descriptor header, present in all types of descriptors
->> + */
->> +struct cppi5_desc_hdr_t {
->> +	u32 pkt_info0;	/* Packet info word 0 (n/a in Buffer desc) */
->> +	u32 pkt_info1;	/* Packet info word 1 (n/a in Buffer desc) */
->> +	u32 pkt_info2;	/* Packet info word 2 Buffer reclamation info */
->> +	u32 src_dst_tag; /* Packet info word 3 (n/a in Buffer desc) */
-> 
-> Can we move these comments to kernel-doc style please
+Signed-off-by: Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>
+[claudiu.beznea@microchip.com: update aic5_irq_fixups[], update
+ documentation]
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ .../devicetree/bindings/interrupt-controller/atmel,aic.txt     |  7 +++++--
+ drivers/irqchip/irq-atmel-aic5.c                               | 10 ++++++++++
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-Sure, I'll move all struct and enums.
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt
+index f4c5d34c4111..7079d44bf3ba 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt
+@@ -1,8 +1,11 @@
+ * Advanced Interrupt Controller (AIC)
+ 
+ Required properties:
+-- compatible: Should be "atmel,<chip>-aic"
+-  <chip> can be "at91rm9200", "sama5d2", "sama5d3" or "sama5d4"
++- compatible: Should be:
++    - "atmel,<chip>-aic" where  <chip> can be "at91rm9200", "sama5d2",
++      "sama5d3" or "sama5d4"
++    - "microchip,<chip>-aic" where <chip> can be "sam9x60"
++
+ - interrupt-controller: Identifies the node as an interrupt controller.
+ - #interrupt-cells: The number of cells to define the interrupts. It should be 3.
+   The first cell is the IRQ number (aka "Peripheral IDentifier" on datasheet).
+diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic5.c
+index 6acad2ea0fb3..29333497ba10 100644
+--- a/drivers/irqchip/irq-atmel-aic5.c
++++ b/drivers/irqchip/irq-atmel-aic5.c
+@@ -313,6 +313,7 @@ static void __init sama5d3_aic_irq_fixup(void)
+ static const struct of_device_id aic5_irq_fixups[] __initconst = {
+ 	{ .compatible = "atmel,sama5d3", .data = sama5d3_aic_irq_fixup },
+ 	{ .compatible = "atmel,sama5d4", .data = sama5d3_aic_irq_fixup },
++	{ .compatible = "microchip,sam9x60", .data = sama5d3_aic_irq_fixup },
+ 	{ /* sentinel */ },
+ };
+ 
+@@ -390,3 +391,12 @@ static int __init sama5d4_aic5_of_init(struct device_node *node,
+ 	return aic5_of_init(node, parent, NR_SAMA5D4_IRQS);
+ }
+ IRQCHIP_DECLARE(sama5d4_aic5, "atmel,sama5d4-aic", sama5d4_aic5_of_init);
++
++#define NR_SAM9X60_IRQS		50
++
++static int __init sam9x60_aic5_of_init(struct device_node *node,
++				       struct device_node *parent)
++{
++	return aic5_of_init(node, parent, NR_SAM9X60_IRQS);
++}
++IRQCHIP_DECLARE(sam9x60_aic5, "microchip,sam9x60-aic", sam9x60_aic5_of_init);
+-- 
+2.7.4
 
->> +/**
->> + * cppi5_desc_get_type - get descriptor type
->> + * @desc_hdr: packet descriptor/TR header
->> + *
->> + * Returns descriptor type:
->> + * CPPI5_INFO0_DESC_TYPE_VAL_HOST
->> + * CPPI5_INFO0_DESC_TYPE_VAL_MONO
->> + * CPPI5_INFO0_DESC_TYPE_VAL_TR
->> + */
->> +static inline u32 cppi5_desc_get_type(struct cppi5_desc_hdr_t *desc_hdr)
->> +{
->> +	WARN_ON(!desc_hdr);
-> 
-> why WARN_ON and not return error!
-
-these helpers were intended to be as simple as possible.
-I can go through with all of the WARN_ONs and replace them with if()
-pr_warn() and either just return or return with 0.
-
-Would that be acceptable?
-
->> +/**
->> + * cppi5_hdesc_calc_size - Calculate Host Packet Descriptor size
->> + * @epib: is EPIB present
->> + * @psdata_size: PSDATA size
->> + * @sw_data_size: SWDATA size
->> + *
->> + * Returns required Host Packet Descriptor size
->> + * 0 - if PSDATA > CPPI5_INFO0_HDESC_PSDATA_MAX_SIZE
->> + */
->> +static inline u32 cppi5_hdesc_calc_size(bool epib, u32 psdata_size,
->> +					u32 sw_data_size)
->> +{
->> +	u32 desc_size;
->> +
->> +	if (psdata_size > CPPI5_INFO0_HDESC_PSDATA_MAX_SIZE)
->> +		return 0;
->> +	//TODO_GS: align
-> 
-> :)
-
-Leftover TODO from Grygorii, the align is already done.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
