@@ -2,96 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1E69ADD88
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42C23ADD8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:54:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390183AbfIIQx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 12:53:59 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43791 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbfIIQx6 (ORCPT
+        id S2390636AbfIIQyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 12:54:17 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:28838 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390263AbfIIQyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 12:53:58 -0400
-Received: by mail-oi1-f194.google.com with SMTP id t84so11066262oih.10
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 09:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ljPPuRHN7pv5RAsMzezY1X1Lrzb1YERDpsuR59TZXOI=;
-        b=cc4AP0xRn0rgSFQQoweXYVeDmdpYDPSRo+ablACaZl0ulft5o6ThBhM8seUjI0P/As
-         2FrOOiCIlbReGxyXmZp79zqy0714NmEYrwosquM4+F8/EVhQTv5G7t+8DHCw02YlvSGE
-         lXv8RN6C8a9rDJ6KXPUD3o8PBc8qBShf0S/Zt4H06TQ9lIBXCuaIjnYRlgE556zpUafJ
-         pJW1sBGoCv57FxGJeiL4qhoLSm0A6r9JOIHri2FMxlnPZfZX+K0V5FG4J7pGNZ4VcetG
-         G3K8Dao7YimLUa59TVick6b/JNeGfMOsbkCaRTymi57XiU3kMmLtOBJb0mmhqL1UwMy+
-         1jpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ljPPuRHN7pv5RAsMzezY1X1Lrzb1YERDpsuR59TZXOI=;
-        b=bcaR+2BmBinTrxeGsOWjz9HW9S2tA67FLdMOAx5CFzIhCaW6Qfd2Ugbz/Fyc6lp60G
-         AbWm46AhQiTVP53eZUxk44sqrRXvB8Izc+tOvaAviaJPqScmr1hJU2s7HVAIKs+wuoCE
-         qxOkdzEspy/JPz6790T50UKL/FomBDMxi/T50KCb/ygu9AKnQABytczCi4mh6MBU++bz
-         8bWho8/3zT5v2D5wNnx39WudxJtxv5984npIWfH26hOGEdRIo3Y//PjU2XVYqptk28Z2
-         rbAPOqmRl9b2pTW8ZqHnNPNTUML61lyJUuWa7dTsmFsOGeB4crOlyXPOt1ZuRxuvjVIa
-         NGmw==
-X-Gm-Message-State: APjAAAUurj/WF5mjo4HRkqdvB81ENhIqEtBgU5Zw3sw+IM7YPtA5PfZF
-        BfBMIgZsXMKN3cMeBt8ka0+I4SDqmuAQgVzZdiw=
-X-Google-Smtp-Source: APXvYqwkg2PtS7tSU9ZYcfGxOf6NNnium6OK0+MhRkPbE2dXlTolFAlTYyAZJTz0MmnJAWGvVUW9zdVFOung1ms3nsY=
-X-Received: by 2002:aca:4e97:: with SMTP id c145mr92531oib.145.1568048037621;
- Mon, 09 Sep 2019 09:53:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190903160430.1368-1-lpf.vector@gmail.com> <20190903160430.1368-2-lpf.vector@gmail.com>
- <4e9a237f-2370-0f55-34d2-1fbb9334bf88@suse.cz>
-In-Reply-To: <4e9a237f-2370-0f55-34d2-1fbb9334bf88@suse.cz>
-From:   Pengfei Li <lpf.vector@gmail.com>
-Date:   Tue, 10 Sep 2019 00:53:46 +0800
-Message-ID: <CAD7_sbEwwqp_ONzYxPQfBDORH4g2Du=LKt=eWf+6SsLgtysBmA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] mm, slab: Make kmalloc_info[] contain all types of names
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christopher Lameter <cl@linux.com>, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 9 Sep 2019 12:54:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1568048051;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=bY9Zsv0toaAL6+H/aBZfY10g+A0xuOv1hEKnmREQGXw=;
+        b=GZVGUK4oROGvMpb9ksnbdipnbwjnzY7RJKPcksH8CKBsB8ftWqrnNMKk2nPndDlZ26
+        p/m7z4QOkwPLRDQxW5sIArYJbfA3P+ISlNJvJwiPnm8Vu85tlp6YQJzbp4pyzxfpWJJF
+        InvGCM6V0XQnPLH5cmHiCSmeIYjQsEF+al3/pQZw5J48ooKDDfB0ZUgB0HqAzYHSGBs3
+        TkZ5mNcFoh62ZVgo1JIrW3fyrzkaxzqjcNX0kj7U0HPInja649Xc9YZMIVMoepuOOuWT
+        Zo8SkCflF6/LkoTO3Rb7D7cNmP9vMUM6HMZtddBNcbvTPFz3psb9fjZJ0gZ8C9T/DDLM
+        X+AQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmMnw4vkig=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v89Gs4xwk
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 9 Sep 2019 18:54:04 +0200 (CEST)
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [Letux-kernel] [RFC PATCH 0/3] Enable 1GHz support on omap36xx
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20190909163236.GP52127@atomide.com>
+Date:   Mon, 9 Sep 2019 18:54:04 +0200
+Cc:     Adam Ford <aford173@gmail.com>,
+        =?utf-8?Q?Andr=C3=A9_Roth?= <neolynx@gmail.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Nishanth Menon <nm@ti.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E001F74D-724E-4C50-9265-CBD33C4F2918@goldelico.com>
+References: <C04F49BA-1229-4E96-9FCF-4FC662D1DB11@goldelico.com> <CAHCN7x+Ye6sB_YqO0sAX1OJDw64B-qGS3pL545v3Xk5z914cwQ@mail.gmail.com> <0C1EF64E-B33C-4BFA-A7D3-471DD1B9EE86@goldelico.com> <515048DE-138D-4400-8168-F2B7D61F1005@goldelico.com> <CAHCN7xLPCX9rZ0+7KVBiA_bgZ6tg6VeCXqD-UXu+6iwpFMPVrA@mail.gmail.com> <7B3D1D77-3E8C-444F-90B9-6DF2641178B8@goldelico.com> <CAHCN7xLW58ggx3CpVL=HdCVHWo6D-MCTB91A_9rtSRoZQ+xJuQ@mail.gmail.com> <FA2920FE-B76A-4D44-A264-862A1CCBF7FC@goldelico.com> <CAHCN7xJsPa0i+Z+qpCkWcdAh9+udmGT0RPNchdDsfB=8ptd3Nw@mail.gmail.com> <87420DBD-770F-4C32-9499-A3AEA5876E8A@goldelico.com> <20190909163236.GP52127@atomide.com>
+To:     Tony Lindgren <tony@atomide.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 9, 2019 at 10:59 PM Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> On 9/3/19 6:04 PM, Pengfei Li wrote:
-> > There are three types of kmalloc, KMALLOC_NORMAL, KMALLOC_RECLAIM
-> > and KMALLOC_DMA.
-> >
-> > The name of KMALLOC_NORMAL is contained in kmalloc_info[].name,
-> > but the names of KMALLOC_RECLAIM and KMALLOC_DMA are dynamically
-> > generated by kmalloc_cache_name().
-> >
-> > This patch predefines the names of all types of kmalloc to save
-> > the time spent dynamically generating names.
->
-> As I said, IMHO it's more useful that we don't need to allocate the
-> names dynamically anymore, and it's simpler overall.
->
+Hi Tony,
 
-Thank you very much for your review.
+> Am 09.09.2019 um 18:32 schrieb Tony Lindgren <tony@atomide.com>:
+>=20
+> Hi,
+>=20
+> * H. Nikolaus Schaller <hns@goldelico.com> [190909 14:57]:
+>> Another question that came up by private mail from Andr=C3=A9 was if =
+we
+>> should better disable the turbo OPPs of omap34xx and 36xx by default
+>> (status =3D "disabled";) because there are concerns about overheating
+>> the chips and we have no thermal regulation like for omap4 & 5.
+>>=20
+>> But this would mean that every board DTS would have to set it =
+explicitly
+>> to "enabled".
+>=20
+> Yes I started thinking about that too. I think there is a requirement
+> to do the scaling via the voltage processor for the higher modes.
 
-> > Signed-off-by: Pengfei Li <lpf.vector@gmail.com>
->
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
->
-> >   /*
-> >    * kmalloc_info[] is to make slub_debug=,kmalloc-xx option work at boot time.
-> >    * kmalloc_index() supports up to 2^26=64MB, so the final entry of the table is
-> >    * kmalloc-67108864.
-> >    */
-> >   const struct kmalloc_info_struct kmalloc_info[] __initconst = {
->
-> BTW should it really be an __initconst, when references to the names
-> keep on living in kmem_cache structs? Isn't this for data that's
-> discarded after init?
+It depends on how you read the little footnotes...
 
-You are right, I will remove __initconst in v2.
+Table 4-18. Processor Voltages Without SmartReflex:
+
+	=E2=80=A2 This table defines the safe VDD1 (vdd_mpu_iva) voltage =
+ranges to be used before using the SmartReflex AVS feature for OPPs =
+calibration.
+	=E2=80=A2 Values are defined when SmartReflexTM feature is =
+deactivated. They can be lower when SmartReflexTM is activated.
+	=E2=80=A2 OPP130 and OPP1G are not available above TJ of 90C.
+	=E2=80=A2 (6)  OPP1G is a high performance operating point which =
+has following requirements:
+		=E2=80=A2 =E2=80=93  ABB LDO must be set to FBB (Forward =
+Body Bias) mode when switching to this OPP. It requires having a 1 F =
+capacitor connected to cap_vdd_bb_mpu_iva.
+		=E2=80=A2 =E2=80=93  AVS (Adaptive Voltage Scaling) =
+power technique must be used to achieve optimum operating voltage.
+
+So I read this as:
+
+* OPP130 and OPP1G should be guarded by 90=C2=B0C thermal framework
+* OPP1G should also set the ABB LDO to FBB mode
+* AVS does only reduce voltage levels (to save energy =3D heat =3D =
+problem)
+* only if we want "optimum operating voltage" (read as: "lowest possible =
+voltage" =3D "highest energy saving") we must use AVS
+
+I.e. we do not necessarily need AVS or SmartReflex or help from the
+twl4030 (except for changing the voltage).
+
+> And there needs to be some way to automatically change to a lower
+> OPP in some cases.
+
+That should probably be done through the thermal framework like
+on omap4 & omap5?
+
+>=20
+> For normal OPPs, using the twl regulator directly should be OK.
+
+Maybe for the turbo OPPs as well.
+
+> For the higher modes, maybe we could pass the callback functions
+> from arch/arm/mach-omap2/voltage.c for the twl regulator so the
+> voltage processor hardware can handle them directly. Or add a
+> separate regulator driver operating the voltages like Nishanth
+> posted patches for earlier.
+
+So in my (limited) understanding it would suffice to set the ABB LDO
+to FBB mode for OPP1G.
+
+And make sure that the TJ does not exceed 90=C2=B0C by reducing the =
+cpufreq
+through the thermal framework. But: the thermal sensors of the omap3
+are quite odd (they seem to jump up by 10=C2=B0 after first use).
+
+BR,
+Nikolaus
+
