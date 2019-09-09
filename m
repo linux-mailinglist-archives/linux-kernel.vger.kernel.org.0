@@ -2,83 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB819AD871
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47B26AD877
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:04:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404657AbfIIMDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 08:03:38 -0400
-Received: from mail-sh.amlogic.com ([58.32.228.43]:48752 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404215AbfIIMDi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 08:03:38 -0400
-Received: from [10.18.29.226] (10.18.29.226) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 9 Sep
- 2019 20:04:28 +0800
-Subject: Re: [PATCH v2 4/4] arm64: dts: add support for A1 based Amlogic AD401
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     Kevin Hilman <khilman@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Tao Zeng <tao.zeng@amlogic.com>
-References: <1567667251-33466-1-git-send-email-jianxin.pan@amlogic.com>
- <1567667251-33466-5-git-send-email-jianxin.pan@amlogic.com>
- <CAFBinCBSmW4y-Dz7EkJMV8HOU4k6Z0G-K6T77XnVrHyubaSsdg@mail.gmail.com>
- <be032a85-b60d-f7f0-8404-b27784d809df@amlogic.com>
- <CAFBinCD7gFzOsmZCB8T1KJKVsgL7WMhoEkj3dRzyqwAnjC0CNA@mail.gmail.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <a82336e2-44df-5682-1c86-daf8a8448d30@amlogic.com>
-Date:   Mon, 9 Sep 2019 20:04:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2404697AbfIIMEs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 08:04:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35146 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404215AbfIIMEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 08:04:47 -0400
+Received: from localhost (unknown [148.69.85.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28BD82067B;
+        Mon,  9 Sep 2019 12:04:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568030686;
+        bh=9b/8IY4QOe0LwdrOWJ2ftTvFx8mgPq5bP/abAgWH+0Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hg+y8W+vKwgkCTchcgPlYP+HxphpgwrPcPZ/0M+tRDuKTjIpACy6zxOY4caDcM9JN
+         yRRLQTNTL5dPIzmtwh2Letb8gNbTQ3XUHLI2XQrOSiiKvpedAD1FZ2KE0e3Qxalosk
+         AI3g57p16XzVXxvOIczb2SrDXjwqRbG7rpueyzKA=
+Date:   Mon, 9 Sep 2019 13:04:43 +0100
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: do not select same victim right
+ again
+Message-ID: <20190909120443.GA31108@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190909012532.20454-1-jaegeuk@kernel.org>
+ <69933b7f-48cc-47f9-ba6f-b5ca8f733cba@huawei.com>
+ <20190909080654.GD21625@jaegeuk-macbookpro.roam.corp.google.com>
+ <97237da2-897a-8420-94de-812e94aa751f@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCD7gFzOsmZCB8T1KJKVsgL7WMhoEkj3dRzyqwAnjC0CNA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.226]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97237da2-897a-8420-94de-812e94aa751f@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+On 09/09, Chao Yu wrote:
+> On 2019/9/9 16:06, Jaegeuk Kim wrote:
+> > On 09/09, Chao Yu wrote:
+> >> On 2019/9/9 9:25, Jaegeuk Kim wrote:
+> >>> GC must avoid select the same victim again.
+> >>
+> >> Blocks in previous victim will occupy addition free segment, I doubt after this
+> >> change, FGGC may encounter out-of-free space issue more frequently.
+> > 
+> > Hmm, actually this change seems wrong by sec_usage_check().
+> > We may be able to avoid this only in the suspicious loop?
+> > 
+> > ---
+> >  fs/f2fs/gc.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index e88f98ddf396..5877bd729689 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -1326,7 +1326,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >  		round++;
+> >  	}
+> >  
+> > -	if (gc_type == FG_GC)
+> > +	if (gc_type == FG_GC && seg_freed)
+> 
+> That's original solution Sahitya provided to avoid infinite loop of GC, but I
+> suggest to find the root cause first, then we added .invalid_segmap for that
+> purpose.
 
-On 2019/9/7 23:02, Martin Blumenstingl wrote:
-> Hi Jianxin,
-> 
-> On Fri, Sep 6, 2019 at 7:58 AM Jianxin Pan <jianxin.pan@amlogic.com> wrote:
-> [...]
->>> also I'm a bit surprised to see no busses (like aobus, cbus, periphs, ...) here
->>> aren't there any busses defined in the A1 SoC implementation or are
->>> were you planning to add them later?
->> Unlike previous series,there is no Cortex-M3 AO CPU in A1, and there is no AO/EE power domain.
->> Most of the registers are on the apb_32b bus.  aobus, cbus and periphs are not used in A1.
-> OK, thank you for the explanation
-> since you're going to re-send the patch anyways: can you please
-> include the apb_32b bus?
-> all other upstream Amlogic .dts are using the bus definitions, so that
-> will make A1 consistent with the other SoCs
-In A1 (and the later C1), BUS is not mentioned in the memmap and register spec.
-Registers are organized and grouped by functions, and we can not find information about buses from the SoC document.
-Maybe it's better to remove bus definitions for these chips.
-> 
-> 
-> Martin
-> 
-> .
-> 
+I've checked the Sahitya's patch. So, it seems the problem can happen due to
+is_alive or atomic_file.
 
+> 
+> Thanks,
+> 
+> >  		sbi->cur_victim_sec = NULL_SEGNO;
+> >  
+> >  	if (sync)
+> > 
