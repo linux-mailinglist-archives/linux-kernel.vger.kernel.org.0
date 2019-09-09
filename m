@@ -2,115 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FCF1AD24B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 05:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C40B2AD25F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 05:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387964AbfIIDk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 23:40:27 -0400
-Received: from mail-eopbgr20065.outbound.protection.outlook.com ([40.107.2.65]:12275
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727530AbfIIDkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 23:40:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gNo6KC12MNq/iAH3m1LKFGmy5Y+BRWYwghLQVQDuwxCMr64h0/a+V1bm+O2EQOhCDMKHtahClxz/1eO8b2IZLpC23rmEtj+kQoyXVK+LA8OwqQcdNltBXCpUkCAhFAIZML3fOyCxknvymUNCM37VPZZhA8eNFqxssj04fT1iLH1vG/pRTY85RnTaeJXymINEE7NpYwVVHkFubvqJrgZgxgk709TE3NW8jagyEEgYlBvfBcSw7Nj9jkxDKLcLjYrj+ROBh6VBjFNMqpdcHUk4gvxDNP44/G4nfcSs3C1K13TVR4infRQZ7JeEzbRiZeqotHq146Hsh8wO+whyC5Gh1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gQbl1Heq/eGArwLF///5xF1zd82P3lfPwYfhEG3DN6E=;
- b=axaqblLY0opytOrf1cr+PBU4t+LZbjAMjur650fQHM1oL4f/OPDCDaus8JRksVm0+HOc819l7yEJIB9dJl+j7oPdsdDBSQmiXD9Ni0lY6CIhleA30esECAb8w1IPuCDqw1UmgEiW4w6xwvRQIc/Cp2e/ZwxdO9OQLjisTTLJOV/HdTfUESbki/JSlgs2/VBqjDiQPV+lLLFQkVNyeXDs2EP0vAH6rla35LIIfz+dHgrpRtv+H7eGr3YRmg7dPCrARegG7vKbj42al/PkIMstOCDNib/MwbntM724sPDPDzo0gMaAHtG2MeIXUdtF2p4bHVlULylEMXCGj7G31hVI8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gQbl1Heq/eGArwLF///5xF1zd82P3lfPwYfhEG3DN6E=;
- b=CuIbraE67GrS4pMtigMJVcGvWCxTyNNCr/O39svTr81IQX9a1WwlQHdLGa9UdrHriy8SzZ/be87xu6jMpmUWbADtTwj4oE3PA02A9c5eHgF12KcDgL7uNoGbm72EbhFlKrD56y7cT/iNIWf8nURw5MUbUI2kZTHdp60SEl6ksuU=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6020.eurprd04.prod.outlook.com (20.179.32.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.19; Mon, 9 Sep 2019 03:40:10 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::6ca2:ec08:2b37:8ab8]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::6ca2:ec08:2b37:8ab8%6]) with mapi id 15.20.2241.018; Mon, 9 Sep 2019
- 03:40:10 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: RE: [PATCH V2 1/4] clk: imx: pll14xx: avoid glitch when set rate
-Thread-Topic: [PATCH V2 1/4] clk: imx: pll14xx: avoid glitch when set rate
-Thread-Index: AQHVW/KK74JBQxFn0kSNJpxYwL3XVace9ziAgAPQ26A=
-Date:   Mon, 9 Sep 2019 03:40:10 +0000
-Message-ID: <AM0PR04MB4481BCB4A02FC868F5B442E288B70@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <1566855676-11510-1-git-send-email-peng.fan@nxp.com>
- <20190906172145.CAD3C20838@mail.kernel.org>
-In-Reply-To: <20190906172145.CAD3C20838@mail.kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6aae4df6-1488-4233-a1fc-08d734d76a69
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6020;
-x-ms-traffictypediagnostic: AM0PR04MB6020:|AM0PR04MB6020:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB60207D6293B5117E158CFBEA88B70@AM0PR04MB6020.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 01559F388D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(39860400002)(376002)(136003)(346002)(199004)(189003)(43544003)(7736002)(76116006)(186003)(26005)(54906003)(316002)(66446008)(52536014)(64756008)(76176011)(7696005)(9686003)(14444005)(446003)(55016002)(4326008)(11346002)(44832011)(3846002)(6116002)(66946007)(102836004)(110136005)(2201001)(25786009)(8676002)(2501003)(478600001)(14454004)(99286004)(66556008)(5660300002)(66476007)(86362001)(4744005)(71190400001)(6246003)(6506007)(2906002)(256004)(476003)(33656002)(486006)(53936002)(8936002)(229853002)(66066001)(81166006)(74316002)(6436002)(71200400001)(81156014)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6020;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: uVfZZh3emXR9QSp3y46OlXKjRZa0LGA/Ycbh8+jxgX9Xv7aXAgk2wIZhGDNq4viygFK/pwXTstEERXL2bRZUyImsPVMj5WJKbeeYDvemNHWuq2wAhEnV0upAqL3zMkfxorz4Lr3jNwM0RcGvvjJQ9YAPp2lISS7594lsynAifqzyVMiXKzxvnS9ZosKxka7AsLD7vfvGD87Jq5/Ho5+B+z0l9f/sAwETQy9AiTHdtjEAjiRBZ3yW2ol95PVamJ4HdSBXT3QgRs1/28UPWWF/tplUeCGybqZuAaEbG9ocknA2+/88nhtZclWquC/sa2GYCMiFeug4nQ1fnrmqrtxVNFVmDPwTQO3GD9y03bfuNNNlem3bzg8hq5tWj1ApZbLN/TCiW6RqkJ6ZPh1PgPK7LaJ+Z00mqildwaLRDclworg=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2387996AbfIIDtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 23:49:55 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46869 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730739AbfIIDtz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 23:49:55 -0400
+Received: by mail-lf1-f68.google.com with SMTP id t8so9267107lfc.13;
+        Sun, 08 Sep 2019 20:49:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kq/0HLiUK8W2h+dk2WJMskncJuE+4YLYDYO2ZzK45o0=;
+        b=ZpbaPRx2lmat2fGxjZLS177OO+d0emKhB2IrUfsdUvpKm0l+d8XfgsYdtJHPfzyh28
+         pTiCG91F7OLR4FYbABHI3d2ON6UYGx98DQ6T/Gny2XyWFLxSqniMJ6Qm2O/hOeu3U7jF
+         Pz6nr7u/WqSUBJCk99i2LNIRlSmsZ6xfPg5HuLmHPmWDNvyDjIJGZYfyhqfQ/G4D1HG5
+         gwBJs/wLJGqvpPFH+M8tu3Wi6IPEXdhdxUYliRWp4UR85gqYi9ZDckRuyhMX0mrEJjM3
+         M57TMRqmriKes8DXJQUjoQjBGpLkKBqMODF3wKe2+yvcBXtW6DfRnAgvkMKb9JJngHk7
+         0vSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kq/0HLiUK8W2h+dk2WJMskncJuE+4YLYDYO2ZzK45o0=;
+        b=G6frux3xbvcs7nwLGVWh6MBXPANCQT9eOCO4YUg7O6vRKGkgc8+P2UTQYJtwSuELSy
+         XhZPaNMrA3tsuqomFkGJmdms8KjP0N0R8DCGvy6f8hyEsqNoXuo1oQSvSEyp8e7FgHn7
+         OcB8CjJb+OMrl039T9eNlSKoJ33cVxpoYrwJYHIb/0t+0Tw7Ue5i7D/d5pUyjqE05TQy
+         Xgf4tmpIs46UXAusaPK9D8C3DsACGMlQdHpv2l6PmH7mh+vNMY9pnBcQme9whElaPhWh
+         pbxr+qWXM9Nv+4yB9h1Fa86Y6M6lSWdqZH4wdVMWxC9DsefIWOel5/6z+mj4LKwFoywM
+         cXZA==
+X-Gm-Message-State: APjAAAW7TQyDKEiPf7kuLGEl5vm4mFi3IQzAPFJvWxh3CE/SbI2PsDZE
+        x5VtLsDK3SlSJ1dCjqgbQ6FDlftExX2Kq083X6E=
+X-Google-Smtp-Source: APXvYqxQj86TjeTxr0/xpyiy4ZWLOU2z5VlWw4H2N3G0Z/inYDZjPb1C9XiFndN7u/3/v+XBFdAmhW0qJ88qNqS+EVs=
+X-Received: by 2002:a19:f604:: with SMTP id x4mr13837563lfe.17.1568000993249;
+ Sun, 08 Sep 2019 20:49:53 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6aae4df6-1488-4233-a1fc-08d734d76a69
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2019 03:40:10.2476
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HgME3AwdcBBdUtdh1GCZMYdBKzJCxkpjkGNCjs7PkzS1S5Q7k3GQJ4wjNWcI4JxFAs/dUWZPODKlf0a7UCOwKQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6020
+References: <20190903085535.23913-1-ufo19890607@gmail.com>
+In-Reply-To: <20190903085535.23913-1-ufo19890607@gmail.com>
+From:   =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Date:   Mon, 9 Sep 2019 11:49:42 +0800
+Message-ID: <CAHCio2iLvOSDEJ8JSnBx6w_65yekWNWu0B8wTAWbLDjy65J9JQ@mail.gmail.com>
+Subject: Re: [PATCH] Add input file_name support for perf sched {map|latency|replay|timehist}
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        windyu@tencent.com, Adrian Hunter <adrian.hunter@intel.com>,
+        Wang Nan <wangnan0@huawei.com>
+Cc:     linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        acme@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgU3RlcGhlbiwNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFYyIDEvNF0gY2xrOiBpbXg6IHBs
-bDE0eHg6IGF2b2lkIGdsaXRjaCB3aGVuIHNldCByYXRlDQo+IA0KPiBRdW90aW5nIFBlbmcgRmFu
-ICgyMDE5LTA4LTI2IDAyOjQyOjE0KQ0KPiA+IEZyb206IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAu
-Y29tPg0KPiA+DQo+ID4gQWNjb3JkaW5nIHRvIFBMTDE0NDNYQSBhbmQgUExMMTQxNlggc3BlYywg
-IldoZW4gQllQQVNTIGlzIDAgYW5kIFJFU0VUQg0KPiA+IGlzIGNoYW5nZWQgZnJvbSAwIHRvIDEs
-IEZPVVQgc3RhcnRzIHRvIG91dHB1dCB1bnN0YWJsZSBjbG9jayB1bnRpbA0KPiA+IGxvY2sgdGlt
-ZSBwYXNzZXMuIFBMTDE0MTZYL1BMTDE0NDNYQSBtYXkgZ2VuZXJhdGUgYSBnbGl0Y2ggYXQgRk9V
-VC4iDQo+ID4NCj4gPiBTbyBzZXQgQllQQVNTIHdoZW4gUkVTRVRCIGlzIGNoYW5nZWQgZnJvbSAw
-IHRvIDEgdG8gYXZvaWQgZ2xpdGNoLg0KPiA+IEluIHRoZSBlbmQgb2Ygc2V0IHJhdGUsIEJZUEFT
-UyB3aWxsIGJlIGNsZWFyZWQuDQo+ID4NCj4gPiBXaGVuIHByZXBhcmUgY2xvY2ssIGFsc28gbmVl
-ZCB0byB0YWtlIGNhcmUgdG8gYXZvaWQgZ2xpdGNoLiBTbyB3ZSBhbHNvDQo+ID4gZm9sbG93IFNw
-ZWMgdG8gc2V0IEJZUEFTUyBiZWZvcmUgUkVTRVRCIGNoYW5nZWQgZnJvbSAwIHRvIDEuDQo+ID4g
-QW5kIGFkZCBhIGNoZWNrIGlmIHRoZSBSRVNFVEIgaXMgYWxyZWFkeSAwLCBkaXJlY3RseSByZXR1
-cm4gMDsNCj4gPg0KPiA+IEZpeGVzOiA4NjQ2ZDRkY2M3ZmIgKCJjbGs6IGlteDogQWRkIFBMTHMg
-ZHJpdmVyIGZvciBpbXg4bW0gc29jIikNCj4gPiBSZXZpZXdlZC1ieTogTGVvbmFyZCBDcmVzdGV6
-IDxsZW9uYXJkLmNyZXN0ZXpAbnhwLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQZW5nIEZhbiA8
-cGVuZy5mYW5AbnhwLmNvbT4NCj4gPiAtLS0NCj4gDQo+IFBsZWFzZSBtYWtlIGNvdmVyIGxldHRl
-cnMgZm9yIG11bHRpLXBhdGNoIHNlcmllcy4NCg0KSnVzdCBzZW50IG91dCB2MyB0byBpbmNsdWRl
-IGNvdmVyLWxldHRlciwgbm8gb3RoZXIgY2hhbmdlcy4NCg0KVGhhbmtzLA0KUGVuZy4NCg0K
+PING
+
+
+yuzhoujian <ufo19890607@gmail.com> =E4=BA=8E2019=E5=B9=B49=E6=9C=883=E6=97=
+=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=884:56=E5=86=99=E9=81=93=EF=BC=9A
+>
+> From: YuZhoujian <windyu@tencent.com>
+>
+> Just add '-i' option for perf sched {map|latency|replay|timehist}
+>
+> Signed-off-by: YuZhoujian <windyu@tencent.com>
+> ---
+>  tools/perf/Documentation/perf-sched.txt | 7 +++++++
+>  tools/perf/builtin-sched.c              | 4 ++++
+>  2 files changed, 11 insertions(+)
+>
+> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documen=
+tation/perf-sched.txt
+> index 63f938b887dd..182c223d3d9b 100644
+> --- a/tools/perf/Documentation/perf-sched.txt
+> +++ b/tools/perf/Documentation/perf-sched.txt
+> @@ -80,6 +80,9 @@ OPTIONS
+>
+>  OPTIONS for 'perf sched map'
+>  ----------------------------
+> +-i::
+> +--input=3D<file>::
+> +        Input file name. (default: perf.data unless stdin is a fifo)
+>
+>  --compact::
+>         Show only CPUs with activity. Helps visualizing on high core
+> @@ -96,6 +99,10 @@ OPTIONS for 'perf sched map'
+>
+>  OPTIONS for 'perf sched timehist'
+>  ---------------------------------
+> +-i::
+> +--input=3D<file>::
+> +        Input file name. (default: perf.data unless stdin is a fifo)
+> +
+>  -k::
+>  --vmlinux=3D<file>::
+>      vmlinux pathname
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 025151dcb651..8e51fbb88549 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -3374,6 +3374,7 @@ int cmd_sched(int argc, const char **argv)
+>         const struct option latency_options[] =3D {
+>         OPT_STRING('s', "sort", &sched.sort_order, "key[,key2...]",
+>                    "sort by key(s): runtime, switch, avg, max"),
+> +       OPT_STRING('i', "input", &input_name, "file", "input file name"),
+>         OPT_INTEGER('C', "CPU", &sched.profile_cpu,
+>                     "CPU to profile on"),
+>         OPT_BOOLEAN('p', "pids", &sched.skip_merge,
+> @@ -3381,11 +3382,13 @@ int cmd_sched(int argc, const char **argv)
+>         OPT_PARENT(sched_options)
+>         };
+>         const struct option replay_options[] =3D {
+> +       OPT_STRING('i', "input", &input_name, "file", "input file name"),
+>         OPT_UINTEGER('r', "repeat", &sched.replay_repeat,
+>                      "repeat the workload replay N times (-1: infinite)")=
+,
+>         OPT_PARENT(sched_options)
+>         };
+>         const struct option map_options[] =3D {
+> +       OPT_STRING('i', "input", &input_name, "file", "input file name"),
+>         OPT_BOOLEAN(0, "compact", &sched.map.comp,
+>                     "map output in compact mode"),
+>         OPT_STRING(0, "color-pids", &sched.map.color_pids_str, "pids",
+> @@ -3397,6 +3400,7 @@ int cmd_sched(int argc, const char **argv)
+>         OPT_PARENT(sched_options)
+>         };
+>         const struct option timehist_options[] =3D {
+> +       OPT_STRING('i', "input", &input_name, "file", "input file name"),
+>         OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
+>                    "file", "vmlinux pathname"),
+>         OPT_STRING(0, "kallsyms", &symbol_conf.kallsyms_name,
+> --
+> 2.23.0.37.g745f681
+>
