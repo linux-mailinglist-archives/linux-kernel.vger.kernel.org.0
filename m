@@ -2,136 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49AACADD8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CCA6ADD8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390530AbfIIQyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 12:54:13 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53052 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390263AbfIIQyM (ORCPT
+        id S2391228AbfIIQy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 12:54:28 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45225 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727866AbfIIQy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 12:54:12 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t17so384758wmi.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 09:54:10 -0700 (PDT)
+        Mon, 9 Sep 2019 12:54:27 -0400
+Received: by mail-ot1-f67.google.com with SMTP id 41so9387319oti.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 09:54:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=f9/8yy+NKv4q/o4tIkF6O8Or8uSW/OZKuGNstmgenRc=;
-        b=rtj5Mvb9qp1ydqG8Dx9wrY+kW9C96wthSIEoYr32iyA8rXHVaahnacuxvVAg9TgJoH
-         AavDm8EfpZxfUaUrlsZfFaq3Rff3LneiUax9g+x0EJhTqRSPdbgrNliPd6T4RLHHJpF6
-         ya6x2MyPXQ7W+UTom2TTu3VieoF3MhdPUhOeuOCoCWaLFkrZ79uFyoRVgcozZeCoxFDW
-         aFY+ZdUevNupWUJz4aZWiNQZqZGhmXQ3k/DBmSj87Yx+evow+Xji9f6FNUDZ1plIdulz
-         oKNt9ZyAU/V38zWVHOmrJBnp2mcxHp9oRM2yM7zZxjHc6ja9mRb2Tlvi7XEvb60RXs1t
-         ED9w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=31kxGZUlgh39qJethx0hRa+2PyryHdT/Kifm1vwiYDs=;
+        b=pg0BqddTOhx6M/Lw9KYbXBx53VB0/+25bq5PSVGS50kKhJAnUXeSYvtCFIgIlUO7I4
+         Sg1kq0KCyg8dXxJGHKD/MqCwcoPyMDnS6oFukKEhKHQoDCoLoj8esh2gRMKFIcUMl5La
+         2FHcOz3V5odVTWnN7UmsDFgD91cDoA9lm/fqufSc+5Jfe1CCXs3dxqddQtSFZUYmc+Mh
+         Q7v6HcK87vArL8+rNjdx+vspc3BNqWnc12MCGysMYEtg0aFAUl7cnDYzfUvg0oLEO0o+
+         k8ZvmZolsz5u43ZSfVkBrweedczj7i6/QGcV4lflm9XvPAaqCL9km3p4IpM1HxWR9qoP
+         hgfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f9/8yy+NKv4q/o4tIkF6O8Or8uSW/OZKuGNstmgenRc=;
-        b=ZWlL20Zxk/0wpIV5RBlxuQYColyptMcMlZaX77T6/ojeaoIA2oQ3jMEnVoGNIs/K3P
-         zKxZ8gLYs4oLLem3B9y2rNPPFOjwrLI7/2FZkn0wiqdVUC+mJZUwb1kRIB+AHnWxIDKh
-         +fRI4+mZZA5VBPkjS5B8Z9+ujeI7bzZSj+OWuJnd1j6DaWtLIrr85Nt0jQnGtbmoCtqZ
-         Nn+bV4UqQXNEVXtT2uRxRq5ok67xlLs9ewvzFjtkZcY6luEOMn/IoKq5XetMqWUFP0Cb
-         zj43jzWn8c4TzhxkC/63qpn+Q2w9EccfbER5phZ5WTZeqdwHFG1xa/6AlJklbBgwSa9n
-         Dvrg==
-X-Gm-Message-State: APjAAAVm9pKUmHgvrLSehvnW+VRuSfj3blbxCc1m4zSmyQ6p7FQJfhfC
-        q0pAXzk6+Dr85fDrdJXp50xTdA==
-X-Google-Smtp-Source: APXvYqx43oC4exXldBFEey6vvP4qHCDYNmsutB9kH+ydwlTmCRk+BOCW0A52BvRAZd+MGWkL90MXiQ==
-X-Received: by 2002:a1c:7011:: with SMTP id l17mr152064wmc.39.1568048049688;
-        Mon, 09 Sep 2019 09:54:09 -0700 (PDT)
-Received: from igloo (69.red-83-35-113.dynamicip.rima-tde.net. [83.35.113.69])
-        by smtp.gmail.com with ESMTPSA id r20sm20381639wrg.61.2019.09.09.09.54.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Sep 2019 09:54:09 -0700 (PDT)
-From:   "Jorge Ramirez-Ortiz, Linaro" <jorge.ramirez-ortiz@linaro.org>
-X-Google-Original-From: "Jorge Ramirez-Ortiz, Linaro" <JorgeRamirez-Ortiz>
-Date:   Mon, 9 Sep 2019 18:54:08 +0200
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "Jorge Ramirez-Ortiz, Linaro" <jorge.ramirez-ortiz@linaro.org>,
-        agross@kernel.org, mturquette@baylibre.com,
-        bjorn.andersson@linaro.org, niklas.cassel@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] clk: qcom: apcs-msm8916: get parent clock names from
- DT
-Message-ID: <20190909165408.GC23964@igloo>
-References: <20190826164510.6425-1-jorge.ramirez-ortiz@linaro.org>
- <20190826164510.6425-2-jorge.ramirez-ortiz@linaro.org>
- <20190909102117.245112089F@mail.kernel.org>
- <20190909141740.GA23964@igloo>
- <20190909161704.07FAE20640@mail.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=31kxGZUlgh39qJethx0hRa+2PyryHdT/Kifm1vwiYDs=;
+        b=t6tieiMkxgUO/5QA06Fzh9lg13t0H+jPoea975iX1RcBWVEWCbgSwtkfKZfM97JPLu
+         IXLQ91NNEpqGi5T/ZdvLCT/kBP0gWILEL6/QL6B+boqkFcd1mUHjPQA+wovDg2znniFh
+         gSuK5gbeALcQJaeiEMfrupAYPjLmAfF3ngCvDkwbzCejrOyDJ4ycWLgBeMH0a/zXWcWe
+         FR64drYa2izA2gyMjB1Q/HxC1aQ4WLlYlTyO0KatTL8YCrawE/WCRTmEKMjqQJv6Gd2A
+         MFjYF7acW0HNU2KYJ5fvtAIxaMQhbtiDf+khtDmNrXzI/rUe8/AY98ympWsg76sGfNrP
+         S5hQ==
+X-Gm-Message-State: APjAAAUZolGHY8vvfLEGx3YV/Yh+gsUoCPypUl1vQsC699cBlh4p+cFi
+        GwxdM6XsE7ZQe3wSL/NxIP2rpFVIXVGUnBQdJfrmtIMYn9I=
+X-Google-Smtp-Source: APXvYqxnlaS57V4kAtXP0r+RRN9r75uKF5+ohgYNaIFFekZNrp9ytwRto6OPiRHTdghftBB5ZTPY16S+Jyw0XDyq2s0=
+X-Received: by 2002:a9d:12e4:: with SMTP id g91mr19182974otg.368.1568048065736;
+ Mon, 09 Sep 2019 09:54:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190909161704.07FAE20640@mail.kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190903160430.1368-1-lpf.vector@gmail.com> <20190903160430.1368-3-lpf.vector@gmail.com>
+ <80fe024b-006e-b38e-1548-70441d917b41@suse.cz>
+In-Reply-To: <80fe024b-006e-b38e-1548-70441d917b41@suse.cz>
+From:   Pengfei Li <lpf.vector@gmail.com>
+Date:   Tue, 10 Sep 2019 00:54:14 +0800
+Message-ID: <CAD7_sbFf429WxnqcROGgpsYvK4q1maF2uP9nZjqs60195aC95g@mail.gmail.com>
+Subject: Re: [PATCH 2/5] mm, slab_common: Remove unused kmalloc_cache_name()
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christopher Lameter <cl@linux.com>, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/09/19 09:17:03, Stephen Boyd wrote:
-> Quoting Jorge Ramirez-Ortiz, Linaro (2019-09-09 07:17:40)
-> > On 09/09/19 03:21:16, Stephen Boyd wrote:
-> > > Quoting Jorge Ramirez-Ortiz (2019-08-26 09:45:07)
-> > > > @@ -76,10 +88,11 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
-> > > >         a53cc->src_shift = 8;
-> > > >         a53cc->parent_map = gpll0_a53cc_map;
-> > > >  
-> > > > -       a53cc->pclk = devm_clk_get(parent, NULL);
-> > > > +       a53cc->pclk = of_clk_get(parent->of_node, pll_index);
-> > > 
-> > > Presumably the PLL was always index 0, so why are we changing it to
-> > > index 1 sometimes? Seems unnecessary.
-> > > 
-> > 
-> > it came as a personal preference. hope it is acceptable (I would
-> > rather not change it)
-> > 
-> > apcs-msm8916.c declares the following
-> > 
-> > [..]
-> > static const u32 gpll0_a53cc_map[] = { 4, 5 };
-> > static const char *gpll0_a53cc[] = {
-> >        "gpll0_vote",
-> >         "a53pll",
-> >         };
-> > [..]
-> > 
-> > 
-> > now will be doing this
-> > 
-> > --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> > @@ -429,7 +429,8 @@
-> >      compatible = "qcom,msm8916-apcs-kpss-global", "syscon";
-> >      reg = <0xb011000 0x1000>;
-> >      #mbox-cells = <1>;
-> > -                   clocks = <&a53pll>;
-> > +                 clocks = <&gcc GPLL0_VOTE>, <&a53pll>;
-> > +                 clock-names = "aux", "pll";
-> >                       #clock-cells = <0>;
-> >                };
-> >                                                                                                                 
-> > 
-> > so I chose to keep the consistency between the clocks definition and
-> > just change the index before calling of_clk_get.
-> > 
-> 
-> But now the binding is different for the same compatible. I'd prefer we
-> keep using devm_clk_get() and use a device pointer here and reorder the
-> map and parent arrays instead. The clocks property shouldn't change in a
-> way that isn't "additive" so that we maintain backwards compatibility.
-> 
+On Mon, Sep 9, 2019 at 10:59 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> On 9/3/19 6:04 PM, Pengfei Li wrote:
+> > Since the name of kmalloc can be obtained from kmalloc_info[],
+> > remove the kmalloc_cache_name() that is no longer used.
+>
+> That could simply be part of patch 1/5 really.
+>
 
-but the backwards compatibility is fully maintained - that is the main reason
-behind the change. the new stuff is that  instead of hardcoding the
-names in the source - like it is being done on the msm8916- we provide
-the clocks in the dts node (a cleaner approach with the obvious
-benefit of allowing new users to be added without having to modify the
-sources).
+Ok, thanks.
 
-
-
+> > Signed-off-by: Pengfei Li <lpf.vector@gmail.com>
+>
+> Ack
+>
+> > ---
+> >   mm/slab_common.c | 15 ---------------
+> >   1 file changed, 15 deletions(-)
