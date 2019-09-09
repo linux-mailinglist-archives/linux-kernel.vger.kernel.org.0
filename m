@@ -2,95 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ED5CAD791
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFF8AD792
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390994AbfIILDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 07:03:39 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37543 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfIILDj (ORCPT
+        id S2391010AbfIILEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 07:04:20 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:59912 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729106AbfIILEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 07:03:39 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y5so1465932lji.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 04:03:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=+smM7WaTYSnOFdxxMLuSqgStB09WERzVFF0P4x2z3pE=;
-        b=DdhZHuo5gfbnugQCH3YGRovxgyaB9ayrltbk3B5f6wpds/fGb7V5M6eI01ksXECZND
-         Kkq+W+XaZ+JoRwh/1MkPW3RxiJvT3kMG+RiCoSSup45XawlsKiXISUAlE/E0Du7SygnK
-         ZtcMVbdO+vfpVL4rHlVlM0FHgwC9Wj+rGrQdG5K1+gml1Gzb5FE5NHc3qKCh9iVktTCN
-         gOiHCMjewe1ICSZo7NiQuC4Ph0Jw76XcyrvcjZc5IWS3aSLpDc2PTUfJEh42FdU+2t86
-         dX3H+LhN50b3jHVbQUXKVMVpiuj6z6GT1Sw/mMoZX6zdrUEuG0pXVSsAuTLgDUmiwmmN
-         M4TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=+smM7WaTYSnOFdxxMLuSqgStB09WERzVFF0P4x2z3pE=;
-        b=nLXI7tq0Y8m7IvVkY6E4nIhAWsFtyR/2jWIL00WV7T9HKMRtfR4RvYwT+tpGVVKqsH
-         YA/gVX1YvBdXvKQCZgvZN3lvlBEtBs6WXLKof+0lcJ9xl2A6muHWf4YYKcxvWCx+xY4D
-         GKlj9suPw2LhaJ+CV9H54Tax5IGuVGM6ba2I2+fCtWdIlkT9hTMJenR5dZwlCtdaYLjy
-         yqTOF3sOUutfAgwaKTYpUrvpQHr0o9np8XksCjQ6CKiGXyN5VSi1KQ+JCUGREp74SJLy
-         621KzBl0pyXaKO1rfQqYOO2gpLUG8SJjhQavq568gR8BNxrws5+Kp1t8TG6M4lGirHAu
-         X97A==
-X-Gm-Message-State: APjAAAUNAyqkFLGrWHzbWizxJEJAWRDEK7NbOj5PvkfIN7DZt2J1zEtP
-        P20ZfJWAw835DghNs5vIWiETZdv5L/lHeQ5/Hwg=
-X-Google-Smtp-Source: APXvYqywzCZTF9dNmjB1gHi2kpRtpSjAeXC2MmcxOd8NhX7zsZ6OJ5r45AnAC3sJ4ogt8Y22ysXRBCyALsqV1vI3h28=
-X-Received: by 2002:a2e:814b:: with SMTP id t11mr16099161ljg.160.1568027017096;
- Mon, 09 Sep 2019 04:03:37 -0700 (PDT)
-MIME-Version: 1.0
-Reply-To: nicolemartha247@gmail.com
-Received: by 2002:a19:cbcf:0:0:0:0:0 with HTTP; Mon, 9 Sep 2019 04:03:36 -0700 (PDT)
-From:   "Mrs. Nicole Martha" <nicolemartha245@gmail.com>
-Date:   Mon, 9 Sep 2019 04:03:36 -0700
-X-Google-Sender-Auth: Dzded9w_ZSqWPHnAFIqsgkS6atk
-Message-ID: <CAJAUzruCU2jshWkZuP-xPyidbsyygnGwZ_AhQaL=A5yYbvivkg@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 9 Sep 2019 07:04:20 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x89B4CjM031800;
+        Mon, 9 Sep 2019 20:04:13 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x89B4CjM031800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1568027053;
+        bh=P3E0voZLBRNhBPs4jkIYDedlz8ZAEmB2TiQnO9CqZgo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lczMtMDHf1vv6d+PWh3dPjM1dhs7VxFW2MwYeA5IXKRuKXHOcUFqd43AVtr8zsSD9
+         SemjxaIymis38wDJsp1VQKsKMjWAH2sJVtqXUc4yfl5hBwx2pPh4l8KrGJaUMXJPOA
+         od8mfZEJZOlW4XIOeAuzL/5IA/bp850IEVkgEj2e36wz71p8P1cft7tgHBexJEOUfA
+         yZ8n9BMtBRNS4yIO6hFhL37TcBOzmvIf2yp9JqgBMNCcd+ArIIoNg9WukNH19xIVfe
+         rhF2grerYJIpOQ5qkH+hlh0NBRAHK+pUNJttuNHCXA629OK9A4n8DNVcy8CkxDnjsq
+         4+if6chVMZD4g==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] module: remove redundant 'depends on MODULES'
+Date:   Mon,  9 Sep 2019 20:04:07 +0900
+Message-Id: <20190909110408.21832-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear,
+These are located in the 'if MODULES' ... 'endif' block.
 
-Please forgive me for stressing you with my predicaments as I know
-that this letter may come to you as big surprise. Actually, I came
-across your E-mail from my personal search afterward I decided to
-email you directly believing that you will be honest to fulfill my
-final wish before i die.
+Remove the redundant dependencies.
 
-Meanwhile, I am Mrs.  Nicole Martha 62 years old, from France, and I
-am suffering from a long time cancer and from all indication my
-condition is really deteriorating as my doctors have confirmed and
-courageously advised me that I may not live beyond two months from now
-for the reason that my tumor has reached a critical stage which has
-defiled all forms of medical treatment. As a matter of fact,
-registered nurse by profession while my husband was dealing on Gold
-Dust and Gold Dory Bars in Burkina Faso till his sudden death the year
-2008 then I took over his business till date.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-In fact, at this moment I have a deposit sum of four million five
-hundred thousand US dollars [$4,500,000.00] with one of the leading
-bank in Burkina Faso but unfortunately I cannot visit the bank since I
-m critically sick and powerless to do anything myself but my bank
-account officer advised me to assign any of my trustworthy relative,
-friends or partner with authorization letter to stand as the recipient
-of my money but sorrowfully I don t have any reliable relative and no
-child.
+ init/Kconfig | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Therefore, I want you to receive the money and take 50% to take care
-of yourself and family while 50% should be use basically on
-humanitarian purposes mostly to orphanages home, Motherless babies
-home, less privileged and disable citizens and widows around the
-world. and as soon as I receive your I shall send you my pictures,
-banking records and with full contacts of my banking institution to
-communicate them on the matter. Please contact me with these email
-address.( nicolemartha247@gmail.com)
+diff --git a/init/Kconfig b/init/Kconfig
+index bd7d650d4a99..9e72cc6071f5 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2006,7 +2006,6 @@ config MODULE_SRCVERSION_ALL
+ 
+ config MODULE_SIG
+ 	bool "Module signature verification"
+-	depends on MODULES
+ 	select SYSTEM_DATA_VERIFICATION
+ 	help
+ 	  Check modules for valid signatures upon load: the signature
+@@ -2083,7 +2082,6 @@ config MODULE_SIG_HASH
+ 
+ config MODULE_COMPRESS
+ 	bool "Compress modules on installation"
+-	depends on MODULES
+ 	help
+ 
+ 	  Compresses kernel modules when 'make modules_install' is run; gzip or
+@@ -2121,7 +2119,7 @@ endchoice
+ 
+ config TRIM_UNUSED_KSYMS
+ 	bool "Trim unused exported kernel symbols"
+-	depends on MODULES && !UNUSED_SYMBOLS
++	depends on !UNUSED_SYMBOLS
+ 	help
+ 	  The kernel and some modules make many symbols available for
+ 	  other modules to use via EXPORT_SYMBOL() and variants. Depending
+-- 
+2.17.1
 
-Hope to hear from you soon.
-Yours Faithfully,
-Mrs.  Nicole Martha
