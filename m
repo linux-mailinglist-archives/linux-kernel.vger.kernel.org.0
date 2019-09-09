@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07312AD6B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:24:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42987AD6BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:24:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390710AbfIIKX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:23:58 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53247 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390658AbfIIKXz (ORCPT
+        id S2390774AbfIIKYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:24:12 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54325 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390662AbfIIKX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:23:55 -0400
-Received: by mail-wm1-f66.google.com with SMTP id t17so13162069wmi.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 03:23:52 -0700 (PDT)
+        Mon, 9 Sep 2019 06:23:56 -0400
+Received: by mail-wm1-f65.google.com with SMTP id p7so1583016wmp.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 03:23:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=IfO/aFsv9csBvAqLmxPrLHozIhVbgmsUP4z+fLvYLKk=;
-        b=lJfo7jVni8HmxsSWeAG1c3uqO1KeWoVPi/W0TZ0bzK7R9ne6ihwnEbCY4QEV66GRyz
-         /oklInIRK/cLDGhHPPMJjgG8aUlCQcMM4I4RXFMzEtrIjz7JjHpFdU5vr4NYtNmQ5r3j
-         RsPiEgCJIUX6Nw7HnJSqmhNg0pMNlR9drvx9g1FbFs1RROI9s/VCJjS9D+NiaqW/phwJ
-         XoTRJy47dlX018UraTK5GAPPLY7dy4rnAGZqip2nB5hJe1qiYoarfrmZ23hKYdqNJftT
-         X4wAzBecTiPRZglrkXmWf7kMTeYaFVzXp7RQtW6n/L3UgAmuHhxjTTeihM7H70Snb5lJ
-         QEqA==
+        bh=yu1wCZdYIYP1jJvk74CcBZj8+AFMfC/Evvd513Cb5Yg=;
+        b=Fb/PZC7J5LnCdiTui3OYvoq5ZKTb0KInKov6ma1riHbkF7BSEr80N1Sof6/BZkmYBd
+         oujqoQ9ATVhk8MujF+smYlsQEdOJxS/FxRBYkkd5iRgiNfUoSZrn0ZP3NtnOmly47Ijg
+         GfoFBCjsBnidcfeejZKwNFneFR4jfSIwCC+ndnVgzl3mz0HhrcuzKdzYpT92oFxz+JVI
+         bQYSvhA1EYI8GsCYuh6uufVHQ2YQQzJeha2PkjOGKtPGNxAnzImagdhYVHAsfwbo9Kgp
+         /iiVNAF/n8D5AUMHwEh5Kse3uhCpYRvpPRujBc+bxCmKdWcX4GqKQBfH+ZsVpNPp8Kt0
+         cAZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IfO/aFsv9csBvAqLmxPrLHozIhVbgmsUP4z+fLvYLKk=;
-        b=e0O6HIKfVyNofNCcklFAVEyaHoPsO2uERPweDLDuCEKzAZgRdWHXPWIhypL1WxMKOc
-         6jsxX4aGP2wNHnFRNkseAAsvDyJXGNX/8e17lNuRAbY0KUokb6aBg6BlvNrdgcO74fqM
-         lWs82XK7RjE0MgPluzdKsflhMfhId9ogRwflGSUSizgtCNsWM/puRH8TlcZ/rAPvy7y0
-         ApatubBiB8TzODLk4/EIB3u5u9fomrKxH8/OA39bSlHgh9Nk3r2X0AhPuBo4Wz8b0EFG
-         98HPLdn+64lhkfjJE7cLqig5nAFZqlayfGiqbM3wHCpGm5GKjIJ2qjY64r2FuGFb91vH
-         YxFw==
-X-Gm-Message-State: APjAAAWZrwhDhEePdqjwtq8e+Nf2ryDlmF2YG/nzx7lb4ef6VUp93lST
-        h6vpWx1qwQf0RXpz/i7riWp+C716KtBfCQ==
-X-Google-Smtp-Source: APXvYqxhTzZ1Fh8C7DgSzqRlLzBHLQAbXCfmJHK6OASTOE6O9Taf1A+yq/zvODVupkbxdtsIx3tznQ==
-X-Received: by 2002:a1c:7513:: with SMTP id o19mr17677294wmc.126.1568024632076;
-        Mon, 09 Sep 2019 03:23:52 -0700 (PDT)
+        bh=yu1wCZdYIYP1jJvk74CcBZj8+AFMfC/Evvd513Cb5Yg=;
+        b=h3hAJP0dIffA3ehhqXsPEH8P0xLZJ5JuPH0JRz54zbwsktTd12L0UEMhPtUbKXO9+D
+         tsBcmcm8w5sCLbigfYwnOFBpWICcClpuN/NokzHbMQF3+uVKLOxKmb89hVKQzC/M6tN0
+         eehBgGORJZs7ikxaQ4YCXG3/nb3ae39gxuGc+fhzylTzjq+TCcY0jFTXCvuoOZiXsNmS
+         4f3bZ6YuHx/Dn2tFCUE8HrzhD+Qz+tXpap+FHp9o9Gd8CGGT6XmT8vtmPMawudJVOLs9
+         0OKmFhNsGe4JkwTdzcEpM1V18mZVcbycKrG7Nh8fxc65XIc5qlqD1Lme7VeAEabZzWj5
+         cqEA==
+X-Gm-Message-State: APjAAAUmy0FRKt+n26+lDdqCxkuoUbFNCzHtaSSV7OSBFjRJhhzJZOna
+        FXsa3K3rlmdez6pKHaCwnRku2va8D/ekkg==
+X-Google-Smtp-Source: APXvYqzLItSWebfZaJEphGQJBKCLGY7oWmQJ8incowXbvPbkOUINKisuMYaDsgYg+9c37v7q+MManw==
+X-Received: by 2002:a1c:be12:: with SMTP id o18mr8864792wmf.128.1568024633598;
+        Mon, 09 Sep 2019 03:23:53 -0700 (PDT)
 Received: from Mindolluin.localdomain ([148.69.85.38])
-        by smtp.gmail.com with ESMTPSA id d14sm1800008wrj.27.2019.09.09.03.23.50
+        by smtp.gmail.com with ESMTPSA id d14sm1800008wrj.27.2019.09.09.03.23.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 03:23:51 -0700 (PDT)
+        Mon, 09 Sep 2019 03:23:53 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -60,9 +60,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 6/9] select: Extract common code into do_sys_ppoll()
-Date:   Mon,  9 Sep 2019 11:23:37 +0100
-Message-Id: <20190909102340.8592-7-dima@arista.com>
+Subject: [PATCH 7/9] select: Use ktime_t in do_sys_poll() and do_poll()
+Date:   Mon,  9 Sep 2019 11:23:38 +0100
+Message-Id: <20190909102340.8592-8-dima@arista.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190909102340.8592-1-dima@arista.com>
 References: <20190909102340.8592-1-dima@arista.com>
@@ -73,169 +73,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reduce the amount of code and shrink a .text section a bit:
-[linux]$ ./scripts/bloat-o-meter -t /tmp/vmlinux.o.{old,new}
-add/remove: 1/0 grow/shrink: 0/4 up/down: 284/-691 (-407)
-Function                                     old     new   delta
-do_sys_ppoll                                   -     284    +284
-__x64_sys_ppoll                              214      42    -172
-__ia32_sys_ppoll                             213      40    -173
-__ia32_compat_sys_ppoll_time64               213      40    -173
-__ia32_compat_sys_ppoll_time32               213      40    -173
-Total: Before=13357557, After=13357150, chg -0.00%
+The plan is to store what's left of timeout in restart block as ktime_t
+which will be used for futex() and nanosleep() timeouts too. That will
+be a value to return with a new ptrace() request API.
 
-The downside is that "tsp" and "sigmask" parameters gets (void *),
-but it seems worth losing static type checking if there is only one
-line in syscall definition.
-Other way could be to add compat parameters in do_sys_ppoll(), but
-that trashes 2 more registers..
+Convert end_time argument of do_{sys_,}poll() functions to ktime_t as
+a preparation ground for storing ktime_t inside restart_block.
 
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- fs/select.c | 94 ++++++++++++++++++-----------------------------------
- 1 file changed, 32 insertions(+), 62 deletions(-)
+ fs/select.c | 47 +++++++++++++++++++++++------------------------
+ 1 file changed, 23 insertions(+), 24 deletions(-)
 
 diff --git a/fs/select.c b/fs/select.c
-index 458f2a944318..262300e58370 100644
+index 262300e58370..4af88feaa2fe 100644
 --- a/fs/select.c
 +++ b/fs/select.c
-@@ -1056,54 +1056,58 @@ SYSCALL_DEFINE3(poll, struct pollfd __user *, ufds, unsigned int, nfds,
- 	return ret;
+@@ -854,25 +854,22 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
  }
  
--SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
--		struct __kernel_timespec __user *, tsp, const sigset_t __user *, sigmask,
--		size_t, sigsetsize)
-+static int do_sys_ppoll(struct pollfd __user *ufds, unsigned int nfds,
-+			void __user *tsp, const void __user *sigmask,
-+			size_t sigsetsize, enum poll_time_type pt_type)
+ static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
+-		   struct timespec64 *end_time)
++		   ktime_t end_time)
  {
- 	struct timespec64 ts, end_time, *to = NULL;
+ 	poll_table* pt = &wait->pt;
+-	ktime_t expire, *to = NULL;
++	ktime_t *to = NULL;
+ 	int timed_out = 0, count = 0;
+ 	u64 slack = 0;
+ 	__poll_t busy_flag = net_busy_loop_on() ? POLL_BUSY_LOOP : 0;
+ 	unsigned long busy_start = 0;
+ 
+ 	/* Optimise the no-wait case */
+-	if (end_time && !end_time->tv_sec && !end_time->tv_nsec) {
++	if (ktime_compare(ktime_get(), end_time) >= 0) {
+ 		pt->_qproc = NULL;
+ 		timed_out = 1;
+-	}
+-
+-	if (end_time && !timed_out) {
+-		expire = timespec64_to_ktime(*end_time);
+-		to = &expire;
+-		slack = select_estimate_accuracy(expire);
++	} else {
++		to = &end_time;
++		slack = select_estimate_accuracy(end_time);
+ 	}
+ 
+ 	for (;;) {
+@@ -936,7 +933,7 @@ static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
+ 			sizeof(struct pollfd))
+ 
+ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
+-		struct timespec64 *end_time)
++		       ktime_t end_time)
+ {
+ 	struct poll_wqueues table;
+ 	int err = -EFAULT, fdcount, len;
+@@ -1004,16 +1001,15 @@ static long do_restart_poll(struct restart_block *restart_block)
+ {
+ 	struct pollfd __user *ufds = restart_block->poll.ufds;
+ 	int nfds = restart_block->poll.nfds;
+-	struct timespec64 *to = NULL, end_time;
++	ktime_t timeout = 0;
+ 	int ret;
+ 
+ 	if (restart_block->poll.has_timeout) {
+-		end_time.tv_sec = restart_block->poll.tv_sec;
+-		end_time.tv_nsec = restart_block->poll.tv_nsec;
+-		to = &end_time;
++		timeout = ktime_set(restart_block->poll.tv_sec,
++				    restart_block->poll.tv_nsec);
+ 	}
+ 
+-	ret = do_sys_poll(ufds, nfds, to);
++	ret = do_sys_poll(ufds, nfds, timeout);
+ 
+ 	if (ret == -ERESTARTNOHAND) {
+ 		restart_block->fn = do_restart_poll;
+@@ -1025,16 +1021,17 @@ static long do_restart_poll(struct restart_block *restart_block)
+ SYSCALL_DEFINE3(poll, struct pollfd __user *, ufds, unsigned int, nfds,
+ 		int, timeout_msecs)
+ {
+-	struct timespec64 end_time, *to = NULL;
++	struct timespec64 end_time;
++	ktime_t timeout = 0;
+ 	int ret;
+ 
+ 	if (timeout_msecs >= 0) {
+-		to = &end_time;
+-		poll_select_set_timeout(to, timeout_msecs / MSEC_PER_SEC,
++		poll_select_set_timeout(&end_time, timeout_msecs / MSEC_PER_SEC,
+ 			NSEC_PER_MSEC * (timeout_msecs % MSEC_PER_SEC));
++		timeout = timespec64_to_ktime(end_time);
+ 	}
+ 
+-	ret = do_sys_poll(ufds, nfds, to);
++	ret = do_sys_poll(ufds, nfds, timeout);
+ 
+ 	if (ret == -ERESTARTNOHAND) {
+ 		struct restart_block *restart_block;
+@@ -1060,7 +1057,8 @@ static int do_sys_ppoll(struct pollfd __user *ufds, unsigned int nfds,
+ 			void __user *tsp, const void __user *sigmask,
+ 			size_t sigsetsize, enum poll_time_type pt_type)
+ {
+-	struct timespec64 ts, end_time, *to = NULL;
++	struct timespec64 ts, *to = NULL;
++	ktime_t timeout = 0;
  	int ret;
  
  	if (tsp) {
--		if (get_timespec64(&ts, tsp))
--			return -EFAULT;
-+		switch (pt_type) {
-+		case PT_TIMESPEC:
-+			if (get_timespec64(&ts, tsp))
-+				return -EFAULT;
-+			break;
-+		case PT_OLD_TIMESPEC:
-+			if (get_old_timespec32(&ts, tsp))
-+				return -EFAULT;
-+			break;
-+		default:
-+			WARN_ON_ONCE(1);
-+			return -ENOSYS;
-+		}
+@@ -1078,9 +1076,10 @@ static int do_sys_ppoll(struct pollfd __user *ufds, unsigned int nfds,
+ 			return -ENOSYS;
+ 		}
  
- 		to = &end_time;
- 		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
+-		to = &end_time;
+-		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
++		to = &ts;
++		if (poll_select_set_timeout(&ts, ts.tv_sec, ts.tv_nsec))
  			return -EINVAL;
++		timeout = timespec64_to_ktime(ts);
  	}
  
--	ret = set_user_sigmask(sigmask, sigsetsize);
-+	if (!in_compat_syscall())
-+		ret = set_user_sigmask(sigmask, sigsetsize);
-+	else
-+		ret = set_compat_user_sigmask(sigmask, sigsetsize);
-+
+ 	if (!in_compat_syscall())
+@@ -1091,8 +1090,8 @@ static int do_sys_ppoll(struct pollfd __user *ufds, unsigned int nfds,
  	if (ret)
  		return ret;
  
- 	ret = do_sys_poll(ufds, nfds, to);
--	return poll_select_finish(&end_time, tsp, PT_TIMESPEC, ret);
-+	return poll_select_finish(&end_time, tsp, pt_type, ret);
- }
- 
--#if defined(CONFIG_COMPAT_32BIT_TIME) && !defined(CONFIG_64BIT)
-+SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
-+		struct __kernel_timespec __user *, tsp, const sigset_t __user *, sigmask,
-+		size_t, sigsetsize)
-+{
-+	return do_sys_ppoll(ufds, nfds, tsp, sigmask, sigsetsize, PT_TIMESPEC);
-+}
- 
-+#if defined(CONFIG_COMPAT_32BIT_TIME) && !defined(CONFIG_64BIT)
- SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds, unsigned int, nfds,
- 		struct old_timespec32 __user *, tsp, const sigset_t __user *, sigmask,
- 		size_t, sigsetsize)
- {
--	struct timespec64 ts, end_time, *to = NULL;
--	int ret;
--
--	if (tsp) {
--		if (get_old_timespec32(&ts, tsp))
--			return -EFAULT;
--
--		to = &end_time;
--		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
--			return -EINVAL;
--	}
--
--	ret = set_user_sigmask(sigmask, sigsetsize);
--	if (ret)
--		return ret;
--
 -	ret = do_sys_poll(ufds, nfds, to);
--	return poll_select_finish(&end_time, tsp, PT_OLD_TIMESPEC, ret);
-+	return do_sys_ppoll(ufds, nfds, tsp, sigmask, sigsetsize, PT_OLD_TIMESPEC);
- }
- #endif
- 
-@@ -1352,24 +1356,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds,
- 	unsigned int,  nfds, struct old_timespec32 __user *, tsp,
- 	const compat_sigset_t __user *, sigmask, compat_size_t, sigsetsize)
- {
--	struct timespec64 ts, end_time, *to = NULL;
--	int ret;
--
--	if (tsp) {
--		if (get_old_timespec32(&ts, tsp))
--			return -EFAULT;
--
--		to = &end_time;
--		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
--			return -EINVAL;
--	}
--
--	ret = set_compat_user_sigmask(sigmask, sigsetsize);
--	if (ret)
--		return ret;
--
--	ret = do_sys_poll(ufds, nfds, to);
--	return poll_select_finish(&end_time, tsp, PT_OLD_TIMESPEC, ret);
-+	return do_sys_ppoll(ufds, nfds, tsp, sigmask, sigsetsize, PT_OLD_TIMESPEC);
- }
- #endif
- 
-@@ -1378,24 +1365,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time64, struct pollfd __user *, ufds,
- 	unsigned int,  nfds, struct __kernel_timespec __user *, tsp,
- 	const compat_sigset_t __user *, sigmask, compat_size_t, sigsetsize)
- {
--	struct timespec64 ts, end_time, *to = NULL;
--	int ret;
--
--	if (tsp) {
--		if (get_timespec64(&ts, tsp))
--			return -EFAULT;
--
--		to = &end_time;
--		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
--			return -EINVAL;
--	}
--
--	ret = set_compat_user_sigmask(sigmask, sigsetsize);
--	if (ret)
--		return ret;
--
--	ret = do_sys_poll(ufds, nfds, to);
--	return poll_select_finish(&end_time, tsp, PT_TIMESPEC, ret);
-+	return do_sys_ppoll(ufds, nfds, tsp, sigmask, sigsetsize, PT_TIMESPEC);
+-	return poll_select_finish(&end_time, tsp, pt_type, ret);
++	ret = do_sys_poll(ufds, nfds, timeout);
++	return poll_select_finish(to, tsp, pt_type, ret);
  }
  
- #endif
+ SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
 -- 
 2.23.0
 
