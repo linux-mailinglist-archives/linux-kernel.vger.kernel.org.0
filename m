@@ -2,90 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AAB0ADDB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 19:00:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80545ADDBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 19:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391330AbfIIRAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 13:00:40 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42107 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728529AbfIIRAk (ORCPT
+        id S2405270AbfIIRC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 13:02:29 -0400
+Received: from smtprelay0254.hostedemail.com ([216.40.44.254]:32894 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725872AbfIIRC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 13:00:40 -0400
-Received: by mail-ed1-f67.google.com with SMTP id y91so13603267ede.9
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 10:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ndNymM6S7tmHE+n2EfAPZaAIl9m2k/Hd15vX5tVSFn0=;
-        b=bC1iKUUAEbStsWoLLyFmH5e3Rn8L60J3eOAqn15+XFheVcXT1DobBZSZOvDsKrkPto
-         BZiYeUcnpJuBt0piDhdzCsqC3hIod7bQagzUG9EjXBu0ESLXWCVV2X7T0c81KPLM1Uf5
-         0f7ixvlLeBdwKRO29lKj8JclH/y5G451SsJIj+y1zKjGQqQ4t1XF2xWUTa0iI02AECtm
-         UGFfXMsdzSC33aaEpg621gISPu5F5vPOIUSC4aFqzcjw2P7AvkYRRZ7AgQ3ewr5RQp3C
-         b5f90jb1+egIK7q+SbO3Y6RqrcCAr280k27p746RhVM2R7SGmgTERnkk1Axx5L/3rZx+
-         Tu5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ndNymM6S7tmHE+n2EfAPZaAIl9m2k/Hd15vX5tVSFn0=;
-        b=mmuEkfWeYBKb2bi1WbPbasryfXxgEPRl9CqeVMWi8dGG9yrVLAg38ZEMwr7eEYudk7
-         qvwyEOCH13QDqFrmZFHh86uxM4uiKxbPqYJfWI0HL7I8eFn5uktTeFV8ivJCV/DoOqTT
-         Jv6WmZUjvnp8n6Pj911xnHXsBFTwkBrw6zEDUJQ6oIJc2Ogpbw44MiKJZsZ5kXGTe+if
-         rZK6KSf50KKmFqL9et8bFkRCipmjK/hLG7e0otHfdpawpw2vHIzkBbTckZJUR0nfhLT6
-         WVTQQZrKuBfsyh0XcWPL3lDuImJPW+Hv8Zj3D+80I/Vq3wqVFKbukiahVQalsz8NKhRv
-         N8ig==
-X-Gm-Message-State: APjAAAWBKpHs1p+c20yCeRpdaH0CRNKKMwI+H+DB7AZJThHLtxxa07aq
-        WUryV1hY2WeGyAovjjOjf0F4xg==
-X-Google-Smtp-Source: APXvYqwrMgzfqO4cc8VaH4OYBbPyjLCLYVUXkYW0y564TeNoEu15jhrHaKYbf96/6CjMmoqhLR3q1Q==
-X-Received: by 2002:a17:906:35c2:: with SMTP id p2mr10087253ejb.241.1568048438153;
-        Mon, 09 Sep 2019 10:00:38 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id ot4sm1832093ejb.43.2019.09.09.10.00.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Sep 2019 10:00:37 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 4F3861029C4; Mon,  9 Sep 2019 20:00:36 +0300 (+03)
-Date:   Mon, 9 Sep 2019 20:00:36 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
-        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        mst@redhat.com, catalin.marinas@arm.com, david@redhat.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, osalvador@suse.de,
-        yang.zhang.wz@gmail.com, pagupta@redhat.com,
-        konrad.wilk@oracle.com, nitesh@redhat.com, riel@surriel.com,
-        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
-        ying.huang@intel.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, fengguang.wu@intel.com,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v9 2/8] mm: Adjust shuffle code to allow for future
- coalescing
-Message-ID: <20190909170036.t3gvjar3qjywjquc@box>
-References: <20190907172225.10910.34302.stgit@localhost.localdomain>
- <20190907172520.10910.83100.stgit@localhost.localdomain>
- <20190909094700.bbslsxpuwvxmodal@box>
- <171e0e86cde2012e8bda647c0370e902768ba0b5.camel@linux.intel.com>
+        Mon, 9 Sep 2019 13:02:28 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 78F6A18224D99;
+        Mon,  9 Sep 2019 17:02:27 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1537:1566:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3868:3870:3873:4321:4605:5007:10004:10400:10848:11026:11232:11658:11914:12048:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21212:21433:21627:21939:30054:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:30,LUA_SUMMARY:none
+X-HE-Tag: bulb50_4f83836154911
+X-Filterd-Recvd-Size: 1233
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  9 Sep 2019 17:02:26 +0000 (UTC)
+Message-ID: <78acf5cf46bec83c007692be057851a28bed9108.camel@perches.com>
+Subject: Re: [PATCH] Bluetooth: trivial: tidy up printk message output from
+ btrtl.
+From:   Joe Perches <joe@perches.com>
+To:     Rui Salvaterra <rsalvaterra@gmail.com>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 09 Sep 2019 10:02:25 -0700
+In-Reply-To: <20190909150329.1779-1-rsalvaterra@gmail.com>
+References: <20190909150329.1779-1-rsalvaterra@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171e0e86cde2012e8bda647c0370e902768ba0b5.camel@linux.intel.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 09:43:00AM -0700, Alexander Duyck wrote:
-> I'm not sure I follow what you are saying about the free_area definition.
-> It looks like it is a part of the zone structure so I would think it still
-> needs to be defined in the header.
+On Mon, 2019-09-09 at 16:03 +0100, Rui Salvaterra wrote:
+> The rtl_dev_* calls in the Realtek USB Bluetooth driver add unnecessary
+> device prefixes and new lines at the end of most messages, which make the
+> dmesg output look like this:
 
-Yeah, you are right. I didn't noticed this.
+OK, but maybe you could fix this one too:
 
--- 
- Kirill A. Shutemov
+drivers/bluetooth/hci_h5.c:             rtl_dev_err(h5->hu->hdev, "set baud rate command failed\n");
+
+
