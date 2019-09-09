@@ -2,94 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E857AD867
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8182DAD862
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404603AbfIIMBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 08:01:15 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40957 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404591AbfIIMBP (ORCPT
+        id S2404556AbfIIMAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 08:00:14 -0400
+Received: from hel-mailgw-01.vaisala.com ([193.143.230.17]:22527 "EHLO
+        hel-mailgw-01.vaisala.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404502AbfIIMAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 08:01:15 -0400
-Received: by mail-io1-f65.google.com with SMTP id h144so27918688iof.7;
-        Mon, 09 Sep 2019 05:01:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gjzSJy3NDD7sYggLday3lhixH+9SUC/EVeZUWoe2eU4=;
-        b=sBnSROaYcwf48BNTZC63gADs6dyXJsKsfnm5pvlYuv5jzlMTu/aPSFTGhshJ5Ll2Ik
-         vp3iKTlPbMgxE6XkoPHIJ/qTcKQQEIG5TxF+1nU1OVHAw1XATgur1o4zXdsj6Tl06D07
-         IVt098D2fTUdr0zDTvJJNG6PS5KsBOW0c2GESGvGta4qvr3/oOGCkc7ZXFfuiHRI2eP+
-         jNx5OyS14T4hjexE+g4JM9Ovu0yh/3y36DnCXdIPNEMImJM4bhEXEWUpxJnIOw2j0N8p
-         VKfPXMRpbA4pqQXRi8/WFkUfYT9a3yEaV7KGTZAW27gtUxRfz210Ov9jSc972wldEYOe
-         B8BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gjzSJy3NDD7sYggLday3lhixH+9SUC/EVeZUWoe2eU4=;
-        b=Ytx/m/6deJw9J/03bD4bFRkoyB9eUyu1ObgdWMKsiPCvQ4zE3lXGdZbYOOhZ3HattU
-         X/rLffcVU3BnCOqAzcIQKC7Gfry7/bFs/c5wLdaULfaCxW8cJW4uNWIEto1i2z/1DHEA
-         RikvXeL6mkdRLSL+vwqHDrGC2hd36ouiQGWjXFWo7EI4LANk8+jGiIapC1zPxaEqPXEe
-         kYG07MQtmfRDEyrJtXj9Fs5wGfy/P0TpsQa9ZB6PYcWG0/T+2FkxazI7iuhxW12NODbT
-         c9z5cOvEF9h/zcr/Jk2yxsweJX5RmbFgEW+5y3sp9719O4zxczZZh80eZV6i3MM1seSF
-         R8Pg==
-X-Gm-Message-State: APjAAAU+v/4+kO4GGjY9yl/ugptv8AqoNCSSlpU4Xj3UazuzB15tB6t5
-        HO0TIUqoN8DMIEQ5Xszy6IEX3ebrnj/2qR+El6Q=
-X-Google-Smtp-Source: APXvYqyKrMcPIeFry4pmSxcirJ0sZlzv9BWvR/f7rXRlNraERjFdqJdXoc1ys7lbOzrlKqXMAIHEzvwlSjm0lpNwlDo=
-X-Received: by 2002:a6b:e514:: with SMTP id y20mr18930982ioc.197.1568030472875;
- Mon, 09 Sep 2019 05:01:12 -0700 (PDT)
+        Mon, 9 Sep 2019 08:00:14 -0400
+IronPort-SDR: XxhML/fkEbWh+Fdt5FqQN2xKL620r4U1w0nPZIzAxhs4OVQXX7BAimlpwRZqPsMKlj0kAakBOL
+ XlgoZ32Wbz6kF8D583rYmDWtrW0PKwnUye7w6AW61Hu1oZXxDNbbQsBd9Zv2YAV9ZT0qLj9vZS
+ HvcgEP56Bf6RqsRt8NoljuLtaEcWoeXypWDmYXPwi02X9Gu8oZlFXTkkkAb/S1gwJvM7jgCOGI
+ K4SuVOzvaC2pjTBkUiUr2arzr86kF+4XftmRqLXf+gcyN/NPxJGYKix/5G6pK8mfVPKHIgv4pf
+ 9kc=
+X-IronPort-AV: E=Sophos;i="5.64,484,1559509200"; 
+   d="scan'208";a="231521946"
+Subject: Re: [PATCH] nvmem: core: fix nvmem_cell_write inline function
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        kbuild test robot <lkp@intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20190908121038.6877-1-sre@kernel.org>
+ <d5017670-5622-283e-1376-8161d6e39dcd@vaisala.com>
+ <20190909101810.gtqouke7vyu63r7e@earth.universe>
+From:   Nandor Han <nandor.han@vaisala.com>
+Message-ID: <84877749-c335-5a66-51b8-6071353f2151@vaisala.com>
+Date:   Mon, 9 Sep 2019 15:00:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <1566936978-28519-1-git-send-email-peng.fan@nxp.com> <20190906172044.B99FB20838@mail.kernel.org>
-In-Reply-To: <20190906172044.B99FB20838@mail.kernel.org>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Mon, 9 Sep 2019 19:51:12 +0800
-Message-ID: <CAA+hA=To9B0H1z6Hh1eSZN9_rcextT_Oe-CTMmz9fC9CDNUBTQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190909101810.gtqouke7vyu63r7e@earth.universe>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-OriginalArrivalTime: 09 Sep 2019 12:00:09.0475 (UTC) FILETIME=[20C82530:01D56706]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 7, 2019 at 9:47 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Peng Fan (2019-08-27 01:17:50)
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > There is hardware issue that:
-> > The output clock the LPCG cell will not turn back on as expected,
-> > even though a read of the IPG registers in the LPCG indicates that
-> > the clock should be enabled.
-> >
-> > The software workaround is to write twice to enable the LPCG clock
-> > output.
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
->
-> Does this need a Fixes tag?
+On 9/9/19 1:18 PM, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Mon, Sep 09, 2019 at 12:26:06PM +0300, Nandor Han wrote:
+>> On 9/8/19 3:10 PM, Sebastian Reichel wrote:
+>>> From: Sebastian Reichel <sebastian.reichel@collabora.com>
+>>>
+>>> nvmem_cell_write's buf argument uses different types based on
+>>> the configuration of CONFIG_NVMEM. The function prototype for
+>>> enabled NVMEM uses 'void *' type, but the static dummy function
+>>> for disabled NVMEM uses 'const char *' instead. Fix the different
+>>> behaviour by always expecting a 'void *' typed buf argument.
+>>>
+>>> Fixes: 7a78a7f7695b ("power: reset: nvmem-reboot-mode: use NVMEM as reboot mode write interface")
+>>> Reported-by: kbuild test robot <lkp@intel.com>
+>>> Cc: Han Nandor <nandor.han@vaisala.com>
+>>> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+>>> ---
+>>>    include/linux/nvmem-consumer.h | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
+>>> index 8f8be5b00060..5c17cb733224 100644
+>>> --- a/include/linux/nvmem-consumer.h
+>>> +++ b/include/linux/nvmem-consumer.h
+>>> @@ -118,7 +118,7 @@ static inline void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len)
+>>>    }
+>>>    static inline int nvmem_cell_write(struct nvmem_cell *cell,
+>>> -				    const char *buf, size_t len)
+>>> +				   void *buf, size_t len)
+>>
+>> nitpick: alignment issue?
+> 
+> This actually fixes the alignment issue as a side-effect.
+> I guess I should have mentioned it in the changelog.
+> 
+>> Review-By: Han Nandor <nandor.han@vaisala.com>
+> 
+> I suppose you meant to write "Reviewed-by" instead of inventing your
+> own tag?
+> 
 
-Not sure as it's not code logic issue but a hardware bug.
-And 4.19 LTS still have not this driver support.
+Yes :)
 
-Regards
-Aisheng
+Nandor
 
->
+
