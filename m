@@ -2,121 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A51D8AD693
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:18:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B235AD696
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:18:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390400AbfIIKSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:18:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32778 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390297AbfIIKSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:18:12 -0400
-Received: from earth.universe (unknown [148.69.85.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45A8F21924;
-        Mon,  9 Sep 2019 10:18:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568024292;
-        bh=0jzpYrQDQLNG9Dg32tb7hfka498MiOABCqXtbU9Cufg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZiEFFr2wi7KPPr/jhw/rQudOlUYSObafeuP85b44ybynxes97QfXWDi+gATuA/DvG
-         A0HoIyCs4IIHY6VYWPewPtN50qeVJ29y7P8Hq5sj7r8nP310sVrWxDG0gnCJOMG3Oc
-         V+uRmW/NmhE0w7YpYfva4dj5WmydyQMzoA4j1/HQ=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 2E8153C0CFA; Mon,  9 Sep 2019 12:18:10 +0200 (CEST)
-Date:   Mon, 9 Sep 2019 11:18:10 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Nandor Han <nandor.han@vaisala.com>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        kbuild test robot <lkp@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmem: core: fix nvmem_cell_write inline function
-Message-ID: <20190909101810.gtqouke7vyu63r7e@earth.universe>
-References: <20190908121038.6877-1-sre@kernel.org>
- <d5017670-5622-283e-1376-8161d6e39dcd@vaisala.com>
+        id S2390458AbfIIKSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:18:38 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:15689 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390297AbfIIKSh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 06:18:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1568024316; x=1599560316;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=PftOWRoYjF16gzp8Wil4H6jd2iHitkZNVA6hQVM9wzQ=;
+  b=IvjpG6Boe/cGwYPyNAyMGZvjw2a60ZIkPjGH/sQQHQb6g/l5hyCTOqqC
+   FsM9zLb3SQuxWFrDiH4W6JWzWHrZZvrp9T+6iMS55rk6AMLb+z8GgLGw9
+   b3b4jree6pJsboJa4x9jZu90pXyoyxkcCk2jmC40vZJfywe+2yEqPMItk
+   Q=;
+X-IronPort-AV: E=Sophos;i="5.64,484,1559520000"; 
+   d="scan'208";a="420172978"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-859fe132.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 09 Sep 2019 10:18:33 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2b-859fe132.us-west-2.amazon.com (Postfix) with ESMTPS id 4E97E221E48;
+        Mon,  9 Sep 2019 10:18:32 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Sep 2019 10:18:31 +0000
+Received: from [10.125.238.52] (10.43.161.217) by EX13D01EUB001.ant.amazon.com
+ (10.43.166.194) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 9 Sep
+ 2019 10:18:26 +0000
+Subject: Re: [UNVERIFIED SENDER] Re: [PATCH 1/1] irqchip: al-fic: add support
+ for irq retrigger
+To:     Marc Zyngier <maz@kernel.org>
+CC:     <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <linux-kernel@vger.kernel.org>, <dwmw@amazon.co.uk>,
+        <benh@kernel.crashing.org>, <hhhawa@amazon.com>,
+        <ronenk@amazon.com>, <jonnyc@amazon.com>, <hanochu@amazon.com>,
+        <barakw@amazon.com>
+References: <1568018358-18985-1-git-send-email-talel@amazon.com>
+ <86d0g9st7m.wl-maz@kernel.org>
+From:   "Shenhar, Talel" <talel@amazon.com>
+Message-ID: <3efe33a5-3ddb-aa77-8a62-bd011ae23110@amazon.com>
+Date:   Mon, 9 Sep 2019 13:18:21 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qss4xo2ixrxhdmym"
-Content-Disposition: inline
-In-Reply-To: <d5017670-5622-283e-1376-8161d6e39dcd@vaisala.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <86d0g9st7m.wl-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.43.161.217]
+X-ClientProxiedBy: EX13D07UWB003.ant.amazon.com (10.43.161.66) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---qss4xo2ixrxhdmym
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 9/9/2019 12:40 PM, Marc Zyngier wrote:
+> On Mon, 09 Sep 2019 09:39:18 +0100,
+> Talel Shenhar <talel@amazon.com> wrote:
+>
+> Hi Talel,
+>
+>> Introduce interrupts retrigger support for Amazon's Annapurna Labs Fabric
+>> Interrupt Controller.
+>>
+>> Signed-off-by: Talel Shenhar <talel@amazon.com>
+>> ---
+>>   drivers/irqchip/irq-al-fic.c | 12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
+>>
+>> diff --git a/drivers/irqchip/irq-al-fic.c b/drivers/irqchip/irq-al-fic.c
+>> index 1a57cee..0b0a737 100644
+>> --- a/drivers/irqchip/irq-al-fic.c
+>> +++ b/drivers/irqchip/irq-al-fic.c
+>> @@ -15,6 +15,7 @@
+>>   
+>>   /* FIC Registers */
+>>   #define AL_FIC_CAUSE		0x00
+>> +#define AL_FIC_SET_CAUSE	0x08
+>>   #define AL_FIC_MASK		0x10
+>>   #define AL_FIC_CONTROL		0x28
+>>   
+>> @@ -126,6 +127,16 @@ static void al_fic_irq_handler(struct irq_desc *desc)
+>>   	chained_irq_exit(irqchip, desc);
+>>   }
+>>   
+>> +static int al_fic_irq_retrigger(struct irq_data *data)
+>> +{
+>> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
+>> +	struct al_fic *fic = gc->private;
+>> +
+>> +	writel_relaxed(BIT(data->hwirq), fic->base + AL_FIC_SET_CAUSE);
+>> +
+>> +	return 1;
+>> +}
+>> +
+>>   static int al_fic_register(struct device_node *node,
+>>   			   struct al_fic *fic)
+>>   {
+>> @@ -159,6 +170,7 @@ static int al_fic_register(struct device_node *node,
+>>   	gc->chip_types->chip.irq_unmask = irq_gc_mask_clr_bit;
+>>   	gc->chip_types->chip.irq_ack = irq_gc_ack_clr_bit;
+>>   	gc->chip_types->chip.irq_set_type = al_fic_irq_set_type;
+>> +	gc->chip_types->chip.irq_retrigger = al_fic_irq_retrigger;
+>>   	gc->chip_types->chip.flags = IRQCHIP_SKIP_SET_WAKE;
+>>   	gc->private = fic;
+> Looks good to me. Is this a fix or a new feature? If the former, I can
+> queue it up for -rc1.
+>
+> 	M.
 
-Hi,
+This is an enhancement to the merged al-fic driver. queuing it up sounds 
+good.
 
-On Mon, Sep 09, 2019 at 12:26:06PM +0300, Nandor Han wrote:
-> On 9/8/19 3:10 PM, Sebastian Reichel wrote:
-> > From: Sebastian Reichel <sebastian.reichel@collabora.com>
-> >=20
-> > nvmem_cell_write's buf argument uses different types based on
-> > the configuration of CONFIG_NVMEM. The function prototype for
-> > enabled NVMEM uses 'void *' type, but the static dummy function
-> > for disabled NVMEM uses 'const char *' instead. Fix the different
-> > behaviour by always expecting a 'void *' typed buf argument.
-> >=20
-> > Fixes: 7a78a7f7695b ("power: reset: nvmem-reboot-mode: use NVMEM as reb=
-oot mode write interface")
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> > Cc: Han Nandor <nandor.han@vaisala.com>
-> > Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > ---
-> >   include/linux/nvmem-consumer.h | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consu=
-mer.h
-> > index 8f8be5b00060..5c17cb733224 100644
-> > --- a/include/linux/nvmem-consumer.h
-> > +++ b/include/linux/nvmem-consumer.h
-> > @@ -118,7 +118,7 @@ static inline void *nvmem_cell_read(struct nvmem_ce=
-ll *cell, size_t *len)
-> >   }
-> >   static inline int nvmem_cell_write(struct nvmem_cell *cell,
-> > -				    const char *buf, size_t len)
-> > +				   void *buf, size_t len)
->=20
-> nitpick: alignment issue?
+Thanks Marc!
 
-This actually fixes the alignment issue as a side-effect.
-I guess I should have mentioned it in the changelog.
 
-> Review-By: Han Nandor <nandor.han@vaisala.com>
-
-I suppose you meant to write "Reviewed-by" instead of inventing your
-own tag?
-
--- Sebastian
-
---qss4xo2ixrxhdmym
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl12JtgACgkQ2O7X88g7
-+pq+5w//WFTsXR9hQ39fHiyVSsAdYdKNBuhCXUY94CzlZceJYrRB9YwbTP4lInFF
-bTgIrC3myS3qLqEcXEpXOdZZmAw/Y7FjQFDSXaAia8NLOQiBiwhVRPcWKCxk1jKS
-rHm2TIWPnTavtzQLI6m3xEcTpodfyYCrTVGRS12jNhQEokzuLrxEgP5xxX1d2KxT
-esYmPbnOyW95kzLhoHk0Wt1gq7AXDM0xc0HbKxGuyrHFfmwOBEQiIGlZwAjvrIIL
-ZD/EBfye7hNSAArgFz8ynehrj9vyxGPYUj7msIZYSk2u901MG7IaOVZpBYV9VBLe
-CDk+uN/klWJlbBFeV9IMJ4nzgX5H1Rm2iuJ/hMZVcLe8s00IsgDhDOPBfbPlTjVx
-IBZJMXog/ZQJxBsSycTPuT3swLRHvPQwnHjjxJYn6DkJYgY2xaBDwa/3d7t2FZvv
-a02mT3t+AWqylKACzEYuAN/1xCEwJAhLuJACn2YXKtj0J5kOzBxcg4Y8ViW4NEJX
-AFG7nqQ61hKhA0vljqUaWZDcfnNBM0szNISMqkd10YaOqBMRuUMATWsHr8cwd4L9
-28ESIUYSBiapWFoPQByyq/plM25uhU3wCQ3oBqHsZE0cAoMzUE89qLMy9KFXoyvK
-EYaznGEjO2JeRk/dJXgGt8gJD1Wh9nm4XiNtbmCzUUwFPL0Gd+k=
-=5KCd
------END PGP SIGNATURE-----
-
---qss4xo2ixrxhdmym--
