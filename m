@@ -2,205 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 994CDAD67D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE031AD688
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:16:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729850AbfIIKNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:13:23 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41568 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726229AbfIIKNX (ORCPT
+        id S1729957AbfIIKP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:15:59 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36513 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728358AbfIIKP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:13:23 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x89A1pit016851;
-        Mon, 9 Sep 2019 12:13:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=eaDnefryRKb0WXqhwir54zXZzPWWXudlNrduZXInUhY=;
- b=WGXq+WpQNhSscPYoOE6mVpFGFO4NJ/SW3A1GtwgMvn9YNO2jk2AXabhjz66nQ4hacclT
- hEd58OAWUH1sKTT/dVpr878Y0aoYoyqxU7eRINMkaBxwSS3TeDe7iUIrl/tpum3cPTCB
- 0ghIEWVYXZs5vTbWoAQsQJVydoLW3wPZf1py9lSfu3W48GJUP4ZS8oKgrP3X13EBdtrq
- hzYRTLIXn4IPNjA5aVnRLMD3fvRo64E6PBRv07+/z0Gi5eTz6suUXkUkpns+XWAniAJb
- FCAqVJIrvgUm6G5GgIBhMYtrxOiCbIie3ZoU0uCqD/aECIEGtdfcxC22epnd4wKJMQXn Vw== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2uv212ctu2-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 09 Sep 2019 12:13:12 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8C6E559;
-        Mon,  9 Sep 2019 10:13:01 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 19A8A2C6D25;
-        Mon,  9 Sep 2019 12:13:01 +0200 (CEST)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 9 Sep 2019
- 12:13:00 +0200
-Received: from localhost (10.201.20.122) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 9 Sep 2019 12:13:00
- +0200
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <benjamin.gaignard@linaro.org>, <airlied@linux.ie>,
-        <daniel@ffwll.ch>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH] drm: sti: fix W=1 warnings
-Date:   Mon, 9 Sep 2019 12:12:53 +0200
-Message-ID: <20190909101254.24191-1-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
+        Mon, 9 Sep 2019 06:15:59 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y22so8874435pfr.3;
+        Mon, 09 Sep 2019 03:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eR0ilnRAfilkxH900ZHRgTRnftEfS8psnkYh74iN2G8=;
+        b=YrkFlb7Ouz0PAGbWQPPET9Vm1z6rB9MKeH2TUiQOfxqfpd8IYwMax+ynsXGcePSstf
+         pty7Jyq7IY38DemBpRJVYg+LyMBDbItdUJqA0iDWcyVLS2DcQO2jSRKhhF0CEZ8KiG4G
+         Zu0UnruSlDHyzsPPg3s4tRwGaFgvOeKanVzxcYrUmjFLgYWfRe0p5a72K2LW5S8YJoLP
+         5PCZJ4vs5DIB6ZvC9I6qSN0mZrj2dV2werYFUgCw5cGSinoacm1SooKKfBEXCKl8ryCh
+         Lqw77PEpT8oujYE8YaQkggTNsTgekLwyS8GjIM9GncBKN0IY/DfPrN49Qvb79LE6oSch
+         arcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eR0ilnRAfilkxH900ZHRgTRnftEfS8psnkYh74iN2G8=;
+        b=TEsPADUZuM+8nOsohHhljlolm2UISmlrtbrIcqSh/bc+QLfJn0NUKDlZ0ifREUXIC7
+         nVDcvpW35uAAxJYADp/jwdKz729ZSPJ04nmwczE4sGaGsVdrafqFUYmHNHesO+vr9ZnR
+         rWP0qQhgPW+rSmwiK+rex8mEMslOtGDM1k9Qq484+/H56kqeKFhUBFHrJnPADZjhise8
+         nuKZJux/t5jxYC1fHudA1VesiJAn66aKmMFXL2pbLktZzxkUy93TmVnfdFWxyk6PS7GS
+         qAtYYS2A0b8YiUsxIz7kPn3793HRI2p5RbEeeNiiK52OE197ERtrNkj3JK4KkMcjRdfz
+         jluQ==
+X-Gm-Message-State: APjAAAUsQv9hxaUqJKGyaHA7D64eBpIxUB1wfjQxn/icbzu3CnQvupNM
+        hTXq9LSL2cLGYGtN+1JGJXE=
+X-Google-Smtp-Source: APXvYqxS2O+zqfJizPPe+/IqtHW21XlsLT7myUVM5OksTn6TphABvgwS/AfMz3KKlQe+ewkTC7hvHw==
+X-Received: by 2002:a17:90a:b116:: with SMTP id z22mr24702277pjq.108.1568024157961;
+        Mon, 09 Sep 2019 03:15:57 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id v7sm14812756pff.87.2019.09.09.03.15.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2019 03:15:57 -0700 (PDT)
+Date:   Mon, 9 Sep 2019 03:15:55 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3 03/13] software node: get rid of property_set_pointer()
+Message-ID: <20190909101555.GC145199@dtor-ws>
+References: <20190909081557.93766-1-dmitry.torokhov@gmail.com>
+ <20190909081557.93766-4-dmitry.torokhov@gmail.com>
+ <20190909095505.GQ2680@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.122]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-09_04:2019-09-09,2019-09-09 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190909095505.GQ2680@smile.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix warnings when W=1.
-No code changes, only clean up in sti internal structures and functions
-descriptions.
+On Mon, Sep 09, 2019 at 12:55:05PM +0300, Andy Shevchenko wrote:
+> On Mon, Sep 09, 2019 at 01:15:47AM -0700, Dmitry Torokhov wrote:
+> > Instead of explicitly setting values of integer types when copying property
+> > entries lets just copy entire value union when processing non-array values.
+> > 
+> > When handling array values assign the pointer there using the newly introduced
+> > "raw" pointer union member. This allows us to remove property_set_pointer().
+> 
+> Is this reincarnation of 318a19718261?
+> Have you read 63dcc7090137?
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- drivers/gpu/drm/sti/sti_cursor.c |  2 +-
- drivers/gpu/drm/sti/sti_dvo.c    |  2 +-
- drivers/gpu/drm/sti/sti_gdp.c    |  2 +-
- drivers/gpu/drm/sti/sti_hda.c    |  2 +-
- drivers/gpu/drm/sti/sti_hdmi.c   |  4 ++--
- drivers/gpu/drm/sti/sti_tvout.c  | 10 +++++-----
- drivers/gpu/drm/sti/sti_vtg.c    |  2 +-
- 7 files changed, 12 insertions(+), 12 deletions(-)
+Okay, I think if I squash this and the followup patch to
+property_get_data() then we'll only go through the "raw" pointer to get
+to the non-inline data and therefore we will not have the union aliasing
+issue.
 
-diff --git a/drivers/gpu/drm/sti/sti_cursor.c b/drivers/gpu/drm/sti/sti_cursor.c
-index 0bf7c332cf0b..ea64c1dcaf63 100644
---- a/drivers/gpu/drm/sti/sti_cursor.c
-+++ b/drivers/gpu/drm/sti/sti_cursor.c
-@@ -47,7 +47,7 @@ struct dma_pixmap {
- 	void *base;
- };
- 
--/**
-+/*
-  * STI Cursor structure
-  *
-  * @sti_plane:    sti_plane structure
-diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
-index 9e6d5d8b7030..c33d0aaee82b 100644
---- a/drivers/gpu/drm/sti/sti_dvo.c
-+++ b/drivers/gpu/drm/sti/sti_dvo.c
-@@ -65,7 +65,7 @@ static struct dvo_config rgb_24bit_de_cfg = {
- 	.awg_fwgen_fct = sti_awg_generate_code_data_enable_mode,
- };
- 
--/**
-+/*
-  * STI digital video output structure
-  *
-  * @dev: driver device
-diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
-index 8e926cd6a1c8..11595c748844 100644
---- a/drivers/gpu/drm/sti/sti_gdp.c
-+++ b/drivers/gpu/drm/sti/sti_gdp.c
-@@ -103,7 +103,7 @@ struct sti_gdp_node_list {
- 	dma_addr_t btm_field_paddr;
- };
- 
--/**
-+/*
-  * STI GDP structure
-  *
-  * @sti_plane:          sti_plane structure
-diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
-index 94e404f13234..3512a94a0fca 100644
---- a/drivers/gpu/drm/sti/sti_hda.c
-+++ b/drivers/gpu/drm/sti/sti_hda.c
-@@ -230,7 +230,7 @@ static const struct sti_hda_video_config hda_supported_modes[] = {
- 	 AWGi_720x480p_60, NN_720x480p_60, VID_ED}
- };
- 
--/**
-+/*
-  * STI hd analog structure
-  *
-  * @dev: driver device
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index f03d617edc4c..87e34f7a6cfe 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -333,7 +333,6 @@ static void hdmi_infoframe_reset(struct sti_hdmi *hdmi,
-  * Helper to concatenate infoframe in 32 bits word
-  *
-  * @ptr: pointer on the hdmi internal structure
-- * @data: infoframe to write
-  * @size: size to write
-  */
- static inline unsigned int hdmi_infoframe_subpack(const u8 *ptr, size_t size)
-@@ -543,13 +542,14 @@ static int hdmi_vendor_infoframe_config(struct sti_hdmi *hdmi)
- 	return 0;
- }
- 
-+#define HDMI_TIMEOUT_SWRESET  100   /*milliseconds */
-+
- /**
-  * Software reset of the hdmi subsystem
-  *
-  * @hdmi: pointer on the hdmi internal structure
-  *
-  */
--#define HDMI_TIMEOUT_SWRESET  100   /*milliseconds */
- static void hdmi_swreset(struct sti_hdmi *hdmi)
- {
- 	u32 val;
-diff --git a/drivers/gpu/drm/sti/sti_tvout.c b/drivers/gpu/drm/sti/sti_tvout.c
-index e1b3c8cb7287..b1fc77b150da 100644
---- a/drivers/gpu/drm/sti/sti_tvout.c
-+++ b/drivers/gpu/drm/sti/sti_tvout.c
-@@ -157,9 +157,9 @@ static void tvout_write(struct sti_tvout *tvout, u32 val, int offset)
-  *
-  * @tvout: tvout structure
-  * @reg: register to set
-- * @cr_r:
-- * @y_g:
-- * @cb_b:
-+ * @cr_r: red chroma or red order
-+ * @y_g: y or green order
-+ * @cb_b: blue chroma or blue order
-  */
- static void tvout_vip_set_color_order(struct sti_tvout *tvout, int reg,
- 				      u32 cr_r, u32 y_g, u32 cb_b)
-@@ -214,7 +214,7 @@ static void tvout_vip_set_rnd(struct sti_tvout *tvout, int reg, u32 rnd)
-  * @tvout: tvout structure
-  * @reg: register to set
-  * @main_path: main or auxiliary path
-- * @sel_input: selected_input (main/aux + conv)
-+ * @video_out: selected_input (main/aux + conv)
-  */
- static void tvout_vip_set_sel_input(struct sti_tvout *tvout,
- 				    int reg,
-@@ -251,7 +251,7 @@ static void tvout_vip_set_sel_input(struct sti_tvout *tvout,
-  *
-  * @tvout: tvout structure
-  * @reg: register to set
-- * @in_vid_signed: used video input format
-+ * @in_vid_fmt: used video input format
-  */
- static void tvout_vip_set_in_vid_fmt(struct sti_tvout *tvout,
- 		int reg, u32 in_vid_fmt)
-diff --git a/drivers/gpu/drm/sti/sti_vtg.c b/drivers/gpu/drm/sti/sti_vtg.c
-index ef4009f11396..0b17ac8a3faa 100644
---- a/drivers/gpu/drm/sti/sti_vtg.c
-+++ b/drivers/gpu/drm/sti/sti_vtg.c
-@@ -121,7 +121,7 @@ struct sti_vtg_sync_params {
- 	u32 vsync_off_bot;
- };
- 
--/**
-+/*
-  * STI VTG structure
-  *
-  * @regs: register mapping
+The in-line values never change their type when storing/accessing.
+
 -- 
-2.15.0
-
+Dmitry
