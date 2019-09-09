@@ -2,90 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3711DADE77
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 20:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22944ADE92
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 20:13:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405482AbfIISMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 14:12:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:24313 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405425AbfIISMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 14:12:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Sep 2019 11:12:34 -0700
-X-IronPort-AV: E=Sophos;i="5.64,486,1559545200"; 
-   d="scan'208";a="178428271"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Sep 2019 11:12:33 -0700
-Message-ID: <576de40e00083206bdb0c2e9f04fe34dd406e6b3.camel@linux.intel.com>
-Subject: Re: [PATCH v9 3/8] mm: Move set/get_pcppage_migratetype to mmzone.h
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        mst@redhat.com, catalin.marinas@arm.com, david@redhat.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, osalvador@suse.de,
-        yang.zhang.wz@gmail.com, pagupta@redhat.com,
-        konrad.wilk@oracle.com, nitesh@redhat.com, riel@surriel.com,
-        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
-        ying.huang@intel.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, fengguang.wu@intel.com,
-        kirill.shutemov@linux.intel.com
-Date:   Mon, 09 Sep 2019 11:12:33 -0700
-In-Reply-To: <cca53aa628a25ead13a2f71060b56bde66e19d05.camel@linux.intel.com>
-References: <20190907172225.10910.34302.stgit@localhost.localdomain>
-         <20190907172528.10910.37051.stgit@localhost.localdomain>
-         <20190909095608.jwachx3womhqmjbl@box>
-         <cca53aa628a25ead13a2f71060b56bde66e19d05.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S2405685AbfIISNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 14:13:36 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:32946 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405643AbfIISNc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 14:13:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1568052807;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=tV029y11XWsg52niiYVuB13LG4WzStnlH9YsdMIy1yQ=;
+        b=X3lqSL2rJsYo520/1Y/VUa5nIZVZcMIz2hS/jP62Bvc+gOk366S6tyg6ngIUOuUh/B
+        fr3XVHXW0AlJTEVGwMpwsDm4V+2V9nbLJbhCL0QWXAy6F0V7N6pF7aWNolqHHv7QtEVT
+        nZpW0iA2xavwMBoijqXlFAQHPUonMC/fsYgvFS9O5YwdjlzxkgVeFGTEH2b2P8CLUYsj
+        Q8Rw7lT/scuy/9OU1UrfO25QRgexfQaoUxx/aWjpL6mCmJ0hx8y2fJtRhNx8wZspXhpF
+        0Div8RsZMMiJzWsm1FbxCmOe7zk9n3ZN9z3VaHo+Y3l/K6Umzc0Xgh6+ZpAM1tsL50QB
+        Js0A==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmMnw4vkig=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v89ID3y5R
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 9 Sep 2019 20:13:03 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 1/2] cpufreq: ti-cpufreq: Add support for AM3517
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20190909154502.19804-1-aford173@gmail.com>
+Date:   Mon, 9 Sep 2019 20:13:03 +0200
+Cc:     linux-omap@vger.kernel.org, neolynx@gmail.com,
+        letux-kernel@openphoenux.org, andreas@kemnade.info,
+        tony@atomide.com, adam.ford@logicpd.com,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6081134F-AACD-412C-B36A-BF9463C9712B@goldelico.com>
+References: <20190909154502.19804-1-aford173@gmail.com>
+To:     Adam Ford <aford173@gmail.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-09-09 at 11:01 -0700, Alexander Duyck wrote:
-> On Mon, 2019-09-09 at 12:56 +0300, Kirill A. Shutemov wrote:
-> > On Sat, Sep 07, 2019 at 10:25:28AM -0700, Alexander Duyck wrote:
-> > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > 
-> > > In order to support page reporting it will be necessary to store and
-> > > retrieve the migratetype of a page. To enable that I am moving the set and
-> > > get operations for pcppage_migratetype into the mm/internal.h header so
-> > > that they can be used outside of the page_alloc.c file.
-> > > 
-> > > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > 
-> > I'm not sure that it's great idea to export this functionality beyond
-> > mm/page_alloc.c without any additional safeguards. How would we avoid to
-> > messing with ->index when the page is not in the right state of its
-> > life-cycle. Can we add some VM_BUG_ON()s here?
-> 
-> I am not sure what we would need to check on though. There are essentially
-> 2 cases where we are using this. The first is the percpu page lists so the
-> value is set either as a result of __rmqueue_smallest or
-> free_unref_page_prepare. The second one which hasn't been added yet is for
-> the Reported pages case which I add with patch 6.
-> 
-> When I use it for page reporting I am essentially using the Reported flag
-> to identify what pages in the buddy list will have this value set versus
-> those that may not. I didn't explicitly define it that way, but that is
-> how I am using it so that the value cannot be trusted unless the Reported
-> flag is set.
+Hi Adam,
 
-I guess the alternative would be to just treat the ->index value as the
-index within the boundary array, and not use the per-cpu list functions.
-Doing that might make things a bit more clear since all we are really
-doing is storing the index into the boundary list the page is contained
-in. I could probably combine the value of order and migratetype and save
-myself a few cycles in the process by just saving the index into the array
-directly.
+> Am 09.09.2019 um 17:45 schrieb Adam Ford <aford173@gmail.com>:
+>=20
+> The AM3517 only lists 600MHz @ 1.2V, but the revister values for
+
+a small typo...
+
+s/revister/register/
+
+> 0x4830A204 =3D 1b86 802f, it seems like am3517 might be a derivative
+> of the omap36 which has OPPs would be OPP50 (300 MHz) and OPP100
+> (600 MHz).
+>=20
+> This patch simply enable adds the am3517 to the compatible table
+> using the omap3630 structure instead of the 3430.
+>=20
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+>=20
+> diff --git a/drivers/cpufreq/ti-cpufreq.c =
+b/drivers/cpufreq/ti-cpufreq.c
+> index f2f58d689320..6b69fb1d6bdf 100644
+> --- a/drivers/cpufreq/ti-cpufreq.c
+> +++ b/drivers/cpufreq/ti-cpufreq.c
+> @@ -270,6 +270,7 @@ static int ti_cpufreq_setup_syscon_register(struct =
+ti_cpufreq_data *opp_data)
+>=20
+> static const struct of_device_id ti_cpufreq_of_match[] =3D {
+> 	{ .compatible =3D "ti,am33xx", .data =3D &am3x_soc_data, },
+> +	{ .compatible =3D "ti,am3517", .data =3D &omap36xx_soc_data, },
+> 	{ .compatible =3D "ti,am43", .data =3D &am4x_soc_data, },
+> 	{ .compatible =3D "ti,dra7", .data =3D &dra7_soc_data },
+> 	{ .compatible =3D "ti,omap34xx", .data =3D &omap34xx_soc_data, =
+},
+> --=20
+> 2.17.1
+>=20
+
+Looks good to me.
+
+Should I include your two patches to my patch set (and resend)?
+Or should we keep them separated?
+
+BR and thanks,
+Nikolaus
 
