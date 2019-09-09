@@ -2,135 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9386ADF9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 21:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A275AADFA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 21:50:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732095AbfIITtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 15:49:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45050 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731191AbfIITtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 15:49:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BCD49B6C7;
-        Mon,  9 Sep 2019 19:49:03 +0000 (UTC)
-Subject: Re: [PATCH 1/5] mm, slab: Make kmalloc_info[] contain all types of
- names
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Pengfei Li <lpf.vector@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christopher Lameter <cl@linux.com>, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20190903160430.1368-1-lpf.vector@gmail.com>
- <20190903160430.1368-2-lpf.vector@gmail.com>
- <4e9a237f-2370-0f55-34d2-1fbb9334bf88@suse.cz>
- <CAD7_sbEwwqp_ONzYxPQfBDORH4g2Du=LKt=eWf+6SsLgtysBmA@mail.gmail.com>
- <3a95d20d-ccf9-bd45-2db3-380cc3e0cd17@rasmusvillemoes.dk>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <018750ce-39c2-6331-9799-d53d0e44eaea@suse.cz>
-Date:   Mon, 9 Sep 2019 21:48:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2405844AbfIITuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 15:50:37 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:46249 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731163AbfIITuh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 15:50:37 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MfYc4-1ieHb10Yrw-00g3kw; Mon, 09 Sep 2019 21:50:27 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Alex Vesker <valex@mellanox.com>,
+        Erez Shitrit <erezsh@mellanox.com>,
+        Mark Bloch <markb@mellanox.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH net-next 1/2] mlx5: steering: use correct enum type
+Date:   Mon,  9 Sep 2019 21:50:08 +0200
+Message-Id: <20190909195024.3268499-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <3a95d20d-ccf9-bd45-2db3-380cc3e0cd17@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:AK8QWmjsuWG4HEmhOqIpwd62ajWhj3F/CeXNzG050S7ptBNBv9G
+ MqdkIwNGTfgOBb3ihKsasKEJrDoJT5Zpo74b2oTeKv2BSP+ZrVQCtd2Ta064gRzZTKDPm2K
+ ijG6Qr8EmM6OgvYdfR/XW+NjnKJuh154KGpE67ARZl7J65uI9gvZpKtETCzORYzrENT1wEP
+ TO5yy6EB2HYEIANJ/FMgA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Jvrju6h+dAo=:zHHY9sOoxpwZQ26Vvkc4if
+ RPOyP48VcYi5WypqyVisjktfO79V97C6398/UTLF/+cgby1Pri2mSa0bvDZ9St/aBze/2+8VR
+ DFJ86ThQP66LHMLZlV63Z4DadH+Gd+fiptytjrrBS3OEchEcoqc9t5PgXg+FRzz4vgEZGl/as
+ 6pDheKbt1dQtYMRmqi53hSCNEwHJa9HcqZAVLJT62U70OMEY0uLlvWJJL4U4esVzz0ipjkR5O
+ Y8gVh61/ik6/tdbvLFYThYf5XMSp7rfFz87PV6Aj/seTudbvsS3CdM8ZJrutSAlY3lF5i4nmK
+ 8biTKWNB+Iw92WcfLEnYpMeOF1PFwN+Lg01hmv8PF70bZjoEBeh4COkVNqJS3Pl2/AGPYHI7i
+ sYOtwSW3hVVzwivdit9efMiKY9lnQdtwxH6fy4f1mub3eFnN4mkE/JilEHb268Zk5t/wQpOnx
+ 2wrJKux5yK2X52EP4AhNVbTKsHBNzAMjpOvjlDwJASk8z5eIsiTV4VHnI63VokYZLOdcmED+o
+ 5S5OacwomwXgjmWYIebaLek2YtxqX3YS5YGHe76vlWSNL2hMhX06+HNbmMduM3hu5nlTPpHxf
+ d7L6YSc6WwZ47ugS/0bg+Ekz2Tmtxuf8g3dXnwSY7cK8Rg66hR3YV0WrhTv3U4kXy2O0F6gc2
+ 4uixBzq3PQaj6uZmNxsWpfOAHGWjZWq1FT3wjHOLoKQXnV+v2qjrT3X36vt/NeR+2bzkwB6yD
+ uqgRZmMNbp+aj+j7aKQNobYTCNQ6z/KSgZuar84PapThwn6T6+qCw+GgUTHov5RzQAEu9x2Kt
+ KDamc3El9U5lc/xO6sFzdgkN8O90y9irglwY4Su0ehosjr+j0s=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/9/19 8:30 PM, Rasmus Villemoes wrote:
-> On 09/09/2019 18.53, Pengfei Li wrote:
->> On Mon, Sep 9, 2019 at 10:59 PM Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
->>>>   /*
->>>>    * kmalloc_info[] is to make slub_debug=,kmalloc-xx option work at boot time.
->>>>    * kmalloc_index() supports up to 2^26=64MB, so the final entry of the table is
->>>>    * kmalloc-67108864.
->>>>    */
->>>>   const struct kmalloc_info_struct kmalloc_info[] __initconst = {
->>>
->>> BTW should it really be an __initconst, when references to the names
->>> keep on living in kmem_cache structs? Isn't this for data that's
->>> discarded after init?
->>
->> You are right, I will remove __initconst in v2.
-> 
-> No, __initconst is correct, and should be kept. The string literals
-> which the .name pointers point to live in .rodata, and we're copying the
-> values of these .name pointers. Nothing refers to something inside
-> kmalloc_info[] after init. (It would be a whole different matter if
-> struct kmalloc_info_struct consisted of { char name[NN]; unsigned int
-> size; }).
+The newly added code triggers a harmless warning with
+clang:
 
-*slaps forehead* ah, of course, string literals themselves are not
-affected by the __initconst, thanks! Sorry for the wrong suggestion Pengfei.
+drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c:1080:9: error: implicit conversion from enumeration type 'enum mlx5_reformat_ctx_type' to different enumeration type 'enum mlx5dr_action_type' [-Werror,-Wenum-conversion]
+                        rt = MLX5_REFORMAT_TYPE_L2_TO_L2_TUNNEL;
+                           ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c:1084:51: error: implicit conversion from enumeration type 'enum mlx5dr_action_type' to different enumeration type 'enum mlx5_reformat_ctx_type' [-Werror,-Wenum-conversion]
+                ret = mlx5dr_cmd_create_reformat_ctx(dmn->mdev, rt, data_sz, data,
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~            ^~
 
-> Rasmus
-> 
+Change it to use mlx5_reformat_ctx_type instead of mlx5dr_action_type.
+
+Fixes: 9db810ed2d37 ("net/mlx5: DR, Expose steering action functionality")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c
+index a02f87f85c17..7d81a7735de5 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c
+@@ -1074,7 +1074,7 @@ dr_action_create_reformat_action(struct mlx5dr_domain *dmn,
+ 	case DR_ACTION_TYP_L2_TO_TNL_L2:
+ 	case DR_ACTION_TYP_L2_TO_TNL_L3:
+ 	{
+-		enum mlx5dr_action_type rt;
++		enum mlx5_reformat_ctx_type rt;
+ 
+ 		if (action->action_type == DR_ACTION_TYP_L2_TO_TNL_L2)
+ 			rt = MLX5_REFORMAT_TYPE_L2_TO_L2_TUNNEL;
+-- 
+2.20.0
 
