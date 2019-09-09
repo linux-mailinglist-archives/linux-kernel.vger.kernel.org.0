@@ -2,117 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E9E8ADB6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 863E4ADB65
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:45:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391217AbfIIOpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 10:45:54 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35262 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388058AbfIIOpx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 10:45:53 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n4so7978513pgv.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 07:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=X27PgNjzyIRHhIAJ8fJ6aLdKaxI7wNnavXRhLpvodTc=;
-        b=lABTPVwUEM/jSLH0LclUBSo6/DiKeOgE9kR0PjYwD5c07lAOpPGwa4wiuA4i3tuRBk
-         HLzsC4DaXs4SbJoIZ+XaRKvyru3JI54AwOKf+ZhtCH3BNcBydJzPKtaVl7zo9dwvlTUy
-         L7NOHIslucv+u2g9cfP7SFT/lHBYN2ypvmItyV6ni2DrV9o20BVvXqxTL6WcZ61pTVK+
-         It85mVkDC4skRqXT59d87rOQM3iy17rzBpu4BWHA8tOvdW7ZJI08Bje/Zyr3LAR7LHfa
-         DJPF6+hS9L++PqPPn4uNWILlymzHv2C1UAiYOAMstMGjNadmZnzC2wJESGP83lgufnKB
-         hITQ==
+        id S1731327AbfIIOpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 10:45:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51928 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727191AbfIIOpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 10:45:16 -0400
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6B0DB81F11
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2019 14:45:15 +0000 (UTC)
+Received: by mail-wm1-f72.google.com with SMTP id r21so4554949wme.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 07:45:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=X27PgNjzyIRHhIAJ8fJ6aLdKaxI7wNnavXRhLpvodTc=;
-        b=Ff/ld/MWRdU+jisvW7R9oyEfM23Ndun1H3BRh04nmyZ+e1AMTfsK7GedebrX4Hqtwi
-         xyh1bgpMkw0B7xWLn25Tj83+RiRsNtYvPDWwdct/ejw+G4Cw00zCNPC3TND8mw8RKkQK
-         62iagULXy0QI0jopj0nOWSXeBGFT6oU835VbBT+SdT6cyiDlyy6cr/MjQ1aPGz+R41Gs
-         kNRVk3jPeUGA5etvrMg4Y8i2+zS8rzKhii5aM0C5vqDmU0IDHSFHL7JEN3bHZTPklq2C
-         s8bHdHM0u9KeWhO5mRsiXagUODOwd37H9LIN+8rshQ4fB670WmEPe2vlFbk7DUjH8waP
-         PjBQ==
-X-Gm-Message-State: APjAAAVnMn+aUaTomP98yBh6C+DVXuFf6ZWUJYq9XzBTQirAOurMutXk
-        cPu5vgL2z7rVRj1Kc1vU/z4=
-X-Google-Smtp-Source: APXvYqzMP3YClxdtCzxJyWIB9dX1Z1YX9wv+5VNF8vueQgXKay0Wp13gJHT0kD/8s70m9eZ4rzmmWw==
-X-Received: by 2002:a63:2264:: with SMTP id t36mr21117473pgm.87.1568040352240;
-        Mon, 09 Sep 2019 07:45:52 -0700 (PDT)
-Received: from localhost.localdomain ([149.28.153.17])
-        by smtp.gmail.com with ESMTPSA id t9sm15334693pgj.89.2019.09.09.07.45.48
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=TIU8l9uNtqi5N363chjsQODAD8NExttwuYVEnSx0c3k=;
+        b=HWtHH1d11QxSTn/MqDRLKOsFTMKWkN5yXkeyfAlz0qDgxZpz+k/phLIe4OsbftBB31
+         3cAdtbnMbT3Da26HqQGyPPttPwFXGQ59krgRhQBwUyel+pfl47qCLeQYkRsohn+Ee1u9
+         CXGPTNQ8NxPAhaWM6J+HWMjx6YsFNb9/mt2UHgQTbNU5oyml9EUHJ4AndzNEqjgfntO2
+         M8jnblTwX9NT6caGWsfn1X9vXL4h7HoUZNpdaisa27bYt6GeXDSyiho95vyoHVqb5Vg2
+         9oFiyY23TbCKhaGgroMjmXphn51yvV5CJJFW4o2gkT8jmrnl2YTLJZc10CDWtjFNfWCd
+         5WiA==
+X-Gm-Message-State: APjAAAUz64FCkR2O3Go3Zqh0iWOFxrwPD0OZQXF0/X0ghn11wvGjQ/I1
+        +/2ZTlVaOak/+VWoRlEf9uNXdhzIzLiYsCo6vbVQ0R0RFJTj/TSg123Jdz6vWbQKr2L1IOlQRoT
+        rNF3jabpHWqShrAxiXCcQKwCz
+X-Received: by 2002:adf:eb4b:: with SMTP id u11mr12031965wrn.121.1568040313765;
+        Mon, 09 Sep 2019 07:45:13 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzcqag+ERBvSjIm6CpVOwAwyVlX8Vd50VjCvuAgwQi1q8tVVx/gSm4B5gLVsG6xNkiMwg2Qkg==
+X-Received: by 2002:adf:eb4b:: with SMTP id u11mr12031946wrn.121.1568040313584;
+        Mon, 09 Sep 2019 07:45:13 -0700 (PDT)
+Received: from redhat.com ([80.74.107.118])
+        by smtp.gmail.com with ESMTPSA id y14sm26560796wrd.84.2019.09.09.07.45.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 07:45:51 -0700 (PDT)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH v3 9/9] hacking: Move DEBUG_FS to 'Generic Kernel Debugging Instruments'
-Date:   Mon,  9 Sep 2019 22:44:53 +0800
-Message-Id: <20190909144453.3520-10-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190909144453.3520-1-changbin.du@gmail.com>
-References: <20190909144453.3520-1-changbin.du@gmail.com>
+        Mon, 09 Sep 2019 07:45:12 -0700 (PDT)
+Date:   Mon, 9 Sep 2019 10:45:10 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [RFC PATCH untested] vhost: block speculation of translated
+ descriptors
+Message-ID: <20190909104355-mutt-send-email-mst@kernel.org>
+References: <20190908110521.4031-1-mst@redhat.com>
+ <db4d77d7-c467-935d-b4ae-1da7635e9b6b@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <db4d77d7-c467-935d-b4ae-1da7635e9b6b@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DEBUG_FS does not belong to 'Compile-time checks and compiler options'.
+On Mon, Sep 09, 2019 at 03:19:55PM +0800, Jason Wang wrote:
+> 
+> On 2019/9/8 下午7:05, Michael S. Tsirkin wrote:
+> > iovec addresses coming from vhost are assumed to be
+> > pre-validated, but in fact can be speculated to a value
+> > out of range.
+> > 
+> > Userspace address are later validated with array_index_nospec so we can
+> > be sure kernel info does not leak through these addresses, but vhost
+> > must also not leak userspace info outside the allowed memory table to
+> > guests.
+> > 
+> > Following the defence in depth principle, make sure
+> > the address is not validated out of node range.
+> > 
+> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > ---
+> >   drivers/vhost/vhost.c | 4 +++-
+> >   1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> > index 5dc174ac8cac..0ee375fb7145 100644
+> > --- a/drivers/vhost/vhost.c
+> > +++ b/drivers/vhost/vhost.c
+> > @@ -2072,7 +2072,9 @@ static int translate_desc(struct vhost_virtqueue *vq, u64 addr, u32 len,
+> >   		size = node->size - addr + node->start;
+> >   		_iov->iov_len = min((u64)len - s, size);
+> >   		_iov->iov_base = (void __user *)(unsigned long)
+> > -			(node->userspace_addr + addr - node->start);
+> > +			(node->userspace_addr +
+> > +			 array_index_nospec(addr - node->start,
+> > +					    node->size));
+> >   		s += size;
+> >   		addr += size;
+> >   		++ret;
+> 
+> 
+> I've tried this on Kaby Lake smap off metadata acceleration off using
+> testpmd (virtio-user) + vhost_net. I don't see obvious performance
+> difference with TX PPS.
+> 
+> Thanks
 
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
----
- lib/Kconfig.debug | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Should I push this to Linus right now then? It's a security thing so
+maybe we better do it ASAP ... what's your opinion?
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index ceefe0c1e78b..09e82676e59c 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -302,18 +302,6 @@ config UNUSED_SYMBOLS
- 	  you really need it, and what the merge plan to the mainline kernel for
- 	  your module is.
- 
--config DEBUG_FS
--	bool "Debug Filesystem"
--	help
--	  debugfs is a virtual file system that kernel developers use to put
--	  debugging files into.  Enable this option to be able to read and
--	  write to these files.
--
--	  For detailed documentation on the debugfs API, see
--	  Documentation/filesystems/.
--
--	  If unsure, say N.
--
- config HEADERS_INSTALL
- 	bool "Install uapi headers to usr/include"
- 	depends on !UML
-@@ -463,6 +451,18 @@ config MAGIC_SYSRQ_SERIAL
- 	  This option allows you to decide whether you want to enable the
- 	  magic SysRq key.
- 
-+config DEBUG_FS
-+	bool "Debug Filesystem"
-+	help
-+	  debugfs is a virtual file system that kernel developers use to put
-+	  debugging files into.  Enable this option to be able to read and
-+	  write to these files.
-+
-+	  For detailed documentation on the debugfs API, see
-+	  Documentation/filesystems/.
-+
-+	  If unsure, say N.
-+
- source "lib/Kconfig.kgdb"
- 
- source "lib/Kconfig.ubsan"
 -- 
-2.20.1
-
+MST
