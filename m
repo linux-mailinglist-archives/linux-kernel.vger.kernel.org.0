@@ -2,76 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F205AD185
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 03:26:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E2AAD186
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 03:26:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732086AbfIIBZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 8 Sep 2019 21:25:16 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39000 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731552AbfIIBZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Sep 2019 21:25:16 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C96ABB1BDEDBF66C19FA;
-        Mon,  9 Sep 2019 09:25:13 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Mon, 9 Sep 2019
- 09:25:12 +0800
-Subject: Re: [PATCH -next] perf/smmuv3: gpio: creg-snps: use
- devm_platform_ioremap_resource() to simplify code
-To:     <will@kernel.org>, <mark.rutland@arm.com>
-References: <20190906143844.27956-1-yuehaibing@huawei.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <de66c0f1-129e-846d-1bde-f2e45b38dd82@huawei.com>
-Date:   Mon, 9 Sep 2019 09:25:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1732118AbfIIBZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 8 Sep 2019 21:25:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731552AbfIIBZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Sep 2019 21:25:36 -0400
+Received: from localhost (unknown [148.69.85.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2F562086D;
+        Mon,  9 Sep 2019 01:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567992336;
+        bh=E2cqUMgnAApDs9Dsnc3TkUoWZaykQ41wUr7ucx5cits=;
+        h=From:To:Cc:Subject:Date:From;
+        b=U+XjKg5BZeMQiD3PXoW/UEPCmrQK8Q0NPiqdpxHOERHwJI9vfsVDlXvDI/pCc3ckO
+         PQques6ArVn5mc8J/Jf6suYB6L4roUtEABY/k+NfQlNwZUIgvav6B5FPdgAvQzN+Fl
+         QTFKL6XoELbN8HFR3CSohe0uvu5YCDxnR0a443LM=
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/2] f2fs: do not select same victim right again
+Date:   Mon,  9 Sep 2019 02:25:31 +0100
+Message-Id: <20190909012532.20454-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-In-Reply-To: <20190906143844.27956-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch title is wrong,  fix it in v2, sorry.
+GC must avoid select the same victim again.
 
-On 2019/9/6 22:38, YueHaibing wrote:
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/perf/arm_smmuv3_pmu.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
-> index abcf54f..773128f 100644
-> --- a/drivers/perf/arm_smmuv3_pmu.c
-> +++ b/drivers/perf/arm_smmuv3_pmu.c
-> @@ -727,7 +727,7 @@ static void smmu_pmu_get_acpi_options(struct smmu_pmu *smmu_pmu)
->  static int smmu_pmu_probe(struct platform_device *pdev)
->  {
->  	struct smmu_pmu *smmu_pmu;
-> -	struct resource *res_0, *res_1;
-> +	struct resource *res_0;
->  	u32 cfgr, reg_size;
->  	u64 ceid_64[2];
->  	int irq, err;
-> @@ -764,8 +764,7 @@ static int smmu_pmu_probe(struct platform_device *pdev)
->  
->  	/* Determine if page 1 is present */
->  	if (cfgr & SMMU_PMCG_CFGR_RELOC_CTRS) {
-> -		res_1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -		smmu_pmu->reloc_base = devm_ioremap_resource(dev, res_1);
-> +		smmu_pmu->reloc_base = devm_platform_ioremap_resource(pdev, 1);
->  		if (IS_ERR(smmu_pmu->reloc_base))
->  			return PTR_ERR(smmu_pmu->reloc_base);
->  	} else {
-> 
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/gc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index e88f98ddf396..15ca8bbb0b22 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -274,6 +274,9 @@ static unsigned int get_cb_cost(struct f2fs_sb_info *sbi, unsigned int segno)
+ static inline unsigned int get_gc_cost(struct f2fs_sb_info *sbi,
+ 			unsigned int segno, struct victim_sel_policy *p)
+ {
++	if (sbi->cur_victim_sec == GET_SEC_FROM_SEG(sbi, segno))
++		return UINT_MAX;
++
+ 	if (p->alloc_mode == SSR)
+ 		return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
+ 
+@@ -1326,9 +1329,6 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 		round++;
+ 	}
+ 
+-	if (gc_type == FG_GC)
+-		sbi->cur_victim_sec = NULL_SEGNO;
+-
+ 	if (sync)
+ 		goto stop;
+ 
+-- 
+2.19.0.605.g01d371f741-goog
 
