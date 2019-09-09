@@ -2,97 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFBF1AD815
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8193AD811
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404279AbfIILlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 07:41:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16204 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2404242AbfIILln (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 07:41:43 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x89BRH0j077225
-        for <linux-kernel@vger.kernel.org>; Mon, 9 Sep 2019 07:41:42 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uwmbfvxnb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 07:41:41 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Mon, 9 Sep 2019 12:41:40 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 9 Sep 2019 12:41:37 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x89BfZqj27131912
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 9 Sep 2019 11:41:35 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6899EA4051;
-        Mon,  9 Sep 2019 11:41:35 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 23BECA4053;
-        Mon,  9 Sep 2019 11:41:35 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  9 Sep 2019 11:41:35 +0000 (GMT)
-From:   Thomas Richter <tmricht@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc:     brueckner@linux.ibm.com, gor@linux.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH 3/3] perf/java: Add detection of java-11-openjdk-devel package
-Date:   Mon,  9 Sep 2019 13:41:16 +0200
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190909114116.50469-1-tmricht@linux.ibm.com>
-References: <20190909114116.50469-1-tmricht@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19090911-0020-0000-0000-00000369BF83
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19090911-0021-0000-0000-000021BF400F
-Message-Id: <20190909114116.50469-4-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-09_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909090121
+        id S2404208AbfIILle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 07:41:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729627AbfIILle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 07:41:34 -0400
+Received: from localhost (unknown [148.69.85.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 582BA218AF;
+        Mon,  9 Sep 2019 11:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568029292;
+        bh=UIBpQL4IyoiRivShLSPvpPLy/w0INLuoSj765Ms5he4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xUsN32R35u2UBRj2lHEcA9H44gsX3xq+T5JpQmqDZWfJa1FKtItfngp9xYD5JwbTx
+         xrTzIzCNrmEsodCvE2TC1jZyOwtkUb0qNP8keMHS8wjJkqKG+aRjDmBg1y7di6ZbHG
+         vjxrtpyNpkPBkeyHRqWC/dCmpSrudREk4MBNKyFI=
+Date:   Mon, 9 Sep 2019 06:41:29 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     tiwai@suse.com, linux-pci@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: Add a helper to check Power Resource
+ Requirements _PR3 existence
+Message-ID: <20190909114129.GT103977@google.com>
+References: <20190827134756.10807-1-kai.heng.feng@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190827134756.10807-1-kai.heng.feng@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With Java 11 there is no seperate JRE anymore.
-Details: https://coderanch.com/t/701603/java/JRE-JDK
-Therefore the detection of the JRE needs to be adapted.
+Maybe:
 
-This change works for s390 and x86.
-I have not tested other platforms.
+  PCI: Add pci_pr3_present() to check for Power Resources for D3hot
 
-Suggested-by: Andreas Krebbel <krebbel@linux.ibm.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
----
- tools/perf/Makefile.config | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Aug 27, 2019 at 09:47:55PM +0800, Kai-Heng Feng wrote:
+> A driver may want to know the existence of _PR3, to choose different
+> runtime suspend behavior. A user will be add in next patch.
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 89ac5a1f1550..3da374911852 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -908,7 +908,7 @@ ifndef NO_JVMTI
-     JDIR=$(shell /usr/sbin/update-java-alternatives -l | head -1 | awk '{print $$3}')
-   else
-     ifneq (,$(wildcard /usr/sbin/alternatives))
--      JDIR=$(shell /usr/sbin/alternatives --display java | tail -1 | cut -d' ' -f 5 | sed 's%/jre/bin/java.%%g')
-+      JDIR=$(shell /usr/sbin/alternatives --display java | tail -1 | cut -d' ' -f 5 | sed -e 's%/jre/bin/java.%%g' -e 's%/bin/java.%%g')
-     endif
-   endif
-   ifndef JDIR
--- 
-2.21.0
+Maybe include something like this in the commit lot?
 
+  Add pci_pr3_present() to check whether the platform supplies _PR3 to
+  tell us which power resources the device depends on when in D3hot.
+
+> This is mostly the same as nouveau_pr3_present().
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+>  drivers/pci/pci.c   | 20 ++++++++++++++++++++
+>  include/linux/pci.h |  2 ++
+>  2 files changed, 22 insertions(+)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 1b27b5af3d55..776af15b92c2 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5856,6 +5856,26 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
+>  	return 0;
+>  }
+>  
+> +bool pci_pr3_present(struct pci_dev *pdev)
+> +{
+> +	struct pci_dev *parent_pdev = pci_upstream_bridge(pdev);
+> +	struct acpi_device *parent_adev;
+> +
+> +	if (acpi_disabled)
+> +		return false;
+> +
+> +	if (!parent_pdev)
+> +		return false;
+> +
+> +	parent_adev = ACPI_COMPANION(&parent_pdev->dev);
+> +	if (!parent_adev)
+> +		return false;
+> +
+> +	return parent_adev->power.flags.power_resources &&
+> +		acpi_has_method(parent_adev->handle, "_PR3");
+
+I think this is generally OK, but it doesn't actually check whether
+*pdev* has a _PR3; it checks whether pdev's *parent* does.  So does
+that mean this is dependent on the GPU topology, i.e., does it assume
+that there is an upstream bridge and that power for everything under
+that bridge can be managed together?
+
+I'm wondering whether the "parent_pdev = pci_upstream_bridge()" part
+should be in the caller rather than in pci_pr3_present()?
+
+I can't connect any of the dots from _PR3 through to
+"need_eld_notify_link" (whatever "eld" is :)) and the uses of
+hda_intel.need_eld_notify_link (and needs_eld_notify_link()).
+
+But that's beyond the scope of *this* patch and it makes sense that
+you do want to discover the _PR3 existence, so I'm fine with this once
+we figure out the pdev vs parent question.
+
+> +}
+> +EXPORT_SYMBOL_GPL(pci_pr3_present);
+> +
+>  /**
+>   * pci_add_dma_alias - Add a DMA devfn alias for a device
+>   * @dev: the PCI device for which alias is added
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 82e4cd1b7ac3..9b6f7b67fac9 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -2348,9 +2348,11 @@ struct irq_domain *pci_host_bridge_acpi_msi_domain(struct pci_bus *bus);
+>  
+>  void
+>  pci_msi_register_fwnode_provider(struct fwnode_handle *(*fn)(struct device *));
+> +bool pci_pr3_present(struct pci_dev *pdev);
+>  #else
+>  static inline struct irq_domain *
+>  pci_host_bridge_acpi_msi_domain(struct pci_bus *bus) { return NULL; }
+> +static bool pci_pr3_present(struct pci_dev *pdev) { return false; }
+>  #endif
+>  
+>  #ifdef CONFIG_EEH
+> -- 
+> 2.17.1
+> 
