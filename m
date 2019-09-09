@@ -2,94 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 834EEAD2F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 08:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12443AD2F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 08:07:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbfIIGJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 02:09:08 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:37358 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbfIIGJH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 02:09:07 -0400
-X-Greylist: delayed 317 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Sep 2019 02:09:06 EDT
-Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id C2C755D6045;
-        Mon,  9 Sep 2019 08:03:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1568009027;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vcNUCkbMLofJESYwiLvXZxB1JxtkjqS0l4Y8aXZHaB8=;
-        b=RW7yB7VNqZ//fQmFwXf6q/ueYkqf4/OLcTr1Wnpy4T8uTQNZBU6vpXJyQYu+fh7ua5dlaX
-        cud3B6xoWA/fdK1fSaQC7pF6QbwS/QzlqbNpHLl10T/TKSGbAjV/1Br33mbJ0X+AEc4VCf
-        bEZi5jJ4YI5dyQ0iy3NRY02XxwzcvKc=
+        id S1727584AbfIIGG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 02:06:58 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47166 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726646AbfIIGG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 02:06:58 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 186672B77F3E256462AD;
+        Mon,  9 Sep 2019 14:06:49 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 9 Sep 2019 14:06:40 +0800
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
+        <mingo@kernel.org>, <mhocko@kernel.org>, <linuxarm@huawei.com>
+Subject: [PATCH] driver core: ensure a device has valid node id in device_add()
+Date:   Mon, 9 Sep 2019 14:04:23 +0800
+Message-ID: <1568009063-77714-1-git-send-email-linyunsheng@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 09 Sep 2019 08:03:47 +0200
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ulf.hansson@linaro.org,
-        linus.walleij@linaro.org, bfq-iosched@googlegroups.com
-Subject: Re: [PATCH 0/4] block, bfq: series of improvements and small fixes of
- the injection mechanism
-In-Reply-To: <20190822152037.15413-1-paolo.valente@linaro.org>
-References: <20190822152037.15413-1-paolo.valente@linaro.org>
-Message-ID: <9088f78edc97279e34f6a96277d088f9@natalenko.name>
-X-Sender: oleksandr@natalenko.name
-User-Agent: Roundcube Webmail/1.3.10
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1568009028;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vcNUCkbMLofJESYwiLvXZxB1JxtkjqS0l4Y8aXZHaB8=;
-        b=Mr9oP/lV/M2M52dZIg4L9ybmL3UhN5khVLwPiBbsr+V1BWl9/T3PZILDtGYqn7exK6ak+u
-        BXJ6iGo7BA4HEDsBPzxGaPm5wOo1fDb6qxrnGowdVtYbIDjhrRllBM+rkKok/Mxy3RELQP
-        UFa8PXVHBokdWKd2KMXgFpLcgTzHevI=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1568009028; a=rsa-sha256;
-        cv=none;
-        b=PbYcbBiP6sBkCNLu7WQxL2h490EROYLol/K59+8xCpvmxM88RaqCZeO1raRT+fPkONmyIi
-        DT2exlJHqPiF/Y7VuVKG13QLGSmGn3SXSa59/Sts3RGLhfG8Moo0qw5m1sdWudBMgtlAen
-        6uB1RjCKsNJn0IqIQEm1X40BuTtUZrs=
-ARC-Authentication-Results: i=1;
-        vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.08.2019 17:20, Paolo Valente wrote:
-> Hi Jens,
-> this patch series makes the injection mechanism better at preserving
-> control on I/O.
-> 
-> Thanks,
-> Paolo
-> 
-> Paolo Valente (4):
->   block, bfq: update inject limit only after injection occurred
->   block, bfq: reduce upper bound for inject limit to max_rq_in_driver+1
->   block, bfq: increase update frequency of inject limit
->   block, bfq: push up injection only after setting service time
-> 
->  block/bfq-iosched.c | 35 ++++++++++++++++++++++++++---------
->  1 file changed, 26 insertions(+), 9 deletions(-)
-> 
-> --
-> 2.20.1
+Currently a device does not belong to any of the numa nodes
+(dev->numa_node is NUMA_NO_NODE) when the node id is neither
+specified by fw nor by virtual device layer and the device has
+no parent device.
 
-FWIW, Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name> (I run 
-it for quite some time already).
+According to discussion in [1]:
+Even if a device's numa node is not specified, the device really
+does belong to a node.
 
+This patch sets the device node to node 0 in device_add() if the
+device's node id is not specified and it either has no parent
+device, or the parent device also does not have a valid node id.
+
+[1] https://lkml.org/lkml/2019/9/2/466
+
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+---
+Changelog RFC -> v1:
+1. Drop log error message and use a "if" instead of "? :".
+2. Drop the RFC tag.
+---
+ drivers/base/core.c  | 10 +++++++---
+ include/linux/numa.h |  2 ++
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 1669d41..f79ad20 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2107,9 +2107,13 @@ int device_add(struct device *dev)
+ 	if (kobj)
+ 		dev->kobj.parent = kobj;
+ 
+-	/* use parent numa_node */
+-	if (parent && (dev_to_node(dev) == NUMA_NO_NODE))
+-		set_dev_node(dev, dev_to_node(parent));
++	/* use parent numa_node or default node 0 */
++	if (!numa_node_valid(dev_to_node(dev))) {
++		if (parent && numa_node_valid(dev_to_node(parent)))
++			set_dev_node(dev, dev_to_node(parent));
++		else
++			set_dev_node(dev, 0);
++	}
+ 
+ 	/* first, register with generic layer. */
+ 	/* we require the name to be set before, and pass NULL */
+diff --git a/include/linux/numa.h b/include/linux/numa.h
+index 110b0e5..eccc757 100644
+--- a/include/linux/numa.h
++++ b/include/linux/numa.h
+@@ -13,4 +13,6 @@
+ 
+ #define	NUMA_NO_NODE	(-1)
+ 
++#define numa_node_valid(node)	((unsigned int)(node) < nr_node_ids)
++
+ #endif /* _LINUX_NUMA_H */
 -- 
-   Oleksandr Natalenko (post-factum)
+2.8.1
+
