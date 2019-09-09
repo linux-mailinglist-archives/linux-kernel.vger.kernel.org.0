@@ -2,46 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEB3DAD65B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:07:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE1F6AD661
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390309AbfIIKHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:07:31 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56186 "EHLO
+        id S2390233AbfIIKH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:07:27 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56020 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390246AbfIIKH3 (ORCPT
+        with ESMTP id S1728701AbfIIKHZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:07:29 -0400
+        Mon, 9 Sep 2019 06:07:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=yTK2raRocXmY1SVYBroK1A3JaVMioGcvQYa4SdbdL8k=; b=S5snUQH5yVyC
-        iub7lySHUfCpO7ZlHP7JorXwWyCPV/iJZESBtKcqjrReAjxZ7alvFMcF4d77OaARw3jxI7IIlZ/Bf
-        uxnyrDY8BM+Awf0jmUCty/MX2yumrprbhF8xp2PhQjZO8AP9qZH6H2mzfyR2tt6LCDIylBacyNh75
-        NlThQ=;
+        List-Archive; bh=pgifkWS240+0IXtL8Cmh/xJGQiIwKppg9/fFNPpyMzA=; b=o+7g/kAVaukw
+        y4CcDvi6FPdDWUfOsbTaPm6f+qq1ZOedWjEtn8vj3pl4MbVQh0/w5lBI8zsD+HKMPoubYQnVh7bKo
+        bvUjTdBJW2O52gt1vcb9nFwA1JrgtML+K9TFhVcQnTqzXKjlB2NFKMrInhVVar9MY3WqWdBv/6WsN
+        uzzsY=;
 Received: from [148.69.85.38] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1i7GZp-0001rj-KO; Mon, 09 Sep 2019 10:07:17 +0000
+        id 1i7GZp-0001s1-U1; Mon, 09 Sep 2019 10:07:17 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 089F0D02D52; Mon,  9 Sep 2019 11:07:17 +0100 (BST)
+        id 2EE5AD02D76; Mon,  9 Sep 2019 11:07:17 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: rt1011: make array pd static const, makes object smaller" to the asoc tree
-In-Reply-To: <20190907073717.21632-1-colin.king@canonical.com>
+To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Cc:     alsa-devel@alsa-project.org, Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: rockchip: ignore 0Hz sysclk" to the asoc tree
+In-Reply-To: <20190907174332.19586-1-katsuhiro@katsuster.net>
 X-Patchwork-Hint: ignore
-Message-Id: <20190909100717.089F0D02D52@fitzroy.sirena.org.uk>
+Message-Id: <20190909100717.2EE5AD02D76@fitzroy.sirena.org.uk>
 Date:   Mon,  9 Sep 2019 11:07:17 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rt1011: make array pd static const, makes object smaller
+   ASoC: rockchip: ignore 0Hz sysclk
 
 has been applied to the asoc tree at
 
@@ -75,46 +71,39 @@ to this mail.
 Thanks,
 Mark
 
-From 2b70d5776e8b173e3b36a2ef63d94428c6a80e1f Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Sat, 7 Sep 2019 08:37:17 +0100
-Subject: [PATCH] ASoC: rt1011: make array pd static const, makes object
- smaller
+From f1879d7b98dc9081cffc7718b644c6c41628cd18 Mon Sep 17 00:00:00 2001
+From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Date: Sun, 8 Sep 2019 02:43:32 +0900
+Subject: [PATCH] ASoC: rockchip: ignore 0Hz sysclk
 
-Don't populate the array pd on the stack but instead make it
-static const. Makes the object code smaller by 100 bytes.
+This patch ignores sysclk setting if it is 0Hz.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  51463	  13016	    128	  64607	   fc5f	sound/soc/codecs/rt1011.o
+Some codecs treat 0Hz sysclk as signal of applying no constraints.
+This driver does not have such feature but current implementation
+outputs 'Failed to set mclk' error message if machine driver sets
+0Hz sysclk to this driver.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  51299	  13080	    128	  64507	   fbfb	sound/soc/codecs/rt1011.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190907073717.21632-1-colin.king@canonical.com
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Link: https://lore.kernel.org/r/20190907174332.19586-1-katsuhiro@katsuster.net
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt1011.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/rockchip/rockchip_i2s.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/codecs/rt1011.c b/sound/soc/codecs/rt1011.c
-index fa34565a3938..a92a0bacd812 100644
---- a/sound/soc/codecs/rt1011.c
-+++ b/sound/soc/codecs/rt1011.c
-@@ -1519,7 +1519,8 @@ static const struct snd_soc_dapm_route rt1011_dapm_routes[] = {
+diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
+index 88ebaf6e1880..af2d5a6124c8 100644
+--- a/sound/soc/rockchip/rockchip_i2s.c
++++ b/sound/soc/rockchip/rockchip_i2s.c
+@@ -419,6 +419,9 @@ static int rockchip_i2s_set_sysclk(struct snd_soc_dai *cpu_dai, int clk_id,
+ 	struct rk_i2s_dev *i2s = to_info(cpu_dai);
+ 	int ret;
  
- static int rt1011_get_clk_info(int sclk, int rate)
- {
--	int i, pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
-+	int i;
-+	static const int pd[] = {1, 2, 3, 4, 6, 8, 12, 16};
- 
- 	if (sclk <= 0 || rate <= 0)
- 		return -EINVAL;
++	if (freq == 0)
++		return 0;
++
+ 	ret = clk_set_rate(i2s->mclk, freq);
+ 	if (ret)
+ 		dev_err(i2s->dev, "Fail to set mclk %d\n", ret);
 -- 
 2.20.1
 
