@@ -2,70 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E17FADB7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:50:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 148A2ADB88
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732281AbfIIOua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 10:50:30 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36335 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfIIOua (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 10:50:30 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y22so9323364pfr.3;
-        Mon, 09 Sep 2019 07:50:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=c6vg0xyrV5io4e6dwW3Gj3nqy/OfmxiGQBslfR4XQAI=;
-        b=P3ttrEWQ1NUjbe9T2KyhQlGrp0uCYvhjgRtYPCgAPeq1ei8pw0Epda9rY38MJ1OLog
-         rWUEGTxOKnEjILjXQojBsmaX6wbnEGQMcfdwp2KAKZG5F/2Na9P22QOzEUwvwShk1vXw
-         tmCkDu2f5YSSp1mOtXbfMXbKRYQZrZDBVs0UR4oh1o7D5u7CTl2YWsRCStph26n+evCz
-         XSYEnj7oeEH1xWD7rpfug40FXkYEZ46ZFXMPwUj/wDGRa9dj3QKYvNjGGVdHo+DMeNUT
-         3gVOEbLCVzdPphOtBKTh3Ggh9aMft0hp0dfQbulE8Sbc71Ob6+Ix+fBTkIKK6FCDuNEz
-         TX7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c6vg0xyrV5io4e6dwW3Gj3nqy/OfmxiGQBslfR4XQAI=;
-        b=i/mNa9CRxB0Qqdyak471DY3f2QwYQiavnckPhqP8LTzbLtZG05WwvJ0ZkmtNSan9rl
-         Vgtj5Jw+pljzg9NysU3hypaqF4agqf1sr0SDhpsdNhpkrpyk+aGuB5wIlDqD8qiPKkvc
-         wz+lh5VSuikQed0JybWAdGDOw2wYTFQmavI0wmzuZWviRDwXCNbTA4BB3Ze+xWGFin8y
-         J58JO4KTkRAIlzydH37MuPGgbeAEj7LL+UEutjN5kXXHJgr09/F6o8wniwaF/NB+sHap
-         pkn/z7uml0jQeLOcCG+Hs3J0kbkic7CUUmnHyO6QxrIoL0FEHlhBiLuiTvYB7iuiBirt
-         SNZQ==
-X-Gm-Message-State: APjAAAUB9/Qw0B3EPGelInB0Yq00VuI8pIS2eZnnMWuGAJ5OwurXgAWS
-        gGidqmfpmEgrlHwA9rPLPkc=
-X-Google-Smtp-Source: APXvYqxWp+Q2iWXBsQYbnjuOJdO6kGWWZzA2jCbKktLRjTQmwyXNUe8qwtYbs3lWwULNG3rs0yXQ8g==
-X-Received: by 2002:a65:5188:: with SMTP id h8mr22004182pgq.294.1568040629438;
-        Mon, 09 Sep 2019 07:50:29 -0700 (PDT)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.34])
-        by smtp.gmail.com with ESMTPSA id w21sm13854496pjh.19.2019.09.09.07.50.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Sep 2019 07:50:28 -0700 (PDT)
-Date:   Mon, 9 Sep 2019 20:20:22 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 00/40] 4.14.143-stable review
-Message-ID: <20190909145022.GC4050@bharath12345-Inspiron-5559>
-References: <20190908121114.260662089@linuxfoundation.org>
+        id S1727955AbfIIOy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 10:54:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38570 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbfIIOy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 10:54:27 -0400
+Received: from oasis.local.home (unknown [148.69.85.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAF2C206CD;
+        Mon,  9 Sep 2019 14:54:25 +0000 (UTC)
+Date:   Mon, 9 Sep 2019 10:54:24 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ftrace: simplify ftrace hash lookup code
+Message-ID: <20190909105424.6769b552@oasis.local.home>
+In-Reply-To: <20190909003159.10574-1-changbin.du@gmail.com>
+References: <20190909003159.10574-1-changbin.du@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190908121114.260662089@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Built and booted on my x86 machine. NO dmesg regressions found.
+On Mon,  9 Sep 2019 08:31:59 +0800
+Changbin Du <changbin.du@gmail.com> wrote:
 
-Thank you
-Bharath
+> Function ftrace_lookup_ip() will check empty hash table. So we don't
+> need extra check outside.
+> 
+> Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> 
+> ---
+> v2: fix incorrect code remove.
+> ---
+>  kernel/trace/ftrace.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index f9821a3374e9..92aab854d3b1 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -1463,8 +1463,7 @@ static bool hash_contains_ip(unsigned long ip,
+>  	 */
+>  	return (ftrace_hash_empty(hash->filter_hash) ||
+>  		__ftrace_lookup_ip(hash->filter_hash, ip)) &&
+> -		(ftrace_hash_empty(hash->notrace_hash) ||
+> -		 !__ftrace_lookup_ip(hash->notrace_hash, ip));
+> +	       !ftrace_lookup_ip(hash->notrace_hash, ip);
+
+I don't care for this part. I've nacked this change in the past. Why?
+let's compare the changes:
+
+	return (ftrace_hash_empty(hash->filter_hash) ||
+		__ftrace_lookup_ip(hash->filter_hash, ip)) &&
+		(ftrace_hash_empty(hash->notrace_hash) ||
+		 !__ftrace_lookup_ip(hash->notrace_hash, ip));
+
+ vs:
+
+	return (ftrace_hash_empty(hash->filter_hash) ||
+		__ftrace_lookup_ip(hash->filter_hash, ip)) &&
+		!ftrace_lookup_ip(hash->notrace_hash, ip);
+
+The issue I have with this is that it abstracts out the difference
+between the filter_hash and the notrace_hash. Sometimes open coded
+works better if it is compared to something that is similar.
+
+The current code I see:
+
+	Return true if (filter_hash is empty or ip exists in filter_hash
+		 and notrace_hash is empty or it does not exist in notrace_hash
+
+With your update I see:
+
+	Return true if filter_hash is empty or ip exists in filter_hash
+                and ip does not exist in notrace_hash
+
+It makes it not easy to see if what happens if notrace_hash is empty
+
+Hmm, come to think of it, perhaps we should change ftrace_lookup_ip()
+to include what to do on empty.
+
+Maybe:
+
+bool ftrace_lookup_ip(struct ftrace_hash *hash, unsigned long ip, bool empty_result)
+{
+	if (ftrace_hash_empty(hash))
+		return empty_result;
+
+	return __ftrace_lookup_ip(hash, ip);
+}
+
+Then we can change the above to:
+
+	return ftrace_lookup_ip(hash->filter_hash, ip, true) &&
+	       !ftrace_lookup_ip(hash->notrace_hash, ip, false);
+
+That would probably work better.
+
+Want to send that update?
+
+-- Steve
+
+
+>  }
+>  
+>  /*
+> @@ -6036,11 +6035,7 @@ clear_func_from_hash(struct ftrace_init_func
+> *func, struct ftrace_hash *hash) {
+>  	struct ftrace_func_entry *entry;
+>  
+> -	if (ftrace_hash_empty(hash))
+> -		return;
+> -
+> -	entry = __ftrace_lookup_ip(hash, func->ip);
+> -
+> +	entry = ftrace_lookup_ip(hash, func->ip);
+>  	/*
+>  	 * Do not allow this rec to match again.
+>  	 * Yeah, it may waste some memory, but will be removed
+
