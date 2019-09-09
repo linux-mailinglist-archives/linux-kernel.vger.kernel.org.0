@@ -2,73 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B384AD4AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:19:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F40AAAD4B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389191AbfIIITi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 04:19:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55476 "EHLO mail.kernel.org"
+        id S2389222AbfIIIVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 04:21:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726928AbfIIITh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 04:19:37 -0400
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1726217AbfIIIVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 04:21:17 -0400
+Received: from localhost (unknown [148.69.85.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13E0920678;
-        Mon,  9 Sep 2019 08:19:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BFE420678;
+        Mon,  9 Sep 2019 08:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568017177;
-        bh=Mpvur8qXCAfHMVIkSt2wICPWYL86B+HBB+4HLiCewek=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=KpzuiJlGsoWanuGSVCqfCjO3vIipkZZTvOENlVFQ8n6E3JGXLj5TJWkfCDUAYUM92
-         2zL4QfzE0r5wgjooSyLdsv+c/LWYuV3cdtH/cuztjA5jcEIO1OsKX9RDpUDj1NdTJt
-         8l2o+L3MHEJ9wpQravNQDag118dTctlOt7Y/z+0M=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1568017275;
+        bh=04tmiWC6pvuodyi7GIh/mM1etgygk5jMugzj+0z2AUw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uA72GW68ebXqnwaS0Zkre5YvbMxZSsV0oYPHoD13acAY46RQ1SmY4VYC4J7+Y7Wru
+         3TuV64oLlfeFuNa1TpH376Zdur1bv+2UegwVXwlTFWL+nKuNckBvVFI+c2XXqXvhhb
+         VBw26vUxVec8wG96c6jquoWJ9MyaQ5o1blEWGHHo=
+Date:   Mon, 9 Sep 2019 09:21:12 +0100
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>,
+        g@jaegeuk-macbookpro.roam.corp.google.com
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: avoid infinite GC loop due to stale
+ atomic files
+Message-ID: <20190909082112.GA25724@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190909012532.20454-1-jaegeuk@kernel.org>
+ <20190909012532.20454-2-jaegeuk@kernel.org>
+ <f446ff29-38a5-61fd-4056-b4067b01c630@huawei.com>
+ <20190909073011.GA21625@jaegeuk-macbookpro.roam.corp.google.com>
+ <5a473076-14b8-768a-62ac-f686e850d5a6@huawei.com>
+ <20190909080108.GC21625@jaegeuk-macbookpro.roam.corp.google.com>
+ <bf0683d9-ac05-1edc-71ea-3d02f7b2fb55@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190906232346.8435-1-jorge.ramirez-ortiz@linaro.org>
-References: <20190906232346.8435-1-jorge.ramirez-ortiz@linaro.org>
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     agross@kernel.org, jorge.ramirez-ortiz@linaro.org,
-        mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: qcom: fix QCS404 TuringCC regmap
-User-Agent: alot/0.8.1
-Date:   Mon, 09 Sep 2019 01:19:36 -0700
-Message-Id: <20190909081937.13E0920678@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf0683d9-ac05-1edc-71ea-3d02f7b2fb55@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jorge Ramirez-Ortiz (2019-09-06 16:23:46)
-> The max register is 0x23004 as per the manual (the current
-> max_register that this commit is fixing is actually out of bounds).
->=20
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> ---
+On 09/09, Chao Yu wrote:
+> On 2019/9/9 16:01, Jaegeuk Kim wrote:
+> > On 09/09, Chao Yu wrote:
+> >> On 2019/9/9 15:30, Jaegeuk Kim wrote:
+> >>> On 09/09, Chao Yu wrote:
+> >>>> On 2019/9/9 9:25, Jaegeuk Kim wrote:
+> >>>>> If committing atomic pages is failed when doing f2fs_do_sync_file(), we can
+> >>>>> get commited pages but atomic_file being still set like:
+> >>>>>
+> >>>>> - inmem:    0, atomic IO:    4 (Max.   10), volatile IO:    0 (Max.    0)
+> >>>>>
+> >>>>> If GC selects this block, we can get an infinite loop like this:
+> >>>>>
+> >>>>> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
+> >>>>> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
+> >>>>> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
+> >>>>> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
+> >>>>> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
+> >>>>> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
+> >>>>> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
+> >>>>> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
+> >>>>>
+> >>>>> In that moment, we can observe:
+> >>>>>
+> >>>>> [Before]
+> >>>>> Try to move 5084219 blocks (BG: 384508)
+> >>>>>   - data blocks : 4962373 (274483)
+> >>>>>   - node blocks : 121846 (110025)
+> >>>>> Skipped : atomic write 4534686 (10)
+> >>>>>
+> >>>>> [After]
+> >>>>> Try to move 5088973 blocks (BG: 384508)
+> >>>>>   - data blocks : 4967127 (274483)
+> >>>>>   - node blocks : 121846 (110025)
+> >>>>> Skipped : atomic write 4539440 (10)
+> >>>>>
+> >>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>> ---
+> >>>>>  fs/f2fs/file.c | 10 +++++-----
+> >>>>>  1 file changed, 5 insertions(+), 5 deletions(-)
+> >>>>>
+> >>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >>>>> index 7ae2f3bd8c2f..68b6da734e5f 100644
+> >>>>> --- a/fs/f2fs/file.c
+> >>>>> +++ b/fs/f2fs/file.c
+> >>>>> @@ -1997,11 +1997,11 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >>>>>  			goto err_out;
+> >>>>>  
+> >>>>>  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+> >>>>> -		if (!ret) {
+> >>>>> -			clear_inode_flag(inode, FI_ATOMIC_FILE);
+> >>>>> -			F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
+> >>>>> -			stat_dec_atomic_write(inode);
+> >>>>> -		}
+> >>>>> +
+> >>>>> +		/* doesn't need to check error */
+> >>>>> +		clear_inode_flag(inode, FI_ATOMIC_FILE);
+> >>>>> +		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
+> >>>>> +		stat_dec_atomic_write(inode);
+> >>>>
+> >>>> If there are still valid atomic write pages linked in .inmem_pages, it may cause
+> >>>> memory leak when we just clear FI_ATOMIC_FILE flag.
+> >>>
+> >>> f2fs_commit_inmem_pages() should have flushed them.
+> >>
+> >> Oh, we failed to flush its nodes.
+> >>
+> >> However we won't clear such info if we failed to flush inmen pages, it looks
+> >> inconsistent.
+> >>
+> >> Any interface needed to drop inmem pages or clear ATOMIC_FILE flag in that two
+> >> error path? I'm not very clear how sqlite handle such error.
+> > 
+> > f2fs_drop_inmem_pages() did that, but not in this case.
+> 
+> What I mean is, for any error returned from atomic_commit() interface, should
+> userspace application handle it with consistent way, like trigger
+> f2fs_drop_inmem_pages(), so we don't need to handle it inside atomic_commit().
 
-Fixes tag?
+f2fs_ioc_abort_volatile_write() will be triggered.
 
->  drivers/clk/qcom/turingcc-qcs404.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turing=
-cc-qcs404.c
-> index aa859e6ec9bd..4cfbbf5bf4d9 100644
-> --- a/drivers/clk/qcom/turingcc-qcs404.c
-> +++ b/drivers/clk/qcom/turingcc-qcs404.c
-> @@ -96,7 +96,7 @@ static const struct regmap_config turingcc_regmap_confi=
-g =3D {
->         .reg_bits       =3D 32,
->         .reg_stride     =3D 4,
->         .val_bits       =3D 32,
-> -       .max_register   =3D 0x30000,
-> +       .max_register   =3D 0x23004,
->         .fast_io        =3D true,
->  };
-> =20
-> --=20
-> 2.23.0
->=20
+> 
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>>
+> >>>> So my question is why below logic didn't handle such condition well?
+> >>>>
+> >>>> f2fs_gc()
+> >>>>
+> >>>> 	if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> >>>> 		if (skipped_round <= MAX_SKIP_GC_COUNT ||
+> >>>> 					skipped_round * 2 < round) {
+> >>>> 			segno = NULL_SEGNO;
+> >>>> 			goto gc_more;
+> >>>> 		}
+> >>>>
+> >>>> 		if (first_skipped < last_skipped &&
+> >>>> 				(last_skipped - first_skipped) >
+> >>>> 						sbi->skipped_gc_rwsem) {
+> >>>> 			f2fs_drop_inmem_pages_all(sbi, true);
+> >>>
+> >>> This is doing nothing, since f2fs_commit_inmem_pages() removed the inode
+> >>> from inmem list.
+> >>>
+> >>>> 			segno = NULL_SEGNO;
+> >>>> 			goto gc_more;
+> >>>> 		}
+> >>>> 		if (gc_type == FG_GC && !is_sbi_flag_set(sbi, SBI_CP_DISABLED))
+> >>>> 			ret = f2fs_write_checkpoint(sbi, &cpc);
+> >>>> 	}
+> >>>>
+> >>>>>  	} else {
+> >>>>>  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
+> >>>>>  	}
+> >>>>>
+> >>> .
+> >>>
+> > .
+> > 
