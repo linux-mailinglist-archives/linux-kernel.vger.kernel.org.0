@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C6B3AD656
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2383AAD662
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:08:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390131AbfIIKHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:07:24 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55984 "EHLO
+        id S2390245AbfIIKH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:07:28 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56084 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728701AbfIIKHX (ORCPT
+        with ESMTP id S2390173AbfIIKH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:07:23 -0400
+        Mon, 9 Sep 2019 06:07:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=h7CwsGin/gAKd5MlPcygrl7rvGBDxjHcGgJA8rYLCjs=; b=jHXwY0XK8Lhz
-        CgaFjd5BtuovqmeEF7YD6sb77Vvs6Fvb3fgM1h1NCG/dz2ePiox6NR/t8gZM8b+Nipd9+3KgLLGjZ
-        MCqoJROXKVe4fxvxUA9OGEWx6dq0tzCP0Cyxz/kEi1uheBtSfTfSBWcIaKa6hBI+JefzGjHEme07L
-        Of120=;
+        List-Archive; bh=7tQBabzGFNgFSknyRXUtCVROlUph9aJGvnMwb+EnPnQ=; b=pA8kSDy1/A6k
+        I8FOL+n00KRf7avC/6XYSNm6JEd4M9cG/aul4uSgmNC+jXx5lBWMC/tioDVjCPLn9IeYGKPJ+ChCw
+        R1TYm1K4hVM6uGDlk7K83tbuzrz5xLkfKJw+tBpnovkeGBTWOOMo4pY2DlQcxh2o7fsqgd0kPpgKL
+        +QS4s=;
 Received: from [148.69.85.38] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1i7GZp-0001rk-Ne; Mon, 09 Sep 2019 10:07:17 +0000
+        id 1i7GZq-0001sD-1Q; Mon, 09 Sep 2019 10:07:18 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 1BBC2D02D74; Mon,  9 Sep 2019 11:07:17 +0100 (BST)
+        id 6A853D02D59; Mon,  9 Sep 2019 11:07:17 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Cc:     alsa-devel@alsa-project.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+Cc:     alsa-devel@alsa-project.org, Daniel Drake <drake@endlessm.com>,
+        David Yang <yangxiaohua@everest-semi.com>,
+        Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "SoC: simple-card-utils: set 0Hz to sysclk when shutdown" to the asoc tree
-In-Reply-To: <20190907174501.19833-1-katsuhiro@katsuster.net>
+Subject: Applied "ASoC: es8316: fix redundant codes of clock" to the asoc tree
+In-Reply-To: <20190907163653.9382-1-katsuhiro@katsuster.net>
 X-Patchwork-Hint: ignore
-Message-Id: <20190909100717.1BBC2D02D74@fitzroy.sirena.org.uk>
+Message-Id: <20190909100717.6A853D02D59@fitzroy.sirena.org.uk>
 Date:   Mon,  9 Sep 2019 11:07:17 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   SoC: simple-card-utils: set 0Hz to sysclk when shutdown
+   ASoC: es8316: fix redundant codes of clock
 
 has been applied to the asoc tree at
 
@@ -71,68 +72,96 @@ to this mail.
 Thanks,
 Mark
 
-From 2458adb8f92ad4d07ef7ab27c5bafa1d3f4678d6 Mon Sep 17 00:00:00 2001
+From 0db0c62c88b84b135bbaf784499a08e536354a43 Mon Sep 17 00:00:00 2001
 From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Date: Sun, 8 Sep 2019 02:45:01 +0900
-Subject: [PATCH] SoC: simple-card-utils: set 0Hz to sysclk when shutdown
+Date: Sun, 8 Sep 2019 01:36:52 +0900
+Subject: [PATCH] ASoC: es8316: fix redundant codes of clock
 
-This patch set 0Hz to sysclk when shutdown the card.
-
-Some codecs set rate constraints that derives from sysclk. This
-mechanism works correctly if machine drivers give fixed frequency.
-
-But simple-audio and audio-graph card set variable clock rate if
-'mclk-fs' property exists. In this case, rate constraints will go
-bad scenario. For example a codec accepts three limited rates
-(mclk / 256, mclk / 384, mclk / 512).
-
-Bad scenario as follows (mclk-fs = 256):
-   - Initialize sysclk by correct value (Ex. 12.288MHz)
-     - Codec set constraints of PCM rate by sysclk
-       48kHz (1/256), 32kHz (1/384), 24kHz (1/512)
-   - Play 48kHz sound, it's acceptable
-   - Sysclk is not changed
-
-   - Play 32kHz sound, it's acceptable
-   - Set sysclk to 8.192MHz (= fs * mclk-fs = 32k * 256)
-     - Codec set constraints of PCM rate by sysclk
-       32kHz (1/256), 21.33kHz (1/384), 16kHz (1/512)
-
-   - Play 48kHz again, but it's NOT acceptable because constraints
-     do not allow 48kHz
-
-So codecs treat 0Hz sysclk as signal of applying no constraints to
-avoid this problem.
+This patch removes redundant null checks for optional MCLK clock.
+And fix DT binding document for changing clock property to optional
+from required.
 
 Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Link: https://lore.kernel.org/r/20190907174501.19833-1-katsuhiro@katsuster.net
+Link: https://lore.kernel.org/r/20190907163653.9382-1-katsuhiro@katsuster.net
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/simple-card-utils.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../bindings/sound/everest,es8316.txt         |  3 ++
+ sound/soc/codecs/es8316.c                     | 31 ++++++++-----------
+ 2 files changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 556b1a789629..9b794775df53 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -213,10 +213,17 @@ EXPORT_SYMBOL_GPL(asoc_simple_startup);
- void asoc_simple_shutdown(struct snd_pcm_substream *substream)
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
- 	struct asoc_simple_priv *priv = snd_soc_card_get_drvdata(rtd->card);
- 	struct simple_dai_props *dai_props =
- 		simple_priv_to_props(priv, rtd->num);
+diff --git a/Documentation/devicetree/bindings/sound/everest,es8316.txt b/Documentation/devicetree/bindings/sound/everest,es8316.txt
+index aefcff9c48a2..1bf03c5f2af4 100644
+--- a/Documentation/devicetree/bindings/sound/everest,es8316.txt
++++ b/Documentation/devicetree/bindings/sound/everest,es8316.txt
+@@ -6,6 +6,9 @@ Required properties:
  
-+	if (dai_props->mclk_fs) {
-+		snd_soc_dai_set_sysclk(codec_dai, 0, 0, SND_SOC_CLOCK_IN);
-+		snd_soc_dai_set_sysclk(cpu_dai, 0, 0, SND_SOC_CLOCK_OUT);
-+	}
+   - compatible  : should be "everest,es8316"
+   - reg : the I2C address of the device for I2C
 +
- 	asoc_simple_clk_disable(dai_props->cpu_dai);
++Optional properties:
++
+   - clocks : a list of phandle, should contain entries for clock-names
+   - clock-names : should include as follows:
+          "mclk" : master clock (MCLK) of the device
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index 6248b01ca049..e9fa4981ccef 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -370,11 +370,9 @@ static int es8316_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 	if (freq == 0)
+ 		return 0;
  
- 	asoc_simple_clk_disable(dai_props->codec_dai);
+-	if (es8316->mclk) {
+-		ret = clk_set_rate(es8316->mclk, freq);
+-		if (ret)
+-			return ret;
+-	}
++	ret = clk_set_rate(es8316->mclk, freq);
++	if (ret)
++		return ret;
+ 
+ 	/* Limit supported sample rates to ones that can be autodetected
+ 	 * by the codec running in slave mode.
+@@ -709,20 +707,18 @@ static int es8316_probe(struct snd_soc_component *component)
+ 
+ 	es8316->component = component;
+ 
+-	es8316->mclk = devm_clk_get(component->dev, "mclk");
+-	if (PTR_ERR(es8316->mclk) == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	es8316->mclk = devm_clk_get_optional(component->dev, "mclk");
+ 	if (IS_ERR(es8316->mclk)) {
+-		dev_err(component->dev, "clock is invalid, ignored\n");
+-		es8316->mclk = NULL;
++		dev_err(component->dev, "unable to get mclk\n");
++		return PTR_ERR(es8316->mclk);
+ 	}
++	if (!es8316->mclk)
++		dev_warn(component->dev, "assuming static mclk\n");
+ 
+-	if (es8316->mclk) {
+-		ret = clk_prepare_enable(es8316->mclk);
+-		if (ret) {
+-			dev_err(component->dev, "unable to enable clock\n");
+-			return ret;
+-		}
++	ret = clk_prepare_enable(es8316->mclk);
++	if (ret) {
++		dev_err(component->dev, "unable to enable mclk\n");
++		return ret;
+ 	}
+ 
+ 	/* Reset codec and enable current state machine */
+@@ -751,8 +747,7 @@ static void es8316_remove(struct snd_soc_component *component)
+ {
+ 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
+ 
+-	if (es8316->mclk)
+-		clk_disable_unprepare(es8316->mclk);
++	clk_disable_unprepare(es8316->mclk);
+ }
+ 
+ static const struct snd_soc_component_driver soc_component_dev_es8316 = {
 -- 
 2.20.1
 
