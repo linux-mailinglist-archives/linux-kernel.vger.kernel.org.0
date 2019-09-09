@@ -2,119 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F213AAE108
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 00:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B160AE10A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 00:30:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729491AbfIIW30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 18:29:26 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:39167 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728684AbfIIW30 (ORCPT
+        id S1729625AbfIIWap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 18:30:45 -0400
+Received: from smtprelay0138.hostedemail.com ([216.40.44.138]:33530 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726197AbfIIWap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 18:29:26 -0400
-Received: by mail-ua1-f65.google.com with SMTP id s15so4893589uaq.6
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 15:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aw3KitC+gZjAstmoI82CIHR5PcpwjoN5I9nINWW5tjg=;
-        b=OE6c/504gfqx+xO3l8yQTRuLIaUfZpmyT5bd/Y4/MMENKMVNlHOdbj6o9KvDbA9NVH
-         IqSAw9xiB9jJ4LFy9nu/lRldThsV0HIziCBBq7vEwYVQ2k5Q82MS++D4zwXZ427rZHKZ
-         NyE2Ab3zEfzf8I93dA9spyKWXxkdT25yuALaY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aw3KitC+gZjAstmoI82CIHR5PcpwjoN5I9nINWW5tjg=;
-        b=swQLKQYbuzpceK0fIYs1C5V6ITnXm3gV8bgiu3/kQsNhvAhi2sdJm2rl5CKE+toi96
-         ttTASdwiBt+c3XKTdaTRaZDHi23Vqg0lgXEE5O2y0NSmCiUTMsSZVSnfmkCnk0scztKj
-         I9CTFZAXEdecwYbjmURIhDtMWdyVVWnatZn6C++8NYrHsl5/VGsbZFjUr+/Wfth5YVqv
-         GsZcYyM4mu81P4C9KsmLHkc4IHXh0t9+Cp8iT8KBXu4WTvlVgJmLJFF7LbrHIFCWT0ec
-         LrnZagxFuNUhTLoaMmVIQq36sGOIbK3LYBF6/tXXxdV4QiF71CEmNKLInefjIbz2XhUx
-         3sfQ==
-X-Gm-Message-State: APjAAAU/m8xBgGzn6ISdVqHSNNI5pSmOsUs7OjY/d5kkJUjY90XYQuk7
-        cIYQJmkQUW06MYbRTtWMWsHrJGn0ORU=
-X-Google-Smtp-Source: APXvYqwQLHAA82z66sQcjBNasYAdqGo732ibsqnIXT5XQTkcEs7gvzEzstfex9+/uV3N8Rnk8vJr0Q==
-X-Received: by 2002:a9f:24c4:: with SMTP id 62mr5992943uar.104.1568068163636;
-        Mon, 09 Sep 2019 15:29:23 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id t6sm4546630vkf.41.2019.09.09.15.29.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2019 15:29:22 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id g11so9549909vsr.8
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 15:29:22 -0700 (PDT)
-X-Received: by 2002:a67:2b86:: with SMTP id r128mr278682vsr.119.1568068161962;
- Mon, 09 Sep 2019 15:29:21 -0700 (PDT)
+        Mon, 9 Sep 2019 18:30:45 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 93C21180A6325;
+        Mon,  9 Sep 2019 22:30:43 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2915:3138:3139:3140:3141:3142:3353:3622:3865:3867:3868:3872:3873:4321:5007:6119:6691:7903:8527:9040:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12296:12297:12438:12679:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14659:14721:21080:21627:30012:30054:30069:30070:30079:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:30,LUA_SUMMARY:none
+X-HE-Tag: brush24_2342836b7ea35
+X-Filterd-Recvd-Size: 2792
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  9 Sep 2019 22:30:42 +0000 (UTC)
+Message-ID: <348e946eb5e90c1af3971fd50b5678668cc1a3d3.camel@perches.com>
+Subject: Re: [PATCH] Staging: gasket: Use temporaries to reduce line length.
+From:   Joe Perches <joe@perches.com>
+To:     Sandro Volery <sandro@volery.com>, rspringer@google.com,
+        toddpoynor@google.com, benchan@chromium.org,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 09 Sep 2019 15:30:41 -0700
+In-Reply-To: <20190909202820.GA5060@volery>
+References: <20190909202820.GA5060@volery>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-References: <20190908101236.2802-1-ulf.hansson@linaro.org> <20190908101236.2802-4-ulf.hansson@linaro.org>
-In-Reply-To: <20190908101236.2802-4-ulf.hansson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 9 Sep 2019 15:29:10 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U=ohP9KFWrMYfdbT4WbOxGXFNMd71c7ej1G9Qrtim=7w@mail.gmail.com>
-Message-ID: <CAD=FV=U=ohP9KFWrMYfdbT4WbOxGXFNMd71c7ej1G9Qrtim=7w@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] mmc: mtk-sd: Re-store SDIO IRQs mask at system resume
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Linux MMC List <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Yong Mao <yong.mao@mediatek.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Daniel Kurtz <djkurtz@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 2019-09-09 at 22:28 +0200, Sandro Volery wrote:
+> Using temporaries for gasket_page_table entries to remove scnprintf()
+> statements and reduce line length, as suggested by Joe Perches. Thanks!
 
-On Sun, Sep 8, 2019 at 3:12 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> In cases when SDIO IRQs have been enabled, runtime suspend is prevented by
-> the driver. However, this still means msdc_runtime_suspend|resume() gets
-> called during system suspend/resume, via pm_runtime_force_suspend|resume().
->
-> This means during system suspend/resume, the register context of the mtk-sd
-> device most likely loses its register context, even in cases when SDIO IRQs
-> have been enabled.
->
-> To re-enable the SDIO IRQs during system resume, the mtk-sd driver
-> currently relies on the mmc core to re-enable the SDIO IRQs when it resumes
-> the SDIO card, but this isn't the recommended solution. Instead, it's
-> better to deal with this locally in the mtk-sd driver, so let's do that.
->
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/mmc/host/mtk-sd.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> index 6946bb040a28..ae7688098b7b 100644
-> --- a/drivers/mmc/host/mtk-sd.c
-> +++ b/drivers/mmc/host/mtk-sd.c
-> @@ -2408,6 +2408,9 @@ static void msdc_save_reg(struct msdc_host *host)
->         } else {
->                 host->save_para.pad_tune = readl(host->base + tune_reg);
->         }
-> +
-> +       if (sdio_irq_claimed(host->mmc))
-> +               __msdc_enable_sdio_irq(host, 1);
->  }
->
->  static void msdc_restore_reg(struct msdc_host *host)
+nak.  Slow down.  You broke the code.
 
-I don't personally have a Mediatek device setup to test this patch on.
-If it's super urgent I could try to track down one and try to set it
-up, but hopefully it's easier for someone else...
+Please be _way_ more careful and verify for yourself
+the code you submit _before_ you submit it.
 
-That being said, from code inspection it seems like you should be
-adding your code to msdc_restore_reg(), not to msdc_save_reg().  Am I
-confused?
+compile/test/verify, twice if necessary.
 
--Doug
+You also should have cc'd me on this patch.
+
+> diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+[]
+> @@ -524,29 +526,25 @@ static ssize_t sysfs_show(struct device *device, struct device_attribute *attr,
+>  	}
+>  
+>  	type = (enum sysfs_attribute_type)gasket_attr->data.attr_type;
+> +	gpt = gasket_dev->page_table[0];
+>  	switch (type) {
+>  	case ATTR_KERNEL_HIB_PAGE_TABLE_SIZE:
+> -		ret = scnprintf(buf, PAGE_SIZE, "%u\n",
+> -				gasket_page_table_num_entries(
+> -					gasket_dev->page_table[0]));
+> +		val = gasket_page_table_num_simple_entries(gpt);
+
+You likely duplicated this line via copy/paste.
+This should be:
+		val = gasket_page_table_num_entries(gpt);
+
+>  		break;
+>  	case ATTR_KERNEL_HIB_SIMPLE_PAGE_TABLE_SIZE:
+> -		ret = scnprintf(buf, PAGE_SIZE, "%u\n",
+> -				gasket_page_table_num_simple_entries(
+> -					gasket_dev->page_table[0]));
+> +		val = gasket_page_table_num_simple_entries(gpt);
+
+ 		break;
+>  	case ATTR_KERNEL_HIB_NUM_ACTIVE_PAGES:
+> -		ret = scnprintf(buf, PAGE_SIZE, "%u\n",
+> -				gasket_page_table_num_active_pages(
+> -					gasket_dev->page_table[0]));
+> +		val = gasket_page_table_num_active_pages(gpt);
+>  		break;
+>  	default:
+>  		dev_dbg(gasket_dev->dev, "Unknown attribute: %s\n",
+>  			attr->attr.name);
+>  		ret = 0;
+> -		break;
+> +		goto exit;
+>  	}
+> -
+> +	ret = scnprintf(buf, PAGE_SIZE, "%u\n", val);
+> +exit:
+>  	gasket_sysfs_put_attr(device, gasket_attr);
+>  	gasket_sysfs_put_device_data(device, gasket_dev);
+>  	return ret;
+
