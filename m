@@ -2,214 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF539AD6EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A6FAD708
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:40:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731475AbfIIKe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:34:56 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:58298 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730940AbfIIKew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:34:52 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 061931A0084;
-        Mon,  9 Sep 2019 12:34:51 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D7CE31A018F;
-        Mon,  9 Sep 2019 12:34:45 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 80C1A402AF;
-        Mon,  9 Sep 2019 18:34:39 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] ASoC: fsl_asrc: Fix error with S24_3LE format bitstream in i.MX8
-Date:   Mon,  9 Sep 2019 18:33:21 -0400
-Message-Id: <2b6e028ca27b8569da4ab7868d7b90ff8c3225d0.1568025083.git.shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1568025083.git.shengjiu.wang@nxp.com>
-References: <cover.1568025083.git.shengjiu.wang@nxp.com>
-In-Reply-To: <cover.1568025083.git.shengjiu.wang@nxp.com>
-References: <cover.1568025083.git.shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729627AbfIIKkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:40:32 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:44900 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbfIIKkb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 06:40:31 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1i7H5v-00043v-EB; Mon, 09 Sep 2019 04:40:27 -0600
+Received: from 110.8.30.213.rev.vodafone.pt ([213.30.8.110] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1i7H5t-00072P-An; Mon, 09 Sep 2019 04:40:27 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>
+Cc:     Philipp Wendler <ml@philippwendler.de>,
+        linux-man <linux-man@vger.kernel.org>,
+        Containers <containers@lists.linux-foundation.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jordan Ogas <jogas@lanl.gov>, werner@almesberger.net,
+        Al Viro <viro@ftp.linux.org.uk>
+References: <CAKgNAki0bR5zZr+kp_xjq+bNUky6-F+s2ep+jnR0YrjHhNMB1g@mail.gmail.com>
+        <20190805103630.tu4kytsbi5evfrhi@mikami>
+        <3a96c631-6595-b75e-f6a7-db703bf89bcf@gmail.com>
+        <da747415-4c7a-f931-6f2e-2962da63c161@philippwendler.de>
+        <CAKgNAkjS+x7aMVUiVSgCRwgi8rnukqJv=svtTARE-tt-oxQxWw@mail.gmail.com>
+Date:   Mon, 09 Sep 2019 05:40:05 -0500
+In-Reply-To: <CAKgNAkjS+x7aMVUiVSgCRwgi8rnukqJv=svtTARE-tt-oxQxWw@mail.gmail.com>
+        (Michael Kerrisk's message of "Tue, 6 Aug 2019 14:03:13 +0200")
+Message-ID: <87r24piwhm.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1i7H5t-00072P-An;;;mid=<87r24piwhm.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=213.30.8.110;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18c6MeuT4/YbjCiKID4z0Z9syV2XRq6dMM=
+X-SA-Exim-Connect-IP: 213.30.8.110
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,TVD_RCVD_IP,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02 autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4566]
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;"Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1533 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 2.8 (0.2%), b_tie_ro: 1.95 (0.1%), parse: 1.20
+        (0.1%), extract_message_metadata: 13 (0.8%), get_uri_detail_list: 2.2
+        (0.1%), tests_pri_-1000: 4.9 (0.3%), tests_pri_-950: 1.31 (0.1%),
+        tests_pri_-900: 1.08 (0.1%), tests_pri_-90: 32 (2.1%), check_bayes: 30
+        (2.0%), b_tokenize: 8 (0.5%), b_tok_get_all: 11 (0.7%), b_comp_prob:
+        2.4 (0.2%), b_tok_touch_all: 4.9 (0.3%), b_finish: 2.0 (0.1%),
+        tests_pri_0: 521 (34.0%), check_dkim_signature: 0.76 (0.0%),
+        check_dkim_adsp: 2.8 (0.2%), poll_dns_idle: 935 (61.0%), tests_pri_10:
+        3.0 (0.2%), tests_pri_500: 950 (61.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: pivot_root(".", ".") and the fchdir() dance
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is error "aplay: pcm_write:2023: write error: Input/output error"
-on i.MX8QM/i.MX8QXP platform for S24_3LE format.
+"Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com> writes:
 
-In i.MX8QM/i.MX8QXP, the DMA is EDMA, which don't support 24bit
-sample, but we didn't add any constraint, that cause issues.
+> Hello Philipp,
+>
+> On Tue, 6 Aug 2019 at 10:12, Philipp Wendler <ml@philippwendler.de> wrote:
+>>
+>> Hello Michael, hello Aleksa,
+>>
+>> Am 05.08.19 um 14:29 schrieb Michael Kerrisk (man-pages):
+>>
+>> > On 8/5/19 12:36 PM, Aleksa Sarai wrote:
+>> >> On 2019-08-01, Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
+>> >>> I'd like to add some documentation about the pivot_root(".", ".")
+>> >>> idea, but I have a doubt/question. In the lxc_pivot_root() code we
+>> >>> have these steps
+>> >>>
+>> >>>         oldroot = open("/", O_DIRECTORY | O_RDONLY | O_CLOEXEC);
+>> >>>         newroot = open(rootfs, O_DIRECTORY | O_RDONLY | O_CLOEXEC);
+>> >>>
+>> >>>         fchdir(newroot);
+>> >>>         pivot_root(".", ".");
+>> >>>
+>> >>>         fchdir(oldroot);      // ****
+>> >>>
+>> >>>         mount("", ".", "", MS_SLAVE | MS_REC, NULL);
+>> >>>         umount2(".", MNT_DETACH);
+>> >>
+>> >>>         fchdir(newroot);      // ****
+>> >>
+>> >> And this one is required because we are in @oldroot at this point, due
+>> >> to the first fchdir(2). If we don't have the first one, then switching
+>> >> from "." to "/" in the mount/umount2 calls should fix the issue.
+>> >
+>> > See my notes above for why I therefore think that the second fchdir()
+>> > is also not needed (and therefore why switching from "." to "/" in the
+>> > mount()/umount2() calls is unnecessary.
+>> >
+>> > Do you agree with my analysis?
+>>
+>> If both the second and third fchdir are not required,
+>> then we do not need to bother with file descriptors at all, right?
+>
+> Exactly.
+>
+>> Indeed, my tests show that the following seems to work fine:
+>>
+>> chdir(rootfs)
+>> pivot_root(".", ".")
+>> umount2(".", MNT_DETACH)
+>
+> Thanks for the confirmation, That's also exactly what I tested.
+>
+>> I tested that with my own tool[1] that uses user namespaces and marks
+>> everything MS_PRIVATE before, so I do not need the mount(MS_SLAVE) here.
+>>
+>> And it works the same with both umount2("/") and umount2(".").
+>
+> Yes.
+>
+>> Did I overlook something that makes the file descriptors required?
+>
+> No.
+>
+>> If not, wouldn't the above snippet make sense as example in the man page?
+>
+> I have exactly that snippet in a pending change for the manual page :-).
 
-So we need to query the caps of dma, then update the hw parameters
-according to the caps.
+I have just spotted this conversation and I expect if you are going
+to use this example it is probably good to document what is going
+on so that people can follow along.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/fsl_asrc.c     |  4 +-
- sound/soc/fsl/fsl_asrc.h     |  3 ++
- sound/soc/fsl/fsl_asrc_dma.c | 93 +++++++++++++++++++++++++++++++++---
- 3 files changed, 92 insertions(+), 8 deletions(-)
+>> chdir(rootfs)
+>> pivot_root(".", ".")
 
-diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
-index 584badf956d2..0bf91a6f54b9 100644
---- a/sound/soc/fsl/fsl_asrc.c
-+++ b/sound/soc/fsl/fsl_asrc.c
-@@ -115,7 +115,7 @@ static void fsl_asrc_sel_proc(int inrate, int outrate,
-  * within range [ANCA, ANCA+ANCB-1], depends on the channels of pair A
-  * while pair A and pair C are comparatively independent.
-  */
--static int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair)
-+int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair)
- {
- 	enum asrc_pair_index index = ASRC_INVALID_PAIR;
- 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
-@@ -158,7 +158,7 @@ static int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair)
-  *
-  * It clears the resource from asrc_priv and releases the occupied channels.
-  */
--static void fsl_asrc_release_pair(struct fsl_asrc_pair *pair)
-+void fsl_asrc_release_pair(struct fsl_asrc_pair *pair)
- {
- 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
- 	enum asrc_pair_index index = pair->index;
-diff --git a/sound/soc/fsl/fsl_asrc.h b/sound/soc/fsl/fsl_asrc.h
-index 38af485bdd22..2b57e8c53728 100644
---- a/sound/soc/fsl/fsl_asrc.h
-+++ b/sound/soc/fsl/fsl_asrc.h
-@@ -462,4 +462,7 @@ struct fsl_asrc {
- #define DRV_NAME "fsl-asrc-dai"
- extern struct snd_soc_component_driver fsl_asrc_component;
- struct dma_chan *fsl_asrc_get_dma_channel(struct fsl_asrc_pair *pair, bool dir);
-+int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair);
-+void fsl_asrc_release_pair(struct fsl_asrc_pair *pair);
-+
- #endif /* _FSL_ASRC_H */
-diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
-index 01052a0808b0..30e27917016e 100644
---- a/sound/soc/fsl/fsl_asrc_dma.c
-+++ b/sound/soc/fsl/fsl_asrc_dma.c
-@@ -16,13 +16,11 @@
- 
- #define FSL_ASRC_DMABUF_SIZE	(256 * 1024)
- 
--static const struct snd_pcm_hardware snd_imx_hardware = {
-+static struct snd_pcm_hardware snd_imx_hardware = {
- 	.info = SNDRV_PCM_INFO_INTERLEAVED |
- 		SNDRV_PCM_INFO_BLOCK_TRANSFER |
- 		SNDRV_PCM_INFO_MMAP |
--		SNDRV_PCM_INFO_MMAP_VALID |
--		SNDRV_PCM_INFO_PAUSE |
--		SNDRV_PCM_INFO_RESUME,
-+		SNDRV_PCM_INFO_MMAP_VALID,
- 	.buffer_bytes_max = FSL_ASRC_DMABUF_SIZE,
- 	.period_bytes_min = 128,
- 	.period_bytes_max = 65535, /* Limited by SDMA engine */
-@@ -276,6 +274,16 @@ static int fsl_asrc_dma_startup(struct snd_pcm_substream *substream)
- 	struct device *dev = component->dev;
- 	struct fsl_asrc *asrc_priv = dev_get_drvdata(dev);
- 	struct fsl_asrc_pair *pair;
-+	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
-+	u8 dir = tx ? OUT : IN;
-+	struct dma_slave_caps dma_caps;
-+	struct dma_chan *tmp_chan;
-+	struct snd_dmaengine_dai_dma_data *dma_data;
-+	u32 addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
-+			  BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
-+			  BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
-+	int ret;
-+	int i;
- 
- 	pair = kzalloc(sizeof(struct fsl_asrc_pair), GFP_KERNEL);
- 	if (!pair)
-@@ -285,8 +293,81 @@ static int fsl_asrc_dma_startup(struct snd_pcm_substream *substream)
- 
- 	runtime->private_data = pair;
- 
--	snd_pcm_hw_constraint_integer(substream->runtime,
--				      SNDRV_PCM_HW_PARAM_PERIODS);
-+	ret = snd_pcm_hw_constraint_integer(substream->runtime,
-+					    SNDRV_PCM_HW_PARAM_PERIODS);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to set pcm hw params periods\n");
-+		return ret;
-+	}
-+
-+	dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
-+
-+	/* Request a temp pair, which is release in the end */
-+	fsl_asrc_request_pair(1, pair);
-+
-+	tmp_chan = fsl_asrc_get_dma_channel(pair, dir);
-+	if (!tmp_chan) {
-+		dev_err(dev, "can't get dma channel\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = dma_get_slave_caps(tmp_chan, &dma_caps);
-+	if (ret == 0) {
-+		if (dma_caps.cmd_pause)
-+			snd_imx_hardware.info |= SNDRV_PCM_INFO_PAUSE |
-+						 SNDRV_PCM_INFO_RESUME;
-+		if (dma_caps.residue_granularity <=
-+			DMA_RESIDUE_GRANULARITY_SEGMENT)
-+			snd_imx_hardware.info |= SNDRV_PCM_INFO_BATCH;
-+
-+		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+			addr_widths = dma_caps.dst_addr_widths;
-+		else
-+			addr_widths = dma_caps.src_addr_widths;
-+	}
-+
-+	/*
-+	 * If SND_DMAENGINE_PCM_DAI_FLAG_PACK is set keep
-+	 * hw.formats set to 0, meaning no restrictions are in place.
-+	 * In this case it's the responsibility of the DAI driver to
-+	 * provide the supported format information.
-+	 */
-+	if (!(dma_data->flags & SND_DMAENGINE_PCM_DAI_FLAG_PACK))
-+		/*
-+		 * Prepare formats mask for valid/allowed sample types. If the
-+		 * dma does not have support for the given physical word size,
-+		 * it needs to be masked out so user space can not use the
-+		 * format which produces corrupted audio.
-+		 * In case the dma driver does not implement the slave_caps the
-+		 * default assumption is that it supports 1, 2 and 4 bytes
-+		 * widths.
-+		 */
-+		for (i = 0; i <= SNDRV_PCM_FORMAT_LAST; i++) {
-+			int bits = snd_pcm_format_physical_width(i);
-+
-+			/*
-+			 * Enable only samples with DMA supported physical
-+			 * widths
-+			 */
-+			switch (bits) {
-+			case 8:
-+			case 16:
-+			case 24:
-+			case 32:
-+			case 64:
-+				if (addr_widths & (1 << (bits / 8)))
-+					snd_imx_hardware.formats |= (1LL << i);
-+				break;
-+			default:
-+				/* Unsupported types */
-+				break;
-+			}
-+		}
-+
-+	if (tmp_chan)
-+		dma_release_channel(tmp_chan);
-+	fsl_asrc_release_pair(pair);
-+
- 	snd_soc_set_runtime_hwparams(substream, &snd_imx_hardware);
- 
- 	return 0;
--- 
-2.21.0
+At this point the mount stack should be:
+old_root
+new_root
+rootfs
 
+With "." and "/" pointing to new_root.
+
+>> umount2(".", MNT_DETACH)
+
+At this point resolving "." starts with new_root and follows up the
+mount stack to old-root.
+
+Ordinarily if you unmount "/" as is happening above you then need to
+call chroot and possibly chdir to ensure neither "/" nor "." point to
+somewhere other than the unmounted root filesystem.  In this specific
+case because "/" and "." resolve to new_root under the filesystem that is
+being unmounted that all is well.
+
+Eric
