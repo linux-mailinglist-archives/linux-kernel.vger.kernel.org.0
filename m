@@ -2,158 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7FE1ADA8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 15:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB757ADAA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:00:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405065AbfIINzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 09:55:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47126 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404953AbfIINzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 09:55:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 179FCAC8E;
-        Mon,  9 Sep 2019 13:55:37 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     "IlyaDryomov" <idryomov@gmail.com>, "Sage Weil" <sage@redhat.com>,
-        <ceph-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ceph: allow object copies across different filesystems in the same cluster
-References: <87k1ahojri.fsf@suse.com>
-        <20190909102834.16246-1-lhenriques@suse.com>
-        <3f838e42a50575595c7310386cf698aca8f89607.camel@kernel.org>
-        <30c007d0c735cd37121e3c2264c1ec3cfdcfd89f.camel@kernel.org>
-Date:   Mon, 09 Sep 2019 14:55:36 +0100
-In-Reply-To: <30c007d0c735cd37121e3c2264c1ec3cfdcfd89f.camel@kernel.org> (Jeff
-        Layton's message of "Mon, 09 Sep 2019 07:05:54 -0400")
-Message-ID: <878sqxo9pj.fsf@suse.com>
+        id S1730690AbfIIN7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 09:59:43 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:63751 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405137AbfIIN7m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 09:59:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1568037581; x=1599573581;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=K42g/AFNMDx/RgjzKJBTKWAce5pXZj/ROym93HlBV/I=;
+  b=iThLrsB7pkHCwAmSPl2JFKAjReiQpTcVs4GslPOukjdC1ZlQolkkH/xN
+   GC5nBTT2WFDl/oMVgNEcDhqOLtkewFS4ru5q5xCq4LTK4Fyve4Yb2MLO0
+   4YACa25Pz9wgmhI+zccrkrJxl6/YN1ljnX4cf8BLQr4hc876TWhkmrhuO
+   Y=;
+X-IronPort-AV: E=Sophos;i="5.64,484,1559520000"; 
+   d="scan'208";a="829304744"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 09 Sep 2019 13:59:14 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com (Postfix) with ESMTPS id 0CCB1A1E19;
+        Mon,  9 Sep 2019 13:59:12 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 9 Sep 2019 13:59:12 +0000
+Received: from [10.125.238.52] (10.43.160.27) by EX13D01EUB001.ant.amazon.com
+ (10.43.166.194) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 9 Sep
+ 2019 13:59:01 +0000
+Subject: Re: [PATCH 3/3] arm64: alpine: select AL_POS
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Patrick Venture" <venture@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Olof Johansson" <olof@lixom.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        "Santosh Shilimkar" <ssantosh@kernel.org>,
+        <paul.kocialkowski@bootlin.com>, <mjourdan@baylibre.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Will Deacon" <will@kernel.org>, DTML <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
+        <hanochu@amazon.com>, <barakw@amazon.com>
+References: <1568020220-7758-1-git-send-email-talel@amazon.com>
+ <1568020220-7758-4-git-send-email-talel@amazon.com>
+ <CAK8P3a0DEMeFWK+RuAdSLyDYduWWwj9DxP_Beipays-d_6ixnA@mail.gmail.com>
+ <ab512ced-d989-5c10-a550-2a4723d38e7e@amazon.com>
+ <CAK8P3a34eKFXoAPOfkFN5+H4kxOhRjXgws_0wy+d-186LFxcTw@mail.gmail.com>
+From:   "Shenhar, Talel" <talel@amazon.com>
+Message-ID: <0d36f94d-596f-0ec7-6951-b097b5ee0d2d@amazon.com>
+Date:   Mon, 9 Sep 2019 16:58:56 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAK8P3a34eKFXoAPOfkFN5+H4kxOhRjXgws_0wy+d-186LFxcTw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.43.160.27]
+X-ClientProxiedBy: EX13D23UWA002.ant.amazon.com (10.43.160.40) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Jeff Layton" <jlayton@kernel.org> writes:
 
-> On Mon, 2019-09-09 at 06:35 -0400, Jeff Layton wrote:
->> On Mon, 2019-09-09 at 11:28 +0100, Luis Henriques wrote:
->> > OSDs are able to perform object copies across different pools.  Thus,
->> > there's no need to prevent copy_file_range from doing remote copies if the
->> > source and destination superblocks are different.  Only return -EXDEV if
->> > they have different fsid (the cluster ID).
->> > 
->> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
->> > ---
->> >  fs/ceph/file.c | 18 ++++++++++++++----
->> >  1 file changed, 14 insertions(+), 4 deletions(-)
->> > 
->> > Hi,
->> > 
->> > Here's the patch changelog since initial submittion:
->> > 
->> > - Dropped have_fsid checks on client structs
->> > - Use %pU to print the fsid instead of raw hex strings (%*ph)
->> > - Fixed 'To:' field in email so that this time the patch hits vger
->> > 
->> > Cheers,
->> > --
->> > Luis
->> > 
->> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> > index 685a03cc4b77..4a624a1dd0bb 100644
->> > --- a/fs/ceph/file.c
->> > +++ b/fs/ceph/file.c
->> > @@ -1904,6 +1904,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->> >  	struct ceph_inode_info *src_ci = ceph_inode(src_inode);
->> >  	struct ceph_inode_info *dst_ci = ceph_inode(dst_inode);
->> >  	struct ceph_cap_flush *prealloc_cf;
->> > +	struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
->> >  	struct ceph_object_locator src_oloc, dst_oloc;
->> >  	struct ceph_object_id src_oid, dst_oid;
->> >  	loff_t endoff = 0, size;
->> > @@ -1915,8 +1916,17 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->> >  
->> >  	if (src_inode == dst_inode)
->> >  		return -EINVAL;
->> > -	if (src_inode->i_sb != dst_inode->i_sb)
->> > -		return -EXDEV;
->> > +	if (src_inode->i_sb != dst_inode->i_sb) {
->> > +		struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
->> > +
->> > +		if (ceph_fsid_compare(&src_fsc->client->fsid,
->> > +				      &dst_fsc->client->fsid)) {
->> > +			dout("Copying object across different clusters:");
->> > +			dout("  src fsid: %pU dst fsid: %pU\n",
->> > +			     &src_fsc->client->fsid, &dst_fsc->client->fsid);
->> > +			return -EXDEV;
->> > +		}
->> > +	}
->> 
->> Just to be clear: what happens here if I mount two entirely separate
->> clusters, and their OSDs don't have any access to one another? Will this
->> fail at some later point with an error that we can catch so that we can
->> fall back?
->> 
+On 9/9/2019 4:45 PM, Arnd Bergmann wrote:
+> On Mon, Sep 9, 2019 at 12:17 PM Shenhar, Talel <talel@amazon.com> wrote:
+>> On 9/9/2019 12:40 PM, Arnd Bergmann wrote:
+>>> On Mon, Sep 9, 2019 at 11:14 AM Talel Shenhar <talel@amazon.com> wrote:
+>>>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+>>>> index 4778c77..bd86b15 100644
+>>>> --- a/arch/arm64/Kconfig.platforms
+>>>> +++ b/arch/arm64/Kconfig.platforms
+>>>> @@ -25,6 +25,7 @@ config ARCH_SUNXI
+>>>>    config ARCH_ALPINE
+>>>>           bool "Annapurna Labs Alpine platform"
+>>>>           select ALPINE_MSI if PCI
+>>>> +       select AL_POS
+>>>>           help
+>>>>             This enables support for the Annapurna Labs Alpine
+>>>>             Soc family.
+>>> Generally I think this kind of thing should go into the defconfig
+>>> rather than being hard-selected. There might be users that
+>>> want to not enable the driver.
+>> The reason for selecting it is because this is a driver that we will
+>> always want for ARCH_ALPINE.
+> Can you put the exact requirement (other than "we want this")
+> in the changelog text then? It's still not clear to me what breaks
+> without this driver.
 >
-> Duh, sorry I asked before I had a cup of coffee this morning. The whole
-> point is to skip that case.
->
-> That said...I wonder if it's possible to have an fsid collision across
-> two separate clusters and this fail to catch that case? Aren't these
-> things just allocated via a simple counter increment?
+>          Arnd
 
-My understanding is that this is some sort of UUID.  Looking at
-doc/install/manual-deployment.rst it says that the fsid is a unique ID
-that should be generated using uuidgen (I believe that's what vstart.sh
-clusters use).
+Its not that something will get broken. its error event detector for POS 
+events which allows seeing bad accesses to registers.
 
-That said, it's obviously possible to reuse an fsid in two clusters.
-And mounting both filesystems with the same fsid on the same client may
-already cause some troubles without even trying to copy_file_range files
-across them (for ex., fscache code seems to assume unique fsids).  But I
-have never tested such sort of things (probably no one did) and I really
-don't know what are the consequences.  In this specific case, I would
-expect the 'copy-from' operation to fail with some error from the OSDs.
+What is the general rule of which configs to put under select and which 
+under defconfig?
 
-> Probably not worth worrying about overmuch, but might be good to
-> understand what would happen in that case if only to field mailing list
-> reports.
+I was thinking that "general" SoC support is good under select - those 
+things that we always want.
 
-If there are concerns regarding this, I'm OK simply dropping the patch
-for now and continue forbidding object copies when superblocks are
-different.  I just thought this was a low-hanging fruit, and didn't
-realized that it's not very easy to ensure that 2 cephfs instances
-actually belong to the same cluster.  Maybe there are other checks that
-could be done...?
+And specific features, e.g. RAID support or features that supported only 
+on specific HW shall go under defconfig.
 
-Cheers,
--- 
-Luis
 
-> Other than that, this looks fine, modulo Ilya's comment about the two
-> dout messages.
->
->> 
->> >  	if (ceph_snap(dst_inode) != CEPH_NOSNAP)
->> >  		return -EROFS;
->> >  
->> > @@ -1928,7 +1938,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->> >  	 * efficient).
->> >  	 */
->> >  
->> > -	if (ceph_test_mount_opt(ceph_inode_to_client(src_inode), NOCOPYFROM))
->> > +	if (ceph_test_mount_opt(src_fsc, NOCOPYFROM))
->> >  		return -EOPNOTSUPP;
->> >  
->> >  	if ((src_ci->i_layout.stripe_unit != dst_ci->i_layout.stripe_unit) ||
->> > @@ -2044,7 +2054,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->> >  				dst_ci->i_vino.ino, dst_objnum);
->> >  		/* Do an object remote copy */
->> >  		err = ceph_osdc_copy_from(
->> > -			&ceph_inode_to_client(src_inode)->client->osdc,
->> > +			&src_fsc->client->osdc,
->> >  			src_ci->i_vino.snap, 0,
->> >  			&src_oid, &src_oloc,
->> >  			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
+Similar, I see ARCH_LAYERSCAPE selecting EDAC_SUPPORT.
+
+
+Will love to hear the general rule for select vs defconfig.
+
