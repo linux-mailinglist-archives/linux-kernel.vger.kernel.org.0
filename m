@@ -2,232 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB582AD878
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:04:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB819AD871
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404714AbfIIMEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 08:04:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47997 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404215AbfIIMEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 08:04:49 -0400
-Received: from [192.168.4.140] (38.85.69.148.rev.vodafone.pt [148.69.85.38] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x89C4WbF2372926
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 9 Sep 2019 05:04:34 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x89C4WbF2372926
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019081901; t=1568030675;
-        bh=4zGD01O5GVyYuHnAx8oJOIENw6fScedLERsAFG9lv4g=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=iXi0mRPfGBdGjEvCf92gzf8wtcQmusIRPPcGAaVCcCVhKmEF3EY3XTlci87+amo3E
-         MKa9Zx8giJr4t5taw6PJs7Slpx5AXw1Q/4yz305P4bb5J8AYdwA0KzG4PJhnCTWwiX
-         UZH7V6NCiBeQ0HX9fZOHfpFl5JAGeeSBedTUXGo8+fNeXtLOth2mIykIF+QHnyXn1i
-         W3QXX2flz2UafSmLCIGTfowjvrokWQKJO/AGI/vEIS9nT8DeRd4M8Ap8HFXrXbJqrh
-         d5ZXZ1JRLDoNf+2jO1uxenNFEjZp0MMzSVnaHowM7xatU0cTkU6xCNddzgYBvMyRb4
-         3owJZDpLZqq2A==
-Date:   Mon, 09 Sep 2019 13:04:23 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190905232222.14900-1-bshanks@codeweavers.com>
-References: <20190905232222.14900-1-bshanks@codeweavers.com>
+        id S2404657AbfIIMDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 08:03:38 -0400
+Received: from mail-sh.amlogic.com ([58.32.228.43]:48752 "EHLO
+        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404215AbfIIMDi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 08:03:38 -0400
+Received: from [10.18.29.226] (10.18.29.226) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 9 Sep
+ 2019 20:04:28 +0800
+Subject: Re: [PATCH v2 4/4] arm64: dts: add support for A1 based Amlogic AD401
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Carlo Caione <carlo@caione.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Tao Zeng <tao.zeng@amlogic.com>
+References: <1567667251-33466-1-git-send-email-jianxin.pan@amlogic.com>
+ <1567667251-33466-5-git-send-email-jianxin.pan@amlogic.com>
+ <CAFBinCBSmW4y-Dz7EkJMV8HOU4k6Z0G-K6T77XnVrHyubaSsdg@mail.gmail.com>
+ <be032a85-b60d-f7f0-8404-b27784d809df@amlogic.com>
+ <CAFBinCD7gFzOsmZCB8T1KJKVsgL7WMhoEkj3dRzyqwAnjC0CNA@mail.gmail.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <a82336e2-44df-5682-1c86-daf8a8448d30@amlogic.com>
+Date:   Mon, 9 Sep 2019 20:04:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] x86/umip: Add emulation for 64-bit processes
-To:     Brendan Shanks <bshanks@codeweavers.com>,
-        linux-kernel@vger.kernel.org
-CC:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
-From:   hpa@zytor.com
-Message-ID: <7BFFC7D1-6158-4237-AEF9-D10635F054FC@zytor.com>
+In-Reply-To: <CAFBinCD7gFzOsmZCB8T1KJKVsgL7WMhoEkj3dRzyqwAnjC0CNA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.226]
+X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
+ (10.18.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On September 6, 2019 12:22:21 AM GMT+01:00, Brendan Shanks <bshanks@codewea=
-vers=2Ecom> wrote:
->Add emulation of the sgdt, sidt, and smsw instructions for 64-bit
->processes=2E
->
->Wine users have encountered a number of 64-bit Windows games that use
->these instructions (particularly sgdt), and were crashing when run on
->UMIP-enabled systems=2E
->
->Originally-by: Ricardo Neri <ricardo=2Eneri-calderon@linux=2Eintel=2Ecom>
->Signed-off-by: Brendan Shanks <bshanks@codeweavers=2Ecom>
->---
-> arch/x86/kernel/umip=2Ec | 55 +++++++++++++++++++++++++-----------------
-> 1 file changed, 33 insertions(+), 22 deletions(-)
->
->diff --git a/arch/x86/kernel/umip=2Ec b/arch/x86/kernel/umip=2Ec
->index 5b345add550f=2E=2E1812e95d2f55 100644
->--- a/arch/x86/kernel/umip=2Ec
->+++ b/arch/x86/kernel/umip=2Ec
->@@ -51,9 +51,7 @@
->* The instruction smsw is emulated to return the value that the
->register CR0
->  * has at boot time as set in the head_32=2E
->  *
->- * Also, emulation is provided only for 32-bit processes; 64-bit
->processes
->- * that attempt to use the instructions that UMIP protects will
->receive the
->- * SIGSEGV signal issued as a consequence of the general protection
->fault=2E
->+ * Emulation is provided for both 32-bit and 64-bit processes=2E
->  *
->* Care is taken to appropriately emulate the results when segmentation
->is
->* used=2E That is, rather than relying on USER_DS and USER_CS, the
->function
->@@ -63,17 +61,18 @@
->  * application uses a local descriptor table=2E
->  */
->=20
->-#define UMIP_DUMMY_GDT_BASE 0xfffe0000
->-#define UMIP_DUMMY_IDT_BASE 0xffff0000
->+#define UMIP_DUMMY_GDT_BASE 0xfffffffffffe0000ULL
->+#define UMIP_DUMMY_IDT_BASE 0xffffffffffff0000ULL
->=20
-> /*
->* The SGDT and SIDT instructions store the contents of the global
->descriptor
->* table and interrupt table registers, respectively=2E The destination is
->a
->* memory operand of X+2 bytes=2E X bytes are used to store the base
->address of
->- * the table and 2 bytes are used to store the limit=2E In 32-bit
->processes, the
->- * only processes for which emulation is provided, X has a value of 4=2E
->+ * the table and 2 bytes are used to store the limit=2E In 32-bit
->processes X
->+ * has a value of 4, in 64-bit processes X has a value of 8=2E
->  */
->-#define UMIP_GDT_IDT_BASE_SIZE 4
->+#define UMIP_GDT_IDT_BASE_SIZE_64BIT 8
->+#define UMIP_GDT_IDT_BASE_SIZE_32BIT 4
-> #define UMIP_GDT_IDT_LIMIT_SIZE 2
->=20
-> #define	UMIP_INST_SGDT	0	/* 0F 01 /0 */
->@@ -189,6 +188,7 @@ static int identify_insn(struct insn *insn)
->  * @umip_inst:	A constant indicating the instruction to emulate
->  * @data:	Buffer into which the dummy result is stored
->  * @data_size:	Size of the emulated result
->+ * @x86_64:     true if process is 64-bit, false otherwise
->  *
->* Emulate an instruction protected by UMIP and provide a dummy result=2E
->The
->* result of the emulation is saved in @data=2E The size of the results
->depends
->@@ -202,11 +202,8 @@ static int identify_insn(struct insn *insn)
->  * 0 on success, -EINVAL on error while emulating=2E
->  */
-> static int emulate_umip_insn(struct insn *insn, int umip_inst,
->-			     unsigned char *data, int *data_size)
->+			     unsigned char *data, int *data_size, bool x86_64)
-> {
->-	unsigned long dummy_base_addr, dummy_value;
->-	unsigned short dummy_limit =3D 0;
->-
-> 	if (!data || !data_size || !insn)
-> 		return -EINVAL;
-> 	/*
->@@ -219,6 +216,9 @@ static int emulate_umip_insn(struct insn *insn, int
->umip_inst,
-> 	 * is always returned irrespective of the operand size=2E
-> 	 */
-> 	if (umip_inst =3D=3D UMIP_INST_SGDT || umip_inst =3D=3D UMIP_INST_SIDT)=
- {
->+		u64 dummy_base_addr;
->+		u16 dummy_limit =3D 0;
->+
-> 		/* SGDT and SIDT do not use registers operands=2E */
-> 		if (X86_MODRM_MOD(insn->modrm=2Evalue) =3D=3D 3)
-> 			return -EINVAL;
->@@ -228,13 +228,24 @@ static int emulate_umip_insn(struct insn *insn,
->int umip_inst,
-> 		else
-> 			dummy_base_addr =3D UMIP_DUMMY_IDT_BASE;
->=20
->-		*data_size =3D UMIP_GDT_IDT_LIMIT_SIZE + UMIP_GDT_IDT_BASE_SIZE;
->+		/*
->+		 * 64-bit processes use the entire dummy base address=2E
->+		 * 32-bit processes use the lower 32 bits of the base address=2E
->+		 * dummy_base_addr is always 64 bits, but we memcpy the correct
->+		 * number of bytes from it to the destination=2E
->+		 */
->+		if (x86_64)
->+			*data_size =3D UMIP_GDT_IDT_BASE_SIZE_64BIT;
->+		else
->+			*data_size =3D UMIP_GDT_IDT_BASE_SIZE_32BIT;
->+
->+		memcpy(data + 2, &dummy_base_addr, *data_size);
->=20
->-		memcpy(data + 2, &dummy_base_addr, UMIP_GDT_IDT_BASE_SIZE);
->+		*data_size +=3D UMIP_GDT_IDT_LIMIT_SIZE;
-> 		memcpy(data, &dummy_limit, UMIP_GDT_IDT_LIMIT_SIZE);
->=20
-> 	} else if (umip_inst =3D=3D UMIP_INST_SMSW) {
->-		dummy_value =3D CR0_STATE;
->+		unsigned long dummy_value =3D CR0_STATE;
->=20
-> 		/*
-> 		 * Even though the CR0 register has 4 bytes, the number
->@@ -291,10 +302,9 @@ static void force_sig_info_umip_fault(void __user
->*addr, struct pt_regs *regs)
->  * @regs:	Registers as saved when entering the #GP handler
->  *
->* The instructions sgdt, sidt, str, smsw, sldt cause a general
->protection
->- * fault if executed with CPL > 0 (i=2Ee=2E, from user space)=2E If the
->offending
->- * user-space process is not in long mode, this function fixes the
->exception
->- * up and provides dummy results for sgdt, sidt and smsw; str and sldt
->are not
->- * fixed up=2E Also long mode user-space processes are not fixed up=2E
->+ * fault if executed with CPL > 0 (i=2Ee=2E, from user space)=2E This
->function fixes
->+ * the exception up and provides dummy results for sgdt, sidt and
->smsw; str
->+ * and sldt are not fixed up=2E
->  *
->* If operands are memory addresses, results are copied to user-space
->memory as
->* indicated by the instruction pointed by eIP using the registers
->indicated in
->@@ -373,13 +383,14 @@ bool fixup_umip_exception(struct pt_regs *regs)
->	umip_pr_warning(regs, "%s instruction cannot be used by
->applications=2E\n",
-> 			umip_insns[umip_inst]);
->=20
->-	/* Do not emulate SLDT, STR or user long mode processes=2E */
->-	if (umip_inst =3D=3D UMIP_INST_STR || umip_inst =3D=3D UMIP_INST_SLDT |=
-|
->user_64bit_mode(regs))
->+	/* Do not emulate SLDT or STR=2E */
->+	if (umip_inst =3D=3D UMIP_INST_STR || umip_inst =3D=3D UMIP_INST_SLDT)
-> 		return false;
->=20
->	umip_pr_warning(regs, "For now, expensive software emulation returns
->the result=2E\n");
->=20
->-	if (emulate_umip_insn(&insn, umip_inst, dummy_data,
->&dummy_data_size))
->+	if (emulate_umip_insn(&insn, umip_inst, dummy_data, &dummy_data_size,
->+			      user_64bit_mode(regs)))
-> 		return false;
->=20
-> 	/*
+Hi Martin,
 
-I would strongly suggest that we change the term "emulation" to "spoofing"=
- for these instructions=2E We need to explain that we do *not* execute thes=
-e instructions the was the CPU would have, and unlike the native instructio=
-ns do not leak kernel information=2E
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+On 2019/9/7 23:02, Martin Blumenstingl wrote:
+> Hi Jianxin,
+> 
+> On Fri, Sep 6, 2019 at 7:58 AM Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+> [...]
+>>> also I'm a bit surprised to see no busses (like aobus, cbus, periphs, ...) here
+>>> aren't there any busses defined in the A1 SoC implementation or are
+>>> were you planning to add them later?
+>> Unlike previous series,there is no Cortex-M3 AO CPU in A1, and there is no AO/EE power domain.
+>> Most of the registers are on the apb_32b bus.  aobus, cbus and periphs are not used in A1.
+> OK, thank you for the explanation
+> since you're going to re-send the patch anyways: can you please
+> include the apb_32b bus?
+> all other upstream Amlogic .dts are using the bus definitions, so that
+> will make A1 consistent with the other SoCs
+In A1 (and the later C1), BUS is not mentioned in the memmap and register spec.
+Registers are organized and grouped by functions, and we can not find information about buses from the SoC document.
+Maybe it's better to remove bus definitions for these chips.
+> 
+> 
+> Martin
+> 
+> .
+> 
+
