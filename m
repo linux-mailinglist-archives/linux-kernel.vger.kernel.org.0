@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18413AD488
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC863AD4A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388935AbfIIIQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 04:16:10 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36234 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388905AbfIIIQH (ORCPT
+        id S2389169AbfIIIQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 04:16:46 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33241 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388894AbfIIIQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 04:16:07 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y22so8686635pfr.3;
-        Mon, 09 Sep 2019 01:16:06 -0700 (PDT)
+        Mon, 9 Sep 2019 04:16:09 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n190so7396125pgn.0;
+        Mon, 09 Sep 2019 01:16:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ygERPEYDl5khdxtFV71ZgBn42XfY3vLVBUhlCDUWTi8=;
-        b=IB0+oaHAnB2IEqov32d4DaABRray/YsR+DTNfwBp3QyqA9tttJgXZX2rrHHI4x74zr
-         UABS7aQN8+/CvZ4Hb5KIIeP0X3J55u82Ea3r0C1QRurXtS55ldXJ0ZMO/r3B24X8V+yz
-         A8X8znO1tUCGFyqdQIwDizl9v26KNx+joIr03lLuT8L15RyOnlrAOmCOq8sF5WzTCYu3
-         3gjR7q7dTbM1Yq2rRxoeiN/n2MQlqVgc9LcYitcejyjJqVXWtunJUmdWc1DniJuCTGvX
-         TYPpJroc5fjJFqtY5mfNm6vbW2yK+VA1q6iP7zXlX5AV6FW5IQEZQCN6e+KC2EdgO5mz
-         5KAQ==
+        bh=KsgRNFOCDuIZ11czAPgOqHyEf7Ffyioe5wChnknAWcs=;
+        b=CPwFmX/k6223gC6lxq0CVIqaai8IZGQVXc+n5Pi2h9gZHb1rVL2j25Bcp34l6YF6Mc
+         +ab4eIz0sX3I3C4qR6zr4/u15xuZ1VDPuW8sm5vql1pdM0zuSFnnwXQoiTstXKS9TU/S
+         u9xJQpLyFK49Xa8QpHCJq9ByqdHurFrWruPrjGdiq2dlgG3HVRDalPvGOc2mI3scaE7K
+         K51qzp7b4tW93/WirZS77nM+wLch8Fa3xpbIE3NsZXB3Dc7vK7lmIDwYVPg/fJtfzInu
+         GRujdjsFGe7/b+7L6sxr/mFZDRys1vUCme2bxR7jEjXhVnYL5g4ZRzCy+6Xu/ED/Ad1S
+         JPKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ygERPEYDl5khdxtFV71ZgBn42XfY3vLVBUhlCDUWTi8=;
-        b=M+vS39RS+FH7hBIWc6X+ulQkI1RTr+uk5pG/KwGwN4ofpUSMSNqcgC0PS/XRSrBZ28
-         D8+aBnfW3FV7gsCpYcYp8CI6rA6a/ZAPo+cKGNO0pHgUrG9hCZAUAcj+o8M6LOd39CmJ
-         fiwDuaC2pKMBrMuWWUl4YvuVnp3wc62f4xGopAlYLWN3Gk5WSGfHHZJzXY6oCpXSMlvB
-         vifuoLtaiw0hnR2aPwAMbRwUNT9+/dJtl2FSRczptpFR/T2KRaNprFzwTJCjenb37iGT
-         c9BnpSJNq8F4WN1xSouYb1JtHj4rcZ6s3HL08+sxKlIxZ/hR4LyXsHzOvABfRA5tw2rF
-         JUlA==
-X-Gm-Message-State: APjAAAWUafIvLBxk8P/AqGxygIxgajnJ8+PF7LLuM45Ischykh9Ohi9/
-        S+LwIvUW0PdyovnQGLMHxkM=
-X-Google-Smtp-Source: APXvYqzEXckrT+EdMdUIs1QKgYUg+AgkH3qbZgV+l+UGHnMxIl2f3qG/fqXXL/LZACKoG3JPkuBq/g==
-X-Received: by 2002:aa7:8b01:: with SMTP id f1mr26960241pfd.173.1568016965972;
-        Mon, 09 Sep 2019 01:16:05 -0700 (PDT)
+        bh=KsgRNFOCDuIZ11czAPgOqHyEf7Ffyioe5wChnknAWcs=;
+        b=SkhvufKuAzxLDk5HpBr76x1m8BVAozQci7imZuYtfc8lPsNNA9Ha6zT355WQ7PKJiC
+         JteoZDNom28kE2YA0z8nFR0noseAON3Jf7470yAD8yXXHL0u5sTjLiJx7Vlh4lEjMoU9
+         cYndTVlhFoM8MDFTWWtGW3lH0JFuxR81aUHVr/qfCZ1JvdMmeZoSoCkv7s7f0j8WnHGg
+         TjYhwBaLyUMP1eLGshqEIKQvnsqe/MXfIQAKwvqeUOzMD+wESbh2fEY+Fbwd5HTMxrNV
+         x7bNBnBfceF7rbs2AZ8y2m4MGADoTRzIT9CHNYJl4VrJggNyz34p7rQ+kJqjYMdkkj+S
+         KFlA==
+X-Gm-Message-State: APjAAAXjMrVQRODX3JQa9X7RULm3IPRAWOv3atR2dRswHU9sigwncKHf
+        ST0XkFIbq727hbbummDv/CVd+bOHfUo=
+X-Google-Smtp-Source: APXvYqwygXmyzpqW2sKjwn/gui2KPWp0UkRNk2iptbPf9j3be4dzy96fYpNF7Rqm/G0gK55MAnyHyw==
+X-Received: by 2002:aa7:9343:: with SMTP id 3mr25821006pfn.145.1568016966653;
+        Mon, 09 Sep 2019 01:16:06 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id u65sm12686669pfu.104.2019.09.09.01.16.04
+        by smtp.gmail.com with ESMTPSA id u65sm12686669pfu.104.2019.09.09.01.16.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 01:16:04 -0700 (PDT)
+        Mon, 09 Sep 2019 01:16:06 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: [PATCH v3 03/13] software node: get rid of property_set_pointer()
-Date:   Mon,  9 Sep 2019 01:15:47 -0700
-Message-Id: <20190909081557.93766-4-dmitry.torokhov@gmail.com>
+Subject: [PATCH v3 04/13] software node: simplify property_get_pointer()
+Date:   Mon,  9 Sep 2019 01:15:48 -0700
+Message-Id: <20190909081557.93766-5-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 In-Reply-To: <20190909081557.93766-1-dmitry.torokhov@gmail.com>
 References: <20190909081557.93766-1-dmitry.torokhov@gmail.com>
@@ -64,107 +64,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of explicitly setting values of integer types when copying property
-entries lets just copy entire value union when processing non-array values.
-
-When handling array values assign the pointer there using the newly introduced
-"raw" pointer union member. This allows us to remove property_set_pointer().
+We do not need to handle each data type separately, we can simply return either
+the raw pointer or pointer to values union.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/base/swnode.c    | 50 +++++-----------------------------------
- include/linux/property.h |  1 +
- 2 files changed, 7 insertions(+), 44 deletions(-)
+ drivers/base/swnode.c | 29 ++++++-----------------------
+ 1 file changed, 6 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index 7bad41a8f65d..a8d12046105e 100644
+index a8d12046105e..bedc26189bed 100644
 --- a/drivers/base/swnode.c
 +++ b/drivers/base/swnode.c
-@@ -103,45 +103,6 @@ property_entry_get(const struct property_entry *prop, const char *name)
- 	return NULL;
- }
+@@ -105,30 +105,13 @@ property_entry_get(const struct property_entry *prop, const char *name)
  
--static void
--property_set_pointer(struct property_entry *prop, const void *pointer)
--{
+ static const void *property_get_pointer(const struct property_entry *prop)
+ {
 -	switch (prop->type) {
 -	case DEV_PROP_U8:
 -		if (prop->is_array)
--			prop->pointer.u8_data = pointer;
--		else
--			prop->value.u8_data = *((u8 *)pointer);
--		break;
+-			return prop->pointer.u8_data;
+-		return &prop->value.u8_data;
 -	case DEV_PROP_U16:
 -		if (prop->is_array)
--			prop->pointer.u16_data = pointer;
--		else
--			prop->value.u16_data = *((u16 *)pointer);
--		break;
+-			return prop->pointer.u16_data;
+-		return &prop->value.u16_data;
 -	case DEV_PROP_U32:
 -		if (prop->is_array)
--			prop->pointer.u32_data = pointer;
--		else
--			prop->value.u32_data = *((u32 *)pointer);
--		break;
+-			return prop->pointer.u32_data;
+-		return &prop->value.u32_data;
 -	case DEV_PROP_U64:
 -		if (prop->is_array)
--			prop->pointer.u64_data = pointer;
--		else
--			prop->value.u64_data = *((u64 *)pointer);
--		break;
+-			return prop->pointer.u64_data;
+-		return &prop->value.u64_data;
 -	case DEV_PROP_STRING:
 -		if (prop->is_array)
--			prop->pointer.str = pointer;
--		else
--			prop->value.str = pointer;
--		break;
+-			return prop->pointer.str;
+-		return &prop->value.str;
 -	default:
--		break;
++	if (!prop->length)
+ 		return NULL;
 -	}
--}
--
- static const void *property_get_pointer(const struct property_entry *prop)
- {
- 	switch (prop->type) {
-@@ -380,20 +341,21 @@ static int property_entry_copy_data(struct property_entry *dst,
- 			if (!new)
- 				return -ENOMEM;
- 		}
 +
-+		dst->is_array = true;
-+		dst->pointer.raw = new;
- 	} else if (src->type == DEV_PROP_STRING) {
- 		new = kstrdup(src->value.str, GFP_KERNEL);
- 		if (!new && src->value.str)
- 			return -ENOMEM;
++	if (prop->is_array)
++		return prop->pointer.raw;
 +
-+		dst->value.str = new;
- 	} else {
--		new = pointer;
-+		dst->value = src->value;
- 	}
++	return &prop->value;
+ }
  
- 	dst->length = src->length;
--	dst->is_array = src->is_array;
- 	dst->type = src->type;
--
--	property_set_pointer(dst, new);
--
- 	dst->name = kstrdup(src->name, GFP_KERNEL);
- 	if (!dst->name)
- 		goto out_free_data;
-diff --git a/include/linux/property.h b/include/linux/property.h
-index 44c1704f7163..4943b40d3536 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -239,6 +239,7 @@ struct property_entry {
- 			const u32 *u32_data;
- 			const u64 *u64_data;
- 			const char * const *str;
-+			const void *raw;
- 		} pointer;
- 		union {
- 			u8 u8_data;
+ static const void *property_entry_find(const struct property_entry *props,
 -- 
 2.23.0.187.g17f5b7556c-goog
 
