@@ -2,151 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19509AD4EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2C5AD4F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388808AbfIIIfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 04:35:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38430 "EHLO mail.kernel.org"
+        id S2389341AbfIIIhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 04:37:47 -0400
+Received: from mail.jv-coder.de ([5.9.79.73]:47070 "EHLO mail.jv-coder.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726779AbfIIIfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 04:35:33 -0400
-Received: from linux-8ccs (ip5f5ade63.dynamic.kabel-deutschland.de [95.90.222.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2587E218AC;
-        Mon,  9 Sep 2019 08:35:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568018132;
-        bh=TKImRVK5QfysGcK3+T8jXTqGg/4D94n2fS1rumyJj0k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TZcrEX8XikzlQDoHKc05y09WwC1EXW/eLqgiewIXoctMEF4T5kTG+SBZVvKmLSF4S
-         VceMDdm8DVu4k7r3KZcFC8odfFvXsgJyf0H+NA5s+jqm3ludZY4Ui/3lgYzsPbcv/q
-         zs77u5TDjehKhBneE5glLjJcM7UFKodd8kLRkcxQ=
-Date:   Mon, 9 Sep 2019 10:35:23 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Matthias Maennich <maennich@google.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org, joel@joelfernandes.org,
-        lucas.de.marchi@gmail.com, maco@android.com, sspatil@google.com,
-        will@kernel.org, yamada.masahiro@socionext.com,
-        linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
-Subject: Re: [PATCH v5 00/11] Symbol Namespaces
-Message-ID: <20190909083522.GA446@linux-8ccs>
-References: <20180716122125.175792-1-maco@android.com>
- <20190906103235.197072-1-maennich@google.com>
+        id S1727003AbfIIIhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 04:37:47 -0400
+Received: from ubuntu.localdomain (unknown [37.156.92.209])
+        by mail.jv-coder.de (Postfix) with ESMTPSA id BD6AD9F681;
+        Mon,  9 Sep 2019 08:37:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jv-coder.de; s=dkim;
+        t=1568018264; bh=zY/1ofIhpVZLmVanmMvgSnDnQqqIxXY/7E9pjv3hfJo=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=NChUk80kjL96BsB0SP6L3oETn7wowCoPj3o1BojqTW7E1ZJXd8y1Ga/IdI29mF6tZ
+         u5cCsyCN5v20qLBa2gZBkVavc71YBXxJcYMoKhmc3og8HsfuthgjPFKrWB2huuHUf5
+         04U2aZKP1+tEnCLe1+Aph97GQ43Y4vdVnmR3cTjU=
+From:   Joerg Vehlow <lkml@jv-coder.de>
+To:     linux-kernel@vger.kernel.org, joerg.vehlow@aox-tech.de
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH] xfrm_input: Protect queue with lock
+Date:   Mon,  9 Sep 2019 10:37:00 +0200
+Message-Id: <20190909083700.63579-1-lkml@jv-coder.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190906103235.197072-1-maennich@google.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.61-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=1.1 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,RDNS_NONE
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: *
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.jv-coder.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Matthias Maennich [06/09/19 11:32 +0100]:
->As of Linux 5.3-rc7, there are 31207 [1] exported symbols in the kernel.
->That is a growth of roughly 1000 symbols since 4.17 (30206 [2]). There
->seems to be some consensus amongst kernel devs that the export surface
->is too large, and hard to reason about.
->
->Generally, these symbols fall in one of these categories:
->1) Symbols actually meant for drivers
->2) Symbols that are only exported because functionality is split over
->   multiple modules, yet they really shouldn't be used by modules outside
->   of their own subsystem
->3) Symbols really only meant for in-tree use
->
->When module developers try to upstream their code, it regularly turns
->out that they are using exported symbols that they really shouldn't be
->using. This problem is even bigger for drivers that are currently
->out-of-tree, which may be using many symbols that they shouldn't be
->using, and that break when those symbols are removed or modified.
->
->This patch allows subsystem maintainers to partition their exported
->symbols into separate namespaces, and module authors to import such
->namespaces only when needed.
->
->This allows subsystem maintainers to more easily limit availability of
->these namespaced symbols to other parts of the kernel. It can also be
->used to partition the set of exported symbols for documentation
->purposes; for example, a set of symbols that is really only used for
->debugging could be in a "SUBSYSTEM_DEBUG" namespace.
->
->I continued the work mainly done by Martijn Coenen.
->
->Changes in v2:
->- Rather than adding and evaluating separate sections __knsimport_NS,
->  use modinfo tags to declare the namespaces a module introduces.
->  Adjust modpost and the module loader accordingly.
->- Also add support for reading multiple modinfo values for the same tag
->  to allow list-like access to modinfo tags.
->- The macros in export.h have been cleaned up to avoid redundancy in the
->  macro parameters (ns, nspost, nspost2).
->- The introduction of relative references in the ksymtab entries caused
->  a rework of the macros to accommodate that configuration as well.
->- Alignment of kernel_symbol in the ksymtab needed to be fixed to allow
->  growing the kernel_symbol struct.
->- Modpost does now also append the namespace suffix to the symbol
->  entries in Module.symvers.
->- The configuration option MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS allows
->  relaxing the enforcement of properly declared namespace imports at
->  module loading time.
->- Symbols can be collectively exported into a namespace by defining
->  DEFAULT_SYMBOL_NAMESPACE in the corresponding Makefile.
->- The requirement for a very recent coccinelle spatch has been lifted by
->  simplifying the script.
->- nsdeps does now ensures MODULE_IMPORT_NS statements are sorted when
->  patching the module source files.
->- Some minor bugs have been addressed in nsdeps to allow it to work with
->  modules that have more than one source file.
->- The RFC for the usb-storage symbols has been simplified by using
->  DEFAULT_SYMBOL_NAMESPACE=USB_STORAGE rather than explicitly exporting
->  each and every symbol into that new namespace.
->
->Changes in v3:
->- Reword the documentation for the
->  MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS option for clarification.
->- Fix printed required version of spatch in coccinelle script.
->- Adopt kbuild changes for modpost: .mod files are no longer generated
->  in .tmp_versions. Similarely, generate the .ns_deps files in the tree
->  along with the .mod files. Also, nsdeps now uses modules.order as
->  source for the list modules to consider.
->- Add an RFC patch to introduce the namespace WATCHDOG_CORE for symbols
->  exported in watchdog_core.c.
->
->Changes in v4:
->- scripts/nsdeps:
->  - exit on first error
->  - support out-of-tree builds O=...
->- scripts/export_report.pl: update for new Module.symvers format
->- scripts/mod/modpost: make the namespace a separate field when
->  exporting to Module.symvers (rather than symbol.NS)
->- include/linux/export.h: fixed style nits
->- kernel/module.c: ensure namespaces are imported before taking a
->  reference to the owner module
->- Documentation: document the Symbol Namespace feature and update
->  references to Module.symvers and EXPORT_SYMBOL*
->
->Changes in v5:
->- Makefile: let 'nsdeps' depend on 'modules' to allow
->  `make clean; make nsdeps` to work
->- scripts/nsdeps: drop 'exit on first error' again as it just makes more
->  problems than it solves
->- drop the watchdog RFC patch for now
->
->This patch series was developed against v5.3-rc7.
+From: Joerg Vehlow <joerg.vehlow@aox-tech.de>
 
-Great work Matthias!
+During the skb_queue_splice_init the tasklet could have been preempted
+and __skb_queue_tail called, which led to an inconsistent queue.
 
-I think this patchset is shaping up nicely. As the merge window is
-coming up soon, I'd like to queue this up in modules-next by the end
-of today to allow for some testing and "soak" time in linux-next. If
-there are any more complaints, please speak up.
+Signed-off-by: Joerg Vehlow <joerg.vehlow@aox-tech.de>
+---
+ net/xfrm/xfrm_input.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Thanks!
+diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
+index 790b514f86b6..4c4e669fcd16 100644
+--- a/net/xfrm/xfrm_input.c
++++ b/net/xfrm/xfrm_input.c
+@@ -512,12 +512,15 @@ EXPORT_SYMBOL(xfrm_input_resume);
+ 
+ static void xfrm_trans_reinject(unsigned long data)
+ {
++	unsigned long flags;
+ 	struct xfrm_trans_tasklet *trans = (void *)data;
+ 	struct sk_buff_head queue;
+ 	struct sk_buff *skb;
+ 
+ 	__skb_queue_head_init(&queue);
++	spin_lock_irqsave(&trans->queue.lock, flags);
+ 	skb_queue_splice_init(&trans->queue, &queue);
++	spin_unlock_irqrestore(&trans->queue.lock, flags);
+ 
+ 	while ((skb = __skb_dequeue(&queue)))
+ 		XFRM_TRANS_SKB_CB(skb)->finish(dev_net(skb->dev), NULL, skb);
+@@ -535,7 +538,7 @@ int xfrm_trans_queue(struct sk_buff *skb,
+ 		return -ENOBUFS;
+ 
+ 	XFRM_TRANS_SKB_CB(skb)->finish = finish;
+-	__skb_queue_tail(&trans->queue, skb);
++	skb_queue_tail(&trans->queue, skb);
+ 	tasklet_schedule(&trans->tasklet);
+ 	return 0;
+ }
+@@ -560,7 +563,7 @@ void __init xfrm_input_init(void)
+ 		struct xfrm_trans_tasklet *trans;
+ 
+ 		trans = &per_cpu(xfrm_trans_tasklet, i);
+-		__skb_queue_head_init(&trans->queue);
++		skb_queue_head_init(&trans->queue);
+ 		tasklet_init(&trans->tasklet, xfrm_trans_reinject,
+ 			     (unsigned long)trans);
+ 	}
+-- 
+2.20.1
 
-Jessica
