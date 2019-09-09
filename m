@@ -2,86 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CEBEAE00A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 22:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25298AE00D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 22:51:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391762AbfIIUqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 16:46:51 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:41691 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726806AbfIIUqv (ORCPT
+        id S2406017AbfIIUv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 16:51:27 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:39988 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728204AbfIIUv1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 16:46:51 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1McH1Q-1ihaFj11VE-00ceqT; Mon, 09 Sep 2019 22:46:35 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] smack: include linux/watch_queue.h
-Date:   Mon,  9 Sep 2019 22:46:25 +0200
-Message-Id: <20190909204631.1076624-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 9 Sep 2019 16:51:27 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id x89KnfaC027339
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Sep 2019 13:51:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=5xZuDgxXFkU1bj7orI6uy6eYQF7vmCZw+o4m3LprmoU=;
+ b=FxmLNSsxgTNh9mKyPiueOjHG8u/a4SsgJqj+7Lta2tRAP/V6cC5jNcEdu7VfagVpLTfA
+ em+XRZF9gJM0oPosM0Ez4v+FAEd3FPhAYWv7p3VHlAqBwfyBQE9bJucvuhScxvGgTP9n
+ fT0mK29StUyqiDhbrG5BGQt4EoSiikcDQz0= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0089730.ppops.net with ESMTP id 2uv820ha85-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 13:51:25 -0700
+Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 9 Sep 2019 13:51:24 -0700
+Received: by devvm1794.vll1.facebook.com (Postfix, from userid 150176)
+        id A7AE321AB8FB; Mon,  9 Sep 2019 13:48:46 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Tao Ren <taoren@fb.com>
+Smtp-Origin-Hostname: devvm1794.vll1.facebook.com
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Arun Parameswaran <arun.parameswaran@broadcom.com>,
+        Justin Chen <justinpopo6@gmail.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <openbmc@lists.ozlabs.org>
+CC:     Tao Ren <taoren@fb.com>
+Smtp-Origin-Cluster: vll1c12
+Subject: [PATCH net-next v8 1/3] net: phy: modify assignment to OR for dev_flags in phy_attach_direct
+Date:   Mon, 9 Sep 2019 13:48:45 -0700
+Message-ID: <20190909204845.2190885-1-taoren@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:7kPRGYZSWYf2iP8zTqFhK7+b0tun5SPyfoyi+uDXVHze5EFuFqS
- Nzh3llpFi4dmcPwTfZOoHLg3he80h016/nSZQMEE/LclAAnZshx65ZWiqrpp6ewK6y+iKZp
- TK40a875Caah6kL2Z6OJLqQYd5DMCurbxVGHv0veJL+f1WJ2vGkPvJG60YwKcr4mbQFoVH7
- vp56UYM1KdXNtRtxjDX7w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:W2q+6/0M+sY=:+ZeLnOSbtYroQQf1oURVYy
- tLW6O3suuY3f2DJRTvLJJ5eHugugl9w3/Xk4a7r3lF0IypVF31eKbWJx5y3rqcE1m/RatIfWG
- XtEZFlH3ZPdHQM/mqlqzCTWlF7zYpEP0e7yoRZc39KYUwkf0ZBPCx9h/gZ8JOV4Q+/yV5aZvk
- JC9gLeRRxkpaXqI3LKGVm5LOERxEdSQ+gIwlIUkNcKGeoQJ9f2pvGQfBTu/7ab/FB9HcyqnwD
- ObLCydlDoh63tdoUJnJ56cGM8NRymT1nHGc2tksdOQpN8zayjEOKEkw/XsWO7vbUwB2Fjy4Uc
- mxGmdOSJRZVAOiIPIQzs7w98KpRc4EIaMlzO0csfbh2K0WBjUpAQD9Su1m1j2jaOJ/imYFUuy
- LAF1whCkZe78ABAsSJ7BBJrShKIu2cT/fAOyIF6Ri57qRZysNbI8vlUCGUJ1QIZmM8bBzSYhd
- KfyKiTI9DfWBseZDKQCG/weOSi+d7Iz4UwjV04OiP5nkneaJ4hcxg/LObLUo64pxAXPinw1/w
- HOndy9Nv/Mbfb67ZUAnSBQSILI2HpkrRRxXU/A6NTpSb7wrLx8GU0nenXxPo29Jx5oHU5TV/l
- l7jZfIS5r2HfRV4yfAYlsnNzrNGug8+hrv+t/pLG9kPNem3mQSGbZsOQdfiYeOwDekweKIELt
- cTVLn2GZ6HKMqq2T8Qoe9NXh4O7WcTSkeGWAyidRN86l9tS9qdRqtwpPE5L06H+l3fLrrbmcl
- ZqkkB/ktI44sgFMOrSTBMFTNA5CCnO1mDoe+RRjeVfsljPlXdC1ciRxb3HdigWb352tcZlBbA
- YcyviTOFF8uU8aAGMaL2xSduJYRVQ==
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-09_07:2019-09-09,2019-09-09 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=818
+ lowpriorityscore=0 spamscore=0 bulkscore=0 clxscore=1015 phishscore=0
+ adultscore=0 malwarescore=0 mlxscore=0 impostorscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1909090204
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some randconfig builds, the lack of an explicit #include
-in smack_lsm.c causes a build failure:
+Modify the assignment to OR when dealing with phydev->dev_flags in
+phy_attach_direct function, and this is to make sure dev_flags set in
+driver's probe callback won't be lost.
 
-security/smack/smack_lsm.c:4384:7: error: incomplete definition of type 'struct watch_notification'
-        if (n->type == WATCH_TYPE_META)
-            ~^
-include/linux/device.h:46:8: note: forward declaration of 'struct watch_notification'
-struct watch_notification;
-       ^
-security/smack/smack_lsm.c:4384:17: error: use of undeclared identifier 'WATCH_TYPE_META'
-        if (n->type == WATCH_TYPE_META)
-
-Fixes: 5301fef8ca60 ("smack: Implement the watch_key and post_notification hooks [untested]")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+CC: Heiner Kallweit <hkallweit1@gmail.com>
+CC: Vladimir Oltean <olteanv@gmail.com>
+Signed-off-by: Tao Ren <taoren@fb.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- security/smack/smack_lsm.c | 1 +
- 1 file changed, 1 insertion(+)
+ Changes:
+  - nothing is changed in v1-v7: it's given v8 to align with the version
+    of patch series.
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index a15e76489683..5120dd9c6335 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -42,6 +42,7 @@
- #include <linux/parser.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/watch_queue.h>
- #include "smack.h"
+ drivers/net/phy/phy_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index d347ddcac45b..8933f07d39e9 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1270,7 +1270,7 @@ int phy_attach_direct(struct net_device *dev, struct phy_device *phydev,
+ 			phydev_err(phydev, "error creating 'phy_standalone' sysfs entry\n");
+ 	}
  
- #define TRANS_TRUE	"TRUE"
+-	phydev->dev_flags = flags;
++	phydev->dev_flags |= flags;
+ 
+ 	phydev->interface = interface;
+ 
 -- 
-2.20.0
+2.17.1
 
