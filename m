@@ -2,90 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF6AAD555
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 11:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D517BAD55B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 11:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389649AbfIIJI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 05:08:58 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39406 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389597AbfIIJI5 (ORCPT
+        id S2389666AbfIIJJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 05:09:39 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41720 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbfIIJJj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 05:08:57 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q12so13704245wmj.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 02:08:54 -0700 (PDT)
+        Mon, 9 Sep 2019 05:09:39 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x15so7450260pgg.8;
+        Mon, 09 Sep 2019 02:09:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+4BP5T9F1nQ04WHnHdo2p8zuW4F9kfRfYy2Oe7UAEX0=;
-        b=zK6YC8uR+gx2gtTbPZfrQvjTvhixWiVL06+lDRgRpep0OWa0qLpWHztn4WRtplHEyU
-         dQOdL99eUOl5HZrIxKhvz8dfoCAlkABvDPcWGJE4uSy83Zzmn2NfKPYVslAzh+QfpUWo
-         ybimlvKx5VDA92w9wUl/peF69vLGiurOdeQZruQLOv3G8a2aBXlxYz3yJueWUCk8pfF2
-         Fthtj+0kBNhsE8S2dvO2H6qCN7GXHeb46x6it+GSFJAJRgl25vEPcmAeyi6H913Yb/tY
-         DggHN5cjUxx6A+/nup96gQwTecH8lo3M6h8gbAJqjOac7MddbSYz9kNPcQ/LDv3A14BP
-         DNFw==
+        bh=nkgxfyyynI7isiueWlzcBjvaj2ty8uVTrVmQjQhJboM=;
+        b=KyRRriKUZdEP7SymqzKEAIo1aivwNm+LsxEQIgia+ei8L68Fm31A0/EofVFAGS+9m2
+         Iv6POZsNwoAbTwOp1icRWHENj6yWlrRLRc7DdxwHR/jT1Zkk/NA5XfUK2oSJFLocI7ng
+         lKTdCSYK5+Nx6y2q71Y0f45r7nYDbMib3oAYBwhn9qq3U5IJU2hbMLpLyJ+GqXJEDzXO
+         0O5IdFzML8z5ST3xEApfWCV6ufmncsI09YcWRqS1BmpbU/w+P+WFEMvQ5SfeaQb0uU8T
+         g1CIL4xfuZ0KdaYvwvBk3HtHEGrLkRrOXYTHQanQEMIE0RxiJsilYhKlp3RNlWR84wBU
+         nIeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+4BP5T9F1nQ04WHnHdo2p8zuW4F9kfRfYy2Oe7UAEX0=;
-        b=RC51lR2PC6xgkcOl/+zmgsVz9g8FvYsY0wFhlZH0WyhKtSih6PpNluZlDYwKlhifo+
-         8295JASD7t7IWVdKZU0BWlv/MqUe+ETGaoS5QQ9aQW72B1m98Oe3oYwA6gcAOn+n/mLO
-         Zsy/y12ac9OWjIiWQ+P9PxJzi5P71ZZBUuZTBNLZie2oeotwKJNe23mz3kfWD+EByOut
-         3uR872SKwLhYfV1cGUp0XSUmxY6ElvoF/R4mNEL4+cgqBAG9nEbafgB8yjC6K0Easesz
-         zbLYPDJ+dy5xTg+QbepfNux1amBbxy6kTf9UhKya+9r3w07zLmCRbofZ7xwYKj0KfYNH
-         kZ6g==
-X-Gm-Message-State: APjAAAUbNPPzs/jdgGhs3QAiY2HRwmVWdtwb36XMfjchurZBDxBDadXs
-        T5K0Lmyza3bDTz4fSC8WbUb4DA==
-X-Google-Smtp-Source: APXvYqy4be4Dr2Cov1HiM8TXxugAZyZo8P+mQ23GodeQvo7+IfiZG3JqP+j/0SxUZhFRj9JeyQm2fA==
-X-Received: by 2002:a05:600c:228a:: with SMTP id 10mr18757070wmf.62.1568020134357;
-        Mon, 09 Sep 2019 02:08:54 -0700 (PDT)
-Received: from localhost.localdomain (69.red-83-35-113.dynamicip.rima-tde.net. [83.35.113.69])
-        by smtp.gmail.com with ESMTPSA id o12sm14734488wmh.43.2019.09.09.02.08.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Sep 2019 02:08:53 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, agross@kernel.org,
-        jassisinghbrar@gmail.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, sboyd@kernel.org
-Subject: [PATCH v2] mailbox: qcom-apcs: fix max_register value
-Date:   Mon,  9 Sep 2019 11:08:50 +0200
-Message-Id: <20190909090850.10822-1-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.23.0
+        bh=nkgxfyyynI7isiueWlzcBjvaj2ty8uVTrVmQjQhJboM=;
+        b=mcoyXrSbDWPOJzuNC/eTMmwNdzbFtU+rmcJuqYikje6d/6wltwDouHnTkp0c3u7ibH
+         QSzJqjIgZaUBB1gCRNUSStwQWtMcr3D3AQ11Idrg9w3HV5AK4Rs2+usGrJLyF6nSBLLs
+         oytOEBne3QLX6WiCN9MxMvtkvWlPObDg+sZp6CsSj7fLv9XCZ8eY1yE+U59SRWO+r5Nq
+         9J8KfqUvJPnYsE1TjezIZgozAMZQdPRHwDxlkIgS8DEcSeFoMeMob77fMfW9cu5KtbWm
+         z116Fcw2euqYahAv2ejDVLFAp5jxEZt0RQAMQK4o9sZNLdlkf7oy2kh/b27WtPQJkkpQ
+         M/6w==
+X-Gm-Message-State: APjAAAXM4030o0IGqt/FiK7OrXbp7EYPyK2cVYNemRMLmCGfAPT0xrqj
+        R0bUAejhormCqrKAet5RGizWoqdGBvw=
+X-Google-Smtp-Source: APXvYqyv7Q8AbgbN732fMmWQJKwZBg3kWDKD62OgiYUFSzKN/ulKIEF0BavL/fEXOgGiW44l1hBEmA==
+X-Received: by 2002:a17:90a:f993:: with SMTP id cq19mr24573494pjb.51.1568020178081;
+        Mon, 09 Sep 2019 02:09:38 -0700 (PDT)
+Received: from localhost.localdomain ([175.203.71.146])
+        by smtp.googlemail.com with ESMTPSA id s18sm19122962pfh.0.2019.09.09.02.09.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2019 02:09:37 -0700 (PDT)
+From:   Seunghun Han <kkamagui@gmail.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        linux-integrity@vger.kernel.org (open list:TPM DEVICE DRIVER),
+        linux-kernel@vger.kernel.org, Seunghun Han <kkamagui@gmail.com>
+Subject: [PATCH v2 0/2] Enhance support for the AMD's fTPM
+Date:   Mon,  9 Sep 2019 18:09:04 +0900
+Message-Id: <20190909090906.28700-1-kkamagui@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mailbox length is 0x1000 hence the max_register value is 0xFFC.
+This patch series enhances the support for the AMD's fTPM. 
+The AMD system assigned a command buffer and response buffer 
+independently in ACPI NVS region. ACPI NVS region allowed nothing to 
+assign a resource in it. 
 
-Fixes: c6a8b171ca8e ("mailbox: qcom: Convert APCS IPC driver to use
-regmap")
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
+For supporting AMD's fTPM, I made a patch to enhance the code of command 
+and response buffer size calculation. I also made a patch to detect TPM 
+regions in ACPI NVS and work around it. 
 
- v2: added Fixes tag
- 
- drivers/mailbox/qcom-apcs-ipc-mailbox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+ - fix a warning of kbuild test robot. The link is below. 
+   https://lkml.org/lkml/2019/8/31/217
 
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index 705e17a5479c..e5d6b1b70441 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -28,7 +28,7 @@ static const struct regmap_config apcs_regmap_config = {
- 	.reg_bits = 32,
- 	.reg_stride = 4,
- 	.val_bits = 32,
--	.max_register = 0x1000,
-+	.max_register = 0xFFC,
- 	.fast_io = true,
- };
- 
+Seunghun Han (2):
+  tpm: tpm_crb: enhance command and response buffer size calculation
+    code
+  tpm: tpm_crb: enhance resource mapping mechanism for supporting AMD's
+    fTPM
+
+ drivers/char/tpm/tpm_crb.c | 69 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 59 insertions(+), 10 deletions(-)
+
 -- 
-2.23.0
+2.21.0
 
