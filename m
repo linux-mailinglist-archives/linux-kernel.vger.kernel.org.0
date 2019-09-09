@@ -2,68 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93BA1AE048
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 23:30:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89723AE04A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 23:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391833AbfIIV1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 17:27:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50642 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfIIV1V (ORCPT
+        id S2391847AbfIIVbJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 9 Sep 2019 17:31:09 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:58181
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1727335AbfIIVbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 17:27:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FVpH6a1GjetVsJXM8dC8LnKY9cXJasZ0yXsRe7v9nF4=; b=FFZylopiX0MRcLVE9xNjWLC6Q
-        TpqbVNdQ5HXEGy9Ps5pYE9V4XqsgifwYDY1/QwBluSYu6OQS/JzjC2fWA3vzDWkVcrViBeHFUCwJN
-        dvX4RTYnXnb9HqLfvVIvR5+dX/5YLqPb1osYpd1uQv9pr0RjioVyuy+wVG+mwdTtZxherGaU/Y5/G
-        EXVteWsYr/aQa9OM1CO9gHhRwS5/xc6uUzzhPAJ1ITOOldHZAfWOIH7epJ1ArZABZcZAla8stZLvL
-        b/J2X633j39/pVgKMqIp+CHcEbxa8lu3RRilVgD43SIjLwPv1JqnVMY1m/I7AqV8wQscsroB+uPrj
-        xIrmFrQ/Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i7RBo-0003Yd-Ip; Mon, 09 Sep 2019 21:27:12 +0000
-Date:   Mon, 9 Sep 2019 14:27:12 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jia He <justin.he@arm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Airlie <airlied@redhat.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Catalin Marinas <Catalin.Marinas@arm.com>
-Subject: Re: [PATCH v2] mm: fix double page fault on arm64 if PTE_AF is
- cleared
-Message-ID: <20190909212712.GE29434@bombadil.infradead.org>
-References: <20190906135747.211836-1-justin.he@arm.com>
+        Mon, 9 Sep 2019 17:31:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 91DBFB4CAA2;
+        Mon,  9 Sep 2019 21:13:04 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id t7LCN773Od2Z; Mon,  9 Sep 2019 21:13:04 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id E412BB4C72D;
+        Mon,  9 Sep 2019 21:13:03 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id uO7yx8EdjuGv; Mon,  9 Sep 2019 21:13:03 +0000 (UTC)
+Received: from [100.81.30.190] (unknown [106.197.202.29])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id D9972B4CC55;
+        Mon,  9 Sep 2019 21:12:56 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906135747.211836-1-justin.he@arm.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Alerta_por_correo_electr=C3=B3nico?=
+To:     Recipients <info@no-reply.it>
+From:   Administrador de correo web <info@no-reply.it>
+Date:   Tue, 10 Sep 2019 02:42:48 +0530
+Message-Id: <20190909211256.D9972B4CC55@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 09:57:47PM +0800, Jia He wrote:
-> +		if (!pte_young(vmf->orig_pte)) {
-> +			entry = pte_mkyoung(vmf->orig_pte);
-> +			if (ptep_set_access_flags(vmf->vma, vmf->address,
-> +				vmf->pte, entry, 0))
-> +				update_mmu_cache(vmf->vma, vmf->address,
-> +						vmf->pte);
-> +		}
-> +
+Estimado usuario
 
-Oh, btw, why call update_mmu_cache() here?  All you've done is changed
-the 'accessed' bit.  What is any architecture supposed to do in response
-to this?
+Como parte de nuestros problemas de seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, suspenderemos su acceso a su dirección de correo electrónico temporalmente para permitir la actualización.
+
+Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar su fecha completando el formulario de verificación manualmente.
+
+Haga clic en la copia y obtenga el enlace: http://emailsverificationscenter.xtgem.com/index en su navegador y verifique.
+
+Gracias
+Equipo de soporte técnico.
