@@ -2,152 +2,309 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 279C7AD343
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 08:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEE5BAD355
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 08:59:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731277AbfIIGwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 02:52:22 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35744 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730555AbfIIGwW (ORCPT
+        id S1731421AbfIIG7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 02:59:18 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45748 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbfIIG7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 02:52:22 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x896qB1N051914;
-        Mon, 9 Sep 2019 01:52:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568011931;
-        bh=zG7j/FKdnKJGi5S4/+DCXgAmeaLRvacq3SV1zBDjDK8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=WKgZcs86xvkImDeZTlWxI+8ij8tctOXjcls20eW2N/bICrWbMQ8eXxRNUA6WGaDpd
-         UzRXpMUYomZH4/+IIuvhgioZDGynFptCHw5uKdFxLnliospaaChQs+WX8DzUHc2q5S
-         5StTng57b+ELtdUOKiZ9lnxXUmb9eldTeMb3K9Ww=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x896qARe005981
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Sep 2019 01:52:11 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 9 Sep
- 2019 01:52:10 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 9 Sep 2019 01:52:10 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x896q69W031378;
-        Mon, 9 Sep 2019 01:52:07 -0500
-Subject: Re: [PATCH v2 04/14] dmaengine: Add metadata_ops for
- dma_async_tx_descriptor
-To:     Vinod Koul <vkoul@kernel.org>,
-        Radhey Shyam Pandey <radheys@xilinx.com>
-CC:     <robh+dt@kernel.org>, "Menon, Nishanth" <nm@ti.com>,
-        <ssantosh@kernel.org>, <dan.j.williams@intel.com>,
-        <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
-        <t-kristo@ti.com>, <tony@atomide.com>, <j-keerthy@ti.com>
-References: <20190730093450.12664-1-peter.ujfalusi@ti.com>
- <20190730093450.12664-5-peter.ujfalusi@ti.com>
- <20190908141207.GO2672@vkoul-mobl>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <0ccf3880-935f-be54-0f62-e57762141af1@ti.com>
-Date:   Mon, 9 Sep 2019 09:52:38 +0300
+        Mon, 9 Sep 2019 02:59:18 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l16so12443573wrv.12
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Sep 2019 23:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=uPb7ZUb8kECFK5vFQJ+UGqGz0n2kxO9qQItYwAt4gFY=;
+        b=DHm1ahO5q654Gu/6Vd7heKonLzVNGhmts5Gw+GY4zikwM9j0Qv0vZMNqgqhPhlM32l
+         mTk3Jxrv5U9JewLXC7NZmjZ8kQ/Qj0x8vtbuwEd9I3C1NncdXA5XxRO9xvFOLfva+OUJ
+         BdMIjfPrAJCTDzCWtu1ysbUe89Iogc3N+RRYq414Jj9a1voUWEK4sxl0IhQImQkW+UTI
+         QcahwVn9F28k6+H9NMBA/n1bD9AWlIVCGHc8GJZzpqLFFs2c5smia0qwWphPiwfvSAyu
+         BgI5E99u53IAwobj8OlzRT9q3Clv4aJJRaxhMIgRq3fCAJLHFIrLesixzwdag37MKwJd
+         mA4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=uPb7ZUb8kECFK5vFQJ+UGqGz0n2kxO9qQItYwAt4gFY=;
+        b=mAeFKaMyRs8k+/0w6SwrCS3e0yDRicpRkMpn0IbIRyIsVmrS2CvS9wbqif/sQ9qC57
+         CNDZwFG9Remo1zWT3h+8EX0/QIdqUxmcNd5uzBfbghrV1/O56jEjgSu7W59+6fHQZXJC
+         yxQGyp4OHH4nIdsoDjfTTQDO7UgVacBt9GPyK6pLAfT7At8w+1vbHk7EQeD8jL8AdZ89
+         ipKz/cvVHNyMv5pG/RBxXAy20D4UFssG9F6l6c1fLdJknDx0416lrsGNpBCh5kx4I3+2
+         CHBs+v2/A4OygztPsK3u9twQs4LyEo/R9l9qMZnxTNs3woaqiq0SvREIUDDMkLocUPzf
+         67mQ==
+X-Gm-Message-State: APjAAAUFkEjzvZ0A/eHN0fl3HFkeMaSnnJiLtmJpdWc9IsSPEHeAOps8
+        BmrI/JDQyMZ7EU5P0ur0iyY=
+X-Google-Smtp-Source: APXvYqw/C6I8CzsT9UGXJlxxLpdeCtDXrqqzvRbYoW4dVD4JuyoSQaL05Is8JEnR4Ta69DMV7MaNPg==
+X-Received: by 2002:adf:8b13:: with SMTP id n19mr14297307wra.203.1568012354232;
+        Sun, 08 Sep 2019 23:59:14 -0700 (PDT)
+Received: from ?IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7? ([2a02:908:1252:fb60:be8a:bd56:1f94:86e7])
+        by smtp.gmail.com with ESMTPSA id n30sm8600164wmd.15.2019.09.08.23.59.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 08 Sep 2019 23:59:13 -0700 (PDT)
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH 1/8] drm/ttm: turn ttm_bo_device.vma_manager into a
+ pointer
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
+        <nouveau@lists.freedesktop.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:RADEON and AMDGPU DRM DRIVERS" 
+        <amd-gfx@lists.freedesktop.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Huang Rui <ray.huang@amd.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>, Sean Paul <sean@poorly.run>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+References: <20190905070509.22407-1-kraxel@redhat.com>
+ <20190905070509.22407-2-kraxel@redhat.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <851d89ec-968f-2209-91d2-29ec0b083e0b@gmail.com>
+Date:   Mon, 9 Sep 2019 08:59:11 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190908141207.GO2672@vkoul-mobl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <20190905070509.22407-2-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am 05.09.19 um 09:05 schrieb Gerd Hoffmann:
+> Rename the embedded struct vma_offset_manager, new name is _vma_manager.
+> ttm_bo_device.vma_manager changed to a pointer.
+>
+> The ttm_bo_device_init() function gets an additional vma_manager
+> argument which allows to initialize ttm with a different vma manager.
+> When passing NULL the embedded _vma_manager is used.
+>
+> All callers are updated to pass NULL, so the behavior doesn't change.
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
+Reviewed-by: Christian König <christian.koenig@amd.com>
 
-On 08/09/2019 17.12, Vinod Koul wrote:
-> On 30-07-19, 12:34, Peter Ujfalusi wrote:
->> The metadata is best described as side band data or parameters traveling
->> alongside the data DMAd by the DMA engine. It is data
->> which is understood by the peripheral and the peripheral driver only, the
->> DMA engine see it only as data block and it is not interpreting it in any
->> way.
->>
->> The metadata can be different per descriptor as it is a parameter for the
->> data being transferred.
->>
->> If the DMA supports per descriptor metadata it can implement the attach,
->> get_ptr/set_len callbacks.
->>
->> Client drivers must only use either attach or get_ptr/set_len to avoid
->> misconfiguration.
->>
->> Client driver can check if a given metadata mode is supported by the
->> channel during probe time with
->> dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_CLIENT);
->> dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_ENGINE);
->>
->> and based on this information can use either mode.
->>
->> Wrappers are also added for the metadata_ops.
->>
->> To be used in DESC_METADATA_CLIENT mode:
->> dmaengine_desc_attach_metadata()
->>
->> To be used in DESC_METADATA_ENGINE mode:
->> dmaengine_desc_get_metadata_ptr()
->> dmaengine_desc_set_metadata_len()
->>
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> ---
->>  drivers/dma/dmaengine.c   |  73 ++++++++++++++++++++++++++
->>  include/linux/dmaengine.h | 108 ++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 181 insertions(+)
->>
->> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
->> index 03ac4b96117c..6baddf7dcbfd 100644
->> --- a/drivers/dma/dmaengine.c
->> +++ b/drivers/dma/dmaengine.c
->> @@ -1302,6 +1302,79 @@ void dma_async_tx_descriptor_init(struct dma_async_tx_descriptor *tx,
->>  }
->>  EXPORT_SYMBOL(dma_async_tx_descriptor_init);
->>  
->> +static inline int desc_check_and_set_metadata_mode(
->> +	struct dma_async_tx_descriptor *desc, enum dma_desc_metadata_mode mode)
->> +{
->> +	/* Make sure that the metadata mode is not mixed */
->> +	if (!desc->desc_metadata_mode) {
->> +		if (dmaengine_is_metadata_mode_supported(desc->chan, mode))
->> +			desc->desc_metadata_mode = mode;
-> 
-> So do we have different descriptors supporting different modes or is it
-> controlled based? For latter we can do this check at controller
-> registration!
+> ---
+>   include/drm/ttm/ttm_bo_driver.h         |  8 ++++++--
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c |  1 +
+>   drivers/gpu/drm/drm_vram_mm_helper.c    |  1 +
+>   drivers/gpu/drm/nouveau/nouveau_ttm.c   |  1 +
+>   drivers/gpu/drm/qxl/qxl_ttm.c           |  1 +
+>   drivers/gpu/drm/radeon/radeon_ttm.c     |  1 +
+>   drivers/gpu/drm/ttm/ttm_bo.c            | 13 +++++++++----
+>   drivers/gpu/drm/ttm/ttm_bo_vm.c         |  6 +++---
+>   drivers/gpu/drm/vmwgfx/vmwgfx_drv.c     |  1 +
+>   9 files changed, 24 insertions(+), 9 deletions(-)
+>
+> diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
+> index e88e00c6cbf2..e365434f92b3 100644
+> --- a/include/drm/ttm/ttm_bo_driver.h
+> +++ b/include/drm/ttm/ttm_bo_driver.h
+> @@ -441,7 +441,8 @@ extern struct ttm_bo_global {
+>    *
+>    * @driver: Pointer to a struct ttm_bo_driver struct setup by the driver.
+>    * @man: An array of mem_type_managers.
+> - * @vma_manager: Address space manager
+> + * @vma_manager: Address space manager (pointer)
+> + * @_vma_manager: Address space manager (enbedded)
+>    * lru_lock: Spinlock that protects the buffer+device lru lists and
+>    * ddestroy lists.
+>    * @dev_mapping: A pointer to the struct address_space representing the
+> @@ -464,7 +465,8 @@ struct ttm_bo_device {
+>   	/*
+>   	 * Protected by internal locks.
+>   	 */
+> -	struct drm_vma_offset_manager vma_manager;
+> +	struct drm_vma_offset_manager *vma_manager;
+> +	struct drm_vma_offset_manager _vma_manager;
+>   
+>   	/*
+>   	 * Protected by the global:lru lock.
+> @@ -585,6 +587,7 @@ int ttm_bo_device_release(struct ttm_bo_device *bdev);
+>    * @glob: A pointer to an initialized struct ttm_bo_global.
+>    * @driver: A pointer to a struct ttm_bo_driver set up by the caller.
+>    * @mapping: The address space to use for this bo.
+> + * @vma_manager: A pointer to a vma manager or NULL.
+>    * @file_page_offset: Offset into the device address space that is available
+>    * for buffer data. This ensures compatibility with other users of the
+>    * address space.
+> @@ -596,6 +599,7 @@ int ttm_bo_device_release(struct ttm_bo_device *bdev);
+>   int ttm_bo_device_init(struct ttm_bo_device *bdev,
+>   		       struct ttm_bo_driver *driver,
+>   		       struct address_space *mapping,
+> +		       struct drm_vma_offset_manager *vma_manager,
+>   		       bool need_dma32);
+>   
+>   /**
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+> index fb09314bcfd4..34ee5d725faf 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+> @@ -1728,6 +1728,7 @@ int amdgpu_ttm_init(struct amdgpu_device *adev)
+>   	r = ttm_bo_device_init(&adev->mman.bdev,
+>   			       &amdgpu_bo_driver,
+>   			       adev->ddev->anon_inode->i_mapping,
+> +			       NULL,
+>   			       adev->need_dma32);
+>   	if (r) {
+>   		DRM_ERROR("failed initializing buffer object driver(%d).\n", r);
+> diff --git a/drivers/gpu/drm/drm_vram_mm_helper.c b/drivers/gpu/drm/drm_vram_mm_helper.c
+> index c911781d6728..56fd1519eb35 100644
+> --- a/drivers/gpu/drm/drm_vram_mm_helper.c
+> +++ b/drivers/gpu/drm/drm_vram_mm_helper.c
+> @@ -172,6 +172,7 @@ int drm_vram_mm_init(struct drm_vram_mm *vmm, struct drm_device *dev,
+>   
+>   	ret = ttm_bo_device_init(&vmm->bdev, &bo_driver,
+>   				 dev->anon_inode->i_mapping,
+> +				 NULL,
+>   				 true);
+>   	if (ret)
+>   		return ret;
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_ttm.c b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+> index f0daf958e03a..e67eb10843d1 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_ttm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c
+> @@ -236,6 +236,7 @@ nouveau_ttm_init(struct nouveau_drm *drm)
+>   	ret = ttm_bo_device_init(&drm->ttm.bdev,
+>   				  &nouveau_bo_driver,
+>   				  dev->anon_inode->i_mapping,
+> +				 NULL,
+>   				  drm->client.mmu.dmabits <= 32 ? true : false);
+>   	if (ret) {
+>   		NV_ERROR(drm, "error initialising bo driver, %d\n", ret);
+> diff --git a/drivers/gpu/drm/qxl/qxl_ttm.c b/drivers/gpu/drm/qxl/qxl_ttm.c
+> index 9b24514c75aa..69da0eea6e4c 100644
+> --- a/drivers/gpu/drm/qxl/qxl_ttm.c
+> +++ b/drivers/gpu/drm/qxl/qxl_ttm.c
+> @@ -325,6 +325,7 @@ int qxl_ttm_init(struct qxl_device *qdev)
+>   	r = ttm_bo_device_init(&qdev->mman.bdev,
+>   			       &qxl_bo_driver,
+>   			       qdev->ddev.anon_inode->i_mapping,
+> +			       NULL,
+>   			       false);
+>   	if (r) {
+>   		DRM_ERROR("failed initializing buffer object driver(%d).\n", r);
+> diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/radeon/radeon_ttm.c
+> index 35ac75a11d38..e2c12e59704d 100644
+> --- a/drivers/gpu/drm/radeon/radeon_ttm.c
+> +++ b/drivers/gpu/drm/radeon/radeon_ttm.c
+> @@ -794,6 +794,7 @@ int radeon_ttm_init(struct radeon_device *rdev)
+>   	r = ttm_bo_device_init(&rdev->mman.bdev,
+>   			       &radeon_bo_driver,
+>   			       rdev->ddev->anon_inode->i_mapping,
+> +			       NULL,
+>   			       rdev->need_dma32);
+>   	if (r) {
+>   		DRM_ERROR("failed initializing buffer object driver(%d).\n", r);
+> diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
+> index 58d1f2b28132..8dc26babc5cb 100644
+> --- a/drivers/gpu/drm/ttm/ttm_bo.c
+> +++ b/drivers/gpu/drm/ttm/ttm_bo.c
+> @@ -672,7 +672,7 @@ static void ttm_bo_release(struct kref *kref)
+>   	struct ttm_bo_device *bdev = bo->bdev;
+>   	struct ttm_mem_type_manager *man = &bdev->man[bo->mem.mem_type];
+>   
+> -	drm_vma_offset_remove(&bdev->vma_manager, &bo->base.vma_node);
+> +	drm_vma_offset_remove(bdev->vma_manager, &bo->base.vma_node);
+>   	ttm_mem_io_lock(man, false);
+>   	ttm_mem_io_free_vm(bo);
+>   	ttm_mem_io_unlock(man);
+> @@ -1353,7 +1353,7 @@ int ttm_bo_init_reserved(struct ttm_bo_device *bdev,
+>   	 */
+>   	if (bo->type == ttm_bo_type_device ||
+>   	    bo->type == ttm_bo_type_sg)
+> -		ret = drm_vma_offset_add(&bdev->vma_manager, &bo->base.vma_node,
+> +		ret = drm_vma_offset_add(bdev->vma_manager, &bo->base.vma_node,
+>   					 bo->mem.num_pages);
+>   
+>   	/* passed reservation objects should already be locked,
+> @@ -1704,7 +1704,7 @@ int ttm_bo_device_release(struct ttm_bo_device *bdev)
+>   			pr_debug("Swap list %d was clean\n", i);
+>   	spin_unlock(&glob->lru_lock);
+>   
+> -	drm_vma_offset_manager_destroy(&bdev->vma_manager);
+> +	drm_vma_offset_manager_destroy(&bdev->_vma_manager);
+>   
+>   	if (!ret)
+>   		ttm_bo_global_release();
+> @@ -1716,11 +1716,15 @@ EXPORT_SYMBOL(ttm_bo_device_release);
+>   int ttm_bo_device_init(struct ttm_bo_device *bdev,
+>   		       struct ttm_bo_driver *driver,
+>   		       struct address_space *mapping,
+> +		       struct drm_vma_offset_manager *vma_manager,
+>   		       bool need_dma32)
+>   {
+>   	struct ttm_bo_global *glob = &ttm_bo_glob;
+>   	int ret;
+>   
+> +	if (!vma_manager)
+> +		vma_manager = &bdev->_vma_manager;
+> +
+>   	ret = ttm_bo_global_init();
+>   	if (ret)
+>   		return ret;
+> @@ -1737,7 +1741,8 @@ int ttm_bo_device_init(struct ttm_bo_device *bdev,
+>   	if (unlikely(ret != 0))
+>   		goto out_no_sys;
+>   
+> -	drm_vma_offset_manager_init(&bdev->vma_manager,
+> +	bdev->vma_manager = vma_manager;
+> +	drm_vma_offset_manager_init(&bdev->_vma_manager,
+>   				    DRM_FILE_PAGE_OFFSET_START,
+>   				    DRM_FILE_PAGE_OFFSET_SIZE);
+>   	INIT_DELAYED_WORK(&bdev->wq, ttm_bo_delayed_workqueue);
+> diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+> index 76eedb963693..4aa007edffb0 100644
+> --- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
+> +++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+> @@ -409,16 +409,16 @@ static struct ttm_buffer_object *ttm_bo_vm_lookup(struct ttm_bo_device *bdev,
+>   	struct drm_vma_offset_node *node;
+>   	struct ttm_buffer_object *bo = NULL;
+>   
+> -	drm_vma_offset_lock_lookup(&bdev->vma_manager);
+> +	drm_vma_offset_lock_lookup(bdev->vma_manager);
+>   
+> -	node = drm_vma_offset_lookup_locked(&bdev->vma_manager, offset, pages);
+> +	node = drm_vma_offset_lookup_locked(bdev->vma_manager, offset, pages);
+>   	if (likely(node)) {
+>   		bo = container_of(node, struct ttm_buffer_object,
+>   				  base.vma_node);
+>   		bo = ttm_bo_get_unless_zero(bo);
+>   	}
+>   
+> -	drm_vma_offset_unlock_lookup(&bdev->vma_manager);
+> +	drm_vma_offset_unlock_lookup(bdev->vma_manager);
+>   
+>   	if (!bo)
+>   		pr_err("Could not find buffer object to map\n");
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> index cd0d49d8a8da..20bc91214e75 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> @@ -830,6 +830,7 @@ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
+>   	ret = ttm_bo_device_init(&dev_priv->bdev,
+>   				 &vmw_bo_driver,
+>   				 dev->anon_inode->i_mapping,
+> +				 NULL,
+>   				 false);
+>   	if (unlikely(ret != 0)) {
+>   		DRM_ERROR("Failed initializing TTM buffer object driver.\n");
 
-It is actually on channel basis (in UDMAP):
-TR channel does not support metadata at all.
-Packet Mode channel have support for metadata, but it might not be
-available for certain remote peripherals. PDMAs for example does not use
-metadata.
-Any channel can be configured as TR or Packet Mode, any channel can
-service a peripheral which needs or does not need metadata.
-
-The reason we ended up per descriptor callbacks with Radhey (added to
-CC) is that all functions operate on the descriptor and it was natural
-to have them attached to the descriptor rather than add channel based
-callbacks which must also take the descriptor pointer in addition. The
-descriptor have pointer to the channel it is issued on.
-
-I only know if metadata is going to be supported when the channel is
-requested, based on the psil-config of the remote thread.
-
-Clients still can check and plan ahead on how to use the metadata.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
