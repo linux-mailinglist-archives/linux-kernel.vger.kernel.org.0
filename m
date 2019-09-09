@@ -2,132 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD31ADD9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1E69ADD88
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:54:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfIIQzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 12:55:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35590 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfIIQzy (ORCPT
+        id S2390183AbfIIQx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 12:53:59 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43791 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727080AbfIIQx6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 12:55:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:
-        Subject:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3fWTUyRxX0mvy7shQ7gKeWr5v7P/Tt6F0XOk74ciJFA=; b=JU7/JELGI4YFnkDhrJWcATIm8
-        fmXDWLHGf7GgyQIqzLWrkrWt2Jn1HmF5XRf+BXR8i5cxcHEeuIaDY/DrYwB0gLcN0UyAzfFcrtaoy
-        Kp1yjwOwWWFoUI+KfhOvAiXlVrUkdjZIAVlbXH3PKmDKWbuLomDz5+OQnGhzx7PTXpcJGKAy8PR9U
-        9dc2ctrWHNnXhXv+qPx2Cg93DkTFNFO48SPjLzxvSzODe0UX/i7nGR7EduFnq4NkbwGhNAss4bwiv
-        Bd0JoQ1625cnbFAfASUWSd4xPMKkE1+orhVW3QhDQOhvfGZc0+5Z5LT/1GXxOdeTBk7l1qvWu8bh/
-        ITzAqNpkg==;
-Received: from c-73-157-219-8.hsd1.or.comcast.net ([73.157.219.8] helo=[10.0.0.252])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i7MxF-00073u-Ur; Mon, 09 Sep 2019 16:55:54 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v3 0/9] hacking: make 'kernel hacking' menu better
- structurized
-To:     Changbin Du <changbin.du@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-References: <20190909144453.3520-1-changbin.du@gmail.com>
-Message-ID: <da2774e1-fc41-0dde-01ed-0607920ce762@infradead.org>
-Date:   Mon, 9 Sep 2019 09:53:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 9 Sep 2019 12:53:58 -0400
+Received: by mail-oi1-f194.google.com with SMTP id t84so11066262oih.10
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 09:53:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ljPPuRHN7pv5RAsMzezY1X1Lrzb1YERDpsuR59TZXOI=;
+        b=cc4AP0xRn0rgSFQQoweXYVeDmdpYDPSRo+ablACaZl0ulft5o6ThBhM8seUjI0P/As
+         2FrOOiCIlbReGxyXmZp79zqy0714NmEYrwosquM4+F8/EVhQTv5G7t+8DHCw02YlvSGE
+         lXv8RN6C8a9rDJ6KXPUD3o8PBc8qBShf0S/Zt4H06TQ9lIBXCuaIjnYRlgE556zpUafJ
+         pJW1sBGoCv57FxGJeiL4qhoLSm0A6r9JOIHri2FMxlnPZfZX+K0V5FG4J7pGNZ4VcetG
+         G3K8Dao7YimLUa59TVick6b/JNeGfMOsbkCaRTymi57XiU3kMmLtOBJb0mmhqL1UwMy+
+         1jpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ljPPuRHN7pv5RAsMzezY1X1Lrzb1YERDpsuR59TZXOI=;
+        b=bcaR+2BmBinTrxeGsOWjz9HW9S2tA67FLdMOAx5CFzIhCaW6Qfd2Ugbz/Fyc6lp60G
+         AbWm46AhQiTVP53eZUxk44sqrRXvB8Izc+tOvaAviaJPqScmr1hJU2s7HVAIKs+wuoCE
+         qxOkdzEspy/JPz6790T50UKL/FomBDMxi/T50KCb/ygu9AKnQABytczCi4mh6MBU++bz
+         8bWho8/3zT5v2D5wNnx39WudxJtxv5984npIWfH26hOGEdRIo3Y//PjU2XVYqptk28Z2
+         rbAPOqmRl9b2pTW8ZqHnNPNTUML61lyJUuWa7dTsmFsOGeB4crOlyXPOt1ZuRxuvjVIa
+         NGmw==
+X-Gm-Message-State: APjAAAUurj/WF5mjo4HRkqdvB81ENhIqEtBgU5Zw3sw+IM7YPtA5PfZF
+        BfBMIgZsXMKN3cMeBt8ka0+I4SDqmuAQgVzZdiw=
+X-Google-Smtp-Source: APXvYqwkg2PtS7tSU9ZYcfGxOf6NNnium6OK0+MhRkPbE2dXlTolFAlTYyAZJTz0MmnJAWGvVUW9zdVFOung1ms3nsY=
+X-Received: by 2002:aca:4e97:: with SMTP id c145mr92531oib.145.1568048037621;
+ Mon, 09 Sep 2019 09:53:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190909144453.3520-1-changbin.du@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190903160430.1368-1-lpf.vector@gmail.com> <20190903160430.1368-2-lpf.vector@gmail.com>
+ <4e9a237f-2370-0f55-34d2-1fbb9334bf88@suse.cz>
+In-Reply-To: <4e9a237f-2370-0f55-34d2-1fbb9334bf88@suse.cz>
+From:   Pengfei Li <lpf.vector@gmail.com>
+Date:   Tue, 10 Sep 2019 00:53:46 +0800
+Message-ID: <CAD7_sbEwwqp_ONzYxPQfBDORH4g2Du=LKt=eWf+6SsLgtysBmA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] mm, slab: Make kmalloc_info[] contain all types of names
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christopher Lameter <cl@linux.com>, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/9/19 7:44 AM, Changbin Du wrote:
-> This series is a trivial improvment for the layout of 'kernel hacking'
-> configuration menu. Now we have many items in it which makes takes
-> a little time to look up them since they are not well structurized yet.
-> 
-> Early discussion is here:
-> https://lkml.org/lkml/2019/9/1/39
-> 
-> This is a preview:
-> 
->   │ ┌─────────────────────────────────────────────────────────────────────────┐ │  
->   │ │        printk and dmesg options  --->                                   │ │  
->   │ │        Compile-time checks and compiler options  --->                   │ │  
->   │ │        Generic Kernel Debugging Instruments  --->                       │ │  
->   │ │    -*- Kernel debugging                                                 │ │  
->   │ │    [*]   Miscellaneous debug code                                       │ │  
->   │ │        Memory Debugging  --->                                           │ │  
->   │ │    [ ] Debug shared IRQ handlers                                        │ │  
->   │ │        Debug Oops, Lockups and Hangs  --->                              │ │  
->   │ │        Scheduler Debugging  --->                                        │ │  
->   │ │    [*] Enable extra timekeeping sanity checking                         │ │  
->   │ │        Lock Debugging (spinlocks, mutexes, etc...)  --->                │ │  
->   │ │    -*- Stack backtrace support                                          │ │  
->   │ │    [ ] Warn for all uses of unseeded randomness                         │ │  
->   │ │    [ ] kobject debugging                                                │ │  
->   │ │        Debug kernel data structures  --->                               │ │  
->   │ │    [ ] Debug credential management                                      │ │  
->   │ │        RCU Debugging  --->                                              │ │  
->   │ │    [ ] Force round-robin CPU selection for unbound work items           │ │  
->   │ │    [ ] Force extended block device numbers and spread them              │ │  
->   │ │    [ ] Enable CPU hotplug state control                                 │ │  
->   │ │    [*] Latency measuring infrastructure                                 │ │  
->   │ │    [*] Tracers  --->                                                    │ │  
->   │ │    [ ] Remote debugging over FireWire early on boot                     │ │  
->   │ │    [*] Sample kernel code  --->                                         │ │  
->   │ │    [*] Filter access to /dev/mem                                        │ │  
->   │ │    [ ]   Filter I/O access to /dev/mem                                  │ │  
->   │ │    [ ] Additional debug code for syzbot                                 │ │  
->   │ │        x86 Debugging  --->                                              │ │  
->   │ │        Kernel Testing and Coverage  --->                                │ │  
->   │ │                                                                         │ │  
->   │ │                                                                         │ │  
->   │ └─────────────────────────────────────────────────────────────────────────┘ │  
->   ├─────────────────────────────────────────────────────────────────────────────┤  
->   │          <Select>    < Exit >    < Help >    < Save >    < Load >           │  
->   └─────────────────────────────────────────────────────────────────────────────┘ 
-> 
-> v3:
->   o change subject prefix.
-> v2:
->   o rebase to linux-next.
->   o move DEBUG_FS to 'Generic Kernel Debugging Instruments'
->   o move DEBUG_NOTIFIERS to 'Debug kernel data structures'
-> 
-> Changbin Du (9):
->   hacking: Group sysrq/kgdb/ubsan into 'Generic Kernel Debugging
->     Instruments'
->   hacking: Create submenu for arch special debugging options
->   hacking: Group kernel data structures debugging together
->   hacking: Move kernel testing and coverage options to same submenu
->   hacking: Move Oops into 'Lockups and Hangs'
->   hacking: Move SCHED_STACK_END_CHECK after DEBUG_STACK_USAGE
->   hacking: Create a submenu for scheduler debugging options
->   hacking: Move DEBUG_BUGVERBOSE to 'printk and dmesg options'
->   hacking: Move DEBUG_FS to 'Generic Kernel Debugging Instruments'
-> 
->  lib/Kconfig.debug | 659 ++++++++++++++++++++++++----------------------
->  1 file changed, 340 insertions(+), 319 deletions(-)
+On Mon, Sep 9, 2019 at 10:59 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> On 9/3/19 6:04 PM, Pengfei Li wrote:
+> > There are three types of kmalloc, KMALLOC_NORMAL, KMALLOC_RECLAIM
+> > and KMALLOC_DMA.
+> >
+> > The name of KMALLOC_NORMAL is contained in kmalloc_info[].name,
+> > but the names of KMALLOC_RECLAIM and KMALLOC_DMA are dynamically
+> > generated by kmalloc_cache_name().
+> >
+> > This patch predefines the names of all types of kmalloc to save
+> > the time spent dynamically generating names.
+>
+> As I said, IMHO it's more useful that we don't need to allocate the
+> names dynamically anymore, and it's simpler overall.
+>
 
-Hi,
-Looks good to me.
+Thank you very much for your review.
 
-I verified that the before and after kernel .config file contains the same
-symbols and values (for allmodconfig).
-I also tested with menuconfig, nconfig, gconfig, and xconfig.
+> > Signed-off-by: Pengfei Li <lpf.vector@gmail.com>
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>
+> >   /*
+> >    * kmalloc_info[] is to make slub_debug=,kmalloc-xx option work at boot time.
+> >    * kmalloc_index() supports up to 2^26=64MB, so the final entry of the table is
+> >    * kmalloc-67108864.
+> >    */
+> >   const struct kmalloc_info_struct kmalloc_info[] __initconst = {
+>
+> BTW should it really be an __initconst, when references to the names
+> keep on living in kmem_cache structs? Isn't this for data that's
+> discarded after init?
 
-for all 9 patches:
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
--- 
-~Randy
+You are right, I will remove __initconst in v2.
