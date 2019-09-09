@@ -2,73 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E03EAD85B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 13:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E857AD867
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:01:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404534AbfIIL47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 07:56:59 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60833 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404502AbfIIL47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 07:56:59 -0400
-Received: from [192.168.4.140] (38.85.69.148.rev.vodafone.pt [148.69.85.38] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x89BuRWN2370009
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 9 Sep 2019 04:56:29 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x89BuRWN2370009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019081901; t=1568030190;
-        bh=amVw5RKHgQtC48TDjO25VF7TYKPY9dwQtCHHtmUiWLE=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=lvoWhoZgfNLoIKEG5HMqgj2INg4WXNd1HFaah1iCDp0Ax9O9xMwZxJ/tVCfuFPX+t
-         SovlpLHk3dL63OePhXjpdYrpwk+zhAKreqHglsT1DKolM9uMw0xDHftZf7qSL4I1dm
-         cU7ZrGpYRYdJ2X4B5koCF9HFHOui2BhRpbBaPn/ZZnBBOy3f+nO1AZCVONjlCGdd+J
-         R1sDya84Assf38LZxcJN9R9OQyM+Sj4Bw84Sp4RZPx4P8thdY9mXqTbQlvMyex5s4h
-         oiSiklz8bhpNWZlFyYKe0WXb8ToI7I4SnOw/otHQAnzM5ukV/GqffGMu5/wJKBrnRn
-         CoQCM9nw4hqSg==
-Date:   Mon, 09 Sep 2019 12:56:18 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190908072248.GB16220@zn.tnic>
-References: <20190905232222.14900-1-bshanks@codeweavers.com> <20190907212610.GA30930@ranerica-svr.sc.intel.com> <20190908072248.GB16220@zn.tnic>
+        id S2404603AbfIIMBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 08:01:15 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40957 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404591AbfIIMBP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 08:01:15 -0400
+Received: by mail-io1-f65.google.com with SMTP id h144so27918688iof.7;
+        Mon, 09 Sep 2019 05:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gjzSJy3NDD7sYggLday3lhixH+9SUC/EVeZUWoe2eU4=;
+        b=sBnSROaYcwf48BNTZC63gADs6dyXJsKsfnm5pvlYuv5jzlMTu/aPSFTGhshJ5Ll2Ik
+         vp3iKTlPbMgxE6XkoPHIJ/qTcKQQEIG5TxF+1nU1OVHAw1XATgur1o4zXdsj6Tl06D07
+         IVt098D2fTUdr0zDTvJJNG6PS5KsBOW0c2GESGvGta4qvr3/oOGCkc7ZXFfuiHRI2eP+
+         jNx5OyS14T4hjexE+g4JM9Ovu0yh/3y36DnCXdIPNEMImJM4bhEXEWUpxJnIOw2j0N8p
+         VKfPXMRpbA4pqQXRi8/WFkUfYT9a3yEaV7KGTZAW27gtUxRfz210Ov9jSc972wldEYOe
+         B8BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gjzSJy3NDD7sYggLday3lhixH+9SUC/EVeZUWoe2eU4=;
+        b=Ytx/m/6deJw9J/03bD4bFRkoyB9eUyu1ObgdWMKsiPCvQ4zE3lXGdZbYOOhZ3HattU
+         X/rLffcVU3BnCOqAzcIQKC7Gfry7/bFs/c5wLdaULfaCxW8cJW4uNWIEto1i2z/1DHEA
+         RikvXeL6mkdRLSL+vwqHDrGC2hd36ouiQGWjXFWo7EI4LANk8+jGiIapC1zPxaEqPXEe
+         kYG07MQtmfRDEyrJtXj9Fs5wGfy/P0TpsQa9ZB6PYcWG0/T+2FkxazI7iuhxW12NODbT
+         c9z5cOvEF9h/zcr/Jk2yxsweJX5RmbFgEW+5y3sp9719O4zxczZZh80eZV6i3MM1seSF
+         R8Pg==
+X-Gm-Message-State: APjAAAU+v/4+kO4GGjY9yl/ugptv8AqoNCSSlpU4Xj3UazuzB15tB6t5
+        HO0TIUqoN8DMIEQ5Xszy6IEX3ebrnj/2qR+El6Q=
+X-Google-Smtp-Source: APXvYqyKrMcPIeFry4pmSxcirJ0sZlzv9BWvR/f7rXRlNraERjFdqJdXoc1ys7lbOzrlKqXMAIHEzvwlSjm0lpNwlDo=
+X-Received: by 2002:a6b:e514:: with SMTP id y20mr18930982ioc.197.1568030472875;
+ Mon, 09 Sep 2019 05:01:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] x86/umip: Add emulation for 64-bit processes
-To:     Borislav Petkov <bp@alien8.de>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-CC:     Brendan Shanks <bshanks@codeweavers.com>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-From:   hpa@zytor.com
-Message-ID: <1E11E98F-4A38-4CDE-8549-64A2C28DC63E@zytor.com>
+References: <1566936978-28519-1-git-send-email-peng.fan@nxp.com> <20190906172044.B99FB20838@mail.kernel.org>
+In-Reply-To: <20190906172044.B99FB20838@mail.kernel.org>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Mon, 9 Sep 2019 19:51:12 +0800
+Message-ID: <CAA+hA=To9B0H1z6Hh1eSZN9_rcextT_Oe-CTMmz9fC9CDNUBTQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On September 8, 2019 8:22:48 AM GMT+01:00, Borislav Petkov <bp@alien8=2Ede>=
- wrote:
->On Sat, Sep 07, 2019 at 02:26:10PM -0700, Ricardo Neri wrote:
->> > Wine users have encountered a number of 64-bit Windows games that
->use
->> > these instructions (particularly sgdt), and were crashing when run
->on
->> > UMIP-enabled systems=2E
->>=20
->> Emulation support for 64-bit processes was not initially included
->> because no use cases had been identified=2E
+On Sat, Sep 7, 2019 at 9:47 PM Stephen Boyd <sboyd@kernel.org> wrote:
 >
->AFAIR, we said at the time that 64-bit doesn't need it because this is
->legacy software only and 64-bit will get fixed properly not to use
->those
->insns=2E I can probably guess how that went =2E=2E=2E
+> Quoting Peng Fan (2019-08-27 01:17:50)
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > There is hardware issue that:
+> > The output clock the LPCG cell will not turn back on as expected,
+> > even though a read of the IPG registers in the LPCG indicates that
+> > the clock should be enabled.
+> >
+> > The software workaround is to write twice to enable the LPCG clock
+> > output.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>
+> Does this need a Fixes tag?
 
-I don't think Windows games was something we considered=2E However, needin=
-g to simulate these instructions is not a huge surprise=2E The important th=
-ing is that by simulating them, we can plug the leak of some very high valu=
-e kernel information =E2=80=93 mainly the GDT, IDT and TSS addresses=2E
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+Not sure as it's not code logic issue but a hardware bug.
+And 4.19 LTS still have not this driver support.
+
+Regards
+Aisheng
+
+>
