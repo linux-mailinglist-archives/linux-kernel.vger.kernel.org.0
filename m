@@ -2,128 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB757ADAA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5F6DADA97
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 15:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730690AbfIIN7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 09:59:43 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:63751 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405137AbfIIN7m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 09:59:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1568037581; x=1599573581;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=K42g/AFNMDx/RgjzKJBTKWAce5pXZj/ROym93HlBV/I=;
-  b=iThLrsB7pkHCwAmSPl2JFKAjReiQpTcVs4GslPOukjdC1ZlQolkkH/xN
-   GC5nBTT2WFDl/oMVgNEcDhqOLtkewFS4ru5q5xCq4LTK4Fyve4Yb2MLO0
-   4YACa25Pz9wgmhI+zccrkrJxl6/YN1ljnX4cf8BLQr4hc876TWhkmrhuO
-   Y=;
-X-IronPort-AV: E=Sophos;i="5.64,484,1559520000"; 
-   d="scan'208";a="829304744"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 09 Sep 2019 13:59:14 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com (Postfix) with ESMTPS id 0CCB1A1E19;
-        Mon,  9 Sep 2019 13:59:12 +0000 (UTC)
-Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 9 Sep 2019 13:59:12 +0000
-Received: from [10.125.238.52] (10.43.160.27) by EX13D01EUB001.ant.amazon.com
- (10.43.166.194) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 9 Sep
- 2019 13:59:01 +0000
-Subject: Re: [PATCH 3/3] arm64: alpine: select AL_POS
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Patrick Venture" <venture@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Olof Johansson" <olof@lixom.net>,
-        Maxime Ripard <mripard@kernel.org>,
-        "Santosh Shilimkar" <ssantosh@kernel.org>,
-        <paul.kocialkowski@bootlin.com>, <mjourdan@baylibre.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>, DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
-        <hanochu@amazon.com>, <barakw@amazon.com>
-References: <1568020220-7758-1-git-send-email-talel@amazon.com>
- <1568020220-7758-4-git-send-email-talel@amazon.com>
- <CAK8P3a0DEMeFWK+RuAdSLyDYduWWwj9DxP_Beipays-d_6ixnA@mail.gmail.com>
- <ab512ced-d989-5c10-a550-2a4723d38e7e@amazon.com>
- <CAK8P3a34eKFXoAPOfkFN5+H4kxOhRjXgws_0wy+d-186LFxcTw@mail.gmail.com>
-From:   "Shenhar, Talel" <talel@amazon.com>
-Message-ID: <0d36f94d-596f-0ec7-6951-b097b5ee0d2d@amazon.com>
-Date:   Mon, 9 Sep 2019 16:58:56 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.0
+        id S2405118AbfIIN7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 09:59:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405085AbfIIN7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 09:59:16 -0400
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7759E2086D;
+        Mon,  9 Sep 2019 13:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568037554;
+        bh=1LOeIrNaojbFutO/35pibYdicy6zk1C9NEftmHLgaYE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UieH1zXYFmI9ZQoBmDFp/Caccsfb8zgAwWbjMjeDAAsY7nOdDGw25MsSl3XEWM/eK
+         aCMGsGuAWbMv29jYF4cNJLtde8dflId6l4spy1NhpVNiZk1DIBghKpAI9y5BFNAJ5s
+         Vr1SD9rR+VQpQwiMsnxecPLCM1nyBKQ6YwApwNbI=
+Date:   Mon, 9 Sep 2019 15:59:10 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux@armlinux.org.uk, mark.rutland@arm.com, robh+dt@kernel.org,
+        wens@csie.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 2/9] crypto: Add Allwinner sun8i-ce Crypto Engine
+Message-ID: <20190909135908.vkvcuykrplhxxwtd@flea>
+References: <20190906184551.17858-1-clabbe.montjoie@gmail.com>
+ <20190906184551.17858-3-clabbe.montjoie@gmail.com>
+ <20190907081951.v2huvhm44jfprfop@flea>
+ <20190907190408.GE2628@Red>
+ <20190909113837.vrnqdfgzhsiymfpm@flea>
+ <20190909131906.GA12882@Red>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a34eKFXoAPOfkFN5+H4kxOhRjXgws_0wy+d-186LFxcTw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.43.160.27]
-X-ClientProxiedBy: EX13D23UWA002.ant.amazon.com (10.43.160.40) To
- EX13D01EUB001.ant.amazon.com (10.43.166.194)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190909131906.GA12882@Red>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 9/9/2019 4:45 PM, Arnd Bergmann wrote:
-> On Mon, Sep 9, 2019 at 12:17 PM Shenhar, Talel <talel@amazon.com> wrote:
->> On 9/9/2019 12:40 PM, Arnd Bergmann wrote:
->>> On Mon, Sep 9, 2019 at 11:14 AM Talel Shenhar <talel@amazon.com> wrote:
->>>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
->>>> index 4778c77..bd86b15 100644
->>>> --- a/arch/arm64/Kconfig.platforms
->>>> +++ b/arch/arm64/Kconfig.platforms
->>>> @@ -25,6 +25,7 @@ config ARCH_SUNXI
->>>>    config ARCH_ALPINE
->>>>           bool "Annapurna Labs Alpine platform"
->>>>           select ALPINE_MSI if PCI
->>>> +       select AL_POS
->>>>           help
->>>>             This enables support for the Annapurna Labs Alpine
->>>>             Soc family.
->>> Generally I think this kind of thing should go into the defconfig
->>> rather than being hard-selected. There might be users that
->>> want to not enable the driver.
->> The reason for selecting it is because this is a driver that we will
->> always want for ARCH_ALPINE.
-> Can you put the exact requirement (other than "we want this")
-> in the changelog text then? It's still not clear to me what breaks
-> without this driver.
+On Mon, Sep 09, 2019 at 03:19:06PM +0200, Corentin Labbe wrote:
+> On Mon, Sep 09, 2019 at 01:38:37PM +0200, Maxime Ripard wrote:
+> > On Sat, Sep 07, 2019 at 09:04:08PM +0200, Corentin Labbe wrote:
+> > > > Also, I'm not sure what is the point of having the clocks names be
+> > > > parameters there as well. It's constant across all the compatibles,
+> > > > the only thing that isn't is the number of clocks and the module clock
+> > > > rate. It's what you should have in there.
+> > >
+> > > Since the datasheet give some max frequency, I think I will add a
+> > > max_freq and add a check to verify if the clock is in the right
+> > > range
+> >
+> > It's a bit pointless. What are you going to do if it's not correct?
+> > What are you trying to fix / report with this?
 >
->          Arnd
+> I thinked to print a warning.  If someone want to play with
+> overclocking for example, the driver should said that probably some
+> result could be invalid.
 
-Its not that something will get broken. its error event detector for POS 
-events which allows seeing bad accesses to registers.
+If someone wants to play with overclocking, the crypto engine is going
+to be the least of their concern.
 
-What is the general rule of which configs to put under select and which 
-under defconfig?
+> > > > > +int sun8i_ce_get_engine_number(struct sun8i_ce_dev *ce)
+> > > > > +{
+> > > > > +	return atomic_inc_return(&ce->flow) % ce->variant->maxflow;
+> > > > > +}
+> > > >
+> > > > I'm not sure what this is supposed to be doing, but that mod there
+> > > > seems pretty dangerous.
+> > > >
+> > > > ...
+> > >
+> > > This mod do a round robin on each channel.
+> > > I dont see why it is dangerous.
+> >
+> > Well, you're using the atomic API here which is most commonly used for
+> > refcounting, while you're using a mod.
+> >
+> > Plus, while the increment is atomic, the modulo isn't, so you can end
+> > up in a case where you would be preempted between the
+> > atomic_inc_return and the mod, which is dangerous.
+> >
+> > Again, I'm not sure what this function is doing (which is also a
+> > problem in itself). I guess you should just make it clearer what it
+> > does, and then we can discuss it properly.
+>
+> Each request need to be assigned to a channel.
+> Each channel are identified by a number from 1 to 4.
+>
+> So this function return the channel to use, 1 then 2 then 3 then 4 then 1...
+>
+> Note that this is uncritical. If, due to anything, two request are
+> assigned to the same channel, nothing will break.
 
-I was thinking that "general" SoC support is good under select - those 
-things that we always want.
+I'm not sure why you're using the atomic API then?
 
-And specific features, e.g. RAID support or features that supported only 
-on specific HW shall go under defconfig.
+Also, I guess a bitfield and find_first_bit (and a different function
+name) would be more obvious to the reader.
 
-
-Similar, I see ARCH_LAYERSCAPE selecting EDAC_SUPPORT.
-
-
-Will love to hear the general rule for select vs defconfig.
-
+Thanks!
+Maxime
