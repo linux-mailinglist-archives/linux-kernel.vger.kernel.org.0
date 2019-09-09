@@ -2,295 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92AECAD936
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDAB1AD93F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:41:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404726AbfIIMkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 08:40:14 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:42625 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727828AbfIIMkM (ORCPT
+        id S2404739AbfIIMlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 08:41:14 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:55602 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728291AbfIIMlN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 08:40:12 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x89CcfEp029014;
-        Mon, 9 Sep 2019 15:38:41 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id CB24462CAA; Mon,  9 Sep 2019 15:38:41 +0300 (IDT)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de,
-        gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, avifishman70@gmail.com,
-        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
-        benjaminfair@google.com, sumit.garg@linaro.org,
-        jens.wiklander@linaro.org, vkoul@kernel.org, tglx@linutronix.de,
-        joel@jms.id.au
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, openbmc@lists.ozlabs.org,
-        Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v2 2/2] hwrng: npcm: add NPCM RNG driver
-Date:   Mon,  9 Sep 2019 15:38:40 +0300
-Message-Id: <20190909123840.154745-3-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190909123840.154745-1-tmaimon77@gmail.com>
-References: <20190909123840.154745-1-tmaimon77@gmail.com>
+        Mon, 9 Sep 2019 08:41:13 -0400
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x89CeRLt047567;
+        Mon, 9 Sep 2019 21:40:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
+ Mon, 09 Sep 2019 21:40:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x89CeRQo047564
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 9 Sep 2019 21:40:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH (resend)] mm,oom: Defer dump_tasks() output.
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <1567159493-5232-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <7de2310d-afbd-e616-e83a-d75103b986c6@i-love.sakura.ne.jp>
+ <20190909113627.GJ27159@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <579a27d2-52fb-207e-9278-fc20a2154394@i-love.sakura.ne.jp>
+Date:   Mon, 9 Sep 2019 21:40:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20190909113627.GJ27159@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Nuvoton NPCM BMC Random Number Generator(RNG) driver.
+On 2019/09/09 20:36, Michal Hocko wrote:
+> On Sat 07-09-19 19:54:32, Tetsuo Handa wrote:
+>> (Resending to LKML as linux-mm ML dropped my posts.)
+>>
+>> If /proc/sys/vm/oom_dump_tasks != 0, dump_header() can become very slow
+>> because dump_tasks() synchronously reports all OOM victim candidates, and
+>> as a result ratelimit test for dump_header() cannot work as expected.
+>>
+>> This patch defers dump_tasks() output till oom_lock is released. As a
+>> result of this patch, the latency between out_of_memory() is called and
+>> SIGKILL is sent (and the OOM reaper starts reclaiming memory) will be
+>> significantly reduced.
+>>
+>> Since CONFIG_PRINTK_CALLER was introduced, concurrent printk() became less
+>> problematic. But we still need to correlate synchronously printed messages
+>> and asynchronously printed messages if we defer dump_tasks() messages.
+>> Thus, this patch also prefixes OOM killer messages using "OOM[$serial]:"
+>> format. As a result, OOM killer messages would look like below.
+>>
+>>   [   31.935015][   T71] OOM[1]: kworker/4:1 invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=-1, oom_score_adj=0
+>>   (...snipped....)
+>>   [   32.052635][   T71] OOM[1]: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),global_oom,task_memcg=/,task=firewalld,pid=737,uid=0
+>>   [   32.056886][   T71] OOM[1]: Out of memory: Killed process 737 (firewalld) total-vm:358672kB, anon-rss:22640kB, file-rss:12328kB, shmem-rss:0kB, UID:0 pgtables:421888kB oom_score_adj:0
+>>   [   32.064291][   T71] OOM[1]: Tasks state (memory values in pages):
+>>   [   32.067807][   T71] OOM[1]: [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
+>>   [   32.070057][   T54] oom_reaper: reaped process 737 (firewalld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+>>   [   32.072417][   T71] OOM[1]: [    548]     0   548     9772     1172   110592        0             0 systemd-journal
+>>   (...snipped....)
+>>   [   32.139566][   T71] OOM[1]: [    737]     0   737    89668     8742   421888        0             0 firewalld
+>>   (...snipped....)
+>>   [   32.221990][   T71] OOM[1]: [   1300]    48  1300    63025     1788   532480        0             0 httpd
+>>
+>> This patch might affect panic behavior triggered by panic_on_oom or no
+>> OOM-killable tasks, for dump_header(oc, NULL) will not report OOM victim
+>> candidates if there are not-yet-reported OOM victim candidates from past
+>> rounds of OOM killer invocations. I don't know if that matters.
+>>
+>> For now this patch embeds "struct oom_task_info" into each
+>> "struct task_struct". In order to avoid bloating "struct task_struct",
+>> future patch might detach from "struct task_struct" because one
+>> "struct oom_task_info" for one "struct signal_struct" will be enough.
+> 
+> This is not an improvement. It detaches the oom report and tasks_dump
+> for an arbitrary amount of time because the worder context might be
+> stalled for an arbitrary time. Even long after the oom is resolved.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
----
- drivers/char/hw_random/Kconfig    |  13 ++
- drivers/char/hw_random/Makefile   |   1 +
- drivers/char/hw_random/npcm-rng.c | 203 ++++++++++++++++++++++++++++++
- 3 files changed, 217 insertions(+)
- create mode 100644 drivers/char/hw_random/npcm-rng.c
+A new worker thread is created if all existing worker threads are busy
+because this patch solves OOM situation quickly when a new worker thread
+cannot be created due to OOM situation.
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 59f25286befe..87a1c30e7958 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -440,6 +440,19 @@ config HW_RANDOM_OPTEE
- 
- 	  If unsure, say Y.
- 
-+config HW_RANDOM_NPCM
-+	tristate "NPCM Random Number Generator support"
-+	depends on ARCH_NPCM || COMPILE_TEST
-+	default HW_RANDOM
-+	help
-+ 	  This driver provides support for the Random Number
-+	  Generator hardware available in Nuvoton NPCM SoCs.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called npcm-rng.
-+
-+ 	  If unsure, say Y.
-+
- endif # HW_RANDOM
- 
- config UML_RANDOM
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 7c9ef4a7667f..17b6d4e6d591 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -39,3 +39,4 @@ obj-$(CONFIG_HW_RANDOM_MTK)	+= mtk-rng.o
- obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
- obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
- obj-$(CONFIG_HW_RANDOM_OPTEE) += optee-rng.o
-+obj-$(CONFIG_HW_RANDOM_NPCM) += npcm-rng.o
-diff --git a/drivers/char/hw_random/npcm-rng.c b/drivers/char/hw_random/npcm-rng.c
-new file mode 100644
-index 000000000000..3ed396474563
---- /dev/null
-+++ b/drivers/char/hw_random/npcm-rng.c
-@@ -0,0 +1,203 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2019 Nuvoton Technology corporation.
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/init.h>
-+#include <linux/random.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/hw_random.h>
-+#include <linux/delay.h>
-+#include <linux/of_irq.h>
-+#include <linux/pm_runtime.h>
-+
-+#define NPCM_RNGCS_REG		0x00	/* Control and status register */
-+#define NPCM_RNGD_REG		0x04	/* Data register */
-+#define NPCM_RNGMODE_REG	0x08	/* Mode register */
-+
-+#define NPCM_RNG_CLK_SET_25MHZ	GENMASK(4, 3) /* 20-25 MHz */
-+#define NPCM_RNG_DATA_VALID	BIT(1)
-+#define NPCM_RNG_ENABLE		BIT(0)
-+#define NPCM_RNG_M1ROSEL	BIT(1)
-+
-+#define NPCM_RNG_TIMEOUT_USEC	20000
-+#define NPCM_RNG_POLL_USEC	1000
-+
-+#define to_npcm_rng(p)	container_of(p, struct npcm_rng, rng)
-+
-+struct npcm_rng {
-+	void __iomem *base;
-+	struct hwrng rng;
-+};
-+
-+static int npcm_rng_init(struct hwrng *rng)
-+{
-+	struct npcm_rng *priv = to_npcm_rng(rng);
-+	u32 val;
-+
-+	val = readl(priv->base + NPCM_RNGCS_REG);
-+	val |= NPCM_RNG_ENABLE;
-+	writel(val, priv->base + NPCM_RNGCS_REG);
-+
-+	return 0;
-+}
-+
-+static void npcm_rng_cleanup(struct hwrng *rng)
-+{
-+	struct npcm_rng *priv = to_npcm_rng(rng);
-+	u32 val;
-+
-+	val = readl(priv->base + NPCM_RNGCS_REG);
-+	val &= ~NPCM_RNG_ENABLE;
-+	writel(val, priv->base + NPCM_RNGCS_REG);
-+}
-+
-+static int npcm_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-+{
-+	struct npcm_rng *priv = to_npcm_rng(rng);
-+	int retval = 0;
-+	int ready;
-+
-+	pm_runtime_get_sync((struct device *)priv->rng.priv);
-+
-+	while (max >= sizeof(u32)) {
-+		ready = readl(priv->base + NPCM_RNGCS_REG) &
-+			NPCM_RNG_DATA_VALID;
-+		if (!ready) {
-+			if (wait) {
-+				if (readl_poll_timeout(priv->base + NPCM_RNGCS_REG,
-+						       ready,
-+						       ready & NPCM_RNG_DATA_VALID,
-+						       NPCM_RNG_POLL_USEC,
-+						       NPCM_RNG_TIMEOUT_USEC))
-+					break;
-+			} else {
-+				break;
-+			}
-+		}
-+
-+		*(u32 *)buf = readl(priv->base + NPCM_RNGD_REG);
-+		retval += sizeof(u32);
-+		buf += sizeof(u32);
-+		max -= sizeof(u32);
-+	}
-+
-+	pm_runtime_mark_last_busy((struct device *)priv->rng.priv);
-+	pm_runtime_put_sync_autosuspend((struct device *)priv->rng.priv);
-+
-+	return retval || !wait ? retval : -EIO;
-+}
-+
-+static int npcm_rng_probe(struct platform_device *pdev)
-+{
-+	struct npcm_rng *priv;
-+	struct resource *res;
-+	bool pm_dis = false;
-+	u32 quality;
-+	int ret;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	priv->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->rng.name = pdev->name;
-+#ifndef CONFIG_PM
-+	pm_dis = true;
-+	priv->rng.init = npcm_rng_init;
-+	priv->rng.cleanup = npcm_rng_cleanup;
-+#endif
-+	priv->rng.read = npcm_rng_read;
-+	priv->rng.priv = (unsigned long)&pdev->dev;
-+	if (of_property_read_u32(pdev->dev.of_node, "quality", &quality))
-+		priv->rng.quality = 1000;
-+	else
-+		priv->rng.quality = quality;
-+
-+	writel(NPCM_RNG_M1ROSEL, priv->base + NPCM_RNGMODE_REG);
-+	if (pm_dis)
-+		writel(NPCM_RNG_CLK_SET_25MHZ, priv->base + NPCM_RNGCS_REG);
-+	else
-+		writel(NPCM_RNG_CLK_SET_25MHZ | NPCM_RNG_ENABLE,
-+		       priv->base + NPCM_RNGCS_REG);
-+
-+	ret = devm_hwrng_register(&pdev->dev, &priv->rng);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register rng device: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	dev_set_drvdata(&pdev->dev, priv);
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static int npcm_rng_remove(struct platform_device *pdev)
-+{
-+	struct npcm_rng *priv = platform_get_drvdata(pdev);
-+
-+	hwrng_unregister(&priv->rng);
-+	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_set_suspended(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM
-+static int npcm_rng_runtime_suspend(struct device *dev)
-+{
-+	struct npcm_rng *priv = dev_get_drvdata(dev);
-+
-+	npcm_rng_cleanup(&priv->rng);
-+
-+	return 0;
-+}
-+
-+static int npcm_rng_runtime_resume(struct device *dev)
-+{
-+	struct npcm_rng *priv = dev_get_drvdata(dev);
-+
-+	return npcm_rng_init(&priv->rng);
-+}
-+#endif
-+
-+static const struct dev_pm_ops npcm_rng_pm_ops = {
-+	SET_RUNTIME_PM_OPS(npcm_rng_runtime_suspend,
-+			   npcm_rng_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+};
-+
-+static const struct of_device_id rng_dt_id[] = {
-+	{ .compatible = "nuvoton,npcm750-rng",  },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, rng_dt_id);
-+
-+static struct platform_driver npcm_rng_driver = {
-+	.driver = {
-+		.name		= "npcm-rng",
-+		.pm		= &npcm_rng_pm_ops,
-+		.owner		= THIS_MODULE,
-+		.of_match_table = of_match_ptr(rng_dt_id),
-+	},
-+	.probe		= npcm_rng_probe,
-+	.remove		= npcm_rng_remove,
-+};
-+
-+module_platform_driver(npcm_rng_driver);
-+
-+MODULE_DESCRIPTION("Nuvoton NPCM Random Number Generator Driver");
-+MODULE_AUTHOR("Tomer Maimon <tomer.maimon@nuvoton.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.18.0
+Also, if a worker thread cannot run due to CPU starvation, the same thing
+applies to dump_tasks(). In other words, dump_tasks() cannot complete due
+to CPU starvation, which results in more costly and serious consequences.
+Being able to send SIGKILL and reclaim memory as soon as possible is
+an improvement.
+
+> Not to mention that 1:1 (oom to tasks) information dumping is
+> fundamentally broken. Any task might be on an oom list of different
+> OOM contexts in different oom scopes (think of OOM happening in disjunct
+> NUMA sets).
+
+I can't understand what you are talking about. This patch just defers
+printk() from /proc/sys/vm/oom_dump_tasks != 0. Please look at the patch
+carefully. If you are saying that it is bad that OOM victim candidates for
+OOM domain B, C, D ... cannot be printed if printing of OOM victim candidates
+for OOM domain A has not finished, I can update this patch to print them.
+
+> 
+> This is just adding more kludges and making the code more complex
+> without trying to address an underlying problems. So
+> Nacked-by: Michal Hocko <mhocko@suse.com>
+
+Since I'm sure that you are misunderstanding, this Nacked-by is invalid.
+
+> 
+> And more importantly it is _known_ that dump_tasks might be costly.
+
+So what? That's an unfortunate reason people have to use
+/proc/sys/vm/oom_dump_tasks == 0. That's not a reason we must not
+offload costly dump_tasks().
+
+Preemption from dump_tasks() is _fatally_ costly (e.g. SCHED_IDLE tasks
+calls out_of_memory() while there are many realtime tasks running around).
+This patch minimizes latency between "an allocating thread decided to
+invoke the OOM killer" and "the OOM killer sends SIGKILL (and the OOM
+reaper starts reclaiming memory)". In other words, this patch reduces
+unoperational duration due to OOM condition.
+
+> People who really need that information have to live with that fact.
+> There is the way to disable this functionality. I wish we could have it
+> disabled by default but it seems I am alone in that thinking so I am not
+> going to push for it.
+
+Setting /proc/sys/vm/oom_dump_tasks == 0 is not a solution.
+We need a solution which can work with /proc/sys/vm/oom_dump_tasks != 0.
 
