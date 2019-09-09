@@ -2,170 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F47DAE15A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 01:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C79AE14E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 01:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbfIIXGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 19:06:14 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:42215 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728358AbfIIXGO (ORCPT
+        id S1729693AbfIIXAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 19:00:40 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43660 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726474AbfIIXAk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 19:06:14 -0400
-X-Greylist: delayed 485 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Sep 2019 19:06:13 EDT
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id C597A5C0;
-        Mon,  9 Sep 2019 18:58:07 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 09 Sep 2019 18:58:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=c7SRxgGkl/n7ftaGRuh/aN2wiSp
-        1GC91qqjIL142vpY=; b=G3dZKzQxG/jRRbNObX/rxwuitX3uvOm0yJq4spn6u4F
-        yD2CpkOUVoxiuTrX2QZMwr5LUXv+DKhqAkX4KgyhTaUT58aDQgRUxDJt3eWbC5Mr
-        piw33yd5qX8u4yPMt9k2N5nEOUak+hc2Gr/H+CQBU8Ac8/4C2QL6WQ5RnDP9Mo4L
-        FusaMeESRa7eu1NPJqXpWUlekmBNcr+TVhqNMjBQbiEF/cOOz9rBJNoqG1UBfLy8
-        Ag2qtQf26igPzpoRjORYHrqlC6MIwfXJZAkfSFk0cBG3qqT5haB/DBlm5tUV8zrH
-        tkA1PSImctrM9gglg+mp/j5nggylrKIQ5YXM375XTEw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=c7SRxg
-        Gkl/n7ftaGRuh/aN2wiSp1GC91qqjIL142vpY=; b=RPWpxAuxPaSDJpabSG4dYI
-        Ptth1BbAnXyffkgaFO7Py31VLFwXre/UPi4ecVVdDVTqnRdQXj1g9s7cDnzaWDMv
-        JX10+fZipUFybkjtTEWISPKVBJyuRF6RGoVgROZRp+o8rNB2IAhypKZejBtzfjKC
-        lOYIqNLyqTqbn6aYVZL1VGSE0EcODUujXe7ewereY7ZM3MWvxQsOuN62IEU2X529
-        7poLNXuYYaYAQTIFjjgnPcbh/i9+tDKNpXU+o94lhOIz1AFTB8bkKTANpaTDQ5d8
-        aGK44GIfGfr2vqmCQZIgqlORbgROGILTtiJC3PmiXB9TwOMuN1I7ZWNgvp7AaJxw
-        ==
-X-ME-Sender: <xms:_th2XYFUAqHgaVXLqngGFV8WqvWxz17vLWRO4v8mF34Uq31HL17ARg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudekjedgudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    goufhprghmkfhpqdhouhhtucdlhedttddmnecujfgurhepfffhvffukfhfgggtuggjfges
-    thdtredttdervdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtg
-    homheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepiedvrddvkedrvdeg
-    tddruddugeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtoh
-    hmnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:_th2XaF8_gevEinqTQQ_uNl-FdiE_vr_10nWdYvuL4Vg_bFMldp0Xg>
-    <xmx:_th2XQ3WXthQKPBf4ag-nrUOUCrRJiQARH8mBGnLtBjyhhkeB5niqg>
-    <xmx:_th2Xcdox1BsHrIBY_f9kUVdliBot0N3RNtWfUu8C9OINpQx6FUgoQ>
-    <xmx:_9h2Xdt6HwnmZejBm85Y1O-QNzqJqOUZpCfmiAxqpLkysdRAiHtjdk5ywtk>
-Received: from localhost (unknown [62.28.240.114])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1611280068;
-        Mon,  9 Sep 2019 18:58:05 -0400 (EDT)
-Date:   Mon, 9 Sep 2019 23:58:04 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] net: enable wireless core features with
- LEGACY_WEXT_ALLCONFIG
-Message-ID: <20190909225804.GA26405@kroah.com>
-References: <20190906192403.195620-1-salyzyn@android.com>
- <20190906233045.GB9478@kroah.com>
- <b7027a5d-5d75-677b-0e9b-cd70e5e30092@android.com>
+        Mon, 9 Sep 2019 19:00:40 -0400
+Received: by mail-io1-f66.google.com with SMTP id r8so8035146iol.10;
+        Mon, 09 Sep 2019 16:00:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jZ0CxXKKRSMIVhulRY/LrdyN0Mz2dv9hIkZJA2zVyA4=;
+        b=BXlqN0nb7CgtNFmpukaK+ZjX8twylN31bZG8XHiLPs54wqhxw3eJFRorm6HAkDxywO
+         ZnO5MOYQNS1DP3xMjX9fcoHh/u8Xdn0ciMbKiR8tZU8Y0Qbp7jywhOE58YrqjwuR/wB/
+         M/L0PMfVWztCWCfNBX1LPUL29h1gYBlUZY7k4Bos7MSTtE8C9QHpHqCLmMYesKnNpPkw
+         7lAczT1Mhm6WvTDBiQ+XpTeRXdzgfbS3YETUs9PNAra8W6rU4h4r01uJnQOckCq2bjl1
+         xYNj8zDSBOGEh7xy2VEmJxO4Hx+wG9KunfwTkEAJazoarx9vVxzJnlsYL6d8fBITZHSB
+         iydg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jZ0CxXKKRSMIVhulRY/LrdyN0Mz2dv9hIkZJA2zVyA4=;
+        b=GwInGQsPz1+H0CR3Z9srq58lFekD9W4Xrd0k82eWB8oLM9VBUsF+dBsI6z1bojjsTB
+         OI+UfR3Us//pdBkbyM/9rSEDHlyv3UCYocW6FFNU7N2c2QixrrnHHLvWHr7QBJZ3XjM4
+         v/ai8sM9+hlkFFUR4EiUOXAag3NpR1PojUkzTJIyzHR4GaznkVvP1Tcz8RWFHVPiyE/s
+         7i1sCfwdQWrN2Q7p6FAYJKKeCDvLzkHUI4aSkdegGWipxKOcPYgKtg2GHzZ5m7JT+Zr/
+         CFgIarPsS1WflEXT6sqpcIDKZoM4iRUpBXu8foUDhDy1NJx1A4Lbw5t/KiCVqwrkEzAL
+         CY9g==
+X-Gm-Message-State: APjAAAUuon7t/jZmC5HSDMiQ6lPMjzqR0k8jrvIkEp9UJnoXvV2cLBke
+        a/VCMfMhaf2e8xLZ2U9alyHt6svgrfmsEPgHJK0=
+X-Google-Smtp-Source: APXvYqz5tkoILqOQfxq57H0P9tkxTC4goh/x89GWft5Ac8gJdidd31xRroqiBoQR1/ne+PiqKrF5ml3SwPNBcKg8TWk=
+X-Received: by 2002:a6b:c895:: with SMTP id y143mr27207977iof.271.1568070038089;
+ Mon, 09 Sep 2019 16:00:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7027a5d-5d75-677b-0e9b-cd70e5e30092@android.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190901211139.2405-1-lucmaga@gmail.com> <1fea2f25-98d1-f9f6-a483-17c74f89452e@xs4all.nl>
+In-Reply-To: <1fea2f25-98d1-f9f6-a483-17c74f89452e@xs4all.nl>
+From:   =?UTF-8?Q?Lucas_Magalh=C3=A3es?= <lucmaga@gmail.com>
+Date:   Mon, 9 Sep 2019 20:00:26 -0300
+Message-ID: <CAK0xOaGZx5dyDMAFp+JxnrfOYH3yYdvtcJzWdAmHyeRwUe38Lg@mail.gmail.com>
+Subject: Re: [PATCH] media: vimc: fla: Add virtual flash subdevice
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Helen Koike <helen.koike@collabora.com>, edusbarretto@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 07:24:29AM -0700, Mark Salyzyn wrote:
-> On 9/6/19 4:30 PM, Greg KH wrote:
-> > On Fri, Sep 06, 2019 at 12:24:00PM -0700, Mark Salyzyn wrote:
-> > > In embedded environments the requirements are to be able to pick and
-> > > chose which features one requires built into the kernel.  If an
-> > > embedded environment wants to supports loading modules that have been
-> > > kbuilt out of tree, there is a need to enable hidden configurations
-> > > for legacy wireless core features to provide the API surface for
-> > > them to load.
-> > > 
-> > > Introduce CONFIG_LEGACY_WEXT_ALLCONFIG to select all legacy wireless
-> > > extension core features by activating in turn all the associated
-> > > hidden configuration options, without having to specifically select
-> > > any wireless module(s).
-> > > 
-> > > Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-> > > Cc: kernel-team@android.com
-> > > Cc: Johannes Berg <johannes@sipsolutions.net>
-> > > Cc: "David S. Miller" <davem@davemloft.net>
-> > > Cc: Marcel Holtmann <marcel@holtmann.org>
-> > > Cc: linux-wireless@vger.kernel.org
-> > > Cc: netdev@vger.kernel.org
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Cc: stable@vger.kernel.org # 4.19
-> > > ---
-> > > v2: change name and documentation to CONFIG_LEGACY_WEXT_ALLCONFIG
-> > > ---
-> > >   net/wireless/Kconfig | 14 ++++++++++++++
-> > >   1 file changed, 14 insertions(+)
-> > > 
-> > > diff --git a/net/wireless/Kconfig b/net/wireless/Kconfig
-> > > index 67f8360dfcee..0d646cf28de5 100644
-> > > --- a/net/wireless/Kconfig
-> > > +++ b/net/wireless/Kconfig
-> > > @@ -17,6 +17,20 @@ config WEXT_SPY
-> > >   config WEXT_PRIV
-> > >   	bool
-> > > +config LEGACY_WEXT_ALLCONFIG
-> > > +	bool "allconfig for legacy wireless extensions"
-> > > +	select WIRELESS_EXT
-> > > +	select WEXT_CORE
-> > > +	select WEXT_PROC
-> > > +	select WEXT_SPY
-> > > +	select WEXT_PRIV
-> > > +	help
-> > > +	  Config option used to enable all the legacy wireless extensions to
-> > > +	  the core functionality used by add-in modules.
-> > > +
-> > > +	  If you are not building a kernel to be used for a variety of
-> > > +	  out-of-kernel built wireless modules, say N here.
-> > > +
-> > >   config CFG80211
-> > >   	tristate "cfg80211 - wireless configuration API"
-> > >   	depends on RFKILL || !RFKILL
-> > > -- 
-> > > 2.23.0.187.g17f5b7556c-goog
-> > > 
-> > How is this patch applicable to stable kernels???
-> 
-> A) worth a shot ;-}
+Hi Hans,
+Thanks for the review. I fixed most of the issues you found. Just have
+the question below.
 
-Not nice, please, you know better :)
+On Mon, Sep 2, 2019 at 9:04 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> > +
+> > +int vimc_fla_add(struct vimc_device *vimc, struct vimc_ent_config *vcfg)
+> > +{
+> > +     struct v4l2_device *v4l2_dev = &vimc->v4l2_dev;
+> > +     struct vimc_fla_device *vfla;
+> > +     int ret;
+> > +
+> > +     /* Allocate the vfla struct */
+> > +     vfla = kzalloc(sizeof(*vfla), GFP_KERNEL);
+> > +     if (!vfla)
+> > +             return -ENOMEM;
+> > +
+> > +     v4l2_ctrl_handler_init(&vfla->hdl, 4);
+> > +
+> > +     v4l2_ctrl_new_std_menu(&vfla->hdl, &vimc_fla_ctrl_ops,
+> > +                            V4L2_CID_FLASH_LED_MODE,
+> > +                            V4L2_FLASH_LED_MODE_TORCH, ~0x7,
+> > +                            V4L2_FLASH_LED_MODE_NONE);
+> > +     v4l2_ctrl_new_std_menu(&vfla->hdl, &vimc_fla_ctrl_ops,
+> > +                            V4L2_CID_FLASH_STROBE_SOURCE, 0x1, ~0x3,
+> > +                            V4L2_FLASH_STROBE_SOURCE_SOFTWARE);
+> > +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
+> > +                       V4L2_CID_FLASH_STROBE, 0, 0, 0, 0);
+> > +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
+> > +                       V4L2_CID_FLASH_STROBE_STOP, 0, 0, 0, 0);
+> > +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
+> > +                       V4L2_CID_FLASH_TIMEOUT, 1, 10, 1, 10);
+> > +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
+> > +                       V4L2_CID_FLASH_TORCH_INTENSITY, 0, 255, 1, 255);
+> > +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
+> > +                       V4L2_CID_FLASH_INTENSITY, 0, 255, 1, 255);
+> > +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
+> > +                       V4L2_CID_FLASH_INDICATOR_INTENSITY, 0, 255, 1, 255);
+> > +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
+> > +                       V4L2_CID_FLASH_STROBE_STATUS, 0, 0, 0, 0);
+>
+> It would be nice if this would actually reflect the actual strobe status.
+>
+Regarding the strobe status I was reading the code and find out that
+V4L2_CID_FLASH_STROBE_STATUS is a V4L2_CTRL_FLAG_READ_ONLY
+but it's not a V4L2_CTRL_FLAG_VOLATILE. I found this intriguing. How an
+I suppose to get it if its not volatile? As I understood it changes over time
+if the strobe starts and the timeout expire, isn't it? Shouldn't it be volatile
+if so?
 
-> B) there is a shortcoming in _all_ kernel versions with respect to hidden
-> configurations options like this, hoping to set one precedent in how to
-> handle them if acceptable to the community.
+I've already made a simple implementation were V4L2_CID_FLASH_STROBE_STATUS
+returns after calling V4L2_CID_FLASH_STROBE and becomes false after the timeout
+time passes.
 
-That's fine, but it's a new feature, not for stable.
-
-> C) [AGENDA ALERT] Android _will_ be back-porting this to android-4.19 kernel
-> anyway, would help maintenance if via stable. <holding hat in hand>
-
-That's fine, lots of distros backport loads of stuff for new features
-for stuff that is upstream.  That's trivial to do, don't try to abuse
-the stable tree for new features like this please.  It only makes
-maintainers grumpy when you do so :(
-
-> D) Not an ABI or interface break, does not introduce instability, but rather
-> keeps downstream kernels of any distributions from having to hack in their
-> own alternate means of dealing with this problem leading to further
-> fragmentation.
-
-Again, new feature, not fixing a bug, so not applicable for stable.
-
-For penance I require a handwritten copy of:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-
-thanks,
-
-greg k-h
+Thanks!
