@@ -2,221 +2,309 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B8FAAD9D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 15:19:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F75FAD9D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 15:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730182AbfIINTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 09:19:20 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33828 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730132AbfIINTT (ORCPT
+        id S1729836AbfIINTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 09:19:13 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33594 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728882AbfIINTN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 09:19:19 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h2so6198350ljk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 06:19:18 -0700 (PDT)
+        Mon, 9 Sep 2019 09:19:13 -0400
+Received: by mail-wm1-f68.google.com with SMTP id r17so23742wme.0;
+        Mon, 09 Sep 2019 06:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ZGgBEktDuEpp437eI+l0oc8mQy/q7e53dFVNJhuHdZA=;
-        b=Kz4YOqP7hIoJolzb/cciYYVNzLGH6bJKibJMDqWRs02yTaESM889lgQOhuIIzfM4KS
-         S3/TG+Y9b6xRzM1CyHzYksvFI/u2uozMcGeWh0iSGlXKRoZ84Yo1ctmRx85eAmuUXnzR
-         3CgAin4gVpzhGvEjnY3HymYHP7muHFs3AYLcbc1cX+ZiorsnVr3B/RjG/lQgeGEXAAw7
-         kVlS1oEzQu2hgGaS7xw/XZRStllfVJPm0zKeSYJmalrv4zXgF+e1K8P+r8V58jbUuJQg
-         Wj5ZS+B6EEVini1g7LRSAqoca8bwd/hpBJRahzTq9Q0stsovMNNCQOfavqBdJV72zSvC
-         kzNw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TXDC+z0IyI2JFm3KYb5ZtvylBoF5a96Rw6KfLJrAyP4=;
+        b=KehY9xntRXwcJqP/Qmh+gxSGQi7Bn1NkHIqhNorXOSTakScu5c2VQKjAEzf2TJJOMM
+         4QlbZS6/65MTryXd9be7eYvYhrPIIdNsWp0ol+0ajrj9dk9lzbzIZXhx61b8D+YA8wtF
+         +AiM41c65dLtMI+zuaa4g480Qsh4+Sn6VBJqz466je3kYhmmOVlJpqDXB6UOy76cvfx9
+         7tB/hV7GBEEO7D/77NTFSGAKJIn37y8jO/2lhXuSxObrkBmA1QNSEDOjW2sx9mw1DffZ
+         jJlEBRVZVACCzjT+/UDM8OUGNJuPK/jwSZTYV0P62ScyGaHey8+7OyB/wbickPCHLHp1
+         OnNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZGgBEktDuEpp437eI+l0oc8mQy/q7e53dFVNJhuHdZA=;
-        b=q21jAg1JzEl3PXKe55FLX2qA9SCGVoVzX5sQ5ZFAPKF7nXj+ufmULGW3FwCzloRCPy
-         gpd0e39iMT+koDroxOXrJpH2xYNujZ7MQEeSc91nqlUbwuDFV+8WP2+MGWxSE0Q9Z8E3
-         hKd65PTXoI4ZZv8oBT41LklmuVS5APpOBV7Wkf2+Whc6IhBj7y0TGOUrBRI86L4yjx1F
-         NY5jLZdUg2DRhjVw6m1D44luWj5j0TirucGcM/nw1t8oNtMzEiKO0dM5wIZ6Et1z/0oA
-         PcqOPhBM+r8I+62HgHD9CnTtWHOAbojhrZDPwFO2tCXTr2HHg053axzYh+Z7wtWiBpEn
-         o8YQ==
-X-Gm-Message-State: APjAAAUOLLt5fVe+XBHtsTJWhRUyOxugYmIZH41yCM6E8L6i8/gWDhPz
-        4htJxY8z4ARZAmt9kEXD8XfGChXa50IAIX+J7dgkyiYut+U=
-X-Google-Smtp-Source: APXvYqwycdIBfJUQfKG6M1oZLvzuKTW+SyPB5bL2yKCH/1F0PrVqCy2vDB4TxpNS1NyR5YCvLNjmJuxi37mVTELLD6M=
-X-Received: by 2002:a2e:890d:: with SMTP id d13mr15918289lji.224.1568035157113;
- Mon, 09 Sep 2019 06:19:17 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TXDC+z0IyI2JFm3KYb5ZtvylBoF5a96Rw6KfLJrAyP4=;
+        b=cUSeUMqWd52ewI3GEEGDbTBqHTdHmRueElmSmwPpBf2Ly3Lm4YGKnIG7sgbVnTmG1b
+         coeQzRlLSPM9wDpwrNFF4c4+rvUGGZkgTlP6z6vKsN2ZZfP9FzSHrFjkeuigoH0Zlg72
+         g1ePxUh2/5EsN7JzI8nJ3Bgf4web8Z27vauXPEVhAqJwAUep9kuWFOx8fH2BDyk0zjpm
+         hZEEsL2Iz/BDzgU6RwcNVXttteM5KrQBlre0QycZ0x9laPPcjsVvHXTklPNOhGPFZ2/b
+         M1LQbmucs0kGcC4eaHEQ/L9ST/JrnAeba6w0J/z242HAYwVsYausQUY67DRWMhp5BBDj
+         5B3g==
+X-Gm-Message-State: APjAAAUU+Fgl1mORra4b9ue6aQOnSUa8SAiLwKhsCX0kEgtQD485JFaT
+        iVgRGqIxRmSm7d2u9EDKkp0GZdIa
+X-Google-Smtp-Source: APXvYqxowR+NZIgG4EBvrXMOcbX0mYRDnV4oZ2c1kIoJTlybzYFFVU2XdxIh9yBZMsqWzqEQcCJstw==
+X-Received: by 2002:a7b:c392:: with SMTP id s18mr20291152wmj.25.1568035149799;
+        Mon, 09 Sep 2019 06:19:09 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id r1sm14193636wro.13.2019.09.09.06.19.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Sep 2019 06:19:08 -0700 (PDT)
+Date:   Mon, 9 Sep 2019 15:19:06 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux@armlinux.org.uk, mark.rutland@arm.com, robh+dt@kernel.org,
+        wens@csie.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 2/9] crypto: Add Allwinner sun8i-ce Crypto Engine
+Message-ID: <20190909131906.GA12882@Red>
+References: <20190906184551.17858-1-clabbe.montjoie@gmail.com>
+ <20190906184551.17858-3-clabbe.montjoie@gmail.com>
+ <20190907081951.v2huvhm44jfprfop@flea>
+ <20190907190408.GE2628@Red>
+ <20190909113837.vrnqdfgzhsiymfpm@flea>
 MIME-Version: 1.0
-References: <20190908121052.898169328@linuxfoundation.org>
-In-Reply-To: <20190908121052.898169328@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 9 Sep 2019 18:49:06 +0530
-Message-ID: <CA+G9fYuYNaCsfFFXmyv2OK0KycC29cw7OuX0eEWK=Vmv1Xe9tQ@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/23] 4.4.192-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190909113837.vrnqdfgzhsiymfpm@flea>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 8 Sep 2019 at 18:13, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.4.192 release.
-> There are 23 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Tue 10 Sep 2019 12:09:36 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.192-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Mon, Sep 09, 2019 at 01:38:37PM +0200, Maxime Ripard wrote:
+> On Sat, Sep 07, 2019 at 09:04:08PM +0200, Corentin Labbe wrote:
+> > > Also, I'm not sure what is the point of having the clocks names be
+> > > parameters there as well. It's constant across all the compatibles,
+> > > the only thing that isn't is the number of clocks and the module clock
+> > > rate. It's what you should have in there.
+> >
+> > Since the datasheet give some max frequency, I think I will add a
+> > max_freq and add a check to verify if the clock is in the right
+> > range
+> 
+> It's a bit pointless. What are you going to do if it's not correct?
+> What are you trying to fix / report with this?
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+I thinked to print a warning.
+If someone want to play with overclocking for example, the driver should said that probably some result could be invalid.
 
-Summary
-------------------------------------------------------------------------
+> 
+> > > > +		}
+> > > > +};
+> > > > +
+> > > > +static const struct ce_variant ce_h5_variant = {
+> > > > +	.alg_cipher = { CE_ID_NOTSUPP, CE_ALG_AES, CE_ALG_DES, CE_ALG_3DES,
+> > > > +		CE_ID_NOTSUPP,
+> > > > +	},
+> > > > +	.op_mode = { CE_ID_NOTSUPP, CE_OP_ECB, CE_OP_CBC
+> > > > +	},
+> > > > +	.intreg = CE_ISR,
+> > > > +	.maxflow = 4,
+> > > > +	.ce_clks = {
+> > > > +		{ "ahb", 200000000 },
+> > > > +		{ "mod", 300000000 },
+> > > > +		}
+> > > > +};
+> > > > +
+> > > > +static const struct ce_variant ce_h6_variant = {
+> > > > +	.alg_cipher = { CE_ID_NOTSUPP, CE_ALG_AES, CE_ALG_DES, CE_ALG_3DES,
+> > > > +		CE_ALG_RAES,
+> > > > +	},
+> > > > +	.op_mode = { CE_ID_NOTSUPP, CE_OP_ECB, CE_OP_CBC
+> > > > +	},
+> > > > +	.model = CE_v2,
+> > >
+> > > Can't that be derived from the version register and / or the
+> > > compatible? This seems to be redundant with each.
+> >
+> > I could use the compatible, but I want to avoid a string comparison
+> > on each request.
+> 
+> Well, this is specifically what this structure is for then, right? So
+> instead of having the model, just add the information that you want
+> there.
+> 
 
-kernel: 4.4.192-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: fbce796fcbec98dc9e077846a5b7ba9c0f42d0cc
-git describe: v4.4.191-24-gfbce796fcbec
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.191-24-gfbce796fcbec
+ok, I will change to a "bool all_size_in_bytes"
 
+> > > > +int sun8i_ce_get_engine_number(struct sun8i_ce_dev *ce)
+> > > > +{
+> > > > +	return atomic_inc_return(&ce->flow) % ce->variant->maxflow;
+> > > > +}
+> > >
+> > > I'm not sure what this is supposed to be doing, but that mod there
+> > > seems pretty dangerous.
+> > >
+> > > ...
+> >
+> > This mod do a round robin on each channel.
+> > I dont see why it is dangerous.
+> 
+> Well, you're using the atomic API here which is most commonly used for
+> refcounting, while you're using a mod.
+> 
+> Plus, while the increment is atomic, the modulo isn't, so you can end
+> up in a case where you would be preempted between the
+> atomic_inc_return and the mod, which is dangerous.
+> 
+> Again, I'm not sure what this function is doing (which is also a
+> problem in itself). I guess you should just make it clearer what it
+> does, and then we can discuss it properly.
 
-No regressions (compared to build v4.4.191)
+Each request need to be assigned to a channel.
+Each channel are identified by a number from 1 to 4.
 
+So this function return the channel to use, 1 then 2 then 3 then 4 then 1...
+Note that this is uncritical. If, due to anything, two request are assigned to the same channel, nothing will break.
 
-No fixes (compared to build v4.4.191)
+> 
+> > > > +			err = clk_set_rate(ce->ceclks[i], ce->variant->ce_clks[i].freq);
+> > > > +			if (err)
+> > > > +				dev_err(&pdev->dev, "Fail to set %s clk speed to %lu\n",
+> > > > +					ce->variant->ce_clks[i].name,
+> > > > +					ce->variant->ce_clks[i].freq);
+> > > > +		} else {
+> > > > +			dev_info(&pdev->dev, "%s run at %lu\n",
+> > > > +				 ce->variant->ce_clks[i].name, cr);
+> > >
+> > > Ditto.
+> > >
+> > > > +		}
+> > > > +		err = clk_prepare_enable(ce->ceclks[i]);
+> > >
+> > > Do you really need this right now though?
+> >
+> > Not sure to understand, why I shouldnt do it now ?
+> > Does it is related to your pm_runtime remark below ?
+> >
+> > My feeling was to submit the driver without PM and convert it after.
+> 
+> runtime_pm would be pretty cheap to add though judging by what you're
+> doing there.
+> 
 
-Ran 18270 total tests in the following environments and test suites.
+I will try to add runtime_pm
 
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+> > > > +		if (err) {
+> > > > +			dev_err(&pdev->dev, "Cannot prepare_enable %s\n",
+> > > > +				ce->variant->ce_clks[i].name);
+> > > > +			return err;
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > > +	/* Get Non Secure IRQ */
+> > > > +	irq = platform_get_irq(pdev, 0);
+> > > > +	if (irq < 0) {
+> > > > +		dev_err(ce->dev, "Cannot get NS IRQ\n");
+> > > > +		return irq;
+> > > > +	}
+> > > > +
+> > > > +	err = devm_request_irq(&pdev->dev, irq, ce_irq_handler, 0,
+> > > > +			       "sun8i-ce-ns", ce);
+> > > > +	if (err < 0) {
+> > > > +		dev_err(ce->dev, "Cannot request NS IRQ\n");
+> > > > +		return err;
+> > > > +	}
+> > > > +
+> > > > +	ce->reset = devm_reset_control_get_optional(&pdev->dev, "ahb");
+> > > > +	if (IS_ERR(ce->reset)) {
+> > > > +		if (PTR_ERR(ce->reset) == -EPROBE_DEFER)
+> > > > +			return PTR_ERR(ce->reset);
+> > > > +		dev_info(&pdev->dev, "No reset control found\n");
+> > >
+> > > It's not optional though.
+> >
+> > I dont understand why.
+> 
+> On all the SoCs, you need that reset line to be deasserted, otherwise
+> the IP (and therefore the driver) will be non-functional. It's not an
+> option to run without it.
 
-Test Suites
------------
-* build
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* prep-tmp-disk
-* spectre-meltdown-checker-test
-* kvm-unit-tests
-* v4l2-compliance
-* install-android-platform-tools-r2600
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* ssuite
+Currently all the SoC have a reset, but nothing prevent a new SoC with CE without reset.
+Anyway, I will made the reset mandatory for the moment.
 
-Summary
-------------------------------------------------------------------------
+> 
+> > > > +		ce->reset = NULL;
+> > > > +	}
+> > > > +
+> > > > +	err = reset_control_deassert(ce->reset);
+> > > > +	if (err) {
+> > > > +		dev_err(&pdev->dev, "Cannot deassert reset control\n");
+> > > > +		goto error_clk;
+> > > > +	}
+> > >
+> > > Again, you don't really need this at this moment. Using runtime_pm
+> > > would make more sense.
+> > >
+> > > > +	v = readl(ce->base + CE_CTR);
+> > > > +	v >>= 16;
+> > > > +	v &= 0x07;
+> > >
+> > > This should be in a define
+> > >
+> >
+> > Will fix.
+> >
+> > > > +	dev_info(&pdev->dev, "CE_NS Die ID %x\n", v);
+> > >
+> > > And if that really makes sense to print it, the error message should
+> > > be made less cryptic.
+> > >
+> >
+> > Will fix.
+> >
+> > > > +
+> > > > +	ce->dev = &pdev->dev;
+> > > > +	platform_set_drvdata(pdev, ce);
+> > > > +
+> > > > +	mutex_init(&ce->mlock);
+> > > > +
+> > > > +	ce->chanlist = devm_kcalloc(ce->dev, ce->variant->maxflow,
+> > > > +				    sizeof(struct sun8i_ce_flow), GFP_KERNEL);
+> > > > +	if (!ce->chanlist) {
+> > > > +		err = -ENOMEM;
+> > > > +		goto error_flow;
+> > > > +	}
+> > > > +
+> > > > +	for (i = 0; i < ce->variant->maxflow; i++) {
+> > > > +		init_completion(&ce->chanlist[i].complete);
+> > > > +		mutex_init(&ce->chanlist[i].lock);
+> > > > +
+> > > > +		ce->chanlist[i].engine = crypto_engine_alloc_init(ce->dev, true);
+> > > > +		if (!ce->chanlist[i].engine) {
+> > > > +			dev_err(ce->dev, "Cannot allocate engine\n");
+> > > > +			i--;
+> > > > +			goto error_engine;
+> > > > +		}
+> > > > +		err = crypto_engine_start(ce->chanlist[i].engine);
+> > > > +		if (err) {
+> > > > +			dev_err(ce->dev, "Cannot start engine\n");
+> > > > +			goto error_engine;
+> > > > +		}
+> > > > +		ce->chanlist[i].tl = dma_alloc_coherent(ce->dev,
+> > > > +							sizeof(struct ce_task),
+> > > > +							&ce->chanlist[i].t_phy,
+> > > > +							GFP_KERNEL);
+> > > > +		if (!ce->chanlist[i].tl) {
+> > > > +			dev_err(ce->dev, "Cannot get DMA memory for task %d\n",
+> > > > +				i);
+> > > > +			err = -ENOMEM;
+> > > > +			goto error_engine;
+> > > > +		}
+> > > > +	}
+> > >
+> > > All this initialization should be done before calling
+> > > request_irq. You're using some of those fields in your handler.
+> >
+> > No interrupt could fire, since algorithms are still not registred.
+> 
+> That's not true. Spurious interrupts are a thing, the engine could
+> have been left in a weird state by the bootloader / kexec / reboot
+> with some pending interrupts, etc.
+> 
+> You have registered that handler already, you should expect it to be
+> called at any point in time.
+> 
 
-kernel: 4.4.192-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.192-rc1-hikey-20190908-552
-git commit: 2bbf7053f847783ad819ce5cdbc4e30b361cf11a
-git describe: 4.4.192-rc1-hikey-20190908-552
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.192-rc1-hikey-20190908-552
+Ok will fix.
 
-
-No regressions (compared to build 4.4.192-rc1-hikey-20190908-551)
-
-
-No fixes (compared to build 4.4.192-rc1-hikey-20190908-551)
-
-Ran 1536 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Thanks for your review.
