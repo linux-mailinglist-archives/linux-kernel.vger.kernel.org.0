@@ -2,237 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E004AD918
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2EE7AD924
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 14:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfIIMgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 08:36:10 -0400
-Received: from vps.xff.cz ([195.181.215.36]:37556 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727428AbfIIMgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 08:36:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1568032567; bh=uTm+MnC373y5QNcajftT9i4MZQ4QqvnPoh06Z6jmTyU=;
-        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
-        b=f8TSLfG0FgnnsVDqQHUDpPwvjBM30WhHeeNdeMT6ybxKyqMt8/zLjAyZPRRoB4qEA
-         49EeMmF3ZolOe1v3gnza8o59B+1sH9f2zigNcPhry7l4Zn+Pes6wcvQ3BMBl0khMW0
-         Ii/WXL4ece+wdMOu7f12J1Ipr0rR+rVAGaieX45E=
-Date:   Mon, 9 Sep 2019 14:36:06 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 00/10] Allwinner sunxi message box support
-Message-ID: <20190909123606.ezsjisxpj7747h6b@core.my.home>
-Mail-Followup-To: Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190820032311.6506-1-samuel@sholland.org>
- <20190909032208.rlorx2ppytymtyej@core.my.home>
- <bb6eab9a-f9cc-81ca-5e8c-9fb867c61ec2@sholland.org>
+        id S1732885AbfIIMhQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 08:37:16 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:55271 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727802AbfIIMhP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 08:37:15 -0400
+Received: from localhost ([46.78.15.232]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MpUEO-1iUb2L1YgG-00pv9R; Mon, 09 Sep 2019 14:36:57 +0200
+Date:   Mon, 9 Sep 2019 14:36:56 +0200
+From:   Andreas Klinger <ak@it-klinger.de>
+To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] iio: adc: hx711: fix and optimize sampling of data
+Message-ID: <20190909123654.xmpwuqwdlvjqhrlf@arbad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bb6eab9a-f9cc-81ca-5e8c-9fb867c61ec2@sholland.org>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Provags-ID: V03:K1:CmNxPPqG6woXpuSfbm3Mvoq5nBP/HMgcMrMoGynjILGEZsNxY/Z
+ qmrcNQSKtanu6YUtJyIr32PjosKt1safXr2r0J7E1UypTNQf4XVXp7GbrNUHZYgUcN7T6k5
+ yghTKqNDSAb24deM0T8AoNep5HgyXDUB69NJxwmsUTOorSohaPAuWv4EopY647WUQWSHUCV
+ /RX3se7RFPCyaAYKH7QbA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:aHLFR5D0t7M=:/AggtR0Y0IWAxgKLjSK5QV
+ bleFxxal58h41Vbe/qmoUjJbPOmAmGxiTiIqUL8Dk/zxnB/SApKP2+221xkxJHfi7st+9f2jP
+ YAV0b0/4abDplbJFyIqp6SGTj9RSkUXYux6v12hTGwqIedCHAEcQQ/PvbFwbRxbOSKf9u/1sh
+ 8J2IRR5RPTGxcktAGYt7fu1GoIYJ0h2e2ZzzI8atfCc21Klw3V98qncpefc2TdQhQFSErXhcs
+ SwMhq0F8V7M83HycHsKpqQPLrNvUD2+rI7AgvpjouWqwJvQofZ/nSDUFRLMWqEEOlnWqD6LUB
+ tYAFaGpwRsVre3lT1nXCTRTo2SAh17p7YC8+pXS2VaUmq0WN3bJL4kmvcYd6u6ZeUuvREmwKy
+ /RIsRF+5WB9tIRzSJxaaaolGKiDBVdRqpJ1uX9oO+uRrwypZ+2wQutcJGGkcHJXg+qu+zrUSD
+ uTVIskoginAls4b6j6sHbqScrltTj/s5Lz7vKdwK3SKEvZk+iexHXA0WvwEqoWyXgUEXrZD+I
+ VTd1Xp5aPBd+jk+zNr0vT3ZdZ+sux8c6bOGELC6bBc1F9k5+2UWCJKhe+MDNviBuSRACgqNGA
+ ln3azg/qx+NdVEPxdBlDxexsD+g/BL+juLsLFvNi1mevOIrS8koD+RAgfKyzPccUMxrbSXfJl
+ kP/w1AzsVWYgJudES4XutwGCrfxJLozKT1vpNYh2tbyzSxbwTGCK4VO/k0bSYqxAMwQmDMQNg
+ YxcrSX4MkDA28LVg/5T/HGHQeFd7UnAvhwwmLKFhX1XDGZyO6HB7Y7/HA0LZOwzk9UyKh0xaM
+ IXcpV1pC8bf/jpWB9dbyeFqJwQu1PBvT3K3cJZACOi3026A8io=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch set fixes problems in the sampling of data and optimizes driver
+performance.
 
-On Sun, Sep 08, 2019 at 10:54:17PM -0500, Samuel Holland wrote:
-> On 9/8/19 10:22 PM, Ondřej Jirman wrote:
-> > Hello Samuel,
-> > 
-> > On Mon, Aug 19, 2019 at 10:23:01PM -0500, Samuel Holland wrote:
-> >> This series adds support for the "hardware message box" in sun8i, sun9i,
-> >> and sun50i SoCs, used for communication with the ARISC management
-> >> processor (the platform's equivalent of the ARM SCP). The end goal is to
-> >> use the arm_scpi driver as a client, communicating with firmware running
-> >> on the AR100 CPU, or to use the mailbox to forward NMIs that the
-> >> firmware picks up from R_INTC.
-> >>
-> >> Unfortunately, the ARM SCPI client no longer works with this driver
-> >> since it now exposes all 8 hardware FIFOs individually. The SCPI client
-> >> could be made to work (and I posted proof-of-concept code to that effect
-> >> with v1 of this series), but that is a low priority, as Linux does not
-> >> directly use SCPI with the current firmware version; all SCPI use goes
-> >> through ATF via PSCI.
-> >>
-> >> As requested in the comments to v3 of this patchset, a demo client is
-> >> provided in the final patch. This demo goes along with a toy firmware
-> >> which shows that the driver does indeed work for two-way communication
-> >> on all channels. To build the firmware component, run:
-> > 
-> > I've tried using this driver with mainline arm_scpi driver (which is probably
-> > an expected future use, since crust provides SCPI interface).
-> 
-> If you've verified in some way that this driver works on A83T, I'd appreciate
-> your Tested-by, so I can send a patch for the A83T device tree node.
+It was partly suggested privately to me and i got the allowance to use it
+further. But because the person is not answering my emails related to
+the question of mentioning the name for a long time i submit it without a
+Suggested-By or something similar.
 
-Tested-by: Ondrej Jirman <megous@megous.com>
+Changes in v2:
+- Clarify which part of the patch queue fixes a certain bug and which one
+  is an optimization of the driver without an underlying bug.
 
-(on A83T)
+Andreas Klinger (3):
+  iio: adc: hx711: fix bug in sampling of data
+  iio: adc: hx711: optimize performance in read cycle
+  iio: adc: hx711: remove unnecessary returns
 
-> > The problem I've found is that arm_scpi expects message box to be
-> > bi-directional, but this driver provides uni-directional interface.
-> > 
-> > What do you think about making this driver provide bi-directional interface?
-> > We could halve the number of channels to 4 and mandate TX/RX configuration
-> > (from main CPU's PoV) as ABI.
-> 
-> Funny you mention that. That's what I did originally for v1, but it got NAKed by
-> Maxime, Andre, and Jassi:
-> 
-> https://lkml.org/lkml/2018/2/28/125
-> https://lkml.org/lkml/2018/2/28/944
-> 
-> > Otherwise it's impossible to use it with the arm_scpi driver.
-> > 
-> > Or do you have any other ideas? I guess arm_scpi can be fixed to add a
-> > property that would make it possible to use single shmem with two
-> > mailboxes, one for rx and one for tx, but making sun6i mailbox have
-> > bi-directional interface sounds easier.
-> 
-> Yes, you can use the existence of the mbox-names property to determine if the
-> driver needs one mailbox or two, as I did in this driver:
-> 
-> https://lkml.org/lkml/2019/3/1/789
-> 
-> I'll have a patch available soon that implements this for arm_scpi.
+ drivers/iio/adc/hx711.c | 40 ++++++++++++----------------------------
+ 1 file changed, 12 insertions(+), 28 deletions(-)
 
-Yeah, I've patched arm_scpi too. :)
-
-https://megous.com/git/linux/commit/?h=tbs-5.3&id=69a0cd0093a63039ace2f763e8d82009c50ff03c
-
-(but that's just for the test, because it breaks the existing interface for
-other uses)
-
-Anyway, using mbox-names looks like a nice solution! Thanks! Though,
-arm_scpi driver has a bit more complicated existing interface, where it can use
-multiple mailboxes and rotates through them after every message.
-
-BTW, I'm slowly laboring through understanding how to get suspend to ram working
-on one A83T tablet. https://xnux.eu/tablet-hacking/ Which is how I tested this
-driver.
-
-regards,
-	o.
-
-> Cheers,
-> Samuel
-> 
-> > regards,
-> > 	o.
-> > 
-> >>   git clone https://github.com/crust-firmware/meta meta
-> >>   git clone -b mailbox-demo https://github.com/crust-firmware/crust meta/crust
-> >>   cd meta
-> >>   make
-> >>
-> >> That will by default produce a U-Boot + ATF + SCP firmware image in
-> >> [meta/]build/pinebook/u-boot-sunxi-with-spl.bin. See the top-level
-> >> README.md for more information, such as cross-compiler setup.
-> >>
-> >> I've now used this driver with three separate clients over the past two
-> >> years, and they all work. If there are no remaining concerns with the
-> >> driver, I'd like it to get merged.
-> >>
-> >> Even without the driver, the clock patches (1-2) can go in at any time.
-> >>
-> >> Changes from v3:
-> >>   - Rebased on sunxi-next
-> >>   - Added Rob's Reviewed-by for patch 3
-> >>   - Fixed a crash when receiving a message on a disabled channel
-> >>   - Cleaned up some comments/formatting in the driver
-> >>   - Fixed #mbox-cells in sunxi-h3-h5.dtsi (patch 7)
-> >>   - Removed the irqchip example (no longer relevant to the fw design)
-> >>   - Added a demo/example client that uses the driver and a toy firmware
-> >>
-> >> Changes from v2:
-> >>   - Merge patches 1-3
-> >>   - Add a comment in the code explaining the CLK_IS_CRITICAL usage
-> >>   - Add a patch to mark the AR100 clocks as critical
-> >>   - Use YAML for the device tree binding
-> >>   - Include a not-for-merge example usage of the mailbox
-> >>
-> >> Changes from v1:
-> >>   - Marked message box clocks as critical instead of hacks in the driver
-> >>   - 8 unidirectional channels instead of 4 bidirectional pairs
-> >>   - Use per-SoC compatible strings and an A31 fallback compatible
-> >>   - Dropped the mailbox framework patch
-> >>   - Include DT patches for SoCs that document the message box
-> >>
-> >> Samuel Holland (10):
-> >>   clk: sunxi-ng: Mark msgbox clocks as critical
-> >>   clk: sunxi-ng: Mark AR100 clocks as critical
-> >>   dt-bindings: mailbox: Add a sunxi message box binding
-> >>   mailbox: sunxi-msgbox: Add a new mailbox driver
-> >>   ARM: dts: sunxi: a80: Add msgbox node
-> >>   ARM: dts: sunxi: a83t: Add msgbox node
-> >>   ARM: dts: sunxi: h3/h5: Add msgbox node
-> >>   arm64: dts: allwinner: a64: Add msgbox node
-> >>   arm64: dts: allwinner: h6: Add msgbox node
-> >>   [DO NOT MERGE] drivers: firmware: msgbox demo
-> >>
-> >>  .../mailbox/allwinner,sunxi-msgbox.yaml       |  79 +++++
-> >>  arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
-> >>  arch/arm/boot/dts/sun9i-a80.dtsi              |  10 +
-> >>  arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  10 +
-> >>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  34 ++
-> >>  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |  24 ++
-> >>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
-> >>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |   2 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-a23.c          |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-a33.c          |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-a83t.c         |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c           |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-r.c            |   2 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun9i-a80.c          |   3 +-
-> >>  drivers/firmware/Kconfig                      |   6 +
-> >>  drivers/firmware/Makefile                     |   1 +
-> >>  drivers/firmware/sunxi_msgbox_demo.c          | 307 +++++++++++++++++
-> >>  drivers/mailbox/Kconfig                       |  10 +
-> >>  drivers/mailbox/Makefile                      |   2 +
-> >>  drivers/mailbox/sunxi-msgbox.c                | 323 ++++++++++++++++++
-> >>  22 files changed, 842 insertions(+), 9 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sunxi-msgbox.yaml
-> >>  create mode 100644 drivers/firmware/sunxi_msgbox_demo.c
-> >>  create mode 100644 drivers/mailbox/sunxi-msgbox.c
-> >>
-> >> -- 
-> >> 2.21.0
-> >>
-> >> _______________________________________________
-> >> linux-arm-kernel mailing list
-> >> linux-arm-kernel@lists.infradead.org
-> >> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+2.11.0
