@@ -2,190 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE2AAAD4F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45FCDAD4FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 10:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389387AbfIIIit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 04:38:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbfIIIis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 04:38:48 -0400
-Received: from localhost (unknown [148.69.85.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE91A218AC;
-        Mon,  9 Sep 2019 08:38:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568018327;
-        bh=h/O/BE7OIazqYv1sKFu2+r3tD8HYU7J0+05Vtn7XDSA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OFGzCFKLEGpb4HSYK7wqOjse7xpWIrMhPEeXkD5UJUY6rQOqD7XLteS5Im/EzHQxL
-         e9GQlHSK5V9bmKh5ynGYZamrLck/aUUIv76XKXs4wBfzqiL9FMDLu1SHl/N4f91KXP
-         0n2+vYDxFLZ4jTvOpTdl5sJC9YQs1DcPE3mplFl0=
-Date:   Mon, 9 Sep 2019 09:38:44 +0100
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     g@jaegeuk-macbookpro.roam.corp.google.com,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: avoid infinite GC loop due to stale
- atomic files
-Message-ID: <20190909083844.GC25724@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190909012532.20454-1-jaegeuk@kernel.org>
- <20190909012532.20454-2-jaegeuk@kernel.org>
- <f446ff29-38a5-61fd-4056-b4067b01c630@huawei.com>
- <20190909073011.GA21625@jaegeuk-macbookpro.roam.corp.google.com>
- <5a473076-14b8-768a-62ac-f686e850d5a6@huawei.com>
- <20190909080108.GC21625@jaegeuk-macbookpro.roam.corp.google.com>
- <bf0683d9-ac05-1edc-71ea-3d02f7b2fb55@huawei.com>
- <20190909082112.GA25724@jaegeuk-macbookpro.roam.corp.google.com>
- <2f5b844c-f722-6a80-a4ab-61bdd72b8be4@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f5b844c-f722-6a80-a4ab-61bdd72b8be4@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        id S2389443AbfIIIkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 04:40:13 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46099 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389418AbfIIIkN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 04:40:13 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q5so8688459pfg.13
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 01:40:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=TNGg1bT4M83XgP2RC5fcRc5TAwrl2wtEuXkFfZHHUo0=;
+        b=ADS5F3cs90nPD8bSvzEWy/mb+K5U1guRgyF+b9L4vilM7Om3shihnqQDQmspQFACA3
+         QyM7CGKF0CfDIwhQvXfQYyGn1ZIvtb9KwPuzjyejVlGYSOyo03KFiEL08MGmm9qC9Vtu
+         D4Yhuea7WOLZ3PtvVj45RuMW55RKJ41Fq8kKs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TNGg1bT4M83XgP2RC5fcRc5TAwrl2wtEuXkFfZHHUo0=;
+        b=f0JL/gYKn5gThlMX+Ye1ijCchfINbLqHta7dvsX+hihF/tuE7/ciDsnjALQQlOqFTI
+         lqqjKS7RNaMjAW5k0qKGwGLecoUfhkF25O827cFVLPA+r4xsamDWwVUTZmtS3q1vWPM7
+         XdDC44xPQr1yVcmzZFbqzLxDUFYwINO6XyPyu92IPzpwfmQAV5o55q2mKOfykxS0aClK
+         yPnBz+HdH26VSpd36M859p57ioiM7n3TBY92hWkdGH+C0dJ63JxxdcoCo0Vv8PpmnTN+
+         iGRQmXyMEdYZAYmHxJMWiObPbMsfwOfXlD6+aA0neOu6pCoPX/Ky0082cCE2N1in2DdF
+         SoUw==
+X-Gm-Message-State: APjAAAVtSHp9yWWSkTHtIdB4iw1WKwhjsJ7ONmBgvQSDxaPp+DrJeHGJ
+        WS1wjU85+myhBpHAOwPJteLZig==
+X-Google-Smtp-Source: APXvYqxVxkiMU1OnCxUqU9U/Z9h7kM90tIaooxzLYGix97nAkELbgYSZRV6TyhpuDWeJOwZRgBJ9uw==
+X-Received: by 2002:a62:ae0c:: with SMTP id q12mr25243724pff.253.1568018411533;
+        Mon, 09 Sep 2019 01:40:11 -0700 (PDT)
+Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id r27sm16175346pgn.25.2019.09.09.01.40.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 09 Sep 2019 01:40:10 -0700 (PDT)
+From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+To:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Subject: [PATCH v1 1/1] arm64: dts: Fix gpio to pinmux mapping
+Date:   Mon,  9 Sep 2019 14:05:27 +0530
+Message-Id: <1568018127-26730-1-git-send-email-rayagonda.kokatanur@broadcom.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/09, Chao Yu wrote:
-> On 2019/9/9 16:21, Jaegeuk Kim wrote:
-> > On 09/09, Chao Yu wrote:
-> >> On 2019/9/9 16:01, Jaegeuk Kim wrote:
-> >>> On 09/09, Chao Yu wrote:
-> >>>> On 2019/9/9 15:30, Jaegeuk Kim wrote:
-> >>>>> On 09/09, Chao Yu wrote:
-> >>>>>> On 2019/9/9 9:25, Jaegeuk Kim wrote:
-> >>>>>>> If committing atomic pages is failed when doing f2fs_do_sync_file(), we can
-> >>>>>>> get commited pages but atomic_file being still set like:
-> >>>>>>>
-> >>>>>>> - inmem:    0, atomic IO:    4 (Max.   10), volatile IO:    0 (Max.    0)
-> >>>>>>>
-> >>>>>>> If GC selects this block, we can get an infinite loop like this:
-> >>>>>>>
-> >>>>>>> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
-> >>>>>>> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
-> >>>>>>> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
-> >>>>>>> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
-> >>>>>>> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
-> >>>>>>> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
-> >>>>>>> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
-> >>>>>>> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
-> >>>>>>>
-> >>>>>>> In that moment, we can observe:
-> >>>>>>>
-> >>>>>>> [Before]
-> >>>>>>> Try to move 5084219 blocks (BG: 384508)
-> >>>>>>>   - data blocks : 4962373 (274483)
-> >>>>>>>   - node blocks : 121846 (110025)
-> >>>>>>> Skipped : atomic write 4534686 (10)
-> >>>>>>>
-> >>>>>>> [After]
-> >>>>>>> Try to move 5088973 blocks (BG: 384508)
-> >>>>>>>   - data blocks : 4967127 (274483)
-> >>>>>>>   - node blocks : 121846 (110025)
-> >>>>>>> Skipped : atomic write 4539440 (10)
-> >>>>>>>
-> >>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>>>> ---
-> >>>>>>>  fs/f2fs/file.c | 10 +++++-----
-> >>>>>>>  1 file changed, 5 insertions(+), 5 deletions(-)
-> >>>>>>>
-> >>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> >>>>>>> index 7ae2f3bd8c2f..68b6da734e5f 100644
-> >>>>>>> --- a/fs/f2fs/file.c
-> >>>>>>> +++ b/fs/f2fs/file.c
-> >>>>>>> @@ -1997,11 +1997,11 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
-> >>>>>>>  			goto err_out;
-> >>>>>>>  
-> >>>>>>>  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
-> >>>>>>> -		if (!ret) {
-> >>>>>>> -			clear_inode_flag(inode, FI_ATOMIC_FILE);
-> >>>>>>> -			F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
-> >>>>>>> -			stat_dec_atomic_write(inode);
-> >>>>>>> -		}
-> >>>>>>> +
-> >>>>>>> +		/* doesn't need to check error */
-> >>>>>>> +		clear_inode_flag(inode, FI_ATOMIC_FILE);
-> >>>>>>> +		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
-> >>>>>>> +		stat_dec_atomic_write(inode);
-> >>>>>>
-> >>>>>> If there are still valid atomic write pages linked in .inmem_pages, it may cause
-> >>>>>> memory leak when we just clear FI_ATOMIC_FILE flag.
-> >>>>>
-> >>>>> f2fs_commit_inmem_pages() should have flushed them.
-> >>>>
-> >>>> Oh, we failed to flush its nodes.
-> >>>>
-> >>>> However we won't clear such info if we failed to flush inmen pages, it looks
-> >>>> inconsistent.
-> >>>>
-> >>>> Any interface needed to drop inmem pages or clear ATOMIC_FILE flag in that two
-> >>>> error path? I'm not very clear how sqlite handle such error.
-> >>>
-> >>> f2fs_drop_inmem_pages() did that, but not in this case.
-> >>
-> >> What I mean is, for any error returned from atomic_commit() interface, should
-> >> userspace application handle it with consistent way, like trigger
-> >> f2fs_drop_inmem_pages(), so we don't need to handle it inside atomic_commit().
-> > 
-> > f2fs_ioc_abort_volatile_write() will be triggered.
-> 
-> If userspace can do this, we can get rid of this patch, or am I missing sth?
+There are total of 151 non-secure gpio (0-150) and four
+pins of pinmux (91, 92, 93 and 94) are not mapped to any
+gpio pin, hence update same in DT.
 
-We don't know when that will come. And, other threads are waiting for GC here.
+Fixes: 8aa428cc1e2e ("arm64: dts: Add pinctrl DT nodes for Stingray SOC")
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+---
+ arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi | 5 +++--
+ arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi         | 3 +--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-> 
-> - f2fs_ioc_abort_volatile_write
->  - f2fs_drop_inmem_pages
->   - clear_inode_flag(inode, FI_ATOMIC_FILE);
->   - fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
->   - stat_dec_atomic_write(inode);
-> 
-> > 
-> >>
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> So my question is why below logic didn't handle such condition well?
-> >>>>>>
-> >>>>>> f2fs_gc()
-> >>>>>>
-> >>>>>> 	if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
-> >>>>>> 		if (skipped_round <= MAX_SKIP_GC_COUNT ||
-> >>>>>> 					skipped_round * 2 < round) {
-> >>>>>> 			segno = NULL_SEGNO;
-> >>>>>> 			goto gc_more;
-> >>>>>> 		}
-> >>>>>>
-> >>>>>> 		if (first_skipped < last_skipped &&
-> >>>>>> 				(last_skipped - first_skipped) >
-> >>>>>> 						sbi->skipped_gc_rwsem) {
-> >>>>>> 			f2fs_drop_inmem_pages_all(sbi, true);
-> >>>>>
-> >>>>> This is doing nothing, since f2fs_commit_inmem_pages() removed the inode
-> >>>>> from inmem list.
-> >>>>>
-> >>>>>> 			segno = NULL_SEGNO;
-> >>>>>> 			goto gc_more;
-> >>>>>> 		}
-> >>>>>> 		if (gc_type == FG_GC && !is_sbi_flag_set(sbi, SBI_CP_DISABLED))
-> >>>>>> 			ret = f2fs_write_checkpoint(sbi, &cpc);
-> >>>>>> 	}
-> >>>>>>
-> >>>>>>>  	} else {
-> >>>>>>>  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
-> >>>>>>>  	}
-> >>>>>>>
-> >>>>> .
-> >>>>>
-> >>> .
-> >>>
-> > .
-> > 
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+index 8a3a770..56789cc 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+@@ -42,13 +42,14 @@
+ 
+ 		pinmux: pinmux@14029c {
+ 			compatible = "pinctrl-single";
+-			reg = <0x0014029c 0x250>;
++			reg = <0x0014029c 0x26c>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			pinctrl-single,register-width = <32>;
+ 			pinctrl-single,function-mask = <0xf>;
+ 			pinctrl-single,gpio-range = <
+-				&range 0 154 MODE_GPIO
++				&range 0  91 MODE_GPIO
++				&range 95 60 MODE_GPIO
+ 				>;
+ 			range: gpio-range {
+ 				#pinctrl-single,gpio-range-cells = <3>;
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 71e2e34..0098dfd 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -464,8 +464,7 @@
+ 					<&pinmux 108 16 27>,
+ 					<&pinmux 135 77 6>,
+ 					<&pinmux 141 67 4>,
+-					<&pinmux 145 149 6>,
+-					<&pinmux 151 91 4>;
++					<&pinmux 145 149 6>;
+ 		};
+ 
+ 		i2c1: i2c@e0000 {
+-- 
+1.9.1
+
