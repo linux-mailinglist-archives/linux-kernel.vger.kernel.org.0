@@ -2,80 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D36F3ADD95
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AB1EADDA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 18:56:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391274AbfIIQzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 12:55:00 -0400
-Received: from smtprelay0227.hostedemail.com ([216.40.44.227]:45554 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727781AbfIIQzA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 12:55:00 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id DD120100E86C0;
-        Mon,  9 Sep 2019 16:54:58 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1981:2194:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3874:4250:4321:4419:5007:6117:10004:10400:10848:11026:11232:11657:11658:11914:12043:12296:12297:12438:12740:12760:12895:13069:13161:13229:13311:13357:13439:13972:14181:14659:14721:21080:21451:21627:21740:30029:30054:30069:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: joke95_e38df7958c09
-X-Filterd-Recvd-Size: 2099
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  9 Sep 2019 16:54:57 +0000 (UTC)
-Message-ID: <ec66e477095bcddb86ffcc7ca10d3e0bbe72f943.camel@perches.com>
-Subject: Re: [Patch 09/13] media: am437x-vpfe: fix function trace debug log
-From:   Joe Perches <joe@perches.com>
-To:     Benoit Parrot <bparrot@ti.com>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 09 Sep 2019 09:54:56 -0700
-In-Reply-To: <20190909162743.30114-10-bparrot@ti.com>
-References: <20190909162743.30114-1-bparrot@ti.com>
-         <20190909162743.30114-10-bparrot@ti.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        id S2391264AbfIIQ4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 12:56:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42668 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727097AbfIIQ4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 12:56:38 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 076BD81F0C
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Sep 2019 16:56:38 +0000 (UTC)
+Received: by mail-wr1-f71.google.com with SMTP id j3so7637683wrn.7
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 09:56:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=b+DYBvL0oEEFzvAdvWpG5+5SFlJp7gZgu0SZ3ZeObvI=;
+        b=IEzpI3TofFvWjw7U1aF0A3twLIUBuO3LToNPtdw9RIcdobOYwXuukLTSQNziE1w5OB
+         p2SQthr6ZUTGFPFuIJxM4q3G1kRGybL1n3cMATvssdeZzVkghvIMjARV2SGT3VXsKqpv
+         TKknbfxLDRJGw76M/U35Xa24curp0H8ErFx0+0y2Lay4yQUrQZGKcH9Mq8FWnRGfJlCS
+         CRKeodwkvjsRZwAGpqLBpPJ9rxQRRTNwgX52pUdkO3FRazTBHtZxGQ4VeHCbb21YQnI1
+         T7frFT7sAZHCpEtmEDSfAEIx4DQbazkajM4ZRtSv4mNqMqSvqWAHAyeymrDQWyfjIjXb
+         irEw==
+X-Gm-Message-State: APjAAAWaU/9or5jZuRfx/G1iQUwugLWlgsyYaPOprErY6X2YawZ89ctX
+        d/gp8F1xBt+egE46PU37pm1CVZOEKVwUq5RV6BENoFyEAQc68mNqAc3tdvjo44fpKYLELa57ZnW
+        mattyrl+hzuHsQtQDR3eq+UQ3
+X-Received: by 2002:adf:e342:: with SMTP id n2mr2723309wrj.341.1568048196573;
+        Mon, 09 Sep 2019 09:56:36 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwCDEHfmFTtFBYf4wpg2xKJ2cjZDTuhPEW8XcTtrVh3SrWj7ioRNCGl/I1N77Z+ytfjL6XmFA==
+X-Received: by 2002:adf:e342:: with SMTP id n2mr2723289wrj.341.1568048196307;
+        Mon, 09 Sep 2019 09:56:36 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:4580:a289:2f55:eec1? ([2001:b07:6468:f312:4580:a289:2f55:eec1])
+        by smtp.gmail.com with ESMTPSA id q15sm18613985wrg.65.2019.09.09.09.56.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2019 09:56:35 -0700 (PDT)
+Subject: Re: [PATCH v2] scsi: virtio_scsi: unplug LUNs when events missed
+To:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Matt Lupfer <mlupfer@ddn.com>
+Cc:     "mst@redhat.com" <mst@redhat.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190905181903.29756-1-mlupfer@ddn.com>
+ <20190906085409.GC5900@stefanha-x1.localdomain>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <45d4fc47-cfc2-b7ae-e147-fb993a77e9e5@redhat.com>
+Date:   Mon, 9 Sep 2019 18:55:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190906085409.GC5900@stefanha-x1.localdomain>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="pxnQuVbtWYEwmX3SJy3OhOXnAXOYEWRNZ"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-09-09 at 11:27 -0500, Benoit Parrot wrote:
-> checkpatch.pl nows reports several:
-> WARNING: Prefer using '"%s...", __func__' to using '<function name>',
-> this function's name, in a string
-> 
-> So fix these for the whole driver.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--pxnQuVbtWYEwmX3SJy3OhOXnAXOYEWRNZ
+Content-Type: multipart/mixed; boundary="KlMsZ2txnG2HaPm51dmD2esB01PSzQkME";
+ protected-headers="v1"
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Stefan Hajnoczi <stefanha@redhat.com>, Matt Lupfer <mlupfer@ddn.com>
+Cc: "mst@redhat.com" <mst@redhat.com>,
+ "jasowang@redhat.com" <jasowang@redhat.com>,
+ "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+ "virtualization@lists.linux-foundation.org"
+ <virtualization@lists.linux-foundation.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-ID: <45d4fc47-cfc2-b7ae-e147-fb993a77e9e5@redhat.com>
+Subject: Re: [PATCH v2] scsi: virtio_scsi: unplug LUNs when events missed
+References: <20190905181903.29756-1-mlupfer@ddn.com>
+ <20190906085409.GC5900@stefanha-x1.localdomain>
+In-Reply-To: <20190906085409.GC5900@stefanha-x1.localdomain>
 
-Most of these seem to be function tracing comments
-that should probably be removed instead.
+--KlMsZ2txnG2HaPm51dmD2esB01PSzQkME
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-The generic kernel facility ftrace works well.
+On 06/09/19 10:54, Stefan Hajnoczi wrote:
+> On Thu, Sep 05, 2019 at 06:19:28PM +0000, Matt Lupfer wrote:
+>> The event handler calls scsi_scan_host() when events are missed, which=
 
-> diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
-[]
-> @@ -466,7 +466,7 @@ static void vpfe_ccdc_config_ycbcr(struct vpfe_ccdc *ccdc)
->  	struct ccdc_params_ycbcr *params = &ccdc->ccdc_cfg.ycbcr;
->  	u32 syn_mode;
->  
-> -	vpfe_dbg(3, vpfe, "vpfe_ccdc_config_ycbcr:\n");
-> +	vpfe_dbg(3, vpfe, "%s:\n", __func__);
+>> will hotplug new LUNs.  However, this function won't remove any
+>> unplugged LUNs.  The result is that hotunplug doesn't work properly wh=
+en
+>> the number of unplugged LUNs exceeds the event queue size (currently 8=
+).
+>>
+>> Scan existing LUNs when events are missed to check if they are still
+>> present.  If not, remove them.
+>>
+>> Signed-off-by: Matt Lupfer <mlupfer@ddn.com>
+>> ---
+>>  drivers/scsi/virtio_scsi.c | 33 +++++++++++++++++++++++++++++++++
+>>  1 file changed, 33 insertions(+)
+>=20
+> Please include a changelog in future patch revisions.  For example:
+>=20
+>   Signed-off-by: ...
+>   ---
+>   v2:
+>     * Replaced magic constants with sd.h constants [Michael]
+>=20
+> Just C and virtio code review, no SCSI specifics:
+>=20
+> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+>=20
 
-Remove this instead
-
->  	/*
->  	 * first restore the CCDC registers to default values
->  	 * This is important since we assume default values to be set in
-> @@ -598,7 +598,7 @@ static void vpfe_ccdc_config_raw(struct vpfe_ccdc *ccdc)
->  	unsigned int syn_mode;
->  	unsigned int val;
->  
-> -	vpfe_dbg(3, vpfe, "vpfe_ccdc_config_raw:\n");
-> +	vpfe_dbg(3, vpfe, "%s:\n", __func__);
-
-here too, etc...
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 
 
+--KlMsZ2txnG2HaPm51dmD2esB01PSzQkME--
+
+--pxnQuVbtWYEwmX3SJy3OhOXnAXOYEWRNZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAl12hBQACgkQv/vSX3jH
+roNf/QgAmxUxJG1dOWyJiM9cOE05ZHpVBvjYtllR4MHb7M3HkgznPc7bAe3ojMCh
+MjjpnhamcSKKTKtx9cgDK1bh8uj8viucaOZ43r0/P+npJO8XsdwwAlzfx5WMQ/Al
+qEaNVoX1KUxdWZAEYS1y52JmEvOf+0SlmaeJZMYQOWSJHepaM3d7l2vslFhZMIdt
+y054MXFZiJxyEB/AE8R/Xy7LPe9/CHliHqxDBMVjLYRFuUeqtkgAXjKUVsThUsGt
+EIKONYmN0aQ+Nl8bphUlxHhVVUgCTZ+YP/OCQqAOWtGKpINsFKBcvipeJeAVj3id
+Z7Jdh+v01Bs92VJ3BdQHgIbvvRulCA==
+=O1le
+-----END PGP SIGNATURE-----
+
+--pxnQuVbtWYEwmX3SJy3OhOXnAXOYEWRNZ--
