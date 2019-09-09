@@ -2,117 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88A2BAD98C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 15:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 469D1AD990
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 15:01:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391187AbfIINAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 09:00:50 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36629 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfIINAt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 09:00:49 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p13so14600700wmh.1;
-        Mon, 09 Sep 2019 06:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2mtaXV7efDqHnLl+I+7SAMFY03vfoRhhBlpiVGaFQk8=;
-        b=o5Mu6W+2SUKWlKCtvnhhXFy04FVwBepV5lS1KIj3m+C/9Og0pMUOcf++P4N0w8Yvzz
-         ir/ZcGOzKohQvKMr37eVmCE14/ggnYO0b1P390t10x43LCdDJdHdjZqrUflV7uwzOZRn
-         +1TN8GpHqhU2rz+SUJFx64QmBlUGeSATBH59Ljcptzl8/Q+sHGn7RFmwjZGlWGZN+Us7
-         7iLWHlGrZ5VwnYeMyGpg1YO+gsp424rYI+xCZuUwXzgPyO2UEV1vD2+ytTLbDxYkjFtd
-         dvbYvOmk2cm/gvj9uvv6gJGH9THmPDSzLHRJ7g3cEUCenkmjFqtpvjEnDlsvWbdX3whC
-         pKDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2mtaXV7efDqHnLl+I+7SAMFY03vfoRhhBlpiVGaFQk8=;
-        b=l2DqugTZP7E+gZijTyYuXKZjhUVWQxt89K4EAcm+i7q+ylCrdNGZo96wrpYr9lcQkU
-         fn6xjIH7xLfjOdIZ3zbYD+1z28cvt0QrL4L25hlbdpsyRWLQa4nKUgqu/MtiNhXcmaGK
-         WPB7H/rIycdz6ry9DPQEucOhWeU7XedXEbw94HDP8PL9hFMLr5Rg2l7VCL5P19c4fqto
-         4LbmQlAGOyUMZY19iohK3aA1tnT4XitKNwiIlh+QYOiOggyYbXxIlkzj500eD7tPdn3C
-         aRYPm4Af3beDEn+T8b55SUO8RK6Wt2tBzO89iFUj3mgc0egobJF83i+8hjaArayArpNb
-         khjA==
-X-Gm-Message-State: APjAAAX/GO6QyUDnC+Fb555EnHLs0IUOzFv67x4221nzWDi+adJfuPam
-        tKbUPcqc2/0Q1kiUWGGs5pM=
-X-Google-Smtp-Source: APXvYqwZNcsdhyfgf9pTofH/0xIuzvtR6S8IvHvjLtdXCPvCCUI3NCXN+ewuYCoam7pbMLdJp4XpPw==
-X-Received: by 2002:a1c:a713:: with SMTP id q19mr1412073wme.127.1568034047476;
-        Mon, 09 Sep 2019 06:00:47 -0700 (PDT)
-Received: from [132.199.67.133] (roam067133.uni-regensburg.de. [132.199.67.133])
-        by smtp.gmail.com with ESMTPSA id u8sm11518806wmj.3.2019.09.09.06.00.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Sep 2019 06:00:46 -0700 (PDT)
-From:   Fabian Henneke <fabian.henneke@gmail.com>
-Subject: Re: [PATCH 4.19 19/57] Bluetooth: hidp: Let hidp_send_message return
- number of queued bytes
-To:     Pavel Machek <pavel@denx.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sasha Levin <sashal@kernel.org>
-References: <20190908121125.608195329@linuxfoundation.org>
- <20190908121132.859238319@linuxfoundation.org> <20190909121555.GA18869@amd>
-Message-ID: <8e7731e0-f0ad-8cbb-799e-dd585e6b7ed6@gmail.com>
-Date:   Mon, 9 Sep 2019 15:00:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190909121555.GA18869@amd>
-Content-Type: text/plain; charset=utf-8
+        id S2404828AbfIINBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 09:01:39 -0400
+Received: from mail-eopbgr150079.outbound.protection.outlook.com ([40.107.15.79]:48964
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726462AbfIINBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Sep 2019 09:01:39 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BEI0iiP7GoPkGliJPjzdy7JU5DR3wjQMXmhuqY3HNakoHluj4VR6P9a3GRaODsiHLCEKW9f21KdINeNtnRILRioaP0Fr51PxE29/m4xR0f7125EWoQElqUmvorxonwm7qTttNOh/nAeCc11PSk2dsgkI4s5JEnT/kCBDnblZyhxiPI3jjLIf4v+TDq6STw3ksd5AmYXtoRfLhmS5vYHlefu9WD2V53hUL2cUHhtQgNuggHifIsp08o7fxPsWUaNjbpzZjNuJ7NLvPeG6UZTutwbtVDkZ7yuIdeTZLNEFBvri6QSsj9lUh/wA3WLyXJQuoHti++4byB9Byuq+mY13pA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BwmUpl/Jkxjag3FFXbdMSlBothp7KMhsOW2Z712Avxg=;
+ b=PTQZXaiT6N4ozFigX8Mc+idhMOvVNNz1qbptuo/dqqjqu1H+gSQyPvHzciN/5haFYodFyE5A9T8ggc4swbYpnpPRvDhEZRuOup3TFOSbayRxFnpafUbTMMUPFS0hcf1YGj2WTJcc5eUlK7YGtqmi1K3kIJIZd1nhChmrlsSU+MBKwrW1Kt0bfno7M9LAE9X8gEOcmZfYDcth59+2i9m/7dhtIAENlVj+ZLvhLwi8HxO4Yx2KXAESIf3dZGPl4rnbv9DP4EbPEazPlA2C+ZDbrox74TgKzpkugqeRH6KmYqo5DzepjZk1rY7jIzStL4ttRbrL0HGmqEUqBL0waI1WLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BwmUpl/Jkxjag3FFXbdMSlBothp7KMhsOW2Z712Avxg=;
+ b=IkliQBn4olkiIWJt++E50foBxsnzKCUKwJKuGNtNhJIJ8+eaqi1RVou/iVGSM3UmppjuSmRUcyJ9Tt+UihRBebCsTSbVow1sSgB9uMMm2cOYwTcjfqGjB9GIbbMHG2Z2Ff+bq42dnbFR2GozweM5RCuRsu22N0HhsBq57aze3h0=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3392.eurprd04.prod.outlook.com (52.134.1.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2241.15; Mon, 9 Sep 2019 13:01:34 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::c1a3:2946:8fa8:bfc5]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::c1a3:2946:8fa8:bfc5%3]) with mapi id 15.20.2241.018; Mon, 9 Sep 2019
+ 13:01:33 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+CC:     Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 02/12] crypto: caam - use devres to unmap JR's registers
+Thread-Topic: [PATCH 02/12] crypto: caam - use devres to unmap JR's registers
+Thread-Index: AQHVYslvb9FRxbBH50Gx/mHeQrstLA==
+Date:   Mon, 9 Sep 2019 13:01:33 +0000
+Message-ID: <VI1PR0402MB3485C0C5500766000E9A425E98B70@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <20190904023515.7107-1-andrew.smirnov@gmail.com>
+ <20190904023515.7107-3-andrew.smirnov@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1014d7d7-4362-47c0-f90c-08d73525d75d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3392;
+x-ms-traffictypediagnostic: VI1PR0402MB3392:|VI1PR0402MB3392:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB3392EDF652306CDF20EC4BD798B70@VI1PR0402MB3392.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:605;
+x-forefront-prvs: 01559F388D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(136003)(376002)(366004)(39860400002)(189003)(199004)(476003)(81166006)(316002)(256004)(54906003)(6246003)(33656002)(186003)(66476007)(64756008)(66446008)(6436002)(86362001)(91956017)(76116006)(26005)(66946007)(66556008)(7696005)(9686003)(2906002)(229853002)(4744005)(71190400001)(71200400001)(99286004)(53936002)(3846002)(6116002)(102836004)(53546011)(76176011)(7736002)(446003)(110136005)(486006)(74316002)(52536014)(55016002)(6506007)(4326008)(14454004)(5660300002)(25786009)(478600001)(66066001)(8936002)(44832011)(8676002)(81156014)(2501003)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3392;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: x9cabrj6s0Quhmwrb5Er4DhOEELAGguPFlKDeayIF4RTrII3cccY40JMLqwldKVvYYaXTdb91I1KCCSZRppJs7jsylfZFI/aqTGrTQambvPvfyea0iBWxaq9CSbjZK7k9rraX/SL1+7CLZu9f8xtyR/InDRhvCa3erZMP2iTFLDmNgJ+hYHeGkoUebYQi/7j++ti2ESJOUSUxLx+G/R8wJIQ0htDoiM/SPoetBhNEXRzP5nVo82DFPSm5zxwYZ74XM4NL5iz7DfRkwZOJZQ3W1hoNFhMiFa2XGgMIASmL1FSMYflP2pcYrkvV5HPI4PXQeFJTs27tHJAFoMpUnvlVB/g9jW3G1FFunByI2ei4f1ny6n7YdiCsbM6Q+EeM6X8qAgpd++4EikTqgMAHD/sPH9NVE4WEvkJvwu1RtJjs5M=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1014d7d7-4362-47c0-f90c-08d73525d75d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2019 13:01:33.7517
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UvmBZxyH/CkiEUa0vD1bwO3ViTjhorbd4prTAQ0KAadQ1TPs6VJ6zW5kIPeUvOniqWy0tSivjijd3xwq74C08g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3392
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Sep 9, 2019 at 2:15 PM Pavel Machek <pavel@denx.de> wrote:
-
-> Hi!
->
-> > [ Upstream commit 48d9cc9d85dde37c87abb7ac9bbec6598ba44b56 ]
-> >
-> > Let hidp_send_message return the number of successfully queued bytes
-> > instead of an unconditional 0.
-> >
-> > With the return value fixed to 0, other drivers relying on hidp, such as
-> > hidraw, can not return meaningful values from their respective
-> > implementations of write(). In particular, with the current behavior, a
-> > hidraw device's write() will have different return values depending on
-> > whether the device is connected via USB or Bluetooth, which makes it
-> > harder to abstract away the transport layer.
->
-> So, does this change any actual behaviour?
->
-> Is it fixing a bug, or is it just preparation for a patch that is not
-> going to make it to stable?
->
-
-I created this patch specifically in order to ensure that user space
-applications can use HID devices with hidraw without needing to care about
-whether the transport is USB or Bluetooth. Without the patch, every
-hidraw-backed Bluetooth device needs to be treated specially as its write()
-violates the usual return value contract, which could be viewed as a bug.
-
-Please note that a later patch (
-https://www.spinics.net/lists/linux-input/msg63291.html) fixes some
-important error checks that were relying on the old behavior (and were
-unfortunately missed by me).
-
-Best regards,
-Fabian
-
->                                                         Pavel
->
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures)
-> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
->
-
+On 9/4/2019 5:35 AM, Andrey Smirnov wrote:=0A=
+> Use devres to unmap memory and drop explicit de-initialization=0A=
+> code.=0A=
+> =0A=
+> NOTE: There's no corresponding unmapping code in caam_jr_remove which=0A=
+> seems like a resource leak.=0A=
+> =0A=
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>=0A=
+> Cc: Chris Healy <cphealy@gmail.com>=0A=
+> Cc: Lucas Stach <l.stach@pengutronix.de>=0A=
+> Cc: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>=0A=
+> Cc: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
+> Cc: linux-crypto@vger.kernel.org=0A=
+> Cc: linux-kernel@vger.kernel.org=0A=
+Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
