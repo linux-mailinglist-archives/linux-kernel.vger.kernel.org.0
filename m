@@ -2,45 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34800AD669
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A77A1AD65D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 12:07:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390373AbfIIKH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 06:07:56 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56126 "EHLO
+        id S2390347AbfIIKHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 06:07:36 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56282 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729654AbfIIKH1 (ORCPT
+        with ESMTP id S2390279AbfIIKHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:07:27 -0400
+        Mon, 9 Sep 2019 06:07:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=zt/n4eTpMG9sUtHcd96OLuRnzRxpm+JT0DN15WfWCf4=; b=i7BuxHtRk6Sa
-        iRDp2uZEvLGrY0pa8cfnzwjY9VOGIuYSM6mxUla7k84MFaKCaBytxLhCwojfVdvng6476uUOKAycv
-        2aUfz5YNtiTgmOz3AOn1wRymCyc5nFXe5mAu5Z2AFMLH+URQsA0GtCuVXWgmpU0rHIUeE+ZyiwieS
-        urfRc=;
+        List-Archive; bh=0BWb9oFNsrzhHRoXjRJsJwhpQNsxpSMWA6Ianh79KG4=; b=kdfGYxagBog3
+        B0uk3QvHNJqgZ5xw0vcglNzkWbAeGRVWdL6/pV38BSZhtOPbuUCzP9jiS2jkT2Paxw/zDKGoLz2SO
+        nNpzN1DL8KuPJmOjOcRI446tBSB/P5cuhxI0sFni4lhLMAa3+Qe+tcD4P+zUuj232Q7SxeRpd3ncM
+        sESsE=;
 Received: from [148.69.85.38] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1i7GZv-0001tm-7Q; Mon, 09 Sep 2019 10:07:23 +0000
+        id 1i7Ga0-0001ub-4U; Mon, 09 Sep 2019 10:07:28 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id A00A9D02D18; Mon,  9 Sep 2019 11:07:22 +0100 (BST)
+        id 86F3BD02D18; Mon,  9 Sep 2019 11:07:27 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        support.opensource@diasemi.com
-Subject: Applied "regulator: slg51000: use devm_gpiod_get_optional() in probe" to the regulator tree
-In-Reply-To: <20190904214200.GA66118@dtor-ws>
+To:     Markus Elfring <elfring@users.sourceforge.net>
+Cc:     kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "spi-gpio: Use PTR_ERR_OR_ZERO() in spi_gpio_request()" to the spi tree
+In-Reply-To: <b2dd074a-1693-3aea-42b4-da1f5ec155c4@web.de>
 X-Patchwork-Hint: ignore
-Message-Id: <20190909100722.A00A9D02D18@fitzroy.sirena.org.uk>
-Date:   Mon,  9 Sep 2019 11:07:22 +0100 (BST)
+Message-Id: <20190909100727.86F3BD02D18@fitzroy.sirena.org.uk>
+Date:   Mon,  9 Sep 2019 11:07:27 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,11 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: slg51000: use devm_gpiod_get_optional() in probe
+   spi-gpio: Use PTR_ERR_OR_ZERO() in spi_gpio_request()
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,64 +71,39 @@ to this mail.
 Thanks,
 Mark
 
-From c0b913447b75538c3cf4b8016fd2e06509895020 Mon Sep 17 00:00:00 2001
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 4 Sep 2019 14:42:00 -0700
-Subject: [PATCH] regulator: slg51000: use devm_gpiod_get_optional() in probe
+From 8995673e6f584c2140b565d9ef20e4e4599aad7e Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 7 Sep 2019 13:51:16 +0200
+Subject: [PATCH] spi-gpio: Use PTR_ERR_OR_ZERO() in spi_gpio_request()
 
-The CS GPIO line is clearly optional GPIO (and marked as such in the
-binding document) and we should handle it accordingly. The current code
-treats all errors as meaning that there is no GPIO defined, which is
-wrong, as it does not handle deferrals raised by the underlying code
-properly, nor does it recognize non-existing GPIO from any other
-initialization error.
+Simplify this function implementation by using a known function.
 
-As far as I can see the only reason the driver, unlike all others,
-is using OF-specific devm_gpiod_get_from_of_node() so that it can
-assign a custom label to the selected GPIO line. Given that noone else
-needs that, it should not be doing that either.
+Generated by: scripts/coccinelle/api/ptr_ret.cocci
 
-Let's switch to using more appropriate devm_gpiod_get_optional().
-
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Link: https://lore.kernel.org/r/20190904214200.GA66118@dtor-ws
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/b2dd074a-1693-3aea-42b4-da1f5ec155c4@web.de
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/slg51000-regulator.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/spi/spi-gpio.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/slg51000-regulator.c b/drivers/regulator/slg51000-regulator.c
-index 4d859fef55e6..a0565daecace 100644
---- a/drivers/regulator/slg51000-regulator.c
-+++ b/drivers/regulator/slg51000-regulator.c
-@@ -447,19 +447,20 @@ static int slg51000_i2c_probe(struct i2c_client *client,
- {
- 	struct device *dev = &client->dev;
- 	struct slg51000 *chip;
--	struct gpio_desc *cs_gpiod = NULL;
-+	struct gpio_desc *cs_gpiod;
- 	int error, ret;
+diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
+index 9eb82150666e..1d3e23ec20a6 100644
+--- a/drivers/spi/spi-gpio.c
++++ b/drivers/spi/spi-gpio.c
+@@ -290,10 +290,7 @@ static int spi_gpio_request(struct device *dev, struct spi_gpio *spi_gpio)
+ 		return PTR_ERR(spi_gpio->miso);
  
- 	chip = devm_kzalloc(dev, sizeof(struct slg51000), GFP_KERNEL);
- 	if (!chip)
- 		return -ENOMEM;
+ 	spi_gpio->sck = devm_gpiod_get(dev, "sck", GPIOD_OUT_LOW);
+-	if (IS_ERR(spi_gpio->sck))
+-		return PTR_ERR(spi_gpio->sck);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(spi_gpio->sck);
+ }
  
--	cs_gpiod = devm_gpiod_get_from_of_node(dev, dev->of_node,
--					       "dlg,cs-gpios", 0,
--					       GPIOD_OUT_HIGH
--					       | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
--					       "slg51000-cs");
--	if (!IS_ERR(cs_gpiod)) {
-+	cs_gpiod = devm_gpiod_get_optional(dev, "dlg,cs",
-+					   GPIOD_OUT_HIGH |
-+						GPIOD_FLAGS_BIT_NONEXCLUSIVE);
-+	if (IS_ERR(cs_gpiod))
-+		return PTR_ERR(cs_gpiod);
-+
-+	if (cs_gpiod) {
- 		dev_info(dev, "Found chip selector property\n");
- 		chip->cs_gpiod = cs_gpiod;
- 	}
+ #ifdef CONFIG_OF
 -- 
 2.20.1
 
