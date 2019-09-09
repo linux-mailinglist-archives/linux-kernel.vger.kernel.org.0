@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28FB9ADB0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C147ADB0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 16:19:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732084AbfIIOTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 10:19:18 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42934 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfIIOTR (ORCPT
+        id S1732421AbfIIOTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 10:19:25 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40058 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732116AbfIIOTW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 10:19:17 -0400
-Received: by mail-pf1-f196.google.com with SMTP id w22so9245326pfi.9
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 07:19:17 -0700 (PDT)
+        Mon, 9 Sep 2019 10:19:22 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x127so9247815pfb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 07:19:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SLkwCl+YmpuBIlfaQTzGPq6Ho+2QR3zhJrCiroUra5k=;
-        b=txgs9ojr9P5owVAhHlKESpWcIO60s8DwW5WWTBJPk/RCOmWJAqjgbC/jvgs1QRHiuV
-         /cD51WrbWrM0h2dI2CYibOVK1C5ZZJwR0Va9PhqNXMlOR7Cew/ZPomcHrFPARTZW7eR7
-         ntGK7VjgyvYdWb0awl1buYFMU026F53/6Bk+KlhSJ75reVXnGoY4Uy/f+ZDojuaDtZth
-         cWu8Q3dJ1vmO62t4zM9v3VZGK9uBDCKR9XejkpNTZnp6YlfL8wtnLfUhyFywZRB3bz/T
-         aMfqpz4Q28x4RqDAJnltpI0uveluPgS27aB6VGkfYFwfkXlyfLVEzRvKG5jPtdbQNqep
-         cSBA==
+        bh=26Wst1tOghrDUnY62Gv01qINYsQrhb3q0IbTkiTmqqM=;
+        b=uDgCrBJ8MVKrIJnLVcX6OI2xCnSlaOKwBS0DSWEhI6CUBa93RmqQTvPt7XgnLSveB3
+         7oLwbehofSn81Eqmdkn69+iqm8nxTQ/fh6mDVvWzlmNnqkx3Kyn/g3Xo9SGRD51zWJYu
+         8+DfMUGX3DN0jRMSzeAqntZ/HCCH1mOOZACEsbT1kibLUXi6qbNaDoyI8Oyke2h00GeE
+         cJYn9BNcRKNUJ4ktDjoajQAXj3zexp3l44Sx0hJ00zRb/4ihTYszssdJf/F28XtCbp2v
+         EZtMO49bblr+anhM8nYxPoWfGV4UC6Vha1MjwFzb/O5z8e5yeYGaHYzBQvR9FSAVGGnA
+         fmrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SLkwCl+YmpuBIlfaQTzGPq6Ho+2QR3zhJrCiroUra5k=;
-        b=gb4rZD9QeEaNezdR2jogD7kKgSizAnK41eGxTxquds1mZ6szQlv9T2UWNtXMjRMPSu
-         F2A9TTxe6ejseIR6DSyTGBKTB4CoEcAHJsam76AgIsz8558B028ZkqdcvC9yAS9hQL31
-         xa/cfomskQfH024Jq0j7Sn5sbi2tPAb4cosRToSIN3ZxTblbtVwEcVUXgfSnj+PxdUP2
-         iZzcN2BIwBfoZX5AYrdDHtH44w+FTghs3oUqOQudxbeM9Vl6YmZox4y5IrRaiQE2Ck7/
-         hdlxesm/DFDkf5aPKPc4rqWVLN86d+LKqiIu2bXmWyBWl6HgLN33ond2xndg3B3AEkGI
-         70BA==
-X-Gm-Message-State: APjAAAWl9QDvMGiAlnNg3dDSRi49jm/Gpn8dtRs2e+MhrHPK7rTexE3I
-        4VO3R9V8obEJDcRaUL7rZhk=
-X-Google-Smtp-Source: APXvYqxDQy3r56uB0kyZEMb5mEb7knYttk7BhjWU5PweRZCdGzzcfCt41kcHbB6BGXpjieTdRxso7A==
-X-Received: by 2002:aa7:8bc2:: with SMTP id s2mr27073479pfd.13.1568038756398;
-        Mon, 09 Sep 2019 07:19:16 -0700 (PDT)
+        bh=26Wst1tOghrDUnY62Gv01qINYsQrhb3q0IbTkiTmqqM=;
+        b=GCiukuPBMMCumFjvb1Xvjcx/knzds5y7qWGsNw8IfC9i6GTSXGqitUrVqFaTRPq0L3
+         0AAYTRmLmcCrLxayMua5RdcW3kbM3x2ZWspGtTADB5+stEChqlKZj8WxXTqOEnd0nz7f
+         6XCPtBdLSdlAjVOnJw9BjzcqV8hmq3AndbqNyIX/+48G27bBU9EFKS/q4UJbXfwMVJZv
+         RmKKENBG1MScdw2RGmBisoGtQpW3143wfLzs1BlrT480eu52MAQK/KD95s6VALIl0/zR
+         O9t526JL165o342i7TyJys3jNHoVUqmpSgwuexE5MV+H7BxmIbdb1/QqsW+m8bgPiatk
+         042g==
+X-Gm-Message-State: APjAAAW8+ZEzC4RYW7nlf1Ca4FL6IjV2nL6VE/uhUGMi++a2GCD+ch/C
+        aSnOaIjgYJEPcL1iQKh226k=
+X-Google-Smtp-Source: APXvYqzZVjw/bj3xu3E4R9KuJmmaHaRN5jsb+5yhdPs2IhUNbwNVcPJYnTMhEKaKM/jfzKb67DLD9A==
+X-Received: by 2002:aa7:82d9:: with SMTP id f25mr17667823pfn.117.1568038761846;
+        Mon, 09 Sep 2019 07:19:21 -0700 (PDT)
 Received: from localhost.localdomain ([149.28.153.17])
-        by smtp.gmail.com with ESMTPSA id w6sm34574695pfw.84.2019.09.09.07.19.11
+        by smtp.gmail.com with ESMTPSA id w6sm34574695pfw.84.2019.09.09.07.19.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 07:19:16 -0700 (PDT)
+        Mon, 09 Sep 2019 07:19:21 -0700 (PDT)
 From:   Changbin Du <changbin.du@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Randy Dunlap <rdunlap@infradead.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
         Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH v2 7/9] kconfig/hacking: Create a submenu for scheduler debugging options
-Date:   Mon,  9 Sep 2019 22:18:21 +0800
-Message-Id: <20190909141823.8638-8-changbin.du@gmail.com>
+Subject: [PATCH v2 8/9] kconfig/hacking: Move DEBUG_BUGVERBOSE to 'printk and dmesg options'
+Date:   Mon,  9 Sep 2019 22:18:22 +0800
+Message-Id: <20190909141823.8638-9-changbin.du@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190909141823.8638-1-changbin.du@gmail.com>
 References: <20190909141823.8638-1-changbin.du@gmail.com>
@@ -63,35 +63,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a submenu 'Scheduler Debugging' for scheduler debugging options.
+I think DEBUG_BUGVERBOSE is a dmesg option which gives more debug info
+to dmesg.
 
 Signed-off-by: Changbin Du <changbin.du@gmail.com>
 ---
- lib/Kconfig.debug | 4 ++++
- 1 file changed, 4 insertions(+)
+ lib/Kconfig.debug | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index ce545bb80ea2..ce891713c914 100644
+index ce891713c914..ceefe0c1e78b 100644
 --- a/lib/Kconfig.debug
 +++ b/lib/Kconfig.debug
-@@ -991,6 +991,8 @@ config WQ_WATCHDOG
+@@ -164,6 +164,15 @@ config DYNAMIC_DEBUG
+ 	  See Documentation/admin-guide/dynamic-debug-howto.rst for additional
+ 	  information.
  
- endmenu # "Debug lockups and hangs"
- 
-+menu "Scheduler Debugging"
++config DEBUG_BUGVERBOSE
++	bool "Verbose BUG() reporting (adds 70K)" if DEBUG_KERNEL && EXPERT
++	depends on BUG && (GENERIC_BUG || HAVE_DEBUG_BUGVERBOSE)
++	default y
++	help
++	  Say Y here to make BUG() panics output the file name and line number
++	  of the BUG call as well as the EIP and oops trace.  This aids
++	  debugging but costs about 70-100K of memory.
 +
- config SCHED_DEBUG
- 	bool "Collect scheduler debugging info"
- 	depends on DEBUG_KERNEL && PROC_FS
-@@ -1017,6 +1019,8 @@ config SCHEDSTATS
- 	  application, you can say N to avoid the very slight overhead
- 	  this adds.
+ endmenu # "printk and dmesg options"
  
-+endmenu
-+
- config DEBUG_TIMEKEEPING
- 	bool "Enable extra timekeeping sanity checking"
- 	help
+ menu "Compile-time checks and compiler options"
+@@ -1323,15 +1332,6 @@ config DEBUG_KOBJECT_RELEASE
+ config HAVE_DEBUG_BUGVERBOSE
+ 	bool
+ 
+-config DEBUG_BUGVERBOSE
+-	bool "Verbose BUG() reporting (adds 70K)" if DEBUG_KERNEL && EXPERT
+-	depends on BUG && (GENERIC_BUG || HAVE_DEBUG_BUGVERBOSE)
+-	default y
+-	help
+-	  Say Y here to make BUG() panics output the file name and line number
+-	  of the BUG call as well as the EIP and oops trace.  This aids
+-	  debugging but costs about 70-100K of memory.
+-
+ menu "Debug kernel data structures"
+ 
+ config DEBUG_LIST
 -- 
 2.20.1
 
