@@ -2,88 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E42EAE00F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 22:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1983AE016
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Sep 2019 22:57:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406051AbfIIUvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 16:51:42 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42543 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406003AbfIIUvl (ORCPT
+        id S1727570AbfIIU51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 16:57:27 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:51977 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726806AbfIIU51 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 16:51:41 -0400
-Received: by mail-qk1-f196.google.com with SMTP id f13so14596415qkm.9
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 13:51:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vhf/VH6qoGbAFq6Zh51eDwuCB0DIG+y0z43PDyN0q8A=;
-        b=TnPu22lFA+qHFZ/W7Pd86taJWLahA4jst0mGpgTwxZDa6EQ7oBq8dZ9LF3cYENetnf
-         GdLE4WpSTF4IecoGKJQa0dSdIl1CQ7pecnNBgJVr6cLOAah9eDB76naqxpayUMZf8AjH
-         Yhn5ryHf6yjfdd+BJ72PNeqLetlo8/eyDaMsIBeu/oxsoHldWZ5OxRWx/LKbguPTB/gE
-         /DJbT4C1YqaRHS4lf8DHFyvVqAHKzTnrkiymBWqCB3lAYkIGKz7r2HciBwSqm2Ly0D1c
-         HqhcrDJ1eE1b00+wD+QgVjc7zh01/gG1KSHIVH+rpIcHq+6P+uACgSM0mXGDqU1K5QQ0
-         eKDg==
-X-Gm-Message-State: APjAAAWG9YVTIMjmL9w22okArakJUhA2IPir+sgOtd728BkZuSdnAhi7
-        pIPQglsIw4SHCh3LFJWnkJRyWKobdB1T7MK/rMM=
-X-Google-Smtp-Source: APXvYqxeuTRYeuG3UAIw3hBXZnoMih7mxoOVjzE2Y782n8BsFv1vUPn7JkL+YjH+hvAoxYdKHNs3DyDqbnCmQ+bVueY=
-X-Received: by 2002:a37:8044:: with SMTP id b65mr3631697qkd.138.1568062299974;
- Mon, 09 Sep 2019 13:51:39 -0700 (PDT)
+        Mon, 9 Sep 2019 16:57:27 -0400
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x89KvPPi038871;
+        Tue, 10 Sep 2019 05:57:26 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Tue, 10 Sep 2019 05:57:25 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x89KvPGd038866
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 10 Sep 2019 05:57:25 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: [PATCH] mm: avoid slub allocation while holding list_lock
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Yu Zhao <yuzhao@google.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190909061016.173927-1-yuzhao@google.com>
+ <20190909160052.cxpfdmnrqucsilz2@box>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <e5e25aa3-651d-92b4-ac82-c5011c66a7cb@I-love.SAKURA.ne.jp>
+Date:   Tue, 10 Sep 2019 05:57:22 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20190909195159.3326134-1-arnd@arndb.de> <3b69e0ec-63cb-4888-9faa-acb7638d71dc@linux.intel.com>
-In-Reply-To: <3b69e0ec-63cb-4888-9faa-acb7638d71dc@linux.intel.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 9 Sep 2019 22:51:23 +0200
-Message-ID: <CAK8P3a0WDB_UvAnwfPDyR_maEefE4Qh++fHxAP61=8JfOFmy6w@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: SOF: Intel: work around snd_hdac_aligned_read link failure
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Pan Xiuli <xiuli.pan@linux.intel.com>,
-        Evan Green <evgreen@chromium.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190909160052.cxpfdmnrqucsilz2@box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 9, 2019 at 10:39 PM Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
->
-> On 9/9/19 2:51 PM, Arnd Bergmann wrote:
-> > When CONFIG_SND_HDA_ALIGNED_MMIO is selected by another driver
-> > (i.e. Tegra) that selects CONFIG_SND_HDA_CORE as a loadable
-> > module, but SND_SOC_SOF_HDA_COMMON is built-in, we get a
-> > link failure from some functions that access the hda register:
-> >
-> > sound/soc/sof/intel/hda.o: In function `hda_ipc_irq_dump':
-> > hda.c:(.text+0x784): undefined reference to `snd_hdac_aligned_read'
-> > sound/soc/sof/intel/hda-stream.o: In function `hda_dsp_stream_threaded_handler':
-> > hda-stream.c:(.text+0x12e4): undefined reference to `snd_hdac_aligned_read'
-> > hda-stream.c:(.text+0x12f8): undefined reference to `snd_hdac_aligned_write'
-> >
-> > Add an explicit 'select' statement as a workaround. This is
-> > not a great solution, but it's the easiest way I could come
-> > up with.
->
-> Thanks for spotting this, I don't think anyone on the SOF team looked at
-> this. Maybe we can filter with depends on !TEGRA or
-> !SND_HDA_ALIGNED_MMIO at the SOF Intel top-level instead?
+On 2019/09/10 1:00, Kirill A. Shutemov wrote:
+> On Mon, Sep 09, 2019 at 12:10:16AM -0600, Yu Zhao wrote:
+>> If we are already under list_lock, don't call kmalloc(). Otherwise we
+>> will run into deadlock because kmalloc() also tries to grab the same
+>> lock.
+>>
+>> Instead, allocate pages directly. Given currently page->objects has
+>> 15 bits, we only need 1 page. We may waste some memory but we only do
+>> so when slub debug is on.
+>>
+>>   WARNING: possible recursive locking detected
+>>   --------------------------------------------
+>>   mount-encrypted/4921 is trying to acquire lock:
+>>   (&(&n->list_lock)->rlock){-.-.}, at: ___slab_alloc+0x104/0x437
+>>
+>>   but task is already holding lock:
+>>   (&(&n->list_lock)->rlock){-.-.}, at: __kmem_cache_shutdown+0x81/0x3cb
+>>
+>>   other info that might help us debug this:
+>>    Possible unsafe locking scenario:
+>>
+>>          CPU0
+>>          ----
+>>     lock(&(&n->list_lock)->rlock);
+>>     lock(&(&n->list_lock)->rlock);
+>>
+>>    *** DEADLOCK ***
+>>
+>> Signed-off-by: Yu Zhao <yuzhao@google.com>
+> 
+> Looks sane to me:
+> 
+> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> 
 
-That doesn't sound much better than my approach, but could also work.
-One idea that I had but did not manage to implement was to move out
-the snd_hdac_aligned_read/write functions from the core hda code
-into a separate file. I think that would be the cleanest solution,
-as it decouples the problem from any drivers.
+Really?
 
-> If you can share your config off-list I can try to simplify this further.
-
-I uploaded the .config to https://pastebin.com/raw/RMBGXTky
-for reference now. This is with the latest linux-next kernel, plus
-a series of patches that I keep around for fixing other build
-problems.
-
-      Arnd
+Since page->objects is handled as bitmap, alignment should be BITS_PER_LONG
+than BITS_PER_BYTE (though in this particular case, get_order() would
+implicitly align BITS_PER_BYTE * PAGE_SIZE). But get_order(0) is an
+undefined behavior.
