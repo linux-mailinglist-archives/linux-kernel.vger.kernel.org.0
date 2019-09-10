@@ -2,94 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88C99AF12D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 20:42:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EB63AF12F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 20:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfIJSmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 14:42:12 -0400
-Received: from smtprelay0184.hostedemail.com ([216.40.44.184]:50425 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726710AbfIJSmL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 14:42:11 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 27EFD801568E;
-        Tue, 10 Sep 2019 18:42:10 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2525:2553:2559:2564:2682:2685:2692:2828:2859:2892:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6742:8784:8985:9025:10004:10400:10848:10967:11232:11658:11914:12043:12297:12555:12679:12740:12760:12895:12986:13069:13161:13229:13255:13311:13357:13439:14181:14659:14721:14819:21080:21627:21811:30029:30034:30054:30070:30075:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: word69_8703812b2da21
-X-Filterd-Recvd-Size: 2733
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 10 Sep 2019 18:42:07 +0000 (UTC)
-Message-ID: <c458e734f5777561138b87228384808398547762.camel@perches.com>
-Subject: Re: [PATCH v6 01/12] tools lib traceevent: Convert remaining %p[fF]
- users to %p[sS]
-From:   Joe Perches <joe@perches.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        linux-trace-devel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Date:   Tue, 10 Sep 2019 11:42:06 -0700
-In-Reply-To: <20190910142621.0bec208d@oasis.local.home>
-References: <20190910084707.18380-1-sakari.ailus@linux.intel.com>
-         <20190910084707.18380-2-sakari.ailus@linux.intel.com>
-         <20190910071837.2e9110f8@oasis.local.home>
-         <61a2b2ab4693535850306f396aac2a328e1d5a21.camel@perches.com>
-         <20190910142621.0bec208d@oasis.local.home>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728107AbfIJSm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 14:42:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46062 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726214AbfIJSm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 14:42:58 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 800E120872;
+        Tue, 10 Sep 2019 18:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568140977;
+        bh=/LooAfLWrCT1T8tDGhy1qtaoR6dOFBqW+Qnf0Z9e0n8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SFfk6a5HWSAUpEvuHFeEzTqvZw2bgdoxrWVszGKc2/TsQ2+1fdPapzYMo56UwZ3P3
+         cSqGUR79jN+gRE5suKQWROiRxkHZjeciopgMIb558OgChPYnyTKMezrdsp+PpxaVWL
+         ps+WzZu8sLxhh1ZjtcGiysueKHt5GHu6CtyqepvA=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH RESEND] config: android: Remove left-over BACKLIGHT_LCD_SUPPORT
+Date:   Tue, 10 Sep 2019 20:42:41 +0200
+Message-Id: <20190910184241.20897-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-10 at 14:26 -0400, Steven Rostedt wrote:
-> On Tue, 10 Sep 2019 10:18:44 -0700
-> Joe Perches <joe@perches.com> wrote:
-> 
-> > > It's not just for the lastest kernel. We must maintain backward
-> > > compatibility here too. If there use to be a usage of this, then we
-> > > must keep it until the kernels are no longer used (perhaps 7 years?)  
-> > 
-> > That argues for not using "%pfw" at all for some number of years.
-> > 
-> > Perhaps the '%pfw' should be '%pnfw' for 'name' and 'fwnode'
->
->   -ENOCOMPREHENSION
+The CONFIG_BACKLIGHT_LCD_SUPPORT was removed in commit 8c5dc8d9f19c
+("video: backlight: Remove useless BACKLIGHT_LCD_SUPPORT kernel
+symbol"). Options protected by CONFIG_BACKLIGHT_LCD_SUPPORT are now
+available directly.
 
-Perhaps you were not copied on the whole series.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ kernel/configs/android-recommended.config | 1 -
+ 1 file changed, 1 deletion(-)
 
-https://lore.kernel.org/lkml/20190910084707.18380-1-sakari.ailus@linux.intel.com/
-
-As I understand it, Sakair Ailus is proposing to
-obsolete the current vsprintf "%p[Ff]" extension
-and replace the usage with a new "%pfw" extension
-which would emit the name of a pointer to "struct fwnode {}".
-
-https://lore.kernel.org/lkml/20190910084707.18380-10-sakari.ailus@linux.intel.com/
-
-If reusing "%pf<foo>" is a problem, then instead
-it might be reasonable to have a new "%pn<foo>" for
-that use instead.
-
-btw:
-
-Is there kernel version information available in
-trace output files?
-
-If so, it might be reasonable to change the tooling
-there instead.
-
+diff --git a/kernel/configs/android-recommended.config b/kernel/configs/android-recommended.config
+index 81e9af7dcec2..c51f4c221ad6 100644
+--- a/kernel/configs/android-recommended.config
++++ b/kernel/configs/android-recommended.config
+@@ -7,7 +7,6 @@
+ # CONFIG_PM_WAKELOCKS_GC is not set
+ # CONFIG_VT is not set
+ CONFIG_ARM64_SW_TTBR0_PAN=y
+-CONFIG_BACKLIGHT_LCD_SUPPORT=y
+ CONFIG_BLK_DEV_DM=y
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_RAM=y
+-- 
+2.17.1
 
