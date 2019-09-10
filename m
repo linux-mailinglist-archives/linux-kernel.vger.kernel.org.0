@@ -2,112 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53076AF1D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 21:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A17BAF1D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 21:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728757AbfIJTXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 15:23:18 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:49178 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727131AbfIJTXS (ORCPT
+        id S1728633AbfIJTWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 15:22:47 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:8944 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727131AbfIJTWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 15:23:18 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8AJIZMQ048968;
-        Tue, 10 Sep 2019 19:22:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=tksQD2Rpoes/XpADezB0hnxBUleozwtCafj604Oeb2A=;
- b=i2Zg7YwKCPWc5PIladBSkin1Ogyg6IVzqSySgL5xkhhEogQ28xOAjXET4JGka2Axh3Cj
- yug91VriQG4y04rrou4BHZJeT36/JBVNhoP+PSW4v8wbseAOkmVo9H1x+NvX0v7JhN6N
- NMsFTla22NwVDD9qBj1Q4egeMW9OUhURIVW7yXx8XbRQuFZTlFjNoV78KLH0XJ008Djj
- qrHlrqq+iN4LKyzqkTgLo75DWRSB1E/W0R+fa0Yh5+YdBpC48o2LL5DBQnO2PuuvA8v5
- NVEsj/9O/mFLjBeghCcRE428WiadbEua6X5YDL5UFLD4u/UcjKtm+AXji17XFVzKB9aq yg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2uw1jkdkr8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Sep 2019 19:22:21 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8AJIF7X067086;
-        Tue, 10 Sep 2019 19:22:20 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2uwqku4nex-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Sep 2019 19:22:20 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8AJMIRK026489;
-        Tue, 10 Sep 2019 19:22:18 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 10 Sep 2019 12:22:18 -0700
-Date:   Tue, 10 Sep 2019 22:22:08 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Mao Wenan <maowenan@huawei.com>
-Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com,
-        marcelo.leitner@gmail.com, davem@davemloft.net,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net 1/2] sctp: remove redundant assignment when call
- sctp_get_port_local
-Message-ID: <20190910192207.GE20699@kadam>
-References: <20190910071343.18808-1-maowenan@huawei.com>
- <20190910071343.18808-2-maowenan@huawei.com>
- <20190910185710.GF15977@kadam>
+        Tue, 10 Sep 2019 15:22:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1568143365;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=Q2xo+8m/PTpfyib2FwPbe4+jFPDhaQCjl4xznLzRWQY=;
+        b=L/4ZyO/QHymt7sZahA1NX80/tpUYDWCRIDGmLbJ9wQdlXtYUBYrKlwSyPPPFIq8XMJ
+        GFMrkzzmamSurLICOCPJdkPFyvJZZ+9S+sfrurnzm0wvS8n+9aj+HVLJ8BM0mtyFIoJ5
+        wwduuVq0DXACnZgxVFmU8J6LddrBmctgCg8sZsOkAQG6mhzizSswIB3xKxHsDhVW0esx
+        3D37a84oSm/qkdNjWyAWeYGZqA1vOFEf8SySOqgp/DtpdP0/mfiWPZOf2+a1zHJ+dNsQ
+        5NBU8wPpcj6drwzFu9gyXASSFvkeST/wUC7hxCNXE2d4jc1NOdwrjZ6f9nT3Cbc3TQ/H
+        g30g==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7N8YnI7o="
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v8AJMU3Yg
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 10 Sep 2019 21:22:30 +0200 (CEST)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Adam Ford <aford173@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH] regulator: core: Fix error return for /sys access
+Date:   Tue, 10 Sep 2019 21:22:29 +0200
+Message-Id: <f37f2a1276efcb34cf3b7f1a25481175be048806.1568143348.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190910185710.GF15977@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909100181
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909100181
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 09:57:10PM +0300, Dan Carpenter wrote:
-> On Tue, Sep 10, 2019 at 03:13:42PM +0800, Mao Wenan wrote:
-> > There are more parentheses in if clause when call sctp_get_port_local
-> > in sctp_do_bind, and redundant assignment to 'ret'. This patch is to
-> > do cleanup.
-> > 
-> > Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> > ---
-> >  net/sctp/socket.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> > index 9d1f83b10c0a..766b68b55ebe 100644
-> > --- a/net/sctp/socket.c
-> > +++ b/net/sctp/socket.c
-> > @@ -399,9 +399,8 @@ static int sctp_do_bind(struct sock *sk, union sctp_addr *addr, int len)
-> >  	 * detection.
-> >  	 */
-> >  	addr->v4.sin_port = htons(snum);
-> > -	if ((ret = sctp_get_port_local(sk, addr))) {
-> > +	if (sctp_get_port_local(sk, addr))
-> >  		return -EADDRINUSE;
-> 
-> sctp_get_port_local() returns a long which is either 0,1 or a pointer
-> casted to long.  It's not documented what it means and neither of the
-> callers use the return since commit 62208f12451f ("net: sctp: simplify
-> sctp_get_port").
+regulator_uV_show() is missing error handling if regulator_get_voltage_rdev()
+returns negative values. Instead it prints the errno as a string, e.g. -EINVAL
+as "-22" which could be interpreted as -22 µV.
 
-Actually it was commit 4e54064e0a13 ("sctp: Allow only 1 listening
-socket with SO_REUSEADDR") from 11 years ago.  That patch fixed a bug,
-because before the code assumed that a pointer casted to an int was the
-same as a pointer casted to a long.
+We also do not need to hold the lock while converting the integer to a string.
 
-regards,
-dan carpenter
+Reported-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/regulator/core.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index e0c0cf462004..ea48cb5a68b8 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -564,13 +564,15 @@ static ssize_t regulator_uV_show(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+ 	struct regulator_dev *rdev = dev_get_drvdata(dev);
+-	ssize_t ret;
++	int uV;
+ 
+ 	regulator_lock(rdev);
+-	ret = sprintf(buf, "%d\n", regulator_get_voltage_rdev(rdev));
++	uV = regulator_get_voltage_rdev(rdev);
+ 	regulator_unlock(rdev);
+ 
+-	return ret;
++	if (uV < 0)
++		return uV;
++	return sprintf(buf, "%d\n", uV);
+ }
+ static DEVICE_ATTR(microvolts, 0444, regulator_uV_show, NULL);
+ 
+-- 
+2.19.1
 
