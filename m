@@ -2,133 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36AF0AE524
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 10:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D81AE504
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 10:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404915AbfIJIJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 04:09:58 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:50778 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729872AbfIJIJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 04:09:57 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 894D6200494;
-        Tue, 10 Sep 2019 10:09:55 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F316B200490;
-        Tue, 10 Sep 2019 10:09:49 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2151B402D2;
-        Tue, 10 Sep 2019 16:09:43 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     linux-devel@linux.nxdi.nxp.com, Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, leoyang.li@nxp.com
-Cc:     Wen He <wen.he_1@nxp.com>
-Subject: [v5 2/2] drm/arm/mali-dp: Add display QoS interface configuration for Mali DP500
-Date:   Tue, 10 Sep 2019 15:59:13 +0800
-Message-Id: <20190910075913.17650-2-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190910075913.17650-1-wen.he_1@nxp.com>
-References: <20190910075913.17650-1-wen.he_1@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730565AbfIJIAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 04:00:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49310 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727205AbfIJIAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 04:00:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E8C39B672;
+        Tue, 10 Sep 2019 08:00:14 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 2E4FEE03B1; Tue, 10 Sep 2019 10:00:14 +0200 (CEST)
+Date:   Tue, 10 Sep 2019 10:00:14 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     netdev@vger.kernel.org
+Cc:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        f.fainelli@gmail.com, hkallweit1@gmail.com, andrew@lunn.ch
+Subject: Re: [PATCH v3 1/2] ethtool: implement Energy Detect Powerdown
+ support via phy-tunable
+Message-ID: <20190910080014.GC24779@unicorn.suse.cz>
+References: <20190909131251.3634-1-alexandru.ardelean@analog.com>
+ <20190909131251.3634-2-alexandru.ardelean@analog.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190909131251.3634-2-alexandru.ardelean@analog.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Configure the display Quality of service (QoS) levels priority if the
-optional property node "arm,malidp-aqros-value" is defined in DTS file.
+On Mon, Sep 09, 2019 at 04:12:50PM +0300, Alexandru Ardelean wrote:
+> The `phy_tunable_id` has been named `ETHTOOL_PHY_EDPD` since it looks like
+> this feature is common across other PHYs (like EEE), and defining
+> `ETHTOOL_PHY_ENERGY_DETECT_POWER_DOWN` seems too long.
+> 
+> The way EDPD works, is that the RX block is put to a lower power mode,
+> except for link-pulse detection circuits. The TX block is also put to low
+> power mode, but the PHY wakes-up periodically to send link pulses, to avoid
+> lock-ups in case the other side is also in EDPD mode.
+> 
+> Currently, there are 2 PHY drivers that look like they could use this new
+> PHY tunable feature: the `adin` && `micrel` PHYs.
+> 
+> The ADIN's datasheet mentions that TX pulses are at intervals of 1 second
+> default each, and they can be disabled. For the Micrel KSZ9031 PHY, the
+> datasheet does not mention whether they can be disabled, but mentions that
+> they can modified.
+> 
+> The way this change is structured, is similar to the PHY tunable downshift
+> control:
+> * a `ETHTOOL_PHY_EDPD_DFLT_TX_INTERVAL` value is exposed to cover a default
+>   TX interval; some PHYs could specify a certain value that makes sense
+> * `ETHTOOL_PHY_EDPD_NO_TX` would disable TX when EDPD is enabled
+> * `ETHTOOL_PHY_EDPD_DISABLE` will disable EDPD
+> 
+> This should allow PHYs to:
+> * enable EDPD and not enable TX pulses (interval would be 0)
+> * enable EDPD and configure TX pulse interval; note that TX interval units
+>   would be PHY specific; we could consider `seconds` as units, but it could
+>   happen that some PHYs would be prefer milliseconds as a unit;
+>   a maximum of 65533 units should be sufficient
 
-QoS signaling using AQROS and AWQOS AXI interface signals, the AQROS is
-driven from the "RQOS" register, so needed to program the RQOS register
-to avoid the high resolutions flicker issue on the LS1028A platform.
+Sorry for missing the discussion on previous version but I don't really
+like the idea of leaving the choice of units to PHY. Both for manual
+setting and system configuration, it would be IMHO much more convenient
+to have the interpretation universal for all NICs.
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
----
- drivers/gpu/drm/arm/malidp_drv.c  |  6 ++++++
- drivers/gpu/drm/arm/malidp_hw.c   |  9 +++++++++
- drivers/gpu/drm/arm/malidp_hw.h   |  3 +++
- drivers/gpu/drm/arm/malidp_regs.h | 10 ++++++++++
- 4 files changed, 28 insertions(+)
+Seconds as units seem too coarse and maximum of ~18 hours way too big.
+Milliseconds would be more practical from granularity point of view,
+would maximum of ~65 seconds be sufficient?
 
-diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index 333b88a5efb0..8a76315aaa0f 100644
---- a/drivers/gpu/drm/arm/malidp_drv.c
-+++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -817,6 +817,12 @@ static int malidp_bind(struct device *dev)
- 
- 	malidp->core_id = version;
- 
-+	ret = of_property_read_u32(dev->of_node,
-+					"arm,malidp-arqos-value",
-+					&hwdev->arqos_value);
-+	if (ret)
-+		hwdev->arqos_value = 0x0;
-+
- 	/* set the number of lines used for output of RGB data */
- 	ret = of_property_read_u8_array(dev->of_node,
- 					"arm,malidp-output-port-lines",
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index bd8265f02e0b..ca570b135478 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -379,6 +379,15 @@ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *
- 		malidp_hw_setbits(hwdev, MALIDP_DISP_FUNC_ILACED, MALIDP_DE_DISPLAY_FUNC);
- 	else
- 		malidp_hw_clearbits(hwdev, MALIDP_DISP_FUNC_ILACED, MALIDP_DE_DISPLAY_FUNC);
-+
-+	/*
-+	 * Program the RQoS register to avoid high resolutions flicker
-+	 * issue on the LS1028A.
-+	 */
-+	if (hwdev->arqos_value) {
-+		val = hwdev->arqos_value;
-+		malidp_hw_setbits(hwdev, val, MALIDP500_RQOS_QUALITY);
-+	}
- }
- 
- int malidp_format_get_bpp(u32 fmt)
-diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-index 968a65eed371..e4c36bc90bda 100644
---- a/drivers/gpu/drm/arm/malidp_hw.h
-+++ b/drivers/gpu/drm/arm/malidp_hw.h
-@@ -251,6 +251,9 @@ struct malidp_hw_device {
- 
- 	/* size of memory used for rotating layers, up to two banks available */
- 	u32 rotation_memory[2];
-+
-+	/* priority level of RQOS register used for driven the ARQOS signal */
-+	u32 arqos_value;
- };
- 
- static inline u32 malidp_hw_read(struct malidp_hw_device *hwdev, u32 reg)
-diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
-index 993031542fa1..514c50dcb74d 100644
---- a/drivers/gpu/drm/arm/malidp_regs.h
-+++ b/drivers/gpu/drm/arm/malidp_regs.h
-@@ -210,6 +210,16 @@
- #define MALIDP500_CONFIG_VALID		0x00f00
- #define MALIDP500_CONFIG_ID		0x00fd4
- 
-+/*
-+ * The quality of service (QoS) register on the DP500. RQOS register values
-+ * are driven by the ARQOS signal, using AXI transacations, dependent on the
-+ * FIFO input level.
-+ * The RQOS register can also set QoS levels for:
-+ *    - RED_ARQOS   @ A 4-bit signal value for close to underflow conditions
-+ *    - GREEN_ARQOS @ A 4-bit signal value for normal conditions
-+ */
-+#define MALIDP500_RQOS_QUALITY          0x00500
-+
- /* register offsets and bits specific to DP550/DP650 */
- #define MALIDP550_ADDR_SPACE_SIZE	0x10000
- #define MALIDP550_DE_CONTROL		0x00010
--- 
-2.17.1
+Michal Kubecek
 
+> * disable EDPD
+> 
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
