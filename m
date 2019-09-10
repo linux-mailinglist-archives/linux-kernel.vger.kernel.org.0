@@ -2,62 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D8AFAE5C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 10:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3F69AE60C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 10:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732886AbfIJIlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 04:41:37 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2260 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726121AbfIJIlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 04:41:36 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4BA335619E8BE2D3678D;
-        Tue, 10 Sep 2019 16:41:34 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 10 Sep 2019 16:41:24 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <tsbogend@alpha.franken.de>, <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH net] net: sonic: replace dev_kfree_skb in sonic_send_packet
-Date:   Tue, 10 Sep 2019 16:58:48 +0800
-Message-ID: <20190910085848.144780-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728681AbfIJIvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 04:51:07 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34986 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbfIJIvH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 04:51:07 -0400
+Received: by mail-ot1-f66.google.com with SMTP id t6so4079005otp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 01:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TORtZiXw+gviBY1uqojNwtzUG5Du45WnPV4wu8nw43A=;
+        b=FP63dxnYbqidnXC5M+glimtjNBKD/siLT23X23yuuOER2/9MRjpqdmr17EYxW/s6p0
+         E+BlJ699H7VMsfwq2N1wqcggLYV4SabdWzY7R+9yPxtI/5t3nmNf5ca2zAEhu1LnVkuB
+         djYTbLY1JIMnBRApHzAxKwnWqjP+nN1qESTU3SbZUvPgE9If19AaeeYRC/e77mGKGlHs
+         Z8ZBwXsPYqqQJgcLf6S0grCdZJQsRslVL3vSrRDO2qTE8+rlRH1udar3q0c+ncpOXXIv
+         4GVPY8w0RyJ4klXWtdtrKObo3MRhX8E73WYW7kEYXbu2xbXOjxHEltwsAL090sa9hSiJ
+         ROuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TORtZiXw+gviBY1uqojNwtzUG5Du45WnPV4wu8nw43A=;
+        b=a49iuQ4bJBIEhqP97Tfl3feFiL49KfbKKaO2tlrklioSJOapHYIiPOntjD4SNlNrSu
+         z47CKoC/0O0wOmQBJ/AXJ4cs2QSCVNTzCVBSeDpvCKkoFvXntlveJRAg4Xz8Dx1VwLxz
+         Pwhh50gEGvfTkBMq3pFNwe2eG8SOGAt4A6J5IoBNc2v3t8W3UoZZSeO1ZV3WDiyYootY
+         yefodFRl2LVoBsBr1BBR/A+HuqCjrNhkXB+4AvFCYJjEOOYsEgGsd7nJczp5LBdEKjK/
+         uiV8063LFNvs6qLKfJYaY+GIvgdDyfRWL0zNG9YQaAlUhch2ezwbZj6TbmYGi0Gbo1lF
+         jm9w==
+X-Gm-Message-State: APjAAAWRbhlYNut+Y0p44kqdIjnWu2y8t8CRBE+MOltRBauGpv1PAv5g
+        FE7B7DS9yUgH5G9hCQMQAICkuKF7ez6pTfD14gsvAw==
+X-Google-Smtp-Source: APXvYqxAsq9CF/Si2rdwo5vSZgIzEMUPMsKHEsRblYndhdS59/hlsoR7x+5MiowCWiAhLmrRORnRA4H2pVT8BZGTtxI=
+X-Received: by 2002:a05:6830:1d4e:: with SMTP id p14mr1451146oth.292.1568105466197;
+ Tue, 10 Sep 2019 01:51:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20190906084539.21838-1-geert+renesas@glider.be>
+In-Reply-To: <20190906084539.21838-1-geert+renesas@glider.be>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 10 Sep 2019 10:50:55 +0200
+Message-ID: <CAMpxmJVrQ92+ULRrzyN52LwEcdPTuK7OZssZjUcRPRSTBQ=fwg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] gpio: API boundary cleanups
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sonic_send_packet will be processed in irq or none
-irq context, so it would better use dev_kfree_skb_any
-instead of dev_kfree_skb.
+pt., 6 wrz 2019 o 10:45 Geert Uytterhoeven <geert+renesas@glider.be> napisa=
+=C5=82(a):
+>
+>         Hi Linus, Bartosz,
+>
+> This patch series contains various API boundary cleanups for gpiolib:
+>   - The first two patches make two functions private,
+>   - The last two patches switch the remaining gpiolib exported functions
+>     from EXPORT_SYMBOL() to EXPORT_SYMBOL_GPL().
+>
+> After this there is only a single GPIO driver function exported with
+> EXPORT_SYMBOL();
+>
+>     drivers/gpio/gpio-htc-egpio.c:EXPORT_SYMBOL(htc_egpio_get_wakeup_irq)=
+;
+>
+> I believe this symbol was never used upstream, and may be a relic of the
+> original out-of-tree code the htc-egpio was based on.  I don't know if
+> there (still) exist out-of-tree users of the symbol.
+>
+> Thanks for your comments!
 
-Fixes: d9fb9f384292 ("*sonic/natsemi/ns83829: Move the National Semi-conductor drivers")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/net/ethernet/natsemi/sonic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+All looks good to me. Are you fine with this being picked up after the
+v5.4 merge window?
 
-diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index 18fd62fbfb64..b339125b2f09 100644
---- a/drivers/net/ethernet/natsemi/sonic.c
-+++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -233,7 +233,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 	laddr = dma_map_single(lp->device, skb->data, length, DMA_TO_DEVICE);
- 	if (!laddr) {
- 		pr_err_ratelimited("%s: failed to map tx DMA buffer.\n", dev->name);
--		dev_kfree_skb(skb);
-+		dev_kfree_skb_any(skb);
- 		return NETDEV_TX_OK;
- 	}
- 
--- 
-2.20.1
+Bart
 
+>
+> Geert Uytterhoeven (4):
+>   gpio: of: Make of_get_named_gpiod_flags() private
+>   gpio: of: Make of_gpio_simple_xlate() private
+>   gpio: of: Switch to EXPORT_SYMBOL_GPL()
+>   gpio: devres: Switch to EXPORT_SYMBOL_GPL()
+>
+>  drivers/gpio/gpiolib-devres.c | 28 ++++++++++++++--------------
+>  drivers/gpio/gpiolib-of.c     | 16 ++++++++--------
+>  drivers/gpio/gpiolib-of.h     |  7 -------
+>  include/linux/of_gpio.h       | 11 -----------
+>  4 files changed, 22 insertions(+), 40 deletions(-)
+>
+> --
+> 2.17.1
+>
+> Gr{oetje,eeting}s,
+>
+>                                                 Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                                             -- Linus Torv=
+alds
