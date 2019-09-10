@@ -2,120 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11493AF17D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 21:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D364AF189
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 21:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfIJTEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 15:04:53 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45640 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbfIJTEv (ORCPT
+        id S1727238AbfIJTFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 15:05:34 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:63043 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbfIJTFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 15:04:51 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l16so21725668wrv.12;
-        Tue, 10 Sep 2019 12:04:50 -0700 (PDT)
+        Tue, 10 Sep 2019 15:05:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/hilQzsCJxKwP3iLZ8HzlKgy8yH9kb6fEFDV5ZKdCyE=;
-        b=guKxL0FnNLiU5TMDidgTSYgeuDCCp9r9hApW3wtyxtFScjHBwNUsnLsm6tbY6FDwTU
-         t/u6ZlTtchki5wWrmGjqydgbnJVG294aOW8R7AIuqm5Bs5KsHs3wl2T99FmZupA7VDCg
-         o0rxxL1oXw+Ri45p4uOBLTCt5GMjMfYHvHxVLajupEnJmLUrLAiwKh9bnKbrYIfBjYBx
-         6VvJkzNH7YWgmau1t/18BmxoxrWiWahHXK55ckcMydegZ7iwrbTXAlfVYOm9riF/dQkk
-         6gNcQydwC6SA9TgoL5a54gFvE7sWcMOBPCjOS0Gj3yCftaKtL2HpUMq/2Ll8s7UeZMQS
-         HgWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/hilQzsCJxKwP3iLZ8HzlKgy8yH9kb6fEFDV5ZKdCyE=;
-        b=Szp45FCjl0RcoC6iO247VrzOnGQ2N4AtQN0/3z/f44VQUyqchz+aOgpngQ1X/qRnt2
-         n80yAKEnkzqqMhuHsGe/+ZtSme0fqjT+FyLQTDeHyfXfossVw0dt9Yfs2XEH3M9reogG
-         b5SgdKGMxC8/4l+mly7MxSMaYSBmKRtOZr7WiYtQmwr8q01FYglE2kbOUhEUqoN240eB
-         UBDhQxhrcH8gENPsdsBpeZFhB1XJLiZWfOja5EhmCIFIlVkDthNT7Q0Jhh8xkU8cvjTI
-         Qlw4NH14vTFB/B66xb0TMAg+6bcjds/4r93CAm2FVYPuSDm8l908/VGPG71IU17aCcEY
-         aKNQ==
-X-Gm-Message-State: APjAAAWsl0ej9dmxc5LAxF3wJKELpFyZ3OY+Mcv5qCI36Cn+OcMlkbTW
-        s0T4YzBqiMP29wCnekJmuJk=
-X-Google-Smtp-Source: APXvYqziVqQ9ov3KhhvPUgg3puxHFUg4O/RuIwQstmHpmz5lZB8ZM3LWhklSgOXw5sYb+cS3M4JxRA==
-X-Received: by 2002:adf:f2cd:: with SMTP id d13mr26723957wrp.143.1568142289391;
-        Tue, 10 Sep 2019 12:04:49 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id w15sm14222967wru.53.2019.09.10.12.04.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 12:04:48 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     kvalo@codeaurora.org
-Cc:     pkshih@realtek.com, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 3/3] rtlwifi: rtl8192de: replace _rtl92d_evm_db_to_percentage with generic version
-Date:   Tue, 10 Sep 2019 21:04:22 +0200
-Message-Id: <20190910190422.63378-4-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190910190422.63378-1-straube.linux@gmail.com>
-References: <20190910190422.63378-1-straube.linux@gmail.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1568142332; x=1599678332;
+  h=from:to:subject:date:message-id:mime-version;
+  bh=nvto+j8LpSPGTaN7OYir8EQdAm7BrTOi6EMVT7BQo00=;
+  b=INQUOKo393EH2j7wygKBV2mzAQJT2DMhmfkIedPOOJQDv0hTrmnYGV+m
+   mKMXv7N6XmEYB/d8/8T1QDGXt/fAyiI+rSAvjeccqrlrtwXPlra7Lnfwk
+   SAX83x768aI0KbLYdMsPK856BHWvEVTiNoQGs6X/dLK9R3IsBvO2cO9no
+   Y=;
+X-IronPort-AV: E=Sophos;i="5.64,490,1559520000"; 
+   d="scan'208";a="414566627"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-1968f9fa.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 10 Sep 2019 19:05:30 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2c-1968f9fa.us-west-2.amazon.com (Postfix) with ESMTPS id 19FE4A26E9;
+        Tue, 10 Sep 2019 19:05:29 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 10 Sep 2019 19:05:28 +0000
+Received: from udc4a3e82dbc15a031435.hfa15.amazon.com (10.43.160.5) by
+ EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 10 Sep 2019 19:05:21 +0000
+From:   Talel Shenhar <talel@amazon.com>
+To:     <robh+dt@kernel.org>, <marc.zyngier@arm.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <mark.rutland@arm.com>,
+        <nicolas.ferre@microchip.com>, <mchehab+samsung@kernel.org>,
+        <shawn.lin@rock-chips.com>, <gregkh@linuxfoundation.org>,
+        <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
+        <talel@amazon.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v2 0/3] Amazon's Annapurna Labs POS Driver
+Date:   Tue, 10 Sep 2019 22:05:07 +0300
+Message-ID: <1568142310-17622-1-git-send-email-talel@amazon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.43.160.5]
+X-ClientProxiedBy: EX13D03UWC002.ant.amazon.com (10.43.162.160) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function _rtl92d_evm_db_to_percentage is functionally identical
-to the generic version rtl_evm_db_to_percentage, so remove
-_rtl92d_evm_db_to_percentage and use the generic version instead.
+The Amazon's Annapurna Labs SoCs includes Point Of Serialization error
+logging unit that reports an error in case of write error (e.g. attempt to
+write to a read only register).
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- .../wireless/realtek/rtlwifi/rtl8192de/trx.c   | 18 ++----------------
- 1 file changed, 2 insertions(+), 16 deletions(-)
+This patch series introduces the support for this unit.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-index d162884a9e00..2494e1f118f8 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-@@ -4,6 +4,7 @@
- #include "../wifi.h"
- #include "../pci.h"
- #include "../base.h"
-+#include "../stats.h"
- #include "reg.h"
- #include "def.h"
- #include "phy.h"
-@@ -32,21 +33,6 @@ static u8 _rtl92d_query_rxpwrpercentage(s8 antpower)
- 		return 100 + antpower;
- }
- 
--static u8 _rtl92d_evm_db_to_percentage(s8 value)
--{
--	s8 ret_val = value;
--
--	if (ret_val >= 0)
--		ret_val = 0;
--	if (ret_val <= -33)
--		ret_val = -33;
--	ret_val = 0 - ret_val;
--	ret_val *= 3;
--	if (ret_val == 99)
--		ret_val = 100;
--	return ret_val;
--}
--
- static long _rtl92de_translate_todbm(struct ieee80211_hw *hw,
- 				     u8 signal_strength_index)
- {
-@@ -215,7 +201,7 @@ static void _rtl92de_query_rxphystatus(struct ieee80211_hw *hw,
- 		else
- 			max_spatial_stream = 1;
- 		for (i = 0; i < max_spatial_stream; i++) {
--			evm = _rtl92d_evm_db_to_percentage(p_drvinfo->rxevm[i]);
-+			evm = rtl_evm_db_to_percentage(p_drvinfo->rxevm[i]);
- 			if (packet_match_bssid) {
- 				if (i == 0)
- 					pstats->signalquality =
+Changes since v1: =================
+- move MODULE_ to the end of the file
+- simplified resource remapping devm_platform_ioremap_resource()
+- use platform_get_irq() instead of irq_of_parse_and_map()
+- removed the use of _relaxed accessor in favor to the regular ones
+- removed driver selected based on arch
+- added casting to u64 before left shifting (reported by kbuild test robot)
+
+
+Talel Shenhar (3):
+  dt-bindings: soc: al-pos: Amazon's Annapurna Labs POS
+  soc: amazon: al-pos: Introduce Amazon's Annapurna Labs POS driver
+  soc: amazon: al-pos: cast to u64 before left shifting
+
+ .../bindings/soc/amazon/amazon,al-pos.txt          |  18 +++
+ MAINTAINERS                                        |   7 ++
+ drivers/soc/Kconfig                                |   1 +
+ drivers/soc/Makefile                               |   1 +
+ drivers/soc/amazon/Kconfig                         |   5 +
+ drivers/soc/amazon/Makefile                        |   1 +
+ drivers/soc/amazon/al_pos.c                        | 127 +++++++++++++++++++++
+ 7 files changed, 160 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/amazon/amazon,al-pos.txt
+ create mode 100644 drivers/soc/amazon/Kconfig
+ create mode 100644 drivers/soc/amazon/Makefile
+ create mode 100644 drivers/soc/amazon/al_pos.c
+
 -- 
-2.23.0
+2.7.4
 
