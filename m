@@ -2,162 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7D79AE805
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C06AE7FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390298AbfIJKZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 06:25:34 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48260 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729700AbfIJKZd (ORCPT
+        id S1730138AbfIJKZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 06:25:08 -0400
+Received: from ushosting.nmnhosting.com ([66.55.73.32]:42938 "EHLO
+        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726960AbfIJKZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:25:33 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8AAJ0mL154732
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 06:25:31 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ux7346dac-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 06:25:31 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Tue, 10 Sep 2019 11:25:27 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 10 Sep 2019 11:25:24 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8AAPNin56295572
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Sep 2019 10:25:23 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6B8052052;
-        Tue, 10 Sep 2019 10:25:23 +0000 (GMT)
-Received: from bangoria.ibmuc.com (unknown [9.199.54.190])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 951725204F;
-        Tue, 10 Sep 2019 10:25:09 +0000 (GMT)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     mpe@ellerman.id.au, mikey@neuling.org
-Cc:     benh@kernel.crashing.org, paulus@samba.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        christophe.leroy@c-s.fr,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH 2/2] powerpc/watchpoint: Disable watchpoint hit by larx/stcx instructions
-Date:   Tue, 10 Sep 2019 15:54:22 +0530
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190910102422.23233-1-ravi.bangoria@linux.ibm.com>
-References: <20190910102422.23233-1-ravi.bangoria@linux.ibm.com>
+        Tue, 10 Sep 2019 06:25:05 -0400
+Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
+        by ushosting.nmnhosting.com (Postfix) with ESMTPS id C3FF82DC1B4F;
+        Tue, 10 Sep 2019 06:25:00 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
+        s=201810a; t=1568111101;
+        bh=HDAltXrE8fa0s1cXwhaPiIFePgfp29KfB1TH4WQiFKM=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=bLdhODUhBW4Fo/x94Nj+R+V91mwnbDdWHLNOGLCq0biZGZH3Jh+idjt+I4APSOr8C
+         Rbc8OmvyYWwlcbdY4DffVqXm1RUEEn3bfRKdaZ1uoMBCsX+spov/LrzTCPI8p/m6yG
+         eorPdXIjF7Xp4/1L2OakqTNsZo7lNf7vyW9f4wCMpok5yTmvZEsL0GMXwFEsrDvVqV
+         u2BgYZUPjehGpv0d4ae7pNuevsXh0ymINJnKAs/jiu7A8fXASd+pYF2Z09eDbzZJTh
+         rpu+wYaQiZaqh9o5kRpPypjiPm7X6UFOTf8brRROPvWQI0tSg3gcbZbnpN8doK/0IN
+         To853JLOgdR9DOz+Rofmdkpor1j24qEnCwrL59ebH7AMvY/hgaDftc8bL+w6G3fDiu
+         /DdLZUth6SFIpG/syJjKU3YM7QaK33iOJMTO6896o/9bTT2Wyrd0PQItUV+aDxtWFh
+         5uh5FAYEVcPNCe4PJ7st0HYpohFsbuKa9xyf360C6loFML0oFu6jUNQYj0uur0Skg0
+         1fg545R3fYt0a+/SbIObDbvt9lhOh7fMJeqCxkIaudOiWBuTxoYKmBCzDF+5yKubCL
+         f82z0VccKg8yE5D2YaC57RDufBuKihrXFF2SH0JqSFbPOehLLX0RZH1maGEvkJ7hTj
+         ZOP4NSLQU6ekz1+NkJkLdFdQ=
+Received: from Hawking (ntp.lan [10.0.1.1])
+        (authenticated bits=0)
+        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x8AAOsMd022564
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 10 Sep 2019 20:24:54 +1000 (AEST)
+        (envelope-from alastair@d-silva.org)
+From:   "Alastair D'Silva" <alastair@d-silva.org>
+To:     "'David Hildenbrand'" <david@redhat.com>,
+        "'Alastair D'Silva'" <alastair@au1.ibm.com>
+Cc:     "'Andrew Morton'" <akpm@linux-foundation.org>,
+        "'Oscar Salvador'" <osalvador@suse.com>,
+        "'Michal Hocko'" <mhocko@suse.com>,
+        "'Pavel Tatashin'" <pasha.tatashin@soleen.com>,
+        "'Dan Williams'" <dan.j.williams@intel.com>,
+        "'Wei Yang'" <richard.weiyang@gmail.com>,
+        "'Qian Cai'" <cai@lca.pw>, "'Jason Gunthorpe'" <jgg@ziepe.ca>,
+        "'Logan Gunthorpe'" <logang@deltatee.com>,
+        "'Ira Weiny'" <ira.weiny@intel.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190910025225.25904-1-alastair@au1.ibm.com> <20190910025225.25904-3-alastair@au1.ibm.com> <6ca671a0-8b00-e974-7de9-a574ad9b77ec@redhat.com>
+In-Reply-To: <6ca671a0-8b00-e974-7de9-a574ad9b77ec@redhat.com>
+Subject: RE: [PATCH 2/2] mm: Add a bounds check in devm_memremap_pages()
+Date:   Tue, 10 Sep 2019 20:24:54 +1000
+Message-ID: <05af01d567c1$fdb256d0$f9170470$@d-silva.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091010-0008-0000-0000-00000313D22B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091010-0009-0000-0000-00004A32397F
-Message-Id: <20190910102422.23233-3-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-10_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=360 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909100105
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHvMJj7Zv4jgOWqcZIGTeYry0K56gJQpAzUAu4+QZimxyuUcA==
+Content-Language: en-au
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Tue, 10 Sep 2019 20:24:56 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If watchpoint exception is generated by larx/stcx instructions, the
-reservation created by larx gets lost while handling exception, and
-thus stcx instruction always fails. Generally these instructions are
-used in a while(1) loop, for example spinlocks. And because stcx
-never succeeds, it loops forever and ultimately hangs the system.
+> -----Original Message-----
+> From: David Hildenbrand <david@redhat.com>
+> Sent: Tuesday, 10 September 2019 5:39 PM
+> To: Alastair D'Silva <alastair@au1.ibm.com>; alastair@d-silva.org
+> Cc: Andrew Morton <akpm@linux-foundation.org>; Oscar Salvador
+> <osalvador@suse.com>; Michal Hocko <mhocko@suse.com>; Pavel Tatashin
+> <pasha.tatashin@soleen.com>; Dan Williams <dan.j.williams@intel.com>;
+> Wei Yang <richard.weiyang@gmail.com>; Qian Cai <cai@lca.pw>; Jason
+> Gunthorpe <jgg@ziepe.ca>; Logan Gunthorpe <logang@deltatee.com>; Ira
+> Weiny <ira.weiny@intel.com>; linux-mm@kvack.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/2] mm: Add a bounds check in
+> devm_memremap_pages()
+> 
+> On 10.09.19 04:52, Alastair D'Silva wrote:
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> >
+> > The call to check_hotplug_memory_addressable() validates that the
+> > memory is fully addressable.
+> >
+> > Without this call, it is possible that we may remap pages that is not
+> > physically addressable, resulting in bogus section numbers being
+> > returned from __section_nr().
+> >
+> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> > ---
+> >  mm/memremap.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/mm/memremap.c b/mm/memremap.c index
+> > 86432650f829..fd00993caa3e 100644
+> > --- a/mm/memremap.c
+> > +++ b/mm/memremap.c
+> > @@ -269,6 +269,13 @@ void *devm_memremap_pages(struct device
+> *dev,
+> > struct dev_pagemap *pgmap)
+> >
+> >  	mem_hotplug_begin();
+> >
+> > +	error = check_hotplug_memory_addressable(res->start,
+> > +						 resource_size(res));
+> > +	if (error) {
+> > +		mem_hotplug_done();
+> > +		goto err_checkrange;
+> > +	}
+> > +
+> 
+> No need to check under the memory hotplug lock.
+> 
 
-Note that ptrace anyway works in one-shot mode and thus for ptrace
-we don't change the behaviour. It's up to ptrace user to take care
-of this.
+Thanks, I'll adjust it.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- arch/powerpc/kernel/hw_breakpoint.c | 49 +++++++++++++++++++----------
- 1 file changed, 33 insertions(+), 16 deletions(-)
+> >  	/*
+> >  	 * For device private memory we call add_pages() as we only need to
+> >  	 * allocate and initialize struct page for the device memory. More-
+> > @@ -324,6 +331,7 @@ void *devm_memremap_pages(struct device *dev,
+> > struct dev_pagemap *pgmap)
+> >
+> >   err_add_memory:
+> >  	kasan_remove_zero_shadow(__va(res->start), resource_size(res));
+> > + err_checkrange:
+> >   err_kasan:
+> >  	untrack_pfn(NULL, PHYS_PFN(res->start), resource_size(res));
+> >   err_pfn_remap:
+> >
+> 
+> 
+> --
+> 
+> Thanks,
+> 
+> David / dhildenb
+> 
 
-diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
-index 28ad3171bb82..9fa496a598ce 100644
---- a/arch/powerpc/kernel/hw_breakpoint.c
-+++ b/arch/powerpc/kernel/hw_breakpoint.c
-@@ -195,14 +195,32 @@ void thread_change_pc(struct task_struct *tsk, struct pt_regs *regs)
- 	tsk->thread.last_hit_ubp = NULL;
- }
- 
-+static bool is_larx_stcx_instr(struct pt_regs *regs, unsigned int instr)
-+{
-+	int ret, type;
-+	struct instruction_op op;
-+
-+	ret = analyse_instr(&op, regs, instr);
-+	type = GETTYPE(op.type);
-+	return (!ret && (type == LARX || type == STCX));
-+}
-+
- /*
-  * Handle debug exception notifications.
-  */
- static bool stepping_handler(struct pt_regs *regs, struct perf_event *bp,
- 			     unsigned long addr)
- {
--	int stepped;
--	unsigned int instr;
-+	unsigned int instr = 0;
-+
-+	if (__get_user_inatomic(instr, (unsigned int *)regs->nip))
-+		goto fail;
-+
-+	if (is_larx_stcx_instr(regs, instr)) {
-+		printk_ratelimited("Watchpoint: Can't emulate/single-step larx/"
-+				   "stcx instructions. Disabling watchpoint.\n");
-+		goto disable;
-+	}
- 
- 	/* Do not emulate user-space instructions, instead single-step them */
- 	if (user_mode(regs)) {
-@@ -211,23 +229,22 @@ static bool stepping_handler(struct pt_regs *regs, struct perf_event *bp,
- 		return false;
- 	}
- 
--	stepped = 0;
--	instr = 0;
--	if (!__get_user_inatomic(instr, (unsigned int *)regs->nip))
--		stepped = emulate_step(regs, instr);
-+	if (!emulate_step(regs, instr))
-+		goto fail;
- 
-+	return true;
-+
-+fail:
- 	/*
--	 * emulate_step() could not execute it. We've failed in reliably
--	 * handling the hw-breakpoint. Unregister it and throw a warning
--	 * message to let the user know about it.
-+	 * We've failed in reliably handling the hw-breakpoint. Unregister
-+	 * it and throw a warning message to let the user know about it.
- 	 */
--	if (!stepped) {
--		WARN(1, "Unable to handle hardware breakpoint. Breakpoint at "
--			"0x%lx will be disabled.", addr);
--		perf_event_disable_inatomic(bp);
--		return false;
--	}
--	return true;
-+	WARN(1, "Unable to handle hardware breakpoint. Breakpoint at "
-+		"0x%lx will be disabled.", addr);
-+
-+disable:
-+	perf_event_disable_inatomic(bp);
-+	return false;
- }
- 
- int hw_breakpoint_handler(struct die_args *args)
 -- 
-2.21.0
+Alastair D'Silva           mob: 0423 762 819
+skype: alastair_dsilva     msn: alastair@d-silva.org
+blog: http://alastair.d-silva.org    Twitter: @EvilDeece
 
