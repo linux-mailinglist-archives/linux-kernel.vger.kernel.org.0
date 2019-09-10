@@ -2,134 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D655AEAA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A045AEAAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:39:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404697AbfIJMgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 08:36:52 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37747 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404629AbfIJMgt (ORCPT
+        id S2393202AbfIJMhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 08:37:18 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33312 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390519AbfIJMhS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 08:36:49 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190910123648euoutp014f2d80e165611e723512874120bc6f19~DE_4f3LOQ1102311023euoutp01d
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 12:36:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190910123648euoutp014f2d80e165611e723512874120bc6f19~DE_4f3LOQ1102311023euoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1568119008;
-        bh=RSuWB2xKQuhROQTDhZij7BzEdzlLgFlLbdhuBzwZOp4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hB0X5E2jPHBVUw8U8g1VnUNZye/kYUNyAijWlrom4v4kecxlHYgoqYgDkxX7EwjA7
-         HvMONdPMeWannMasAXmq3yAd5kJcRLQJaIywUYcTTPX6zn3QTErcFYSvpQ4Bs9isIh
-         pY05c9sFCIn7xBqbR1PyucSrQXaggj4KVh/EHTG0=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190910123647eucas1p20b5977a2fa4ebd7c1eb0d84e3ea6f8ad~DE_3y2sp91358413584eucas1p2F;
-        Tue, 10 Sep 2019 12:36:47 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 17.F6.04309.FD8977D5; Tue, 10
-        Sep 2019 13:36:47 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190910123647eucas1p176bc817bbdae813e5aa9ab4745f9c285~DE_27XTxx1067210672eucas1p1l;
-        Tue, 10 Sep 2019 12:36:47 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190910123646eusmtrp1adf092844cf47c08a81772e54a8efac2~DE_2tHPgi2381323813eusmtrp1f;
-        Tue, 10 Sep 2019 12:36:46 +0000 (GMT)
-X-AuditID: cbfec7f4-ae1ff700000010d5-e1-5d7798dfcb8d
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 16.88.04166.ED8977D5; Tue, 10
-        Sep 2019 13:36:46 +0100 (BST)
-Received: from AMDC3061.DIGITAL.local (unknown [106.120.51.75]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190910123646eusmtip198c8b1c4f53d6d2961b8c402bdebf128~DE_2HdSg90745507455eusmtip1S;
-        Tue, 10 Sep 2019 12:36:46 +0000 (GMT)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     krzk@kernel.org, vireshk@kernel.org
-Cc:     robh+dt@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 6/6] ARM: dts: Add samsung,asv-bin property for
- odroidxu3-lite
-Date:   Tue, 10 Sep 2019 14:36:18 +0200
-Message-Id: <20190910123618.27985-7-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190910123618.27985-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnleLIzCtJLcpLzFFi42LZduznOd37M8pjDb4t0bDYOGM9q8X8I+dY
-        Lfofv2a2OH9+A7vFpsfXWC0u75rDZvG59wijxYzz+5gs1h65y27RuvcIu8XhN+2sFpsfHGNz
-        4PHYtKqTzWPzknqPvi2rGD0+b5ILYInisklJzcksSy3St0vgyrj+rJOp4Atbxc7eG4wNjDdY
-        uxg5OSQETCROd78Asrk4hARWMEo0/XgC5XxhlFhzcz4jhPOZUWL54k3sXYwcYC3Pe1gg4ssZ
-        JXYsaWaD6+j+/40dZC6bgKFE79E+RhBbREBd4tWp/8wgRcwC65gkls1aBpYQFgiWaHj7HayB
-        RUBVYmHPfjYQm1fAWuLwnL1sEAfKS6zecIAZxOYUsJE4tXsXE8ggCYF+dokVG/awQxS5SMzp
-        PQr1kbDEq+NboOIyEqcnQ9wqIdDMKNGz+zY7hDOBUeL+8QWMEFVA645fZAV5jllAU2L9Ln2I
-        sKPEpDMvGSF+5pO48VYQJMwMZE7aNp0ZIswr0dEmBFGtIvF71XQmCFtKovvJfxaIEg+JPX3Q
-        AOpnlHg6bQ3LBEb5WQi7FjAyrmIUTy0tzk1PLTbKSy3XK07MLS7NS9dLzs/dxAhMJqf/Hf+y
-        g3HXn6RDjAIcjEo8vA/aymOFWBPLiitzDzFKcDArifBe7yuNFeJNSaysSi3Kjy8qzUktPsQo
-        zcGiJM5bzfAgWkggPbEkNTs1tSC1CCbLxMEp1cAYZLHm+IPD9clnqw0XHzC8/f3/K6n9zi7N
-        oeFiAVsfPMvYXcnCH3o/7CvfPaOCf3f8V7P3vRda+rH75uSbqk83C+ptFnzupaAqMsX14sfw
-        yBWn8k59sKw0f88dOM1g/0Rt1x4he1XveXGrVRi/xgR825qdPm+HekFnmumXFV4rLFmkQ7t4
-        Kp8osRRnJBpqMRcVJwIA2vQ1wyIDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsVy+t/xu7r3ZpTHGjz8om2xccZ6Vov5R86x
-        WvQ/fs1scf78BnaLTY+vsVpc3jWHzeJz7xFGixnn9zFZrD1yl92ide8RdovDb9pZLTY/OMbm
-        wOOxaVUnm8fmJfUefVtWMXp83iQXwBKlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwe
-        a2VkqqRvZ5OSmpNZllqkb5egl3H9WSdTwRe2ip29NxgbGG+wdjFycEgImEg872HpYuTiEBJY
-        yigx4/sydoi4lMT8FqUuRk4gU1jiz7UuNoiaT4wSf6/fYAZJsAkYSvQe7WMEqRcR0JTYuw6s
-        hllgB5PE3md/2UBqhAUCJdqPvWQBsVkEVCUW9uwHi/MKWEscnrOXDWKBvMTqDQfAZnIK2Eic
-        2r2LCcQWAqp5/XEK6wRGvgWMDKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzECw3rbsZ+bdzBe
-        2hh8iFGAg1GJh/dBW3msEGtiWXFl7iFGCQ5mJRHe632lsUK8KYmVValF+fFFpTmpxYcYTYGO
-        msgsJZqcD4y5vJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjDaa
-        EfExV/5/8xCeclx+OeMfJan1wod5Jgc+F/N4Ji2a4V127Sxj1ZUZu/n7JwYWFx55YcMY+Pbe
-        lNdXPaK/Hb11ll/6a+OO6nVnn56IcRU9fNrxhbH5RJ4Gl3OCG5U4/33SiFoUk39wia/ajp4U
-        K6HavYU/956adfHfeuGS8M7nZmUrnwcG3ldiKc5INNRiLipOBACk+bOigQIAAA==
-X-CMS-MailID: 20190910123647eucas1p176bc817bbdae813e5aa9ab4745f9c285
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190910123647eucas1p176bc817bbdae813e5aa9ab4745f9c285
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190910123647eucas1p176bc817bbdae813e5aa9ab4745f9c285
-References: <20190910123618.27985-1-s.nawrocki@samsung.com>
-        <CGME20190910123647eucas1p176bc817bbdae813e5aa9ab4745f9c285@eucas1p1.samsung.com>
+        Tue, 10 Sep 2019 08:37:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ACZZVA024911;
+        Tue, 10 Sep 2019 12:37:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=zBKsoyvZW42pljgNs2qIOF6TztDTbsqax0iQzIQWQUA=;
+ b=SEyixP50QAQYo5M3gec+LxdFGf4NLzGqW/txDjBSEhqaueyQtKtSGun/g8dp7C57LPNO
+ n3lybg4J+mtaRdMmofjaDDRWcMajRoPpE6UMZFK1e6PfNTUgfLzqvzk+rQdt9RzbXZ4X
+ GFn5VBBNNiPB3owH/N+ab8q1JEkv3xxeWTrc4ZNb0TbPJKdBqWX734u3Tb0fjDWsC+b/
+ bW7dA1VQJz9CAaZXT9AEw1nofn5gSgek8PMsBxiOeHakOF3Nw+UKPnW/2ArvauePTo4t
+ pOjjRKy9SzbMWqBlE33jSThJbDzT7hrYYD16EH+T4WgUYXjH+d9KX5rzGd3SCagFm8Rs NA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2uw1jy3290-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 12:37:12 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ACZV4P027035;
+        Tue, 10 Sep 2019 12:37:11 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2uwqqdyjw6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 12:37:11 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8ACb63f010683;
+        Tue, 10 Sep 2019 12:37:06 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Sep 2019 05:37:05 -0700
+Date:   Tue, 10 Sep 2019 15:36:56 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Sandro Volery <sandro@volery.com>
+Cc:     rspringer@google.com, toddpoynor@google.com, benchan@chromium.org,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, joe@perches.com
+Subject: Re: [PATCH v3] Staging: gasket: Use temporaries to reduce line
+ length.
+Message-ID: <20190910123656.GC15977@kadam>
+References: <20190910061928.GA9623@volery>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190910061928.GA9623@volery>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9375 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=687
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909100122
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9375 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=757 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909100122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Exynos5422 SoC used on Odroid XU3 Lite boards belongs to
-a special ASV bin but this information cannot be read from the
-CHIPID block registers. Add samsung,asv-bin property for XU3
-Lite to ensure the ASV bin is properly determined.
+Looks good.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since v2:
- - none
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Changes since v1 (RFC):
- - new patch
----
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-index c19b5a51ca44..a31ca2ef750f 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-@@ -26,6 +26,10 @@
- 	status = "disabled";
- };
-
-+&chipid {
-+	samsung,asv-bin = <2>;
-+};
-+
- &pwm {
- 	/*
- 	 * PWM 0 -- fan
---
-2.17.1
+regards,
+dan carpenter
 
