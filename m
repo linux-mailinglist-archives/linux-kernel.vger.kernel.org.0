@@ -2,111 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C821AAE679
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F4F2AE67F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfIJJQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 05:16:25 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34529 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbfIJJQY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 05:16:24 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r12so11207653pfh.1;
-        Tue, 10 Sep 2019 02:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wfhBlXbTlTMX4E76VadOfA+hOSSFiVKlUr5WhybwN6Y=;
-        b=Ix5XIq52ojuczz2WFlndYuPyvegA1xBDLqKlQinxNi/ddwwT7aSp4BE52bdpTtvBZU
-         VGccYwG2QB+jUEvkPdfe009RtiB9HEycmrhIrWHM2Wz5mmZhS9Z/AETPcWfTFmwV3RVr
-         LmnHyXpoIlqloJ3oDoCuKVs3wIKH02w1f1IqNKPq+VKN2iVFQ8lY97MeHbb7nlrdDQjZ
-         a1vYuEugpJMWHAut3i/uQueEv43jrugOrhortyg2TB6eWDbzer1PjupJpjCNdPR/GRIV
-         TFhVK+cu/PfSgVeGkWYqYzXVF/xBJikC6YUBWbu1BJHOGROPTjsqrh8eNAkwfDzk1T8t
-         KXbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wfhBlXbTlTMX4E76VadOfA+hOSSFiVKlUr5WhybwN6Y=;
-        b=qVutd7aMe3kzHOynRAvUyp4RXnsCk2k13NO3v7MXVegLU8M6bx0N3nR9VoHjhYUK9e
-         AOGSi3eLE2vAzf63NM+x/sbZOW3eAlgdN7kog1wlih/hUh4UE2y1g84jyym+Ijfvw1wQ
-         fGyYk4Mw6Einaj4JDuSVT1WR/6puoUWSaMktOqSY8kMl+/Oj5UJBP6Q2xGDCrI57rfSL
-         u432VeCwExz8H/6mz13zoAm85xn7oOcsT+xDAohmFkd/BpbqUUG3TsM4FH6oXCNzG9u2
-         E09j/PBgRRl78/selUIcSG9j64Q2p4RvcDCdRhE9KzkHcYben3gP6Pe6VAKuThCNX9V7
-         SN6g==
-X-Gm-Message-State: APjAAAWK5rtNKzRmOxqg2YZskMw+NokgPEd65l+V1hmNMgU0bGrfVhQ/
-        z5ylOapIXRh/4Ux6+PExiMzf3DwF
-X-Google-Smtp-Source: APXvYqzHxaQmBpWgS74sUCr55Qt//D6scXpE7mF2noH5yrUuPhN0dejzlnIbbX8R57D9IIvydGR9/g==
-X-Received: by 2002:a65:5cca:: with SMTP id b10mr27422854pgt.365.1568106983856;
-        Tue, 10 Sep 2019 02:16:23 -0700 (PDT)
-Received: from localhost ([39.7.19.227])
-        by smtp.gmail.com with ESMTPSA id l26sm20389698pgb.90.2019.09.10.02.16.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 02:16:23 -0700 (PDT)
-Date:   Tue, 10 Sep 2019 18:16:19 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Drew Davenport <ddavenport@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Feng Tang <feng.tang@intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        YueHaibing <yuehaibing@huawei.com>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] bug: Move WARN_ON() "cut here" into exception
- handler
-Message-ID: <20190910091619.GA207290@jagdpanzerIV>
-References: <201908200943.601DD59DCE@keescook>
- <20190909160539.GA989@tigerII.localdomain>
- <201909100157.CEE99802C@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201909100157.CEE99802C@keescook>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1729839AbfIJJRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 05:17:17 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:45557 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728857AbfIJJRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 05:17:16 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46SKDT4VFtz9txVy;
+        Tue, 10 Sep 2019 11:17:13 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=bRfVBqGT; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id gGVpoIF28Ftl; Tue, 10 Sep 2019 11:17:13 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46SKDT3N62z9txVw;
+        Tue, 10 Sep 2019 11:17:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1568107033; bh=kGon0ub1xJnz0O6Eae+CiFjeXTbJxumDVRZ8IyCl084=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=bRfVBqGTm7ZP4TNHo9d4OwEGPPNEDsVuceZm4Z9QKfBh3L9M1H18Boq0bohSbaYj7
+         YQcZbhlnXwS5bfH7AQ/zHN6iTLd4PJv46JVLKpfogSFrNFL8HMO3a8xyNYXg7jDBbP
+         13NG9g4/xhCgJySauKt5R3YagsKncUdvCP9ZOJdw=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 327F18B878;
+        Tue, 10 Sep 2019 11:17:13 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id BWrtv-xqzQwT; Tue, 10 Sep 2019 11:17:12 +0200 (CEST)
+Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 66CD38B886;
+        Tue, 10 Sep 2019 11:16:20 +0200 (CEST)
+Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 096006B739; Tue, 10 Sep 2019 09:16:20 +0000 (UTC)
+Message-Id: <20ee91d8a7abc7d27a79ba704c0fd4b2800e9951.1568106758.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1568106758.git.christophe.leroy@c-s.fr>
+References: <cover.1568106758.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 01/15] powerpc/32: replace MTMSRD() by mtmsr
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        dja@axtens.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Date:   Tue, 10 Sep 2019 09:16:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/10/19 01:59), Kees Cook wrote:
-> On Tue, Sep 10, 2019 at 01:05:39AM +0900, Sergey Senozhatsky wrote:
-> > On (08/20/19 09:47), Kees Cook wrote:
-> > [..]
-> > > +	/*
-> > > +	 * BUG() and WARN_ON() families don't print a custom debug message
-> > > +	 * before triggering the exception handler, so we must add the
-> > > +	 * "cut here" line now. WARN() issues its own "cut here" before the
-> > > +	 * extra debugging message it writes before triggering the handler.
-> > > +	 */
-> > > +	if ((bug->flags & BUGFLAG_NO_CUT_HERE) == 0)
-> > > +		printk(KERN_DEFAULT CUT_HERE);
-> > 
-> > Shouldn't this be pr_warn() or pr_crit()?
-> 
-> The pr_* helpers here would (potentially) add unwanted prefixes, so
-> those aren't used. KERN_DEFAULT is used here because that's how it's
-> always been printed. I didn't want to change that for this refactoring
-> work. I'm not opposed to it, generally speaking, though. :)
+On PPC32, MTMSRD() is simply defined as mtmsr.
 
-I just glanced through CUT_HERE users
+Replace MTMSRD(reg) by mtmsr reg in files dedicated to PPC32,
+this makes the code less obscure.
 
-warn_slowpath_fmt()    pr_warn(CUT_HERE)
-__warn_printk()        pr_warn(CUT_HERE)
-rdma_restrack_clean()  pr_err("restrack: %s", CUT_HERE)
-rdma_restrack_clean()  pr_err("restrack: %s", CUT_HERE)
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/entry_32.S | 18 +++++++++---------
+ arch/powerpc/kernel/head_32.h  |  4 ++--
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-+ oops/panic end markers are of pr_warn() or pr_crit() log levels.
-So I thought that maybe we can make it more or less similar.
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index d60908ea37fb..6273b4862482 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -397,7 +397,7 @@ ret_from_syscall:
+ 	LOAD_REG_IMMEDIATE(r10,MSR_KERNEL)	/* doesn't include MSR_EE */
+ 	/* Note: We don't bother telling lockdep about it */
+ 	SYNC
+-	MTMSRD(r10)
++	mtmsr	r10
+ 	lwz	r9,TI_FLAGS(r2)
+ 	li	r8,-MAX_ERRNO
+ 	andi.	r0,r9,(_TIF_SYSCALL_DOTRACE|_TIF_SINGLESTEP|_TIF_USER_WORK_MASK|_TIF_PERSYSCALL_MASK)
+@@ -554,7 +554,7 @@ syscall_exit_work:
+ 	 */
+ 	ori	r10,r10,MSR_EE
+ 	SYNC
+-	MTMSRD(r10)
++	mtmsr	r10
+ 
+ 	/* Save NVGPRS if they're not saved already */
+ 	lwz	r4,_TRAP(r1)
+@@ -697,7 +697,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_SPE)
+ 	and.	r0,r0,r11	/* FP or altivec or SPE enabled? */
+ 	beq+	1f
+ 	andc	r11,r11,r0
+-	MTMSRD(r11)
++	mtmsr	r11
+ 	isync
+ 1:	stw	r11,_MSR(r1)
+ 	mfcr	r10
+@@ -831,7 +831,7 @@ ret_from_except:
+ 	/* Note: We don't bother telling lockdep about it */
+ 	LOAD_REG_IMMEDIATE(r10,MSR_KERNEL)
+ 	SYNC			/* Some chip revs have problems here... */
+-	MTMSRD(r10)		/* disable interrupts */
++	mtmsr	r10		/* disable interrupts */
+ 
+ 	lwz	r3,_MSR(r1)	/* Returning to user mode? */
+ 	andi.	r0,r3,MSR_PR
+@@ -998,7 +998,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_NEED_PAIRED_STWCX)
+ 	 */
+ 	LOAD_REG_IMMEDIATE(r10,MSR_KERNEL & ~MSR_RI)
+ 	SYNC
+-	MTMSRD(r10)		/* clear the RI bit */
++	mtmsr	r10		/* clear the RI bit */
+ 	.globl exc_exit_restart
+ exc_exit_restart:
+ 	lwz	r12,_NIP(r1)
+@@ -1234,7 +1234,7 @@ do_resched:			/* r10 contains MSR_KERNEL here */
+ #endif
+ 	ori	r10,r10,MSR_EE
+ 	SYNC
+-	MTMSRD(r10)		/* hard-enable interrupts */
++	mtmsr	r10		/* hard-enable interrupts */
+ 	bl	schedule
+ recheck:
+ 	/* Note: And we don't tell it we are disabling them again
+@@ -1243,7 +1243,7 @@ recheck:
+ 	 */
+ 	LOAD_REG_IMMEDIATE(r10,MSR_KERNEL)
+ 	SYNC
+-	MTMSRD(r10)		/* disable interrupts */
++	mtmsr	r10		/* disable interrupts */
+ 	lwz	r9,TI_FLAGS(r2)
+ 	andi.	r0,r9,_TIF_NEED_RESCHED
+ 	bne-	do_resched
+@@ -1252,7 +1252,7 @@ recheck:
+ do_user_signal:			/* r10 contains MSR_KERNEL here */
+ 	ori	r10,r10,MSR_EE
+ 	SYNC
+-	MTMSRD(r10)		/* hard-enable interrupts */
++	mtmsr	r10		/* hard-enable interrupts */
+ 	/* save r13-r31 in the exception frame, if not already done */
+ 	lwz	r3,_TRAP(r1)
+ 	andi.	r0,r3,1
+@@ -1341,7 +1341,7 @@ _GLOBAL(enter_rtas)
+ 	stw	r9,8(r1)
+ 	LOAD_REG_IMMEDIATE(r0,MSR_KERNEL)
+ 	SYNC			/* disable interrupts so SRR0/1 */
+-	MTMSRD(r0)		/* don't get trashed */
++	mtmsr	r0		/* don't get trashed */
+ 	li	r9,MSR_KERNEL & ~(MSR_IR|MSR_DR)
+ 	mtlr	r6
+ 	stw	r7, THREAD + RTAS_SP(r2)
+diff --git a/arch/powerpc/kernel/head_32.h b/arch/powerpc/kernel/head_32.h
+index 8abc7783dbe5..b2ca8c9ffd8b 100644
+--- a/arch/powerpc/kernel/head_32.h
++++ b/arch/powerpc/kernel/head_32.h
+@@ -50,7 +50,7 @@
+ 	rlwinm	r9,r9,0,14,12		/* clear MSR_WE (necessary?) */
+ #else
+ 	li	r10,MSR_KERNEL & ~(MSR_IR|MSR_DR) /* can take exceptions */
+-	MTMSRD(r10)			/* (except for mach check in rtas) */
++	mtmsr	r10			/* (except for mach check in rtas) */
+ #endif
+ 	stw	r0,GPR0(r11)
+ 	lis	r10,STACK_FRAME_REGS_MARKER@ha /* exception frame marker */
+@@ -80,7 +80,7 @@
+ 	rlwinm	r9,r9,0,14,12		/* clear MSR_WE (necessary?) */
+ #else
+ 	LOAD_REG_IMMEDIATE(r10, MSR_KERNEL & ~(MSR_IR|MSR_DR)) /* can take exceptions */
+-	MTMSRD(r10)			/* (except for mach check in rtas) */
++	mtmsr	r10			/* (except for mach check in rtas) */
+ #endif
+ 	lis	r10,STACK_FRAME_REGS_MARKER@ha /* exception frame marker */
+ 	stw	r2,GPR2(r11)
+-- 
+2.13.3
 
-But if it has always been this way (KERN_DEFAULT) then OK.
-
-	-ss
