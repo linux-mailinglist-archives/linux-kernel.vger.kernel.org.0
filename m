@@ -2,120 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D90BDAEB48
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8353EAEB5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:22:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731600AbfIJNSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 09:18:48 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:59022 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726188AbfIJNSr (ORCPT
+        id S1730908AbfIJNW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 09:22:28 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:43496 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfIJNW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 09:18:47 -0400
-Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x8ADIkSi002492
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 09:18:46 -0400
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x8ADIfLS029228
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 09:18:46 -0400
-Received: by mail-qk1-f197.google.com with SMTP id q62so20782646qkd.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 06:18:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=7kNO9uDNvugTv3H3koO6iBR61aeWq1IakC0dWAwZ414=;
-        b=tYgcPW8BzFtjTHdO5YCU/bidN5ylOXvRKsERqTq2CZy9r66mvh0omD/QmAQ/+7S2Uc
-         MQ4AmTPte8eTq9ynbvXcBPAqTfSGs8h1xWMWtXPeJ6GdyczhtlJtes5jJAFTG7eDsB7M
-         VW6L34ZOV4XQvdNpw+AQGiEhlT+BC/sb6oiayJ7dp3phIzJX8cryVwO/pa77T+YOfU6l
-         O/9meMlXzAbWo/hKM49FCO0rUy38v0imWHO5ipmbVhKyv0tct+IaQTLl2TPummxu+nLy
-         uUr307On4DQGnBx2Qrvs1vaMGY+ItKmCB9cPJig110ZXP2SU6ubN88zScUp5IyUMd0/O
-         NCPA==
-X-Gm-Message-State: APjAAAU0s8aik8VX2Mfn0H613mWnuT69hF663eUe8NanI6qPKIHdx9qy
-        uyBuQ9qPfKam1JAIOj4JkIS5JcPI+KSZ+bTKHPcuCCnGd9owfVi5xMjCXTAomTNUePddhvR7mW5
-        /4PjvCEvWeojOEod4FMMd1E+Wzdt5z6wnxkk=
-X-Received: by 2002:a37:c0f:: with SMTP id 15mr23232181qkm.73.1568121520887;
-        Tue, 10 Sep 2019 06:18:40 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyHLmfoD+Kv5Ihhcunz/PPRO8HiNM4sdOJhK03/Lv6eRrYrNyPTStg6jFzCIG8lLRtsiz/hKA==
-X-Received: by 2002:a37:c0f:: with SMTP id 15mr23232151qkm.73.1568121520625;
-        Tue, 10 Sep 2019 06:18:40 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:4341::359])
-        by smtp.gmail.com with ESMTPSA id g45sm2907548qtc.9.2019.09.10.06.18.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 06:18:39 -0700 (PDT)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: staging: exfat: issue with FFS_MEDIAERR error return assignment
-In-Reply-To: <20190910130934.GE15977@kadam>
-References: <c569b04c-2959-c8eb-0d38-628e8c5ff7ac@canonical.com> <20190910124443.GD15977@kadam> <aefa4806-af3c-1757-59c2-72e7d1663d66@canonical.com>
- <20190910130934.GE15977@kadam>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1568121518_4251P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
+        Tue, 10 Sep 2019 09:22:28 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8ADLQqP062583;
+        Tue, 10 Sep 2019 08:21:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568121686;
+        bh=Fiv18WkpSi2E0hZY53yNFwdEsK8dFEfnR7kLuNVjuR4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=OOVstoD7+vguQQl8jPDvPTcp1qxxK9oRom3sKajxvIe77PBY7bkmfRVQljYegbf9R
+         0g5t52SQBs3iwNgaG5qYM/7X3KoukrpbttQ+zv+wDjQPW24jlJS6bl10Nv8fmSEf4V
+         rKCf360Z03oG1FSCE3IRDSBLOCdeVvuVllWaD5UE=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8ADLPsU125510
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Sep 2019 08:21:25 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 10
+ Sep 2019 08:21:25 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 10 Sep 2019 08:21:25 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8ADLPRu026587;
+        Tue, 10 Sep 2019 08:21:25 -0500
+Subject: Re: [PATCH] tas2770: add tas2770 smart PA dt bindings
+To:     <shifu0704@thundersoft.com>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>
+CC:     <navada@ti.com>
+References: <1567753564-13699-1-git-send-email-shifu0704@thundersoft.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <76759c2c-3f5d-5cf6-fc2b-feb1dc8c0e6a@ti.com>
+Date:   Tue, 10 Sep 2019 08:21:25 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <1567753564-13699-1-git-send-email-shifu0704@thundersoft.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 10 Sep 2019 09:18:38 -0400
-Message-ID: <1146681.1568121518@turing-police>
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1568121518_4251P
-Content-Type: text/plain; charset=us-ascii
+Shi
 
-On Tue, 10 Sep 2019 16:09:35 +0300, Dan Carpenter said:
-> On Tue, Sep 10, 2019 at 01:58:35PM +0100, Colin Ian King wrote:
-> > On 10/09/2019 13:44, Dan Carpenter wrote:
-> > > On Fri, Aug 30, 2019 at 07:38:00PM +0100, Colin Ian King wrote:
-> > >> Hi,
-> > >>
-> > >> Static analysis on exfat with Coverity has picked up an assignment of
-> > >> FFS_MEDIAERR that gets over-written:
-> > >>
-> > >>
-> > >> 1750        if (is_dir) {
-> > >> 1751                if ((fid->dir.dir == p_fs->root_dir) &&
-> > >> 1752                    (fid->entry == -1)) {
-> > >> 1753                        if (p_fs->dev_ejected)
-> > >
-> > > Idealy we would have both a filename and a function name but this email
-> > > doesn't have either so no one knows what code you are talking about.  :P
-> >
-> > Oops, my bad.
-> >
-> > drivers/staging/exfat/exfat_super.c ffsWriteStat()
+On 9/6/19 2:06 AM, shifu0704@thundersoft.com wrote:
+> From: Frank Shi <shifu0704@thundersoft.com>
+
+Subject should be
+
+dt-bindings: ASoC: Add tas2770 smart PA dt bindings
+
+Also Please add Rob Herring <robh+dt@kernel.org> for review
+
+> add tas2770 smart PA dt bindings
 >
-> Yes, your solution is correct.
+> Signed-off-by: Frank Shi <shifu0704@thundersoft.com>
+> ---
+>   Documentation/devicetree/bindings/tas2770.txt | 38 +++++++++++++++++++++++++++
+>   1 file changed, 38 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/tas2770.txt
+>
+> diff --git a/Documentation/devicetree/bindings/tas2770.txt b/Documentation/devicetree/bindings/tas2770.txt
+> new file mode 100644
+> index 0000000..f70b310
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/tas2770.txt
+> @@ -0,0 +1,38 @@
+> +Texas Instruments TAS2770 Smart PA
+> +
+> +The TAS2770 is a mono, digital input Class-D audio amplifier optimized for
+> +efficiently driving high peak power into small loudspeakers.
+> +Integrated speaker voltage and current sense provides for
+> +real time monitoring of loudspeaker behavior.
+> +
+> +Required properties:
+> +
+> + - compatible:	   - Should contain "ti,tas2770".
+> + - reg:		       - The i2c address. Should contain <0x4c>, <0x4d>,<0x4e>, or <0x4f>.
+s/should/may
+> + - #address-cells  - Should be <1>.
+> + - #size-cells     - Should be <0>.
+> + - ti,asi-format:  - Sets TDM RX capture edge. 0->Rising; 1->Falling.
+> + - ti,left-slot:   - Sets TDM RX left time slots.
+> + - ti,right-slot:  - Sets TDM RX right time slots.
+> + - ti,imon-slot-no:- TDM TX current sense time slot.
+> + - ti,vmon-slot-no:- TDM TX voltage sense time slot.
+> +
+> +Optional properties:
+> +
+> + - reset-gpio:	Reset GPIO number of left device.
+> + - irq-gpio:  IRQ GPIO number of left device.
 
-Actually, you can skip the else, because we initialized 'ret' at the start of the function.
+You might want to use
 
-The *bigger* issue - what should 'ret' be if dev_ejected is *false*?
+- interrupt-parent: the phandle to the interrupt controller which provides
+                     the interrupt.
+- interrupts: interrupt specification for data-ready.
 
---==_Exmh_1568121518_4251P
-Content-Type: application/pgp-signature
+Instead of irq-gpio
 
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
+> +
+> +Examples:
+> +
+> +    tas2770@4c {
+> +                compatible = "ti,tas2770";
+> +                reg = <0x4c>;
 
-iQIVAwUBXXeirQdmEQWDXROgAQL5wA/+PPHOGEmDV504BFRLn9srgqIa56tfpmot
-Ja0n16HXiCIc/z1N2QQ1yTCN1HR387EPagxgMoiIcNV4rlJ8vKFDXzxg8BA4xUKK
-8ikDLD0pwq5jR+ghYKYrjHxMs1OClbH0dUvlzra7TOOJpdaPL91MezH4fhJH5Ybj
-MPjwNb+MjNLcC5rEYO6BY4TMVuBUES1w4BgQr0cpsvFZWfLoOHs6l8jHyHmnxJ8O
-GeE0yMX4THplzc7pWAbyYnm08kXBc4spMcziXRWfJtNtg8JjTYBNC1jYAH41THGO
-zf0Bp3n1BtdrIr93000EsmQNrdXTSoogIisJ6tg+5GauE1WbJAUSLuyWwqLKSQk/
-gWd7aWO1COCNJS7887iKimSxntiCH4ExjoZigDStvWSMprqCPDefuSefOlkWU53Q
-d6TLu3zqicuqiIqp/z9V+kkf3TUMedLHPosvzbhC2WQaHr5MiaBUjDDx8n4zJ+JS
-vJyHuWeqFuoGxwdg8viDrPATRJOkgQFPGupGyfVZGQpTxBYu9Ooyl3XgNxtJJIbz
-w6OOrrJm9PS9bllSVlEbKHQtiRi8eM2R4gNQQHow5klY6FNIV39dUiQHXwf+OAlp
-2GQ63Cv6WLgJakMBRzHcpfpUVayLn2WozSD5TEJx8VsIwqTU2rswLtKpSF47j1hu
-y21iQgn12Q8=
-=gwNw
------END PGP SIGNATURE-----
+Missing
 
---==_Exmh_1568121518_4251P--
+#address-cells = <1>;
+
+#size-cells = <0>;
+
+> +                reset-gpio = <&gpio15 1 GPIO_ACTIVE_LOW>;
+> +                irq-gpio = <&gpio16 1 GPIO_ACTIVE_LOW>;
+> +                ti,asi-format = <0>;
+> +                ti,left-slot = <0>;
+> +                ti,right-slot = <1>;
+> +                ti,imon-slot-no = <0>;
+> +                ti,vmon-slot-no = <2>;
+> +        };
+> +
+
+Suggestion to provide the URL to the data sheet.
+
