@@ -2,188 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 533A1AEDFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:00:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5629AEE03
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:01:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405668AbfIJPAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 11:00:20 -0400
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:38820 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388133AbfIJPAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 11:00:14 -0400
-Received: from pps.filterd (m0134423.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8AEpgGs018083;
-        Tue, 10 Sep 2019 15:00:00 GMT
-Received: from g4t3427.houston.hpe.com (g4t3427.houston.hpe.com [15.241.140.73])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2ux843n647-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Sep 2019 14:59:59 +0000
-Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
-        by g4t3427.houston.hpe.com (Postfix) with ESMTP id 3B01F66;
-        Tue, 10 Sep 2019 14:59:59 +0000 (UTC)
-Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 5508)
-        id A3E56201FCF1F; Tue, 10 Sep 2019 09:59:58 -0500 (CDT)
-Message-Id: <20190910145840.294981941@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190910145839.604369497@stormcage.eag.rdlabs.hpecorp.net>
-User-Agent: quilt/0.46-1
-Date:   Tue, 10 Sep 2019 09:58:47 -0500
-From:   Mike Travis <mike.travis@hpe.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Justin Ernst <justin.ernst@hpe.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2 8/8] x86/platform/uv: Account for UV Hubless in is_uvX_hub Ops
-Content-Disposition: inline; filename=mod-is_uvX_hub
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-10_10:2019-09-10,2019-09-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 spamscore=0
- clxscore=1015 suspectscore=0 bulkscore=0 mlxlogscore=577 mlxscore=0
- adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1906280000 definitions=main-1909100144
+        id S2393484AbfIJPBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 11:01:41 -0400
+Received: from foss.arm.com ([217.140.110.172]:36866 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389308AbfIJPBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 11:01:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65DD228;
+        Tue, 10 Sep 2019 08:01:40 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C724B3F71F;
+        Tue, 10 Sep 2019 08:01:38 -0700 (PDT)
+Subject: Re: [PATCH] iommu/arm-smmu: fix "hang" when games exit
+To:     Rob Clark <robdclark@gmail.com>, iommu@lists.linux-foundation.org
+Cc:     linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Rob Clark <robdclark@chromium.org>,
+        Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        "moderated list:ARM SMMU DRIVERS" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190907175013.24246-1-robdclark@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <418d8426-f299-1269-2b2e-f86677cf22c2@arm.com>
+Date:   Tue, 10 Sep 2019 16:01:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190907175013.24246-1-robdclark@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The references in the is_uvX_hub() function uses the hub_info pointer
-which will be NULL when the system is hubless.  This change avoids
-that NULL dereference.  It is also an optimization in performance.
+On 07/09/2019 18:50, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
+> 
+> When games, browser, or anything using a lot of GPU buffers exits, there
+> can be many hundreds or thousands of buffers to unmap and free.  If the
+> GPU is otherwise suspended, this can cause arm-smmu to resume/suspend
+> for each buffer, resulting 5-10 seconds worth of reprogramming the
+> context bank (arm_smmu_write_context_bank()/arm_smmu_write_s2cr()/etc).
+> To the user it would appear that the system is locked up.
+> 
+> A simple solution is to use pm_runtime_put_autosuspend() instead, so we
+> don't immediately suspend the SMMU device.
+> 
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+> Note: I've tied the autosuspend enable/delay to the consumer device,
+> based on the reasoning that if the consumer device benefits from using
+> an autosuspend delay, then it's corresponding SMMU probably does too.
+> Maybe that is overkill and we should just unconditionally enable
+> autosuspend.
 
-Signed-off-by: Mike Travis <mike.travis@hpe.com>
-Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
-Reviewed-by: Dimitri Sivanich <dimitri.sivanich@hpe.com>
----
-V2: Add WARNING that the is UVx supported defines will be removed.
----
- arch/x86/include/asm/uv/.uv_hub.h.swp |binary
- arch/x86/include/asm/uv/uv_hub.h |   61 ++++++++++++---------------------------
- 1 file changed, 20 insertions(+), 41 deletions(-)
+I'm not sure there's really any reason to expect that a supplier's usage 
+model when doing things for itself bears any relation to that of its 
+consumer(s), so I'd certainly lean towards the "unconditional" argument 
+myself.
 
-Binary files linux.orig/arch/x86/include/asm/uv/.uv_hub.h.swp and linux/arch/x86/include/asm/uv/.uv_hub.h.swp differ
---- linux.orig/arch/x86/include/asm/uv/uv_hub.h
-+++ linux/arch/x86/include/asm/uv/uv_hub.h
-@@ -19,6 +19,7 @@
- #include <linux/topology.h>
- #include <asm/types.h>
- #include <asm/percpu.h>
-+#include <asm/uv/uv.h>
- #include <asm/uv/uv_mmrs.h>
- #include <asm/uv/bios.h>
- #include <asm/irq_vectors.h>
-@@ -243,83 +244,61 @@ static inline int uv_hub_info_check(int
- #define UV4_HUB_REVISION_BASE		7
- #define UV4A_HUB_REVISION_BASE		8	/* UV4 (fixed) rev 2 */
- 
--#ifdef	UV1_HUB_IS_SUPPORTED
-+/* WARNING: UVx_HUB_IS_SUPPORTED defines are deprecated and will be removed */
- static inline int is_uv1_hub(void)
- {
--	return uv_hub_info->hub_revision < UV2_HUB_REVISION_BASE;
--}
-+#ifdef	UV1_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(1));
- #else
--static inline int is_uv1_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV2_HUB_IS_SUPPORTED
- static inline int is_uv2_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV3_HUB_REVISION_BASE));
--}
-+#ifdef	UV2_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(2));
- #else
--static inline int is_uv2_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV3_HUB_IS_SUPPORTED
- static inline int is_uv3_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV3_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV4_HUB_REVISION_BASE));
--}
-+#ifdef	UV3_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(3));
- #else
--static inline int is_uv3_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- /* First test "is UV4A", then "is UV4" */
--#ifdef	UV4A_HUB_IS_SUPPORTED
--static inline int is_uv4a_hub(void)
--{
--	return (uv_hub_info->hub_revision >= UV4A_HUB_REVISION_BASE);
--}
--#else
- static inline int is_uv4a_hub(void)
- {
-+#ifdef	UV4A_HUB_IS_SUPPORTED
-+	if (is_uv_hubbed(uv(4)))
-+		return (uv_hub_info->hub_revision == UV4A_HUB_REVISION_BASE);
-+#endif
- 	return 0;
- }
--#endif
- 
--#ifdef	UV4_HUB_IS_SUPPORTED
- static inline int is_uv4_hub(void)
- {
--	return uv_hub_info->hub_revision >= UV4_HUB_REVISION_BASE;
--}
-+#ifdef	UV4_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(4));
- #else
--static inline int is_uv4_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- static inline int is_uvx_hub(void)
- {
--	if (uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE)
--		return uv_hub_info->hub_revision;
--
--	return 0;
-+	return (is_uv_hubbed(-2) >= uv(2));
- }
- 
- static inline int is_uv_hub(void)
- {
--#ifdef	UV1_HUB_IS_SUPPORTED
--	return uv_hub_info->hub_revision;
--#endif
--	return is_uvx_hub();
-+	return is_uv1_hub() || is_uvx_hub();
- }
- 
- union uvh_apicid {
+Of course ideally we'd skip resuming altogether in the map/unmap paths 
+(since resume implies a full TLB reset anyway), but IIRC that approach 
+started to get messy in the context of the initial RPM patchset. I'm 
+planning to fiddle around a bit more to clean up the implementation of 
+the new iommu_flush_ops stuff, so I've made a note to myself to revisit 
+RPM to see if there's a sufficiently clean way to do better. In the 
+meantime, though, I don't have any real objection to using some 
+reasonable autosuspend delay on the principle that if we've been woken 
+up to map/unmap one page, there's a high likelihood that more will 
+follow in short order (and in the configuration slow-paths it won't have 
+much impact either way).
 
--- 
+Robin.
 
+>   drivers/iommu/arm-smmu.c | 11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index c2733b447d9c..73a0dd53c8a3 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -289,7 +289,7 @@ static inline int arm_smmu_rpm_get(struct arm_smmu_device *smmu)
+>   static inline void arm_smmu_rpm_put(struct arm_smmu_device *smmu)
+>   {
+>   	if (pm_runtime_enabled(smmu->dev))
+> -		pm_runtime_put(smmu->dev);
+> +		pm_runtime_put_autosuspend(smmu->dev);
+>   }
+>   
+>   static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
+> @@ -1445,6 +1445,15 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
+>   	/* Looks ok, so add the device to the domain */
+>   	ret = arm_smmu_domain_add_master(smmu_domain, fwspec);
+>   
+> +#ifdef CONFIG_PM
+> +	/* TODO maybe device_link_add() should do this for us? */
+> +	if (dev->power.use_autosuspend) {
+> +		pm_runtime_set_autosuspend_delay(smmu->dev,
+> +			dev->power.autosuspend_delay);
+> +		pm_runtime_use_autosuspend(smmu->dev);
+> +	}
+> +#endif
+> +
+>   rpm_put:
+>   	arm_smmu_rpm_put(smmu);
+>   	return ret;
+> 
