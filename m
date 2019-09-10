@@ -2,187 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC413AF35E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 01:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E01EAAF364
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 01:35:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfIJXcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 19:32:19 -0400
-Received: from mail-vk1-f201.google.com ([209.85.221.201]:56245 "EHLO
-        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726653AbfIJXcP (ORCPT
+        id S1726442AbfIJXfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 19:35:10 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:43665 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbfIJXfJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 19:32:15 -0400
-Received: by mail-vk1-f201.google.com with SMTP id f27so6533433vkl.22
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 16:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=0LEswebCuXlUeK7tPzkfS93LgBHF3BU/v1A9gg1d3Jc=;
-        b=e/SIH2orKqbKFX2gNfzSIzJVtzBFf5hXWjn5Vfz22L9QA5QFdedJKt3j7w0PpInHbz
-         lVvPgETr0Jbfwbj6JUht/BSUXmoNajeGGPi8S9SsZus3IZtAJvMZ6uxAJDkOd/TRCrWE
-         lJgntTxvOrHowSOhvclAmpFpHElnVn+5t1nNi2tzuO8BHw8B4izIfpv0AddmccrMionV
-         u0BppCYSZfZS5SULW9vxvdunM4/nsrQ+G9B5srifEofG4anGR2hLcTooY1boiv+RKIoW
-         bbiAxpTi+HUuTdp9NjxvSK9uWVWE1aO3FACG8wRiq/gx4HABAyUpGEWgMCtr5wL6gDke
-         d3Bg==
+        Tue, 10 Sep 2019 19:35:09 -0400
+Received: by mail-io1-f72.google.com with SMTP id o6so11660710ioh.10
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 16:35:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=0LEswebCuXlUeK7tPzkfS93LgBHF3BU/v1A9gg1d3Jc=;
-        b=A6115QKU3o4vqZBOXem3W3I5L9X0BYdH0VMRrQBKdXTvbB5YUTNsyh2iiwKy8ywv9f
-         /ABbvk+gZF9E1On6EdBwMg1NncCkdo/ZpTI3LSs+wwexX7DNlG+4XnXFw46Gd8VS6DPe
-         /sCw/CR3TJ+hGgZW7dprzuBnKQT6kHrsQFaFWFLTJMo991GTJQXDsWXjgnl1d7sqzkYJ
-         HGvJRSz0BSNahupZjq0Wc6xS5doMBhVpSzXsolL9bq6Lev7fUSLCZ97IDRO1WYE9tqTH
-         6fVhgo1bLuY6bb6I3/hGmKGDRqBMvWU7VLv/q+jQomdTm56+e6yZA0uqHn8WgMFWzwoY
-         h1Yw==
-X-Gm-Message-State: APjAAAVfcu9G7EZH3w3+KmKjEVAZ7aczvguerDyCVcIn+ntP3hPLLxBU
-        Pt4hDhTfHzSPxfuUPoyxFQFTNBez6rgTU0LpOw==
-X-Google-Smtp-Source: APXvYqy/3Zn8sqmETM/JAH7hp9TufhpKQ3F/v7pZaXngfOyH7O21D7gnsKHl66KuXfAx3PVnCWkls5tzRe2Ask7GvQ==
-X-Received: by 2002:ac5:c7d3:: with SMTP id e19mr7511087vkn.60.1568158334638;
- Tue, 10 Sep 2019 16:32:14 -0700 (PDT)
-Date:   Tue, 10 Sep 2019 16:31:46 -0700
-In-Reply-To: <20190910233146.206080-1-almasrymina@google.com>
-Message-Id: <20190910233146.206080-10-almasrymina@google.com>
-Mime-Version: 1.0
-References: <20190910233146.206080-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.23.0.162.g0b9fbb3734-goog
-Subject: [PATCH v4 9/9] hugetlb_cgroup: Add hugetlb_cgroup reservation docs
-From:   Mina Almasry <almasrymina@google.com>
-To:     mike.kravetz@oracle.com
-Cc:     shuah@kernel.org, almasrymina@google.com, rientjes@google.com,
-        shakeelb@google.com, gthelen@google.com, akpm@linux-foundation.org,
-        khalid.aziz@oracle.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        cgroups@vger.kernel.org, aneesh.kumar@linux.vnet.ibm.com,
-        mkoutny@suse.com, Hillf Danton <hdanton@sina.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Y67ZPAjv5Qq+Fx3oOv1534DfTfsCTzwcze7Z3T26u+U=;
+        b=L82qwplGj3hCAUEKZMypuhTQa1a8JChawRfgi7sMZMZb6hnJqfrRu82YcSXtqgG90W
+         qFQPyBf0CDu9sfMlBCxa9x7/EXlABDO7DOUs/0LHhrg2ZNByUeI3VR4TiwqH7JJ3xiIh
+         jQEDYYKBMvWWPhQpIK1ajfFihT9QvQGX/2/vszfPBjESH5XPFt84Sv3FqucN0TpvrQIM
+         s7jZHMutUy8SMsXAph1IBsbntu/Gjx2ifOYxg1grrqffWDQGuNtuhgnejU4zM6i1N6HW
+         Hv5Xj/P2jsAfAbf4d19z598CIe3ZMTwnwMWDHvDy7nqGapOFeLNm7AYPwR9ZLrgv85Cz
+         ythQ==
+X-Gm-Message-State: APjAAAUpGU7vVYxKz2K6R2QK+P1J01AyQ0SK4NvQLW9yVTOrlTbjsNN8
+        fOaExjzI9NBE3ggoFu0UN2VxU3kpvYrLogt1FfBgmdkSbjvW
+X-Google-Smtp-Source: APXvYqxDShE5QODV3Bt/aXdYO54eEw9UNBEK1xCKo6mvmG8TVje0Sj9MsL8Fcp0zqrZrft6TEdufwtY4haSPtBVWoFBfbq6+Htkz
+MIME-Version: 1.0
+X-Received: by 2002:a6b:b4c7:: with SMTP id d190mr11298139iof.209.1568158506509;
+ Tue, 10 Sep 2019 16:35:06 -0700 (PDT)
+Date:   Tue, 10 Sep 2019 16:35:06 -0700
+In-Reply-To: <000000000000e695c1058fb26925@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bb6c1005923b5ab7@google.com>
+Subject: Re: KASAN: use-after-free Read in rxrpc_send_keepalive
+From:   syzbot <syzbot+d850c266e3df14da1d31@syzkaller.appspotmail.com>
+To:     MAILER_DAEMON@email.uscc.net, davem@davemloft.net,
+        dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add docs for how to use hugetlb_cgroup reservations, and their behavior.
+syzbot has found a reproducer for the following crash on:
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
-Acked-by: Hillf Danton <hdanton@sina.com>
----
- .../admin-guide/cgroup-v1/hugetlb.rst         | 84 ++++++++++++++++---
- 1 file changed, 73 insertions(+), 11 deletions(-)
+HEAD commit:    3120b9a6 Merge tag 'ipc-fixes' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=107d1ca5600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ed2b148cd67382ec
+dashboard link: https://syzkaller.appspot.com/bug?extid=d850c266e3df14da1d31
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17347095600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=143bcca5600000
 
-diff --git a/Documentation/admin-guide/cgroup-v1/hugetlb.rst b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-index a3902aa253a96..cc6eb859fc722 100644
---- a/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-+++ b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-@@ -2,13 +2,6 @@
- HugeTLB Controller
- ==================
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d850c266e3df14da1d31@syzkaller.appspotmail.com
 
--The HugeTLB controller allows to limit the HugeTLB usage per control group and
--enforces the controller limit during page fault. Since HugeTLB doesn't
--support page reclaim, enforcing the limit at page fault time implies that,
--the application will get SIGBUS signal if it tries to access HugeTLB pages
--beyond its limit. This requires the application to know beforehand how much
--HugeTLB pages it would require for its use.
--
- HugeTLB controller can be created by first mounting the cgroup filesystem.
+==================================================================
+BUG: KASAN: use-after-free in rxrpc_send_keepalive+0xe2/0x3c0  
+net/rxrpc/output.c:634
+Read of size 8 at addr ffff8880a859a058 by task kworker/0:2/3016
 
- # mount -t cgroup -o hugetlb none /sys/fs/cgroup
-@@ -28,10 +21,14 @@ process (bash) into it.
+CPU: 0 PID: 3016 Comm: kworker/0:2 Not tainted 5.3.0-rc8+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: krxrpcd rxrpc_peer_keepalive_worker
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
+  print_address_description+0x75/0x5b0 mm/kasan/report.c:351
+  __kasan_report+0x14b/0x1c0 mm/kasan/report.c:482
+  kasan_report+0x26/0x50 mm/kasan/common.c:618
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+  rxrpc_send_keepalive+0xe2/0x3c0 net/rxrpc/output.c:634
+  rxrpc_peer_keepalive_dispatch net/rxrpc/peer_event.c:369 [inline]
+  rxrpc_peer_keepalive_worker+0x76e/0xb40 net/rxrpc/peer_event.c:430
+  process_one_work+0x7ef/0x10e0 kernel/workqueue.c:2269
+  worker_thread+0xc01/0x1630 kernel/workqueue.c:2415
+  kthread+0x332/0x350 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
- Brief summary of control files::
+Allocated by task 9378:
+  save_stack mm/kasan/common.c:69 [inline]
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc+0x11c/0x1b0 mm/kasan/common.c:493
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:507
+  kmem_cache_alloc_trace+0x221/0x2f0 mm/slab.c:3550
+  kmalloc include/linux/slab.h:552 [inline]
+  kzalloc include/linux/slab.h:748 [inline]
+  rxrpc_alloc_connection+0x79/0x490 net/rxrpc/conn_object.c:41
+  rxrpc_alloc_client_connection net/rxrpc/conn_client.c:176 [inline]
+  rxrpc_get_client_conn net/rxrpc/conn_client.c:339 [inline]
+  rxrpc_connect_call+0xb30/0x2c40 net/rxrpc/conn_client.c:697
+  rxrpc_new_client_call+0x6d5/0xb60 net/rxrpc/call_object.c:289
+  rxrpc_new_client_call_for_sendmsg net/rxrpc/sendmsg.c:595 [inline]
+  rxrpc_do_sendmsg+0xf2b/0x19b0 net/rxrpc/sendmsg.c:652
+  rxrpc_sendmsg+0x5eb/0x8b0 net/rxrpc/af_rxrpc.c:585
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg net/socket.c:657 [inline]
+  ___sys_sendmsg+0x60d/0x910 net/socket.c:2311
+  __sys_sendmmsg+0x239/0x470 net/socket.c:2413
+  __do_sys_sendmmsg net/socket.c:2442 [inline]
+  __se_sys_sendmmsg net/socket.c:2439 [inline]
+  __x64_sys_sendmmsg+0xa0/0xb0 net/socket.c:2439
+  do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-- hugetlb.<hugepagesize>.limit_in_bytes     # set/show limit of "hugepagesize" hugetlb usage
-- hugetlb.<hugepagesize>.max_usage_in_bytes # show max "hugepagesize" hugetlb  usage recorded
-- hugetlb.<hugepagesize>.usage_in_bytes     # show current usage for "hugepagesize" hugetlb
-- hugetlb.<hugepagesize>.failcnt		   # show the number of allocation failure due to HugeTLB limit
-+ hugetlb.<hugepagesize>.reservation_limit_in_bytes     # set/show limit of "hugepagesize" hugetlb reservations
-+ hugetlb.<hugepagesize>.reservation_max_usage_in_bytes # show max "hugepagesize" hugetlb reservations recorded
-+ hugetlb.<hugepagesize>.reservation_usage_in_bytes     # show current reservations for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.reservation_failcnt            # show the number of allocation failure due to HugeTLB reservation limit
-+ hugetlb.<hugepagesize>.limit_in_bytes                 # set/show limit of "hugepagesize" hugetlb faults
-+ hugetlb.<hugepagesize>.max_usage_in_bytes             # show max "hugepagesize" hugetlb  usage recorded
-+ hugetlb.<hugepagesize>.usage_in_bytes                 # show current usage for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.failcnt                        # show the number of allocation failure due to HugeTLB usage limit
+Freed by task 16:
+  save_stack mm/kasan/common.c:69 [inline]
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_slab_free+0x12a/0x1e0 mm/kasan/common.c:455
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:463
+  __cache_free mm/slab.c:3425 [inline]
+  kfree+0x115/0x200 mm/slab.c:3756
+  rxrpc_destroy_connection+0x1ec/0x240 net/rxrpc/conn_object.c:372
+  __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2114 [inline]
+  rcu_core+0x892/0xf10 kernel/rcu/tree.c:2314
+  rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2323
+  __do_softirq+0x333/0x7c4 arch/x86/include/asm/paravirt.h:778
 
- For a system supporting three hugepage sizes (64k, 32M and 1G), the control
- files include::
-@@ -40,11 +37,76 @@ files include::
-   hugetlb.1GB.max_usage_in_bytes
-   hugetlb.1GB.usage_in_bytes
-   hugetlb.1GB.failcnt
-+  hugetlb.1GB.reservation_limit_in_bytes
-+  hugetlb.1GB.reservation_max_usage_in_bytes
-+  hugetlb.1GB.reservation_usage_in_bytes
-+  hugetlb.1GB.reservation_failcnt
-   hugetlb.64KB.limit_in_bytes
-   hugetlb.64KB.max_usage_in_bytes
-   hugetlb.64KB.usage_in_bytes
-   hugetlb.64KB.failcnt
-+  hugetlb.64KB.reservation_limit_in_bytes
-+  hugetlb.64KB.reservation_max_usage_in_bytes
-+  hugetlb.64KB.reservation_usage_in_bytes
-+  hugetlb.64KB.reservation_failcnt
-   hugetlb.32MB.limit_in_bytes
-   hugetlb.32MB.max_usage_in_bytes
-   hugetlb.32MB.usage_in_bytes
-   hugetlb.32MB.failcnt
-+  hugetlb.32MB.reservation_limit_in_bytes
-+  hugetlb.32MB.reservation_max_usage_in_bytes
-+  hugetlb.32MB.reservation_usage_in_bytes
-+  hugetlb.32MB.reservation_failcnt
-+
-+
-+1. Reservation limits
-+
-+The HugeTLB controller allows to limit the HugeTLB reservations per control
-+group and enforces the controller limit at reservation time. Reservation limits
-+are superior to Page fault limits (see section 2), since Reservation limits are
-+enforced at reservation time, and never causes the application to get SIGBUS
-+signal. Instead, if the application is violating its limits, then it gets an
-+error on reservation time, i.e. the mmap or shmget return an error.
-+
-+
-+2. Page fault limits
-+
-+The HugeTLB controller allows to limit the HugeTLB usage (page fault) per
-+control group and enforces the controller limit during page fault. Since HugeTLB
-+doesn't support page reclaim, enforcing the limit at page fault time implies
-+that, the application will get SIGBUS signal if it tries to access HugeTLB
-+pages beyond its limit. This requires the application to know beforehand how
-+much HugeTLB pages it would require for its use.
-+
-+
-+3. Caveats with shared memory
-+
-+a. Charging and uncharging:
-+
-+For shared hugetlb memory, both hugetlb reservation and usage (page faults) are
-+charged to the first task that causes the memory to be reserved or faulted,
-+and all subsequent uses of this reserved or faulted memory is done without
-+charging.
-+
-+Shared hugetlb memory is only uncharged when it is unreseved or deallocated.
-+This is usually when the hugetlbfs file is deleted, and not when the task that
-+caused the reservation or fault has exited.
-+
-+b. Interaction between reservation limit and fault limit.
-+
-+Generally, it's not recommended to set both of the reservation limit and fault
-+limit in a cgroup. For private memory, the fault usage cannot exceed the
-+reservation usage, so if you set both, one of those limits will be useless.
-+
-+For shared memory, a cgroup's fault usage may be greater than its reservation
-+usage, so some care needs to be taken. Consider this example:
-+
-+- Task A reserves 4 pages in a shared hugetlbfs file. Cgroup A will get
-+  4 reservations charged to it and no faults charged to it.
-+- Task B reserves and faults the same 4 pages as Task A. Cgroup B will get no
-+  reservation charge, but will get charged 4 faulted pages. If Cgroup B's limit
-+  is less than 4, then Task B will get a SIGBUS.
-+
-+For the above scenario, it's not recommended for the userspace to set both
-+reservation limits and fault limits, but it is still allowed to in case it sees
-+some use for it.
---
-2.23.0.162.g0b9fbb3734-goog
+The buggy address belongs to the object at ffff8880a859a040
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 24 bytes inside of
+  1024-byte region [ffff8880a859a040, ffff8880a859a440)
+The buggy address belongs to the page:
+page:ffffea0002a16680 refcount:1 mapcount:0 mapping:ffff8880aa400c40  
+index:0x0 compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea00024cc688 ffffea0002684d88 ffff8880aa400c40
+raw: 0000000000000000 ffff8880a859a040 0000000100000007 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8880a8599f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8880a8599f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8880a859a000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                                     ^
+  ffff8880a859a080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8880a859a100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
