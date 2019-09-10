@@ -2,100 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E439AEE92
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:35:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38E36AEE99
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:35:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393955AbfIJPe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 11:34:27 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:46493 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727457AbfIJPe0 (ORCPT
+        id S2393998AbfIJPek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 11:34:40 -0400
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:26636 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2393960AbfIJPej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 11:34:26 -0400
-Received: by mail-ed1-f65.google.com with SMTP id i8so17479835edn.13;
-        Tue, 10 Sep 2019 08:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b4wnBlpeFgpGxUVqzfbdvP1S+Q+RawN3p7bTgqnZia8=;
-        b=tzUouiroRdJjO/r28/634yrQ4C8pWz/+BOZ+mEtUOK3kpyHqIRhDkUnyEQ71dGDzZd
-         eV9r1PRFyP8IHgUbl9FqShjbwycRxAB0fwLv2qC7bme4DyOSOsM8HR2u8x2sI4UPumtG
-         c0OlWiSyl2uwiL7uTXcNcWtQwoZ4hvX3jgw3VhaUOJjf3FlZgjIN68zIQso9eaGkmtTP
-         /3GmXxjh0Fn7jkEanuaNrTfCjI+I3RqMMoKmq7qrrJjrlZg7YmxLdzpWZA4BjA4ivqxL
-         s83bDaQOuAHvVXsmXCo9hHqsCcSA1CafKyd4S0M5LZYrxfey+98rQGYF5KXA6PmW3vyX
-         foKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b4wnBlpeFgpGxUVqzfbdvP1S+Q+RawN3p7bTgqnZia8=;
-        b=FJtAhFnmwwmAHI9SNw9mu+kDf7juD7dKi2tHcfZKmx5NjDaZfahCaHs+3nOkh57cNP
-         YDxSnH3s9eJ8Z6XfiJmK0nO31yZ12G3d4Sf2VvpD23b031PW69529hPRVyorOA7jklrY
-         mxpOp3Oz61dEnUZrNuplQUfipL9zYln50tKM7XKJO+MLHpZo0MoFyxPyeZVN3fHZrUQf
-         EO7Zlz+Vt+vNvASeaKzTwlJXQXrJDHlE5Zh8v+8Fselh03R8EJ+Iukvg6+YSrevaezFB
-         qEqwIs5aAl5djZKtSaT0OJRmCCMcS1pVUPjAvaVSAS1O1HdjwG8wvAH2mMEH11ixVi3O
-         JhYg==
-X-Gm-Message-State: APjAAAXcGJJUn77kSh8Exx2ixkwXW266FzDKKurm5byxFKlykduivAtD
-        J6Xa9xfPXo63yikLCZ4fOoGSDFKsJ+lObUwu/KY=
-X-Google-Smtp-Source: APXvYqyyx6xWTkb16aLchOZtzOWws5iFVpGXm89mtst/lZo1kpZ1sLfKtvPombMjz1ZlKI1NrttKYsabF6z8hwrEYtQ=
-X-Received: by 2002:a17:906:a3d5:: with SMTP id ca21mr25922239ejb.258.1568129664829;
- Tue, 10 Sep 2019 08:34:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190906214409.26677-1-robdclark@gmail.com> <20190906214409.26677-2-robdclark@gmail.com>
- <20190910081415.GB3247@8bytes.org>
-In-Reply-To: <20190910081415.GB3247@8bytes.org>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Tue, 10 Sep 2019 08:34:13 -0700
-Message-ID: <CAF6AEGsFmuO5M_RWm-RjDT_F_1Z=MLYmNqRXqFNDR7aUoPaMdg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] iommu: add support for drivers that manage iommu explicitly
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Rob Clark <robdclark@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Tue, 10 Sep 2019 11:34:39 -0400
+Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8AFW19p001475;
+        Tue, 10 Sep 2019 15:34:16 GMT
+Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
+        by mx0a-002e3701.pphosted.com with ESMTP id 2uxc4t2b6q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Sep 2019 15:34:16 +0000
+Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
+        by g4t3425.houston.hpe.com (Postfix) with ESMTP id C8E7CAA;
+        Tue, 10 Sep 2019 15:34:15 +0000 (UTC)
+Received: from [16.116.129.27] (unknown [16.116.129.27])
+        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 8873D46;
+        Tue, 10 Sep 2019 15:34:14 +0000 (UTC)
+Subject: Re: [PATCH 0/8] x86/platform/UV: Update UV Hubless System Support
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Borislav Petkov <bp@alien8.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Hedi Berriche <hedi.berriche@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org
+References: <20190905130252.590161292@stormcage.eag.rdlabs.hpecorp.net>
+ <CANiq72nTKbNEKezoy_CqdFRuQ0SD2OsORV8u=i_1g=2atkCRiA@mail.gmail.com>
+From:   Mike Travis <mike.travis@hpe.com>
+Message-ID: <797654d8-562a-6492-79e1-65a292157d04@hpe.com>
+Date:   Tue, 10 Sep 2019 08:34:44 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+In-Reply-To: <CANiq72nTKbNEKezoy_CqdFRuQ0SD2OsORV8u=i_1g=2atkCRiA@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-10_11:2019-09-10,2019-09-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=883 spamscore=0 adultscore=0 priorityscore=1501 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
+ definitions=main-1909100147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 1:14 AM Joerg Roedel <joro@8bytes.org> wrote:
->
-> On Fri, Sep 06, 2019 at 02:44:01PM -0700, Rob Clark wrote:
-> > @@ -674,7 +674,7 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
-> >
-> >       mutex_lock(&group->mutex);
-> >       list_add_tail(&device->list, &group->devices);
-> > -     if (group->domain)
-> > +     if (group->domain && !(dev->driver && dev->driver->driver_manages_iommu))
->
-> Hmm, this code usually runs at enumeration time when no driver is
-> attached to the device. Actually it would be pretty dangerous when this
-> code runs while a driver is attached to the device. How does that change
-> make things work for you?
->
 
-I was seeing this get called via the path driver_probe_device() ->
-platform_dma_configure() -> of_dma_configure() -> of_iommu_configure()
--> iommu_probe_device() -> ...
 
-The only cases I was seeing where dev->driver is NULL where a few
-places that drivers call of_dma_configure() on their own sub-devices.
-But maybe there are some other paths that I did not notice?
+On 9/10/2019 5:07 AM, Miguel Ojeda wrote:
+> On Thu, Sep 5, 2019 at 3:50 PM Mike Travis <mike.travis@hpe.com> wrote:
+>>
+>> These patches support upcoming UV systems that do not have a UV HUB.
+> 
+> Please send patches as plain text without attachments. See:
+> 
+>    https://www.kernel.org/doc/html/latest/process/submitting-patches.html#no-mime-no-links-no-compression-no-attachments-just-plain-text
+> 
+> for details.
+> 
+> Cheers,
+> Miguel
+> 
 
-BR,
--R
+Hi,  I'm not conscientiously adding any attachments.  I think what is 
+happening is some email readers mistake the '---' to signify an 
+attachment follows.  I see the "staple" symbol on some indicating an 
+attachment, but not usually all of the email I send.  Thanks, Mike
