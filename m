@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 146DDAE9B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6BC3AE9BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388396AbfIJL4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 07:56:43 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36866 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733144AbfIJL4k (ORCPT
+        id S2392975AbfIJL4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 07:56:47 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35640 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388243AbfIJL4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:56:40 -0400
-Received: by mail-wr1-f68.google.com with SMTP id i1so19028452wro.4
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 04:56:38 -0700 (PDT)
+        Tue, 10 Sep 2019 07:56:44 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g7so19677259wrx.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 04:56:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=t15c8HaxO7PieQmaQJo6m5Fa3LC9U0plzJQkm4Wyt4U=;
-        b=fN37gePq6j/onKdsWODRjgRB0RSIEAzJkFNsmZsO7Rj/2Ydz5NSbjvpWNzIbAy9pA/
-         9oxN0X6e2Zy8DSUr+5l7voWWPCZHxmcHB9aPMViYyGqKV2xJO+fJXtKd2cTvIS+oWUAb
-         U/eQ9hzmSg0IgzNvMa+MSbiuuwdf05LgDQSFQ=
+        bh=Xx8OQzLGeYj3y8P8kHo1vFFB3UBFSHmtM6b5jQ7aUbc=;
+        b=L/JcmoL9YFbmK7b5Ew8OA1Fu7G6qYLk08zlfibWCYa5wLOBEtncRKjJHOAC/3GgUNH
+         tyH4p/RGx2W8u2s5Z5zmnBfGz80YsBhI+p+vULHEpkDHhJg+ymK5RN5K/0jBPlXyb2Yh
+         0Dwg1BkJ5ku6v9PobnKdYpGahlhHlgU675J58=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=t15c8HaxO7PieQmaQJo6m5Fa3LC9U0plzJQkm4Wyt4U=;
-        b=Qqya+uJOLFYkT4Mv3NBEjyP9kZGYa1dLcvLMNf1yuMlpQuA7P9yEeYsUfOO1eTtL5L
-         MMhcq06Y8SQclsw6Gx4RE3fkKK/d4stbJ0VY9E6U5Yu295woYxNiMCW7viVmE4JQxGbr
-         EQh9GyGck6Xe+8AYhYOdFIFPmbAZ8qHTiOKhTdjKbsfaTyOF7ZXqmZ4STH+YFI6XD4S5
-         2LmmwycMa8rp3p+O5NgJTwaanFAX7rUB4BJXMmGGeAaNgAmGMt6ZJ33xCeEEb0mMd25C
-         tZu6sNmYgVdrQedgB+HWXof1e50bbvcgnz7M0ONJBjK/uZLrnT7injBIMnNXGKQTavel
-         EPjg==
-X-Gm-Message-State: APjAAAVfHz46YgVra6Y8UI5uCP3rrL9X40vVNq7eUcjfupKw5Jzz0U4o
-        wNrFmaOIwhEkQc8WuzT/5kD7wlZEkDc=
-X-Google-Smtp-Source: APXvYqx5bCZdZM8ig5BWorMuJCs6R0fLGHDD6n+wdFQaD3/uF7xN9UX6qDjEC4Ak4zVX4HLaU+dLvQ==
-X-Received: by 2002:adf:dd04:: with SMTP id a4mr26091671wrm.340.1568116598261;
-        Tue, 10 Sep 2019 04:56:38 -0700 (PDT)
+        bh=Xx8OQzLGeYj3y8P8kHo1vFFB3UBFSHmtM6b5jQ7aUbc=;
+        b=i5GOl7L/F+P/8DklAlgKa0onddThKWDtgfhpA6yjo0UfhvwD5M0mTrM9ar1YwkCuwB
+         DiBk419NTnnzbwjSSy/0+6NcRF5aGhIrOYLQ0pCgFinyvY7qAVBOUEddZoIG/k5iVKRG
+         zQTMq8C4dktOzU5CxhPjU5k1aAK1g+Qu9/Z98rTko6mCZ43BxJxEUkEOMWic4WipR8t+
+         73xyx2LGzCjGzvZYwWUghFQ8T+XjwRR4FgEb8qbILE/w2iVT4NfZRow9bOmyMYxpNl+P
+         tX3TrhNJal5CTTgN1R9S4MLbJHgqUATx0Y6+d3R4G/LXacIE8eo47io5NBoLwKhFwZtF
+         yhLQ==
+X-Gm-Message-State: APjAAAUjxoP29ctGxl7HsVv6xglfT8kfvbksgR5cMYiIzLyra5372Fqg
+        wb9srFvqmIdbdlFbklqOBUk00fYuXJM=
+X-Google-Smtp-Source: APXvYqwNk6DvXrD4yaS/Fc0Y482stWXQP2rzXiEmcLEygo6h6UhjTxAsjVjo58V1vhNDVNYvKl8pLw==
+X-Received: by 2002:adf:e852:: with SMTP id d18mr24404287wrn.225.1568116600270;
+        Tue, 10 Sep 2019 04:56:40 -0700 (PDT)
 Received: from kpsingh-kernel.c.hoisthospitality.com (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id q19sm23732935wra.89.2019.09.10.04.56.36
+        by smtp.gmail.com with ESMTPSA id q19sm23732935wra.89.2019.09.10.04.56.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 04:56:37 -0700 (PDT)
+        Tue, 10 Sep 2019 04:56:39 -0700 (PDT)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -68,9 +68,9 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [RFC v1 09/14] krsi: Add a helper function for bpf_perf_event_output
-Date:   Tue, 10 Sep 2019 13:55:22 +0200
-Message-Id: <20190910115527.5235-10-kpsingh@chromium.org>
+Subject: [RFC v1 10/14] krsi: Handle attachment of the same program
+Date:   Tue, 10 Sep 2019 13:55:23 +0200
+Message-Id: <20190910115527.5235-11-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190910115527.5235-1-kpsingh@chromium.org>
 References: <20190910115527.5235-1-kpsingh@chromium.org>
@@ -83,86 +83,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: KP Singh <kpsingh@google.com>
 
-This helper is mapped to the existing operation
-BPF_FUNC_perf_event_output.
+Allow the userspace to attach a newer version of a program without
+having duplicates of the same program.
 
-An example usage of this function would be:
+If BPF_F_ALLOW_OVERRIDE is passed, the attachment logic compares the
+name of the new program to the names of existing attached programs. The
+names are only compared till a "__" (or '\0', if there is no "__"). If
+a successful match is found, the existing program is replaced with the
+newer attachment.
 
-#define BUF_SIZE 64;
+./krsi Attaches "env_dumper__v1" followed by "env_dumper__v2"
+to the process_execution hook of the KRSI LSM.
 
-struct bpf_map_def SEC("maps") perf_map = {
-        .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
-        .key_size = sizeof(int),
-        .value_size = sizeof(u32),
-        .max_entries = MAX_CPUS,
-};
+./krsi
+./krsi
 
-SEC("krsi")
-int bpf_prog1(void *ctx)
-{
-	char buf[BUF_SIZE];
-	int len;
-	u64 flags = BPF_F_CURRENT_CPU;
+Before:
 
-	/* some logic that fills up buf with len data*/
-	len = fill_up_buf(buf);
-	if (len < 0)
-		return len;
-	if (len > BU)
-		return 0;
+  cat /sys/kernel/security/krsi/process_execution
+  env_dumper__v1
+  env_dumper__v2
 
-	bpf_perf_event_output(ctx, &perf_map, flags, buf len);
-	return 0;
-}
+After:
 
-A sample program that showcases the use of bpf_perf_event_output is
-added later.
+  cat /sys/kernel/security/krsi/process_execution
+  env_dumper__v2
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 ---
- security/krsi/ops.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ security/krsi/ops.c | 53 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 1 deletion(-)
 
 diff --git a/security/krsi/ops.c b/security/krsi/ops.c
-index a61508b7018f..57bd304a03f4 100644
+index 57bd304a03f4..1f4df920139c 100644
 --- a/security/krsi/ops.c
 +++ b/security/krsi/ops.c
-@@ -111,6 +111,26 @@ static bool krsi_prog_is_valid_access(int off, int size,
- 	return false;
+@@ -65,11 +65,52 @@ static struct krsi_hook *get_hook_from_fd(int fd)
+ 	return ERR_PTR(ret);
  }
  
-+BPF_CALL_5(krsi_event_output, void *, log,
-+	   struct bpf_map *, map, u64, flags, void *, data, u64, size)
++/*
++ * match_prog_name matches the name of the program till "__"
++ * or the end of the string is encountered. This allows
++ * a different version of the same program to be loaded.
++ *
++ * For example:
++ *
++ *	env_dumper__v1 is matched with env_dumper__v2
++ *
++ */
++static bool match_prog_name(char *a, char *b)
 +{
-+	if (unlikely(flags & ~(BPF_F_INDEX_MASK)))
-+		return -EINVAL;
++	int m, n;
++	char *end;
 +
-+	return bpf_event_output(map, flags, data, size, NULL, 0, NULL);
++	end = strstr(a, "__");
++	n = end ? end - a : strlen(a);
++
++	end = strstr(b, "__");
++	m = end ? end - b : strlen(b);
++
++	if (m != n)
++		return false;
++
++	return strncmp(a, b, n) == 0;
 +}
 +
-+static const struct bpf_func_proto krsi_event_output_proto =  {
-+	.func		= krsi_event_output,
-+	.gpl_only       = true,
-+	.ret_type       = RET_INTEGER,
-+	.arg1_type      = ARG_PTR_TO_CTX,
-+	.arg2_type      = ARG_CONST_MAP_PTR,
-+	.arg3_type      = ARG_ANYTHING,
-+	.arg4_type      = ARG_PTR_TO_MEM,
-+	.arg5_type      = ARG_CONST_SIZE_OR_ZERO,
-+};
++static struct bpf_prog *find_attached_prog(struct bpf_prog_array *array,
++					   struct bpf_prog *prog)
++{
++	struct bpf_prog_array_item *item = array->items;
 +
- static const struct bpf_func_proto *krsi_prog_func_proto(enum bpf_func_id
- 							 func_id,
- 							 const struct bpf_prog
-@@ -121,6 +141,8 @@ static const struct bpf_func_proto *krsi_prog_func_proto(enum bpf_func_id
- 		return &bpf_map_lookup_elem_proto;
- 	case BPF_FUNC_get_current_pid_tgid:
- 		return &bpf_get_current_pid_tgid_proto;
-+	case BPF_FUNC_perf_event_output:
-+		return &krsi_event_output_proto;
- 	default:
- 		return NULL;
- 	}
++	for (; item->prog; item++) {
++		if (match_prog_name(item->prog->aux->name, prog->aux->name))
++			return item->prog;
++	}
++
++	return NULL;
++}
++
+ int krsi_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog)
+ {
+ 	struct bpf_prog_array *old_array;
+ 	struct bpf_prog_array *new_array;
+ 	struct krsi_hook *h;
++	struct bpf_prog *old_prog;
+ 	int ret = 0;
+ 
+ 	h = get_hook_from_fd(attr->target_fd);
+@@ -79,8 +120,18 @@ int krsi_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog)
+ 	mutex_lock(&h->mutex);
+ 	old_array = rcu_dereference_protected(h->progs,
+ 					      lockdep_is_held(&h->mutex));
++	/*
++	 * Check if a matching program with already exists and replace
++	 * the existing program will be overridden if BPF_F_ALLOW_OVERRIDE
++	 * is specified in the attach flags.
++	 */
++	old_prog = find_attached_prog(old_array, prog);
++	if (old_prog && !(attr->attach_flags & BPF_F_ALLOW_OVERRIDE)) {
++		ret = -EEXIST;
++		goto unlock;
++	}
+ 
+-	ret = bpf_prog_array_copy(old_array, NULL, prog, &new_array);
++	ret = bpf_prog_array_copy(old_array, old_prog, prog, &new_array);
+ 	if (ret < 0) {
+ 		ret = -ENOMEM;
+ 		goto unlock;
 -- 
 2.20.1
 
