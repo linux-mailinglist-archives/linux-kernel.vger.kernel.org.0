@@ -2,259 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9DAFAE5D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 10:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D848AE602
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 10:48:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733183AbfIJIoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 04:44:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46560 "EHLO mail.kernel.org"
+        id S2393634AbfIJIsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 04:48:03 -0400
+Received: from mga14.intel.com ([192.55.52.115]:8059 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbfIJIoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 04:44:04 -0400
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87FFC20872;
-        Tue, 10 Sep 2019 08:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568105042;
-        bh=n2FnhZvZY86zGRCH5evX7+DlwR5AirNLeqrX264yekM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tCo1Kq8SFbvD4DYtaThEjzPnJ8wMI1qw6EzeYppN+oebsEi1BVcA7WO5hJoIkPZ4M
-         15Ua51GgYfkUlB2GFraSGek9uGRDMdBD4zEWOFoUTC6WUivURgmZHtN7m3QVItkC9C
-         zxa2WuJkfTRc78Gbpek2RsCOfrlaW7sXlCQRfq0c=
-Received: by mail-lf1-f48.google.com with SMTP id q27so12753764lfo.10;
-        Tue, 10 Sep 2019 01:44:02 -0700 (PDT)
-X-Gm-Message-State: APjAAAXzE99L3aYSniq0OA8PoILJ/59ABgN/Grqeb/hjiFA90iEVKqvF
-        HvW2+FPOf4CmKXkSF9UzAx96ApujOwXrfhJCO98=
-X-Google-Smtp-Source: APXvYqyXRx393/LoDIHBKgAXm7I9lWbgJlOjw6C1wPm1MmUEsJ2qFw1Q5BapRrLrck9Q02orzG3OjXJU3ctiAn/YZg0=
-X-Received: by 2002:a19:770a:: with SMTP id s10mr1997656lfc.30.1568105040685;
- Tue, 10 Sep 2019 01:44:00 -0700 (PDT)
+        id S1726819AbfIJIrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 04:47:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 01:47:09 -0700
+X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
+   d="scan'208";a="185446491"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 01:47:07 -0700
+Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
+        by paasikivi.fi.intel.com (Postfix) with ESMTP id 8A5F820365;
+        Tue, 10 Sep 2019 11:47:05 +0300 (EEST)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@linux.intel.com>)
+        id 1i7bnn-0004nL-5B; Tue, 10 Sep 2019 11:47:07 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        rafael@kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Joe Perches <joe@perches.com>
+Subject: [PATCH v6 00/12] Device property improvements, add %pfw format specifier
+Date:   Tue, 10 Sep 2019 11:46:55 +0300
+Message-Id: <20190910084707.18380-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190909183436.9045-1-krzk@kernel.org> <CAL_JsqJpZ-64Y7p1w5ctMwbjdftQPLjeh3XRHkBeS6tfYY0a+A@mail.gmail.com>
-In-Reply-To: <CAL_JsqJpZ-64Y7p1w5ctMwbjdftQPLjeh3XRHkBeS6tfYY0a+A@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 10 Sep 2019 10:43:49 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPf2b5QsNWq_7D0tyXuEcp93F_CsxEkAze_oV8Z07oNJXA@mail.gmail.com>
-Message-ID: <CAJKOXPf2b5QsNWq_7D0tyXuEcp93F_CsxEkAze_oV8Z07oNJXA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] dt-bindings: pwm: Convert PWM bindings to json-schema
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Sep 2019 at 10:33, Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Mon, Sep 9, 2019 at 7:35 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > Convert generic PWM bindings to DT schema format using json-schema.  The
-> > consumer bindings are split to separate file.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  .../devicetree/bindings/clock/pwm-clock.txt   |  2 +-
-> >  .../bindings/display/bridge/ti,sn65dsi86.txt  |  2 +-
-> >  .../devicetree/bindings/display/ssd1307fb.txt |  2 +-
-> >  .../bindings/leds/backlight/pwm-backlight.txt |  2 +-
-> >  .../devicetree/bindings/leds/leds-pwm.txt     |  2 +-
-> >  .../devicetree/bindings/mfd/max77693.txt      |  2 +-
-> >  .../bindings/pwm/atmel-hlcdc-pwm.txt          |  2 +-
-> >  .../devicetree/bindings/pwm/atmel-pwm.txt     |  2 +-
-> >  .../devicetree/bindings/pwm/atmel-tcb-pwm.txt |  2 +-
-> >  .../bindings/pwm/brcm,bcm7038-pwm.txt         |  2 +-
-> >  .../bindings/pwm/brcm,iproc-pwm.txt           |  2 +-
-> >  .../devicetree/bindings/pwm/brcm,kona-pwm.txt |  2 +-
-> >  .../devicetree/bindings/pwm/img-pwm.txt       |  2 +-
-> >  .../devicetree/bindings/pwm/imx-pwm.txt       |  2 +-
-> >  .../devicetree/bindings/pwm/imx-tpm-pwm.txt   |  2 +-
-> >  .../bindings/pwm/lpc1850-sct-pwm.txt          |  2 +-
-> >  .../devicetree/bindings/pwm/mxs-pwm.txt       |  2 +-
-> >  .../bindings/pwm/nvidia,tegra20-pwm.txt       |  2 +-
-> >  .../bindings/pwm/nxp,pca9685-pwm.txt          |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-bcm2835.txt   |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-berlin.txt    |  2 +-
-> >  .../bindings/pwm/pwm-consumers.yaml           | 76 +++++++++++++++++++
-> >  .../devicetree/bindings/pwm/pwm-fsl-ftm.txt   |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-hibvt.txt     |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-lp3943.txt    |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-mediatek.txt  |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-meson.txt     |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-mtk-disp.txt  |  2 +-
-> >  .../bindings/pwm/pwm-omap-dmtimer.txt         |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-rockchip.txt  |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-sifive.txt    |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-stm32-lp.txt  |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-stm32.txt     |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-tiecap.txt    |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-tiehrpwm.txt  |  2 +-
-> >  .../devicetree/bindings/pwm/pwm-zx.txt        |  2 +-
-> >  Documentation/devicetree/bindings/pwm/pwm.txt | 69 -----------------
-> >  .../devicetree/bindings/pwm/pwm.yaml          | 30 ++++++++
-> >  .../bindings/pwm/renesas,pwm-rcar.txt         |  2 +-
-> >  .../bindings/pwm/renesas,tpu-pwm.txt          |  4 +-
-> >  .../devicetree/bindings/pwm/spear-pwm.txt     |  2 +-
-> >  .../devicetree/bindings/pwm/st,stmpe-pwm.txt  |  2 +-
-> >  .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  2 +-
-> >  .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  2 +-
-> >  .../devicetree/bindings/pwm/vt8500-pwm.txt    |  2 +-
-> >  .../bindings/regulator/pwm-regulator.txt      |  2 +-
-> >  .../devicetree/bindings/timer/ingenic,tcu.txt |  2 +-
->
-> We've been leaving the .txt file with a reference to the schema file
-> to avoid doing all the updates. But as you've done it already, that's
-> good.
->
-> >  47 files changed, 151 insertions(+), 114 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-consumers.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm.txt
-> >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm.yaml
->
-> [...]
->
-> > diff --git a/Documentation/devicetree/bindings/pwm/pwm-consumers.yaml b/Documentation/devicetree/bindings/pwm/pwm-consumers.yaml
-> > new file mode 100644
-> > index 000000000000..39c844fe6338
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pwm/pwm-consumers.yaml
->
-> We already have a PWM consumer schema in dt-schema repository. It
-> doesn't have the descriptions because we need permission to relicense.
-> My aim is to have all common schema in the dt-schema repo, but we have
-> a mixture because of needing to relicense.
+Hi all,
 
-I forgot to check it. In such case the pwm-consumers here do not offer
-much more, except some description and examples. I guess it can be
-just dropped then?
+This set adds functionality into the device property API (counting a
+node's parents as well as obtaining its name) in order to support printing
+fwnode names using a new conversion specifier "%pfw". The names that are
+produced are equivalent to its OF counterpart "%pOF" on OF systems for the
+two supported modifiers ("f" and "P").
 
-> > @@ -0,0 +1,76 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pwm/pwm-consumers.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Specifying PWM information for devices
-> > +
-> > +maintainers:
-> > +  - Thierry Reding <thierry.reding@gmail.com>
-> > +
-> > +description: |
-> > +  PWM properties should be named "pwms". The exact meaning of each pwms
-> > +  property must be documented in the device tree binding for each device.
-> > +  An optional property "pwm-names" may contain a list of strings to label
-> > +  each of the PWM devices listed in the "pwms" property. If no "pwm-names"
-> > +  property is given, the name of the user node will be used as fallback.
-> > +
-> > +  Drivers for devices that use more than a single PWM device can use the
-> > +  "pwm-names" property to map the name of the PWM device requested by the
-> > +  pwm_get() call to an index into the list given by the "pwms" property.
-> > +
-> > +properties:
-> > +  pwms:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +    description: |
-> > +      Phandle to PWM controller node and pwm-specifier (controller specific).
-> > +      pwm-specifier typically encodes the chip-relative PWM number and the PWM
-> > +      period in nanoseconds.
-> > +      Optionally, the pwm-specifier can encode a number of flags (defined in
-> > +      <dt-bindings/pwm/pwm.h>) in a third cell:
-> > +        - PWM_POLARITY_INVERTED: invert the PWM signal polarity
-> > +
-> > +  pwm-names:
-> > +    $ref: /schemas/types.yaml#/definitions/string-array
-> > +    description:
-> > +      A list of strings to label each of the PWM devices listed in the "pwms"
-> > +      property. If no "pwm-names" property is given, the name of the user node
-> > +      will be used as fallback.
-> > +
-> > +required:
-> > +  - pwms
->
-> Doing this means every consumer has to include this file where as I do
-> 'select: true' some every occurrence of these properties is checked.
-> We're generally only including other schema on the provider side.
->
-> > +
-> > +dependencies:
-> > +  pwm-names: [ pwms ]
-> > +
-> > +examples:
-> > +  - |
-> > +    // The following example could be used to describe a PWM-based
-> > +    // backlight device:
-> > +
-> > +    pwm: pwm {
-> > +      #pwm-cells = <2>;
-> > +    };
-> > +
-> > +    bl: backlight {
-> > +      pwms = <&pwm 0 5000000>;
-> > +      pwm-names = "backlight";
-> > +    };
-> > +
-> > +    // Note that in the example above, specifying the "pwm-names" is redundant
-> > +    // because the name "backlight" would be used as fallback anyway.
-> > +
-> > +  - |
-> > +    // Example with optional PWM specifier for inverse polarity
-> > +
-> > +    #include <dt-bindings/pwm/pwm.h>
-> > +
-> > +    pwm2: pwm {
-> > +      #pwm-cells = <3>;
-> > +    };
-> > +
-> > +    backlight {
-> > +      pwms = <&pwm2 0 5000000 PWM_POLARITY_INVERTED>;
-> > +      pwm-names = "backlight";
-> > +    };
->
-> > diff --git a/Documentation/devicetree/bindings/pwm/pwm.yaml b/Documentation/devicetree/bindings/pwm/pwm.yaml
-> > new file mode 100644
-> > index 000000000000..5d8029f11ccc
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pwm/pwm.yaml
-> > @@ -0,0 +1,30 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pwm/pwm.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: PWM controllers (providers)
-> > +
-> > +maintainers:
-> > +  - Thierry Reding <thierry.reding@gmail.com>
-> > +
-> > +properties:
-> > +  $nodename:
-> > +    pattern: "^pwm(@.*)?$"
->
-> Copy the pattern for spi. We allow for 'pwm-[0-9]' for cases like GPIO PWMs.
+Printing a node's name is something that's been available on OF for a long
+time and if something is converted to device property API (such as the
+V4L2 fwnode framework) it always got removed of a nice feature that was
+sometimes essential in debugging. With this set, that no longer is the
+case.
 
-Sure
+Note: the set now depends on 2d44d165e939 ("scsi: lpfc: Convert existing
+%pf users to %ps") that is expected from the linux-scsi tree.
 
->
-> > +
-> > +  "#pwm-cells":
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
->
-> You don't actually need to define the type as we already have for '#.*-cells'
+since v5:
 
-OK.
+- Added a patch to convert %pf to %ps in tools/lib/traceevent.c (first in
+  the set).
 
-Best regards,
-Krzysztof
+- Fix ReST syntax in Documentation/core-api/printk-formats.rst.
+
+- Fix returning root swnode name in patch "device property: Add
+  fwnode_get_name for returning the name of a node". Use to_swnode()
+  directly as well in the same patch.
+
+- Tests: take root node name into account, use direct indices and remove
+  the comma from the guardian entry.
+
+- Add a comment on how fwnode_full_name_string() enumerates the nodes.
+
+- Fix error string in fwnode_string().
+
+- Move 'f' + default case as last in the switch in fwnode_string().
+
+- Fix %pfw validation in checkpatch.pl.
+
+since v4:
+
+- Improved documentation for fwnode_get_nth_parent().
+
+- Removed comma from the guardian entry in fwnode_pointer() testcase.
+
+since v3:
+
+- Remove underscores in argument name of fwnode_count_parents().
+
+- Re-introduce "%pO?" error string.
+
+- Unwrap a call to string() in fwnode_string().
+
+- Removed a useless Depends-on: on a patch that was merged long ago.
+
+- Unwrap a Fixes: line.
+
+- Added a patch to move fwnode_get_parent() up to make the review of the
+  following patch easier.
+
+since v2:
+
+- Better comments in acpi_fwnode_get_name_prefix().
+
+- Added swnode implementation.
+
+- Fixed swnode refcounting in get_parent() ("swnode: Get reference to
+  parent swnode in get_parent op")
+
+- Make argument to to_software_node() const (a new patch)
+
+- Factored out confusingly named kobject_string() that had a single
+  caller.
+
+- Cleaner fwnode_count_parents() implementation (as discussed in review).
+
+- Made fwnode_count_parents() argument const.
+
+- Added tests (last patch in the set).
+
+since v1:
+
+- Add patch to remove support for %pf and %pF (depends on another patch
+  removing all use of %pf and %pF) (now 4th patch)
+
+- Fix kerneldoc argument documentation for fwnode_get_name (2nd patch)
+
+- Align kerneldoc style with the rest of drivers/base/property.c (no extra
+  newline after function name)
+
+- Make checkpatch.pl complain about "%pf" not followed by "w" (6th patch)
+
+- WARN_ONCE() on use of invalid conversion specifiers ("%pf" not followed
+  by "w")
+
+Sakari Ailus (12):
+  tools lib traceevent: Convert remaining %p[fF] users to %p[sS]
+  software node: Get reference to parent swnode in get_parent op
+  software node: Make argument to to_software_node const
+  device property: Move fwnode_get_parent() up
+  device property: Add functions for accessing node's parents
+  device property: Add fwnode_get_name for returning the name of a node
+  device property: Add a function to obtain a node's prefix
+  lib/vsprintf: Remove support for %pF and %pf in favour of %pS and %ps
+  lib/vsprintf: Make use of fwnode API to obtain node names and
+    separators
+  lib/vsprintf: OF nodes are first and foremost, struct device_nodes
+  lib/vsprintf: Add %pfw conversion specifier for printing fwnode names
+  lib/test_printf: Add tests for %pfw printk modifier
+
+ Documentation/core-api/printk-formats.rst     | 34 ++++---
+ drivers/acpi/property.c                       | 48 ++++++++++
+ drivers/base/property.c                       | 83 +++++++++++++++--
+ drivers/base/swnode.c                         | 43 ++++++++-
+ drivers/of/property.c                         | 16 ++++
+ include/linux/fwnode.h                        |  4 +
+ include/linux/property.h                      |  8 +-
+ lib/test_printf.c                             | 32 +++++++
+ lib/vsprintf.c                                | 89 +++++++++++--------
+ scripts/checkpatch.pl                         |  8 +-
+ .../Documentation/libtraceevent-func_apis.txt | 10 +--
+ tools/lib/traceevent/event-parse.c            |  7 +-
+ 12 files changed, 314 insertions(+), 68 deletions(-)
+
+-- 
+2.20.1
+
