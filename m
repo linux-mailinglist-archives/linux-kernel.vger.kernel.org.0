@@ -2,87 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CE0AF2D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 00:14:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE38AF2E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 00:21:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbfIJWOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 18:14:49 -0400
-Received: from mga04.intel.com ([192.55.52.120]:57998 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725856AbfIJWOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 18:14:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 15:14:48 -0700
-X-IronPort-AV: E=Sophos;i="5.64,490,1559545200"; 
-   d="scan'208";a="178822353"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 15:14:48 -0700
-Message-ID: <ac75ce0302faa234860a49cc965a6d342b3ca685.camel@linux.intel.com>
-Subject: Re: [PATCH v9 1/8] mm: Add per-cpu logic to page shuffling
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        mst@redhat.com, catalin.marinas@arm.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, osalvador@suse.de,
-        yang.zhang.wz@gmail.com, pagupta@redhat.com,
-        konrad.wilk@oracle.com, nitesh@redhat.com, riel@surriel.com,
-        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
-        ying.huang@intel.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, fengguang.wu@intel.com,
-        kirill.shutemov@linux.intel.com
-Date:   Tue, 10 Sep 2019 15:14:47 -0700
-In-Reply-To: <20190910121130.GU2063@dhcp22.suse.cz>
-References: <20190907172225.10910.34302.stgit@localhost.localdomain>
-         <20190907172512.10910.74435.stgit@localhost.localdomain>
-         <0df2e5d0-af92-04b4-aa7d-891387874039@redhat.com>
-         <0ca58fea280b51b83e7b42e2087128789bc9448d.camel@linux.intel.com>
-         <20190910121130.GU2063@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726351AbfIJWVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 18:21:36 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38990 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfIJWVg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 18:21:36 -0400
+Received: by mail-io1-f66.google.com with SMTP id d25so41337689iob.6;
+        Tue, 10 Sep 2019 15:21:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=zNmBqBiKCk6tuEuyxER70RAEgALJreQQf3E9yiwzkPY=;
+        b=r99ohcwKO6on8GYUYhTUw3dsqLewE0ODeVEZotLOrqQA43sN7r9DokEoVlVL1HCflz
+         ZrIQGgVoQcHuQjS3o+DIz8ULnED9bDJELls0lDm+ApttHrAtHexW5gXonlKkxaTu18rz
+         SLQF7oTk9o9ikcFExf8wrtkOUbv//fzps+EprldpFg1fbUuhCjsNR0nfeORSB5iWpXxf
+         XVCtKWJwvHzdq2H2hkAwLtN+ymRgQqjyl7kVFf6lD0cnbgvRyhxgwAQR00kMjF3PCw1A
+         TYrtAiW1IrrYvOX3/4drPB6XRbAQdn9rV4a4zDeYJIJa9RXQFBmOwQTCNLG5vEQa4SlE
+         9c1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zNmBqBiKCk6tuEuyxER70RAEgALJreQQf3E9yiwzkPY=;
+        b=qRX7svBTsuJ1SFd4FGKV2qTxfBQRYAsbR64quTcgDDiCL8Xu4ApnIOmgjFV/SgDVox
+         LBCrEc+t2Iyb2K5yrAHSawTyG8d8c70S79t1eZpheUaYknn1J3FjObbzAGhdYPRwaj8c
+         xx6xCzdwmqAAOttEyFMDyIVhgHtuGjpBU2F3huPgbferXy1cCdrUnSSFGfY3hsVUd5Yq
+         A2VFIhh5NAvlEuXnm+mS42v1somCwJqGnKKm4WS/FtVV/DtraY4/H0AUR5CWfZypS0th
+         WM8soELSbzhkq7ZVWpLCWw1+EQ6GJtX+nxwbiSxDAe0FBjgrXAwrcRtxBCPblsLxcPuh
+         xhtg==
+X-Gm-Message-State: APjAAAV+lgsMHXpok2X1WSfWv2Kk2pyoG2bVbwM2pfhVRCK8creOqvLm
+        oaZoMI5cPL9TRJL0wmICHtU=
+X-Google-Smtp-Source: APXvYqzGodRMVSnOXMqK629VGLR8xwRkydp5Rwp2qc2P+lInChSSTK3xgA3CoFbTTSOw3XXP+BnoSQ==
+X-Received: by 2002:a02:7113:: with SMTP id n19mr33640058jac.82.1568154095088;
+        Tue, 10 Sep 2019 15:21:35 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id u6sm14814127iop.18.2019.09.10.15.21.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2019 15:21:34 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] RDMA: fix goto target to release the allocated memory
+Date:   Tue, 10 Sep 2019 17:21:19 -0500
+Message-Id: <20190910222120.16517-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-10 at 14:11 +0200, Michal Hocko wrote:
-> On Mon 09-09-19 08:11:36, Alexander Duyck wrote:
-> > On Mon, 2019-09-09 at 10:14 +0200, David Hildenbrand wrote:
-> > > On 07.09.19 19:25, Alexander Duyck wrote:
-> > > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > 
-> > > > Change the logic used to generate randomness in the suffle path so that we
-> > > > can avoid cache line bouncing. The previous logic was sharing the offset
-> > > > and entropy word between all CPUs. As such this can result in cache line
-> > > > bouncing and will ultimately hurt performance when enabled.
-> > > 
-> > > So, usually we perform such changes if there is real evidence. Do you
-> > > have any such performance numbers to back your claims?
-> > 
-> > I'll have to go rerun the test to get the exact numbers. The reason this
-> > came up is that my original test was spanning NUMA nodes and that made
-> > this more expensive as a result since the memory was both not local to the
-> > CPU and was being updated by multiple sockets.
-> 
-> What was the pattern of page freeing in your testing? I am wondering
-> because order 0 pages should be prevailing and those usually go via pcp
-> lists so they do not get shuffled unless the batch is full IIRC.
+In bnxt_re_create_srq, when ib_copy_to_udata fails allocated memory
+should be released by goto fail.
 
-So I am pretty sure my previous data was faulty. One side effect of the
-page reporting is that it was evicting pages out of the guest and when the
-pages were faulted back in they were coming from local page pools. This
-was throwing off my early numbers and making tests look better than they
-should have for the reported case.
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I had this patch previously merged with another one so I wasn't testing it
-on its own, it was instead a part of a bigger set. Now that I have tried
-testing it on its own I can see that it has no significant impact on
-performance. With that being the case I will probably just drop it.
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index 098ab883733e..4a91ffe2c676 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -1398,7 +1398,7 @@ int bnxt_re_create_srq(struct ib_srq *ib_srq,
+ 			dev_err(rdev_to_dev(rdev), "SRQ copy to udata failed!");
+ 			bnxt_qplib_destroy_srq(&rdev->qplib_res,
+ 					       &srq->qplib_srq);
+-			goto exit;
++			goto fail;
+ 		}
+ 	}
+ 	if (nq)
+-- 
+2.17.1
 
