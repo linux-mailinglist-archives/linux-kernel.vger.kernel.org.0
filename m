@@ -2,113 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B5A0AE97C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 442D0AE971
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:50:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731874AbfIJLu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 07:50:27 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40549 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725981AbfIJLu0 (ORCPT
+        id S1731673AbfIJLuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 07:50:13 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:59530 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbfIJLuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:50:26 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w13so19576782wru.7;
-        Tue, 10 Sep 2019 04:50:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Mp/+xh4B3lpSZPmUYL9dk1fTpKxVKAigwQspDwbteG4=;
-        b=sa7HyIV0cMMHhgL1oWqjGwgDx6yJ6vvqgaCRI6+aVF6/EOgson57KX5taONf0xwhZc
-         1tj9JmDKUINzY4o7P0ZhBW9gvdwuWFZoa5FraxRlX46Y3xbGIUiXtBz8bmJl3e4YVsN2
-         KaLQXi4gy1N2kMStAOhOee9ajNjA2xn2QelLNQ3G76kGH/XIyjvf8QFDakFhQ3a8oViO
-         foT1pNIPDEE+6AtOWPfcLkTx06a67K0AzOG6LqpRXIbptk9eHupVpHni78cO9Y6Ff31d
-         RpmzI6X7ksKaQUorQnu+Fatg5ziWPviVAjqiYPCCzHsoX1xJ0TIF0P1Qa3NhxDdHIn9T
-         tZhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Mp/+xh4B3lpSZPmUYL9dk1fTpKxVKAigwQspDwbteG4=;
-        b=Wj8eCn9JVviq4SVCNXkfUoET2CikTJTfUnFc+fGTn/RKwRv3DBSemGYFMZ6whYnP5Q
-         1OiLzNS3rlREOAKzaTOsFmsnOHOxYzyXj4mnKD6+PCfB5+8N3i13ICe999ZgtgWopfhW
-         cXExPnnCDe4SxbNfSLUR3R5A4Lc9oZY8NBjjhBvpM4I/g/yijCIn4lvl2I03HiEK01UE
-         FYJGMiAuGNsr6ldWPY3Bf05gfzeVmXqI861ueMroN3RnZgeK1Eg6cRJQiHIfnY4i1qQ5
-         t9+TlQk9LwxeRuCBEid7iYWt5N6Hi54bUPvuXT9GroLbK/WRdbqhgYFrNMPgBxmvo0Dj
-         IggQ==
-X-Gm-Message-State: APjAAAVJYX2/inNIOoiRF87kAwTzysDXflpTXk/c9KwaUgyX6A/meVCS
-        1dPB8dTbxTLWS7wYGv8voUzK7rhqSTKhblb+CM0=
-X-Google-Smtp-Source: APXvYqy/r75bH4ygY8YmMgMk2X4bmFVs4CUIe5R1fGiV9fEib8ljRft33b37v8rwJrOA1FWZgNDjwW6HapTyAN886xw=
-X-Received: by 2002:a05:6000:142:: with SMTP id r2mr2208566wrx.212.1568116224155;
- Tue, 10 Sep 2019 04:50:24 -0700 (PDT)
+        Tue, 10 Sep 2019 07:50:12 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8ABo9EP050408;
+        Tue, 10 Sep 2019 06:50:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568116209;
+        bh=JcH26n/D7DAN+euHsWczUuhZTWYKCDEdx+p+sNANUYU=;
+        h=From:To:CC:Subject:Date;
+        b=RjPBdJugaAKGMYFepjUPRbGHeFB/245pfBHjOaKDeWdDXyNd45dx9mKVtKgWn5CNR
+         +1XJ6ozLmioURFZxlZ3m+CFhHqzKs6bHQ/nztXmEBkGpK3JJXVVG3dea3itYxeJ3Z/
+         7vq0ggSVnncuaqdaQ6G+WteZihk5AnnKZFnyABgs=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8ABo9cO092200
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Sep 2019 06:50:09 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 10
+ Sep 2019 06:50:07 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 10 Sep 2019 06:50:07 -0500
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8ABo5cF028909;
+        Tue, 10 Sep 2019 06:50:06 -0500
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <vkoul@kernel.org>, <robh+dt@kernel.org>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dan.j.williams@intel.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH 0/3] dmaengine: Support for DMA domain controllers
+Date:   Tue, 10 Sep 2019 14:50:34 +0300
+Message-ID: <20190910115037.23539-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
- <20190906172044.B99FB20838@mail.kernel.org> <CAA+hA=To9B0H1z6Hh1eSZN9_rcextT_Oe-CTMmz9fC9CDNUBTQ@mail.gmail.com>
- <DB3PR0402MB3916906683B58843B459ABE1F5B60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-In-Reply-To: <DB3PR0402MB3916906683B58843B459ABE1F5B60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Tue, 10 Sep 2019 14:50:12 +0300
-Message-ID: <CAEnQRZCAWa61dj+0=iTBQOrntZ-8mk=YB_jtRV4LAEGTfwZuHQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Dong Aisheng <dongas86@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 1:40 PM Anson Huang <anson.huang@nxp.com> wrote:
->
->
->
-> > On Sat, Sep 7, 2019 at 9:47 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Peng Fan (2019-08-27 01:17:50)
-> > > > From: Peng Fan <peng.fan@nxp.com>
-> > > >
-> > > > There is hardware issue that:
-> > > > The output clock the LPCG cell will not turn back on as expected,
-> > > > even though a read of the IPG registers in the LPCG indicates that
-> > > > the clock should be enabled.
-> > > >
-> > > > The software workaround is to write twice to enable the LPCG clock
-> > > > output.
-> > > >
-> > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > Does this need a Fixes tag?
-> >
-> > Not sure as it's not code logic issue but a hardware bug.
-> > And 4.19 LTS still have not this driver support.
->
-> Looks like there is an errata for this issue, and Ranjani just sent a patch for review internally,
->
-> Back-to-back LPCG writes can be ignored by the LPCG register due to a
-> HW bug. The writes need to be separated by atleast 4 cycles of the gated clock.
-> The workaround is implemented as follows:
-> 1. For clocks running greater than 50MHz no delay is required as the
-> delay in accessing the LPCG register is sufficient.
-> 2. For clocks running greater than 23MHz, a read followed by the write
-> will provide the sufficient delay.
-> 3. For clocks running below 23MHz, LPCG is not used.
+Hi,
 
-Lets add this information in the commit message and also
-enhance the comment before the double write.
+Changes since RFC:
+- Extended the binding document's example
+- Changed the API to dma_request_chan_by_domain(dev, mask)
+ - Fixed certain crash if the dev parameter would be NULL
+- Add missing parenthesis in of_dma.c
+- typo fix.
 
-Also, why can't we add a udelay after the first write and remove
-the second write as having two writes for writing a value looks
-very un-natural.
+More and more SoC have more than one DMA controller integrated.
+
+If a device needs none slave DMA channel for operation (block copy from/to
+memory mapped regions for example) at the moment when they request a channel it
+is going to be taken from the first DMA controller which was registered, but
+this might be not optimal for the device.
+
+For example on AM654 we have two DMAs: main_udmap and mcu_udmap.
+DDR to DDR memcpy is twice as fast on main_udmap compared to mcu_udmap, while
+devices on MCU domain (OSPI for example) are more than twice as fast on
+mcu_udmap than with main_udmap.
+
+Because of probing order (mcu_udmap is probing first) modules would use
+mcu_udmap instead of the better main_udmap. Currently the only solution is to
+make a choice and disable the MEM_TO_MEM functionality on one of them which is
+not a great solution.
+
+With the introduction of DMA domain controllers we can utilize the best DMA
+controller for the job around the SoC without the need to degrade performance.
+
+If the dma-domain-controller is not present in DT or booted w/o DT the none
+slave channel request will work as it does today.
+
+Regards,
+Peter
+---
+Peter Ujfalusi (3):
+  dt-bindings: dma: Add documentation for DMA domains
+  dmaengine: of_dma: Function to look up the DMA domain of a client
+  dmaengine: Support for requesting channels preferring DMA domain
+    controller
+
+ .../devicetree/bindings/dma/dma-domain.yaml   | 88 +++++++++++++++++++
+ drivers/dma/dmaengine.c                       | 21 +++--
+ drivers/dma/of-dma.c                          | 42 +++++++++
+ include/linux/dmaengine.h                     |  9 +-
+ include/linux/of_dma.h                        |  7 ++
+ 5 files changed, 159 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/dma-domain.yaml
+
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
