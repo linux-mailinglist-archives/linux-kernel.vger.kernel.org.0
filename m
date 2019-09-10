@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55B78AE9B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31074AE9CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388002AbfIJL4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 07:56:39 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39020 "EHLO
+        id S2393177AbfIJL5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 07:57:21 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:47010 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733144AbfIJL4g (ORCPT
+        with ESMTP id S1733236AbfIJL4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:56:36 -0400
-Received: by mail-wr1-f67.google.com with SMTP id t16so19621791wra.6
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 04:56:35 -0700 (PDT)
+        Tue, 10 Sep 2019 07:56:38 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d17so6860478wrq.13
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 04:56:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EIsUn9Jau6/KXdzHwU5tqQRGOjQOzaD5sGChfY5yPIY=;
-        b=fQDaaJcNPj2sPf2H7BhtU7Ap8m14kBNq8GYHsDC+Xbu3N6CadWR/9hgZxLMs8sRAHD
-         Y3bXRzzMz60k+pQNzLSY52Lvc99Xddnp0bnDDfUeUQBTtGIkKdmbEhX7q0qJfLCgNWS5
-         /q9JXIzNV6eDgkWQbomqYunLWFF1pqhJsb8gA=
+        bh=oVQ7Tct8tU0DJx5s8h1k7biDl9I5KG0OFqo1Lpd86hc=;
+        b=lIcQYf/amVBtQDfTxCxyvYoyuo7sxkZenk0YeowuFnzDH6o8iHr3Ldayw8ch8W5+Fa
+         dRQYIkfrm5mFDKNUvGJOYCBnZmxaTxgckK4gIyg2wybSvUgyFr4Qyup1A5rGGxMnbdAf
+         TujF0G6HNz/U56ZKm3MxmHZ9PCEw9y/TPRj+g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EIsUn9Jau6/KXdzHwU5tqQRGOjQOzaD5sGChfY5yPIY=;
-        b=p5DXzh1f624drZP7rImX2URoUGiju0Ofjgt0efS/cpu0UT1al+1stN4lhNez/tlW2G
-         RNhngcG+j3QslkYyWdDpXBXDKAxBRSFGWCdG/VT4UsGT8eO3az0S8rnkq+MNLQBkakbq
-         ajrChbR/+SGEVZjObUu+OP18QfcK+fCWMXKl12GzRH33B/e+IcX4YK4qARBPQJrsUWBH
-         7Dbx4+w+SJ7U+ZcnNxvUBSxxxbXpBorKuGAAsIMGJeLQW0RHpUlk4kB6nJQiLbny1zuz
-         Scgij5bZVz8Jit6Cip7lSwjpHd2DNbteKNSR3YpSNKYDCiM5NpYuq7oCax/TFdhV0tFJ
-         3vKA==
-X-Gm-Message-State: APjAAAWwgQzaqV776JlXKMyY5m99tG0PMs6we51hpkTb2AlIQdCF+yhq
-        yJQAzFfwqhYNogMOvMcL3GFeMfJIkXc=
-X-Google-Smtp-Source: APXvYqxcquIR5poZ++yC0HYIAXEUfYXCiM1tVNnZaQn9El9Vx1mdrWz5lnAfc9Zwi+MRB67X7M7DgA==
-X-Received: by 2002:adf:fd41:: with SMTP id h1mr6946449wrs.315.1568116594481;
-        Tue, 10 Sep 2019 04:56:34 -0700 (PDT)
+        bh=oVQ7Tct8tU0DJx5s8h1k7biDl9I5KG0OFqo1Lpd86hc=;
+        b=KWC5jEAk03V2U9nE6PYuI9SFgeovjv/rcUAeO1VdLpbEBP4GMmwEQgCWh63bWMXSoK
+         XERnyVhMIxvfRfQSQ5vM3f6L+vJnviT5C1o143zmBLgvhZQ+4gX5zMfNSMrUeyPtha/A
+         bYfYTDzsI89rqy6C0aVo5t1eeT3vyL8i4WY0tQztdDE4RMJZ49+qRPL1k7u9toUam+mY
+         bXRRTwYnBfwGDRe4ggmAruEFep+8wgGl/bGasjSoxUn2uSXrb3LYtAbKaXL0MHHKV54j
+         +ew8rz1uiKlAOYQLqcW/ePpK5iHukFfy8JMq4NVl/CjWPxJw/9VOY4jOEOVIs1jmDYez
+         JdOQ==
+X-Gm-Message-State: APjAAAX2h6HUGzSw6rdJJqiG1xob3u+CGKReVjOnPk5csHfMr23eeEYY
+        ussNLl3LhEdXdo7C4Xgbwj21iRGBuHw=
+X-Google-Smtp-Source: APXvYqxsMV7T7MYZDqZj7+zf1X42YUxNEluEUNSWA8evGhzEfC93r4n95G3TeHM62hd43tXfDYT1jw==
+X-Received: by 2002:adf:e947:: with SMTP id m7mr26846741wrn.178.1568116596374;
+        Tue, 10 Sep 2019 04:56:36 -0700 (PDT)
 Received: from kpsingh-kernel.c.hoisthospitality.com (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id q19sm23732935wra.89.2019.09.10.04.56.32
+        by smtp.gmail.com with ESMTPSA id q19sm23732935wra.89.2019.09.10.04.56.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 04:56:34 -0700 (PDT)
+        Tue, 10 Sep 2019 04:56:35 -0700 (PDT)
 From:   KP Singh <kpsingh@chromium.org>
 To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -68,9 +68,9 @@ Cc:     Alexei Starovoitov <ast@kernel.org>,
         Stanislav Fomichev <sdf@google.com>,
         Quentin Monnet <quentin.monnet@netronome.com>,
         Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [RFC v1 07/14] krsi: Check for premissions on eBPF attachment
-Date:   Tue, 10 Sep 2019 13:55:20 +0200
-Message-Id: <20190910115527.5235-8-kpsingh@chromium.org>
+Subject: [RFC v1 08/14] krsi: Show attached program names in hook read handler.
+Date:   Tue, 10 Sep 2019 13:55:21 +0200
+Message-Id: <20190910115527.5235-9-kpsingh@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190910115527.5235-1-kpsingh@chromium.org>
 References: <20190910115527.5235-1-kpsingh@chromium.org>
@@ -83,55 +83,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: KP Singh <kpsingh@google.com>
 
-Add validation checks for the attachment of eBPF programs.
+For inspectability the system administrator should be able to view the
+list of active KRSI programs:
 
-The following permissions are required:
-
-- CAP_SYS_ADMIN to load eBPF programs
-- CAP_MAC_ADMIN (to update the policy of an LSM)
-- The securityfs file being a KRSI hook and writable (O_RDWR)
+   bash # cat /sys/kernel/security/krsi/process_execution
+   bpf_prog1
 
 Signed-off-by: KP Singh <kpsingh@google.com>
 ---
- security/krsi/ops.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ security/krsi/krsi_fs.c | 76 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 75 insertions(+), 1 deletion(-)
 
-diff --git a/security/krsi/ops.c b/security/krsi/ops.c
-index cf4d06189aa1..a61508b7018f 100644
---- a/security/krsi/ops.c
-+++ b/security/krsi/ops.c
-@@ -23,11 +23,31 @@ static struct krsi_hook *get_hook_from_fd(int fd)
- 		goto error;
- 	}
+diff --git a/security/krsi/krsi_fs.c b/security/krsi/krsi_fs.c
+index 3ba18b52ce85..0ebf4fabe935 100644
+--- a/security/krsi/krsi_fs.c
++++ b/security/krsi/krsi_fs.c
+@@ -6,6 +6,7 @@
+ #include <linux/fs.h>
+ #include <linux/types.h>
+ #include <linux/filter.h>
++#include <linux/seq_file.h>
+ #include <linux/bpf.h>
+ #include <linux/security.h>
  
-+	/*
-+	 * Only CAP_MAC_ADMIN users are allowed to make
-+	 * changes to LSM hooks
-+	 */
-+	if (!capable(CAP_MAC_ADMIN)) {
-+		ret = -EPERM;
-+		goto error;
-+	}
-+
- 	if (!is_krsi_hook_file(f.file)) {
- 		ret = -EINVAL;
- 		goto error;
- 	}
+@@ -16,8 +17,81 @@ extern struct krsi_hook krsi_hooks_list[];
  
-+	/*
-+	 * It's wrong to attach the program to the hook
-+	 * if the file is not opened for a write. Note that,
-+	 * this is an EBADF and not an EPERM because the file
-+	 * has been opened with an incorrect mode.
-+	 */
-+	if (!(f.file->f_mode & FMODE_WRITE)) {
-+		ret = -EBADF;
-+		goto error;
-+	}
+ static struct dentry *krsi_dir;
+ 
++static void *seq_start(struct seq_file *m, loff_t *pos)
++	__acquires(rcu)
++{
++	struct krsi_hook *h;
++	struct dentry *dentry;
++	struct bpf_prog_array *progs;
++	struct bpf_prog_array_item *item;
 +
- 	/*
- 	 * The securityfs dentry never disappears, so we don't need to take a
- 	 * reference to it.
++	/*
++	 * rcu_read_lock() must be held before any return statement
++	 * because the stop() will always be called and thus call
++	 * rcu_read_unlock()
++	 */
++	rcu_read_lock();
++
++	dentry = file_dentry(m->file);
++	h = dentry->d_fsdata;
++	if (WARN_ON(!h))
++		return ERR_PTR(-EFAULT);
++
++	progs = rcu_dereference(h->progs);
++	if ((*pos) >= bpf_prog_array_length(progs))
++		return NULL;
++
++	item = progs->items + *pos;
++	if (!item->prog)
++		return NULL;
++
++	return item;
++}
++
++static void *seq_next(struct seq_file *m, void *v, loff_t *pos)
++{
++	struct bpf_prog_array_item *item = v;
++
++	item++;
++	++*pos;
++
++	if (!item->prog)
++		return NULL;
++
++	return item;
++}
++
++static void seq_stop(struct seq_file *m, void *v)
++	__releases(rcu)
++{
++	rcu_read_unlock();
++}
++
++static int show_prog(struct seq_file *m, void *v)
++{
++	struct bpf_prog_array_item *item = v;
++
++	seq_printf(m, "%s\n", item->prog->aux->name);
++	return 0;
++}
++
++static const struct seq_operations seq_ops = {
++	.show	= show_prog,
++	.start	= seq_start,
++	.next	= seq_next,
++	.stop	= seq_stop,
++};
++
++static int hook_open(struct inode *inode, struct file *file)
++{
++	return seq_open(file, &seq_ops);
++}
++
+ static const struct file_operations krsi_hook_ops = {
+-	.llseek = generic_file_llseek,
++	.open		= hook_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= seq_release,
+ };
+ 
+ int krsi_fs_initialized;
 -- 
 2.20.1
 
