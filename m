@@ -2,119 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8A22AEB50
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:19:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D90BDAEB48
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:18:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732076AbfIJNTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 09:19:20 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37948 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731895AbfIJNTQ (ORCPT
+        id S1731600AbfIJNSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 09:18:48 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:59022 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726188AbfIJNSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 09:19:16 -0400
-Received: by mail-io1-f68.google.com with SMTP id k5so12093591iol.5;
-        Tue, 10 Sep 2019 06:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=849o91yGt5jrZZIi8LC13Ut3Cl2Y81Etzv/w6RPtCGk=;
-        b=ImGQIRy5R3E58ARwHYy3bxOVecENV/vSe4RImjtdCR0ryWMfS6ZzsmkETb5QTxV0Kc
-         kpD6QMj2HVdzmGVBiZcDXRcIQc/c7y9OjB9EBR3hKaCLq2uayXXiR+zqDYvdt63Eyn1j
-         2ODvnm152zwm9ieGJClpPGqc19id6xQcmpiIGMlpxB72GnILVmq19PsrSzH0W+hQ4BNG
-         b3EtpVc5r2uLCqEgYgLzT1v8BHpAovLRAxSpMlpzzry6Gt9Lxup8j2c7uLc/Wx9D8/Ok
-         DHkfJnI9DYUW4E39JS7yKzQxuONrRBB4s9wL+5fhpgjz4DgUhhTAn6QQxRAy5azMEQgh
-         qzhw==
+        Tue, 10 Sep 2019 09:18:47 -0400
+Received: from mr6.cc.vt.edu (mr6.cc.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x8ADIkSi002492
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 09:18:46 -0400
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x8ADIfLS029228
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 09:18:46 -0400
+Received: by mail-qk1-f197.google.com with SMTP id q62so20782646qkd.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 06:18:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=849o91yGt5jrZZIi8LC13Ut3Cl2Y81Etzv/w6RPtCGk=;
-        b=WgoUkOoDoVzJSgXGKlckuJhmzm1MzMvpEPexRvZcymZZydx5qcmApWe6+AyILFtXZV
-         DFClAIZvFMSJOO2y57KHBqEhHVYNuLE0Anir+4TVIrSVg/oerBb6IgvnUBGrkOsHMZ1h
-         pEz2x1VgqyD1TtI8OKv6TDHqifATfDoC3CqgfC79qLodJdv2tvafYhKGk8F1VP8BrZBw
-         laH0MxpHdDIN4XGZXDmVjjsQmySeTPAkY7/Ta3fGaGQFBDzA0ZFfn6pVLNXE3M+4YPWT
-         RisnKjCAIyw9QZt0aK+EehYzaWFLOZH9jsBQ2H8Onmq9hN81RtBZS/cDFcwYEP5ewdjL
-         g55Q==
-X-Gm-Message-State: APjAAAXF96ypo+3MZHLEy88MNhgiRi/ELiXpyvf3qbSkpZdNOo5JjrE5
-        hF3hPGrSSTaN89G2OG0vmYjL8FUO4w==
-X-Google-Smtp-Source: APXvYqxbeW4rhJKhkXroWYNTN5OxXBvOBf4ysg2Oh8hocFuWn+MqfXtn5mARzADizM/0QyFrtu7GLQ==
-X-Received: by 2002:a6b:ec18:: with SMTP id c24mr34124578ioh.72.1568121555004;
-        Tue, 10 Sep 2019 06:19:15 -0700 (PDT)
-Received: from threadripper.novatech-llc.local ([216.21.169.52])
-        by smtp.gmail.com with ESMTPSA id f7sm13642740ioc.31.2019.09.10.06.19.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Sep 2019 06:19:14 -0700 (PDT)
-From:   George McCollister <george.mccollister@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Woojung Huh <woojung.huh@microchip.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Tristram Ha <Tristram.Ha@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Marek Vasut <marex@denx.de>, linux-kernel@vger.kernel.org,
-        George McCollister <george.mccollister@gmail.com>
-Subject: [PATCH net-next v2 3/3] net: dsa: microchip: remove NET_DSA_TAG_KSZ_COMMON
-Date:   Tue, 10 Sep 2019 08:18:36 -0500
-Message-Id: <20190910131836.114058-4-george.mccollister@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190910131836.114058-1-george.mccollister@gmail.com>
-References: <20190910131836.114058-1-george.mccollister@gmail.com>
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=7kNO9uDNvugTv3H3koO6iBR61aeWq1IakC0dWAwZ414=;
+        b=tYgcPW8BzFtjTHdO5YCU/bidN5ylOXvRKsERqTq2CZy9r66mvh0omD/QmAQ/+7S2Uc
+         MQ4AmTPte8eTq9ynbvXcBPAqTfSGs8h1xWMWtXPeJ6GdyczhtlJtes5jJAFTG7eDsB7M
+         VW6L34ZOV4XQvdNpw+AQGiEhlT+BC/sb6oiayJ7dp3phIzJX8cryVwO/pa77T+YOfU6l
+         O/9meMlXzAbWo/hKM49FCO0rUy38v0imWHO5ipmbVhKyv0tct+IaQTLl2TPummxu+nLy
+         uUr307On4DQGnBx2Qrvs1vaMGY+ItKmCB9cPJig110ZXP2SU6ubN88zScUp5IyUMd0/O
+         NCPA==
+X-Gm-Message-State: APjAAAU0s8aik8VX2Mfn0H613mWnuT69hF663eUe8NanI6qPKIHdx9qy
+        uyBuQ9qPfKam1JAIOj4JkIS5JcPI+KSZ+bTKHPcuCCnGd9owfVi5xMjCXTAomTNUePddhvR7mW5
+        /4PjvCEvWeojOEod4FMMd1E+Wzdt5z6wnxkk=
+X-Received: by 2002:a37:c0f:: with SMTP id 15mr23232181qkm.73.1568121520887;
+        Tue, 10 Sep 2019 06:18:40 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyHLmfoD+Kv5Ihhcunz/PPRO8HiNM4sdOJhK03/Lv6eRrYrNyPTStg6jFzCIG8lLRtsiz/hKA==
+X-Received: by 2002:a37:c0f:: with SMTP id 15mr23232151qkm.73.1568121520625;
+        Tue, 10 Sep 2019 06:18:40 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4341::359])
+        by smtp.gmail.com with ESMTPSA id g45sm2907548qtc.9.2019.09.10.06.18.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2019 06:18:39 -0700 (PDT)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: staging: exfat: issue with FFS_MEDIAERR error return assignment
+In-Reply-To: <20190910130934.GE15977@kadam>
+References: <c569b04c-2959-c8eb-0d38-628e8c5ff7ac@canonical.com> <20190910124443.GD15977@kadam> <aefa4806-af3c-1757-59c2-72e7d1663d66@canonical.com>
+ <20190910130934.GE15977@kadam>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1568121518_4251P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 10 Sep 2019 09:18:38 -0400
+Message-ID: <1146681.1568121518@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the superfluous NET_DSA_TAG_KSZ_COMMON and just use the existing
-NET_DSA_TAG_KSZ. Update the description to mention the three switch
-families it supports. No functional change.
+--==_Exmh_1568121518_4251P
+Content-Type: text/plain; charset=us-ascii
 
-Signed-off-by: George McCollister <george.mccollister@gmail.com>
-Reviewed-by: Marek Vasut <marex@denx.de>
----
+On Tue, 10 Sep 2019 16:09:35 +0300, Dan Carpenter said:
+> On Tue, Sep 10, 2019 at 01:58:35PM +0100, Colin Ian King wrote:
+> > On 10/09/2019 13:44, Dan Carpenter wrote:
+> > > On Fri, Aug 30, 2019 at 07:38:00PM +0100, Colin Ian King wrote:
+> > >> Hi,
+> > >>
+> > >> Static analysis on exfat with Coverity has picked up an assignment of
+> > >> FFS_MEDIAERR that gets over-written:
+> > >>
+> > >>
+> > >> 1750        if (is_dir) {
+> > >> 1751                if ((fid->dir.dir == p_fs->root_dir) &&
+> > >> 1752                    (fid->entry == -1)) {
+> > >> 1753                        if (p_fs->dev_ejected)
+> > >
+> > > Idealy we would have both a filename and a function name but this email
+> > > doesn't have either so no one knows what code you are talking about.  :P
+> >
+> > Oops, my bad.
+> >
+> > drivers/staging/exfat/exfat_super.c ffsWriteStat()
+>
+> Yes, your solution is correct.
 
-Changes since v1:
-	- Added Reviewed-by.
+Actually, you can skip the else, because we initialized 'ret' at the start of the function.
 
- net/dsa/Kconfig  | 9 ++-------
- net/dsa/Makefile | 2 +-
- 2 files changed, 3 insertions(+), 8 deletions(-)
+The *bigger* issue - what should 'ret' be if dev_ejected is *false*?
 
-diff --git a/net/dsa/Kconfig b/net/dsa/Kconfig
-index 2f69d4b53d46..29e2bd5cc5af 100644
---- a/net/dsa/Kconfig
-+++ b/net/dsa/Kconfig
-@@ -73,16 +73,11 @@ config NET_DSA_TAG_MTK
- 	  Say Y or M if you want to enable support for tagging frames for
- 	  Mediatek switches.
- 
--config NET_DSA_TAG_KSZ_COMMON
--	tristate
--	default n
--
- config NET_DSA_TAG_KSZ
--	tristate "Tag driver for Microchip 9893 family of switches"
--	select NET_DSA_TAG_KSZ_COMMON
-+	tristate "Tag driver for Microchip 8795/9477/9893 families of switches"
- 	help
- 	  Say Y if you want to enable support for tagging frames for the
--	  Microchip 9893 family of switches.
-+	  Microchip 8795/9477/9893 families of switches.
- 
- config NET_DSA_TAG_QCA
- 	tristate "Tag driver for Qualcomm Atheros QCA8K switches"
-diff --git a/net/dsa/Makefile b/net/dsa/Makefile
-index c342f54715ba..2c6d286f0511 100644
---- a/net/dsa/Makefile
-+++ b/net/dsa/Makefile
-@@ -9,7 +9,7 @@ obj-$(CONFIG_NET_DSA_TAG_BRCM_COMMON) += tag_brcm.o
- obj-$(CONFIG_NET_DSA_TAG_DSA) += tag_dsa.o
- obj-$(CONFIG_NET_DSA_TAG_EDSA) += tag_edsa.o
- obj-$(CONFIG_NET_DSA_TAG_GSWIP) += tag_gswip.o
--obj-$(CONFIG_NET_DSA_TAG_KSZ_COMMON) += tag_ksz.o
-+obj-$(CONFIG_NET_DSA_TAG_KSZ) += tag_ksz.o
- obj-$(CONFIG_NET_DSA_TAG_LAN9303) += tag_lan9303.o
- obj-$(CONFIG_NET_DSA_TAG_MTK) += tag_mtk.o
- obj-$(CONFIG_NET_DSA_TAG_QCA) += tag_qca.o
--- 
-2.11.0
+--==_Exmh_1568121518_4251P
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXXeirQdmEQWDXROgAQL5wA/+PPHOGEmDV504BFRLn9srgqIa56tfpmot
+Ja0n16HXiCIc/z1N2QQ1yTCN1HR387EPagxgMoiIcNV4rlJ8vKFDXzxg8BA4xUKK
+8ikDLD0pwq5jR+ghYKYrjHxMs1OClbH0dUvlzra7TOOJpdaPL91MezH4fhJH5Ybj
+MPjwNb+MjNLcC5rEYO6BY4TMVuBUES1w4BgQr0cpsvFZWfLoOHs6l8jHyHmnxJ8O
+GeE0yMX4THplzc7pWAbyYnm08kXBc4spMcziXRWfJtNtg8JjTYBNC1jYAH41THGO
+zf0Bp3n1BtdrIr93000EsmQNrdXTSoogIisJ6tg+5GauE1WbJAUSLuyWwqLKSQk/
+gWd7aWO1COCNJS7887iKimSxntiCH4ExjoZigDStvWSMprqCPDefuSefOlkWU53Q
+d6TLu3zqicuqiIqp/z9V+kkf3TUMedLHPosvzbhC2WQaHr5MiaBUjDDx8n4zJ+JS
+vJyHuWeqFuoGxwdg8viDrPATRJOkgQFPGupGyfVZGQpTxBYu9Ooyl3XgNxtJJIbz
+w6OOrrJm9PS9bllSVlEbKHQtiRi8eM2R4gNQQHow5klY6FNIV39dUiQHXwf+OAlp
+2GQ63Cv6WLgJakMBRzHcpfpUVayLn2WozSD5TEJx8VsIwqTU2rswLtKpSF47j1hu
+y21iQgn12Q8=
+=gwNw
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1568121518_4251P--
