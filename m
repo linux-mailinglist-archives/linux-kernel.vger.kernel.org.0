@@ -2,93 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4375FAE9C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D604AE9B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393082AbfIJL4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 07:56:55 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37767 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2393023AbfIJL4w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:56:52 -0400
-Received: from callcc.thunk.org (38.85.69.148.rev.vodafone.pt [148.69.85.38] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x8ABua45016670
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Sep 2019 07:56:39 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 97FF742049E; Tue, 10 Sep 2019 07:56:35 -0400 (EDT)
-Date:   Tue, 10 Sep 2019 07:56:35 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     "Ahmed S. Darwish" <darwish.07@gmail.com>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, zhangjs <zachary@baishancloud.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Linux 5.3-rc8
-Message-ID: <20190910115635.GB2740@mit.edu>
-References: <CAHk-=whBQ+6c-h+htiv6pp8ndtv97+45AH9WvdZougDRM6M4VQ@mail.gmail.com>
- <20190910042107.GA1517@darwi-home-pc>
+        id S2391152AbfIJL4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 07:56:45 -0400
+Received: from mx.socionext.com ([202.248.49.38]:18767 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388099AbfIJL4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 07:56:43 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 10 Sep 2019 20:56:41 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 723BB605F8;
+        Tue, 10 Sep 2019 20:56:41 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 10 Sep 2019 20:56:41 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 4F5B740357;
+        Tue, 10 Sep 2019 20:56:41 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 24B391204AA;
+        Tue, 10 Sep 2019 20:56:41 +0900 (JST)
+Date:   Tue, 10 Sep 2019 20:56:40 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH] reset: uniphier-glue: Add Pro5 USB3 support
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+In-Reply-To: <1568101695.3062.1.camel@pengutronix.de>
+References: <1568080527-1767-1-git-send-email-hayashi.kunihiko@socionext.com> <1568101695.3062.1.camel@pengutronix.de>
+Message-Id: <20190910205640.6ABD.4A936039@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190910042107.GA1517@darwi-home-pc>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 06:21:07AM +0200, Ahmed S. Darwish wrote:
+Hi Philipp,
+
+On Tue, 10 Sep 2019 09:48:15 +0200 <p.zabel@pengutronix.de> wrote:
+
+> Hi Kunihiko,
 > 
-> The commit b03755ad6f33 (ext4: make __ext4_get_inode_loc plug), [1]
-> which was merged in v5.3-rc1, *always* leads to a blocked boot on my
-> system due to low entropy.
+> On Tue, 2019-09-10 at 10:55 +0900, Kunihiko Hayashi wrote:
+> > Pro5 SoC has same scheme of USB3 reset as Pro4, so the data for Pro5 is
+> > equivalent to Pro4.
+> > 
+> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 > 
-> The hardware is not a VM: it's a Thinkpad E480 (i5-8250U CPU), with
-> a standard Arch user-space.
+> If it is exactly the same, you could keep using the same compatible:
 
-Hmm, I'm not seeing this on a Dell XPS 13 (model 9380) using a Debian
-Bullseye (Testing) running a rc4+ kernel.
+This driver is derived from reset-simple, so the method to control reset
+in the glue block is the same for each SoC.
 
-This could be because Debian is simply doing more I/O; or it could be
-because I don't have some package installed which is trying to reading
-from /dev/random or calling getrandom(2).  Previously, Fedora ran into
-blocking issues because of some FIPS compliance patches to some
-userspace daemons.  So it's going to be very user space dependent and
-package dependent.
+And both Pro4 and Pro5 need same parent clock and reset, so the data for
+these SoCs refer same parent clock names and parent reset names.
 
-> It seems that batching the directory lookup I/O requests (which are
-> possibly a lot during boot) is minimizing sources of disk-activity-
-> induced entropy? [2] [3]
+However, since the glue block itself can be different, I think that
+compatible string should be distinguished for each SoC.
+
+For example, "pxs2-usb3-reset", "ld20-usb3-reset" and "pxs3-usb-reset"
+in this driver are distinguished for the same reason.
+
+Thank you,
+
 > 
-> Can this even be considered a user-space breakage? I'm honestly not
-> sure. On my modern RDRAND-capable x86, just running rng-tools rngd(8)
-> early-on fixes the problem. I'm not sure about the status of older
-> CPUs though.
+> > ---
+> >  Documentation/devicetree/bindings/reset/uniphier-reset.txt | 5 +++--
+> >  drivers/reset/reset-uniphier-glue.c                        | 4 ++++
+> >  2 files changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/reset/uniphier-reset.txt b/Documentation/devicetree/bindings/reset/uniphier-reset.txt
+> > index ea00517..e320a8c 100644
+> > --- a/Documentation/devicetree/bindings/reset/uniphier-reset.txt
+> > +++ b/Documentation/devicetree/bindings/reset/uniphier-reset.txt
+> > @@ -130,6 +130,7 @@ this layer. These clocks and resets should be described in each property.
+> >  Required properties:
+> >  - compatible: Should be
+> >      "socionext,uniphier-pro4-usb3-reset" - for Pro4 SoC USB3
+> > +    "socionext,uniphier-pro5-usb3-reset" - for Pro5 SoC USB3
+> 
+> +    "socionext,uniphier-pro5-usb3-reset", "socionext,uniphier-pro4-usb3-reset" - for Pro5 SoC USB3
+> 
+> [...]
+> > diff --git a/drivers/reset/reset-uniphier-glue.c b/drivers/reset/reset-uniphier-glue.c
+> > index a45923f..2b188b3bb 100644
+> > --- a/drivers/reset/reset-uniphier-glue.c
+> > +++ b/drivers/reset/reset-uniphier-glue.c
+> > @@ -141,6 +141,10 @@ static const struct of_device_id uniphier_glue_reset_match[] = {
+> >  		.data = &uniphier_pro4_data,
+> >  	},
+> >  	{
+> > +		.compatible = "socionext,uniphier-pro5-usb3-reset",
+> > +		.data = &uniphier_pro4_data,
+> > +	},
+> > +	{
+> >  		.compatible = "socionext,uniphier-pxs2-usb3-reset",
+> >  		.data = &uniphier_pxs2_data,
+> >  	},
+> 
+> And this change would not be necessary.
+> 
+> regards
+> Philipp
 
-You can probably also fix this problem by adding random.trust_cpu=true
-to the boot command line, or by enabling CONFIG_RANDOM_TRUST_CPU.
-This obviously assumes that you trust Intel's implementation of
-RDRAND, but that's true regardless of whether of whether you use rngd
-or the kernel config option.
+---
+Best Regards,
+Kunihiko Hayashi
 
-As far as whether it's considered user-space breakage; that's though.
-File system performance improvements can cause a reduced amount of
-I/O, and that can cause less entropy to be collected, and depending on
-a complex combination of kernel config options, distribution-specific
-patches, and what packages are loaded, that could potentially cause
-boot hangs waiting for entropy.  Does that we we're can't make any
-file system performace improvements?  Surely that doesn't seem like
-the right answer.
 
-It would be useful to figure out what process is blocking waiting on
-entropy, since in general, trying to rely on cryptographic entropy in
-early boot, especially if it is to generate cryptographic keys, is
-going to be more dangerous compared to a "just in time" approach to
-generating crypto keys.  So this could also be considered a userspace
-bug, depending on your point of view...
-
-					- Ted
