@@ -2,126 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51E13AED40
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2230AED44
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388116AbfIJOip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 10:38:45 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:9210 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728244AbfIJOip (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:38:45 -0400
-Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
-        by mx0a-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8AER2uX023428;
-        Tue, 10 Sep 2019 14:38:32 GMT
-Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
-        by mx0a-002e3701.pphosted.com with ESMTP id 2uxc4t1jmm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Sep 2019 14:38:32 +0000
-Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
-        by g9t5008.houston.hpe.com (Postfix) with ESMTP id E950D56;
-        Tue, 10 Sep 2019 14:38:30 +0000 (UTC)
-Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
-        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id C54DF51;
-        Tue, 10 Sep 2019 14:38:29 +0000 (UTC)
-Date:   Tue, 10 Sep 2019 09:38:29 -0500
-From:   Steve Wahl <steve.wahl@hpe.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
-        Baoquan He <bhe@redhat.com>, russ.anderson@hpe.com,
-        dimitri.sivanich@hpe.com, mike.travis@hpe.com
-Subject: Re: [PATCH] x86/boot/64: Make level2_kernel_pgt pages invalid
- outside kernel area.
-Message-ID: <20190910143829.GB7834@swahl-linux>
-References: <20190906212950.GA7792@swahl-linux>
- <20190909081414.5e3q47fzzruesscx@box>
- <20190910061815.GA40059@gmail.com>
+        id S2387606AbfIJOju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 10:39:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44416 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731623AbfIJOjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 10:39:49 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A888930832E1;
+        Tue, 10 Sep 2019 14:39:49 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.72])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 83EA76012C;
+        Tue, 10 Sep 2019 14:39:45 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 10 Sep 2019 16:39:48 +0200 (CEST)
+Date:   Tue, 10 Sep 2019 16:39:44 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Eugene Syromiatnikov <esyr@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH] fork: fail on non-zero higher 32 bits of args.exit_signal
+Message-ID: <20190910143943.GC25647@redhat.com>
+References: <20190910115711.GA3755@asgard.redhat.com>
+ <20190910124440.GA25647@redhat.com>
+ <20190910130935.jxqxbt7wop3ostob@wittgenstein>
+ <20190910131048.e7xr52az2zej4p4v@wittgenstein>
+ <20190910132701.s5o5nidewyo5zl7h@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190910061815.GA40059@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-10_10:2019-09-10,2019-09-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- phishscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=912 spamscore=0 adultscore=0 priorityscore=1501 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
- definitions=main-1909100141
+In-Reply-To: <20190910132701.s5o5nidewyo5zl7h@wittgenstein>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 10 Sep 2019 14:39:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 08:18:15AM +0200, Ingo Molnar wrote:
+On 09/10, Christian Brauner wrote:
+> On Tue, Sep 10, 2019 at 03:10:48PM +0200, Christian Brauner wrote:
+> > On Tue, Sep 10, 2019 at 03:09:35PM +0200, Christian Brauner wrote:
+> > > On Tue, Sep 10, 2019 at 02:44:41PM +0200, Oleg Nesterov wrote:
+> > > > On 09/10, Eugene Syromiatnikov wrote:
+> > > > >
+> > > > > --- a/kernel/fork.c
+> > > > > +++ b/kernel/fork.c
+> > > > > @@ -2562,6 +2562,9 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+> > > > >  	if (copy_from_user(&args, uargs, size))
+> > > > >  		return -EFAULT;
+> > > > >  
+> > > > > +	if (unlikely(((unsigned int)args.exit_signal) != args.exit_signal))
+> > > > > +		return -EINVAL;
+> > > > 
+> > > > Hmm. Unless I am totally confused you found a serious bug...
+> > > > 
+> > > > Without CLONE_THREAD/CLONE_PARENT copy_process() blindly does
+> > > > 
+> > > > 	p->exit_signal = args->exit_signal;
+> > > > 
+> > > > the valid_signal(sig) check in do_notify_parent() mostly saves us, but we
+> > > > must not allow child->exit_signal < 0, if nothing else this breaks
+> > > > thread_group_leader().
+> > > > 
+> > > > And afaics this patch doesn't fix this? I think we need the valid_signal()
+> > > > check...
+> > > 
+> > > Thanks for sending this patch so quickly after our conversation
+> > > yesterday, Eugene!
+> > > We definitely want valid_signal() to verify the signal is ok.
 > 
-> * Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> 
-> > On Fri, Sep 06, 2019 at 04:29:50PM -0500, Steve Wahl wrote:
-> > > Our hardware (UV aka Superdome Flex) has address ranges marked
-> > > reserved by the BIOS. These ranges can cause the system to halt if
-> > > accessed.
-> > > 
-> > > During kernel initialization, the processor was speculating into
-> > > reserved memory causing system halts.  The processor speculation is
-> > > enabled because the reserved memory is being mapped by the kernel.
-> > > 
-> > > The page table level2_kernel_pgt is 1 GiB in size, and had all pages
-> > > initially marked as valid, and the kernel is placed anywhere in this
-> > > range depending on the virtual address selected by KASLR.  Later on in
-> > > the boot process, the valid area gets trimmed back to the space
-> > > occupied by the kernel.
-> > > 
-> > > But during the interval of time when the full 1 GiB space was marked
-> > > as valid, if the kernel physical address chosen by KASLR was close
-> > > enough to our reserved memory regions, the valid pages outside the
-> > > actual kernel space were allowing the processor to issue speculative
-> > > accesses to the reserved space, causing the system to halt.
-> > > 
-> > > This was encountered somewhat rarely on a normal system boot, and
-> > > somewhat more often when starting the crash kernel if
-> > > "crashkernel=512M,high" was specified on the command line (because
-> > > this heavily restricts the physical address of the crash kernel,
-> > > usually to within 1 GiB of our reserved space).
-> > > 
-> > > The answer is to invalidate the pages of this table outside the
-> > > address range occupied by the kernel before the page table is
-> > > activated.  This patch has been validated to fix this problem on our
-> > > hardware.
-> > 
-> > If the goal is to avoid *any* mapping of the reserved region to stop
-> > speculation, I don't think this patch will do the job. We still (likely)
-> > have the same memory mapped as part of the identity mapping. And it
-> > happens at least in two places: here and before on decompression stage.
-> 
-> Yeah, this really needs a fix at the KASLR level: it should only ever map 
-> into regions that are fully RAM backed.
-> 
-> Is the problem that the 1 GiB mapping is a direct mapping, which can be 
-> speculated into? I presume KASLR won't accidentally map the kernel into 
-> the reserved region, right?
+> So we could do your check in copy_clone_args_from_user(), and then we do
+> another valid_signal() check in clone3_args_valid()? We could do the
+> latter in copy_clone_args_from_user() too but it's nicer to do it along
+> the other checks in clone3_args_valid().
 
-I believe you are correct.  There is code that limits KASLR's choice
-of phyiscal addresses to valid RAM locations.  There are no bugs in it
-that I've seen.
+I am fine either way. Sure, we can add valid_signal() into clone3_args_valid(),
+but then I'd ask to simplify the "overflow" check above. Something like
 
-It's just that the 1G mapping includes wide regions of physical
-address space on either or both sides of the chosen physical space for
-the kernel, which are not limited to valid RAM regions, allowing
-speculative accesses into reserved regions if the chosen kernel
-physical address is close enough to one of them.
+	if (args.exit_signal > UINT_MAX)
+		return -EINVAL;
 
---> Steve Wahl
+looks much more readable to me.
 
--- 
-Steve Wahl, Hewlett Packard Enterprise
+
+Or we can simply do
+
+	if (args.exit_signal & ~((u64)CSIGNAL))
+		return -EINVAL;
+
+in copy_clone_args_from_user() and forget about all problems.
+
+Up to Eugene and you.
+
+Oleg.
+
