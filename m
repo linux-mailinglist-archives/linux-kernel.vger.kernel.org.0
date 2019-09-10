@@ -2,53 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82B74AEA48
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:24:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE6F5AEA23
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391638AbfIJMYg convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 10 Sep 2019 08:24:36 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:34938
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726762AbfIJMYg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 08:24:36 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 4ABACB4D0D6;
-        Tue, 10 Sep 2019 12:07:42 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id xkyhu0zMSENh; Tue, 10 Sep 2019 12:07:41 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id A5BE6B4D1F8;
-        Tue, 10 Sep 2019 12:07:41 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id KESEa5_Dvmny; Tue, 10 Sep 2019 12:07:41 +0000 (UTC)
-Received: from [100.90.131.168] (unknown [106.197.219.117])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 2D00AB4D1C4;
-        Tue, 10 Sep 2019 12:07:33 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S2388725AbfIJMUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 08:20:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48852 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731146AbfIJMUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 08:20:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 80E9FABCE;
+        Tue, 10 Sep 2019 12:20:31 +0000 (UTC)
+Date:   Tue, 10 Sep 2019 14:20:30 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        mst@redhat.com, catalin.marinas@arm.com, david@redhat.com,
+        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+        willy@infradead.org, linux-mm@kvack.org, akpm@linux-foundation.org,
+        will@kernel.org, linux-arm-kernel@lists.infradead.org,
+        osalvador@suse.de, yang.zhang.wz@gmail.com, pagupta@redhat.com,
+        konrad.wilk@oracle.com, nitesh@redhat.com, riel@surriel.com,
+        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        ying.huang@intel.com, pbonzini@redhat.com,
+        dan.j.williams@intel.com, fengguang.wu@intel.com,
+        alexander.h.duyck@linux.intel.com, kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v9 2/8] mm: Adjust shuffle code to allow for future
+ coalescing
+Message-ID: <20190910122030.GV2063@dhcp22.suse.cz>
+References: <20190907172225.10910.34302.stgit@localhost.localdomain>
+ <20190907172520.10910.83100.stgit@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Alerta_por_correo_electr=C3=B3nico?=
-To:     Recipients <info@no-reply.it>
-From:   Administrador de correo web <info@no-reply.it>
-Date:   Tue, 10 Sep 2019 17:37:26 +0530
-Message-Id: <20190910120734.2D00AB4D1C4@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190907172520.10910.83100.stgit@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario
+On Sat 07-09-19 10:25:20, Alexander Duyck wrote:
+> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> 
+> Move the head/tail adding logic out of the shuffle code and into the
+> __free_one_page function since ultimately that is where it is really
+> needed anyway. By doing this we should be able to reduce the overhead
+> and can consolidate all of the list addition bits in one spot.
 
-Como parte de nuestros problemas de seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, suspenderemos su acceso a su dirección de correo electrónico temporalmente para permitir la actualización.
+This changelog doesn't really explain why we want this. You are
+reshuffling the code, allright, but why do we want to reshuffle? Is the
+result readability a better code reuse or something else? Where
+does the claimed reduced overhead coming from?
 
-Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar su fecha completando el formulario de verificación manualmente.
+From a quick look buddy_merge_likely looks nicer than the code splat
+we have. Good.
 
-Haga clic en la copia y obtenga el enlace: http://emailsverificationscenter.xtgem.com/index en su navegador y verifique.
+But then
 
-Gracias
-Equipo de soporte técnico.
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+
+[...]
+
+> -	if (is_shuffle_order(order))
+> -		add_to_free_area_random(page, &zone->free_area[order],
+> -				migratetype);
+> +	area = &zone->free_area[order];
+> +	if (is_shuffle_order(order) ? shuffle_pick_tail() :
+> +	    buddy_merge_likely(pfn, buddy_pfn, page, order))
+
+Ouch this is just awful don't you think?
+-- 
+Michal Hocko
+SUSE Labs
