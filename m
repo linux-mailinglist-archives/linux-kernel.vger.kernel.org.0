@@ -2,53 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B17AF068
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 19:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 885A7AF06F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 19:26:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437082AbfIJRZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 13:25:24 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:59808 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394139AbfIJRZY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 13:25:24 -0400
-Received: from localhost (unknown [88.214.187.211])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D7F24154FE282;
-        Tue, 10 Sep 2019 10:25:21 -0700 (PDT)
-Date:   Tue, 10 Sep 2019 19:25:16 +0200 (CEST)
-Message-Id: <20190910.192516.1686418457520996592.davem@davemloft.net>
-To:     tanhuazhong@huawei.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
-        linuxarm@huawei.com, jakub.kicinski@netronome.com,
-        huangguangbin2@huawei.com
-Subject: Re: [PATCH net-next 1/7] net: hns3: add ethtool_ops.set_channels
- support for HNS3 VF driver
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1568105908-60983-2-git-send-email-tanhuazhong@huawei.com>
-References: <1568105908-60983-1-git-send-email-tanhuazhong@huawei.com>
-        <1568105908-60983-2-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 10 Sep 2019 10:25:23 -0700 (PDT)
+        id S2437106AbfIJR0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 13:26:45 -0400
+Received: from mga02.intel.com ([134.134.136.20]:64528 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394139AbfIJR0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 13:26:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 10:26:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,490,1559545200"; 
+   d="scan'208";a="196626008"
+Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
+  by orsmga002.jf.intel.com with ESMTP; 10 Sep 2019 10:26:44 -0700
+Subject: [PATCH 0/4] Documentation/process: embargoed hardware issues additions
+To:     linux-kernel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>, corbet@lwn.net,
+        gregkh@linuxfoundation.org, sashal@kernel.org, ben@decadent.org.uk,
+        tglx@linutronix.de, labbott@redhat.com, andrew.cooper3@citrix.com,
+        tsoni@codeaurora.org, keescook@chromium.org, tony.luck@intel.com,
+        dan.j.williams@intel.com, linux-doc@vger.kernel.org
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Tue, 10 Sep 2019 10:26:44 -0700
+Message-Id: <20190910172644.4D2CDF0A@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
-Date: Tue, 10 Sep 2019 16:58:22 +0800
+Intel will adhere to this process for future hardware embargoed
+issues.  This series contains a patch from Tony Luck with him
+volunteering to be Intel's ambassador for this process.
 
-> +	/* Set to user value, no larger than max_rss_size. */
-> +	if (kinfo->req_rss_size != kinfo->rss_size && kinfo->req_rss_size &&
-> +	    kinfo->req_rss_size <= max_rss_size) {
-> +		dev_info(&hdev->pdev->dev, "rss changes from %u to %u\n",
-> +			 kinfo->rss_size, kinfo->req_rss_size);
-> +		kinfo->rss_size = kinfo->req_rss_size;
+These are some minor improvements here to the process document.  I've
+had the pleasure of seeing some of the problems with the various
+"processes" that led to the need for this document and I think these
+tweaks will help.  This part of the series is much more of an RFC than
+the first patch, obviously.
 
-Please do not emit kernel log messages for normal operations.
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sasha Levin <sashal@kernel.org>
+Cc: Ben Hutchings <ben@decadent.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Trilok Soni <tsoni@codeaurora.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
