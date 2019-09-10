@@ -2,111 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB776AE7E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:21:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5758AE7E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729502AbfIJKVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 06:21:23 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49598 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726231AbfIJKVX (ORCPT
+        id S1731008AbfIJKVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 06:21:32 -0400
+Received: from smtprelay0089.hostedemail.com ([216.40.44.89]:57175 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726231AbfIJKVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:21:23 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8AAIHSZ125873
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 06:21:21 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ux6t3xj4d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 06:21:21 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <imbrenda@linux.ibm.com>;
-        Tue, 10 Sep 2019 11:21:18 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 10 Sep 2019 11:21:15 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8AALDcq59441152
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Sep 2019 10:21:13 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C98E1A4053;
-        Tue, 10 Sep 2019 10:21:13 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 918DFA4040;
-        Tue, 10 Sep 2019 10:21:13 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.39])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 10 Sep 2019 10:21:13 +0000 (GMT)
-Date:   Tue, 10 Sep 2019 12:21:12 +0200
-From:   Claudio Imbrenda <imbrenda@linux.ibm.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Igor Mammedov <imammedo@redhat.com>, linux-kernel@vger.kernel.org,
-        david@redhat.com, cohuck@redhat.com,
-        Janosch Frank <frankja@linux.ibm.com>
-Subject: Re: [PATCH] kvm_s390_vm_start_migration: check dirty_bitmap before
- using it as target for memset()
-In-Reply-To: <4668e4e9-c0bc-3647-6387-20c6f8107ed3@de.ibm.com>
-References: <20190909145545.11759-1-imammedo@redhat.com>
-        <4668e4e9-c0bc-3647-6387-20c6f8107ed3@de.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Tue, 10 Sep 2019 06:21:31 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 735C1180A8123;
+        Tue, 10 Sep 2019 10:21:29 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:69:355:379:599:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1981:2194:2197:2198:2199:2200:2201:2393:2553:2559:2562:2828:2892:3138:3139:3140:3141:3142:3355:3622:3653:3865:3866:3867:3868:3870:3871:3872:4250:4321:4605:5007:6117:6119:6120:7875:7903:7904:8957:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12295:12297:12438:12555:12740:12760:12895:12986:13019:13149:13161:13229:13230:13255:13439:14181:14659:14721:21080:21221:21433:21505:21627:21774:30003:30012:30029:30030:30054:30056:30070:30075:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
+X-HE-Tag: quilt67_8134ff3330428
+X-Filterd-Recvd-Size: 3861
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 10 Sep 2019 10:21:27 +0000 (UTC)
+Message-ID: <ef57a3fc72b548b7daf9257aacc596d57004199d.camel@perches.com>
+Subject: Re: [PATCH v6 11/12] lib/vsprintf: Add %pfw conversion specifier
+ for printing fwnode names
+From:   Joe Perches <joe@perches.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        rafael@kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Date:   Tue, 10 Sep 2019 03:21:26 -0700
+In-Reply-To: <20190910084707.18380-12-sakari.ailus@linux.intel.com>
+References: <20190910084707.18380-1-sakari.ailus@linux.intel.com>
+         <20190910084707.18380-12-sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091010-0012-0000-0000-000003497464
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091010-0013-0000-0000-00002183D856
-Message-Id: <20190910122112.098e3494@p-imbrenda.boeblingen.de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-10_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=773 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909100105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Sep 2019 18:21:47 +0200
-Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+On Tue, 2019-09-10 at 11:47 +0300, Sakari Ailus wrote:
+> Add support for %pfw conversion specifier (with "f" and "P" modifiers) to
+> support printing full path of the node, including its name ("f") and only
+> the node's name ("P") in the printk family of functions. The two flags
+> have equivalent functionality to existing %pOF with the same two modifiers
+> ("f" and "P") on OF based systems. The ability to do the same on ACPI
+> based systems is added by this patch.
 
-[...]
+checkpatch comment below:
+   A. 
+> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+[]
+> @@ -418,6 +418,30 @@ Examples::
+>  
+>  Passed by reference.
+>  
+> +Fwnode handles
+> +--------------
+> +
+> +::
+> +
+> +	%pfw[fP]
+> +
+> +For printing information on fwnode handles. The default is to print the full
+> +node name, including the path. The modifiers are functionally equivalent to
+> +%pOF above.
+> +
+> +	- f - full name of the node, including the path
+> +	- P - the name of the node including an address (if there is one)
+> +
+> +Examples (ACPI)::
+> +
+> +	%pfwf	\_SB.PCI0.CIO2.port@1.endpoint@0	- Full node name
+> +	%pfwP	endpoint@0				- Node name
+> +
+> +Examples (OF)::
+> +
+> +	%pfwf	/ocp@68000000/i2c@48072000/camera@10/port/endpoint - Full name
+> +	%pfwP	endpoint				- Node name
+[]
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -5988,14 +5988,17 @@ sub process {
+>  		        for (my $count = $linenr; $count <= $lc; $count++) {
+>  				my $specifier;
+>  				my $extension;
+> +				my $qualifier;
+>  				my $bad_specifier = "";
+>  				my $fmt = get_quoted_string($lines[$count - 1], raw_line($count, 0));
+>  				$fmt =~ s/%%//g;
+>  
+> -				while ($fmt =~ /(\%[\*\d\.]*p(\w))/g) {
+> +				while ($fmt =~ /(\%[\*\d\.]*p(\w)(\w?))/g) {
+
+This is not generic enough to allow all possible qualifiers
+to be captured.
+
+This should be something like:
+
+			while ($fmt =~ /(\%[\*\d\.]*p(\w)(\w*))/g) {
+	
+>  					$specifier = $1;
+>  					$extension = $2;
+> -					if ($extension !~ /[SsBKRraEhMmIiUDdgVCbGNOxt]/) {
+> +					$qualifier = $3;
+> +					if ($extension !~ /[SsBKRraEhMmIiUDdgVCbGNOxtf]/ ||
+> +					    ($extension eq "f" && $qualifier ne "w")) {
 
 
-> > diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> > index f329dcb3f44c..dfba51c9d60c 100644
-> > --- a/arch/s390/kvm/kvm-s390.c
-> > +++ b/arch/s390/kvm/kvm-s390.c
-> > @@ -1018,6 +1018,10 @@ static int
-> > kvm_s390_vm_start_migration(struct kvm *kvm) /* mark all the pages
-> > in active slots as dirty */ for (slotnr = 0; slotnr <
-> > slots->used_slots; slotnr++) { ms = slots->memslots + slotnr;
-> > +		if (!ms->dirty_bitmap) {
-> > +			WARN(1, "ms->dirty_bitmap == NULL\n");  
-> 
-> I would prefer to not have a WARN_ON. Otherwise this would allow a
-> malicious user to spam the log. 
+And this should likely test
+					    (defined $qualifier &&
+					     $extension eq 'f' && $qualifier =~ /^w/))
 
-I agree, the WARN is not needed.
- 
-> 
-> > +			return -EINVAL;
-> > +		}
-> >  		/*
-> >  		 * The second half of the bitmap is only used on
-> > x86,
-> >  		 * and would be wasted otherwise, so we put it to
-> > good 
+>  						$bad_specifier = $specifier;
+>  						last;
+>  					}
 
-Otherwise it looks good.
+And here the 'f' isn't really a bad $specifier,
+it does not have the correct 'w' $extension.
+
+The valid extensions may change in the future and
+this code isn't particularly manageable, so I
+think the $specifier/$extension pair should likely
+have some additional testing after validating
+the $specifier.
 
 
-
-Claudio Imbrenda
 
