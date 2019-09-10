@@ -2,147 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2C06AE7FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E71C8AE7FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:25:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730138AbfIJKZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 06:25:08 -0400
-Received: from ushosting.nmnhosting.com ([66.55.73.32]:42938 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbfIJKZF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:25:05 -0400
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id C3FF82DC1B4F;
-        Tue, 10 Sep 2019 06:25:00 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1568111101;
-        bh=HDAltXrE8fa0s1cXwhaPiIFePgfp29KfB1TH4WQiFKM=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=bLdhODUhBW4Fo/x94Nj+R+V91mwnbDdWHLNOGLCq0biZGZH3Jh+idjt+I4APSOr8C
-         Rbc8OmvyYWwlcbdY4DffVqXm1RUEEn3bfRKdaZ1uoMBCsX+spov/LrzTCPI8p/m6yG
-         eorPdXIjF7Xp4/1L2OakqTNsZo7lNf7vyW9f4wCMpok5yTmvZEsL0GMXwFEsrDvVqV
-         u2BgYZUPjehGpv0d4ae7pNuevsXh0ymINJnKAs/jiu7A8fXASd+pYF2Z09eDbzZJTh
-         rpu+wYaQiZaqh9o5kRpPypjiPm7X6UFOTf8brRROPvWQI0tSg3gcbZbnpN8doK/0IN
-         To853JLOgdR9DOz+Rofmdkpor1j24qEnCwrL59ebH7AMvY/hgaDftc8bL+w6G3fDiu
-         /DdLZUth6SFIpG/syJjKU3YM7QaK33iOJMTO6896o/9bTT2Wyrd0PQItUV+aDxtWFh
-         5uh5FAYEVcPNCe4PJ7st0HYpohFsbuKa9xyf360C6loFML0oFu6jUNQYj0uur0Skg0
-         1fg545R3fYt0a+/SbIObDbvt9lhOh7fMJeqCxkIaudOiWBuTxoYKmBCzDF+5yKubCL
-         f82z0VccKg8yE5D2YaC57RDufBuKihrXFF2SH0JqSFbPOehLLX0RZH1maGEvkJ7hTj
-         ZOP4NSLQU6ekz1+NkJkLdFdQ=
-Received: from Hawking (ntp.lan [10.0.1.1])
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x8AAOsMd022564
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 10 Sep 2019 20:24:54 +1000 (AEST)
-        (envelope-from alastair@d-silva.org)
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     "'David Hildenbrand'" <david@redhat.com>,
-        "'Alastair D'Silva'" <alastair@au1.ibm.com>
-Cc:     "'Andrew Morton'" <akpm@linux-foundation.org>,
-        "'Oscar Salvador'" <osalvador@suse.com>,
-        "'Michal Hocko'" <mhocko@suse.com>,
-        "'Pavel Tatashin'" <pasha.tatashin@soleen.com>,
-        "'Dan Williams'" <dan.j.williams@intel.com>,
-        "'Wei Yang'" <richard.weiyang@gmail.com>,
-        "'Qian Cai'" <cai@lca.pw>, "'Jason Gunthorpe'" <jgg@ziepe.ca>,
-        "'Logan Gunthorpe'" <logang@deltatee.com>,
-        "'Ira Weiny'" <ira.weiny@intel.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190910025225.25904-1-alastair@au1.ibm.com> <20190910025225.25904-3-alastair@au1.ibm.com> <6ca671a0-8b00-e974-7de9-a574ad9b77ec@redhat.com>
-In-Reply-To: <6ca671a0-8b00-e974-7de9-a574ad9b77ec@redhat.com>
-Subject: RE: [PATCH 2/2] mm: Add a bounds check in devm_memremap_pages()
-Date:   Tue, 10 Sep 2019 20:24:54 +1000
-Message-ID: <05af01d567c1$fdb256d0$f9170470$@d-silva.org>
+        id S1729661AbfIJKZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 06:25:02 -0400
+Received: from foss.arm.com ([217.140.110.172]:60660 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726960AbfIJKZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 06:25:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45E591000;
+        Tue, 10 Sep 2019 03:25:01 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B154C3F59C;
+        Tue, 10 Sep 2019 03:25:00 -0700 (PDT)
+Date:   Tue, 10 Sep 2019 11:24:59 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Subject: Re: [PATCH] arm64: fix unreachable code issue with cmpxchg
+Message-ID: <20190910102458.GJ9720@e119886-lin.cambridge.arm.com>
+References: <20190909202153.144970-1-arnd@arndb.de>
+ <20190910092324.GI9720@e119886-lin.cambridge.arm.com>
+ <CAK8P3a2Vk+KSUGJyPTRuLPD=KPEAR43SZ1ofB6k+KeQi3fSERw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHvMJj7Zv4jgOWqcZIGTeYry0K56gJQpAzUAu4+QZimxyuUcA==
-Content-Language: en-au
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Tue, 10 Sep 2019 20:24:56 +1000 (AEST)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2Vk+KSUGJyPTRuLPD=KPEAR43SZ1ofB6k+KeQi3fSERw@mail.gmail.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: David Hildenbrand <david@redhat.com>
-> Sent: Tuesday, 10 September 2019 5:39 PM
-> To: Alastair D'Silva <alastair@au1.ibm.com>; alastair@d-silva.org
-> Cc: Andrew Morton <akpm@linux-foundation.org>; Oscar Salvador
-> <osalvador@suse.com>; Michal Hocko <mhocko@suse.com>; Pavel Tatashin
-> <pasha.tatashin@soleen.com>; Dan Williams <dan.j.williams@intel.com>;
-> Wei Yang <richard.weiyang@gmail.com>; Qian Cai <cai@lca.pw>; Jason
-> Gunthorpe <jgg@ziepe.ca>; Logan Gunthorpe <logang@deltatee.com>; Ira
-> Weiny <ira.weiny@intel.com>; linux-mm@kvack.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH 2/2] mm: Add a bounds check in
-> devm_memremap_pages()
+On Tue, Sep 10, 2019 at 11:38:37AM +0200, Arnd Bergmann wrote:
+> On Tue, Sep 10, 2019 at 11:23 AM Andrew Murray <andrew.murray@arm.com> wrote:
 > 
-> On 10.09.19 04:52, Alastair D'Silva wrote:
-> > From: Alastair D'Silva <alastair@d-silva.org>
 > >
-> > The call to check_hotplug_memory_addressable() validates that the
-> > memory is fully addressable.
+> > >  arch/arm64/include/asm/cmpxchg.h | 15 ++++++++-------
+> > >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/arch/arm64/include/asm/cmpxchg.h b/arch/arm64/include/asm/cmpxchg.h
+> > > index a1398f2f9994..fd64dc8a235f 100644
+> > > --- a/arch/arm64/include/asm/cmpxchg.h
+> > > +++ b/arch/arm64/include/asm/cmpxchg.h
+> > > @@ -19,7 +19,7 @@
+> > >   * acquire+release for the latter.
+> > >   */
+> > >  #define __XCHG_CASE(w, sfx, name, sz, mb, nop_lse, acq, acq_lse, rel, cl)    \
+> > > -static inline u##sz __xchg_case_##name##sz(u##sz x, volatile void *ptr)              \
+> > > +static __always_inline u##sz __xchg_case_##name##sz(u##sz x, volatile void *ptr)\
 > >
-> > Without this call, it is possible that we may remap pages that is not
-> > physically addressable, resulting in bogus section numbers being
-> > returned from __section_nr().
-> >
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > ---
-> >  mm/memremap.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/mm/memremap.c b/mm/memremap.c index
-> > 86432650f829..fd00993caa3e 100644
-> > --- a/mm/memremap.c
-> > +++ b/mm/memremap.c
-> > @@ -269,6 +269,13 @@ void *devm_memremap_pages(struct device
-> *dev,
-> > struct dev_pagemap *pgmap)
-> >
-> >  	mem_hotplug_begin();
-> >
-> > +	error = check_hotplug_memory_addressable(res->start,
-> > +						 resource_size(res));
-> > +	if (error) {
-> > +		mem_hotplug_done();
-> > +		goto err_checkrange;
-> > +	}
-> > +
+> > This hunk isn't needed, there is no BUILD_BUG here.
 > 
-> No need to check under the memory hotplug lock.
+> Right, I noticed this, but it seemed like a good idea regardless given the small
+> size of the function compared with the overhead of a function call.  We clearly
+> want these to be inlined all the time.
 > 
+> Same for the others.
 
-Thanks, I'll adjust it.
+I'm not so sure - isn't the point of something like OPTIMIZE_INLINING to give
+more freedom to the tooling (and by virtue of the option - the user)?
 
-> >  	/*
-> >  	 * For device private memory we call add_pages() as we only need to
-> >  	 * allocate and initialize struct page for the device memory. More-
-> > @@ -324,6 +331,7 @@ void *devm_memremap_pages(struct device *dev,
-> > struct dev_pagemap *pgmap)
+Surely any decent optimising compiler will do the right thing by inlining small
+trivial functions that are annotated with inline? And if not, the compiler
+should be fixed not the kernel - unless of course it causes an issue - and then
+we should fix those specific cases.
+
+There must be dozens of trivial functions that are marked with __inline, I
+don't think it would make sense to mark those as __always_inline. For example the
+atomics in atomic_lse.h are trivial but only marked inline. We obviously want
+them inline, though I don't think we should babysit the compiler to do the
+right thing.
+
+(Also the commit message implies that all the hunks are required to fix this
+particular issue which they are not).
+
+Thanks,
+
+Andrew Murray
+
+> 
+> > Alternatively is it possible to replace the BUILD_BUG's with something else?
 > >
-> >   err_add_memory:
-> >  	kasan_remove_zero_shadow(__va(res->start), resource_size(res));
-> > + err_checkrange:
-> >   err_kasan:
-> >  	untrack_pfn(NULL, PHYS_PFN(res->start), resource_size(res));
-> >   err_pfn_remap:
+> > I think because we use BUILD_BUG at the end of a switch statement, we make
+> > the assumption that size is known at compile time, for this reason we should
+> > ensure the function containing the BUILD_BUG is __always_inline.
 > >
+> > Looking across the kernel where BUILD_BUG is used as a default in a switch
+> > statment ($ git grep -B 3 BUILD_BUG\( | grep default), most instances are
+> > within macros, but many are found in an __always_inline function:
+> >
+> > arch/x86/kvm/cpuid.h
+> > mm/kasan/generic.c
+> >
+> > Though some are not:
+> >
+> > include/linux/signal.h
+> > arch/arm64/include/asm/arm_dsu/pmu.h
+> >
+> > I wonder if there may be a latent mole ready to whack with pmu.h?
 > 
+> Right, it can't hurt to annotate those as well. I actually have another
+> fixup for linux/signal.h that I would have to revisit at some point.
+> See https://bugs.llvm.org/show_bug.cgi?id=38789, I think this is
+> fixed with clang-9 now, but maybe not with clang-8.
 > 
-> --
-> 
-> Thanks,
-> 
-> David / dhildenb
-> 
-
--- 
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva     msn: alastair@d-silva.org
-blog: http://alastair.d-silva.org    Twitter: @EvilDeece
-
+>       Arnd
