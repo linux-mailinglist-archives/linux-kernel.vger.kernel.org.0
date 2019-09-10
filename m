@@ -2,281 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE0EEAE9C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54765AE99E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393055AbfIJL4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 07:56:54 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:47058 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393004AbfIJL4w (ORCPT
+        id S1728575AbfIJL4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 07:56:19 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54656 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728249AbfIJL4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:56:52 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d17so6861713wrq.13
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 04:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lgmJPtZQ8fyvuHmMOh0a9ZreWnclwauCPln6Fe4dsAY=;
-        b=IdAVenQm+KFl73tqIuoKRLF16IuBa66JLF9e3L97ri0rt1+h13KE7e/z9EFxsEw55/
-         5Gg9Q2C/Pqh22uIIEB+S0T5w5wL8ylwDuDMWCnJhmD6IHoGEDjwyaW46T2hBA9yjnE+/
-         qntn7RAEUAWM4IqnU33TBEjzQWA1193y70e+s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lgmJPtZQ8fyvuHmMOh0a9ZreWnclwauCPln6Fe4dsAY=;
-        b=NlEx7gBdmm5IIWSL5FzLUE08e14AnbP/3i8NiIhsUutkM1tPfv/qM6r7vk995zzkNU
-         ROB5iipWflo5CSNLkfEDL4tZspsErofibUm/Ud3/gwzPpBxqdULUjUurb417n8B0cCG4
-         /DJSyE0aMmr0bVH5JBYY2k4iSzUsrTi71EXJ/ihQdmGk7Imv0mXMkO2s9VgyInR33LZU
-         lHhC2xjuojsLpmklxsDZ3za+JKTEt4ADgSSZuenslohAq9dS04mCeWjeTE+atOQ63aVG
-         F2m4AC6eTFo7MArtGqjAGgP0sOcIDsQs1d+/+57qTLpvAG5/c6VX+NDSKOo4JoJNAos2
-         iXDg==
-X-Gm-Message-State: APjAAAXk4lQYb2acNoUUJZiuie/9k2CRy8+du6Df0tDDPP8T1K9sC8PP
-        +8QrpW/az+80TPqE4vHIa52vRPyPZEA=
-X-Google-Smtp-Source: APXvYqwsJ62ovsvYrjSdhTzzrg9GHfIWeorKeBgzq7lDd93TJ6kuVNJcQfYw6ooL0kkzPRzV/HrWJw==
-X-Received: by 2002:a5d:43cc:: with SMTP id v12mr13130776wrr.75.1568116607885;
-        Tue, 10 Sep 2019 04:56:47 -0700 (PDT)
-Received: from kpsingh-kernel.c.hoisthospitality.com (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id q19sm23732935wra.89.2019.09.10.04.56.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 04:56:47 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [RFC v1 14/14] krsi: Pin arg pages only when needed
-Date:   Tue, 10 Sep 2019 13:55:27 +0200
-Message-Id: <20190910115527.5235-15-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190910115527.5235-1-kpsingh@chromium.org>
-References: <20190910115527.5235-1-kpsingh@chromium.org>
+        Tue, 10 Sep 2019 07:56:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ABrjjQ183698;
+        Tue, 10 Sep 2019 11:56:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=ivdH+jkLdC2yHvpK29OWsjhzVtybUeJgo5z2e3uXc10=;
+ b=eZ3fntW5pgwadibllzOdiuvGQQ4GkoD+0OHfJnnreNWlKwq3gOohSS7YUY7NHvQYQ1M+
+ mnlaQyYRl+dsrqCT7JVOOR6yDsE3lLuou5QTv8u9Eg/GjEIAKRCFeILeGQ7pb+H9K00D
+ o8sB50Y2Y1mZAPMkTpC2zqwApR8ZZKRNdCYtCxlSOtxU4VJcrkqCDIN2kS0KDYnu8VSR
+ Xv3v3WIddvK+fJRdWqGrFu32QnqMw08nwMzB6ZMEAVlILL8gIGa0SJjp/I2u4U5ebjYu
+ 2qUbqWhiqt1IN3INIQC3H7hQzUJ7yDFkJMf0R9elOBC9R2l6cy2Bk/ISympMW0GFlDKZ uw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2uw1jy2u0h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 11:56:02 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8ABsLD0060248;
+        Tue, 10 Sep 2019 11:56:02 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2uwqktmp1p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 11:56:02 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8ABu0GM028873;
+        Tue, 10 Sep 2019 11:56:00 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Sep 2019 04:56:00 -0700
+Date:   Tue, 10 Sep 2019 14:55:50 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Adam Zerella <adam.zerella@gmail.com>
+Cc:     labbott@redhat.com, sumit.semwal@linaro.org,
+        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH] staging: android: ion: Replace strncpy() for stracpy()
+Message-ID: <20190910115550.GA15977@kadam>
+References: <20190908043450.1078-1-adam.zerella@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190908043450.1078-1-adam.zerella@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9375 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909100119
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9375 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909100119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KP Singh <kpsingh@google.com>
+On Sun, Sep 08, 2019 at 02:34:50PM +1000, Adam Zerella wrote:
+> Using strncpy() does not always terminate the destination string.
+> stracpy() is a alternative function that does, by using this new
+> function we will no longer need to insert a null separator.
+> 
+> Signed-off-by: Adam Zerella <adam.zerella@gmail.com>
+> ---
+>  drivers/staging/android/ion/ion.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+> index e6b1ca141b93..17901bd626be 100644
+> --- a/drivers/staging/android/ion/ion.c
+> +++ b/drivers/staging/android/ion/ion.c
+> @@ -433,8 +433,7 @@ static int ion_query_heaps(struct ion_heap_query *query)
+>  	max_cnt = query->cnt;
+>  
+>  	plist_for_each_entry(heap, &dev->heaps, node) {
+> -		strncpy(hdata.name, heap->name, MAX_HEAP_NAME);
+> -		hdata.name[sizeof(hdata.name) - 1] = '\0';
+> +		stracpy(hdata.name, heap->name, MAX_HEAP_NAME);
 
-Adds a callback which is called when a new program is attached
-to a hook. The callback registered by the process_exection hook
-checks if a program that has calls to a helper that requires pages to
-be pinned (eg. krsi_get_env_var).
+stracpy() only takes two arguments.  This doesn't compile.
 
-Signed-off-by: KP Singh <kpsingh@google.com>
----
- include/linux/krsi.h              |  1 +
- security/krsi/include/hooks.h     |  5 ++-
- security/krsi/include/krsi_init.h |  7 ++++
- security/krsi/krsi.c              | 62 ++++++++++++++++++++++++++++---
- security/krsi/ops.c               | 10 ++++-
- 5 files changed, 77 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/krsi.h b/include/linux/krsi.h
-index c7d1790d0c1f..e443d0309764 100644
---- a/include/linux/krsi.h
-+++ b/include/linux/krsi.h
-@@ -7,6 +7,7 @@
- 
- #ifdef CONFIG_SECURITY_KRSI
- int krsi_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog);
-+extern const struct bpf_func_proto krsi_get_env_var_proto;
- #else
- static inline int krsi_prog_attach(const union bpf_attr *attr,
- 				   struct bpf_prog *prog)
-diff --git a/security/krsi/include/hooks.h b/security/krsi/include/hooks.h
-index e070c452b5de..38293125ff99 100644
---- a/security/krsi/include/hooks.h
-+++ b/security/krsi/include/hooks.h
-@@ -8,7 +8,7 @@
-  *
-  * Format:
-  *
-- *   KRSI_HOOK_INIT(TYPE, NAME, LSM_HOOK, KRSI_HOOK_FN)
-+ *   KRSI_HOOK_INIT(TYPE, NAME, LSM_HOOK, KRSI_HOOK_FN, CALLBACK)
-  *
-  * KRSI adds one layer of indirection between the name of the hook and the name
-  * it exposes to the userspace in Security FS to prevent the userspace from
-@@ -18,4 +18,5 @@
- KRSI_HOOK_INIT(PROCESS_EXECUTION,
- 	       process_execution,
- 	       bprm_check_security,
--	       krsi_process_execution)
-+	       krsi_process_execution,
-+	       krsi_process_execution_cb)
-diff --git a/security/krsi/include/krsi_init.h b/security/krsi/include/krsi_init.h
-index 6152847c3b08..99801d5b273a 100644
---- a/security/krsi/include/krsi_init.h
-+++ b/security/krsi/include/krsi_init.h
-@@ -31,6 +31,8 @@ struct krsi_ctx {
- 	};
- };
- 
-+typedef int (*krsi_prog_attach_t) (struct bpf_prog_array *);
-+
- /*
-  * The LSM creates one file per hook.
-  *
-@@ -61,6 +63,11 @@ struct krsi_hook {
- 	 * The eBPF programs that are attached to this hook.
- 	 */
- 	struct bpf_prog_array __rcu	*progs;
-+	/*
-+	 * The attach callback is called before a new program is attached
-+	 * to the hook and is passed the updated bpf_prog_array as an argument.
-+	 */
-+	krsi_prog_attach_t attach_callback;
- };
- 
- extern struct krsi_hook krsi_hooks_list[];
-diff --git a/security/krsi/krsi.c b/security/krsi/krsi.c
-index 00a7150c1b22..a4443d7aa150 100644
---- a/security/krsi/krsi.c
-+++ b/security/krsi/krsi.c
-@@ -5,15 +5,65 @@
- #include <linux/bpf.h>
- #include <linux/binfmts.h>
- #include <linux/highmem.h>
-+#include <linux/krsi.h>
- #include <linux/mm.h>
- 
- #include "krsi_init.h"
- 
-+/*
-+ * need_arg_pages is only updated in bprm_check_security_cb
-+ * when a mutex on krsi_hook for bprm_check_security is already
-+ * held. need_arg_pages avoids pinning pages when no program
-+ * that needs them is attached to the hook.
-+ */
-+static bool need_arg_pages;
-+
-+/*
-+ * Checks if the instruction is a BPF_CALL to an eBPF helper located
-+ * at the given address.
-+ */
-+static inline bool bpf_is_call_to_func(struct bpf_insn *insn,
-+				       void *func_addr)
-+{
-+	u8 opcode = BPF_OP(insn->code);
-+
-+	if (opcode != BPF_CALL)
-+		return false;
-+
-+	if (insn->src_reg == BPF_PSEUDO_CALL)
-+		return false;
-+
-+	/*
-+	 * The BPF verifier updates the value of insn->imm from the
-+	 * enum bpf_func_id to the offset of the address of helper
-+	 * from the __bpf_call_base.
-+	 */
-+	return __bpf_call_base + insn->imm == func_addr;
-+}
-+
-+static int krsi_process_execution_cb(struct bpf_prog_array *array)
-+{
-+	struct bpf_prog_array_item *item = array->items;
-+	struct bpf_prog *p;
-+	const struct bpf_func_proto *proto = &krsi_get_env_var_proto;
-+	int i;
-+
-+	while ((p = READ_ONCE(item->prog))) {
-+		for (i = 0; i < p->len; i++) {
-+			if (bpf_is_call_to_func(&p->insnsi[i], proto->func))
-+				need_arg_pages = true;
-+		}
-+		item++;
-+	}
-+	return 0;
-+}
-+
- struct krsi_hook krsi_hooks_list[] = {
--	#define KRSI_HOOK_INIT(TYPE, NAME, H, I) \
-+	#define KRSI_HOOK_INIT(TYPE, NAME, H, I, CB) \
- 		[TYPE] = { \
- 			.h_type = TYPE, \
- 			.name = #NAME, \
-+			.attach_callback = CB, \
- 		},
- 	#include "hooks.h"
- 	#undef KRSI_HOOK_INIT
-@@ -75,9 +125,11 @@ static int krsi_process_execution(struct linux_binprm *bprm)
- 		.bprm = bprm,
- 	};
- 
--	ret = pin_arg_pages(&ctx.bprm_ctx);
--	if (ret < 0)
--		goto out_arg_pages;
-+	if (READ_ONCE(need_arg_pages)) {
-+		ret = pin_arg_pages(&ctx.bprm_ctx);
-+		if (ret < 0)
-+			goto out_arg_pages;
-+	}
- 
- 	ret = krsi_run_progs(PROCESS_EXECUTION, &ctx);
- 	kfree(ctx.bprm_ctx.arg_pages);
-@@ -87,7 +139,7 @@ static int krsi_process_execution(struct linux_binprm *bprm)
- }
- 
- static struct security_hook_list krsi_hooks[] __lsm_ro_after_init = {
--	#define KRSI_HOOK_INIT(T, N, HOOK, IMPL) LSM_HOOK_INIT(HOOK, IMPL),
-+	#define KRSI_HOOK_INIT(T, N, HOOK, IMPL, CB) LSM_HOOK_INIT(HOOK, IMPL),
- 	#include "hooks.h"
- 	#undef KRSI_HOOK_INIT
- };
-diff --git a/security/krsi/ops.c b/security/krsi/ops.c
-index 1db94dfaac15..2de682371eff 100644
---- a/security/krsi/ops.c
-+++ b/security/krsi/ops.c
-@@ -139,6 +139,14 @@ int krsi_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog)
- 		goto unlock;
- 	}
- 
-+	if (h->attach_callback) {
-+		ret = h->attach_callback(new_array);
-+		if (ret < 0) {
-+			bpf_prog_array_free(new_array);
-+			goto unlock;
-+		}
-+	}
-+
- 	rcu_assign_pointer(h->progs, new_array);
- 	bpf_prog_array_free(old_array);
- 
-@@ -278,7 +286,7 @@ BPF_CALL_5(krsi_get_env_var, struct krsi_ctx *, ctx, char *, name, u32, n_size,
- 	return get_env_var(ctx, name, dest, n_size, size);
- }
- 
--static const struct bpf_func_proto krsi_get_env_var_proto = {
-+const struct bpf_func_proto krsi_get_env_var_proto = {
- 	.func = krsi_get_env_var,
- 	.gpl_only = true,
- 	.ret_type = RET_INTEGER,
--- 
-2.20.1
+regards,
+dan carpenter
 
