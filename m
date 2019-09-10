@@ -2,131 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1592AAEA2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D7EEAEA2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389340AbfIJMVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 08:21:11 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:53454 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388902AbfIJMVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389179AbfIJMVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 10 Sep 2019 08:21:10 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 93FAD200090;
-        Tue, 10 Sep 2019 14:21:08 +0200 (CEST)
+Received: from inva020.nxp.com ([92.121.34.13]:34576 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388896AbfIJMVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 08:21:09 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EE3091A009A;
+        Tue, 10 Sep 2019 14:21:07 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 521212004BF;
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7E92A1A0495;
         Tue, 10 Sep 2019 14:21:04 +0200 (CEST)
 Received: from lsv03124.swis.in-blr01.nxp.com (lsv03124.swis.in-blr01.nxp.com [92.120.146.121])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1F134402A5;
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id AEE41402D2;
         Tue, 10 Sep 2019 20:20:59 +0800 (SGT)
 From:   Ashish Kumar <Ashish.Kumar@nxp.com>
 To:     devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
         shawnguo@kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Ashish Kumar <Ashish.Kumar@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCH] arm64: dts: ls1028a: Add FlexSPI support for NXP LS1028
-Date:   Tue, 10 Sep 2019 17:50:51 +0530
-Message-Id: <1568118055-9740-1-git-send-email-Ashish.Kumar@nxp.com>
+        Ashish Kumar <Ashish.Kumar@nxp.com>
+Subject: [PATCH] arm64: dts: ls1046a: Add QSPI node for ls1046afrwy
+Date:   Tue, 10 Sep 2019 17:50:52 +0530
+Message-Id: <1568118055-9740-2-git-send-email-Ashish.Kumar@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1568118055-9740-1-git-send-email-Ashish.Kumar@nxp.com>
+References: <1568118055-9740-1-git-send-email-Ashish.Kumar@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add fspi node property for LS1028A SoC for FlexSPI driver.
-Property added for FlexSPI controller and for the connected
-slave device for the LS1028ARDB and LS1028AQDS target.
-RDB and QDS is having one SPI-NOR flash device, mt35xu02g
-connected at CS0.
-This flash device "mt35xu02g" is tested for octal read
+This board has a single 64MB mt25qu512a flash.
+QUAD I/O read and single I/O write is tested.
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
 Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts | 15 +++++++++++++++
- arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts | 15 +++++++++++++++
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    | 13 +++++++++++++
- 3 files changed, 43 insertions(+)
+ arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-index 5e14e5a..5d46993 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-@@ -103,6 +103,21 @@
- 	status = "okay";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dts
+index 3595be0..c95d1ca 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dts
+@@ -112,6 +112,21 @@
+ 
  };
  
-+&fspi {
++&qspi {
 +	status = "okay";
-+	flash0: mt35xu02g@0 {
-+		compatible = "micron,mt35xu02g", "jedec,spi-nor";
++
++	qflash0: mt25qu512a@0 {
++		compatible = "micron,mt25qu512a", "jedec,spi-nor";
 +		#address-cells = <1>;
 +		#size-cells = <1>;
 +		m25p,fast-read;
 +		spi-max-frequency = <50000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
 +		reg = <0>;
-+		/* The following setting enables 1-1-8 (CMD-ADDR-DATA) mode */
-+		spi-rx-bus-width = <8>; /* 8 SPI Rx lines */
-+		spi-tx-bus-width = <1>; /* 1 SPI Tx line */
 +	};
 +};
 +
- &i2c0 {
- 	status = "okay";
+ #include "fsl-ls1046-post.dtsi"
  
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-index 1a69221..f33cb2e 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-@@ -96,6 +96,21 @@
- 	status = "okay";
- };
- 
-+&fspi {
-+	status = "okay";
-+	flash0: mt35xu02g@0 {
-+		compatible = "micron,mt35xu02g", "jedec,spi-nor";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		m25p,fast-read;
-+		spi-max-frequency = <50000000>;
-+		reg = <0>;
-+		/* The following setting enables 1-1-8 (CMD-ADDR-DATA) mode */
-+		spi-rx-bus-width = <8>; /* 8 SPI Rx lines */
-+		spi-tx-bus-width = <1>; /* 1 SPI Tx line */
-+	};
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index b139b29..4aa1825 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -174,6 +174,19 @@
- 			clocks = <&sysclk>;
- 		};
- 
-+		fspi: spi@20c0000 {
-+			compatible = "nxp,lx2160a-fspi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x20c0000 0x0 0x10000>,
-+			      <0x0 0x20000000 0x0 0x10000000>;
-+			reg-names = "fspi_base", "fspi_mmap";
-+			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
-+			clock-names = "fspi_en", "fspi";
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@2000000 {
- 			compatible = "fsl,vf610-i2c";
- 			#address-cells = <1>;
+ &fman0 {
 -- 
 2.7.4
 
