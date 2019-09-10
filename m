@@ -2,191 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A57A2AE310
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 06:32:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54A1EAE311
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 06:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404307AbfIJEbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 00:31:49 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:2082 "EHLO
+        id S1729724AbfIJEfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 00:35:42 -0400
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:18520 "EHLO
         mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2393009AbfIJEb0 (ORCPT
+        by vger.kernel.org with ESMTP id S1728414AbfIJEfm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 00:31:26 -0400
-Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
-        by mx0a-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8A4UsOa022306;
-        Tue, 10 Sep 2019 04:30:54 GMT
-Received: from g4t3427.houston.hpe.com (g4t3427.houston.hpe.com [15.241.140.73])
-        by mx0a-002e3701.pphosted.com with ESMTP id 2uwnda6qqr-1
+        Tue, 10 Sep 2019 00:35:42 -0400
+Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8A4Utge018718;
+        Tue, 10 Sep 2019 04:35:27 GMT
+Received: from g9t5009.houston.hpe.com (g9t5009.houston.hpe.com [15.241.48.73])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2uwhce0h5p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Sep 2019 04:30:54 +0000
+        Tue, 10 Sep 2019 04:35:27 +0000
 Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
-        by g4t3427.houston.hpe.com (Postfix) with ESMTP id 5E0016F;
-        Tue, 10 Sep 2019 04:30:19 +0000 (UTC)
+        by g9t5009.houston.hpe.com (Postfix) with ESMTP id 2440A5C;
+        Tue, 10 Sep 2019 04:35:25 +0000 (UTC)
 Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 5508)
-        id 411EC201FCF15; Mon,  9 Sep 2019 23:30:18 -0500 (CDT)
-Message-Id: <20190910042452.489490687@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190910042451.795793945@stormcage.eag.rdlabs.hpecorp.net>
+        id A4740201FCE44; Mon,  9 Sep 2019 23:35:25 -0500 (CDT)
+Message-Id: <20190910043437.021955474@stormcage.eag.rdlabs.hpecorp.net>
 User-Agent: quilt/0.46-1
-Date:   Mon, 09 Sep 2019 23:24:59 -0500
+Date:   Mon, 09 Sep 2019 23:34:37 -0500
 From:   Mike Travis <mike.travis@hpe.com>
 To:     Mike Travis <mike.travis@hpe.com>
-Subject: [PATCH V2 8/8] x86/platform/uv: Account for UV Hubless in is_uvX_hub Ops
-Content-Disposition: inline; filename=mod-is_uvX_hub
+Subject: [PATCH V2 0/8] x86/platform/UV: Update UV Hubless System Support
+In-Reply-To: <20190905184741.256857552@stormcage.eag.rdlabs.hpecorp.net>
 X-HPE-SCL: -1
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
  definitions=2019-09-10_04:2019-09-09,2019-09-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=744
- lowpriorityscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- adultscore=0 spamscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ malwarescore=0 clxscore=1015 impostorscore=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=812
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-1906280000 definitions=main-1909100041
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The references in the is_uvX_hub() function uses the hub_info pointer
-which will be NULL when the system is hubless.  This change avoids
-that NULL dereference.  It is also an optimization in performance.
 
-Signed-off-by: Mike Travis <mike.travis@hpe.com>
-Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
-Reviewed-by: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-To: Ingo Molnar <mingo@redhat.com>
-To: H. Peter Anvin <hpa@zytor.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Borislav Petkov <bp@alien8.de>
-To: Christoph Hellwig <hch@infradead.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Cc: Hedi Berriche <hedi.berriche@hpe.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>
-Cc: Justin Ernst <justin.ernst@hpe.com>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
----
-V2: Add WARNING that the is UVx supported defines will be removed.
----
- arch/x86/include/asm/uv/.uv_hub.h.swp |binary
- arch/x86/include/asm/uv/uv_hub.h |   61 ++++++++++++---------------------------
- 1 file changed, 20 insertions(+), 41 deletions(-)
+On 9/5/2019 11:47 AM, Mike Travis wrote:
+> 
+> These patches support upcoming UV systems that do not have a UV HUB.
+> 
+> [1/8] Save OEM_ID from ACPI MADT probe
+>
+> [2/8] Return UV Hubless System Type
+    V2: Remove is_uv_hubless define
+	Remove leading '_' from _is_uv_hubless
 
-Binary files linux.orig/arch/x86/include/asm/uv/.uv_hub.h.swp and linux/arch/x86/include/asm/uv/.uv_hub.h.swp differ
---- linux.orig/arch/x86/include/asm/uv/uv_hub.h
-+++ linux/arch/x86/include/asm/uv/uv_hub.h
-@@ -19,6 +19,7 @@
- #include <linux/topology.h>
- #include <asm/types.h>
- #include <asm/percpu.h>
-+#include <asm/uv/uv.h>
- #include <asm/uv/uv_mmrs.h>
- #include <asm/uv/bios.h>
- #include <asm/irq_vectors.h>
-@@ -243,83 +244,61 @@ static inline int uv_hub_info_check(int
- #define UV4_HUB_REVISION_BASE		7
- #define UV4A_HUB_REVISION_BASE		8	/* UV4 (fixed) rev 2 */
- 
--#ifdef	UV1_HUB_IS_SUPPORTED
-+/* WARNING: UVx_HUB_IS_SUPPORTED defines are deprecated and will be removed */
- static inline int is_uv1_hub(void)
- {
--	return uv_hub_info->hub_revision < UV2_HUB_REVISION_BASE;
--}
-+#ifdef	UV1_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(1));
- #else
--static inline int is_uv1_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV2_HUB_IS_SUPPORTED
- static inline int is_uv2_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV3_HUB_REVISION_BASE));
--}
-+#ifdef	UV2_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(2));
- #else
--static inline int is_uv2_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV3_HUB_IS_SUPPORTED
- static inline int is_uv3_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV3_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV4_HUB_REVISION_BASE));
--}
-+#ifdef	UV3_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(3));
- #else
--static inline int is_uv3_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- /* First test "is UV4A", then "is UV4" */
--#ifdef	UV4A_HUB_IS_SUPPORTED
--static inline int is_uv4a_hub(void)
--{
--	return (uv_hub_info->hub_revision >= UV4A_HUB_REVISION_BASE);
--}
--#else
- static inline int is_uv4a_hub(void)
- {
-+#ifdef	UV4A_HUB_IS_SUPPORTED
-+	if (is_uv_hubbed(uv(4)))
-+		return (uv_hub_info->hub_revision == UV4A_HUB_REVISION_BASE);
-+#endif
- 	return 0;
- }
--#endif
- 
--#ifdef	UV4_HUB_IS_SUPPORTED
- static inline int is_uv4_hub(void)
- {
--	return uv_hub_info->hub_revision >= UV4_HUB_REVISION_BASE;
--}
-+#ifdef	UV4_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(4));
- #else
--static inline int is_uv4_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- static inline int is_uvx_hub(void)
- {
--	if (uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE)
--		return uv_hub_info->hub_revision;
--
--	return 0;
-+	return (is_uv_hubbed(-2) >= uv(2));
- }
- 
- static inline int is_uv_hub(void)
- {
--#ifdef	UV1_HUB_IS_SUPPORTED
--	return uv_hub_info->hub_revision;
--#endif
--	return is_uvx_hub();
-+	return is_uv1_hub() || is_uvx_hub();
- }
- 
- union uvh_apicid {
+> [3/8] Add return code to UV BIOS Init function
+>
+> [4/8] Setup UV functions for Hubless UV Systems
+>
+> [5/8] Add UV Hubbed/Hubless Proc FS Files
+    V2: Remove is_uv_hubbed define
+	Remove leading '_' from _is_uv_hubbed
+
+> [6/8] Decode UVsystab Info
+    V2: Removed redundant error message after call to uv_bios_init.
+	Removed redundant error message after call to decode_uv_systab.
+	Clarify selection of UV4 and higher when checking for extended UVsystab
+	in decode_uv_systab().
+
+> [7/8] Check EFI Boot to set reboot type
+>
+> [8/8] Account for UV Hubless in is_uvX_hub Ops
+    V2: Add WARNING that the is UVx supported defines will be removed.
 
 -- 
 
