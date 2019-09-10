@@ -2,64 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF09CAE4B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 09:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02E0EAE4B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 09:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731942AbfIJHb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 03:31:27 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42784 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfIJHb1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 03:31:27 -0400
-Received: by mail-qk1-f193.google.com with SMTP id f13so15970214qkm.9;
-        Tue, 10 Sep 2019 00:31:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J4aIbTcgYnsL2jAn60izorNqL2E+CEoVtmdgC/gCJ2A=;
-        b=rA+YV42bahdlJ80KZYTG6Br/IowEbQmS5Ti/4npAstLMK+yviYQ3Bcgsz2fq/TGbHF
-         duOfieiqXaTGK/YC7wEM4gL5Ut1F+JJLXs52bePD3n4DwilGs/viE8ttiv/u6yfyMhbw
-         EocqobjA5Ha8Nz2wmUdnJgTK63rWAVTHOn32mldsL+EvLjzmbvuiPj09PK3usQHrQRmT
-         3DtD78DOZUrmTj5lW1I1iWt3yhF0SGgNcNJV8NyCSz4Dg2/Jt3ahMSivNgLJj4Y7jTr+
-         +MFWsPyxBUteSGgfjj0iw7OavAjdw0wZo9P4LiSNITPNtYEN3FeXJg8Ac9awCOkvYIV3
-         zvpg==
-X-Gm-Message-State: APjAAAVWDyJebX/TmJ1XHcnUIxtqbEOQXJ+KeokVomo0nL6OF9Jcdwxy
-        6487PwdIIbFFrZaumE168c6hrZQka8yHHtLSmRlR9Yp1
-X-Google-Smtp-Source: APXvYqzxfu9hm0NXuOKA2ZPbbiK1FbMXuncwD0ThgVH5KBnNGFfYb5fTYOiTxWRMVJbtLh9Ew4O+xiYHL4ZLpkip+vI=
-X-Received: by 2002:ae9:ef8c:: with SMTP id d134mr27834191qkg.286.1568100685778;
- Tue, 10 Sep 2019 00:31:25 -0700 (PDT)
+        id S1728888AbfIJHbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 03:31:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56496 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726008AbfIJHbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 03:31:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 53D38B011;
+        Tue, 10 Sep 2019 07:31:22 +0000 (UTC)
+Date:   Tue, 10 Sep 2019 09:31:20 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Chris Down <chris@chrisdown.name>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>, lkp@01.org,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [LKP] [mm, memcg] 1e577f970f: will-it-scale.per_process_ops
+ -7.2% regression
+Message-ID: <20190910073120.GK2063@dhcp22.suse.cz>
+References: <20190909021544.GP15734@shao2-debian>
+ <20190909194652.GE2063@dhcp22.suse.cz>
+ <87d0g8hbly.fsf@yhuang-dev.intel.com>
 MIME-Version: 1.0
-References: <20190909204201.931830-1-arnd@arndb.de> <20190910071030.GG2063@dhcp22.suse.cz>
-In-Reply-To: <20190910071030.GG2063@dhcp22.suse.cz>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 10 Sep 2019 09:31:09 +0200
-Message-ID: <CAK8P3a2_nuy-nxYapRbkZfAa+xABGUSPekEOwTunu4G-=V2cCA@mail.gmail.com>
-Subject: Re: [PATCH] mm: add dummy can_do_mlock() helper
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d0g8hbly.fsf@yhuang-dev.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 9:10 AM Michal Hocko <mhocko@kernel.org> wrote:
+On Tue 10-09-19 15:08:41, Huang, Ying wrote:
+> Michal Hocko <mhocko@kernel.org> writes:
+> 
+> > On Mon 09-09-19 10:15:44, kernel test robot wrote:
+> >> Greeting,
+> >> 
+> >> FYI, we noticed a -7.2% regression of will-it-scale.per_process_ops due to commit:
+> >
+> > What is the memcg setup for this test?
+> 
+> Except enabling memcg in kernel config, we don't do any special
+> setup for memcg for the test.
 
-> but IB on nonMMU? Whut? Is there any HW that actually supports this?
-> Just wondering...
-
-Probably not, but I can't think of a good reason to completely disable
-it in Kconfig.
-Almost everything can be built without MMU at the moment, but the subset
-of things that are actually useful is hard to know.
-
-         Arnd
+OK, this is really interesting because the local events introduced by
+this commits do not apply to the root memcg. So this smells like another
+case when a microbenchmark is sensitive on the memcg layout changes.
+-- 
+Michal Hocko
+SUSE Labs
