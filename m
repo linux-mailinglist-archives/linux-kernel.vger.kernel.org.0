@@ -2,105 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49DBCAED35
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:37:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51E13AED40
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387893AbfIJOhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 10:37:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbfIJOhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:37:35 -0400
-Received: from earth.universe (unknown [148.69.85.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95C0121479;
-        Tue, 10 Sep 2019 14:37:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568126254;
-        bh=y1WgrtzyvFdOq+b4d4REujchX5rk4th/6G7OOccfmxM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iYlI8DaVumn332PgaHqmbGve4wfPHMu0RUKeSPGg0tR/ZBCA5cMBGisOPvfJ5WTat
-         QFfogJ1XfKG4+7MXP5TZNCCqhaSNCAgjaVnZ0lZ9X2TpoxJ9fC0zIbRwf7lAqP9XiG
-         1a67UW/obuJuytpzOoVZrwD9QXBSgZWniN83km5U=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 8B5D53C0CFA; Tue, 10 Sep 2019 16:37:32 +0200 (CEST)
-Date:   Tue, 10 Sep 2019 15:37:32 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Paul Walmsley <paul@pwsan.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Adam Ford <adam.ford@logicpd.com>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC] ARM: omap3: Enable HWMODS for HW Random Number Generator
-Message-ID: <20190910143732.3g3q4acvnx2pqvjx@earth.universe>
-References: <20190828150037.2640-1-aford173@gmail.com>
- <20190905230443.GA52127@atomide.com>
- <CAHCN7xKxffJUV2V2CCuw0iPqUm4LJT28GMrcF2=8rDJQM2dOOw@mail.gmail.com>
+        id S2388116AbfIJOip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 10:38:45 -0400
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:9210 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728244AbfIJOip (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 10:38:45 -0400
+Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8AER2uX023428;
+        Tue, 10 Sep 2019 14:38:32 GMT
+Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
+        by mx0a-002e3701.pphosted.com with ESMTP id 2uxc4t1jmm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Sep 2019 14:38:32 +0000
+Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
+        by g9t5008.houston.hpe.com (Postfix) with ESMTP id E950D56;
+        Tue, 10 Sep 2019 14:38:30 +0000 (UTC)
+Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
+        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id C54DF51;
+        Tue, 10 Sep 2019 14:38:29 +0000 (UTC)
+Date:   Tue, 10 Sep 2019 09:38:29 -0500
+From:   Steve Wahl <steve.wahl@hpe.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Juergen Gross <jgross@suse.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
+        Baoquan He <bhe@redhat.com>, russ.anderson@hpe.com,
+        dimitri.sivanich@hpe.com, mike.travis@hpe.com
+Subject: Re: [PATCH] x86/boot/64: Make level2_kernel_pgt pages invalid
+ outside kernel area.
+Message-ID: <20190910143829.GB7834@swahl-linux>
+References: <20190906212950.GA7792@swahl-linux>
+ <20190909081414.5e3q47fzzruesscx@box>
+ <20190910061815.GA40059@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qrixv7njwauekhyc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHCN7xKxffJUV2V2CCuw0iPqUm4LJT28GMrcF2=8rDJQM2dOOw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190910061815.GA40059@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-10_10:2019-09-10,2019-09-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=912 spamscore=0 adultscore=0 priorityscore=1501 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
+ definitions=main-1909100141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 10, 2019 at 08:18:15AM +0200, Ingo Molnar wrote:
+> 
+> * Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> 
+> > On Fri, Sep 06, 2019 at 04:29:50PM -0500, Steve Wahl wrote:
+> > > Our hardware (UV aka Superdome Flex) has address ranges marked
+> > > reserved by the BIOS. These ranges can cause the system to halt if
+> > > accessed.
+> > > 
+> > > During kernel initialization, the processor was speculating into
+> > > reserved memory causing system halts.  The processor speculation is
+> > > enabled because the reserved memory is being mapped by the kernel.
+> > > 
+> > > The page table level2_kernel_pgt is 1 GiB in size, and had all pages
+> > > initially marked as valid, and the kernel is placed anywhere in this
+> > > range depending on the virtual address selected by KASLR.  Later on in
+> > > the boot process, the valid area gets trimmed back to the space
+> > > occupied by the kernel.
+> > > 
+> > > But during the interval of time when the full 1 GiB space was marked
+> > > as valid, if the kernel physical address chosen by KASLR was close
+> > > enough to our reserved memory regions, the valid pages outside the
+> > > actual kernel space were allowing the processor to issue speculative
+> > > accesses to the reserved space, causing the system to halt.
+> > > 
+> > > This was encountered somewhat rarely on a normal system boot, and
+> > > somewhat more often when starting the crash kernel if
+> > > "crashkernel=512M,high" was specified on the command line (because
+> > > this heavily restricts the physical address of the crash kernel,
+> > > usually to within 1 GiB of our reserved space).
+> > > 
+> > > The answer is to invalidate the pages of this table outside the
+> > > address range occupied by the kernel before the page table is
+> > > activated.  This patch has been validated to fix this problem on our
+> > > hardware.
+> > 
+> > If the goal is to avoid *any* mapping of the reserved region to stop
+> > speculation, I don't think this patch will do the job. We still (likely)
+> > have the same memory mapped as part of the identity mapping. And it
+> > happens at least in two places: here and before on decompression stage.
+> 
+> Yeah, this really needs a fix at the KASLR level: it should only ever map 
+> into regions that are fully RAM backed.
+> 
+> Is the problem that the 1 GiB mapping is a direct mapping, which can be 
+> speculated into? I presume KASLR won't accidentally map the kernel into 
+> the reserved region, right?
 
---qrixv7njwauekhyc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I believe you are correct.  There is code that limits KASLR's choice
+of phyiscal addresses to valid RAM locations.  There are no bugs in it
+that I've seen.
 
-Hi,
+It's just that the 1G mapping includes wide regions of physical
+address space on either or both sides of the chosen physical space for
+the kernel, which are not limited to valid RAM regions, allowing
+speculative accesses into reserved regions if the chosen kernel
+physical address is close enough to one of them.
 
-On Tue, Sep 10, 2019 at 08:56:49AM -0500, Adam Ford wrote:
-> On Thu, Sep 5, 2019 at 6:04 PM Tony Lindgren <tony@atomide.com> wrote:
-> > Oh and this needs to default to status =3D "disabled" for
-> > HS devices like n900 as it needs to use the omap3-rom-rng.
->=20
-> I don't know enough about the HS version of the OMAP3, but what's the
-> main difference between omap3-rom-rng and this one?
+--> Steve Wahl
 
-The OMAP HS chips have the bus firewall configured to block direct
-access to some cryptography related devices. The kernel will crash
-with a bus error, if you try to read/write the registers for
-protected devices. The omap3-rom-rng avoids this by communicating
-with the security middleware component instead of directly accessing
-the RNG hardware.
-
--- Sebastian
-
---qrixv7njwauekhyc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl13tSkACgkQ2O7X88g7
-+prv8g//byjix58ZdQFHZMVKdcFO70kTP9egx8f9Bsi2ZGMy3ybyYweRBD1xerSj
-9ytb9qNeNKC1Tn9R4HXWF2s0uG8YiCCwYv8XO2RGD1gBYc+ohxHMgu2LUHkqrYkd
-4ch8aa6vWOfoYz5p6RZ4TSMifa6pEL/Dntv73BZ2iWyIPNFiU3G0JYERDwh1k2mE
-zJQ/eEq/1G+ztEYBSa5HoRSLQUfgbpRWdnjw/WMQZMYIGb67iKJhEnFRl9bKdiS+
-Bj0od1d1EuQWiYclgBn2qGrfxKbweSmX9rDGTsQKzzb32zUSYLd5eh4m6dpO3Cea
-eWNc4w0cBN5XXDjmVf400xtdbhl4GNS0gwfHUb6QCHp4aSPKGIvv3rU2vt5Rf+HI
-K/u+3sywozcr9D6NbgmTyGNRRUxpZZe7QZdAtIaZChEcwi8FgtCxmeAtnUyXHNxr
-+0vPFHKA3IFKHfR2pNKu2UlS7HbKxUg+ZEgCq6dUAVGQ8BdNK5/a26MbJCASEGor
-OLfajRDyxnyFSlV2rKMh2Ich5oD39lI+rwA2jIJf+EbcHAudd25/4mGxc6Gb2oBb
-PgogxAzpXE95iStDWlUeoS/8Jh0hQtD/zb9amYgvwYSookOL9Wt39x5iMovt8IBm
-pHpoVJGzv5+DB874xaKn0jUe988yQdhym1joC+xayv+LGfBQvkE=
-=hSyU
------END PGP SIGNATURE-----
-
---qrixv7njwauekhyc--
+-- 
+Steve Wahl, Hewlett Packard Enterprise
