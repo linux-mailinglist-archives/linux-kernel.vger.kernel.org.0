@@ -2,417 +2,261 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D90DEAE9EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0921DAE9F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:06:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730163AbfIJMEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 08:04:22 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52278 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726066AbfIJMEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 08:04:22 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0AC0F1DF1C46A30BFBBD;
-        Tue, 10 Sep 2019 20:04:19 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 10 Sep
- 2019 20:04:15 +0800
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: avoid infinite GC loop due to stale
- atomic files
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190909073011.GA21625@jaegeuk-macbookpro.roam.corp.google.com>
- <5a473076-14b8-768a-62ac-f686e850d5a6@huawei.com>
- <20190909080108.GC21625@jaegeuk-macbookpro.roam.corp.google.com>
- <bf0683d9-ac05-1edc-71ea-3d02f7b2fb55@huawei.com>
- <20190909082112.GA25724@jaegeuk-macbookpro.roam.corp.google.com>
- <2f5b844c-f722-6a80-a4ab-61bdd72b8be4@huawei.com>
- <20190909083844.GC25724@jaegeuk-macbookpro.roam.corp.google.com>
- <83759349-644a-b3a0-787d-e463b0565885@huawei.com>
- <20190909143419.GB31108@jaegeuk-macbookpro.roam.corp.google.com>
- <c48f8992-eaef-9b2e-56a3-f6a922daa4af@huawei.com>
- <20190910115850.GA98080@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <2fd8940b-9ebd-d143-5ce6-c056750c596f@huawei.com>
-Date:   Tue, 10 Sep 2019 20:04:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190910115850.GA98080@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
+        id S1731308AbfIJMFh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 08:05:37 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:29277 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbfIJMFh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 08:05:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1568117137; x=1599653137;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=naPgreOrv+jbplJUeYbYK1HSrWlw/hU8Yk2K8iPwzZM=;
+  b=Qp/CX1SDLQPMUT7uNE5D5G7ccYFvCifm7vGdf+p0ZV7fn/c1RT+8i/0P
+   l1j15crxpxZebWHrNUrCIStlAo6OqYjxKpMRKMfwcdRN/CCvnUml1Ux86
+   H/O5Yg7nYCsHBiE0M1awxBehplGPCNA9H+nCD+jnNyu7WYuWTn+Axphuo
+   DK9bq2fFFz6Y/LNpsPc7PJPoHDA3UmWDrNv8eosTY/ZLsBLsOWh1S9QjB
+   CVDmgCPHVpPePspWwZrYtPSEGPsS1O2IFQ2lrUZYZj8Lis1np9VY6EHlh
+   IeXgXEKKDIsNVGXC+YddB1/xtudpGRgMuO+ZjeXaMJGkzMNWXyamL8MrL
+   Q==;
+IronPort-SDR: 60UeObbVLR1ovluIHwP4rlrNF+DVHxpn26EDl0e2Cla30zhi1fMRejfO/2UDY14suNRvHBWhDM
+ cDJ0DWJ78mDC9H+qgv8MT2O0jboEvW2vHefkod5piLDRlcqazo/JeblJBzU0knkBQxzguhLfXg
+ Kco+yMU54CK5qBX18hOYGNELOHDnds4laYlPdRdzKeTl7zAIO/dvm7vWIPzyRQW46fRns5qJZD
+ /diEb6VhA0i4VPa6Rrr6jaHCkSLB0qq0R8HQkl71SAiQPe6DnfrwTOCsab32RnW296TQRAGtgh
+ bKc=
+X-IronPort-AV: E=Sophos;i="5.64,489,1559491200"; 
+   d="scan'208";a="119491830"
+Received: from mail-co1nam05lp2057.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([104.47.48.57])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Sep 2019 20:05:35 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fH2tOszrsWonHU4WFR530DIfnf9BOmqE8H7j9Mgo11aHcPXqyzUn9yAMM0VgONLTJ3LHxEzEeCHsQ2RIEmC7fLS+FgeG1LorXC4Lsc2oT69932PoyiOqvspg6JPcHtQ9eYe08DG1uuJcwpNjCvxC4+XewMDwEC4/CM1UX+/dR7y6/DhVSY7Is8BI41N72nmh1wBVnb1Oiu5X3P1L5V/l0N2jw6jdlVYIojo8ubHPi9yS0z7vELh71gjLH9uQ1i7/UIVVt0nDk+PogmktJ8VnlY4ioveIvWITnEslzUnbvLs+mcwmZtaEqdhJhYyISLxn7tY07dMfgFKT8stxxcOOgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K5Xtce5IzlhYIqSnG3eOSlANtfHLHGZbCjZuFA7zPic=;
+ b=VQLfdPFX+OYUfbmUkBJ6XK11+ss50QKHvMlDHbE4OtZ4PrU56JLQuffmfPl+CEJUuY4jd+uugvwDVXc9XXR1BLiLTWorMHmmT2IWfe14U7MI724sUTdQT/2Opjytj0aGk2qU91epuCqxHyGiwaVNtBSeeKW453st+AxvtO2c2NJmCv70osOcBZxaqhLnEkyzn8KgFXxTovswcs0k8yei+9SdW0XbKRryB/X8H106Ya65++zuT/Q9MBRlSDzFaGZq0ybANxHGoMQSS1NgSuflsDP2fmKol6auN0pxJL+TPw8DEpruqmqt5aig8ixAZvY/SGF8aqWfr1x5ZUi8FutQGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K5Xtce5IzlhYIqSnG3eOSlANtfHLHGZbCjZuFA7zPic=;
+ b=Llu1dAVXsbVjwrnoij+BD628EaSSwH3RyEkQJZNBdFPID9WS6D9pjtqs5cuabXEboipARqRzvEcNi+caoDwQiK7dDE3sDrj6ZHn+ytoyRDwPJutynawIKqdNKN/dBANBt65ujWPAKlvSp+nWT/XOhNJVQ07eAIKGcIuAHZbodEg=
+Received: from DM6PR04MB5817.namprd04.prod.outlook.com (20.179.48.92) by
+ DM6PR04MB6731.namprd04.prod.outlook.com (10.186.141.201) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2241.18; Tue, 10 Sep 2019 12:05:33 +0000
+Received: from DM6PR04MB5817.namprd04.prod.outlook.com
+ ([fe80::1c67:56a6:4b01:a381]) by DM6PR04MB5817.namprd04.prod.outlook.com
+ ([fe80::1c67:56a6:4b01:a381%6]) with mapi id 15.20.2241.018; Tue, 10 Sep 2019
+ 12:05:33 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mike Christie <mchristi@redhat.com>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "James.Bottomley@HansenPartnership.com" 
+        <James.Bottomley@HansenPartnership.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [RFC PATCH] Add proc interface to set PF_MEMALLOC flags
+Thread-Topic: [RFC PATCH] Add proc interface to set PF_MEMALLOC flags
+Thread-Index: AQHVZyuWq/Op5bBFkEiasB8XvOZqww==
+Date:   Tue, 10 Sep 2019 12:05:33 +0000
+Message-ID: <DM6PR04MB5817096434DE9381DDB55184E7B60@DM6PR04MB5817.namprd04.prod.outlook.com>
+References: <20190909162804.5694-1-mchristi@redhat.com>
+ <20190910100000.mcik63ot6o3dyzjv@box.shutemov.name>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [213.30.8.110]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 000959f4-a8fe-46d8-a6d6-08d735e72ec1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR04MB6731;
+x-ms-traffictypediagnostic: DM6PR04MB6731:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <DM6PR04MB67314BDAA9D6FD1839D493ECE7B60@DM6PR04MB6731.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 01565FED4C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(136003)(39860400002)(376002)(366004)(396003)(15374003)(189003)(199004)(52314003)(8936002)(53936002)(256004)(9686003)(55016002)(14444005)(66946007)(66476007)(52536014)(86362001)(14454004)(66066001)(64756008)(66446008)(7696005)(478600001)(316002)(53546011)(6506007)(2906002)(4326008)(25786009)(33656002)(229853002)(66556008)(8676002)(81166006)(102836004)(81156014)(476003)(446003)(5660300002)(26005)(6306002)(6246003)(186003)(6436002)(99286004)(91956017)(76116006)(110136005)(7736002)(486006)(305945005)(74316002)(71200400001)(54906003)(76176011)(966005)(71190400001)(3846002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR04MB6731;H:DM6PR04MB5817.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: raaW51p2unL46BRJPzIAsAp+Y1ogb7hHRyccCpnciK6Ei91w2c2rQnVLpHvVt2nSd82NiTFNpYvlwme1nBJpyzuj8dSU1yAxsLeYT6hTGBk7HUh/GRh1x+siB8C1KpZ1N7oWUusLzdBSpzhpbvpjj956DrUFLkn46or3IbtaGqySMZWOHTfRKAag6A9+N4/HJbJckSRO6p9QoDALNG37cmFmoKYPoTEMQKU8iqFNFg6w4AdrrJniSqDUBHr1tN0GeKSxvBBuZjl6WviPpRfRB1l+8NKobpJy7RabREHTqMdwySiiZLcsFS67ytcvW5W9LXlEweFCyTvgLkEupKcfTnZ+/aBIZY34T43f23bo8WtDlOk/gqj+ib+8FiXtUVcHIV8DqlEyhgiTVIc6FidU4DUrQwEm2VE2JEYfY4f5sK4=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 000959f4-a8fe-46d8-a6d6-08d735e72ec1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2019 12:05:33.2566
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7gTA7MUPcjo/S85q4brTvVfngRNmRv0rpwOtazYc6GDTVQLcopnlYyK/o50NBRrhZHxvzunNnX7wnQ2JFNfL/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB6731
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/10 19:58, Jaegeuk Kim wrote:
-> On 09/10, Chao Yu wrote:
->> On 2019/9/9 22:34, Jaegeuk Kim wrote:
->>> On 09/09, Chao Yu wrote:
->>>> On 2019/9/9 16:38, Jaegeuk Kim wrote:
->>>>> On 09/09, Chao Yu wrote:
->>>>>> On 2019/9/9 16:21, Jaegeuk Kim wrote:
->>>>>>> On 09/09, Chao Yu wrote:
->>>>>>>> On 2019/9/9 16:01, Jaegeuk Kim wrote:
->>>>>>>>> On 09/09, Chao Yu wrote:
->>>>>>>>>> On 2019/9/9 15:30, Jaegeuk Kim wrote:
->>>>>>>>>>> On 09/09, Chao Yu wrote:
->>>>>>>>>>>> On 2019/9/9 9:25, Jaegeuk Kim wrote:
->>>>>>>>>>>>> If committing atomic pages is failed when doing f2fs_do_sync_file(), we can
->>>>>>>>>>>>> get commited pages but atomic_file being still set like:
->>>>>>>>>>>>>
->>>>>>>>>>>>> - inmem:    0, atomic IO:    4 (Max.   10), volatile IO:    0 (Max.    0)
->>>>>>>>>>>>>
->>>>>>>>>>>>> If GC selects this block, we can get an infinite loop like this:
->>>>>>>>>>>>>
->>>>>>>>>>>>> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
->>>>>>>>>>>>> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
->>>>>>>>>>>>> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
->>>>>>>>>>>>> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
->>>>>>>>>>>>> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
->>>>>>>>>>>>> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
->>>>>>>>>>>>> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
->>>>>>>>>>>>> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
->>>>>>>>>>>>>
->>>>>>>>>>>>> In that moment, we can observe:
->>>>>>>>>>>>>
->>>>>>>>>>>>> [Before]
->>>>>>>>>>>>> Try to move 5084219 blocks (BG: 384508)
->>>>>>>>>>>>>   - data blocks : 4962373 (274483)
->>>>>>>>>>>>>   - node blocks : 121846 (110025)
->>>>>>>>>>>>> Skipped : atomic write 4534686 (10)
->>>>>>>>>>>>>
->>>>>>>>>>>>> [After]
->>>>>>>>>>>>> Try to move 5088973 blocks (BG: 384508)
->>>>>>>>>>>>>   - data blocks : 4967127 (274483)
->>>>>>>>>>>>>   - node blocks : 121846 (110025)
->>>>>>>>>>>>> Skipped : atomic write 4539440 (10)
->>>>>>>>>>>>>
->>>>>>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>>>>>>> ---
->>>>>>>>>>>>>  fs/f2fs/file.c | 10 +++++-----
->>>>>>>>>>>>>  1 file changed, 5 insertions(+), 5 deletions(-)
->>>>>>>>>>>>>
->>>>>>>>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>>>>>>>>>>> index 7ae2f3bd8c2f..68b6da734e5f 100644
->>>>>>>>>>>>> --- a/fs/f2fs/file.c
->>>>>>>>>>>>> +++ b/fs/f2fs/file.c
->>>>>>>>>>>>> @@ -1997,11 +1997,11 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>>>>>>>>>>>  			goto err_out;
->>>>>>>>>>>>>  
->>>>>>>>>>>>>  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
->>>>>>>>>>>>> -		if (!ret) {
->>>>>>>>>>>>> -			clear_inode_flag(inode, FI_ATOMIC_FILE);
->>>>>>>>>>>>> -			F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
->>>>>>>>>>>>> -			stat_dec_atomic_write(inode);
->>>>>>>>>>>>> -		}
->>>>>>>>>>>>> +
->>>>>>>>>>>>> +		/* doesn't need to check error */
->>>>>>>>>>>>> +		clear_inode_flag(inode, FI_ATOMIC_FILE);
->>>>>>>>>>>>> +		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
->>>>>>>>>>>>> +		stat_dec_atomic_write(inode);
->>>>>>>>>>>>
->>>>>>>>>>>> If there are still valid atomic write pages linked in .inmem_pages, it may cause
->>>>>>>>>>>> memory leak when we just clear FI_ATOMIC_FILE flag.
->>>>>>>>>>>
->>>>>>>>>>> f2fs_commit_inmem_pages() should have flushed them.
->>>>>>>>>>
->>>>>>>>>> Oh, we failed to flush its nodes.
->>>>>>>>>>
->>>>>>>>>> However we won't clear such info if we failed to flush inmen pages, it looks
->>>>>>>>>> inconsistent.
->>>>>>>>>>
->>>>>>>>>> Any interface needed to drop inmem pages or clear ATOMIC_FILE flag in that two
->>>>>>>>>> error path? I'm not very clear how sqlite handle such error.
->>>>>>>>>
->>>>>>>>> f2fs_drop_inmem_pages() did that, but not in this case.
->>>>>>>>
->>>>>>>> What I mean is, for any error returned from atomic_commit() interface, should
->>>>>>>> userspace application handle it with consistent way, like trigger
->>>>>>>> f2fs_drop_inmem_pages(), so we don't need to handle it inside atomic_commit().
->>>>>>>
->>>>>>> f2fs_ioc_abort_volatile_write() will be triggered.
->>>>>>
->>>>>> If userspace can do this, we can get rid of this patch, or am I missing sth?
->>>>>
->>>>> We don't know when that will come. And, other threads are waiting for GC here.
->>>>
->>>> Yes, however, even atomic_write won't be called sometimes... that's why we add
->>>> handling logic in f2fs_gc().
->>>
->>> We need to clean this up like:
->>>
->>> If committing atomic pages is failed when doing f2fs_do_sync_file(), we can
->>> get commited pages but atomic_file being still set like:
->>>
->>> - inmem:    0, atomic IO:    4 (Max.   10), volatile IO:    0 (Max.    0)
->>>
->>> If GC selects this block, we can get an infinite loop like this:
->>>
->>> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
->>> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
->>> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
->>> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
->>> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
->>> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
->>> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
->>> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
->>>
->>> In that moment, we can observe:
->>>
->>> [Before]
->>> Try to move 5084219 blocks (BG: 384508)
->>>   - data blocks : 4962373 (274483)
->>>   - node blocks : 121846 (110025)
->>> Skipped : atomic write 4534686 (10)
->>>
->>> [After]
->>> Try to move 5088973 blocks (BG: 384508)
->>>   - data blocks : 4967127 (274483)
->>>   - node blocks : 121846 (110025)
->>> Skipped : atomic write 4539440 (10)
->>>
->>> So, refactor atomic_write flow like this:
->>> 1. start_atomic_write
->>>  - add inmem_list and set atomic_file
->>>
->>> 2. write()
->>>  - register it in inmem_pages
->>>
->>> 3. commit_atomic_write
->>>  - if no error, f2fs_drop_inmem_pages()
->>>  - f2fs_commit_inmme_pages() failed
->>>    : __revoked_inmem_pages() was done
->>>  - f2fs_do_sync_file failed
->>>    : abort_atomic_write later
->>>
->>> 4. abort_atomic_write
->>>  - f2fs_drop_inmem_pages
->>>
->>> 5. f2fs_drop_inmem_pages
->>>  - clear atomic_file
->>>  - remove inmem_list
->>
->> Looks good.
->>
->>>
->>> Based on this change, when GC fails to move block in atomic_file,
->>> f2fs_drop_inmem_pages_all() can call f2fs_drop_inmem_pages().
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/file.c    | 17 +++++++++++------
->>>  fs/f2fs/segment.c | 24 +++++-------------------
->>>  2 files changed, 16 insertions(+), 25 deletions(-)
->>>
->>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>> index 10927a0b8df3..1f499ac13d9a 100644
->>> --- a/fs/f2fs/file.c
->>> +++ b/fs/f2fs/file.c
->>> @@ -1830,6 +1830,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->>>  {
->>>  	struct inode *inode = file_inode(filp);
->>>  	int ret;
->>> +	struct f2fs_inode_info *fi = F2FS_I(inode);
->>>  
->>>  	if (!inode_owner_or_capable(inode))
->>>  		return -EACCES;
->>> @@ -1871,10 +1872,17 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->>>  		goto out;
->>>  	}
->>>  
->>> -	set_inode_flag(inode, FI_ATOMIC_FILE);
->>>  	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
->>>  	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>  
->>> +	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
->>> +	if (list_empty(&fi->inmem_ilist))
->>> +		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
->>> +	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->>> +
->>> +	/* add inode in inmem_list first and set atomic_file */
->>> +	set_inode_flag(inode, FI_ATOMIC_FILE);
->>
->> Should call up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]) here? Then in f2fs_gc(),
->> we can check FI_ATOMIC_FILE atomically under i_gc_rwsem.
-> 
-> Yup.
-> 
-> If committing atomic pages is failed when doing f2fs_do_sync_file(), we can
-> get commited pages but atomic_file being still set like:
-> 
-> - inmem:    0, atomic IO:    4 (Max.   10), volatile IO:    0 (Max.    0)
-> 
-> If GC selects this block, we can get an infinite loop like this:
-> 
-> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
-> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
-> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
-> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
-> f2fs_submit_page_bio: dev = (253,7), ino = 2, page_index = 0x2359a8, oldaddr = 0x2359a8, newaddr = 0x2359a8, rw = READ(), type = COLD_DATA
-> f2fs_submit_read_bio: dev = (253,7)/(253,7), rw = READ(), DATA, sector = 18533696, size = 4096
-> f2fs_get_victim: dev = (253,7), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 4355, cost = 1, ofs_unit = 1, pre_victim_secno = 4355, prefree = 0, free = 234
-> f2fs_iget: dev = (253,7), ino = 6247, pino = 5845, i_mode = 0x81b0, i_size = 319488, i_nlink = 1, i_blocks = 624, i_advise = 0x2c
-> 
-> In that moment, we can observe:
-> 
-> [Before]
-> Try to move 5084219 blocks (BG: 384508)
->   - data blocks : 4962373 (274483)
->   - node blocks : 121846 (110025)
-> Skipped : atomic write 4534686 (10)
-> 
-> [After]
-> Try to move 5088973 blocks (BG: 384508)
->   - data blocks : 4967127 (274483)
->   - node blocks : 121846 (110025)
-> Skipped : atomic write 4539440 (10)
-> 
-> So, refactor atomic_write flow like this:
-> 1. start_atomic_write
->  - add inmem_list and set atomic_file
-> 
-> 2. write()
->  - register it in inmem_pages
-> 
-> 3. commit_atomic_write
->  - if no error, f2fs_drop_inmem_pages()
->  - f2fs_commit_inmme_pages() failed
->    : __revoked_inmem_pages() was done
->  - f2fs_do_sync_file failed
->    : abort_atomic_write later
-> 
-> 4. abort_atomic_write
->  - f2fs_drop_inmem_pages
-> 
-> 5. f2fs_drop_inmem_pages
->  - clear atomic_file
->  - remove inmem_list
-> 
-> Based on this change, when GC fails to move block in atomic_file,
-> f2fs_drop_inmem_pages_all() can call f2fs_drop_inmem_pages().
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/file.c    | 15 ++++++++++-----
->  fs/f2fs/segment.c | 27 ++++++---------------------
->  2 files changed, 16 insertions(+), 26 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 10927a0b8df3..fab6e4cf8f06 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1829,6 +1829,8 @@ static int f2fs_ioc_getversion(struct file *filp, unsigned long arg)
->  static int f2fs_ioc_start_atomic_write(struct file *filp)
->  {
->  	struct inode *inode = file_inode(filp);
-> +	struct f2fs_inode_info *fi = F2FS_I(inode);
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	int ret;
->  
->  	if (!inode_owner_or_capable(inode))
-> @@ -1871,6 +1873,12 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->  		goto out;
->  	}
->  
-> +	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> +	if (list_empty(&fi->inmem_ilist))
-> +		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
-> +	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-> +
-> +	/* add inode in inmem_list first and set atomic_file */
->  	set_inode_flag(inode, FI_ATOMIC_FILE);
->  	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
->  	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> @@ -1912,11 +1920,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->  			goto err_out;
->  
->  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
-> -		if (!ret) {
-> -			clear_inode_flag(inode, FI_ATOMIC_FILE);
-> -			F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
-> -			stat_dec_atomic_write(inode);
-> -		}
-> +		if (!ret)
-> +			f2fs_drop_inmem_pages(inode);
->  	} else {
->  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
->  	}
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 18584d4c078a..66343f451d73 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -185,8 +185,6 @@ bool f2fs_need_SSR(struct f2fs_sb_info *sbi)
->  
->  void f2fs_register_inmem_page(struct inode *inode, struct page *page)
->  {
-> -	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> -	struct f2fs_inode_info *fi = F2FS_I(inode);
->  	struct inmem_pages *new;
->  
->  	f2fs_trace_pid(page);
-> @@ -200,15 +198,9 @@ void f2fs_register_inmem_page(struct inode *inode, struct page *page)
->  	INIT_LIST_HEAD(&new->list);
->  
->  	/* increase reference count with clean state */
-> -	mutex_lock(&fi->inmem_lock);
-
-The lock is used to protect F2FS_I(inode)->inmem_pages list... it should be kept?
-
-Thanks,
-
->  	get_page(page);
-> -	list_add_tail(&new->list, &fi->inmem_pages);
-> -	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> -	if (list_empty(&fi->inmem_ilist))
-> -		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
-> -	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-> +	list_add_tail(&new->list, &F2FS_I(inode)->inmem_pages);
->  	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
-> -	mutex_unlock(&fi->inmem_lock);
->  
->  	trace_f2fs_register_inmem_page(page, INMEM);
->  }
-> @@ -330,19 +322,17 @@ void f2fs_drop_inmem_pages(struct inode *inode)
->  		mutex_lock(&fi->inmem_lock);
->  		__revoke_inmem_pages(inode, &fi->inmem_pages,
->  						true, false, true);
-> -
-> -		if (list_empty(&fi->inmem_pages)) {
-> -			spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> -			if (!list_empty(&fi->inmem_ilist))
-> -				list_del_init(&fi->inmem_ilist);
-> -			spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-> -		}
->  		mutex_unlock(&fi->inmem_lock);
->  	}
->  
->  	clear_inode_flag(inode, FI_ATOMIC_FILE);
->  	fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
->  	stat_dec_atomic_write(inode);
-> +
-> +	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> +	if (!list_empty(&fi->inmem_ilist))
-> +		list_del_init(&fi->inmem_ilist);
-> +	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->  }
->  
->  void f2fs_drop_inmem_page(struct inode *inode, struct page *page)
-> @@ -471,11 +461,6 @@ int f2fs_commit_inmem_pages(struct inode *inode)
->  
->  	mutex_lock(&fi->inmem_lock);
->  	err = __f2fs_commit_inmem_pages(inode);
-> -
-> -	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> -	if (!list_empty(&fi->inmem_ilist))
-> -		list_del_init(&fi->inmem_ilist);
-> -	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->  	mutex_unlock(&fi->inmem_lock);
->  
->  	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
-> 
+On 2019/09/10 11:00, Kirill A. Shutemov wrote:=0A=
+> On Mon, Sep 09, 2019 at 11:28:04AM -0500, Mike Christie wrote:=0A=
+>> There are several storage drivers like dm-multipath, iscsi, and nbd that=
+=0A=
+>> have userspace components that can run in the IO path. For example,=0A=
+>> iscsi and nbd's userspace deamons may need to recreate a socket and/or=
+=0A=
+>> send IO on it, and dm-multipath's daemon multipathd may need to send IO=
+=0A=
+>> to figure out the state of paths and re-set them up.=0A=
+>>=0A=
+>> In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the=0A=
+>> memalloc_*_save/restore functions to control the allocation behavior,=0A=
+>> but for userspace we would end up hitting a allocation that ended up=0A=
+>> writing data back to the same device we are trying to allocate for.=0A=
+>>=0A=
+>> This patch allows the userspace deamon to set the PF_MEMALLOC* flags=0A=
+>> through procfs. It currently only supports PF_MEMALLOC_NOIO, but=0A=
+>> depending on what other drivers and userspace file systems need, for=0A=
+>> the final version I can add the other flags for that file or do a file=
+=0A=
+>> per flag or just do a memalloc_noio file.=0A=
+>>=0A=
+>> Signed-off-by: Mike Christie <mchristi@redhat.com>=0A=
+>> ---=0A=
+>>  Documentation/filesystems/proc.txt |  6 ++++=0A=
+>>  fs/proc/base.c                     | 53 ++++++++++++++++++++++++++++++=
+=0A=
+>>  2 files changed, 59 insertions(+)=0A=
+>>=0A=
+>> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesyst=
+ems/proc.txt=0A=
+>> index 99ca040e3f90..b5456a61a013 100644=0A=
+>> --- a/Documentation/filesystems/proc.txt=0A=
+>> +++ b/Documentation/filesystems/proc.txt=0A=
+>> @@ -46,6 +46,7 @@ Table of Contents=0A=
+>>    3.10  /proc/<pid>/timerslack_ns - Task timerslack value=0A=
+>>    3.11	/proc/<pid>/patch_state - Livepatch patch operation state=0A=
+>>    3.12	/proc/<pid>/arch_status - Task architecture specific information=
+=0A=
+>> +  3.13  /proc/<pid>/memalloc - Control task's memory reclaim behavior=
+=0A=
+>>  =0A=
+>>    4	Configuring procfs=0A=
+>>    4.1	Mount options=0A=
+>> @@ -1980,6 +1981,11 @@ Example=0A=
+>>   $ cat /proc/6753/arch_status=0A=
+>>   AVX512_elapsed_ms:      8=0A=
+>>  =0A=
+>> +3.13 /proc/<pid>/memalloc - Control task's memory reclaim behavior=0A=
+>> +-----------------------------------------------------------------------=
+=0A=
+>> +A value of "noio" indicates that when a task allocates memory it will n=
+ot=0A=
+>> +reclaim memory that requires starting phisical IO.=0A=
+>> +=0A=
+>>  Description=0A=
+>>  -----------=0A=
+>>  =0A=
+>> diff --git a/fs/proc/base.c b/fs/proc/base.c=0A=
+>> index ebea9501afb8..c4faa3464602 100644=0A=
+>> --- a/fs/proc/base.c=0A=
+>> +++ b/fs/proc/base.c=0A=
+>> @@ -1223,6 +1223,57 @@ static const struct file_operations proc_oom_scor=
+e_adj_operations =3D {=0A=
+>>  	.llseek		=3D default_llseek,=0A=
+>>  };=0A=
+>>  =0A=
+>> +static ssize_t memalloc_read(struct file *file, char __user *buf, size_=
+t count,=0A=
+>> +			     loff_t *ppos)=0A=
+>> +{=0A=
+>> +	struct task_struct *task;=0A=
+>> +	ssize_t rc =3D 0;=0A=
+>> +=0A=
+>> +	task =3D get_proc_task(file_inode(file));=0A=
+>> +	if (!task)=0A=
+>> +		return -ESRCH;=0A=
+>> +=0A=
+>> +	if (task->flags & PF_MEMALLOC_NOIO)=0A=
+>> +		rc =3D simple_read_from_buffer(buf, count, ppos, "noio", 4);=0A=
+>> +	put_task_struct(task);=0A=
+>> +	return rc;=0A=
+>> +}=0A=
+>> +=0A=
+>> +static ssize_t memalloc_write(struct file *file, const char __user *buf=
+,=0A=
+>> +			      size_t count, loff_t *ppos)=0A=
+>> +{=0A=
+>> +	struct task_struct *task;=0A=
+>> +	char buffer[5];=0A=
+>> +	int rc =3D count;=0A=
+>> +=0A=
+>> +	memset(buffer, 0, sizeof(buffer));=0A=
+>> +	if (count !=3D sizeof(buffer) - 1)=0A=
+>> +		return -EINVAL;=0A=
+>> +=0A=
+>> +	if (copy_from_user(buffer, buf, count))=0A=
+>> +		return -EFAULT;=0A=
+>> +	buffer[count] =3D '\0';=0A=
+>> +=0A=
+>> +	task =3D get_proc_task(file_inode(file));=0A=
+>> +	if (!task)=0A=
+>> +		return -ESRCH;=0A=
+>> +=0A=
+>> +	if (!strcmp(buffer, "noio")) {=0A=
+>> +		task->flags |=3D PF_MEMALLOC_NOIO;=0A=
+>> +	} else {=0A=
+>> +		rc =3D -EINVAL;=0A=
+>> +	}=0A=
+> =0A=
+> Really? Without any privilege check? So any random user can tap into=0A=
+> __GFP_NOIO allocations?=0A=
+=0A=
+OK. It probably should have a test on capable(CAP_SYS_ADMIN) or similar. Si=
+nce=0A=
+these storage daemons are generally run as root anyway, that would still wo=
+rk=0A=
+for most setup I think.=0A=
+=0A=
+> =0A=
+> NAK.=0A=
+> =0A=
+> I don't think that it's great idea in general to expose this low-level=0A=
+> machinery to userspace. But it's better to get comment from people move=
+=0A=
+> familiar with reclaim path.=0A=
+=0A=
+Any setup with stacked file systems and one of the IO path component being =
+a=0A=
+user level process can benefit from this. See the problem described in this=
+=0A=
+patch I pushed for (unsuccessfully as it was a heavy handed solution):=0A=
+https://www.spinics.net/lists/linux-fsdevel/msg148912.html=0A=
+=0A=
+As the discussion in this thread shows, there is no existing simple solutio=
+n to=0A=
+deal with this reclaim recursion problem. And automatic detection is too ha=
+rd,=0A=
+if at all possible. With the proper access rights added, this user accessib=
+le=0A=
+interface does look very sensible to me.=0A=
+=0A=
+Best regards.=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
