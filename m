@@ -2,63 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85308AF1CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 21:21:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53076AF1D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 21:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbfIJTUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 15:20:39 -0400
-Received: from mail-pf1-f178.google.com ([209.85.210.178]:35688 "EHLO
-        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727849AbfIJTUj (ORCPT
+        id S1728757AbfIJTXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 15:23:18 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:49178 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727131AbfIJTXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 15:20:39 -0400
-Received: by mail-pf1-f178.google.com with SMTP id 205so12122018pfw.2;
-        Tue, 10 Sep 2019 12:20:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hjznco4o+Dn2VZDtAq/yGZeHT9P3y4uXRyWwDlemFd8=;
-        b=dbad3cwS3bDXPXiia9RQOxLMxcCGqZO4+b9pM/wM5CA0PyGVDYA5yr8aBY4DsMN1N7
-         6kx4wLnjH9RnixBOI+XZDwA2PXkae1VpOAG71leCuERWo762t+CKEMr+OntzMFI83DZs
-         XlXE3G065vOSrrv6l3w1CXw3QwSuoiqILjlukElsnnzwbexoMU4ejxHixn2Uk0s/rueV
-         OzZgGk+d++G4jH9n/qAcNNiW9la3nrF3/lGmBh3etyaoG36K0y9uijbf8b5mzNlbN7v+
-         fLiNRugxBdu2tfelixWCVOCA59dUhwffC73i+Bwyf7TjhX2td6k/mww0w6YUMXwxCmyc
-         mPpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hjznco4o+Dn2VZDtAq/yGZeHT9P3y4uXRyWwDlemFd8=;
-        b=TijoTTkYV9uT5zKqUv17DtvLKVQw1WDcdVxKTeLvyfCdlBkOkHZFtrGfuJyVq/iBct
-         aYuSODxIbm1iOAVtLHXExnq9eozpo1GKVoS5iR9t/FPutEknTJHgSQTVs7YPoQ0zNNTH
-         WTZXpxBfstCaEkXc/Zss6suV8EvOqSgPH/Q76mAvTc0uTOWbmK8ViTICFlsNw1Byy+k6
-         ol3l1Vvmh5eHYLCqFpY+8gAgbyU4HIXUeLHaobfaJdgyZQ4HR+R7bLHn4QLOO3l5o76m
-         u9YGfjbNV1D4HQPmLCfv5fDBifM2RvKMAfwx/01njCdCtSncWJnAtdzJyDftdKW2luOj
-         LRCw==
-X-Gm-Message-State: APjAAAVZuTxxNqqZYD0/ehle9t0kGclMVUaH+HUYte+X32KxRP1riyT1
-        H6KtPaOCHBBaBLNRj317GnaXAKQKpeRLrdW8l9k=
-X-Google-Smtp-Source: APXvYqw/HUFmrOU8dCiX0+yLftcHJVhZDygwUw4PA7p0G0QzOsod91uplKxeY9bzTmrCWVN7zKwfjR76Jx9zNF5eu5k=
-X-Received: by 2002:a63:36cc:: with SMTP id d195mr29148700pga.157.1568143238774;
- Tue, 10 Sep 2019 12:20:38 -0700 (PDT)
+        Tue, 10 Sep 2019 15:23:18 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8AJIZMQ048968;
+        Tue, 10 Sep 2019 19:22:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=tksQD2Rpoes/XpADezB0hnxBUleozwtCafj604Oeb2A=;
+ b=i2Zg7YwKCPWc5PIladBSkin1Ogyg6IVzqSySgL5xkhhEogQ28xOAjXET4JGka2Axh3Cj
+ yug91VriQG4y04rrou4BHZJeT36/JBVNhoP+PSW4v8wbseAOkmVo9H1x+NvX0v7JhN6N
+ NMsFTla22NwVDD9qBj1Q4egeMW9OUhURIVW7yXx8XbRQuFZTlFjNoV78KLH0XJ008Djj
+ qrHlrqq+iN4LKyzqkTgLo75DWRSB1E/W0R+fa0Yh5+YdBpC48o2LL5DBQnO2PuuvA8v5
+ NVEsj/9O/mFLjBeghCcRE428WiadbEua6X5YDL5UFLD4u/UcjKtm+AXji17XFVzKB9aq yg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2uw1jkdkr8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 19:22:21 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8AJIF7X067086;
+        Tue, 10 Sep 2019 19:22:20 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2uwqku4nex-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 19:22:20 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8AJMIRK026489;
+        Tue, 10 Sep 2019 19:22:18 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Sep 2019 12:22:18 -0700
+Date:   Tue, 10 Sep 2019 22:22:08 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Mao Wenan <maowenan@huawei.com>
+Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com,
+        marcelo.leitner@gmail.com, davem@davemloft.net,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net 1/2] sctp: remove redundant assignment when call
+ sctp_get_port_local
+Message-ID: <20190910192207.GE20699@kadam>
+References: <20190910071343.18808-1-maowenan@huawei.com>
+ <20190910071343.18808-2-maowenan@huawei.com>
+ <20190910185710.GF15977@kadam>
 MIME-Version: 1.0
-References: <000000000000bcb83d059237c30a@google.com>
-In-Reply-To: <000000000000bcb83d059237c30a@google.com>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Tue, 10 Sep 2019 12:20:27 -0700
-Message-ID: <CAM_iQpVT3P_mrPtVOayfdRKpLvEO_YtkjrDK3uX_G7P1MzM8EA@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in br_handle_frame
-To:     syzbot <syzbot+2addc1f058bd021b0a40@syzkaller.appspotmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190910185710.GF15977@kadam>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909100181
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909100181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-#syz fix: sch_hhf: ensure quantum and hhf_non_hh_weight are non-zero
+On Tue, Sep 10, 2019 at 09:57:10PM +0300, Dan Carpenter wrote:
+> On Tue, Sep 10, 2019 at 03:13:42PM +0800, Mao Wenan wrote:
+> > There are more parentheses in if clause when call sctp_get_port_local
+> > in sctp_do_bind, and redundant assignment to 'ret'. This patch is to
+> > do cleanup.
+> > 
+> > Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> > ---
+> >  net/sctp/socket.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> > index 9d1f83b10c0a..766b68b55ebe 100644
+> > --- a/net/sctp/socket.c
+> > +++ b/net/sctp/socket.c
+> > @@ -399,9 +399,8 @@ static int sctp_do_bind(struct sock *sk, union sctp_addr *addr, int len)
+> >  	 * detection.
+> >  	 */
+> >  	addr->v4.sin_port = htons(snum);
+> > -	if ((ret = sctp_get_port_local(sk, addr))) {
+> > +	if (sctp_get_port_local(sk, addr))
+> >  		return -EADDRINUSE;
+> 
+> sctp_get_port_local() returns a long which is either 0,1 or a pointer
+> casted to long.  It's not documented what it means and neither of the
+> callers use the return since commit 62208f12451f ("net: sctp: simplify
+> sctp_get_port").
+
+Actually it was commit 4e54064e0a13 ("sctp: Allow only 1 listening
+socket with SO_REUSEADDR") from 11 years ago.  That patch fixed a bug,
+because before the code assumed that a pointer casted to an int was the
+same as a pointer casted to a long.
+
+regards,
+dan carpenter
+
