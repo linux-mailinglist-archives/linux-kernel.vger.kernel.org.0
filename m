@@ -2,162 +2,756 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACF4DAE644
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B92EEAE639
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:01:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387917AbfIJJBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 05:01:53 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:55602 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726655AbfIJJBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 05:01:09 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 98AAE63E293416FC9073;
-        Tue, 10 Sep 2019 17:01:07 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 10 Sep 2019 17:01:01 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, <jakub.kicinski@netronome.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 7/7] net: hns3: add some DFX info for reset issue
-Date:   Tue, 10 Sep 2019 16:58:28 +0800
-Message-ID: <1568105908-60983-8-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568105908-60983-1-git-send-email-tanhuazhong@huawei.com>
-References: <1568105908-60983-1-git-send-email-tanhuazhong@huawei.com>
+        id S1733030AbfIJJB1 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 10 Sep 2019 05:01:27 -0400
+Received: from mga14.intel.com ([192.55.52.115]:9143 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726591AbfIJJBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 05:01:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 02:01:23 -0700
+X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
+   d="scan'208";a="359750541"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 02:01:17 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
+Cc:     Sean Paul <sean@poorly.run>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
+        Juston Li <juston.li@intel.com>,
+        Deepak Rawat <drawat@vmware.com>,
+        Harry Wentland <hwentlan@amd.com>
+Subject: Re: [PATCH v2 07/27] drm/dp_mst: Add sideband down request tracing + selftests
+In-Reply-To: <20190903204645.25487-8-lyude@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190903204645.25487-1-lyude@redhat.com> <20190903204645.25487-8-lyude@redhat.com>
+Date:   Tue, 10 Sep 2019 12:01:14 +0300
+Message-ID: <87woeg1q5h.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds more information for reset DFX. Also, adds some
-cleanups to reset info, move reset_fail_cnt into struct
-hclge_rst_stats, and modifies some print formats.
+On Tue, 03 Sep 2019, Lyude Paul <lyude@redhat.com> wrote:
+> Unfortunately the DP MST helpers do not have much in the way of
+> debugging utilities. So, let's add some!
+>
+> This adds basic debugging output for down sideband requests that we send
+> from the driver, so that we can actually discern what's happening when
+> sideband requests timeout.
+>
+> Since there wasn't really a good way of testing that any of this worked,
+> I ended up writing simple selftests that lightly test sideband message
+> encoding and decoding as well. Enjoy!
+>
+> Changes since v1:
+> * Clean up DO_TEST() and sideband_msg_req_encode_decode() - danvet
+> * Get rid of pr_fmt(), just define a prefix string instead and use
+>   drm_printf()
+> * Check highest bit of VCPI in drm_dp_decode_sideband_req() - danvet
+> * Make the switch case order between drm_dp_decode_sideband_req() and
+>   drm_dp_encode_sideband_req() the same - danvet
+> * Only check DRM_UT_DP - danvet
+> * Clean up sideband_msg_req_equal() from selftests a bit, and add
+>   comments explaining why we can't just use memcmp - danvet
+>
+> Cc: Juston Li <juston.li@intel.com>
+> Cc: Imre Deak <imre.deak@intel.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Cc: Harry Wentland <hwentlan@amd.com>
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+>  drivers/gpu/drm/drm_dp_mst_topology.c         | 309 +++++++++++++++++-
+>  .../gpu/drm/drm_dp_mst_topology_internal.h    |  24 ++
+>  .../gpu/drm/selftests/drm_modeset_selftests.h |   1 +
+>  .../drm/selftests/test-drm_dp_mst_helper.c    | 204 ++++++++++++
+>  .../drm/selftests/test-drm_modeset_common.h   |   1 +
+>  include/drm/drm_dp_mst_helper.h               |   2 +-
+>  6 files changed, 536 insertions(+), 5 deletions(-)
+>  create mode 100644 drivers/gpu/drm/drm_dp_mst_topology_internal.h
+>
+> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+> index 1c862749cb63..f5f1d8b50fb6 100644
+> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> @@ -37,6 +37,7 @@
+>  #include <drm/drm_probe_helper.h>
+>  
+>  #include "drm_crtc_helper_internal.h"
+> +#include "drm_dp_mst_topology_internal.h"
+>  
+>  /**
+>   * DOC: dp mst helper
+> @@ -73,6 +74,8 @@ static int drm_dp_mst_register_i2c_bus(struct drm_dp_aux *aux);
+>  static void drm_dp_mst_unregister_i2c_bus(struct drm_dp_aux *aux);
+>  static void drm_dp_mst_kick_tx(struct drm_dp_mst_topology_mgr *mgr);
+>  
+> +#define DBG_PREFIX "[dp_mst]"
+> +
+>  #define DP_STR(x) [DP_ ## x] = #x
+>  
+>  static const char *drm_dp_mst_req_type_str(u8 req_type)
+> @@ -129,6 +132,43 @@ static const char *drm_dp_mst_nak_reason_str(u8 nak_reason)
+>  }
+>  
+>  #undef DP_STR
+> +#define DP_STR(x) [DRM_DP_SIDEBAND_TX_ ## x] = #x
+> +
+> +static const char *drm_dp_mst_sideband_tx_state_str(int state)
+> +{
+> +	static const char * const sideband_reason_str[] = {
+> +		DP_STR(QUEUED),
+> +		DP_STR(START_SEND),
+> +		DP_STR(SENT),
+> +		DP_STR(RX),
+> +		DP_STR(TIMEOUT),
+> +	};
+> +
+> +	if (state >= ARRAY_SIZE(sideband_reason_str) ||
+> +	    !sideband_reason_str[state])
+> +		return "unknown";
+> +
+> +	return sideband_reason_str[state];
+> +}
+> +
+> +static int
+> +drm_dp_mst_rad_to_str(const u8 rad[8], u8 lct, char *out, size_t len)
+> +{
+> +	int i;
+> +	u8 unpacked_rad[16];
+> +
+> +	for (i = 0; i < lct; i++) {
+> +		if (i % 2)
+> +			unpacked_rad[i] = rad[i / 2] >> 4;
+> +		else
+> +			unpacked_rad[i] = rad[i / 2] & BIT_MASK(4);
+> +	}
+> +
+> +	/* TODO: Eventually add something to printk so we can format the rad
+> +	 * like this: 1.2.3
+> +	 */
+> +	return snprintf(out, len, "%*phC", lct, unpacked_rad);
+> +}
+>  
+>  /* sideband msg handling */
+>  static u8 drm_dp_msg_header_crc4(const uint8_t *data, size_t num_nibbles)
+> @@ -261,8 +301,9 @@ static bool drm_dp_decode_sideband_msg_hdr(struct drm_dp_sideband_msg_hdr *hdr,
+>  	return true;
+>  }
+>  
+> -static void drm_dp_encode_sideband_req(struct drm_dp_sideband_msg_req_body *req,
+> -				       struct drm_dp_sideband_msg_tx *raw)
+> +void
+> +drm_dp_encode_sideband_req(const struct drm_dp_sideband_msg_req_body *req,
+> +			   struct drm_dp_sideband_msg_tx *raw)
+>  {
+>  	int idx = 0;
+>  	int i;
+> @@ -363,6 +404,251 @@ static void drm_dp_encode_sideband_req(struct drm_dp_sideband_msg_req_body *req,
+>  	}
+>  	raw->cur_len = idx;
+>  }
+> +EXPORT_SYMBOL_FOR_TESTS_ONLY(drm_dp_encode_sideband_req);
+> +
+> +/* Decode a sideband request we've encoded, mainly used for debugging */
+> +int
+> +drm_dp_decode_sideband_req(const struct drm_dp_sideband_msg_tx *raw,
+> +			   struct drm_dp_sideband_msg_req_body *req)
+> +{
+> +	const u8 *buf = raw->msg;
+> +	int i, idx = 0;
+> +
+> +	req->req_type = buf[idx++] & 0x7f;
+> +	switch (req->req_type) {
+> +	case DP_ENUM_PATH_RESOURCES:
+> +	case DP_POWER_DOWN_PHY:
+> +	case DP_POWER_UP_PHY:
+> +		req->u.port_num.port_number = (buf[idx] >> 4) & 0xf;
+> +		break;
+> +	case DP_ALLOCATE_PAYLOAD:
+> +		{
+> +			struct drm_dp_allocate_payload *a =
+> +				&req->u.allocate_payload;
+> +
+> +			a->number_sdp_streams = buf[idx] & 0xf;
+> +			a->port_number = (buf[idx] >> 4) & 0xf;
+> +
+> +			WARN_ON(buf[++idx] & 0x80);
+> +			a->vcpi = buf[idx] & 0x7f;
+> +
+> +			a->pbn = buf[++idx] << 8;
+> +			a->pbn |= buf[++idx];
+> +
+> +			idx++;
+> +			for (i = 0; i < a->number_sdp_streams; i++) {
+> +				a->sdp_stream_sink[i] =
+> +					(buf[idx + (i / 2)] >> ((i % 2) ? 0 : 4)) & 0xf;
+> +			}
+> +		}
+> +		break;
+> +	case DP_QUERY_PAYLOAD:
+> +		req->u.query_payload.port_number = (buf[idx] >> 4) & 0xf;
+> +		WARN_ON(buf[++idx] & 0x80);
+> +		req->u.query_payload.vcpi = buf[idx] & 0x7f;
+> +		break;
+> +	case DP_REMOTE_DPCD_READ:
+> +		{
+> +			struct drm_dp_remote_dpcd_read *r = &req->u.dpcd_read;
+> +
+> +			r->port_number = (buf[idx] >> 4) & 0xf;
+> +
+> +			r->dpcd_address = (buf[idx] << 16) & 0xf0000;
+> +			r->dpcd_address |= (buf[++idx] << 8) & 0xff00;
+> +			r->dpcd_address |= buf[++idx] & 0xff;
+> +
+> +			r->num_bytes = buf[++idx];
+> +		}
+> +		break;
+> +	case DP_REMOTE_DPCD_WRITE:
+> +		{
+> +			struct drm_dp_remote_dpcd_write *w =
+> +				&req->u.dpcd_write;
+> +
+> +			w->port_number = (buf[idx] >> 4) & 0xf;
+> +
+> +			w->dpcd_address = (buf[idx] << 16) & 0xf0000;
+> +			w->dpcd_address |= (buf[++idx] << 8) & 0xff00;
+> +			w->dpcd_address |= buf[++idx] & 0xff;
+> +
+> +			w->num_bytes = buf[++idx];
+> +
+> +			w->bytes = kmemdup(&buf[++idx], w->num_bytes,
+> +					   GFP_KERNEL);
+> +			if (!w->bytes)
+> +				return -ENOMEM;
+> +		}
+> +		break;
+> +	case DP_REMOTE_I2C_READ:
+> +		{
+> +			struct drm_dp_remote_i2c_read *r = &req->u.i2c_read;
+> +			struct drm_dp_remote_i2c_read_tx *tx;
+> +			bool failed = false;
+> +
+> +			r->num_transactions = buf[idx] & 0x3;
+> +			r->port_number = (buf[idx] >> 4) & 0xf;
+> +			for (i = 0; i < r->num_transactions; i++) {
+> +				tx = &r->transactions[i];
+> +
+> +				tx->i2c_dev_id = buf[++idx] & 0x7f;
+> +				tx->num_bytes = buf[++idx];
+> +				tx->bytes = kmemdup(&buf[++idx],
+> +						    tx->num_bytes,
+> +						    GFP_KERNEL);
+> +				if (!tx->bytes) {
+> +					failed = true;
+> +					break;
+> +				}
+> +				idx += tx->num_bytes;
+> +				tx->no_stop_bit = (buf[idx] >> 5) & 0x1;
+> +				tx->i2c_transaction_delay = buf[idx] & 0xf;
+> +			}
+> +
+> +			if (failed) {
+> +				for (i = 0; i < r->num_transactions; i++)
+> +					kfree(tx->bytes);
+> +				return -ENOMEM;
+> +			}
+> +
+> +			r->read_i2c_device_id = buf[++idx] & 0x7f;
+> +			r->num_bytes_read = buf[++idx];
+> +		}
+> +		break;
+> +	case DP_REMOTE_I2C_WRITE:
+> +		{
+> +			struct drm_dp_remote_i2c_write *w = &req->u.i2c_write;
+> +
+> +			w->port_number = (buf[idx] >> 4) & 0xf;
+> +			w->write_i2c_device_id = buf[++idx] & 0x7f;
+> +			w->num_bytes = buf[++idx];
+> +			w->bytes = kmemdup(&buf[++idx], w->num_bytes,
+> +					   GFP_KERNEL);
+> +			if (!w->bytes)
+> +				return -ENOMEM;
+> +		}
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_FOR_TESTS_ONLY(drm_dp_decode_sideband_req);
+> +
+> +void
+> +drm_dp_dump_sideband_msg_req_body(const struct drm_dp_sideband_msg_req_body *req,
+> +				  int indent, struct drm_printer *printer)
+> +{
+> +	int i;
+> +
+> +#define P(f, ...) drm_printf_indent(printer, indent, f, ##__VA_ARGS__)
+> +	if (req->req_type == DP_LINK_ADDRESS) {
+> +		/* No contents to print */
+> +		P("type=%s\n", drm_dp_mst_req_type_str(req->req_type));
+> +		return;
+> +	}
+> +
+> +	P("type=%s contents:\n", drm_dp_mst_req_type_str(req->req_type));
+> +	indent++;
+> +
+> +	switch (req->req_type) {
+> +	case DP_ENUM_PATH_RESOURCES:
+> +	case DP_POWER_DOWN_PHY:
+> +	case DP_POWER_UP_PHY:
+> +		P("port=%d\n", req->u.port_num.port_number);
+> +		break;
+> +	case DP_ALLOCATE_PAYLOAD:
+> +		P("port=%d vcpi=%d pbn=%d sdp_streams=%d %*ph\n",
+> +		  req->u.allocate_payload.port_number,
+> +		  req->u.allocate_payload.vcpi, req->u.allocate_payload.pbn,
+> +		  req->u.allocate_payload.number_sdp_streams,
+> +		  req->u.allocate_payload.number_sdp_streams,
+> +		  req->u.allocate_payload.sdp_stream_sink);
+> +		break;
+> +	case DP_QUERY_PAYLOAD:
+> +		P("port=%d vcpi=%d\n",
+> +		  req->u.query_payload.port_number,
+> +		  req->u.query_payload.vcpi);
+> +		break;
+> +	case DP_REMOTE_DPCD_READ:
+> +		P("port=%d dpcd_addr=%05x len=%d\n",
+> +		  req->u.dpcd_read.port_number, req->u.dpcd_read.dpcd_address,
+> +		  req->u.dpcd_read.num_bytes);
+> +		break;
+> +	case DP_REMOTE_DPCD_WRITE:
+> +		P("port=%d addr=%05x len=%d: %*ph\n",
+> +		  req->u.dpcd_write.port_number,
+> +		  req->u.dpcd_write.dpcd_address,
+> +		  req->u.dpcd_write.num_bytes, req->u.dpcd_write.num_bytes,
+> +		  req->u.dpcd_write.bytes);
+> +		break;
+> +	case DP_REMOTE_I2C_READ:
+> +		P("port=%d num_tx=%d id=%d size=%d:\n",
+> +		  req->u.i2c_read.port_number,
+> +		  req->u.i2c_read.num_transactions,
+> +		  req->u.i2c_read.read_i2c_device_id,
+> +		  req->u.i2c_read.num_bytes_read);
+> +
+> +		indent++;
+> +		for (i = 0; i < req->u.i2c_read.num_transactions; i++) {
+> +			const struct drm_dp_remote_i2c_read_tx *rtx =
+> +				&req->u.i2c_read.transactions[i];
+> +
+> +			P("%d: id=%03d size=%03d no_stop_bit=%d tx_delay=%03d: %*ph\n",
+> +			  i, rtx->i2c_dev_id, rtx->num_bytes,
+> +			  rtx->no_stop_bit, rtx->i2c_transaction_delay,
+> +			  rtx->num_bytes, rtx->bytes);
+> +		}
+> +		break;
+> +	case DP_REMOTE_I2C_WRITE:
+> +		P("port=%d id=%d size=%d: %*ph\n",
+> +		  req->u.i2c_write.port_number,
+> +		  req->u.i2c_write.write_i2c_device_id,
+> +		  req->u.i2c_write.num_bytes, req->u.i2c_write.num_bytes,
+> +		  req->u.i2c_write.bytes);
+> +		break;
+> +	default:
+> +		P("???\n");
+> +		break;
+> +	}
+> +#undef P
+> +}
+> +EXPORT_SYMBOL_FOR_TESTS_ONLY(drm_dp_dump_sideband_msg_req_body);
+> +
+> +static inline void
+> +drm_dp_mst_dump_sideband_msg_tx(struct drm_printer *p,
+> +				const struct drm_dp_sideband_msg_tx *txmsg)
+> +{
+> +	struct drm_dp_sideband_msg_req_body req;
+> +	char buf[64];
+> +	int ret;
+> +	int i;
+> +
+> +	drm_dp_mst_rad_to_str(txmsg->dst->rad, txmsg->dst->lct, buf,
+> +			      sizeof(buf));
+> +	drm_printf(p, "txmsg cur_offset=%x cur_len=%x seqno=%x state=%s path_msg=%d dst=%s\n",
+> +		   txmsg->cur_offset, txmsg->cur_len, txmsg->seqno,
+> +		   drm_dp_mst_sideband_tx_state_str(txmsg->state),
+> +		   txmsg->path_msg, buf);
+> +
+> +	ret = drm_dp_decode_sideband_req(txmsg, &req);
+> +	if (ret) {
+> +		drm_printf(p, "<failed to decode sideband req: %d>\n", ret);
+> +		return;
+> +	}
+> +	drm_dp_dump_sideband_msg_req_body(&req, 1, p);
+> +
+> +	switch (req.req_type) {
+> +	case DP_REMOTE_DPCD_WRITE:
+> +		kfree(req.u.dpcd_write.bytes);
+> +		break;
+> +	case DP_REMOTE_I2C_READ:
+> +		for (i = 0; i < req.u.i2c_read.num_transactions; i++)
+> +			kfree(req.u.i2c_read.transactions[i].bytes);
+> +		break;
+> +	case DP_REMOTE_I2C_WRITE:
+> +		kfree(req.u.i2c_write.bytes);
+> +		break;
+> +	}
+> +}
+>  
+>  static void drm_dp_crc_sideband_chunk_req(u8 *msg, u8 len)
+>  {
+> @@ -894,6 +1180,11 @@ static int drm_dp_mst_wait_tx_reply(struct drm_dp_mst_branch *mstb,
+>  		}
+>  	}
+>  out:
+> +	if (unlikely(ret == -EIO && drm_debug & DRM_UT_DP)) {
+> +		struct drm_printer p = drm_debug_printer(DBG_PREFIX);
+> +
+> +		drm_dp_mst_dump_sideband_msg_tx(&p, txmsg);
+> +	}
+>  	mutex_unlock(&mgr->qlock);
+>  
+>  	return ret;
+> @@ -2013,8 +2304,11 @@ static int process_single_tx_qlock(struct drm_dp_mst_topology_mgr *mgr,
+>  	idx += tosend + 1;
+>  
+>  	ret = drm_dp_send_sideband_msg(mgr, up, chunk, idx);
+> -	if (ret) {
+> -		DRM_DEBUG_KMS("sideband msg failed to send\n");
+> +	if (unlikely(ret && drm_debug & DRM_UT_DP)) {
+> +		struct drm_printer p = drm_debug_printer(DBG_PREFIX);
+> +
+> +		drm_printf(&p, "sideband msg failed to send\n");
+> +		drm_dp_mst_dump_sideband_msg_tx(&p, txmsg);
+>  		return ret;
+>  	}
+>  
+> @@ -2076,6 +2370,13 @@ static void drm_dp_queue_down_tx(struct drm_dp_mst_topology_mgr *mgr,
+>  {
+>  	mutex_lock(&mgr->qlock);
+>  	list_add_tail(&txmsg->next, &mgr->tx_msg_downq);
+> +
+> +	if (unlikely(drm_debug & DRM_UT_DP)) {
+> +		struct drm_printer p = drm_debug_printer(DBG_PREFIX);
+> +
+> +		drm_dp_mst_dump_sideband_msg_tx(&p, txmsg);
+> +	}
+> +
+>  	if (list_is_singular(&mgr->tx_msg_downq))
+>  		process_single_down_tx_qlock(mgr);
+>  	mutex_unlock(&mgr->qlock);
+> diff --git a/drivers/gpu/drm/drm_dp_mst_topology_internal.h b/drivers/gpu/drm/drm_dp_mst_topology_internal.h
+> new file mode 100644
+> index 000000000000..eeda9a61c657
+> --- /dev/null
+> +++ b/drivers/gpu/drm/drm_dp_mst_topology_internal.h
+> @@ -0,0 +1,24 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only
+> + *
+> + * Declarations for DP MST related functions which are only used in selftests
+> + *
+> + * Copyright © 2018 Red Hat
+> + * Authors:
+> + *     Lyude Paul <lyude@redhat.com>
+> + */
+> +
+> +#ifndef _DRM_DP_MST_HELPER_INTERNAL_H_
+> +#define _DRM_DP_MST_HELPER_INTERNAL_H_
+> +
+> +#include <drm/drm_dp_mst_helper.h>
+> +
+> +void
+> +drm_dp_encode_sideband_req(const struct drm_dp_sideband_msg_req_body *req,
+> +			   struct drm_dp_sideband_msg_tx *raw);
+> +int drm_dp_decode_sideband_req(const struct drm_dp_sideband_msg_tx *raw,
+> +			       struct drm_dp_sideband_msg_req_body *req);
+> +void
+> +drm_dp_dump_sideband_msg_req_body(const struct drm_dp_sideband_msg_req_body *req,
+> +				  int indent, struct drm_printer *printer);
+> +
+> +#endif /* !_DRM_DP_MST_HELPER_INTERNAL_H_ */
+> diff --git a/drivers/gpu/drm/selftests/drm_modeset_selftests.h b/drivers/gpu/drm/selftests/drm_modeset_selftests.h
+> index dec3ee3ec96f..1898de0b4a4d 100644
+> --- a/drivers/gpu/drm/selftests/drm_modeset_selftests.h
+> +++ b/drivers/gpu/drm/selftests/drm_modeset_selftests.h
+> @@ -33,3 +33,4 @@ selftest(damage_iter_damage_one_outside, igt_damage_iter_damage_one_outside)
+>  selftest(damage_iter_damage_src_moved, igt_damage_iter_damage_src_moved)
+>  selftest(damage_iter_damage_not_visible, igt_damage_iter_damage_not_visible)
+>  selftest(dp_mst_calc_pbn_mode, igt_dp_mst_calc_pbn_mode)
+> +selftest(dp_mst_sideband_msg_req_decode, igt_dp_mst_sideband_msg_req_decode)
+> diff --git a/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c b/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c
+> index 9baa5171988d..af2b2de65316 100644
+> --- a/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c
+> +++ b/drivers/gpu/drm/selftests/test-drm_dp_mst_helper.c
+> @@ -3,9 +3,12 @@
+>   * Test cases for for the DRM DP MST helpers
+>   */
+>  
+> +#define PREFIX_STR "[drm_dp_mst_helper]"
+> +
+>  #include <drm/drm_dp_mst_helper.h>
+>  #include <drm/drm_print.h>
+>  
+> +#include "../drm_dp_mst_topology_internal.h"
+>  #include "test-drm_modeset_common.h"
+>  
+>  int igt_dp_mst_calc_pbn_mode(void *ignored)
+> @@ -32,3 +35,204 @@ int igt_dp_mst_calc_pbn_mode(void *ignored)
+>  
+>  	return 0;
+>  }
+> +
+> +static bool
+> +sideband_msg_req_equal(const struct drm_dp_sideband_msg_req_body *in,
+> +		       const struct drm_dp_sideband_msg_req_body *out)
+> +{
+> +	const struct drm_dp_remote_i2c_read_tx *txin, *txout;
+> +	int i;
+> +
+> +	if (in->req_type != out->req_type)
+> +		return false;
+> +
+> +	switch (in->req_type) {
+> +	/*
+> +	 * Compare struct members manually for request types which can't be
+> +	 * compared simply using memcmp(). This is because said request types
+> +	 * contain pointers to other allocated structs
+> +	 */
+> +	case DP_REMOTE_I2C_READ:
+> +#define IN in->u.i2c_read
+> +#define OUT out->u.i2c_read
+> +		if (IN.num_bytes_read != OUT.num_bytes_read ||
+> +		    IN.num_transactions != OUT.num_transactions ||
+> +		    IN.port_number != OUT.port_number ||
+> +		    IN.read_i2c_device_id != OUT.read_i2c_device_id)
+> +			return false;
+> +
+> +		for (i = 0; i < IN.num_transactions; i++) {
+> +			txin = &IN.transactions[i];
+> +			txout = &OUT.transactions[i];
+> +
+> +			if (txin->i2c_dev_id != txout->i2c_dev_id ||
+> +			    txin->no_stop_bit != txout->no_stop_bit ||
+> +			    txin->num_bytes != txout->num_bytes ||
+> +			    txin->i2c_transaction_delay !=
+> +			    txout->i2c_transaction_delay)
+> +				return false;
+> +
+> +			if (memcmp(txin->bytes, txout->bytes,
+> +				   txin->num_bytes) != 0)
+> +				return false;
+> +		}
+> +		break;
+> +#undef IN
+> +#undef OUT
+> +
+> +	case DP_REMOTE_DPCD_WRITE:
+> +#define IN in->u.dpcd_write
+> +#define OUT out->u.dpcd_write
+> +		if (IN.dpcd_address != OUT.dpcd_address ||
+> +		    IN.num_bytes != OUT.num_bytes ||
+> +		    IN.port_number != OUT.port_number)
+> +			return false;
+> +
+> +		return memcmp(IN.bytes, OUT.bytes, IN.num_bytes) == 0;
+> +#undef IN
+> +#undef OUT
+> +
+> +	case DP_REMOTE_I2C_WRITE:
+> +#define IN in->u.i2c_write
+> +#define OUT out->u.i2c_write
+> +		if (IN.port_number != OUT.port_number ||
+> +		    IN.write_i2c_device_id != OUT.write_i2c_device_id ||
+> +		    IN.num_bytes != OUT.num_bytes)
+> +			return false;
+> +
+> +		return memcmp(IN.bytes, OUT.bytes, IN.num_bytes) == 0;
+> +#undef IN
+> +#undef OUT
+> +
+> +	default:
+> +		return memcmp(in, out, sizeof(*in)) == 0;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static bool
+> +sideband_msg_req_encode_decode(struct drm_dp_sideband_msg_req_body *in)
+> +{
+> +	struct drm_dp_sideband_msg_req_body out = {0};
+> +	struct drm_printer p = drm_err_printer(PREFIX_STR);
+> +	struct drm_dp_sideband_msg_tx txmsg;
+> +	int i, ret;
+> +
+> +	drm_dp_encode_sideband_req(in, &txmsg);
+> +	ret = drm_dp_decode_sideband_req(&txmsg, &out);
+> +	if (ret < 0) {
+> +		drm_printf(&p, "Failed to decode sideband request: %d\n",
+> +			   ret);
 
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 32 ++++++++++++++++------
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 11 ++++----
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  2 +-
- 3 files changed, 30 insertions(+), 15 deletions(-)
+Is this the sole reason of adding drm_err_printer()? Where do you intend
+to take error printing next, in general? Why isn't DRM_ERROR() the right
+thing to do here?
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-index 6dcce48..d0128d7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-@@ -931,22 +931,36 @@ static void hclge_dbg_fd_tcam(struct hclge_dev *hdev)
- 
- static void hclge_dbg_dump_rst_info(struct hclge_dev *hdev)
- {
--	dev_info(&hdev->pdev->dev, "PF reset count: %d\n",
-+	dev_info(&hdev->pdev->dev, "PF reset count: %u\n",
- 		 hdev->rst_stats.pf_rst_cnt);
--	dev_info(&hdev->pdev->dev, "FLR reset count: %d\n",
-+	dev_info(&hdev->pdev->dev, "FLR reset count: %u\n",
- 		 hdev->rst_stats.flr_rst_cnt);
--	dev_info(&hdev->pdev->dev, "CORE reset count: %d\n",
--		 hdev->rst_stats.core_rst_cnt);
--	dev_info(&hdev->pdev->dev, "GLOBAL reset count: %d\n",
-+	dev_info(&hdev->pdev->dev, "GLOBAL reset count: %u\n",
- 		 hdev->rst_stats.global_rst_cnt);
--	dev_info(&hdev->pdev->dev, "IMP reset count: %d\n",
-+	dev_info(&hdev->pdev->dev, "IMP reset count: %u\n",
- 		 hdev->rst_stats.imp_rst_cnt);
--	dev_info(&hdev->pdev->dev, "reset done count: %d\n",
-+	dev_info(&hdev->pdev->dev, "reset done count: %u\n",
- 		 hdev->rst_stats.reset_done_cnt);
--	dev_info(&hdev->pdev->dev, "HW reset done count: %d\n",
-+	dev_info(&hdev->pdev->dev, "HW reset done count: %u\n",
- 		 hdev->rst_stats.hw_reset_done_cnt);
--	dev_info(&hdev->pdev->dev, "reset count: %d\n",
-+	dev_info(&hdev->pdev->dev, "reset count: %u\n",
- 		 hdev->rst_stats.reset_cnt);
-+	dev_info(&hdev->pdev->dev, "reset count: %u\n",
-+		 hdev->rst_stats.reset_cnt);
-+	dev_info(&hdev->pdev->dev, "reset fail count: %u\n",
-+		 hdev->rst_stats.reset_fail_cnt);
-+	dev_info(&hdev->pdev->dev, "vector0 interrupt enable status: 0x%x\n",
-+		 hclge_read_dev(&hdev->hw, HCLGE_MISC_VECTOR_REG_BASE));
-+	dev_info(&hdev->pdev->dev, "reset interrupt source: 0x%x\n",
-+		 hclge_read_dev(&hdev->hw, HCLGE_MISC_RESET_STS_REG));
-+	dev_info(&hdev->pdev->dev, "reset interrupt status: 0x%x\n",
-+		 hclge_read_dev(&hdev->hw, HCLGE_MISC_VECTOR_INT_STS));
-+	dev_info(&hdev->pdev->dev, "hardware reset status: 0x%x\n",
-+		 hclge_read_dev(&hdev->hw, HCLGE_GLOBAL_RESET_REG));
-+	dev_info(&hdev->pdev->dev, "handshake status: 0x%x\n",
-+		 hclge_read_dev(&hdev->hw, HCLGE_NIC_CSQ_DEPTH_REG));
-+	dev_info(&hdev->pdev->dev, "function reset status: 0x%x\n",
-+		 hclge_read_dev(&hdev->hw, HCLGE_FUN_RST_ING));
- }
- 
- static void hclge_dbg_get_m7_stats_info(struct hclge_dev *hdev)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index bc5bad3..fd7f943 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3547,12 +3547,12 @@ static bool hclge_reset_err_handle(struct hclge_dev *hdev)
- 			 "reset failed because new reset interrupt\n");
- 		hclge_clear_reset_cause(hdev);
- 		return false;
--	} else if (hdev->reset_fail_cnt < MAX_RESET_FAIL_CNT) {
--		hdev->reset_fail_cnt++;
-+	} else if (hdev->rst_stats.reset_fail_cnt < MAX_RESET_FAIL_CNT) {
-+		hdev->rst_stats.reset_fail_cnt++;
- 		set_bit(hdev->reset_type, &hdev->reset_pending);
- 		dev_info(&hdev->pdev->dev,
- 			 "re-schedule reset task(%d)\n",
--			 hdev->reset_fail_cnt);
-+			 hdev->rst_stats.reset_fail_cnt);
- 		return true;
- 	}
- 
-@@ -3679,7 +3679,8 @@ static void hclge_reset(struct hclge_dev *hdev)
- 	/* ignore RoCE notify error if it fails HCLGE_RESET_MAX_FAIL_CNT - 1
- 	 * times
- 	 */
--	if (ret && hdev->reset_fail_cnt < HCLGE_RESET_MAX_FAIL_CNT - 1)
-+	if (ret &&
-+	    hdev->rst_stats.reset_fail_cnt < HCLGE_RESET_MAX_FAIL_CNT - 1)
- 		goto err_reset;
- 
- 	rtnl_lock();
-@@ -3695,7 +3696,7 @@ static void hclge_reset(struct hclge_dev *hdev)
- 		goto err_reset;
- 
- 	hdev->last_reset_time = jiffies;
--	hdev->reset_fail_cnt = 0;
-+	hdev->rst_stats.reset_fail_cnt = 0;
- 	hdev->rst_stats.reset_done_cnt++;
- 	ae_dev->reset_type = HNAE3_NONE_RESET;
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 870550f..3e9574a 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -659,6 +659,7 @@ struct hclge_rst_stats {
- 	u32 global_rst_cnt;	/* the number of GLOBAL */
- 	u32 imp_rst_cnt;	/* the number of IMP reset */
- 	u32 reset_cnt;		/* the number of reset */
-+	u32 reset_fail_cnt;	/* the number of reset fail */
- };
- 
- /* time and register status when mac tunnel interruption occur */
-@@ -725,7 +726,6 @@ struct hclge_dev {
- 	unsigned long reset_request;	/* reset has been requested */
- 	unsigned long reset_pending;	/* client rst is pending to be served */
- 	struct hclge_rst_stats rst_stats;
--	u32 reset_fail_cnt;
- 	u32 fw_version;
- 	u16 num_vmdq_vport;		/* Num vmdq vport this PF has set up */
- 	u16 num_tqps;			/* Num task queue pairs of this PF */
+It's just that I think debug and error printing from drm is a mess, and
+instead of cleaning it up, we seem to be piling on new stuff without
+direction.
+
+BR,
+Jani.
+
+
+
+> +		return false;
+> +	}
+> +
+> +	if (!sideband_msg_req_equal(in, &out)) {
+> +		drm_printf(&p, "Encode/decode failed, expected:\n");
+> +		drm_dp_dump_sideband_msg_req_body(in, 1, &p);
+> +		drm_printf(&p, "Got:\n");
+> +		drm_dp_dump_sideband_msg_req_body(&out, 1, &p);
+> +		return false;
+> +	}
+> +
+> +	switch (in->req_type) {
+> +	case DP_REMOTE_DPCD_WRITE:
+> +		kfree(out.u.dpcd_write.bytes);
+> +		break;
+> +	case DP_REMOTE_I2C_READ:
+> +		for (i = 0; i < out.u.i2c_read.num_transactions; i++)
+> +			kfree(out.u.i2c_read.transactions[i].bytes);
+> +		break;
+> +	case DP_REMOTE_I2C_WRITE:
+> +		kfree(out.u.i2c_write.bytes);
+> +		break;
+> +	}
+> +
+> +	/* Clear everything but the req_type for the input */
+> +	memset(&in->u, 0, sizeof(in->u));
+> +
+> +	return true;
+> +}
+> +
+> +int igt_dp_mst_sideband_msg_req_decode(void *unused)
+> +{
+> +	struct drm_dp_sideband_msg_req_body in = { 0 };
+> +	u8 data[] = { 0xff, 0x0, 0xdd };
+> +	int i;
+> +
+> +#define DO_TEST() FAIL_ON(!sideband_msg_req_encode_decode(&in))
+> +
+> +	in.req_type = DP_ENUM_PATH_RESOURCES;
+> +	in.u.port_num.port_number = 5;
+> +	DO_TEST();
+> +
+> +	in.req_type = DP_POWER_UP_PHY;
+> +	in.u.port_num.port_number = 5;
+> +	DO_TEST();
+> +
+> +	in.req_type = DP_POWER_DOWN_PHY;
+> +	in.u.port_num.port_number = 5;
+> +	DO_TEST();
+> +
+> +	in.req_type = DP_ALLOCATE_PAYLOAD;
+> +	in.u.allocate_payload.number_sdp_streams = 3;
+> +	for (i = 0; i < in.u.allocate_payload.number_sdp_streams; i++)
+> +		in.u.allocate_payload.sdp_stream_sink[i] = i + 1;
+> +	DO_TEST();
+> +	in.u.allocate_payload.port_number = 0xf;
+> +	DO_TEST();
+> +	in.u.allocate_payload.vcpi = 0x7f;
+> +	DO_TEST();
+> +	in.u.allocate_payload.pbn = U16_MAX;
+> +	DO_TEST();
+> +
+> +	in.req_type = DP_QUERY_PAYLOAD;
+> +	in.u.query_payload.port_number = 0xf;
+> +	DO_TEST();
+> +	in.u.query_payload.vcpi = 0x7f;
+> +	DO_TEST();
+> +
+> +	in.req_type = DP_REMOTE_DPCD_READ;
+> +	in.u.dpcd_read.port_number = 0xf;
+> +	DO_TEST();
+> +	in.u.dpcd_read.dpcd_address = 0xfedcb;
+> +	DO_TEST();
+> +	in.u.dpcd_read.num_bytes = U8_MAX;
+> +	DO_TEST();
+> +
+> +	in.req_type = DP_REMOTE_DPCD_WRITE;
+> +	in.u.dpcd_write.port_number = 0xf;
+> +	DO_TEST();
+> +	in.u.dpcd_write.dpcd_address = 0xfedcb;
+> +	DO_TEST();
+> +	in.u.dpcd_write.num_bytes = ARRAY_SIZE(data);
+> +	in.u.dpcd_write.bytes = data;
+> +	DO_TEST();
+> +
+> +	in.req_type = DP_REMOTE_I2C_READ;
+> +	in.u.i2c_read.port_number = 0xf;
+> +	DO_TEST();
+> +	in.u.i2c_read.read_i2c_device_id = 0x7f;
+> +	DO_TEST();
+> +	in.u.i2c_read.num_transactions = 3;
+> +	in.u.i2c_read.num_bytes_read = ARRAY_SIZE(data) * 3;
+> +	for (i = 0; i < in.u.i2c_read.num_transactions; i++) {
+> +		in.u.i2c_read.transactions[i].bytes = data;
+> +		in.u.i2c_read.transactions[i].num_bytes = ARRAY_SIZE(data);
+> +		in.u.i2c_read.transactions[i].i2c_dev_id = 0x7f & ~i;
+> +		in.u.i2c_read.transactions[i].i2c_transaction_delay = 0xf & ~i;
+> +	}
+> +	DO_TEST();
+> +
+> +	in.req_type = DP_REMOTE_I2C_WRITE;
+> +	in.u.i2c_write.port_number = 0xf;
+> +	DO_TEST();
+> +	in.u.i2c_write.write_i2c_device_id = 0x7f;
+> +	DO_TEST();
+> +	in.u.i2c_write.num_bytes = ARRAY_SIZE(data);
+> +	in.u.i2c_write.bytes = data;
+> +	DO_TEST();
+> +
+> +#undef DO_TEST
+> +	return 0;
+> +}
+> diff --git a/drivers/gpu/drm/selftests/test-drm_modeset_common.h b/drivers/gpu/drm/selftests/test-drm_modeset_common.h
+> index 590bda35a683..0fcb8bbc6a1b 100644
+> --- a/drivers/gpu/drm/selftests/test-drm_modeset_common.h
+> +++ b/drivers/gpu/drm/selftests/test-drm_modeset_common.h
+> @@ -40,5 +40,6 @@ int igt_damage_iter_damage_one_outside(void *ignored);
+>  int igt_damage_iter_damage_src_moved(void *ignored);
+>  int igt_damage_iter_damage_not_visible(void *ignored);
+>  int igt_dp_mst_calc_pbn_mode(void *ignored);
+> +int igt_dp_mst_sideband_msg_req_decode(void *ignored);
+>  
+>  #endif
+> diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+> index 4a4507fe928d..5423a8adda78 100644
+> --- a/include/drm/drm_dp_mst_helper.h
+> +++ b/include/drm/drm_dp_mst_helper.h
+> @@ -293,7 +293,7 @@ struct drm_dp_remote_dpcd_write {
+>  struct drm_dp_remote_i2c_read {
+>  	u8 num_transactions;
+>  	u8 port_number;
+> -	struct {
+> +	struct drm_dp_remote_i2c_read_tx {
+>  		u8 i2c_dev_id;
+>  		u8 num_bytes;
+>  		u8 *bytes;
+
 -- 
-2.7.4
-
+Jani Nikula, Intel Open Source Graphics Center
