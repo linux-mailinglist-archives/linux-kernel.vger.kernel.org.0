@@ -2,106 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E34BFAE46C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 09:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD9AFAE44E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 09:10:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406660AbfIJHOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 03:14:39 -0400
-Received: from mxwww.masterlogin.de ([95.129.51.220]:43542 "EHLO
-        mxwww.masterlogin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406597AbfIJHOc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 03:14:32 -0400
-Received: from mxout2.routing.net (unknown [192.168.10.82])
-        by new.mxwww.masterlogin.de (Postfix) with ESMTPS id 52516963C5;
-        Tue, 10 Sep 2019 07:05:20 +0000 (UTC)
-Received: from mxbox2.masterlogin.de (unknown [192.168.10.253])
-        by mxout2.routing.net (Postfix) with ESMTP id ADB286208B;
-        Tue, 10 Sep 2019 07:05:20 +0000 (UTC)
-Received: from localhost.localdomain (fttx-pool-185.75.73.135.bambit.de [185.75.73.135])
-        by mxbox2.masterlogin.de (Postfix) with ESMTPSA id B4CAE1002EF;
-        Tue, 10 Sep 2019 07:05:19 +0000 (UTC)
-From:   Frank Wunderlich <frank-w@public-files.de>
-To:     linux-mediatek@lists.infradead.org
-Cc:     Frank Wunderlich <frank-w@public-files.de>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Josef Friedl <josef.friedl@speed.at>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        "Tianping Fang" <tianping.fang@mediatek.com>
-Subject: [PATCH v7 7/7] arm: dts: mt6323: add keys, power-controller, rtc and codec
-Date:   Tue, 10 Sep 2019 09:04:46 +0200
-Message-Id: <20190910070446.639-8-frank-w@public-files.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190910070446.639-1-frank-w@public-files.de>
-References: <20190910070446.639-1-frank-w@public-files.de>
+        id S2406578AbfIJHKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 03:10:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39702 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2406564AbfIJHKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 03:10:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 523C0AFF5;
+        Tue, 10 Sep 2019 07:10:31 +0000 (UTC)
+Date:   Tue, 10 Sep 2019 09:10:30 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-rdma@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: add dummy can_do_mlock() helper
+Message-ID: <20190910071030.GG2063@dhcp22.suse.cz>
+References: <20190909204201.931830-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190909204201.931830-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Friedl <josef.friedl@speed.at>
+On Mon 09-09-19 22:41:40, Arnd Bergmann wrote:
+> On kernels without CONFIG_MMU, we get a link error for the siw
+> driver:
+> 
+> drivers/infiniband/sw/siw/siw_mem.o: In function `siw_umem_get':
+> siw_mem.c:(.text+0x4c8): undefined reference to `can_do_mlock'
+> 
+> This is probably not the only driver that needs the function
+> and could otherwise build correctly without CONFIG_MMU, so
+> add a dummy variant that always returns false.
+> 
+> Fixes: 2251334dcac9 ("rdma/siw: application buffer management")
+> Suggested-by: Jason Gunthorpe <jgg@mellanox.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-support poweroff and power-related keys on bpi-r2
+Makes sense
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Suggested-by: Frank Wunderlich <frank-w@public-files.de>
-Signed-off-by: Josef Friedl <josef.friedl@speed.at>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
-changes since v6: none
-changes since v5: none
-changes since v4: none
-changes since v3: none
-changes since v2: none (=v2 part 7)
----
- arch/arm/boot/dts/mt6323.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+but IB on nonMMU? Whut? Is there any HW that actually supports this?
+Just wondering...
 
-diff --git a/arch/arm/boot/dts/mt6323.dtsi b/arch/arm/boot/dts/mt6323.dtsi
-index ba397407c1dd..7fda40ab5fe8 100644
---- a/arch/arm/boot/dts/mt6323.dtsi
-+++ b/arch/arm/boot/dts/mt6323.dtsi
-@@ -238,5 +238,32 @@
- 				regulator-enable-ramp-delay = <216>;
- 			};
- 		};
-+
-+		mt6323keys: mt6323keys {
-+			compatible = "mediatek,mt6323-keys";
-+			mediatek,long-press-mode = <1>;
-+			power-off-time-sec = <0>;
-+
-+			power {
-+				linux,keycodes = <116>;
-+				wakeup-source;
-+			};
-+
-+			home {
-+				linux,keycodes = <114>;
-+			};
-+		};
-+
-+		codec: mt6397codec {
-+			compatible = "mediatek,mt6397-codec";
-+		};
-+
-+		power-controller {
-+			compatible = "mediatek,mt6323-pwrc";
-+		};
-+
-+		rtc {
-+			compatible = "mediatek,mt6323-rtc";
-+		};
- 	};
- };
+> ---
+>  include/linux/mm.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 66f296181bcc..cc292273e6ba 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1424,7 +1424,11 @@ extern void pagefault_out_of_memory(void);
+>  
+>  extern void show_free_areas(unsigned int flags, nodemask_t *nodemask);
+>  
+> +#ifdef CONFIG_MMU
+>  extern bool can_do_mlock(void);
+> +#else
+> +static inline bool can_do_mlock(void) { return false; }
+> +#endif
+>  extern int user_shm_lock(size_t, struct user_struct *);
+>  extern void user_shm_unlock(size_t, struct user_struct *);
+>  
+> -- 
+> 2.20.0
+> 
+
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
