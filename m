@@ -2,191 +2,306 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58DFBAE313
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 06:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63C10AE322
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 06:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390335AbfIJEfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 00:35:48 -0400
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:8516 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728414AbfIJEfr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 00:35:47 -0400
-Received: from pps.filterd (m0134423.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8A4Uto4008199;
-        Tue, 10 Sep 2019 04:35:27 GMT
-Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2uwhy7gay5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Sep 2019 04:35:27 +0000
-Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
-        by g4t3425.houston.hpe.com (Postfix) with ESMTP id 91B389A;
-        Tue, 10 Sep 2019 04:35:26 +0000 (UTC)
-Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 5508)
-        id CB705201FCF18; Mon,  9 Sep 2019 23:35:25 -0500 (CDT)
-Message-Id: <20190910043437.718797407@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190910043437.021955474@stormcage.eag.rdlabs.hpecorp.net>
-User-Agent: quilt/0.46-1
-Date:   Mon, 09 Sep 2019 23:34:45 -0500
-From:   Mike Travis <mike.travis@hpe.com>
-To:     Mike Travis <mike.travis@hpe.com>
-Subject: [PATCH V2 8/8] x86/platform/uv: Account for UV Hubless in is_uvX_hub Ops
-Content-Disposition: inline; filename=mod-is_uvX_hub
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-10_04:2019-09-09,2019-09-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- bulkscore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=744 mlxscore=0
- spamscore=0 clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
- definitions=main-1909100041
+        id S1730079AbfIJEpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 00:45:36 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:24770 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729298AbfIJEpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 00:45:35 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46SCBz6t8WzB09bJ;
+        Tue, 10 Sep 2019 06:45:31 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=gWwFwMGQ; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id bU4eAMlI_ySx; Tue, 10 Sep 2019 06:45:31 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46SCBz5bQYzB09bF;
+        Tue, 10 Sep 2019 06:45:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1568090731; bh=3HdTywXJsBxu7f63a95rihr1tfvWFCcQDr3tUVoe8yw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=gWwFwMGQhXbQPv4skvhBowgMpQ4CQb9YoCte6J0EYdnWndOz/QIIkIC5h0zvHR3UB
+         Ff9SsJ29XXUzNtVXyrvW+IGqLrX8MaQ1V/dHa+poQ/qL4JRqg1blBogwropiP4BW3n
+         ppQHiwrH0gDyFgNqtIfQfIcOubs7+hioH8IDo+8k=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7CEF08B78A;
+        Tue, 10 Sep 2019 06:45:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id nnso-4tCA0Zm; Tue, 10 Sep 2019 06:45:32 +0200 (CEST)
+Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7E34D8B754;
+        Tue, 10 Sep 2019 06:45:30 +0200 (CEST)
+Subject: Re: [PATCH 1/1] mm/pgtable/debug: Add test validating architecture
+ page table helpers
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-ia64@vger.kernel.org,
+        linux-sh@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        James Hogan <jhogan@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Paul Mackerras <paulus@samba.org>, sparclinux@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-s390@vger.kernel.org, x86@kernel.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Steven Price <Steven.Price@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        linux-snps-arc@lists.infradead.org,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        "David S. Miller" <davem@davemloft.net>
+References: <1567497706-8649-1-git-send-email-anshuman.khandual@arm.com>
+ <1567497706-8649-2-git-send-email-anshuman.khandual@arm.com>
+ <20190904221618.1b624a98@thinkpad>
+ <20e3044d-2af5-b27b-7653-cec53bdec941@arm.com>
+ <20190905190629.523bdb87@thinkpad>
+ <3c609e33-afbb-ffaf-481a-6d225a06d1d0@arm.com>
+ <20190906210346.5ecbff01@thinkpad>
+ <3d5de35f-8192-1c75-50a9-03e66e3b8e5c@arm.com>
+ <20190909151344.ghfypjbgxyosjdk3@box>
+ <5883d41a-8299-1584-aa3d-fac89b3d9b5b@arm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <94029d96-47c4-3020-57a8-4e03de1b4fc8@c-s.fr>
+Date:   Tue, 10 Sep 2019 04:45:30 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <5883d41a-8299-1584-aa3d-fac89b3d9b5b@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The references in the is_uvX_hub() function uses the hub_info pointer
-which will be NULL when the system is hubless.  This change avoids
-that NULL dereference.  It is also an optimization in performance.
 
-Signed-off-by: Mike Travis <mike.travis@hpe.com>
-Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
-Reviewed-by: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-To: Ingo Molnar <mingo@redhat.com>
-To: H. Peter Anvin <hpa@zytor.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Borislav Petkov <bp@alien8.de>
-To: Christoph Hellwig <hch@infradead.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Cc: Hedi Berriche <hedi.berriche@hpe.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>
-Cc: Justin Ernst <justin.ernst@hpe.com>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
----
-V2: Add WARNING that the is UVx supported defines will be removed.
----
- arch/x86/include/asm/uv/.uv_hub.h.swp |binary
- arch/x86/include/asm/uv/uv_hub.h |   61 ++++++++++++---------------------------
- 1 file changed, 20 insertions(+), 41 deletions(-)
 
-Binary files linux.orig/arch/x86/include/asm/uv/.uv_hub.h.swp and linux/arch/x86/include/asm/uv/.uv_hub.h.swp differ
---- linux.orig/arch/x86/include/asm/uv/uv_hub.h
-+++ linux/arch/x86/include/asm/uv/uv_hub.h
-@@ -19,6 +19,7 @@
- #include <linux/topology.h>
- #include <asm/types.h>
- #include <asm/percpu.h>
-+#include <asm/uv/uv.h>
- #include <asm/uv/uv_mmrs.h>
- #include <asm/uv/bios.h>
- #include <asm/irq_vectors.h>
-@@ -243,83 +244,61 @@ static inline int uv_hub_info_check(int
- #define UV4_HUB_REVISION_BASE		7
- #define UV4A_HUB_REVISION_BASE		8	/* UV4 (fixed) rev 2 */
- 
--#ifdef	UV1_HUB_IS_SUPPORTED
-+/* WARNING: UVx_HUB_IS_SUPPORTED defines are deprecated and will be removed */
- static inline int is_uv1_hub(void)
- {
--	return uv_hub_info->hub_revision < UV2_HUB_REVISION_BASE;
--}
-+#ifdef	UV1_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(1));
- #else
--static inline int is_uv1_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV2_HUB_IS_SUPPORTED
- static inline int is_uv2_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV3_HUB_REVISION_BASE));
--}
-+#ifdef	UV2_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(2));
- #else
--static inline int is_uv2_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
--#ifdef	UV3_HUB_IS_SUPPORTED
- static inline int is_uv3_hub(void)
- {
--	return ((uv_hub_info->hub_revision >= UV3_HUB_REVISION_BASE) &&
--		(uv_hub_info->hub_revision < UV4_HUB_REVISION_BASE));
--}
-+#ifdef	UV3_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(3));
- #else
--static inline int is_uv3_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- /* First test "is UV4A", then "is UV4" */
--#ifdef	UV4A_HUB_IS_SUPPORTED
--static inline int is_uv4a_hub(void)
--{
--	return (uv_hub_info->hub_revision >= UV4A_HUB_REVISION_BASE);
--}
--#else
- static inline int is_uv4a_hub(void)
- {
-+#ifdef	UV4A_HUB_IS_SUPPORTED
-+	if (is_uv_hubbed(uv(4)))
-+		return (uv_hub_info->hub_revision == UV4A_HUB_REVISION_BASE);
-+#endif
- 	return 0;
- }
--#endif
- 
--#ifdef	UV4_HUB_IS_SUPPORTED
- static inline int is_uv4_hub(void)
- {
--	return uv_hub_info->hub_revision >= UV4_HUB_REVISION_BASE;
--}
-+#ifdef	UV4_HUB_IS_SUPPORTED
-+	return is_uv_hubbed(uv(4));
- #else
--static inline int is_uv4_hub(void)
--{
- 	return 0;
--}
- #endif
-+}
- 
- static inline int is_uvx_hub(void)
- {
--	if (uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE)
--		return uv_hub_info->hub_revision;
--
--	return 0;
-+	return (is_uv_hubbed(-2) >= uv(2));
- }
- 
- static inline int is_uv_hub(void)
- {
--#ifdef	UV1_HUB_IS_SUPPORTED
--	return uv_hub_info->hub_revision;
--#endif
--	return is_uvx_hub();
-+	return is_uv1_hub() || is_uvx_hub();
- }
- 
- union uvh_apicid {
+On 09/10/2019 03:56 AM, Anshuman Khandual wrote:
+> 
+> 
+> On 09/09/2019 08:43 PM, Kirill A. Shutemov wrote:
+>> On Mon, Sep 09, 2019 at 11:56:50AM +0530, Anshuman Khandual wrote:
+>>>
+>>>
+>>> On 09/07/2019 12:33 AM, Gerald Schaefer wrote:
+>>>> On Fri, 6 Sep 2019 11:58:59 +0530
+>>>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>>>
+>>>>> On 09/05/2019 10:36 PM, Gerald Schaefer wrote:
+>>>>>> On Thu, 5 Sep 2019 14:48:14 +0530
+>>>>>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>>>>>    
+>>>>>>>> [...]
+>>>>>>>>> +
+>>>>>>>>> +#if !defined(__PAGETABLE_PMD_FOLDED) && !defined(__ARCH_HAS_4LEVEL_HACK)
+>>>>>>>>> +static void pud_clear_tests(pud_t *pudp)
+>>>>>>>>> +{
+>>>>>>>>> +	memset(pudp, RANDOM_NZVALUE, sizeof(pud_t));
+>>>>>>>>> +	pud_clear(pudp);
+>>>>>>>>> +	WARN_ON(!pud_none(READ_ONCE(*pudp)));
+>>>>>>>>> +}
+>>>>>>>>
+>>>>>>>> For pgd/p4d/pud_clear(), we only clear if the page table level is present
+>>>>>>>> and not folded. The memset() here overwrites the table type bits, so
+>>>>>>>> pud_clear() will not clear anything on s390 and the pud_none() check will
+>>>>>>>> fail.
+>>>>>>>> Would it be possible to OR a (larger) random value into the table, so that
+>>>>>>>> the lower 12 bits would be preserved?
+>>>>>>>
+>>>>>>> So the suggestion is instead of doing memset() on entry with RANDOM_NZVALUE,
+>>>>>>> it should OR a large random value preserving lower 12 bits. Hmm, this should
+>>>>>>> still do the trick for other platforms, they just need non zero value. So on
+>>>>>>> s390, the lower 12 bits on the page table entry already has valid value while
+>>>>>>> entering this function which would make sure that pud_clear() really does
+>>>>>>> clear the entry ?
+>>>>>>
+>>>>>> Yes, in theory the table entry on s390 would have the type set in the last
+>>>>>> 4 bits, so preserving those would be enough. If it does not conflict with
+>>>>>> others, I would still suggest preserving all 12 bits since those would contain
+>>>>>> arch-specific flags in general, just to be sure. For s390, the pte/pmd tests
+>>>>>> would also work with the memset, but for consistency I think the same logic
+>>>>>> should be used in all pxd_clear_tests.
+>>>>>
+>>>>> Makes sense but..
+>>>>>
+>>>>> There is a small challenge with this. Modifying individual bits on a given
+>>>>> page table entry from generic code like this test case is bit tricky. That
+>>>>> is because there are not enough helpers to create entries with an absolute
+>>>>> value. This would have been easier if all the platforms provided functions
+>>>>> like __pxx() which is not the case now. Otherwise something like this should
+>>>>> have worked.
+>>>>>
+>>>>>
+>>>>> pud_t pud = READ_ONCE(*pudp);
+>>>>> pud = __pud(pud_val(pud) | RANDOM_VALUE (keeping lower 12 bits 0))
+>>>>> WRITE_ONCE(*pudp, pud);
+>>>>>
+>>>>> But __pud() will fail to build in many platforms.
+>>>>
+>>>> Hmm, I simply used this on my system to make pud_clear_tests() work, not
+>>>> sure if it works on all archs:
+>>>>
+>>>> pud_val(*pudp) |= RANDOM_NZVALUE;
+>>>
+>>> Which compiles on arm64 but then fails on x86 because of the way pmd_val()
+>>> has been defined there.
+>>
+>> Use instead
+>>
+>> 	*pudp = __pud(pud_val(*pudp) | RANDOM_NZVALUE);
+> 
+> Agreed.
+> 
+> As I had mentioned before this would have been really the cleanest approach.
+> 
+>>
+>> It *should* be more portable.
+> 
+> Not really, because not all the platforms have __pxx() definitions right now.
+> Going with these will clearly cause build failures on affected platforms. Lets
+> examine __pud() for instance. It is defined only on these platforms.
+> 
+> arch/arm64/include/asm/pgtable-types.h:		#define __pud(x) ((pud_t) { (x) } )
+> arch/mips/include/asm/pgtable-64.h:		#define __pud(x) ((pud_t) { (x) })
+> arch/powerpc/include/asm/pgtable-be-types.h:	#define __pud(x) ((pud_t) { cpu_to_be64(x) })
+> arch/powerpc/include/asm/pgtable-types.h:	#define __pud(x) ((pud_t) { (x) })
+> arch/s390/include/asm/page.h:			#define __pud(x) ((pud_t) { (x) } )
+> arch/sparc/include/asm/page_64.h:		#define __pud(x) ((pud_t) { (x) } )
+> arch/sparc/include/asm/page_64.h:		#define __pud(x) (x)
+> arch/x86/include/asm/pgtable.h:			#define __pud(x) native_make_pud(x)
 
--- 
+You missed:
+arch/x86/include/asm/paravirt.h:static inline pud_t __pud(pudval_t val)
+include/asm-generic/pgtable-nop4d-hack.h:#define __pud(x) 
+                ((pud_t) { __pgd(x) })
+include/asm-generic/pgtable-nopud.h:#define __pud(x) 
+        ((pud_t) { __p4d(x) })
 
+> 
+> Similarly for __pmd()
+> 
+> arch/alpha/include/asm/page.h:			#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/arm/include/asm/page-nommu.h:		#define __pmd(x)  (x)
+> arch/arm/include/asm/pgtable-2level-types.h:	#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/arm/include/asm/pgtable-2level-types.h:	#define __pmd(x)  (x)
+> arch/arm/include/asm/pgtable-3level-types.h:	#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/arm/include/asm/pgtable-3level-types.h:	#define __pmd(x)  (x)
+> arch/arm64/include/asm/pgtable-types.h:		#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/m68k/include/asm/page.h:			#define __pmd(x)  ((pmd_t) { { (x) }, })
+> arch/mips/include/asm/pgtable-64.h:		#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/nds32/include/asm/page.h:			#define __pmd(x)  (x)
+> arch/parisc/include/asm/page.h:			#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/parisc/include/asm/page.h:			#define __pmd(x)  (x)
+> arch/powerpc/include/asm/pgtable-be-types.h:	#define __pmd(x)  ((pmd_t) { cpu_to_be64(x) })
+> arch/powerpc/include/asm/pgtable-types.h:	#define __pmd(x)  ((pmd_t) { (x) })
+> arch/riscv/include/asm/pgtable-64.h:		#define __pmd(x)  ((pmd_t) { (x) })
+> arch/s390/include/asm/page.h:			#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/sh/include/asm/pgtable-3level.h:		#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/sparc/include/asm/page_32.h:		#define __pmd(x)  ((pmd_t) { { (x) }, })
+> arch/sparc/include/asm/page_32.h:		#define __pmd(x)  ((pmd_t) { { (x) }, })
+> arch/sparc/include/asm/page_64.h:		#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/sparc/include/asm/page_64.h:		#define __pmd(x)  (x)
+> arch/um/include/asm/page.h:			#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/um/include/asm/page.h:			#define __pmd(x)  ((pmd_t) { (x) } )
+> arch/x86/include/asm/pgtable.h:			#define __pmd(x)  native_make_pmd(x)
+
+You missed:
+arch/x86/include/asm/paravirt.h:static inline pmd_t __pmd(pmdval_t val)
+include/asm-generic/page.h:#define __pmd(x)     ((pmd_t) { (x) } )
+include/asm-generic/pgtable-nopmd.h:#define __pmd(x) 
+        ((pmd_t) { __pud(x) } )
+
+
+> 
+> Similarly for __pgd()
+> 
+> arch/alpha/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/alpha/include/asm/page.h:			#define __pgd(x)  (x)
+> arch/arc/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) })
+> arch/arc/include/asm/page.h:			#define __pgd(x)  (x)
+> arch/arm/include/asm/pgtable-3level-types.h:	#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/arm/include/asm/pgtable-3level-types.h:	#define __pgd(x)  (x)
+> arch/arm64/include/asm/pgtable-types.h:		#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/csky/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) })
+> arch/hexagon/include/asm/page.h:		#define __pgd(x)  ((pgd_t) { (x) })
+> arch/m68k/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/mips/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/nds32/include/asm/page.h:			#define __pgd(x)  (x)
+> arch/nios2/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) })
+> arch/openrisc/include/asm/page.h:		#define __pgd(x)  ((pgd_t) { (x) })
+> arch/parisc/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/parisc/include/asm/page.h:			#define __pgd(x)  (x)
+> arch/powerpc/include/asm/pgtable-be-types.h:	#define __pgd(x)  ((pgd_t) { cpu_to_be64(x) })
+> arch/powerpc/include/asm/pgtable-types.h:	#define __pgd(x)  ((pgd_t) { (x) })
+> arch/riscv/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) })
+> arch/s390/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/sh/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/sparc/include/asm/page_32.h:		#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/sparc/include/asm/page_32.h:		#define __pgd(x)  (x)
+> arch/sparc/include/asm/page_64.h:		#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/sparc/include/asm/page_64.h:		#define __pgd(x)  (x)
+> arch/um/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) } )
+> arch/unicore32/include/asm/page.h:		#define __pgd(x)  ((pgd_t) { (x) })
+> arch/unicore32/include/asm/page.h:		#define __pgd(x)  (x)
+> arch/x86/include/asm/pgtable.h:			#define __pgd(x)  native_make_pgd(x)
+> arch/xtensa/include/asm/page.h:			#define __pgd(x)  ((pgd_t) { (x) } )
+
+You missed:
+arch/x86/include/asm/paravirt.h:static inline pgd_t __pgd(pgdval_t val)
+include/asm-generic/page.h:#define __pgd(x)     ((pgd_t) { (x) } )
+
+
+> 
+> Similarly for __p4d()
+> 
+> arch/s390/include/asm/page.h:			#define __p4d(x)  ((p4d_t) { (x) } )
+> arch/x86/include/asm/pgtable.h:			#define __p4d(x)  native_make_p4d(x)
+
+You missed:
+arch/x86/include/asm/paravirt.h:static inline p4d_t __p4d(p4dval_t val)
+include/asm-generic/5level-fixup.h:#define __p4d(x) 
+__pgd(x)
+include/asm-generic/pgtable-nop4d.h:#define __p4d(x) 
+        ((p4d_t) { __pgd(x) })
+
+
+> 
+> The search pattern here has been "#define __pxx(". Unless I am missing something,
+> I dont see how we can use these without risking build failures.
+> 
+
+I guess you missed that arches not defining them fall back on the 
+definitions in include/asm-generic
+
+Christophe
