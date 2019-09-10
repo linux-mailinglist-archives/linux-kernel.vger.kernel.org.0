@@ -2,95 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59C91AE40C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 08:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D22AFAE430
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 09:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406483AbfIJG4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 02:56:23 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2202 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727816AbfIJG4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 02:56:22 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E360A5AC159EB3A6D7B8;
-        Tue, 10 Sep 2019 14:56:18 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 10 Sep 2019 14:56:10 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <vyasevich@gmail.com>, <nhorman@tuxdriver.com>,
-        <marcelo.leitner@gmail.com>, <davem@davemloft.net>
-CC:     <linux-sctp@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net 2/2] sctp: destroy bucket if failed to bind addr
-Date:   Tue, 10 Sep 2019 15:13:43 +0800
-Message-ID: <20190910071343.18808-3-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190910071343.18808-1-maowenan@huawei.com>
-References: <20190910071343.18808-1-maowenan@huawei.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1731643AbfIJHDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 03:03:38 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34673 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729701AbfIJHDi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 03:03:38 -0400
+Received: by mail-pl1-f196.google.com with SMTP id d3so8128327plr.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 00:03:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=x8676vaAMOMU0xS9ZBzOGK+O3nkLRs05V8sfia4T0io=;
+        b=E1yMmjSYYd3SJOl+n5kBSPDt6WFLc78WrSf3sphfdotTh1RZBV7Wc2tjPZQ8px9Lig
+         HIziAgXnNgmbIGwEZTBIwWFVvZyQHTmvuM5p5CxbaRm5SowE78u3iYJ/VsbfSugaN8jf
+         NnlXJpbwcuB2cssMweuqo0+B1jpuvP2nzsTqzmKMtrl8C7M85iNm/k7zRCX4y7EdEqf3
+         zFlfzHcT4mMotiXCMV6H4wM1ZqRLhS9zy8PV7yFjQZPpFgvdpOWnMx0T6R5N5kIMCVPa
+         7F2JORo1xbDQps6U/RVRm7iIU80SWnXDaFWzFmmPz8v9wdKankZFOVw9XTCgudVlGMT4
+         nClg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=x8676vaAMOMU0xS9ZBzOGK+O3nkLRs05V8sfia4T0io=;
+        b=WRfaUvEp8cCKB//6OEC+GnEfaUGPCLg58g+JG8wqAo3N9w1YVGKU93yni0xsFMXbc/
+         ZdhJ6DDXdh3IF2bXEUsZ7rjCLxn8o9J3CirbxY1ldTkzX0jCtSYKIRpOYz5mIC/sE/sY
+         TGLoh/yleDF8FT6rmBd05Zj2kJnZBYbQFlvyFTzWgNa1m+hmRYverY/bOGtMDQJloE3I
+         AI47JLi6WAWZZLpNy7V33KUR8GdrueUQi/DMnzLR2mmp1yQgME5g8VevWibifBI+sdT5
+         bvFQzgKYyP7zD/oNpbb3wxYB5svfhyYvhtu+bA8gVp+EzV1SrnbKyO9RON4UbXd+Cige
+         Ji5A==
+X-Gm-Message-State: APjAAAWzUJ9VwRJNVVcE8rv3wsfWmOI670BFWQ7o9JJUv2Fh4k/n6Tvl
+        svYLnRr6r1Kzvk4xJBEHMPZPNw==
+X-Google-Smtp-Source: APXvYqzf295XBYzMkJ2GP3vZ3dUOjLqYHN6ex68DBrUFlhgOofOjYtZwSxq9PB4LXBeat1GxDUDaAw==
+X-Received: by 2002:a17:902:8a88:: with SMTP id p8mr29467918plo.152.1568099017311;
+        Tue, 10 Sep 2019 00:03:37 -0700 (PDT)
+Received: from pragneshp.open-silicon.com ([114.143.65.226])
+        by smtp.gmail.com with ESMTPSA id q30sm1387383pja.18.2019.09.10.00.03.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 10 Sep 2019 00:03:36 -0700 (PDT)
+From:   Pragnesh Patel <pragnesh.patel@sifive.com>
+To:     palmer@sifive.com, paul.walmsley@sifive.com
+Cc:     Pragnesh Patel <pragnesh.patel@sifive.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: dt-bindings: Convert spi-sifive binding to json-schema
+Date:   Tue, 10 Sep 2019 12:32:51 +0530
+Message-Id: <1568098996-4180-1-git-send-email-pragnesh.patel@sifive.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one memory leak bug report:
-BUG: memory leak
-unreferenced object 0xffff8881dc4c5ec0 (size 40):
-  comm "syz-executor.0", pid 5673, jiffies 4298198457 (age 27.578s)
-  hex dump (first 32 bytes):
-    02 00 00 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-    f8 63 3d c1 81 88 ff ff 00 00 00 00 00 00 00 00  .c=.............
-  backtrace:
-    [<0000000072006339>] sctp_get_port_local+0x2a1/0xa00 [sctp]
-    [<00000000c7b379ec>] sctp_do_bind+0x176/0x2c0 [sctp]
-    [<000000005be274a2>] sctp_bind+0x5a/0x80 [sctp]
-    [<00000000b66b4044>] inet6_bind+0x59/0xd0 [ipv6]
-    [<00000000c68c7f42>] __sys_bind+0x120/0x1f0 net/socket.c:1647
-    [<000000004513635b>] __do_sys_bind net/socket.c:1658 [inline]
-    [<000000004513635b>] __se_sys_bind net/socket.c:1656 [inline]
-    [<000000004513635b>] __x64_sys_bind+0x3e/0x50 net/socket.c:1656
-    [<0000000061f2501e>] do_syscall_64+0x72/0x2e0 arch/x86/entry/common.c:296
-    [<0000000003d1e05e>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Convert the spi-sifive binding to DT schema format.
 
-This is because in sctp_do_bind, if sctp_get_port_local is to
-create hash bucket successfully, and sctp_add_bind_addr failed
-to bind address, e.g return -ENOMEM, so memory leak found, it
-needs to destroy allocated bucket.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
 ---
- net/sctp/socket.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/spi/spi-sifive.txt         | 37 ----------
+ .../devicetree/bindings/spi/spi-sifive.yaml        | 86 ++++++++++++++++++++++
+ 2 files changed, 86 insertions(+), 37 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/spi/spi-sifive.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-sifive.yaml
 
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index 766b68b55ebe..ab37fc1f7bb6 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -412,11 +412,13 @@ static int sctp_do_bind(struct sock *sk, union sctp_addr *addr, int len)
- 	ret = sctp_add_bind_addr(bp, addr, af->sockaddr_len,
- 				 SCTP_ADDR_SRC, GFP_ATOMIC);
- 
--	/* Copy back into socket for getsockname() use. */
--	if (!ret) {
--		inet_sk(sk)->inet_sport = htons(inet_sk(sk)->inet_num);
--		sp->pf->to_sk_saddr(addr, sk);
-+	if (ret) {
-+		sctp_put_port(sk);
-+		return ret;
- 	}
-+	/* Copy back into socket for getsockname() use. */
-+	inet_sk(sk)->inet_sport = htons(inet_sk(sk)->inet_num);
-+	sp->pf->to_sk_saddr(addr, sk);
- 
- 	return ret;
- }
+diff --git a/Documentation/devicetree/bindings/spi/spi-sifive.txt b/Documentation/devicetree/bindings/spi/spi-sifive.txt
+deleted file mode 100644
+index 3f5c6e4..0000000
+--- a/Documentation/devicetree/bindings/spi/spi-sifive.txt
++++ /dev/null
+@@ -1,37 +0,0 @@
+-SiFive SPI controller Device Tree Bindings
+-------------------------------------------
+-
+-Required properties:
+-- compatible		: Should be "sifive,<chip>-spi" and "sifive,spi<version>".
+-			  Supported compatible strings are:
+-			  "sifive,fu540-c000-spi" for the SiFive SPI v0 as integrated
+-			  onto the SiFive FU540 chip, and "sifive,spi0" for the SiFive
+-			  SPI v0 IP block with no chip integration tweaks.
+-			  Please refer to sifive-blocks-ip-versioning.txt for details
+-- reg			: Physical base address and size of SPI registers map
+-			  A second (optional) range can indicate memory mapped flash
+-- interrupts		: Must contain one entry
+-- interrupt-parent	: Must be core interrupt controller
+-- clocks		: Must reference the frequency given to the controller
+-- #address-cells	: Must be '1', indicating which CS to use
+-- #size-cells		: Must be '0'
+-
+-Optional properties:
+-- sifive,fifo-depth		: Depth of hardware queues; defaults to 8
+-- sifive,max-bits-per-word	: Maximum bits per word; defaults to 8
+-
+-SPI RTL that corresponds to the IP block version numbers can be found here:
+-https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/spi
+-
+-Example:
+-	spi: spi@10040000 {
+-		compatible = "sifive,fu540-c000-spi", "sifive,spi0";
+-		reg = <0x0 0x10040000 0x0 0x1000 0x0 0x20000000 0x0 0x10000000>;
+-		interrupt-parent = <&plic>;
+-		interrupts = <51>;
+-		clocks = <&tlclk>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		sifive,fifo-depth = <8>;
+-		sifive,max-bits-per-word = <8>;
+-	};
+diff --git a/Documentation/devicetree/bindings/spi/spi-sifive.yaml b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
+new file mode 100644
+index 0000000..368f5d5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
+@@ -0,0 +1,86 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/spi/spi-sifive.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SiFive SPI controller
++
++maintainers:
++  - Pragnesh Patel <pragnesh.patel@sifive.com>
++  - Paul Walmsley  <paul.walmsley@sifive.com>
++  - Palmer Dabbelt <palmer@sifive.com>
++
++allOf:
++  - $ref: "spi-controller.yaml#"
++
++properties:
++  compatible:
++    items:
++      - const: sifive,fu540-c000-spi
++      - const: sifive,spi0
++
++    description:
++      Should be "sifive,<chip>-spi" and "sifive,spi<version>".
++      Supported compatible strings are -
++      "sifive,fu540-c000-spi" for the SiFive SPI v0 as integrated
++      onto the SiFive FU540 chip, and "sifive,spi0" for the SiFive
++      SPI v0 IP block with no chip integration tweaks.
++      Please refer to sifive-blocks-ip-versioning.txt for details
++
++      SPI RTL that corresponds to the IP block version numbers can be found here -
++      https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/spi
++
++  reg:
++    maxItems: 1
++
++    description:
++      Physical base address and size of SPI registers map
++      A second (optional) range can indicate memory mapped flash
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++    description:
++      Must reference the frequency given to the controller
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  sifive,fifo-depth:
++    description:
++      Depth of hardware queues; defaults to 8
++    $ref: "/schemas/types.yaml#/definitions/uint32"
++
++  sifive,max-bits-per-word:
++    description:
++      Maximum bits per word; defaults to 8
++    $ref: "/schemas/types.yaml#/definitions/uint32"
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++examples:
++  - |
++    spi: spi@10040000 {
++      compatible = "sifive,fu540-c000-spi", "sifive,spi0";
++      reg = <0x0 0x10040000 0x0 0x1000 0x0 0x20000000 0x0 0x10000000>;
++      interrupt-parent = <&plic>;
++      interrupts = <51>;
++      clocks = <&tlclk>;
++      #address-cells = <1>;
++      #size-cells = <0>;
++      sifive,fifo-depth = <8>;
++      sifive,max-bits-per-word = <8>;
++    };
++
++...
 -- 
-2.20.1
+2.7.4
 
