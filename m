@@ -2,68 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AFAFAE361
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 07:59:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D6F6AE381
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 08:09:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393203AbfIJF73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 01:59:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43756 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730117AbfIJF72 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 01:59:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fIGfMlrxJV5LsPD/0GOyEkA6JJ43g2NcxaloY4HpG0M=; b=Pms1SD+dyyIaw6SRkOF4c6iO4
-        lcMmT2URpL21DKmeVp6SfzrfceFPYvotTK/2UWo7RXWv89qtZDTgIMhvdF34xf1WIEZAgnRwcPRJw
-        USkGPbRn3gJns6zoyz5NgYHUgJoNiy1PHjEDs/WDlXaKQI0sMvfc/LkGPndJV/H76pBOtlR2clFb/
-        g49DsmWumNLCDUBsf943t7H9dourO/VKW09emXKV7o690l9PKRgyry2oOUr8rb+KvTCV5BQFtnNdp
-        9YCjEphyWjA2VMHowPV+UI3jeAQZludF+ZSTUkzsYOzwsYzwpGak0zuuOOuoEO7LV/wlPyXCrwPrN
-        D8nSf690g==;
-Received: from [2001:4bb8:180:57ff:412:4333:4bf9:9db2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i7ZBV-0001Vn-4L; Tue, 10 Sep 2019 05:59:25 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     gregkh@linuxfoundation.org, jslaby@suse.com
-Cc:     paul.walmsley@sifive.com, linux-serial@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] serial/sifive: select SERIAL_EARLYCON
-Date:   Tue, 10 Sep 2019 07:59:23 +0200
-Message-Id: <20190910055923.28384-1-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S2393264AbfIJGJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 02:09:38 -0400
+Received: from mga02.intel.com ([134.134.136.20]:9595 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730334AbfIJGJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 02:09:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Sep 2019 23:09:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,487,1559545200"; 
+   d="scan'208";a="175206824"
+Received: from hao-dev.bj.intel.com ([10.238.157.65])
+  by orsmga007.jf.intel.com with ESMTP; 09 Sep 2019 23:09:04 -0700
+From:   Wu Hao <hao.wu@intel.com>
+To:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux@roeck-us.net, jdelvare@suse.com, gregkh@linuxfoundation.org,
+        Wu Hao <hao.wu@intel.com>
+Subject: [PATCH v6 0/3] add thermal/power management features for FPGA DFL drivers
+Date:   Tue, 10 Sep 2019 13:50:37 +0800
+Message-Id: <1568094640-4920-1-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sifive serial driver implements earlycon support, but unless
-another driver is built in that supports earlycon support it won't
-be usable.  Explicitly select SERIAL_EARLYCON instead.
+Hi Mortiz and all,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/tty/serial/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+This patchset adds thermal and power management features for FPGA DFL
+drivers. Both patches are using hwmon as userspace interfaces.
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 530cb966092f..6b77a72278e3 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -1075,6 +1075,7 @@ config SERIAL_SIFIVE_CONSOLE
- 	bool "Console on SiFive UART"
- 	depends on SERIAL_SIFIVE=y
- 	select SERIAL_CORE_CONSOLE
-+	select SERIAL_EARLYCON
- 	help
- 	  Select this option if you would like to use a SiFive UART as the
- 	  system console.
+As previous dfl patches have been merged, so I resubmit this one after
+rebase and clean up, as dependency is resolved now.
+(This patchset is generated against char-misc-next).
+
+Please help with review to see if any comments, thank you very much!
+
+Main changes from v5:
+ - rebase and clean up (remove empty uinit function) per changes in recent
+   merged dfl patches.
+ - update date in sysfs doc.
+
+Main changes from v4:
+ - rebase due to Documentation format change (dfl.txt -> rst).
+ - clamp threshold inputs for sysfs interfaces. (patch#3)
+ - update sysfs doc to add more description for ltr sysfs interfaces.
+   (patch#3)
+
+Main changes from v3:
+ - use HWMON_CHANNEL_INFO.
+
+Main changes from v2:
+ - switch to standard hwmon APIs for thermal hwmon:
+     temp1_alarm        --> temp1_max
+     temp1_alarm_status --> temp1_max_alarm
+     temp1_crit_status  --> temp1_crit_alarm
+     temp1_alarm_policy --> temp1_max_policy
+ - switch to standard hwmon APIs for power hwmon:
+     power1_cap         --> power1_max
+     power1_cap_status  --> power1_max_alarm
+     power1_crit_status --> power1_crit_alarm
+
+Wu Hao (2):
+  fpga: dfl: fme: add thermal management support
+  fpga: dfl: fme: add power management support
+
+Xu Yilun (1):
+  Documentation: fpga: dfl: add descriptions for thermal/power
+    management interfaces
+
+ Documentation/ABI/testing/sysfs-platform-dfl-fme | 134 ++++++++
+ Documentation/fpga/dfl.rst                       |  10 +
+ drivers/fpga/Kconfig                             |   2 +-
+ drivers/fpga/dfl-fme-main.c                      | 385 +++++++++++++++++++++++
+ 4 files changed, 530 insertions(+), 1 deletion(-)
+
 -- 
-2.20.1
+1.8.3.1
 
