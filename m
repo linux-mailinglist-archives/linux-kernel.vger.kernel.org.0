@@ -2,75 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DB3CAEED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14169AEECF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436642AbfIJPp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 11:45:58 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33189 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbfIJPp6 (ORCPT
+        id S2436625AbfIJPpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 11:45:50 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:58200 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbfIJPpu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 11:45:58 -0400
-Received: by mail-qt1-f196.google.com with SMTP id r5so21321219qtd.0;
-        Tue, 10 Sep 2019 08:45:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mgWzDzaplnc/d23D8NMX6EnM/r2A1Rxq4yqexQ5ZW4U=;
-        b=V4nCxWpn08hKC/92SvncwaKyuOPRtIKFzf8yh7SWP/60qxuvG9Tkda0lhSfUheRV9T
-         nkEHeJ0rQnt/ndd0UrXvj6GIXKRRygnxgPQHpp3K5qkWQMK+zb9s9RKuRNSHV94vVM+U
-         kZFuSEMJiR2w6bUikvFX/g6zBiiCmhObDeKhaHdAXrqR+b3iPNvLXF4ogKvp/lgjtKWb
-         jiARDuzKElo88dS5wdVahxe2u6cVIhSaJSfsIeZFIiQTqV+lihnTB4BOWbfxBQUZ0Tyc
-         WkkvL6YNCXGFfOIsUKEvMzqLnVh2QOMJqNeihz8eMYCDj3cjuic5O4AgDUEyjsUUBWiV
-         O6Fw==
-X-Gm-Message-State: APjAAAXB6oLPCgLENdKpOE/I7J/WscSo+UuP7HRTKqQj02nIMgX2snU3
-        XJdiyGhkwjNSfdqvxWgtJN59O7gAC+Vumrl+HqxZ8r+I
-X-Google-Smtp-Source: APXvYqxQH8ZG7AlztTu020V7wjuwxg54PlPvvwrHVe4CjyTXMgRX8ktupMOJ/s108I0Fkf/NWKSaIdVENYYhSYg1Luw=
-X-Received: by 2002:ac8:5306:: with SMTP id t6mr29717314qtn.204.1568130357213;
- Tue, 10 Sep 2019 08:45:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190911011034.3bae9ee3@canb.auug.org.au>
-In-Reply-To: <20190911011034.3bae9ee3@canb.auug.org.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 10 Sep 2019 17:45:40 +0200
-Message-ID: <CAK8P3a2h1CcfhVDgmhhMna4q+6rx_eFyUE_zMo7cF1HmM_Es8Q@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the y2038 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 10 Sep 2019 11:45:50 -0400
+Received: from localhost (unknown [148.69.85.38])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id C02AA154F499A;
+        Tue, 10 Sep 2019 08:45:47 -0700 (PDT)
+Date:   Tue, 10 Sep 2019 17:45:44 +0200 (CEST)
+Message-Id: <20190910.174544.945128884852877943.davem@davemloft.net>
+To:     alexandru.ardelean@analog.com
+Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, mcoquelin.stm32@gmail.com
+Subject: Re: [PATCH] net: stmmac: socfpga: re-use the `interface` parameter
+ from platform data
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190906123054.5514-1-alexandru.ardelean@analog.com>
+References: <20190906123054.5514-1-alexandru.ardelean@analog.com>
+X-Mailer: Mew version 6.8 on Emacs 26.2
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 10 Sep 2019 08:45:49 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 5:10 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> In commit
->
->   e83dd16c24d8 ("fix compat handling of FICLONERANGE, FIDEDUPERANGE and FS_IOC_FIEMAP")
->
-> Fixes tag
->
->   Fixes: d79bdd52d8be7 54dbc15172375 ceac204e1da94
->
-> has these problem(s):
->
->   - Subject does not match target commit subject
->     Just use
->         git log -1 --format='Fixes: %h ("%s")'
->
-> So (presumably):
->
-> Fixes: d79bdd52d8be ("vfs: wire up compat ioctl for CLONE/CLONE_RANGE")
-> Fixes: 54dbc1517237 ("vfs: hoist the btrfs deduplication ioctl to the vfs")
-> Fixes: ceac204e1da9 ("fs: make fiemap work from compat_ioctl")
+From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Date: Fri, 6 Sep 2019 15:30:54 +0300
 
-Fixed, thanks for the report!
+> The socfpga sub-driver defines an `interface` field in the `socfpga_dwmac`
+> struct and parses it on init.
+> 
+> The shared `stmmac_probe_config_dt()` function also parses this from the
+> device-tree and makes it available on the returned `plat_data` (which is
+> the same data available via `netdev_priv()`).
+> 
+> All that's needed now is to dig that information out, via some
+> `dev_get_drvdata()` && `netdev_priv()` calls and re-use it.
+> 
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-      Arnd
+This doesn't build even on net-next.
+
+And if your patch does target net-next you must indicate this properly in the
+Subject line as "[PATCH net-next]" vs. "[PATCH net]"
