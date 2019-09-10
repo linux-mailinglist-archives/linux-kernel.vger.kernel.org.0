@@ -2,83 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30AFAAF319
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 01:02:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35698AF31F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 01:07:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbfIJXCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 19:02:48 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35001 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbfIJXCr (ORCPT
+        id S1726382AbfIJXHQ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 10 Sep 2019 19:07:16 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:44604 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbfIJXHP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 19:02:47 -0400
-Received: by mail-io1-f65.google.com with SMTP id f4so40780152ion.2;
-        Tue, 10 Sep 2019 16:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=qFQvEySkMVQBX12lnH0ZCFalhV4g8jKTY1/3imp1kQE=;
-        b=IpScRasRmgFQwgEw+l1MwSj9YWZUhrtD/QFkL3h+p+nBJCeW4KtHswV8I7Fa6HkT3Z
-         DBRipKPZZ/T6xhnNFMDW3RgWGIXMXIN3QYVfkDxVuYGWo4gf0c8iGOt9P2wOTfCen7lK
-         f3hVLn+kzNDkltdMkOwz+AQi+TAMcrjKExt8a8bUmPZuOF960aHyBNo8RLpadn8FUZ9K
-         A5r9Ae2ma1+GQv25BwF0ex8kq0KlOdw0Kp90HaKRcqWkY26XSAloMS3WR46WikeeNOf9
-         ucunkuignpQiy/4suqjm3kT5Qi75eE8Xw2WfGuiynLrn8WFtKu97U0b8lcFemOUtd69B
-         gTfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qFQvEySkMVQBX12lnH0ZCFalhV4g8jKTY1/3imp1kQE=;
-        b=U/rCmTfUcNPgmnDz1edCuCktxTmuZ1hAzx4rhReqJWjPSDdb9coo1WcK6u6+cb4uL+
-         Dn/ZIU6BTiOkbMJ6EpANSNTVEOwe+bfaSZgh1ZV4itSVjGtABhs4+JHa/ob1OiB78Xa1
-         IphRFV401d+UZECv/rzmFg8IxrF0u4CDjVjeHsDfcltEbp4UbtA3RfmrvAvWuHyvTj/z
-         u+nuISjA7fc+s7Kb5SZMyL9X6tWiw+Y7e/XLKnLTzUiujT0jA6wIXWYFLdffGtVljGPc
-         gomKIyu4RafzuLtOCDhTgVxR/fTtjf5adwg4xKDdYsQuZwoueeN4w2K4XygnkwsBF7Xk
-         sJFw==
-X-Gm-Message-State: APjAAAVYiys3mGl76WY/fxZ9Zfdxkv7l/515Exb+pnoza+WSTelQ9OEt
-        uW1ymCFhVX5oWW4bVzpOY/4=
-X-Google-Smtp-Source: APXvYqxg7g+TQmNyPqur7MV1wMlYWfcOO9bGfGA8D0Bdz2Kz1F7gUODgj9ZQ3Ix1h1SjFQtQYMARsg==
-X-Received: by 2002:a02:712b:: with SMTP id n43mr7641019jac.2.1568156565341;
-        Tue, 10 Sep 2019 16:02:45 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id f6sm13572733iob.58.2019.09.10.16.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 16:02:44 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
-        linux-wimax@intel.com, "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] wimax: i2400: fix memory leak
-Date:   Tue, 10 Sep 2019 18:01:40 -0500
-Message-Id: <20190910230210.19012-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 10 Sep 2019 19:07:15 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1i7pE8-0002km-8e; Tue, 10 Sep 2019 17:07:12 -0600
+Received: from 110.8.30.213.rev.vodafone.pt ([213.30.8.110] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1i7pE7-00013O-A2; Tue, 10 Sep 2019 17:07:12 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Containers <containers@lists.linux-foundation.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jordan Ogas <jogas@lanl.gov>, werner@almesberger.net,
+        Al Viro <viro@ftp.linux.org.uk>
+References: <CAKgNAki0bR5zZr+kp_xjq+bNUky6-F+s2ep+jnR0YrjHhNMB1g@mail.gmail.com>
+        <20190805103630.tu4kytsbi5evfrhi@mikami>
+        <3a96c631-6595-b75e-f6a7-db703bf89bcf@gmail.com>
+        <da747415-4c7a-f931-6f2e-2962da63c161@philippwendler.de>
+        <CAKgNAkjS+x7aMVUiVSgCRwgi8rnukqJv=svtTARE-tt-oxQxWw@mail.gmail.com>
+        <87r24piwhm.fsf@x220.int.ebiederm.org>
+        <CAKgNAkhK2qBbz5aVY9VdK0UzvpZ=c7c7LWQ1MK2gu-rVKUz9_g@mail.gmail.com>
+        <87ftl5donm.fsf@x220.int.ebiederm.org>
+        <b8b9d8bd-e959-633f-b879-4bfe4eb0df23@gmail.com>
+        <20190910111551.scam5payogqqvlri@wittgenstein>
+        <30545c5c-ff4c-8b87-e591-40cc0a631304@gmail.com>
+Date:   Tue, 10 Sep 2019 18:06:48 -0500
+In-Reply-To: <30545c5c-ff4c-8b87-e591-40cc0a631304@gmail.com> (Michael
+        Kerrisk's message of "Tue, 10 Sep 2019 13:21:16 +0200")
+Message-ID: <871rwnda47.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1i7pE7-00013O-A2;;;mid=<871rwnda47.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=213.30.8.110;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19gpHRC1XMCfJcrnQu7B/ABXa7XBMZB6l8=
+X-SA-Exim-Connect-IP: 213.30.8.110
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,TVD_RCVD_IP,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02 autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4038]
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;"Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 348 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.9 (0.8%), b_tie_ro: 2.00 (0.6%), parse: 1.14
+        (0.3%), extract_message_metadata: 4.5 (1.3%), get_uri_detail_list:
+        1.86 (0.5%), tests_pri_-1000: 3.9 (1.1%), tests_pri_-950: 1.34 (0.4%),
+        tests_pri_-900: 1.07 (0.3%), tests_pri_-90: 22 (6.4%), check_bayes: 21
+        (5.9%), b_tokenize: 7 (2.0%), b_tok_get_all: 7 (2.1%), b_comp_prob:
+        2.1 (0.6%), b_tok_touch_all: 2.1 (0.6%), b_finish: 0.59 (0.2%),
+        tests_pri_0: 289 (83.0%), check_dkim_signature: 0.56 (0.2%),
+        check_dkim_adsp: 2.3 (0.7%), poll_dns_idle: 0.67 (0.2%), tests_pri_10:
+        2.5 (0.7%), tests_pri_500: 11 (3.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: pivot_root(".", ".") and the fchdir() dance
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In i2400m_op_rfkill_sw_toggle cmd buffer should be released along with
-skb response.
+"Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com> writes:
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/net/wimax/i2400m/op-rfkill.c | 1 +
- 1 file changed, 1 insertion(+)
+> Hello Christian,
+>
+>>> All: I plan to add the following text to the manual page:
+>>>
+>>>        new_root and put_old may be the same  directory.   In  particular,
+>>>        the following sequence allows a pivot-root operation without need‐
+>>>        ing to create and remove a temporary directory:
+>>>
+>>>            chdir(new_root);
+>>>            pivot_root(".", ".");
+>>>            umount2(".", MNT_DETACH);
+>> 
+>> Hm, should we mention that MS_PRIVATE or MS_SLAVE is usually needed
+>> before the umount2()? Especially for the container case... I think we
+>> discussed this briefly yesterday in person.
+> Thanks for noticing. That detail (more precisely: not MS_SHARED) is
+> already covered in the numerous other changes that I have pending
+> for this page:
+>
+>        The following restrictions apply:
+>        ...
+>        -  The propagation type of new_root and its parent mount must  not
+>           be MS_SHARED; similarly, if put_old is an existing mount point,
+>           its propagation type must not be MS_SHARED.
 
-diff --git a/drivers/net/wimax/i2400m/op-rfkill.c b/drivers/net/wimax/i2400m/op-rfkill.c
-index 6642bcb27761..8efb493ceec2 100644
---- a/drivers/net/wimax/i2400m/op-rfkill.c
-+++ b/drivers/net/wimax/i2400m/op-rfkill.c
-@@ -127,6 +127,7 @@ int i2400m_op_rfkill_sw_toggle(struct wimax_dev *wimax_dev,
- 			"%d\n", result);
- 	result = 0;
- error_cmd:
-+	kfree(cmd);
- 	kfree_skb(ack_skb);
- error_msg_to_dev:
- error_alloc:
--- 
-2.17.1
+Ugh.  That is close but not quite correct.
+
+A better explanation:
+
+    The pivot_root system call will never propagate any changes it makes.
+    The pivot_root system call ensures this is safe by verifying that
+    none of put_old, the parent of new_root, and parent of the root directory
+    have a propagation type of MS_SHARED.
+
+>
+
+The concern from our conversation at the container mini-summit was that
+there is a pathology if in your initial mount namespace all of the
+mounts are marked MS_SHARED like systemd does (and is almost necessary
+if you are going to use mount propagation), that if new_root itself
+is MS_SHARED then unmounting the old_root could propagate.
+
+So I believe the desired sequence is:
+
+>>>            chdir(new_root);
++++            mount("", ".", MS_SLAVE | MS_REC, NULL);
+>>>            pivot_root(".", ".");
+>>>            umount2(".", MNT_DETACH);
+
+The change to new new_root could be either MS_SLAVE or MS_PRIVATE.  So
+long as it is not MS_SHARED the mount won't propagate back to the
+parent mount namespace.
+
+Eric
+
 
