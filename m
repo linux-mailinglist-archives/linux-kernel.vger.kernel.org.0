@@ -2,86 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22840AE285
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 05:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E9E2AE28E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 05:27:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392798AbfIJDWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 23:22:51 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41719 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbfIJDWv (ORCPT
+        id S2392836AbfIJD1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 23:27:24 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39776 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728598AbfIJD1X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 23:22:51 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b13so10636886pfo.8
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 20:22:49 -0700 (PDT)
+        Mon, 9 Sep 2019 23:27:23 -0400
+Received: by mail-lf1-f65.google.com with SMTP id l11so12219923lfk.6
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 20:27:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JwYl5b1PFnWQJ5Rk6doRyu3zqe4CdVYg/isoUZ798Ig=;
-        b=G0jTNUyBUiEx0wDG+jJuHRfrOw9c2svHPf5dnKQ4hcIl++XTmFjIpjov64gPvZrMN2
-         5p3hv0RyM5+YJfgPix0BsYiQAaOmhEZRWjGP5fwnUE/lAVMSDbTfL2zjq/Lh9QOMnCUy
-         Cj1DtfyWVo4bMoqZsJredt0rZCu8xutPnY46D1VNr/4aRRfwh6qGjrWzrhZdMuP8VVEX
-         dxj3sd5B0U5tyniScx4hCZJ786/ba/qKOpJpyobykBKMJcU+hzDGwArmcESYXDz67Ikq
-         s7FwK7II62DMEvmgyICLXniG1DKD2dFAFKgdx6rgx1ZJihusUWA6UgRonFD9DNus8KAw
-         GZ9w==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ropqFminAsuYzLc+qA9K24nUNWnD7cn3AN/0FfpV44M=;
+        b=auysCQzPijlKbJ8dj8RvUZmk6jgRVymv2glX5u2Ca08XLuwMRh+1OyCCZNBpXOpPXX
+         LbbVNuA6VM+3y6KQE58M5Y6pnkcZssZo4yOra6Hobd8cT2oqx1nNnbIt9HXeBi5mgoqx
+         i7oyVOpS9eASObqUbyci7/CyCeMy1qp0gEPnTPZdjO5iMgR5+Pmk3s3JFG08FDoYnEgV
+         2lh+gs73JByv8yUfwrHoFZKTlCKTeLvETjUZ61b1IG27loNPtdmujlL+FQgNfAB/hqzM
+         +nAHSxwnaKaiXQXaRXyfGOHI5V4b7ZvIAyT5CA8U+/IgLSCtEf1EexVlhG7OxL5zCxsc
+         zXqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JwYl5b1PFnWQJ5Rk6doRyu3zqe4CdVYg/isoUZ798Ig=;
-        b=HZPOs/H60A0dvvNWewm5ODJNLZB6wmheqSHVf2fTfYNUBmEAP2hoYXii1x4MUMvrFB
-         SzpqOyz/PSNvctciGPOwa21x0rERqV+IwsZIaPRoOckQZ2i+YXP2S9ekU520IFH/0gW7
-         Z2Wu9LJN8XOQ2MmSToBIKlTWl/9XhrQ6oyBUXX/xMw8V7NVn2owTLXcVVhECl7UDGS2F
-         S9yScAnx1ldv/8LsB7vByCf4mH2YeWyLW4lihs9Vic5BOVVvsquQG+eZfhbZSrYRJv/Y
-         4CCjHIwaTNCS+2mViJ/Lxuj3RfItS6s8NY2yXBYXjypJrMqg3PDbrySePflwHE/V+ZD2
-         Q/+w==
-X-Gm-Message-State: APjAAAXCMcJTJIkGxAJ216JJGVcU7pHEzfljhaGp/ciStP1ulo4f8RVc
-        LlUgTcHyWr1P9LqE/NoGJl8=
-X-Google-Smtp-Source: APXvYqydrZoWkytA9HmU06E46kp2OwAqeYpWK/HuuqLiHI+YR5VYvzvs6Uomj2K8Abzk0ZDm3iPMyA==
-X-Received: by 2002:aa7:8d4b:: with SMTP id s11mr5417393pfe.132.1568085769167;
-        Mon, 09 Sep 2019 20:22:49 -0700 (PDT)
-Received: from localhost ([39.7.19.227])
-        by smtp.gmail.com with ESMTPSA id f188sm19871488pfa.170.2019.09.09.20.22.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 20:22:48 -0700 (PDT)
-Date:   Tue, 10 Sep 2019 12:22:44 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 0/9] printk: new ringbuffer implementation
-Message-ID: <20190910032244.GB103966@jagdpanzerIV>
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
- <20190904123531.GA2369@hirez.programming.kicks-ass.net>
- <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
- <20190905143118.GP2349@hirez.programming.kicks-ass.net>
- <20190906090627.GX2386@hirez.programming.kicks-ass.net>
- <20190906124211.2dionk2kzcslaotz@pathway.suse.cz>
- <20190906140126.GY2349@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ropqFminAsuYzLc+qA9K24nUNWnD7cn3AN/0FfpV44M=;
+        b=D9VLgG7t54aFItI1e8hVgZ8WHaJ+0nEWWR9iLHDn/ckY0dd8QD0Y2UwJKaAgqJEB5w
+         rzgDkICbIST7H2Fus0JF6FvVbzdrIHtA3qa/3Vy0qGQ6P6yTwC7LkH60EydzQlBxe9w7
+         ejiTYCDiwS7fhLCSlkEHXif+2HyEUSkQDSdSt0UzEmcyymkGowPMwwofcEAIYVdha7i8
+         6yVnXzPlsxETk7KjBR7j3Te8ODiH5At0S9pD3JlTNaqo7qewYd1U5JvnwbkkAwC+E84w
+         UNGXljI/Fbqw5bQyWkhL+LSwvO5NR9tHGWKh2FwEg6UERcxV8Vys6Hp/uG53g1DiBB8U
+         g4BQ==
+X-Gm-Message-State: APjAAAU0pUNR9fP/pwTng+Gf2CBgiZYqerbYzH6M/schI0n6VVoIrLMO
+        hVcEzsQSfCqTBp0PQHbVzKlnzyrS4g9zhDzueprBFg==
+X-Google-Smtp-Source: APXvYqypB9y/im+Z9qxmaZUuMkgXQGzTCs7vAzL0uU20Vdq5CFvQMJu0Kd+GW2/zmWzljJE618/x2qTXAZhWQCSOXPY=
+X-Received: by 2002:ac2:4424:: with SMTP id w4mr18492565lfl.65.1568086041766;
+ Mon, 09 Sep 2019 20:27:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906140126.GY2349@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <cover.1567740135.git.baolin.wang@linaro.org> <14599f7165f23db2bf7b71a2596e808e2bc2056c.1567740135.git.baolin.wang@linaro.org>
+ <3bcd69fd-2f8e-9b87-7292-4b0b1aa5be78@intel.com> <CAMz4kuKsk7ZN2BnD4zp53PQE22jD-BTsJLL53SL3ndZ5=OCHYA@mail.gmail.com>
+ <3d83db18-7e80-944c-fc4b-244249c71bbf@intel.com>
+In-Reply-To: <3d83db18-7e80-944c-fc4b-244249c71bbf@intel.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Tue, 10 Sep 2019 11:27:09 +0800
+Message-ID: <CAMz4kuLLjDC_bLpen9qEsxEJTF5WWg9zsH_J-3Xp=Mj_Wss7Eg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mmc: Add virtual command queue support
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, asutoshd@codeaurora.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/06/19 16:01), Peter Zijlstra wrote:
-> In fact, i've gotten output that is plain impossible with
-> the current junk.
+On Mon, 9 Sep 2019 at 20:45, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 9/09/19 3:16 PM, Baolin Wang wrote:
+> > Hi Adrian,
+> >
+> > On Mon, 9 Sep 2019 at 20:02, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> >>
+> >> On 6/09/19 6:52 AM, Baolin Wang wrote:
+> >>> Now the MMC read/write stack will always wait for previous request is
+> >>> completed by mmc_blk_rw_wait(), before sending a new request to hardware,
+> >>> or queue a work to complete request, that will bring context switching
+> >>> overhead, especially for high I/O per second rates, to affect the IO
+> >>> performance.
+> >>>
+> >>> Thus this patch introduces virtual command queue interface, which is
+> >>> similar with the hardware command queue engine's idea, that can remove
+> >>> the context switching.
+> >>
+> >> CQHCI is a hardware interface for eMMC's that support command queuing.  What
+> >> you are doing is a software issue queue, unrelated to CQHCI.  I think you
+> >
+> > Yes.
+> >
+> >> should avoid all reference to CQHCI i.e. call it something else.
+> >
+> > Since its process is similar with CQHCI and re-use the CQHCI's
+> > interfaces, I called it virtual command queue. I am not sure what else
+> > name is better, any thoughts? VCQHCI? Thanks.
+>
+> What about swq for software queue.  Maybe Ulf can suggest something?
 
-Peter, can you post any of those backtraces? Very curious.
+Um, though changing to use swq, still need reuse command queue's
+interfaces, like 'mq->use-cqe', 'host->cqe_depth' and cqe ops and so
+on, looks a little weird for me. But if you all agree with this name,
+then I am okay. Ulf, what do you suggest?
 
-	-ss
+-- 
+Baolin Wang
+Best Regards
