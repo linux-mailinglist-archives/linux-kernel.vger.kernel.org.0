@@ -2,130 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9318AE6B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:21:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B2D2AE6BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:21:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389806AbfIJJU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 05:20:58 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35996 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389682AbfIJJU5 (ORCPT
+        id S2389624AbfIJJVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 05:21:17 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46293 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727070AbfIJJVQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 05:20:57 -0400
-Received: by mail-ed1-f66.google.com with SMTP id f2so10012022edw.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 02:20:55 -0700 (PDT)
+        Tue, 10 Sep 2019 05:21:16 -0400
+Received: by mail-ot1-f66.google.com with SMTP id g19so17391722otg.13
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 02:21:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fVGVsESSvCGQOFNvs9wLVPNtEbA+xNhK0Vsp0KuYL0U=;
-        b=l1enudLKhX+NelYlOqQKvgNY5xLG29otQPhknZNcMkv0NM6LGktXu52o7Rq9oXni7U
-         rT6qa9jJFvVV7DGrQcvT7TkQVr7YPjzLLN2yyQhzqc/3CKUefFYh0Wj1fNGmGs1LrBaU
-         +Rt/P8fFgugTd0kFHr2Ss0tY7TIbjyM5B9kitn9D5U0zYDDTKHkZiimf0vIykHPbq2fZ
-         mZWj8mIoPkIvn0hdw5gdaffVtvbc7DNotaOw6ScSEUxSsXK+bbSJXldYd/iSPSahFARY
-         wygqctO/41VVuzlrbXrPVfgvn1BZBO8SRggWpYtz77R2bRkNGZ3TfXnz9srnNazLkorr
-         QBDw==
+        bh=V15g9krwElh5s7ubtVRB+OPlWr+bh/CCGHQMHIst0mg=;
+        b=jKloMCTV2Hfo5rjrHrNVD5uu9OsubyMBqmOMrtzEZfjnQOlY84UlHGoemFPHuW0Uvc
+         Xy8b6X22PTLv00Eoe1bUrISeP6U+hNgOdhVko6Pd80qoqp3DWIuYIetNoD/UWMAyMU+/
+         oYgPh3vLlik4dolpS7iRuxLN2Aim0L7oI/ICaabvCPp/8keooUr7tdfAhVB1FGEWv+Xs
+         x5yZcXi9qc6v6wZbKmXk5zgODl31w260Ghz1lF17cmDNkcoJ03wwGNKdvsuMgpFA+R0Q
+         WVA8+7eLnANoehlKlA6eX83Ks+RTA02g5nvaXLf+xRw0z0PvS/qBb/OsZUgadEH7uoyr
+         TTcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fVGVsESSvCGQOFNvs9wLVPNtEbA+xNhK0Vsp0KuYL0U=;
-        b=tREthPoDZ4mcXdgzF8n4aEqSRflukJcNIZy48Qh1vgK7UNy+IOWeZVgqS9/U8cc2SI
-         2bVAT/YC9/2F1M3pVgg8d12pmzYeiDcDD1q9PYZCWiyVhueLI/0eZimcuJSW7rYuiVcZ
-         zR5D2QqVVgH4NGBGKmn3wQ5QE2qUAYZ5X7pXZAla/5MlP5XQvU3BvU9eRLgm6BgBh+6J
-         mu49NPQrNUpz8KTYE9VatXY4fJKCiMFWgBqGSzCGClNjrW8K2OOB0pA+K8KM4eh6uDWd
-         GfoB6ykoY5tDCx9LAQQt608s8QBT2eQUuKm4jAOxmXhih6vNxwxo4fYyMYbpfP0mQ8ua
-         ZfIw==
-X-Gm-Message-State: APjAAAUB02RwJfBS5EaxoIZjkkWZxkefz6pA5rYMLC8L2zwX/hDZAl8a
-        dyRXbLAhvRusZymKRJkxikBSGkSsJFbucGiXcsERBZHkU34=
-X-Google-Smtp-Source: APXvYqxafwr9K7U55nRLBrBFKjJwhzRPMsyqMlNm7SM6xGY0Iw+4afMLkFcRjz7kyMGTKRb774E7d1RrUT7vfuc/ufA=
-X-Received: by 2002:aa7:dd17:: with SMTP id i23mr28832869edv.124.1568107254841;
- Tue, 10 Sep 2019 02:20:54 -0700 (PDT)
+        bh=V15g9krwElh5s7ubtVRB+OPlWr+bh/CCGHQMHIst0mg=;
+        b=hzgyGAUXJxugLQBp/3HY+Ab7B2JkISeB4dr2w0WsLeSDDU3IVNXmepEpP5rASb2uz8
+         SVWClPt/wItqMw6T/YbCquvDU2phgRu6d0h0r14IIll8VfQXFpj/PL7DlcxosL+mHlxm
+         zcHaoxvH0Q5xup2L4F35vLzg9xkrqYCtjZTk09WiGR8v0BfegXoehgpmLBgQdN14y2+6
+         Nwcouz0W4k9mddpQ//IrSMeNnral0HmmvSvOeo1P8D8tn6z145DuaDOmJTYtKK3RtvgR
+         uVBEI83vyxxCaB0afmYown7BKefFmyXAdwKL2Hq8UomkNcsSynMKzbkY77Z9VDfmzWbE
+         Ef6A==
+X-Gm-Message-State: APjAAAU7GUk1OeSYmzr8R0raIz+j42+ZJSQM4xJnUlcWw0Z6+CIPGdxq
+        mdg6jkxBlAxRVg2A8RkPjfv/ucg9tJA+D3atzQWDYQ==
+X-Google-Smtp-Source: APXvYqy2s1HOVT5KWkC7vc1cJBH9IgMcXfX2UD8wgbY4zwDCPPr5Lsujug0iHzMmDGj5UqgT8qeL3ITtDPK3I3GKhmI=
+X-Received: by 2002:a9d:2642:: with SMTP id a60mr23742841otb.247.1568107275846;
+ Tue, 10 Sep 2019 02:21:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190909181221.309510-1-pasha.tatashin@soleen.com>
- <20190909181221.309510-11-pasha.tatashin@soleen.com> <60975350-87f8-56b3-437d-d9ee26ac3bd3@suse.com>
-In-Reply-To: <60975350-87f8-56b3-437d-d9ee26ac3bd3@suse.com>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Tue, 10 Sep 2019 10:20:43 +0100
-Message-ID: <CA+CK2bBK40T_DEhNvz8nQaKSsanxXpGYhBm05N_NmZtq+JDVTg@mail.gmail.com>
-Subject: Re: [PATCH v4 10/17] arm64: trans_pgd: make trans_pgd_map_page generic
-To:     Matthias Brugger <mbrugger@suse.com>
-Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        kexec mailing list <kexec@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Mark Rutland <mark.rutland@arm.com>
+References: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
+ <b7732a55-4a10-2c1d-c2f5-ca38ee60964d@redhat.com> <e762ee45-43e3-975a-ad19-065f07d1440f@vx.jp.nec.com>
+ <40a1ce2e-1384-b869-97d0-7195b5b47de0@redhat.com> <6a99e003-e1ab-b9e8-7b25-bc5605ab0eb2@vx.jp.nec.com>
+ <e4e54258-e83b-cf0b-b66e-9874be6b5122@redhat.com> <f9b10653-949b-64a6-6539-a32bd980edb9@redhat.com>
+ <CAPcyv4gA4mcDEPeCFokn_jy5gX62cK0U40EzL7M8c0iDO7U7bg@mail.gmail.com> <c6198acd-8ff7-c40c-cb4e-f0f12f841b38@redhat.com>
+In-Reply-To: <c6198acd-8ff7-c40c-cb4e-f0f12f841b38@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 10 Sep 2019 02:21:04 -0700
+Message-ID: <CAPcyv4ioWGySF36Urzza7RrRBiP=-ivBmnt0YJF=jOPVAXZEnw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] mm: initialize struct pages reserved by
+ ZONE_DEVICE driver.
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "longman@redhat.com" <longman@redhat.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "mst@redhat.com" <mst@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Junichi Nomura <j-nomura@ce.jp.nec.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +/*
-> > + * Add map entry to trans_pgd for a base-size page at PTE level.
-> > + * page:     page to be mapped.
-> > + * dst_addr: new VA address for the pages
-> > + * pgprot:   protection for the page.
+On Mon, Sep 9, 2019 at 5:06 AM David Hildenbrand <david@redhat.com> wrote:
 >
-> For consistency please describe all function parameters. From my experience
-> function parameter description is normally done in the C-file that implements
-> the logic. Don't ask me why.
-
-Ok, I move the comment, and will describe every parameter. Thank you.
-
->
-> > + */
-> > +int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
-> > +                    void *page, unsigned long dst_addr, pgprot_t pgprot);
+> On 09.09.19 13:53, Dan Williams wrote:
+> > On Mon, Sep 9, 2019 at 1:11 AM David Hildenbrand <david@redhat.com> wrote:
+> > [..]
+> >>>> It seems that SECTION_IS_ONLINE and SECTION_MARKED_PRESENT can be used to
+> >>>> distinguish uninitialized struct pages if we can apply them to ZONE_DEVICE,
+> >>>> but that is no longer necessary with this approach.
+> >>>
+> >>> Let's take a step back here to understand the issues I am aware of. I
+> >>> think we should solve this for good now:
+> >>>
+> >>> A PFN walker takes a look at a random PFN at a random point in time. It
+> >>> finds a PFN with SECTION_MARKED_PRESENT && !SECTION_IS_ONLINE. The
+> >>> options are:
+> >>>
+> >>> 1. It is buddy memory (add_memory()) that has not been online yet. The
+> >>> memmap contains garbage. Don't access.
+> >>>
+> >>> 2. It is ZONE_DEVICE memory with a valid memmap. Access it.
+> >>>
+> >>> 3. It is ZONE_DEVICE memory with an invalid memmap, because the section
+> >>> is only partially present: E.g., device starts at offset 64MB within a
+> >>> section or the device ends at offset 64MB within a section. Don't access it.
+> >>>
+> >>> 4. It is ZONE_DEVICE memory with an invalid memmap, because the memmap
+> >>> was not initialized yet. memmap_init_zone_device() did not yet succeed
+> >>> after dropping the mem_hotplug lock in mm/memremap.c. Don't access it.
+> >>>
+> >>> 5. It is reserved ZONE_DEVICE memory ("pages mapped, but reserved for
+> >>> driver") with an invalid memmap. Don't access it.
+> >>>
+> >>> I can see that your patch tries to make #5 vanish by initializing the
+> >>> memmap, fair enough. #3 and #4 can't be detected. The PFN walker could
+> >>> still stumble over uninitialized memmaps.
+> >>>
+> >>
+> >> FWIW, I thinkg having something like pfn_zone_device(), similarly
+> >> implemented like pfn_zone_device_reserved() could be one solution to
+> >> most issues.
 > >
-> >  #endif /* _ASM_TRANS_TABLE_H */
-> > diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
-> > index 94ede33bd777..9b75b680ab70 100644
-> > --- a/arch/arm64/kernel/hibernate.c
-> > +++ b/arch/arm64/kernel/hibernate.c
-> > @@ -179,6 +179,12 @@ int arch_hibernation_header_restore(void *addr)
-> >  }
-> >  EXPORT_SYMBOL(arch_hibernation_header_restore);
+> > I've been thinking of a replacement for PTE_DEVMAP with section-level,
+> > or sub-section level flags. The section-level flag would still require
+> > a call to get_dev_pagemap() to validate that the pfn is not section in
+> > the subsection case which seems to be entirely too much overhead. If
+> > ZONE_DEVICE is to be a first class citizen in pfn walkers I think it
+> > would be worth the cost to double the size of subsection_map and to
+> > identify whether a sub-section is ZONE_DEVICE, or not.
 > >
-> > +static void *
-> > +hibernate_page_alloc(void *arg)
+> > Thoughts?
+> >
 >
-> AFAICS no new line needed here.
-
-Right, will fix it.
-
+> I thought about this last week and came up with something like
 >
-> > +{
-> > +     return (void *)get_safe_page((gfp_t)(unsigned long)arg);
-> > +}
-> > +
-> >  /*
-> >   * Copies length bytes, starting at src_start into an new page,
-> >   * perform cache maintenance, then maps it at the specified address low
-> > @@ -195,6 +201,10 @@ static int create_safe_exec_page(void *src_start, size_t length,
-> >                                unsigned long dst_addr,
-> >                                phys_addr_t *phys_dst_addr)
-> >  {
-> > +     struct trans_pgd_info trans_info = {
-> > +             .trans_alloc_page       = hibernate_page_alloc,
-> > +             .trans_alloc_arg        = (void *)GFP_ATOMIC,
-> > +     };
+> 1. Convert SECTION_IS_ONLINE to SECTION IS_ACTIVE
 >
-> New line between end of struct and other variables.
-
-Sure.
-
+> 2. Make pfn_to_online_page() also check that it's not ZONE_DEVICE.
+> Online pfns are limited to !ZONE_DEVICE.
 >
-> With these changes:
-> Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+> 3. Extend subsection_map to an additional active_map
+>
+> 4. Set SECTION IS_ACTIVE *iff* the whole active_map is set. This keeps
+> most accesses of pfn_to_online_page() fast. If !SECTION IS_ACTIVE, check
+> the active_map.
+>
+> 5. Set sub-sections active/unactive in
+> move_pfn_range_to_zone()/remove_pfn_range_from_zone() - see "[PATCH v4
+> 0/8] mm/memory_hotplug: Shrink zones before removing memory" for the
+> latter.
+>
+> 6. Set boot memory properly active (this is a tricky bit :/ ).
+>
+> However, it turned out too complex for my taste (and limited time to
+> spend on this), so I abandoned that idea for now. If somebody wants to
+> pick that up, fine.
+>
 
-Thank you,
-Pasha
+That seems to solve the pfn walk case but it would not address the
+need for PTE_DEVMAP or speed up the other places that want an
+efficient way to determine if it's worthwhile to call
+get_dev_pagemap().
