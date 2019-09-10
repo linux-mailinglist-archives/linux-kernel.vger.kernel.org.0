@@ -2,61 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4DC2AE392
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 08:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2653AE398
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 08:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393368AbfIJGQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 02:16:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45510 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfIJGQD (ORCPT
+        id S2393400AbfIJGS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 02:18:26 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:29660 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730336AbfIJGSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 02:16:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ykZkUPCZEJJWvilRQ1BONPpE0r1rcbx/nKZazkyDSHw=; b=lFQeo0aM7GCKBBrlQycyYru89
-        qrMJu2JN2IS87y3oAeYRTpulYPgeV46dW7Koefkme7/ongnLkvhjeoObWBkjL9p6XxlHmXX7DOoHr
-        dSqbNH+cjQyEjac3OSm3bRojGFwTWHu1gOUXDu/DF6/F/CW8DwBlDQzKNjJpSYDFKcR2+GHd2vXAR
-        Tizsz3b2nmGD/V5niDX7v/+o48HwXlWSvOz7GzqHDUbCxw1VwPYEDL1+k2YwjCVvh+NiP2L3tKyTC
-        LBZO/XQXMf+Ag4WJSH6dALKrkQeehKQX6TiCHhBNA0R9P/Dn+6qYZwqTAB8GKtr/5QWU6wmE07J+8
-        7woE9W+yw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i7ZRS-0007Dx-H6; Tue, 10 Sep 2019 06:15:54 +0000
-Date:   Mon, 9 Sep 2019 23:15:54 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Alexander Graf <graf@amazon.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@redhat.com>,
+        Tue, 10 Sep 2019 02:18:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1568096304; x=1599632304;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=NUby1e5z8ZmZZG/r8xjMa7/ADWenJfdiJrb9sSaJJJI=;
+  b=bQvc3MUJ5s/JTaKRQOCHqdJgS4wK5znTY/wujDnOWfMBwqfAuUaUnHTA
+   MPa3I7cBCEoeYlhsz+SCpkX6g3K/Noib0oP1sK8eH7NJ9eqbZsLm6i/9e
+   3he7IEKymrEaf5B8nSCiKYOmbPUa+fmX7xHUNxKAbuDojZ/W/CZQnP4ge
+   U=;
+X-IronPort-AV: E=Sophos;i="5.64,487,1559520000"; 
+   d="scan'208";a="701737185"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 10 Sep 2019 06:17:38 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (Postfix) with ESMTPS id 374E0A226A;
+        Tue, 10 Sep 2019 06:17:28 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 10 Sep 2019 06:17:28 +0000
+Received: from [10.125.238.52] (10.43.161.82) by EX13D01EUB001.ant.amazon.com
+ (10.43.166.194) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 10 Sep
+ 2019 06:17:17 +0000
+Subject: Re: [PATCH 3/3] arm64: alpine: select AL_POS
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH v3] KVM: x86: Disable posted interrupts for odd IRQs
-Message-ID: <20190910061554.GD10968@infradead.org>
-References: <20190905125818.22395-1-graf@amazon.com>
+        "Patrick Venture" <venture@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Olof Johansson" <olof@lixom.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        "Santosh Shilimkar" <ssantosh@kernel.org>,
+        <paul.kocialkowski@bootlin.com>, <mjourdan@baylibre.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Will Deacon" <will@kernel.org>, DTML <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
+        <hanochu@amazon.com>, <barakw@amazon.com>
+References: <1568020220-7758-1-git-send-email-talel@amazon.com>
+ <1568020220-7758-4-git-send-email-talel@amazon.com>
+ <CAK8P3a0DEMeFWK+RuAdSLyDYduWWwj9DxP_Beipays-d_6ixnA@mail.gmail.com>
+ <ab512ced-d989-5c10-a550-2a4723d38e7e@amazon.com>
+ <CAK8P3a34eKFXoAPOfkFN5+H4kxOhRjXgws_0wy+d-186LFxcTw@mail.gmail.com>
+ <0d36f94d-596f-0ec7-6951-b097b5ee0d2d@amazon.com>
+ <CAK8P3a0RUHxcpyUJU5bpd8nqpm0Sqhy4aJaoh7K9jVn8zJC6aQ@mail.gmail.com>
+From:   "Shenhar, Talel" <talel@amazon.com>
+Message-ID: <a616c903-6d3e-cf84-8afb-ade48d5ca68f@amazon.com>
+Date:   Tue, 10 Sep 2019 09:17:11 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190905125818.22395-1-graf@amazon.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAK8P3a0RUHxcpyUJU5bpd8nqpm0Sqhy4aJaoh7K9jVn8zJC6aQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.43.161.82]
+X-ClientProxiedBy: EX13D08UWC002.ant.amazon.com (10.43.162.168) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And what about even ones? :)
 
-Sorry, just joking, but the "odd" qualifier here looks a little weird,
-maybe something like "non-standard develiry modes" might make sense
-here.
+On 9/9/2019 6:08 PM, Arnd Bergmann wrote:
+> On Mon, Sep 9, 2019 at 3:59 PM Shenhar, Talel <talel@amazon.com> wrote:
+>> On 9/9/2019 4:45 PM, Arnd Bergmann wrote:
+>>
+>> Its not that something will get broken. its error event detector for POS
+>> events which allows seeing bad accesses to registers.
+>>
+>> What is the general rule of which configs to put under select and which
+>> under defconfig?
+>>
+>> I was thinking that "general" SoC support is good under select - those
+>> things that we always want.
+> I generally want as little as possible to be selected, basically only
+> things that are required for linking the kernel and booting it without
+> potentially destroying the hardware.
+>
+> In particular, I want most drivers to be enabled as loadable modules
+> if possible. When you have general-purpose distributions support
+> your platform, there is no need to have this module built-in while
+> running on a different chip, even if you always want to load the
+> module when it's running on yours.
+>
+>> And specific features, e.g. RAID support or features that supported only
+>> on specific HW shall go under defconfig.
+>>
+>> Similar, I see ARCH_LAYERSCAPE selecting EDAC_SUPPORT.
+> I think this was done to avoid a link failure. It's also possible that this
+> is a mistake and just did not get caught in review.
+>
+>         Arnd
+
+
+I see.
+
+Will remove this from v2.
+
