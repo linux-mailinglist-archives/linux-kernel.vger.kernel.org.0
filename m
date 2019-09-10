@@ -2,334 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F658AF230
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 22:09:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08F42AF227
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 22:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbfIJUJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 16:09:16 -0400
-Received: from cyberdimension.org ([80.67.179.20]:40988 "EHLO
-        gnutoo.cyberdimension.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbfIJUJQ (ORCPT
+        id S1726103AbfIJUGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 16:06:16 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43439 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbfIJUGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 16:09:16 -0400
-X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Sep 2019 16:09:14 EDT
-Received: from gnutoo.cyberdimension.org (localhost [127.0.0.1])
-        by cyberdimension.org (OpenSMTPD) with ESMTP id f0d39e6a;
-        Tue, 10 Sep 2019 19:59:29 +0000 (UTC)
-Received: from primarylaptop.localdomain (localhost.localdomain [IPv6:::1])
-        by gnutoo.cyberdimension.org (OpenSMTPD) with ESMTP id 1dac50d3;
-        Tue, 10 Sep 2019 19:59:28 +0000 (UTC)
-From:   Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-To:     Chanwoo@gnutoo.cyberdimension.org, Choi@gnutoo.cyberdimension.org
-Cc:     linux-kernel@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
-        Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-Subject: [PATCH 2/2] power_supply: max77693: Listen for cable events and enable charging
-Date:   Tue, 10 Sep 2019 22:02:33 +0200
-Message-Id: <20190910200233.3195-2-GNUtoo@cyberdimension.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190910200233.3195-1-GNUtoo@cyberdimension.org>
-References: <20190910200233.3195-1-GNUtoo@cyberdimension.org>
+        Tue, 10 Sep 2019 16:06:16 -0400
+Received: by mail-io1-f68.google.com with SMTP id r8so15536273iol.10;
+        Tue, 10 Sep 2019 13:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YG7RvdOIwjK1UdixQ7WKAg7NBDBytJur+Essvs27pB4=;
+        b=cBVuy1j8LvwjXNlKea3WZZu/llHIKajhDRDcOIpf6pBd4Nz9JFm0c1z7/GE+YKxc25
+         2AsBPGH7QZOxsEaO7+8aV7QFbH0fLtyvUzhzfLIXaDHveXCeSqRAtb9coMkaRH3UGR9Y
+         DTQRfwqpDZv9IIxaHbie/fcNyXdyV8zbz8VRH0D1rW2PrkDclKwaBToEOIgFqPAkkH5y
+         ATWiYgl770OR2U+iD3FObOd5vRUZdzKK/fGWiz5CfI6Pt/4N/KJnldfW2JykI5fHBITk
+         gf+qOK9vt8xvGoK+q4gQSx0rI7qKEX5O/h2xoAT6XE8uJrTpMvwX2i+0Gxh03rPwGMxS
+         7t1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YG7RvdOIwjK1UdixQ7WKAg7NBDBytJur+Essvs27pB4=;
+        b=P7UAWG5uAYFz/imO94B3IdTn6WoYNgzxD5mCUCQgt7cY2LFDUugJSnXAA8H4QZpOfT
+         1QkOPMrjCTfzEOTo0o/lpq6WbfYhVhYtnFIpzWjPnQ0bGm0aIPj/8YZ7lHcRLuv5oPU9
+         bukR6NBT7P97aPHaLr/yGarVGS4cqGtqwWwkO6JLDxb4JTquT9Bm4qQAUlOdm46thK+5
+         zekNvc97ic8FKNsbEKGYvLpygG3heIbVthR2R3jz+g9C5WdAYZsnz4iNIXAEAlFbJ2Sb
+         q1c5dT8N1EllF+3WQGHFtqm7Tt5eMtV49T9jtNuMqbdiF3K7xUCCTuHh+YbpjR+QqHno
+         181w==
+X-Gm-Message-State: APjAAAUg5WUvZ9WixeG6ohiFiZ/MgbbbDLEO/vHcLRtLHfrgwNt2Br+6
+        qIWiQEXTYqT2jO7hBQ+0wlcce03OtPpAM10pHTU=
+X-Google-Smtp-Source: APXvYqy5ZqCktt/W+m/8o1GlDoAoLwLRdRlkAlbu90c1Mkoxh1EwMPZWMP6kmDmzOnFjz5/3psJNCLYZtkbEx1gfSCg=
+X-Received: by 2002:a6b:cd81:: with SMTP id d123mr4299123iog.78.1568145974838;
+ Tue, 10 Sep 2019 13:06:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <C04F49BA-1229-4E96-9FCF-4FC662D1DB11@goldelico.com>
+ <CAHCN7x+Ye6sB_YqO0sAX1OJDw64B-qGS3pL545v3Xk5z914cwQ@mail.gmail.com>
+ <0C1EF64E-B33C-4BFA-A7D3-471DD1B9EE86@goldelico.com> <515048DE-138D-4400-8168-F2B7D61F1005@goldelico.com>
+ <CAHCN7xLPCX9rZ0+7KVBiA_bgZ6tg6VeCXqD-UXu+6iwpFMPVrA@mail.gmail.com>
+ <7B3D1D77-3E8C-444F-90B9-6DF2641178B8@goldelico.com> <CAHCN7xLW58ggx3CpVL=HdCVHWo6D-MCTB91A_9rtSRoZQ+xJuQ@mail.gmail.com>
+ <FA2920FE-B76A-4D44-A264-862A1CCBF7FC@goldelico.com> <CAHCN7xJsPa0i+Z+qpCkWcdAh9+udmGT0RPNchdDsfB=8ptd3Nw@mail.gmail.com>
+ <87420DBD-770F-4C32-9499-A3AEA5876E8A@goldelico.com> <20190909163236.GP52127@atomide.com>
+ <E001F74D-724E-4C50-9265-CBD33C4F2918@goldelico.com> <F8F08882-8011-441C-9581-ECCE9772EC21@goldelico.com>
+ <CAHCN7x+fgtMHMNYU2W7BRQwd-d2g_Tb8-L5QNcnZjCF=VzRXJg@mail.gmail.com>
+ <3663B13C-1AAB-4BE3-8CAD-F821B70393FA@goldelico.com> <CAHCN7x+mLCNq4evwGZfk6Ka=3o6EzhL=s38aNdukyLwKB1xO7A@mail.gmail.com>
+ <56482888-DBD3-4658-8DB9-FB57653B5AA8@goldelico.com> <2DC3BCD1-BD61-4109-9AF3-04FBD980FFB8@goldelico.com>
+In-Reply-To: <2DC3BCD1-BD61-4109-9AF3-04FBD980FFB8@goldelico.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Tue, 10 Sep 2019 15:06:03 -0500
+Message-ID: <CAHCN7x++uBzYx0cK4K6CY6aveofti5TVXnqEeNKnGBy_fzm5GQ@mail.gmail.com>
+Subject: Re: [Letux-kernel] [RFC PATCH 0/3] Enable 1GHz support on omap36xx
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?Q?Andr=C3=A9_Roth?= <neolynx@gmail.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Nishanth Menon <nm@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>
+On Tue, Sep 10, 2019 at 2:55 PM H. Nikolaus Schaller <hns@goldelico.com> wrote:
+>
+> Ok,
+>
+> > Am 10.09.2019 um 20:51 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
+> >
+> >>>> it, but then I got some nasty errors and crashes.
+> >>>
+> >>> I have done the same but not (yet) seen a crash or error. Maybe you had
+> >>> a typo?
+> >>
+> >> Can you send me an updated patch?  I'd like to try to get where you
+> >> are that doesn't crash.
+> >
+> > Yes, as soon as I have access.
+>
+> it turns out that my patch breaks cpufreq completely...
+> So it looks as if *I* have a typo :)
+>
+> Hence I am likely running at constant speed and the
+> VDD1 regulator is fixed a 1.200V.
+>
+> root@letux:~# dmesg|fgrep opp
+> [    2.426208] cpu cpu0: opp_parse_supplies: Invalid number of elements in opp-microvolt property (6) with supplies (1)
+> [    2.438140] cpu cpu0: _of_add_opp_table_v2: Failed to add OPP, -22
+> root@letux:~# cat /sys/class/regulator/regulator.8/microvolts
+> 1200000
+> root@letux:~#
+>
+> The error message looks as if we have to enable multi_regulator.
 
-This patch adds a listener for extcon cable events and enables
-charging if an USB cable is connected. It recognizes SDP and DCP cable
-types and treats them the same (same input current and fast charge
-current). The maximum input current is set before the charger is
-enabled and before the charger gets disabled, the maximum input
-current is set to zero. The listener is inspired by the listener
-implementation that was used for the AXP288 Charger driver.
+That will enable both vdd and vbb regulators from what I can tell in the driver.
 
-The patch also adds support for the CURRENT_NOW property. It reads the
-fast charge current that gets set before the charger is enabled or
-disabled.
+> And that may need to rename cpu0-supply to vdd-supply (unless the
+> names can be configured).
 
-Signed-off-by: Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>
-GNUtoo@cyberdimension.org: small fixes
-Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
----
- drivers/power/supply/Kconfig            |   2 +-
- drivers/power/supply/max77693_charger.c | 176 ++++++++++++++++++++++++
- 2 files changed, 177 insertions(+), 1 deletion(-)
+That is consistent with what I found.  vdd-supply = <&vcc>; and
+vbb-supply = <&abb_mpu_iva>;
+I put them both under the cpu node.  Unfortunately, when I did that,
+my board crashed.
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index 5d91b5160b41..5cd06b1b145e 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -534,7 +534,7 @@ config CHARGER_MAX77650
- 
- config CHARGER_MAX77693
- 	tristate "Maxim MAX77693 battery charger driver"
--	depends on MFD_MAX77693
-+	depends on MFD_MAX77693 && REGULATOR_MAX77693
- 	help
- 	  Say Y to enable support for the Maxim MAX77693 battery charger.
- 
-diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supply/max77693_charger.c
-index a2c5c9858639..b19490cb4a8f 100644
---- a/drivers/power/supply/max77693_charger.c
-+++ b/drivers/power/supply/max77693_charger.c
-@@ -12,8 +12,11 @@
- #include <linux/mfd/max77693.h>
- #include <linux/mfd/max77693-common.h>
- #include <linux/mfd/max77693-private.h>
-+#include <linux/extcon.h>
-+#include <linux/regulator/consumer.h>
- 
- #define MAX77693_CHARGER_NAME				"max77693-charger"
-+#define MAX77693_EXTCON_DEV_NAME			"max77693-muic"
- static const char *max77693_charger_model		= "MAX77693";
- static const char *max77693_charger_manufacturer	= "Maxim Integrated";
- 
-@@ -21,12 +24,21 @@ struct max77693_charger {
- 	struct device		*dev;
- 	struct max77693_dev	*max77693;
- 	struct power_supply	*charger;
-+	struct regulator	*regu;
- 
- 	u32 constant_volt;
- 	u32 min_system_volt;
- 	u32 thermal_regulation_temp;
- 	u32 batttery_overcurrent;
- 	u32 charge_input_threshold_volt;
-+
-+	/* SDP/DCP USB charging cable notifications */
-+	struct {
-+		struct extcon_dev *edev;
-+		bool connected;
-+		struct notifier_block nb;
-+		struct work_struct work;
-+	} cable;
- };
- 
- static int max77693_get_charger_state(struct regmap *regmap, int *val)
-@@ -197,12 +209,28 @@ static int max77693_get_online(struct regmap *regmap, int *val)
- 	return 0;
- }
- 
-+int max77693_get_charge_current(struct regmap *regmap, int *val)
-+{
-+	unsigned int data;
-+	int ret;
-+
-+	ret = regmap_read(regmap, MAX77693_CHG_REG_CHG_CNFG_02, &data);
-+	if (ret < 0)
-+		return ret;
-+
-+	data &= CHG_CNFG_02_CC_MASK;
-+	*val = data * 333 / 10; /* 3 steps/0.1A */
-+
-+	return 0;
-+}
-+
- static enum power_supply_property max77693_charger_props[] = {
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_CHARGE_TYPE,
- 	POWER_SUPPLY_PROP_HEALTH,
- 	POWER_SUPPLY_PROP_PRESENT,
- 	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_CURRENT_NOW,
- 	POWER_SUPPLY_PROP_MODEL_NAME,
- 	POWER_SUPPLY_PROP_MANUFACTURER,
- };
-@@ -231,6 +259,9 @@ static int max77693_charger_get_property(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_ONLINE:
- 		ret = max77693_get_online(regmap, &val->intval);
- 		break;
-+	case POWER_SUPPLY_PROP_CURRENT_NOW:
-+		ret = max77693_get_charge_current(regmap, &val->intval);
-+		break;
- 	case POWER_SUPPLY_PROP_MODEL_NAME:
- 		val->strval = max77693_charger_model;
- 		break;
-@@ -285,6 +316,7 @@ static ssize_t fast_charge_timer_show(struct device *dev,
- 
- 	data &= CHG_CNFG_01_FCHGTIME_MASK;
- 	data >>= CHG_CNFG_01_FCHGTIME_SHIFT;
-+
- 	switch (data) {
- 	case 0x1 ... 0x7:
- 		/* Starting from 4 hours, step by 2 hours */
-@@ -573,6 +605,102 @@ static int max77693_set_charge_input_threshold_volt(struct max77693_charger *chg
- 			CHG_CNFG_12_VCHGINREG_MASK, data);
- }
- 
-+static int max77693_enable_charger(struct max77693_charger *chg, bool enable)
-+{
-+	int ret;
-+
-+	if (enable) {
-+		ret = regulator_set_current_limit(
-+			chg->regu,
-+			CHG_CNFG_09_CHGIN_ILIM_500_MIN,
-+			CHG_CNFG_09_CHGIN_ILIM_500_MAX);
-+
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = regulator_enable(chg->regu);
-+		if (ret < 0)
-+			return ret;
-+	} else {
-+		/* sets fast charge current to zero */
-+		ret = regulator_set_current_limit(chg->regu,
-+						  CHG_CNFG_09_CHGIN_ILIM_0_MIN,
-+						  CHG_CNFG_09_CHGIN_ILIM_0_MAX);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = regulator_disable(chg->regu);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+static void max77693_extcon_evt_worker(struct work_struct *work)
-+{
-+	struct max77693_charger *chg = container_of(work,
-+						    struct max77693_charger,
-+						    cable.work);
-+	bool changed = false;
-+	struct extcon_dev *edev = chg->cable.edev;
-+	bool old_connected = chg->cable.connected;
-+	bool is_charger_enabled;
-+	int ret;
-+
-+	/* Determine cable/charger type */
-+	if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) ||
-+	    extcon_get_state(edev, EXTCON_CHG_USB_DCP)) {
-+		dev_dbg(chg->dev, "USB charger is connected");
-+		chg->cable.connected = true;
-+	} else {
-+		if (old_connected)
-+			dev_dbg(chg->dev, "USB charger disconnected");
-+		chg->cable.connected = false;
-+	}
-+
-+	/* Cable status changed */
-+	if (old_connected != chg->cable.connected)
-+		changed = true;
-+
-+	if (!changed)
-+		return;
-+
-+	if (regulator_is_enabled(chg->regu))
-+		is_charger_enabled = true;
-+	else
-+		is_charger_enabled = false;
-+
-+	if (is_charger_enabled && !chg->cable.connected) {
-+		ret = max77693_enable_charger(chg, false);
-+		if (ret < 0) {
-+			dev_err(chg->dev,
-+				"failed to disable charger (%d)", ret);
-+		}
-+	} else if (!is_charger_enabled && chg->cable.connected) {
-+		ret = max77693_enable_charger(chg, true);
-+		if (ret < 0) {
-+			dev_err(chg->dev,
-+				"cannot enable charger (%d)", ret);
-+		}
-+	}
-+
-+	if (changed)
-+		power_supply_changed(chg->charger);
-+}
-+
-+static int max77693_handle_cable_evt(struct notifier_block *nb,
-+				unsigned long event, void *param)
-+{
-+	struct max77693_charger *chg = container_of(nb,
-+						    struct max77693_charger,
-+						    cable.nb);
-+
-+	schedule_work(&chg->cable.work);
-+
-+	return NOTIFY_OK;
-+}
-+
- /*
-  * Sets charger registers to proper and safe default values.
-  */
-@@ -684,6 +812,45 @@ static int max77693_charger_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	chg->regu = devm_regulator_get(chg->dev, "CHARGER");
-+	if (IS_ERR(chg->regu)) {
-+		ret = PTR_ERR(chg->regu);
-+		dev_err(&pdev->dev,
-+			"failed to get charger regulator %d\n", ret);
-+		return ret;
-+	}
-+
-+	chg->cable.edev = extcon_get_extcon_dev(MAX77693_EXTCON_DEV_NAME);
-+	if (chg->cable.edev == NULL) {
-+		dev_dbg(&pdev->dev, "%s is not ready, probe deferred\n",
-+			MAX77693_EXTCON_DEV_NAME);
-+		return -EPROBE_DEFER;
-+	}
-+
-+	/* set initial value */
-+	chg->cable.connected = false;
-+
-+	/* Register for extcon notification */
-+	INIT_WORK(&chg->cable.work, max77693_extcon_evt_worker);
-+	chg->cable.nb.notifier_call = max77693_handle_cable_evt;
-+	ret = extcon_register_notifier(chg->cable.edev, EXTCON_CHG_USB_SDP,
-+				       &chg->cable.nb);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"failed to register extcon notifier for SDP %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = extcon_register_notifier(chg->cable.edev, EXTCON_CHG_USB_DCP,
-+				       &chg->cable.nb);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"failed to register extcon notifier for DCP %d\n", ret);
-+		extcon_unregister_notifier(chg->cable.edev,
-+					   EXTCON_CHG_USB_SDP, &chg->cable.nb);
-+		return ret;
-+	}
-+
- 	ret = max77693_reg_init(chg);
- 	if (ret)
- 		return ret;
-@@ -724,6 +891,10 @@ static int max77693_charger_probe(struct platform_device *pdev)
- 	device_remove_file(&pdev->dev, &dev_attr_top_off_timer);
- 	device_remove_file(&pdev->dev, &dev_attr_top_off_threshold_current);
- 	device_remove_file(&pdev->dev, &dev_attr_fast_charge_timer);
-+	extcon_unregister_notifier(chg->cable.edev, EXTCON_CHG_USB_SDP,
-+				   &chg->cable.nb);
-+	extcon_unregister_notifier(chg->cable.edev, EXTCON_CHG_USB_DCP,
-+				   &chg->cable.nb);
- 
- 	return ret;
- }
-@@ -736,6 +907,11 @@ static int max77693_charger_remove(struct platform_device *pdev)
- 	device_remove_file(&pdev->dev, &dev_attr_top_off_threshold_current);
- 	device_remove_file(&pdev->dev, &dev_attr_fast_charge_timer);
- 
-+	extcon_unregister_notifier(chg->cable.edev, EXTCON_CHG_USB_SDP,
-+				   &chg->cable.nb);
-+	extcon_unregister_notifier(chg->cable.edev, EXTCON_CHG_USB_DCP,
-+				   &chg->cable.nb);
-+
- 	power_supply_unregister(chg->charger);
- 
- 	return 0;
--- 
-2.23.0
+I am thinking it has something to do with the abb_mpu_iva driver
+because until this point, we've always operated at 800MHz or lower
+which all have the same behavior in abb_mpu_iva.
 
+With the patch you posted for the regulator, without the update to
+cpufreq,  and with debugging enabled, I received the following in
+dmesg:
+
+[    1.112518] ti_abb 483072f0.regulator-abb-mpu: Missing
+'efuse-address' IO resource
+[    1.112579] ti_abb 483072f0.regulator-abb-mpu: [0]v=1012500 ABB=0
+ef=0x0 rbb=0x0 fbb=0x0 vset=0x0
+[    1.112609] ti_abb 483072f0.regulator-abb-mpu: [1]v=1200000 ABB=0
+ef=0x0 rbb=0x0 fbb=0x0 vset=0x0
+[    1.112609] ti_abb 483072f0.regulator-abb-mpu: [2]v=1325000 ABB=0
+ef=0x0 rbb=0x0 fbb=0x0 vset=0x0
+[    1.112640] ti_abb 483072f0.regulator-abb-mpu: [3]v=1375000 ABB=1
+ef=0x0 rbb=0x0 fbb=0x0 vset=0x0
+[    1.112731] ti_abb 483072f0.regulator-abb-mpu: ti_abb_init_timings:
+Clk_rate=13000000, sr2_cnt=0x00000032
+
+
+adam
+>
+> BR,
+> Nikolaus
+>
