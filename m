@@ -2,111 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C0E1AE4A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 09:28:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF09CAE4B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 09:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbfIJH2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 03:28:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42188 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbfIJH2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 03:28:33 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A41AF81F2F;
-        Tue, 10 Sep 2019 07:28:33 +0000 (UTC)
-Received: from [10.72.12.188] (ovpn-12-188.pek2.redhat.com [10.72.12.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 23B5660BF3;
-        Tue, 10 Sep 2019 07:28:28 +0000 (UTC)
-Subject: Re: [RFC PATCH untested] vhost: block speculation of translated
- descriptors
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-References: <20190908110521.4031-1-mst@redhat.com>
- <db4d77d7-c467-935d-b4ae-1da7635e9b6b@redhat.com>
- <20190909104355-mutt-send-email-mst@kernel.org>
- <9ab48e0f-50a9-bed4-1801-73c37a7da27c@redhat.com>
- <20190910024814-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <bb71974e-a8b3-4cc4-f3e1-e48118469b78@redhat.com>
-Date:   Tue, 10 Sep 2019 15:28:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731942AbfIJHb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 03:31:27 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42784 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfIJHb1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 03:31:27 -0400
+Received: by mail-qk1-f193.google.com with SMTP id f13so15970214qkm.9;
+        Tue, 10 Sep 2019 00:31:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J4aIbTcgYnsL2jAn60izorNqL2E+CEoVtmdgC/gCJ2A=;
+        b=rA+YV42bahdlJ80KZYTG6Br/IowEbQmS5Ti/4npAstLMK+yviYQ3Bcgsz2fq/TGbHF
+         duOfieiqXaTGK/YC7wEM4gL5Ut1F+JJLXs52bePD3n4DwilGs/viE8ttiv/u6yfyMhbw
+         EocqobjA5Ha8Nz2wmUdnJgTK63rWAVTHOn32mldsL+EvLjzmbvuiPj09PK3usQHrQRmT
+         3DtD78DOZUrmTj5lW1I1iWt3yhF0SGgNcNJV8NyCSz4Dg2/Jt3ahMSivNgLJj4Y7jTr+
+         +MFWsPyxBUteSGgfjj0iw7OavAjdw0wZo9P4LiSNITPNtYEN3FeXJg8Ac9awCOkvYIV3
+         zvpg==
+X-Gm-Message-State: APjAAAVWDyJebX/TmJ1XHcnUIxtqbEOQXJ+KeokVomo0nL6OF9Jcdwxy
+        6487PwdIIbFFrZaumE168c6hrZQka8yHHtLSmRlR9Yp1
+X-Google-Smtp-Source: APXvYqzxfu9hm0NXuOKA2ZPbbiK1FbMXuncwD0ThgVH5KBnNGFfYb5fTYOiTxWRMVJbtLh9Ew4O+xiYHL4ZLpkip+vI=
+X-Received: by 2002:ae9:ef8c:: with SMTP id d134mr27834191qkg.286.1568100685778;
+ Tue, 10 Sep 2019 00:31:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190910024814-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 10 Sep 2019 07:28:33 +0000 (UTC)
+References: <20190909204201.931830-1-arnd@arndb.de> <20190910071030.GG2063@dhcp22.suse.cz>
+In-Reply-To: <20190910071030.GG2063@dhcp22.suse.cz>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 10 Sep 2019 09:31:09 +0200
+Message-ID: <CAK8P3a2_nuy-nxYapRbkZfAa+xABGUSPekEOwTunu4G-=V2cCA@mail.gmail.com>
+Subject: Re: [PATCH] mm: add dummy can_do_mlock() helper
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 10, 2019 at 9:10 AM Michal Hocko <mhocko@kernel.org> wrote:
 
-On 2019/9/10 下午2:48, Michael S. Tsirkin wrote:
-> On Tue, Sep 10, 2019 at 09:52:10AM +0800, Jason Wang wrote:
->> On 2019/9/9 下午10:45, Michael S. Tsirkin wrote:
->>> On Mon, Sep 09, 2019 at 03:19:55PM +0800, Jason Wang wrote:
->>>> On 2019/9/8 下午7:05, Michael S. Tsirkin wrote:
->>>>> iovec addresses coming from vhost are assumed to be
->>>>> pre-validated, but in fact can be speculated to a value
->>>>> out of range.
->>>>>
->>>>> Userspace address are later validated with array_index_nospec so we can
->>>>> be sure kernel info does not leak through these addresses, but vhost
->>>>> must also not leak userspace info outside the allowed memory table to
->>>>> guests.
->>>>>
->>>>> Following the defence in depth principle, make sure
->>>>> the address is not validated out of node range.
->>>>>
->>>>> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->>>>> ---
->>>>>     drivers/vhost/vhost.c | 4 +++-
->>>>>     1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->>>>> index 5dc174ac8cac..0ee375fb7145 100644
->>>>> --- a/drivers/vhost/vhost.c
->>>>> +++ b/drivers/vhost/vhost.c
->>>>> @@ -2072,7 +2072,9 @@ static int translate_desc(struct vhost_virtqueue *vq, u64 addr, u32 len,
->>>>>     		size = node->size - addr + node->start;
->>>>>     		_iov->iov_len = min((u64)len - s, size);
->>>>>     		_iov->iov_base = (void __user *)(unsigned long)
->>>>> -			(node->userspace_addr + addr - node->start);
->>>>> +			(node->userspace_addr +
->>>>> +			 array_index_nospec(addr - node->start,
->>>>> +					    node->size));
->>>>>     		s += size;
->>>>>     		addr += size;
->>>>>     		++ret;
->>>> I've tried this on Kaby Lake smap off metadata acceleration off using
->>>> testpmd (virtio-user) + vhost_net. I don't see obvious performance
->>>> difference with TX PPS.
->>>>
->>>> Thanks
->>> Should I push this to Linus right now then? It's a security thing so
->>> maybe we better do it ASAP ... what's your opinion?
->>
->> Yes, you can.
->>
->> Acked-by: Jason Wang <jasowang@redhat.com>
->
-> And should I include
->
-> Tested-by: Jason Wang <jasowang@redhat.com>
->
-> ?
+> but IB on nonMMU? Whut? Is there any HW that actually supports this?
+> Just wondering...
 
+Probably not, but I can't think of a good reason to completely disable
+it in Kconfig.
+Almost everything can be built without MMU at the moment, but the subset
+of things that are actually useful is hard to know.
 
-Yes.
-
-Thanks
-
-
->
->>
+         Arnd
