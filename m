@@ -2,117 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 027CCAE9C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4375FAE9C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393170AbfIJL5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 07:57:10 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:48971 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732932AbfIJL5I (ORCPT
+        id S2393082AbfIJL4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 07:56:55 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37767 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2393023AbfIJL4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:57:08 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M2xjg-1i8k9h33wC-003NW5; Tue, 10 Sep 2019 13:56:45 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH] [v2] arm64: fix unreachable code issue with cmpxchg
-Date:   Tue, 10 Sep 2019 13:56:22 +0200
-Message-Id: <20190910115643.391995-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 10 Sep 2019 07:56:52 -0400
+Received: from callcc.thunk.org (38.85.69.148.rev.vodafone.pt [148.69.85.38] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x8ABua45016670
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Sep 2019 07:56:39 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 97FF742049E; Tue, 10 Sep 2019 07:56:35 -0400 (EDT)
+Date:   Tue, 10 Sep 2019 07:56:35 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Ahmed S. Darwish" <darwish.07@gmail.com>
+Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>, zhangjs <zachary@baishancloud.com>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Linux 5.3-rc8
+Message-ID: <20190910115635.GB2740@mit.edu>
+References: <CAHk-=whBQ+6c-h+htiv6pp8ndtv97+45AH9WvdZougDRM6M4VQ@mail.gmail.com>
+ <20190910042107.GA1517@darwi-home-pc>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:EHTSpuLoMolBSz8CcDfb/qHKuFLM8p+7X9tC8Slqv2t0NwgBE8C
- CEK+aT1cF8p9GCYOMXQ9HwXnX5NR3vF73638cRLoJsKIRu4XOBbcOp7sn4PNSRR5Jbt0Sry
- d6um31l43yl6egOIpt1DYB9KLWb+JQkE3FcXmpjvrBxGY9yI6dKjHFJ35D2Ao3CsqwFFPRU
- kW57LeoduR53gqRvt9G4A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tZ2pxyEDoFE=:FjiMNmyAJhF+Kct/9J4gj6
- WlnXVAVAC8Cxf0IYDscFNtsWlONzdMJXCr0JwZPzKZe6H2kyJ+9zA6HZFLjNI6X8TGtTkx1ZU
- YeaJHl2QR/C+yOjV5mni9COAFLkrzR9B7FOn2i+MEUH3TSPUt1pRfhhr/JI6u/vxjpCCIXE56
- lNNhX2f3/fJAYKLEbZEVxiRggi9Ae3gY4942USVK6PBNwClhC4wz7fiy4rmgHW5cFUcxop+oW
- bhsTxXPMd3ZNAjh+m6UWJBBZlkWFR9iScOGuXMPlP9jiMWveayxKFHQzPHzdwVD0hBYv3H0Uy
- FAV/roihgc1V0OUDl0qwBKuk9y4inwLCLHCYShGOiiJQ/BzEHzoR8Uzn76IZ4vaBXyvsguiAQ
- GKMMqeoH7+xtXsCDhFTxAewinskUBlX1II/D54y5mi4S1S7Cb+s49Vy3pPwPZaCQ0FGUxBcLL
- bm8u22xwBXQZMAHtIBrJGBOKZEBIeoKBzNZo7YLv8DI6q+Uh2qNAWIcZF60YxOoYrkSQ2SlsX
- EjN3vfJjiwr+RAvsJGgW0Updu1M0NHsFManaC9mkCRbY0k36V7Bi7YkrQEzUEPjkBMVXH7l4D
- eaUUPAu6qsGCrrVdU9IB/Autez1PeKBWm66DURBJl+gtrTiw9RrEbLT0xkiXlBXlOs05c1YsI
- uxOL6R7TgViEhaboreZmuwhnng1zszG6BEXPJNLZ/bynHBAJHtf8NvDNWlzmHJC9IeTSTpQtG
- QLsB2fv3oQcctBcfg0wLRYs1XNLJoirOb5z3fOldnxwVHphjv344tb3G7pOKU9SH+f/JD0ZkR
- H1QVp8iXmykxUFgO3di1hBiinYpWgQvVDHWXAEBGF9wZY5SgfU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190910042107.GA1517@darwi-home-pc>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On arm64 build with clang, sometimes the __cmpxchg_mb is not inlined
-when CONFIG_OPTIMIZE_INLINING is set.
-Clang then fails a compile-time assertion, because it cannot tell at
-compile time what the size of the argument is:
+On Tue, Sep 10, 2019 at 06:21:07AM +0200, Ahmed S. Darwish wrote:
+> 
+> The commit b03755ad6f33 (ext4: make __ext4_get_inode_loc plug), [1]
+> which was merged in v5.3-rc1, *always* leads to a blocked boot on my
+> system due to low entropy.
+> 
+> The hardware is not a VM: it's a Thinkpad E480 (i5-8250U CPU), with
+> a standard Arch user-space.
 
-mm/memcontrol.o: In function `__cmpxchg_mb':
-memcontrol.c:(.text+0x1a4c): undefined reference to `__compiletime_assert_175'
-memcontrol.c:(.text+0x1a4c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `__compiletime_assert_175'
+Hmm, I'm not seeing this on a Dell XPS 13 (model 9380) using a Debian
+Bullseye (Testing) running a rc4+ kernel.
 
-Mark all of the cmpxchg() style functions as __always_inline to
-ensure that the compiler can see the result.
+This could be because Debian is simply doing more I/O; or it could be
+because I don't have some package installed which is trying to reading
+from /dev/random or calling getrandom(2).  Previously, Fedora ran into
+blocking issues because of some FIPS compliance patches to some
+userspace daemons.  So it's going to be very user space dependent and
+package dependent.
 
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-Link: https://github.com/ClangBuiltLinux/linux/issues/648
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Tested-by: Andrew Murray <andrew.murray@arm.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: skip unneeded changes, as suggested by Andrew Murray
----
- arch/arm64/include/asm/cmpxchg.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> It seems that batching the directory lookup I/O requests (which are
+> possibly a lot during boot) is minimizing sources of disk-activity-
+> induced entropy? [2] [3]
+> 
+> Can this even be considered a user-space breakage? I'm honestly not
+> sure. On my modern RDRAND-capable x86, just running rng-tools rngd(8)
+> early-on fixes the problem. I'm not sure about the status of older
+> CPUs though.
 
-diff --git a/arch/arm64/include/asm/cmpxchg.h b/arch/arm64/include/asm/cmpxchg.h
-index a1398f2f9994..f9bef42c1411 100644
---- a/arch/arm64/include/asm/cmpxchg.h
-+++ b/arch/arm64/include/asm/cmpxchg.h
-@@ -62,7 +62,7 @@ __XCHG_CASE( ,  ,  mb_, 64, dmb ish, nop,  , a, l, "memory")
- #undef __XCHG_CASE
- 
- #define __XCHG_GEN(sfx)							\
--static inline unsigned long __xchg##sfx(unsigned long x,		\
-+static __always_inline  unsigned long __xchg##sfx(unsigned long x,	\
- 					volatile void *ptr,		\
- 					int size)			\
- {									\
-@@ -148,7 +148,7 @@ __CMPXCHG_DBL(_mb)
- #undef __CMPXCHG_DBL
- 
- #define __CMPXCHG_GEN(sfx)						\
--static inline unsigned long __cmpxchg##sfx(volatile void *ptr,		\
-+static __always_inline unsigned long __cmpxchg##sfx(volatile void *ptr,	\
- 					   unsigned long old,		\
- 					   unsigned long new,		\
- 					   int size)			\
-@@ -255,7 +255,7 @@ __CMPWAIT_CASE( ,  , 64);
- #undef __CMPWAIT_CASE
- 
- #define __CMPWAIT_GEN(sfx)						\
--static inline void __cmpwait##sfx(volatile void *ptr,			\
-+static __always_inline void __cmpwait##sfx(volatile void *ptr,		\
- 				  unsigned long val,			\
- 				  int size)				\
- {									\
--- 
-2.20.0
+You can probably also fix this problem by adding random.trust_cpu=true
+to the boot command line, or by enabling CONFIG_RANDOM_TRUST_CPU.
+This obviously assumes that you trust Intel's implementation of
+RDRAND, but that's true regardless of whether of whether you use rngd
+or the kernel config option.
 
+As far as whether it's considered user-space breakage; that's though.
+File system performance improvements can cause a reduced amount of
+I/O, and that can cause less entropy to be collected, and depending on
+a complex combination of kernel config options, distribution-specific
+patches, and what packages are loaded, that could potentially cause
+boot hangs waiting for entropy.  Does that we we're can't make any
+file system performace improvements?  Surely that doesn't seem like
+the right answer.
+
+It would be useful to figure out what process is blocking waiting on
+entropy, since in general, trying to rely on cryptographic entropy in
+early boot, especially if it is to generate cryptographic keys, is
+going to be more dangerous compared to a "just in time" approach to
+generating crypto keys.  So this could also be considered a userspace
+bug, depending on your point of view...
+
+					- Ted
