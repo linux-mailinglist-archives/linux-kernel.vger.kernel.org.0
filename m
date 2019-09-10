@@ -2,176 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B1D9AF22E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 22:08:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27B20AF235
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 22:12:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726231AbfIJUIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 16:08:34 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:47079 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725290AbfIJUId (ORCPT
+        id S1726298AbfIJUMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 16:12:25 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:47037 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725263AbfIJUMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 16:08:33 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d17so9210646wrq.13;
-        Tue, 10 Sep 2019 13:08:29 -0700 (PDT)
+        Tue, 10 Sep 2019 16:12:25 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t1so9088381plq.13
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 13:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WHzPcXXybqqGsMlH+hHtKIHgOAXMA6dj6+vGOmjydVM=;
-        b=VyQkrY7J4e4tNRP/HvvZIXgABjJfzzXE39fxyrNK7TQEMsvNQ8pPlHF7FphP2DNAYA
-         P45BseF/osYu5zMPDOjnTogw5d6bVPZRBgnfC88i+/BYSyEDExBGmnT3OB5hMRAnzWRM
-         gsD96T1JFTFS6rCJRgExSvuIDZAm2hMf4lqjcaKfR2Pkv8IKHEE54ElJumE21Caxsuon
-         DeC6+8zyzPpbmZ+qux9XW8p9d+irXEgNhYt7y4oQOVJhZjpZ0xeWKx88E02qQvdJD1cl
-         sCsgRRH5Zyz8ci/WMRNT0LI1M5o+Q0KNEwjlj/wklmzuLlYjEAt7eDvu0MGmL5GLqfB5
-         jN/w==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=15hWnr6f2tJrfEoilZ1helN5HSi4DmE9rTuHqUhMmkU=;
+        b=R61eEifgYMh7PnNayuYxhvP5bhbfW2mOmVNcjBrX0u4fCMa2T6Ler3WWj5Apg/ZTMQ
+         f1/ye3xAfOzASybxWrea9GsS6SoROey6PHwxCSthuxwXK0qDfT/cYfz/fb9ycyHnRX2e
+         EbV46qG2jGs23H1GpBftp0RKBI0c8rFuNQb3M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=WHzPcXXybqqGsMlH+hHtKIHgOAXMA6dj6+vGOmjydVM=;
-        b=Hk1n+Jl+9CpJ29C2Gr+wP2J2oMQHwLR9Wwo5P3ScH+B0QUOXbV0xTkj29VREbW8Lli
-         7IBv/sS9V7SWLkpJ9oDmLN30QqktYcA5mSmBWRXB04TbPNn0GJRYUwbIXkilp4HddJSe
-         BUVorbU458nkY0sEiXFT6VjEoAYNsOk2kvnKXCRqB5h4C8qgUUMAX7UTK1gVwP57kc/u
-         6rbjsxl/9C8wbAOHgt1YWMwyEQGrYzz7+pYgb7qBLxZZcERtoiDhN4z0vbdkn8KcHjs1
-         N09QrLmd7bJh21VwHV8GBQ7KYyZIqIAszKNv/x65hXJRGn/6/DSNT3an3IduZCF7m/oc
-         okwA==
-X-Gm-Message-State: APjAAAWiF17yAdSxqhPVj4AUcBtDW2Uja4PbnDz71aulo+ypXNoqmZT7
-        2sqfgvuRcP1dC4Us0R/Qk2KtviBr
-X-Google-Smtp-Source: APXvYqwwkPUgud8mK4NYVdnuoQloXcv/uzW+3vGLlT3rFRDnrxzmIQjJSIVIyCQZpNJVCjIS37EhvQ==
-X-Received: by 2002:a05:6000:a:: with SMTP id h10mr5887183wrx.226.1568146108982;
-        Tue, 10 Sep 2019 13:08:28 -0700 (PDT)
-Received: from [192.168.1.19] (cit166.neoplus.adsl.tpnet.pl. [83.31.43.166])
-        by smtp.gmail.com with ESMTPSA id w125sm1354279wmg.32.2019.09.10.13.08.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Sep 2019 13:08:28 -0700 (PDT)
-Subject: Re: [RESEND,v2 2/2] leds: tlc591xx: Use the OF version of the LED
- registration function
-To:     Jean-Jacques Hiblot <jjhiblot@ti.com>, pavel@ucw.cz, dmurphy@ti.com
-Cc:     tomi.valkeinen@ti.com, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190910133814.10275-1-jjhiblot@ti.com>
- <20190910133814.10275-3-jjhiblot@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <69b5adc1-08fd-a0bd-b5b7-3943d8027253@gmail.com>
-Date:   Tue, 10 Sep 2019 22:08:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=15hWnr6f2tJrfEoilZ1helN5HSi4DmE9rTuHqUhMmkU=;
+        b=kZpQ2aaPLvWdfvSGqvPXMAGXkWN0hnpeD/pPtPlik4AtGmcPT6sxNUxzGJyvt8+MHv
+         GW5FYUQgYCEnMc1x9bDZ57VzFPi2KDCPlKVdu2E+4aOAgwC1UOdB7G9oPzyV3iqnEnml
+         JcpNQPzfpBLg/h8iSEfx7+P3dMNrhL7nXCKFh8LsP39k0taW26emcP5gH4M6JN7HXHTB
+         h/KRMx3QKp/n7SO4t3rvVT3v+xhwGlG0MEpG2dtXAMd0N4tpAH48GEGrdFe7AHGrEEon
+         B+gxhUs+TBJM9noPAGu6NBj/kcPb0w7og1bhRlACb/F92vQkQyaGiU3AztXIuaLxJuqI
+         pIPA==
+X-Gm-Message-State: APjAAAV14SNvoOyY5chVimYw3+WNgbedFh6p+gPyoiaTxcPkokstYZid
+        C07QtUR8HwieJ9hF3Iozzb3Rqg==
+X-Google-Smtp-Source: APXvYqxe5wirZcu9g1h+r/nLCfi6tx506Er0HD6EdTcai5ASMPCpU4DNsON/yG0qYLuEnO9zkBPWPw==
+X-Received: by 2002:a17:902:b497:: with SMTP id y23mr33009585plr.201.1568146344505;
+        Tue, 10 Sep 2019 13:12:24 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:e9ae:bd45:1bd9:e60d])
+        by smtp.gmail.com with ESMTPSA id c8sm1581955pgw.37.2019.09.10.13.12.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2019 13:12:23 -0700 (PDT)
+From:   David Riley <davidriley@chromium.org>
+To:     dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org
+Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Gurchetan Singh <gurchetansingh@chromium.org>,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
+        linux-kernel@vger.kernel.org, David Riley <davidriley@chromium.org>
+Subject: [PATCH v3 2/2] drm/virtio: Use vmalloc for command buffer allocations.
+Date:   Tue, 10 Sep 2019 13:06:51 -0700
+Message-Id: <20190910200651.118628-2-davidriley@chromium.org>
+X-Mailer: git-send-email 2.23.0.162.g0b9fbb3734-goog
+In-Reply-To: <20190829212417.257397-1-davidriley@chromium.org>
+References: <20190829212417.257397-1-davidriley@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20190910133814.10275-3-jjhiblot@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean,
+Userspace requested command buffer allocations could be too large
+to make as a contiguous allocation.  Use vmalloc if necessary to
+satisfy those allocations.
 
-Thank you the patch.
+Signed-off-by: David Riley <davidriley@chromium.org>
+---
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c |  4 +-
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 79 +++++++++++++++++++++++---
+ 2 files changed, 73 insertions(+), 10 deletions(-)
 
-On 9/10/19 3:38 PM, Jean-Jacques Hiblot wrote:
-> The driver parses the device-tree to identify which LED should be handled.
-> Since the information about the device node is known at this time, we can
-> provide the LED core with it. It may be useful later.
-> 
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> ---
->  drivers/leds/leds-tlc591xx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-> index 3d5a4b92f016..10764a62cb71 100644
-> --- a/drivers/leds/leds-tlc591xx.c
-> +++ b/drivers/leds/leds-tlc591xx.c
-> @@ -207,7 +207,7 @@ tlc591xx_probe(struct i2c_client *client,
->  		led->led_no = reg;
->  		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
->  		led->ldev.max_brightness = LED_FULL;
-> -		err = devm_led_classdev_register(dev, &led->ldev);
-> +		err = devm_of_led_classdev_register(dev, child, &led->ldev);
-
-devm_of_led_classdev_register() has been replaced with
-devm_led_classdev_register_ext() recently. Do you have some specific
-reason for passing OF node to the LED registration function?
-
-Currently this is beneficial only for generic LED name composition
-mechanism basing on 'function' and 'color' DT properties so if you
-want you can convert the driver to that. Please compare such recent
-conversions in linux-leds.git for-next branch [0][1].
-
->  		if (err < 0) {
->  			dev_err(dev, "couldn't register LED %s\n",
->  				led->ldev.name);
-> 
-
-[0]
-https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git/commit/?h=for-next&id=a50ff28348934913c46feb7945571329e46c70b3
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git/commit/?h=for-next&id=4dcbc8f8c59f4b618d651f5ba884ee5bf562c8de
-
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+index ac60be9b5c19..a8732a8af766 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -195,7 +195,7 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+ 	if (ret)
+ 		goto out_free;
+ 
+-	buf = memdup_user(u64_to_user_ptr(exbuf->command), exbuf->size);
++	buf = vmemdup_user(u64_to_user_ptr(exbuf->command), exbuf->size);
+ 	if (IS_ERR(buf)) {
+ 		ret = PTR_ERR(buf);
+ 		goto out_unresv;
+@@ -230,7 +230,7 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+ 	return 0;
+ 
+ out_memdup:
+-	kfree(buf);
++	kvfree(buf);
+ out_unresv:
+ 	ttm_eu_backoff_reservation(&ticket, &validate_list);
+ out_free:
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index bf5a4a50b002..76cf2b9d5d1d 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -154,7 +154,7 @@ static void free_vbuf(struct virtio_gpu_device *vgdev,
+ {
+ 	if (vbuf->resp_size > MAX_INLINE_RESP_SIZE)
+ 		kfree(vbuf->resp_buf);
+-	kfree(vbuf->data_buf);
++	kvfree(vbuf->data_buf);
+ 	kmem_cache_free(vgdev->vbufs, vbuf);
+ }
+ 
+@@ -251,13 +251,54 @@ void virtio_gpu_dequeue_cursor_func(struct work_struct *work)
+ 	wake_up(&vgdev->cursorq.ack_queue);
+ }
+ 
++/* Create sg_table from a vmalloc'd buffer. */
++static struct sg_table *vmalloc_to_sgt(char *data, uint32_t size, int *sg_ents)
++{
++	int ret, s, i;
++	struct sg_table *sgt;
++	struct scatterlist *sg;
++	struct page *pg;
++
++	if (WARN_ON(!PAGE_ALIGNED(data)))
++		return NULL;
++
++	sgt = kmalloc(sizeof(*sgt), GFP_KERNEL);
++	if (!sgt)
++		return NULL;
++
++	*sg_ents = DIV_ROUND_UP(size, PAGE_SIZE);
++	ret = sg_alloc_table(sgt, *sg_ents, GFP_KERNEL);
++	if (ret) {
++		kfree(sgt);
++		return NULL;
++	}
++
++	for_each_sg(sgt->sgl, sg, *sg_ents, i) {
++		pg = vmalloc_to_page(data);
++		if (!pg) {
++			sg_free_table(sgt);
++			kfree(sgt);
++			return NULL;
++		}
++
++		s = min_t(int, PAGE_SIZE, size);
++		sg_set_page(sg, pg, s, 0);
++
++		size -= s;
++		data += s;
++	}
++
++	return sgt;
++}
++
+ static int virtio_gpu_queue_ctrl_buffer_locked(struct virtio_gpu_device *vgdev,
+-					       struct virtio_gpu_vbuffer *vbuf)
++					       struct virtio_gpu_vbuffer *vbuf,
++					       struct scatterlist *vout)
+ 		__releases(&vgdev->ctrlq.qlock)
+ 		__acquires(&vgdev->ctrlq.qlock)
+ {
+ 	struct virtqueue *vq = vgdev->ctrlq.vq;
+-	struct scatterlist *sgs[3], vcmd, vout, vresp;
++	struct scatterlist *sgs[3], vcmd, vresp;
+ 	int outcnt = 0, incnt = 0;
+ 	int ret;
+ 
+@@ -268,9 +309,8 @@ static int virtio_gpu_queue_ctrl_buffer_locked(struct virtio_gpu_device *vgdev,
+ 	sgs[outcnt + incnt] = &vcmd;
+ 	outcnt++;
+ 
+-	if (vbuf->data_size) {
+-		sg_init_one(&vout, vbuf->data_buf, vbuf->data_size);
+-		sgs[outcnt + incnt] = &vout;
++	if (vout) {
++		sgs[outcnt + incnt] = vout;
+ 		outcnt++;
+ 	}
+ 
+@@ -305,7 +345,24 @@ static int virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
+ 					       struct virtio_gpu_fence *fence)
+ {
+ 	struct virtqueue *vq = vgdev->ctrlq.vq;
++	struct scatterlist *vout = NULL, sg;
++	struct sg_table *sgt = NULL;
+ 	int rc;
++	int outcnt = 0;
++
++	if (vbuf->data_size) {
++		if (is_vmalloc_addr(vbuf->data_buf)) {
++			sgt = vmalloc_to_sgt(vbuf->data_buf, vbuf->data_size,
++					     &outcnt);
++			if (!sgt)
++				return -ENOMEM;
++			vout = sgt->sgl;
++		} else {
++			sg_init_one(&sg, vbuf->data_buf, vbuf->data_size);
++			vout = &sg;
++			outcnt = 1;
++		}
++	}
+ 
+ again:
+ 	spin_lock(&vgdev->ctrlq.qlock);
+@@ -318,7 +375,7 @@ static int virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
+ 	 * to wait for free space, which can result in fence ids being
+ 	 * submitted out-of-order.
+ 	 */
+-	if (vq->num_free < 3) {
++	if (vq->num_free < 2 + outcnt) {
+ 		spin_unlock(&vgdev->ctrlq.qlock);
+ 		wait_event(vgdev->ctrlq.ack_queue, vq->num_free >= 3);
+ 		goto again;
+@@ -326,8 +383,14 @@ static int virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
+ 
+ 	if (hdr && fence)
+ 		virtio_gpu_fence_emit(vgdev, hdr, fence);
+-	rc = virtio_gpu_queue_ctrl_buffer_locked(vgdev, vbuf);
++	rc = virtio_gpu_queue_ctrl_buffer_locked(vgdev, vbuf, vout);
+ 	spin_unlock(&vgdev->ctrlq.qlock);
++
++	if (sgt) {
++		sg_free_table(sgt);
++		kfree(sgt);
++	}
++
+ 	return rc;
+ }
+ 
 -- 
-Best regards,
-Jacek Anaszewski
+2.23.0.162.g0b9fbb3734-goog
+
