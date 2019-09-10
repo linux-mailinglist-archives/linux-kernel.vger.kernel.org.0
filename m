@@ -2,182 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63E5AAE1B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 02:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36CC5AE1B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 02:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390653AbfIJAdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 20:33:32 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33145 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727115AbfIJAdc (ORCPT
+        id S2390712AbfIJAe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 20:34:59 -0400
+Received: from smtprelay0162.hostedemail.com ([216.40.44.162]:41730 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390656AbfIJAe7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 20:33:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id t11so7577302plo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2019 17:33:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LdMkj9ydUpeGQz38kxhXmRjgb45ZaaFVzNT7mjTRqas=;
-        b=JalEDdTDZRzhywQC2f0WOr6aN0yHO+NIVCzPWd16sAX9Xx3743FU/DqlqeKPO9oUQn
-         LhQI+rSmR8nNHmr5Pcp1sjdPOdxOvGS8gejJJpcQnW7t2WPwhTvYzlgQ8h/wzX77pq/p
-         A3Val6pjIKL5+cCKFWKWaKZgaw0w0kc7IIphk2/oQk2EwJTZx95hS4eOc3dAKY4QjXiK
-         3tbt+oxYVCq1jFI5+juIJ5NuBIbhm4W8EswtebjLBCnbDYXKTWX4Q6XhzAfL3Egbx+VV
-         99XpHqUz2Lg7xcM2xozNeHbXUFLAJ1GLUMqYvOQetxMGngcHcj92EmtBN7LMH4/WrRTk
-         g5tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LdMkj9ydUpeGQz38kxhXmRjgb45ZaaFVzNT7mjTRqas=;
-        b=PEJcyfyBuhsFO3UyBaSGBaXlzbyLT1C6x/M6USS/IdoGz7UJ7+eF1iUsW3nON5HPJB
-         beG3OsFK7elj1WKpqtPhclmRNXjKiNBHyS0GEyVYRnOQcotstmJkHh+2jHOVrsrXqsxO
-         kquQwPTqICi0l8NQ6gOwlR1WqASXLzdYzUYHgEv+bZcii+9qVbrRRuMBQze1zDeCzaL9
-         GLRBmMYq+ywYqtoqKjmiFunQPOptNW+mrz/eCmzTKH1umdqTsR0xTpsFSnGMWQaS6mC/
-         mm3eXsRmn7p2TiSYPZ8rrVkkL+4DjhKmDvUOR+blDoOfu6Kqxx6QUiam2HgowetE9Cn8
-         LvFQ==
-X-Gm-Message-State: APjAAAX8F7urOSEdeN4CYLbOlyC7kItOPP1nmvBEw9yNpHegl4Vx8ZEh
-        URGmFNL/K//TWYPh4ifk8N0=
-X-Google-Smtp-Source: APXvYqxoz8p0CnnYz2lpULO/pJTvkWfE44ItpK9zgm5aMH1SkPlm6sGG3GHzCb/wBoeqpUBjRgxvyQ==
-X-Received: by 2002:a17:902:b110:: with SMTP id q16mr26545337plr.50.1568075611247;
-        Mon, 09 Sep 2019 17:33:31 -0700 (PDT)
-Received: from mail.google.com ([149.28.153.17])
-        by smtp.gmail.com with ESMTPSA id b19sm16515847pgs.10.2019.09.09.17.33.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 17:33:30 -0700 (PDT)
-Date:   Tue, 10 Sep 2019 08:33:23 +0800
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Changbin Du <changbin.du@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ftrace: simplify ftrace hash lookup code
-Message-ID: <20190910003321.d3q65j756z3vzhiw@mail.google.com>
-References: <20190909003159.10574-1-changbin.du@gmail.com>
- <20190909105424.6769b552@oasis.local.home>
+        Mon, 9 Sep 2019 20:34:59 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id E444A1802972A;
+        Tue, 10 Sep 2019 00:34:57 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2691:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:4321:5007:10004:10400:10848:11026:11232:11658:11914:12043:12048:12297:12438:12740:12760:12895:13069:13311:13357:13439:14096:14097:14659:14721:21080:21451:21627:30012:30054:30070:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:35,LUA_SUMMARY:none
+X-HE-Tag: camp25_6560f4e3d733e
+X-Filterd-Recvd-Size: 2008
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 10 Sep 2019 00:34:56 +0000 (UTC)
+Message-ID: <65a3989d97b1ae60cfb0749f3ee8bbd625c7beb6.camel@perches.com>
+Subject: Re: [PATCH 3/3] iio: adc: hx711: remove unnecessary returns
+From:   Joe Perches <joe@perches.com>
+To:     Andreas Klinger <ak@it-klinger.de>, jic23@kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 09 Sep 2019 17:34:55 -0700
+In-Reply-To: <20190907101848.hl4vgaostftr4ddj@arbad>
+References: <20190907101848.hl4vgaostftr4ddj@arbad>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190909105424.6769b552@oasis.local.home>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 10:54:24AM -0400, Steven Rostedt wrote:
-> On Mon,  9 Sep 2019 08:31:59 +0800
-> Changbin Du <changbin.du@gmail.com> wrote:
-> 
-> > Function ftrace_lookup_ip() will check empty hash table. So we don't
-> > need extra check outside.
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> > 
-> > ---
-> > v2: fix incorrect code remove.
-> > ---
-> >  kernel/trace/ftrace.c | 9 ++-------
-> >  1 file changed, 2 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> > index f9821a3374e9..92aab854d3b1 100644
-> > --- a/kernel/trace/ftrace.c
-> > +++ b/kernel/trace/ftrace.c
-> > @@ -1463,8 +1463,7 @@ static bool hash_contains_ip(unsigned long ip,
-> >  	 */
-> >  	return (ftrace_hash_empty(hash->filter_hash) ||
-> >  		__ftrace_lookup_ip(hash->filter_hash, ip)) &&
-> > -		(ftrace_hash_empty(hash->notrace_hash) ||
-> > -		 !__ftrace_lookup_ip(hash->notrace_hash, ip));
-> > +	       !ftrace_lookup_ip(hash->notrace_hash, ip);
-> 
-> I don't care for this part. I've nacked this change in the past. Why?
-> let's compare the changes:
-> 
-> 	return (ftrace_hash_empty(hash->filter_hash) ||
-> 		__ftrace_lookup_ip(hash->filter_hash, ip)) &&
-> 		(ftrace_hash_empty(hash->notrace_hash) ||
-> 		 !__ftrace_lookup_ip(hash->notrace_hash, ip));
-> 
->  vs:
-> 
-> 	return (ftrace_hash_empty(hash->filter_hash) ||
-> 		__ftrace_lookup_ip(hash->filter_hash, ip)) &&
-> 		!ftrace_lookup_ip(hash->notrace_hash, ip);
-> 
-> The issue I have with this is that it abstracts out the difference
-> between the filter_hash and the notrace_hash. Sometimes open coded
-> works better if it is compared to something that is similar.
-> 
-> The current code I see:
-> 
-> 	Return true if (filter_hash is empty or ip exists in filter_hash
-> 		 and notrace_hash is empty or it does not exist in notrace_hash
-> 
-> With your update I see:
-> 
-> 	Return true if filter_hash is empty or ip exists in filter_hash
->                 and ip does not exist in notrace_hash
-> 
-> It makes it not easy to see if what happens if notrace_hash is empty
-> 
-> Hmm, come to think of it, perhaps we should change ftrace_lookup_ip()
-> to include what to do on empty.
-> 
-> Maybe:
-> 
-> bool ftrace_lookup_ip(struct ftrace_hash *hash, unsigned long ip, bool empty_result)
-> {
-> 	if (ftrace_hash_empty(hash))
-> 		return empty_result;
-> 
-> 	return __ftrace_lookup_ip(hash, ip);
-> }
->
-We must add another similar function since ftrace_lookup_ip() returns a pointer.
+On Sat, 2019-09-07 at 12:18 +0200, Andreas Klinger wrote:
+> Optimize use of return in hx711_set_gain_for_channel().
 
-bool ftrace_contains_ip(struct ftrace_hash *hash, unsigned long ip,
-			bool empty_result)
-{
-	if (ftrace_hash_empty(hash))
-		return empty_result;
+I believe this change is not an optimization but
+this change does make the code harder to read.
 
-	return !!__ftrace_lookup_ip(hash, ip);
-}
+> diff --git a/drivers/iio/adc/hx711.c b/drivers/iio/adc/hx711.c
+[]
+> @@ -213,7 +213,7 @@ static int hx711_reset(struct hx711_data *hx711_data)
+>  
+>  static int hx711_set_gain_for_channel(struct hx711_data *hx711_data, int chan)
+>  {
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	if (chan == 0) {
+>  		if (hx711_data->gain_set == 32) {
+> @@ -224,8 +224,6 @@ static int hx711_set_gain_for_channel(struct hx711_data *hx711_data, int chan)
+>  				return ret;
+>  
+>  			ret = hx711_wait_for_ready(hx711_data);
+> -			if (ret)
+> -				return ret;
+>  		}
+>  	} else {
+>  		if (hx711_data->gain_set != 32) {
+> @@ -236,12 +234,10 @@ static int hx711_set_gain_for_channel(struct hx711_data *hx711_data, int chan)
+>  				return ret;
+>  
+>  			ret = hx711_wait_for_ready(hx711_data);
+> -			if (ret)
+> -				return ret;
+>  		}
+>  	}
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static int hx711_reset_read(struct hx711_data *hx711_data, int chan)
 
-But after this, it's a little overkill I think. It is not much simpler than before.
-Do you still want this then?
-
-> Then we can change the above to:
-> 
-> 	return ftrace_lookup_ip(hash->filter_hash, ip, true) &&
-> 	       !ftrace_lookup_ip(hash->notrace_hash, ip, false);
-> 
-> That would probably work better.
-> 
-> Want to send that update?
-> 
-> -- Steve
-> 
-> 
-> >  }
-> >  
-> >  /*
-> > @@ -6036,11 +6035,7 @@ clear_func_from_hash(struct ftrace_init_func
-> > *func, struct ftrace_hash *hash) {
-> >  	struct ftrace_func_entry *entry;
-> >  
-> > -	if (ftrace_hash_empty(hash))
-> > -		return;
-> > -
-> > -	entry = __ftrace_lookup_ip(hash, func->ip);
-> > -
-> > +	entry = ftrace_lookup_ip(hash, func->ip);
-> >  	/*
-> >  	 * Do not allow this rec to match again.
-> >  	 * Yeah, it may waste some memory, but will be removed
-> 
-
--- 
-Cheers,
-Changbin Du
