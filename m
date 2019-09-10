@@ -2,244 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1524AEBF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:48:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B44AEBEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733250AbfIJNs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 09:48:28 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:52285 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729173AbfIJNs1 (ORCPT
+        id S1733132AbfIJNsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 09:48:03 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:46020 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731435AbfIJNsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 09:48:27 -0400
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="Claudiu.Beznea@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: 683XAQN9cp4PvWPaqfkswPOIVe8ed+z2/PAq+f5JbwUzTvxskB6TgBI5humDkARo19rIwUFt4F
- JzDtfX8pqdaTvCf5xrJyuiOTbmLIdfTBZj8qrSZO9+YVFXyDN0U4WcXn6dL9SSpUh4/3dqi5Xf
- X1CK53wyLz+ksXw4GCnfyxymjat+8N9sXtEswkYDIBJy9KWVsAg0I8VKBbVUJahRwl0rGXKZse
- tTI/HzuiqgKTdepmpiRMYHuCmvqPBYcgKq0bJKzkh7Ds3++Q6EUbOPHiJ1DHplps4/rkRql4eS
- 8NI=
-X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
-   d="scan'208";a="45604948"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 10 Sep 2019 06:48:15 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 10 Sep 2019 06:48:15 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Tue, 10 Sep 2019 06:47:52 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <daniel.lezcano@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>, <nsekhar@ti.com>,
-        <bgolaszewski@baylibre.com>, <monstr@monstr.eu>,
-        <john@phrozen.org>, <ralf@linux-mips.org>, <paul.burton@mips.com>,
-        <jhogan@kernel.org>, <lftan@altera.com>, <tglx@linutronix.de>,
-        <vgupta@synopsys.com>, <marc.zyngier@arm.com>,
-        <patrice.chotard@st.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <eric@anholt.net>, <wahrenst@gmx.net>,
-        <f.fainelli@gmail.com>, <rjui@broadcom.com>,
-        <sbranden@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
-        <linus.walleij@linaro.org>, <shc_work@mail.ru>, <kgene@kernel.org>,
-        <krzk@kernel.org>, <ysato@users.sourceforge.jp>,
-        <liviu.dudau@arm.com>, <sudeep.holla@arm.com>,
-        <lorenzo.pieralisi@arm.com>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-        <festevam@gmail.com>, <linux-imx@nxp.com>, <baohua@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <baruch@tkos.co.il>,
-        <u.kleine-koenig@pengutronix.de>, <guoren@kernel.org>,
-        <kaloz@openwrt.org>, <khalasa@piap.pl>, <ssantosh@kernel.org>,
-        <vz@mleia.com>, <slemieux.tyco@gmail.com>, <khilman@baylibre.com>,
-        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
-        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <afaerber@suse.de>,
-        <manivannan.sadhasivam@linaro.org>, <narmstrong@baylibre.com>,
-        <agross@kernel.org>, <palmer@sifive.com>, <aou@eecs.berkeley.edu>,
-        <heiko@sntech.de>, <orsonzhai@gmail.com>, <baolin.wang@linaro.org>,
-        <zhang.lyra@gmail.com>, <maxime.ripard@bootlin.com>,
-        <wens@csie.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux@prisktech.co.nz>,
-        <john.stultz@linaro.org>, <sboyd@kernel.org>,
-        <matthias.bgg@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mips@vger.kernel.org>, <nios2-dev@lists.rocketboards.org>,
-        <linux-snps-arc@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        <linux-amlogic@lists.infradead.org>, <openbmc@lists.ozlabs.org>,
-        <linux-oxnas@groups.io>, <linux-arm-msm@vger.kernel.org>,
-        <linux-unisoc@lists.infradead.org>,
-        <linux-riscv@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        "Claudiu Beznea" <claudiu.beznea@microchip.com>
-Subject: [PATCH 1/7] clocksource/drivers/c-sky: request timer_of_init only for probing CPU
-Date:   Tue, 10 Sep 2019 16:47:10 +0300
-Message-ID: <1568123236-767-2-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+        Tue, 10 Sep 2019 09:48:03 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8ADlAGb068851;
+        Tue, 10 Sep 2019 08:47:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568123230;
+        bh=KCsuiucHi88CCTXSYu2IpIzdJ7GYk/usdfSwVkf0fN0=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=aCBFXZAkngxsPLJ/RWW99Vqvi5DqIb/9uS/cdfD7nGL+ng9fLYqb/l80gcbyjzpAg
+         npotnHguI98tJFqnWongfobRdhcla/VvL9Kq75+dWDSHcYcVFoVjWY2+yneHYw/p8q
+         ln/foJwhUp+NiNKabjS9tFqNrF7LOdI5vbxOawaY=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8ADlAVO104167;
+        Tue, 10 Sep 2019 08:47:10 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 10
+ Sep 2019 08:47:10 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 10 Sep 2019 08:47:10 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8ADlAPC079028;
+        Tue, 10 Sep 2019 08:47:10 -0500
+Subject: Re: [PATCH] tas2770: add tas2770 smart PA dt bindings
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <shifu0704@thundersoft.com>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>
+CC:     <navada@ti.com>
+References: <1567753564-13699-1-git-send-email-shifu0704@thundersoft.com>
+ <76759c2c-3f5d-5cf6-fc2b-feb1dc8c0e6a@ti.com>
+Message-ID: <15483b8f-ffda-eea3-9461-894f43a39a20@ti.com>
+Date:   Tue, 10 Sep 2019 08:47:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <76759c2c-3f5d-5cf6-fc2b-feb1dc8c0e6a@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-timer_of_init() was initially called for all possible CPUs although it
-was requested clock with index 0 for the same device_node on behalf of
-all possible CPUs. This patch keeps the timer_of_init() only for probing
-CPU and use the information obtained by timer_of_init() to also
-initialize the timer_of structure for the rest of CPUs. Since the
-probing CPU was requested also a per CPU interrupt, and the
-timer_of_init() has such a mechanism implemented, the patch took also
-the chance to pass TIMER_OF_IRQ flag to timer_of_init(). Apart from
-this csky_mptimer_irq variable was removed and information in per CPU
-timer_of objects was used instead (to->clkevt.irq).
+Shi
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/clocksource/timer-mp-csky.c | 45 +++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 22 deletions(-)
+One other thing
 
-diff --git a/drivers/clocksource/timer-mp-csky.c b/drivers/clocksource/timer-mp-csky.c
-index 183a9955160a..dd263c8de580 100644
---- a/drivers/clocksource/timer-mp-csky.c
-+++ b/drivers/clocksource/timer-mp-csky.c
-@@ -15,7 +15,7 @@
- #define PTIM_LVR	"cr<6, 14>"
- #define PTIM_TSR	"cr<1, 14>"
- 
--static int csky_mptimer_irq;
-+static irqreturn_t csky_timer_interrupt(int irq, void *dev);
- 
- static int csky_mptimer_set_next_event(unsigned long delta,
- 				       struct clock_event_device *ce)
-@@ -47,7 +47,7 @@ static int csky_mptimer_oneshot_stopped(struct clock_event_device *ce)
- }
- 
- static DEFINE_PER_CPU(struct timer_of, csky_to) = {
--	.flags					= TIMER_OF_CLOCK,
-+	.flags					= TIMER_OF_CLOCK | TIMER_OF_IRQ,
- 	.clkevt = {
- 		.rating				= 300,
- 		.features			= CLOCK_EVT_FEAT_PERCPU |
-@@ -57,6 +57,10 @@ static DEFINE_PER_CPU(struct timer_of, csky_to) = {
- 		.set_state_oneshot_stopped	= csky_mptimer_oneshot_stopped,
- 		.set_next_event			= csky_mptimer_set_next_event,
- 	},
-+	.of_irq = {
-+		.percpu				= true,
-+		.handler			= csky_timer_interrupt,
-+	},
- };
- 
- static irqreturn_t csky_timer_interrupt(int irq, void *dev)
-@@ -79,7 +83,7 @@ static int csky_mptimer_starting_cpu(unsigned int cpu)
- 
- 	to->clkevt.cpumask = cpumask_of(cpu);
- 
--	enable_percpu_irq(csky_mptimer_irq, 0);
-+	enable_percpu_irq(to->clkevt.irq, 0);
- 
- 	clockevents_config_and_register(&to->clkevt, timer_of_rate(to),
- 					2, ULONG_MAX);
-@@ -89,7 +93,9 @@ static int csky_mptimer_starting_cpu(unsigned int cpu)
- 
- static int csky_mptimer_dying_cpu(unsigned int cpu)
- {
--	disable_percpu_irq(csky_mptimer_irq);
-+	struct timer_of *to = per_cpu_ptr(&csky_to, cpu);
-+
-+	disable_percpu_irq(to->clkevt.irq);
- 
- 	return 0;
- }
-@@ -117,8 +123,8 @@ struct clocksource csky_clocksource = {
- 
- static int __init csky_mptimer_init(struct device_node *np)
- {
--	int ret, cpu, cpu_rollback;
--	struct timer_of *to = NULL;
-+	struct timer_of *to = this_cpu_ptr(&csky_to);
-+	int ret, cpu;
- 
- 	/*
- 	 * Csky_mptimer is designed for C-SKY SMP multi-processors and
-@@ -132,20 +138,20 @@ static int __init csky_mptimer_init(struct device_node *np)
- 	 * We use private irq for the mptimer and irq number is the same
- 	 * for every core. So we use request_percpu_irq() in timer_of_init.
- 	 */
--	csky_mptimer_irq = irq_of_parse_and_map(np, 0);
--	if (csky_mptimer_irq <= 0)
--		return -EINVAL;
- 
--	ret = request_percpu_irq(csky_mptimer_irq, csky_timer_interrupt,
--				 "csky_mp_timer", &csky_to);
-+	ret = timer_of_init(np, to);
- 	if (ret)
- 		return -EINVAL;
- 
- 	for_each_possible_cpu(cpu) {
--		to = per_cpu_ptr(&csky_to, cpu);
--		ret = timer_of_init(np, to);
--		if (ret)
--			goto rollback;
-+		struct timer_of *cpu_to = per_cpu_ptr(&csky_to, cpu);
-+
-+		if (to == cpu_to)
-+			continue;
-+
-+		cpu_to->clkevt.irq = to->of_irq.irq;
-+		cpu_to->of_clk.rate = to->of_clk.rate;
-+		cpu_to->of_clk.period = to->of_clk.period;
- 	}
- 
- 	clocksource_register_hz(&csky_clocksource, timer_of_rate(to));
-@@ -156,18 +162,13 @@ static int __init csky_mptimer_init(struct device_node *np)
- 				csky_mptimer_starting_cpu,
- 				csky_mptimer_dying_cpu);
- 	if (ret)
--		return -EINVAL;
-+		goto rollback;
- 
- 	return 0;
- 
- rollback:
--	for_each_possible_cpu(cpu_rollback) {
--		if (cpu_rollback == cpu)
--			break;
-+	timer_of_cleanup(to);
- 
--		to = per_cpu_ptr(&csky_to, cpu_rollback);
--		timer_of_cleanup(to);
--	}
- 	return -EINVAL;
- }
- TIMER_OF_DECLARE(csky_mptimer, "csky,mptimer", csky_mptimer_init);
--- 
-2.7.4
-
+On 9/10/19 8:21 AM, Dan Murphy wrote:
+> Shi
+>
+> On 9/6/19 2:06 AM, shifu0704@thundersoft.com wrote:
+>> From: Frank Shi <shifu0704@thundersoft.com>
+>
+> Subject should be
+>
+> dt-bindings: ASoC: Add tas2770 smart PA dt bindings
+>
+> Also Please add Rob Herring <robh+dt@kernel.org> for review
+>
+>> add tas2770 smart PA dt bindings
+>>
+>> Signed-off-by: Frank Shi <shifu0704@thundersoft.com>
+>> ---
+>>   Documentation/devicetree/bindings/tas2770.txt | 38 
+>> +++++++++++++++++++++++++++
+>>   1 file changed, 38 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/tas2770.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/tas2770.txt 
+>> b/Documentation/devicetree/bindings/tas2770.txt
+This binding belongs in Documentation/devicetree/bindings/sound
+>> new file mode 100644
+>> index 0000000..f70b310
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/tas2770.txt
+>> @@ -0,0 +1,38 @@
+>> +Texas Instruments TAS2770 Smart PA
+>> +
+>> +The TAS2770 is a mono, digital input Class-D audio amplifier 
+>> optimized for
+>> +efficiently driving high peak power into small loudspeakers.
+>> +Integrated speaker voltage and current sense provides for
+>> +real time monitoring of loudspeaker behavior.
+>> +
+>> +Required properties:
+>> +
+>> + - compatible:       - Should contain "ti,tas2770".
+>> + - reg:               - The i2c address. Should contain <0x4c>, 
+>> <0x4d>,<0x4e>, or <0x4f>.
+> s/should/may
+>> + - #address-cells  - Should be <1>.
+>> + - #size-cells     - Should be <0>.
+>> + - ti,asi-format:  - Sets TDM RX capture edge. 0->Rising; 1->Falling.
+>> + - ti,left-slot:   - Sets TDM RX left time slots.
+>> + - ti,right-slot:  - Sets TDM RX right time slots.
+>> + - ti,imon-slot-no:- TDM TX current sense time slot.
+>> + - ti,vmon-slot-no:- TDM TX voltage sense time slot.
+>> +
+>> +Optional properties:
+>> +
+>> + - reset-gpio:    Reset GPIO number of left device.
+>> + - irq-gpio:  IRQ GPIO number of left device.
+>
+> You might want to use
+>
+> - interrupt-parent: the phandle to the interrupt controller which 
+> provides
+>                     the interrupt.
+> - interrupts: interrupt specification for data-ready.
+>
+> Instead of irq-gpio
+>
+>> +
+>> +Examples:
+>> +
+>> +    tas2770@4c {
+>> +                compatible = "ti,tas2770";
+>> +                reg = <0x4c>;
+>
+> Missing
+>
+> #address-cells = <1>;
+>
+> #size-cells = <0>;
+>
+>> +                reset-gpio = <&gpio15 1 GPIO_ACTIVE_LOW>;
+>> +                irq-gpio = <&gpio16 1 GPIO_ACTIVE_LOW>;
+>> +                ti,asi-format = <0>;
+>> +                ti,left-slot = <0>;
+>> +                ti,right-slot = <1>;
+>> +                ti,imon-slot-no = <0>;
+>> +                ti,vmon-slot-no = <2>;
+>> +        };
+>> +
+>
+> Suggestion to provide the URL to the data sheet.
+>
