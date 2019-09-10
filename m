@@ -2,100 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 822B4AEE65
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5692AEE72
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405762AbfIJPTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 11:19:51 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33033 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729662AbfIJPTu (ORCPT
+        id S2393923AbfIJPX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 11:23:28 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60448 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731043AbfIJPX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 11:19:50 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u16so21109572wrr.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 08:19:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=vmUuCMkzir2Sv0OO2nHQXi9m+juUE2w8XHaiTSroSHA=;
-        b=kYw/oUI/H82GJRyFfkUzR4+OURd1LYYPwpXS5Eassv7VrsNI7XMdZAjX/Hem4mUJmh
-         Q07kd8PYu2S/HY2W5SC/lu+yJ4R0w793l/6htAF9mDMKAzMoFl2DMq1iT6b+LwK6IaQ7
-         UOtLAN5bR7qX4XSlusnmqgKWZ9hozJtU1Zp8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vmUuCMkzir2Sv0OO2nHQXi9m+juUE2w8XHaiTSroSHA=;
-        b=WknDHH3DC4HHGtlK4LuwqnG9k9d0Y7QbofwBdp69CJpHh+4Bt4qLVBx/b3PcJshthk
-         TpeqZ+a4U97LIgkqcXVVyDYaTZYknLA7LURBhxI9425tfbNBW3j4B7cWBCQEVuichH87
-         4PiRbzimsAQ7M6JuZfhCknI2Trd1hQVXnnUa4MupfhEI3H5D19u+b+68tMrecNWJ5U5G
-         B0rAM4Evsxbjno/AQQk0s46T9lXnpss1IFR4NY2+udsp2JgfVAd9eUkqLbXHoOfkhqSk
-         6hjlDooLYNNhWsLQTH5ZBhOdkbdmYZcObwobUtMD0BR1tIzcYjBLhjaERhNy5E4orJnw
-         Y/4w==
-X-Gm-Message-State: APjAAAVKQ4FN+8ihYPHxBVnYen0ybTyP0I5N2oXDiBxtWG1vRPZKSN1Z
-        NODRZbSyBM1P1bsXhr0Hb8NVuY6lru3owR2A
-X-Google-Smtp-Source: APXvYqw39BL6cpTQ2h3WRAEb89m10wkW4DGlcBRXCORRYb3DbUpcGPbZICuw3hLTec/QOR2bEOCGEQ==
-X-Received: by 2002:a5d:678a:: with SMTP id v10mr26708489wru.145.1568128788717;
-        Tue, 10 Sep 2019 08:19:48 -0700 (PDT)
-Received: from penguin.lxd ([148.69.85.38])
-        by smtp.gmail.com with ESMTPSA id o22sm32753305wra.96.2019.09.10.08.19.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Sep 2019 08:19:48 -0700 (PDT)
-From:   Nick Crews <ncrews@chromium.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Duncan Laurie <dlaurie@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Nick Crews <ncrews@chromium.org>
-Subject: [PATCH] rtc: wilco-ec: Sanitize values received from RTC
-Date:   Tue, 10 Sep 2019 16:19:29 +0100
-Message-Id: <20190910151929.780-1-ncrews@chromium.org>
-X-Mailer: git-send-email 2.11.0
+        Tue, 10 Sep 2019 11:23:27 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8AFItUK027960;
+        Tue, 10 Sep 2019 15:22:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=tOczzZS4JVmfczdE9mY887heuT2/utVYNO9vG7SJCcc=;
+ b=G6nGr7fAvGgT+9NCwikhlTwHcRA7ww33aAgb+LexAHOEHnXH8h0HpfNoNEENo/jRPvqt
+ tnKbN1EnMhQh7HLj51k5bjAfWtTCXau6gbwiLIPxfPwXFKrBpHgzcFFTD1mGrpjxe3pq
+ ilX2FaHLtQMOBd4XAfkP+vQhXvvsllltPBMXHHGgLKmtFqz7AvHuJyuR1IXuAPSHq9v0
+ 9j+fHJ/iaoXJhaE7WoHUhaJHl0BzH7xA+svEuJdzlZjrdoZ4NvQQMAWbQIX0CAgevkbm
+ 8FdVE2RCgjaHH2SVQjKIfU0Joc1aw3E7ITG8swlkozjhUJzvbFSwEX8gM8C8cQngCbhB Ew== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2uw1jkc7gw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 15:22:22 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8AFIiQQ191566;
+        Tue, 10 Sep 2019 15:22:21 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2uwq9q5j9b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 15:21:11 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8AFJwpG020463;
+        Tue, 10 Sep 2019 15:19:58 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Sep 2019 08:19:58 -0700
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 18E256A010E; Tue, 10 Sep 2019 11:21:42 -0400 (EDT)
+Date:   Tue, 10 Sep 2019 11:21:42 -0400
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
+        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        pengfei.xu@intel.com, Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 0/5] iommu: Bounce page for untrusted devices
+Message-ID: <20190910152142.GC7585@char.us.oracle.com>
+References: <20190906061452.30791-1-baolu.lu@linux.intel.com>
+ <20190910145322.GB24103@8bytes.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190910145322.GB24103@8bytes.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909100147
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909100147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that the time received from the RTC HW is valid,
-otherwise the computation of rtc_year_days() in the next
-line could, and sometimes does, crash the kernel.
+On Tue, Sep 10, 2019 at 04:53:23PM +0200, Joerg Roedel wrote:
+> On Fri, Sep 06, 2019 at 02:14:47PM +0800, Lu Baolu wrote:
+> > Lu Baolu (5):
+> >   swiotlb: Split size parameter to map/unmap APIs
+> >   iommu/vt-d: Check whether device requires bounce buffer
+> >   iommu/vt-d: Don't switch off swiotlb if bounce page is used
+> >   iommu/vt-d: Add trace events for device dma map/unmap
+> >   iommu/vt-d: Use bounce buffer for untrusted devices
+> > 
+> >  .../admin-guide/kernel-parameters.txt         |   5 +
+> >  drivers/iommu/Kconfig                         |   1 +
+> >  drivers/iommu/Makefile                        |   1 +
+> >  drivers/iommu/intel-iommu.c                   | 310 +++++++++++++++++-
+> >  drivers/iommu/intel-trace.c                   |  14 +
+> >  drivers/xen/swiotlb-xen.c                     |   8 +-
+> >  include/linux/swiotlb.h                       |   8 +-
+> >  include/trace/events/intel_iommu.h            | 106 ++++++
+> >  kernel/dma/direct.c                           |   2 +-
+> >  kernel/dma/swiotlb.c                          |  30 +-
+> >  10 files changed, 449 insertions(+), 36 deletions(-)
+> >  create mode 100644 drivers/iommu/intel-trace.c
+> >  create mode 100644 include/trace/events/intel_iommu.h
+> 
+> Applied, thanks.
 
-While we're at it, fix the license to plain "GPL".
-
-Signed-off-by: Nick Crews <ncrews@chromium.org>
----
- drivers/rtc/rtc-wilco-ec.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
-index 8ad4c4e6d557..0ccbf2dce832 100644
---- a/drivers/rtc/rtc-wilco-ec.c
-+++ b/drivers/rtc/rtc-wilco-ec.c
-@@ -110,8 +110,16 @@ static int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
- 	tm->tm_mday	= rtc.day;
- 	tm->tm_mon	= rtc.month - 1;
- 	tm->tm_year	= rtc.year + (rtc.century * 100) - 1900;
--	tm->tm_yday	= rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
- 
-+	if (rtc_valid_tm(tm)) {
-+		dev_warn(dev,
-+			 "Time computed from EC RTC is invalid: sec=%d, min=%d, hour=%d, mday=%d, mon=%d, year=%d",
-+			 tm->tm_sec, tm->tm_min, tm->tm_hour, tm->mday,
-+			 tm->mon, tm->year);
-+		return -EIO;
-+	}
-+
-+	tm->tm_yday = rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
- 	/* Don't compute day of week, we don't need it. */
- 	tm->tm_wday = -1;
- 
-@@ -188,5 +196,5 @@ module_platform_driver(wilco_ec_rtc_driver);
- 
- MODULE_ALIAS("platform:rtc-wilco-ec");
- MODULE_AUTHOR("Nick Crews <ncrews@chromium.org>");
--MODULE_LICENSE("GPL v2");
-+MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Wilco EC RTC driver");
--- 
-2.11.0
+Please un-apply the swiotlb until the WARN_ON gets fixed. Or alternatively
+squash the fix once that is done.
 
