@@ -2,65 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F41AEC90
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77DAFAEC95
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:03:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387711AbfIJOBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 10:01:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57444 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726634AbfIJOBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:01:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 60A59B71C;
-        Tue, 10 Sep 2019 14:01:09 +0000 (UTC)
-Date:   Tue, 10 Sep 2019 16:01:07 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "longman@redhat.com" <longman@redhat.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>
-Subject: Re: [RFC PATCH v2] mm: initialize struct pages reserved by
- ZONE_DEVICE driver.
-Message-ID: <20190910140107.GD2063@dhcp22.suse.cz>
-References: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
+        id S2387760AbfIJODR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 10:03:17 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:38026 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726263AbfIJODR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 10:03:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=FqKfQsiBOTyZitqzXjJVEKWxZ/2yB1mlJyy6Xco5aA4=; b=EVoil5AkVpuXllPLDdeqTzo5Lb
+        f/N1jzf74Y1+whpcnUaski9yXT9ZydIZ2AZaSb2lXz7uiuATX2ZhC4SYhgI2UwqoDTndjPpsmRnj1
+        zlWSy5nwH1bpyYvESKm08uHPWiebWUaDCIrxYWIrkFwxcwJNiC0hUZ4C6HqUwUv/0qgk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1i7gjY-0001NC-MR; Tue, 10 Sep 2019 16:03:04 +0200
+Date:   Tue, 10 Sep 2019 16:03:04 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     George McCollister <george.mccollister@gmail.com>
+Cc:     netdev@vger.kernel.org, Woojung Huh <woojung.huh@microchip.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Tristram Ha <Tristram.Ha@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Marek Vasut <marex@denx.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/3] net: dsa: microchip: add KSZ9477 I2C
+ driver
+Message-ID: <20190910140304.GA4683@lunn.ch>
+References: <20190910131836.114058-1-george.mccollister@gmail.com>
+ <20190910131836.114058-2-george.mccollister@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190910131836.114058-2-george.mccollister@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 06-09-19 08:09:52, Toshiki Fukasawa wrote:
-[...]
-> @@ -5856,8 +5855,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->  		if (!altmap)
->  			return;
+Hi George
+
+> +KSZ_REGMAP_TABLE(ksz9477, not_used, 16, 0, 0);
+> +
+> @@ -294,6 +294,8 @@ static inline void ksz_pwrite32(struct ksz_device *dev, int port, int offset,
+>  #define KSZ_SPI_OP_RD		3
+>  #define KSZ_SPI_OP_WR		2
 >  
-> -		if (start_pfn == altmap->base_pfn)
-> -			start_pfn += altmap->reserve;
->  		end_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
+> +#define swabnot_used(x)		0
 
-Who is actually setting reserve? This is is something really impossible
-to grep for in the kernle and git grep on altmap->reserve doesn't show
-anything AFAICS.
+> +
+>  #define KSZ_SPI_OP_FLAG_MASK(opcode, swp, regbits, regpad)		\
+>  	swab##swp((opcode) << ((regbits) + (regpad)))
 
-Btw. irrespective to this issue all three callers should be using
-pfn_to_online_page rather than pfn_to_page AFAICS. It doesn't really
-make sense to collect data for offline pfn ranges. They might be
-uninitialized even without zone device.
--- 
-Michal Hocko
-SUSE Labs
+There seems to be quite a lot of macro magic here which is not
+obvious. Can this be simplified or made more obvious?
+
+	 Andrew
