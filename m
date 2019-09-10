@@ -2,461 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 205C3AE8A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BCA7AE8B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389774AbfIJKvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 06:51:11 -0400
-Received: from mga11.intel.com ([192.55.52.93]:12122 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729493AbfIJKvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:51:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 03:51:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
-   d="scan'208";a="189305926"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 10 Sep 2019 03:51:07 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 3CD36F3; Tue, 10 Sep 2019 13:51:05 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] kernel.h: Split out mathematical helpers
-Date:   Tue, 10 Sep 2019 13:51:05 +0300
-Message-Id: <20190910105105.7714-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.23.0
+        id S2390321AbfIJKyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 06:54:38 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39760 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729511AbfIJKyh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 06:54:37 -0400
+Received: by mail-ot1-f65.google.com with SMTP id n7so17822597otk.6;
+        Tue, 10 Sep 2019 03:54:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=8ZMbUskOXgI25SOWpInQr+JY4OVqm269xolgAnTkx6o=;
+        b=EGSd4zC9zj4ozGWRafNcd7zQYF3M9VsWONRgl+QjdNIEM79+bKsCrFb17BtLyPmqkQ
+         CaqcRpp5eDXG9jH5V2QfkHtZpgiizobgVG/UxP9YujE6rzKCYTrFlRxVnwIVLSRV/UbK
+         JC54F9CvJcFFMjuNQj9TbNDvhX6hg4iz5/v7LyJNVgyh2NpImytRv2U1Wnv52PIMdyBb
+         UMwUWmUsBTDuIjnnoeTvotJasrZzMQcYztjoivFIuxjKa5FEaKUzxamI2/2JBSkPFBT3
+         4wyUcsZJkztw4ouOvsuPil5iuLNrXNoZ85Z9ZfO3p0ue5bOrxB/LdREdAYDUIltR/3Bn
+         RGGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8ZMbUskOXgI25SOWpInQr+JY4OVqm269xolgAnTkx6o=;
+        b=lQK89km0cuY0IBcu8OZYZR+rot3pZtUGikmlX/fV3Pjs+vdXDVSuWv04YfTcbiVZf4
+         mtajs8UrsjCyoBx6AeNs08XLMuRPrrp1JvCI7EaZAn726/qYDHWiGGw4YBW8/mE5mg6w
+         sXscow1M71JAXRSndho4p/Ap9Ila/zZlugZQapUYMFSNFtvT8DDtVrBbDkuBQv1yKi/M
+         Em96Bq1a5xFIObvK/5QruFmPoEHQqK8JkaebM6rxa8yiLmvCbUCgpkvjojADyz9m2nki
+         ra/LO6wdgrowl7L3e/s2BaQIbEXWkIAx5uReTGkC91FMz9r5SlTXUGGjMndPJsCJsqry
+         wcvg==
+X-Gm-Message-State: APjAAAV717JNiy91egyc8x7ZB83uBbdtxf5Ft3N6UPzmafUX9GA11y0H
+        B+3x9EnRoWTZ6hYxL1AXFNMJNGNUK2mWOMhoPZ0=
+X-Google-Smtp-Source: APXvYqyg34n5MHhPXpxUWiAatELovwJjnUreZtCpVAAiJWUlqu3+uQJg85oSoiYFctwHKQufK14w+RrlW1OXddsgws4=
+X-Received: by 2002:a9d:39b7:: with SMTP id y52mr430394otb.205.1568112876680;
+ Tue, 10 Sep 2019 03:54:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190830210139.7028-1-andrew.smirnov@gmail.com>
+In-Reply-To: <20190830210139.7028-1-andrew.smirnov@gmail.com>
+From:   Yang Li <pku.leo@gmail.com>
+Date:   Tue, 10 Sep 2019 11:54:25 +0100
+Message-ID: <CADRPPNSRv-WLCbhWmmbsyjaUD0v-_Au8utXDy1z8gx45TnwDwQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: imx8mq: Add CAAM node
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Shawn Guo <shawnguo@kernel.org>,
+        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        linux-crypto@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kernel.h is being used as a dump for all kinds of stuff for a long time.
-Here is the attempt to start cleaning it up by splitting out mathematical
-helpers.
+On Fri, Aug 30, 2019 at 10:05 PM Andrey Smirnov
+<andrew.smirnov@gmail.com> wrote:
+>
+> Add node for CAAM - Cryptographic Acceleration and Assurance Module.
+>
+> Signed-off-by: Horia Geant=C4=83 <horia.geanta@nxp.com>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- fs/nfs/callback_proc.c        |   1 +
- include/linux/bitops.h        |   3 +-
- include/linux/dcache.h        |   1 +
- include/linux/iommu-helper.h  |   1 +
- include/linux/kernel.h        | 143 --------------------------------
- include/linux/math.h          | 149 ++++++++++++++++++++++++++++++++++
- include/linux/rcu_node_tree.h |   2 +
- 7 files changed, 156 insertions(+), 144 deletions(-)
- create mode 100644 include/linux/math.h
+The patch itself looks good to me.
 
-diff --git a/fs/nfs/callback_proc.c b/fs/nfs/callback_proc.c
-index f39924ba050b..aa00d109600c 100644
---- a/fs/nfs/callback_proc.c
-+++ b/fs/nfs/callback_proc.c
-@@ -6,6 +6,7 @@
-  *
-  * NFSv4 callback procedures
-  */
-+#include <linux/math.h>
- #include <linux/nfs4.h>
- #include <linux/nfs_fs.h>
- #include <linux/slab.h>
-diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-index cf074bce3eb3..fbd4917603a0 100644
---- a/include/linux/bitops.h
-+++ b/include/linux/bitops.h
-@@ -3,9 +3,10 @@
- #define _LINUX_BITOPS_H
- #include <asm/types.h>
- #include <linux/bits.h>
-+#include <uapi/linux/kernel.h>
- 
- #define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
--#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
-+#define BITS_TO_LONGS(nr)	__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
- 
- extern unsigned int __sw_hweight8(unsigned int w);
- extern unsigned int __sw_hweight16(unsigned int w);
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 10090f11ab95..d0fe48715226 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/atomic.h>
- #include <linux/list.h>
-+#include <linux/math.h>
- #include <linux/rculist.h>
- #include <linux/rculist_bl.h>
- #include <linux/spinlock.h>
-diff --git a/include/linux/iommu-helper.h b/include/linux/iommu-helper.h
-index 70d01edcbf8b..16fcd3cdee92 100644
---- a/include/linux/iommu-helper.h
-+++ b/include/linux/iommu-helper.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/bug.h>
- #include <linux/kernel.h>
-+#include <linux/math.h>
- 
- static inline unsigned long iommu_device_max_index(unsigned long size,
- 						   unsigned long offset,
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 4fa360a13c1e..37882f591929 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -17,7 +17,6 @@
- #include <asm/byteorder.h>
- #include <asm/div64.h>
- #include <uapi/linux/kernel.h>
--#include <asm/div64.h>
- 
- #define STACK_MAGIC	0xdeadbeef
- 
-@@ -90,97 +89,9 @@
- 
- #define typeof_member(T, m)	typeof(((T*)0)->m)
- 
--#define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
--
--#define DIV_ROUND_DOWN_ULL(ll, d) \
--	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
--
--#define DIV_ROUND_UP_ULL(ll, d) \
--	DIV_ROUND_DOWN_ULL((unsigned long long)(ll) + (d) - 1, (d))
--
--#if BITS_PER_LONG == 32
--# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
--#else
--# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
--#endif
--
--/**
-- * roundup - round up to the next specified multiple
-- * @x: the value to up
-- * @y: multiple to round up to
-- *
-- * Rounds @x up to next multiple of @y. If @y will always be a power
-- * of 2, consider using the faster round_up().
-- */
--#define roundup(x, y) (					\
--{							\
--	typeof(y) __y = y;				\
--	(((x) + (__y - 1)) / __y) * __y;		\
--}							\
--)
--/**
-- * rounddown - round down to next specified multiple
-- * @x: the value to round
-- * @y: multiple to round down to
-- *
-- * Rounds @x down to next multiple of @y. If @y will always be a power
-- * of 2, consider using the faster round_down().
-- */
--#define rounddown(x, y) (				\
--{							\
--	typeof(x) __x = (x);				\
--	__x - (__x % (y));				\
--}							\
--)
--
--/*
-- * Divide positive or negative dividend by positive or negative divisor
-- * and round to closest integer. Result is undefined for negative
-- * divisors if the dividend variable type is unsigned and for negative
-- * dividends if the divisor variable type is unsigned.
-- */
--#define DIV_ROUND_CLOSEST(x, divisor)(			\
--{							\
--	typeof(x) __x = x;				\
--	typeof(divisor) __d = divisor;			\
--	(((typeof(x))-1) > 0 ||				\
--	 ((typeof(divisor))-1) > 0 ||			\
--	 (((__x) > 0) == ((__d) > 0))) ?		\
--		(((__x) + ((__d) / 2)) / (__d)) :	\
--		(((__x) - ((__d) / 2)) / (__d));	\
--}							\
--)
--/*
-- * Same as above but for u64 dividends. divisor must be a 32-bit
-- * number.
-- */
--#define DIV_ROUND_CLOSEST_ULL(x, divisor)(		\
--{							\
--	typeof(divisor) __d = divisor;			\
--	unsigned long long _tmp = (x) + (__d) / 2;	\
--	do_div(_tmp, __d);				\
--	_tmp;						\
--}							\
--)
--
--/*
-- * Multiplies an integer by a fraction, while avoiding unnecessary
-- * overflow or loss of precision.
-- */
--#define mult_frac(x, numer, denom)(			\
--{							\
--	typeof(x) quot = (x) / (denom);			\
--	typeof(x) rem  = (x) % (denom);			\
--	(quot * (numer)) + ((rem * (numer)) / (denom));	\
--}							\
--)
--
--
- #define _RET_IP_		(unsigned long)__builtin_return_address(0)
- #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
- 
--#define sector_div(a, b) do_div(a, b)
--
- /**
-  * upper_32_bits - return bits 32-63 of a number
-  * @n: the number we're accessing
-@@ -245,48 +156,6 @@ extern void __cant_sleep(const char *file, int line, int preempt_offset);
- 
- #define might_sleep_if(cond) do { if (cond) might_sleep(); } while (0)
- 
--/**
-- * abs - return absolute value of an argument
-- * @x: the value.  If it is unsigned type, it is converted to signed type first.
-- *     char is treated as if it was signed (regardless of whether it really is)
-- *     but the macro's return type is preserved as char.
-- *
-- * Return: an absolute value of x.
-- */
--#define abs(x)	__abs_choose_expr(x, long long,				\
--		__abs_choose_expr(x, long,				\
--		__abs_choose_expr(x, int,				\
--		__abs_choose_expr(x, short,				\
--		__abs_choose_expr(x, char,				\
--		__builtin_choose_expr(					\
--			__builtin_types_compatible_p(typeof(x), char),	\
--			(char)({ signed char __x = (x); __x<0?-__x:__x; }), \
--			((void)0)))))))
--
--#define __abs_choose_expr(x, type, other) __builtin_choose_expr(	\
--	__builtin_types_compatible_p(typeof(x),   signed type) ||	\
--	__builtin_types_compatible_p(typeof(x), unsigned type),		\
--	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
--
--/**
-- * reciprocal_scale - "scale" a value into range [0, ep_ro)
-- * @val: value
-- * @ep_ro: right open interval endpoint
-- *
-- * Perform a "reciprocal multiplication" in order to "scale" a value into
-- * range [0, @ep_ro), where the upper interval endpoint is right-open.
-- * This is useful, e.g. for accessing a index of an array containing
-- * @ep_ro elements, for example. Think of it as sort of modulus, only that
-- * the result isn't that of modulo. ;) Note that if initial input is a
-- * small value, then result will return 0.
-- *
-- * Return: a result based on @val in interval [0, @ep_ro).
-- */
--static inline u32 reciprocal_scale(u32 val, u32 ep_ro)
--{
--	return (u32)(((u64) val * ep_ro) >> 32);
--}
--
- #if defined(CONFIG_MMU) && \
- 	(defined(CONFIG_PROVE_LOCKING) || defined(CONFIG_DEBUG_ATOMIC_SLEEP))
- #define might_fault() __might_fault(__FILE__, __LINE__)
-@@ -487,18 +356,6 @@ extern int __kernel_text_address(unsigned long addr);
- extern int kernel_text_address(unsigned long addr);
- extern int func_ptr_is_kernel_text(void *ptr);
- 
--u64 int_pow(u64 base, unsigned int exp);
--unsigned long int_sqrt(unsigned long);
--
--#if BITS_PER_LONG < 64
--u32 int_sqrt64(u64 x);
--#else
--static inline u32 int_sqrt64(u64 x)
--{
--	return (u32)int_sqrt(x);
--}
--#endif
--
- extern void bust_spinlocks(int yes);
- extern int oops_in_progress;		/* If set, an oops, panic(), BUG() or die() is in progress */
- extern int panic_timeout;
-diff --git a/include/linux/math.h b/include/linux/math.h
-new file mode 100644
-index 000000000000..fa95172c1a5f
---- /dev/null
-+++ b/include/linux/math.h
-@@ -0,0 +1,149 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_MATH_H
-+#define _LINUX_MATH_H
-+
-+#include <uapi/linux/kernel.h>
-+#include <asm/div64.h>
-+
-+#define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
-+
-+#define DIV_ROUND_DOWN_ULL(ll, d) \
-+	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
-+
-+#define DIV_ROUND_UP_ULL(ll, d) \
-+	DIV_ROUND_DOWN_ULL((unsigned long long)(ll) + (d) - 1, (d))
-+
-+#if BITS_PER_LONG == 32
-+# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
-+#else
-+# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
-+#endif
-+
-+/**
-+ * roundup - round up to the next specified multiple
-+ * @x: the value to up
-+ * @y: multiple to round up to
-+ *
-+ * Rounds @x up to next multiple of @y. If @y will always be a power
-+ * of 2, consider using the faster round_up().
-+ */
-+#define roundup(x, y) (					\
-+{							\
-+	typeof(y) __y = y;				\
-+	(((x) + (__y - 1)) / __y) * __y;		\
-+}							\
-+)
-+/**
-+ * rounddown - round down to next specified multiple
-+ * @x: the value to round
-+ * @y: multiple to round down to
-+ *
-+ * Rounds @x down to next multiple of @y. If @y will always be a power
-+ * of 2, consider using the faster round_down().
-+ */
-+#define rounddown(x, y) (				\
-+{							\
-+	typeof(x) __x = (x);				\
-+	__x - (__x % (y));				\
-+}							\
-+)
-+
-+/*
-+ * Divide positive or negative dividend by positive or negative divisor
-+ * and round to closest integer. Result is undefined for negative
-+ * divisors if the dividend variable type is unsigned and for negative
-+ * dividends if the divisor variable type is unsigned.
-+ */
-+#define DIV_ROUND_CLOSEST(x, divisor)(			\
-+{							\
-+	typeof(x) __x = x;				\
-+	typeof(divisor) __d = divisor;			\
-+	(((typeof(x))-1) > 0 ||				\
-+	 ((typeof(divisor))-1) > 0 ||			\
-+	 (((__x) > 0) == ((__d) > 0))) ?		\
-+		(((__x) + ((__d) / 2)) / (__d)) :	\
-+		(((__x) - ((__d) / 2)) / (__d));	\
-+}							\
-+)
-+/*
-+ * Same as above but for u64 dividends. divisor must be a 32-bit
-+ * number.
-+ */
-+#define DIV_ROUND_CLOSEST_ULL(x, divisor)(		\
-+{							\
-+	typeof(divisor) __d = divisor;			\
-+	unsigned long long _tmp = (x) + (__d) / 2;	\
-+	do_div(_tmp, __d);				\
-+	_tmp;						\
-+}							\
-+)
-+
-+/*
-+ * Multiplies an integer by a fraction, while avoiding unnecessary
-+ * overflow or loss of precision.
-+ */
-+#define mult_frac(x, numer, denom)(			\
-+{							\
-+	typeof(x) quot = (x) / (denom);			\
-+	typeof(x) rem  = (x) % (denom);			\
-+	(quot * (numer)) + ((rem * (numer)) / (denom));	\
-+}							\
-+)
-+
-+#define sector_div(a, b) do_div(a, b)
-+
-+/**
-+ * abs - return absolute value of an argument
-+ * @x: the value.  If it is unsigned type, it is converted to signed type first.
-+ *     char is treated as if it was signed (regardless of whether it really is)
-+ *     but the macro's return type is preserved as char.
-+ *
-+ * Return: an absolute value of x.
-+ */
-+#define abs(x)	__abs_choose_expr(x, long long,				\
-+		__abs_choose_expr(x, long,				\
-+		__abs_choose_expr(x, int,				\
-+		__abs_choose_expr(x, short,				\
-+		__abs_choose_expr(x, char,				\
-+		__builtin_choose_expr(					\
-+			__builtin_types_compatible_p(typeof(x), char),	\
-+			(char)({ signed char __x = (x); __x<0?-__x:__x; }), \
-+			((void)0)))))))
-+
-+#define __abs_choose_expr(x, type, other) __builtin_choose_expr(	\
-+	__builtin_types_compatible_p(typeof(x),   signed type) ||	\
-+	__builtin_types_compatible_p(typeof(x), unsigned type),		\
-+	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
-+
-+/**
-+ * reciprocal_scale - "scale" a value into range [0, ep_ro)
-+ * @val: value
-+ * @ep_ro: right open interval endpoint
-+ *
-+ * Perform a "reciprocal multiplication" in order to "scale" a value into
-+ * range [0, @ep_ro), where the upper interval endpoint is right-open.
-+ * This is useful, e.g. for accessing a index of an array containing
-+ * @ep_ro elements, for example. Think of it as sort of modulus, only that
-+ * the result isn't that of modulo. ;) Note that if initial input is a
-+ * small value, then result will return 0.
-+ *
-+ * Return: a result based on @val in interval [0, @ep_ro).
-+ */
-+static inline u32 reciprocal_scale(u32 val, u32 ep_ro)
-+{
-+	return (u32)(((u64) val * ep_ro) >> 32);
-+}
-+
-+u64 int_pow(u64 base, unsigned int exp);
-+unsigned long int_sqrt(unsigned long);
-+
-+#if BITS_PER_LONG < 64
-+u32 int_sqrt64(u64 x);
-+#else
-+static inline u32 int_sqrt64(u64 x)
-+{
-+	return (u32)int_sqrt(x);
-+}
-+#endif
-+
-+#endif	/* _LINUX_MATH_H */
-diff --git a/include/linux/rcu_node_tree.h b/include/linux/rcu_node_tree.h
-index b8e094b125ee..78feb8ba7358 100644
---- a/include/linux/rcu_node_tree.h
-+++ b/include/linux/rcu_node_tree.h
-@@ -20,6 +20,8 @@
- #ifndef __LINUX_RCU_NODE_TREE_H
- #define __LINUX_RCU_NODE_TREE_H
- 
-+#include <linux/math.h>
-+
- /*
-  * Define shape of hierarchy based on NR_CPUS, CONFIG_RCU_FANOUT, and
-  * CONFIG_RCU_FANOUT_LEAF.
--- 
-2.23.0
+Acked-by: Li Yang <leoyang.li@nxp.com>
 
+> Cc: Cory Tusar <cory.tusar@zii.aero>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>
+> Shawn:
+>
+> Just a bit of a context: as per this thread
+> https://lore.kernel.org/linux-crypto/20190830131547.GA27480@gondor.apana.=
+org.au/
+> I am hoping I can get and Ack from you for this patch, so it can go
+> via cryptodev tree.
+
+The dts is describing the hardware and normally update to it shouldn't
+break old drivers.  Not sure if this time the dts change is depending
+on driver change again?   I remember previously arm-soc maintainer
+prefer to have dts changes merged with soc trees as a common practice.
+
+Regards,
+Leo
+
+>
+> Thanks,
+> Andrey Smirnov
+>
+>  arch/arm64/boot/dts/freescale/imx8mq.dtsi | 30 +++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mq.dtsi
+> index d09b808eff87..752d5a61878c 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> @@ -728,6 +728,36 @@
+>                                 status =3D "disabled";
+>                         };
+>
+> +                       crypto: crypto@30900000 {
+> +                               compatible =3D "fsl,sec-v4.0";
+> +                               #address-cells =3D <1>;
+> +                               #size-cells =3D <1>;
+> +                               reg =3D <0x30900000 0x40000>;
+> +                               ranges =3D <0 0x30900000 0x40000>;
+> +                               interrupts =3D <GIC_SPI 91 IRQ_TYPE_LEVEL=
+_HIGH>;
+> +                               clocks =3D <&clk IMX8MQ_CLK_AHB>,
+> +                                        <&clk IMX8MQ_CLK_IPG_ROOT>;
+> +                               clock-names =3D "aclk", "ipg";
+> +
+> +                               sec_jr0: jr@1000 {
+> +                                       compatible =3D "fsl,sec-v4.0-job-=
+ring";
+> +                                       reg =3D <0x1000 0x1000>;
+> +                                       interrupts =3D <GIC_SPI 105 IRQ_T=
+YPE_LEVEL_HIGH>;
+> +                               };
+> +
+> +                               sec_jr1: jr@2000 {
+> +                                       compatible =3D "fsl,sec-v4.0-job-=
+ring";
+> +                                       reg =3D <0x2000 0x1000>;
+> +                                       interrupts =3D <GIC_SPI 106 IRQ_T=
+YPE_LEVEL_HIGH>;
+> +                               };
+> +
+> +                               sec_jr2: jr@3000 {
+> +                                       compatible =3D "fsl,sec-v4.0-job-=
+ring";
+> +                                       reg =3D <0x3000 0x1000>;
+> +                                       interrupts =3D <GIC_SPI 114 IRQ_T=
+YPE_LEVEL_HIGH>;
+> +                               };
+> +                       };
+> +
+>                         i2c1: i2c@30a20000 {
+>                                 compatible =3D "fsl,imx8mq-i2c", "fsl,imx=
+21-i2c";
+>                                 reg =3D <0x30a20000 0x10000>;
+> --
+> 2.21.0
+>
+
+
+--=20
+- Leo
