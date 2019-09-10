@@ -2,65 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08C53AEBB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E748AEBD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:43:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732788AbfIJNhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 09:37:54 -0400
-Received: from mga17.intel.com ([192.55.52.151]:40813 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726613AbfIJNhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 09:37:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 06:37:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
-   d="scan'208";a="189345404"
-Received: from marshy.an.intel.com ([10.122.105.159])
-  by orsmga006.jf.intel.com with ESMTP; 10 Sep 2019 06:37:52 -0700
-From:   richard.gong@linux.intel.com
-To:     catalin.marinas@arm.com, will@kernel.org, shawnguo@kernel.org,
-        olof@lixom.net, mripard@kernel.org, bjorn.andersson@linaro.org,
-        arnd@arndb.de, dinguyen@kernel.org, marcin.juszkiewicz@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     richard.gong@linux.intel.com, Richard Gong <richard.gong@intel.com>
-Subject: [PATCHv1] arm64: defconfig: enable rsu driver
-Date:   Tue, 10 Sep 2019 08:49:46 -0500
-Message-Id: <1568123386-530-1-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1732944AbfIJNns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 09:43:48 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34109 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729662AbfIJNnr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 09:43:47 -0400
+Received: by mail-qk1-f194.google.com with SMTP id q203so17062903qke.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 06:43:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p6zPc+01Hqtj70FYQH87POktpG3lo+D/uPeGYtLeCvc=;
+        b=qynhaLo1pqxhcQFzhoOgbhx9rpE0iYbUvUQqeuy+KWoVXuXBPkPyG1GW93MBlA5DGL
+         eDy30KCgF2+K5xHl1UsiyKlon1l7V5rB6l15r1TC8pvuMSvy1KbkeI6eZVEVbAqQW+lS
+         qSDjgD/mr05ddUjsgDzs4dkZSJaOS3//8kFcif0hYkXEKoe+e0fYJ6vpS5CdBpu88uAC
+         wVIT9bFPj6g9qsjGFcy7OMFiL7p35Cl23KXFiwUFVJvWAemBXTtpc5VXSZaCVsYvfnrt
+         KRzoE63GjHhS/rbJIqQQE92Xn7qT35qm9t3l4NEwRLJ6ZpSxCFeizPB2sQBrlegS3G4/
+         C4eQ==
+X-Gm-Message-State: APjAAAWbW/LNTKqAOo9SdVsnPtO8aDb5kh8S5y3DpVm5EM7/SRNTrrMR
+        WZ09pdw0XE1uvBTEx5HnOimhmVSdDFjJ+HRmHxU=
+X-Google-Smtp-Source: APXvYqx63W2KmaLnbZnwoNzPoM9AmlM0KI9/P88LEJJ6BbifXaOvNlmx+AWjiX8rS0YSdxh0Xc6uuOzmtj/wUOvmmm8=
+X-Received: by 2002:ae9:ee06:: with SMTP id i6mr8806139qkg.3.1568123026492;
+ Tue, 10 Sep 2019 06:43:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190909202153.144970-1-arnd@arndb.de> <20190910074606.45k5m2pkztlpj4nj@willie-the-truck>
+ <CAK8P3a0O8bVLgMzyc9bXb8joy6CZevP4CVn5eEwEPVqAOutDEw@mail.gmail.com> <20190910132415.4j2ygxhuanihvzhx@willie-the-truck>
+In-Reply-To: <20190910132415.4j2ygxhuanihvzhx@willie-the-truck>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 10 Sep 2019 15:43:29 +0200
+Message-ID: <CAK8P3a3w6q7iUy2zYRhUqiWCR3o-L5s3BTYvXZMXb0zEa=Ydig@mail.gmail.com>
+Subject: Re: [PATCH] arm64: fix unreachable code issue with cmpxchg
+To:     Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Gong <richard.gong@intel.com>
+On Tue, Sep 10, 2019 at 3:24 PM Will Deacon <will@kernel.org> wrote:
+> On Tue, Sep 10, 2019 at 10:04:24AM +0200, Arnd Bergmann wrote:
+> > On Tue, Sep 10, 2019 at 9:46 AM Will Deacon <will@kernel.org> wrote:
+> > - In theory, CONFIG_OPTIMIZE_INLINING is the right thing to do -- the compilers
+> >   also make some particularly bad decisions around inlining when each inline
+> >   turns into an __always_inline, as has been the case in Linux for a long time.
+> >   I think in most cases, we get better object code with CONFIG_OPTIMIZE_INLINING
+> >   and in the cases where this is worse, it may be better to fix the compiler.
+> >   The new "asm_inline"  macro should also help with that.
+>
+> Sure, in theory, but it looks like there isn't a single arm64 compiler out
+> there which gets it right.
 
-Enable Intel Stratix10 Remote System Update (RSU) driver
+I don't see anything architecture specific in here. When the option was
+made generic instead of x86 specific, I fixed a ton of bugs that showed
+up all over the place. If we don't want it on arm64, I'd suggest making
+it a per-architecture opt-in instead of an opt-out.
 
-The Intel Remote System Update (RSU) driver provides a way for customers
-to update the boot configuration of a Intel Stratix 10 SoC device with
-significantly reduced risk of corrupting the bitstream storage and
-bricking the system.
+> >
+> >     | commit 4f81c5350b44bcc501ab6f8a089b16d064b4d2f6
+> >     | Author: Jeff Dike <jdike@addtoit.com>
+> >     | Date:   Mon Jul 7 13:36:56 2008 -0400
+> >     |
+> >     |     [UML] fix gcc ICEs and unresolved externs
+> >     [...]
+> >     |    This patch reintroduces unit-at-a-time for gcc >= 4.0,
+> > bringing back the
+> >     |    possibility of Uli's crash.  If that happens, we'll debug it.
+> >
+> >     it's still default-off and thus opt-in.
+>
+> This appears to be fixing an ICE, whereas the issue reported recently for
+> arm64 gcc was silent miscompilation of atomics in some cases. Unfortunately,
+> I can't seem to find the thread :/ Mark, you were on that one too, right?
 
-Signed-off-by: Richard Gong <richard.gong@intel.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Sorry, that reference was unclear, I meant the text for commit 3f9b5cc01856,
+which in turn contains a citation of the earlier 4f81c5350b44bc commit.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8c7b664..7325115 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -90,6 +90,7 @@ CONFIG_ARM_TEGRA186_CPUFREQ=y
- CONFIG_ARM_SCPI_PROTOCOL=y
- CONFIG_RASPBERRYPI_FIRMWARE=y
- CONFIG_INTEL_STRATIX10_SERVICE=y
-+CONFIG_INTEL_STRATIX10_RSU=m
- CONFIG_TI_SCI_PROTOCOL=y
- CONFIG_EFI_CAPSULE_LOADER=y
- CONFIG_IMX_SCU=y
--- 
-2.7.4
+> > - The inlining decisions of gcc and clang are already very different, and
+> >    the bugs we are finding around that are much more common than
+> >    the difference between CONFIG_OPTIMIZE_INLINING=y/n on a
+> >    given compiler.
+>
+> Sorry, not sure that you're getting at here.
+>
+> Anyway, the second version of your patch looks fine, but I would still
+> prefer to go the extra mile and disable CONFIG_OPTIMIZE_INLINING altogether
+> given that I don't think it's a safe option to enable for us.
 
+The point is that function inlining frequently causes all kinds of problems
+when code was written in a way that is not entirely reproducible but
+depends on the behavior of a particular implementation. I've fixed
+lots of bugs based on any of these:
+
+- gcc-4.0 and higher started ignoring 'inline' without
+  __attribute__((always_inline)), so a workaround got applied
+  in 2.6.26, and this turned into CONFIG_OPTIMIZE_INLINING=n
+  later
+- gcc -O2 makes different decisions compared to -Os and -O3,
+  which is an endless source of "uninitialized variable" warnings
+  and similar problems
+- Some configuration options like KASAN grow the code to result
+  in less inlining
+- clang and gcc behave completely differently
+- gcc is traditionally bad at guessing the size of inline assembly
+  to make a good decision
+- newer compilers tend to get better at identifying which functions
+  benefit from inlining, which changes the balance
+
+CONFIG_OPTIMIZE_INLINING clearly adds to that mess, but it's
+not the worst part. The only real solution tends to be to write
+portable and correct code rather than making assumptions
+about compiler behavior.
+
+    Arnd
