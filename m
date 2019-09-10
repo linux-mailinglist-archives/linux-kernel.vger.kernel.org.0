@@ -2,121 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D604AE9B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:57:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6481AE9D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391152AbfIJL4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 07:56:45 -0400
-Received: from mx.socionext.com ([202.248.49.38]:18767 "EHLO mx.socionext.com"
+        id S1733154AbfIJL5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 07:57:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51316 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388099AbfIJL4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:56:43 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 10 Sep 2019 20:56:41 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 723BB605F8;
-        Tue, 10 Sep 2019 20:56:41 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 10 Sep 2019 20:56:41 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 4F5B740357;
-        Tue, 10 Sep 2019 20:56:41 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 24B391204AA;
-        Tue, 10 Sep 2019 20:56:41 +0900 (JST)
-Date:   Tue, 10 Sep 2019 20:56:40 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH] reset: uniphier-glue: Add Pro5 USB3 support
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <1568101695.3062.1.camel@pengutronix.de>
-References: <1568080527-1767-1-git-send-email-hayashi.kunihiko@socionext.com> <1568101695.3062.1.camel@pengutronix.de>
-Message-Id: <20190910205640.6ABD.4A936039@socionext.com>
+        id S1725818AbfIJL5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 07:57:46 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E5FD418EF684;
+        Tue, 10 Sep 2019 11:57:45 +0000 (UTC)
+Received: from asgard.redhat.com (ovpn-112-63.ams2.redhat.com [10.36.112.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 241D819C78;
+        Tue, 10 Sep 2019 11:57:37 +0000 (UTC)
+Date:   Tue, 10 Sep 2019 12:57:11 +0100
+From:   Eugene Syromiatnikov <esyr@redhat.com>
+To:     linux-kernel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH] fork: fail on non-zero higher 32 bits of args.exit_signal
+Message-ID: <20190910115711.GA3755@asgard.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Tue, 10 Sep 2019 11:57:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+Previously, higher 32 bits of exit_signal fields were lost when
+copied to the kernel args structure (that uses int as a type for the
+respective field).  Fail with EINVAL if these are set as it looks like
+there's no sane reason to accept them.
 
-On Tue, 10 Sep 2019 09:48:15 +0200 <p.zabel@pengutronix.de> wrote:
+* kernel/fork.c (copy_clone_args_from_user): Fail with -EINVAL if
+args.exit_signal converted to unsigned int is not equal to the original
+value.
 
-> Hi Kunihiko,
-> 
-> On Tue, 2019-09-10 at 10:55 +0900, Kunihiko Hayashi wrote:
-> > Pro5 SoC has same scheme of USB3 reset as Pro4, so the data for Pro5 is
-> > equivalent to Pro4.
-> > 
-> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> 
-> If it is exactly the same, you could keep using the same compatible:
-
-This driver is derived from reset-simple, so the method to control reset
-in the glue block is the same for each SoC.
-
-And both Pro4 and Pro5 need same parent clock and reset, so the data for
-these SoCs refer same parent clock names and parent reset names.
-
-However, since the glue block itself can be different, I think that
-compatible string should be distinguished for each SoC.
-
-For example, "pxs2-usb3-reset", "ld20-usb3-reset" and "pxs3-usb-reset"
-in this driver are distinguished for the same reason.
-
-Thank you,
-
-> 
-> > ---
-> >  Documentation/devicetree/bindings/reset/uniphier-reset.txt | 5 +++--
-> >  drivers/reset/reset-uniphier-glue.c                        | 4 ++++
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/reset/uniphier-reset.txt b/Documentation/devicetree/bindings/reset/uniphier-reset.txt
-> > index ea00517..e320a8c 100644
-> > --- a/Documentation/devicetree/bindings/reset/uniphier-reset.txt
-> > +++ b/Documentation/devicetree/bindings/reset/uniphier-reset.txt
-> > @@ -130,6 +130,7 @@ this layer. These clocks and resets should be described in each property.
-> >  Required properties:
-> >  - compatible: Should be
-> >      "socionext,uniphier-pro4-usb3-reset" - for Pro4 SoC USB3
-> > +    "socionext,uniphier-pro5-usb3-reset" - for Pro5 SoC USB3
-> 
-> +    "socionext,uniphier-pro5-usb3-reset", "socionext,uniphier-pro4-usb3-reset" - for Pro5 SoC USB3
-> 
-> [...]
-> > diff --git a/drivers/reset/reset-uniphier-glue.c b/drivers/reset/reset-uniphier-glue.c
-> > index a45923f..2b188b3bb 100644
-> > --- a/drivers/reset/reset-uniphier-glue.c
-> > +++ b/drivers/reset/reset-uniphier-glue.c
-> > @@ -141,6 +141,10 @@ static const struct of_device_id uniphier_glue_reset_match[] = {
-> >  		.data = &uniphier_pro4_data,
-> >  	},
-> >  	{
-> > +		.compatible = "socionext,uniphier-pro5-usb3-reset",
-> > +		.data = &uniphier_pro4_data,
-> > +	},
-> > +	{
-> >  		.compatible = "socionext,uniphier-pxs2-usb3-reset",
-> >  		.data = &uniphier_pxs2_data,
-> >  	},
-> 
-> And this change would not be necessary.
-> 
-> regards
-> Philipp
-
+Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
 ---
-Best Regards,
-Kunihiko Hayashi
+ kernel/fork.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 2852d0e..fcbc4d5 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2562,6 +2562,9 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 	if (copy_from_user(&args, uargs, size))
+ 		return -EFAULT;
+ 
++	if (unlikely(((unsigned int)args.exit_signal) != args.exit_signal))
++		return -EINVAL;
++
+ 	*kargs = (struct kernel_clone_args){
+ 		.flags		= args.flags,
+ 		.pidfd		= u64_to_user_ptr(args.pidfd),
+-- 
+2.1.4
 
