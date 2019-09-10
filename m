@@ -2,105 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05EB8AED90
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9CAAED91
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:46:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393221AbfIJOqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 10:46:19 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42673 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfIJOqT (ORCPT
+        id S2403889AbfIJOqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 10:46:36 -0400
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:8784 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726060AbfIJOqf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:46:19 -0400
-Received: from [148.69.85.38] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1i7hPM-0004H9-Dd; Tue, 10 Sep 2019 14:46:16 +0000
-Date:   Tue, 10 Sep 2019 16:46:15 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
+        Tue, 10 Sep 2019 10:46:35 -0400
+Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8AEfLi0008121;
+        Tue, 10 Sep 2019 14:46:23 GMT
+Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2uxa9hk75j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Sep 2019 14:46:23 +0000
+Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
+        by g2t2353.austin.hpe.com (Postfix) with ESMTP id 3051C9C;
+        Tue, 10 Sep 2019 14:46:22 +0000 (UTC)
+Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 5508)
+        id 6C884201FCF28; Tue, 10 Sep 2019 09:46:21 -0500 (CDT)
+Message-Id: <20190910144610.752086970@stormcage.eag.rdlabs.hpecorp.net>
+References: <20190910144609.909602978@stormcage.eag.rdlabs.hpecorp.net>
+User-Agent: quilt/0.46-1
+Date:   Tue, 10 Sep 2019 09:46:16 -0500
+From:   Mike Travis <mike.travis@hpe.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCH] fork: fail on non-zero higher 32 bits of args.exit_signal
-Message-ID: <20190910144614.qsisdvm46vlc4bl7@wittgenstein>
-References: <20190910115711.GA3755@asgard.redhat.com>
- <20190910124440.GA25647@redhat.com>
- <20190910130935.jxqxbt7wop3ostob@wittgenstein>
- <20190910131048.e7xr52az2zej4p4v@wittgenstein>
- <20190910132701.s5o5nidewyo5zl7h@wittgenstein>
- <20190910143943.GC25647@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190910143943.GC25647@redhat.com>
-User-Agent: NeoMutt/20180716
+        Borislav Petkov <bp@alien8.de>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Hedi Berriche <hedi.berriche@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        Justin Ernst <justin.ernst@hpe.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 7/8] x86/platform/uv: Check EFI Boot to set reboot type
+Content-Disposition: inline; filename=check-efi-boot
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-10_10:2019-09-10,2019-09-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 clxscore=1015 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1909100142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 04:39:44PM +0200, Oleg Nesterov wrote:
-> On 09/10, Christian Brauner wrote:
-> > On Tue, Sep 10, 2019 at 03:10:48PM +0200, Christian Brauner wrote:
-> > > On Tue, Sep 10, 2019 at 03:09:35PM +0200, Christian Brauner wrote:
-> > > > On Tue, Sep 10, 2019 at 02:44:41PM +0200, Oleg Nesterov wrote:
-> > > > > On 09/10, Eugene Syromiatnikov wrote:
-> > > > > >
-> > > > > > --- a/kernel/fork.c
-> > > > > > +++ b/kernel/fork.c
-> > > > > > @@ -2562,6 +2562,9 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
-> > > > > >  	if (copy_from_user(&args, uargs, size))
-> > > > > >  		return -EFAULT;
-> > > > > >  
-> > > > > > +	if (unlikely(((unsigned int)args.exit_signal) != args.exit_signal))
-> > > > > > +		return -EINVAL;
-> > > > > 
-> > > > > Hmm. Unless I am totally confused you found a serious bug...
-> > > > > 
-> > > > > Without CLONE_THREAD/CLONE_PARENT copy_process() blindly does
-> > > > > 
-> > > > > 	p->exit_signal = args->exit_signal;
-> > > > > 
-> > > > > the valid_signal(sig) check in do_notify_parent() mostly saves us, but we
-> > > > > must not allow child->exit_signal < 0, if nothing else this breaks
-> > > > > thread_group_leader().
-> > > > > 
-> > > > > And afaics this patch doesn't fix this? I think we need the valid_signal()
-> > > > > check...
-> > > > 
-> > > > Thanks for sending this patch so quickly after our conversation
-> > > > yesterday, Eugene!
-> > > > We definitely want valid_signal() to verify the signal is ok.
-> > 
-> > So we could do your check in copy_clone_args_from_user(), and then we do
-> > another valid_signal() check in clone3_args_valid()? We could do the
-> > latter in copy_clone_args_from_user() too but it's nicer to do it along
-> > the other checks in clone3_args_valid().
-> 
-> I am fine either way. Sure, we can add valid_signal() into clone3_args_valid(),
-> but then I'd ask to simplify the "overflow" check above. Something like
-> 
-> 	if (args.exit_signal > UINT_MAX)
-> 		return -EINVAL;
-> 
-> looks much more readable to me.
-> 
-> 
-> Or we can simply do
-> 
-> 	if (args.exit_signal & ~((u64)CSIGNAL))
-> 		return -EINVAL;
-> 
-> in copy_clone_args_from_user() and forget about all problems.
+Change to checking for EFI Boot type from previous check on if this
+is a KDUMP kernel.  This allows for KDUMP kernels that can handle
+EFI reboots.
 
-Both are fine with me. The latter might have the advantage that we catch
-both legacy clone and clone3. I think Eugene prefers this as well.
+Signed-off-by: Mike Travis <mike.travis@hpe.com>
+Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
+Reviewed-by: Dimitri Sivanich <dimitri.sivanich@hpe.com>
+---
+ arch/x86/kernel/apic/x2apic_uv_x.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-Christian
+--- linux.orig/arch/x86/kernel/apic/x2apic_uv_x.c
++++ linux/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -15,6 +15,7 @@
+ #include <linux/export.h>
+ #include <linux/pci.h>
+ #include <linux/acpi.h>
++#include <linux/efi.h>
+ 
+ #include <asm/e820/api.h>
+ #include <asm/uv/uv_mmrs.h>
+@@ -1483,6 +1484,14 @@ static void __init build_socket_tables(v
+ 	}
+ }
+ 
++/* Check which reboot to use */
++static void check_efi_reboot(void)
++{
++	/* If EFI reboot not available, use ACPI reboot */
++	if (!efi_enabled(EFI_BOOT))
++		reboot_type = BOOT_ACPI;
++}
++
+ /* Setup user proc fs files */
+ static int proc_hubbed_show(struct seq_file *file, void *data)
+ {
+@@ -1571,6 +1580,8 @@ static __init int uv_system_init_hubless
+ 	if (rc >= 0)
+ 		uv_setup_proc_files(1);
+ 
++	check_efi_reboot();
++
+ 	return rc;
+ }
+ 
+@@ -1704,12 +1715,7 @@ static void __init uv_system_init_hub(vo
+ 	/* Register Legacy VGA I/O redirection handler: */
+ 	pci_register_set_vga_state(uv_set_vga_state);
+ 
+-	/*
+-	 * For a kdump kernel the reset must be BOOT_ACPI, not BOOT_EFI, as
+-	 * EFI is not enabled in the kdump kernel:
+-	 */
+-	if (is_kdump_kernel())
+-		reboot_type = BOOT_ACPI;
++	check_efi_reboot();
+ }
+ 
+ /*
+
+-- 
+
