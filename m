@@ -2,87 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F19AEB44
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F0BAEB4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:19:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731493AbfIJNRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 09:17:35 -0400
-Received: from mx.kolabnow.com ([95.128.36.42]:62004 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfIJNRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 09:17:34 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTP id E54CA40434;
-        Tue, 10 Sep 2019 15:17:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:message-id:date:date:subject:subject
-        :from:from:received:received:received; s=dkim20160331; t=
-        1568121451; x=1569935852; bh=a5pnmPm8nIxY3zzJSRLdaWsreRl6h7wiA3V
-        rT0lIx44=; b=o+8f00MBmpBBxslrWIFlLHd/L7TyhEz6fLH3x+Ycf7F0hmyzpuC
-        ZkLuE192s7eahT1OVeav3IBNpT8wfvXM0nYR3FF9ilCd5FqBIvbMAQyruLaGaAsD
-        QCPNdZNmDorqeZaJtn7SZUN4nvy/wRDRrD3QVKW9mh9L/yQVP5Mr/yUtNeKjn87h
-        uBea4ubwinzXI7yLW8erF5/9E1Uyxd8blmOerQD8kogIXxpti6ub+DDAe9sAY/bu
-        0zEz4T300MdxeInU3povnM3qE96Rp5zVPHRM5HhGKKumCewrgXcpCDCXcR58WpBf
-        PfRf9TqsIJWKNOXtVlxxqZL4E165Hm7bTxbAQ3ohrx7o4tfGn4T3kgOyBGQQLDMe
-        5kLXuoJ0yqR36uwHiD1ClxNqtIa0sJzF3T1RcXyHs9M9EE1ABt6yeOQYcTGcJQW+
-        8IXIjQnjSUF3XUGZ9SEr4t502bX0fHRCia/32w/FGJkkzYI7PCIr3/lSuSf1CDQW
-        skZ51+uPClhupdoaSiefXdD28WikX2hPX4rCOR3hYA7jzQWdGrQSoUjjj/P9rDub
-        KCoV2fCfnyCGBcFzVdfx0jWRda8AyGbvOvtkeL8QSh8qnDKiIdwQG6H3E9BPnDNx
-        qtS/n3xfklkxE/Maa/PlO/EzBjNqw/wBDOr+OzW3nLpUrdFEfiqhrTxg=
-X-Virus-Scanned: amavisd-new at mykolab.com
-X-Spam-Flag: NO
-X-Spam-Score: -1.9
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 tagged_above=-10 required=5
-        tests=[BAYES_00=-1.9] autolearn=ham autolearn_force=no
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out003.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id mG2EcvuXIwJl; Tue, 10 Sep 2019 15:17:31 +0200 (CEST)
-Received: from int-mx001.mykolab.com (unknown [10.9.13.1])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTPS id 5CCF8403A2;
-        Tue, 10 Sep 2019 15:17:31 +0200 (CEST)
-Received: from ext-subm002.mykolab.com (unknown [10.9.6.2])
-        by int-mx001.mykolab.com (Postfix) with ESMTPS id 008561B2B;
-        Tue, 10 Sep 2019 15:17:30 +0200 (CEST)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] doc: replace IFF abbreviation  with 'if and only if'
-Date:   Tue, 10 Sep 2019 15:17:29 +0200
-Message-ID: <4450664.oKrbQx5eeJ@harkonnen>
-In-Reply-To: <20190910063510.GA4267@infradead.org>
-References: <20190907105116.19183-1-federico.vaga@vaga.pv.it> <20190910063510.GA4267@infradead.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1731712AbfIJNTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 09:19:07 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35955 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbfIJNTH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 09:19:07 -0400
+Received: by mail-io1-f67.google.com with SMTP id b136so37416420iof.3;
+        Tue, 10 Sep 2019 06:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3NoG0vBNoSx4CrvuLpw+01gKlsQbKo/T85d3WjtfkAg=;
+        b=AaKJ46g2++b8dR0pLMw/fVSQKFnPcvgkEe6d2fnb7QfYpXf0A6Dc4rdgAiZwng7fBy
+         6iyXBoAKffc48qaVpMHaSgdYJ/L5QY4ngzV2OCgiGQz3700DkLpPpXP9PWu5Vn0Ddrbu
+         icprOUAZePHNxJY8BpQjCi6LpvcfyAoW1jYjmDzuTrjaEuA4f68JT76KsZ9a4jN5wTm0
+         ksnBR+6WJcU72Ii0G/8L1uima6qa9Mjp4sxCAWJuG/lq71Ivapli5PKzZheANiGoWJ6P
+         9O6cDLdJAVLwE2zpqz0RcqeEgFE+suorqjE1VQj5BHsVSqz2Dopj1LVmeaTFpkTNUwuT
+         O8Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3NoG0vBNoSx4CrvuLpw+01gKlsQbKo/T85d3WjtfkAg=;
+        b=kubkDKA+CpeVo7EMq3qCQxsl51ui8tFvPbB2POp9aimVYhfs3TrKijtzF2dtO/VOuo
+         wWRBqs9sbAmY/naN1IIZZ3Jvh37SItGVIWrSoeymSvo6AcyyQ1ZKfVYNY/zc+ywIkEVv
+         UHTlM0xrngaTef6tutsPJ0pf1gNtJqT/GSERUmhnihmzYEk85NlkEGb63eL3IE+Bylft
+         +W7P8K7OE31BBFlUjUOvuNlNfL3HQP3o8yEJcM673U+kpjXyZjiMdVlF/+xLweBnQzWV
+         wfkOQq2KKvSal+/tuWxkKO4XBJVPJL+AEIEtKt5/lgV329DHlIpwoLisqjHLsTiW4t7O
+         0T4w==
+X-Gm-Message-State: APjAAAWBbDmtxZqTL9tXy0e2E51uHhglcFYctAgj6SI6rLXCKsuW3kxS
+        5ISL06FcBLjQqaqm4GSHfMqCHhaJFg==
+X-Google-Smtp-Source: APXvYqyCuj0U/E4bD0SfA1DH2xQRTO/LWC8u2d9bDME7fG2ojEwL3WcSf3ejelZRkrYEpW/dR9cgjg==
+X-Received: by 2002:a5d:8908:: with SMTP id b8mr864488ion.237.1568121546514;
+        Tue, 10 Sep 2019 06:19:06 -0700 (PDT)
+Received: from threadripper.novatech-llc.local ([216.21.169.52])
+        by smtp.gmail.com with ESMTPSA id f7sm13642740ioc.31.2019.09.10.06.19.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Sep 2019 06:19:05 -0700 (PDT)
+From:   George McCollister <george.mccollister@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Woojung Huh <woojung.huh@microchip.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Tristram Ha <Tristram.Ha@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Marek Vasut <marex@denx.de>, linux-kernel@vger.kernel.org,
+        George McCollister <george.mccollister@gmail.com>
+Subject: [PATCH net-next v2 0/3] add ksz9567 with I2C support to ksz9477 driver
+Date:   Tue, 10 Sep 2019 08:18:33 -0500
+Message-Id: <20190910131836.114058-1-george.mccollister@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, September 10, 2019 8:35:10 AM CEST Christoph Hellwig wrote:
-> On Sat, Sep 07, 2019 at 12:51:16PM +0200, Federico Vaga wrote:
-> > In a normal piece of text the use of 'iff' does not guarantee a correct
-> > interpretation because it is easy to confuse it for a typo (if or iff?).
-> > 
-> > I believe that IFF should not be used outside a logical/mathematical
-> > expression. For this reason with this patch I am replacing 'iff' with
-> > 'if an only if' in text, and I am leaving it as it is in logical formulae.
-> 
-> Hell no.  If you want to avoid the usage in your own docs please go for
-> it, but as seen in your patch we commonly use 
+Resurrect KSZ9477 I2C driver support patch originally sent to the list
+by Tristram Ha and resolve outstanding issues. It now works as similarly to
+the ksz9477 SPI driver as possible, using the same regmap macros.
 
-The usage of 'iff' is as common as the usage of  'if and only if'
+Add support for ksz9567 to the ksz9477 driver (tested on a board with
+ksz9567 connected via I2C).
 
-> and that is a good thing
-> as it brings the information across  in a very compact way.
+Remove NET_DSA_TAG_KSZ_COMMON since it's not needed.
 
-It is not a piece of code that has to run on an embedded system and it needs 
-to be compact. It is a piece of text that people must understand.
+Changes since v1:
+Put ksz9477_i2c.c includes in alphabetical order.
+Added Reviewed-Bys.
 
-Generally speaking compactness does not bring any value if then the text is 
-unclear or open to interpretation.
+George McCollister (2):
+  net: dsa: microchip: add ksz9567 to ksz9477 driver
+  net: dsa: microchip: remove NET_DSA_TAG_KSZ_COMMON
 
+Tristram Ha (1):
+  net: dsa: microchip: add KSZ9477 I2C driver
+
+ drivers/net/dsa/microchip/Kconfig       |   7 +++
+ drivers/net/dsa/microchip/Makefile      |   1 +
+ drivers/net/dsa/microchip/ksz9477.c     |   9 +++
+ drivers/net/dsa/microchip/ksz9477_i2c.c | 101 ++++++++++++++++++++++++++++++++
+ drivers/net/dsa/microchip/ksz9477_spi.c |   1 +
+ drivers/net/dsa/microchip/ksz_common.h  |   2 +
+ net/dsa/Kconfig                         |   9 +--
+ net/dsa/Makefile                        |   2 +-
+ 8 files changed, 124 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/net/dsa/microchip/ksz9477_i2c.c
+
+-- 
+2.11.0
 
