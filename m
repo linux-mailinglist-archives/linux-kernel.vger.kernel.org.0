@@ -2,79 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 551FBAE402
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 08:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85357AE416
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 08:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404667AbfIJGuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 02:50:37 -0400
-Received: from mx1.emlix.com ([188.40.240.192]:33030 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729518AbfIJGuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 02:50:37 -0400
-X-Greylist: delayed 573 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Sep 2019 02:50:36 EDT
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id B189A5F8BE;
-        Tue, 10 Sep 2019 08:41:01 +0200 (CEST)
-From:   Rolf Eike Beer <eb@emlix.com>
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org
-Subject: [PATCH v3][RESEND] scripts: use pkg-config to locate libcrypto
-Date:   Tue, 10 Sep 2019 08:41:01 +0200
-Message-ID: <2010898.sAvVGPNi7W@devpool35>
-Organization: emlix GmbH
-In-Reply-To: <20538915.Wj2CyUsUYa@devpool35>
-References: <20538915.Wj2CyUsUYa@devpool35>
+        id S2406516AbfIJG5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 02:57:35 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:53037 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729634AbfIJG5e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 02:57:34 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1i7a5h-0007Cf-NK; Tue, 10 Sep 2019 08:57:29 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 138A21C0714;
+        Tue, 10 Sep 2019 08:57:29 +0200 (CEST)
+Date:   Tue, 10 Sep 2019 06:57:28 -0000
+From:   "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: core/objtool] objtool: Clobber user CFLAGS variable
+Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <83a276df209962e6058fcb6c615eef9d401c21bc.1567121311.git.jpoimboe@redhat.com>
+References: <83a276df209962e6058fcb6c615eef9d401c21bc.1567121311.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Message-ID: <156809864897.24167.16002808408492392040.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Otherwise build fails if the headers are not in the default location. While at
-it also ask pkg-config for the libs, with fallback to the existing value.
+The following commit has been merged into the core/objtool branch of tip:
 
-Signed-off-by: Rolf Eike Beer <eb@emlix.com>
-Cc: stable@vger.kernel.org
+Commit-ID:     f73b3cc39c84220e6dccd463b5c8279b03514646
+Gitweb:        https://git.kernel.org/tip/f73b3cc39c84220e6dccd463b5c8279b03514646
+Author:        Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate:    Thu, 29 Aug 2019 18:28:49 -05:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 10 Sep 2019 08:49:52 +02:00
+
+objtool: Clobber user CFLAGS variable
+
+If the build user has the CFLAGS variable set in their environment,
+objtool blindly appends to it, which can cause unexpected behavior.
+
+Clobber CFLAGS to ensure consistent objtool compilation behavior.
+
+Reported-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Tested-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/83a276df209962e6058fcb6c615eef9d401c21bc.1567121311.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- scripts/Makefile | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ tools/objtool/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/Makefile b/scripts/Makefile
-index 16bcb8087899..1715adcd8f81 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -8,7 +8,11 @@
- # conmakehash:   Create chartable
- # conmakehash:	 Create arrays for initializing the kernel console tables
+diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+index 8815823..20f67fc 100644
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -35,7 +35,7 @@ INCLUDES := -I$(srctree)/tools/include \
+ 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
+ 	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
+ WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
+-CFLAGS   += -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES) $(LIBELF_FLAGS)
++CFLAGS   := -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES) $(LIBELF_FLAGS)
+ LDFLAGS  += $(LIBELF_LIBS) $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
  
-+PKG_CONFIG?= pkg-config
-+
- HOST_EXTRACFLAGS += -I$(srctree)/tools/include
-+CRYPTO_LIBS = $(shell $(PKG_CONFIG) --libs libcrypto 2> /dev/null || echo -lcrypto)
-+CRYPTO_CFLAGS = $(shell $(PKG_CONFIG) --cflags libcrypto 2> /dev/null)
- 
- hostprogs-$(CONFIG_BUILD_BIN2C)  += bin2c
- hostprogs-$(CONFIG_KALLSYMS)     += kallsyms
-@@ -23,8 +27,9 @@ hostprogs-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE) += insert-sys-cert
- 
- HOSTCFLAGS_sortextable.o = -I$(srctree)/tools/include
- HOSTCFLAGS_asn1_compiler.o = -I$(srctree)/include
--HOSTLDLIBS_sign-file = -lcrypto
--HOSTLDLIBS_extract-cert = -lcrypto
-+HOSTLDLIBS_sign-file = $(CRYPTO_LIBS)
-+HOSTCFLAGS_extract-cert.o = $(CRYPTO_CFLAGS)
-+HOSTLDLIBS_extract-cert = $(CRYPTO_LIBS)
- 
- always		:= $(hostprogs-y) $(hostprogs-m)
- 
--- 
-2.23.0
-
-
-
-
+ # Allow old libelf to be used:
