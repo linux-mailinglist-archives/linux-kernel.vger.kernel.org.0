@@ -2,106 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5BFEAE69B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 825DAAE6A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389365AbfIJJTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 05:19:36 -0400
-Received: from smtp3.goneo.de ([85.220.129.37]:33404 "EHLO smtp3.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729439AbfIJJTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 05:19:35 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 0247F23FDF8;
-        Tue, 10 Sep 2019 11:19:32 +0200 (CEST)
-X-Virus-Scanned: by goneo
-X-Spam-Flag: NO
-X-Spam-Score: -3.035
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.035 tagged_above=-999 tests=[ALL_TRUSTED=-1,
-        AWL=-0.135, BAYES_00=-1.9] autolearn=ham
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id dffO01LN1ocM; Tue, 10 Sep 2019 11:19:31 +0200 (CEST)
-Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPA id 671F923FA02;
-        Tue, 10 Sep 2019 11:19:31 +0200 (CEST)
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "GitAuthor: Lars Poeschel" <poeschel@lemonage.de>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Cc:     Johan Hovold <johan@kernel.org>
-Subject: [PATCH v7 2/7] nfc: pn532_uart: Add NXP PN532 to devicetree docs
-Date:   Tue, 10 Sep 2019 11:32:53 +0200
-Message-Id: <20190910093256.1920-1-poeschel@lemonage.de>
-X-Mailer: git-send-email 2.23.0
+        id S1730817AbfIJJUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 05:20:07 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3637 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbfIJJUG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 05:20:06 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d776aca0000>; Tue, 10 Sep 2019 02:20:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 10 Sep 2019 02:20:05 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 10 Sep 2019 02:20:05 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Sep
+ 2019 09:20:03 +0000
+Subject: Re: [PATCH 4.19 00/57] 4.19.72-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190908121125.608195329@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <24b7d910-d1dd-d683-0386-b0b303baa8c3@nvidia.com>
+Date:   Tue, 10 Sep 2019 10:20:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190908121125.608195329@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1568107210; bh=MOCeHyILm7eotOZBBWy8GCesdWBOpGJGwMchggaEPXs=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=pIWbBRpyPo9lQt8onqfz/RlidBQbyhqHn4Ww/O38b2p8wZaURzYKyLqqQDhr7ET2F
+         +OjkBh1/p24hXujPFyWmwQXqivFrnsTTBrObfzjUn5cdDuBtBf3U9CnzQsJ9Bzo0bV
+         GGm5/K3HFCTUmRzlRTpSV0SbD+zmDFms463MhrBsS/v1Ola1FhzBhggVlFgWYSZcSz
+         aNtSB8pElpQkSL+9ddHSCq5YLpLmmJQcmLDgRermsMcj4sLaguC9ehQeADOQiIHLX0
+         r2JOnjmS4aHqnqnT1iqtm26dz5XTfsb6fkzcSJ/4ulbuKHjbltKnM83RNCbgMOSLkA
+         sROmg6a++AJhg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a simple binding doc for the pn532.
 
-Cc: Johan Hovold <johan@kernel.org>
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
----
-Changes in v6:
-- Rebased the patch series on v5.3-rc5
-- Picked up Rob's Reviewed-By
+On 08/09/2019 13:41, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.72 release.
+> There are 57 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue 10 Sep 2019 12:09:36 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.72-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Changes in v4:
-- Add documentation about reg property in case of i2c
+All tests are passing for Tegra ...
 
-Changes in v3:
-- seperate binding doc instead of entry in trivial-devices.txt
+Test results for stable-v4.19:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
- .../devicetree/bindings/nfc/pn532.txt         | 33 +++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/nfc/pn532.txt
+Linux version:	4.19.72-rc1-g20f1e9f54416
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-diff --git a/Documentation/devicetree/bindings/nfc/pn532.txt b/Documentation/devicetree/bindings/nfc/pn532.txt
-new file mode 100644
-index 000000000000..d5aaa588073d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/nfc/pn532.txt
-@@ -0,0 +1,33 @@
-+NXP PN532 NFC Chip
-+
-+Required properties:
-+- compatible: Should be
-+    - "nxp,pn532" Place a node with this inside the devicetree node of the bus
-+                  where the NFC chip is connected to.
-+                  Currently the kernel has phy bindings for uart and i2c.
-+    - "nxp,pn532-i2c" (DEPRECATED) only works for the i2c binding.
-+    - "nxp,pn533-i2c" (DEPRECATED) only works for the i2c binding.
-+
-+Required properties if connected on i2c:
-+- reg: for the i2c bus address. This is fixed at 0x48 for the PN532.
-+
-+Example uart:
-+
-+uart4: serial@49042000 {
-+        compatible = "ti,omap3-uart";
-+
-+        pn532: nfc {
-+                compatible = "nxp,pn532";
-+        };
-+};
-+
-+Example i2c:
-+
-+i2c1: i2c@0 {
-+        compatible = "ti,omap3-i2c";
-+
-+        pn532: nfc {
-+                compatible = "nxp,pn532";
-+                reg = <0x48>;
-+        };
-+};
+Cheers
+Jon
+
 -- 
-2.23.0
-
+nvpublic
