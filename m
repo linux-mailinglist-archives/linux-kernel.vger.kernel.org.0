@@ -2,111 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7424FAED88
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 732DCAEDA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393521AbfIJOo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 10:44:57 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33679 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387874AbfIJOo4 (ORCPT
+        id S2405387AbfIJOrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 10:47:00 -0400
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:56276 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727164AbfIJOqk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:44:56 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u16so20876245wrr.0;
-        Tue, 10 Sep 2019 07:44:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=K5duO6IbkJ8p2e8p4z12GaGcHnnxC09bJLQvbWViWok=;
-        b=fu4g8oruUidKGWMGKAQilbHJ3zZ7QI7stPHT9LX/emhpA0g/uhNnCIfSzvekCRxVHx
-         Wnrh4cBhFQ05o5vH8hUWdGFnFKzPPI9fi/iv6vHcJlFrQ1nMCaJ5BpIulyKguP3lhglr
-         9e74K100oZ8+JWH98eeNglVWTOWnCXBZMme6/Lw6ruC2MmV+R72Ou/j9luMFFmINvC1f
-         0GiPVVVtqRaVbXqxLF3HVhEllIaskwiqn2821fB3L4wcOj8TsZS0O0kHENJXS4uCTrJQ
-         YxZ3oWIPlmC3d7SH/UJsQs1IRCIUc/CdG9PM4XnY07ShLokUiUoQhY2q4EV9Sjn6/cVT
-         TbNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=K5duO6IbkJ8p2e8p4z12GaGcHnnxC09bJLQvbWViWok=;
-        b=PISmjsUgPwc5MVWmHYBw9C7tQTavaRAU4dy6mixx8KKOFw50pPrHEumzOvVQtCEJA9
-         X3/icrjdE1aUEpPWcEd+VpuZ3BnTD1BRf8HMp2YYWxFMThosNW/zgV8kAC06YuyzI6+p
-         O17jqfpRHzkUBJNihHAp6G5cPGOYjuDvGsGCJUGIGeSB23tRCA9AaaEcrw9wRjAdj9kO
-         okdvS+vSuJBj2zGUTt+DVoMfgoE8q3WDgDoDl8MMmiVCMhXDvjqbzUyfkNPgIt9CbsvX
-         x7iPbvhU6MMEgEEuDPg9BHMMOFA9NqwQngGs8M8puQ33gakMe6+3tgA3K5A1oYGf4eq3
-         hjeA==
-X-Gm-Message-State: APjAAAUGVGM//3oNS5sG3aD3wK/HwgB80WMjlj96GZRy3OyDxtzK9bDJ
-        yCyL4C/FXPnUv8GsIuyHyTo=
-X-Google-Smtp-Source: APXvYqy8oCF9jzlFwjhls5MC+bV0p4KcSxaCpKbMvnhXuGJ9mOg6cetjGtTvTEefF3ROADm+FtzlQA==
-X-Received: by 2002:a5d:45c3:: with SMTP id b3mr27792792wrs.207.1568126694371;
-        Tue, 10 Sep 2019 07:44:54 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id a192sm5705205wma.1.2019.09.10.07.44.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Sep 2019 07:44:53 -0700 (PDT)
-Date:   Tue, 10 Sep 2019 16:44:52 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Adam Ford <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Paul Walmsley <paul@pwsan.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Adam Ford <adam.ford@logicpd.com>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC] ARM: omap3: Enable HWMODS for HW Random Number Generator
-Message-ID: <20190910144452.vmhmls3xhh6hd5xw@pali>
-References: <20190828150037.2640-1-aford173@gmail.com>
- <20190905230443.GA52127@atomide.com>
- <CAHCN7xKxffJUV2V2CCuw0iPqUm4LJT28GMrcF2=8rDJQM2dOOw@mail.gmail.com>
- <20190910143732.3g3q4acvnx2pqvjx@earth.universe>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190910143732.3g3q4acvnx2pqvjx@earth.universe>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 10 Sep 2019 10:46:40 -0400
+Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8AEfOGD011585;
+        Tue, 10 Sep 2019 14:46:22 GMT
+Received: from g4t3427.houston.hpe.com (g4t3427.houston.hpe.com [15.241.140.73])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2ux8e44e4h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Sep 2019 14:46:22 +0000
+Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
+        by g4t3427.houston.hpe.com (Postfix) with ESMTP id 7531971;
+        Tue, 10 Sep 2019 14:46:21 +0000 (UTC)
+Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 5508)
+        id 1E65A201FCF15; Tue, 10 Sep 2019 09:46:21 -0500 (CDT)
+Message-Id: <20190910144609.909602978@stormcage.eag.rdlabs.hpecorp.net>
+User-Agent: quilt/0.46-1
+Date:   Tue, 10 Sep 2019 09:46:09 -0500
+From:   Mike Travis <mike.travis@hpe.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Hedi Berriche <hedi.berriche@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        Justin Ernst <justin.ernst@hpe.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/8] x86/platform/UV: Update UV Hubless System Support
+In-Reply-To: <20190905184741.256857552@stormcage.eag.rdlabs.hpecorp.net>
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-10_10:2019-09-10,2019-09-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=926 spamscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1909100142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 10 September 2019 15:37:32 Sebastian Reichel wrote:
-> Hi,
+
+On 9/5/2019 11:47 AM, Mike Travis wrote:
 > 
-> On Tue, Sep 10, 2019 at 08:56:49AM -0500, Adam Ford wrote:
-> > On Thu, Sep 5, 2019 at 6:04 PM Tony Lindgren <tony@atomide.com> wrote:
-> > > Oh and this needs to default to status = "disabled" for
-> > > HS devices like n900 as it needs to use the omap3-rom-rng.
-> > 
-> > I don't know enough about the HS version of the OMAP3, but what's the
-> > main difference between omap3-rom-rng and this one?
+> These patches support upcoming UV systems that do not have a UV HUB.
 > 
-> The OMAP HS chips have the bus firewall configured to block direct
-> access to some cryptography related devices. The kernel will crash
-> with a bus error, if you try to read/write the registers for
-> protected devices.
+> [1/8] Save OEM_ID from ACPI MADT probe
+>
+> [2/8] Return UV Hubless System Type
+    V2: Remove is_uv_hubless define
+	Remove leading '_' from _is_uv_hubless
 
-And if you try to read it more times, SOC would be rebooted for security
-reasons.
+> [3/8] Add return code to UV BIOS Init function
+>
+> [4/8] Setup UV functions for Hubless UV Systems
+>
+> [5/8] Add UV Hubbed/Hubless Proc FS Files
+    V2: Remove is_uv_hubbed define
+	Remove leading '_' from _is_uv_hubbed
 
-> The omap3-rom-rng avoids this by communicating
-> with the security middleware component instead of directly accessing
-> the RNG hardware.
+> [6/8] Decode UVsystab Info
+    V2: Removed redundant error message after call to uv_bios_init.
+	Removed redundant error message after call to decode_uv_systab.
+	Clarify selection of UV4 and higher when checking for extended UVsystab
+	in decode_uv_systab().
 
-And that component is loaded by signed bootloader into "secure" area not
-accessible by "non-secure" work (like kernel) and communication is done
-via arm smc instruction.
+> [7/8] Check EFI Boot to set reboot type
+>
+> [8/8] Account for UV Hubless in is_uvX_hub Ops
+    V2: Add WARNING that the is UVx supported defines will be removed.
 
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+
