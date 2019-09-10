@@ -2,135 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0B75AE7BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EDCDAE7C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405765AbfIJKRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 06:17:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726353AbfIJKRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:17:18 -0400
-Received: from localhost (110.8.30.213.rev.vodafone.pt [213.30.8.110])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E69B2081B;
-        Tue, 10 Sep 2019 10:17:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568110636;
-        bh=6kZKtIQGIAhTPZjJiOCymp6oiDQ1IbRcjg+WwKUlA98=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FWMixbx8bSWYX38Q4GD876/rCMSSEAOAbP870FAQu9V6jw7fu3aPFxXOc7svCQ145
-         6FsbjB+QQyMtLnvasaGhgz447b565FX1+/iFTx6Ka64jv42ee6BeKVEdJ5jK6//JYA
-         HyQc3YVKmIJ1ztKOT9tKehRjo123kB47LQGeIi5E=
-Date:   Tue, 10 Sep 2019 11:17:13 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.4.192
-Message-ID: <20190910101713.GA7074@kroah.com>
+        id S2405867AbfIJKSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 06:18:01 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:54769 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfIJKSA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 06:18:00 -0400
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x8AAHubj009939
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 19:17:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x8AAHubj009939
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1568110677;
+        bh=yIKQfh97GgxHjqDfeFwoaAFGiMM6pmiH8tsXc3yeVNw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qcXNzlf0KcUbgOr3KW95A3rcl0cUA+VpAOeAMVZzYVAUb/lSyUpg84Xk0PZCcQ/L8
+         1i1yxRELBst0CCKtXFJog61y3lndYOyJcp+RZsiBeK6p9FPi5DAIUDmSKs0EH6Mkqr
+         T0jjlnf9qUUCsbMRa5n+HsgxeqG6zH+tGJzGbeyPZhpXrX9hRqzRneUWzwkWuw6gdW
+         HPT+y5fo15tbWvu78wWNJ8G+4SLDhxu5orDsd5iQlWX1FLT5QudK5u/sGXXcuimz3Q
+         eAH8eplTtqkBY5FVXUlYFAbka7cSVnwKP6RBTBtAhQWSJ3mj0o7mE7QS9ic+yb0LmG
+         cFR92SJOcZOPg==
+X-Nifty-SrcIP: [209.85.221.180]
+Received: by mail-vk1-f180.google.com with SMTP id s28so1620863vkm.13
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 03:17:56 -0700 (PDT)
+X-Gm-Message-State: APjAAAXO6XDHjwDR5JkDz1vRazzk+AUKOu9GVuueq4XXQXZpRXdl4HMT
+        DflUU8x5uI+m1KOH5mzkecGD1Ql5NWmyP4U/SFA=
+X-Google-Smtp-Source: APXvYqy/cswSnc8WfFFL71roXbz40cEs77mBG+d9RGmyXNZx/2NEp/U4gXNVKHOOAIEYpjdCWmMQjdyo+yofpY8FAww=
+X-Received: by 2002:a1f:60c2:: with SMTP id u185mr1443841vkb.0.1568110675632;
+ Tue, 10 Sep 2019 03:17:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190909202153.144970-1-arnd@arndb.de> <20190910092324.GI9720@e119886-lin.cambridge.arm.com>
+ <CAK8P3a2Vk+KSUGJyPTRuLPD=KPEAR43SZ1ofB6k+KeQi3fSERw@mail.gmail.com>
+In-Reply-To: <CAK8P3a2Vk+KSUGJyPTRuLPD=KPEAR43SZ1ofB6k+KeQi3fSERw@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 10 Sep 2019 19:17:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQbjPhDqN9ZeC_qnxzMAhPdrSpG4te0HmRrnxuuM6bquw@mail.gmail.com>
+Message-ID: <CAK7LNAQbjPhDqN9ZeC_qnxzMAhPdrSpG4te0HmRrnxuuM6bquw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: fix unreachable code issue with cmpxchg
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Murray <andrew.murray@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm announcing the release of the 4.4.192 kernel.
+On Tue, Sep 10, 2019 at 6:38 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Sep 10, 2019 at 11:23 AM Andrew Murray <andrew.murray@arm.com> wrote:
+>
+> >
+> > >  arch/arm64/include/asm/cmpxchg.h | 15 ++++++++-------
+> > >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/arch/arm64/include/asm/cmpxchg.h b/arch/arm64/include/asm/cmpxchg.h
+> > > index a1398f2f9994..fd64dc8a235f 100644
+> > > --- a/arch/arm64/include/asm/cmpxchg.h
+> > > +++ b/arch/arm64/include/asm/cmpxchg.h
+> > > @@ -19,7 +19,7 @@
+> > >   * acquire+release for the latter.
+> > >   */
+> > >  #define __XCHG_CASE(w, sfx, name, sz, mb, nop_lse, acq, acq_lse, rel, cl)    \
+> > > -static inline u##sz __xchg_case_##name##sz(u##sz x, volatile void *ptr)              \
+> > > +static __always_inline u##sz __xchg_case_##name##sz(u##sz x, volatile void *ptr)\
+> >
+> > This hunk isn't needed, there is no BUILD_BUG here.
+>
+> Right, I noticed this, but it seemed like a good idea regardless given the small
+> size of the function compared with the overhead of a function call.  We clearly
+> want these to be inlined all the time.
 
-All users of the 4.4 kernel series must upgrade.
 
-The updated 4.4.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.4.y
-and can be browsed at the normal kernel.org git web browser:
-	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+Generally speaking, this should be judged by the compiler, not by humans.
+If the function size is quite small compared with the cost of function call,
+the compiler will determine to inline it anyway.
+(If the compiler's inlining heuristic is not good, we should fix the compiler.)
 
-thanks,
+So, I personally agree with Andrew Murray.
+We should use __always_inline only when we must to do so.
 
-greg k-h
+Masahiro Yamada
 
-------------
 
- Makefile                                           |    2 
- arch/arm/kvm/mmio.c                                |    7 ++
- arch/x86/kernel/apic/apic.c                        |    4 -
- drivers/bluetooth/btqca.c                          |    3 +
- drivers/infiniband/hw/mlx4/mad.c                   |    4 -
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c |    4 +
- drivers/net/ethernet/ibm/ibmveth.c                 |    9 +--
- drivers/net/ethernet/myricom/myri10ge/myri10ge.c   |    2 
- drivers/net/ethernet/renesas/ravb_main.c           |    8 ++
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     |    6 --
- drivers/net/ethernet/toshiba/tc35815.c             |    2 
- drivers/net/ethernet/tundra/tsi108_eth.c           |    5 +
- drivers/net/usb/cx82310_eth.c                      |    3 -
- drivers/net/usb/kalmia.c                           |    6 +-
- drivers/net/wimax/i2400m/fw.c                      |    4 +
- drivers/spi/spi-bcm2835aux.c                       |   57 +++++++--------------
- fs/ceph/xattr.c                                    |    8 ++
- include/linux/ceph/buffer.h                        |    3 -
- include/linux/gpio.h                               |   24 --------
- net/core/netpoll.c                                 |    6 +-
- tools/hv/hv_kvp_daemon.c                           |    2 
- 21 files changed, 74 insertions(+), 95 deletions(-)
 
-Andrew Jones (1):
-      KVM: arm/arm64: Only skip MMIO insn once
+>
+> Same for the others.
+>
+> > Alternatively is it possible to replace the BUILD_BUG's with something else?
+> >
+> > I think because we use BUILD_BUG at the end of a switch statement, we make
+> > the assumption that size is known at compile time, for this reason we should
+> > ensure the function containing the BUILD_BUG is __always_inline.
+> >
+> > Looking across the kernel where BUILD_BUG is used as a default in a switch
+> > statment ($ git grep -B 3 BUILD_BUG\( | grep default), most instances are
+> > within macros, but many are found in an __always_inline function:
+> >
+> > arch/x86/kvm/cpuid.h
+> > mm/kasan/generic.c
+> >
+> > Though some are not:
+> >
+> > include/linux/signal.h
+> > arch/arm64/include/asm/arm_dsu/pmu.h
+> >
+> > I wonder if there may be a latent mole ready to whack with pmu.h?
+>
+> Right, it can't hurt to annotate those as well. I actually have another
+> fixup for linux/signal.h that I would have to revisit at some point.
+> See https://bugs.llvm.org/show_bug.cgi?id=38789, I think this is
+> fixed with clang-9 now, but maybe not with clang-8.
+>
+>       Arnd
 
-Chen-Yu Tsai (1):
-      net: stmmac: dwmac-rk: Don't fail if phy regulator is absent
 
-Feng Sun (1):
-      net: fix skb use after free in netpoll
 
-Fuqian Huang (1):
-      net: tundra: tsi108: use spin_lock_irqsave instead of spin_lock_irq in IRQ context
-
-Greg Kroah-Hartman (1):
-      Linux 4.4.192
-
-Linus Torvalds (1):
-      Revert "x86/apic: Include the LDR when clearing out APIC registers"
-
-Luis Henriques (2):
-      ceph: fix buffer free while holding i_ceph_lock in __ceph_setxattr()
-      libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
-
-Martin Sperl (3):
-      spi: bcm2835aux: unifying code between polling and interrupt driven code
-      spi: bcm2835aux: remove dangerous uncontrolled read of fifo
-      spi: bcm2835aux: fix corruptions for longer spi transfers
-
-Matthias Kaehlcke (1):
-      Bluetooth: btqca: Add a short delay before downloading the NVM
-
-Nathan Chancellor (1):
-      net: tc35815: Explicitly check NET_IP_ALIGN is not zero in tc35815_rx
-
-Rob Herring (1):
-      spi: bcm2835aux: ensure interrupts are enabled for shared handler
-
-Tho Vu (1):
-      ravb: Fix use-after-free ravb_tstamp_skb
-
-Thomas Falcon (1):
-      ibmveth: Convert multicast list size for little-endian system
-
-Vitaly Kuznetsov (1):
-      Tools: hv: kvp: eliminate 'may be used uninitialized' warning
-
-Wenwen Wang (6):
-      cxgb4: fix a memory leak bug
-      net: myri10ge: fix memory leaks
-      cx82310_eth: fix a memory leak bug
-      net: kalmia: fix memory leaks
-      wimax/i2400m: fix a memory leak bug
-      IB/mlx4: Fix memory leaks
-
-YueHaibing (1):
-      gpio: Fix build error of function redefinition
-
+-- 
+Best Regards
+Masahiro Yamada
