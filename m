@@ -2,57 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98015AEA25
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1592AAEA2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 14:21:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388847AbfIJMUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 08:20:35 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:46586 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388476AbfIJMUe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 08:20:34 -0400
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 4363B72CC6C;
-        Tue, 10 Sep 2019 15:20:32 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id BD4867CCB47; Tue, 10 Sep 2019 15:20:31 +0300 (MSK)
-Date:   Tue, 10 Sep 2019 15:20:31 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Eugene Syromiatnikov <esyr@redhat.com>,
-        Christian Brauner <christian@brauner.io>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH] fork: fail on non-zero higher 32 bits of args.exit_signal
-Message-ID: <20190910122031.GA5311@altlinux.org>
-References: <20190910115711.GA3755@asgard.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190910115711.GA3755@asgard.redhat.com>
+        id S2389340AbfIJMVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 08:21:11 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:53454 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388902AbfIJMVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 08:21:10 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 93FAD200090;
+        Tue, 10 Sep 2019 14:21:08 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 521212004BF;
+        Tue, 10 Sep 2019 14:21:04 +0200 (CEST)
+Received: from lsv03124.swis.in-blr01.nxp.com (lsv03124.swis.in-blr01.nxp.com [92.120.146.121])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1F134402A5;
+        Tue, 10 Sep 2019 20:20:59 +0800 (SGT)
+From:   Ashish Kumar <Ashish.Kumar@nxp.com>
+To:     devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Ashish Kumar <Ashish.Kumar@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: [PATCH] arm64: dts: ls1028a: Add FlexSPI support for NXP LS1028
+Date:   Tue, 10 Sep 2019 17:50:51 +0530
+Message-Id: <1568118055-9740-1-git-send-email-Ashish.Kumar@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 12:57:11PM +0100, Eugene Syromiatnikov wrote:
-> Previously, higher 32 bits of exit_signal fields were lost when
-> copied to the kernel args structure (that uses int as a type for the
-> respective field).  Fail with EINVAL if these are set as it looks like
-> there's no sane reason to accept them.
-> 
-> * kernel/fork.c (copy_clone_args_from_user): Fail with -EINVAL if
-> args.exit_signal converted to unsigned int is not equal to the original
-> value.
-> 
-> Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+Add fspi node property for LS1028A SoC for FlexSPI driver.
+Property added for FlexSPI controller and for the connected
+slave device for the LS1028ARDB and LS1028AQDS target.
+RDB and QDS is having one SPI-NOR flash device, mt35xu02g
+connected at CS0.
+This flash device "mt35xu02g" is tested for octal read
 
-Reviewed-by: Dmitry V. Levin <ldv@altlinux.org>
+Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts | 15 +++++++++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts | 15 +++++++++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    | 13 +++++++++++++
+ 3 files changed, 43 insertions(+)
 
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+index 5e14e5a..5d46993 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+@@ -103,6 +103,21 @@
+ 	status = "okay";
+ };
+ 
++&fspi {
++	status = "okay";
++	flash0: mt35xu02g@0 {
++		compatible = "micron,mt35xu02g", "jedec,spi-nor";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		m25p,fast-read;
++		spi-max-frequency = <50000000>;
++		reg = <0>;
++		/* The following setting enables 1-1-8 (CMD-ADDR-DATA) mode */
++		spi-rx-bus-width = <8>; /* 8 SPI Rx lines */
++		spi-tx-bus-width = <1>; /* 1 SPI Tx line */
++	};
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+index 1a69221..f33cb2e 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+@@ -96,6 +96,21 @@
+ 	status = "okay";
+ };
+ 
++&fspi {
++	status = "okay";
++	flash0: mt35xu02g@0 {
++		compatible = "micron,mt35xu02g", "jedec,spi-nor";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		m25p,fast-read;
++		spi-max-frequency = <50000000>;
++		reg = <0>;
++		/* The following setting enables 1-1-8 (CMD-ADDR-DATA) mode */
++		spi-rx-bus-width = <8>; /* 8 SPI Rx lines */
++		spi-tx-bus-width = <1>; /* 1 SPI Tx line */
++	};
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index b139b29..4aa1825 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -174,6 +174,19 @@
+ 			clocks = <&sysclk>;
+ 		};
+ 
++		fspi: spi@20c0000 {
++			compatible = "nxp,lx2160a-fspi";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x20c0000 0x0 0x10000>,
++			      <0x0 0x20000000 0x0 0x10000000>;
++			reg-names = "fspi_base", "fspi_mmap";
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clock-names = "fspi_en", "fspi";
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@2000000 {
+ 			compatible = "fsl,vf610-i2c";
+ 			#address-cells = <1>;
 -- 
-ldv
+2.7.4
+
