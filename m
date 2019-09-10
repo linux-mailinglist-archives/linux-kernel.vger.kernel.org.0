@@ -2,88 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39472AED4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0423CAED68
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbfIJOlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 10:41:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45294 "EHLO mx1.redhat.com"
+        id S2393293AbfIJOmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 10:42:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:38637 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729518AbfIJOlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:41:02 -0400
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2393023AbfIJOmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 10:42:06 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6B39C7FDC9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 14:41:02 +0000 (UTC)
-Received: by mail-wr1-f69.google.com with SMTP id a4so7772023wrg.8
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 07:41:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cJrLJhg77HdXITw7W6jWRWxQLFrh8FY3brtGhslg/yU=;
-        b=UPhkHjNAwr6cg8GVO0iJVjkKS7JAOiKQzj3D9YxO0b4l/zt166e9A3vkuFrxZ2UgAZ
-         rXirXzbjrdI1VVCNtPoVf5ehGKO1//JPZtlp9a1SDNX70gjsdq9iD9aBZLT/CO+L3Q1y
-         eYANiXb89wGtiUVh5Rh37ww+e/NvUtUfIGxoUozAIFEDmWJwBDrtvTeKINA7fAi3+Rxl
-         QFOKMHijowJrVDe01ezDpBGi0p7EgrQ3XSnC56QWsSV18QrvIGu2CEJhfPf99r5WS6Vn
-         isWf4VGJ7Rh4zj7PN4svHXP6ti75iAlBBUj9RZ2MfSjkq0YBwQdhQZGfE/FqxtfqS5tx
-         cCKA==
-X-Gm-Message-State: APjAAAXT6Hfxnu1gqUXXCEoCdePYcyC0h67wOp7xXk8qLHtJSiu2owLZ
-        5NUaXjdFlwUZRnZ2+YBQNRjIA33Qdmt/SDit33kM28BhCbSUzMoBx0bIrIcRyRtVSqvcScxQ2an
-        KafhMXFBlY92vPMbAPMEs3S0p
-X-Received: by 2002:adf:fc05:: with SMTP id i5mr21459277wrr.134.1568126461120;
-        Tue, 10 Sep 2019 07:41:01 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqy7r22ycaiyIAOgheL4k6r1Mn72f2EGSPwZkUVY5WoV3EEGyJTIURDBq8k7n4jtyP6PoMsfpw==
-X-Received: by 2002:adf:fc05:: with SMTP id i5mr21459245wrr.134.1568126460876;
-        Tue, 10 Sep 2019 07:41:00 -0700 (PDT)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id i9sm3720112wmf.14.2019.09.10.07.40.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2019 07:41:00 -0700 (PDT)
-Subject: Re: [PATCH v3] KVM: x86: Disable posted interrupts for odd IRQs
-To:     Christoph Hellwig <hch@infradead.org>,
-        Alexander Graf <graf@amazon.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>
-References: <20190905125818.22395-1-graf@amazon.com>
- <20190910061554.GD10968@infradead.org>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <1cc51fa5-ee1c-88a4-c935-c293c947f240@redhat.com>
-Date:   Tue, 10 Sep 2019 16:40:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46SSQY2r3lz9s4Y;
+        Wed, 11 Sep 2019 00:41:21 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1568126523;
+        bh=OgL1E3Bn836EI/U9TfNLgjcy9EiqKvLZ4vknVwwsPfE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=QJtFt4FJe9ZV89RhMLsPUEIccr+G9wrvlU5ZTHMDm9G/iJg50qjvIS/SAF+2F8d7G
+         qYnIhgShhNf07dQNvuFku8heFGfZ7gh7tZsJxvzMhdtqusRMaulcw8MyOU5KLEjQgb
+         0S607N0fz3QwuumuwUl3YfwgVcmtsU8IRXAmTN0oxq2nFBNYCOt2JPf2Ee5RertKLn
+         4wI79U0DuEmJzLmAw31DBljOo57JxH0AVgeBdISYMZa2+UPVLNL+Wx0woNzd7yLDVV
+         j8g3J73gCLk4NHGCmQDkAbe2NTCW/SGjQzVR8JS3+cbmVqYi0ytTys6vc14Cg5O3q8
+         YOU7JR+ReQFMw==
+Date:   Wed, 11 Sep 2019 00:41:03 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        The j1939 authors <linux-can@vger.kernel.org>,
+        Bastian Stender <bst@pengutronix.de>,
+        Elenita Hinds <ecathinds@gmail.com>,
+        Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>,
+        kbuild test robot <lkp@intel.com>,
+        Maxime Jayat <maxime.jayat@mobile-devices.fr>,
+        Robin van der Gracht <robin@protonic.nl>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: linux-next: Signed-off-by missing for commit in the net-next tree
+Message-ID: <20190911004103.3480fa40@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190910061554.GD10968@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/9Jn59mgO98rup=kQiyX7Z.U";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/09/19 08:15, Christoph Hellwig wrote:
-> And what about even ones? :)
-> 
-> Sorry, just joking, but the "odd" qualifier here looks a little weird,
-> maybe something like "non-standard develiry modes" might make sense
-> here.
+--Sig_/9Jn59mgO98rup=kQiyX7Z.U
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Indeed, folded this into the commit message.  Thanks Christoph.
+Hi all,
 
-Alex, I queued the patch but I don't think I'll include it in 5.3.
+Commit
 
-Paolo
+  9d71dd0c7009 ("can: add support of SAE J1939 protocol")
 
+is missing a Signed-off-by from its author.
+
+[Not sure if I should complain about this one ...]
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9Jn59mgO98rup=kQiyX7Z.U
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl13tf8ACgkQAVBC80lX
+0Gz1XQgAghJMDzpTB959LAyRnZ2BTcdjC1I1Ql+yI07GFjjckCpckq6nNv+XJQ8V
+8v0zFk21GxHe4iiFr5TENfSfALy1o8hw1lqjfilqQk9q8E6RjkNrVE+j6rnEVG95
+iLE41mafTnm/T6b2sUBdLPQ8hkir6ToIcLeEQp8k3naw1cEqa7dG1D07nRiOFDoU
+OzQREKHCUpFGmbne150OlvNIBzM5tQmicoRALm6dAwGckksLMeGwtES07coQsSqZ
+dMydcYHuHSfMLzrail0URBEN2Llw75EZxKc+Y6XJhNhQLYhuKiERhZ0ZtWykz82i
+cvM+OQfoJINzEz+OyEne3/nLz1azEg==
+=F1hC
+-----END PGP SIGNATURE-----
+
+--Sig_/9Jn59mgO98rup=kQiyX7Z.U--
