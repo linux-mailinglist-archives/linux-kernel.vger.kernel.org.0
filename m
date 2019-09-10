@@ -2,116 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5BEAE440
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 09:07:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 733CCAE44B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 09:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404320AbfIJHHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 03:07:16 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39466 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729518AbfIJHHP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 03:07:15 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8A773kY063473;
-        Tue, 10 Sep 2019 02:07:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568099223;
-        bh=qhrJHNazfc5CMwtBCfE9AmHbBpmQjdMCtB10M++D6ZI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=aV5MsxeyOwzwuZre588rIVKEGGzYc0ka2baZHICXVKLIOPQ85G4qlEBnlMU9/6aq/
-         QWLgTsFdP5pvBhU4DDK+fl1lFQb/bNpW77FzDyhCS66xccgugv/apXAeh1XkKaeRA6
-         5L+806zvG7l2Kb7IKCSvyZDZbZTvjv6TKV9eZRD4=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8A7735E059383
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 10 Sep 2019 02:07:03 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 10
- Sep 2019 02:07:03 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 10 Sep 2019 02:07:03 -0500
-Received: from [10.250.98.116] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8A76xLj100346;
-        Tue, 10 Sep 2019 02:07:00 -0500
-Subject: Re: [PATCH v2 06/14] dmaengine: ti: Add cppi5 header for UDMA
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vkoul@kernel.org>
-CC:     <robh+dt@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>,
-        <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lokeshvutla@ti.com>, <t-kristo@ti.com>, <tony@atomide.com>,
-        <j-keerthy@ti.com>
-References: <20190730093450.12664-1-peter.ujfalusi@ti.com>
- <20190730093450.12664-7-peter.ujfalusi@ti.com>
- <20190908142528.GP2672@vkoul-mobl>
- <8699f999-7834-a083-2c7b-3ea909b1e011@ti.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <8486fbb1-9d2c-9230-6205-85d58b93697c@ti.com>
-Date:   Tue, 10 Sep 2019 10:06:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2406562AbfIJHJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 03:09:38 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33434 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729707AbfIJHJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 03:09:37 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1DAC3C5B758C0C66B5EB;
+        Tue, 10 Sep 2019 15:09:36 +0800 (CST)
+Received: from [127.0.0.1] (10.74.191.121) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Tue, 10 Sep 2019
+ 15:09:26 +0800
+Subject: Re: [PATCH] driver core: ensure a device has valid node id in
+ device_add()
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
+        <mingo@kernel.org>, <linuxarm@huawei.com>
+References: <1568009063-77714-1-git-send-email-linyunsheng@huawei.com>
+ <20190909185035.GC2063@dhcp22.suse.cz>
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <07576292-e129-5949-6a2e-45fff067ca5a@huawei.com>
+Date:   Tue, 10 Sep 2019 15:08:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <8699f999-7834-a083-2c7b-3ea909b1e011@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190909185035.GC2063@dhcp22.suse.cz>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.74.191.121]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/09/2019 13:59, Peter Ujfalusi wrote:
-> 
-> 
-> On 08/09/2019 17.25, Vinod Koul wrote:
->> On 30-07-19, 12:34, Peter Ujfalusi wrote:
+On 2019/9/10 2:50, Michal Hocko wrote:
+> On Mon 09-09-19 14:04:23, Yunsheng Lin wrote:
+>> Currently a device does not belong to any of the numa nodes
+>> (dev->numa_node is NUMA_NO_NODE) when the node id is neither
+>> specified by fw nor by virtual device layer and the device has
+>> no parent device.
 >>
->>> +/**
->>> + * Descriptor header, present in all types of descriptors
->>> + */
->>> +struct cppi5_desc_hdr_t {
->>> +	u32 pkt_info0;	/* Packet info word 0 (n/a in Buffer desc) */
->>> +	u32 pkt_info1;	/* Packet info word 1 (n/a in Buffer desc) */
->>> +	u32 pkt_info2;	/* Packet info word 2 Buffer reclamation info */
->>> +	u32 src_dst_tag; /* Packet info word 3 (n/a in Buffer desc) */
+>> According to discussion in [1]:
+> 
+> Please do not reference important parts of the justification via a link.
+> Just quote the relevant part to the changelog. It is just too easy that
+> external links die - not to mention lkml.org.
+
+Ok
+
+> 
+>> Even if a device's numa node is not specified, the device really
+>> does belong to a node.
+> 
+> What does this mean?
+
+It means some one need to guess the node id if the node is not
+specified.
+
+> 
+>> This patch sets the device node to node 0 in device_add() if the
+>> device's node id is not specified and it either has no parent
+>> device, or the parent device also does not have a valid node id.
+> 
+> Why is node 0 special? I have seen platforms with node 0 missing or
+> being memory less. The changelog also lacks an actual problem
+
+by node 0 missing, how do we know if node 0 is missing?
+by node_online(0)?
+
+> descripton. Why do we even care about NUMA_NO_NODE? E.g. the page
+> allocator interprets NUMA_NO_NODE as the closest node with a memory.
+> And by closest it really means to the CPU which is performing the
+> allocation.
+
+Yes, I should have mentioned that in the commit log.
+
+I mentioned the below in the RFC, but somehow deleted when sending
+V1:
+"There may be explicit handling out there relying on NUMA_NO_NODE,
+like in nvme_probe()."
+
+>  
+>> [1] https://lkml.org/lkml/2019/9/2/466
 >>
->> Can we move these comments to kernel-doc style please
-> 
-> Sure, I'll move all struct and enums.
-> 
->>> +/**
->>> + * cppi5_desc_get_type - get descriptor type
->>> + * @desc_hdr: packet descriptor/TR header
->>> + *
->>> + * Returns descriptor type:
->>> + * CPPI5_INFO0_DESC_TYPE_VAL_HOST
->>> + * CPPI5_INFO0_DESC_TYPE_VAL_MONO
->>> + * CPPI5_INFO0_DESC_TYPE_VAL_TR
->>> + */
->>> +static inline u32 cppi5_desc_get_type(struct cppi5_desc_hdr_t *desc_hdr)
->>> +{
->>> +	WARN_ON(!desc_hdr);
+>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>> ---
+>> Changelog RFC -> v1:
+>> 1. Drop log error message and use a "if" instead of "? :".
+>> 2. Drop the RFC tag.
+>> ---
+>>  drivers/base/core.c  | 10 +++++++---
+>>  include/linux/numa.h |  2 ++
+>>  2 files changed, 9 insertions(+), 3 deletions(-)
 >>
->> why WARN_ON and not return error!
-> 
-> these helpers were intended to be as simple as possible.
-> I can go through with all of the WARN_ONs and replace them with if()
-> pr_warn() and either just return or return with 0.
-> 
-> Would that be acceptable?
+>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+>> index 1669d41..f79ad20 100644
+>> --- a/drivers/base/core.c
+>> +++ b/drivers/base/core.c
+>> @@ -2107,9 +2107,13 @@ int device_add(struct device *dev)
+>>  	if (kobj)
+>>  		dev->kobj.parent = kobj;
+>>  
+>> -	/* use parent numa_node */
+>> -	if (parent && (dev_to_node(dev) == NUMA_NO_NODE))
+>> -		set_dev_node(dev, dev_to_node(parent));
+>> +	/* use parent numa_node or default node 0 */
+>> +	if (!numa_node_valid(dev_to_node(dev))) {
+>> +		if (parent && numa_node_valid(dev_to_node(parent)))
+>> +			set_dev_node(dev, dev_to_node(parent));
+>> +		else
+>> +			set_dev_node(dev, 0);
+>> +	}
+>>  
+>>  	/* first, register with generic layer. */
+>>  	/* we require the name to be set before, and pass NULL */
+>> diff --git a/include/linux/numa.h b/include/linux/numa.h
+>> index 110b0e5..eccc757 100644
+>> --- a/include/linux/numa.h
+>> +++ b/include/linux/numa.h
+>> @@ -13,4 +13,6 @@
+>>  
+>>  #define	NUMA_NO_NODE	(-1)
+>>  
+>> +#define numa_node_valid(node)	((unsigned int)(node) < nr_node_ids)
+>> +
+>>  #endif /* _LINUX_NUMA_H */
+>> -- 
+>> 2.8.1
 > 
 
-This should never happens in working system unless there is buggy code.
-I think It can be just removed
-
--- 
-Best regards,
-grygorii
