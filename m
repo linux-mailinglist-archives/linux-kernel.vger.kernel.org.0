@@ -2,142 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F206BAEF9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 18:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE0AEAEFBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 18:39:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436796AbfIJQeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 12:34:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:38080 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729580AbfIJQeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 12:34:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5CA321000;
-        Tue, 10 Sep 2019 09:34:23 -0700 (PDT)
-Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6204C3F71F;
-        Tue, 10 Sep 2019 09:34:19 -0700 (PDT)
-Subject: Re: [PATCH v3 0/2] iommu: handle drivers that manage iommu directly
-To:     Rob Clark <robdclark@gmail.com>, iommu@lists.linux-foundation.org
-Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Rob Clark <robdclark@chromium.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Bruce Wang <bzwang@chromium.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Joe Perches <joe@perches.com>, Joerg Roedel <jroedel@suse.de>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Sean Paul <seanpaul@chromium.org>,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20190906214409.26677-1-robdclark@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <c43de10f-7768-592c-0fd8-6fb64b3fd43e@arm.com>
-Date:   Tue, 10 Sep 2019 17:34:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2436884AbfIJQjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 12:39:14 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34893 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436800AbfIJQjL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 12:39:11 -0400
+Received: by mail-qk1-f193.google.com with SMTP id d26so17765339qkk.2;
+        Tue, 10 Sep 2019 09:39:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=lpZWq94qrk679Y3vz/0HnxpCxOg4F7I7xKpKBxCXn0s=;
+        b=HjT3JYoyNzN4qhLK9VFybMhJawQHZpS3NfF/hEOoe+j2Uu4cLMM4NrQ/kHbqJipnZc
+         2jQ+Bc2jdQke1G4uXkFNei+1HYOFGWW/GDNnQkn+xgiBBLp7GJ7NUFQHrmNDHpo0zbXT
+         xds5eJAa8XFFktRc9p42mz0dOJHQTQhv1XIkWo65mblo0ahWNTSTVsitsU3LGcAGLX9R
+         fhg+TIPBY8alRNY/Fq3KPJqVvTjXnpJaFgbCEAJ5bPtFM9z31P9anvb3e84l2JoGJmCG
+         2v5LPPDJixPwT0oB+uuCbzzhrxRQn/58geab8xNNfm6+5//B7QkugCaWJfrtoDByVfjN
+         bOGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=lpZWq94qrk679Y3vz/0HnxpCxOg4F7I7xKpKBxCXn0s=;
+        b=c5M2X8wBjNWl+IL3tj6Sx45MopLoPIdmMt/V5ffOzI2+umxeM3Wc4E+olOo/4YR/OU
+         qBSffYjWSg6BXFrHwYYCRkYMGr30V2DMsa1kUW+D0wsZigHIk7+ZXwk/bI20FG764NPu
+         NUliKduW12xZfCMg19yii0sVCfnuNNBzlRJzZ2ltzORmM5wIKdKaPGgYR0oUUVm6JClh
+         /jb8rDs0gV44aOa7tHQHI330Xb1E6fhYM7E2hmsFU7bVsTyOe8aUKINpwnozE2cCr9zC
+         1BXuC9kYpNLBkM/X2n0iUYg7Yf2uIf3hUAdvY3U2iSroJvIJAH3xP2YxgLgphfPNwnSW
+         jkgQ==
+X-Gm-Message-State: APjAAAV/1k7kDJQw/iCBT9/kn9Ze0iViXmxOuXt8yA0xwbtx53u/sRGG
+        sPMTcH8TqvrlmGNM3Zkf3/3RpqKkcXiuifMeZuQ=
+X-Google-Smtp-Source: APXvYqzuYDTPkcD5G8eMEjdj1wRJTupI9im3I0ZWo5MrhxMrpw94COPRbtz42FtpofglGXvXTSIoDortHdMzxHvAU+8=
+X-Received: by 2002:a37:7086:: with SMTP id l128mr12804031qkc.433.1568133548629;
+ Tue, 10 Sep 2019 09:39:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190906214409.26677-1-robdclark@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20190903033019.GA149622@LGEARND20B15>
+In-Reply-To: <20190903033019.GA149622@LGEARND20B15>
+From:   Austin Kim <austindh.kim@gmail.com>
+Date:   Wed, 11 Sep 2019 01:39:03 +0900
+Message-ID: <CADLLry6vC_bPEq9VLhz3_EXrDPZP1XDFLocnT3zxYEcCaX0QYw@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: fix Wmaybe-uninitialized warning
+To:     clm@fb.com, Josef Bacik <josef@toxicpanda.com>, dsterba@suse.com
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/09/2019 22:44, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> One of the challenges we have to enable the aarch64 laptops upstream
-> is dealing with the fact that the bootloader enables the display and
-> takes the corresponding SMMU context-bank out of BYPASS.  Unfortunately,
-> currently, the IOMMU framework attaches a DMA (or potentially an
-> IDENTITY) domain before the driver is probed and has a chance to
-> intervene and shutdown scanout.  Which makes things go horribly wrong.
+Hello, maintainers.
 
-Nope, things already went horribly wrong in arm_smmu_device_reset() - 
-sure, sometimes for some configurations it might *seem* like they didn't 
-and that you can fudge the context bank state at arm's length from core 
-code later, but the truth is that impl->cfg_probe is your last chance to 
-guarantee that any necessary SMMU state is preserved.
+If you are available, please review this patch and share the feedback.
 
-The remainder of the problem involves reworking default domain 
-allocation such that we can converge on what iommu_request_dm_for_dev() 
-currently does but without the momentary attachment to a translation 
-domain to cause hiccups. That's starting here:
+Thanks,
+Austin Kim
 
-https://lore.kernel.org/linux-iommu/cover.1566353521.git.sai.praneeth.prakhya@intel.com/
-
-> But in this case, drm/msm is already directly managing it's IOMMUs
-> directly, the DMA API attached iommu_domain simply gets in the way.
-> This series adds a way that a driver can indicate to drivers/iommu
-> that it does not wish to have an DMA managed iommu_domain attached.
-> This way, drm/msm can shut down scanout cleanly before attaching it's
-> own iommu_domain.
-> 
-> NOTE that to get things working with arm-smmu on the aarch64 laptops,
-> you also need a patchset[1] from Bjorn Andersson to inherit SMMU config
-> at boot, when it is already enabled.
-> 
-> [1] https://www.spinics.net/lists/arm-kernel/msg732246.html
-> 
-> NOTE that in discussion of previous revisions, RMRR came up.  This is
-> not really a replacement for RMRR (nor does RMRR really provide any
-> more information than we already get from EFI GOP, or DT in the
-> simplefb case).  I also don't see how RMRR could help w/ SMMU handover
-> of CB/SMR config (Bjorn's patchset[1]) without defining new tables.
-
-The point of RMRR-like-things is that they identify not just the memory 
-region but also the specific device accessing them, which means the 
-IOMMU driver knows up-front which IDs etc. it must be careful not to 
-disrupt. Obviously for SMMU that *would* be some new table (designed to 
-encompass everything relevant) since literal RMRRs are specifically an 
-Intel VT-d thing.
-
-> This perhaps doesn't solve the more general case of bootloader enabled
-> display for drivers that actually want to use DMA API managed IOMMU.
-> But it does also happen to avoid a related problem with GPU, caused by
-> the DMA domain claiming the context bank that the GPU firmware expects
-> to use.
-
-Careful bringing that up again, or I really will rework the context bank 
-allocator to avoid this default domain problem entirely... ;)
-
-Robin.
-
->  And it avoids spurious TLB invalidation coming from the unused
-> DMA domain.  So IMHO this is a useful and necessary change.
-> 
-> Rob Clark (2):
->    iommu: add support for drivers that manage iommu explicitly
->    drm/msm: mark devices where iommu is managed by driver
-> 
->   drivers/gpu/drm/msm/adreno/adreno_device.c | 1 +
->   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c    | 1 +
->   drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c   | 1 +
->   drivers/gpu/drm/msm/msm_drv.c              | 1 +
->   drivers/iommu/iommu.c                      | 2 +-
->   drivers/iommu/of_iommu.c                   | 3 +++
->   include/linux/device.h                     | 3 ++-
->   7 files changed, 10 insertions(+), 2 deletions(-)
-> 
+2019=EB=85=84 9=EC=9B=94 3=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 12:30, A=
+ustin Kim <austindh.kim@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> gcc throws warning message as below:
+>
+> =E2=80=98clone_src_i_size=E2=80=99 may be used uninitialized in this func=
+tion
+> [-Wmaybe-uninitialized]
+>  #define IS_ALIGNED(x, a)  (((x) & ((typeof(x))(a) - 1)) =3D=3D 0)
+>                        ^
+> fs/btrfs/send.c:5088:6: note: =E2=80=98clone_src_i_size=E2=80=99 was decl=
+ared here
+>  u64 clone_src_i_size;
+>    ^
+> The clone_src_i_size is only used as call-by-reference
+> in a call to get_inode_info().
+>
+> Silence the warning by initializing clone_src_i_size to 0.
+>
+> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+> ---
+>  fs/btrfs/send.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+> index f856d6c..197536b 100644
+> --- a/fs/btrfs/send.c
+> +++ b/fs/btrfs/send.c
+> @@ -5085,7 +5085,7 @@ static int clone_range(struct send_ctx *sctx,
+>         struct btrfs_path *path;
+>         struct btrfs_key key;
+>         int ret;
+> -       u64 clone_src_i_size;
+> +       u64 clone_src_i_size =3D 0;
+>
+>         /*
+>          * Prevent cloning from a zero offset with a length matching the =
+sector
+> --
+> 2.6.2
+>
