@@ -2,117 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1116AAE860
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C779AE884
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:42:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406292AbfIJKi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 06:38:57 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34617 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406251AbfIJKiy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:38:54 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h2so9385469ljk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 03:38:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aOBDMFi7PSb0gHyNeqqhWN1bJP3tg81RdsZh4BrKqUw=;
-        b=dZCGaEuJIGUCPQEGK33Sn/a9ZXr1W2in9EPfmjnbwJAMCekhG6gPrUKBXtM9dA6Bua
-         CO0ROLT22y9S3G5cB0fUS+NwtMDzJr6+L13qfksUvKAEex3h114d1QzyYZ8sZ6IjKuSt
-         rkwhMTdhR2vjcycIZ/U4KfP6/DGiUOHzrf1z1Ykp5RNNE8nDy3evu9ck5pH876DEllqg
-         sRw/k+zeukJc80NgALQN0hag/HPBhscdR5rSFY7PjS3o0+DYv3vwXnmOn0f1CoV9/JzP
-         FG5HBwd3LzjMCIpehQQdiNtCwLoUdPyT7QvAmxLutks5bbQM/+usVCkuxFOtnq0+Q2uv
-         9New==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aOBDMFi7PSb0gHyNeqqhWN1bJP3tg81RdsZh4BrKqUw=;
-        b=JcltRPH6rOIFmClWG/sUCP5cBgyIEJwbXecMwrhHeAV+8cHnuj39/a2BqIEQvfq6Zw
-         ixdxmlRjBZxFMFnk8pA5AIT7JinHkaslrfKfUcBJmgjUDMGZ8S6U50NmB0ZKw/epRBR7
-         EOR1F1Ik47wGoumaW8zkUfYmHquTTZtIqiuMhOjEqTu5FIOxun2kvT7LHg5eHVcpw+DV
-         RVWZj/5HZBNSRwDfiZYiPdOozEtPNkz5wHQmGOObOfQJlbWHz/rsf5+qzvxCazS7gt2q
-         mRYk6UAB1nyyFc/IpPWsnVpGrv5zCd9cZRpoOj4B4ZXhp+jMnjhm1fnPaMGrRInaQ8hC
-         HGVA==
-X-Gm-Message-State: APjAAAWkngTwVRmOFcyhVV0GTMccgi2pPXRbuz0fxE2qgTWREaZ9mJeC
-        PZH8DFBgki+Cvbn/69qnRVXH0A==
-X-Google-Smtp-Source: APXvYqyAutFjXRPV/VcndllZEPdk69aMXnYST9mSOt78qiRws+YgyCDmh/V5o8V9Ost00AHcM8xVsA==
-X-Received: by 2002:a2e:8012:: with SMTP id j18mr19477348ljg.36.1568111930993;
-        Tue, 10 Sep 2019 03:38:50 -0700 (PDT)
-Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id g5sm4005563lfh.2.2019.09.10.03.38.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 03:38:50 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
-        davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
-        john.fastabend@gmail.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH bpf-next 11/11] samples: bpf: makefile: add sysroot support
-Date:   Tue, 10 Sep 2019 13:38:30 +0300
-Message-Id: <20190910103830.20794-12-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190910103830.20794-1-ivan.khoronzhuk@linaro.org>
-References: <20190910103830.20794-1-ivan.khoronzhuk@linaro.org>
+        id S1728024AbfIJKlc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 06:41:32 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2203 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725797AbfIJKlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 06:41:31 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8F8E7C44C905677AE275;
+        Tue, 10 Sep 2019 18:41:27 +0800 (CST)
+Received: from [127.0.0.1] (10.74.191.121) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Tue, 10 Sep 2019
+ 18:41:19 +0800
+Subject: Re: [PATCH] driver core: ensure a device has valid node id in
+ device_add()
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
+        <mingo@kernel.org>, <linuxarm@huawei.com>
+References: <1568009063-77714-1-git-send-email-linyunsheng@huawei.com>
+ <20190909185035.GC2063@dhcp22.suse.cz>
+ <07576292-e129-5949-6a2e-45fff067ca5a@huawei.com>
+ <20190910072425.GI2063@dhcp22.suse.cz>
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <434aff9a-2acb-73d7-83fa-43d5494471c0@huawei.com>
+Date:   Tue, 10 Sep 2019 18:40:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20190910072425.GI2063@dhcp22.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.191.121]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Basically it only enables that was added by previous couple fixes.
-For sure, just make tools/include to be included after sysroot
-headers.
+On 2019/9/10 15:24, Michal Hocko wrote:
+> Our emails crossed, sorry about that.
+> 
+> On Tue 10-09-19 15:08:20, Yunsheng Lin wrote:
+>> On 2019/9/10 2:50, Michal Hocko wrote:
+>>> On Mon 09-09-19 14:04:23, Yunsheng Lin wrote:
+> [...]
+>>>> Even if a device's numa node is not specified, the device really
+>>>> does belong to a node.
+>>>
+>>> What does this mean?
+>>
+>> It means some one need to guess the node id if the node is not
+>> specified.
+> 
+> I have asked about this in other email so let's not cross the
+> communication even more.
 
-export ARCH=arm
-export CROSS_COMPILE=arm-linux-gnueabihf-
-make samples/bpf/ SYSROOT="path/to/sysroot"
+I may just answer your question here.
 
-Sysroot contains correct libs installed and its headers ofc.
-Useful when working with NFC or virtual machine.
+Besides the page allocator, cpu allocator or scheduler may need to
+know about the node id to figure out which cpu to run is more
+optimized, like in workqueue_select_cpu_near().
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
- samples/bpf/Makefile   |  5 +++++
- samples/bpf/README.rst | 10 ++++++++++
- 2 files changed, 15 insertions(+)
 
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index 4edc5232cfc1..68ba78d1dbbe 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -177,6 +177,11 @@ ifeq ($(ARCH), arm)
- CLANG_EXTRA_CFLAGS := $(D_OPTIONS)
- endif
- 
-+ifdef SYSROOT
-+ccflags-y += --sysroot=${SYSROOT}
-+PROGS_LDFLAGS := -L${SYSROOT}/usr/lib
-+endif
-+
- ccflags-y += -I$(objtree)/usr/include
- ccflags-y += -I$(srctree)/tools/lib/bpf/
- ccflags-y += -I$(srctree)/tools/testing/selftests/bpf/
-diff --git a/samples/bpf/README.rst b/samples/bpf/README.rst
-index 5f27e4faca50..786d0ab98e8a 100644
---- a/samples/bpf/README.rst
-+++ b/samples/bpf/README.rst
-@@ -74,3 +74,13 @@ samples for the cross target.
- export ARCH=arm64
- export CROSS_COMPILE="aarch64-linux-gnu-"
- make samples/bpf/ LLC=~/git/llvm/build/bin/llc CLANG=~/git/llvm/build/bin/clang
-+
-+If need to use environment of target board (headers and libs), the SYSROOT
-+also can be set, pointing on FS of target board:
-+
-+export ARCH=arm64
-+export CROSS_COMPILE="aarch64-linux-gnu-"
-+make samples/bpf/ SYSROOT=~/some_sdk/linux-devkit/sysroots/aarch64-linux-gnu
-+
-+Setting LLC and CLANG is not necessarily if it's installed on HOST and have
-+in its targets appropriate arch triple (usually it has several arches).
--- 
-2.17.1
+>  
+>>>> This patch sets the device node to node 0 in device_add() if the
+>>>> device's node id is not specified and it either has no parent
+>>>> device, or the parent device also does not have a valid node id.
+>>>
+>>> Why is node 0 special? I have seen platforms with node 0 missing or
+>>> being memory less. The changelog also lacks an actual problem
+>>
+>> by node 0 missing, how do we know if node 0 is missing?
+>> by node_online(0)?
+> 
+> No, this is a dynamic situation. Node might get offline via hotremove.
+> In most cases it wouldn't because there will likely be some kernel
+> memory on node0 but you cannot really make any assumptions here. Besides
+> that nothing should really care.
+
+From the node checking:
+'(unsigned)node_id >= nr_node_ids'
+
+If the nr_node_ids > 0, then node 0 is a valid node according to
+the above checking, is there a function to check if a node is
+missing?
+
+Also, I am not sure if I understand "nothing should really care".
+Does it means a device still can be a numa that is missing, just
+have some performance degradation?
+
+> 
+>>> descripton. Why do we even care about NUMA_NO_NODE? E.g. the page
+>>> allocator interprets NUMA_NO_NODE as the closest node with a memory.
+>>> And by closest it really means to the CPU which is performing the
+>>> allocation.
+>>
+>> Yes, I should have mentioned that in the commit log.
+>>
+>> I mentioned the below in the RFC, but somehow deleted when sending
+>> V1:
+>> "There may be explicit handling out there relying on NUMA_NO_NODE,
+>> like in nvme_probe()."
+> 
+> This code, and other doing similar things, is very likely bogus. Just
+> look at what the code does. It takes the node affinity from the dev and
+> uses it for an allocation. So far so good. But it tries to be clever
+> and special cases NUMA_NO_NODE to be first_node. So now the allocator
+> has used a proper fallback to the nearest node with memory for the
+> current CPU that is executing the code while dev will point to a
+> first_node which might be a completely different one. See the
+> discrepancy?
+
+Do you mean let kzalloc_node handle the NUMA_NO_NODE case, if node
+id is NUMA_NO_NODE, kzalloc_node handles it as numa_mem_id().
+
+If yes, above makes more sense.
+
+> 
 
