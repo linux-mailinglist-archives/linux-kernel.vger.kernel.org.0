@@ -2,116 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE355AEE62
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63247AEE4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405594AbfIJPS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 11:18:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:65400 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726060AbfIJPS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 11:18:57 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BE30318C4275;
-        Tue, 10 Sep 2019 15:18:56 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-75.pek2.redhat.com [10.72.12.75])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CCF64196B2;
-        Tue, 10 Sep 2019 15:18:52 +0000 (UTC)
-From:   Kairui Song <kasong@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Baoquan He <bhe@redhat.com>, Lianbo Jiang <lijiang@redhat.com>,
-        Dave Young <dyoung@redhat.com>, x86@kernel.org,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        Kairui Song <kasong@redhat.com>
-Subject: [PATCH v3 2/2] x86/kdump: Reserve extra memory when SME or SEV is active
-Date:   Tue, 10 Sep 2019 23:13:41 +0800
-Message-Id: <20190910151341.14986-3-kasong@redhat.com>
-In-Reply-To: <20190910151341.14986-1-kasong@redhat.com>
-References: <20190910151341.14986-1-kasong@redhat.com>
+        id S2388511AbfIJPPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 11:15:19 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:43787 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfIJPPS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 11:15:18 -0400
+Received: from localhost (unknown [148.69.85.38])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id DDB17240006;
+        Tue, 10 Sep 2019 15:15:15 +0000 (UTC)
+Date:   Tue, 10 Sep 2019 17:15:13 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, maz@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        nicolas.ferre@microchip.com, ludovic.desroches@microchip.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Sandeep Sheriker Mallikarjun 
+        <sandeepsheriker.mallikarjun@microchip.com>
+Subject: Re: [PATCH] irqchip/atmel-aic5: add support for sam9x60 irqchip
+Message-ID: <20190910151513.GY21254@piout.net>
+References: <1568026835-6646-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Tue, 10 Sep 2019 15:18:56 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568026835-6646-1-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit c7753208a94c ("x86, swiotlb: Add memory encryption support"),
-SWIOTLB will be enabled even if there is less than 4G of memory when SME
-is active, to support DMA of devices that not support address with the
-encrypt bit.
+On 09/09/2019 14:00:35+0300, Claudiu Beznea wrote:
+> From: Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>
+> 
+> Add support for SAM9X60 irqchip.
+> 
+> Signed-off-by: Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>
+> [claudiu.beznea@microchip.com: update aic5_irq_fixups[], update
+>  documentation]
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-And commit aba2d9a6385a ("iommu/amd: Do not disable SWIOTLB if SME is
-active") make the kernel keep SWIOTLB enabled even if there is an IOMMU.
+> ---
+>  .../devicetree/bindings/interrupt-controller/atmel,aic.txt     |  7 +++++--
+>  drivers/irqchip/irq-atmel-aic5.c                               | 10 ++++++++++
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt
+> index f4c5d34c4111..7079d44bf3ba 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt
+> @@ -1,8 +1,11 @@
+>  * Advanced Interrupt Controller (AIC)
+>  
+>  Required properties:
+> -- compatible: Should be "atmel,<chip>-aic"
+> -  <chip> can be "at91rm9200", "sama5d2", "sama5d3" or "sama5d4"
+> +- compatible: Should be:
+> +    - "atmel,<chip>-aic" where  <chip> can be "at91rm9200", "sama5d2",
+> +      "sama5d3" or "sama5d4"
+> +    - "microchip,<chip>-aic" where <chip> can be "sam9x60"
+> +
+>  - interrupt-controller: Identifies the node as an interrupt controller.
+>  - #interrupt-cells: The number of cells to define the interrupts. It should be 3.
+>    The first cell is the IRQ number (aka "Peripheral IDentifier" on datasheet).
+> diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic5.c
+> index 6acad2ea0fb3..29333497ba10 100644
+> --- a/drivers/irqchip/irq-atmel-aic5.c
+> +++ b/drivers/irqchip/irq-atmel-aic5.c
+> @@ -313,6 +313,7 @@ static void __init sama5d3_aic_irq_fixup(void)
+>  static const struct of_device_id aic5_irq_fixups[] __initconst = {
+>  	{ .compatible = "atmel,sama5d3", .data = sama5d3_aic_irq_fixup },
+>  	{ .compatible = "atmel,sama5d4", .data = sama5d3_aic_irq_fixup },
+> +	{ .compatible = "microchip,sam9x60", .data = sama5d3_aic_irq_fixup },
+>  	{ /* sentinel */ },
+>  };
+>  
+> @@ -390,3 +391,12 @@ static int __init sama5d4_aic5_of_init(struct device_node *node,
+>  	return aic5_of_init(node, parent, NR_SAMA5D4_IRQS);
+>  }
+>  IRQCHIP_DECLARE(sama5d4_aic5, "atmel,sama5d4-aic", sama5d4_aic5_of_init);
+> +
+> +#define NR_SAM9X60_IRQS		50
+> +
+> +static int __init sam9x60_aic5_of_init(struct device_node *node,
+> +				       struct device_node *parent)
+> +{
+> +	return aic5_of_init(node, parent, NR_SAM9X60_IRQS);
+> +}
+> +IRQCHIP_DECLARE(sam9x60_aic5, "microchip,sam9x60-aic", sam9x60_aic5_of_init);
+> -- 
+> 2.7.4
+> 
 
-Then commit d7b417fa08d1 ("x86/mm: Add DMA support for SEV memory
-encryption") will always force SWIOTLB to be enabled when SEV is active
-in all cases.
-
-Now, when either SME or SEV is active, SWIOTLB will be force enabled,
-and this is also true for kdump kernel. As a result kdump kernel will
-run out of already scarce pre-reserved memory easily.
-
-So when SME/SEV is active, reserve extra memory for SWIOTLB to ensure
-kdump kernel have enough memory, except when "crashkernel=size[KMG],high"
-is specified or any offset is used. As for the high reservation case, an
-extra low memory region will always be reserved and that is enough for
-SWIOTLB. Else if the offset format is used, user should be fully aware
-of any possible kdump kernel memory requirement and have to organize the
-memory usage carefully.
-
-Signed-off-by: Kairui Song <kasong@redhat.com>
----
- arch/x86/kernel/setup.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 71f20bb18cb0..ee6a2f1e2226 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -530,7 +530,7 @@ static int __init crashkernel_find_region(unsigned long long *crash_base,
- 					  unsigned long long *crash_size,
- 					  bool high)
- {
--	unsigned long long base, size;
-+	unsigned long long base, size, mem_enc_req = 0;
- 
- 	base = *crash_base;
- 	size = *crash_size;
-@@ -561,11 +561,25 @@ static int __init crashkernel_find_region(unsigned long long *crash_base,
- 	if (high)
- 		goto high_reserve;
- 
-+	/*
-+	 * When SME/SEV is active and not using high reserve,
-+	 * it will always required an extra SWIOTLB region.
-+	 */
-+	if (mem_encrypt_active())
-+		mem_enc_req = ALIGN(swiotlb_size_or_default(), SZ_1M);
-+
- 	base = memblock_find_in_range(CRASH_ALIGN,
--				      CRASH_ADDR_LOW_MAX, size,
-+				      CRASH_ADDR_LOW_MAX,
-+				      size + mem_enc_req,
- 				      CRASH_ALIGN);
--	if (base)
-+	if (base) {
-+		if (mem_enc_req) {
-+			pr_info("Memory encryption is active, crashkernel needs %ldMB extra memory\n",
-+				(unsigned long)(mem_enc_req >> 20));
-+			size += mem_enc_req;
-+		}
- 		goto found;
-+	}
- 
- high_reserve:
- 	/* Try high reserve */
 -- 
-2.21.0
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
