@@ -2,47 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1D96AE707
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2628DAE6FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390043AbfIJJbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 05:31:34 -0400
-Received: from mail.distrito02d02.saludzona5.gob.ec ([186.46.233.172]:48380
-        "EHLO mail.distrito02d02.saludzona5.gob.ec" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727825AbfIJJbe (ORCPT
+        id S2389925AbfIJJbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 05:31:07 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42902 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387801AbfIJJbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 05:31:34 -0400
-X-Greylist: delayed 12960 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Sep 2019 05:31:33 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.distrito02d02.saludzona5.gob.ec (Postfix) with ESMTP id AE49B761161;
-        Mon,  9 Sep 2019 13:34:25 -0500 (-05)
-Received: from mail.distrito02d02.saludzona5.gob.ec ([127.0.0.1])
-        by localhost (mail.distrito02d02.saludzona5.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id iTzbQzvhBzgo; Mon,  9 Sep 2019 13:34:25 -0500 (-05)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.distrito02d02.saludzona5.gob.ec (Postfix) with ESMTP id 1158D54587B;
-        Mon,  9 Sep 2019 07:15:29 -0500 (-05)
-X-Virus-Scanned: amavisd-new at distrito09d18.saludzona5.gob.ec
-Received: from mail.distrito02d02.saludzona5.gob.ec ([127.0.0.1])
-        by localhost (mail.distrito02d02.saludzona5.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id EmFp-8YLLwfK; Mon,  9 Sep 2019 07:15:28 -0500 (-05)
-Received: from mail.distrito02d02.saludzona5.gob.ec (mail.distrito02d02.saludzona5.gob.ec [186.46.233.172])
-        by mail.distrito02d02.saludzona5.gob.ec (Postfix) with ESMTP id 781357C43F9;
-        Sun,  8 Sep 2019 16:39:17 -0500 (-05)
-Date:   Sun, 8 Sep 2019 16:39:16 -0500 (ECT)
-From:   Jorge Cardenas <jorge.cardenas@distrito02d02.saludzona5.gob.ec>
-Message-ID: <985807766.514993.1567978756811.JavaMail.zimbra@distrito02d02.saludzona5.gob.ec>
-Subject: $1,000,000.00 dollars has been donated to you
+        Tue, 10 Sep 2019 05:31:06 -0400
+Received: by mail-ed1-f68.google.com with SMTP id y91so16384339ede.9
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 02:31:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nPUEYX1NKslohD2E+roi3GND2/I3OUXfvQ3XAcK+/GA=;
+        b=SSNNjgPQ1LSHIFhAfZd4y0wYr0+CC4ozBTywesC/p7SttOr6N2R7mXpSTeUG7e5Asp
+         r8Y/5rQ+0c4hRlG2zqaksGhlUOxOHvFvcWaPcfWbBQRLfk9F4xEpKsfnIlW6rWvwKohN
+         RNGw0IM/rKcv+cvba+nXEbQz0fbZXP6AHWb68cHXdh8ePHUYqx+2OqRBCekHgvlyW+Sw
+         P8Vkg+ZokeeLku2jJcT4X/bYAzCp+7R5R7yHqtsOA3sn6/NIShlu4GVTrZyZ9adTF5QC
+         J0N4aHa7o44cenXBoTu5Me3EkOwY3YbZwKPp5kN8YgRpX8rQ34t4N+SuVkQb/4NR5Mgv
+         w3HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nPUEYX1NKslohD2E+roi3GND2/I3OUXfvQ3XAcK+/GA=;
+        b=rTLUfxEOp/1X1sW3iMo8ypTSR74ZAx4tgMbnEHzuQLl6Vm17uiiXCezksFnO/ka2EH
+         3YMDDDvheG3zBF0d6YTTxuRRF69Fj+Hq+YGt1x2Y1P739doZEVCrxYD0zBjAE1Mw1zA2
+         evDuM4gLsFN9AKTUok7PWh9Ogw6jqVwWIC/kTk1uanM/71uWqaSQ59ecA6Ef9DwVxYFh
+         LZiQlIpEsHB93301iXifapUmJ0rXu7nqaeBUKJkJ6xp89XbTA5gGODlSBMqPe84Lc9md
+         E+RpmcKR5nYAS9N9WwQrbu8qWB2RvAjKw+tVOv19gjEggfGzYhVocoXXdI4SefpefVTE
+         HmCw==
+X-Gm-Message-State: APjAAAXlNLTvZxLmO4YeRTtR0QZYrWj5YdT/Hb+Yk1FR/hnMxcZoho+Q
+        LgPeM7zFCO88jStJVWPkkMMhVw==
+X-Google-Smtp-Source: APXvYqxCHutpkbRJfLAOgIJs9EabO82Ve9zSCkPCIkSC3X5ZdrOL0QaU2or0dKk75rTzC1h9BCUrgw==
+X-Received: by 2002:a17:906:4f04:: with SMTP id t4mr23891798eju.190.1568107863856;
+        Tue, 10 Sep 2019 02:31:03 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id u27sm3463898edb.48.2019.09.10.02.31.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Sep 2019 02:31:03 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 9F3511009F6; Tue, 10 Sep 2019 12:31:03 +0300 (+03)
+Date:   Tue, 10 Sep 2019 12:31:03 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Walter Wu <walter-zh.wu@mediatek.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Will Deacon <will@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@kernel.org>, Qian Cai <cai@lca.pw>,
+        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+Subject: Re: [PATCH v2 1/2] mm/page_ext: support to record the last stack of
+ page
+Message-ID: <20190910093103.4cmqk4semlhgpmle@box.shutemov.name>
+References: <20190909085339.25350-1-walter-zh.wu@mediatek.com>
+ <36b5a8e0-2783-4c0e-4fc7-78ea652ba475@redhat.com>
+ <1568077669.24886.3.camel@mtksdccf07>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [186.46.233.172]
-X-Mailer: Zimbra 8.5.1_GA_3056 (zclient/8.5.1_GA_3056)
-Thread-Topic: $1,000,000.00 dollars has been donated to you
-Thread-Index: AzOmXJvnMZCygqwlznICLOiWyaBSgQ==
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568077669.24886.3.camel@mtksdccf07>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 10, 2019 at 09:07:49AM +0800, Walter Wu wrote:
+> On Mon, 2019-09-09 at 12:57 +0200, David Hildenbrand wrote:
+> > On 09.09.19 10:53, Walter Wu wrote:
+> > > KASAN will record last stack of page in order to help programmer
+> > > to see memory corruption caused by page.
+> > > 
+> > > What is difference between page_owner and our patch?
+> > > page_owner records alloc stack of page, but our patch is to record
+> > > last stack(it may be alloc or free stack of page).
+> > > 
+> > > Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
+> > > ---
+> > >  mm/page_ext.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > > 
+> > > diff --git a/mm/page_ext.c b/mm/page_ext.c
+> > > index 5f5769c7db3b..7ca33dcd9ffa 100644
+> > > --- a/mm/page_ext.c
+> > > +++ b/mm/page_ext.c
+> > > @@ -65,6 +65,9 @@ static struct page_ext_operations *page_ext_ops[] = {
+> > >  #if defined(CONFIG_IDLE_PAGE_TRACKING) && !defined(CONFIG_64BIT)
+> > >  	&page_idle_ops,
+> > >  #endif
+> > > +#ifdef CONFIG_KASAN
+> > > +	&page_stack_ops,
+> > > +#endif
+> > >  };
+> > >  
+> > >  static unsigned long total_usage;
+> > > 
+> > 
+> > Are you sure this patch compiles?
+> > 
+> This is patchsets, it need another patch2.
+> We have verified it by running KASAN UT on Qemu.
+
+Any patchset must be bisectable: do not break anything in the middle of
+patchset.
+
+-- 
+ Kirill A. Shutemov
