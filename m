@@ -2,79 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E956AECED
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F94AECF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:28:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733294AbfIJOZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 10:25:57 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:40297 "EHLO ozlabs.org"
+        id S2387616AbfIJO2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 10:28:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:25301 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733102AbfIJOZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:25:56 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726066AbfIJO2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 10:28:10 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46SS4J58Mrz9sP3;
-        Wed, 11 Sep 2019 00:25:33 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1568125554;
-        bh=uq9UJS1CnW+1MSyChB0WEJsx1WRMMtR4z8ZvDjymjg8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rIyLsjh/Gn8j+AhvZ7dBzJdx3YsdoP0B9m/Ty+YOym2lQpM+TGq8oDZpgb+VtHaI6
-         fsDaIZg/5grlnu0oR5odggdIRIw0mmwtKlNkSglSenOJzFUrCFZYarlLgmMIBO/Z9L
-         HjAEew4Nn+V0/peCxhRH794LNJ7TTMCs8QLJPW+EUNLTX6kn1puXNBjrq3XMl8RCtX
-         zQvFLovy3/W73lpqX7eKgXodglYGkvY5FDUAyBU1rgPzUYaBDVEI+uxkF9uH3kwry6
-         nb7dzNiWaKG4HTLtfs9z8o01azEHHy03qIu4TiGeqWHiiRuVPc4MloukO421ue5XOn
-         +kQL/Y2vSjfWA==
-Date:   Wed, 11 Sep 2019 00:25:28 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: Signed-off-by missing for commit in the vfs tree
-Message-ID: <20190911002528.47fbd3f0@canb.auug.org.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id AE7B63175A20;
+        Tue, 10 Sep 2019 14:28:09 +0000 (UTC)
+Received: from asgard.redhat.com (ovpn-112-20.ams2.redhat.com [10.36.112.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24D9560C5E;
+        Tue, 10 Sep 2019 14:27:36 +0000 (UTC)
+Date:   Tue, 10 Sep 2019 15:27:07 +0100
+From:   Eugene Syromiatnikov <esyr@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH] fork: fail on non-zero higher 32 bits of args.exit_signal
+Message-ID: <20190910142707.GQ4960@asgard.redhat.com>
+References: <20190910115711.GA3755@asgard.redhat.com>
+ <20190910124440.GA25647@redhat.com>
+ <20190910130935.jxqxbt7wop3ostob@wittgenstein>
+ <20190910131048.e7xr52az2zej4p4v@wittgenstein>
+ <20190910132701.s5o5nidewyo5zl7h@wittgenstein>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/GB//vjhqRiLw2d5ztMh/F+Y";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190910132701.s5o5nidewyo5zl7h@wittgenstein>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 10 Sep 2019 14:28:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/GB//vjhqRiLw2d5ztMh/F+Y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 10, 2019 at 03:27:02PM +0200, Christian Brauner wrote:
+> On Tue, Sep 10, 2019 at 03:10:48PM +0200, Christian Brauner wrote:
+> > On Tue, Sep 10, 2019 at 03:09:35PM +0200, Christian Brauner wrote:
+> > > On Tue, Sep 10, 2019 at 02:44:41PM +0200, Oleg Nesterov wrote:
+> > > > On 09/10, Eugene Syromiatnikov wrote:
+> > > > >
+> > > > > --- a/kernel/fork.c
+> > > > > +++ b/kernel/fork.c
+> > > > > @@ -2562,6 +2562,9 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+> > > > >  	if (copy_from_user(&args, uargs, size))
+> > > > >  		return -EFAULT;
+> > > > >  
+> > > > > +	if (unlikely(((unsigned int)args.exit_signal) != args.exit_signal))
+> > > > > +		return -EINVAL;
+> > > > 
+> > > > Hmm. Unless I am totally confused you found a serious bug...
+> > > > 
+> > > > Without CLONE_THREAD/CLONE_PARENT copy_process() blindly does
+> > > > 
+> > > > 	p->exit_signal = args->exit_signal;
+> > > > 
+> > > > the valid_signal(sig) check in do_notify_parent() mostly saves us, but we
+> > > > must not allow child->exit_signal < 0, if nothing else this breaks
+> > > > thread_group_leader().
+> > > > 
+> > > > And afaics this patch doesn't fix this? I think we need the valid_signal()
+> > > > check...
+> > > 
+> > > Thanks for sending this patch so quickly after our conversation
+> > > yesterday, Eugene!
+> > > We definitely want valid_signal() to verify the signal is ok.
+> 
+> So we could do your check in copy_clone_args_from_user(), and then we do
+> another valid_signal() check in clone3_args_valid()? We could do the
+> latter in copy_clone_args_from_user() too but it's nicer to do it along
+> the other checks in clone3_args_valid().
 
-Hi all,
+There's also a discrepancy between CSIGNAL (0xff) and _NSIG, used
+in valid_signal (which is between 32 and 128, depending on architecture),
+it seems it doesn't break thread_group_leader, but definitely allows
+passing some invalid signal numbers via legacy clone-like syscalls—I'm
+not sure if that's important.
 
-Commit
-
-  591b53ca2883 ("vfs: Convert orangefs to use the new mount API")
-
-is missing a Signed-off-by from its author.
-
-Also, please keep the tags together in the commit message.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/GB//vjhqRiLw2d5ztMh/F+Y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl13slgACgkQAVBC80lX
-0GzUAAf/doFEpYTPO6XF+c03jQVp9K56kY+2Bv/BxjKigFS9Kc2rW7/rMRLD73Vb
-7vbO5gNwOvY4qycb3ear3GHa4iGfHJ6MyaooGCJB9WD6w2qjJM0o96AqkYmk8Bgg
-hW3wgxZnEjBeLYOI8Ne39htXUkZ0ypZNdZlMwy47gSljxqiOX3g/YySQpQ98Xe2H
-9/C/JH157LMVWMKiOE2ToIhkVLdsRzUKjd94gurL7JG1xllYpI6o/j/UUxLmvU3l
-/CKQ+Mmhbgf817yWB+Ec0R71AA702IBhJYRCjMoawayzv2gz1gFHuVPqVtk5gmqY
-kGJ7UjhhuLGEg5ThRiZ1FMYfndPiyA==
-=Hedc
------END PGP SIGNATURE-----
-
---Sig_/GB//vjhqRiLw2d5ztMh/F+Y--
+> Christian
