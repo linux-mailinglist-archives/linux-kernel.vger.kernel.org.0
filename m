@@ -2,95 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5AEEAEDD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEF68AEDD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 16:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393746AbfIJOxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 10:53:31 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40670 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393693AbfIJOx3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:53:29 -0400
-Received: by mail-ot1-f68.google.com with SMTP id y39so19155303ota.7
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 07:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o8ly24a+jxc+91/TFypCkb4F8N+FEdjNAE/zhEV+IIE=;
-        b=mfSJF8PaPQmyDY9iChJmuo3gGAWGIprSFFiC1eBc2RjVbb7pyDG60UmszTQjZrSGzE
-         K+6tCKyTJkmcwwALfPMqRwAAPujuq/yfI4Q7jmV94bCU1aEGBOuCvUS/J0XvzmRrUCPT
-         RbHLsv9SLAoH4EtNfOkt11yzTbrSPIchF8T+3d4u2dBZAUQ6enJw8Bu21MoZnYakcb8V
-         pIF/7U8K9/s3i0xFyyDQE9CXIl7k54gXZUXpJ2aHYdpSLJLRrBjZj+RzxftUZmwtuMCS
-         FEhwcoyAlMjk4xyslFR+dSTbEKdEdPR9o4fPblns1DCFNeCX3XfB9wgSTm+V1YFqLqWw
-         U5+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o8ly24a+jxc+91/TFypCkb4F8N+FEdjNAE/zhEV+IIE=;
-        b=A/png5M1YSLzPQ+QUWW7cmOxUjgzpOkaSgOANdi9wDKkPgEgWAbeNIVSl0XN19U8oG
-         zZzd2CBhEonCiUPOLy3nkL+EJJzlZgEph7SQMioMbTzFkRoYundvIVFnP7W66V+Y/58q
-         W04MBl1CK+/9oRzNoXrVhHCR7eyDdjb0dnlD+Vrf1Zo47vr72IF12N8Ubp5SVjHKE0gq
-         Ha+ueVAC8KR2QgiHOQ7dh8JYj05JD3zBY2G+mnQPhow31QVGtrkbbxtj2lSvK5ya/05c
-         D1D1CdLi7ESNBWTM1YB4CvfVtB7jLO+i/Yzc5xeT+hhouh6/UnWVa6vgjNHdrxSrTZk2
-         mvhg==
-X-Gm-Message-State: APjAAAX3UD7BlL6ZpgAYuNDRj3EWHPGYYokYCTsDv3FlK0BemPdo7UuV
-        ulIfl0HoDI7iIgcgVfhtH5pDemGO76cThSu4/eSJew==
-X-Google-Smtp-Source: APXvYqxQmuDGMJwxn/eWcj+lNZcggHjhtKUuLiO38N7aE8QSYKsPN792e8m5XBP9d1ntulf0NUV56UxMjwtQxhgQXFU=
-X-Received: by 2002:a9d:2642:: with SMTP id a60mr25476337otb.247.1568127208568;
- Tue, 10 Sep 2019 07:53:28 -0700 (PDT)
+        id S2393690AbfIJOx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 10:53:26 -0400
+Received: from 8bytes.org ([81.169.241.247]:53878 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731630AbfIJOx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 10:53:26 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 04377BDE; Tue, 10 Sep 2019 16:53:24 +0200 (CEST)
+Date:   Tue, 10 Sep 2019 16:53:23 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
+        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        pengfei.xu@intel.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 0/5] iommu: Bounce page for untrusted devices
+Message-ID: <20190910145322.GB24103@8bytes.org>
+References: <20190906061452.30791-1-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
-References: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com> <20190910140107.GD2063@dhcp22.suse.cz>
-In-Reply-To: <20190910140107.GD2063@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 10 Sep 2019 07:53:17 -0700
-Message-ID: <CAPcyv4jkZJLzEDne6W2pEDGB+q96NkkozmhKxybTu1LjnPYY9g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] mm: initialize struct pages reserved by
- ZONE_DEVICE driver.
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "longman@redhat.com" <longman@redhat.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906061452.30791-1-baolu.lu@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 7:01 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Fri 06-09-19 08:09:52, Toshiki Fukasawa wrote:
-> [...]
-> > @@ -5856,8 +5855,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
-> >               if (!altmap)
-> >                       return;
-> >
-> > -             if (start_pfn == altmap->base_pfn)
-> > -                     start_pfn += altmap->reserve;
-> >               end_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
->
-> Who is actually setting reserve? This is is something really impossible
-> to grep for in the kernle and git grep on altmap->reserve doesn't show
-> anything AFAICS.
+On Fri, Sep 06, 2019 at 02:14:47PM +0800, Lu Baolu wrote:
+> Lu Baolu (5):
+>   swiotlb: Split size parameter to map/unmap APIs
+>   iommu/vt-d: Check whether device requires bounce buffer
+>   iommu/vt-d: Don't switch off swiotlb if bounce page is used
+>   iommu/vt-d: Add trace events for device dma map/unmap
+>   iommu/vt-d: Use bounce buffer for untrusted devices
+> 
+>  .../admin-guide/kernel-parameters.txt         |   5 +
+>  drivers/iommu/Kconfig                         |   1 +
+>  drivers/iommu/Makefile                        |   1 +
+>  drivers/iommu/intel-iommu.c                   | 310 +++++++++++++++++-
+>  drivers/iommu/intel-trace.c                   |  14 +
+>  drivers/xen/swiotlb-xen.c                     |   8 +-
+>  include/linux/swiotlb.h                       |   8 +-
+>  include/trace/events/intel_iommu.h            | 106 ++++++
+>  kernel/dma/direct.c                           |   2 +-
+>  kernel/dma/swiotlb.c                          |  30 +-
+>  10 files changed, 449 insertions(+), 36 deletions(-)
+>  create mode 100644 drivers/iommu/intel-trace.c
+>  create mode 100644 include/trace/events/intel_iommu.h
 
-Yes, it's difficult to grep, here is the use in the nvdimm case:
-
-    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/nvdimm/pfn_devs.c#n600
-
->
-> Btw. irrespective to this issue all three callers should be using
-> pfn_to_online_page rather than pfn_to_page AFAICS. It doesn't really
-> make sense to collect data for offline pfn ranges. They might be
-> uninitialized even without zone device.
-
-Agree.
+Applied, thanks.
