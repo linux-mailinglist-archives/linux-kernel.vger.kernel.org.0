@@ -2,220 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCB62AEF7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 18:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5C08AEF87
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 18:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394220AbfIJQW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 12:22:57 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:7576 "EHLO pegase1.c-s.fr"
+        id S2436779AbfIJQ1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 12:27:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34017 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394211AbfIJQW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 12:22:57 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46SVgd4bCYz9tyvS;
-        Tue, 10 Sep 2019 18:22:53 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=tLMUSP0a; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id nz-WxYFQc0gT; Tue, 10 Sep 2019 18:22:53 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46SVgd3Qyqz9tyvQ;
-        Tue, 10 Sep 2019 18:22:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1568132573; bh=+6o+78VZsQA+v7vQ/HRTMCRCI9xi61deAbzDhccBXKU=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=tLMUSP0aHHdfA/uGbuUYrb2i2RZcbnaUor8S5aGIXKI/8hTw6KLlkfP1zkiS+j7Iq
-         wNjfSOdNqW2YyRvQbIUfQi6RYegbVQwKqqbLDUTsWGdvNCqJOYftPsLB+uPD9jqSDc
-         WlccUH+JzrhK3heSCZunkAjJwVzvOAZLwBqjl39Y=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 234238B88E;
-        Tue, 10 Sep 2019 18:22:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id Z-JXUHdkEBL5; Tue, 10 Sep 2019 18:22:55 +0200 (CEST)
-Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id CC1588B885;
-        Tue, 10 Sep 2019 18:22:54 +0200 (CEST)
-Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 96AFD6B751; Tue, 10 Sep 2019 16:22:54 +0000 (UTC)
-Message-Id: <d6979510ee67331de69d5859054258e483ceddfc.1568132567.git.christophe.leroy@c-s.fr>
-In-Reply-To: <b8fbdac205bbebd8e860dc42e12246de29bcc68f.1568132567.git.christophe.leroy@c-s.fr>
-References: <b8fbdac205bbebd8e860dc42e12246de29bcc68f.1568132567.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 2/2] powerpc/kexec: move kexec files into a dedicated
- subdir.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 10 Sep 2019 16:22:54 +0000 (UTC)
+        id S2436494AbfIJQ1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 12:27:11 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AC52C3016F49;
+        Tue, 10 Sep 2019 16:27:10 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A009C60BFB;
+        Tue, 10 Sep 2019 16:27:10 +0000 (UTC)
+Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 9008224F2F;
+        Tue, 10 Sep 2019 16:27:10 +0000 (UTC)
+Date:   Tue, 10 Sep 2019 12:27:10 -0400 (EDT)
+From:   Jan Stancek <jstancek@redhat.com>
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        systemd-devel@lists.freedesktop.org,
+        Jan Stancek <jstancek@redhat.com>
+Message-ID: <1802022622.11216716.1568132830207.JavaMail.zimbra@redhat.com>
+In-Reply-To: <87r24o24eo.fsf@mail.parknet.co.jp>
+References: <fc8878aeefea128c105c49671b2a1ac4694e1f48.1567468225.git.jstancek@redhat.com> <87v9u3xf5q.fsf@mail.parknet.co.jp> <339755031.10549626.1567969588805.JavaMail.zimbra@redhat.com> <87r24o24eo.fsf@mail.parknet.co.jp>
+Subject: Re: [PATCH] fat: fix corruption in fat_alloc_new_dir()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.43.17.163, 10.4.195.13]
+Thread-Topic: fix corruption in fat_alloc_new_dir()
+Thread-Index: btCRHWvdReVkaymHhT2xSAQwL/tLmw==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 10 Sep 2019 16:27:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arch/powerpc/kernel/ contains 8 files dedicated to kexec.
 
-Move them into a dedicated subdirectory.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+----- Original Message -----
+> Jan Stancek <jstancek@redhat.com> writes:
+> 
+> >> Using the device while mounting same device doesn't work reliably like
+> >> this race. (getblk() is intentionally used to get the buffer to write
+> >> new data.)
+> >
+> > Are you saying this is expected even if 'usage' is just read?
+> 
+> Yes, assuming exclusive access.
 
----
-v2: moved crash.c as well as it's part of kexec suite.
-v3: renamed files to remove 'kexec' keyword from names.
----
- arch/powerpc/kernel/Makefile                       | 19 +---------------
- arch/powerpc/kernel/kexec/Makefile                 | 25 ++++++++++++++++++++++
- arch/powerpc/kernel/{ => kexec}/crash.c            |  0
- .../kernel/{kexec_elf_64.c => kexec/elf_64.c}      |  0
- arch/powerpc/kernel/{ima_kexec.c => kexec/ima.c}   |  0
- .../kernel/{machine_kexec.c => kexec/machine.c}    |  0
- .../{machine_kexec_32.c => kexec/machine_32.c}     |  0
- .../{machine_kexec_64.c => kexec/machine_64.c}     |  0
- .../machine_file_64.c}                             |  0
- .../{kexec_relocate_32.S => kexec/relocate_32.S}   |  2 +-
- 10 files changed, 27 insertions(+), 19 deletions(-)
- create mode 100644 arch/powerpc/kernel/kexec/Makefile
- rename arch/powerpc/kernel/{ => kexec}/crash.c (100%)
- rename arch/powerpc/kernel/{kexec_elf_64.c => kexec/elf_64.c} (100%)
- rename arch/powerpc/kernel/{ima_kexec.c => kexec/ima.c} (100%)
- rename arch/powerpc/kernel/{machine_kexec.c => kexec/machine.c} (100%)
- rename arch/powerpc/kernel/{machine_kexec_32.c => kexec/machine_32.c} (100%)
- rename arch/powerpc/kernel/{machine_kexec_64.c => kexec/machine_64.c} (100%)
- rename arch/powerpc/kernel/{machine_kexec_file_64.c => kexec/machine_file_64.c} (100%)
- rename arch/powerpc/kernel/{kexec_relocate_32.S => kexec/relocate_32.S} (99%)
+Seems we were lucky so far to only hit this with FAT.
 
-diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-index f6c80f31502a..42e150e6e663 100644
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -5,9 +5,6 @@
- 
- CFLAGS_ptrace.o		+= -DUTS_MACHINE='"$(UTS_MACHINE)"'
- 
--# Disable clang warning for using setjmp without setjmp.h header
--CFLAGS_crash.o		+= $(call cc-disable-warning, builtin-requires-header)
--
- ifdef CONFIG_PPC64
- CFLAGS_prom_init.o	+= $(NO_MINIMAL_TOC)
- endif
-@@ -81,7 +78,6 @@ obj-$(CONFIG_CRASH_DUMP)	+= crash_dump.o
- obj-$(CONFIG_FA_DUMP)		+= fadump.o
- ifdef CONFIG_PPC32
- obj-$(CONFIG_E500)		+= idle_e500.o
--obj-$(CONFIG_KEXEC_CORE)	+= kexec_relocate_32.o
- endif
- obj-$(CONFIG_PPC_BOOK3S_32)	+= idle_6xx.o l2cr_6xx.o cpu_setup_6xx.o
- obj-$(CONFIG_TAU)		+= tau_6xx.o
-@@ -125,14 +121,7 @@ pci64-$(CONFIG_PPC64)		+= pci_dn.o pci-hotplug.o isa-bridge.o
- obj-$(CONFIG_PCI)		+= pci_$(BITS).o $(pci64-y) \
- 				   pci-common.o pci_of_scan.o
- obj-$(CONFIG_PCI_MSI)		+= msi.o
--obj-$(CONFIG_KEXEC_CORE)	+= machine_kexec.o crash.o \
--				   machine_kexec_$(BITS).o
--obj-$(CONFIG_KEXEC_FILE)	+= machine_kexec_file_$(BITS).o kexec_elf_$(BITS).o
--ifdef CONFIG_HAVE_IMA_KEXEC
--ifdef CONFIG_IMA
--obj-y				+= ima_kexec.o
--endif
--endif
-+obj-$(CONFIG_KEXEC_CORE)	+= kexec/
- 
- obj-$(CONFIG_AUDIT)		+= audit.o
- obj64-$(CONFIG_AUDIT)		+= compat_audit.o
-@@ -164,12 +153,6 @@ endif
- GCOV_PROFILE_prom_init.o := n
- KCOV_INSTRUMENT_prom_init.o := n
- UBSAN_SANITIZE_prom_init.o := n
--GCOV_PROFILE_machine_kexec_64.o := n
--KCOV_INSTRUMENT_machine_kexec_64.o := n
--UBSAN_SANITIZE_machine_kexec_64.o := n
--GCOV_PROFILE_machine_kexec_32.o := n
--KCOV_INSTRUMENT_machine_kexec_32.o := n
--UBSAN_SANITIZE_machine_kexec_32.o := n
- GCOV_PROFILE_kprobes.o := n
- KCOV_INSTRUMENT_kprobes.o := n
- UBSAN_SANITIZE_kprobes.o := n
-diff --git a/arch/powerpc/kernel/kexec/Makefile b/arch/powerpc/kernel/kexec/Makefile
-new file mode 100644
-index 000000000000..46e52ee95322
---- /dev/null
-+++ b/arch/powerpc/kernel/kexec/Makefile
-@@ -0,0 +1,25 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Makefile for the linux kernel.
-+#
-+
-+# Disable clang warning for using setjmp without setjmp.h header
-+CFLAGS_crash.o		+= $(call cc-disable-warning, builtin-requires-header)
-+
-+obj-y				+= machine.o crash.o machine_$(BITS).o
-+
-+obj-$(CONFIG_PPC32)		+= relocate_32.o
-+
-+obj-$(CONFIG_KEXEC_FILE)	+= machine_file_$(BITS).o elf_$(BITS).o
-+
-+ifdef CONFIG_HAVE_IMA_KEXEC
-+ifdef CONFIG_IMA
-+obj-y				+= ima.o
-+endif
-+endif
-+
-+
-+# Disable GCOV, KCOV & sanitizers in odd or sensitive code
-+GCOV_PROFILE_machine_$(BITS).o := n
-+KCOV_INSTRUMENT_machine_$(BITS).o := n
-+UBSAN_SANITIZE_machine_$(BITS).o := n
-diff --git a/arch/powerpc/kernel/crash.c b/arch/powerpc/kernel/kexec/crash.c
-similarity index 100%
-rename from arch/powerpc/kernel/crash.c
-rename to arch/powerpc/kernel/kexec/crash.c
-diff --git a/arch/powerpc/kernel/kexec_elf_64.c b/arch/powerpc/kernel/kexec/elf_64.c
-similarity index 100%
-rename from arch/powerpc/kernel/kexec_elf_64.c
-rename to arch/powerpc/kernel/kexec/elf_64.c
-diff --git a/arch/powerpc/kernel/ima_kexec.c b/arch/powerpc/kernel/kexec/ima.c
-similarity index 100%
-rename from arch/powerpc/kernel/ima_kexec.c
-rename to arch/powerpc/kernel/kexec/ima.c
-diff --git a/arch/powerpc/kernel/machine_kexec.c b/arch/powerpc/kernel/kexec/machine.c
-similarity index 100%
-rename from arch/powerpc/kernel/machine_kexec.c
-rename to arch/powerpc/kernel/kexec/machine.c
-diff --git a/arch/powerpc/kernel/machine_kexec_32.c b/arch/powerpc/kernel/kexec/machine_32.c
-similarity index 100%
-rename from arch/powerpc/kernel/machine_kexec_32.c
-rename to arch/powerpc/kernel/kexec/machine_32.c
-diff --git a/arch/powerpc/kernel/machine_kexec_64.c b/arch/powerpc/kernel/kexec/machine_64.c
-similarity index 100%
-rename from arch/powerpc/kernel/machine_kexec_64.c
-rename to arch/powerpc/kernel/kexec/machine_64.c
-diff --git a/arch/powerpc/kernel/machine_kexec_file_64.c b/arch/powerpc/kernel/kexec/machine_file_64.c
-similarity index 100%
-rename from arch/powerpc/kernel/machine_kexec_file_64.c
-rename to arch/powerpc/kernel/kexec/machine_file_64.c
-diff --git a/arch/powerpc/kernel/kexec_relocate_32.S b/arch/powerpc/kernel/kexec/relocate_32.S
-similarity index 99%
-rename from arch/powerpc/kernel/kexec_relocate_32.S
-rename to arch/powerpc/kernel/kexec/relocate_32.S
-index 3f8ca6a566fb..b9355e0d5c85 100644
---- a/arch/powerpc/kernel/kexec_relocate_32.S
-+++ b/arch/powerpc/kernel/kexec/relocate_32.S
-@@ -32,7 +32,7 @@ relocate_new_kernel:
- 	mr	r31, r5
- 
- #define ENTRY_MAPPING_KEXEC_SETUP
--#include "fsl_booke_entry_mapping.S"
-+#include <kernel/fsl_booke_entry_mapping.S>
- #undef ENTRY_MAPPING_KEXEC_SETUP
- 
- 	mr      r3, r29
--- 
-2.13.3
+I also tried couple variations of reproducer:
 
+- Disabling udevd and running just "blkid --probe" in parallel
+  also reproduced it
+- Disabling udevd and running read() on first 1024 sectors in parallel
+  also reproduced it
+- aio_read() submitted prior to mount could reproduce it,
+  as long as fd was held open
+- I couldn't reproduce it with fadvise/madvise WILLNEED submitted prior to mount
+
+> 
+> >> mount(2) internally opens the device by EXCL mode, so I guess udev opens
+> >> without EXCL (I dont know if it is intent or not).
+> >
+> > I gave this a try and added O_EXCL to udev-builtin-blkid.c. My system had
+> > trouble
+> > booting, it was getting stuck on mounting LVM volumes.
+> >
+> > So, I'm not sure how to move forward here.
+> 
+> OK. I'm still think the userspace should avoid to use blockdev while
+> mounting though, this patch will workaround this race with small race.
+
+https://systemd.io/BLOCK_DEVICE_LOCKING.html mentions flock(LOCK_EX) as a way
+to avoid probing while "another program concurrently modifies a superblock or
+partition table". Adding flock(LOCK_EX) works around the problem too, but that
+would address problem only for LTP (and tools/scripts that use this approach).
+
+> 
+> Can you test this?
+> 
+> Thanks.
+> --
+> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+> 
+> 
+> [PATCH] fat: Workaround the race with userspace's read via blockdev while
+> mounting
+
+I ran reproducer on patched kernel for 5 hours, it made over 25000 iterations,
+there was no corruption. Thank you for looking at this.
+
+Regards,
+Jan
