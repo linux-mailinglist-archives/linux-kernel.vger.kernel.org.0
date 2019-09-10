@@ -2,199 +2,1109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8659AEF7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 18:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B7EBAEF7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 18:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394208AbfIJQWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 12:22:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36494 "EHLO mx1.redhat.com"
+        id S2436750AbfIJQW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 12:22:58 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:61422 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394113AbfIJQWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 12:22:51 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3841410C697D;
-        Tue, 10 Sep 2019 16:22:50 +0000 (UTC)
-Received: from [10.36.116.108] (ovpn-116-108.ams2.redhat.com [10.36.116.108])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D38D95C207;
-        Tue, 10 Sep 2019 16:22:37 +0000 (UTC)
-Subject: Re: [virtio-dev] Re: [PATCH v9 0/8] stg mail -e --version=v9 \
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, virtio-dev@lists.oasis-open.org,
-        kvm list <kvm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Oscar Salvador <osalvador@suse.de>,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        Rik van Riel <riel@surriel.com>, lcapitulino@redhat.com,
-        "Wang, Wei W" <wei.w.wang@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20190907172225.10910.34302.stgit@localhost.localdomain>
- <20190910124209.GY2063@dhcp22.suse.cz>
- <CAKgT0Udr6nYQFTRzxLbXk41SiJ-pcT_bmN1j1YR4deCwdTOaUQ@mail.gmail.com>
- <20190910144713.GF2063@dhcp22.suse.cz>
- <CAKgT0UdB4qp3vFGrYEs=FwSXKpBEQ7zo7DV55nJRO2C-KCEOrw@mail.gmail.com>
- <20190910161818.GF2797@work-vm>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
- BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
- 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
- xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
- jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
- s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
- m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
- MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
- z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
- dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
- UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
- 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
- uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
- 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
- 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
- xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
- 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
- hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
- u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
- gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
- rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
- BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
- KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
- NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
- YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
- lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
- qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
- C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
- W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
- TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
- +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <f74117db-225d-92cb-9476-22c0f752659d@redhat.com>
-Date:   Tue, 10 Sep 2019 18:22:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190910161818.GF2797@work-vm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Tue, 10 Sep 2019 16:22:50 +0000 (UTC)
+        id S2394210AbfIJQW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 12:22:57 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46SVgc6D70z9tyvR;
+        Tue, 10 Sep 2019 18:22:52 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=hLD1YdS6; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id sXuk_CNHZkkt; Tue, 10 Sep 2019 18:22:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46SVgc57dVz9tyvQ;
+        Tue, 10 Sep 2019 18:22:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1568132572; bh=vyOfof1EN+sHNN2fvL/owbDyjpKSZbteaRPnhGFDHKU=;
+        h=From:Subject:To:Cc:Date:From;
+        b=hLD1YdS6TR7PJUqv0coKAWeF3BVPMyTzPlhhniQgMXPHGXWMdAlJeOFMjyF+qVWE2
+         snhxBUpCs5ek41emp41yAlodk9M/6EjvjKdavHDVjZIJUfHRARdTBaxepJ+qQDB9CP
+         B7BdGyDCUq4N3kdtxEFABnokG4mJjPwM5+IuRFgk=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 531C78B88E;
+        Tue, 10 Sep 2019 18:22:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id onMYOPYYeXMN; Tue, 10 Sep 2019 18:22:54 +0200 (CEST)
+Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C7CCF8B885;
+        Tue, 10 Sep 2019 18:22:53 +0200 (CEST)
+Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 872736B751; Tue, 10 Sep 2019 16:22:53 +0000 (UTC)
+Message-Id: <b8fbdac205bbebd8e860dc42e12246de29bcc68f.1568132567.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 1/2] powerpc/32: Split kexec low level code out of
+ misc_32.S
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 10 Sep 2019 16:22:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.09.19 18:18, Dr. David Alan Gilbert wrote:
-> * Alexander Duyck (alexander.duyck@gmail.com) wrote:
->> On Tue, Sep 10, 2019 at 7:47 AM Michal Hocko <mhocko@kernel.org> wrote:
->>>
->>> On Tue 10-09-19 07:42:43, Alexander Duyck wrote:
->>>> On Tue, Sep 10, 2019 at 5:42 AM Michal Hocko <mhocko@kernel.org> wrote:
->>>>>
->>>>> I wanted to review "mm: Introduce Reported pages" just realize that I
->>>>> have no clue on what is going on so returned to the cover and it didn't
->>>>> really help much. I am completely unfamiliar with virtio so please bear
->>>>> with me.
->>>>>
->>>>> On Sat 07-09-19 10:25:03, Alexander Duyck wrote:
->>>>> [...]
->>>>>> This series provides an asynchronous means of reporting to a hypervisor
->>>>>> that a guest page is no longer in use and can have the data associated
->>>>>> with it dropped. To do this I have implemented functionality that allows
->>>>>> for what I am referring to as unused page reporting
->>>>>>
->>>>>> The functionality for this is fairly simple. When enabled it will allocate
->>>>>> statistics to track the number of reported pages in a given free area.
->>>>>> When the number of free pages exceeds this value plus a high water value,
->>>>>> currently 32, it will begin performing page reporting which consists of
->>>>>> pulling pages off of free list and placing them into a scatter list. The
->>>>>> scatterlist is then given to the page reporting device and it will perform
->>>>>> the required action to make the pages "reported", in the case of
->>>>>> virtio-balloon this results in the pages being madvised as MADV_DONTNEED
->>>>>> and as such they are forced out of the guest. After this they are placed
->>>>>> back on the free list,
->>>>>
->>>>> And here I am reallly lost because "forced out of the guest" makes me
->>>>> feel that those pages are no longer usable by the guest. So how come you
->>>>> can add them back to the free list. I suspect understanding this part
->>>>> will allow me to understand why we have to mark those pages and prevent
->>>>> merging.
->>>>
->>>> Basically as the paragraph above mentions "forced out of the guest"
->>>> really is just the hypervisor calling MADV_DONTNEED on the page in
->>>> question. So the behavior is the same as any userspace application
->>>> that calls MADV_DONTNEED where the contents are no longer accessible
->>>> from userspace and attempting to access them will result in a fault
->>>> and the page being populated with a zero fill on-demand page, or a
->>>> copy of the file contents if the memory is file backed.
->>>
->>> As I've said I have no idea about virt so this doesn't really tell me
->>> much. Does that mean that if somebody allocates such a page and tries to
->>> access it then virt will handle a fault and bring it back?
->>
->> Actually I am probably describing too much as the MADV_DONTNEED is the
->> hypervisor behavior in response to the virtio-balloon notification. A
->> more thorough explanation of it can be found by just running "man
->> madvise", probably best just to leave it at that since I am probably
->> confusing things by describing hypervisor behavior in a kernel patch
->> set.
->>
->> For the most part all the page reporting really does is provide a way
->> to incrementally identify unused regions of memory in the buddy
->> allocator. That in turn is used by virtio-balloon in a polling thread
->> to report to the hypervisor what pages are not in use so that it can
->> make a decision on what to do with the pages now that it knows they
->> are unused.
->>
->> All this is providing is just a report and it is optional if the
->> hypervisor will act on it or not. If the hypervisor takes some sort of
->> action on the page, then the expectation is that the hypervisor will
->> use some sort of mechanism such as a page fault to discover when the
->> page is used again.
-> 
-> OK, that's interestingly different (but OK) from some other schemes that
-> hav ebeen described which *require* the guest to somehow indicate the
-> page is in use before starting to use the page again.
-> 
+Almost half of misc_32.S is dedicated to kexec.
+That's the relocation function for kexec.
 
-virtio-balloon also has a mode where the guest would not have to
-indicate to the host before re-using a page. Only
-VIRTIO_BALLOON_F_MUST_TELL_HOST enforces this. So it's not completely new.
+Drop it into a dedicated kexec_relocate_32.S
 
-> Dave
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
+---
+v2: no change
+v3: renamed kexec_32.S to kexec_relocate_32.S
+---
+ arch/powerpc/kernel/Makefile            |   1 +
+ arch/powerpc/kernel/kexec_relocate_32.S | 500 ++++++++++++++++++++++++++++++++
+ arch/powerpc/kernel/misc_32.S           | 491 -------------------------------
+ 3 files changed, 501 insertions(+), 491 deletions(-)
+ create mode 100644 arch/powerpc/kernel/kexec_relocate_32.S
 
+diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+index c9cc4b689e60..f6c80f31502a 100644
+--- a/arch/powerpc/kernel/Makefile
++++ b/arch/powerpc/kernel/Makefile
+@@ -81,6 +81,7 @@ obj-$(CONFIG_CRASH_DUMP)	+= crash_dump.o
+ obj-$(CONFIG_FA_DUMP)		+= fadump.o
+ ifdef CONFIG_PPC32
+ obj-$(CONFIG_E500)		+= idle_e500.o
++obj-$(CONFIG_KEXEC_CORE)	+= kexec_relocate_32.o
+ endif
+ obj-$(CONFIG_PPC_BOOK3S_32)	+= idle_6xx.o l2cr_6xx.o cpu_setup_6xx.o
+ obj-$(CONFIG_TAU)		+= tau_6xx.o
+diff --git a/arch/powerpc/kernel/kexec_relocate_32.S b/arch/powerpc/kernel/kexec_relocate_32.S
+new file mode 100644
+index 000000000000..3f8ca6a566fb
+--- /dev/null
++++ b/arch/powerpc/kernel/kexec_relocate_32.S
+@@ -0,0 +1,500 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * This file contains kexec low-level functions.
++ *
++ * Copyright (C) 2002-2003 Eric Biederman  <ebiederm@xmission.com>
++ * GameCube/ppc32 port Copyright (C) 2004 Albert Herranz
++ * PPC44x port. Copyright (C) 2011,  IBM Corporation
++ * 		Author: Suzuki Poulose <suzuki@in.ibm.com>
++ */
++
++#include <asm/reg.h>
++#include <asm/page.h>
++#include <asm/mmu.h>
++#include <asm/ppc_asm.h>
++#include <asm/kexec.h>
++
++	.text
++
++	/*
++	 * Must be relocatable PIC code callable as a C function.
++	 */
++	.globl relocate_new_kernel
++relocate_new_kernel:
++	/* r3 = page_list   */
++	/* r4 = reboot_code_buffer */
++	/* r5 = start_address      */
++
++#ifdef CONFIG_FSL_BOOKE
++
++	mr	r29, r3
++	mr	r30, r4
++	mr	r31, r5
++
++#define ENTRY_MAPPING_KEXEC_SETUP
++#include "fsl_booke_entry_mapping.S"
++#undef ENTRY_MAPPING_KEXEC_SETUP
++
++	mr      r3, r29
++	mr      r4, r30
++	mr      r5, r31
++
++	li	r0, 0
++#elif defined(CONFIG_44x)
++
++	/* Save our parameters */
++	mr	r29, r3
++	mr	r30, r4
++	mr	r31, r5
++
++#ifdef CONFIG_PPC_47x
++	/* Check for 47x cores */
++	mfspr	r3,SPRN_PVR
++	srwi	r3,r3,16
++	cmplwi	cr0,r3,PVR_476FPE@h
++	beq	setup_map_47x
++	cmplwi	cr0,r3,PVR_476@h
++	beq	setup_map_47x
++	cmplwi	cr0,r3,PVR_476_ISS@h
++	beq	setup_map_47x
++#endif /* CONFIG_PPC_47x */
++	
++/*
++ * Code for setting up 1:1 mapping for PPC440x for KEXEC
++ *
++ * We cannot switch off the MMU on PPC44x.
++ * So we:
++ * 1) Invalidate all the mappings except the one we are running from.
++ * 2) Create a tmp mapping for our code in the other address space(TS) and
++ *    jump to it. Invalidate the entry we started in.
++ * 3) Create a 1:1 mapping for 0-2GiB in chunks of 256M in original TS.
++ * 4) Jump to the 1:1 mapping in original TS.
++ * 5) Invalidate the tmp mapping.
++ *
++ * - Based on the kexec support code for FSL BookE
++ *
++ */
++
++	/* 
++	 * Load the PID with kernel PID (0).
++	 * Also load our MSR_IS and TID to MMUCR for TLB search.
++	 */
++	li	r3, 0
++	mtspr	SPRN_PID, r3
++	mfmsr	r4
++	andi.	r4,r4,MSR_IS@l
++	beq	wmmucr
++	oris	r3,r3,PPC44x_MMUCR_STS@h
++wmmucr:
++	mtspr	SPRN_MMUCR,r3
++	sync
++
++	/*
++	 * Invalidate all the TLB entries except the current entry
++	 * where we are running from
++	 */
++	bl	0f				/* Find our address */
++0:	mflr	r5				/* Make it accessible */
++	tlbsx	r23,0,r5			/* Find entry we are in */
++	li	r4,0				/* Start at TLB entry 0 */
++	li	r3,0				/* Set PAGEID inval value */
++1:	cmpw	r23,r4				/* Is this our entry? */
++	beq	skip				/* If so, skip the inval */
++	tlbwe	r3,r4,PPC44x_TLB_PAGEID		/* If not, inval the entry */
++skip:
++	addi	r4,r4,1				/* Increment */
++	cmpwi	r4,64				/* Are we done?	*/
++	bne	1b				/* If not, repeat */
++	isync
++
++	/* Create a temp mapping and jump to it */
++	andi.	r6, r23, 1		/* Find the index to use */
++	addi	r24, r6, 1		/* r24 will contain 1 or 2 */
++
++	mfmsr	r9			/* get the MSR */
++	rlwinm	r5, r9, 27, 31, 31	/* Extract the MSR[IS] */
++	xori	r7, r5, 1		/* Use the other address space */
++
++	/* Read the current mapping entries */
++	tlbre	r3, r23, PPC44x_TLB_PAGEID
++	tlbre	r4, r23, PPC44x_TLB_XLAT
++	tlbre	r5, r23, PPC44x_TLB_ATTRIB
++
++	/* Save our current XLAT entry */
++	mr	r25, r4
++
++	/* Extract the TLB PageSize */
++	li	r10, 1 			/* r10 will hold PageSize */
++	rlwinm	r11, r3, 0, 24, 27	/* bits 24-27 */
++
++	/* XXX: As of now we use 256M, 4K pages */
++	cmpwi	r11, PPC44x_TLB_256M
++	bne	tlb_4k
++	rotlwi	r10, r10, 28		/* r10 = 256M */
++	b	write_out
++tlb_4k:
++	cmpwi	r11, PPC44x_TLB_4K
++	bne	default
++	rotlwi	r10, r10, 12		/* r10 = 4K */
++	b	write_out
++default:
++	rotlwi	r10, r10, 10		/* r10 = 1K */
++
++write_out:
++	/*
++	 * Write out the tmp 1:1 mapping for this code in other address space
++	 * Fixup  EPN = RPN , TS=other address space
++	 */
++	insrwi	r3, r7, 1, 23		/* Bit 23 is TS for PAGEID field */
++
++	/* Write out the tmp mapping entries */
++	tlbwe	r3, r24, PPC44x_TLB_PAGEID
++	tlbwe	r4, r24, PPC44x_TLB_XLAT
++	tlbwe	r5, r24, PPC44x_TLB_ATTRIB
++
++	subi	r11, r10, 1		/* PageOffset Mask = PageSize - 1 */
++	not	r10, r11		/* Mask for PageNum */
++
++	/* Switch to other address space in MSR */
++	insrwi	r9, r7, 1, 26		/* Set MSR[IS] = r7 */
++
++	bl	1f
++1:	mflr	r8
++	addi	r8, r8, (2f-1b)		/* Find the target offset */
++
++	/* Jump to the tmp mapping */
++	mtspr	SPRN_SRR0, r8
++	mtspr	SPRN_SRR1, r9
++	rfi
++
++2:
++	/* Invalidate the entry we were executing from */
++	li	r3, 0
++	tlbwe	r3, r23, PPC44x_TLB_PAGEID
++
++	/* attribute fields. rwx for SUPERVISOR mode */
++	li	r5, 0
++	ori	r5, r5, (PPC44x_TLB_SW | PPC44x_TLB_SR | PPC44x_TLB_SX | PPC44x_TLB_G)
++
++	/* Create 1:1 mapping in 256M pages */
++	xori	r7, r7, 1			/* Revert back to Original TS */
++
++	li	r8, 0				/* PageNumber */
++	li	r6, 3				/* TLB Index, start at 3  */
++
++next_tlb:
++	rotlwi	r3, r8, 28			/* Create EPN (bits 0-3) */
++	mr	r4, r3				/* RPN = EPN  */
++	ori	r3, r3, (PPC44x_TLB_VALID | PPC44x_TLB_256M) /* SIZE = 256M, Valid */
++	insrwi	r3, r7, 1, 23			/* Set TS from r7 */
++
++	tlbwe	r3, r6, PPC44x_TLB_PAGEID	/* PageID field : EPN, V, SIZE */
++	tlbwe	r4, r6, PPC44x_TLB_XLAT		/* Address translation : RPN   */
++	tlbwe	r5, r6, PPC44x_TLB_ATTRIB	/* Attributes */
++
++	addi	r8, r8, 1			/* Increment PN */
++	addi	r6, r6, 1			/* Increment TLB Index */
++	cmpwi	r8, 8				/* Are we done ? */
++	bne	next_tlb
++	isync
++
++	/* Jump to the new mapping 1:1 */
++	li	r9,0
++	insrwi	r9, r7, 1, 26			/* Set MSR[IS] = r7 */
++
++	bl	1f
++1:	mflr	r8
++	and	r8, r8, r11			/* Get our offset within page */
++	addi	r8, r8, (2f-1b)
++
++	and	r5, r25, r10			/* Get our target PageNum */
++	or	r8, r8, r5			/* Target jump address */
++
++	mtspr	SPRN_SRR0, r8
++	mtspr	SPRN_SRR1, r9
++	rfi
++2:
++	/* Invalidate the tmp entry we used */
++	li	r3, 0
++	tlbwe	r3, r24, PPC44x_TLB_PAGEID
++	sync
++	b	ppc44x_map_done
++
++#ifdef CONFIG_PPC_47x
++
++	/* 1:1 mapping for 47x */
++
++setup_map_47x:
++
++	/*
++	 * Load the kernel pid (0) to PID and also to MMUCR[TID].
++	 * Also set the MSR IS->MMUCR STS
++	 */
++	li	r3, 0
++	mtspr	SPRN_PID, r3			/* Set PID */
++	mfmsr	r4				/* Get MSR */
++	andi.	r4, r4, MSR_IS@l		/* TS=1? */
++	beq	1f				/* If not, leave STS=0 */
++	oris	r3, r3, PPC47x_MMUCR_STS@h	/* Set STS=1 */
++1:	mtspr	SPRN_MMUCR, r3			/* Put MMUCR */
++	sync
++
++	/* Find the entry we are running from */
++	bl	2f
++2:	mflr	r23
++	tlbsx	r23, 0, r23
++	tlbre	r24, r23, 0			/* TLB Word 0 */
++	tlbre	r25, r23, 1			/* TLB Word 1 */
++	tlbre	r26, r23, 2			/* TLB Word 2 */
++
++
++	/*
++	 * Invalidates all the tlb entries by writing to 256 RPNs(r4)
++	 * of 4k page size in all  4 ways (0-3 in r3).
++	 * This would invalidate the entire UTLB including the one we are
++	 * running from. However the shadow TLB entries would help us 
++	 * to continue the execution, until we flush them (rfi/isync).
++	 */
++	addis	r3, 0, 0x8000			/* specify the way */
++	addi	r4, 0, 0			/* TLB Word0 = (EPN=0, VALID = 0) */
++	addi	r5, 0, 0
++	b	clear_utlb_entry
++
++	/* Align the loop to speed things up. from head_44x.S */
++	.align	6
++
++clear_utlb_entry:
++
++	tlbwe	r4, r3, 0
++	tlbwe	r5, r3, 1
++	tlbwe	r5, r3, 2
++	addis	r3, r3, 0x2000			/* Increment the way */
++	cmpwi	r3, 0
++	bne	clear_utlb_entry
++	addis	r3, 0, 0x8000
++	addis	r4, r4, 0x100			/* Increment the EPN */
++	cmpwi	r4, 0
++	bne	clear_utlb_entry
++
++	/* Create the entries in the other address space */
++	mfmsr	r5
++	rlwinm	r7, r5, 27, 31, 31		/* Get the TS (Bit 26) from MSR */
++	xori	r7, r7, 1			/* r7 = !TS */
++
++	insrwi	r24, r7, 1, 21			/* Change the TS in the saved TLB word 0 */
++
++	/* 
++	 * write out the TLB entries for the tmp mapping
++	 * Use way '0' so that we could easily invalidate it later.
++	 */
++	lis	r3, 0x8000			/* Way '0' */ 
++
++	tlbwe	r24, r3, 0
++	tlbwe	r25, r3, 1
++	tlbwe	r26, r3, 2
++
++	/* Update the msr to the new TS */
++	insrwi	r5, r7, 1, 26
++
++	bl	1f
++1:	mflr	r6
++	addi	r6, r6, (2f-1b)
++
++	mtspr	SPRN_SRR0, r6
++	mtspr	SPRN_SRR1, r5
++	rfi
++
++	/* 
++	 * Now we are in the tmp address space.
++	 * Create a 1:1 mapping for 0-2GiB in the original TS.
++	 */
++2:
++	li	r3, 0
++	li	r4, 0				/* TLB Word 0 */
++	li	r5, 0				/* TLB Word 1 */
++	li	r6, 0
++	ori	r6, r6, PPC47x_TLB2_S_RWX	/* TLB word 2 */
++
++	li	r8, 0				/* PageIndex */
++
++	xori	r7, r7, 1			/* revert back to original TS */
++
++write_utlb:
++	rotlwi	r5, r8, 28			/* RPN = PageIndex * 256M */
++						/* ERPN = 0 as we don't use memory above 2G */
++
++	mr	r4, r5				/* EPN = RPN */
++	ori	r4, r4, (PPC47x_TLB0_VALID | PPC47x_TLB0_256M)
++	insrwi	r4, r7, 1, 21			/* Insert the TS to Word 0 */
++
++	tlbwe	r4, r3, 0			/* Write out the entries */
++	tlbwe	r5, r3, 1
++	tlbwe	r6, r3, 2
++	addi	r8, r8, 1
++	cmpwi	r8, 8				/* Have we completed ? */
++	bne	write_utlb
++
++	/* make sure we complete the TLB write up */
++	isync
++
++	/* 
++	 * Prepare to jump to the 1:1 mapping.
++	 * 1) Extract page size of the tmp mapping
++	 *    DSIZ = TLB_Word0[22:27]
++	 * 2) Calculate the physical address of the address
++	 *    to jump to.
++	 */
++	rlwinm	r10, r24, 0, 22, 27
++
++	cmpwi	r10, PPC47x_TLB0_4K
++	bne	0f
++	li	r10, 0x1000			/* r10 = 4k */
++	bl	1f
++
++0:
++	/* Defaults to 256M */
++	lis	r10, 0x1000
++	
++	bl	1f
++1:	mflr	r4
++	addi	r4, r4, (2f-1b)			/* virtual address  of 2f */
++
++	subi	r11, r10, 1			/* offsetmask = Pagesize - 1 */
++	not	r10, r11			/* Pagemask = ~(offsetmask) */
++
++	and	r5, r25, r10			/* Physical page */
++	and	r6, r4, r11			/* offset within the current page */
++
++	or	r5, r5, r6			/* Physical address for 2f */
++
++	/* Switch the TS in MSR to the original one */
++	mfmsr	r8
++	insrwi	r8, r7, 1, 26
++
++	mtspr	SPRN_SRR1, r8
++	mtspr	SPRN_SRR0, r5
++	rfi
++
++2:
++	/* Invalidate the tmp mapping */
++	lis	r3, 0x8000			/* Way '0' */
++
++	clrrwi	r24, r24, 12			/* Clear the valid bit */
++	tlbwe	r24, r3, 0
++	tlbwe	r25, r3, 1
++	tlbwe	r26, r3, 2
++
++	/* Make sure we complete the TLB write and flush the shadow TLB */
++	isync
++
++#endif
++
++ppc44x_map_done:
++
++
++	/* Restore the parameters */
++	mr	r3, r29
++	mr	r4, r30
++	mr	r5, r31
++
++	li	r0, 0
++#else
++	li	r0, 0
++
++	/*
++	 * Set Machine Status Register to a known status,
++	 * switch the MMU off and jump to 1: in a single step.
++	 */
++
++	mr	r8, r0
++	ori     r8, r8, MSR_RI|MSR_ME
++	mtspr	SPRN_SRR1, r8
++	addi	r8, r4, 1f - relocate_new_kernel
++	mtspr	SPRN_SRR0, r8
++	sync
++	rfi
++
++1:
++#endif
++	/* from this point address translation is turned off */
++	/* and interrupts are disabled */
++
++	/* set a new stack at the bottom of our page... */
++	/* (not really needed now) */
++	addi	r1, r4, KEXEC_CONTROL_PAGE_SIZE - 8 /* for LR Save+Back Chain */
++	stw	r0, 0(r1)
++
++	/* Do the copies */
++	li	r6, 0 /* checksum */
++	mr	r0, r3
++	b	1f
++
++0:	/* top, read another word for the indirection page */
++	lwzu	r0, 4(r3)
++
++1:
++	/* is it a destination page? (r8) */
++	rlwinm.	r7, r0, 0, 31, 31 /* IND_DESTINATION (1<<0) */
++	beq	2f
++
++	rlwinm	r8, r0, 0, 0, 19 /* clear kexec flags, page align */
++	b	0b
++
++2:	/* is it an indirection page? (r3) */
++	rlwinm.	r7, r0, 0, 30, 30 /* IND_INDIRECTION (1<<1) */
++	beq	2f
++
++	rlwinm	r3, r0, 0, 0, 19 /* clear kexec flags, page align */
++	subi	r3, r3, 4
++	b	0b
++
++2:	/* are we done? */
++	rlwinm.	r7, r0, 0, 29, 29 /* IND_DONE (1<<2) */
++	beq	2f
++	b	3f
++
++2:	/* is it a source page? (r9) */
++	rlwinm.	r7, r0, 0, 28, 28 /* IND_SOURCE (1<<3) */
++	beq	0b
++
++	rlwinm	r9, r0, 0, 0, 19 /* clear kexec flags, page align */
++
++	li	r7, PAGE_SIZE / 4
++	mtctr   r7
++	subi    r9, r9, 4
++	subi    r8, r8, 4
++9:
++	lwzu    r0, 4(r9)  /* do the copy */
++	xor	r6, r6, r0
++	stwu    r0, 4(r8)
++	dcbst	0, r8
++	sync
++	icbi	0, r8
++	bdnz    9b
++
++	addi    r9, r9, 4
++	addi    r8, r8, 4
++	b	0b
++
++3:
++
++	/* To be certain of avoiding problems with self-modifying code
++	 * execute a serializing instruction here.
++	 */
++	isync
++	sync
++
++	mfspr	r3, SPRN_PIR /* current core we are running on */
++	mr	r4, r5 /* load physical address of chunk called */
++
++	/* jump to the entry point, usually the setup routine */
++	mtlr	r5
++	blrl
++
++1:	b	1b
++
++relocate_new_kernel_end:
++
++	.globl relocate_new_kernel_size
++relocate_new_kernel_size:
++	.long relocate_new_kernel_end - relocate_new_kernel
+diff --git a/arch/powerpc/kernel/misc_32.S b/arch/powerpc/kernel/misc_32.S
+index 82df4b09e79f..6cbcabac7ee1 100644
+--- a/arch/powerpc/kernel/misc_32.S
++++ b/arch/powerpc/kernel/misc_32.S
+@@ -6,11 +6,6 @@
+  * Largely rewritten by Cort Dougan (cort@cs.nmt.edu)
+  * and Paul Mackerras.
+  *
+- * kexec bits:
+- * Copyright (C) 2002-2003 Eric Biederman  <ebiederm@xmission.com>
+- * GameCube/ppc32 port Copyright (C) 2004 Albert Herranz
+- * PPC44x port. Copyright (C) 2011,  IBM Corporation
+- * 		Author: Suzuki Poulose <suzuki@in.ibm.com>
+  */
+ 
+ #include <linux/sys.h>
+@@ -25,7 +20,6 @@
+ #include <asm/thread_info.h>
+ #include <asm/asm-offsets.h>
+ #include <asm/processor.h>
+-#include <asm/kexec.h>
+ #include <asm/bug.h>
+ #include <asm/ptrace.h>
+ #include <asm/export.h>
+@@ -614,488 +608,3 @@ _GLOBAL(start_secondary_resume)
+  */
+ _GLOBAL(__main)
+ 	blr
+-
+-#ifdef CONFIG_KEXEC_CORE
+-	/*
+-	 * Must be relocatable PIC code callable as a C function.
+-	 */
+-	.globl relocate_new_kernel
+-relocate_new_kernel:
+-	/* r3 = page_list   */
+-	/* r4 = reboot_code_buffer */
+-	/* r5 = start_address      */
+-
+-#ifdef CONFIG_FSL_BOOKE
+-
+-	mr	r29, r3
+-	mr	r30, r4
+-	mr	r31, r5
+-
+-#define ENTRY_MAPPING_KEXEC_SETUP
+-#include "fsl_booke_entry_mapping.S"
+-#undef ENTRY_MAPPING_KEXEC_SETUP
+-
+-	mr      r3, r29
+-	mr      r4, r30
+-	mr      r5, r31
+-
+-	li	r0, 0
+-#elif defined(CONFIG_44x)
+-
+-	/* Save our parameters */
+-	mr	r29, r3
+-	mr	r30, r4
+-	mr	r31, r5
+-
+-#ifdef CONFIG_PPC_47x
+-	/* Check for 47x cores */
+-	mfspr	r3,SPRN_PVR
+-	srwi	r3,r3,16
+-	cmplwi	cr0,r3,PVR_476FPE@h
+-	beq	setup_map_47x
+-	cmplwi	cr0,r3,PVR_476@h
+-	beq	setup_map_47x
+-	cmplwi	cr0,r3,PVR_476_ISS@h
+-	beq	setup_map_47x
+-#endif /* CONFIG_PPC_47x */
+-	
+-/*
+- * Code for setting up 1:1 mapping for PPC440x for KEXEC
+- *
+- * We cannot switch off the MMU on PPC44x.
+- * So we:
+- * 1) Invalidate all the mappings except the one we are running from.
+- * 2) Create a tmp mapping for our code in the other address space(TS) and
+- *    jump to it. Invalidate the entry we started in.
+- * 3) Create a 1:1 mapping for 0-2GiB in chunks of 256M in original TS.
+- * 4) Jump to the 1:1 mapping in original TS.
+- * 5) Invalidate the tmp mapping.
+- *
+- * - Based on the kexec support code for FSL BookE
+- *
+- */
+-
+-	/* 
+-	 * Load the PID with kernel PID (0).
+-	 * Also load our MSR_IS and TID to MMUCR for TLB search.
+-	 */
+-	li	r3, 0
+-	mtspr	SPRN_PID, r3
+-	mfmsr	r4
+-	andi.	r4,r4,MSR_IS@l
+-	beq	wmmucr
+-	oris	r3,r3,PPC44x_MMUCR_STS@h
+-wmmucr:
+-	mtspr	SPRN_MMUCR,r3
+-	sync
+-
+-	/*
+-	 * Invalidate all the TLB entries except the current entry
+-	 * where we are running from
+-	 */
+-	bl	0f				/* Find our address */
+-0:	mflr	r5				/* Make it accessible */
+-	tlbsx	r23,0,r5			/* Find entry we are in */
+-	li	r4,0				/* Start at TLB entry 0 */
+-	li	r3,0				/* Set PAGEID inval value */
+-1:	cmpw	r23,r4				/* Is this our entry? */
+-	beq	skip				/* If so, skip the inval */
+-	tlbwe	r3,r4,PPC44x_TLB_PAGEID		/* If not, inval the entry */
+-skip:
+-	addi	r4,r4,1				/* Increment */
+-	cmpwi	r4,64				/* Are we done?	*/
+-	bne	1b				/* If not, repeat */
+-	isync
+-
+-	/* Create a temp mapping and jump to it */
+-	andi.	r6, r23, 1		/* Find the index to use */
+-	addi	r24, r6, 1		/* r24 will contain 1 or 2 */
+-
+-	mfmsr	r9			/* get the MSR */
+-	rlwinm	r5, r9, 27, 31, 31	/* Extract the MSR[IS] */
+-	xori	r7, r5, 1		/* Use the other address space */
+-
+-	/* Read the current mapping entries */
+-	tlbre	r3, r23, PPC44x_TLB_PAGEID
+-	tlbre	r4, r23, PPC44x_TLB_XLAT
+-	tlbre	r5, r23, PPC44x_TLB_ATTRIB
+-
+-	/* Save our current XLAT entry */
+-	mr	r25, r4
+-
+-	/* Extract the TLB PageSize */
+-	li	r10, 1 			/* r10 will hold PageSize */
+-	rlwinm	r11, r3, 0, 24, 27	/* bits 24-27 */
+-
+-	/* XXX: As of now we use 256M, 4K pages */
+-	cmpwi	r11, PPC44x_TLB_256M
+-	bne	tlb_4k
+-	rotlwi	r10, r10, 28		/* r10 = 256M */
+-	b	write_out
+-tlb_4k:
+-	cmpwi	r11, PPC44x_TLB_4K
+-	bne	default
+-	rotlwi	r10, r10, 12		/* r10 = 4K */
+-	b	write_out
+-default:
+-	rotlwi	r10, r10, 10		/* r10 = 1K */
+-
+-write_out:
+-	/*
+-	 * Write out the tmp 1:1 mapping for this code in other address space
+-	 * Fixup  EPN = RPN , TS=other address space
+-	 */
+-	insrwi	r3, r7, 1, 23		/* Bit 23 is TS for PAGEID field */
+-
+-	/* Write out the tmp mapping entries */
+-	tlbwe	r3, r24, PPC44x_TLB_PAGEID
+-	tlbwe	r4, r24, PPC44x_TLB_XLAT
+-	tlbwe	r5, r24, PPC44x_TLB_ATTRIB
+-
+-	subi	r11, r10, 1		/* PageOffset Mask = PageSize - 1 */
+-	not	r10, r11		/* Mask for PageNum */
+-
+-	/* Switch to other address space in MSR */
+-	insrwi	r9, r7, 1, 26		/* Set MSR[IS] = r7 */
+-
+-	bl	1f
+-1:	mflr	r8
+-	addi	r8, r8, (2f-1b)		/* Find the target offset */
+-
+-	/* Jump to the tmp mapping */
+-	mtspr	SPRN_SRR0, r8
+-	mtspr	SPRN_SRR1, r9
+-	rfi
+-
+-2:
+-	/* Invalidate the entry we were executing from */
+-	li	r3, 0
+-	tlbwe	r3, r23, PPC44x_TLB_PAGEID
+-
+-	/* attribute fields. rwx for SUPERVISOR mode */
+-	li	r5, 0
+-	ori	r5, r5, (PPC44x_TLB_SW | PPC44x_TLB_SR | PPC44x_TLB_SX | PPC44x_TLB_G)
+-
+-	/* Create 1:1 mapping in 256M pages */
+-	xori	r7, r7, 1			/* Revert back to Original TS */
+-
+-	li	r8, 0				/* PageNumber */
+-	li	r6, 3				/* TLB Index, start at 3  */
+-
+-next_tlb:
+-	rotlwi	r3, r8, 28			/* Create EPN (bits 0-3) */
+-	mr	r4, r3				/* RPN = EPN  */
+-	ori	r3, r3, (PPC44x_TLB_VALID | PPC44x_TLB_256M) /* SIZE = 256M, Valid */
+-	insrwi	r3, r7, 1, 23			/* Set TS from r7 */
+-
+-	tlbwe	r3, r6, PPC44x_TLB_PAGEID	/* PageID field : EPN, V, SIZE */
+-	tlbwe	r4, r6, PPC44x_TLB_XLAT		/* Address translation : RPN   */
+-	tlbwe	r5, r6, PPC44x_TLB_ATTRIB	/* Attributes */
+-
+-	addi	r8, r8, 1			/* Increment PN */
+-	addi	r6, r6, 1			/* Increment TLB Index */
+-	cmpwi	r8, 8				/* Are we done ? */
+-	bne	next_tlb
+-	isync
+-
+-	/* Jump to the new mapping 1:1 */
+-	li	r9,0
+-	insrwi	r9, r7, 1, 26			/* Set MSR[IS] = r7 */
+-
+-	bl	1f
+-1:	mflr	r8
+-	and	r8, r8, r11			/* Get our offset within page */
+-	addi	r8, r8, (2f-1b)
+-
+-	and	r5, r25, r10			/* Get our target PageNum */
+-	or	r8, r8, r5			/* Target jump address */
+-
+-	mtspr	SPRN_SRR0, r8
+-	mtspr	SPRN_SRR1, r9
+-	rfi
+-2:
+-	/* Invalidate the tmp entry we used */
+-	li	r3, 0
+-	tlbwe	r3, r24, PPC44x_TLB_PAGEID
+-	sync
+-	b	ppc44x_map_done
+-
+-#ifdef CONFIG_PPC_47x
+-
+-	/* 1:1 mapping for 47x */
+-
+-setup_map_47x:
+-
+-	/*
+-	 * Load the kernel pid (0) to PID and also to MMUCR[TID].
+-	 * Also set the MSR IS->MMUCR STS
+-	 */
+-	li	r3, 0
+-	mtspr	SPRN_PID, r3			/* Set PID */
+-	mfmsr	r4				/* Get MSR */
+-	andi.	r4, r4, MSR_IS@l		/* TS=1? */
+-	beq	1f				/* If not, leave STS=0 */
+-	oris	r3, r3, PPC47x_MMUCR_STS@h	/* Set STS=1 */
+-1:	mtspr	SPRN_MMUCR, r3			/* Put MMUCR */
+-	sync
+-
+-	/* Find the entry we are running from */
+-	bl	2f
+-2:	mflr	r23
+-	tlbsx	r23, 0, r23
+-	tlbre	r24, r23, 0			/* TLB Word 0 */
+-	tlbre	r25, r23, 1			/* TLB Word 1 */
+-	tlbre	r26, r23, 2			/* TLB Word 2 */
+-
+-
+-	/*
+-	 * Invalidates all the tlb entries by writing to 256 RPNs(r4)
+-	 * of 4k page size in all  4 ways (0-3 in r3).
+-	 * This would invalidate the entire UTLB including the one we are
+-	 * running from. However the shadow TLB entries would help us 
+-	 * to continue the execution, until we flush them (rfi/isync).
+-	 */
+-	addis	r3, 0, 0x8000			/* specify the way */
+-	addi	r4, 0, 0			/* TLB Word0 = (EPN=0, VALID = 0) */
+-	addi	r5, 0, 0
+-	b	clear_utlb_entry
+-
+-	/* Align the loop to speed things up. from head_44x.S */
+-	.align	6
+-
+-clear_utlb_entry:
+-
+-	tlbwe	r4, r3, 0
+-	tlbwe	r5, r3, 1
+-	tlbwe	r5, r3, 2
+-	addis	r3, r3, 0x2000			/* Increment the way */
+-	cmpwi	r3, 0
+-	bne	clear_utlb_entry
+-	addis	r3, 0, 0x8000
+-	addis	r4, r4, 0x100			/* Increment the EPN */
+-	cmpwi	r4, 0
+-	bne	clear_utlb_entry
+-
+-	/* Create the entries in the other address space */
+-	mfmsr	r5
+-	rlwinm	r7, r5, 27, 31, 31		/* Get the TS (Bit 26) from MSR */
+-	xori	r7, r7, 1			/* r7 = !TS */
+-
+-	insrwi	r24, r7, 1, 21			/* Change the TS in the saved TLB word 0 */
+-
+-	/* 
+-	 * write out the TLB entries for the tmp mapping
+-	 * Use way '0' so that we could easily invalidate it later.
+-	 */
+-	lis	r3, 0x8000			/* Way '0' */ 
+-
+-	tlbwe	r24, r3, 0
+-	tlbwe	r25, r3, 1
+-	tlbwe	r26, r3, 2
+-
+-	/* Update the msr to the new TS */
+-	insrwi	r5, r7, 1, 26
+-
+-	bl	1f
+-1:	mflr	r6
+-	addi	r6, r6, (2f-1b)
+-
+-	mtspr	SPRN_SRR0, r6
+-	mtspr	SPRN_SRR1, r5
+-	rfi
+-
+-	/* 
+-	 * Now we are in the tmp address space.
+-	 * Create a 1:1 mapping for 0-2GiB in the original TS.
+-	 */
+-2:
+-	li	r3, 0
+-	li	r4, 0				/* TLB Word 0 */
+-	li	r5, 0				/* TLB Word 1 */
+-	li	r6, 0
+-	ori	r6, r6, PPC47x_TLB2_S_RWX	/* TLB word 2 */
+-
+-	li	r8, 0				/* PageIndex */
+-
+-	xori	r7, r7, 1			/* revert back to original TS */
+-
+-write_utlb:
+-	rotlwi	r5, r8, 28			/* RPN = PageIndex * 256M */
+-						/* ERPN = 0 as we don't use memory above 2G */
+-
+-	mr	r4, r5				/* EPN = RPN */
+-	ori	r4, r4, (PPC47x_TLB0_VALID | PPC47x_TLB0_256M)
+-	insrwi	r4, r7, 1, 21			/* Insert the TS to Word 0 */
+-
+-	tlbwe	r4, r3, 0			/* Write out the entries */
+-	tlbwe	r5, r3, 1
+-	tlbwe	r6, r3, 2
+-	addi	r8, r8, 1
+-	cmpwi	r8, 8				/* Have we completed ? */
+-	bne	write_utlb
+-
+-	/* make sure we complete the TLB write up */
+-	isync
+-
+-	/* 
+-	 * Prepare to jump to the 1:1 mapping.
+-	 * 1) Extract page size of the tmp mapping
+-	 *    DSIZ = TLB_Word0[22:27]
+-	 * 2) Calculate the physical address of the address
+-	 *    to jump to.
+-	 */
+-	rlwinm	r10, r24, 0, 22, 27
+-
+-	cmpwi	r10, PPC47x_TLB0_4K
+-	bne	0f
+-	li	r10, 0x1000			/* r10 = 4k */
+-	bl	1f
+-
+-0:
+-	/* Defaults to 256M */
+-	lis	r10, 0x1000
+-	
+-	bl	1f
+-1:	mflr	r4
+-	addi	r4, r4, (2f-1b)			/* virtual address  of 2f */
+-
+-	subi	r11, r10, 1			/* offsetmask = Pagesize - 1 */
+-	not	r10, r11			/* Pagemask = ~(offsetmask) */
+-
+-	and	r5, r25, r10			/* Physical page */
+-	and	r6, r4, r11			/* offset within the current page */
+-
+-	or	r5, r5, r6			/* Physical address for 2f */
+-
+-	/* Switch the TS in MSR to the original one */
+-	mfmsr	r8
+-	insrwi	r8, r7, 1, 26
+-
+-	mtspr	SPRN_SRR1, r8
+-	mtspr	SPRN_SRR0, r5
+-	rfi
+-
+-2:
+-	/* Invalidate the tmp mapping */
+-	lis	r3, 0x8000			/* Way '0' */
+-
+-	clrrwi	r24, r24, 12			/* Clear the valid bit */
+-	tlbwe	r24, r3, 0
+-	tlbwe	r25, r3, 1
+-	tlbwe	r26, r3, 2
+-
+-	/* Make sure we complete the TLB write and flush the shadow TLB */
+-	isync
+-
+-#endif
+-
+-ppc44x_map_done:
+-
+-
+-	/* Restore the parameters */
+-	mr	r3, r29
+-	mr	r4, r30
+-	mr	r5, r31
+-
+-	li	r0, 0
+-#else
+-	li	r0, 0
+-
+-	/*
+-	 * Set Machine Status Register to a known status,
+-	 * switch the MMU off and jump to 1: in a single step.
+-	 */
+-
+-	mr	r8, r0
+-	ori     r8, r8, MSR_RI|MSR_ME
+-	mtspr	SPRN_SRR1, r8
+-	addi	r8, r4, 1f - relocate_new_kernel
+-	mtspr	SPRN_SRR0, r8
+-	sync
+-	rfi
+-
+-1:
+-#endif
+-	/* from this point address translation is turned off */
+-	/* and interrupts are disabled */
+-
+-	/* set a new stack at the bottom of our page... */
+-	/* (not really needed now) */
+-	addi	r1, r4, KEXEC_CONTROL_PAGE_SIZE - 8 /* for LR Save+Back Chain */
+-	stw	r0, 0(r1)
+-
+-	/* Do the copies */
+-	li	r6, 0 /* checksum */
+-	mr	r0, r3
+-	b	1f
+-
+-0:	/* top, read another word for the indirection page */
+-	lwzu	r0, 4(r3)
+-
+-1:
+-	/* is it a destination page? (r8) */
+-	rlwinm.	r7, r0, 0, 31, 31 /* IND_DESTINATION (1<<0) */
+-	beq	2f
+-
+-	rlwinm	r8, r0, 0, 0, 19 /* clear kexec flags, page align */
+-	b	0b
+-
+-2:	/* is it an indirection page? (r3) */
+-	rlwinm.	r7, r0, 0, 30, 30 /* IND_INDIRECTION (1<<1) */
+-	beq	2f
+-
+-	rlwinm	r3, r0, 0, 0, 19 /* clear kexec flags, page align */
+-	subi	r3, r3, 4
+-	b	0b
+-
+-2:	/* are we done? */
+-	rlwinm.	r7, r0, 0, 29, 29 /* IND_DONE (1<<2) */
+-	beq	2f
+-	b	3f
+-
+-2:	/* is it a source page? (r9) */
+-	rlwinm.	r7, r0, 0, 28, 28 /* IND_SOURCE (1<<3) */
+-	beq	0b
+-
+-	rlwinm	r9, r0, 0, 0, 19 /* clear kexec flags, page align */
+-
+-	li	r7, PAGE_SIZE / 4
+-	mtctr   r7
+-	subi    r9, r9, 4
+-	subi    r8, r8, 4
+-9:
+-	lwzu    r0, 4(r9)  /* do the copy */
+-	xor	r6, r6, r0
+-	stwu    r0, 4(r8)
+-	dcbst	0, r8
+-	sync
+-	icbi	0, r8
+-	bdnz    9b
+-
+-	addi    r9, r9, 4
+-	addi    r8, r8, 4
+-	b	0b
+-
+-3:
+-
+-	/* To be certain of avoiding problems with self-modifying code
+-	 * execute a serializing instruction here.
+-	 */
+-	isync
+-	sync
+-
+-	mfspr	r3, SPRN_PIR /* current core we are running on */
+-	mr	r4, r5 /* load physical address of chunk called */
+-
+-	/* jump to the entry point, usually the setup routine */
+-	mtlr	r5
+-	blrl
+-
+-1:	b	1b
+-
+-relocate_new_kernel_end:
+-
+-	.globl relocate_new_kernel_size
+-relocate_new_kernel_size:
+-	.long relocate_new_kernel_end - relocate_new_kernel
+-#endif
 -- 
+2.13.3
 
-Thanks,
-
-David / dhildenb
