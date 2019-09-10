@@ -2,191 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D00A9AE965
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:47:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E5F3AE96B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731450AbfIJLpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 07:45:42 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:32846 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731383AbfIJLpl (ORCPT
+        id S1731523AbfIJLqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 07:46:53 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39305 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729304AbfIJLqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:45:41 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8ABjaJ1039840;
-        Tue, 10 Sep 2019 06:45:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568115936;
-        bh=Xv9IdSYQH2Wyjdje4PEB2rgCyL+w8guQKyTJ3UYqNXA=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=gTpX58GgNDpjPLX3OcJeIAepr8ezrqR9cD//hLKnkR1KnfkHORr2MXZYaR0C5WUAS
-         pttZzGI/1eMC4zzj1LFsI7H/zITk3fF6vdYHsC+jxBQbE9uiNgok4tV3Ke8gJW5Iq+
-         IWJSFojmCheVop5THPFCrXcqvsPxatoTtsmU3gq8=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8ABjac6006007
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 10 Sep 2019 06:45:36 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 10
- Sep 2019 06:45:36 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 10 Sep 2019 06:45:36 -0500
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8ABjRpL119821;
-        Tue, 10 Sep 2019 06:45:34 -0500
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <vkoul@kernel.org>, <robh+dt@kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dan.j.williams@intel.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 3/3] dmaengine: ti: edma: Add support for handling reserved channels
-Date:   Tue, 10 Sep 2019 14:45:59 +0300
-Message-ID: <20190910114559.22810-4-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190910114559.22810-1-peter.ujfalusi@ti.com>
-References: <20190910114559.22810-1-peter.ujfalusi@ti.com>
+        Tue, 10 Sep 2019 07:46:52 -0400
+Received: by mail-ed1-f65.google.com with SMTP id u6so16772504edq.6
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 04:46:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=abgaMe6ZZ95gWMUy3hnBn63QDEWfYInzgOcZ2MI8v94=;
+        b=tftMnhBJScOV8S3EmVcpxBEYVwD+kjSOjjJnwjAszAVqSj6dW3geoaHbPqD30vr9In
+         B34ec4xjvm6BWlbqScNbwNS4F975qVfgKj77tvBAX81Mx9OLOVkxIHTgjKYgEZwn87HU
+         Pfq0HOEIriPMB6bH+/A0NYJPc8F5GaEH2o0oXzW3b2kH8Mh0pKTSI8+DWnspiNdcC7XG
+         RgfypAQqbD1RZzEiuyz5EA48EPM6rtJiXGVCPF0CvkFRrNwwvbX3YVawSMNIbhZKbL1+
+         CkDA7H6RGNFthFkMiT2TENiFzI0ytmsamjsSm7suEkEqU7XVr1sk03to65M/wfegFi7b
+         AYDQ==
+X-Gm-Message-State: APjAAAUjUu+zrOeKIgKHifmmoOHl4SRrZ4HnMVEh+42sO5xnxdxgsodh
+        AiA2TePTKfChivC4j0vbWWo=
+X-Google-Smtp-Source: APXvYqzec2pfMLAxkhhovJ45V9gaVPv8RRuMLY7VMY/ZkxobyGPpBpSQQBrFTGvFv0X4GFnIClIdFw==
+X-Received: by 2002:aa7:d28d:: with SMTP id w13mr29796008edq.264.1568116011004;
+        Tue, 10 Sep 2019 04:46:51 -0700 (PDT)
+Received: from [10.10.2.174] (bran.ispras.ru. [83.149.199.196])
+        by smtp.gmail.com with ESMTPSA id p4sm3408685edc.38.2019.09.10.04.46.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2019 04:46:50 -0700 (PDT)
+Reply-To: efremov@linux.com
+Subject: Re: [RESEND PATCH] MAINTAINERS: Update path to physmap-versatile.c
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20190813061024.15428-1-efremov@linux.com>
+ <20190813063251.21842-1-efremov@linux.com>
+ <CACRpkdZRW1fpjf=vQbuDdSC1ZU9o2tq2C2bL0GonQbnPWc06-A@mail.gmail.com>
+From:   Denis Efremov <efremov@linux.com>
+Message-ID: <a406a875-b267-9653-ced5-4afee0056975@linux.com>
+Date:   Tue, 10 Sep 2019 14:46:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CACRpkdZRW1fpjf=vQbuDdSC1ZU9o2tq2C2bL0GonQbnPWc06-A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like paRAM slots, channels could be used by other cores and in this case
-we need to make sure that the driver do not alter these channels.
+Hi,
 
-Handle the generic dma-channel-mask property to mark channels in a bitmap
-which can not be used by Linux and convert the legacy rsv_chans if it is
-provided by platform_data.
+On 8/13/19 10:20 AM, Linus Walleij wrote:
+> On Tue, Aug 13, 2019 at 8:33 AM Denis Efremov <efremov@linux.com> wrote:
+> 
+>> Update MAINTAINERS record to reflect the filename change
+>> from physmap_of_versatile.c to physmap-versatile.c
+>>
+>> Cc: Boris Brezillon <bbrezillon@kernel.org>
+>> Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Fixes: 6ca15cfa0788 ("mtd: maps: Rename physmap_of_{versatile, gemini} into physmap-{versatile, gemini}")
+>> Signed-off-by: Denis Efremov <efremov@linux.com>
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Yours,
+> Linus Walleij
+> 
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/dma/ti/edma.c | 59 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 53 insertions(+), 6 deletions(-)
+Could someone take this fix through his tree?
 
-diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-index ba7c4f07fcd6..03c9c6296006 100644
---- a/drivers/dma/ti/edma.c
-+++ b/drivers/dma/ti/edma.c
-@@ -260,6 +260,13 @@ struct edma_cc {
- 	 */
- 	unsigned long *slot_inuse;
- 
-+	/*
-+	 * For tracking reserved channels used by DSP.
-+	 * If the bit is cleared, the channel is allocated to be used by DSP
-+	 * and Linux must not touch it.
-+	 */
-+	unsigned long *channels_mask;
-+
- 	struct dma_device		dma_slave;
- 	struct dma_device		*dma_memcpy;
- 	struct edma_chan		*slave_chans;
-@@ -716,6 +723,12 @@ static int edma_alloc_channel(struct edma_chan *echan,
- 	struct edma_cc *ecc = echan->ecc;
- 	int channel = EDMA_CHAN_SLOT(echan->ch_num);
- 
-+	if (!test_bit(echan->ch_num, ecc->channels_mask)) {
-+		dev_err(ecc->dev, "Channel%d is reserved, can not be used!\n",
-+			echan->ch_num);
-+		return -EINVAL;
-+	}
-+
- 	/* ensure access through shadow region 0 */
- 	edma_or_array2(ecc, EDMA_DRAE, 0, EDMA_REG_ARRAY_INDEX(channel),
- 		       EDMA_CHANNEL_BIT(channel));
-@@ -2250,7 +2263,7 @@ static int edma_probe(struct platform_device *pdev)
- 	struct edma_soc_info	*info = pdev->dev.platform_data;
- 	s8			(*queue_priority_mapping)[2];
- 	int			i, off;
--	const s16		(*rsv_slots)[2];
-+	const s16		(*reserved)[2];
- 	const s16		(*xbar_chans)[2];
- 	int			irq;
- 	char			*irq_name;
-@@ -2331,15 +2344,32 @@ static int edma_probe(struct platform_device *pdev)
- 	if (!ecc->slot_inuse)
- 		return -ENOMEM;
- 
-+	ecc->channels_mask = devm_kcalloc(dev,
-+					   BITS_TO_LONGS(ecc->num_channels),
-+					   sizeof(unsigned long), GFP_KERNEL);
-+	if (!ecc->channels_mask)
-+		return -ENOMEM;
-+
-+	/* Mark all channels available initially */
-+	bitmap_fill(ecc->channels_mask, ecc->num_channels);
-+
- 	ecc->default_queue = info->default_queue;
- 
- 	if (info->rsv) {
- 		/* Set the reserved slots in inuse list */
--		rsv_slots = info->rsv->rsv_slots;
--		if (rsv_slots) {
--			for (i = 0; rsv_slots[i][0] != -1; i++)
--				bitmap_set(ecc->slot_inuse, rsv_slots[i][0],
--					   rsv_slots[i][1]);
-+		reserved = info->rsv->rsv_slots;
-+		if (reserved) {
-+			for (i = 0; reserved[i][0] != -1; i++)
-+				bitmap_set(ecc->slot_inuse, reserved[i][0],
-+					   reserved[i][1]);
-+		}
-+
-+		/* Clear channels not usable for Linux */
-+		reserved = info->rsv->rsv_chans;
-+		if (reserved) {
-+			for (i = 0; reserved[i][0] != -1; i++)
-+				bitmap_clear(ecc->channels_mask, reserved[i][0],
-+					     reserved[i][1]);
- 		}
- 	}
- 
-@@ -2399,6 +2429,7 @@ static int edma_probe(struct platform_device *pdev)
- 
- 	if (!ecc->legacy_mode) {
- 		int lowest_priority = 0;
-+		unsigned int array_max;
- 		struct of_phandle_args tc_args;
- 
- 		ecc->tc_list = devm_kcalloc(dev, ecc->num_tc,
-@@ -2420,6 +2451,18 @@ static int edma_probe(struct platform_device *pdev)
- 				info->default_queue = i;
- 			}
- 		}
-+
-+		/* See if we have optional dma-channel-mask array */
-+		array_max = DIV_ROUND_UP(ecc->num_channels, BITS_PER_TYPE(u32));
-+		ret = of_property_read_variable_u32_array(node,
-+						"dma-channel-mask",
-+						(u32 *)ecc->channels_mask,
-+						1, array_max);
-+		if (ret > 0 && ret != array_max)
-+			dev_warn(dev, "dma-channel-mask is not complete.\n");
-+		else if (ret == -EOVERFLOW || ret == -ENODATA)
-+			dev_warn(dev,
-+				 "dma-channel-mask is out of range or empty\n");
- 	}
- 
- 	/* Event queue priority mapping */
-@@ -2437,6 +2480,10 @@ static int edma_probe(struct platform_device *pdev)
- 	edma_dma_init(ecc, legacy_mode);
- 
- 	for (i = 0; i < ecc->num_channels; i++) {
-+		/* Do not touch reserved channels */
-+		if (!test_bit(i, ecc->channels_mask))
-+			continue;
-+
- 		/* Assign all channels to the default queue */
- 		edma_assign_channel_eventq(&ecc->slave_chans[i],
- 					   info->default_queue);
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+Thanks,
+Denis
