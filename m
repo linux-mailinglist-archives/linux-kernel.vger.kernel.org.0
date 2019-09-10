@@ -2,196 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6963AE96E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B5A0AE97C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 13:50:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731548AbfIJLt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 07:49:57 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:16527 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726849AbfIJLt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 07:49:57 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46SNcd6c96z9txgq;
-        Tue, 10 Sep 2019 13:49:53 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=PI+pE73W; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 3v_1cA5buZFM; Tue, 10 Sep 2019 13:49:53 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46SNcd5RxQz9txgQ;
-        Tue, 10 Sep 2019 13:49:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1568116193; bh=TbjAy2wVdlhVpZD8prLibBzDi4PfIr/7P73XrESIlBI=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=PI+pE73WAltbsfp9m+HDRZZ3rfGT89d3DyEnJTCtT3HYxhlbpBGiUJ9Ql5djGlK/w
-         RWClaFzbGnN2xbFQyuj7gWQpHC0TxZb/tJcseBDg7eKqlPvRYafuiELXDJAbaA522Q
-         C6N71Cz4fz4nhE+lq1MpkojI8/avHoLv7wYLB16s=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 17E058B877;
-        Tue, 10 Sep 2019 13:49:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id mOadAyedBEiA; Tue, 10 Sep 2019 13:49:54 +0200 (CEST)
-Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C5F6D8B86F;
-        Tue, 10 Sep 2019 13:49:54 +0200 (CEST)
-Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 7D4CE6B750; Tue, 10 Sep 2019 11:49:54 +0000 (UTC)
-Message-Id: <602c8aef42d5d2e7302cdd718c0ceca8eab34c68.1568116179.git.christophe.leroy@c-s.fr>
-In-Reply-To: <bc2ef5a64175d734f0b32f101b63854d517f6589.1568116179.git.christophe.leroy@c-s.fr>
-References: <bc2ef5a64175d734f0b32f101b63854d517f6589.1568116179.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 2/2] powerpc/kexec: move kexec files into a dedicated subdir.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 10 Sep 2019 11:49:54 +0000 (UTC)
+        id S1731874AbfIJLu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 07:50:27 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40549 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfIJLu0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 07:50:26 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w13so19576782wru.7;
+        Tue, 10 Sep 2019 04:50:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mp/+xh4B3lpSZPmUYL9dk1fTpKxVKAigwQspDwbteG4=;
+        b=sa7HyIV0cMMHhgL1oWqjGwgDx6yJ6vvqgaCRI6+aVF6/EOgson57KX5taONf0xwhZc
+         1tj9JmDKUINzY4o7P0ZhBW9gvdwuWFZoa5FraxRlX46Y3xbGIUiXtBz8bmJl3e4YVsN2
+         KaLQXi4gy1N2kMStAOhOee9ajNjA2xn2QelLNQ3G76kGH/XIyjvf8QFDakFhQ3a8oViO
+         foT1pNIPDEE+6AtOWPfcLkTx06a67K0AzOG6LqpRXIbptk9eHupVpHni78cO9Y6Ff31d
+         RpmzI6X7ksKaQUorQnu+Fatg5ziWPviVAjqiYPCCzHsoX1xJ0TIF0P1Qa3NhxDdHIn9T
+         tZhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mp/+xh4B3lpSZPmUYL9dk1fTpKxVKAigwQspDwbteG4=;
+        b=Wj8eCn9JVviq4SVCNXkfUoET2CikTJTfUnFc+fGTn/RKwRv3DBSemGYFMZ6whYnP5Q
+         1OiLzNS3rlREOAKzaTOsFmsnOHOxYzyXj4mnKD6+PCfB5+8N3i13ICe999ZgtgWopfhW
+         cXExPnnCDe4SxbNfSLUR3R5A4Lc9oZY8NBjjhBvpM4I/g/yijCIn4lvl2I03HiEK01UE
+         FYJGMiAuGNsr6ldWPY3Bf05gfzeVmXqI861ueMroN3RnZgeK1Eg6cRJQiHIfnY4i1qQ5
+         t9+TlQk9LwxeRuCBEid7iYWt5N6Hi54bUPvuXT9GroLbK/WRdbqhgYFrNMPgBxmvo0Dj
+         IggQ==
+X-Gm-Message-State: APjAAAVJYX2/inNIOoiRF87kAwTzysDXflpTXk/c9KwaUgyX6A/meVCS
+        1dPB8dTbxTLWS7wYGv8voUzK7rhqSTKhblb+CM0=
+X-Google-Smtp-Source: APXvYqy/r75bH4ygY8YmMgMk2X4bmFVs4CUIe5R1fGiV9fEib8ljRft33b37v8rwJrOA1FWZgNDjwW6HapTyAN886xw=
+X-Received: by 2002:a05:6000:142:: with SMTP id r2mr2208566wrx.212.1568116224155;
+ Tue, 10 Sep 2019 04:50:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
+ <20190906172044.B99FB20838@mail.kernel.org> <CAA+hA=To9B0H1z6Hh1eSZN9_rcextT_Oe-CTMmz9fC9CDNUBTQ@mail.gmail.com>
+ <DB3PR0402MB3916906683B58843B459ABE1F5B60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB3916906683B58843B459ABE1F5B60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Tue, 10 Sep 2019 14:50:12 +0300
+Message-ID: <CAEnQRZCAWa61dj+0=iTBQOrntZ-8mk=YB_jtRV4LAEGTfwZuHQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Dong Aisheng <dongas86@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arch/powerpc/kernel/ contains 7 files dedicated to kexec.
+On Tue, Sep 10, 2019 at 1:40 PM Anson Huang <anson.huang@nxp.com> wrote:
+>
+>
+>
+> > On Sat, Sep 7, 2019 at 9:47 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Peng Fan (2019-08-27 01:17:50)
+> > > > From: Peng Fan <peng.fan@nxp.com>
+> > > >
+> > > > There is hardware issue that:
+> > > > The output clock the LPCG cell will not turn back on as expected,
+> > > > even though a read of the IPG registers in the LPCG indicates that
+> > > > the clock should be enabled.
+> > > >
+> > > > The software workaround is to write twice to enable the LPCG clock
+> > > > output.
+> > > >
+> > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Does this need a Fixes tag?
+> >
+> > Not sure as it's not code logic issue but a hardware bug.
+> > And 4.19 LTS still have not this driver support.
+>
+> Looks like there is an errata for this issue, and Ranjani just sent a patch for review internally,
+>
+> Back-to-back LPCG writes can be ignored by the LPCG register due to a
+> HW bug. The writes need to be separated by atleast 4 cycles of the gated clock.
+> The workaround is implemented as follows:
+> 1. For clocks running greater than 50MHz no delay is required as the
+> delay in accessing the LPCG register is sufficient.
+> 2. For clocks running greater than 23MHz, a read followed by the write
+> will provide the sufficient delay.
+> 3. For clocks running below 23MHz, LPCG is not used.
 
-Move them into a dedicated subdirectory.
+Lets add this information in the commit message and also
+enhance the comment before the double write.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/Makefile                       | 16 +---------------
- arch/powerpc/kernel/kexec/Makefile                 | 22 ++++++++++++++++++++++
- arch/powerpc/kernel/{ => kexec}/ima_kexec.c        |  0
- arch/powerpc/kernel/{ => kexec}/kexec_32.S         |  2 +-
- arch/powerpc/kernel/{ => kexec}/kexec_elf_64.c     |  0
- arch/powerpc/kernel/{ => kexec}/machine_kexec.c    |  0
- arch/powerpc/kernel/{ => kexec}/machine_kexec_32.c |  0
- arch/powerpc/kernel/{ => kexec}/machine_kexec_64.c |  0
- .../kernel/{ => kexec}/machine_kexec_file_64.c     |  0
- 9 files changed, 24 insertions(+), 16 deletions(-)
- create mode 100644 arch/powerpc/kernel/kexec/Makefile
- rename arch/powerpc/kernel/{ => kexec}/ima_kexec.c (100%)
- rename arch/powerpc/kernel/{ => kexec}/kexec_32.S (99%)
- rename arch/powerpc/kernel/{ => kexec}/kexec_elf_64.c (100%)
- rename arch/powerpc/kernel/{ => kexec}/machine_kexec.c (100%)
- rename arch/powerpc/kernel/{ => kexec}/machine_kexec_32.c (100%)
- rename arch/powerpc/kernel/{ => kexec}/machine_kexec_64.c (100%)
- rename arch/powerpc/kernel/{ => kexec}/machine_kexec_file_64.c (100%)
-
-diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-index df708de6f866..b65c44d47157 100644
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -81,7 +81,6 @@ obj-$(CONFIG_CRASH_DUMP)	+= crash_dump.o
- obj-$(CONFIG_FA_DUMP)		+= fadump.o
- ifdef CONFIG_PPC32
- obj-$(CONFIG_E500)		+= idle_e500.o
--obj-$(CONFIG_KEXEC_CORE)	+= kexec_32.o
- endif
- obj-$(CONFIG_PPC_BOOK3S_32)	+= idle_6xx.o l2cr_6xx.o cpu_setup_6xx.o
- obj-$(CONFIG_TAU)		+= tau_6xx.o
-@@ -125,14 +124,7 @@ pci64-$(CONFIG_PPC64)		+= pci_dn.o pci-hotplug.o isa-bridge.o
- obj-$(CONFIG_PCI)		+= pci_$(BITS).o $(pci64-y) \
- 				   pci-common.o pci_of_scan.o
- obj-$(CONFIG_PCI_MSI)		+= msi.o
--obj-$(CONFIG_KEXEC_CORE)	+= machine_kexec.o crash.o \
--				   machine_kexec_$(BITS).o
--obj-$(CONFIG_KEXEC_FILE)	+= machine_kexec_file_$(BITS).o kexec_elf_$(BITS).o
--ifdef CONFIG_HAVE_IMA_KEXEC
--ifdef CONFIG_IMA
--obj-y				+= ima_kexec.o
--endif
--endif
-+obj-$(CONFIG_KEXEC_CORE)	+= kexec/
- 
- obj-$(CONFIG_AUDIT)		+= audit.o
- obj64-$(CONFIG_AUDIT)		+= compat_audit.o
-@@ -164,12 +156,6 @@ endif
- GCOV_PROFILE_prom_init.o := n
- KCOV_INSTRUMENT_prom_init.o := n
- UBSAN_SANITIZE_prom_init.o := n
--GCOV_PROFILE_machine_kexec_64.o := n
--KCOV_INSTRUMENT_machine_kexec_64.o := n
--UBSAN_SANITIZE_machine_kexec_64.o := n
--GCOV_PROFILE_machine_kexec_32.o := n
--KCOV_INSTRUMENT_machine_kexec_32.o := n
--UBSAN_SANITIZE_machine_kexec_32.o := n
- GCOV_PROFILE_kprobes.o := n
- KCOV_INSTRUMENT_kprobes.o := n
- UBSAN_SANITIZE_kprobes.o := n
-diff --git a/arch/powerpc/kernel/kexec/Makefile b/arch/powerpc/kernel/kexec/Makefile
-new file mode 100644
-index 000000000000..d96ee5660572
---- /dev/null
-+++ b/arch/powerpc/kernel/kexec/Makefile
-@@ -0,0 +1,22 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Makefile for the linux kernel.
-+#
-+
-+obj-y				+= machine_kexec.o crash.o machine_kexec_$(BITS).o
-+
-+obj-$(CONFIG_PPC32)		+= kexec_32.o
-+
-+obj-$(CONFIG_KEXEC_FILE)	+= machine_kexec_file_$(BITS).o kexec_elf_$(BITS).o
-+
-+ifdef CONFIG_HAVE_IMA_KEXEC
-+ifdef CONFIG_IMA
-+obj-y				+= ima_kexec.o
-+endif
-+endif
-+
-+
-+# Disable GCOV, KCOV & sanitizers in odd or sensitive code
-+GCOV_PROFILE_machine_kexec_$(BITS).o := n
-+KCOV_INSTRUMENT_machine_kexec_$(BITS).o := n
-+UBSAN_SANITIZE_machine_kexec_$(BITS).o := n
-diff --git a/arch/powerpc/kernel/ima_kexec.c b/arch/powerpc/kernel/kexec/ima_kexec.c
-similarity index 100%
-rename from arch/powerpc/kernel/ima_kexec.c
-rename to arch/powerpc/kernel/kexec/ima_kexec.c
-diff --git a/arch/powerpc/kernel/kexec_32.S b/arch/powerpc/kernel/kexec/kexec_32.S
-similarity index 99%
-rename from arch/powerpc/kernel/kexec_32.S
-rename to arch/powerpc/kernel/kexec/kexec_32.S
-index 3f8ca6a566fb..b9355e0d5c85 100644
---- a/arch/powerpc/kernel/kexec_32.S
-+++ b/arch/powerpc/kernel/kexec/kexec_32.S
-@@ -32,7 +32,7 @@ relocate_new_kernel:
- 	mr	r31, r5
- 
- #define ENTRY_MAPPING_KEXEC_SETUP
--#include "fsl_booke_entry_mapping.S"
-+#include <kernel/fsl_booke_entry_mapping.S>
- #undef ENTRY_MAPPING_KEXEC_SETUP
- 
- 	mr      r3, r29
-diff --git a/arch/powerpc/kernel/kexec_elf_64.c b/arch/powerpc/kernel/kexec/kexec_elf_64.c
-similarity index 100%
-rename from arch/powerpc/kernel/kexec_elf_64.c
-rename to arch/powerpc/kernel/kexec/kexec_elf_64.c
-diff --git a/arch/powerpc/kernel/machine_kexec.c b/arch/powerpc/kernel/kexec/machine_kexec.c
-similarity index 100%
-rename from arch/powerpc/kernel/machine_kexec.c
-rename to arch/powerpc/kernel/kexec/machine_kexec.c
-diff --git a/arch/powerpc/kernel/machine_kexec_32.c b/arch/powerpc/kernel/kexec/machine_kexec_32.c
-similarity index 100%
-rename from arch/powerpc/kernel/machine_kexec_32.c
-rename to arch/powerpc/kernel/kexec/machine_kexec_32.c
-diff --git a/arch/powerpc/kernel/machine_kexec_64.c b/arch/powerpc/kernel/kexec/machine_kexec_64.c
-similarity index 100%
-rename from arch/powerpc/kernel/machine_kexec_64.c
-rename to arch/powerpc/kernel/kexec/machine_kexec_64.c
-diff --git a/arch/powerpc/kernel/machine_kexec_file_64.c b/arch/powerpc/kernel/kexec/machine_kexec_file_64.c
-similarity index 100%
-rename from arch/powerpc/kernel/machine_kexec_file_64.c
-rename to arch/powerpc/kernel/kexec/machine_kexec_file_64.c
--- 
-2.13.3
-
+Also, why can't we add a udelay after the first write and remove
+the second write as having two writes for writing a value looks
+very un-natural.
