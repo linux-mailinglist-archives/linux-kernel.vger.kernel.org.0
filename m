@@ -2,84 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECFB5AEBBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08C53AEBB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 15:37:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732834AbfIJNig (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 09:38:36 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:45590 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfIJNie (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 09:38:34 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8ADcWBf109914;
-        Tue, 10 Sep 2019 08:38:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568122712;
-        bh=YVo6iYdWALs+Xpp42Wo9fNLJ3/ExYwL0sdWFDjBnzhg=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=hN4dTuYimJ8DhlcyIzLdo62tOV563GuW51gbUS8PITVh905RUmAvpVHKYh/RO0txG
-         Sf/Pl4pf7wJqL0ToLQjgnCx3hZ/bzjAUIcCroKkLk79mCT3P/E3K6vJg4y5sSJGua3
-         EJODGWKyxfnwM5f/+tgMwClRQWXcToKC1uEWebSM=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8ADcWMY101041
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 10 Sep 2019 08:38:32 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 10
- Sep 2019 08:38:31 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 10 Sep 2019 08:38:31 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8ADcVos119262;
-        Tue, 10 Sep 2019 08:38:31 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <dmurphy@ti.com>
-CC:     <tomi.valkeinen@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [RESEND,v2 2/2] leds: tlc591xx: Use the OF version of the LED registration function
-Date:   Tue, 10 Sep 2019 15:38:14 +0200
-Message-ID: <20190910133814.10275-3-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190910133814.10275-1-jjhiblot@ti.com>
-References: <20190910133814.10275-1-jjhiblot@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1732788AbfIJNhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 09:37:54 -0400
+Received: from mga17.intel.com ([192.55.52.151]:40813 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726613AbfIJNhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 09:37:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 06:37:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
+   d="scan'208";a="189345404"
+Received: from marshy.an.intel.com ([10.122.105.159])
+  by orsmga006.jf.intel.com with ESMTP; 10 Sep 2019 06:37:52 -0700
+From:   richard.gong@linux.intel.com
+To:     catalin.marinas@arm.com, will@kernel.org, shawnguo@kernel.org,
+        olof@lixom.net, mripard@kernel.org, bjorn.andersson@linaro.org,
+        arnd@arndb.de, dinguyen@kernel.org, marcin.juszkiewicz@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     richard.gong@linux.intel.com, Richard Gong <richard.gong@intel.com>
+Subject: [PATCHv1] arm64: defconfig: enable rsu driver
+Date:   Tue, 10 Sep 2019 08:49:46 -0500
+Message-Id: <1568123386-530-1-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver parses the device-tree to identify which LED should be handled.
-Since the information about the device node is known at this time, we can
-provide the LED core with it. It may be useful later.
+From: Richard Gong <richard.gong@intel.com>
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Enable Intel Stratix10 Remote System Update (RSU) driver
+
+The Intel Remote System Update (RSU) driver provides a way for customers
+to update the boot configuration of a Intel Stratix 10 SoC device with
+significantly reduced risk of corrupting the bitstream storage and
+bricking the system.
+
+Signed-off-by: Richard Gong <richard.gong@intel.com>
 ---
- drivers/leds/leds-tlc591xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
-index 3d5a4b92f016..10764a62cb71 100644
---- a/drivers/leds/leds-tlc591xx.c
-+++ b/drivers/leds/leds-tlc591xx.c
-@@ -207,7 +207,7 @@ tlc591xx_probe(struct i2c_client *client,
- 		led->led_no = reg;
- 		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
- 		led->ldev.max_brightness = LED_FULL;
--		err = devm_led_classdev_register(dev, &led->ldev);
-+		err = devm_of_led_classdev_register(dev, child, &led->ldev);
- 		if (err < 0) {
- 			dev_err(dev, "couldn't register LED %s\n",
- 				led->ldev.name);
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 8c7b664..7325115 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -90,6 +90,7 @@ CONFIG_ARM_TEGRA186_CPUFREQ=y
+ CONFIG_ARM_SCPI_PROTOCOL=y
+ CONFIG_RASPBERRYPI_FIRMWARE=y
+ CONFIG_INTEL_STRATIX10_SERVICE=y
++CONFIG_INTEL_STRATIX10_RSU=m
+ CONFIG_TI_SCI_PROTOCOL=y
+ CONFIG_EFI_CAPSULE_LOADER=y
+ CONFIG_IMX_SCU=y
 -- 
-2.17.1
+2.7.4
 
