@@ -2,194 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51A35CD9FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 02:51:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8A4ACDA0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 03:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfJGAvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 20:51:08 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:56513 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726661AbfJGAvI (ORCPT
+        id S1726822AbfJGBFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 21:05:51 -0400
+Received: from smtprelay0215.hostedemail.com ([216.40.44.215]:53881 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726266AbfJGBFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 20:51:08 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id A352E20DC2;
-        Sun,  6 Oct 2019 20:51:06 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Sun, 06 Oct 2019 20:51:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:content-type:mime-version
-        :content-transfer-encoding; s=fm1; bh=AUCWi7dg8CtTdu5/plLNnp01CE
-        E4wJlXKJek4yB9CPI=; b=3HG4LrcTHN9Rt/xJv6OQOYG4uykAeci7ZaesvYVqtA
-        98SCnmKSFkIbvAvi5v8alch9hVABsNEtXKfagZipFoAX0JZr9F9sSKbGmv8DXSI1
-        IQB47gas/pvfledWYBMybbOYsgz6Ndvqu7RhnC+AUnFvKhSqSCw4TM9xwW/Y+y1Q
-        jFngz5AnMcvweIye+bF9HukBtI5ItKLd0npPgcvt6YJZm3ajXmT/JfNpcBfTYkSF
-        nE20fjgqeIoe8rvLZfzypeeAbPiIJGV6xNa4g76JCLMm9489sUQUtbkVPwyiUuD6
-        jW2Wp5tvWmeOWEVUsTXEku1IEBjTT1nmKfmqrpCBE6Lg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=AUCWi7
-        dg8CtTdu5/plLNnp01CEE4wJlXKJek4yB9CPI=; b=B1vpEkXfw6jp1jIhBihmsn
-        me06S9umVe0fiZYflrjG6CUdp3dzeZTS3DSaRbELikITq/w9eK7F0OcND0osxXmq
-        Le+7ICBdK+ZdevvU/o3/HvjyaB/xRxTgp6ge5Px03SqZh/O1Sv/doZXTFekc0Gbn
-        oUCl6TNpGgnYvVxsm84pQ7Hse1bqFCdEe+av6uPODpAIhzqnglgQzDxntJrVnpZQ
-        G50+JJIOM0LQI8M9uBFFL8OZpXREktXPNPUzbl21lDWmFSzXf2R/mm6oBdwYMGS2
-        Jqdm1timoX5QWzEoKg7XI99uo0jvXqnuckC+mTlS4iFVG6Gszzmm33zxkd6ePYHA
-        ==
-X-ME-Sender: <xms:-YuaXRdrZJ1Zb5cJZxFTeHSMQmwChPDyGgeeJFqpxhKmmZ3RqDyaFQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrheeigdegudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhepkffuhffvffgtfggggfesthejredttd
-    erjeenucfhrhhomhepkfgrnhcumfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvght
-    qeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduudekrddvtdelrdduke
-    efrdejudenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhn
-    vghtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:-ouaXTc4UYhOy_DMBme8dTXijB5zTjTrQ84A7iGsGqDONF9P9NMfdQ>
-    <xmx:-ouaXVhGdUmzTaS08x2SX7Ck7y3vRKRxDxjCYXa8CBFQiG3vg186wA>
-    <xmx:-ouaXfQMQdw9KnQctQja8oMpj3k0yzpEcIo89gpjEgoDRbwOuNcNHw>
-    <xmx:-ouaXco0bU1zHip3hDK6BK7KcXBrX7YqjNVAfyCt-891n-M1X4aoFw>
-Received: from mickey.themaw.net (unknown [118.209.183.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 66832D6005B;
-        Sun,  6 Oct 2019 20:51:04 -0400 (EDT)
-Message-ID: <199d4dd82398c5a2cc915525024a122ed73a6637.camel@themaw.net>
-Subject: [ANNOUNCE] autofs 5.1.6 release
-From:   Ian Kent <raven@themaw.net>
-To:     autofs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 07 Oct 2019 08:51:00 +0800
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        Sun, 6 Oct 2019 21:05:51 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 4AF3A100E86C8;
+        Mon,  7 Oct 2019 01:05:49 +0000 (UTC)
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Spam-Summary: 86,0,0,,d41d8cd98f00b204,rostedt@goodmis.org,:::::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2525:2553:2559:2564:2682:2685:2692:2859:2892:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4362:5007:6261:6742:7875:9025:10004:10400:10903:10967:11232:11658:11914:12043:12297:12555:12740:12760:12895:12986:13069:13161:13229:13255:13311:13357:13439:14096:14097:14181:14659:14721:14819:21080:21627:21811:21939:30029:30034:30054:30070:30075:30090:30091,0,RBL:66.24.58.225:@goodmis.org:.lbl8.mailshell.net-62.8.0.186 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:172,LUA_SUMMARY:none
+X-HE-Tag: swim51_328f856470b47
+X-Filterd-Recvd-Size: 3389
+Received: from grimm.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (Authenticated sender: rostedt@goodmis.org)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  7 Oct 2019 01:05:47 +0000 (UTC)
+Date:   Tue, 10 Sep 2019 15:03:03 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        rafael@kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        linux-trace-devel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH v6 01/12] tools lib traceevent: Convert remaining %p[fF]
+ users to %p[sS]
+Message-ID: <20190910150303.5a0d3904@oasis.local.home>
+In-Reply-To: <c458e734f5777561138b87228384808398547762.camel@perches.com>
+References: <20190910084707.18380-1-sakari.ailus@linux.intel.com>
+        <20190910084707.18380-2-sakari.ailus@linux.intel.com>
+        <20190910071837.2e9110f8@oasis.local.home>
+        <61a2b2ab4693535850306f396aac2a328e1d5a21.camel@perches.com>
+        <20190910142621.0bec208d@oasis.local.home>
+        <c458e734f5777561138b87228384808398547762.camel@perches.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Tue, 10 Sep 2019 11:42:06 -0700
+Joe Perches <joe@perches.com> wrote:
 
-It's time for a release, autofs-5.1.6.
+> On Tue, 2019-09-10 at 14:26 -0400, Steven Rostedt wrote:
+> > On Tue, 10 Sep 2019 10:18:44 -0700
+> > Joe Perches <joe@perches.com> wrote:
+> >   
+> > > > It's not just for the lastest kernel. We must maintain backward
+> > > > compatibility here too. If there use to be a usage of this, then we
+> > > > must keep it until the kernels are no longer used (perhaps 7 years?)    
+> > > 
+> > > That argues for not using "%pfw" at all for some number of years.
+> > > 
+> > > Perhaps the '%pfw' should be '%pnfw' for 'name' and 'fwnode'  
+> >
+> >   -ENOCOMPREHENSION  
+> 
+> Perhaps you were not copied on the whole series.
+> 
+> https://lore.kernel.org/lkml/20190910084707.18380-1-sakari.ailus@linux.intel.com/
 
-This is an important release because it marks the beginning of
-work to be done torward resolving the very long standing problem
-of using very large direct mount maps in autofs, along with the
-needed mitigatigation of the effects of those large mount tables
-in user space.
+Thanks for the link.
 
-The first thing that needs to be done is for autofs to get back
-to what is was before the symlinking of the mount table to the
-proc file system. From experience having a large number of (largely
-not useful) autofs mount entries showing up in the mount table
-makes system administation frustrating and is quite annoying.
+> 
+> As I understand it, Sakair Ailus is proposing to
+> obsolete the current vsprintf "%p[Ff]" extension
+> and replace the usage with a new "%pfw" extension
+> which would emit the name of a pointer to "struct fwnode {}".
+> 
+> https://lore.kernel.org/lkml/20190910084707.18380-10-sakari.ailus@linux.intel.com/
+> 
+> If reusing "%pf<foo>" is a problem, then instead
+> it might be reasonable to have a new "%pn<foo>" for
+> that use instead.
+> 
+> btw:
+> 
+> Is there kernel version information available in
+> trace output files?
 
-To do this I'm using the same approach used in other SysV autofs
-implementations of providing an autofs pseudo mount option "ignore"
-that can be used by user space as a hint to ignore these mount
-entries.
+Not really. This is just a library that parses the trace event formats,
+there's not kernel versions passed in, but we do use variations in
+formats and such to determine what is supported.
 
-This will require fairly straight forward changes to glibc and
-libmount at least. The glibc change has been accepted and I plan
-on submitting a change for libmount when I get a chance.
+> 
+> If so, it might be reasonable to change the tooling
+> there instead.
+> 
 
-A configuration option, use_ignore_mount_option, has been added
-to autofs that is initially disabled to allow people to enable it
-when they are confident that there won't be unexpected problems.
+Actually, I think we could just look to see if "%pfw" is used and fall
+to that, otherwise consider it an older kernel and do it the original
+way.
 
-The side effects of very large mount tables in user space is
-somewhat difficult to mitigate.
-
-First, to acheive this autofs needs to not use the system mount
-table for expiration "at all". Not using the mount table for expires
-has proven very difficult to do and initial attempts resulted in
-changes that didn't fit in well at all.
-
-The changes to clean up the mount table listing amounted to making
-autofs use it's own genmntent(3) implementation (borrowed from glibc)
-but quite a bit of that change was re-factoring toward eliminating
-the need to use the mount table during expires. I had trouble getting
-that to work, let alone stable, but the approach will fit in well
-with the current design so it's progress.
-
-Then there's the affect of very large mount tables on other user
-space applications.
-
-For example, under rapid mount activity we see several user space
-process, systemd, udisk2, et. al., growing to consume all available
-CPU and a couple of others performing poorly simply because the
-mount table is large.
-
-I had planned on using the fsinfo() system call being proposed by
-David Howells for initial mount handing improvements in libmount,
-and later David's related kernel notifications proposal for further
-libmount mount table handling improvements but those propsals have
-seen some challenges being accepted so we will have to wait and see
-how things go before working out how to acheive this rather difficult
-goal.
-
-So there's a long way to go but progress is bieng made!
-
-Additionally there are a number of bug fixes and other minor
-improvements.
-
-autofs
-======
-
-The package can be found at:
-https://www.kernel.org/pub/linux/daemons/autofs/v5/
-
-It is autofs-5.1.6.tar.[gz|xz]
-
-No source rpm is there as it can be produced by using:
-
-rpmbuild -ts autofs-5.1.6.tar.gz
-
-and the binary rpm by using:
-
-rpmbuild -tb autofs-5.1.6.tar.gz
-
-Here are the entries from the CHANGELOG which outline the updates:
-
-07/10/2019 autofs-5.1.6
-- support strictexpire mount option.
-- fix hesiod string check in master_parse().
-- add NULL check for get_addr_string() return.
-- use malloc(3) in spawn.c.
-- add mount_verbose configuration option.
-- optionally log mount requestor process info.
-- log mount call arguments if mount_verbose is set.
-- Fix NFS mount from IPv6 addresses.
-- make expire remaining log level debug.
-- allow period following macro in selector value.
-- fix macro expansion in selector values.
-- fix typing errors.
-- Explain /etc/auto.master.d usage.
-- plus map includes are only allowed in file sources.
-- Update README.
-- fix additional typing errors.
-- update autofs(8) offset map entry update description.
-- increase group buffer size geometrically.
-- also use strictexpire for offsets.
-- remove unused function has_fstab_option().
-- remove unused function reverse_mnt_list().
-- remove a couple of old debug messages.
-- fix amd entry memory leak.
-- fix unlink_mount_tree() not umounting mounts.
-- use ignore option for offset mounts as well.
-- add config option for "ignore" mount option
-- use bit flags for autofs mount types in mnt_list.
-- use mp instead of path in mnt_list entries.
-- always use PROC_MOUNTS to make mount lists.
-- add glibc getmntent_r().
-- use local getmntent_r in table_is_mounted().
-- refactor unlink_active_mounts() in direct.c.
-- don't use tree_is_mounted() for mounted checks.
-- use single unlink_umount_tree() for both direct and indirect mounts.
-- move unlink_mount_tree() to lib/mounts.c.
-- use local_getmntent_r() for unlink_mount_tree().
-- use local getmntent_r() in get_mnt_list().
-- use local getmntent_r() in tree_make_mnt_list().
-- fix missing initialization of autofs_point flags.
-
-Ian
+-- Steve
 
