@@ -2,115 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE4DDAE215
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 03:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1480DAE21A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 03:47:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392587AbfIJBrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 9 Sep 2019 21:47:23 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41201 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392565AbfIJBrW (ORCPT
+        id S2392621AbfIJBrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 9 Sep 2019 21:47:48 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40094 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbfIJBrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Sep 2019 21:47:22 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b13so10514393pfo.8;
-        Mon, 09 Sep 2019 18:47:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OPs6A8lDNpICZmUpEyxEyuqr3RMXqZTPOjxLSO08Fjs=;
-        b=fbv2oHguO69qstVBK6kmyRwhUkmfa86gv053xwDJkbrjHeGk28T2Wc/6KWLtAFHwy8
-         NZ7aObpFOjH0/MJHTkBySiFUrDci9j9NJ5ErxcNTkjE6CRqIx+p1VacCeuSGeUzcV7ez
-         tYpyGhAgZKlWMQC+o1ZryqRZfCRJrEW3e/vzO6LVu1f9nCrvwiVqTp2u5tqoJ7EVAFBK
-         YN16iFWD8Bc7QRlizY/uh7xqUGtcoB0FX/cPbvPAedgVYNE+fe+rhIP4jphwyauslUQA
-         pZ7MICDE/uaPoeCa4+Drl3dhFnjf27kHnKTETHZVxkw2tuvloX65XMx1sIhA+jNuVY3b
-         Wjqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=OPs6A8lDNpICZmUpEyxEyuqr3RMXqZTPOjxLSO08Fjs=;
-        b=nK6tFU9XnkPhAzrxqGadSIerwfvfBsSFjd7eLkhDm6Qzfxt+zKim9Zb46e/GAYSXi6
-         69Zt0PkegiEMhvcuVsSMKap2BwCbbUhHW6xxDQO+d/e5Ngb4oACk0/OsykdZMZzvm93L
-         UCFI09dP3SuLOPlv0rwdFIBTwYdbZg+MjHa1H9aQEPYb4jkgQXZMOTfHn/WY9NUYFjYc
-         9JNXcMZSU3f7yvGFpx7rc4CA3gwyzwQzax1qdNfiC4mIUaGSTUdfTSRzYJdlsgamEwww
-         kJOzvcG48lhN6VDRrQn/VlaYA6mD6WxrdD+p/lmognnENtVfHlABsbmY+FEUeQeS4EJa
-         Bdlw==
-X-Gm-Message-State: APjAAAV4mNRHXiIWj+ggwsvBRV/GGLRtZOZ7udapvz4B7/glObgX3iU8
-        8HhP40waTYl44PB1r565jBDIyORq
-X-Google-Smtp-Source: APXvYqxeq6G5brIinercSHXAhFJUoxVUN24qlvsibi4gg8PFx/x7gkx2cC8UfUUdKBv5VaVcbpCS5g==
-X-Received: by 2002:aa7:9341:: with SMTP id 1mr32960375pfn.202.1568080041734;
-        Mon, 09 Sep 2019 18:47:21 -0700 (PDT)
-Received: from localhost.localdomain (S0106d80d17472dbd.wp.shawcable.net. [24.79.253.190])
-        by smtp.gmail.com with ESMTPSA id o35sm13491699pgm.29.2019.09.09.18.47.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2019 18:47:21 -0700 (PDT)
-From:   jassisinghbrar@gmail.com
-To:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     vkoul@kernel.org, robh+dt@kernel.org, masami.hiramatsu@linaro.org,
-        orito.takao@socionext.com, Jassi Brar <jaswinder.singh@linaro.org>
-Subject: [PATCH v3 1/2] dt-bindings: milbeaut-m10v-hdmac: Add Socionext Milbeaut HDMAC bindings
-Date:   Mon,  9 Sep 2019 20:47:18 -0500
-Message-Id: <20190910014718.5832-1-jassisinghbrar@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190910014647.5782-1-jassisinghbrar@gmail.com>
-References: <20190910014647.5782-1-jassisinghbrar@gmail.com>
+        Mon, 9 Sep 2019 21:47:47 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8A1i3uH060781;
+        Tue, 10 Sep 2019 01:47:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=yazFdrcsdTkSLAhsJkPtZkMltlXsnozFho6m7Gw/B+Y=;
+ b=aB7NElDCPJLMH5w894c1Vr01AnZQ3SwxD17AlrK/53rLl6wMl9JCXopSko1iibfbnpSa
+ SePuqXbx7UhauOjRHIxIn8ak8i34ieRfsNGgKAIDk58htNJc7OoMZsTn9e2fE2H99qgY
+ FPZyMhTChM1vAoyNmt+qddOC42o+6LBSADmoi9Q30o4HAhReAbTCpUywkY+5PWWa6G4Z
+ jjImZSAH7QbOk7J0y+BFxEd/+Rw+w4jxwNJHrbz/PSPlWGkvPSTg7KxlIe6GX1DUTgkP
+ G1R3cTtxErehSt1UUF3pjjQVFzJX5EsGIOfpp8pPsMo7/AcfFU3S5SurvthleUMP59I8 0A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2uw1jxyxcr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 01:47:41 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8A1lRbZ052588;
+        Tue, 10 Sep 2019 01:47:41 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2uwq9p6fe3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Sep 2019 01:47:40 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8A1ldVb013403;
+        Tue, 10 Sep 2019 01:47:40 GMT
+Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Sep 2019 18:47:39 -0700
+Subject: Re: [Xen-devel] [PATCH] xen/pci: try to reserve MCFG areas earlier
+To:     Igor Druzhinin <igor.druzhinin@citrix.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     jgross@suse.com
+References: <1567556431-9809-1-git-send-email-igor.druzhinin@citrix.com>
+ <5054ad91-5b87-652c-873a-b31758948bd7@oracle.com>
+ <e3114d56-51cd-b973-1ada-f6a60a7e99cc@citrix.com>
+ <43b7da04-5c42-80d8-898b-470ee1c91ed2@oracle.com>
+ <adefac87-c2b3-b67f-fb4d-d763ce920bef@citrix.com>
+ <1695c88d-e5ad-1854-cdef-3cd95c812574@oracle.com>
+ <4d3bf854-51de-99e4-9a40-a64c581bdd10@citrix.com>
+ <bc3da154-d451-02cf-6154-5e0dc721a6e6@oracle.com>
+ <c45b8786-5735-a95d-bc40-61372c326037@citrix.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <43e492ff-f967-7218-65c4-d16581fabea3@oracle.com>
+Date:   Mon, 9 Sep 2019 21:47:26 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <c45b8786-5735-a95d-bc40-61372c326037@citrix.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9375 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909100015
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9375 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909100014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jassi Brar <jaswinder.singh@linaro.org>
+On 9/9/19 5:48 PM, Igor Druzhinin wrote:
+> On 09/09/2019 20:19, Boris Ostrovsky wrote:
+>> On 9/8/19 7:37 PM, Igor Druzhinin wrote:
+>>> On 09/09/2019 00:30, Boris Ostrovsky wrote:
+>>>> On 9/8/19 5:11 PM, Igor Druzhinin wrote:
+>>>>> On 08/09/2019 19:28, Boris Ostrovsky wrote:
+>>>>>> On 9/6/19 7:00 PM, Igor Druzhinin wrote:
+>>>>>>> On 06/09/2019 23:30, Boris Ostrovsky wrote:
+>>>>>>>> Where is MCFG parsed? pci_arch_init()?
+>>>>>>>>> It happens twice:
+>>>>>>> 1) first time early one in pci_arch_init() that is arch_initcall - that
+>>>>>>> time pci_mmcfg_list will be freed immediately there because MCFG area is
+>>>>>>> not reserved in E820;
+>>>>>>> 2) second time late one in acpi_init() which is subsystem_initcall right
+>>>>>>> before where PCI enumeration starts - this time ACPI tables will be
+>>>>>>> checked for a reserved resource and pci_mmcfg_list will be finally
+>>>>>>> populated.
+>>>>>>>
+>>>>>>> The problem is that on a system that doesn't have MCFG area reserved in
+>>>>>>> E820 pci_mmcfg_list is empty before acpi_init() and our PCI hooks are
+>>>>>>> called in the same place. So MCFG is still not in use by Xen at this
+>>>>>>> point since we haven't reached our xen_mcfg_late().
+>>>>>> Would it be possible for us to parse MCFG ourselves in pci_xen_init()? I
+>>>>>> realize that we'd be doing this twice (or maybe even three times since
+>>>>>> apparently both pci_arch_init()  and acpi_ini() do it).
+>>>>>>
+>>>>> I don't thine it makes sense:
+>>>>> a) it needs to be done after ACPI is initialized since we need to parse
+>>>>> it to figure out the exact reserved region - that's why it's currently
+>>>>> done in acpi_init() (see commit message for the reasons why)
+>>>> Hmm... We should be able to parse ACPI tables by the time
+>>>> pci_arch_init() is called. In fact, if you look at
+>>>> pci_mmcfg_early_init() you will see that it does just that.
+>>>>
+>>> The point is not to parse MCFG after acpi_init but to parse DSDT for
+>>> reserved resource which could be done only after ACPI initialization.
+>> OK, I think I understand now what you are trying to do --- you are
+>> essentially trying to account for the range inserted by
+>> setup_mcfg_map(), right?
+>>
+> Actually, pci_mmcfg_late_init() that's called out of acpi_init() -
+> that's where MCFG areas are properly sized. 
 
-Document the devicetree bindings for Socionext Milbeaut HDMAC
-controller. Controller has upto 8 floating channels, that need
-a predefined slave-id to work from a set of slaves.
+pci_mmcfg_late_init() reads the (static) MCFG, which doesn't need DSDT parsing, does it? setup_mcfg_map() OTOH does need it as it uses data from _CBA (or is it _CRS?), and I think that's why we can't parse MCFG prior to acpi_init(). So what I said above indeed won't work.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
----
- .../bindings/dma/milbeaut-m10v-hdmac.txt      | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt
+> setup_mcfg_map() is mostly
+> for bus hotplug where MCFG area is discovered by evaluating _CBA method;
+> for cold-plugged buses it just confirms that MCFG area is already
+> registered because it is mandated for them to be in MCFG table at boot time.
+>
+>> The other question I have is why you think it's worth keeping
+>> xen_mcfg_late() as a late initcall. How could MCFG info be updated
+>> between acpi_init() and late_initcalls being run? I'd think it can only
+>> happen when a new device is hotplugged.
+>>
+> It was a precaution against setup_mcfg_map() calls that might add new
+> areas that are not in MCFG table but for some reason have _CBA method.
+> It's obviously a "firmware is broken" scenario so I don't have strong
+> feelings to keep it here. Will prefer to remove in v2 if you want.
 
-diff --git a/Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt b/Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt
-new file mode 100644
-index 000000000000..1f0875bd5abc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/milbeaut-m10v-hdmac.txt
-@@ -0,0 +1,32 @@
-+* Milbeaut AHB DMA Controller
-+
-+Milbeaut AHB DMA controller has transfer capability below.
-+ - device to memory transfer
-+ - memory to device transfer
-+
-+Required property:
-+- compatible:       Should be  "socionext,milbeaut-m10v-hdmac"
-+- reg:              Should contain DMA registers location and length.
-+- interrupts:       Should contain all of the per-channel DMA interrupts.
-+                     Number of channels is configurable - 2, 4 or 8, so
-+                     the number of interrupts specified should be {2,4,8}.
-+- #dma-cells:       Should be 1. Specify the ID of the slave.
-+- clocks:           Phandle to the clock used by the HDMAC module.
-+
-+
-+Example:
-+
-+	hdmac1: dma-controller@1e110000 {
-+		compatible = "socionext,milbeaut-m10v-hdmac";
-+		reg = <0x1e110000 0x10000>;
-+		interrupts = <0 132 4>,
-+			     <0 133 4>,
-+			     <0 134 4>,
-+			     <0 135 4>,
-+			     <0 136 4>,
-+			     <0 137 4>,
-+			     <0 138 4>,
-+			     <0 139 4>;
-+		#dma-cells = <1>;
-+		clocks = <&dummy_clk>;
-+	};
--- 
-2.17.1
+Isn't setup_mcfg_map() called before the first xen_add_device() which is where you are calling xen_mcfg_late()?
 
+
+-boris
