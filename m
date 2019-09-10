@@ -2,82 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB3FCAE6B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9318AE6B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389590AbfIJJUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 05:20:52 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:47127 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbfIJJUv (ORCPT
+        id S2389806AbfIJJU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 05:20:58 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35996 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389682AbfIJJU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 05:20:51 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MSKq6-1hjJ4T3Ojw-00SbPA; Tue, 10 Sep 2019 11:20:33 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] objdump: restore quiet build output
-Date:   Tue, 10 Sep 2019 11:20:24 +0200
-Message-Id: <20190910092031.2897823-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 10 Sep 2019 05:20:57 -0400
+Received: by mail-ed1-f66.google.com with SMTP id f2so10012022edw.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 02:20:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fVGVsESSvCGQOFNvs9wLVPNtEbA+xNhK0Vsp0KuYL0U=;
+        b=l1enudLKhX+NelYlOqQKvgNY5xLG29otQPhknZNcMkv0NM6LGktXu52o7Rq9oXni7U
+         rT6qa9jJFvVV7DGrQcvT7TkQVr7YPjzLLN2yyQhzqc/3CKUefFYh0Wj1fNGmGs1LrBaU
+         +Rt/P8fFgugTd0kFHr2Ss0tY7TIbjyM5B9kitn9D5U0zYDDTKHkZiimf0vIykHPbq2fZ
+         mZWj8mIoPkIvn0hdw5gdaffVtvbc7DNotaOw6ScSEUxSsXK+bbSJXldYd/iSPSahFARY
+         wygqctO/41VVuzlrbXrPVfgvn1BZBO8SRggWpYtz77R2bRkNGZ3TfXnz9srnNazLkorr
+         QBDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fVGVsESSvCGQOFNvs9wLVPNtEbA+xNhK0Vsp0KuYL0U=;
+        b=tREthPoDZ4mcXdgzF8n4aEqSRflukJcNIZy48Qh1vgK7UNy+IOWeZVgqS9/U8cc2SI
+         2bVAT/YC9/2F1M3pVgg8d12pmzYeiDcDD1q9PYZCWiyVhueLI/0eZimcuJSW7rYuiVcZ
+         zR5D2QqVVgH4NGBGKmn3wQ5QE2qUAYZ5X7pXZAla/5MlP5XQvU3BvU9eRLgm6BgBh+6J
+         mu49NPQrNUpz8KTYE9VatXY4fJKCiMFWgBqGSzCGClNjrW8K2OOB0pA+K8KM4eh6uDWd
+         GfoB6ykoY5tDCx9LAQQt608s8QBT2eQUuKm4jAOxmXhih6vNxwxo4fYyMYbpfP0mQ8ua
+         ZfIw==
+X-Gm-Message-State: APjAAAUB02RwJfBS5EaxoIZjkkWZxkefz6pA5rYMLC8L2zwX/hDZAl8a
+        dyRXbLAhvRusZymKRJkxikBSGkSsJFbucGiXcsERBZHkU34=
+X-Google-Smtp-Source: APXvYqxafwr9K7U55nRLBrBFKjJwhzRPMsyqMlNm7SM6xGY0Iw+4afMLkFcRjz7kyMGTKRb774E7d1RrUT7vfuc/ufA=
+X-Received: by 2002:aa7:dd17:: with SMTP id i23mr28832869edv.124.1568107254841;
+ Tue, 10 Sep 2019 02:20:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:kvlPWdIu+LuyrXPRkKyMxErLVgDRXe6HknkxoxEedEF9LHNIXpD
- oiYvHe1/OXFbz/YmXmAWUeg6tfWGDw+1g0vTlktk9OAJ7tmiGeGQdP4wgVOs9gUd7msiLND
- 7kjg9IfyXHDeWroUM2+Fb5zcgnDBq2iejsc6TE83e8jL21bXsmbYXz5Qq3o1pjSSGSjffOp
- gu/D5RxBF7r51M6R2kSHA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:uVq5xvgeT8I=:/NvUsnpWc8oKalgj04kIiB
- IcoUBrzU6REMSY+vCpyfM7ujPntsQe7IOPFtLE6pBzhmM7jr5xommhD/j4ewk/pjIC1enZXYd
- YqxMbSlO+Hv2YFXbsQxZwcA1hB/pMiQe8CiXwB/rKoDA19ieCupfGDDcNs8DkjDn3tscHIvHT
- /7j4/ckskcaP8CeYGwkAfr4xcmK6QY1JPXrb20t1F3JDi3ayFbytuyakxtn8fiqTEYuK6Aojl
- T91XPe0TsnkPY2t73gecb8zDlJMf0I+1mP1+PcEMElkHurC2t59RGlEzNZ+0rAIXoL1T7KBPd
- /DOY0UNshIBuByGMt1lp0rmeWs6qdQX4JlMJCk6ZeNR4x17oqJgnMK+laWXA0xaAZepZBv6I7
- rZR9SmNfciTkCdOxKaCmaTMspMRoSWdPjMDlUXuYq8arWcBLxF76u6EJ5oD7OD9jnQ3cicE+4
- iuiCKdxH3Z24o4+EfEZAD3LeT7ghi897C9XZZJSs3Ezlh95K78kPNpCiGhcLDSl5xyx4/Bv2d
- oa1p+6T7sOIQu8gZzisgRDhPvoz1qHvjteBGJ6WmwXCiYTnrQMspwLIFtB3gJ39XI5Khn9aH9
- Ab/uoyuj/C4LIKTu5R4mGsfMTEOspB+WFpf7bgEIKIVXIbKKuMVrszGej8YKIzj+ziRwqYXm9
- iRl4L49TF+zK83eKOEpiG7HHQr1gpi32E3qS7ZoUITOyCvvDTynDRExte+Kz1s5nTIirq76EC
- yaKFgpCrwhJhNWUTt7HPGOP+uxbDR2yinBztTjVx47a0z3/Bxjhx/4i+kSwOLdzNeQV3kZ9Wh
- prSutG0lDQdT/soNPfhQ2asbdAP/BnROyURBZDsVWps0n8N9g0=
+References: <20190909181221.309510-1-pasha.tatashin@soleen.com>
+ <20190909181221.309510-11-pasha.tatashin@soleen.com> <60975350-87f8-56b3-437d-d9ee26ac3bd3@suse.com>
+In-Reply-To: <60975350-87f8-56b3-437d-d9ee26ac3bd3@suse.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Tue, 10 Sep 2019 10:20:43 +0100
+Message-ID: <CA+CK2bBK40T_DEhNvz8nQaKSsanxXpGYhBm05N_NmZtq+JDVTg@mail.gmail.com>
+Subject: Re: [PATCH v4 10/17] arm64: trans_pgd: make trans_pgd_map_page generic
+To:     Matthias Brugger <mbrugger@suse.com>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After a recent sync-check.sh update, a 'make -s' build prints a
-single line of output from the 'cd -' command:
+> > +/*
+> > + * Add map entry to trans_pgd for a base-size page at PTE level.
+> > + * page:     page to be mapped.
+> > + * dst_addr: new VA address for the pages
+> > + * pgprot:   protection for the page.
+>
+> For consistency please describe all function parameters. From my experience
+> function parameter description is normally done in the C-file that implements
+> the logic. Don't ask me why.
 
-    /git/linux/tools/objtool
+Ok, I move the comment, and will describe every parameter. Thank you.
 
-This is clearly unintended, so revert back to a completely quiet
-build by redirecting the cd output to /dev/null.
+>
+> > + */
+> > +int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
+> > +                    void *page, unsigned long dst_addr, pgprot_t pgprot);
+> >
+> >  #endif /* _ASM_TRANS_TABLE_H */
+> > diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+> > index 94ede33bd777..9b75b680ab70 100644
+> > --- a/arch/arm64/kernel/hibernate.c
+> > +++ b/arch/arm64/kernel/hibernate.c
+> > @@ -179,6 +179,12 @@ int arch_hibernation_header_restore(void *addr)
+> >  }
+> >  EXPORT_SYMBOL(arch_hibernation_header_restore);
+> >
+> > +static void *
+> > +hibernate_page_alloc(void *arg)
+>
+> AFAICS no new line needed here.
 
-Fixes: 2ffd84ae973b ("objtool: Update sync-check.sh from perf's check-headers.sh")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- tools/objtool/sync-check.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Right, will fix it.
 
-diff --git a/tools/objtool/sync-check.sh b/tools/objtool/sync-check.sh
-index 0a832e265a50..94b8d76c2851 100755
---- a/tools/objtool/sync-check.sh
-+++ b/tools/objtool/sync-check.sh
-@@ -48,4 +48,4 @@ check arch/x86/include/asm/insn.h     '-I "^#include [\"<]\(asm/\)*inat.h[\">]"'
- check arch/x86/lib/inat.c             '-I "^#include [\"<]\(../include/\)*asm/insn.h[\">]"'
- check arch/x86/lib/insn.c             '-I "^#include [\"<]\(../include/\)*asm/in\(at\|sn\).h[\">]"'
- 
--cd -
-+cd - > /dev/null
--- 
-2.20.0
+>
+> > +{
+> > +     return (void *)get_safe_page((gfp_t)(unsigned long)arg);
+> > +}
+> > +
+> >  /*
+> >   * Copies length bytes, starting at src_start into an new page,
+> >   * perform cache maintenance, then maps it at the specified address low
+> > @@ -195,6 +201,10 @@ static int create_safe_exec_page(void *src_start, size_t length,
+> >                                unsigned long dst_addr,
+> >                                phys_addr_t *phys_dst_addr)
+> >  {
+> > +     struct trans_pgd_info trans_info = {
+> > +             .trans_alloc_page       = hibernate_page_alloc,
+> > +             .trans_alloc_arg        = (void *)GFP_ATOMIC,
+> > +     };
+>
+> New line between end of struct and other variables.
 
+Sure.
+
+>
+> With these changes:
+> Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+
+Thank you,
+Pasha
