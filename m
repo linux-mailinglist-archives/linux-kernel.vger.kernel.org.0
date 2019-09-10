@@ -2,117 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33D29AEE5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 822B4AEE65
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 17:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393904AbfIJPSi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 11:18:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49842 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726060AbfIJPSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 11:18:38 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A34B230821A3;
-        Tue, 10 Sep 2019 15:18:37 +0000 (UTC)
-Received: from asgard.redhat.com (ovpn-112-20.ams2.redhat.com [10.36.112.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3CA491001B01;
-        Tue, 10 Sep 2019 15:18:29 +0000 (UTC)
-Date:   Tue, 10 Sep 2019 16:18:01 +0100
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCH] fork: fail on non-zero higher 32 bits of args.exit_signal
-Message-ID: <20190910151801.GR4960@asgard.redhat.com>
-References: <20190910115711.GA3755@asgard.redhat.com>
- <20190910124440.GA25647@redhat.com>
- <20190910130935.jxqxbt7wop3ostob@wittgenstein>
- <20190910131048.e7xr52az2zej4p4v@wittgenstein>
- <20190910132701.s5o5nidewyo5zl7h@wittgenstein>
- <20190910143943.GC25647@redhat.com>
- <20190910144614.qsisdvm46vlc4bl7@wittgenstein>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190910144614.qsisdvm46vlc4bl7@wittgenstein>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 10 Sep 2019 15:18:37 +0000 (UTC)
+        id S2405762AbfIJPTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 11:19:51 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33033 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729662AbfIJPTu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 11:19:50 -0400
+Received: by mail-wr1-f67.google.com with SMTP id u16so21109572wrr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 08:19:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=vmUuCMkzir2Sv0OO2nHQXi9m+juUE2w8XHaiTSroSHA=;
+        b=kYw/oUI/H82GJRyFfkUzR4+OURd1LYYPwpXS5Eassv7VrsNI7XMdZAjX/Hem4mUJmh
+         Q07kd8PYu2S/HY2W5SC/lu+yJ4R0w793l/6htAF9mDMKAzMoFl2DMq1iT6b+LwK6IaQ7
+         UOtLAN5bR7qX4XSlusnmqgKWZ9hozJtU1Zp8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vmUuCMkzir2Sv0OO2nHQXi9m+juUE2w8XHaiTSroSHA=;
+        b=WknDHH3DC4HHGtlK4LuwqnG9k9d0Y7QbofwBdp69CJpHh+4Bt4qLVBx/b3PcJshthk
+         TpeqZ+a4U97LIgkqcXVVyDYaTZYknLA7LURBhxI9425tfbNBW3j4B7cWBCQEVuichH87
+         4PiRbzimsAQ7M6JuZfhCknI2Trd1hQVXnnUa4MupfhEI3H5D19u+b+68tMrecNWJ5U5G
+         B0rAM4Evsxbjno/AQQk0s46T9lXnpss1IFR4NY2+udsp2JgfVAd9eUkqLbXHoOfkhqSk
+         6hjlDooLYNNhWsLQTH5ZBhOdkbdmYZcObwobUtMD0BR1tIzcYjBLhjaERhNy5E4orJnw
+         Y/4w==
+X-Gm-Message-State: APjAAAVKQ4FN+8ihYPHxBVnYen0ybTyP0I5N2oXDiBxtWG1vRPZKSN1Z
+        NODRZbSyBM1P1bsXhr0Hb8NVuY6lru3owR2A
+X-Google-Smtp-Source: APXvYqw39BL6cpTQ2h3WRAEb89m10wkW4DGlcBRXCORRYb3DbUpcGPbZICuw3hLTec/QOR2bEOCGEQ==
+X-Received: by 2002:a5d:678a:: with SMTP id v10mr26708489wru.145.1568128788717;
+        Tue, 10 Sep 2019 08:19:48 -0700 (PDT)
+Received: from penguin.lxd ([148.69.85.38])
+        by smtp.gmail.com with ESMTPSA id o22sm32753305wra.96.2019.09.10.08.19.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Sep 2019 08:19:48 -0700 (PDT)
+From:   Nick Crews <ncrews@chromium.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Duncan Laurie <dlaurie@google.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Nick Crews <ncrews@chromium.org>
+Subject: [PATCH] rtc: wilco-ec: Sanitize values received from RTC
+Date:   Tue, 10 Sep 2019 16:19:29 +0100
+Message-Id: <20190910151929.780-1-ncrews@chromium.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 04:46:15PM +0200, Christian Brauner wrote:
-> On Tue, Sep 10, 2019 at 04:39:44PM +0200, Oleg Nesterov wrote:
-> > On 09/10, Christian Brauner wrote:
-> > > On Tue, Sep 10, 2019 at 03:10:48PM +0200, Christian Brauner wrote:
-> > > > On Tue, Sep 10, 2019 at 03:09:35PM +0200, Christian Brauner wrote:
-> > > > > On Tue, Sep 10, 2019 at 02:44:41PM +0200, Oleg Nesterov wrote:
-> > > > > > On 09/10, Eugene Syromiatnikov wrote:
-> > > > > > >
-> > > > > > > --- a/kernel/fork.c
-> > > > > > > +++ b/kernel/fork.c
-> > > > > > > @@ -2562,6 +2562,9 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
-> > > > > > >  	if (copy_from_user(&args, uargs, size))
-> > > > > > >  		return -EFAULT;
-> > > > > > >  
-> > > > > > > +	if (unlikely(((unsigned int)args.exit_signal) != args.exit_signal))
-> > > > > > > +		return -EINVAL;
-> > > > > > 
-> > > > > > Hmm. Unless I am totally confused you found a serious bug...
-> > > > > > 
-> > > > > > Without CLONE_THREAD/CLONE_PARENT copy_process() blindly does
-> > > > > > 
-> > > > > > 	p->exit_signal = args->exit_signal;
-> > > > > > 
-> > > > > > the valid_signal(sig) check in do_notify_parent() mostly saves us, but we
-> > > > > > must not allow child->exit_signal < 0, if nothing else this breaks
-> > > > > > thread_group_leader().
-> > > > > > 
-> > > > > > And afaics this patch doesn't fix this? I think we need the valid_signal()
-> > > > > > check...
-> > > > > 
-> > > > > Thanks for sending this patch so quickly after our conversation
-> > > > > yesterday, Eugene!
-> > > > > We definitely want valid_signal() to verify the signal is ok.
-> > > 
-> > > So we could do your check in copy_clone_args_from_user(), and then we do
-> > > another valid_signal() check in clone3_args_valid()? We could do the
-> > > latter in copy_clone_args_from_user() too but it's nicer to do it along
-> > > the other checks in clone3_args_valid().
-> > 
-> > I am fine either way. Sure, we can add valid_signal() into clone3_args_valid(),
-> > but then I'd ask to simplify the "overflow" check above. Something like
-> > 
-> > 	if (args.exit_signal > UINT_MAX)
-> > 		return -EINVAL;
-> > 
-> > looks much more readable to me.
-> > 
-> > 
-> > Or we can simply do
-> > 
-> > 	if (args.exit_signal & ~((u64)CSIGNAL))
-> > 		return -EINVAL;
-> > 
-> > in copy_clone_args_from_user() and forget about all problems.
-> 
-> Both are fine with me. The latter might have the advantage that we catch
-> both legacy clone and clone3. I think Eugene prefers this as well.
+Check that the time received from the RTC HW is valid,
+otherwise the computation of rtc_year_days() in the next
+line could, and sometimes does, crash the kernel.
 
-Unfortunately, it doesn't.  I think, the best place for the check is
-either in _do_fork or copy_process itself; however, it's quite messy as
-that way it's detached from the other checks, but, at the same time,
-there are a lot of code paths (like the one in arch/x86/ia32/sys_ia32.c),
-and it's kinda obscure that the caller of _do_fork has to check that
-exit_syscall is positive itself.
+While we're at it, fix the license to plain "GPL".
 
-> Christian
+Signed-off-by: Nick Crews <ncrews@chromium.org>
+---
+ drivers/rtc/rtc-wilco-ec.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
+index 8ad4c4e6d557..0ccbf2dce832 100644
+--- a/drivers/rtc/rtc-wilco-ec.c
++++ b/drivers/rtc/rtc-wilco-ec.c
+@@ -110,8 +110,16 @@ static int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
+ 	tm->tm_mday	= rtc.day;
+ 	tm->tm_mon	= rtc.month - 1;
+ 	tm->tm_year	= rtc.year + (rtc.century * 100) - 1900;
+-	tm->tm_yday	= rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
+ 
++	if (rtc_valid_tm(tm)) {
++		dev_warn(dev,
++			 "Time computed from EC RTC is invalid: sec=%d, min=%d, hour=%d, mday=%d, mon=%d, year=%d",
++			 tm->tm_sec, tm->tm_min, tm->tm_hour, tm->mday,
++			 tm->mon, tm->year);
++		return -EIO;
++	}
++
++	tm->tm_yday = rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
+ 	/* Don't compute day of week, we don't need it. */
+ 	tm->tm_wday = -1;
+ 
+@@ -188,5 +196,5 @@ module_platform_driver(wilco_ec_rtc_driver);
+ 
+ MODULE_ALIAS("platform:rtc-wilco-ec");
+ MODULE_AUTHOR("Nick Crews <ncrews@chromium.org>");
+-MODULE_LICENSE("GPL v2");
++MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Wilco EC RTC driver");
+-- 
+2.11.0
+
