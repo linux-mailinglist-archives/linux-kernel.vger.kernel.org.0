@@ -2,89 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BED1CAE676
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20FE8AE67E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 11:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbfIJJQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 05:16:13 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43559 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbfIJJQN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 05:16:13 -0400
-Received: by mail-lf1-f68.google.com with SMTP id q27so12825483lfo.10
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 02:16:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ip8Tgw+p2G5k0S3Bh1zyW4MCMwm2IXBnOauC9pyqqGM=;
-        b=uyuEBoMMeYZP3Bjkc6hSX/k1miX7i4H8wHCAfvP32VB5mcSoR9rIxSo1oFzyXsrJkT
-         e46f9NcYBFCmRelWJJGfttHcjeYz0rIqU50nug3VUVPoP4oPIBUoqUmfU0+tSk7zoI2x
-         omcxcFD0KHVxRe7mHMSLfdsTL8YTu2aLKCqlzIv4ANsOuP21dVnhTOEAbLnCOHkRuEcK
-         kr4BKK15u+Q++4hQaPxF6rEKO723up/0bxU9w0sdM8o6gENYqw0kBD8km+KVwc2uvb1j
-         GO/ZpKPgHcI1Ux5/u8T4x6wSFLhRMFdNcHj01FtwkinSgVOWrm8/B6PX0rFeQW8mEFhf
-         pCTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ip8Tgw+p2G5k0S3Bh1zyW4MCMwm2IXBnOauC9pyqqGM=;
-        b=pQf9D3bh54SlHGpXJ7ZpW6C3S2ljeTd95bhYHPfLy8+BZZDwyJNRLLzMrK2sl5ARRX
-         xoNFh794pnOeHACh/66i81NhZbJCYYSg4PaOrc/BLeL9knTiFTcnTsZD6wK2o1k/UAc0
-         9U88awHIgwmtIor6yrm8TZwl5z4FyBVxY/d+gOkrXhDk3IKg7MQ5LHMBG7WTCUVQJ5B+
-         zkKVbc/QWPv2G3FAhLstdzCM3di4OdxgSj70TUEGZY/GkF6IY/hOALIYpVARXviIKlQS
-         dyjbre8G3+jqbn9wHAkNJH98+/rKepo12nOwiSSb1wouCVmTb2pqi9abujv8HmB0dv9D
-         whVA==
-X-Gm-Message-State: APjAAAXk/Cd9gB9eHRC6UbQHXzwI8a2YbYuKdnNlNS+9k+GEjeOJs+JR
-        2unsUEteuWIKgCwgVwa2wziPJ7HOszBG8Ff7Rm7dtQ==
-X-Google-Smtp-Source: APXvYqz4IkxmLERS+Sdx4yJ2TjFnNAxzIkZaexDSGRqUjspc4l++Q8xMc81KQJgAAL8Am7iCT/LUKtxuGmV+CeBtGII=
-X-Received: by 2002:ac2:568c:: with SMTP id 12mr19253689lfr.133.1568106971437;
- Tue, 10 Sep 2019 02:16:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190904181740.GA19688@gmail.com> <CAHk-=wi2VOPoweqnDhxXKJ9fcLQzkV1oEDjteV=z-C7KXrpomg@mail.gmail.com>
- <CANiq72mXLbaefVBqZzz1vSREi0=HiBUgR1KU3iRjOCum7rvfrw@mail.gmail.com>
- <CAHk-=wiNksYaQ5zRFgTdY4TMHkxRi3aOcTC2zMMS6+aVSx+yeQ@mail.gmail.com>
- <CANiq72kyk6uzxS3LRvcOs9zgYYh7V7V2yPtAFkDwpHmyYcsz_Q@mail.gmail.com>
- <CAKwvOdkodVFxUr_Xc-qeUHnpxEmofENDhNdvCuiRzcGXQ54QkQ@mail.gmail.com>
- <CAHk-=wg+PD-+FEdKJuRVrrsgnFFLoAgU4Uz7tnohq_TgsEcNig@mail.gmail.com>
- <CAKwvOdmCBgKMLkXt29=vgvws_ek4XY3urMdfBUzbREH8Bj3uYA@mail.gmail.com>
- <CAHk-=whZ-ac4jm9zt=805xWsXaDAFWn2Bwn2PNtOBVx1vUmVvQ@mail.gmail.com>
- <CAKwvOdkWcB6jhqpr6p3LQkJOOt2si3i=bTGM11Poz8cZypS5EA@mail.gmail.com>
- <CAHk-=wiyxKDMW2fPumh2WyP3tP1BHpispjGfTWQ-we8keZ=q7Q@mail.gmail.com>
- <CA+icZUVNATrXZ7SDTrKa10cK8xtrRiC6VeXjkP6e9WyeKstMnA@mail.gmail.com>
- <CANiq72mOjC+JrpAOveqLPuE8f=XLXnr99DHb79ZVz=SKV6zhnA@mail.gmail.com> <CA+icZUVPFHimzas_YfmYJc14-qthsPRAXwj1m-fvBfP-HpziOQ@mail.gmail.com>
-In-Reply-To: <CA+icZUVPFHimzas_YfmYJc14-qthsPRAXwj1m-fvBfP-HpziOQ@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 10 Sep 2019 11:16:00 +0200
-Message-ID: <CANiq72mJHrYqYr8dSHh3O2Sy6GPscRc4pkSr3Pi_e76b8O3qzg@mail.gmail.com>
-Subject: Re: [GIT PULL] compiler-attributes for v5.3-rc8
-To:     Sedat Dilek <sedat.dilek@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Will Deacon <will@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Paul Burton <paul.burton@mips.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Behan Webster <behanw@gmail.com>,
-        Behan Webster <behanw@converseincode.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729610AbfIJJRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 05:17:16 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:54236 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726836AbfIJJRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 05:17:16 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46SKDS719hz9txW0;
+        Tue, 10 Sep 2019 11:17:12 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Uo7vBuqs; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id aiL9FREYs1Iv; Tue, 10 Sep 2019 11:17:12 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46SKDS5yLgz9txVx;
+        Tue, 10 Sep 2019 11:17:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1568107032; bh=W7DK9fV7ou1Pj1g9DnumvyDlGuhYJdM1G0uUAoFgmVY=;
+        h=From:Subject:To:Cc:Date:From;
+        b=Uo7vBuqsQYCrMwrHXVGWzbOzqvISk+RBR+kV0zI1xyLyEpyh5cXME5zC/2O25DQqA
+         puotdR6/Dn7foKcZ9Pd/6FHOUF/aAc5b8HUi0v5XMr1aeZw8w7cffZV/QoLBUgA7TS
+         kRXPM+mpk8wzDRiGC/YuAvZQ08R+3NEgkmXVNilE=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 02D958B877;
+        Tue, 10 Sep 2019 11:17:13 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Nni7Vn_UJZAF; Tue, 10 Sep 2019 11:17:12 +0200 (CEST)
+Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8D2A58B885;
+        Tue, 10 Sep 2019 11:16:19 +0200 (CEST)
+Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 16AA46B739; Tue, 10 Sep 2019 09:16:18 +0000 (UTC)
+Message-Id: <cover.1568106758.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3 00/15] Enable CONFIG_VMAP_STACK on PPC32
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        dja@axtens.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Date:   Tue, 10 Sep 2019 09:16:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 10:58 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
->
-> Sorry, I was not precise enough and didn't remember correctly.
->
-> I have re-tested with Linux v5.3-rc8. All OK.
+The purpose of this serie is to enable CONFIG_VMAP_STACK on PPC32.
 
-No worries at all! I just wanted to clarify it :)
+rfc v1: initial support on 8xx
 
-Thanks a lot for confirming it works.
+rfc v2: added stack overflow detection.
 
-Cheers,
-Miguel
+v3:
+- Stack overflow detection works, tested with LKDTM STACK_EXHAUST test
+- Support for book3s32 added
+
+Christophe Leroy (15):
+  powerpc/32: replace MTMSRD() by mtmsr
+  powerpc/32: Add EXCEPTION_PROLOG_0 in head_32.h
+  powerpc/32: save DEAR/DAR before calling handle_page_fault
+  powerpc/32: move MSR_PR test into EXCEPTION_PROLOG_0
+  powerpc/32: add a macro to get and/or save DAR and DSISR on stack.
+  powerpc/32: prepare for CONFIG_VMAP_STACK
+  powerpc: align stack to 2 * THREAD_SIZE with VMAP_STACK
+  powerpc/32: Add early stack overflow detection with VMAP stack.
+  powerpc/8xx: Use alternative scratch registers in DTLB miss handler
+  powerpc/8xx: drop exception entries for non-existing exceptions
+  powerpc/8xx: move DataStoreTLBMiss perf handler
+  powerpc/8xx: split breakpoint exception
+  powerpc/8xx: Enable CONFIG_VMAP_STACK
+  powerpc/32s: reorganise DSI handler.
+  powerpc/32s: Activate CONFIG_VMAP_STACK
+
+ arch/powerpc/include/asm/irq.h         |   1 +
+ arch/powerpc/include/asm/processor.h   |   6 ++
+ arch/powerpc/include/asm/thread_info.h |  18 ++++
+ arch/powerpc/kernel/asm-offsets.c      |   6 ++
+ arch/powerpc/kernel/entry_32.S         |  55 ++++++++--
+ arch/powerpc/kernel/head_32.S          |  57 ++++++----
+ arch/powerpc/kernel/head_32.h          | 129 ++++++++++++++++++++---
+ arch/powerpc/kernel/head_40x.S         |   2 +
+ arch/powerpc/kernel/head_8xx.S         | 186 +++++++++++++++------------------
+ arch/powerpc/kernel/head_booke.h       |   2 +
+ arch/powerpc/kernel/head_fsl_booke.S   |   1 +
+ arch/powerpc/kernel/irq.c              |   1 +
+ arch/powerpc/kernel/setup_32.c         |   3 +-
+ arch/powerpc/kernel/setup_64.c         |   2 +-
+ arch/powerpc/kernel/traps.c            |  15 ++-
+ arch/powerpc/kernel/vmlinux.lds.S      |   2 +-
+ arch/powerpc/mm/book3s32/hash_low.S    |  46 +++++---
+ arch/powerpc/mm/book3s32/mmu.c         |   9 +-
+ arch/powerpc/perf/8xx-pmu.c            |  12 ++-
+ arch/powerpc/platforms/Kconfig.cputype |   3 +
+ 20 files changed, 379 insertions(+), 177 deletions(-)
+
+-- 
+2.13.3
+
