@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25141AE828
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 911B5AE82D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2019 12:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393701AbfIJKax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 06:30:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59368 "EHLO mx1.suse.de"
+        id S2393785AbfIJKbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 06:31:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59388 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2393685AbfIJKav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:30:51 -0400
+        id S1729118AbfIJKaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 06:30:52 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8374FAE5E;
+        by mx1.suse.de (Postfix) with ESMTP id 9D768AF0B;
         Tue, 10 Sep 2019 10:30:49 +0000 (UTC)
 From:   Oscar Salvador <osalvador@suse.de>
 To:     n-horiguchi@ah.jp.nec.com
 Cc:     mhocko@kernel.org, mike.kravetz@oracle.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH 03/10] mm,hwpoison-inject: don't pin for hwpoison_filter
-Date:   Tue, 10 Sep 2019 12:30:09 +0200
-Message-Id: <20190910103016.14290-4-osalvador@suse.de>
+Subject: [PATCH 04/10] mm,hwpoison: remove MF_COUNT_INCREASED
+Date:   Tue, 10 Sep 2019 12:30:10 +0200
+Message-Id: <20190910103016.14290-5-osalvador@suse.de>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20190910103016.14290-1-osalvador@suse.de>
 References: <20190910103016.14290-1-osalvador@suse.de>
@@ -32,62 +32,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-Another memory error injection interface debugfs:hwpoison/corrupt-pfn
-also takes bogus refcount for hwpoison_filter(). It's justified
-because this does a coarse filter, expecting that memory_failure()
-redoes the check for sure.
+Now there's no user of MF_COUNT_INCREASED, so we can safely remove
+it from all calling points.
 
 Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- mm/hwpoison-inject.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ include/linux/mm.h  |  7 +++----
+ mm/memory-failure.c | 16 +++-------------
+ 2 files changed, 6 insertions(+), 17 deletions(-)
 
-diff --git a/mm/hwpoison-inject.c b/mm/hwpoison-inject.c
-index 5b7430bd83a6..0c8cdb80fd7d 100644
---- a/mm/hwpoison-inject.c
-+++ b/mm/hwpoison-inject.c
-@@ -26,11 +26,6 @@ static int hwpoison_inject(void *data, u64 val)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad6766a08f9b..fb36a4165a4e 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2814,10 +2814,9 @@ void register_page_bootmem_memmap(unsigned long section_nr, struct page *map,
+ 				  unsigned long nr_pages);
  
- 	p = pfn_to_page(pfn);
- 	hpage = compound_head(p);
--	/*
--	 * This implies unable to support free buddy pages.
--	 */
--	if (!get_hwpoison_page(p))
--		return 0;
+ enum mf_flags {
+-	MF_COUNT_INCREASED = 1 << 0,
+-	MF_ACTION_REQUIRED = 1 << 1,
+-	MF_MUST_KILL = 1 << 2,
+-	MF_SOFT_OFFLINE = 1 << 3,
++	MF_ACTION_REQUIRED = 1 << 0,
++	MF_MUST_KILL = 1 << 1,
++	MF_SOFT_OFFLINE = 1 << 2,
+ };
+ extern int memory_failure(unsigned long pfn, int flags);
+ extern void memory_failure_queue(unsigned long pfn, int flags);
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index e43b61462fd5..1be785b25324 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -1092,7 +1092,7 @@ static int memory_failure_hugetlb(unsigned long pfn, int flags)
  
- 	if (!hwpoison_filter_enable)
- 		goto inject;
-@@ -40,23 +35,20 @@ static int hwpoison_inject(void *data, u64 val)
- 	 * This implies unable to support non-LRU pages.
+ 	num_poisoned_pages_inc();
+ 
+-	if (!(flags & MF_COUNT_INCREASED) && !get_hwpoison_page(p)) {
++	if (!get_hwpoison_page(p)) {
+ 		/*
+ 		 * Check "filter hit" and "race with other subpage."
+ 		 */
+@@ -1286,7 +1286,7 @@ int memory_failure(unsigned long pfn, int flags)
+ 	 * In fact it's dangerous to directly bump up page count from 0,
+ 	 * that may make page_ref_freeze()/page_ref_unfreeze() mismatch.
  	 */
- 	if (!PageLRU(hpage) && !PageHuge(p))
--		goto put_out;
-+		return 0;
+-	if (!(flags & MF_COUNT_INCREASED) && !get_hwpoison_page(p)) {
++	if (!get_hwpoison_page(p)) {
+ 		if (is_free_buddy_page(p)) {
+ 			action_result(pfn, MF_MSG_BUDDY, MF_DELAYED);
+ 			return 0;
+@@ -1327,10 +1327,7 @@ int memory_failure(unsigned long pfn, int flags)
+ 	shake_page(p, 0);
+ 	/* shake_page could have turned it free. */
+ 	if (!PageLRU(p) && is_free_buddy_page(p)) {
+-		if (flags & MF_COUNT_INCREASED)
+-			action_result(pfn, MF_MSG_BUDDY, MF_DELAYED);
+-		else
+-			action_result(pfn, MF_MSG_BUDDY_2ND, MF_DELAYED);
++		action_result(pfn, MF_MSG_BUDDY_2ND, MF_DELAYED);
+ 		return 0;
+ 	}
  
+@@ -1618,9 +1615,6 @@ static int __get_any_page(struct page *p, unsigned long pfn, int flags)
+ {
+ 	int ret;
+ 
+-	if (flags & MF_COUNT_INCREASED)
+-		return 1;
+-
  	/*
--	 * do a racy check with elevated page count, to make sure PG_hwpoison
--	 * will only be set for the targeted owner (or on a free page).
-+	 * do a racy check to make sure PG_hwpoison will only be set for
-+	 * the targeted owner (or on a free page).
- 	 * memory_failure() will redo the check reliably inside page lock.
- 	 */
- 	err = hwpoison_filter(hpage);
- 	if (err)
--		goto put_out;
-+		return 0;
+ 	 * When the target page is a free hugepage, just remove it
+ 	 * from free hugepage list.
+@@ -1890,15 +1884,11 @@ int soft_offline_page(struct page *page, int flags)
+ 	if (is_zone_device_page(page)) {
+ 		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
+ 				pfn);
+-		if (flags & MF_COUNT_INCREASED)
+-			put_page(page);
+ 		return -EIO;
+ 	}
  
- inject:
- 	pr_info("Injecting memory failure at pfn %#lx\n", pfn);
--	return memory_failure(pfn, MF_COUNT_INCREASED);
--put_out:
--	put_hwpoison_page(p);
--	return 0;
-+	return memory_failure(pfn, 0);
- }
+ 	if (PageHWPoison(page)) {
+ 		pr_info("soft offline: %#lx page already poisoned\n", pfn);
+-		if (flags & MF_COUNT_INCREASED)
+-			put_hwpoison_page(page);
+ 		return -EBUSY;
+ 	}
  
- static int hwpoison_unpoison(void *data, u64 val)
 -- 
 2.12.3
 
