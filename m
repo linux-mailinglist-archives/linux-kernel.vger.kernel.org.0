@@ -2,73 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDDE9AFA9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F312AFAA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbfIKKkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 06:40:12 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41781 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfIKKkM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 06:40:12 -0400
-Received: by mail-qk1-f193.google.com with SMTP id p10so2269695qkg.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 03:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=IsKLpw1/PLuECT5XnF5q5Q0ixcl3h7VvWOuyGam5pPU=;
-        b=CjTXmOClsjXlyh19NMJ+2Pun565hTXslv3NMcpGl7ZTvWTHEhh+KRB8gdrV09LuzIV
-         6elSLvUhKD4bFBcDl5/42O7N2Ljw5MLoGO9+LMO8xVCGlgc+PtRjopJORHjuaKv61gq/
-         WJeLAhhcjiVhdXzF4SlzjsiX+9/f1icXPv5Z8VeBkdiAPbZqFonP5vI+AQPHFTSog75L
-         BFAf19cvBn7T11Pi4sPaEtu5Hc9ucc7UATXmpfuq5E+D4NSvX9UCwDI5C1xQc2XIacOu
-         hKooFtJwifEsopaGvVHn3kKhpkYpxBHoi7WxtrI+RXrLXSS+RYp87qi5kyMfw09vvDHA
-         rUYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=IsKLpw1/PLuECT5XnF5q5Q0ixcl3h7VvWOuyGam5pPU=;
-        b=lZ/j1CpAjrnYtYVdq64DAk7+qsmFQOV4ZDOp+pQyvWBdL57A0mN97Rh46XwJOa+ZPZ
-         MJtd7urLnh3ef7HevT/AHnipVqr7hN/5uraLVc7vlbHEmq9MGU/eFq0iCK16zI+eqZwe
-         0zklbPcspzCOQW183NInYDN9ip847ycB4pgp0DlYvNd3b+/ZOGvIFelA0Oj9tZK+fUJE
-         yYg35Qzds60pnV+IvOopl672IZ1ht9LTJF5d34pKWFty7N0XYL8wCu3/FbnUtOYMbcCw
-         VDBsW/mkYNlCL3v11VEYsqUZp2Blkfp4S68GfR4ZP44HZkpSi8MIReSojKJdL912nVsI
-         9eVw==
-X-Gm-Message-State: APjAAAXLNxVpRgq+xfgZGHmQzHVJFEw2VECCnXJY8cQYOlM2EsFJrY1H
-        LRKUQElL37VUJwZv4QRJrriVbjg1YBtipYUzaMM=
-X-Google-Smtp-Source: APXvYqwyGE5HvV3v/eRidG5NGaCTCWVF3p4KgK/Z9h85OdvlNDV4S7ZbNtYVozmTxOR+B8NWhvKeeQmNCFJItBMJ0hw=
-X-Received: by 2002:ae9:e510:: with SMTP id w16mr35001438qkf.268.1568198410798;
- Wed, 11 Sep 2019 03:40:10 -0700 (PDT)
+        id S1727547AbfIKKpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 06:45:11 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48451 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726696AbfIKKpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 06:45:10 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46Sz7Q5CS4z9s00;
+        Wed, 11 Sep 2019 20:45:06 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1568198708;
+        bh=RyBKerNtXPgq5u7GMyo0dMA2s5vk3hbVdoM1RJRMdCA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=uxudcLaR4Ox5BPqTIMPatcPXldn6Iw62x5/u6om9YS/pHGnp8tYz5wwPvIySyE/9z
+         5fK/A/RA5X5a0Fk49euCNKsWhz+47fpcEQ9dgu7mf8sLfiKBJaneTgdKqq5DR4+Wz2
+         ieJZ/Sh5/JOw07rtkWA9ml+35hENwK+l6jH3DFcxJLp7OBLuJvR5Jb0pyrm8Toknqz
+         tBtOtcPnglMjpMS6GOTHGmciTH7HSCcHhHwwbq9G2ykpzSvsIWUL9RlJp7OCF1gWrf
+         y8A8xD8qF4BIyPn6bOWwS0IGHcUcyFABkz0HIRvVRdMJoOewuqeXBdHr9tIAPiYrdE
+         4h+j9yoRTkiBA==
+Date:   Wed, 11 Sep 2019 20:45:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the configfs tree
+Message-ID: <20190911204500.69590946@canb.auug.org.au>
 MIME-Version: 1.0
-Reply-To: zia412@outlook.com
-Received: by 2002:a0c:8163:0:0:0:0:0 with HTTP; Wed, 11 Sep 2019 03:40:09
- -0700 (PDT)
-From:   Ahmed Ahmed <zaaama250@gmail.com>
-Date:   Wed, 11 Sep 2019 12:40:09 +0200
-X-Google-Sender-Auth: E-yy6wVPGmv76KGc5tYRQv6uX2w
-Message-ID: <CANcFNshMnUOvJ4n=c9Xd-c2W65jjO0hjcNqYkWgU4e7uXN+ePA@mail.gmail.com>
-Subject: OK
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="Sig_/3yh3ctdjPZwiClDF7jWp+DL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend.
+--Sig_/3yh3ctdjPZwiClDF7jWp+DL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-  I am Mr. .Ahmed Zama .I am sending this brief letter to solicit your
-partnership to =E2=82=AC 15 MILLION Euros into your account. I shall send y=
-ou
-more information and procedures when I receive positive response from
-you. If you are interested, send to me the followings immediately
-Full Names
-Age
-Nationality
-Occupation
-Scanned copy of your International Passport
-Direct Telephone Lines
-Mr Ahmed Zama
+Hi all,
+
+Commit
+
+  c84493bbf7ae ("configfs: fix a deadlock in configfs_symlink()")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3yh3ctdjPZwiClDF7jWp+DL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl140CwACgkQAVBC80lX
+0GyX3Qf/R/95RMpdOFml0JH5YxhmHwEf5ZczEMBawVGQv2cdpN3t2XH3aNiJ1t7n
+e2/NuMUYtZqz/pzdFlRHnxAMGLzv0GwsAjnU6HfejoYbg3nxtPfRhdPHfwB/cFNX
+PxNccz8Q5zp3fmJOMRT+15b8Muh5enWnKZwAfgNH3TRdSnvZSwfStKRYkKkanR78
+PbQJL3oQ+KENFdpOUZxzdfjbqdyD9DpReTYs1IkKTRmC5Q7Pjo/yTKjpuuqrZoXL
+OQUUhs2AQagN5cQPLJW0TmK1W64hhCEyX6T3hmqjR1AGkyRvDe7PuZmMDSwnAGP5
+5iKLUxI9qMEOCutRUdPz+CebesGaIg==
+=kjKB
+-----END PGP SIGNATURE-----
+
+--Sig_/3yh3ctdjPZwiClDF7jWp+DL--
