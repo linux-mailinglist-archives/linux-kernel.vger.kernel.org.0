@@ -2,88 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABDDCAFED6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 16:37:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B3ABAFEE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 16:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbfIKOhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 10:37:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40042 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726381AbfIKOhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 10:37:46 -0400
-Received: from X1 (110.8.30.213.rev.vodafone.pt [213.30.8.110])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C90A32053B;
-        Wed, 11 Sep 2019 14:37:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568212664;
-        bh=1fczKAAqSGjDH9qf3eCyH0kGN2ggp27wOT47W+oQbtE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nWlWY+dAVzcqLF6822O67BEu6DZSELxK0ypBc4Thosu+kucgLcO/tbHvMQv81D6dm
-         r/i7x3BEXb/FmQm3o2lQ8QiBxKF2to5xds4voBkuA268lJwuR0CzcoA/E2mWA2b1sO
-         RloOpE8n4Y45ROxaZKYW4XFD7YyrWCYo1cQG5Y7k=
-Date:   Wed, 11 Sep 2019 07:37:40 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Thomas Lindroth <thomas.lindroth@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [PATCH] memcg, kmem: do not fail __GFP_NOFAIL charges
-Message-Id: <20190911073740.b5c40cd47ea845884e25e265@linux-foundation.org>
-In-Reply-To: <20190911120002.GQ4023@dhcp22.suse.cz>
-References: <31131c2d-a936-8bbf-e58d-a3baaa457340@gmail.com>
-        <20190906125608.32129-1-mhocko@kernel.org>
-        <CALvZod5w72jH8fJSFRaw7wgQTnzF6nb=+St-sSXVGSiG6Bs3Lg@mail.gmail.com>
-        <20190909112245.GH27159@dhcp22.suse.cz>
-        <20190911120002.GQ4023@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728292AbfIKOjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 10:39:15 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:33398 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728184AbfIKOjN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 10:39:13 -0400
+Received: from ramsan ([84.194.98.4])
+        by xavier.telenet-ops.be with bizsmtp
+        id 0Ef42100105gfCL01Ef4Mu; Wed, 11 Sep 2019 16:39:10 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i83lv-0006T2-Tj; Wed, 11 Sep 2019 16:39:03 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i83lv-0003Ou-Qz; Wed, 11 Sep 2019 16:39:03 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 0/5] gpio: Add GPIO Aggregator Driver
+Date:   Wed, 11 Sep 2019 16:38:53 +0200
+Message-Id: <20190911143858.13024-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Sep 2019 14:00:02 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+	Hi all,
 
-> On Mon 09-09-19 13:22:45, Michal Hocko wrote:
-> > On Fri 06-09-19 11:24:55, Shakeel Butt wrote:
-> [...]
-> > > I wonder what has changed since
-> > > <http://lkml.kernel.org/r/20180525185501.82098-1-shakeelb@google.com/>.
-> > 
-> > I have completely forgot about that one. It seems that we have just
-> > repeated the same discussion again. This time we have a poor user who
-> > actually enabled the kmem limit.
-> > 
-> > I guess there was no real objection to the change back then. The primary
-> > discussion revolved around the fact that the accounting will stay broken
-> > even when this particular part was fixed. Considering this leads to easy
-> > to trigger crash (with the limit enabled) then I guess we should just
-> > make it less broken and backport to stable trees and have a serious
-> > discussion about discontinuing of the limit. Start by simply failing to
-> > set any limit in the current upstream kernels.
-> 
-> Any more concerns/objections to the patch? I can add a reference to your
-> earlier post Shakeel if you want or to credit you the way you prefer.
-> 
-> Also are there any objections to start deprecating process of kmem
-> limit? I would see it in two stages
-> - 1st warn in the kernel log
-> 	pr_warn("kmem.limit_in_bytes is deprecated and will be removed.
-> 	        "Please report your usecase to linux-mm@kvack.org if you "
-> 		"depend on this functionality."
+GPIO controllers are exported to userspace using /dev/gpiochip*
+character devices.  Access control to these devices is provided by
+standard UNIX file system permissions, on an all-or-nothing basis:
+either a GPIO controller is accessible for a user, or it is not.
+Currently no mechanism exists to control access to individual GPIOs.
 
-pr_warn_once() :)
+Hence this second RFC adds a GPIO driver to aggregate existing GPIOs,
+and expose them as a new gpiochip.  This is useful for implementing
+access control, and assigning a set of GPIOs to a specific user.
+Furthermore, this simplifies and hardens exporting GPIOs to a virtual
+machine, as the VM can just grab the full GPIO controller, and no longer
+needs to care about which GPIOs to grab and which not, reducing the
+attack surface.
 
-> - 2nd fail any write to kmem.limit_in_bytes
-> - 3rd remove the control file completely
+Changes compared to v1[1]:
+  - Drop "virtual", rename to gpio-aggregator,
+  - Create and use new GPIO Forwarder Helper, to allow sharing code with
+    the GPIO inverter,
+  - Lift limit on the maximum number of GPIOs,
+  - Improve parsing of GPIO specifiers,
+  - Fix modular build.
 
-Sounds good to me.
+To do:
+  - Write proper documentation.
+
+Aggregating GPIOs and exposing them as a new gpiochip was suggested in
+response to my proof-of-concept for GPIO virtualization with QEMU[2][3].
+
+Aggregated GPIO controllers are instantiated and destroyed by writing to
+atribute files in sysfs.  Sample session on r8a7791/koelsch:
+
+  - Unbind LEDs from leds-gpio driver:
+
+	echo leds > /sys/bus/platform/drivers/leds-gpio/unbind
+
+  - Create aggregators:
+
+    $ echo e6052000.gpio 19,20 \
+	> /sys/bus/platform/drivers/gpio-aggregator/new_device
+
+    gpio-aggregator.0: gpio 0 => gpio-953 (?)
+    gpio-aggregator.0: gpio 1 => gpio-954 (?)
+    gpiochip_find_base: found new base at 778
+    gpio gpiochip8: (gpio-aggregator.0): added GPIO chardev (254:8)
+    gpiochip_setup_dev: registered GPIOs 778 to 779 on device: gpiochip8 (gpio-aggregator.0)
+
+    $ echo e6052000.gpio 21 e6050000.gpio 20-22 \
+	> /sys/bus/platform/drivers/gpio-aggregator/new_device
+
+    gpio-aggregator.1: gpio 0 => gpio-955 (?)
+    gpio-aggregator.1: gpio 1 => gpio-1012 (?)
+    gpio-aggregator.1: gpio 2 => gpio-1013 (?)
+    gpio-aggregator.1: gpio 3 => gpio-1014 (?)
+    gpiochip_find_base: found new base at 774
+    gpio gpiochip9: (gpio-aggregator.1): added GPIO chardev (254:9)
+    gpiochip_setup_dev: registered GPIOs 774 to 777 on device: gpiochip9 (gpio-aggregator.1)
+
+  - Adjust permissions on /dev/gpiochip[89] (optional)
+
+  - Control LEDs:
+
+    $ gpioset gpiochip8 0=0 1=1	# LED6 OFF, LED7 ON
+    $ gpioset gpiochip8 0=1 1=0	# LED6 ON, LED7 OFF
+    $ gpioset gpiochip9 0=0	# LED8 OFF
+    $ gpioset gpiochip9 0=1	# LED8 ON
+
+  - Destroy aggregators:
+
+    $ echo gpio-aggregator.0 \
+            > /sys/bus/platform/drivers/gpio-aggregator/delete_device
+    $ echo gpio-aggregator.1 \
+            > /sys/bus/platform/drivers/gpio-aggregator/delete_device
+
+Thanks for your comments!
+
+References:
+  - [1] "[PATCH RFC] gpio: Add Virtual Aggregator GPIO Driver"
+        (https://lore.kernel.org/lkml/20190705160536.12047-1-geert+renesas@glider.be/)
+  - [2] "[PATCH QEMU POC] Add a GPIO backend"
+	(https://lore.kernel.org/linux-renesas-soc/20181003152521.23144-1-geert+renesas@glider.be/)
+  - [3] "Getting To Blinky: Virt Edition / Making device pass-through
+	 work on embedded ARM"
+	(https://fosdem.org/2019/schedule/event/vai_getting_to_blinky/)
+
+Geert Uytterhoeven (5):
+  gpio: Export gpiod_{request,free}() to modular GPIO code
+  gpio: Export gpiochip_get_desc() to modular GPIO code
+  gpio: Export gpio_name_to_desc() to modular GPIO code
+  gpio: Add GPIO Forwarder Helper
+  gpio: Add GPIO Aggregator Driver
+
+ drivers/gpio/Kconfig           |  12 ++
+ drivers/gpio/Makefile          |   2 +
+ drivers/gpio/gpio-aggregator.c | 333 +++++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib-fwd.c     | 272 +++++++++++++++++++++++++++
+ drivers/gpio/gpiolib-fwd.h     |  16 ++
+ drivers/gpio/gpiolib.c         |   6 +-
+ drivers/gpio/gpiolib.h         |   1 +
+ 7 files changed, 641 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-aggregator.c
+ create mode 100644 drivers/gpio/gpiolib-fwd.c
+ create mode 100644 drivers/gpio/gpiolib-fwd.h
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
