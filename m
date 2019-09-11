@@ -2,36 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ADFAAFAA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:45:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9BCBAFABB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfIKKpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 06:45:20 -0400
-Received: from verein.lst.de ([213.95.11.211]:38171 "EHLO verein.lst.de"
+        id S1727736AbfIKKq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 06:46:27 -0400
+Received: from verein.lst.de ([213.95.11.211]:38180 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbfIKKpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 06:45:20 -0400
+        id S1726657AbfIKKq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 06:46:27 -0400
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id ED2FD68B02; Wed, 11 Sep 2019 12:45:16 +0200 (CEST)
-Date:   Wed, 11 Sep 2019 12:45:16 +0200
+        id 86B3468B02; Wed, 11 Sep 2019 12:46:24 +0200 (CEST)
+Date:   Wed, 11 Sep 2019 12:46:24 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Stefano Stabellini <sstabellini@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        gross@suse.com, boris.ostrovsky@oracle.com
-Cc:     xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: swiotlb-xen cleanups v4
-Message-ID: <20190911104516.GA28423@lst.de>
-References: <20190905113408.3104-1-hch@lst.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the configfs
+ tree
+Message-ID: <20190911104624.GB28423@lst.de>
+References: <20190911204500.69590946@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190905113408.3104-1-hch@lst.de>
+In-Reply-To: <20190911204500.69590946@canb.auug.org.au>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied to the dma-mapping tree.
+On Wed, Sep 11, 2019 at 08:45:00PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   c84493bbf7ae ("configfs: fix a deadlock in configfs_symlink()")
+> 
+> is missing a Signed-off-by from its committer.
+
+Fixed.
