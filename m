@@ -2,88 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A856B04B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 21:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 221BAB04BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 22:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730459AbfIKT6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 15:58:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:32928 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728244AbfIKT6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 15:58:16 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 826FD307D8E3;
-        Wed, 11 Sep 2019 19:58:16 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-117-150.ams2.redhat.com [10.36.117.150])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 250266012A;
-        Wed, 11 Sep 2019 19:58:09 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Carlos O'Donell <carlos@redhat.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha@sourceware.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH glibc 2.31 1/5] glibc: Perform rseq(2) registration at C startup and thread creation (v12)
-References: <20190807142726.2579-1-mathieu.desnoyers@efficios.com>
-        <20190807142726.2579-2-mathieu.desnoyers@efficios.com>
-        <8736h2sn8y.fsf@oldenburg2.str.redhat.com>
-        <7db64714-3dc5-b322-1edc-736b08ee7d63@redhat.com>
-        <87ef0mr6qj.fsf@oldenburg2.str.redhat.com>
-        <4a6f6326-ea82-e031-0fe0-7263ed97e797@redhat.com>
-        <877e6er4ls.fsf@oldenburg2.str.redhat.com>
-Date:   Wed, 11 Sep 2019 21:58:08 +0200
-In-Reply-To: <877e6er4ls.fsf@oldenburg2.str.redhat.com> (Florian Weimer's
-        message of "Wed, 11 Sep 2019 21:54:23 +0200")
-Message-ID: <8736h2r4fj.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 11 Sep 2019 19:58:16 +0000 (UTC)
+        id S1730478AbfIKUJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 16:09:01 -0400
+Received: from 2.mo3.mail-out.ovh.net ([46.105.75.36]:44502 "EHLO
+        2.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728808AbfIKUJA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 16:09:00 -0400
+X-Greylist: delayed 25202 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Sep 2019 16:09:00 EDT
+Received: from player168.ha.ovh.net (unknown [10.108.42.239])
+        by mo3.mail-out.ovh.net (Postfix) with ESMTP id E11EB21F5BB
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 15:03:51 +0200 (CEST)
+Received: from qperret.net (115.ip-51-255-42.eu [51.255.42.115])
+        (Authenticated sender: qperret@qperret.net)
+        by player168.ha.ovh.net (Postfix) with ESMTPSA id 7EBCF997FDF2;
+        Wed, 11 Sep 2019 13:03:35 +0000 (UTC)
+From:   Quentin Perret <qperret@qperret.net>
+To:     edubezval@gmail.com, rui.zhang@intel.com, javi.merino@kernel.org,
+        viresh.kumar@linaro.org, amit.kachhap@gmail.com, rjw@rjwysocki.net,
+        catalin.marinas@arm.com, will@kernel.org, daniel.lezcano@linaro.org
+Cc:     dietmar.eggemann@arm.com, ionela.voinescu@arm.com,
+        mka@chromium.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qperret@qperret.net
+Subject: [PATCH v8 1/4] arm64: defconfig: Enable CONFIG_ENERGY_MODEL
+Date:   Wed, 11 Sep 2019 15:03:11 +0200
+Message-Id: <20190911130314.29973-2-qperret@qperret.net>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190911130314.29973-1-qperret@qperret.net>
+References: <20190911130314.29973-1-qperret@qperret.net>
+X-Ovh-Tracer-Id: 17345332493490281465
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrtdefgdeffecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecu
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Florian Weimer:
+From: Quentin Perret <quentin.perret@arm.com>
 
-> * Carlos O'Donell:
->
->> On 9/11/19 3:08 PM, Florian Weimer wrote:
->>> * Carlos O'Donell:
->>> 
->>>> It would be easier to merge the patch set if it were just an unconditional
->>>> registration like we do for set_robust_list().
->>> 
->>> Note that this depends on the in-tree system call numbers list, which I
->>> still need to finish according to Joseph's specifications.
->>
->> Which work is this? Do you have a URL reference to WIP?
->
->   <https://sourceware.org/ml/libc-alpha/2019-05/msg00630.html>
->   <https://sourceware.org/ml/libc-alpha/2019-06/msg00015.html>
+The recently introduced Energy Model (EM) framework manages power cost
+tables for the CPUs of the system. Its only user right now is the
+scheduler, in the context of Energy Aware Scheduling (EAS).
 
-Sorry, there was also this:
+However, the EM framework also offers a generic infrastructure that
+could replace subsystem-specific implementations of the same concepts,
+as this is the case in the thermal framework.
 
-  <https://sourceware.org/ml/libc-alpha/2019-05/msg00629.html>
+So, in order to prepare the migration of the thermal subsystem to use
+the EM framework, enable it in the default arm64 defconfig, which is the
+most commonly used architecture for IPA. This will also compile-in all
+of the EAS code, although it won't be enabled by default -- EAS requires
+to use the 'schedutil' CPUFreq governor while arm64 defaults to
+'performance'.
 
-I also posted a build-many-glibcs.py patch at some point with an
-automatic table update, but that still had the massive bot-cycle time.
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-My current line of thinking is to implement some --use-compilers flag,
-so that you can build a fresh glibc checkout against an old, pre-built
-compilers for the system call tables update, and then use the patched
-glibc sources for one (and hopefully final) bot-cycle.
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 0e58ef02880c..ad0e4944a71f 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -71,6 +71,7 @@ CONFIG_COMPAT=y
+ CONFIG_RANDOMIZE_BASE=y
+ CONFIG_HIBERNATION=y
+ CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
++CONFIG_ENERGY_MODEL=y
+ CONFIG_ARM_CPUIDLE=y
+ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT=y
+-- 
+2.22.1
 
-Thanks,
-Florian
