@@ -2,97 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07272B02DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 859ADB02E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:46:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbfIKRnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 13:43:25 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.20]:31312 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729483AbfIKRnZ (ORCPT
+        id S1729756AbfIKRqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 13:46:17 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:49514 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729735AbfIKRqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 13:43:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1568223799;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=I5N0mIKioyErN8ieKWZ34hwP3cp6hVAp8pMtpw+iaIU=;
-        b=p997Yrb4h0KhQl1eH5uTi+i+OjN+jrab+fNCORvMd+WvEhzUhqGl34Fg8Uh+aboecQ
-        pVgb6FZr6jmFosZVMBfCQ+o/17VMkYUES+ar3ppq1MqLjcdih6GkHNZMWnicsyUgf3tF
-        Yu8IX2VzA2C6dhO/ZtK6EF37H4XYal6FPXXM9912c/gGmJ2tL/hhnDvS4zgxxIhpJYgz
-        uzzweMaw3D9A8um51shwrF+I7OYRXzM/i7B+acA+ef5/qiGjn1tAbyVOihw0HMX3YJXu
-        rsA/Hc2kReljX5sMaURPt13+PD0ym4fC4Q2AWMG3LeMFTWybQ/uf/qF3S88DjctnANKh
-        hsKw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/PgwDCvjo0="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
-        with ESMTPSA id u036f9v8BHhG8nG
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 11 Sep 2019 19:43:16 +0200 (CEST)
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [Letux-kernel] [RFC PATCH 0/3] Enable 1GHz support on omap36xx
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <BF829797-492C-4120-AC69-F8B83572FD38@goldelico.com>
-Date:   Wed, 11 Sep 2019 19:43:16 +0200
-Cc:     Nishanth Menon <nm@ti.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?utf-8?Q?Andr=C3=A9_Roth?= <neolynx@gmail.com>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
+        Wed, 11 Sep 2019 13:46:15 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8BHgc0g174577;
+        Wed, 11 Sep 2019 17:43:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=Pb5WjMUsVaTlVO0wSI4Ye0S4dRAE3PuojCAmFvOzGjQ=;
+ b=fNFTn4tKKIr78GW9Kv+VoT4MiNJGk4PQ0XBCe408niyns2ckkaxjoAk2u7ssN3NjLpMl
+ Bx5zpjO0AQD+i7TEof1VpEmV/6j+GpBWGRGJqKHWYePmt+aNPNE8Xi5aNwAYLz7qqAsG
+ RBMJJzIQadKJ5p5N/meX18uXRmF1f5bg2oUJGANeSYD0Te3Y+CrbXKLyfXbJyOlTZrgI
+ TxPxFoNbIwJfQKkZSH+aA+k5kvvEoAWiwMuvtwueuCmzR+0M/LkSOKswH9/UqDgZ808j
+ evdmKpfmqKTKerUntQlxS+6w8sX04mpfLneZBkhDgszmJBdDNKt0hph8k9K22zZWMzxu +w== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2uw1jkkpf1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 17:43:40 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8BHcnam044036;
+        Wed, 11 Sep 2019 17:43:39 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2uxk0tfveq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 17:43:39 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8BHhciQ014105;
+        Wed, 11 Sep 2019 17:43:38 GMT
+Received: from anon-dhcp-153.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Sep 2019 10:43:38 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: Regression in 5.1.20: Reading long directory fails
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <8D7EFCEB-4AE6-4963-B66F-4A8EEA5EA42A@redhat.com>
+Date:   Wed, 11 Sep 2019 13:43:37 -0400
+Cc:     Jason L Tibbitts III <tibbs@math.uh.edu>,
+        Bruce Fields <bfields@fieldses.org>,
+        Wolfgang Walter <linux@stwm.de>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        km@cm4all.com, linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <D3E8B5DC-AB53-4F46-8ABB-F839A11EB31C@goldelico.com>
-References: <C04F49BA-1229-4E96-9FCF-4FC662D1DB11@goldelico.com> <CAHCN7x+Ye6sB_YqO0sAX1OJDw64B-qGS3pL545v3Xk5z914cwQ@mail.gmail.com> <0C1EF64E-B33C-4BFA-A7D3-471DD1B9EE86@goldelico.com> <515048DE-138D-4400-8168-F2B7D61F1005@goldelico.com> <CAHCN7xLPCX9rZ0+7KVBiA_bgZ6tg6VeCXqD-UXu+6iwpFMPVrA@mail.gmail.com> <7B3D1D77-3E8C-444F-90B9-6DF2641178B8@goldelico.com> <CAHCN7xLW58ggx3CpVL=HdCVHWo6D-MCTB91A_9rtSRoZQ+xJuQ@mail.gmail.com> <FA2920FE-B76A-4D44-A264-862A1CCBF7FC@goldelico.com> <CAHCN7xJsPa0i+Z+qpCkWcdAh9+udmGT0RPNchdDsfB=8ptd3Nw@mail.gmail.com> <87420DBD-770F-4C32-9499-A3AEA5876E8A@goldelico.com> <20190909163236.GP52127@atomide.com> <E001F74D-724E-4C50-9265-CBD33C4F2918@goldelico.com> <F8F08882-8011-441C-9581-ECCE9772EC21@goldelico.com> <CAHCN7x+fgtMHMNYU2W7BRQwd-d2g_Tb8-L5QNcnZjCF=VzRXJg@mail.gmail.com> <3663B13C-1AAB-4BE3-8CAD-F821B70393FA@goldelico.com> <CAHCN7x+mLCNq4evwGZfk6Ka=3o6EzhL=s38aNdukyLwKB1xO7A@mail.gmail.com> <56482888-DBD3-4658-8DB9-FB57653B5AA8@goldelico.com> <CAHC N7x++uBzYx0cK4K6CY6aveofti5TVXnqEeNKnGBy_fzm5GQ@mail.gmail.com> <CAHCN7xLPZisrNk==eF-+V8hD+sceQq25qw+sK7vVZAYdd8=Q2Q@mail.gmail.com> <CAHCN7xL59cXgbe1YTbNvTjptO9bMnuxprCP7ok5kRuc8UO9Fcw@mail.gmail.com> <D7B54A39-D8A3-4EDF-8B47-66D59319B3F4@goldelico.com> <F65E947E-784A-4540-B926-BF3ECB0C01EC@goldelico.com> <285FED38-2B2B-4813-9FD2-396C53E9B1B2@goldelico.com> <CAHCN7xKyTnNojwRqsXcE1AsDKtJikBpXoUo8ED=89ZR9-ko9hA@mail.gmail.com> <65A23326-70B4-46E3-992D-74256B056900@goldelico.com> <CAHCN7xLGx0S3xyd0q-N8pgY8VdBbUUaJdgoxkKxakR59sH+zXQ@mail.gmail.com> <BF829797-492C-4120-AC69-F8B83572FD38@goldelico.com>
-To:     Adam Ford <aford173@gmail.com>
-X-Mailer: Apple Mail (2.3124)
+Message-Id: <CD5EF2C8-DB99-467B-8048-B290BAD44D4B@oracle.com>
+References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
+ <4418877.15LTP4gqqJ@stwm.de> <ufapnkhqjwm.fsf@epithumia.math.uh.edu>
+ <4198657.JbNDGbLXiX@h2o.as.studentenwerk.mhn.de>
+ <ufad0ggrfrk.fsf@epithumia.math.uh.edu> <20190906144837.GD17204@fieldses.org>
+ <ufapnkdw3s3.fsf@epithumia.math.uh.edu>
+ <75F810C6-E99E-40C3-B5E1-34BA2CC42773@oracle.com>
+ <DD6B77EE-3E25-4A65-9D0E-B06EEAD32B31@redhat.com>
+ <0089DF80-3A1C-4F0B-A200-28FF7CFD0C65@oracle.com>
+ <429B2B1F-FB55-46C5-8BC5-7644CE9A5894@redhat.com>
+ <F1EC95D2-47A3-4390-8178-CAA8C045525B@oracle.com>
+ <8D7EFCEB-4AE6-4963-B66F-4A8EEA5EA42A@redhat.com>
+To:     Benjamin Coddington <bcodding@redhat.com>
+X-Mailer: Apple Mail (2.3445.104.11)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909110163
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909110163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adam,
 
-> Am 11.09.2019 um 18:01 schrieb H. Nikolaus Schaller =
-<hns@goldelico.com>:
+
+> On Sep 11, 2019, at 1:40 PM, Benjamin Coddington <bcodding@redhat.com> =
+wrote:
 >=20
->>=20
->> Am 11.09.2019 um 17:56 schrieb Adam Ford <aford173@gmail.com>:
->>=20
->>> There are some subtleties for testing.
+> On 11 Sep 2019, at 13:29, Chuck Lever wrote:
+>=20
+>>> On Sep 11, 2019, at 1:26 PM, Benjamin Coddington =
+<bcodding@redhat.com> wrote:
 >>>=20
->>> * I have added turbo-mode; to OPP6 / OPP1G
->>> * which means they are available but not used by the ondemand =
-govenor
->>> * to enable them one has to echo 1 =
->/sys/devices/system/cpu/cpufreq/boost
+>>>=20
+>>> On 11 Sep 2019, at 12:39, Chuck Lever wrote:
+>>>=20
+>>>>> On Sep 11, 2019, at 12:25 PM, Benjamin Coddington =
+<bcodding@redhat.com> wrote:
+>>>>>=20
+>>>=20
+>>>>> Instead, I think we want to make sure the mic falls squarely into =
+the tail
+>>>>> every time.
+>>>>=20
+>>>> I'm not clear how you could do that. The length of the page data is =
+not
+>>>> known to the client before it parses the reply. Are you suggesting =
+that
+>>>> gss_unwrap should do it somehow?
+>>>=20
+>>> Is it too niave to always put the mic at the end of the tail?
 >>=20
->> Will that be documented somewhere? If not, can we put a comment in =
-the
->> device tree so people know how to enable it?
+>> The size of the page content is variable.
+>>=20
+>> The only way the MIC will fall into the tail is if the page content =
+is
+>> exactly the largest expected size. When the page content is smaller =
+than
+>> that, the receive logic will place part or all of the MIC in ->pages.
 >=20
-> It seems to be pretty standard on i86 systems if you google for "turbo =
-mode".
-> I have added it to the commit message which adds the vbb regulator.
+> Ok, right.  But what I meant is that xdr_buf_read_netobj() should be =
+renamed
+> and repurposed to be "move the mic from wherever it is to the end of
+> xdr_buf's tail".
+>=20
+> But now I see what you mean, and I also see that it is already trying =
+to do
+> that.. and we don't want to overlap the copy..
+>=20
+> So, really, we need the tail to be larger than twice the mic.. less 1. =
+ That
+> means the fix is probably just increasing rslack for krb5i.
 
-And, I am not sure if DT maintainers will accept comments about the
-Linux /sys implementation in device tree files or bindings. Those
-should be independent of Linux.
+What's the justification for that particular maximum size? Are you sure =
+the
+page contents are not spilling into the tail?
 
-Basically the turbo-mode property is a hint to the OPP system (which
-may or may not use of it).
+--
+Chuck Lever
 
-So I think it is indeed better to have it in the commit message and
-not the code.
 
-One more thought: as long as we do not have junction temperature =
-monitoring
-we should keep it off by default... We may even remove the turbo-mode
-designator if we have the 90=C2=B0C limit and smart reflex working.
-
-BR,
-Nikolaus
 
