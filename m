@@ -2,104 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7637B02E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:46:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44030B02E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:47:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729745AbfIKRqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 13:46:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56044 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729349AbfIKRqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 13:46:13 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC0AA2A09B2;
-        Wed, 11 Sep 2019 17:46:12 +0000 (UTC)
-Received: from asgard.redhat.com (ovpn-112-27.ams2.redhat.com [10.36.112.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B484A5D6A5;
-        Wed, 11 Sep 2019 17:46:05 +0000 (UTC)
-Date:   Wed, 11 Sep 2019 18:45:40 +0100
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Eric Biederman <ebiederm@xmission.com>
-Subject: [PATCH v3] fork: check exit_signal passed in clone3() call
-Message-ID: <4b38fa4ce420b119a4c6345f42fe3cec2de9b0b5.1568223594.git.esyr@redhat.com>
-References: <cover.1568223594.git.esyr@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1568223594.git.esyr@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 11 Sep 2019 17:46:12 +0000 (UTC)
+        id S1729765AbfIKRrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 13:47:00 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38502 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729683AbfIKRq7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 13:46:59 -0400
+Received: by mail-io1-f67.google.com with SMTP id k5so22549352iol.5;
+        Wed, 11 Sep 2019 10:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=m6EOAJO1qgEemJlkYFxDYcBwzW52x2O5dEl25GRcoSc=;
+        b=LQHGkTsqCaP8EfYJI/4g9fzb5NhR+mH8Ofvj4v2IIjBuYitiqn/Iz0cp5UZVRy6EGq
+         GcsPryMwY+RrBvooTU18BzfsCCX7TDEihCT8uSFRtDj/93ML9GR1wXg7Va/QCNIj7H+w
+         aYd4DGYjJOJBQ01MdyYdzWl1PCZpdbt8UyAAzTzFEvRZE3euqOUQ+IDxvT0ZRV5Z+jXN
+         8s8QBvTzTOnCp0IiDHH8OhOJtToHgAIiLEAfcFwk5UDydGLLuTMcKbVF1gdPLzTsd6og
+         rnb0wU3P+F5ibXwLonI/Ns26o3b/RtvMw05MrWXDNphEP8JCw8WRUbiy5GBnoG1YyQDE
+         0zVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m6EOAJO1qgEemJlkYFxDYcBwzW52x2O5dEl25GRcoSc=;
+        b=jTlcSE/5N37jEjwwKmFFPAvguYXcusOj2ukpf5i/kBXBvXVbaeN/tIfgLS8OEvjvde
+         thSeje9DQuj3rn4hK3m7CK9fpp1/iEqSMOKiNa8NrFEixOIfAsa5WNP/euqKMk4+gWwA
+         xMjpXWdxCTAM72YEZJ8N3vC4zPpBU2HkrkXWAaapg+/x3YzbZME/inbkCkXoSHB7toC6
+         I7RPXt7CwvczK+QjzaFlpe7aROIvEQvZ387sropbX0dK0jUOniiU7Y+WsnVFLn2Cto9Y
+         bZslTvJ21PkPECImOI/MA0rCO35+RIOKDpC5u4e9c3DmWSwnjGzf4Zdf9lAdnUtOOt1b
+         TKSg==
+X-Gm-Message-State: APjAAAUt7CxFoZiqAwM58eI2PpYvnk7qWm/jWAb4WPykmSoCUD2DPVz4
+        x4sws6hPORXv9Hp+vzDy1SA85l8y
+X-Google-Smtp-Source: APXvYqzxTMSyzOm40fnhFm9eaQZkFEEtBWf0exKouA7+NALtOfOJVLpNgsp+8oDMNF52g0vv1Y8dZg==
+X-Received: by 2002:a5d:89c1:: with SMTP id a1mr7693726iot.306.1568224018425;
+        Wed, 11 Sep 2019 10:46:58 -0700 (PDT)
+Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
+        by smtp.gmail.com with ESMTPSA id z11sm18788778ioi.88.2019.09.11.10.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2019 10:46:57 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-omap@vger.kernel.org
+Cc:     adam.ford@logicpd.com, sre@kernel.org,
+        Adam Ford <aford173@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: omap2plus_defconfig: Enable DRM_TI_TFP410
+Date:   Wed, 11 Sep 2019 12:46:47 -0500
+Message-Id: <20190911174647.29721-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously, higher 32 bits of exit_signal fields were lost when
-copied to the kernel args structure (that uses int as a type for the
-respective field).  Moreover, as Oleg has noted[1], exit_signal is used
-unchecked, so it has to be checked for sanity before use; for the legacy
-syscalls, applying CSIGNAL mask guarantees that it is at least non-negative;
-however, there's no such thing is done in clone3() code path, and that can
-break at least thread_group_leader.
+The TFP410 driver was removed but the replacement driver was
+never enabled.  This patch enableds the DRM_TI_TFP410
 
-Adding checks that user-passed exit_signal fits into int and passes
-valid_signal() check solves both of these problems.
+Fixes: be3143d8b27f ("drm/omap: Remove TFP410 and DVI connector drivers")
 
-[1] https://lkml.org/lkml/2019/9/10/467
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-* kernel/fork.c (copy_clone_args_from_user): Fail with -EINVAL if
-args.exit_signal is greater than UINT_MAX or is not a valid signal.
-(_do_fork): Note that exit_signal is expected to be checked for the
-sanity by the caller.
-
-Fixes: 7f192e3cd316 ("fork: add clone3")
-Reported-by: Oleg Nesterov <oleg@redhat.com>
-Co-authored-by: Oleg Nesterov <oleg@redhat.com>
-Co-authored-by: Dmitry V. Levin <ldv@altlinux.org>
-Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
----
- kernel/fork.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 2852d0e..f98314b 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2338,6 +2338,8 @@ struct mm_struct *copy_init_mm(void)
-  *
-  * It copies the process, and if successful kick-starts
-  * it and waits for it to finish using the VM if required.
-+ *
-+ * args->exit_signal is expected to be checked for sanity by the caller.
-  */
- long _do_fork(struct kernel_clone_args *args)
- {
-@@ -2562,6 +2564,15 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
- 	if (copy_from_user(&args, uargs, size))
- 		return -EFAULT;
- 
-+	/*
-+	 * Two separate checks are needed, as valid_signal() takes unsigned long
-+	 * as an argument, and struct kernel_clone_args uses int type
-+	 * for the exit_signal field.
-+	 */
-+	if (unlikely((args.exit_signal > UINT_MAX) ||
-+		     !valid_signal(args.exit_signal)))
-+		return -EINVAL;
-+
- 	*kargs = (struct kernel_clone_args){
- 		.flags		= args.flags,
- 		.pidfd		= u64_to_user_ptr(args.pidfd),
+diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
+index a0449d3b48a5..d384c13de19a 100644
+--- a/arch/arm/configs/omap2plus_defconfig
++++ b/arch/arm/configs/omap2plus_defconfig
+@@ -359,6 +359,7 @@ CONFIG_DRM_OMAP_PANEL_TPO_TD028TTEC1=m
+ CONFIG_DRM_OMAP_PANEL_TPO_TD043MTEA1=m
+ CONFIG_DRM_OMAP_PANEL_NEC_NL8048HL11=m
+ CONFIG_DRM_TILCDC=m
++CONFIG_DRM_TI_TFP410=m
+ CONFIG_FB=y
+ CONFIG_FIRMWARE_EDID=y
+ CONFIG_FB_MODE_HELPERS=y
 -- 
-2.1.4
+2.17.1
 
