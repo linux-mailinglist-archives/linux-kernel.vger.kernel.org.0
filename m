@@ -2,127 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AA03AF8B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:17:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D490EAF8C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbfIKJRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 05:17:36 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37485 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbfIKJRe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 05:17:34 -0400
-Received: by mail-wr1-f65.google.com with SMTP id i1so23049760wro.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 02:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=CvSWNGsfSG1sshb9s1EDdJReSoxTISoAGD+1pfVDxyc=;
-        b=F7q/rlCVfShEWRlTFaXZoWsn7ac1oQJJyQuElIuIsdCUY73256m3uxItJ4dxeLme/e
-         btftQ3Yxe1a2Z8qIWTg50DgpkXymF/RAKCfeQrPFunaUhp6aOzxr8GIPSMCeguLIv5Yy
-         QT8K1ALdIXrZyAyYM3dX55uiMzgNVBSUQ1shR4mFLfYqMZAPbSlIoKAj3IrYhtpinEvx
-         MHzGfx5nf/mmLUYWEkXAmd3hHcFD5mO6TVantjHMklWNizc8xI12U3bZpkMyWNgu2hbm
-         k9DqNqVfJutzS8OG2XbE4aRAGB7IR7eKLql3rojiURJHcXngyvzrs8qN0OWpboBS6vcd
-         9g5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=CvSWNGsfSG1sshb9s1EDdJReSoxTISoAGD+1pfVDxyc=;
-        b=tHqc5I1UTh1V7hGXFYWVWlfHp62T2PaSUhb3G1NmvIxBZ9KVKma3/Wln3dSl7K2jQt
-         TpnJs6dI3Rrq33+qdLVO7g2RLZoiL46CqsLSEWGsHFi/9Lbtrx7WF/BTn/Of3lrUTxFz
-         0lIG1xgf3jS73Rg/VvzKEfmtBycOOi+1a1HH03OVurVWzAOv6wJFLy6aFPdD8vxFbcSr
-         6izbQXdSqjJAQHKT07o9bMcLNStkN2veHC9kAuG8jwi9YDvVHB3aSYU0RN00pCgcjRGO
-         8V3DtE1L/lp1jBCuH0w4XFMKUZUdmjEzui+IPae4h7AJ4phrvd1ipsjtaRZ/J+0VcF/1
-         0b+w==
-X-Gm-Message-State: APjAAAUwt/1x8bsRPvTW33JFNh7TqTmh/nqsuOrqjMHIPUCC4njPALz2
-        IFtq2W4sCv0Vd8YY5loLGKCLOExTzT8cAw==
-X-Google-Smtp-Source: APXvYqxRMwsayDYeAxgwWdYFhf0lJ7v5s5sqVxMyGnluLJElV52fQ9ESHXB/Xyu87A+TkMV/wNA4KQ==
-X-Received: by 2002:adf:e388:: with SMTP id e8mr1342609wrm.306.1568193451950;
-        Wed, 11 Sep 2019 02:17:31 -0700 (PDT)
-Received: from linaro.org ([148.69.85.38])
-        by smtp.gmail.com with ESMTPSA id v7sm17985808wru.87.2019.09.11.02.17.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Sep 2019 02:17:31 -0700 (PDT)
-Date:   Wed, 11 Sep 2019 11:17:28 +0200
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>, Jun Li <jun.li@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        id S1727290AbfIKJVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 05:21:24 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2212 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726579AbfIKJVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 05:21:24 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E6267DBB613FD0A61D59;
+        Wed, 11 Sep 2019 17:21:21 +0800 (CST)
+Received: from [127.0.0.1] (10.184.12.158) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Sep 2019
+ 17:21:13 +0800
+Subject: Re: [PATCH 2/2] KVM: arm/arm64: Print the EC hex value with its exact
+ width
+To:     Marc Zyngier <maz@kernel.org>
+CC:     <james.morse@arm.com>, <julien.thierry.kdev@gmail.com>,
+        <suzuki.poulose@arm.com>, <kvmarm@lists.cs.columbia.edu>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/2] arm64: dts: imx8mm: Remove incorrect fallback
- compatible for ocotp
-Message-ID: <20190911091728.GA10331@linaro.org>
-References: <1568211887-19318-1-git-send-email-Anson.Huang@nxp.com>
- <749f8dc6-dbf9-127c-9924-33432b8af00a@linaro.org>
- <DB3PR0402MB3916E0F566E35DD30275A8E9F5B10@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>
+References: <1568169216-12632-1-git-send-email-yuzenghui@huawei.com>
+ <1568169216-12632-3-git-send-email-yuzenghui@huawei.com>
+ <86h85js083.wl-maz@kernel.org>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <e013e828-5e61-8c07-510f-6cb4c59367cf@huawei.com>
+Date:   Wed, 11 Sep 2019 17:19:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DB3PR0402MB3916E0F566E35DD30275A8E9F5B10@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <86h85js083.wl-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.12.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 09:05:49AM +0000, Anson Huang wrote:
-> Hi, Daniel
+Hi Marc,
+
+On 2019/9/11 16:31, Marc Zyngier wrote:
+> On Wed, 11 Sep 2019 03:33:36 +0100,
+> Zenghui Yu <yuzenghui@huawei.com> wrote:
+>>
+>> EC is the bits [31:26] of ESR_ELx on arm64 (HSR on arm). Print the
+>> hex value with its exact width (8).
+>>
+>> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+>> ---
+>>   virt/kvm/arm/trace.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/virt/kvm/arm/trace.h b/virt/kvm/arm/trace.h
+>> index 204d210d01c2..022b0a060034 100644
+>> --- a/virt/kvm/arm/trace.h
+>> +++ b/virt/kvm/arm/trace.h
+>> @@ -42,7 +42,7 @@ TRACE_EVENT(kvm_exit,
+>>   		__entry->vcpu_pc		= vcpu_pc;
+>>   	),
+>>   
+>> -	TP_printk("%s: HSR_EC: 0x%04x (%s), PC: 0x%08lx",
+>> +	TP_printk("%s: HSR_EC: 0x%02x (%s), PC: 0x%08lx",
+>>   		  __print_symbolic(__entry->ret, kvm_arm_exception_type),
+>>   		  __entry->esr_ec,
+>>   		  __print_symbolic(__entry->esr_ec, kvm_arm_exception_class),
 > 
-> > On 11/09/2019 16:24, Anson Huang wrote:
-> > > Compared to i.MX7D, i.MX8MM has different ocotp layout, so it should
-> > > NOT use "fsl,imx7d-ocotp" as ocotp's fallback compatible, remove it.
-> > >
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > ---
-> > >  arch/arm64/boot/dts/freescale/imx8mm.dtsi | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > index 5f9d0da..7c4dcce 100644
-> > > --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> > > @@ -426,7 +426,7 @@
-> > >  			};
-> > >
-> > >  			ocotp: ocotp-ctrl@30350000 {
-> > > -				compatible = "fsl,imx8mm-ocotp", "fsl,imx7d-
-> > ocotp", "syscon";
-> > > +				compatible = "fsl,imx8mm-ocotp", "syscon";
-> > >  				reg = <0x30350000 0x10000>;
-> > >  				clocks = <&clk IMX8MM_CLK_OCOTP_ROOT>;
-> > >  				/* For nvmem subnodes */
-> > 
-> > Why not fold the two patches?
-> 
-> For i.MX8MM, it just removes the incorrect fallback compatible, for i.MX8MN, it needs
-> to replace the incorrect fallback compatible in order to support SoC UID read, so I think
-> this should be 2 separate patch?
+> Although you're right that 8 bits ought to be enough, this is a change
+> to the output of the tracepoint, which userspace could (does?) parse.
 
-Oh, yes, there is a subtle difference in the file name :) m|n. I understand
-now why you splitted it.
+Well-written userspace tools should only parse the low 8 bits (if they
+do parse). But even if the high bits are parsed, they're always 0.
+So I don't think this change will have a bad impact on userspace.
+
+> I'm thus reluctant to change anything there, knowing that we don't
+> lose any information, and just print two extra zeroes.
+
+Anyway this is not a fix, feel free to ignore it if you're worried about
+that there might be some issues ;)
+
+> Am I missing anything?
+
+No.
 
 
--- 
+Thanks,
+zenghui
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
