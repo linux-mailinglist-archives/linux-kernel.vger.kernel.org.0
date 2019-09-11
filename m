@@ -2,66 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E88B6AF439
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 04:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F200AF444
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 04:31:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfIKC0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 10 Sep 2019 22:26:12 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:39818 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbfIKC0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Sep 2019 22:26:11 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DA03C200101;
-        Wed, 11 Sep 2019 04:26:09 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 385A82000C6;
-        Wed, 11 Sep 2019 04:26:03 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CF74D402A5;
-        Wed, 11 Sep 2019 10:25:54 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, daniel.lezcano@linaro.org,
-        ping.bai@nxp.com, daniel.baluta@nxp.com, jun.li@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] arm64: dts: imx8mn: Use "fsl,imx8mm-ocotp" as ocotp's fallback compatible
-Date:   Wed, 11 Sep 2019 10:24:47 -0400
-Message-Id: <1568211887-19318-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568211887-19318-1-git-send-email-Anson.Huang@nxp.com>
-References: <1568211887-19318-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726658AbfIKCbr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 10 Sep 2019 22:31:47 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57466 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbfIKCbr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Sep 2019 22:31:47 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8B2Supx134204;
+        Wed, 11 Sep 2019 02:31:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=qomVzkwZbo+ACBSCTS3Y2FRLpO/90hcekpEd1aiRTWs=;
+ b=m/wwV3yqPBl6xsL1b4BP7R0+ir0e3Nj/oFaqV95ebr+/5XPoB8XUSVI167kTRJiyKF8q
+ K9aksf2EpDhj68OIBSaGqV57OLbyqPJ4TTaUn38fG//rraU04FYwFJRdiludC+LUbEZH
+ 3/oJXUelvxG9VYb4XtjBrzg5IbIT9xTI1wqKAvHSn78r33UL8ZvJnkcNripNRRb0VNzl
+ JQYlBRHWexTaG/0n+KsIz43aCguR//OYV7SFh+9cnVo/DZ4tqXoxETS+CJok4s0E7Qfr
+ kOdKsGTHCtdGzedkkq7MJWIsZ+qgLy8pGkym/YqXVQr8Goc4vnAoe/GtnU27+Iq+iBKI NQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2uw1jy6y3t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 02:31:29 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8B2SZ22143815;
+        Wed, 11 Sep 2019 02:29:28 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2uxj3hwkbs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 02:29:28 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8B2TQN5001969;
+        Wed, 11 Sep 2019 02:29:26 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Sep 2019 19:29:25 -0700
+To:     John Garry <john.garry@huawei.com>
+Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/13] hisi_sas: Some misc patches
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1567774537-20003-1-git-send-email-john.garry@huawei.com>
+Date:   Tue, 10 Sep 2019 22:29:23 -0400
+In-Reply-To: <1567774537-20003-1-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Fri, 6 Sep 2019 20:55:24 +0800")
+Message-ID: <yq1y2yvefb0.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=881
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909110019
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=964 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909110019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use "fsl,imx8mm-ocotp" as i.MX8MN ocotp's fallback compatible instead
-of "fsl,imx7d-ocotp" to support SoC UID read, as i.MX8MN reuses
-i.MX8MM's SoC ID driver.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mn.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+John,
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-index e4efe8d..6cb6c9c 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-@@ -337,7 +337,7 @@
- 			};
- 
- 			ocotp: ocotp-ctrl@30350000 {
--				compatible = "fsl,imx8mn-ocotp", "fsl,imx7d-ocotp", "syscon";
-+				compatible = "fsl,imx8mn-ocotp", "fsl,imx8mm-ocotp", "syscon";
- 				reg = <0x30350000 0x10000>;
- 				clocks = <&clk IMX8MN_CLK_OCOTP_ROOT>;
- 				#address-cells = <1>;
+> This patchset includes support for some more minor features, a bit of
+> tidying, and a few patches to make the driver a bit more robust.
+
+Applied to 5.4/scsi-queue, thanks.
+
 -- 
-2.7.4
-
+Martin K. Petersen	Oracle Linux Engineering
