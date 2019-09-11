@@ -2,133 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3D5AF6D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 499E0AF6D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:25:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbfIKHUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 03:20:55 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46858 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfIKHUz (ORCPT
+        id S1727114AbfIKHWg convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Sep 2019 03:22:36 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:45536 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbfIKHWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 03:20:55 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q5so13073335pfg.13;
-        Wed, 11 Sep 2019 00:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NTSA2KWTYkZ5jUmaKr2hzgikiMEn5EUiQArjTO/JJ7k=;
-        b=tciV8VlCLtN80qdrFlxoq0Hj7+jQCySauyTC32p1hbaxewc7oqOIkv9XUJ0QCImn55
-         EWuBZcnav+dglkKAZ78akhkvjvLsmyq661EHhly8f3pfqUpbX5vEcAiRLrSaTpXB3enw
-         KIZfi6RyBd7dctmjOW7Z0846G5JJT2aRqhNaDGoIhpS4HhdwI1K/YE8C4EnyBdo0zen9
-         7q9vS4Fhkl7bZqn/Ns8f7sXDS+6PT6i6xzmTj8OoPBOsJzZfnSoy0vMNTGi+eBfDb9is
-         FqpLA2GLlRt2NxLtq1FJFfx10o6vJUkoV05+Kv8bo6Gjy1xslt1fLGKeKBD/Q7+EGFfl
-         EKxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NTSA2KWTYkZ5jUmaKr2hzgikiMEn5EUiQArjTO/JJ7k=;
-        b=Fjr9IRdPPtNhqef3Y7+rXm27iGcmbX8SOz1W9WHM5jQVcEzlwYszgi25EVLXoVa8zz
-         /nTNxmSmUAfEDdOjCZeOBR/2YBEObNJawAuIZOeyC2J2qxjeyljiQPhXjsb0mE6nX42P
-         qlVeR9tdyerSZ6eZS8uLOy3mHeTt6u2+iLzSG7evdigq/q5DpNQTcU/D/nNLz5rbJ32D
-         z3tV/zQWEfVIUsJaX00Kz2NkluD3hNWPKHBivbuIZKHLHedvy0lJdCLtkwltfa48Mt3K
-         vJCrKUyuzFhXsKKSLh/qQYEGJQmrGvfqDPhS7ZOftpTo/qpl4Kw9C9GJinn6ogLY1YjY
-         eFuQ==
-X-Gm-Message-State: APjAAAULWDIyBkKnM3qc3u9poXCxsROqeEe3yRU7kHolDJYToubqzZkk
-        a7ZlHYHsUq3DNZstmwNQXjM=
-X-Google-Smtp-Source: APXvYqxzIpSwifRQceVeyApomRHKjKYVK/yebwOMK0KKstiSHdYeHkR5b5GyY/6CRVi4PJUZn/J8eA==
-X-Received: by 2002:a62:170b:: with SMTP id 11mr21111130pfx.243.1568186454587;
-        Wed, 11 Sep 2019 00:20:54 -0700 (PDT)
-Received: from gli-arch.genesyslogic.com.tw (60-251-58-169.HINET-IP.hinet.net. [60.251.58.169])
-        by smtp.gmail.com with ESMTPSA id m9sm3577364pjf.11.2019.09.11.00.20.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2019 00:20:53 -0700 (PDT)
-From:   Ben Chuang <benchuanggli@gmail.com>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johnsonm@danlj.org, ben.chuang@genesyslogic.com.tw,
-        Ben Chuang <benchuanggli@gmail.com>
-Subject: [PATCH V9 0/5] Add Genesys Logic GL975x support
-Date:   Wed, 11 Sep 2019 15:21:09 +0800
-Message-Id: <cover.1568184581.git.benchuanggli@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        Wed, 11 Sep 2019 03:22:35 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x8B7MKAk020343
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 11 Sep 2019 16:22:20 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x8B7MK2T021862;
+        Wed, 11 Sep 2019 16:22:20 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x8B7MDR1021065;
+        Wed, 11 Sep 2019 16:22:20 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.147] [10.38.151.147]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-936117; Wed, 11 Sep 2019 16:21:14 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC19GP.gisp.nec.co.jp ([10.38.151.147]) with mapi id 14.03.0439.000; Wed,
+ 11 Sep 2019 16:21:13 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     "osalvador@suse.de" <osalvador@suse.de>
+CC:     "mhocko@kernel.org" <mhocko@kernel.org>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/10] Hwpoison soft-offline rework
+Thread-Topic: [PATCH 00/10] Hwpoison soft-offline rework
+Thread-Index: AQHVZ8LTy7PIWQBirkyAnAoCBs9f5aclXX4AgAAOxICAAAOJAIAADMoA
+Date:   Wed, 11 Sep 2019 07:21:12 +0000
+Message-ID: <20190911072112.GA12499@hori.linux.bs1.fc.nec.co.jp>
+References: <20190910103016.14290-1-osalvador@suse.de>
+ <20190911052956.GA9729@hori.linux.bs1.fc.nec.co.jp>
+ <20190911062246.GA31960@hori.linux.bs1.fc.nec.co.jp>
+ <59dce1bc205b10f67f17cf9d2e1e7a04@suse.de>
+In-Reply-To: <59dce1bc205b10f67f17cf9d2e1e7a04@suse.de>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.150]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <80CDEFCDA81BC34D9226C8BC8FBFE853@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+On Wed, Sep 11, 2019 at 08:35:26AM +0200, osalvador@suse.de wrote:
+> On 2019-09-11 08:22, Naoya Horiguchi wrote:
+> > I found another panic ...
+> 
+> Hi Naoya,
+> 
+> Thanks for giving it a try. Are these testcase public?
+> I will definetely take a look and try to solve these cases.
 
-The patches modify internal clock setup to match SD Host Controller
-Simplified Specifications 4.20 and support Genesys Logic GL9750/GL9755
-chipsets.
+It's available on https://github.com/Naoya-Horiguchi/mm_regression.
+The README is a bit obsolete (sorry about that ...,) but you can run
+the testcase like below:
 
-v9:
- - refine gli_set_9750_rx_inv()
- - modify comments in sdhci_gli_voltage_switch()
+  $ git clone https://github.com/Naoya-Horiguchi/mm_regression
+  $ cd mm_regression
+  mm_regression $ git clone https://github.com/Naoya-Horiguchi/test_core 
+  mm_regression $ make
+  // you might need to install some dependencies like numa library and mce-inject tool
+  mm_regression $ make update_recipes
 
-v8:
- refine codes in sdhci-gli-pci.c
- - remove duplicate assignment 
- - remove redundant delay
- - use '!!'(not not) logical operator to refine the true/false condition
- - check end condition after outter loop
- - add comments for delay 5ms in sdhci_gli_voltage_switch()
- - merge two logical conditions to one line
+To run the single testcase, run the commands like below:
 
-v7:
- - remove condition define CONFIG_MMC_SDHCI_IO_ACCESSORS from sdhci-pci-gli.c
- - making the accessors(MMC_SDHCI_IO_ACCESSORS) always available when selecting
-   MMC_SDHCI_PCI in Kconfig
+  mm_regression $ RECIPEFILES=cases/page_migration/hugetlb_migratepages_allocate1_noovercommit.auto2 bash run.sh
+  mm_regression $ RECIPEFILES=cases/cases/mce_ksm_soft-offline_avoid_access.auto2 bash run.sh
+  
+You can run a set of many testcases with the commands like below:
 
-V6:
- - export sdhci_abot_tuning() function symbol
- - use C-style comments
- - use BIT, FIELD_{GET,PREP} and GENMASK to define bit fields of register
- - use host->ops->platform_execute_tuning instead of mmc->ops->execute_tuning
- - call sdhci_reset() instead of duplicating the code in sdhci_gl9750_reset
- - remove .hw_reset 
- - use condition define CONFIG_MMC_SDHCI_IO_ACCESSORS for read_l
+  mm_regression $ RECIPEFILES=cases/cases/mce_ksm_* bash run.sh
+  // run all ksm related testcases. I reproduced the panic with this command.
 
-V5:
- - add "change timeout of loop .." to a patch
- - fix typo "verndor" to "vendor"
+  mm_regression $ run_class=simple bash run.sh
+  // run the set of minimum testcases I run for each releases.
 
-V4:
- - change name from sdhci_gli_reset to sdhci_gl9750_reset
- - fix sdhci_reset to sdhci_gl9750_reset in sdhci_gl9750_ops
- - fix sdhci_gli_reset to sdhci_reset in sdhci_gl9755_ops
- 
-V3:
- - change usleep_range to udelay
- - add Genesys Logic PCI Vendor ID to a patch
- - separate the Genesys Logic specific part to a patch
+Hopefully this will help you.
 
-V2:
- - change udelay to usleep_range
-
-Ben Chuang (5):
-  mmc: sdhci: Change timeout of loop for checking internal clock stable
-  mmc: sdhci: Add PLL Enable support to internal clock setup
-  PCI: Add Genesys Logic, Inc. Vendor ID
-  mmc: sdhci: Export sdhci_abort_tuning function symbol
-  mmc: host: sdhci-pci: Add Genesys Logic GL975x support
-
- drivers/mmc/host/Kconfig          |   1 +
- drivers/mmc/host/Makefile         |   2 +-
- drivers/mmc/host/sdhci-pci-core.c |   2 +
- drivers/mmc/host/sdhci-pci-gli.c  | 353 ++++++++++++++++++++++++++++++
- drivers/mmc/host/sdhci-pci.h      |   5 +
- drivers/mmc/host/sdhci.c          |  30 ++-
- drivers/mmc/host/sdhci.h          |   2 +
- include/linux/pci_ids.h           |   2 +
- 8 files changed, 393 insertions(+), 4 deletions(-)
- create mode 100644 drivers/mmc/host/sdhci-pci-gli.c
-
--- 
-2.23.0
-
+Thanks,
+Naoya Horiguchi
