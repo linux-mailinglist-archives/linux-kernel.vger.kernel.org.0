@@ -2,117 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A305B0378
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 20:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B2E9B037E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 20:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbfIKSTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 14:19:25 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46830 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728198AbfIKSTZ (ORCPT
+        id S1729962AbfIKSVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 14:21:30 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52549 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729758AbfIKSVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 14:19:25 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 33882607C6; Wed, 11 Sep 2019 18:19:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568225964;
-        bh=Cq8dA5RuJNCfEAowmhvZuC5y4iuFy5mhIPmTToluUMs=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=D4aSuyuLCh3pJmHnnFpuTZCHcgVPaPoy16SYi1IkAD2LGzeyMkb1mf4M04VdRUEsl
-         deUcjNc05bsek504fYmwIDZbrG6EDW1lu3lpUtBPeCdZqQkJ68cukQl+Hzlsp1p82J
-         wny+cIg6vd2kG6sSC7EPTgNfqTVcbu96E3ggKVSY=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from tynnyri.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 933CF602BC;
-        Wed, 11 Sep 2019 18:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568225963;
-        bh=Cq8dA5RuJNCfEAowmhvZuC5y4iuFy5mhIPmTToluUMs=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=oPoyWpwWaYG6gmpB5EbPPo9zZG4bz8pA8hQ3l4p8ZV5bp+GMzxvD0tduXjlV+A/vn
-         4PvOsNNH3umELX67JiyoIbxDx+wsjMi3kYHic0fJIv+3qNnM2tnVsy/YnztgZjQHat
-         egYPG4zlizRYUB9g1n3e9+jHAuwVloSa1avaEzGg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 933CF602BC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        ath10k@lists.infradead.org
-Subject: Re: WARNING at net/mac80211/sta_info.c:1057 (__sta_info_destroy_part2())
-References: <CAHk-=wgBuu8PiYpD7uWgxTSY8aUOJj6NJ=ivNQPYjAKO=cRinA@mail.gmail.com>
-        <feecebfcceba521703f13c8ee7f5bb9016924cb6.camel@sipsolutions.net>
-Date:   Wed, 11 Sep 2019 21:19:19 +0300
-In-Reply-To: <feecebfcceba521703f13c8ee7f5bb9016924cb6.camel@sipsolutions.net>
-        (Johannes Berg's message of "Wed, 11 Sep 2019 12:26:32 +0200")
-Message-ID: <87ef0mlmqg.fsf@tynnyri.adurom.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 11 Sep 2019 14:21:30 -0400
+Received: by mail-wm1-f67.google.com with SMTP id t17so4616345wmi.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 11:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5oTS8CESIdf2+fECzEqNsvb0NTpwnzCnNyq2GZVcr2Q=;
+        b=K7xqlKEdOnfS0O9XRqb/0q0HY6V3p5QTtuFnmr0KhOwXtXTdrIo7XOMQjBPTztjdBv
+         P2BkfFDusrYB3nUQH6LdVxrOILhGLcKVTvrwT0KVabE4tZPcmTOH+z27YSkrp56n/CPV
+         I7tD8H8NX3WnSaIqV1wrz/S8P133nyn3cQZ9bTI0KlK5VXDAlwEdTrw3+xAn/nRxigzX
+         oQFENDOvL6cAPWMpPTKZYx2roioydtwSveTu4Db+InkEQ552rK+aSTmjkAsDH6geR0fD
+         TJRmFWw54E4ZULc2TLubi7PPT14jWff0OJuAZ6yo0rpSts5mEOMLrgoLLKQOIrILv8WI
+         2TMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5oTS8CESIdf2+fECzEqNsvb0NTpwnzCnNyq2GZVcr2Q=;
+        b=Bppg/kMzubnoOsL6Kh9OsePf1OHqNdj/Nu3mVUUS59asYpKMFRO4GDhmpQBbtLtZtY
+         GGg4Or2O+5iVxvdQl7iMJc8asyYkDeYwSbeC+j+gHYaKYg6hxhiYXlg9kLp4c6FRaFKa
+         boYSBhYpTfoiWLEfJbN4zZdz3u2DTHJjeS6gjTq7isebjPmzYxEQ70XHUCdNnx3/JQVp
+         /sL7WvaqrGHe9e5uOBoTaO66RwQOFABukh1mVtt0snmBzHNImTwsVZCY5eT04UblJKGU
+         IDOMuLVnbLKQS0optm4B88kwMN11Uy5/ZOCt8RFImL7UHb0FX681l3ma2vpdQsVMgA7t
+         XpEA==
+X-Gm-Message-State: APjAAAUugoSe5M+Vj5O+aeUkwyayoCxSgfpQP8GY/F7Rrb7gxzniS9XG
+        +Y1NBnguTmaaOwGdo4uz++B3iwg877w=
+X-Google-Smtp-Source: APXvYqzgU/fRnLbtz6RgedmNuEbJtbEeTdDWGVaZDP3OGyWMCl1pe8N23aR5qWBVV1G9Z0Q/VHcoyA==
+X-Received: by 2002:a05:600c:2152:: with SMTP id v18mr5188852wml.177.1568226088230;
+        Wed, 11 Sep 2019 11:21:28 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id q9sm2356753wmq.15.2019.09.11.11.21.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2019 11:21:27 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: [PATCH v3 0/3] LLVM/Clang fixes for pseries_defconfig
+Date:   Wed, 11 Sep 2019 11:20:47 -0700
+Message-Id: <20190911182049.77853-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Johannes Berg <johannes@sipsolutions.net> writes:
+Hi all,
 
->>    ath10k_pci 0000:02:00.0: wmi command 16387 timeout, restarting hardware
->>    ath10k_pci 0000:02:00.0: failed to set 5g txpower 23: -11
->>    ath10k_pci 0000:02:00.0: failed to setup tx power 23: -11
->>    ath10k_pci 0000:02:00.0: failed to recalc tx power: -11
->>    ath10k_pci 0000:02:00.0: failed to set inactivity time for vdev 0: -108
->>    ath10k_pci 0000:02:00.0: failed to setup powersave: -108
->> 
->> That certainly looks like something did try to set a power limit, but
->> eventually failed.
->
-> Yeah, that does seem a bit fishy. Kalle would have to comment for
-> ath10k.
->
->> Immediately after that:
->> 
->>    wlp2s0: deauthenticating from 54:ec:2f:05:70:2c by local choice
->> (Reason: 3=DEAUTH_LEAVING)
->
-> I don't _think_ any of the above would be a reason to disconnect, but it
-> clearly looks like the device got stuck at this point, since everything
-> just fails afterwards.
+This series includes a set of fixes for LLVM/Clang when building
+pseries_defconfig. These have been floating around as standalone patches
+so I decided to gather them up as a series so it was easier to
+review/apply them. The versioning is a bit wonky because of this reason,
+I have included the previous versions of the patches below as well as
+added an explanation on each patch. Please let me know if there are any
+comments or concerns.
 
-Yeah, to me it looks anything ath10k tries to do with the devie fails,
-even resetting the device.
+Previous postings:
 
-> Looks like indeed the driver gives the device at least *3 seconds* for
-> every command, see ath10k_wmi_cmd_send(), so most likely this would
-> eventually have finished, but who knows how many firmware commands it
-> would still have attempted to send...
+https://lore.kernel.org/lkml/20190818191321.58185-1-natechancellor@gmail.com/
+https://lore.kernel.org/lkml/20190820232921.102673-1-natechancellor@gmail.com/
+https://lore.kernel.org/lkml/20190812023214.107817-1-natechancellor@gmail.com/
 
-3 seconds is a bit short but in normal cases it should be enough. Of
-course we could increase the delay but I'm skeptic it would help here.
-
-> Perhaps the driver should mark the device as dead and fail quickly once
-> it timed out once, or so, but I'll let Kalle comment on that.
-
-Actually we do try to restart the device when a timeout happens in
-ath10k_wmi_cmd_send():
-
-        if (ret == -EAGAIN) {
-                ath10k_warn(ar, "wmi command %d timeout, restarting hardware\n",
-                            cmd_id);
-                queue_work(ar->workqueue, &ar->restart_work);
-        }
-                        
-
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Cheers,
+Nathan
