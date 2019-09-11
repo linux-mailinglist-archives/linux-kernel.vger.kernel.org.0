@@ -2,143 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A2F0AF636
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E1F8AF661
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:06:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfIKG4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 02:56:05 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:53036 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfIKG4F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 02:56:05 -0400
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 9046B15CBF1;
-        Wed, 11 Sep 2019 15:56:03 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-14) with ESMTPS id x8B6u25D003078
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 11 Sep 2019 15:56:03 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-14) with ESMTPS id x8B6u1ad021769
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 11 Sep 2019 15:56:02 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id x8B6txfI021766;
-        Wed, 11 Sep 2019 15:55:59 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jan Stancek <jstancek@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, systemd-devel@lists.freedesktop.org
-Subject: [PATCH] fat: Workaround the race with userspace's read via blockdev
- while mounting
-References: <fc8878aeefea128c105c49671b2a1ac4694e1f48.1567468225.git.jstancek@redhat.com>
-        <87v9u3xf5q.fsf@mail.parknet.co.jp>
-        <339755031.10549626.1567969588805.JavaMail.zimbra@redhat.com>
-        <87r24o24eo.fsf@mail.parknet.co.jp>
-        <1802022622.11216716.1568132830207.JavaMail.zimbra@redhat.com>
-Date:   Wed, 11 Sep 2019 15:55:59 +0900
-In-Reply-To: <1802022622.11216716.1568132830207.JavaMail.zimbra@redhat.com>
-        (Jan Stancek's message of "Tue, 10 Sep 2019 12:27:10 -0400 (EDT)")
-Message-ID: <87pnk7l3sw.fsf_-_@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        id S1726811AbfIKHGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 03:06:36 -0400
+Received: from ns.omicron.at ([212.183.10.25]:38858 "EHLO ns.omicron.at"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726702AbfIKHGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 03:06:36 -0400
+X-Greylist: delayed 727 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Sep 2019 03:06:35 EDT
+Received: from MGW02-ATKLA.omicron.at ([172.25.62.35])
+        by ns.omicron.at (8.15.2/8.15.2) with ESMTPS id x8B6sQJo018425
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 08:54:26 +0200
+DKIM-Filter: OpenDKIM Filter v2.11.0 ns.omicron.at x8B6sQJo018425
+Received: from MGW02-ATKLA.omicron.at (localhost [127.0.0.1])
+        by MGW02-ATKLA.omicron.at (Postfix) with ESMTP id E29CAA006D
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 08:54:25 +0200 (CEST)
+Received: from MGW01-ATKLA.omicron.at (unknown [172.25.62.34])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by MGW02-ATKLA.omicron.at (Postfix) with ESMTPS id DDB1DA0068
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 08:54:25 +0200 (CEST)
+Received: from EXC03-ATKLA.omicron.at ([172.22.100.188])
+        by MGW01-ATKLA.omicron.at  with ESMTP id x8B6sP3d030596-x8B6sP3f030596
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=CAFAIL);
+        Wed, 11 Sep 2019 08:54:25 +0200
+Received: from buiwinne01.omicron.at (172.22.97.206) by EXC03-ATKLA.omicron.at
+ (172.22.100.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Wed, 11 Sep
+ 2019 08:54:24 +0200
+From:   Christoph Fink <christoph.fink@omicron-lab.com>
+CC:     Huang Shijie <shijie8@gmail.com>, Han Xu <han.xu@nxp.com>,
+        Christoph Fink <fink.christoph@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Fix reading support of the 1-4-4-DTR read-mode from the wrong bit of the SFDP table which is part of the linux-imx fork located in the following repo: https://source.codeaurora.org/external/imx/linux-imx/?h=imx_4.14.98_2.1.0
+Date:   Wed, 11 Sep 2019 08:54:03 +0200
+Message-ID: <1568184843-11300-1-git-send-email-christoph.fink@omicron-lab.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [172.22.97.206]
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If userspace reads the buffer via blockdev while mounting,
-sb_getblk()+modify can race with buffer read via blockdev.
+From: Christoph Fink <fink.christoph@gmail.com>
 
-For example,
-
-            FS                               userspace
-    bh = sb_getblk()
-    modify bh->b_data
-                                  read
-				    ll_rw_block(bh)
-				      fill bh->b_data by on-disk data
-				      /* lost modified data by FS */
-				      set_buffer_uptodate(bh)
-    set_buffer_uptodate(bh)
-
-The userspace should not use the blockdev while mounting though, the
-udev seems to be already doing this.  Although I think the udev should
-try to avoid this, workaround the race by small overhead.
-
-Reported-by: Jan Stancek <jstancek@redhat.com>
-Tested-by: Jan Stancek <jstancek@redhat.com>
-Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Signed-off-by: Christoph Fink <fink.christoph@gmail.com>
 ---
+ drivers/mtd/spi-nor/spi-nor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- fs/fat/dir.c    |   13 +++++++++++--
- fs/fat/fatent.c |    3 +++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 8cc4b04..7fd52fa 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2089,7 +2089,7 @@ static const struct sfdp_bfpt_read sfdp_bfpt_reads[] = {
+ 	/* Fast Read 1-4-4-DTR */
+ 	{
+ 		SNOR_HWCAPS_READ_1_4_4_DTR,
+-		BFPT_DWORD(1), BIT(21),	/* Supported bit */
++		BFPT_DWORD(1), BIT(19),	/* Supported bit */
+ 		BFPT_DWORD(3), 0,	/* Settings */
+ 		SNOR_PROTO_1_4_4_DTR,
+ 	},
+-- 
+2.7.4
 
-diff -puN fs/fat/dir.c~fat-workaround-getblk fs/fat/dir.c
---- linux/fs/fat/dir.c~fat-workaround-getblk	2019-09-10 09:29:51.137292020 +0900
-+++ linux-hirofumi/fs/fat/dir.c	2019-09-10 09:39:15.366295152 +0900
-@@ -1100,8 +1100,11 @@ static int fat_zeroed_cluster(struct ino
- 			err = -ENOMEM;
- 			goto error;
- 		}
-+		/* Avoid race with userspace read via bdev */
-+		lock_buffer(bhs[n]);
- 		memset(bhs[n]->b_data, 0, sb->s_blocksize);
- 		set_buffer_uptodate(bhs[n]);
-+		unlock_buffer(bhs[n]);
- 		mark_buffer_dirty_inode(bhs[n], dir);
- 
- 		n++;
-@@ -1158,6 +1161,8 @@ int fat_alloc_new_dir(struct inode *dir,
- 	fat_time_unix2fat(sbi, ts, &time, &date, &time_cs);
- 
- 	de = (struct msdos_dir_entry *)bhs[0]->b_data;
-+	/* Avoid race with userspace read via bdev */
-+	lock_buffer(bhs[0]);
- 	/* filling the new directory slots ("." and ".." entries) */
- 	memcpy(de[0].name, MSDOS_DOT, MSDOS_NAME);
- 	memcpy(de[1].name, MSDOS_DOTDOT, MSDOS_NAME);
-@@ -1180,6 +1185,7 @@ int fat_alloc_new_dir(struct inode *dir,
- 	de[0].size = de[1].size = 0;
- 	memset(de + 2, 0, sb->s_blocksize - 2 * sizeof(*de));
- 	set_buffer_uptodate(bhs[0]);
-+	unlock_buffer(bhs[0]);
- 	mark_buffer_dirty_inode(bhs[0], dir);
- 
- 	err = fat_zeroed_cluster(dir, blknr, 1, bhs, MAX_BUF_PER_PAGE);
-@@ -1237,11 +1243,14 @@ static int fat_add_new_entries(struct in
- 
- 			/* fill the directory entry */
- 			copy = min(size, sb->s_blocksize);
-+			/* Avoid race with userspace read via bdev */
-+			lock_buffer(bhs[n]);
- 			memcpy(bhs[n]->b_data, slots, copy);
--			slots += copy;
--			size -= copy;
- 			set_buffer_uptodate(bhs[n]);
-+			unlock_buffer(bhs[n]);
- 			mark_buffer_dirty_inode(bhs[n], dir);
-+			slots += copy;
-+			size -= copy;
- 			if (!size)
- 				break;
- 			n++;
-diff -puN fs/fat/fatent.c~fat-workaround-getblk fs/fat/fatent.c
---- linux/fs/fat/fatent.c~fat-workaround-getblk	2019-09-10 09:36:20.247225406 +0900
-+++ linux-hirofumi/fs/fat/fatent.c	2019-09-10 09:36:43.847100048 +0900
-@@ -388,8 +388,11 @@ static int fat_mirror_bhs(struct super_b
- 				err = -ENOMEM;
- 				goto error;
- 			}
-+			/* Avoid race with userspace read via bdev */
-+			lock_buffer(c_bh);
- 			memcpy(c_bh->b_data, bhs[n]->b_data, sb->s_blocksize);
- 			set_buffer_uptodate(c_bh);
-+			unlock_buffer(c_bh);
- 			mark_buffer_dirty_inode(c_bh, sbi->fat_inode);
- 			if (sb->s_flags & SB_SYNCHRONOUS)
- 				err = sync_dirty_buffer(c_bh);
-_
