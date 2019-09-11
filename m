@@ -2,288 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E16AF739
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B5EAF733
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:52:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbfIKHwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 03:52:46 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39423 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727281AbfIKHwd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 03:52:33 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i1so4304148pfa.6;
-        Wed, 11 Sep 2019 00:52:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gKLtdokeOoRF3SRWNOq5UT1zY3ZXy0T2vFi4VcDT30o=;
-        b=bwMX/jqDCuA3mgnugHD0og1w1xqERquBp3pjLXh9xr4ZtLEGTSDW+BphHSD2VintP4
-         dmMbfwifJ7PGuRV5Kx8GiZwPQvrcHKuxW9KG0PFUlDW8d9VTRVSg8FT6fRXu0Mn/PTg5
-         ruyxr1SYJDXMcdrlB8GjKKLW2oeqsKXe890uetXIvVpXUxArc7zPw+ViSkwZKkwxLowR
-         kHu74qN8sHbhRgOFs3dDO78pwWpK5ADAkrGifbAYWYnk5ZmN7CV0+PMrYUv7gGCWKHxs
-         V3ereFdZzMvw3W8001Da8RH4mDywWfQcA/jtpJdrAcgQCMyN3JZU7xVrpTl2MBAQ5J2J
-         2V/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gKLtdokeOoRF3SRWNOq5UT1zY3ZXy0T2vFi4VcDT30o=;
-        b=Vwa8g31uuOD8uUH44L5DMllUE8Sxs5vbNFOw5F3viiaidyIEQF5i1nu19pwQPbtB19
-         BNi3fHaNAb1GuQRZTtZnk65lLUUtRoguAe47NAkDTpJ95r1oKBOUfzst2LNJ4kRjKDAW
-         39J4a9J9SVkpbTN6C4M+IIu/VuFhdDWw+/8LUDxiabQc1aw+1u1/xjt1CM39i0QoZqp+
-         a2p4i6FcxLjFrFSLDywjMYxuAaUWkUm0xARuYBJ6NIyaSvsHRJV/+5r8cztq+nzX7yrW
-         oxnyHK3CDb+M1Gr1NuZZ/u3dcpiVAw5Pq5Z1mNZtzpVeY3ODau61MYPcmBZkC3tNEaCS
-         +tAw==
-X-Gm-Message-State: APjAAAXZ+j3Ze6Mb/U0XWUOAJ0YyPEj57FQOMWe+NkFhkfZY1BqFd+vq
-        6hnyLOhKc0GyPJc2r5CTBso=
-X-Google-Smtp-Source: APXvYqw6at7dv7tZ/aC8L4GCiaU6acQ/RkIsI4G1MnS2IAJcx1wKj4CXMTmGu4N5sjAy34LaJybNhA==
-X-Received: by 2002:a63:fc52:: with SMTP id r18mr31872839pgk.378.1568188352173;
-        Wed, 11 Sep 2019 00:52:32 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id u2sm8582445pgp.66.2019.09.11.00.52.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2019 00:52:31 -0700 (PDT)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 11/11] gpiolib: add support for software nodes
-Date:   Wed, 11 Sep 2019 00:52:15 -0700
-Message-Id: <20190911075215.78047-12-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.23.0.162.g0b9fbb3734-goog
-In-Reply-To: <20190911075215.78047-1-dmitry.torokhov@gmail.com>
-References: <20190911075215.78047-1-dmitry.torokhov@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727275AbfIKHwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 03:52:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40046 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727208AbfIKHw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 03:52:28 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B4E55316E536;
+        Wed, 11 Sep 2019 07:52:27 +0000 (UTC)
+Received: from dell-r430-03.lab.eng.brq.redhat.com (dell-r430-03.lab.eng.brq.redhat.com [10.37.153.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2AD0B6012A;
+        Wed, 11 Sep 2019 07:52:23 +0000 (UTC)
+From:   Igor Mammedov <imammedo@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     borntraeger@de.ibm.com, david@redhat.com, cohuck@redhat.com,
+        frankja@linux.ibm.com, heiko.carstens@de.ibm.com,
+        gor@linux.ibm.com, imbrenda@linux.ibm.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH v2] KVM: s390: kvm_s390_vm_start_migration: check dirty_bitmap before using it as target for memset()
+Date:   Wed, 11 Sep 2019 03:52:18 -0400
+Message-Id: <20190911075218.29153-1-imammedo@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 11 Sep 2019 07:52:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that static device properties understand notion of child nodes and
-references, let's teach gpiolib to handle them:
+If userspace doesn't set KVM_MEM_LOG_DIRTY_PAGES on memslot before calling
+kvm_s390_vm_start_migration(), kernel will oops with:
 
-- GPIOs are represented as a references to software nodes representing
-  gpiochip
-- references must have 2 arguments - GPIO number within the chip and
-  GPIO flags (GPIO_ACTIVE_LOW/GPIO_ACTIVE_HIGH, etc).
-- name of the software node representing gpiochip must match label of
-  the gpiochip, as we use it to locate gpiochip structure at runtime.
+  Unable to handle kernel pointer dereference in virtual kernel address space
+  Failing address: 0000000000000000 TEID: 0000000000000483
+  Fault in home space mode while using kernel ASCE.
+  AS:0000000002a2000b R2:00000001bff8c00b R3:00000001bff88007 S:00000001bff91000 P:000000000000003d
+  Oops: 0004 ilc:2 [#1] SMP
+  ...
+  Call Trace:
+  ([<001fffff804ec552>] kvm_s390_vm_set_attr+0x347a/0x3828 [kvm])
+   [<001fffff804ecfc0>] kvm_arch_vm_ioctl+0x6c0/0x1998 [kvm]
+   [<001fffff804b67e4>] kvm_vm_ioctl+0x51c/0x11a8 [kvm]
+   [<00000000008ba572>] do_vfs_ioctl+0x1d2/0xe58
+   [<00000000008bb284>] ksys_ioctl+0x8c/0xb8
+   [<00000000008bb2e2>] sys_ioctl+0x32/0x40
+   [<000000000175552c>] system_call+0x2b8/0x2d8
+  INFO: lockdep is turned off.
+  Last Breaking-Event-Address:
+   [<0000000000dbaf60>] __memset+0xc/0xa0
 
-const struct software_node gpio_bank_b_node = {
-	.name = "B",
-};
+due to ms->dirty_bitmap being NULL, which might crash the host.
 
-const struct property_entry simone_key_enter_props[] __initconst = {
-	PROPERTY_ENTRY_U32("linux,code", KEY_ENTER),
-	PROPERTY_ENTRY_STRING("label", "enter"),
-	PROPERTY_ENTRY_REF("gpios", &gpio_bank_b_node, 123, GPIO_ACTIVE_LOW),
-	{ }
-};
+Make sure that ms->dirty_bitmap is set before using it or
+return -ENIVAL otherwise.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
+Fixes: afdad61615cc ("KVM: s390: Fix storage attributes migration with memory slots")
+Signed-off-by: Igor Mammedov <imammedo@redhat.com>
 ---
+Cc: stable@vger.kernel.org # v4.19+
 
- drivers/gpio/Makefile         |  1 +
- drivers/gpio/gpiolib-swnode.c | 92 +++++++++++++++++++++++++++++++++++
- drivers/gpio/gpiolib-swnode.h | 13 +++++
- drivers/gpio/gpiolib.c        | 31 ++++++++++--
- 4 files changed, 133 insertions(+), 4 deletions(-)
- create mode 100644 drivers/gpio/gpiolib-swnode.c
- create mode 100644 drivers/gpio/gpiolib-swnode.h
+v2:
+   - remove not true anym 'warning' clause in commit message
+v2:
+   - drop WARN()
 
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index d2fd19c15bae..41869ba725e2 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_GPIOLIB)		+= gpiolib.o
- obj-$(CONFIG_GPIOLIB)		+= gpiolib-devres.o
- obj-$(CONFIG_GPIOLIB)		+= gpiolib-legacy.o
- obj-$(CONFIG_GPIOLIB)		+= gpiolib-devprop.o
-+obj-$(CONFIG_GPIOLIB)		+= gpiolib-swnode.o
- obj-$(CONFIG_OF_GPIO)		+= gpiolib-of.o
- obj-$(CONFIG_GPIO_SYSFS)	+= gpiolib-sysfs.o
- obj-$(CONFIG_GPIO_ACPI)		+= gpiolib-acpi.o
-diff --git a/drivers/gpio/gpiolib-swnode.c b/drivers/gpio/gpiolib-swnode.c
-new file mode 100644
-index 000000000000..a20d73cc9a3f
---- /dev/null
-+++ b/drivers/gpio/gpiolib-swnode.c
-@@ -0,0 +1,92 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Software Node helpers for the GPIO API
-+ *
-+ * Copyright 2019 Google LLC
-+ */
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/consumer.h>
-+
-+#include "gpiolib.h"
-+#include "gpiolib-swnode.h"
-+
-+static int swnode_gpiochip_match_name(struct gpio_chip *chip, void *data)
-+{
-+	return !strcmp(chip->label, data);
-+}
-+
-+struct gpio_desc *swnode_find_gpio(struct fwnode_handle *fwnode,
-+				   const char *con_id, unsigned int idx,
-+				   unsigned long *flags)
-+{
-+	const struct software_node *chip_node;
-+	const struct software_node *swnode;
-+	struct fwnode_reference_args args;
-+	struct gpio_chip *chip;
-+	char prop_name[32]; /* 32 is max size of property name */
-+	int error;
-+
-+	swnode = to_software_node(fwnode);
-+	if (!swnode)
-+		return ERR_PTR(-EINVAL);
-+
-+	/*
-+	 * Note we do not need to try both -gpios and -gpio suffixes,
-+	 * as, unlike OF and ACPI, we can fix software nodes to conform
-+	 * to the proper binding.
-+	 */
-+	if (con_id)
-+		snprintf(prop_name, sizeof(prop_name), "%s-gpios", con_id);
-+	else
-+		stracpy(prop_name, "gpios");
-+
-+	/*
-+	 * We expect all swnode-described GPIOs have GPIO number and
-+	 * polarity arguments, hence nargs is set to 2.
-+	 */
-+	error = fwnode_property_get_reference_args(fwnode, prop_name, NULL,
-+						   2, idx, &args);
-+	if (error) {
-+		pr_debug("%s: can't parse '%s' property of node '%s[%d]'\n",
-+			__func__, prop_name, swnode->name ?: "unnamed", idx);
-+		return ERR_PTR(error);
-+	}
-+
-+	chip_node = to_software_node(args.fwnode);
-+	if (!chip_node || !chip_node->name)
-+		return ERR_PTR(-EINVAL);
-+
-+	chip = gpiochip_find((void *)chip_node->name,
-+			     swnode_gpiochip_match_name);
-+	if (!chip)
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	/* We expect native GPIO flags */
-+	*flags = args.args[1];
-+
-+	return gpiochip_get_desc(chip, args.args[0]);
-+}
-+
-+int swnode_gpio_count(struct fwnode_handle *fwnode, const char *con_id)
-+{
-+	struct fwnode_reference_args args;
-+	char prop_name[32];
-+	int count;
-+
-+	if (con_id)
-+		snprintf(prop_name, sizeof(prop_name), "%s-gpios", con_id);
-+	else
-+		stracpy(prop_name, "gpios");
-+
-+	/*
-+	 * This is not very efficient, but GPIO lists usually have only
-+	 * 1 or 2 entries.
-+	 */
-+	count = 0;
-+	while (fwnode_property_get_reference_args(fwnode, prop_name, NULL,
-+						  0, count, &args) == 0)
-+		count++;
-+
-+	return count ? count : -ENOENT;
-+}
-diff --git a/drivers/gpio/gpiolib-swnode.h b/drivers/gpio/gpiolib-swnode.h
-new file mode 100644
-index 000000000000..afd51c9b6e34
---- /dev/null
-+++ b/drivers/gpio/gpiolib-swnode.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef GPIOLIB_SWNODE_H
-+#define GPIOLIB_SWNODE_H
-+
-+struct fwnode_handle;
-+
-+struct gpio_desc *swnode_find_gpio(struct fwnode_handle *fwnode,
-+				   const char *con_id, unsigned int idx,
-+				   unsigned long *flags);
-+int swnode_gpio_count(struct fwnode_handle *fwnode, const char *con_id);
-+
-+#endif /* GPIOLIB_SWNODE_H */
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 6534dcd6e406..0f41b4b9b8ba 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -31,6 +31,7 @@
- #include "gpiolib.h"
- #include "gpiolib-of.h"
- #include "gpiolib-acpi.h"
-+#include "gpiolib-swnode.h"
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/gpio.h>
-@@ -4335,6 +4336,16 @@ static struct gpio_desc *fwnode_locate_gpiod(struct fwnode_handle *fwnode,
- 			desc = acpi_find_gpio_fallback(ACPI_COMPANION(dev),
- 						       con_id, idx,
- 						       flags, lookupflags);
-+	} else if (is_software_node(fwnode)) {
-+		dev_dbg(dev, "using software node for GPIO lookup\n");
-+		desc = swnode_find_gpio(fwnode, con_id, idx, lookupflags);
-+	}
-+
-+	if (IS_ERR(desc) &&
-+	    !IS_ERR_OR_NULL(fwnode) &&
-+	    is_software_node(fwnode->secondary)) {
-+		desc = swnode_find_gpio(fwnode->secondary,
-+					con_id, idx, lookupflags);
- 	}
- 
- 	return desc;
-@@ -4397,12 +4408,24 @@ EXPORT_SYMBOL_GPL(fwnode_gpiod_get_index);
-  */
- int gpiod_count(struct device *dev, const char *con_id)
- {
-+	struct fwnode_handle *fwnode;
- 	int count = -ENOENT;
- 
--	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
--		count = of_gpio_get_count(dev, con_id);
--	else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev))
--		count = acpi_gpio_count(dev, con_id);
-+	if (dev) {
-+		fwnode = dev_fwnode(dev);
-+		if (is_of_node(fwnode))
-+			count = of_gpio_get_count(dev, con_id);
-+		else if (is_acpi_device_node(fwnode))
-+			count = acpi_gpio_count(dev, con_id);
-+		else if (is_software_node(fwnode))
-+			count = swnode_gpio_count(fwnode, con_id);
-+
-+		if (count < 0 &&
-+		    !IS_ERR_OR_NULL(fwnode) &&
-+		    is_software_node(fwnode->secondary)) {
-+			count = swnode_gpio_count(fwnode, con_id);
-+		}
-+	}
- 
- 	if (count < 0)
- 		count = platform_gpio_count(dev, con_id);
+ arch/s390/kvm/kvm-s390.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index f329dcb3f44c..2a40cd3e40b4 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -1018,6 +1018,8 @@ static int kvm_s390_vm_start_migration(struct kvm *kvm)
+ 	/* mark all the pages in active slots as dirty */
+ 	for (slotnr = 0; slotnr < slots->used_slots; slotnr++) {
+ 		ms = slots->memslots + slotnr;
++		if (!ms->dirty_bitmap)
++			return -EINVAL;
+ 		/*
+ 		 * The second half of the bitmap is only used on x86,
+ 		 * and would be wasted otherwise, so we put it to good
 -- 
-2.23.0.162.g0b9fbb3734-goog
+2.18.1
 
