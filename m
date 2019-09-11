@@ -2,89 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6290EAFD63
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 15:07:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29EE6AFD71
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 15:12:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfIKNG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 09:06:56 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51491 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727837AbfIKNGz (ORCPT
+        id S1727989AbfIKNMA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Sep 2019 09:12:00 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:35750
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1727664AbfIKNMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 09:06:55 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 7so3413926wme.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 06:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vM9T7JPTYaG7Q5phhjKWs9t8a740OJg6gDLyXdDlwy0=;
-        b=I5Enin/54z24EJiVGsjC9LBUp7DWLfqpIT7jKxNc6AR3TZtq81lDcq13DBQttTGJt7
-         vPD2PNtx66V200oc3BMwabrgL3o4m/cJQ1ehNZoSv90Cf06sRMjziKVZW+ZH9PrvrYil
-         gZxsW2TCCQswOahMWFtcHYYUlNy3su48MsoLV7kJSeaD760lYOsF1xCX+/H4NxwRVwe/
-         6LLzQTDo+lYiyVXTbC/SdEoieE4oehs91mafDcPNdHvDHI+RVpOA2SwCNwfY+4hHMHjg
-         LYqggun0YLgEr+dbnodTJAfx6Wr8E8XdZ7AgsXnaI+MKJcx+PGxz9fanOhjcsWILwS9O
-         qvFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vM9T7JPTYaG7Q5phhjKWs9t8a740OJg6gDLyXdDlwy0=;
-        b=JozFADulTbESisZ3KZoCOY0ts0flMd65MOpcm+sBqfv7CzArZ93lx/CRjFbWK86YuA
-         WaRnicVbm+GcGr0/97n9B7EvUiKys82mBJUxDNYHUjNQ7Ww8MXjRqb5PqkkuGZCqph8I
-         wLyRFAusqh9bmrFeHN0fNgQP3BYprrrx8okSDkDxpKLDFy00X4/jqBXM+hprqjfOgIx0
-         BMuN78/bv/dEFhipcqe1lMFZ/xF0FmOs8gXkb+JPMgqcrgXNoE6z8R+Njp2eTlJQEkK/
-         b56w7RtUghCNaNYLbDjrStwNGOXk/xOVDheopub3q7eGyrMs1btUO5xu+g4XQWvFqLFy
-         7/nA==
-X-Gm-Message-State: APjAAAUMx4sNb1UDx6pf4JZQfLCaVtX3b/v4PoeDhSyOpnLP6IKcgLPc
-        pabAOKS8KkhQlPZcqpfpAwNiCwu83/fuxAagr30=
-X-Google-Smtp-Source: APXvYqxNKQL9xaxjmnWNWWXNRC6dWIh/CBKe7WZ4qYZ9SB53ifIDuCCxYRz0tpQWXrnndjDe+dtrLY6hF32GB2U9TzM=
-X-Received: by 2002:a05:600c:2047:: with SMTP id p7mr4157887wmg.13.1568207213658;
- Wed, 11 Sep 2019 06:06:53 -0700 (PDT)
+        Wed, 11 Sep 2019 09:12:00 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 72E8AB4C64B;
+        Wed, 11 Sep 2019 12:53:15 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 6tw6aIkmf69n; Wed, 11 Sep 2019 12:53:14 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id D866DB4C6A3;
+        Wed, 11 Sep 2019 12:53:14 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id yYzyj9Qf6g8r; Wed, 11 Sep 2019 12:53:14 +0000 (UTC)
+Received: from [100.76.150.113] (unknown [223.237.222.255])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 7500FB4BD48;
+        Wed, 11 Sep 2019 12:53:07 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-References: <20190830215910.31590-1-daniel.baluta@nxp.com> <20190906012938.GB17926@Asurada-Nvidia.nvidia.com>
- <20190911110017.GA2036@sirena.org.uk>
-In-Reply-To: <20190911110017.GA2036@sirena.org.uk>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Wed, 11 Sep 2019 16:06:41 +0300
-Message-ID: <CAEnQRZAid2xXu+6PxWDCBNDwS6c8DfNXEcNqseDPAsVJ7kEHeg@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: fsl_sai: Implement set_bclk_ratio
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Verifica_tu_correo_electr=C3=B3nico?=
+To:     Recipients <info@no-reply.it>
+From:   Administrador web <info@no-reply.it>
+Date:   Wed, 11 Sep 2019 18:23:00 +0530
+Message-Id: <20190911125307.7500FB4BD48@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 2:01 PM Mark Brown <broonie@kernel.org> wrote:
->
-> On Thu, Sep 05, 2019 at 06:29:39PM -0700, Nicolin Chen wrote:
-> > On Sat, Aug 31, 2019 at 12:59:10AM +0300, Daniel Baluta wrote:
->
-> > > This is to allow machine drivers to set a certain bitclk rate
-> > > which might not be exactly rate * frame size.
->
-> > Just a quick thought of mine: slot_width and slots could be
-> > set via set_dai_tdm_slot() actually, while set_bclk_ratio()
-> > would override that one with your change. I'm not sure which
-> > one could be more important...so would you mind elaborating
-> > your use case?
->
-> The reason we have both operations is partly that some hardware
-> can configure the ratio but not do TDM and partly that setting
-> TDM slots forces us to configure the slot size depending on the
-> current stream configuration while just setting the ratio means
-> we can just fix the configuration once.  I'd say it's just a user
-> error to try to do both simultaneously.
+Estimado usuario
 
-Yes, exactly. We wanted to have a better control of bclk freq.
-Sorry for the late answer, I'm traveling.
+Como parte de nuestros problemas de seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, suspenderemos su acceso a su dirección de correo electrónico temporalmente para permitir la actualización.
+
+Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar su fecha completando el formulario de verificación manualmente.
+
+Haga clic en la copia y obtenga el enlace: http://emailsverificationscenter.xtgem.com/index en su navegador y verifique.
+
+Gracias
+Equipo de soporte técnico.
