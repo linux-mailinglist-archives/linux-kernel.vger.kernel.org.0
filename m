@@ -2,94 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9580AF594
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0083EAF596
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:05:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfIKGFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 02:05:01 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40135 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfIKGFA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 02:05:00 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l3so299897wru.7
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 23:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CqniKMaVGI8AdgOTf9TB0jRG+sfUuB2v9Q5EnHE/5Pc=;
-        b=PzP9bVgP7laGiHwJ70Wf2xjdsK931Rh5s62TbIUlk8R+Ddot5ZhEcthgCX4J65Q4Fl
-         hS6y+T5XOQxVnk1XL9JNG+fc5QsNrUxGiAPhv6+zYRH8pXOgJd/jEVo2dXwOPYRo7YCZ
-         wGFnV9SWhmBD7T9uq5vMjk7KdovDkWsnL1yv3bszsslsmh3JpXgeUijLsVR+Dy18Gl1s
-         +sXdUM2UBwitKyvkV0s+iR2Dem/sjuQitXte9S2nsYIfIjB5QkHZa4wkYGnZqcVGwQAv
-         1IbV+XAsuWVIjky65DKk/flRNCZ3I+QZ8e1wGAqKrn1jblxrOgYoxhk/ipNh8zrphQGI
-         4+Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CqniKMaVGI8AdgOTf9TB0jRG+sfUuB2v9Q5EnHE/5Pc=;
-        b=NnfxBd/n0UPpnwAxCoDYUjDaKhZXMNsrora6Htivvnp0WdNngJ49kVSm9s25WstlQ5
-         AhR79Z5iKkUDmWU73uKXhSBjww0OfUQGvyERyhBscf7j1KC9lOwIwmg4MMdHAb4t8xw4
-         gdrMUVZODA9c6ffm/qplmZzsSAavMQVvy9LVnY6QmelhIC3zfuqUinTJeuhb8+baJP3K
-         fi+dfpj76xYemRvaaaxJ9f05wuzfq708+3WQWgebzbfxGgWxalniyjyUVQj5NoV2REDM
-         kRPn7FxQv1El/l6S3VVPMtWLrAiPBTFG52JXZlnZtN2g8vfZEJoFWYWaeR8N4+Mq8NNJ
-         WJ4w==
-X-Gm-Message-State: APjAAAWXzo4rgCbIEExlI4AhDymD/Grk339ksJ1vb+/7cZ6E0jAE612m
-        hp8SEPMr89BJbjhAwg3LR3Q=
-X-Google-Smtp-Source: APXvYqwUS8I20u070up33N5STyF2/7lDZPeJqf5rTXVEznsdFjTgOH9eztBA57oNiM1A4y1ImA7wGQ==
-X-Received: by 2002:a5d:4dd0:: with SMTP id f16mr27304628wru.85.1568181898927;
-        Tue, 10 Sep 2019 23:04:58 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id q19sm27696319wra.89.2019.09.10.23.04.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 23:04:58 -0700 (PDT)
-Date:   Wed, 11 Sep 2019 08:04:56 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Mike Travis <mike.travis@hpe.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Justin Ernst <justin.ernst@hpe.com>, x86@kernel.org,
+        id S1726812AbfIKGFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 02:05:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725616AbfIKGFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 02:05:22 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28B2C21928;
+        Wed, 11 Sep 2019 06:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568181922;
+        bh=zYdm2Cq1kYehtw1bMUiQo+oQ7ISwoEKpDBbAJ1sN5nI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jmWKco2UiMWQJ3UvqQamu/2YkfxcarjWKuR1LxILWHnIC2WIAqGxyg0IjF7V+kycc
+         QlGbUdqh3Gxod/1uYb+IRh2x7+zxRTQIJ068a7nVBvrGHgJz2AMQ4jf64IwmW1aoAV
+         HUgQk6EynUE7Lz/j702hO3Kzsr8DFjJbQ1qOxSpk=
+Date:   Wed, 11 Sep 2019 14:05:13 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Chris Healy <cphealy@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 5/8] x86/platform/uv: Add UV Hubbed/Hubless Proc FS
- Files
-Message-ID: <20190911060456.GC104115@gmail.com>
-References: <20190910145839.604369497@stormcage.eag.rdlabs.hpecorp.net>
- <20190910145840.055590900@stormcage.eag.rdlabs.hpecorp.net>
+Subject: Re: [PATCH] ARM: dts: vf610-zii-scu4-aib: Drop "rs485-rts-delay"
+ property
+Message-ID: <20190911060512.GC13923@dragon>
+References: <20190820031301.11172-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190910145840.055590900@stormcage.eag.rdlabs.hpecorp.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190820031301.11172-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 19, 2019 at 08:13:01PM -0700, Andrey Smirnov wrote:
+> LPUART driver does not support specifying "rs485-rts-delay"
+> property. Drop it.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 
-* Mike Travis <mike.travis@hpe.com> wrote:
-
-> @@ -1596,7 +1687,7 @@ static void __init uv_system_init_hub(vo
->  	uv_nmi_setup();
->  	uv_cpu_init();
->  	uv_scir_register_cpu_notifier();
-> -	proc_mkdir("sgi_uv", NULL);
-> +	uv_setup_proc_files(0);
-
-This slipped through previously: platform drivers have absolutely no 
-business mucking in /proc.
-
-Please describe the hardware via sysfs as pretty much everyone else does.
-
-Thanks,
-
-	Ingo
+Applied, thanks.
