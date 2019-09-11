@@ -2,76 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2D8EAFAC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA4DAFAD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:52:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbfIKKs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 06:48:57 -0400
-Received: from ozlabs.org ([203.11.71.1]:51407 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbfIKKs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 06:48:57 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46SzCm676Pz9s00;
-        Wed, 11 Sep 2019 20:48:52 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1568198934;
-        bh=yJ5Q6YhnC8J2au2Q5c8U6tpMW4JSLJXthExyIaHfoN0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=nmuFZKWqvVafbjwwjXPX8ihaKq1fuj1iaQ231a2cyqrhtDnb7VxQPdD6Fg1fZR8hg
-         3D1KRVLf7TS/3xye8SUEUFw/mtQYN6XJgS8yADCEDpxB/cbJo1k/sXYvT6/kFis2Pz
-         WvcOFP0a2leAgBgId8JjjemPblb6k2RnaMAgOaR+3XPzczV6QDxsc7H554N7rGtbbQ
-         0XgHyUiFnDS7tUNE3ZMCoZYpdxAXOSuGVah445eA8vjMlwctw//GS/dG8O0ZVJVzHH
-         D9DKaok7odw+xpS49nBFpJdyFrwdfhtOIURWPNxDDuoKAqrxta5DDkbKrmbJh+XttD
-         hBF6ok1LZfMpQ==
-Date:   Wed, 11 Sep 2019 20:48:53 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the pinctrl tree
-Message-ID: <20190911204853.7e6aad26@canb.auug.org.au>
+        id S1727649AbfIKKwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 06:52:13 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59674 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfIKKwN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 06:52:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fb8QmfcM6+bHa12eOMWxQHKCXWAsQRSOTaIAwdUDGXE=; b=dmS8IhYzgJSx2wo+NEVFycnHi
+        UlsetVnoOcYmgqf4uRccXocYARHtxRtkKS0Pudu1zhZ5F7Alsrvdss/TTak172MmZznVuzuq5g0id
+        hyWWCrMJFPL6/3TG1eT9DX3RTN7oWeqF0nUdyKSCe4GhBmD5Ztp26fJg6AS//5YX/OKFA=;
+Received: from [148.69.85.38] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1i80Dk-0008Jn-0H; Wed, 11 Sep 2019 10:51:32 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 5A1D9D00330; Wed, 11 Sep 2019 11:51:31 +0100 (BST)
+Date:   Wed, 11 Sep 2019 11:51:31 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     shifu0704@thundersoft.com
+Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        robh+dt@kernel.org, dmurphy@ti.com, navada@ti.com
+Subject: Re: [PATCH v2] tas2770: add tas2770 smart PA kernel driver
+Message-ID: <20190911105131.GY2036@sirena.org.uk>
+References: <1568197529-4385-1-git-send-email-shifu0704@thundersoft.com>
+ <1568197529-4385-2-git-send-email-shifu0704@thundersoft.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/VONq.M_gGblEsm0NMKdIE1w";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="H7DA0n3a+SnB4bJ2"
+Content-Disposition: inline
+In-Reply-To: <1568197529-4385-2-git-send-email-shifu0704@thundersoft.com>
+X-Cookie: Be careful!  UGLY strikes 9 out of 10!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/VONq.M_gGblEsm0NMKdIE1w
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+--H7DA0n3a+SnB4bJ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Commit
+On Wed, Sep 11, 2019 at 06:25:29PM +0800, shifu0704@thundersoft.com wrote:
 
-  cc3abdb73df4 ("pinctrl: iproc: Add 'get_direction' support")
+> +++ b/sound/soc/codecs/tas2770.c
+> @@ -0,0 +1,954 @@
+> +/*
+> + * SPDX-License-Identifier: GPL-2.0
+> + *
+> + * ALSA SoC Texas Instruments TAS2770 20-W Digital Input Mono Class-D
+> + * Audio Amplifier with Speaker I/V Sense
+> + *
+> + * Copyright (C) 2016-2017 Texas Instruments Incorporated - http://www.ti.com/
+> + *	Author: Tracy Yi <tracy-yi@ti.com>
+> + *	Shi Fu <shifu0704@thundersoft.com>
+> + */
 
-is missing a Signed-off-by from its committer.
+This is a C style comment not a C++ style comment.
 
---=20
-Cheers,
-Stephen Rothwell
+> +static int tas2770_regmap_read(struct tas2770_priv *tas2770,
+> +			unsigned int reg, unsigned int *value)
+> +{
+> +	int result = 0;
+> +	int retry_count = TAS2770_I2C_RETRY_COUNT;
+> +
+> +	while (retry_count--) {
+> +		result = snd_soc_component_read(tas2770->component, reg,
+> +			value);
+> +		if (!result)
+> +			break;
+> +
+> +		msleep(20);
+> +	}
+> +	if (!retry_count)
+> +		return -ETIMEDOUT;
 
---Sig_/VONq.M_gGblEsm0NMKdIE1w
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+This appears to be the same as the previous version?  It looks
+like we still have code to hande the device randomly resetting
+underneath the driver - like I said we really need to understand
+why that's being done, I'd strongly suggest splitting that code
+out into a separate patch so we can review the base driver and
+hopefully merge it while we discuss this reboot support.
+
+--H7DA0n3a+SnB4bJ2
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl140RYACgkQAVBC80lX
-0GwdKggAoOEArS9e4P9QhdoiQ+LU/UHT8p0f0oeyfCfv5ArqHNuuio+Tlaf9BFzw
-xKeV2YrZptiNBgGoMmqhyerK6qnuj9ik5OJImckrsuXJ1i64EeqIkkisrHOFXayF
-Ud9CSnpZdpZS2KPChhYz5Gv3fm+1MDgce67Si0OQ2bB8VS0UUbRGQD5dyqKGRWpU
-YmE/OgCu5G6fBEtqFpq8ndi8dTQJGNDkgFvPZchs9vPuUcmRkmjhoqOwdHcx6wnF
-lpEJF/M4IT88dkHg0cb5LrWoDzgtp3X5E5ApSrSI4X3BUGSpddXux4XXp/WMgkDZ
-vg6sSGWvQzRg+soMj86fS0xcVnIKKg==
-=8jqs
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl140bIACgkQJNaLcl1U
+h9DPdAgAg5/Xr71P8Q6mf/bfG1iLz+/TfNsplKMTskvGTVVtUue5zPE1ptG6WZ5L
+2fYEJ/CBBqbuGg2faUb8m0hBIGYcS/hTuOG/ZpQ9qJqZKYCYhHf9Vq5vnPEodiTx
+83K1JQrBDmNPmkgxMuGs6Bw4Hk+d4Rneyu/kPfRx3bi5FcwbdPYK+cUb0s/I31s9
+IWVodTlRPi4yhdEfjemx68QplB2JrQCDTDSLfKTlMRTzzxDJ1qGWxQ5JZji1yYhb
+JpfsEMRIZzoErRhlEu52AzJL0Fdb4OCejmlzpBfQ54xiyoBM7ZuLV++9FPWdlSYi
+PMt4GcEJZ6gS1UtdPYtizHwco2a1kw==
+=mutQ
 -----END PGP SIGNATURE-----
 
---Sig_/VONq.M_gGblEsm0NMKdIE1w--
+--H7DA0n3a+SnB4bJ2--
