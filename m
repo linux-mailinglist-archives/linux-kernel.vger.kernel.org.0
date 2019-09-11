@@ -2,195 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11895AFBA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 13:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5F52AFB9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 13:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbfIKLnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 07:43:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727656AbfIKLnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 07:43:10 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BCAE20CC7;
-        Wed, 11 Sep 2019 11:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568202189;
-        bh=YzWZW7fIuQ/hMWEfEFuyifHV7xQrAuW9vHt/Tk5o2pY=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=aPfd+XVspS17VU4U2mkQl6Yc4E2z+1yRNW+uYs18CSe7JJAuk+1FzZu+3SE5KNTJT
-         k1ikshr4Ua440fWfMYE/HvxdawoEX9KTNuM4Sq1etzk0GjHQRxqjT0XCQkuU8U7sBO
-         LSiuf6tIZwox4urGzreZGw/V59EemNYHp4Q8+1xs=
-Date:   Wed, 11 Sep 2019 12:42:38 +0100 (WEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Johannes Berg <johannes@sipsolutions.net>
-cc:     Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5.1-rc] iwlwifi: make locking in iwl_mvm_tx_mpdu()
- BH-safe
-In-Reply-To: <01d55c5cf513554d9cbdee0b14f9360a8df859c8.camel@sipsolutions.net>
-Message-ID: <nycvar.YFH.7.76.1909111238470.473@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1904151300160.9803@cbobk.fhfr.pm>  <24e05607b902e811d1142e3bd345af021fd3d077.camel@sipsolutions.net>  <nycvar.YFH.7.76.1904151328270.9803@cbobk.fhfr.pm> <01d55c5cf513554d9cbdee0b14f9360a8df859c8.camel@sipsolutions.net>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727761AbfIKLmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 07:42:52 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:32823 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726793AbfIKLmw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 07:42:52 -0400
+Received: by mail-qt1-f193.google.com with SMTP id r5so24832765qtd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 04:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=8+OX84D3OD8DVrZ9a7q2Ku1fRaie55mt1/8kXZjuUUE=;
+        b=dcdd0RrZs3IuwCK0B9ztsaOEdtmef6QmlZkSJ4i9ttAnUde5fq6unM5o543/4nHt2b
+         lSv1MI5CZUboFhMcEpVXc/wEmeP3GsK+whAWjMRvGYn4RKo8giZxaJuNDe/DBxYE/7Vr
+         MMU6YZVXjFAEDCqr4Ay0EL2G4fDuwwYW/2jSnL8wZXaIokLsM5FNw2oVUASBCSlZ2aeU
+         szi7kG67/hbyDHIGyGyC19oC3r/xUtSSVzVg8/yvAYoauf05JJr0eu4hNlW51dzaJjfM
+         Tfgee44HF/AYXXt3SluHMBOgH7+gfn5ZHMR8JopogHm9LUf73hHJ+zgK5hZNUkT0Gfpq
+         /+0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8+OX84D3OD8DVrZ9a7q2Ku1fRaie55mt1/8kXZjuUUE=;
+        b=HENTsbJj02ZDhF2sKeJV93t5ZD/qQi1xJBqXk3h74c1tgKEto5M3NHbH/VkeVW2qEv
+         iOPIITPCPpihtQNRQEUamGGpZVpptugbjNA9tDU4WOKGWAZWeFh9xendgQ8e7F+wWHdi
+         +KfgxNZsMUDXCeadXTFmRZUMWCcdqksv/wxbWG+88Q5DqPWLAD8fUI/A1VqX1oWTaYrw
+         Kb5yDFjMW+qP1xEaXbjZt7p+4s74zASg4/DmgKpnrS4bCaSBPR4ZPnf0EMiUTZUmv0ZO
+         JTM0UUCnmwEy/pLx6/t9KHEqdrViKV85+OSXJNx7C1Rhhb2/SykBxJfRN8yzQUR+UnaV
+         M8oQ==
+X-Gm-Message-State: APjAAAVgNGWppy/4cK0BYSHrag4E70Rr3YHVQksULwogSiZl+wjA/62l
+        2xw32N98s3qCPrl2AWOeQxEWtaqnLhlEfPE72pw=
+X-Google-Smtp-Source: APXvYqwRIeQKQzY3Fp+rsnAuzP7HMudQTmIIvcqXrDAlGm5cZTe0O/lVFaVD2m63xyjJkWChI6g1pX9rKql+XrE3az4=
+X-Received: by 2002:ac8:51c4:: with SMTP id d4mr35213431qtn.17.1568202171389;
+ Wed, 11 Sep 2019 04:42:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20190911045408.GA62424@LGEARND20B15> <20190911094031.GU13294@shell.armlinux.org.uk>
+In-Reply-To: <20190911094031.GU13294@shell.armlinux.org.uk>
+From:   Austin Kim <austindh.kim@gmail.com>
+Date:   Wed, 11 Sep 2019 20:42:47 +0900
+Message-ID: <CADLLry7XKojSy5gaWBd0pkp5OVNrt-xysiHf69tEUPjHOS8kxA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: module: Drop 'rel->r_offset < 0' always false statement
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     allison@lohutok.net, info@metux.net,
+        matthias.schiffer@ew.tq-group.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Apr 2019, Johannes Berg wrote:
+2019=EB=85=84 9=EC=9B=94 11=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 6:40, R=
+ussell King - ARM Linux admin
+<linux@armlinux.org.uk>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> On Wed, Sep 11, 2019 at 01:54:08PM +0900, Austin Kim wrote:
+> > Since rel->r_offset is declared as Elf32_Addr,
+> > this value is always non-negative.
+> > typedef struct elf32_rel {
+> >         Elf32_Addr    r_offset;
+> >           Elf32_Word  r_info;
+> > } Elf32_Rel;
+> >
+> > typedef __u32 Elf32_Addr;
+> > typedef unsigned int __u32;
+> >
+> > Drop 'rel->r_offset < 0' statement which is always false.
+> >
+> > Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+> > ---
+> >  arch/arm/kernel/module.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
+> > index deef17f..0921ce7 100644
+> > --- a/arch/arm/kernel/module.c
+> > +++ b/arch/arm/kernel/module.c
+> > @@ -92,7 +92,7 @@ apply_relocate(Elf32_Shdr *sechdrs, const char *strta=
+b, unsigned int symindex,
+> >               sym =3D ((Elf32_Sym *)symsec->sh_addr) + offset;
+> >               symname =3D strtab + sym->st_name;
+> >
+> > -             if (rel->r_offset < 0 || rel->r_offset > dstsec->sh_size =
+- sizeof(u32)) {
+> > +             if (rel->r_offset > dstsec->sh_size - sizeof(u32)) {
+> >                       pr_err("%s: section %u reloc %u sym '%s': out of =
+bounds relocation, offset %d size %u\n",
+>
+> Also change %d to %u here.
 
-> > If there are other reasons why disable BH for the whole function (are 
-> > there?), then this bigger hammer works as well of course.
-> 
-> I thought there are, but seeing the commit log here I'm not sure.
-> 
-> In any case, even if not, the function itself is part of the TX fast
-> path, but the caller from the workqueue is very uncommon (basically only
-> happens for a handful of packets on each new RA/TID), so I'd say that'd
-> be a good reason to use the slightly bigger hammer (it's not that much
-> different really, if you look at how much code is covered by the lock)
-> and avoid doing it all the time when we know it to be not needed.
+Let me resend the patch with the change(%d to %u).
 
-So this now popped up on me with current Linus' tree from a different 
-codepath, see below. Therefore I'd like to propose bringing my previous 
-patch back to life.
+Thanks,
+Austin Kim
 
-Thanks.
-
-
-
-
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH] iwlwifi: make locking in iwl_mvm_tx_mpdu() BH-safe
-
-iwl_mvm_sta->lock can be taken from BH, and therefore BH must be disabled if
-taking it from other contexts.
-
-This fixes the lockdep warning below.
-
- ================================
- WARNING: inconsistent lock state
- 5.3.0-rc8 #3 Tainted: G        W
- --------------------------------
- inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
- kworker/u8:2/28401 [HC0[0]:SC0[0]:HE1:SE1] takes:
- 000000009c020e13 (&(&mvm_sta->lock)->rlock){+.?.}, at: iwl_mvm_tx_mpdu+0xae/0x600 [iwlmvm]
- {IN-SOFTIRQ-W} state was registered at:
-   lock_acquire+0xbd/0x1e0
-   _raw_spin_lock+0x35/0x50
-   iwl_mvm_tx_mpdu+0xae/0x600 [iwlmvm]
-   iwl_mvm_tx_skb+0x1f8/0x460 [iwlmvm]
-   iwl_mvm_mac_itxq_xmit+0xcc/0x200 [iwlmvm]
-   ieee80211_queue_skb+0x290/0x4c0 [mac80211]
-   ieee80211_xmit_fast+0x814/0xa70 [mac80211]
-   __ieee80211_subif_start_xmit+0x132/0x380 [mac80211]
-   ieee80211_subif_start_xmit+0x49/0x370 [mac80211]
-   dev_hard_start_xmit+0xaf/0x340
-   __dev_queue_xmit+0x98d/0xd20
-   ip6_finish_output2+0x323/0x960
-   ip6_output+0x19d/0x2d0
-   mld_sendpack+0x361/0x3a0
-   mld_ifc_timer_expire+0x19f/0x2e0
-   call_timer_fn+0x97/0x300
-   run_timer_softirq+0x233/0x590
-   __do_softirq+0x12c/0x448
-   irq_exit+0xa5/0xb0
-   smp_apic_timer_interrupt+0xac/0x2a0
-   apic_timer_interrupt+0xf/0x20
-   cpuidle_enter_state+0xbf/0x450
-   cpuidle_enter+0x29/0x40
-   do_idle+0x1cc/0x290
-   cpu_startup_entry+0x19/0x20
-   start_secondary+0x15f/0x1a0
-   secondary_startup_64+0xa4/0xb0
-[ ... snip ... ]
-               stack backtrace:
- CPU: 1 PID: 28401 Comm: kworker/u8:2 Tainted: G        W         5.3.0-rc8 #3
- Hardware name: LENOVO 20K5S22R00/20K5S22R00, BIOS R0IET38W (1.16 ) 05/31/2017
- Workqueue: phy0 ieee80211_beacon_connection_loss_work [mac80211]
- Call Trace:
-  dump_stack+0x78/0xb3
-  mark_lock+0x28a/0x2a0
-  __lock_acquire+0x568/0x1020
-  ? iwl_mvm_set_tx_cmd+0x1c5/0x400 [iwlmvm]
-  lock_acquire+0xbd/0x1e0
-  ? iwl_mvm_tx_mpdu+0xae/0x600 [iwlmvm]
-  _raw_spin_lock+0x35/0x50
-  ? iwl_mvm_tx_mpdu+0xae/0x600 [iwlmvm]
-  iwl_mvm_tx_mpdu+0xae/0x600 [iwlmvm]
-  ? ieee80211_tx_h_select_key+0xf1/0x4a0 [mac80211]
-  iwl_mvm_tx_skb+0x1f8/0x460 [iwlmvm]
-  iwl_mvm_mac_itxq_xmit+0xcc/0x200 [iwlmvm]
-  ? iwl_mvm_mac_itxq_xmit+0x55/0x200 [iwlmvm]
-  _ieee80211_wake_txqs+0x2cf/0x660 [mac80211]
-  ? _ieee80211_wake_txqs+0x5/0x660 [mac80211]
-  ? __ieee80211_wake_queue+0x219/0x340 [mac80211]
-  ieee80211_wake_queues_by_reason+0x64/0xa0 [mac80211]
-  ieee80211_set_disassoc+0x3b1/0x520 [mac80211]
-  __ieee80211_disconnect+0x81/0x110 [mac80211]
-  process_one_work+0x1f0/0x5b0
-  ? process_one_work+0x16a/0x5b0
-  worker_thread+0x4c/0x3f0
-  kthread+0x103/0x140
-  ? process_one_work+0x5b0/0x5b0
-  ? kthread_bind+0x10/0x10
-  ret_from_fork+0x3a/0x50
-
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-index 6ac114a393cc..bcfb290beaaf 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-@@ -1106,7 +1106,7 @@ static int iwl_mvm_tx_mpdu(struct iwl_mvm *mvm, struct sk_buff *skb,
- 	 */
- 	info->flags &= ~IEEE80211_TX_STATUS_EOSP;
- 
--	spin_lock(&mvmsta->lock);
-+	spin_lock_bh(&mvmsta->lock);
- 
- 	/* nullfunc frames should go to the MGMT queue regardless of QOS,
- 	 * the condition of !ieee80211_is_qos_nullfunc(fc) keeps the default
-@@ -1145,7 +1145,7 @@ static int iwl_mvm_tx_mpdu(struct iwl_mvm *mvm, struct sk_buff *skb,
- 
- 	if (WARN_ONCE(txq_id == IWL_MVM_INVALID_QUEUE, "Invalid TXQ id")) {
- 		iwl_trans_free_tx_cmd(mvm->trans, dev_cmd);
--		spin_unlock(&mvmsta->lock);
-+		spin_unlock_bh(&mvmsta->lock);
- 		return 0;
- 	}
- 
-@@ -1181,7 +1181,7 @@ static int iwl_mvm_tx_mpdu(struct iwl_mvm *mvm, struct sk_buff *skb,
- 	if (tid < IWL_MAX_TID_COUNT && !ieee80211_has_morefrags(fc))
- 		mvmsta->tid_data[tid].seq_number = seq_number + 0x10;
- 
--	spin_unlock(&mvmsta->lock);
-+	spin_unlock_bh(&mvmsta->lock);
- 
- 	if (iwl_mvm_tx_pkt_queued(mvm, mvmsta,
- 				  tid == IWL_MAX_TID_COUNT ? 0 : tid))
-@@ -1191,7 +1191,7 @@ static int iwl_mvm_tx_mpdu(struct iwl_mvm *mvm, struct sk_buff *skb,
- 
- drop_unlock_sta:
- 	iwl_trans_free_tx_cmd(mvm->trans, dev_cmd);
--	spin_unlock(&mvmsta->lock);
-+	spin_unlock_bh(&mvmsta->lock);
- drop:
- 	IWL_DEBUG_TX(mvm, "TX to [%d|%d] dropped\n", mvmsta->sta_id, tid);
- 	return -1;
-
--- 
-Jiri Kosina
-SUSE Labs
-
+>
+> >                              module->name, relindex, i, symname,
+> >                              rel->r_offset, dstsec->sh_size);
+> > --
+> > 2.6.2
+> >
+> >
+>
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbp=
+s up
+> According to speedtest.net: 11.9Mbps down 500kbps up
