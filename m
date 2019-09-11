@@ -2,73 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17955AFE08
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 15:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49226AFE10
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 15:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbfIKNs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 09:48:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727093AbfIKNs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 09:48:57 -0400
-Received: from X1 (110.8.30.213.rev.vodafone.pt [213.30.8.110])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13A6A206CD;
-        Wed, 11 Sep 2019 13:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568209737;
-        bh=2ZAB+MxpAQ5hJTPfjiPVljlb21WGGQdhzccadL1cdPs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=yLZdyRICT5fdlJII7PdUmXMGmuN7rE8UOq/X4b1M1Mpki/JS7/vsvXA8KvGSmfXRb
-         jdUZ+fJGg7XWaumbFjMoLNPNSgI6vV8coA/RvRaB4MIVKWhLbSSnuJXg/hxy99xE1y
-         9NYp9yLP20fZWnh+XuV1Bb7QYStdGeHy0gcvEPf4=
-Date:   Wed, 11 Sep 2019 06:48:52 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCH v2] fork: check exit_signal passed in clone3() call
-Message-Id: <20190911064852.9f236d4c201b50e14d717c14@linux-foundation.org>
-In-Reply-To: <20190910175852.GA15572@asgard.redhat.com>
-References: <20190910175852.GA15572@asgard.redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728209AbfIKNvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 09:51:08 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:32783 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727782AbfIKNvF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 09:51:05 -0400
+Received: by mail-lj1-f193.google.com with SMTP id a22so20110558ljd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 06:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NoMqRKmSHDNSonXcVU6fMQXm+z8bwoc4kZBnKFdCowk=;
+        b=U3w+OKyBdOmsh6TvHMeNg2QShNoGWJKQGgwwHt3oI+sJpfMGXbMmZAW4xPIAm37vUf
+         eHS2BZ9FeUkb+xCURTh9+1atnbXo8i0O4a0ONkSg9pFunDi8U2UOmSKJo1csyqw42lFA
+         Mtkq+qxIiq+2bjH3m880tHaH0bAkOzrbgg0bCQxQuUQHe6UfpQX4gtCSowLb48kYe9H8
+         UDScj59r1OpzGwKEUTtY0PSMfA669A1lqJPtmTOGCnfVHZP26XqHbb0caZ6Vh8TRf0Xv
+         FKUWnGmrKvVL/6XJ5Hq/UgLcW9DyKpOfdnw39veCqa1inGv0zjOMM6xtfSIokn3qL7oh
+         WaEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NoMqRKmSHDNSonXcVU6fMQXm+z8bwoc4kZBnKFdCowk=;
+        b=ug6X3KHECSrwhXGo6Dj9cxgimqDMc4HcJTiI01qapyFJV/gcs3GNS+/hilh2bgwwrs
+         G214tK/ZJowvKbhQwmztS+OhRqCj/NdiQpuhf+szf0KHu70VzCr7WpReVlJovyAnL5LI
+         lCIxHiEOu0pljLQMTPIGtvhbqgtstp2cgMF+T2S4BiVYu0bN26sV0ydWHfBrlUwhvlCI
+         S+/5JxJpNDXemRx30vmdP0cuEgKhTk6Jj/53FA3eXf+yWgdQYPYFzWO4btOKFMVc669N
+         GeNIEKLUQ0AUjixOtINt/DTPPw1VfG9PMWRt4OwKWksRkYxAYEsL3Mv5DEPor7k21GVj
+         OQNg==
+X-Gm-Message-State: APjAAAXHGf7FNEaiXAumSpUuNXTI/ByD3ZTHRJU8Dsve7V1K6hSJRsaH
+        YzdHCc3HrqXAfC8f6K7vJK0q1CE9z0jeOYgCjqv7oA==
+X-Google-Smtp-Source: APXvYqwfZnw3PjgDOxtmmaDanHc/yotTXP96wDhdzPOnMRhDpWyM2WFlorifP/kb36RfTEmUgCFHL3JnFqi8Mce9Hw8=
+X-Received: by 2002:a2e:884d:: with SMTP id z13mr22437077ljj.62.1568209863184;
+ Wed, 11 Sep 2019 06:51:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190906131032.22148-1-yuehaibing@huawei.com>
+In-Reply-To: <20190906131032.22148-1-yuehaibing@huawei.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 11 Sep 2019 14:50:51 +0100
+Message-ID: <CACRpkdZgH9Q9OMUV4C6zADPj_NN+QrxQOLUDcOqJ_oYCxWP7vg@mail.gmail.com>
+Subject: Re: [PATCH -next] gpio: creg-snps: use devm_platform_ioremap_resource()
+ to simplify code
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Eugeniy.Paltsev@synopsys.com,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Sep 2019 18:58:52 +0100 Eugene Syromiatnikov <esyr@redhat.com> wrote:
+On Fri, Sep 6, 2019 at 2:48 PM YueHaibing <yuehaibing@huawei.com> wrote:
 
-> Previously, higher 32 bits of exit_signal fields were lost when
-> copied to the kernel args structure (that uses int as a type for the
-> respective field).  Moreover, as Oleg has noted[1], exit_signal is used
-> unchecked, so it has to be checked for sanity before use; for the legacy
-> syscalls, applying CSIGNAL mask guarantees that it is at least non-negative;
-> however, there's no such thing is done in clone3() code path, and that can
-> break at least thread_group_leader.
-> 
-> Checking user-passed exit_signal against ~CSIGNAL mask solves both
-> of these problems.
-> 
-> [1] https://lkml.org/lkml/2019/9/10/467
-> 
-> * kernel/fork.c (copy_clone_args_from_user): Fail with -EINVAL if
-> args.exit_signal has bits set outside CSIGNAL mask.
-> (_do_fork): Note that exit_signal is expected to be checked for the
-> sanity by the caller.
-> 
-> Fixes: 7f192e3cd316 ("fork: add clone3")
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-What are the user-visible runtime effects of this bug?
+Patch applied with Eugeniy's ACK!
 
-Relatedly, should this fix be backported into -stable kernels?  If so, why?
-
+Yours,
+Linus Walleij
