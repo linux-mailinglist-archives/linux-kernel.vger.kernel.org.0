@@ -2,114 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB66B0334
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:59:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC5BB0329
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:53:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729817AbfIKR7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 13:59:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39182 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729675AbfIKR7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 13:59:21 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 090BF10CC1F9;
-        Wed, 11 Sep 2019 17:59:21 +0000 (UTC)
-Received: from [172.16.176.1] (ovpn-64-2.rdu2.redhat.com [10.10.64.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3CD365D9E2;
-        Wed, 11 Sep 2019 17:59:20 +0000 (UTC)
-From:   "Benjamin Coddington" <bcodding@redhat.com>
-To:     "Chuck Lever" <chuck.lever@oracle.com>
-Cc:     "Jason L Tibbitts III" <tibbs@math.uh.edu>,
-        "Bruce Fields" <bfields@fieldses.org>,
-        "Wolfgang Walter" <linux@stwm.de>,
-        "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
-        km@cm4all.com, linux-kernel@vger.kernel.org
-Subject: Re: Regression in 5.1.20: Reading long directory fails
-Date:   Wed, 11 Sep 2019 13:59:19 -0400
-Message-ID: <8DD22D2C-A26B-430E-AB10-E420B4C6A8F0@redhat.com>
-In-Reply-To: <CD5EF2C8-DB99-467B-8048-B290BAD44D4B@oracle.com>
-References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
- <4418877.15LTP4gqqJ@stwm.de> <ufapnkhqjwm.fsf@epithumia.math.uh.edu>
- <4198657.JbNDGbLXiX@h2o.as.studentenwerk.mhn.de>
- <ufad0ggrfrk.fsf@epithumia.math.uh.edu> <20190906144837.GD17204@fieldses.org>
- <ufapnkdw3s3.fsf@epithumia.math.uh.edu>
- <75F810C6-E99E-40C3-B5E1-34BA2CC42773@oracle.com>
- <DD6B77EE-3E25-4A65-9D0E-B06EEAD32B31@redhat.com>
- <0089DF80-3A1C-4F0B-A200-28FF7CFD0C65@oracle.com>
- <429B2B1F-FB55-46C5-8BC5-7644CE9A5894@redhat.com>
- <F1EC95D2-47A3-4390-8178-CAA8C045525B@oracle.com>
- <8D7EFCEB-4AE6-4963-B66F-4A8EEA5EA42A@redhat.com>
- <CD5EF2C8-DB99-467B-8048-B290BAD44D4B@oracle.com>
+        id S1729786AbfIKRxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 13:53:09 -0400
+Received: from mxout012.mail.hostpoint.ch ([217.26.49.172]:39365 "EHLO
+        mxout012.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729145AbfIKRxI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 13:53:08 -0400
+Received: from [10.0.2.45] (helo=asmtp012.mail.hostpoint.ch)
+        by mxout012.mail.hostpoint.ch with esmtp (Exim 4.92.2 (FreeBSD))
+        (envelope-from <sandro@volery.com>)
+        id 1i86nd-000GOr-W3; Wed, 11 Sep 2019 19:53:02 +0200
+Received: from 145-126.cable.senselan.ch ([83.222.145.126] helo=volery)
+        by asmtp012.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92.2 (FreeBSD))
+        (envelope-from <sandro@volery.com>)
+        id 1i86nd-0006xP-SW; Wed, 11 Sep 2019 19:53:01 +0200
+X-Authenticated-Sender-Id: sandro@volery.com
+Date:   Wed, 11 Sep 2019 21:53:03 +0200
+From:   Sandro Volery <sandro@volery.com>
+To:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@oracle.com, linux@rasmusvillemoes.dk
+Subject: [PATCH v4] Staging: exfat: avoid use of strcpy
+Message-ID: <20190911195303.GA27966@volery>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Wed, 11 Sep 2019 17:59:21 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 Sep 2019, at 13:43, Chuck Lever wrote:
+Replacing strcpy with strscpy and moving the length check to the
+same function.
 
->> On Sep 11, 2019, at 1:40 PM, Benjamin Coddington 
->> <bcodding@redhat.com> wrote:
->>
->> On 11 Sep 2019, at 13:29, Chuck Lever wrote:
->>
->>>> On Sep 11, 2019, at 1:26 PM, Benjamin Coddington 
->>>> <bcodding@redhat.com> wrote:
->>>>
->>>>
->>>> On 11 Sep 2019, at 12:39, Chuck Lever wrote:
->>>>
->>>>>> On Sep 11, 2019, at 12:25 PM, Benjamin Coddington 
->>>>>> <bcodding@redhat.com> wrote:
->>>>>>
->>>>
->>>>>> Instead, I think we want to make sure the mic falls squarely into 
->>>>>> the tail
->>>>>> every time.
->>>>>
->>>>> I'm not clear how you could do that. The length of the page data 
->>>>> is not
->>>>> known to the client before it parses the reply. Are you suggesting 
->>>>> that
->>>>> gss_unwrap should do it somehow?
->>>>
->>>> Is it too niave to always put the mic at the end of the tail?
->>>
->>> The size of the page content is variable.
->>>
->>> The only way the MIC will fall into the tail is if the page content 
->>> is
->>> exactly the largest expected size. When the page content is smaller 
->>> than
->>> that, the receive logic will place part or all of the MIC in 
->>> ->pages.
->>
->> Ok, right.  But what I meant is that xdr_buf_read_netobj() should be 
->> renamed
->> and repurposed to be "move the mic from wherever it is to the end of
->> xdr_buf's tail".
->>
->> But now I see what you mean, and I also see that it is already trying 
->> to do
->> that.. and we don't want to overlap the copy..
->>
->> So, really, we need the tail to be larger than twice the mic.. less 
->> 1.  That
->> means the fix is probably just increasing rslack for krb5i.
->
-> What's the justification for that particular maximum size? Are you 
-> sure the
-> page contents are not spilling into the tail?
+Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Sandro Volery <sandro@volery.com>
+---
 
-In the problem case, I am sure they are not.
+Took a couple attempts to finaly get this right :P
 
-The justification is that if the mic straddles pages and tail, today we 
-try
-to copy it to the end of the tail.  The room we'd need for that is the 
-size
-of the mic less any of it that is up in the pages.
+v4: Replaced strlen check
+v3: Failed to replace check
+v2: Forgot to replace strlen check
+v1: original patch
+ drivers/staging/exfat/exfat_core.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
+index da8c58149c35..4336fee444ce 100644
+--- a/drivers/staging/exfat/exfat_core.c
++++ b/drivers/staging/exfat/exfat_core.c
+@@ -2960,18 +2960,15 @@ s32 resolve_path(struct inode *inode, char *path, struct chain_t *p_dir,
+ 	struct super_block *sb = inode->i_sb;
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+ 	struct file_id_t *fid = &(EXFAT_I(inode)->fid);
+-
+-	if (strlen(path) >= (MAX_NAME_LENGTH * MAX_CHARSET_SIZE))
++	
++	if (strscpy(name_buf, path, sizeof(name_buf)) < 0)
+ 		return FFS_INVALIDPATH;
+ 
+-	strcpy(name_buf, path);
+-
+ 	nls_cstring_to_uniname(sb, p_uniname, name_buf, &lossy);
+ 	if (lossy)
+ 		return FFS_INVALIDPATH;
+ 
+-	fid->size = i_size_read(inode);
+-
++fid->size = i_size_read(inode);
+ 	p_dir->dir = fid->start_clu;
+ 	p_dir->size = (s32)(fid->size >> p_fs->cluster_size_bits);
+ 	p_dir->flags = fid->flags;
+-- 
+2.23.0
+
