@@ -2,153 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 461EAAF6E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E15BAF6D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:25:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfIKHXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 03:23:53 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2210 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726735AbfIKHXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 03:23:52 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 76821790CCCDCFF3A76D;
-        Wed, 11 Sep 2019 15:23:49 +0800 (CST)
-Received: from [127.0.0.1] (10.74.191.121) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Sep 2019
- 15:23:41 +0800
-Subject: Re: [PATCH] driver core: ensure a device has valid node id in
- device_add()
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Greg KH <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
-        <mingo@kernel.org>, <linuxarm@huawei.com>
-References: <20190909095347.GB6314@kroah.com>
- <9598b359-ab96-7d61-687a-917bee7a5cd9@huawei.com>
- <20190910093114.GA19821@kroah.com>
- <34feca56-c95e-41a6-e09f-8fc2d2fd2bce@huawei.com>
- <20190910110451.GP2063@dhcp22.suse.cz> <20190910111252.GA8970@kroah.com>
- <5a5645d2-030f-7921-432f-ff7d657405b8@huawei.com>
- <20190910125339.GZ2063@dhcp22.suse.cz> <20190911053334.GH4023@dhcp22.suse.cz>
- <ca590101-bfc8-3934-d803-537aacb707e0@huawei.com>
- <20190911064926.GJ4023@dhcp22.suse.cz>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <3b977388-5f25-d0b5-bdc9-f963a9be2bd1@huawei.com>
-Date:   Wed, 11 Sep 2019 15:22:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1727189AbfIKHW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 03:22:56 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38841 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbfIKHWz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 03:22:55 -0400
+Received: by mail-ot1-f68.google.com with SMTP id h17so17769346otn.5
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 00:22:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RApwx5LDSAMD4iHD35F9JLH9Ye8FG1fZvq9Vj2OH05c=;
+        b=cYEkrglDnJkgbSuHeKyIlMyCchR5ohwabVol4z7OaCfTpGLTYKC7ab7f9syjHr2mDE
+         Hp59ysWqV0Sc59Zxtahg53bzq9Qsq6aiKKryH+Tnz2CTntFkaZqaYF06I+AN6zbwbV0l
+         W/w40OOEhseD6t2xrZt6izwkP86qH9vJiw9s4zdQaOSptMBGlFiEdNcOkJ4a8SsVHODD
+         qZfWZSDMipXLWJbodW7pBQXnF0ZIshXeYninM1vxzxsSwJayMxqMrdmI3kLV5EHF2QmY
+         P/hOHpksSOi4fvkMi+E//y5u8+EeRduSQY3QQQAgTNaSIASznlf4DDywccziq7N4rSi9
+         +OkA==
+X-Gm-Message-State: APjAAAU5PEO46pJ/dABYb1Q4bfKFr9IBftLcHiZaVxs5qn+K/hlIkwzg
+        GvotxPbUowG0CKMtmhAlztg2tsoIG6azmcT20yg=
+X-Google-Smtp-Source: APXvYqzJ0kqmlruLmnYW1QIj2Hu8GhX9jPrW0LH/6teXZ2G+NSopwZNP7ZZ3+RNfu4CiEf2Q9K0h0oNBROYBb360kdE=
+X-Received: by 2002:a9d:5a06:: with SMTP id v6mr8353187oth.250.1568186574782;
+ Wed, 11 Sep 2019 00:22:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190911064926.GJ4023@dhcp22.suse.cz>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+References: <alpine.DEB.2.21.9999.1908141328440.18249@viisi.sifive.com>
+ <mhng-4eded486-d381-4822-abc5-4023bf7ba591@palmer-si-x1c4> <87mugbv1ch.fsf@igel.home>
+In-Reply-To: <87mugbv1ch.fsf@igel.home>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 11 Sep 2019 09:22:43 +0200
+Message-ID: <CAMuHMdX9tDqN4jMwMrUc-0zhYBo5gAHTbjwORCwB=3zVi6kvgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] riscv: Make __fstate_clean() work correctly.
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        vincent.chen@sifive.com, linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/11 14:49, Michal Hocko wrote:
-> On Wed 11-09-19 14:15:51, Yunsheng Lin wrote:
->> On 2019/9/11 13:33, Michal Hocko wrote:
->>> On Tue 10-09-19 14:53:39, Michal Hocko wrote:
->>>> On Tue 10-09-19 20:47:40, Yunsheng Lin wrote:
->>>>> On 2019/9/10 19:12, Greg KH wrote:
->>>>>> On Tue, Sep 10, 2019 at 01:04:51PM +0200, Michal Hocko wrote:
->>>>>>> On Tue 10-09-19 18:58:05, Yunsheng Lin wrote:
->>>>>>>> On 2019/9/10 17:31, Greg KH wrote:
->>>>>>>>> On Tue, Sep 10, 2019 at 02:43:32PM +0800, Yunsheng Lin wrote:
->>>>>>>>>> On 2019/9/9 17:53, Greg KH wrote:
->>>>>>>>>>> On Mon, Sep 09, 2019 at 02:04:23PM +0800, Yunsheng Lin wrote:
->>>>>>>>>>>> Currently a device does not belong to any of the numa nodes
->>>>>>>>>>>> (dev->numa_node is NUMA_NO_NODE) when the node id is neither
->>>>>>>>>>>> specified by fw nor by virtual device layer and the device has
->>>>>>>>>>>> no parent device.
->>>>>>>>>>>
->>>>>>>>>>> Is this really a problem?
->>>>>>>>>>
->>>>>>>>>> Not really.
->>>>>>>>>> Someone need to guess the node id when it is not specified, right?
->>>>>>>>>
->>>>>>>>> No, why?  Guessing guarantees you will get it wrong on some systems.
->>>>>>>>>
->>>>>>>>> Are you seeing real problems because the id is not being set?  What
->>>>>>>>> problem is this fixing that you can actually observe?
->>>>>>>>
->>>>>>>> When passing the return value of dev_to_node() to cpumask_of_node()
->>>>>>>> without checking the node id if the node id is not valid, there is
->>>>>>>> global-out-of-bounds detected by KASAN as below:
->>>>>>>
->>>>>>> OK, I seem to remember this being brought up already. And now when I
->>>>>>> think about it, we really want to make cpumask_of_node NUMA_NO_NODE
->>>>>>> aware. That means using the same trick the allocator does for this
->>>>>>> special case.
->>>>>>
->>>>>> That seems reasonable to me, and much more "obvious" as to what is going
->>>>>> on.
->>>>>>
->>>>>
->>>>> Ok, thanks for the suggestion.
->>>>>
->>>>> For arm64 and x86, there are two versions of cpumask_of_node().
->>>>>
->>>>> when CONFIG_DEBUG_PER_CPU_MAPS is defined, the cpumask_of_node()
->>>>>    in arch/x86/mm/numa.c is used, which does partial node id checking:
->>>>>
->>>>> const struct cpumask *cpumask_of_node(int node)
->>>>> {
->>>>>         if (node >= nr_node_ids) {
->>>>>                 printk(KERN_WARNING
->>>>>                         "cpumask_of_node(%d): node > nr_node_ids(%u)\n",
->>>>>                         node, nr_node_ids);
->>>>>                 dump_stack();
->>>>>                 return cpu_none_mask;
->>>>>         }
->>>>>         if (node_to_cpumask_map[node] == NULL) {
->>>>>                 printk(KERN_WARNING
->>>>>                         "cpumask_of_node(%d): no node_to_cpumask_map!\n",
->>>>>                         node);
->>>>>                 dump_stack();
->>>>>                 return cpu_online_mask;
->>>>>         }
->>>>>         return node_to_cpumask_map[node];
->>>>> }
->>>>>
->>>>> when CONFIG_DEBUG_PER_CPU_MAPS is undefined, the cpumask_of_node()
->>>>>    in arch/x86/include/asm/topology.h is used:
->>>>>
->>>>> static inline const struct cpumask *cpumask_of_node(int node)
->>>>> {
->>>>>         return node_to_cpumask_map[node];
->>>>> }
->>>>
->>>> I would simply go with. There shouldn't be any need for heavy weight
->>>> checks that CONFIG_DEBUG_PER_CPU_MAPS has.
->>>>
->>>> static inline const struct cpumask *cpumask_of_node(int node)
->>>> {
->>>> 	/* A nice comment goes here */
->>>> 	if (node == NUMA_NO_NODE)
->>
->> How about "(unsigned int)node >= nr_node_ids", this is suggested
->> by Peter, it checks the case where the node id set by fw is bigger
->> or equal than nr_node_ids, and still handle the < 0 case, which
->> includes NUMA_NO_NODE.
-> 
-> Isn't that a plain bug? Is something like that really happening?
+Hi Andreas,
 
-I have not seen one happened before except the NUMA_NO_NODE case.
-Even with NUMA_NO_NODE case, we did not see it until we turn on
-the KASAN detection.
+On Thu, Aug 15, 2019 at 12:37 AM Andreas Schwab <schwab@linux-m68k.org> wrote:
+> On Aug 14 2019, Palmer Dabbelt <palmer@sifive.com> wrote:
+> > On Wed, 14 Aug 2019 13:32:50 PDT (-0700), Paul Walmsley wrote:
+> >> On Wed, 14 Aug 2019, Vincent Chen wrote:
+> >>> Make the __fstate_clean() function correctly set the
+> >>> state of sstatus.FS in pt_regs to SR_FS_CLEAN.
+> >>>
+> >>> Fixes: 7db91e5 ("RISC-V: Task implementation")
+> >>> Cc: linux-stable <stable@vger.kernel.org>
+> >>> Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
+> >>> Reviewed-by: Anup Patel <anup@brainfault.org>
+> >>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> >>
+> >> Thanks, I extended the "Fixes" commit ID to 12 digits, as is the usual
+> >> practice here, and have queued the following for v5.3-rc.
+> >
+> > For reference, something like "git config core.abbrev=12" (or whatever you
+> > write to get this in your .gitconfig)
+> >
+> >    https://github.com/palmer-dabbelt/home/blob/master/.gitconfig.in#L23
+> >
+> > causes git to do the right thing.
+>
+> Actually, the right setting is core.abbrev=auto (or leaving it unset).
+> It lets git chose the appropriate length depending on the repository
+> contents.  For the linux repository it will chose 13 right now.
 
-It seems that there is no protection that prevent setting the node
-of device to an invalid node.
-And the kernel does have a few different check now:
-1) some does " < 0" check;
-2) some does "== NUMA_NO_NODE" check;
-3) some does ">= MAX_NUMNODES" check;
-4) some does "< 0 || >= MAX_NUMNODES || !node_online(node)" check.
+Does that depend on the git version?
+For me (git version 2.17.1), it still uses 12 when using the auto setting.
 
-We need to be consistent about the checking, right?
+Should we update Documentation/process/submitting-patches.rst
+to increase to e.g. 16 (which is what I've been using for quite a while)?
+When can we expect old 12 hexit references to start breaking?
 
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
