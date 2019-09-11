@@ -2,146 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ADBBAFD67
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 15:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABA0FAFD5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 15:04:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfIKNIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 09:08:50 -0400
-Received: from mail2.candelatech.com ([208.74.158.173]:58156 "EHLO
-        mail3.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbfIKNIu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 09:08:50 -0400
-X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Sep 2019 09:08:49 EDT
-Received: from [192.168.1.47] (unknown [50.34.216.97])
+        id S1728088AbfIKNEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 09:04:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52812 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbfIKNEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 09:04:37 -0400
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail3.candelatech.com (Postfix) with ESMTPSA id 4D7DE104F;
-        Wed, 11 Sep 2019 06:03:44 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 4D7DE104F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
-        s=default; t=1568207025;
-        bh=XIn3JBORtKzOkERfGjA3+iWzadACjJyAvSCJ/fogVqA=;
-        h=Subject:To:References:Cc:From:Date:In-Reply-To:From;
-        b=CzsmEeLIiQrpfB+wLCa7XQ8FXXHnDjxlpGIfPOi68TLjouBlWMdKbC+N/VH+BHLCS
-         InupJwTM0AK4i+yPeXA3RNJ1+VM/pj8ZcG1bZdo+jZLXFasa0bGpjtwb+ohIx+K3KY
-         56+I9JUpJk4JZ7/mO6xiUBOyvT4kdLGGAwQUK2xY=
-Subject: Re: WARNING at net/mac80211/sta_info.c:1057
- (__sta_info_destroy_part2())
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <CAHk-=wgBuu8PiYpD7uWgxTSY8aUOJj6NJ=ivNQPYjAKO=cRinA@mail.gmail.com>
- <feecebfcceba521703f13c8ee7f5bb9016924cb6.camel@sipsolutions.net>
- <CAHk-=wj_jneK+UYzHhjwsH0XxP0knM+2o2OeFVEz-FjuQ77-ow@mail.gmail.com>
- <30679d3f86731475943856196478677e70a349a9.camel@sipsolutions.net>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-From:   Ben Greear <greearb@candelatech.com>
-Message-ID: <2d673d55-eb27-8573-b8ae-a493335723cf@candelatech.com>
-Date:   Wed, 11 Sep 2019 06:03:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        by mx1.redhat.com (Postfix) with ESMTPS id 1BBDF11A1E
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 13:04:36 +0000 (UTC)
+Received: by mail-wr1-f72.google.com with SMTP id n6so10393154wrm.20
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 06:04:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5cZwRFkPnBfvd9KKrvlsF0v7o7pc2TdTfWhZUtnofjs=;
+        b=Xu3JiAb7XaRMBRMe7Ukvgso0V5WHituGO+izEFFZZrmEDetDkdjpbaJTYv0I3LW0nJ
+         Qpbz8DQ38WuYo3OohILp4qRUGlS16xigB8fnzkr8DpU9DbEL0U5Rl97dputLzHAVOsB7
+         yesj1yiPkmkhUT3UiHz3GAlFDPFGPwtBHa27EBnLs46kUgKsB2sKeUvpiSSPy13urONl
+         SIMDQV2fEeyOZMxuAH35YPQmoSXmg5oqTWZ4ygmlV0LD3wGCsDc+jV6+kGbl+5OjweYy
+         A1cs4BWBfn2CQZQZ61PrnUCOug231aVHsFEmLSNIVFkCUITI2ALhcQCLEUZdUp/qsEOi
+         uOeA==
+X-Gm-Message-State: APjAAAW9HVahcPr7QSMbwpscEMpR96wU2+sasQYiTIw1wXTMJCTA5dA/
+        0aPMLIQNypEYl/3fUbNal2/mCTPM8G3ddgs8bgWEKGWZLb2zmYz5W3EccCdIT8hgDEzpdjFwV8t
+        MSDUrdEDeLDLizCI2v1UakgQw
+X-Received: by 2002:adf:f48e:: with SMTP id l14mr29136120wro.234.1568207074753;
+        Wed, 11 Sep 2019 06:04:34 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzBF20UcHxsYOQf/lES4ZO/bVViSm+7jzfEb91Ml+VtQ6z82mrGbxsV6Pa7Uej4nDz/PD+EEQ==
+X-Received: by 2002:adf:f48e:: with SMTP id l14mr29136106wro.234.1568207074435;
+        Wed, 11 Sep 2019 06:04:34 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:102b:3795:6714:7df6? ([2001:b07:6468:f312:102b:3795:6714:7df6])
+        by smtp.gmail.com with ESMTPSA id y13sm42446736wrg.8.2019.09.11.06.04.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2019 06:04:33 -0700 (PDT)
+Subject: Re: [PATCH] Revert "locking/pvqspinlock: Don't wait if vCPU is
+ preempted"
+To:     Waiman Long <longman@redhat.com>, Wanpeng Li <kernellwp@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, loobinliu@tencent.com,
+        "# v3 . 10+" <stable@vger.kernel.org>
+References: <1567993228-23668-1-git-send-email-wanpengli@tencent.com>
+ <29d04ee4-60e7-4df9-0c4f-fc29f2b0c6a8@redhat.com>
+ <CANRm+CxVXsQCmEpxNJSifmQJk5cqoSifFq+huHJE1s7a-=0iXw@mail.gmail.com>
+ <2dda32db-5662-f7a6-f52d-b835df1f45f1@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <9ef778df-c34a-897c-bcfa-780256fb78ff@redhat.com>
+Date:   Wed, 11 Sep 2019 15:04:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <30679d3f86731475943856196478677e70a349a9.camel@sipsolutions.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <2dda32db-5662-f7a6-f52d-b835df1f45f1@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/11/2019 05:04 AM, Johannes Berg wrote:
-> On Wed, 2019-09-11 at 12:58 +0100, Linus Torvalds wrote:
+On 11/09/19 06:25, Waiman Long wrote:
+> On 9/10/19 6:56 AM, Wanpeng Li wrote:
+>> On Mon, 9 Sep 2019 at 18:56, Waiman Long <longman@redhat.com> wrote:
+>>> On 9/9/19 2:40 AM, Wanpeng Li wrote:
+>>>> From: Wanpeng Li <wanpengli@tencent.com>
+>>>>
+>>>> This patch reverts commit 75437bb304b20 (locking/pvqspinlock: Don't wait if
+>>>> vCPU is preempted), we found great regression caused by this commit.
+>>>>
+>>>> Xeon Skylake box, 2 sockets, 40 cores, 80 threads, three VMs, each is 80 vCPUs.
+>>>> The score of ebizzy -M can reduce from 13000-14000 records/s to 1700-1800
+>>>> records/s with this commit.
+>>>>
+>>>>           Host                       Guest                score
+>>>>
+>>>> vanilla + w/o kvm optimizes     vanilla               1700-1800 records/s
+>>>> vanilla + w/o kvm optimizes     vanilla + revert      13000-14000 records/s
+>>>> vanilla + w/ kvm optimizes      vanilla               4500-5000 records/s
+>>>> vanilla + w/ kvm optimizes      vanilla + revert      14000-15500 records/s
+>>>>
+>>>> Exit from aggressive wait-early mechanism can result in yield premature and
+>>>> incur extra scheduling latency in over-subscribe scenario.
+>>>>
+>>>> kvm optimizes:
+>>>> [1] commit d73eb57b80b (KVM: Boost vCPUs that are delivering interrupts)
+>>>> [2] commit 266e85a5ec9 (KVM: X86: Boost queue head vCPU to mitigate lock waiter preemption)
+>>>>
+>>>> Tested-by: loobinliu@tencent.com
+>>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>> Cc: Ingo Molnar <mingo@kernel.org>
+>>>> Cc: Waiman Long <longman@redhat.com>
+>>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>>>> Cc: loobinliu@tencent.com
+>>>> Cc: stable@vger.kernel.org
+>>>> Fixes: 75437bb304b20 (locking/pvqspinlock: Don't wait if vCPU is preempted)
+>>>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>>>> ---
+>>>>  kernel/locking/qspinlock_paravirt.h | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
+>>>> index 89bab07..e84d21a 100644
+>>>> --- a/kernel/locking/qspinlock_paravirt.h
+>>>> +++ b/kernel/locking/qspinlock_paravirt.h
+>>>> @@ -269,7 +269,7 @@ pv_wait_early(struct pv_node *prev, int loop)
+>>>>       if ((loop & PV_PREV_CHECK_MASK) != 0)
+>>>>               return false;
+>>>>
+>>>> -     return READ_ONCE(prev->state) != vcpu_running || vcpu_is_preempted(prev->cpu);
+>>>> +     return READ_ONCE(prev->state) != vcpu_running;
+>>>>  }
+>>>>
+>>>>  /*
+>>> There are several possibilities for this performance regression:
+>>>
+>>> 1) Multiple vcpus calling vcpu_is_preempted() repeatedly may cause some
+>>> cacheline contention issue depending on how that callback is implemented.
+>>>
+>>> 2) KVM may set the preempt flag for a short period whenver an vmexit
+>>> happens even if a vmenter is executed shortly after. In this case, we
+>>> may want to use a more durable vcpu suspend flag that indicates the vcpu
+>>> won't get a real vcpu back for a longer period of time.
+>>>
+>>> Perhaps you can add a lock event counter to count the number of
+>>> wait_early events caused by vcpu_is_preempted() being true to see if it
+>>> really cause a lot more wait_early than without the vcpu_is_preempted()
+>>> call.
+>> pv_wait_again:1:179
+>> pv_wait_early:1:189429
+>> pv_wait_head:1:263
+>> pv_wait_node:1:189429
+>> pv_vcpu_is_preempted:1:45588
+>> =========sleep 5============
+>> pv_wait_again:1:181
+>> pv_wait_early:1:202574
+>> pv_wait_head:1:267
+>> pv_wait_node:1:202590
+>> pv_vcpu_is_preempted:1:46336
 >>
->> And I didn't think about it or double-check, because the errors that
->> then followed later _looked_ like that TX power failing that I thought
->> hadn't happened.
->
-> Yeah, it could be something already got stuck there, hard to say.
->
->>> Since we see that something actually did an rfkill operation. Did you
->>> push a button there?
->>
->> No, I tried to turn off and turn on Wifi manually (no button, just the
->> settings panel).
->
-> That does usually also cause rfkill, so that explains how we got down
-> this particular code path.
->
->> I didn't notice the WARN_ON(), I just noticed that there was no
->> networking, and "turn it off and on again" is obviously the first
->> thing to try ;)
->
-> :-)
->
->> Sep 11 10:27:13 xps13 kernel: WARNING: CPU: 4 PID: 1246 at
->> net/mac80211/sta_info.c:1057 __sta_info_destroy_part2+0x147/0x150
->> [mac80211]
->>
->> but if you want full logs I can send them in private to you.
->
-> No, it's fine, though maybe Kalle does - he was stepping out for a while
-> but said he'd look later.
->
-> This is the interesting time - 10:27:13 we get one of the first
-> failures. Really the first one was this:
->
->> Sep 11 10:27:07 xps13 kernel: ath10k_pci 0000:02:00.0: wmi command 16387 timeout, restarting hardware
->
->
->> I do suspect it's atheros and suspend/resume or something. The
->> wireless clearly worked for a while after the resume, but then at some
->> point it stopped.
->
-> I'm not really sure it's related to suspend/resume at all, the firmware
-> seems to just have gotten stuck, and the device and firmware most likely
-> got reset over the suspend/resume anyway.
->
->>> The only explanation I therefore have is that something is just taking
->>> *forever* in that code path, hence my question about timing information
->>> on the logs.
->>
->> Yeah, maybe it would time out everything eventually. But not for a
->> long time. It hadn't cleared up by
->>
->>   Sep 11 10:36:21 xps13 gnome-session-f[6837]: gnome-session-failed:
->> Fatal IO error 0 (Success) on X server :0.
->
-> Ok, that's way longer than I would have guessed even! That's over 9
-> minutes, that'd be close to 200 commands having to be issued and timing
-> out ...
->
-> I don't know. What I wrote before is basically all I can say, I think
-> the driver gets stuck somewhere waiting for the device "forever", and
-> the stack just doesn't get to release the lock, causing all the follow-
-> up problems.
+>> The sampling period is 5s, 6% of wait_early events caused by
+>> vcpu_is_preempted() being true.
+> 
+> 6% isn't that high. However, when one vCPU voluntarily releases its
+> vCPU, all the subsequently waiters in the queue will do the same. It is
+> a cascading effect. Perhaps we wait early too aggressive with the
+> original patch.
+> 
+> I also look up the email chain of the original commit. The patch
+> submitter did not provide any performance data to support this change.
+> The patch just looked reasonable at that time. So there was no
+> objection. Given that we now have hard evidence that this was not a good
+> idea. I think we should revert it.
+> 
+> Reviewed-by: Waiman Long <longman@redhat.com>
+> 
+> Thanks,
+> Longman
+> 
 
-It looks to me like the ath10k firmware is not responding to commands and/or
-is out of its WMI tx credits.  The code often takes a lock and then blocks for up to 3
-or so seconds waiting for a response from the firmware, and the mac80211 calling
-code is often already holding rtnl.  Pretty much every mac80211 call will cause a
-WMI message and thus potentially hit this timeout.
+Queued, thanks.
 
-This can easily cause rtnl to be held for 3 seconds, but after that, I believe
-upstream ath10k will now time out and kill the firmware and restart.  (I run
-a significantly modified ath10k driver, and that is how mine works, at least.)
-
-In this case, it looks like restarting the firmware/NIC failed, and I guess
-that must get it in a state where it is still blocking and trying to talk
-to the firmware?  Or maybe deadlock down inside ath10k driver.
-
-For what it's worth, we see that WARN_ON often when ath10k firmware crashes, but it
-seems to not be a big deal and the system normally recovers fine.
-
-Out of curiosity, I'm interested to know what ath10k NIC chipset this is from.
-
-Thanks,
-Ben
-
--- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
+Paolo
