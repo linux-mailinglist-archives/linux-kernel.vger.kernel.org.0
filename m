@@ -2,106 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BBD4B00DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:05:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96579B00ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbfIKQFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 12:05:31 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:11590 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728818AbfIKQFa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:05:30 -0400
-Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8BG1xOc026275;
-        Wed, 11 Sep 2019 16:05:01 GMT
-Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2uxxgjdyry-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 Sep 2019 16:05:01 +0000
-Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
-        by g4t3425.houston.hpe.com (Postfix) with ESMTP id A8B01A1;
-        Wed, 11 Sep 2019 16:05:00 +0000 (UTC)
-Received: from [16.116.129.27] (unknown [16.116.129.27])
-        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id A08DD47;
-        Wed, 11 Sep 2019 16:04:58 +0000 (UTC)
-Subject: Re: [PATCH V2 5/8] x86/platform/uv: Add UV Hubbed/Hubless Proc FS
- Files
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Justin Ernst <justin.ernst@hpe.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190910145839.604369497@stormcage.eag.rdlabs.hpecorp.net>
- <20190910145840.055590900@stormcage.eag.rdlabs.hpecorp.net>
- <20190911060456.GC104115@gmail.com>
-From:   Mike Travis <mike.travis@hpe.com>
-Message-ID: <1d7a8b2f-80e0-33bf-85f4-2de719747eeb@hpe.com>
-Date:   Wed, 11 Sep 2019 09:05:28 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        id S1729006AbfIKQHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:07:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44468 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727839AbfIKQHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:07:09 -0400
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8B993796FC
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 16:07:09 +0000 (UTC)
+Received: by mail-wr1-f69.google.com with SMTP id b9so10629428wrt.5
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 09:07:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=B/S0TKkh///EsNRFEKwugE3C+En+WB89iDH3SdhNlRE=;
+        b=UHB/Rl3/mMfHIvDY4NAVjBAIY9EzyiP+QGCfmkT64gazXf3EoYSHgjfOQcOzIM5mQ8
+         /ZKm1ocsyJTGu2rSqLYH4pEiCylStu9UJm/dG/DXg1HpOh1shXq5KlJn+KZtZ/De4i/0
+         SZZ60BjK2ofUp/ZN46pS2MbmTp5BZ3xAIcJNE/pap6l2prl81sK/28+0oe4cL+fx9VG/
+         V5nRL69+Id/l2h0MAK0XJJSQhuXldt6ikE4x+73Yn465hb3f9NDc4WdP6olE5TVQZCcE
+         LGYFqtJKURFWmszBkpXGVWN5F/ejcE//zElc74Er9MhYlLdKv10A37AXFqPhhxHfv9qP
+         ASjg==
+X-Gm-Message-State: APjAAAUgWTQCWpbhPAmDLZGGfvvKtgktVSEOG2jxupFHL0bhIVT9TDCE
+        HRVWsiVpJ64StGCiTWcgg6rZDnbIRyeQEO15wKqLVa9dfqM2QNYLPBJN2rgGycf9qD400DULZc7
+        qPRy76FkD+q15jtMKzj05j7/H
+X-Received: by 2002:a1c:a6ca:: with SMTP id p193mr4509428wme.103.1568218028199;
+        Wed, 11 Sep 2019 09:07:08 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqz40/LD2YjoatJ8x8wP88TO4G3SZTOx+s9gIrPeXLOKq6V3pp00n5o0Rw4IO6/4fws059Z+TA==
+X-Received: by 2002:a1c:a6ca:: with SMTP id p193mr4509410wme.103.1568218027958;
+        Wed, 11 Sep 2019 09:07:07 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:102b:3795:6714:7df6? ([2001:b07:6468:f312:102b:3795:6714:7df6])
+        by smtp.gmail.com with ESMTPSA id c8sm9314872wrr.49.2019.09.11.09.07.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2019 09:07:07 -0700 (PDT)
+Subject: Re: [PATCH 2/2] KVM: VMX: Stop the preemption timer during vCPU reset
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1567664788-10249-1-git-send-email-wanpengli@tencent.com>
+ <1567664788-10249-2-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <d7b46861-2787-f8c0-fa84-5368235db830@redhat.com>
+Date:   Wed, 11 Sep 2019 18:06:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190911060456.GC104115@gmail.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <1567664788-10249-2-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-11_08:2019-09-11,2019-09-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- spamscore=0 phishscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- mlxlogscore=999 mlxscore=0 impostorscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1909110146
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 9/10/2019 11:04 PM, Ingo Molnar wrote:
+On 05/09/19 08:26, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
 > 
-> * Mike Travis <mike.travis@hpe.com> wrote:
+> The hrtimer which is used to emulate lapic timer is stopped during 
+> vcpu reset, preemption timer should do the same.
 > 
->> @@ -1596,7 +1687,7 @@ static void __init uv_system_init_hub(vo
->>   	uv_nmi_setup();
->>   	uv_cpu_init();
->>   	uv_scir_register_cpu_notifier();
->> -	proc_mkdir("sgi_uv", NULL);
->> +	uv_setup_proc_files(0);
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> This slipped through previously: platform drivers have absolutely no
-> business mucking in /proc.
-> 
-> Please describe the hardware via sysfs as pretty much everyone else does.
-> 
-> Thanks,
-> 
-> 	Ingo
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 570a233..f794929 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -4162,6 +4162,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+>  
+>  	vcpu->arch.microcode_version = 0x100000000ULL;
+>  	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
+> +	vmx->hv_deadline_tsc = -1;
+>  	kvm_set_cr8(vcpu, 0);
+>  
+>  	if (!init_event) {
 > 
 
-If I was doing it now I definitely would put it in the sysfs realm.  The 
-problem is Jack did it back in (I think) 2007.  The earliest commit I 
-could find:
+Queued both, thanks.
 
-commit a3d732f93785da17e0137210deadb4616f5536fc
-Author: Cliff Wickman <cpw@sgi.com>
-Date:   Mon Nov 10 16:16:31 2008 -0600
-
-     x86, UV: fix redundant creation of sgi_uv
-
-     Impact: fix double entry creation in /proc
-
-And in the past 12 years probably a hundred user programs are now keying 
-of the presence of /proc/sgi_uv to signal this is indeed a UV system. 
-Changing the location of this node also affects all the UV utilities 
-including those not written by us.
+Paolo
