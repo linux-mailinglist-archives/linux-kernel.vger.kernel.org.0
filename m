@@ -2,66 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDAABAF700
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03176AF705
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:37:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfIKHey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 03:34:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34836 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726735AbfIKHey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 03:34:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9410BAD7F;
-        Wed, 11 Sep 2019 07:34:52 +0000 (UTC)
-Date:   Wed, 11 Sep 2019 09:34:51 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yunsheng Lin <linyunsheng@huawei.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org, linuxarm@huawei.com
-Subject: Re: [PATCH] driver core: ensure a device has valid node id in
- device_add()
-Message-ID: <20190911073451.GM4023@dhcp22.suse.cz>
-References: <20190910093114.GA19821@kroah.com>
- <34feca56-c95e-41a6-e09f-8fc2d2fd2bce@huawei.com>
- <20190910110451.GP2063@dhcp22.suse.cz>
- <20190910111252.GA8970@kroah.com>
- <5a5645d2-030f-7921-432f-ff7d657405b8@huawei.com>
- <20190910125339.GZ2063@dhcp22.suse.cz>
- <20190911053334.GH4023@dhcp22.suse.cz>
- <ca590101-bfc8-3934-d803-537aacb707e0@huawei.com>
- <20190911064926.GJ4023@dhcp22.suse.cz>
- <3b977388-5f25-d0b5-bdc9-f963a9be2bd1@huawei.com>
+        id S1727123AbfIKHgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 03:36:12 -0400
+Received: from mail-sh.amlogic.com ([58.32.228.43]:56151 "EHLO
+        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfIKHgL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 03:36:11 -0400
+Received: from [10.18.29.226] (10.18.29.226) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 11 Sep
+ 2019 15:37:02 +0800
+Subject: Re: [PATCH v2 4/4] arm64: dts: add support for A1 based Amlogic AD401
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     Kevin Hilman <khilman@baylibre.com>,
+        <linux-amlogic@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Carlo Caione <carlo@caione.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Tao Zeng <tao.zeng@amlogic.com>
+References: <1567667251-33466-1-git-send-email-jianxin.pan@amlogic.com>
+ <1567667251-33466-5-git-send-email-jianxin.pan@amlogic.com>
+ <CAFBinCBSmW4y-Dz7EkJMV8HOU4k6Z0G-K6T77XnVrHyubaSsdg@mail.gmail.com>
+ <be032a85-b60d-f7f0-8404-b27784d809df@amlogic.com>
+ <CAFBinCD7gFzOsmZCB8T1KJKVsgL7WMhoEkj3dRzyqwAnjC0CNA@mail.gmail.com>
+ <a82336e2-44df-5682-1c86-daf8a8448d30@amlogic.com>
+ <CAFBinCAJG4=M3BSXfREGU+iadMPkc7=yt3AdcqA1KAhQx6Wh9w@mail.gmail.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <09d7f5cc-9063-28f4-b68f-79f21fca500b@amlogic.com>
+Date:   Wed, 11 Sep 2019 15:37:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b977388-5f25-d0b5-bdc9-f963a9be2bd1@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAFBinCAJG4=M3BSXfREGU+iadMPkc7=yt3AdcqA1KAhQx6Wh9w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.226]
+X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
+ (10.18.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 11-09-19 15:22:30, Yunsheng Lin wrote:
-[...]
-> It seems that there is no protection that prevent setting the node
-> of device to an invalid node.
-> And the kernel does have a few different check now:
-> 1) some does " < 0" check;
-> 2) some does "== NUMA_NO_NODE" check;
-> 3) some does ">= MAX_NUMNODES" check;
-> 4) some does "< 0 || >= MAX_NUMNODES || !node_online(node)" check.
+Hi Martin,
+
+On 2019/9/10 1:24, Martin Blumenstingl wrote:
+> Hi Jianxin,
 > 
-> We need to be consistent about the checking, right?
+> On Mon, Sep 9, 2019 at 2:03 PM Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+>>
+>> Hi Martin,
+>>
+>> On 2019/9/7 23:02, Martin Blumenstingl wrote:
+>>> Hi Jianxin,
+>>>
+>>> On Fri, Sep 6, 2019 at 7:58 AM Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+>>> [...]
+>>>>> also I'm a bit surprised to see no busses (like aobus, cbus, periphs, ...) here
+>>>>> aren't there any busses defined in the A1 SoC implementation or are
+>>>>> were you planning to add them later?
+>>>> Unlike previous series,there is no Cortex-M3 AO CPU in A1, and there is no AO/EE power domain.
+>>>> Most of the registers are on the apb_32b bus.  aobus, cbus and periphs are not used in A1.
+>>> OK, thank you for the explanation
+>>> since you're going to re-send the patch anyways: can you please
+>>> include the apb_32b bus?
+>>> all other upstream Amlogic .dts are using the bus definitions, so that
+>>> will make A1 consistent with the other SoCs
+>> In A1 (and the later C1), BUS is not mentioned in the memmap and register spec.
+>> Registers are organized and grouped by functions, and we can not find information about buses from the SoC document.
+> do you know why the busses are not part of the documentation?
+> 
+>> Maybe it's better to remove bus definitions for these chips.
+> my understanding is that devicetree describes the hardware
+> so if there's a bus in hardware (that we know about) then we should
+> describe it in devicetree
+> 
+> personally I think busses also make the .dts easier to read:
+> instead of a huge .dts with all nodes on one level it's split into
+> multiple smaller sub-nodes - thus making it easier to keep track of
+> "where am I in this file".
+> 
+OK, I will add the bus description for A1.
+Thank you for your suggestion.
+> 
+> Martin
+> 
+> .
+> 
 
-You can try and chase each of them and see what to do with them. I
-suspect they are a result of random attempts to fortify the code in many
-cases. Consistency is certainly good but spreading more checks all over
-the place just adds more cargo cult. Each check should be reasonably
-justified.
-
--- 
-Michal Hocko
-SUSE Labs
