@@ -2,102 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20955B00E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:06:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14445B00F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:07:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfIKQGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 12:06:40 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36712 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728703AbfIKQGj (ORCPT
+        id S1729008AbfIKQHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:07:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35907 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727839AbfIKQHg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:06:39 -0400
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AF88C33A;
-        Wed, 11 Sep 2019 18:06:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1568217997;
-        bh=F2dlj/MFhkCIb/9CSt/w8Fw5jSo4ioGNSYWJmqdIqPY=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=qdsaUQYM6hhd68U1apolZTzXB9co1nILTU0yuAVKimxwB0wlDzP++mspv/miVEfr+
-         An2oEmr6fbOzXHdV1hL2ArT97vQ9oQH32eOL8jyob6Pmp8r24Q37cG3PkZrB4R6ECs
-         BwWHzNIl91Psdsne5U5s8D+NNwhFBw7ylnvXCuGE=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH v4 2/9] dt-bindings: display, renesas,du: Document cmms
- property
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com
-Cc:     airlied@linux.ie, daniel@ffwll.ch, koji.matsuoka.xm@renesas.com,
-        muroya@ksk.co.jp, Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-References: <20190906135436.10622-1-jacopo+renesas@jmondi.org>
- <20190906135436.10622-3-jacopo+renesas@jmondi.org>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <2bcbb30c-db36-38a1-dcff-4f4269c11ad6@ideasonboard.com>
-Date:   Wed, 11 Sep 2019 17:06:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 11 Sep 2019 12:07:36 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1i859U-000298-Ft; Wed, 11 Sep 2019 16:07:28 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        ocfs2-devel@oss.oracle.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ocfs2: fix spelling mistake "ambigous" -> "ambiguous"
+Date:   Wed, 11 Sep 2019 17:07:28 +0100
+Message-Id: <20190911160728.24322-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190906135436.10622-3-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 06/09/2019 14:54, Jacopo Mondi wrote:
-> Document the newly added 'cmms' property which accepts a list of phandle
-> and channel index pairs that point to the CMM units available for each
-> Display Unit output video channel.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
->  Documentation/devicetree/bindings/display/renesas,du.txt | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-> index c97dfacad281..1773b0a2f54f 100644
-> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
-> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-> @@ -45,6 +45,10 @@ Required Properties:
->      instance that serves the DU channel, and the channel index identifies the
->      LIF instance in that VSP.
-> 
-> +  - renesas,cmms: A list of phandles to the CMM instances present in the SoC,
-> +    one for each available DU channel. The property shall not be specified for
-> +    SoCs that do not provide any CMM (such as V3M and V3H).
-> +
->  Required nodes:
-> 
->  The connections to the DU output video ports are modeled using the OF graph
-> @@ -91,6 +95,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
->  			 <&cpg CPG_MOD 721>;
->  		clock-names = "du.0", "du.1", "du.2", "du.3";
->  		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
-> +		renesas,cmms = <&cmm0 &cmm1 &cmm2 &cmm3>;
+There is a spelling mistake in a mlog_bug_on_msg message. Fix it.
 
-Should these be comma separated in the same fashion as the vsps are
-separated?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ocfs2/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I don't really mind either way though ...
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-
-> 
->  		ports {
->  			#address-cells = <1>;
-> --
-> 2.23.0
-> 
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 7ad9d6590818..7c9dfd50c1c1 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -534,7 +534,7 @@ static int ocfs2_read_locked_inode(struct inode *inode,
+ 	 */
+ 	mlog_bug_on_msg(!!(fe->i_flags & cpu_to_le32(OCFS2_SYSTEM_FL)) !=
+ 			!!(args->fi_flags & OCFS2_FI_FLAG_SYSFILE),
+-			"Inode %llu: system file state is ambigous\n",
++			"Inode %llu: system file state is ambiguous\n",
+ 			(unsigned long long)args->fi_blkno);
+ 
+ 	if (S_ISCHR(le16_to_cpu(fe->i_mode)) ||
+-- 
+2.20.1
 
