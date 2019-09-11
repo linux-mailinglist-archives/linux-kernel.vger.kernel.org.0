@@ -2,130 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C6DAAFB8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 13:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B1A0AFBA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 13:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbfIKLkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 07:40:02 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33304 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbfIKLkC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 07:40:02 -0400
-Received: by mail-qt1-f196.google.com with SMTP id r5so24823084qtd.0;
-        Wed, 11 Sep 2019 04:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=02aihXja284pbHw6Y7cb4oikypS3Tqv6XvGRsMJSOOE=;
-        b=X6MhGCf+Dg3iPT/QKVLKBqFuz6OfWBLGaEq55dvHMYpgq+kgIXE/UxqXGtcbzgGee0
-         myEyxVSRbTXKNe04N/qKKfWsBH9sBeUOvew61rhz7GG+rAHtpV9eRYr2ffE5ZLE3BSHf
-         81Kz6byL4AR0jGaJ414Rc9nHKYoO3mZoGMhRNCJwKH+L9Jd52u5yBNUPv4FSyCc8LISD
-         cSTI0NXsxHhwRnUq7xxPLlNCOvn4FG5vD0JnLJiuM7sImyUoPFm1qaBE2JqP0JfZ2zI3
-         lTispFcDYefT9hjSSuVetwwH+F++ZLm7NpCmamEd7HfxMAVqfvD4WlCzyPZOxbusIRaa
-         DF7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=02aihXja284pbHw6Y7cb4oikypS3Tqv6XvGRsMJSOOE=;
-        b=pcbuB/1vMWJkBxgRMmyK/xZPE0qVZP4QDOmCGUOa8Bjs0MHEJihTNWoKeljwNeu1D8
-         ZZmGgxFnpa66DZQQW+uYwC9OsRA8Ok/O75w6QCGM7M9x4mUvW/66jRdPE7bNKRufTg35
-         ohQuH3P9eOi1iZeAWcRxUCKLvZaoPfcqE3q4EzKxWDjfI6ac02q/9PycoZn2VeH1YJrG
-         2/EJt0ze8FrypSTXp/uFuJM6px+5NMeioiBKQSaogEifeOA12C2JjDD1I3pJXHYsRg+V
-         j5MMTxLxCV9OMJrhEdPb4hFBfKWtMr8zg6wT6XgEhby5A65ZYk0PUsd/0/C2/8ICAguD
-         6Zzg==
-X-Gm-Message-State: APjAAAWoOFi39sQTBVovYKKgVtExU/R1LPjKWYeQ7W8p0Hzp0t6hf3iO
-        ++enO5U28Ky/PHBtAGRSdWjwA+MfWYc22g+rHxG/EWKXYZ7qCA==
-X-Google-Smtp-Source: APXvYqzxCgIxRf8FhCijOGxwxw3mpS0Qmd0vx1KZDn85ap8XUByuk6vdrres0E7Po7lqZsJNJpWN3wGy2yIYOJXxd7I=
-X-Received: by 2002:a0c:9846:: with SMTP id e6mr21943255qvd.114.1568202000956;
- Wed, 11 Sep 2019 04:40:00 -0700 (PDT)
+        id S1727867AbfIKLnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 07:43:12 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37808 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727806AbfIKLnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 07:43:08 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 32EFD10E2531DB4B26B4;
+        Wed, 11 Sep 2019 19:43:07 +0800 (CST)
+Received: from [127.0.0.1] (10.74.191.121) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Sep 2019
+ 19:42:56 +0800
+Subject: Re: [PATCH] driver core: ensure a device has valid node id in
+ device_add()
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Greg KH <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
+        <mingo@kernel.org>, <linuxarm@huawei.com>
+References: <20190910093114.GA19821@kroah.com>
+ <34feca56-c95e-41a6-e09f-8fc2d2fd2bce@huawei.com>
+ <20190910110451.GP2063@dhcp22.suse.cz> <20190910111252.GA8970@kroah.com>
+ <5a5645d2-030f-7921-432f-ff7d657405b8@huawei.com>
+ <20190910125339.GZ2063@dhcp22.suse.cz> <20190911053334.GH4023@dhcp22.suse.cz>
+ <ca590101-bfc8-3934-d803-537aacb707e0@huawei.com>
+ <20190911064926.GJ4023@dhcp22.suse.cz>
+ <3b977388-5f25-d0b5-bdc9-f963a9be2bd1@huawei.com>
+ <20190911073451.GM4023@dhcp22.suse.cz>
+ <d828d48c-cae7-f3c2-fb2e-c8b25995cbef@huawei.com>
+Message-ID: <97ad9ede-3a69-bd9e-e6c9-c2a893459565@huawei.com>
+Date:   Wed, 11 Sep 2019 19:41:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <20190910092731.GA173476@LGEARND20B15> <61418cb7514460e24bfcd431eee9c540e795fcbc.camel@mellanox.com>
-In-Reply-To: <61418cb7514460e24bfcd431eee9c540e795fcbc.camel@mellanox.com>
-From:   Austin Kim <austindh.kim@gmail.com>
-Date:   Wed, 11 Sep 2019 20:39:56 +0900
-Message-ID: <CADLLry7io3DwrjWU2n9eiFGsA0sseniQYhMRHmR7SjV6pLnk3w@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5: Declare 'rt' as corresponding enum type
-To:     Saeed Mahameed <saeedm@mellanox.com>
-Cc:     "leon@kernel.org" <leon@kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Bloch <markb@mellanox.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Alex Vesker <valex@mellanox.com>,
-        Erez Shitrit <erezsh@mellanox.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d828d48c-cae7-f3c2-fb2e-c8b25995cbef@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.191.121]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is good to hear that similar patch was submitted.
-Thanks for notification.
+On 2019/9/11 19:03, Yunsheng Lin wrote:
+> On 2019/9/11 15:34, Michal Hocko wrote:
+>> On Wed 11-09-19 15:22:30, Yunsheng Lin wrote:
+>> [...]
+>>> It seems that there is no protection that prevent setting the node
+>>> of device to an invalid node.
+>>> And the kernel does have a few different check now:
+>>> 1) some does " < 0" check;
+>>> 2) some does "== NUMA_NO_NODE" check;
+>>> 3) some does ">= MAX_NUMNODES" check;
+>>> 4) some does "< 0 || >= MAX_NUMNODES || !node_online(node)" check.
+>>>
+>>> We need to be consistent about the checking, right?
+>>
+>> You can try and chase each of them and see what to do with them. I
+>> suspect they are a result of random attempts to fortify the code in many
+>> cases. Consistency is certainly good but spreading more checks all over
+>> the place just adds more cargo cult. Each check should be reasonably
+>> justified.
+> 
+> Ok, Let me focus on making the node_to_cpumask_map() NUMA_NO_NODE aware
+> by only checking "node == NUMA_NO_NODE" first.
 
-Thanks,
-Austin Kim
+Hi, Michal
+    It that ok for me to add your name to "Suggested-by" tag, since I am
+going to quote some of your words on the commit log.
 
-2019=EB=85=84 9=EC=9B=94 11=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 2:59, S=
-aeed Mahameed <saeedm@mellanox.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> On Tue, 2019-09-10 at 18:27 +0900, Austin Kim wrote:
-> > When building kernel with clang, we can observe below warning
-> > message:
-> >
-> > drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c:1080:9:
-> > warning: implicit conversion from enumeration type 'enum
-> > mlx5_reformat_ctx_type'
-> > to different enumeration type 'enum mlx5dr_action_type' [-   Wenum-
-> > conversion]
-> >       rt =3D MLX5_REFORMAT_TYPE_L2_TO_L2_TUNNEL;
-> >                                 ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c:1082:9:
-> > warning: implicit conversion from enumeration type 'enum
-> > mlx5_reformat_ctx_type'
-> > to different enumeration type 'enum mlx5dr_action_type' [-   Wenum-
-> > conversion]
-> >       rt =3D MLX5_REFORMAT_TYPE_L2_TO_L3_TUNNEL;
-> >         ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c:1084:51:
-> > warning: implicit conversion from enumeration type 'enum
-> > mlx5dr_action_type'
-> > to different enumeration type 'enum mlx5_reformat_ctx_type'
-> > [-  Wenum-conversion]
-> >       ret =3D mlx5dr_cmd_create_reformat_ctx(dmn->mdev, rt, data_sz,
-> > data,
-> >          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~            ^~
-> >
-> > Declare 'rt' as corresponding enum mlx5_reformat_ctx_type type.
-> >
-> > Signed-off-by: Austin Kim <austindh.kim@gmail.com>
-> Hi Austin, Thanks for the patch:
->
-> We already have a similar patch queued for submission.
-> https://patchwork.ozlabs.org/patch/1158175/
->
-> > ---
-> >  drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git
-> > a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c
-> > b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c
-> > index a02f87f..7d81a77 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_action.c
-> > @@ -1074,7 +1074,7 @@ dr_action_create_reformat_action(struct
-> > mlx5dr_domain *dmn,
-> >       case DR_ACTION_TYP_L2_TO_TNL_L2:
-> >       case DR_ACTION_TYP_L2_TO_TNL_L3:
-> >       {
-> > -             enum mlx5dr_action_type rt;
-> > +             enum mlx5_reformat_ctx_type rt;
-> >
-> >               if (action->action_type =3D=3D DR_ACTION_TYP_L2_TO_TNL_L2=
-)
-> >                       rt =3D MLX5_REFORMAT_TYPE_L2_TO_L2_TUNNEL;
+> 
+>>
+> 
+> 
+> .
+> 
+
