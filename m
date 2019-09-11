@@ -2,95 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB54AFFA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 17:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F094AAFFA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 17:09:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbfIKPJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 11:09:37 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42308 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728381AbfIKPJg (ORCPT
+        id S1728517AbfIKPJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 11:09:12 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:36878 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728421AbfIKPJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 11:09:36 -0400
-Received: by mail-io1-f65.google.com with SMTP id n197so46611408iod.9;
-        Wed, 11 Sep 2019 08:09:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zpSTnZWLfU+mtdlAh42xs+GSxup7aA/377MpA3ZModA=;
-        b=VuKDYc2rxs+4jUZdpQuHBjBqjoG+/X87aXFRR84EAstHq2b/sHIjhulnX8LfXX0Z5v
-         J6TQg8wudBS4xNr73cEkMUG8ZFNK+vMMVQhkBlN6VMEkCPew+eviVICq9ijf6jxzHmHN
-         Pf2EjKsicklY9we2tu1vWq+xXE9AltcEKK3POWlkJsOZUXLWPXMIWZ+mWKdlOX2f9mDX
-         qSJi/OC1wFLCsVgyKETD+aILLb3YaR6u1HL9vfN6+yBm87CLyE0CiWI6MZItdXiGZaSg
-         lV+1g29SOCWtBfrkRC3uwca2wdcti0rZUro55vCHYyW63y5DHNZuCpBc3UjdPtPJn7w+
-         nLdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=zpSTnZWLfU+mtdlAh42xs+GSxup7aA/377MpA3ZModA=;
-        b=CPY2Qw2GleOc+tyeQcDB5JKddrf/cRvM8cuJ++rfAFYnl9N2hKM2YIhERJHLyBIbWw
-         2rJ0aZhrWnpyvrsr9LJT9dVlYqUC/+GYDBMlZ9Uk+7P1hrz/QNnOQekXN3IX4/aMWl52
-         +fc1NJrWqEx2HZNqLqfGrX3M8T+5ME26p43kqt0DOjDLzEwH4afm2SJkN4jsRqpdPEtV
-         L1opu0Lj8DJnrAonntEO/AUyfjta4FeCzarP3o4z+XlbT5jx7eDjy0ZGIxkGGJT1YyuH
-         atlipRAdOIbo7Hdpw6oWojiR46/M4wHZH/aMzRJILBUftvbYNqab0RSvgHhmROiu4EB7
-         tMzg==
-X-Gm-Message-State: APjAAAVDeNA++dBDtiE+R5xioSxbbbkfb5Wc2PQxl6DcEe7ZGS+epmdm
-        ql+S/dGcpDXbqO0T9gBKWORZsuLkhyM=
-X-Google-Smtp-Source: APXvYqweuexRIh7nhhjMSs2ZGpMcndP/A8OxHHeXjgoKEcTuRqDBStiAqy7TcKpsUYCqtH+xbhjnkQ==
-X-Received: by 2002:a6b:c810:: with SMTP id y16mr43703681iof.75.1568214575179;
-        Wed, 11 Sep 2019 08:09:35 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id c4sm16670135ioa.76.2019.09.11.08.09.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2019 08:09:34 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     davem@davemloft.net
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] net: qrtr: fix memort leak in qrtr_tun_write_iter
-Date:   Wed, 11 Sep 2019 10:09:02 -0500
-Message-Id: <20190911150907.18251-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190911.101320.682967997452798874.davem@davemloft.net>
-References: <20190911.101320.682967997452798874.davem@davemloft.net>
+        Wed, 11 Sep 2019 11:09:11 -0400
+Received: (qmail 4433 invoked by uid 2102); 11 Sep 2019 11:09:10 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 11 Sep 2019 11:09:10 -0400
+Date:   Wed, 11 Sep 2019 11:09:10 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>
+cc:     linux-kernel@vger.kernel.org,
+        <linux-arm-kernel@lists.infradead.org>,
+        <gregkh@linuxfoundation.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        <Boris.Krasnovskiy@lairdconnect.com>, <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH 0/3] USB: host: ohci-at91: tailor power consumption
+In-Reply-To: <20190911064154.28633-1-nicolas.ferre@microchip.com>
+Message-ID: <Pine.LNX.4.44L0.1909111108460.1483-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In qrtr_tun_write_iter the allocated kbuf should be release in case of
-error or success return.
+On Wed, 11 Sep 2019, Nicolas Ferre wrote:
 
-v2 Update: Thanks to David Miller for pointing out the release on success
-path as well.
+> Following a set of experiments we found areas of improvement for OHCI power
+> consumption (and associated USB analog cells).
+> This enhances the shutdown of residual power consumption in case of Linux
+> suspend/resume and removal of the driver (when compiled as a module).
+> 
+> Best regards,
+>   Nicolas
+> 
+> Boris Krasnovskiy (2):
+>   USB: host: ohci-at91: completely shutdown the controller in
+>     at91_stop_hc()
+>   USB: host: ohci-at91: resume: balance the clock start call
+> 
+> Nicolas Ferre (1):
+>   USB: host: ohci-at91: suspend: delay needed before to stop clocks
+> 
+>  drivers/usb/host/ohci-at91.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- net/qrtr/tun.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+For all three patches:
 
-diff --git a/net/qrtr/tun.c b/net/qrtr/tun.c
-index ccff1e544c21..e35869e81766 100644
---- a/net/qrtr/tun.c
-+++ b/net/qrtr/tun.c
-@@ -84,11 +84,14 @@ static ssize_t qrtr_tun_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	if (!kbuf)
- 		return -ENOMEM;
- 
--	if (!copy_from_iter_full(kbuf, len, from))
-+	if (!copy_from_iter_full(kbuf, len, from)) {
-+		kfree(kbuf);
- 		return -EFAULT;
-+	}
- 
- 	ret = qrtr_endpoint_post(&tun->ep, kbuf, len);
- 
-+	kfree(kbuf);
- 	return ret < 0 ? ret : len;
- }
- 
--- 
-2.17.1
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
