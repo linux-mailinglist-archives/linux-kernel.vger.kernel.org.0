@@ -2,95 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEAE5AF563
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 07:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00CFCAF53E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 07:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfIKFQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 01:16:15 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44408 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfIKFQP (ORCPT
+        id S1726712AbfIKFMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 01:12:36 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39090 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfIKFMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 01:16:15 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q21so12876699pfn.11
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2019 22:16:14 -0700 (PDT)
+        Wed, 11 Sep 2019 01:12:36 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i1so4042060pfa.6;
+        Tue, 10 Sep 2019 22:12:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=BMbiIR1LyRY98dnnELG+YAf1kawqGEANpBbQC+CCbhM=;
-        b=hXFF7s+PuFW/NxL4QbBtCtkypBM6BCKYfL5Y4lDxq0MOLXR5iPqBGXyy6lo6DNUTzf
-         bfCuPZIzKyEo5zHuuJ4/fcTkFLpI0wmW7ZILWwHnD4bjemvW3FE/mnuDq5PIvxzlDSvW
-         H+OdfrFmDdj+G6wKnx6ypaSLghjQ0p14FssHQ=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rZNyXpEzQutbsjHDJX6LxKD82IhI48MXw89jA3LWwJE=;
+        b=jdl4R9OBzj7aWR/izSqAkbCbWSpLJODhZk2KGhuRZnIqmhTthemF/w1NuCaMaKgBHH
+         yWHBf6YvZJAe1IpqWE4A1JEKy7Y7SR0T7zA4QSS3dZgyk8Ub6oWUgfgAcwSK3+n7u0o4
+         dD4878tb8oWqG02VbMkEwjhj53aOK7Wng/6LTfRFFqB5aJq/Mvs+YTZFXlsAXSQvmVFc
+         zMeD1upHa5/E7pdjid2b+7g73F6YDgfBeeVkmMLOHgXRpPQ00IWBTj9n3Pu31gxRXEOO
+         eym569kfS9zaIalGzTu/xMGetWFwkiifyMUh9/FeNdm6GWbIK9iR5RMB37L10JFj+Fn7
+         f97w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BMbiIR1LyRY98dnnELG+YAf1kawqGEANpBbQC+CCbhM=;
-        b=DLnGEa2S2XaXmvFEI/MlyT+7S4R+mc8tqxEgaQJ8RbLVtXPHOdDW2hcWV6lpnVXKy6
-         Lbd9YYoo42giF3r2lbvslYyg29NbKgIvt9jO3hJvwyf0aEVMSce91UeThb9ltnYry7ji
-         B54ynBcS8NLRpmvnnCCW02isfTJymlgjR+hoRTir2abzywsJb0A+84sP3fwg4SMaRefB
-         SJIQtCt7A3+1o8ctw+BuWUM0Kd6ovVtJFslCerRfct5PIxSxPaGbwFU8OTa+Cm/MWfKI
-         6AYcy4/hJsCrBofKYX4bd/P7m0yyBZga4sIZJd34ZgzGV/KTdY4pfi3qlhoNe3xAdJB0
-         +86w==
-X-Gm-Message-State: APjAAAWy/s3QVw13yTQ8f9m0DOpimBjzSv9Fofz6vwtwYUk3eOoltZ3c
-        zhCLn4OG266CMHcvIpQ35wG39w==
-X-Google-Smtp-Source: APXvYqwYQWfMQ6vWWOF3mSdlh/pc8D0x/hHtJukanbuXtbH4cOkp3f+6D5/1gN28cXGa7MC9q4xGzA==
-X-Received: by 2002:a63:6a4a:: with SMTP id f71mr30755038pgc.409.1568178973942;
-        Tue, 10 Sep 2019 22:16:13 -0700 (PDT)
-Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id h186sm33650986pfb.63.2019.09.10.22.16.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 10 Sep 2019 22:16:12 -0700 (PDT)
-From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Subject: [PATCH v1 1/1] pinctrl: iproc: Add 'get_direction' support
-Date:   Wed, 11 Sep 2019 10:41:25 +0530
-Message-Id: <1568178685-30738-1-git-send-email-rayagonda.kokatanur@broadcom.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rZNyXpEzQutbsjHDJX6LxKD82IhI48MXw89jA3LWwJE=;
+        b=N8nyRN/DuGuUTgQC0tLCdP2vH+u8xTnVPRQDMNidx8ov4aqwDWRtDOCRLRhOFSLML+
+         AFAup0VpSncllik3oBMldbtXNsfV/Pf+QQo+1cDjamMdtnyJzXMNPPb0+/FSVBsHEau4
+         NdPoXxSqKPc/Ws65PKZ4G+aImFCz4VHeThn1WGkszs0gVRv5kVIVk8YSabihwSOLg6W4
+         S3RNLOuMc0Bth5Bf9pebrsSCuoDhQG35Plcej5FOEPmcfpX71ea4myzU/eyku7FLTsT3
+         BdqwH7aNJOf3RBbEb4CvuVNvWsms3EFbppJ36hfBaTLqIvNeMlz63qS3lU+1xqHck0B8
+         Dy7A==
+X-Gm-Message-State: APjAAAUcq9DljX2reHn7xr1n0DjC05EpoqvfHFGZNIJaW8aGBd6Ol+Th
+        6KAjtbTMdm8YhlSMS4FMFWo=
+X-Google-Smtp-Source: APXvYqxtjHuUPFRSWw3me57nzF0FGN7Skq2i2yaEdj3wEWAnSTCdr4sNuEPWu0m+4PkQDuLEnWsYwQ==
+X-Received: by 2002:a63:5920:: with SMTP id n32mr25475307pgb.352.1568178755371;
+        Tue, 10 Sep 2019 22:12:35 -0700 (PDT)
+Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id p11sm22011149pff.136.2019.09.10.22.12.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2019 22:12:34 -0700 (PDT)
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: [PATCH v4 00/14] software node: add support for reference properties
+Date:   Tue, 10 Sep 2019 22:12:17 -0700
+Message-Id: <20190911051231.148032-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.23.0.162.g0b9fbb3734-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add 'get_direction' support to the iProc GPIO driver.
+These series implement "references" properties for software nodes as true
+properties, instead of managing them completely separately.
 
-Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
----
- drivers/pinctrl/bcm/pinctrl-iproc-gpio.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+The first 10 patches are generic cleanups and consolidation and unification
+of the existing code; patch #11 implements PROPERTY_EMTRY_REF() and friends;
+patch #12 converts the user of references to the property syntax, and patch
+#13 removes the remains of references as entities that are managed
+separately.
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-index b70058c..d782d70 100644
---- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-+++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-@@ -355,6 +355,15 @@ static int iproc_gpio_direction_output(struct gpio_chip *gc, unsigned gpio,
- 	return 0;
- }
- 
-+static int iproc_gpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
-+{
-+	struct iproc_gpio *chip = gpiochip_get_data(gc);
-+	unsigned int offset = IPROC_GPIO_REG(gpio, IPROC_GPIO_OUT_EN_OFFSET);
-+	unsigned int shift = IPROC_GPIO_SHIFT(gpio);
-+
-+	return !(readl(chip->base + offset) & BIT(shift));
-+}
-+
- static void iproc_gpio_set(struct gpio_chip *gc, unsigned gpio, int val)
- {
- 	struct iproc_gpio *chip = gpiochip_get_data(gc);
-@@ -784,6 +793,7 @@ static int iproc_gpio_probe(struct platform_device *pdev)
- 	gc->free = iproc_gpio_free;
- 	gc->direction_input = iproc_gpio_direction_input;
- 	gc->direction_output = iproc_gpio_direction_output;
-+	gc->get_direction = iproc_gpio_get_direction;
- 	gc->set = iproc_gpio_set;
- 	gc->get = iproc_gpio_get;
- 
+Changes in v4:
+- dealt with union aliasing concerns
+- inline small properties on copy
+
+Changes in v3:
+- added various cleanups before implementing reference properties
+
+Changes in v2:
+- reworked code so that even single-entry reference properties are
+  stored as arrays (i.e. the software_node_ref_args instances are
+  not part of property_entry structure) to avoid size increase.
+  From user's POV nothing is changed, one can still use PROPERTY_ENTRY_REF
+  macro to define reference "inline".
+- dropped unused DEV_PROP_MAX
+- rebased on linux-next
+
+
+Dmitry Torokhov (14):
+  software node: remove DEV_PROP_MAX
+  software node: introduce PROPERTY_ENTRY_ARRAY_XXX_LEN()
+  efi/apple-properties: use PROPERTY_ENTRY_U8_ARRAY_LEN
+  software node: mark internal macros with double underscores
+  software node: clean up property_copy_string_array()
+  software node: get rid of property_set_pointer()
+  software node: remove property_entry_read_uNN_array functions
+  software node: unify PROPERTY_ENTRY_XXX macros
+  software node: simplify property_entry_read_string_array()
+  software node: rename is_array to is_inline
+  software node: move small properties inline when copying
+  software node: implement reference properties
+  platform/x86: intel_cht_int33fe: use inline reference properties
+  software node: remove separate handling of references
+
+ drivers/base/swnode.c                    | 266 ++++++++---------------
+ drivers/firmware/efi/apple-properties.c  |  18 +-
+ drivers/platform/x86/intel_cht_int33fe.c |  81 +++----
+ include/linux/property.h                 | 177 +++++++--------
+ 4 files changed, 230 insertions(+), 312 deletions(-)
+
 -- 
-1.9.1
+2.23.0.162.g0b9fbb3734-goog
 
