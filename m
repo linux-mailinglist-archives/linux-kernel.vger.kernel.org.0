@@ -2,54 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77BDAFCD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD70AFCDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbfIKMaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 08:30:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728036AbfIKMau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 08:30:50 -0400
-Received: from linux-8ccs (unknown [92.117.136.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06FB221D79;
-        Wed, 11 Sep 2019 12:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568205050;
-        bh=EB/xTS3V+NQTSXHN7JsctMIp/7LjYGOKMCwob5l6arU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=syfGzBwLR8Fp48PZj07IK8SfCV9cSpvzmms+hBfSzXg/sxIQTVqiUbhYBM0h23Hhr
-         eMZdXYSEfvLlHuriU7fgT1Yjlree6tYvs4iapAFdWOC5o3tFK7tjAYdqQm740BExc3
-         jH1+6MJ+2mucxSDcn1XauL9HC1b02Oz2C7FbiuLw=
-Date:   Wed, 11 Sep 2019 14:30:45 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] module: remove unneeded casts in cmp_name()
-Message-ID: <20190911123044.GA7837@linux-8ccs>
-References: <20190909113902.3096-1-yamada.masahiro@socionext.com>
+        id S1727874AbfIKMdS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 08:33:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40740 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726198AbfIKMdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 08:33:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A71A0AC3E;
+        Wed, 11 Sep 2019 12:33:16 +0000 (UTC)
+Date:   Wed, 11 Sep 2019 14:33:16 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v2] vhost: block speculation of translated descriptors
+Message-ID: <20190911123316.GX4023@dhcp22.suse.cz>
+References: <20190911120908.28410-1-mst@redhat.com>
+ <20190911121628.GT4023@dhcp22.suse.cz>
+ <20190911082236-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190909113902.3096-1-yamada.masahiro@socionext.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.61-default x86_64
+In-Reply-To: <20190911082236-mutt-send-email-mst@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Masahiro Yamada [09/09/19 20:39 +0900]:
->You can pass opaque pointers directly.
+On Wed 11-09-19 08:25:03, Michael S. Tsirkin wrote:
+> On Wed, Sep 11, 2019 at 02:16:28PM +0200, Michal Hocko wrote:
+> > On Wed 11-09-19 08:10:00, Michael S. Tsirkin wrote:
+> > > iovec addresses coming from vhost are assumed to be
+> > > pre-validated, but in fact can be speculated to a value
+> > > out of range.
+> > > 
+> > > Userspace address are later validated with array_index_nospec so we can
+> > > be sure kernel info does not leak through these addresses, but vhost
+> > > must also not leak userspace info outside the allowed memory table to
+> > > guests.
+> > > 
+> > > Following the defence in depth principle, make sure
+> > > the address is not validated out of node range.
+> > > 
+> > > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > > Acked-by: Jason Wang <jasowang@redhat.com>
+> > > Tested-by: Jason Wang <jasowang@redhat.com>
+> > 
+> > no need to mark fo stable? Other spectre fixes tend to be backported
+> > even when the security implications are not really clear. The risk
+> > should be low and better to be covered in case.
+> 
+> This is not really a fix - more a defence in depth thing,
+> quite similar to e.g.  commit b3bbfb3fb5d25776b8e3f361d2eedaabb0b496cd
+> x86: Introduce __uaccess_begin_nospec() and uaccess_try_nospec
+> in scope.
 >
->I also renamed 'va' and 'vb' into more meaningful arguments.
->
->Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> That one doesn't seem to be tagged for stable. Was it queued
+> there in practice?
 
-Looks good, I'll queue this up in modules-next.
+not marked for stable but it went in. At least to 4.4.
 
-Thanks!
-
-Jessica
+-- 
+Michal Hocko
+SUSE Labs
