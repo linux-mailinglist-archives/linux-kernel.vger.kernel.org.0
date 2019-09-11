@@ -2,103 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A84ABAFC6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:22:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05549AFC7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbfIKMWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 08:22:54 -0400
-Received: from foss.arm.com ([217.140.110.172]:46656 "EHLO foss.arm.com"
+        id S1727920AbfIKMZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 08:25:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55562 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726198AbfIKMWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 08:22:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CAD91000;
-        Wed, 11 Sep 2019 05:22:53 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A78693F59C;
-        Wed, 11 Sep 2019 05:22:52 -0700 (PDT)
-Date:   Wed, 11 Sep 2019 13:22:50 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, bhelgaas@google.com,
-        lorenzo.pieralisi@arm.com, yue.wang@Amlogic.com, kishon@ti.com,
-        devicetree@vger.kernel.org, repk@triplefau.lt, maz@kernel.org,
-        linux-amlogic@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: pci: amlogic,meson-pcie: Add G12A
- bindings
-Message-ID: <20190911122250.GT9720@e119886-lin.cambridge.arm.com>
-References: <1567950178-4466-1-git-send-email-narmstrong@baylibre.com>
- <1567950178-4466-2-git-send-email-narmstrong@baylibre.com>
+        id S1726954AbfIKMZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 08:25:10 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2B8423060399;
+        Wed, 11 Sep 2019 12:25:10 +0000 (UTC)
+Received: from localhost (ovpn-116-185.ams2.redhat.com [10.36.116.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C55A71001959;
+        Wed, 11 Sep 2019 12:25:04 +0000 (UTC)
+Date:   Wed, 11 Sep 2019 14:24:58 +0200
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v5 0/4] virtio-fs: shared file system for virtual machines
+Message-ID: <20190911122458.GA8859@stefanha-x1.localdomain>
+References: <20190910151206.4671-1-mszeredi@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
 Content-Disposition: inline
-In-Reply-To: <1567950178-4466-2-git-send-email-narmstrong@baylibre.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20190910151206.4671-1-mszeredi@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 11 Sep 2019 12:25:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 08, 2019 at 01:42:53PM +0000, Neil Armstrong wrote:
-> Add PCIE bindings for the Amlogic G12A SoC, the support is the same
-> but the PHY is shared with USB3 to control the differential lines.
-> 
-> Thus this adds a phy phandle to control the PHY, and sets invalid
-> MIPI clock as optional for G12A.
 
-Perhaps reword to "Thus this adds a phy phandle to control the PHY,
-and only requires a MIPI clock for AXG SoC Family".
+--AhhlLboLdkugWU4S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Tue, Sep 10, 2019 at 05:12:02PM +0200, Miklos Szeredi wrote:
+> Git tree for this version is available here:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#virtiofs-=
+v5
+>=20
+> Only post patches that actually add virtiofs (virtiofs-v5-base..virtiofs-=
+v5).
+>=20
+> I've folded the series from Vivek and fixed a couple of TODO comments
+> myself.  AFAICS two issues remain that need to be resolved in the short
+> term, one way or the other: freeze/restore and full virtqueue.
 
-Andrew Murray
+Thank you!  I am investigating freeze/restore.
 
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  .../devicetree/bindings/pci/amlogic,meson-pcie.txt   | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-> index efa2c8b9b85a..84fdc422792e 100644
-> --- a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-> @@ -9,13 +9,16 @@ Additional properties are described here:
->  
->  Required properties:
->  - compatible:
-> -	should contain "amlogic,axg-pcie" to identify the core.
-> +	should contain :
-> +	- "amlogic,axg-pcie" for AXG SoC Family
-> +	- "amlogic,g12a-pcie" for G12A SoC Family
-> +	to identify the core.
->  - reg:
->  	should contain the configuration address space.
->  - reg-names: Must be
->  	- "elbi"	External local bus interface registers
->  	- "cfg"		Meson specific registers
-> -	- "phy"		Meson PCIE PHY registers
-> +	- "phy"		Meson PCIE PHY registers for AXG SoC Family
->  	- "config"	PCIe configuration space
->  - reset-gpios: The GPIO to generate PCIe PERST# assert and deassert signal.
->  - clocks: Must contain an entry for each entry in clock-names.
-> @@ -23,12 +26,13 @@ Required properties:
->  	- "pclk"       PCIe GEN 100M PLL clock
->  	- "port"       PCIe_x(A or B) RC clock gate
->  	- "general"    PCIe Phy clock
-> -	- "mipi"       PCIe_x(A or B) 100M ref clock gate
-> +	- "mipi"       PCIe_x(A or B) 100M ref clock gate for AXG SoC Family
->  - resets: phandle to the reset lines.
->  - reset-names: must contain "phy" "port" and "apb"
-> -       - "phy"         Share PHY reset
-> +       - "phy"         Share PHY reset for AXG SoC Family
->         - "port"        Port A or B reset
->         - "apb"         Share APB reset
-> +- phys: should contain a phandle to the shared phy for G12A SoC Family
->  - device_type:
->  	should be "pci". As specified in designware-pcie.txt
->  
-> -- 
-> 2.17.1
-> 
+Stefan
+
+--AhhlLboLdkugWU4S
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1455oACgkQnKSrs4Gr
+c8hWrggArzr0OOPSTmdQ2dbddY7tmvuQTZgyaLYh1W0gffJZH8gkHIH2rod4htHq
+AWYZ7UxNWmHEdY4JHvMZCuxHMT8NScXWjGrkYbyE9amgj0b7PjtgRMiTJDFp2AMf
+pr5rza+XUKxkeoVjdSHMThZEGXWn2PP3zEA/IftMSyL7XEHSVS47NRFTFScGDDwW
+HpuWwzul31EFYU6ciPAGbAYPOcvDZCZv51ViJdnCcUMnzP3JMpdYyQy/2pcTauzm
+1cvyoMStnkMl3uqTswNRCwRFGU5YVqjnxAWg6Gyqu4TyEa5hp96f97XKcFZRbBjv
+LFwvgwMzPdO3dZqn3kBILCi/ZSR6MA==
+=TbXq
+-----END PGP SIGNATURE-----
+
+--AhhlLboLdkugWU4S--
