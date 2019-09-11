@@ -2,112 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E2F1B02B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:28:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EDA4B02BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:34:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729565AbfIKR2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 13:28:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36536 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728897AbfIKR2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 13:28:42 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9BB09A37191;
-        Wed, 11 Sep 2019 17:28:42 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-123-234.rdu2.redhat.com [10.10.123.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 61251608C2;
-        Wed, 11 Sep 2019 17:28:40 +0000 (UTC)
-Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
- PMD
-From:   Waiman Long <longman@redhat.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
-References: <20190911150537.19527-1-longman@redhat.com>
- <20190911150537.19527-6-longman@redhat.com>
- <20190911151451.GH29434@bombadil.infradead.org>
- <19d9ea18-bd20-e02f-c1de-70e7322f5f22@redhat.com>
- <40a511a4-5771-f9a9-40b6-64e39478bbcb@oracle.com>
- <5229662c-d709-7aca-be4c-53dea1a49fda@redhat.com>
-Organization: Red Hat
-Message-ID: <81464111-2335-9dc4-3465-5800348d5aba@redhat.com>
-Date:   Wed, 11 Sep 2019 18:28:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <5229662c-d709-7aca-be4c-53dea1a49fda@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Wed, 11 Sep 2019 17:28:42 +0000 (UTC)
+        id S1729607AbfIKReQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 13:34:16 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33580 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728897AbfIKReP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 13:34:15 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8BHSmB0185448;
+        Wed, 11 Sep 2019 17:31:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=vdcAsqLRAiFiTKWcxJVERFUpZ1PHtp9XnzYZYe2wy6M=;
+ b=B3UwskUyw0aAdXtXHV5+JRlHhj2c6ftYlEO72NPMjUfSjSM5Ls7u/c8qjGsWxhoEKLjw
+ EVUlDWE/Ts4GZ0WTBagxCv+3feVEWNrAn41lPK9LWtQZxRfDGICR12QWfjY1R+d6GQqw
+ BZye9daqD639D7jQJulIQIplTvfxpzEJ/04IUAJEksoytpNuFAQ7GAYbei2Vvt2GFMrI
+ dYF9R9evHhk2Q6d+G40lovb8ttggL2dgGVtHERS/hIm/zZRBTdJtQlbePGkLYY0pzqlw
+ u5JrisEjMcvw0y9ZMxIgRwvtcERHjTr3sQHotRDusW4ES+Q4zFTIump+7MnAansryJ1L Ow== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2uw1m93q0g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 17:31:38 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8BHSco2020308;
+        Wed, 11 Sep 2019 17:29:38 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2uxj891dxm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 17:29:38 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8BHTaBm030828;
+        Wed, 11 Sep 2019 17:29:36 GMT
+Received: from anon-dhcp-153.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Sep 2019 10:29:36 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: Regression in 5.1.20: Reading long directory fails
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <429B2B1F-FB55-46C5-8BC5-7644CE9A5894@redhat.com>
+Date:   Wed, 11 Sep 2019 13:29:34 -0400
+Cc:     Jason L Tibbitts III <tibbs@math.uh.edu>,
+        Bruce Fields <bfields@fieldses.org>,
+        Wolfgang Walter <linux@stwm.de>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        km@cm4all.com, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F1EC95D2-47A3-4390-8178-CAA8C045525B@oracle.com>
+References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
+ <4418877.15LTP4gqqJ@stwm.de> <ufapnkhqjwm.fsf@epithumia.math.uh.edu>
+ <4198657.JbNDGbLXiX@h2o.as.studentenwerk.mhn.de>
+ <ufad0ggrfrk.fsf@epithumia.math.uh.edu> <20190906144837.GD17204@fieldses.org>
+ <ufapnkdw3s3.fsf@epithumia.math.uh.edu>
+ <75F810C6-E99E-40C3-B5E1-34BA2CC42773@oracle.com>
+ <DD6B77EE-3E25-4A65-9D0E-B06EEAD32B31@redhat.com>
+ <0089DF80-3A1C-4F0B-A200-28FF7CFD0C65@oracle.com>
+ <429B2B1F-FB55-46C5-8BC5-7644CE9A5894@redhat.com>
+To:     Benjamin Coddington <bcodding@redhat.com>
+X-Mailer: Apple Mail (2.3445.104.11)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=899
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909110161
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=959 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909110161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/19 6:15 PM, Waiman Long wrote:
-> On 9/11/19 6:03 PM, Mike Kravetz wrote:
->> On 9/11/19 8:44 AM, Waiman Long wrote:
->>> On 9/11/19 4:14 PM, Matthew Wilcox wrote:
->>>> On Wed, Sep 11, 2019 at 04:05:37PM +0100, Waiman Long wrote:
->>>>> When allocating a large amount of static hugepages (~500-1500GB) on a
->>>>> system with large number of CPUs (4, 8 or even 16 sockets), performance
->>>>> degradation (random multi-second delays) was observed when thousands
->>>>> of processes are trying to fault in the data into the huge pages. The
->>>>> likelihood of the delay increases with the number of sockets and hence
->>>>> the CPUs a system has.  This only happens in the initial setup phase
->>>>> and will be gone after all the necessary data are faulted in.
->>>> Can;t the application just specify MAP_POPULATE?
->>> Originally, I thought that this happened in the startup phase when the
->>> pages were faulted in. The problem persists after steady state had been
->>> reached though. Every time you have a new user process created, it will
->>> have its own page table.
->> This is still at fault time.  Although, for the particular application it
->> may be after the 'startup phase'.
->>
->>>                          It is the sharing of the of huge page shared
->>> memory that is causing problem. Of course, it depends on how the
->>> application is written.
->> It may be the case that some applications would find the delays acceptable
->> for the benefit of shared pmds once they reach steady state.  As you say, of
->> course this depends on how the application is written.
->>
->> I know that Oracle DB would not like it if PMD sharing is disabled for them.
->> Based on what I know of their model, all processes which share PMDs perform
->> faults (write or read) during the startup phase.  This is in environments as
->> big or bigger than you describe above.  I have never looked at/for delays in
->> these environments around pmd sharing (page faults), but that does not mean
->> they do not exist.  I will try to get the DB group to give me access to one
->> of their large environments for analysis.
->>
->> We may want to consider making the timeout value and disable threshold user
->> configurable.
-> Making it configurable is certainly doable. They can be sysctl
-> parameters so that the users can reenable PMD sharing by making those
-> parameters larger.
 
-I suspect that the customer's application may be generating a new
-process with its own address space for each transaction. That will be
-causing a lot of PMD sharing operations when hundreds of threads are
-pounding it simultaneously. I had inserted some instrumentation code to
-a test kernel that the customers used for testing, the number of
-timeouts after a certain time went up more than 20k.
 
-On the other hands, if the application is structured in such a way that
-there is limited number of separate address spaces with worker threads
-processing the transaction, PMD sharing will be less of a problem. It
-will be hard to convince users to make such a structural changes to
-their application.
+> On Sep 11, 2019, at 1:26 PM, Benjamin Coddington <bcodding@redhat.com> =
+wrote:
+>=20
+>=20
+> On 11 Sep 2019, at 12:39, Chuck Lever wrote:
+>=20
+>>> On Sep 11, 2019, at 12:25 PM, Benjamin Coddington =
+<bcodding@redhat.com> wrote:
+>>>=20
+>=20
+>>> Instead, I think we want to make sure the mic falls squarely into =
+the tail
+>>> every time.
+>>=20
+>> I'm not clear how you could do that. The length of the page data is =
+not
+>> known to the client before it parses the reply. Are you suggesting =
+that
+>> gss_unwrap should do it somehow?
+>=20
+> Is it too niave to always put the mic at the end of the tail?
 
-Cheers,
-Longman
+The size of the page content is variable.
+
+The only way the MIC will fall into the tail is if the page content is
+exactly the largest expected size. When the page content is smaller than
+that, the receive logic will place part or all of the MIC in ->pages.
+
+
+--
+Chuck Lever
+
 
 
