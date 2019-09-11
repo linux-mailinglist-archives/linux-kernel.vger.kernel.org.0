@@ -2,102 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B935AFAD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBEB1AFADC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:54:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbfIKKvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 06:51:52 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55248 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbfIKKvw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 06:51:52 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p7so2873021wmp.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 03:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Uryc0/pqdqKJAZc5VoGKLbUrzv2t7H2FdK8rw8hlLgg=;
-        b=YeChDvIWXEB0TstAMgYAD4rorZ17PMeVJH48y0XNFopRTKZkFqUzX25bM6/kDkwlSB
-         viruUn+aG6aBu7i775BC0uPh+Nsgx/H/fOmG9216rwKNJhReVC/5NFTPYosGl7ssOqXf
-         Ip70bQ66StWipRujTpPgoTIYal+mCceDScD4Xpm6y026t3KvdNv8aQG0AX1QCn4xSqqg
-         J2DFJGyp8hAvpPJxNa+g/OKeKf5D0HyIxw3JdyOMhYjvFneVT7aV2X+MA1yMM361/1py
-         /X/tC/wr7UCCvVd8QF24ZWpp+8FpWc8i3kUAx2gpGTztEI/E2jSfyarbbeJ/q9Js94L+
-         T3Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Uryc0/pqdqKJAZc5VoGKLbUrzv2t7H2FdK8rw8hlLgg=;
-        b=q350kOpSuzZSQTmgvoOxFiHRy172gnJdXugas1FGYaleqe+TdVASd+cWTwBRe+9bYN
-         tAvB4k1VmrMOxmFck1JxdSclg8O/8IuG1RB7R766J5vX35ZxQMjCo8/Yv6/XVrjg0r6Q
-         0Xg/U9+MzmVGeB7wVSRUIIK6vBVJal+OgX5Q50Aaz8lEewDIPmfoQjEZ4j3xEcf7Cpj/
-         vEqgm+0VdkI7ARzDd7NZ5M6aFKEfF3YhYL7+EpbUrKj/KW64HEww6H0mH8EAAHT0DIu/
-         +02VOHqfk6ljjgmCc7wF0Q8j2XzDHGT+nK0COL4JZtcemreK91XD5+emSY/xBYHEwlpU
-         fd1w==
-X-Gm-Message-State: APjAAAWsLdBrrusdw4o9xphMFXS9s+NLJ/2jl47czmqEfVxel1rN2IB3
-        4+ShyiYBRDy7ME2qW8sgCQuSqszR6QZ3Mw==
-X-Google-Smtp-Source: APXvYqxQ+TkhPae6YnwpETNmnZCKnGfRVMJswmmeya3cK+zZE7nfR1qS/48jxDEUAMDXwJhtaDBYyw==
-X-Received: by 2002:a1c:110:: with SMTP id 16mr3544521wmb.88.1568199110456;
-        Wed, 11 Sep 2019 03:51:50 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id b144sm2485131wmb.3.2019.09.11.03.51.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2019 03:51:49 -0700 (PDT)
-Date:   Wed, 11 Sep 2019 11:51:48 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     lee.jones@linaro.org, jingoohan1@gmail.com,
-        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hns@goldelico.com
-Subject: Re: [PATCH] backlight: lm3630a: fix module aliases
-Message-ID: <20190911105148.4prmcr2f2r36sgrf@holly.lan>
-References: <20190910152359.7448-1-andreas@kemnade.info>
+        id S1727528AbfIKKyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 06:54:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50440 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726696AbfIKKyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 06:54:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 625F7AFBA;
+        Wed, 11 Sep 2019 10:54:41 +0000 (UTC)
+Message-ID: <b0b824bebb9ef13ce746f9914de83126b0386e23.camel@suse.de>
+Subject: Re: [PATCH v5 3/4] arm64: use both ZONE_DMA and ZONE_DMA32
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     catalin.marinas@arm.com, hch@lst.de, wahrenst@gmx.net,
+        marc.zyngier@arm.com, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org, Will Deacon <will@kernel.org>
+Cc:     f.fainelli@gmail.com, robin.murphy@arm.com,
+        linux-kernel@vger.kernel.org, mbrugger@suse.com,
+        linux-rpi-kernel@lists.infradead.org, phill@raspberrypi.org,
+        m.szyprowski@samsung.com
+Date:   Wed, 11 Sep 2019 12:54:38 +0200
+In-Reply-To: <20190909095807.18709-4-nsaenzjulienne@suse.de>
+References: <20190909095807.18709-1-nsaenzjulienne@suse.de>
+         <20190909095807.18709-4-nsaenzjulienne@suse.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-+mwqdWbEE6wWAYsMfkXS"
+User-Agent: Evolution 3.32.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190910152359.7448-1-andreas@kemnade.info>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 05:23:59PM +0200, Andreas Kemnade wrote:
-> Devicetree aliases are missing, so that module autoloading
-> does not work properly.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+--=-+mwqdWbEE6wWAYsMfkXS
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-> ---
->  drivers/video/backlight/lm3630a_bl.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-> index 3b45a1733198..9d67c07db2f2 100644
-> --- a/drivers/video/backlight/lm3630a_bl.c
-> +++ b/drivers/video/backlight/lm3630a_bl.c
-> @@ -617,12 +617,14 @@ static const struct i2c_device_id lm3630a_id[] = {
->  	{}
->  };
->  
-> +MODULE_DEVICE_TABLE(i2c, lm3630a_id);
+On Mon, 2019-09-09 at 11:58 +0200, Nicolas Saenz Julienne wrote:
 > +
->  static const struct of_device_id lm3630a_match_table[] = {
->  	{ .compatible = "ti,lm3630a", },
->  	{ },
->  };
->  
-> -MODULE_DEVICE_TABLE(i2c, lm3630a_id);
-> +MODULE_DEVICE_TABLE(of, lm3630a_match_table);
->  
->  static struct i2c_driver lm3630a_i2c_driver = {
->  	.driver = {
-> -- 
-> 2.11.0
-> 
+>  /*
+> - * Return the maximum physical address for ZONE_DMA32 (DMA_BIT_MASK(32))=
+. It
+> - * currently assumes that for memory starting above 4G, 32-bit devices w=
+ill
+> - * use a DMA offset.
+> + * Return the maximum physical address for a zone with a given address s=
+ize
+> + * limit. It currently assumes that for memory starting above 4G, 32-bit
+> + * devices will use a DMA offset.
+>   */
+> -static phys_addr_t __init max_zone_dma32_phys(void)
+> +static phys_addr_t __init max_zone_phys(unsigned int zone_bits)
+>  {
+>         phys_addr_t offset =3D memblock_start_of_DRAM() & GENMASK_ULL(63,=
+ 32);
+> -       return min(offset + (1ULL << 32), memblock_end_of_DRAM());
+> +       return min(offset + (1ULL << zone_bits), memblock_end_of_DRAM());
+>  }
+
+Hi all,
+while testing other code on top of this series on odd arm64 machines I foun=
+d an
+issue: when memblock_start_of_DRAM() !=3D 0, max_zone_phys() isn't taking i=
+nto
+account the offset to the beginning of memory. This doesn't matter with
+zone_bits =3D=3D 32 but it does when zone_bits =3D=3D 30.
+
+I'll send a follow-up series.
+
+Regards,
+Nicolas
+
+
+--=-+mwqdWbEE6wWAYsMfkXS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl140m4ACgkQlfZmHno8
+x/7BUAf8DFgSHDr3lRvqtp8RR9IRwdyy2AUPrJxMxccznKYgaiaJpx9nyG2J8h2M
+2RuPADsFlI9fX0698LVNDxwUhICkAYh5gxOw/S+KHQvpw6KDqOn5HNvAESc64TTQ
+T+KDM+LR+j6W0fRNPUDWJvLJCYf0dXc2PmysKhJF+Gck5LmHPl+aNUmJjpVqa/HJ
+cMUJAObpwDpLRySRBi5DtN+ZAv/SVwD1WhJkn/0FjWmBRBpwt9T0YVdPGbyJd877
+kLjB51r2JQSn/+Za+2TjIx4E1Qf9APCKCYzp1Jd0ofb53DO5jFtMPZ7GQljKwVf1
+d05+0WOR5OrHixfZhqXV1huP39T8Uw==
+=iRPY
+-----END PGP SIGNATURE-----
+
+--=-+mwqdWbEE6wWAYsMfkXS--
+
