@@ -2,100 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD71BAFC89
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C690DAFC8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:27:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbfIKM0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 08:26:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33132 "EHLO mail.kernel.org"
+        id S1727967AbfIKM04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 08:26:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbfIKM0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 08:26:03 -0400
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+        id S1726781AbfIKM04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 08:26:56 -0400
+Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9C6D20872;
-        Wed, 11 Sep 2019 12:26:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7220A2075C;
+        Wed, 11 Sep 2019 12:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568204763;
-        bh=2pPMn/FVFbCJXIco4hndCy4yU4apLjVYE56Muit6qTY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=btzmfK97dcowxxq/8O16K0PTIHFX9tbMeTa4kmm/4lheEz68VruqQERLYbjUHM7pT
-         UQuI7VeW+2AwHOtw1j1+hzWgSQZUCqL1FzHNEviy7J4EEGFE/Q6uZpmOIjk/HmSi+A
-         nvQJ+0cyNIOUl0sZ8SvdEO6tyrB/Dxykx+hTJkDY=
-Received: by mail-lj1-f178.google.com with SMTP id y23so19453563ljn.5;
-        Wed, 11 Sep 2019 05:26:02 -0700 (PDT)
-X-Gm-Message-State: APjAAAWeURmGifab4o3ALSzzcE0gRRftC/AlKNN+3E9Huz4aGCo7Hx01
-        ZL7rpbeH+LueER2NNNmXJJJPnuuCGjtipjV6xvA=
-X-Google-Smtp-Source: APXvYqw8gd+xprNyWbgdYgqyXgDC15vF70jPsWIWsn6xVgL8eKxH8DV9rxOR9uhU6qghey5K9nKVIBQo3AdRVaPcC8k=
-X-Received: by 2002:a2e:b4e3:: with SMTP id s3mr23885542ljm.143.1568204760929;
- Wed, 11 Sep 2019 05:26:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20190911110500eucas1p2e1304a19e2e75ee43d80fcdc3b871237@eucas1p2.samsung.com>
- <CAJKOXPeojuk1UrYo9Wakaaq4VJt3Ts22Vi-V5xzwAXoFU5+tcA@mail.gmail.com>
- <20190911110446.32058-1-m.falkowski@samsung.com> <CAJKOXPeZ2usT+bx23n-hXxsLsbZqr-0JEtyagK8sfsLaFiaH5w@mail.gmail.com>
- <d7e938e8-d42e-be22-ce76-561159064180@samsung.com>
-In-Reply-To: <d7e938e8-d42e-be22-ce76-561159064180@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 11 Sep 2019 14:25:49 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdM_A5Enmv_GOJuKLvfBBwi-z3qWiW4WG9L-dmuW9T5Wg@mail.gmail.com>
-Message-ID: <CAJKOXPdM_A5Enmv_GOJuKLvfBBwi-z3qWiW4WG9L-dmuW9T5Wg@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: arm: samsung: Convert Samsung Exynos
- IOMMU H/W, System MMU to dt-schema
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Maciej Falkowski <m.falkowski@samsung.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        Andrzej Hajda <a.hajda@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        s=default; t=1568204815;
+        bh=MseBqWNeudWiY5Pr7ynKRYTy7jqmwG9LbsTu29MhRKY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LZdJBvqCBTeZla1V84Jvesl+/iKxoEMHllQ6mdelwy6CTJTUtMeG23jEOWk9243i+
+         7nWDOMMWIdhPNK+TRxsdmaTNGp7NciuNvs1Zx8Au6khZC07bagyXzJ97FH/gkXkBmQ
+         CsnNzvqSqBcBz7jA1rgVBX6+SX5AL/zvH1eD2PUw=
+From:   Will Deacon <will@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     maco@android.com, gregkh@linuxfoundation.org,
+        Will Deacon <will@kernel.org>,
+        Matthias Maennich <maennich@google.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH] module: Fix link failure due to invalid relocation on namespace offset
+Date:   Wed, 11 Sep 2019 13:26:46 +0100
+Message-Id: <20190911122646.13838-1-will@kernel.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Sep 2019 at 13:57, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Hi Krzyszotf,
->
-> On 2019-09-11 13:36, Krzysztof Kozlowski wrote:
-> > On Wed, 11 Sep 2019 at 13:05, Maciej Falkowski <m.falkowski@samsung.com> wrote:
-> >> Convert Samsung Exynos IOMMU H/W, System Memory Management Unit
-> >> to newer dt-schema format.
-> >>
-> >> Update clock description.
-> >>
-> >> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> >> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> >> ---
-> >> Hi Krzysztof,
-> >>
-> >> Thank you for feedback.
-> >>
-> >> v3:
-> >>
-> >> - remove obsolete interrupts description and
-> >> set its maxItems to one. There are some incompatible
-> >> files which will be fixed with another patch.
-> > Driver stopped supporting two IRQ lines in commit
-> > 7222e8db2d506197ee183de0f9b76b3ad97e8c18 (iommu/exynos: Fix build
-> > errors). The second IRQ line in Exynos3250 DTS seems to be ignored.
-> >
-> > The patch now looks good to me:
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >
-> > However for some reasons you did not CC the IOMMU maintainers. Please
-> > use scripts/get_maintainer.pl to get the list of folks to CC.
->
-> Frankly I don't see any reason to spam IOMMU ml or maintainer with this
-> discussion about dt-binding conversion. This patch will be merged via dt
-> tree if I got it right.
+Commit 8651ec01daed ("module: add support for symbol namespaces.")
+broke linking for arm64 defconfig:
 
-Indeed usually subsystem maintainers are not interested in DT schema
-conversion although they are mentioned as maintainers for this file so
-it is nice to CC them... I would not call spamming when there is
-explicit pattern for CCing.
+  | lib/crypto/arc4.o: In function `__ksymtab_arc4_setkey':
+  | arc4.c:(___ksymtab+arc4_setkey+0x8): undefined reference to `no symbol'
+  | lib/crypto/arc4.o: In function `__ksymtab_arc4_crypt':
+  | arc4.c:(___ksymtab+arc4_crypt+0x8): undefined reference to `no symbol'
 
-Best regards,
-Krzysztof
+This is because the dummy initialisation of the 'namespace_offset' field
+in 'struct kernel_symbol' when using EXPORT_SYMBOL on architectures with
+support for PREL32 locations uses an offset from an absolute address (0)
+in an effort to trick 'offset_to_pointer' into behaving as a NOP,
+allowing non-namespaced symbols to be treated in the same way as those
+belonging to a namespace.
+
+Unfortunately, place-relative relocations require a symbol reference
+rather than an absolute value and, although x86 appears to get away with
+this due to placing the kernel text at the top of the address space, it
+almost certainly results in a runtime failure if the kernel is relocated
+dynamically as a result of KASLR.
+
+Rework 'namespace_offset' so that a value of 0, which cannot occur for a
+valid namespaced symbol, indicates that the corresponding symbol does
+not belong to a namespace.
+
+Cc: Matthias Maennich <maennich@google.com>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 8651ec01daed ("module: add support for symbol namespaces.")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+---
+
+Please note that I've not been able to test this at LPC, but it's been
+submitted to kernelci.
+
+ include/asm-generic/export.h | 2 +-
+ include/linux/export.h       | 2 +-
+ kernel/module.c              | 2 ++
+ 3 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+index e2b5d0f569d3..d0912c7ac2fc 100644
+--- a/include/asm-generic/export.h
++++ b/include/asm-generic/export.h
+@@ -17,7 +17,7 @@
+ 
+ .macro __put, val, name
+ #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+-	.long	\val - ., \name - ., 0 - .
++	.long	\val - ., \name - ., 0
+ #elif defined(CONFIG_64BIT)
+ 	.quad	\val, \name, 0
+ #else
+diff --git a/include/linux/export.h b/include/linux/export.h
+index 2c5468d8ea9a..ef5d015d754a 100644
+--- a/include/linux/export.h
++++ b/include/linux/export.h
+@@ -68,7 +68,7 @@ extern struct module __this_module;
+ 	    "__ksymtab_" #sym ":				\n"	\
+ 	    "	.long	" #sym "- .				\n"	\
+ 	    "	.long	__kstrtab_" #sym "- .			\n"	\
+-	    "	.long	0 - .					\n"	\
++	    "	.long	0					\n"	\
+ 	    "	.previous					\n")
+ 
+ struct kernel_symbol {
+diff --git a/kernel/module.c b/kernel/module.c
+index f76efcf2043e..7ab244c4e1ba 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -547,6 +547,8 @@ static const char *kernel_symbol_name(const struct kernel_symbol *sym)
+ static const char *kernel_symbol_namespace(const struct kernel_symbol *sym)
+ {
+ #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
++	if (!sym->namespace_offset)
++		return NULL;
+ 	return offset_to_ptr(&sym->namespace_offset);
+ #else
+ 	return sym->namespace;
+-- 
+2.23.0.162.g0b9fbb3734-goog
+
