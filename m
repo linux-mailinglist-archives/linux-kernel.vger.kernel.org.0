@@ -2,181 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83801AF5A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 761A2AF5A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:17:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfIKGRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 02:17:09 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2209 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726018AbfIKGRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 02:17:09 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A8CF6161B60E344335FF;
-        Wed, 11 Sep 2019 14:17:06 +0800 (CST)
-Received: from [127.0.0.1] (10.74.191.121) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Sep 2019
- 14:17:00 +0800
-Subject: Re: [PATCH] driver core: ensure a device has valid node id in
- device_add()
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Greg KH <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
-        <mingo@kernel.org>, <linuxarm@huawei.com>
-References: <1568009063-77714-1-git-send-email-linyunsheng@huawei.com>
- <20190909095347.GB6314@kroah.com>
- <9598b359-ab96-7d61-687a-917bee7a5cd9@huawei.com>
- <20190910093114.GA19821@kroah.com>
- <34feca56-c95e-41a6-e09f-8fc2d2fd2bce@huawei.com>
- <20190910110451.GP2063@dhcp22.suse.cz> <20190910111252.GA8970@kroah.com>
- <5a5645d2-030f-7921-432f-ff7d657405b8@huawei.com>
- <20190910125339.GZ2063@dhcp22.suse.cz> <20190911053334.GH4023@dhcp22.suse.cz>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <ca590101-bfc8-3934-d803-537aacb707e0@huawei.com>
-Date:   Wed, 11 Sep 2019 14:15:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1726835AbfIKGQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 02:16:26 -0400
+Received: from mga04.intel.com ([192.55.52.120]:26661 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726018AbfIKGQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 02:16:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 23:16:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="185731681"
+Received: from pipin.fi.intel.com ([10.237.72.175])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Sep 2019 23:16:23 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     Christopher S Hall <christopher.s.hall@intel.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH v4 1/2] PTP: introduce new versions of IOCTLs
+Date:   Wed, 11 Sep 2019 09:16:21 +0300
+Message-Id: <20190911061622.774006-1-felipe.balbi@linux.intel.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20190911053334.GH4023@dhcp22.suse.cz>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/11 13:33, Michal Hocko wrote:
-> On Tue 10-09-19 14:53:39, Michal Hocko wrote:
->> On Tue 10-09-19 20:47:40, Yunsheng Lin wrote:
->>> On 2019/9/10 19:12, Greg KH wrote:
->>>> On Tue, Sep 10, 2019 at 01:04:51PM +0200, Michal Hocko wrote:
->>>>> On Tue 10-09-19 18:58:05, Yunsheng Lin wrote:
->>>>>> On 2019/9/10 17:31, Greg KH wrote:
->>>>>>> On Tue, Sep 10, 2019 at 02:43:32PM +0800, Yunsheng Lin wrote:
->>>>>>>> On 2019/9/9 17:53, Greg KH wrote:
->>>>>>>>> On Mon, Sep 09, 2019 at 02:04:23PM +0800, Yunsheng Lin wrote:
->>>>>>>>>> Currently a device does not belong to any of the numa nodes
->>>>>>>>>> (dev->numa_node is NUMA_NO_NODE) when the node id is neither
->>>>>>>>>> specified by fw nor by virtual device layer and the device has
->>>>>>>>>> no parent device.
->>>>>>>>>
->>>>>>>>> Is this really a problem?
->>>>>>>>
->>>>>>>> Not really.
->>>>>>>> Someone need to guess the node id when it is not specified, right?
->>>>>>>
->>>>>>> No, why?  Guessing guarantees you will get it wrong on some systems.
->>>>>>>
->>>>>>> Are you seeing real problems because the id is not being set?  What
->>>>>>> problem is this fixing that you can actually observe?
->>>>>>
->>>>>> When passing the return value of dev_to_node() to cpumask_of_node()
->>>>>> without checking the node id if the node id is not valid, there is
->>>>>> global-out-of-bounds detected by KASAN as below:
->>>>>
->>>>> OK, I seem to remember this being brought up already. And now when I
->>>>> think about it, we really want to make cpumask_of_node NUMA_NO_NODE
->>>>> aware. That means using the same trick the allocator does for this
->>>>> special case.
->>>>
->>>> That seems reasonable to me, and much more "obvious" as to what is going
->>>> on.
->>>>
->>>
->>> Ok, thanks for the suggestion.
->>>
->>> For arm64 and x86, there are two versions of cpumask_of_node().
->>>
->>> when CONFIG_DEBUG_PER_CPU_MAPS is defined, the cpumask_of_node()
->>>    in arch/x86/mm/numa.c is used, which does partial node id checking:
->>>
->>> const struct cpumask *cpumask_of_node(int node)
->>> {
->>>         if (node >= nr_node_ids) {
->>>                 printk(KERN_WARNING
->>>                         "cpumask_of_node(%d): node > nr_node_ids(%u)\n",
->>>                         node, nr_node_ids);
->>>                 dump_stack();
->>>                 return cpu_none_mask;
->>>         }
->>>         if (node_to_cpumask_map[node] == NULL) {
->>>                 printk(KERN_WARNING
->>>                         "cpumask_of_node(%d): no node_to_cpumask_map!\n",
->>>                         node);
->>>                 dump_stack();
->>>                 return cpu_online_mask;
->>>         }
->>>         return node_to_cpumask_map[node];
->>> }
->>>
->>> when CONFIG_DEBUG_PER_CPU_MAPS is undefined, the cpumask_of_node()
->>>    in arch/x86/include/asm/topology.h is used:
->>>
->>> static inline const struct cpumask *cpumask_of_node(int node)
->>> {
->>>         return node_to_cpumask_map[node];
->>> }
->>
->> I would simply go with. There shouldn't be any need for heavy weight
->> checks that CONFIG_DEBUG_PER_CPU_MAPS has.
->>
->> static inline const struct cpumask *cpumask_of_node(int node)
->> {
->> 	/* A nice comment goes here */
->> 	if (node == NUMA_NO_NODE)
+The current version of the IOCTL have a small problem which prevents us
+from extending the API by making use of reserved fields. In these new
+IOCTLs, we are now making sure that flags and rsv fields are zero which
+will allow us to extend the API in the future.
 
-How about "(unsigned int)node >= nr_node_ids", this is suggested
-by Peter, it checks the case where the node id set by fw is bigger
-or equal than nr_node_ids, and still handle the < 0 case, which
-includes NUMA_NO_NODE.
+Reviewed-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+---
 
-Maybe define a macro like below to do that in order to do
-the node checking consistently through kernel:
+Changes since v3:
+	- Remove bogus bitwise negation
 
-#define numa_node_valid(node)	((unsigned int)(node) < nr_node_ids)
+Changes since v2:
+	- Define PTP_{PEROUT,EXTTS}_VALID_FLAGS
+	- Fix comment above PTP_*_FLAGS
 
+Changes since v1:
+	- Add a blank line after memset()
+	- Move memset(req) to the three places where it's needed
+	- Fix the accidental removal of GETFUNC and SETFUNC
 
->> 		return node_to_cpumask_map[numa_mem_id()];
->>         return node_to_cpumask_map[node];
->> }
-> 
-> Sleeping over this and thinking more about the actual semantic the above
-> is wrong. We cannot really copy the page allocator logic. Why? Simply
-> because the page allocator doesn't enforce the near node affinity. It
-> just picks it up as a preferred node but then it is free to fallback to
-> any other numa node. This is not the case here and node_to_cpumask_map will
-> only restrict to the particular node's cpus which would have really non
-> deterministic behavior depending on where the code is executed. So in
-> fact we really want to return cpu_online_mask for NUMA_NO_NODE.
+ drivers/ptp/ptp_chardev.c      | 63 ++++++++++++++++++++++++++++++++++
+ include/uapi/linux/ptp_clock.h | 24 ++++++++++++-
+ 2 files changed, 86 insertions(+), 1 deletion(-)
 
-From below, if the __GFP_THISNODE is set, the fallback is not performed.
-For node_to_cpumask_map() case, maybe we can return the cpumask that is
-on the node of cpu_to_node(raw_smp_processor_id()) for NUMA_NO_NODE,
-because the current cpu does belong to a node, and the node does have at
-least one cpu, which is the cpu is calling the node_to_cpumask_map().
-
-Make any sense?
-
-/*
- * Allocate pages, preferring the node given as nid. The node must be valid and
- * online. For more general interface, see alloc_pages_node().
- */
-static inline struct page *
-__alloc_pages_node(int nid, gfp_t gfp_mask, unsigned int order)
-{
-	VM_BUG_ON(nid < 0 || nid >= MAX_NUMNODES);
-	VM_WARN_ON((gfp_mask & __GFP_THISNODE) && !node_online(nid));
-
-	return __alloc_pages(gfp_mask, order, nid);
-}
-
-> 
-> Sorry about the confusion.
->> -- 
->> Michal Hocko
->> SUSE Labs
-> 
+diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
+index 18ffe449efdf..9c18476d8d10 100644
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -126,7 +126,9 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 	switch (cmd) {
+ 
+ 	case PTP_CLOCK_GETCAPS:
++	case PTP_CLOCK_GETCAPS2:
+ 		memset(&caps, 0, sizeof(caps));
++
+ 		caps.max_adj = ptp->info->max_adj;
+ 		caps.n_alarm = ptp->info->n_alarm;
+ 		caps.n_ext_ts = ptp->info->n_ext_ts;
+@@ -139,11 +141,24 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_EXTTS_REQUEST:
++	case PTP_EXTTS_REQUEST2:
++		memset(&req, 0, sizeof(req));
++
+ 		if (copy_from_user(&req.extts, (void __user *)arg,
+ 				   sizeof(req.extts))) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if (((req.extts.flags & ~PTP_EXTTS_VALID_FLAGS) ||
++			req.extts.rsv[0] || req.extts.rsv[1]) &&
++			cmd == PTP_EXTTS_REQUEST2) {
++			err = -EINVAL;
++			break;
++		} else if (cmd == PTP_EXTTS_REQUEST) {
++			req.extts.flags &= ~PTP_EXTTS_VALID_FLAGS;
++			req.extts.rsv[0] = 0;
++			req.extts.rsv[1] = 0;
++		}
+ 		if (req.extts.index >= ops->n_ext_ts) {
+ 			err = -EINVAL;
+ 			break;
+@@ -154,11 +169,27 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_PEROUT_REQUEST:
++	case PTP_PEROUT_REQUEST2:
++		memset(&req, 0, sizeof(req));
++
+ 		if (copy_from_user(&req.perout, (void __user *)arg,
+ 				   sizeof(req.perout))) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if (((req.perout.flags & ~PTP_PEROUT_VALID_FLAGS) ||
++			req.perout.rsv[0] || req.perout.rsv[1] ||
++			req.perout.rsv[2] || req.perout.rsv[3]) &&
++			cmd == PTP_PEROUT_REQUEST2) {
++			err = -EINVAL;
++			break;
++		} else if (cmd == PTP_PEROUT_REQUEST) {
++			req.perout.flags &= ~PTP_PEROUT_VALID_FLAGS;
++			req.perout.rsv[0] = 0;
++			req.perout.rsv[1] = 0;
++			req.perout.rsv[2] = 0;
++			req.perout.rsv[3] = 0;
++		}
+ 		if (req.perout.index >= ops->n_per_out) {
+ 			err = -EINVAL;
+ 			break;
+@@ -169,6 +200,9 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_ENABLE_PPS:
++	case PTP_ENABLE_PPS2:
++		memset(&req, 0, sizeof(req));
++
+ 		if (!capable(CAP_SYS_TIME))
+ 			return -EPERM;
+ 		req.type = PTP_CLK_REQ_PPS;
+@@ -177,6 +211,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_SYS_OFFSET_PRECISE:
++	case PTP_SYS_OFFSET_PRECISE2:
+ 		if (!ptp->info->getcrosststamp) {
+ 			err = -EOPNOTSUPP;
+ 			break;
+@@ -201,6 +236,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_SYS_OFFSET_EXTENDED:
++	case PTP_SYS_OFFSET_EXTENDED2:
+ 		if (!ptp->info->gettimex64) {
+ 			err = -EOPNOTSUPP;
+ 			break;
+@@ -232,6 +268,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_SYS_OFFSET:
++	case PTP_SYS_OFFSET2:
+ 		sysoff = memdup_user((void __user *)arg, sizeof(*sysoff));
+ 		if (IS_ERR(sysoff)) {
+ 			err = PTR_ERR(sysoff);
+@@ -266,10 +303,23 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_PIN_GETFUNC:
++	case PTP_PIN_GETFUNC2:
+ 		if (copy_from_user(&pd, (void __user *)arg, sizeof(pd))) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if ((pd.rsv[0] || pd.rsv[1] || pd.rsv[2]
++				|| pd.rsv[3] || pd.rsv[4])
++			&& cmd == PTP_PIN_GETFUNC2) {
++			err = -EINVAL;
++			break;
++		} else if (cmd == PTP_PIN_GETFUNC) {
++			pd.rsv[0] = 0;
++			pd.rsv[1] = 0;
++			pd.rsv[2] = 0;
++			pd.rsv[3] = 0;
++			pd.rsv[4] = 0;
++		}
+ 		pin_index = pd.index;
+ 		if (pin_index >= ops->n_pins) {
+ 			err = -EINVAL;
+@@ -285,10 +335,23 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_PIN_SETFUNC:
++	case PTP_PIN_SETFUNC2:
+ 		if (copy_from_user(&pd, (void __user *)arg, sizeof(pd))) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if ((pd.rsv[0] || pd.rsv[1] || pd.rsv[2]
++				|| pd.rsv[3] || pd.rsv[4])
++			&& cmd == PTP_PIN_SETFUNC2) {
++			err = -EINVAL;
++			break;
++		} else if (cmd == PTP_PIN_SETFUNC) {
++			pd.rsv[0] = 0;
++			pd.rsv[1] = 0;
++			pd.rsv[2] = 0;
++			pd.rsv[3] = 0;
++			pd.rsv[4] = 0;
++		}
+ 		pin_index = pd.index;
+ 		if (pin_index >= ops->n_pins) {
+ 			err = -EINVAL;
+diff --git a/include/uapi/linux/ptp_clock.h b/include/uapi/linux/ptp_clock.h
+index 1bc794ad957a..9a0af3511b68 100644
+--- a/include/uapi/linux/ptp_clock.h
++++ b/include/uapi/linux/ptp_clock.h
+@@ -25,10 +25,20 @@
+ #include <linux/ioctl.h>
+ #include <linux/types.h>
+ 
+-/* PTP_xxx bits, for the flags field within the request structures. */
++/*
++ * Bits of the ptp_extts_request.flags field:
++ */
+ #define PTP_ENABLE_FEATURE (1<<0)
+ #define PTP_RISING_EDGE    (1<<1)
+ #define PTP_FALLING_EDGE   (1<<2)
++#define PTP_EXTTS_VALID_FLAGS	(PTP_ENABLE_FEATURE |	\
++				 PTP_RISING_EDGE |	\
++				 PTP_FALLING_EDGE)
++
++/*
++ * Bits of the ptp_perout_request.flags field:
++ */
++#define PTP_PEROUT_VALID_FLAGS (0)
+ 
+ /*
+  * struct ptp_clock_time - represents a time value
+@@ -149,6 +159,18 @@ struct ptp_pin_desc {
+ #define PTP_SYS_OFFSET_EXTENDED \
+ 	_IOWR(PTP_CLK_MAGIC, 9, struct ptp_sys_offset_extended)
+ 
++#define PTP_CLOCK_GETCAPS2  _IOR(PTP_CLK_MAGIC, 10, struct ptp_clock_caps)
++#define PTP_EXTTS_REQUEST2  _IOW(PTP_CLK_MAGIC, 11, struct ptp_extts_request)
++#define PTP_PEROUT_REQUEST2 _IOW(PTP_CLK_MAGIC, 12, struct ptp_perout_request)
++#define PTP_ENABLE_PPS2     _IOW(PTP_CLK_MAGIC, 13, int)
++#define PTP_SYS_OFFSET2     _IOW(PTP_CLK_MAGIC, 14, struct ptp_sys_offset)
++#define PTP_PIN_GETFUNC2    _IOWR(PTP_CLK_MAGIC, 15, struct ptp_pin_desc)
++#define PTP_PIN_SETFUNC2    _IOW(PTP_CLK_MAGIC, 16, struct ptp_pin_desc)
++#define PTP_SYS_OFFSET_PRECISE2 \
++	_IOWR(PTP_CLK_MAGIC, 17, struct ptp_sys_offset_precise)
++#define PTP_SYS_OFFSET_EXTENDED2 \
++	_IOWR(PTP_CLK_MAGIC, 18, struct ptp_sys_offset_extended)
++
+ struct ptp_extts_event {
+ 	struct ptp_clock_time t; /* Time event occured. */
+ 	unsigned int index;      /* Which channel produced the event. */
+-- 
+2.23.0
 
