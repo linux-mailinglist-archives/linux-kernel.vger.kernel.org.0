@@ -2,62 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51622AF656
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:03:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8F7FAF664
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfIKHD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 03:03:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbfIKHD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 03:03:26 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 751E2222BF;
-        Wed, 11 Sep 2019 07:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568185405;
-        bh=KHMiHQSVMrPZ+NrnVGJZgjz+3LvakSIMk7I2HwLLups=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FZuk2zkcPvu0woCKqtj3weurQ7xKWtYR8DTA13MEIuHCb+eSPa451G8boYuE65Y4v
-         2trrQcIG0P8GUr3NXXYvbBSOsrku2o6Yh4lQvgBFax8lR5YejUJdjOHaOzVrNDME2R
-         Am5Js/c52wIg0m5PQkixc5a0lQlDMc3+rnVhsVxE=
-Date:   Wed, 11 Sep 2019 15:03:16 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Ilie Halip <ilie.halip@gmail.com>
-Cc:     clang-built-linux@googlegroups.com,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bus: imx-weim: remove __init from 2 functions
-Message-ID: <20190911070314.GE17142@dragon>
-References: <20190826095828.8948-1-ilie.halip@gmail.com>
+        id S1727001AbfIKHHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 03:07:17 -0400
+Received: from mail2.protonmail.ch ([185.70.40.22]:48917 "EHLO
+        mail2.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbfIKHHR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 03:07:17 -0400
+Date:   Wed, 11 Sep 2019 07:07:06 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aurabindo.in;
+        s=protonmail; t=1568185634;
+        bh=o1L+8KhqsX2u25XHVsCqbScSrZDVm6VBVGwx2oUNrkc=;
+        h=Date:To:From:Cc:Reply-To:Subject:Feedback-ID:From;
+        b=B1ngaLX5Wd0vi0NHSp7skQKh8dYy4lezL9ofvPLKxXliM72y9PJF4LOxBEYH7uFZC
+         Z++rLaVCEzu2lnHJ/qIXYW5ltoyhKg1aOg/UTULTuX3epfAqsBxEgfx1+viO2SlrCP
+         wUAMOlolarO3wnMNqjqWJ5w30HjId+EtZmFEOyv0=
+To:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+From:   Aurabindo Jayamohanan <mail@aurabindo.in>
+Cc:     "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Reply-To: Aurabindo Jayamohanan <mail@aurabindo.in>
+Subject: [RFC] buildtar: add case for riscv architecture
+Message-ID: <NwVOGH2ZdDQaDK35QUy7y8GS__G8IYSIUUIBAJsimZq5BgvI3SzLS3uY6fV7Pgppq-RTRHzpT-8KrsLjDN74CPWwHTCWoSgHkGbeJNvyS30=@aurabindo.in>
+Feedback-ID: D1Wwva8zb0UdpJtanaReRLGO3iCsewpGmDn8ZDKmpao-Gnxd2qXPmwwrSQ99r5Q15lmK-D8x6vKzqhUKCgzweA==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826095828.8948-1-ilie.halip@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/mixed;
+        boundary="b1_8aa5ac17d5a37d2299526ba3f06c3a3e"
+X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 12:58:28PM +0300, Ilie Halip wrote:
-> A previous commit removed __init from weim_probe(), but this attribute is
-> still present for other functions called from it. Thus, these warnings
-> are triggered:
->     WARNING: Section mismatch in reference from the function weim_probe() to the function .init.text:imx_weim_gpr_setup()
->     WARNING: Section mismatch in reference from the function weim_probe() to the function .init.text:weim_timing_setup()
-> 
-> Remove the __init attribute from these functions as well, since they
-> don't seem to be used anywhere else.
-> 
-> Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
-> Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: clang-built-linux@googlegroups.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
+This is a multi-part message in MIME format.
 
-Applied, thanks.
+--b1_8aa5ac17d5a37d2299526ba3f06c3a3e
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+I would like to know if something extra needs to be done other than copying=
+ compressed kernel image, when making tar package for riscv architecture. P=
+lease see the attached patch.
+
+--
+
+Thanks and Regards,
+Aurabindo Jayamohanan
+
+--b1_8aa5ac17d5a37d2299526ba3f06c3a3e
+Content-Type: text/x-patch; name="0001-buildtar-add-riscv-case.patch"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=0001-buildtar-add-riscv-case.patch
+
+RnJvbSA4NmZlYjkzYzYyZGFhNjEzMTRkZjBiYmUxYTExMjcyYzIzYjFlYWRiIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBdXJhYmluZG8gSmF5YW1vaGFuYW4gPG1haWxAYXVyYWJpbmRv
+LmluPgpEYXRlOiBUaHUsIDUgU2VwIDIwMTkgMTI6NTI6NDUgKzA1MzAKU3ViamVjdDogW1BBVENI
+XSBidWlsZHRhcjogYWRkIHJpc2N2IGNhc2UKCkNvcHkgY29tcHJlc3NlZCBrZXJuZWwgaW1hZ2Ug
+aW50byB0YXJiYWxsIHJvb3QuIFNpbWlsYXIKYWN0aW9uIGZvciBib3RoIGFybTY0IGFuZCByaXNj
+diBhcmNoaXRlY3R1cmVzLgoKU2lnbmVkLW9mZi1ieTogQXVyYWJpbmRvIEpheWFtb2hhbmFuIDxt
+YWlsQGF1cmFiaW5kby5pbj4KLS0tCiBzY3JpcHRzL3BhY2thZ2UvYnVpbGR0YXIgfCA2ICsrKy0t
+LQogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYg
+LS1naXQgYS9zY3JpcHRzL3BhY2thZ2UvYnVpbGR0YXIgYi9zY3JpcHRzL3BhY2thZ2UvYnVpbGR0
+YXIKaW5kZXggMmY2NmM4MWU0MDIxLi4zODhkMGZjYmU4YzIgMTAwNzU1Ci0tLSBhL3NjcmlwdHMv
+cGFja2FnZS9idWlsZHRhcgorKysgYi9zY3JpcHRzL3BhY2thZ2UvYnVpbGR0YXIKQEAgLTEwNSwx
+MCArMTA1LDEwIEBAIGNhc2UgIiR7QVJDSH0iIGluCiAJCQljcCAtdiAtLSAiJHtvYmp0cmVlfS92
+bWxpbnV4IiAiJHt0bXBkaXJ9L2Jvb3Qvdm1saW51eC0ke0tFUk5FTFJFTEVBU0V9IgogCQlmaQog
+CQk7OwotCWFybTY0KQorCWFybTY0fHJpc2N2KQogCQlmb3IgaSBpbiBJbWFnZS5iejIgSW1hZ2Uu
+Z3ogSW1hZ2UubHo0IEltYWdlLmx6bWEgSW1hZ2UubHpvIDsgZG8KLQkJCWlmIFsgLWYgIiR7b2Jq
+dHJlZX0vYXJjaC9hcm02NC9ib290LyR7aX0iIF0gOyB0aGVuCi0JCQkJY3AgLXYgLS0gIiR7b2Jq
+dHJlZX0vYXJjaC9hcm02NC9ib290LyR7aX0iICIke3RtcGRpcn0vYm9vdC92bWxpbnV6LSR7S0VS
+TkVMUkVMRUFTRX0iCisJCQlpZiBbIC1mICIke29ianRyZWV9L2FyY2gvJHtBUkNIfS9ib290LyR7
+aX0iIF0gOyB0aGVuCisJCQkJY3AgLXYgLS0gIiR7b2JqdHJlZX0vYXJjaC8ke0FSQ0h9L2Jvb3Qv
+JHtpfSIgIiR7dG1wZGlyfS9ib290L3ZtbGludXotJHtLRVJORUxSRUxFQVNFfSIKIAkJCQlicmVh
+awogCQkJZmkKIAkJZG9uZQotLSAKMi4yMy4wCgo=
+
+
+--b1_8aa5ac17d5a37d2299526ba3f06c3a3e--
+
