@@ -2,87 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD7ABAFF3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 16:54:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C035AFF5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 16:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbfIKOyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 10:54:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60067 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbfIKOyw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 10:54:52 -0400
-Received: from [148.69.85.38] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1i841A-0003CG-8l; Wed, 11 Sep 2019 14:54:48 +0000
-Date:   Wed, 11 Sep 2019 16:54:47 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCH v2] fork: check exit_signal passed in clone3() call
-Message-ID: <20190911145446.vkcqy2shldi5ibb5@wittgenstein>
-References: <20190910175852.GA15572@asgard.redhat.com>
- <20190911064852.9f236d4c201b50e14d717c14@linux-foundation.org>
- <20190911135236.73l6icwxqff7fkw5@wittgenstein>
- <20190911141635.lafrcjwvbhjm3ezy@wittgenstein>
- <20190911143213.GB21600@asgard.redhat.com>
+        id S1728477AbfIKO5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 10:57:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727664AbfIKO5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 10:57:35 -0400
+Received: from [172.20.7.147] (unknown [88.157.232.34])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B41D92075C;
+        Wed, 11 Sep 2019 14:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568213855;
+        bh=Gh/7DuU8FiSq8rs45zDGOHH3xiKvcuGbScoQIpm/Xeo=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=K8R58zx6IuxCk61Fab4q8lzEiDkIgosx90ioV/q3gepVnDLLr+ihYqorzEivU3cwo
+         qvq/pjcGePJp9D6fAe/lh++ZyIWmRAy5Ih/9i+l0+w+4rhb7K3eB/Is6xTW7pDP1tJ
+         rNFFkk1XUu6+vO6EwoDb/+i0PFJxxtZRboVALl2c=
+Date:   Wed, 11 Sep 2019 15:57:29 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190911160939.19f776535770d12ff51a2af7@suse.de>
+References: <1567662477-27404-1-git-send-email-rppt@kernel.org> <20190905152150.f7ff6ef70726085de63df828@suse.de> <20190905133251.GA3650@rapoport-lnx> <20190905154831.88b7853b47ba7db7bd7626bd@suse.de> <20190905154747.GB3650@rapoport-lnx> <20190905233800.0f6b3fb3722cde2f5a88663a@suse.de> <20190906130223.GA17704@rapoport-lnx> <20190909182242.c1ef9717d14b20212ef75954@suse.de> <20190910113243.GA19207@rapoport-lnx> <20190911160939.19f776535770d12ff51a2af7@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190911143213.GB21600@asgard.redhat.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] mips: sgi-ip27: switch from DISCONTIGMEM to SPARSEMEM
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+CC:     Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+From:   Mike Rapoport <rppt@kernel.org>
+Message-ID: <6B6A736C-26FA-429C-92BA-42DDE2271514@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 03:32:13PM +0100, Eugene Syromiatnikov wrote:
-> On Wed, Sep 11, 2019 at 04:16:36PM +0200, Christian Brauner wrote:
-> > On Wed, Sep 11, 2019 at 03:52:36PM +0200, Christian Brauner wrote:
-> > > On Wed, Sep 11, 2019 at 06:48:52AM -0700, Andrew Morton wrote:
-> > > > What are the user-visible runtime effects of this bug?
-> 
-> The userspace can set -1 as an exit_signal, and that will break process
-> signalling and reaping.
-> 
-> > > > Relatedly, should this fix be backported into -stable kernels?  If so, why?
-> > > 
-> > > No, as I said in my other mail clone3() is not in any released kernel
-> > > yet. clone3() is going to be released in v5.3.
-> > 
-> > Sigh, I spoke to soon... Hm, this is placed in _do_fork(). There's a
-> > chance that this might be visible in legacy clone if anyone passes in an
-> > invalid signal greater than NSIG right now somehow, they'd now get
-> > EINVAL if I'm seeing this right.
-> > 
-> > So an alternative might be to only fix this in clone3() only right now
-> > and get this patch into 5.3 to not release clone3() with this bug from
-> > legacy clone duplicated.
-> > And we defer the actual legacy clone fix until after next merge window
-> > having it stew in linux-next for a couple of rcs. Distros often pull in
-> > rcs so if anyone notices a regression for legacy clone we'll know about
-> > it... valid_signal() checks at process exit time when the parent is
-> > supposed to be notifed will catch faulty signals anyway so it's not that
-> > big of a deal.
-> 
-> As the patch is written, only copy_clone_args_from_user is touched (which
-> is used only by clone3 and not legacy clone), and the check added
+On September 11, 2019 3:09:39 PM GMT+01:00, Thomas Bogendoerfer <tbogendoer=
+fer@suse=2Ede> wrote:
+>On Tue, 10 Sep 2019 12:32:44 +0100
+>Mike Rapoport <rppt@kernel=2Eorg> wrote:
+>
+>> [=2E=2E]
+>
+>Patch below works on the same Origin=2E
+>
+>Does memblocks_present() deal better with the one reserved page per
+>node
+>than sparse_memory_present_with_active_regions() ? Or is there a better
+>explanation ? My debug prints didn't make sense out of it=2E=2E=2E
 
-Great!
+To be honest, I'm really puzzled=2E
+I'll take a closer look tomorrow=2E
 
-> replicates legacy clone behaviour: userspace can set 0..CSIGNAL
-> as an exit_signal.   Having ability to set exit_signal in NSIG..CSIGNAL
+Thanks for the debugging and fixing this :)
 
-Hm. The way I see it for clone3() it would make sense to only have <
-NSIG right away. valid_signal() won't let through anything else
-anyway... Since clone3() isn't out yet it doesn't make sense to
-replicate the (buggy) behavior of legacy clone, right?
+>Thomas=2E
+>
+>diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+>index d50fafd7bf3a=2E=2Ee4b02b5f3487 100644
+>--- a/arch/mips/Kconfig
+>+++ b/arch/mips/Kconfig
+>@@ -669,6 +669,7 @@ config SGI_IP22
+> config SGI_IP27
+> 	bool "SGI IP27 (Origin200/2000)"
+> 	select ARCH_HAS_PHYS_TO_DMA
+>+	select ARCH_SPARSEMEM_ENABLE
+> 	select FW_ARC
+> 	select FW_ARC64
+> 	select BOOT_ELF64
+>@@ -2633,18 +2634,9 @@ config ARCH_FLATMEM_ENABLE
+> 	def_bool y
+> 	depends on !NUMA && !CPU_LOONGSON2
+>=20
+>-config ARCH_DISCONTIGMEM_ENABLE
+>-	bool
+>-	default y if SGI_IP27
+>-	help
+>-	  Say Y to support efficient handling of discontiguous physical
+>memory,
+>-	  for architectures which are either NUMA (Non-Uniform Memory Access)
+>-	  or have huge holes in the physical address space for other reasons=2E
+>-	  See <file:Documentation/vm/numa=2Erst> for more=2E
+>-
+> config ARCH_SPARSEMEM_ENABLE
+> 	bool
+>-	select SPARSEMEM_STATIC
+>+	select SPARSEMEM_STATIC if !SGI_IP27
+>=20
+> config NUMA
+> 	bool "NUMA Support"
+>diff --git a/arch/mips/sgi-ip27/ip27-memory=2Ec
+>b/arch/mips/sgi-ip27/ip27-memory=2Ec
+>index fb077a947575=2E=2E370f2ba14a89 100644
+>--- a/arch/mips/sgi-ip27/ip27-memory=2Ec
+>+++ b/arch/mips/sgi-ip27/ip27-memory=2Ec
+>@@ -410,8 +410,6 @@ static void __init node_mem_init(cnodeid_t node)
+>=20
+> 	memblock_reserve(slot_firstpfn << PAGE_SHIFT,
+> 			 ((slot_freepfn - slot_firstpfn) << PAGE_SHIFT));
+>-
+>-	sparse_memory_present_with_active_regions(node);
+> }
+>=20
+> /*
+>@@ -444,6 +442,7 @@ void __init prom_meminit(void)
+> 		}
+> 		__node_data[node] =3D &null_node;
+> 	}
+>+	memblocks_present();
+> }
+>=20
+> void __init prom_free_prom_memory(void)
 
-Christian
+
+--=20
+Sincerely yours,
+Mike
