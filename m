@@ -2,108 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90358B0294
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E77AEB0287
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbfIKRVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 13:21:38 -0400
-Received: from mail.andi.de1.cc ([85.214.55.253]:45738 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729130AbfIKRVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 13:21:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=sPMO8vcrRK/jL3rN+4QkorWNycje82WGvrWvZkHcz44=; b=nQIeaSRKdjHALYED3UM4qdoZaj
-        ay1z5xTneTJmZeyPryoIfinTJ7Wa2z7azMYWQHLs4Sq+6Xoh9/zr8lMELMLwGMA8HD1OnMEmmvnsv
-        Am+q25RuMlzHUpmF3HDg0AFOx+q4GjftewUadKNHpwEsJKVgMGEkex/C99DpuZ78XkSk=;
-Received: from p200300ccff0b59001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff0b:5900:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1i86J7-0006kp-9U; Wed, 11 Sep 2019 19:21:29 +0200
-Received: from andi by aktux with local (Exim 4.92)
-        (envelope-from <andreas@kemnade.info>)
-        id 1i86J7-0003M5-0o; Wed, 11 Sep 2019 19:21:29 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     lee.jones@linaro.org, daniel.thompson@linaro.org,
-        jingoohan1@gmail.com, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        dmurphy@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v3 2/2] backlight: lm3630a: add an enable gpio for the HWEN pin
-Date:   Wed, 11 Sep 2019 19:21:06 +0200
-Message-Id: <20190911172106.12843-3-andreas@kemnade.info>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190911172106.12843-1-andreas@kemnade.info>
-References: <20190911172106.12843-1-andreas@kemnade.info>
+        id S1729567AbfIKRVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 13:21:20 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43528 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729130AbfIKRVU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 13:21:20 -0400
+Received: by mail-oi1-f195.google.com with SMTP id t84so14785981oih.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 10:21:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A1/ETkpc6G5lmIiqCjrYZygtKs+ulwm0ZGxJ4xV62tI=;
+        b=AGLr9rL6e2DdV6PvDqGuCbHgbLuX12DxhOqs8mNkp3pM3Z43BEORtqhnQjWCjXVh1d
+         JVb/u2DY/2VN4LayCng42iOkyKQYbKFhn+boBNa/FvPDpRsVTA0pwX4vzgu3n0LLGbZb
+         ZngCRMpx9ARElSjFe82vmJLRngwVd2j0SpAbepbO/I2SPPTDdKkBkmFB7yN95yPv2v8W
+         U8ydG1/w9/dPQo8LycqZIINn9FVbZTvvxuqitB9EYIJudvoMyAcR+F6yBhRF45wv/VvQ
+         IbtgeBByS7rzaYIIj6JeIvHZG6h2L+A6St49C4xgEH9l5nWEjY+NNjBOTsg6+ehVCOW9
+         Kmww==
+X-Gm-Message-State: APjAAAVrM8hjctov4sz87Lb2ZuV5XF1eo2x7N3sgT78YGhFpbeijZscS
+        2p0rioUs1pZEYbSg23yrT18=
+X-Google-Smtp-Source: APXvYqxqZ+haTwVi3/MKjiTUTVQ1QsehIAv7tF1qipiAoQyKJTn6/7c+pIHjMecml9oTBwCRiMA/PA==
+X-Received: by 2002:aca:c550:: with SMTP id v77mr4881558oif.93.1568222478126;
+        Wed, 11 Sep 2019 10:21:18 -0700 (PDT)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id o4sm7789027otp.43.2019.09.11.10.21.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Sep 2019 10:21:17 -0700 (PDT)
+Subject: Re: [PATCH] Added QUIRKs for ADATA XPG SX8200 Pro 512GB
+To:     Gabriel C <nix.or.die@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>, linux-nvme@lists.infradead.org
+References: <CAEJqkgivvhQ=tOOuLjY=iwBVCKQhmmjpfNDa1yJ5SreNQubw6Q@mail.gmail.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <4581016e-b421-e794-e603-807d37aa1bf3@grimberg.me>
+Date:   Wed, 11 Sep 2019 10:21:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -1.0 (-)
+In-Reply-To: <CAEJqkgivvhQ=tOOuLjY=iwBVCKQhmmjpfNDa1yJ5SreNQubw6Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For now just enable it in the probe function to allow i2c
-access. Disabling also means resetting the register values
-to default and according to the datasheet does not give
-power savings.
-
-Tested on Kobo Clara HD.
-
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
-changes in v2:
-- simplification
-- correct gpio direction initialisation
-
-changes in v3:
-- removed legacy include
-
- drivers/video/backlight/lm3630a_bl.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-index 8f84f3684f04..d9e67b9b2571 100644
---- a/drivers/video/backlight/lm3630a_bl.c
-+++ b/drivers/video/backlight/lm3630a_bl.c
-@@ -12,6 +12,7 @@
- #include <linux/uaccess.h>
- #include <linux/interrupt.h>
- #include <linux/regmap.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/pwm.h>
- #include <linux/platform_data/lm3630a_bl.h>
- 
-@@ -48,6 +49,7 @@ struct lm3630a_chip {
- 	struct lm3630a_platform_data *pdata;
- 	struct backlight_device *bleda;
- 	struct backlight_device *bledb;
-+	struct gpio_desc *enable_gpio;
- 	struct regmap *regmap;
- 	struct pwm_device *pwmd;
- };
-@@ -535,6 +537,13 @@ static int lm3630a_probe(struct i2c_client *client,
- 	}
- 	pchip->pdata = pdata;
- 
-+	pchip->enable_gpio = devm_gpiod_get_optional(&client->dev, "enable",
-+						GPIOD_OUT_HIGH);
-+	if (IS_ERR(pchip->enable_gpio)) {
-+		rval = PTR_ERR(pchip->enable_gpio);
-+		return rval;
-+	}
-+
- 	/* chip initialize */
- 	rval = lm3630a_chip_init(pchip);
- 	if (rval < 0) {
--- 
-2.20.1
-
+This does not apply on nvme-5.4, can you please respin a patch
+that cleanly applies?
