@@ -2,63 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE32EAF8E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:29:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDCECAF8E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:29:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbfIKJ27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 05:28:59 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48118 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfIKJ27 (ORCPT
+        id S1727450AbfIKJ32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 05:29:28 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39866 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727407AbfIKJ31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 05:28:59 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1i7yvo-0005JO-Do; Wed, 11 Sep 2019 09:28:56 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/bnxt_re: fix spelling mistake "missin_resp" -> "missing_resp"
-Date:   Wed, 11 Sep 2019 10:28:56 +0100
-Message-Id: <20190911092856.11146-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 11 Sep 2019 05:29:27 -0400
+Received: by mail-lf1-f66.google.com with SMTP id l11so15867601lfk.6
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 02:29:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=meoyF5qnG1EbOZhPqlVN2+IiExXsiF/sJ/BQgZ1twjI=;
+        b=blO4zlD2kpj/8/v83jVkDYzwy/DXX2v+pWYr4ZysLvhmiPcDuXpCjOELy0K6cPbbn9
+         PiJe1ObQU3MpmlNHhUm1/2yhq/++D7dAEH1evQfJ/NXRSYeMG74G+yHOJEivgjVKBR/g
+         9VbTPqwbXk+V6n/gJ6fSbWfWvquIaEIzWeOlEaF2kAIeIJSklsoktwxpBHncLz+Flb0X
+         DXOj0b7DdhqyW++P/hbwgvrE3+4tNpTftDM1ffmOOspcPY5QRQPG6Bl8TlP/8UbMHdfn
+         LkshNjdIwBAxjKNDblUx0ex684BdzoLtfsOyaqHRxOP5WFspRavgJ+4pIDoOT1Delae7
+         W0fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=meoyF5qnG1EbOZhPqlVN2+IiExXsiF/sJ/BQgZ1twjI=;
+        b=fNI1t7rt8iYDy/tO4LH6zTFPYmoIetD3oPaa0M01KRYNtkt2Q7bXGRwRa6VJR+xgi+
+         RBguOQrb95IWSW2o9bzoUaKJSXcG3sepRCv8VOxxg5jjgu4XlxEFfcyxhP5Ukri9k37Z
+         k31lbF9Qrf9Y1WTjAfNGTeRq8/V3t8e0A8TTfyUgcZm6u8h8/vC/jKlpT33kOVba0zdO
+         HXYWwNjKg8Hv3cTQWpJSriGSjvztvVIOSWY4K8aFivBNn0GmIKjDIcnV53cOfPJYmmTy
+         rmpYzCAB7X8B/HGBGXJLFNSa7OHAL1/+51b6wP5egVFLGoNNbtpujM1/EgCvytjAl6D/
+         trig==
+X-Gm-Message-State: APjAAAX0CW7kV8ZTK2NEmCBuJh/Qkfn1GwReydS4r4sPdu3QfT1QyBnI
+        /AJnSHx2TxTFCJkjhlXD9R67NkqlXg1CjELjb1f7sQ==
+X-Google-Smtp-Source: APXvYqzOYZehJ5Xw3MxFgYRqFUIZbXMNBMiPJdnrux4Wxk8zVbXjZTviaBEscQ9wTzhD2drdfEvrsRgqL7YT5XRozlU=
+X-Received: by 2002:a05:6512:25b:: with SMTP id b27mr24506530lfo.60.1568194164645;
+ Wed, 11 Sep 2019 02:29:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <1567662796-25508-1-git-send-email-light.hsieh@mediatek.com> <1567663210.1324.3.camel@mtkswgap22>
+In-Reply-To: <1567663210.1324.3.camel@mtkswgap22>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 11 Sep 2019 10:29:12 +0100
+Message-ID: <CACRpkdY7Vpy-fBHSXnjby0kK_tDWBtZaCwjCGxFy4HWeJ1FgEg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] pinctrl: mediatek: Check gpio pin number and use
+ binary search in mtk_hw_pin_field_lookup()
+To:     Light Hsieh <light.hsieh@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>
+Cc:     "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Sep 5, 2019 at 7:00 AM Light Hsieh <light.hsieh@mediatek.com> wrote:
 
-There is a spelling mistake in a literal string, fix it.
+> v2 is the same as v1 except that commit message is corrected according
+> to Linus' comment for v1:
+>
+> 1. remove Change-Id lines
+> 2. correct sysfs as debugfs
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/hw/bnxt_re/hw_counters.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks OK to me, but i need Sean's review on this, Sean?
 
-diff --git a/drivers/infiniband/hw/bnxt_re/hw_counters.c b/drivers/infiniband/hw/bnxt_re/hw_counters.c
-index 604b71875f5f..3421a0b15983 100644
---- a/drivers/infiniband/hw/bnxt_re/hw_counters.c
-+++ b/drivers/infiniband/hw/bnxt_re/hw_counters.c
-@@ -74,7 +74,7 @@ static const char * const bnxt_re_stat_name[] = {
- 	[BNXT_RE_SEQ_ERR_NAKS_RCVD]     = "seq_err_naks_rcvd",
- 	[BNXT_RE_MAX_RETRY_EXCEEDED]    = "max_retry_exceeded",
- 	[BNXT_RE_RNR_NAKS_RCVD]         = "rnr_naks_rcvd",
--	[BNXT_RE_MISSING_RESP]          = "missin_resp",
-+	[BNXT_RE_MISSING_RESP]          = "missing_resp",
- 	[BNXT_RE_UNRECOVERABLE_ERR]     = "unrecoverable_err",
- 	[BNXT_RE_BAD_RESP_ERR]          = "bad_resp_err",
- 	[BNXT_RE_LOCAL_QP_OP_ERR]       = "local_qp_op_err",
--- 
-2.20.1
-
+Yours,
+Linus Walleij
