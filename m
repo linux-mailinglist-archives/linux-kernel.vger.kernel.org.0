@@ -2,86 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACA2DB04BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 22:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 960B4B04BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 22:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730467AbfIKUIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 16:08:55 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:48018 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728808AbfIKUIz (ORCPT
+        id S1730492AbfIKUJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 16:09:07 -0400
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:20004 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728808AbfIKUJG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 16:08:55 -0400
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1i88uY-0003DM-00; Wed, 11 Sep 2019 20:08:18 +0000
-Date:   Wed, 11 Sep 2019 16:08:18 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Carlos O'Donell <carlos@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha@sourceware.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH glibc 2.31 1/5] glibc: Perform rseq(2) registration at C
- startup and thread creation (v12)
-Message-ID: <20190911200818.GB9017@brightrain.aerifal.cx>
-References: <20190807142726.2579-1-mathieu.desnoyers@efficios.com>
- <20190807142726.2579-2-mathieu.desnoyers@efficios.com>
- <8736h2sn8y.fsf@oldenburg2.str.redhat.com>
- <7db64714-3dc5-b322-1edc-736b08ee7d63@redhat.com>
- <87ef0mr6qj.fsf@oldenburg2.str.redhat.com>
- <4a6f6326-ea82-e031-0fe0-7263ed97e797@redhat.com>
- <877e6er4ls.fsf@oldenburg2.str.redhat.com>
+        Wed, 11 Sep 2019 16:09:06 -0400
+Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8BK2cOt002442;
+        Wed, 11 Sep 2019 20:08:38 GMT
+Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2uxpwjfp7w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Sep 2019 20:08:38 +0000
+Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
+        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 1A87166;
+        Wed, 11 Sep 2019 20:08:36 +0000 (UTC)
+Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
+        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 70B3B49;
+        Wed, 11 Sep 2019 20:08:35 +0000 (UTC)
+Date:   Wed, 11 Sep 2019 15:08:35 -0500
+From:   Steve Wahl <steve.wahl@hpe.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Steve Wahl <steve.wahl@hpe.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Juergen Gross <jgross@suse.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
+        Baoquan He <bhe@redhat.com>, russ.anderson@hpe.com,
+        dimitri.sivanich@hpe.com, mike.travis@hpe.com
+Subject: Re: [PATCH] x86/boot/64: Make level2_kernel_pgt pages invalid
+ outside kernel area.
+Message-ID: <20190911200835.GD7834@swahl-linux>
+References: <20190906212950.GA7792@swahl-linux>
+ <20190909081414.5e3q47fzzruesscx@box>
+ <20190910142810.GA7834@swahl-linux>
+ <20190911002856.mx44pmswcjfpfjsb@box.shutemov.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <877e6er4ls.fsf@oldenburg2.str.redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190911002856.mx44pmswcjfpfjsb@box.shutemov.name>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-11_10:2019-09-11,2019-09-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ malwarescore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
+ priorityscore=1501 spamscore=0 adultscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1909110180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 09:54:23PM +0200, Florian Weimer wrote:
-> * Carlos O'Donell:
+On Wed, Sep 11, 2019 at 03:28:56AM +0300, Kirill A. Shutemov wrote:
+> On Tue, Sep 10, 2019 at 09:28:10AM -0500, Steve Wahl wrote:
+> > On Mon, Sep 09, 2019 at 11:14:14AM +0300, Kirill A. Shutemov wrote:
+> > > On Fri, Sep 06, 2019 at 04:29:50PM -0500, Steve Wahl wrote:
+> > > > ...
+> > > > The answer is to invalidate the pages of this table outside the
+> > > > address range occupied by the kernel before the page table is
+> > > > activated.  This patch has been validated to fix this problem on our
+> > > > hardware.
+> > > 
+> > > If the goal is to avoid *any* mapping of the reserved region to stop
+> > > speculation, I don't think this patch will do the job. We still (likely)
+> > > have the same memory mapped as part of the identity mapping. And it
+> > > happens at least in two places: here and before on decompression stage.
+> > 
+> > I imagine you are likely correct, ideally you would not map any
+> > reserved pages in these spaces.
+> > 
+> > I've been reading the code to try to understand what you say above.
+> > For identity mappings in the kernel, I see level2_ident_pgt mapping
+> > the first 1G.
 > 
-> > On 9/11/19 3:08 PM, Florian Weimer wrote:
-> >> * Carlos O'Donell:
-> >> 
-> >>> It would be easier to merge the patch set if it were just an unconditional
-> >>> registration like we do for set_robust_list().
-> >> 
-> >> Note that this depends on the in-tree system call numbers list, which I
-> >> still need to finish according to Joseph's specifications.
-> >
-> > Which work is this? Do you have a URL reference to WIP?
-> 
->   <https://sourceware.org/ml/libc-alpha/2019-05/msg00630.html>
->   <https://sourceware.org/ml/libc-alpha/2019-06/msg00015.html>
-> 
-> I think realistically this is needed for the Y2038 work as well if we
-> want to support building glibc with older kernel headers.  “glibc 2..31
-> will have Y2038 support and rseq support, but only if it runs on a
-> current and it happens to have been built against sufficiently recent
-> kernel headers” is a bit difficult to explain.  The current kernel part
-> is easy enough to understand, but the impact of the kernel headers on
-> the feature set has always been tough to explain.  Especially if you
-> factor in vendor kernels with system call backports.
+> This is for XEN case. Not sure how relevant it is for you.
 
-I'm in favor of in-tree syscall numbers list. If you don't want O(n)
-per-arch work, though, you could just define the 'base number' for
-each arch and use the fact that all the new syscalls share a common
-numbering (i.e. base + constant depending only on syscall). I think
-including the list with glibc is more robust though, and would
-eliminate the need to check for definitions of older (pre-unification)
-syscalls glibc wants to use.
+I don't have much familiarity with XEN, and I'm not using it, but it
+does seem to be enabled for the distribution kernels we deal with.
+However, it is below 4G.
 
-Rich
+> > And I see early_dyanmic_pgts being set up with an identity mapping of
+> > the kernel that seems to be pretty well restricted to the range _text
+> > through _end.
+> 
+> Right, but rounded to 2M around the place kernel was decompressed to.
+> Some of reserved areas from the listing below are smaller then 2M or not
+> aligned to 2M.
+
+The problematic reserved regions are aligned to 2M or greater.  See
+the answer to "which reserved regions" below.
+
+> > Within the decompression code, I see an identity mapping of the first
+> > 4G set up within the 32 bit code.  I believe we go past that to the
+> > startup_64 entry point.  (I don't know how common that path is, but I
+> > don't have a way to test it without figuring out how to force it.)
+> 
+> Kernel can start in 64-bit mode directly and in this case we inherit page
+> tables from bootloader/BIOS. They trusted to provide identity mapping to
+> cover at least kernel (plus some more essential stuff), but it's free to
+> map more.
+
+I haven't looked at the bootloader, at least not yet.
+
+If tables supplied by the BIOS don't follow the rules, that is
+somebody else's problem.  (And if needed I'll hunt them down.)
+
+> > From a pragmatic standpoint, the guy who can verify this for me is on
+> > vacation, but I believe our BIOS won't ever place the halt-causing
+> > ranges in a space below 4GiB.  Which explains why this patch works for
+> > our hardware.  (We do have reserved regions below 4G, just not the
+> > ones that hardware causes a halt for accessing.)
+> > 
+> > In case it helps you picture the situation, our hardware takes a small
+> > portion of RAM from the end of each NUMA node (or it might be pairs or
+> > quads of NUMA nodes, I'm not entirely clear on this at the moment) for
+> > its own purposes.  Here's a section of our e820 table:
+> > 
+> > [    0.000000] BIOS-e820: [mem 0x000000007c000000-0x000000008fffffff] reserved
+> > [    0.000000] BIOS-e820: [mem 0x00000000f8000000-0x00000000fbffffff] reserved
+> > [    0.000000] BIOS-e820: [mem 0x00000000fe000000-0x00000000fe010fff] reserved
+> > [    0.000000] BIOS-e820: [mem 0x0000000100000000-0x0000002f7fffffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x0000002f80000000-0x000000303fffffff] reserved *
+> > [    0.000000] BIOS-e820: [mem 0x0000003040000000-0x0000005f7bffffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x0000005f7c000000-0x000000603fffffff] reserved *
+> > [    0.000000] BIOS-e820: [mem 0x0000006040000000-0x0000008f7bffffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x0000008f7c000000-0x000000903fffffff] reserved *
+> > [    0.000000] BIOS-e820: [mem 0x0000009040000000-0x000000bf7bffffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x000000bf7c000000-0x000000c03fffffff] reserved *
+> > [    0.000000] BIOS-e820: [mem 0x000000c040000000-0x000000ef7bffffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x000000ef7c000000-0x000000f03fffffff] reserved *
+> > [    0.000000] BIOS-e820: [mem 0x000000f040000000-0x0000011f7bffffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x0000011f7c000000-0x000001203fffffff] reserved *
+> > [    0.000000] BIOS-e820: [mem 0x0000012040000000-0x0000014f7bffffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x0000014f7c000000-0x000001503fffffff] reserved *
+> > [    0.000000] BIOS-e820: [mem 0x0000015040000000-0x0000017f7bffffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x0000017f7c000000-0x000001803fffffff] reserved *
+> 
+> It would be interesting to know which of them are problematic.
+
+It's pretty much all of the reserved regions above 4G, I edited the
+table above and put asterisks on the lines describing the problematic
+regions.  The number and size of them will vary based on the number of
+NUMA nodes and other factors.
+
+The alignment of these... While examining the values above, I realized
+I'm working with a BIOS version that has already tried to work around
+this problem by aligning to 1GiB.  My expert is still on vacation, but
+I and a coworker looked at the BIOS source, and we're 99% certain the
+alignment and granularity without the workaround code would be 64MiB.
+Which accomodates the 2MiB alignment issues discussed above.
+
+I didn't want to delay my response until my expert was back.  I will
+send another message when I can get this confirmed.
+
+> > Our problem occurs when KASLR (or kexec) places the kernel close
+> > enough to the end of one of the usable sections, and the 1G of 1:1
+> > mapped space includes a portion of the following reserved section, and
+> > speculation touches the reserved area.
+> 
+> Are you sure that it's speculative access to blame? Speculative access
+> must not cause change in architectural state.
+
+That's a hard one to prove.  However, our hardware stops detecting
+accesses to these areas (and halting) when we stop including them in
+valid page table entries.  With that change, any non-speculative
+accesses to these areas should have transformed into an access to an
+invalid page / page fault in kernel mode / oops.  Instead, they just
+go away.  That says to me that they are speculative accesses.
+
+Thank you for your time looking into this with me!
+
+--> Steve Wahl
+
+-- 
+Steve Wahl, Hewlett Packard Enterprise
