@@ -2,53 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19649B00EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCBA3B00C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:03:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbfIKQGz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Sep 2019 12:06:55 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:47526
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1728960AbfIKQGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:06:55 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 08989B4DAD9;
-        Wed, 11 Sep 2019 15:43:05 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Wf_wsky0OMXa; Wed, 11 Sep 2019 15:43:04 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 6A077B4DAB4;
-        Wed, 11 Sep 2019 15:43:04 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id DjWO3pQ1M6Z0; Wed, 11 Sep 2019 15:43:04 +0000 (UTC)
-Received: from [100.89.179.12] (unknown [106.197.251.106])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id CAD1AB4C9E9;
-        Wed, 11 Sep 2019 15:42:54 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1728919AbfIKQDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:03:01 -0400
+Received: from mga05.intel.com ([192.55.52.43]:26157 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728819AbfIKQDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:03:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2019 09:03:00 -0700
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="268788464"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2019 09:03:00 -0700
+Subject: [PATCH v2 0/3] Maintainer Entry Profiles
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joe Perches <joe@perches.com>,
+        "Tobin C. Harding" <me@tobin.cc>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steve French <stfrench@microsoft.com>,
+        Olof Johansson <olof@lixom.net>, linux-nvdimm@lists.01.org,
+        ksummit-discuss@lists.linuxfoundation.org
+Date:   Wed, 11 Sep 2019 08:48:42 -0700
+Message-ID: <156821692280.2951081.18036584954940423225.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Verifica_tu_correo_electr=C3=B3nico?=
-To:     Recipients <info@no-reply.it>
-From:   Administrador web <info@no-reply.it>
-Date:   Wed, 11 Sep 2019 21:12:44 +0530
-Message-Id: <20190911154254.CAD1AB4C9E9@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario
+Changes since v1 [1]:
+- Simplify the profile to a hopefully non-controversial set of
+  attributes that address the most common sources of contributor
+  confusion, or maintainer frustration.
+- Rename "Subsystem Profile" to "Maintainer Entry Profile". Not every
+  entry in MAINTAINERS represents a full subsystem. There may be driver
+  local considerations to communicate to a submitter in addition to wider
+  subsystem guidelines. 
+- Delete the old P: tag in MAINTAINERS rather than convert to a new E:
+  tag (Joe Perches).
+[1]:  http://lore.kernel.org/r/154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com
 
-Como parte de nuestros problemas de seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, suspenderemos su acceso a su dirección de correo electrónico temporalmente para permitir la actualización.
+---
 
-Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar su fecha completando el formulario de verificación manualmente.
+At last years Plumbers Conference I proposed the Maintainer Entry
+Profile as a document that a maintainer can provide to set contributor
+expectations and provide fodder for a discussion between maintainers
+about the merits of different maintainer policies.
 
-Haga clic en la copia y obtenga el enlace: http://emailsverificationscenter.xtgem.com/index en su navegador y verifique.
+For those that did not attend, the goal of the Maintainer Entry Profile,
+and the Maintainer Handbook more generally, is to provide a desk
+reference for maintainers both new and experienced. The session
+introduction was:
 
-Gracias
-Equipo de soporte técnico.
+    The first rule of kernel maintenance is that there are no hard and
+    fast rules. That state of affairs is both a blessing and a curse. It
+    has served the community well to be adaptable to the different
+    people and different problem spaces that inhabit the kernel
+    community. However, that variability also leads to inconsistent
+    experiences for contributors, little to no guidance for new
+    contributors, and unnecessary stress on current maintainers. There
+    are quite a few of people who have been around long enough to make
+    enough mistakes that they have gained some hard earned proficiency.
+    However if the kernel community expects to keep growing it needs to
+    be able both scale the maintainers it has and ramp new ones without
+    necessarily let them make a decades worth of mistakes to learn the
+    ropes. 
+
+To be clear, the proposed document does not impose or suggest new
+rules. Instead it provides an outlet to document the unwritten rules
+and policies in effect for each subsystem, and that each subsystem
+might decide differently for whatever reason.
+
+
+---
+
+Dan Williams (3):
+      MAINTAINERS: Reclaim the P: tag for Maintainer Entry Profile
+      Maintainer Handbook: Maintainer Entry Profile
+      libnvdimm, MAINTAINERS: Maintainer Entry Profile
+
+
+ Documentation/maintainer/index.rst                 |    1 
+ .../maintainer/maintainer-entry-profile.rst        |   99 ++++++++++++++++++++
+ Documentation/nvdimm/maintainer-entry-profile.rst  |   64 +++++++++++++
+ MAINTAINERS                                        |   20 ++--
+ 4 files changed, 175 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/maintainer/maintainer-entry-profile.rst
+ create mode 100644 Documentation/nvdimm/maintainer-entry-profile.rst
