@@ -2,479 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63278AFEE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 16:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 647C7AFEF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 16:39:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728307AbfIKOjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 10:39:17 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:33374 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728117AbfIKOjO (ORCPT
+        id S1728371AbfIKOja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 10:39:30 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40022 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728032AbfIKOj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 10:39:14 -0400
-Received: from ramsan ([84.194.98.4])
-        by xavier.telenet-ops.be with bizsmtp
-        id 0Ef42100405gfCL01Ef4Mv; Wed, 11 Sep 2019 16:39:10 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1i83lw-0006TC-16; Wed, 11 Sep 2019 16:39:04 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1i83lv-0003PI-VI; Wed, 11 Sep 2019 16:39:03 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 5/5] gpio: Add GPIO Aggregator Driver
-Date:   Wed, 11 Sep 2019 16:38:58 +0200
-Message-Id: <20190911143858.13024-6-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190911143858.13024-1-geert+renesas@glider.be>
-References: <20190911143858.13024-1-geert+renesas@glider.be>
+        Wed, 11 Sep 2019 10:39:28 -0400
+Received: by mail-qk1-f194.google.com with SMTP id y144so12962517qkb.7;
+        Wed, 11 Sep 2019 07:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TwN6OrjdKt+44ku7KhvZUr2O4KlJSVZ8kmhB6V+j7N8=;
+        b=t12WokXoJJ4K4NUUnEOf7/c8b7WRfEQ6bn7vsO5yCVsQ9XAK4VVGkp9+O8v1rgippv
+         3E0ddwd9nqFUG00UzxFS30O6gPjS9LBm10a+Zm8ipspUkj7Oc5oFkw2uOfPp24PR7tuF
+         oOQY2CtT5G7ia1Sm/h4yz1/MZPIGGeHe6ArOVTBZryVmnIuUpLD7szxh+2ec/T4e3Mw1
+         OoujYt5HBky2ouplU++zanDJ6CrUhhX3FY30dAT9fysCmK0kFyQLucIUvxqCtf0rZ9Hp
+         PXtaD8GdMfehs9dCLuz7cfVqU/wqp/xdGjB+L9hPmo58yIpvgobuCwLCTTLpG7ZmcGEt
+         hBrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TwN6OrjdKt+44ku7KhvZUr2O4KlJSVZ8kmhB6V+j7N8=;
+        b=oD9UVBQNGsBRuWh9nxOOdsuudHkFIsqtdKbU7s9JpL5Ll/o9+KqoQsWtf+ZbzXIcRs
+         YYmGWNq+95dg1k3neJ0ALN5lcxhlPLiU2sMz8+PAyFgJ8KzpT0avvKyIYAyY2YIvo9iR
+         mrKz6L5ID4n4sGfwvVu5M0BY4zCtgANTyb0xrlsvyMCnhhMFCA97RQ3OXjx92z5oymbP
+         0DUu5FZ+Lmps1TOPM53uN/HAkIgKD8ipIiQPF88FGKdFKHV0/dMBMgruhdwW1fUVvj6W
+         ogq95YBJxJujRK41eIXx87r0/qo5bDnfA7qNFK21HL3IS0bRTOYlGiVWXnqs0nwf02G+
+         hM7w==
+X-Gm-Message-State: APjAAAW3fmiq3RiMiomH/47BGWQQU7JNPPjytvW81UUz+tAbWtYzQZSc
+        49CpNh3UfRr6ELLEKmOKYRg=
+X-Google-Smtp-Source: APXvYqzDyV+SgjNA5WEUzBQAIMOWaP+tdcQzaGUX0YOJ8JPSKoUht7TpayG/vdBITmUBUICF0Fd/pA==
+X-Received: by 2002:ae9:e00a:: with SMTP id m10mr37294490qkk.167.1568212766886;
+        Wed, 11 Sep 2019 07:39:26 -0700 (PDT)
+Received: from localhost.localdomain ([177.220.172.89])
+        by smtp.gmail.com with ESMTPSA id d45sm12194380qtc.70.2019.09.11.07.39.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2019 07:39:25 -0700 (PDT)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 75378C4A64; Wed, 11 Sep 2019 11:39:23 -0300 (-03)
+Date:   Wed, 11 Sep 2019 11:39:23 -0300
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     maowenan <maowenan@huawei.com>, vyasevich@gmail.com,
+        nhorman@tuxdriver.com, davem@davemloft.net,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net 1/2] sctp: remove redundant assignment when call
+ sctp_get_port_local
+Message-ID: <20190911143923.GE3499@localhost.localdomain>
+References: <20190910071343.18808-1-maowenan@huawei.com>
+ <20190910071343.18808-2-maowenan@huawei.com>
+ <20190910185710.GF15977@kadam>
+ <20190910192207.GE20699@kadam>
+ <53556c87-a351-4314-cbd9-49a39d0b41aa@huawei.com>
+ <20190911083038.GF20699@kadam>
+ <20190911143008.GD3499@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911143008.GD3499@localhost.localdomain>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GPIO controllers are exported to userspace using /dev/gpiochip*
-character devices.  Access control to these devices is provided by
-standard UNIX file system permissions, on an all-or-nothing basis:
-either a GPIO controller is accessible for a user, or it is not.
-Currently no mechanism exists to control access to individual GPIOs.
+On Wed, Sep 11, 2019 at 11:30:08AM -0300, Marcelo Ricardo Leitner wrote:
+> On Wed, Sep 11, 2019 at 11:30:38AM +0300, Dan Carpenter wrote:
+> > On Wed, Sep 11, 2019 at 09:30:47AM +0800, maowenan wrote:
+> > > 
+> > > 
+> > > On 2019/9/11 3:22, Dan Carpenter wrote:
+> > > > On Tue, Sep 10, 2019 at 09:57:10PM +0300, Dan Carpenter wrote:
+> > > >> On Tue, Sep 10, 2019 at 03:13:42PM +0800, Mao Wenan wrote:
+> > > >>> There are more parentheses in if clause when call sctp_get_port_local
+> > > >>> in sctp_do_bind, and redundant assignment to 'ret'. This patch is to
+> > > >>> do cleanup.
+> > > >>>
+> > > >>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> > > >>> ---
+> > > >>>  net/sctp/socket.c | 3 +--
+> > > >>>  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > >>>
+> > > >>> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> > > >>> index 9d1f83b10c0a..766b68b55ebe 100644
+> > > >>> --- a/net/sctp/socket.c
+> > > >>> +++ b/net/sctp/socket.c
+> > > >>> @@ -399,9 +399,8 @@ static int sctp_do_bind(struct sock *sk, union sctp_addr *addr, int len)
+> > > >>>  	 * detection.
+> > > >>>  	 */
+> > > >>>  	addr->v4.sin_port = htons(snum);
+> > > >>> -	if ((ret = sctp_get_port_local(sk, addr))) {
+> > > >>> +	if (sctp_get_port_local(sk, addr))
+> > > >>>  		return -EADDRINUSE;
+> > > >>
+> > > >> sctp_get_port_local() returns a long which is either 0,1 or a pointer
+> > > >> casted to long.  It's not documented what it means and neither of the
+> > > >> callers use the return since commit 62208f12451f ("net: sctp: simplify
+> > > >> sctp_get_port").
+> > > > 
+> > > > Actually it was commit 4e54064e0a13 ("sctp: Allow only 1 listening
+> > > > socket with SO_REUSEADDR") from 11 years ago.  That patch fixed a bug,
+> > > > because before the code assumed that a pointer casted to an int was the
+> > > > same as a pointer casted to a long.
+> > > 
+> > > commit 4e54064e0a13 treated non-zero return value as unexpected, so the current
+> > > cleanup is ok?
+> > 
+> > Yeah.  It's fine, I was just confused why we weren't preserving the
+> > error code and then I saw that we didn't return errors at all and got
+> > confused.
+> 
+> But please lets seize the moment and do the change Dean suggested.
 
-Hence add a GPIO driver to aggregate existing GPIOs, and expose them as
-a new gpiochip.  This is useful for implementing access control, and
-assigning a set of GPIOs to a specific user.
-Furthermore, this simplifies and hardens exporting GPIOs to a virtual
-machine, as the VM can just grab the full GPIO controller, and no longer
-needs to care about which GPIOs to grab and which not, reducing the
-attack surface.
+*Dan*, sorry.
 
-Aggregated GPIO controllers are instantiated by writing to the
-"new_device" attribute file in sysfs:
-
-    $ echo [<gpioA>] [<gpiochipB> <offsets>] ...
-            > /sys/bus/platform/drivers/gpio-aggregator/new_device
-
-Where <gpioA> is a GPIO line name, <gpiochipB> is a GPIO chip label or
-name, and <offsets> is a comma-separated list of GPIO offsets and/or
-GPIO offset ranges.
-
-Likewise, aggregated GPIO controllers can be destroyed after use:
-
-    $ echo gpio-aggregator.<N> \
-            > /sys/bus/platform/drivers/gpio-aggregator/delete_device
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Add missing initialization of i in gpio_virt_agg_probe(),
-  - Update for removed .need_valid_mask field and changed
-    .init_valid_mask() signature,
-  - Drop "virtual", rename to gpio-aggregator,
-  - Drop bogus FIXME related to gpiod_set_transitory() expectations,
-  - Use new GPIO Forwarder Helper,
-  - Lift limit on the maximum number of GPIOs,
-  - Improve parsing:
-      - add support for specifying GPIOs by line name,
-      - add support for specifying GPIO chips by ID,
-      - add support for GPIO offset ranges,
-      - names and offset specifiers must be separated by whitespace,
-      - GPIO offsets must separated by spaces,
-  - Use str_has_prefix() and kstrtouint().
-
-I didn't use argv_split(), as it doesn't support quoted strings yet,
-and GPIO line names can contain spaces.  Perhaps I should enhance
-argv_split() first, and use that?
----
- drivers/gpio/Kconfig           |   9 +
- drivers/gpio/Makefile          |   1 +
- drivers/gpio/gpio-aggregator.c | 333 +++++++++++++++++++++++++++++++++
- 3 files changed, 343 insertions(+)
- create mode 100644 drivers/gpio/gpio-aggregator.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 29d3ce8debcca1f6..058aa68fd7015e7c 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1483,6 +1483,15 @@ config GPIO_VIPERBOARD
- 
- endmenu
- 
-+config GPIO_AGGREGATOR
-+	tristate "GPIO Aggregator"
-+	select GPIOLIB_FWD
-+	help
-+	  This enabled the GPIO Aggregator, which provides a way to aggregate
-+	  existing GPIOs into a new GPIO device.
-+	  This is useful for assigning a collection of GPIOs to a user, or
-+	  exported them to a virtual machine.
-+
- config GPIO_MOCKUP
- 	tristate "GPIO Testing Driver"
- 	select IRQ_SIM
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 8a0e685c92b69855..2ec9128bcfefa40a 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -26,6 +26,7 @@ obj-$(CONFIG_GPIO_74XX_MMIO)		+= gpio-74xx-mmio.o
- obj-$(CONFIG_GPIO_ADNP)			+= gpio-adnp.o
- obj-$(CONFIG_GPIO_ADP5520)		+= gpio-adp5520.o
- obj-$(CONFIG_GPIO_ADP5588)		+= gpio-adp5588.o
-+obj-$(CONFIG_GPIO_AGGREGATOR)		+= gpio-aggregator.o
- obj-$(CONFIG_GPIO_ALTERA_A10SR)		+= gpio-altera-a10sr.o
- obj-$(CONFIG_GPIO_ALTERA)  		+= gpio-altera.o
- obj-$(CONFIG_GPIO_AMD8111)		+= gpio-amd8111.o
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-new file mode 100644
-index 0000000000000000..42485735bd823e02
---- /dev/null
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -0,0 +1,333 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// GPIO Aggregator
-+//
-+// Copyright (C) 2019 Glider bvba
-+
-+#include <linux/ctype.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/idr.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/platform_device.h>
-+#include <linux/string.h>
-+
-+#include "gpiolib.h"
-+#include "gpiolib-fwd.h"
-+
-+#define DRV_NAME	"gpio-aggregator"
-+
-+struct gpio_aggregator {
-+	struct platform_device *pdev;
-+};
-+
-+static DEFINE_MUTEX(gpio_aggregator_lock);	/* protects idr */
-+static DEFINE_IDR(gpio_aggregator_idr);
-+
-+static int gpiochip_match_label(struct gpio_chip *chip, void *data)
-+{
-+	return !strcmp(chip->label, data);
-+}
-+
-+static struct gpio_chip *gpiochip_find_by_label(const char *label)
-+{
-+	return gpiochip_find((void *)label, gpiochip_match_label);
-+}
-+
-+static int gpiochip_match_id(struct gpio_chip *chip, void *data)
-+{
-+	unsigned int id = (uintptr_t)data;
-+
-+	return id == chip->base || id == chip->gpiodev->id;
-+}
-+
-+static struct gpio_chip *gpiochip_find_by_id(const char *id)
-+{
-+	unsigned int x;
-+
-+	if (!str_has_prefix(id, "gpiochip"))
-+		return NULL;
-+
-+	if (kstrtouint(id + strlen("gpiochip"), 10, &x))
-+		return NULL;
-+
-+	return gpiochip_find((void *)(uintptr_t)x, gpiochip_match_id);
-+}
-+
-+static ssize_t new_device_store(struct device_driver *driver, const char *buf,
-+				size_t count)
-+{
-+	struct platform_device *pdev;
-+	struct gpio_aggregator *aggr;
-+	int res, id;
-+
-+	aggr = kzalloc(sizeof(*aggr), GFP_KERNEL);
-+	if (!aggr)
-+		return -ENOMEM;
-+
-+	mutex_lock(&gpio_aggregator_lock);
-+	id = idr_alloc(&gpio_aggregator_idr, aggr, 0, 0, GFP_KERNEL);
-+	mutex_unlock(&gpio_aggregator_lock);
-+
-+	if (id < 0) {
-+		res = id;
-+		goto free_ga;
-+	}
-+
-+	/* kernfs guarantees string termination, so count + 1 is safe */
-+	pdev = platform_device_register_data(NULL, DRV_NAME, id, buf,
-+					     count + 1);
-+	if (IS_ERR(pdev)) {
-+		res = PTR_ERR(pdev);
-+		goto remove_idr;
-+	}
-+
-+	aggr->pdev = pdev;
-+	return count;
-+
-+remove_idr:
-+	mutex_lock(&gpio_aggregator_lock);
-+	idr_remove(&gpio_aggregator_idr, id);
-+	mutex_unlock(&gpio_aggregator_lock);
-+free_ga:
-+	kfree(aggr);
-+	return res;
-+}
-+
-+static DRIVER_ATTR_WO(new_device);
-+
-+static ssize_t delete_device_store(struct device_driver *driver,
-+				   const char *buf, size_t count)
-+{
-+	struct gpio_aggregator *aggr;
-+	unsigned int id;
-+	int error;
-+
-+	if (!str_has_prefix(buf, DRV_NAME "."))
-+		return -EINVAL;
-+
-+	error = kstrtouint(buf + strlen(DRV_NAME "."), 10, &id);
-+	if (error)
-+		return error;
-+
-+	mutex_lock(&gpio_aggregator_lock);
-+	aggr = idr_remove(&gpio_aggregator_idr, id);
-+	mutex_unlock(&gpio_aggregator_lock);
-+	if (!aggr)
-+		return -ENOENT;
-+
-+	platform_device_unregister(aggr->pdev);
-+	kfree(aggr);
-+	return count;
-+}
-+static DRIVER_ATTR_WO(delete_device);
-+
-+static struct attribute *gpio_aggregator_attrs[] = {
-+	&driver_attr_new_device.attr,
-+	&driver_attr_delete_device.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(gpio_aggregator);
-+
-+static char *get_arg(struct device *dev, const char **args)
-+{
-+	const char *start = *args, *end;
-+	char *arg;
-+
-+	if (*start == '"') {
-+		/* Quoted arg */
-+		end = strchr(++start, '"');
-+		if (!end)
-+			return ERR_PTR(-EINVAL);
-+
-+		arg = devm_kasprintf(dev, GFP_KERNEL, "%.*s",
-+				     (int)(end++ - start), start);
-+	} else {
-+		/* Unquoted arg */
-+		for (end = start; *end && !isspace(*end); end++) ;
-+
-+		if (end == start)
-+			return ERR_PTR(-ENOENT);
-+
-+		arg = devm_kasprintf(dev, GFP_KERNEL, "%.*s",
-+				     (int)(end - start), start);
-+	}
-+	if (!arg)
-+		return ERR_PTR(-ENOMEM);
-+
-+	while (isspace(*end))
-+		end++;
-+
-+	*args = end;
-+	return arg;
-+}
-+
-+static int add_gpio(struct device *dev, struct gpio_desc ***descs,
-+		    unsigned int *n, struct gpio_desc *desc)
-+{
-+	struct gpio_desc **new_descs;
-+
-+	new_descs = devm_kmalloc_array(dev, *n + 1, sizeof(desc), GFP_KERNEL);
-+	if (!new_descs)
-+		return -ENOMEM;
-+
-+	if (*descs) {
-+		memcpy(new_descs, *descs, *n * sizeof(desc));
-+		devm_kfree(dev, *descs);
-+	}
-+
-+	new_descs[(*n)++] = desc;
-+	*descs = new_descs;
-+	return 0;
-+}
-+
-+static int gpio_aggregator_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	char *name, *offsets, *first, *last, *next;
-+	const char *args = dev_get_platdata(dev);
-+	struct gpio_desc **descs = NULL, *desc;
-+	unsigned int a, b, i, n = 0;
-+	struct gpiochip_fwd *fwd;
-+	struct gpio_chip *chip;
-+	int error;
-+
-+	while (isspace(*args))
-+		args++;
-+
-+	while (*args) {
-+		name = get_arg(dev, &args);
-+		if (IS_ERR(name)) {
-+			dev_err(dev, "Cannot get GPIO specifier: %ld\n",
-+				PTR_ERR(name));
-+			return PTR_ERR(name);
-+		}
-+
-+		desc = gpio_name_to_desc(name);
-+		if (desc) {
-+			/* Named GPIO line */
-+			error = add_gpio(dev, &descs, &n, desc);
-+			if (error)
-+				return error;
-+
-+			devm_kfree(dev, name);
-+			continue;
-+		}
-+
-+		/* GPIO chip + offsets */
-+		chip = gpiochip_find_by_label(name);
-+		if (!chip)
-+			chip = gpiochip_find_by_id(name);
-+		if (!chip) {
-+			dev_err(dev, "Cannot find gpiochip %s\n", name);
-+			return -EINVAL;
-+		}
-+
-+		offsets = get_arg(dev, &args);
-+		if (IS_ERR(offsets)) {
-+			dev_err(dev, "Cannot get GPIO offsets: %ld\n",
-+				PTR_ERR(offsets));
-+			return PTR_ERR(offsets);
-+		}
-+
-+		for (first = offsets; *first; first = next) {
-+			next = strchrnul(first, ',');
-+			if (*next)
-+				*next++ = '\0';
-+
-+			last = strchr(first, '-');
-+			if (last)
-+				*last++ = '\0';
-+
-+			if (kstrtouint(first, 10, &a)) {
-+				dev_err(dev, "Cannot parse gpio index %s\n",
-+					first);
-+				return -EINVAL;
-+			}
-+
-+			if (!last) {
-+				b = a;
-+			} else if (kstrtouint(last, 10, &b)) {
-+				dev_err(dev, "Cannot parse gpio index %s\n",
-+					last);
-+				return -EINVAL;
-+			}
-+
-+			for (i = a; i <= b; i++) {
-+				desc = gpiochip_get_desc(chip, i);
-+				if (IS_ERR(desc)) {
-+					dev_err(dev,
-+						"Cannot get GPIO %s/%u: %ld\n",
-+						name, i, PTR_ERR(desc));
-+					return PTR_ERR(desc);
-+				}
-+
-+				error = add_gpio(dev, &descs, &n, desc);
-+				if (error)
-+					return error;
-+			}
-+		}
-+
-+		devm_kfree(dev, offsets);
-+		devm_kfree(dev, name);
-+	}
-+
-+	if (!descs) {
-+		dev_err(dev, "No GPIOs specified\n");
-+		return -EINVAL;
-+	}
-+
-+	fwd = gpiochip_fwd_create(dev_name(dev), dev, n, descs);
-+	if (IS_ERR(fwd))
-+		return PTR_ERR(fwd);
-+
-+	platform_set_drvdata(pdev, fwd);
-+	return 0;
-+}
-+
-+static int gpio_aggregator_remove(struct platform_device *pdev)
-+{
-+	struct gpiochip_fwd *fwd = platform_get_drvdata(pdev);
-+
-+	return gpiochip_fwd_destroy(fwd);
-+}
-+
-+static struct platform_driver gpio_aggregator_driver = {
-+	.probe = gpio_aggregator_probe,
-+	.remove = gpio_aggregator_remove,
-+	.driver = {
-+		.name = DRV_NAME,
-+		.groups = gpio_aggregator_groups,
-+	},
-+};
-+
-+static int __init gpio_aggregator_init(void)
-+{
-+	return platform_driver_register(&gpio_aggregator_driver);
-+}
-+module_init(gpio_aggregator_init);
-+
-+static int __exit gpio_aggregator_idr_remove(int id, void *p, void *data)
-+{
-+	struct gpio_aggregator *aggr = p;
-+
-+	platform_device_unregister(aggr->pdev);
-+	kfree(aggr);
-+	return 0;
-+}
-+
-+static void __exit gpio_aggregator_exit(void)
-+{
-+	mutex_lock(&gpio_aggregator_lock);
-+	idr_for_each(&gpio_aggregator_idr, gpio_aggregator_idr_remove, NULL);
-+	idr_destroy(&gpio_aggregator_idr);
-+	mutex_unlock(&gpio_aggregator_lock);
-+
-+	platform_driver_unregister(&gpio_aggregator_driver);
-+}
-+module_exit(gpio_aggregator_exit);
-+
-+MODULE_AUTHOR("Geert Uytterhoeven <geert+renesas@glider.be>");
-+MODULE_DESCRIPTION("GPIO Aggregator");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
-
+> This was the last place saving this return value somewhere. It makes
+> sense to cleanup sctp_get_port_local() now and remove that masked
+> pointer return.
+> 
+> Then you may also cleanup:
+> socket.c:       return !!sctp_get_port_local(sk, &addr);
+> as it will be a direct map.
+> 
+>   Marcelo
+> 
