@@ -2,129 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1CCAB016D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F190B0114
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbfIKQS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 12:18:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40042 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728890AbfIKQQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:16:23 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728952AbfIKQQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:16:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37510 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728818AbfIKQQC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:16:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B92E360850; Wed, 11 Sep 2019 16:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568218561;
+        bh=4pqyw3IXTBXHyJWpxTvm1Q2YJt8vEQt6DZIUC1to7nI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I1g18rBM8Zv19w3RUn4yVD5rKQyQWBW2fXlf9Qf3ouqMbbwsKDICuL+z0NuFQq8/o
+         MSW9wEbxQR4q5dnRNV4J9UL7emrwVqKV8SUDoJs/JaVhoFHpHfjrNdb2k39ZPdbSaH
+         jnH559wTmz/y+xBdyUNK8Fc949Wocn2ecxJFLthA=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9B4E9A371A2;
-        Wed, 11 Sep 2019 16:16:22 +0000 (UTC)
-Received: from coeurl.usersys.redhat.com (ovpn-122-52.rdu2.redhat.com [10.10.122.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C29B5D9E2;
-        Wed, 11 Sep 2019 16:16:22 +0000 (UTC)
-Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
-        id 02F2A2032C; Wed, 11 Sep 2019 12:16:22 -0400 (EDT)
-From:   Scott Mayhew <smayhew@redhat.com>
-To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 01/26] saner calling conventions for nfs_fs_mount_common()
-Date:   Wed, 11 Sep 2019 12:15:56 -0400
-Message-Id: <20190911161621.19832-2-smayhew@redhat.com>
-In-Reply-To: <20190911161621.19832-1-smayhew@redhat.com>
-References: <20190911161621.19832-1-smayhew@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Wed, 11 Sep 2019 16:16:22 +0000 (UTC)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 36EAA602BC;
+        Wed, 11 Sep 2019 16:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568218559;
+        bh=4pqyw3IXTBXHyJWpxTvm1Q2YJt8vEQt6DZIUC1to7nI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UDgWMZCS1la7fmC+L4cGPM1lpn6JYB68/34qRhNl8r0idwkVLNp8ruGkL8iM9R3qJ
+         H0JZeO5HN3vLOuTNSeWQQZmz07aUlNBRthwsGQ5JwAQrQ9PhTLoYhqLiR3PLpPPRqR
+         PmznQE9QLAIgjyye48f2qz2nnLBcQt5fKOaPc/EA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36EAA602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Wed, 11 Sep 2019 10:15:57 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     evgreen@chromium.org, linus.walleij@linaro.org,
+        marc.zyngier@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
+        mkshah@codeaurora.org, linux-gpio@vger.kernel.org,
+        rnayak@codeaurora.org
+Subject: Re: [PATCH RFC 02/14] drivers: irqchip: pdc: Do not toggle
+ IRQ_ENABLE during mask/unmask
+Message-ID: <20190911161557.GB30053@codeaurora.org>
+References: <20190829181203.2660-1-ilina@codeaurora.org>
+ <20190829181203.2660-3-ilina@codeaurora.org>
+ <5d71aad9.1c69fb81.f469e.262f@mx.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <5d71aad9.1c69fb81.f469e.262f@mx.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+On Thu, Sep 05 2019 at 18:39 -0600, Stephen Boyd wrote:
+>Quoting Lina Iyer (2019-08-29 11:11:51)
+>> When an interrupt is to be serviced, the convention is to mask the
+>> interrupt at the chip and unmask after servicing the interrupt. Enabling
+>> and disabling the interrupt at the PDC irqchip causes an interrupt storm
+>> due to the way dual edge interrupts are handled in hardware.
+>>
+>> Skip configuring the PDC when the IRQ is masked and unmasked, instead
+>> use the irq_enable/irq_disable callbacks to toggle the IRQ_ENABLE
+>> register at the PDC. The PDC's IRQ_ENABLE register is only used during
+>> the monitoring mode when the system is asleep and is not needed for
+>> active mode detection.
+>
+>I think this is saying that we want to always let the line be sent
+>through the PDC to the parent irqchip, in this case GIC, so that we
+>don't get an interrupt storm for dual edge interrupts? Why does dual
+>edge interrupts cause a problem?
+>
+I am not sure about the hardware details, but the PDC designers did not
+expect enable and disable to be called whenever the interrupt is
+handled. This specially becomes a problem for dual edge interrupts which
+seems to generate a interrupt storm when enabled/disabled while handling
+the interrupt.
 
-Allow it to take ERR_PTR() for server and return ERR_CAST() of it in
-such case.  All callers used to open-code that...
-
-Reviewed-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/nfs/nfs4super.c | 16 +---------------
- fs/nfs/super.c     | 11 ++++-------
- 2 files changed, 5 insertions(+), 22 deletions(-)
-
-diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
-index 04c57066a11a..baece9857bcf 100644
---- a/fs/nfs/nfs4super.c
-+++ b/fs/nfs/nfs4super.c
-@@ -110,21 +110,12 @@ nfs4_remote_mount(struct file_system_type *fs_type, int flags,
- {
- 	struct nfs_mount_info *mount_info = info;
- 	struct nfs_server *server;
--	struct dentry *mntroot = ERR_PTR(-ENOMEM);
- 
- 	mount_info->set_security = nfs_set_sb_security;
- 
- 	/* Get a volume representation */
- 	server = nfs4_create_server(mount_info, &nfs_v4);
--	if (IS_ERR(server)) {
--		mntroot = ERR_CAST(server);
--		goto out;
--	}
--
--	mntroot = nfs_fs_mount_common(server, flags, dev_name, mount_info, &nfs_v4);
--
--out:
--	return mntroot;
-+	return nfs_fs_mount_common(server, flags, dev_name, mount_info, &nfs_v4);
- }
- 
- static struct vfsmount *nfs_do_root_mount(struct file_system_type *fs_type,
-@@ -280,11 +271,6 @@ nfs4_remote_referral_mount(struct file_system_type *fs_type, int flags,
- 
- 	/* create a new volume representation */
- 	server = nfs4_create_referral_server(mount_info.cloned, mount_info.mntfh);
--	if (IS_ERR(server)) {
--		mntroot = ERR_CAST(server);
--		goto out;
--	}
--
- 	mntroot = nfs_fs_mount_common(server, flags, dev_name, &mount_info, &nfs_v4);
- out:
- 	nfs_free_fhandle(mount_info.mntfh);
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 703f595dce90..467d7a636f0b 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1903,9 +1903,6 @@ struct dentry *nfs_try_mount(int flags, const char *dev_name,
- 	else
- 		server = nfs_mod->rpc_ops->create_server(mount_info, nfs_mod);
- 
--	if (IS_ERR(server))
--		return ERR_CAST(server);
--
- 	return nfs_fs_mount_common(server, flags, dev_name, mount_info, nfs_mod);
- }
- EXPORT_SYMBOL_GPL(nfs_try_mount);
-@@ -2641,6 +2638,9 @@ struct dentry *nfs_fs_mount_common(struct nfs_server *server,
- 	};
- 	int error;
- 
-+	if (IS_ERR(server))
-+		return ERR_CAST(server);
-+
- 	if (server->flags & NFS_MOUNT_UNSHARED)
- 		compare_super = NULL;
- 
-@@ -2789,10 +2789,7 @@ nfs_xdev_mount(struct file_system_type *fs_type, int flags,
- 	/* create a new volume representation */
- 	server = nfs_mod->rpc_ops->clone_server(NFS_SB(data->sb), data->fh, data->fattr, data->authflavor);
- 
--	if (IS_ERR(server))
--		mntroot = ERR_CAST(server);
--	else
--		mntroot = nfs_fs_mount_common(server, flags,
-+	mntroot = nfs_fs_mount_common(server, flags,
- 				dev_name, &mount_info, nfs_mod);
- 
- 	dprintk("<-- nfs_xdev_mount() = %ld\n",
--- 
-2.17.2
+--Lina
 
