@@ -2,108 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAD36AFC20
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAB98AFC2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:07:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbfIKMEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 08:04:41 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:37674 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726696AbfIKMEk (ORCPT
+        id S1727753AbfIKMHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 08:07:13 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:38971 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbfIKMHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 08:04:40 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1i81MN-0006HO-EX; Wed, 11 Sep 2019 14:04:31 +0200
-Message-ID: <30679d3f86731475943856196478677e70a349a9.camel@sipsolutions.net>
-Subject: Re: WARNING at net/mac80211/sta_info.c:1057
- (__sta_info_destroy_part2())
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Date:   Wed, 11 Sep 2019 14:04:30 +0200
-In-Reply-To: <CAHk-=wj_jneK+UYzHhjwsH0XxP0knM+2o2OeFVEz-FjuQ77-ow@mail.gmail.com> (sfid-20190911_135849_146176_004B38CD)
-References: <CAHk-=wgBuu8PiYpD7uWgxTSY8aUOJj6NJ=ivNQPYjAKO=cRinA@mail.gmail.com>
-         <feecebfcceba521703f13c8ee7f5bb9016924cb6.camel@sipsolutions.net>
-         <CAHk-=wj_jneK+UYzHhjwsH0XxP0knM+2o2OeFVEz-FjuQ77-ow@mail.gmail.com>
-         (sfid-20190911_135849_146176_004B38CD)
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Wed, 11 Sep 2019 08:07:12 -0400
+Received: by mail-ua1-f67.google.com with SMTP id s15so6673884uaq.6
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 05:07:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/W60zi2CsnYN3oTG7y8mYKQVQdd1OgZCvvKaWEAFp1Q=;
+        b=GLqOvUYQJXCW5SvJ4CneXBkrDEz8pJWYKS2UiBssfPdaLACxSvkuI5OvIYJGEYjjqE
+         cUKV2A5GorrESRFbUXruLYcRkLE7zysW9cB3DKRhYleYX7lfuaMEjH9ms1pLUXgUk/ga
+         AtWSvRuI1lRk+Iyz2TkD0lPx4g07tYYl9X6G+AbpiumYRog0O1rzm9VT33DP6Z0kmYz4
+         vMab7Wfv8VvJLhGFAuKqmODy0KH7+8olA6iIsgLC1GJ6h8cJPzFzFViLd+rFxMCRubVv
+         LANBylL1rUTIy8ZgvuoDO/kgM8B8H6Ikxqa9IyMKv8xIbSQAegJmuPU/eZzMsC08oh/h
+         6piw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/W60zi2CsnYN3oTG7y8mYKQVQdd1OgZCvvKaWEAFp1Q=;
+        b=UdIjdNOFsJro8P0aRZHP7vRLJy97D05FRqhJEBY11sm77MkxEyxDIdQZljAqxLKO3o
+         8qmudaDYfPRNUEujNM11aF9yYgBmggR5Ilbo/G6LCFIWWWTb1tF8RW2+Nx/klZfScgzB
+         OGWJV4A2k3FZlVTZHvDEqN5GKpbe37AvtmQSL5GcCOTWMCFhyBobo+Y5+tBLi+LNFPBT
+         FVlXyuExwtGzoSqUGCiA4aFmXZ7eRX5zaqJ5mSuG+38jS+bW/WOxQUraGomasAoaAKNi
+         JouNGI9Nvd6cRouqzN4vnMuopqvY437LT6Ny6SzgunThELI20dzYRVKLwK6f8BCDCCBu
+         CW2A==
+X-Gm-Message-State: APjAAAXMha0c/5qQGrc81yHHxZWCDdAKMR4CoybZ24DpszquK8+R3etv
+        u+/YRWJrm9WU4+FalL2RNIKMpmGZCSVAyR4DbAO7lg==
+X-Google-Smtp-Source: APXvYqyHwlzHmgm/F3rLCurrnWpPOQ6N0VtapKXg6cMw0YxI7Dd9PBI/rZrdtfNNpy0PoR1fPnLL/GpHB6Hiw8NQA7E=
+X-Received: by 2002:ab0:3113:: with SMTP id e19mr2059643ual.129.1568203631219;
+ Wed, 11 Sep 2019 05:07:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190908101236.2802-1-ulf.hansson@linaro.org> <20190908101236.2802-4-ulf.hansson@linaro.org>
+ <CAD=FV=U=ohP9KFWrMYfdbT4WbOxGXFNMd71c7ej1G9Qrtim=7w@mail.gmail.com>
+In-Reply-To: <CAD=FV=U=ohP9KFWrMYfdbT4WbOxGXFNMd71c7ej1G9Qrtim=7w@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 11 Sep 2019 14:06:35 +0200
+Message-ID: <CAPDyKFpaM5Os_B_f=b5aY87Espm6GvGG=C6sRemzvfG=9rE74A@mail.gmail.com>
+Subject: Re: [PATCH v2 03/11] mmc: mtk-sd: Re-store SDIO IRQs mask at system resume
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Linux MMC List <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Yong Mao <yong.mao@mediatek.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Daniel Kurtz <djkurtz@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-09-11 at 12:58 +0100, Linus Torvalds wrote:
-> 
-> And I didn't think about it or double-check, because the errors that
-> then followed later _looked_ like that TX power failing that I thought
-> hadn't happened.
+On Tue, 10 Sep 2019 at 00:29, Doug Anderson <dianders@chromium.org> wrote:
+>
+> Hi,
+>
+> On Sun, Sep 8, 2019 at 3:12 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > In cases when SDIO IRQs have been enabled, runtime suspend is prevented by
+> > the driver. However, this still means msdc_runtime_suspend|resume() gets
+> > called during system suspend/resume, via pm_runtime_force_suspend|resume().
+> >
+> > This means during system suspend/resume, the register context of the mtk-sd
+> > device most likely loses its register context, even in cases when SDIO IRQs
+> > have been enabled.
+> >
+> > To re-enable the SDIO IRQs during system resume, the mtk-sd driver
+> > currently relies on the mmc core to re-enable the SDIO IRQs when it resumes
+> > the SDIO card, but this isn't the recommended solution. Instead, it's
+> > better to deal with this locally in the mtk-sd driver, so let's do that.
+> >
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >  drivers/mmc/host/mtk-sd.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> > index 6946bb040a28..ae7688098b7b 100644
+> > --- a/drivers/mmc/host/mtk-sd.c
+> > +++ b/drivers/mmc/host/mtk-sd.c
+> > @@ -2408,6 +2408,9 @@ static void msdc_save_reg(struct msdc_host *host)
+> >         } else {
+> >                 host->save_para.pad_tune = readl(host->base + tune_reg);
+> >         }
+> > +
+> > +       if (sdio_irq_claimed(host->mmc))
+> > +               __msdc_enable_sdio_irq(host, 1);
+> >  }
+> >
+> >  static void msdc_restore_reg(struct msdc_host *host)
+>
+> I don't personally have a Mediatek device setup to test this patch on.
+> If it's super urgent I could try to track down one and try to set it
+> up, but hopefully it's easier for someone else...
+>
+> That being said, from code inspection it seems like you should be
+> adding your code to msdc_restore_reg(), not to msdc_save_reg().  Am I
+> confused?
 
-Yeah, it could be something already got stuck there, hard to say.
+No, you are absolutely correct, my bad. Thanks a lot for spotting this!
 
-> > Since we see that something actually did an rfkill operation. Did you
-> > push a button there?
-> 
-> No, I tried to turn off and turn on Wifi manually (no button, just the
-> settings panel).
-
-That does usually also cause rfkill, so that explains how we got down
-this particular code path.
-
-> I didn't notice the WARN_ON(), I just noticed that there was no
-> networking, and "turn it off and on again" is obviously the first
-> thing to try ;)
-
-:-)
-
-> Sep 11 10:27:13 xps13 kernel: WARNING: CPU: 4 PID: 1246 at
-> net/mac80211/sta_info.c:1057 __sta_info_destroy_part2+0x147/0x150
-> [mac80211]
-> 
-> but if you want full logs I can send them in private to you.
-
-No, it's fine, though maybe Kalle does - he was stepping out for a while
-but said he'd look later.
-
-This is the interesting time - 10:27:13 we get one of the first
-failures. Really the first one was this:
-
-> Sep 11 10:27:07 xps13 kernel: ath10k_pci 0000:02:00.0: wmi command 16387 timeout, restarting hardware
-
-
-> I do suspect it's atheros and suspend/resume or something. The
-> wireless clearly worked for a while after the resume, but then at some
-> point it stopped.
-
-I'm not really sure it's related to suspend/resume at all, the firmware
-seems to just have gotten stuck, and the device and firmware most likely
-got reset over the suspend/resume anyway.
-
-> > The only explanation I therefore have is that something is just taking
-> > *forever* in that code path, hence my question about timing information
-> > on the logs.
-> 
-> Yeah, maybe it would time out everything eventually. But not for a
-> long time. It hadn't cleared up by
-> 
->   Sep 11 10:36:21 xps13 gnome-session-f[6837]: gnome-session-failed:
-> Fatal IO error 0 (Success) on X server :0.
-
-Ok, that's way longer than I would have guessed even! That's over 9
-minutes, that'd be close to 200 commands having to be issued and timing
-out ...
-
-I don't know. What I wrote before is basically all I can say, I think
-the driver gets stuck somewhere waiting for the device "forever", and
-the stack just doesn't get to release the lock, causing all the follow-
-up problems.
-
-johannes
-
+Kind regards
+Uffe
