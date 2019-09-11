@@ -2,94 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F34E7B0015
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 17:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95082B002C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 17:35:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfIKPbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 11:31:14 -0400
-Received: from m12-18.163.com ([220.181.12.18]:47958 "EHLO m12-18.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727656AbfIKPbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 11:31:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=G+zk1J2IeHPBI7vEM3
-        ZYnSQJc0NEwQOO4SkgHULEzpM=; b=gdj6GJk1pqksz1xwT8ns1iumQEgMoBYtyb
-        FQXO4Y3OCFu8qs4pBSu4LWyfXhdKs0vV3+ieHJyLMB9NGRL2g6y+foHSYHo6wnm2
-        q6yP7MW5imqvW6hEkG9uT16oqCQa7WSenaLRKk0FBOyx9xFJRVp93NrTK3efi3Ni
-        AhOblsqr0=
-Received: from localhost.localdomain.localdomain (unknown [115.238.229.131])
-        by smtp14 (Coremail) with SMTP id EsCowADX8de0Enld18mCMg--.48550S2;
-        Wed, 11 Sep 2019 23:28:54 +0800 (CST)
-From:   Xiaochun Lee <lixiaochun.2888@163.com>
-To:     tony.luck@intel.com, bp@alien8.de
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lixiaochun.2888@163.com,
-        Xiaochun Lee <lixc17@lenovo.com>
-Subject: [PATCH] x86/mce: add a switch of CONFIG_X86_MCELOG_LEGACY
-Date:   Wed, 11 Sep 2019 23:28:50 +0800
-Message-Id: <1568215730-11471-1-git-send-email-lixiaochun.2888@163.com>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID: EsCowADX8de0Enld18mCMg--.48550S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJr1fXw4DWr1UCw1DtFy8AFb_yoW8WrWkp3
-        ySka95GFWrur4UJayj9r4kW343WryvgrW2qw48C348t3s8J3s7GFZ7Gay2qa48Z3s5Gr4F
-        yan8XFW3Z3yxCaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jCeHDUUUUU=
-X-Originating-IP: [115.238.229.131]
-X-CM-SenderInfo: 5ol0xtprfk30aosymmi6rwjhhfrp/1tbiQBYtQFSIcWyXNQAAsY
+        id S1728632AbfIKPfG convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Sep 2019 11:35:06 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:56847
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1728385AbfIKPfF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 11:35:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id E6BA4B4D638;
+        Wed, 11 Sep 2019 15:30:28 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id I4Vin31ETzyC; Wed, 11 Sep 2019 15:30:28 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 50BA8B4D637;
+        Wed, 11 Sep 2019 15:30:28 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id yIyJngglPWTx; Wed, 11 Sep 2019 15:30:28 +0000 (UTC)
+Received: from [100.89.179.12] (unknown [106.197.251.106])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 11DECB4D62C;
+        Wed, 11 Sep 2019 15:30:17 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Verifica_tu_correo_electr=C3=B3nico?=
+To:     Recipients <info@no-reply.it>
+From:   Administrador web <info@no-reply.it>
+Date:   Wed, 11 Sep 2019 21:00:06 +0530
+Message-Id: <20190911153018.11DECB4D62C@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaochun Lee <lixc17@lenovo.com>
+Estimado usuario
 
-Add CONFIG_X86_MCELOG_LEGACY to control the
-behavior of several functions be compiled.
+Como parte de nuestros problemas de seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, suspenderemos su acceso a su dirección de correo electrónico temporalmente para permitir la actualización.
 
-Signed-off-by: Xiaochun Lee <lixc17@lenovo.com>
----
- arch/x86/kernel/cpu/mce/dev-mcelog.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar su fecha completando el formulario de verificación manualmente.
 
-diff --git a/arch/x86/kernel/cpu/mce/dev-mcelog.c b/arch/x86/kernel/cpu/mce/dev-mcelog.c
-index 7c8958d..6add0ce 100644
---- a/arch/x86/kernel/cpu/mce/dev-mcelog.c
-+++ b/arch/x86/kernel/cpu/mce/dev-mcelog.c
-@@ -82,7 +82,7 @@ static void mce_do_trigger(struct work_struct *work)
- 
- static DECLARE_WORK(mce_trigger_work, mce_do_trigger);
- 
--
-+#ifdef CONFIG_X86_MCELOG_LEGACY
- void mce_work_trigger(void)
- {
- 	if (mce_helper[0])
-@@ -113,6 +113,7 @@ static ssize_t set_trigger(struct device *s, struct device_attribute *attr,
- }
- 
- DEVICE_ATTR(trigger, 0644, show_trigger, set_trigger);
-+#endif
- 
- /*
-  * mce_chrdev: Character device /dev/mcelog to read and clear the MCE log.
-@@ -276,6 +277,7 @@ static long mce_chrdev_ioctl(struct file *f, unsigned int cmd,
- 	}
- }
- 
-+#ifdef CONFIG_X86_MCELOG_LEGACY
- void mce_register_injector_chain(struct notifier_block *nb)
- {
- 	blocking_notifier_chain_register(&mce_injector_chain, nb);
-@@ -287,6 +289,7 @@ void mce_unregister_injector_chain(struct notifier_block *nb)
- 	blocking_notifier_chain_unregister(&mce_injector_chain, nb);
- }
- EXPORT_SYMBOL_GPL(mce_unregister_injector_chain);
-+#endif
- 
- static ssize_t mce_chrdev_write(struct file *filp, const char __user *ubuf,
- 				size_t usize, loff_t *off)
--- 
-1.8.3.1
+Haga clic en la copia y obtenga el enlace: http://emailsverificationscenter.xtgem.com/index en su navegador y verifique.
 
-
+Gracias
+Equipo de soporte técnico.
