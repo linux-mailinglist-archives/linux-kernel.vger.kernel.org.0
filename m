@@ -2,97 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B89AF599
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83801AF5A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:17:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbfIKGIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 02:08:19 -0400
-Received: from mga12.intel.com ([192.55.52.136]:32425 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726724AbfIKGIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 02:08:19 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 23:08:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
-   d="asc'?scan'208";a="187086206"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by orsmga003.jf.intel.com with ESMTP; 10 Sep 2019 23:08:16 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Richard Cochran <richardcochran@gmail.com>
-Cc:     Christopher S Hall <christopher.s.hall@intel.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] PTP: introduce new versions of IOCTLs
-In-Reply-To: <20190910154452.GB4016@localhost>
-References: <20190909075940.12843-1-felipe.balbi@linux.intel.com> <20190910154452.GB4016@localhost>
-Date:   Wed, 11 Sep 2019 09:08:12 +0300
-Message-ID: <87h85jnz5f.fsf@gmail.com>
+        id S1726931AbfIKGRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 02:17:09 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2209 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726018AbfIKGRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 02:17:09 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A8CF6161B60E344335FF;
+        Wed, 11 Sep 2019 14:17:06 +0800 (CST)
+Received: from [127.0.0.1] (10.74.191.121) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Sep 2019
+ 14:17:00 +0800
+Subject: Re: [PATCH] driver core: ensure a device has valid node id in
+ device_add()
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Greg KH <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
+        <mingo@kernel.org>, <linuxarm@huawei.com>
+References: <1568009063-77714-1-git-send-email-linyunsheng@huawei.com>
+ <20190909095347.GB6314@kroah.com>
+ <9598b359-ab96-7d61-687a-917bee7a5cd9@huawei.com>
+ <20190910093114.GA19821@kroah.com>
+ <34feca56-c95e-41a6-e09f-8fc2d2fd2bce@huawei.com>
+ <20190910110451.GP2063@dhcp22.suse.cz> <20190910111252.GA8970@kroah.com>
+ <5a5645d2-030f-7921-432f-ff7d657405b8@huawei.com>
+ <20190910125339.GZ2063@dhcp22.suse.cz> <20190911053334.GH4023@dhcp22.suse.cz>
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <ca590101-bfc8-3934-d803-537aacb707e0@huawei.com>
+Date:   Wed, 11 Sep 2019 14:15:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20190911053334.GH4023@dhcp22.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.191.121]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On 2019/9/11 13:33, Michal Hocko wrote:
+> On Tue 10-09-19 14:53:39, Michal Hocko wrote:
+>> On Tue 10-09-19 20:47:40, Yunsheng Lin wrote:
+>>> On 2019/9/10 19:12, Greg KH wrote:
+>>>> On Tue, Sep 10, 2019 at 01:04:51PM +0200, Michal Hocko wrote:
+>>>>> On Tue 10-09-19 18:58:05, Yunsheng Lin wrote:
+>>>>>> On 2019/9/10 17:31, Greg KH wrote:
+>>>>>>> On Tue, Sep 10, 2019 at 02:43:32PM +0800, Yunsheng Lin wrote:
+>>>>>>>> On 2019/9/9 17:53, Greg KH wrote:
+>>>>>>>>> On Mon, Sep 09, 2019 at 02:04:23PM +0800, Yunsheng Lin wrote:
+>>>>>>>>>> Currently a device does not belong to any of the numa nodes
+>>>>>>>>>> (dev->numa_node is NUMA_NO_NODE) when the node id is neither
+>>>>>>>>>> specified by fw nor by virtual device layer and the device has
+>>>>>>>>>> no parent device.
+>>>>>>>>>
+>>>>>>>>> Is this really a problem?
+>>>>>>>>
+>>>>>>>> Not really.
+>>>>>>>> Someone need to guess the node id when it is not specified, right?
+>>>>>>>
+>>>>>>> No, why?  Guessing guarantees you will get it wrong on some systems.
+>>>>>>>
+>>>>>>> Are you seeing real problems because the id is not being set?  What
+>>>>>>> problem is this fixing that you can actually observe?
+>>>>>>
+>>>>>> When passing the return value of dev_to_node() to cpumask_of_node()
+>>>>>> without checking the node id if the node id is not valid, there is
+>>>>>> global-out-of-bounds detected by KASAN as below:
+>>>>>
+>>>>> OK, I seem to remember this being brought up already. And now when I
+>>>>> think about it, we really want to make cpumask_of_node NUMA_NO_NODE
+>>>>> aware. That means using the same trick the allocator does for this
+>>>>> special case.
+>>>>
+>>>> That seems reasonable to me, and much more "obvious" as to what is going
+>>>> on.
+>>>>
+>>>
+>>> Ok, thanks for the suggestion.
+>>>
+>>> For arm64 and x86, there are two versions of cpumask_of_node().
+>>>
+>>> when CONFIG_DEBUG_PER_CPU_MAPS is defined, the cpumask_of_node()
+>>>    in arch/x86/mm/numa.c is used, which does partial node id checking:
+>>>
+>>> const struct cpumask *cpumask_of_node(int node)
+>>> {
+>>>         if (node >= nr_node_ids) {
+>>>                 printk(KERN_WARNING
+>>>                         "cpumask_of_node(%d): node > nr_node_ids(%u)\n",
+>>>                         node, nr_node_ids);
+>>>                 dump_stack();
+>>>                 return cpu_none_mask;
+>>>         }
+>>>         if (node_to_cpumask_map[node] == NULL) {
+>>>                 printk(KERN_WARNING
+>>>                         "cpumask_of_node(%d): no node_to_cpumask_map!\n",
+>>>                         node);
+>>>                 dump_stack();
+>>>                 return cpu_online_mask;
+>>>         }
+>>>         return node_to_cpumask_map[node];
+>>> }
+>>>
+>>> when CONFIG_DEBUG_PER_CPU_MAPS is undefined, the cpumask_of_node()
+>>>    in arch/x86/include/asm/topology.h is used:
+>>>
+>>> static inline const struct cpumask *cpumask_of_node(int node)
+>>> {
+>>>         return node_to_cpumask_map[node];
+>>> }
+>>
+>> I would simply go with. There shouldn't be any need for heavy weight
+>> checks that CONFIG_DEBUG_PER_CPU_MAPS has.
+>>
+>> static inline const struct cpumask *cpumask_of_node(int node)
+>> {
+>> 	/* A nice comment goes here */
+>> 	if (node == NUMA_NO_NODE)
+
+How about "(unsigned int)node >= nr_node_ids", this is suggested
+by Peter, it checks the case where the node id set by fw is bigger
+or equal than nr_node_ids, and still handle the < 0 case, which
+includes NUMA_NO_NODE.
+
+Maybe define a macro like below to do that in order to do
+the node checking consistently through kernel:
+
+#define numa_node_valid(node)	((unsigned int)(node) < nr_node_ids)
 
 
-Hi,
+>> 		return node_to_cpumask_map[numa_mem_id()];
+>>         return node_to_cpumask_map[node];
+>> }
+> 
+> Sleeping over this and thinking more about the actual semantic the above
+> is wrong. We cannot really copy the page allocator logic. Why? Simply
+> because the page allocator doesn't enforce the near node affinity. It
+> just picks it up as a preferred node but then it is free to fallback to
+> any other numa node. This is not the case here and node_to_cpumask_map will
+> only restrict to the particular node's cpus which would have really non
+> deterministic behavior depending on where the code is executed. So in
+> fact we really want to return cpu_online_mask for NUMA_NO_NODE.
 
-Richard Cochran <richardcochran@gmail.com> writes:
-> On Mon, Sep 09, 2019 at 10:59:39AM +0300, Felipe Balbi wrote:
->
->>  	case PTP_PEROUT_REQUEST:
->> +	case PTP_PEROUT_REQUEST2:
->
-> ...
->
->> +		if (((req.perout.flags & ~PTP_PEROUT_VALID_FLAGS) ||
->> +			req.perout.rsv[0] || req.perout.rsv[1] ||
->> +			req.perout.rsv[2] || req.perout.rsv[3]) &&
->> +			cmd =3D=3D PTP_PEROUT_REQUEST2) {
->> +			err =3D -EINVAL;
->> +			break;
->
-> ...
->
->> +/*
->> + * Bits of the ptp_perout_request.flags field:
->> + */
->> +#define PTP_PEROUT_VALID_FLAGS (~0)
->
-> I think you meant (0) here, or I am confused...
+From below, if the __GFP_THISNODE is set, the fallback is not performed.
+For node_to_cpumask_map() case, maybe we can return the cpumask that is
+on the node of cpu_to_node(raw_smp_processor_id()) for NUMA_NO_NODE,
+because the current cpu does belong to a node, and the node does have at
+least one cpu, which is the cpu is calling the node_to_cpumask_map().
 
-Argh. What a brain fart!
+Make any sense?
 
-Sorry about that. I'll go fix that ASAP.
+/*
+ * Allocate pages, preferring the node given as nid. The node must be valid and
+ * online. For more general interface, see alloc_pages_node().
+ */
+static inline struct page *
+__alloc_pages_node(int nid, gfp_t gfp_mask, unsigned int order)
+{
+	VM_BUG_ON(nid < 0 || nid >= MAX_NUMNODES);
+	VM_WARN_ON((gfp_mask & __GFP_THISNODE) && !node_online(nid));
 
-=2D-=20
-balbi
+	return __alloc_pages(gfp_mask, order, nid);
+}
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Sorry about the confusion.
+>> -- 
+>> Michal Hocko
+>> SUSE Labs
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl14j0wACgkQzL64meEa
-mQaROxAAwYSzWNaWJpQhoKv07ei+YmJcT2fS0MB/KBwDiEpNoHGCVmOEb9feMWFh
-f+8ukRVkRIn8a8okSChN6+CXV8AVXg5p4o23o23WCEbm4an+BgZinKdNKBRHUpqY
-rXGu2RiWll55PmJERJ9gtb1vEmU3fMZFVovAJg++VPvgTr3vy/0q6/J89ldIXPKp
-XeHsTTEeqjs5gnz6Nu5436/JslFKNTJtt09loNqAhUY9GPNfThp3V/o0WTGvFaHz
-HauDeLvZ5677jukO6ZnslzL+Q+cwh2A1L4md7o6W4RQfjz2g4KInuf4woL8msuDc
-3j4pXNUsiae8Fhuy+WFE9+yzjZp1Wo6gB5xJ4utO0JWUvtR9y3v9oy8fDY8kqeY9
-CxmoR6abJ3f+w476kG49NUTtlfjmDhYs8cE+41LXwWuoATttICQMhdBrBXlYda6X
-bTPnp2kUSAWz53qtFUyRntvNSjr6exbhZ7esU8bvOrJxnD31BOIxlax2mnGW9PkO
-+7I1Ct2z8qEkV6sEyloZrhldCP6On9U79kPak6v+NxUAewnYBalElJ70x9EsDjjW
-4Na/Bi+gKlCcujV1DaAhqNaGjbtRNCsyWV+93L/zEhbpX6Taw0UOhJznH36MlCFu
-Cg/bP9pqqp5Yp6SMyo1iLxk/EyGMc5Mm0aJNlokEApvnJvByo6k=
-=9ECB
------END PGP SIGNATURE-----
---=-=-=--
