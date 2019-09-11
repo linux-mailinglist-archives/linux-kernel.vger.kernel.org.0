@@ -2,107 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5F18AFA19
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88753AFA22
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:15:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfIKKNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 06:13:47 -0400
-Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:52564 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726724AbfIKKNq (ORCPT
+        id S1727534AbfIKKPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 06:15:05 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:47060 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726842AbfIKKPE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 06:13:46 -0400
-Received: from zxbjmbx3.zhaoxin.com (10.29.252.165) by ZXSHCAS1.zhaoxin.com
- (10.28.252.161) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 11 Sep
- 2019 18:13:44 +0800
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by zxbjmbx3.zhaoxin.com
- (10.29.252.165) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 11 Sep
- 2019 18:13:43 +0800
-Received: from zxbjmbx1.zhaoxin.com ([fe80::b41a:737:a784:b70d]) by
- zxbjmbx1.zhaoxin.com ([fe80::b41a:737:a784:b70d%16]) with mapi id
- 15.01.1261.035; Wed, 11 Sep 2019 18:13:43 +0800
-From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     "tony.luck@intel.com" <tony.luck@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
-        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-        "qiuxu.zhuo@intel.com" <qiuxu.zhuo@intel.com>,
-        David Wang <DavidWang@zhaoxin.com>,
-        "Cooper Yan(BJ-RD)" <CooperYan@zhaoxin.com>,
-        "Qiyuan Wang(BJ-RD)" <QiyuanWang@zhaoxin.com>,
-        "Herry Yang(BJ-RD)" <HerryYang@zhaoxin.com>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjIgNC80XSB4ODYvbWNlOiBBZGQgWmhhb3hpbiBM?=
- =?utf-8?Q?MCE_support?=
-Thread-Topic: [PATCH v2 4/4] x86/mce: Add Zhaoxin LMCE support
-Thread-Index: AdVnrQawETN/yUVcT86jBiMUKrTywv//yLSA//5cEqA=
-Date:   Wed, 11 Sep 2019 10:13:43 +0000
-Message-ID: <904ed0781be648fa8a8fdd8af70b6b94@zhaoxin.com>
-References: <5f4f8dee1fb24d38aa0ee136c5e98c72@zhaoxin.com>
- <20190910123657.GE23931@zn.tnic>
-In-Reply-To: <20190910123657.GE23931@zn.tnic>
-Accept-Language: en-US, zh-CN
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.32.64.75]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 11 Sep 2019 06:15:04 -0400
+Received: by mail-lj1-f195.google.com with SMTP id e17so19392327ljf.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 03:15:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9kt1CQafIKHj/rHsG6mTJs/CDrUdJxcoRtxru9KNIIc=;
+        b=iktAugW3hJD0fx1Mw3vh0knWXjv2kzp5AZw4KSCK3AsaOuN+ieamhuN7lmY7l001vc
+         E+Bw1UUWNfzJKEpjHhyrYQuHoO6fhOY2Gv1siIiYX5gHyxZzgek3vX9Q8jMH/w2NMPaD
+         u1UbUJr4qgpKkVG13fXg9aZm8fQYOfFr6rvvY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9kt1CQafIKHj/rHsG6mTJs/CDrUdJxcoRtxru9KNIIc=;
+        b=Q6ZaOKhC4L0nPDOAlIYhz5/LHmfZzY6LzAeS0t+ffvMnAJXTKizGz1+7V4z8MTf0Xb
+         wCWN1kVyKkSbUAKMVAUM4m5EOnRWuoKogzALFQtOkcY3mKrDnIYki3p6tJD/853PlkpL
+         3yaB4tcmyhpHITR4OSnPK2TeTf64NZomJPYNfhsxMkUov2dJJriT5b6KrdbLxp8RShqn
+         O+ozZFWfoWvdkodcSsvii+VfPBhxFqowMClbpUrgK/8G/WaBoXJoJNq7c1er/mmAmtMI
+         KYI6PbGsX+cRBpnW9JirwgPmQfO+eSQcn684rUU+FrsTXQhzItjZE4/gGqt+LTRlgqSj
+         u7Xw==
+X-Gm-Message-State: APjAAAUbGz19auoAO3siODxL71iqISdZ4AQHNjaPOZWnTc8eUKHxeBVW
+        lc+wQBLOyTX/9j80/+x85ig1Lg==
+X-Google-Smtp-Source: APXvYqzYDJlOd0oaFf/DIvrn5sCLtqtD+U9OlgwAoanyEXdZ4W5myJ1ffax3gZYquRafZEtsbH8GxA==
+X-Received: by 2002:a2e:9c86:: with SMTP id x6mr22795025lji.141.1568196900869;
+        Wed, 11 Sep 2019 03:15:00 -0700 (PDT)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id 18sm4074325ljd.86.2019.09.11.03.14.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Sep 2019 03:15:00 -0700 (PDT)
+Subject: Re: [PATCH v2] printf: add support for printing symbolic error codes
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>,
+        Joe Perches <joe@perches.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Documentation List <linux-doc@vger.kernel.org>
+References: <20190830214655.6625-1-linux@rasmusvillemoes.dk>
+ <20190909203826.22263-1-linux@rasmusvillemoes.dk>
+ <CAHp75Vdpd5uMCM-n+4vAZLwUpN=-cHnHs1uxoV2MDd5fk+CQig@mail.gmail.com>
+ <95a9f6fbc8fc2cf81e9eadc6f7fef8dd3592e60b.camel@perches.com>
+ <354dc1f5-45b8-9e51-1ba0-b1fd368be45a@rasmusvillemoes.dk>
+ <8f21cddf-0e39-8379-6eab-60e8238a020d@kleine-koenig.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <7e02e25e-a67a-e7a2-3d85-fd2166a882e5@rasmusvillemoes.dk>
+Date:   Wed, 11 Sep 2019 12:14:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <8f21cddf-0e39-8379-6eab-60e8238a020d@kleine-koenig.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCBTZXAgMTAsIDIwMTksIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj5PbiBUdWUsIFNl
-cCAxMCwgMjAxOSBhdCAwODoyMDowN0FNICswMDAwLCBUb255IFcgV2FuZy1vYyB3cm90ZToNCj4+
-IFpoYW94aW4gbmV3ZXIgQ1BVcyBzdXBwb3J0IExNQ0UgdGhhdCBjb21wYXRpYmxlIHdpdGggSW50
-ZWwncw0KPj4gIk1hY2hpbmUtQ2hlY2sgQXJjaGl0ZWN0dXJlIiwgc28gYWRkIHN1cHBvcnQgZm9y
-IFpoYW94aW4gTE1DRQ0KPj4gaW4gbWNlL2NvcmUuYy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBU
-b255IFcgV2FuZy1vYyA8VG9ueVdXYW5nLW9jQHpoYW94aW4uY29tPg0KPj4gLS0tDQo+PiB2MS0+
-djI6DQo+PiAgLSBGaXggcmVkZWZpbml0aW9uIG9mICJtY2Vfemhhb3hpbl9mZWF0dXJlX2NsZWFy
-Ig0KPj4NCj4+ICBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9tY2UuaCAgICAgfCAgMiArKw0KPj4gIGFy
-Y2gveDg2L2tlcm5lbC9jcHUvbWNlL2NvcmUuYyB8IDI1ICsrKysrKysrKysrKysrKysrKysrKysr
-LS0NCj4+ICAyIGZpbGVzIGNoYW5nZWQsIDI1IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0p
-DQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL21jZS5oIGIvYXJjaC94
-ODYvaW5jbHVkZS9hc20vbWNlLmgNCj4+IGluZGV4IDA5ODZhMTEuLjAxODQwZWMgMTAwNjQ0DQo+
-PiAtLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9tY2UuaA0KPj4gKysrIGIvYXJjaC94ODYvaW5j
-bHVkZS9hc20vbWNlLmgNCj4+IEBAIC0zNTIsOCArMzUyLDEwIEBAIHN0YXRpYyBpbmxpbmUgdm9p
-ZCBtY2VfaHlnb25fZmVhdHVyZV9pbml0KHN0cnVjdA0KPmNwdWluZm9feDg2ICpjKQl7IHJldHVy
-biBtY2VfYW0NCj4+DQo+PiAgI2lmZGVmIENPTkZJR19DUFVfU1VQX1pIQU9YSU4NCj4+ICB2b2lk
-IG1jZV96aGFveGluX2ZlYXR1cmVfaW5pdChzdHJ1Y3QgY3B1aW5mb194ODYgKmMpOw0KPj4gK3Zv
-aWQgbWNlX3poYW94aW5fZmVhdHVyZV9jbGVhcihzdHJ1Y3QgY3B1aW5mb194ODYgKmMpOw0KPj4g
-ICNlbHNlDQo+PiAgc3RhdGljIGlubGluZSB2b2lkIG1jZV96aGFveGluX2ZlYXR1cmVfaW5pdChz
-dHJ1Y3QgY3B1aW5mb194ODYgKmMpIHsgfQ0KPj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBtY2Vfemhh
-b3hpbl9mZWF0dXJlX2NsZWFyKHN0cnVjdCBjcHVpbmZvX3g4NiAqYykgeyB9DQo+PiAgI2VuZGlm
-DQo+Pg0KPj4gICNlbmRpZiAvKiBfQVNNX1g4Nl9NQ0VfSCAqLw0KPj4gZGlmZiAtLWdpdCBhL2Fy
-Y2gveDg2L2tlcm5lbC9jcHUvbWNlL2NvcmUuYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvbWNlL2Nv
-cmUuYw0KPj4gaW5kZXggOGEzNjgzMy4uNTk1ZDNhZjdhYyAxMDA2NDQNCj4+IC0tLSBhL2FyY2gv
-eDg2L2tlcm5lbC9jcHUvbWNlL2NvcmUuYw0KPj4gKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9t
-Y2UvY29yZS5jDQo+PiBAQCAtMTEyOSw2ICsxMTI5LDE3IEBAIHN0YXRpYyBib29sIF9fbWNfY2hl
-Y2tfY3Jhc2hpbmdfY3B1KGludCBjcHUpDQo+PiAgCQl1NjQgbWNnc3RhdHVzOw0KPj4NCj4+ICAJ
-CW1jZ3N0YXR1cyA9IG1jZV9yZG1zcmwoTVNSX0lBMzJfTUNHX1NUQVRVUyk7DQo+PiArDQo+PiAr
-CQlpZiAoYm9vdF9jcHVfZGF0YS54ODZfdmVuZG9yID09IFg4Nl9WRU5ET1JfWkhBT1hJTikgew0K
-Pj4gKwkJCWlmIChtY2dzdGF0dXMgJiBNQ0dfU1RBVFVTX0xNQ0VTKSB7DQo+PiArCQkJCXJldHVy
-biBmYWxzZTsNCj4+ICsJCQl9IGVsc2Ugew0KPj4gKwkJCQlpZiAobWNnc3RhdHVzICYgTUNHX1NU
-QVRVU19SSVBWKQ0KPj4gKwkJCQkJbWNlX3dybXNybChNU1JfSUEzMl9NQ0dfU1RBVFVTLCAwKTsN
-Cj4+ICsJCQkJcmV0dXJuIHRydWU7DQo+PiArCQkJfQ0KPj4gKwkJfQ0KPg0KPlNpbXBsaWZ5Og0K
-Pg0KPiAgICAgICAgICAgICAgICBpZiAoYm9vdF9jcHVfZGF0YS54ODZfdmVuZG9yID09IFg4Nl9W
-RU5ET1JfWkhBT1hJTikgew0KPiAgICAgICAgICAgICAgICAgICAgICAgIGlmIChtY2dzdGF0dXMg
-JiBNQ0dfU1RBVFVTX0xNQ0VTKQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0
-dXJuIGZhbHNlOw0KPgkJfQ0KPg0KPgkJPC0tLSBOb3cgaGVyZSwgb24geW91ciBDUFVzIHdoaWNo
-IGRvbid0IHNldCBNQ0dfU1RBVFVTX0xNQ0VTLA0KPml0IHdpbGwgZmFsbGJhY2sgdG8gY2xlYXJp
-bmcgdGhlIHN0YXR1cyByZWdpc3Rlci4gSS5lLiwgd2hhdCB5b3UgZG8gaW4gdGhlIGVsc2UNCj5j
-bGF1c2UuDQo+DQoNCk9uIFpoYW94aW4gQ1BVcyBkb24ndCBzZXQgTUNHX1NUQVRVU19MTUNFUywg
-dG8gYXZvaWQgcmVuZGV6dm91cyB0aW1lb3V0IGlmIA0KdGhpcyBDUFUgaXMgb2ZmbGluZSBvciBj
-cmFzaGluZ19jcHUgd2FzIHNldCwgd2Ugd2FudCByZXR1cm4gdHJ1ZSByZWdhcmRsZXNzIG9mDQpN
-Q0dfU1RBVFVTX1JJUFYncyBzZXR0aW5nLiANCg0KV2l0aG91dCBteSBlbHNlIGNsYXVzZSwgb3Jp
-Z2luYWwgY29kZXMgcmV0dXJuIHRydWUgb25seSB3aGVuIE1DR19TVEFUVVNfUklQVg0KYmUgc2V0
-dGVkLg0KDQpGb3IgYmV0dGVyIHJlYWRhYmlsaXR5LCB3aWxsIGFkZCBjb21tZW50IGFuZCBjaGFu
-Z2UgY29kaW5nIHN0eWxlIGluIHYzLg0KDQpTaW5jZXJlbHkNClRvbnlXV2FuZy1vYw0K
+On 11/09/2019 11.37, Uwe Kleine-König wrote:
+> On 9/11/19 8:43 AM, Rasmus Villemoes wrote:
+>> On 11/09/2019 02.15, Joe Perches wrote:
+>>> On Tue, 2019-09-10 at 18:26 +0300, Andy Shevchenko wrote:
+>>>> On Mon, Sep 9, 2019 at 11:39 PM Rasmus Villemoes
+>>>> <linux@rasmusvillemoes.dk> wrote:
+>>>>> +{
+>>>>> +       /* Might as well accept both -EIO and EIO. */
+>>>>> +       if (err < 0)
+>>>>> +               err = -err;
+>>>>> +       if (err <= 0) /* INT_MIN or 0 */
+>>>>> +               return NULL;
+>>>>> +       if (err < ARRAY_SIZE(codes_0))
+>>>>> +               return codes_0[err];
+>>>>
+>>>> It won't work if one of the #ifdef:s in the array fails.
+>>>> Would it?
+>>
+>> I don't understand what you mean. How can an ifdef fail(?), and what
+>> exactly won't work?
+> 
+> I think Joe means: What happens if codes_0[57] is "" because there is no
+> ESOMETHING with value 57.
+
+[That was Andy, not Joe, I was lazy and replied to both in one email
+since Joe quoted all of Andy's questions].
+
+So first, for good measure, codes_0[57] may be NULL but not "". Second,
+if we're passed 57 but no Exxx on this architecture has the value 57,
+then yes, we return NULL, just as if we're passed -18 or 0 or 1234. But
+57 (or -57, or ERR_PTR(-57)) would realistically never find its way into
+an err variable (be it pointer or integer) in the first place when no
+ESOMETHING has the value 57.
+
+Except for the case where somebody in the future adds #define ESOMETHING
+57 to their asm/errno.h and starts using ESOMETHING, without updating
+the table in errcode.c. But if that's the case, letting the caller
+handle the "sorry, I can't translate 57 to some string" is still the
+right thing to do.
+
+Rasmus
+
