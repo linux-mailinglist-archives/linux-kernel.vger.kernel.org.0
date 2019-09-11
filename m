@@ -2,73 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BD70AFCDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5E3AAFCE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:38:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbfIKMdS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 08:33:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40740 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726198AbfIKMdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 08:33:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A71A0AC3E;
-        Wed, 11 Sep 2019 12:33:16 +0000 (UTC)
-Date:   Wed, 11 Sep 2019 14:33:16 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v2] vhost: block speculation of translated descriptors
-Message-ID: <20190911123316.GX4023@dhcp22.suse.cz>
-References: <20190911120908.28410-1-mst@redhat.com>
- <20190911121628.GT4023@dhcp22.suse.cz>
- <20190911082236-mutt-send-email-mst@kernel.org>
+        id S1727742AbfIKMiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 08:38:05 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:19936 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726198AbfIKMiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 08:38:04 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46T1dj3qf5z9ttBh;
+        Wed, 11 Sep 2019 14:38:01 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=BheTapsZ; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id mYSQiCEUNZcF; Wed, 11 Sep 2019 14:38:01 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46T1dj2lqhz9ttBL;
+        Wed, 11 Sep 2019 14:38:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1568205481; bh=DhX4WED4iVEDvM7Oo6DUrJ7y5zvr1cIiyY6i5byB5xc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=BheTapsZKTb+mshgPxc5LdW+Rjt6YT+UWBHiyi8BqPZzqijoiF4b8ASoCLfoJqGIo
+         u2zdN67hu9KFy/D7DmUHWGbYstPxxBodFfJcUcoxDR/bUVxj38gJIOHySRpbnIugt1
+         PbCeRLYqhEnvNMELqUUbiz0qeDa36xLBGYDo6rOk=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BB57A8B8BF;
+        Wed, 11 Sep 2019 14:38:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id SJCnYKUN_9kO; Wed, 11 Sep 2019 14:38:02 +0200 (CEST)
+Received: from [172.25.230.103] (po15451.idsi0.si.c-s.fr [172.25.230.103])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 945FD8B8A6;
+        Wed, 11 Sep 2019 14:38:02 +0200 (CEST)
+Subject: Re: [PATCH v7 0/5] kasan: support backing vmalloc space with real
+ shadow memory
+To:     Daniel Axtens <dja@axtens.net>, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, x86@kernel.org, aryabinin@virtuozzo.com,
+        glider@google.com, luto@kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, dvyukov@google.com
+Cc:     linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com
+References: <20190903145536.3390-1-dja@axtens.net>
+ <d43cba17-ef1f-b715-e826-5325432042dd@c-s.fr>
+ <87ftl39izy.fsf@dja-thinkpad.axtens.net>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <f1798d6b-96c5-18a7-3787-2307d0899b59@c-s.fr>
+Date:   Wed, 11 Sep 2019 14:38:02 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190911082236-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87ftl39izy.fsf@dja-thinkpad.axtens.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 11-09-19 08:25:03, Michael S. Tsirkin wrote:
-> On Wed, Sep 11, 2019 at 02:16:28PM +0200, Michal Hocko wrote:
-> > On Wed 11-09-19 08:10:00, Michael S. Tsirkin wrote:
-> > > iovec addresses coming from vhost are assumed to be
-> > > pre-validated, but in fact can be speculated to a value
-> > > out of range.
-> > > 
-> > > Userspace address are later validated with array_index_nospec so we can
-> > > be sure kernel info does not leak through these addresses, but vhost
-> > > must also not leak userspace info outside the allowed memory table to
-> > > guests.
-> > > 
-> > > Following the defence in depth principle, make sure
-> > > the address is not validated out of node range.
-> > > 
-> > > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > > Acked-by: Jason Wang <jasowang@redhat.com>
-> > > Tested-by: Jason Wang <jasowang@redhat.com>
-> > 
-> > no need to mark fo stable? Other spectre fixes tend to be backported
-> > even when the security implications are not really clear. The risk
-> > should be low and better to be covered in case.
+
+
+Le 11/09/2019 à 13:20, Daniel Axtens a écrit :
+> Hi Christophe,
 > 
-> This is not really a fix - more a defence in depth thing,
-> quite similar to e.g.  commit b3bbfb3fb5d25776b8e3f361d2eedaabb0b496cd
-> x86: Introduce __uaccess_begin_nospec() and uaccess_try_nospec
-> in scope.
->
-> That one doesn't seem to be tagged for stable. Was it queued
-> there in practice?
+>> Are any other patches required prior to this series ? I have tried to
+>> apply it on later powerpc/merge branch without success:
+> 
+> It applies on the latest linux-next. I didn't base it on powerpc/*
+> because it's generic.
+> 
 
-not marked for stable but it went in. At least to 4.4.
+Ok, thanks.
 
--- 
-Michal Hocko
-SUSE Labs
+I backported it to powerpc/merge and I'm testing it on PPC32 with 
+VMAP_STACK.
+
+Got a few challenges but it is working now.
+
+Christophe
