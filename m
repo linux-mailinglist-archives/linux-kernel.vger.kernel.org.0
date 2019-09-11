@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C30EAF55B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 07:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D245AF54E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 07:13:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfIKFN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 01:13:28 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36981 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726818AbfIKFMp (ORCPT
+        id S1726903AbfIKFMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 01:12:53 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43069 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbfIKFMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Sep 2019 01:12:45 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y5so10141881pfo.4;
-        Tue, 10 Sep 2019 22:12:43 -0700 (PDT)
+Received: by mail-pg1-f196.google.com with SMTP id u72so10881553pgb.10;
+        Tue, 10 Sep 2019 22:12:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eO8kYN9dCKJpVNrT1gZqNTBkkExiu3MjUltw/zl2pgs=;
-        b=JhuQTpR3cIX4KQCSoGChxjU8n5tf4t0H6tqOQe9DCehfKA86vNh/IFTBSSUfm6wOAO
-         k7MD6LpdLbSLR7CmgOXaL80Ez0LkqO1pPJ0Ojn/6/69IEcivohKaWYD71dwlKUAxkHSK
-         eNP7HxtyY7JmZH7ACvwoeHyrBvXMLG6SZoZWCLiMA5vnnmN66k8Dc5PzeAVL2OEXEMFM
-         ZcXMEChRqV0a4U/AF7w5bytBTews5i7Aqw94AYxhHtjeoSBQUVa2POs+mD9kBNh4COZM
-         pvV4ilEEVCsGPRMM1NzPjvzRDtBijIFRQkpt65M8GMVUi+kQqZ/r66TEdSeWP2k6c1DU
-         C5FA==
+        bh=Sr5fjQTMZVqf+Bacd5g9dQg5Ens8+dgwrpyFPkZSOxI=;
+        b=I81PYlpAKX/W2CfW7Na7WdVPXubtkOv2peWrSpwBv00eVnfizb5Io/APJgRPRHQrng
+         lxPWcyQn4Vp66OQUbYoC/Z1/g+XbApeE2Xu6klh7eU8er+qpKAfAlqhNMXxo1Sd5ebsw
+         XVehMx5mb1BdBVCxFOjWh4guC20sOXK8eBEyWi6mHeERZHLFSsLRFMOGy+tNXDTQC+Cn
+         hUZ3AShswkE3hYYOTHKAhSn9uimIMNjysrkAA2wmCB/bdDhyf10wTUiMC4I+J9p7Qkti
+         8L+vSbxtidYoG9oKoMMIDJ4J66WuCoo6QDJAd7Tq7zLPDPpc4wZFWrMqgFUeo8SWjsnV
+         GShA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eO8kYN9dCKJpVNrT1gZqNTBkkExiu3MjUltw/zl2pgs=;
-        b=dV6kQAYAn3KTX46TWUmiTvimBs2pyICaJiHohuxYDp1n1p/9tSomQ6S/pfyXwMtJlc
-         E6GHV5rWHCIbMisPx1U21KwkAxkRAI4slcOMVJAFOaf+kjl/sHtvp+q1VlUV8zI8jCks
-         da8rJuxblin413HGSlDtRT0eGGdRsN6evoJ4N/Dmufr6iHDmqwGRZVUUy/xSnFxuq+Ug
-         n9feBKb7eNTgdz4po26Y7qYK2Kja929VcoE6x646fHT0wnXCRP9FcgEZV0ItjXP5QwrW
-         +5pZYwh1FyiAdCZ4cMN6fOhDkjTc0RN3SBz6C6AO91MFyG255cSQJlveavW0IXwvp8Zo
-         r0xg==
-X-Gm-Message-State: APjAAAUFtWhk1/tSrw7ZFhzZXlkn0mLt+/DfyermA9dZMfxMLE0hlhtH
-        wt7dHBeaKZoQG6+j1dvOUTQ=
-X-Google-Smtp-Source: APXvYqzP0qF9m+m375uNm4tLF58AeA5zYrlo+rn232PVTpNnaIA7kpYyCpFWrLBEetDj4tcFNAyXPA==
-X-Received: by 2002:a62:f80a:: with SMTP id d10mr39536697pfh.98.1568178763022;
-        Tue, 10 Sep 2019 22:12:43 -0700 (PDT)
+        bh=Sr5fjQTMZVqf+Bacd5g9dQg5Ens8+dgwrpyFPkZSOxI=;
+        b=d1mfT2/pT8vVRXjFnr0/CO42gzIaNIItpzvq0lvHfKL3XhZkxu9rHOf6pf88xHVZOB
+         UGMJCQpO+M5OO2tn0opV34lpWfo8uNfjO5rJYiQqeXOf01oFMUkKjtbpJH9IUSfwjGbs
+         AgDKiJ3sjpoH+qVRITFgg58sDwxUWq2EexbjVH1GHXl2eSrnRnqO2hGDr4qAXG2V7sS6
+         l5Y2Auu9FAdSHRll7XnyXY17LsNvNP8O1hncasShqqnRqk4vmGbbEVjjEmnfcNaR2l0i
+         SS4m1njHDFMTUZg9l2LubWBlbsZ1iPar6bWtH2jpB5HGfy0Rm3y0cl8zARbl+fpvcFfJ
+         HN5g==
+X-Gm-Message-State: APjAAAVRfTsYPSTG8+utqVsjfFE3IqzbP2tBuWn4s+n/pBOdKbTabJrr
+        5IU+6aQRu8dYU04JZV75orU=
+X-Google-Smtp-Source: APXvYqxNJTOZbRUEGaipqBNeV3JtfmKsQfW0Y3abDdEsnfzacv6CRpAGh6xhFFjoD6yZOeoi85mhmQ==
+X-Received: by 2002:a62:7c47:: with SMTP id x68mr40265301pfc.178.1568178764011;
+        Tue, 10 Sep 2019 22:12:44 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id p11sm22011149pff.136.2019.09.10.22.12.42
+        by smtp.gmail.com with ESMTPSA id p11sm22011149pff.136.2019.09.10.22.12.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 22:12:42 -0700 (PDT)
+        Tue, 10 Sep 2019 22:12:43 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: [PATCH v4 05/14] software node: clean up property_copy_string_array()
-Date:   Tue, 10 Sep 2019 22:12:22 -0700
-Message-Id: <20190911051231.148032-6-dmitry.torokhov@gmail.com>
+Subject: [PATCH v4 06/14] software node: get rid of property_set_pointer()
+Date:   Tue, 10 Sep 2019 22:12:23 -0700
+Message-Id: <20190911051231.148032-7-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.23.0.162.g0b9fbb3734-goog
 In-Reply-To: <20190911051231.148032-1-dmitry.torokhov@gmail.com>
 References: <20190911051231.148032-1-dmitry.torokhov@gmail.com>
@@ -64,78 +64,207 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because property_copy_string_array() stores the newly allocated pointer in the
-destination property, we have an awkward code in property_entry_copy_data()
-where we fetch the new pointer from dst.
+Instead of explicitly setting values of integer types when copying
+property entries lets just copy entire value union when processing
+non-array values.
 
-Let's change property_copy_string_array() to return pointer and rely on the
-common path in property_entry_copy_data() to store it in destination structure.
+When handling array values assign the pointer there using the newly
+introduced "raw" pointer union member. This allows us to remove
+property_set_pointer().
+
+In property_get_pointer() we do not need to handle each data type
+separately, we can simply return either the raw pointer or pointer to
+values union.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/base/swnode.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ drivers/base/swnode.c    | 90 +++++++++-------------------------------
+ include/linux/property.h | 12 ++----
+ 2 files changed, 22 insertions(+), 80 deletions(-)
 
 diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index ee2a405cca9a..7bad41a8f65d 100644
+index 7bad41a8f65d..726195d334e4 100644
 --- a/drivers/base/swnode.c
 +++ b/drivers/base/swnode.c
-@@ -337,8 +337,8 @@ static void property_entry_free_data(const struct property_entry *p)
- 	kfree(p->name);
+@@ -103,71 +103,15 @@ property_entry_get(const struct property_entry *prop, const char *name)
+ 	return NULL;
  }
  
--static int property_copy_string_array(struct property_entry *dst,
--				      const struct property_entry *src)
-+static const char * const *
-+property_copy_string_array(const struct property_entry *src)
+-static void
+-property_set_pointer(struct property_entry *prop, const void *pointer)
+-{
+-	switch (prop->type) {
+-	case DEV_PROP_U8:
+-		if (prop->is_array)
+-			prop->pointer.u8_data = pointer;
+-		else
+-			prop->value.u8_data = *((u8 *)pointer);
+-		break;
+-	case DEV_PROP_U16:
+-		if (prop->is_array)
+-			prop->pointer.u16_data = pointer;
+-		else
+-			prop->value.u16_data = *((u16 *)pointer);
+-		break;
+-	case DEV_PROP_U32:
+-		if (prop->is_array)
+-			prop->pointer.u32_data = pointer;
+-		else
+-			prop->value.u32_data = *((u32 *)pointer);
+-		break;
+-	case DEV_PROP_U64:
+-		if (prop->is_array)
+-			prop->pointer.u64_data = pointer;
+-		else
+-			prop->value.u64_data = *((u64 *)pointer);
+-		break;
+-	case DEV_PROP_STRING:
+-		if (prop->is_array)
+-			prop->pointer.str = pointer;
+-		else
+-			prop->value.str = pointer;
+-		break;
+-	default:
+-		break;
+-	}
+-}
+-
+ static const void *property_get_pointer(const struct property_entry *prop)
+ {
+-	switch (prop->type) {
+-	case DEV_PROP_U8:
+-		if (prop->is_array)
+-			return prop->pointer.u8_data;
+-		return &prop->value.u8_data;
+-	case DEV_PROP_U16:
+-		if (prop->is_array)
+-			return prop->pointer.u16_data;
+-		return &prop->value.u16_data;
+-	case DEV_PROP_U32:
+-		if (prop->is_array)
+-			return prop->pointer.u32_data;
+-		return &prop->value.u32_data;
+-	case DEV_PROP_U64:
+-		if (prop->is_array)
+-			return prop->pointer.u64_data;
+-		return &prop->value.u64_data;
+-	case DEV_PROP_STRING:
+-		if (prop->is_array)
+-			return prop->pointer.str;
+-		return &prop->value.str;
+-	default:
++	if (!prop->length)
+ 		return NULL;
+-	}
++
++	if (prop->is_array)
++		return prop->pointer;
++
++	return &prop->value;
+ }
+ 
+ static const void *property_entry_find(const struct property_entry *props,
+@@ -322,13 +266,15 @@ static int property_entry_read_string_array(const struct property_entry *props,
+ static void property_entry_free_data(const struct property_entry *p)
+ {
+ 	const void *pointer = property_get_pointer(p);
++	const char * const *src_str;
+ 	size_t i, nval;
+ 
+ 	if (p->is_array) {
+-		if (p->type == DEV_PROP_STRING && p->pointer.str) {
++		if (p->type == DEV_PROP_STRING && p->pointer) {
++			src_str = p->pointer;
+ 			nval = p->length / sizeof(const char *);
+ 			for (i = 0; i < nval; i++)
+-				kfree(p->pointer.str[i]);
++				kfree(src_str[i]);
+ 		}
+ 		kfree(pointer);
+ 	} else if (p->type == DEV_PROP_STRING) {
+@@ -341,6 +287,7 @@ static const char * const *
+ property_copy_string_array(const struct property_entry *src)
  {
  	const char **d;
++	const char * const *src_str = src->pointer;
  	size_t nval = src->length / sizeof(*d);
-@@ -346,7 +346,7 @@ static int property_copy_string_array(struct property_entry *dst,
+ 	int i;
  
- 	d = kcalloc(nval, sizeof(*d), GFP_KERNEL);
- 	if (!d)
--		return -ENOMEM;
-+		return NULL;
+@@ -349,8 +296,8 @@ property_copy_string_array(const struct property_entry *src)
+ 		return NULL;
  
  	for (i = 0; i < nval; i++) {
- 		d[i] = kstrdup(src->pointer.str[i], GFP_KERNEL);
-@@ -354,12 +354,11 @@ static int property_copy_string_array(struct property_entry *dst,
+-		d[i] = kstrdup(src->pointer.str[i], GFP_KERNEL);
+-		if (!d[i] && src->pointer.str[i]) {
++		d[i] = kstrdup(src_str[i], GFP_KERNEL);
++		if (!d[i] && src_str[i]) {
  			while (--i >= 0)
  				kfree(d[i]);
  			kfree(d);
--			return -ENOMEM;
-+			return NULL;
+@@ -380,20 +327,21 @@ static int property_entry_copy_data(struct property_entry *dst,
+ 			if (!new)
+ 				return -ENOMEM;
  		}
++
++		dst->is_array = true;
++		dst->pointer = new;
+ 	} else if (src->type == DEV_PROP_STRING) {
+ 		new = kstrdup(src->value.str, GFP_KERNEL);
+ 		if (!new && src->value.str)
+ 			return -ENOMEM;
++
++		dst->value.str = new;
+ 	} else {
+-		new = pointer;
++		dst->value = src->value;
  	}
  
--	dst->pointer.str = d;
--	return 0;
-+	return d;
+ 	dst->length = src->length;
+-	dst->is_array = src->is_array;
+ 	dst->type = src->type;
+-
+-	property_set_pointer(dst, new);
+-
+ 	dst->name = kstrdup(src->name, GFP_KERNEL);
+ 	if (!dst->name)
+ 		goto out_free_data;
+diff --git a/include/linux/property.h b/include/linux/property.h
+index 2c9d4d209296..ec8f84d564a8 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -233,13 +233,7 @@ struct property_entry {
+ 	bool is_array;
+ 	enum dev_prop_type type;
+ 	union {
+-		union {
+-			const u8 *u8_data;
+-			const u16 *u16_data;
+-			const u32 *u32_data;
+-			const u64 *u64_data;
+-			const char * const *str;
+-		} pointer;
++		const void *pointer;
+ 		union {
+ 			u8 u8_data;
+ 			u16 u16_data;
+@@ -262,7 +256,7 @@ struct property_entry {
+ 	.length = (_len_) * sizeof(_type_),				\
+ 	.is_array = true,						\
+ 	.type = DEV_PROP_##_Type_,					\
+-	{ .pointer = { ._type_##_data = _val_ } },			\
++	{ .pointer = _val_ },						\
  }
  
- static int property_entry_copy_data(struct property_entry *dst,
-@@ -367,17 +366,15 @@ static int property_entry_copy_data(struct property_entry *dst,
- {
- 	const void *pointer = property_get_pointer(src);
- 	const void *new;
--	int error;
+ #define PROPERTY_ENTRY_U8_ARRAY_LEN(_name_, _val_, _len_)		\
+@@ -280,7 +274,7 @@ struct property_entry {
+ 	.length = (_len_) * sizeof(const char *),			\
+ 	.is_array = true,						\
+ 	.type = DEV_PROP_STRING,					\
+-	{ .pointer = { .str = _val_ } },				\
++	{ .pointer = _val_ },						\
+ }
  
- 	if (src->is_array) {
- 		if (!src->length)
- 			return -ENODATA;
- 
- 		if (src->type == DEV_PROP_STRING) {
--			error = property_copy_string_array(dst, src);
--			if (error)
--				return error;
--			new = dst->pointer.str;
-+			new = property_copy_string_array(src);
-+			if (!new)
-+				return -ENOMEM;
- 		} else {
- 			new = kmemdup(pointer, src->length, GFP_KERNEL);
- 			if (!new)
+ #define PROPERTY_ENTRY_U8_ARRAY(_name_, _val_)				\
 -- 
 2.23.0.162.g0b9fbb3734-goog
 
