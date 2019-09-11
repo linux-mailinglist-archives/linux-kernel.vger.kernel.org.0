@@ -2,155 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78728B019B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:26:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E0FFB01A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729183AbfIKQZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 12:25:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48438 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728825AbfIKQZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:25:45 -0400
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D46913D3C
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 16:25:44 +0000 (UTC)
-Received: by mail-wr1-f72.google.com with SMTP id j3so10684983wrn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 09:25:44 -0700 (PDT)
+        id S1729233AbfIKQ0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:26:45 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38892 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729002AbfIKQ0o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:26:44 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c12so16975895lfh.5
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 09:26:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=EAOxKqAsGB+Fl+XXS3RbKMSzJKNFkD9EiRqNq0C3Cpc=;
+        b=ly1LSre/R2XJP16HeApPdALWlxvwry9mocmMqgRn+gzjv1mqZpEpMJ114s915QbIDu
+         6yCRaQXDPD3xu+/zlAVpf1m3nA/+iXr4n3w3yRWqP8hsLrmNoFshKncjViBOnX7ndAF5
+         EzkpYbi0hkx+C/FHI5rqGBnFEnL+hWDVvHve89970qjTjMWkF0WJj7zPeIDEUueRLl3k
+         gZiRDDPH3zbSEOZJFh6PPT1IOPg0ae12He23s6LE9e6SKsDdpr2Mpw6LrbXFemjz8OI5
+         /OqRiPwSlkTCpKUVczBEbqDGtim1iPNU0A+diRJsXu2tbXSz8gXVfqOD/Wo6BYqaBOi/
+         Weeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jouLTsamzJ4avMDtLnEA4ZYZ2r8dstKdUGPZA1EeyPc=;
-        b=QZkn+VZ1VdH4nJGGCTXYwPguAmAvgEzhjVNpTZ6bgBcAeV5lxfbOkYjLQoQs6oXYvP
-         inIm707JDjSbExdUazJhfYtm3lYi5urr0yYjCmKV4d0dOk/qEtPLAvCtyg9EXuAz3noP
-         /Ip4c10saF+L8eB38XdeSJ0nsFM3j+5vdyla0IifAZNt9dX/eHnqNBq1Dcu8r6CY1bkj
-         KNfzSFBGikysYWcRwaQV/b63QVLXaz+JlLOq+NCjwchpmryZcUKPDXd6WDnQQCmtyuwY
-         wVy/P9IZMRnw1It65c5JOYw+NniPKihh5hYxh/sVNZq6fzyu4cI/A+Iu8y325Xd7Eui4
-         b8+Q==
-X-Gm-Message-State: APjAAAWRG9I9EXLaNJel7q0bYDbzHCCB0mZr0tU13twKz9keb0Klla54
-        IhnFE0mC1IKXEnLs5tg533HGHk371afcwCab/35DQa5HVGmsTndSmfkLZRGMPRmXR/hKkHo1ep2
-        b5G8bwddKb45u75iUIO/RD6Bs
-X-Received: by 2002:adf:db8e:: with SMTP id u14mr5211830wri.50.1568219143519;
-        Wed, 11 Sep 2019 09:25:43 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqz9RLDSUAqf9dPaonHEiASXp5JqjZOlzrrW+BDIVOqMn9pjKU55MQl1oFpGGrhgDg26esMu6w==
-X-Received: by 2002:adf:db8e:: with SMTP id u14mr5211814wri.50.1568219143230;
-        Wed, 11 Sep 2019 09:25:43 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:102b:3795:6714:7df6? ([2001:b07:6468:f312:102b:3795:6714:7df6])
-        by smtp.gmail.com with ESMTPSA id d78sm4041480wmd.47.2019.09.11.09.25.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2019 09:25:42 -0700 (PDT)
-Subject: Re: [PATCH] KVM: LAPIC: Fix SynIC Timers inject timer interrupt w/o
- LAPIC present
-To:     Wanpeng Li <kernellwp@gmail.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1567680270-14022-1-git-send-email-wanpengli@tencent.com>
- <87ftlakhn6.fsf@vitty.brq.redhat.com>
- <CANRm+CyPxb+ZY2cTdbLL_LBKMJSOaMqnPGKc_ATc6-TMHW-rJw@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <23b9c284-9317-2c9a-ed3d-6bdf9ac0dea5@redhat.com>
-Date:   Wed, 11 Sep 2019 18:25:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=EAOxKqAsGB+Fl+XXS3RbKMSzJKNFkD9EiRqNq0C3Cpc=;
+        b=t5vcP+tfic0BlT8sYYsOj2WM5kvW7JFVbg9SqVfagyyTXk1hUinpCqW9T816AI33FY
+         dTWsAcxPxyD5McoUGro1lr3sxELzpL0Ngiwa4hxJaKKnO0XhRHhSKvv3o/OXpuYIs2CR
+         +pfT/m4vNaf2rvEnXx9P26uY2fZSs0JscHIoX5to2kzxBe0fTPZDRCWfBeCZfL/Tebai
+         1Ng/8wViPRsYlOguKZ6TG6TTgD8QrZTU1OwJKE8fKL7EfHuVzdl2COo0w2IpAKgqpx2o
+         s46YUwmZK7JBTDV/KFmQ0gckMmerFsxAFxdNYIuN+S0aWn6nKsFxf6+HCQRnvD4ubSgd
+         RLoA==
+X-Gm-Message-State: APjAAAXACO1IykaM/MAeYmIeWPPz8Ontq7kdU60Xo9azGoFvE1BRQKs8
+        BEChIC9TAbgeTCZlJEM1jPFRT0GTAfAzkB081FYOUTk=
+X-Google-Smtp-Source: APXvYqyQdG27qGXzmZMAB3uXRQxDXaVHkCS9lJljH6i3wU4Ic/J9vhiGnoF2W+UyXI1YQ7DF4d94d9WLPZvXU0GWf64=
+X-Received: by 2002:ac2:5203:: with SMTP id a3mr1393961lfl.151.1568219201336;
+ Wed, 11 Sep 2019 09:26:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CANRm+CyPxb+ZY2cTdbLL_LBKMJSOaMqnPGKc_ATc6-TMHW-rJw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   Gabriel C <nix.or.die@gmail.com>
+Date:   Wed, 11 Sep 2019 18:26:15 +0200
+Message-ID: <CAEJqkggcnW98Sk3BEBCCZf57Uwd9rdqD5Da0tmuTaNfkJN5kVg@mail.gmail.com>
+Subject: nvme vs. hibernation ( again )
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     linux-nvme@lists.infradead.org, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/09/19 03:54, Wanpeng Li wrote:
-> On Thu, 5 Sep 2019 at 21:16, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->>
->> Wanpeng Li <kernellwp@gmail.com> writes:
->>
->>> From: Wanpeng Li <wanpengli@tencent.com>
->>>
->>> Reported by syzkaller:
->>>
->>>       kasan: GPF could be caused by NULL-ptr deref or user memory access
->>>       general protection fault: 0000 [#1] PREEMPT SMP KASAN
->>>       RIP: 0010:__apic_accept_irq+0x46/0x740 arch/x86/kvm/lapic.c:1029
->>>       Call Trace:
->>>       kvm_apic_set_irq+0xb4/0x140 arch/x86/kvm/lapic.c:558
->>>       stimer_notify_direct arch/x86/kvm/hyperv.c:648 [inline]
->>>       stimer_expiration arch/x86/kvm/hyperv.c:659 [inline]
->>>       kvm_hv_process_stimers+0x594/0x1650 arch/x86/kvm/hyperv.c:686
->>>       vcpu_enter_guest+0x2b2a/0x54b0 arch/x86/kvm/x86.c:7896
->>>       vcpu_run+0x393/0xd40 arch/x86/kvm/x86.c:8152
->>>       kvm_arch_vcpu_ioctl_run+0x636/0x900 arch/x86/kvm/x86.c:8360
->>>       kvm_vcpu_ioctl+0x6cf/0xaf0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2765
->>>
->>> The testcase programs HV_X64_MSR_STIMERn_CONFIG/HV_X64_MSR_STIMERn_COUNT,
->>> in addition, there is no lapic in the kernel, the counters value are small
->>> enough in order that kvm_hv_process_stimers() inject this already-expired
->>> timer interrupt into the guest through lapic in the kernel which triggers
->>> the NULL deferencing. This patch fixes it by checking lapic_in_kernel,
->>> discarding the inject if it is 0.
->>>
->>> Reported-by: syzbot+dff25ee91f0c7d5c1695@syzkaller.appspotmail.com
->>> Cc: Paolo Bonzini <pbonzini@redhat.com>
->>> Cc: Radim Krčmář <rkrcmar@redhat.com>
->>> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
->>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->>> ---
->>>  arch/x86/kvm/hyperv.c | 4 +++-
->>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
->>> index c10a8b1..461fcc5 100644
->>> --- a/arch/x86/kvm/hyperv.c
->>> +++ b/arch/x86/kvm/hyperv.c
->>> @@ -645,7 +645,9 @@ static int stimer_notify_direct(struct kvm_vcpu_hv_stimer *stimer)
->>>               .vector = stimer->config.apic_vector
->>>       };
->>>
->>> -     return !kvm_apic_set_irq(vcpu, &irq, NULL);
->>> +     if (lapic_in_kernel(vcpu))
->>> +             return !kvm_apic_set_irq(vcpu, &irq, NULL);
->>> +     return 0;
->>>  }
->>>
->>>  static void stimer_expiration(struct kvm_vcpu_hv_stimer *stimer)
->>
->> Hm, but this basically means direct mode synthetic timers won't work
->> when LAPIC is not in kernel but the feature will still be advertised to
->> the guest, not good. Shall we stop advertizing it? Something like
->> (completely untested):
->>
->> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
->> index 3f5ad84853fb..1dfa594eaab6 100644
->> --- a/arch/x86/kvm/hyperv.c
->> +++ b/arch/x86/kvm/hyperv.c
->> @@ -1856,7 +1856,13 @@ int kvm_vcpu_ioctl_get_hv_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid2 *cpuid,
->>
->>                         ent->edx |= HV_FEATURE_FREQUENCY_MSRS_AVAILABLE;
->>                         ent->edx |= HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE;
->> -                       ent->edx |= HV_STIMER_DIRECT_MODE_AVAILABLE;
->> +
->> +                       /*
->> +                        * Direct Synthetic timers only make sense with in-kernel
->> +                        * LAPIC
->> +                        */
->> +                       if (lapic_in_kernel(vcpu))
->> +                               ent->edx |= HV_STIMER_DIRECT_MODE_AVAILABLE;
->>
->>                         break;
-> 
-> Thanks, I fold this into v2, syzkaller even didn't check the cpuid, so
-> I still keep the discard inject part.
+Hi Christoph,
 
-Can you also include a beautified testcase or at least a link to the
-syzkaller source?
+I see this was already discussed in 2 threads:
 
-Thanks,
+ https://lists.infradead.org/pipermail/linux-nvme/2019-April/023234.html
+ https://lkml.org/lkml/2019/5/24/668
 
-Paolo
+but in latest git the issue still exists.
+
+I hit that on each resume on my Acer Nitro 5 (AN515-43-R8BF) Laptop.
+
+.....
+Sep 11 16:16:30 nitro5 kernel: Freezing remaining freezable tasks ...
+(elapsed 0.000 seconds) done.
+Sep 11 16:16:30 nitro5 kernel: printk: Suspending console(s) (use
+no_console_suspend to debug)
+Sep 11 16:16:30 nitro5 kernel: WARNING: CPU: 0 PID: 882 at
+kernel/irq/chip.c:210 irq_startup+0xe6/0xf0
+Sep 11 16:16:30 nitro5 kernel: Modules linked in: af_packet bnep
+amdgpu ath10k_pci ath10k_core ath mac80211 joydev uvcvideo
+videobuf2_vmalloc videobuf2_memops edac_mce_amd videobuf2_v4l2
+amd_iommu_v2 kvm_amd gpu_sched btusb snd_hda_codec_realtek ttm btrtl
+btbcm btintel hid_multitouch ccp snd_hda_codec_generic nls_utf8
+bluetooth drm_kms_helper hid_generic videobuf2_common ledtrig_audio
+snd_hda_codec_hdmi nls_cp437 cfg80211 drm kvm snd_hda_intel vfat
+videodev fat agpgart efi_pstore r8169 snd_hda_codec ecdh_generic
+i2c_algo_bit realtek irqbypass pcspkr mc rfkill fb_sys_fops efivars
+syscopyarea snd_hda_core ecc k10temp wmi_bmof sysfillrect tpm_crb
+crc16 libphy i2c_piix4 libarc4 snd_hwdep hwmon sysimgblt tpm_tis
+tpm_tis_core evdev ac tpm battery mac_hid i2c_designware_platform
+pinctrl_amd i2c_designware_core rng_core acer_wireless button
+acpi_cpufreq ppdev sch_fq_codel fuse snd_pcm_oss snd_mixer_oss snd_pcm
+snd_seq_dummy snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device
+snd_timer snd soundcore lp parport_pc
+Sep 11 16:16:30 nitro5 kernel:  parport xfs libcrc32c crc32c_generic
+crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel ahci
+libahci libata xhci_pci xhci_hcd aesni_intel usbcore scsi_mod
+aes_x86_64 crypto_simd cryptd glue_helper serio_raw i2c_hid hid video
+i2c_core wmi dm_mirror dm_region_hash dm_log dm_mod unix sha1_ssse3
+sha1_generic hmac ipv6 nf_defrag_ipv6 autofs4
+Sep 11 16:16:30 nitro5 kernel: CPU: 0 PID: 882 Comm: kworker/u32:9 Not
+tainted 5.3.0-rc8-00007-g3120b9a6a3f7-dirty #2
+Sep 11 16:16:30 nitro5 kernel: Hardware name: Acer Nitro
+AN515-43/Octavia_PKS, BIOS V1.05 08/07/2019
+Sep 11 16:16:30 nitro5 kernel: Workqueue: events_unbound async_run_entry_fn
+Sep 11 16:16:30 nitro5 kernel: RIP: 0010:irq_startup+0xe6/0xf0
+Sep 11 16:16:30 nitro5 kernel: Code: e8 7f 3c 00 00 85 c0 0f 85 e3 09
+00 00 4c 89 e7 31 d2 4c 89 ee e8 1a cf ff ff 48 89 ef e8 b2 fe ff ff
+41 89 c4 e9 51 ff ff ff <0f> 0b eb b2 66 0f 1f 44 00 00 0f 1f 44 00 00
+55 48 89 fd 53 48 8b
+Sep 11 16:16:30 nitro5 kernel: RSP: 0018:ffffbe9b00793c38 EFLAGS: 00010002
+Sep 11 16:16:30 nitro5 kernel: RAX: 0000000000000010 RBX:
+0000000000000001 RCX: 0000000000000040
+Sep 11 16:16:30 nitro5 kernel: RDX: 0000000000000000 RSI:
+ffffffff9d1b8800 RDI: ffff9c9d9e136598
+Sep 11 16:16:30 nitro5 kernel: RBP: ffff9c9d981e5400 R08:
+0000000000000000 R09: ffff9c9d9e8003f0
+Sep 11 16:16:30 nitro5 kernel: R10: 0000000000000000 R11:
+ffffffff9d057688 R12: 0000000000000001
+Sep 11 16:16:30 nitro5 kernel: R13: ffff9c9d9e136598 R14:
+0000000000000000 R15: ffff9c9d9e346000
+Sep 11 16:16:30 nitro5 kernel: FS:  0000000000000000(0000)
+GS:ffff9c9da0800000(0000) knlGS:0000000000000000
+Sep 11 16:16:30 nitro5 kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Sep 11 16:16:30 nitro5 kernel: CR2: 00005633ad8d0060 CR3:
+00000003db8d0000 CR4: 00000000003406f0
+Sep 11 16:16:30 nitro5 kernel: Call Trace:
+Sep 11 16:16:30 nitro5 kernel:  enable_irq+0x48/0x90
+Sep 11 16:16:30 nitro5 kernel:  nvme_poll_irqdisable+0x20c/0x280
+Sep 11 16:16:30 nitro5 kernel:  __nvme_disable_io_queues+0x19d/0x1d0
+Sep 11 16:16:30 nitro5 kernel:  ? nvme_del_queue_end+0x20/0x20
+Sep 11 16:16:30 nitro5 kernel:  nvme_dev_disable+0x15c/0x210
+Sep 11 16:16:30 nitro5 kernel:  nvme_suspend+0x40/0x130
+Sep 11 16:16:30 nitro5 kernel:  pci_pm_suspend+0x72/0x130
+Sep 11 16:16:30 nitro5 kernel:  ? pci_pm_freeze+0xb0/0xb0
+Sep 11 16:16:30 nitro5 kernel:  dpm_run_callback+0x29/0x120
+Sep 11 16:16:30 nitro5 kernel:  __device_suspend+0x1b2/0x400
+Sep 11 16:16:30 nitro5 kernel:  async_suspend+0x1b/0x90
+Sep 11 16:16:30 nitro5 kernel:  async_run_entry_fn+0x37/0xe0
+Sep 11 16:16:30 nitro5 kernel:  process_one_work+0x1d1/0x3a0
+Sep 11 16:16:30 nitro5 kernel:  worker_thread+0x4a/0x3d0
+Sep 11 16:16:30 nitro5 kernel:  kthread+0xf9/0x130
+Sep 11 16:16:30 nitro5 kernel:  ? process_one_work+0x3a0/0x3a0
+Sep 11 16:16:30 nitro5 kernel:  ? kthread_park+0x80/0x80
+Sep 11 16:16:30 nitro5 kernel:  ret_from_fork+0x22/0x40
+Sep 11 16:16:30 nitro5 kernel: ---[ end trace c598a86b44574730 ]---
+
+...
+
+The patch from Dongli Zhang was rejected the time without any other fix
+or work on this issue I could find.
+
+Are there any plans to fix that or any code to test?
+
+Best Regards,
+
+Gabriel C
