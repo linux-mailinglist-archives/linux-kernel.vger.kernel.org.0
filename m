@@ -2,84 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E1B1AF8C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7A01AF8CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfIKJV5 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Sep 2019 05:21:57 -0400
-Received: from mxout017.mail.hostpoint.ch ([217.26.49.177]:11331 "EHLO
-        mxout017.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726579AbfIKJV5 (ORCPT
+        id S1727447AbfIKJW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 05:22:57 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36893 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727372AbfIKJW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 05:21:57 -0400
-Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
-        by mxout017.mail.hostpoint.ch with esmtp (Exim 4.92.2 (FreeBSD))
-        (envelope-from <sandro@volery.com>)
-        id 1i7yor-000O7j-Ec; Wed, 11 Sep 2019 11:21:45 +0200
-Received: from [213.55.220.251] (helo=[100.66.103.90])
-        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92.2 (FreeBSD))
-        (envelope-from <sandro@volery.com>)
-        id 1i7yor-000El9-4u; Wed, 11 Sep 2019 11:21:45 +0200
-X-Authenticated-Sender-Id: sandro@volery.com
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-From:   Sandro Volery <sandro@volery.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] Staging: octeon: Avoid several usecases of strcpy
-Date:   Wed, 11 Sep 2019 11:21:44 +0200
-Message-Id: <C1B40FAD-9F8F-449D-B10C-334BAC76797D@volery.com>
-References: <20190911091659.GI15977@kadam>
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        aaro.koskinen@iki.fi
-In-Reply-To: <20190911091659.GI15977@kadam>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-X-Mailer: iPhone Mail (17A5831c)
+        Wed, 11 Sep 2019 05:22:57 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y5so8461239lji.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 02:22:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=OnqeOxbk+Jb4LkuzIvu3fnmtH0hxg9KKumo/IKgh7Zw=;
+        b=vRhRR9BvhHoApULL02N4YZ59zm+wjHqU0MdfBESv9ZzSpigeJqKbSKKPLbHVUpmv9/
+         DiNtEqj5MALdLWHUZfCyNBRCrdJBqgU5nUvsuBDGk/gx1wRSTtWgtB2kMsZeVjwJiEP4
+         5P4aaug1r4KCTMkwQGkZKFj9/EvJOjL/swjDr1/oLuURUhKE3O8p7hHWSyCaGEnd4LN9
+         GuE3wUym9dFnbg4OWGxUB2zaNyrhbKFfsez08VGPX2Dyvx/6N0H5flk/C5AEKfkz9R8z
+         jIdkbI8DfvOsytQQdPN6bGrtLhIqxDYtdwOOhfV4mD4ArVnleFNP4m65WjsKppd4KZKv
+         6JCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=OnqeOxbk+Jb4LkuzIvu3fnmtH0hxg9KKumo/IKgh7Zw=;
+        b=XAQvGqUxQU7bw5MbDyZDC/RqaGuqbS7xWOPZuHdiFAAtExXY5bAxl3qCDWQoYFGsad
+         kDaMefEUJIDYxQOMy+qlXmEiygepD5WbsG//iiznLM+/WeZL0RUEJt3sGHM2zfYvfojz
+         xjOMGnmBYLQzyYd5P9k61huB7/b17kaKaPr5OOkDrJgQqyXMG7QlwaudMQV4sSCz8NV6
+         GWiEUUQFRDUavllUI1x/CumIz3OB0q6tkJT/Cf7jJrdLp0XyHGTneQvLoogOFH+fxJZz
+         ECaXSIjTLH84EsnGGllVQM8UJ0lnSNnfHVQR9RufssaWXPLI5PnwW7y5DOSoZFA3j883
+         vLdQ==
+X-Gm-Message-State: APjAAAUhUulCY6qJIbql4nXW4EIro898OoMPWo8WoJXpTVhlofBayZlN
+        XgQzjDsoPqNvlw7ZSkbqjkWu93aKvWrWPB7xkIw=
+X-Google-Smtp-Source: APXvYqyT3yxyuf0HhcFcJkWqfAbrc6UVPFM2kgDCUZ0q699XmhCXp42Q7+VaRdg/3xqpg2saBXsTXjLTmiyTB/QZV2Y=
+X-Received: by 2002:a2e:99c1:: with SMTP id l1mr16896974ljj.8.1568193775262;
+ Wed, 11 Sep 2019 02:22:55 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac2:51b0:0:0:0:0:0 with HTTP; Wed, 11 Sep 2019 02:22:54
+ -0700 (PDT)
+Reply-To: mrsnicolemarois0001@gmail.com
+From:   Nicole Marois <mrjohnmoses8@gmail.com>
+Date:   Wed, 11 Sep 2019 09:22:54 +0000
+Message-ID: <CACkZuE07-aojm7VzcAc+S52etqvaBA4Jn9Uh=_=YAHSkZLS8Ag@mail.gmail.com>
+Subject: Hello Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Dear.
+I=E2=80=99m Mrs. Nicole Maoris a manager in  HSBC  BANK in   Spain  Madrid,=
+ I
+am sending  this brief letter  to seek for  your partnership and long
+term relationship, I have an important and urgent  issue I want to
+discuss with you privately about transaction fund  worth the sum of
+$9.5m America dollars left by most of the greedy Asia Kuwait
+politician in our bank here in Spain  Madrid.
 
-On 11 Sep 2019, at 11:17, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> ﻿On Wed, Sep 11, 2019 at 11:04:38AM +0200, Sandro Volery wrote:
->> 
->> 
->>>> On 11 Sep 2019, at 10:52, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>> 
->>> ﻿On Wed, Sep 11, 2019 at 08:23:59AM +0200, Sandro Volery wrote:
->>>> strcpy was used multiple times in strcpy to write into dev->name.
->>>> I replaced them with strscpy.
->>>> 
->>>> Signed-off-by: Sandro Volery <sandro@volery.com>
->>>> ---
->>>> drivers/staging/octeon/ethernet.c | 16 ++++++++--------
->>>> 1 file changed, 8 insertions(+), 8 deletions(-)
->>>> 
->>>> diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
->>>> index 8889494adf1f..cf8e9a23ebf9 100644
->>>> --- a/drivers/staging/octeon/ethernet.c
->>>> +++ b/drivers/staging/octeon/ethernet.c
->>>> @@ -784,7 +784,7 @@ static int cvm_oct_probe(struct platform_device *pdev)
->>>>           priv->imode = CVMX_HELPER_INTERFACE_MODE_DISABLED;
->>>>           priv->port = CVMX_PIP_NUM_INPUT_PORTS;
->>>>           priv->queue = -1;
->>>> -            strcpy(dev->name, "pow%d");
->>>> +            strscpy(dev->name, "pow%d", sizeof(dev->name));
->>> 
->>> Is there a program which is generating a warning for this code?  We know
->>> that "pow%d" is 6 characters and static analysis tools can understand
->>> this code fine so we know it's safe.
->> 
->> Well I was confused too but checkpatch complained about 
->> it so I figured I'd clean it up quick
-> 
-> Ah.  It's a new checkpatch warning.  I don't care in that case.  I'm
-> fine with replacing all of these in that case.
+If you know that you can invest this fund into profitable business in
+your country at the end we shall have 50%50 share each,  kindly get
+back to me for more detail and procedures .
 
-Alright thanks. Can you review this?
-
-Thanks,
-Sandro V
+Your urgent respond will be highly appreciated
+Awaiting to hear from you asap.
+My Regard.
+Mrs. Nicole Maoris=09
+Phone Number:  +34(62) 768 5146
