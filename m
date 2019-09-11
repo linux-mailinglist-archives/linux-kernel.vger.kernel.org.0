@@ -2,126 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 761F2B0393
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 20:26:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A779B0399
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 20:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbfIKSZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 14:25:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60022 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729985AbfIKSZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 14:25:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 09BFBAE53;
-        Wed, 11 Sep 2019 18:25:54 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     catalin.marinas@arm.com, hch@lst.de, wahrenst@gmx.net,
-        marc.zyngier@arm.com, robh+dt@kernel.org
-Cc:     f.fainelli@gmail.com, will@kernel.org, linux-mm@kvack.org,
-        robin.murphy@arm.com, nsaenzjulienne@suse.de,
-        linux-kernel@vger.kernel.org, mbrugger@suse.com,
-        linux-rpi-kernel@lists.infradead.org, phill@raspberrypi.org,
-        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
-Subject: [PATCH v6 4/4] mm: refresh ZONE_DMA and ZONE_DMA32 comments in 'enum zone_type'
-Date:   Wed, 11 Sep 2019 20:25:46 +0200
-Message-Id: <20190911182546.17094-5-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190911182546.17094-1-nsaenzjulienne@suse.de>
-References: <20190911182546.17094-1-nsaenzjulienne@suse.de>
+        id S1730097AbfIKS0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 14:26:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728198AbfIKS0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 14:26:14 -0400
+Received: from linux-8ccs (ip5f5ade65.dynamic.kabel-deutschland.de [95.90.222.101])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53FC220863;
+        Wed, 11 Sep 2019 18:26:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568226373;
+        bh=Ih6q6C0Ey30P2dlsz+uDKXdLbs5oAKqU5nDPKbljbi0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eXp/lwwVvWeEMbRvy3kuxSz/AaCEA3vwhWofMQlcUiNHEwd2d9u/hKgUSbuDKHs62
+         yfGnWux9k7HS7uMGj4a7Qnq0+S/Ms6J/PzTf5vdVVCwqHK7q1LzPVwWClrKGzwFeyo
+         JBLtX5XN6jtYKxMI32h8dwTT1n8uVVW6draC3nE4=
+Date:   Wed, 11 Sep 2019 20:26:07 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, maco@android.com,
+        gregkh@linuxfoundation.org,
+        Matthias Maennich <maennich@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] module: Fix link failure due to invalid relocation on
+ namespace offset
+Message-ID: <20190911182607.GB640@linux-8ccs>
+References: <20190911122646.13838-1-will@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190911122646.13838-1-will@kernel.org>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.61-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These zones usage has evolved with time and the comments were outdated.
-This joins both ZONE_DMA and ZONE_DMA32 explanation and gives up to date
-examples on how they are used on different architectures.
++++ Will Deacon [11/09/19 13:26 +0100]:
+>Commit 8651ec01daed ("module: add support for symbol namespaces.")
+>broke linking for arm64 defconfig:
+>
+>  | lib/crypto/arc4.o: In function `__ksymtab_arc4_setkey':
+>  | arc4.c:(___ksymtab+arc4_setkey+0x8): undefined reference to `no symbol'
+>  | lib/crypto/arc4.o: In function `__ksymtab_arc4_crypt':
+>  | arc4.c:(___ksymtab+arc4_crypt+0x8): undefined reference to `no symbol'
+>
+>This is because the dummy initialisation of the 'namespace_offset' field
+>in 'struct kernel_symbol' when using EXPORT_SYMBOL on architectures with
+>support for PREL32 locations uses an offset from an absolute address (0)
+>in an effort to trick 'offset_to_pointer' into behaving as a NOP,
+>allowing non-namespaced symbols to be treated in the same way as those
+>belonging to a namespace.
+>
+>Unfortunately, place-relative relocations require a symbol reference
+>rather than an absolute value and, although x86 appears to get away with
+>this due to placing the kernel text at the top of the address space, it
+>almost certainly results in a runtime failure if the kernel is relocated
+>dynamically as a result of KASLR.
+>
+>Rework 'namespace_offset' so that a value of 0, which cannot occur for a
+>valid namespaced symbol, indicates that the corresponding symbol does
+>not belong to a namespace.
+>
+>Cc: Matthias Maennich <maennich@google.com>
+>Cc: Jessica Yu <jeyu@kernel.org>
+>Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>Cc: Catalin Marinas <catalin.marinas@arm.com>
+>Fixes: 8651ec01daed ("module: add support for symbol namespaces.")
+>Reported-by: kbuild test robot <lkp@intel.com>
+>Signed-off-by: Will Deacon <will@kernel.org>
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Applied, thanks everyone!
 
----
+Jessica
 
-Changes in v3:
-- Update comment to match changes in arm64
-
-Changes in v2:
-- Try another approach merging both ZONE_DMA comments into one
-- Address Christoph's comments
-- If this approach doesn't get much traction I'll just drop the patch
-  from the series as it's not really essential
-
- include/linux/mmzone.h | 45 ++++++++++++++++++++++++------------------
- 1 file changed, 26 insertions(+), 19 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 3f38c30d2f13..bf1b916c9ecb 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -357,33 +357,40 @@ struct per_cpu_nodestat {
- #endif /* !__GENERATING_BOUNDS.H */
- 
- enum zone_type {
--#ifdef CONFIG_ZONE_DMA
- 	/*
--	 * ZONE_DMA is used when there are devices that are not able
--	 * to do DMA to all of addressable memory (ZONE_NORMAL). Then we
--	 * carve out the portion of memory that is needed for these devices.
--	 * The range is arch specific.
-+	 * ZONE_DMA and ZONE_DMA32 are used when there are peripherals not able
-+	 * to DMA to all of the addressable memory (ZONE_NORMAL).
-+	 * On architectures where this area covers the whole 32 bit address
-+	 * space ZONE_DMA32 is used. ZONE_DMA is left for the ones with smaller
-+	 * DMA addressing constraints. This distinction is important as a 32bit
-+	 * DMA mask is assumed when ZONE_DMA32 is defined. Some 64-bit
-+	 * platforms may need both zones as they support peripherals with
-+	 * different DMA addressing limitations.
-+	 *
-+	 * Some examples:
-+	 *
-+	 *  - i386 and x86_64 have a fixed 16M ZONE_DMA and ZONE_DMA32 for the
-+	 *    rest of the lower 4G.
-+	 *
-+	 *  - arm only uses ZONE_DMA, the size, up to 4G, may vary depending on
-+	 *    the specific device.
-+	 *
-+	 *  - arm64 has a fixed 1G ZONE_DMA and ZONE_DMA32 for the rest of the
-+	 *    lower 4G.
- 	 *
--	 * Some examples
-+	 *  - powerpc only uses ZONE_DMA, the size, up to 2G, may vary
-+	 *    depending on the specific device.
- 	 *
--	 * Architecture		Limit
--	 * ---------------------------
--	 * parisc, ia64, sparc	<4G
--	 * s390, powerpc	<2G
--	 * arm			Various
--	 * alpha		Unlimited or 0-16MB.
-+	 *  - s390 uses ZONE_DMA fixed to the lower 2G.
- 	 *
--	 * i386, x86_64 and multiple other arches
--	 * 			<16M.
-+	 *  - ia64 and riscv only use ZONE_DMA32.
-+	 *
-+	 *  - parisc uses neither.
- 	 */
-+#ifdef CONFIG_ZONE_DMA
- 	ZONE_DMA,
- #endif
- #ifdef CONFIG_ZONE_DMA32
--	/*
--	 * x86_64 needs two ZONE_DMAs because it supports devices that are
--	 * only able to do DMA to the lower 16M but also 32 bit devices that
--	 * can only do DMA areas below 4G.
--	 */
- 	ZONE_DMA32,
- #endif
- 	/*
--- 
-2.23.0
-
+>---
+>
+>Please note that I've not been able to test this at LPC, but it's been
+>submitted to kernelci.
+>
+> include/asm-generic/export.h | 2 +-
+> include/linux/export.h       | 2 +-
+> kernel/module.c              | 2 ++
+> 3 files changed, 4 insertions(+), 2 deletions(-)
+>
+>diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+>index e2b5d0f569d3..d0912c7ac2fc 100644
+>--- a/include/asm-generic/export.h
+>+++ b/include/asm-generic/export.h
+>@@ -17,7 +17,7 @@
+>
+> .macro __put, val, name
+> #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+>-	.long	\val - ., \name - ., 0 - .
+>+	.long	\val - ., \name - ., 0
+> #elif defined(CONFIG_64BIT)
+> 	.quad	\val, \name, 0
+> #else
+>diff --git a/include/linux/export.h b/include/linux/export.h
+>index 2c5468d8ea9a..ef5d015d754a 100644
+>--- a/include/linux/export.h
+>+++ b/include/linux/export.h
+>@@ -68,7 +68,7 @@ extern struct module __this_module;
+> 	    "__ksymtab_" #sym ":				\n"	\
+> 	    "	.long	" #sym "- .				\n"	\
+> 	    "	.long	__kstrtab_" #sym "- .			\n"	\
+>-	    "	.long	0 - .					\n"	\
+>+	    "	.long	0					\n"	\
+> 	    "	.previous					\n")
+>
+> struct kernel_symbol {
+>diff --git a/kernel/module.c b/kernel/module.c
+>index f76efcf2043e..7ab244c4e1ba 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -547,6 +547,8 @@ static const char *kernel_symbol_name(const struct kernel_symbol *sym)
+> static const char *kernel_symbol_namespace(const struct kernel_symbol *sym)
+> {
+> #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
+>+	if (!sym->namespace_offset)
+>+		return NULL;
+> 	return offset_to_ptr(&sym->namespace_offset);
+> #else
+> 	return sym->namespace;
+>-- 
+>2.23.0.162.g0b9fbb3734-goog
+>
