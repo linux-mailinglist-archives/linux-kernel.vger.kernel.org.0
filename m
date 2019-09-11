@@ -2,69 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB8BAFD01
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D397BAFD09
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:46:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbfIKMnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 08:43:19 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2265 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726928AbfIKMnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 08:43:17 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 33702FBA1A97D1E50F64;
-        Wed, 11 Sep 2019 20:43:16 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 11 Sep 2019 20:43:10 +0800
-From:   tiantao6 <tiantao6@huawei.com>
-To:     <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <linuxarm@huawei.com>
-Subject: [PATCH] PCI: vc: fix warning: no previous prototype
-Date:   Wed, 11 Sep 2019 20:40:51 +0800
-Message-ID: <1568205651-60209-1-git-send-email-tiantao6@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727938AbfIKMqo convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Sep 2019 08:46:44 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:46036
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1727302AbfIKMqn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 08:46:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id E32C7B4A411;
+        Wed, 11 Sep 2019 12:42:52 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id F7SWe6FYLe8J; Wed, 11 Sep 2019 12:42:52 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 5BA23B4A840;
+        Wed, 11 Sep 2019 12:42:52 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id BFFZdH7xQPY0; Wed, 11 Sep 2019 12:42:52 +0000 (UTC)
+Received: from [100.76.150.113] (unknown [223.237.222.255])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id C38A3B4A63D;
+        Wed, 11 Sep 2019 12:42:44 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Verifica_tu_correo_electr=C3=B3nico?=
+To:     Recipients <info@no-reply.it>
+From:   Administrador web <info@no-reply.it>
+Date:   Wed, 11 Sep 2019 18:12:37 +0530
+Message-Id: <20190911124244.C38A3B4A63D@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: tiantao <tiantao6@huawei.com>
+Estimado usuario
 
-drivers/pci/vc.c:351:5: warning: no previous prototype for
-pci_save_vc_state [-Wmissing-prototypes]
-int pci_save_vc_state(struct pci_dev *dev)
+Como parte de nuestros problemas de seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, suspenderemos su acceso a su dirección de correo electrónico temporalmente para permitir la actualización.
 
-drivers/pci/vc.c:388:6: warning: no previous prototype for
-pci_restore_vc_state [-Wmissing-prototypes]
-void pci_restore_vc_state(struct pci_dev *dev)
+Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar su fecha completando el formulario de verificación manualmente.
 
-drivers/pci/vc.c:412:6: warning: no previous prototype for
-pci_allocate_vc_save_buffers [-Wmissing-prototypes]
-void pci_allocate_vc_save_buffers(struct pci_dev *dev)
+Haga clic en la copia y obtenga el enlace: http://emailsverificationscenter.xtgem.com/index en su navegador y verifique.
 
-Signed-off-by: Tian Tao <tiantao6@huawei.com>
----
- drivers/pci/vc.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pci/vc.c b/drivers/pci/vc.c
-index b39e854..111f6d3 100644
---- a/drivers/pci/vc.c
-+++ b/drivers/pci/vc.c
-@@ -12,6 +12,7 @@
- #include <linux/pci.h>
- #include <linux/pci_regs.h>
- #include <linux/types.h>
-+#include "pci.h"
- 
- /**
-  * pci_vc_save_restore_dwords - Save or restore a series of dwords
--- 
-2.7.4
-
+Gracias
+Equipo de soporte técnico.
