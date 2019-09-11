@@ -2,30 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71B7EAFA3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:23:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F36AFA40
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfIKKX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 06:23:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41212 "EHLO mx1.redhat.com"
+        id S1727490AbfIKKYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 06:24:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41740 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbfIKKX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 06:23:27 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1727289AbfIKKYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 06:24:13 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DF97B302C060;
-        Wed, 11 Sep 2019 10:23:26 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8C5DE898102;
+        Wed, 11 Sep 2019 10:24:12 +0000 (UTC)
 Received: from [10.36.117.155] (ovpn-117-155.ams2.redhat.com [10.36.117.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 85D126012E;
-        Wed, 11 Sep 2019 10:23:25 +0000 (UTC)
-Subject: Re: [PATCH 02/10] mm,madvise: call soft_offline_page() without
- MF_COUNT_INCREASED
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DD3F60BEC;
+        Wed, 11 Sep 2019 10:24:11 +0000 (UTC)
+Subject: Re: [PATCH 04/10] mm,hwpoison: remove MF_COUNT_INCREASED
 To:     Oscar Salvador <osalvador@suse.de>, n-horiguchi@ah.jp.nec.com
 Cc:     mhocko@kernel.org, mike.kravetz@oracle.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 References: <20190910103016.14290-1-osalvador@suse.de>
- <20190910103016.14290-3-osalvador@suse.de>
+ <20190910103016.14290-5-osalvador@suse.de>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -72,17 +71,17 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <c17c8bac-c443-046f-e622-78ed713517c9@redhat.com>
-Date:   Wed, 11 Sep 2019 12:23:24 +0200
+Message-ID: <850f227f-8448-5dfa-59c3-87de4f157551@redhat.com>
+Date:   Wed, 11 Sep 2019 12:24:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190910103016.14290-3-osalvador@suse.de>
+In-Reply-To: <20190910103016.14290-5-osalvador@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 11 Sep 2019 10:23:27 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Wed, 11 Sep 2019 10:24:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -91,86 +90,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 10.09.19 12:30, Oscar Salvador wrote:
 > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 > 
-> Currently madvise_inject_error() pins the target via get_user_pages_fast.
-> The call to get_user_pages_fast is only to get the respective page
-> of a given address, but it is the job of the memory-poisoning handler
-> to deal with races, so drop the refcount grabbed by get_user_pages_fast.
+> Now there's no user of MF_COUNT_INCREASED, so we can safely remove
+> it from all calling points.
 > 
 > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 > Signed-off-by: Oscar Salvador <osalvador@suse.de>
 > ---
->  mm/madvise.c | 25 +++++++++++--------------
->  1 file changed, 11 insertions(+), 14 deletions(-)
+>  include/linux/mm.h  |  7 +++----
+>  mm/memory-failure.c | 16 +++-------------
+>  2 files changed, 6 insertions(+), 17 deletions(-)
 > 
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 6e023414f5c1..fbe6d402232c 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -883,6 +883,16 @@ static int madvise_inject_error(int behavior,
->  		ret = get_user_pages_fast(start, 1, 0, &page);
->  		if (ret != 1)
->  			return ret;
-> +		/*
-> +		 * The get_user_pages_fast() is just to get the pfn of the
-> +		 * given address, and the refcount has nothing to do with
-> +		 * what we try to test, so it should be released immediately.
-> +		 * This is racy but it's intended because the real hardware
-> +		 * errors could happen at any moment and memory error handlers
-> +		 * must properly handle the race.
-> +		 */
-> +		put_page(page);
-> +
-
-I wonder if it would be clearer to do that after the page has been fully
-used  - e.g. after getting the pfn and the order (and then e.g.,
-symbolically setting the page pointer to 0).
-
-I guess the important part of this patch is to not have an elevated
-refcount while calling soft_offline_page().
-
->  		pfn = page_to_pfn(page);
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ad6766a08f9b..fb36a4165a4e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2814,10 +2814,9 @@ void register_page_bootmem_memmap(unsigned long section_nr, struct page *map,
+>  				  unsigned long nr_pages);
 >  
+>  enum mf_flags {
+> -	MF_COUNT_INCREASED = 1 << 0,
+> -	MF_ACTION_REQUIRED = 1 << 1,
+> -	MF_MUST_KILL = 1 << 2,
+> -	MF_SOFT_OFFLINE = 1 << 3,
+> +	MF_ACTION_REQUIRED = 1 << 0,
+> +	MF_MUST_KILL = 1 << 1,
+> +	MF_SOFT_OFFLINE = 1 << 2,
+>  };
+>  extern int memory_failure(unsigned long pfn, int flags);
+>  extern void memory_failure_queue(unsigned long pfn, int flags);
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index e43b61462fd5..1be785b25324 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1092,7 +1092,7 @@ static int memory_failure_hugetlb(unsigned long pfn, int flags)
+>  
+>  	num_poisoned_pages_inc();
+>  
+> -	if (!(flags & MF_COUNT_INCREASED) && !get_hwpoison_page(p)) {
+> +	if (!get_hwpoison_page(p)) {
 >  		/*
-> @@ -892,16 +902,11 @@ static int madvise_inject_error(int behavior,
+>  		 * Check "filter hit" and "race with other subpage."
 >  		 */
->  		order = compound_order(compound_head(page));
+> @@ -1286,7 +1286,7 @@ int memory_failure(unsigned long pfn, int flags)
+>  	 * In fact it's dangerous to directly bump up page count from 0,
+>  	 * that may make page_ref_freeze()/page_ref_unfreeze() mismatch.
+>  	 */
+> -	if (!(flags & MF_COUNT_INCREASED) && !get_hwpoison_page(p)) {
+> +	if (!get_hwpoison_page(p)) {
+>  		if (is_free_buddy_page(p)) {
+>  			action_result(pfn, MF_MSG_BUDDY, MF_DELAYED);
+>  			return 0;
+> @@ -1327,10 +1327,7 @@ int memory_failure(unsigned long pfn, int flags)
+>  	shake_page(p, 0);
+>  	/* shake_page could have turned it free. */
+>  	if (!PageLRU(p) && is_free_buddy_page(p)) {
+> -		if (flags & MF_COUNT_INCREASED)
+> -			action_result(pfn, MF_MSG_BUDDY, MF_DELAYED);
+> -		else
+> -			action_result(pfn, MF_MSG_BUDDY_2ND, MF_DELAYED);
+> +		action_result(pfn, MF_MSG_BUDDY_2ND, MF_DELAYED);
+>  		return 0;
+>  	}
 >  
-> -		if (PageHWPoison(page)) {
+> @@ -1618,9 +1615,6 @@ static int __get_any_page(struct page *p, unsigned long pfn, int flags)
+>  {
+>  	int ret;
+>  
+> -	if (flags & MF_COUNT_INCREASED)
+> -		return 1;
+> -
+>  	/*
+>  	 * When the target page is a free hugepage, just remove it
+>  	 * from free hugepage list.
+> @@ -1890,15 +1884,11 @@ int soft_offline_page(struct page *page, int flags)
+>  	if (is_zone_device_page(page)) {
+>  		pr_debug_ratelimited("soft_offline: %#lx page is device page\n",
+>  				pfn);
+> -		if (flags & MF_COUNT_INCREASED)
 > -			put_page(page);
-> -			continue;
-> -		}
-
-This change is not reflected in the changelog. I would have expected
-that only the put_page() would go. If this should go completely, I
-suggest a separate patch.
-
-> -
->  		if (behavior == MADV_SOFT_OFFLINE) {
->  			pr_info("Soft offlining pfn %#lx at process virtual address %#lx\n",
->  					pfn, start);
+>  		return -EIO;
+>  	}
 >  
-> -			ret = soft_offline_page(page, MF_COUNT_INCREASED);
-> +			ret = soft_offline_page(page, 0);
->  			if (ret)
->  				return ret;
->  			continue;
-> @@ -909,14 +914,6 @@ static int madvise_inject_error(int behavior,
+>  	if (PageHWPoison(page)) {
+>  		pr_info("soft offline: %#lx page already poisoned\n", pfn);
+> -		if (flags & MF_COUNT_INCREASED)
+> -			put_hwpoison_page(page);
+>  		return -EBUSY;
+>  	}
 >  
->  		pr_info("Injecting memory failure for pfn %#lx at process virtual address %#lx\n",
->  				pfn, start);
-> -
-> -		/*
-> -		 * Drop the page reference taken by get_user_pages_fast(). In
-> -		 * the absence of MF_COUNT_INCREASED the memory_failure()
-> -		 * routine is responsible for pinning the page to prevent it
-> -		 * from being released back to the page allocator.
-> -		 */
-> -		put_page(page);
->  		ret = memory_failure(pfn, 0);
->  		if (ret)
->  			return ret;
 > 
 
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 
