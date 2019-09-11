@@ -2,88 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE4CB0087
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 17:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E653B00B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 17:58:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbfIKPuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 11:50:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728722AbfIKPuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 11:50:02 -0400
-Received: from localhost (unknown [62.28.240.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 143252089F;
-        Wed, 11 Sep 2019 15:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568217001;
-        bh=kXtkziQGWXBOfL538EtmdmNIZTcvB4FwDAz/sAqRLiY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lrKcxFNqtHhOmQ3jDbNmnZufE+8VqY6xFiROzEjnQrkk3u0By8egoiAeLUyYtmhIO
-         rSd6YGBOsMbAcZi4r+XlEKP8OcWhotLOc4DBs8THEUA/uea5Wnmg9Q2oubWodnI63L
-         mn3S4TZyVg0txz4wIU71FfAlf9+pA58G5DitvWaE=
-Date:   Wed, 11 Sep 2019 16:49:58 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net, sashal@kernel.org,
-        ben@decadent.org.uk, tglx@linutronix.de, labbott@redhat.com,
-        andrew.cooper3@citrix.com, tsoni@codeaurora.org,
-        keescook@chromium.org, tony.luck@intel.com,
-        linux-doc@vger.kernel.org, dan.j.williams@intel.com
-Subject: Re: [PATCH 3/4] Documentation/process: soften language around
- conference talk dates
-Message-ID: <20190911154958.GB14152@kroah.com>
-References: <20190910172644.4D2CDF0A@viggo.jf.intel.com>
- <20190910172651.D9F5C062@viggo.jf.intel.com>
+        id S1728870AbfIKP60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 11:58:26 -0400
+Received: from 9.mo68.mail-out.ovh.net ([46.105.78.111]:47529 "EHLO
+        9.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728266AbfIKP60 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 11:58:26 -0400
+X-Greylist: delayed 3601 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Sep 2019 11:58:25 EDT
+Received: from player688.ha.ovh.net (unknown [10.109.143.249])
+        by mo68.mail-out.ovh.net (Postfix) with ESMTP id BB5F4142F53
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 16:40:52 +0200 (CEST)
+Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player688.ha.ovh.net (Postfix) with ESMTPSA id 4ED3C99ECC49;
+        Wed, 11 Sep 2019 14:40:44 +0000 (UTC)
+Date:   Wed, 11 Sep 2019 16:40:43 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        =?UTF-8?B?Q8OpZHJpYw==?= Le Goater <clg@kaod.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/xive: Fix bogus error code returned by OPAL
+Message-ID: <20190911164043.5548afa1@bahia.lan>
+In-Reply-To: <87k1aezz78.fsf@mpe.ellerman.id.au>
+References: <156812362556.1866243.7399893138425681517.stgit@bahia.tls.ibm.com>
+        <87k1aezz78.fsf@mpe.ellerman.id.au>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190910172651.D9F5C062@viggo.jf.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 537054258809641393
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrtdefgdehfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 10:26:51AM -0700, Dave Hansen wrote:
+On Thu, 12 Sep 2019 00:26:19 +1000
+Michael Ellerman <mpe@ellerman.id.au> wrote:
+
+> Hi Greg,
 > 
-> From: Dave Hansen <dave.hansen@linux.intel.com>
+
+Bom dia ! :)
+
+> Couple of comments ...
 > 
-> Both hardware companies and the kernel community prefer coordinated
-> disclosure to the alternatives.  It is also obvious that sitting on
-> ready-to-go mitigations for months is not so nice for kernel
-> maintainers.
+> Greg Kurz <groug@kaod.org> writes:
+> > There's a bug in skiboot that causes the OPAL_XIVE_ALLOCATE_IRQ call
+> > to return the 32-bit value 0xffffffff when OPAL has run out of IRQs.
+> > Unfortunatelty, OPAL return values are signed 64-bit entities and
+> > errors are supposed to be negative. If that happens, the linux code
+> > confusingly treats 0xffffffff as a valid IRQ number and panics at some
+> > point.
+> >
+> > A fix was recently merged in skiboot:
+> >
+> > e97391ae2bb5 ("xive: fix return value of opal_xive_allocate_irq()")
+> >
+> > but we need a workaround anyway to support older skiboots already
+> > on the field.
+>   ^
+>   in
+>  
+> >
+> > Internally convert 0xffffffff to OPAL_RESOURCE which is the usual error
+> > returned upon resource exhaustion.
 > 
-> I want to ensure that the patched text can not be read as "the kernel
-> does not wait for conference dates".  I'm also fairly sure that, so
-> far, we *have* waited for a number of conference dates.
+> This should go to stable, any idea what versions it should go back to?
+> Probably whenever the xive code was introduced?
+> 
 
-We have been "forced" to wait for conference dates.  That is much
-different from what we are saying here (i.e. we do NOT want to have to
-wait for that type of thing as that causes us all real work that is a
-total waste of engineering effort.)
+Yes I guess so. This would mean v4.12. I'll add the appropriate stable
+tag before re-posting, and address all the other remarks of course.
 
-> Change the text to make it clear that waiting for conference dates
-> is possible, but keep the grumbling about it being a burden.
-
-I don't think we want that, waiting for long periods of time like we
-have been (and are currently) is a royal pain.  We are glad to take
-these on a case-by-case basis, but doing delays for no other reason than
-a specific conference date 6 months in the future when we have fixes now
-benifits no one at all, and in fact HURTS everyone involved, including
-our users the most.
-
-> While I think this is good for everyone, this patch represents my
-> personal opinion and not that of my employer.
-
-I appreciate the disclaimer :)
-
-I know Thomas and others are totally busy with Plumbers right now (as am
-I), so I'll hold on to this and your next patch in my "to-review" queue
-to give others a chance to weigh in on the tweaks to see if anyone
-disagrees with my comments above.
-
-thanks,
-
-greg k-h
+> > Signed-off-by: Greg Kurz <groug@kaod.org>
+> > ---
+> >  arch/powerpc/sysdev/xive/native.c |   13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/powerpc/sysdev/xive/native.c b/arch/powerpc/sysdev/xive/native.c
+> > index 37987c815913..c35583f84f9f 100644
+> > --- a/arch/powerpc/sysdev/xive/native.c
+> > +++ b/arch/powerpc/sysdev/xive/native.c
+> > @@ -231,6 +231,15 @@ static bool xive_native_match(struct device_node *node)
+> >  	return of_device_is_compatible(node, "ibm,opal-xive-vc");
+> >  }
+> >  
+> > +static int64_t opal_xive_allocate_irq_fixup(uint32_t chip_id)
+>           ^                                    ^
+>           Can you use s64 here and u32 here ....
+> 
+> Instead of calling this opal_xive_allocate_irq_fixup() and relying on
+> all callers to call the fixup, can we rename the opal wrapper and leave
+> this function's name unchanged, eg:
+> 
+> -OPAL_CALL(opal_xive_allocate_irq,              OPAL_XIVE_ALLOCATE_IRQ);
+> +OPAL_CALL(opal_xive_allocate_irq_raw,          OPAL_XIVE_ALLOCATE_IRQ);
+> 
+> 
+> > +{
+> > +	s64 irq = opal_xive_allocate_irq(chip_id);
+> > +
+> > +#define XIVE_ALLOC_NO_SPACE	0xffffffff /* No possible space */
+> > +	return
+> > +		irq == XIVE_ALLOC_NO_SPACE ? OPAL_RESOURCE : irq;
+> > +}
+> 
+> I don't really like the #define and the weird indenting and so on, can
+> we instead do it like:
+> 
+> 	/*
+>          * Old versions of skiboot can incorrectly return 0xffffffff to
+>          * indicate no space, fix it up here.
+>          */
+> 	return irq == 0xffffffff ? OPAL_RESOURCE : irq;
+> 
+> cheers
