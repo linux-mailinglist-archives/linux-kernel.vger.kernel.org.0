@@ -2,94 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D490EAF8C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5339AF8BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:20:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfIKJVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 05:21:24 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2212 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726579AbfIKJVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 05:21:24 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E6267DBB613FD0A61D59;
-        Wed, 11 Sep 2019 17:21:21 +0800 (CST)
-Received: from [127.0.0.1] (10.184.12.158) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Sep 2019
- 17:21:13 +0800
-Subject: Re: [PATCH 2/2] KVM: arm/arm64: Print the EC hex value with its exact
- width
-To:     Marc Zyngier <maz@kernel.org>
-CC:     <james.morse@arm.com>, <julien.thierry.kdev@gmail.com>,
-        <suzuki.poulose@arm.com>, <kvmarm@lists.cs.columbia.edu>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>
-References: <1568169216-12632-1-git-send-email-yuzenghui@huawei.com>
- <1568169216-12632-3-git-send-email-yuzenghui@huawei.com>
- <86h85js083.wl-maz@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <e013e828-5e61-8c07-510f-6cb4c59367cf@huawei.com>
-Date:   Wed, 11 Sep 2019 17:19:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
- Thunderbird/64.0
+        id S1727158AbfIKJUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 05:20:12 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39191 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfIKJUM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 05:20:12 -0400
+Received: by mail-ed1-f68.google.com with SMTP id u6so19961869edq.6;
+        Wed, 11 Sep 2019 02:20:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xco/af/x6HLCOyTU+F8H8hS4JAyuU2ZOlKKdPNtbpTc=;
+        b=IBQkqAd12yBtK7nUuezywmOLAhdKqEfDOGXS/rpxNGoG0SWhmCi0eQoQ+N5PpBj66G
+         FwZSPnzD7gRissIkhDNBGvyI3qG+alfEf76ataezk8eiJD9hXs3qrFjFljsmBagnA00D
+         AFM5P/MQtW30Lmier4a9FNH8sKnyjzAgu7leE52yCOe2+YPa5Z53PQMlVRwpFr8v7Mxs
+         DQkxacEhzTs31k3OwYJQjn5IedecyueCd4zKrtNdKvDDFvbOe42eaAX2H5ggjUiJkaAO
+         Zf6yjpC1B06wU2+AXCcxAZElwYkB+7XFbaHGf9XEGYeSHuVpd9vdo+hzHFB0YKnI71E3
+         jpeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xco/af/x6HLCOyTU+F8H8hS4JAyuU2ZOlKKdPNtbpTc=;
+        b=ktL32IgkqMeBBNk8EJVAau+k/QRP17f2MPBv9r7kNvQB+GG5T4EnSiQ611u/3XzTTS
+         Wkfb8wxFbzFLtzmYR6wnP5VxNuciWth/r4OGriMumGVIMgaLCa34dd9tHkxT6WXtWmzY
+         0TCyYnQlO+FTwHauayM149mjeggW2+3+YOCkhQ70BpGJuztIqOHehaSfpdw8vFzw8Aqu
+         O39AQ2lR6ozCLZER7MHzqzruSx0NpcBZXP1RQHbS3PaaI6bzTj+ptA6UbQ7PNQ+Buyqo
+         FQNKUoCVKd/S73JiN63gxcp5JzkLktczoOTVyQNxpDzhE1gPvESVue71FsUELP88buYD
+         jqaQ==
+X-Gm-Message-State: APjAAAVsnOWaccbM1vmDwzU+c3ndnrIAVr9tcqzdHT3L0og0h7XEsccW
+        KlAaCtfNlttoXtQbIDs3RIU=
+X-Google-Smtp-Source: APXvYqy4BvSO0gG/4I1Sjsy9hAklRK2xOgW5m/CB7P/ljWkEEbYILxaBvColTBRBPjXu3ggDmikluA==
+X-Received: by 2002:a50:eb4c:: with SMTP id z12mr35703111edp.155.1568193608578;
+        Wed, 11 Sep 2019 02:20:08 -0700 (PDT)
+Received: from dell5510 ([62.201.25.198])
+        by smtp.gmail.com with ESMTPSA id l11sm157360ejn.62.2019.09.11.02.20.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2019 02:20:07 -0700 (PDT)
+Date:   Wed, 11 Sep 2019 11:20:06 +0200
+From:   Petr Vorel <petr.vorel@gmail.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-integrity@vger.kernel.org, stable@vger.kernel.org,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] selftests/tpm2: Add the missing TEST_FILES assignment
+Message-ID: <20190911092005.GA22492@dell5510>
+Reply-To: Petr Vorel <petr.vorel@gmail.com>
+References: <20190910222523.8116-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <86h85js083.wl-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.12.158]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190910222523.8116-1-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Hi Jarkko,
 
-On 2019/9/11 16:31, Marc Zyngier wrote:
-> On Wed, 11 Sep 2019 03:33:36 +0100,
-> Zenghui Yu <yuzenghui@huawei.com> wrote:
->>
->> EC is the bits [31:26] of ESR_ELx on arm64 (HSR on arm). Print the
->> hex value with its exact width (8).
->>
->> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
->> ---
->>   virt/kvm/arm/trace.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/virt/kvm/arm/trace.h b/virt/kvm/arm/trace.h
->> index 204d210d01c2..022b0a060034 100644
->> --- a/virt/kvm/arm/trace.h
->> +++ b/virt/kvm/arm/trace.h
->> @@ -42,7 +42,7 @@ TRACE_EVENT(kvm_exit,
->>   		__entry->vcpu_pc		= vcpu_pc;
->>   	),
->>   
->> -	TP_printk("%s: HSR_EC: 0x%04x (%s), PC: 0x%08lx",
->> +	TP_printk("%s: HSR_EC: 0x%02x (%s), PC: 0x%08lx",
->>   		  __print_symbolic(__entry->ret, kvm_arm_exception_type),
->>   		  __entry->esr_ec,
->>   		  __print_symbolic(__entry->esr_ec, kvm_arm_exception_class),
-> 
-> Although you're right that 8 bits ought to be enough, this is a change
-> to the output of the tracepoint, which userspace could (does?) parse.
+> The Python files required by the selftests are not packaged because of
+> the missing assignment to TEST_FILES. Add the assignment.
 
-Well-written userspace tools should only parse the low 8 bits (if they
-do parse). But even if the high bits are parsed, they're always 0.
-So I don't think this change will have a bad impact on userspace.
+> Cc: stable@vger.kernel.org
+> Fixes: 6ea3dfe1e073 ("selftests: add TPM 2.0 tests")
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-> I'm thus reluctant to change anything there, knowing that we don't
-> lose any information, and just print two extra zeroes.
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
 
-Anyway this is not a fix, feel free to ignore it if you're worried about
-that there might be some issues ;)
-
-> Am I missing anything?
-
-No.
-
-
-Thanks,
-zenghui
-
+Kind regards,
+Petr
