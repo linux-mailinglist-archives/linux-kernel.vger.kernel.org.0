@@ -2,79 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72099AF83F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 10:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA543AF852
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 10:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfIKIul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 04:50:41 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2211 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726765AbfIKIul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 04:50:41 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1641D4EFB943E5F659AA;
-        Wed, 11 Sep 2019 16:50:39 +0800 (CST)
-Received: from [127.0.0.1] (10.177.251.225) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Sep 2019
- 16:50:29 +0800
-To:     <catalin.marinas@arm.com>, <will@kernel.org>
-CC:     <kstewart@linuxfoundation.org>, <gregkh@linuxfoundation.org>,
-        <ard.biesheuvel@linaro.org>, <tglx@linutronix.de>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wuyun.wu@huawei.com>
-From:   Yunfeng Ye <yeyunfeng@huawei.com>
-Subject: [PATCH] arm64: psci: Use udelay() instead of msleep() to reduce
- waiting time
-Message-ID: <e4d42bda-72f2-4002-f319-1cbe2bff74d2@huawei.com>
-Date:   Wed, 11 Sep 2019 16:50:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727075AbfIKI4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 04:56:21 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36558 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfIKI4V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 04:56:21 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l20so19220898ljj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 01:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/E13juu/FtC97zR3HMtA4Q3ZzUhvcKxTohP/DIrieFE=;
+        b=BcqK+uXn+oKcHQci2VioBov/yYrGjlPkyn/T/kLLSbgWOlSSf+NsSr9tcr+eWTkHB+
+         jsfLdzZTp6C+J0ho7T2xrzmgZFcpO3Px/xdP0U/++BsKxOVGHFqBD5k1MeTP8WuVczL+
+         0urtdMdVcnVQrzmqR98SdvyOPtyUvsVnd8Eb8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/E13juu/FtC97zR3HMtA4Q3ZzUhvcKxTohP/DIrieFE=;
+        b=VRhXh5x8mSo6WqGXCNsbEgGEnBK5mwjhf3o5d3ZgIEqTRcNtp21JzCf+T7GmUv24Oo
+         /u8xLK5IPopSckiFDwgC91N0y1Dk1gxYlhETnhaYDSPEU28um1X+LFhGhLC9F5ZXM+E6
+         HO9uCwJIDoWpXV7LANtc6eNiuQ7UmCwLk2l7IJTlCXW6UEshVO2REurohdacA3sRttMT
+         sHSzKQtT2dzv6Qs+kCDTqm9EC2Tpg3yCDzc8JD6H8xvB/v8FUmpMz2JAz1NuAx+u7cfb
+         ezP1AoP24FW+4I4TywB4NMRkeel3H/cSXB8Meo3+SE/udCaoqJ8GsYULr0eMId+ufKZY
+         Sovg==
+X-Gm-Message-State: APjAAAWeTRJwxeCKVj4Ny6zOcEYzDYpHE4SGSH+96T4vkkZKl617w4ci
+        MzV81R5AtSDkBAZrwnPBOXNHhhqrTHICRZcX
+X-Google-Smtp-Source: APXvYqy1RDrW7Pk+KOWN/Jc3bS05Tc1eYcGhatc7TiXDSqSL/sku24bMf+Y2wx8fUy/PfU+iLX5gpQ==
+X-Received: by 2002:a2e:a313:: with SMTP id l19mr6461495lje.205.1568192177571;
+        Wed, 11 Sep 2019 01:56:17 -0700 (PDT)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id t82sm4987346lff.58.2019.09.11.01.56.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Sep 2019 01:56:16 -0700 (PDT)
+Subject: Re: [PATCH] Staging: exfat: Avoid use of strcpy
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Sandro Volery <sandro@volery.com>
+Cc:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20190911055749.GA10786@volery> <20190911084111.GG15977@kadam>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <214f3b20-fac4-df5e-6b3c-a08a19a8ea42@rasmusvillemoes.dk>
+Date:   Wed, 11 Sep 2019 10:56:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190911084111.GG15977@kadam>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.251.225]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We want to reduce the time of cpu_down() for saving power, found that
-cpu_psci_cpu_kill() cost 10ms after psci_ops.affinity_info() fail.
+On 11/09/2019 10.41, Dan Carpenter wrote:
+> On Wed, Sep 11, 2019 at 07:57:49AM +0200, Sandro Volery wrote:
+>> Replaced strcpy with strscpy in exfat_core.c.
+>>
+>> Signed-off-by: Sandro Volery <sandro@volery.com>
+>> ---
+>>  drivers/staging/exfat/exfat_core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
+>> index da8c58149c35..c71b145e8a24 100644
+>> --- a/drivers/staging/exfat/exfat_core.c
+>> +++ b/drivers/staging/exfat/exfat_core.c
+>> @@ -2964,7 +2964,7 @@ s32 resolve_path(struct inode *inode, char *path, struct chain_t *p_dir,
+>>  	if (strlen(path) >= (MAX_NAME_LENGTH * MAX_CHARSET_SIZE))
+>>  		return FFS_INVALIDPATH;
+>>  
+>> -	strcpy(name_buf, path);
+>> +	strscpy(name_buf, path, sizeof(name_buf));
+> 
+> It checked strlen() earlier so we know that it can't overflow but, oh
+> wow, the "name_buf" is a shared buffer.  wow wow wow.  This seems very
+> racy.
 
-Normally the time cpu dead is very short, it is no need to wait 10ms.
-so use udelay 10us to instead msleep 10ms in every waiting loop, and add
-cond_resched() to give a chance to run a higher-priority process.
+Yeah, and note that the callers of resolve_path do seem to take a lock,
+but that's not a global lock but a per-superblock (or
+per-something-else) one... Obviously exfat should not rely on such a
+single static buffer, but in the meantime, perhaps one should add a
+name_buf_lock (though I don't know how long name_buf is actually in use,
+so that needs checking).
 
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
----
- arch/arm64/kernel/psci.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Apart from the broken/lack of locking, it would be better to combine the
+copying and length checking into a single check - i.e. do
 
-diff --git a/arch/arm64/kernel/psci.c b/arch/arm64/kernel/psci.c
-index 85ee7d0..9e9d8a6 100644
---- a/arch/arm64/kernel/psci.c
-+++ b/arch/arm64/kernel/psci.c
-@@ -86,15 +86,15 @@ static int cpu_psci_cpu_kill(unsigned int cpu)
- 	 * while it is dying. So, try again a few times.
- 	 */
+  if (strscpy(name_buf, path, sizeof(name_buf)) < 0)
+    return FFS_INVALIDPATH;
 
--	for (i = 0; i < 10; i++) {
-+	for (i = 0; i < 10000; i++) {
- 		err = psci_ops.affinity_info(cpu_logical_map(cpu), 0);
- 		if (err == PSCI_0_2_AFFINITY_LEVEL_OFF) {
- 			pr_info("CPU%d killed.\n", cpu);
- 			return 0;
- 		}
+That's both more efficient and fixes the open-coding of sizeof(name_buf)
+that is currently used in the if().
 
--		msleep(10);
--		pr_info("Retrying again to check for CPU kill\n");
-+		cond_resched();
-+		udelay(10);
- 	}
+Rasmus
 
- 	pr_warn("CPU%d may not have shut down cleanly (AFFINITY_INFO reports %d)\n",
--- 
-1.8.3.1
 
