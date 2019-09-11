@@ -2,86 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A3E2AF5A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34871AF5AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfIKGQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 02:16:28 -0400
-Received: from mga04.intel.com ([192.55.52.120]:26661 "EHLO mga04.intel.com"
+        id S1726967AbfIKGRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 02:17:50 -0400
+Received: from mga03.intel.com ([134.134.136.65]:1731 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726018AbfIKGQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 02:16:27 -0400
+        id S1725379AbfIKGRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 02:17:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 23:16:27 -0700
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Sep 2019 23:17:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
-   d="scan'208";a="185731691"
-Received: from pipin.fi.intel.com ([10.237.72.175])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Sep 2019 23:16:25 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Richard Cochran <richardcochran@gmail.com>
-Cc:     Christopher S Hall <christopher.s.hall@intel.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH v4 2/2] PTP: add support for one-shot output
-Date:   Wed, 11 Sep 2019 09:16:22 +0300
-Message-Id: <20190911061622.774006-2-felipe.balbi@linux.intel.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190911061622.774006-1-felipe.balbi@linux.intel.com>
-References: <20190911061622.774006-1-felipe.balbi@linux.intel.com>
+   d="scan'208";a="209565502"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga004.fm.intel.com with ESMTP; 10 Sep 2019 23:17:45 -0700
+Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
+        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        pengfei.xu@intel.com, Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 1/5] swiotlb: Split size parameter to map/unmap APIs
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <20190906061452.30791-1-baolu.lu@linux.intel.com>
+ <20190906061452.30791-2-baolu.lu@linux.intel.com>
+ <20190910151544.GA7585@char.us.oracle.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <0b939480-cb99-46fe-374e-a31441d21486@linux.intel.com>
+Date:   Wed, 11 Sep 2019 14:16:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190910151544.GA7585@char.us.oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some controllers allow for a one-shot output pulse, in contrast to
-periodic output. Now that we have extensible versions of our IOCTLs, we
-can finally make use of the 'flags' field to pass a bit telling driver
-that if we want one-shot pulse output.
+Hi,
 
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
----
+On 9/10/19 11:15 PM, Konrad Rzeszutek Wilk wrote:
+> On Fri, Sep 06, 2019 at 02:14:48PM +0800, Lu Baolu wrote:
+>> This splits the size parameter to swiotlb_tbl_map_single() and
+>> swiotlb_tbl_unmap_single() into an alloc_size and a mapping_size
+>> parameter, where the latter one is rounded up to the iommu page
+>> size.
+> It does a bit more too. You have the WARN_ON. Can you make it be
+> more  verbose (as in details of which device requested it) and also use printk_once or so please?
 
-Changes since v3:
-	- Remove bogus bitwise negation
+How about this change?
 
-Changes since v2:
-	- Add _PEROUT_ to bit macro
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 89066efa3840..22a7848caca3 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -466,8 +466,11 @@ phys_addr_t swiotlb_tbl_map_single(struct device 
+*hwdev,
+                 pr_warn_once("%s is active and system is using DMA 
+bounce buffers\n",
+                              sme_active() ? "SME" : "SEV");
 
-Changes since v1:
-	- remove comment from .flags field
+-       if (WARN_ON(mapping_size > alloc_size))
++       if (mapping_size > alloc_size) {
++               dev_warn_once(hwdev, "Invalid sizes (mapping: %zd bytes, 
+alloc: %zd bytes)",
++                             mapping_size, alloc_size);
+                 return (phys_addr_t)DMA_MAPPING_ERROR;
++       }
 
- include/uapi/linux/ptp_clock.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+         mask = dma_get_seg_boundary(hwdev);
 
-diff --git a/include/uapi/linux/ptp_clock.h b/include/uapi/linux/ptp_clock.h
-index 9a0af3511b68..f16301015949 100644
---- a/include/uapi/linux/ptp_clock.h
-+++ b/include/uapi/linux/ptp_clock.h
-@@ -38,8 +38,8 @@
- /*
-  * Bits of the ptp_perout_request.flags field:
-  */
--#define PTP_PEROUT_VALID_FLAGS (0)
+@@ -584,9 +587,6 @@ void swiotlb_tbl_unmap_single(struct device *hwdev, 
+phys_addr_t tlb_addr,
+         int index = (tlb_addr - io_tlb_start) >> IO_TLB_SHIFT;
+         phys_addr_t orig_addr = io_tlb_orig_addr[index];
+
+-       if (WARN_ON(mapping_size > alloc_size))
+-               return;
 -
-+#define PTP_PEROUT_ONE_SHOT (1<<0)
-+#define PTP_PEROUT_VALID_FLAGS	(PTP_PEROUT_ONE_SHOT)
- /*
-  * struct ptp_clock_time - represents a time value
-  *
-@@ -77,7 +77,7 @@ struct ptp_perout_request {
- 	struct ptp_clock_time start;  /* Absolute start time. */
- 	struct ptp_clock_time period; /* Desired period, zero means disable. */
- 	unsigned int index;           /* Which channel to configure. */
--	unsigned int flags;           /* Reserved for future use. */
-+	unsigned int flags;
- 	unsigned int rsv[4];          /* Reserved for future use. */
- };
- 
--- 
-2.23.0
+         /*
+          * First, sync the memory before unmapping the entry
+          */
 
+Best regards,
+Baolu
