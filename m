@@ -2,80 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD2FAF9DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8B10AF9F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfIKKFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 06:05:01 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35511 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbfIKKFB (ORCPT
+        id S1727653AbfIKKH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 06:07:59 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59718 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbfIKKH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 06:05:01 -0400
-Received: by mail-lf1-f65.google.com with SMTP id w6so15994803lfl.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 03:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aEBAvzyvKwKy4+z0icRgfRVKXYXcNb1iM7EN7yrDUow=;
-        b=b5WLEtD03nLPtyVSE+wLZn9h7qijVtAN+cYaeN6IYy+aFGDtEbDuL/gYsMMM/a/5ed
-         Bm/8bSgVFY582J67Cdazp0Jc7/0Ip0JtCwnp1Jwa0sBRHurYKd3AFT/MOoX9EgKmv7Wt
-         THm606K5uucv2RO6R7HvnwPXo9zNI5/SCpU50YcpK5nYOIZ/jeKlZyT4JwA91pyBCRGY
-         76K3WnTq/FQ1cFtQhenLCpIb3UROTl/67IWPqHB+hXeomfMlanRc/zaQHe3r5hBODnQq
-         lVYiLeCNz+Ewk8X+yoLY0VvEITQNeFzHI7YN8tMAZaUuIjZtJqEzFplZ9DoSsXHDz63B
-         er6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aEBAvzyvKwKy4+z0icRgfRVKXYXcNb1iM7EN7yrDUow=;
-        b=DE5r388kuWbkxbCMIUx/p9UDgWcxG1e7LRCp89q2QEA/J3gmTY/SuRRL/Ufijjw68K
-         sS9vzF23DSENPj0OaauCa/hhiH+SIn/r8FTv4KAaIJRkCuUf9/ehTsxX7MCX/taq5FC1
-         AOG6yspNhBcJaJUm2cgfOJ0eXj56GK9rTOlpjoOmH4AR8Og/PSZ6pMd75AppxU/S3/7P
-         RR6fqv7CCGo4fguNqwYaUCx1m9a/OKj1SMn/vEfBHtvZkVlZ27EYqTidt8af4CPY71gT
-         2fRMRUIUwE7t6MWtqAA2QpC6z2PB84+QkcnmtpFQ+Hg4QKbOZuMY/cEJsgyDmaGu5jwP
-         uqrg==
-X-Gm-Message-State: APjAAAX1l+5BC2tAeZDGdkQJ3/OOvvPjR3Qm4JWvZa+bbQg3WDyBlDhY
-        hRm1sIeU3qAdAEgnCRW5paqe9pxp0VnmzDrrTiL2aICPLyvXTA==
-X-Google-Smtp-Source: APXvYqyC+pv5N0Vcj+RE52xkcBxAzDFKvxknvjpMo7X5lxTEnajzZlDFTx5W6vtzY7meOzprM4Zolus/zI1aT2yhpaQ=
-X-Received: by 2002:a19:117:: with SMTP id 23mr23845320lfb.115.1568196299188;
- Wed, 11 Sep 2019 03:04:59 -0700 (PDT)
+        Wed, 11 Sep 2019 06:07:58 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8B9rbKe093930;
+        Wed, 11 Sep 2019 10:07:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=wxw9BbTHu4AzXJ1XStoEfZ/9Z/QWrwvMgzyBlvyAEQ0=;
+ b=nleJfhwGNVh777tOd3R+piFAF4/W8h/P5lZeAoY44+thF7HCP0zDwh8uV+c58rEY9wDA
+ AloFcUMauVRnCp4J5SbyeB0jAvHPB5CuXI0WiKaoMezzngUGN7kJJvcPeu6JBYYOoiGk
+ euEYyAM9DWPpAFRYkIJ3kIKKsQl4d6aLz9xcfiHyvoMjDkqXW8PNLcwo2TtgSVC5PEn3
+ hDCkvjoeXi3NxaD1bgg4maD2rxG/tmfDw2cTgrY4AOXSlsBgUA+lxJPC9yun9Qleih9p
+ mPJjGy6uGq1Cl+Wh0xJcKi48hRIVE3H2mhRmSFq+kiHetEwxfIf1WUAS8aw5mlcvJ8JC jA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2uw1jy8v8b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 10:07:42 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8B9raDu131313;
+        Wed, 11 Sep 2019 10:05:41 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2uxd6dx7nn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 10:05:41 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8BA5XFi022907;
+        Wed, 11 Sep 2019 10:05:33 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Sep 2019 03:05:32 -0700
+Date:   Wed, 11 Sep 2019 13:05:26 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Sandro Volery <sandro@volery.com>
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        aaro.koskinen@iki.fi, davem@davemloft.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: octeon: Avoid several usecases of strcpy
+Message-ID: <20190911100526.GJ15977@kadam>
+References: <20190911091659.GI15977@kadam>
+ <C1B40FAD-9F8F-449D-B10C-334BAC76797D@volery.com>
 MIME-Version: 1.0
-References: <20190906062623.13354-1-rashmica.g@gmail.com>
-In-Reply-To: <20190906062623.13354-1-rashmica.g@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 11 Sep 2019 11:04:47 +0100
-Message-ID: <CACRpkdZvBHk65Vs93YbrTR92-8o0SgtUUWMBXeABQH0PZwpRxQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] gpio/aspeed: Fix incorrect number of banks
-To:     Rashmica Gupta <rashmica.g@gmail.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Joel Stanley <joel@jms.id.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
-        <linux-aspeed@lists.ozlabs.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <C1B40FAD-9F8F-449D-B10C-334BAC76797D@volery.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909110093
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909110093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 6, 2019 at 7:26 AM Rashmica Gupta <rashmica.g@gmail.com> wrote:
+On Wed, Sep 11, 2019 at 11:21:44AM +0200, Sandro Volery wrote:
+> 
+> On 11 Sep 2019, at 11:17, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > 
+> > ﻿On Wed, Sep 11, 2019 at 11:04:38AM +0200, Sandro Volery wrote:
+> >> 
+> >> 
+> >>>> On 11 Sep 2019, at 10:52, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >>> 
+> >>> ﻿On Wed, Sep 11, 2019 at 08:23:59AM +0200, Sandro Volery wrote:
+> >>>> strcpy was used multiple times in strcpy to write into dev->name.
+> >>>> I replaced them with strscpy.
+> >>>> 
+> >>>> Signed-off-by: Sandro Volery <sandro@volery.com>
+> >>>> ---
+> >>>> drivers/staging/octeon/ethernet.c | 16 ++++++++--------
+> >>>> 1 file changed, 8 insertions(+), 8 deletions(-)
+> >>>> 
+> >>>> diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+> >>>> index 8889494adf1f..cf8e9a23ebf9 100644
+> >>>> --- a/drivers/staging/octeon/ethernet.c
+> >>>> +++ b/drivers/staging/octeon/ethernet.c
+> >>>> @@ -784,7 +784,7 @@ static int cvm_oct_probe(struct platform_device *pdev)
+> >>>>           priv->imode = CVMX_HELPER_INTERFACE_MODE_DISABLED;
+> >>>>           priv->port = CVMX_PIP_NUM_INPUT_PORTS;
+> >>>>           priv->queue = -1;
+> >>>> -            strcpy(dev->name, "pow%d");
+> >>>> +            strscpy(dev->name, "pow%d", sizeof(dev->name));
+> >>> 
+> >>> Is there a program which is generating a warning for this code?  We know
+> >>> that "pow%d" is 6 characters and static analysis tools can understand
+> >>> this code fine so we know it's safe.
+> >> 
+> >> Well I was confused too but checkpatch complained about 
+> >> it so I figured I'd clean it up quick
+> > 
+> > Ah.  It's a new checkpatch warning.  I don't care in that case.  I'm
+> > fine with replacing all of these in that case.
+> 
+> Alright thanks. Can you review this?
+> 
 
-> The current calculation for the number of GPIO banks is only correct if
-> the number of GPIOs is a multiple of 32 (if there were 31 GPIOs we would
-> currently say there are 0 banks, which is incorrect).
->
-> Fixes: 361b79119a4b7 ('gpio: Add Aspeed driver')
->
-> Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Sure.
 
-Patch applied.
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Yours,
-Linus Walleij
+regards,
+dan carpenter
+
