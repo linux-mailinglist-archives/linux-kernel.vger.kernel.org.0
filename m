@@ -2,100 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C5EAF605
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EB19AF607
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfIKGmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 02:42:38 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:38951 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfIKGme (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 02:42:34 -0400
-Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
-  Nicolas.Ferre@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="Nicolas.Ferre@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa2.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Nicolas.Ferre@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Nicolas.Ferre@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: oVL/De3qJ0eO2V641n5mVglNnEflb5buSfjyBElXkHLnlgZ2Ubshz3su221izQyQZlRtDipJEC
- A5Pxx19x16XpoBvUNOwYN9SGQK0clb/ZncuqGT6nDW8lKVWHJ+nWOzG04y/Q3SkKlAqhUkbi8+
- rzr9UWetZkdPY1u7GmIUWkxT6odcbSYStYpC9/trJJkReeBrPID98furAQnAlQzj/rLaWPsViv
- KVKQ/uOJ8VbXYf1HSEG1IXRt37WijuS27k79ikdJ/7GH/wEVf8Rsl/g6jYveXJZ2hOzkG4CLdl
- M7w=
-X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
-   d="scan'208";a="48466723"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 10 Sep 2019 23:42:32 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 10 Sep 2019 23:42:32 -0700
-Received: from tenerife.corp.atmel.com (10.10.85.251) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Tue, 10 Sep 2019 23:42:30 -0700
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-To:     <linux-kernel@vger.kernel.org>,
+        id S1727040AbfIKGm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 02:42:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725747AbfIKGm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 02:42:59 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EC7D21A4C;
+        Wed, 11 Sep 2019 06:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568184179;
+        bh=5fDkxYy4jOJS/+QkDeYxCAE8Sxo/JVPofcF3L2N5Fic=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y9IQJVh4gWWvNhP69nMQB9GqIa6147EQg+yKHp+8dtZOLWPT0SiiubwSFtWogeqKb
+         WBEs+sFuXPJJjJZ36g1A4MkIszLObdh7dyzQ2eOGo5JR1AGBR69g4Vv5VuL/C+GNKX
+         p3dFw6HxfOqh/ZGsP7fIeBC23ZkyR+j34Wmie6sw=
+Date:   Wed, 11 Sep 2019 14:42:47 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Fancy Fang <chen.fang@nxp.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        LnxRevLi <LnxRevLi@nxp.com>, Jana Build <jana.build@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>
-CC:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        <Boris.Krasnovskiy@lairdconnect.com>, <linux-usb@vger.kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 3/3] USB: host: ohci-at91: resume: balance the clock start call
-Date:   Wed, 11 Sep 2019 08:41:54 +0200
-Message-ID: <20190911064154.28633-4-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190911064154.28633-1-nicolas.ferre@microchip.com>
-References: <20190911064154.28633-1-nicolas.ferre@microchip.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 1/2] ARM: dts: imx7ulp: remove mipi pll clock node
+Message-ID: <20190911064246.GC17142@dragon>
+References: <20190823003600.8317-1-chen.fang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190823003600.8317-1-chen.fang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Krasnovskiy <Boris.Krasnovskiy@lairdconnect.com>
+On Fri, Aug 23, 2019 at 12:37:30AM +0000, Fancy Fang wrote:
+> According to the IMX7ULP reference manual, the mipi pll
+> clock comes from the MIPI PHY PLL output. So it should
+> not be defined as a fixed clock. So remove this clock
+> node and all the references to it.
+> 
+> Signed-off-by: Fancy Fang <chen.fang@nxp.com>
 
-There is a clock enable counter run away problem in resume ohci_at91. Code
-enables clock that was never disabled in case of non wakeup interface. That
-would make clock unstoppable in future.
-Use proper alternative to start clocks only if they were stopped before.
-
-Signed-off-by: Boris Krasnovskiy <Boris.Krasnovskiy@lairdconnect.com>
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/usb/host/ohci-at91.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
-index 85d67fe42d59..513e48397743 100644
---- a/drivers/usb/host/ohci-at91.c
-+++ b/drivers/usb/host/ohci-at91.c
-@@ -643,8 +643,8 @@ ohci_hcd_at91_drv_resume(struct device *dev)
- 
- 	if (ohci_at91->wakeup)
- 		disable_irq_wake(hcd->irq);
--
--	at91_start_clock(ohci_at91);
-+	else
-+		at91_start_clock(ohci_at91);
- 
- 	ohci_resume(hcd, false);
- 
--- 
-2.17.1
-
+Applied, thanks.
