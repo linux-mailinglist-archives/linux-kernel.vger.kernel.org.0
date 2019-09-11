@@ -2,173 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81019B01A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28429B01B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbfIKQaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 12:30:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48342 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727839AbfIKQaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:30:14 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 64779306E171;
-        Wed, 11 Sep 2019 16:30:13 +0000 (UTC)
-Received: from gondolin (ovpn-116-29.ams2.redhat.com [10.36.116.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9DCF460C5E;
-        Wed, 11 Sep 2019 16:30:03 +0000 (UTC)
-Date:   Wed, 11 Sep 2019 18:29:58 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Parav Pandit <parav@mellanox.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH v3 0/5] Introduce variable length mdev alias
-Message-ID: <20190911182958.042cd03a.cohuck@redhat.com>
-In-Reply-To: <AM0PR05MB48668DFF8E816F0D2D3041BFD1B10@AM0PR05MB4866.eurprd05.prod.outlook.com>
-References: <20190826204119.54386-1-parav@mellanox.com>
-        <20190902042436.23294-1-parav@mellanox.com>
-        <AM0PR05MB4866F76F807409ED887537D7D1B70@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190911145610.453b32ec@x1.home>
-        <AM0PR05MB48668DFF8E816F0D2D3041BFD1B10@AM0PR05MB4866.eurprd05.prod.outlook.com>
-Organization: Red Hat GmbH
+        id S1729084AbfIKQfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:35:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728828AbfIKQfX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:35:23 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8BGWPbE008827;
+        Wed, 11 Sep 2019 12:34:53 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uy4351360-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Sep 2019 12:34:53 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8BGTSmU023056;
+        Wed, 11 Sep 2019 16:34:52 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma02wdc.us.ibm.com with ESMTP id 2uv467cjdr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Sep 2019 16:34:52 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8BGYpIU13632112
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 16:34:52 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E3663112061;
+        Wed, 11 Sep 2019 16:34:51 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4A87112063;
+        Wed, 11 Sep 2019 16:34:49 +0000 (GMT)
+Received: from morokweng.localdomain.com (unknown [9.85.164.37])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Sep 2019 16:34:49 +0000 (GMT)
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH] powerpc/prom_init: Undo relocation before entering secure mode
+Date:   Wed, 11 Sep 2019 13:34:33 -0300
+Message-Id: <20190911163433.12822-1-bauerman@linux.ibm.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 11 Sep 2019 16:30:13 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-11_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=982 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909110152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Sep 2019 15:30:40 +0000
-Parav Pandit <parav@mellanox.com> wrote:
+The ultravisor will do an integrity check of the kernel image but we
+relocated it so the check will fail. Restore the original image by
+relocating it back to the kernel virtual base address.
 
-> Hi Alex,
-> 
-> > -----Original Message-----
-> > From: Alex Williamson <alex.williamson@redhat.com>
-> > Sent: Wednesday, September 11, 2019 8:56 AM
-> > To: Parav Pandit <parav@mellanox.com>
-> > Cc: Jiri Pirko <jiri@mellanox.com>; kwankhede@nvidia.com;
-> > cohuck@redhat.com; davem@davemloft.net; kvm@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; netdev@vger.kernel.org
-> > Subject: Re: [PATCH v3 0/5] Introduce variable length mdev alias
-> > 
-> > On Mon, 9 Sep 2019 20:42:32 +0000
-> > Parav Pandit <parav@mellanox.com> wrote:
-> >   
-> > > Hi Alex,
-> > >  
-> > > > -----Original Message-----
-> > > > From: Parav Pandit <parav@mellanox.com>
-> > > > Sent: Sunday, September 1, 2019 11:25 PM
-> > > > To: alex.williamson@redhat.com; Jiri Pirko <jiri@mellanox.com>;
-> > > > kwankhede@nvidia.com; cohuck@redhat.com; davem@davemloft.net
-> > > > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > > netdev@vger.kernel.org; Parav Pandit <parav@mellanox.com>
-> > > > Subject: [PATCH v3 0/5] Introduce variable length mdev alias
-> > > >
-> > > > To have consistent naming for the netdevice of a mdev and to have
-> > > > consistent naming of the devlink port [1] of a mdev, which is formed
-> > > > using phys_port_name of the devlink port, current UUID is not usable
-> > > > because UUID is too long.
-> > > >
-> > > > UUID in string format is 36-characters long and in binary 128-bit.
-> > > > Both formats are not able to fit within 15 characters limit of netdev  
-> > name.  
-> > > >
-> > > > It is desired to have mdev device naming consistent using UUID.
-> > > > So that widely used user space framework such as ovs [2] can make
-> > > > use of mdev representor in similar way as PCIe SR-IOV VF and PF  
-> > representors.  
-> > > >
-> > > > Hence,
-> > > > (a) mdev alias is created which is derived using sha1 from the mdev  
-> > name.  
-> > > > (b) Vendor driver describes how long an alias should be for the
-> > > > child mdev created for a given parent.
-> > > > (c) Mdev aliases are unique at system level.
-> > > > (d) alias is created optionally whenever parent requested.
-> > > > This ensures that non networking mdev parents can function without
-> > > > alias creation overhead.
-> > > >
-> > > > This design is discussed at [3].
-> > > >
-> > > > An example systemd/udev extension will have,
-> > > >
-> > > > 1. netdev name created using mdev alias available in sysfs.
-> > > >
-> > > > mdev UUID=83b8f4f2-509f-382f-3c1e-e6bfe0fa1001
-> > > > mdev 12 character alias=cd5b146a80a5
-> > > >
-> > > > netdev name of this mdev = enmcd5b146a80a5 Here en = Ethernet link m
-> > > > = mediated device
-> > > >
-> > > > 2. devlink port phys_port_name created using mdev alias.
-> > > > devlink phys_port_name=pcd5b146a80a5
-> > > >
-> > > > This patchset enables mdev core to maintain unique alias for a mdev.
-> > > >
-> > > > Patch-1 Introduces mdev alias using sha1.
-> > > > Patch-2 Ensures that mdev alias is unique in a system.
-> > > > Patch-3 Exposes mdev alias in a sysfs hirerchy, update Documentation
-> > > > Patch-4 Introduces mdev_alias() API.
-> > > > Patch-5 Extends mtty driver to optionally provide alias generation.
-> > > > This also enables to test UUID based sha1 collision and trigger
-> > > > error handling for duplicate sha1 results.
-> > > >
-> > > > [1] http://man7.org/linux/man-pages/man8/devlink-port.8.html
-> > > > [2] https://docs.openstack.org/os-vif/latest/user/plugins/ovs.html
-> > > > [3] https://patchwork.kernel.org/cover/11084231/
-> > > >
-> > > > ---
-> > > > Changelog:
-> > > > v2->v3:
-> > > >  - Addressed comment from Yunsheng Lin
-> > > >  - Changed strcmp() ==0 to !strcmp()
-> > > >  - Addressed comment from Cornelia Hunk
-> > > >  - Merged sysfs Documentation patch with syfs patch
-> > > >  - Added more description for alias return value  
-> > >
-> > > Did you get a chance review this updated series?
-> > > I addressed Cornelia's and yours comment.
-> > > I do not think allocating alias memory twice, once for comparison and
-> > > once for storing is good idea or moving alias generation logic inside
-> > > the mdev_list_lock(). So I didn't address that suggestion of Cornelia.  
-> > 
-> > Sorry, I'm at LPC this week.  I agree, I don't think the double allocation is
-> > necessary, I thought the comment was sufficient to clarify null'ing the
-> > variable.  It's awkward, but seems correct.
+This works because during build vmlinux is linked with an expected virtual
+runtime address of KERNELBASE.
 
-Not hot about it, but no real complaints.
+Fixes: 6a9c930bd775 ("powerpc/prom_init: Add the ESM call to prom_init")
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+---
+ arch/powerpc/include/asm/elf.h         |  3 +++
+ arch/powerpc/kernel/prom_init.c        | 11 +++++++++++
+ arch/powerpc/kernel/prom_init_check.sh |  3 ++-
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
-However, please give me some more time, as I'm at LPC as well.
-
-> > 
-> > I'm not sure what we do with this patch series though, has the real
-> > consumer of this even been proposed?  It feels optimistic to include at this
-> > point.  We've used the sample driver as a placeholder in the past for
-> > mdev_uuid(), but we arrived at that via a conversion rather than explicitly
-> > adding the API.  Please let me know where the consumer patches stand,
-> > perhaps it would make more sense for them to go in together rather than
-> > risk adding an unused API.  Thanks,
-> >   
-> Given that consumer patch series is relatively large (around 15+ patches), I was considering to merge this one as pre-series to it.
-> Its ok to combine this with consumer patch series.
-> But wanted to have it reviewed beforehand, so that churn is less in actual consumer series which is more mlx5_core and devlink/netdev centric.
-> So if you can add Review-by, it will be easier to combine with consumer series.
-> 
-> And if we merge it with consumer series, it will come through Dave Miller's tree instead of your tree.
-> Would that work for you?
-
-It would be easier to see what to do here if we could see the consumer
-for this. If those patches are fine, we could maybe queue this series
-via both trees?
+diff --git a/arch/powerpc/include/asm/elf.h b/arch/powerpc/include/asm/elf.h
+index 409c9bfb43d9..57c229a86f08 100644
+--- a/arch/powerpc/include/asm/elf.h
++++ b/arch/powerpc/include/asm/elf.h
+@@ -175,4 +175,7 @@ do {									\
+ 	ARCH_DLINFO_CACHE_GEOMETRY;					\
+ } while (0)
+ 
++/* Relocate the kernel image to @final_address */
++void relocate(unsigned long final_address);
++
+ #endif /* _ASM_POWERPC_ELF_H */
+diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+index 74f70f90eff0..44b1d404250e 100644
+--- a/arch/powerpc/kernel/prom_init.c
++++ b/arch/powerpc/kernel/prom_init.c
+@@ -3249,7 +3249,18 @@ static void setup_secure_guest(unsigned long kbase, unsigned long fdt)
+ 	/* Switch to secure mode. */
+ 	prom_printf("Switching to secure mode.\n");
+ 
++	/*
++	 * The ultravisor will do an integrity check of the kernel image but we
++	 * relocated it so the check will fail. Restore the original image by
++	 * relocating it back to the kernel virtual base address.
++	 */
++	relocate(KERNELBASE);
++
+ 	ret = enter_secure_mode(kbase, fdt);
++
++	/* Relocate the kernel again. */
++	relocate(kbase);
++
+ 	if (ret != U_SUCCESS) {
+ 		prom_printf("Returned %d from switching to secure mode.\n", ret);
+ 		prom_rtas_os_term("Switch to secure mode failed.\n");
+diff --git a/arch/powerpc/kernel/prom_init_check.sh b/arch/powerpc/kernel/prom_init_check.sh
+index 160bef0d553d..16535ccc0fa0 100644
+--- a/arch/powerpc/kernel/prom_init_check.sh
++++ b/arch/powerpc/kernel/prom_init_check.sh
+@@ -26,7 +26,8 @@ _end enter_prom $MEM_FUNCS reloc_offset __secondary_hold
+ __secondary_hold_acknowledge __secondary_hold_spinloop __start
+ logo_linux_clut224 btext_prepare_BAT
+ reloc_got2 kernstart_addr memstart_addr linux_banner _stext
+-__prom_init_toc_start __prom_init_toc_end btext_setup_display TOC."
++__prom_init_toc_start __prom_init_toc_end btext_setup_display TOC.
++relocate"
+ 
+ NM="$1"
+ OBJ="$2"
