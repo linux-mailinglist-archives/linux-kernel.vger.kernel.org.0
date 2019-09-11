@@ -2,96 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE70AF6D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 461EAAF6E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 09:25:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbfIKHVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 03:21:55 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44477 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfIKHVy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 03:21:54 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q21so13082146pfn.11;
-        Wed, 11 Sep 2019 00:21:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0a/Ttcv1b84BQ/BKZwWZSK7rdmYU6EM1Hc5Czp/KOEk=;
-        b=V3qcTtddc3yo40buBXwwrD0vajRM89aCkIV7zLE/1wk+X29XHOD0VWcv0LPzr0ldL0
-         XYrwSqHwCDDDe1MHbBhPKOUzd7L60OWuowGP1hj4tnYItXP/T0f/eTHBkIo8DzLtfxTU
-         ZDMCLmWlVB5HIS3gztSzQYSaHfU0wFvskNTELiIcBs9FkXU7IB2C1FBDazdOZ/7FGXnd
-         eB02OloHbFSvh24hJbOKWWAKHoUAwNkYIfrSG6LckQj50p6ATOVBq3GAI+wpF1VUkwFX
-         jJsayheq92Stc9Z+ZY8EiocHsJTJ8XTNuKpTIVlIfTXvvGrJEeIzR3GLjUYWSOcz4f0t
-         XfhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0a/Ttcv1b84BQ/BKZwWZSK7rdmYU6EM1Hc5Czp/KOEk=;
-        b=nCaLmRXkoRFiFzO+xKvbsWx4F2yWDm2Kg2dEyIlJXscvxKE1KPzsFSP04ozYZsGr57
-         z73JvDK+yU+RxH1rOv1R2NLSWFGMGhGBawP4lrdGrngblAuR7A9y+HbE/Bet1cXEuVE7
-         X6C/fCiwfA7DPbGJk+KXctiPVJSYgUgfIRpLwSfMRHrT1YZYd19+gevAA9hAkBiR9x1u
-         8JWLqd3quV7rjClPGUb0yHYmRdp5g0bRrbkiJxpMOYtthrToLa+6AItV6KjGm6mjHJVG
-         z1TD2YUjBwscZTI1lWDy64B5NuM+/zjcPMIEnHtrdy3ANKaiN7i2qx0tHkoA/js1ToIw
-         EqqA==
-X-Gm-Message-State: APjAAAUWjlAQgkPIqeaGo8TK6dkpTKLXWRNECI84b4HSyVFc79jZ22j1
-        +6F55u7gqOgEFMyesrJ2leU=
-X-Google-Smtp-Source: APXvYqxP40ELMsVal6Ho+IuzuATf3DR7IVB7v+DnFGXZBevSrxyzMEI1s2oI00WHkn5E7boogdJAqg==
-X-Received: by 2002:a17:90a:890c:: with SMTP id u12mr3901328pjn.117.1568186513912;
-        Wed, 11 Sep 2019 00:21:53 -0700 (PDT)
-Received: from gli-arch.genesyslogic.com.tw (60-251-58-169.HINET-IP.hinet.net. [60.251.58.169])
-        by smtp.gmail.com with ESMTPSA id r2sm34227993pfq.60.2019.09.11.00.21.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2019 00:21:53 -0700 (PDT)
-From:   Ben Chuang <benchuanggli@gmail.com>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johnsonm@danlj.org, ben.chuang@genesyslogic.com.tw,
-        Ben Chuang <benchuanggli@gmail.com>
-Subject: [PATCH V9 1/5] mmc: sdhci: Change timeout of loop for checking internal clock stable
-Date:   Wed, 11 Sep 2019 15:22:10 +0800
-Message-Id: <0c090d866e2b4cd7966672b1b6cf5667a5ce39dd.1568184581.git.benchuanggli@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1568184581.git.benchuanggli@gmail.com>
-References: <cover.1568184581.git.benchuanggli@gmail.com>
+        id S1727284AbfIKHXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 03:23:53 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2210 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726735AbfIKHXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 03:23:52 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 76821790CCCDCFF3A76D;
+        Wed, 11 Sep 2019 15:23:49 +0800 (CST)
+Received: from [127.0.0.1] (10.74.191.121) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 11 Sep 2019
+ 15:23:41 +0800
+Subject: Re: [PATCH] driver core: ensure a device has valid node id in
+ device_add()
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Greg KH <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
+        <mingo@kernel.org>, <linuxarm@huawei.com>
+References: <20190909095347.GB6314@kroah.com>
+ <9598b359-ab96-7d61-687a-917bee7a5cd9@huawei.com>
+ <20190910093114.GA19821@kroah.com>
+ <34feca56-c95e-41a6-e09f-8fc2d2fd2bce@huawei.com>
+ <20190910110451.GP2063@dhcp22.suse.cz> <20190910111252.GA8970@kroah.com>
+ <5a5645d2-030f-7921-432f-ff7d657405b8@huawei.com>
+ <20190910125339.GZ2063@dhcp22.suse.cz> <20190911053334.GH4023@dhcp22.suse.cz>
+ <ca590101-bfc8-3934-d803-537aacb707e0@huawei.com>
+ <20190911064926.GJ4023@dhcp22.suse.cz>
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <3b977388-5f25-d0b5-bdc9-f963a9be2bd1@huawei.com>
+Date:   Wed, 11 Sep 2019 15:22:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190911064926.GJ4023@dhcp22.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.191.121]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+On 2019/9/11 14:49, Michal Hocko wrote:
+> On Wed 11-09-19 14:15:51, Yunsheng Lin wrote:
+>> On 2019/9/11 13:33, Michal Hocko wrote:
+>>> On Tue 10-09-19 14:53:39, Michal Hocko wrote:
+>>>> On Tue 10-09-19 20:47:40, Yunsheng Lin wrote:
+>>>>> On 2019/9/10 19:12, Greg KH wrote:
+>>>>>> On Tue, Sep 10, 2019 at 01:04:51PM +0200, Michal Hocko wrote:
+>>>>>>> On Tue 10-09-19 18:58:05, Yunsheng Lin wrote:
+>>>>>>>> On 2019/9/10 17:31, Greg KH wrote:
+>>>>>>>>> On Tue, Sep 10, 2019 at 02:43:32PM +0800, Yunsheng Lin wrote:
+>>>>>>>>>> On 2019/9/9 17:53, Greg KH wrote:
+>>>>>>>>>>> On Mon, Sep 09, 2019 at 02:04:23PM +0800, Yunsheng Lin wrote:
+>>>>>>>>>>>> Currently a device does not belong to any of the numa nodes
+>>>>>>>>>>>> (dev->numa_node is NUMA_NO_NODE) when the node id is neither
+>>>>>>>>>>>> specified by fw nor by virtual device layer and the device has
+>>>>>>>>>>>> no parent device.
+>>>>>>>>>>>
+>>>>>>>>>>> Is this really a problem?
+>>>>>>>>>>
+>>>>>>>>>> Not really.
+>>>>>>>>>> Someone need to guess the node id when it is not specified, right?
+>>>>>>>>>
+>>>>>>>>> No, why?  Guessing guarantees you will get it wrong on some systems.
+>>>>>>>>>
+>>>>>>>>> Are you seeing real problems because the id is not being set?  What
+>>>>>>>>> problem is this fixing that you can actually observe?
+>>>>>>>>
+>>>>>>>> When passing the return value of dev_to_node() to cpumask_of_node()
+>>>>>>>> without checking the node id if the node id is not valid, there is
+>>>>>>>> global-out-of-bounds detected by KASAN as below:
+>>>>>>>
+>>>>>>> OK, I seem to remember this being brought up already. And now when I
+>>>>>>> think about it, we really want to make cpumask_of_node NUMA_NO_NODE
+>>>>>>> aware. That means using the same trick the allocator does for this
+>>>>>>> special case.
+>>>>>>
+>>>>>> That seems reasonable to me, and much more "obvious" as to what is going
+>>>>>> on.
+>>>>>>
+>>>>>
+>>>>> Ok, thanks for the suggestion.
+>>>>>
+>>>>> For arm64 and x86, there are two versions of cpumask_of_node().
+>>>>>
+>>>>> when CONFIG_DEBUG_PER_CPU_MAPS is defined, the cpumask_of_node()
+>>>>>    in arch/x86/mm/numa.c is used, which does partial node id checking:
+>>>>>
+>>>>> const struct cpumask *cpumask_of_node(int node)
+>>>>> {
+>>>>>         if (node >= nr_node_ids) {
+>>>>>                 printk(KERN_WARNING
+>>>>>                         "cpumask_of_node(%d): node > nr_node_ids(%u)\n",
+>>>>>                         node, nr_node_ids);
+>>>>>                 dump_stack();
+>>>>>                 return cpu_none_mask;
+>>>>>         }
+>>>>>         if (node_to_cpumask_map[node] == NULL) {
+>>>>>                 printk(KERN_WARNING
+>>>>>                         "cpumask_of_node(%d): no node_to_cpumask_map!\n",
+>>>>>                         node);
+>>>>>                 dump_stack();
+>>>>>                 return cpu_online_mask;
+>>>>>         }
+>>>>>         return node_to_cpumask_map[node];
+>>>>> }
+>>>>>
+>>>>> when CONFIG_DEBUG_PER_CPU_MAPS is undefined, the cpumask_of_node()
+>>>>>    in arch/x86/include/asm/topology.h is used:
+>>>>>
+>>>>> static inline const struct cpumask *cpumask_of_node(int node)
+>>>>> {
+>>>>>         return node_to_cpumask_map[node];
+>>>>> }
+>>>>
+>>>> I would simply go with. There shouldn't be any need for heavy weight
+>>>> checks that CONFIG_DEBUG_PER_CPU_MAPS has.
+>>>>
+>>>> static inline const struct cpumask *cpumask_of_node(int node)
+>>>> {
+>>>> 	/* A nice comment goes here */
+>>>> 	if (node == NUMA_NO_NODE)
+>>
+>> How about "(unsigned int)node >= nr_node_ids", this is suggested
+>> by Peter, it checks the case where the node id set by fw is bigger
+>> or equal than nr_node_ids, and still handle the < 0 case, which
+>> includes NUMA_NO_NODE.
+> 
+> Isn't that a plain bug? Is something like that really happening?
 
-According to section 3.2.1 internal clock setup in SD Host Controller
-Simplified Specifications 4.20, the timeout of loop for checking
-internal clock stable is defined as 150ms.
+I have not seen one happened before except the NUMA_NO_NODE case.
+Even with NUMA_NO_NODE case, we did not see it until we turn on
+the KASAN detection.
 
-Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-Co-developed-by: Michael K Johnson <johnsonm@danlj.org>
-Signed-off-by: Michael K Johnson <johnsonm@danlj.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It seems that there is no protection that prevent setting the node
+of device to an invalid node.
+And the kernel does have a few different check now:
+1) some does " < 0" check;
+2) some does "== NUMA_NO_NODE" check;
+3) some does ">= MAX_NUMNODES" check;
+4) some does "< 0 || >= MAX_NUMNODES || !node_online(node)" check.
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 59acf8e3331e..bed0760a6c2a 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1636,8 +1636,8 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
- 	clk |= SDHCI_CLOCK_INT_EN;
- 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
- 
--	/* Wait max 20 ms */
--	timeout = ktime_add_ms(ktime_get(), 20);
-+	/* Wait max 150 ms */
-+	timeout = ktime_add_ms(ktime_get(), 150);
- 	while (1) {
- 		bool timedout = ktime_after(ktime_get(), timeout);
- 
--- 
-2.23.0
+We need to be consistent about the checking, right?
 
