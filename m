@@ -2,60 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C25EAF9AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0EF3AF9A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 11:58:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbfIKJ67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 05:58:59 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:51334 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727093AbfIKJ67 (ORCPT
+        id S1727535AbfIKJ6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 05:58:13 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33846 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727224AbfIKJ6M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 05:58:59 -0400
-X-UUID: 11a683efec1448528c5135f870771c37-20190911
-X-UUID: 11a683efec1448528c5135f870771c37-20190911
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <luhua.xu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1367689443; Wed, 11 Sep 2019 17:58:52 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 11 Sep 2019 17:58:51 +0800
-Received: from localhost.localdomain (10.15.20.246) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 11 Sep 2019 17:58:50 +0800
-From:   Luhua Xu <luhua.xu@mediatek.com>
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>
-Subject: [PATCH 0/3] MT6765 spi support 
-Date:   Wed, 11 Sep 2019 05:55:28 -0400
-Message-ID: <1568195731-3239-1-git-send-email-luhua.xu@mediatek.com>
-X-Mailer: git-send-email 2.6.4
+        Wed, 11 Sep 2019 05:58:12 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h2so12873782ljk.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 02:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k4dGhcxp6T6gSoKIxWokryHsNaeknVwfT4UnRhjgn/A=;
+        b=tkDWR58vwuKS0da2FWu9u/M/Xn/DyAr+ZUrx/+cJp27zqKvp/xBOMk/VGYXwWTSTla
+         RUGyo5mKpJkCSH4kikwfH+5eo9+R6rZIayBLRSf+XRHifxKTcmqIQ4gwFxUtB1L1mNNv
+         C+y6q8VDxxIv11W0mSPewJcrRxVLCXfhy/zrVENzffiPUZWT19SmmXpXLxeHXmrBsWUW
+         Z+acs/RypO6knajkSEc5Qz/wJsF/2ZvG/Tnm6Rf1dhTLkszi/Ebc+DrhWG1iSvuJcAmU
+         OvMWljKcMJ9mFuT5LckIuewLzRHNMNjiVhbyaXyBbavOplfSxkteHCHD9wi0oaIvuhN+
+         RE7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k4dGhcxp6T6gSoKIxWokryHsNaeknVwfT4UnRhjgn/A=;
+        b=rfSaQls45BITatH8PLMR0MS3uNj3pW5KEjLOSP2mv/8TYCDDoie2LUCAjx3MVWIfZj
+         khFcDeMsAzbPlDOFU6QUpj0Wp4dBCRg+kKOGe0HBeK63ang67K8WTPCAs/8WW4wXCXVH
+         QyY0Txue03sRWK5Fc21BlVBpPGUT5h/tcicZby9c5vUepPPhYNlWZvaWQQKB+KNF+Qxd
+         7HoyAwyjvInFiXwuIGU/co1JyrFo/2uW/Rwn6B0D2dgCaZ/Dj95cYVQQ4UmfoA48/6CJ
+         8zxngjpT0NsY/aYMvRZ0RbHE4oUkerBN7NlFYFl1BKVh4OIbOmTdZBBSZ95WU31oH1Ru
+         FPHQ==
+X-Gm-Message-State: APjAAAWt9+F0DBFd7KOmwwFe3DT2mtLz0s5Kb/21zMxdfvDdCNCCjUu1
+        VbJVNG+qp8VHRyZ31/EI+C13Y3Chpow3+SXGKavwVwQfxyVOIQ==
+X-Google-Smtp-Source: APXvYqwbLg5jGI86j9e4EMl792llsAjTOPkGlSGFa4C8Xlkdq8JvUyl4zObZNLLqt7Sar4h37ifM08D33QB5mKjQPek=
+X-Received: by 2002:a2e:8056:: with SMTP id p22mr17584388ljg.69.1568195890794;
+ Wed, 11 Sep 2019 02:58:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20190905140919.29283-1-colin.king@canonical.com>
+In-Reply-To: <20190905140919.29283-1-colin.king@canonical.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 11 Sep 2019 10:57:59 +0100
+Message-ID: <CACRpkdbYKjKPAT=V8K_JtP49teq5q9GELkK-vc+mQEdwcU781w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: bcm: remove redundant assignment to pointer log
+To:     Colin King <colin.king@canonical.com>
+Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These patch series add Mediatek mt6765 spi support, and add spi DMA
-large PA support on some platforms. 
+On Thu, Sep 5, 2019 at 3:09 PM Colin King <colin.king@canonical.com> wrote:
 
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The pointer log is being initialized with a value that is never read
+> and is being re-assigned a little later on. The assignment is
+> redundant and hence can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-luhua.xu (3):
-  dt-bindings: spi: update bindings for MT6765 SoC
-  spi: mediatek: add spi support for mt6765 IC
-  spi: mediatek: support large PA
+Patch applied.
 
- .../devicetree/bindings/spi/spi-mt65xx.txt    |  1 +
- drivers/spi/spi-mt65xx.c                      | 53 +++++++++++++++++--
- 2 files changed, 49 insertions(+), 5 deletions(-)
-
---
-2.18.0
+Yours,
+Linus Walleij
