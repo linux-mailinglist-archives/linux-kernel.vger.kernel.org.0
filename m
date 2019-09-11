@@ -2,86 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 638AEBD77B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 06:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B7B5BDB61
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 11:48:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405153AbfIYEqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 00:46:40 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36183 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731848AbfIYEqk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 00:46:40 -0400
-Received: by mail-io1-f65.google.com with SMTP id b136so10279823iof.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 21:46:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=L0m69X+LQ4frLVby8EeJS1EQVq3OI3wT8S733h98iBY=;
-        b=abELyR7FeIlVGJPkjZn9UpCopVU8AQ5F05bm6IeSz1xSMYAXnSpiotzDBDceHJQPEW
-         ULcSyUQ7JjYrkFgsySjVXZcGtRWhTZi1aSQ9Lv+TYLvHvFI5wZrevpNyDbWkWtBZDBDq
-         kKcg9WddnobR24uaUfYlf3VjfzCiE4OcUYEocPl20BWzTkNFGZYQ6fYcBVFpQTFK3gdi
-         e1hH8VDbBkG6fXLNpGPTfgwpU35GBB+OHcEHKjhFe9nS5cYteJLubBJIl7ucnW0mji5y
-         xUoDIRLmcuvwceWv2iZx3Afo9OD9T70H7d5GQ0mU0Hq2LhZnprpFf3nkzU1rEFzB3jQy
-         cpnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=L0m69X+LQ4frLVby8EeJS1EQVq3OI3wT8S733h98iBY=;
-        b=Ub6jxkOM0GtraQ3EfT9I1PtywLslJV2PbnXKsXzyHlIh4Y9GcdLD69zoQyeD4m82P8
-         hXwu3mbSE4LxqAT+xMMXjtwPTmbinzRzXYoO3Dhi4v+WVPx6Zsyuuya6RSeIDAn6cl/8
-         2y19eOIYIiNqEZDn50NbLkvGnb4H37nW8pwqqsUSlnN1T282RXXIwypHyeTEH6R8fVxw
-         amf/+FpbsVMoQfqTlaI/uADoLHruFehXzqkVZhJk1bEe86lUq43u3/wSM51HoVOh6HBt
-         GGU3G315q6jnebhoK27fu8C9AIA7HpPcfmeQPGDMp+KMwalO/xgiNYJOGiJqPOsfSzv3
-         JPRw==
-X-Gm-Message-State: APjAAAUK9N9fnv4gKBay7bIYHm/UA2aMB/aqFH8o7o3R8wWJKHqYMPDb
-        W0TA1OmwNB627QVRHUFYTHc=
-X-Google-Smtp-Source: APXvYqyKT3ovdvw1fI5/3vLGvl5AkjEDbTc6sYb0NhOsx0Hd+zOXARsy+Js8tagkLvrb+17Hr4LvtA==
-X-Received: by 2002:a6b:210:: with SMTP id 16mr8335610ioc.104.1569386799583;
-        Tue, 24 Sep 2019 21:46:39 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id t4sm42107iln.82.2019.09.24.21.46.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2019 21:46:39 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/vmwgfx: prevent memory leak in vmw_context_define
-Date:   Tue, 24 Sep 2019 23:46:26 -0500
-Message-Id: <20190925044627.2476-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729075AbfIYJsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 05:48:22 -0400
+Received: from drt.pacien.net ([5.2.64.213]:60442 "EHLO drt.pacien.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728683AbfIYJsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 05:48:22 -0400
+Received: from lsn.pacien.net (mail.kea [10.0.3.108])
+        by drt.pacien.net (OpenSMTPD) with ESMTP id dd0b71fb;
+        Wed, 25 Sep 2019 09:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pacien.net;
+         s=lsn.pacien.net; h=Date:Message-ID:Cc:In-Reply-To:Subject:From:
+        Content-Transfer-Encoding:MIME-Version:Content-Type:Reply-To:To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=k5vM3iqTrJFHvMei5yw/jf63ySBSFhk36kIUWh5YeVw=; b=pERwqMKNUuPozpM/4UHdX/s4uj
+        qrvjxZnWPq1G0JyOl+92dL9ONg9Hn4xbwNfHHSiZAZTSepY0tbfJEHA//Awd2piv1to55Jmr1wunq
+        uJamQYi3hF45Zq5fgRls19Ka3VwG2s2oaM/XdXCCq/fmetvmMmwAlr6ugjM+AKxT90/lr6YxntCtF
+        ZEHNRafB71gZG1b7zJO0vMOPFKi4peEQX4pMvtv/TGgJA/dKl5oOQP4vMO7U1q2EL/CXveVvlrQh3
+        eOnILMmx3f527FGR5X/AYOvBWNiP3leE7J+TZVx3uQypvq8j2A8kuTwMuPcbTddJoCZP5QYXHXe/o
+        BOb2SClg==;
+Received: from warfstation.kea ([10.1.1.1] helo=localhost)
+        by lsn.pacien.net with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92.2)
+        (envelope-from <pacien.trangirard@pacien.net>)
+        id 1iD3uE-0008Lc-8n; Wed, 25 Sep 2019 09:48:18 +0000
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+From:   Pacien TRAN-GIRARD <pacien.trangirard@pacien.net>
+Date:   Thu, 12 Sep 2019 00:07:45 +0200
+Subject: [PATCH v2] platform/x86: dell-laptop: fix broken kbd backlight on Inspiron 10xx
+In-Reply-To: <20190925082149.yjhmmb64i4h6sddi@pali>
+Cc:     Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <156940489220.8635.14349142383780268583@WARFSTATION>
+Date:   Wed, 25 Sep 2019 11:48:12 +0200
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In vmw_context_define if vmw_context_init fails the allocated resource
-should be unreferenced. The goto label was fixed.
+This patch adds a quirk disabling keyboard backlight support for the
+Dell Inspiron 1012 and 1018.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Those models wrongly report supporting keyboard backlight control
+features (through SMBIOS tokens) even though they're not equipped with
+a backlit keyboard. This led to broken controls being exposed
+through sysfs by this driver which froze the system when used.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=3D107651
+Signed-off-by: Pacien TRAN-GIRARD <pacien.trangirard@pacien.net>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_context.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/dell-laptop.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_context.c b/drivers/gpu/drm/vmwgfx/vmwgfx_context.c
-index a56c9d802382..ac42f8a6acf0 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_context.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_context.c
-@@ -773,7 +773,7 @@ static int vmw_context_define(struct drm_device *dev, void *data,
- 
- 	ret = vmw_context_init(dev_priv, res, vmw_user_context_free, dx);
- 	if (unlikely(ret != 0))
--		goto out_unlock;
-+		goto out_err;
- 
- 	tmp = vmw_resource_reference(&ctx->res);
- 	ret = ttm_base_object_init(tfile, &ctx->base, false, VMW_RES_CONTEXT,
--- 
-2.17.1
-
+diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell=
+-laptop.c
+index d27be2836bc2..ffe5abbdadda 100644
+--- a/drivers/platform/x86/dell-laptop.c
++++ b/drivers/platform/x86/dell-laptop.c
+@@ -33,6 +33,7 @@
+=20
+ struct quirk_entry {
+ 	bool touchpad_led;
++	bool kbd_broken_backlight;
+ 	bool kbd_led_levels_off_1;
+ 	bool kbd_missing_ac_tag;
+=20
+@@ -73,6 +74,10 @@ static struct quirk_entry quirk_dell_latitude_e6410 =3D {
+ 	.kbd_led_levels_off_1 =3D true,
+ };
+=20
++static struct quirk_entry quirk_dell_inspiron_1012 =3D {
++	.kbd_broken_backlight =3D true,
++};
++
+ static struct platform_driver platform_driver =3D {
+ 	.driver =3D {
+ 		.name =3D "dell-laptop",
+@@ -310,6 +315,24 @@ static const struct dmi_system_id dell_quirks[] __init=
+const =3D {
+ 		},
+ 		.driver_data =3D &quirk_dell_latitude_e6410,
+ 	},
++	{
++		.callback =3D dmi_matched,
++		.ident =3D "Dell Inspiron 1012",
++		.matches =3D {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 1012"),
++		},
++		.driver_data =3D &quirk_dell_inspiron_1012,
++	},
++	{
++		.callback =3D dmi_matched,
++		.ident =3D "Dell Inspiron 1018",
++		.matches =3D {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 1018"),
++		},
++		.driver_data =3D &quirk_dell_inspiron_1012,
++	},
+ 	{ }
+ };
+=20
+@@ -2040,6 +2063,9 @@ static int __init kbd_led_init(struct device *dev)
+ {
+ 	int ret;
+=20
++	if (quirks && quirks->kbd_broken_backlight)
++		return -ENODEV;
++
+ 	kbd_init();
+ 	if (!kbd_led_present)
+ 		return -ENODEV;
+--=20
+2.19.2
