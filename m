@@ -2,53 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 433E6B0216
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:51:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EDBFB020F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:50:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729337AbfIKQvr convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Sep 2019 12:51:47 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:42104
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1729028AbfIKQvr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:51:47 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id BA64AB4DB70;
-        Wed, 11 Sep 2019 16:43:40 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id PknH6TiMEEob; Wed, 11 Sep 2019 16:43:40 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 1FE37B4DB6C;
-        Wed, 11 Sep 2019 16:43:40 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id dsXsGspPEcsI; Wed, 11 Sep 2019 16:43:40 +0000 (UTC)
-Received: from [100.89.179.12] (unknown [106.197.251.106])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 351CBB4DB70;
-        Wed, 11 Sep 2019 16:43:30 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1729469AbfIKQu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:50:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729393AbfIKQuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:50:25 -0400
+Received: from earth.universe (unknown [148.69.85.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74E6A20872;
+        Wed, 11 Sep 2019 16:50:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568220623;
+        bh=nR8hx3HK09Zo3Xccb+ticqxSNc/27NqZIk5X0xyz19Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qRpE9q+loPKnhIWXbSWfUjhLzQKkgRzPW9r8UNqhhTfC44nsa5vhYzI2DjDyHfNw+
+         J01X3OoeBzxN4sn/3M3dRYZp6op74PWkO2La/TopQG7uwCQ9GZv3vGGJ2XBx5eZlty
+         WfhJVcXaVb5UV8wvoAGsYxCx2V6UlQJfDjFlIdQU=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 495773C0D39; Wed, 11 Sep 2019 17:50:21 +0100 (WEST)
+Date:   Wed, 11 Sep 2019 17:50:21 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-omap@vger.kernel.org, adam.ford@logicpd.com,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: omap2plus_defconfig: Update for removed items
+Message-ID: <20190911165021.qr5i37mpnua3fvw5@earth.universe>
+References: <20190911145226.21088-1-aford173@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Verifica_tu_correo_electr=C3=B3nico?=
-To:     Recipients <info@no-reply.it>
-From:   Administrador web <info@no-reply.it>
-Date:   Wed, 11 Sep 2019 22:13:22 +0530
-Message-Id: <20190911164331.351CBB4DB70@smspyt.cancun.gob.mx>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cquryzuhszuj65pm"
+Content-Disposition: inline
+In-Reply-To: <20190911145226.21088-1-aford173@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario
 
-Como parte de nuestros problemas de seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, suspenderemos su acceso a su dirección de correo electrónico temporalmente para permitir la actualización.
+--cquryzuhszuj65pm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar su fecha completando el formulario de verificación manualmente.
+Hi,
 
-Haga clic en la copia y obtenga el enlace: http://emailsverificationscenter.xtgem.com/index en su navegador y verifique.
+On Wed, Sep 11, 2019 at 09:52:25AM -0500, Adam Ford wrote:
+> The omap panel-dpi driver was removed in
+> Commit 8bf4b1621178 ("drm/omap: Remove panel-dpi driver")
+>=20
+> The tFP410 and DVI connector was remove in
+> Commit be3143d8b27f ("drm/omap: Remove TFP410 and DVI connector drivers")
+>=20
+> This patch removes these items from the omap2plus_defconfig.
 
-Gracias
-Equipo de soporte técnico.
+The omapdrm specific drivers have generic replacements, that
+should be added to the defconfig instead:
+
+DRM_OMAP_PANEL_DPI -> DRM_PANEL_SIMPLE
+DRM_OMAP_ENCODER_TFP410 -> DRM_TI_TFP410
+
+Nothing should be required for DRM_OMAP_CONNECTOR_DVI.
+
+-- Sebastian
+
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+>=20
+> diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap=
+2plus_defconfig
+> index c7bf9c493646..166b36be2ca6 100644
+> --- a/arch/arm/configs/omap2plus_defconfig
+> +++ b/arch/arm/configs/omap2plus_defconfig
+> @@ -349,12 +349,9 @@ CONFIG_OMAP5_DSS_HDMI=3Dy
+>  CONFIG_OMAP2_DSS_SDI=3Dy
+>  CONFIG_OMAP2_DSS_DSI=3Dy
+>  CONFIG_DRM_OMAP_ENCODER_OPA362=3Dm
+> -CONFIG_DRM_OMAP_ENCODER_TFP410=3Dm
+>  CONFIG_DRM_OMAP_ENCODER_TPD12S015=3Dm
+> -CONFIG_DRM_OMAP_CONNECTOR_DVI=3Dm
+>  CONFIG_DRM_OMAP_CONNECTOR_HDMI=3Dm
+>  CONFIG_DRM_OMAP_CONNECTOR_ANALOG_TV=3Dm
+> -CONFIG_DRM_OMAP_PANEL_DPI=3Dm
+>  CONFIG_DRM_OMAP_PANEL_DSI_CM=3Dm
+>  CONFIG_DRM_OMAP_PANEL_SONY_ACX565AKM=3Dm
+>  CONFIG_DRM_OMAP_PANEL_LGPHILIPS_LB035Q02=3Dm
+> --=20
+> 2.17.1
+>=20
+
+--cquryzuhszuj65pm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl15JckACgkQ2O7X88g7
++poVgRAAgMcfz1sNIFGJyjDqAyhgu3cqv4oHp9J6JpEc+oy01vP+KpXSncCd2V7q
+4qo1PkL++BZUN7uOYLNKK3f4KH8RSkITyzhTiY9Sj8nqASc+khTbYyCms+lePx3M
+vSgxevdTU4Nw3VzjR67z5IsXz8VyEwmDGyunTc8lhnkPupuSOUg8YW/3XA363Epu
+CYsHJSJykrVvtScBGs4dcgPD+eIPqfMTslhCMw8zxzAy3HBqsHqDu6tfYDAL1DB/
+K0L+QhILnkSKh+g8C0oC/sikdJTgwdHen0Lx9iYJqqaFutLabuP4FNovPMCt7bJ4
+ciHZV6etFcW4ci9sX7L9jgbn9oZtfMhifI5T2JfDxGrMfNWpRf3wehvsoL1Gqupe
+zUX0rgAb50PFGxkAn9mPnbEvtaKBP6tkLTVTDNThf2jbK5gn9yS6dXjES8q7XIJI
+t+/a8NiQRUmNBhlQNtdlY8g2mqmP9orSSZD0AUULhIw9tmEvCCdlRuFNLkm8/Wr6
+5S0QHbfMi+W7nlnEF3g7lRmtpbbwA7/glTCehYmuOvtFVZH9sBPu6XoESS2pyyMv
+2H1yrhxPUku8EnRgIsO3ZQDKF7xXT0F1teL2PQbO17HoaPWaBJq36HJ99UvUpGQU
+eegD9nrFhGv5mBQSxFwlNju5cuJ5k4yELT8CZjMkd08KJJfopkQ=
+=k12s
+-----END PGP SIGNATURE-----
+
+--cquryzuhszuj65pm--
