@@ -2,136 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8050FB01C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81019B01A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:30:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbfIKQkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 12:40:01 -0400
-Received: from 6.mo179.mail-out.ovh.net ([46.105.56.76]:38545 "EHLO
-        6.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728828AbfIKQkA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:40:00 -0400
-X-Greylist: delayed 2262 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Sep 2019 12:39:59 EDT
-Received: from player761.ha.ovh.net (unknown [10.109.159.222])
-        by mo179.mail-out.ovh.net (Postfix) with ESMTP id 0CFA5141187
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 18:02:16 +0200 (CEST)
-Received: from kaod.org (lfbn-1-2240-157.w90-76.abo.wanadoo.fr [90.76.60.157])
-        (Authenticated sender: clg@kaod.org)
-        by player761.ha.ovh.net (Postfix) with ESMTPSA id 50A7F9B791FC;
-        Wed, 11 Sep 2019 16:02:11 +0000 (UTC)
-Subject: Re: [PATCH v2] powerpc/xive: Fix bogus error code returned by OPAL
-To:     Greg Kurz <groug@kaod.org>, Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <156821713818.1985334.14123187368108582810.stgit@bahia.lan>
-From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Message-ID: <a15c02b2-ac3a-21a7-db56-242cb864f79e@kaod.org>
-Date:   Wed, 11 Sep 2019 18:02:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729043AbfIKQaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:30:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48342 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727839AbfIKQaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:30:14 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 64779306E171;
+        Wed, 11 Sep 2019 16:30:13 +0000 (UTC)
+Received: from gondolin (ovpn-116-29.ams2.redhat.com [10.36.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9DCF460C5E;
+        Wed, 11 Sep 2019 16:30:03 +0000 (UTC)
+Date:   Wed, 11 Sep 2019 18:29:58 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Parav Pandit <parav@mellanox.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH v3 0/5] Introduce variable length mdev alias
+Message-ID: <20190911182958.042cd03a.cohuck@redhat.com>
+In-Reply-To: <AM0PR05MB48668DFF8E816F0D2D3041BFD1B10@AM0PR05MB4866.eurprd05.prod.outlook.com>
+References: <20190826204119.54386-1-parav@mellanox.com>
+        <20190902042436.23294-1-parav@mellanox.com>
+        <AM0PR05MB4866F76F807409ED887537D7D1B70@AM0PR05MB4866.eurprd05.prod.outlook.com>
+        <20190911145610.453b32ec@x1.home>
+        <AM0PR05MB48668DFF8E816F0D2D3041BFD1B10@AM0PR05MB4866.eurprd05.prod.outlook.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <156821713818.1985334.14123187368108582810.stgit@bahia.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 1911778042506414871
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrtdefgdejtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 11 Sep 2019 16:30:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/09/2019 17:52, Greg Kurz wrote:
-> There's a bug in skiboot that causes the OPAL_XIVE_ALLOCATE_IRQ call
-> to return the 32-bit value 0xffffffff when OPAL has run out of IRQs.
-> Unfortunatelty, OPAL return values are signed 64-bit entities and
-> errors are supposed to be negative. If that happens, the linux code
-> confusingly treats 0xffffffff as a valid IRQ number and panics at some
-> point.
-> 
-> A fix was recently merged in skiboot:
-> 
-> e97391ae2bb5 ("xive: fix return value of opal_xive_allocate_irq()")
-> 
-> but we need a workaround anyway to support older skiboots already
-> in the field.
-> 
-> Internally convert 0xffffffff to OPAL_RESOURCE which is the usual error
-> returned upon resource exhaustion.
-> 
-> Cc: stable@vger.kernel.org # v4.12+
-> Signed-off-by: Greg Kurz <groug@kaod.org>
+On Wed, 11 Sep 2019 15:30:40 +0000
+Parav Pandit <parav@mellanox.com> wrote:
 
-
-
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-
-Thanks,
-
-C.
-
-> ---
-> v2: - fix syntax error in changelog
->     - Cc stable
->     - rename original OPAL wrapper
->     - rewrite fixup wrapper (style, use s64 and u32)
-> ---
->  arch/powerpc/include/asm/opal.h            |    2 +-
->  arch/powerpc/platforms/powernv/opal-call.c |    2 +-
->  arch/powerpc/sysdev/xive/native.c          |   11 +++++++++++
->  3 files changed, 13 insertions(+), 2 deletions(-)
+> Hi Alex,
 > 
-> diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
-> index 57bd029c715e..d5a0807d21db 100644
-> --- a/arch/powerpc/include/asm/opal.h
-> +++ b/arch/powerpc/include/asm/opal.h
-> @@ -272,7 +272,7 @@ int64_t opal_xive_get_vp_info(uint64_t vp,
->  int64_t opal_xive_set_vp_info(uint64_t vp,
->  			      uint64_t flags,
->  			      uint64_t report_cl_pair);
-> -int64_t opal_xive_allocate_irq(uint32_t chip_id);
-> +int64_t opal_xive_allocate_irq_raw(uint32_t chip_id);
->  int64_t opal_xive_free_irq(uint32_t girq);
->  int64_t opal_xive_sync(uint32_t type, uint32_t id);
->  int64_t opal_xive_dump(uint32_t type, uint32_t id);
-> diff --git a/arch/powerpc/platforms/powernv/opal-call.c b/arch/powerpc/platforms/powernv/opal-call.c
-> index 29ca523c1c79..dccdc9df5213 100644
-> --- a/arch/powerpc/platforms/powernv/opal-call.c
-> +++ b/arch/powerpc/platforms/powernv/opal-call.c
-> @@ -257,7 +257,7 @@ OPAL_CALL(opal_xive_set_queue_info,		OPAL_XIVE_SET_QUEUE_INFO);
->  OPAL_CALL(opal_xive_donate_page,		OPAL_XIVE_DONATE_PAGE);
->  OPAL_CALL(opal_xive_alloc_vp_block,		OPAL_XIVE_ALLOCATE_VP_BLOCK);
->  OPAL_CALL(opal_xive_free_vp_block,		OPAL_XIVE_FREE_VP_BLOCK);
-> -OPAL_CALL(opal_xive_allocate_irq,		OPAL_XIVE_ALLOCATE_IRQ);
-> +OPAL_CALL(opal_xive_allocate_irq_raw,		OPAL_XIVE_ALLOCATE_IRQ);
->  OPAL_CALL(opal_xive_free_irq,			OPAL_XIVE_FREE_IRQ);
->  OPAL_CALL(opal_xive_get_vp_info,		OPAL_XIVE_GET_VP_INFO);
->  OPAL_CALL(opal_xive_set_vp_info,		OPAL_XIVE_SET_VP_INFO);
-> diff --git a/arch/powerpc/sysdev/xive/native.c b/arch/powerpc/sysdev/xive/native.c
-> index 37987c815913..ad8ee7dd7f57 100644
-> --- a/arch/powerpc/sysdev/xive/native.c
-> +++ b/arch/powerpc/sysdev/xive/native.c
-> @@ -231,6 +231,17 @@ static bool xive_native_match(struct device_node *node)
->  	return of_device_is_compatible(node, "ibm,opal-xive-vc");
->  }
->  
-> +static s64 opal_xive_allocate_irq(u32 chip_id)
-> +{
-> +	s64 irq = opal_xive_allocate_irq_raw(chip_id);
-> +
-> +	/*
-> +	 * Old versions of skiboot can incorrectly return 0xffffffff to
-> +	 * indicate no space, fix it up here.
-> +	 */
-> +	return irq == 0xffffffff ? OPAL_RESOURCE : irq;
-> +}
-> +
->  #ifdef CONFIG_SMP
->  static int xive_native_get_ipi(unsigned int cpu, struct xive_cpu *xc)
->  {
-> 
+> > -----Original Message-----
+> > From: Alex Williamson <alex.williamson@redhat.com>
+> > Sent: Wednesday, September 11, 2019 8:56 AM
+> > To: Parav Pandit <parav@mellanox.com>
+> > Cc: Jiri Pirko <jiri@mellanox.com>; kwankhede@nvidia.com;
+> > cohuck@redhat.com; davem@davemloft.net; kvm@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; netdev@vger.kernel.org
+> > Subject: Re: [PATCH v3 0/5] Introduce variable length mdev alias
+> > 
+> > On Mon, 9 Sep 2019 20:42:32 +0000
+> > Parav Pandit <parav@mellanox.com> wrote:
+> >   
+> > > Hi Alex,
+> > >  
+> > > > -----Original Message-----
+> > > > From: Parav Pandit <parav@mellanox.com>
+> > > > Sent: Sunday, September 1, 2019 11:25 PM
+> > > > To: alex.williamson@redhat.com; Jiri Pirko <jiri@mellanox.com>;
+> > > > kwankhede@nvidia.com; cohuck@redhat.com; davem@davemloft.net
+> > > > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > > netdev@vger.kernel.org; Parav Pandit <parav@mellanox.com>
+> > > > Subject: [PATCH v3 0/5] Introduce variable length mdev alias
+> > > >
+> > > > To have consistent naming for the netdevice of a mdev and to have
+> > > > consistent naming of the devlink port [1] of a mdev, which is formed
+> > > > using phys_port_name of the devlink port, current UUID is not usable
+> > > > because UUID is too long.
+> > > >
+> > > > UUID in string format is 36-characters long and in binary 128-bit.
+> > > > Both formats are not able to fit within 15 characters limit of netdev  
+> > name.  
+> > > >
+> > > > It is desired to have mdev device naming consistent using UUID.
+> > > > So that widely used user space framework such as ovs [2] can make
+> > > > use of mdev representor in similar way as PCIe SR-IOV VF and PF  
+> > representors.  
+> > > >
+> > > > Hence,
+> > > > (a) mdev alias is created which is derived using sha1 from the mdev  
+> > name.  
+> > > > (b) Vendor driver describes how long an alias should be for the
+> > > > child mdev created for a given parent.
+> > > > (c) Mdev aliases are unique at system level.
+> > > > (d) alias is created optionally whenever parent requested.
+> > > > This ensures that non networking mdev parents can function without
+> > > > alias creation overhead.
+> > > >
+> > > > This design is discussed at [3].
+> > > >
+> > > > An example systemd/udev extension will have,
+> > > >
+> > > > 1. netdev name created using mdev alias available in sysfs.
+> > > >
+> > > > mdev UUID=83b8f4f2-509f-382f-3c1e-e6bfe0fa1001
+> > > > mdev 12 character alias=cd5b146a80a5
+> > > >
+> > > > netdev name of this mdev = enmcd5b146a80a5 Here en = Ethernet link m
+> > > > = mediated device
+> > > >
+> > > > 2. devlink port phys_port_name created using mdev alias.
+> > > > devlink phys_port_name=pcd5b146a80a5
+> > > >
+> > > > This patchset enables mdev core to maintain unique alias for a mdev.
+> > > >
+> > > > Patch-1 Introduces mdev alias using sha1.
+> > > > Patch-2 Ensures that mdev alias is unique in a system.
+> > > > Patch-3 Exposes mdev alias in a sysfs hirerchy, update Documentation
+> > > > Patch-4 Introduces mdev_alias() API.
+> > > > Patch-5 Extends mtty driver to optionally provide alias generation.
+> > > > This also enables to test UUID based sha1 collision and trigger
+> > > > error handling for duplicate sha1 results.
+> > > >
+> > > > [1] http://man7.org/linux/man-pages/man8/devlink-port.8.html
+> > > > [2] https://docs.openstack.org/os-vif/latest/user/plugins/ovs.html
+> > > > [3] https://patchwork.kernel.org/cover/11084231/
+> > > >
+> > > > ---
+> > > > Changelog:
+> > > > v2->v3:
+> > > >  - Addressed comment from Yunsheng Lin
+> > > >  - Changed strcmp() ==0 to !strcmp()
+> > > >  - Addressed comment from Cornelia Hunk
+> > > >  - Merged sysfs Documentation patch with syfs patch
+> > > >  - Added more description for alias return value  
+> > >
+> > > Did you get a chance review this updated series?
+> > > I addressed Cornelia's and yours comment.
+> > > I do not think allocating alias memory twice, once for comparison and
+> > > once for storing is good idea or moving alias generation logic inside
+> > > the mdev_list_lock(). So I didn't address that suggestion of Cornelia.  
+> > 
+> > Sorry, I'm at LPC this week.  I agree, I don't think the double allocation is
+> > necessary, I thought the comment was sufficient to clarify null'ing the
+> > variable.  It's awkward, but seems correct.
 
+Not hot about it, but no real complaints.
+
+However, please give me some more time, as I'm at LPC as well.
+
+> > 
+> > I'm not sure what we do with this patch series though, has the real
+> > consumer of this even been proposed?  It feels optimistic to include at this
+> > point.  We've used the sample driver as a placeholder in the past for
+> > mdev_uuid(), but we arrived at that via a conversion rather than explicitly
+> > adding the API.  Please let me know where the consumer patches stand,
+> > perhaps it would make more sense for them to go in together rather than
+> > risk adding an unused API.  Thanks,
+> >   
+> Given that consumer patch series is relatively large (around 15+ patches), I was considering to merge this one as pre-series to it.
+> Its ok to combine this with consumer patch series.
+> But wanted to have it reviewed beforehand, so that churn is less in actual consumer series which is more mlx5_core and devlink/netdev centric.
+> So if you can add Review-by, it will be easier to combine with consumer series.
+> 
+> And if we merge it with consumer series, it will come through Dave Miller's tree instead of your tree.
+> Would that work for you?
+
+It would be easier to see what to do here if we could see the consumer
+for this. If those patches are fine, we could maybe queue this series
+via both trees?
