@@ -2,79 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5760FAFAFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 12:59:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07C82AFB02
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 13:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfIKK7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 06:59:39 -0400
-Received: from foss.arm.com ([217.140.110.172]:45654 "EHLO foss.arm.com"
+        id S1727750AbfIKLAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 07:00:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbfIKK7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 06:59:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCDB428;
-        Wed, 11 Sep 2019 03:59:37 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5402E3F59C;
-        Wed, 11 Sep 2019 03:59:37 -0700 (PDT)
-Date:   Wed, 11 Sep 2019 11:59:35 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, bhelgaas@google.com,
-        lorenzo.pieralisi@arm.com, yue.wang@Amlogic.com, kishon@ti.com,
-        repk@triplefau.lt, maz@kernel.org,
-        linux-amlogic@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] PCI: amlogic: Fix probed clock names
-Message-ID: <20190911105935.GQ9720@e119886-lin.cambridge.arm.com>
-References: <1567950178-4466-1-git-send-email-narmstrong@baylibre.com>
- <1567950178-4466-3-git-send-email-narmstrong@baylibre.com>
+        id S1726724AbfIKLAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 07:00:37 -0400
+Received: from localhost (unknown [148.69.85.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11BE820CC7;
+        Wed, 11 Sep 2019 11:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568199636;
+        bh=6CkPkTexnyeUrJ/816Xs3QnneqgRrUamwtCeRc3RdDw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GsyuQay4M3D0T6k12JN9vA6vAC8zi/uNCkurc567Yfsj5mi0QNuV4KF18EBKu0XLb
+         /K76WGe50DO8+dtS04M61v++esDJbSgw5DaP3GtQqnFE7G5KQzhWZnt3GSzKdMBYdK
+         GF2qwcjLTfnYc8QYeHUWCUQaTKLgD9KR6p7FqwVY=
+Date:   Wed, 11 Sep 2019 06:11:55 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net,
+        gregkh@linuxfoundation.org, ben@decadent.org.uk,
+        tglx@linutronix.de, labbott@redhat.com, andrew.cooper3@citrix.com,
+        tsoni@codeaurora.org, keescook@chromium.org, tony.luck@intel.com,
+        linux-doc@vger.kernel.org, dan.j.williams@intel.com
+Subject: Re: [PATCH 2/4] Documentation/process: describe relaxing disclosing
+ party NDAs
+Message-ID: <20190911101155.GN2012@sasha-vm>
+References: <20190910172644.4D2CDF0A@viggo.jf.intel.com>
+ <20190910172649.74639177@viggo.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1567950178-4466-3-git-send-email-narmstrong@baylibre.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20190910172649.74639177@viggo.jf.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 08, 2019 at 01:42:54PM +0000, Neil Armstrong wrote:
-> Fix the clock names used in the probe function according
-> to the bindings.
-> 
-> Fixes: 9c0ef6d34fdb ("PCI: amlogic: Add the Amlogic Meson PCIe controller driver")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+On Tue, Sep 10, 2019 at 10:26:49AM -0700, Dave Hansen wrote:
+>
+>From: Dave Hansen <dave.hansen@linux.intel.com>
+>
+>Hardware companies like Intel have lots of information which they
+>want to disclose to some folks but not others.  Non-disclosure
+>agreements are a tool of choice for helping to ensure that the
+>flow of information is controlled.
+>
+>But, they have caused problems in mitigation development.  It
+>can be hard for individual developers employed by companies to
+>figure out how they can participate, especially if their
+>employer is under an NDA.
+>
+>To make this easier for developers, make it clear to disclosing
+>parties that they are expected to give permission for individuals
+>to participate in mitigation efforts.
+>
+>Cc: Jonathan Corbet <corbet@lwn.net>
+>Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>Cc: Sasha Levin <sashal@kernel.org>
+>Cc: Ben Hutchings <ben@decadent.org.uk>
+>Cc: Thomas Gleixner <tglx@linutronix.de>
+>Cc: Laura Abbott <labbott@redhat.com>
+>Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+>Cc: Trilok Soni <tsoni@codeaurora.org>
+>Cc: Kees Cook <keescook@chromium.org>
+>Cc: Tony Luck <tony.luck@intel.com>
+>Cc: linux-doc@vger.kernel.org
+>Cc: linux-kernel@vger.kernel.org
+>Acked-by: Dan Williams <dan.j.williams@intel.com>
+>Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+>---
+>
+> b/Documentation/process/embargoed-hardware-issues.rst |    7 +++++++
+> 1 file changed, 7 insertions(+)
+>
+>diff -puN Documentation/process/embargoed-hardware-issues.rst~hw-sec-0 Documentation/process/embargoed-hardware-issues.rst
+>--- a/Documentation/process/embargoed-hardware-issues.rst~hw-sec-0	2019-09-10 08:39:02.835488131 -0700
+>+++ b/Documentation/process/embargoed-hardware-issues.rst	2019-09-10 08:39:02.838488131 -0700
+>@@ -74,6 +74,13 @@ unable to enter into any non-disclosure
+> is aware of the sensitive nature of such issues and offers a Memorandum of
+> Understanding instead.
+>
+>+Disclosing parties may have shared information about an issue under a
+>+non-disclosure agreement with third parties.  In order to ensure that
+>+these agreements do not interfere with the mitigation development
+>+process, the disclosing party must provide explicit permission to
+>+participate to any response team members affected by a non-disclosure
+>+agreement.  Disclosing parties must resolve requests to do so in a
+>+timely manner.
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Can giving the permission be made explicitly along with the disclosure?
+If it's disclosed with Microsoft under NDA, it makes it tricky for me to
+participate in the "response team" context here unless premission is
+given to do so.
 
-> ---
->  drivers/pci/controller/dwc/pci-meson.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-> index 541f37a6f6a5..ab79990798f8 100644
-> --- a/drivers/pci/controller/dwc/pci-meson.c
-> +++ b/drivers/pci/controller/dwc/pci-meson.c
-> @@ -250,15 +250,15 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
->  	if (IS_ERR(res->port_clk))
->  		return PTR_ERR(res->port_clk);
->  
-> -	res->mipi_gate = meson_pcie_probe_clock(dev, "pcie_mipi_en", 0);
-> +	res->mipi_gate = meson_pcie_probe_clock(dev, "mipi", 0);
->  	if (IS_ERR(res->mipi_gate))
->  		return PTR_ERR(res->mipi_gate);
->  
-> -	res->general_clk = meson_pcie_probe_clock(dev, "pcie_general", 0);
-> +	res->general_clk = meson_pcie_probe_clock(dev, "general", 0);
->  	if (IS_ERR(res->general_clk))
->  		return PTR_ERR(res->general_clk);
->  
-> -	res->clk = meson_pcie_probe_clock(dev, "pcie", 0);
-> +	res->clk = meson_pcie_probe_clock(dev, "pclk", 0);
->  	if (IS_ERR(res->clk))
->  		return PTR_ERR(res->clk);
->  
-> -- 
-> 2.17.1
-> 
+--
+Thanks,
+Sasha
