@@ -2,89 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D10CEB04D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 22:25:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C74DCB04D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 22:26:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730518AbfIKUZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 16:25:27 -0400
-Received: from mail.andi.de1.cc ([85.214.55.253]:35838 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729054AbfIKUZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 16:25:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KHbCcZ8BvWWbKPSh5z+H7SgPQzQ4ifBlCer1pX9BQL0=; b=hf05DHewho7GMIGCsH6/PGeoio
-        TGv5pVTLJKtBGYQuR9O23JhXG5QQBFQf0V2+KLqVOFIomAerLdkInBvA12Nh22VovQPgot39NQJJF
-        064uTu5vshQfNEAFAkSfKJs+GTMkN5eWl7TkiwuP9es2KdReiUOZjp8+XSaY1uEhNT6s=;
-Received: from p200300ccff0b59001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff0b:5900:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1i89Aw-0003L7-B7; Wed, 11 Sep 2019 22:25:14 +0200
-Date:   Wed, 11 Sep 2019 22:25:13 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        <lee.jones@linaro.org>, <jingoohan1@gmail.com>,
-        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <b.zolnierkie@samsung.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-leds@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCH v2 2/2] backlight: lm3630a: add an enable gpio for the
- HWEN pin
-Message-ID: <20190911222513.489b5235@aktux>
-In-Reply-To: <a3f10318-11f4-3b78-47e5-d9add8a46791@ti.com>
-References: <20190910212909.18095-1-andreas@kemnade.info>
-        <20190910212909.18095-3-andreas@kemnade.info>
-        <20190911102533.not4ta3xwgm6bhjo@holly.lan>
-        <a3f10318-11f4-3b78-47e5-d9add8a46791@ti.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Score: -1.0 (-)
+        id S1730533AbfIKU0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 16:26:14 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37942 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729001AbfIKU0O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 16:26:14 -0400
+Received: by mail-io1-f65.google.com with SMTP id k5so23746799iol.5;
+        Wed, 11 Sep 2019 13:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ry5hLNX1d0tX2Sbto+75KAiWlIHP1VB3CEPnkog+XmA=;
+        b=MkfYoycL5g0bbwtR2rEAFu67nBhW2JYmojWOMxdeePTFfu6VHDObm/4Fxwpe7sPect
+         z0s1yIhIr68nM6r47cW5JBmLZTAnEQ1FOJTro873qPNx4vD123OxcsAXX0w4Zk20rphl
+         SHd1FqqddDbbfhIAxGzfQAUK5plaQo8qh/qZbbYqZ0wDIW0GzpVZsnBQflLcCLT+S9HK
+         +ksXwz8wH0mO6w+P9lDOAiDNeFF4qcWZsxvNvaMJBdljYDd83QR9KSQKT1wALDS0gPjX
+         6BZ4M/C6S9CxbvkJvdKLToVYGO5EvhuHbHr973U+06arh0tWffUnLg4yoRGdt4UnYWRy
+         tVUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ry5hLNX1d0tX2Sbto+75KAiWlIHP1VB3CEPnkog+XmA=;
+        b=uADRvGOf3umVD9wwYC90t8C8MBDn62dSZS/k/tadnzAg6zmlC+txbKeienwkqT0NTw
+         aBnLewTHW+mx4IWXq3fMQkUDIsmIEEPLR0bEKi5ZCdwruyPcjdNBZ0mqlxoE85sIlOeE
+         nUqGnvC/3+i18S8oc1EyXQEi+ftQbeC1/0k7Mb9XeShi8GubTcSxGT6cKYA98Hg9TKi+
+         Cgjw/pVQXDCWzdbZtIhtVX8mImQG3n3Hy+sD9On7AMmTNCf+S6UwDiAzGF3CV2QEcBik
+         3UbAj3zmQrLSFKYtaieu++EJScKCFmOhKo76orSCTNShtG55KBqMZtxZfap2cQBGWK1f
+         tgMA==
+X-Gm-Message-State: APjAAAWzYnm3YR9q2ZZGWkQVX02QV0MJg+Nkk+C1vFiTgz8s54XNSEFE
+        3CvJK5ObrM62lpjQxa125GA=
+X-Google-Smtp-Source: APXvYqwlo5pNy0gVHX7ssYwO+u4telVjGeapJYGI38KL7lLCP8a9EdfJPxFGjXTPPdh1c5G56lvoHQ==
+X-Received: by 2002:a6b:b445:: with SMTP id d66mr12103059iof.269.1568233573261;
+        Wed, 11 Sep 2019 13:26:13 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id q5sm14635474iob.65.2019.09.11.13.26.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2019 13:26:12 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: usb: null check create_singlethread_workqueue
+Date:   Wed, 11 Sep 2019 15:26:00 -0500
+Message-Id: <20190911202603.13689-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Sep 2019 13:48:36 -0500
-Dan Murphy <dmurphy@ti.com> wrote:
+In sd_start return value of create_singlethread_workqueue needs null
+check.
 
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ drivers/media/usb/gspca/sq905.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> >> @@ -535,6 +538,13 @@ static int lm3630a_probe(struct i2c_client *clien=
-t,
-> >>   	}
-> >>   	pchip->pdata =3D pdata;
-> >>  =20
-> >> +	pchip->enable_gpio =3D devm_gpiod_get_optional(&client->dev, "enable=
-",
-> >> +						GPIOD_OUT_HIGH);
-> >> +	if (IS_ERR(pchip->enable_gpio)) {
-> >> +		rval =3D PTR_ERR(pchip->enable_gpio);
-> >> +		return rval; =20
->=20
-> the enable gpio is optional so if it fails you log the error and move on
->
-well, if the gpio is not there, then it returns NULL.
-It might return e.g. -EDEFER. So I need to check for errors here.
-=20
-> Also on driver removal did you want to set the GPIO to low to disable=20
-> the device to save power?
->=20
-page 5 of the datasheet says:
+diff --git a/drivers/media/usb/gspca/sq905.c b/drivers/media/usb/gspca/sq905.c
+index 863c485f4275..97799cfb832e 100644
+--- a/drivers/media/usb/gspca/sq905.c
++++ b/drivers/media/usb/gspca/sq905.c
+@@ -378,6 +378,9 @@ static int sd_start(struct gspca_dev *gspca_dev)
+ 	}
+ 	/* Start the workqueue function to do the streaming */
+ 	dev->work_thread = create_singlethread_workqueue(MODULE_NAME);
++	if (!dev->work_thread)
++		return -ENOMEM;
++
+ 	queue_work(dev->work_thread, &dev->work_struct);
+ 
+ 	return 0;
+-- 
+2.17.1
 
-Ishdn =3D Typ. 1=C2=B5A max. 4=C2=B5A.
-For HWEN=3DVin, I2c shutdown  (I guess this means outputs powered off)
-ond for HWEN=3DGND.
-
-So are we really saving something here?
-
-Regards,
-Andreas
