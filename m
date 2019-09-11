@@ -2,125 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C690DAFC8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DCA3AFCA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 14:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbfIKM04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 08:26:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbfIKM04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 08:26:56 -0400
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7220A2075C;
-        Wed, 11 Sep 2019 12:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568204815;
-        bh=MseBqWNeudWiY5Pr7ynKRYTy7jqmwG9LbsTu29MhRKY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LZdJBvqCBTeZla1V84Jvesl+/iKxoEMHllQ6mdelwy6CTJTUtMeG23jEOWk9243i+
-         7nWDOMMWIdhPNK+TRxsdmaTNGp7NciuNvs1Zx8Au6khZC07bagyXzJ97FH/gkXkBmQ
-         CsnNzvqSqBcBz7jA1rgVBX6+SX5AL/zvH1eD2PUw=
-From:   Will Deacon <will@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     maco@android.com, gregkh@linuxfoundation.org,
-        Will Deacon <will@kernel.org>,
-        Matthias Maennich <maennich@google.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH] module: Fix link failure due to invalid relocation on namespace offset
-Date:   Wed, 11 Sep 2019 13:26:46 +0100
-Message-Id: <20190911122646.13838-1-will@kernel.org>
-X-Mailer: git-send-email 2.11.0
+        id S1727981AbfIKM3H convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Sep 2019 08:29:07 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:46477 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727696AbfIKM3H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 08:29:07 -0400
+X-Originating-IP: 148.69.85.38
+Received: from xps13 (unknown [148.69.85.38])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 43624FF812;
+        Wed, 11 Sep 2019 12:29:03 +0000 (UTC)
+Date:   Wed, 11 Sep 2019 14:29:01 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Piotr Sroka <piotrs@cadence.com>
+Cc:     <linux-kernel@vger.kernel.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Stefan Agner <stefan@agner.ch>,
+        <linux-mtd@lists.infradead.org>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>
+Subject: Re: [v5 1/2] mtd: nand: Add new Cadence NAND driver to MTD
+ subsystem
+Message-ID: <20190911142901.317f8f8e@xps13>
+In-Reply-To: <20190911094354.GA14863@global.cadence.com>
+References: <20190725145804.8886-1-piotrs@cadence.com>
+        <20190725150012.14416-1-piotrs@cadence.com>
+        <20190830114645.59898cfe@xps13>
+        <20190911094354.GA14863@global.cadence.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 8651ec01daed ("module: add support for symbol namespaces.")
-broke linking for arm64 defconfig:
+Hi Piotr,
 
-  | lib/crypto/arc4.o: In function `__ksymtab_arc4_setkey':
-  | arc4.c:(___ksymtab+arc4_setkey+0x8): undefined reference to `no symbol'
-  | lib/crypto/arc4.o: In function `__ksymtab_arc4_crypt':
-  | arc4.c:(___ksymtab+arc4_crypt+0x8): undefined reference to `no symbol'
+Piotr Sroka <piotrs@cadence.com> wrote on Wed, 11 Sep 2019 10:43:56
++0100:
 
-This is because the dummy initialisation of the 'namespace_offset' field
-in 'struct kernel_symbol' when using EXPORT_SYMBOL on architectures with
-support for PREL32 locations uses an offset from an absolute address (0)
-in an effort to trick 'offset_to_pointer' into behaving as a NOP,
-allowing non-namespaced symbols to be treated in the same way as those
-belonging to a namespace.
+> The 08/30/2019 11:46, Miquel Raynal wrote:
+> >EXTERNAL MAIL
+> >
+> >
+> >Hi Piotr,
+> >
+> >Piotr Sroka <piotrs@cadence.com> wrote on Thu, 25 Jul 2019 16:00:12
+> >+0100:
+> >
+> >Subject should be: mtd: rawnand:
+> >
+> >Last few nits in your driver which overall looks good (see below).
+> >
+> >Now I'm waiting for Rob's ack on the bindings. This driver should be a
+> >good candidate for 5.5.  
+> 
+> I think that Rob alredy review it. You can find hist review on
+> https://patchwork.ozlabs.org/patch/1136932/
+> Let me know if something else should be improved or fixed.
 
-Unfortunately, place-relative relocations require a symbol reference
-rather than an absolute value and, although x86 appears to get away with
-this due to placing the kernel text at the top of the address space, it
-almost certainly results in a runtime failure if the kernel is relocated
-dynamically as a result of KASLR.
+Oh right I missed it. Then just don't forget to carry the tag in your
+next iteration and we'll be fine!
 
-Rework 'namespace_offset' so that a value of 0, which cannot occur for a
-valid namespaced symbol, indicates that the corresponding symbol does
-not belong to a namespace.
 
-Cc: Matthias Maennich <maennich@google.com>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Fixes: 8651ec01daed ("module: add support for symbol namespaces.")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Will Deacon <will@kernel.org>
----
+[...]
 
-Please note that I've not been able to test this at LPC, but it's been
-submitted to kernelci.
+> >> +static irqreturn_t cadence_nand_isr(int irq, void *dev_id)
+> >> +{
+> >> +	struct cdns_nand_ctrl *cdns_ctrl = dev_id;
+> >> +	struct cadence_nand_irq_status irq_status;
+> >> +	irqreturn_t result = IRQ_NONE;
+> >> +
+> >> +	spin_lock(&cdns_ctrl->irq_lock);
+> >> +
+> >> +	if (irq_detected(cdns_ctrl, &irq_status)) {
+> >> +		/* Handle interrupt. */
+> >> +		/* First acknowledge it. */
+> >> +		cadence_nand_clear_interrupt(cdns_ctrl, &irq_status);
+> >> +		/* Status in the device context for someone to read. */
+> >> +		cdns_ctrl->irq_status.status |= irq_status.status;
+> >> +		cdns_ctrl->irq_status.trd_status |= irq_status.trd_status;
+> >> +		cdns_ctrl->irq_status.trd_error |= irq_status.trd_error;
+> >> +		/* Notify anyone who cares that it happened. */
+> >> +		complete(&cdns_ctrl->complete);
+> >> +		/* Tell the OS that we've handled this. */
+> >> +		result = IRQ_HANDLED;
+> >> +	}
+> >> +	spin_unlock(&cdns_ctrl->irq_lock);  
+> >
+> >Your locking scheme seems wrong (maybe I'm not going deep enough in the
+> >code), can you please try with LOCKDEP enabled?
+> >  
+> I will check it.
+> At the time I can see only one problem: the cadence_nand_reset_irq function should use spin_lock_irqsave instead of spin_lock.
+> Can you see any other problems?
 
- include/asm-generic/export.h | 2 +-
- include/linux/export.h       | 2 +-
- kernel/module.c              | 2 ++
- 3 files changed, 4 insertions(+), 2 deletions(-)
+It just felt bizarre. Just run with LOCKDEP enabled and we'll be fixed.
 
-diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
-index e2b5d0f569d3..d0912c7ac2fc 100644
---- a/include/asm-generic/export.h
-+++ b/include/asm-generic/export.h
-@@ -17,7 +17,7 @@
- 
- .macro __put, val, name
- #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
--	.long	\val - ., \name - ., 0 - .
-+	.long	\val - ., \name - ., 0
- #elif defined(CONFIG_64BIT)
- 	.quad	\val, \name, 0
- #else
-diff --git a/include/linux/export.h b/include/linux/export.h
-index 2c5468d8ea9a..ef5d015d754a 100644
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -68,7 +68,7 @@ extern struct module __this_module;
- 	    "__ksymtab_" #sym ":				\n"	\
- 	    "	.long	" #sym "- .				\n"	\
- 	    "	.long	__kstrtab_" #sym "- .			\n"	\
--	    "	.long	0 - .					\n"	\
-+	    "	.long	0					\n"	\
- 	    "	.previous					\n")
- 
- struct kernel_symbol {
-diff --git a/kernel/module.c b/kernel/module.c
-index f76efcf2043e..7ab244c4e1ba 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -547,6 +547,8 @@ static const char *kernel_symbol_name(const struct kernel_symbol *sym)
- static const char *kernel_symbol_namespace(const struct kernel_symbol *sym)
- {
- #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-+	if (!sym->namespace_offset)
-+		return NULL;
- 	return offset_to_ptr(&sym->namespace_offset);
- #else
- 	return sym->namespace;
--- 
-2.23.0.162.g0b9fbb3734-goog
 
+[...]
+
+> >> +/* Hardware initialization. */
+> >> +static int cadence_nand_hw_init(struct cdns_nand_ctrl *cdns_ctrl)
+> >> +{
+> >> +	int status;
+> >> +	u32 reg;
+> >> +
+> >> +	status = cadence_nand_wait_for_value(cdns_ctrl, CTRL_STATUS,
+> >> +					     1000000,
+> >> +					     CTRL_STATUS_INIT_COMP, false);
+> >> +	if (status)
+> >> +		return status;
+> >> +
+> >> +	reg = readl_relaxed(cdns_ctrl->reg + CTRL_VERSION);
+> >> +
+> >> +	dev_info(cdns_ctrl->dev,
+> >> +		 "%s: cadence nand controller version reg %x\n",
+> >> +		 __func__, reg);
+> >> +
+> >> +	/* Disable cache and multiplane. */
+> >> +	writel_relaxed(0, cdns_ctrl->reg + MULTIPLANE_CFG);
+> >> +	writel_relaxed(0, cdns_ctrl->reg + CACHE_CFG);  
+> >
+> >Cache?
+> >  
+> If  feature is enabled then The NAND Flash Controller will sequence the multi-page read commands as cache read or cache program sequence. Not used by Linux driver because driver has possibility to program/read only a single page.
+
+Indeed, that's fine then.
+
+
+
+[...]
+
+> >> +
+> >> +	switch (status) {
+> >> +	case STAT_ECC_UNCORR:
+> >> +		mtd->ecc_stats.failed++;
+> >> +		ecc_err_count++;
+> >> +		break;
+> >> +	case STAT_ECC_CORR:
+> >> +		ecc_err_count = FIELD_GET(CDMA_CS_MAXERR,
+> >> +					  cdns_ctrl->cdma_desc->status);
+> >> +		mtd->ecc_stats.corrected += ecc_err_count;  
+> >
+> >Is this value the maximum number of bitflips in each chunk of the page?
+> >If it returns the total number of bitflips corrected in the entire page
+> >we have a problem.
+> >  
+> It is a maximum number of corrections applied to any ECC sector in the
+> transaction.
+> it looks like folowing.
+> mtd->ecc_stats.corrected += max(bitflips_chunk1, bitflips_chunk2, ....)
+> 
+> Transaction will be marked uncorrectable if any one of the sectors is
+> uncorrectable.
+> It looks like following.
+> if (is_chunk1_fail || is_chunk2_fail .....)
+>      mtd->ecc_stats.failed++;
+
+Fine
+
+> 
+> >> +		break;
+> >> +	case STAT_ERASED:
+> >> +	case STAT_OK:
+> >> +		break;
+> >> +	default:
+> >> +		dev_err(cdns_ctrl->dev, "read page failed\n");
+> >> +		return -EIO;
+> >> +	}
+> >> +
+> >> +	if (oob_required)
+> >> +		if (cadence_nand_read_bbm(chip, page, chip->oob_poi))
+> >> +			return -EIO;  
+> >
+> >Do we really care about the BBM at this level? If we are requested to
+> >read the page, I suppose we must do what is in our hands to return the
+> >data? Normally this is handled in userspace directly.  
+> It is because when ECC is enabled then position of "logic" spare area is
+> moved.
+
+That's sad.
+
+> Lets say we have page size 4096 and sector size is 1024.
+> Manufacturer use begining of spare area as BBM. Spare area started at
+> 4096.
+> In case ECC is enabled. 4096 offset is somewhere in sector 4. Start of spare are is 4096 + 3 * ecc_size. So BBM is taken from bad
+> place.
+> <page                                   ><spare                 >
+> <sec    ><ecc><sec  ><ecc><sec  ><ecc><sec +spare dat  ><ecc>
+> Therefore we need to read BBM from proper place.
+> There are two "problems" which make us to read BBM separatelly.
+> 
+> 1. During build BBT the BBM is read by functions which are expected     to use ECC. 2. Controller interleaves the data with ECC.
+> 
+
+Thanks,
+Miquèl
