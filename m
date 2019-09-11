@@ -2,262 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCCE9AF5B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:23:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D992AF5C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 08:27:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfIKGXV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 11 Sep 2019 02:23:21 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:51800 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfIKGXV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 02:23:21 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x8B6N4UJ028587
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 11 Sep 2019 15:23:04 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x8B6N4oN014610;
-        Wed, 11 Sep 2019 15:23:04 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x8B6MHfX007431;
-        Wed, 11 Sep 2019 15:23:04 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.151] [10.38.151.151]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-8363811; Wed, 11 Sep 2019 15:22:48 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC23GP.gisp.nec.co.jp ([10.38.151.151]) with mapi id 14.03.0439.000; Wed,
- 11 Sep 2019 15:22:47 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Oscar Salvador <osalvador@suse.de>
-CC:     "mhocko@kernel.org" <mhocko@kernel.org>,
-        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/10] Hwpoison soft-offline rework
-Thread-Topic: [PATCH 00/10] Hwpoison soft-offline rework
-Thread-Index: AQHVZ8LTy7PIWQBirkyAnAoCBs9f5aclXX4AgAAOxIA=
-Date:   Wed, 11 Sep 2019 06:22:47 +0000
-Message-ID: <20190911062246.GA31960@hori.linux.bs1.fc.nec.co.jp>
-References: <20190910103016.14290-1-osalvador@suse.de>
- <20190911052956.GA9729@hori.linux.bs1.fc.nec.co.jp>
-In-Reply-To: <20190911052956.GA9729@hori.linux.bs1.fc.nec.co.jp>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
+        id S1726941AbfIKGZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 02:25:34 -0400
+Received: from mail-eopbgr10080.outbound.protection.outlook.com ([40.107.1.80]:13942
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726792AbfIKGZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 02:25:34 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lAXAJGihlY/RTUnYcJinAv+/jdDIGoZ/rEnwtDkR43wS/JCiPVcfbcZzuuFwxJuAyFsAqJGLFG5XUVZ+Hm21IYhPMFm7eSjKDSD3tRcqr9wxoSruGJ62zVEuEDQKdzgAx+s7O4f31ToeAZpJkOh4JeVWsBGhmBTwi7oX/AB8H5Ur4kY5s30Qxi6TneKYmqEghF5K2PWlZCm15+2iw6V0pw4Ng3WUbIIphavWyt66tRhAM2p8DZOxB2q1AXBdMT5m2q+merfDkMEYG+0kmW66bEf8lqS9+iEz5Sac4LA3xWBL5QX2Erp6FSMX/KEueaWtQLVQb2Rfq8xvt7b+UsRV4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C3t7A/kmVrufOCnKd5Jhgiwp0W0uBoxwWYSgGoZffq4=;
+ b=BiSOsvjXLTpAFbbLXByMYjylGkLajxJTz7XhXH0owibBGqOe9TtgA3xUWAg3cMzaYZdJhOTTQ+OCKYNMZEbuBXHb03mHF9OQMnemSPQcKlcR6ZZMBjpyVHUPhENfJl/KwuOoGq6Yl0eSg7kvO1yRiP3iMzhObCmfXM8oTlcr+yKJAtsbBstOb4s7Rodim5FkKB9DkthncDa40yLAkcwo7UQQiH8+lZ84jh2IBgpMYegZHxLwdhE5ujRA7hL9MmRfZdI5LV5FDILO5CTspSfaSJ8dy+Dm4bg7VHiHN+1w7jtUPcK9vR1L9vYzPylDJuoZRixZUeD7SJ3pzUcO9Bw+8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C3t7A/kmVrufOCnKd5Jhgiwp0W0uBoxwWYSgGoZffq4=;
+ b=a6/dEXRxkiZ+n9zzCJB9HyV/4EPGVMQ+9zwYxHHhwsuphsl45UtIh/JqG8kyo1hSiN/IBHnGPIFpsyiEtUVXM3mmG883p1hXdRbyFyS6Q921AYuY2+I01ECuyWEQGv6Nd79Bgl6p/Vln26mAsaS8AQQg16jmLRVtWY3KkoU/UXs=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB5386.eurprd04.prod.outlook.com (20.178.104.79) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2241.19; Wed, 11 Sep 2019 06:23:49 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::4427:96f2:f651:6dfa]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::4427:96f2:f651:6dfa%5]) with mapi id 15.20.2241.018; Wed, 11 Sep 2019
+ 06:23:49 +0000
+From:   Biwen Li <biwen.li@nxp.com>
+To:     'Andy Shevchenko' <andy.shevchenko@gmail.com>
+CC:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
+        Udit Kumar <udit.kumar@nxp.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Chuanhua Han <chuanhua.han@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [EXT] Re: [v2] ACPI: support for NXP i2c controller
+Thread-Topic: [EXT] Re: [v2] ACPI: support for NXP i2c controller
+Thread-Index: AQHVZImk5g5PYdwMgEGSUu7QXQNuc6cec4kAgAXLnMA=
+Date:   Wed, 11 Sep 2019 06:23:49 +0000
+Message-ID: <DB7PR04MB44902F057F8541CF3C7FC3198FB10@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <20190906075319.21244-1-biwen.li@nxp.com>
+ <CAHp75Vcz+ruwvq_yu6Oj69XTezsdnne049Ma=oTRPjRXJKnhPQ@mail.gmail.com>
+In-Reply-To: <CAHp75Vcz+ruwvq_yu6Oj69XTezsdnne049Ma=oTRPjRXJKnhPQ@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.34.125.150]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <46CA089726CAEF41BFE69ABD6E125BF3@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biwen.li@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 68e729ed-8226-4831-73db-08d736809bc9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DB7PR04MB5386;
+x-ms-traffictypediagnostic: DB7PR04MB5386:|DB7PR04MB5386:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB5386F2FDD7517328174F080C8FB10@DB7PR04MB5386.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2803;
+x-forefront-prvs: 0157DEB61B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(346002)(39860400002)(376002)(136003)(189003)(199004)(256004)(81166006)(81156014)(4326008)(99286004)(6116002)(3846002)(6246003)(229853002)(6436002)(6916009)(486006)(2906002)(476003)(66066001)(14454004)(5660300002)(71200400001)(44832011)(446003)(76116006)(11346002)(25786009)(316002)(54906003)(6506007)(186003)(7416002)(7736002)(53936002)(74316002)(52536014)(14444005)(478600001)(7696005)(76176011)(26005)(55016002)(8936002)(9686003)(66476007)(66446008)(64756008)(66556008)(66946007)(305945005)(53546011)(86362001)(102836004)(8676002)(71190400001)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5386;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 1VNT0lNH7gDoosY4jr12JdwAGORTt6vWcp57/g+2YeCduZa3Uv2PlF44asTsSBFa0byXgkdQAUjiMH5lzXfpjHEkaGrKkF5k2FBf4jx833bT9rWSOxmiz2Mop4rTTJ16ytztkF1hDzm4YyR4JwdOaNuLQeRlD5wnkONSrrIWOAQ1g00EpuJ/Gw1hUg1PzPxH3bt//7h6LsttndPMEPzAVot1wMQjcMlrgmGEbNSGab3lzOKhzfCHH/46bo2ULeRJV48fkHth3vykMHa6eKvgTdWnYO2MlGEIH8y6Vbapb5m9eUAPOyI8gYRSD04V4X/fxuVCX1JGnA7MOeP2Fivi7IAqRkiWeioYB7fgKnnz5e46EzuRVNP9uXyV8S2ODo59T/+s2CYWVMaxaEogypiZJyyTK5s7/v+9P3cF5DQe1Xo=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68e729ed-8226-4831-73db-08d736809bc9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2019 06:23:49.2709
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 05+9XHtmioUW4tqgizAYN+1ZJJJzrMPE2JpoJE317UcYERRCLhFggpzC2hHxAKjyR5Hec0hX0UPOhFOB8GqXbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5386
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I found another panic ...
-
-This testcase is testing the corner case where hugepage migration fails
-by allocation failure on destination numa node which is caused by the
-condition that all remaining free hugetlb are reserved.
-
-  [ 2610.711713] ===> testcase 'page_migration/hugetlb_madv_soft_reserve_noovercommit.auto2' start
-  [ 2610.995836] bash (15807): drop_caches: 3
-  [ 2612.596154] Soft offlining pfn 0x1d000 at process virtual address 0x700000000000
-  [ 2612.910245] bash (15807): drop_caches: 3
-  [ 2613.099769] page:fffff4ba40740000 refcount:1 mapcount:-128 mapping:0000000000000000 index:0x0
-  [ 2613.102099] flags: 0xfffe000800000(hwpoison)
-  [ 2613.103424] raw: 000fffe000800000 ffff9c953ffd5af8 fffff4ba40e78008 0000000000000000
-  [ 2613.105817] raw: 0000000000000000 0000000000000009 00000001ffffff7f 0000000000000000
-  [ 2613.107703] page dumped because: VM_BUG_ON_PAGE(page_count(buddy) != 0)
-  [ 2613.109485] ------------[ cut here ]------------
-  [ 2613.110834] kernel BUG at mm/page_alloc.c:821!
-  [ 2613.112015] invalid opcode: 0000 [#1] SMP PTI
-  [ 2613.113245] CPU: 0 PID: 16195 Comm: sysctl Not tainted 5.3.0-rc8-v5.3-rc8-190911-1025-00010-ga436dbce8674+ #18
-  [ 2613.115982] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
-  [ 2613.118495] RIP: 0010:free_one_page+0x5f1/0x610
-  [ 2613.119803] Code: 09 7e 81 49 8d b4 17 c0 00 00 00 8b 14 24 48 89 ef e8 83 75 00 00 e9 16 fe ff ff 48 c7 c6 c0 2b 0d 82 4c 89 e7 e8 9f c3 fd ff <0f> 0b 48 c7 c6 c0 2b 0d 82 e8 91 c3 fd ff 0f 0b 66 66 2e 0f 1f 84
-  [ 2613.124751] RSP: 0018:ffffac7442727ca8 EFLAGS: 00010046
-  [ 2613.126224] RAX: 000000000000003b RBX: 0000000000000009 RCX: 0000000000000006
-  [ 2613.128261] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff820d1814
-  [ 2613.130299] RBP: fffff4ba40748000 R08: 0000000000000710 R09: 000000000000004a
-  [ 2613.132082] R10: 0000000000000000 R11: ffffac7442727b20 R12: fffff4ba40740000
-  [ 2613.133821] R13: 000000000001d200 R14: 0000000000000000 R15: ffff9c953ffd5680
-  [ 2613.135769] FS:  00007fbf2e6cb900(0000) GS:ffff9c953da00000(0000) knlGS:0000000000000000
-  [ 2613.138077] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [ 2613.139721] CR2: 000055eef99d4d38 CR3: 000000007cb50000 CR4: 00000000001406f0
-  [ 2613.141747] Call Trace:
-  [ 2613.142472]  __free_pages_ok+0x175/0x4e0
-  [ 2613.143454]  free_pool_huge_page+0xec/0x100
-  [ 2613.144500]  __nr_hugepages_store_common+0x173/0x2e0
-  [ 2613.145968]  ? __do_proc_doulongvec_minmax+0x3ae/0x440
-  [ 2613.147444]  hugetlb_sysctl_handler_common+0xad/0xc0
-  [ 2613.148867]  proc_sys_call_handler+0x1a5/0x1c0
-  [ 2613.150104]  vfs_write+0xa5/0x1a0
-  [ 2613.151081]  ksys_write+0x59/0xd0
-  [ 2613.152052]  do_syscall_64+0x5f/0x1a0
-  [ 2613.153071]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  [ 2613.154327] RIP: 0033:0x7fbf2eb01ed8
-
-
-On Wed, Sep 11, 2019 at 05:29:56AM +0000, Horiguchi Naoya(堀口 直也) wrote:
-> Hi Oscar,
-> 
-> Thank you for your working on this.
-> 
-> My testing shows the following error:
-> 
->   [ 1926.932435] ===> testcase 'mce_ksm_soft-offline_avoid_access.auto2' start
->   [ 1927.155321] bash (15853): drop_caches: 3
->   [ 1929.019094] page:ffffe5c384c4cd40 refcount:1 mapcount:0 mapping:0000000000000003 index:0x700000001
->   [ 1929.021586] anon
->   [ 1929.021588] flags: 0x57ffe00088000e(referenced|uptodate|dirty|swapbacked|hwpoison)
->   [ 1929.024289] raw: 0057ffe00088000e dead000000000100 dead000000000122 0000000000000003
->   [ 1929.026611] raw: 0000000700000001 0000000000000000 00000000ffffffff 0000000000000000
->   [ 1929.028760] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page))
->   [ 1929.030559] ------------[ cut here ]------------
->   [ 1929.031684] kernel BUG at mm/internal.h:73!
->   [ 1929.032738] invalid opcode: 0000 [#1] SMP PTI
->   [ 1929.033941] CPU: 3 PID: 16052 Comm: mceinj.sh Not tainted 5.3.0-rc8-v5.3-rc8-190911-1025-00010-ga436dbce8674+ #18
->   [ 1929.037137] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
->   [ 1929.040066] RIP: 0010:page_set_poison+0xf9/0x160
->   [ 1929.041665] Code: 63 02 7f 31 c0 5b 5d 41 5c c3 48 c7 c6 d0 d1 0c b0 48 89 df e8 88 bb f8 ff 0f 0b 48 c7 c6 f0 2a 0d b0 48 89 df e8 77 bb f8 ff <0f> 0b 48 8b 45 00 48 c1 e8 33 83 e0 07 83 f8 04 75 89 48 8b 45 08
->   [ 1929.047773] RSP: 0018:ffffb4fb8a73bde0 EFLAGS: 00010246
->   [ 1929.049511] RAX: 0000000000000039 RBX: ffffe5c384c4cd40 RCX: 0000000000000000
->   [ 1929.051870] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffffb00d1814
->   [ 1929.054238] RBP: ffffe5c384c4cd40 R08: 0000000000000596 R09: 0000000000000048
->   [ 1929.056599] R10: 0000000000000000 R11: ffffb4fb8a73bc58 R12: 0000000000000000
->   [ 1929.058986] R13: ffffb4fb8a73be10 R14: 0000000000131335 R15: 0000000000000001
->   [ 1929.061366] FS:  00007fc9e208d740(0000) GS:ffff9fa9bdb00000(0000) knlGS:0000000000000000
->   [ 1929.063842] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   [ 1929.065429] CR2: 000055946c05d192 CR3: 00000001365f2000 CR4: 00000000001406e0
->   [ 1929.067373] Call Trace:
->   [ 1929.068094]  soft_offline_page+0x2be/0x600
->   [ 1929.069246]  soft_offline_page_store+0xdf/0x110
->   [ 1929.070510]  kernfs_fop_write+0x116/0x190
->   [ 1929.071618]  vfs_write+0xa5/0x1a0
->   [ 1929.072614]  ksys_write+0x59/0xd0
->   [ 1929.073548]  do_syscall_64+0x5f/0x1a0
->   [ 1929.074554]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->   [ 1929.075957] RIP: 0033:0x7fc9e217ded8
-> 
-> It seems that soft-offlining on ksm pages is affected by this changeset.
-> Could you try to handle this?
-> 
-> - Naoya
-> 
-> On Tue, Sep 10, 2019 at 12:30:06PM +0200, Oscar Salvador wrote:
-> >
-> > This patchset was based on Naoya's hwpoison rework [1], so thanks to him
-> > for the initial work.
-> >
-> > This patchset aims to fix some issues laying in soft-offline handling,
-> > but it also takes the chance and takes some further steps to perform
-> > cleanups and some refactoring as well.
-> >
-> >  - Motivation:
-> >
-> >    A customer and I were facing an issue where poisoned pages we returned
-> >    back to user-space after having offlined them properly.
-> >    This was only seend under some memory stress + soft offlining pages.
-> >    After some anaylsis, it became clear that the problem was that
-> >    when kcompactd kicked in to migrate pages over, compaction_alloc
-> >    callback was handing poisoned pages to the migrate routine.
-> >    Once this page was later on fault in, __do_page_fault returned
-> >    VM_FAULT_HWPOISON making the process being killed.
-> >
-> >    All this could happen because isolate_freepages_block and
-> >    fast_isolate_freepages just check for the page to be PageBuddy,
-> >    and since 1) poisoned pages can be part of a higher order page
-> >    and 2) poisoned pages are also Page Buddy, they can sneak in easily.
-> >
-> >    I also saw some problem with swap pages, but I suspected to be the
-> >    same sort of problem, so I did not follow that trace.
-> >
-> >    The full explanation can be see in [2].
-> >
-> >  - Approach:
-> >
-> >    The taken approach is to not let poisoned pages hit neither
-> >    pcplists nor buddy freelists.
-> >    This is achieved by:
-> >
-> > In-use pages:
-> >
-> >    * Normal pages
-> >
-> >    1) do not release the last reference count after the
-> >       invalidation/migration of the page.
-> >    2) the page is being handed to page_set_poison, which does:
-> >       2a) sets PageHWPoison flag
-> >       2b) calls put_page (only to be able to call __page_cache_release)
-> >           Since poisoned pages are skipped in free_pages_prepare,
-> >           this put_page is safe.
-> >       2c) Sets the refcount to 1
-> >
-> >    * Hugetlb pages
-> >
-> >    1) Hand the page to page_set_poison after migration
-> >    2) page_set_poison does:
-> >       2a) Calls dissolve_free_huge_page
-> >       2b) If ranged to be dissolved contains poisoned pages,
-> >           we free the rangeas order-0 pages (as we do with gigantic hugetlb page),
-> >           so free_pages_prepare will skip them accordingly.
-> >       2c) Sets the refcount to 1
-> >
-> > Free pages:
-> >
-> >    * Normal pages:
-> >
-> >    1) Take the page off the buddy freelist
-> >    2) Set PageHWPoison flag and set refcount to 1
-> >
-> >    * Hugetlb pages
-> >
-> >    1) Try to allocate a new hugetlb page to the pool
-> >    2) Take off the pool the poisoned hugetlb
-> >
-> >
-> > With this patchset, I no longer see the issues I faced before.
-> >
-> > Note:
-> > I presented this as RFC to open discussion of the taken aproach.
-> > I think that furthers cleanups and refactors could be made, but I would
-> > like to get some insight of the taken approach before touching more
-> > code.
-> >
-> > Thanks
-> >
-> > [1] https://lore.kernel.org/linux-mm/1541746035-13408-1-git-send-email-n-horiguchi@ah.jp.nec.com/
-> > [2] https://lore.kernel.org/linux-mm/20190826104144.GA7849@linux/T/#u
-> >
-> > Naoya Horiguchi (5):
-> >   mm,hwpoison: cleanup unused PageHuge() check
-> >   mm,madvise: call soft_offline_page() without MF_COUNT_INCREASED
-> >   mm,hwpoison-inject: don't pin for hwpoison_filter
-> >   mm,hwpoison: remove MF_COUNT_INCREASED
-> >   mm: remove flag argument from soft offline functions
-> >
-> > Oscar Salvador (5):
-> >   mm,hwpoison: Unify THP handling for hard and soft offline
-> >   mm,hwpoison: Rework soft offline for in-use pages
-> >   mm,hwpoison: Refactor soft_offline_huge_page and __soft_offline_page
-> >   mm,hwpoison: Rework soft offline for free pages
-> >   mm,hwpoison: Use hugetlb_replace_page to replace free hugetlb pages
-> >
-> >  drivers/base/memory.c      |   2 +-
-> >  include/linux/mm.h         |   9 +-
-> >  include/linux/page-flags.h |   5 -
-> >  mm/hugetlb.c               |  51 +++++++-
-> >  mm/hwpoison-inject.c       |  18 +--
-> >  mm/madvise.c               |  25 ++--
-> >  mm/memory-failure.c        | 319 +++++++++++++++++++++------------------------
-> >  mm/migrate.c               |  11 +-
-> >  mm/page_alloc.c            |  62 +++++++--
-> >  9 files changed, 267 insertions(+), 235 deletions(-)
-> >
-> > --
-> > 2.12.3
-> >
-> >
-> 
+44CBPiANCj4gQ2F1dGlvbjogRVhUIEVtYWlsDQo+IA0KPiBPbiBGcmksIFNlcCA2LCAyMDE5IGF0
+IDExOjAzIEFNIEJpd2VuIExpIDxiaXdlbi5saUBueHAuY29tPiB3cm90ZToNCj4gPg0KPiA+IEZy
+b206IENodWFuaHVhIEhhbiA8Y2h1YW5odWEuaGFuQG54cC5jb20+DQo+ID4NCj4gPiBFbmFibGUg
+TlhQIGkyYyBjb250cm9sbGVyIHRvIGJvb3Qgd2l0aCBBQ1BJDQo+ID4NCj4gDQo+IFRoYW5rcywg
+dGhlIGNvZGUgbG9va3MgZ29vZCB0byBtZSwNCj4gUmV2aWV3ZWQtYnk6IEFuZHkgU2hldmNoZW5r
+byA8YW5keS5zaGV2Y2hlbmtvQGdtYWlsLmNvbT4NCj4gDQo+IHRob3VnaC4uLg0KPiANCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBNZWVuYWtzaGkgQWdnYXJ3YWwgPG1lZW5ha3NoaS5hZ2dhcndhbEBueHAu
+Y29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFVkaXQgS3VtYXIgPHVkaXQua3VtYXJAbnhwLmNvbT4N
+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBDaHVhbmh1YSBIYW4gPGNodWFuaHVhLmhhbkBueHAuY29tPg0K
+PiANCj4gVGhpcyBTb0IgY2hhaW4gaXMgYSBiaXQgb2RkLiBXaG8gaXMgdGhlIGF1dGhvciBvZiB0
+aGlzPyBUaGUgZmlyc3QgU29CIGluIHRoZSBjaGFpbg0KPiB1c3VhbGx5IHBvaW50cyB0byB0aGUg
+Zmlyc3QgKG1haW4pIGF1dGhvci4gVGhlcmUgaXMgYWxzbyBwb3NzaWJsZSB0byBjaGFuZ2UgdGhh
+dCwNCj4gdGhvdWdoIGluIHRoYXQgY2FzZSBmb3IgdGhlIHJlc3Qgd2Ugbm93IHVzZSBDby1kZXZl
+bG9wZWQtYnkgdGFnIHJhdGhlciB0aGFuDQo+IFNvQi4NCj4gSW4gYW55IGNhc2UsIGlmIFJhZmFl
+bCBhbmQgV29sZnJhbSBhcmUgb2theSB3aXRoIHRoaXMsIEkgaGF2ZSBubyBvYmplY3Rpb25zLg0K
+VGhhbmtzLg0KPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBCaXdlbiBMaSA8Yml3ZW4ubGlAbnhwLmNv
+bT4NCj4gPiAtLS0NCj4gPiBDaGFuZ2UgaW4gdjI6DQo+ID4gICAgICAgICAtIFNpbXBsaWZ5IGNv
+ZGUNCj4gPiAgICAgICAgIC0gQWRqdXN0IGhlYWRlciBmaWxlIG9yZGVyDQo+ID4gICAgICAgICAt
+IE5vdCB1c2UgQUNQSV9QVFIoKQ0KPiA+DQo+ID4gIGRyaXZlcnMvYWNwaS9hY3BpX2FwZC5jICAg
+ICAgfCAgNyArKysrKysrDQo+ID4gIGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtaW14LmMgfCAxNyAr
+KysrKysrKysrKysrLS0tLQ0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyks
+IDQgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9hY3BpL2FjcGlf
+YXBkLmMgYi9kcml2ZXJzL2FjcGkvYWNwaV9hcGQuYyBpbmRleA0KPiA+IDdjZDBjOWFjNzFlYS4u
+NzE1MTFhZTJkZmNkIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvYWNwaS9hY3BpX2FwZC5jDQo+
+ID4gKysrIGIvZHJpdmVycy9hY3BpL2FjcGlfYXBkLmMNCj4gPiBAQCAtMTYwLDExICsxNjAsMTcg
+QEAgc3RhdGljIGNvbnN0IHN0cnVjdCBhcGRfZGV2aWNlX2Rlc2MNCj4gaGlwMDhfaTJjX2Rlc2Mg
+PSB7DQo+ID4gICAgICAgICAuc2V0dXAgPSBhY3BpX2FwZF9zZXR1cCwNCj4gPiAgICAgICAgIC5m
+aXhlZF9jbGtfcmF0ZSA9IDI1MDAwMDAwMCwNCj4gPiAgfTsNCj4gPiArDQo+ID4gIHN0YXRpYyBj
+b25zdCBzdHJ1Y3QgYXBkX2RldmljZV9kZXNjIHRodW5kZXJ4Ml9pMmNfZGVzYyA9IHsNCj4gPiAg
+ICAgICAgIC5zZXR1cCA9IGFjcGlfYXBkX3NldHVwLA0KPiA+ICAgICAgICAgLmZpeGVkX2Nsa19y
+YXRlID0gMTI1MDAwMDAwLA0KPiA+ICB9Ow0KPiA+DQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qg
+YXBkX2RldmljZV9kZXNjIG54cF9pMmNfZGVzYyA9IHsNCj4gPiArICAgICAgIC5zZXR1cCA9IGFj
+cGlfYXBkX3NldHVwLA0KPiA+ICsgICAgICAgLmZpeGVkX2Nsa19yYXRlID0gMzUwMDAwMDAwLA0K
+PiA+ICt9Ow0KPiA+ICsNCj4gPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBhcGRfZGV2aWNlX2Rlc2Mg
+aGlwMDhfc3BpX2Rlc2MgPSB7DQo+ID4gICAgICAgICAuc2V0dXAgPSBhY3BpX2FwZF9zZXR1cCwN
+Cj4gPiAgICAgICAgIC5maXhlZF9jbGtfcmF0ZSA9IDI1MDAwMDAwMCwNCj4gPiBAQCAtMjM4LDYg
+KzI0NCw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgYWNwaV9kZXZpY2VfaWQNCj4gYWNwaV9hcGRf
+ZGV2aWNlX2lkc1tdID0gew0KPiA+ICAgICAgICAgeyAiSElTSTAyQTEiLCBBUERfQUREUihoaXAw
+N19pMmNfZGVzYykgfSwNCj4gPiAgICAgICAgIHsgIkhJU0kwMkEyIiwgQVBEX0FERFIoaGlwMDhf
+aTJjX2Rlc2MpIH0sDQo+ID4gICAgICAgICB7ICJISVNJMDE3MyIsIEFQRF9BRERSKGhpcDA4X3Nw
+aV9kZXNjKSB9LA0KPiA+ICsgICAgICAgeyAiTlhQMDAwMSIsIEFQRF9BRERSKG54cF9pMmNfZGVz
+YykgfSwNCj4gPiAgI2VuZGlmDQo+ID4gICAgICAgICB7IH0NCj4gPiAgfTsNCj4gPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1pbXguYw0KPiA+IGIvZHJpdmVycy9pMmMvYnVz
+c2VzL2kyYy1pbXguYyBpbmRleCAxNWY2Y2RlNjQ1MmYuLmEzYjYxMzM2ZmU1NSAxMDA2NDQNCj4g
+PiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWlteC5jDQo+ID4gKysrIGIvZHJpdmVycy9p
+MmMvYnVzc2VzL2kyYy1pbXguYw0KPiA+IEBAIC0yMCw2ICsyMCw3IEBADQo+ID4gICAqDQo+ID4g
+ICAqLw0KPiA+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9hY3BpLmg+DQo+ID4gICNpbmNsdWRlIDxs
+aW51eC9jbGsuaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2NvbXBsZXRpb24uaD4NCj4gPiAgI2lu
+Y2x1ZGUgPGxpbnV4L2RlbGF5Lmg+DQo+ID4gQEAgLTI1NSw2ICsyNTYsMTIgQEAgc3RhdGljIGNv
+bnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgaTJjX2lteF9kdF9pZHNbXQ0KPiA+ID0geyAgfTsgIE1P
+RFVMRV9ERVZJQ0VfVEFCTEUob2YsIGkyY19pbXhfZHRfaWRzKTsNCj4gPg0KPiA+ICtzdGF0aWMg
+Y29uc3Qgc3RydWN0IGFjcGlfZGV2aWNlX2lkIGkyY19pbXhfYWNwaV9pZHNbXSA9IHsNCj4gPiAr
+ICAgICAgIHsiTlhQMDAwMSIsIC5kcml2ZXJfZGF0YSA9IChrZXJuZWxfdWxvbmdfdCkmdmY2MTBf
+aTJjX2h3ZGF0YX0sDQo+ID4gKyAgICAgICB7IH0NCj4gPiArfTsNCj4gPiArTU9EVUxFX0RFVklD
+RV9UQUJMRShhY3BpLCBpMmNfaW14X2FjcGlfaWRzKTsNCj4gPiArDQo+ID4gIHN0YXRpYyBpbmxp
+bmUgaW50IGlzX2lteDFfaTJjKHN0cnVjdCBpbXhfaTJjX3N0cnVjdCAqaTJjX2lteCkgIHsNCj4g
+PiAgICAgICAgIHJldHVybiBpMmNfaW14LT5od2RhdGEtPmRldnR5cGUgPT0gSU1YMV9JMkM7IEBA
+IC0xMDQ4LDE0DQo+ID4gKzEwNTUsMTMgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBpMmNfYWxnb3Jp
+dGhtIGkyY19pbXhfYWxnbyA9IHsNCj4gPg0KPiA+ICBzdGF0aWMgaW50IGkyY19pbXhfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikgIHsNCj4gPiAtICAgICAgIGNvbnN0IHN0cnVj
+dCBvZl9kZXZpY2VfaWQgKm9mX2lkID0gb2ZfbWF0Y2hfZGV2aWNlKGkyY19pbXhfZHRfaWRzLA0K
+PiA+IC0NCj4gJnBkZXYtPmRldik7DQo+ID4gICAgICAgICBzdHJ1Y3QgaW14X2kyY19zdHJ1Y3Qg
+KmkyY19pbXg7DQo+ID4gICAgICAgICBzdHJ1Y3QgcmVzb3VyY2UgKnJlczsNCj4gPiAgICAgICAg
+IHN0cnVjdCBpbXhpMmNfcGxhdGZvcm1fZGF0YSAqcGRhdGEgPQ0KPiBkZXZfZ2V0X3BsYXRkYXRh
+KCZwZGV2LT5kZXYpOw0KPiA+ICAgICAgICAgdm9pZCBfX2lvbWVtICpiYXNlOw0KPiA+ICAgICAg
+ICAgaW50IGlycSwgcmV0Ow0KPiA+ICAgICAgICAgZG1hX2FkZHJfdCBwaHlfYWRkcjsNCj4gPiAr
+ICAgICAgIGNvbnN0IHN0cnVjdCBpbXhfaTJjX2h3ZGF0YSAqbWF0Y2g7DQo+ID4NCj4gPiAgICAg
+ICAgIGRldl9kYmcoJnBkZXYtPmRldiwgIjwlcz5cbiIsIF9fZnVuY19fKTsNCj4gPg0KPiA+IEBA
+IC0xMDc1LDggKzEwODEsOSBAQCBzdGF0aWMgaW50IGkyY19pbXhfcHJvYmUoc3RydWN0IHBsYXRm
+b3JtX2RldmljZQ0KPiAqcGRldikNCj4gPiAgICAgICAgIGlmICghaTJjX2lteCkNCj4gPiAgICAg
+ICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07DQo+ID4NCj4gPiAtICAgICAgIGlmIChvZl9pZCkN
+Cj4gPiAtICAgICAgICAgICAgICAgaTJjX2lteC0+aHdkYXRhID0gb2ZfaWQtPmRhdGE7DQo+ID4g
+KyAgICAgICBtYXRjaCA9IGRldmljZV9nZXRfbWF0Y2hfZGF0YSgmcGRldi0+ZGV2KTsNCj4gPiAr
+ICAgICAgIGlmIChtYXRjaCkNCj4gPiArICAgICAgICAgICAgICAgaTJjX2lteC0+aHdkYXRhID0g
+bWF0Y2g7DQo+ID4gICAgICAgICBlbHNlDQo+ID4gICAgICAgICAgICAgICAgIGkyY19pbXgtPmh3
+ZGF0YSA9IChzdHJ1Y3QgaW14X2kyY19od2RhdGEgKikNCj4gPg0KPiBwbGF0Zm9ybV9nZXRfZGV2
+aWNlX2lkKHBkZXYpLT5kcml2ZXJfZGF0YTsNCj4gPiBAQCAtMTA4OSw2ICsxMDk2LDcgQEAgc3Rh
+dGljIGludCBpMmNfaW14X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UNCj4gKnBkZXYpDQo+
+ID4gICAgICAgICBpMmNfaW14LT5hZGFwdGVyLm5yICAgICAgICAgICAgID0gcGRldi0+aWQ7DQo+
+ID4gICAgICAgICBpMmNfaW14LT5hZGFwdGVyLmRldi5vZl9ub2RlICAgID0gcGRldi0+ZGV2Lm9m
+X25vZGU7DQo+ID4gICAgICAgICBpMmNfaW14LT5iYXNlICAgICAgICAgICAgICAgICAgID0gYmFz
+ZTsNCj4gPiArICAgICAgIEFDUElfQ09NUEFOSU9OX1NFVCgmaTJjX2lteC0+YWRhcHRlci5kZXYs
+DQo+IEFDUElfQ09NUEFOSU9OKCZwZGV2LT5kZXYpKTsNCj4gPg0KPiA+ICAgICAgICAgLyogR2V0
+IEkyQyBjbG9jayAqLw0KPiA+ICAgICAgICAgaTJjX2lteC0+Y2xrID0gZGV2bV9jbGtfZ2V0KCZw
+ZGV2LT5kZXYsIE5VTEwpOw0KPiA+IEBAIC0xMjQ3LDYgKzEyNTUsNyBAQCBzdGF0aWMgc3RydWN0
+IHBsYXRmb3JtX2RyaXZlciBpMmNfaW14X2RyaXZlciA9IHsNCj4gPiAgICAgICAgICAgICAgICAg
+Lm5hbWUgPSBEUklWRVJfTkFNRSwNCj4gPiAgICAgICAgICAgICAgICAgLnBtID0gJmkyY19pbXhf
+cG1fb3BzLA0KPiA+ICAgICAgICAgICAgICAgICAub2ZfbWF0Y2hfdGFibGUgPSBpMmNfaW14X2R0
+X2lkcywNCj4gPiArICAgICAgICAgICAgICAgLmFjcGlfbWF0Y2hfdGFibGUgPSBpMmNfaW14X2Fj
+cGlfaWRzLA0KPiA+ICAgICAgICAgfSwNCj4gPiAgICAgICAgIC5pZF90YWJsZSA9IGlteF9pMmNf
+ZGV2dHlwZSwNCj4gPiAgfTsNCj4gPiAtLQ0KPiA+IDIuMTcuMQ0KPiA+DQo+IA0KPiANCj4gLS0N
+Cj4gV2l0aCBCZXN0IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNoZW5rbw0K
