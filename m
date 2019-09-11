@@ -2,143 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71792B019F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:26:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8050FB01C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbfIKQ0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 12:26:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53120 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729028AbfIKQ0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:26:21 -0400
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A7717C049E36
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 16:26:20 +0000 (UTC)
-Received: by mail-wm1-f69.google.com with SMTP id 124so1171654wmz.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 09:26:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eyaijbgIkayhX4PjBUU3nGz4VJDOHf43oHAeZt11sYU=;
-        b=otTgJADkXRNhdzHOSojiRSM4UclRTaVV9s2g30bcQMLD6ieut7LNPVNdMa7E5DLbZV
-         sUT499d7/pbsZ4X4u1xVw2Y3B01aqC7u01eYq9dic8OumUX/OqvdqvuwD5BqsL/apFl3
-         oDxJy56MMLEXerZdvRT/xN3lOqWZZNjxGTX6VIYrKn/75d1zy7S+3eDm4Pk1ok0ymU7O
-         sxK6iNHUt9X7IhkEKwiDAQx+1sfeTwwJR50w0+RQAp54qBG/+xPZCVRa1HJl4OwkyYAv
-         c63W/Q2NBe46rY9xisxT0YiVjnFvapn+p+34PV1S/ElhM2FJOh7joLAQQBAjeKLN9kFF
-         hmjw==
-X-Gm-Message-State: APjAAAXEdg7U3ZTEM3P5QPl6Du7OymX3DHo9VCcU7u3XBZbz5wto4NZL
-        6iL49RaJiXLGsdL4ma6IQ1fzQaAfHj5OT8nt/4238UN7+prvHR6Uf/xT8GeDijg8vnRf+W5jQOF
-        mhDl3ukF6JmjYayZgsLkFZYKD
-X-Received: by 2002:a7b:c764:: with SMTP id x4mr4315436wmk.134.1568219179296;
-        Wed, 11 Sep 2019 09:26:19 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwOAVygTquC9Ou/lQms9cBy79Ajfv+C5hPogGsEA3YLASjZm7mPMsJdoVNRdV9fJe20qtNpDg==
-X-Received: by 2002:a7b:c764:: with SMTP id x4mr4315419wmk.134.1568219179035;
-        Wed, 11 Sep 2019 09:26:19 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:102b:3795:6714:7df6? ([2001:b07:6468:f312:102b:3795:6714:7df6])
-        by smtp.gmail.com with ESMTPSA id 17sm16247400wrl.15.2019.09.11.09.26.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2019 09:26:18 -0700 (PDT)
-Subject: Re: [PATCH v2 5/5] KVM: hyperv: Fix Direct Synthetic timers assert an
- interrupt w/o lapic_in_kernel
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-References: <1567733404-7759-1-git-send-email-wanpengli@tencent.com>
- <1567733404-7759-5-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <9d244f84-93d3-5e1b-7222-aebb270f3f29@redhat.com>
-Date:   Wed, 11 Sep 2019 18:26:16 +0200
+        id S1729119AbfIKQkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:40:01 -0400
+Received: from 6.mo179.mail-out.ovh.net ([46.105.56.76]:38545 "EHLO
+        6.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728828AbfIKQkA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:40:00 -0400
+X-Greylist: delayed 2262 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Sep 2019 12:39:59 EDT
+Received: from player761.ha.ovh.net (unknown [10.109.159.222])
+        by mo179.mail-out.ovh.net (Postfix) with ESMTP id 0CFA5141187
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 18:02:16 +0200 (CEST)
+Received: from kaod.org (lfbn-1-2240-157.w90-76.abo.wanadoo.fr [90.76.60.157])
+        (Authenticated sender: clg@kaod.org)
+        by player761.ha.ovh.net (Postfix) with ESMTPSA id 50A7F9B791FC;
+        Wed, 11 Sep 2019 16:02:11 +0000 (UTC)
+Subject: Re: [PATCH v2] powerpc/xive: Fix bogus error code returned by OPAL
+To:     Greg Kurz <groug@kaod.org>, Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <156821713818.1985334.14123187368108582810.stgit@bahia.lan>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <a15c02b2-ac3a-21a7-db56-242cb864f79e@kaod.org>
+Date:   Wed, 11 Sep 2019 18:02:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1567733404-7759-5-git-send-email-wanpengli@tencent.com>
+In-Reply-To: <156821713818.1985334.14123187368108582810.stgit@bahia.lan>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 1911778042506414871
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrtdefgdejtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/09/19 03:30, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On 11/09/2019 17:52, Greg Kurz wrote:
+> There's a bug in skiboot that causes the OPAL_XIVE_ALLOCATE_IRQ call
+> to return the 32-bit value 0xffffffff when OPAL has run out of IRQs.
+> Unfortunatelty, OPAL return values are signed 64-bit entities and
+> errors are supposed to be negative. If that happens, the linux code
+> confusingly treats 0xffffffff as a valid IRQ number and panics at some
+> point.
 > 
-> Reported by syzkaller:
+> A fix was recently merged in skiboot:
 > 
-> 	kasan: GPF could be caused by NULL-ptr deref or user memory access
-> 	general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> 	RIP: 0010:__apic_accept_irq+0x46/0x740 arch/x86/kvm/lapic.c:1029
-> 	Call Trace:
-> 	kvm_apic_set_irq+0xb4/0x140 arch/x86/kvm/lapic.c:558
-> 	stimer_notify_direct arch/x86/kvm/hyperv.c:648 [inline]
-> 	stimer_expiration arch/x86/kvm/hyperv.c:659 [inline]
-> 	kvm_hv_process_stimers+0x594/0x1650 arch/x86/kvm/hyperv.c:686
-> 	vcpu_enter_guest+0x2b2a/0x54b0 arch/x86/kvm/x86.c:7896
-> 	vcpu_run+0x393/0xd40 arch/x86/kvm/x86.c:8152
-> 	kvm_arch_vcpu_ioctl_run+0x636/0x900 arch/x86/kvm/x86.c:8360
-> 	kvm_vcpu_ioctl+0x6cf/0xaf0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2765
+> e97391ae2bb5 ("xive: fix return value of opal_xive_allocate_irq()")
 > 
-> The testcase programs HV_X64_MSR_STIMERn_CONFIG/HV_X64_MSR_STIMERn_COUNT,
-> in addition, there is no lapic in the kernel, the counters value are small
-> enough in order that kvm_hv_process_stimers() inject this already-expired
-> timer interrupt into the guest through lapic in the kernel which triggers
-> the NULL deferencing. This patch fixes it by don't advertise direct mode 
-> synthetic timers and discarding the inject when lapic is not in kernel.
+> but we need a workaround anyway to support older skiboots already
+> in the field.
 > 
-> Reported-by: syzbot+dff25ee91f0c7d5c1695@syzkaller.appspotmail.com
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> Internally convert 0xffffffff to OPAL_RESOURCE which is the usual error
+> returned upon resource exhaustion.
+> 
+> Cc: stable@vger.kernel.org # v4.12+
+> Signed-off-by: Greg Kurz <groug@kaod.org>
+
+
+
+Reviewed-by: Cédric Le Goater <clg@kaod.org>
+
+Thanks,
+
+C.
+
 > ---
-> v1 -> v2:
->  * don't advertise direct mode synthetic timers when lapic is not in kernel
+> v2: - fix syntax error in changelog
+>     - Cc stable
+>     - rename original OPAL wrapper
+>     - rewrite fixup wrapper (style, use s64 and u32)
+> ---
+>  arch/powerpc/include/asm/opal.h            |    2 +-
+>  arch/powerpc/platforms/powernv/opal-call.c |    2 +-
+>  arch/powerpc/sysdev/xive/native.c          |   11 +++++++++++
+>  3 files changed, 13 insertions(+), 2 deletions(-)
 > 
->  arch/x86/kvm/hyperv.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-> index c10a8b1..069e655 100644
-> --- a/arch/x86/kvm/hyperv.c
-> +++ b/arch/x86/kvm/hyperv.c
-> @@ -645,7 +645,9 @@ static int stimer_notify_direct(struct kvm_vcpu_hv_stimer *stimer)
->  		.vector = stimer->config.apic_vector
->  	};
->  
-> -	return !kvm_apic_set_irq(vcpu, &irq, NULL);
-> +	if (lapic_in_kernel(vcpu))
-> +		return !kvm_apic_set_irq(vcpu, &irq, NULL);
-> +	return 0;
+> diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
+> index 57bd029c715e..d5a0807d21db 100644
+> --- a/arch/powerpc/include/asm/opal.h
+> +++ b/arch/powerpc/include/asm/opal.h
+> @@ -272,7 +272,7 @@ int64_t opal_xive_get_vp_info(uint64_t vp,
+>  int64_t opal_xive_set_vp_info(uint64_t vp,
+>  			      uint64_t flags,
+>  			      uint64_t report_cl_pair);
+> -int64_t opal_xive_allocate_irq(uint32_t chip_id);
+> +int64_t opal_xive_allocate_irq_raw(uint32_t chip_id);
+>  int64_t opal_xive_free_irq(uint32_t girq);
+>  int64_t opal_xive_sync(uint32_t type, uint32_t id);
+>  int64_t opal_xive_dump(uint32_t type, uint32_t id);
+> diff --git a/arch/powerpc/platforms/powernv/opal-call.c b/arch/powerpc/platforms/powernv/opal-call.c
+> index 29ca523c1c79..dccdc9df5213 100644
+> --- a/arch/powerpc/platforms/powernv/opal-call.c
+> +++ b/arch/powerpc/platforms/powernv/opal-call.c
+> @@ -257,7 +257,7 @@ OPAL_CALL(opal_xive_set_queue_info,		OPAL_XIVE_SET_QUEUE_INFO);
+>  OPAL_CALL(opal_xive_donate_page,		OPAL_XIVE_DONATE_PAGE);
+>  OPAL_CALL(opal_xive_alloc_vp_block,		OPAL_XIVE_ALLOCATE_VP_BLOCK);
+>  OPAL_CALL(opal_xive_free_vp_block,		OPAL_XIVE_FREE_VP_BLOCK);
+> -OPAL_CALL(opal_xive_allocate_irq,		OPAL_XIVE_ALLOCATE_IRQ);
+> +OPAL_CALL(opal_xive_allocate_irq_raw,		OPAL_XIVE_ALLOCATE_IRQ);
+>  OPAL_CALL(opal_xive_free_irq,			OPAL_XIVE_FREE_IRQ);
+>  OPAL_CALL(opal_xive_get_vp_info,		OPAL_XIVE_GET_VP_INFO);
+>  OPAL_CALL(opal_xive_set_vp_info,		OPAL_XIVE_SET_VP_INFO);
+> diff --git a/arch/powerpc/sysdev/xive/native.c b/arch/powerpc/sysdev/xive/native.c
+> index 37987c815913..ad8ee7dd7f57 100644
+> --- a/arch/powerpc/sysdev/xive/native.c
+> +++ b/arch/powerpc/sysdev/xive/native.c
+> @@ -231,6 +231,17 @@ static bool xive_native_match(struct device_node *node)
+>  	return of_device_is_compatible(node, "ibm,opal-xive-vc");
 >  }
 >  
->  static void stimer_expiration(struct kvm_vcpu_hv_stimer *stimer)
-> @@ -1849,7 +1851,13 @@ int kvm_vcpu_ioctl_get_hv_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid2 *cpuid,
->  
->  			ent->edx |= HV_FEATURE_FREQUENCY_MSRS_AVAILABLE;
->  			ent->edx |= HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE;
-> -			ent->edx |= HV_STIMER_DIRECT_MODE_AVAILABLE;
+> +static s64 opal_xive_allocate_irq(u32 chip_id)
+> +{
+> +	s64 irq = opal_xive_allocate_irq_raw(chip_id);
 > +
-> +			/*
-> +			 * Direct Synthetic timers only make sense with in-kernel
-> +			 * LAPIC
-> +			 */
-> +			if (lapic_in_kernel(vcpu))
-> +				ent->edx |= HV_STIMER_DIRECT_MODE_AVAILABLE;
->  
->  			break;
->  
+> +	/*
+> +	 * Old versions of skiboot can incorrectly return 0xffffffff to
+> +	 * indicate no space, fix it up here.
+> +	 */
+> +	return irq == 0xffffffff ? OPAL_RESOURCE : irq;
+> +}
+> +
+>  #ifdef CONFIG_SMP
+>  static int xive_native_get_ipi(unsigned int cpu, struct xive_cpu *xc)
+>  {
 > 
 
-See replies to the previous version of the individual patches.
-
-Paolo
