@@ -2,383 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE31B012A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 545B2B0137
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 18:19:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbfIKQQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 12:16:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47296 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729047AbfIKQQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 12:16:24 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729189AbfIKQQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 12:16:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37970 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729149AbfIKQQt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 12:16:49 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2900760C72; Wed, 11 Sep 2019 16:16:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568218608;
+        bh=tn8EIOlw52p10Je+it7oNkaaHTfUPXTl86tPFg9hjf4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ojylFW7dnyYRTd/m6Je9Pflrh3J/HiQswu7GR89Oy0hd9ICzLsjlBLdHrXU4Oc1vH
+         crQ+JZ9X+/YAM94thTMlbDpLjAOhF5IpNLuwRAg/MpzSqrB2eeY6GyxvfVnK0P4Jsk
+         LJB6id1yKoAMBNZzhE8QeudvPbXBHEL7hjq63mrk=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC8F8C057E9F;
-        Wed, 11 Sep 2019 16:16:23 +0000 (UTC)
-Received: from coeurl.usersys.redhat.com (ovpn-122-52.rdu2.redhat.com [10.10.122.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 946CC5C22C;
-        Wed, 11 Sep 2019 16:16:23 +0000 (UTC)
-Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
-        id 8F89820F44; Wed, 11 Sep 2019 12:16:22 -0400 (EDT)
-From:   Scott Mayhew <smayhew@redhat.com>
-To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 26/26] NFS: Attach supplementary error information to fs_context.
-Date:   Wed, 11 Sep 2019 12:16:21 -0400
-Message-Id: <20190911161621.19832-27-smayhew@redhat.com>
-In-Reply-To: <20190911161621.19832-1-smayhew@redhat.com>
-References: <20190911161621.19832-1-smayhew@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 11 Sep 2019 16:16:23 +0000 (UTC)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 099F8607CA;
+        Wed, 11 Sep 2019 16:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568218607;
+        bh=tn8EIOlw52p10Je+it7oNkaaHTfUPXTl86tPFg9hjf4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kuou501Yo7RboC4JSk3MoJZMFT5F2MdaLY69J+9td8eHy5AUlddXETD4NaMngglZH
+         hGYp7phS6po6tVrVSqrTxerKL4tgX3IDdo+23t2Cdebt09QAw975vUKh+d2RHu3/wB
+         OGka20x77a2XvwIyS8hSV65fbtCyUEF+8rSy+J1s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 099F8607CA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Wed, 11 Sep 2019 10:16:46 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        mkshah@codeaurora.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: Re: [PATCH RFC 09/14] drivers: pinctrl: msm: fix use of deprecated
+ gpiolib APIs
+Message-ID: <20190911161646.GC30053@codeaurora.org>
+References: <20190829181203.2660-1-ilina@codeaurora.org>
+ <20190829181203.2660-10-ilina@codeaurora.org>
+ <CACRpkdbhNY8N=LMG6wwYw9bAnL4HmAqj8WMpsLsqvh8PvaQ52A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbhNY8N=LMG6wwYw9bAnL4HmAqj8WMpsLsqvh8PvaQ52A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split out from commit "NFS: Add fs_context support."
-
-Add wrappers nfs_errorf(), nfs_invalf(), and nfs_warnf() which log error
-information to the fs_context.  Convert some printk's to use these new
-wrappers instead.
-
-Signed-off-by: Scott Mayhew <smayhew@redhat.com>
----
- fs/nfs/fs_context.c | 105 +++++++++++++++-----------------------------
- fs/nfs/getroot.c    |   3 ++
- fs/nfs/internal.h   |   4 ++
- fs/nfs/namespace.c  |   2 +-
- fs/nfs/nfs4super.c  |   2 +
- fs/nfs/super.c      |   4 +-
- 6 files changed, 48 insertions(+), 72 deletions(-)
-
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index 14c43d1c7da9..03044aaa8e17 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -321,10 +321,8 @@ static int nfs_auth_info_add(struct fs_context *fc,
- 			return 0;
- 	}
- 
--	if (auth_info->flavor_len + 1 >= max_flavor_len) {
--		dfprintk(MOUNT, "NFS: too many sec= flavors\n");
--		return -EINVAL;
--	}
-+	if (auth_info->flavor_len + 1 >= max_flavor_len)
-+		return nfs_invalf(fc, "NFS: too many sec= flavors");
- 
- 	auth_info->flavors[auth_info->flavor_len++] = flavor;
- 	return 0;
-@@ -381,9 +379,7 @@ static int nfs_parse_security_flavors(struct fs_context *fc,
- 			pseudoflavor = RPC_AUTH_GSS_SPKMP;
- 			break;
- 		default:
--			dfprintk(MOUNT,
--				 "NFS: sec= option '%s' not recognized\n", p);
--			return -EINVAL;
-+			return nfs_invalf(fc, "NFS: sec=%s option not recognized", p);
- 		}
- 
- 		ret = nfs_auth_info_add(fc, &ctx->auth_info, pseudoflavor);
-@@ -428,8 +424,7 @@ static int nfs_parse_version_string(struct fs_context *fc,
- 		ctx->minorversion = 2;
- 		break;
- 	default:
--		dfprintk(MOUNT, "NFS:   Unsupported NFS version\n");
--		return -EINVAL;
-+		return nfs_invalf(fc, "NFS: Unsupported NFS version");
- 	}
- 	return 0;
- }
-@@ -454,10 +449,8 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
- 
- 	switch (opt) {
- 	case Opt_source:
--		if (fc->source) {
--			dfprintk(MOUNT, "NFS: Multiple sources not supported\n");
--			return -EINVAL;
--		}
-+		if (fc->source)
-+			return nfs_invalf(fc, "NFS: Multiple sources not supported");
- 		fc->source = param->string;
- 		param->string = NULL;
- 		break;
-@@ -667,8 +660,7 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
- 			xprt_load_transport(param->string);
- 			break;
- 		default:
--			dfprintk(MOUNT, "NFS:   unrecognized transport protocol\n");
--			return -EINVAL;
-+			return nfs_invalf(fc, "NFS: Unrecognized transport protocol");
- 		}
- 
- 		ctx->protofamily = protofamily;
-@@ -691,8 +683,7 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
- 			break;
- 		case Opt_xprt_rdma: /* not used for side protocols */
- 		default:
--			dfprintk(MOUNT, "NFS:   unrecognized transport protocol\n");
--			return -EINVAL;
-+			return nfs_invalf(fc, "NFS: Unrecognized transport protocol");
- 		}
- 		ctx->mountfamily = mountfamily;
- 		break;
-@@ -777,13 +768,11 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
- 	return 0;
- 
- out_invalid_value:
--	printk(KERN_INFO "NFS: Bad mount option value specified\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: Bad mount option value specified");
- out_invalid_address:
--	printk(KERN_INFO "NFS: Bad IP address specified\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: Bad IP address specified");
- out_of_bounds:
--	printk(KERN_INFO "NFS: Value for '%s' out of range\n", param->key);
-+	nfs_invalf(fc, "NFS: Value for '%s' out of range", param->key);
- 	return -ERANGE;
- }
- 
-@@ -849,19 +838,15 @@ static int nfs_parse_source(struct fs_context *fc,
- 	return 0;
- 
- out_bad_devname:
--	dfprintk(MOUNT, "NFS: device name not in host:path format\n");
--	return -EINVAL;
--
-+	return nfs_invalf(fc, "NFS: device name not in host:path format");
- out_nomem:
--	dfprintk(MOUNT, "NFS: not enough memory to parse device name\n");
-+	nfs_errorf(fc, "NFS: not enough memory to parse device name");
- 	return -ENOMEM;
--
- out_hostname:
--	dfprintk(MOUNT, "NFS: server hostname too long\n");
-+	nfs_errorf(fc, "NFS: server hostname too long");
- 	return -ENAMETOOLONG;
--
- out_path:
--	dfprintk(MOUNT, "NFS: export pathname too long\n");
-+	nfs_errorf(fc, "NFS: export pathname too long");
- 	return -ENAMETOOLONG;
- }
- 
-@@ -1018,29 +1003,23 @@ static int nfs23_parse_monolithic(struct fs_context *fc,
- 		ctx->skip_reconfig_option_check = true;
- 		return 0;
- 	}
--	dfprintk(MOUNT, "NFS: mount program didn't pass any mount data\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: mount program didn't pass any mount data");
- 
- out_no_v3:
--	dfprintk(MOUNT, "NFS: nfs_mount_data version %d does not support v3\n",
--		 data->version);
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: nfs_mount_data version does not support v3");
- 
- out_no_sec:
--	dfprintk(MOUNT, "NFS: nfs_mount_data version supports only AUTH_SYS\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: nfs_mount_data version supports only AUTH_SYS");
- 
- out_nomem:
--	dfprintk(MOUNT, "NFS: not enough memory to handle mount options\n");
-+	dfprintk(MOUNT, "NFS: not enough memory to handle mount options");
- 	return -ENOMEM;
- 
- out_no_address:
--	dfprintk(MOUNT, "NFS: mount program didn't pass remote address\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: mount program didn't pass remote address");
- 
- out_invalid_fh:
--	dfprintk(MOUNT, "NFS: invalid root filehandle\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: invalid root filehandle");
- }
- 
- #if IS_ENABLED(CONFIG_NFS_V4)
-@@ -1135,21 +1114,17 @@ static int nfs4_parse_monolithic(struct fs_context *fc,
- 		ctx->skip_reconfig_option_check = true;
- 		return 0;
- 	}
--	dfprintk(MOUNT, "NFS4: mount program didn't pass any mount data\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS4: mount program didn't pass any mount data");
- 
- out_inval_auth:
--	dfprintk(MOUNT, "NFS4: Invalid number of RPC auth flavours %d\n",
--		 data->auth_flavourlen);
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS4: Invalid number of RPC auth flavours %d",
-+		      data->auth_flavourlen);
- 
- out_no_address:
--	dfprintk(MOUNT, "NFS4: mount program didn't pass remote address\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS4: mount program didn't pass remote address");
- 
- out_invalid_transport_udp:
--	dfprintk(MOUNT, "NFSv4: Unsupported transport protocol udp\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFSv4: Unsupported transport protocol udp");
- }
- #endif
- 
-@@ -1167,8 +1142,7 @@ static int nfs_fs_context_parse_monolithic(struct fs_context *fc,
- 		return nfs4_parse_monolithic(fc, data);
- #endif
- 
--	dfprintk(MOUNT, "NFS: Unsupported monolithic data version\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: Unsupported monolithic data version");
- }
- 
- /*
-@@ -1256,32 +1230,25 @@ static int nfs_fs_context_validate(struct fs_context *fc)
- 	return 0;
- 
- out_no_device_name:
--	dfprintk(MOUNT, "NFS: Device name not specified\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: Device name not specified");
- out_v4_not_compiled:
--	dfprintk(MOUNT, "NFS: NFSv4 is not compiled into kernel\n");
-+	nfs_errorf(fc, "NFS: NFSv4 is not compiled into kernel");
- 	return -EPROTONOSUPPORT;
- out_invalid_transport_udp:
--	dfprintk(MOUNT, "NFSv4: Unsupported transport protocol udp\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFSv4: Unsupported transport protocol udp");
- out_no_address:
--	dfprintk(MOUNT, "NFS: mount program didn't pass remote address\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: mount program didn't pass remote address");
- out_mountproto_mismatch:
--	dfprintk(MOUNT, "NFS: Mount server address does not match mountproto= option\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: Mount server address does not match mountproto= option");
- out_proto_mismatch:
--	dfprintk(MOUNT, "NFS: Server address does not match proto= option\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: Server address does not match proto= option");
- out_minorversion_mismatch:
--	dfprintk(MOUNT, "NFS: Mount option vers=%u does not support minorversion=%u\n",
-+	return nfs_invalf(fc, "NFS: Mount option vers=%u does not support minorversion=%u",
- 			  ctx->version, ctx->minorversion);
--	return -EINVAL;
- out_migration_misuse:
--	dfprintk(MOUNT, "NFS: 'Migration' not supported for this NFS version\n");
--	return -EINVAL;
-+	return nfs_invalf(fc, "NFS: 'Migration' not supported for this NFS version");
- out_version_unavailable:
--	dfprintk(MOUNT, "NFS: Version unavailable\n");
-+	nfs_errorf(fc, "NFS: Version unavailable");
- 	return ret;
- }
- 
-diff --git a/fs/nfs/getroot.c b/fs/nfs/getroot.c
-index ab45496d23a6..b012c2668a1f 100644
---- a/fs/nfs/getroot.c
-+++ b/fs/nfs/getroot.c
-@@ -86,6 +86,7 @@ int nfs_get_root(struct super_block *s, struct fs_context *fc)
- 	error = server->nfs_client->rpc_ops->getroot(server, ctx->mntfh, &fsinfo);
- 	if (error < 0) {
- 		dprintk("nfs_get_root: getattr error = %d\n", -error);
-+		nfs_errorf(fc, "NFS: Couldn't getattr on root");
- 		goto out_fattr;
- 	}
- 
-@@ -93,6 +94,7 @@ int nfs_get_root(struct super_block *s, struct fs_context *fc)
- 	if (IS_ERR(inode)) {
- 		dprintk("nfs_get_root: get root inode failed\n");
- 		error = PTR_ERR(inode);
-+		nfs_errorf(fc, "NFS: Couldn't get root inode");
- 		goto out_fattr;
- 	}
- 
-@@ -108,6 +110,7 @@ int nfs_get_root(struct super_block *s, struct fs_context *fc)
- 	if (IS_ERR(root)) {
- 		dprintk("nfs_get_root: get root dentry failed\n");
- 		error = PTR_ERR(root);
-+		nfs_errorf(fc, "NFS: Couldn't get root dentry");
- 		goto out_fattr;
- 	}
- 
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index e0911815e153..e1f46034814f 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -141,6 +141,10 @@ struct nfs_fs_context {
- 	} clone_data;
- };
- 
-+#define nfs_errorf(fc, fmt, ...) errorf(fc, fmt, ## __VA_ARGS__)
-+#define nfs_invalf(fc, fmt, ...) invalf(fc, fmt, ## __VA_ARGS__)
-+#define nfs_warnf(fc, fmt, ...) warnf(fc, fmt, ## __VA_ARGS__)
-+
- static inline struct nfs_fs_context *nfs_fc2context(const struct fs_context *fc)
- {
- 	return fc->fs_private;
-diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
-index 3e566a632215..c1824bc6336b 100644
---- a/fs/nfs/namespace.c
-+++ b/fs/nfs/namespace.c
-@@ -278,7 +278,7 @@ int nfs_do_submount(struct fs_context *fc)
- 
- 	p = nfs_devname(dentry, buffer, 4096);
- 	if (IS_ERR(p)) {
--		dprintk("NFS: Couldn't determine submount pathname\n");
-+		nfs_errorf(fc, "NFS: Couldn't determine submount pathname");
- 		ret = PTR_ERR(p);
- 	} else {
- 		ret = vfs_parse_fs_string(fc, "source", p, buffer + 4096 - p);
-diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
-index 3b27c5e3d781..54e9c54bd08d 100644
---- a/fs/nfs/nfs4super.c
-+++ b/fs/nfs/nfs4super.c
-@@ -225,6 +225,7 @@ int nfs4_try_get_tree(struct fs_context *fc)
- 			   fc, ctx->nfs_server.hostname,
- 			   ctx->nfs_server.export_path);
- 	if (err) {
-+		nfs_errorf(fc, "NFS4: Couldn't follow remote path");
- 		dfprintk(MOUNT, "<-- nfs4_try_get_tree() = %d [error]\n", err);
- 	} else {
- 		dfprintk(MOUNT, "<-- nfs4_try_get_tree() = 0\n");
-@@ -247,6 +248,7 @@ int nfs4_get_referral_tree(struct fs_context *fc)
- 			    fc, ctx->nfs_server.hostname,
- 			    ctx->nfs_server.export_path);
- 	if (err) {
-+		nfs_errorf(fc, "NFS4: Couldn't follow remote path");
- 		dfprintk(MOUNT, "<-- nfs4_get_referral_tree() = %d [error]\n", err);
- 	} else {
- 		dfprintk(MOUNT, "<-- nfs4_get_referral_tree() = 0\n");
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 60174a30a91a..2e363cc65688 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1189,7 +1189,7 @@ int nfs_get_tree_common(struct fs_context *fc)
- 	fc->s_fs_info = NULL;
- 	if (IS_ERR(s)) {
- 		error = PTR_ERR(s);
--		dfprintk(MOUNT, "NFS: Couldn't get superblock\n");
-+		nfs_errorf(fc, "NFS: Couldn't get superblock");
- 		goto out_err_nosb;
- 	}
- 
-@@ -1218,7 +1218,7 @@ int nfs_get_tree_common(struct fs_context *fc)
- 
- 	error = nfs_get_root(s, fc);
- 	if (error < 0) {
--		dfprintk(MOUNT, "NFS: Couldn't get root dentry\n");
-+		nfs_errorf(fc, "NFS: Couldn't get root dentry");
- 		goto error_splat_super;
- 	}
- 
--- 
-2.17.2
-
+On Wed, Sep 11 2019 at 04:19 -0600, Linus Walleij wrote:
+>On Thu, Aug 29, 2019 at 7:35 PM Lina Iyer <ilina@codeaurora.org> wrote:
+>
+>> Replace gpiochip_irqchip_add() and gpiochip_set_chained_irqchip() calls
+>> by populating the gpio_irq_chip data structures instead.
+>>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>
+>This is mostly fixed upstream I think, but:
+>
+>> +       chip->irq.fwnode = pctrl->dev->fwnode;
+>
+>This fwnode assignment is missing though.
+>
+>Sorry for the constant churn and required rebasing...
+>
+Not a problem. Will rebase.
