@@ -2,127 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E653B00B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 17:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F3FEB008D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 17:51:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728870AbfIKP60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 11:58:26 -0400
-Received: from 9.mo68.mail-out.ovh.net ([46.105.78.111]:47529 "EHLO
-        9.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728266AbfIKP60 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 11:58:26 -0400
-X-Greylist: delayed 3601 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Sep 2019 11:58:25 EDT
-Received: from player688.ha.ovh.net (unknown [10.109.143.249])
-        by mo68.mail-out.ovh.net (Postfix) with ESMTP id BB5F4142F53
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 16:40:52 +0200 (CEST)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player688.ha.ovh.net (Postfix) with ESMTPSA id 4ED3C99ECC49;
-        Wed, 11 Sep 2019 14:40:44 +0000 (UTC)
-Date:   Wed, 11 Sep 2019 16:40:43 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        =?UTF-8?B?Q8OpZHJpYw==?= Le Goater <clg@kaod.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/xive: Fix bogus error code returned by OPAL
-Message-ID: <20190911164043.5548afa1@bahia.lan>
-In-Reply-To: <87k1aezz78.fsf@mpe.ellerman.id.au>
-References: <156812362556.1866243.7399893138425681517.stgit@bahia.tls.ibm.com>
-        <87k1aezz78.fsf@mpe.ellerman.id.au>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1728795AbfIKPvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 11:51:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56448 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727839AbfIKPvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 11:51:11 -0400
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E1B487E423
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 15:51:10 +0000 (UTC)
+Received: by mail-wr1-f70.google.com with SMTP id j2so2435967wre.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 08:51:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MYNEXJF4GkgPzBLfLPqtcFS1AbXG16xNG5ruRxPdF1M=;
+        b=IHg4k/EoEJOZsL1hJmQblePN3nEMQDHKfcdnW2ariZVVqHrCCttcDzvgcfsJWEdK3N
+         pAPfJef/fWXsbd5yK6NFp11+h/bAz+XENhmcNVoKjI4UXg8shD8LuMkSw09civ7bmbw2
+         hysMuQhxrjO1aHhH/UNZmWb9czUdWlrHX9n+LfZ4wWxS4k/I/3f9xWQnWf0yOwJ+UU+Q
+         2IZfQDzgPV4bpJUK5CaM5DM/s18fRJdg3DjD7wVoi1CcxBGrZwx1qcIw8qjD/SZ3+QbI
+         A7/jgwAVD2S3VOZfdEOqFfnPpULsFoustci9ZMWwBBQc/IGiDvjQ+Y1dcEK0QOATsPR/
+         K8Xg==
+X-Gm-Message-State: APjAAAVW3sqKlseLZ7tjNdy2waXAyostQuUArYhVEe2Vw55DKaU6+vwn
+        3+TBE7KgleE35XnOOPEqk4Tg+4iG0jbppY9GNOjsLtcr+6cUQZGkYTUO6KTmfrDJG2TFe9BFLqi
+        h/YiBk0cZKlcOKOWJ9sCKp3Cg
+X-Received: by 2002:a7b:c761:: with SMTP id x1mr4475055wmk.100.1568217069595;
+        Wed, 11 Sep 2019 08:51:09 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwrcjV0TF/QpLhw2Hb2TkuwW5WlkfcWes3bPsKS74TJB47gt2uRH2r+YUum/UKrt2ooDWkz7w==
+X-Received: by 2002:a7b:c761:: with SMTP id x1mr4475030wmk.100.1568217069325;
+        Wed, 11 Sep 2019 08:51:09 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:102b:3795:6714:7df6? ([2001:b07:6468:f312:102b:3795:6714:7df6])
+        by smtp.gmail.com with ESMTPSA id r65sm4352320wmr.9.2019.09.11.08.51.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2019 08:51:08 -0700 (PDT)
+Subject: Re: [PATCH 0/3] fix emulation error on Windows bootup
+To:     Jan Dakinevich <jan.dakinevich@virtuozzo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Denis Lunev <den@virtuozzo.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <1566911210-30059-1-git-send-email-jan.dakinevich@virtuozzo.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <b35c8b24-7531-5a5d-1518-eaf9567359ae@redhat.com>
+Date:   Wed, 11 Sep 2019 17:51:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1566911210-30059-1-git-send-email-jan.dakinevich@virtuozzo.com>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 537054258809641393
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrtdefgdehfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Sep 2019 00:26:19 +1000
-Michael Ellerman <mpe@ellerman.id.au> wrote:
-
-> Hi Greg,
+On 27/08/19 15:07, Jan Dakinevich wrote:
+> This series intended to fix (again) a bug that was a subject of the 
+> following change:
+> 
+>   6ea6e84 ("KVM: x86: inject exceptions produced by x86_decode_insn")
+> 
+> Suddenly, that fix had a couple mistakes. First, ctxt->have_exception was 
+> not set if fault happened during instruction decoding. Second, returning 
+> value of inject_emulated_instruction was used to make the decision to 
+> reenter guest, but this could happen iff on nested page fault, that is not 
+> the scope where this bug could occur.
+> 
+> However, I have still deep doubts about 3rd commit in the series. Could
+> you please, make me an advise if it is the correct handling of guest page 
+> fault?
+> 
+> Jan Dakinevich (3):
+>   KVM: x86: fix wrong return code
+>   KVM: x86: set ctxt->have_exception in x86_decode_insn()
+>   KVM: x86: always stop emulation on page fault
+> 
+>  arch/x86/kvm/emulate.c | 4 +++-
+>  arch/x86/kvm/x86.c     | 4 +++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
 > 
 
-Bom dia ! :)
+Queued, thanks.  I added the WARN_ON_ONCE that Sean suggested.
 
-> Couple of comments ...
-> 
-> Greg Kurz <groug@kaod.org> writes:
-> > There's a bug in skiboot that causes the OPAL_XIVE_ALLOCATE_IRQ call
-> > to return the 32-bit value 0xffffffff when OPAL has run out of IRQs.
-> > Unfortunatelty, OPAL return values are signed 64-bit entities and
-> > errors are supposed to be negative. If that happens, the linux code
-> > confusingly treats 0xffffffff as a valid IRQ number and panics at some
-> > point.
-> >
-> > A fix was recently merged in skiboot:
-> >
-> > e97391ae2bb5 ("xive: fix return value of opal_xive_allocate_irq()")
-> >
-> > but we need a workaround anyway to support older skiboots already
-> > on the field.
->   ^
->   in
->  
-> >
-> > Internally convert 0xffffffff to OPAL_RESOURCE which is the usual error
-> > returned upon resource exhaustion.
-> 
-> This should go to stable, any idea what versions it should go back to?
-> Probably whenever the xive code was introduced?
-> 
-
-Yes I guess so. This would mean v4.12. I'll add the appropriate stable
-tag before re-posting, and address all the other remarks of course.
-
-> > Signed-off-by: Greg Kurz <groug@kaod.org>
-> > ---
-> >  arch/powerpc/sysdev/xive/native.c |   13 +++++++++++--
-> >  1 file changed, 11 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/powerpc/sysdev/xive/native.c b/arch/powerpc/sysdev/xive/native.c
-> > index 37987c815913..c35583f84f9f 100644
-> > --- a/arch/powerpc/sysdev/xive/native.c
-> > +++ b/arch/powerpc/sysdev/xive/native.c
-> > @@ -231,6 +231,15 @@ static bool xive_native_match(struct device_node *node)
-> >  	return of_device_is_compatible(node, "ibm,opal-xive-vc");
-> >  }
-> >  
-> > +static int64_t opal_xive_allocate_irq_fixup(uint32_t chip_id)
->           ^                                    ^
->           Can you use s64 here and u32 here ....
-> 
-> Instead of calling this opal_xive_allocate_irq_fixup() and relying on
-> all callers to call the fixup, can we rename the opal wrapper and leave
-> this function's name unchanged, eg:
-> 
-> -OPAL_CALL(opal_xive_allocate_irq,              OPAL_XIVE_ALLOCATE_IRQ);
-> +OPAL_CALL(opal_xive_allocate_irq_raw,          OPAL_XIVE_ALLOCATE_IRQ);
-> 
-> 
-> > +{
-> > +	s64 irq = opal_xive_allocate_irq(chip_id);
-> > +
-> > +#define XIVE_ALLOC_NO_SPACE	0xffffffff /* No possible space */
-> > +	return
-> > +		irq == XIVE_ALLOC_NO_SPACE ? OPAL_RESOURCE : irq;
-> > +}
-> 
-> I don't really like the #define and the weird indenting and so on, can
-> we instead do it like:
-> 
-> 	/*
->          * Old versions of skiboot can incorrectly return 0xffffffff to
->          * indicate no space, fix it up here.
->          */
-> 	return irq == 0xffffffff ? OPAL_RESOURCE : irq;
-> 
-> cheers
+Paolo
