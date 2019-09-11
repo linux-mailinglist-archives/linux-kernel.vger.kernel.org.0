@@ -2,108 +2,356 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A35B6B032B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35FD4B032F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:56:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729750AbfIKRy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 13:54:57 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40768 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729352AbfIKRy5 (ORCPT
+        id S1729815AbfIKR4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 13:56:38 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44426 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729699AbfIKR4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 13:54:57 -0400
-Received: by mail-pf1-f195.google.com with SMTP id x127so14161333pfb.7;
-        Wed, 11 Sep 2019 10:54:56 -0700 (PDT)
+        Wed, 11 Sep 2019 13:56:36 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k1so10484068pls.11
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 10:56:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hVAmdWRlaxMqfcknDHMrIO4GwZviw2k7zF3Deg03FGs=;
-        b=Jtm7zYN/3BPBHV71cSqvO7q3OxMIAkTDNLyHSKVttZKkze0neUTRRu+k9y9nUDPEIJ
-         4QnZEeEU8MX+GWmV3XSfBVHtsIjkzHwhIM2Z9oYyz5jMPg7zNyBYbMyaT91v89Mik2gM
-         /qdyt0i2kxDHF7y5LUTfXkfwA+LEwPLGZ+mbvB9TlO8Wxh+9Kp7Q2cr2B5xxGBiCB3Nb
-         HgPf7XQfXO7AOnjDwLWcmBsHz4oe4USv7/RZB5EzmbiQcm0/p/yfwa82yDlS+frVk/RY
-         beFTBN0aIaRW01N9AFgUJQzTvKThoUUseeVOkehN458v1qRTAC9Lxv54RznIZl5VdS6G
-         GNjQ==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9UDE7fGt18+1cBH1BDzpFJT4FbsQW05ecK8AZmM/NuA=;
+        b=HMQSTGXvm3TbYLM+4OX5mmxZ3apw+mmeOz9yn6qO0J32o5VsrBER96caw3agnpU24E
+         fJiMK8/+dWCToVQL4PSvhpP6QPJjivQyX7crT31ZH5JTfdMhiirFKVmH92nHhcJ609Z3
+         WtNp2MutVPfrX9FhJqovRAO9Cp8zIwc8J2AlE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hVAmdWRlaxMqfcknDHMrIO4GwZviw2k7zF3Deg03FGs=;
-        b=fowUJ/EehU/lyjcvLqzYGL/ix0P7vhxHJgiNLd5YqVkIizXbrWtXVIM5iMBGE7Dz7f
-         T9saOBpqceLMsvt8yhrQsNica1izQ967GYBlE3UjcSl5yMntNbBjML/dSN0KV4mbddaJ
-         y6aebqASBkmNP7whU9N6hdMJ90tyGyyBD4R7XrV1PjTCXzjE5AMvvS9KxrRdxc1Zx4m5
-         /c/LC5YNZyAGxxokNBRCNgf55E8Jz8CXDGM485wtGs1jyETY6+ROwtguAvxgW8ZtXvjG
-         rlAgmSk1E7EFb05h0D5+oIsoEgdOtFY/itcA8noyxQloRJ5SaW19BSPQcufufmwFLhjj
-         t+tQ==
-X-Gm-Message-State: APjAAAWjXeB+GU7L5+6dOq1jIrg8cChxo/Ffp48IU9ufWfSJjFXirWbR
-        KhcKqqTGEPuPH3NrgMbLJXs6VuTw
-X-Google-Smtp-Source: APXvYqy2FvuGYRN6QinUeQL+5/39/wahbZLGdnRk9wVpivns5lnmWAojDdnq8q10lpLzdfR2JkoH7w==
-X-Received: by 2002:a17:90a:1903:: with SMTP id 3mr6821217pjg.80.1568224496232;
-        Wed, 11 Sep 2019 10:54:56 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id k4sm4911733pfa.95.2019.09.11.10.54.54
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9UDE7fGt18+1cBH1BDzpFJT4FbsQW05ecK8AZmM/NuA=;
+        b=Uf38YBDgnYkj3tTNMf8iXEiEPoY5wzWXr3/tH9bUGh6EUMVYwItD5PAMJTHk1GV5JI
+         KPEkyW9kfNb8t9gt8co86b+uopBF48VGi3gj6nj8uhvaPq7LCcimP/cVQOu7w0K/bG06
+         ZMlz+6wRdUJ2a3QAvIFSOC3sJEnL3f2nHkjJeOkmfcbsJ7ROGAn4dzU7zRZBwT2vVX/I
+         eBjwT92iWeyCgRZp0Hq9TBRKNYwL4fC8/B5WzU9ekZDREM8h2wINqR5Xda97259wVsOM
+         GG7RTyoowVTYpz6pNXQxo5yXSI7MMWlF2vihZu5jB/D0zmXICqdkEXJMekQdOPLhxuNw
+         HxSw==
+X-Gm-Message-State: APjAAAWwRp6vG0EuZzel2uAgLdkkxl6WFLxWX6zYENARmDKvOeVqZSlQ
+        IbHHxT9cQV5ipuQ1Ug2ARwbjRg==
+X-Google-Smtp-Source: APXvYqz61t4znS782zVi8rUTsjPxf6eB2RreSFzX5GFLSzM65LFj+KZvioGkJPVyXINo+2vFEokfWw==
+X-Received: by 2002:a17:902:fe93:: with SMTP id x19mr37602186plm.337.1568224594911;
+        Wed, 11 Sep 2019 10:56:34 -0700 (PDT)
+Received: from rj-aorus.ric.broadcom.com ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id 143sm19361751pgc.6.2019.09.11.10.56.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Sep 2019 10:54:54 -0700 (PDT)
-Date:   Wed, 11 Sep 2019 10:54:53 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Loic Poulain <loic.poulain@linaro.org>
-Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 1/2] watchdog: pm8916_wdt: fix pretimeout registration
- flow
-Message-ID: <20190911175453.GA31612@roeck-us.net>
-References: <20190906203054.26725-1-jorge.ramirez-ortiz@linaro.org>
- <4231aab1-c538-a14f-cea1-ceb28781c7bb@roeck-us.net>
- <CAMZdPi-P_AopbbyJEWDbnm7X8MtxTzs=MN13+UFndL2OK5VReg@mail.gmail.com>
+        Wed, 11 Sep 2019 10:56:34 -0700 (PDT)
+Subject: Re: [PATCH] firmware: broadcom: add OP-TEE based BNXT f/w manager
+To:     Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        tee-dev@lists.linaro.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        Vikas Gupta <vikas.gupta@broadcom.com>
+References: <1568128624-2902-1-git-send-email-sheetal.tigadoli@broadcom.com>
+ <20190910171601.GA12665@kroah.com>
+ <CAFD6DHjOV9ChRXsuoanXh0JN6DW-AUxTFdcu8PKTwGa5wW7e8A@mail.gmail.com>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <ce00990d-b2ad-ee66-cb0f-13ff2580bfaf@broadcom.com>
+Date:   Wed, 11 Sep 2019 10:56:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMZdPi-P_AopbbyJEWDbnm7X8MtxTzs=MN13+UFndL2OK5VReg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAFD6DHjOV9ChRXsuoanXh0JN6DW-AUxTFdcu8PKTwGa5wW7e8A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 10:04:12AM +0200, Loic Poulain wrote:
-> Hi Guenter, Jorge,
+
+
+On 9/11/19 10:53 AM, Sheetal Tigadoli wrote:
+> Thanks for the review and  comments.
 > 
-> On Mon, 9 Sep 2019 at 00:50, Guenter Roeck <linux@roeck-us.net> wrote:
+> On Tue, Sep 10, 2019 at 10:46 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>>
+>> On Tue, Sep 10, 2019 at 08:47:04PM +0530, Sheetal Tigadoli wrote:
+>>> From: Vikas Gupta <vikas.gupta@broadcom.com>
+>>>
+>>> This driver registers on TEE bus to interact with OP-TEE based
+>>> BNXT firmware management modules
+>>>
+>>> Signed-off-by: Vikas Gupta <vikas.gupta@broadcom.com>
+>>> Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+>>> ---
+>>>   drivers/firmware/broadcom/Kconfig             |   8 +
+>>>   drivers/firmware/broadcom/Makefile            |   1 +
+>>>   drivers/firmware/broadcom/tee_bnxt_fw.c       | 447 ++++++++++++++++++++++++++
+>>>   include/linux/firmware/broadcom/tee_bnxt_fw.h |  17 +
+>>>   4 files changed, 473 insertions(+)
+>>>   create mode 100644 drivers/firmware/broadcom/tee_bnxt_fw.c
+>>>   create mode 100644 include/linux/firmware/broadcom/tee_bnxt_fw.h
+>>>
+>>> diff --git a/drivers/firmware/broadcom/Kconfig b/drivers/firmware/broadcom/Kconfig
+>>> index 6468082..a846a21 100644
+>>> --- a/drivers/firmware/broadcom/Kconfig
+>>> +++ b/drivers/firmware/broadcom/Kconfig
+>>> @@ -22,3 +22,11 @@ config BCM47XX_SPROM
+>>>          In case of SoC devices SPROM content is stored on a flash used by
+>>>          bootloader firmware CFE. This driver provides method to ssb and bcma
+>>>          drivers to read SPROM on SoC.
+>>> +
+>>> +config TEE_BNXT_FW
+>>> +     bool "Broadcom BNXT firmware manager"
+>>> +     depends on ARCH_BCM_IPROC && OPTEE
+>>
+>> No ability to build with compile testing?
+> Will add "|| COMPILE_TEST"
+>>
+>>> +     default ARCH_BCM_IPROC
+>>> +     help
+>>> +       This module help to manage firmware on Broadcom BNXT device. The module
+>>> +       registers on tee bus and invoke calls to manage firmware on BNXT device.
+>>> diff --git a/drivers/firmware/broadcom/Makefile b/drivers/firmware/broadcom/Makefile
+>>> index 72c7fdc..17c5061 100644
+>>> --- a/drivers/firmware/broadcom/Makefile
+>>> +++ b/drivers/firmware/broadcom/Makefile
+>>> @@ -1,3 +1,4 @@
+>>>   # SPDX-License-Identifier: GPL-2.0-only
+>>>   obj-$(CONFIG_BCM47XX_NVRAM)          += bcm47xx_nvram.o
+>>>   obj-$(CONFIG_BCM47XX_SPROM)          += bcm47xx_sprom.o
+>>> +obj-$(CONFIG_TEE_BNXT_FW)            += tee_bnxt_fw.o
+>>> diff --git a/drivers/firmware/broadcom/tee_bnxt_fw.c b/drivers/firmware/broadcom/tee_bnxt_fw.c
+>>> new file mode 100644
+>>> index 00000000..89a48fd
+>>> --- /dev/null
+>>> +++ b/drivers/firmware/broadcom/tee_bnxt_fw.c
+>>> @@ -0,0 +1,447 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Copyright 2019 Broadcom.
+>>> + */
+>>> +
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/slab.h>
+>>> +#include <linux/tee_drv.h>
+>>> +#include <linux/uuid.h>
+>>> +
+>>> +#include <linux/firmware/broadcom/tee_bnxt_fw.h>
+>>> +
+>>> +#define DRIVER_NAME  "tee-bnxt-fw"
+>>
+>> KBUILD_MODNAME?
+> Will remove DRIVER_NAME macro and use KBUILD_MODNAME instead.
+>>
+>>> +#define MAX_SHM_MEM_SZ       SZ_4M
+>>
+>> Why?
+> Limiting max data buffer size per request to optee to 4MB.
+>>
+>>> +
+>>> +#define MAX_TEE_PARAM_ARRY_MEMB              4
+>>> +
+>>> +enum ta_cmd {
+>>> +/*
+>>> + * TA_CMD_BNXT_FASTBOOT - boot bnxt device by copying f/w into sram
+>>> + *
+>>> + * param[0] unused
+>>> + * param[1] unused
+>>> + * param[2] unused
+>>> + * param[3] unused
+>>> + *
+>>> + * Result:
+>>> + * TEE_SUCCESS - Invoke command success
+>>> + * TEE_ERROR_ITEM_NOT_FOUND - Corrupt f/w image found on memory
+>>> + */
+>>> +     TA_CMD_BNXT_FASTBOOT = 0,
+>>> +
+>>
+>> Please indent the comments too.  As-is this is hard to read.
+> Will do
+>>
+>>
+>>> +/*
+>>> + * TA_CMD_BNXT_HEALTH_STATUS - to check health of bnxt device
+>>> + *
+>>> + * param[0] (out value) - value.a: health status
+>>> + * param[1] unused
+>>> + * param[2] unused
+>>> + * param[3] unused
+>>> + *
+>>> + * Result:
+>>> + * TEE_SUCCESS - Invoke command success
+>>> + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
+>>> + */
+>>> +     TA_CMD_BNXT_HEALTH_STATUS,
+>>
+>> Should all of these have explicit values?
+> Will initialize each cmd (TA_CMD_BNXT_*) explicitly
+>>
+>>> +
+>>> +/*
+>>> + * TA_CMD_BNXT_HANDSHAKE - to check bnxt device is booted
+>>> + *
+>>> + * param[0] (in value)  - value.a: max timeout value
+>>> + * param[0] (out value) - value.a: boot status
+>>> + * param[1] unused
+>>> + * param[2] unused
+>>> + * param[3] unused
+>>> + *
+>>> + * Result:
+>>> + * TEE_SUCCESS - Invoke command success
+>>> + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
+>>> + */
+>>> +     TA_CMD_BNXT_HANDSHAKE,
+>>> +
+>>> +/*
+>>> + * TA_CMD_BNXT_COPY_COREDUMP - copy the core dump into shm
+>>> + *
+>>> + * param[0] (in value) - value.a: offset at which data to be copied from
+>>> + *                    value.b: size of the data
+>>> + * param[1] unused
+>>> + * param[2] unused
+>>> + * param[3] unused
+>>> + *
+>>> + * Result:
+>>> + * TEE_SUCCESS - Invoke command success
+>>> + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
+>>> + * TEE_ERROR_ITEM_NOT_FOUND - Corrupt core dump
+>>> + */
+>>> +     TA_CMD_BNXT_COPY_COREDUMP,
+>>> +
+>>> +/*
+>>> + * TA_CMD_BNXT_FW_UPGRADE - upgrade the bnxt firmware
+>>> + *
+>>> + * param[0] (in value) - value.a: size of the f/w image
+>>> + * param[1] unused
+>>> + * param[2] unused
+>>> + * param[3] unused
+>>> + *
+>>> + * Result:
+>>> + * TEE_SUCCESS - Invoke command success
+>>> + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
+>>> + */
+>>> +     TA_CMD_BNXT_FW_UPGRADE,
+>>> +};
+>>> +
+>>> +/**
+>>> + * struct tee_bnxt_fw_private - OP-TEE bnxt private data
+>>> + * @dev:             OP-TEE based bnxt device.
+>>> + * @ctx:             OP-TEE context handler.
+>>> + * @session_id:              TA session identifier.
+>>> + */
+>>> +struct tee_bnxt_fw_private {
+>>> +     struct device *dev;
+>>
+>> Why is the pointer back needed?
+> the dev pointer is used in "dev_err()"
+>>
+>>> +     struct tee_context *ctx;
+>>> +     u32 session_id;
+>>> +     struct tee_shm *fw_shm_pool;
+>>> +};
+>>> +
+>>> +static struct tee_bnxt_fw_private pvt_data;
+>>> +
+>>> +static inline void prepare_args(int cmd,
+>>> +                             struct tee_ioctl_invoke_arg *inv_arg,
+>>> +                             struct tee_param *param)
+>>> +{
+>>> +     memset(inv_arg, 0, sizeof(*inv_arg));
+>>> +     memset(param, 0, (MAX_TEE_PARAM_ARRY_MEMB * sizeof(*param)));
+>>> +
+>>> +     inv_arg->func = cmd;
+>>> +     inv_arg->session = pvt_data.session_id;
+>>> +     inv_arg->num_params = MAX_TEE_PARAM_ARRY_MEMB;
+>>> +
+>>> +     /* Fill invoke cmd params */
+>>> +     switch (cmd) {
+>>> +     case TA_CMD_BNXT_HEALTH_STATUS:
+>>> +             param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+>>> +             break;
+>>> +     case TA_CMD_BNXT_HANDSHAKE:
+>>> +             param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INOUT;
+>>> +             break;
+>>> +     case TA_CMD_BNXT_COPY_COREDUMP:
+>>> +     case TA_CMD_BNXT_FW_UPGRADE:
+>>> +             param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
+>>> +             param[0].u.memref.shm = pvt_data.fw_shm_pool;
+>>> +             param[0].u.memref.size = MAX_SHM_MEM_SZ;
+>>> +             param[0].u.memref.shm_offs = 0;
+>>> +             param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT;
+>>> +             break;
+>>> +     case TA_CMD_BNXT_FASTBOOT:
+>>> +     default:
+>>> +             /* Nothing to do */
+>>> +             break;
+>>> +     }
+>>> +}
+>>> +
+>>> +/**
+>>> + * tee_bnxt_fw_load() - Load the bnxt firmware
+>>> + *               Uses an OP-TEE call to start a secure
+>>> + *               boot process.
+>>> + * Returns 0 on success, negative errno otherwise.
+>>> + */
+>>> +int tee_bnxt_fw_load(void)
+>>> +{
+>>> +     int ret = 0;
+>>> +     struct tee_ioctl_invoke_arg inv_arg;
+>>> +     struct tee_param param[MAX_TEE_PARAM_ARRY_MEMB];
+>>> +
+>>> +     if (!pvt_data.ctx)
+>>> +             return -ENODEV;
+>>> +
+>>> +     prepare_args(TA_CMD_BNXT_FASTBOOT, &inv_arg, param);
+>>> +
+>>> +     ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
+>>> +     if ((ret < 0) || (inv_arg.ret != 0)) {
+>>> +             dev_err(pvt_data.dev, "TA_CMD_BNXT_LOAD invoke err: %x\n",
+>>> +                     (ret < 0) ? ret : inv_arg.ret);
+>>> +             return -EINVAL;
+>>> +     }
+>>> +
+>>> +     return 0;
+>>> +}
+>>> +EXPORT_SYMBOL(tee_bnxt_fw_load);
+>>
+>> Why are you exporting symbols for a single file?  What uses these?
+> These apis will be used by bnxt driver, still working on open sourcing changes
 > 
-> > On 9/6/19 1:30 PM, Jorge Ramirez-Ortiz wrote:
-> > > When an IRQ is present in the dts, the probe function shall fail if
-> > > the interrupt can not be registered.
-> > >
-> >
-> > The author intended differently, and did not want registration to fail
-> > in this situation, following the logic that it is better to have a
-> > standard watchdog without pretimeout than no watchdog at all.
-> >
-> 
-> Indeed, but I tend to agree with this change since it aligns behavior with
-> other
-> watchdog drivers and I assume there is a serious issue if request_irq fails.
-> I suggest adding a dev_err message in such case.
-> 
-> Copying the author; I am not inclined to accept such a change without
-> > input from the driver author.
-> >
-> > Similar, for the deferred probe, we'll need to know from the driver author
-> > if this is a concern. In general it is, but there are cases where
-> > -EPROBE_DEFFER is never returned in practice (eg for some SoC watchdog
-> > drivers).
-> >
-> 
-> The IRQ controller is the SPMI bus parent node whose driver (MFD_SPMI_PMIC)
-> is a direct dependency of pm8916_wdt. I'm not sure in which scenario this
-> could
-> happen.
-> 
-Not sure what the action item is. Accept the patch as-is (Reviewed-by
-appreciated), or resubmit without the -EPROBE_DEFER check ?
+
+Hi Greg,
+
+The above API is used by the bnxt_en Ethernet driver to load firmware 
+that is stored in the secure region of DDR that can only be accessed 
+through secure calls via TEE.
+
+EXPORT_SYMBOL is needed given that bnxt_en driver (the client that uses 
+this API) is usually loaded as a module.
+
+>> This feels really wrong, are you sure this all is correct?
+
+Is there anything specific that looks wrong? Please help to point out 
+and we'll fix it.
 
 Thanks,
-Guenter
+
+Ray
+
+>>
+>> I stopped reading here :)
+>>
+>> thanks,
+>>
+>> greg k-h
