@@ -2,146 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E25E4B0458
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 21:00:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAB8AB0461
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 21:04:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730140AbfIKTAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 15:00:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59240 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730023AbfIKTAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 15:00:47 -0400
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B22C289AC4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 19:00:46 +0000 (UTC)
-Received: by mail-qt1-f199.google.com with SMTP id k22so21936949qtm.7
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 12:00:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=GbrEn6qZqNk8hB7L2+kRT1tArBh8lvQk9OpZiosnvlQ=;
-        b=FEwwFtDVywhAVq9UWFkS1keND3C5nhqI4Iz7ENxTHtd23eexrl6D0ldWYvwffua+j4
-         npY0ePsPjbkQeUnhHv4NJuPoMrx4KQmKb5+zSJl17JS+V/dnrBa/C0HM3AjzhdNdWhFB
-         LrIOr2NCvJ44zCA/2X4C+PCi2b4IWVpn8tkOlODdT2dJZwiBpOurYhKzS9/AQ9ZuKTd8
-         RFXG07qhAO1lcmCNjfXtgBUhGI7RypfpuBW6QWIvUPOooMhfwB0gf+5Rpna+NztmFODV
-         Gq8K6tHcsM8pn+qI8jBVO5xYf6pJq+AWGiTRw3/j0G6/Soc/CpIH6gulWCyiwGalZwgd
-         EYFg==
-X-Gm-Message-State: APjAAAV3A8jU9fIPGdSM0XRxSpWYdqxAKrGf3eGbToBmJCiiLAP70xs2
-        ACHLWxagqngmaDNuwy6xb8QoCySd3yMhT8Ywo5AFEdvQl0rABqnjhNsWre9S29rIIZJJEPLOof9
-        3oKcYbr86esa18gc0BO1LUK45
-X-Received: by 2002:ae9:ef4c:: with SMTP id d73mr36153824qkg.57.1568228445882;
-        Wed, 11 Sep 2019 12:00:45 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzXFPZbhdDbQqKjZl2wxJNQJHt+WIAUtb8fiF2AknifKLJLpxZIaYfDi+H19hMWci80medUTQ==
-X-Received: by 2002:ae9:ef4c:: with SMTP id d73mr36153781qkg.57.1568228445627;
-        Wed, 11 Sep 2019 12:00:45 -0700 (PDT)
-Received: from [192.168.1.4] (192-0-145-99.cpe.teksavvy.com. [192.0.145.99])
-        by smtp.gmail.com with ESMTPSA id c26sm13444792qtk.93.2019.09.11.12.00.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2019 12:00:44 -0700 (PDT)
-Subject: Re: [PATCH glibc 2.31 1/5] glibc: Perform rseq(2) registration at C
- startup and thread creation (v12)
-To:     Florian Weimer <fweimer@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha@sourceware.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-References: <20190807142726.2579-1-mathieu.desnoyers@efficios.com>
- <20190807142726.2579-2-mathieu.desnoyers@efficios.com>
- <8736h2sn8y.fsf@oldenburg2.str.redhat.com>
-From:   Carlos O'Donell <carlos@redhat.com>
-Organization: Red Hat
-Message-ID: <7db64714-3dc5-b322-1edc-736b08ee7d63@redhat.com>
-Date:   Wed, 11 Sep 2019 15:00:43 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730194AbfIKTEN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 15:04:13 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38676 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728105AbfIKTEN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 15:04:13 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8BIxecq070989;
+        Wed, 11 Sep 2019 19:04:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=/eClILhHkjw0LpYIhEDRFhF0ehDvHS1dirEpGKitMHs=;
+ b=nTa9vXO4zoomQrSYBGOhwFZIkgs6tPetu3O5OUM5P9V1ZX4PFiQPySoWDvF1uNJIa69U
+ JZD+IQXlGXm1nw7Cr4wSMXSsjor0sUp5Papj2hggmPgzYHShrZgJtzwpqrk0f9WEQ6u0
+ SN2IHrtNsHQu3t7SON1BXWZFr+SLkEUZ4V4l2tlI6V9V9q0NBiE3k4HaXrj7lyID+X84
+ q5lqtfHjiTDmIGBTgf0okA5YMpcL/6EGsI8JUMrnkuBzdHp6ThB3YJUedHaRSWmw/rBf
+ mbEzsB5/F05d5fEsd/1lBMvyWzBfrkLOStRUULjK/R7gBN1cza8y/uGDzOC+BMfSVQL5 jA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2uw1m947aq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 19:04:08 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8BJ3ggE015899;
+        Wed, 11 Sep 2019 19:04:07 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2uy33b2ht8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 19:04:07 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8BJ421Y012734;
+        Wed, 11 Sep 2019 19:04:02 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Sep 2019 12:04:01 -0700
+Date:   Wed, 11 Sep 2019 22:03:55 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Sandro Volery <sandro@volery.com>
+Cc:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux@rasmusvillemoes.dk
+Subject: Re: [PATCH v4] Staging: exfat: avoid use of strcpy
+Message-ID: <20190911190355.GA18977@kadam>
+References: <20190911195303.GA27966@volery>
 MIME-Version: 1.0
-In-Reply-To: <8736h2sn8y.fsf@oldenburg2.str.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911195303.GA27966@volery>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=965
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909110175
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909110174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/19 2:26 PM, Florian Weimer wrote:
-> * Mathieu Desnoyers:
-> 
->> +#ifdef SHARED
->> +  if (rtld_active ())
->> +    {
->> +      /* Register rseq ABI to the kernel.   */
->> +      (void) rseq_register_current_thread ();
->> +    }
->> +#else
-> 
-> I think this will need *another* check for the inner libc in an audit
-> module.  See what we do in malloc.  __libc_multiple_libcs is supposed to
-> cover that, but it's unfortunately not reliable.
-> 
-> I believe without that additional check, the first audit module we load
-> will claim rseq, and the main program will not have control over the
-> rseq area.  Reversed roles would be desirable here.
-> 
-> In October, I hope to fix __libc_multiple_libcs, and then you can use
-> just that.  (We have a Fedora patch that is supposed to fix it, I need
-> to documen the mechanism and upstream it.)
+On Wed, Sep 11, 2019 at 09:53:03PM +0200, Sandro Volery wrote:
+> diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
+> index da8c58149c35..4336fee444ce 100644
+> --- a/drivers/staging/exfat/exfat_core.c
+> +++ b/drivers/staging/exfat/exfat_core.c
+> @@ -2960,18 +2960,15 @@ s32 resolve_path(struct inode *inode, char *path, struct chain_t *p_dir,
+>  	struct super_block *sb = inode->i_sb;
+>  	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+>  	struct file_id_t *fid = &(EXFAT_I(inode)->fid);
+> -
+> -	if (strlen(path) >= (MAX_NAME_LENGTH * MAX_CHARSET_SIZE))
+> +	
 
-This is a technical issue we can resolve.
+You have added a tab here.
 
->> +/* Advertise Restartable Sequences registration ownership across
->> +   application and shared libraries.
->> +
->> +   Libraries and applications must check whether this variable is zero or
->> +   non-zero if they wish to perform rseq registration on their own. If it
->> +   is zero, it means restartable sequence registration is not handled, and
->> +   the library or application is free to perform rseq registration. In
->> +   that case, the library or application is taking ownership of rseq
->> +   registration, and may set __rseq_handled to 1. It may then set it back
->> +   to 0 after it completes unregistering rseq.
->> +
->> +   If __rseq_handled is found to be non-zero, it means that another
->> +   library (or the application) is currently handling rseq registration.
->> +
->> +   Typical use of __rseq_handled is within library constructors and
->> +   destructors, or at program startup.  */
->> +
->> +int __rseq_handled;
-> 
-> Are there any programs that use __rseq_handled *today*?
-> 
-> I'm less convinced that we actually need this.  I don't think we have
-> ever done anything like that before, and I don't think it's necessary.
-> Any secondary rseq library just needs to note if it could perform
-> registration, and if it failed to do so, do not perform unregistration
-> in a pthread destructor callback.
-> 
-> Sure, there's the matter of pthread destructor ordering, but that
-> problem is not different from any other singleton (thread-local or not),
-> and the fix for the last time this has come up (TLS destructors vs
-> dlclose) was to upgrade glibc.
+> +	if (strscpy(name_buf, path, sizeof(name_buf)) < 0)
+>  		return FFS_INVALIDPATH;
+>  
+> -	strcpy(name_buf, path);
+> -
+>  	nls_cstring_to_uniname(sb, p_uniname, name_buf, &lossy);
+>  	if (lossy)
+>  		return FFS_INVALIDPATH;
+>  
+> -	fid->size = i_size_read(inode);
+> -
+> +fid->size = i_size_read(inode);
 
-This is a braoder issue.
+And you accidentally deleted some white space here.
 
-Mathieu,
+I use vim, so I have it configured to highlight whitespace at the end of
+a line.  I don't remember how it's done now but I googled it for you.
+https://vim.fandom.com/wiki/Highlight_unwanted_spaces
 
-It would be easier to merge the patch set if it were just an unconditional
-registration like we do for set_robust_list().
-
-What's your thought there?
-
--- 
-Cheers,
-Carlos.
+regards,
+dan carpenter
