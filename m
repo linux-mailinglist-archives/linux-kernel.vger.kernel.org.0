@@ -2,58 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 380EDB0279
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:19:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B333B028B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 19:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfIKRTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 13:19:15 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40580 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729130AbfIKRTP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 13:19:15 -0400
-Received: by mail-oi1-f195.google.com with SMTP id b80so14756214oii.7
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 10:19:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=lagNI/PLpM9uenHkNSBRNWBaN+S5ImPbZCfrPAVgyoZodXY0XMilI8a7f1SDUFI/Xu
-         dSrjpK8H7cVk70GXik62BjDsXIxxII1Eu8yTystx+oGk6id0WS9H6g5c3lPKXCMSVoMH
-         ay6H9rjsvsFnLr/qJxufpBUHrAUDWQ4AGV7/HwzUGL7O/4T5t65fidgBv235l++qLo+l
-         nWE6/fKIcpesO4kYLQNCkK0FpZA+NY3ouD35cygxf0Eqh7R1q90GET7sUOUlpBZfGNav
-         wjagJn9lYUVbPjvd/GOv+4XslamgIMrt972wck5EQgZE1jrVyEJewovQYcyqzx0/bhkj
-         0znQ==
-X-Gm-Message-State: APjAAAVGW4DlxcuqcDexrKrZX/NO3AeA8KrwWXyMk6da5MovG1X8X1/T
-        C9x1WBx7qbQF23r612mQ+Bw=
-X-Google-Smtp-Source: APXvYqyXdUt23tgPQin40lxwUV+EKeatQGhs0ErHQZEAGbpfUnvyS+B+QJgGXG2sgbFG5xYLgOPwRQ==
-X-Received: by 2002:aca:574c:: with SMTP id l73mr5397367oib.47.1568222353181;
-        Wed, 11 Sep 2019 10:19:13 -0700 (PDT)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id t18sm8721368otd.60.2019.09.11.10.19.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Sep 2019 10:19:12 -0700 (PDT)
-Subject: Re: [PATCH] Added QUIRKs for ADATA XPG SX8200 Pro 512GB
-To:     Gabriel C <nix.or.die@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>, linux-nvme@lists.infradead.org
-References: <CAEJqkgivvhQ=tOOuLjY=iwBVCKQhmmjpfNDa1yJ5SreNQubw6Q@mail.gmail.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <335f6d13-e61b-c683-6589-cc8b097a9e57@grimberg.me>
-Date:   Wed, 11 Sep 2019 10:19:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729592AbfIKRV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 13:21:29 -0400
+Received: from mail.andi.de1.cc ([85.214.55.253]:45194 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729130AbfIKRV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 13:21:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=LQxw/u540K2TPFsuUGW/nsJsLYCtpA6SW4wjQ2RiCn4=; b=Enw8fEVpNTlLP3CEbfW/3P9zv7
+        q6ZAWTnc0G0NtMPIWDXHVUSl5TYA2UAZbpLvdUBpVN2QBgr22U+sVuFtpzUJRScehYULw5zunqHgW
+        FvRUUiBY1bq1tpy/XM6ndBlK6ORNyaGPgXv7qV6fnFBFE0X+FT36SFVXY9LwLOUq6Dvc=;
+Received: from p200300ccff0b59001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff0b:5900:1a3d:a2ff:febf:d33a] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1i86It-0006kA-J3; Wed, 11 Sep 2019 19:21:15 +0200
+Received: from andi by aktux with local (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1i86It-0003Lz-0Q; Wed, 11 Sep 2019 19:21:15 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     lee.jones@linaro.org, daniel.thompson@linaro.org,
+        jingoohan1@gmail.com, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        dmurphy@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v3 0/2] backlight_lm3630a: add enable_gpios property
+Date:   Wed, 11 Sep 2019 19:21:04 +0200
+Message-Id: <20190911172106.12843-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAEJqkgivvhQ=tOOuLjY=iwBVCKQhmmjpfNDa1yJ5SreNQubw6Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.0 (-)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+To be able to handle the HWEN pin of the lm3630a, add
+an enable gpio to the driver and a property.
+
+Tested on Kobo Clara HD.
+
+Changes in v2:
+simplification and reordering
+
+Changes in v3:
+added acked-by
+removed legacy include
+
+Andreas Kemnade (2):
+  dt-bindings: backlight: lm3630a: add enable_gpios
+  backlight: lm3630a: add an enable gpio for the HWEN pin
+
+ .../bindings/leds/backlight/lm3630a-backlight.yaml       | 5 +++++
+ drivers/video/backlight/lm3630a_bl.c                     | 9 +++++++++
+ 2 files changed, 14 insertions(+)
+
+-- 
+2.20.1
+
