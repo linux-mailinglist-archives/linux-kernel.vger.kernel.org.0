@@ -2,100 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22000AF838
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 10:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CC82AF847
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2019 10:52:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfIKIsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 04:48:31 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:22350 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726724AbfIKIsb (ORCPT
+        id S1727236AbfIKIwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 04:52:25 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46568 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbfIKIwZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 04:48:31 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8B8kp03032729;
-        Wed, 11 Sep 2019 10:48:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=z6ENkti3uAiwejD5PjtOMXUIXSlg5W0YF9pqxoz3ApI=;
- b=AdR7PLnhq76/wCtudwip3AwQvR6m5lINU6EJdjomYgaYVBQMZ3xrdCBJGzwLkfCBnyrw
- rz3NJh0GHibY8btNQ9xiJ/7CzI7nuHheo28Kg9NHr3awMceHpKcgRT3Ktrg2jQbj3vcG
- igVXtZyrCfHZPO3DWxhh/paMG4m3cCO8DrlzILLedMwdKXR/+oMUJYi1K5HJi5S6yBeI
- oVhfbImIi0hbGnE/56tJ0YUmKAl1qD/PknYe0WhC3FSzRMy+hKwRnqFpsXIj+br0XfCc
- PTyyzPF3h+8bufyOwrcd4wB6WSO2MfAxoJc5ZmQyLv7oGlj535azzuRTYs362fKwsExV vQ== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2uv2aw9qx2-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 11 Sep 2019 10:48:13 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 239E923;
-        Wed, 11 Sep 2019 08:48:05 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4D7E42B59F2;
-        Wed, 11 Sep 2019 10:48:05 +0200 (CEST)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 11 Sep
- 2019 10:48:04 +0200
-Received: from localhost (10.201.20.122) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 11 Sep 2019 10:48:03
- +0200
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <benjamin.gaignard@linaro.org>, <airlied@linux.ie>,
-        <daniel@ffwll.ch>, <hwentlan@amd.com>, <manasi.d.navare@intel.com>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH] drm: fix warnings in DSC
-Date:   Wed, 11 Sep 2019 10:47:59 +0200
-Message-ID: <20190911084759.6946-1-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
+        Wed, 11 Sep 2019 04:52:25 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8B8meLM097263;
+        Wed, 11 Sep 2019 08:52:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=9q4LtJAqv0F0QoJlz3XTDUNIJczhe+LxSRL/PZPmYSg=;
+ b=L2GBadGJQHoW78Jp6NDSKabKAFE/p2MummzFJ94mxtzDuql2oH4YNTSUwd4MzC96NUP3
+ 0GBIwotwBC7xFfWfVhxKvIxBoLN8NPxuScODyS4gRaC6MZlOomnOy8aASOufMcIEfipJ
+ XKMYPQmGMJ85p+5CBOucLss/TZbme5Xca/azhLHaJKYWA2y76aGsxht4OXpJtyuFlVol
+ yB/pVmolTI5H5uQkC/SrDaXqKD+lWqGXQhfdPnvnZwuKYyveuu6LdOGOx6315AIVS8OA
+ akOkDfmUFtm9OOgr6OI/vj0ftm9Ntz3wedlB20vCzC4tmXwsbC+r9aWqIdj9G17Eiwmo uQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2uw1m90hyu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 08:52:13 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8B8m5Ng025016;
+        Wed, 11 Sep 2019 08:50:13 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2uxk0t0gy1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Sep 2019 08:50:13 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8B8o423027882;
+        Wed, 11 Sep 2019 08:50:05 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Sep 2019 01:50:04 -0700
+Date:   Wed, 11 Sep 2019 11:49:56 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Sandro Volery <sandro@volery.com>
+Cc:     gregkh@linuxfoundation.org, davem@davemloft.net,
+        aaro.koskinen@iki.fi, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: octeon: Avoid several usecases of strcpy
+Message-ID: <20190911084956.GH15977@kadam>
+References: <20190911062359.GA14886@volery>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.122]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-11_06:2019-09-10,2019-09-11 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911062359.GA14886@volery>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909110084
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9376 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909110084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove always false comparisons due to limited range of nfl_bpg_offset
-and scale_increment_interval fields.
-Warnings detected when compiling with W=1.
+On Wed, Sep 11, 2019 at 08:23:59AM +0200, Sandro Volery wrote:
+> strcpy was used multiple times in strcpy to write into dev->name.
+> I replaced them with strscpy.
+> 
+> Signed-off-by: Sandro Volery <sandro@volery.com>
+> ---
+>  drivers/staging/octeon/ethernet.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+> index 8889494adf1f..cf8e9a23ebf9 100644
+> --- a/drivers/staging/octeon/ethernet.c
+> +++ b/drivers/staging/octeon/ethernet.c
+> @@ -784,7 +784,7 @@ static int cvm_oct_probe(struct platform_device *pdev)
+>  			priv->imode = CVMX_HELPER_INTERFACE_MODE_DISABLED;
+>  			priv->port = CVMX_PIP_NUM_INPUT_PORTS;
+>  			priv->queue = -1;
+> -			strcpy(dev->name, "pow%d");
+> +			strscpy(dev->name, "pow%d", sizeof(dev->name));
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- drivers/gpu/drm/drm_dsc.c | 11 -----------
- 1 file changed, 11 deletions(-)
+Is there a program which is generating a warning for this code?  We know
+that "pow%d" is 6 characters and static analysis tools can understand
+this code fine so we know it's safe.
 
-diff --git a/drivers/gpu/drm/drm_dsc.c b/drivers/gpu/drm/drm_dsc.c
-index 77f4e5ae4197..27e5c6036658 100644
---- a/drivers/gpu/drm/drm_dsc.c
-+++ b/drivers/gpu/drm/drm_dsc.c
-@@ -336,12 +336,6 @@ int drm_dsc_compute_rc_parameters(struct drm_dsc_config *vdsc_cfg)
- 	else
- 		vdsc_cfg->nfl_bpg_offset = 0;
- 
--	/* 2^16 - 1 */
--	if (vdsc_cfg->nfl_bpg_offset > 65535) {
--		DRM_DEBUG_KMS("NflBpgOffset is too large for this slice height\n");
--		return -ERANGE;
--	}
--
- 	/* Number of groups used to code the entire slice */
- 	groups_total = groups_per_line * vdsc_cfg->slice_height;
- 
-@@ -371,11 +365,6 @@ int drm_dsc_compute_rc_parameters(struct drm_dsc_config *vdsc_cfg)
- 		vdsc_cfg->scale_increment_interval = 0;
- 	}
- 
--	if (vdsc_cfg->scale_increment_interval > 65535) {
--		DRM_DEBUG_KMS("ScaleIncrementInterval is large for slice height\n");
--		return -ERANGE;
--	}
--
- 	/*
- 	 * DSC spec mentions that bits_per_pixel specifies the target
- 	 * bits/pixel (bpp) rate that is used by the encoder,
--- 
-2.15.0
+regards,
+dan carpenter
 
