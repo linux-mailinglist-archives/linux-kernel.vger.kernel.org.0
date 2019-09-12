@@ -2,116 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D12CB0C52
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 12:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C74B0C58
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 12:12:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731007AbfILKLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 06:11:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48336 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730831AbfILKLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 06:11:38 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 41C60105786C;
-        Thu, 12 Sep 2019 10:11:37 +0000 (UTC)
-Received: from [10.36.117.168] (ovpn-117-168.ams2.redhat.com [10.36.117.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D1BF5D6A5;
-        Thu, 12 Sep 2019 10:11:35 +0000 (UTC)
-Subject: Re: [PATCH] hv_balloon: Add the support of hibernation
-From:   David Hildenbrand <david@redhat.com>
-To:     Dexuan Cui <decui@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>
-References: <1568245010-66879-1-git-send-email-decui@microsoft.com>
- <42de5835-8faa-2047-0f77-db51dd57b036@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <dfee4472-da92-fdc7-f277-c98c2e37d09b@redhat.com>
-Date:   Thu, 12 Sep 2019 12:11:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731035AbfILKMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 06:12:44 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53795 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730386AbfILKMo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 06:12:44 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1i8M5h-0001Ib-VH; Thu, 12 Sep 2019 12:12:41 +0200
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1i8M5g-0007GA-TS; Thu, 12 Sep 2019 12:12:40 +0200
+Date:   Thu, 12 Sep 2019 12:12:40 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Gilles Doffe <gilles.doffe@savoirfairelinux.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        mark rutland <mark.rutland@arm.com>,
+        festevam <festevam@gmail.com>, s hauer <s.hauer@pengutronix.de>,
+        rennes <rennes@savoirfairelinux.com>,
+        robh+dt <robh+dt@kernel.org>, linux-imx <linux-imx@nxp.com>,
+        kernel <kernel@pengutronix.de>,
+        =?iso-8859-1?Q?J=E9rome?= Oufella 
+        <jerome.oufella@savoirfairelinux.com>,
+        shawnguo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2] arm: dts: imx6qdl: add gpio expander pca9535
+Message-ID: <20190912101240.ml5jmdei5rvzesap@pengutronix.de>
+References: <20190719104615.5329-1-gilles.doffe@savoirfairelinux.com>
+ <20190722075341.e4ve45rneusiogtk@pengutronix.de>
+ <978100557.7721358.1568282514403.JavaMail.zimbra@savoirfairelinux.com>
 MIME-Version: 1.0
-In-Reply-To: <42de5835-8faa-2047-0f77-db51dd57b036@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Thu, 12 Sep 2019 10:11:37 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <978100557.7721358.1568282514403.JavaMail.zimbra@savoirfairelinux.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 12:08:06 up 117 days, 16:26, 67 users,  load average: 0.19, 0.17,
+ 0.09
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.09.19 12:08, David Hildenbrand wrote:
-> On 12.09.19 01:36, Dexuan Cui wrote:
->> When hibernation is enabled, we must ignore the balloon up/down and
->> hot-add requests from the host, if any.
->>
->> Fow now, if people want to test hibernation, please blacklist hv_balloon
->> or do not enable Dynamic Memory and Memory Resizing. See the comment in
->> balloon_probe() for more info.
->>
+Hi Gilles,
+
+On 19-09-12 06:01, Gilles Doffe wrote:
+> Hi Marco,
 > 
-> Why do you even care about supporting hibernation? Can't you just pause
-> the VM in the hypervisor and continue to live a happy life? :)
+> Thanks for your reply and sorry about the delay.
 
-(to be more precise, most QEMU/KVM distributions I am aware of don't
-support suspend/hibernation of guests for said reason, so I wonder why
-Hyper-V needs it)
+No worries ;)
 
+> ----- Le 22 Juil 19, à 9:53, Marco Felsch m.felsch@pengutronix.de a écrit :
+> 
+> > Hi Gilles,
+> > 
+> > can you adapt the patch title, I assumed that the base dtsi is adding a
+> > gpio-expander which makes no sense.
+> 
+> My first intent was to add the gpio-expander pca9535 into the imx6q-rex-pro.dts and in a future imx6qp-rex-ultra.dts
+> However I noticed that the sgtl5000 was already in the dtsi.
+> It is maybe due to the fact that like the pca9535, the sgtl5000 is present on the baseboard not on the SOM.
+> Thus I guess that baseboard stuff common to all rex SOM should be in imx6qdl-rex.dtsi and not in the dts.
+> Does-it seem correct to you ?
+
+Yes this is correct what Shawn and I mean is that you should adapt the
+commit title. Shawn already give you an example.
+
+> > 
+> > On 19-07-19 12:46, Gilles DOFFE wrote:
+> >> The pca9535 gpio expander is present on the Rex baseboard, but missing
+> >> from the dtsi.
+> >> 
+> >> Add the new gpio controller and the associated interrupt line
+> >> MX6QDL_PAD_NANDF_CS3__GPIO6_IO16.
+> >> 
+> >> Signed-off-by: Gilles DOFFE <gilles.doffe@savoirfairelinux.com>
+> >> ---
+> > 
+> > Having a changelog would be nice too.
+> > 
+> >>  arch/arm/boot/dts/imx6qdl-rex.dtsi | 19 +++++++++++++++++++
+> >>  1 file changed, 19 insertions(+)
+> >> 
+> >> diff --git a/arch/arm/boot/dts/imx6qdl-rex.dtsi
+> >> b/arch/arm/boot/dts/imx6qdl-rex.dtsi
+> >> index 97f1659144ea..b517efb22fcb 100644
+> >> --- a/arch/arm/boot/dts/imx6qdl-rex.dtsi
+> >> +++ b/arch/arm/boot/dts/imx6qdl-rex.dtsi
+> >> @@ -136,6 +136,19 @@
+> >>  		compatible = "atmel,24c02";
+> >>  		reg = <0x57>;
+> >>  	};
+> >> +
+> >> +	pca9535: gpio8@27 {
+> >> +		compatible = "nxp,pca9535";
+> >> +		reg = <0x27>;
+> > 
+> > The i2c devices are orderd by their i2c-addresses starting from the
+> > lowest.
+> >
+> 
+> Ack.
+> 
+> >> +		gpio-controller;
+> >> +		#gpio-cells = <2>;
+> >> +		pinctrl-names = "default";
+> >> +		pinctrl-0 = <&pinctrl_pca9535>;
+> >> +		interrupt-parent = <&gpio6>;
+> >> +		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
+> >> +		interrupt-controller;
+> >> +		#interrupt-cells = <2>;
+
+As you pointed out above this device isn't available on the
+imx6dl-rex-basic? You should add: 'status = "disabled";' if this is the
+case.
+
+Regards,
+  Marco
+
+> >> +	};
+> >>  };
+> >>  
+> >>  &i2c3 {
+> >> @@ -237,6 +250,12 @@
+> >>  			>;
+> >>  		};
+> >>  
+> >> +		pinctrl_pca9535: pca9535 {
+> >> +			fsl,pins = <
+> >> +				MX6QDL_PAD_NANDF_CS3__GPIO6_IO16	0x00017059
+> > 
+> > The pinmux below don't use the leading zero's if you are the first I
+> > would drop that.
+> > 
+> > Regards,
+> >  Marco
+> >
+> 
+> Ack.
+> 
+> Regards,
+> Gilles
+> 
 
 -- 
-
-Thanks,
-
-David / dhildenb
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
