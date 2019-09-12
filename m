@@ -2,325 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFC78B0E79
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 14:03:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68EE3B0E7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 14:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731569AbfILMC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 08:02:56 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46841 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730454AbfILMCz (ORCPT
+        id S1731589AbfILMDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 08:03:17 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54488 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730454AbfILMDR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 08:02:55 -0400
-Received: by mail-qk1-f196.google.com with SMTP id 201so24127375qkd.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 05:02:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:date:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=NJ+V9WdH/Mr55CbE+4tCVIXroMyvqDzfmVNb8fYQdC4=;
-        b=X9BwuCAMyL0HkIMHQZTrYkcKYoxesQQBc03dGTAerff++yYqnueCFUG+9R5d+jXfsD
-         ILAnkSwukAjd9PMBWa9h1go0l+VstSm5Hci3nDYtrAlFN5FC8VzMhHh/wM1ypkfVi7I5
-         xC2NQpOkaZGRGDDblnEmqtsCDwJjKPhPf1gxSpyhFJAfAnHkZToO0QVL3o7qmb6yq3kl
-         /fPKJ36uZKtumx4PMe051elYi1fZr6YsGFpQtmalR3a03is+1tETesXYb8nLmi7YOgWT
-         YbiZACAjO9JVtxcJOF8Fl8Vh+s/Y/AMgZMpVqQHjcJCPht1J5olzVhZ4edarhiUmbZFX
-         4ajw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NJ+V9WdH/Mr55CbE+4tCVIXroMyvqDzfmVNb8fYQdC4=;
-        b=qT78JywTaj+1n9b9tUAzR/N31CuDakQvsJHChj8nBqQCVafTb3HDH4ep3GZfiLHWMn
-         7ayiKuHMblBe2DN7Qg4yCM8YsjCpGD58ixb4BVRbxuImN4bgS3PGOA4SkrQOiyAGLGFN
-         njCNvLH+9wE6s6SoBy3v4zZTuSLh7bYCKMMcO12wyt57dzNy86u/j3MdSIV3Yioisg8j
-         MO+GVMmjkTmUzOLllRBU0aNsqeTWQX2zw8BmkiXxbpuBCwr/AIApWuqlFPREZvW7iVBn
-         icpdLuvJPFwya86fps6MsCDM9jDUNBD+n3h0TPYWfJD12v3064hUz6s4nzA8rCWhxih1
-         UDiQ==
-X-Gm-Message-State: APjAAAViD56xryRePJ/ckcNCdv44NnwizdiATYyKoe7/dlD1ZT21fiw8
-        /sdyU6xKhS/s2E2s9SzEx4HPEg==
-X-Google-Smtp-Source: APXvYqxW3gfyTl86Ie7fIUSZxIf33R/kZjhqzOjknmiTByk8wlOSZatDorFjLent8xT63ngd7QqDdQ==
-X-Received: by 2002:a05:620a:7c8:: with SMTP id 8mr1592111qkb.299.1568289774048;
-        Thu, 12 Sep 2019 05:02:54 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id a72sm12098951qkg.77.2019.09.12.05.02.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Sep 2019 05:02:53 -0700 (PDT)
-Message-ID: <1568289769.5576.138.camel@lca.pw>
-Subject: Re: [PATCH] zswap: Add CONFIG_ZSWAP_IO_SWITCH
-From:   Qian Cai <cai@lca.pw>
-To:     Hui Zhu <teawaterz@linux.alibaba.com>, sjenning@redhat.com,
-        ddstreet@ieee.org, akpm@linux-foundation.org, mhocko@suse.com,
-        willy@infradead.org, chris@chris-wilson.co.uk, hannes@cmpxchg.org,
-        ziqian.lzq@antfin.com, osandov@fb.com, ying.huang@intel.com,
-        aryabinin@virtuozzo.com, vovoy@chromium.org,
-        richard.weiyang@gmail.com, jgg@ziepe.ca, dan.j.williams@intel.com,
-        rppt@linux.ibm.com, jglisse@redhat.com, b.zolnierkie@samsung.com,
-        axboe@kernel.dk, dennis@kernel.org, josef@toxicpanda.com,
-        tj@kernel.org, oleg@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Date:   Thu, 12 Sep 2019 08:02:49 -0400
-In-Reply-To: <1568258490-25359-1-git-send-email-teawaterz@linux.alibaba.com>
-References: <1568258490-25359-1-git-send-email-teawaterz@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
+        Thu, 12 Sep 2019 08:03:17 -0400
+Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0AA6F33A;
+        Thu, 12 Sep 2019 14:03:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1568289794;
+        bh=C+RrWY0EIzI5LrQTiBgIBlgI6Dg0MAQvhea9e5EBEPE=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Ak6vkLhQupZNcO+qkxcIatxD/iSDy2C70/jLhCsqnseiK4SHFoC45tx6aA3nfx7YR
+         U18eXzZ1tde21tv9s5JxH0o/H465yLB8BFO7s1blMXM9gzMoUpzbTCBXn2PGsxjd7O
+         2kmPb67OFwvQjG9OSeysvhO6JPAiySXo56x55K4w=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH] arm: dts: renesas: r8a77980: Remove r8a77970 DU
+ compatible
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190912103734.1879-1-kieran.bingham+renesas@ideasonboard.com>
+ <CAMuHMdWb9qBDZqOs072u_pCRTaGGArAdUBLWbA5kGoU=KM4Y3A@mail.gmail.com>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <4ecb7e77-45e7-cf91-c8e3-0670d7ae25a7@ideasonboard.com>
+Date:   Thu, 12 Sep 2019 13:03:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWb9qBDZqOs072u_pCRTaGGArAdUBLWbA5kGoU=KM4Y3A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-09-12 at 11:21 +0800, Hui Zhu wrote:
-> I use zswap to handle the swap IO issue in a VM that uses a swap file.
-> This VM has 4G memory and 2 CPUs.  And I set up 4G swap in /swapfile.
-> This is test script:
-> cat 1.sh
-> ./usemem --sleep 3600 -M -a -n 1 $((3 * 1024 * 1024 * 1024)) &
-> sleep 10
-> echo 1 > /proc/sys/vm/drop_caches
-> ./usemem -S -f /test2 $((2 * 1024 * 1024 * 1024)) &
-> while [ True ]; do ./usemem -a -n 1 $((1 * 1024 * 1024 * 1024)); done
-> 
-> Without ZSWAP:
-> echo 100 > /proc/sys/vm/swappiness
-> swapon /swapfile
-> sh 1.sh
-> ...
-> ...
-> 1207959552 bytes / 2076479 usecs = 568100 KB/s
-> 61088 usecs to free memory
-> 1207959552 bytes / 2035439 usecs = 579554 KB/s
-> 55073 usecs to free memory
-> 2415919104 bytes / 24054408 usecs = 98081 KB/s
-> 3741 usecs to free memory
-> 1207959552 bytes / 1954371 usecs = 603594 KB/s
-> 53161 usecs to free memory
-> ...
-> ...
-> 
-> With ZSWAP:
-> echo 100 > /proc/sys/vm/swappiness
-> swapon /swapfile
-> echo lz4 > /sys/module/zswap/parameters/compressor
-> echo zsmalloc > /sys/module/zswap/parameters/zpool
-> echo 0 > /sys/module/zswap/parameters/same_filled_pages_enabled
-> echo 20 > /sys/module/zswap/parameters/max_pool_percent
-> echo 1 > /sys/module/zswap/parameters/enabled
-> sh 1.sh
-> 1207959552 bytes / 3619283 usecs = 325934 KB/s
-> 194825 usecs to free memory
-> 1207959552 bytes / 3439563 usecs = 342964 KB/s
-> 218419 usecs to free memory
-> 2415919104 bytes / 19508762 usecs = 120935 KB/s
-> 5632 usecs to free memory
-> 1207959552 bytes / 3329369 usecs = 354315 KB/s
-> 179764 usecs to free memory
-> 
-> The normal io speed is increased from 98081 KB/s to 120935 KB/s.
-> But I found 2 issues of zswap in this machine:
-> 1. Because the disk of VM has the file cache in the host layer,
->    so normal swap speed is higher than with zswap.
-> 2. Because zswap need allocates memory to store the compressed pages,
->    it will make memory capacity worse.
-> For example:
-> Command "./usemem -a -n 1 $((7 * 1024 * 1024 * 1024))" request 7G memory
-> from this machine.
-> It will work OK without zswap but got OOM when zswap is opened.
-> 
-> This commit adds CONFIG_ZSWAP_IO_SWITCH that try to handle the issues
-> and let zswap keep save IO.
-> It add two parameters read_in_flight_limit and write_in_flight_limit to
-> zswap.
-> In zswap_frontswap_store, pages will be stored to zswap only when
-> the IO in flight number of swap device is bigger than
-> zswap_read_in_flight_limit or zswap_write_in_flight_limit
-> when zswap is enabled.
-> Then the zswap just work when the IO in flight number of swap device
-> is low.
+Hi Geert,
 
-There isn't sufficient information for users to decide when they should enable
-this kconfig. Also, It describes your specific workload, but not clear to me how
-this benefit other people's workloads in general.
+On 12/09/2019 12:56, Geert Uytterhoeven wrote:
+> On Thu, Sep 12, 2019 at 12:38 PM Kieran Bingham
+> <kieran.bingham+renesas@ideasonboard.com> wrote:
+>> The r8a77970 was added with an compatible string for a differnet device
+> 
+> different
 
+Also s/an/a/ ... Perhaps I should just step away from the keyboard
+today, I can't seem to type ! hehe
+
+
+>> rather than adding the correct compatible to the driver.
+>>
+>> Remove the unnecessary compatible which is for a different platform.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > 
-> This is the test result:
-> echo 100 > /proc/sys/vm/swappiness
-> swapon /swapfile
-> echo lz4 > /sys/module/zswap/parameters/compressor
-> echo zsmalloc > /sys/module/zswap/parameters/zpool
-> echo 0 > /sys/module/zswap/parameters/same_filled_pages_enabled
-> echo 20 > /sys/module/zswap/parameters/max_pool_percent
-> echo 1 > /sys/module/zswap/parameters/enabled
-> echo 3 > /sys/module/zswap/parameters/read_in_flight_limit
-> echo 50 > /sys/module/zswap/parameters/write_in_flight_limit
-> sh 1.sh
-> ...
-> 1207959552 bytes / 2320861 usecs = 508280 KB/s
-> 106164 usecs to free memory
-> 1207959552 bytes / 2343916 usecs = 503280 KB/s
-> 79386 usecs to free memory
-> 2415919104 bytes / 20136015 usecs = 117167 KB/s
-> 4411 usecs to free memory
-> 1207959552 bytes / 1833403 usecs = 643419 KB/s
-> 70452 usecs to free memory
-> ...
-> killall usemem
-> ./usemem -a -n 1 $((7 * 1024 * 1024 * 1024))
-> 8455716864 bytes / 14457505 usecs = 571159 KB/s
-> 365961 usecs to free memory
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
-> Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
-> ---
->  include/linux/swap.h |  3 +++
->  mm/Kconfig           | 11 +++++++++++
->  mm/page_io.c         | 16 +++++++++++++++
->  mm/zswap.c           | 55 ++++++++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 85 insertions(+)
+>> Please note, this patch should not be integrated until the renesas,du-r8a77980
+>> compatible string makes it into the DU [0].
 > 
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index de2c67a..82b621f 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -389,6 +389,9 @@ extern void end_swap_bio_write(struct bio *bio);
->  extern int __swap_writepage(struct page *page, struct writeback_control *wbc,
->  	bio_end_io_t end_write_func);
->  extern int swap_set_page_dirty(struct page *page);
-> +#ifdef CONFIG_ZSWAP_IO_SWITCH
-> +extern void swap_io_in_flight(struct page *page, unsigned int inflight[2]);
-> +#endif
->  
->  int add_swap_extent(struct swap_info_struct *sis, unsigned long start_page,
->  		unsigned long nr_pages, sector_t start_block);
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 56cec63..d077e51 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -546,6 +546,17 @@ config ZSWAP
->  	  they have not be fully explored on the large set of potential
->  	  configurations and workloads that exist.
->  
-> +config ZSWAP_IO_SWITCH
-> +	bool "Compressed cache for swap pages according to the IO status"
-> +	depends on ZSWAP
-> +	def_bool n
-> +	help
-> +	  Add two parameters read_in_flight_limit and write_in_flight_limit to
-> +	  ZSWAP.  When ZSWAP is enabled, pages will be stored to zswap only
-> +	  when the IO in flight number of swap device is bigger than
-> +	  zswap_read_in_flight_limit or zswap_write_in_flight_limit.
-> +	  If unsure, say "n".
-> +
->  config ZPOOL
->  	tristate "Common API for compressed memory storage"
->  	help
-> diff --git a/mm/page_io.c b/mm/page_io.c
-> index 24ee600..e66b050 100644
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -434,3 +434,19 @@ int swap_set_page_dirty(struct page *page)
->  		return __set_page_dirty_no_writeback(page);
->  	}
->  }
-> +
-> +#ifdef CONFIG_ZSWAP_IO_SWITCH
-> +void swap_io_in_flight(struct page *page, unsigned int inflight[2])
-> +{
-> +	struct swap_info_struct *sis = page_swap_info(page);
-> +
-> +	if (!sis->bdev) {
-> +		inflight[0] = 0;
-> +		inflight[1] = 0;
-> +		return;
-> +	}
-> +
-> +	part_in_flight_rw(bdev_get_queue(sis->bdev), sis->bdev->bd_part,
-> +					  inflight);
-> +}
-> +#endif
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 0e22744..1255645 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -62,6 +62,13 @@ static u64 zswap_reject_compress_poor;
->  static u64 zswap_reject_alloc_fail;
->  /* Store failed because the entry metadata could not be allocated (rare) */
->  static u64 zswap_reject_kmemcache_fail;
-> +#ifdef CONFIG_ZSWAP_IO_SWITCH
-> +/* Store failed because zswap_read_in_flight_limit or
-> + * zswap_write_in_flight_limit is bigger than IO in flight number of
-> + * swap device
-> + */
-> +static u64 zswap_reject_io;
-> +#endif
->  /* Duplicate store was encountered (rare) */
->  static u64 zswap_duplicate_entry;
->  
-> @@ -114,6 +121,22 @@ static bool zswap_same_filled_pages_enabled = true;
->  module_param_named(same_filled_pages_enabled, zswap_same_filled_pages_enabled,
->  		   bool, 0644);
->  
-> +#ifdef CONFIG_ZSWAP_IO_SWITCH
-> +/* zswap will not try to store the page if zswap_read_in_flight_limit is
-> + * bigger than IO read in flight number of swap device
-> + */
-> +static unsigned int zswap_read_in_flight_limit;
-> +module_param_named(read_in_flight_limit, zswap_read_in_flight_limit,
-> +		   uint, 0644);
-> +
-> +/* zswap will not try to store the page if zswap_write_in_flight_limit is
-> + * bigger than IO write in flight number of swap device
-> + */
-> +static unsigned int zswap_write_in_flight_limit;
-> +module_param_named(write_in_flight_limit, zswap_write_in_flight_limit,
-> +		   uint, 0644);
-> +#endif
-> +
->  /*********************************
->  * data structures
->  **********************************/
-> @@ -1009,6 +1032,34 @@ static int zswap_frontswap_store(unsigned type, pgoff_t offset,
->  		goto reject;
->  	}
->  
-> +#ifdef CONFIG_ZSWAP_IO_SWITCH
-> +	if (zswap_read_in_flight_limit || zswap_write_in_flight_limit) {
-> +		unsigned int inflight[2];
-> +		bool should_swap = false;
-> +
-> +		swap_io_in_flight(page, inflight);
-> +
-> +		if (zswap_write_in_flight_limit &&
-> +			inflight[1] < zswap_write_in_flight_limit)
-> +			should_swap = true;
-> +
-> +		if (zswap_read_in_flight_limit &&
-> +			(should_swap ||
-> +			 (!should_swap && !zswap_write_in_flight_limit))) {
-> +			if (inflight[0] < zswap_read_in_flight_limit)
-> +				should_swap = true;
-> +			else
-> +				should_swap = false;
-> +		}
-> +
-> +		if (should_swap) {
-> +			zswap_reject_io++;
-> +			ret = -EIO;
-> +			goto reject;
-> +		}
-> +	}
-> +#endif
-> +
->  	/* reclaim space if needed */
->  	if (zswap_is_full()) {
->  		zswap_pool_limit_hit++;
-> @@ -1264,6 +1315,10 @@ static int __init zswap_debugfs_init(void)
->  			   zswap_debugfs_root, &zswap_reject_kmemcache_fail);
->  	debugfs_create_u64("reject_compress_poor", 0444,
->  			   zswap_debugfs_root, &zswap_reject_compress_poor);
-> +#ifdef CONFIG_ZSWAP_IO_SWITCH
-> +	debugfs_create_u64("reject_io", 0444,
-> +			   zswap_debugfs_root, &zswap_reject_io);
-> +#endif
->  	debugfs_create_u64("written_back_pages", 0444,
->  			   zswap_debugfs_root, &zswap_written_back_pages);
->  	debugfs_create_u64("duplicate_entry", 0444,
+> Hence postponed.
+
+
+Thanks.
+--
+KB
+
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+
