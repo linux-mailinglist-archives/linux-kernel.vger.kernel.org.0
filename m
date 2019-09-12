@@ -2,194 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8D2B0ADF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 11:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5FA7B0ADE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 11:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730602AbfILJEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 05:04:22 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:17493 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730571AbfILJEU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730585AbfILJEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 12 Sep 2019 05:04:20 -0400
-X-UUID: 8c39693336454b4b99f520b792409639-20190912
-X-UUID: 8c39693336454b4b99f520b792409639-20190912
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 541960630; Thu, 12 Sep 2019 17:04:13 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 12 Sep
- 2019 17:04:09 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
- MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Thu, 12 Sep 2019 17:04:09 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC:     <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
-        <stonea168@163.com>, Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH 3/3] drm/panel: panel-innolux: Add support for P097PFZ behind SSD2858
-Date:   Thu, 12 Sep 2019 17:04:04 +0800
-Message-ID: <20190912090404.89822-4-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190912090404.89822-1-jitao.shi@mediatek.com>
-References: <20190912090404.89822-1-jitao.shi@mediatek.com>
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45630 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730557AbfILJEQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 05:04:16 -0400
+Received: by mail-io1-f68.google.com with SMTP id f12so52674484iog.12
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 02:04:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=4/XQrQs3hsOb/l0r/7UOpRt774uH8BelSAtMEDNdeuA=;
+        b=m0FL/xDIYQ/M4eN8j+hVJw/QkQi55ggrrHvgjQzdU6sDtCZtdTKJoLFSz5SQ9prd6e
+         HFjtEBqWB6z5opxd2L+nNNg8HbqNPF+tyK8rbII59xtAvcsRzqJGS8ZJydC76Du78Wma
+         sW76og+AC/hTd/yX6EM6KK898+OVdj88aDRDxTS9ixrEFs9o2GyCJ1/wclMSE8l6kSRG
+         a1m4yvRaBiA9uMTramZNzl9FcHtTOv/wasW7K6zluerDQKzz2ebHIuatBAy+Q2zhmJuT
+         oxmwTx0/3lkF0g2Q8PP1Ff0EI7pHERXpjGnL/AcaGkgLeZ0YBmx8XgykLEyz8XqakzM8
+         mD+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=4/XQrQs3hsOb/l0r/7UOpRt774uH8BelSAtMEDNdeuA=;
+        b=HWcE3nErG3g5zoozcZcWZIHyve1mtd8WFFn6Q8YLQT8k5jVlaZSQjg2R/tH/EF3EZp
+         9JncfKx0D2NsbHEQ05u1Mr9hczPkjePPRZf24Aal8AndhcMC3Vy1vR1SlO3rGbW0pExm
+         n88vVVNOlPzRWdlqptguG4BDMVn3qYYyyoXwv/vjGV1hxoHSEy/4rkUipnyCOrPlmgIj
+         M3vCBxbX1DrXyniW+xq8A7vpC+b8Hf2wK0LdA3NhhKZU95BW7EoNqkqdryHMVMk6wYAh
+         qtqu5LKBzGRt6vZNmhppL//SYQuvPzEtLJ/oz9dkSxHaE+4lyno+/jG+drVgSTZnGLe5
+         SnGg==
+X-Gm-Message-State: APjAAAWUyfeBqaTHvDtWK8DK8jtXtjYiDlWls4CNMNa0KMEpNpWUwgRn
+        3Zu+1J0G4IsoLQSopt8pC7hob1zLSuryg76Iozc=
+X-Google-Smtp-Source: APXvYqx/hisCBBu0NewyFGIrLUKi6Ny6uZqUnp0OVjs7J+jcdQYlS996cWH1en9c5vqNWN0USlUosLyBV12GA414wFQ=
+X-Received: by 2002:a5d:8a0a:: with SMTP id w10mr3184386iod.291.1568279055511;
+ Thu, 12 Sep 2019 02:04:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-TM-SNTS-SMTP: 8277112D4DE284E7189B77DFE9C77F681CBCBFC38380D94183C83199343503D02000:8
-X-MTK:  N
+Reply-To: priscalamberth@gmail.com
+Received: by 2002:a4f:5842:0:0:0:0:0 with HTTP; Thu, 12 Sep 2019 02:04:14
+ -0700 (PDT)
+From:   "DR. OMAR KALIFA" <bya8241@gmail.com>
+Date:   Thu, 12 Sep 2019 11:04:14 +0200
+X-Google-Sender-Auth: yGcfJTgxE0OyAXV9LX4-stvEPt0
+Message-ID: <CAErLtpzXBNxmF_dJe0iQqi6g1VEFR-giakVWg2yzPT_EKfTxeA@mail.gmail.com>
+Subject: REQUEST FOR YOUR ASSISTANCE.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver to setup P097PFZ behing SSD2858 (4 to 8 lanes bridge).
-
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
----
- drivers/gpu/drm/panel/panel-innolux-p079zca.c | 103 +++++++++++++++++-
- 1 file changed, 102 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/panel/panel-innolux-p079zca.c b/drivers/gpu/drm/panel/panel-innolux-p079zca.c
-index 8db404fb5eeb..a658ccba30a0 100644
---- a/drivers/gpu/drm/panel/panel-innolux-p079zca.c
-+++ b/drivers/gpu/drm/panel/panel-innolux-p079zca.c
-@@ -138,7 +138,7 @@ static int innolux_panel_prepare(struct drm_panel *panel)
- 		if (!innolux->enable_gpio[i])
- 			break;
- 
--		/* p079zca: t2 (20ms), p097pfg: t4 (15ms) */
-+		/* p079zca: t2 (20ms), p097pfg: t4 (15ms); ssd2858: 20ms */
- 		usleep_range(20000, 21000);
- 		gpiod_set_value_cansleep(innolux->enable_gpio[i], 1);
- 	}
-@@ -162,6 +162,18 @@ static int innolux_panel_prepare(struct drm_panel *panel)
- 				goto poweroff;
- 			}
- 
-+			/*
-+			 * If the command list contains exit sleep mode or set
-+			 * display on, wait the appropriate time (needed for
-+			 * displays behind a bridge).
-+			 */
-+			/* T6: 120ms - 1000ms*/
-+			if (cmd->data[0] == MIPI_DCS_EXIT_SLEEP_MODE)
-+				msleep(120);
-+			 /* T7: 5ms */
-+			if (cmd->data[0] == MIPI_DCS_SET_DISPLAY_ON)
-+				usleep_range(5000, 6000);
-+
- 			/*
- 			 * Included by random guessing, because without this
- 			 * (or at least, some delay), the panel sometimes
-@@ -410,6 +422,92 @@ static const struct panel_desc innolux_p097pfg_panel_desc = {
- 	.sleep_mode_delay = 100, /* T15 */
- };
- 
-+static const char * const innolux_p097pfg_ssd2858_supply_names[] = {
-+	"avdd",
-+	"avee",
-+	"pp1800",
-+	"pp3300",
-+	"pp1200-bridge",
-+	"vddio-bridge",
-+};
-+
-+static const struct drm_display_mode innolux_p097pfg_ssd2858_mode = {
-+	.clock = 211660,
-+	.hdisplay = 1536,
-+	.hsync_start = 1536 + 140,
-+	.hsync_end = 1536 + 140 + 10,
-+	.htotal = 1536 + 140 + 10 + 10,
-+	.vdisplay = 2048,
-+	.vsync_start = 2048 + 20,
-+	.vsync_end = 2048 + 20 + 2,
-+	.vtotal = 2048 + 20 + 2 + 10,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_init_cmd innolux_p097pfg_ssd2858_init_cmds[] = {
-+	/* SSD2858 config */
-+	_INIT_CMD(0xff, 0x00),
-+	/* LOCKCNT=0x1f4, MRX=0, POSTDIV=1 (/2), MULT=0x49
-+	 * 27 Mhz => 985.5 Mhz
-+	 */
-+	_INIT_CMD(0x00, 0x08, 0x01, 0xf4, 0x01, 0x49),
-+	/* MTXDIV=1, SYSDIV=3 (=> 4) */
-+	_INIT_CMD(0x00, 0x0c, 0x00, 0x00, 0x00, 0x03),
-+	/* MTXVPF=24bpp, MRXLS=4 lanes, MRXVB=bypass, MRXECC=1, MRXEOT=1
-+	 * MRXEE=1
-+	 */
-+	_INIT_CMD(0x00, 0x14, 0x0c, 0x3d, 0x80, 0x0f),
-+	_INIT_CMD(0x00, 0x20, 0x15, 0x92, 0x56, 0x7d),
-+	_INIT_CMD(0x00, 0x24, 0x00, 0x00, 0x30, 0x00),
-+
-+	_INIT_CMD(0x10, 0x08, 0x01, 0x20, 0x08, 0x45),
-+	_INIT_CMD(0x10, 0x1c, 0x00, 0x00, 0x00, 0x00),
-+	_INIT_CMD(0x20, 0x0c, 0x00, 0x00, 0x00, 0x04),
-+	/* Pixel clock 985.5 Mhz * 0x49/0x4b = 959 Mhz */
-+	_INIT_CMD(0x20, 0x10, 0x00, 0x4b, 0x00, 0x49),
-+	_INIT_CMD(0x20, 0xa0, 0x00, 0x00, 0x00, 0x00),
-+	/* EOT=1, LPE = 0, LSOUT=4 lanes, LPD=25 */
-+	_INIT_CMD(0x60, 0x08, 0x00, 0xd9, 0x00, 0x08),
-+	_INIT_CMD(0x60, 0x14, 0x01, 0x00, 0x01, 0x06),
-+	/* DSI0 enable (default: probably not needed) */
-+	_INIT_CMD(0x60, 0x80, 0x00, 0x00, 0x00, 0x0f),
-+	/* DSI1 enable */
-+	_INIT_CMD(0x60, 0xa0, 0x00, 0x00, 0x00, 0x0f),
-+
-+	/* HSA=0x18, VSA=0x02, HBP=0x50, VBP=0x0c */
-+	_INIT_CMD(0x60, 0x0c, 0x0c, 0x50, 0x02, 0x18),
-+	/* VACT= 0x800 (2048), VFP= 0x14, HFP=0x50 */
-+	_INIT_CMD(0x60, 0x10, 0x08, 0x00, 0x14, 0x50),
-+	/* HACT=0x300 (768) */
-+	_INIT_CMD(0x60, 0x84, 0x00, 0x00, 0x03, 0x00),
-+	_INIT_CMD(0x60, 0xa4, 0x00, 0x00, 0x03, 0x00),
-+
-+	/* Take panel out of sleep. */
-+	_INIT_CMD(0xff, 0x01),
-+	_INIT_CMD(0x11),
-+	_INIT_CMD(0x29),
-+	_INIT_CMD(0xff, 0x00),
-+
-+	{},
-+};
-+
-+static const struct panel_desc innolux_p097pfg_ssd2858_panel_desc = {
-+	.mode = &innolux_p097pfg_ssd2858_mode,
-+	.bpc = 8,
-+	.size = {
-+		.width = 147,
-+		.height = 196,
-+	},
-+	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+		 MIPI_DSI_MODE_LPM,
-+	.format = MIPI_DSI_FMT_RGB888,
-+	.init_cmds = innolux_p097pfg_ssd2858_init_cmds,
-+	.lanes = 4,
-+	.supply_names = innolux_p097pfg_ssd2858_supply_names,
-+	.num_supplies = ARRAY_SIZE(innolux_p097pfg_ssd2858_supply_names),
-+	.sleep_mode_delay = 100, /* T15 */
-+};
-+
- static int innolux_panel_get_modes(struct drm_panel *panel)
- {
- 	struct innolux_panel *innolux = to_innolux_panel(panel);
-@@ -451,6 +549,9 @@ static const struct of_device_id innolux_of_match[] = {
- 	{ .compatible = "innolux,p097pfg",
- 	  .data = &innolux_p097pfg_panel_desc
- 	},
-+	{ .compatible = "innolux,p097pfg_ssd2858",
-+	  .data = &innolux_p097pfg_ssd2858_panel_desc
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, innolux_of_match);
 -- 
-2.21.0
+Hello,
 
+Compliment of the season. My name is Dr. Omar Kalifa. i work with one
+of the reputable banks here in West Africa.I have a lucrative and
+profitable business to discuse with you. Reply if you are intersted
+for more details.
+
+Regards,
+Dr. Omar Kalifa
