@@ -2,65 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 483F8B0692
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 03:35:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA68B0697
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 03:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbfILBfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 21:35:06 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44348 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728673AbfILBfF (ORCPT
+        id S1728224AbfILBhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 21:37:48 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41507 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbfILBhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 21:35:05 -0400
-Received: by mail-pl1-f194.google.com with SMTP id k1so10975769pls.11;
-        Wed, 11 Sep 2019 18:35:04 -0700 (PDT)
+        Wed, 11 Sep 2019 21:37:48 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b13so14830735pfo.8
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 18:37:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cWsYbqUsjfWBFB132P+70l3TxUklV7bh1JoltYP6jwg=;
-        b=MyBrC6i6+1kxrLbsnlfDDL0aEm1Fz6LZLVW02g8qpEjAZEbXFhu+a4lUt5nEfn3fSJ
-         C022VdB7gVPIsWueyYSZ2cJ67LaHIrWe/M9mI0isacZYZ3hSYQ385tvAh6IILbIS6h/G
-         YHrxvf+UMUovoXwvmgC4b6q3f6EE144Y4fkdMozx07UFo2fEvcJkGmnt3aMg1HendhGN
-         9fCju6kGaOFWbGslerMN9XUP5ql9RV9cEr6Q5k1PAX8edmdzpigLHPoOnYoIFjxHzLKz
-         QpbH9o74zrX0Dik9n3VyNG7QUjXZQppgJc0rUbnW91i153mK9ekm2ioEgSdFmJYb1MfC
-         2k1g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jy5SRy6ysNBo94VTweaZaJHfTY+VCYVdnfQshAKb0WM=;
+        b=k4v95DuE7lWKvBVdtvsH9CRWmXvIB21882kOWRmrwlL/ePhEwfw9Umgw9vULw7E2pr
+         NVdU9bQsOdCZ9OqGvvbpdJAhmfr/HLZM1qhPAMCz+vCZUV+CnNEz68izuCfyinsvaDB1
+         2sFQgGdUAZz3MfMrzrAq1YQtmc5BG1DEqUsr+phrNgMVMYVdwBlM/YyBtDAMQDCShSG5
+         nGvMZc8g6Sf2aEq2+Jtzzehmv8dHIuBfwjfj9fMTvOJCgni7U2tZUEB57QMy6ZTh8n4x
+         ZS/EHtXKa8u2NVYMphQ0nK4dDJLbr9fFcW5/A5wfMK0uDo894TT2vJRFC0UkkWfZyT2N
+         KYbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cWsYbqUsjfWBFB132P+70l3TxUklV7bh1JoltYP6jwg=;
-        b=Fxzw1AbywGZ/Ij6hDkR/+5d/nvHe35XQMfydjVixZFafk93zGhyuK14dVDdNbUxQJx
-         gXM6BN81Fw5y8R+PuSoyYOTIpKh2/0ths6hEMx5WC1U/g/Xbc98egIlL+lx5Eg3RJ0LA
-         xcfFPVIKoQDyywMxWq4/hae1NgI+OvUNAzq46w/aACdz8cPCsQRdMw6fcrnJ2c2fDr+3
-         jt33+TUoaWCYp1Zd8RyHITkXGHAjJYUIVWqpdiY6JgPOeW/hRpCHRzu3bOx3YGc4u3td
-         zgbcFo2/gXPHVjEqeH6mJaVUKceMp6+ZJ15QxrewGFrG2fmtgGbFc6FWzkwS/0VjELng
-         WtsQ==
-X-Gm-Message-State: APjAAAWDZ+9mlYwJnZ+9QU4ARvMWic/S1QjtHFLIQCkHsSP0gGi5njuO
-        4EbsaaXzP0IqR35gwwcE+Wg=
-X-Google-Smtp-Source: APXvYqxP8kYJiqLOH5C7TMGvcDrnUub31FEEbsJFEjj+MFaxYXeE07zi+1Gc4Vv0muSp00W8t23JLQ==
-X-Received: by 2002:a17:902:b70f:: with SMTP id d15mr40679643pls.285.1568252104542;
-        Wed, 11 Sep 2019 18:35:04 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jy5SRy6ysNBo94VTweaZaJHfTY+VCYVdnfQshAKb0WM=;
+        b=k98IFi7PX1zR8XYaA5cjhe1lTkkiUEpeVSKNdGKlvd1K5E9ISZ8575wD/bac1FR4Sl
+         mrp20LRFhIEEidXfzo0k4lGd+B7rbeAAIpZXmK0+mE9P69GrZtVVIOtIOFBPkYLIFeQa
+         va2wHADW8T7/pZP+n+kVaknX48+AddFeryNHiBZcDMwJCVLdXTEYRqnzVq+oCl/dHOZl
+         f2UFzBteCder0a5NiFRfPZgrP7NVnLqw3XqbHkLpFjAdfICgkOQLX5HeJelFvKsU+2hk
+         mAj+BV4zqIS/8M1NAFjZsCgD8rdEhGUMP0z2i5eHOoPGUCKWOKkdtKLAKXz6Irlw+qLV
+         qkRA==
+X-Gm-Message-State: APjAAAUYlOwNt7kaGgsww7RyikLcnEOPBVpqpGv+3CyD2nRIeNYd+ZUz
+        HxWUfXkveNfgRktTHOgWdhc=
+X-Google-Smtp-Source: APXvYqyt8MVFo3gbMGKTnWOJvKI7dY5EL+0DtCMd2EJSVzgh2no+WFBAS33R4p5z/B7AnHZZ/JevTA==
+X-Received: by 2002:aa7:9194:: with SMTP id x20mr21524493pfa.126.1568252267613;
+        Wed, 11 Sep 2019 18:37:47 -0700 (PDT)
 Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id b126sm35248236pfa.177.2019.09.11.18.35.03
+        by smtp.gmail.com with ESMTPSA id f22sm8682967pgb.4.2019.09.11.18.37.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2019 18:35:03 -0700 (PDT)
+        Wed, 11 Sep 2019 18:37:46 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     Zhang Rui <rui.zhang@intel.com>
+To:     dri-devel@lists.freedesktop.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
         Chris Healy <cphealy@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Angus Ainslie <angus@akkea.ca>, linux-imx@nxp.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 12/12] thermal: qoriq: Add hwmon support
-Date:   Wed, 11 Sep 2019 18:34:47 -0700
-Message-Id: <20190912013447.2977-6-andrew.smirnov@gmail.com>
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] tc358767 test mode
+Date:   Wed, 11 Sep 2019 18:37:38 -0700
+Message-Id: <20190912013740.5638-1-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190912013447.2977-1-andrew.smirnov@gmail.com>
-References: <20190912012920.29601-1-andrew.smirnov@gmail.com>
- <20190912013447.2977-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,48 +66,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose thermal readings as a HWMON device, so that it could be
-accessed using lm-sensors.
+Everyone:
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Tested-by: Lucas Stach <l.stach@pengutronix.de>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Angus Ainslie (Purism) <angus@akkea.ca>
-Cc: linux-imx@nxp.com
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/thermal/qoriq_thermal.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+This series is a couple of patches exposing TestCtl register of
+tc358767, which can be pretty handy when troubleshooting link problems.
 
-diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-index 48853192514a..e907f0d2103f 100644
---- a/drivers/thermal/qoriq_thermal.c
-+++ b/drivers/thermal/qoriq_thermal.c
-@@ -13,6 +13,7 @@
- #include <linux/thermal.h>
- 
- #include "thermal_core.h"
-+#include "thermal_hwmon.h"
- 
- #define SITES_MAX	16
- 
-@@ -118,6 +119,11 @@ static int qoriq_tmu_register_tmu_zone(struct device *dev,
- 			regmap_write(qdata->regmap, REGS_TMR, TMR_DISABLE);
- 			return ret;
- 		}
-+
-+		if (devm_thermal_add_hwmon_sysfs(tzd))
-+			dev_warn(dev,
-+				 "Failed to add hwmon sysfs attributes\n");
-+
- 	}
- 
- 	return 0;
+Changes since [v1]:
+
+    - Debugfs moved into a standalone directory and is now created as
+      a part of probe()
+
+    - Added tstctl_lock to ensure mutual exclusion of tstctl code and
+      bridge's enable/disable methods
+
+    - tc_tstctl_set() changed to function only if bridge was previosly
+      enabled
+
+    - Added comment explaining data format expected by "tstctl"
+
+    - Debugfs permission changed to reflect write-only nature of this
+      feature
+
+    - Original commit split into two
+
+    - Minor formatting changes
+
+Thanks,
+Andrey Smirnov
+
+[v1] lore.kernel.org/r/20190826182524.5064-1-andrew.smirnov@gmail.com
+
+Andrey Smirnov (2):
+  drm/bridge: tc358767: Introduce __tc_bridge_enable/disable()
+  drm/bridge: tc358767: Expose test mode functionality via debugfs
+
+ drivers/gpu/drm/bridge/tc358767.c | 184 ++++++++++++++++++++++++------
+ 1 file changed, 148 insertions(+), 36 deletions(-)
+
 -- 
 2.21.0
 
