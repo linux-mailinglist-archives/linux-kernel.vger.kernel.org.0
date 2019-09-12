@@ -2,159 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E550B1468
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 20:26:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC85BB1463
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 20:26:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbfILS0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 14:26:32 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39549 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfILS0c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 14:26:32 -0400
-Received: by mail-pg1-f195.google.com with SMTP id u17so13894703pgi.6;
-        Thu, 12 Sep 2019 11:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=16RAWRckcie+V9oI/6PZrjOMSfXV1PuRqJWQkGoociA=;
-        b=Zs/x+6ihUxdRh3Di/Xv7kRptkUwioSJUSmFuHUeFZIyjBnwGf0Ib5R09DisS9N7Zsd
-         zAGTvEBCRbDJCFz2XX1hrCKloqXaTrCRFdkBmhr7jDE8mJEIODyct2x8h4dxxYa9IGFk
-         AMGKx28vk9JNXLqwuwG04jX7AHpPH1cOsOinvDMPYjYXeyEcukmgf507rWGh7UBjIJVR
-         xd2q+PDHIHS9Fbr/S0Xj5Q4y1w/cuwa+CG2gioYwvhBAHNyCLdkuGy/cb8sWIV6W7mV5
-         MYd0ETzbXkl+py7rQw6I0lDaB2opkPUzuGol5DVG7os4mSFDsibN6u2TCrSbEO9bi44H
-         bjeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=16RAWRckcie+V9oI/6PZrjOMSfXV1PuRqJWQkGoociA=;
-        b=DzJGGLNJRBYi8IKpMFV26eyVEawlbQJ5AsSZjalg8o13mQp9FYNQmFlX2XpNWmITsx
-         trTN433qQEJWvHSDlQ+ZtNDp98KRLbxYZ6+9y5FgHgyy+XwMkfaXcg5q6XtgysRr007E
-         gQDVJLOanhhOg5vVRlqd/J8RnFT1w2f3u3bHbigd2PpmAUB0D73KEf5lfRAG9g0Zn0bk
-         G76t+XEhnZhE3lyH25AOH4PuR7HwTSnvwt2RF/aiLR4wUCIvDHuAPDVlOcsbcpAyEt63
-         7LB8IGQ57nbS/57q5fYtgP7qTEzdBW5kARk27vFakzlBGYTXL9jwtYr9P6AZeLEq99ox
-         sT1Q==
-X-Gm-Message-State: APjAAAUzpVwFjnJUJNqE0aUUqV3cGWWwK8lpIQuYlna/wKvq2NtYtSni
-        DGZzmO6BrTdWu0vdyKZmz9Y=
-X-Google-Smtp-Source: APXvYqy5c50GltAl+kKInt13PhiVj7hdgfYsMKoWVysjItsDA5w7rBOLXYV1yajOhJMzqnZplbjCzQ==
-X-Received: by 2002:a63:5754:: with SMTP id h20mr38137589pgm.195.1568312791454;
-        Thu, 12 Sep 2019 11:26:31 -0700 (PDT)
-Received: from localhost.localdomain (61-231-52-128.dynamic-ip.hinet.net. [61.231.52.128])
-        by smtp.gmail.com with ESMTPSA id r1sm20747382pgv.70.2019.09.12.11.26.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2019 11:26:31 -0700 (PDT)
-From:   lecopzer@gmail.com
-X-Google-Original-From: lecopzer.chen@mediatek.com
-To:     lecopzer@gmail.com, sre@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     yj.chiang@mediatek.com, lecopzer.chen@mediatek.com
-Subject: [PATCH v2 2/2] test_power: Add CURRENT properties
-Date:   Fri, 13 Sep 2019 02:26:00 +0800
-Message-Id: <20190912182600.24211-3-lecopzer.chen@mediatek.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190912182600.24211-1-lecopzer.chen@mediatek.com>
-References: <20190912182600.24211-1-lecopzer.chen@mediatek.com>
+        id S1727131AbfILS0J convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Sep 2019 14:26:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53778 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727041AbfILS0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 14:26:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 39C8DAEE0;
+        Thu, 12 Sep 2019 18:26:06 +0000 (UTC)
+Date:   Thu, 12 Sep 2019 20:26:04 +0200
+From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Breno Leitao <leitao@debian.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Diana Craciun <diana.craciun@nxp.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v8 5/7] powerpc/64: make buildable without CONFIG_COMPAT
+Message-ID: <20190912202604.14a73423@kitsune.suse.cz>
+In-Reply-To: <9973bf6b-f1b9-c778-bd88-ed41e45ca126@c-s.fr>
+References: <cover.1568306311.git.msuchanek@suse.de>
+        <039ed7ac686927fe169241ac72225a258d95ccfc.1568306311.git.msuchanek@suse.de>
+        <9973bf6b-f1b9-c778-bd88-ed41e45ca126@c-s.fr>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CURRENT is really general in other battery drivers,
-Android also has an interface to monitor CURRENT, so let's
-add it into test framework.
+On Thu, 12 Sep 2019 20:02:16 +0200
+Christophe Leroy <christophe.leroy@c-s.fr> wrote:
 
-The default value (1.6A) is just a random but reasonable value.
+> Le 12/09/2019 à 19:26, Michal Suchanek a écrit :
+> > There are numerous references to 32bit functions in generic and 64bit
+> > code so ifdef them out.
+> > 
+> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > ---
+> > v2:
+> > - fix 32bit ifdef condition in signal.c
+> > - simplify the compat ifdef condition in vdso.c - 64bit is redundant
+> > - simplify the compat ifdef condition in callchain.c - 64bit is redundant
+> > v3:
+> > - use IS_ENABLED and maybe_unused where possible
+> > - do not ifdef declarations
+> > - clean up Makefile
+> > v4:
+> > - further makefile cleanup
+> > - simplify is_32bit_task conditions
+> > - avoid ifdef in condition by using return
+> > v5:
+> > - avoid unreachable code on 32bit
+> > - make is_current_64bit constant on !COMPAT
+> > - add stub perf_callchain_user_32 to avoid some ifdefs
+> > v6:
+> > - consolidate current_is_64bit
+> > v7:
+> > - remove leftover perf_callchain_user_32 stub from previous series version
+> > v8:
+> > - fix build again - too trigger-happy with stub removal
+> > - remove a vdso.c hunk that causes warning according to kbuild test robot
+> > ---
+> >   arch/powerpc/include/asm/thread_info.h |  4 +--
+> >   arch/powerpc/kernel/Makefile           |  7 ++---
+> >   arch/powerpc/kernel/entry_64.S         |  2 ++
+> >   arch/powerpc/kernel/signal.c           |  3 +-
+> >   arch/powerpc/kernel/syscall_64.c       |  6 ++--
+> >   arch/powerpc/kernel/vdso.c             |  3 +-
+> >   arch/powerpc/perf/callchain.c          | 39 ++++++++++++++------------
+> >   7 files changed, 33 insertions(+), 31 deletions(-)
+> > 
+> > diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
+> > index 8e1d0195ac36..c128d8a48ea3 100644
+> > --- a/arch/powerpc/include/asm/thread_info.h
+> > +++ b/arch/powerpc/include/asm/thread_info.h
+> > @@ -144,10 +144,10 @@ static inline bool test_thread_local_flags(unsigned int flags)
+> >   	return (ti->local_flags & flags) != 0;
+> >   }
+> >   
+> > -#ifdef CONFIG_PPC64
+> > +#ifdef CONFIG_COMPAT
+> >   #define is_32bit_task()	(test_thread_flag(TIF_32BIT))
+> >   #else
+> > -#define is_32bit_task()	(1)
+> > +#define is_32bit_task()	(IS_ENABLED(CONFIG_PPC32))
+> >   #endif
+> >   
+> >   #if defined(CONFIG_PPC64)  
+> 
+> [...]
+> 
+> > +static inline int current_is_64bit(void)
+> > +{
+> > +	if (!IS_ENABLED(CONFIG_COMPAT))
+> > +		return IS_ENABLED(CONFIG_PPC64);
+> > +	/*
+> > +	 * We can't use test_thread_flag() here because we may be on an
+> > +	 * interrupt stack, and the thread flags don't get copied over
+> > +	 * from the thread_info on the main stack to the interrupt stack.
+> > +	 */
+> > +	return !test_ti_thread_flag(task_thread_info(current), TIF_32BIT);
+> > +}  
+> 
+> 
+> Since at least commit ed1cd6deb013 ("powerpc: Activate 
+> CONFIG_THREAD_INFO_IN_TASK") 
+> [https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ed1cd6d] 
+> the above comment is wrong and current_is_64bit() is equivalent to 
+> !is_32bit_task()
+> 
+> See https://github.com/linuxppc/issues/issues/275
+> 
+> Christophe
 
-Signed-off-by: Lecopzer Chen <lecopzer.chen@mediatek.com>
----
- drivers/power/supply/test_power.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+I aim at changing the code as little as possible here. A separate patch
+on top removing this function would be ok?
 
-diff --git a/drivers/power/supply/test_power.c b/drivers/power/supply/test_power.c
-index 70db8d20e138..65c23ef6408d 100644
---- a/drivers/power/supply/test_power.c
-+++ b/drivers/power/supply/test_power.c
-@@ -34,6 +34,7 @@ static int battery_technology		= POWER_SUPPLY_TECHNOLOGY_LION;
- static int battery_capacity		= 50;
- static int battery_voltage		= 3300;
- static int battery_charge_counter	= -1000;
-+static int battery_current		= 1600;
- 
- static bool module_initialized;
- 
-@@ -118,6 +119,10 @@ static int test_power_get_battery_property(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
- 		val->intval = battery_voltage;
- 		break;
-+	case POWER_SUPPLY_PROP_CURRENT_AVG:
-+	case POWER_SUPPLY_PROP_CURRENT_NOW:
-+		val->intval = battery_current;
-+		break;
- 	default:
- 		pr_info("%s: some properties deliberately report errors.\n",
- 			__func__);
-@@ -149,6 +154,8 @@ static enum power_supply_property test_power_battery_props[] = {
- 	POWER_SUPPLY_PROP_SERIAL_NUMBER,
- 	POWER_SUPPLY_PROP_TEMP,
- 	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-+	POWER_SUPPLY_PROP_CURRENT_AVG,
-+	POWER_SUPPLY_PROP_CURRENT_NOW,
- };
- 
- static char *test_power_ac_supplied_to[] = {
-@@ -467,6 +474,21 @@ static int param_set_battery_charge_counter(const char *key,
- 
- #define param_get_battery_charge_counter param_get_int
- 
-+static int param_set_battery_current(const char *key,
-+					const struct kernel_param *kp)
-+{
-+	int tmp;
-+
-+	if (1 != sscanf(key, "%d", &tmp))
-+		return -EINVAL;
-+
-+	battery_current = tmp;
-+	signal_power_supply_changed(test_power_supplies[TEST_BATTERY]);
-+	return 0;
-+}
-+
-+#define param_get_battery_current param_get_int
-+
- static const struct kernel_param_ops param_ops_ac_online = {
- 	.set = param_set_ac_online,
- 	.get = param_get_ac_online,
-@@ -512,6 +534,11 @@ static const struct kernel_param_ops param_ops_battery_charge_counter = {
- 	.get = param_get_battery_charge_counter,
- };
- 
-+static const struct kernel_param_ops param_ops_battery_current = {
-+	.set = param_set_battery_current,
-+	.get = param_get_battery_current,
-+};
-+
- #define param_check_ac_online(name, p) __param_check(name, p, void);
- #define param_check_usb_online(name, p) __param_check(name, p, void);
- #define param_check_battery_status(name, p) __param_check(name, p, void);
-@@ -521,6 +548,7 @@ static const struct kernel_param_ops param_ops_battery_charge_counter = {
- #define param_check_battery_capacity(name, p) __param_check(name, p, void);
- #define param_check_battery_voltage(name, p) __param_check(name, p, void);
- #define param_check_battery_charge_counter(name, p) __param_check(name, p, void);
-+#define param_check_battery_current(name, p) __param_check(name, p, void);
- 
- 
- module_param(ac_online, ac_online, 0644);
-@@ -555,6 +583,9 @@ module_param(battery_charge_counter, battery_charge_counter, 0644);
- MODULE_PARM_DESC(battery_charge_counter,
- 	"battery charge counter (microampere-hours)");
- 
-+module_param(battery_current, battery_current, 0644);
-+MODULE_PARM_DESC(battery_current, "battery current (milliampere)");
-+
- MODULE_DESCRIPTION("Power supply driver for testing");
- MODULE_AUTHOR("Anton Vorontsov <cbouatmailru@gmail.com>");
- MODULE_LICENSE("GPL");
--- 
-2.17.1
+Thanks
 
+Michal
