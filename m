@@ -2,89 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C76B3B098E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 09:35:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E864B09A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 09:42:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729958AbfILHfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 03:35:05 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38570 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbfILHfE (ORCPT
+        id S1729914AbfILHmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 03:42:37 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:37658 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727186AbfILHmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 03:35:04 -0400
-Received: by mail-io1-f67.google.com with SMTP id k5so26972839iol.5
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 00:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3yy/eB93u3i9oFcrYya+qHvoEWOjOqMkA6Rb+MDstxQ=;
-        b=K05sx5cBxhYiaLy2Alt2mn8Mrq+JJD8WgnnBD5NOn12SAe96tzwo5Znel55J8i+iXI
-         qiTaXW3iH1cACv8m9V2QYoHIzAG+piVKMYQ1R0IpmwBM6/DfomHsYEmLe3u/cFh7QJNA
-         wlnzdFAGWW99YORzPMbLex+anPI5d6C2iZqj0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3yy/eB93u3i9oFcrYya+qHvoEWOjOqMkA6Rb+MDstxQ=;
-        b=JK5pjIQ+AUYc2/o9v8tT/unrcnxqbDV6vB1nO9SeT1lfUuYoaD2v+bND2IxWG1dR4R
-         jQ4FaSOzXHOhLCWIQNLBg/BmJSws378IIfYW3xkUbXtLJMlnucZjSNhc9bia0tyHKVw2
-         2eJkiDgRtEUTTPBrkBKPbm6G7PyZqxrToz7MhmG2HF62bEjxyAC0yZWga1Zp5nwLQ/BD
-         dmjb1ot7Ta3UerESFDYBMch2UQMbTLZ0to7QD8mAgVXFuW17FqHwAu0daJt0oHq1R33w
-         7xOaYfX1ETkBS2RtQPJd7uyMCdSoi0xWevVW8AH6yBODgwVA/es+tE2ynyBYsSKoIRI/
-         Gs0A==
-X-Gm-Message-State: APjAAAVwqHdOsTBZqH0NcdYw3ZyNpoXmCQgh9di1lPmDfYnIDOGEpfbJ
-        OmEE79Wk/H0Lc6Mh1JmnMJFCCluoaBfiGE4mF6qY6Q==
-X-Google-Smtp-Source: APXvYqwDgZMkrPkxnR7Kpp3wOz1MBiRabFbv3J14u1Gj0YLn1LeCU7PJj52biEq7IGB5upsfDYmTD5hxdyd3zlFT4qQ=
-X-Received: by 2002:a05:6638:405:: with SMTP id q5mr40270933jap.78.1568273702977;
- Thu, 12 Sep 2019 00:35:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190910151206.4671-1-mszeredi@redhat.com> <20190911145247.GA7271@redhat.com>
-In-Reply-To: <20190911145247.GA7271@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 12 Sep 2019 09:34:52 +0200
-Message-ID: <CAJfpegtmvi7pkiJe+1cHMbkx2rJEi7LOAaBMEyC0DaNm7uW3bQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] virtio-fs: shared file system for virtual machines
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 12 Sep 2019 03:42:37 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x8C7edBo002482;
+        Thu, 12 Sep 2019 16:40:39 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x8C7edBo002482
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1568274040;
+        bh=tYNGmUKDdlHdaYWdH5IidgIolcOzTVD5cgXor3vQ83I=;
+        h=From:To:Cc:Subject:Date:From;
+        b=b5zTIocnN33/DdUDcjaMeyjFzoTtbxCd5868rKO0xNO0s4hj4TNzpDUOblkZcIN5s
+         blwV1MedYVuH8L4E6jhrG9tGRK5B6XcHeO9hj0vbKerkxkYHo2Ide3IG4M/1a7c4bX
+         1PaFV6ym3Hz6Rf1JatWU/532qvHQvpov555Eto+SN0h143gBLKQRZ81xTz1moDF4q8
+         PIRr9nPjvDy9VjennU0QLC/d+55xbxsG5lX6PE7UvoAwocoen+R8QD/u8uMmFMIzBi
+         yEL4RALzlrR3T6bfH2CDH66vDOel/m3mCNo/vLZ6dB9qFtFdxrTaTKOewUmDQU56i6
+         cURS0DcBm/zvw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc: improve prom_init_check rule
+Date:   Thu, 12 Sep 2019 16:40:37 +0900
+Message-Id: <20190912074037.13813-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 4:53 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Tue, Sep 10, 2019 at 05:12:02PM +0200, Miklos Szeredi wrote:
-> > Git tree for this version is available here:
-> >
-> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#virtiofs-v5
-> >
-> > Only post patches that actually add virtiofs (virtiofs-v5-base..virtiofs-v5).
-> >
-> > I've folded the series from Vivek and fixed a couple of TODO comments
-> > myself.  AFAICS two issues remain that need to be resolved in the short
-> > term, one way or the other: freeze/restore and full virtqueue.
->
-> Hi Miklos,
->
-> We are already handling full virtqueue by waiting a bit and retrying.
-> I think TODO in virtio_fs_enqueue_req() is stale. Caller already
-> handles virtqueue full situation by retrying.
+This slightly improves the prom_init_check rule.
 
-Ah.
+[1] Avoid needless check
 
->
-> Havind said that, this could be improved by using some sort of wait
-> queue or completion privimitve.
+Currently, prom_init_check.sh is invoked every time you run 'make'
+even if you have changed nothing in prom_init.c. With this commit,
+the script is re-run only when prom_init.o is recompiled.
 
-Yeah, the request queuing can be cleaned up in several ways.  But I
-think that we might postpone that till after merging with mainline.
+[2] Beautify the build log
 
-Thanks,
-Miklos
+Currently, the O= build shows the absolute path to the script:
+
+  CALL    /abs/path/to/source/of/linux/arch/powerpc/kernel/prom_init_check.sh
+
+With this commit, it is always a relative path to the timestamp file:
+
+  PROMCHK arch/powerpc/kernel/prom_init_check
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ arch/powerpc/kernel/.gitignore |  1 +
+ arch/powerpc/kernel/Makefile   | 14 ++++++--------
+ 2 files changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/arch/powerpc/kernel/.gitignore b/arch/powerpc/kernel/.gitignore
+index c5f676c3c224..67ebd3003c05 100644
+--- a/arch/powerpc/kernel/.gitignore
++++ b/arch/powerpc/kernel/.gitignore
+@@ -1 +1,2 @@
++prom_init_check
+ vmlinux.lds
+diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+index 56dfa7a2a6f2..07bf5a45f176 100644
+--- a/arch/powerpc/kernel/Makefile
++++ b/arch/powerpc/kernel/Makefile
+@@ -184,15 +184,13 @@ extra-$(CONFIG_ALTIVEC)		+= vector.o
+ extra-$(CONFIG_PPC64)		+= entry_64.o
+ extra-$(CONFIG_PPC_OF_BOOT_TRAMPOLINE)	+= prom_init.o
+ 
+-ifdef CONFIG_PPC_OF_BOOT_TRAMPOLINE
+-$(obj)/built-in.a:		prom_init_check
++extra-$(CONFIG_PPC_OF_BOOT_TRAMPOLINE)	+= prom_init_check
+ 
+-quiet_cmd_prom_init_check = CALL    $<
+-      cmd_prom_init_check = $(CONFIG_SHELL) $< "$(NM)" "$(obj)/prom_init.o"
++quiet_cmd_prom_init_check = PROMCHK $@
++      cmd_prom_init_check = $(CONFIG_SHELL) $< "$(NM)" $(obj)/prom_init.o; touch $@
+ 
+-PHONY += prom_init_check
+-prom_init_check: $(src)/prom_init_check.sh $(obj)/prom_init.o
+-	$(call cmd,prom_init_check)
+-endif
++$(obj)/prom_init_check: $(src)/prom_init_check.sh $(obj)/prom_init.o FORCE
++	$(call if_changed,prom_init_check)
++targets += prom_init_check
+ 
+ clean-files := vmlinux.lds
+-- 
+2.17.1
+
