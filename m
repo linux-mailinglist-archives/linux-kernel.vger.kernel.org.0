@@ -2,88 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB39B073B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 05:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2D07B0757
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 05:53:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbfILDnf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 23:43:35 -0400
-Received: from aclms3.advantech.com.tw ([125.252.70.86]:60492 "EHLO
-        ACLMS3.advantech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfILDnf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 23:43:35 -0400
-X-Greylist: delayed 602 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Sep 2019 23:43:32 EDT
-Received: from taipei08.ADVANTECH.CORP (unverified [172.20.0.235]) by ACLMS3.advantech.com.tw
- (Clearswift SMTPRS 5.6.0) with ESMTP id <Tda31a8ab12ac1401c8187c@ACLMS3.advantech.com.tw>;
- Thu, 12 Sep 2019 11:33:27 +0800
-From:   <Amy.Shih@advantech.com.tw>
-To:     <she90122@gmail.com>
-CC:     <amy.shih@advantech.com.tw>, <oakley.ding@advantech.com.tw>,
-        <bichan.lu@advantech.com.tw>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [v1,1/1] hwmon: (nct7904) Fix incorrect SMI status register setting of LTD temperature and fan.
-Date:   Thu, 12 Sep 2019 11:33:00 +0000
-Message-ID: <20190912113300.4714-1-Amy.Shih@advantech.com.tw>
-X-Mailer: git-send-email 2.17.1
+        id S1729604AbfILDxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 23:53:21 -0400
+Received: from mga06.intel.com ([134.134.136.31]:13411 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729310AbfILDxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 23:53:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2019 20:53:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="268958277"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga001.jf.intel.com with ESMTP; 11 Sep 2019 20:53:20 -0700
+Received: from fmsmsx117.amr.corp.intel.com (10.18.116.17) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 11 Sep 2019 20:52:50 -0700
+Received: from fmsmsx113.amr.corp.intel.com ([169.254.13.68]) by
+ fmsmsx117.amr.corp.intel.com ([169.254.3.133]) with mapi id 14.03.0439.000;
+ Wed, 11 Sep 2019 20:52:50 -0700
+From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
+To:     "joe@perches.com" <joe@perches.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Jiang, Dave" <dave.jiang@intel.com>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH 11/13] nvdimm: Use more common logic testing styles and
+ bare ; positions
+Thread-Topic: [PATCH 11/13] nvdimm: Use more common logic testing styles and
+ bare ; positions
+Thread-Index: AQHVaRWKbif/DxojQEGXHgNOmHirzacn3kSA
+Date:   Thu, 12 Sep 2019 03:52:49 +0000
+Message-ID: <706f6af6a6571a3bb2d35ec332fa572a990cbc48.camel@intel.com>
+References: <cover.1568256705.git.joe@perches.com>
+         <d6aa5b66936f2e0f132e893e10494aae6b74e886.1568256708.git.joe@perches.com>
+In-Reply-To: <d6aa5b66936f2e0f132e893e10494aae6b74e886.1568256708.git.joe@perches.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+x-originating-ip: [10.254.21.217]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9B343DDA310A65479EFFA2A81A767489@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.17.10.114]
-X-ClientProxiedBy: ACLDAG.ADVANTECH.CORP (172.20.2.88) To
- taipei08.ADVANTECH.CORP (172.20.0.235)
-X-StopIT: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "amy.shih" <amy.shih@advantech.com.tw>
-
-According to datasheet, the SMI status register setting of LTD
-temperature is SMI_STS3, and the SMI status register setting
-of fan is SMI_STS5 and SMI_STS6.
-
-Signed-off-by: amy.shih <amy.shih@advantech.com.tw>
----
- drivers/hwmon/nct7904.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
-index ce688ab4fce2..95b447cfa24c 100644
---- a/drivers/hwmon/nct7904.c
-+++ b/drivers/hwmon/nct7904.c
-@@ -51,6 +51,7 @@
- #define VSEN1_HV_HL_REG		0x00	/* Bank 1; 2 regs (HV/LV) per sensor */
- #define VSEN1_LV_HL_REG		0x01	/* Bank 1; 2 regs (HV/LV) per sensor */
- #define SMI_STS1_REG		0xC1	/* Bank 0; SMI Status Register */
-+#define SMI_STS3_REG		0xC3	/* Bank 0; SMI Status Register */
- #define SMI_STS5_REG		0xC5	/* Bank 0; SMI Status Register */
- #define SMI_STS7_REG		0xC7	/* Bank 0; SMI Status Register */
- #define SMI_STS8_REG		0xC8	/* Bank 0; SMI Status Register */
-@@ -210,7 +211,7 @@ static int nct7904_read_fan(struct device *dev, u32 attr, int channel,
- 		return 0;
- 	case hwmon_fan_alarm:
- 		ret = nct7904_read_reg(data, BANK_0,
--				       SMI_STS7_REG + (channel >> 3));
-+				       SMI_STS5_REG + (channel >> 3));
- 		if (ret < 0)
- 			return ret;
- 		*val = (ret >> (channel & 0x07)) & 1;
-@@ -351,7 +352,13 @@ static int nct7904_read_temp(struct device *dev, u32 attr, int channel,
- 		*val = sign_extend32(temp, 10) * 125;
- 		return 0;
- 	case hwmon_temp_alarm:
--		if (channel < 5) {
-+		if (channel == 4) {
-+			ret = nct7904_read_reg(data, BANK_0,
-+					       SMI_STS3_REG);
-+			if (ret < 0)
-+				return ret;
-+			*val = (ret >> 1) & 1;
-+		} else if (channel < 4) {
- 			ret = nct7904_read_reg(data, BANK_0,
- 					       SMI_STS1_REG);
- 			if (ret < 0)
--- 
-2.17.1
-
+T24gV2VkLCAyMDE5LTA5LTExIGF0IDE5OjU0IC0wNzAwLCBKb2UgUGVyY2hlcyB3cm90ZToNCj4g
+QXZvaWQgdXNpbmcgdW5jb21tb24gbG9naWMgdGVzdGluZyBzdHlsZXMgdG8gbWFrZSB0aGUgY29k
+ZSBhDQo+IGJpdCBtb3JlIGxpa2Ugb3RoZXIga2VybmVsIGNvZGUuDQo+IA0KPiBlLmcuOg0KPiAJ
+aWYgKGZvbykgew0KPiAJCTsNCj4gCX0gZWxzZSB7DQo+IAkJPGNvZGU+DQo+IAl9DQo+IA0KPiBp
+cyB0eXBpY2FsbHkgd3JpdHRlbg0KPiANCj4gCWlmICghZm9vKSB7DQo+IAkJPGNvZGU+DQo+IAl9
+DQo+IA0KDQpBIGxvdCBvZiB0aW1lcyB0aGUgZXhjZXNzaXZlIGludmVyc2lvbnMgc2VlbSB0byBy
+ZXN1bHQgaW4gYSBuZXQgbG9zcyBvZg0KcmVhZGFiaWxpdHkgLSBlLmcuOg0KDQo8c25pcD4NCg0K
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9udmRpbW0vcmVnaW9uX2RldnMuYw0KPiBiL2RyaXZlcnMv
+bnZkaW1tL3JlZ2lvbl9kZXZzLmMNCj4gaW5kZXggNjVkZjA3NDgxOTA5Li42ODYxZTA5OTdkMjEg
+MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbnZkaW1tL3JlZ2lvbl9kZXZzLmMNCj4gKysrIGIvZHJp
+dmVycy9udmRpbW0vcmVnaW9uX2RldnMuYw0KPiBAQCAtMzIwLDkgKzMyMCw3IEBAIHN0YXRpYyBz
+c2l6ZV90IHNldF9jb29raWVfc2hvdyhzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+ICAJc3RydWN0IG5k
+X2ludGVybGVhdmVfc2V0ICpuZF9zZXQgPSBuZF9yZWdpb24tPm5kX3NldDsNCj4gIAlzc2l6ZV90
+IHJjID0gMDsNCj4gIA0KPiAtCWlmIChpc19tZW1vcnkoZGV2KSAmJiBuZF9zZXQpDQo+IC0JCS8q
+IHBhc3MsIHNob3VsZCBiZSBwcmVjbHVkZWQgYnkgcmVnaW9uX3Zpc2libGUgKi87DQoNCkZvciBv
+bmUsIHRoZSBjb21tZW50IGlzIGxvc3QNCg0KPiAtCWVsc2UNCj4gKwlpZiAoIShpc19tZW1vcnko
+ZGV2KSAmJiBuZF9zZXQpKQ0KDQpBbmQgaXQgdGFrZXMgYSBtb21lbnQgdG8gcmVzb2x2ZSBiZXR3
+ZWVuIHRoaW5ncyBzdWNoIGFzOg0KDQoJaWYgKCEoQSAmJiBCKSkNCgkgIHZzLg0KCWlmICghKEEp
+ICYmIEIpDQoNCkFuZCB0aGlzIGlzIGVzcGVjaWFsbHkgdHJ1ZSBpZiAnQScgYW5kICdCJyBhcmUg
+bG9uZ2VyIGZ1bmN0aW9uIGNhbGxzLA0Kc3BsaXQgb3ZlciBtdWx0aXBsZSBsaW5lcywgb3IgYXJl
+IHRoZW1zZWx2ZXMgY29tcG91bmQgJ3NlY3Rpb25zJy4NCg0KSSdtIG5vdCBvcHBvc2VkIHRvIC9h
+bGwvIHN1Y2ggdHJhbnNmb3JtYXRpb25zIC0tIGZvciBleGFtcGxlLCB0aGUgb25lcw0Kd2hlcmUg
+dGhlIGxvZ2ljYWwgaW52ZXJzaW9uIGNhbiBiZSAnY29uc3VtZWQnIGJ5IHRvZ2dsaW5nIGEgY29t
+cGFyaXNpb24NCm9wZXJhdG9yLCBhcyB5b3UgaGF2ZSBhIGZldyB0aW1lcyBpbiB0aGlzIHBhdGNo
+LCBkb24ndCBzYWNyaWZpY2UgYW55DQpyZWFkaWJpbGl0eSwgYW5kIHBlcmhhcHMgZXZlbiBpbXBy
+b3ZlIGl0LiANCg0KPiAgCQlyZXR1cm4gLUVOWElPOw0KPiAgDQo+ICAJLyoNCg==
