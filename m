@@ -2,356 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD6FB11C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 17:04:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 475E7B11D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 17:10:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732969AbfILPEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 11:04:40 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:33159 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732592AbfILPEk (ORCPT
+        id S1732924AbfILPKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 11:10:11 -0400
+Received: from mta01.svc.cra.dublin.eircom.net ([159.134.118.222]:47840 "HELO
+        mta01.svc.cra.dublin.eircom.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1732715AbfILPKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 11:04:40 -0400
-Received: by mail-vk1-f196.google.com with SMTP id q186so5224574vkb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 08:04:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xFNNCOgYKpq2tfIBsvM5Q2EFA3f47YwR/HKpQvuH55A=;
-        b=AZEvGYnHobz+aCT+xnfAm+qo5L3S6S0AsimwkFQLGvUSD1g9sEjVwzSPupFnLuhUGb
-         BkJp+eA6AN7OZp6PYY//MtWmqLqL6DjY5KT59ehRnTV2w9kilGBb7+zg/Lm/9PMIMAwU
-         yaaC8yubvTQWQ6q22ByA5EqaO/cu2bJABaQNJwntZBiI1668H2QIAG4W1vWCf5PQ+bDq
-         sINOBDMlzXWVnhASAglbBurBC1bHAK3wSNkv5g0+e/5v1+GpIoJZnk06vF4hCc0oDjQv
-         D1HUQ8r+Gz0ca+OaEINpNDWtZQXKgcLdrHScU/jJAu6Cw7ZBMW6ODoMZtB8VK4iX2sol
-         2Y1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xFNNCOgYKpq2tfIBsvM5Q2EFA3f47YwR/HKpQvuH55A=;
-        b=JWKk0SDU061CtRJgW61lHip8fI37petWsTprQqQhuOz4x8HoctKDE1AV3jjV0J1l1u
-         7/m+uzLT9XC5NDMiPfb+1Z6cMWX8q5VSowrMhjJEP0aGZ4+rfwSLOK6ps+qBpTbf8tnS
-         Kx90zwOkrU31qI0slGw0ytBpPJ9vRcxhhFLks2FZaF2Om37YzjmkwGaIJRu3sQZw++m7
-         aD/BKDBN+ZD4hSy4nyGIZ9meQqi/p4UQ3wGgYrQGTQ0F+47+Uz8VrPI2iB6ex3qGyHxe
-         Yn2TQrOVFUQvuKIMOL9veIdGbS+JxhknICsMbURhr1MjzG8oU42dftNewgJ2S+dtK6l7
-         6JHg==
-X-Gm-Message-State: APjAAAXAzjnGDiZ4wd6iLvV8YHDWuU+NbneYV8pIoxhkOcW+TXXiE42m
-        vrBgQHPgttjHmsOC8xFvnnlc+CXKeM3yH88sN4dA3A==
-X-Google-Smtp-Source: APXvYqzDZaA8bVUczMnOc9xu5hIchlU6tSMAYQmK9E71nFn77GkeKYvDio8gEXBBxH2xAQd8ycVUZdJh7BnvQANMu2s=
-X-Received: by 2002:a1f:8c50:: with SMTP id o77mr7663416vkd.52.1568300678305;
- Thu, 12 Sep 2019 08:04:38 -0700 (PDT)
+        Thu, 12 Sep 2019 11:10:11 -0400
+X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Sep 2019 11:10:09 EDT
+Received: (qmail 11016 messnum 13901751 invoked from network[213.94.190.15/avas03.vendorsvc.cra.dublin.eircom.net]); 12 Sep 2019 15:03:27 -0000
+Received: from avas03.vendorsvc.cra.dublin.eircom.net (HELO avas03) (213.94.190.15)
+  by mta01.svc.cra.dublin.eircom.net (qp 11016) with SMTP; 12 Sep 2019 15:03:27 -0000
+Received: from vzmbx18.eircom.net ([86.43.60.98])
+        by Cloudmark Gateway with SMTP
+        id 8Qd4iAUOFHftS8Qd4ir826; Thu, 12 Sep 2019 16:03:27 +0100
+X-Spam-Flag: NO
+X-CNFS-Analysis: v=2.2 cv=bdwbaKHB c=1 sm=1 tr=0
+ a=e7gqILOnBbllteVy7xBg4A==:117 a=9cW_t1CCXrUA:10 a=FKkrIqjQGGEA:10
+ a=2Ad1L7sHTmAA:10 a=5_IimSLyMIIA:10 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+ a=FMVE419cD_oA:10 a=YIq4gEiiZW0A:10 a=ZZnuYtJkoWoA:10
+ a=9bUQUdo6JS71loVLorMA:9 a=QEXdDO2ut3YA:10 a=NCmjSkj-TwUiR8at5sTD:22
+Date:   Thu, 12 Sep 2019 16:03:26 +0100 (IST)
+From:   Mrs Jessica Becker <ok125221@eircom.net>
+Reply-To: jessicakecker@gmail.com
+Message-ID: <614755836.88344.1568300606778.JavaMail.zimbra@eircom.net>
+Subject: Dear Friend,
 MIME-Version: 1.0
-References: <1568135676-9328-1-git-send-email-thara.gopinath@linaro.org> <1568135676-9328-5-git-send-email-thara.gopinath@linaro.org>
-In-Reply-To: <1568135676-9328-5-git-send-email-thara.gopinath@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 12 Sep 2019 17:04:01 +0200
-Message-ID: <CAPDyKFpzeF6Adu9qBTFazTzbe=rv90x1UjKqC2LvCDpoXBJfVQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] thermal: Add generic power domain warming device driver.
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, agross@kernel.org,
-        amit.kucheria@verdurent.com, Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [212.103.48.115]
+X-Mailer: Zimbra 8.6.0_GA_1242 (ZimbraWebClient - FF69 (Win)/8.6.0_GA_1242)
+Thread-Topic: Dear Friend,
+Thread-Index: 5iD8/Ej1HmAlgiT/K75P7S/mxvRs8A==
+X-CMAE-Envelope: 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
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Sep 2019 at 19:14, Thara Gopinath <thara.gopinath@linaro.org> wrote:
->
-> Resources modeled as power domains in linux kenrel
-> can  be used to warm the SoC(eg. mx power domain on sdm845).
-> To support this feature, introduce a generic power domain
-> warming device driver that can be plugged into the thermal framework
-> (The thermal framework itself requires further modifiction to
-> support a warming device in place of a cooling device.
-> Those extensions are not introduced in this patch series).
->
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> ---
-> v1->v2:
->         - Make power domain based warming device driver a generic
->         driver in the thermal framework. v1 implemented this as a
->         Qualcomm specific driver.
->         - Rename certain variables as per review suggestions on the
->         mailing list.
->
->  drivers/thermal/Kconfig              |  11 +++
->  drivers/thermal/Makefile             |   2 +
->  drivers/thermal/pwr_domain_warming.c | 174 +++++++++++++++++++++++++++++++++++
->  3 files changed, 187 insertions(+)
->  create mode 100644 drivers/thermal/pwr_domain_warming.c
->
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 9966364..eeb6018 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -187,6 +187,17 @@ config DEVFREQ_THERMAL
->
->           If you want this support, you should say Y here.
->
-> +config PWR_DOMAIN_WARMING_THERMAL
-> +       bool "Power Domain based warming device"
-> +       depends on PM_GENERIC_DOMAINS
-> +       depends on PM_GENERIC_DOMAINS_OF
+Dear Friend,
 
-PM_GENERIC_DOMAINS_OF can't be set unless PM_GENERIC_DOMAINS is set too.
+Hello how are you doing? Please, I am still waiting for your reply on the message I sent you yesterday
 
-So I assume it's sufficient to depend on PM_GENERIC_DOMAINS_OF?
-
-> +       help
-> +         This implements the generic power domain based warming
-> +         mechanism through increasing the performance state of
-> +         a power domain.
-> +
-> +         If you want this support, you should say Y here.
-> +
->  config THERMAL_EMULATION
->         bool "Thermal emulation mode support"
->         help
-> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> index 74a37c7..382c64a 100644
-> --- a/drivers/thermal/Makefile
-> +++ b/drivers/thermal/Makefile
-> @@ -27,6 +27,8 @@ thermal_sys-$(CONFIG_CLOCK_THERMAL)   += clock_cooling.o
->  # devfreq cooling
->  thermal_sys-$(CONFIG_DEVFREQ_THERMAL) += devfreq_cooling.o
->
-> +thermal_sys-$(CONFIG_PWR_DOMAIN_WARMING_THERMAL)       += pwr_domain_warming.o
-> +
->  # platform thermal drivers
->  obj-y                          += broadcom/
->  obj-$(CONFIG_THERMAL_MMIO)             += thermal_mmio.o
-> diff --git a/drivers/thermal/pwr_domain_warming.c b/drivers/thermal/pwr_domain_warming.c
-> new file mode 100644
-> index 0000000..3dd792b
-> --- /dev/null
-> +++ b/drivers/thermal/pwr_domain_warming.c
-> @@ -0,0 +1,174 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019, Linaro Ltd
-> + */
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/init.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/thermal.h>
-> +
-> +struct pd_warming_device {
-> +       struct thermal_cooling_device *cdev;
-> +       struct device *dev;
-> +       int max_state;
-> +       int cur_state;
-> +       bool runtime_resumed;
-> +};
-> +
-> +static const struct of_device_id pd_wdev_match_table[] = {
-> +       { .compatible = "thermal-power-domain-wdev", .data = NULL },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, pd_wdev_match_table);
-> +
-> +static int pd_wdev_get_max_state(struct thermal_cooling_device *cdev,
-> +                                unsigned long *state)
-> +{
-> +       struct pd_warming_device *pd_wdev = cdev->devdata;
-> +
-> +       *state = pd_wdev->max_state;
-> +       return 0;
-> +}
-> +
-> +static int pd_wdev_get_cur_state(struct thermal_cooling_device *cdev,
-> +                                unsigned long *state)
-> +{
-> +       struct pd_warming_device *pd_wdev = cdev->devdata;
-> +
-> +       *state = dev_pm_genpd_get_performance_state(pd_wdev->dev);
-> +
-> +       return 0;
-> +}
-> +
-> +static int pd_wdev_set_cur_state(struct thermal_cooling_device *cdev,
-> +                                unsigned long state)
-> +{
-> +       struct pd_warming_device *pd_wdev = cdev->devdata;
-> +       struct device *dev = pd_wdev->dev;
-> +       int ret;
-> +
-> +       ret = dev_pm_genpd_set_performance_state(dev, state);
-> +
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (state && !pd_wdev->runtime_resumed) {
-> +               ret = pm_runtime_get_sync(dev);
-> +               pd_wdev->runtime_resumed = true;
-> +       } else if (!state && pd_wdev->runtime_resumed) {
-> +               ret = pm_runtime_put(dev);
-> +               pd_wdev->runtime_resumed = false;
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static struct thermal_cooling_device_ops pd_warming_device_ops = {
-> +       .get_max_state = pd_wdev_get_max_state,
-> +       .get_cur_state = pd_wdev_get_cur_state,
-> +       .set_cur_state = pd_wdev_set_cur_state,
-> +};
-> +
-> +static int pd_wdev_create(struct device *dev, const char *name)
-> +{
-> +       struct pd_warming_device *pd_wdev;
-> +       int state_count;
-> +
-> +       pd_wdev = devm_kzalloc(dev, sizeof(*pd_wdev), GFP_KERNEL);
-> +       if (!pd_wdev)
-> +               return -ENOMEM;
-> +
-> +       state_count = dev_pm_genpd_performance_state_count(dev);
-> +       if (state_count < 0)
-> +               return state_count;
-> +
-> +       pd_wdev->dev = dev;
-> +       pd_wdev->max_state = state_count - 1;
-> +       pd_wdev->runtime_resumed = false;
-> +
-> +       pm_runtime_enable(dev);
-> +
-> +       pd_wdev->cdev = thermal_of_cooling_device_register
-> +                                       (dev->of_node, name,
-> +                                        pd_wdev,
-> +                                        &pd_warming_device_ops);
-> +       if (IS_ERR(pd_wdev->cdev)) {
-> +               dev_err(dev, "unable to register %s cooling device\n", name);
-> +               pm_runtime_disable(dev);
-> +
-> +               return PTR_ERR(pd_wdev->cdev);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int pd_wdev_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev, *pd_dev;
-> +       const char *pd_name;
-> +       int id, count, ret = 0;
-> +
-> +       count = of_count_phandle_with_args(dev->of_node, "power-domains",
-> +                                          "#power-domain-cells");
-
-Perhaps this should be converted to genpd OF helper function instead,
-that allows the caller to know how many power-domains there are
-specified for a device node.
-
-> +
-> +       if (count > 1) {
-> +               for (id = 0; id < count; id++) {
-> +                       ret = of_property_read_string_index
-> +                                       (dev->of_node, "power-domain-names",
-> +                                        id, &pd_name);
-> +                       if (ret) {
-> +                               dev_err(dev, "Error reading the power domain name %d\n", ret);
-> +                               continue;
-> +                       }
-
-It looks a bit awkward that you want to re-use the power-domain-names
-as the name for the cooling (warming) device. This isn't really what
-we use the "*-names" bindings for in general, I think.
-
-Anyway, if you want a name corresponding to the actual attached PM
-domain, perhaps re-using "->name" from the struct generic_pm_domain is
-better. We can add a genpd helper for that, no problem. Of course it
-also means that you must call dev_pm_domain_attach_by_id() first, to
-attach the device and then get the name of the genpd, but that should
-be fine.
-
-> +
-> +                       pd_dev = dev_pm_domain_attach_by_id(dev, id);
-> +                       if (IS_ERR(pd_dev)) {
-> +                               dev_err(dev, "Error attaching power domain %s %ld\n", pd_name, PTR_ERR(pd_dev));
-> +                               continue;
-> +                       }
-> +
-> +                       ret = pd_wdev_create(pd_dev, pd_name);
-> +                       if (ret) {
-> +                               dev_err(dev, "Error building cooling device %s %d\n", pd_name, ret);
-> +                               dev_pm_domain_detach(pd_dev, false);
-> +                               continue;
-> +                       }
-
-I am wondering about the use case of having multiple PM domains
-attached to the cooling (warming) device. Is that really needed?
-Perhaps you can elaborate on that a bit?
-
-> +               }
-> +       } else if (count == 1) {
-> +               ret = of_property_read_string_index(dev->of_node,
-> +                                                   "power-domain-names",
-> +                                                   0, &pd_name);
-> +               if (ret) {
-> +                       dev_err(dev, "Error reading the power domain name %d\n", ret);
-> +                       goto exit;
-> +               }
-
-According to my comment above, perhaps we simply don't have to use the
-"power-domain-names" binding at all.
-
-Also, I don't think this is really safe, as there is no guarantee that
-there is PM domain attached to the device, just because you found the
-DT property "power-domain-names".
-
-Probably better to check pm_domain pointer for the device.
-
-> +
-> +               ret = pd_wdev_create(dev, pd_name);
-> +               if (ret) {
-> +                       dev_err(dev, "Error building cooling device %s %d\n", pd_name, ret);
-> +                       goto exit;
-> +               }
-> +       } else  {
-> +               ret = -EINVAL;
-> +       }
-> +
-> +exit:
-> +       return ret;
-> +}
-> +
-> +static struct platform_driver pd_wdev_driver = {
-> +       .driver = {
-> +               .name = "qcom-rpmhpd-cdev",
-
-Probably rename to a more generic name (leftover from earlier version I assume).
-
-> +               .of_match_table = pd_wdev_match_table,
-> +       },
-> +       .probe = pd_wdev_probe,
-> +};
-> +module_platform_driver(pd_wdev_driver);
-> +
-> +MODULE_DESCRIPTION("Qualcomm RPMHPD cooling device driver");
-
-Ditto.
-
-> +MODULE_LICENSE("GPL v2");
-> --
-> 2.1.4
->
-
-Kind regards
-Uffe
+Thanks
+Mrs Jessica Becker.
