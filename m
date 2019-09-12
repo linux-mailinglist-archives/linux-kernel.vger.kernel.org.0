@@ -2,147 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC85BB1463
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 20:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81710B146F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 20:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbfILS0J convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Sep 2019 14:26:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53778 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727041AbfILS0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 14:26:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 39C8DAEE0;
-        Thu, 12 Sep 2019 18:26:06 +0000 (UTC)
-Date:   Thu, 12 Sep 2019 20:26:04 +0200
-From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Breno Leitao <leitao@debian.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Diana Craciun <diana.craciun@nxp.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v8 5/7] powerpc/64: make buildable without CONFIG_COMPAT
-Message-ID: <20190912202604.14a73423@kitsune.suse.cz>
-In-Reply-To: <9973bf6b-f1b9-c778-bd88-ed41e45ca126@c-s.fr>
-References: <cover.1568306311.git.msuchanek@suse.de>
-        <039ed7ac686927fe169241ac72225a258d95ccfc.1568306311.git.msuchanek@suse.de>
-        <9973bf6b-f1b9-c778-bd88-ed41e45ca126@c-s.fr>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1727247AbfILSav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 14:30:51 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46498 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbfILSau (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 14:30:50 -0400
+Received: by mail-io1-f65.google.com with SMTP id d17so35222651ios.13;
+        Thu, 12 Sep 2019 11:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=mZC7pXGu1qT+F+Mq64PPbUxImuBhl3ZWzMgjPcWRv1I=;
+        b=e0WfDTx16CLEoSBy/3fiIR03RqbzvAiglsH52t970LcLPbhe8lqs8+vV7FVCfytT4O
+         y1vDYSDLdY0FfCG3msZYM6Qv8q8BVFA6NHtZ8C3RlqMejRiFseSGqpZUxGrMCMTZwjkK
+         Y0/sFzpel7WDQlKkQNvOQBw4phT2s10M8mabkO8ieGRVuUfOpYduXhgtlY9j3qipFDuF
+         Qk5Q1WBmN23cRHV8pVg/aqmdAvtT5O/GzJKLdG/lJSWTREHZq5sG8KO5DRWhadqWspH3
+         iA73OVBHgf63bX8Z9TsIPa0poZlENqHwCOn2j8p4eRnyV1sDq6bxF4d/kwY/8CgfihxO
+         dckA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mZC7pXGu1qT+F+Mq64PPbUxImuBhl3ZWzMgjPcWRv1I=;
+        b=jISrwselFVo81SUwqVfiN5NifMd9wfJFDWdBSTb1r6tjgCwoNFc6cMHGHVVkJquSgE
+         QZ/R+AGHXv2SlHZE10OjWvswmzm5WNrV79Wo6BXQuC8GfPkzoS4urP9ysZJUKEkueyDj
+         cPb3FJ0LQd0xL8/Ioj2HeKcos2ArSxoP9RObyS5FYogcYz6b0k+B6/pn8vwQc4r3WTjH
+         XyHjQ07Dto5ZGSGf19dN0ahNeIChlj7uy/w2D7wolq8AcRInEl2Re3hVGIVEQPv6HZ5m
+         vd3UC3Rvr2/3sR0RmYWhlDdzrGxJrxDJrW40uGxUogztF0lLzGfuyCN+YUqrA1jvG35q
+         6mYg==
+X-Gm-Message-State: APjAAAXVUpbBSnV6QgyEWd7MraJdaJU9VzRQJ5y2scDx90I9TXcF7y0q
+        RKhvqTTmZRmOKRuwCOFlq1o/AYZoyq0=
+X-Google-Smtp-Source: APXvYqx7lsIdpsP6HV/3/J6qGakWdISq6NhXFQCIREvQL0MvxIArSJRD6Hiy/g14GLaINB5IhSjntQ==
+X-Received: by 2002:a5e:c644:: with SMTP id s4mr3382341ioo.36.1568313049479;
+        Thu, 12 Sep 2019 11:30:49 -0700 (PDT)
+Received: from aford-OptiPlex-7050.logicpd.com ([174.46.170.158])
+        by smtp.gmail.com with ESMTPSA id c4sm20003578ioa.76.2019.09.12.11.30.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2019 11:30:48 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-omap@vger.kernel.org
+Cc:     hns@goldelico.com, tony@atomide.com, neolynx@gmail.com,
+        letux-kernel@openphoenux.org, linux-kernel@vger.kernel.org,
+        andreas@kemnade.info, nm@ti.com, adam.ford@logicpd.com,
+        Adam Ford <aford173@gmail.com>
+Subject: [RFC] ARM: dts: omap36xx: Enable thermal throttling
+Date:   Thu, 12 Sep 2019 13:30:37 -0500
+Message-Id: <20190912183037.18449-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Sep 2019 20:02:16 +0200
-Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+The thermal sensor in the omap3 family isn't accurate, but it's
+better than nothing.  The various OPP's enabled for the omap3630
+support up to OPP1G, however the datasheet for the DM3730 states
+that OPP130 and OPP1G are not available above TJ of 90C.
 
-> Le 12/09/2019 à 19:26, Michal Suchanek a écrit :
-> > There are numerous references to 32bit functions in generic and 64bit
-> > code so ifdef them out.
-> > 
-> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > ---
-> > v2:
-> > - fix 32bit ifdef condition in signal.c
-> > - simplify the compat ifdef condition in vdso.c - 64bit is redundant
-> > - simplify the compat ifdef condition in callchain.c - 64bit is redundant
-> > v3:
-> > - use IS_ENABLED and maybe_unused where possible
-> > - do not ifdef declarations
-> > - clean up Makefile
-> > v4:
-> > - further makefile cleanup
-> > - simplify is_32bit_task conditions
-> > - avoid ifdef in condition by using return
-> > v5:
-> > - avoid unreachable code on 32bit
-> > - make is_current_64bit constant on !COMPAT
-> > - add stub perf_callchain_user_32 to avoid some ifdefs
-> > v6:
-> > - consolidate current_is_64bit
-> > v7:
-> > - remove leftover perf_callchain_user_32 stub from previous series version
-> > v8:
-> > - fix build again - too trigger-happy with stub removal
-> > - remove a vdso.c hunk that causes warning according to kbuild test robot
-> > ---
-> >   arch/powerpc/include/asm/thread_info.h |  4 +--
-> >   arch/powerpc/kernel/Makefile           |  7 ++---
-> >   arch/powerpc/kernel/entry_64.S         |  2 ++
-> >   arch/powerpc/kernel/signal.c           |  3 +-
-> >   arch/powerpc/kernel/syscall_64.c       |  6 ++--
-> >   arch/powerpc/kernel/vdso.c             |  3 +-
-> >   arch/powerpc/perf/callchain.c          | 39 ++++++++++++++------------
-> >   7 files changed, 33 insertions(+), 31 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
-> > index 8e1d0195ac36..c128d8a48ea3 100644
-> > --- a/arch/powerpc/include/asm/thread_info.h
-> > +++ b/arch/powerpc/include/asm/thread_info.h
-> > @@ -144,10 +144,10 @@ static inline bool test_thread_local_flags(unsigned int flags)
-> >   	return (ti->local_flags & flags) != 0;
-> >   }
-> >   
-> > -#ifdef CONFIG_PPC64
-> > +#ifdef CONFIG_COMPAT
-> >   #define is_32bit_task()	(test_thread_flag(TIF_32BIT))
-> >   #else
-> > -#define is_32bit_task()	(1)
-> > +#define is_32bit_task()	(IS_ENABLED(CONFIG_PPC32))
-> >   #endif
-> >   
-> >   #if defined(CONFIG_PPC64)  
-> 
-> [...]
-> 
-> > +static inline int current_is_64bit(void)
-> > +{
-> > +	if (!IS_ENABLED(CONFIG_COMPAT))
-> > +		return IS_ENABLED(CONFIG_PPC64);
-> > +	/*
-> > +	 * We can't use test_thread_flag() here because we may be on an
-> > +	 * interrupt stack, and the thread flags don't get copied over
-> > +	 * from the thread_info on the main stack to the interrupt stack.
-> > +	 */
-> > +	return !test_ti_thread_flag(task_thread_info(current), TIF_32BIT);
-> > +}  
-> 
-> 
-> Since at least commit ed1cd6deb013 ("powerpc: Activate 
-> CONFIG_THREAD_INFO_IN_TASK") 
-> [https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ed1cd6d] 
-> the above comment is wrong and current_is_64bit() is equivalent to 
-> !is_32bit_task()
-> 
-> See https://github.com/linuxppc/issues/issues/275
-> 
-> Christophe
+This patch configures the thermal throttling to limit the
+operating points of the omap3630 to Only OPP50 and OPP100 if
+the thermal sensor reads a value above 90C.
 
-I aim at changing the code as little as possible here. A separate patch
-on top removing this function would be ok?
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Thanks
+diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx.dtsi
+index 4bb4f534afe2..58b9d347019f 100644
+--- a/arch/arm/boot/dts/omap36xx.dtsi
++++ b/arch/arm/boot/dts/omap36xx.dtsi
+@@ -25,6 +25,7 @@
+ 
+ 			vbb-supply = <&abb_mpu_iva>;
+ 			clock-latency = <300000>; /* From omap-cpufreq driver */
++			#cooling-cells = <2>;
+ 		};
+ 	};
+ 
+@@ -195,6 +196,31 @@
+ 	};
+ };
+ 
++&cpu_thermal {
++	cpu_trips: trips {
++		/* OPP130 and OPP1G are not available above TJ of 90C. */
++		cpu_alert0: cpu_alert {
++			temperature = <90000>; /* millicelsius */
++			hysteresis = <2000>; /* millicelsius */
++			type = "passive";
++		};
++
++		cpu_crit: cpu_crit {
++			temperature = <125000>; /* millicelsius */
++			hysteresis = <2000>; /* millicelsius */
++			type = "critical";
++		};
++	};
++
++	cpu_cooling_maps: cooling-maps {
++		map0 {
++			trip = <&cpu_alert0>;
++			/* Only allow OPP50 and OPP100 */
++			cooling-device = <&cpu 0 1>;
++		};
++	};
++};
++
+ /* OMAP3630 needs dss_96m_fck for VENC */
+ &venc {
+ 	clocks = <&dss_tv_fck>, <&dss_96m_fck>;
+-- 
+2.17.1
 
-Michal
