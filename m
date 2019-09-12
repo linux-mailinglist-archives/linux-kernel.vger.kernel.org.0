@@ -2,110 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E864B09A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 09:42:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB76B0998
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 09:40:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729914AbfILHmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 03:42:37 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:37658 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727186AbfILHmh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 03:42:37 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x8C7edBo002482;
-        Thu, 12 Sep 2019 16:40:39 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x8C7edBo002482
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1568274040;
-        bh=tYNGmUKDdlHdaYWdH5IidgIolcOzTVD5cgXor3vQ83I=;
-        h=From:To:Cc:Subject:Date:From;
-        b=b5zTIocnN33/DdUDcjaMeyjFzoTtbxCd5868rKO0xNO0s4hj4TNzpDUOblkZcIN5s
-         blwV1MedYVuH8L4E6jhrG9tGRK5B6XcHeO9hj0vbKerkxkYHo2Ide3IG4M/1a7c4bX
-         1PaFV6ym3Hz6Rf1JatWU/532qvHQvpov555Eto+SN0h143gBLKQRZ81xTz1moDF4q8
-         PIRr9nPjvDy9VjennU0QLC/d+55xbxsG5lX6PE7UvoAwocoen+R8QD/u8uMmFMIzBi
-         yEL4RALzlrR3T6bfH2CDH66vDOel/m3mCNo/vLZ6dB9qFtFdxrTaTKOewUmDQU56i6
-         cURS0DcBm/zvw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linuxppc-dev@lists.ozlabs.org,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: improve prom_init_check rule
-Date:   Thu, 12 Sep 2019 16:40:37 +0900
-Message-Id: <20190912074037.13813-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729622AbfILHkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 03:40:41 -0400
+Received: from mga05.intel.com ([192.55.52.43]:34025 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725940AbfILHkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 03:40:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 00:40:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,495,1559545200"; 
+   d="scan'208";a="200692094"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 12 Sep 2019 00:40:38 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 12 Sep 2019 10:40:38 +0300
+Date:   Thu, 12 Sep 2019 10:40:38 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the pm tree
+Message-ID: <20190912074038.GA26647@kuha.fi.intel.com>
+References: <20190911003306.74ca7251@canb.auug.org.au>
+ <20190911072741.GA981@kuha.fi.intel.com>
+ <3207595.z7mfiUyZYE@kreacher>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3207595.z7mfiUyZYE@kreacher>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This slightly improves the prom_init_check rule.
+On Wed, Sep 11, 2019 at 07:17:52PM +0200, Rafael J. Wysocki wrote:
+> On Wednesday, September 11, 2019 9:27:41 AM CEST Heikki Krogerus wrote:
+> > On Wed, Sep 11, 2019 at 12:33:06AM +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > In commit
+> > > 
+> > >   fd3f7275826f ("software node: Initialize the return value in software_node_find_by_name()")
+> > > 
+> > > Fixes tag
+> > > 
+> > >   Fixes: 1666faedb567 ("software node: Add software_node_get_reference_args()")
+> > > 
+> > > has these problem(s):
+> > > 
+> > >   - Subject does not match target commit subject
+> > >     Just use
+> > > 	git log -1 --format='Fixes: %h ("%s")'
+> > > 
+> > > Did you mean
+> > > 
+> > > Fixes: 1666faedb567 ("software node: Add software_node_find_by_name()")
+> > > 
+> > > or
+> > > 
+> > > Fixes: b06184acf751 ("software node: Add software_node_get_reference_args()")
+> > 
+> > Rafael, it seems you have rebased your branch.
+> 
+> No, I haven't.
+> 
+> Actually, the commit ID is correct, but the name isn't.
+> 
+> You'd have been unlikely to get a valid commit ID matching anything with
+> "software node" in the subject had it been rebased. :-)
 
-[1] Avoid needless check
+Ah. I've added the tag line manually (for some reason). I'm sorry
+about that. I usually use this:
 
-Currently, prom_init_check.sh is invoked every time you run 'make'
-even if you have changed nothing in prom_init.c. With this commit,
-the script is re-run only when prom_init.o is recompiled.
+        % git show -s --abbrev-commit --abbrev=12 --pretty=format:"%h (\"%s\")%n"
 
-[2] Beautify the build log
+> > Do you want me to resend those fixes, or can you fix the tags in them
+> > yourself?
+> 
+> I fixed that tag up.
 
-Currently, the O= build shows the absolute path to the script:
+Thanks Rafael!
 
-  CALL    /abs/path/to/source/of/linux/arch/powerpc/kernel/prom_init_check.sh
-
-With this commit, it is always a relative path to the timestamp file:
-
-  PROMCHK arch/powerpc/kernel/prom_init_check
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- arch/powerpc/kernel/.gitignore |  1 +
- arch/powerpc/kernel/Makefile   | 14 ++++++--------
- 2 files changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/arch/powerpc/kernel/.gitignore b/arch/powerpc/kernel/.gitignore
-index c5f676c3c224..67ebd3003c05 100644
---- a/arch/powerpc/kernel/.gitignore
-+++ b/arch/powerpc/kernel/.gitignore
-@@ -1 +1,2 @@
-+prom_init_check
- vmlinux.lds
-diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-index 56dfa7a2a6f2..07bf5a45f176 100644
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -184,15 +184,13 @@ extra-$(CONFIG_ALTIVEC)		+= vector.o
- extra-$(CONFIG_PPC64)		+= entry_64.o
- extra-$(CONFIG_PPC_OF_BOOT_TRAMPOLINE)	+= prom_init.o
- 
--ifdef CONFIG_PPC_OF_BOOT_TRAMPOLINE
--$(obj)/built-in.a:		prom_init_check
-+extra-$(CONFIG_PPC_OF_BOOT_TRAMPOLINE)	+= prom_init_check
- 
--quiet_cmd_prom_init_check = CALL    $<
--      cmd_prom_init_check = $(CONFIG_SHELL) $< "$(NM)" "$(obj)/prom_init.o"
-+quiet_cmd_prom_init_check = PROMCHK $@
-+      cmd_prom_init_check = $(CONFIG_SHELL) $< "$(NM)" $(obj)/prom_init.o; touch $@
- 
--PHONY += prom_init_check
--prom_init_check: $(src)/prom_init_check.sh $(obj)/prom_init.o
--	$(call cmd,prom_init_check)
--endif
-+$(obj)/prom_init_check: $(src)/prom_init_check.sh $(obj)/prom_init.o FORCE
-+	$(call if_changed,prom_init_check)
-+targets += prom_init_check
- 
- clean-files := vmlinux.lds
 -- 
-2.17.1
-
+heikki
