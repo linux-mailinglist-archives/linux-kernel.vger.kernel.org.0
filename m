@@ -2,233 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BAB7B0BC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 11:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB372B0BCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 11:46:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730946AbfILJoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 05:44:16 -0400
-Received: from mail-eopbgr30094.outbound.protection.outlook.com ([40.107.3.94]:55461
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730835AbfILJoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 05:44:14 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aA+OG/XIFSl08Ww+otKdIwdNuFia0oP2YR/0w/IwyAvfywmyeVqhR0HQXFoba43Q28lzdfOsoIeDKj00LgkcuoDiFRzADlfTppLBcEdCbPEgaHkjAT2rk5B74HncA4Q9N7onG9hHL5rtYavd+KD8Xt3pSJvp85uocGmcNsLQ76FhYvweiNIr24RqZP4nnhkU6AfqIRFvYGYrcXP7jVbALJRgzuS3e6Gb0NULTx43uqKStOO0+ZNlR4ChFwhWpbJ9Qheh9gu8H8pX+jvKhELkfDOULh4gmXXaxlmFLjXYcCG3gcdtJS+D35vO8R0ete7ZmZLIix0YHEyjRu4vY29yPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UE+HEtwhHIsezNX6gn/hDBiF4Y2+YR4kyHGqo5ONTkE=;
- b=GLO8B1WXENoW4VtFOzGxd3kI0QyJ6fqSPrTU5d8x0uBTng9IrpmWsl8wy4/hw+idgRZkDA1oTi176khdEre4N0ANbEsFj79bWOW1a12RQzTLiucEbAO+g4nsFv1LGQFd/qCtOl8wpmmuG0HCd/vEP9JSgCVW1N3qNUCMWkBFDG3IICNmaNnlNAP582Hvcii0ipvdFo4MXfk0WReP5WfJ/h3wW2p1aUgEK1EK0v9RwVNQ3X8ptdhcuYGpzpWb50g4m/hoCVpP2GqCil5zuOcLcMX4polCLvMNquhw8+ARLbC1G2TF4KSWP0ZoVaHD/857P8xi/7ascSIGmU6UY8QHUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UE+HEtwhHIsezNX6gn/hDBiF4Y2+YR4kyHGqo5ONTkE=;
- b=GRWPuOpPdWlrKV37hZzW+Qn5YIeCR2PwUBtB4JsE4Nm5NVXXKTe+xztxnu/A0AM2Nu7ONrdyHF1TcW5wEkEzUmK01BxKkJqXsMUBlls0C3aYuKsAkHg84ACGP1ciua/5YDHnuwazQZk+oyTpi2OUHg8oMYo0ya+OQTkiy++Hw3Y=
-Received: from AM6PR0702MB3527.eurprd07.prod.outlook.com (52.133.24.149) by
- AM6PR0702MB3573.eurprd07.prod.outlook.com (52.133.19.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2263.10; Thu, 12 Sep 2019 09:44:10 +0000
-Received: from AM6PR0702MB3527.eurprd07.prod.outlook.com
- ([fe80::892c:2b90:e54f:ab56]) by AM6PR0702MB3527.eurprd07.prod.outlook.com
- ([fe80::892c:2b90:e54f:ab56%3]) with mapi id 15.20.2263.016; Thu, 12 Sep 2019
- 09:44:10 +0000
-From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-To:     Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Grant Likely <grant.likely@secretlab.ca>
-CC:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
-        Mark Brown <broonie@opensource.wolfsonmicro.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "Glavinic-Pecotic, Matija (EXT - DE/Ulm)" 
-        <matija.glavinic-pecotic.ext@nokia.com>,
-        "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
-        <krzysztof.adamski@nokia.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: [PATCH 3/3] genirq/irqdomain: Detect type race in
- irq_create_fwspec_mapping()
-Thread-Topic: [PATCH 3/3] genirq/irqdomain: Detect type race in
- irq_create_fwspec_mapping()
-Thread-Index: AQHVaU6gc4wd5DvxjEeG+LE441tLCA==
-Date:   Thu, 12 Sep 2019 09:44:10 +0000
-Message-ID: <20190912094343.5480-4-alexander.sverdlin@nokia.com>
-References: <20190912094343.5480-1-alexander.sverdlin@nokia.com>
-In-Reply-To: <20190912094343.5480-1-alexander.sverdlin@nokia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [131.228.2.21]
-x-mailer: git-send-email 2.23.0
-x-clientproxiedby: HE1PR05CA0342.eurprd05.prod.outlook.com
- (2603:10a6:7:92::37) To AM6PR0702MB3527.eurprd07.prod.outlook.com
- (2603:10a6:209:11::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9fc3c94c-aa8d-41e5-aac3-08d73765c351
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR0702MB3573;
-x-ms-traffictypediagnostic: AM6PR0702MB3573:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6PR0702MB3573DF4BC54ACCA2F252C76288B00@AM6PR0702MB3573.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:862;
-x-forefront-prvs: 01583E185C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(136003)(396003)(366004)(346002)(376002)(199004)(189003)(102836004)(2501003)(76176011)(71190400001)(66066001)(3846002)(50226002)(2616005)(6512007)(446003)(7736002)(66446008)(486006)(476003)(6486002)(6436002)(186003)(1076003)(305945005)(71200400001)(11346002)(14454004)(64756008)(86362001)(8676002)(66476007)(66946007)(99286004)(8936002)(6116002)(53936002)(52116002)(110136005)(36756003)(25786009)(386003)(54906003)(26005)(81156014)(66556008)(2906002)(14444005)(6506007)(256004)(478600001)(4326008)(81166006)(316002)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0702MB3573;H:AM6PR0702MB3527.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GzVQaQ9xnxDF9MXlJ6Tgif4JC+W4tdDSlTcdquXyv4ZIGF/AD60wLEL1Rsb7SoEGf9cqtvt6qI842nigWRl5KNzKGLLUiAj8l6/PjmgJ/VruPgyhWMQyrHcW4uX0i9vCPIARyCQo9W+gDh6UsbmbGu3xkIBmzOCY8sR2WYpDgFzy9LPHaIWH6d+CbQCeTclgs2PqqdIynPy706pXEsg5wqz7MHXlRdAhdQR4hsV80KcZKpNnyoPXZKQhQDJx+1EL5BzGwGk8VTuhYxfeRCNKWgGRFB0tfDPKV9XPIvPMXb28KI0CdOOFuJaLLNWN5iXo9O3GxUiXJ7cuZAAIYHAvRawy98iSPKFngtMJkcuqGrpfKY2nSI5oFgRm1HseV46tEqUh8U1N8vGQWHoJqghjMGevwLYJ3B/aUum1AP1tMtg=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1730821AbfILJqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 05:46:25 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44658 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730237AbfILJqY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 05:46:24 -0400
+Received: by mail-ed1-f66.google.com with SMTP id p2so22159087edx.11
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 02:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+UyKiSlCaUkZGSuO0Sn5mI0OYBngHSXLKAH/562lIqI=;
+        b=aXpDJ9aB0wt3TGU0/ZL7E4RmOYJxeN5X/S5JG56aeGrcXRjwWCzWTem0AkaoNFe990
+         bbE9Omc+2tzXG9k75Ev0aAclSuz8BCC9xlRjcZY5SkuudR4RcJLpGcGK6TqZvqbiSrOn
+         W0OEkpagpUWEmj45mgjtp27+YzCfGbvHnPUtQXLjRci0ORz4NZco6SDSjS6kxxeuNqf8
+         dAMhtWIDh5TXG8Ti3lTRUNNrp3i/dODe9ejjJmlbJuL5Ie7yK+TxFSC20cIM2TwFaTV/
+         KPVnBfabA9Ld+Zvd1kdKeLfKUdaRigCO94b1SCtPgCv0zksO1KPMyWvI+eaXpEFpfNPB
+         gSjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+UyKiSlCaUkZGSuO0Sn5mI0OYBngHSXLKAH/562lIqI=;
+        b=NpUn1JXr31RCtNTIhbOXD8K3z18KEe36hEFl1tjmz3A7h/6Cmeu9QKJnBCYsuHervD
+         GHu0MFIqv5uQ+y/+qRgpIMlGBPDxfmmV4fE+nb7KOFhJ2HHfhDsmcW/sQVS3lDbqevUW
+         FrwLMq4V0xkx5QlP68RElwNsI35pqYxp1zv7N7FRnVnWjWPkJD5+bHhTAHrRfuNhZTor
+         9XPUW//bh5EO8rfVmXXA2PgTTTGoexkrz+EBP6peS50xUBKIzIX+YGFV3evPLIexd3mW
+         6wHp7cHqIVX7G3lIZzflH4ABztJNawAceKdhfEzAWEf53hiprW+Pj9rAL4UkzwJpl3/9
+         Tyew==
+X-Gm-Message-State: APjAAAW1EqK8V+Px4aDfXsWiCrydHJVC/KSChaumtuC3JPM23FozBLkx
+        EgKmJ+EgQmDrHvqhy/dFbN/V9g==
+X-Google-Smtp-Source: APXvYqzcJuQSNTfTiOqDf5b9PLpt0sipTAEEY55d+MmxRm6Hkg07fkj/J7ssBpH9EfThJXAmhT/EVw==
+X-Received: by 2002:aa7:d899:: with SMTP id u25mr39791190edq.289.1568281582725;
+        Thu, 12 Sep 2019 02:46:22 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id t21sm2728489ejf.27.2019.09.12.02.46.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Sep 2019 02:46:22 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 3884C100B4A; Thu, 12 Sep 2019 12:46:23 +0300 (+03)
+Date:   Thu, 12 Sep 2019 12:46:23 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yu Zhao <yuzhao@google.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] mm: clean up validate_slab()
+Message-ID: <20190912094623.fn6qdefrnnskdai5@box>
+References: <20190912004401.jdemtajrspetk3fh@box>
+ <20190912023111.219636-1-yuzhao@google.com>
+ <20190912023111.219636-2-yuzhao@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fc3c94c-aa8d-41e5-aac3-08d73765c351
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2019 09:44:10.5987
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Z8zs8wMgHUORkafQt+GETME1BicfxLtjbWyI1gV/IgAkRwQzqbtlLVUcaQIlZsgFhxAC9Ja8XZ1qSsM+o3KChJWlsbm2XM1fEmrs1ZwnkIA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0702MB3573
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190912023111.219636-2-yuzhao@google.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+On Wed, Sep 11, 2019 at 08:31:09PM -0600, Yu Zhao wrote:
+> The function doesn't need to return any value, and the check can be
+> done in one pass.
+> 
+> There is a behavior change: before the patch, we stop at the first
+> invalid free object; after the patch, we stop at the first invalid
+> object, free or in use. This shouldn't matter because the original
+> behavior isn't intended anyway.
+> 
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
+> ---
+>  mm/slub.c | 21 ++++++++-------------
+>  1 file changed, 8 insertions(+), 13 deletions(-)
+> 
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 62053ceb4464..7b7e1ee264ef 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -4386,31 +4386,26 @@ static int count_total(struct page *page)
+>  #endif
+>  
+>  #ifdef CONFIG_SLUB_DEBUG
+> -static int validate_slab(struct kmem_cache *s, struct page *page,
+> +static void validate_slab(struct kmem_cache *s, struct page *page,
+>  						unsigned long *map)
+>  {
+>  	void *p;
+>  	void *addr = page_address(page);
+>  
+> -	if (!check_slab(s, page) ||
+> -			!on_freelist(s, page, NULL))
+> -		return 0;
+> +	if (!check_slab(s, page) || !on_freelist(s, page, NULL))
+> +		return;
+>  
+>  	/* Now we know that a valid freelist exists */
+>  	bitmap_zero(map, page->objects);
+>  
+>  	get_map(s, page, map);
+>  	for_each_object(p, s, addr, page->objects) {
+> -		if (test_bit(slab_index(p, s, addr), map))
+> -			if (!check_object(s, page, p, SLUB_RED_INACTIVE))
+> -				return 0;
+> -	}
+> +		u8 val = test_bit(slab_index(p, s, addr), map) ?
+> +			 SLUB_RED_INACTIVE : SLUB_RED_ACTIVE;
 
-irq_create_fwspec_mapping() can race with itself during IRQ trigger type
-configuration. Possible scenarios include:
+Proper 'if' would be more readable.
 
-- Mapping exists, two irq_create_fwspec_mapping() running in parallel do
-  not detect type mismatch, IRQ remains configured with one of the
-  different trigger types randomly
-- Second call to irq_create_fwspec_mapping() sees existing mapping just
-  created by first call, but earlier irqd_set_trigger_type() call races
-  with later irqd_set_trigger_type() =3D> totally undetected, IRQ type
-  is being set randomly to either one or another type
+Other than that look fine to me.
 
-Introduce helper function to detect parallel changes to IRQ type.
+>  
+> -	for_each_object(p, s, addr, page->objects)
+> -		if (!test_bit(slab_index(p, s, addr), map))
+> -			if (!check_object(s, page, p, SLUB_RED_ACTIVE))
+> -				return 0;
+> -	return 1;
+> +		if (!check_object(s, page, p, val))
+> +			break;
+> +	}
+>  }
+>  
+>  static void validate_slab_slab(struct kmem_cache *s, struct page *page,
+> -- 
+> 2.23.0.162.g0b9fbb3734-goog
+> 
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
----
- kernel/irq/irqdomain.c | 66 +++++++++++++++++++++++++++++-----------------=
-----
- 1 file changed, 38 insertions(+), 28 deletions(-)
-
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 176f2cc..af4d30c 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -764,10 +764,45 @@ static void of_phandle_args_to_fwspec(struct device_n=
-ode *np, const u32 *args,
- 		fwspec->param[i] =3D args[i];
- }
-=20
-+/* Detect races during IRQ type setting */
-+static int irq_set_trigger_type_locked(unsigned int virq, unsigned int typ=
-e,
-+				       irq_hw_number_t hwirq,
-+				       const struct irq_fwspec *fwspec)
-+{
-+	struct irq_data *irq_data;
-+	int ret =3D 0;
-+
-+	mutex_lock(&irq_domain_mutex);
-+	/*
-+	 * If the trigger type is not specified or matches the current trigger
-+	 * type then we are done.
-+	 */
-+	if (type =3D=3D IRQ_TYPE_NONE || type =3D=3D irq_get_trigger_type(virq))
-+		goto unlock;
-+
-+	/* If the trigger type has not been set yet, then set it now */
-+	if (irq_get_trigger_type(virq) !=3D IRQ_TYPE_NONE) {
-+		pr_warn("type mismatch, failed to map hwirq-%lu for %s!\n",
-+			hwirq, of_node_full_name(to_of_node(fwspec->fwnode)));
-+		ret =3D -EINVAL;
-+		goto unlock;
-+	}
-+
-+	irq_data =3D irq_get_irq_data(virq);
-+	if (!irq_data) {
-+		ret =3D -ENOENT;
-+		goto unlock;
-+	}
-+	irqd_set_trigger_type(irq_data, type);
-+
-+unlock:
-+	mutex_unlock(&irq_domain_mutex);
-+	return ret;
-+}
-+
- unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
- {
- 	struct irq_domain *domain;
--	struct irq_data *irq_data;
- 	irq_hw_number_t hwirq;
- 	unsigned int type =3D IRQ_TYPE_NONE;
- 	int virq;
-@@ -802,29 +837,8 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwsp=
-ec *fwspec)
- 	 */
- 	virq =3D irq_find_mapping(domain, hwirq);
- 	if (virq) {
--		/*
--		 * If the trigger type is not specified or matches the
--		 * current trigger type then we are done so return the
--		 * interrupt number.
--		 */
--		if (type =3D=3D IRQ_TYPE_NONE || type =3D=3D irq_get_trigger_type(virq))
--			return virq;
--
--		/*
--		 * If the trigger type has not been set yet, then set
--		 * it now and return the interrupt number.
--		 */
--		if (irq_get_trigger_type(virq) =3D=3D IRQ_TYPE_NONE) {
--			irq_data =3D irq_get_irq_data(virq);
--			if (!irq_data)
--				return 0;
--
--			irqd_set_trigger_type(irq_data, type);
-+		if (!irq_set_trigger_type_locked(virq, type, hwirq, fwspec))
- 			return virq;
--		}
--
--		pr_warn("type mismatch, failed to map hwirq-%lu for %s!\n",
--			hwirq, of_node_full_name(to_of_node(fwspec->fwnode)));
- 		return 0;
- 	}
-=20
-@@ -839,8 +853,7 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspe=
-c *fwspec)
- 			return virq;
- 	}
-=20
--	irq_data =3D irq_get_irq_data(virq);
--	if (!irq_data) {
-+	if (irq_set_trigger_type_locked(virq, type, hwirq, fwspec)) {
- 		if (irq_domain_is_hierarchy(domain))
- 			irq_domain_free_irqs(virq, 1);
- 		else
-@@ -848,9 +861,6 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspe=
-c *fwspec)
- 		return 0;
- 	}
-=20
--	/* Store trigger type */
--	irqd_set_trigger_type(irq_data, type);
--
- 	return virq;
- }
- EXPORT_SYMBOL_GPL(irq_create_fwspec_mapping);
---=20
-2.4.6
-
+-- 
+ Kirill A. Shutemov
