@@ -2,154 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC97B10DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 16:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF0D3B10EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 16:17:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732617AbfILOPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 10:15:53 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50756 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732587AbfILOPs (ORCPT
+        id S1732652AbfILORS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 10:17:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54084 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732639AbfILORR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 10:15:48 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c10so257786wmc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 07:15:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=U94LXB0H1SLchTUsgjMZwjp3h0cafdMB0BynvaN+clQ=;
-        b=c2LsHJ3tBEwEu++rxVvsn78g0L8UGdn7yiC4/N4WA91klnp22ccVAB1m6chQL/Onzq
-         RhHrr9XFtyyqbHwCu1B1W+g94jvzJjkTfeDlIRm1O27WepyHaoth/Gs16hJe+L0Z9pbo
-         njNWTGxQCTm1gyfrIhwhNHhqw+frkZfE4FpyYuoXtKj2XdpxVE/NV4Y4VvX/AakWvjys
-         v8tipJcte9cSWKsE9GIJCbTR/X74OPRpl09XBDpkPW9vo/zKKDTtXStOUMoe4g4o6n9k
-         xZxx0QvX8cFKWC00/Y1UN+WXaYKiXKNDC7V+qx0/JFXxnzziXfJBQM+gb9Y2DGDnJ1r+
-         tTMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=U94LXB0H1SLchTUsgjMZwjp3h0cafdMB0BynvaN+clQ=;
-        b=j3vtV/LD+GZdQ5wBxBYVvTo3cAvWJtenmrRvE9RlphNwdPvwuoIbOA0ibScJECjjpm
-         YSrbVPalDH0ixSMWGW+23/dtIwNbmiFNr0pNYGKm5r+JJ+SmtVY+O1B8uLrSOxSdG/J3
-         qgNnySw5slj8u1e+lozgYVkA0E9NcmWvdf6sHS2iRoTZrYlXth/A2t/gZzmMYzTqhcUA
-         26pLAycnFj7SUiyOOgUpeHSd9Ay3shAHPHl/Oce3IDe+c5cloQfMwdew2LoOwGBhSCyi
-         5KwXAP/ofMAfV6GkTCjpBiALKyDBXT5EpZYofg3eTnIb48fUntE8flyn5b8XMvyXy9ER
-         yDBQ==
-X-Gm-Message-State: APjAAAWVZ2Yf4/ZCCP/0bGXVAi2je0wGUn7pHRu0IefPh9lZ2js1Ui6W
-        /cdg5lWKA6H5hokAwTQSKwCGUg==
-X-Google-Smtp-Source: APXvYqy70e0LTKSHReHGBTwSYaCcOtPua5H4LToUok6GoIgFi9Fwo1Yl8Gyg5lX985HrVLB3xIj4Bw==
-X-Received: by 2002:a1c:7a14:: with SMTP id v20mr197811wmc.75.1568297745884;
-        Thu, 12 Sep 2019 07:15:45 -0700 (PDT)
-Received: from localhost.localdomain (69.red-83-35-113.dynamicip.rima-tde.net. [83.35.113.69])
-        by smtp.gmail.com with ESMTPSA id p23sm137599wma.18.2019.09.12.07.15.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 12 Sep 2019 07:15:45 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
-        agross@kernel.org, mturquette@baylibre.com,
-        bjorn.andersson@linaro.org
-Cc:     niklas.cassel@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] clk: qcom: apcs-msm8916: get parent clock names from DT
-Date:   Thu, 12 Sep 2019 16:15:34 +0200
-Message-Id: <20190912141534.28870-6-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190912141534.28870-1-jorge.ramirez-ortiz@linaro.org>
-References: <20190912141534.28870-1-jorge.ramirez-ortiz@linaro.org>
+        Thu, 12 Sep 2019 10:17:17 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8CE7X5k006871;
+        Thu, 12 Sep 2019 10:16:57 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uyp18ubpt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Sep 2019 10:16:54 -0400
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8CE7tkK007616;
+        Thu, 12 Sep 2019 10:16:51 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uyp18ubks-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Sep 2019 10:16:51 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8CE5ZPb008328;
+        Thu, 12 Sep 2019 14:16:46 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma05wdc.us.ibm.com with ESMTP id 2uv467cdks-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Sep 2019 14:16:46 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8CEGj7M23921038
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Sep 2019 14:16:46 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E2E8913605E;
+        Thu, 12 Sep 2019 14:16:45 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 678BC136066;
+        Thu, 12 Sep 2019 14:16:43 +0000 (GMT)
+Received: from [9.199.32.243] (unknown [9.199.32.243])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Sep 2019 14:16:43 +0000 (GMT)
+Subject: Re: [PATCH 2/3] powperc/mm: read TLB Block Invalidate Characteristics
+To:     Laurent Dufour <ldufour@linux.ibm.com>, mpe@ellerman.id.au,
+        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190830120712.22971-1-ldufour@linux.ibm.com>
+ <20190830120712.22971-3-ldufour@linux.ibm.com>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Message-ID: <e809e33f-58df-ec99-44e8-9b1ae0b6bfe0@linux.ibm.com>
+Date:   Thu, 12 Sep 2019 19:46:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190830120712.22971-3-ldufour@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-12_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909120149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow accessing the parent clock names required for the driver
-operation by using the device tree node.
+On 8/30/19 5:37 PM, Laurent Dufour wrote:
+> The PAPR document specifies the TLB Block Invalidate Characteristics which
+> is telling which couple base page size / page size is supported by the
+> H_BLOCK_REMOVE hcall.
+> 
+> A new set of feature is added to the mmu_psize_def structure to record per
+> base page size which page size is supported by H_BLOCK_REMOVE.
+> 
+> A new init service is added to read the characteristics. The size of the
+> buffer is set to twice the number of known page size, plus 10 bytes to
+> ensure we have enough place.
+> 
 
-This permits extending the driver to other platforms without having to
-modify its source code.
 
-For backwards compatibility leave previous values as default.
+So this is not really the base page size/actual page size combination. 
+This is related to H_BLOCK_REMOVE hcall, block size supported by that 
+HCALL and what page size combination is supported with that specific 
+block size.
 
-Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/clk/qcom/apcs-msm8916.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+We should add that TLB block invalidate characteristics format in this 
+patch.
 
-diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
-index a6c89a310b18..099b028dbc20 100644
---- a/drivers/clk/qcom/apcs-msm8916.c
-+++ b/drivers/clk/qcom/apcs-msm8916.c
-@@ -19,7 +19,7 @@
- 
- static const u32 gpll0_a53cc_map[] = { 4, 5 };
- 
--static const char * const gpll0_a53cc[] = {
-+static const char *gpll0_a53cc[] = {
- 	"gpll0_vote",
- 	"a53pll",
- };
-@@ -50,6 +50,7 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	struct clk_init_data init = { };
- 	int ret = -ENODEV;
-+	const char *parents[2];
- 
- 	regmap = dev_get_regmap(parent, NULL);
- 	if (!regmap) {
-@@ -61,6 +62,9 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 	if (!a53cc)
- 		return -ENOMEM;
- 
-+	if (of_clk_parent_fill(parent->of_node, parents, 2) == 2)
-+		memcpy(gpll0_a53cc, parents, sizeof(parents));
-+
- 	init.name = "a53mux";
- 	init.parent_names = gpll0_a53cc;
- 	init.num_parents = ARRAY_SIZE(gpll0_a53cc);
-@@ -76,10 +80,11 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 	a53cc->src_shift = 8;
- 	a53cc->parent_map = gpll0_a53cc_map;
- 
--	a53cc->pclk = devm_clk_get(parent, NULL);
-+	a53cc->pclk = of_clk_get(parent->of_node, 0);
- 	if (IS_ERR(a53cc->pclk)) {
- 		ret = PTR_ERR(a53cc->pclk);
--		dev_err(dev, "failed to get clk: %d\n", ret);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to get clk: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -87,6 +92,7 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 	ret = clk_notifier_register(a53cc->pclk, &a53cc->clk_nb);
- 	if (ret) {
- 		dev_err(dev, "failed to register clock notifier: %d\n", ret);
-+		clk_put(a53cc->pclk);
- 		return ret;
- 	}
- 
-@@ -109,6 +115,8 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 
- err:
- 	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
-+	clk_put(a53cc->pclk);
-+
- 	return ret;
- }
- 
-@@ -117,6 +125,7 @@ static int qcom_apcs_msm8916_clk_remove(struct platform_device *pdev)
- 	struct clk_regmap_mux_div *a53cc = platform_get_drvdata(pdev);
- 
- 	clk_notifier_unregister(a53cc->pclk, &a53cc->clk_nb);
-+	clk_put(a53cc->pclk);
- 
- 	return 0;
- }
--- 
-2.23.0
+
+> Signed-off-by: Laurent Dufour <ldufour@linux.ibm.com>
+> ---
+>   arch/powerpc/include/asm/book3s/64/mmu.h |   3 +
+>   arch/powerpc/platforms/pseries/lpar.c    | 107 +++++++++++++++++++++++
+>   2 files changed, 110 insertions(+)
+> 
+> diff --git a/arch/powerpc/include/asm/book3s/64/mmu.h b/arch/powerpc/include/asm/book3s/64/mmu.h
+> index 23b83d3593e2..675895dfe39f 100644
+> --- a/arch/powerpc/include/asm/book3s/64/mmu.h
+> +++ b/arch/powerpc/include/asm/book3s/64/mmu.h
+> @@ -12,11 +12,14 @@
+>    *    sllp  : is a bit mask with the value of SLB L || LP to be or'ed
+>    *            directly to a slbmte "vsid" value
+>    *    penc  : is the HPTE encoding mask for the "LP" field:
+> + *    hblk  : H_BLOCK_REMOVE supported block size for this page size in
+> + *            segment who's base page size is that page size.
+>    *
+>    */
+>   struct mmu_psize_def {
+>   	unsigned int	shift;	/* number of bits */
+>   	int		penc[MMU_PAGE_COUNT];	/* HPTE encoding */
+> +	int		hblk[MMU_PAGE_COUNT];	/* H_BLOCK_REMOVE support */
+>   	unsigned int	tlbiel;	/* tlbiel supported for that page size */
+>   	unsigned long	avpnm;	/* bits to mask out in AVPN in the HPTE */
+>   	union {
+> diff --git a/arch/powerpc/platforms/pseries/lpar.c b/arch/powerpc/platforms/pseries/lpar.c
+> index 4f76e5f30c97..375e19b3cf53 100644
+> --- a/arch/powerpc/platforms/pseries/lpar.c
+> +++ b/arch/powerpc/platforms/pseries/lpar.c
+> @@ -1311,6 +1311,113 @@ static void do_block_remove(unsigned long number, struct ppc64_tlb_batch *batch,
+>   		(void)call_block_remove(pix, param, true);
+>   }
+>   
+> +static inline void __init set_hblk_bloc_size(int bpsize, int psize,
+> +					     unsigned int block_size)
+> +{
+> +	struct mmu_psize_def *def = &mmu_psize_defs[bpsize];
+> +
+> +	if (block_size > def->hblk[psize])
+> +		def->hblk[psize] = block_size;
+> +}
+> +
+> +static inline void __init check_lp_set_hblk(unsigned int lp,
+> +					    unsigned int block_size)
+> +{
+> +	unsigned int bpsize, psize;
+> +
+> +
+> +	/* First, check the L bit, if not set, this means 4K */
+> +	if ((lp & 0x80) == 0) {
+
+
+What is that 0x80? We should have #define for most of those.
+
+> +		set_hblk_bloc_size(MMU_PAGE_4K, MMU_PAGE_4K, block_size);
+> +		return;
+> +	}
+> +
+> +	/* PAPR says to look at bits 2-7 (0 = MSB) */
+> +	lp &= 0x3f;
+
+Also convert that to #define?
+
+> +	for (bpsize = 0; bpsize < MMU_PAGE_COUNT; bpsize++) {
+> +		struct mmu_psize_def *def =  &mmu_psize_defs[bpsize];
+> +
+> +		for (psize = 0; psize < MMU_PAGE_COUNT; psize++) {
+> +			if (def->penc[psize] == lp) {
+> +				set_hblk_bloc_size(bpsize, psize, block_size);
+> +				return;
+> +			}
+> +		}
+> +	}
+> +}
+> +
+> +#define SPLPAR_TLB_BIC_TOKEN		50
+> +#define SPLPAR_TLB_BIC_MAXLENGTH	(MMU_PAGE_COUNT*2 + 10)
+> +static int __init read_tlbbi_characteristics(void)
+> +{
+> +	int call_status;
+> +	unsigned char local_buffer[SPLPAR_TLB_BIC_MAXLENGTH];
+> +	int len, idx, bpsize;
+> +
+> +	if (!firmware_has_feature(FW_FEATURE_BLOCK_REMOVE)) {
+> +		pr_info("H_BLOCK_REMOVE is not supported");
+> +		return 0;
+> +	}
+> +
+> +	memset(local_buffer, 0, SPLPAR_TLB_BIC_MAXLENGTH);
+> +
+> +	spin_lock(&rtas_data_buf_lock);
+> +	memset(rtas_data_buf, 0, RTAS_DATA_BUF_SIZE);
+> +	call_status = rtas_call(rtas_token("ibm,get-system-parameter"), 3, 1,
+> +				NULL,
+> +				SPLPAR_TLB_BIC_TOKEN,
+> +				__pa(rtas_data_buf),
+> +				RTAS_DATA_BUF_SIZE);
+> +	memcpy(local_buffer, rtas_data_buf, SPLPAR_TLB_BIC_MAXLENGTH);
+> +	local_buffer[SPLPAR_TLB_BIC_MAXLENGTH - 1] = '\0';
+> +	spin_unlock(&rtas_data_buf_lock);
+> +
+> +	if (call_status != 0) {
+> +		pr_warn("%s %s Error calling get-system-parameter (0x%x)\n",
+> +			__FILE__, __func__, call_status);
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * The first two (2) bytes of the data in the buffer are the length of
+> +	 * the returned data, not counting these first two (2) bytes.
+> +	 */
+> +	len = local_buffer[0] * 256 + local_buffer[1] + 2;
+> +	if (len >= SPLPAR_TLB_BIC_MAXLENGTH) {
+> +		pr_warn("%s too large returned buffer %d", __func__, len);
+> +		return 0;
+> +	}
+> +
+> +	idx = 2;
+> +	while (idx < len) {
+> +		unsigned int block_size = local_buffer[idx++];
+> +		unsigned int npsize;
+> +
+> +		if (!block_size)
+> +			break;
+> +
+> +		block_size = 1 << block_size;
+> +		if (block_size != 8)
+> +			/* We only support 8 bytes size TLB invalidate buffer */
+> +			pr_warn("Unsupported H_BLOCK_REMOVE block size : %d\n",
+> +				block_size);
+> +
+> +		for (npsize = local_buffer[idx++];  npsize > 0; npsize--)
+> +			check_lp_set_hblk((unsigned int) local_buffer[idx++],
+> +					  block_size);
+> +	}
+> +
+> +	for (bpsize = 0; bpsize < MMU_PAGE_COUNT; bpsize++)
+> +		for (idx = 0; idx < MMU_PAGE_COUNT; idx++)
+> +			if (mmu_psize_defs[bpsize].hblk[idx])
+> +				pr_info("H_BLOCK_REMOVE supports base psize:%d psize:%d block size:%d",
+> +					bpsize, idx,
+> +					mmu_psize_defs[bpsize].hblk[idx]);
+> +
+> +	return 0;
+> +}
+> +machine_arch_initcall(pseries, read_tlbbi_characteristics);
+> +
+
+Why a machine_arch_initcall() ? Can't we do this similar to how we do 
+segment-page-size parsing from device tree? Also this should be hash 
+translation mode specific.
+
+>   /*
+>    * Take a spinlock around flushes to avoid bouncing the hypervisor tlbie
+>    * lock.
+> 
 
