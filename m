@@ -2,177 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C9A5B0F70
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 15:02:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D532B0F7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 15:02:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731998AbfILNCE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 09:02:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:33888 "EHLO foss.arm.com"
+        id S1732020AbfILNCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 09:02:46 -0400
+Received: from mga17.intel.com ([192.55.52.151]:55893 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731937AbfILNCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 09:02:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA45928;
-        Thu, 12 Sep 2019 06:02:01 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09BF13F71F;
-        Thu, 12 Sep 2019 06:02:01 -0700 (PDT)
-Date:   Thu, 12 Sep 2019 14:01:59 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, "kishon@ti.com" <kishon@ti.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: Re: [PATCH v3 10/11] arm64: dts: layerscape: Add PCIe EP node for
- ls1088a
-Message-ID: <20190912130159.GF9720@e119886-lin.cambridge.arm.com>
-References: <20190902031716.43195-1-xiaowei.bao@nxp.com>
- <20190902031716.43195-11-xiaowei.bao@nxp.com>
- <20190902130628.GL9720@e119886-lin.cambridge.arm.com>
- <AM5PR04MB329926C6F424C4BE1CE9B787F5B90@AM5PR04MB3299.eurprd04.prod.outlook.com>
+        id S1731864AbfILNCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 09:02:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 06:02:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,497,1559545200"; 
+   d="scan'208";a="215037563"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 12 Sep 2019 06:02:43 -0700
+Received: from vjyoung-mobl.amr.corp.intel.com (unknown [10.251.12.73])
+        by linux.intel.com (Postfix) with ESMTP id 3F784580862;
+        Thu, 12 Sep 2019 06:02:42 -0700 (PDT)
+Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: kbl_rt5663_rt5514_max98927: Add
+ dmic format constraint
+To:     Yu-Hsuan Hsu <yuhsuan@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Tzung-Bi Shih <tzungbi@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        alsa-devel@alsa-project.org
+References: <20190912022740.161798-1-yuhsuan@chromium.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <f2d9e339-ef96-8bb4-7360-422d317a470f@linux.intel.com>
+Date:   Thu, 12 Sep 2019 08:02:23 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM5PR04MB329926C6F424C4BE1CE9B787F5B90@AM5PR04MB3299.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20190912022740.161798-1-yuhsuan@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 02:01:32AM +0000, Xiaowei Bao wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Andrew Murray <andrew.murray@arm.com>
-> > Sent: 2019年9月2日 21:06
-> > To: Xiaowei Bao <xiaowei.bao@nxp.com>
-> > Cc: robh+dt@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; Leo
-> > Li <leoyang.li@nxp.com>; kishon@ti.com; lorenzo.pieralisi@arm.com; M.h.
-> > Lian <minghuan.lian@nxp.com>; Mingkai Hu <mingkai.hu@nxp.com>; Roy
-> > Zang <roy.zang@nxp.com>; jingoohan1@gmail.com;
-> > gustavo.pimentel@synopsys.com; linux-pci@vger.kernel.org;
-> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org;
-> > arnd@arndb.de; gregkh@linuxfoundation.org; Z.q. Hou
-> > <zhiqiang.hou@nxp.com>
-> > Subject: Re: [PATCH v3 10/11] arm64: dts: layerscape: Add PCIe EP node for
-> > ls1088a
-> > 
-> > On Mon, Sep 02, 2019 at 11:17:15AM +0800, Xiaowei Bao wrote:
-> > > Add PCIe EP node for ls1088a to support EP mode.
-> > >
-> > > Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> > > ---
-> > > v2:
-> > >  - Remove the pf-offset proparty.
-> > > v3:
-> > >  - No change.
-> > >
-> > >  arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 31
-> > ++++++++++++++++++++++++++
-> > >  1 file changed, 31 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-> > b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-> > > index c676d07..da246ab 100644
-> > > --- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-> > > +++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-> > > @@ -483,6 +483,17 @@
-> > >  			status = "disabled";
-> > >  		};
-> > >
-> > > +		pcie_ep@3400000 {
-> > > +			compatible = "fsl,ls1088a-pcie-ep","fsl,ls-pcie-ep";
-> > 
-> > Here you specify a fallback "fsl,ls-pcie-ep" that is removed by this series.
-> > 
-> > Besides that, this looks OK.
-> 
-> As explained, the "fsl,ls-pcie-ep" is needed, due to the u-boot will fixup the status
-> property base on this compatible, I think we reserve this compatible is helpfully,
-> if delate this compatible, I have to modify the code of bootloader.
+On 9/11/19 9:27 PM, Yu-Hsuan Hsu wrote:
+> 24 bits recording from DMIC is not supported for KBL platform because
+> the TDM slot between PCH and codec is 16 bits only. We should add a
+> constraint to remove that unsupported format.
 
-I assume you mean that u-boot fixes up "fsl,ls-pcie-ep" *only* for ls1046a
-devices?
+Humm, when you use DMICs they are directly connected to the PCH with a 
+standard 1-bit PDM. There is no notion of TDM or slot.
 
-Thanks,
-
-Andrew Murray
+It could very well be that the firmware/topology only support 16 bit (I 
+vaguely recall another case where 24 bits was added), but the 
+description in the commit message would need to be modified to make the 
+reason for this change clearer.
 
 > 
-> Thanks 
-> XIaowei
+> Signed-off-by: Yu-Hsuan Hsu <yuhsuan@chromium.org>
+> ---
+>   sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> > 
-> > Thanks,
-> > 
-> > Andrew Murray
-> > 
-> > > +			reg = <0x00 0x03400000 0x0 0x00100000
-> > > +			       0x20 0x00000000 0x8 0x00000000>;
-> > > +			reg-names = "regs", "addr_space";
-> > > +			num-ib-windows = <24>;
-> > > +			num-ob-windows = <128>;
-> > > +			max-functions = /bits/ 8 <2>;
-> > > +			status = "disabled";
-> > > +		};
-> > > +
-> > >  		pcie@3500000 {
-> > >  			compatible = "fsl,ls1088a-pcie";
-> > >  			reg = <0x00 0x03500000 0x0 0x00100000   /* controller
-> > registers */
-> > > @@ -508,6 +519,16 @@
-> > >  			status = "disabled";
-> > >  		};
-> > >
-> > > +		pcie_ep@3500000 {
-> > > +			compatible = "fsl,ls1088a-pcie-ep","fsl,ls-pcie-ep";
-> > > +			reg = <0x00 0x03500000 0x0 0x00100000
-> > > +			       0x28 0x00000000 0x8 0x00000000>;
-> > > +			reg-names = "regs", "addr_space";
-> > > +			num-ib-windows = <6>;
-> > > +			num-ob-windows = <8>;
-> > > +			status = "disabled";
-> > > +		};
-> > > +
-> > >  		pcie@3600000 {
-> > >  			compatible = "fsl,ls1088a-pcie";
-> > >  			reg = <0x00 0x03600000 0x0 0x00100000   /* controller
-> > registers */
-> > > @@ -533,6 +554,16 @@
-> > >  			status = "disabled";
-> > >  		};
-> > >
-> > > +		pcie_ep@3600000 {
-> > > +			compatible = "fsl,ls1088a-pcie-ep","fsl,ls-pcie-ep";
-> > > +			reg = <0x00 0x03600000 0x0 0x00100000
-> > > +			       0x30 0x00000000 0x8 0x00000000>;
-> > > +			reg-names = "regs", "addr_space";
-> > > +			num-ib-windows = <6>;
-> > > +			num-ob-windows = <8>;
-> > > +			status = "disabled";
-> > > +		};
-> > > +
-> > >  		smmu: iommu@5000000 {
-> > >  			compatible = "arm,mmu-500";
-> > >  			reg = <0 0x5000000 0 0x800000>;
-> > > --
-> > > 2.9.5
-> > >
+> diff --git a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+> index 74dda8784f1a01..67b276a65a8d2d 100644
+> --- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+> +++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+> @@ -400,6 +400,9 @@ static int kabylake_dmic_startup(struct snd_pcm_substream *substream)
+>   	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
+>   			dmic_constraints);
+>   
+> +	runtime->hw.formats = SNDRV_PCM_FMTBIT_S16_LE;
+> +	snd_pcm_hw_constraint_msbits(runtime, 0, 16, 16);
+> +
+>   	return snd_pcm_hw_constraint_list(substream->runtime, 0,
+>   			SNDRV_PCM_HW_PARAM_RATE, &constraints_rates);
+>   }
+> 
+
