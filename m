@@ -2,105 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7903EB0B12
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 11:17:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99212B0B10
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 11:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730545AbfILJRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 05:17:33 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38554 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730386AbfILJRb (ORCPT
+        id S1730535AbfILJR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 05:17:29 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33317 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730419AbfILJR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 05:17:31 -0400
-Received: by mail-qt1-f193.google.com with SMTP id j31so1903930qta.5;
-        Thu, 12 Sep 2019 02:17:30 -0700 (PDT)
+        Thu, 12 Sep 2019 05:17:29 -0400
+Received: by mail-lj1-f193.google.com with SMTP id a22so22906181ljd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 02:17:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=szvOgaSKQHuR91dwCdpTxKgQS8xunWLLdcGGO0krnL4=;
+        b=sA7zUsLieMzsUVFjX2+urBr0+1oZ9bvhGRHA4G0cboyuuO3Y0mq+djLeDOwM0jAPY4
+         /QNlB9igugVuoWRXJRNqk4JkA9GyMlt0oRVwCZo+/fm0cn6IFuMcU30YnHCJLopTFQqP
+         EW8b1fGL078UUPetpRD6ZnYfylArrpW1c6mqvxdiMyE+k1g1tk6KPkC11hwPTtzJ9WsU
+         Cg9K08Wep9/wMuKC5cmgo0iE0qOqEnvACztRLP90QbET4V/YHOZeiJvgxXL+TDeQYoHd
+         C/sGr9e//liFGE+rDfKNa0KlqNI808auphGPLR8RhaQFbgU3KGv8Yv+BC1uVses4g8xU
+         t7WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3v9vNWScPyFQpJOj2uC5NrtlNxn+puyxlyM0L6NxVxI=;
-        b=DFv/JSkSm/ASw4AJkKifQYAoWJFeMXObeBn8sY9QUNG/hhjudK0jJKQ9qvoQEecqGc
-         KWYfQy+yvkbZPvcJfQlLeGSVP10sbMBL9plVaneFAjbJSHII98yV6ENsgvXwTzdNDZc/
-         z1Hbexj7eSxCZvQ53ZHhmSohkRAUms9BS9t1jQCqKTCpOGw2Ng0p0TmNiGqBhs3UoVVu
-         GWj/hTUfXaREysSdtwBWvw7MRPWob8HNuLRN75nMcny1oKoy5e/MC2WWgb9cmNNekQSI
-         YjPmtVR/sKL0IiC4CsiIn9QGH7M0zw5IM4hIGoBQ3WsK5wxZqF6zhHXJc2CeQgvwp0/n
-         siWg==
-X-Gm-Message-State: APjAAAVD+S4ClH2PeD0dqlUQbrb3c14rBsb54KvijjW73m0tNKunO4o/
-        A9IEHne/Ocnp7Tzlj6ZA+jn9ofD8/5wTv1tgtFp+CHOhr3o=
-X-Google-Smtp-Source: APXvYqy+bZ/IsdWGG/lweYHMToFo2NNHZpONP/kd5+jqUDDglfiDRhLYrs6Ayjqcx3vUQ5sGnAv8u0JP9HHxRjVMY+w=
-X-Received: by 2002:ac8:6b1a:: with SMTP id w26mr39336977qts.304.1568279850382;
- Thu, 12 Sep 2019 02:17:30 -0700 (PDT)
+        bh=szvOgaSKQHuR91dwCdpTxKgQS8xunWLLdcGGO0krnL4=;
+        b=fPc/Yr8/8IKQZyhHnTRX3a/4o/wfJWxUo7xtLxA8VuOnAzjGsID6AjDACGt1uutAPO
+         //F+6AW8zqTh7BglOOCpRcjEXUTj3FrtEpw2Ai+EZgjJKS4//hl2vZgooboKAmulPERI
+         r96sXjy9Eu7iMfCexbR3/sRBzO4V8mGOlIXjGd6icJoaj5xoLNOCfo2vbAetMbxxG12Y
+         rQUx8NwHUNAMfsIBmNMBc8DErWWKL2MG1dEP8FTkMk55z2zBuzKWtaKeUNaJUg3JBYby
+         zRpQP8hE5TWKp+52cAn7T21yis2uBBJVslUOdyWCHyVaFi8bW4ark1v2srrbfek8DcZb
+         e/ZA==
+X-Gm-Message-State: APjAAAW5dxR7zFMhIdu9gxlK2o5/XpS4a9TCGupefYDDqUi+GPe35t2b
+        4WU6ovpLYQ8Gl9CPfE0O8+tNEb2ZmM3hht5MWUDlvA==
+X-Google-Smtp-Source: APXvYqxL+8XFoDpn8Dd9sc3WWzP6/eBNJgZM935Fj7SoXm0Pq+8cYMp8gFoV2ij+afLEJn83FenUjyZivw8vujXDIuM=
+X-Received: by 2002:a2e:9dc3:: with SMTP id x3mr22302607ljj.108.1568279846715;
+ Thu, 12 Sep 2019 02:17:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1568239378.git.amit.kucheria@linaro.org> <8f539b28c25d22b8f515c131cd6b24c309f7ca90.1568239378.git.amit.kucheria@linaro.org>
-In-Reply-To: <8f539b28c25d22b8f515c131cd6b24c309f7ca90.1568239378.git.amit.kucheria@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 12 Sep 2019 11:17:14 +0200
-Message-ID: <CAK8P3a3u8KhgaqoK0=2CXBs0HMh0fuN-ANvvQtSrWQm0J6xnvw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] arm64: Kconfig: Fix VEXPRESS driver dependencies
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        arm-soc <arm@kernel.org>,
+References: <20190910152855.111588-1-paul.kocialkowski@bootlin.com> <20190910152855.111588-3-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20190910152855.111588-3-paul.kocialkowski@bootlin.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 12 Sep 2019 10:17:15 +0100
+Message-ID: <CACRpkdY40PZc9R-yFwooR4-WMgn3LH7K+yTx00ZNxyq6OOnw6A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] gpio: syscon: Add support for the Xylon LogiCVC GPIOs
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 12:19 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+On Tue, Sep 10, 2019 at 4:29 PM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+
+> The LogiCVC display hardware block comes with GPIO capabilities
+> that must be exposed separately from the main driver (as GPIOs) for
+> use with regulators and panels. A syscon is used to share the same
+> regmap across the two drivers.
 >
-> Push various VEXPRESS drivers behind ARCH_VEXPRESS dependency so that it
-> doesn't get enabled by default on other platforms.
+> Since the GPIO capabilities are pretty simple, add them to the syscon
+> GPIO driver.
 >
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  drivers/bus/Kconfig           | 2 +-
->  drivers/clk/versatile/Kconfig | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-> index d80e8d70bf10..b2b1beee9953 100644
-> --- a/drivers/bus/Kconfig
-> +++ b/drivers/bus/Kconfig
-> @@ -166,7 +166,7 @@ config UNIPHIER_SYSTEM_BUS
->
->  config VEXPRESS_CONFIG
->         bool "Versatile Express configuration bus"
-> -       default y if ARCH_VEXPRESS
-> +       depends on ARCH_VEXPRESS
->         depends on ARM || ARM64
->         depends on OF
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Removing the 'default y' breaks existing defconfig files,
+I'm fine with this for now, but the gpio-syscon driver is now growing
+big and when you use it you are getting support for a whole bunch
+of systems you're not running on included in your binary.
 
-Adding the 'depends on ARCH_VEXPRESS' unnecessarily limits
-compile-testing. I'd rather extend it to other architectures than
-limit it to builds that have vexpress enabled.
+We need to think about possibly creating drivers/gpio/syscon
+and split subdrivers into separate files and config options
+so that people can slim down to what they actually need.
 
-> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-> index ac766855ba16..826750292c1e 100644
-> --- a/drivers/clk/versatile/Kconfig
-> +++ b/drivers/clk/versatile/Kconfig
-> @@ -5,8 +5,8 @@ config ICST
->  config COMMON_CLK_VERSATILE
->         bool "Clock driver for ARM Reference designs"
->         depends on ARCH_INTEGRATOR || ARCH_REALVIEW || \
-> -               ARCH_VERSATILE || ARCH_VEXPRESS || ARM64 || \
-> -               COMPILE_TEST
-> +               ARCH_VERSATILE || ARCH_VEXPRESS || COMPILE_TEST
-> +       depends on ARM64
+> +       *bit = 1 << offset;
 
-It's definitely wrong to limit this to 64 bit.
+Please do this:
 
-      Arnd
+#include <linux/bits.h>
+
+*bit = BIT(offset);
+
+Yours,
+Linus Walleij
