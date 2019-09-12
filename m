@@ -2,119 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA147B099B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 09:41:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C259EB09A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 09:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729806AbfILHlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 03:41:37 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34831 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729391AbfILHlh (ORCPT
+        id S1729947AbfILHoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 03:44:06 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39347 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728927AbfILHoG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 03:41:37 -0400
-Received: by mail-oi1-f194.google.com with SMTP id a127so16378757oii.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 00:41:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o8LTeC4govd1fNBJO0ioJqcSmCWQfNIKLUUZIaiAhHg=;
-        b=r5iciw4g8aqTCdevxlX7Yl1qKRDD/phXv4v2oTTELHQGit1wxhO/OmSHjpMCzaPPrC
-         Vr8pfrqAPKZP/QRditALJa3T7m3utIzI7knIH43NmnrLOYeWwUlpJTX+V+qEIHPXtDWk
-         i+S3TBIunng9amNi6owpSMAwGYmTOzTOg39UCXWUFCAs9mW/cRdQ9TrieNsVwozqYGMY
-         ud38gNVy7hASRzjURWmOVrK8Lm1bGKmNLt/QqIPlK0Zbi79sDGl94Y4HvgRcvzJv2owV
-         GO/6yFDyIZBlsfIr5xvExb4PHDGHZscKuenTgOys/I73OMjRL8cbQsLrUCTP+Fo1/Uy7
-         k13A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o8LTeC4govd1fNBJO0ioJqcSmCWQfNIKLUUZIaiAhHg=;
-        b=mYC+dP/WDJcpdUCufq6GqLT7I3XF4ZzfS3vmJHVP2p8OJlgU71Fi1SJoQ7xwuSEHHB
-         7BWm9jVslr73Z3O+jpo2HZ/Y/YITxjimy7P+CpVWqfhUXbDeWkXPcxvcrc7E4e2Jls3Z
-         qHCNw8drs3HDVa+bYtfolT+RrRhKSZnIrJhzxJUN8wzvEyWbngZNBM4vhXR6HF8s2sxR
-         EMR+tyiJq3NDbP1HiUBPVD9KOPNfcGzoki04umrZ+FraOjnGcMZMl4ldCCW2ZPVM+bBI
-         gURdebAzlWnL2QAFEPuqAHqf9eaANWVVqA/4ks/J/rsxbt5+yrQ0z/EiMw2xlm9eE7ua
-         GPvA==
-X-Gm-Message-State: APjAAAVcFaaKb5A62k6WZ+v5ya7JvxaeJ+WiBcfbdj9AuuJ+snAOdfnr
-        nMP2eMLsi6KGoBXlVj1bipOQ5pPd2jXQ4Ebz+SkxTujA
-X-Google-Smtp-Source: APXvYqw0A8Lqk6qX7CD0ZjUAfqaCMtvOeZCnyqiVzGAx3LVFCio/Y9Fb+8rbJ3TzTxR704q9l8iceiToxbjJgcESn2g=
-X-Received: by 2002:aca:eb09:: with SMTP id j9mr7724558oih.105.1568274096350;
- Thu, 12 Sep 2019 00:41:36 -0700 (PDT)
+        Thu, 12 Sep 2019 03:44:06 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1i8Jlr-0001qk-0T; Thu, 12 Sep 2019 09:44:03 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1i8Jlh-00023h-Ee; Thu, 12 Sep 2019 09:43:53 +0200
+Date:   Thu, 12 Sep 2019 09:43:53 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mediatek@lists.infradead.org, kernel@pengutronix.de,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/2] iommu: pass cell_count = -1 to
+ of_for_each_phandle with cells_name
+Message-ID: <20190912074353.wqohpfydjxueqade@pengutronix.de>
+References: <20190824132846.8589-1-u.kleine-koenig@pengutronix.de>
+ <20190903125210.GB11530@8bytes.org>
 MIME-Version: 1.0
-References: <156821692280.2951081.18036584954940423225.stgit@dwillia2-desk3.amr.corp.intel.com>
- <156821693963.2951081.11214256396118531359.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190911184332.GL20699@kadam> <9132e214-9b57-07dc-7ee2-f6bc52e960c5@kernel.dk>
-In-Reply-To: <9132e214-9b57-07dc-7ee2-f6bc52e960c5@kernel.dk>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 12 Sep 2019 00:41:24 -0700
-Message-ID: <CAPcyv4ij3s+9uO0f9aLHGj3=ACG7hAjZ0Rf=tyFmpt3+uQyymw@mail.gmail.com>
-Subject: Re: [Ksummit-discuss] [PATCH v2 3/3] libnvdimm, MAINTAINERS:
- Maintainer Entry Profile
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190903125210.GB11530@8bytes.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 3:11 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 9/11/19 12:43 PM, Dan Carpenter wrote:
-> > On Wed, Sep 11, 2019 at 08:48:59AM -0700, Dan Williams wrote:
-> >> +Coding Style Addendum
-> >> +---------------------
-> >> +libnvdimm expects multi-line statements to be double indented. I.e.
-> >> +
-> >> +        if (x...
-> >> +                        && ...y) {
-> >
-> > That looks horrible and it causes a checkpatch warning.  :(  Why not
-> > do it the same way that everyone else does it.
-> >
-> >       if (blah_blah_x && <-- && has to be on the first line for checkpatch
-> >           blah_blah_y) { <-- [tab][space][space][space][space]blah
-> >
-> > Now all the conditions are aligned visually which makes it readable.
-> > They aren't aligned with the indent block so it's easy to tell the
-> > inside from the if condition.
-> >
-> > I kind of hate all this extra documentation because now everyone thinks
-> > they can invent new hoops to jump through.
->
-> FWIW, I completely agree with Dan (Carpenter) here. I absolutely
-> dislike having these kinds of files, and with subsystems imposing weird
-> restrictions on style (like the quoted example, yuck).
->
-> Additionally, it would seem saner to standardize rules around when
-> code is expected to hit the maintainers hands for kernel releases. Both
-> yours and Martins deals with that, there really shouldn't be the need
-> to have this specified in detail per sub-system.
+On Tue, Sep 03, 2019 at 02:52:10PM +0200, Joerg Roedel wrote:
+> On Sat, Aug 24, 2019 at 03:28:45PM +0200, Uwe Kleine-König wrote:
+> > Currently of_for_each_phandle ignores the cell_count parameter when a
+> > cells_name is given. I intend to change that and let the iterator fall
+> > back to a non-negative cell_count if the cells_name property is missing
+> > in the referenced node.
+> > 
+> > To not change how existing of_for_each_phandle's users iterate, fix them
+> > to pass cell_count = -1 when also cells_name is given which yields the
+> > expected behaviour with and without my change.
+> > 
+> > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > ---
+> >  drivers/iommu/arm-smmu.c     | 2 +-
+> >  drivers/iommu/mtk_iommu_v1.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> Acked-by: Joerg Roedel <jroedel@suse.de>
 
-So this is *the* point of the exercise.
+Does this ack mean that Rob is expected to apply this together with
+patch 2?
 
-I picked up this indentation habit a long while back in response to
-review feedback on a patch to a subsystem that formatted code this
-way. At the time CodingStyle did not contradict the maintainer's
-preference, so I adopted it across the board.
+Best regards
+Uwe
 
-Now I come to find that CodingStyle has settled on clang-format (in
-the last 15 months) as the new standard which is a much better answer
-to me than a manually specified style open to interpretation. I'll
-take a look at getting libnvdimm converted over.
-
-If we can take that further and standardize all of the places where
-contributors see variations across subsystems on the fundamental
-questions of style, timing, follow-up, and unit test invocation the
-Maintainer Entry Profile can be superseded with common guidelines.
-
-Otherwise, yes I completely agree with you that a "Maintainer Entry
-Profile" is a sad comment on the state of what contributors need to
-navigate, but that's today's reality that needs to be addressed.
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
