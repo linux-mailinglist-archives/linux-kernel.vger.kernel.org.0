@@ -2,166 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F871B0A1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 10:21:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6514B0A22
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 10:22:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730238AbfILIVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 04:21:14 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60670 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730033AbfILIU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 04:20:59 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id CADD68FD58E36A7835F6;
-        Thu, 12 Sep 2019 16:20:54 +0800 (CST)
-Received: from [127.0.0.1] (10.74.149.191) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 12 Sep 2019
- 16:20:47 +0800
-Subject: Re: [PATCH V2 net-next 1/7] net: hns3: add ethtool_ops.set_channels
- support for HNS3 VF driver
-To:     Michal Kubecek <mkubecek@suse.cz>, <netdev@vger.kernel.org>
-CC:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, <jakub.kicinski@netronome.com>
-References: <1568169639-43658-1-git-send-email-tanhuazhong@huawei.com>
- <1568169639-43658-2-git-send-email-tanhuazhong@huawei.com>
- <20190912062301.GE24779@unicorn.suse.cz>
-From:   tanhuazhong <tanhuazhong@huawei.com>
-Message-ID: <8d51697c-703e-09f2-74e1-c83a31b5f52f@huawei.com>
-Date:   Thu, 12 Sep 2019 16:20:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1730248AbfILIWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 04:22:02 -0400
+Received: from sonic309-20.consmr.mail.ne1.yahoo.com ([66.163.184.146]:40259
+        "EHLO sonic309-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726159AbfILIWC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 04:22:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1568276521; bh=9xH5w6zSEuhYXlvG2VclR697b/6izmQwsn4JLiYuDJA=; h=Date:From:Reply-To:Subject:From:Subject; b=unnQqThEI+MQjEQQKb56/M3gG3cfy2GhR+ELHvLehFaISXwmfE021ju67pGpqcmE689LhxU1Tf2/NUihi3ngk1b1FUBoYvt8VR22jhdumdxB2xdKZ63028yEMEN878Gov1jQww7z0hbh2SEaAVq7qi+l1Te/8VbKC9vvOAp6J8TT3YFDyrPTumqJWuSjcopjCBnf+Z0TgD+m1ynGd8G8gc2NqZhm/EjdEaEE2UyRYwnjWWJL6ooKjRSD0O3q30tz4bVwtYR6MZLqPJkRBZ/8zE3yZ8yvgmt+ANkS+Ywr4dn6GS+kdLM7UnxNyKNwjY5qbissD+W6ulVnzNRxZa5v7w==
+X-YMail-OSG: atNTMaAVM1lA43GEyP7YiESSkQhbcYQ7mSfsozhTvTv8b95AtX3py0qCrq7CuOi
+ XZfZsW9GSAt7kuNWHrMkVmLqhCr8RSNQxbzHZIlS5JvvqBS9eD8h6wAiLoOT7KmNDQlM3KYsPCOA
+ IgQ.soW3T7RKL4IYjjCv7edo03OIJC2CGVM0E5OB89P8fVay62E5YnxysMvpUaPBuweEBacVVB_V
+ SSgpSoNmZEtziLNvU9nOuSyxSrME3k5bEJyq21HdWyrb07Wgarpmi6QFg4lrpuQjFCJWZasytaI1
+ F.XHVCWL_VM0wLsed7x85FcQykXpOOZD.wkk5ah6uzdO37Em.6JaJ2G2CvhIKiyudWzXYCBK8Uja
+ zhZ5QrlufwnLoB3B1AaBDuCetER3mP9iZ1DiXouK0RFzRy1DG97UX2NW5Hvayn7Z_kysk3VuAg_V
+ DGI9vuUBrBYw9ipSY4m4RPG4fdTbNiUKXmA2GXZ72skzEEJ9P5ngHxMGh14MGlJT9yknlUweDjrA
+ 0iA5_ZrqLt7Y320BFY6aXRLi1dYVFaW5iBMA_iRi949PcB4QEvXp5bSpJsNc1rgMoxIHbrGxGxQN
+ TZoG5prscOuKu92qbgoPlK1UzQ.66dUCY6CRpwMCG5N_4pY6HoID.1lnkUtuaSPeMwYTqcX6001C
+ bzRuFfLtSP30V9L1BhzSiHpQZuExYpaYNoOliju39Uz7.FmDXjaVic1P.XPue64RAmRWE.KN79om
+ DPq86JVKWCZ28v07LG_Pci441CMPBoAHm15o5NyRxGLCvPPyo.OR4KftHdxUxmOno71r6Go743Pa
+ Lq.JKyf8Q02OSoZY7mOjkJTH.pVCLcdgZ09o_HdtfHRDDy_3Y0ZcjWZXeIVQyv.EVbCguNvs2P71
+ QrpbB9Y0wLuKcZXOuGUVYQ6R0bmtObcDNQakTdUjp10bWBqk50I7ijDhn_HY82cPuB4HAXhCilrF
+ GUHwe31yWfnTnvzVKLnkn3riC_Q3SLh2EqVw4NDwot16V5DVFv8laC2rhBjyGQBtpS8FCC6p2jZP
+ NOJRoIaauib7TFCd.YdW421iaZskggiZFlk198m2OY5L6XQtb90w.vr2B6bopsV68FEkF5EhI8hY
+ llCih5TCn60gsHF_PdQeXJy8ggEVJPD19Ji5M9bZxI4d.NXwGn.ys2eXswIDBGM4Tkc66ET.JY.a
+ px8Ve_iYzCd103isskgVMvTTor2yIJDn9jYfDKNrTFKSrrYa6hRCxQQJL4efYFwtHZGD.03qpYfr
+ PL8.bb4vZ2xFV_vSHpSUdHEt5CUFAUCo-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 12 Sep 2019 08:22:01 +0000
+Date:   Thu, 12 Sep 2019 08:21:59 +0000 (UTC)
+From:   Lipton Davied <barrsterliptondaveid@gmail.com>
+Reply-To: barrsterliptondaveid@gmail.com
+Message-ID: <1013195882.137794.1568276519037@mail.yahoo.com>
+Subject: HI
 MIME-Version: 1.0
-In-Reply-To: <20190912062301.GE24779@unicorn.suse.cz>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.149.191]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Michal
 
-On 2019/9/12 14:23, Michal Kubecek wrote:
-> On Wed, Sep 11, 2019 at 10:40:33AM +0800, Huazhong Tan wrote:
->> From: Guangbin Huang <huangguangbin2@huawei.com>
->>
->> This patch adds ethtool_ops.set_channels support for HNS3 VF driver,
->> and updates related TQP information and RSS information, to support
->> modification of VF TQP number, and uses current rss_size instead of
->> max_rss_size to initialize RSS.
->>
->> Also, fixes a format error in hclgevf_get_rss().
->>
->> Signed-off-by: Guangbin Huang <huangguangbin2@huawei.com>
->> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
->> ---
->>   drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  1 +
->>   .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 83 ++++++++++++++++++++--
->>   2 files changed, 79 insertions(+), 5 deletions(-)
->>
-> ...
->> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
->> index 594cae8..e3090b3 100644
->> --- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
->> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-> ...
->> +static void hclgevf_update_rss_size(struct hnae3_handle *handle,
->> +				    u32 new_tqps_num)
->> +{
->> +	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
->> +	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
->> +	u16 max_rss_size;
->> +
->> +	kinfo->req_rss_size = new_tqps_num;
->> +
->> +	max_rss_size = min_t(u16, hdev->rss_size_max,
->> +			     hdev->num_tqps / kinfo->num_tc);
->> +
->> +	/* Use the user's configuration when it is not larger than
->> +	 * max_rss_size, otherwise, use the maximum specification value.
->> +	 */
->> +	if (kinfo->req_rss_size != kinfo->rss_size && kinfo->req_rss_size &&
->> +	    kinfo->req_rss_size <= max_rss_size)
->> +		kinfo->rss_size = kinfo->req_rss_size;
->> +	else if (kinfo->rss_size > max_rss_size ||
->> +		 (!kinfo->req_rss_size && kinfo->rss_size < max_rss_size))
->> +		kinfo->rss_size = max_rss_size;
-> 
-> I don't think requested channel count can be larger than max_rss_size
-> here. In ethtool_set_channels(), we check that requested channel counts
-> do not exceed maximum channel counts as reported by ->get_channels().
-> And hclgevf_get_max_channels() cannot return more than max_rss_size.
-> 
 
-When we can modify the TC number (which PF has already supported, VF may 
-implement in the future) using lldptool or tc cmd, 
-hclgevf_update_rss_size will be called to update the rss information, 
-which may also change max_rss_size,  so we will use max_rss_size instead 
-if the kinfo->rss_size configured using ethtool is bigger than max_rss_size.
+Drogi przyjacielu,
 
->> +
->> +	kinfo->num_tqps = kinfo->num_tc * kinfo->rss_size;
->> +}
->> +
->> +static int hclgevf_set_channels(struct hnae3_handle *handle, u32 new_tqps_num,
->> +				bool rxfh_configured)
->> +{
->> +	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
->> +	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
->> +	u16 cur_rss_size = kinfo->rss_size;
->> +	u16 cur_tqps = kinfo->num_tqps;
->> +	u32 *rss_indir;
->> +	unsigned int i;
->> +	int ret;
->> +
->> +	hclgevf_update_rss_size(handle, new_tqps_num);
->> +
->> +	ret = hclgevf_set_rss_tc_mode(hdev, kinfo->rss_size);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* RSS indirection table has been configuared by user */
->> +	if (rxfh_configured)
->> +		goto out;
->> +
->> +	/* Reinitializes the rss indirect table according to the new RSS size */
->> +	rss_indir = kcalloc(HCLGEVF_RSS_IND_TBL_SIZE, sizeof(u32), GFP_KERNEL);
->> +	if (!rss_indir)
->> +		return -ENOMEM;
->> +
->> +	for (i = 0; i < HCLGEVF_RSS_IND_TBL_SIZE; i++)
->> +		rss_indir[i] = i % kinfo->rss_size;
->> +
->> +	ret = hclgevf_set_rss(handle, rss_indir, NULL, 0);
->> +	if (ret)
->> +		dev_err(&hdev->pdev->dev, "set rss indir table fail, ret=%d\n",
->> +			ret);
->> +
->> +	kfree(rss_indir);
->> +
->> +out:
->> +	if (!ret)
->> +		dev_info(&hdev->pdev->dev,
->> +			 "Channels changed, rss_size from %u to %u, tqps from %u to %u",
->> +			 cur_rss_size, kinfo->rss_size,
->> +			 cur_tqps, kinfo->rss_size * kinfo->num_tc);
->> +
->> +	return ret;
->> +}
-> 
-> IIRC David asked you not to issue this log message in v1 review.
-> 
-> Michal Kubecek
-> 
 
-Sorry for missing this log.
+Jestem pan Lipton, kt=C3=B3ry nie by=C5=82 radc=C4=85 prawnym. Chc=C4=99, a=
+by tw=C3=B3j kontakt pom=C3=B3g=C5=82 mi odzyska=C4=87 fundusz o warto=C5=
+=9Bci (4,8 miliona dolar=C3=B3w) pozostawiony przez mojego zmar=C5=82ego kl=
+ienta na jego koncie, zanim zostanie on skonfiskowany lub uznany za nieu=C5=
+=BCyteczny przez firm=C4=99 Security Finance, je=C5=9Bli to kwota zosta=C5=
+=82a zdeponowana,
 
-Thanks.
 
-> .
-> 
+Wszystko, czego od ciebie wymagam, to twoja uczciwa wsp=C3=B3=C5=82praca, a=
+by=C5=9Bmy mogli zobaczy=C4=87 t=C4=99 transakcj=C4=99 jak najszybciej.
 
+
+prosz=C4=99 o bezpo=C5=9Bredni=C4=85 odpowied=C5=BA w celu uzyskania dodatk=
+owych wyja=C5=9Bnie=C5=84.
+
+
+
+Pozdrowienia,
+
+
+
+Mr.Lipton Daveid (Esq)
