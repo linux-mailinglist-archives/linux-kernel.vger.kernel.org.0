@@ -2,62 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED6EDB083A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 07:19:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D42EDB083E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 07:24:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbfILFTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 01:19:07 -0400
-Received: from cmccmta1.chinamobile.com ([221.176.66.79]:3068 "EHLO
-        cmccmta1.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbfILFTG (ORCPT
+        id S1728305AbfILFYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 01:24:18 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:23481 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbfILFYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 01:19:06 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.11]) by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee35d79d533104-04883; Thu, 12 Sep 2019 13:18:47 +0800 (CST)
-X-RM-TRANSID: 2ee35d79d533104-04883
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee65d79d536400-208ae;
-        Thu, 12 Sep 2019 13:18:47 +0800 (CST)
-X-RM-TRANSID: 2ee65d79d536400-208ae
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     miklos@szeredi.hu, linux-unionfs@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, sfr@canb.auug.org.au
-Subject: [PATCH V2] ovl: Fix dereferencing possible ERR_PTR()
-Date:   Thu, 12 Sep 2019 13:18:31 +0800
-Message-Id: <1568265511-1622-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 12 Sep 2019 01:24:18 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x8C5Nti6026272;
+        Thu, 12 Sep 2019 14:23:55 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x8C5Nti6026272
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1568265836;
+        bh=JYvxGIDdbHIrCH6vXGu0q1ENkAtg1uD8iiUS3RqpBP8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CiiNwjz9Px6G3Z6B062d7R59gGovBQLOYazKoATOz0dzPKkvSphYTtkyPjXf7hvX4
+         TODxaGWsU9En17KyEVtadbujJAMgiSTZ7Il6UmL4ZM1K4AO/HcgmH1U3IfrUdEev/Q
+         JRVGPJJ5PwMSSBz7pkvqMT4Sj+K9/myYFanCnVDSGkshiwNYR1js72Bv1JWLpaWjvt
+         6gzNcc3pP6yiIPs2/du+86Vb8BKXmo2hj4a+6tI6wrBUXRe0sN2JLx8H7eN5HDMVUy
+         uPqMtsUqz8rbGm4yihlP7ZwRf4JTNLJIQ2zq4mz/sQ5uip03H5cY6oBvPV/BA4nVDs
+         X+KuUSzcBZ4AA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] s390: remove pointless drivers-y in drivers/s390/Makefile
+Date:   Thu, 12 Sep 2019 14:23:54 +0900
+Message-Id: <20190912052354.24829-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if ovl_encode_real_fh() fails, no memory was allocated
-and the error in the error-valued pointer should be returned.
+This is unused.
 
-V1->V2: fix SHA1 length problem
-
-Fixes: 9b6faee07470 ("ovl: check ERR_PTR() return value from ovl_encode_fh()")
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- fs/overlayfs/export.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-index cb8ec1f..50ade19 100644
---- a/fs/overlayfs/export.c
-+++ b/fs/overlayfs/export.c
-@@ -229,7 +229,7 @@ static int ovl_d_to_fh(struct dentry *dentry, char *buf, int buflen)
- 				ovl_dentry_upper(dentry), !enc_lower);
- 	err = PTR_ERR(fh);
- 	if (IS_ERR(fh))
--		goto fail;
-+		return err;
+ drivers/s390/Makefile | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/s390/Makefile b/drivers/s390/Makefile
+index a863b0462b43..cde73b6a9afb 100644
+--- a/drivers/s390/Makefile
++++ b/drivers/s390/Makefile
+@@ -4,6 +4,3 @@
+ #
  
- 	err = -EOVERFLOW;
- 	if (fh->len > buflen)
+ obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
+-
+-drivers-y += drivers/s390/built-in.a
+-
 -- 
-1.9.1
-
-
+2.17.1
 
