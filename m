@@ -2,92 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 507B4B1688
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 01:01:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CE7EB168E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 01:08:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfILXBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 19:01:06 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41757 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfILXBG (ORCPT
+        id S1727364AbfILXH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 19:07:58 -0400
+Received: from smtprelay0059.hostedemail.com ([216.40.44.59]:45719 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726718AbfILXH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 19:01:06 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x15so14231277pgg.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 16:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D9dYUr5fMgUHKFTaUbiggMwqfm0d4ExFNXTKQwvsDKQ=;
-        b=tPvXqEzHwKpENKEwHi+Skg0ISMB7ZFeB0yn6fEGDuRS61LxsjWdYrvLH7BObaVO3QB
-         HsxMdXR+4aWWSfV+ANxcz0Bo0o3+m1Wv1IeRZJ5ymFd5GGiMrSTqBjgZv9EPPdkoVJoE
-         nsaxTy4G3QnB9ClFNIRybTH9QlrNg8MIH4HJi8Gn1ORBp28GWQy/T1ZOBztKGGQNSQSA
-         ZBmziZ1luIwLyXBh+aJj+Tq+k2YA2w1JufIQ425tRqxHmpOft3Fbk/nIN7Prdjv2GtT2
-         eUCpew0OAlYYRdqQ9LTbf1aHAnRjHKtThgj8M46igFVG7H7c4gheoHjP36DfQhsOIKgA
-         1F3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D9dYUr5fMgUHKFTaUbiggMwqfm0d4ExFNXTKQwvsDKQ=;
-        b=OSdMmNPODsQOCFC0C8rZAEcc2nno7gXX0fBfmZcfXgthdXRtOZU++IQNc996sX9kyL
-         y4jz8KupsIdon6m30BKqe6WU76XTxYnLHUzpZureHmrBebArs8mJEXTB0HOPkhKa8WBp
-         YiUL1jWjZ8dnFZrtRBoCY3v/qKDnLrw+BfQ6VpytsTwE76cSp7CozyMygQThXMFZhqqJ
-         7NAB9OCMKugvD8oV+rUmO5EV+1w/337qk9sFJzFI2dfgSXMeqWpC6pmwPBavAXViRHi/
-         7E8X2gRNbGNPrZREjys+StfYyQfEM29cFNDPZrbxLzCwTfF0WyY4hkzhx4hQGx31wjRc
-         0/rA==
-X-Gm-Message-State: APjAAAUXnaqI0qPfKz7DHexN6gKgvnfaiifB8hlsWo7UuAzszhQw0RLK
-        fX1xMqVo5OHpPckmFA4y22mvyGUkvkX3/fR/ExwHFw==
-X-Google-Smtp-Source: APXvYqxKPqcf3nesXiRdlItW9fzTGtoWDpjNQ9SjjFM/YxRP0tFmd4/ksEvcvMhaZFyTL+zMR5XBadhwoqkrNWZwEyE=
-X-Received: by 2002:a63:6193:: with SMTP id v141mr41159638pgb.263.1568329264856;
- Thu, 12 Sep 2019 16:01:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1568256705.git.joe@perches.com> <x498sqtvclx.fsf@segfault.boston.devel.redhat.com>
- <CANiq72kTsf=0rEufDMo7BzMNv1dqc5=ws7fSd=H_e=cpHR24Kg@mail.gmail.com>
- <4df0a07ec8f1391acfa987ecef184a50e7831000.camel@perches.com>
- <CANiq72mgbepmw=G5pM7iSRf-Eob7AHFzLw=76uFivpNGtccyKw@mail.gmail.com> <4f759f8c4f4d59fd60008e833334e29b0da0869c.camel@perches.com>
-In-Reply-To: <4f759f8c4f4d59fd60008e833334e29b0da0869c.camel@perches.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 12 Sep 2019 16:00:53 -0700
-Message-ID: <CAKwvOd=S911qkQtN31JkusS==NXZMnEwrUOGN3Gp6B7GTzYe2A@mail.gmail.com>
+        Thu, 12 Sep 2019 19:07:58 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id B5AD9837F24A;
+        Thu, 12 Sep 2019 23:07:56 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3870:3871:3872:3874:4321:5007:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:21080:21627:21740:30054:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:16,LUA_SUMMARY:none
+X-HE-Tag: thumb06_624660a277f15
+X-Filterd-Recvd-Size: 1827
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 12 Sep 2019 23:07:55 +0000 (UTC)
+Message-ID: <ed9803592b2cbc96e2b422df68cbd62d8daf6f76.camel@perches.com>
 Subject: Re: [PATCH 00/13] nvdimm: Use more common kernel coding style
-To:     Joe Perches <joe@perches.com>
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
 Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
         Jeff Moyer <jmoyer@redhat.com>,
         Dan Williams <dan.j.williams@intel.com>,
         linux-nvdimm <linux-nvdimm@lists.01.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Thu, 12 Sep 2019 16:07:53 -0700
+In-Reply-To: <CAKwvOd=S911qkQtN31JkusS==NXZMnEwrUOGN3Gp6B7GTzYe2A@mail.gmail.com>
+References: <cover.1568256705.git.joe@perches.com>
+         <x498sqtvclx.fsf@segfault.boston.devel.redhat.com>
+         <CANiq72kTsf=0rEufDMo7BzMNv1dqc5=ws7fSd=H_e=cpHR24Kg@mail.gmail.com>
+         <4df0a07ec8f1391acfa987ecef184a50e7831000.camel@perches.com>
+         <CANiq72mgbepmw=G5pM7iSRf-Eob7AHFzLw=76uFivpNGtccyKw@mail.gmail.com>
+         <4f759f8c4f4d59fd60008e833334e29b0da0869c.camel@perches.com>
+         <CAKwvOd=S911qkQtN31JkusS==NXZMnEwrUOGN3Gp6B7GTzYe2A@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 3:38 PM Joe Perches <joe@perches.com> wrote:
->
-> On Thu, 2019-09-12 at 23:58 +0200, Miguel Ojeda wrote:
-> > On Thu, Sep 12, 2019 at 11:08 PM Joe Perches <joe@perches.com> wrote:
-> > > Please name the major projects and then point to their
-> > > .clang-format equivalents.
-> > >
-> > > Also note the size/scope/complexity of the major projects.
-> >
-> > Mozilla, WebKit, LLVM and Microsoft. They have their style distributed
-> > with the official clang-format, not sure if they enforce it.
->
-> At least for LLVM, it appears not.
+On Thu, 2019-09-12 at 16:00 -0700, Nick Desaulniers wrote:
 
-I acknowledge the irony you present, but that's because there's no
-enforcement on the LLVM side.  I frequently forget to run:
-$ git-clang-format HEAD~
+> Consider the fact that not all kernel developers run checkpatch.pl.
+> Is that a deficiency in checkpatch.pl, or the lack of enforcement in
+> kernel developers' workflows?
 
-If you have automated systems that help encourage (ie. force) the use
-of the formatter, this helps.
+No.  Mostly it's because the kernel is like a bunch of little
+untethered development planets, each with a little prince that
+wants to keep their own little fiefdom separate from the others.
 
-Consider the fact that not all kernel developers run checkpatch.pl.
-Is that a deficiency in checkpatch.pl, or the lack of enforcement in
-kernel developers' workflows?
--- 
-Thanks,
-~Nick Desaulniers
+
