@@ -2,115 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B91E4B16A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 01:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCE4CB16A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 01:27:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfILXWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 19:22:00 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33400 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfILXV7 (ORCPT
+        id S1727748AbfILX0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 19:26:41 -0400
+Received: from smtprelay0148.hostedemail.com ([216.40.44.148]:42011 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726905AbfILX0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 19:21:59 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n190so14275999pgn.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 16:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YmpY77tOjMlIBM+QNhtMQBjrqYVfrKFcyr6SgoPVdxU=;
-        b=mVclnYpUotNVMVlsDFEnMjm9huupDI5osneDwNjpz3DEn7odTq1c2j3DWotgaHFfiP
-         RrjHJyXSDm+jOs+8PAS76MemG0ZSxEVKxiDuzMSVkqgGaPZ+rBRIRjAdsDKGdsqmDTtV
-         8Mt5Z3cBPNwe+5kJ6n1RslkClAwV6Wvjtx61BNTXpB7H7V+dtKgX9hc5up8a01GcBRgR
-         1aygXyMNnQwQU56EcGzPJFVX4neoPPoyr92ld2d0Hs2kf0jf9Y5L3RTNqCXiFkcC2qFv
-         z/cuxBvO5uT+Jm8RnPJQe231C5TPgiAibBCNfbVu/wM4UTIERhf0rLgrHxYfKtOwmB2t
-         61+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YmpY77tOjMlIBM+QNhtMQBjrqYVfrKFcyr6SgoPVdxU=;
-        b=lwhpNUvDo2vMi2KmQm7ugQUdGx96nYLWikm34LWu2WuiGsA8i9CtmRjUb28Tn1bqah
-         E9cXbMywYwlsDtMjLkBeLAJzkzEb+1pRUIiFvfs7yNQxwfbq8lhaDYzo9bed4qc7d0WJ
-         t4sb9qkLFGz0aYikZbGarae9tnSySovd0GVw2HmwfUMzJCvLKPnCm5SXvIrDfYEjAoPn
-         baP6CcqpsbJRDnJyZAI6JgtStj94s40iCgUFnqnogSHSa1EcE69iPWIz8CQARibfvwq+
-         hulOIzqxvJyyqz0mTsymoQX9H85A2QY8JonespGb/g17fTegP4dF321Bmsm1zD6iis2b
-         LTiQ==
-X-Gm-Message-State: APjAAAWQiVFuuSSDIP2J76aveVMoiTdDOe0TBp6H8yLmYyV3hfxEqG+M
-        7UMwLDPLptwcYlK9RvI1w8o=
-X-Google-Smtp-Source: APXvYqzjkWQvAVi05TsLPjjsDKWOcCu5aiWUyBmF1hRLmeD9T7T6K9HbN6XFLr4Amm9oqjG/SQ3UEQ==
-X-Received: by 2002:a17:90a:e98e:: with SMTP id v14mr1337906pjy.101.1568330519125;
-        Thu, 12 Sep 2019 16:21:59 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id q204sm33758013pfc.11.2019.09.12.16.21.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 12 Sep 2019 16:21:58 -0700 (PDT)
-Date:   Thu, 12 Sep 2019 16:21:37 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>
-Cc:     "timur@kernel.org" <timur@kernel.org>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXT] Re: [PATCH 1/3] ASoC: fsl_asrc: Use in(out)put_format
- instead of in(out)put_word_width
-Message-ID: <20190912232136.GC24937@Asurada-Nvidia.nvidia.com>
-References: <cover.1568025083.git.shengjiu.wang@nxp.com>
- <65e96ca15afd4a282b122f3ea8b13642cf4614c7.1568025083.git.shengjiu.wang@nxp.com>
- <20190909200156.GB10344@Asurada-Nvidia.nvidia.com>
- <VE1PR04MB6479D271F4271ECF404473E7E3B60@VE1PR04MB6479.eurprd04.prod.outlook.com>
+        Thu, 12 Sep 2019 19:26:41 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 9A7731801A086;
+        Thu, 12 Sep 2019 23:26:39 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3865:3867:3871:3872:3874:4321:4470:5007:6691:10004:10400:10848:11026:11232:11658:11914:12109:12297:12663:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21627:30054:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:15,LUA_SUMMARY:none
+X-HE-Tag: skin44_742702c58da54
+X-Filterd-Recvd-Size: 1793
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 12 Sep 2019 23:26:38 +0000 (UTC)
+Message-ID: <fdd69f54908d90cd0c93af7b5d80a6c3ca3b5817.camel@perches.com>
+Subject: clang-format and 'clang-format on' and 'clang-format off'
+From:   Joe Perches <joe@perches.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        llvm-dev@lists.llvm.org
+Cc:     Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Thu, 12 Sep 2019 16:26:37 -0700
+In-Reply-To: <CANiq72mgbepmw=G5pM7iSRf-Eob7AHFzLw=76uFivpNGtccyKw@mail.gmail.com>
+References: <cover.1568256705.git.joe@perches.com>
+         <x498sqtvclx.fsf@segfault.boston.devel.redhat.com>
+         <CANiq72kTsf=0rEufDMo7BzMNv1dqc5=ws7fSd=H_e=cpHR24Kg@mail.gmail.com>
+         <4df0a07ec8f1391acfa987ecef184a50e7831000.camel@perches.com>
+         <CANiq72mgbepmw=G5pM7iSRf-Eob7AHFzLw=76uFivpNGtccyKw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VE1PR04MB6479D271F4271ECF404473E7E3B60@VE1PR04MB6479.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 02:22:06AM +0000, S.j. Wang wrote:
-> Hi
-> 
-> > 
-> > On Mon, Sep 09, 2019 at 06:33:19PM -0400, Shengjiu Wang wrote:
-> > > snd_pcm_format_t is more formal than enum asrc_word_width, which
-> > has
-> > > two property, width and physical width, which is more accurate than
-> > > enum asrc_word_width. So it is better to use in(out)put_format instead
-> > > of in(out)put_word_width.
-> > 
-> > Hmm...I don't really see the benefit of using snd_pcm_format_t here...I
-> > mean, I know it's a generic one, and would understand if we use it as a
-> > param for a common API. But this patch merely packs the "width" by
-> > intentionally using this snd_pcm_format_t and then adds another
-> > translation to unpack it.. I feel it's a bit overcomplicated. Or am I missing
-> > something?
-> > 
-> > And I feel it's not necessary to use ALSA common format in our own "struct
-> > asrc_config" since it is more IP/register specific.
-> > 
-> > Thanks
-> > Nicolin
-> > 
-> 
-> As you know, we have another M2M function internally, when user want to
-> Set the format through M2M API, it is better to use snd_pcm_format_t instead the
-> Width, for snd_pcm_format_t include two property, data with and physical width
-> In driver some place need data width, some place need physical width.
-> For example how to distinguish S24_LE and S24_3LE in driver,  DMA setting needs
-> The physical width,  but ASRC need data width. 
-> 
-> Another purpose is that we have another new designed ASRC, which support more
-> Formats, I would like it can share same API with this ASRC, using snd_pcm_format_t
-> That we can use the common API, like snd_pcm_format_linear,
-> snd_pcm_format_big_endian to get the property of the format, which is needed by
-> driver.
+On Thu, 2019-09-12 at 23:58 +0200, Miguel Ojeda wrote:
+> On Thu, Sep 12, 2019 at 11:08 PM Joe Perches <joe@perches.com> wrote:
 
-I see. Just acked the patch.
+> > Marking sections _no_auto_format_ isn't really a
+> > good solution is it?
+> 
+> I am thinking about special tables that are hand-crafted or very
+> complex macros. For those, yes, I think it is a fine solution.
+
+Can the 'clang-format on/off' trigger be indirected into
+something non-clang specific via a macro?
+
+Not every project is going to use only the clang-format tool.
+
