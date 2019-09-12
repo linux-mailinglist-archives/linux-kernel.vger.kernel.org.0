@@ -2,76 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCF2B0709
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 05:02:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ED6AB0710
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 05:11:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbfILDCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 23:02:18 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45794 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbfILDCR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 23:02:17 -0400
-Received: by mail-io1-f67.google.com with SMTP id f12so50947038iog.12
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 20:02:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mXXFqHSKj7akMYz+2BHSRLbRi0+2gpnMvtcz77fab9g=;
-        b=tnG/cIC0vOxQhpWDc/JR2MwNWbBgkfBw6AVBNFF3UyzID48WRYdPkLy0MyD1UCbrYW
-         PuLUMJ3Rhu3yS8JL4G3mfbl7wKSxlxze32xco66YmRFi+laea4tm2iaFCUJZt6goac7S
-         7OU2Cd3gr9gV5TIZEOKyKU/4JNF786l3vOWUxAxAS+I3AL/Ij6Ozgu3UVU5zMHRElfI6
-         rO3dLdQP6wmpvtntYBSsY4FAmj4qBSY3tryar3O3g2HkxZc9J4Pc/gqmuTY/O/+oaxao
-         hDa9hOs8lbSBQ0RmjXJZDwFJeiiqbDQnhDBUy17AqfAPXwBgwA/qsKLm0lvdHw2Ur74R
-         dR7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mXXFqHSKj7akMYz+2BHSRLbRi0+2gpnMvtcz77fab9g=;
-        b=iz7NL3J7UdkTNcmF6JJI8V9NUFpQEhXAg7XiGt6bTgMN3v40NkVaNP5qJCdqMAFfnz
-         8PnfllLpaIFsHgmRoroGhoswnazdjVUp1B4/Dh5DYKQWncCFREeQkuUIpLe2sZaPxyJt
-         lVZrRXUmWC6ExBvvFRwOAjUAkaUNERvZoONBfa9CzySMz/dx5NkTp7Eue3yYIQdgHd/4
-         rP8zsQLigcBQ2AQufCiF/5Hf+lZcfB0g2rp6qYcZfiERTd8xIxjNXl1VMCW8kvRQFvJQ
-         57p9vEkIExmg2r01T7hXZQBXNy5zc6iPm4qgT3YCFPVXQ1eGoPUMeAPgZliie9vDkZ4w
-         ky1w==
-X-Gm-Message-State: APjAAAVp1ytaX4Tgwsk6pKj+NvF7x2TWYtWZTPnCKXqnZWHwG7HtYKGf
-        vN1fsX2YycmzK8/PUjJ5AgSAaTNm0PWGL2Sapak=
-X-Google-Smtp-Source: APXvYqyqZLMOU0VzjHFYOiUD2HDkk3NnFQ5jNE6dCmY9m+FlWLHNYgnVeiMEIBMwNVatbPiuILtRTWj9SDhyucuMkh0=
-X-Received: by 2002:a5d:87ce:: with SMTP id q14mr1622011ios.248.1568257337009;
- Wed, 11 Sep 2019 20:02:17 -0700 (PDT)
+        id S1728874AbfILDLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 23:11:21 -0400
+Received: from mga18.intel.com ([134.134.136.126]:9955 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbfILDLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Sep 2019 23:11:21 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2019 20:11:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="179224490"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga008.jf.intel.com with ESMTP; 11 Sep 2019 20:11:18 -0700
+Date:   Thu, 12 Sep 2019 11:10:58 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     akpm@linux-foundation.org, mgorman@techsingularity.net,
+        vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/mmap.c: rb_parent is not necessary in __vma_link_list
+Message-ID: <20190912031058.GC25169@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20190813032656.16625-1-richardw.yang@linux.intel.com>
 MIME-Version: 1.0
-References: <20190907081446.3865-1-rain.1986.08.12@gmail.com> <20190910.175051.1032944353064959379.davem@davemloft.net>
-In-Reply-To: <20190910.175051.1032944353064959379.davem@davemloft.net>
-From:   Rain River <rain.1986.08.12@gmail.com>
-Date:   Thu, 12 Sep 2019 11:06:37 +0800
-Message-ID: <CAJr_XRAr+qBPKKsxRZQf=8Kb7mDMjsNeLSHko+B0ziTM4JzXTA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] MAINTAINERS: update FORCEDETH MAINTAINERS info
-To:     David Miller <davem@davemloft.net>
-Cc:     mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813032656.16625-1-richardw.yang@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OK. I will resend this very soon.
+On Tue, Aug 13, 2019 at 11:26:56AM +0800, Wei Yang wrote:
+>Now we use rb_parent to get next, while this is not necessary.
+>
+>When prev is NULL, this means vma should be the first element in the
+>list. Then next should be current first one (mm->mmap), no matter
+>whether we have parent or not.
+>
+>After removing it, the code shows the beauty of symmetry.
+>
+>Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
 
-On Tue, Sep 10, 2019 at 11:50 PM David Miller <davem@davemloft.net> wrote:
+Ping~
+
+>---
+> mm/internal.h | 2 +-
+> mm/mmap.c     | 2 +-
+> mm/nommu.c    | 2 +-
+> mm/util.c     | 8 ++------
+> 4 files changed, 5 insertions(+), 9 deletions(-)
 >
-> From: rain.1986.08.12@gmail.com
-> Date: Sat,  7 Sep 2019 16:14:46 +0800
->
-> > From: Rain River <rain.1986.08.12@gmail.com>
-> >
-> > Many FORCEDETH NICs are used in our hosts. Several bugs are fixed and
-> > some features are developed for FORCEDETH NICs. And I have been
-> > reviewing patches for FORCEDETH NIC for several months. Mark me as the
-> > FORCEDETH NIC maintainer. I will send out the patches and maintain
-> > FORCEDETH NIC.
-> >
-> > Signed-off-by: Rain River <rain.1986.08.12@gmail.com>
->
-> Please resend this with netdev properly CC:'d, thank you.
+>diff --git a/mm/internal.h b/mm/internal.h
+>index e32390802fd3..41a49574acc3 100644
+>--- a/mm/internal.h
+>+++ b/mm/internal.h
+>@@ -290,7 +290,7 @@ static inline bool is_data_mapping(vm_flags_t flags)
+> 
+> /* mm/util.c */
+> void __vma_link_list(struct mm_struct *mm, struct vm_area_struct *vma,
+>-		struct vm_area_struct *prev, struct rb_node *rb_parent);
+>+		struct vm_area_struct *prev);
+> 
+> #ifdef CONFIG_MMU
+> extern long populate_vma_page_range(struct vm_area_struct *vma,
+>diff --git a/mm/mmap.c b/mm/mmap.c
+>index f7ed0afb994c..b8072630766f 100644
+>--- a/mm/mmap.c
+>+++ b/mm/mmap.c
+>@@ -632,7 +632,7 @@ __vma_link(struct mm_struct *mm, struct vm_area_struct *vma,
+> 	struct vm_area_struct *prev, struct rb_node **rb_link,
+> 	struct rb_node *rb_parent)
+> {
+>-	__vma_link_list(mm, vma, prev, rb_parent);
+>+	__vma_link_list(mm, vma, prev);
+> 	__vma_link_rb(mm, vma, rb_link, rb_parent);
+> }
+> 
+>diff --git a/mm/nommu.c b/mm/nommu.c
+>index fed1b6e9c89b..12a66fbeb988 100644
+>--- a/mm/nommu.c
+>+++ b/mm/nommu.c
+>@@ -637,7 +637,7 @@ static void add_vma_to_mm(struct mm_struct *mm, struct vm_area_struct *vma)
+> 	if (rb_prev)
+> 		prev = rb_entry(rb_prev, struct vm_area_struct, vm_rb);
+> 
+>-	__vma_link_list(mm, vma, prev, parent);
+>+	__vma_link_list(mm, vma, prev);
+> }
+> 
+> /*
+>diff --git a/mm/util.c b/mm/util.c
+>index e6351a80f248..80632db29247 100644
+>--- a/mm/util.c
+>+++ b/mm/util.c
+>@@ -264,7 +264,7 @@ void *memdup_user_nul(const void __user *src, size_t len)
+> EXPORT_SYMBOL(memdup_user_nul);
+> 
+> void __vma_link_list(struct mm_struct *mm, struct vm_area_struct *vma,
+>-		struct vm_area_struct *prev, struct rb_node *rb_parent)
+>+		struct vm_area_struct *prev)
+> {
+> 	struct vm_area_struct *next;
+> 
+>@@ -273,12 +273,8 @@ void __vma_link_list(struct mm_struct *mm, struct vm_area_struct *vma,
+> 		next = prev->vm_next;
+> 		prev->vm_next = vma;
+> 	} else {
+>+		next = mm->mmap;
+> 		mm->mmap = vma;
+>-		if (rb_parent)
+>-			next = rb_entry(rb_parent,
+>-					struct vm_area_struct, vm_rb);
+>-		else
+>-			next = NULL;
+> 	}
+> 	vma->vm_next = next;
+> 	if (next)
+>-- 
+>2.17.1
+
+-- 
+Wei Yang
+Help you, Help me
