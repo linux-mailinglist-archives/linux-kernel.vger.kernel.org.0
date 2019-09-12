@@ -2,123 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23892B0CFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 12:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD3BFB0D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 12:36:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731071AbfILKfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 06:35:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47410 "EHLO
+        id S1731141AbfILKgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 06:36:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:26226 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726952AbfILKfr (ORCPT
+        by vger.kernel.org with ESMTP id S1726952AbfILKgI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 06:35:47 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8CAWq26087452
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 06:35:46 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2uyh47qddq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 06:35:45 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 12 Sep 2019 11:35:43 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Sep 2019 11:35:41 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8CAZeV220709736
+        Thu, 12 Sep 2019 06:36:08 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8CAWjVV015899;
+        Thu, 12 Sep 2019 06:35:56 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uymbh052w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Sep 2019 06:35:55 -0400
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8CAX2pA017299;
+        Thu, 12 Sep 2019 06:35:55 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uymbh052j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Sep 2019 06:35:55 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8CAU7CF005640;
+        Thu, 12 Sep 2019 10:35:54 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma04dal.us.ibm.com with ESMTP id 2uv467nfjj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Sep 2019 10:35:54 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8CAZrfN60948914
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Sep 2019 10:35:40 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E083AE058;
-        Thu, 12 Sep 2019 10:35:40 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 572CAAE051;
-        Thu, 12 Sep 2019 10:35:39 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.148.206.179])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 12 Sep 2019 10:35:39 +0000 (GMT)
-Date:   Thu, 12 Sep 2019 11:35:36 +0100
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Cao jin <caoj.fnst@cn.fujitsu.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/memblock: fix typo in memblock doc
-References: <20190911030856.18010-1-caoj.fnst@cn.fujitsu.com>
- <20190911144230.GB6429@linux.ibm.com>
- <59f571f6-785c-7f6e-fd03-5cfc76da27be@cn.fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59f571f6-785c-7f6e-fd03-5cfc76da27be@cn.fujitsu.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 12 Sep 2019 10:35:53 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3F879136051;
+        Thu, 12 Sep 2019 10:35:53 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E9698136053;
+        Thu, 12 Sep 2019 10:35:52 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.124.35.237])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Sep 2019 10:35:52 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id F08552E47C2; Thu, 12 Sep 2019 16:05:50 +0530 (IST)
+From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+To:     Nathan Lynch <nathanl@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Kamalesh Babulal <kamaleshb@in.ibm.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: [PATCH 0/2] pseries/hotplug: Change the default behaviour of cede_offline
+Date:   Thu, 12 Sep 2019 16:05:39 +0530
+Message-Id: <1568284541-15169-1-git-send-email-ego@linux.vnet.ibm.com>
+X-Mailer: git-send-email 1.8.3.1
 X-TM-AS-GCONF: 00
-x-cbid: 19091210-4275-0000-0000-00000364D55E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091210-4276-0000-0000-000038772FC3
-Message-Id: <20190912103535.GB9062@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-12_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=996 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1909120112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 10:54:09AM +0800, Cao jin wrote:
-> On 9/11/19 10:42 PM, Mike Rapoport wrote:
-> > On Wed, Sep 11, 2019 at 11:08:56AM +0800, Cao jin wrote:
-> >> elaboarte -> elaborate
-> >> architecure -> architecture
-> >> compltes -> completes
-> >>
-> >> Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
-> >> ---
-> >>  mm/memblock.c | 6 +++---
-> >>  1 file changed, 3 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/mm/memblock.c b/mm/memblock.c
-> >> index 7d4f61ae666a..0d0f92003d18 100644
-> >> --- a/mm/memblock.c
-> >> +++ b/mm/memblock.c
-> >> @@ -83,16 +83,16 @@
-> >>   * Note, that both API variants use implict assumptions about allowed
-> >>   * memory ranges and the fallback methods. Consult the documentation
-> >>   * of :c:func:`memblock_alloc_internal` and
-> >> - * :c:func:`memblock_alloc_range_nid` functions for more elaboarte
-> >> + * :c:func:`memblock_alloc_range_nid` functions for more elaborate
-> > 
-> > While on it, could you please replace the
-> > :c:func:`memblock_alloc_range_nid` construct with
-> > memblock_alloc_range_nid()?
-> > 
-> > And that would be really great to see all the :c:func:`foo` changed to
-> > foo().
-> > 
-> 
-> Sure. BTW, do you want convert all the markups too?
-> 
->     :c:type:`foo` -> struct foo
->     %FOO -> FOO
->     ``foo`` -> foo
->     **foo** -> foo
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 
-The documentation toolchain can recognize now foo() as a function and does
-not require the :c:func: prefix for that. AFAIK it only works for
-functions, so please don't change the rest of the markup.
- 
-> -- 
-> Sincerely,
-> Cao jin
-> 
-> 
+Currently on Pseries Linux Guests, the offlined CPU can be put to one
+of the following two states:
+   - Long term processor cede (also called extended cede)
+   - Returned to the Hypervisor via RTAS "stop-self" call.
+
+This is controlled by the kernel boot parameter "cede_offline=on/off".
+
+By default the offlined CPUs enter extended cede. The PHYP hypervisor
+considers CPUs in extended cede to be "active" since the CPUs are
+still under the control fo the Linux Guests. Hence, when we change the
+SMT modes by offlining the secondary CPUs, the PURR and the RWMR SPRs
+will continue to count the values for offlined CPUs in extended cede
+as if they are online.
+
+One of the expectations with PURR is that the for an interval of time,
+the sum of the PURR increments across the online CPUs of a core should
+equal the number of timebase ticks for that interval.
+
+This is currently not the case.
+
+In the following data (Generated using
+https://github.com/gautshen/misc/blob/master/purr_tb.py):
+
+
+delta tb = tb ticks elapsed in 1 second.
+delta purr = sum of PURR increments on online CPUs of that core in 1
+       	     second
+      
+SMT=off
+===========================================
+Core        	delta tb(apprx)  delta purr	
+===========================================
+core00 [  0]	512000000	69883784	
+core01 [  8]	512000000	88782536	
+core02 [ 16]	512000000	94296824	
+core03 [ 24]	512000000	80951968	
+
+SMT=2
+===========================================
+Core            delta tb(apprx)  delta purr	
+===========================================
+core00 [  0,1]	512000000	136147792	
+core01 [  8,9]	512000000	128636784	
+core02 [ 16,17]	512000000	135426488	
+core03 [ 24,25]	512000000	153027520	
+
+SMT=4
+===================================================
+Core                   	delta tb(apprx)  delta purr	
+===================================================
+core00 [  0,1,2,3]	512000000	258331616	
+core01 [  8,9,10,11]	512000000	274220072	
+core02 [ 16,17,18,19]	512000000	260013736	
+core03 [ 24,25,26,27]	512000000	260079672	
+
+SMT=on
+===================================================================
+Core                                   	delta tb(apprx)  delta purr	
+===================================================================
+core00 [  0,1,2,3,4,5,6,7]		512000000	512941248	
+core01 [  8,9,10,11,12,13,14,15]	512000000	512936544	
+core02 [ 16,17,18,19,20,21,22,23]	512000000	512931544	
+core03 [ 24,25,26,27,28,29,30,31]	512000000	512923800
+
+This patchset addresses this issue by ensuring that by default, the
+offlined CPUs are returned to the Hypervisor via RTAS "stop-self" call
+by changing the default value of "cede_offline_enabled" to false.
+
+The patchset also defines a new sysfs attribute
+"/sys/device/system/cpu/cede_offline_enabled" on PSeries Linux guests
+to allow userspace programs to change the state into which the
+offlined CPU need to be put to at runtime. This is intended for
+userspace programs that fold CPUs for the purpose of saving energy
+when the utilization is low. Setting the value of this attribute
+ensures that subsequent CPU offline operations will put the offlined
+CPUs to extended cede. However, it will cause inconsistencies in the
+PURR accounting. Clearing the attribute will make the offlined CPUs
+call the RTAS "stop-self" call thereby returning the CPU to the
+hypervisor.
+
+With the patches,
+
+SMT=off
+===========================================
+Core        	delta tb(apprx)	 delta purr	
+===========================================
+core00 [  0]	512000000	 512527568	
+core01 [  8]	512000000	 512556128	
+core02 [ 16]	512000000	 512590016	
+core03 [ 24]	512000000	 512589440	
+
+SMT=2
+===========================================
+Core            delta tb(apprx)	 delta purr	
+===========================================
+core00 [  0,1]	512000000	512635328
+core01 [  8,9]	512000000	512610416	
+core02 [ 16,17]	512000000	512639360	
+core03 [ 24,25]	512000000	512638720	
+
+SMT=4
+===================================================
+Core                    delta tb(apprx)  delta purr	
+===================================================
+core00 [  0,1,2,3]	512000000	512757328	
+core01 [  8,9,10,11]	512000000	512727920	
+core02 [ 16,17,18,19]	512000000	512754712	
+core03 [ 24,25,26,27]	512000000	512739040	
+
+SMT=on
+==============================================================
+Core                               delta tb(apprx)  delta purr	
+==============================================================
+core00 [  0,1,2,3,4,5,6,7]	   512000000	   512920936	
+core01 [  8,9,10,11,12,13,14,15]   512000000	   512878728	
+core02 [ 16,17,18,19,20,21,22,23]  512000000	   512921192	
+core03 [ 24,25,26,27,28,29,30,31]  512000000	   512924816	
+
+Gautham R. Shenoy (2):
+  pseries/hotplug-cpu: Change default behaviour of cede_offline to "off"
+  pseries/hotplug-cpu: Add sysfs attribute for cede_offline
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu | 14 ++++
+ Documentation/core-api/cpu_hotplug.rst             |  2 +-
+ arch/powerpc/platforms/pseries/hotplug-cpu.c       | 80 ++++++++++++++++++++--
+ 3 files changed, 88 insertions(+), 8 deletions(-)
 
 -- 
-Sincerely yours,
-Mike.
+1.9.4
 
