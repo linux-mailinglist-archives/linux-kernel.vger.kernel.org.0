@@ -2,246 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 008E4B0A1B
+	by mail.lfdr.de (Postfix) with ESMTP id 6F871B0A1C
 	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 10:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730210AbfILIVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 04:21:05 -0400
-Received: from mail-sh.amlogic.com ([58.32.228.43]:14718 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730172AbfILIVC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 04:21:02 -0400
-Received: from droid13.amlogic.com (116.236.93.172) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.1591.10; Thu, 12 Sep 2019
- 16:21:49 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Tao Zeng <tao.zeng@amlogic.com>
-Subject: [PATCH v4 4/4] arm64: dts: add support for A1 based Amlogic AD401
-Date:   Thu, 12 Sep 2019 04:19:30 -0400
-Message-ID: <1568276370-54181-5-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568276370-54181-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1568276370-54181-1-git-send-email-jianxin.pan@amlogic.com>
+        id S1730238AbfILIVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 04:21:14 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60670 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730033AbfILIU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 04:20:59 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CADD68FD58E36A7835F6;
+        Thu, 12 Sep 2019 16:20:54 +0800 (CST)
+Received: from [127.0.0.1] (10.74.149.191) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 12 Sep 2019
+ 16:20:47 +0800
+Subject: Re: [PATCH V2 net-next 1/7] net: hns3: add ethtool_ops.set_channels
+ support for HNS3 VF driver
+To:     Michal Kubecek <mkubecek@suse.cz>, <netdev@vger.kernel.org>
+CC:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, <jakub.kicinski@netronome.com>
+References: <1568169639-43658-1-git-send-email-tanhuazhong@huawei.com>
+ <1568169639-43658-2-git-send-email-tanhuazhong@huawei.com>
+ <20190912062301.GE24779@unicorn.suse.cz>
+From:   tanhuazhong <tanhuazhong@huawei.com>
+Message-ID: <8d51697c-703e-09f2-74e1-c83a31b5f52f@huawei.com>
+Date:   Thu, 12 Sep 2019 16:20:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [116.236.93.172]
+In-Reply-To: <20190912062301.GE24779@unicorn.suse.cz>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.149.191]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add basic support for the Amlogic A1 based Amlogic AD401 board:
-which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
-Timer, UART. It's capable of booting up into the serial console.
+Hi, Michal
 
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/Makefile           |   1 +
- arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts |  30 ++++++
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi      | 130 +++++++++++++++++++++++++
- 3 files changed, 161 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+On 2019/9/12 14:23, Michal Kubecek wrote:
+> On Wed, Sep 11, 2019 at 10:40:33AM +0800, Huazhong Tan wrote:
+>> From: Guangbin Huang <huangguangbin2@huawei.com>
+>>
+>> This patch adds ethtool_ops.set_channels support for HNS3 VF driver,
+>> and updates related TQP information and RSS information, to support
+>> modification of VF TQP number, and uses current rss_size instead of
+>> max_rss_size to initialize RSS.
+>>
+>> Also, fixes a format error in hclgevf_get_rss().
+>>
+>> Signed-off-by: Guangbin Huang <huangguangbin2@huawei.com>
+>> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+>> ---
+>>   drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  1 +
+>>   .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 83 ++++++++++++++++++++--
+>>   2 files changed, 79 insertions(+), 5 deletions(-)
+>>
+> ...
+>> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+>> index 594cae8..e3090b3 100644
+>> --- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+>> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+> ...
+>> +static void hclgevf_update_rss_size(struct hnae3_handle *handle,
+>> +				    u32 new_tqps_num)
+>> +{
+>> +	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
+>> +	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
+>> +	u16 max_rss_size;
+>> +
+>> +	kinfo->req_rss_size = new_tqps_num;
+>> +
+>> +	max_rss_size = min_t(u16, hdev->rss_size_max,
+>> +			     hdev->num_tqps / kinfo->num_tc);
+>> +
+>> +	/* Use the user's configuration when it is not larger than
+>> +	 * max_rss_size, otherwise, use the maximum specification value.
+>> +	 */
+>> +	if (kinfo->req_rss_size != kinfo->rss_size && kinfo->req_rss_size &&
+>> +	    kinfo->req_rss_size <= max_rss_size)
+>> +		kinfo->rss_size = kinfo->req_rss_size;
+>> +	else if (kinfo->rss_size > max_rss_size ||
+>> +		 (!kinfo->req_rss_size && kinfo->rss_size < max_rss_size))
+>> +		kinfo->rss_size = max_rss_size;
+> 
+> I don't think requested channel count can be larger than max_rss_size
+> here. In ethtool_set_channels(), we check that requested channel counts
+> do not exceed maximum channel counts as reported by ->get_channels().
+> And hclgevf_get_max_channels() cannot return more than max_rss_size.
+> 
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 84afecb..a90be52 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -36,3 +36,4 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-sm1-sei610.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-sm1-khadas-vim3l.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-a1-ad401.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts b/arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts
-new file mode 100644
-index 00000000..69c25c6
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-a1.dtsi"
-+
-+/ {
-+	compatible = "amlogic,ad401", "amlogic,a1";
-+	model = "Amlogic Meson A1 AD401 Development Board";
-+
-+	aliases {
-+		serial0 = &uart_AO_B;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x0 0x0 0x8000000>;
-+	};
-+};
-+
-+&uart_AO_B {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-new file mode 100644
-index 00000000..7210ad0
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "amlogic,a1";
-+
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a35";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a35";
-+			reg = <0x0 0x1>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		l2: l2-cache0 {
-+			compatible = "cache";
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			reusable;
-+			size = <0x0 0x800000>;
-+			alignment = <0x0 0x400000>;
-+			linux,cma-default;
-+		};
-+	};
-+
-+	sm: secure-monitor {
-+		compatible = "amlogic,meson-gxbb-sm";
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		apb: bus@fe000000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xfe000000 0x0 0x1000000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x1000000>;
-+
-+			uart_AO: serial@1c00 {
-+				compatible = "amlogic,meson-gx-uart",
-+					     "amlogic,meson-ao-uart";
-+				reg = <0x0 0x1c00 0x0 0x18>;
-+				interrupts = <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>;
-+				clocks = <&xtal>, <&xtal>, <&xtal>;
-+				clock-names = "xtal", "pclk", "baud";
-+				status = "disabled";
-+			};
-+
-+			uart_AO_B: serial@2000 {
-+				compatible = "amlogic,meson-gx-uart",
-+					     "amlogic,meson-ao-uart";
-+				reg = <0x0 0x2000 0x0 0x18>;
-+				interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
-+				clocks = <&xtal>, <&xtal>, <&xtal>;
-+				clock-names = "xtal", "pclk", "baud";
-+				status = "disabled";
-+			};
-+		};
-+
-+		gic: interrupt-controller@ff901000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x0 0xff901000 0x0 0x1000>,
-+			      <0x0 0xff902000 0x0 0x2000>,
-+			      <0x0 0xff904000 0x0 0x2000>,
-+			      <0x0 0xff906000 0x0 0x2000>;
-+			interrupt-controller;
-+			interrupts = <GIC_PPI 9
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	xtal: xtal-clk {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "xtal";
-+		#clock-cells = <0>;
-+	};
-+};
--- 
-2.7.4
+When we can modify the TC number (which PF has already supported, VF may 
+implement in the future) using lldptool or tc cmd, 
+hclgevf_update_rss_size will be called to update the rss information, 
+which may also change max_rss_size,  so we will use max_rss_size instead 
+if the kinfo->rss_size configured using ethtool is bigger than max_rss_size.
+
+>> +
+>> +	kinfo->num_tqps = kinfo->num_tc * kinfo->rss_size;
+>> +}
+>> +
+>> +static int hclgevf_set_channels(struct hnae3_handle *handle, u32 new_tqps_num,
+>> +				bool rxfh_configured)
+>> +{
+>> +	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
+>> +	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
+>> +	u16 cur_rss_size = kinfo->rss_size;
+>> +	u16 cur_tqps = kinfo->num_tqps;
+>> +	u32 *rss_indir;
+>> +	unsigned int i;
+>> +	int ret;
+>> +
+>> +	hclgevf_update_rss_size(handle, new_tqps_num);
+>> +
+>> +	ret = hclgevf_set_rss_tc_mode(hdev, kinfo->rss_size);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* RSS indirection table has been configuared by user */
+>> +	if (rxfh_configured)
+>> +		goto out;
+>> +
+>> +	/* Reinitializes the rss indirect table according to the new RSS size */
+>> +	rss_indir = kcalloc(HCLGEVF_RSS_IND_TBL_SIZE, sizeof(u32), GFP_KERNEL);
+>> +	if (!rss_indir)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = 0; i < HCLGEVF_RSS_IND_TBL_SIZE; i++)
+>> +		rss_indir[i] = i % kinfo->rss_size;
+>> +
+>> +	ret = hclgevf_set_rss(handle, rss_indir, NULL, 0);
+>> +	if (ret)
+>> +		dev_err(&hdev->pdev->dev, "set rss indir table fail, ret=%d\n",
+>> +			ret);
+>> +
+>> +	kfree(rss_indir);
+>> +
+>> +out:
+>> +	if (!ret)
+>> +		dev_info(&hdev->pdev->dev,
+>> +			 "Channels changed, rss_size from %u to %u, tqps from %u to %u",
+>> +			 cur_rss_size, kinfo->rss_size,
+>> +			 cur_tqps, kinfo->rss_size * kinfo->num_tc);
+>> +
+>> +	return ret;
+>> +}
+> 
+> IIRC David asked you not to issue this log message in v1 review.
+> 
+> Michal Kubecek
+> 
+
+Sorry for missing this log.
+
+Thanks.
+
+> .
+> 
 
