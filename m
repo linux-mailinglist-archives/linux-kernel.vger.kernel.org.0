@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01C5DB1514
+	by mail.lfdr.de (Postfix) with ESMTP id DF4AFB1516
 	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 22:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbfILUIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 16:08:11 -0400
-Received: from mga01.intel.com ([192.55.52.88]:35558 "EHLO mga01.intel.com"
+        id S1727819AbfILUI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 16:08:27 -0400
+Received: from mga01.intel.com ([192.55.52.88]:35554 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727390AbfILUH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 16:07:59 -0400
+        id S1727404AbfILUIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 16:08:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 13:07:59 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
-   d="scan'208";a="336688264"
+   d="scan'208";a="336688267"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.185])
-  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2019 13:07:58 -0700
+  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2019 13:07:59 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     ravi.v.shankar@intel.com, chang.seok.bae@intel.com,
+        Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Tony Luck <tony.luck@intel.com>,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v8 14/17] selftests/x86/fsgsbase: Test ptracer-induced GS base write with FSGSBASE
-Date:   Thu, 12 Sep 2019 13:06:55 -0700
-Message-Id: <1568318818-4091-15-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v8 15/17] x86/fsgsbase/64: Enable FSGSBASE on 64bit by default and add a chicken bit
+Date:   Thu, 12 Sep 2019 13:06:56 -0700
+Message-Id: <1568318818-4091-16-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1568318818-4091-1-git-send-email-chang.seok.bae@intel.com>
 References: <1568318818-4091-1-git-send-email-chang.seok.bae@intel.com>
@@ -41,10 +41,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This validates that GS selector and base are independently preserved in
-ptrace commands.
+From: Andy Lutomirski <luto@kernel.org>
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
+Now that FSGSBASE is fully supported, remove unsafe_fsgsbase, enable
+FSGSBASE by default, and add nofsgsbase to disable it.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Reviewed-by: Tony Luck <tony.luck@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -57,48 +59,80 @@ Cc: Andi Kleen <ak@linux.intel.com>
 ---
 
 Changes from v7:
-* Fixed the test message
+* No code change
+* Massaged title by Thomas
 ---
- tools/testing/selftests/x86/fsgsbase.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  3 +--
+ arch/x86/kernel/cpu/common.c                    | 32 +++++++++++--------------
+ 2 files changed, 15 insertions(+), 20 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/fsgsbase.c b/tools/testing/selftests/x86/fsgsbase.c
-index 950a48b..9a43498 100644
---- a/tools/testing/selftests/x86/fsgsbase.c
-+++ b/tools/testing/selftests/x86/fsgsbase.c
-@@ -465,7 +465,7 @@ static void test_ptrace_write_gsbase(void)
- 	wait(&status);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 2ff72af..ce11a6a 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2875,8 +2875,7 @@
+ 	no5lvl		[X86-64] Disable 5-level paging mode. Forces
+ 			kernel to use 4-level paging instead.
  
- 	if (WSTOPSIG(status) == SIGTRAP) {
--		unsigned long gs;
-+		unsigned long gs, base;
- 		unsigned long gs_offset = USER_REGS_OFFSET(gs);
- 		unsigned long base_offset = USER_REGS_OFFSET(gs_base);
+-	unsafe_fsgsbase	[X86] Allow FSGSBASE instructions.  This will be
+-			replaced with a nofsgsbase flag.
++	nofsgsbase	[X86] Disables FSGSBASE instructions.
  
-@@ -481,6 +481,7 @@ static void test_ptrace_write_gsbase(void)
- 			err(1, "PTRACE_POKEUSER");
+ 	no_console_suspend
+ 			[HW] Never suspend the console
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 9f57fb0..0fe75fa 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -437,21 +437,21 @@ static void __init setup_cr_pinning(void)
+ 	static_key_enable(&cr_pinning.key);
+ }
  
- 		gs = ptrace(PTRACE_PEEKUSER, child, gs_offset, NULL);
-+		base = ptrace(PTRACE_PEEKUSER, child, base_offset, NULL);
+-/*
+- * Temporary hack: FSGSBASE is unsafe until a few kernel code paths are
+- * updated. This allows us to get the kernel ready incrementally.
+- *
+- * Once all the pieces are in place, these will go away and be replaced with
+- * a nofsgsbase chicken flag.
+- */
+-static bool unsafe_fsgsbase;
+-
+-static __init int setup_unsafe_fsgsbase(char *arg)
++static __init int x86_nofsgsbase_setup(char *arg)
+ {
+-	unsafe_fsgsbase = true;
++	/* Require an exact match without trailing characters. */
++	if (strlen(arg))
++		return 0;
++
++	/* Do not emit a message if the feature is not present. */
++	if (!boot_cpu_has(X86_FEATURE_FSGSBASE))
++		return 1;
++
++	setup_clear_cpu_cap(X86_FEATURE_FSGSBASE);
++	pr_info("nofsgsbase: FSGSBASE disabled\n");
+ 	return 1;
+ }
+-__setup("unsafe_fsgsbase", setup_unsafe_fsgsbase);
++__setup("nofsgsbase", x86_nofsgsbase_setup);
  
- 		/*
- 		 * In a non-FSGSBASE system, the nonzero selector will load
-@@ -501,8 +502,14 @@ static void test_ptrace_write_gsbase(void)
- 			 */
- 			if (gs == 0)
- 				printf("\tNote: this is expected behavior on older kernels.\n");
-+		} else if (have_fsgsbase && (base != 0xFF)) {
-+			nerrs++;
-+			printf("[FAIL]\tGSBASE changed to %lx\n", base);
- 		} else {
--			printf("[OK]\tGS remained 0x%hx\n", *shared_scratch);
-+			printf("[OK]\tGS remained 0x%hx", *shared_scratch);
-+			if (have_fsgsbase)
-+				printf(" and GSBASE changed to 0xFF");
-+			printf("\n");
- 		}
- 	}
+ /*
+  * Protection Keys are not available in 32-bit mode.
+@@ -1472,12 +1472,8 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	setup_umip(c);
  
+ 	/* Enable FSGSBASE instructions if available. */
+-	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
+-		if (unsafe_fsgsbase)
+-			cr4_set_bits(X86_CR4_FSGSBASE);
+-		else
+-			clear_cpu_cap(c, X86_FEATURE_FSGSBASE);
+-	}
++	if (cpu_has(c, X86_FEATURE_FSGSBASE))
++		cr4_set_bits(X86_CR4_FSGSBASE);
+ 
+ 	/*
+ 	 * The vendor-specific functions might have changed features.
 -- 
 2.7.4
 
