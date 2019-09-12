@@ -2,222 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 129B2B0ED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 14:25:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9071BB0EDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 14:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731623AbfILMZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 08:25:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60930 "EHLO mail.kernel.org"
+        id S1731645AbfILM3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 08:29:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38794 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731508AbfILMZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 08:25:31 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731547AbfILM3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 08:29:50 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7C6B20693;
-        Thu, 12 Sep 2019 12:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568291130;
-        bh=pHyd+nIsTmA2wA+QeNN7PdGQXRqiG7bZ7/rvxr2VSr4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hpEYhpG3oOFGP98/XEo4NhOKemvj4vVMdN3B1jXO+VMXlySsK6dx3bL29Gx4D+EeZ
-         erm9I+3OoUEF1zGQrodlWwYQopt5BoDbW3R7DyIHd50R1PyUPT4kb1oe8KoTBhxNIm
-         5QAJuLsBHjqCNdY2zkdH3zAJvTOJFhHMyLobOJQQ=
-Date:   Thu, 12 Sep 2019 13:25:21 +0100
-From:   Will Deacon <will@kernel.org>
-To:     syzbot <syzbot+46f1dd7dbbe2bfb98b10@syzkaller.appspotmail.com>
-Cc:     bp@alien8.de, carlo@caione.org, catalin.marinas@arm.com,
-        devicetree@vger.kernel.org, hpa@zytor.com, jmattson@google.com,
-        joro@8bytes.org, khilman@baylibre.com, kvm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, mingo@redhat.com, narmstrong@baylibre.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com, robh+dt@kernel.org,
-        sean.j.christopherson@intel.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
-        will.deacon@arm.com, x86@kernel.org
-Subject: Re: KASAN: slab-out-of-bounds Read in handle_vmptrld
-Message-ID: <20190912122521.lchqtye24tfol4an@willie-the-truck>
-References: <000000000000a9d4f705924cff7a@google.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 156B5A37182;
+        Thu, 12 Sep 2019 12:29:49 +0000 (UTC)
+Received: from [172.16.176.1] (ovpn-64-2.rdu2.redhat.com [10.10.64.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 801EB600C4;
+        Thu, 12 Sep 2019 12:29:47 +0000 (UTC)
+From:   "Benjamin Coddington" <bcodding@redhat.com>
+To:     "Chuck Lever" <chuck.lever@oracle.com>
+Cc:     "Jason L Tibbitts III" <tibbs@math.uh.edu>,
+        "Bruce Fields" <bfields@fieldses.org>,
+        "Wolfgang Walter" <linux@stwm.de>,
+        "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
+        km@cm4all.com, linux-kernel@vger.kernel.org
+Subject: Re: Regression in 5.1.20: Reading long directory fails
+Date:   Thu, 12 Sep 2019 08:29:47 -0400
+Message-ID: <EC2B51FB-8C22-4513-B59F-0F0741F694EB@redhat.com>
+In-Reply-To: <B8CDE765-7DCE-4257-91E1-CC85CB7F87F7@oracle.com>
+References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
+ <4418877.15LTP4gqqJ@stwm.de> <ufapnkhqjwm.fsf@epithumia.math.uh.edu>
+ <4198657.JbNDGbLXiX@h2o.as.studentenwerk.mhn.de>
+ <ufad0ggrfrk.fsf@epithumia.math.uh.edu> <20190906144837.GD17204@fieldses.org>
+ <ufapnkdw3s3.fsf@epithumia.math.uh.edu>
+ <75F810C6-E99E-40C3-B5E1-34BA2CC42773@oracle.com>
+ <DD6B77EE-3E25-4A65-9D0E-B06EEAD32B31@redhat.com>
+ <0089DF80-3A1C-4F0B-A200-28FF7CFD0C65@oracle.com>
+ <429B2B1F-FB55-46C5-8BC5-7644CE9A5894@redhat.com>
+ <F1EC95D2-47A3-4390-8178-CAA8C045525B@oracle.com>
+ <8D7EFCEB-4AE6-4963-B66F-4A8EEA5EA42A@redhat.com>
+ <FAA4DD3D-C58A-4628-8FD5-A7E2E203B75A@redhat.com>
+ <B8CDE765-7DCE-4257-91E1-CC85CB7F87F7@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000a9d4f705924cff7a@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; format=flowed
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Thu, 12 Sep 2019 12:29:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 01:38:08PM -0700, syzbot wrote:
-> syzbot found the following crash on:
-> 
-> HEAD commit:    1e3778cb Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15bdfc5e600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b89bb446a3faaba4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=46f1dd7dbbe2bfb98b10
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1709421a600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=168fc4b2600000
-> 
-> The bug was bisected to:
-> 
-> commit a87f854ddcf7ff7e044d72db0aa6da82f26d69a6
-> Author: Neil Armstrong <narmstrong@baylibre.com>
-> Date:   Wed Oct 11 15:39:40 2017 +0000
-> 
->     ARM64: dts: meson-gx: remove unnecessary uart compatible
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17e78a6e600000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=14178a6e600000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10178a6e600000
+On 11 Sep 2019, at 13:54, Chuck Lever wrote:
 
-Unfortunately, I think the bisect must be bogus, since I can't see how a
-devicetree change for an arm64 file can affect the x86 KVM instruction
-emulation.
+>> On Sep 11, 2019, at 1:50 PM, Benjamin Coddington 
+>> <bcodding@redhat.com> wrote:
+>>
+>> On 11 Sep 2019, at 13:40, Benjamin Coddington wrote:
+>>
+>>> On 11 Sep 2019, at 13:29, Chuck Lever wrote:
+>>>
+>>>>> On Sep 11, 2019, at 1:26 PM, Benjamin Coddington 
+>>>>> <bcodding@redhat.com> wrote:
+>>>>>
+>>>>>
+>>>>> On 11 Sep 2019, at 12:39, Chuck Lever wrote:
+>>>>>
+>>>>>>> On Sep 11, 2019, at 12:25 PM, Benjamin Coddington 
+>>>>>>> <bcodding@redhat.com> wrote:
+>>>>>>>
+>>>>>
+>>>>>>> Instead, I think we want to make sure the mic falls squarely 
+>>>>>>> into the tail
+>>>>>>> every time.
+>>>>>>
+>>>>>> I'm not clear how you could do that. The length of the page data 
+>>>>>> is not
+>>>>>> known to the client before it parses the reply. Are you 
+>>>>>> suggesting that
+>>>>>> gss_unwrap should do it somehow?
+>>>>>
+>>>>> Is it too niave to always put the mic at the end of the tail?
+>>>>
+>>>> The size of the page content is variable.
+>>>>
+>>>> The only way the MIC will fall into the tail is if the page content 
+>>>> is
+>>>> exactly the largest expected size. When the page content is smaller 
+>>>> than
+>>>> that, the receive logic will place part or all of the MIC in 
+>>>> ->pages.
+>>>
+>>> Ok, right.  But what I meant is that xdr_buf_read_netobj() should be 
+>>> renamed
+>>> and repurposed to be "move the mic from wherever it is to the end of
+>>> xdr_buf's tail".
+>>>
+>>> But now I see what you mean, and I also see that it is already 
+>>> trying to do
+>>> that.. and we don't want to overlap the copy..
+>>>
+>>> So, really, we need the tail to be larger than twice the mic.. less 
+>>> 1.  That
+>>> means the fix is probably just increasing rslack for krb5i.
+>>
+>> .. or we can keep the tighter tail space, and if we detect the mic 
+>> straddles
+>> the page and tail, we can move the mic into the tail with 2 copies, 
+>> first
+>> move the bit in the tail back, then move the bit in the pages.
+>>
+>> Which is preferred, less allocation, or in the rare case this occurs, 
+>> doing
+>> copy twice?
+>
+> It sounds like the bug is that the current code does not deal 
+> correctly
+> when the MIC crosses the boundary between ->pages and ->tail? I'd like
+> to see that addressed rather than changing rslack.
 
-Maybe somebody from the x86 KVM side could have a look at the KASAN splat?
+Here's what I'm about to run through my testing:
 
-Will
+diff --git a/net/sunrpc/xdr.c b/net/sunrpc/xdr.c
+index 48c93b9e525e..d6ffc9011269 100644
+--- a/net/sunrpc/xdr.c
++++ b/net/sunrpc/xdr.c
+@@ -1238,14 +1238,21 @@ EXPORT_SYMBOL_GPL(xdr_encode_word);
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+46f1dd7dbbe2bfb98b10@syzkaller.appspotmail.com
-> Fixes: a87f854ddcf7 ("ARM64: dts: meson-gx: remove unnecessary uart
-> compatible")
-> 
-> L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and
-> https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for
-> details.
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in handle_vmptrld
-> arch/x86/kvm/vmx/nested.c:4789 [inline]
-> BUG: KASAN: slab-out-of-bounds in handle_vmptrld+0x777/0x800
-> arch/x86/kvm/vmx/nested.c:4749
-> Read of size 4 at addr ffff888091e10000 by task syz-executor758/10006
-> 
-> CPU: 1 PID: 10006 Comm: syz-executor758 Not tainted 5.3.0-rc7+ #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->  print_address_description.cold+0xd4/0x306 mm/kasan/report.c:351
->  __kasan_report.cold+0x1b/0x36 mm/kasan/report.c:482
->  kasan_report+0x12/0x17 mm/kasan/common.c:618
->  __asan_report_load_n_noabort+0xf/0x20 mm/kasan/generic_report.c:142
->  handle_vmptrld arch/x86/kvm/vmx/nested.c:4789 [inline]
->  handle_vmptrld+0x777/0x800 arch/x86/kvm/vmx/nested.c:4749
->  vmx_handle_exit+0x299/0x15e0 arch/x86/kvm/vmx/vmx.c:5886
->  vcpu_enter_guest+0x1087/0x5e90 arch/x86/kvm/x86.c:8088
->  vcpu_run arch/x86/kvm/x86.c:8152 [inline]
->  kvm_arch_vcpu_ioctl_run+0x464/0x1750 arch/x86/kvm/x86.c:8360
->  kvm_vcpu_ioctl+0x4dc/0xfd0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2765
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  file_ioctl fs/ioctl.c:509 [inline]
->  do_vfs_ioctl+0xdb6/0x13e0 fs/ioctl.c:696
->  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
->  __do_sys_ioctl fs/ioctl.c:720 [inline]
->  __se_sys_ioctl fs/ioctl.c:718 [inline]
->  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
->  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x447269
-> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 3b d0 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffd58df6ad8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007ffd58df6ae0 RCX: 0000000000447269
-> RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
-> RBP: 0000000000000000 R08: 0000000020003800 R09: 0000000000400e80
-> R10: 00007ffd58df4f20 R11: 0000000000000246 R12: 0000000000404730
-> R13: 00000000004047c0 R14: 0000000000000000 R15: 0000000000000000
-> 
-> Allocated by task 10006:
->  save_stack+0x23/0x90 mm/kasan/common.c:69
->  set_track mm/kasan/common.c:77 [inline]
->  __kasan_kmalloc mm/kasan/common.c:493 [inline]
->  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:466
->  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:507
->  __do_kmalloc mm/slab.c:3655 [inline]
->  __kmalloc+0x163/0x770 mm/slab.c:3664
->  kmalloc include/linux/slab.h:557 [inline]
->  hcd_buffer_alloc+0x1c6/0x260 drivers/usb/core/buffer.c:132
->  usb_alloc_coherent+0x62/0x90 drivers/usb/core/usb.c:910
->  usbdev_mmap+0x1ce/0x790 drivers/usb/core/devio.c:224
->  call_mmap include/linux/fs.h:1875 [inline]
->  mmap_region+0xc35/0x1760 mm/mmap.c:1788
->  do_mmap+0x82e/0x1090 mm/mmap.c:1561
->  do_mmap_pgoff include/linux/mm.h:2374 [inline]
->  vm_mmap_pgoff+0x1c5/0x230 mm/util.c:391
->  ksys_mmap_pgoff+0x4aa/0x630 mm/mmap.c:1611
->  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
->  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
->  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
->  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Freed by task 9516:
->  save_stack+0x23/0x90 mm/kasan/common.c:69
->  set_track mm/kasan/common.c:77 [inline]
->  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:455
->  kasan_slab_free+0xe/0x10 mm/kasan/common.c:463
->  __cache_free mm/slab.c:3425 [inline]
->  kfree+0x10a/0x2c0 mm/slab.c:3756
->  tomoyo_init_log+0x15ba/0x2070 security/tomoyo/audit.c:293
->  tomoyo_supervisor+0x33f/0xef0 security/tomoyo/common.c:2095
->  tomoyo_audit_env_log security/tomoyo/environ.c:36 [inline]
->  tomoyo_env_perm+0x18e/0x210 security/tomoyo/environ.c:63
->  tomoyo_environ security/tomoyo/domain.c:670 [inline]
->  tomoyo_find_next_domain+0x1354/0x1f6c security/tomoyo/domain.c:876
->  tomoyo_bprm_check_security security/tomoyo/tomoyo.c:107 [inline]
->  tomoyo_bprm_check_security+0x124/0x1b0 security/tomoyo/tomoyo.c:97
->  security_bprm_check+0x63/0xb0 security/security.c:750
->  search_binary_handler+0x71/0x570 fs/exec.c:1645
->  exec_binprm fs/exec.c:1701 [inline]
->  __do_execve_file.isra.0+0x1333/0x2340 fs/exec.c:1821
->  do_execveat_common fs/exec.c:1868 [inline]
->  do_execve fs/exec.c:1885 [inline]
->  __do_sys_execve fs/exec.c:1961 [inline]
->  __se_sys_execve fs/exec.c:1956 [inline]
->  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1956
->  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> The buggy address belongs to the object at ffff888091e109c0
->  which belongs to the cache kmalloc-8k of size 8192
-> The buggy address is located 2496 bytes to the left of
->  8192-byte region [ffff888091e109c0, ffff888091e129c0)
-> The buggy address belongs to the page:
-> page:ffffea0002478400 refcount:2 mapcount:0 mapping:ffff8880aa4021c0
-> index:0x0 compound_mapcount: 0
-> flags: 0x1fffc0000010200(slab|head)
-> raw: 01fffc0000010200 ffffea000242e608 ffffea0002436708 ffff8880aa4021c0
-> raw: 0000000000000000 ffff888091e109c0 0000000200000001 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff888091e0ff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff888091e0ff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > ffff888091e10000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->                    ^
->  ffff888091e10080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff888091e10100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+  /* If the netobj starting offset bytes from the start of xdr_buf is 
+contained
+   * entirely in the head or the tail, set object to point to it; 
+otherwise
+- * try to find space for it at the end of the tail, copy it there, and
+- * set obj to point to it. */
++ * try to find space for it at the end of the tail, and copy it there.  
+If
++ * the netobj is partly within the page data and tail, shrink the pages 
+to
++ * move the object into the tail */
+  int xdr_buf_read_netobj(struct xdr_buf *buf, struct xdr_netobj *obj, 
+unsigned int offset)
+  {
+         struct xdr_buf subbuf;
++       unsigned int page_range;
+
+         if (xdr_decode_word(buf, offset, &obj->len))
+                 return -EFAULT;
++
++       page_range = buf->head->iov_len + buf->page_len - offset + 4;
++       if (page_range > 0 && page_range < obj->len)
++               xdr_shrink_pagelen(buf, page_range);
++
+         if (xdr_buf_subsegment(buf, &subbuf, offset + 4, obj->len))
+                 return -EFAULT;
+
+
+Is the use of xdr_shrink_pagelen() at this point in the decoding a 
+problem for RDMA?
+
+Ben
