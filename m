@@ -2,71 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E67FB0C76
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 12:17:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF088B0CA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 12:19:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731100AbfILKRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 06:17:46 -0400
-Received: from forward104p.mail.yandex.net ([77.88.28.107]:36603 "EHLO
-        forward104p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730454AbfILKRq (ORCPT
+        id S1731244AbfILKSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 06:18:12 -0400
+Received: from smtprelay0160.hostedemail.com ([216.40.44.160]:44845 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731234AbfILKSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 06:17:46 -0400
-Received: from mxback19o.mail.yandex.net (mxback19o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::70])
-        by forward104p.mail.yandex.net (Yandex) with ESMTP id 768E04B00F54;
-        Thu, 12 Sep 2019 13:17:43 +0300 (MSK)
-Received: from smtp3p.mail.yandex.net (smtp3p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:8])
-        by mxback19o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id nBsZZiBuAK-HfFKLkII;
-        Thu, 12 Sep 2019 13:17:43 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cloudbear.ru; s=mail; t=1568283463;
-        bh=1OrWmgCBOEcc7Ob5Zgorn88c1jPz+PwVD3IBo54AYgc=;
-        h=In-Reply-To:From:To:Subject:Cc:Date:References:Message-ID;
-        b=MMRA9c9icxUyWn9Fv/3Ad8vTg6eIql0R3zktqLLa681Spq/IYqTW+YXqppvkvn4/a
-         U8vrCwz/9F9o1yNmOkreaNMUWsC6vCQ85T6QZxr7rQ4WAYsQHQez67zjMp/1XdTtid
-         hkvQIjOTNtrCnzrYDC3aEVgHFnBrsLrtWBM2glzs=
-Authentication-Results: mxback19o.mail.yandex.net; dkim=pass header.i=@cloudbear.ru
-Received: by smtp3p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id FCyoj03qUM-Hel4FVqS;
-        Thu, 12 Sep 2019 13:17:40 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH v4 2/2] net: phy: dp83867: Add SGMII mode type switching
-To:     David Miller <davem@davemloft.net>
-Cc:     robh+dt@kernel.org, f.fainelli@gmail.com, mark.rutland@arm.com,
-        andrew@lunn.ch, hkallweit1@gmail.com, tpiepho@impinj.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1568047940-14490-2-git-send-email-vitaly.gaiduk@cloudbear.ru>
- <1568049566-16708-1-git-send-email-vitaly.gaiduk@cloudbear.ru>
- <20190912.003754.663480494374990855.davem@davemloft.net>
-From:   Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>
-Message-ID: <83c63a9c-53f4-8f3e-38da-1f230cfca186@cloudbear.ru>
-Date:   Thu, 12 Sep 2019 13:17:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 12 Sep 2019 06:18:09 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id D459A18225E0D;
+        Thu, 12 Sep 2019 10:18:07 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2691:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:4470:5007:8957:10010:10400:10562:10848:11232:11658:11914:12050:12294:12296:12297:12679:12740:12760:12895:13069:13255:13311:13357:13439:13618:14096:14097:14181:14659:14721:14819:21080:21324:21433:21627:21740:21939:30006:30034:30054:30060:30064:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:1:0,LFtime:38,LUA_SUMMARY:none
+X-HE-Tag: body44_46c106f754330
+X-Filterd-Recvd-Size: 2921
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 12 Sep 2019 10:18:06 +0000 (UTC)
+Message-ID: <e9cb9bc8bd7fe38a5bb6ff7b7222b512acc7b018.camel@perches.com>
+Subject: Re: [Ksummit-discuss] [PATCH v2 3/3] libnvdimm, MAINTAINERS:
+ Maintainer Entry Profile
+From:   Joe Perches <joe@perches.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        bpf@vger.kernel.org
+Date:   Thu, 12 Sep 2019 03:18:04 -0700
+In-Reply-To: <CANiq72k2so3ZcqA3iRziGY=Shd_B1=qGoXXROeAF7Y3+pDmqyA@mail.gmail.com>
+References: <156821692280.2951081.18036584954940423225.stgit@dwillia2-desk3.amr.corp.intel.com>
+         <156821693963.2951081.11214256396118531359.stgit@dwillia2-desk3.amr.corp.intel.com>
+         <20190911184332.GL20699@kadam>
+         <9132e214-9b57-07dc-7ee2-f6bc52e960c5@kernel.dk>
+         <CAPcyv4ij3s+9uO0f9aLHGj3=ACG7hAjZ0Rf=tyFmpt3+uQyymw@mail.gmail.com>
+         <CANiq72k2so3ZcqA3iRziGY=Shd_B1=qGoXXROeAF7Y3+pDmqyA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20190912.003754.663480494374990855.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, David.
+On Thu, 2019-09-12 at 10:24 +0200, Miguel Ojeda wrote:
+> On Thu, Sep 12, 2019 at 9:43 AM Dan Williams <dan.j.williams@intel.com> wrote:
+> > Now I come to find that CodingStyle has settled on clang-format (in
+> > the last 15 months) as the new standard which is a much better answer
+> > to me than a manually specified style open to interpretation. I'll
+> > take a look at getting libnvdimm converted over.
+> 
+> Note that clang-format cannot do everything as we want within the
+> kernel just yet, but it is a close enough approximation -- it is near
+> the point where we could simply agree to use it and stop worrying
+> about styling issues. However, that would mean everyone needs to have
+> a recent clang-format available, which I think is the biggest obstacle
+> at the moment.
 
-Should I patch commit as Trent Piepho suggested? He wrote about using 
-phy_modify_mmd() instead.
+I don't think that's close to true yet for clang-format.
 
-Vitaly.
+For instance: clang-format does not do anything with
+missing braces, or coalescing multi-part strings,
+or any number of other nominal coding style defects
+like all the for_each macros, aligning or not aligning
+columnar contents appropriately, etc...
 
-On 12.09.2019 1:37, David Miller wrote:
-> From: Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>
-> Date: Mon,  9 Sep 2019 20:19:24 +0300
->
->> This patch adds ability to switch beetween two PHY SGMII modes.
->> Some hardware, for example, FPGA IP designs may use 6-wire mode
->> which enables differential SGMII clock to MAC.
->>
->> Signed-off-by: Vitaly Gaiduk <vitaly.gaiduk@cloudbear.ru>
-> Applied.
+clang-format as yet has no taste.
+
+I believe it'll take a lot of work to improve it to a point
+where its formatting is acceptable and appropriate.
+
+An AI rather than a table based system like clang-format is
+more likely to be a real solution, but training that AI
+isn't a thing that I want to do.
+
