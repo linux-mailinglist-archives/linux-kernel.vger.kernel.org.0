@@ -2,204 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C855AB113C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 16:36:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5DE9B1129
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 16:31:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732713AbfILOfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 10:35:54 -0400
-Received: from rfout2.hes.trendmicro.com ([54.67.111.2]:44890 "EHLO
-        rfout2.hes.trendmicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732444AbfILOfx (ORCPT
+        id S1732680AbfILObH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 10:31:07 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38006 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732566AbfILObH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 10:35:53 -0400
-X-Greylist: delayed 925 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Sep 2019 10:35:52 EDT
-Received: from 0.0.0.0_hes.trendmicro.com (unknown [10.64.14.197])
-        by rfout2.hes.trendmicro.com (Postfix) with ESMTPS id 6FB56110FD73
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 14:18:15 +0000 (UTC)
-Received: from 0.0.0.0_hes.trendmicro.com (unknown [10.64.0.243])
-        by rout1.hes.trendmicro.com (Postfix) with SMTP id EA7B8EFC04E;
-        Thu, 12 Sep 2019 14:18:14 +0000 (UTC)
-Received: from IND01-BO1-obe.outbound.protection.outlook.com (unknown [104.47.101.53])
-        by relay1.hes.trendmicro.com (TrendMicro Hosted Email Security) with ESMTPS id 09473AFA014;
-        Thu, 12 Sep 2019 14:18:12 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Rs+//jhK0XhnV4QvFA4B+3IMSeWtGsnAL6VS81/XmNOSPIpj1le7jM2WDOA6Wh1VIEQFCDDlNAU3lrvCiIGrVjlnPhdUs1OJ3DMQQRkqYPQJzXZ0BY8h2aJ5J1xw4TU7zcHjlG5u6yHLrmdYsTJOu2qaehj6BX98FEe6csa6kOsOnRz6b+L7CGUiJOCwffBl0PliymrK1nlg2Y+WUg+Atp4C7DlXbddwRu/U+oCmaIBF6y0rb8DXPiBOsViaOtf5gjlxqKh7beVVLI5WBc1XMtWE/nHXPHrTiU6PWZ/aPZgOqf88LwI/ZdqKJd4bei24wYAFUcMnhtEv3zi0dG/MLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9vUKnmKl7DRujYB2ncYVvVr9QoFnSI5/g2wzVayuoT8=;
- b=VcRAx243YohBf/9VjGNngfrlAQqoQXFVp4PEdlrx83YKKk8D93swzr9kz/85AVKbrB/rxeFmlMWoavlrLAOtir/J+5REMycel2DYVpsRrpczVhko+ia/V5awrri9u10ToLPHRky89li5rTH0GHBKBxQL8lLemZ+HJ0bvX8bnmQ1vS0Me5aDC/uSbIQIJnyoIPFWnq5kmlpvI91M3B/BVrXSb08HW2L5ziF5RH1XyCSQF0f/DfcNDHmGuo8NQjDtKfKsbV7X+grFnVRYEX0rA+bbBqpJFlwVSJxICZUqqJacY7QA3hjxIjy4BuQgBsgahwyLxW9eMqP0vIidVzgv5yA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=thinci.com; dmarc=pass action=none header.from=thinci.com;
- dkim=pass header.d=thinci.com; arc=none
+        Thu, 12 Sep 2019 10:31:07 -0400
+Received: by mail-lf1-f67.google.com with SMTP id c12so19546814lfh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 07:31:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=thinciit.onmicrosoft.com; s=selector2-thinciit-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9vUKnmKl7DRujYB2ncYVvVr9QoFnSI5/g2wzVayuoT8=;
- b=WWUbl/9K5YdPdPwu+acTbKBDUiwp55WNvf66UDTLjYS9ZDrtsN751G3qg42A1BQ8vfHt13TgCdKevXOJvAhDKWwI2IgYmqObYfHLnKNzuy6kzvoPik7isbFDQH+uO6WhU15XNGqAFlyq2GpERJSLbxJk0QiduHggMWqcz5aY8LU=
-Received: from MA1PR01MB3033.INDPRD01.PROD.OUTLOOK.COM (52.134.150.139) by
- MA1PR01MB2732.INDPRD01.PROD.OUTLOOK.COM (52.134.150.205) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2263.15; Thu, 12 Sep 2019 14:18:03 +0000
-Received: from MA1PR01MB3033.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::ac1f:2d05:990:b583]) by MA1PR01MB3033.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::ac1f:2d05:990:b583%5]) with mapi id 15.20.2263.016; Thu, 12 Sep 2019
- 14:18:03 +0000
-From:   Matt Redfearn <matt.redfearn@thinci.com>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        John Stultz <john.stultz@linaro.org>
-CC:     Rob Clark <robdclark@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        David Airlie <airlied@linux.ie>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: Re: [RFC][PATCH] drm: kirin: Fix dsi probe/attach logic
-Thread-Topic: [RFC][PATCH] drm: kirin: Fix dsi probe/attach logic
-Thread-Index: AQHVXi/ZYjUHyRzEOUKUcNBcrpSsvKcSZPyAgADdeICAAKoKAIAEee8AgAHDkACAAS/zgIAMEBsAgACziACAAA/JAA==
-Date:   Thu, 12 Sep 2019 14:18:03 +0000
-Message-ID: <00e4f553-a02c-6d98-a0e8-28c0183a3c8c@thinci.com>
-References: <20190829060550.62095-1-john.stultz@linaro.org>
- <CGME20190829173938epcas3p1276089cb3d6f9813840d1bb6cac8b1da@epcas3p1.samsung.com>
- <CAF6AEGvborwLmjfC6_vgZ-ZbfvF3HEFFyb_NHSLRoYWF35bw+g@mail.gmail.com>
- <ebdf3ff5-5a9b-718d-2832-f326138a5b2d@samsung.com>
- <CAF6AEGtkvRpXSoddjmxer2U6LxnV_SAe+jwE2Ct8B8dDpFy2mA@mail.gmail.com>
- <b925e340-4b6a-fbda-3d8d-5c27204d2814@samsung.com>
- <CALAqxLU5Ov+__b5gxnuMxQP1RLjndXkB4jAiGgmb-OMdaKePug@mail.gmail.com>
- <9d31af23-8a65-d8e8-b73d-b2eb815fcd6f@samsung.com>
- <CALAqxLVP=x9+p9scGyfgFUMN2di+ngOz9-fWW=A1YCM4aN7JRA@mail.gmail.com>
- <16c9066b-091f-6d0e-23f1-2c1f83a7da1b@samsung.com>
-In-Reply-To: <16c9066b-091f-6d0e-23f1-2c1f83a7da1b@samsung.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0445.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:e::25) To MA1PR01MB3033.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:46::11)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=matthew.redfearn@thinci.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [213.106.91.208]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8e0fbb9d-045c-4021-6da3-08d7378c05d7
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MA1PR01MB2732;
-x-ms-traffictypediagnostic: MA1PR01MB2732:
-x-microsoft-antispam-prvs: <MA1PR01MB2732E4D36F58AE8009F91247F1B00@MA1PR01MB2732.INDPRD01.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 01583E185C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(39840400004)(396003)(376002)(346002)(52314003)(189003)(199004)(102836004)(5660300002)(6246003)(386003)(6512007)(6436002)(53936002)(81166006)(81156014)(53546011)(478600001)(76176011)(7736002)(6506007)(305945005)(71200400001)(71190400001)(6486002)(4326008)(54906003)(229853002)(8676002)(110136005)(31696002)(7416002)(52116002)(6116002)(3846002)(446003)(99286004)(36756003)(11346002)(2616005)(66066001)(25786009)(66446008)(64756008)(476003)(66556008)(66476007)(66946007)(486006)(256004)(5024004)(186003)(14454004)(8936002)(26005)(2906002)(316002)(31686004);DIR:OUT;SFP:1102;SCL:1;SRVR:MA1PR01MB2732;H:MA1PR01MB3033.INDPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: thinci.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4iuRccU/5ZoOX+dq0Pj9OceErr2ejxZSIWj+IE0KU5Ku2A0gzqD9pPXfAwbkL0bPWoctKqwsKHOI8Pqt7VWlaJGS/1IN0A1nvaqtSO8SbK8JwjwB3XhFoiLEQhpZcvRwep20x2fQDECUmaPkZ+KE3nGSmAKCTkBjW3YXmy7Hcb/p4V601t/wdFrP74SwOdRAapDDmI5MmmOmlnWjgW/IwiRSbmDYDG4HtOwpXlaghrwTrMce8OtFHos3NLwVT3jCqlMl1Zcn1p86Ucsc427MJ98i36wsGPSAkUWQ03E34XRiSOnwehgHLK6kNDbnU6Qxc/Im+tiKe20KWhogFpZ3BMpVxFPBwNFHkpIS9jGsbyGJl8nqwuEaWNyK4J/HTs+/whDaMZuZf/rf6bkYahQD9MI8c21sEaVWlRwP58kmUWw=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C2806052E8B64D468F9ED075782BDC63@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GGFnevdB6/W3Bn08vXZUmYabxaeEv2/WytcSluM4/qA=;
+        b=ncaEmNwJoGN+h9j/w2zBIKBQZsgZQT2H68ZJRafK8UQg1HqUSTqLYVkpITITzG6hYp
+         8kNSTxCfdTHB8SlHaOYh+ZtMRu8pMEDN3T6x22PO3AiC3vRwRw+JrMqlP/Jk74y6t3mX
+         ywWS24EkuibJ2tShu+SqULfWeNSIMKPpr5wJREZX7Tc1cL+bYwQCkSoznpU7aTReSWjF
+         jyH9hbh2kpExgjM79iT+iG6bEqijxuIXLbmtAyZikQrSeR0MiiA079g1SNBe9hFsvZwK
+         C1lQqzudFaoE/DZcKU/0HVRJdxc8hXy5dcBdFy2kIB3D3tvU/DZJjJo/WTKqNQBI+1qo
+         0Y+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GGFnevdB6/W3Bn08vXZUmYabxaeEv2/WytcSluM4/qA=;
+        b=acM21u1vS5FFEJlCPnVoEKMiikIOIgLt78xgqGRjqc2+glp9LQOBhYKFgy+KccIaqC
+         D6ac9cBSpC1O6i38U3pT5ZCAOG2kYdIDAnU17MkDTGi3IbfGT6+lduZC6JEi+5zHbGLp
+         I8sVQS4DL11j4cHwhGRHBzrkRQXHVt/Ua3B+xsEqgFuLyykFc0XF5c8+iZg3XEo4YXMq
+         bykTVwaFA93By76YplwTvWlHzeL/jxPQQm+AXWgfWE/+j9Lkp1CjbAnrIqOnKS2b5/gB
+         T1L7vWfuJrjw6hyqCJ/aBXvi+kxnSlrOaOfZ79+2tt9kV288hnhwXEap1757FE5akdfw
+         x2qA==
+X-Gm-Message-State: APjAAAWY5PiXh6HF8vchYiYbSXmjpL8xhxedhZtxe8yxo2nnOu2RZMDa
+        1DFttNs1/Ye4sncBPjMIkFKGQIGvq8sWxQbo2o0fQg==
+X-Google-Smtp-Source: APXvYqxO9Z8c7OrTKavPMGL2/MV6p57Y1bzJgt/HX0TZHAPCfiKQUMd+9yPlAdhhtCF+f1UbeWI7+mA8oZoL7ARgpjY=
+X-Received: by 2002:ac2:530e:: with SMTP id c14mr1286884lfh.165.1568298665420;
+ Thu, 12 Sep 2019 07:31:05 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: thinci.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e0fbb9d-045c-4021-6da3-08d7378c05d7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2019 14:18:03.2236
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 9d1c3c89-8615-4064-88a7-bb1a8537c779
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SZts4ItkBnwN+KdgDLdbmM6/LujqcUMs+r209r17AnJ/lt8fuFlAM/k3tdKFvpC59nNmDU8CLMv9zo8LGh3ieyr4BjvAGZGW5wyvA7A0spE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA1PR01MB2732
-X-TMASE-Version: StarCloud-1.3-8.5.1020-24906.007
-X-TMASE-Result: 10--17.718100-4.000000
-X-TMASE-MatchedRID: 0lhM5bBmjEPmLzc6AOD8DfHkpkyUphL9SeIjeghh/zNyRzv8VthUeO78
-        JM8/PJKtilFjvLZ/j0+CfAAkLV8ZpAZozxJuL+QzSyH6bNPVSdsA+JHhu0IR5r0rWM4nIpJrQ06
-        GWWsHgeWclFMYx7d3xp13WEx+M1LaMYXCjAv0ws/0hv/rD7WVZAZyESFXAljfSgypjNmDEOv/ol
-        ENOfDLuqv4jSzK/3BDzOzX3Ugwdp8vTkJbUZogmvNctuQlbOgkprzcyrz2L10cNByoSo036bBZs
-        zSz1qei8ze0IlupaK3sfSmuEHK7OCzoUFXYNBYHqJSK+HSPY+9rLj3DxYBIN1S+oHmj8upzcM9I
-        zjFc6Cbh53PZBRbu8/5G22dO0g90ig6yfQGtC660YzRwENQzjWgU1o1xV13fLrb+wM+3z+IEv3J
-        Y2DTPMTWhjLSUqUa9z0Nn6V8FDgK0Nx5/0yISyS/PpqUXWtWDBtG6netTkaVLxCuBTCXaKmlys1
-        PDhWLo7Sr91NIPRy13j1jxhRfPxsGY0l4ehoxDvOAv94sAIMScX+8paBX5l8eQfu6iwSfsn3P5M
-        anUWB0gXhVckvDO0ZX00MHwP9R6LDvpFRH1bkKwWQIt565829s4MOUU/wa2BjMxa/QV+tThBjWE
-        tFRXBgh3s4yCdKS3fILl67YGAqY5HWa1kxc3MRRbernba4ig64sVlliWKx/QOCWBwgRKBYesoyU
-        FcYI/wWulRtvvYxTUHQeTVDUrItRnEQCUU+jz9xS3mVzWUuA152LecOHHIz8mKvV1biOgrLtkjl
-        ioaNM4Gm2JhqDjKmuT1Mq3TdwU3Az5D7wfy24=
-X-TM-Deliver-Signature: C9FE929865C6A0FEC2E7C22290EC42E1
+References: <cover.1568274587.git.rahul.tanwar@linux.intel.com>
+ <CACRpkdb7bPo7oH9w5OhAsOoQXx=MWjJELd5JvBt3R1sPdMjnpw@mail.gmail.com> <20190912135806.GA2680@smile.fi.intel.com>
+In-Reply-To: <20190912135806.GA2680@smile.fi.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 12 Sep 2019 15:30:52 +0100
+Message-ID: <CACRpkdYcdaoA_D6YyKJuT5bfJ5QE4LWfXF8+R1y01xaWJaJZuQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] pinctrl: Add new pinctrl/GPIO driver
+To:     Andriy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDEyLzA5LzIwMTkgMTQ6MjEsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6DQo+IE9uIDEyLjA5
-LjIwMTkgMDQ6MzgsIEpvaG4gU3R1bHR6IHdyb3RlOg0KPj4gT24gV2VkLCBTZXAgNCwgMjAxOSBh
-dCAzOjI2IEFNIEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+IHdyb3RlOg0KPj4+
-IE9uIDAzLjA5LjIwMTkgMTg6MTgsIEpvaG4gU3R1bHR6IHdyb3RlOg0KPj4+PiBPbiBNb24sIFNl
-cCAyLCAyMDE5IGF0IDY6MjIgQU0gQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4g
-d3JvdGU6DQo+Pj4+PiBPbiAzMC4wOC4yMDE5IDE5OjAwLCBSb2IgQ2xhcmsgd3JvdGU6DQo+Pj4+
-Pj4gT24gVGh1LCBBdWcgMjksIDIwMTkgYXQgMTE6NTIgUE0gQW5kcnplaiBIYWpkYSA8YS5oYWpk
-YUBzYW1zdW5nLmNvbT4gd3JvdGU6DQo+Pj4+Pj4+IE9mIGNvdXJzZSBpdCBzZWVtcyB5b3UgaGF2
-ZSBkaWZmZXJlbnQgb3BpbmlvbiB3aGF0IGlzIHRoZSByaWdodCB0aGluZyBpbg0KPj4+Pj4+PiB0
-aGlzIGNhc2UsIHNvIGlmIHlvdSBjb252aW5jZSB1cyB0aGF0IHlvdXIgYXBwcm9hY2ggaXMgYmV0
-dGVyIG9uZSBjYW4NCj4+Pj4+Pj4gcmV2ZXJ0IHRoZSBwYXRjaC4NCj4+Pj4+PiBJIGd1ZXNzIG15
-IHN0cm9uZ2VzdCAvIG1vc3QgaW1tZWRpYXRlIG9waW5pb24gaXMgdG8gbm90IGJyZWFrIG90aGVy
-DQo+Pj4+Pj4gZXhpc3RpbmcgYWR2NzV4eCBicmlkZ2UgdXNlcnMuDQo+Pj4+PiBJdCBpcyBwaXR5
-IHRoYXQgYnJlYWthZ2UgaGFwcGVuZWQsIGFuZCBuZXh0IHRpbWUgd2Ugc2hvdWxkIGJlIG1vcmUN
-Cj4+Pj4+IHN0cmljdCBhYm91dCB0ZXN0aW5nIG90aGVyIHBsYXRmb3JtcywgYmVmb3JlIHBhdGNo
-IGFjY2VwdGFuY2UuDQo+Pj4+Pg0KPj4+Pj4gQnV0IHJldmVydGluZyBpdCBub3cgd2lsbCBicmVh
-ayBhbHNvIHBsYXRmb3JtIHdoaWNoIGRlcGVuZCBvbiBpdC4NCj4+Pj4gSSdtIHJlYWxseSBvZiBu
-byBvcGluaW9uIG9mIHdoaWNoIGFwcHJvYWNoIGlzIGJldHRlciBoZXJlLCBidXQgSSB3aWxsDQo+
-Pj4+IHNheSB0aGF0IHdoZW4gYSBwYXRjaCBicmVha3MgcHJldmlvdXNseSB3b3JraW5nIGJvYXJk
-cywgdGhhdCdzIGENCj4+Pj4gcmVncmVzc2lvbiBhbmQganVzdGlmeWluZyB0aGF0IHNvbWUgb3Ro
-ZXIgYm9hcmQgaXMgbm93IGVuYWJsZWQgdGhhdA0KPj4+PiB3b3VsZCBiZSBicm9rZW4gYnkgdGhl
-IHJldmVydCAob2YgYSBwYXRjaCB0aGF0IGlzIG5vdCB5ZXQgdXBzdHJlYW0pDQo+Pj4+IGlzbid0
-IHJlYWxseSBhIHN0cm9uZyBhcmd1bWVudC4NCj4+Pj4NCj4+Pj4gSSdtIGhhcHB5IHRvIHdvcmsg
-d2l0aCBmb2xrcyB0byB0cnkgdG8gZml4dXAgdGhlIGtpcmluIGRyaXZlciBpZiB0aGlzDQo+Pj4+
-IHBhdGNoIHJlYWxseSBpcyB0aGUgcmlnaHQgYXBwcm9hY2gsIGJ1dCB3ZSBuZWVkIHNvbWVvbmUg
-dG8gZG8gdGhlIHNhbWUNCj4+Pj4gZm9yIHRoZSBkYjQxMGMsIGFuZCBJIGRvbid0IHRoaW5rIGl0
-cyBmYWlyIHRvIGp1c3QgZHVtcCB0aGF0IHdvcmsgb250bw0KPj4+PiBmb2xrcyB1bmRlciB0aGUg
-dGhyZWF0IG9mIHRoZSBib2FyZCBicmVha2luZy4NCj4+Pg0KPj4+IFRoZXNlIGRyaXZlcnMgc2hv
-dWxkIGJlIGZpeGVkIGFueXdheSAtIGFzc3VtcHRpb24gdGhhdA0KPj4+IGRybV9icmlkZ2UvZHJt
-X3BhbmVsIHdpbGwgYmUgcmVnaXN0ZXJlZCBiZWZvcmUgdGhlIGJ1cyBpdCBpcyBhdHRhY2hlZCB0
-bw0KPj4+IGlzIGp1c3QgaW5jb3JyZWN0Lg0KPj4+DQo+Pj4gU28gaW5zdGVhZCBvZiByZXZlcnRp
-bmcsIGZpeGluZyBhbmQgdGhlbiByZS1hcHBseWluZyB0aGUgcGF0Y2ggSSBoYXZlDQo+Pj4gZ2Vu
-dGx5IHByb3Bvc2VkIHNob3J0ZXIgcGF0aC4gSWYgeW91IHByZWZlciBsb25nIHBhdGggd2UgY2Fu
-IHRyeSB0byBnbw0KPj4+IHRoaXMgd2F5Lg0KPj4+DQo+Pj4gTWF0dCwgaXMgdGhlIHB1cmUgcmV2
-ZXJ0IE9LIGZvciB5b3Ugb3IgaXMgaXQgcG9zc2libGUgdG8gcHJlcGFyZSBzb21lDQo+Pj4gd29y
-a2Fyb3VuZCBhbGxvd2luZyBjb29wZXJhdGlvbiB3aXRoIGJvdGggYXBwcm9hY2hlcz8NCj4+IFJv
-Yi9BbmRyemVqOiBXaGF0J3MgdGhlIGNhbGwgaGVyZT8NCj4+DQo+PiBTaG91bGQgSSByZXN1Ym1p
-dCB0aGUga2lyaW4gZml4IGZvciB0aGUgYWR2NzUxMSByZWdyZXNzaW9uIGhlcmU/DQo+PiBPciBk
-byB3ZSByZXZlcnQgdGhlIGFkdjc1MTEgcGF0Y2g/IEkgYmVsaWV2ZSBkYjQxMGMgc3RpbGwgbmVl
-ZHMgYSBmaXguDQo+Pg0KPj4gSSdkIGp1c3QgbGlrZSB0byBrZWVwIHRoZSBIaUtleSBib2FyZCBm
-cm9tIGJyZWFraW5nLCBzbyBsZXQgbWUga25vdyBzbw0KPj4gSSBjYW4gZ2V0IHRoZSBmaXggc3Vi
-bWl0dGVkIGlmIG5lZWRlZC4NCj4gDQo+IA0KPiBTaW5jZSB0aGVyZSBpcyBubyByZXNwb25zZSBm
-cm9tIE1hdHQsIHdlIGNhbiBwZXJmb3JtIHJldmVydCwgc2luY2UgdGhlcmUNCj4gYXJlIG5vIG90
-aGVyIGlkZWFzLiBJIHdpbGwgYXBwbHkgaXQgdG9tb3Jyb3csIGlmIHRoZXJlIGFyZSBubyBvYmpl
-Y3Rpb25zLg0KDQpIaSwNCg0KU29ycnkgLSB5ZWFoIEkgdGhpbmsgcmV2ZXJ0aW5nIGlzIHByb2Jh
-Ymx5IGJlc3QgYXQgdGhpcyBwb2ludCB0byBhdm9pZCANCmJyZWFraW5nIGluLXRyZWUgcGxhdGZv
-cm1zLg0KSXQncyBhIHNoYW1lIHRob3VnaCB0aGF0IHRoZXJlIGlzIGEgYnVpbHQtaW4gaW5jb21w
-YXRpYmlsaXR5IHdpdGhpbiB0aGUgDQp0cmVlIGJldHdlZW4gZHJpdmVycy4gVGhlIHdheSB0aGF0
-IHRoZSBnZW5lcmljIFN5bm9wc3lzIERTSSBob3N0IGRyaXZlciANCnByb2JlcyBpcyBjdXJyZW50
-bHkgaW5jb21wYXRpYmxlIHdpdGggdGhlIEFEVjc1MzMgKGhlbmNlIHRoZSBwYXRjaCksIA0Kb3Ro
-ZXIgRFNJIGhvc3QgZHJpdmVycyBhcmUgbm93IGNvbXBhdGlibGUgd2l0aCB0aGUgQURWNzUzMyBi
-dXQgYnJlYWsgDQp3aGVuIHdlIGNoYW5nZSBpdCB0byBwcm9iZSBpbiBhIHNpbWlsYXIgd2F5IHRv
-IHBhbmVsIGRyaXZlcnMuDQoNCj4gDQo+IEFuZCBmb3IgdGhlIGZ1dHVyZTogSSBndWVzcyBpdCBp
-cyBub3QgcG9zc2libGUgdG8gbWFrZSBhZHYgd29yayB3aXRoIG9sZA0KPiBhbmQgbmV3IGFwcHJv
-YWNoLCBidXQgc2ltcGxlIHdvcmthcm91bmQgZm9yIGFkdiBjb3VsZCBiZSBhZGRlZCBsYXRlcjoN
-Cj4gDQo+IGlmIChzb3VyY2UgaXMgbXNtIG9yIGtpcmluKQ0KPiANCj4gIMKgwqDCoCBkb190aGVf
-b2xkX3dheQ0KPiANCj4gZWxzZQ0KPiANCj4gIMKgwqDCoCBkb19jb3JyZWN0bHkuDQoNCk1heWJl
-IHRoaXMgd291bGQgd29yaywgYnV0IGhvdyBkbyB3ZSBrbm93IHRoYXQgdGhlIGxpc3QgIm1zbSBv
-ciBraXJpbiIgDQppcyBleGhhdXN0aXZlIHRvIGNvcGUgd2l0aCBhbGwgcGxhdGZvcm1zPyBJdCBz
-ZWVtcyB0byBtZSB0aGUgYnVpbHQgaW4gDQppbmNvbXBhdGliaWxpdHkgYmV0d2VlbiBEU0kgaG9z
-dHMgbmVlZHMgdG8gYmUgcmVzb2x2ZWQgcmVhbGx5IHJhdGhlciANCnRoYW4gdHJ5aW5nIHRvIHdv
-cmsgYXJvdW5kIGl0IGluIHRoZSBBRFY3NTMzIGRyaXZlciAoYW5kIGFueSBvdGhlciBEU0kgDQpi
-dXMgZGV2aWNlIHRoYXQgZmFsbHMgaW50byB0aGlzIHRyYXApLg0KDQpBbnl3YXksIG15IHBsYXRm
-b3JtIGlzIG91dCBvZiB0cmVlIHNvIGJldHRlciB0byByZXZlcnQgbXkgcGF0Y2ggYW5kIGtlZXAg
-DQp0aGUgaW4tdHJlZSBwbGF0Zm9ybXMgd29ya2luZy4NCg0KVGhhbmtzIGV2ZXJ5b25lLg0KTWF0
-dA0KDQo+IA0KPiANCj4gQW5kIHJlbW92ZSBpdCBhZnRlciBmaXhpbmcgYm90aCBkc2kgbWFzdGVy
-cy4NCj4gDQo+IA0KPiBSZWdhcmRzDQo+IA0KPiBBbmRyemVqDQo+IA0KPiANCj4+DQo+PiB0aGFu
-a3MNCj4+IC1qb2huDQo+Pg0KPj4NCj4gDQo=
+On Thu, Sep 12, 2019 at 2:58 PM Andriy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+> On Thu, Sep 12, 2019 at 11:11:32AM +0100, Linus Walleij wrote:
+> > Hi Rahul,
+> >
+> > thanks for your patches!
+> >
+> > On Thu, Sep 12, 2019 at 8:59 AM Rahul Tanwar
+> > <rahul.tanwar@linux.intel.com> wrote:
+> >
+> > > This series is to add pinctrl & GPIO controller driver for a new SoC.
+> > > Patch 1 adds pinmux & GPIO controller driver.
+> > > Patch 2 adds the dt bindings document & include file.
+> > >
+> > > Patches are against Linux 5.3-rc5 at below Git tree:
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+> >
+> > OK nice, I think you need to include Mika Westerberg on this review
+> > as well, because I think he likes to stay on top of all things intel
+> > in pin control. (Also included two other Intel folks in Finland who usually
+> > take an interest in these things.)
+>
+> Linus,
+> nevertheless I guess you may give your comments WRT device tree use
+> (bindings, helpers, etc) along with some basics, (like devm_*()
+> [ab]use I just noticed).
+
+I plan to look at the patches per se but right now I don't have much
+time because soon there is merge window and kernel summit,
+the patches just need to age a little bit like a good wine ;)
+
+Yours,
+Linus Walleij
