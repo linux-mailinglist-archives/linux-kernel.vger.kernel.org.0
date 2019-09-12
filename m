@@ -2,99 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04036B08A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 08:05:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD26B088E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 08:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbfILGEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 02:04:21 -0400
-Received: from mga01.intel.com ([192.55.52.88]:25089 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727186AbfILGEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 02:04:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2019 23:04:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,495,1559545200"; 
-   d="scan'208";a="186036010"
-Received: from kmsmsx152.gar.corp.intel.com ([172.21.73.87])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Sep 2019 23:04:17 -0700
-Received: from pgsmsx108.gar.corp.intel.com ([169.254.8.138]) by
- KMSMSX152.gar.corp.intel.com ([169.254.11.65]) with mapi id 14.03.0439.000;
- Thu, 12 Sep 2019 14:00:45 +0800
-From:   "Lu, Brent" <brent.lu@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-CC:     "Rojewski, Cezary" <cezary.rojewski@intel.com>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yang.jie@linux.intel.com" <yang.jie@linux.intel.com>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "liam.r.girdwood@linux.intel.com" <liam.r.girdwood@linux.intel.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Subject: RE: [alsa-devel] [PATCH] ASoC: bdw-rt5677: channel constraint
- support
-Thread-Topic: [alsa-devel] [PATCH] ASoC: bdw-rt5677: channel constraint
- support
-Thread-Index: AQHVZFJP8PyrEMjcjUeZpcb0xW/mNqceLbmAgASxdDCAAEEEgIABJDyggAAwUICAAuppgA==
-Date:   Thu, 12 Sep 2019 06:00:45 +0000
-Message-ID: <CF33C36214C39B4496568E5578BE70C7402DBB9B@PGSMSX108.gar.corp.intel.com>
-References: <1567733058-9561-1-git-send-email-brent.lu@intel.com>
- <391e8f6c-7e35-deb4-4f4d-c39396b778ba@linux.intel.com>
- <CF33C36214C39B4496568E5578BE70C7402C9EA2@PGSMSX108.gar.corp.intel.com>
- <29b9fd4e-3d78-b4a3-e61a-c066bf24995a@linux.intel.com>
- <CF33C36214C39B4496568E5578BE70C7402CB9AC@PGSMSX108.gar.corp.intel.com>
- <99769525-779a-59aa-96da-da96f8f09a8a@linux.intel.com>
-In-Reply-To: <99769525-779a-59aa-96da-da96f8f09a8a@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjdlZjY3NDgtNTUxMi00YWYyLTk5OTUtZGE2MWU2MmU1MzMzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYkdvakhBVEpJWFBTT0Z4Vkh6cXRYaHNEajkzQjUxMkZxaEh0STlrMWJtNkxQRVVcL1hDdkQ4ZU1kU29LQXJZWGcifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1729310AbfILGCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 02:02:01 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:34173 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727186AbfILGCA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 02:02:00 -0400
+Received: by mail-yb1-f194.google.com with SMTP id u68so8254256ybg.1;
+        Wed, 11 Sep 2019 23:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K9+ntv9uSx3Ki8PaxHviLAmn/U1312pdl1Nqx/+XVGM=;
+        b=tVP7wsm0JfXajQjrOHCeRwkukET9lg/523L2R8yTSA4O0Nq9JeeInDt3Zw36cLUrd8
+         5KCHvyEE4/nlb+No8OIw9JQwmRZVhOFlMhA/QgBm1Hj1qcDOhQq72hwNruMj5FBH+ygO
+         jzMGidmPg4WkyG9arHkShiFTth1mYO0p8nznQpYQT2x+CaifQc6xif0vtgozNg/wrpIf
+         1Jf+Gf7CaXwYzZWYOS5Mn1jUnt5kg5p6ppo5gU/46X99+StZJCY9EEAG1Qt1hkcO+Yh/
+         TszAGr2OiHsnOkpP2ArPFBEf148may6uNQebpdhCMJBYehOLRvconyp50TpSosogMutw
+         YO/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K9+ntv9uSx3Ki8PaxHviLAmn/U1312pdl1Nqx/+XVGM=;
+        b=mi27gup7Kd7Uuzyz2GWQA++QvYc1vG6z3DLUc8buHRybhAo7zb4pm4TA81XfPkL+T0
+         YN1Fe1PgpnsOjCLfv7FG7SigmjQM5WvZ5IN5QywlHuTKOGE9Znd3neMIgjT1Xw2BL2Ut
+         NXGJYeouWR5NrIgcho6qVhoXFQGXIMdzBmBkgYFPwTp5RyNQ5bzoE+m+x7XgW+vttjow
+         Pfxlg+r+QwUXsufVmRNgiecp2F3nyHy0lmsLEXt4/cexIWMsQjDfW+8Ta0vw88ey5po+
+         KDPxqY89b/aW6ZJ0E3HQSR3R1rz6OMLAX582TVqGaz/GoIaORxwsGl7lBe/shoksE56L
+         G1Kw==
+X-Gm-Message-State: APjAAAWNkK/bVj/4fLzeHI9dI0L7cHo46DJnuarc5KqlFRQ9uVXYmmXm
+        xyZWfH9bwXO8iTXXw/A6NUDTju29Jh4LnLuua7SKOZOM
+X-Google-Smtp-Source: APXvYqxdVhyBvRhD5pEJMq5IPO8fSYIR8HTJxLA2DfYt/FJI/9GZhI08OSl63c9NvR5tcb6QfPUG2HRwf7qrjyFes7k=
+X-Received: by 2002:a25:d44c:: with SMTP id m73mr580540ybf.126.1568268119580;
+ Wed, 11 Sep 2019 23:01:59 -0700 (PDT)
 MIME-Version: 1.0
+References: <1568265511-1622-1-git-send-email-dingxiang@cmss.chinamobile.com>
+In-Reply-To: <1568265511-1622-1-git-send-email-dingxiang@cmss.chinamobile.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 12 Sep 2019 09:01:48 +0300
+Message-ID: <CAOQ4uxjNK9BQxmNqbx8Hix0yd5op-i17BiqvOmmEmr=3bHtm_A@mail.gmail.com>
+Subject: Re: [PATCH V2] ovl: Fix dereferencing possible ERR_PTR()
+To:     Ding Xiang <dingxiang@cmss.chinamobile.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+DQo+ID4gVGhlIHN0b3J5IGlzIENocm9tZSBoYXMgYSB0b29sIGNhbGxlZCBhbHNhX2NvbmZv
-cm1hbmNlX3Rlc3Qgd2hpY2ggcnVucw0KPiA+IGNhcHR1cmUgb3IgcGxheWJhY2sgYWdhaW5zdCBh
-IFBDTSBwb3J0IHdpdGggYWxsIHBvc3NpYmxlDQo+ID4gY29uZmlndXJhdGlvbnMgKGNoYW5uZWws
-IGZvcm1hdCwgcmF0ZSkgdGhlbiBtZWFzdXJlIGlmIHRoZSBzYW1wbGUgcmF0ZQ0KPiA+IGlzIGNv
-cnJlY3QuIFNpbmNlIHRoZSBjaGFubmVsIG1heCBudW1iZXIgcmVwb3J0ZWQgaXMgNCwgaXQgdGVz
-dHMgdGhlDQo+ID4gNC1jaGFubmVsIDQ4SyBjYXB0dXJlIGFuZCByZXBvcnRzIHRoZSBhY3R1YWwg
-c2FtcGxlIHJhdGUgaXMgMjQwMDANCj4gPiBpbnN0ZWFkIG9mIDQ4MDAwLiBUaGF0J3MgdGhlIHJl
-YXNvbiB3ZSB3YW50IHRvIGFkZCBhIGNvbnN0cmFpbnQgaW4NCj4gPiBtYWNoaW5lIGRyaXZlciB0
-byBhdm9pZCB1c2VyIHNwYWNlIHByb2dyYW1zIHRyeWluZyB0byBkbyA0IGNoYW5uZWwNCj4gcmVj
-b3JkaW5nIHNpbmNlIHRoaXMgbWFjaGluZSBkb2VzIG5vdCBzdXBwb3J0IGl0IGluIHRoZSBiZWdp
-bm5pbmcuDQo+IA0KPiBvaywgdGhhdCBoZWxwcyBnZXQgY29udGV4dCwgdGhhbmtzIGZvciB0aGUg
-ZGV0YWlscy4NCj4gDQo+IEkgd291bGQgaGF2ZSBleHBlY3RlZCBzb21lIGVycm9yIHRvIGJlIHJl
-dHVybmVkIGlmIHRoZXJlJ3MgYSBmcm9udC1lbmQNCj4gb3BlbmVkIHdpdGggNCBjaGFubmVscyBh
-bmQgdGhlIGJhY2stZW5kIG9ubHkgc3VwcG9ydHMgdHdvLiBBZGRpbmcgdGhlDQo+IGNvbnN0cmFp
-bnQgc2VlbXMgbGlrZSBhIHdvcmstYXJvdW5kIHRvIGF2b2lkIGRlYWxpbmcgd2l0aCB0aGUgbWlz
-bWF0Y2gNCj4gYmV0d2VlbiBGRSBhbmQgQkUuIEkgZG9uJ3QgdW5kZXJzdGFuZCBEUENNIGVub3Vn
-aCB0byBzdWdnZXN0IGFuDQo+IGFsdGVybmF0aXZlIHRob3VnaC4gUmFuamFuaSwgY2FuIHlvdSBo
-ZWxwIG9uIHRoaXMgb25lPw0KPiANCj4gQW5kIGV2ZW4gaWYgd2UgYWdyZWUgd2l0aCB0aGlzIHNv
-bHV0aW9uLCBpdCdkIGJlIG5pY2UgdG8gYXBwbHkgaXQgZm9yIHRoZQ0KPiBCcm9hZHdlbGwgbWFj
-aGluZSBkcml2ZXIgZm9yIGNvbnNpc3RlbmN5Lg0KDQpJdCdzIG5vdCBvbmx5IHRoZSBtaXNtYXRj
-aCBidXQgYWxzbyB0aGUgZGVzaWduIGxpbWl0YXRpb24uIEFjY29yZGluZyB0byB0aGUgDQppbmZv
-cm1hdGlvbiBmcm9tIGdvb2dsZSwgdGhlIGJvYXJkIChzYW11cykgb25seSB1c2VzIHR3byBtaWNy
-b3Bob25lIHNvIA0KMyBvciA0IGNoYW5uZWwgcmVjb3JkaW5nIGFyZSBub3Qgc3VwcG9ydGVkLiBU
-aGF0J3MgdGhlIHJlYXNvbiB3ZSBsZXZlcmFnZSANCnRoZSBjb25zdHJhaW50IGZyb20gb3RoZXIg
-bWFjaGluZSBkcml2ZXIgKGxpa2Uga2JsX2RhNzIxOV9tYXg5ODM1N2EuYykgDQp0byByZW1vdmUg
-dGhlIDMgYW5kIDQgY2hhbm5lbCByZWNvcmRpbmcgb3B0aW9uLg0KDQpUaGUgZGlmZmVyZW5jZSBh
-ZnRlciB0aGUgY29uc3RyYWludCBpcyBpbXBsZW1lbnRlZCBpcyB0aGF0IHRoZSANCnNuZF9wY21f
-aHdfcGFyYW1zX3NldF9jaGFubmVscygpIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIGVycm9yIChJbnZh
-bGlkIA0KYXJndW1lbnQpIHdoZW4gY2hhbm5lbCBudW1iZXIgaXMgMyBvciA0IHNvIHRoZSBhcHBs
-aWNhdGlvbiBrbm93cyB0aGUgDQpjb25maWd1cmF0aW9uIGlzIG5vdCBzdXBwb3J0ZWQuDQoNCg0K
-UmVnYXJkcywNCkJyZW50DQoNCg==
+On Thu, Sep 12, 2019 at 8:24 AM Ding Xiang
+<dingxiang@cmss.chinamobile.com> wrote:
+>
+> if ovl_encode_real_fh() fails, no memory was allocated
+> and the error in the error-valued pointer should be returned.
+>
+> V1->V2: fix SHA1 length problem
+>
+> Fixes: 9b6faee07470 ("ovl: check ERR_PTR() return value from ovl_encode_fh()")
+> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+> ---
+>  fs/overlayfs/export.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> index cb8ec1f..50ade19 100644
+> --- a/fs/overlayfs/export.c
+> +++ b/fs/overlayfs/export.c
+> @@ -229,7 +229,7 @@ static int ovl_d_to_fh(struct dentry *dentry, char *buf, int buflen)
+>                                 ovl_dentry_upper(dentry), !enc_lower);
+>         err = PTR_ERR(fh);
+>         if (IS_ERR(fh))
+> -               goto fail;
+> +               return err;
+>
+
+Please fix the code in warning message instead of skipping the warning.
+
+Thanks,
+Amir.
