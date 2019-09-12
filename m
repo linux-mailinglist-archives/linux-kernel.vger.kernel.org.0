@@ -2,278 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEC6AB0884
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 08:00:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04036B08A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 08:05:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729235AbfILF7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 01:59:47 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45187 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfILF7q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 01:59:46 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y72so15211109pfb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 22:59:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FxFE8kRj/EbRgKoWP35uNVOjcf/RHJrS7TO4gPoF1aw=;
-        b=eBDesVj3g+SbqAKG8q2xV8P2B/mupoEtGicY3Is/+aV/JLmtliD/CQj1oHz5AbTGzT
-         ibeR+rVsYLMo2C6oEn3s7NCJLs8Z9tToLUbJZBP6WvV+0QBx2hcmhfNM/7LYDc5n2RmY
-         cZoj8I/SJrol5TJQR3Bn4K+0e/5hXi1dkfiGlwNWQQIP3trO1v3hQFjlOqxjRmFIaPJO
-         No8MV7FL7eXNx7wBqMopi0DAxFyySodWwynsSEFmtDXTBQJNuktqXOa/pKR6L6BZcxk/
-         ZGxt5OVSHPNSl1ybKJhTalSIwduOPKikGWAF6yPVoK/teypHOhztCG1Bxg8gYA8rDw/J
-         jceQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FxFE8kRj/EbRgKoWP35uNVOjcf/RHJrS7TO4gPoF1aw=;
-        b=dmaoRwBf6JDv9BdWgq2cPM7kW2UeNjcsEpkuVWqxNn32ljLLE6nGjWG6081SCRzM8J
-         MaOXmrL3r5qKl1RkijsQBeDSGhfbrTZR5JkJbPLvtn9JEy7c3PM2U1C3czsrdfOYzWm/
-         Qy35B0gmuIAoIJ07534/M0guVIQhKHoIOWrxY3C8ILf7ZeRqG15q3ndt8XtF3Wh2aVCG
-         bTYGUDRoYBLSgvTgX3SoFF3SMAOZX9HmkoUH657985LIj7nSMUUCPwrABjR0Iwm9S1E+
-         rBN4jwUk0AODoZZA/Zyr+idy4LqpPfNTxk4zMHJMSgMWDzLl/dIgLP7CBISeZkB7o3OS
-         xJ9w==
-X-Gm-Message-State: APjAAAVI8GDeWGRVcoLkpE2kgS8lf+VmiGbzQwwywlP8Kzk4Bt0x0yT/
-        ZAHMKE5P1kDFnjit4L6ckZkZcIPlneY=
-X-Google-Smtp-Source: APXvYqzrUMHEJKlllEkbtSJF1fAnGNVZUDuEsmrY+s0nLn1qDSccMEfHsDcRj8CGFkCxHj7Q65zOwQ==
-X-Received: by 2002:a62:5c82:: with SMTP id q124mr47525159pfb.177.1568267985462;
-        Wed, 11 Sep 2019 22:59:45 -0700 (PDT)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id l62sm36827139pfl.167.2019.09.11.22.59.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Sep 2019 22:59:45 -0700 (PDT)
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     catalin.marinas@arm.com, will.deacon@arm.com, robh+dt@kernel.org,
-        frowand.list@gmail.com
-Cc:     james.morse@arm.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH 3/3] arm64: kexec_file: add crash dump support
-Date:   Thu, 12 Sep 2019 15:01:50 +0900
-Message-Id: <20190912060150.10818-4-takahiro.akashi@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190912060150.10818-1-takahiro.akashi@linaro.org>
-References: <20190912060150.10818-1-takahiro.akashi@linaro.org>
+        id S1729616AbfILGEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 02:04:21 -0400
+Received: from mga01.intel.com ([192.55.52.88]:25089 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727186AbfILGEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 02:04:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Sep 2019 23:04:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,495,1559545200"; 
+   d="scan'208";a="186036010"
+Received: from kmsmsx152.gar.corp.intel.com ([172.21.73.87])
+  by fmsmga007.fm.intel.com with ESMTP; 11 Sep 2019 23:04:17 -0700
+Received: from pgsmsx108.gar.corp.intel.com ([169.254.8.138]) by
+ KMSMSX152.gar.corp.intel.com ([169.254.11.65]) with mapi id 14.03.0439.000;
+ Thu, 12 Sep 2019 14:00:45 +0800
+From:   "Lu, Brent" <brent.lu@intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+CC:     "Rojewski, Cezary" <cezary.rojewski@intel.com>,
+        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "yang.jie@linux.intel.com" <yang.jie@linux.intel.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "liam.r.girdwood@linux.intel.com" <liam.r.girdwood@linux.intel.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Subject: RE: [alsa-devel] [PATCH] ASoC: bdw-rt5677: channel constraint
+ support
+Thread-Topic: [alsa-devel] [PATCH] ASoC: bdw-rt5677: channel constraint
+ support
+Thread-Index: AQHVZFJP8PyrEMjcjUeZpcb0xW/mNqceLbmAgASxdDCAAEEEgIABJDyggAAwUICAAuppgA==
+Date:   Thu, 12 Sep 2019 06:00:45 +0000
+Message-ID: <CF33C36214C39B4496568E5578BE70C7402DBB9B@PGSMSX108.gar.corp.intel.com>
+References: <1567733058-9561-1-git-send-email-brent.lu@intel.com>
+ <391e8f6c-7e35-deb4-4f4d-c39396b778ba@linux.intel.com>
+ <CF33C36214C39B4496568E5578BE70C7402C9EA2@PGSMSX108.gar.corp.intel.com>
+ <29b9fd4e-3d78-b4a3-e61a-c066bf24995a@linux.intel.com>
+ <CF33C36214C39B4496568E5578BE70C7402CB9AC@PGSMSX108.gar.corp.intel.com>
+ <99769525-779a-59aa-96da-da96f8f09a8a@linux.intel.com>
+In-Reply-To: <99769525-779a-59aa-96da-da96f8f09a8a@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjdlZjY3NDgtNTUxMi00YWYyLTk5OTUtZGE2MWU2MmU1MzMzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYkdvakhBVEpJWFBTT0Z4Vkh6cXRYaHNEajkzQjUxMkZxaEh0STlrMWJtNkxQRVVcL1hDdkQ4ZU1kU29LQXJZWGcifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.206]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling crash dump (kdump) includes
-* prepare contents of ELF header of a core dump file, /proc/vmcore,
-  using crash_prepare_elf64_headers(), and
-* add two device tree properties, "linux,usable-memory-range" and
-  "linux,elfcorehdr", which represent respectively a memory range
-  to be used by crash dump kernel and the header's location
-
-Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
----
- arch/arm64/include/asm/kexec.h         |   4 +
- arch/arm64/kernel/kexec_image.c        |   4 -
- arch/arm64/kernel/machine_kexec_file.c | 105 ++++++++++++++++++++++++-
- 3 files changed, 106 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index 12a561a54128..d24b527e8c00 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -96,6 +96,10 @@ static inline void crash_post_resume(void) {}
- struct kimage_arch {
- 	void *dtb;
- 	unsigned long dtb_mem;
-+	/* Core ELF header buffer */
-+	void *elf_headers;
-+	unsigned long elf_headers_mem;
-+	unsigned long elf_headers_sz;
- };
- 
- extern const struct kexec_file_ops kexec_image_ops;
-diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-index 2514fd6f12cb..60cedfa9529b 100644
---- a/arch/arm64/kernel/kexec_image.c
-+++ b/arch/arm64/kernel/kexec_image.c
-@@ -47,10 +47,6 @@ static void *image_load(struct kimage *image,
- 	struct kexec_segment *kernel_segment;
- 	int ret;
- 
--	/* We don't support crash kernels yet. */
--	if (image->type == KEXEC_TYPE_CRASH)
--		return ERR_PTR(-EOPNOTSUPP);
--
- 	/*
- 	 * We require a kernel with an unambiguous Image header. Per
- 	 * Documentation/arm64/booting.rst, this is the case when image_size
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 58871333737a..f5276e27c12b 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -17,12 +17,15 @@
- #include <linux/memblock.h>
- #include <linux/of_fdt.h>
- #include <linux/random.h>
-+#include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/vmalloc.h>
- #include <asm/byteorder.h>
- 
- /* relevant device tree properties */
-+#define FDT_PROP_KEXEC_ELFHDR	"linux,elfcorehdr"
-+#define FDT_PROP_MEM_RANGE	"linux,usable-memory-range"
- #define FDT_PROP_INITRD_START	"linux,initrd-start"
- #define FDT_PROP_INITRD_END	"linux,initrd-end"
- #define FDT_PROP_BOOTARGS	"bootargs"
-@@ -38,6 +41,10 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	vfree(image->arch.dtb);
- 	image->arch.dtb = NULL;
- 
-+	vfree(image->arch.elf_headers);
-+	image->arch.elf_headers = NULL;
-+	image->arch.elf_headers_sz = 0;
-+
- 	return kexec_image_post_load_cleanup_default(image);
- }
- 
-@@ -53,6 +60,31 @@ static int setup_dtb(struct kimage *image,
- 
- 	off = ret;
- 
-+	ret = fdt_delprop(dtb, off, FDT_PROP_KEXEC_ELFHDR);
-+	if (ret && ret != -FDT_ERR_NOTFOUND)
-+		goto out;
-+	ret = fdt_delprop(dtb, off, FDT_PROP_MEM_RANGE);
-+	if (ret && ret != -FDT_ERR_NOTFOUND)
-+		goto out;
-+
-+	if (image->type == KEXEC_TYPE_CRASH) {
-+		/* add linux,elfcorehdr */
-+		ret = fdt_appendprop_addrrange(dtb, 0, off,
-+				FDT_PROP_KEXEC_ELFHDR,
-+				image->arch.elf_headers_mem,
-+				image->arch.elf_headers_sz);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+
-+		/* add linux,usable-memory-range */
-+		ret = fdt_appendprop_addrrange(dtb, 0, off,
-+				FDT_PROP_MEM_RANGE,
-+				crashk_res.start,
-+				crashk_res.end - crashk_res.start + 1);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+	}
-+
- 	/* add bootargs */
- 	if (cmdline) {
- 		ret = fdt_setprop_string(dtb, off, FDT_PROP_BOOTARGS, cmdline);
-@@ -110,7 +142,8 @@ static int setup_dtb(struct kimage *image,
- }
- 
- /*
-- * More space needed so that we can add initrd, bootargs and kaslr-seed.
-+ * More space needed so that we can add initrd, bootargs, kaslr-seed,
-+ * userable-memory-range and elfcorehdr.
-  */
- #define DTB_EXTRA_SPACE 0x1000
- 
-@@ -158,6 +191,43 @@ static int create_dtb(struct kimage *image,
- 	}
- }
- 
-+static int prepare_elf_headers(void **addr, unsigned long *sz)
-+{
-+	struct crash_mem *cmem;
-+	unsigned int nr_ranges;
-+	int ret;
-+	u64 i;
-+	phys_addr_t start, end;
-+
-+	nr_ranges = 1; /* for exclusion of crashkernel region */
-+	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE,
-+					MEMBLOCK_NONE, &start, &end, NULL)
-+		nr_ranges++;
-+
-+	cmem = kmalloc(sizeof(struct crash_mem) +
-+			sizeof(struct crash_mem_range) * nr_ranges, GFP_KERNEL);
-+	if (!cmem)
-+		return -ENOMEM;
-+
-+	cmem->max_nr_ranges = nr_ranges;
-+	cmem->nr_ranges = 0;
-+	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE,
-+					MEMBLOCK_NONE, &start, &end, NULL) {
-+		cmem->ranges[cmem->nr_ranges].start = start;
-+		cmem->ranges[cmem->nr_ranges].end = end - 1;
-+		cmem->nr_ranges++;
-+	}
-+
-+	/* Exclude crashkernel region */
-+	ret = crash_exclude_mem_range(cmem, crashk_res.start, crashk_res.end);
-+
-+	if (!ret)
-+		ret =  crash_prepare_elf64_headers(cmem, true, addr, sz);
-+
-+	kfree(cmem);
-+	return ret;
-+}
-+
- int load_other_segments(struct kimage *image,
- 			unsigned long kernel_load_addr,
- 			unsigned long kernel_size,
-@@ -165,14 +235,43 @@ int load_other_segments(struct kimage *image,
- 			char *cmdline)
- {
- 	struct kexec_buf kbuf;
--	void *dtb = NULL;
--	unsigned long initrd_load_addr = 0, dtb_len;
-+	void *headers, *dtb = NULL;
-+	unsigned long headers_sz, initrd_load_addr = 0, dtb_len;
- 	int ret = 0;
- 
- 	kbuf.image = image;
- 	/* not allocate anything below the kernel */
- 	kbuf.buf_min = kernel_load_addr + kernel_size;
- 
-+	/* load elf core header */
-+	if (image->type == KEXEC_TYPE_CRASH) {
-+		ret = prepare_elf_headers(&headers, &headers_sz);
-+		if (ret) {
-+			pr_err("Preparing elf core header failed\n");
-+			goto out_err;
-+		}
-+
-+		kbuf.buffer = headers;
-+		kbuf.bufsz = headers_sz;
-+		kbuf.mem = 0;
-+		kbuf.memsz = headers_sz;
-+		kbuf.buf_align = SZ_64K; /* largest supported page size */
-+		kbuf.buf_max = ULONG_MAX;
-+		kbuf.top_down = true;
-+
-+		ret = kexec_add_buffer(&kbuf);
-+		if (ret) {
-+			vfree(headers);
-+			goto out_err;
-+		}
-+		image->arch.elf_headers = headers;
-+		image->arch.elf_headers_mem = kbuf.mem;
-+		image->arch.elf_headers_sz = headers_sz;
-+
-+		pr_debug("Loaded elf core header at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-+			 image->arch.elf_headers_mem, headers_sz, headers_sz);
-+	}
-+
- 	/* load initrd */
- 	if (initrd) {
- 		kbuf.buffer = initrd;
--- 
-2.21.0
-
+PiA+DQo+ID4gVGhlIHN0b3J5IGlzIENocm9tZSBoYXMgYSB0b29sIGNhbGxlZCBhbHNhX2NvbmZv
+cm1hbmNlX3Rlc3Qgd2hpY2ggcnVucw0KPiA+IGNhcHR1cmUgb3IgcGxheWJhY2sgYWdhaW5zdCBh
+IFBDTSBwb3J0IHdpdGggYWxsIHBvc3NpYmxlDQo+ID4gY29uZmlndXJhdGlvbnMgKGNoYW5uZWws
+IGZvcm1hdCwgcmF0ZSkgdGhlbiBtZWFzdXJlIGlmIHRoZSBzYW1wbGUgcmF0ZQ0KPiA+IGlzIGNv
+cnJlY3QuIFNpbmNlIHRoZSBjaGFubmVsIG1heCBudW1iZXIgcmVwb3J0ZWQgaXMgNCwgaXQgdGVz
+dHMgdGhlDQo+ID4gNC1jaGFubmVsIDQ4SyBjYXB0dXJlIGFuZCByZXBvcnRzIHRoZSBhY3R1YWwg
+c2FtcGxlIHJhdGUgaXMgMjQwMDANCj4gPiBpbnN0ZWFkIG9mIDQ4MDAwLiBUaGF0J3MgdGhlIHJl
+YXNvbiB3ZSB3YW50IHRvIGFkZCBhIGNvbnN0cmFpbnQgaW4NCj4gPiBtYWNoaW5lIGRyaXZlciB0
+byBhdm9pZCB1c2VyIHNwYWNlIHByb2dyYW1zIHRyeWluZyB0byBkbyA0IGNoYW5uZWwNCj4gcmVj
+b3JkaW5nIHNpbmNlIHRoaXMgbWFjaGluZSBkb2VzIG5vdCBzdXBwb3J0IGl0IGluIHRoZSBiZWdp
+bm5pbmcuDQo+IA0KPiBvaywgdGhhdCBoZWxwcyBnZXQgY29udGV4dCwgdGhhbmtzIGZvciB0aGUg
+ZGV0YWlscy4NCj4gDQo+IEkgd291bGQgaGF2ZSBleHBlY3RlZCBzb21lIGVycm9yIHRvIGJlIHJl
+dHVybmVkIGlmIHRoZXJlJ3MgYSBmcm9udC1lbmQNCj4gb3BlbmVkIHdpdGggNCBjaGFubmVscyBh
+bmQgdGhlIGJhY2stZW5kIG9ubHkgc3VwcG9ydHMgdHdvLiBBZGRpbmcgdGhlDQo+IGNvbnN0cmFp
+bnQgc2VlbXMgbGlrZSBhIHdvcmstYXJvdW5kIHRvIGF2b2lkIGRlYWxpbmcgd2l0aCB0aGUgbWlz
+bWF0Y2gNCj4gYmV0d2VlbiBGRSBhbmQgQkUuIEkgZG9uJ3QgdW5kZXJzdGFuZCBEUENNIGVub3Vn
+aCB0byBzdWdnZXN0IGFuDQo+IGFsdGVybmF0aXZlIHRob3VnaC4gUmFuamFuaSwgY2FuIHlvdSBo
+ZWxwIG9uIHRoaXMgb25lPw0KPiANCj4gQW5kIGV2ZW4gaWYgd2UgYWdyZWUgd2l0aCB0aGlzIHNv
+bHV0aW9uLCBpdCdkIGJlIG5pY2UgdG8gYXBwbHkgaXQgZm9yIHRoZQ0KPiBCcm9hZHdlbGwgbWFj
+aGluZSBkcml2ZXIgZm9yIGNvbnNpc3RlbmN5Lg0KDQpJdCdzIG5vdCBvbmx5IHRoZSBtaXNtYXRj
+aCBidXQgYWxzbyB0aGUgZGVzaWduIGxpbWl0YXRpb24uIEFjY29yZGluZyB0byB0aGUgDQppbmZv
+cm1hdGlvbiBmcm9tIGdvb2dsZSwgdGhlIGJvYXJkIChzYW11cykgb25seSB1c2VzIHR3byBtaWNy
+b3Bob25lIHNvIA0KMyBvciA0IGNoYW5uZWwgcmVjb3JkaW5nIGFyZSBub3Qgc3VwcG9ydGVkLiBU
+aGF0J3MgdGhlIHJlYXNvbiB3ZSBsZXZlcmFnZSANCnRoZSBjb25zdHJhaW50IGZyb20gb3RoZXIg
+bWFjaGluZSBkcml2ZXIgKGxpa2Uga2JsX2RhNzIxOV9tYXg5ODM1N2EuYykgDQp0byByZW1vdmUg
+dGhlIDMgYW5kIDQgY2hhbm5lbCByZWNvcmRpbmcgb3B0aW9uLg0KDQpUaGUgZGlmZmVyZW5jZSBh
+ZnRlciB0aGUgY29uc3RyYWludCBpcyBpbXBsZW1lbnRlZCBpcyB0aGF0IHRoZSANCnNuZF9wY21f
+aHdfcGFyYW1zX3NldF9jaGFubmVscygpIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIGVycm9yIChJbnZh
+bGlkIA0KYXJndW1lbnQpIHdoZW4gY2hhbm5lbCBudW1iZXIgaXMgMyBvciA0IHNvIHRoZSBhcHBs
+aWNhdGlvbiBrbm93cyB0aGUgDQpjb25maWd1cmF0aW9uIGlzIG5vdCBzdXBwb3J0ZWQuDQoNCg0K
+UmVnYXJkcywNCkJyZW50DQoNCg==
