@@ -2,111 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74432B121E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 17:31:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01D86B123C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 17:34:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733063AbfILPbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 11:31:16 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36229 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733001AbfILPbQ (ORCPT
+        id S1733074AbfILPeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 11:34:31 -0400
+Received: from smtprelay0247.hostedemail.com ([216.40.44.247]:35895 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732699AbfILPeb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 11:31:16 -0400
-Received: by mail-lf1-f67.google.com with SMTP id x80so19750837lff.3;
-        Thu, 12 Sep 2019 08:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NLThGLGX2luBPY/V3tzpyvjSzQN5EJNand59KMNVjgc=;
-        b=gkG2975pwBiCBXaPE6eTjd/T6v/glmnTKg3B5kK4SOVJDsDgKIGQa1k18m9BcBs9VS
-         bAO7rcjTbL5EVUOf1frETZsAHAoEXE7QPTHaIkBFLZn39bQ2PSgPKEGbTIEce8MaImDp
-         wPbQIRdRURaivJt2WWrFc/NBYU+wUAcBFczFFGuzXiTVCe7vCvJ9tBxeX7zmaH3BTT3k
-         pe+x8odbQtrIXAhdSKSM3t9rP/1oF2vADV4q3300DjrKHBGEAlWD+d24H49Chk7L2xzT
-         IxbuEjWlEnx4tcdExp98Wrlhz6qxyS5Brp72oqRne2wOEwkOLOXbxidzW0McZ3W8M7H3
-         7H0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NLThGLGX2luBPY/V3tzpyvjSzQN5EJNand59KMNVjgc=;
-        b=KIFi6XjudEB6+RaCJ/QEvQ2sk+sxeZG23M5f11ipKeAMF2CoaBK8vcsDyJqERHO1Ct
-         WeETe8llH8zMdptU2H0N7EBpVtoHh7Jbjg54KP/yiqVP1eUlTXeOuv3qLAVIN1J5vbuX
-         g7IKGZagW5IBv2BO6dm1a6eQquxhNeesY0vjC/jhvLoBjYTUjO+RfCkSzWP8Xjej3Pfd
-         73Y1jLluUWkOnhsMFurUE69n6stebsIbRDO4oOBYrz0gncQybVHWRAmGp+H5I7qsumb2
-         PgQWcLdt6qO5UMvjCqV70De+pvfUNm9w4E0OwX5iad3Mw2MRNsWxXt84RxCnoJ2UoNVY
-         7qhg==
-X-Gm-Message-State: APjAAAWLZ10ZzyCChwA73DAtOTuoNWea8eMYTYXiesAH37bzUnRa4JGL
-        VEmHsLMCSIqKTjq7wNyDYSCeJb/SboAItrOoUh4=
-X-Google-Smtp-Source: APXvYqwUhkAPW9D2SkLS1McuAXKVB3YjfihtVnFvJQvIuEmwcKR9GEFxQHz+6tPz/KYnEI/dqNUstw+dR+4k3wO1i98=
-X-Received: by 2002:a19:2207:: with SMTP id i7mr28348579lfi.185.1568302273356;
- Thu, 12 Sep 2019 08:31:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190911144943.21554-1-philipp.puschmann@emlix.com>
-In-Reply-To: <20190911144943.21554-1-philipp.puschmann@emlix.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 12 Sep 2019 12:31:02 -0300
-Message-ID: <CAOMZO5Bxks8709gEA+8OFH2b0LYqJd1EmpSbKEgPJo+64Pf3EA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Fix UART DMA freezes for iMX6
-To:     Philipp Puschmann <philipp.puschmann@emlix.com>,
-        Robin Gong <yibin.gong@nxp.com>,
-        Fugang Duan <fugang.duan@nxp.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Vinod <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        Thu, 12 Sep 2019 11:34:31 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id E876C18224D65;
+        Thu, 12 Sep 2019 15:34:29 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2691:2828:2829:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3874:4321:5007:6119:7903:8603:8908:9010:10004:10400:10562:10848:11026:11232:11658:11914:12050:12297:12740:12760:12895:13069:13095:13311:13357:13439:14096:14097:14181:14659:14721:14777:21080:21433:21627:21819:30022:30054:30070:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: room66_4419114b8213b
+X-Filterd-Recvd-Size: 2754
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 12 Sep 2019 15:34:27 +0000 (UTC)
+Message-ID: <44c08faf43fa77fb271f8dbb579079fb09007716.camel@perches.com>
+Subject: Re: [Ksummit-discuss] [PATCH v2 0/3] Maintainer Entry Profiles
+From:   Joe Perches <joe@perches.com>
+To:     Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     Dave Jiang <dave.jiang@intel.com>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        linux-nvdimm@lists.01.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, dmaengine@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steve French <stfrench@microsoft.com>,
+        "Tobin C. Harding" <me@tobin.cc>
+Date:   Thu, 12 Sep 2019 08:34:26 -0700
+In-Reply-To: <6fe45562-9493-25cf-afdb-6c0e702a49b4@acm.org>
+References: <156821692280.2951081.18036584954940423225.stgit@dwillia2-desk3.amr.corp.intel.com>
+         <yq1o8zqeqhb.fsf@oracle.com> <6fe45562-9493-25cf-afdb-6c0e702a49b4@acm.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Adding Robin and Andy]
+On Thu, 2019-09-12 at 14:31 +0100, Bart Van Assche wrote:
+> On 9/11/19 5:40 PM, Martin K. Petersen wrote:
+> > * Do not use custom To: and Cc: for individual patches. We want to see the
+> >   whole series, even patches that potentially need to go through a different
+> >   subsystem tree.
 
-On Wed, Sep 11, 2019 at 11:50 AM Philipp Puschmann
-<philipp.puschmann@emlix.com> wrote:
->
-> For some years and since many kernel versions there are reports that
-> RX UART DMA channel stops working at one point. So far the usual workaround was
-> to disable RX DMA. This patches try to fix the underlying problem.
->
-> When a running sdma script does not find any usable destination buffer to put
-> its data into it just leads to stopping the channel being scheduled again. As
-> solution we we manually retrigger the sdma script for this channel and by this
-> dissolve the freeze.
->
-> While this seems to work fine so far a further patch in this series increases
-> the number of RX DMA periods for UART to reduce use cases running into such
-> a situation.
->
-> This patch series was tested with the current kernel and backported to
-> kernel 4.15 with a special use case using a WL1837MOD via UART and provoking
-> the hanging of UART RX DMA within seconds after starting a test application.
-> It resulted in well known
->   "Bluetooth: hci0: command 0x0408 tx timeout"
-> errors and complete stop of UART data reception. Our Bluetooth traffic consists
-> of many independent small packets, mostly only a few bytes, causing high usage
-> of periods.
->
->
-> Philipp Puschmann (4):
->   dmaengine: imx-sdma: fix buffer ownership
->   dmaengine: imx-sdma: fix dma freezes
->   serial: imx: adapt rx buffer and dma periods
->   dmaengine: imx-sdma: drop redundant variable
->
->  drivers/dma/imx-sdma.c   | 32 ++++++++++++++++++++++----------
->  drivers/tty/serial/imx.c |  5 ++---
->  2 files changed, 24 insertions(+), 13 deletions(-)
->
-> --
-> 2.23.0
->
+That's not currently feasible when cc'ing any vger.kernel.org list
+as those lists have a maximum email header size and patches that
+span multiple subsystems can have very long to: and cc: lists.
+
+> > * The patch must compile without warnings (make C=1 CF="-D__CHECK_ENDIAN__")
+> >   and does not incur any zeroday test robot complaints.
+> 
+> How about adding W=1 to that make command?
+
+That's rather too compiler version dependent and new
+warnings frequently get introduced by new compiler versions.
+
+> How about existing drivers that trigger tons of endianness warnings,
+> e.g. qla2xxx? How about requiring that no new warnings are introduced?
+
+Adding a sparse clean C=2 requirement might be useful.
+
+> > * The patch must have a commit message that describes, comprehensively and in
+> >   plain English, what the patch does.
+> 
+> How about making this requirement more detailed and requiring that not
+> only what has been changed is document but also why that change has been
+> made?
+
+I believe the "why" is rather more important than the "how"
+and should be the primary thing described in the commit message.
+
+
