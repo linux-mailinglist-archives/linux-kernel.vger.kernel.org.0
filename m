@@ -2,103 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4292B0A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 10:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41330B0A67
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 10:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbfILIbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 04:31:40 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40023 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfILIbk (ORCPT
+        id S1730311AbfILIeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 04:34:12 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45986 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfILIeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 04:31:40 -0400
-Received: by mail-ot1-f68.google.com with SMTP id y39so25302511ota.7
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 01:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=OlWYYjLORVad+G4yd1ldM6bKFvrCL2c9JT72fGmdr8k=;
-        b=BFHVOJ/03oqepW2w4s/CChp7o3uecT/wHS9gP/yNcJYV/ZCnNjX8yP74apgqno1ooz
-         uWntnM2EXxDwdOQS+XmZR5Sy/Lz6abT33alUsOYNcfwwFpBxqW41Vqmi9sGKmr02R9GY
-         7mDM+HDHbfQbhRaXXr+6qCArROSyc+fYJokNNzkROaBGEyFzlEjeWV8C7uSSp/vs9oYr
-         0B+wVoNnNmDaJ5F8W0yVhl9ACS7vdS9P+R+oJPfp0mkTWxHwPz1L/aWU40uPFBrOMitR
-         dNlnj5ZPWX/GshqhjWXwbR9jNbA8AVwGuJwOZZDgAjy1s/lWkqFSrV8cgi4YOt1tBdl7
-         c8VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=OlWYYjLORVad+G4yd1ldM6bKFvrCL2c9JT72fGmdr8k=;
-        b=r3oajItOsAtXJTxvd241DOd6Gb6oeNZ/qNe3EhkNmwCe92EA5zV5anvFL2rDl86tFz
-         Bopr9pCY9zFBySUiqtSR0c7i7692rAbzTFrVv2HjcOKI2hyHK15kUTdDvuW5fyy53+TS
-         c1o5GnXpOtD+NL75dqU6ZF6N5lsxfSvD2g3n/rCJvn79fq+JRXdfRRT9biGsomL+p79P
-         hJJlH7m9bQ1OGLfr1IVOm3mdqxlQdohXPSMvNvwz/QyrxGYM7XEeebo2FHHY4xOTdjHl
-         VmxXdnMOhhMlQ/+s9YeQ89hHncQ8xTJWf5LLxaUg3FVDiyvRIZFUe7W4nF9o8o1AYYz7
-         3kMA==
-X-Gm-Message-State: APjAAAXfgRQdT4P+Fy6RWP8nPnocLL/3+yvK5bSMqYPnqlS6+jDxfkfU
-        aETwUnIaJ7TDebCBPYdvzc5bwV+DOCMzGoZsSME=
-X-Google-Smtp-Source: APXvYqyzacyGy4wroziRir2dcCjA5Eh9ogJSH3K9LlvrXxsbg8E9e6yKs9ebOEW9cPy0kYN8PDrXWHkOv8bH7przI2E=
-X-Received: by 2002:a9d:3b23:: with SMTP id z32mr32868610otb.190.1568277097616;
- Thu, 12 Sep 2019 01:31:37 -0700 (PDT)
+        Thu, 12 Sep 2019 04:34:11 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8C8JBTh021612;
+        Thu, 12 Sep 2019 08:34:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=6DO3cZ/C+dKYPej/qzrFPSWCEgvugiX6kxk6zUsvZqs=;
+ b=OCiXsUcFVUG40Tkg9mPHRciwJg1/GADCpjRH4o1HFMbGXs+Gu2V8iN5eUMZ2vRl5bash
+ +NStBguTmeN3D8UphxUB4ZNjaAI4EL6ncCHrgxzrr1xzRZvqDVlpQg2szDftOBCDDoTB
+ Fk5QOojvIz9s+6J/BEt7cYh+7T1cCG0J5pse4kfKPHBHUkdtg2JXKxB1vmdeU7w3bpQf
+ UetqJcwxygqiwjtso5UrfxOekIgE1EjayF272St4luuzr2JhUBCvtOFi2lR3R+ycM3HS
+ +wbhuYez2TELpynwenZZ76B6nSt2pdYOyEbQvv98LuIyvHTgnS33q0bvYkwci8Z670hJ Xg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2uw1jyevx9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Sep 2019 08:34:06 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8C8J3QJ013733;
+        Thu, 12 Sep 2019 08:32:06 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2uxk0u3t14-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Sep 2019 08:32:06 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8C8W0O3002104;
+        Thu, 12 Sep 2019 08:32:01 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Sep 2019 01:31:59 -0700
+Date:   Thu, 12 Sep 2019 11:31:53 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Sandro Volery <sandro@volery.com>
+Cc:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux@rasmusvillemoes.dk
+Subject: Re: [PATCH v5] Staging: exfat: Avoid use of strcpy
+Message-ID: <20190912083153.GN20699@kadam>
+References: <20190912082559.GA5043@volery>
 MIME-Version: 1.0
-Received: by 2002:ac9:314f:0:0:0:0:0 with HTTP; Thu, 12 Sep 2019 01:31:37
- -0700 (PDT)
-Reply-To: elodieantoine76578@yahoo.com
-From:   Mrs Elodie Antoine <marianmichel97@gmail.com>
-Date:   Thu, 12 Sep 2019 01:31:37 -0700
-Message-ID: <CAFBSE-PBgLNULw1-qxRQRRus3hYFHHBwtt8q4jRhw9tND-2BbA@mail.gmail.com>
-Subject: Greetings From Mrs Elodie,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190912082559.GA5043@volery>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=864
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909120090
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9377 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=934 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909120090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings From Mrs Elodie,
+You did it.  Well done.  :P
 
-Calvary Greetings in the name of the LORD Almighty and Our LORD JESUS
-CHRIST the giver of every good thing. Good day,i know this letter will
-definitely come to you as a huge surprise, but I implore you to take
-the time to go through it carefully as the decision you make will go
-off a long way to determine my future and continued existence. I am
-Mrs Elodie Antoine
-aging widow of 59 years old suffering from long time illness. I have
-some funds I inherited from my late husband,
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The sum of (US$4.5 Million Dollars) and I needed a very honest and God
-fearing  who can withdraw this money then use the funds for Charity
-works. I WISH TO GIVE THIS FUNDS TO YOU FOR CHARITY WORKS. I found
-your email address from the internet after honest prayers  to the LORD
-to bring me a helper and i decided to contact you if you may be
-willing and interested to handle these trust funds in good faith
-before anything happens to me.
-I accept this decision because I do not have any child who will
-inherit this money after I die. I want your urgent reply to me so that
-I will give you the deposit receipt which the  COMPANY issued to me as
-next of kin for immediate transfer of the money to your account in
-your country, to start the good work of God, I want you to use the
-15/percent of the total amount to help yourself in doing the project.
+regards,
+dan carpenter
 
-
-I am desperately in keen need of assistance and I have summoned up
-courage to contact you for this task, you must not fail me and the
-millions of the poor people in our todays WORLD. This is no stolen
-money and there are no dangers involved,100% RISK FREE with full legal
-proof. Please if you would be able to use the funds for the Charity
-works kindly let me know immediately.I will appreciate your utmost
-confidentiality and trust in this matter to accomplish my heart
-desire, as I don't want anything that will jeopardize my last wish. I
-want you to take 15 percent of the total money for your personal use
-while 85% of the money will go to charity.I will appreciate your
-utmost confidentiality and trust in this matter to accomplish my heart
-desire, as I don't want anything that will jeopardize my last wish.
-
-
-kindly respond for further details. reply to my private E-mail:(
-elodieantoine76578@yahoo.com )
-
-
-Thanks and God bless you,
-
-Mrs Elodie Antoine
