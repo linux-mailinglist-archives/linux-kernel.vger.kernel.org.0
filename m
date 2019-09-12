@@ -2,110 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA8E6B109D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 16:04:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD57B10A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 16:05:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732419AbfILOEK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 12 Sep 2019 10:04:10 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43871 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731816AbfILOEK (ORCPT
+        id S1732456AbfILOFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 10:05:15 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33743 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732447AbfILOFO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 10:04:10 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d15so16057825pfo.10;
-        Thu, 12 Sep 2019 07:04:09 -0700 (PDT)
+        Thu, 12 Sep 2019 10:05:14 -0400
+Received: by mail-ed1-f68.google.com with SMTP id o9so24112451edq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 07:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ha/ksfChi40fvWXvJ2Pp1OUPpzkomxxm5i7dcskz7Q0=;
+        b=N1uaN/ryzApCA4SADojux1E9zO7nn0OPjjEhdzhTt0JKsMtlgusANPx2drUgpBAlLs
+         SoZeqeON7maPDbM+8sK+uV/VnXPnMhc5g1bliSnosSXlo6RK5RwkdtVIW7Qp0ctU+sSL
+         QIWvxhqIgpV8zoKpYk8nnZDbkc4QWsB8IV8IA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UW+vGhhaDwB8JUulVCeUl6DUls9Tf7byS++5Ic4BMgo=;
-        b=IbImnIaLuQTkNHaup7cO4iFl/4wtq1LhVLxPzuAOwvBu0FDAk7pJweK/GP5gB0i5BM
-         ZY0UC3zjiL15oYOzQYpe+OiKIb9nG+W7PIB0o900S0oYNCvcH09EL9HDWqZnfHtVtCEQ
-         2x9yfi3hRa2FX/Swn3a4fXph/nuAsjymGAzlKafFxsrsEqCHHx6Ki+GA5mFh6i44l0m8
-         HvGVd4N8CwjsjGA44wkI1N5LlPq/DfiZVjdOsMv6m7tVE8liMtWrjYXxFIHB3Tx0qvu+
-         Lq0ox/cbO6hCoum0+kyAnGK/ItGdBM3Rh63dC71ms9/HikN4jjaSSsPuRA8zB9FMM8e/
-         5ddQ==
-X-Gm-Message-State: APjAAAW0e4A9gMPet9kw4xHs58deINjSAKSTQgJzyUYjqBU0elO15mOQ
-        k5AE+DT5vG3KwwKu+OHwjSU=
-X-Google-Smtp-Source: APXvYqxtVNhYO4w3FacKlb3XkfXk4WXO2cF+kGey0owBt4cG6OUwFWyvIIVkp/ooVH7793FzuO5+mA==
-X-Received: by 2002:a63:d30c:: with SMTP id b12mr39057704pgg.235.1568297049432;
-        Thu, 12 Sep 2019 07:04:09 -0700 (PDT)
-Received: from [172.19.249.100] ([38.98.37.138])
-        by smtp.gmail.com with ESMTPSA id m24sm29696055pfa.37.2019.09.12.07.03.52
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ha/ksfChi40fvWXvJ2Pp1OUPpzkomxxm5i7dcskz7Q0=;
+        b=Jv5rqHH0jIwk3j4PF6LxFJtjx6P9XLkoMe3lXEM6q9p1mINRgbH6NBClZSahNB2h3N
+         we130suHIAo4DtjaeXMNTx3anbRmMbOEGIIXcPs9McJ2Z/lUOqY/nvPPSVSkI7iVYEZt
+         XxHWFjyiiiLJr3zjMmBFXofrV4ZGYHh976meHWTaVhXghG4WZO2HzRiN+41LfW9OXrqM
+         Ucct2wyWb112rn/wiEisc02A5mrpyEHxWdGkC77ZWC28Z26ygqPM15fYv5PArgLLGux6
+         9q3KDT8kJ0adyRJY6jy8NWolRRTGelFSvyfzIGrJnie/49uyFwdTt1g6zFxoDqZfPz7J
+         V8ow==
+X-Gm-Message-State: APjAAAXI0gHCBeLRrONxJq2peB6EC9cZBwU6h7imLAULXaRdkejRpvXT
+        rSbeXFWOw2kKoT/G0DqJoEpGIT4C/zenAQ==
+X-Google-Smtp-Source: APXvYqzON2KHQQFke0uoToGCzmU/fr4R5bJ2Z/iyiiwEFdbuad3PtWsUv3lXaIIGsaZvtC5xYV6y2Q==
+X-Received: by 2002:a05:6402:651:: with SMTP id u17mr34830937edx.59.1568297112249;
+        Thu, 12 Sep 2019 07:05:12 -0700 (PDT)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
+        by smtp.gmail.com with ESMTPSA id f4sm4564572edf.47.2019.09.12.07.05.11
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2019 07:04:08 -0700 (PDT)
-Subject: Re: [PATCH 3/3] scsi: core: change function comments to kernel-doc
- style
-To:     =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     corbet@lwn.net, kernel@collabora.com, krisman@collabora.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com
-References: <20190911203735.1332398-1-andrealmeid@collabora.com>
- <20190911203735.1332398-3-andrealmeid@collabora.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <19eb6b7f-0a62-0e2a-c108-27887b825767@acm.org>
-Date:   Thu, 12 Sep 2019 15:03:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 12 Sep 2019 07:05:11 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id h7so27599263wrw.8
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 07:05:11 -0700 (PDT)
+X-Received: by 2002:a05:6000:1082:: with SMTP id y2mr35193821wrw.77.1568297110781;
+ Thu, 12 Sep 2019 07:05:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190911203735.1332398-3-andrealmeid@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+References: <20190912094121.228435-1-tfiga@chromium.org> <20190912123821.rraib5entkcxt5p5@sirius.home.kraxel.org>
+In-Reply-To: <20190912123821.rraib5entkcxt5p5@sirius.home.kraxel.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 12 Sep 2019 23:04:59 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AFXfu7ysFCi1XQS61DK8nbSk5-=UHkvpYWDtFae5YQ6Q@mail.gmail.com>
+Message-ID: <CAAFQd5AFXfu7ysFCi1XQS61DK8nbSk5-=UHkvpYWDtFae5YQ6Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] drm/virtio: Export resource handles via DMA-buf API
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stevensd@chromium.org,
+        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>,
+        Zach Reizner <zachr@chromium.org>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Pawel Osciak <posciak@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/11/19 9:37 PM, André Almeida wrote:
-> +/**
-> + * scsi_queue_insert - Insert a command in the midlevel queue.
-> + * @cmd:    command that we are adding to queue.
-> + * @reason: why we are inserting command to queue.
->   *
-> - * Returns:     Nothing.
-> + * We do this for one of two cases. Either the host is busy and it cannot accept
-> + * any more commands for the time being, or the device returned QUEUE_FULL and
-> + * can accept no more commands.
->   *
-> - * Notes:       We do this for one of two cases.  Either the host is busy
-> - *              and it cannot accept any more commands for the time being,
-> - *              or the device returned QUEUE_FULL and can accept no more
-> - *              commands.
-> - * Notes:       This could be called either from an interrupt context or a
-> - *              normal process context.
-> + * Context: This could be called either from an interrupt context or a normal
-> + * process context.
->   */
+Hi Gerd,
 
-What is the midlevel queue? I don't know anyone who still uses that
-terminology today. Since the switch to scsi-mq we have software queues
-(if no I/O scheduler has been configured), scheduler queue(s) (if an I/O
-scheduler has been configured) and hardware queues.
+On Thu, Sep 12, 2019 at 9:38 PM Gerd Hoffmann <kraxel@redhat.com> wrote:
+>
+>   Hi,
+>
+> > To seamlessly enable buffer sharing with drivers using such frameworks,
+> > make the virtio-gpu driver expose the resource handle as the DMA address
+> > of the buffer returned from the DMA-buf mapping operation.  Arguably, the
+> > resource handle is a kind of DMA address already, as it is the buffer
+> > identifier that the device needs to access the backing memory, which is
+> > exactly the same role a DMA address provides for native devices.
 
-> +/**
-> + * scsi_io_completion - Completion processing for block device I/O requests.
-> + * @cmd:	command that is finished.
+First of all, thanks for taking a look at this.
 
-That looks inconsistent: the function description refers to block device
-I/O requests while what is being completed is a SCSI command.
+>
+> No.  A scatter list has guest dma addresses, period.  Stuffing something
+> else into a scatterlist is asking for trouble, things will go seriously
+> wrong when someone tries to use such a fake scatterlist as real scatterlist.
 
-> + * We will finish off the specified number of sectors.  If we are done, the
-> + * command block will be released and the queue function will be goosed. If we
-> + * are not done then we have to figure out what to do next:
-> + *
-> + *   a) We can call scsi_requeue_command().  The request
-> + *	will be unprepared and put back on the queue.  Then
-> + *	a new command will be created for it.  This should
-> + *	be used if we made forward progress, or if we want
-> + *	to switch from READ(10) to READ(6) for example.
+What is a "guest dma address"? The definition of a DMA address in the
+Linux DMA API is an address internal to the DMA master address space.
+For virtio, the resource handle namespace may be such an address
+space. However, we could as well introduce a separate DMA address
+space if resource handles are not the right way to refer to the memory
+from other virtio devices.
 
-I am not aware of any function in the kernel tree that has the name
-scsi_requeue_command().
+>
+> Also note that "the DMA address of the buffer" is bonkers in virtio-gpu
+> context.  virtio-gpu resources are not required to be physically
+> contigous in memory, so typically you actually need a scatter list to
+> describe them.
 
-Thanks,
+There is no such requirement even on a bare metal system, see any
+system that has an IOMMU, which is typical on ARM/ARM64. The DMA
+address space must be contiguous only from the DMA master point of
+view.
 
-Bart.
-
+Best regards,
+Tomasz
