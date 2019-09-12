@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87857B1641
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 00:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BB8B163E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 00:20:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbfILWUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 18:20:02 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39761 "EHLO
+        id S1729361AbfILWTu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 18:19:50 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39764 "EHLO
         mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbfILWTq (ORCPT
+        with ESMTP id S1726164AbfILWTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 18:19:46 -0400
-Received: by mail-ed1-f67.google.com with SMTP id u6so25329731edq.6
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 15:19:45 -0700 (PDT)
+        Thu, 12 Sep 2019 18:19:47 -0400
+Received: by mail-ed1-f67.google.com with SMTP id u6so25329752edq.6
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 15:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OHOoE81/vagVdgBIH9CLF85wSTRP1qRZlYCJ09Kjkp4=;
-        b=TjJrxsl4zMXNrJFiUwiLu0rXfmuD+c9bLYta25oBAOywi1uIcNZagWhJtH0/xc4JQq
-         5tPlC0jgBNcItarWE0JdpGDg0KttyWH7BoiWpfLd9T2xttJtJfLjff5GzrVD0HBOs7s/
-         azlms+/f5/MN5FdWxUmiuSCwyzgP12gCZp/Xk=
+        bh=J/Zs3M8U4xSGbreIPfz9YMDfpqs2smNfuk85ROC+apU=;
+        b=VlWJzeFUMiBdShxxsRCMtQDi2X3BEYTsY+qF61Ym60/yomCJcq1ZK2npVmras1QC+O
+         rZQw0OxEbN+rLICZpxnRxVeZf//HiYpNhHxqzS44MG+aK+swfNz2beu3YF1/DkjTQdJg
+         mU8QEr32VZCpC0nOqS5XO7+hrmZQXMY2/Au3c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OHOoE81/vagVdgBIH9CLF85wSTRP1qRZlYCJ09Kjkp4=;
-        b=GibmSHpci1x1odUCSebcE2fkp0xRwmZz+hRNWaRRu0j9oaUT5fXNiFmGFyyOu/yEKn
-         PpQTvHwmL6FXPL935yytWrHilNBMFXqCyMTR/HnPGPDgkd7oI7XNFcCOkgek7OzJAAZo
-         7pMXXmB2rU2nKlfGBU88Auw32o5j4mRkHbTnlCFL1YgbNqCVQPVPJb5tTkueMnYHubqj
-         C00zvd/VNXelbzdDn03vgG1QYmR0We2br7oi9rA9aW384/G2Ko4yLtoojUr8PrthVe8B
-         uUpuXvbZj56hPAa4N4xlB6r1mP4tulUE9iSDJLWT1iDrLSe72qClSEOEDGqB23a71+za
-         4qZg==
-X-Gm-Message-State: APjAAAUBbb3sQqykmUVUEYE3MKE+JxM6dtj+mvcdnnU9X7tjTTQICXTy
-        pxzSZn7iB1wF0C2EZGS1Tohmyg==
-X-Google-Smtp-Source: APXvYqwVuv2WZLLpJLpIl8iaifWOV1Pbklez+EdUQAQZTc2XRJa6FHvGGT6cxlfmf5E90tcecg/37g==
-X-Received: by 2002:aa7:d607:: with SMTP id c7mr45378150edr.286.1568326784935;
-        Thu, 12 Sep 2019 15:19:44 -0700 (PDT)
+        bh=J/Zs3M8U4xSGbreIPfz9YMDfpqs2smNfuk85ROC+apU=;
+        b=oS5KJvkJa48vcUR27cKXGUx0r4KShaBZiEkOAY+ZGsQyf7guNWaTrNgOn9pP22AJAT
+         4Zren/NJmnMgFqB6Q0fF9L55gTZOCeXK71iqn/UXg95wi93UScCo2a0HinKzXkMmtBlx
+         xnHelUoYlj5kWp0UPXo429XvsfYic1l0a0dNRs5/ohmAjme/sLhnp/osKZFY0Pk0bej1
+         Hkvjgcm88RdykSgu43Nhf+4G2ZGGMIkk5YIJA0j6gNizwXlzk2MdWyWIYUmrgX7bvrhT
+         JIFcjPRs9Pyi+unO8qUWHvE3M38F/OrNkU3+0fqwjZAElRYqn4jNGmFhCu349y/lO1c7
+         UlfA==
+X-Gm-Message-State: APjAAAXTlP6YtD7PUfdoEp0SEh0tBaFD/Div9RSw0GzVSm0Ia4bjBdgu
+        nhSYv9kCdsknoukOCi1hhIH0ww==
+X-Google-Smtp-Source: APXvYqyBmONlyJbpuPSE9kXi+uyAdtb5Ms1e+b/ehTsS11FCAJYi0pEjNI0GNEc5MXDbWAQAt2oZBw==
+X-Received: by 2002:a05:6402:17aa:: with SMTP id j10mr44115355edy.222.1568326785970;
+        Thu, 12 Sep 2019 15:19:45 -0700 (PDT)
 Received: from prevas-ravi.prevas.se (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
-        by smtp.gmail.com with ESMTPSA id 36sm4305228edz.92.2019.09.12.15.19.43
+        by smtp.gmail.com with ESMTPSA id 36sm4305228edz.92.2019.09.12.15.19.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2019 15:19:44 -0700 (PDT)
+        Thu, 12 Sep 2019 15:19:45 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
         ndesaulniers@google.com,
@@ -52,9 +52,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nadav Amit <namit@vmware.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v3 2/6] lib/zstd/mem.h: replace __inline by inline
-Date:   Fri, 13 Sep 2019 00:19:23 +0200
-Message-Id: <20190912221927.18641-3-linux@rasmusvillemoes.dk>
+Subject: [PATCH v3 3/6] compiler_types.h: don't #define __inline
+Date:   Fri, 13 Sep 2019 00:19:24 +0200
+Message-Id: <20190912221927.18641-4-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190912221927.18641-1-linux@rasmusvillemoes.dk>
 References: <20190830231527.22304-1-linux@rasmusvillemoes.dk>
@@ -66,39 +66,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, compiler_types.h #defines __inline as inline (and further
-#defines inline to automatically attach some attributes), so this does
-not change functionality. It serves as preparation for removing the
-#define of __inline.
+The spellings __inline and __inline__ should be reserved for uses
+where one really wants to refer to the inline keyword, regardless of
+whether or not the spelling "inline" has been #defined to something
+else. Due to use of __inline__ in uapi headers, we can't easily get
+rid of the definition of __inline__. However, almost all users of
+__inline has been converted to inline, so we can get rid of that
+#define.
 
-While at it, also remove the __attribute__((unused)) - it's already
-included in the definition of the inline macro, and "open-coded"
-__attribute__(()) should be avoided.
-
-Since commit a95b37e20db9 (kbuild: get <linux/compiler_types.h> out of
-<linux/kconfig.h>), compiler_types.h is automatically included by all
-kernel C code - i.e., the definition of inline including the unused
-attribute is guaranteed to be in effect whenever ZSTD_STATIC is
-expanded.
+The exception is include/acpi/platform/acintel.h. However, that header
+is only included when using the intel compiler (does anybody actually
+build the kernel with that?), and the ACPI_INLINE macro is only used
+in the definition of utterly trivial stub functions, where I doubt a
+small change of semantics (lack of __gnu_inline) changes anything.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- lib/zstd/mem.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/compiler_types.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/lib/zstd/mem.h b/lib/zstd/mem.h
-index 3a0f34c8706c..93d7a2c377fe 100644
---- a/lib/zstd/mem.h
-+++ b/lib/zstd/mem.h
-@@ -27,7 +27,7 @@
- /*-****************************************
- *  Compiler specifics
- ******************************************/
--#define ZSTD_STATIC static __inline __attribute__((unused))
-+#define ZSTD_STATIC static inline
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 599c27b56c29..ee49be6d6088 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -150,8 +150,17 @@ struct ftrace_likely_data {
+ 	__maybe_unused notrace
+ #endif
  
- /*-**************************************************************
- *  Basic Types
++/*
++ * gcc provides both __inline__ and __inline as alternate spellings of
++ * the inline keyword, though the latter is undocumented. New kernel
++ * code should only use the inline spelling, but some existing code
++ * uses __inline__. Since we #define inline above, to ensure
++ * __inline__ has the same semantics, we need this #define.
++ *
++ * However, the spelling __inline is strictly reserved for referring
++ * to the bare keyword.
++ */
+ #define __inline__ inline
+-#define __inline   inline
+ 
+ /*
+  * Rather then using noinline to prevent stack consumption, use
 -- 
 2.20.1
 
