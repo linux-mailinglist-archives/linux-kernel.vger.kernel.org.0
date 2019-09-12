@@ -2,103 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD88B15D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 23:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D41FDB15D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 23:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbfILVUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 17:20:22 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35556 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728504AbfILVUW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 17:20:22 -0400
-Received: by mail-io1-f68.google.com with SMTP id f4so57593244ion.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 14:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gN6NbTbdBD+LpPm2/OIojga+N97BltFjeiskUToQd2k=;
-        b=uwudzUW+QhHWEBiuzAIQHoFP9Q69nPzDa6YfPHDIQwbLPH4yOueCxKLHSe10rBJGk/
-         KhMtM3sJArrKR7vuHq9nkIr2X+tNYnC7SsyfPUc8rTLoktXUYE+BXhGSdYy2FvVSDgOQ
-         yKNYiKfgP1dIJeZSY5aAox8IvqunDL6EsO+02vs0RyvDv4sJ7r5Dd/0RqA51abO/h0vM
-         TCAQ2atBaRXIorzCzX0TzVQ/DQaJZZRQIuFIBjS6v+n/Z7h+n5wXwcUqzBUU0Q/AgtPG
-         Upc37wSeXinGGYRHaEyBVQFkRHDAnyZe22+DLDbAwn8sjLRfhktzooI2nSXj1XC5rISB
-         vpUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gN6NbTbdBD+LpPm2/OIojga+N97BltFjeiskUToQd2k=;
-        b=Z+rZtAScmZyqV9GcRy0M6mPbj1/+3QCRoIMWdENua22nTz7OhQAQrprb/TL8Z5kWVL
-         MVE51DWD2KSA44f4GkylLyMcMiqAWEaGmWPWhgBEvKSEQnz/JGFFnGVyK+ktmOKqGWs0
-         XH5Z9Jw8GII7rCC2zBMocoGNqnPzJ8oJgGp7PYTs05OtjxJqfCVx+eHXzf5ouadE3utF
-         lDEsJ0PvNc7yIC/57gyjMIR7cueuKGmMaj6qtTkvN9q+E+tfAwO4W1WUGNUgqPYESmmS
-         FY44xvx7D3EpSyMs3h0ed/OetW5lA5oAjtc3ue53t1u9AVoPLH78UU4lP38kXSu3QJEK
-         TH9Q==
-X-Gm-Message-State: APjAAAXX0niuHeG5xxJsU26SNl2dAqglvJ2/QarfHr1PENahwKVRvTp6
-        P9icnijGTMiGzDfcLtlXWSSyg+Wr1x/p+9Rqg0pLAg==
-X-Google-Smtp-Source: APXvYqwxoYarrCqiyOJMszrAlELGJkKpICOdAogSDotKra7i4hK6Vfwg5TYlNK0oSP4qThk1xhrf5PPbSUlOsmz3LX0=
-X-Received: by 2002:a6b:1606:: with SMTP id 6mr2231217iow.108.1568323220804;
- Thu, 12 Sep 2019 14:20:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190912041817.23984-1-huangfq.daxian@gmail.com>
-In-Reply-To: <20190912041817.23984-1-huangfq.daxian@gmail.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Thu, 12 Sep 2019 14:20:09 -0700
-Message-ID: <CALMp9eSL_rDdWmgeWNwuqP_J_yu7x5Gs8DUBpJFdie18NEz=ow@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: work around leak of uninitialized stack contents
-To:     Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728624AbfILVbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 17:31:44 -0400
+Received: from mga14.intel.com ([192.55.52.115]:38897 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728577AbfILVbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 17:31:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 14:31:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="176092119"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga007.jf.intel.com with ESMTP; 12 Sep 2019 14:31:41 -0700
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH 1/3] fs/userfaultfd.c: remove a redundant check on end
+Date:   Fri, 13 Sep 2019 05:31:08 +0800
+Message-Id: <20190912213110.3691-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 9:18 PM Fuqian Huang <huangfq.daxian@gmail.com> wrote:
->
-> Emulation of VMPTRST can incorrectly inject a page fault
-> when passed an operand that points to an MMIO address.
-> The page fault will use uninitialized kernel stack memory
-> as the CR2 and error code.
->
-> The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
-> exit to userspace; however, it is not an easy fix, so for now just ensure
-> that the error code and CR2 are zero.
->
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-> ---
->  arch/x86/kvm/x86.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 290c3c3efb87..7f442d710858 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -5312,6 +5312,7 @@ int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
->         /* kvm_write_guest_virt_system can pull in tons of pages. */
->         vcpu->arch.l1tf_flush_l1d = true;
->
-> +       memset(exception, 0, sizeof(*exception));
->         return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
->                                            PFERR_WRITE_MASK, exception);
->  }
-> --
-> 2.11.0
->
-Perhaps you could also add a comment like the one Paolo added when he
-made the same change in kvm_read_guest_virt?
-See commit 353c0956a618 ("KVM: x86: work around leak of uninitialized
-stack contents (CVE-2019-7222)").
+For the ending vma, there is a check to make sure the end is huge page
+aligned.
+
+The *if* check makes sure vm_start < end <= vm_end. While the first half
+is not necessary, because the *for* clause makes sure vm_start < end.
+
+This patch just removes it.
+
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+---
+ fs/userfaultfd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 653d8f7c453c..9ce09ac619a2 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -1402,8 +1402,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+ 		 * If this vma contains ending address, and huge pages
+ 		 * check alignment.
+ 		 */
+-		if (is_vm_hugetlb_page(cur) && end <= cur->vm_end &&
+-		    end > cur->vm_start) {
++		if (is_vm_hugetlb_page(cur) && end <= cur->vm_end) {
+ 			unsigned long vma_hpagesize = vma_kernel_pagesize(cur);
+ 
+ 			ret = -EINVAL;
+-- 
+2.17.1
+
