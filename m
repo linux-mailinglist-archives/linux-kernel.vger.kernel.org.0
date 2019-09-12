@@ -2,72 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF87AB1311
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 18:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80F95B131B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 19:01:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730986AbfILQvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 12:51:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39054 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730840AbfILQvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 12:51:16 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 165FC3B464;
-        Thu, 12 Sep 2019 16:51:16 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.72])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 504FD5D712;
-        Thu, 12 Sep 2019 16:51:11 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 12 Sep 2019 18:51:15 +0200 (CEST)
-Date:   Thu, 12 Sep 2019 18:51:11 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCH v3] fork: check exit_signal passed in clone3() call
-Message-ID: <20190912165110.GA719@redhat.com>
-References: <cover.1568223594.git.esyr@redhat.com>
- <4b38fa4ce420b119a4c6345f42fe3cec2de9b0b5.1568223594.git.esyr@redhat.com>
+        id S1730557AbfILRAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 13:00:35 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2218 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729855AbfILQzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 12:55:43 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id BD85C710C0A98E5A65C6;
+        Fri, 13 Sep 2019 00:55:39 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 13 Sep 2019 00:55:29 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <arnd@arndb.de>, <zhongjiang@huawei.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drivers/misc: Remove unneeded variable in st_tty_open
+Date:   Fri, 13 Sep 2019 00:52:27 +0800
+Message-ID: <1568307147-43468-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b38fa4ce420b119a4c6345f42fe3cec2de9b0b5.1568223594.git.esyr@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 12 Sep 2019 16:51:16 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11, Eugene Syromiatnikov wrote:
->
-> @@ -2562,6 +2564,15 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
->  	if (copy_from_user(&args, uargs, size))
->  		return -EFAULT;
->  
-> +	/*
-> +	 * Two separate checks are needed, as valid_signal() takes unsigned long
-> +	 * as an argument, and struct kernel_clone_args uses int type
-> +	 * for the exit_signal field.
-> +	 */
-> +	if (unlikely((args.exit_signal > UINT_MAX) ||
-> +		     !valid_signal(args.exit_signal)))
-> +		return -EINVAL;
+st_tty_open do not need local variable to store different value,
+Hence just remove it.
 
-OK, I equally agree with this version. Although I'd simply do
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/misc/ti-st/st_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	if (args.exit_signal > _NSIG)
-		return -EINVAL;
-
-but this is cosmetic.
-
-Acked-by: Oleg Nesterov <oleg@redhat.com>
+diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
+index 7d9e23a..2ae9948 100644
+--- a/drivers/misc/ti-st/st_core.c
++++ b/drivers/misc/ti-st/st_core.c
+@@ -708,7 +708,6 @@ long st_write(struct sk_buff *skb)
+  */
+ static int st_tty_open(struct tty_struct *tty)
+ {
+-	int err = 0;
+ 	struct st_data_s *st_gdata;
+ 	pr_info("%s ", __func__);
+ 
+@@ -731,7 +730,8 @@ static int st_tty_open(struct tty_struct *tty)
+ 	 */
+ 	st_kim_complete(st_gdata->kim_data);
+ 	pr_debug("done %s", __func__);
+-	return err;
++
++	return 0;
+ }
+ 
+ static void st_tty_close(struct tty_struct *tty)
+-- 
+1.7.12.4
 
