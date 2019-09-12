@@ -2,109 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 245F9B0FC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 15:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C404AB0FEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 15:29:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732090AbfILNZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 09:25:58 -0400
-Received: from mail-eopbgr800093.outbound.protection.outlook.com ([40.107.80.93]:36768
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731879AbfILNZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 09:25:58 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IhPJRIVMMu3MuMs444ncOS4guMGWagPLky8HIQuMa2irjLRmuIjBmuXjg2DBPqhOr9JIN2YZdtzfG1vruMuJIUkXO5NP5n1h1LdX5qh6jBA9ou4JHk/W8XH2jGlp1Iz/6vw9bAObfMyyZSc/Sl2xIR6Efuk4KgE5ItyuRIim9Y0dm5aI6tzHBjcO7q2Hf5aZ2lvKzY8mC3qSKcsNo5IYhqPZEVk2iim0GbxwC+zR+UlsIFx8nEVB7L48PDTDACrf9jB/Dhyd1C9G6y9DQkprlMTflKLymwtMOD6TMbWyEI3Kzc8u0AOeHyzCBK5VL8fsQqkJrlNs0XYdl8WIxn5f7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rDsJpJf8h+/NrNuQArehXk82KZVqr1IWaohKzKq0GqY=;
- b=cJ0UpPuP0vHvrfSU1wOZRkY9/sWF+LSx7BJ92n/tsO6SJ3EZegjxd3GACtTfqVF0j9ap3KkNbit2tXuRXVBy2cMhO1V0xZBEWrP34AYlVVUoGbZUwsDYezgXrwD59k6Z0o8eOeVNL0Tp3sxNz2RxKoK0xTmTZraDf9LP7DCqvCjn2q1xoHAMgG/IZ1pJUyPxYiXLlOs+/j+TFjwIBiUrsvY81Xoa8vi5ApQllM16q37K9WPBLrP+HOXFG6kT2LKv9suUCVFWZi85Ze31YyY6cjojwvt9Ps1/tVa0zqkE+RFFEwbve76WkVbE0swbK93x9CdUCUopKobPAOUUNwL7vA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rDsJpJf8h+/NrNuQArehXk82KZVqr1IWaohKzKq0GqY=;
- b=WoQPVJxsWMFEIpUh1MPXoSiBUhub7SfUT7xwvg/laJYcf4zZNySYWBOTrb2giR4e0pir0pKJOj+jKR0XvYNp8Owie2Zu7JJDDxYe74REM2ZW6m6hHkigAFfgVQyWgaL/dAy8jzTxr87JrgAZmevClAZ9FNZeTf0KhtB1lwwHvmo=
-Received: from DM5PR13MB1851.namprd13.prod.outlook.com (10.171.159.143) by
- DM5PR13MB1337.namprd13.prod.outlook.com (10.168.117.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2263.10; Thu, 12 Sep 2019 13:25:53 +0000
-Received: from DM5PR13MB1851.namprd13.prod.outlook.com
- ([fe80::70fd:85c2:8ea9:a0b6]) by DM5PR13MB1851.namprd13.prod.outlook.com
- ([fe80::70fd:85c2:8ea9:a0b6%9]) with mapi id 15.20.2263.016; Thu, 12 Sep 2019
- 13:25:53 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "bfields@fieldses.org" <bfields@fieldses.org>,
-        "bcodding@redhat.com" <bcodding@redhat.com>
-CC:     "tibbs@math.uh.edu" <tibbs@math.uh.edu>,
-        "linux@stwm.de" <linux@stwm.de>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "km@cm4all.com" <km@cm4all.com>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>
-Subject: Re: Regression in 5.1.20: Reading long directory fails
-Thread-Topic: Regression in 5.1.20: Reading long directory fails
-Thread-Index: AQHVUfDuoAq39fX+s0K+L+pluMBkM6cHnsTegAlOTYCAAAwCNIAJQZHggAAlEwCAABHoXoAAKhIAgABG1wuAA/3qgIAAZExXgAAA1wCAB5GfgIAAA/sAgAAM/YCAAADmAIAAAysAgAACpICAAAEVAIABN6+AgAAGjQCAAARdgIAAAW+AgAADUYA=
-Date:   Thu, 12 Sep 2019 13:25:53 +0000
-Message-ID: <db42c87ba2c5b0852ad42ba51792ee67ab036a37.camel@hammerspace.com>
-References: <DD6B77EE-3E25-4A65-9D0E-B06EEAD32B31@redhat.com>
-         <0089DF80-3A1C-4F0B-A200-28FF7CFD0C65@oracle.com>
-         <429B2B1F-FB55-46C5-8BC5-7644CE9A5894@redhat.com>
-         <F1EC95D2-47A3-4390-8178-CAA8C045525B@oracle.com>
-         <8D7EFCEB-4AE6-4963-B66F-4A8EEA5EA42A@redhat.com>
-         <FAA4DD3D-C58A-4628-8FD5-A7E2E203B75A@redhat.com>
-         <B8CDE765-7DCE-4257-91E1-CC85CB7F87F7@oracle.com>
-         <EC2B51FB-8C22-4513-B59F-0F0741F694EB@redhat.com>
-         <c8bc4f95e7a097b01e5fff9ce5324e32ee9d8821.camel@hammerspace.com>
-         <57185A91-0AC8-4805-B6CE-67D629F814C2@redhat.com>
-         <20190912131359.GB31879@fieldses.org>
-In-Reply-To: <20190912131359.GB31879@fieldses.org>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-originating-ip: [50.36.167.63]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7a308be1-7c78-43e2-8aa6-08d73784bcd2
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM5PR13MB1337;
-x-ms-traffictypediagnostic: DM5PR13MB1337:
-x-microsoft-antispam-prvs: <DM5PR13MB1337B25BCABEC6A811A2BC06B8B00@DM5PR13MB1337.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 01583E185C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(136003)(39830400003)(366004)(199004)(189003)(102836004)(14444005)(6506007)(486006)(2906002)(446003)(5660300002)(4744005)(36756003)(2501003)(2616005)(11346002)(86362001)(478600001)(316002)(14454004)(3846002)(66066001)(110136005)(71190400001)(26005)(186003)(476003)(71200400001)(6116002)(7736002)(6246003)(81166006)(4326008)(305945005)(76176011)(6512007)(81156014)(53936002)(99286004)(256004)(229853002)(66946007)(6436002)(66476007)(54906003)(6486002)(64756008)(66556008)(118296001)(8936002)(66446008)(8676002)(25786009)(76116006)(91956017);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR13MB1337;H:DM5PR13MB1851.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: M5Atlu+zFtev3aWQXoGvQip26lPfOMqfaI6FyByWmTJ0lGVbStwnp4yd+V/tcedHkc5xXKTvjkTOx+M9Q/KH26hJw4nwdZA9NlyCaZ93moF594d60ik8WWTcDgekUbt0V2uJapSAN3kNywrjG3iysjj58+p/nQ+z3nitpuwbwqDXl/3n4EFh4Hc6F9C0zUlo0Fs3pnHVnIRWUMSSeOIZPxAwSTwBDXQGGxNSG2imClMpkACX2U6HnoAzcEuC3HsIvrrdLjjFXqA7Mdy2mTYQBm6X6lx5ETpHnD34QW4tn3ey9GLxvrVhTz5x9VpA3W2OvraRJaoRfhgBS+3bFnKkfAbHOI07QrmogzilTi+AsjpgoH8idmPw5F4k6htvAOt8u7/i4BJR4r1tQiUBHp+UrFJVa+UkZ7K8WrHrCFrUBew=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BD517F3422D8104CB56853EEB7D0EBF7@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a308be1-7c78-43e2-8aa6-08d73784bcd2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2019 13:25:53.8300
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Va27BrFjY9VdpZyHzzMx5SEA94MBgqG2FHPuhlF2AbpahNT5VBDpXnkfma5RMfTM+W61NYRUYqDZQtLQiyHlAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR13MB1337
+        id S1732181AbfILN3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 09:29:10 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:50467 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731687AbfILN3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 09:29:09 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46TfkB4RrNz9txvH;
+        Thu, 12 Sep 2019 15:29:06 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=AlE91qUL; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id CS_Eux0cFFP1; Thu, 12 Sep 2019 15:29:06 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46TfkB3PHMz9txv9;
+        Thu, 12 Sep 2019 15:29:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1568294946; bh=8YKLm3BM8Fxy2PQQ/azbBDLOKtUwGMrFARZT5pRecvA=;
+        h=From:Subject:To:Cc:Date:From;
+        b=AlE91qUL1IErytQqrdVZaNb9DzquT4c1DDMHzdBMvDQPPhBo32PH9smETuDiHEmDM
+         VhhMwPC/3jHELmOlEDYDvNJcOof5G74/RIP+uh59HYEPZHXxKgIyDK2IFWOnFck8fs
+         6YGJfcZvPw8X9qe0HOoAGCsjkgP/t+e84XZFSC0E=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D128C8B933;
+        Thu, 12 Sep 2019 15:29:07 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id MahlDDjqoM9y; Thu, 12 Sep 2019 15:29:07 +0200 (CEST)
+Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6A0258B934;
+        Thu, 12 Sep 2019 15:29:07 +0200 (CEST)
+Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 3B00F6B736; Thu, 12 Sep 2019 13:29:07 +0000 (UTC)
+Message-Id: <f816ccdbd15b97cf43c5a8c7cc8dfa8db58ff036.1568294935.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/8xx: use the fixmapped IMMR in cpm_reset()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 12 Sep 2019 13:29:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTA5LTEyIGF0IDA5OjEzIC0wNDAwLCBKLiBCcnVjZSBGaWVsZHMgd3JvdGU6
-DQo+IChVbmxlc3MgSSdtIG1pc3Npbmcgc29tZXRoaW5nLiAgSSBoYXZlbid0IGxvb2tlZCBhdCB0
-aGlzIGNvZGUgaW4gYQ0KPiB3aGlsZS4gIFRob3VnaCBpdCB3YXMgcHJvYmxlbSBtZSB0aGF0IHdy
-b3RlIGl0IG9yaWdpbmFsbHktLWFwb2xvZ2llcw0KPiBmb3INCj4gdGhhdC4uLi4pDQo+IA0KDQpU
-aGUgZnVuY3Rpb24gaXRzZWxmIGlzIGZpbmUuIEl0IHdhcyBqdXN0IHRoZSBuYW1lIEknbSBvYmpl
-Y3RpbmcgdG8sDQpzaW5jZSB3ZSdyZSBhY3R1YWxseSBtb3ZpbmcgdGhlIGxhc3QgJ24nIGJ5dGVz
-IGluIHRoZSBtZXNzYWdlIGluIG9yZGVyDQp0byBiZSBhYmxlIHRvIHJlYWQgdGhlbS4NCg0KLS0g
-DQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5GUyBjbGllbnQgbWFpbnRhaW5lciwgSGFtbWVyc3Bh
-Y2UNCnRyb25kLm15a2xlYnVzdEBoYW1tZXJzcGFjZS5jb20NCg0KDQo=
+Since commit f86ef74ed919 ("powerpc/8xx: Fix vaddr for IMMR early
+remap"), the IMMR area has been mapped at startup with fixmap.
+
+Use that fixmap directly instead of calling ioremap(), this
+avoids calling ioremap() early before the slab is available.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/platforms/8xx/cpm1.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/arch/powerpc/platforms/8xx/cpm1.c b/arch/powerpc/platforms/8xx/cpm1.c
+index 5a47b3ead01a..d4648cc468dc 100644
+--- a/arch/powerpc/platforms/8xx/cpm1.c
++++ b/arch/powerpc/platforms/8xx/cpm1.c
+@@ -51,7 +51,7 @@
+ #define CPM_MAP_SIZE    (0x4000)
+ 
+ cpm8xx_t __iomem *cpmp;  /* Pointer to comm processor space */
+-immap_t __iomem *mpc8xx_immr;
++immap_t __iomem *mpc8xx_immr = (void __iomem *)VIRT_IMMR_BASE;
+ static cpic8xx_t __iomem *cpic_reg;
+ 
+ static struct irq_domain *cpm_pic_host;
+@@ -205,12 +205,6 @@ void __init cpm_reset(void)
+ 	int len;
+ #endif
+ 
+-	mpc8xx_immr = ioremap(get_immrbase(), 0x4000);
+-	if (!mpc8xx_immr) {
+-		printk(KERN_CRIT "Could not map IMMR\n");
+-		return;
+-	}
+-
+ 	cpmp = &mpc8xx_immr->im_cpm;
+ 
+ #ifndef CONFIG_PPC_EARLY_DEBUG_CPM
+-- 
+2.13.3
+
