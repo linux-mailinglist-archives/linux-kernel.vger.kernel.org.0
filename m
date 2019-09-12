@@ -2,88 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76161B0684
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 03:32:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C5F5B0688
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 03:33:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbfILBbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 11 Sep 2019 21:31:07 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41753 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfILBbG (ORCPT
+        id S1728358AbfILBdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 11 Sep 2019 21:33:38 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:46517 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726157AbfILBdi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Sep 2019 21:31:06 -0400
-Received: by mail-io1-f66.google.com with SMTP id r26so50510675ioh.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2019 18:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VAjn6U6N/arzAqTNNO05V4de66eq/g4N7k2+dh2Hohs=;
-        b=pPNprPlyDZe9kCLCoAsHCrJIOoTusOUs87tHwEqMZVeeRErd6vEZCRNMVFhQfazg95
-         DI/4xQ6A2/OcjcLW+MxKWYjFM9fyUBo0Xo+dgO/rdO0HI5iZShwsW+Q/h/CVUCg+R+Ew
-         BZQO1wrCYZWmY1/DF5aysIhXAHoktZNTUFEnOz8scqbHHyOYSRKLFQf7fIS7/kagzwJc
-         0MieTFBo4fmIOF8SLnGAmMfqW2mzSWN6UZDO/KYnfpzEXp1x90PW/OPgT798oZLzni+q
-         gGkSRi3e4SYCbYU70EBzWSiGrlBNRFwGaX0pK7bOF7785Mq7eW3wz1N7e0LVlPO9Q9nq
-         1hoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VAjn6U6N/arzAqTNNO05V4de66eq/g4N7k2+dh2Hohs=;
-        b=OdzIPk4g0qT57xYG1L5MYB9AnoumjR7l/cFeeokYl98DwTika6HUzi4kOTxA+RGQ2j
-         jVtQHJZLKjaQri/OSOwsN0eIWRLGdyV68ZDKsXA1QOX1FN/eaj/LASOMtAhMkrsLC7eD
-         0duOGsSrgvh4zDN3fmtujwr3PSsWsHemrwCR5zTPbE9xj4wtx320AhMCnvCzedKV6BaJ
-         GQ+fJ8Cwmfefy4KXyqIGk/6rh7EYNe1RIht8bH6pulpJivkj+FiWArdaMQiE2dUzEjzk
-         i7bKt4A1sLsMhTHn3NIsYhxlDwhUyFQINyfqSyZ6HYLWOeHauNUjez/DRRbWMEdpCYSc
-         33LA==
-X-Gm-Message-State: APjAAAVrpNzGxK3Rjh9iHh0nnj+b5GaOjzVNyDfg4bk+MJMVVg8klIzC
-        eCYN4POHts8YQoClZ9G2TUZ/sg==
-X-Google-Smtp-Source: APXvYqwiHKqhV5A2wXd8IRIqXKzw4cMZ9I6IeH3N094Evn8SYf82x91sqv1m3AKXh2WtLyPWThKsZw==
-X-Received: by 2002:a6b:3705:: with SMTP id e5mr1172039ioa.213.1568251865760;
-        Wed, 11 Sep 2019 18:31:05 -0700 (PDT)
-Received: from google.com ([2620:15c:183:0:9f3b:444a:4649:ca05])
-        by smtp.gmail.com with ESMTPSA id q74sm36424390iod.72.2019.09.11.18.31.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2019 18:31:04 -0700 (PDT)
-Date:   Wed, 11 Sep 2019 19:31:00 -0600
-From:   Yu Zhao <yuzhao@google.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm: avoid slub allocation while holding list_lock
-Message-ID: <20190912013100.GA114178@google.com>
-References: <20190911071331.770ecddff6a085330bf2b5f2@linux-foundation.org>
- <20190912002929.78873-1-yuzhao@google.com>
- <20190912002929.78873-2-yuzhao@google.com>
- <20190912004401.jdemtajrspetk3fh@box>
+        Wed, 11 Sep 2019 21:33:38 -0400
+X-UUID: 78297ba1371f445b84693c296f71f482-20190912
+X-UUID: 78297ba1371f445b84693c296f71f482-20190912
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1472135931; Thu, 12 Sep 2019 09:33:34 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 12 Sep 2019 09:33:32 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 12 Sep 2019 09:33:32 +0800
+Message-ID: <1568252013.4102.1.camel@mtksdccf07>
+Subject: Re: [PATCH v5 07/13] dt-bindings: pwm: add a property "num-pwms"
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh@kernel.org>,
+        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "Ryder Lee" <ryder.lee@mediatek.com>,
+        John Crispin <john@phrozen.org>, <linux-pwm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 12 Sep 2019 09:33:33 +0800
+In-Reply-To: <20190902160445.fitoa65t4ndzjq6v@pengutronix.de>
+References: <1566457123-20791-1-git-send-email-sam.shih@mediatek.com>
+         <1566457123-20791-8-git-send-email-sam.shih@mediatek.com>
+         <20190827183924.GA24178@bogus>
+         <20190902160445.fitoa65t4ndzjq6v@pengutronix.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190912004401.jdemtajrspetk3fh@box>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 03:44:01AM +0300, Kirill A. Shutemov wrote:
-> On Wed, Sep 11, 2019 at 06:29:28PM -0600, Yu Zhao wrote:
-> > If we are already under list_lock, don't call kmalloc(). Otherwise we
-> > will run into deadlock because kmalloc() also tries to grab the same
-> > lock.
+On Mon, 2019-09-02 at 18:04 +0200, Uwe Kleine-König wrote:
+> On Tue, Aug 27, 2019 at 01:39:24PM -0500, Rob Herring wrote:
+> > On Thu, Aug 22, 2019 at 02:58:37PM +0800, Sam Shih wrote:
+> > > From: Ryder Lee <ryder.lee@mediatek.com>
 > > 
-> > Instead, statically allocate bitmap in struct kmem_cache_node. Given
-> > currently page->objects has 15 bits, we bloat the per-node struct by
-> > 4K. So we waste some memory but only do so when slub debug is on.
+> > The subject should indicate this is for Mediatek.
+> > 
+> > > 
+> > > This adds a property "num-pwms" in example so that we could
+> > > specify the number of PWM channels via device tree.
+> > > 
+> > > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > > Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> > > Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> > > Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > > ---
+> > > Changes since v5:
+> > > - Add an Acked-by tag
+> > > - This file is original v4 patch 5/10
+> > > (https://patchwork.kernel.org/patch/11102577/)
+> > > 
+> > > Change-Id: I429048afeffa96f3f14533910efe242f88776043
+> > > ---
+> > >  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 7 ++++---
+> > >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
+> > > index 991728cb46cb..ea95b490a913 100644
+> > > --- a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
+> > > +++ b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
+> > > @@ -14,12 +14,12 @@ Required properties:
+> > >                  has no clocks
+> > >     - "top": the top clock generator
+> > >     - "main": clock used by the PWM core
+> > > -   - "pwm1-8": the eight per PWM clocks for mt2712
+> > > -   - "pwm1-6": the six per PWM clocks for mt7622
+> > > -   - "pwm1-5": the five per PWM clocks for mt7623
+> > > +   - "pwm1-N": the PWM clocks for each channel
+> > > +   where N starting from 1 to the maximum number of PWM channels
+> > 
+> > Once converted to schema, you are going to be back to listing them out.
+> > 
+> > >   - pinctrl-names: Must contain a "default" entry.
+> > >   - pinctrl-0: One property must exist for each entry in pinctrl-names.
+> > >     See pinctrl/pinctrl-bindings.txt for details of the property values.
+> > > + - num-pwms: the number of PWM channels.
+> > 
+> > You can't add new required properties without breaking compatibility. 
+> > 
+> > You already have to imply the number of channels from the compatible (or 
+> > number of clocks) and you have to keep doing so to maintain 
+> > compatibility, so why not just keep doing that for new chips?
 > 
-> Why not have single page total protected by a lock?
+> This was a suggestion by me. The driver still handles compatibility
+> (i.e. falls back to the number of PWMs that was implied by the
+> compatible before). Given that there are various drivers that all solve
+> the same problem (i.e. different variants with different number of PWMs)
+> I thought it would be a good idea to introduce a property in the device
+> tree that specifies this number.
 > 
-> Listing object from two pages at the same time doesn't make sense anyway.
-> Cuncurent validating is not something sane to do.
+> Only for newly introduced compatibles the num-pwms property is really
+> required. Differentiating the ones that need it and the ones that don't
+> seems over-engineered to me.
+> 
+> (BTW, using the number of clks doesn't really work because there are
+> also some variants without clocks. It is still under discussion if in
+> this case dummy-clocks should be provided IIRC.)
+> 
+> Best regards
+> Uwe
+> 
 
-Okay, cutting down to static global bitmap.
+
+Any conclusions ? 
+
+just a friendly reminder :)
+
+
+regards Sam
+
+
