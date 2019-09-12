@@ -2,293 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75A09B1515
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 22:09:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E59E6B151D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 22:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbfILUIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 16:08:12 -0400
-Received: from mga01.intel.com ([192.55.52.88]:35560 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727446AbfILUIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 16:08:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 13:08:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
-   d="scan'208";a="336688279"
-Received: from chang-linux-3.sc.intel.com ([172.25.66.185])
-  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2019 13:08:00 -0700
-From:   "Chang S. Bae" <chang.seok.bae@intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     ravi.v.shankar@intel.com, chang.seok.bae@intel.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v8 17/17] Documentation/x86/64: Add documentation for GS/FS addressing mode
-Date:   Thu, 12 Sep 2019 13:06:58 -0700
-Message-Id: <1568318818-4091-18-git-send-email-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568318818-4091-1-git-send-email-chang.seok.bae@intel.com>
-References: <1568318818-4091-1-git-send-email-chang.seok.bae@intel.com>
+        id S1727924AbfILUJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 16:09:28 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:22175 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfILUJ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 16:09:28 -0400
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: GNDS3s3JLom+rZWyh4asQBjdgjybdJ0dcQ2hqdbq+vyBSvzIzNWxxxEAF4k8wOmiy69Y1T4wFM
+ Icg+maMwEfwBJz4AmKAGEODNWM6ady0L8oH4dTjP2Nb1P+V4K80SRBwe9vbq9LToyj4obuNTHT
+ Vknd8HlloevCm0da1nN5v5a9X1FVo6fzd0DnPBz5CLTd22lctO6VBFgbauUSdrFyyo/69HRP6F
+ sZvmlxkNMMmMZqLmDomdzkTO+VojPt96Hz1RDLwLMTvvFRfTCnGeaNHOMu56urR3aMusoO+A9M
+ rXw=
+X-IronPort-AV: E=Sophos;i="5.64,498,1559545200"; 
+   d="scan'208";a="47283694"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Sep 2019 13:09:27 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 12 Sep 2019 13:09:25 -0700
+Received: from sekiro.microchip.com (10.10.85.251) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 12 Sep 2019 13:09:24 -0700
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <nicolas.ferre@microchip.com>,
+        <ludovic.desroches@microchip.com>, <adrian.hunter@intel.com>,
+        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <claudiu.beznea@microchip.com>
+Subject: [PATCH 1/3] dt-bindings: sdhci-of-at91: new compatible string and update properties
+Date:   Thu, 12 Sep 2019 22:09:06 +0200
+Message-ID: <20190912200908.31318-1-ludovic.desroches@microchip.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+There is a new compatible string for the SAM9X60 sdhci device. It involves
+an update of the properties about the clocks stuff.
 
-Explain how the GS/FS based addressing can be utilized in user space
-applications along with the differences between the generic prctl() based
-GS/FS base control and the FSGSBASE version available on newer CPUs.
-
-Originally-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 ---
+ .../devicetree/bindings/mmc/sdhci-atmel.txt   | 25 ++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
-Changes from v7:
-* Rewritten the documentation and changelog by Thomas
-* Included compiler version info additionally
----
- Documentation/x86/x86_64/fsgs.rst  | 200 +++++++++++++++++++++++++++++++++++++
- Documentation/x86/x86_64/index.rst |   1 +
- 2 files changed, 201 insertions(+)
- create mode 100644 Documentation/x86/x86_64/fsgs.rst
-
-diff --git a/Documentation/x86/x86_64/fsgs.rst b/Documentation/x86/x86_64/fsgs.rst
-new file mode 100644
-index 0000000..791063c
---- /dev/null
-+++ b/Documentation/x86/x86_64/fsgs.rst
-@@ -0,0 +1,200 @@
-+.. SPDX-License-Identifier: GPL-2.0
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+index 1b662d7171a0..364ceea330b6 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
++++ b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+@@ -5,12 +5,19 @@ Documentation/devicetree/bindings/mmc/mmc.txt and the properties used by the
+ sdhci-of-at91 driver.
+ 
+ Required properties:
+-- compatible:		Must be "atmel,sama5d2-sdhci".
++- compatible:		Must be "atmel,sama5d2-sdhci" or "microchip,sam9x60-sdhci".
+ - clocks:		Phandlers to the clocks.
+-- clock-names:		Must be "hclock", "multclk", "baseclk";
++- clock-names:		Must be "hclock", "multclk", "baseclk" for
++			"atmel,sama5d2-sdhci".
++			Must be "hclock", "multclk" for "microchip,sam9x60-sdhci".
+ 
++Optional properties:
++- assigned-clocks:	The same with "multclk".
++- assigned-clock-rates	The rate of "multclk" in order to not rely on the
++			gck configuration set by previous components.
+ 
+-Example:
 +
-+Using FS and GS segments in user space applications
-+===================================================
++Examples:
+ 
+ sdmmc0: sdio-host@a0000000 {
+ 	compatible = "atmel,sama5d2-sdhci";
+@@ -18,4 +25,16 @@ sdmmc0: sdio-host@a0000000 {
+ 	interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
+ 	clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
+ 	clock-names = "hclock", "multclk", "baseclk";
++	assigned-clocks = <&sdmmc0_gclk>;
++	assigned-clock-rates = <480000000>;
++};
 +
-+The x86 architecture supports segmentation. Instructions which access
-+memory can use segment register based addressing mode. The following
-+notation is used to address a byte within a segment:
-+
-+  Segment-register:Byte-address
-+
-+The segment base address is added to the Byte-address to compute the
-+resulting virtual address which is accessed. This allows to access multiple
-+instances of data with the identical Byte-address, i.e. the same code. The
-+selection of a particular instance is purely based on the base-address in
-+the segment register.
-+
-+In 32-bit mode the CPU provides 6 segments, which also support segment
-+limits. The limits can be used to enforce address space protections.
-+
-+In 64-bit mode the CS/SS/DS/ES segments are ignored and the base address is
-+always 0 to provide a full 64bit address space. The FS and GS segments are
-+still functional in 64-bit mode.
-+
-+Common FS and GS usage
-+------------------------------
-+
-+The FS segment is commonly used to address Thread Local Storage (TLS). FS
-+is usually managed by runtime code or a threading library. Variables
-+declared with the '__thread' storage class specifier are instantiated per
-+thread and the compiler emits the FS: address prefix for accesses to these
-+variables. Each thread has its own FS base address so common code can be
-+used without complex address offset calculations to access the per thread
-+instances. Applications should not use FS for other purposes when they use
-+runtimes or threading libraries which manage the per thread FS.
-+
-+The GS segment has no common use and can be used freely by
-+applications. There is no storage class specifier similar to __thread which
-+would cause the compiler to use GS based addressing modes. Newer versions
-+of GCC and Clang support GS based addressing via address space identifiers.
-+
-+
-+Reading and writing the FS/GS base address
-+------------------------------------------
-+
-+There exist two mechanisms to read and write the FS/FS base address:
-+
-+ - the arch_prctl() system call
-+
-+ - the FSGSBASE instruction family
-+
-+Accessing FS/GS base with arch_prctl()
-+--------------------------------------
-+
-+ The arch_prctl(2) based mechanism is available on all 64bit CPUs and all
-+ kernel versions.
-+
-+ Reading the base:
-+
-+   arch_prctl(ARCH_GET_FS, &fsbase);
-+   arch_prctl(ARCH_GET_GS, &gsbase);
-+
-+ Writing the base:
-+
-+   arch_prctl(ARCH_SET_FS, fsbase);
-+   arch_prctl(ARCH_SET_GS, gsbase);
-+
-+ The ARCH_SET_GS prctl may be disabled depending on kernel configuration
-+ and security settings.
-+
-+Accessing FS/GS base with the FSGSBASE instructions
-+---------------------------------------------------
-+
-+ With the Ivy Bridge CPU generation Intel introduced a new set of
-+ instructions to access the FS and GS base registers directly from user
-+ space. These instructions are also supported on AMD Family 17H CPUs. The
-+ following instructions are available:
-+
-+  =============== ===========================
-+  RDFSBASE %reg   Read the FS base register
-+  RDGSBASE %reg   Read the GS base register
-+  WRFSBASE %reg   Write the FS base register
-+  WRGSBASE %reg   Write the GS base register
-+  =============== ===========================
-+
-+ The instructions avoid the overhead of the arch_prctl() syscall and allow
-+ more flexible usage of the FS/GS addressing modes in user space
-+ applications. This does not prevent conflicts between threading libraries
-+ and runtimes which utilize FS and applications which want to use it for
-+ their own purpose.
-+
-+FSGSBASE instructions enablement
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+ The instructions are enumerated in CPUID leaf 7, bit 0 of EBX. If
-+ available /proc/cpuinfo shows 'fsgsbase' in the flag entry of the CPUs.
-+
-+ The availability of the instructions is not enabling them
-+ automatically. The kernel has to enable them explicitly in CR4. The
-+ reason for this is that older kernels make assumptions about the values in
-+ the GS register and enforce them when GS base is set via
-+ arch_prctl(). Allowing user space to write arbitrary values to GS base
-+ would violate these assumptions and cause malfunction.
-+
-+ On kernels which do not enable FSGSBASE the execution of the FSGSBASE
-+ instructions will fault with a #UD exception.
-+
-+ The kernel provides reliable information about the enabled state in the
-+ ELF AUX vector. If the HWCAP2_FSGSBASE bit is set in the AUX vector, the
-+ kernel has FSGSBASE instructions enabled and applications can use them.
-+ The following code example shows how this detection works::
-+
-+   #include <sys/auxv.h>
-+   #include <elf.h>
-+
-+   /* Will be eventually in asm/hwcap.h */
-+   #ifndef HWCAP2_FSGSBASE
-+   #define HWCAP2_FSGSBASE        (1 << 1)
-+   #endif
-+
-+   ....
-+
-+   unsigned val = getauxval(AT_HWCAP2);
-+
-+   if (val & HWCAP2_FSGSBASE)
-+        printf("FSGSBASE enabled\n");
-+
-+FSGSBASE instructions compiler support
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+GCC version 4.6.4 and newer provide instrinsics for the FSGSBASE
-+instructions. Clang 5 supports them as well.
-+
-+  =================== ===========================
-+  _readfsbase_u64()   Read the FS base register
-+  _readfsbase_u64()   Read the GS base register
-+  _writefsbase_u64()  Write the FS base register
-+  _writegsbase_u64()  Write the GS base register
-+  =================== ===========================
-+
-+To utilize these instrinsics <immintrin.h> must be included in the source
-+code and the compiler option -mfsgsbase has to be added.
-+
-+Compiler support for FS/GS based addressing
-+-------------------------------------------
-+
-+GCC version 6 and newer provide support for FS/GS based addressing via
-+Named Address Spaces. GCC implements the following address space
-+identifiers for x86:
-+
-+  ========= ====================================
-+  __seg_fs  Variable is addressed relative to FS
-+  __seg_gs  Variable is addressed relative to GS
-+  ========= ====================================
-+
-+The preprocessor symbols __SEG_FS and __SEG_GS are defined when these
-+address spaces are supported. Code which implements fallback modes should
-+check whether these symbols are defined. Usage example::
-+
-+  #ifdef __SEG_GS
-+
-+  long data0 = 0;
-+  long data1 = 1;
-+
-+  long __seg_gs *ptr;
-+
-+  /* Check whether FSGSBASE is enabled by the kernel (HWCAP2_FSGSBASE) */
-+  ....
-+
-+  /* Set GS to point to data0 */
-+  _writegsbase_u64(&data0);
-+
-+  /* Access offset 0 of GS */
-+  ptr = 0;
-+  print("data0 = %ld\n", *ptr);
-+
-+  /* Set GS to point to data1 */
-+  _writegsbase_u64(&data1);
-+  /* ptr still addresses offset 0! */
-+  print("data1 = %ld\n", *ptr);
-+
-+
-+Clang does not provide these address space identifiers, but it provides
-+an attribute based mechanism in Clang 2.6 and newer versions:
-+
-+ ==================================== =====================================
-+  __attribute__((address_space(256))  Variable is addressed relative to GS
-+  __attribute__((address_space(257))  Variable is addressed relative to FS
-+ ==================================== =====================================
-+
-+FS/GS based addressing with inline assembly
-+-------------------------------------------
-+
-+In case the compiler does not support address spaces, inline assembly can
-+be used for FS/GS based addressing mode::
-+
-+	mov %fs:offset, %reg
-+	mov %gs:offset, %reg
-+
-+	mov %reg, %fs:offset
-+	mov %reg, %gs:offset
-\ No newline at end of file
-diff --git a/Documentation/x86/x86_64/index.rst b/Documentation/x86/x86_64/index.rst
-index d6eaaa5..a56070f 100644
---- a/Documentation/x86/x86_64/index.rst
-+++ b/Documentation/x86/x86_64/index.rst
-@@ -14,3 +14,4 @@ x86_64 Support
-    fake-numa-for-cpusets
-    cpu-hotplug-spec
-    machinecheck
-+   fsgs
++sdmmc0: sdio-host@80000000 {
++	compatible = "microchip,sam9x60-sdhci";
++	reg = <0x80000000 0x300>;
++	interrupts = <12 IRQ_TYPE_LEVEL_HIGH 0>;
++	clocks = <&pmc PMC_TYPE_PERIPHERAL 12>, <&pmc PMC_TYPE_GCK 12>;
++	clock-names = "hclock", "multclk";
++	assigned-clocks = <&pmc PMC_TYPE_GCK 12>;
++	assigned-clock-rates = <100000000>;
+ };
 -- 
-2.7.4
+2.23.0
 
