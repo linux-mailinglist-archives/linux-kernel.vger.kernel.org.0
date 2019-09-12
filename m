@@ -2,85 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12BC7B12EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 18:45:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 688FDB12E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 18:44:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733268AbfILQos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 12:44:48 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53340 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725972AbfILQor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 12:44:47 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 542F2CD0AB34221E6235;
-        Fri, 13 Sep 2019 00:44:45 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 13 Sep 2019 00:44:35 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <kvalo@codeaurora.org>
-CC:     <davem@davemloft.net>, <zhongjiang@huawei.com>,
-        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] libertas: Remove unneeded variable and make function to be void
-Date:   Fri, 13 Sep 2019 00:41:32 +0800
-Message-ID: <1568306492-42998-4-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1568306492-42998-1-git-send-email-zhongjiang@huawei.com>
-References: <1568306492-42998-1-git-send-email-zhongjiang@huawei.com>
+        id S1729505AbfILQoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 12:44:23 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60538 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbfILQoX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 12:44:23 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8CGhdQh088519;
+        Thu, 12 Sep 2019 16:43:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=EB/p5338NYK4pzHsk6TBuBlAMNpbEMjQOcbfPa1pTQQ=;
+ b=jCafRrJiLWmf9PMwQwF3AQ5GwyOUrMFaTKoak7fyLTjhfpvBEwfryr6f+qpkTtAycMnC
+ Ek8O93/PErFd/DhTtMsYJAHFpYqkZRMNVmZa+VqbYyc8455i4rkK6JpQUIMAUJIa1LHF
+ DIRRwdujfsNWYrvn9nm0oLWu+LciByGLAyv3yyMki3b96p8VADNpao/k/LFCmxf8wQOE
+ cQSXRqJz307e+aoHlIVVeY6AFM62+dwjstXLL9T8DNsn6NIAguH29YeTouKFvcbHQMnD
+ ydn/mkbe6plveb4unWpgJOXqELB4KUg+ltQeThuC9RXEIH1NZ73dXIaJLz9IefNnT1e1 iw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2uw1jyhnvw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Sep 2019 16:43:49 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8CGhe1s010201;
+        Thu, 12 Sep 2019 16:43:48 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2uyrdgkbaf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Sep 2019 16:43:48 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8CGhSW9018583;
+        Thu, 12 Sep 2019 16:43:28 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Sep 2019 09:43:28 -0700
+Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
+ PMD
+To:     Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
+References: <20190911150537.19527-1-longman@redhat.com>
+ <20190911150537.19527-6-longman@redhat.com>
+ <ae7edcb8-74e5-037c-17e7-01b3cf9320af@oracle.com>
+ <b7d7d109-03cf-d750-3a56-a95837998372@redhat.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <87ac9e4f-9301-9eb7-e68b-a877e7cf0384@oracle.com>
+Date:   Thu, 12 Sep 2019 09:43:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <b7d7d109-03cf-d750-3a56-a95837998372@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9378 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=664
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909120174
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9378 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=710 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909120174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lbs_process_event  do not need return value to cope with different
-cases. And change functon return type to void.
+On 9/12/19 2:06 AM, Waiman Long wrote:
+> If we can take the rwsem in read mode, that should solve the problem
+> AFAICS. As I don't have a full understanding of the history of that
+> code, I didn't try to do that in my patch.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/net/wireless/marvell/libertas/cmd.h     | 2 +-
- drivers/net/wireless/marvell/libertas/cmdresp.c | 5 +----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+Do you still have access to an environment that creates the long stalls?
+If so, can you try the simple change of taking the semaphore in read mode
+in huge_pmd_share.
 
-diff --git a/drivers/net/wireless/marvell/libertas/cmd.h b/drivers/net/wireless/marvell/libertas/cmd.h
-index 8087856..3c19307 100644
---- a/drivers/net/wireless/marvell/libertas/cmd.h
-+++ b/drivers/net/wireless/marvell/libertas/cmd.h
-@@ -76,7 +76,7 @@ void lbs_mac_event_disconnected(struct lbs_private *priv,
- 
- /* Events */
- 
--int lbs_process_event(struct lbs_private *priv, u32 event);
-+void lbs_process_event(struct lbs_private *priv, u32 event);
- 
- 
- /* Actual commands */
-diff --git a/drivers/net/wireless/marvell/libertas/cmdresp.c b/drivers/net/wireless/marvell/libertas/cmdresp.c
-index b73d083..cb515c5 100644
---- a/drivers/net/wireless/marvell/libertas/cmdresp.c
-+++ b/drivers/net/wireless/marvell/libertas/cmdresp.c
-@@ -220,9 +220,8 @@ int lbs_process_command_response(struct lbs_private *priv, u8 *data, u32 len)
- 	return ret;
- }
- 
--int lbs_process_event(struct lbs_private *priv, u32 event)
-+void lbs_process_event(struct lbs_private *priv, u32 event)
- {
--	int ret = 0;
- 	struct cmd_header cmd;
- 
- 	switch (event) {
-@@ -351,6 +350,4 @@ int lbs_process_event(struct lbs_private *priv, u32 event)
- 		netdev_alert(priv->dev, "EVENT: unknown event id %d\n", event);
- 		break;
- 	}
--
--	return ret;
- }
 -- 
-1.7.12.4
-
+Mike Kravetz
