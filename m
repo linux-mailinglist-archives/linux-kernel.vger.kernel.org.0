@@ -2,166 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F27DB0F3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 14:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC000B0F57
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 15:00:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731860AbfILM5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 08:57:15 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33815 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731743AbfILM5O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 08:57:14 -0400
-Received: by mail-wr1-f67.google.com with SMTP id a11so18583769wrx.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 05:57:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=o5x4LczZh/4WpNcF/HWMsfZg/GCL//ccIzviDyHT0iU=;
-        b=e/n28xkzlQFDtsGCE+RqPLrYDP/BPF5hSAs21UloH+gTE1lO+u95IbbgQR1UjtxjBP
-         fRdG6SMutf8lFQdzvALS2/UGMkok4RB6GTpFOZlHKIPPcnpEHDAc+uzhf2t81OMM6B4z
-         jGw8g88LExeI17MvyLJKFcO5N3R4yADqJgcuRZugV4tvsrwridwm4WWqCTdUQepKAkSr
-         ++NYF7+95iE7CTvBsJXqYMxoVrdNLKIqP+SOwhrHq6e7fdevl2LSWr/sUazf76plrnvu
-         OiZbef55JGYHc6T8kv4Xj1nDe7cDxXqgej3g88P9sepfXhMhVKdsB+Wy+CodXIusUxQ9
-         5B1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=o5x4LczZh/4WpNcF/HWMsfZg/GCL//ccIzviDyHT0iU=;
-        b=nQfzxvyG5GBzTsOKdPrm1HRDYvPWieHHqxPTPbwweBxxCy7+IyDw0hDquHa81TWbUf
-         p95rSU1amp0nP1O64HnxpG63Wj29uPLCvuim85WhgAmevIEW3pwKEMpGPRP6SBqrGsmQ
-         InKp/fVgN5vrkzK0RSSoKUmqg4MjDaXscD0kTFZgZKaVqp4xD8qR6lbbs07ChbUa5wQa
-         eO701Kj27yhrOA7VB8CpEWo83bvGRJYnAfmOc+ZrKuOTGNvqQz39ySZ2d6Qr1oOR5FvB
-         cpSbSmnwDNa3LCoCfpqktIKgkSCMBMp6jnI9bQKAzWASzOUwbHpTyQXPLpBAt4r8IFLm
-         1jIg==
-X-Gm-Message-State: APjAAAXjUY0vgfAuZsatKixWvKMn1QYt+WuL9p7IdN2Ue3MkjhbWPtsI
-        CVpr1bNgWNUZcKk8tMELIPI=
-X-Google-Smtp-Source: APXvYqwYLqA2OtGGqmTkXwb+0El9qZfVH0UQen058sAMI37IHwMiylv+sIvqGZN5o73WEbtOQ4qx4A==
-X-Received: by 2002:adf:e908:: with SMTP id f8mr34410528wrm.210.1568293032610;
-        Thu, 12 Sep 2019 05:57:12 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id v8sm38823927wra.79.2019.09.12.05.57.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2019 05:57:12 -0700 (PDT)
-Date:   Thu, 12 Sep 2019 14:57:10 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86 fixes
-Message-ID: <20190912125710.GA21080@gmail.com>
+        id S1731981AbfILM7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 08:59:43 -0400
+Received: from foss.arm.com ([217.140.110.172]:33832 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730454AbfILM7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 08:59:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48B7B28;
+        Thu, 12 Sep 2019 05:59:42 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B4FCE3F71F;
+        Thu, 12 Sep 2019 05:59:41 -0700 (PDT)
+Date:   Thu, 12 Sep 2019 13:59:40 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>, helgaas@kernel.org
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>, "kishon@ti.com" <kishon@ti.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Subject: Re: [PATCH v3 11/11] misc: pci_endpoint_test: Add LS1088a in
+ pci_device_id table
+Message-ID: <20190912125939.GE9720@e119886-lin.cambridge.arm.com>
+References: <20190902031716.43195-1-xiaowei.bao@nxp.com>
+ <20190902031716.43195-12-xiaowei.bao@nxp.com>
+ <20190902125454.GK9720@e119886-lin.cambridge.arm.com>
+ <AM5PR04MB3299D598229952C13C492B48F5B90@AM5PR04MB3299.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AM5PR04MB3299D598229952C13C492B48F5B90@AM5PR04MB3299.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Tue, Sep 03, 2019 at 01:52:30AM +0000, Xiaowei Bao wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Andrew Murray <andrew.murray@arm.com>
+> > Sent: 2019年9月2日 20:55
+> > To: Xiaowei Bao <xiaowei.bao@nxp.com>
+> > Cc: robh+dt@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; Leo
+> > Li <leoyang.li@nxp.com>; kishon@ti.com; lorenzo.pieralisi@arm.com; M.h.
+> > Lian <minghuan.lian@nxp.com>; Mingkai Hu <mingkai.hu@nxp.com>; Roy
+> > Zang <roy.zang@nxp.com>; jingoohan1@gmail.com;
+> > gustavo.pimentel@synopsys.com; linux-pci@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > linux-arm-kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org;
+> > arnd@arndb.de; gregkh@linuxfoundation.org; Z.q. Hou
+> > <zhiqiang.hou@nxp.com>
+> > Subject: Re: [PATCH v3 11/11] misc: pci_endpoint_test: Add LS1088a in
+> > pci_device_id table
+> > 
+> > On Mon, Sep 02, 2019 at 11:17:16AM +0800, Xiaowei Bao wrote:
+> > > Add LS1088a in pci_device_id table so that pci-epf-test can be used
+> > > for testing PCIe EP in LS1088a.
+> > >
+> > > Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+> > > ---
+> > > v2:
+> > >  - No change.
+> > > v3:
+> > >  - No change.
+> > >
+> > >  drivers/misc/pci_endpoint_test.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/misc/pci_endpoint_test.c
+> > > b/drivers/misc/pci_endpoint_test.c
+> > > index 6e208a0..d531951 100644
+> > > --- a/drivers/misc/pci_endpoint_test.c
+> > > +++ b/drivers/misc/pci_endpoint_test.c
+> > > @@ -793,6 +793,7 @@ static const struct pci_device_id
+> > pci_endpoint_test_tbl[] = {
+> > >  	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
+> > >  	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
+> > >  	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x81c0) },
+> > > +	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x80c0) },
+> > 
+> > The Freescale PCI devices are the only devices in this table that don't have a
+> > define for their device ID. I think a define should be created for both of the
+> > device IDs above.
+> 
+> OK, but I only define in this file, I am not sure this can define in include/linux/pci_ids.h
+> file 
 
-Please pull the latest x86-urgent-for-linus git tree from:
+This file seems a little inconsistent...
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+ - Two of the TI device IDs are defined in pci_ids.h and only used in pci_endpoint_test.c
+ - One of the TI device IDs are defined in pci_endpoint_test.c and only used there
+ - The Freescale device ID is hardcoded and only used in pci_endpoint_test.c
 
-   # HEAD: afa8b475c1aec185a8e106c48b3832e0b88bc2de x86/timer: Force PIT initialization when !X86_FEATURE_ARAT
+The header in pci_ids.h has a comment suggestion definitions are only added where used
+in multiple files - yet I don't think this holds true.
 
-A KVM guest fix, and a kdump kernel relocation errors fix.
+Bjorn - do you have a suggestion?
 
- Thanks,
+Thanks,
 
-	Ingo
+Andrew Murray
 
------------------->
-Jan Stancek (1):
-      x86/timer: Force PIT initialization when !X86_FEATURE_ARAT
-
-Steve Wahl (1):
-      x86/purgatory: Change compiler flags from -mcmodel=kernel to -mcmodel=large to fix kexec relocation errors
-
-
- arch/x86/kernel/apic/apic.c |  4 ++++
- arch/x86/purgatory/Makefile | 35 +++++++++++++++++++----------------
- 2 files changed, 23 insertions(+), 16 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index dba2828b779a..f91b3ff9dc03 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -834,6 +834,10 @@ bool __init apic_needs_pit(void)
- 	if (!boot_cpu_has(X86_FEATURE_APIC))
- 		return true;
- 
-+	/* Virt guests may lack ARAT, but still have DEADLINE */
-+	if (!boot_cpu_has(X86_FEATURE_ARAT))
-+		return true;
-+
- 	/* Deadline timer is based on TSC so no further PIT action required */
- 	if (boot_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER))
- 		return false;
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 8901a1f89cf5..10fb42da0007 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -18,37 +18,40 @@ targets += purgatory.ro
- KASAN_SANITIZE	:= n
- KCOV_INSTRUMENT := n
- 
-+# These are adjustments to the compiler flags used for objects that
-+# make up the standalone purgatory.ro
-+
-+PURGATORY_CFLAGS_REMOVE := -mcmodel=kernel
-+PURGATORY_CFLAGS := -mcmodel=large -ffreestanding -fno-zero-initialized-in-bss
-+
- # Default KBUILD_CFLAGS can have -pg option set when FTRACE is enabled. That
- # in turn leaves some undefined symbols like __fentry__ in purgatory and not
- # sure how to relocate those.
- ifdef CONFIG_FUNCTION_TRACER
--CFLAGS_REMOVE_sha256.o		+= $(CC_FLAGS_FTRACE)
--CFLAGS_REMOVE_purgatory.o	+= $(CC_FLAGS_FTRACE)
--CFLAGS_REMOVE_string.o		+= $(CC_FLAGS_FTRACE)
--CFLAGS_REMOVE_kexec-purgatory.o	+= $(CC_FLAGS_FTRACE)
-+PURGATORY_CFLAGS_REMOVE		+= $(CC_FLAGS_FTRACE)
- endif
- 
- ifdef CONFIG_STACKPROTECTOR
--CFLAGS_REMOVE_sha256.o		+= -fstack-protector
--CFLAGS_REMOVE_purgatory.o	+= -fstack-protector
--CFLAGS_REMOVE_string.o		+= -fstack-protector
--CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector
-+PURGATORY_CFLAGS_REMOVE		+= -fstack-protector
- endif
- 
- ifdef CONFIG_STACKPROTECTOR_STRONG
--CFLAGS_REMOVE_sha256.o		+= -fstack-protector-strong
--CFLAGS_REMOVE_purgatory.o	+= -fstack-protector-strong
--CFLAGS_REMOVE_string.o		+= -fstack-protector-strong
--CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector-strong
-+PURGATORY_CFLAGS_REMOVE		+= -fstack-protector-strong
- endif
- 
- ifdef CONFIG_RETPOLINE
--CFLAGS_REMOVE_sha256.o		+= $(RETPOLINE_CFLAGS)
--CFLAGS_REMOVE_purgatory.o	+= $(RETPOLINE_CFLAGS)
--CFLAGS_REMOVE_string.o		+= $(RETPOLINE_CFLAGS)
--CFLAGS_REMOVE_kexec-purgatory.o	+= $(RETPOLINE_CFLAGS)
-+PURGATORY_CFLAGS_REMOVE		+= $(RETPOLINE_CFLAGS)
- endif
- 
-+CFLAGS_REMOVE_purgatory.o	+= $(PURGATORY_CFLAGS_REMOVE)
-+CFLAGS_purgatory.o		+= $(PURGATORY_CFLAGS)
-+
-+CFLAGS_REMOVE_sha256.o		+= $(PURGATORY_CFLAGS_REMOVE)
-+CFLAGS_sha256.o			+= $(PURGATORY_CFLAGS)
-+
-+CFLAGS_REMOVE_string.o		+= $(PURGATORY_CFLAGS_REMOVE)
-+CFLAGS_string.o			+= $(PURGATORY_CFLAGS)
-+
- $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
- 		$(call if_changed,ld)
- 
+> 
+> Thanks 
+> Xiaowei
+> 
+> > 
+> > Thanks,
+> > 
+> > Andrew Murray
+> > 
+> > >  	{ PCI_DEVICE_DATA(SYNOPSYS, EDDA, NULL) },
+> > >  	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654),
+> > >  	  .driver_data = (kernel_ulong_t)&am654_data
+> > > --
+> > > 2.9.5
+> > >
