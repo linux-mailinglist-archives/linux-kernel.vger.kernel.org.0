@@ -2,162 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38827B16BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 01:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3879B16BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 01:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbfILXuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 19:50:17 -0400
-Received: from smtprelay0085.hostedemail.com ([216.40.44.85]:43356 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726586AbfILXuR (ORCPT
+        id S1727815AbfILXv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 19:51:27 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33072 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727529AbfILXv0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 19:50:17 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 4E0EC18030445;
-        Thu, 12 Sep 2019 23:50:14 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:871:973:988:989:1000:1260:1313:1314:1345:1359:1437:1516:1518:1535:1537:1566:1575:1594:1711:1714:1730:1747:1764:1777:1792:2393:2559:2562:3138:3139:3140:3141:3142:3622:3865:3867:3868:3872:3873:4119:4321:4362:5007:6120:6506:6747:6748:7281:7776:7980:8531:10004:10394:10400:10848:11232:11604:11658:11914:12297:12740:12895:13439:14659:21080:21433:21627:21789:21819:30022:30054:30079:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: snake37_1efd62991ce19
-X-Filterd-Recvd-Size: 8670
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 12 Sep 2019 23:50:12 +0000 (UTC)
-Message-ID: <a8290101e2720cac8b06613ec4cb91ffbfd69f05.camel@perches.com>
-Subject: Re: [rfc patch script] treewide conversion of __section(foo) to
- section("foo");
-From:   Joe Perches <joe@perches.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 12 Sep 2019 16:50:11 -0700
-In-Reply-To: <CAKwvOdn6bMGZFAwH8iS5xD+Ce7oV8U6Fgi_SrFpCjo2-1hEUrw@mail.gmail.com>
-References: <7ef58eb00bc46b4ea3fe49a8c45cd2ff06292247.camel@perches.com>
-         <CAKwvOdn6bMGZFAwH8iS5xD+Ce7oV8U6Fgi_SrFpCjo2-1hEUrw@mail.gmail.com>
-Content-Type: multipart/mixed; boundary="=-l/Hb6MCBA8+oZyjPPDsJ"
-User-Agent: Evolution 3.32.1-2 
+        Thu, 12 Sep 2019 19:51:26 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t11so12446333plo.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 16:51:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jwH7MEoAJ00c+7yFxXFsE0JEMDQRkeWQsif61Jhqi3M=;
+        b=CH+33i++1Luzxl8HYawv8HE2blbAZ7swcTEJAA7tWhmDd6HBta3K9TBY1havYrrodJ
+         7+wkJA0vugEJi+fuHOJLp/jNbRghNgF+owPo44A17sTvEiyTUWvxtD0KUsPdLov77ETE
+         OjYMwTAAZV3vwkDzfhKUJVKbmZKGKwYbQk0kqGkGZta360oMD/mAHbxQhitLNDR53Ze4
+         SU3HZZBIVazFcwyYjFmcc25pa7ILwXvs1ASWa6lXm+0opNIxy7ZFRchNNFkX/gIve+fu
+         VhqfI5XkvWQj6su1zQCV3UB+uISGEbLxFeNhbQADYmagwaZTIUIIBmjZfZzWbiBWpD0s
+         MiIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jwH7MEoAJ00c+7yFxXFsE0JEMDQRkeWQsif61Jhqi3M=;
+        b=SEhu0NDUOfq6WnyzuK+rvFWIBjA7Mtj9GYdHTPsmBaIxOXJ+AlQ+Ln0WOxRlYjlfz1
+         t44k9dT6AUpWcVqo060zhNW62EXUnRWPDujya2iCNpXkIVMr6iste4BPHNy0qfQHyL4T
+         wU9l9aJgO37YS5XYEWIAwtPJ0/8HDJro2YIAfR2SKaOMySpjD/kbawWBnjlflbJdHi1F
+         VTewTvLq/85yg6eDQQXT4ouw8lKBAzO5/bGJe74igFarmR3zrL1WjpTxU7/CIdcVIKhe
+         i0379wKkb06LdGwCVaWHxK1YanKg7nqcxl7aWXHrzLZVlVUr+uBHYLHellIKjQHOcThZ
+         aA1Q==
+X-Gm-Message-State: APjAAAWsRrlVjCDrzX8RsuJVTN+HHvun0Vh3fbGK1WHeYkxyTzYWJsfJ
+        tZ8wkll50c2vUDRlJMAEQ3s=
+X-Google-Smtp-Source: APXvYqw8JsAO/ku52ctAh426YyLkFzzTSBnKNOrqkT8cXxA2Fn6w0cpGB8xMIpxVpQYBQQwfczK2/A==
+X-Received: by 2002:a17:902:724c:: with SMTP id c12mr31734884pll.312.1568332285454;
+        Thu, 12 Sep 2019 16:51:25 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id u5sm27193129pfl.25.2019.09.12.16.51.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Sep 2019 16:51:25 -0700 (PDT)
+Date:   Thu, 12 Sep 2019 16:51:03 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     "S.j. Wang" <shengjiu.wang@nxp.com>
+Cc:     "timur@kernel.org" <timur@kernel.org>,
+        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] ASoC: fsl_asrc: update supported sample format
+Message-ID: <20190912235103.GD24937@Asurada-Nvidia.nvidia.com>
+References: <VE1PR04MB64791308D87F91C51412DF53E3B60@VE1PR04MB6479.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VE1PR04MB64791308D87F91C51412DF53E3B60@VE1PR04MB6479.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 10, 2019 at 02:07:25AM +0000, S.j. Wang wrote:
+> > On Mon, Sep 09, 2019 at 06:33:20PM -0400, Shengjiu Wang wrote:
+> > > The ASRC support 24bit/16bit/8bit input width, so S20_3LE format
+> > > should not be supported, it is word width is 20bit.
+> > 
+> > I thought 3LE used 24-bit physical width. And the driver assigns
+> > ASRC_WIDTH_24_BIT to "width" for all non-16bit cases, so 20-bit would go
+> > for that 24-bit slot also. I don't clearly recall if I had explicitly tested
+> > S20_3LE, but I feel it should work since I put there...
+> 
+> For S20_3LE, the width is 20bit,  but the ASRC only support 24bit, if set the
+> ASRMCR1n.IWD= 24bit, because the actual width is 20 bit, the volume is
+> Lower than expected,  it likes 24bit data right shift 4 bit.
+> So it is not supported.
 
---=-l/Hb6MCBA8+oZyjPPDsJ
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Hmm..S20_3LE right-aligns 20 bits in a 24-bit slot? I thought
+they're left aligned...
 
-On Thu, 2019-09-12 at 15:45 -0700, Nick Desaulniers wrote:
-> If you want to email me just the patch file (so I don't have to
-> copy+pasta from an email),
-
-Lazy... ;)
-
-> I'd be happy to apply it and compile+boot test a few more arch's
-> than x86.
-
-Thanks.  attached.
-
-
---=-l/Hb6MCBA8+oZyjPPDsJ
-Content-Type: application/x-perl; name="section.pl"
-Content-Disposition: attachment; filename="section.pl"
-Content-Transfer-Encoding: base64
-
-IyBjb252ZXJ0IGxpbnV4LWtlcm5lbCBfX3NlY3Rpb24gdXNlcyBmcm9tIHVucXVvdGVkIHN0cmlu
-ZyB0byBxdW90ZWQgc3RyaW5nCiMgY29udmVydCBfX2F0dHJpYnV0ZV9fKChzZWN0aW9uKCJmb28i
-KSkpIHRvIF9fc2VjdGlvbigiZm9vIikKIyBjb252ZXJ0IF9fYXR0cmlidXRlX18oKGZvbywgc2Vj
-dGlvbj0oImJhciIpLCBiYXopKQojICAgICAgdG8gX19zZWN0aW9uKCJiYXIiKSBhdHRyaWJ1dGUo
-KGZvbywgYmF6KSkKCnVzZSBzdHJpY3Q7CgojIHBhdGNoIGNvbXBpbGVyX2F0dHJpYnV0ZXMuaCB0
-byByZW1vdmUgcXVvdGluZyBvZiBzZWN0aW9uIG5hbWUKCm15ICRyZXN1bHQgPSBxeHtwYXRjaCAt
-cDEgPDwiRU9GIgogaW5jbHVkZS9saW51eC9jb21waWxlcl9hdHRyaWJ1dGVzLmggfCAxMiArLS0t
-LS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMTEgZGVsZXRpb25zKC0p
-CgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9jb21waWxlcl9hdHRyaWJ1dGVzLmggYi9pbmNs
-dWRlL2xpbnV4L2NvbXBpbGVyX2F0dHJpYnV0ZXMuaAppbmRleCA5Y2EwNDBmYTFjYzYuLjg4ZDNl
-ZWExY2JiYSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9jb21waWxlcl9hdHRyaWJ1dGVzLmgK
-KysrIGIvaW5jbHVkZS9saW51eC9jb21waWxlcl9hdHRyaWJ1dGVzLmgKQEAgLTIyNSwyMSArMjI1
-LDExIEBACiAjZGVmaW5lIF9fcHVyZSAgICAgICAgICAgICAgICAgICAgICAgICAgX19hdHRyaWJ1
-dGVfXygoX19wdXJlX18pKQogCiAvKgotICogTm90ZTogU2luY2UgdGhpcyBtYWNybyBtYWtlcyB1
-c2Ugb2YgdGhlICJzdHJpbmdpZmljYXRpb24gb3BlcmF0b3IiIGAjYCwKLSAqIGEgcXVvdGVkIHN0
-cmluZyBsaXRlcmFsIHNob3VsZCBub3QgYmUgcGFzc2VkIHRvIGl0LiBlZy4gcHJlZmVyOgotICog
-ICAgIF9fc2VjdGlvbiguZm9vKQotICogdG86Ci0gKiAgICAgX19zZWN0aW9uKCIuZm9vIikKLSAq
-IHVubGVzcyB0aGUgc2VjdGlvbiBuYW1lIGlzIGR5bmFtaWNhbGx5IGJ1aWx0IHVwLCBpbiB3aGlj
-aCBjYXNlIHRoZQotICogdmVyYm9zZSBfX2F0dHJpYnV0ZV9fKChfX3NlY3Rpb25fXygiLmZvbyIg
-eCkpKSBzaG91bGQgYmUgcHJlZmVycmVkLgotICoKLSAqIFNlZSBhbHNvOiBodHRwczovL2J1Z3Mu
-bGx2bS5vcmcvc2hvd19idWcuY2dpP2lkPTQyOTUwCi0gKgogICogICBnY2M6IGh0dHBzOi8vZ2Nj
-LmdudS5vcmcvb25saW5lZG9jcy9nY2MvQ29tbW9uLUZ1bmN0aW9uLUF0dHJpYnV0ZXMuaHRtbCNp
-bmRleC1zZWN0aW9uLWZ1bmN0aW9uLWF0dHJpYnV0ZQogICogICBnY2M6IGh0dHBzOi8vZ2NjLmdu
-dS5vcmcvb25saW5lZG9jcy9nY2MvQ29tbW9uLVZhcmlhYmxlLUF0dHJpYnV0ZXMuaHRtbCNpbmRl
-eC1zZWN0aW9uLXZhcmlhYmxlLWF0dHJpYnV0ZQogICogY2xhbmc6IGh0dHBzOi8vY2xhbmcubGx2
-bS5vcmcvZG9jcy9BdHRyaWJ1dGVSZWZlcmVuY2UuaHRtbCNzZWN0aW9uLWRlY2xzcGVjLWFsbG9j
-YXRlCiAgKi8KLSNkZWZpbmUgX19zZWN0aW9uKFMpICAgICAgICAgICAgICAgICAgICBfX2F0dHJp
-YnV0ZV9fKChfX3NlY3Rpb25fXygjUykpKQorI2RlZmluZSBfX3NlY3Rpb24oc2VjdGlvbikgICAg
-ICAgICAgICAgIF9fYXR0cmlidXRlX18oKF9fc2VjdGlvbl9fKHNlY3Rpb24pKSkKIAogLyoKICAq
-ICAgZ2NjOiBodHRwczovL2djYy5nbnUub3JnL29ubGluZWRvY3MvZ2NjL0NvbW1vbi1GdW5jdGlv
-bi1BdHRyaWJ1dGVzLmh0bWwjaW5kZXgtdW51c2VkLWZ1bmN0aW9uLWF0dHJpYnV0ZQpFT0Z9OwoK
-IyBHZXQgdGhlIGxpc3Qgb2YgZmlsZXMgdG8gbW9kaWZ5IChjb250YWlucyBfX3NlY3Rpb24gb3Ig
-X19hdHRyaWJ1dGVfXy4qc2VjdGlvbgojIChpZ25vcmUgc2NyaXB0cywgdG9vbHMsIHVhcGksIGFu
-ZCBjb21waWxlcl9hdHRyaWJ1dGVzLmgpCgpteSAkb3V0cHV0ID0gYGdpdCBncmVwIC0tbmFtZS1v
-bmx5IC1QICIoPzpcXGJfX3NlY3Rpb25cXGJcfFxcYl9fYXR0cmlidXRlX19cXGIuKnNlY3Rpb24p
-IiB8IGdyZXAgLXZQICdeKD86aW5jbHVkZS9saW51eC9jb21waWxlcl9hdHRyaWJ1dGVzXFwuaHxz
-Y3JpcHRzL3x0b29scy98L3VhcGkvKSdgOwpteSBAZmlsZXMgPSBzcGxpdCgiXG4iLCAkb3V0cHV0
-KTsKCiMgTW9kaWZ5IGVhY2ggcG9zc2libGUgZmlsZQpmb3JlYWNoIChAZmlsZXMpIHsKICAgIGNo
-b21wOwogICAgbXkgJGZpbGUgPSAkXzsKCiAgICAjIHJlYWQgdGhlIG9yaWdpbmFsIGZpbGUKICAg
-IG9wZW4oRkgsICc8JywgJGZpbGUpIG9yIGRpZSAkITsKICAgIG15IEBsaW5lcyA9IDxGSD47CiAg
-ICBjbG9zZSBGSDsKCiAgICAjIHdyaXRlIHRoZSBtb2RpZmllZCBmaWxlIGxpbmUgYnkgbGluZQog
-ICAgb3BlbiAoRkgsICc+JywgJGZpbGUpIG9yIGRpZSAkITsKICAgIGZvcmVhY2ggbXkgJGxpbmUg
-KEBsaW5lcykgewoJY2hvbXAgJGxpbmU7CglteSAkbmV3bGluZSA9ICRsaW5lOwoKCSMgQ29udmVy
-dCBfX3NlY3Rpb24oZm9vKSB0byBfX3NlY3Rpb24oImZvbyIpCgkjIGlmICJmb28iIHVzZXMgdG9r
-ZW4gcGFzdGluZywgcHJlIGFuZCBwb3N0IHRva2VucyBhcmUgYWxzbyBxdW90ZWQKCWlmICgkbGlu
-ZSA9fiBtL1xiX19zZWN0aW9uXHMqXChccyooPyEiKShbXlwpXSspXCkvKSB7CgkgICAgbXkgJG9s
-ZHNlY3Rpb24gPSAkMTsKCSAgICBteSAkbmV3c2VjdGlvbiA9ICQxOwoJICAgIGlmICgkb2xkc2Vj
-dGlvbiA9fiAvKC4qKSMjKC4qKSMjKC4qKS8pIHsKCQkkbmV3c2VjdGlvbiA9ICciJyAuIHRyaW0o
-JDEpIC4gJyIgIyMgJyAuIHRyaW0oJDIpIC4gJyAjIyAiJyAuIHRyaW0oJDMpIC4gJyInOwoJICAg
-IH0gZWxzZSB7CgkJJG5ld3NlY3Rpb24gPSAnIicgLiB0cmltKCRvbGRzZWN0aW9uKSAuICciJzsK
-CSAgICB9CgkgICAgJG5ld2xpbmUgPX4gcy9fX3NlY3Rpb25ccypcKFxzKlxRJG9sZHNlY3Rpb25c
-RVxzKlwpL19fc2VjdGlvbigkbmV3c2VjdGlvbikvOwoJfQoKCSMgY29udmVydCBfX2F0dHJpYnV0
-ZV9fKChzZWN0aW9uKCJmb28iKSkpIHRvIF9fc2VjdGlvbigiZm9vIikKCSRuZXdsaW5lID1+IHMv
-XGJfX2F0dHJpYnV0ZV9fXHMqXChccypcKFxzKl8qc2VjdGlvbl8qXHMqXChccyooIlteIl0rIilc
-cypcKVxzKlwpXHMqXCkvX19zZWN0aW9uKCQxKS87CgoJIyBjb252ZXJ0IF9fYXR0cmlidXRlX18o
-KGZvbywgc2VjdGlvbj0oImJhciIpLCBiYXopKQoJIyB0byBfX3NlY3Rpb24oImJhciIpIGF0dHJp
-YnV0ZSgoZm9vLCBiYXopKQoJaWYgKCRuZXdsaW5lID1+IC8oXGJfX2F0dHJpYnV0ZV9fXHMqXChc
-cypcKChbXixfXSspPyhccyosP1xzKl8qc2VjdGlvbl8qXHMqXChccyooIlteIl0rIilccypcKVxz
-Kiw/XHMqKSguKilccypcKVxzKlwpKS8pIHsKCSAgICBteSAkc2VjdGlvbiA9ICQzOwoJICAgIG15
-ICRjb21tYSA9ICIiOwoJICAgICRjb21tYSA9ICIsICIgaWYgKCRzZWN0aW9uID1+IC9eXHMqLC8g
-JiYgJHNlY3Rpb24gPX4gLyxccyokLyk7CgkgICAgJG5ld2xpbmUgPX4gcy9cUSRzZWN0aW9uXEUv
-JGNvbW1hLzsKCSAgICAkc2VjdGlvbiA9fiBzL15bXiJdKi8vOwoJICAgICRzZWN0aW9uID1+IHMv
-XigiW14iXSoiKS4qLyQxLzsKCSAgICAkbmV3bGluZSA9fiBzL1xiX19hdHRyaWJ1dGVfXy9fX3Nl
-Y3Rpb24oJHNlY3Rpb24pIF9fYXR0cmlidXRlX18vOwoJfQoKCSMgaWYgdGhlIGxpbmUgZW5kZWQg
-d2l0aCBhIGxpbmUgY29udGludWF0aW9uIFwsIHRyeSB0byBtb3ZlIHRoZQoJIyBjb250aW51YXRp
-b24gdG8gdGhlIHNhbWUgbG9jYXRpb24gYnkgcmVtb3Zpbmcgb3IgYWRkaW5nIHRhYnMKCWlmICgk
-bGluZSA9fiAvXFwkLykgewoJICAgIG15ICRvbGVuID0gbGVuZ3RoKGV4cGFuZF90YWJzKCRsaW5l
-KSk7CgkgICAgbXkgJG5sZW4gPSBsZW5ndGgoZXhwYW5kX3RhYnMoJG5ld2xpbmUpKTsKCSAgICBp
-ZiAoJG5ld2xpbmUgPX4gL1x0XFwkLykgewoJCWlmICgkbmxlbiA+ICRvbGVuKSB7CgkJICAgICRu
-ZXdsaW5lID1+IHMvXHRcXCQvXFwvOwoJCX0gZWxzZSB7CgkJICAgIHdoaWxlICgkbmxlbiA8ICRv
-bGVuKSB7CgkJCSRuZXdsaW5lID1+IHMvXFwkL1x0XFwvOwoJCQkkbmxlbiA9IGxlbmd0aChleHBh
-bmRfdGFicygkbmV3bGluZSkpOwoJCSAgICB9CgkJfQoJICAgIH0KCX0KCXByaW50IEZIICIkbmV3
-bGluZVxuIjsKICAgIH0KICAgIGNsb3NlIEZIOwp9CgojIEFuZCBnaXQgY29tbWl0IHRoZSBjaGFu
-Z2VzCiRyZXN1bHQgPSBxeHtnaXQgY29tbWl0IC1hIC0tYXV0aG9yPSdKb2UgUGVyY2hlcyA8am9l
-XEBwZXJjaGVzLmNvbT4nIC1GLSA8PCJFT0YiCnRyZWV3aWRlOiBDb252ZXJ0IG1hY3JvIGFuZCB1
-c2VzIG9mIF9fc2VjdGlvbihmb28pIHRvIF9fc2VjdGlvbigiZm9vIikKClVzZSBhIG1vcmUgZ2Vu
-ZXJpYyBmb3JtIGZvciBfX3NlY3Rpb24gdGhhdCByZXF1aXJlcyBxdW90ZXMgdG8gYXZvaWQKY29t
-cGxpY2F0aW9ucyB3aXRoIGNsYW5nIGFuZCBnY2MgZGlmZmVyZW5jZXMuCgpSZW1vdmUgdGhlIHF1
-b3RlIG9wZXJhdG9yICMgZnJvbSBjb21waWxlcl9hdHRyaWJ1dGVzLmggX19zZWN0aW9uIG1hY3Jv
-LgoKQ29udmVydCBhbGwgdW5xdW90ZWQgX19zZWN0aW9uKGZvbykgdXNlcyB0byBxdW90ZWQgX19z
-ZWN0aW9uKCJmb28iKS4KQWxzbyBjb252ZXJ0IF9fYXR0cmlidXRlX18oKHNlY3Rpb24oImZvbyIp
-KSkgdXNlcyB0byBfX3NlY3Rpb24oImZvbyIpCmV2ZW4gaWYgdGhlIF9fYXR0cmlidXRlX18gaGFz
-IG11bHRpcGxlIGxpc3QgZW50cnkgZm9ybXMuCgpTaWduZWQtb2ZmLWJ5OiBKb2UgUGVyY2hlcyA8
-am9lXEBwZXJjaGVzLmNvbT4KRU9GCn07CgojIHV0aWxpdHkgc3Vicm91dGluZXMKc3ViIHRyaW0g
-ewogICAgbXkgKCRzdHJpbmcpID0gQF87CiAgICAkc3RyaW5nID1+IHMvXlxzK3xccyskLy9nOwog
-ICAgcmV0dXJuICRzdHJpbmc7Cn0KCnN1YiBleHBhbmRfdGFicyB7CglteSAoJHN0cikgPSBAXzsK
-CglteSAkcmVzID0gJyc7CglteSAkbiA9IDA7Cglmb3IgbXkgJGMgKHNwbGl0KC8vLCAkc3RyKSkg
-ewoJCWlmICgkYyBlcSAiXHQiKSB7CgkJCSRyZXMgLj0gJyAnOwoJCQkkbisrOwoJCQlmb3IgKDsg
-KCRuICUgOCkgIT0gMDsgJG4rKykgewoJCQkJJHJlcyAuPSAnICc7CgkJCX0KCQkJbmV4dDsKCQl9
-CgkJJHJlcyAuPSAkYzsKCQkkbisrOwoJfQoKCXJldHVybiAkcmVzOwp9Cg==
-
-
---=-l/Hb6MCBA8+oZyjPPDsJ--
-
+If this is the case...shouldn't we have the same lower-volume
+problem for all hardwares that support S20_3LE now?
