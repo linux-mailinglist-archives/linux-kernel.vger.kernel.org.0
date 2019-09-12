@@ -2,142 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18583B1640
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 00:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 151B9B163C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 00:20:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729595AbfILWUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 18:20:00 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46310 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729355AbfILWTu (ORCPT
+        id S1727205AbfILWTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 18:19:46 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36237 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbfILWTp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 18:19:50 -0400
-Received: by mail-ed1-f66.google.com with SMTP id i8so25280099edn.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 15:19:48 -0700 (PDT)
+        Thu, 12 Sep 2019 18:19:45 -0400
+Received: by mail-pl1-f194.google.com with SMTP id f19so12355043plr.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 15:19:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lwxfKZDbkwsssc8hJEZ7254If0oTH7t3AgJp5tFLhpQ=;
-        b=Kc2wbMDaSPuvNCOUWiPawZ2XjD9wncgKxq8m3BULeF3PmtrOCOiHmeZRTNRG+J3FXt
-         IGupAYENCPO4vXO4s3p8GRMT8UgfR/8Rsj3nEuE+xZnYfBURC7SjMTbPUu7/WS9+IuP9
-         Sljo8fS94RMRPfk0oeY+cpPKyoUFgcnq1B+3k=
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VYcaD0CgRaK6iDJ2VeDVxMN7Qlt4v9GgR7dsZ3QROoA=;
+        b=aB6FI72FYFUB6TYj52LB9VxYzjcfuAlJ5r2flFNdTbRg4p1IaVUcTZm3lsv1Vk3MFj
+         d3KPmw3cMHf2xPzsSICJHsynW5UpzDwugYamm6crgk2QXrW+TxfqcPLM4n6CjNHfUsp/
+         gj7eIriG93QDFxaXCjJyW4Dc9tdfuI3kqStOk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lwxfKZDbkwsssc8hJEZ7254If0oTH7t3AgJp5tFLhpQ=;
-        b=VIde+IVNV2dxhEWKts114LePJRBR8M0Ar7ec5MIgVHXHH5oJjLAxpgmHnZsNTgoYP/
-         Y14+vW7VREzmAvbMuMSteOiXd5PKUyHQfIxTsVwO1++HL2fTDHDTFwOQk+NgQmRbklKG
-         +SZrDCXhNTkEVKFkcGmPyAavqNtCQSHUmpAbXogBWYixd11doohz4mdInEvlCzuZzpp7
-         aL9Y6J3d8O/sWKsdhFdgW9h894CSR5Quags7bMJ7TI6L9RyM6lIPS0N+0y528+zG0n8Z
-         DKWE3c6LtmBua1koTKIDuf8/BQYPzTM6iCfPW9MrtLdMIGZey0A0T6YlWYl7kr4+vooe
-         S15A==
-X-Gm-Message-State: APjAAAUvpcpME916HZ+6rFS/TEAdtYtKXYfz51dVuJY8f91iH+9iMB7j
-        YAHuwIOGs41URqqRRa4wuMgB4V172B0gU24N
-X-Google-Smtp-Source: APXvYqzd56ZujyFylBsQlE/MU6x/6GnG2yrLrsDqQpumPyFHEgAhKQjfl6DYMAdNq4Qv2Ra1WvSG1Q==
-X-Received: by 2002:a50:9eee:: with SMTP id a101mr22124717edf.128.1568326788028;
-        Thu, 12 Sep 2019 15:19:48 -0700 (PDT)
-Received: from prevas-ravi.prevas.se (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
-        by smtp.gmail.com with ESMTPSA id 36sm4305228edz.92.2019.09.12.15.19.47
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VYcaD0CgRaK6iDJ2VeDVxMN7Qlt4v9GgR7dsZ3QROoA=;
+        b=UgWrbtD+F22vH1FjH+3pBhbzwGy79ZVy/0rO6MVmT1XkauyQgrDkgmWnN0hMYK5Ymu
+         +eaU0PPiKWA5l3NU+py4vIpWuMP7uT1V4IpAIR273ipqaMyl76q/EeAZ16AB4AmGFLng
+         WPMSM8/ji9LZb7mfnDNEFL+xGXW6A2htFr8z9XsigpD1OZTP7yaXQhome+tKRgxyIPti
+         Qxlob2P5Q2/nGJKf+E8ZS7P7T+owwGFCIExhGVlR0aqsaQWdX3n07Gq+08ZI8r8v5gvt
+         6N488+7EIlU8CIOl7XM14DdKe9C8M6DFbXXnxGeG78zgoxDv48LkzeVrQCbmqYChKI/G
+         qG2A==
+X-Gm-Message-State: APjAAAVzViyRvyU/sWDitwvJJwYWxlvRCaPqnaz2QqEEbI9F9bTeVMRw
+        RxM5NvDvtX7mmAdK+vRb2Vsl1Q==
+X-Google-Smtp-Source: APXvYqxEIAKiH7VoObg5pPCE1OSWvWVPGgLO5md2J4MB25LnCgnALkNSrNECU0GFs+pMubwA5uSWNg==
+X-Received: by 2002:a17:902:8302:: with SMTP id bd2mr46615100plb.9.1568326782713;
+        Thu, 12 Sep 2019 15:19:42 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id 132sm1673199pgg.52.2019.09.12.15.19.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2019 15:19:47 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        ndesaulniers@google.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nadav Amit <namit@vmware.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v3 5/6] x86: alternative.h: use asm_inline for all alternative variants
-Date:   Fri, 13 Sep 2019 00:19:26 +0200
-Message-Id: <20190912221927.18641-6-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190912221927.18641-1-linux@rasmusvillemoes.dk>
-References: <20190830231527.22304-1-linux@rasmusvillemoes.dk>
- <20190912221927.18641-1-linux@rasmusvillemoes.dk>
+        Thu, 12 Sep 2019 15:19:42 -0700 (PDT)
+Date:   Thu, 12 Sep 2019 18:19:41 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>, rcu@vger.kernel.org
+Subject: Re: [PATCH RT v3 4/5] rcu: Disable use_softirq on PREEMPT_RT
+Message-ID: <20190912221941.GD150506@google.com>
+References: <20190911165729.11178-1-swood@redhat.com>
+ <20190911165729.11178-5-swood@redhat.com>
+ <20190912213843.GA150506@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190912213843.GA150506@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most, if not all, uses of the alternative* family just provide one or
-two instructions in .text, but the string literal can be quite large,
-causing gcc to overestimate the size of the generated code. That in
-turn affects its decisions about inlining of the function containing
-the alternative() asm statement.
+On Thu, Sep 12, 2019 at 05:38:43PM -0400, Joel Fernandes wrote:
+> Hi Scott,
+> 
+> Would you mind CC'ing rcu@vger.kernel.org on RCU related patches? I added it
+> for this time.
+> 
+> On Wed, Sep 11, 2019 at 05:57:28PM +0100, Scott Wood wrote:
+> > Besides restoring behavior that used to be default on RT, this avoids
+> > a deadlock on scheduler locks:
+[snip]
+> > [  136.995194] 039:  May be due to missing lock nesting notation
+> > 
+> > [  137.001115] 039: 3 locks held by rcu_torture_rea/13474:
+> > [  137.006341] 039:  #0:
+> > [  137.008707] 039: 000000005f25146d
+> > [  137.012024] 039:  (
+> > [  137.014131] 039: &p->pi_lock
+> > [  137.017015] 039: ){-...}
+> > [  137.019558] 039: , at: try_to_wake_up+0x39/0x920
+> > [  137.024175] 039:  #1:
+> > [  137.026540] 039: 0000000011c8e51d
+> > [  137.029859] 039:  (
+> > [  137.031966] 039: &rq->lock
+> > [  137.034679] 039: ){-...}
+> > [  137.037217] 039: , at: try_to_wake_up+0x241/0x920
+> > [  137.041924] 039:  #2:
+> > [  137.044291] 039: 00000000098649b9
+> > [  137.047610] 039:  (
+> > [  137.049714] 039: rcu_read_lock
+> > [  137.052774] 039: ){....}
+> > [  137.055314] 039: , at: cpuacct_charge+0x33/0x1e0
+> > [  137.059934] 039:
+> > stack backtrace:
+> > [  137.063425] 039: CPU: 39 PID: 13474 Comm: rcu_torture_rea Kdump: loaded Tainted: G            E     5.2.9-rt3.dbg+ #174
+> > [  137.074197] 039: Hardware name: Intel Corporation S2600BT/S2600BT, BIOS SE5C620.86B.01.00.0763.022420181017 02/24/2018
+> > [  137.084886] 039: Call Trace:
+> > [  137.087773] 039:  <IRQ>
+> > [  137.090226] 039:  dump_stack+0x5e/0x8b
+> > [  137.093997] 039:  __lock_acquire+0x725/0x1100
+> > [  137.098358] 039:  lock_acquire+0xc0/0x240
+> > [  137.102374] 039:  ? try_to_wake_up+0x39/0x920
+> > [  137.106737] 039:  _raw_spin_lock_irqsave+0x47/0x90
+> > [  137.111534] 039:  ? try_to_wake_up+0x39/0x920
+> > [  137.115910] 039:  try_to_wake_up+0x39/0x920
+> > [  137.120098] 039:  rcu_read_unlock_special+0x65/0xb0
+> > [  137.124977] 039:  __rcu_read_unlock+0x5d/0x70
+> > [  137.129337] 039:  cpuacct_charge+0xd9/0x1e0
+> > [  137.133522] 039:  ? cpuacct_charge+0x33/0x1e0
+> > [  137.137880] 039:  update_curr+0x14b/0x420
+> > [  137.141894] 039:  enqueue_entity+0x42/0x370
+> > [  137.146080] 039:  enqueue_task_fair+0xa9/0x490
+> > [  137.150528] 039:  activate_task+0x5a/0xf0
+> > [  137.154539] 039:  ttwu_do_activate+0x4e/0x90
+> > [  137.158813] 039:  try_to_wake_up+0x277/0x920
+> > [  137.163086] 039:  irq_exit+0xb6/0xf0
+[snip]
+> > Signed-off-by: Scott Wood <swood@redhat.com>
+> > ---
+> > The prohibition on use_softirq should be able to be dropped once RT gets
+> > the latest RCU code, but the question of what use_softirq should default
+> > to on PREEMPT_RT remains.
+> > 
+> > v3: Use IS_ENABLED
+> 
+> Out of curiosity, does PREEMPT_RT use the NOCB callback offloading? If no,
+> should it use it? IIUC, that does make the work the softirq have to do less
+> work since the callbacks are executed in threaded context.
+> 
+> If yes, can RT tolerate use_softirq=false and what could a realistic softirq
 
-New enough versions of gcc allow one to overrule the estimated size by
-using "asm inline" instead of just "asm". So replace asm by the helper
-asm_inline, which for older gccs just expands to asm.
+s/use_softirq=false/use_softirq=true/
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- arch/x86/include/asm/alternative.h | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+thanks,
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 094fbc9c0b1c..13adca37c99a 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -201,10 +201,10 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  * without volatile and memory clobber.
-  */
- #define alternative(oldinstr, newinstr, feature)			\
--	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
-+	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
- 
- #define alternative_2(oldinstr, newinstr1, feature1, newinstr2, feature2) \
--	asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
-+	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
- 
- /*
-  * Alternative inline assembly with input.
-@@ -218,7 +218,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  * Leaving an unused argument 0 to keep API compatibility.
-  */
- #define alternative_input(oldinstr, newinstr, feature, input...)	\
--	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature)		\
-+	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature)	\
- 		: : "i" (0), ## input)
- 
- /*
-@@ -231,18 +231,18 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  */
- #define alternative_input_2(oldinstr, newinstr1, feature1, newinstr2,	     \
- 			   feature2, input...)				     \
--	asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1,	     \
-+	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1,     \
- 		newinstr2, feature2)					     \
- 		: : "i" (0), ## input)
- 
- /* Like alternative_input, but with a single output argument */
- #define alternative_io(oldinstr, newinstr, feature, output, input...)	\
--	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature)		\
-+	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature)	\
- 		: output : "i" (0), ## input)
- 
- /* Like alternative_io, but for replacing a direct call with another one. */
- #define alternative_call(oldfunc, newfunc, feature, output, input...)	\
--	asm volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
-+	asm_inline volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
- 		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
- 
- /*
-@@ -253,7 +253,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  */
- #define alternative_call_2(oldfunc, newfunc1, feature1, newfunc2, feature2,   \
- 			   output, input...)				      \
--	asm volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
-+	asm_inline volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
- 		"call %P[new2]", feature2)				      \
- 		: output, ASM_CALL_CONSTRAINT				      \
- 		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
--- 
-2.20.1
+ - Joel
 
