@@ -2,121 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 679FDB12DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 18:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFBABB12F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 18:45:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729905AbfILQi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 12:38:56 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43740 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727864AbfILQi4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 12:38:56 -0400
-Received: by mail-qt1-f194.google.com with SMTP id l22so30308122qtp.10
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 09:38:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ye6xQQ/sF83reTDnUCyM55UC2Rr32BLp4JT0MbP8r90=;
-        b=GXZlHbQgjETSzC5lbRTxmInSczNYwP3qQkCLCxDBOf52E/Ta/DZ7l+gyiv+1rDWWzQ
-         lJz/ZR9lur/MfdAB4y14nHz9U4SONByKfkAq8+KksZt5X4MHa/vqOJu6xPHiy8w9WgRs
-         TGpngt2JvkKJsfYRcHshqF3XldOGKYGwwkoZO81YKjdHBj5Jb0ld2Bhx23lKy5pEnQM8
-         gkBgFD4x3LExP0ca0835cifub8aphE1kLBU840o5E8+nS4vbeZyn9oIsYO9ikRTU+tYx
-         m5Xw2KeuNQiNwv858+LIfvMacrEZSqUgyip1qHFCPA+iz6nRDAaFoAID+dSXWk2IFKcJ
-         zfWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ye6xQQ/sF83reTDnUCyM55UC2Rr32BLp4JT0MbP8r90=;
-        b=d0gcgqn8ZYh4/pBuVCy7Zcnyn32ChYqTiqZWH8gw6qW0d38HiIeQf0ZNAIPlS87leI
-         T9aSDGkCaxavJBr9dFIFx+7mir9PXeqqH607V7Y7qTHV/ZhtLL6XPbniiC5r8HoB2nj+
-         d8lqzQrjTv0vkDOAfurOeU6jljGpntwauK5DALJbsxIGuWcCifNAtgKXTZZpAArmy3ZK
-         uV1I56bGWXUKTFSqiT4gs/oh2ZRx59kOeAeQT8+Rb1oW1iJL25iv/seZUVk0WbuaO+HO
-         EYOJgWAPGdgBl5xdFU+KwZJ7ODeaszBzvrRwx9UT1O0Ru/VC6c0nPgQ4gusIHH9o2Lmn
-         6j3g==
-X-Gm-Message-State: APjAAAWm/4tj7eaOfQaWQrC9ldiCpqH9kT1020VinfqWyTrmBiAYZaP5
-        hC0Z4E0fY5+w0rUjT8QmA7/Hna/WZPKSvV3gum4=
-X-Google-Smtp-Source: APXvYqznG6Q1gmsGFY+PyPT+6CqR9jOjznF9RIqjhr26hCasSiqcRUMAK0i93+X0Ac6q23Ye4T0jwrdvZIasBwVvdaI=
-X-Received: by 2002:a0c:b49a:: with SMTP id c26mr27598392qve.105.1568306334833;
- Thu, 12 Sep 2019 09:38:54 -0700 (PDT)
+        id S1733295AbfILQox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 12:44:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52378 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725972AbfILQow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 12:44:52 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3EDD97724A098D8E9CEE;
+        Fri, 13 Sep 2019 00:44:40 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 13 Sep 2019 00:44:33 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <kvalo@codeaurora.org>
+CC:     <davem@davemloft.net>, <zhongjiang@huawei.com>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] wireless: Remove unneeded variable
+Date:   Fri, 13 Sep 2019 00:41:29 +0800
+Message-ID: <1568306492-42998-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-References: <CAD56B7euf1kQpwOYiq-he8HveKKzkGdf8_-izEVfwa=QH24a3g@mail.gmail.com>
- <33ec2a52-91aa-6c4a-d900-1725f2970975@xilinx.com>
-In-Reply-To: <33ec2a52-91aa-6c4a-d900-1725f2970975@xilinx.com>
-From:   Paul Thomas <pthomas8589@gmail.com>
-Date:   Thu, 12 Sep 2019 12:38:43 -0400
-Message-ID: <CAD56B7dvKtqQV9hkKEKB7VgoE8hqQGqMxHZiCXxg0sejUpsNCg@mail.gmail.com>
-Subject: Re: Regression: commit c9712e333809 breaks xilinx_uartps
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > ---
-> >  drivers/tty/serial/xilinx_uartps.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/tty/serial/xilinx_uartps.c
-> > b/drivers/tty/serial/xilinx_uartps.c
-> > index 9dcc4d855ddd..ece7f6caa994 100644
-> > --- a/drivers/tty/serial/xilinx_uartps.c
-> > +++ b/drivers/tty/serial/xilinx_uartps.c
-> > @@ -1565,6 +1565,8 @@ static int cdns_uart_probe(struct platform_device *pdev)
-> >
-> >         cdns_uart_data->pclk = devm_clk_get(&pdev->dev, "pclk");
-> >         if (PTR_ERR(cdns_uart_data->pclk) == -EPROBE_DEFER) {
-> > +               /* If we end up defering then set uartps_major back to 0 */
-> > +               uartps_major = 0;
-> >                 rc = PTR_ERR(cdns_uart_data->pclk);
-> >                 goto err_out_unregister_driver;
-> >         }
-> >
->
-> I expect that this can be problematic for all failures in probe.
-> What about this?
-Makes sense, this worked for me. Although, I think the patch is
-malformed by the email line lengths.
+With the help of Coccinelle, I find some place to use redundant
+variable to store the return value, It is unnecessary. Just remove
+it and make the funtion to be void.
 
--Paul
+zhong jiang (3):
+  brcmsmac: Remove unneeded variable and make function to be void
+  wlegacy: Remove unneeded variable and make function to be void
+  libertas: Remove unneeded variable and make function to be void
 
-> Just setting up global major number if first instance
-> pass.
-> Also cleanup should be likely done in remove function too.
->
->
->  diff --git a/drivers/tty/serial/xilinx_uartps.c
-> b/drivers/tty/serial/xilinx_uartps.c
->  index f145946f659b..c1550b45d59b 100644
->  --- a/drivers/tty/serial/xilinx_uartps.c
->  +++ b/drivers/tty/serial/xilinx_uartps.c
->  @@ -1550,7 +1550,6 @@ static int cdns_uart_probe(struct platform_device
-> *pdev)
->                  goto err_out_id;
->          }
->
->  -       uartps_major = cdns_uart_uart_driver->tty_driver->major;
->          cdns_uart_data->cdns_uart_driver = cdns_uart_uart_driver;
->
->          /*
->  @@ -1680,6 +1679,7 @@ static int cdns_uart_probe(struct platform_device
-> *pdev)
->                  console_port = NULL;
->   #endif
->
->  +       uartps_major = cdns_uart_uart_driver->tty_driver->major;
->          cdns_uart_data->cts_override =
-> of_property_read_bool(pdev->dev.of_node,
->
-> "cts-override");
->          return 0;
->
-> Thanks,
-> Michal
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c | 5 +----
+ drivers/net/wireless/intel/iwlegacy/4965-mac.c          | 8 ++------
+ drivers/net/wireless/marvell/libertas/cmd.h             | 2 +-
+ drivers/net/wireless/marvell/libertas/cmdresp.c         | 5 +----
+ 4 files changed, 5 insertions(+), 15 deletions(-)
+
+-- 
+1.7.12.4
+
