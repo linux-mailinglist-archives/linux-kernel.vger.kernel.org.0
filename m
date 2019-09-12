@@ -2,74 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1C5AB0EE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 14:31:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CAAEB0EEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 14:36:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731647AbfILMbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 08:31:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731283AbfILMbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 08:31:44 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C298B206CD;
-        Thu, 12 Sep 2019 12:31:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568291503;
-        bh=y+iwcDhS0CV/l/g9TCSnbAA71fAViqS5kUSTZKfsLFA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FvIfMI6UhO/LYxT2vvOYn3UqhZwke5zzUg5klDqZbih17jYY380GErxthie2GY4RW
-         17AJ4rBpUyDSgZ18lmts4vgZyiLdQReh87VW8qDxTy25zm8CM0ENxVT/0H7COapRMQ
-         mEwCL88usc1Ke8ov/i5oXbEsTjoYtll+L3tyLX4U=
-Date:   Thu, 12 Sep 2019 13:31:39 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: linux-next: manual merge of the arm64 tree with the dma-mapping
- tree
-Message-ID: <20190912123139.kuucii4sltycgy3p@willie-the-truck>
-References: <20190912215558.473206de@canb.auug.org.au>
+        id S1731627AbfILMgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 08:36:36 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:53382 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731283AbfILMgf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 08:36:35 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R531e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=aaron.lu@linux.alibaba.com;NM=1;PH=DS;RN=22;SR=0;TI=SMTPD_---0Tc9p5so_1568291732;
+Received: from aaronlu(mailfrom:aaron.lu@linux.alibaba.com fp:SMTPD_---0Tc9p5so_1568291732)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 12 Sep 2019 20:35:34 +0800
+Date:   Thu, 12 Sep 2019 20:35:32 +0800
+From:   Aaron Lu <aaron.lu@linux.alibaba.com>
+To:     Vineeth Remanan Pillai <vpillai@digitalocean.com>
+Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Dario Faggioli <dfaggioli@suse.com>,
+        "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+Message-ID: <20190912123532.GB16200@aaronlu>
+References: <20190725143003.GA992@aaronlu>
+ <20190726152101.GA27884@sinkpad>
+ <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
+ <20190802153715.GA18075@sinkpad>
+ <eec72c2d533b7600c63de3c8001cc6ab9e915afe.camel@suse.com>
+ <69cd9bca-da28-1d35-3913-1efefe0c1c22@linux.intel.com>
+ <fab8eabb-1cfa-9bf6-02af-3afdff3f955d@linux.intel.com>
+ <20190911140204.GA52872@aaronlu>
+ <7b001860-05b4-4308-df0e-8b60037b8000@linux.intel.com>
+ <CANaguZCH-jjHrWwycU3vz6RfNkW9xN+DoRkHnL3n8-DneNV3FQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190912215558.473206de@canb.auug.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CANaguZCH-jjHrWwycU3vz6RfNkW9xN+DoRkHnL3n8-DneNV3FQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Wed, Sep 11, 2019 at 12:47:34PM -0400, Vineeth Remanan Pillai wrote:
+> > > So both of you are working on top of my 2 patches that deal with the
+> > > fairness issue, but I had the feeling Tim's alternative patches[1] are
+> > > simpler than mine and achieves the same result(after the force idle tag
+> >
+> > I think Julien's result show that my patches did not do as well as
+> > your patches for fairness. Aubrey did some other testing with the same
+> > conclusion.  So I think keeping the forced idle time balanced is not
+> > enough for maintaining fairness.
+> >
+> There are two main issues - vruntime comparison issue and the
+> forced idle issue.  coresched_idle thread patch is addressing
+> the forced idle issue as scheduler is no longer overloading idle
+> thread for forcing idle. If I understand correctly, Tim's patch
+> also tries to fix the forced idle issue. On top of fixing forced
 
-On Thu, Sep 12, 2019 at 09:55:58PM +1000, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm64 tree got a conflict in:
-> 
->   arch/arm64/include/asm/dma-mapping.h
-> 
-> between commit:
-> 
->   5489c8e0cf03 ("arm64: use asm-generic/dma-mapping.h")
-> 
-> from the dma-mapping tree and commit:
-> 
->   b907b80d7ae7 ("arm64: remove pointless __KERNEL__ guards")
-> 
-> from the arm64 tree.
-> 
-> I fixed it up (I just removed the file) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+Er...I don't think so. Tim's patch is meant to solve fairness issue as
+mine, it doesn't attempt to address the forced idle issue.
 
-Thanks. Killing the file is the right thing to do.
+> idle issue, we also need to fix that vruntime comparison issue
+> and I think thats where Aaron's patch helps.
+> 
+> I think comparing parent's runtime also will have issues once
+> the task group has a lot more threads with different running
+> patterns. One example is a task group with lot of active threads
+> and a thread with fairly less activity. So when this less active
+> thread is competing with a thread in another group, there is a
+> chance that it loses continuously for a while until the other
+> group catches up on its vruntime.
 
-Will
+I actually think this is expected behaviour.
 
+Without core scheduling, when deciding which task to run, we will first
+decide which "se" to run from the CPU's root level cfs runqueue and then
+go downwards. Let's call the chosen se on the root level cfs runqueue
+the winner se. Then with core scheduling, we will also need compare the
+two winner "se"s of each hyperthread and choose the core wide winner "se".
+
+> 
+> As discussed during LPC, probably start thinking along the lines
+> of global vruntime or core wide vruntime to fix the vruntime
+> comparison issue?
+
+core wide vruntime makes sense when there are multiple tasks of
+different cgroups queued on the same core. e.g. when there are two
+tasks of cgroupA and one task of cgroupB are queued on the same core,
+assume cgroupA's one task is on one hyperthread and its other task is on
+the other hyperthread with cgroupB's task. With my current
+implementation or Tim's, cgroupA will get more time than cgroupB. If we
+maintain core wide vruntime for cgroupA and cgroupB, we should be able
+to maintain fairness between cgroups on this core. Tim propose to solve
+this problem by doing some kind of load balancing if I'm not mistaken, I
+haven't taken a look at this yet.
