@@ -2,85 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92DC1B10B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 16:08:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F58FB10B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 16:09:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732453AbfILOIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 10:08:37 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56496 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732389AbfILOIh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 10:08:37 -0400
-X-UUID: 88ef5b91e7cc45ca9b12d53609cb2ee6-20190912
-X-UUID: 88ef5b91e7cc45ca9b12d53609cb2ee6-20190912
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <walter-zh.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1916237428; Thu, 12 Sep 2019 22:08:30 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 12 Sep 2019 22:08:28 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 12 Sep 2019 22:08:27 +0800
-Message-ID: <1568297308.19040.5.camel@mtksdccf07>
-Subject: Re: [PATCH v3] mm/kasan: dump alloc and free stack for page
- allocator
-From:   Walter Wu <walter-zh.wu@mediatek.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-CC:     Qian Cai <cai@lca.pw>, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        "Arnd Bergmann" <arnd@arndb.de>, <linux-kernel@vger.kernel.org>,
-        <kasan-dev@googlegroups.com>, <linux-mm@kvack.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
-Date:   Thu, 12 Sep 2019 22:08:28 +0800
-In-Reply-To: <c4d2518f-4813-c941-6f47-73897f420517@suse.cz>
-References: <20190911083921.4158-1-walter-zh.wu@mediatek.com>
-         <5E358F4B-552C-4542-9655-E01C7B754F14@lca.pw>
-         <c4d2518f-4813-c941-6f47-73897f420517@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1732505AbfILOJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 10:09:21 -0400
+Received: from elvis.franken.de ([193.175.24.41]:41051 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732348AbfILOJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 10:09:21 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1i8Pmh-0003T2-00; Thu, 12 Sep 2019 16:09:19 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 1E80CC278A; Thu, 12 Sep 2019 16:09:12 +0200 (CEST)
+Date:   Thu, 12 Sep 2019 16:09:12 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH] mips: sgi-ip27: switch from DISCONTIGMEM to SPARSEMEM
+Message-ID: <20190912140912.GA13137@alpha.franken.de>
+References: <20190905133251.GA3650@rapoport-lnx>
+ <20190905154831.88b7853b47ba7db7bd7626bd@suse.de>
+ <20190905154747.GB3650@rapoport-lnx>
+ <20190905233800.0f6b3fb3722cde2f5a88663a@suse.de>
+ <20190906130223.GA17704@rapoport-lnx>
+ <20190909182242.c1ef9717d14b20212ef75954@suse.de>
+ <20190910113243.GA19207@rapoport-lnx>
+ <20190911160939.19f776535770d12ff51a2af7@suse.de>
+ <20190912105831.GA10677@rapoport-lnx>
+ <20190912155539.6151b0811e858455be4c8d86@suse.de>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190912155539.6151b0811e858455be4c8d86@suse.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 12, 2019 at 03:55:39PM +0200, Thomas Bogendoerfer wrote:
+> - reserved[0xd]	[0x000000035bff8000-0x000000035bffffff], 0x0000000000008000 bytes flags: 0x0
+> 
+> I have no idea which reservation this is, but it's not from one of the
+> node data.
 
->  extern void __reset_page_owner(struct page *page, unsigned int order);
-> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-> index 6c9682ce0254..dc560c7562e8 100644
-> --- a/lib/Kconfig.kasan
-> +++ b/lib/Kconfig.kasan
-> @@ -41,6 +41,8 @@ config KASAN_GENERIC
->  	select SLUB_DEBUG if SLUB
->  	select CONSTRUCTORS
->  	select STACKDEPOT
-> +	select PAGE_OWNER
-> +	select PAGE_OWNER_FREE_STACK
->  	help
->  	  Enables generic KASAN mode.
->  	  Supported in both GCC and Clang. With GCC it requires version 4.9.2
-> @@ -63,6 +65,8 @@ config KASAN_SW_TAGS
->  	select SLUB_DEBUG if SLUB
->  	select CONSTRUCTORS
->  	select STACKDEPOT
-> +	select PAGE_OWNER
-> +	select PAGE_OWNER_FREE_STACK
->  	help
+that's sparsemem's mem_section. And 
 
-What is the difference between PAGE_OWNER+PAGE_OWNER_FREE_STACK and
-DEBUG_PAGEALLOC?
-If you directly enable PAGE_OWNER+PAGE_OWNER_FREE_STACK
-PAGE_OWNER_FREE_STACK,don't you think low-memory device to want to use
-KASAN?
+ free_bootmem_with_active_regions(node, end_pfn);
 
+on the last node will free this reserved memory, when memory
+is added node by node. This explains it.
+
+So when resending the patch add my
+
+Tested-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
