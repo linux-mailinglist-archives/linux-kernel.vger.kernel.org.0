@@ -2,77 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E4CCB13D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 19:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA22B13FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 19:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387767AbfILRhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 13:37:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33424 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387431AbfILRhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 13:37:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5DC0DAEF8;
-        Thu, 12 Sep 2019 17:37:07 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 3B506DA835; Thu, 12 Sep 2019 19:37:28 +0200 (CEST)
-From:   David Sterba <dsterba@suse.com>
-To:     torvalds@linux-foundation.org
-Cc:     David Sterba <dsterba@suse.com>, clm@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Last btrfs fixes for 5.3
-Date:   Thu, 12 Sep 2019 19:37:26 +0200
-Message-Id: <cover.1568307806.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726353AbfILRrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 13:47:42 -0400
+Received: from gateway36.websitewelcome.com ([192.185.184.18]:30433 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726017AbfILRrm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 13:47:42 -0400
+X-Greylist: delayed 1283 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Sep 2019 13:47:41 EDT
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 1967A4010C7B7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 11:53:04 -0500 (CDT)
+Received: from gator3278.hostgator.com ([198.57.247.242])
+        by cmsmtp with SMTP
+        id 8SrJi6sus4FKp8SrJi88aF; Thu, 12 Sep 2019 12:26:17 -0500
+X-Authority-Reason: nr=8
+Received: from 89-69-237-178.dynamic.chello.pl ([89.69.237.178]:60840 helo=comp.lan)
+        by gator3278.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <arkadiusz@drabczyk.org>)
+        id 1i8SrI-002o5v-LP; Thu, 12 Sep 2019 12:26:17 -0500
+From:   Arkadiusz Drabczyk <arkadiusz@drabczyk.org>
+To:     jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: csiostor: Fix spelling typos
+Date:   Thu, 12 Sep 2019 19:25:46 +0200
+Message-Id: <20190912172546.16489-1-arkadiusz@drabczyk.org>
+X-Mailer: git-send-email 2.9.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator3278.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - drabczyk.org
+X-BWhitelist: no
+X-Source-IP: 89.69.237.178
+X-Source-L: No
+X-Exim-ID: 1i8SrI-002o5v-LP
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 89-69-237-178.dynamic.chello.pl (comp.lan) [89.69.237.178]:60840
+X-Source-Auth: arkadiusz@drabczyk.org
+X-Email-Count: 2
+X-Source-Cap: cmt1bXZicmg7cmt1bXZicmg7Z2F0b3IzMjc4Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Fix several spelling typos in comments in csio_hw.c.
 
-there are two fixes, one of them urgent fixing a bug introduced in 5.2
-and reported by many users. It took time to identify the root cause,
-catching the 5.3 release is higly desired also to push the fix to 5.2
-stable tree.
+Signed-off-by: Arkadiusz Drabczyk <arkadiusz@drabczyk.org>
+---
+ drivers/scsi/csiostor/csio_hw.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-The bug is a mess up of return values after adding proper error handling
-and honestly the kind of bug that can cause sleeping disorders until
-it's caught. My appologies to everybody who was affected.
+diff --git a/drivers/scsi/csiostor/csio_hw.c b/drivers/scsi/csiostor/csio_hw.c
+index e519238..950f9cd 100644
+--- a/drivers/scsi/csiostor/csio_hw.c
++++ b/drivers/scsi/csiostor/csio_hw.c
+@@ -793,10 +793,10 @@ csio_hw_get_flash_params(struct csio_hw *hw)
+ 			goto found;
+ 		}
+ 
+-	/* Decode Flash part size.  The code below looks repetative with
++	/* Decode Flash part size.  The code below looks repetitive with
+ 	 * common encodings, but that's not guaranteed in the JEDEC
+-	 * specification for the Read JADEC ID command.  The only thing that
+-	 * we're guaranteed by the JADEC specification is where the
++	 * specification for the Read JEDEC ID command.  The only thing that
++	 * we're guaranteed by the JEDEC specification is where the
+ 	 * Manufacturer ID is in the returned result.  After that each
+ 	 * Manufacturer ~could~ encode things completely differently.
+ 	 * Note, all Flash parts must have 64KB sectors.
+@@ -983,8 +983,8 @@ csio_do_hello(struct csio_hw *hw, enum csio_dev_state *state)
+ 			waiting -= 50;
+ 
+ 			/*
+-			 * If neither Error nor Initialialized are indicated
+-			 * by the firmware keep waiting till we exaust our
++			 * If neither Error nor Initialized are indicated
++			 * by the firmware keep waiting till we exhaust our
+ 			 * timeout ... and then retry if we haven't exhausted
+ 			 * our retries ...
+ 			 */
+@@ -1738,7 +1738,7 @@ static void csio_link_l1cfg(struct link_config *lc, uint16_t fw_caps,
+ 	 * Convert Common Code Forward Error Control settings into the
+ 	 * Firmware's API.  If the current Requested FEC has "Automatic"
+ 	 * (IEEE 802.3) specified, then we use whatever the Firmware
+-	 * sent us as part of it's IEEE 802.3-based interpratation of
++	 * sent us as part of it's IEEE 802.3-based interpretation of
+ 	 * the Transceiver Module EPROM FEC parameters.  Otherwise we
+ 	 * use whatever is in the current Requested FEC settings.
+ 	 */
+@@ -2834,7 +2834,7 @@ csio_hws_configuring(struct csio_hw *hw, enum csio_hw_ev evt)
+ }
+ 
+ /*
+- * csio_hws_initializing - Initialiazing state
++ * csio_hws_initializing - Initializing state
+  * @hw - HW module
+  * @evt - Event
+  *
+@@ -3049,7 +3049,7 @@ csio_hws_removing(struct csio_hw *hw, enum csio_hw_ev evt)
+ 		if (!csio_is_hw_master(hw))
+ 			break;
+ 		/*
+-		 * The BYE should have alerady been issued, so we cant
++		 * The BYE should have already been issued, so we can't
+ 		 * use the mailbox interface. Hence we use the PL_RST
+ 		 * register directly.
+ 		 */
+@@ -3104,7 +3104,7 @@ csio_hws_pcierr(struct csio_hw *hw, enum csio_hw_ev evt)
+  *
+  *	A table driven interrupt handler that applies a set of masks to an
+  *	interrupt status word and performs the corresponding actions if the
+- *	interrupts described by the mask have occured.  The actions include
++ *	interrupts described by the mask have occurred.  The actions include
+  *	optionally emitting a warning or alert message. The table is terminated
+  *	by an entry specifying mask 0.  Returns the number of fatal interrupt
+  *	conditions.
+@@ -4219,7 +4219,7 @@ csio_mgmtm_exit(struct csio_mgmtm *mgmtm)
+  * @hw:		Pointer to HW module.
+  *
+  * It is assumed that the initialization is a synchronous operation.
+- * So when we return afer posting the event, the HW SM should be in
++ * So when we return after posting the event, the HW SM should be in
+  * the ready state, if there were no errors during init.
+  */
+ int
+-- 
+2.9.0
 
-Summary of what could happen:
-
-1) either a hang when committing a transaction, if this happens there's
-   no risk of corruption, still the hang is very inconvenient and can't be
-   resolved without a reboot
-
-2) writeback for some btree nodes may never be started and we end up
-   committing a transaction without noticing that, this is really serious
-   and that will lead to the "parent transid verify failed" messages
-
-Please pull, thanks.
-
-----------------------------------------------------------------
-The following changes since commit 07301df7d2fc220d3de5f7ad804dcb941400cb00:
-
-  btrfs: trim: Check the range passed into to prevent overflow (2019-08-07 16:42:39 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.3-rc8-tag
-
-for you to fetch changes up to 18dfa7117a3f379862dcd3f67cadd678013bb9dd:
-
-  Btrfs: fix unwritten extent buffers and hangs on future writeback attempts (2019-09-12 13:37:25 +0200)
-
-----------------------------------------------------------------
-Filipe Manana (2):
-      Btrfs: fix assertion failure during fsync and use of stale transaction
-      Btrfs: fix unwritten extent buffers and hangs on future writeback attempts
-
- fs/btrfs/extent_io.c | 35 ++++++++++++++++++++++++++---------
- fs/btrfs/tree-log.c  | 16 ++++++++--------
- 2 files changed, 34 insertions(+), 17 deletions(-)
