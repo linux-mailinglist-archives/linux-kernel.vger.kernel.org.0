@@ -2,524 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E684B15E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 23:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F057EB15EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 23:38:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbfILVhc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 17:37:32 -0400
-Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:41018 "EHLO
-        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728630AbfILVhb (ORCPT
+        id S1729048AbfILViq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 17:38:46 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43077 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726721AbfILVip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 17:37:31 -0400
-Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
-        by mx0a-00190b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8CLM1cU007332;
-        Thu, 12 Sep 2019 22:37:15 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=jan2016.eng;
- bh=euhEg/mbs+WcguSgE16Vn0LdaCX/L5nyr5rgMtyjdiw=;
- b=aJrYwOHSAy9gKZh11Iwbs88b113Pb93hJC6lplkQYwMAsmPEsgsalwVVL+E0Wr1tJ2Gs
- pqYNeRnT2a9gjo00E4mWRkRyALiBdLxwsOpXpMOmF5g3yGhkZZKKCKt3Upm1fLy9EIxV
- iOSyqWqi7DnVxGa4dtYs1qpIA5dqKylPuWSJrkN4QcB2AjDDNiHFv4oCR4nXYa1YEgwY
- 8s3hzCxX1ZW6nRSd+XvsDqEpBqODolK7Cv5z0cbq2zMwDb/T9R3qYt9EZ424S5mskJQ2
- u2w6S9rqJloKrDcJLZhAdkx8QxPCK3cVuFo183rK2fUrxShNQFhn1MdhFqVz+a682VTf pw== 
-Received: from prod-mail-ppoint6 (prod-mail-ppoint6.akamai.com [184.51.33.61] (may be forged))
-        by mx0a-00190b01.pphosted.com with ESMTP id 2uytck8w68-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Sep 2019 22:37:14 +0100
-Received: from pps.filterd (prod-mail-ppoint6.akamai.com [127.0.0.1])
-        by prod-mail-ppoint6.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x8CLW3hb003903;
-        Thu, 12 Sep 2019 17:37:13 -0400
-Received: from prod-mail-relay10.akamai.com ([172.27.118.251])
-        by prod-mail-ppoint6.akamai.com with ESMTP id 2uyth10ady-1;
-        Thu, 12 Sep 2019 17:37:13 -0400
-Received: from [172.29.170.83] (bos-lpjec.kendall.corp.akamai.com [172.29.170.83])
-        by prod-mail-relay10.akamai.com (Postfix) with ESMTP id 58A221FCDB;
-        Thu, 12 Sep 2019 21:37:13 +0000 (GMT)
-Subject: Re: [PATCH RESEND] fs/epoll: fix the edge-triggered mode for nested
- epoll
-To:     Heiher <r@hev.cc>
-Cc:     Roman Penyaev <rpenyaev@suse.de>, linux-fsdevel@vger.kernel.org,
-        Eric Wong <e@80x24.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20190902052034.16423-1-r@hev.cc>
- <0cdc9905efb9b77b159e09bee17d3ad4@suse.de>
- <7075dd44-feea-a52f-ddaa-087d7bb2c4f6@akamai.com>
- <23659bc3e5f80efe9746aefd4d6791e8@suse.de>
- <341df9eb-7e8e-98c8-5183-402bdfff7d59@akamai.com>
- <CAHirt9hra2tA_OPNSow+CgD_CF2Z11ZqGG=1P45noqtdMtWuJw@mail.gmail.com>
- <CAHirt9j+DSR+uP-SBLHn0ika86uixSOPLXft+vVj5G5Ge0xr5w@mail.gmail.com>
- <CAHirt9iZAj67FVnhd9ORp2Sk2xAXHDrJ2BANf4VrtM4dLWv9ww@mail.gmail.com>
- <d5914273597707b8780d188688fe0ac2@suse.de>
- <6fd44437-fdd8-3be3-a2ef-6c3534d4e954@akamai.com>
- <CAHirt9gtCssDsS6NjfxSociPObL6vwL7ygCWjgZZYegsUt4YOg@mail.gmail.com>
-From:   Jason Baron <jbaron@akamai.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jbaron@akamai.com; prefer-encrypt=mutual; keydata=
- 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
- JeQ7iQ==
-Message-ID: <7bb91058-eee8-d0c5-c4b3-e3f6cbda8c0b@akamai.com>
-Date:   Thu, 12 Sep 2019 17:36:44 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 12 Sep 2019 17:38:45 -0400
+Received: by mail-pf1-f194.google.com with SMTP id d15so16760530pfo.10
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 14:38:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=T0n1rQXOCr5k4sXETp/07X1OnsstRokhftrJYTFQPJM=;
+        b=Lj+PkIdA+iKPVsKCgd0EoDIHkJpo/2uzZFcmWFb5Zp+cWgdWWudapJGJOfqdrcwNvz
+         xHdDNzF3t570VSOX2TmmjTVARQEjMhnON0Yan8L3EpDekJ1Oltnk+uNcvUyryJMdn6qd
+         KXe9QrHijlzTeRHh+1RbH32IkomP7XTXRukq0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=T0n1rQXOCr5k4sXETp/07X1OnsstRokhftrJYTFQPJM=;
+        b=S2W4JiVNUWkicSjeozPNhNbgZRk4A/bPeYH4ZqxlZOvbH2A4uHyk7E3zJG8VhRDKGe
+         SCFKu/1ZE0bYf1rCZdzYS6eTUPiECskSZL1fd73nzrJ/jhfvFxauAHxgnD6oc9ObC2C/
+         351DQKty0cKotmtIL8KfMBZcrWdJkPCC0NLTCJup4g7J09ZT5ZmAtnSh++TYUOfML42G
+         XZIJpBPT/dNW9oN/teI6CHcFyiOZQjgeuLfvhkBmL3KepttR6Z5oDK1E/PchWwNXJwAx
+         QCvYuQemWmWhrfuURtkk/QUC6gu6hrThXY5L4gMDW0Jlg4Eq5ZhAhejAk/RvMn0kteR0
+         Tabw==
+X-Gm-Message-State: APjAAAVE3FiYuLoecV5MxWqmTMODujx86CU3dvYajvWYYXc5OJqseLn2
+        /SyS8ejQFU8vIC2v9WSpet00EQ==
+X-Google-Smtp-Source: APXvYqyScjKIQlC4hvFLWu4xhuXi3/8FV6iiQ3uZe6FT3Zi2LMPsK5iWncI+1tlidW92PwQWPlE0Kg==
+X-Received: by 2002:a17:90a:cb01:: with SMTP id z1mr917535pjt.96.1568324324469;
+        Thu, 12 Sep 2019 14:38:44 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id b26sm10670396pfd.61.2019.09.12.14.38.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2019 14:38:43 -0700 (PDT)
+Date:   Thu, 12 Sep 2019 17:38:43 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>, rcu@vger.kernel.org
+Subject: Re: [PATCH RT v3 4/5] rcu: Disable use_softirq on PREEMPT_RT
+Message-ID: <20190912213843.GA150506@google.com>
+References: <20190911165729.11178-1-swood@redhat.com>
+ <20190911165729.11178-5-swood@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHirt9gtCssDsS6NjfxSociPObL6vwL7ygCWjgZZYegsUt4YOg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-12_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909120218
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-12_12:2019-09-11,2019-09-12 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxscore=0 phishscore=0
- malwarescore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 mlxlogscore=999 bulkscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1908290000
- definitions=main-1909120218
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911165729.11178-5-swood@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Scott,
 
+Would you mind CC'ing rcu@vger.kernel.org on RCU related patches? I added it
+for this time.
 
-On 9/11/19 4:19 AM, Heiher wrote:
-> Hi,
+On Wed, Sep 11, 2019 at 05:57:28PM +0100, Scott Wood wrote:
+> Besides restoring behavior that used to be default on RT, this avoids
+> a deadlock on scheduler locks:
 > 
-> On Fri, Sep 6, 2019 at 1:48 AM Jason Baron <jbaron@akamai.com> wrote:
->>
->>
->>
->> On 9/5/19 1:27 PM, Roman Penyaev wrote:
->>> On 2019-09-05 11:56, Heiher wrote:
->>>> Hi,
->>>>
->>>> On Thu, Sep 5, 2019 at 10:53 AM Heiher <r@hev.cc> wrote:
->>>>>
->>>>> Hi,
->>>>>
->>>>> I created an epoll wakeup test project, listed some possible cases,
->>>>> and any other corner cases needs to be added?
->>>>>
->>>>> https://github.com/heiher/epoll-wakeup/blob/master/README.md
->>>>>
->>>>> On Wed, Sep 4, 2019 at 10:02 PM Heiher <r@hev.cc> wrote:
->>>>>>
->>>>>> Hi,
->>>>>>
->>>>>> On Wed, Sep 4, 2019 at 8:02 PM Jason Baron <jbaron@akamai.com> wrote:
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> On 9/4/19 5:57 AM, Roman Penyaev wrote:
->>>>>>>> On 2019-09-03 23:08, Jason Baron wrote:
->>>>>>>>> On 9/2/19 11:36 AM, Roman Penyaev wrote:
->>>>>>>>>> Hi,
->>>>>>>>>>
->>>>>>>>>> This is indeed a bug. (quick side note: could you please
->>>>> remove efd[1]
->>>>>>>>>> from your test, because it is not related to the reproduction
->>>>> of a
->>>>>>>>>> current bug).
->>>>>>>>>>
->>>>>>>>>> Your patch lacks a good description, what exactly you've
->>>>> fixed.  Let
->>>>>>>>>> me speak out loud and please correct me if I'm wrong, my
->>>>> understanding
->>>>>>>>>> of epoll internals has become a bit rusty: when epoll fds are
->>>>> nested
->>>>>>>>>> an attempt to harvest events (ep_scan_ready_list() call)
->>>>> produces a
->>>>>>>>>> second (repeated) event from an internal fd up to an external
->>>>> fd:
->>>>>>>>>>
->>>>>>>>>>      epoll_wait(efd[0], ...):
->>>>>>>>>>        ep_send_events():
->>>>>>>>>>           ep_scan_ready_list(depth=0):
->>>>>>>>>>             ep_send_events_proc():
->>>>>>>>>>                 ep_item_poll():
->>>>>>>>>>                   ep_scan_ready_list(depth=1):
->>>>>>>>>>                     ep_poll_safewake():
->>>>>>>>>>                       ep_poll_callback()
->>>>>>>>>>                         list_add_tail(&epi, &epi->rdllist);
->>>>>>>>>>                         ^^^^^^
->>>>>>>>>>                         repeated event
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> In your patch you forbid wakeup for the cases, where depth !=
->>>>> 0, i.e.
->>>>>>>>>> for all nested cases. That seems clear.  But what if we can
->>>>> go further
->>>>>>>>>> and remove the whole chunk, which seems excessive:
->>>>>>>>>>
->>>>>>>>>> @@ -885,26 +886,11 @@ static __poll_t ep_scan_ready_list(struct
->>>>>>>>>> eventpoll *ep,
->>>>>>>>>>
->>>>>>>>>> -
->>>>>>>>>> -       if (!list_empty(&ep->rdllist)) {
->>>>>>>>>> -               /*
->>>>>>>>>> -                * Wake up (if active) both the eventpoll
->>>>> wait list and
->>>>>>>>>> -                * the ->poll() wait list (delayed after we
->>>>> release the
->>>>>>>>>> lock).
->>>>>>>>>> -                */
->>>>>>>>>> -               if (waitqueue_active(&ep->wq))
->>>>>>>>>> -                       wake_up(&ep->wq);
->>>>>>>>>> -               if (waitqueue_active(&ep->poll_wait))
->>>>>>>>>> -                       pwake++;
->>>>>>>>>> -       }
->>>>>>>>>>         write_unlock_irq(&ep->lock);
->>>>>>>>>>
->>>>>>>>>>         if (!ep_locked)
->>>>>>>>>>                 mutex_unlock(&ep->mtx);
->>>>>>>>>>
->>>>>>>>>> -       /* We have to call this outside the lock */
->>>>>>>>>> -       if (pwake)
->>>>>>>>>> -               ep_poll_safewake(&ep->poll_wait);
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> I reason like that: by the time we've reached the point of
->>>>> scanning events
->>>>>>>>>> for readiness all wakeups from ep_poll_callback have been
->>>>> already fired and
->>>>>>>>>> new events have been already accounted in ready list
->>>>> (ep_poll_callback()
->>>>>>>>>> calls
->>>>>>>>>> the same ep_poll_safewake()). Here, frankly, I'm not 100%
->>>>> sure and probably
->>>>>>>>>> missing some corner cases.
->>>>>>>>>>
->>>>>>>>>> Thoughts?
->>>>>>>>>
->>>>>>>>> So the: 'wake_up(&ep->wq);' part, I think is about waking up
->>>>> other
->>>>>>>>> threads that may be in waiting in epoll_wait(). For example,
->>>>> there may
->>>>>>>>> be multiple threads doing epoll_wait() on the same epoll fd,
->>>>> and the
->>>>>>>>> logic above seems to say thread 1 may have processed say N
->>>>> events and
->>>>>>>>> now its going to to go off to work those, so let's wake up
->>>>> thread 2 now
->>>>>>>>> to handle the next chunk.
->>>>>>>>
->>>>>>>> Not quite. Thread which calls ep_scan_ready_list() processes
->>>>> all the
->>>>>>>> events, and while processing those, removes them one by one
->>>>> from the
->>>>>>>> ready list.  But if event mask is !0 and event belongs to
->>>>>>>> Level Triggered Mode descriptor (let's say default mode) it
->>>>> tails event
->>>>>>>> again back to the list (because we are in level mode, so event
->>>>> should
->>>>>>>> be there).  So at the end of this traversing loop ready list is
->>>>> likely
->>>>>>>> not empty, and if so, wake up again is called for nested epoll
->>>>> fds.
->>>>>>>> But, those nested epoll fds should get already all the
->>>>> notifications
->>>>>>>> from the main event callback ep_poll_callback(), regardless any
->>>>> thread
->>>>>>>> which traverses events.
->>>>>>>>
->>>>>>>> I suppose this logic exists for decades, when Davide (the
->>>>> author) was
->>>>>>>> reshuffling the code here and there.
->>>>>>>>
->>>>>>>> But I do not feel confidence to state that this extra wakeup is
->>>>> bogus,
->>>>>>>> I just have a gut feeling that it looks excessive.
->>>>>>>
->>>>>>> Note that I was talking about the wakeup done on ep->wq not
->>>>> ep->poll_wait.
->>>>>>> The path that I'm concerned about is let's say that there are N
->>>>> events
->>>>>>> queued on the ready list. A thread that was woken up in
->>>>> epoll_wait may
->>>>>>> decide to only process say N/2 of then. Then it will call wakeup
->>>>> on ep->wq
->>>>>>> and this will wakeup another thread to process the remaining N/2.
->>>>> Without
->>>>>>> the wakeup, the original thread isn't going to process the events
->>>>> until
->>>>>>> it finishes with the original N/2 and gets back to epoll_wait().
->>>>> So I'm not
->>>>>>> sure how important that path is but I wanted to at least note the
->>>>> change
->>>>>>> here would impact that behavior.
->>>>>>>
->>>>>>> Thanks,
->>>>>>>
->>>>>>> -Jason
->>>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>>> So I think removing all that even for the
->>>>>>>>> depth 0 case is going to change some behavior here. So
->>>>> perhaps, it
->>>>>>>>> should be removed for all depths except for 0? And if so, it
->>>>> may be
->>>>>>>>> better to make 2 patches here to separate these changes.
->>>>>>>>>
->>>>>>>>> For the nested wakeups, I agree that the extra wakeups seem
->>>>> unnecessary
->>>>>>>>> and it may make sense to remove them for all depths. I don't
->>>>> think the
->>>>>>>>> nested epoll semantics are particularly well spelled out, and
->>>>> afaict,
->>>>>>>>> nested epoll() has behaved this way for quite some time. And
->>>>> the current
->>>>>>>>> behavior is not bad in the way that a missing wakeup or false
->>>>> negative
->>>>>>>>> would be.
->>>>>>>>
->>>>>>>> That's 100% true! For edge mode extra wake up is not a bug, not
->>>>> optimal
->>>>>>>> for userspace - yes, but that can't lead to any lost wakeups.
->>>>>>>>
->>>>>>>> --
->>>>>>>> Roman
->>>>>>>>
->>>>>>
->>>>>> I tried to remove the whole chunk of code that Roman said, and it
->>>>>> seems that there
->>>>>> are no obvious problems with the two test programs below:
->>>>
->>>> I recall this message, the test case 9/25/26 of epoll-wakeup (on
->>>> github) are failed while
->>>> the whole chunk are removed.
->>>>
->>>> Apply the original patch, all tests passed.
->>>
->>>
->>> These are failing on my bare 5.2.0-rc2
->>>
->>> TEST  bin/epoll31       FAIL
->>> TEST  bin/epoll46       FAIL
->>> TEST  bin/epoll50       FAIL
->>> TEST  bin/epoll32       FAIL
->>> TEST  bin/epoll19       FAIL
->>> TEST  bin/epoll27       FAIL
->>> TEST  bin/epoll42       FAIL
->>> TEST  bin/epoll34       FAIL
->>> TEST  bin/epoll48       FAIL
->>> TEST  bin/epoll40       FAIL
->>> TEST  bin/epoll20       FAIL
->>> TEST  bin/epoll28       FAIL
->>> TEST  bin/epoll38       FAIL
->>> TEST  bin/epoll52       FAIL
->>> TEST  bin/epoll24       FAIL
->>> TEST  bin/epoll23       FAIL
->>>
->>>
->>> These are failing if your patch is applied:
->>> (my 5.2.0-rc2 is old? broken?)
->>>
->>> TEST  bin/epoll46       FAIL
->>> TEST  bin/epoll42       FAIL
->>> TEST  bin/epoll34       FAIL
->>> TEST  bin/epoll48       FAIL
->>> TEST  bin/epoll40       FAIL
->>> TEST  bin/epoll44       FAIL
->>> TEST  bin/epoll38       FAIL
->>>
->>> These are failing if "ep_poll_safewake(&ep->poll_wait)" is not called,
->>> but wakeup(&ep->wq); is still invoked:
->>>
->>> TEST  bin/epoll46       FAIL
->>> TEST  bin/epoll42       FAIL
->>> TEST  bin/epoll34       FAIL
->>> TEST  bin/epoll40       FAIL
->>> TEST  bin/epoll44       FAIL
->>> TEST  bin/epoll38       FAIL
->>>
->>> So at least 48 has been "fixed".
->>>
->>> These are failing if the whole chunk is removed, like your
->>> said 9,25,26 are among which do not pass:
->>>
->>> TEST  bin/epoll26       FAIL
->>> TEST  bin/epoll42       FAIL
->>> TEST  bin/epoll34       FAIL
->>> TEST  bin/epoll9        FAIL
->>> TEST  bin/epoll48       FAIL
->>> TEST  bin/epoll40       FAIL
->>> TEST  bin/epoll25       FAIL
->>> TEST  bin/epoll44       FAIL
->>> TEST  bin/epoll38       FAIL
->>>
->>> This can be a good test suite, probably can be added to kselftests?
+> [  136.894657] 039: ============================================
+> [  136.900401] 039: WARNING: possible recursive locking detected
+> [  136.906146] 039: 5.2.9-rt3.dbg+ #174 Tainted: G            E
+> [  136.912152] 039: --------------------------------------------
+> [  136.917896] 039: rcu_torture_rea/13474 is trying to acquire lock:
+> [  136.923990] 039: 000000005f25146d
+> [  136.927310] 039:  (
+> [  136.929414] 039: &p->pi_lock
+> [  136.932303] 039: ){-...}
+> [  136.934840] 039: , at: try_to_wake_up+0x39/0x920
+> [  136.939461] 039:
+> but task is already holding lock:
+> [  136.944425] 039: 000000005f25146d
+> [  136.947745] 039:  (
+> [  136.949852] 039: &p->pi_lock
+> [  136.952738] 039: ){-...}
+> [  136.955274] 039: , at: try_to_wake_up+0x39/0x920
+> [  136.959895] 039:
+> other info that might help us debug this:
+> [  136.965555] 039:  Possible unsafe locking scenario:
 > 
-> Thank you, I have updated epoll-tests to fix these issues. I think this is good
-> news if we can added to kselftests. ;)
+> [  136.970608] 039:        CPU0
+> [  136.973493] 039:        ----
+> [  136.976378] 039:   lock(
+> [  136.978918] 039: &p->pi_lock
+> [  136.981806] 039: );
+> [  136.983911] 039:   lock(
+> [  136.986451] 039: &p->pi_lock
+> [  136.989336] 039: );
+> [  136.991444] 039:
+>  *** DEADLOCK ***
 > 
->>>
->>> --
->>> Roman
->>>
->>
->>
->> Indeed, I just tried the same test suite and I am seeing similar
->> failures - it looks like its a bit timing dependent. It looks like all
->> the failures are caused by a similar issue. For example, take epoll34:
->>
->>          t0   t1
->>      (ew) |    | (ew)
->>          e0    |
->>       (lt) \  /
->>              |
->>             e1
->>              | (et)
->>             s0
->>
->>
->> The test is trying to assert that an epoll_wait() on e1 and and
->> epoll_wait() on e0 both return 1 event for EPOLLIN. However, the
->> epoll_wait on e1 is done in a thread and it can happen before or after
->> the epoll_wait() is called against e0. If the epoll_wait() on e1 happens
->> first then because its attached as 'et', it consumes the event. So that
->> there is no longer an event reported at e0. I think that is reasonable
->> semantics here. However if the wait on e0 happens after the wait on e1
->> then the test will pass as both waits will see the event. Thus, a patch
->> like this will 'fix' this testcase:
->>
->> --- a/src/epoll34.c
->> +++ b/src/epoll34.c
->> @@ -59,15 +59,15 @@ int main(int argc, char *argv[])
->>         if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
->>                 goto out;
->>
->> -       if (pthread_create(&tw, NULL, thread_handler, NULL) < 0)
->> -               goto out;
->> -
->>         if (pthread_create(&te, NULL, emit_handler, NULL) < 0)
->>                 goto out;
->>
->>         if (epoll_wait(efd[0], &e, 1, 500) == 1)
->>                 count++;
->>
->> +       if (pthread_create(&tw, NULL, thread_handler, NULL) < 0)
->> +               goto out;
->> +
->>         if (pthread_join(tw, NULL) < 0)
->>                 goto out;
->>
->>
->> I found all the other failures to be of similar origin. I suspect Heiher
->> didn't see failures due to the thread timings here.
+> [  136.995194] 039:  May be due to missing lock nesting notation
 > 
-> Thank you. I also found a multi-threaded concurrent accumulation problem,
-> and that has been changed to atomic operations. I think we should allow two
-> different behaviors to be passed because they are all correctly.
+> [  137.001115] 039: 3 locks held by rcu_torture_rea/13474:
+> [  137.006341] 039:  #0:
+> [  137.008707] 039: 000000005f25146d
+> [  137.012024] 039:  (
+> [  137.014131] 039: &p->pi_lock
+> [  137.017015] 039: ){-...}
+> [  137.019558] 039: , at: try_to_wake_up+0x39/0x920
+> [  137.024175] 039:  #1:
+> [  137.026540] 039: 0000000011c8e51d
+> [  137.029859] 039:  (
+> [  137.031966] 039: &rq->lock
+> [  137.034679] 039: ){-...}
+> [  137.037217] 039: , at: try_to_wake_up+0x241/0x920
+> [  137.041924] 039:  #2:
+> [  137.044291] 039: 00000000098649b9
+> [  137.047610] 039:  (
+> [  137.049714] 039: rcu_read_lock
+> [  137.052774] 039: ){....}
+> [  137.055314] 039: , at: cpuacct_charge+0x33/0x1e0
+> [  137.059934] 039:
+> stack backtrace:
+> [  137.063425] 039: CPU: 39 PID: 13474 Comm: rcu_torture_rea Kdump: loaded Tainted: G            E     5.2.9-rt3.dbg+ #174
+> [  137.074197] 039: Hardware name: Intel Corporation S2600BT/S2600BT, BIOS SE5C620.86B.01.00.0763.022420181017 02/24/2018
+> [  137.084886] 039: Call Trace:
+> [  137.087773] 039:  <IRQ>
+> [  137.090226] 039:  dump_stack+0x5e/0x8b
+> [  137.093997] 039:  __lock_acquire+0x725/0x1100
+> [  137.098358] 039:  lock_acquire+0xc0/0x240
+> [  137.102374] 039:  ? try_to_wake_up+0x39/0x920
+> [  137.106737] 039:  _raw_spin_lock_irqsave+0x47/0x90
+> [  137.111534] 039:  ? try_to_wake_up+0x39/0x920
+> [  137.115910] 039:  try_to_wake_up+0x39/0x920
+> [  137.120098] 039:  rcu_read_unlock_special+0x65/0xb0
+> [  137.124977] 039:  __rcu_read_unlock+0x5d/0x70
+> [  137.129337] 039:  cpuacct_charge+0xd9/0x1e0
+> [  137.133522] 039:  ? cpuacct_charge+0x33/0x1e0
+> [  137.137880] 039:  update_curr+0x14b/0x420
+> [  137.141894] 039:  enqueue_entity+0x42/0x370
+> [  137.146080] 039:  enqueue_task_fair+0xa9/0x490
+> [  137.150528] 039:  activate_task+0x5a/0xf0
+> [  137.154539] 039:  ttwu_do_activate+0x4e/0x90
+> [  137.158813] 039:  try_to_wake_up+0x277/0x920
+> [  137.163086] 039:  irq_exit+0xb6/0xf0
+> [  137.166661] 039:  smp_apic_timer_interrupt+0xe3/0x3a0
+> [  137.171714] 039:  apic_timer_interrupt+0xf/0x20
+> [  137.176249] 039:  </IRQ>
+> [  137.178785] 039: RIP: 0010:__schedule+0x0/0x8e0
+> [  137.183319] 039: Code: 00 02 48 89 43 20 e8 0f 5a 00 00 48 8d 7b 28 e8 86 f2 fd ff 31 c0 5b 5d 41 5c c3 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <55> 48 89 e5 41 57 41 56 49 c7 c6 c0 ca 1e 00 41 55 41 89 fd 41 54
+> [  137.202498] 039: RSP: 0018:ffffc9005835fbc0 EFLAGS: 00000246
+> [  137.208158] 039:  ORIG_RAX: ffffffffffffff13
+> [  137.212428] 039: RAX: 0000000000000000 RBX: ffff8897c3e1bb00 RCX: 0000000000000001
+> [  137.219994] 039: RDX: 0000000080004008 RSI: 0000000000000006 RDI: 0000000000000001
+> [  137.227560] 039: RBP: ffff8897c3e1bb00 R08: 0000000000000000 R09: 0000000000000000
+> [  137.235126] 039: R10: 0000000000000001 R11: 0000000000000001 R12: ffffffff81001fd1
+> [  137.242694] 039: R13: 0000000000000044 R14: 0000000000000000 R15: ffffc9005835fcac
+> [  137.250259] 039:  ? ___preempt_schedule+0x16/0x18
+> [  137.254969] 039:  preempt_schedule_common+0x32/0x80
+> [  137.259846] 039:  ___preempt_schedule+0x16/0x18
+> [  137.264379] 039:  rcutorture_one_extend+0x33a/0x510 [rcutorture]
+> [  137.270397] 039:  rcu_torture_one_read+0x18c/0x450 [rcutorture]
+> [  137.276334] 039:  rcu_torture_reader+0xac/0x1f0 [rcutorture]
+> [  137.281998] 039:  ? rcu_torture_reader+0x1f0/0x1f0 [rcutorture]
+> [  137.287920] 039:  kthread+0x106/0x140
+> [  137.291591] 039:  ? rcu_torture_one_read+0x450/0x450 [rcutorture]
+> [  137.297681] 039:  ? kthread_bind+0x10/0x10
+> [  137.301783] 039:  ret_from_fork+0x3a/0x50
 > 
-> thread 2:
-> if (epoll_wait(efd[1], &e, 1, 500) == 1)
->     __sync_fetch_and_or(&count, 1);
+> Signed-off-by: Scott Wood <swood@redhat.com>
+> ---
+> The prohibition on use_softirq should be able to be dropped once RT gets
+> the latest RCU code, but the question of what use_softirq should default
+> to on PREEMPT_RT remains.
 > 
-> thread1:
-> if (epoll_wait(efd[0], &e, 1, 500) == 1)
->     __sync_fetch_and_or(&count, 2);
-> 
-> check:
-> if ((count != 1) && (count != 3))
->     goto out;
-> 
->>
->> I also found that all the testcases pass if we leave the wakeup(&ep->wq)
->> call for the depth 0 case (and remove the pwake part).
-> 
-> So, We need to keep the wakeup(&ep-wq) for all depth, and only
-> wakeup(&ep->poll_wait)
-> for depth 0 and/or ep->rdlist from empty to be not empty?
-> 
+> v3: Use IS_ENABLED
 
-Yes, so my thinking is yes, leave the wakeup(&ep->wq) for all depths. It
-may not strictly be necessary for depths > 0 but I do have some concerns
-about it and doesn't affect this specific case. So I would leave it for
-all depths and if you want to remove it for depths > 0, its a separate
-patch.
+Out of curiosity, does PREEMPT_RT use the NOCB callback offloading? If no,
+should it use it? IIUC, that does make the work the softirq have to do less
+work since the callbacks are executed in threaded context.
 
-I'm now not sure its really safe to remove the wakeup(&ep->poll_wait)
-either. Take the case where we have:
+If yes, can RT tolerate use_softirq=false and what could a realistic softirq
+running/completion time be that PREEMPT_RT can tolerate? I guess that can be
+answered by running rcuperf on PREEMPT_RT with a NOCB configuration and
+measuring softirq worst-case start/completion times.
 
-       (et)  (lt)
-t0---e0---e1----s0
+I could run these tests myself but I am vacation for the next week or so.
+
+thanks,
+
+ - Joel
 
 
-Let's say there is thread t1 also doing epoll_wait() on e1. Now, let's
-say s0 fires an event and wakes up t1. While t1 is reaping events from
-t1 its calling ep_scan_ready_list() and while its processing the events
-it drops the ep->lock and more events get queued to the overflow list.
-Now, let's say t0 wakes up from epoll_wait() it will not see any of the
-events queued to e1 yet (since they are not on the readylist yet). Thus,
-t0 goes back to sleep and I think can miss an event here. So I think
-that's what the wakeup(&ep->poll_wait) is about.
-
-What I think we can do to fix the original case, is that perhaps in that
-case where events get queued to the overflow list we do in fact do the
-wakeup(&ep->poll_wait). So perhaps, we can just have variable that
-checks if there is anything in the overflow list, and if so do the
-wakeup(&ep->poll_wait) conditional on there being things on the overflow
-list. Although I can't say I tried to see if this would work.
-
-That said, I think ep_modify() might also subtlety be dependent on the
-current behavior, in that ep_item_poll() uses ep_scan_ready_list() and
-when an event is modified it may need to wakeup nested epoll fds to
-inform them of events. Thus, perhaps, we would also need an explicit
-call to wakeup(&ep->poll_wait) when ep_item_poll() returns events.
-
-Thanks,
-
--Jason
+> ---
+>  kernel/rcu/tree.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index fc8b00c61b32..ee0a5ec2c30f 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -98,9 +98,14 @@ struct rcu_state rcu_state = {
+>  /* Dump rcu_node combining tree at boot to verify correct setup. */
+>  static bool dump_tree;
+>  module_param(dump_tree, bool, 0444);
+> -/* By default, use RCU_SOFTIRQ instead of rcuc kthreads. */
+> -static bool use_softirq = 1;
+> +/*
+> + * By default, use RCU_SOFTIRQ instead of rcuc kthreads.
+> + * But, avoid RCU_SOFTIRQ on PREEMPT_RT due to pi/rq deadlocks.
+> + */
+> +static bool use_softirq = !IS_ENABLED(CONFIG_PREEMPT_RT_FULL);
+> +#ifdef CONFIG_PREEMPT_RT_FULL
+>  module_param(use_softirq, bool, 0444);
+> +#endif
+>  /* Control rcu_node-tree auto-balancing at boot time. */
+>  static bool rcu_fanout_exact;
+>  module_param(rcu_fanout_exact, bool, 0444);
+> -- 
+> 1.8.3.1
+> 
