@@ -2,214 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 591D4B0D02
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 12:36:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 938ADB0D0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 12:38:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731153AbfILKgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 06:36:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3868 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731092AbfILKgI (ORCPT
+        id S1731178AbfILKiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 06:38:08 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53966 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730454AbfILKiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 06:36:08 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8CAX30a026071;
-        Thu, 12 Sep 2019 06:35:55 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uym8prbxd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Sep 2019 06:35:55 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8CAZKwA034203;
-        Thu, 12 Sep 2019 06:35:54 -0400
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uym8prbww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Sep 2019 06:35:54 -0400
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8CAU8iC017403;
-        Thu, 12 Sep 2019 10:35:53 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma04wdc.us.ibm.com with ESMTP id 2uy6jvwg7m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Sep 2019 10:35:53 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8CAZqqN52560328
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Sep 2019 10:35:52 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BC49C13604F;
-        Thu, 12 Sep 2019 10:35:52 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 770F3136051;
-        Thu, 12 Sep 2019 10:35:52 +0000 (GMT)
-Received: from sofia.ibm.com (unknown [9.124.35.237])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Sep 2019 10:35:52 +0000 (GMT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 1F7B12E47C4; Thu, 12 Sep 2019 16:05:51 +0530 (IST)
-From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-To:     Nathan Lynch <nathanl@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Kamalesh Babulal <kamaleshb@in.ibm.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [PATCH 2/2] pseries/hotplug-cpu: Add sysfs attribute for cede_offline
-Date:   Thu, 12 Sep 2019 16:05:41 +0530
-Message-Id: <1568284541-15169-3-git-send-email-ego@linux.vnet.ibm.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1568284541-15169-1-git-send-email-ego@linux.vnet.ibm.com>
-References: <1568284541-15169-1-git-send-email-ego@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909120112
+        Thu, 12 Sep 2019 06:38:08 -0400
+Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7EEF533A;
+        Thu, 12 Sep 2019 12:38:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1568284686;
+        bh=oEZwKKZfoB39rIHVguV/Mi482TNps8xNyQ8BfbqvOB8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IMY/z6lqnv1bfvjbv0Gtt+hv07eVPmX/ydFh9YOmqr73nItwhbr5dAl7bcretH9li
+         H+7uYGkb+AeI869DOfVw7tUk8xYZHoDWzKtn8e6xnIHxem9Kwxjnn1UERNgmJidY1m
+         jh5IIHKQbFnvaFAJPMNbSMNYCBzZmxy5M9oUj1Jo=
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] arm: dts: renesas: r8a77980: Remove r8a77970 DU compatible
+Date:   Thu, 12 Sep 2019 11:37:34 +0100
+Message-Id: <20190912103734.1879-1-kieran.bingham+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+The r8a77970 was added with an compatible string for a differnet device
+rather than adding the correct compatible to the driver.
 
-Define a new sysfs attribute
-"/sys/device/system/cpu/cede_offline_enabled" on PSeries Linux guests
-to allow userspace programs to change the state into which the
-offlined CPU need to be put to at runtime. This is intended for
-userspace programs that fold CPUs for the purpose of saving energy
-when the utilization is low.
+Remove the unnecessary compatible which is for a different platform.
 
-Setting the value of this attribute ensures that subsequent CPU
-offline operations will put the offlined CPUs to extended
-cede. However, it will cause inconsistencies in the PURR accounting.
-
-Clearing the attribute will make the offlined CPUs call the RTAS
-"stop-self" call thereby returning the CPU to the hypervisor.
-
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- Documentation/ABI/testing/sysfs-devices-system-cpu | 14 +++++
- arch/powerpc/platforms/pseries/hotplug-cpu.c       | 68 ++++++++++++++++++++--
- 2 files changed, 76 insertions(+), 6 deletions(-)
+Please note, this patch should not be integrated until the renesas,du-r8a77980
+compatible string makes it into the DU [0].
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 06d0931..b3c52cd 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -572,3 +572,17 @@ Description:	Secure Virtual Machine
- 		If 1, it means the system is using the Protected Execution
- 		Facility in POWER9 and newer processors. i.e., it is a Secure
- 		Virtual Machine.
-+
-+What:		/sys/devices/system/cpu/cede_offline_enabled
-+Date:		August 2019
-+Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-+		Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description:	Offline CPU state control
-+
-+		If 1, it means that offline CPUs on PSeries guests
-+		will be made to call an extended CEDE which provides
-+		energy savings but at the expense of accuracy of PURR
-+		accounting. If 0, the offline CPUs on PSeries guests
-+		will be made to call RTAS "stop-self" call which will
-+		return the CPUs to the Hypervisor and provide accurate
-+		values of PURR. The value is 0 by default.
-diff --git a/arch/powerpc/platforms/pseries/hotplug-cpu.c b/arch/powerpc/platforms/pseries/hotplug-cpu.c
-index f9d0366..4a04cf7 100644
---- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
-@@ -943,9 +943,64 @@ static int parse_cede_parameters(void)
- 			 CEDE_LATENCY_PARAM_MAX_LENGTH);
- }
+[0] https://lore.kernel.org/linux-renesas-soc/a9cc2193-0a18-0490-c273-c64bd70992f5@ideasonboard.com/T/#t
+
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index 042f4089e546..c6195377d181 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -1487,8 +1487,7 @@
+ 		};
  
--static int __init pseries_cpu_hotplug_init(void)
-+/*
-+ * Must be guarded by
-+ * cpu_maps_update_begin()...cpu_maps_update_done()
-+ */
-+static void update_default_offline_state(void)
- {
- 	int cpu;
-+
-+	if (cede_offline_enabled)
-+		default_offline_state = CPU_STATE_INACTIVE;
-+	else
-+		default_offline_state = CPU_STATE_OFFLINE;
-+
-+	for_each_possible_cpu(cpu)
-+		set_default_offline_state(cpu);
-+}
-+
-+static ssize_t show_cede_offline_enabled(struct device *dev,
-+					 struct device_attribute *attr,
-+					 char *buf)
-+{
-+	unsigned long ret = 0;
-+
-+	if (cede_offline_enabled)
-+		ret = 1;
-+
-+	return sprintf(buf, "%lx\n", ret);
-+}
-+
-+static ssize_t store_cede_offline_enabled(struct device *dev,
-+					  struct device_attribute *attr,
-+					  const char *buf, size_t count)
-+{
-+	bool val;
-+	int ret = 0;
-+
-+	ret = kstrtobool(buf, &val);
-+	if (ret)
-+		return -EINVAL;
-+
-+	cpu_maps_update_begin();
-+	/* Check if anything needs to be done */
-+	if (val == cede_offline_enabled)
-+		goto done;
-+	cede_offline_enabled = val;
-+	update_default_offline_state();
-+done:
-+	cpu_maps_update_done();
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR(cede_offline_enabled, 0600,
-+		   show_cede_offline_enabled,
-+		   store_cede_offline_enabled);
-+
-+static int __init pseries_cpu_hotplug_init(void)
-+{
- 	int qcss_tok;
- 
- #ifdef CONFIG_ARCH_CPU_PROBE_RELEASE
-@@ -971,11 +1026,12 @@ static int __init pseries_cpu_hotplug_init(void)
- 	if (firmware_has_feature(FW_FEATURE_LPAR)) {
- 		of_reconfig_notifier_register(&pseries_smp_nb);
- 		cpu_maps_update_begin();
--		if (cede_offline_enabled && parse_cede_parameters() == 0) {
--			default_offline_state = CPU_STATE_INACTIVE;
--			for_each_online_cpu(cpu)
--				set_default_offline_state(cpu);
--		}
-+		if (parse_cede_parameters() == 0)
-+			device_create_file(cpu_subsys.dev_root,
-+					   &dev_attr_cede_offline_enabled);
-+		else /* Extended cede is not supported */
-+			cede_offline_enabled = false;
-+		update_default_offline_state();
- 		cpu_maps_update_done();
- 	}
- 
+ 		du: display@feb00000 {
+-			compatible = "renesas,du-r8a77980",
+-				     "renesas,du-r8a77970";
++			compatible = "renesas,du-r8a77980";
+ 			reg = <0 0xfeb00000 0 0x80000>;
+ 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 724>;
 -- 
-1.9.4
+2.20.1
 
