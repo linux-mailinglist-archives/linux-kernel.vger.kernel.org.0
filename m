@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18064B1512
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 22:09:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C1DB1517
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 22:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfILUIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 16:08:09 -0400
+        id S1727838AbfILUIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 16:08:31 -0400
 Received: from mga01.intel.com ([192.55.52.88]:35554 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727352AbfILUH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727373AbfILUH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Sep 2019 16:07:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -17,22 +17,22 @@ Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 13:07:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
-   d="scan'208";a="336688254"
+   d="scan'208";a="336688257"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.185])
-  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2019 13:07:57 -0700
+  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2019 13:07:58 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     ravi.v.shankar@intel.com, chang.seok.bae@intel.com,
+        Tony Luck <tony.luck@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>,
         Dave Hansen <dave.hansen@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v8 12/17] x86/entry/64: Document GSBASE handling in the paranoid path
-Date:   Thu, 12 Sep 2019 13:06:53 -0700
-Message-Id: <1568318818-4091-13-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v8 13/17] x86/speculation/swapgs: Check FSGSBASE in enabling SWAPGS mitigation
+Date:   Thu, 12 Sep 2019 13:06:54 -0700
+Message-Id: <1568318818-4091-14-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1568318818-4091-1-git-send-email-chang.seok.bae@intel.com>
 References: <1568318818-4091-1-git-send-email-chang.seok.bae@intel.com>
@@ -41,12 +41,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On FSGSBASE systems, the way to handle GS base in the paranoid path is
-different from the existing SWAPGS-based entry/exit path handling. Document
-the reason and what has to be done for FSGSBASE enabled systems.
+From: Tony Luck <tony.luck@intel.com>
 
+Before enabling FSGSBASE the kernel could safely assume that the content
+of GS base was a user address. Thus any speculative access as the result
+of a mispredicted branch controlling the execution of SWAPGS would be to
+a user address. So systems with speculation-proof SMAP did not need to
+add additional LFENCE instructions to mitigate.
+
+With FSGSBASE enabled a hostile user can set GS base to a kernel address.
+So they can make the kernel speculatively access data they wish to leak
+via a side channel. This means that SMAP provides no protection.
+
+Add FSGSBASE as an additional condition to enable the fence-based SWAPGS
+mitigation.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -57,29 +68,32 @@ Cc: Andi Kleen <ak@linux.intel.com>
 ---
 
 Changes from v7:
-* Massaged doc and changelog by Thomas
-* Used 'GS base' consistently, instead of 'GSBASE'
+* Included as a new patch.
 ---
- Documentation/x86/entry_64.rst | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/kernel/cpu/bugs.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/x86/entry_64.rst b/Documentation/x86/entry_64.rst
-index a48b3f6..0499a40 100644
---- a/Documentation/x86/entry_64.rst
-+++ b/Documentation/x86/entry_64.rst
-@@ -108,3 +108,12 @@ We try to only use IST entries and the paranoid entry code for vectors
- that absolutely need the more expensive check for the GS base - and we
- generate all 'normal' entry points with the regular (faster) paranoid=0
- variant.
-+
-+On FSGSBASE systems, however, user space can set GS without kernel
-+interaction. It means the value of GS base itself does not imply anything,
-+whether a kernel value or a user space value. So, there is no longer a safe
-+way to check whether the exception is entering from user mode or kernel
-+mode in the paranoid entry code path. So the GS base value needs to be read
-+out, saved and the kernel GS base value written. On exit, the saved GS base
-+value needs to be restored unconditionally. The non-paranoid entry/exit
-+code still uses SWAPGS unconditionally as the state is known.
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 91c2561..e06356f 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -321,14 +321,12 @@ static void __init spectre_v1_select_mitigation(void)
+ 		 * If FSGSBASE is enabled, the user can put a kernel address in
+ 		 * GS, in which case SMAP provides no protection.
+ 		 *
+-		 * [ NOTE: Don't check for X86_FEATURE_FSGSBASE until the
+-		 *	   FSGSBASE enablement patches have been merged. ]
+-		 *
+ 		 * If FSGSBASE is disabled, the user can only put a user space
+ 		 * address in GS.  That makes an attack harder, but still
+ 		 * possible if there's no SMAP protection.
+ 		 */
+-		if (!smap_works_speculatively()) {
++		if (boot_cpu_has(X86_FEATURE_FSGSBASE) ||
++		    !smap_works_speculatively()) {
+ 			/*
+ 			 * Mitigation can be provided from SWAPGS itself or
+ 			 * PTI as the CR3 write in the Meltdown mitigation
 -- 
 2.7.4
 
