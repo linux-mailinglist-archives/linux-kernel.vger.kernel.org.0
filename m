@@ -2,126 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72BC7B0AB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 10:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0451B0ABB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 10:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730432AbfILI4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 04:56:13 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:38692 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfILI4M (ORCPT
+        id S1730511AbfILI5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 04:57:16 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:8194 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725940AbfILI5Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 04:56:12 -0400
-Received: by mail-yw1-f66.google.com with SMTP id f187so8865255ywa.5;
-        Thu, 12 Sep 2019 01:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Ba0Mg0PjzFl5tyazyjtWzd4MBHG4kyyWf35Son0d6lA=;
-        b=QpKGvCltuwLS1EvJHQvNjmcaYy/JUMTCT0iVaXYh9wkBOauFKMUiP0kYkUwR5+bDgH
-         0qakOzwgCtqVB/ZqH2NihcyADJAd5R4MhpwmexILx739pxC+qBikD41/PA4sMmQ9YbcF
-         K13487GS0MfqO3xVQt7IFbn4Un4c+FbnpWas7ti/I2vlFozGjrYYAJQFYkiyC8Yn2Pco
-         VyWW0ZmtMlVUw470exQCGI/hxRpM+5T4RiLhx2gunLQCiWjLh+yGV8+Qoj9b1sy0X26U
-         eaO9NwDi+FNx3VwvMRpzp7JrHQwjWvM1jlizyw5h9IeqU3TkN41OpzugLKv5hasQPYyS
-         +fwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ba0Mg0PjzFl5tyazyjtWzd4MBHG4kyyWf35Son0d6lA=;
-        b=QFvHi1oh8UqebrcZ55BbMgOCnesA9cxDlwLty13VkmukDbRsoDLzw4eVZY1r7YRcCp
-         TcIeis+Js3SeFWslLrd2x0ojUCIxhs6VpU9Usyd83QsBRlxNb4fkiTo8+uWPCq7sfnYx
-         vY5WgDHzHK1peiDrJST/IIfGbwaBQTR5sneobPMb6GZywArQI7zunRzmJwYEB//tqMcE
-         Q6scmGMcfa5xnAB+tStxZW74timxL1vM5Cus3kscDzD95z4OSOFliNN30A0e7x8SxXf4
-         6s1k2sLCptN6M7NfSyHj5N4GmSeyj576UizutI8RgaPjy02kS8dH5Im2dUcLnzlNgHrc
-         ENEA==
-X-Gm-Message-State: APjAAAVf0hk7rrTY6+65ztjSXrmOaDi/XLvOHeud8h51qNzUKThJNClo
-        11LNZr46SdXSknesBxmn4F5bXPJJqWRT+qlu9dM=
-X-Google-Smtp-Source: APXvYqxo4SZfAeLiIv90NX3eRPxzJ4KtqyBZq8+C62dbsPbxsixwbH1Gt2YyD5fq4Xgxd8rfuSeUHty7pKSI0eZMX5c=
-X-Received: by 2002:a81:9404:: with SMTP id l4mr27056745ywg.352.1568278571868;
- Thu, 12 Sep 2019 01:56:11 -0700 (PDT)
+        Thu, 12 Sep 2019 04:57:16 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8C8u6xt002413;
+        Thu, 12 Sep 2019 10:56:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=hC/Ep7sILGc8IpTJGW+E2kTEYIt84RL/dPIXG9oXwF0=;
+ b=DxjeenHlDwZIXSKz4Z4Cj9H1cpx4vn5MQKPwyPNsHrltd/aGq+o1yO8tGnckqJRC1rQT
+ TTPOBEn7Xm3/pY0nTQv62iCWyOKOPdXagbxmaGYUTGLFXVJRr9J745Yf0T8YzhMgvxIj
+ Egqir2G8pxnZajnCAKontJPhtgQ3bODtPj0En19MSxqkZnR62OROnca6RjLlA+wST1Kv
+ 0+UXJgXGPswnPexcPT76AarTnogHSI0AsJoVVCIZICvYkoaPww4Pbdl2oNvga7B66J5P
+ 5HaDRbiCk1h77MaWfvXvtIl9nPZnpZLMtIg/C1rvoSeOq5j8JYibDjDUguNOPx5DkzdF YA== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2uv2awg4hb-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 12 Sep 2019 10:56:57 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C5C2A53;
+        Thu, 12 Sep 2019 08:56:46 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D1BA12B841B;
+        Thu, 12 Sep 2019 10:56:45 +0200 (CEST)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 12 Sep
+ 2019 10:56:45 +0200
+Received: from localhost (10.201.23.97) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 12 Sep 2019 10:56:45
+ +0200
+From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
+To:     Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm/stm: dsi: higher pll out only in video burst mode
+Date:   Thu, 12 Sep 2019 10:56:29 +0200
+Message-ID: <1568278589-20400-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20190912041817.23984-1-huangfq.daxian@gmail.com> <87tv9hew2k.fsf@vitty.brq.redhat.com>
-In-Reply-To: <87tv9hew2k.fsf@vitty.brq.redhat.com>
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Date:   Thu, 12 Sep 2019 16:56:00 +0800
-Message-ID: <CABXRUiTD=yRRQFfSdS=2e9QaO-PEgvZ=LBar927rL04G59nHxQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: work around leak of uninitialized stack contents
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.97]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-12_04:2019-09-11,2019-09-12 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vitaly Kuznetsov <vkuznets@redhat.com> =E6=96=BC 2019=E5=B9=B49=E6=9C=8812=
-=E6=97=A5=E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=884:51=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> Fuqian Huang <huangfq.daxian@gmail.com> writes:
->
-> > Emulation of VMPTRST can incorrectly inject a page fault
-> > when passed an operand that points to an MMIO address.
-> > The page fault will use uninitialized kernel stack memory
-> > as the CR2 and error code.
-> >
-> > The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ER=
-ROR
-> > exit to userspace;
->
-> Hm, why so? KVM_EXIT_INTERNAL_ERROR is basically an error in KVM, this
-> is not a proper reaction to a userspace-induced condition (or ever).
->
-> I also looked at VMPTRST's description in Intel's manual and I can't
-> find and explicit limitation like "this must be normal memory". We're
-> just supposed to inject #PF "If a page fault occurs in accessing the
-> memory destination operand."
->
-> In case it seems to be too cumbersome to handle VMPTRST to MMIO and we
-> think that nobody should be doing that I'd rather prefer injecting #GP.
->
-> Please tell me what I'm missing :-)
+In order to better support video non-burst modes,
+the +20% on pll out is added only in burst mode.
 
-I found it during the code review, and it looks like the problem the
-commit 353c0956a618 ("KVM: x86: work around leak of uninitialized
-stack contents (CVE-2019-7222)")
-mentions. So I fixed it in a similar way.
+Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+Reviewed-by: Yannick FERTRE <yannick.fertre@st.com>
+---
+ drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
->
-> >  however, it is not an easy fix, so for now just ensure
-> > that the error code and CR2 are zero.
-> >
-> > Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
-> > ---
-> >  arch/x86/kvm/x86.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 290c3c3efb87..7f442d710858 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -5312,6 +5312,7 @@ int kvm_write_guest_virt_system(struct kvm_vcpu *=
-vcpu, gva_t addr, void *val,
-> >       /* kvm_write_guest_virt_system can pull in tons of pages. */
-> >       vcpu->arch.l1tf_flush_l1d =3D true;
-> >
-> > +     memset(exception, 0, sizeof(*exception));
-> >       return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
-> >                                          PFERR_WRITE_MASK, exception);
-> >  }
->
-> --
-> Vitaly
+diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
+index a03a642..514efef 100644
+--- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
++++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
+@@ -260,8 +260,11 @@ dw_mipi_dsi_get_lane_mbps(void *priv_data, const struct drm_display_mode *mode,
+ 	/* Compute requested pll out */
+ 	bpp = mipi_dsi_pixel_format_to_bpp(format);
+ 	pll_out_khz = mode->clock * bpp / lanes;
++
+ 	/* Add 20% to pll out to be higher than pixel bw (burst mode only) */
+-	pll_out_khz = (pll_out_khz * 12) / 10;
++	if (mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
++		pll_out_khz = (pll_out_khz * 12) / 10;
++
+ 	if (pll_out_khz > dsi->lane_max_kbps) {
+ 		pll_out_khz = dsi->lane_max_kbps;
+ 		DRM_WARN("Warning max phy mbps is used\n");
+-- 
+2.7.4
+
