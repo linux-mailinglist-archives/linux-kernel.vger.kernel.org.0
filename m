@@ -2,74 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1413AB15B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 23:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D93B15BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 23:11:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbfILVJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 17:09:07 -0400
-Received: from smtprelay0043.hostedemail.com ([216.40.44.43]:38089 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728249AbfILVJG (ORCPT
+        id S1728316AbfILVLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 17:11:21 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43652 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbfILVLU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 17:09:06 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 529AE180A884F;
-        Thu, 12 Sep 2019 21:09:05 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:960:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3871:4321:4605:5007:7903:10004:10400:10848:11026:11232:11473:11658:11914:12043:12291:12297:12683:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21080:21451:21627:30054:30070:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: fog75_4f3e7db1c3c36
-X-Filterd-Recvd-Size: 2110
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 12 Sep 2019 21:09:04 +0000 (UTC)
-Message-ID: <e4f60b3f68bd214261b946f34ea0459098da00c3.camel@perches.com>
-Subject: Re: [PATCH] checkpatch.pl: Don't complain about nominal authors if
- there isn't one
-From:   Joe Perches <joe@perches.com>
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        Andy Whitcroft <apw@canonical.com>
-Cc:     Kernel development list <linux-kernel@vger.kernel.org>
-Date:   Thu, 12 Sep 2019 14:09:03 -0700
-In-Reply-To: <Pine.LNX.4.44L0.1909121651180.1305-100000@iolanthe.rowland.org>
-References: <Pine.LNX.4.44L0.1909121651180.1305-100000@iolanthe.rowland.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Thu, 12 Sep 2019 17:11:20 -0400
+Received: by mail-io1-f68.google.com with SMTP id r8so33287701iol.10
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 14:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=62srlE3SBeqwLg3Pd9NJw2uOwPxjT0FuUEa1NpcJ1xg=;
+        b=qWhIUGIbwLqnA77UZ14TIIf9D+cAZjHYn+mhylpeFjNYM7MeVdl9l3Q8gNgt9vowCE
+         usvkwZg92ge3+m2sG9Zovwsf5Jdji//d4DgCkyxOA37bKPnG0mwy5iOZ/CbIq1g5hKyp
+         tGIbkUstgAac+ynlhNq6+chmBgnlhYfCILlbgnV1xtiLpn7Ppkjsnq7KV9IL5/eh8KqU
+         7PfS91T8+D93qqW85sKaeA/+wfgNGB3MYnMzluyNMvQSIu1CwGVlBZxL0iUBGoglKpDQ
+         P4aqRniuu1HnlZqcTcF8VQed492BC1B5qlaCgP9krPjUwQRetrnZObRHpo+4DUPI4wy8
+         5BqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=62srlE3SBeqwLg3Pd9NJw2uOwPxjT0FuUEa1NpcJ1xg=;
+        b=DD2wXnfmT6cOFMalIYIe3u/AkWmXBXf2nL4X6Hi/ihQQDkAbfFdCBPisbBZM/jj/eP
+         sDNirO2+aFFau0057x2ItbYrmhE31KFtZJuqeu0s26wFTW1ByYawpLq/XBbKUJ1fcAt+
+         nYjGEzrFUfD+lakfFBc6tYL2Rz/TeXOk0jXzkVh/AMwyYjvGd6ecPDMbcF/Sw7TMgRrI
+         gEVYvBrphOQEHLElfbRQ23KDJahbNJgh/I8iaG5XwGxdFaAToQWHNBI03VZCeimzZkAG
+         FnEJTVqU3M6SCfRAuLEQ02kFAq5nz3+ZhdZqcKn+U+G6nqDiLjQqO22Q2IFkw4+Rrg5b
+         A9gg==
+X-Gm-Message-State: APjAAAWi6dOpefdw+EeaJuTIoYFeaBrVEiAnWh0XQyN69vkLY9GIXXyU
+        beTthUGRc1/14TfswPA1gZkpJg==
+X-Google-Smtp-Source: APXvYqxn+KCXBrBfZnrJIz4+Qc8lvkyqM8DtjXHGEMowE6lpWAOAuV9+fPmtupBmcM6xQSJ5JfKnhA==
+X-Received: by 2002:a6b:f717:: with SMTP id k23mr6875020iog.210.1568322679426;
+        Thu, 12 Sep 2019 14:11:19 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:9f3b:444a:4649:ca05])
+        by smtp.gmail.com with ESMTPSA id c15sm22432089ioi.74.2019.09.12.14.11.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2019 14:11:18 -0700 (PDT)
+Date:   Thu, 12 Sep 2019 15:11:14 -0600
+From:   Yu Zhao <yuzhao@google.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] mm: correct mask size for slub page->objects
+Message-ID: <20190912211114.GA146974@google.com>
+References: <20190912004401.jdemtajrspetk3fh@box>
+ <20190912023111.219636-1-yuzhao@google.com>
+ <20190912094035.vkqnj24bwh33yvia@box>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190912094035.vkqnj24bwh33yvia@box>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-09-12 at 16:55 -0400, Alan Stern wrote:
-> checkpatch.pl shouldn't warn about a "Missing Signed-off-by: line by
-> nominal patch author" if there is no nominal patch author.  Without
-> this change, checkpatch always gives me the following warning:
+On Thu, Sep 12, 2019 at 12:40:35PM +0300, Kirill A. Shutemov wrote:
+> On Wed, Sep 11, 2019 at 08:31:08PM -0600, Yu Zhao wrote:
+> > Mask of slub objects per page shouldn't be larger than what
+> > page->objects can hold.
+> > 
+> > It requires more than 2^15 objects to hit the problem, and I don't
+> > think anybody would. It'd be nice to have the mask fixed, but not
+> > really worth cc'ing the stable.
+> > 
+> > Fixes: 50d5c41cd151 ("slub: Do not use frozen page flag but a bit in the page counters")
+> > Signed-off-by: Yu Zhao <yuzhao@google.com>
 > 
->         WARNING: Missing Signed-off-by: line by nominal patch author ''
+> I don't think the patch fixes anything.
 
-When/how does this occur?  Example please.
+Technically it does. It makes no sense for a mask to have more bits
+than the variable that holds the masked value. I had to look up the
+commit history to find out why and go through the code to make sure
+it doesn't actually cause any problem.
 
-> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> 
-> ---
-> 
->  scripts/checkpatch.pl |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Index: usb-devel/scripts/checkpatch.pl
-> ===================================================================
-> --- usb-devel.orig/scripts/checkpatch.pl
-> +++ usb-devel/scripts/checkpatch.pl
-> @@ -6673,7 +6673,7 @@ sub process {
->                 if ($signoff == 0) {
->                         ERROR("MISSING_SIGN_OFF",
->                               "Missing Signed-off-by: line(s)\n");
-> -               } elsif (!$authorsignoff) {
-> +               } elsif ($author ne '' && !$authorsignoff) {
->                         WARN("NO_AUTHOR_SIGN_OFF",
->                              "Missing Signed-off-by: line by nominal patch author '$author'\n");
->                 }
-> 
+My hope is that nobody else would have to go through the same trouble.
 
+> Yes, we have one spare bit between order and number of object that is not
+> used and always zero. So what?
+> 
+> I can imagine for some microarchitecures accessing higher 16 bits of int
+> is cheaper than shifting by 15.
+
+Well, I highly doubt the inconsistency is intended for such
+optimization, even it existed.
