@@ -2,94 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C00B4B0E5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 13:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DB5B0E57
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 13:56:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731533AbfILL4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 07:56:47 -0400
-Received: from ozlabs.org ([203.11.71.1]:49461 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731283AbfILL4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 07:56:46 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46TcgX5mw6z9s00;
-        Thu, 12 Sep 2019 21:56:40 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1568289404;
-        bh=/N+GHb6Q4DSPJrXliJOICdcpLmYvTsamZ3rmrW6spnM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rbhXD03TQsGooid4wLhTUDWO8BmwB61GgK6QV47Gleif8ZA1Ksd/zqo744wIPwn7T
-         qVfbJe9T7sttEx2975c6u00CGZzr2bCz+WNeBNvheQwQ7bwv0pM7jXkm3GsSbn2Sry
-         y9Ip/LV0UPI0Youx2TgIZpB6xC4pfOC1V8x0m5hAlS7usCFLaLlq9NrQgAKp8PXXIp
-         TnlJ9daSM/2Ueetj7N1dBm3cxPrT2pRU5epPXJaB1uwphRckKU7K0nOuIihxu53JS7
-         l2zBBaYD1qDT1k7zfJgGdm4p2+hXRkQGn4s5ZvgQgAhCIr7BZbFcGQn85pfn01aXlZ
-         q1yHvuZ35JU6A==
-Date:   Thu, 12 Sep 2019 21:55:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: linux-next: manual merge of the arm64 tree with the dma-mapping
- tree
-Message-ID: <20190912215558.473206de@canb.auug.org.au>
+        id S1731492AbfILL43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 07:56:29 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38492 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731377AbfILL43 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 07:56:29 -0400
+Received: by mail-oi1-f195.google.com with SMTP id 7so16863466oip.5;
+        Thu, 12 Sep 2019 04:56:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S1u80ilTf7G0ZNN0O4iJG8ezHwT90ZnChBDdldmbdiM=;
+        b=lZxQp8c7OHDrwJ8cRDMu/FKdMSGVJzn0y0jkX4L04Fpa25lEfRaejsjz7ff96tWJAl
+         AM79z1jPzutZIbZ+tpMimpZj8NiJt/LmTsQvUEhHSJlQF4Gnl2M2SHX55dT56EmhhL7e
+         Kh2pRcHklazISI+/WIiC4vvuhivv/3OnYrcJBjH4l1YQGFu4q+SFuvanO6xGE+32J9F0
+         lur6QKwM2XACQKIXCVmtFhdAt9XXNYMqvhrE+jCKXLkCrWd5690DuqVHAVVDIm3yUyQT
+         Ec8og/TlzQTYbCoYikNHiOZ6yDGhOCHIeyjysnzagSBO9XGX0oFS2KZVTq2IoLYrYafW
+         PYLA==
+X-Gm-Message-State: APjAAAUPAIl4qXxVZXVefFYy20Y5TsZtUs1YaFtnZ2WaE5EUwRv5Kay/
+        Oxm/3MZypncq4gpAi7cmSVfssHq2f+pgeMWKcWs=
+X-Google-Smtp-Source: APXvYqymEmu8yP8kOCKU3SZPHOFLXhmadtL34z8YlpNUfAcz68fuN1P9jyLC9n1+IY2XaDbxa+IApNS+a0I+vR0Q8FQ=
+X-Received: by 2002:aca:dad4:: with SMTP id r203mr8545498oig.102.1568289387824;
+ Thu, 12 Sep 2019 04:56:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Ga3xg0O0/4COl5KooqPVUmq";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20190912103734.1879-1-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20190912103734.1879-1-kieran.bingham+renesas@ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 12 Sep 2019 13:56:16 +0200
+Message-ID: <CAMuHMdWb9qBDZqOs072u_pCRTaGGArAdUBLWbA5kGoU=KM4Y3A@mail.gmail.com>
+Subject: Re: [PATCH] arm: dts: renesas: r8a77980: Remove r8a77970 DU compatible
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Ga3xg0O0/4COl5KooqPVUmq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 12, 2019 at 12:38 PM Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> The r8a77970 was added with an compatible string for a differnet device
 
-Hi all,
+different
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+> rather than adding the correct compatible to the driver.
+>
+> Remove the unnecessary compatible which is for a different platform.
+>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-  arch/arm64/include/asm/dma-mapping.h
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-between commit:
+> Please note, this patch should not be integrated until the renesas,du-r8a77980
+> compatible string makes it into the DU [0].
 
-  5489c8e0cf03 ("arm64: use asm-generic/dma-mapping.h")
+Hence postponed.
 
-from the dma-mapping tree and commit:
+Gr{oetje,eeting}s,
 
-  b907b80d7ae7 ("arm64: remove pointless __KERNEL__ guards")
+                        Geert
 
-from the arm64 tree.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Ga3xg0O0/4COl5KooqPVUmq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl16Mk4ACgkQAVBC80lX
-0Gx5OQf5AWmAI7PcuY5qrjVrmxOGfiAYSFFQviVgTYqxbX8Yuu63JNeEmjP4YVwy
-pdCT2f531PKRdnfR9J2F0jselppcHQf4dhMaMGvd+MKa4eqdsDpDLVrlAheAm+d/
-1rxjDHfWtr2R2zryvkiaqezpFMBuwf5VmQG2vRFsFB1f41VxPOllIHX9/A6qEqVA
-+Ql7V5EQNnATNlW8+yY1txHRWDTseylgHJAxy+Uq2cYM9r9H1md3/eiRgGphuECO
-YbezVvHJs+9+hpME3ICs5gx8Pfo8To0a4n5/GnXiNWI1iMOHXOC7USr9XJ81sdaP
-ODFwSLJuIipCg2tsTaW89pTH6WhIww==
-=zu/j
------END PGP SIGNATURE-----
-
---Sig_/Ga3xg0O0/4COl5KooqPVUmq--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
