@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE300B1518
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 22:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3871BB1510
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 22:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbfILUIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 16:08:35 -0400
+        id S1727501AbfILUIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 16:08:05 -0400
 Received: from mga01.intel.com ([192.55.52.88]:35554 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbfILUH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 16:07:56 -0400
+        id S1727338AbfILUH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 16:07:57 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 13:07:56 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 13:07:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
-   d="scan'208";a="336688242"
+   d="scan'208";a="336688246"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.185])
-  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2019 13:07:55 -0700
+  by orsmga004.jf.intel.com with ESMTP; 12 Sep 2019 13:07:56 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     ravi.v.shankar@intel.com, chang.seok.bae@intel.com,
@@ -31,9 +31,9 @@ Cc:     ravi.v.shankar@intel.com, chang.seok.bae@intel.com,
         Tony Luck <tony.luck@intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         Vegard Nossum <vegard.nossum@oracle.com>
-Subject: [PATCH v8 09/17] x86/entry/64: Switch CR3 before SWAPGS in paranoid entry
-Date:   Thu, 12 Sep 2019 13:06:50 -0700
-Message-Id: <1568318818-4091-10-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v8 10/17] x86/entry/64: Introduce the FIND_PERCPU_BASE macro
+Date:   Thu, 12 Sep 2019 13:06:51 -0700
+Message-Id: <1568318818-4091-11-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1568318818-4091-1-git-send-email-chang.seok.bae@intel.com>
 References: <1568318818-4091-1-git-send-email-chang.seok.bae@intel.com>
@@ -42,17 +42,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When FSGSBASE is enabled, the GS base handling in paranoid entry will need
-to retrieve the kernel GS base which requires that the kernel page table is
-active.
+GS base is used to find per-CPU data in the kernel. But when GS base is
+unknown, the per-CPU base can be found from the per_cpu_offset table with a
+CPU NR.  The CPU NR is extracted from the limit field of the CPUNODE entry
+in GDT, or by the RDPID instruction. This is a prerequisite for using
+FSGSBASE in the low level entry code.
 
-As the CR3 switch to the kernel page tables (PTI is active) does not depend
-on kernel GS base, move the CR3 switch in front of the GS base handling.
+Also, add the GAS-compatible RDPID macro as binutils 2.21 does not support
+it. Support is added in version 2.27.
 
-Comment the EBX content while at it.
-
-No functional change.
-
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Reviewed-by: Tony Luck <tony.luck@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -66,70 +65,92 @@ Cc: Vegard Nossum <vegard.nossum@oracle.com>
 ---
 
 Changes from v7:
-* Rebased onto the LFENCE-based SWAPGS mitigation code
-* Dropped the READ_MSR_GSBASE macro by Thomas
-* Rewrote changelog and comments by Thomas
-* Use 'GS base' consistently, instead of 'GSBASE'
+* No code change
+* Massaged changelog by Thomas
+* Used 'GS base' consistently, instead of 'GSBASE'
 ---
- arch/x86/entry/entry_64.S | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+ arch/x86/entry/calling.h    | 34 ++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/inst.h | 15 +++++++++++++++
+ 2 files changed, 49 insertions(+)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index dd0d62a..edb4160 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1219,15 +1219,7 @@ ENTRY(paranoid_entry)
- 	cld
- 	PUSH_AND_CLEAR_REGS save_ret=1
- 	ENCODE_FRAME_POINTER 8
--	movl	$1, %ebx
--	movl	$MSR_GS_BASE, %ecx
--	rdmsr
--	testl	%edx, %edx
--	js	1f				/* negative -> in kernel */
--	SWAPGS
--	xorl	%ebx, %ebx
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index 515c0ce..c222302 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -6,6 +6,7 @@
+ #include <asm/percpu.h>
+ #include <asm/asm-offsets.h>
+ #include <asm/processor-flags.h>
++#include <asm/inst.h>
  
--1:
- 	/*
- 	 * Always stash CR3 in %r14.  This value will be restored,
- 	 * verbatim, at exit.  Needed if paranoid_entry interrupted
-@@ -1237,16 +1229,31 @@ ENTRY(paranoid_entry)
- 	 * This is also why CS (stashed in the "iret frame" by the
- 	 * hardware at entry) can not be used: this may be a return
- 	 * to kernel code, but with a user CR3 value.
-+	 *
-+	 * Switching CR3 does not depend on kernel GS base so it can
-+	 * be done before switching to the kernel GS base. This is
-+	 * required for FSGSBASE because the kernel GS base has to
-+	 * be retrieved from a kernel internal table.
- 	 */
- 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+ /*
  
-+	/* EBX = 1 -> kernel GSBASE active, no restore required */
-+	movl	$1, %ebx
- 	/*
--	 * The above SAVE_AND_SWITCH_TO_KERNEL_CR3 macro doesn't do an
--	 * unconditional CR3 write, even in the PTI case.  So do an lfence
--	 * to prevent GS speculation, regardless of whether PTI is enabled.
-+	 * The kernel-enforced convention is a negative GS base indicates
-+	 * a kernel value. No SWAPGS needed on entry and exit.
- 	 */
--	FENCE_SWAPGS_KERNEL_ENTRY
-+	movl	$MSR_GS_BASE, %ecx
-+	rdmsr
-+	testl	%edx, %edx
-+	jns	.Lparanoid_entry_swapgs
-+	ret
+@@ -347,6 +348,39 @@ For 32-bit we have the following conventions - kernel is built with
+ #endif
+ .endm
  
-+.Lparanoid_entry_swapgs:
-+	SWAPGS
-+	FENCE_SWAPGS_KERNEL_ENTRY
-+	/* EBX = 0 -> SWAPGS required on exit */
-+	xorl	%ebx, %ebx
- 	ret
- END(paranoid_entry)
++#ifdef CONFIG_SMP
++
++/*
++ * CPU/node NR is loaded from the limit (size) field of a special segment
++ * descriptor entry in GDT.
++ */
++.macro LOAD_CPU_AND_NODE_SEG_LIMIT reg:req
++	movq	$__CPUNODE_SEG, \reg
++	lsl	\reg, \reg
++.endm
++
++/*
++ * Fetch the per-CPU GS base value for this processor and put it in @reg.
++ * We normally use %gs for accessing per-CPU data, but we are setting up
++ * %gs here and obviously can not use %gs itself to access per-CPU data.
++ */
++.macro GET_PERCPU_BASE reg:req
++	ALTERNATIVE \
++		"LOAD_CPU_AND_NODE_SEG_LIMIT \reg", \
++		"RDPID	\reg", \
++		X86_FEATURE_RDPID
++	andq	$VDSO_CPUNODE_MASK, \reg
++	movq	__per_cpu_offset(, \reg, 8), \reg
++.endm
++
++#else
++
++.macro GET_PERCPU_BASE reg:req
++	movq	pcpu_unit_offsets(%rip), \reg
++.endm
++
++#endif /* CONFIG_SMP */
++
+ /*
+  * This does 'call enter_from_user_mode' unless we can avoid it based on
+  * kernel config or using the static jump infrastructure.
+diff --git a/arch/x86/include/asm/inst.h b/arch/x86/include/asm/inst.h
+index f5a796d..d063841 100644
+--- a/arch/x86/include/asm/inst.h
++++ b/arch/x86/include/asm/inst.h
+@@ -306,6 +306,21 @@
+ 	.endif
+ 	MODRM 0xc0 movq_r64_xmm_opd1 movq_r64_xmm_opd2
+ 	.endm
++
++.macro RDPID opd
++	REG_TYPE rdpid_opd_type \opd
++	.if rdpid_opd_type == REG_TYPE_R64
++	R64_NUM rdpid_opd \opd
++	.else
++	R32_NUM rdpid_opd \opd
++	.endif
++	.byte 0xf3
++	.if rdpid_opd > 7
++	PFX_REX rdpid_opd 0
++	.endif
++	.byte 0x0f, 0xc7
++	MODRM 0xc0 rdpid_opd 0x7
++.endm
+ #endif
  
+ #endif
 -- 
 2.7.4
 
