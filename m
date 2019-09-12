@@ -2,345 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D52C8B0EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 14:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31C9BB0EDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 14:27:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731616AbfILMSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 08:18:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58713 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731283AbfILMSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 08:18:45 -0400
-Received: from [26.252.58.3] ([172.58.27.94])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x8CCHprQ3302160
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 12 Sep 2019 05:17:53 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x8CCHprQ3302160
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019081901; t=1568290675;
-        bh=XUtKFvK6K4S+CS2rLO+1BrbGuHCKBoLO+N3C38fmh2I=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=pPBaQUtqztU6dN55sIIXdoRwTjv4Am8EtPEaCw1ek0mXAHFale5viyAOlc69v8qVS
-         Sh2m7OWJnqR58rBueeTZqkHLQyfJjbwmH8UZ3QIiUnbRvxLB1SJbvTy901DJ3BcYCl
-         RWOSzCReWUysozcnDw65lG/h9OkOCwVj9e1VqrWh06C2DnJRbcONUe0kWHtmBGNhpR
-         T8YKRCzA8Do/iXMRd3tLr8+6TDuGPsHFiiDpinGYg3+Ob9Nd/tWa7C+kh1oQN43ggT
-         3bxfEYsyFN994+t6GgKpJQAWVg/ad4aSC6kcvombFhXI3EnxaIKNcKx1EdeSEsZVwH
-         OhpRxbmwJHliw==
-Date:   Thu, 12 Sep 2019 13:17:39 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <533cc422-3f26-591f-f41c-b385d8c8ff05@intel.com>
-References: <306d38fb-7ce6-a3ec-a351-6c117559ebaa@intel.com> <20190108101058.GB6808@hirez.programming.kicks-ass.net> <20190108172721.GN6118@tassilo.jf.intel.com> <D1A153D5-D23B-45E6-9E7A-EB9CBAE84B7E@gmail.com> <20190108190104.GC1900@hirez.programming.kicks-ass.net> <7EB5F9ED-8743-4225-BE97-8D5C8D8E0F84@gmail.com> <20190109103544.GH1900@hirez.programming.kicks-ass.net> <7b4952c2-d3e3-488f-3697-2e8b71c58063@intel.com> <20190829085339.GN2369@hirez.programming.kicks-ass.net> <d37f678f-cf1d-5c98-228f-05bed99f2112@intel.com> <20190829114602.GR2369@hirez.programming.kicks-ass.net> <533cc422-3f26-591f-f41c-b385d8c8ff05@intel.com>
+        id S1731554AbfILM1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 08:27:48 -0400
+Received: from m9a0003g.houston.softwaregrp.com ([15.124.64.68]:48751 "EHLO
+        m9a0003g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731436AbfILM1s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 08:27:48 -0400
+X-Greylist: delayed 2116 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Sep 2019 08:24:48 EDT
+Received: FROM m9a0003g.houston.softwaregrp.com (15.121.0.191) BY m9a0003g.houston.softwaregrp.com WITH ESMTP;
+ Thu, 12 Sep 2019 12:23:58 +0000
+Received: from M9W0068.microfocus.com (2002:f79:bf::f79:bf) by
+ M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 12 Sep 2019 11:23:16 +0000
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (15.124.72.14) by
+ M9W0068.microfocus.com (15.121.0.191) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Thu, 12 Sep 2019 11:23:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gY8qgw9foCDdO5lidXrPIrchyZrTCZo2j6ds5Pnpx+DdK6uJFOKtwddzUK+z5I4b18rDn1cq6p4wDAgOqv6jeNOACpGt4ksTDbGBdo9nbEK/b3WtqV7Ywv5FlKrAscVxYFs0TbPLoZQwUzc6n0cnVQ8qu6a958Im0qZYYqOtOGlsVAuv3WFbUNMK60yKHQRgDbw0LOQL7i3kL3wMtp3NBuBUlBH3lpltPNH2uIJGPLjnTHcFXyJYWEG0GHZUvfuoFuQc3oA/+0MtcyVSutGvpeyzErV1IjunJ6Y5/oZUu7nrx+odZ9dkEps00iVrqcCMKuey7zLWd2YoPKNhUpReLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nwo4KWkACWyRIvqaHvb2vG9rVDF2Flb6xXZ1Mb//3+g=;
+ b=ZGihH00hhFbdK6h/IXFQ3///LvS4UOSkgKb3TQ5CCKuQGcaop73i0+lBYKytubtxyoS+YqAHn/RaW+SY0qBUPogHbnqgMhw4eixeN3YenspWdQ2fmCuZrZZ1u+71hsJtfju5d5QRnun/f7QG8HMpQcNFz1kdmHYdDtMCeGTqLirahLdsI4qHd0DW2hs8LCOEb1YUTia2hlgcU3GRNwUCvCjrFw9cL0InFjTA/sWmFjgQvaTRusYGTDreyLVcVhn5yycP2lNwaz6wDzdZst5vs0TwOFwhCRndVM7CPkItV2xDFF0v7S/x9BhJ2L/gsLryeugxS/xrNr7RJSmdpvtp8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from CH2PR18MB3349.namprd18.prod.outlook.com (52.132.246.91) by
+ CH2PR18MB3174.namprd18.prod.outlook.com (52.132.244.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2241.14; Thu, 12 Sep 2019 11:23:10 +0000
+Received: from CH2PR18MB3349.namprd18.prod.outlook.com
+ ([fe80::d507:1099:1d46:c025]) by CH2PR18MB3349.namprd18.prod.outlook.com
+ ([fe80::d507:1099:1d46:c025%6]) with mapi id 15.20.2241.018; Thu, 12 Sep 2019
+ 11:23:10 +0000
+From:   Martin Wilck <Martin.Wilck@suse.com>
+To:     "chris@chris-wilson.co.uk" <chris@chris-wilson.co.uk>
+CC:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "Michal Koutny" <MKoutny@suse.com>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "leho@kraav.com" <leho@kraav.com>, "tiwai@suse.de" <tiwai@suse.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: 5.3-rc3: Frozen graphics with kcompactd migrating i915 pages
+Thread-Topic: 5.3-rc3: Frozen graphics with kcompactd migrating i915 pages
+Thread-Index: AQHVTq/MWvioSNESukKKSJFs3b9mpA==
+Date:   Thu, 12 Sep 2019 11:23:09 +0000
+Message-ID: <3dcff41048621ff440687dd6691aae31a8647a1e.camel@suse.com>
+References: <ad70d1985e8d0227dc55fedeec769de166e63ae0.camel@suse.com>
+         <156535522344.29541.9312856809559678262@skylake-alporthouse-com>
+         <20190910142047.GB3029@papaya>
+In-Reply-To: <20190910142047.GB3029@papaya>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Martin.Wilck@suse.com; 
+x-originating-ip: [90.186.0.117]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d3f7940e-eef7-4d2d-58a2-08d737739795
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CH2PR18MB3174;
+x-ms-traffictypediagnostic: CH2PR18MB3174:
+x-ms-exchange-purlcount: 1
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CH2PR18MB317485CF15328040084DBBECFCB00@CH2PR18MB3174.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 01583E185C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(396003)(366004)(136003)(39860400002)(346002)(189003)(199004)(229853002)(316002)(7736002)(3846002)(64756008)(71200400001)(25786009)(305945005)(71190400001)(6486002)(66066001)(102836004)(6916009)(81166006)(26005)(2616005)(476003)(54906003)(486006)(8936002)(36756003)(76176011)(478600001)(14454004)(186003)(5640700003)(99286004)(966005)(11346002)(2351001)(2501003)(446003)(86362001)(6436002)(6246003)(2906002)(1730700003)(91956017)(66446008)(8676002)(6512007)(6506007)(81156014)(5660300002)(6306002)(66946007)(66556008)(66476007)(76116006)(118296001)(6116002)(256004)(14444005)(53936002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:CH2PR18MB3174;H:CH2PR18MB3349.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 34+h9T3jAlwFhzsMn4O6ay99BKMy0GamzyeySR0wyvZzy0EbXub1+NTyU2y1a7leYSAShjX2uyF5kzSGFNC71edmCHvLz277jUp4Hia6uGylcUhEzPlzsCfA1g3QZCNjZP1M+2Wdb9t1ZJgD1ZAGtlq6dTN0gcf5+RiXTCGf0aElN/s3qjJ8dTqtxqG4yPt4cohtjjbNEkvKR9VShgCiYAFnA50BatUusnkmbdHP6YsR/MqntTKsOPHKAVRYptrEz6C56ETJ9Q+5+Wd5ryA/Uz03fJ3ugwwH23dkqgCiYezXUFyIstGWQdf4BzH8gMahz3/+pcBjAz/ZQ/PxrSy4RJ5fmHphs9tMF47Y7uhHkl+vwQ3jKXQtcf+75EfR04LnJibWvCnFQc2I8ZivP+HujCETEX74Ri/kp10TJ58Azfw=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <60855FB0E4AAC44BB47EE686AD7CFB89@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: Tracing text poke / kernel self-modifying code (Was: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion)
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     Nadav Amit <nadav.amit@gmail.com>, Andi Kleen <ak@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        songliubraving@fb.com
-From:   hpa@zytor.com
-Message-ID: <164232F0-A132-479B-AF63-1357C77F081B@zytor.com>
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3f7940e-eef7-4d2d-58a2-08d737739795
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2019 11:23:09.8849
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Xyar+MxXvrqqSF62b0aKHnv0R/86aNW643Q2ZGpWHwayiSYhmsYRzbKxJoK2qlfy5F9dPQrO+Pd6YTt6nYdszw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR18MB3174
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On September 12, 2019 8:00:39 AM GMT+01:00, Adrian Hunter <adrian=2Ehunter@=
-intel=2Ecom> wrote:
->On 29/08/19 2:46 PM, Peter Zijlstra wrote:
->> On Thu, Aug 29, 2019 at 12:40:56PM +0300, Adrian Hunter wrote:
->>> Can you expand on "and ensure the poke_handler preserves the
->existing
->>> control flow"?  Whatever the INT3-handler does will be traced
->normally so
->>> long as it does not itself execute self-modified code=2E
->>=20
->> My thinking was that the code shouldn't change semantics before
->emitting
->> the RECORD_TEXT_POKE; but you're right in that that doesn't seem to
->> matter much=2E
->>=20
->> Either we run the old code or INT3 does 'something'=2E  Then we get
->> RECORD_TEXT_POKE and finish the poke=2E  Which tells that the moment
->INT3
->> stops the new text is in place=2E
->>=20
->> I suppose that works too, and requires less changes=2E
->
->
->What about this?
->
->
->diff --git a/arch/x86/include/asm/text-patching=2Eh
->b/arch/x86/include/asm/text-patching=2Eh
->index 70c09967a999=2E=2E00aa9bef2b9d 100644
->--- a/arch/x86/include/asm/text-patching=2Eh
->+++ b/arch/x86/include/asm/text-patching=2Eh
->@@ -30,6 +30,7 @@ struct text_poke_loc {
-> 	void *addr;
-> 	size_t len;
-> 	const char opcode[POKE_MAX_OPCODE_SIZE];
->+	char old_opcode[POKE_MAX_OPCODE_SIZE];
-> };
->=20
->extern void text_poke_early(void *addr, const void *opcode, size_t
->len);
->diff --git a/arch/x86/kernel/alternative=2Ec
->b/arch/x86/kernel/alternative=2Ec
->index ccd32013c47a=2E=2Ec781bbbbbafd 100644
->--- a/arch/x86/kernel/alternative=2Ec
->+++ b/arch/x86/kernel/alternative=2Ec
->@@ -3,6 +3,7 @@
->=20
-> #include <linux/module=2Eh>
-> #include <linux/sched=2Eh>
->+#include <linux/perf_event=2Eh>
-> #include <linux/mutex=2Eh>
-> #include <linux/list=2Eh>
-> #include <linux/stringify=2Eh>
->@@ -1045,8 +1046,10 @@ void text_poke_bp_batch(struct text_poke_loc
->*tp, unsigned int nr_entries)
-> 	/*
-> 	 * First step: add a int3 trap to the address that will be patched=2E
-> 	 */
->-	for (i =3D 0; i < nr_entries; i++)
->+	for (i =3D 0; i < nr_entries; i++) {
->+		memcpy(tp[i]=2Eold_opcode, tp[i]=2Eaddr, tp[i]=2Elen);
-> 		text_poke(tp[i]=2Eaddr, &int3, sizeof(int3));
->+	}
->=20
-> 	on_each_cpu(do_sync_core, NULL, 1);
->=20
->@@ -1071,6 +1074,11 @@ void text_poke_bp_batch(struct text_poke_loc
->*tp, unsigned int nr_entries)
-> 		on_each_cpu(do_sync_core, NULL, 1);
-> 	}
->=20
->+	for (i =3D 0; i < nr_entries; i++) {
->+		perf_event_text_poke((unsigned long)tp[i]=2Eaddr,
->+				     tp[i]=2Eold_opcode, tp[i]=2Eopcode, tp[i]=2Elen);
->+	}
->+
-> 	/*
-> 	 * Third step: replace the first byte (int3) by the first byte of
-> 	 * replacing opcode=2E
->diff --git a/include/linux/perf_event=2Eh b/include/linux/perf_event=2Eh
->index 61448c19a132=2E=2Ef4c6095d2110 100644
->--- a/include/linux/perf_event=2Eh
->+++ b/include/linux/perf_event=2Eh
->@@ -1183,6 +1183,8 @@ extern void perf_event_exec(void);
-> extern void perf_event_comm(struct task_struct *tsk, bool exec);
-> extern void perf_event_namespaces(struct task_struct *tsk);
-> extern void perf_event_fork(struct task_struct *tsk);
->+extern void perf_event_text_poke(unsigned long addr, const void
->*old_bytes,
->+				 const void *new_bytes, size_t len);
->=20
-> /* Callchains */
-> DECLARE_PER_CPU(struct perf_callchain_entry, perf_callchain_entry);
->@@ -1406,6 +1408,10 @@ static inline void perf_event_exec(void)				{ }
->static inline void perf_event_comm(struct task_struct *tsk, bool
->exec)	{ }
-> static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
-> static inline void perf_event_fork(struct task_struct *tsk)		{ }
->+static inline void perf_event_text_poke(unsigned long addr,
->+					const void *old_bytes,
->+					const void *new_bytes,
->+					size_t len)			{ }
-> static inline void perf_event_init(void)				{ }
->static inline int  perf_swevent_get_recursion_context(void)		{ return
->-1; }
-> static inline void perf_swevent_put_recursion_context(int rctx)		{ }
->diff --git a/include/uapi/linux/perf_event=2Eh
->b/include/uapi/linux/perf_event=2Eh
->index bb7b271397a6=2E=2E6396d4c0d2f9 100644
->--- a/include/uapi/linux/perf_event=2Eh
->+++ b/include/uapi/linux/perf_event=2Eh
->@@ -375,7 +375,8 @@ struct perf_event_attr {
-> 				ksymbol        :  1, /* include ksymbol events */
-> 				bpf_event      :  1, /* include bpf events */
-> 				aux_output     :  1, /* generate AUX records instead of events */
->-				__reserved_1   : 32;
->+				text_poke      :  1, /* include text poke events */
->+				__reserved_1   : 31;
->=20
-> 	union {
-> 		__u32		wakeup_events;	  /* wakeup every n events */
->@@ -1000,6 +1001,22 @@ enum perf_event_type {
-> 	 */
-> 	PERF_RECORD_BPF_EVENT			=3D 18,
->=20
->+	/*
->+	 * Records changes to kernel text i=2Ee=2E self-modified code=2E
->+	 * 'len' is the number of old bytes, which is the same as the number
->+	 * of new bytes=2E 'bytes' contains the old bytes followed immediately
->+	 * by the new bytes=2E
->+	 *
->+	 * struct {
->+	 *	struct perf_event_header	header;
->+	 *	u64				addr;
->+	 *	u16				len;
->+	 *	u8				bytes[];
->+	 *	struct sample_id		sample_id;
->+	 * };
->+	 */
->+ 	PERF_RECORD_TEXT_POKE			=3D 19,
->+
-> 	PERF_RECORD_MAX,			/* non-ABI */
-> };
->=20
->diff --git a/kernel/events/core=2Ec b/kernel/events/core=2Ec
->index 811bb333c986=2E=2E43c0d3d232dc 100644
->--- a/kernel/events/core=2Ec
->+++ b/kernel/events/core=2Ec
->@@ -386,6 +386,7 @@ static atomic_t nr_freq_events __read_mostly;
-> static atomic_t nr_switch_events __read_mostly;
-> static atomic_t nr_ksymbol_events __read_mostly;
-> static atomic_t nr_bpf_events __read_mostly;
->+static atomic_t nr_text_poke_events __read_mostly;
->=20
-> static LIST_HEAD(pmus);
-> static DEFINE_MUTEX(pmus_lock);
->@@ -4339,7 +4340,7 @@ static bool is_sb_event(struct perf_event *event)
-> 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
-> 	    attr->comm || attr->comm_exec ||
-> 	    attr->task || attr->ksymbol ||
->-	    attr->context_switch ||
->+	    attr->context_switch || attr->text_poke ||
-> 	    attr->bpf_event)
-> 		return true;
-> 	return false;
->@@ -4413,6 +4414,8 @@ static void unaccount_event(struct perf_event
->*event)
-> 		atomic_dec(&nr_ksymbol_events);
-> 	if (event->attr=2Ebpf_event)
-> 		atomic_dec(&nr_bpf_events);
->+	if (event->attr=2Etext_poke)
->+		atomic_dec(&nr_text_poke_events);
->=20
-> 	if (dec) {
-> 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
->@@ -8045,6 +8048,85 @@ void perf_event_bpf_event(struct bpf_prog *prog,
-> 	perf_iterate_sb(perf_event_bpf_output, &bpf_event, NULL);
-> }
->=20
->+struct perf_text_poke_event {
->+	const void		*old_bytes;
->+	const void		*new_bytes;
->+	size_t			pad;
->+	u16			len;
->+
->+	struct {
->+		struct perf_event_header	header;
->+
->+		u64				addr;
->+	} event_id;
->+};
->+
->+static int perf_event_text_poke_match(struct perf_event *event)
->+{
->+	return event->attr=2Etext_poke;
->+}
->+
->+static void perf_event_text_poke_output(struct perf_event *event, void
->*data)
->+{
->+	struct perf_text_poke_event *text_poke_event =3D data;
->+	struct perf_output_handle handle;
->+	struct perf_sample_data sample;
->+	u64 padding =3D 0;
->+	int ret;
->+
->+	if (!perf_event_text_poke_match(event))
->+		return;
->+
->+	perf_event_header__init_id(&text_poke_event->event_id=2Eheader,
->&sample, event);
->+
->+	ret =3D perf_output_begin(&handle, event,
->text_poke_event->event_id=2Eheader=2Esize);
->+	if (ret)
->+		return;
->+
->+	perf_output_put(&handle, text_poke_event->event_id);
->+	perf_output_put(&handle, text_poke_event->len);
->+
->+	__output_copy(&handle, text_poke_event->old_bytes,
->text_poke_event->len);
->+	__output_copy(&handle, text_poke_event->new_bytes,
->text_poke_event->len);
->+
->+	if (text_poke_event->pad)
->+		__output_copy(&handle, &padding, text_poke_event->pad);
->+
->+	perf_event__output_id_sample(event, &handle, &sample);
->+
->+	perf_output_end(&handle);
->+}
->+
->+void perf_event_text_poke(unsigned long addr, const void *old_bytes,
->+			  const void *new_bytes, size_t len)
->+{
->+	struct perf_text_poke_event text_poke_event;
->+	size_t tot, pad;
->+
->+	if (!atomic_read(&nr_text_poke_events))
->+		return;
->+
->+	tot  =3D sizeof(text_poke_event=2Elen) + (len << 1);
->+	pad  =3D ALIGN(tot, sizeof(u64)) - tot;
->+
->+	text_poke_event =3D (struct perf_text_poke_event){
->+		=2Eold_bytes    =3D old_bytes,
->+		=2Enew_bytes    =3D new_bytes,
->+		=2Epad          =3D pad,
->+		=2Elen          =3D len,
->+		=2Eevent_id  =3D {
->+			=2Eheader =3D {
->+				=2Etype =3D PERF_RECORD_TEXT_POKE,
->+				=2Emisc =3D PERF_RECORD_MISC_KERNEL,
->+				=2Esize =3D sizeof(text_poke_event=2Eevent_id) + tot + pad,
->+			},
->+			=2Eaddr =3D addr,
->+		},
->+	};
->+
->+	perf_iterate_sb(perf_event_text_poke_output, &text_poke_event, NULL);
->+}
->+
-> void perf_event_itrace_started(struct perf_event *event)
-> {
-> 	event->attach_state |=3D PERF_ATTACH_ITRACE;
->@@ -10331,6 +10413,8 @@ static void account_event(struct perf_event
->*event)
-> 		atomic_inc(&nr_ksymbol_events);
-> 	if (event->attr=2Ebpf_event)
-> 		atomic_inc(&nr_bpf_events);
->+	if (event->attr=2Etext_poke)
->+		atomic_inc(&nr_text_poke_events);
->=20
-> 	if (inc) {
-> 		/*
-
-Wasn't there was a long discussion about this a while ago=2E Holding (or s=
-pinning) on INT 3 has a lot of nice properties, e=2Eg=2E no need to emulate=
- instructions=2E However, there were concerns about deadlocks=2E I proposed=
- an algorithm which I *believe* addressed the deadlocks, but obviously when=
- it comes to deadlock avoidance one pair of eyeballs is not enough=2E
-
-My flight is about to take off so I can't look up the email thread right n=
-ow, unfortunately=2E
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+SGkgQ2hyaXMsDQoNCk9uIFR1ZSwgMjAxOS0wOS0xMCBhdCAxNzoyMCArMDMwMCwgTGVobyBLcmFh
+diB3cm90ZToNCj4gT24gRnJpLCBBdWcgMDksIDIwMTkgYXQgMDE6NTM6NDNQTSArMDEwMCwgQ2hy
+aXMgV2lsc29uIHdyb3RlOg0KPiA+IFF1b3RpbmcgTWFydGluIFdpbGNrICgyMDE5LTA4LTA5IDEz
+OjQxOjQyKQ0KPiA+ID4gVGhpcyBoYXBwZW5lZCB0byBtZSB0b2RheSwgcnVubmluZyBrZXJuZWwg
+NS4zLjAtcmMzLTEuZzU3MTg2M2ItDQo+ID4gPiBkZWZhdWx0DQo+ID4gPiAoNS4zLXJjMyB3aXRo
+IGp1c3QgYSBmZXcgcGF0Y2hlcyBvbiB0b3ApLCBhZnRlciBzdGFydGluZyBhIEtWTQ0KPiA+ID4g
+dmlydHVhbA0KPiA+ID4gbWFjaGluZS4gVGhlIFggc2NyZWVuIHdhcyBmcm96ZW4uIFJlbW90ZSBs
+b2dpbiB2aWEgc3NoIHdhcyBzdGlsbA0KPiA+ID4gcG9zc2libGUsIHRodXMgSSB3YXMgYWJsZSB0
+byByZXRyaWV2ZSBiYXNpYyBsb2dzLg0KPiA+ID4gDQo+ID4gPiBzeXNycS13IHNob3dlZCB0d28g
+YmxvY2tlZCBwcm9jZXNzZXMgKGtjb21wYWN0ZDAgYW5kIEtWTSkuIEFmdGVyDQo+ID4gPiBhDQo+
+ID4gPiBtaW51dGUsIHRoZSBzYW1lIHR3byBwcm9jZXNzZXMgd2VyZSBzdGlsbCBibG9ja2VkLiBL
+Vk0gc2VlbXMgdG8NCj4gPiA+IHRyeSB0bw0KPiA+ID4gYWNxdWlyZSBhIGxvY2sgdGhhdCBrY29t
+cGFjdGQgaXMgaG9sZGluZy4ga2NvbXBhY3RkIGlzIHdhaXRpbmcNCj4gPiA+IGZvciBJTw0KPiA+
+ID4gdG8gY29tcGxldGUgb24gcGFnZXMgb3duZWQgYnkgdGhlIGk5MTUgZHJpdmVyLg0KPiA+IA0K
+PiA+IE15IGJhZCwgaXQncyBrbm93bi4gV2UgaGF2ZW4ndCBkZWNpZGVkIG9uIHdoZXRoZXIgdG8g
+cmV2ZXJ0IHRoZQ0KPiA+IHVuZm9ydHVuYXRlIHJlY3Vyc2l2ZSBsb2NraW5nIChhbmQgc28gaGl0
+IGFub3RoZXIgd2FybiBlbHNld2hlcmUpDQo+ID4gb3IgdG8NCj4gPiBpZ25vcmUgdGhlIGRpcnR5
+IHBhZ2VzIChhbmQgc28gcmlzayBsb3NpbmcgZGF0YSBhY3Jvc3Mgc3dhcCkuDQo+ID4gDQo+ID4g
+Y2I2ZDdjN2RjN2ZmICgiZHJtL2k5MTUvdXNlcnB0cjogQWNxdWlyZSB0aGUgcGFnZSBsb2NrIGFy
+b3VuZA0KPiA+IHNldF9wYWdlX2RpcnR5KCkiKQ0KPiA+IC1DaHJpcw0KPiANCj4gSGkgQ2hyaXMu
+IElzIHRoaXMgZXhhY3RseSB3aGF0IEknbSBoaXR0aW5nIGF0DQo+IGh0dHBzOi8vYnVncy5mcmVl
+ZGVza3RvcC5vcmcvc2hvd19idWcuY2dpP2lkPTExMTUwMCBwZXJoYXBzPw0KPiANCj4gSXQgcmVs
+aWFibHkgYnJlYWtzIHRoZSBncmFwaGljcyB1c2VybGFuZCwgYXMgdGhlIG1hY2hpbmUgY29uc2lz
+dGVudGx5DQo+IGZyZWV6ZXMgYXQgYW55IHJhbmRvbSBtb21lbnQuDQo+IA0KPiBBbnkgd29ya2Fy
+b3VuZCBvcHRpb25zLCBldmVuIGlmIHdpdGggYSBwZXJmb3JtYW5jZSBwZW5hbHR5PyBSZXZlcnQN
+Cj4gY2I2ZDdjN2RjN2ZmIGJ1dCBzaWRlIGVmZmVjdHM/DQo+IA0KPiA1LjMgaGFzIHVzZWZ1bCBO
+Vk1lIHBvd2VyIG1nbXQgdXBkYXRlcyBmb3IgbGFwdG9wcywgSSdkIGxpa2UgdG8gc3RpY2sNCj4g
+d2l0aCB0aGUgbmV3ZXN0IGlmIHBvc3NpYmxlLg0KDQpUaGVyZSdzIGEgY29uc2lkZXJhYmxlIHJp
+c2sgdGhhdCBtYW55IHVzZXJzIHdpbGwgc3RhcnQgc2VlaW5nIHRoaXMNCnJlZ3Jlc3Npb24gd2hl
+biA1LjMgaXMgcmVsZWFzZWQuIEkgYW0gbm90IGF3YXJlIG9mIGEgd29ya2Fyb3VuZC4NCg0KSXMg
+dGhlcmUgYW4gYWx0ZXJuYXRpdmUgdG8gcmV2ZXJ0aW5nIGFhNTZhMjkyY2U2MiAoImRybS9pOTE1
+L3VzZXJwdHI6DQpBY3F1aXJlIHRoZSBwYWdlIGxvY2sgYXJvdW5kIHNldF9wYWdlX2RpcnR5KCki
+KT8gQW5kIGlmIHdlIGRvLCB3aGF0DQp3b3VsZCBiZSB0aGUgY29uc2VxdWVuY2VzPyBXb3VsZCBv
+dGhlciBwYXRjaGVzIG5lZWQgdG8gYmUgcmV2ZXJ0ZWQsDQp0b28/DQoNClRoYW5rcywNCk1hcnRp
+bg0KDQo=
