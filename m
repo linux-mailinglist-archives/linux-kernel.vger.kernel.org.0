@@ -2,128 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD0BFB09FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 10:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 122F3B09FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 10:15:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbfILIOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 04:14:23 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:45433 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfILIOX (ORCPT
+        id S1730030AbfILIPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 04:15:42 -0400
+Received: from smtprelay0133.hostedemail.com ([216.40.44.133]:36190 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728582AbfILIPm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 04:14:23 -0400
-Received: by mail-io1-f65.google.com with SMTP id f12so52386043iog.12
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 01:14:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nq9/DS8ZAkk6yGZQDvDoemz16SUFh0W3pARCnI2rYv8=;
-        b=gBPv97WiIsJNEVOZTmAMABWXLytZ3qsF9OH0lw2dMtOUnbzAKiFjSvrOlTQS5TXujp
-         uZFGqRUDOklLF0o6zZGhThUZSYix/Bxtl+uwkOlA/z8ZBk116lonY4Ac0aUui9vi2J8y
-         7HoPzNmr12yEuR940DWBrdXLk23333EirKTZA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nq9/DS8ZAkk6yGZQDvDoemz16SUFh0W3pARCnI2rYv8=;
-        b=OXy6UEpaigUXb5gMgIuxmWDXXu9B/fybBsXzGtumq1vGrTWfkLtCHDo9PzWWJ+cdia
-         4LiHC+e1diHSAyt7bzdML2EfwCEWjR3kW4VmEVAl5hKDSUgUP7RiC4iQmCHjbbwoEsBI
-         ODKm2vaC+VTwaFuH2k2eJ8AzWIG2wPj7WHELTMoknhaO3QkTmyZMJHTK1TN2j6K+eCQO
-         uMMe0aFcsLtRU1RNP1wN5erQd062faTszvvjoUtrHwFH9RWZ0i8yc2uxY9nPV9G+L2H5
-         Qf9WQer5ozi6oN+KpWU8BgpMYO0r5GvVghAmEwS8BhYsYPezVBgHESuwruqvISgQH7//
-         5v/Q==
-X-Gm-Message-State: APjAAAW2YrGCekcT+hMhTVwgZpM/ZChskAvrwdfds4gc0SZYOdZasb/E
-        MtkkSWcTZZvSv13MDzkv9vKl5AAZunayAynMVaikKw==
-X-Google-Smtp-Source: APXvYqxxjlj3oUz8nkos6HZEeJYB3JDpAsf5iFlG4IbXXAq77CHvFWDCDXVCrCXMBAIgSySeNevqBWU+A/RnUx8wFrI=
-X-Received: by 2002:a05:6602:21cb:: with SMTP id c11mr2851573ioc.25.1568276062494;
- Thu, 12 Sep 2019 01:14:22 -0700 (PDT)
+        Thu, 12 Sep 2019 04:15:42 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id ABE5E1801585D;
+        Thu, 12 Sep 2019 08:15:40 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2110:2198:2199:2393:2553:2559:2562:2691:2828:2917:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3872:3873:3874:4321:5007:6119:7903:7974:10004:10400:10848:11232:11658:11914:12050:12297:12663:12740:12760:12895:13069:13311:13357:13439:14096:14097:14180:14181:14659:14721:21060:21080:21324:21627:21740:30054:30060:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:34,LUA_SUMMARY:none
+X-HE-Tag: help45_1436e6ec66121
+X-Filterd-Recvd-Size: 2134
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 12 Sep 2019 08:15:38 +0000 (UTC)
+Message-ID: <be3c626c2e9d14fe2fa9d0403bc02832231cc437.camel@perches.com>
+Subject: Re: [PATCH 00/13] nvdimm: Use more common kernel coding style
+From:   Joe Perches <joe@perches.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Thu, 12 Sep 2019 01:15:37 -0700
+In-Reply-To: <CAPcyv4hzoSp-bFx19Yj71H7x3D66-TE4uCpcHm4S9sJsGtXugA@mail.gmail.com>
+References: <cover.1568256705.git.joe@perches.com>
+         <CAPcyv4hzoSp-bFx19Yj71H7x3D66-TE4uCpcHm4S9sJsGtXugA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-References: <20190910151206.4671-1-mszeredi@redhat.com> <20190911155208.GA20527@stefanha-x1.localdomain>
-In-Reply-To: <20190911155208.GA20527@stefanha-x1.localdomain>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 12 Sep 2019 10:14:11 +0200
-Message-ID: <CAJfpegsorJKWoqRyThCfgLUyXiK7TLjSwmh5DqC8cytYRE4TLw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] virtio-fs: shared file system for virtual machines
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 5:54 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->
-> On Tue, Sep 10, 2019 at 05:12:02PM +0200, Miklos Szeredi wrote:
-> > I've folded the series from Vivek and fixed a couple of TODO comments
-> > myself.  AFAICS two issues remain that need to be resolved in the short
-> > term, one way or the other: freeze/restore and full virtqueue.
->
-> I have researched freeze/restore and come to the conclusion that it
-> needs to be a future feature.  It will probably come together with live
-> migration support for reasons mentioned below.
->
-> Most virtio devices have fairly simply power management freeze/restore
-> functions that shut down the device and bring it back to the state held
-> in memory, respectively.  virtio-fs, as well as virtio-9p and
-> virtio-gpu, are different because they contain session state.  It is not
-> easily possible to bring back the state held in memory after the device
-> has been reset.
->
-> The following areas of the FUSE protocol are stateful and need special
-> attention:
->
->  * FUSE_INIT - this is pretty easy, we must re-negotiate the same
->    settings as before.
->
->  * FUSE_LOOKUP -> fuse_inode (inode_map)
->
->    The session contains a set of inode numbers that have been looked up
->    using FUSE_LOOKUP.  They are ephemeral in the current virtiofsd
->    implementation and vary across device reset.  Therefore we are unable
->    to restore the same inode numbers upon restore.
->
->    The solution is persistent inode numbers in virtiofsd.  This is also
->    needed to make open_by_handle_at(2) work and probably for live
->    migration.
->
->  * FUSE_OPEN -> fh (fd_map)
->
->    The session contains FUSE file handles for open files.  There is
->    currently no way of re-opening a file so that a specific fh is
->    returned.  A mechanism to do so probably isn't necessary if the
->    driver can update the fh to the new one produced by the device for
->    all open files instead.
->
->  * FUSE_OPENDIR -> fh (dirp_map)
->
->    Same story as for FUSE_OPEN but for open directories.
->
->  * FUSE_GETLK/SETLK/SETLKW -> (inode->posix_locks and fcntl(F_OFD_GET/SETLK))
->
->    The session contains file locks.  The driver must reacquire them upon
->    restore.  It's unclear what to do when locking fails.
->
-> Live migration has the same problem since the FUSE session will be moved
-> to a new virtio-fs device instance.  It makes sense to tackle both
-> features together.  This is something that can be implemented in the
-> next year, but it's not a quick fix.
+On Thu, 2019-09-12 at 01:00 -0700, Dan Williams wrote:
+> Hi Joe,
+> 
+> On Wed, Sep 11, 2019 at 7:55 PM Joe Perches <joe@perches.com> wrote:
+> > Rather than have a local coding style, use the typical kernel style.
+> 
+> I'd rather automate this. I'm going to do once-over with clang-format
+> and see what falls out.
 
-Right.   The question for now is: should the freeze silently succeed
-(as it seems to do now) or should it fail instead?
+I am adding Miguel Ojeda to the cc's.
 
-I guess normally freezing should be okay, as long as the virtiofsd
-remains connected while the system is frozen.
+Of course you are welcome to try it, but I believe that
+clang-format doesn't work all that well yet.
 
-I tried to test this with "echo -n mem > /sys/power/state", which
-indeed resulted in the virtio_fs_freeze() callback being called.
-However, I couldn't find a way to wake up the system...
+It's more a work in progress rather than a "standard".
 
-Thanks,
-Miklos
+I believe you'll find that the patch series I sent
+ends up with a rather more typical kernel style.
+
+I suggest you try to apply the series I sent and then
+run clang-format on that and see the differences.
+
+Ideally one day, something tool like clang-format
+might be locally applied by every developer for their
+own personal style with some other neutral style the
+content actually distributed.
+
+cheers, Joe
+
