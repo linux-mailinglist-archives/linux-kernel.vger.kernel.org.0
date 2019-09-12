@@ -2,54 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E065B0C65
+	by mail.lfdr.de (Postfix) with ESMTP id 9C2DFB0C66
 	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 12:15:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731059AbfILKPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 06:15:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41486 "EHLO mail.kernel.org"
+        id S1731073AbfILKPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 06:15:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730386AbfILKPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 06:15:06 -0400
-Subject: Re: [GIT PULL] final GPIO fixes for v5.3
+        id S1730386AbfILKPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 06:15:07 -0400
+Subject: Re: [GIT PULL] IRQ fix
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568283305;
-        bh=5zpTjKGOM6Tl+Zb9Y1WxxL4hxjD14N+VLqAVLu+rTW0=;
+        s=default; t=1568283306;
+        bh=hN6bU7QDxK+290PSR7C2ecFhoCXe6ZL7euHhk7yUXxs=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Cg+XH5DFbxzpQCrkAqUyDVEfZNVVxAJSO7XrE55WRT08pjMPZTbQjW8NxIwlTiHrB
-         FdVKjlZ2hxAXbCpfOsz7rMNbiFxqFrwYbjNmuZujSuyVixNdoXYwfGPHRs5D8qYT9Z
-         LCqYmZtyo+UbamsR+xBMiz7Gk8fDtjXr8iODI0kg=
+        b=1KjYc/ieRXGgvY8l5rDospIR7GSmwjKwoOKoTnbcBV30PCOi3IKbWYLr6Ha1mnedc
+         bPpJUVO40Ts+ACsprBKZTZtrSUp3A8bLnT0siZeMKEjlqavnlbtXMNLKIjDuwmLOyK
+         CcncJpXy7czLiadKJXEL1RPI2h/Qx/19pRTBQePI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdbZE2dwmaE2-NF_p6XQodBb=34tOxyDgfbAWjiirTgj+Q@mail.gmail.com>
-References: <CACRpkdbZE2dwmaE2-NF_p6XQodBb=34tOxyDgfbAWjiirTgj+Q@mail.gmail.com>
+In-Reply-To: <20190912083503.GA124477@gmail.com>
+References: <20190912083503.GA124477@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdbZE2dwmaE2-NF_p6XQodBb=34tOxyDgfbAWjiirTgj+Q@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- tags/gpio-v5.3-6
-X-PR-Tracked-Commit-Id: 61f7f7c8f978b1c0d80e43c83b7d110ca0496eb4
+X-PR-Tracked-Message-Id: <20190912083503.GA124477@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ irq-urgent-for-linus
+X-PR-Tracked-Commit-Id: eddf3e9c7c7e4d0707c68d1bb22cc6ec8aef7d4a
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9c09f623487178867d8000af337585b84b1f53d9
-Message-Id: <156828330582.21107.13403762778212378247.pr-tracker-bot@kernel.org>
-Date:   Thu, 12 Sep 2019 10:15:05 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
+X-PR-Merge-Commit-Id: 95779fe8506d4f750f1e66e958b6b3c405182d7a
+Message-Id: <156828330691.21107.15394111119879330524.pr-tracker-bot@kernel.org>
+Date:   Thu, 12 Sep 2019 10:15:06 +0000
+To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 12 Sep 2019 09:10:10 +0100:
+The pull request you sent on Thu, 12 Sep 2019 10:35:03 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.3-6
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9c09f623487178867d8000af337585b84b1f53d9
+https://git.kernel.org/torvalds/c/95779fe8506d4f750f1e66e958b6b3c405182d7a
 
 Thank you!
 
