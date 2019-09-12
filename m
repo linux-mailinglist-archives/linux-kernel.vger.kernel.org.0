@@ -2,67 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5FA7B0ADE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 11:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71A8FB0AE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2019 11:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730585AbfILJEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 05:04:20 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45630 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730557AbfILJEQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 05:04:16 -0400
-Received: by mail-io1-f68.google.com with SMTP id f12so52674484iog.12
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 02:04:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=4/XQrQs3hsOb/l0r/7UOpRt774uH8BelSAtMEDNdeuA=;
-        b=m0FL/xDIYQ/M4eN8j+hVJw/QkQi55ggrrHvgjQzdU6sDtCZtdTKJoLFSz5SQ9prd6e
-         HFjtEBqWB6z5opxd2L+nNNg8HbqNPF+tyK8rbII59xtAvcsRzqJGS8ZJydC76Du78Wma
-         sW76og+AC/hTd/yX6EM6KK898+OVdj88aDRDxTS9ixrEFs9o2GyCJ1/wclMSE8l6kSRG
-         a1m4yvRaBiA9uMTramZNzl9FcHtTOv/wasW7K6zluerDQKzz2ebHIuatBAy+Q2zhmJuT
-         oxmwTx0/3lkF0g2Q8PP1Ff0EI7pHERXpjGnL/AcaGkgLeZ0YBmx8XgykLEyz8XqakzM8
-         mD+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=4/XQrQs3hsOb/l0r/7UOpRt774uH8BelSAtMEDNdeuA=;
-        b=HWcE3nErG3g5zoozcZcWZIHyve1mtd8WFFn6Q8YLQT8k5jVlaZSQjg2R/tH/EF3EZp
-         9JncfKx0D2NsbHEQ05u1Mr9hczPkjePPRZf24Aal8AndhcMC3Vy1vR1SlO3rGbW0pExm
-         n88vVVNOlPzRWdlqptguG4BDMVn3qYYyyoXwv/vjGV1hxoHSEy/4rkUipnyCOrPlmgIj
-         M3vCBxbX1DrXyniW+xq8A7vpC+b8Hf2wK0LdA3NhhKZU95BW7EoNqkqdryHMVMk6wYAh
-         qtqu5LKBzGRt6vZNmhppL//SYQuvPzEtLJ/oz9dkSxHaE+4lyno+/jG+drVgSTZnGLe5
-         SnGg==
-X-Gm-Message-State: APjAAAWUyfeBqaTHvDtWK8DK8jtXtjYiDlWls4CNMNa0KMEpNpWUwgRn
-        3Zu+1J0G4IsoLQSopt8pC7hob1zLSuryg76Iozc=
-X-Google-Smtp-Source: APXvYqx/hisCBBu0NewyFGIrLUKi6Ny6uZqUnp0OVjs7J+jcdQYlS996cWH1en9c5vqNWN0USlUosLyBV12GA414wFQ=
-X-Received: by 2002:a5d:8a0a:: with SMTP id w10mr3184386iod.291.1568279055511;
- Thu, 12 Sep 2019 02:04:15 -0700 (PDT)
+        id S1730621AbfILJGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 05:06:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40360 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730327AbfILJGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 05:06:24 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 882FB18C4272;
+        Thu, 12 Sep 2019 09:06:23 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-120-238.rdu2.redhat.com [10.10.120.238])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B31CA600C4;
+        Thu, 12 Sep 2019 09:06:18 +0000 (UTC)
+Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
+ PMD
+To:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
+References: <20190911150537.19527-1-longman@redhat.com>
+ <20190911150537.19527-6-longman@redhat.com>
+ <ae7edcb8-74e5-037c-17e7-01b3cf9320af@oracle.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <b7d7d109-03cf-d750-3a56-a95837998372@redhat.com>
+Date:   Thu, 12 Sep 2019 10:06:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Reply-To: priscalamberth@gmail.com
-Received: by 2002:a4f:5842:0:0:0:0:0 with HTTP; Thu, 12 Sep 2019 02:04:14
- -0700 (PDT)
-From:   "DR. OMAR KALIFA" <bya8241@gmail.com>
-Date:   Thu, 12 Sep 2019 11:04:14 +0200
-X-Google-Sender-Auth: yGcfJTgxE0OyAXV9LX4-stvEPt0
-Message-ID: <CAErLtpzXBNxmF_dJe0iQqi6g1VEFR-giakVWg2yzPT_EKfTxeA@mail.gmail.com>
-Subject: REQUEST FOR YOUR ASSISTANCE.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ae7edcb8-74e5-037c-17e7-01b3cf9320af@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Thu, 12 Sep 2019 09:06:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Hello,
+On 9/12/19 4:26 AM, Mike Kravetz wrote:
+> On 9/11/19 8:05 AM, Waiman Long wrote:
+>> When allocating a large amount of static hugepages (~500-1500GB) on a
+>> system with large number of CPUs (4, 8 or even 16 sockets), performance
+>> degradation (random multi-second delays) was observed when thousands
+>> of processes are trying to fault in the data into the huge pages. The
+>> likelihood of the delay increases with the number of sockets and hence
+>> the CPUs a system has.  This only happens in the initial setup phase
+>> and will be gone after all the necessary data are faulted in.
+>>
+>> These random delays, however, are deemed unacceptable. The cause of
+>> that delay is the long wait time in acquiring the mmap_sem when trying
+>> to share the huge PMDs.
+>>
+>> To remove the unacceptable delays, we have to limit the amount of wait
+>> time on the mmap_sem. So the new down_write_timedlock() function is
+>> used to acquire the write lock on the mmap_sem with a timeout value of
+>> 10ms which should not cause a perceivable delay. If timeout happens,
+>> the task will abandon its effort to share the PMD and allocate its own
+>> copy instead.
+>>
+> <snip>
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index 6d7296dd11b8..445af661ae29 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -4750,6 +4750,8 @@ void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
+>>  	}
+>>  }
+>>  
+>> +#define PMD_SHARE_DISABLE_THRESHOLD	(1 << 8)
+>> +
+>>  /*
+>>   * Search for a shareable pmd page for hugetlb. In any case calls pmd_alloc()
+>>   * and returns the corresponding pte. While this is not necessary for the
+>> @@ -4770,11 +4772,24 @@ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud)
+>>  	pte_t *spte = NULL;
+>>  	pte_t *pte;
+>>  	spinlock_t *ptl;
+>> +	static atomic_t timeout_cnt;
+>>  
+>> -	if (!vma_shareable(vma, addr))
+>> -		return (pte_t *)pmd_alloc(mm, pud, addr);
+>> +	/*
+>> +	 * Don't share if it is not sharable or locking attempt timed out
+>> +	 * after 10ms. After 256 timeouts, PMD sharing will be permanently
+>> +	 * disabled as it is just too slow.
+>> +	 */
+>> +	if (!vma_shareable(vma, addr) ||
+>> +	   (atomic_read(&timeout_cnt) >= PMD_SHARE_DISABLE_THRESHOLD))
+>> +		goto out_no_share;
+>> +
+>> +	if (!i_mmap_timedlock_write(mapping, ms_to_ktime(10))) {
+>> +		if (atomic_inc_return(&timeout_cnt) ==
+>> +		    PMD_SHARE_DISABLE_THRESHOLD)
+>> +			pr_info("Hugetlbfs PMD sharing disabled because of timeouts!\n");
+>> +		goto out_no_share;
+>> +	}
+>>  
+>> -	i_mmap_lock_write(mapping);
+> All this got me wondering if we really need to take i_mmap_rwsem in write
+> mode here.  We are not changing the tree, only traversing it looking for
+> a suitable vma.
+>
+> Unless I am missing something, the hugetlb code only ever takes the semaphore
+> in write mode; never read.  Could this have been the result of changing the
+> tree semaphore to read/write?  Instead of analyzing all the code, the easiest
+> and safest thing would have been to take all accesses in write mode.
+>
+> I can investigate more, but wanted to ask the question in case someone already
+> knows.
+>
+> At one time, I thought it was safe to acquire the semaphore in read mode for
+> huge_pmd_share, but write mode for huge_pmd_unshare.  See commit b43a99900559.
+> This was reverted along with another patch for other reasons.
+>
+> If we change change from write to read mode, this may have significant impact
+> on the stalls.
 
-Compliment of the season. My name is Dr. Omar Kalifa. i work with one
-of the reputable banks here in West Africa.I have a lucrative and
-profitable business to discuse with you. Reply if you are intersted
-for more details.
+If we can take the rwsem in read mode, that should solve the problem
+AFAICS. As I don't have a full understanding of the history of that
+code, I didn't try to do that in my patch.
 
-Regards,
-Dr. Omar Kalifa
+Cheers,
+Longman
+
