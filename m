@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5727FB1F45
+	by mail.lfdr.de (Postfix) with ESMTP id BFDD0B1F46
 	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388556AbfIMNRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:17:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44742 "EHLO mail.kernel.org"
+        id S2390097AbfIMNRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:17:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390065AbfIMNRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:17:30 -0400
+        id S2390080AbfIMNRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:17:35 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C9A9206A5;
-        Fri, 13 Sep 2019 13:17:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B309D20717;
+        Fri, 13 Sep 2019 13:17:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380649;
-        bh=6ILFhvEXDEnSURpR9RZAmjptUv5yCKrkEql3WkcJjys=;
+        s=default; t=1568380655;
+        bh=kOe/e8wj5K6DSrfsbugwq5GyIY6FAwrp96RMEEC7K1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ms2rfjVD3X7acwphQLEx22Mw0bxDCFKXWuqoByQuLPqgtPgvcOQuZMIxT+20cbxX2
-         6IIOPdwZjSuXjp9JdC80XiSlPd4Vs7QZpn6i0RA0nokbrWnfKVEpU/lX9HfIGvd2Y2
-         jOWNyMyY3X0VGWgfDkdeuQur0PrZNcW4WS3OPp7U=
+        b=Ey41CePeDEMmnrAXsI3quA5wCpqgOYNZu0SqseexKdklZsbN/UtbnVZr981zxkhq8
+         dKGkUtmoo9o0XWPKyegmdMNfmNqcIJ2XzPFIo0ueoafU7gHq3GX3pns1LcDIT4zK9N
+         HX0LfP8rkqnP/KnbVDbKlF7oKg6i9Cmb6UyQUEFk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 133/190] ARC: mm: fix uninitialised signal code in do_page_fault
-Date:   Fri, 13 Sep 2019 14:06:28 +0100
-Message-Id: <20190913130610.582710456@linuxfoundation.org>
+        stable@vger.kernel.org, Kent Russell <kent.russell@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.rg, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 135/190] drm/amdkfd: Add missing Polaris10 ID
+Date:   Fri, 13 Sep 2019 14:06:30 +0100
+Message-Id: <20190913130610.768254465@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -45,33 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 121e38e5acdc8e1e4cdb750fcdcc72f94e420968 ]
+[ Upstream commit 0a5a9c276c335870a1cecc4f02b76d6d6f663c8b ]
 
-Commit 15773ae938d8 ("signal/arc: Use force_sig_fault where
-appropriate") introduced undefined behaviour by leaving si_code
-unitiailized and leaking random kernel values to user space.
+This was added to amdgpu but was missed in amdkfd
 
-Fixes: 15773ae938d8 ("signal/arc: Use force_sig_fault where appropriate")
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Kent Russell <kent.russell@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.rg
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/mm/fault.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_device.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index a0366f9dca051..535cf18e8bf2c 100644
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@ -66,7 +66,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	struct vm_area_struct *vma = NULL;
- 	struct task_struct *tsk = current;
- 	struct mm_struct *mm = tsk->mm;
--	int si_code;
-+	int si_code = 0;
- 	int ret;
- 	vm_fault_t fault;
- 	int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device.c b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+index 5aba50f63ac6f..938d0053a8208 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+@@ -310,6 +310,7 @@ static const struct kfd_deviceid supported_devices[] = {
+ 	{ 0x67CF, &polaris10_device_info },	/* Polaris10 */
+ 	{ 0x67D0, &polaris10_vf_device_info },	/* Polaris10 vf*/
+ 	{ 0x67DF, &polaris10_device_info },	/* Polaris10 */
++	{ 0x6FDF, &polaris10_device_info },	/* Polaris10 */
+ 	{ 0x67E0, &polaris11_device_info },	/* Polaris11 */
+ 	{ 0x67E1, &polaris11_device_info },	/* Polaris11 */
+ 	{ 0x67E3, &polaris11_device_info },	/* Polaris11 */
 -- 
 2.20.1
 
