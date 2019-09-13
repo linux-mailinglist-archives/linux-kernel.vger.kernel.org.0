@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F428B1EAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16EF8B1EAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389045AbfIMNLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:11:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37026 "EHLO mail.kernel.org"
+        id S2389054AbfIMNLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:11:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388096AbfIMNLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:11:47 -0400
+        id S2389035AbfIMNLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:11:50 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66645214AE;
-        Fri, 13 Sep 2019 13:11:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7854E214D8;
+        Fri, 13 Sep 2019 13:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380307;
-        bh=VD0f0+ab+C+4GW+EAuXTuKN+g/TJz9sfwB1E3e6vQIs=;
+        s=default; t=1568380310;
+        bh=VqNzzUOuKwTukUd28y7P1lYA35/hn2Tp0oQEZy8nl/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PZD4ykgWbKxsDBbfTJReFXrXrAAd9KaNmrpUWO0BJH/+44o75AupMsA+p6HVCAXlh
-         P2pXXodCvpsDJo9lPPaXrtCQVo0CM91t4NGlOXvZkmJxn4Dsz16asbMKxCFDOIKG8a
-         2PC8W1/5xPzpZV7hAKjGrpyFZUGYU7CetK7DuZNM=
+        b=e9OHFR0Xca514RMA1A4PoWaZu6jIeV+Fsoi1X5Tl5iet0y4Ks9VxIN9ruQvprFjo3
+         J2rmPFeW3hkM51ieNjMFP8blRiB19txiqSlveoRA+a1QZj52F2m4tocDBP+ABySAIv
+         /IfipXXRh5FgtzFPxiWzIzh/1biPUq4AMZJoo4G0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>
-Subject: [PATCH 4.19 007/190] drm/vmwgfx: Fix double free in vmw_recv_msg()
-Date:   Fri, 13 Sep 2019 14:04:22 +0100
-Message-Id: <20190913130600.230044997@linuxfoundation.org>
+        stable@vger.kernel.org, Tiwei Bie <tiwei.bie@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>
+Subject: [PATCH 4.19 008/190] vhost/test: fix build for vhost test
+Date:   Fri, 13 Sep 2019 14:04:23 +0100
+Message-Id: <20190913130600.303904103@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -43,68 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Tiwei Bie <tiwei.bie@intel.com>
 
-commit 08b0c891605acf727e43e3e03a25857d3e789b61 upstream.
+commit 93d2c4de8d8129b97ee1e1a222aedb0719d2fcd9 upstream.
 
-We recently added a kfree() after the end of the loop:
+Since below commit, callers need to specify the iov_limit in
+vhost_dev_init() explicitly.
 
-	if (retries == RETRIES) {
-		kfree(reply);
-		return -EINVAL;
-	}
-
-There are two problems.  First the test is wrong and because retries
-equals RETRIES if we succeed on the last iteration through the loop.
-Second if we fail on the last iteration through the loop then the kfree
-is a double free.
-
-When you're reading this code, please note the break statement at the
-end of the while loop.  This patch changes the loop so that if it's not
-successful then "reply" is NULL and we can test for that afterward.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 6b7c3b86f0b6 ("drm/vmwgfx: fix memory leak when too many retries have occurred")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Fixes: b46a0bf78ad7 ("vhost: fix OOB in get_rx_bufs()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/vhost/test.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-@@ -353,7 +353,7 @@ static int vmw_recv_msg(struct rpc_chann
- 				     !!(HIGH_WORD(ecx) & MESSAGE_STATUS_HB));
- 		if ((HIGH_WORD(ebx) & MESSAGE_STATUS_SUCCESS) == 0) {
- 			kfree(reply);
--
-+			reply = NULL;
- 			if ((HIGH_WORD(ebx) & MESSAGE_STATUS_CPT) != 0) {
- 				/* A checkpoint occurred. Retry. */
- 				continue;
-@@ -377,7 +377,7 @@ static int vmw_recv_msg(struct rpc_chann
+--- a/drivers/vhost/test.c
++++ b/drivers/vhost/test.c
+@@ -116,7 +116,7 @@ static int vhost_test_open(struct inode
+ 	dev = &n->dev;
+ 	vqs[VHOST_TEST_VQ] = &n->vqs[VHOST_TEST_VQ];
+ 	n->vqs[VHOST_TEST_VQ].handle_kick = handle_vq_kick;
+-	vhost_dev_init(dev, vqs, VHOST_TEST_VQ_MAX);
++	vhost_dev_init(dev, vqs, VHOST_TEST_VQ_MAX, UIO_MAXIOV);
  
- 		if ((HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS) == 0) {
- 			kfree(reply);
--
-+			reply = NULL;
- 			if ((HIGH_WORD(ecx) & MESSAGE_STATUS_CPT) != 0) {
- 				/* A checkpoint occurred. Retry. */
- 				continue;
-@@ -389,10 +389,8 @@ static int vmw_recv_msg(struct rpc_chann
- 		break;
- 	}
+ 	f->private_data = n;
  
--	if (retries == RETRIES) {
--		kfree(reply);
-+	if (!reply)
- 		return -EINVAL;
--	}
- 
- 	*msg_len = reply_len;
- 	*msg     = reply;
 
 
