@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63081B1F66
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA9EB1F53
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390398AbfIMNTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:19:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47036 "EHLO mail.kernel.org"
+        id S2390195AbfIMNST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:18:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390356AbfIMNTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:19:08 -0400
+        id S2390178AbfIMNSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:18:15 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CEC820640;
-        Fri, 13 Sep 2019 13:19:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BCDC206A5;
+        Fri, 13 Sep 2019 13:18:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380747;
-        bh=HAmmkIcp7no0uC3WdtdrKjJJZWCoxqdHRWx5eZr7dXk=;
+        s=default; t=1568380694;
+        bh=wJlV9uxbuGvpLMn0SR+wrb+pr59x6GztUh8UsrE8Zks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aHHnwz+7LUz+A+8gK95fnUCcsF+1SkLkjHS3pa2WENKjYq8beBXyzJh4vRUKi0G3E
-         6NejthWzxwByL5oBqEcu0sYiGY5WEb9nLDE0ULJdjjogAM4wxRUgjHVlnxUOlIj9ZV
-         y7ZFHlc47PaCj4StApQoZMnhnEWHw4ijuI2+F8gU=
+        b=IHUmp8cwsr7gESG8TfrJriXnMsTQxf6rYw2Dl5IaoWnOleqYT8NHftM5QLZxgtf5r
+         sFFWDMCFeSyw10TGv4ZFVHVNXoB7hNZjoOP6bhN+S9Ph4/KXPYLOmE6Al+qapsU8Fk
+         Y9rX0VGv4w3BXp/yF3259PVgtv1QSlpCorPQKnW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Salvatore <mike.salvatore@canonical.com>,
-        John Johansen <john.johansen@canonical.com>,
+        stable@vger.kernel.org, Ajay Singh <ajay.kathat@microchip.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 144/190] apparmor: reset pos on failure to unpack for various functions
-Date:   Fri, 13 Sep 2019 14:06:39 +0100
-Message-Id: <20190913130611.488999485@linuxfoundation.org>
+Subject: [PATCH 4.19 147/190] staging: wilc1000: fix error path cleanup in wilc_wlan_initialize()
+Date:   Fri, 13 Sep 2019 14:06:42 +0100
+Message-Id: <20190913130611.717936449@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -45,148 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 156e42996bd84eccb6acf319f19ce0cb140d00e3 ]
+[ Upstream commit 6419f818ababebc1116fb2d0e220bd4fe835d0e3 ]
 
-Each function that manipulates the aa_ext struct should reset it's "pos"
-member on failure. This ensures that, on failure, no changes are made to
-the state of the aa_ext struct.
+For the error path in wilc_wlan_initialize(), the resources are not
+cleanup in the correct order. Reverted the previous changes and use the
+correct order to free during error condition.
 
-There are paths were elements are optional and the error path is
-used to indicate the optional element is not present. This means
-instead of just aborting on error the unpack stream can become
-unsynchronized on optional elements, if using one of the affected
-functions.
-
-Cc: stable@vger.kernel.org
-Fixes: 736ec752d95e ("AppArmor: policy routines for loading and unpacking policy")
-Signed-off-by: Mike Salvatore <mike.salvatore@canonical.com>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
+Fixes: b46d68825c2d ("staging: wilc1000: remove COMPLEMENT_BOOT")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ajay Singh <ajay.kathat@microchip.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/apparmor/policy_unpack.c | 40 +++++++++++++++++++++++++------
- 1 file changed, 33 insertions(+), 7 deletions(-)
+ drivers/staging/wilc1000/linux_wlan.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index 088ea2ac85706..612f737cee836 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -223,16 +223,21 @@ static void *kvmemdup(const void *src, size_t len)
- static size_t unpack_u16_chunk(struct aa_ext *e, char **chunk)
- {
- 	size_t size = 0;
-+	void *pos = e->pos;
- 
- 	if (!inbounds(e, sizeof(u16)))
--		return 0;
-+		goto fail;
- 	size = le16_to_cpu(get_unaligned((__le16 *) e->pos));
- 	e->pos += sizeof(__le16);
- 	if (!inbounds(e, size))
--		return 0;
-+		goto fail;
- 	*chunk = e->pos;
- 	e->pos += size;
- 	return size;
-+
-+fail:
-+	e->pos = pos;
-+	return 0;
- }
- 
- /* unpack control byte */
-@@ -294,49 +299,66 @@ fail:
- 
- static bool unpack_u32(struct aa_ext *e, u32 *data, const char *name)
- {
-+	void *pos = e->pos;
-+
- 	if (unpack_nameX(e, AA_U32, name)) {
- 		if (!inbounds(e, sizeof(u32)))
--			return 0;
-+			goto fail;
- 		if (data)
- 			*data = le32_to_cpu(get_unaligned((__le32 *) e->pos));
- 		e->pos += sizeof(u32);
- 		return 1;
- 	}
-+
-+fail:
-+	e->pos = pos;
- 	return 0;
- }
- 
- static bool unpack_u64(struct aa_ext *e, u64 *data, const char *name)
- {
-+	void *pos = e->pos;
-+
- 	if (unpack_nameX(e, AA_U64, name)) {
- 		if (!inbounds(e, sizeof(u64)))
--			return 0;
-+			goto fail;
- 		if (data)
- 			*data = le64_to_cpu(get_unaligned((__le64 *) e->pos));
- 		e->pos += sizeof(u64);
- 		return 1;
- 	}
-+
-+fail:
-+	e->pos = pos;
- 	return 0;
- }
- 
- static size_t unpack_array(struct aa_ext *e, const char *name)
- {
-+	void *pos = e->pos;
-+
- 	if (unpack_nameX(e, AA_ARRAY, name)) {
- 		int size;
- 		if (!inbounds(e, sizeof(u16)))
--			return 0;
-+			goto fail;
- 		size = (int)le16_to_cpu(get_unaligned((__le16 *) e->pos));
- 		e->pos += sizeof(u16);
- 		return size;
- 	}
-+
-+fail:
-+	e->pos = pos;
- 	return 0;
- }
- 
- static size_t unpack_blob(struct aa_ext *e, char **blob, const char *name)
- {
-+	void *pos = e->pos;
-+
- 	if (unpack_nameX(e, AA_BLOB, name)) {
- 		u32 size;
- 		if (!inbounds(e, sizeof(u32)))
--			return 0;
-+			goto fail;
- 		size = le32_to_cpu(get_unaligned((__le32 *) e->pos));
- 		e->pos += sizeof(u32);
- 		if (inbounds(e, (size_t) size)) {
-@@ -345,6 +367,9 @@ static size_t unpack_blob(struct aa_ext *e, char **blob, const char *name)
- 			return size;
+diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
+index 649caae2b6033..25798119426b3 100644
+--- a/drivers/staging/wilc1000/linux_wlan.c
++++ b/drivers/staging/wilc1000/linux_wlan.c
+@@ -649,17 +649,17 @@ static int wilc_wlan_initialize(struct net_device *dev, struct wilc_vif *vif)
+ 			goto fail_locks;
  		}
- 	}
-+
-+fail:
-+	e->pos = pos;
- 	return 0;
- }
  
-@@ -361,9 +386,10 @@ static int unpack_str(struct aa_ext *e, const char **string, const char *name)
- 			if (src_str[size - 1] != 0)
- 				goto fail;
- 			*string = src_str;
-+
-+			return size;
+-		if (wl->gpio_irq && init_irq(dev)) {
+-			ret = -EIO;
+-			goto fail_locks;
+-		}
+-
+ 		ret = wlan_initialize_threads(dev);
+ 		if (ret < 0) {
+ 			ret = -EIO;
+ 			goto fail_wilc_wlan;
  		}
- 	}
--	return size;
  
- fail:
- 	e->pos = pos;
++		if (wl->gpio_irq && init_irq(dev)) {
++			ret = -EIO;
++			goto fail_threads;
++		}
++
+ 		if (!wl->dev_irq_num &&
+ 		    wl->hif_func->enable_interrupt &&
+ 		    wl->hif_func->enable_interrupt(wl)) {
+@@ -715,7 +715,7 @@ fail_irq_enable:
+ fail_irq_init:
+ 		if (wl->dev_irq_num)
+ 			deinit_irq(dev);
+-
++fail_threads:
+ 		wlan_deinitialize_threads(dev);
+ fail_wilc_wlan:
+ 		wilc_wlan_cleanup(dev);
 -- 
 2.20.1
 
