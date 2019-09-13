@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94089B1F74
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 202F2B1F9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390429AbfIMNTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:19:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47912 "EHLO mail.kernel.org"
+        id S2390736AbfIMNVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:21:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390422AbfIMNTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:19:39 -0400
+        id S2390714AbfIMNVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:21:03 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1B5B20640;
-        Fri, 13 Sep 2019 13:19:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C59E206BB;
+        Fri, 13 Sep 2019 13:21:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380778;
-        bh=nbvMh1RIRXXzZ6TclUPYbZSby/FBqYy/SvJruTPaJuk=;
+        s=default; t=1568380862;
+        bh=QMVlag0qqeZVF7AtUAiqBf+PBP+FgaKrteIQgjAKXPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QvrLUhoADIz19eq0r0qA1oDEFkJaWLWK4D3jtdIGf9KOwHv4JUVnFJJdqPz/XPlJc
-         sChdAtZlQD4A0GidJFWh2T0t1gGBhA62bmEKpETLhZsHyZImsycf7v5JphGZAaCJ0+
-         mxFV8X1Ij4Jfe1R5UbZea2C1Afo+H4LeKkR/jDWY=
+        b=bXFtB5Wh892O42pPslZytxDP+fkS9lSkKnw2WqiE/O5GplTknT1AJx7QNkphSeSxq
+         yYIz6bNkAfRgZXipT3/Ec6jqPI3dvI2kIbby8Rseqa/dVpl5H6U2FgqpUa7fvoyNI2
+         72RfADro8oO+9aWXGB8F2azDF+CWlVJwLftXCLXk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 176/190] NFSv4: Fix delegation state recovery
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.2 06/37] ALSA: hda/realtek - Enable internal speaker & headset mic of ASUS UX431FL
 Date:   Fri, 13 Sep 2019 14:07:11 +0100
-Message-Id: <20190913130613.814058908@linuxfoundation.org>
+Message-Id: <20190913130512.188810278@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
-References: <20190913130559.669563815@linuxfoundation.org>
+In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
+References: <20190913130510.727515099@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,119 +43,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5eb8d18ca0e001c6055da2b7f30d8f6dca23a44f ]
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-Once we clear the NFS_DELEGATED_STATE flag, we're telling
-nfs_delegation_claim_opens() that we're done recovering all open state
-for that stateid, so we really need to ensure that we test for all
-open modes that are currently cached and recover them before exiting
-nfs4_open_delegation_recall().
+commit 60083f9e94b2f28047d71ed778adf89357c1a8fb upstream.
 
-Fixes: 24311f884189d ("NFSv4: Recovery of recalled read delegations...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: stable@vger.kernel.org # v4.3+
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Original pin node values of ASUS UX431FL with ALC294:
+
+0x12 0xb7a60140
+0x13 0x40000000
+0x14 0x90170110
+0x15 0x411111f0
+0x16 0x411111f0
+0x17 0x90170111
+0x18 0x411111f0
+0x19 0x411111f0
+0x1a 0x411111f0
+0x1b 0x411111f0
+0x1d 0x4066852d
+0x1e 0x411111f0
+0x1f 0x411111f0
+0x21 0x04211020
+
+1. Has duplicated internal speakers (0x14 & 0x17) which makes the output
+   route become confused. So, the output volume cannot be changed by
+   setting.
+2. Misses the headset mic pin node.
+
+This patch disables the confusing speaker (NID 0x14) and enables the
+headset mic (NID 0x19).
+
+Link: https://lore.kernel.org/r/20190902100054.6941-1-jian-hong@endlessm.com
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/nfs/delegation.c |  2 +-
- fs/nfs/delegation.h |  2 +-
- fs/nfs/nfs4proc.c   | 25 ++++++++++++-------------
- 3 files changed, 14 insertions(+), 15 deletions(-)
+ sound/pci/hda/patch_realtek.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
-index 75fe92eaa6818..1624618c2bc72 100644
---- a/fs/nfs/delegation.c
-+++ b/fs/nfs/delegation.c
-@@ -153,7 +153,7 @@ again:
- 		/* Block nfs4_proc_unlck */
- 		mutex_lock(&sp->so_delegreturn_mutex);
- 		seq = raw_seqcount_begin(&sp->so_reclaim_seqcount);
--		err = nfs4_open_delegation_recall(ctx, state, stateid, type);
-+		err = nfs4_open_delegation_recall(ctx, state, stateid);
- 		if (!err)
- 			err = nfs_delegation_claim_locks(ctx, state, stateid);
- 		if (!err && read_seqcount_retry(&sp->so_reclaim_seqcount, seq))
-diff --git a/fs/nfs/delegation.h b/fs/nfs/delegation.h
-index bb1ef8c37af42..c95477823fa6b 100644
---- a/fs/nfs/delegation.h
-+++ b/fs/nfs/delegation.h
-@@ -61,7 +61,7 @@ void nfs_reap_expired_delegations(struct nfs_client *clp);
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5799,6 +5799,7 @@ enum {
+ 	ALC286_FIXUP_ACER_AIO_HEADSET_MIC,
+ 	ALC256_FIXUP_ASUS_MIC_NO_PRESENCE,
+ 	ALC299_FIXUP_PREDATOR_SPK,
++	ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC,
+ };
  
- /* NFSv4 delegation-related procedures */
- int nfs4_proc_delegreturn(struct inode *inode, struct rpc_cred *cred, const nfs4_stateid *stateid, int issync);
--int nfs4_open_delegation_recall(struct nfs_open_context *ctx, struct nfs4_state *state, const nfs4_stateid *stateid, fmode_t type);
-+int nfs4_open_delegation_recall(struct nfs_open_context *ctx, struct nfs4_state *state, const nfs4_stateid *stateid);
- int nfs4_lock_delegation_recall(struct file_lock *fl, struct nfs4_state *state, const nfs4_stateid *stateid);
- bool nfs4_copy_delegation_stateid(struct inode *inode, fmode_t flags, nfs4_stateid *dst, struct rpc_cred **cred);
- bool nfs4_refresh_delegation_stateid(nfs4_stateid *dst, struct inode *inode);
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 31ae3bd5d9d20..621e3cf90f4eb 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -2113,12 +2113,10 @@ static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct
- 		case -NFS4ERR_BAD_HIGH_SLOT:
- 		case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
- 		case -NFS4ERR_DEADSESSION:
--			set_bit(NFS_DELEGATED_STATE, &state->flags);
- 			nfs4_schedule_session_recovery(server->nfs_client->cl_session, err);
- 			return -EAGAIN;
- 		case -NFS4ERR_STALE_CLIENTID:
- 		case -NFS4ERR_STALE_STATEID:
--			set_bit(NFS_DELEGATED_STATE, &state->flags);
- 			/* Don't recall a delegation if it was lost */
- 			nfs4_schedule_lease_recovery(server->nfs_client);
- 			return -EAGAIN;
-@@ -2139,7 +2137,6 @@ static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct
- 			return -EAGAIN;
- 		case -NFS4ERR_DELAY:
- 		case -NFS4ERR_GRACE:
--			set_bit(NFS_DELEGATED_STATE, &state->flags);
- 			ssleep(1);
- 			return -EAGAIN;
- 		case -ENOMEM:
-@@ -2155,8 +2152,7 @@ static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct
- }
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6839,6 +6840,16 @@ static const struct hda_fixup alc269_fix
+ 			{ }
+ 		}
+ 	},
++	[ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x14, 0x411111f0 }, /* disable confusing internal speaker */
++			{ 0x19, 0x04a11150 }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
++	},
+ };
  
- int nfs4_open_delegation_recall(struct nfs_open_context *ctx,
--		struct nfs4_state *state, const nfs4_stateid *stateid,
--		fmode_t type)
-+		struct nfs4_state *state, const nfs4_stateid *stateid)
- {
- 	struct nfs_server *server = NFS_SERVER(state->inode);
- 	struct nfs4_opendata *opendata;
-@@ -2167,20 +2163,23 @@ int nfs4_open_delegation_recall(struct nfs_open_context *ctx,
- 	if (IS_ERR(opendata))
- 		return PTR_ERR(opendata);
- 	nfs4_stateid_copy(&opendata->o_arg.u.delegation, stateid);
--	nfs_state_clear_delegation(state);
--	switch (type & (FMODE_READ|FMODE_WRITE)) {
--	case FMODE_READ|FMODE_WRITE:
--	case FMODE_WRITE:
-+	if (!test_bit(NFS_O_RDWR_STATE, &state->flags)) {
- 		err = nfs4_open_recover_helper(opendata, FMODE_READ|FMODE_WRITE);
- 		if (err)
--			break;
-+			goto out;
-+	}
-+	if (!test_bit(NFS_O_WRONLY_STATE, &state->flags)) {
- 		err = nfs4_open_recover_helper(opendata, FMODE_WRITE);
- 		if (err)
--			break;
--		/* Fall through */
--	case FMODE_READ:
-+			goto out;
-+	}
-+	if (!test_bit(NFS_O_RDONLY_STATE, &state->flags)) {
- 		err = nfs4_open_recover_helper(opendata, FMODE_READ);
-+		if (err)
-+			goto out;
- 	}
-+	nfs_state_clear_delegation(state);
-+out:
- 	nfs4_opendata_put(opendata);
- 	return nfs4_handle_delegation_recall_error(server, state, stateid, NULL, err);
- }
--- 
-2.20.1
-
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -6998,6 +7009,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1043, 0x1427, "Asus Zenbook UX31E", ALC269VB_FIXUP_ASUS_ZENBOOK),
+ 	SND_PCI_QUIRK(0x1043, 0x1517, "Asus Zenbook UX31A", ALC269VB_FIXUP_ASUS_ZENBOOK_UX31A),
+ 	SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DMIC),
++	SND_PCI_QUIRK(0x1043, 0x17d1, "ASUS UX431FL", ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
+ 	SND_PCI_QUIRK(0x1043, 0x1a30, "ASUS X705UD", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1b13, "Asus U41SV", ALC269_FIXUP_INV_DMIC),
 
 
