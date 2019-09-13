@@ -2,231 +2,435 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B338BB20E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3F83B20DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391639AbfIMN3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:29:11 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34751 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390039AbfIMN3K (ORCPT
+        id S2391613AbfIMN1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:27:12 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:38242 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390650AbfIMN1J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:29:10 -0400
-Received: by mail-oi1-f193.google.com with SMTP id 12so2433060oiq.1;
-        Fri, 13 Sep 2019 06:29:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0lGX0mmNDZtjfIYdJVFVZ2KgaUdbkDG/oNQ8h8bJVp4=;
-        b=gqyk3KVolu2/yCOiY6n9Ki9WFErlDfsmsqFT0Ofq+qYRk9gO3ohIe+onGVwqfvFeyB
-         htUeujC5taoBw5rJQJGaPkAtLVipNBwhLp9oirsrzQtDfQhuOIxdADa0bkIkP1fpr4vi
-         cfU6UcPXa4mbcTwzkALUS8tHBCPaHWUflKbONdxn2AYqTiwx1Gs8pkg/jJW9SX0CV7yT
-         d943ec9xci8tQ0flC16vfhqiCHidv+BiOdcHra2iLMuimq/0dPE5p4hng933YAvBx95D
-         SG3cuwN8nDJDdTLnR36ZcHPMiEgTO56SrAUURv5r+8oI95IVeZIfIxNgtBK4FY3cAw9i
-         PDGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0lGX0mmNDZtjfIYdJVFVZ2KgaUdbkDG/oNQ8h8bJVp4=;
-        b=Hy33pN1qALbjoX7CddFTOR8qDrHexZ7LBQVb2PeH5Os15SqEygDtwkrL/pMvhbg4Ma
-         lG0UcTvjVVVJ67vlDUYTUZKgXxx/z8L7srpdCK9wUsJbG0kYl4lxTRQFTLSnxVe+m7eV
-         xxeDvBQdg3FnVcg379RRM48Fn2VwHc11XQHl7lyGigJgx84PL5S6Uz6wLX9UkNulXpaP
-         Goj8giN3DWQkYkRRiN/kMRXMLyVOg15tQsv0BCuWzM8kZ2+CIB3STEge2zm9L/VZmjHn
-         K5uGiCi/zTe+h42Jbx1EtVtgJYlynuK6B1JaFPbwSEatU03o6mS32X65NKUVeDcPx9/B
-         LpXw==
-X-Gm-Message-State: APjAAAUIyH0RxsGZx24SG0FKCkurVJRyMeKGs/dFh7Z8NUH4sDKOvBTB
-        /KBlaQnDyIc8GX3oDzJ3uzvsH8UZdUrOqOd1kpo=
-X-Google-Smtp-Source: APXvYqzcUsPZy4tfC8E/8u9HzImkPf6/1yoMwlrKiuxXgU1w3PS3ACKepCTTb3MQo4IsOzwdn0gmoHpXTBIjKSB2X+w=
-X-Received: by 2002:a02:3b21:: with SMTP id c33mr51100071jaa.54.1568381348870;
- Fri, 13 Sep 2019 06:29:08 -0700 (PDT)
+        Fri, 13 Sep 2019 09:27:09 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8DDR7Y9090656;
+        Fri, 13 Sep 2019 08:27:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568381227;
+        bh=BOT4+HTjzQxXq3OYIv0dSDS89qORhvStj/UKjz7Ij3E=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=lgOOlulzYuIrz65W47cZ1pwJFxhpecP4+6kb/VfsR2evESeC4jlwgpiiOeGjsxOoo
+         z648ITvZuq6tVIHIuL+coHjcuJnv2e7+vn8YLkiNsATUj4LHX1DAH4FZc1WYo18ljY
+         EjTbVlB6I40o8fYcQbwyYV3uF+EO3v4jn3f0/brc=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8DDR7K0037102
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 13 Sep 2019 08:27:07 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 13
+ Sep 2019 08:27:07 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 13 Sep 2019 08:27:07 -0500
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with SMTP id x8DDR7cJ101515;
+        Fri, 13 Sep 2019 08:27:07 -0500
+Date:   Fri, 13 Sep 2019 08:29:12 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+CC:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch 07/13] media: am437x-vpfe: Use a per instance format
+ array instead of a static one
+Message-ID: <20190913132912.jbf3u32a2oshelyb@ti.com>
+References: <20190909162743.30114-1-bparrot@ti.com>
+ <20190909162743.30114-8-bparrot@ti.com>
+ <d6aebae8-570a-284a-d336-f3a9670daa0b@xs4all.nl>
 MIME-Version: 1.0
-References: <20190912183037.18449-1-aford173@gmail.com> <D4F7E03C-1880-45AC-8F7C-6C8A336E2A01@goldelico.com>
- <CAHCN7xK100mR=fNns3qdDKpOyWsTWXgDnnngQfQ_j8cB_SFfuA@mail.gmail.com>
-In-Reply-To: <CAHCN7xK100mR=fNns3qdDKpOyWsTWXgDnnngQfQ_j8cB_SFfuA@mail.gmail.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Fri, 13 Sep 2019 08:28:57 -0500
-Message-ID: <CAHCN7xLx-XquVqEEqhEG5t7sQWMAWJqM9JH0pPowz+a374D2Dg@mail.gmail.com>
-Subject: Re: [RFC] ARM: dts: omap36xx: Enable thermal throttling
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        =?UTF-8?Q?Andr=C3=A9_Roth?= <neolynx@gmail.com>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Nishanth Menon <nm@ti.com>, Adam Ford <adam.ford@logicpd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <d6aebae8-570a-284a-d336-f3a9670daa0b@xs4all.nl>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 6:07 AM Adam Ford <aford173@gmail.com> wrote:
->
-> On Fri, Sep 13, 2019 at 1:56 AM H. Nikolaus Schaller <hns@goldelico.com> =
-wrote:
-> >
-> > Hi Adam,
-> >
-> > > Am 12.09.2019 um 20:30 schrieb Adam Ford <aford173@gmail.com>:
-> > >
-> > > The thermal sensor in the omap3 family isn't accurate, but it's
-> > > better than nothing.  The various OPP's enabled for the omap3630
-> > > support up to OPP1G, however the datasheet for the DM3730 states
-> > > that OPP130 and OPP1G are not available above TJ of 90C.
-> >
-> > We may have to add similar things for omap34xx as well. See
-> > data sheet 3.3 Recommended Operating Conditions
-> >
-> > But when reading them they do not limit temperature but
-> > number of operation hours of each OPP depending on temperature...
-> > That is clearly beyond what a kernel can do (we would have to
-> > have access to some NVRAM in the kernel counting hours).
-> >
-> > >
-> > > This patch configures the thermal throttling to limit the
-> > > operating points of the omap3630 to Only OPP50 and OPP100 if
-> >
-> > s/Only/only/
->
-> I will fix when I do V2
-> >
-> > > the thermal sensor reads a value above 90C.
-> > >
-> > > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > >
-> > > diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap=
-36xx.dtsi
-> > > index 4bb4f534afe2..58b9d347019f 100644
-> > > --- a/arch/arm/boot/dts/omap36xx.dtsi
-> > > +++ b/arch/arm/boot/dts/omap36xx.dtsi
-> > > @@ -25,6 +25,7 @@
-> > >
-> > >                       vbb-supply =3D <&abb_mpu_iva>;
-> > >                       clock-latency =3D <300000>; /* From omap-cpufre=
-q driver */
-> > > +                     #cooling-cells =3D <2>;
-> > >               };
-> > >       };
-> > >
-> > > @@ -195,6 +196,31 @@
-> > >       };
-> > > };
-> > >
-> > > +&cpu_thermal {
-> > > +     cpu_trips: trips {
-> >
-> > Yes, that is comparable to what I have seen in omap5 DT where I know
-> > that thermal throttling works.
-> >
-> > > +             /* OPP130 and OPP1G are not available above TJ of 90C. =
-*/
-> > > +             cpu_alert0: cpu_alert {
-> > > +                     temperature =3D <90000>; /* millicelsius */
-> > > +                     hysteresis =3D <2000>; /* millicelsius */
-> > > +                     type =3D "passive";
-> > > +             };
-> > > +
-> > > +             cpu_crit: cpu_crit {
-> > > +                     temperature =3D <125000>; /* millicelsius */
-> >
-> > Shouldn't this be 105=C2=B0C for all omap3 chips (industrial temperatur=
-e range)?
->
-> You are correct.  I forgot to change this when I did my copy-paste.
-> >
-> > > +                     hysteresis =3D <2000>; /* millicelsius */
-> > > +                     type =3D "critical";
-> > > +             };
-> > > +     };
-> > > +
-> > > +     cpu_cooling_maps: cooling-maps {
-> > > +             map0 {
-> > > +                     trip =3D <&cpu_alert0>;
-> > > +                     /* Only allow OPP50 and OPP100 */
-> > > +                     cooling-device =3D <&cpu 0 1>;
-> >
-> > omap4-cpu-thermal.dtsi uses THERMAL_NO_LIMIT constants but I do not
-> > understand their meaning (and how it relates to the opp list).
->
-> I read through the documentation, but it wasn't completely clear to
-> me. AFAICT, the numbers after &cpu represent the min and max index in
-> the OPP table when the condition is hit.
-> >
-> > > +             };
-> > > +     };
-> >
-> > Seems to make sense when comparing to omap4-cpu-thermal.dtsi...
-> >
-> > Maybe we can add the trip points to omap3-cpu-thermal.dtsi
-> > because they seem to be the same for all omap3 variants and
-> > just have a SoC variant specific cooling map for omap36xx.dtsi.
->
-> The OPP's for OMAP3530 show that OPP5 and OPP6 are capable of
-> operating at 105C.  AM3517 is a little different also, so I didn't
-> want to make a generic omap3 throttling table.  Since my goal was to
-> try to remove the need for the turbo option from the newly supported
-> 1GHz omap3630/3730, I was hoping to get this pushed first.  From
-> there, we can tweak the 34xx.dtsi and 3517.dtsi for their respective
-> thermal information.
->
-> >
-> > > +};
-> > > +
-> > > /* OMAP3630 needs dss_96m_fck for VENC */
-> > > &venc {
-> > >       clocks =3D <&dss_tv_fck>, <&dss_96m_fck>;
-> > > --
-> > > 2.17.1
-> > >
-> >
-> > The question is how we can test that. Heating up the omap36xx to 90=C2=
-=B0C
-> > or even 105=C2=B0C isn't that easy like with omap5...
-> >
-> > Maybe we can modify the millicelsius values for testing purposes to
-> > something in reachable range, e.g. 60=C2=B0C and 70=C2=B0C and watch wh=
-at happens?
->
-> I have access to a thermal chamber at work, but the guy who knows how
-> to use it is out for the rest of the week.  My plan was do as you
-> suggested and change the milicelsius values, but I wanted to get some
-> buy-in from TI people and/or Tony.  This also means enabling the omap3
-> thermal stuff which clearly throws a message that it's inaccurate.  I
-> don't know how much it's inaccurate, so we may have to make the 90C
-> value lower to compensate.
+Hans Verkuil <hverkuil@xs4all.nl> wrote on Fri [2019-Sep-13 15:07:29 +0200]:
+> On 9/9/19 6:27 PM, Benoit Parrot wrote:
+> > Using a statically defined format array would cause issue when
+> > multiple vpfe instance would be connected to sub-device of
+> > different capabilities. We need to use an instance based array
+> > instead to properly maintain a per port/instance format list.
+> > 
+> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> > ---
+> >  drivers/media/platform/am437x/am437x-vpfe.c | 108 ++++++++------------
+> >  drivers/media/platform/am437x/am437x-vpfe.h |  34 ++++++
+> >  2 files changed, 74 insertions(+), 68 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
+> > index ac759c066d00..e76dc2b3b7b8 100644
+> > --- a/drivers/media/platform/am437x/am437x-vpfe.c
+> > +++ b/drivers/media/platform/am437x/am437x-vpfe.c
+> > @@ -69,30 +69,6 @@ static const struct vpfe_standard vpfe_standards[] = {
+> >  	{V4L2_STD_625_50, 720, 576, {54, 59}, 1},
+> >  };
+> >  
+> > -struct bus_format {
+> > -	unsigned int width;
+> > -	unsigned int bpp;
+> > -};
+> > -
+> > -/*
+> > - * struct vpfe_fmt - VPFE media bus format information
+> > - * @code: V4L2 media bus format code
+> > - * @shifted: V4L2 media bus format code for the same pixel layout but
+> > - *	shifted to be 8 bits per pixel. =0 if format is not shiftable.
+> > - * @pixelformat: V4L2 pixel format FCC identifier
+> > - * @width: Bits per pixel (when transferred over a bus)
+> > - * @bpp: Bytes per pixel (when stored in memory)
+> > - * @supported: Indicates format supported by subdev
+> > - */
+> > -struct vpfe_fmt {
+> > -	u32 fourcc;
+> > -	u32 code;
+> > -	struct bus_format l;
+> > -	struct bus_format s;
+> > -	bool supported;
+> > -	u32 index;
+> > -};
+> > -
+> >  static struct vpfe_fmt formats[] = {
+> >  	{
+> >  		.fourcc		= V4L2_PIX_FMT_YUYV,
+> > @@ -101,7 +77,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 4,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 2,
+> > -		.supported	= false,
+> >  	}, {
+> >  		.fourcc		= V4L2_PIX_FMT_UYVY,
+> >  		.code		= MEDIA_BUS_FMT_UYVY8_2X8,
+> > @@ -109,7 +84,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 4,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 2,
+> > -		.supported	= false,
+> >  	}, {
+> >  		.fourcc		= V4L2_PIX_FMT_YVYU,
+> >  		.code		= MEDIA_BUS_FMT_YVYU8_2X8,
+> > @@ -117,7 +91,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 4,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 2,
+> > -		.supported	= false,
+> >  	}, {
+> >  		.fourcc		= V4L2_PIX_FMT_VYUY,
+> >  		.code		= MEDIA_BUS_FMT_VYUY8_2X8,
+> > @@ -125,7 +98,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 4,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 2,
+> > -		.supported	= false,
+> >  	}, {
+> >  		.fourcc		= V4L2_PIX_FMT_SBGGR8,
+> >  		.code		= MEDIA_BUS_FMT_SBGGR8_1X8,
+> > @@ -133,7 +105,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 2,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 1,
+> > -		.supported	= false,
+> >  	}, {
+> >  		.fourcc		= V4L2_PIX_FMT_SGBRG8,
+> >  		.code		= MEDIA_BUS_FMT_SGBRG8_1X8,
+> > @@ -141,7 +112,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 2,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 1,
+> > -		.supported	= false,
+> >  	}, {
+> >  		.fourcc		= V4L2_PIX_FMT_SGRBG8,
+> >  		.code		= MEDIA_BUS_FMT_SGRBG8_1X8,
+> > @@ -149,7 +119,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 2,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 1,
+> > -		.supported	= false,
+> >  	}, {
+> >  		.fourcc		= V4L2_PIX_FMT_SRGGB8,
+> >  		.code		= MEDIA_BUS_FMT_SRGGB8_1X8,
+> > @@ -157,7 +126,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 2,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 1,
+> > -		.supported	= false,
+> >  	}, {
+> >  		.fourcc		= V4L2_PIX_FMT_RGB565,
+> >  		.code		= MEDIA_BUS_FMT_RGB565_2X8_LE,
+> > @@ -165,7 +133,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 4,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 2,
+> > -		.supported	= false,
+> >  	}, {
+> >  		.fourcc		= V4L2_PIX_FMT_RGB565X,
+> >  		.code		= MEDIA_BUS_FMT_RGB565_2X8_BE,
+> > @@ -173,7 +140,6 @@ static struct vpfe_fmt formats[] = {
+> >  		.l.bpp		= 4,
+> >  		.s.width	= 8,
+> >  		.s.bpp		= 2,
+> > -		.supported	= false,
+> >  	},
+> >  };
+> >  
+> > @@ -181,13 +147,14 @@ static int
+> >  __vpfe_get_format(struct vpfe_device *vpfe,
+> >  		  struct v4l2_format *format, unsigned int *bpp);
+> >  
+> > -static struct vpfe_fmt *find_format_by_code(unsigned int code)
+> > +static struct vpfe_fmt *find_format_by_code(struct vpfe_device *vpfe,
+> > +					    unsigned int code)
+> >  {
+> >  	struct vpfe_fmt *fmt;
+> >  	unsigned int k;
+> >  
+> > -	for (k = 0; k < ARRAY_SIZE(formats); k++) {
+> > -		fmt = &formats[k];
+> > +	for (k = 0; k < vpfe->num_active_fmt; k++) {
+> > +		fmt = vpfe->active_fmt[k];
+> >  		if (fmt->code == code)
+> >  			return fmt;
+> >  	}
+> > @@ -195,13 +162,14 @@ static struct vpfe_fmt *find_format_by_code(unsigned int code)
+> >  	return NULL;
+> >  }
+> >  
+> > -static struct vpfe_fmt *find_format_by_pix(unsigned int pixelformat)
+> > +static struct vpfe_fmt *find_format_by_pix(struct vpfe_device *vpfe,
+> > +					   unsigned int pixelformat)
+> >  {
+> >  	struct vpfe_fmt *fmt;
+> >  	unsigned int k;
+> >  
+> > -	for (k = 0; k < ARRAY_SIZE(formats); k++) {
+> > -		fmt = &formats[k];
+> > +	for (k = 0; k < vpfe->num_active_fmt; k++) {
+> > +		fmt = vpfe->active_fmt[k];
+> >  		if (fmt->fourcc == pixelformat)
+> >  			return fmt;
+> >  	}
+> > @@ -218,7 +186,7 @@ mbus_to_pix(struct vpfe_device *vpfe,
+> >  	unsigned int bus_width = sdinfo->vpfe_param.bus_width;
+> >  	struct vpfe_fmt *fmt;
+> >  
+> > -	fmt = find_format_by_code(mbus->code);
+> > +	fmt = find_format_by_code(vpfe, mbus->code);
+> >  	if (WARN_ON(fmt == NULL)) {
+> >  		pr_err("Invalid mbus code set\n");
+> >  		*bpp = 1;
+> > @@ -241,12 +209,12 @@ static void pix_to_mbus(struct vpfe_device *vpfe,
+> >  {
+> >  	struct vpfe_fmt *fmt;
+> >  
+> > -	fmt = find_format_by_pix(pix_fmt->pixelformat);
+> > +	fmt = find_format_by_pix(vpfe, pix_fmt->pixelformat);
+> >  	if (!fmt) {
+> >  		/* default to first entry */
+> >  		vpfe_dbg(3, vpfe, "Invalid pixel code: %x, default used instead\n",
+> >  			pix_fmt->pixelformat);
+> > -		fmt = &formats[0];
+> > +		fmt = vpfe->active_fmt[0];
+> >  	}
+> >  
+> >  	memset(mbus_fmt, 0, sizeof(*mbus_fmt));
+> > @@ -1494,8 +1462,7 @@ static int vpfe_enum_fmt(struct file *file, void  *priv,
+> >  {
+> >  	struct vpfe_device *vpfe = video_drvdata(file);
+> >  	struct vpfe_subdev_info *sdinfo;
+> > -	struct vpfe_fmt *fmt = NULL;
+> > -	unsigned int k;
+> > +	struct vpfe_fmt *fmt;
+> >  
+> >  	vpfe_dbg(2, vpfe, "vpfe_enum_format index:%d\n",
+> >  		f->index);
+> > @@ -1504,17 +1471,10 @@ static int vpfe_enum_fmt(struct file *file, void  *priv,
+> >  	if (!sdinfo->sd)
+> >  		return -EINVAL;
+> >  
+> > -	if (f->index > ARRAY_SIZE(formats))
+> > +	if (f->index >= vpfe->num_active_fmt)
+> >  		return -EINVAL;
+> >  
+> > -	for (k = 0; k < ARRAY_SIZE(formats); k++) {
+> > -		if (formats[k].index == f->index) {
+> > -			fmt = &formats[k];
+> > -			break;
+> > -		}
+> > -	}
+> > -	if (!fmt)
+> > -		return -EINVAL;
+> > +	fmt = vpfe->active_fmt[f->index];
+> >  
+> >  	f->pixelformat = fmt->fourcc;
+> >  
+> > @@ -1593,7 +1553,7 @@ static int vpfe_enum_size(struct file *file, void  *priv,
+> >  	vpfe_dbg(2, vpfe, "vpfe_enum_size\n");
+> >  
+> >  	/* check for valid format */
+> > -	fmt = find_format_by_pix(fsize->pixel_format);
+> > +	fmt = find_format_by_pix(vpfe, fsize->pixel_format);
+> >  	if (!fmt) {
+> >  		vpfe_dbg(3, vpfe, "Invalid pixel code: %x, default used instead\n",
+> >  			fsize->pixel_format);
+> > @@ -2281,8 +2241,10 @@ vpfe_async_bound(struct v4l2_async_notifier *notifier,
+> >  					       struct vpfe_device, v4l2_dev);
+> >  	struct v4l2_subdev_mbus_code_enum mbus_code;
+> >  	struct vpfe_subdev_info *sdinfo;
+> > +	struct vpfe_fmt *fmt;
+> > +	int ret = 0;
+> >  	bool found = false;
+> > -	int i, j;
+> > +	int i, j, k;
+> >  
+> >  	vpfe_dbg(1, vpfe, "vpfe_async_bound\n");
+> >  
+> > @@ -2304,27 +2266,37 @@ vpfe_async_bound(struct v4l2_async_notifier *notifier,
+> >  
+> >  	vpfe->video_dev.tvnorms |= sdinfo->inputs[0].std;
+> >  
+> > -	/* setup the supported formats & indexes */
+> > -	for (j = 0, i = 0; ; ++j) {
+> > -		struct vpfe_fmt *fmt;
+> > -		int ret;
+> > -
+> > +	vpfe->num_active_fmt = 0;
+> > +	for (j = 0, i = 0; (ret != -EINVAL); ++j) {
+> >  		memset(&mbus_code, 0, sizeof(mbus_code));
+> >  		mbus_code.index = j;
+> >  		mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+> >  		ret = v4l2_subdev_call(subdev, pad, enum_mbus_code,
+> > -			       NULL, &mbus_code);
+> > +				       NULL, &mbus_code);
+> >  		if (ret)
+> > -			break;
+> > -
+> > -		fmt = find_format_by_code(mbus_code.code);
+> > -		if (!fmt)
+> >  			continue;
+> >  
+> > -		fmt->supported = true;
+> > -		fmt->index = i++;
+> > +		vpfe_dbg(3, vpfe,
+> > +			 "subdev %s: code: %04x idx: %d\n",
+> > +			 subdev->name, mbus_code.code, j);
+> > +
+> > +		for (k = 0; k < ARRAY_SIZE(formats); k++) {
+> > +			fmt = &formats[k];
+> > +			if (mbus_code.code != fmt->code)
+> > +				continue;
+> > +			vpfe->active_fmt[i] = fmt;
+> > +			vpfe_dbg(3, vpfe,
+> > +				 "matched fourcc: %4.4s code: %04x idx: %d\n",
+> > +				 (char *)&fmt->fourcc, mbus_code.code, i);
+> > +			vpfe->num_active_fmt = ++i;
+> > +		}
+> >  	}
+> >  
+> > +	if (!i) {
+> > +		vpfe_err(vpfe, "No suitable format reported by subdev %s\n",
+> > +			 subdev->name);
+> > +		return -EINVAL;
+> > +	}
+> >  	return 0;
+> >  }
+> >  
+> > diff --git a/drivers/media/platform/am437x/am437x-vpfe.h b/drivers/media/platform/am437x/am437x-vpfe.h
+> > index 2dde09780215..6f25750f84e4 100644
+> > --- a/drivers/media/platform/am437x/am437x-vpfe.h
+> > +++ b/drivers/media/platform/am437x/am437x-vpfe.h
+> > @@ -215,6 +215,37 @@ struct vpfe_ccdc {
+> >  	u32 ccdc_ctx[VPFE_REG_END / sizeof(u32)];
+> >  };
+> >  
+> > +/*
+> > + * struct bus_format - VPFE bus format information
+> > + * @width: Bits per pixel (when transferred over a bus)
+> > + * @bpp: Bytes per pixel (when stored in memory)
+> 
+> Slightly confused: the '@' indicates docbook format, but the '/*'
+> indicates a regular comment. Either choose '/**' or drop the @.
 
-I set the alert to 60C then booted the system.  It initially read
-58.6C, then I ran a benchmark to push the processor over 60C.
-Unfortunately, it didn't appear to throttle like I expected.  I was
-expecting it to only make 300 amd 600 MHz available.
+Yeah I think this driver pre-date all of that.
 
-cat /sys/devices/virtual/thermal/thermal_zone0/temp
-58500
+Now did you mean to fix just the above comments or all of the other ones
+also.
 
-whetstone 200000
-Loops: 200000, Iterations: 1, Duration: 31 sec.
-C Converted Double Precision Whetstones: 645.2 MIPS
+Frankly, I do not have a clear idea either way.
+I guess i'll just remove the '@' tag then.
 
-cat /sys/devices/virtual/thermal/thermal_zone0/temp
-62000
+> 
+> > + */
+> > +struct bus_format {
+> > +	unsigned int width;
+> > +	unsigned int bpp;
+> > +};
+> > +
+> > +/*
+> > + * struct vpfe_fmt - VPFE media bus format information
+> > + * @fourcc: V4L2 pixel format code
+> > + * @code: V4L2 media bus format code
+> > + * @l: 10 bit bus format info
+> > + * @s: 8 bit bus format info
+> > + */
+> > +struct vpfe_fmt {
+> > +	u32 fourcc;
+> > +	u32 code;
+> > +	struct bus_format l;
+> > +	struct bus_format s;
+> > +};
+> > +
+> > +/*
+> > + * This value needs to be at least as large as the number of entry in
+> > + * formats[].
+> > + * When formats[] is modified make sure to adjust this value also.
+> > + */
+> > +#define VPFE_MAX_ACTIVE_FMT	10
+> 
+> I recommend adding something like:
+> 
+> #if ARRAY_SIZE(formats) > VPFE_MAX_ACTIVE_FMT
+> 	#error must update VPFE_MAX_ACTIVE_FMT
+> #endif
+> 
+> to am437x-vpfe.c.
+> 
+> Or something along those lines. Don't rely on just the comment :-)
 
-cat /sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies
-300000 600000 800000
+Ah yes very good.
 
-I am going to investigate how other processors do this.  I may have
-the cpu reference wrong.
-
-adam
->
-> adam
-> >
-> > BR,
-> > Nikolaus
-> >
-> >
-> >
+> 
+> Regards,
+> 
+> 	Hans
+> 
+> > +
+> >  struct vpfe_device {
+> >  	/* V4l2 specific parameters */
+> >  	/* Identifies video device for this channel */
+> > @@ -252,6 +283,9 @@ struct vpfe_device {
+> >  	struct v4l2_format fmt;
+> >  	/* Used to store current bytes per pixel based on current format */
+> >  	unsigned int bpp;
+> > +	struct vpfe_fmt	*active_fmt[VPFE_MAX_ACTIVE_FMT];
+> > +	unsigned int num_active_fmt;
+> > +
+> >  	/*
+> >  	 * used when IMP is chained to store the crop window which
+> >  	 * is different from the image window
+> > 
+> 
