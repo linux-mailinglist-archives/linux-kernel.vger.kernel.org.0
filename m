@@ -2,104 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4120EB1A33
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 10:53:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30249B1A52
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 10:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387645AbfIMIx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 04:53:29 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43945 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387402AbfIMIx3 (ORCPT
+        id S2387866AbfIMI54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 04:57:56 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:44260 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387655AbfIMI54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 04:53:29 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1i8hKa-0006rN-C8; Fri, 13 Sep 2019 10:53:28 +0200
-Message-ID: <a4f36fed24c8c2a1e9228ee178fe16f2957b3ffb.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/2] drm/etnaviv: print MMU exception cause
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Christian Gmeiner <christian.gmeiner@gmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     David Airlie <airlied@linux.ie>, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
-        Russell King <linux+etnaviv@armlinux.org.uk>
-Date:   Fri, 13 Sep 2019 10:53:25 +0200
-In-Reply-To: <20190913055052.25599-2-christian.gmeiner@gmail.com>
-References: <20190913055052.25599-1-christian.gmeiner@gmail.com>
-         <20190913055052.25599-2-christian.gmeiner@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Fri, 13 Sep 2019 04:57:56 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2F96425B7B0;
+        Fri, 13 Sep 2019 18:57:54 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 268F3940513; Fri, 13 Sep 2019 10:57:52 +0200 (CEST)
+Date:   Fri, 13 Sep 2019 10:57:52 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm: rcar-du: Add r8a77980 support
+Message-ID: <20190913085751.j743ry4ygtoyb7n6@verge.net.au>
+References: <20190911192502.16609-1-kieran.bingham+renesas@ideasonboard.com>
+ <70b94265-69f3-d18f-1b67-b5b814723b1b@cogentembedded.com>
+ <20190913082129.lvusbp6pbcayqh5r@verge.net.au>
+ <CAMuHMdU5SgQhnfoeTc1Ur+dhjrUXkEfpk+9VRQR2EKxLzEnmGg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU5SgQhnfoeTc1Ur+dhjrUXkEfpk+9VRQR2EKxLzEnmGg@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fr, 2019-09-13 at 07:50 +0200, Christian Gmeiner wrote:
-> Might be useful when debugging MMU exceptions.
+On Fri, Sep 13, 2019 at 10:30:45AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Sep 13, 2019 at 10:21 AM Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Sep 12, 2019 at 01:00:41PM +0300, Sergei Shtylyov wrote:
+> > > On 11.09.2019 22:25, Kieran Bingham wrote:
+> > > > Add direct support for the r8a77980 (V3H).
+> > > > The V3H shares a common, compatible configuration with the r8a77970
+> > > > (V3M) so that device info structure is reused.
+> > >
+> > >    Do we really need to add yet another compatible in this case?
+> > > I just added r8a77970 to the compatible prop in the r8a77980 DT. That's why
+> > > a patch like this one didn't get posted by me.
+> >
+> > The reason for having per-SoC compat strings is that the IP blocks
+> > are not versioned and while we can observe that there are similarities
+> > between, f.e. the DU on the r8a77970 and r8a77980, we can't be certain that
+> > differences may not emerge at some point. By having per-SoC compat strings
+> > we have the flexibility for the driver to address any such differences as
+> > the need arises.
 > 
-> Changes in V2:
->  - Use a static array of string for error message as suggested
->    by Lucas Stach.
-
-Please move those changelogs below the 3 dashes, so they don't end up
-in the commit message. They don't really add any value to the
-persistent kernel history.
-
-> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+> Thanks, that is the generic reason, applicable to all IP blocks without
+> version registers.
 > 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> index d47d1a8e0219..b8cd85153fe0 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> @@ -1351,6 +1351,15 @@ static void sync_point_worker(struct work_struct *work)
->  
->  static void dump_mmu_fault(struct etnaviv_gpu *gpu)
->  {
-> +	static const char *errors[] = {
-> +		"slave not present",
-> +		"page not present",
-> +		"write violation",
-> +		"out of bound",
-> +		"read security violation",
-> +		"write security violation",
-> +	};
-> +
->  	u32 status_reg, status;
->  	int i;
->  
-> @@ -1364,10 +1373,16 @@ static void dump_mmu_fault(struct etnaviv_gpu *gpu)
->  
->  	for (i = 0; i < 4; i++) {
->  		u32 address_reg;
-> +		const char *error = "unknown state";
->  
->  		if (!(status & (VIVS_MMUv2_STATUS_EXCEPTION0__MASK << (i * 4))))
->  			continue;
->  
-> +		if (status < ARRAY_SIZE(errors))
-> +			error = errors[status];
+> For the Display Unit, there are documented differences (e.g. number and type
+> of ports), so we definitely need it there.
 
-Huh? This won't work. The status register is a bitfield, not an integer
-so you need to map the bit position to the array index via ffs() or
-something like that.
+Ack.
 
-Regards,
-Lucas
-
-> +
-> +		dev_err_ratelimited(gpu->dev, "MMU %d %s\n", i, error);
-> +
->  		if (gpu->sec_mode == ETNA_SEC_NONE)
->  			address_reg = VIVS_MMUv2_EXCEPTION_ADDR(i);
->  		else
-
+> > My recollection is that this scheme has been adopted for non-versioned
+> > Renesas IP blocks since June 2015 and uses of this scheme well before that.
+> >
+> > > > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
