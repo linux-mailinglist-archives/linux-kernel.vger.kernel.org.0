@@ -2,40 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A0B4B1F9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73499B1F93
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390155AbfIMNVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:21:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50562 "EHLO mail.kernel.org"
+        id S2390616AbfIMNUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:20:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390744AbfIMNVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:21:08 -0400
+        id S2389469AbfIMNUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:20:38 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCAEB214AE;
-        Fri, 13 Sep 2019 13:21:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8421206BB;
+        Fri, 13 Sep 2019 13:20:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380867;
-        bh=Ff2GSNVrxgxqu4nz2TJSyI8jgqHK9DS8WU37o7j5Ehk=;
+        s=default; t=1568380836;
+        bh=w9rMOSJJjyio0AAEDtCnA2QRY8NZqeOX69wnXBT1yE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GuqzhQo7NR5N8q/HIBq5amGfb2Xa3kvAW4glBMSV/cT307DE4M1K4zOSXVM2WVqd4
-         tnMakrMkgRCQCmsKrllkmw0DCDxA3bJNlW7mt23Pd5p4by6b7ENEA3R/LHwv5FfhFO
-         QSSDQhZQBJDY/PvmxLUGwO5lueGEgGPjJQdLM8zk=
+        b=jhGUfW7g8FCAKQGhwWOBEG7oWeUYLfkNQnJqAXlwRa40YjsbASLsdVcKTZGv6lyV+
+         kIUddXs5jqc9nziA8v/oGBJSekUUWjMSMRN+MHu8yCrhMjRO9fABk9t9VtemrdXCjl
+         MYVD9n0vSeXewtyzzq2eANUVAG7KwhuzLay9HpTU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 5.2 16/37] batman-adv: fix uninit-value in batadv_netlink_get_ifindex()
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Daniel Drake <drake@endlessm.com>,
+        Aaron Plattner <aplattner@nvidia.com>,
+        Peter Wu <peter@lekensteyn.nl>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        Karol Herbst <kherbst@redhat.com>,
+        Maik Freudenberg <hhfeuer@gmx.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 186/190] PCI: Reset both NVIDIA GPU and HDA in ThinkPad P50 workaround
 Date:   Fri, 13 Sep 2019 14:07:21 +0100
-Message-Id: <20190913130517.403593738@linuxfoundation.org>
+Message-Id: <20190913130614.757255328@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
-References: <20190913130510.727515099@linuxfoundation.org>
+In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
+References: <20190913130559.669563815@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,65 +52,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+[ Upstream commit ad54567ad5d8e938ee6cf02e4f3867f18835ae6e ]
 
-commit 3ee1bb7aae97324ec9078da1f00cb2176919563f upstream.
+quirk_reset_lenovo_thinkpad_50_nvgpu() resets NVIDIA GPUs to work around
+an apparent BIOS defect.  It previously used pci_reset_function(), and
+the available method was a bus reset, which was fine because there was
+only one function on the bus.  After b516ea586d71 ("PCI: Enable NVIDIA
+HDA controllers"), there are now two functions (the HDA controller and
+the GPU itself) on the bus, so the reset fails.
 
-batadv_netlink_get_ifindex() needs to make sure user passed
-a correct u32 attribute.
+Use pci_reset_bus() explicitly instead of pci_reset_function() since it's
+OK to reset both devices.
 
-syzbot reported :
-BUG: KMSAN: uninit-value in batadv_netlink_dump_hardif+0x70d/0x880 net/batman-adv/netlink.c:968
-CPU: 1 PID: 11705 Comm: syz-executor888 Not tainted 5.1.0+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x191/0x1f0 lib/dump_stack.c:113
- kmsan_report+0x130/0x2a0 mm/kmsan/kmsan.c:622
- __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:310
- batadv_netlink_dump_hardif+0x70d/0x880 net/batman-adv/netlink.c:968
- genl_lock_dumpit+0xc6/0x130 net/netlink/genetlink.c:482
- netlink_dump+0xa84/0x1ab0 net/netlink/af_netlink.c:2253
- __netlink_dump_start+0xa3a/0xb30 net/netlink/af_netlink.c:2361
- genl_family_rcv_msg net/netlink/genetlink.c:550 [inline]
- genl_rcv_msg+0xfc1/0x1a40 net/netlink/genetlink.c:627
- netlink_rcv_skb+0x431/0x620 net/netlink/af_netlink.c:2486
- genl_rcv+0x63/0x80 net/netlink/genetlink.c:638
- netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
- netlink_unicast+0xf3e/0x1020 net/netlink/af_netlink.c:1337
- netlink_sendmsg+0x127e/0x12f0 net/netlink/af_netlink.c:1926
- sock_sendmsg_nosec net/socket.c:651 [inline]
- sock_sendmsg net/socket.c:661 [inline]
- ___sys_sendmsg+0xcc6/0x1200 net/socket.c:2260
- __sys_sendmsg net/socket.c:2298 [inline]
- __do_sys_sendmsg net/socket.c:2307 [inline]
- __se_sys_sendmsg+0x305/0x460 net/socket.c:2305
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2305
- do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440209
-
-Fixes: b60620cf567b ("batman-adv: netlink: hardif query")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+[bhelgaas: commit log, add e0547c81bfcf]
+Fixes: b516ea586d71 ("PCI: Enable NVIDIA HDA controllers")
+Fixes: e0547c81bfcf ("PCI: Reset Lenovo ThinkPad P50 nvgpu at boot if necessary")
+Link: https://lore.kernel.org/r/20190801220117.14952-1-lyude@redhat.com
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Ben Skeggs <bskeggs@redhat.com>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Daniel Drake <drake@endlessm.com>
+Cc: Aaron Plattner <aplattner@nvidia.com>
+Cc: Peter Wu <peter@lekensteyn.nl>
+Cc: Ilia Mirkin <imirkin@alum.mit.edu>
+Cc: Karol Herbst <kherbst@redhat.com>
+Cc: Maik Freudenberg <hhfeuer@gmx.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/netlink.c |    2 +-
+ drivers/pci/quirks.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/batman-adv/netlink.c
-+++ b/net/batman-adv/netlink.c
-@@ -164,7 +164,7 @@ batadv_netlink_get_ifindex(const struct
- {
- 	struct nlattr *attr = nlmsg_find_attr(nlh, GENL_HDRLEN, attrtype);
- 
--	return attr ? nla_get_u32(attr) : 0;
-+	return (attr && nla_len(attr) == sizeof(u32)) ? nla_get_u32(attr) : 0;
- }
- 
- /**
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 311f8a33e62ff..06be52912dcdb 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -5162,7 +5162,7 @@ static void quirk_reset_lenovo_thinkpad_p50_nvgpu(struct pci_dev *pdev)
+ 	 */
+ 	if (ioread32(map + 0x2240c) & 0x2) {
+ 		pci_info(pdev, FW_BUG "GPU left initialized by EFI, resetting\n");
+-		ret = pci_reset_function(pdev);
++		ret = pci_reset_bus(pdev);
+ 		if (ret < 0)
+ 			pci_err(pdev, "Failed to reset GPU: %d\n", ret);
+ 	}
+-- 
+2.20.1
+
 
 
