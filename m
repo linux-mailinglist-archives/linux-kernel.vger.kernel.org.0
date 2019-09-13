@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E5B9B1FE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67C43B2058
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388676AbfIMNKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:10:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34888 "EHLO mail.kernel.org"
+        id S2390691AbfIMNU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:20:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388665AbfIMNKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:10:06 -0400
+        id S2390644AbfIMNUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:20:54 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5282214D8;
-        Fri, 13 Sep 2019 13:10:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB9F920CC7;
+        Fri, 13 Sep 2019 13:20:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380205;
-        bh=a2w4CYDBcGWKAeQc/xMACf+a/RKVnsKjdeVupWJ8Ix8=;
+        s=default; t=1568380853;
+        bh=u4AEQA8IMkb9shpP6sxLQkQqMEc8olY3grzDr/FTydM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VtA2iz2nU1EYIUjq5XD/G9OQEWAG7/0zf82lr/ScvBgvX3AGm5VNtgmL5+dfR30h7
-         y7AqP0JXbe/yPxGl/eA99L0KX4/aMVlwwpObgjCuk2zaiTfY34Y/YDoVEB+gpJ8Y5e
-         YR3GFhwsrG1lOLMs7OEjNqAB4U0BL9oTTJhOQ5uU=
+        b=QKKREadKE1+7XQgrfaUsvFymolTMYFpvOzvRJdCMP2M/PwF5tjtiUoUFK5i4+FAd8
+         xm09F45kxbnEojerLTk7/8QQO+KkOpgu+arRN4JnobXh8QjJ4HUeHiAWfKyg8Dqc6+
+         l7RY+pGcWx/hcAvQaTL/dmACoBmxuYykdoRCF/dI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+355cab184197dbbfa384@syzkaller.appspotmail.com,
-        Sven Eckelmann <sven@narfation.org>,
-        Antonio Quartulli <a@unstable.cc>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.14 13/21] batman-adv: Only read OGM tvlv_len after buffer len check
-Date:   Fri, 13 Sep 2019 14:07:06 +0100
-Message-Id: <20190913130506.836333693@linuxfoundation.org>
+        stable@vger.kernel.org, David Jander <david@protonic.nl>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 5.2 02/37] gpio: pca953x: use pca953x_read_regs instead of regmap_bulk_read
+Date:   Fri, 13 Sep 2019 14:07:07 +0100
+Message-Id: <20190913130511.432521598@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
-References: <20190913130501.285837292@linuxfoundation.org>
+In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
+References: <20190913130510.727515099@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,81 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: David Jander <david@protonic.nl>
 
-commit a15d56a60760aa9dbe26343b9a0ac5228f35d445 upstream.
+commit 438b6c20e6161a1a7542490baa093c86732f77d6 upstream.
 
-Multiple batadv_ogm_packet can be stored in an skbuff. The functions
-batadv_iv_ogm_send_to_if()/batadv_iv_ogm_receive() use
-batadv_iv_ogm_aggr_packet() to check if there is another additional
-batadv_ogm_packet in the skb or not before they continue processing the
-packet.
+The register number needs to be translated for chips with more than 8
+ports. This patch fixes a bug causing all chips with more than 8 GPIO pins
+to not work correctly.
 
-The length for such an OGM is BATADV_OGM_HLEN +
-batadv_ogm_packet->tvlv_len. The check must first check that at least
-BATADV_OGM_HLEN bytes are available before it accesses tvlv_len (which is
-part of the header. Otherwise it might try read outside of the currently
-available skbuff to get the content of tvlv_len.
-
-Fixes: ef26157747d4 ("batman-adv: tvlv - basic infrastructure")
-Reported-by: syzbot+355cab184197dbbfa384@syzkaller.appspotmail.com
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Antonio Quartulli <a@unstable.cc>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Fixes: 0f25fda840a9 ("gpio: pca953x: Zap ad-hoc reg_direction cache")
+Cc: Cc: <stable@vger.kernel.org>
+Signed-off-by: David Jander <david@protonic.nl>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/batman-adv/bat_iv_ogm.c |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-pca953x.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -450,17 +450,23 @@ static u8 batadv_hop_penalty(u8 tq, cons
-  * batadv_iv_ogm_aggr_packet - checks if there is another OGM attached
-  * @buff_pos: current position in the skb
-  * @packet_len: total length of the skb
-- * @tvlv_len: tvlv length of the previously considered OGM
-+ * @ogm_packet: potential OGM in buffer
-  *
-  * Return: true if there is enough space for another OGM, false otherwise.
-  */
--static bool batadv_iv_ogm_aggr_packet(int buff_pos, int packet_len,
--				      __be16 tvlv_len)
-+static bool
-+batadv_iv_ogm_aggr_packet(int buff_pos, int packet_len,
-+			  const struct batadv_ogm_packet *ogm_packet)
- {
- 	int next_buff_pos = 0;
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -606,8 +606,7 @@ static void pca953x_irq_bus_sync_unlock(
+ 	u8 invert_irq_mask[MAX_BANK];
+ 	u8 reg_direction[MAX_BANK];
  
--	next_buff_pos += buff_pos + BATADV_OGM_HLEN;
--	next_buff_pos += ntohs(tvlv_len);
-+	/* check if there is enough space for the header */
-+	next_buff_pos += buff_pos + sizeof(*ogm_packet);
-+	if (next_buff_pos > packet_len)
-+		return false;
-+
-+	/* check if there is enough space for the optional TVLV */
-+	next_buff_pos += ntohs(ogm_packet->tvlv_len);
+-	regmap_bulk_read(chip->regmap, chip->regs->direction, reg_direction,
+-			 NBANK(chip));
++	pca953x_read_regs(chip, chip->regs->direction, reg_direction);
  
- 	return (next_buff_pos <= packet_len) &&
- 	       (next_buff_pos <= BATADV_MAX_AGGREGATION_BYTES);
-@@ -488,7 +494,7 @@ static void batadv_iv_ogm_send_to_if(str
+ 	if (chip->driver_data & PCA_PCAL) {
+ 		/* Enable latch on interrupt-enabled inputs */
+@@ -710,8 +709,7 @@ static bool pca953x_irq_pending(struct p
+ 		return false;
  
- 	/* adjust all flags and log packets */
- 	while (batadv_iv_ogm_aggr_packet(buff_pos, forw_packet->packet_len,
--					 batadv_ogm_packet->tvlv_len)) {
-+					 batadv_ogm_packet)) {
- 		/* we might have aggregated direct link packets with an
- 		 * ordinary base packet
- 		 */
-@@ -1838,7 +1844,7 @@ static int batadv_iv_ogm_receive(struct
+ 	/* Remove output pins from the equation */
+-	regmap_bulk_read(chip->regmap, chip->regs->direction, reg_direction,
+-			 NBANK(chip));
++	pca953x_read_regs(chip, chip->regs->direction, reg_direction);
+ 	for (i = 0; i < NBANK(chip); i++)
+ 		cur_stat[i] &= reg_direction[i];
  
- 	/* unpack the aggregated packets and process them one by one */
- 	while (batadv_iv_ogm_aggr_packet(ogm_offset, skb_headlen(skb),
--					 ogm_packet->tvlv_len)) {
-+					 ogm_packet)) {
- 		batadv_iv_ogm_process(skb, ogm_offset, if_incoming);
- 
- 		ogm_offset += BATADV_OGM_HLEN;
+@@ -789,8 +787,7 @@ static int pca953x_irq_setup(struct pca9
+ 	 * interrupt.  We have to rely on the previous read for
+ 	 * this purpose.
+ 	 */
+-	regmap_bulk_read(chip->regmap, chip->regs->direction, reg_direction,
+-			 NBANK(chip));
++	pca953x_read_regs(chip, chip->regs->direction, reg_direction);
+ 	for (i = 0; i < NBANK(chip); i++)
+ 		chip->irq_stat[i] &= reg_direction[i];
+ 	mutex_init(&chip->irq_lock);
 
 
