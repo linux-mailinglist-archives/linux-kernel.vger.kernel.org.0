@@ -2,263 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C58B2822
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EE66B2825
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403892AbfIMWJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 18:09:41 -0400
-Received: from muru.com ([72.249.23.125]:60782 "EHLO muru.com"
+        id S2403940AbfIMWLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 18:11:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38190 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403839AbfIMWJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 18:09:40 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 177AB827D;
-        Fri, 13 Sep 2019 22:10:08 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Cc:     linux-crypto@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Adam Ford <aford173@gmail.com>,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>, devicetree@vger.kernel.org
-Subject: [PATCH 6/6] hwrng: omap3-rom - Use runtime PM instead of custom functions
-Date:   Fri, 13 Sep 2019 15:09:22 -0700
-Message-Id: <20190913220922.29501-7-tony@atomide.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913220922.29501-1-tony@atomide.com>
-References: <20190913220922.29501-1-tony@atomide.com>
+        id S2403902AbfIMWLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 18:11:16 -0400
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 83CE980F7C
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 22:11:15 +0000 (UTC)
+Received: by mail-wm1-f69.google.com with SMTP id s25so1178045wmh.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 15:11:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Hr2S3cXatEQEjg97ibO0S46MGU+IMBQToXpc/8fv2pA=;
+        b=KJYPA0NMwAhA2uwQDGZlRtQ4kgcq+BZfvjMHN7jOgP0wY1XHdAtI0DhLgcr6996/8K
+         yP7FQ4KwCeEGasFEf/HanhDfAW6MRBjuI4kOH8W6kJ8YngM9n+XdYBXDA592Xe8hqq44
+         GQoul/Ek4XsFBKvifYsomms8bCQbtXLk2bi4VGIVFuHIc21WcdnS1dZiEr4kFZQcX7o3
+         YHyoBrLmjV8vV1pNv5nURj0dh8VNIWsDSUhpitWeoFioiHQshfiJTNJCktYEfhxLaOW7
+         Py75TE1oSR2BE2exiRx4fCAlV6vceLYZ6zZl5Bh9bR98Q4rhDUzeL4CUwEfxpQUAtP7m
+         mGaw==
+X-Gm-Message-State: APjAAAUUCFSIavqfDf6nTE46cinZqxDSOsHyMkg4KOF9KmhjQBZIiGOb
+        ROzkHNrJbh3gMz2PvkDlxDEBIemeKbnSgMUywbvKqkrK1/dLAJFN1kVjOWgY9jrqolj+a8l/psA
+        2YVb49W671koCbxQVOI2LxHoW
+X-Received: by 2002:a5d:6288:: with SMTP id k8mr40466672wru.209.1568412674069;
+        Fri, 13 Sep 2019 15:11:14 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwvg5mcGBMQcH69oTg4Zy/5SDck0mdoQ+L7PhYICLf0u+uCx46qLIxP64BzdPr6T4XAIhrtHA==
+X-Received: by 2002:a5d:6288:: with SMTP id k8mr40466656wru.209.1568412673788;
+        Fri, 13 Sep 2019 15:11:13 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:3166:d768:e1a7:aab8? ([2001:b07:6468:f312:3166:d768:e1a7:aab8])
+        by smtp.gmail.com with ESMTPSA id r16sm34574925wrc.81.2019.09.13.15.11.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2019 15:11:13 -0700 (PDT)
+Subject: Re: [PATCH 00/11] KVM: x86/mmu: Restore fast invalidate/zap flow
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        James Harvey <jamespharvey20@gmail.com>,
+        Alex Willamson <alex.williamson@redhat.com>
+References: <20190913024612.28392-1-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <d40b0e36-8a6a-d79e-4242-dda24a209bcd@redhat.com>
+Date:   Sat, 14 Sep 2019 00:11:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190913024612.28392-1-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nowadays we have runtime PM, and we can use it with autosuspend_timeout
-to idle things automatically. This allows us to get rid of the custom
-PM implementation.
+On 13/09/19 04:46, Sean Christopherson wrote:
+> Restore the fast invalidate flow for zapping shadow pages and use it
+> whenever vCPUs can be active in the VM.  This fixes (in theory, not yet
+> confirmed) a regression reported by James Harvey where KVM can livelock
+> in kvm_mmu_zap_all() when it's invoked in response to a memslot update.
+> 
+> The fast invalidate flow was removed as it was deemed to be unnecessary
+> after its primary user, memslot flushing, was reworked to zap only the
+> memslot in question instead of all shadow pages.  Unfortunately, zapping
+> only the memslot being (re)moved during a memslot update introduced a
+> regression for VMs with assigned devices.  Because we could not discern
+> why zapping only the relevant memslot broke device assignment, or if the
+> regression extended beyond device assignment, we reverted to zapping all
+> shadow pages when a memslot is (re)moved.
+> 
+> The revert to "zap all" failed to account for subsequent changes that
+> have been made to kvm_mmu_zap_all() between then and now.  Specifically,
+> kvm_mmu_zap_all() now conditionally drops reschedules and drops mmu_lock
+> if a reschedule is needed or if the lock is contended.  Dropping the lock
+> allows other vCPUs to add shadow pages, and, with enough vCPUs, can cause
+> kvm_mmu_zap_all() to get stuck in an infinite loop as it can never zap all
+> pages before observing lock contention or the need to reschedule.
+> 
+> The reasoning behind having kvm_mmu_zap_all() conditionally reschedule was
+> that it would only be used when the VM is inaccesible, e.g. when its
+> mm_struct is dying or when the VM itself is being destroyed.  In that case,
+> playing nice with the rest of the kernel instead of hogging cycles to free
+> unused shadow pages made sense.
+> 
+> Since it's unlikely we'll root cause the device assignment regression any
+> time soon, and that simply removing the conditional rescheduling isn't
+> guaranteed to return us to a known good state, restore the fast invalidate
+> flow for zapping on memslot updates, including mmio generation wraparound.
+> Opportunisticaly tack on a bug fix and a couple enhancements.
+> 
+> Alex and James, it probably goes without saying... please test, especially
+> patch 01/11 as a standalone patch as that'll likely need to be applied to
+> stable branches, assuming it works.  Thanks!
+> 
+> Sean Christopherson (11):
+>   KVM: x86/mmu: Reintroduce fast invalidate/zap for flushing memslot
+>   KVM: x86/mmu: Treat invalid shadow pages as obsolete
+>   KVM: x86/mmu: Use fast invalidate mechanism to zap MMIO sptes
+>   KVM: x86/mmu: Revert "Revert "KVM: MMU: show mmu_valid_gen in shadow
+>     page related tracepoints""
+>   KVM: x86/mmu: Revert "Revert "KVM: MMU: add tracepoint for
+>     kvm_mmu_invalidate_all_pages""
+>   KVM: x86/mmu: Revert "Revert "KVM: MMU: zap pages in batch""
+>   KVM: x86/mmu: Revert "Revert "KVM: MMU: collapse TLB flushes when zap
+>     all pages""
+>   KVM: x86/mmu: Revert "Revert "KVM: MMU: reclaim the zapped-obsolete
+>     page first""
+>   KVM: x86/mmu: Revert "KVM: x86/mmu: Remove is_obsolete() call"
+>   KVM: x86/mmu: Explicitly track only a single invalid mmu generation
+>   KVM: x86/mmu: Skip invalid pages during zapping iff root_count is zero
+> 
+>  arch/x86/include/asm/kvm_host.h |   4 +-
+>  arch/x86/kvm/mmu.c              | 154 ++++++++++++++++++++++++++++----
+>  arch/x86/kvm/mmutrace.h         |  42 +++++++--
+>  arch/x86/kvm/x86.c              |   1 +
+>  4 files changed, 173 insertions(+), 28 deletions(-)
+> 
 
-We enable clocks and init RNG in runtime_resume, and reset RNG and
-disable clocks in runtime_suspend. And then omap3_rom_rng_read()
-becomes very simple and we don't need the old functions for
-omap3_rom_rng_idle() and omap3_rom_rng_get_random().
+Thanks, I'm testing patch 1 and should send a pull request to Linus
+tomorrow morning as soon as I get the results.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/char/hw_random/omap3-rom-rng.c | 127 +++++++++++++++----------
- 1 file changed, 77 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/char/hw_random/omap3-rom-rng.c b/drivers/char/hw_random/omap3-rom-rng.c
---- a/drivers/char/hw_random/omap3-rom-rng.c
-+++ b/drivers/char/hw_random/omap3-rom-rng.c
-@@ -23,73 +23,83 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- 
- #define RNG_RESET			0x01
- #define RNG_GEN_PRNG_HW_INIT		0x02
- #define RNG_GEN_HW			0x08
- 
--/* param1: ptr, param2: count, param3: flag */
--static u32 (*omap3_rom_rng_call)(u32, u32, u32);
--
- struct omap_rom_rng {
- 	struct clk *clk;
- 	struct device *dev;
- 	struct hwrng ops;
-+	u32 (*rom_rng_call)(u32 ptr, u32 count, u32 flag);
- };
- 
--static struct delayed_work idle_work;
--static int rng_idle;
--static struct clk *rng_clk;
--
--static void omap3_rom_rng_idle(struct work_struct *work)
-+static int omap3_rom_rng_read(struct hwrng *rng, void *data, size_t max, bool w)
- {
-+	struct omap_rom_rng *ddata;
-+	u32 ptr;
- 	int r;
- 
--	r = omap3_rom_rng_call(0, 0, RNG_RESET);
--	if (r != 0) {
--		pr_err("reset failed: %d\n", r);
--		return;
-+	ddata = (struct omap_rom_rng *)rng->priv;
-+
-+	r = pm_runtime_get_sync(ddata->dev);
-+	if (r < 0) {
-+		pm_runtime_put_noidle(ddata->dev);
-+
-+		return r;
- 	}
--	clk_disable(rng_clk);
--	rng_idle = 1;
-+
-+	ptr = virt_to_phys(data);
-+	r = ddata->rom_rng_call(ptr, 4, RNG_GEN_HW);
-+	if (r != 0)
-+		r = -EINVAL;
-+	else
-+		r = 4;
-+
-+	pm_runtime_mark_last_busy(ddata->dev);
-+	pm_runtime_put_autosuspend(ddata->dev);
-+
-+	return r;
- }
- 
--static int omap3_rom_rng_get_random(void *buf, unsigned int count)
-+static int omap_rom_rng_runtime_suspend(struct device *dev)
- {
--	u32 r;
--	u32 ptr;
-+	struct omap_rom_rng *ddata;
-+	int r;
- 
--	cancel_delayed_work_sync(&idle_work);
--	if (rng_idle) {
--		r = clk_enable(rng_clk);
--		if (r)
--			return r;
--
--		r = omap3_rom_rng_call(0, 0, RNG_GEN_PRNG_HW_INIT);
--		if (r != 0) {
--			clk_disable(rng_clk);
--			pr_err("HW init failed: %d\n", r);
--			return -EIO;
--		}
--		rng_idle = 0;
--	}
-+	ddata = dev_get_drvdata(dev);
- 
--	ptr = virt_to_phys(buf);
--	r = omap3_rom_rng_call(ptr, count, RNG_GEN_HW);
--	schedule_delayed_work(&idle_work, msecs_to_jiffies(500));
-+	r = ddata->rom_rng_call(0, 0, RNG_RESET);
- 	if (r != 0)
--		return -EINVAL;
-+		pr_err("reset failed: %d\n", r);
-+
-+	clk_disable(ddata->clk);
-+
- 	return 0;
- }
- 
--static int omap3_rom_rng_read(struct hwrng *rng, void *data, size_t max, bool w)
-+static int omap_rom_rng_runtime_resume(struct device *dev)
- {
-+	struct omap_rom_rng *ddata;
- 	int r;
- 
--	r = omap3_rom_rng_get_random(data, 4);
-+	ddata = dev_get_drvdata(dev);
-+
-+	r = clk_enable(ddata->clk);
- 	if (r < 0)
- 		return r;
--	return 4;
-+
-+	r = ddata->rom_rng_call(0, 0, RNG_GEN_PRNG_HW_INIT);
-+	if (r != 0) {
-+		clk_disable(ddata->clk);
-+		dev_err(ddata->dev, "HW init failed: %d\n", r);
-+
-+		return -EIO;
-+	}
-+
-+	return 0;
- }
- 
- static int omap3_rom_rng_probe(struct platform_device *pdev)
-@@ -113,19 +123,17 @@ static int omap3_rom_rng_probe(struct platform_device *pdev)
- 	}
- 	dev_set_drvdata(ddata->dev, ddata);
- 
--	omap3_rom_rng_call = pdev->dev.platform_data;
--	if (!omap3_rom_rng_call) {
-+	ddata->rom_rng_call = pdev->dev.platform_data;
-+	if (!ddata->rom_rng_call) {
- 		dev_err(ddata->dev, "rom_rng_call is NULL\n");
- 		return -EINVAL;
- 	}
- 
--	INIT_DELAYED_WORK(&idle_work, omap3_rom_rng_idle);
- 	ddata->clk = devm_clk_get(ddata->dev, "ick");
- 	if (IS_ERR(ddata->clk)) {
- 		dev_err(ddata->dev, "unable to get RNG clock\n");
- 		return PTR_ERR(ddata->clk);
- 	}
--	rng_clk = ddata->clk;
- 
- 	ret = clk_prepare(ddata->clk);
- 	if (ret < 0) {
-@@ -133,15 +141,27 @@ static int omap3_rom_rng_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	/* Leave the RNG in reset state. */
--	ret = clk_enable(ddata->clk);
--	if (ret)
--		goto err_unprepare;
--	omap3_rom_rng_idle(0);
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
-+	ret = pm_runtime_get_sync(&pdev->dev);
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(&pdev->dev);
-+		goto err_disable;
- 
--	return hwrng_register(&ddata->ops);
-+		return ret;
-+	}
- 
--err_unprepare:
-+	pm_runtime_mark_last_busy(&pdev->dev);
-+	pm_runtime_put_autosuspend(&pdev->dev);
-+
-+	ret = hwrng_register(&ddata->ops);
-+	if (!ret)
-+		return 0;
-+
-+err_disable:
-+	pm_runtime_dont_use_autosuspend(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
- 	clk_unprepare(ddata->clk);
- 
- 	return ret;
-@@ -152,8 +172,9 @@ static int omap3_rom_rng_remove(struct platform_device *pdev)
- 	struct omap_rom_rng *ddata;
- 
- 	ddata = dev_get_drvdata(&pdev->dev);
--	cancel_delayed_work_sync(&idle_work);
- 	hwrng_unregister(&ddata->ops);
-+	pm_runtime_dont_use_autosuspend(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
- 	clk_unprepare(ddata->clk);
- 
- 	return 0;
-@@ -165,10 +186,16 @@ static const struct of_device_id omap_rom_rng_match[] = {
- };
- MODULE_DEVICE_TABLE(of, omap_rom_rng_match);
- 
-+static const struct dev_pm_ops omap_rom_rng_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(omap_rom_rng_runtime_suspend,
-+				omap_rom_rng_runtime_resume)
-+};
-+
- static struct platform_driver omap3_rom_rng_driver = {
- 	.driver = {
- 		.name		= "omap3-rom-rng",
- 		.of_match_table = omap_rom_rng_match,
-+		.pm = &omap_rom_rng_pm_ops,
- 	},
- 	.probe		= omap3_rom_rng_probe,
- 	.remove		= omap3_rom_rng_remove,
--- 
-2.23.0
+Paolo
