@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBAC4B1F67
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9212B1F52
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390407AbfIMNTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:19:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47284 "EHLO mail.kernel.org"
+        id S2390185AbfIMNSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:18:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390356AbfIMNTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:19:17 -0400
+        id S2390166AbfIMNSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:18:12 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E26CA206A5;
-        Fri, 13 Sep 2019 13:19:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09F46206BB;
+        Fri, 13 Sep 2019 13:18:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380756;
-        bh=PerjJq8RtcCHS4m1Bz+YroaFuFXujxQwpgh+O0P6CYE=;
+        s=default; t=1568380691;
+        bh=rJpO7TU0sY6emSYPENsTn/mM8sHV7RmIWOtVJ/Zqg4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RRskDQvWZfGC9pbDXbH/Vv0rda1Ddspu4zqiYUqxSvEd/HWemVC8Ir+m1WzKKI8uu
-         IixIruIyO2EsZ+Vumi0Dmk6GloO1HExpEof8i7tjcejjot0zq9iY59v5rVtSMD1eNx
-         3L6EyajUywV01OxYzElv079IuLxiTAhVKvAbwkKA=
+        b=G4JpmCjDxTIRuYC2h4Thyu64sc8i+wTSveqit90rkGko3xhbsfBwmSuCqntVJeLvM
+         p6VDrOaTTXqm8t/VMM9dm4MzXD2bcZBhZIjGIGLa4BDADHGxn2oejGjWWFGwiBUbId
+         JFCvNFwOJKFb3TyF809Epm6sZh/yM6P7CuCZ/ThA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Louis Li <Ching-shih.Li@amd.com>,
+        Shirish S <shirish.s@amd.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 137/190] drm/amdgpu: fix ring test failure issue during s3 in vce 3.0 (V2)
-Date:   Fri, 13 Sep 2019 14:06:32 +0100
-Message-Id: <20190913130610.950072079@linuxfoundation.org>
+Subject: [PATCH 4.19 138/190] drm/amdgpu/{uvd,vcn}: fetch rings read_ptr after alloc
+Date:   Fri, 13 Sep 2019 14:06:33 +0100
+Message-Id: <20190913130611.029453027@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -45,56 +46,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ce0e22f5d886d1b56c7ab4347c45b9ac5fcc058d ]
+[ Upstream commit 517b91f4cde3043d77b2178548473e8545ef07cb ]
 
 [What]
-vce ring test fails consistently during resume in s3 cycle, due to
-mismatch read & write pointers.
-On debug/analysis its found that rptr to be compared is not being
-correctly updated/read, which leads to this failure.
-Below is the failure signature:
-	[drm:amdgpu_vce_ring_test_ring] *ERROR* amdgpu: ring 12 test failed
-	[drm:amdgpu_device_ip_resume_phase2] *ERROR* resume of IP block <vce_v3_0> failed -110
-	[drm:amdgpu_device_resume] *ERROR* amdgpu_device_ip_resume failed (-110).
+readptr read always returns zero, since most likely
+these blocks are either power or clock gated.
 
 [How]
-fetch rptr appropriately, meaning move its read location further down
-in the code flow.
-With this patch applied the s3 failure is no more seen for >5k s3 cycles,
-which otherwise is pretty consistent.
-
-V2: remove reduntant fetch of rptr
+fetch rptr after amdgpu_ring_alloc() which informs
+the power management code that the block is about to be
+used and hence the gating is turned off.
 
 Signed-off-by: Louis Li <Ching-shih.Li@amd.com>
+Signed-off-by: Shirish S <shirish.s@amd.com>
 Reviewed-by: Christian König <christian.koenig@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c | 5 ++++-
+ drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c   | 5 ++++-
+ drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c   | 5 ++++-
+ 3 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
-index 5f3f540738187..17862b9ecccd7 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
-@@ -1070,7 +1070,7 @@ void amdgpu_vce_ring_emit_fence(struct amdgpu_ring *ring, u64 addr, u64 seq,
- int amdgpu_vce_ring_test_ring(struct amdgpu_ring *ring)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+index 400fc74bbae27..205e683fb9206 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+@@ -431,7 +431,7 @@ error:
+ int amdgpu_vcn_enc_ring_test_ring(struct amdgpu_ring *ring)
  {
  	struct amdgpu_device *adev = ring->adev;
 -	uint32_t rptr = amdgpu_ring_get_rptr(ring);
 +	uint32_t rptr;
  	unsigned i;
- 	int r, timeout = adev->usec_timeout;
+ 	int r;
  
-@@ -1084,6 +1084,9 @@ int amdgpu_vce_ring_test_ring(struct amdgpu_ring *ring)
+@@ -441,6 +441,9 @@ int amdgpu_vcn_enc_ring_test_ring(struct amdgpu_ring *ring)
  			  ring->idx, r);
  		return r;
  	}
 +
 +	rptr = amdgpu_ring_get_rptr(ring);
 +
- 	amdgpu_ring_write(ring, VCE_CMD_END);
+ 	amdgpu_ring_write(ring, VCN_ENC_CMD_END);
+ 	amdgpu_ring_commit(ring);
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c b/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
+index d4070839ac809..80613a74df420 100644
+--- a/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/uvd_v6_0.c
+@@ -170,7 +170,7 @@ static void uvd_v6_0_enc_ring_set_wptr(struct amdgpu_ring *ring)
+ static int uvd_v6_0_enc_ring_test_ring(struct amdgpu_ring *ring)
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+-	uint32_t rptr = amdgpu_ring_get_rptr(ring);
++	uint32_t rptr;
+ 	unsigned i;
+ 	int r;
+ 
+@@ -180,6 +180,9 @@ static int uvd_v6_0_enc_ring_test_ring(struct amdgpu_ring *ring)
+ 			  ring->idx, r);
+ 		return r;
+ 	}
++
++	rptr = amdgpu_ring_get_rptr(ring);
++
+ 	amdgpu_ring_write(ring, HEVC_ENC_CMD_END);
+ 	amdgpu_ring_commit(ring);
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c b/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
+index 057151b17b456..ce16b8329af04 100644
+--- a/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c
+@@ -175,7 +175,7 @@ static void uvd_v7_0_enc_ring_set_wptr(struct amdgpu_ring *ring)
+ static int uvd_v7_0_enc_ring_test_ring(struct amdgpu_ring *ring)
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+-	uint32_t rptr = amdgpu_ring_get_rptr(ring);
++	uint32_t rptr;
+ 	unsigned i;
+ 	int r;
+ 
+@@ -188,6 +188,9 @@ static int uvd_v7_0_enc_ring_test_ring(struct amdgpu_ring *ring)
+ 			  ring->me, ring->idx, r);
+ 		return r;
+ 	}
++
++	rptr = amdgpu_ring_get_rptr(ring);
++
+ 	amdgpu_ring_write(ring, HEVC_ENC_CMD_END);
  	amdgpu_ring_commit(ring);
  
 -- 
