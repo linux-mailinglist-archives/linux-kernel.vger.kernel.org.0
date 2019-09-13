@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02A31B1E54
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64D7CB1E67
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388446AbfIMNJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:09:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33592 "EHLO mail.kernel.org"
+        id S2388612AbfIMNJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:09:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388429AbfIMNJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:09:06 -0400
+        id S2388579AbfIMNJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:09:50 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA6902089F;
-        Fri, 13 Sep 2019 13:09:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1EC1206BB;
+        Fri, 13 Sep 2019 13:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380145;
-        bh=qmIDS1RUIUlk4PqP13Ji4FuXvckwkFyjkjtsRyDYu4Y=;
+        s=default; t=1568380190;
+        bh=QrXK3JMoG6QA2Z3P6wUdIIr/jFFdmlem452gyj0jXfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wlltPRm5SVIN6qN3afvbKknzobJXIu/uZI1gWa766KxPksXcM+FW2QBy1cmMieuvn
-         wOMPTy2zs2JXAA6qtjBva0ImsB/qKZoAZPfk50IQGqsXHSBlA9Y76LEkiWiJWgSCuV
-         bM25DNPpD9tZyXal3r2AzaZJ14TYr2dBC2xLantA=
+        b=o79nFIT0aEIMqEuF0uF0tb5zsm7qvRUSfCJqYOTZuG5vYBRhaDj3YeHVc7vHbIYyh
+         Y2/RnOUBH7bwyR0EkSfJDywHKBwCOTUW5qJQejvKAcdew67S4BFgX2Llcrxbxrkiav
+         0MSJug5vqDqPXUvELec0mntEPXdchjVLGxgwkAyw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tiwei Bie <tiwei.bie@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Subject: [PATCH 4.4 4/9] vhost/test: fix build for vhost test
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 01/14] ALSA: hda - Fix potential endless loop at applying quirks
 Date:   Fri, 13 Sep 2019 14:06:54 +0100
-Message-Id: <20190913130428.871493307@linuxfoundation.org>
+Message-Id: <20190913130441.238678810@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130424.160808669@linuxfoundation.org>
-References: <20190913130424.160808669@linuxfoundation.org>
+In-Reply-To: <20190913130440.264749443@linuxfoundation.org>
+References: <20190913130440.264749443@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,62 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tiwei Bie <tiwei.bie@intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 264b563b8675771834419057cbe076c1a41fb666 upstream.
+commit 333f31436d3db19f4286f8862a00ea1d8d8420a1 upstream.
 
-Since vhost_exceeds_weight() was introduced, callers need to specify
-the packet weight and byte weight in vhost_dev_init(). Note that, the
-packet weight isn't counted in this patch to keep the original behavior
-unchanged.
+Since the chained quirks via chained_before flag is applied before the
+depth check, it may lead to the endless recursive calls, when the
+chain were set up incorrectly.  Fix it by moving the depth check at
+the beginning of the loop.
 
-Fixes: e82b9b0727ff ("vhost: introduce vhost_exceeds_weight()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
+Fixes: 1f57825077dc ("ALSA: hda - Add chained_before flag to the fixup entry")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vhost/test.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ sound/pci/hda/hda_auto_parser.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/vhost/test.c
-+++ b/drivers/vhost/test.c
-@@ -23,6 +23,12 @@
-  * Using this limit prevents one virtqueue from starving others. */
- #define VHOST_TEST_WEIGHT 0x80000
+--- a/sound/pci/hda/hda_auto_parser.c
++++ b/sound/pci/hda/hda_auto_parser.c
+@@ -827,6 +827,8 @@ static void apply_fixup(struct hda_codec
+ 	while (id >= 0) {
+ 		const struct hda_fixup *fix = codec->fixup_list + id;
  
-+/* Max number of packets transferred before requeueing the job.
-+ * Using this limit prevents one virtqueue from starving others with
-+ * pkts.
-+ */
-+#define VHOST_TEST_PKT_WEIGHT 256
-+
- enum {
- 	VHOST_TEST_VQ = 0,
- 	VHOST_TEST_VQ_MAX = 1,
-@@ -81,10 +87,8 @@ static void handle_vq(struct vhost_test
++		if (++depth > 10)
++			break;
+ 		if (fix->chained_before)
+ 			apply_fixup(codec, fix->chain_id, action, depth + 1);
+ 
+@@ -866,8 +868,6 @@ static void apply_fixup(struct hda_codec
  		}
- 		vhost_add_used_and_signal(&n->dev, vq, head, 0);
- 		total_len += len;
--		if (unlikely(total_len >= VHOST_TEST_WEIGHT)) {
--			vhost_poll_queue(&vq->poll);
-+		if (unlikely(vhost_exceeds_weight(vq, 0, total_len)))
+ 		if (!fix->chained || fix->chained_before)
  			break;
--		}
+-		if (++depth > 10)
+-			break;
+ 		id = fix->chain_id;
  	}
- 
- 	mutex_unlock(&vq->mutex);
-@@ -116,7 +120,8 @@ static int vhost_test_open(struct inode
- 	dev = &n->dev;
- 	vqs[VHOST_TEST_VQ] = &n->vqs[VHOST_TEST_VQ];
- 	n->vqs[VHOST_TEST_VQ].handle_kick = handle_vq_kick;
--	vhost_dev_init(dev, vqs, VHOST_TEST_VQ_MAX);
-+	vhost_dev_init(dev, vqs, VHOST_TEST_VQ_MAX,
-+		       VHOST_TEST_PKT_WEIGHT, VHOST_TEST_WEIGHT);
- 
- 	f->private_data = n;
- 
+ }
 
 
