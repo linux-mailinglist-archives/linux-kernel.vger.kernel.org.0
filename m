@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD30FB1F3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30080B1F40
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389440AbfIMNRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:17:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44400 "EHLO mail.kernel.org"
+        id S2390052AbfIMNR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:17:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390017AbfIMNRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:17:15 -0400
+        id S2389067AbfIMNRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:17:21 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 195D0206A5;
-        Fri, 13 Sep 2019 13:17:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16714206A5;
+        Fri, 13 Sep 2019 13:17:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380634;
-        bh=ZFE8+QNtXmMbENewwtTgJlgNDip9sKbdVE4+5TxJSWo=;
+        s=default; t=1568380640;
+        bh=tyz9EDC0TzptZ+ClxDdX/l0wChzdsOy41JFyVkHDeqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=chSPrX7kUMjVnVgNWhSnKTLfbpmFC9Tgz8rU3CTTPQChD+UvAtM6bn2/zf6qaYLn6
-         16OGjgof/cXZ0rJL5Z397rYC0HF3oxwadbXo3KMJa1VnqUywDM1tVZp5RBFnWUHrJ/
-         UVkkOxffMXNvqHXi0uGUSuIgJrSZMXrbg3KriEdE=
+        b=hjTTqmIAAcfmXucD1pVGoGgEtGOzYEoIQX5aNRvfA+vJ0d0piBlsGXGsRvh3wfUcN
+         94RiSLZD8DxQ7SxfEpqGTCxD4zKr11tWKt28u92QzLBaVImVbHtzWoN/2cEjKxIY2M
+         zaKkEdBqir89CNeXWJnTIPn4LcIkucuBxrrYr11s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        stable@vger.kernel.org, Milan Broz <gmazyland@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 129/190] PCI: dwc: Use devm_pci_alloc_host_bridge() to simplify code
-Date:   Fri, 13 Sep 2019 14:06:24 +0100
-Message-Id: <20190913130610.230166835@linuxfoundation.org>
+Subject: [PATCH 4.19 131/190] dm crypt: move detailed message into debug level
+Date:   Fri, 13 Sep 2019 14:06:26 +0100
+Message-Id: <20190913130610.418799348@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -47,108 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e6fdd3bf5aecd8615f31a5128775b9abcf3e0d86 ]
+[ Upstream commit 7a1cd7238fde6ab367384a4a2998cba48330c398 ]
 
-Use devm_pci_alloc_host_bridge() to simplify the error code path.  This
-also fixes a leak in the dw_pcie_host_init() error path.
+The information about tag size should not be printed without debug info
+set. Also print device major:minor in the error message to identify the
+device instance.
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-CC: stable@vger.kernel.org	# v4.13+
+Also use rate limiting and debug level for info about used crypto API
+implementaton.  This is important because during online reencryption
+the existing message saturates syslog (because we are moving hotzone
+across the whole device).
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Milan Broz <gmazyland@gmail.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../pci/controller/dwc/pcie-designware-host.c | 21 +++++++------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ drivers/md/dm-crypt.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index acd50920c2ffd..b57ee79f6d699 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -356,7 +356,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		dev_err(dev, "Missing *config* reg space\n");
- 	}
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index f3dcc7640319e..34f5de13a93d1 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -949,6 +949,7 @@ static int crypt_integrity_ctr(struct crypt_config *cc, struct dm_target *ti)
+ {
+ #ifdef CONFIG_BLK_DEV_INTEGRITY
+ 	struct blk_integrity *bi = blk_get_integrity(cc->dev->bdev->bd_disk);
++	struct mapped_device *md = dm_table_get_md(ti->table);
  
--	bridge = pci_alloc_host_bridge(0);
-+	bridge = devm_pci_alloc_host_bridge(dev, 0);
- 	if (!bridge)
- 		return -ENOMEM;
+ 	/* From now we require underlying device with our integrity profile */
+ 	if (!bi || strcasecmp(bi->profile->name, "DM-DIF-EXT-TAG")) {
+@@ -968,7 +969,7 @@ static int crypt_integrity_ctr(struct crypt_config *cc, struct dm_target *ti)
  
-@@ -367,7 +367,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 	if (crypt_integrity_aead(cc)) {
+ 		cc->integrity_tag_size = cc->on_disk_tag_size - cc->integrity_iv_size;
+-		DMINFO("Integrity AEAD, tag size %u, IV size %u.",
++		DMDEBUG("%s: Integrity AEAD, tag size %u, IV size %u.", dm_device_name(md),
+ 		       cc->integrity_tag_size, cc->integrity_iv_size);
  
- 	ret = devm_request_pci_bus_resources(dev, &bridge->windows);
- 	if (ret)
--		goto error;
-+		return ret;
- 
- 	/* Get the I/O and memory ranges from DT */
- 	resource_list_for_each_entry_safe(win, tmp, &bridge->windows) {
-@@ -411,8 +411,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 						resource_size(pp->cfg));
- 		if (!pci->dbi_base) {
- 			dev_err(dev, "Error with ioremap\n");
--			ret = -ENOMEM;
--			goto error;
-+			return -ENOMEM;
+ 		if (crypto_aead_setauthsize(any_tfm_aead(cc), cc->integrity_tag_size)) {
+@@ -976,7 +977,7 @@ static int crypt_integrity_ctr(struct crypt_config *cc, struct dm_target *ti)
+ 			return -EINVAL;
  		}
- 	}
+ 	} else if (cc->integrity_iv_size)
+-		DMINFO("Additional per-sector space %u bytes for IV.",
++		DMDEBUG("%s: Additional per-sector space %u bytes for IV.", dm_device_name(md),
+ 		       cc->integrity_iv_size);
  
-@@ -423,8 +422,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 					pp->cfg0_base, pp->cfg0_size);
- 		if (!pp->va_cfg0_base) {
- 			dev_err(dev, "Error with ioremap in function\n");
--			ret = -ENOMEM;
--			goto error;
-+			return -ENOMEM;
- 		}
- 	}
- 
-@@ -434,8 +432,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 						pp->cfg1_size);
- 		if (!pp->va_cfg1_base) {
- 			dev_err(dev, "Error with ioremap\n");
--			ret = -ENOMEM;
--			goto error;
-+			return -ENOMEM;
- 		}
- 	}
- 
-@@ -458,14 +455,14 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 			    pp->num_vectors == 0) {
- 				dev_err(dev,
- 					"Invalid number of vectors\n");
--				goto error;
-+				return -EINVAL;
- 			}
- 		}
- 
- 		if (!pp->ops->msi_host_init) {
- 			ret = dw_pcie_allocate_domains(pp);
- 			if (ret)
--				goto error;
-+				return ret;
- 
- 			if (pp->msi_irq)
- 				irq_set_chained_handler_and_data(pp->msi_irq,
-@@ -474,7 +471,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		} else {
- 			ret = pp->ops->msi_host_init(pp);
- 			if (ret < 0)
--				goto error;
-+				return ret;
- 		}
- 	}
- 
-@@ -514,8 +511,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
- err_free_msi:
- 	if (pci_msi_enabled() && !pp->ops->msi_host_init)
- 		dw_pcie_free_msi(pp);
--error:
--	pci_free_host_bridge(bridge);
- 	return ret;
- }
- 
+ 	if ((cc->integrity_tag_size + cc->integrity_iv_size) != bi->tag_size) {
 -- 
 2.20.1
 
