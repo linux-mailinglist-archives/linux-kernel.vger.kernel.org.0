@@ -2,102 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56F64B2463
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 18:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF600B246B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 18:55:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730771AbfIMQte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 12:49:34 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45658 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729293AbfIMQte (ORCPT
+        id S1730849AbfIMQzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 12:55:11 -0400
+Received: from 195-159-176-226.customer.powertech.no ([195.159.176.226]:60074
+        "EHLO blaine.gmane.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730773AbfIMQzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 12:49:34 -0400
-Received: by mail-io1-f68.google.com with SMTP id f12so63941884iog.12;
-        Fri, 13 Sep 2019 09:49:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=P/0+gdjpplcC13gJqGlr19O2NEwJcpegNILvvw0PWSI=;
-        b=hvAK0gk9/rsGf1DZtkSiqnWGDR7A2QJf2jrTq2owenTp5ZPxSGNIueBPldEXz/hRIQ
-         sXlLgmr7WsCjqsec4IcHQBPWS1Q9Oz2m50eh7ex6a0zDRZLyoNV9ltpPhdf65YgSA4Xz
-         m6IjToc2hi/9hTtDOXksQBbqNMQ2iCVf6jz1I7ODQlKFg+NlgoXO7TND3IZHVC+uBBj3
-         dHttUaP07K5kHi9V8muG5i6CWR2yXSPRyf/DUPIoUDAzPny//YpWKvBpobLXkCIfxYFw
-         KyFpXm+WPS25yj0g287w44o1RAKtMDzk/Hya89wZxdgecqUVcx4C16oBpVHC6n09pHeX
-         B5Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=P/0+gdjpplcC13gJqGlr19O2NEwJcpegNILvvw0PWSI=;
-        b=H22Dvr9h94DnWA6D+3zJbOryphgZIDiF5suEHXbQ6zWxPzT2fmlqNYPktEREu9XShF
-         ZQJObJz+6oFJXD7tbCTAtT8rvuauORy5r/vqEAnvdqnSnU7KiI3CfufihXNN84+I0d9D
-         YpL/wX9g7m/WS8EE1utaNzEorOTNq9RHo1BZWHCMBubtXwJaZ6/4NENX7ohOolgbfkjF
-         IUj7UQETazj/JgcNnXz5W7NNuR0Q1Zjt3Ai8sGqeupoRI8zVx9lmzEO0qvG/XjU78k7E
-         D8o68sta129Is2QL6LbWPlhte/qCIrtkwmka1uFEICQO6pdlDGVvKc78LpV0HdFOwyM4
-         zohw==
-X-Gm-Message-State: APjAAAVsusLVdfe8V3HtGeQ+84p1+lfVQHnA18qhenE69TMo7egoa05M
-        Xkh3whFiYMw8alY+PVnLQMFkl21t2yM=
-X-Google-Smtp-Source: APXvYqwQx/NLDa1Er/iMTPGAPeXawmGOw4E621+bliLv5p9UywKvec+7Ct+VllG/pQZTKrQeNwmZ3A==
-X-Received: by 2002:a6b:b445:: with SMTP id d66mr885791iof.269.1568393372754;
-        Fri, 13 Sep 2019 09:49:32 -0700 (PDT)
-Received: from aford-OptiPlex-7050.logicpd.com ([174.46.170.158])
-        by smtp.gmail.com with ESMTPSA id y17sm22487252ioa.52.2019.09.13.09.49.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 09:49:32 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-omap@vger.kernel.org
-Cc:     neolynx@gmail.com, letux-kernel@openphoenux.org,
-        andreas@kemnade.info, tony@atomide.com, adam.ford@logicpd.com,
-        hns@goldelico.com, Adam Ford <aford173@gmail.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC v2] ARM: dts: omap36xx: Enable thermal throttling
-Date:   Fri, 13 Sep 2019 11:49:19 -0500
-Message-Id: <20190913164919.4565-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 13 Sep 2019 12:55:10 -0400
+Received: from list by blaine.gmane.org with local (Exim 4.89)
+        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
+        id 1i8oqh-000DiX-Gy
+        for linux-kernel@vger.kernel.org; Fri, 13 Sep 2019 18:55:07 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     linux-kernel@vger.kernel.org
+From:   Ferry Toth <fntoth@gmail.com>
+Subject: Re: [PATCH] ACPICA: make acpi_load_table() return table index
+Date:   Fri, 13 Sep 2019 18:48:28 +0200
+Message-ID: <7625fe37-1710-056d-fb9e-39c33fd962a1@gmail.com>
+References: <20190906174605.GY2680@smile.fi.intel.com>
+ <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B9679CE8@ORSMSX110.amr.corp.intel.com>
+ <alpine.DEB.2.20.1909130911180.20316@fox.voss.local>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B967ADF6@ORSMSX110.amr.corp.intel.com>
+ <20190913151228.GT2680@smile.fi.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+In-Reply-To: <20190913151228.GT2680@smile.fi.intel.com>
+Content-Language: en-US
+Cc:     linux-acpi@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The thermal sensor in the omap3 family isn't accurate, but it's
-better than nothing.  The various OPP's enabled for the omap3630
-support up to OPP1G, however the datasheet for the DM3730 states
-that OPP130 and OPP1G are not available above TJ of 90C.
+Hello all,
 
-This patch configures the thermal throttling to limit the
-operating points of the omap3630 to Only OPP50 and OPP100 if
-the thermal sensor reads a value above 90C.
+Sorry to have sent our message with cancelled e-mail address. I have 
+correct this now.
 
-When forcing the high-temperature state, the scaling_max_freq
-returns a value that corresponds to OPP100 showing that
-OPP130 and OPP1G are not available.
+Op 13-09-19 om 17:12 schreef Shevchenko, Andriy:
+> On Fri, Sep 13, 2019 at 05:20:21PM +0300, Moore, Robert wrote:
+>> -----Original Message-----
+>> From: Nikolaus Voss [mailto:nv@vosn.de]
+>> Sent: Friday, September 13, 2019 12:44 AM
+>> To: Moore, Robert <robert.moore@intel.com>
+>> Cc: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Schmauss, Erik <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Jacek Anaszewski <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy <dmurphy@ti.com>; linux-acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org; Ferry Toth <ftoth@telfort.nl>; nikolaus.voss@loewensteinmedical.de
+>> Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table index
+>>
+>> Bob,
+>>
+>> On Thu, 12 Sep 2019, Moore, Robert wrote:
+>>> The ability to unload an ACPI table (especially AML tables such as
+>>> SSDTs) is in the process of being deprecated in ACPICA -- since it is
+>>> also deprecated in the current ACPI specification. This is being done
+>>> because of the difficulty of deleting the namespace entries for the
+>>> table.  FYI, Windows does not properly support this function either.
+>>
+>> ok, I see it can be a problem to unload an AML table with all it's consequences e.g. with respect to driver unregistering in setups with complex dependencies. It will only work properly under certain conditions
+>> - nevertheless acpi_tb_unload_table() is still exported in ACPICA and we should get this working as it worked before.
+>>
+>> AcpiTbUnloadTable is not exported, it is an internal interface only -- as
+>> recognized by the "AcpiTb".
+> 
+> In Linux it became a part of ABI when the
+> 
+> commit 772bf1e2878ecfca0d1f332071c83e021dd9cf01
+> Author: Jan Kiszka <jan.kiszka@siemens.com>
+> Date:   Fri Jun 9 20:36:31 2017 +0200
+> 
+>      ACPI: configfs: Unload SSDT on configfs entry removal
+> 
+> appeared in the kernel.
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
-V2:  Rebase after moving thermal info into a common omap3.
-     This now only changes the cooling-device reference to remove the fastest
-     two OPP's
-     
-diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx.dtsi
-index 77e9fcf60ba7..d8ba513f3deb 100644
---- a/arch/arm/boot/dts/omap36xx.dtsi
-+++ b/arch/arm/boot/dts/omap36xx.dtsi
-@@ -219,6 +219,13 @@
- 	};
- };
- 
-+&cpu_cooling_maps {
-+	map0 {
-+		/* OPP130 and OPP1G are not available above 90C */
-+		cooling-device = <&cpu 1 2>;
-+	};
-+};
-+
- /* OMAP3630 needs dss_96m_fck for VENC */
- &venc {
- 	clocks = <&dss_tv_fck>, <&dss_96m_fck>;
--- 
-2.17.1
+And the commit message explains quite well why it is an important feature:
+
+"This allows to change SSDTs without rebooting the system.
+It also allows to destroy devices again that a dynamically loaded SSDT
+created.
+
+This is widely similar to the DT overlay behavior."
+
+>> I'm not sure that I want to change the interface
+>> to AcpiLoadTable just for something that is being deprecated. Already, we
+>> throw an ACPI_EXCEPTION if the Unload operator is encountered in the AML byte
+>> stream. The same thing with AcpiUnloadParentTable - it is being deprecated.
+>>
+>>      ACPI_EXCEPTION ((AE_INFO, AE_NOT_IMPLEMENTED,
+>>          "AML Unload operator is not supported"));
+> 
+
 
