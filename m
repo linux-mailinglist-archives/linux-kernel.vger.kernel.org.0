@@ -2,127 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B46DB2108
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2110B2117
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391732AbfIMNbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:31:37 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42726 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391723AbfIMNbb (ORCPT
+        id S2391749AbfIMNcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:32:54 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:29894 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389053AbfIMNcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:31:31 -0400
-Received: by mail-pf1-f195.google.com with SMTP id w22so18092030pfi.9
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 06:31:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fossix-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=9ddMFiJu/sWzXjkexotIn9umjnAL30uzzTUAh4FEKTA=;
-        b=LWRfw0GlPqtpTJMS8Lh6Tuv8esJSSzpd8D1rEOlAg3Bp085NgI1H/9zflEueRBXSuh
-         NMaP+hDWL6zan6LOFFZljAeNOH9tFgC2x2/OpZciITy6ZRwgpAxIdC2uPzk0PydrnoKP
-         m8tQ/OHGNKeJPSwUDMA8dQ4eqNPKSJBNqIGtvUYtcouOjTwFYdnRVCCHW0QeA3i+7HWP
-         fzUCaXstUbBPtHUww/+vGG7bRbLAUHSiZvTGQhRB720lnW1DrZMDzE7QIO1qKGzcVfTi
-         AnziJ3LVkMpclxhOv6qH76MhvuOa3aVcUXRFZyU3bf7iRvW7hgbWT7Paq6b7PR2E2Erf
-         cU5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=9ddMFiJu/sWzXjkexotIn9umjnAL30uzzTUAh4FEKTA=;
-        b=QOA8SE+t9lYK9/0zSKpYzUyDtafnpeQfxtyWZTz9WhEgW18lCGvQp/QvI/6/xpbt7c
-         2zL7xZOBkEM+UZFNdu0BJzZCP7vFbviTtfA+eWnoD2JFAC2rKQQQCrpJnjgkSxqVarCp
-         s1S5UlohdjRHGFrEIKZOWDYEpAUahIuCUDh6e7lJFfLd4c0jnIt0U7JDuvsSEj3c31B1
-         UdFC7yk0xF0bW9AtRz5nF1iFbngDZ2T+kZNaQS3Dab9rNpRCJG9P6io26p5wHPCO/k08
-         faSnH4xj+BHG47rxLLeeG4xF++zFhoR6J0SP7OGXXrlVBGidtmdGzWDPBTqTpimtQJJl
-         0Gqw==
-X-Gm-Message-State: APjAAAVx7s5palESp7haFUWX5oV9wyb6AqrT5r5+Xa6tZmqN1e3Yd5q4
-        oiRY4bFX7zgYbYuBeeobz58eFA==
-X-Google-Smtp-Source: APXvYqweIKhJb64CFwQ0oERfJ9vPY2uyZJ1J4wrn4HgzGDyKTvZYRQWNVsqferrXgB82OV4RKcLYsA==
-X-Received: by 2002:a63:6947:: with SMTP id e68mr43615810pgc.60.1568381491040;
-        Fri, 13 Sep 2019 06:31:31 -0700 (PDT)
-Received: from localhost ([49.207.57.15])
-        by smtp.gmail.com with ESMTPSA id 127sm56901669pfw.6.2019.09.13.06.31.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 06:31:30 -0700 (PDT)
-From:   Santosh Sivaraj <santosh@fossix.org>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/8] powerpc/vdso32: inline __get_datapage()
-In-Reply-To: <a95c4a58-bc59-3e75-46db-414f6d0f1412@c-s.fr>
-References: <cover.1566491310.git.christophe.leroy@c-s.fr> <194fb7bc973ef2ce43016c97dd32f2b2dcbae4e7.1566491310.git.christophe.leroy@c-s.fr> <87h864iiq9.fsf@santosiv.in.ibm.com> <a95c4a58-bc59-3e75-46db-414f6d0f1412@c-s.fr>
-Date:   Fri, 13 Sep 2019 19:01:28 +0530
-Message-ID: <87blvonwzz.fsf@santosiv.in.ibm.com>
-MIME-Version: 1.0
+        Fri, 13 Sep 2019 09:32:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1568381569;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=A2hOKYZbqR8pujhx31mIs820r0FV7oonDRTmq1qM+Ag=;
+        b=LkHcxLGCxnV6eSl5CcVAARKzV88kfcEGrNziN6ASJPTW+lsL18u6uoRPf4zmjH+Znz
+        MahYNvjXFzl14ujICERKBOs5e6XgRMvgUu8X2Rp2LGlnRV9uhz/bHgEiGCdb0fB98NQb
+        DxvJGzLfVZwD9ZFBbJ6NfKiWD+GByZs5rYDv2QVKg44AGWPcQm4iJfZwSt5AHY/3Ut0U
+        s7YzJD6ywTpftgfDfP4zJA0FYbe8zc7fJMh2lzLRdBk3y8m/2Iw4xbLbzpaUAD6Ie74a
+        eMD6RdVDS4Bh4+r64QJZGVk1HvOj949TM+Q2KrGO+8D4YhDFlMQEIr9GLS2hvwLETM7A
+        EFLA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlSVXA4OAWU="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v8DDWTITu
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 13 Sep 2019 15:32:29 +0200 (CEST)
 Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [RFC] ARM: dts: omap36xx: Enable thermal throttling
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <CAHCN7xK100mR=fNns3qdDKpOyWsTWXgDnnngQfQ_j8cB_SFfuA@mail.gmail.com>
+Date:   Fri, 13 Sep 2019 15:32:28 +0200
+Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        =?utf-8?Q?Andr=C3=A9_Roth?= <neolynx@gmail.com>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Nishanth Menon <nm@ti.com>, Adam Ford <adam.ford@logicpd.com>,
+        kernel@pyra-handheld.com
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <98751DAF-B3F7-4638-97BE-1D067B24EF18@goldelico.com>
+References: <20190912183037.18449-1-aford173@gmail.com> <D4F7E03C-1880-45AC-8F7C-6C8A336E2A01@goldelico.com> <CAHCN7xK100mR=fNns3qdDKpOyWsTWXgDnnngQfQ_j8cB_SFfuA@mail.gmail.com>
+To:     Adam Ford <aford173@gmail.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+Hi Adam,
 
-> Hi Santosh,
->
-> Le 26/08/2019 =C3=A0 07:44, Santosh Sivaraj a =C3=A9crit=C2=A0:
->> Hi Christophe,
->>=20
->> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>=20
->>> __get_datapage() is only a few instructions to retrieve the
->>> address of the page where the kernel stores data to the VDSO.
->>>
->>> By inlining this function into its users, a bl/blr pair and
->>> a mflr/mtlr pair is avoided, plus a few reg moves.
->>>
->>> The improvement is noticeable (about 55 nsec/call on an 8xx)
->>>
->>> vdsotest before the patch:
->>> gettimeofday:    vdso: 731 nsec/call
->>> clock-gettime-realtime-coarse:    vdso: 668 nsec/call
->>> clock-gettime-monotonic-coarse:    vdso: 745 nsec/call
->>>
->>> vdsotest after the patch:
->>> gettimeofday:    vdso: 677 nsec/call
->>> clock-gettime-realtime-coarse:    vdso: 613 nsec/call
->>> clock-gettime-monotonic-coarse:    vdso: 690 nsec/call
->>>
->>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>> ---
->>>   arch/powerpc/kernel/vdso32/cacheflush.S   | 10 +++++-----
->>>   arch/powerpc/kernel/vdso32/datapage.S     | 29 ++++------------------=
--------
->>>   arch/powerpc/kernel/vdso32/datapage.h     | 11 +++++++++++
->>>   arch/powerpc/kernel/vdso32/gettimeofday.S | 13 ++++++-------
->>>   4 files changed, 26 insertions(+), 37 deletions(-)
->>>   create mode 100644 arch/powerpc/kernel/vdso32/datapage.h
->>=20
->> The datapage.h file should ideally be moved under include/asm, then we c=
-an use
->> the same for powerpc64 too.
->
-> I have a more ambitious project indeed.
->
-> Most of the VDSO code is duplicated between vdso32 and vdso64. I'm=20
-> aiming at merging everything into a single source code.
->
-> This means we would have to generate vdso32.so and vdso64.so out of the=20
-> same source files. Any idea on how to do that ? I'm not too good at=20
-> creating Makefiles. I guess we would have everything in=20
-> arch/powerpc/kernel/vdso/ and would have to build the objects twice,=20
-> once in arch/powerpc/kernel/vdso32/ and once in arch/powerpc/kernel/vdso6=
-4/
+> Am 13.09.2019 um 13:07 schrieb Adam Ford <aford173@gmail.com>:
 
-Should we need to build the objects twice? For 64 bit config it is going to=
- be
-a 64 bit build else a 32 bit build. It should suffice to get the single sou=
-rce
-code compile for both, maybe with macros or (!)CONFIG_PPC64 conditional
-compilation. Am I missing something when you say build twice?
+>>> +     cpu_cooling_maps: cooling-maps {
+>>> +             map0 {
+>>> +                     trip =3D <&cpu_alert0>;
+>>> +                     /* Only allow OPP50 and OPP100 */
+>>> +                     cooling-device =3D <&cpu 0 1>;
+>>=20
+>> omap4-cpu-thermal.dtsi uses THERMAL_NO_LIMIT constants but I do not
+>> understand their meaning (and how it relates to the opp list).
+>=20
+> I read through the documentation, but it wasn't completely clear to
+> me. AFAICT, the numbers after &cpu represent the min and max index in
+> the OPP table when the condition is hit.
 
-Thanks,
-Santosh
+Ok. It seems to use "cooling state" for those and the first is minimum
+and the last is maximum. Using THERMAL_NO_LIMIT (-1UL) means to have
+no limits.
+
+Since here we use the &cpu node it is likely that the "cooling state"
+is the same as the OPP index currently in use.
+
+I have looked through the .dts which use cpu_crit and the picture is
+not unique...
+
+omap4		seems to only define it
+am57xx		has two different grade dtsi files
+dra7		overwrites critical temperature value
+am57xx-beagle	defines a gpio to control a fan
+
+The fan is only a map0 for the board_alert0 starting to do something at =
+40=C2=B0C
+and above but there is nothing for the "critical" point.
+But throttling is working on omap5...
+
+Could there be some automatic handling by the govenors for the =
+"critical"
+trip points? So that we do not need to define any cooling-maps for =
+"critical"?
+
+Even for the exynos54xx where the crical trip point is only defined.
+
+>>=20
+>>> +             };
+>>> +     };
+>>=20
+>> Seems to make sense when comparing to omap4-cpu-thermal.dtsi...
+>>=20
+>> Maybe we can add the trip points to omap3-cpu-thermal.dtsi
+>> because they seem to be the same for all omap3 variants and
+>> just have a SoC variant specific cooling map for omap36xx.dtsi.
+>=20
+> The OPP's for OMAP3530 show that OPP5 and OPP6 are capable of
+> operating at 105C.  AM3517 is a little different also, so I didn't
+> want to make a generic omap3 throttling table.  Since my goal was to
+> try to remove the need for the turbo option from the newly supported
+> 1GHz omap3630/3730, I was hoping to get this pushed first.  From
+> there, we can tweak the 34xx.dtsi and 3517.dtsi for their respective
+> thermal information.
+
+My observation is that all omap3 have
+commercial range	0=C2=B0C .. 90=C2=B0C
+extended		-40=C2=B0C .. 105=C2=B0C
+
+So there is no difference in defining these as trip points and
+my proposal would be to have these in omap3.dtsi.
+
+Only disabling OPPs differs. Which would make only the mapping
+go to omap36xx.
+
+>=20
+>>=20
+>>> +};
+>>> +
+>>> /* OMAP3630 needs dss_96m_fck for VENC */
+>>> &venc {
+>>>      clocks =3D <&dss_tv_fck>, <&dss_96m_fck>;
+>>> --
+>>> 2.17.1
+>>>=20
+>>=20
+>> The question is how we can test that. Heating up the omap36xx to =
+90=C2=B0C
+>> or even 105=C2=B0C isn't that easy like with omap5...
+>>=20
+>> Maybe we can modify the millicelsius values for testing purposes to
+>> something in reachable range, e.g. 60=C2=B0C and 70=C2=B0C and watch =
+what happens?
+>=20
+> I have access to a thermal chamber at work, but the guy who knows how
+> to use it is out for the rest of the week.  My plan was do as you
+> suggested and change the milicelsius values, but I wanted to get some
+> buy-in from TI people and/or Tony.  This also means enabling the omap3
+> thermal stuff which clearly throws a message that it's inaccurate.
+
+Basically we need two different types of test:
+1. is the DTS setup correct so that the bandgap sensor is read and
+   triggers correct actions
+2. is the bandgap sensor correct enough to that the data sheet limits
+   are really met
+
+>  I don't know how much it's inaccurate, so we may have to make the 90C
+> value lower to compensate.
+
+Hm. If the bandgap sensor is inaccurate, we should make sure it reports =
+the
+maximum value, just to be on the safe side. So that the real temperature
+is guaranteed to be lower than what is reported.
+
+Then we can use the data sheet limits of 90=C2=B0C and 105=C2=B0C in the =
+trip point
+table (which should not be tweaked for sensor inaccuracy).
+
+BR,
+Nikolaus
+
