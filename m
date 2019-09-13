@@ -2,109 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EC9EB2648
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 21:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3F3FB2650
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 21:57:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388677AbfIMTxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 15:53:30 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55468 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729670AbfIMTx3 (ORCPT
+        id S1730892AbfIMT4R convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 13 Sep 2019 15:56:17 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37764 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729803AbfIMT4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 15:53:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4009160770; Fri, 13 Sep 2019 19:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568404408;
-        bh=PBhczAxgGjJzcJPYs5T3OHtqWkVJvof+zdxMM1IFvbg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AmU0IYHzJcYptiF+l+/vTuBGnNyRRUPfS+N5FbkaaGQiA5HOpa5Sh1qbNNWlmWInH
-         QHEPBfQ9LaWRgMD1VNt4CEvVr5v6UN4ultrJvjswYEPdTerOumbK78jHVziDdWJ475
-         yQKjjp7MrvVFZxN7+xbhhlA/6SpK0/+HZf5EOt6k=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4539460770;
-        Fri, 13 Sep 2019 19:53:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568404407;
-        bh=PBhczAxgGjJzcJPYs5T3OHtqWkVJvof+zdxMM1IFvbg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SFuM9u936AWPbXLPJKuCFFyLQ7WsQYwG/6SiF23ViGYBu7kM6Iua3Sn2xtRkl9kU0
-         yyr0s3Ezs+KQ8zjr/8DACAdCwGfMo4RMvKoMixuyN4RWSV0nDIZ3FV9sOGaFlv0Gy9
-         mLJlSeEKrwJ1LFuiOZsOu+mYdYQ1r9/kb/dM7Q6w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4539460770
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Fri, 13 Sep 2019 13:53:26 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Rob Herring <robh@kernel.org>, evgreen@chromium.org,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        mkshah@codeaurora.org, linux-gpio@vger.kernel.org,
-        rnayak@codeaurora.org, devicetree@vger.kernel.org, maz@kernel.org
-Subject: Re: [PATCH RFC 05/14] dt-bindings/interrupt-controller: pdc: add SPI
- config register
-Message-ID: <20190913195326.GA3293@codeaurora.org>
-References: <20190829181203.2660-1-ilina@codeaurora.org>
- <20190829181203.2660-6-ilina@codeaurora.org>
- <5d6d1b72.1c69fb81.ee88.efcf@mx.google.com>
- <102c9268-c4ce-6133-3b0a-67c2fcba1e7a@arm.com>
- <20190903170722.GA31716@codeaurora.org>
- <5d71a247.1c69fb81.2146f.7ed2@mx.google.com>
+        Fri, 13 Sep 2019 15:56:16 -0400
+Received: by mail-oi1-f193.google.com with SMTP id 11so3677788oix.4;
+        Fri, 13 Sep 2019 12:56:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Bqrell8wJyp7c0Rf4MsSdHNwfJJHDYykWzrcHl5UBW8=;
+        b=lHSEcDgqQfaE4Pt8GaPum4cbrlGvGoGLoCmMSnaYRzEGzwPZHrpHSUnN0ithJv0iVX
+         0PweOr3gL2PwH5O1esom8lM6XMeWqvXzBR7Br8iQHM5LBSkCLU8AUr7q0+9ianggEFxx
+         jYiUQ0IRoAlA/SfXfusPiYfHuoe11pmC4ivtNl4HneruQQNqgrKBkAWt+4324TsRsp5L
+         z0cCM2WoBX76xJqa5bC9/b+4I5RfiL31k6CgRAs4aynNi3qiHNS4t0monbxEF1uCfdTl
+         yVTa5o+vTr0wgXjSpttz4txuJWe+mTOHmmn1GvAgCwxYx4HLaRTjH+HqnNVqLfFqho/R
+         NOHQ==
+X-Gm-Message-State: APjAAAW5/4u0yzNaMvm2xaMeJEr6TzdDg3iRJ2HxGm7D4SIhAK4gvsWW
+        LQOFd+XX9zXy46eqlyhxJvgAR7NOJ3+m0wdJ7Mg=
+X-Google-Smtp-Source: APXvYqxGNZtGjPVXVF2ptVfh59M2fdj1iLV1JXkpMFzMJe6mrSgDGrt2HGM2Tu5TnQ5j8POrLzB1A4PzpQ+CdwYW6oI=
+X-Received: by 2002:aca:b808:: with SMTP id i8mr4821405oif.68.1568404575404;
+ Fri, 13 Sep 2019 12:56:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <5d71a247.1c69fb81.2146f.7ed2@mx.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190906174605.GY2680@smile.fi.intel.com> <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B9679CE8@ORSMSX110.amr.corp.intel.com>
+ <alpine.DEB.2.20.1909130911180.20316@fox.voss.local> <94F2FBAB4432B54E8AACC7DFDE6C92E3B967ADF6@ORSMSX110.amr.corp.intel.com>
+ <20190913151228.GT2680@smile.fi.intel.com> <7625fe37-1710-056d-fb9e-39c33fd962a1@gmail.com>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B967AEC9@ORSMSX110.amr.corp.intel.com>
+In-Reply-To: <94F2FBAB4432B54E8AACC7DFDE6C92E3B967AEC9@ORSMSX110.amr.corp.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 13 Sep 2019 21:56:03 +0200
+Message-ID: <CAJZ5v0iDao-1DxSqOwW+pYsw-8wGi0L8SFoAW6AzKYwUpH+iUA@mail.gmail.com>
+Subject: Re: [PATCH] ACPICA: make acpi_load_table() return table index
+To:     "Moore, Robert" <robert.moore@intel.com>
+Cc:     Ferry Toth <fntoth@gmail.com>,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        Nikolaus Voss <nv@vosn.de>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nikolaus.voss@loewensteinmedical.de" 
+        <nikolaus.voss@loewensteinmedical.de>,
+        Jan Kiszka <jan.kiszka@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, I couldn't get to this earlier.
+On Fri, Sep 13, 2019 at 7:41 PM Moore, Robert <robert.moore@intel.com> wrote:
+>
+>
+>
+> -----Original Message-----
+> From: Ferry Toth [mailto:fntoth@gmail.com]
+> Sent: Friday, September 13, 2019 9:48 AM
+> To: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Moore, Robert <robert.moore@intel.com>
+> Cc: Nikolaus Voss <nv@vosn.de>; Schmauss, Erik <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Jacek Anaszewski <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy <dmurphy@ti.com>; linux-acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org; nikolaus.voss@loewensteinmedical.de; Jan Kiszka <jan.kiszka@siemens.com>
+> Subject: Re: [PATCH] ACPICA: make acpi_load_table() return table index
+>
+> Hello all,
+>
+> Sorry to have sent our message with cancelled e-mail address. I have correct this now.
+>
+> Op 13-09-19 om 17:12 schreef Shevchenko, Andriy:
+> > On Fri, Sep 13, 2019 at 05:20:21PM +0300, Moore, Robert wrote:
+> >> -----Original Message-----
+> >> From: Nikolaus Voss [mailto:nv@vosn.de]
+> >> Sent: Friday, September 13, 2019 12:44 AM
+> >> To: Moore, Robert <robert.moore@intel.com>
+> >> Cc: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Schmauss, Erik
+> >> <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len
+> >> Brown <lenb@kernel.org>; Jacek Anaszewski
+> >> <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy
+> >> <dmurphy@ti.com>; linux-acpi@vger.kernel.org; devel@acpica.org;
+> >> linux-kernel@vger.kernel.org; Ferry Toth <ftoth@telfort.nl>;
+> >> nikolaus.voss@loewensteinmedical.de
+> >> Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table
+> >> index
+> >>
+> >> Bob,
+> >>
+> >> On Thu, 12 Sep 2019, Moore, Robert wrote:
+> >>> The ability to unload an ACPI table (especially AML tables such as
+> >>> SSDTs) is in the process of being deprecated in ACPICA -- since it
+> >>> is also deprecated in the current ACPI specification. This is being
+> >>> done because of the difficulty of deleting the namespace entries for
+> >>> the table.  FYI, Windows does not properly support this function either.
+> >>
+> >> ok, I see it can be a problem to unload an AML table with all it's
+> >> consequences e.g. with respect to driver unregistering in setups with
+> >> complex dependencies. It will only work properly under certain
+> >> conditions
+> >> - nevertheless acpi_tb_unload_table() is still exported in ACPICA and we should get this working as it worked before.
+> >>
+> >> AcpiTbUnloadTable is not exported, it is an internal interface only
+> >> -- as recognized by the "AcpiTb".
+> >
+> > In Linux it became a part of ABI when the
+> >
+> > commit 772bf1e2878ecfca0d1f332071c83e021dd9cf01
+> > Author: Jan Kiszka <jan.kiszka@siemens.com>
+> > Date:   Fri Jun 9 20:36:31 2017 +0200
+> >
+> >      ACPI: configfs: Unload SSDT on configfs entry removal
+> >
+> > appeared in the kernel.
+>
+> And the commit message explains quite well why it is an important feature:
+>
+> "This allows to change SSDTs without rebooting the system.
+> It also allows to destroy devices again that a dynamically loaded SSDT created.
+>
+> The biggest problem AFAIK is that under linux, many drivers cannot be unloaded.
+> Also, there are many race conditions as the namespace entries "owned" by an SSDT
+> being unloaded are deleted (out from underneath a driver).
 
-On Thu, Sep 05 2019 at 18:03 -0600, Stephen Boyd wrote:
->Quoting Lina Iyer (2019-09-03 10:07:22)
->> On Mon, Sep 02 2019 at 07:58 -0600, Marc Zyngier wrote:
->> >On 02/09/2019 14:38, Rob Herring wrote:
->> >> On Thu, Aug 29, 2019 at 12:11:54PM -0600, Lina Iyer wrote:
->> These are not GIC registers but located on the PDC interface to the GIC.
->> They may or may not be secure access controlled, depending on the SoC.
->>
->
->It looks like it falls under this "mailbox" device which is really the
->catch all bucket for bits with no home besides they're related to the
->apps CPUs/subsystem.
->
-Thanks for pointing to this.
->	apss_shared: mailbox@17990000 {
->		compatible = "qcom,sdm845-apss-shared";
->		reg = <0 0x17990000 0 0x1000>;
-But this doesn't seem correct. The registers in this page are all not
-mailbox door bell registers. We should restrict the space allocated to
-the mbox to 0xC or something, definitely, not the whole page. They all
-cannot be treated as a mailbox registers.
->		#mbox-cells = <1>;
->	};
->
->Can you point to this node with a phandle and then parse the reg
->property out of it to use in the scm readl/writel APIs? Maybe it can be
->a two cell property with <&apps_shared 0xf0> to indicate the offset to
->the registers to read/write? In non-secure mode presumably we need to
->also write these registers? Good news is that there's a regmap for this
->driver already, so maybe that can be acquired from the pdc driver.
->
-The register space collection seems to be mix of different types of
-application processor registers that should probably not be grouped up
-under one subsystem. A single regmap doesn't seem correct either.
+While that is true in general, there are cases in which unloading does
+work and they
+still need to be supported.
 
--- Lina
+You may argue that adding support for unloading SSDTs loaded via
+configfs was a mistake,
+but that was done and it cannot be undone.
+
+We cannot break existing setups in which it is in use and works.
+
+> This is widely similar to the DT overlay behavior."
+>
+> >> I'm not sure that I want to change the interface to AcpiLoadTable
+> >> just for something that is being deprecated. Already, we throw an
+> >> ACPI_EXCEPTION if the Unload operator is encountered in the AML byte
+> >> stream. The same thing with AcpiUnloadParentTable - it is being deprecated.
+> >>
+> >>      ACPI_EXCEPTION ((AE_INFO, AE_NOT_IMPLEMENTED,
+> >>          "AML Unload operator is not supported"));
+> >
+>
