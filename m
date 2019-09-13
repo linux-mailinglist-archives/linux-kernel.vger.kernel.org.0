@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4733B1E82
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3976B1E60
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388832AbfIMNKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:10:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35648 "EHLO mail.kernel.org"
+        id S2388558AbfIMNJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:09:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388817AbfIMNKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:10:47 -0400
+        id S2388533AbfIMNJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:09:33 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64902206BB;
-        Fri, 13 Sep 2019 13:10:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3A762089F;
+        Fri, 13 Sep 2019 13:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380247;
-        bh=p2OG/25OntIVnTzVIz2+SUyWxOBIql0bEaDlV5Vj7Nc=;
+        s=default; t=1568380172;
+        bh=3PY/NNR9mlGmTuaPwzlQKVuEgDoiAjQwTzC3+QkvHZw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yb3ti1xl1QQtrFStmVEwBZiK/07T43LeaiufwktavLA0ALXXMclbCV7D+mwbBb0ba
-         NluT1Nx44EXDdfoj1NmaQfUusqxJlBM52t/r/Bcs52fo8rXLyu6tu3Y86HPcwZVQnZ
-         jYZlfb6GX3eln6TP+HkApa8188elLkbHXKp0XCjk=
+        b=NtKmchMdDzdcbzrpCcWWg3MbJYoBSOQF364rdSxZ533jWKJ/9m4u43MxoJ5SA6wxx
+         2OL9AEepKieE+0zS2GAQnqxBrwwVaoxpe/hXJsBbdm4ljXS9szsmFVcSSqOd/MTkI9
+         81h5Hc4AagCky9FEIK26e7MFUkZCgiOMMX/4uezs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>
-Subject: [PATCH 4.14 05/21] drm/vmwgfx: Fix double free in vmw_recv_msg()
+        stable@vger.kernel.org,
+        Gustavo Romero <gromero@linux.vnet.ibm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 05/14] powerpc/tm: Fix FP/VMX unavailable exceptions inside a transaction
 Date:   Fri, 13 Sep 2019 14:06:58 +0100
-Message-Id: <20190913130503.441739156@linuxfoundation.org>
+Message-Id: <20190913130444.097940154@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
-References: <20190913130501.285837292@linuxfoundation.org>
+In-Reply-To: <20190913130440.264749443@linuxfoundation.org>
+References: <20190913130440.264749443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,68 +45,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Gustavo Romero <gromero@linux.ibm.com>
 
-commit 08b0c891605acf727e43e3e03a25857d3e789b61 upstream.
+commit 8205d5d98ef7f155de211f5e2eb6ca03d95a5a60 upstream.
 
-We recently added a kfree() after the end of the loop:
+When we take an FP unavailable exception in a transaction we have to
+account for the hardware FP TM checkpointed registers being
+incorrect. In this case for this process we know the current and
+checkpointed FP registers must be the same (since FP wasn't used
+inside the transaction) hence in the thread_struct we copy the current
+FP registers to the checkpointed ones.
 
-	if (retries == RETRIES) {
-		kfree(reply);
-		return -EINVAL;
-	}
+This copy is done in tm_reclaim_thread(). We use thread->ckpt_regs.msr
+to determine if FP was on when in userspace. thread->ckpt_regs.msr
+represents the state of the MSR when exiting userspace. This is setup
+by check_if_tm_restore_required().
 
-There are two problems.  First the test is wrong and because retries
-equals RETRIES if we succeed on the last iteration through the loop.
-Second if we fail on the last iteration through the loop then the kfree
-is a double free.
+Unfortunatley there is an optimisation in giveup_all() which returns
+early if tsk->thread.regs->msr (via local variable `usermsr`) has
+FP=VEC=VSX=SPE=0. This optimisation means that
+check_if_tm_restore_required() is not called and hence
+thread->ckpt_regs.msr is not updated and will contain an old value.
 
-When you're reading this code, please note the break statement at the
-end of the while loop.  This patch changes the loop so that if it's not
-successful then "reply" is NULL and we can test for that afterward.
+This can happen if due to load_fp=255 we start a userspace process
+with MSR FP=1 and then we are context switched out. In this case
+thread->ckpt_regs.msr will contain FP=1. If that same process is then
+context switched in and load_fp overflows, MSR will have FP=0. If that
+process now enters a transaction and does an FP instruction, the FP
+unavailable will not update thread->ckpt_regs.msr (the bug) and MSR
+FP=1 will be retained in thread->ckpt_regs.msr.  tm_reclaim_thread()
+will then not perform the required memcpy and the checkpointed FP regs
+in the thread struct will contain the wrong values.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 6b7c3b86f0b6 ("drm/vmwgfx: fix memory leak when too many retries have occurred")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+The code path for this happening is:
+
+       Userspace:                      Kernel
+                   Start userspace
+                    with MSR FP/VEC/VSX/SPE=0 TM=1
+                      < -----
+       ...
+       tbegin
+       bne
+       fp instruction
+                   FP unavailable
+                       ---- >
+                                        fp_unavailable_tm()
+					  tm_reclaim_current()
+					    tm_reclaim_thread()
+					      giveup_all()
+					        return early since FP/VMX/VSX=0
+						/* ckpt MSR not updated (Incorrect) */
+					      tm_reclaim()
+					        /* thread_struct ckpt FP regs contain junk (OK) */
+                                              /* Sees ckpt MSR FP=1 (Incorrect) */
+					      no memcpy() performed
+					        /* thread_struct ckpt FP regs not fixed (Incorrect) */
+					  tm_recheckpoint()
+					     /* Put junk in hardware checkpoint FP regs */
+                                         ....
+                      < -----
+                   Return to userspace
+                     with MSR TM=1 FP=1
+                     with junk in the FP TM checkpoint
+       TM rollback
+       reads FP junk
+
+This is a data integrity problem for the current process as the FP
+registers are corrupted. It's also a security problem as the FP
+registers from one process may be leaked to another.
+
+This patch moves up check_if_tm_restore_required() in giveup_all() to
+ensure thread->ckpt_regs.msr is updated correctly.
+
+A simple testcase to replicate this will be posted to
+tools/testing/selftests/powerpc/tm/tm-poison.c
+
+Similarly for VMX.
+
+This fixes CVE-2019-15030.
+
+Fixes: f48e91e87e67 ("powerpc/tm: Fix FP and VMX register corruption")
+Cc: stable@vger.kernel.org # 4.12+
+Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190904045529.23002-1-gromero@linux.vnet.ibm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ arch/powerpc/kernel/process.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-@@ -264,7 +264,7 @@ static int vmw_recv_msg(struct rpc_chann
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -476,13 +476,14 @@ void giveup_all(struct task_struct *tsk)
+ 	if (!tsk->thread.regs)
+ 		return;
  
- 		if ((HIGH_WORD(ebx) & MESSAGE_STATUS_SUCCESS) == 0) {
- 			kfree(reply);
--
-+			reply = NULL;
- 			if ((HIGH_WORD(ebx) & MESSAGE_STATUS_CPT) != 0) {
- 				/* A checkpoint occurred. Retry. */
- 				continue;
-@@ -288,7 +288,7 @@ static int vmw_recv_msg(struct rpc_chann
++	check_if_tm_restore_required(tsk);
++
+ 	usermsr = tsk->thread.regs->msr;
  
- 		if ((HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS) == 0) {
- 			kfree(reply);
--
-+			reply = NULL;
- 			if ((HIGH_WORD(ecx) & MESSAGE_STATUS_CPT) != 0) {
- 				/* A checkpoint occurred. Retry. */
- 				continue;
-@@ -300,10 +300,8 @@ static int vmw_recv_msg(struct rpc_chann
- 		break;
- 	}
+ 	if ((usermsr & msr_all_available) == 0)
+ 		return;
  
--	if (retries == RETRIES) {
--		kfree(reply);
-+	if (!reply)
- 		return -EINVAL;
--	}
+ 	msr_check_and_set(msr_all_available);
+-	check_if_tm_restore_required(tsk);
  
- 	*msg_len = reply_len;
- 	*msg     = reply;
+ #ifdef CONFIG_PPC_FPU
+ 	if (usermsr & MSR_FP)
 
 
