@@ -2,135 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47A3AB2223
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553E4B222E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730676AbfIMOgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 10:36:14 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46162 "EHLO
+        id S1730722AbfIMOgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 10:36:19 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:32886 "EHLO
         mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730648AbfIMOgN (ORCPT
+        with ESMTP id S1730680AbfIMOgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 10:36:13 -0400
-Received: by mail-oi1-f196.google.com with SMTP id v16so2774568oiv.13;
-        Fri, 13 Sep 2019 07:36:13 -0700 (PDT)
+        Fri, 13 Sep 2019 10:36:15 -0400
+Received: by mail-oi1-f196.google.com with SMTP id e12so2834231oie.0;
+        Fri, 13 Sep 2019 07:36:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:to:cc:subject:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Z79bT51s8X9t468gxQ2+1ZKqbdd8xzju/Fxq/NSNMTo=;
-        b=Jm+J5GkgwMCuUZ1KSyzH9i7NijIXZIl3spYFI92qz9iRF2aAUuBCmp9XCLZEEv+g/3
-         islda/JF+qAqnsOkpf//OLV2KrKKx6FzIiIKgI8uDRsF9UU/OdqDxPJ+wxumx17bbkuP
-         r5EjQQGuIANZE1Z0wRr6AoLZ6Oeoytz1Z2bmvxZ/P8UHFYDS4uLAzTHiNfelxvg0tT7n
-         PnKITcZBlqrN7zVp3Pac5x8heJQnsrGaacRcE3teqB9GcXSjGCAaPReIhspsRFIevp9m
-         wr+ypXHC4huVsPpyCrlvrEgyOUnb8Z8qUUZj0o5Z4syhJ5JQjF7QWONCQBbrDLVgP5pQ
-         btRg==
-X-Gm-Message-State: APjAAAXQd14hnP1olhry1Qk8tEjwDTqKxNenFsIKhwVntaHEWzgUHqNH
-        A1v4oW/4pccExM7c2sK1AQ==
-X-Google-Smtp-Source: APXvYqys48uCX3cKqHL275Upcx6Znn3+mIOh8UgFx1fG2pm+46Ii25BVGfwriubeNdu+E5Hy4OkcZA==
-X-Received: by 2002:aca:2402:: with SMTP id n2mr3696427oic.32.1568385373025;
-        Fri, 13 Sep 2019 07:36:13 -0700 (PDT)
+        bh=UP4LyBZtja8yOBRdHcIkyNeFR6QjS9+iEtVblnpjuyY=;
+        b=e8Y2bOs6zYmQz5xB+xSJ6b600FvY+atgP2eY5jqjfDF4SNTBVIQNyvv+BnlEYcGGw7
+         DUurBO+i9xYegYVgkaoT8DyMUOr54NDZ54bvKy/LcvLQ+tCm8kG86BbWV5J5CE8MGe4o
+         fWBtTUoE2CYjXgAxk/B4AfSpd8jUk5um7JKS8SvQ7PLA7BMr8k3HtcfUhL3MIUXBrRUf
+         nHXdaBQ3bhkjeDOd312ora886KWEKldMxcNh0T+Lwk3KPbtlYDQfhUNdKWUm4NuFzXTf
+         S1u9u5RlBl3IiQKsERLPdnqxe/Gx0cgePeFiT9RV8WztYneIHzg5EOtX8DKwqNNIagGr
+         79MQ==
+X-Gm-Message-State: APjAAAXA9mCKynpuTMthHdPe/yzEdNCdOviQqWPlVZUssCrMjK1aCzQP
+        BK4ggmJ1gKf1Sb70qpFlYA==
+X-Google-Smtp-Source: APXvYqzP1VXv0J4uktgJBC21kz8j76TfYxkR5gba3uZ868WL6Ruc+iWxBjHhaWJLDP7vH3miYFpvdw==
+X-Received: by 2002:aca:4406:: with SMTP id r6mr3656555oia.175.1568385374280;
+        Fri, 13 Sep 2019 07:36:14 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v6sm913643oie.4.2019.09.13.07.36.12
+        by smtp.gmail.com with ESMTPSA id i47sm10585317ota.1.2019.09.13.07.36.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 07:36:12 -0700 (PDT)
-Message-ID: <5d7ba95c.1c69fb81.edf8e.6556@mx.google.com>
-Date:   Fri, 13 Sep 2019 15:36:11 +0100
+        Fri, 13 Sep 2019 07:36:13 -0700 (PDT)
+Message-ID: <5d7ba95d.1c69fb81.dabe4.8057@mx.google.com>
+Date:   Fri, 13 Sep 2019 15:36:13 +0100
 From:   Rob Herring <robh@kernel.org>
-To:     Pradeep P V K <ppvk@codeaurora.org>
-Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        asutoshd@codeaurora.org, vbadigan@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        rampraka@codeaurora.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC 2/2] dt-bindings: mmc: sdhci-msm: Add Bus BW vote supported
- strings
-References: <1567774037-2344-1-git-send-email-ppvk@codeaurora.org>
- <1567774037-2344-3-git-send-email-ppvk@codeaurora.org>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, davem@davemloft.net,
+        peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        --cc=andrew@lunn.ch
+Subject: Re: [PATCH 2/2] dt-bindings: net: dwmac: document 'mac-mode' property
+References: <20190906130256.10321-1-alexandru.ardelean@analog.com>
+ <20190906130256.10321-2-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1567774037-2344-3-git-send-email-ppvk@codeaurora.org>
-X-Mutt-References: <1567774037-2344-3-git-send-email-ppvk@codeaurora.org>
+In-Reply-To: <20190906130256.10321-2-alexandru.ardelean@analog.com>
+X-Mutt-References: <20190906130256.10321-2-alexandru.ardelean@analog.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 06:17:17PM +0530, Pradeep P V K wrote:
-> Add Bus bandwidth voting supported strings for qcom-sdhci controller.
-
-What is bus bandwidth voting?
-
+On Fri, Sep 06, 2019 at 04:02:56PM +0300, Alexandru Ardelean wrote:
+> This change documents the 'mac-mode' property that was introduced in the
+> 'stmmac' driver to support passive mode converters that can sit in-between
+> the MAC & PHY.
 > 
-> Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 > ---
->  .../devicetree/bindings/mmc/sdhci-msm.txt          | 32 ++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+>  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> index da4edb1..8255d92 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> @@ -39,6 +39,25 @@ Required properties:
->  	"cal"	- reference clock for RCLK delay calibration (optional)
->  	"sleep"	- sleep clock for RCLK delay calibration (optional)
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index c78be15704b9..ebe4537a7cce 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -112,6 +112,14 @@ properties:
+>    reset-names:
+>      const: stmmaceth
 >  
-> +Optional Properties:
-> +* Following bus parameters are required for bus bw voting:
-> +- interconnects: Pairs of phandles and interconnect provider specifier
-> +		 to denote the edge source and destination ports of
-> +		 the interconnect path. Please refer to
-> +		 Documentation/devicetree/bindings/interconnect/
-> +		 for more details.
-> +- interconnect-names: List of interconnect path name strings sorted in the same
-> +		order as the interconnects property. Consumers drivers will use
-> +		interconnect-names to match interconnect paths with interconnect
-> +		specifiers. Please refer to Documentation/devicetree/bindings/
-> +		interconnect/ for more details.
+> +  mac-mode:
+> +    maxItems: 1
 
-How many? What are the strings?
+Is this an array because {min,max}Items is for arrays? It should be 
+defined as a string with possible values.
 
-> +- qcom,msm-bus,name: string describing the bus path
-> +- qcom,msm-bus,num-cases: number of configurations in which sdhc can operate in
-> +- qcom,msm-bus,num-paths: number of paths to vote for
-> +- qcom,msm-bus,vectors-KBps: Takes a tuple <ib ab>, <ib ab> (2 tuples for 2
+As this property is the same as another, you can do this:
 
-ib and ab are what? Didn't we just add interconnect bindings for 
-expressing bandwidth?
+$ref: ethernet-controller.yaml#/properties/phy-connection-type
 
-> +				num-paths) The number of these entries *must*
-> +				be same as num-cases.
+Unless only a small subset of those values are valid here, then you may 
+want to list them here.
 
-Are all these properties SDHCI specific or can we expect to get these 
-for *all* the QCom blocks?
-
+> +    description:
+> +      The property is identical to 'phy-mode', and assumes that there is mode
+> +      converter in-between the MAC & PHY (e.g. GMII-to-RGMII). This converter
+> +      can be passive (no SW requirement), and requires that the MAC operate
+> +      in a different mode than the PHY in order to function.
 > +
->  Example:
->  
->  	sdhc_1: sdhci@f9824900 {
-> @@ -56,6 +75,19 @@ Example:
->  
->  		clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
->  		clock-names = "core", "iface";
-> +		interconnects = <&qnoc 50 &qnoc 512>,
-> +				<&qnoc 1 &qnoc 544>;
-> +		interconnect-names = "sdhc-ddr","cpu-sdhc";
-> +		qcom,msm-bus,name = "sdhc1";
-> +		qcom,msm-bus,num-cases = <3>;
-> +		qcom,msm-bus,num-paths = <2>;
-> +		qcom,msm-bus,vectors-KBps =
-> +		/* No Vote */
-> +		<0 0>, <0 0>,
-> +		/* 50 MB/s */
-> +		<130718 200000>, <133320 133320>,
-> +		/* 200 MB/s */
-> +		<1338562 4096000>, <1338562 4096000>;
->  	};
->  
->  	sdhc_2: sdhci@f98a4900 {
+>    snps,axi-config:
+>      $ref: /schemas/types.yaml#definitions/phandle
+>      description:
 > -- 
-> 1.9.1
+> 2.20.1
 > 
 
