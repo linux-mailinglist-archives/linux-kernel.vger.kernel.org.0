@@ -2,87 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1182B1B84
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 12:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ADA2B1B9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 12:38:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbfIMKYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 06:24:14 -0400
-Received: from mga01.intel.com ([192.55.52.88]:25166 "EHLO mga01.intel.com"
+        id S1729484AbfIMKiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 06:38:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbfIMKYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 06:24:14 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2019 03:24:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,500,1559545200"; 
-   d="scan'208";a="210309025"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Sep 2019 03:24:11 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i8ikL-0001lD-Qu; Fri, 13 Sep 2019 13:24:09 +0300
-Date:   Fri, 13 Sep 2019 13:24:09 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Heiko Schocher <hs@denx.de>
-Cc:     linux-serial@vger.kernel.org,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        John Garry <john.garry@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lubomir Rintel <lkundrak@v3.sk>, Rob Herring <robh@kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tty: 8250_of: Use software emulated RS485 direction
- control
-Message-ID: <20190913102409.GF2680@smile.fi.intel.com>
-References: <20190913050105.1132080-1-hs@denx.de>
+        id S1726266AbfIMKiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 06:38:03 -0400
+Received: from localhost (unknown [117.99.85.83])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1FB2208C0;
+        Fri, 13 Sep 2019 10:38:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568371081;
+        bh=oU3a12NfiJIjFSxgc9/S51/UO/lBe7aSHfdp9MwruCc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PrfDIWI0vMkjyCoUzAs7y/Epi9QYxrZm5xewcu7xyMYQ6L8vW4yyTbgfC8vj8P46w
+         ZEdi3urijZJlSaO/OqSIuZrgnjlEajtQTqgvtz2YhJxwMiCXD6Tl6cVRQBhO6AAWkN
+         SFADjoVPuqQopGJ5dtvjMZe7yNqyN3aHNdayYbd8=
+Date:   Fri, 13 Sep 2019 16:06:54 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     robh+dt@kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        devicetree@vger.kernel.org
+Subject: Re: [RFC 1/3] dt-bindings: dma: Add documentation for DMA domains
+Message-ID: <20190913103654.GE4392@vkoul-mobl>
+References: <20190906141816.24095-1-peter.ujfalusi@ti.com>
+ <20190906141816.24095-2-peter.ujfalusi@ti.com>
+ <961d30ea-d707-1120-7ecf-f51c11c41891@ti.com>
+ <20190908121058.GL2672@vkoul-mobl>
+ <a452cd06-79ca-424d-b259-c8d60fc59772@ti.com>
+ <20190912170312.GD4392@vkoul-mobl>
+ <1992ccdd-78b3-f248-3d4d-76b5e6d4cb37@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190913050105.1132080-1-hs@denx.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1992ccdd-78b3-f248-3d4d-76b5e6d4cb37@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 07:01:05AM +0200, Heiko Schocher wrote:
-> Use software emulated RS485 direction control to provide RS485 API
+On 13-09-19, 10:21, Peter Ujfalusi wrote:
 > 
-> Currently it is not possible to use rs485 as pointer to
-> rs485_config struct in struct uart_port is NULL in case we
-> configure the port through device tree.
-
-Thank you for the patch, few recommendations for the future submissions.
-
-> Patch is based on:
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> commit:
-> 505a8ec7e11a - Revert "drm/i915/userptr: Acquire the page lock around set_page_dirty()"
-
-More reliably is to base on corresponding subsystem tree, i.e. tty-next for
-this case.
-
-> checkpatch output:
-> $ ./scripts/checkpatch.pl 0001-tty-8250_of-Use-software-emulated-RS485-direction-co.patch
-> total: 0 errors, 0 warnings, 43 lines checked
 > 
-> 0001-tty-8250_of-Use-software-emulated-RS485-direction-co.patch has no obvious style problems and is ready for submission.
+> On 12/09/2019 20.03, Vinod Koul wrote:
+> > On 09-09-19, 09:30, Peter Ujfalusi wrote:
+> > 
+> >>>> or domain-dma-controller?
+> >>>
+> >>> I feel dma-domain-controller sounds fine as we are defining domains for
+> >>> dmaengine. Another thought which comes here is that why not extend this to
+> >>> slave as well and define dma-domain-controller for them as use that for
+> >>> filtering, that is what we really need along with slave id in case a
+> >>> specific channel is to be used by a peripheral
+> >>>
+> >>> Thoughts..?
+> >>
+> >> I have thought about this, we should be able to drop the phandle to the
+> >> dma controller from the slave binding just fine.
+> >>
+> >> However we have the dma routers for the slave channels and there is no
+> >> clear way to handle them.
+> >> They are not needed for non slave channels as there is no trigger to
+> >> route. In DRA7 for example we have an event router for EDMA and another
+> >> one for sDMA. If a slave device is to be serviced by EDMA, the EDMA
+> >> event router needs to be specified, for sDMA clients should use the sDMA
+> >> event router.
+> > 
+> > So you have dma, xbar and client? And you need to use a specfic xbar,
+> > did i get that right?
+> 
+> At the end yes.
 
-There is no need to mention this. It's supposed that submitter did that
-themselves.
+:)
 
-When you gather people to send the patch to, I recommend to use some threshold,
-e.g. `scripts/get_maintainer.pl --git --git-min-percent=67 ...`
+> EDMA have dedicated crossbar
+> sDMA have dedicated crossbar
+
+So the domain mapping should point to crossbar.
+
+> Slave devices must use the crossbar to request channel from the DMA
+> controllers. Non slave request are directed to the controllers directly
+> (no DT binding).
+
+The clients for these are different right, if so slave clients will
+point to domain xbar and non slave will point to domain controller (to
+make everyone use domains). Non domain get any channel ... (fallback as
+well)
+
+
+> At minimum we would need a new property for DMA routers.
+> dma-domain-router perhaps which is pointing to the xbar.
+
+Precisely!
+
+> A slave channel request would first look for dma-domain-router, if it is
+> there, the request goes via that.
+> If not then look for dma-domain-controller and use it for the request.
+> The DMA binding can drop the phandle to the xbar/dma.
+> Request for not slave channel would only look for dma-domain-controller.
+>
+> 
+> But...
+> 
+> - If we have one dedicated memcpy DMA and one for slave usage.
+> In top we declare dma-domain-controller = <&m2m_dma>;
+> 
+> Then you have  a slave client somewhere
+> client1: peripheral@42 {
+> 	dma-domain-controller = <&slave_dma>;
+> 	dmas = <6>, <7>;
+> 	dma-names = "tx", "rx";
+> };
+> 
+> This is fine I guess. But what would we do if the driver for client1
+> needs additional memcpy channel? By the definition of the binding the
+> non slave channel should be taken from the closest dma-domain-controller
+> which is not what we want. We want the channel from m2m_dma.
+
+I would not envision same controller needs both memcpy or slave
+channels. If so, that should be represented as something like dma-names
+and represent two sets of dmas one for domain1 and another for domain2.
+
+I would generalize it and not call it memcpy/slave but just domains and
+have a controller use multiple domains (if we have a super controller
+which can do that :D)
+
+client1: peripheral@42 {
+        dma-domain-names = "memcpy", "slave";
+        dma-domains = <&mem_dma>, <&slave_dma>;
+        ...
+};
+
+
+> 
+> And no, we can not start looking for the dma-domain-controller starting
+> from the root as in most cases the dma-domain-controller closer to the
+> client is what we really want and not the globally best controller.
+> 
+> - How to handle the transition?
+>
+> If neither dma-domain-controller/router is found, assume that the first
+> argument in the binding is a phandle to the dma/router?
+> We need to carry the support for what we have today for a long time. The
+> kernel must boot with old DT blob.
+> 
+> - Will it make things cleaner? Atm it is pretty easy to see which
+> controller/router is used for which device.
+> 
+> - Also to note that the EDMA and sDMA bindings are different, so we can
+> not just swap dma-domain-controller/router underneath, we also need to
+> modify the client's dmas line as well.
+> 
+> - Péter
+> 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+~Vinod
