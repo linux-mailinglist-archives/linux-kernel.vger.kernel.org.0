@@ -2,133 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD20CB288D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96613B2893
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:44:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404162AbfIMWha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 18:37:30 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:48943 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404123AbfIMWh3 (ORCPT
+        id S2404132AbfIMWnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 18:43:46 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35704 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404009AbfIMWnq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 18:37:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1568414247; x=1599950247;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=Fym3AEh3SFKGgXyTk9/qVAD19siuANlY5H9t5ukh1Zk=;
-  b=aoOnEeTNbEx6gloHKLnD5jQAztLoRtfMN3on8zpK25xLqN9goFoItoDJ
-   ukKZwzTeT2T0QKGmPPCEZRHYFwKp64tH7dNiWZLuCWsSGNcjRuF/TNFgr
-   /mG9Rq9c3edQd+DZRQOKujmByoJcXTFb370W/6YXvduTf/bhW8jeSQ5DZ
-   gY9eluzFBJidwzYuWy6CrtAA9Xo5MCzP/Vfj1xVmm6v28VRXa1To7lIlc
-   qLUp8Uq4uNPKhzgesfbTEX9XNN1FmhIt503sRwPhwVvs6pr0aTn/w3opE
-   afdgJRcS5SwSXRdTGI/dcJb8rlMUwa7MFDxb+VcxhMFMwa43ta3fk3Hjs
-   g==;
-IronPort-SDR: ZabXXmtCy1ppYN/rEtUOF6tkavCdAe8GLqAdWKqLVqZ52AIZpUrQ9O7+TrQiU4r1F2qm3/65qt
- RTSXAL94Uvlw78Ve4QmrQ416waVCKPkFtHl7AbzRh+7cTNs23qGhdLcbg6E7dFGhNbVGu0bAc6
- 3zSRYPCYzq+2P9jOeOT0mOiT3pn4AlcTnXOERuFIKY/Pkz3tgwpc2HrDvusTD6Vozs2+slJvJG
- dpeoEF/YuA8cCX9wZXqDenWV90Z0VaX0pOc8ZKCv+gwwXA+wgGwff91BtWipD9yU4Sc9K0i2WT
- KuQ=
-X-IronPort-AV: E=Sophos;i="5.64,501,1559491200"; 
-   d="scan'208";a="225004220"
-Received: from mail-sn1nam01lp2053.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([104.47.32.53])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Sep 2019 06:37:26 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lM+UgqIgZ/qTBsxVrBJICAayyRzKa5cqjwGBYaL9A6QjM/IY9R5eATfdsAI8lQqWp9z6pe/2iBL3ijyAECRASn0bKLqQuWOlCfbYyNXiROnBQTO/OYreeKOAePcIB39xF9vufie36Fe2SXzqac0tm+t84WeWYWMQ3DyjGVleEPj8GqIDNDCJREnoVZ/R67+vQ0/ctVZvFiXepQhZAcM4eMMYq3PTTlv3ghENMk+UFZTCWGGdSNgKSGKUy+SlA/YCwiTGzHYgWiA13HERGgIK4Uu4UW7YQzkLwK5tceNisU1wxVEMuDbaitW3idKYjdJ7kvoDJDFUYjR8UDPFTUxOBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/cLXyz6O9wo2sX1CWYn94706vFX9/b9xJl8ohWPULUw=;
- b=WubZYufWfxLnAUx+xo7xkKnYH9wwc1x9ofELF28/IHqutBIU+YUIdtf1SN6aogH4baQe/7SXybZqolWKiS+2OSY6gZzqm1o1ohkde/+7BNmRqD++QSB0wj4Pu+/ztAdAE7XKVJr50kbIyZ3bWfHMO1T39pZdJ/XdMH8AgyD055y5Y5hsXNWpXOCOvWDBpxFqFOeX3AAEoZN5cFs1cRh5IacT6eIwH3jRYVbgxrOONwq20t+YuFuDDTAeLqiT53YExabTwC9R1khxqDWNlM8NPtAFNeRBU4v1vfuD5pA98dnqobX3GzdnkWORYnH+2dmTe2g7NOKTRlMIR1z2bS033A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/cLXyz6O9wo2sX1CWYn94706vFX9/b9xJl8ohWPULUw=;
- b=Hg7/Zg67kEcOMF0pF9F4zMuJlofy0taQIef/F/0xy/RL0lXtyTShVxEBT4+I5QGAlNkl1xaIg2KKtJ1CgX3dGlzp3A+pY6bHzKjHLuSfLWgIz1V0P0LhTXlmSr0Sr8Uso3HFWIcMoHy84FOiTlWjU+VtSym6hF+EbS8/JGg+c5Y=
-Received: from BYAPR04MB5749.namprd04.prod.outlook.com (20.179.58.26) by
- BYAPR04MB4550.namprd04.prod.outlook.com (52.135.240.220) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2263.21; Fri, 13 Sep 2019 22:37:24 +0000
-Received: from BYAPR04MB5749.namprd04.prod.outlook.com
- ([fe80::6169:680:44fc:965d]) by BYAPR04MB5749.namprd04.prod.outlook.com
- ([fe80::6169:680:44fc:965d%6]) with mapi id 15.20.2263.018; Fri, 13 Sep 2019
- 22:37:24 +0000
-From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-To:     Bart Van Assche <bvanassche@acm.org>,
-        =?iso-8859-1?Q?Andr=E9_Almeida?= <andrealmeid@collabora.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "kernel@collabora.com" <kernel@collabora.com>,
-        "krisman@collabora.com" <krisman@collabora.com>
-Subject: Re: [PATCH v2 1/4] null_blk: do not fail the module load with zero
- devices
-Thread-Topic: [PATCH v2 1/4] null_blk: do not fail the module load with zero
- devices
-Thread-Index: AQHVan85AifiRz+yRUqzbl6jvX3qQA==
-Date:   Fri, 13 Sep 2019 22:37:23 +0000
-Message-ID: <BYAPR04MB57494AD6FADC0654403613CE86B30@BYAPR04MB5749.namprd04.prod.outlook.com>
-References: <20190913220300.422869-1-andrealmeid@collabora.com>
- <20190913220300.422869-2-andrealmeid@collabora.com>
- <7c0f4547-4193-bd3e-85c6-d950a004ac46@acm.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
-x-originating-ip: [199.255.45.62]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 82b69170-f7d1-4d55-3902-08d7389af2a4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB4550;
-x-ms-traffictypediagnostic: BYAPR04MB4550:
-x-microsoft-antispam-prvs: <BYAPR04MB45506AFBBA75CBCABD6D449986B30@BYAPR04MB4550.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0159AC2B97
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(396003)(136003)(376002)(366004)(346002)(199004)(189003)(51444003)(256004)(26005)(2501003)(186003)(316002)(3846002)(6116002)(14454004)(53546011)(25786009)(4326008)(478600001)(6506007)(7696005)(99286004)(102836004)(76176011)(8676002)(8936002)(81156014)(2906002)(110136005)(54906003)(66066001)(81166006)(53936002)(71200400001)(71190400001)(74316002)(7736002)(6436002)(9686003)(55016002)(229853002)(305945005)(76116006)(66446008)(64756008)(66556008)(66476007)(2201001)(86362001)(66946007)(476003)(446003)(52536014)(33656002)(5660300002)(486006)(4744005)(6246003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4550;H:BYAPR04MB5749.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: eSOYLC0LyxFMDB/4a740q83PCMtgXqykuzIpoNrq9Ioz2qDclJ6/RVot5debf0KeUCCCIP0ZJd8s87mOOugc0HriyxvVGDwXn2eFxqd1SQAeTkwd7LDnEr3udPgvt9gwgm+2XyNdzSrq8qaWjdkXpr/BfCtRmVfueOHnlioZ+cAmU1lqEztjpDh7KCmFPo71046N8llbXwEkuW99nGzMpqNNCRfwTw1m7tc/pqbPZB16gBV4HvtvB/g7O3itqlD9lcpV9EsWyE0gRQQ6irF5hCS3oinUeo73cZQ1ClE5e9+tV9uw/O2P8PGlX3bkRKs6ya6sKc0ySlEu0wxTVRDB5BGI8M5Rc5hJMXqDNVgXOzKKNpa4GaEoRRYvM4SMDha9TDVUccfia1s/He7S+1GC33jL5DMOBXmSA1U3PELbNVo=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 13 Sep 2019 18:43:46 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1i8uHm-0005iJ-Hf; Sat, 14 Sep 2019 00:43:27 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A23011C04F3;
+        Sat, 14 Sep 2019 00:43:25 +0200 (CEST)
+Date:   Fri, 13 Sep 2019 22:43:25 -0000
+From:   "tip-bot2 for Miles Chen" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/psi: Correct overly pessimistic size calculation
+Cc:     Miles Chen <miles.chen@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20190912103452.13281-1-miles.chen@mediatek.com>
+References: <20190912103452.13281-1-miles.chen@mediatek.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82b69170-f7d1-4d55-3902-08d7389af2a4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2019 22:37:23.8215
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: o60mFgev9ke0qyDkHv7UZeKI3rtnW9OpFYLatALGZ0TCL2Zw99HGyFTq/bINX8dfUxiPdJ+KQa9fe26j1GLf4horkeA69RUs5lyw5BIBLXw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4550
+Message-ID: <156841460535.24167.6273030361884540421.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/13/2019 03:18 PM, Bart Van Assche wrote:=0A=
-> I just noticed that this patch is necessary to unbreak blktests. The srp=
-=0A=
-> tests fail as follows with Jens' for-next branch:=0A=
->=0A=
-> modprobe: ERROR: could not insert 'null_blk': Invalid argument=0A=
->=0A=
-> I think that error is triggered by the following statement in=0A=
-> common/multipath-over-rdma:=0A=
->=0A=
->       modprobe null_blk nr_devices=3D0 || return $?=0A=
->=0A=
-> Bart.=0A=
->=0A=
-=0A=
-Not only that I'm sure my membacked null_blk testcases will also start=0A=
-failing without this patch, which I've not posted on mailing list yet.=0A=
-=0A=
+The following commit has been merged into the sched/core branch of tip:
+
+Commit-ID:     4adcdcea717cb2d8436bef00dd689aa5bc76f11b
+Gitweb:        https://git.kernel.org/tip/4adcdcea717cb2d8436bef00dd689aa5bc76f11b
+Author:        Miles Chen <miles.chen@mediatek.com>
+AuthorDate:    Thu, 12 Sep 2019 18:34:52 +08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 13 Sep 2019 07:49:28 +02:00
+
+sched/psi: Correct overly pessimistic size calculation
+
+When passing a equal or more then 32 bytes long string to psi_write(),
+psi_write() copies 31 bytes to its buf and overwrites buf[30]
+with '\0'. Which makes the input string 1 byte shorter than
+it should be.
+
+Fix it by copying sizeof(buf) bytes when nbytes >= sizeof(buf).
+
+This does not cause problems in normal use case like:
+"some 500000 10000000" or "full 500000 10000000" because they
+are less than 32 bytes in length.
+
+	/* assuming nbytes == 35 */
+	char buf[32];
+
+	buf_size = min(nbytes, (sizeof(buf) - 1)); /* buf_size = 31 */
+	if (copy_from_user(buf, user_buf, buf_size))
+		return -EFAULT;
+
+	buf[buf_size - 1] = '\0'; /* buf[30] = '\0' */
+
+Before:
+
+ %cd /proc/pressure/
+ %echo "123456789|123456789|123456789|1234" > memory
+ [   22.473497] nbytes=35,buf_size=31
+ [   22.473775] 123456789|123456789|123456789| (print 30 chars)
+ %sh: write error: Invalid argument
+
+ %echo "123456789|123456789|123456789|1" > memory
+ [   64.916162] nbytes=32,buf_size=31
+ [   64.916331] 123456789|123456789|123456789| (print 30 chars)
+ %sh: write error: Invalid argument
+
+After:
+
+ %cd /proc/pressure/
+ %echo "123456789|123456789|123456789|1234" > memory
+ [  254.837863] nbytes=35,buf_size=32
+ [  254.838541] 123456789|123456789|123456789|1 (print 31 chars)
+ %sh: write error: Invalid argument
+
+ %echo "123456789|123456789|123456789|1" > memory
+ [ 9965.714935] nbytes=32,buf_size=32
+ [ 9965.715096] 123456789|123456789|123456789|1 (print 31 chars)
+ %sh: write error: Invalid argument
+
+Also remove the superfluous parentheses.
+
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Cc: <linux-mediatek@lists.infradead.org>
+Cc: <wsd_upstream@mediatek.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190912103452.13281-1-miles.chen@mediatek.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/psi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 7acc632..4b14a32 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -1190,7 +1190,7 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
+ 	if (static_branch_likely(&psi_disabled))
+ 		return -EOPNOTSUPP;
+ 
+-	buf_size = min(nbytes, (sizeof(buf) - 1));
++	buf_size = min(nbytes, sizeof(buf));
+ 	if (copy_from_user(buf, user_buf, buf_size))
+ 		return -EFAULT;
+ 
