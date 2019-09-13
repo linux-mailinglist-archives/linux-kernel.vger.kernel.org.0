@@ -2,64 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4F5BB285D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59AC3B2860
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404088AbfIMW1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 18:27:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44576 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404072AbfIMW1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 18:27:15 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 16B00308402D;
-        Fri, 13 Sep 2019 22:27:15 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-34.bss.redhat.com [10.20.1.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C40460BF1;
-        Fri, 13 Sep 2019 22:27:14 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/encoder: Don't raise voice in drm_encoder_mask() documentation
-Date:   Fri, 13 Sep 2019 18:27:03 -0400
-Message-Id: <20190913222704.8241-4-lyude@redhat.com>
-In-Reply-To: <20190913222704.8241-1-lyude@redhat.com>
-References: <20190913222704.8241-1-lyude@redhat.com>
+        id S2404100AbfIMW2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 18:28:18 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34631 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404009AbfIMW2S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 18:28:18 -0400
+Received: by mail-wm1-f65.google.com with SMTP id y135so2803982wmc.1;
+        Fri, 13 Sep 2019 15:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ngm7w4qbHtlMJdNCG88CXh8nP0Oze5VBvf7zLp4iqzY=;
+        b=DP53uxIj2f1aUHm3OCrqBEtN7gs1CRrFzj7FDpS9ztadgKHGf1V0+cNEfIR1pWgSIv
+         WriydTHFQd3nCbKCk5BzXZg0Pl64lTywRmw7MUrH7yjPBFOgP5IfCVB8bY6hzrqorysi
+         iM3J3cvizmdsOp5PZ6buV3ZNv5XbHa3Gn6UWg3xb5+Hx89VVezevfVNR8x+IT6ZwkXJo
+         oFUTmyCDHZwVxxyfFimyyOY9slE0QVL2DwM0LHp5C/oUtP14JvnEm5wqwK7G/XmbMCjh
+         bwVsDt1rr19lmsPtUzFUzVor1cf1zuL1MWHFjG+0hYuCZTz5vdfPvE3E6/x6kdOsB5ko
+         FlHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ngm7w4qbHtlMJdNCG88CXh8nP0Oze5VBvf7zLp4iqzY=;
+        b=TV2UfaSyngj4wrB0wQIjTD2gEaEGaR358+Nc5sron1iZuhFl2+v5jKkJm1tw3TK+il
+         JQH1JVtWh2MPZ8dHebE7m4GiH+uJ0JCbvIFTYxj+FwqfVb8PkuOBOrU6GxsMj6VHDT9W
+         StmSfziUIMLkCHoINcO6LLUT6E4XQUrnkhgQpaWW0d39obCqQNNj+4oYGmCsJP7L4SrE
+         HKwyPJtwigHmlqu+SAIWsoaOG8QF+OsibZX9q0kC8Vq6ru+Ic8dav5qrfJ1g2y5lkSrs
+         eKhBXaCeAvtigUkHVrazG1BmelA2N/x0pN0eq+A+0K9/NSdjMDjETpQ1OKY4hMHLG/7h
+         3c2g==
+X-Gm-Message-State: APjAAAXLSMmo6h73VVCTFlZe9L3kfmRVTRrm4+YlIXypUARAlHM/uHOo
+        CqRvjI7sidHFQVl/Hsr0CI/ww/qitss=
+X-Google-Smtp-Source: APXvYqyGGKLyDU/IaggmOU7bpeYlXV53GMECoqFoYK4Pb++AyM5ValDH+FRJ6oui69yNDKSEVsgsbQ==
+X-Received: by 2002:a05:600c:24d2:: with SMTP id 18mr5211248wmu.146.1568413696087;
+        Fri, 13 Sep 2019 15:28:16 -0700 (PDT)
+Received: from localhost.localdomain ([109.126.151.137])
+        by smtp.gmail.com with ESMTPSA id d12sm3456107wme.33.2019.09.13.15.28.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2019 15:28:15 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [RFC PATCH 0/2] Optimise io_uring completion waiting
+Date:   Sat, 14 Sep 2019 01:28:00 +0300
+Message-Id: <cover.1568413210.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 13 Sep 2019 22:27:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no need to raise our voice when saying encoder, we're all
-civilized adults here!
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- include/drm/drm_encoder.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+There could be a lot of overhead within generic wait_event_*() used for
+waiting for large number of completions. The patchset removes much of
+it by using custom wait event (wait_threshold).
 
-diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
-index d65173d413b7..f06164f44efe 100644
---- a/include/drm/drm_encoder.h
-+++ b/include/drm/drm_encoder.h
-@@ -198,7 +198,7 @@ static inline unsigned int drm_encoder_index(const struct drm_encoder *encoder)
- }
- 
- /**
-- * drm_encoder_mask - find the mask of a registered ENCODER
-+ * drm_encoder_mask - find the mask of a registered encoder
-  * @encoder: encoder to find mask for
-  *
-  * Given a registered encoder, return the mask bit of that encoder for an
+Synthetic test showed ~40% performance boost. (see patch 2)
+
+Pavel Begunkov (2):
+  sched/wait: Add wait_threshold
+  io_uring: Optimise cq waiting with wait_threshold
+
+ fs/io_uring.c                  | 21 ++++++-----
+ include/linux/wait_threshold.h | 64 ++++++++++++++++++++++++++++++++++
+ kernel/sched/Makefile          |  2 +-
+ kernel/sched/wait_threshold.c  | 26 ++++++++++++++
+ 4 files changed, 103 insertions(+), 10 deletions(-)
+ create mode 100644 include/linux/wait_threshold.h
+ create mode 100644 kernel/sched/wait_threshold.c
+
 -- 
-2.21.0
+2.22.0
 
