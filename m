@@ -2,190 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94233B2089
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F329EB2115
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391066AbfIMNW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:22:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51788 "EHLO mail.kernel.org"
+        id S2391650AbfIMNco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:32:44 -0400
+Received: from mga07.intel.com ([134.134.136.100]:1052 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390909AbfIMNVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:21:52 -0400
-Received: from localhost (unknown [104.132.45.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0988E20717;
-        Fri, 13 Sep 2019 13:21:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380911;
-        bh=ZGQq7XmYS3Ko11gPlRhrnwMkCQgmaoPYqlC740uS8JE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dOV3fhcmQCV1ZG3Z6geC8hBICzCeKey2XTDsDxTAzz/Z3ODcIElYirU3HHrwSwgD5
-         4IPsUGsRDwTRf2qMyz0wlPcsirpYw9oytXOONmwHz943xTkhzh/pueNolL3KrJlam1
-         TnqUhaJyW7wRyUVcJCPCkMaEY8Aw8y0ONI8+PCPc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zdenek Sojka <zsojka@seznam.cz>,
-        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        Drazen Kacar <drazen.kacar@oradian.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.2 35/37] Btrfs: fix unwritten extent buffers and hangs on future writeback attempts
-Date:   Fri, 13 Sep 2019 14:07:40 +0100
-Message-Id: <20190913130522.060024148@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
-References: <20190913130510.727515099@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2389185AbfIMNMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:12:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2019 06:12:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,501,1559545200"; 
+   d="scan'208";a="215371241"
+Received: from ddungax-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.37.38])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Sep 2019 06:12:35 -0700
+Date:   Fri, 13 Sep 2019 14:12:34 +0100
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Seunghun Han <kkamagui@gmail.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vanya Lazeev <ivan.lazeev@gmail.com>
+Subject: Re: [PATCH v2 2/2] tpm: tpm_crb: enhance resource mapping mechanism
+ for supporting AMD's fTPM
+Message-ID: <20190913131234.GA7412@linux.intel.com>
+References: <20190909090906.28700-1-kkamagui@gmail.com>
+ <20190909090906.28700-3-kkamagui@gmail.com>
+ <20190910144215.GA30780@linux.intel.com>
+ <20190910150342.GA1920@linux.intel.com>
+ <CAHjaAcRf3fcJMp6AwVRTrVaABZVzSkhBwRcpKZogAS4SSDK3zg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHjaAcRf3fcJMp6AwVRTrVaABZVzSkhBwRcpKZogAS4SSDK3zg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+On Wed, Sep 11, 2019 at 12:28:18AM +0900, Seunghun Han wrote:
+> > Matthew pointed out that having a hook in NVS driver is better solution
+> > because it is nil functionality if the TPM driver is loaded. We need
+> > functions to:
+> >
+> > 1. Request a region from the NVS driver (when tpm_crb loads)
+> > 2. Release a region back to the NVS Driver (when tpm_crb unloads).
+> >
+> > My proposal would unnecessarily duplicate code and also leave a
+> > side-effect when TPM is not used in the first place.
+> >
+> > I see this as the overally best solution. If you can come up with a
+> > patch for the NVS side and changes to CRB drivers to utilize the new
+> > hooks, then combined with Vanya's changes we have a sustainable solution
+> > for AMD fTPM.
+> 
+> It's a great solution. I will update this patch on your advice and
+> send it to you soon.
+> 
+> By the way, I have a question about your advice.
+> If we handle the NVS region with NVS driver, calling devm_ioremap()
+> function is fine like crb_ioremap_resource() function in this patch?
 
-commit 18dfa7117a3f379862dcd3f67cadd678013bb9dd upstream.
+No, you should reclaim the resource that conflicts and return it back
+when tpm_crb is unregistered (e.g. rmmod tpm_crb).
 
-The lock_extent_buffer_io() returns 1 to the caller to tell it everything
-went fine and the callers needs to start writeback for the extent buffer
-(submit a bio, etc), 0 to tell the caller everything went fine but it does
-not need to start writeback for the extent buffer, and a negative value if
-some error happened.
+I would try something like enumerating iomem resources with
+walk_iomem_res_desc(). I would advice to peek at arch/x86/kernel/crash.c
+for an example how to use this for NVS regions
+(IORES_DESC_ACPI_NV_STORAGE).
 
-When it's about to return 1 it tries to lock all pages, and if a try lock
-on a page fails, and we didn't flush any existing bio in our "epd", it
-calls flush_write_bio(epd) and overwrites the return value of 1 to 0 or
-an error. The page might have been locked elsewhere, not with the goal
-of starting writeback of the extent buffer, and even by some code other
-than btrfs, like page migration for example, so it does not mean the
-writeback of the extent buffer was already started by some other task,
-so returning a 0 tells the caller (btree_write_cache_pages()) to not
-start writeback for the extent buffer. Note that epd might currently have
-either no bio, so flush_write_bio() returns 0 (success) or it might have
-a bio for another extent buffer with a lower index (logical address).
+E.g. you could use a callback for it along the lines of:
 
-Since we return 0 with the EXTENT_BUFFER_WRITEBACK bit set on the
-extent buffer and writeback is never started for the extent buffer,
-future attempts to writeback the extent buffer will hang forever waiting
-on that bit to be cleared, since it can only be cleared after writeback
-completes. Such hang is reported with a trace like the following:
+static int crb_find_iomem_res_cb(struct resource *res, void *io_res_ptr)
+{
+	struct resource *io_res = io_res_ptr;
 
-  [49887.347053] INFO: task btrfs-transacti:1752 blocked for more than 122 seconds.
-  [49887.347059]       Not tainted 5.2.13-gentoo #2
-  [49887.347060] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-  [49887.347062] btrfs-transacti D    0  1752      2 0x80004000
-  [49887.347064] Call Trace:
-  [49887.347069]  ? __schedule+0x265/0x830
-  [49887.347071]  ? bit_wait+0x50/0x50
-  [49887.347072]  ? bit_wait+0x50/0x50
-  [49887.347074]  schedule+0x24/0x90
-  [49887.347075]  io_schedule+0x3c/0x60
-  [49887.347077]  bit_wait_io+0x8/0x50
-  [49887.347079]  __wait_on_bit+0x6c/0x80
-  [49887.347081]  ? __lock_release.isra.29+0x155/0x2d0
-  [49887.347083]  out_of_line_wait_on_bit+0x7b/0x80
-  [49887.347084]  ? var_wake_function+0x20/0x20
-  [49887.347087]  lock_extent_buffer_for_io+0x28c/0x390
-  [49887.347089]  btree_write_cache_pages+0x18e/0x340
-  [49887.347091]  do_writepages+0x29/0xb0
-  [49887.347093]  ? kmem_cache_free+0x132/0x160
-  [49887.347095]  ? convert_extent_bit+0x544/0x680
-  [49887.347097]  filemap_fdatawrite_range+0x70/0x90
-  [49887.347099]  btrfs_write_marked_extents+0x53/0x120
-  [49887.347100]  btrfs_write_and_wait_transaction.isra.4+0x38/0xa0
-  [49887.347102]  btrfs_commit_transaction+0x6bb/0x990
-  [49887.347103]  ? start_transaction+0x33e/0x500
-  [49887.347105]  transaction_kthread+0x139/0x15c
+	if (res->start == io_res->start && res->end == io_res->end) {
+		/*
+		 * Backup all resource data so that it can be inserted
+		 * later on with the flags it had etc.
+		 */
+		*io_res = *res;
+		return 1;
+	}
 
-So fix this by not overwriting the return value (ret) with the result
-from flush_write_bio(). We also need to clear the EXTENT_BUFFER_WRITEBACK
-bit in case flush_write_bio() returns an error, otherwise it will hang
-any future attempts to writeback the extent buffer, and undo all work
-done before (set back EXTENT_BUFFER_DIRTY, etc).
+	return 0;
+}
 
-This is a regression introduced in the 5.2 kernel.
-
-Fixes: 2e3c25136adfb ("btrfs: extent_io: add proper error handling to lock_extent_buffer_for_io()")
-Fixes: f4340622e0226 ("btrfs: extent_io: Move the BUG_ON() in flush_write_bio() one level up")
-Reported-by: Zdenek Sojka <zsojka@seznam.cz>
-Link: https://lore.kernel.org/linux-btrfs/GpO.2yos.3WGDOLpx6t%7D.1TUDYM@seznam.cz/T/#u
-Reported-by: Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
-Link: https://lore.kernel.org/linux-btrfs/5c4688ac-10a7-fb07-70e8-c5d31a3fbb38@profihost.ag/T/#t
-Reported-by: Drazen Kacar <drazen.kacar@oradian.com>
-Link: https://lore.kernel.org/linux-btrfs/DB8PR03MB562876ECE2319B3E579590F799C80@DB8PR03MB5628.eurprd03.prod.outlook.com/
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204377
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/btrfs/extent_io.c |   35 ++++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 9 deletions(-)
-
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -3591,6 +3591,13 @@ void wait_on_extent_buffer_writeback(str
- 		       TASK_UNINTERRUPTIBLE);
- }
- 
-+static void end_extent_buffer_writeback(struct extent_buffer *eb)
-+{
-+	clear_bit(EXTENT_BUFFER_WRITEBACK, &eb->bflags);
-+	smp_mb__after_atomic();
-+	wake_up_bit(&eb->bflags, EXTENT_BUFFER_WRITEBACK);
-+}
-+
- /*
-  * Lock eb pages and flush the bio if we can't the locks
-  *
-@@ -3662,8 +3669,11 @@ static noinline_for_stack int lock_exten
- 
- 		if (!trylock_page(p)) {
- 			if (!flush) {
--				ret = flush_write_bio(epd);
--				if (ret < 0) {
-+				int err;
-+
-+				err = flush_write_bio(epd);
-+				if (err < 0) {
-+					ret = err;
- 					failed_page_nr = i;
- 					goto err_unlock;
- 				}
-@@ -3678,16 +3688,23 @@ err_unlock:
- 	/* Unlock already locked pages */
- 	for (i = 0; i < failed_page_nr; i++)
- 		unlock_page(eb->pages[i]);
-+	/*
-+	 * Clear EXTENT_BUFFER_WRITEBACK and wake up anyone waiting on it.
-+	 * Also set back EXTENT_BUFFER_DIRTY so future attempts to this eb can
-+	 * be made and undo everything done before.
-+	 */
-+	btrfs_tree_lock(eb);
-+	spin_lock(&eb->refs_lock);
-+	set_bit(EXTENT_BUFFER_DIRTY, &eb->bflags);
-+	end_extent_buffer_writeback(eb);
-+	spin_unlock(&eb->refs_lock);
-+	percpu_counter_add_batch(&fs_info->dirty_metadata_bytes, eb->len,
-+				 fs_info->dirty_metadata_batch);
-+	btrfs_clear_header_flag(eb, BTRFS_HEADER_FLAG_WRITTEN);
-+	btrfs_tree_unlock(eb);
- 	return ret;
- }
- 
--static void end_extent_buffer_writeback(struct extent_buffer *eb)
--{
--	clear_bit(EXTENT_BUFFER_WRITEBACK, &eb->bflags);
--	smp_mb__after_atomic();
--	wake_up_bit(&eb->bflags, EXTENT_BUFFER_WRITEBACK);
--}
--
- static void set_btree_ioerr(struct page *page)
- {
- 	struct extent_buffer *eb = (struct extent_buffer *)page->private;
+Then you could __release_region() to unallocate the source. When tpm_crb
+is removed you can then allocate and insert a resource with data
+matching it had.
 
 
+/Jarkko
