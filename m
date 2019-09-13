@@ -2,102 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 703E2B24F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 20:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34794B24F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 20:20:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389315AbfIMSRi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 14:17:38 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58856 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389005AbfIMSRh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 14:17:37 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: alyssa)
-        with ESMTPSA id ED22D289F25
-Date:   Fri, 13 Sep 2019 14:17:29 -0400
-From:   Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Nick Fan <nick.fan@mediatek.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>
-Subject: Re: [PATCH] arm64: dts: mt8183: Add node for the Mali GPU
-Message-ID: <20190913181729.GB3115@kevin>
-References: <20190905081546.42716-1-drinkcat@chromium.org>
- <CAL_JsqJCO2G90TTT9Mpy4kjVKQyXWw4aXEEnbRp_SE8X=EGc5g@mail.gmail.com>
- <CANMq1KCTPdFhJG1SLf-i+-557Yx-1WLzWCHu3tT_5Q2BF+JgdQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
-Content-Disposition: inline
-In-Reply-To: <CANMq1KCTPdFhJG1SLf-i+-557Yx-1WLzWCHu3tT_5Q2BF+JgdQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2389663AbfIMSUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 14:20:46 -0400
+Received: from foss.arm.com ([217.140.110.172]:47808 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389336AbfIMSUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 14:20:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 217FE28;
+        Fri, 13 Sep 2019 11:20:45 -0700 (PDT)
+Received: from e120937-lin.cambridge.arm.com (e120937-lin.cambridge.arm.com [10.1.197.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A48663F71F;
+        Fri, 13 Sep 2019 11:20:42 -0700 (PDT)
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arch@vger.kernel.org, mark.rutland@arm.com,
+        peterz@infradead.org, catalin.marinas@arm.com,
+        takahiro.akashi@linaro.org, james.morse@arm.com,
+        hidehiro.kawai.ez@hitachi.com, tglx@linutronix.de, will@kernel.org,
+        dave.martin@arm.com, linux-arm-kernel@lists.infradead.org,
+        mingo@redhat.com, x86@kernel.org, dzickus@redhat.com,
+        ehabkost@redhat.com, linux@armlinux.org.uk, davem@davemloft.net,
+        sparclinux@vger.kernel.org, hch@infradead.org
+Subject: [RFC PATCH v2 00/12] Unify SMP stop generic logic to common code
+Date:   Fri, 13 Sep 2019 19:19:41 +0100
+Message-Id: <20190913181953.45748-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
---2B/JsCI69OhZNC5r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+the logic underlying SMP stop and kexec crash procedures, beside containing
+some arch-specific bits, is mostly generic and common across all archs:
+despite this fact, such logic is now scattered across all architectures and
+on some of them is flawed, in such a way that, under some specific
+conditions, you can end up with a CPU left still running after a panic and
+possibly lost across a subsequent kexec crash reboot. [1]
 
-> > > The binding we use with out-of-tree Mali drivers includes more
-> > > clocks, I assume this would be required eventually if we have an
-> > > in-tree driver:
-> >
-> > We have an in-tree driver...
->=20
-> Right but AFAICT it does not support Bifrost GPU (yet?).
+Beside the flaws on some archs, there is anyway lots of code duplication,
+so this patch series attempts to move into common code all the generic SMP
+stop and crash logic, fixing observed issues, and leaving only the arch
+specific bits inside properly provided arch-specific helpers.
 
-By the time MT8183 shows up in more concrete devices, it will, certainly
-in kernel-space and likely in userspace as well. At present, the DDK can
-be modified to run on top of the in-tree Mali drivers, i.e. "Bifrost on
-mainline linux-next (+ page table/compatible patches), with blob
-userspace".
+An architecture willing to rely on this SMP common logic has to define its
+own helpers and set CONFIG_ARCH_USE_COMMON_SMP_STOP=y.
 
-While the open userspace isn't ready here quite yet, I would definitely
-encourage upstream kernel for ChromeOS, since then there's no need to
-maintain the out-of-tree GPU driver.
+This series wire this up for arm64, x86, arm, sparc64.
 
----
+Behaviour is not changed for architectures not adopting this new common
+logic.
 
-More immediately, per Rob's review, it's important that the bindings
-accepted upstream work with the in-tree Bifrost driver. Conceptually,
-once Mesa supports Bifrost, if I install Debian on a MT8183 board,
-everything should just work. I shouldn't need MT-specific changes / need
-to change names for the DT. Regardless of which kernel driver you end up
-using, minimally sharing the DT is good for everyone :-)
+In v2 the SMP common stop/crash code is generalized a bit more to address
+the needs of the newly ported architectures (x86, arm, sparc64).
 
--Alyssa
+Tested as follows:
 
---2B/JsCI69OhZNC5r
-Content-Type: application/pgp-signature; name="signature.asc"
+- arm64:
+ 1. boot/reboot/emergency reboot
+ 2. panic on a starting CPU within a 2 CPUs system (freezing properly)
+ 3. kexec reboot after a panic like 2. (not losing any CPU on reboot)
+ 4. kexec reboot after a panic like 2. and a simultaneous reboot
+    (instrumenting code to delay the stop messages transmission
+     to have time to inject a reboot -f)
 
------BEGIN PGP SIGNATURE-----
+- x86:
+ 1. boot/reboot/emergency reboot/emergency reboot with VMX enabled
+ 2. panic on a starting CPU within a 2 CPUs system
+ 2. panic sysrq 4-CPus
+ 3. kexec reboot after a panic
 
-iQIzBAABCgAdFiEEQ17gm7CvANAdqvY4/v5QWgr1WA0FAl173TQACgkQ/v5QWgr1
-WA2KFBAAnQIHm2aIeWt2mYq9onM7XNfSCCxZzYCsLXaE1LiylCZdcDanV4VaF+B3
-f+jIbfoeoHcnqlhNYRNiI93L0dl3YdmKHBJsPkxNg+ziQu/alZQbsYFNB07LBsuk
-2dxKissYufkSfdcc4UFEBDYq6LQlLF0XmXr5G7oNazC29e73h6Jpn8lrIlKrKo+v
-5SE/KJs7ua1sfKkj6As8LOh2VFqCv+NZ7XPjI+qUQDoSfXgoO2DTsLu79lhInxRr
-pdC8YKeypMlEGRuDgXt9Ee1zi0lk0OroJ+9uELf1G67V/JlpSOOI1go00HhC4Tll
-I8LeczfwD2ujVnJ1kpENyQAmqEY/b6lNPIQJm0MvLFh59Hk9hjl8j1WlH9+yKMNH
-rcZK1/SYeo97URXmKbfYFiwnRLXsX3p7wXjC6vtiw0xa7AcgdsfU+su4uUp8uq3V
-6xCVdnowzNVjYBt8OZbOV5QWXTp0peb9VRIdCjHnrtgb55eYoQDV7Mh69Q5oG8MB
-GZoD72p8ks3LI9BrTJ2QFjEsbWYj9XpvXI7AGL7YcR99QyF9hmgQF0h8Xnwz4nwD
-8oYGMbECAYUT7gVNHCU9lbFkmvsgMCSTvLfMNO5nwarwgF5y8LsQITo9Bf2tLyQ/
-nu3S6fy0qmIcLnwbiMG7urG8a81EtGUNJb8JBd4SLmKQAkA4NWo=
-=H0a9
------END PGP SIGNATURE-----
+- arm:
+1. boot
 
---2B/JsCI69OhZNC5r--
+- sparc64:
+1. build
+
+A couple more of still to be done potential enhancements have been noted
+on specific commits, and a lot more of testing remains surely to be done
+as of now, but, in the context of this RFC, any thoughts on this approach
+in general ?
+
+Thanks,
+
+Cristian
+
+
+Changes:
+--------
+
+v1-->v2:
+- rebased on v5.3-rc8
+- moved common Kconfig bits to arch/Kconfig
+- extended SMP common stop/crash generic code to address new architectures
+  needs: custom wait/timeouts, max_retries, attempt numbers.
+- ported x86 to SMP common stop/crash code
+- ported arm to SMP common stop/crash code
+- ported sparc64 to SMP common stop code
+
+
+[1]
+
+[root@arch ~]# echo 1 > /sys/devices/system/cpu/cpu1/online
+[root@arch ~]# [  152.583368] ------------[ cut here ]------------
+[  152.583872] kernel BUG at arch/arm64/kernel/cpufeature.c:852!
+[  152.584693] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+[  152.585228] Modules linked in:
+[  152.586040] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.3.0-rc5-00001-gcabd12118c4a-dirty #2
+[  152.586218] Hardware name: Foundation-v8A (DT)
+[  152.586478] pstate: 000001c5 (nzcv dAIF -PAN -UAO)
+[  152.587260] pc : has_cpuid_feature+0x35c/0x360
+[  152.587398] lr : verify_local_elf_hwcaps+0x6c/0xf0
+[  152.587520] sp : ffff0000118bbf60
+[  152.587605] x29: ffff0000118bbf60 x28: 0000000000000000
+[  152.587784] x27: 0000000000000000 x26: 0000000000000000
+[  152.587882] x25: ffff00001167a010 x24: ffff0000112f59f8
+[  152.587992] x23: 0000000000000000 x22: 0000000000000000
+[  152.588085] x21: ffff0000112ea018 x20: ffff000010fe5518
+[  152.588180] x19: ffff000010ba3f30 x18: 0000000000000036
+[  152.588285] x17: 0000000000000000 x16: 0000000000000000
+[  152.588380] x15: 0000000000000000 x14: ffff80087a821210
+[  152.588481] x13: 0000000000000000 x12: 0000000000000000
+[  152.588599] x11: 0000000000000080 x10: 00400032b5503510
+[  152.588709] x9 : 0000000000000000 x8 : ffff000010b93204
+[  152.588810] x7 : 00000000800001d8 x6 : 0000000000000005
+[  152.588910] x5 : 0000000000000000 x4 : 0000000000000000
+[  152.589021] x3 : 0000000000000000 x2 : 0000000000008000
+[  152.589121] x1 : 0000000000180480 x0 : 0000000000180480
+[  152.589379] Call trace:
+[  152.589646]  has_cpuid_feature+0x35c/0x360
+[  152.589763]  verify_local_elf_hwcaps+0x6c/0xf0
+[  152.589858]  check_local_cpu_capabilities+0x88/0x118
+[  152.589968]  secondary_start_kernel+0xc4/0x168
+[  152.590530] Code: d53801e0 17ffff58 d5380600 17ffff56 (d4210000)
+[  152.592215] ---[ end trace 80ea98416149c87e ]---
+[  152.592734] Kernel panic - not syncing: Attempted to kill the idle task!
+[  152.593173] Kernel Offset: disabled
+[  152.593501] CPU features: 0x0004,20c02008
+[  152.593678] Memory Limit: none
+[  152.594208] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
+[root@arch ~]# bash: echo: write error: Input/output error
+[root@arch ~]#
+[root@arch ~]#
+[root@arch ~]# echo HELO
+HELO
+
+
+Cristian Marussi (12):
+  smp: add generic SMP-stop support to common code
+  smp: unify crash_ and smp_send_stop() logic
+  smp: coordinate concurrent crash/smp stop calls
+  smp: address races of starting CPUs while stopping
+  arm64: smp: use generic SMP stop common code
+  arm64: smp: use SMP crash-stop common code
+  arm64: smp: add arch specific cpu parking helper
+  x86: smp: use generic SMP stop common code
+  x86: smp: use SMP crash-stop common code
+  arm: smp: use generic SMP stop common code
+  arm: smp: use SMP crash-stop common code
+  sparc64: smp: use generic SMP stop common code
+
+ arch/Kconfig                    |   7 ++
+ arch/arm/Kconfig                |   1 +
+ arch/arm/kernel/machine_kexec.c |  27 ++---
+ arch/arm/kernel/smp.c           |  18 +---
+ arch/arm64/Kconfig              |   1 +
+ arch/arm64/include/asm/smp.h    |   2 -
+ arch/arm64/kernel/smp.c         | 127 +++++++-----------------
+ arch/sparc/Kconfig              |   1 +
+ arch/sparc/kernel/smp_64.c      |  15 +--
+ arch/x86/Kconfig                |   1 +
+ arch/x86/include/asm/reboot.h   |   2 +
+ arch/x86/include/asm/smp.h      |   6 --
+ arch/x86/kernel/crash.c         |  27 +----
+ arch/x86/kernel/reboot.c        |  50 ++++++----
+ arch/x86/kernel/smp.c           |  98 ++++++++----------
+ include/linux/smp.h             | 109 ++++++++++++++++++++
+ kernel/panic.c                  |  26 -----
+ kernel/smp.c                    | 170 ++++++++++++++++++++++++++++++++
+ 18 files changed, 418 insertions(+), 270 deletions(-)
+
+-- 
+2.17.1
+
