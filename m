@@ -2,117 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B67B2597
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 21:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED0A7B25A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 21:04:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389283AbfIMTBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 15:01:20 -0400
-Received: from mail-eopbgr710060.outbound.protection.outlook.com ([40.107.71.60]:62364
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389163AbfIMTBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 15:01:18 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OEUdDPsewtL9YI47FhOYWf9m2RKSP6oqYsKVCCzrd69LVmqimwFK41KCS7ZDx6D2d7VIfxKDs+Z5xv1E458jrbXUY1LH3k7RDE/TFMsksiYeZx0FnEL8jx2LiDwOMupIhAaLaO4Z746LPS16R54t49ZR/EUDuwOkYle6OEoIMdOliKuKoaDylkvAEH8wQvTtUFu0OcfU93eBuyJZbJElTWk8zE3Emtm2IneUrk1eq/MwYo9CUT5RgJaF4xE2SnrFwFAH4ZWOJPOCjjf8OHXCSjACo045OdTvjB91qO28JJ8ltHHj/XH+uVXY+JHu4x7VPauNvw4BL1ROofZL8udYlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jJPIwFhdWsP3d/i29F4g9Mxq2BKGJCh2LO/dIM8UVT0=;
- b=mWFbZ4l5oK+3YvOdrJ8MkH3cjfbnHcfwiVbfBUgGNnXxGN7CgpGMZSOGonz3iGOtU85BlKLSouMvRXZua3FPxqxXNf8tX7frzA8g5Le5eMzabh5JDMz4LCuV2jYfV7e8GrpEX0YfYuYZua0yGRk2x8vPjLxvrz7Zt1tyCfluXqzc4Ub8mwSDZYBupsmzp92ntTdtsHCRhX8bG0EKBbdjW8Ebupp9j1+GUsQ65IlfhyK1i/JFnD7WaE8/XsINqE5o1tbztn0lf1F2CEcxcSvJT/WNAtAw+1Au8CeN+Yhn5MzfPQRmRhLyL8MDH+RKedtUiShMiF8f1cU4ketf8Wgypg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jJPIwFhdWsP3d/i29F4g9Mxq2BKGJCh2LO/dIM8UVT0=;
- b=bjTlNzUMGcdzxHKema6J0VV54NctgJx/UCET27/Ko2cUBlbq1TiF0cP7ZnTQF37yJkQt4xNVMRotHWDM53KinNyOCBdxj/z2yIBXsfx9GvPE76MQzrRR1RZhMBVNjvZoHkrRt982IodNlfXrbbgJf9sPJXVxt6eNC2b0Js7btQE=
-Received: from DM6PR12MB2844.namprd12.prod.outlook.com (20.176.117.96) by
- DM6PR12MB3596.namprd12.prod.outlook.com (20.178.199.83) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.18; Fri, 13 Sep 2019 19:01:11 +0000
-Received: from DM6PR12MB2844.namprd12.prod.outlook.com
- ([fe80::201f:ac0f:4576:e997]) by DM6PR12MB2844.namprd12.prod.outlook.com
- ([fe80::201f:ac0f:4576:e997%3]) with mapi id 15.20.2241.022; Fri, 13 Sep 2019
- 19:01:11 +0000
-From:   "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-CC:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "graf@amazon.com" <graf@amazon.com>,
-        "jschoenh@amazon.de" <jschoenh@amazon.de>,
-        "karahmed@amazon.de" <karahmed@amazon.de>,
-        "rimasluk@amazon.com" <rimasluk@amazon.com>,
-        "Grimm, Jon" <Jon.Grimm@amd.com>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-Subject: [PATCH v3 16/16] svm: Allow AVIC with in-kernel irqchip mode
-Thread-Topic: [PATCH v3 16/16] svm: Allow AVIC with in-kernel irqchip mode
-Thread-Index: AQHVamWbPsANoSEXBkO4BBRG/d09aQ==
-Date:   Fri, 13 Sep 2019 19:01:11 +0000
-Message-ID: <1568401242-260374-17-git-send-email-suravee.suthikulpanit@amd.com>
-References: <1568401242-260374-1-git-send-email-suravee.suthikulpanit@amd.com>
-In-Reply-To: <1568401242-260374-1-git-send-email-suravee.suthikulpanit@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [165.204.78.1]
-x-clientproxiedby: SN6PR08CA0021.namprd08.prod.outlook.com
- (2603:10b6:805:66::34) To DM6PR12MB2844.namprd12.prod.outlook.com
- (2603:10b6:5:45::32)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.8.3.1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a68276d7-4167-4078-c277-08d7387cbe45
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB3596;
-x-ms-traffictypediagnostic: DM6PR12MB3596:
-x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR12MB35963FEB098826A9BC4CD62DF3B30@DM6PR12MB3596.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-forefront-prvs: 0159AC2B97
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(346002)(396003)(366004)(376002)(189003)(199004)(66066001)(7416002)(3846002)(6116002)(81156014)(186003)(8676002)(81166006)(54906003)(6436002)(52116002)(110136005)(316002)(4744005)(76176011)(53936002)(5660300002)(71200400001)(71190400001)(6506007)(386003)(102836004)(6512007)(486006)(26005)(66946007)(66574012)(8936002)(66476007)(66556008)(64756008)(66446008)(4720700003)(2906002)(99286004)(50226002)(6486002)(446003)(256004)(14444005)(25786009)(305945005)(478600001)(11346002)(36756003)(476003)(7736002)(14454004)(4326008)(2616005)(2501003)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3596;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: bvg4JvStfWszZEDVEY2XxQNku6xswA22F3bW+Y/C7ccKAICDSA3r9kJvGhPp0B1xd5JZ+9Emo3hK1lX9S5VKkqrzV1E2cA3KoXJy8SYwzEYzHIDNQKKSGmP0FGbLyRjaxtuFKbl+3BGnGd6nc3jqArcU0UdrSquDO2jZ/2wrBVaElJjda/18gK9av2d77vmlEVn5iTftHSrIO27f/6rb5p3U6Sg61roDAOCDTACNEJY7wU/g9i5E0782r9En7/1Qtufp6twDRu+ZA7QFYdzDMEpCNuWjuYNCNGqUne/hHV2HmidprcGqO2bWYiOlGbJuDAPH/zV1BQ9qvYuJgPPo0W7tZGae5MXfEzvv2xK1G7lbRW8J7St+PeaRe/x2qlry6yoBeR9OhMmFmyNfwiPPAkD8MVaAWmMwE+O61p/3lco=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AC110F5A11FF8D49A0018830CC974F21@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1730552AbfIMTE1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 15:04:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42770 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730448AbfIMTE1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 15:04:27 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8DJ3caW064158;
+        Fri, 13 Sep 2019 19:04:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=IoVVM/QGfUe47lDF2L+/IJZuAWT2B1IWHs+hgqsZpIo=;
+ b=Y8VSQxyNfZFxgZtE0syNGsPeCFGb+GdnLfRff+CNX9hPk5re4Ki/hQ52OzFi17u2PXpX
+ dkIGycnsTS5iXXrlltY+rwTtI3KEEPNzWUUD81LhGlDFQAfqr1vKn7LfZPMYGzeeednK
+ P1SooVbrl1ruglJm5aJtx2OGEFsaNRY2WQO5GWfap649fVo1mV7xI3oguyTkWT1W3ent
+ 9Ukw9nw9zqtLLqUf/vvbpAPQovpfbtfcpyfyi0RVerbrSzlZI4MS84gdoW0C0skkkgyw
+ Mkbt0jusZVSQFNNDok6eTVskykViOO59S5VDEVrTsV6mGMPjcTWgkYOKJtb2DQBMcX7x ag== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2uytd3pgud-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Sep 2019 19:04:18 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8DJ3uYu001325;
+        Fri, 13 Sep 2019 19:04:17 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2uytdjnyfk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Sep 2019 19:04:13 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8DJ3Y8t025684;
+        Fri, 13 Sep 2019 19:03:35 GMT
+Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 13 Sep 2019 12:03:34 -0700
+Subject: Re: [PATCH v2] xen/pci: reserve MCFG areas earlier
+To:     Igor Druzhinin <igor.druzhinin@citrix.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     jgross@suse.com
+References: <1568313111-14726-1-git-send-email-igor.druzhinin@citrix.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ mQINBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
+ PQg8rMsSd0OzIvvjbEAvaWLlbs8wa3MtVLysHY/DfqRK9Zvr/RgrsYC6ukOB7igy2PGqZd+M
+ MDnSmVzik0sPvB6xPV7QyFsykEgpnHbvdZAUy/vyys8xgT0PVYR5hyvhyf6VIfGuvqIsvJw5
+ C8+P71CHI+U/IhsKrLrsiYHpAhQkw+Zvyeml6XSi5w4LXDbF+3oholKYCkPwxmGdK8MUIdkM
+ d7iYdKqiP4W6FKQou/lC3jvOceGupEoDV9botSWEIIlKdtm6C4GfL45RD8V4B9iy24JHPlom
+ woVWc0xBZboQguhauQqrBFooHO3roEeM1pxXjLUbDtH4t3SAI3gt4dpSyT3EvzhyNQVVIxj2
+ FXnIChrYxR6S0ijSqUKO0cAduenhBrpYbz9qFcB/GyxD+ZWY7OgQKHUZMWapx5bHGQ8bUZz2
+ SfjZwK+GETGhfkvNMf6zXbZkDq4kKB/ywaKvVPodS1Poa44+B9sxbUp1jMfFtlOJ3AYB0WDS
+ Op3d7F2ry20CIf1Ifh0nIxkQPkTX7aX5rI92oZeu5u038dHUu/dO2EcuCjl1eDMGm5PLHDSP
+ 0QUw5xzk1Y8MG1JQ56PtqReO33inBXG63yTIikJmUXFTw6lLJwARAQABtDNCb3JpcyBPc3Ry
+ b3Zza3kgKFdvcmspIDxib3Jpcy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT6JAjgEEwECACIFAlH8
+ CgsCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEIredpCGysGyasEP/j5xApopUf4g
+ 9Fl3UxZuBx+oduuw3JHqgbGZ2siA3EA4bKwtKq8eT7ekpApn4c0HA8TWTDtgZtLSV5IdH+9z
+ JimBDrhLkDI3Zsx2CafL4pMJvpUavhc5mEU8myp4dWCuIylHiWG65agvUeFZYK4P33fGqoaS
+ VGx3tsQIAr7MsQxilMfRiTEoYH0WWthhE0YVQzV6kx4wj4yLGYPPBtFqnrapKKC8yFTpgjaK
+ jImqWhU9CSUAXdNEs/oKVR1XlkDpMCFDl88vKAuJwugnixjbPFTVPyoC7+4Bm/FnL3iwlJVE
+ qIGQRspt09r+datFzPqSbp5Fo/9m4JSvgtPp2X2+gIGgLPWp2ft1NXHHVWP19sPgEsEJXSr9
+ tskM8ScxEkqAUuDs6+x/ISX8wa5Pvmo65drN+JWA8EqKOHQG6LUsUdJolFM2i4Z0k40BnFU/
+ kjTARjrXW94LwokVy4x+ZYgImrnKWeKac6fMfMwH2aKpCQLlVxdO4qvJkv92SzZz4538az1T
+ m+3ekJAimou89cXwXHCFb5WqJcyjDfdQF857vTn1z4qu7udYCuuV/4xDEhslUq1+GcNDjAhB
+ nNYPzD+SvhWEsrjuXv+fDONdJtmLUpKs4Jtak3smGGhZsqpcNv8nQzUGDQZjuCSmDqW8vn2o
+ hWwveNeRTkxh+2x1Qb3GT46uuQINBFH8CgsBEADGC/yx5ctcLQlB9hbq7KNqCDyZNoYu1HAB
+ Hal3MuxPfoGKObEktawQPQaSTB5vNlDxKihezLnlT/PKjcXC2R1OjSDinlu5XNGc6mnky03q
+ yymUPyiMtWhBBftezTRxWRslPaFWlg/h/Y1iDuOcklhpr7K1h1jRPCrf1yIoxbIpDbffnuyz
+ kuto4AahRvBU4Js4sU7f/btU+h+e0AcLVzIhTVPIz7PM+Gk2LNzZ3/on4dnEc/qd+ZZFlOQ4
+ KDN/hPqlwA/YJsKzAPX51L6Vv344pqTm6Z0f9M7YALB/11FO2nBB7zw7HAUYqJeHutCwxm7i
+ BDNt0g9fhviNcJzagqJ1R7aPjtjBoYvKkbwNu5sWDpQ4idnsnck4YT6ctzN4I+6lfkU8zMzC
+ gM2R4qqUXmxFIS4Bee+gnJi0Pc3KcBYBZsDK44FtM//5Cp9DrxRQOh19kNHBlxkmEb8kL/pw
+ XIDcEq8MXzPBbxwHKJ3QRWRe5jPNpf8HCjnZz0XyJV0/4M1JvOua7IZftOttQ6KnM4m6WNIZ
+ 2ydg7dBhDa6iv1oKdL7wdp/rCulVWn8R7+3cRK95SnWiJ0qKDlMbIN8oGMhHdin8cSRYdmHK
+ kTnvSGJNlkis5a+048o0C6jI3LozQYD/W9wq7MvgChgVQw1iEOB4u/3FXDEGulRVko6xCBU4
+ SQARAQABiQIfBBgBAgAJBQJR/AoLAhsMAAoJEIredpCGysGyfvMQAIywR6jTqix6/fL0Ip8G
+ jpt3uk//QNxGJE3ZkUNLX6N786vnEJvc1beCu6EwqD1ezG9fJKMl7F3SEgpYaiKEcHfoKGdh
+ 30B3Hsq44vOoxR6zxw2B/giADjhmWTP5tWQ9548N4VhIZMYQMQCkdqaueSL+8asp8tBNP+TJ
+ PAIIANYvJaD8xA7sYUXGTzOXDh2THWSvmEWWmzok8er/u6ZKdS1YmZkUy8cfzrll/9hiGCTj
+ u3qcaOM6i/m4hqtvsI1cOORMVwjJF4+IkC5ZBoeRs/xW5zIBdSUoC8L+OCyj5JETWTt40+lu
+ qoqAF/AEGsNZTrwHJYu9rbHH260C0KYCNqmxDdcROUqIzJdzDKOrDmebkEVnxVeLJBIhYZUd
+ t3Iq9hdjpU50TA6sQ3mZxzBdfRgg+vaj2DsJqI5Xla9QGKD+xNT6v14cZuIMZzO7w0DoojM4
+ ByrabFsOQxGvE0w9Dch2BDSI2Xyk1zjPKxG1VNBQVx3flH37QDWpL2zlJikW29Ws86PHdthh
+ Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
+ 19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
+ Jg6OxFYd01z+a+oL
+Message-ID: <76c350ed-9753-ef02-3813-2bf53b783227@oracle.com>
+Date:   Fri, 13 Sep 2019 15:03:14 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a68276d7-4167-4078-c277-08d7387cbe45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2019 19:01:11.7696
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bO7gNvsJuA9Z5QL2gpClDA4KdcxFTCJq57+ExBua3A7n9j+Tlc0Lagp9au0Tk/Imk4VVv5cIyr8m7t/KmSaCiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3596
+In-Reply-To: <1568313111-14726-1-git-send-email-igor.druzhinin@citrix.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9379 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909130194
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9379 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909130194
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T25jZSBydW4tdGltZSBBVklDIGFjdGl2YXRlL2RlYWN0aXZhdGUgaXMgc3VwcG9ydGVkLCBhbmQg
-RU9JIHdvcmthcm91bmQNCmZvciBBVklDIGlzIGltcGxlbWVudGVkLCB3ZSBjYW4gcmVtb3ZlIHRo
-ZSBrZXJuZWwgaXJxY2hpcCBzcGxpdCBtb2RlDQpyZXF1aXJlbWVudCBmb3IgQVZJQy4NCg0KSGVu
-Y2UsIHJlbW92ZSB0aGUgY2hlY2sgZm9yIGlycWNoaXAgc3BsaXQgbW9kZSB3aGVuIGVuYWJsaW5n
-IEFWSUMuDQoNCkNjOiBSYWRpbSBLcsSNbcOhxZkgPHJrcmNtYXJAcmVkaGF0LmNvbT4NCkNjOiBQ
-YW9sbyBCb256aW5pIDxwYm9uemluaUByZWRoYXQuY29tPg0KU2lnbmVkLW9mZi1ieTogU3VyYXZl
-ZSBTdXRoaWt1bHBhbml0IDxzdXJhdmVlLnN1dGhpa3VscGFuaXRAYW1kLmNvbT4NCi0tLQ0KIGFy
-Y2gveDg2L2t2bS9zdm0uYyB8IDIgKy0NCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
-IDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L2t2bS9zdm0uYyBiL2FyY2gv
-eDg2L2t2bS9zdm0uYw0KaW5kZXggNDU3ZmZlMS4uNGM2NDljMCAxMDA2NDQNCi0tLSBhL2FyY2gv
-eDg2L2t2bS9zdm0uYw0KKysrIGIvYXJjaC94ODYva3ZtL3N2bS5jDQpAQCAtNTIwMyw3ICs1MjAz
-LDcgQEAgc3RhdGljIHZvaWQgc3ZtX3NldF92aXJ0dWFsX2FwaWNfbW9kZShzdHJ1Y3Qga3ZtX3Zj
-cHUgKnZjcHUpDQogDQogc3RhdGljIGJvb2wgc3ZtX2dldF9lbmFibGVfYXBpY3Yoc3RydWN0IGt2
-bSAqa3ZtKQ0KIHsNCi0JcmV0dXJuIGF2aWMgJiYgaXJxY2hpcF9zcGxpdChrdm0pOw0KKwlyZXR1
-cm4gYXZpYzsNCiB9DQogDQogc3RhdGljIHZvaWQgc3ZtX2h3YXBpY19pcnJfdXBkYXRlKHN0cnVj
-dCBrdm1fdmNwdSAqdmNwdSwgaW50IG1heF9pcnIpDQotLSANCjEuOC4zLjENCg0K
+On 9/12/19 2:31 PM, Igor Druzhinin wrote:
+> If MCFG area is not reserved in E820, Xen by default will defer its usage
+> until Dom0 registers it explicitly after ACPI parser recognizes it as
+> a reserved resource in DSDT. Having it reserved in E820 is not
+> mandatory according to "PCI Firmware Specification, rev 3.2" (par. 4.1.2)
+> and firmware is free to keep a hole in E820 in that place. Xen doesn't know
+> what exactly is inside this hole since it lacks full ACPI view of the
+> platform therefore it's potentially harmful to access MCFG region
+> without additional checks as some machines are known to provide
+> inconsistent information on the size of the region.
+>
+> Now xen_mcfg_late() runs after acpi_init() which is too late as some basic
+> PCI enumeration starts exactly there as well. Trying to register a device
+> prior to MCFG reservation causes multiple problems with PCIe extended
+> capability initializations in Xen (e.g. SR-IOV VF BAR sizing). There are
+> no convenient hooks for us to subscribe to so register MCFG areas earlier
+> upon the first invocation of xen_add_device(). It should be safe to do once
+> since all the boot time buses must have their MCFG areas in MCFG table
+> already and we don't support PCI bus hot-plug.
+>
+> Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
+
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+
+and applied to for-linus-5.4
+
