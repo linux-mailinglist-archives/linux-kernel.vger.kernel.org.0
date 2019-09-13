@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58EAFB206F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A17B2071
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390956AbfIMNWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:22:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52002 "EHLO mail.kernel.org"
+        id S2389072AbfIMNWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:22:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390319AbfIMNV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:21:59 -0400
+        id S2389953AbfIMNWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:22:01 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0437D20717;
-        Fri, 13 Sep 2019 13:21:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AEFB20830;
+        Fri, 13 Sep 2019 13:22:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380918;
-        bh=dalrnHsil4hTXqXKKp8qF0QRwgIrSl3mgXCtomtKHl0=;
+        s=default; t=1568380920;
+        bh=UDnXtbd710pMVoNFt1FBa760326mEjIhMRy4SgOn1Hw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gdWGbJTUHtZk+Y8zRsQC23TQAj1oSVOkxIlMTSKNIEi8zwcbjE0vAdjbMuWOz6kuU
-         X+Vr37vlVB3t3RQg7PwM/TX4vixmMt5hF4XuEa4Fhi55q28HD8U6+InBbHd8/czwit
-         3e47bxGI2sis045m4O1rMMf3kjbufRjNAR1aWeGE=
+        b=HOZQxyo/2OcrPy/RQ8tJJVDOXRpd2/eiMx20GTH4WhDRn4eZuFygjzghFTd9zHSCr
+         TJNAY3AwtVDPMueuH7hAYQPJysuUVeC43PuyI/bMJFEhiQhl6+NeHrWRhCe5YzNmjg
+         CN2u28Dxse+p8lek+CoU8GW+Cl43tI3oqanpR0G8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kenneth Graunke <kenneth@whitecape.org>,
+        stable@vger.kernel.org, Stefan Gottwald <gottwald@igel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
         Chris Wilson <chris@chris-wilson.co.uk>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
         Jani Nikula <jani.nikula@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 24/37] drm/i915: Disable SAMPLER_STATE prefetching on all Gen11 steppings.
-Date:   Fri, 13 Sep 2019 14:07:29 +0100
-Message-Id: <20190913130520.081807213@linuxfoundation.org>
+Subject: [PATCH 5.2 25/37] drm/i915: Make sure cdclk is high enough for DP audio on VLV/CHV
+Date:   Fri, 13 Sep 2019 14:07:30 +0100
+Message-Id: <20190913130520.218322624@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
 References: <20190913130510.727515099@linuxfoundation.org>
@@ -46,51 +47,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 248f883db61283b4f5a1c92a5e27277377b09f16 ]
+[ Upstream commit a8f196a0fa6391a436f63f360a1fb57031fdf26c ]
 
-The Demand Prefetch workaround (binding table prefetching) only applies
-to Icelake A0/B0.  But the Sampler Prefetch workaround needs to be
-applied to all Gen11 steppings, according to a programming note in the
-SARCHKMD documentation.
+On VLV/CHV there is some kind of linkage between the cdclk frequency
+and the DP link frequency. The spec says:
+"For DP audio configuration, cdclk frequency shall be set to
+ meet the following requirements:
+ DP Link Frequency(MHz) | Cdclk frequency(MHz)
+ 270                    | 320 or higher
+ 162                    | 200 or higher"
 
-Using the Intel Gallium driver, I have seen intermittent failures in
-the dEQP-GLES31.functional.copy_image.non_compressed.* tests.  After
-applying this workaround, the tests reliably pass.
+I suspect that would more accurately be expressed as
+"cdclk >= DP link clock", and in any case we can express it like
+that in the code because of the limited set of cdclk (200, 266,
+320, 400 MHz) and link frequencies (162 and 270 MHz) we support.
 
-v2: Remove the overlap with a pre-production w/a
+Without this we can end up in a situation where the cdclk
+is too low and enabling DP audio will kill the pipe. Happens
+eg. with 2560x1440 modes where the 266MHz cdclk is sufficient
+to pump the pixels (241.5 MHz dotclock) but is too low for
+the DP audio due to the link frequency being 270 MHz.
 
-BSpec: 9663
-Signed-off-by: Kenneth Graunke <kenneth@whitecape.org>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+v2: Spell out the cdclk and link frequencies we actually support
+
 Cc: stable@vger.kernel.org
-Reviewed-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190625090655.19220-1-chris@chris-wilson.co.uk
-(cherry picked from commit f9a393875d3af13cc3267477746608dadb7f17c1)
+Tested-by: Stefan Gottwald <gottwald@igel.com>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111149
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190717114536.22937-1-ville.syrjala@linux.intel.com
+Acked-by: Chris Wilson <chris@chris-wilson.co.uk>
+(cherry picked from commit bffb31f73b29a60ef693842d8744950c2819851d)
 Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/intel_workarounds.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/intel_cdclk.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/intel_workarounds.c b/drivers/gpu/drm/i915/intel_workarounds.c
-index 841b8e515f4d6..2fb70fab2d1c6 100644
---- a/drivers/gpu/drm/i915/intel_workarounds.c
-+++ b/drivers/gpu/drm/i915/intel_workarounds.c
-@@ -1167,8 +1167,12 @@ rcs_engine_wa_init(struct intel_engine_cs *engine, struct i915_wa_list *wal)
- 		if (IS_ICL_REVID(i915, ICL_REVID_A0, ICL_REVID_B0))
- 			wa_write_or(wal,
- 				    GEN7_SARCHKMD,
--				    GEN7_DISABLE_DEMAND_PREFETCH |
--				    GEN7_DISABLE_SAMPLER_PREFETCH);
-+				    GEN7_DISABLE_DEMAND_PREFETCH);
-+
-+		/* Wa_1606682166:icl */
-+		wa_write_or(wal,
-+			    GEN7_SARCHKMD,
-+			    GEN7_DISABLE_SAMPLER_PREFETCH);
- 	}
+diff --git a/drivers/gpu/drm/i915/intel_cdclk.c b/drivers/gpu/drm/i915/intel_cdclk.c
+index ae40a8679314e..fd5236da039fb 100644
+--- a/drivers/gpu/drm/i915/intel_cdclk.c
++++ b/drivers/gpu/drm/i915/intel_cdclk.c
+@@ -2269,6 +2269,17 @@ int intel_crtc_compute_min_cdclk(const struct intel_crtc_state *crtc_state)
+ 	if (crtc_state->has_audio && INTEL_GEN(dev_priv) >= 9)
+ 		min_cdclk = max(2 * 96000, min_cdclk);
  
- 	if (IS_GEN_RANGE(i915, 9, 11)) {
++	/*
++	 * "For DP audio configuration, cdclk frequency shall be set to
++	 *  meet the following requirements:
++	 *  DP Link Frequency(MHz) | Cdclk frequency(MHz)
++	 *  270                    | 320 or higher
++	 *  162                    | 200 or higher"
++	 */
++	if ((IS_VALLEYVIEW(dev_priv) || IS_CHERRYVIEW(dev_priv)) &&
++	    intel_crtc_has_dp_encoder(crtc_state) && crtc_state->has_audio)
++		min_cdclk = max(crtc_state->port_clock, min_cdclk);
++
+ 	/*
+ 	 * On Valleyview some DSI panels lose (v|h)sync when the clock is lower
+ 	 * than 320000KHz.
 -- 
 2.20.1
 
