@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 521A8B1F78
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60E5B1FA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390455AbfIMNTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:19:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48192 "EHLO mail.kernel.org"
+        id S2390828AbfIMNV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:21:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390444AbfIMNTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:19:49 -0400
+        id S2389107AbfIMNV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:21:26 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C08920640;
-        Fri, 13 Sep 2019 13:19:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 499C0206A5;
+        Fri, 13 Sep 2019 13:21:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380788;
-        bh=xeJPOiQaOi1s+9JeA7eunTKWAgu9A6ggmpWUwR/faOM=;
+        s=default; t=1568380885;
+        bh=VD0f0+ab+C+4GW+EAuXTuKN+g/TJz9sfwB1E3e6vQIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e9nY8OIKTo6FgydW6sEtncjB4yjbBYUre3NxZVGW4v5T8JsgMhD2dYyXxc1B0+iRI
-         /JI5wCp0qg6ZqogW2Y7wQlMXCZayUag/TXk8F4bb1euP4HgoxVDSKPK45FthrzOcYp
-         xnYyI65UAGPKcvfQWYUiiDfpeW2RYoV+LZTRCvg4=
+        b=aHOY/RLCAI2ySYFA9EHhOELGDTnTn37caVnxMqAuWc1pgXFDZFu0MSNoG0IZxP9xw
+         fQYUxG8Os5l9NQ53jCLYig/Qf8IFnQo+TjxkEpob14KHoVT9BuavNoFaypX0zMnU0Y
+         /lfugZBaiSJPC4UJGZTZ2/dpUOG1hZDuxuAdq5p0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 178/190] bcache: add comments for mutex_lock(&b->write_lock)
-Date:   Fri, 13 Sep 2019 14:07:13 +0100
-Message-Id: <20190913130614.001157669@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Subject: [PATCH 5.2 09/37] drm/vmwgfx: Fix double free in vmw_recv_msg()
+Date:   Fri, 13 Sep 2019 14:07:14 +0100
+Message-Id: <20190913130513.448614886@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
-References: <20190913130559.669563815@linuxfoundation.org>
+In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
+References: <20190913130510.727515099@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +43,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 41508bb7d46b74dba631017e5a702a86caf1db8c ]
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-When accessing or modifying BTREE_NODE_dirty bit, it is not always
-necessary to acquire b->write_lock. In bch_btree_cache_free() and
-mca_reap() acquiring b->write_lock is necessary, and this patch adds
-comments to explain why mutex_lock(&b->write_lock) is necessary for
-checking or clearing BTREE_NODE_dirty bit there.
+commit 08b0c891605acf727e43e3e03a25857d3e789b61 upstream.
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+We recently added a kfree() after the end of the loop:
+
+	if (retries == RETRIES) {
+		kfree(reply);
+		return -EINVAL;
+	}
+
+There are two problems.  First the test is wrong and because retries
+equals RETRIES if we succeed on the last iteration through the loop.
+Second if we fail on the last iteration through the loop then the kfree
+is a double free.
+
+When you're reading this code, please note the break statement at the
+end of the while loop.  This patch changes the loop so that if it's not
+successful then "reply" is NULL and we can test for that afterward.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 6b7c3b86f0b6 ("drm/vmwgfx: fix memory leak when too many retries have occurred")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/md/bcache/btree.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpu/drm/vmwgfx/vmwgfx_msg.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 8c80833e73a9a..e0468fd41b6ea 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -649,6 +649,11 @@ static int mca_reap(struct btree *b, unsigned int min_order, bool flush)
- 		up(&b->io_mutex);
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
+@@ -353,7 +353,7 @@ static int vmw_recv_msg(struct rpc_chann
+ 				     !!(HIGH_WORD(ecx) & MESSAGE_STATUS_HB));
+ 		if ((HIGH_WORD(ebx) & MESSAGE_STATUS_SUCCESS) == 0) {
+ 			kfree(reply);
+-
++			reply = NULL;
+ 			if ((HIGH_WORD(ebx) & MESSAGE_STATUS_CPT) != 0) {
+ 				/* A checkpoint occurred. Retry. */
+ 				continue;
+@@ -377,7 +377,7 @@ static int vmw_recv_msg(struct rpc_chann
+ 
+ 		if ((HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS) == 0) {
+ 			kfree(reply);
+-
++			reply = NULL;
+ 			if ((HIGH_WORD(ecx) & MESSAGE_STATUS_CPT) != 0) {
+ 				/* A checkpoint occurred. Retry. */
+ 				continue;
+@@ -389,10 +389,8 @@ static int vmw_recv_msg(struct rpc_chann
+ 		break;
  	}
  
-+	/*
-+	 * BTREE_NODE_dirty might be cleared in btree_flush_btree() by
-+	 * __bch_btree_node_write(). To avoid an extra flush, acquire
-+	 * b->write_lock before checking BTREE_NODE_dirty bit.
-+	 */
- 	mutex_lock(&b->write_lock);
- 	if (btree_node_dirty(b))
- 		__bch_btree_node_write(b, &cl);
-@@ -772,6 +777,11 @@ void bch_btree_cache_free(struct cache_set *c)
- 	while (!list_empty(&c->btree_cache)) {
- 		b = list_first_entry(&c->btree_cache, struct btree, list);
+-	if (retries == RETRIES) {
+-		kfree(reply);
++	if (!reply)
+ 		return -EINVAL;
+-	}
  
-+		/*
-+		 * This function is called by cache_set_free(), no I/O
-+		 * request on cache now, it is unnecessary to acquire
-+		 * b->write_lock before clearing BTREE_NODE_dirty anymore.
-+		 */
- 		if (btree_node_dirty(b)) {
- 			btree_complete_write(b, btree_current_write(b));
- 			clear_bit(BTREE_NODE_dirty, &b->flags);
--- 
-2.20.1
-
+ 	*msg_len = reply_len;
+ 	*msg     = reply;
 
 
