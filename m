@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E28A6B20B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57F6FB20B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391340AbfIMNZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:25:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:30520 "EHLO mx1.redhat.com"
+        id S2391349AbfIMNZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:25:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53350 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390993AbfIMNZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:25:19 -0400
+        id S2390988AbfIMNZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:25:21 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B6DB2301A3AC;
-        Fri, 13 Sep 2019 13:25:18 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABE8C7F746;
+        Fri, 13 Sep 2019 13:25:20 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C7585C219;
-        Fri, 13 Sep 2019 13:25:16 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0FE3F5C219;
+        Fri, 13 Sep 2019 13:25:18 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,199 +27,141 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 31/73] libperf: Add perf_evlist__id_add_fd function
-Date:   Fri, 13 Sep 2019 15:23:13 +0200
-Message-Id: <20190913132355.21634-32-jolsa@kernel.org>
+Subject: [PATCH 32/73] libperf: Move page_size into libperf
+Date:   Fri, 13 Sep 2019 15:23:14 +0200
+Message-Id: <20190913132355.21634-33-jolsa@kernel.org>
 In-Reply-To: <20190913132355.21634-1-jolsa@kernel.org>
 References: <20190913132355.21634-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 13 Sep 2019 13:25:18 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Fri, 13 Sep 2019 13:25:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding perf_evlist__id_add_fd function to libperf
-as internal function.
+We need page_size in libperf, so moving it in there.
+Adding libperf_init as a global libperf init functon.
 
-Link: http://lkml.kernel.org/n/tip-ba32sqqoqy925xs4l1bvwg1f@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-g6auuaej31nsusuevuhcgxli@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/lib/evlist.c                  | 44 ++++++++++++++++++++++++
- tools/perf/lib/include/internal/evlist.h |  4 +++
- tools/perf/util/evlist.c                 | 43 +----------------------
- tools/perf/util/evlist.h                 |  4 ---
- tools/perf/util/evsel.c                  |  2 +-
- 5 files changed, 50 insertions(+), 47 deletions(-)
+ tools/perf/lib/core.c                 | 7 +++++++
+ tools/perf/lib/include/internal/lib.h | 2 ++
+ tools/perf/lib/include/perf/core.h    | 1 +
+ tools/perf/lib/lib.c                  | 2 ++
+ tools/perf/lib/libperf.map            | 1 +
+ tools/perf/perf.c                     | 4 ++--
+ tools/perf/util/util.h                | 2 --
+ 7 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
-index f4f8e37c6272..35467d99cea5 100644
---- a/tools/perf/lib/evlist.c
-+++ b/tools/perf/lib/evlist.c
-@@ -3,11 +3,14 @@
- #include <perf/evsel.h>
- #include <linux/list.h>
- #include <linux/hash.h>
-+#include <sys/ioctl.h>
- #include <internal/evlist.h>
- #include <internal/evsel.h>
- #include <internal/xyarray.h>
- #include <linux/zalloc.h>
- #include <stdlib.h>
-+#include <errno.h>
+diff --git a/tools/perf/lib/core.c b/tools/perf/lib/core.c
+index 29d5e3348718..6689d593c2d1 100644
+--- a/tools/perf/lib/core.c
++++ b/tools/perf/lib/core.c
+@@ -4,7 +4,9 @@
+ 
+ #include <stdio.h>
+ #include <stdarg.h>
 +#include <unistd.h>
- #include <perf/cpumap.h>
- #include <perf/threadmap.h>
+ #include <perf/core.h>
++#include <internal/lib.h>
+ #include "internal.h"
  
-@@ -193,3 +196,44 @@ void perf_evlist__id_add(struct perf_evlist *evlist,
- 	perf_evlist__id_hash(evlist, evsel, cpu, thread, id);
- 	evsel->id[evsel->ids++] = id;
+ static int __base_pr(enum libperf_print_level level, const char *format,
+@@ -32,3 +34,8 @@ void libperf_print(enum libperf_print_level level, const char *format, ...)
+ 	__libperf_pr(level, format, args);
+ 	va_end(args);
  }
 +
-+int perf_evlist__id_add_fd(struct perf_evlist *evlist,
-+			   struct perf_evsel *evsel,
-+			   int cpu, int thread, int fd)
++void libperf_init(void)
 +{
-+	u64 read_data[4] = { 0, };
-+	int id_idx = 1; /* The first entry is the counter value */
-+	u64 id;
-+	int ret;
-+
-+	ret = ioctl(fd, PERF_EVENT_IOC_ID, &id);
-+	if (!ret)
-+		goto add;
-+
-+	if (errno != ENOTTY)
-+		return -1;
-+
-+	/* Legacy way to get event id.. All hail to old kernels! */
-+
-+	/*
-+	 * This way does not work with group format read, so bail
-+	 * out in that case.
-+	 */
-+	if (perf_evlist__read_format(evlist) & PERF_FORMAT_GROUP)
-+		return -1;
-+
-+	if (!(evsel->attr.read_format & PERF_FORMAT_ID) ||
-+	    read(fd, &read_data, sizeof(read_data)) == -1)
-+		return -1;
-+
-+	if (evsel->attr.read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
-+		++id_idx;
-+	if (evsel->attr.read_format & PERF_FORMAT_TOTAL_TIME_RUNNING)
-+		++id_idx;
-+
-+	id = read_data[id_idx];
-+
-+add:
-+	perf_evlist__id_add(evlist, evsel, cpu, thread, id);
-+	return 0;
++	page_size = sysconf(_SC_PAGE_SIZE);
 +}
-diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
-index 649406f717bc..7d64185cfabd 100644
---- a/tools/perf/lib/include/internal/evlist.h
-+++ b/tools/perf/lib/include/internal/evlist.h
-@@ -72,4 +72,8 @@ void perf_evlist__id_add(struct perf_evlist *evlist,
- 			 struct perf_evsel *evsel,
- 			 int cpu, int thread, u64 id);
+diff --git a/tools/perf/lib/include/internal/lib.h b/tools/perf/lib/include/internal/lib.h
+index 0b56f1201dc9..9168b7d2a7e1 100644
+--- a/tools/perf/lib/include/internal/lib.h
++++ b/tools/perf/lib/include/internal/lib.h
+@@ -4,6 +4,8 @@
  
-+int perf_evlist__id_add_fd(struct perf_evlist *evlist,
-+			   struct perf_evsel *evsel,
-+			   int cpu, int thread, int fd);
+ #include <unistd.h>
+ 
++extern unsigned int page_size;
 +
- #endif /* __LIBPERF_INTERNAL_EVLIST_H */
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index dde6c68b9a42..433e9af6e063 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -460,47 +460,6 @@ int perf_evlist__poll(struct evlist *evlist, int timeout)
- 	return fdarray__poll(&evlist->core.pollfd, timeout);
- }
+ ssize_t readn(int fd, void *buf, size_t n);
+ ssize_t writen(int fd, const void *buf, size_t n);
  
--int perf_evlist__id_add_fd(struct evlist *evlist,
--			   struct evsel *evsel,
--			   int cpu, int thread, int fd)
--{
--	u64 read_data[4] = { 0, };
--	int id_idx = 1; /* The first entry is the counter value */
--	u64 id;
--	int ret;
--
--	ret = ioctl(fd, PERF_EVENT_IOC_ID, &id);
--	if (!ret)
--		goto add;
--
--	if (errno != ENOTTY)
--		return -1;
--
--	/* Legacy way to get event id.. All hail to old kernels! */
--
--	/*
--	 * This way does not work with group format read, so bail
--	 * out in that case.
--	 */
--	if (perf_evlist__read_format(&evlist->core) & PERF_FORMAT_GROUP)
--		return -1;
--
--	if (!(evsel->core.attr.read_format & PERF_FORMAT_ID) ||
--	    read(fd, &read_data, sizeof(read_data)) == -1)
--		return -1;
--
--	if (evsel->core.attr.read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
--		++id_idx;
--	if (evsel->core.attr.read_format & PERF_FORMAT_TOTAL_TIME_RUNNING)
--		++id_idx;
--
--	id = read_data[id_idx];
--
-- add:
--	perf_evlist__id_add(&evlist->core, &evsel->core, cpu, thread, id);
--	return 0;
--}
--
- static void perf_evlist__set_sid_idx(struct evlist *evlist,
- 				     struct evsel *evsel, int idx, int cpu,
- 				     int thread)
-@@ -775,7 +734,7 @@ static int evlist__mmap_per_evsel(struct evlist *evlist, int idx,
- 		}
+diff --git a/tools/perf/lib/include/perf/core.h b/tools/perf/lib/include/perf/core.h
+index c341a7b2c874..ba2f4e76a3e2 100644
+--- a/tools/perf/lib/include/perf/core.h
++++ b/tools/perf/lib/include/perf/core.h
+@@ -18,5 +18,6 @@ typedef int (*libperf_print_fn_t)(enum libperf_print_level level,
+ 				  const char *, va_list ap);
  
- 		if (evsel->core.attr.read_format & PERF_FORMAT_ID) {
--			if (perf_evlist__id_add_fd(evlist, evsel, cpu, thread,
-+			if (perf_evlist__id_add_fd(&evlist->core, &evsel->core, cpu, thread,
- 						   fd) < 0)
- 				return -1;
- 			perf_evlist__set_sid_idx(evlist, evsel, idx, cpu,
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 37f29b67dd61..204315516c32 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -113,10 +113,6 @@ struct evsel *
- perf_evlist__find_tracepoint_by_name(struct evlist *evlist,
- 				     const char *name);
+ LIBPERF_API void libperf_set_print(libperf_print_fn_t fn);
++LIBPERF_API void libperf_init(void);
  
--int perf_evlist__id_add_fd(struct evlist *evlist,
--			   struct evsel *evsel,
--			   int cpu, int thread, int fd);
+ #endif /* __LIBPERF_CORE_H */
+diff --git a/tools/perf/lib/lib.c b/tools/perf/lib/lib.c
+index 2a81819c3b8c..18658931fc71 100644
+--- a/tools/perf/lib/lib.c
++++ b/tools/perf/lib/lib.c
+@@ -5,6 +5,8 @@
+ #include <linux/kernel.h>
+ #include <internal/lib.h>
+ 
++unsigned int page_size;
++
+ static ssize_t ion(bool is_read, int fd, void *buf, size_t n)
+ {
+ 	void *buf_start = buf;
+diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
+index dc4d66363bc4..3fbf050b5add 100644
+--- a/tools/perf/lib/libperf.map
++++ b/tools/perf/lib/libperf.map
+@@ -1,5 +1,6 @@
+ LIBPERF_0.0.1 {
+ 	global:
++		libperf_init;
+ 		libperf_set_print;
+ 		perf_cpu_map__dummy_new;
+ 		perf_cpu_map__get;
+diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+index 1193b923e801..ead18b712d6c 100644
+--- a/tools/perf/perf.c
++++ b/tools/perf/perf.c
+@@ -25,6 +25,7 @@
+ #include "perf-sys.h"
+ #include <api/fs/fs.h>
+ #include <api/fs/tracing_path.h>
++#include <internal/lib.h>
+ #include <errno.h>
+ #include <pthread.h>
+ #include <signal.h>
+@@ -438,8 +439,7 @@ int main(int argc, const char **argv)
+ 	exec_cmd_init("perf", PREFIX, PERF_EXEC_PATH, EXEC_PATH_ENVIRONMENT);
+ 	pager_init(PERF_PAGER_ENVIRONMENT);
+ 
+-	/* The page_size is placed in util object. */
+-	page_size = sysconf(_SC_PAGE_SIZE);
++	libperf_init();
+ 
+ 	cmd = extract_argv0_path(argv[0]);
+ 	if (!cmd)
+diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+index 45a5c6f20197..d6ae394e67c4 100644
+--- a/tools/perf/util/util.h
++++ b/tools/perf/util/util.h
+@@ -33,8 +33,6 @@ int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size);
+ 
+ size_t hex_width(u64 v);
+ 
+-extern unsigned int page_size;
 -
- int perf_evlist__add_pollfd(struct evlist *evlist, int fd);
- int perf_evlist__alloc_pollfd(struct evlist *evlist);
- int perf_evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask);
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 904b67d23bde..d69549c57fda 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -2936,7 +2936,7 @@ static int store_evsel_ids(struct evsel *evsel, struct evlist *evlist)
- 		     thread++) {
- 			int fd = FD(evsel, cpu, thread);
+ int sysctl__max_stack(void);
  
--			if (perf_evlist__id_add_fd(evlist, evsel,
-+			if (perf_evlist__id_add_fd(&evlist->core, &evsel->core,
- 						   cpu, thread, fd) < 0)
- 				return -1;
- 		}
+ int fetch_kernel_version(unsigned int *puint,
 -- 
 2.21.0
 
