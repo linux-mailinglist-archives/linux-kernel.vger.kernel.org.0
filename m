@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1BEAB20B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 374F5B20B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391357AbfIMNZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:25:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53366 "EHLO mx1.redhat.com"
+        id S2391370AbfIMNZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:25:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45394 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390988AbfIMNZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:25:24 -0400
+        id S2391356AbfIMNZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:25:27 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6FE4C1DA4;
-        Fri, 13 Sep 2019 13:25:24 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C1493308A9E2;
+        Fri, 13 Sep 2019 13:25:26 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 02C275C1D4;
-        Fri, 13 Sep 2019 13:25:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BCD615C1D4;
+        Fri, 13 Sep 2019 13:25:24 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,110 +27,140 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 33/73] libperf: Merge libperf_set_print in libperf_init
-Date:   Fri, 13 Sep 2019 15:23:15 +0200
-Message-Id: <20190913132355.21634-34-jolsa@kernel.org>
+Subject: [PATCH 34/73] libperf: Add libperf_init call to tests
+Date:   Fri, 13 Sep 2019 15:23:16 +0200
+Message-Id: <20190913132355.21634-35-jolsa@kernel.org>
 In-Reply-To: <20190913132355.21634-1-jolsa@kernel.org>
 References: <20190913132355.21634-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Fri, 13 Sep 2019 13:25:24 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 13 Sep 2019 13:25:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The libperf_set_print needs to be called in any
-case so let's merge it with libperf_init, so
-we have just one init function.
+Adding libperf_init call to automated tests.
 
-Link: http://lkml.kernel.org/n/tip-ak1oqlj43qsbioo7q9m5fg9t@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-xxpguwr7u2jryhsn7wjybexz@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/lib/core.c              | 8 ++------
- tools/perf/lib/include/perf/core.h | 3 +--
- tools/perf/lib/libperf.map         | 1 -
- tools/perf/perf.c                  | 8 +++++++-
- 4 files changed, 10 insertions(+), 10 deletions(-)
+ tools/perf/lib/tests/test-cpumap.c    |  8 ++++++++
+ tools/perf/lib/tests/test-evlist.c    | 10 ++++++++++
+ tools/perf/lib/tests/test-evsel.c     |  8 ++++++++
+ tools/perf/lib/tests/test-threadmap.c |  8 ++++++++
+ 4 files changed, 34 insertions(+)
 
-diff --git a/tools/perf/lib/core.c b/tools/perf/lib/core.c
-index 6689d593c2d1..d0b9ae422b9f 100644
---- a/tools/perf/lib/core.c
-+++ b/tools/perf/lib/core.c
-@@ -17,11 +17,6 @@ static int __base_pr(enum libperf_print_level level, const char *format,
- 
- static libperf_print_fn_t __libperf_pr = __base_pr;
- 
--void libperf_set_print(libperf_print_fn_t fn)
--{
--	__libperf_pr = fn;
--}
--
- __printf(2, 3)
- void libperf_print(enum libperf_print_level level, const char *format, ...)
- {
-@@ -35,7 +30,8 @@ void libperf_print(enum libperf_print_level level, const char *format, ...)
- 	va_end(args);
- }
- 
--void libperf_init(void)
-+void libperf_init(libperf_print_fn_t fn)
- {
- 	page_size = sysconf(_SC_PAGE_SIZE);
-+	__libperf_pr = fn;
- }
-diff --git a/tools/perf/lib/include/perf/core.h b/tools/perf/lib/include/perf/core.h
-index ba2f4e76a3e2..cfd70e720c1c 100644
---- a/tools/perf/lib/include/perf/core.h
-+++ b/tools/perf/lib/include/perf/core.h
-@@ -17,7 +17,6 @@ enum libperf_print_level {
- typedef int (*libperf_print_fn_t)(enum libperf_print_level level,
- 				  const char *, va_list ap);
- 
--LIBPERF_API void libperf_set_print(libperf_print_fn_t fn);
--LIBPERF_API void libperf_init(void);
-+LIBPERF_API void libperf_init(libperf_print_fn_t fn);
- 
- #endif /* __LIBPERF_CORE_H */
-diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
-index 3fbf050b5add..507b4cc4784c 100644
---- a/tools/perf/lib/libperf.map
-+++ b/tools/perf/lib/libperf.map
-@@ -1,7 +1,6 @@
- LIBPERF_0.0.1 {
- 	global:
- 		libperf_init;
--		libperf_set_print;
- 		perf_cpu_map__dummy_new;
- 		perf_cpu_map__get;
- 		perf_cpu_map__put;
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index ead18b712d6c..d13a9b1ce65d 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -429,6 +429,12 @@ void pthread__unblock_sigwinch(void)
- 	pthread_sigmask(SIG_UNBLOCK, &set, NULL);
- }
+diff --git a/tools/perf/lib/tests/test-cpumap.c b/tools/perf/lib/tests/test-cpumap.c
+index 76a43cfb83a1..4224d6f213f8 100644
+--- a/tools/perf/lib/tests/test-cpumap.c
++++ b/tools/perf/lib/tests/test-cpumap.c
+@@ -2,12 +2,20 @@
+ #include <perf/cpumap.h>
+ #include <internal/tests.h>
  
 +static int libperf_print(enum libperf_print_level level,
 +			 const char *fmt, va_list ap)
 +{
-+	return eprintf(level, verbose, fmt, ap);
++	return vfprintf(stderr, fmt, ap);
 +}
 +
- int main(int argc, const char **argv)
+ int main(int argc, char **argv)
  {
- 	int err;
-@@ -439,7 +445,7 @@ int main(int argc, const char **argv)
- 	exec_cmd_init("perf", PREFIX, PERF_EXEC_PATH, EXEC_PATH_ENVIRONMENT);
- 	pager_init(PERF_PAGER_ENVIRONMENT);
+ 	struct perf_cpu_map *cpus;
  
--	libperf_init();
+ 	__T_START;
+ 
 +	libperf_init(libperf_print);
++
+ 	cpus = perf_cpu_map__dummy_new();
+ 	if (!cpus)
+ 		return -1;
+diff --git a/tools/perf/lib/tests/test-evlist.c b/tools/perf/lib/tests/test-evlist.c
+index 4e1407f20ffd..e6b2ab2e2bde 100644
+--- a/tools/perf/lib/tests/test-evlist.c
++++ b/tools/perf/lib/tests/test-evlist.c
+@@ -1,4 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <stdio.h>
++#include <stdarg.h>
+ #include <linux/perf_event.h>
+ #include <perf/cpumap.h>
+ #include <perf/threadmap.h>
+@@ -6,6 +8,12 @@
+ #include <perf/evsel.h>
+ #include <internal/tests.h>
  
- 	cmd = extract_argv0_path(argv[0]);
- 	if (!cmd)
++static int libperf_print(enum libperf_print_level level,
++			 const char *fmt, va_list ap)
++{
++	return vfprintf(stderr, fmt, ap);
++}
++
+ static int test_stat_cpu(void)
+ {
+ 	struct perf_cpu_map *cpus;
+@@ -177,6 +185,8 @@ int main(int argc, char **argv)
+ {
+ 	__T_START;
+ 
++	libperf_init(libperf_print);
++
+ 	test_stat_cpu();
+ 	test_stat_thread();
+ 	test_stat_thread_enable();
+diff --git a/tools/perf/lib/tests/test-evsel.c b/tools/perf/lib/tests/test-evsel.c
+index 2c648fe5617e..64d2257a93cb 100644
+--- a/tools/perf/lib/tests/test-evsel.c
++++ b/tools/perf/lib/tests/test-evsel.c
+@@ -5,6 +5,12 @@
+ #include <perf/evsel.h>
+ #include <internal/tests.h>
+ 
++static int libperf_print(enum libperf_print_level level,
++			 const char *fmt, va_list ap)
++{
++	return vfprintf(stderr, fmt, ap);
++}
++
+ static int test_stat_cpu(void)
+ {
+ 	struct perf_cpu_map *cpus;
+@@ -116,6 +122,8 @@ int main(int argc, char **argv)
+ {
+ 	__T_START;
+ 
++	libperf_init(libperf_print);
++
+ 	test_stat_cpu();
+ 	test_stat_thread();
+ 	test_stat_thread_enable();
+diff --git a/tools/perf/lib/tests/test-threadmap.c b/tools/perf/lib/tests/test-threadmap.c
+index 10a4f4cbbdd5..9b72c43c8c59 100644
+--- a/tools/perf/lib/tests/test-threadmap.c
++++ b/tools/perf/lib/tests/test-threadmap.c
+@@ -2,12 +2,20 @@
+ #include <perf/threadmap.h>
+ #include <internal/tests.h>
+ 
++static int libperf_print(enum libperf_print_level level,
++			 const char *fmt, va_list ap)
++{
++	return vfprintf(stderr, fmt, ap);
++}
++
+ int main(int argc, char **argv)
+ {
+ 	struct perf_thread_map *threads;
+ 
+ 	__T_START;
+ 
++	libperf_init(libperf_print);
++
+ 	threads = perf_thread_map__new_dummy();
+ 	if (!threads)
+ 		return -1;
 -- 
 2.21.0
 
