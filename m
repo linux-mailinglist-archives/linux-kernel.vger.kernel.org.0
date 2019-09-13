@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9013B1F98
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD10FB1F6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390678AbfIMNUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:20:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50084 "EHLO mail.kernel.org"
+        id S1730270AbfIMNTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:19:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389901AbfIMNUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:20:51 -0400
+        id S2389470AbfIMNTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:19:25 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 876C5214AE;
-        Fri, 13 Sep 2019 13:20:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 890F220CC7;
+        Fri, 13 Sep 2019 13:19:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380851;
-        bh=V5ryNmRt/DI8n+3VX9CWi5D7HhqLdK0qwkg50RMMFtw=;
+        s=default; t=1568380765;
+        bh=M6Y2GPm5GkYCYKq/U3sgL7XcihZDnAQFosxCIlj2vjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NH0PXGCcmp+ehA8t4Fap+g4ijjX0W460jl6C4qOWE4sqB8L7VY/31sSm2uBozci4Y
-         L2i1jsDjbUnAb/r8PXEfIhDwdvT77GIoebAcbDaURVYanRnTno2h7LwNo9M1WUZSnw
-         ms4S/iWoAMhu316ZSMJqJPiuCWsbNznMTp/ruaVQ=
+        b=MMMMVm8rfb+x9d5535oX42UhT4dbm8Tk7h+QXE0+6gZwGv1Z1RsbK3UTm3RGIelzE
+         mxugMAbJYIr2UZqTi7zqs0nXVz8DqMNWfxMT0MFh/8g1v7tcE4SmkqR6Msb8rGRd6H
+         CMpltvHWid0kjbfwxZE0d6KQg6axYlsVcSVdVQms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Jander <david@protonic.nl>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 5.2 01/37] gpio: pca953x: correct type of reg_direction
+        stable@vger.kernel.org, "Claus H. Stovgaard" <cst@phaseone.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 171/190] gpio: dont WARN() on NULL descs if gpiolib is disabled
 Date:   Fri, 13 Sep 2019 14:07:06 +0100
-Message-Id: <20190913130510.940562189@linuxfoundation.org>
+Message-Id: <20190913130613.448204999@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
-References: <20190913130510.727515099@linuxfoundation.org>
+In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
+References: <20190913130559.669563815@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,51 +44,284 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Jander <david@protonic.nl>
+[ Upstream commit ffe0bbabb0cffceceae07484fde1ec2a63b1537c ]
 
-commit bc624a06f0c5190bc37fec7d22cd82b43a579698 upstream.
+If gpiolib is disabled, we use the inline stubs from gpio/consumer.h
+instead of regular definitions of GPIO API. The stubs for 'optional'
+variants of gpiod_get routines return NULL in this case as if the
+relevant GPIO wasn't found. This is correct so far.
 
-The type of reg_direction needs to match the type of the regmap, which
-is u8.
+Calling other (non-gpio_get) stubs from this header triggers a warning
+because the GPIO descriptor couldn't have been requested. The warning
+however is unconditional (WARN_ON(1)) and is emitted even if the passed
+descriptor pointer is NULL.
 
-Fixes: 0f25fda840a9 ("gpio: pca953x: Zap ad-hoc reg_direction cache")
-Cc: Cc: <stable@vger.kernel.org>
-Signed-off-by: David Jander <david@protonic.nl>
+We don't want to force the users of 'optional' gpio_get to check the
+returned pointer before calling e.g. gpiod_set_value() so let's only
+WARN on non-NULL descriptors.
+
+Cc: stable@vger.kernel.org
+Reported-by: Claus H. Stovgaard <cst@phaseone.com>
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-pca953x.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/gpio/consumer.h | 62 +++++++++++++++++------------------
+ 1 file changed, 31 insertions(+), 31 deletions(-)
 
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -604,7 +604,7 @@ static void pca953x_irq_bus_sync_unlock(
- 	u8 new_irqs;
- 	int level, i;
- 	u8 invert_irq_mask[MAX_BANK];
--	int reg_direction[MAX_BANK];
-+	u8 reg_direction[MAX_BANK];
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index acc4279ad5e3f..412098b24f58b 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -222,7 +222,7 @@ static inline void gpiod_put(struct gpio_desc *desc)
+ 	might_sleep();
  
- 	regmap_bulk_read(chip->regmap, chip->regs->direction, reg_direction,
- 			 NBANK(chip));
-@@ -679,7 +679,7 @@ static bool pca953x_irq_pending(struct p
- 	bool pending_seen = false;
- 	bool trigger_seen = false;
- 	u8 trigger[MAX_BANK];
--	int reg_direction[MAX_BANK];
-+	u8 reg_direction[MAX_BANK];
- 	int ret, i;
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ }
  
- 	if (chip->driver_data & PCA_PCAL) {
-@@ -768,7 +768,7 @@ static int pca953x_irq_setup(struct pca9
+ static inline void gpiod_put_array(struct gpio_descs *descs)
+@@ -230,7 +230,7 @@ static inline void gpiod_put_array(struct gpio_descs *descs)
+ 	might_sleep();
+ 
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(descs);
+ }
+ 
+ static inline struct gpio_desc *__must_check
+@@ -283,7 +283,7 @@ static inline void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
+ 	might_sleep();
+ 
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ }
+ 
+ static inline void devm_gpiod_put_array(struct device *dev,
+@@ -292,32 +292,32 @@ static inline void devm_gpiod_put_array(struct device *dev,
+ 	might_sleep();
+ 
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(descs);
+ }
+ 
+ 
+ static inline int gpiod_get_direction(const struct gpio_desc *desc)
  {
- 	struct i2c_client *client = chip->client;
- 	struct irq_chip *irq_chip = &chip->irq_chip;
--	int reg_direction[MAX_BANK];
-+	u8 reg_direction[MAX_BANK];
- 	int ret, i;
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return -ENOSYS;
+ }
+ static inline int gpiod_direction_input(struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return -ENOSYS;
+ }
+ static inline int gpiod_direction_output(struct gpio_desc *desc, int value)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return -ENOSYS;
+ }
+ static inline int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return -ENOSYS;
+ }
  
- 	if (!client->irq)
+@@ -325,7 +325,7 @@ static inline int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+ static inline int gpiod_get_value(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return 0;
+ }
+ static inline int gpiod_get_array_value(unsigned int array_size,
+@@ -333,25 +333,25 @@ static inline int gpiod_get_array_value(unsigned int array_size,
+ 					int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc_array);
+ 	return 0;
+ }
+ static inline void gpiod_set_value(struct gpio_desc *desc, int value)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ }
+ static inline void gpiod_set_array_value(unsigned int array_size,
+ 					 struct gpio_desc **desc_array,
+ 					 int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc_array);
+ }
+ static inline int gpiod_get_raw_value(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return 0;
+ }
+ static inline int gpiod_get_raw_array_value(unsigned int array_size,
+@@ -359,27 +359,27 @@ static inline int gpiod_get_raw_array_value(unsigned int array_size,
+ 					    int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc_array);
+ 	return 0;
+ }
+ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ }
+ static inline int gpiod_set_raw_array_value(unsigned int array_size,
+ 					     struct gpio_desc **desc_array,
+ 					     int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc_array);
+ 	return 0;
+ }
+ 
+ static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return 0;
+ }
+ static inline int gpiod_get_array_value_cansleep(unsigned int array_size,
+@@ -387,25 +387,25 @@ static inline int gpiod_get_array_value_cansleep(unsigned int array_size,
+ 				     int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc_array);
+ 	return 0;
+ }
+ static inline void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ }
+ static inline void gpiod_set_array_value_cansleep(unsigned int array_size,
+ 					    struct gpio_desc **desc_array,
+ 					    int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc_array);
+ }
+ static inline int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return 0;
+ }
+ static inline int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
+@@ -413,55 +413,55 @@ static inline int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
+ 					       int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc_array);
+ 	return 0;
+ }
+ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
+ 						int value)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ }
+ static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 						struct gpio_desc **desc_array,
+ 						int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc_array);
+ 	return 0;
+ }
+ 
+ static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return -ENOSYS;
+ }
+ 
+ static inline int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return -ENOSYS;
+ }
+ 
+ static inline int gpiod_is_active_low(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return 0;
+ }
+ static inline int gpiod_cansleep(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return 0;
+ }
+ 
+ static inline int gpiod_to_irq(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return -EINVAL;
+ }
+ 
+@@ -469,7 +469,7 @@ static inline int gpiod_set_consumer_name(struct gpio_desc *desc,
+ 					  const char *name)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return -EINVAL;
+ }
+ 
+@@ -481,7 +481,7 @@ static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
+ static inline int desc_to_gpio(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-	WARN_ON(1);
++	WARN_ON(desc);
+ 	return -EINVAL;
+ }
+ 
+-- 
+2.20.1
+
 
 
