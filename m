@@ -2,21 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34F52B1E6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03340B1EA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388690AbfIMNKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:10:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55880 "EHLO mx1.suse.de"
+        id S2388991AbfIMNLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:11:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57230 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388654AbfIMNKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:10:06 -0400
+        id S2388968AbfIMNLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:11:30 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9C784AF77;
-        Fri, 13 Sep 2019 13:10:03 +0000 (UTC)
-Subject: Re: [PATCH 6/8] drm/vram: switch vram helper to
- &drm_gem_object_funcs.mmap()
+        by mx1.suse.de (Postfix) with ESMTP id 5B61AAF77;
+        Fri, 13 Sep 2019 13:11:28 +0000 (UTC)
+Subject: Re: [PATCH 7/8] drm/vram: drop verify_access
 To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
 Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -25,7 +24,7 @@ Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         Daniel Vetter <daniel@ffwll.ch>,
         open list <linux-kernel@vger.kernel.org>
 References: <20190913122908.784-1-kraxel@redhat.com>
- <20190913122908.784-7-kraxel@redhat.com>
+ <20190913122908.784-8-kraxel@redhat.com>
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=tzimmermann@suse.de; keydata=
@@ -53,23 +52,23 @@ Autocrypt: addr=tzimmermann@suse.de; keydata=
  iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
  VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
  iNx9uqqx
-Message-ID: <dba5d37c-b1d8-4e25-778e-834eab56ac22@suse.de>
-Date:   Fri, 13 Sep 2019 15:10:02 +0200
+Message-ID: <03fc182c-c9fd-d43f-66ac-7e0e3c3d34c5@suse.de>
+Date:   Fri, 13 Sep 2019 15:11:27 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190913122908.784-7-kraxel@redhat.com>
+In-Reply-To: <20190913122908.784-8-kraxel@redhat.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="RmsZZWSXavej7oVe5ush19wY9mOx8b3S7"
+ boundary="B4ubPbblfygnnrPXdd669gDn5RYdmiFuB"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---RmsZZWSXavej7oVe5ush19wY9mOx8b3S7
-Content-Type: multipart/mixed; boundary="PJnqTNeeviakBB93394pK2IBJaf2SDsO7";
+--B4ubPbblfygnnrPXdd669gDn5RYdmiFuB
+Content-Type: multipart/mixed; boundary="TAKKNywCAPAMOgux3zEvO2oPBgSoQ11vE";
  protected-headers="v1"
 From: Thomas Zimmermann <tzimmermann@suse.de>
 To: Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
@@ -78,14 +77,13 @@ Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
  Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>,
  David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
  open list <linux-kernel@vger.kernel.org>
-Message-ID: <dba5d37c-b1d8-4e25-778e-834eab56ac22@suse.de>
-Subject: Re: [PATCH 6/8] drm/vram: switch vram helper to
- &drm_gem_object_funcs.mmap()
+Message-ID: <03fc182c-c9fd-d43f-66ac-7e0e3c3d34c5@suse.de>
+Subject: Re: [PATCH 7/8] drm/vram: drop verify_access
 References: <20190913122908.784-1-kraxel@redhat.com>
- <20190913122908.784-7-kraxel@redhat.com>
-In-Reply-To: <20190913122908.784-7-kraxel@redhat.com>
+ <20190913122908.784-8-kraxel@redhat.com>
+In-Reply-To: <20190913122908.784-8-kraxel@redhat.com>
 
---PJnqTNeeviakBB93394pK2IBJaf2SDsO7
+--TAKKNywCAPAMOgux3zEvO2oPBgSoQ11vE
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
@@ -93,110 +91,68 @@ Content-Transfer-Encoding: quoted-printable
 Hi
 
 Am 13.09.19 um 14:29 schrieb Gerd Hoffmann:
-> Wire up the new drm_gem_ttm_mmap() helper function,
-> use generic drm_gem_mmap for &fops.mmap and
-> delete dead drm_vram_mm_file_operations_mmap().
+> Not needed any more.
 >=20
 > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
 Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 
 > ---
->  include/drm/drm_gem_vram_helper.h     |  9 +------
->  drivers/gpu/drm/drm_gem_vram_helper.c | 34 +--------------------------=
-
->  2 files changed, 2 insertions(+), 41 deletions(-)
+>  drivers/gpu/drm/drm_gem_vram_helper.c | 22 ----------------------
+>  1 file changed, 22 deletions(-)
 >=20
-> diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vr=
-am_helper.h
-> index 9aaef4f8c327..9d5526650291 100644
-> --- a/include/drm/drm_gem_vram_helper.h
-> +++ b/include/drm/drm_gem_vram_helper.h
-> @@ -180,13 +180,6 @@ struct drm_vram_mm *drm_vram_helper_alloc_mm(
->  	struct drm_device *dev, uint64_t vram_base, size_t vram_size);
->  void drm_vram_helper_release_mm(struct drm_device *dev);
-> =20
-> -/*
-> - * Helpers for &struct file_operations
-> - */
-> -
-> -int drm_vram_mm_file_operations_mmap(
-> -	struct file *filp, struct vm_area_struct *vma);
-> -
->  /**
->   * define DRM_VRAM_MM_FILE_OPERATIONS - default callback functions for=
- \
->  	&struct file_operations
-> @@ -200,7 +193,7 @@ int drm_vram_mm_file_operations_mmap(
->  	.poll		=3D drm_poll, \
->  	.unlocked_ioctl =3D drm_ioctl, \
->  	.compat_ioctl	=3D drm_compat_ioctl, \
-> -	.mmap		=3D drm_vram_mm_file_operations_mmap, \
-> +	.mmap		=3D drm_gem_mmap, \
->  	.open		=3D drm_open, \
->  	.release	=3D drm_release \
-> =20
 > diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/dr=
 m_gem_vram_helper.c
-> index 7bee80c6b6e8..e100b97ea6e3 100644
+> index e100b97ea6e3..42ee80414273 100644
 > --- a/drivers/gpu/drm/drm_gem_vram_helper.c
 > +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-> @@ -681,6 +681,7 @@ static const struct drm_gem_object_funcs drm_gem_vr=
-am_object_funcs =3D {
->  	.unpin	=3D drm_gem_vram_object_unpin,
->  	.vmap	=3D drm_gem_vram_object_vmap,
->  	.vunmap	=3D drm_gem_vram_object_vunmap,
-> +	.mmap   =3D drm_gem_ttm_mmap,
->  	.print_info =3D drm_gem_ttm_print_info,
->  };
-> =20
-> @@ -915,12 +916,6 @@ static void drm_vram_mm_cleanup(struct drm_vram_mm=
- *vmm)
->  	ttm_bo_device_release(&vmm->bdev);
+> @@ -469,13 +469,6 @@ static void drm_gem_vram_bo_driver_evict_flags(str=
+uct drm_gem_vram_object *gbo,
+>  	*pl =3D gbo->placement;
 >  }
 > =20
-> -static int drm_vram_mm_mmap(struct file *filp, struct vm_area_struct *=
-vma,
-> -			    struct drm_vram_mm *vmm)
+> -static int drm_gem_vram_bo_driver_verify_access(struct drm_gem_vram_ob=
+ject *gbo,
+> -						struct file *filp)
 > -{
-> -	return ttm_bo_mmap(filp, vma, &vmm->bdev);
+> -	return drm_vma_node_verify_access(&gbo->bo.base.vma_node,
+> -					  filp->private_data);
 > -}
 > -
->  /*
->   * Helpers for integration with struct drm_device
->   */
-> @@ -976,30 +971,3 @@ void drm_vram_helper_release_mm(struct drm_device =
-*dev)
->  	dev->vram_mm =3D NULL;
+>  static void drm_gem_vram_bo_driver_move_notify(struct drm_gem_vram_obj=
+ect *gbo,
+>  					       bool evict,
+>  					       struct ttm_mem_reg *new_mem)
+> @@ -767,20 +760,6 @@ static void bo_driver_evict_flags(struct ttm_buffe=
+r_object *bo,
+>  	drm_gem_vram_bo_driver_evict_flags(gbo, placement);
 >  }
->  EXPORT_SYMBOL(drm_vram_helper_release_mm);
-> -
-> -/*
-> - * Helpers for &struct file_operations
-> - */
-> -
-> -/**
-> - * drm_vram_mm_file_operations_mmap() - \
-> -	Implements &struct file_operations.mmap()
-> - * @filp:	the mapping's file structure
-> - * @vma:	the mapping's memory area
-> - *
-> - * Returns:
-> - * 0 on success, or
-> - * a negative error code otherwise.
-> - */
-> -int drm_vram_mm_file_operations_mmap(
-> -	struct file *filp, struct vm_area_struct *vma)
+> =20
+> -static int bo_driver_verify_access(struct ttm_buffer_object *bo,
+> -				   struct file *filp)
 > -{
-> -	struct drm_file *file_priv =3D filp->private_data;
-> -	struct drm_device *dev =3D file_priv->minor->dev;
+> -	struct drm_gem_vram_object *gbo;
 > -
-> -	if (WARN_ONCE(!dev->vram_mm, "VRAM MM not initialized"))
+> -	/* TTM may pass BOs that are not GEM VRAM BOs. */
+> -	if (!drm_is_gem_vram(bo))
 > -		return -EINVAL;
 > -
-> -	return drm_vram_mm_mmap(filp, vma, dev->vram_mm);
+> -	gbo =3D drm_gem_vram_of_bo(bo);
+> -
+> -	return drm_gem_vram_bo_driver_verify_access(gbo, filp);
 > -}
-> -EXPORT_SYMBOL(drm_vram_mm_file_operations_mmap);
+> -
+>  static void bo_driver_move_notify(struct ttm_buffer_object *bo,
+>  				  bool evict,
+>  				  struct ttm_mem_reg *new_mem)
+> @@ -837,7 +816,6 @@ static struct ttm_bo_driver bo_driver =3D {
+>  	.init_mem_type =3D bo_driver_init_mem_type,
+>  	.eviction_valuable =3D ttm_bo_eviction_valuable,
+>  	.evict_flags =3D bo_driver_evict_flags,
+> -	.verify_access =3D bo_driver_verify_access,
+>  	.move_notify =3D bo_driver_move_notify,
+>  	.io_mem_reserve =3D bo_driver_io_mem_reserve,
+>  	.io_mem_free =3D bo_driver_io_mem_free,
 >=20
 
 --=20
@@ -207,23 +163,23 @@ GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
 HRB 21284 (AG N=C3=BCrnberg)
 
 
---PJnqTNeeviakBB93394pK2IBJaf2SDsO7--
+--TAKKNywCAPAMOgux3zEvO2oPBgSoQ11vE--
 
---RmsZZWSXavej7oVe5ush19wY9mOx8b3S7
+--B4ubPbblfygnnrPXdd669gDn5RYdmiFuB
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl17lSoACgkQaA3BHVML
-eiMlnAgAuxM3198AW62WoPQh/tnCpRgXAfVVr139GaUue632fn62jXkyNkqemGss
-0k+tOeN7cUqQvZJAnG1nY6dlsRYznmhRBTVeJpKngf/faFDuX8Ndj73KmQ5/JBCU
-UT9lWo7d5XlVOkdsF7Pm7U/haEwYi7HHe6yFdFGDN8P2t4CoCosFGLNqw41mdTlv
-JBrGg+kJbfPYDx/0uKHSO8r5nnwyUKTgAp3sDa3LmwG/wC232x4WHFk7ccDWmCph
-E4qO6KVnXFAWqKZfccnhNGHx1el5aKPBzxEoms/Gr8R2VCF0cNTj2bu4ETwfuDV+
-zUbPrHqLGjwVT+Kf2u3oYUt8Pdvmmg==
-=hVky
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl17lX8ACgkQaA3BHVML
+eiMhmQf/aQRBU6TX24aYux0DF9HFWQPuS0iR0IGsNMyTwRDU74bgaxO8ioZgpItR
+saRSvuXmIHT7iQxONAvEvFOj8ja1U2TkabxLb91YoYnz0TGMQ2j2qE7CufVSs0O+
+bFmtaQL21LUFo/rTNNzpwlsqkkEPK4Uu8XaVT07PE20FzPWgCRJ7zm0hCXlg02ww
+RIoCb02cUURq8t/41qICQ/O1orm1WPsKeOn2KIcZ8IW6wIlSGnd3E3utkqodWLtz
+ZMKfoZ5zgsljXS4CbnmZZPhP6mbuLGZHE9OGwrJZRpTyLg1UBrh2hSROXxaLiC5e
+N6YwncTh9AmhUpuQS2v5CPpqYxbGMQ==
+=YT4g
 -----END PGP SIGNATURE-----
 
---RmsZZWSXavej7oVe5ush19wY9mOx8b3S7--
+--B4ubPbblfygnnrPXdd669gDn5RYdmiFuB--
