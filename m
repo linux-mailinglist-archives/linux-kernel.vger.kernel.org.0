@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CBA7B1F30
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4944B1F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389919AbfIMNQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:16:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43614 "EHLO mail.kernel.org"
+        id S2389744AbfIMNPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:15:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389872AbfIMNQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:16:44 -0400
+        id S2389732AbfIMNPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:15:45 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57A32206BB;
-        Fri, 13 Sep 2019 13:16:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C571F206BB;
+        Fri, 13 Sep 2019 13:15:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380602;
-        bh=O8aiKFyzlJiJLO8gG7b5wYNlw36+bfY0lfspTRYJjOc=;
+        s=default; t=1568380545;
+        bh=zFskO4KDNb4IBX5Ugsg8jZrG6R4mDRf3CfSFygV7v6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=idmXQUvUR8g8QcAvJw5oEkMWjXWcGpouudCfmWPOXnT9b11qFGGnS0NYp7cYdFM3B
-         li1R+rsNSt3/ghEUbv/PuSP6ocAiJ52Wiv191qnIzWpZtRKjb7jHq+zIQyG9EEHOIo
-         pm22KCfCTv+IO1kLVh3mhSumR945ThtdeZClEd10=
+        b=iLtrzLJ9JTXr0UiTB32dvHpK4cih1LH6bf9I9okIUMuLFTKhfEQdb/pfwCtlnD9pK
+         RrtfqMPnYoeAfyZ5iVSiIjn/1LZ3c17C9XfnM2IO/nF+trDe96YqGOG680K0Tjc0DF
+         ZDi7q0NCIQvx4AOXe4V/iHcccvYfHCc5Dag9MGPI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell Currey <ruscur@russell.cc>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@ozlabs.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 097/190] powerpc/kvm: Save and restore host AMR/IAMR/UAMOR
-Date:   Fri, 13 Sep 2019 14:05:52 +0100
-Message-Id: <20190913130607.375991312@linuxfoundation.org>
+Subject: [PATCH 4.19 099/190] btrfs: scrub: pass fs_info to scrub_setup_ctx
+Date:   Fri, 13 Sep 2019 14:05:54 +0100
+Message-Id: <20190913130607.519210914@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -45,130 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c3c7470c75566a077c8dc71dcf8f1948b8ddfab4 ]
+[ Upstream commit 92f7ba434f51e8e9317f1d166105889aa230abd2 ]
 
-When the hash MMU is active the AMR, IAMR and UAMOR are used for
-pkeys. The AMR is directly writable by user space, and the UAMOR masks
-those writes, meaning both registers are effectively user register
-state. The IAMR is used to create an execute only key.
+We can pass fs_info directly as this is the only member of btrfs_device
+that's bing used inside scrub_setup_ctx.
 
-Also we must maintain the value of at least the AMR when running in
-process context, so that any memory accesses done by the kernel on
-behalf of the process are correctly controlled by the AMR.
-
-Although we are correctly switching all registers when going into a
-guest, on returning to the host we just write 0 into all regs, except
-on Power9 where we restore the IAMR correctly.
-
-This could be observed by a user process if it writes the AMR, then
-runs a guest and we then return immediately to it without
-rescheduling. Because we have written 0 to the AMR that would have the
-effect of granting read/write permission to pages that the process was
-trying to protect.
-
-In addition, when using the Radix MMU, the AMR can prevent inadvertent
-kernel access to userspace data, writing 0 to the AMR disables that
-protection.
-
-So save and restore AMR, IAMR and UAMOR.
-
-Fixes: cf43d3b26452 ("powerpc: Enable pkey subsystem")
-Cc: stable@vger.kernel.org # v4.16+
-Signed-off-by: Russell Currey <ruscur@russell.cc>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Acked-by: Paul Mackerras <paulus@ozlabs.org>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kvm/book3s_hv_rmhandlers.S | 26 ++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ fs/btrfs/scrub.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_hv_rmhandlers.S b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-index 1d14046124a01..5902a60f92268 100644
---- a/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-+++ b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-@@ -56,6 +56,8 @@ END_FTR_SECTION_IFCLR(CPU_FTR_ARCH_300)
- #define STACK_SLOT_DAWR		(SFS-56)
- #define STACK_SLOT_DAWRX	(SFS-64)
- #define STACK_SLOT_HFSCR	(SFS-72)
-+#define STACK_SLOT_AMR		(SFS-80)
-+#define STACK_SLOT_UAMOR	(SFS-88)
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index 5a2d10ba747f7..efaad3e1b295a 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -578,12 +578,11 @@ static void scrub_put_ctx(struct scrub_ctx *sctx)
+ 		scrub_free_ctx(sctx);
+ }
  
- /*
-  * Call kvmppc_hv_entry in real mode.
-@@ -760,11 +762,9 @@ BEGIN_FTR_SECTION
- 	mfspr	r5, SPRN_TIDR
- 	mfspr	r6, SPRN_PSSCR
- 	mfspr	r7, SPRN_PID
--	mfspr	r8, SPRN_IAMR
- 	std	r5, STACK_SLOT_TID(r1)
- 	std	r6, STACK_SLOT_PSSCR(r1)
- 	std	r7, STACK_SLOT_PID(r1)
--	std	r8, STACK_SLOT_IAMR(r1)
- 	mfspr	r5, SPRN_HFSCR
- 	std	r5, STACK_SLOT_HFSCR(r1)
- END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
-@@ -772,11 +772,18 @@ BEGIN_FTR_SECTION
- 	mfspr	r5, SPRN_CIABR
- 	mfspr	r6, SPRN_DAWR
- 	mfspr	r7, SPRN_DAWRX
-+	mfspr	r8, SPRN_IAMR
- 	std	r5, STACK_SLOT_CIABR(r1)
- 	std	r6, STACK_SLOT_DAWR(r1)
- 	std	r7, STACK_SLOT_DAWRX(r1)
-+	std	r8, STACK_SLOT_IAMR(r1)
- END_FTR_SECTION_IFSET(CPU_FTR_ARCH_207S)
+-static noinline_for_stack
+-struct scrub_ctx *scrub_setup_ctx(struct btrfs_device *dev, int is_dev_replace)
++static noinline_for_stack struct scrub_ctx *scrub_setup_ctx(
++		struct btrfs_fs_info *fs_info, int is_dev_replace)
+ {
+ 	struct scrub_ctx *sctx;
+ 	int		i;
+-	struct btrfs_fs_info *fs_info = dev->fs_info;
  
-+	mfspr	r5, SPRN_AMR
-+	std	r5, STACK_SLOT_AMR(r1)
-+	mfspr	r6, SPRN_UAMOR
-+	std	r6, STACK_SLOT_UAMOR(r1)
-+
- BEGIN_FTR_SECTION
- 	/* Set partition DABR */
- 	/* Do this before re-enabling PMU to avoid P7 DABR corruption bug */
-@@ -1713,22 +1720,25 @@ ALT_FTR_SECTION_END_IFCLR(CPU_FTR_ARCH_300)
- 	mtspr	SPRN_PSPB, r0
- 	mtspr	SPRN_WORT, r0
- BEGIN_FTR_SECTION
--	mtspr	SPRN_IAMR, r0
- 	mtspr	SPRN_TCSCR, r0
- 	/* Set MMCRS to 1<<31 to freeze and disable the SPMC counters */
- 	li	r0, 1
- 	sldi	r0, r0, 31
- 	mtspr	SPRN_MMCRS, r0
- END_FTR_SECTION_IFCLR(CPU_FTR_ARCH_300)
--8:
+ 	sctx = kzalloc(sizeof(*sctx), GFP_KERNEL);
+ 	if (!sctx)
+@@ -592,7 +591,7 @@ struct scrub_ctx *scrub_setup_ctx(struct btrfs_device *dev, int is_dev_replace)
+ 	sctx->is_dev_replace = is_dev_replace;
+ 	sctx->pages_per_rd_bio = SCRUB_PAGES_PER_RD_BIO;
+ 	sctx->curr = -1;
+-	sctx->fs_info = dev->fs_info;
++	sctx->fs_info = fs_info;
+ 	for (i = 0; i < SCRUB_BIOS_PER_SCTX; ++i) {
+ 		struct scrub_bio *sbio;
  
--	/* Save and reset AMR and UAMOR before turning on the MMU */
-+	/* Save and restore AMR, IAMR and UAMOR before turning on the MMU */
-+	ld	r8, STACK_SLOT_IAMR(r1)
-+	mtspr	SPRN_IAMR, r8
-+
-+8:	/* Power7 jumps back in here */
- 	mfspr	r5,SPRN_AMR
- 	mfspr	r6,SPRN_UAMOR
- 	std	r5,VCPU_AMR(r9)
- 	std	r6,VCPU_UAMOR(r9)
--	li	r6,0
--	mtspr	SPRN_AMR,r6
-+	ld	r5,STACK_SLOT_AMR(r1)
-+	ld	r6,STACK_SLOT_UAMOR(r1)
-+	mtspr	SPRN_AMR, r5
- 	mtspr	SPRN_UAMOR, r6
+@@ -3881,7 +3880,7 @@ int btrfs_scrub_dev(struct btrfs_fs_info *fs_info, u64 devid, u64 start,
+ 		return ret;
+ 	}
  
- 	/* Switch DSCR back to host value */
-@@ -1897,11 +1907,9 @@ BEGIN_FTR_SECTION
- 	ld	r5, STACK_SLOT_TID(r1)
- 	ld	r6, STACK_SLOT_PSSCR(r1)
- 	ld	r7, STACK_SLOT_PID(r1)
--	ld	r8, STACK_SLOT_IAMR(r1)
- 	mtspr	SPRN_TIDR, r5
- 	mtspr	SPRN_PSSCR, r6
- 	mtspr	SPRN_PID, r7
--	mtspr	SPRN_IAMR, r8
- END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
- 
- #ifdef CONFIG_PPC_RADIX_MMU
+-	sctx = scrub_setup_ctx(dev, is_dev_replace);
++	sctx = scrub_setup_ctx(fs_info, is_dev_replace);
+ 	if (IS_ERR(sctx)) {
+ 		mutex_unlock(&fs_info->scrub_lock);
+ 		mutex_unlock(&fs_info->fs_devices->device_list_mutex);
 -- 
 2.20.1
 
