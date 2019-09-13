@@ -2,147 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AFCAB201B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08C0FB20EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389850AbfIMNQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:16:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56526 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388932AbfIMNQX (ORCPT
+        id S2391645AbfIMN3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:29:21 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:33885 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390444AbfIMNT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:16:23 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8DDD63E083518
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 09:16:22 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v0bpt8gft-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 09:16:21 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.ibm.com>;
-        Fri, 13 Sep 2019 14:16:19 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 13 Sep 2019 14:16:15 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8DDFn9344368324
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 13 Sep 2019 13:15:50 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EBD19AE059;
-        Fri, 13 Sep 2019 13:16:14 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5878BAE051;
-        Fri, 13 Sep 2019 13:16:14 +0000 (GMT)
-Received: from pomme.local (unknown [9.145.181.150])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 13 Sep 2019 13:16:14 +0000 (GMT)
-Subject: Re: [PATCH 3/3] powerpc/mm: call H_BLOCK_REMOVE when supported
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        npiggin@gmail.com
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
+        Fri, 13 Sep 2019 09:19:58 -0400
+Received: from [IPv6:2001:420:44c1:2577:888a:538c:8dda:557b] ([IPv6:2001:420:44c1:2577:888a:538c:8dda:557b])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id 8lUOiWodCV17O8lURi2q7R; Fri, 13 Sep 2019 15:19:55 +0200
+Subject: Re: [Patch 12/13] media: am437x-vpfe: Remove per bus width static
+ data
+To:     Benoit Parrot <bparrot@ti.com>
+Cc:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20190830120712.22971-1-ldufour@linux.ibm.com>
- <20190830120712.22971-4-ldufour@linux.ibm.com>
- <5bcd3da7-1bc2-f3f9-3ed2-e3aa0bb540bd@linux.ibm.com>
-From:   Laurent Dufour <ldufour@linux.ibm.com>
-Date:   Fri, 13 Sep 2019 15:16:13 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+References: <20190909162743.30114-1-bparrot@ti.com>
+ <20190909162743.30114-13-bparrot@ti.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <add3cb62-1391-f8e3-15f3-f1345e18da47@xs4all.nl>
+Date:   Fri, 13 Sep 2019 15:19:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <5bcd3da7-1bc2-f3f9-3ed2-e3aa0bb540bd@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190909162743.30114-13-bparrot@ti.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091313-4275-0000-0000-000003654FAE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091313-4276-0000-0000-00003877ADA2
-Message-Id: <cf06842a-ea37-9684-5b28-de4277e7bef3@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-13_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909130130
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfDPD79xpkAXnqWG0IqlGd95oDOl6bT+t+OMAuRgFfzmSo+y5satYA0w6avFYMQClcPT72By7btbxBlcfIXJSYFPmzapLt0p05YQz0Ot3cIej0Rrjv4rD
+ TKGUjwt56ya8Kk68vFVAt6s0E8gulCm1cc+HpK1IMy8v+ScJy7+KSr7sSe9EneEp6fgS1+OyQ84o9VQBbAa+ePjkH2/hsogZjV+3lAtajqplQ7d6Zfk3drHT
+ Fb0mX1fXJmHUFDdc4fsSWJ1Ex4z7/OOTkLfNU70O3a3x+vnAe7yNOIxlzqQQZnuNUTb4KnPYY/bUrtZweAkj0NinkPrpt0O2Pj9yPiKbxdWq3wmYBueBtsYO
+ SuyWNIAajdqqtnl1BvkyjHMFrXIlbtnhaLlh0oXT71i5JixTJfK12uwvqfweIBHva2PL4usEX/Ij6hmDt1IVHFyRcEJCaw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 12/09/2019 à 16:20, Aneesh Kumar K.V a écrit :
-> On 8/30/19 5:37 PM, Laurent Dufour wrote:
->> Instead of calling H_BLOCK_REMOVE all the time when the feature is
->> exhibited, call this hcall only when the couple base page size, page size
->> is supported as reported by the TLB Invalidate Characteristics.
->>
-> 
-> supported is not actually what we are checking here. We are checking 
-> whether the base page size actual page size remove can be done in chunks of 
-> 8 blocks. If we don't support 8 block you fallback to bulk invalidate. May 
-> be update the commit message accordingly?
+On 9/9/19 6:27 PM, Benoit Parrot wrote:
+> The bus related static data include in the vpfe_fmt
+> static table can be derived dynamically instead.
+> This simplify the table and it's use.
 
-Yes that's correct.
-
-I think I should also put the warning message displayed when reading the 
-characteristic in that commit and explicitly mentioned that we only support 
-8 entries size block for this hcall.
-This way the limitation is limited to this commit.
+simplify -> simplifies
+it's -> its
 
 > 
->> For regular pages and hugetlb, the assumption is made that the page size is
->> equal to the base page size. For THP the page size is assumed to be 16M.
->>
->> Signed-off-by: Laurent Dufour <ldufour@linux.ibm.com>
->> ---
->>   arch/powerpc/platforms/pseries/lpar.c | 11 +++++++++--
->>   1 file changed, 9 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/powerpc/platforms/pseries/lpar.c 
->> b/arch/powerpc/platforms/pseries/lpar.c
->> index 375e19b3cf53..ef3dbf108a65 100644
->> --- a/arch/powerpc/platforms/pseries/lpar.c
->> +++ b/arch/powerpc/platforms/pseries/lpar.c
->> @@ -1143,7 +1143,11 @@ static inline void 
->> __pSeries_lpar_hugepage_invalidate(unsigned long *slot,
->>       if (lock_tlbie)
->>           spin_lock_irqsave(&pSeries_lpar_tlbie_lock, flags);
->> -    if (firmware_has_feature(FW_FEATURE_BLOCK_REMOVE))
->> +    /*
->> +     * Assuming THP size is 16M, and we only support 8 bytes size buffer
->> +     * for the momment.
->> +     */
->> +    if (mmu_psize_defs[psize].hblk[MMU_PAGE_16M] == 8)
->>           hugepage_block_invalidate(slot, vpn, count, psize, ssize);
->>       else
->>           hugepage_bulk_invalidate(slot, vpn, count, psize, ssize);
-> 
-> 
-> 
-> So we don't use block invalidate if blocksize is != 8.
+> We instead replace the per bus data info with just
+> the usual bit per pixel value for each supported
 
-yes
+bit -> bits
 
+> pixel format.
 > 
+> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> ---
+>  drivers/media/platform/am437x/am437x-vpfe.c | 56 ++++++---------------
+>  drivers/media/platform/am437x/am437x-vpfe.h | 16 +-----
+>  2 files changed, 16 insertions(+), 56 deletions(-)
 > 
->> @@ -1437,7 +1441,10 @@ static void pSeries_lpar_flush_hash_range(unsigned 
->> long number, int local)
->>       if (lock_tlbie)
->>           spin_lock_irqsave(&pSeries_lpar_tlbie_lock, flags);
->> -    if (firmware_has_feature(FW_FEATURE_BLOCK_REMOVE)) {
->> +    /*
->> +     * Currently, we only support 8 bytes size buffer in do_block_remove().
->> +     */
->> +    if (mmu_psize_defs[batch->psize].hblk[batch->psize] == 8) {
->>           do_block_remove(number, batch, param);
->>           goto out;
->>       }
->>
+> diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
+> index 9759ed398943..9855d4cb1d13 100644
+> --- a/drivers/media/platform/am437x/am437x-vpfe.c
+> +++ b/drivers/media/platform/am437x/am437x-vpfe.c
+> @@ -73,73 +73,43 @@ static struct vpfe_fmt formats[] = {
+>  	{
+>  		.fourcc		= V4L2_PIX_FMT_YUYV,
+>  		.code		= MEDIA_BUS_FMT_YUYV8_2X8,
+> -		.l.width	= 10,
+> -		.l.bpp		= 4,
+> -		.s.width	= 8,
+> -		.s.bpp		= 2,
+> +		.bitsperpixel	= 16,
+>  	}, {
+>  		.fourcc		= V4L2_PIX_FMT_UYVY,
+>  		.code		= MEDIA_BUS_FMT_UYVY8_2X8,
+> -		.l.width	= 10,
+> -		.l.bpp		= 4,
+> -		.s.width	= 8,
+> -		.s.bpp		= 2,
+> +		.bitsperpixel	= 16,
+>  	}, {
+>  		.fourcc		= V4L2_PIX_FMT_YVYU,
+>  		.code		= MEDIA_BUS_FMT_YVYU8_2X8,
+> -		.l.width	= 10,
+> -		.l.bpp		= 4,
+> -		.s.width	= 8,
+> -		.s.bpp		= 2,
+> +		.bitsperpixel	= 16,
+>  	}, {
+>  		.fourcc		= V4L2_PIX_FMT_VYUY,
+>  		.code		= MEDIA_BUS_FMT_VYUY8_2X8,
+> -		.l.width	= 10,
+> -		.l.bpp		= 4,
+> -		.s.width	= 8,
+> -		.s.bpp		= 2,
+> +		.bitsperpixel	= 16,
+>  	}, {
+>  		.fourcc		= V4L2_PIX_FMT_SBGGR8,
+>  		.code		= MEDIA_BUS_FMT_SBGGR8_1X8,
+> -		.l.width	= 10,
+> -		.l.bpp		= 2,
+> -		.s.width	= 8,
+> -		.s.bpp		= 1,
+> +		.bitsperpixel	= 8,
+>  	}, {
+>  		.fourcc		= V4L2_PIX_FMT_SGBRG8,
+>  		.code		= MEDIA_BUS_FMT_SGBRG8_1X8,
+> -		.l.width	= 10,
+> -		.l.bpp		= 2,
+> -		.s.width	= 8,
+> -		.s.bpp		= 1,
+> +		.bitsperpixel	= 8,
+>  	}, {
+>  		.fourcc		= V4L2_PIX_FMT_SGRBG8,
+>  		.code		= MEDIA_BUS_FMT_SGRBG8_1X8,
+> -		.l.width	= 10,
+> -		.l.bpp		= 2,
+> -		.s.width	= 8,
+> -		.s.bpp		= 1,
+> +		.bitsperpixel	= 8,
+>  	}, {
+>  		.fourcc		= V4L2_PIX_FMT_SRGGB8,
+>  		.code		= MEDIA_BUS_FMT_SRGGB8_1X8,
+> -		.l.width	= 10,
+> -		.l.bpp		= 2,
+> -		.s.width	= 8,
+> -		.s.bpp		= 1,
+> +		.bitsperpixel	= 8,
+>  	}, {
+>  		.fourcc		= V4L2_PIX_FMT_RGB565,
+>  		.code		= MEDIA_BUS_FMT_RGB565_2X8_LE,
+> -		.l.width	= 10,
+> -		.l.bpp		= 4,
+> -		.s.width	= 8,
+> -		.s.bpp		= 2,
+> +		.bitsperpixel	= 16,
+>  	}, {
+>  		.fourcc		= V4L2_PIX_FMT_RGB565X,
+>  		.code		= MEDIA_BUS_FMT_RGB565_2X8_BE,
+> -		.l.width	= 10,
+> -		.l.bpp		= 4,
+> -		.s.width	= 8,
+> -		.s.bpp		= 2,
+> +		.bitsperpixel	= 16,
+>  	},
+>  };
+>  
+> @@ -184,9 +154,11 @@ static unsigned int __get_bytesperpixel(struct vpfe_device *vpfe,
+>  {
+>  	struct vpfe_subdev_info *sdinfo = vpfe->current_subdev;
+>  	unsigned int bus_width = sdinfo->vpfe_param.bus_width;
+> -	u32 bpp;
+> +	u32 bpp, bus_width_bytes, clocksperpixel;
+>  
+> -	bpp = (bus_width == 10) ? fmt->l.bpp : fmt->s.bpp;
+> +	bus_width_bytes = ALIGN(bus_width, 8) >> 3;
+> +	clocksperpixel = DIV_ROUND_UP(fmt->bitsperpixel, bus_width);
+> +	bpp = clocksperpixel * bus_width_bytes;
+>  
+>  	return bpp;
+>  }
+> diff --git a/drivers/media/platform/am437x/am437x-vpfe.h b/drivers/media/platform/am437x/am437x-vpfe.h
+> index 0d10d2b4d7a2..2c9e89395bea 100644
+> --- a/drivers/media/platform/am437x/am437x-vpfe.h
+> +++ b/drivers/media/platform/am437x/am437x-vpfe.h
+> @@ -215,28 +215,16 @@ struct vpfe_ccdc {
+>  	u32 ccdc_ctx[VPFE_REG_END / sizeof(u32)];
+>  };
+>  
+> -/*
+> - * struct bus_format - VPFE bus format information
+> - * @width: Bits per pixel (when transferred over a bus)
+> - * @bpp: Bytes per pixel (when stored in memory)
+> - */
+> -struct bus_format {
+> -	unsigned int width;
+> -	unsigned int bpp;
+> -};
+> -
+>  /*
+>   * struct vpfe_fmt - VPFE media bus format information
+>   * @fourcc: V4L2 pixel format code
+>   * @code: V4L2 media bus format code
+> - * @l: 10 bit bus format info
+> - * @s: 8 bit bus format info
+> + * @bitsperpixel: Bits per pixel over the bus
+>   */
+>  struct vpfe_fmt {
+>  	u32 fourcc;
+>  	u32 code;
+> -	struct bus_format l;
+> -	struct bus_format s;
+> +	u32 bitsperpixel;
+>  };
+>  
+>  /*
 > 
-> -aneesh
 
+Regards,
+
+	Hans
