@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E01E9B1E58
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F85B1E6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388482AbfIMNJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:09:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33772 "EHLO mail.kernel.org"
+        id S2388664AbfIMNKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:10:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388463AbfIMNJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:09:15 -0400
+        id S2388579AbfIMNKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:10:03 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7D6B208C0;
-        Fri, 13 Sep 2019 13:09:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11762208C0;
+        Fri, 13 Sep 2019 13:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380154;
-        bh=SJB/SZBZ512Lz00RrXmy++B4RO1M66TXhT5Mr0YbSBU=;
+        s=default; t=1568380202;
+        bh=xHGKZYRYZZCmv8FBlLbE77wCZ22V4FAgpkrLIjJPL7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0KWx41ZYnN5jLrquE7zn4D8rku17SmQ8nxBoKPP+P85j/2LfPfsB91ofQJgL0994E
-         nrA4hqOCSRSFEYAMC7cMHnCTtzA9rOtZYbqdFId17FspSU7N/0eoLUqtGo+jG1+M6Z
-         RTcVuoLw3QpF1iJfpEiSnFszkNLJl72BbI59TkuE=
+        b=lVwZYwsEBbXMF46PmZoZFph82RxuZv4o8nUFh+JoPe9XOnCapvAzR9VyfyrY7XuuA
+         4irvWP2bwsAluxcrppQqnpg7esQZ8dOatVWGyy5sMXxI/QpLRA7HMPbdDPLU/vymBN
+         p/zjX2eYtGyulBDJMvGf3f1HyuaSHxW7MWJZaIbs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 11/14] scripts/decode_stacktrace: match basepath using shell prefix operator, not regex
-Date:   Fri, 13 Sep 2019 14:07:04 +0100
-Message-Id: <20190913130446.021198073@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.14 12/21] batman-adv: fix uninit-value in batadv_netlink_get_ifindex()
+Date:   Fri, 13 Sep 2019 14:07:05 +0100
+Message-Id: <20190913130506.581710560@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130440.264749443@linuxfoundation.org>
-References: <20190913130440.264749443@linuxfoundation.org>
+In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
+References: <20190913130501.285837292@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +45,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 31013836a71e07751a6827f9d2ad41ef502ddaff ]
+From: Eric Dumazet <edumazet@google.com>
 
-The basepath may contain special characters, which would confuse the regex
-matcher.  ${var#prefix} does the right thing.
+commit 3ee1bb7aae97324ec9078da1f00cb2176919563f upstream.
 
-Link: http://lkml.kernel.org/r/20190518055946.181563-1-drinkcat@chromium.org
-Fixes: 67a28de47faa8358 ("scripts/decode_stacktrace: only strip base path when a prefix of the path")
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+batadv_netlink_get_ifindex() needs to make sure user passed
+a correct u32 attribute.
+
+syzbot reported :
+BUG: KMSAN: uninit-value in batadv_netlink_dump_hardif+0x70d/0x880 net/batman-adv/netlink.c:968
+CPU: 1 PID: 11705 Comm: syz-executor888 Not tainted 5.1.0+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+ kmsan_report+0x130/0x2a0 mm/kmsan/kmsan.c:622
+ __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:310
+ batadv_netlink_dump_hardif+0x70d/0x880 net/batman-adv/netlink.c:968
+ genl_lock_dumpit+0xc6/0x130 net/netlink/genetlink.c:482
+ netlink_dump+0xa84/0x1ab0 net/netlink/af_netlink.c:2253
+ __netlink_dump_start+0xa3a/0xb30 net/netlink/af_netlink.c:2361
+ genl_family_rcv_msg net/netlink/genetlink.c:550 [inline]
+ genl_rcv_msg+0xfc1/0x1a40 net/netlink/genetlink.c:627
+ netlink_rcv_skb+0x431/0x620 net/netlink/af_netlink.c:2486
+ genl_rcv+0x63/0x80 net/netlink/genetlink.c:638
+ netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
+ netlink_unicast+0xf3e/0x1020 net/netlink/af_netlink.c:1337
+ netlink_sendmsg+0x127e/0x12f0 net/netlink/af_netlink.c:1926
+ sock_sendmsg_nosec net/socket.c:651 [inline]
+ sock_sendmsg net/socket.c:661 [inline]
+ ___sys_sendmsg+0xcc6/0x1200 net/socket.c:2260
+ __sys_sendmsg net/socket.c:2298 [inline]
+ __do_sys_sendmsg net/socket.c:2307 [inline]
+ __se_sys_sendmsg+0x305/0x460 net/socket.c:2305
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2305
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440209
+
+Fixes: b60620cf567b ("batman-adv: netlink: hardif query")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- scripts/decode_stacktrace.sh | 2 +-
+ net/batman-adv/netlink.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index 381acfc4c59dd..98cf6343afcd7 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -77,7 +77,7 @@ parse_symbol() {
- 	fi
+--- a/net/batman-adv/netlink.c
++++ b/net/batman-adv/netlink.c
+@@ -110,7 +110,7 @@ batadv_netlink_get_ifindex(const struct
+ {
+ 	struct nlattr *attr = nlmsg_find_attr(nlh, GENL_HDRLEN, attrtype);
  
- 	# Strip out the base of the path
--	code=${code//^$basepath/""}
-+	code=${code#$basepath/}
+-	return attr ? nla_get_u32(attr) : 0;
++	return (attr && nla_len(attr) == sizeof(u32)) ? nla_get_u32(attr) : 0;
+ }
  
- 	# In the case of inlines, move everything to same line
- 	code=${code//$'\n'/' '}
--- 
-2.20.1
-
+ /**
 
 
