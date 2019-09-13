@@ -2,59 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA21B2666
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 22:04:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E9BBB266B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 22:06:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730996AbfIMUDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 16:03:48 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:48654 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729118AbfIMUDs (ORCPT
+        id S1731062AbfIMUGW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 13 Sep 2019 16:06:22 -0400
+Received: from mailoutvs39.siol.net ([185.57.226.230]:47326 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730930AbfIMUGV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 16:03:48 -0400
-Received: from localhost (93-63-141-166.ip28.fastwebnet.it [93.63.141.166])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 963BC1539AD18;
-        Fri, 13 Sep 2019 13:03:45 -0700 (PDT)
-Date:   Fri, 13 Sep 2019 21:03:43 +0100 (WEST)
-Message-Id: <20190913.210343.724088723062134961.davem@davemloft.net>
-To:     decui@microsoft.com
-Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        sashal@kernel.org, linux-hyperv@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mikelley@microsoft.com
-Subject: Re: [PATCH][PATCH net-next] hv_sock: Add the support of hibernation
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1568245042-66967-1-git-send-email-decui@microsoft.com>
-References: <1568245042-66967-1-git-send-email-decui@microsoft.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 13 Sep 2019 13:03:47 -0700 (PDT)
+        Fri, 13 Sep 2019 16:06:21 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 1A96A522590;
+        Fri, 13 Sep 2019 22:06:19 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Yu6tDdrqQ1J6; Fri, 13 Sep 2019 22:06:18 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id B54C1522597;
+        Fri, 13 Sep 2019 22:06:18 +0200 (CEST)
+Received: from jernej-laptop.localnet (cpe-86-58-59-25.static.triera.net [86.58.59.25])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Postfix) with ESMTPA id D201E522590;
+        Fri, 13 Sep 2019 22:06:16 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mchehab@kernel.org, hverkuil@xs4all.nl, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 5/6] media: sun4i: Add H3 deinterlace driver
+Date:   Fri, 13 Sep 2019 22:06:15 +0200
+Message-ID: <6033065.vD0Azduf8t@jernej-laptop>
+In-Reply-To: <20190913091147.42nsldzxwzfjoiak@localhost.localdomain>
+References: <20190912175132.411-1-jernej.skrabec@siol.net> <4613446.95M5L3lKvs@jernej-laptop> <20190913091147.42nsldzxwzfjoiak@localhost.localdomain>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
-Date: Wed, 11 Sep 2019 23:37:27 +0000
+Hi!
 
-> Add the necessary dummy callbacks for hibernation.
+Dne petek, 13. september 2019 ob 11:11:47 CEST je Maxime Ripard napisal(a):
+> Hi,
 > 
-> Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> ---
-> This patch is basically a pure Hyper-V specific change and it has a
-> build dependency on the commit 271b2224d42f ("Drivers: hv: vmbus: Implement
-> suspend/resume for VSC drivers for hibernation"), which is on Sasha Levin's
-> Hyper-V tree's hyperv-next branch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git/log/?h=hyperv-next
+> On Thu, Sep 12, 2019 at 10:43:28PM +0200, Jernej Škrabec wrote:
+> > Dne četrtek, 12. september 2019 ob 22:26:47 CEST je Maxime Ripard 
+napisal(a):
+> > > > +	clk_set_rate(dev->mod_clk, 300000000);
 > 
-> I request this patch should go through Sasha's tree rather than the
-> net-next tree.
+> I just realized I missed this too. If you really need the rate to be
+> fixed, and if the controller cannot operate properly at any other
+> frequency, you probably want to use clk_set_rate_exclusive there.
 
-That's fine:
+I don't think that's needed. Parents of deinterlace clock are pll-periph0 and 
+pll-periph1 which both have fixed clock and thus deinterlace clock will never 
+be changed. I just set it to same frequency as it is set in BSP driver. I 
+think it works with 600 MHz too, but that's overkill.
 
-Acked-by: David S. Miller <davem@davemloft.net>
+Best regards,
+Jernej 
+
+
+
