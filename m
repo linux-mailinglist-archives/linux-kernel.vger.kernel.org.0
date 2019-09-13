@@ -2,231 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA70DB2112
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A674B212D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391746AbfIMNc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:32:26 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56218 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729968AbfIMNcZ (ORCPT
+        id S2388857AbfIMNhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:37:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56944 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387584AbfIMNhx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:32:25 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8DDWNmD077135;
-        Fri, 13 Sep 2019 08:32:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568381543;
-        bh=fftuCa/VDn10BIV1mF1oWQ1fX435RLKNzqyAtdoWExw=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=I3ADpNir0IM+GrMDnbpKIFRUgfpAQHqC6VR0tVZi6RrriNuyLC+6EYBQGhbu29eJm
-         hsgl5uaSTh+XB9OvmBWSy7vcc2xfZiYjRPTl5WnaLg5uRkPC7plrCwo2581hhIYuJg
-         YWjyf6F7ib5u1ZQgHTO0LdaKmSoHpbQc7746CbjA=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8DDWN1v043620
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Sep 2019 08:32:23 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 13
- Sep 2019 08:32:23 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 13 Sep 2019 08:32:23 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with SMTP id x8DDWNKw015666;
-        Fri, 13 Sep 2019 08:32:23 -0500
-Date:   Fri, 13 Sep 2019 08:34:28 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch 12/13] media: am437x-vpfe: Remove per bus width static
- data
-Message-ID: <20190913133428.kavc3dewxhqhmwyj@ti.com>
-References: <20190909162743.30114-1-bparrot@ti.com>
- <20190909162743.30114-13-bparrot@ti.com>
- <add3cb62-1391-f8e3-15f3-f1345e18da47@xs4all.nl>
+        Fri, 13 Sep 2019 09:37:53 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BDA7760767; Fri, 13 Sep 2019 13:37:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568381872;
+        bh=IISeWQxNAdCObwP9mJjaExic+PQ/4Av37VV7Ya2x/YM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=FN6AbRaoI/KGMGj0HLNzg2KWAdrlZOGMbfVpz8oxQ+rXbglOwuksxtXfoEv0q6Nhc
+         7rpPE3QyP2y2weTMI5/8at9+VonrFn0IFFVEL21C+K9kpg2S4HDvPymfYVR7xesGqr
+         iH8JNxNG8L8ZFcu/yBcDvXnBStU2sXHu0a/lMIX8=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E8686601C3;
+        Fri, 13 Sep 2019 13:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568381872;
+        bh=IISeWQxNAdCObwP9mJjaExic+PQ/4Av37VV7Ya2x/YM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=Kf384DT0b91WwyV904MdaAgk3pq8OvtjEOKdoLdqIf/olHRzwCjgaZBUlJKimrrD5
+         rucfghzCrEjencpdiisW0jbMVZpumk+kwmoNl/YUIPrni3J5n77r9Rtm4lm3cKoH+T
+         sh/Evla47IOLKBw1t1+ocXNjpnhUMQ1z6rIN+CNQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E8686601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <add3cb62-1391-f8e3-15f3-f1345e18da47@xs4all.nl>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/3] brcmsmac: Remove unneeded variable and make function
+ to be void
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1568306492-42998-2-git-send-email-zhongjiang@huawei.com>
+References: <1568306492-42998-2-git-send-email-zhongjiang@huawei.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <davem@davemloft.net>, <zhongjiang@huawei.com>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190913133752.BDA7760767@smtp.codeaurora.org>
+Date:   Fri, 13 Sep 2019 13:37:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hans Verkuil <hverkuil@xs4all.nl> wrote on Fri [2019-Sep-13 15:19:52 +0200]:
-> On 9/9/19 6:27 PM, Benoit Parrot wrote:
-> > The bus related static data include in the vpfe_fmt
-> > static table can be derived dynamically instead.
-> > This simplify the table and it's use.
-> 
-> simplify -> simplifies
-> it's -> its
-> 
-> > 
-> > We instead replace the per bus data info with just
-> > the usual bit per pixel value for each supported
-> 
-> bit -> bits
+zhong jiang <zhongjiang@huawei.com> wrote:
 
-I'll fix all of those, thanks...
-It's a shame vi ":set spell" does not help trying to figure out what we
-meant to say :)
+> brcms_c_set_mac  do not need return value to cope with different
+> cases. And change functon return type to void.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-> 
-> > pixel format.
-> > 
-> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> > ---
-> >  drivers/media/platform/am437x/am437x-vpfe.c | 56 ++++++---------------
-> >  drivers/media/platform/am437x/am437x-vpfe.h | 16 +-----
-> >  2 files changed, 16 insertions(+), 56 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
-> > index 9759ed398943..9855d4cb1d13 100644
-> > --- a/drivers/media/platform/am437x/am437x-vpfe.c
-> > +++ b/drivers/media/platform/am437x/am437x-vpfe.c
-> > @@ -73,73 +73,43 @@ static struct vpfe_fmt formats[] = {
-> >  	{
-> >  		.fourcc		= V4L2_PIX_FMT_YUYV,
-> >  		.code		= MEDIA_BUS_FMT_YUYV8_2X8,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 4,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 2,
-> > +		.bitsperpixel	= 16,
-> >  	}, {
-> >  		.fourcc		= V4L2_PIX_FMT_UYVY,
-> >  		.code		= MEDIA_BUS_FMT_UYVY8_2X8,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 4,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 2,
-> > +		.bitsperpixel	= 16,
-> >  	}, {
-> >  		.fourcc		= V4L2_PIX_FMT_YVYU,
-> >  		.code		= MEDIA_BUS_FMT_YVYU8_2X8,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 4,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 2,
-> > +		.bitsperpixel	= 16,
-> >  	}, {
-> >  		.fourcc		= V4L2_PIX_FMT_VYUY,
-> >  		.code		= MEDIA_BUS_FMT_VYUY8_2X8,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 4,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 2,
-> > +		.bitsperpixel	= 16,
-> >  	}, {
-> >  		.fourcc		= V4L2_PIX_FMT_SBGGR8,
-> >  		.code		= MEDIA_BUS_FMT_SBGGR8_1X8,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 2,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 1,
-> > +		.bitsperpixel	= 8,
-> >  	}, {
-> >  		.fourcc		= V4L2_PIX_FMT_SGBRG8,
-> >  		.code		= MEDIA_BUS_FMT_SGBRG8_1X8,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 2,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 1,
-> > +		.bitsperpixel	= 8,
-> >  	}, {
-> >  		.fourcc		= V4L2_PIX_FMT_SGRBG8,
-> >  		.code		= MEDIA_BUS_FMT_SGRBG8_1X8,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 2,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 1,
-> > +		.bitsperpixel	= 8,
-> >  	}, {
-> >  		.fourcc		= V4L2_PIX_FMT_SRGGB8,
-> >  		.code		= MEDIA_BUS_FMT_SRGGB8_1X8,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 2,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 1,
-> > +		.bitsperpixel	= 8,
-> >  	}, {
-> >  		.fourcc		= V4L2_PIX_FMT_RGB565,
-> >  		.code		= MEDIA_BUS_FMT_RGB565_2X8_LE,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 4,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 2,
-> > +		.bitsperpixel	= 16,
-> >  	}, {
-> >  		.fourcc		= V4L2_PIX_FMT_RGB565X,
-> >  		.code		= MEDIA_BUS_FMT_RGB565_2X8_BE,
-> > -		.l.width	= 10,
-> > -		.l.bpp		= 4,
-> > -		.s.width	= 8,
-> > -		.s.bpp		= 2,
-> > +		.bitsperpixel	= 16,
-> >  	},
-> >  };
-> >  
-> > @@ -184,9 +154,11 @@ static unsigned int __get_bytesperpixel(struct vpfe_device *vpfe,
-> >  {
-> >  	struct vpfe_subdev_info *sdinfo = vpfe->current_subdev;
-> >  	unsigned int bus_width = sdinfo->vpfe_param.bus_width;
-> > -	u32 bpp;
-> > +	u32 bpp, bus_width_bytes, clocksperpixel;
-> >  
-> > -	bpp = (bus_width == 10) ? fmt->l.bpp : fmt->s.bpp;
-> > +	bus_width_bytes = ALIGN(bus_width, 8) >> 3;
-> > +	clocksperpixel = DIV_ROUND_UP(fmt->bitsperpixel, bus_width);
-> > +	bpp = clocksperpixel * bus_width_bytes;
-> >  
-> >  	return bpp;
-> >  }
-> > diff --git a/drivers/media/platform/am437x/am437x-vpfe.h b/drivers/media/platform/am437x/am437x-vpfe.h
-> > index 0d10d2b4d7a2..2c9e89395bea 100644
-> > --- a/drivers/media/platform/am437x/am437x-vpfe.h
-> > +++ b/drivers/media/platform/am437x/am437x-vpfe.h
-> > @@ -215,28 +215,16 @@ struct vpfe_ccdc {
-> >  	u32 ccdc_ctx[VPFE_REG_END / sizeof(u32)];
-> >  };
-> >  
-> > -/*
-> > - * struct bus_format - VPFE bus format information
-> > - * @width: Bits per pixel (when transferred over a bus)
-> > - * @bpp: Bytes per pixel (when stored in memory)
-> > - */
-> > -struct bus_format {
-> > -	unsigned int width;
-> > -	unsigned int bpp;
-> > -};
-> > -
-> >  /*
-> >   * struct vpfe_fmt - VPFE media bus format information
-> >   * @fourcc: V4L2 pixel format code
-> >   * @code: V4L2 media bus format code
-> > - * @l: 10 bit bus format info
-> > - * @s: 8 bit bus format info
-> > + * @bitsperpixel: Bits per pixel over the bus
-> >   */
-> >  struct vpfe_fmt {
-> >  	u32 fourcc;
-> >  	u32 code;
-> > -	struct bus_format l;
-> > -	struct bus_format s;
-> > +	u32 bitsperpixel;
-> >  };
-> >  
-> >  /*
-> > 
-> 
-> Regards,
-> 
-> 	Hans
+I just don't see the benefit from changing the function to return void.
+And if we ever add error handling to the function we need to change it
+back to return int again, which is extra work.
+
+Patch set to Rejected.
+
+-- 
+https://patchwork.kernel.org/patch/11143403/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
