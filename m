@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47391B1FA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 607DDB1F81
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390862AbfIMNVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:21:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51282 "EHLO mail.kernel.org"
+        id S2390536AbfIMNUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:20:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390847AbfIMNVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:21:33 -0400
+        id S2390513AbfIMNUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:20:07 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57CFE206BB;
-        Fri, 13 Sep 2019 13:21:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3B00214DE;
+        Fri, 13 Sep 2019 13:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380892;
-        bh=f1ussyl0yeIxmZBfMJ7r0itbq7fEnM3dbc1i3oePXxk=;
+        s=default; t=1568380806;
+        bh=bgl7nUni9RQRQL9FRML8kLPCV5dpzQQ+fXp1/vppIaI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GXvexKfZ3PZyJ2ICH5Xu1gZfX+T79akEzjIdk4GPSSRVRtO8OzmXC2Xxl/Tw5qiE3
-         HAG7pTARpZ0/g1vPKbm8JzIZZmkWDTDJ39A0+5E8TdKFn/3GsI2f2W6vTxeOobha0R
-         Ab7CvM2iMH26cdK81wb7Dti8xz7Fr7jzjE5mdGtw=
+        b=wCYikmi9hnohWIRHAEef0MkfIPatAsz9K3jCWKaGOBFcwJwwKvxczP4S8fVBREgtK
+         FlI1hLwRBt7O8xv2nVn/7RJR+/yQ+xZwre0I6YEIsqJZD0LqTbyQOZeov2nknQ5YRw
+         2wS2zItoDew87XXYzlhOpwK6+oi8pFG0ygiHgApU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tiwei Bie <tiwei.bie@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Subject: [PATCH 5.2 12/37] vhost/test: fix build for vhost test - again
-Date:   Fri, 13 Sep 2019 14:07:17 +0100
-Message-Id: <20190913130515.217540495@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Rue <dan.rue@linaro.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 183/190] ext4: dont perform block validity checks on the journal inode
+Date:   Fri, 13 Sep 2019 14:07:18 +0100
+Message-Id: <20190913130614.485465467@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
-References: <20190913130510.727515099@linuxfoundation.org>
+In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
+References: <20190913130559.669563815@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tiwei Bie <tiwei.bie@intel.com>
+[ Upstream commit 0a944e8a6c66ca04c7afbaa17e22bf208a8b37f0 ]
 
-commit 264b563b8675771834419057cbe076c1a41fb666 upstream.
+Since the journal inode is already checked when we added it to the
+block validity's system zone, if we check it again, we'll just trigger
+a failure.
 
-Since vhost_exceeds_weight() was introduced, callers need to specify
-the packet weight and byte weight in vhost_dev_init(). Note that, the
-packet weight isn't counted in this patch to keep the original behavior
-unchanged.
+This was causing failures like this:
 
-Fixes: e82b9b0727ff ("vhost: introduce vhost_exceeds_weight()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[   53.897001] EXT4-fs error (device sda): ext4_find_extent:909: inode
+#8: comm jbd2/sda-8: pblk 121667583 bad header/extent: invalid extent entries - magic f30a, entries 8, max 340(340), depth 0(0)
+[   53.931430] jbd2_journal_bmap: journal block not found at offset 49 on sda-8
+[   53.938480] Aborting journal on device sda-8.
 
+... but only if the system was under enough memory pressure that
+logical->physical mapping for the journal inode gets pushed out of the
+extent cache.  (This is why it wasn't noticed earlier.)
+
+Fixes: 345c0dbf3a30 ("ext4: protect journal inode's blocks using block_validity")
+Reported-by: Dan Rue <dan.rue@linaro.org>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vhost/test.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ fs/ext4/extents.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/vhost/test.c
-+++ b/drivers/vhost/test.c
-@@ -22,6 +22,12 @@
-  * Using this limit prevents one virtqueue from starving others. */
- #define VHOST_TEST_WEIGHT 0x80000
- 
-+/* Max number of packets transferred before requeueing the job.
-+ * Using this limit prevents one virtqueue from starving others with
-+ * pkts.
-+ */
-+#define VHOST_TEST_PKT_WEIGHT 256
-+
- enum {
- 	VHOST_TEST_VQ = 0,
- 	VHOST_TEST_VQ_MAX = 1,
-@@ -80,10 +86,8 @@ static void handle_vq(struct vhost_test
- 		}
- 		vhost_add_used_and_signal(&n->dev, vq, head, 0);
- 		total_len += len;
--		if (unlikely(total_len >= VHOST_TEST_WEIGHT)) {
--			vhost_poll_queue(&vq->poll);
-+		if (unlikely(vhost_exceeds_weight(vq, 0, total_len)))
- 			break;
--		}
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 45aea792d22a0..00bf0b67aae87 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -518,10 +518,14 @@ __read_extent_tree_block(const char *function, unsigned int line,
  	}
- 
- 	mutex_unlock(&vq->mutex);
-@@ -115,7 +119,8 @@ static int vhost_test_open(struct inode
- 	dev = &n->dev;
- 	vqs[VHOST_TEST_VQ] = &n->vqs[VHOST_TEST_VQ];
- 	n->vqs[VHOST_TEST_VQ].handle_kick = handle_vq_kick;
--	vhost_dev_init(dev, vqs, VHOST_TEST_VQ_MAX, UIO_MAXIOV);
-+	vhost_dev_init(dev, vqs, VHOST_TEST_VQ_MAX, UIO_MAXIOV,
-+		       VHOST_TEST_PKT_WEIGHT, VHOST_TEST_WEIGHT);
- 
- 	f->private_data = n;
- 
+ 	if (buffer_verified(bh) && !(flags & EXT4_EX_FORCE_CACHE))
+ 		return bh;
+-	err = __ext4_ext_check(function, line, inode,
+-			       ext_block_hdr(bh), depth, pblk);
+-	if (err)
+-		goto errout;
++	if (!ext4_has_feature_journal(inode->i_sb) ||
++	    (inode->i_ino !=
++	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum))) {
++		err = __ext4_ext_check(function, line, inode,
++				       ext_block_hdr(bh), depth, pblk);
++		if (err)
++			goto errout;
++	}
+ 	set_buffer_verified(bh);
+ 	/*
+ 	 * If this is a leaf block, cache all of its entries
+-- 
+2.20.1
+
 
 
