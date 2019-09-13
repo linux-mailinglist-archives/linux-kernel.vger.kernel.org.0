@@ -2,155 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BFCFB1AFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 11:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B10EDB1B1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 11:50:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbfIMJmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 05:42:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39756 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfIMJmW (ORCPT
+        id S1729100AbfIMJuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 05:50:44 -0400
+Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:46496 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728767AbfIMJuo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 05:42:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=lHumIoWHnfMgoly+K9KCOwt1FKK4j360M4fRV6UdXgg=; b=i7d56xHKmc5d
-        HYJR1JpadvREqDSPUR8sLXqZRvcXnYGZPc26BQLDYR/N23x5rb7qeZzda0PyTeOwwPsIVVLwvfGy3
-        pzZ1b1XOyM1rgUymbsFYkMJqtzJyWk86BfYLzC7OHary5Mbl3nwutB/D5ii0X5F8nuRiWSqgELJo7
-        L6CrE=;
-Received: from 195-23-252-136.net.novis.pt ([195.23.252.136] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1i8i5p-0003T7-8u; Fri, 13 Sep 2019 09:42:17 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id A26C1D00DD9; Fri, 13 Sep 2019 10:42:16 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Viorel Suman <viorel.suman@nxp.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        Daniel Baluta <daniel.baluta@nxp.com>, festevam@gmail.com,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        nicoleotsuka@gmail.com, Nicolin Chen <nicoleotsuka@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>, shengjiu.wang@nxp.com,
-        timur@kernel.org, Xiubo.Lee@gmail.com
-Subject: Applied "ASoC: fsl_sai: Implement set_bclk_ratio" to the asoc tree
-In-Reply-To: <20190830215910.31590-1-daniel.baluta@nxp.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190913094216.A26C1D00DD9@fitzroy.sirena.org.uk>
-Date:   Fri, 13 Sep 2019 10:42:16 +0100 (BST)
+        Fri, 13 Sep 2019 05:50:44 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E309AC585C;
+        Fri, 13 Sep 2019 09:50:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1568368243; bh=VNT0CfKOWFVh9wUN9OsP/Ath/shvOWvuL7ZRZxtlnJs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Un9DyyRCSzZ+BtJTyFzXfYHYaMhQnX66hyzPJ7tJyO3pd2xg9j1D/PHFXEhvO5f5W
+         B5XPmrkD7JgkRHonCx64A4E1kCItZjdmDai34ozetB9McFOfv/UOHJCRe5wxiCJ1fz
+         PpKeWuXqH+z60IL+LxzK8zsh1VvfxPhWFJZZ5D5Iui9abpAXS5zgiXnusKjyiF4Sjg
+         84Fp5+BGF900G5y+WhZPOLS7OkHRfZWZgerfgu+4P/d1Cd/KhrLRIos4rjmgb0Rqtk
+         8WbcA9LfVEII3XRdjhhZZk3wy5rBsx/OqBoLVdwR+68KZTHBV25dUfBKd1f8P+tKRg
+         1V5VWw+vXVoMQ==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id C1E27A0057;
+        Fri, 13 Sep 2019 09:50:40 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Christophe ROULLIER <christophe.roullier@st.com>
+Subject: [PATCH net] net: stmmac: Hold rtnl lock in suspend/resume callbacks
+Date:   Fri, 13 Sep 2019 11:50:32 +0200
+Message-Id: <66b6c1395e4bbc836e80083b89b2189ce7382d7b.1568360548.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+We need to hold rnl lock in suspend and resume callbacks because phylink
+requires it. Otherwise we will get a WARN() in suspend and resume.
 
-   ASoC: fsl_sai: Implement set_bclk_ratio
+Also, move phylink start and stop callbacks to inside device's internal
+lock so that we prevent concurrent HW accesses.
 
-has been applied to the asoc tree at
+Fixes: 74371272f97f ("net: stmmac: Convert to phylink and remove phylib logic")
+Reported-by: Christophe ROULLIER <christophe.roullier@st.com>
+Tested-by: Christophe ROULLIER <christophe.roullier@st.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 63d1a3488ff58e094a7f517cf93c0250f0a3f6be Mon Sep 17 00:00:00 2001
-From: Viorel Suman <viorel.suman@nxp.com>
-Date: Sat, 31 Aug 2019 00:59:10 +0300
-Subject: [PATCH] ASoC: fsl_sai: Implement set_bclk_ratio
-
-This is to allow machine drivers to set a certain bitclk rate
-which might not be exactly rate * frame size.
-
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Link: https://lore.kernel.org/r/20190830215910.31590-1-daniel.baluta@nxp.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/fsl_sai.c | 21 +++++++++++++++++++--
- sound/soc/fsl/fsl_sai.h |  1 +
- 2 files changed, 20 insertions(+), 2 deletions(-)
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Christophe ROULLIER <christophe.roullier@st.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-index 728307acab90..ef0b74693093 100644
---- a/sound/soc/fsl/fsl_sai.c
-+++ b/sound/soc/fsl/fsl_sai.c
-@@ -137,6 +137,16 @@ static int fsl_sai_set_dai_tdm_slot(struct snd_soc_dai *cpu_dai, u32 tx_mask,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index fd54c7c87485..b19ab09cb18f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4451,10 +4451,12 @@ int stmmac_suspend(struct device *dev)
+ 	if (!ndev || !netif_running(ndev))
+ 		return 0;
+ 
+-	phylink_stop(priv->phylink);
+-
+ 	mutex_lock(&priv->lock);
+ 
++	rtnl_lock();
++	phylink_stop(priv->phylink);
++	rtnl_unlock();
++
+ 	netif_device_detach(ndev);
+ 	stmmac_stop_all_queues(priv);
+ 
+@@ -4558,9 +4560,11 @@ int stmmac_resume(struct device *dev)
+ 
+ 	stmmac_start_all_queues(priv);
+ 
+-	mutex_unlock(&priv->lock);
+-
++	rtnl_lock();
+ 	phylink_start(priv->phylink);
++	rtnl_unlock();
++
++	mutex_unlock(&priv->lock);
+ 
  	return 0;
  }
- 
-+static int fsl_sai_set_dai_bclk_ratio(struct snd_soc_dai *dai,
-+				      unsigned int ratio)
-+{
-+	struct fsl_sai *sai = snd_soc_dai_get_drvdata(dai);
-+
-+	sai->bclk_ratio = ratio;
-+
-+	return 0;
-+}
-+
- static int fsl_sai_set_dai_sysclk_tr(struct snd_soc_dai *cpu_dai,
- 		int clk_id, unsigned int freq, int fsl_dir)
- {
-@@ -423,8 +433,14 @@ static int fsl_sai_hw_params(struct snd_pcm_substream *substream,
- 		slot_width = sai->slot_width;
- 
- 	if (!sai->is_slave_mode) {
--		ret = fsl_sai_set_bclk(cpu_dai, tx,
--				slots * slot_width * params_rate(params));
-+		if (sai->bclk_ratio)
-+			ret = fsl_sai_set_bclk(cpu_dai, tx,
-+					       sai->bclk_ratio *
-+					       params_rate(params));
-+		else
-+			ret = fsl_sai_set_bclk(cpu_dai, tx,
-+					       slots * slot_width *
-+					       params_rate(params));
- 		if (ret)
- 			return ret;
- 
-@@ -630,6 +646,7 @@ static void fsl_sai_shutdown(struct snd_pcm_substream *substream,
- }
- 
- static const struct snd_soc_dai_ops fsl_sai_pcm_dai_ops = {
-+	.set_bclk_ratio	= fsl_sai_set_dai_bclk_ratio,
- 	.set_sysclk	= fsl_sai_set_dai_sysclk,
- 	.set_fmt	= fsl_sai_set_dai_fmt,
- 	.set_tdm_slot	= fsl_sai_set_dai_tdm_slot,
-diff --git a/sound/soc/fsl/fsl_sai.h b/sound/soc/fsl/fsl_sai.h
-index b89b0ca26053..b12cb578f6d0 100644
---- a/sound/soc/fsl/fsl_sai.h
-+++ b/sound/soc/fsl/fsl_sai.h
-@@ -176,6 +176,7 @@ struct fsl_sai {
- 	unsigned int mclk_streams;
- 	unsigned int slots;
- 	unsigned int slot_width;
-+	unsigned int bclk_ratio;
- 
- 	const struct fsl_sai_soc_data *soc_data;
- 	struct snd_dmaengine_dai_dma_data dma_params_rx;
 -- 
-2.20.1
+2.7.4
 
