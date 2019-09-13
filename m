@@ -2,70 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED1BB1CC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6F76B1CF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:04:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbfIMMBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 08:01:49 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55404 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728312AbfIMMBs (ORCPT
+        id S2388065AbfIMMDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 08:03:08 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:25811 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387896AbfIMMDG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 08:01:48 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: tomeu)
-        with ESMTPSA id 03BAD28BB6B
-Subject: Re: [PATCH 0/2] drm/panfrost: Tidy up the devfreq implementation
-To:     Steven Price <steven.price@arm.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>
-Cc:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Mark Brown <broonie@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20190912112804.10104-1-steven.price@arm.com>
-From:   Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Message-ID: <8be4769c-3162-efbb-ea66-05b8404188fc@collabora.com>
-Date:   Thu, 12 Sep 2019 15:51:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.0
+        Fri, 13 Sep 2019 08:03:06 -0400
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 13 Sep 2019 17:26:39 +0530
+Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 13 Sep 2019 17:26:13 +0530
+Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
+        id B23C9372A; Fri, 13 Sep 2019 17:26:11 +0530 (IST)
+From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
+        robh+dt@kernel.org, sricharan@codeaurora.org,
+        nprakash@codeaurora.org
+Subject: [PATCH V2 00/12] remoteproc: qcom: q6v5-wcss: Add support for secure pil
+Date:   Fri, 13 Sep 2019 17:25:59 +0530
+Message-Id: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190912112804.10104-1-steven.price@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/12/19 12:28 PM, Steven Price wrote:
-> The devfreq implementation in panfrost is unnecessarily open coded. It
-> also tracks utilisation metrics per slot which isn't very useful. Let's
-> tidy it up!
-> 
-> This should be picked up along with Mark's change[1] to fix
-> regulator_get_optional() misuse. This also deletes the code changes from
-> 52282163dfa6 and e21dd290881b which would otherwise need reverting, see
-> the previous discussion[2].
+IPQ8074 needs support for secure pil as well.
+Also, currently only unified firmware is supported.
+IPQ8074 supports split firmware for q6 and m3, so
+adding support for that.
 
-Both patches look great.
+ Also, this series is based on Govind’s,
+ “[v4] Add non PAS wcss Q6 support for QCS404”
+ https://www.spinics.net/lists/linux-remoteproc/msg03612.html
 
-Reviewed-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+[V2] Fixed all comments
 
-Thanks!
+Gokul Sriram Palanisamy (12):
+  remoteproc: qcom: Add PRNG proxy clock
+  remoteproc: qcom: Add secure PIL support
+  remoteproc: qcom: Add support for split q6 + m3 wlan firmware
+  remoteproc: qcom: Add ssr subdevice identifier
+  remoteproc: qcom: Update regmap offsets for halt register
+  dt-bindings: clock: qcom: Add reset for WCSSAON
+  clk: qcom: Add WCSSAON reset
+  dt-bindings: mailbox: qom: Add ipq8074 APPS compatible
+  mailbox: qcom: Add support for IPQ8074 APCS
+  dt-bindings: firmware: qcom: Add compatible for IPQ8074 SoC
+  arm64: dts: Add support for scm on IPQ8074 SoCs
+  arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
 
-Tomeu
+ .../devicetree/bindings/firmware/qcom,scm.txt      |   1 +
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   1 +
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 132 +++++++++++++++++
+ drivers/clk/qcom/gcc-ipq8074.c                     |   1 +
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c            |   1 +
+ drivers/remoteproc/qcom_q6v5_wcss.c                | 158 +++++++++++++++++----
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h       |   1 +
+ 7 files changed, 265 insertions(+), 30 deletions(-)
 
-> [1] https://lore.kernel.org/lkml/20190904123032.23263-1-broonie@kernel.org/
-> [2] https://lore.kernel.org/lkml/ccd81530-2dbd-3c02-ca0a-1085b00663b5@arm.com/
-> 
-> Steven Price (2):
->    drm/panfrost: Use generic code for devfreq
->    drm/panfrost: Simplify devfreq utilisation tracking
-> 
->   drivers/gpu/drm/panfrost/panfrost_devfreq.c | 126 ++++++--------------
->   drivers/gpu/drm/panfrost/panfrost_devfreq.h |   3 +-
->   drivers/gpu/drm/panfrost/panfrost_device.h  |  14 +--
->   drivers/gpu/drm/panfrost/panfrost_job.c     |  14 +--
->   4 files changed, 48 insertions(+), 109 deletions(-)
-> 
+-- 
+1.9.1
+
