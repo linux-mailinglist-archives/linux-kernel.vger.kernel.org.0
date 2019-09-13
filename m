@@ -2,237 +2,279 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD64EB2080
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3A62B2095
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391033AbfIMNWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:22:34 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:40459 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388828AbfIMNWW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:22:22 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8DDGDDQ008470;
-        Fri, 13 Sep 2019 15:21:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=XsRDAFdNpZsq68i7jv8FE3dvyRmLYMzu893o05OONls=;
- b=F/KxLIs604mI5tT9XNXLzWVfNZC04NPczB2rKfTrvl8xMvXssmxN5svUaiLe67H9xKIa
- L0nEQ7TtrcaKK/6/sNY/IEVt7WgSnCnhK5UgTUM+tH+H/au1HAvRlineBlxIhHNx6SqC
- P5QHdTRDFE0l5l4IwKSCPDgE/y/AawZCQJtce9h3FCdiOTDrjQBNFCDdI1TU2tsbqJOd
- LRqqWtcGgln1hvj55Ub1xCDl26GMyYHxuPrEKFDw3XEoncS7ou7oH6omH7QYjla5Y/mj
- QOYt+6e2zxX4X5gJ4wd5nvb2eW+lhTI3qMHIlG7H5Z703w9E/mO3vU0sA5ZpaNRlT8Vh IA== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2uyte2w3k6-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 13 Sep 2019 15:21:45 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 90BA74B;
-        Fri, 13 Sep 2019 13:21:40 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E43132C2B99;
-        Fri, 13 Sep 2019 15:21:39 +0200 (CEST)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 13 Sep
- 2019 15:21:39 +0200
-Received: from localhost (10.48.1.232) by Webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 13 Sep 2019 15:21:38 +0200
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <jic23@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <fabrice.gasnier@st.com>,
-        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH] iio: adc: stm32-adc: fix a race when using several adcs with dma and irq
-Date:   Fri, 13 Sep 2019 15:21:30 +0200
-Message-ID: <1568380890-313-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 2.7.4
+        id S2391089AbfIMNYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:24:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55042 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390039AbfIMNYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:24:01 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D9AD8190C102;
+        Fri, 13 Sep 2019 13:23:59 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.36])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A43CF5C219;
+        Fri, 13 Sep 2019 13:23:56 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Kan Liang <kan.liang@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>,
+        Stephane Eranian <eranian@google.com>,
+        Song Liu <songliubraving@fb.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: [RFC 00/73] libperf: Add sampling interface
+Date:   Fri, 13 Sep 2019 15:22:42 +0200
+Message-Id: <20190913132355.21634-1-jolsa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.1.232]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-13_06:2019-09-11,2019-09-13 signatures=0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.70]); Fri, 13 Sep 2019 13:24:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-End of conversion may be handled by using IRQ or DMA. There may be a
-race when two conversions complete at the same time on several ADCs.
-EOC can be read as 'set' for several ADCs, with:
-- an ADC configured to use IRQs. EOCIE bit is set. The handler is normally
-  called in this case.
-- an ADC configured to use DMA. EOCIE bit isn't set. EOC triggers the DMA
-  request instead. It's then automatically cleared by DMA read. But the
-  handler gets called due to status bit is temporarily set (IRQ triggered
-  by the other ADC).
-So both EOC status bit in CSR and EOCIE control bit must be checked
-before invoking the interrupt handler (e.g. call ISR only for
-IRQ-enabled ADCs).
+hi,
+sending changes for exporting basic sampling interface
+in libperf. It's now possible to use following code in
+applications via libperf:
 
-Fixes: 2763ea0585c9 ("iio: adc: stm32: add optional dma support")
+--- (example is without error checks for simplicity)
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+  struct perf_event_attr attr = {
+          .type             = PERF_TYPE_TRACEPOINT,
+          .sample_period    = 1,
+          .wakeup_watermark = 1,
+          .disabled         = 1,
+  };
+  /* ... setup attr */
+
+  cpus = perf_cpu_map__new(NULL);
+
+  evlist = perf_evlist__new();
+  evsel  = perf_evsel__new(&attr);
+  perf_evlist__add(evlist, evsel);
+
+  perf_evlist__set_maps(evlist, cpus, NULL);
+
+  err = perf_evlist__open(evlist);
+  err = perf_evlist__mmap(evlist, 4);
+
+  err = perf_evlist__enable(evlist);
+
+  /* ... monitored area, plus all the other cpus */
+
+  err = perf_evlist__disable(evlist);
+
+  perf_evlist__for_each_mmap(evlist, map) {
+          if (perf_mmap__read_init(map) < 0)
+                  continue;
+
+          while ((event = perf_mmap__read_event(map)) != NULL) {
+                  perf_mmap__consume(map);
+          }
+
+          perf_mmap__read_done(map);
+  }
+
+  perf_evlist__delete(evlist);
+  perf_cpu_map__put(cpus);
+
+--- (end)
+
+Nothing is carved in stone so far, the interface is exported
+as is available in perf now and we can change it as we want.
+
+New tests are added in test-evlist.c to do thread and cpu based
+sampling.
+
+All the functionality should not change, however there's considerable
+mmap code rewrite, so would be great if guys could run your usual
+workloads to see if all is fine.. so far so good in my tests ;-)
+
+It's also available in here:
+  git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+  perf/lib
+
+thanks,
+jirka
+
+
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 ---
- drivers/iio/adc/stm32-adc-core.c | 43 +++++++++++++++++++++++++++++++++++++---
- drivers/iio/adc/stm32-adc-core.h | 13 ++++++++++++
- drivers/iio/adc/stm32-adc.c      |  6 ------
- 3 files changed, 53 insertions(+), 9 deletions(-)
+Jiri Olsa (73):
+      tools: Add missing stdio.h include to asm/bug.h header
+      perf tests: Fix static build test
+      perf tools: Rename struct perf_mmap to struct mmap
+      perf tools: Rename perf_evlist__mmap() to evlist__mmap()
+      perf tools: Rename perf_evlist__munmap() to evlist__munmap()
+      perf tools: Rename perf_evlist__alloc_mmap() to evlist__alloc_mmap()
+      perf tools: Rename perf_evlist__exit() to evlist__exit()
+      perf tools: Rename perf_evlist__purge() to evlist__purge()
+      libperf: Link libapi.a in libperf.so
+      libperf: Add perf_mmap struct
+      libperf: Add mask to struct perf_mmap
+      libperf: Add fd to struct perf_mmap
+      libperf: Add cpu to struct perf_mmap
+      libperf: Add refcnt to struct perf_mmap
+      libperf: Add prev/start/end to struct perf_mmap
+      libperf: Add overwrite to struct perf_mmap
+      libperf: Add event_copy to struct perf_mmap
+      libperf: Add flush to struct perf_mmap
+      libperf: Move system_wide from struct evsel to struct perf_evsel
+      libperf: Move nr_mmaps from struct evlist to struct perf_evlist
+      libperf: Move mmap_len from struct evlist to struct perf_evlist
+      libperf: Move pollfd from struct evlist to struct perf_evlist
+      libperf: Move sample_id from struct evsel to struct perf_evsel
+      libperf: Move id from struct evsel to struct perf_evsel
+      libperf: Move ids from struct evsel to struct perf_evsel
+      libperf: Move heads from struct evlist to struct perf_evlist
+      libperf: Add perf_evsel__alloc_id/perf_evsel__free_id functions
+      libperf: Add perf_evlist__first/last functions
+      libperf: Add perf_evlist__read_format function
+      libperf: Add perf_evlist__id_add function
+      libperf: Add perf_evlist__id_add_fd function
+      libperf: Move page_size into libperf
+      libperf: Merge libperf_set_print in libperf_init
+      libperf: Add libperf_init call to tests
+      libperf: Add libperf dependency for tests targets
+      libperf: Add perf_evlist__alloc_pollfd function
+      libperf: Add perf_evlist__add_pollfd function
+      libperf: Add perf_evlist__poll function
+      libperf: Add perf_mmap__init function
+      libperf: Add struct perf_mmap_param
+      libperf: Add perf_mmap__mmap_len function
+      libperf: Add perf_mmap__mmap function
+      libperf: Add perf_mmap__get function
+      libperf: Add perf_mmap__unmap function
+      libperf: Add perf_mmap__put function
+      libperf: Add perf_mmap__new function
+      perf tools: Use perf_mmap way to detect aux mmap
+      libperf: Add perf_mmap__consume function
+      libperf: Add perf_mmap__read_init function
+      libperf: Add perf_mmap__read_done function
+      libperf: Add perf_mmap__read_event function
+      libperf: Add perf_evlist__mmap/munmap function
+      libperf: Add perf_evlist__mmap_ops function
+      libperf: Add perf_evlist_mmap_ops::idx callback
+      libperf: Add perf_evlist_mmap_ops::new callback
+      libperf: Add perf_evlist_mmap_ops::mmap callback
+      perf tools: Add perf_evlist__mmap_cb_idx function
+      perf tools: Add perf_evlist__mmap_cb_new function
+      perf tools: Add perf_evlist__mmap_cb_mmap function
+      perf tools: Switch to libperf mmap interface
+      libperf: Move pollfd allocation to libperf
+      libperf: Add perf_evlist__exit function
+      libperf: Add perf_evlist__purge function
+      libperf: Call perf_evlist__munmap/close on perf_evlist__delete
+      libperf: Add perf_evlist__filter_pollfd function
+      libperf: Add perf_evlist__for_each_mmap function
+      libperf: Link static tests with libapi.a
+      libperf: Add _GNU_SOURCE define to compilation
+      libperf: Add tests_mmap_thread test
+      libperf: Add tests_mmap_cpus test
+      libperf: Keep count of failed tests
+      libperf: Do not export perf_evsel__init/perf_evlist__init
+      libperf: Add pr_err macro
 
-diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
-index 9b85fef..7297396 100644
---- a/drivers/iio/adc/stm32-adc-core.c
-+++ b/drivers/iio/adc/stm32-adc-core.c
-@@ -71,6 +71,8 @@
-  * @eoc1:	adc1 end of conversion flag in @csr
-  * @eoc2:	adc2 end of conversion flag in @csr
-  * @eoc3:	adc3 end of conversion flag in @csr
-+ * @ier:	interrupt enable register offset for each adc
-+ * @eocie_msk:	end of conversion interrupt enable mask in @ier
-  */
- struct stm32_adc_common_regs {
- 	u32 csr;
-@@ -78,6 +80,8 @@ struct stm32_adc_common_regs {
- 	u32 eoc1_msk;
- 	u32 eoc2_msk;
- 	u32 eoc3_msk;
-+	u32 ier;
-+	u32 eocie_msk;
- };
- 
- struct stm32_adc_priv;
-@@ -303,6 +307,8 @@ static const struct stm32_adc_common_regs stm32f4_adc_common_regs = {
- 	.eoc1_msk = STM32F4_EOC1,
- 	.eoc2_msk = STM32F4_EOC2,
- 	.eoc3_msk = STM32F4_EOC3,
-+	.ier = STM32F4_ADC_CR1,
-+	.eocie_msk = STM32F4_EOCIE,
- };
- 
- /* STM32H7 common registers definitions */
-@@ -311,8 +317,24 @@ static const struct stm32_adc_common_regs stm32h7_adc_common_regs = {
- 	.ccr = STM32H7_ADC_CCR,
- 	.eoc1_msk = STM32H7_EOC_MST,
- 	.eoc2_msk = STM32H7_EOC_SLV,
-+	.ier = STM32H7_ADC_IER,
-+	.eocie_msk = STM32H7_EOCIE,
- };
- 
-+static const unsigned int stm32_adc_offset[STM32_ADC_MAX_ADCS] = {
-+	0, STM32_ADC_OFFSET, STM32_ADC_OFFSET * 2,
-+};
-+
-+static unsigned int stm32_adc_eoc_enabled(struct stm32_adc_priv *priv,
-+					  unsigned int adc)
-+{
-+	u32 ier, offset = stm32_adc_offset[adc];
-+
-+	ier = readl_relaxed(priv->common.base + offset + priv->cfg->regs->ier);
-+
-+	return ier & priv->cfg->regs->eocie_msk;
-+}
-+
- /* ADC common interrupt for all instances */
- static void stm32_adc_irq_handler(struct irq_desc *desc)
- {
-@@ -323,13 +345,28 @@ static void stm32_adc_irq_handler(struct irq_desc *desc)
- 	chained_irq_enter(chip, desc);
- 	status = readl_relaxed(priv->common.base + priv->cfg->regs->csr);
- 
--	if (status & priv->cfg->regs->eoc1_msk)
-+	/*
-+	 * End of conversion may be handled by using IRQ or DMA. There may be a
-+	 * race here when two conversions complete at the same time on several
-+	 * ADCs. EOC may be read 'set' for several ADCs, with:
-+	 * - an ADC configured to use DMA (EOC triggers the DMA request, and
-+	 *   is then automatically cleared by DR read in hardware)
-+	 * - an ADC configured to use IRQs (EOCIE bit is set. The handler must
-+	 *   be called in this case)
-+	 * So both EOC status bit in CSR and EOCIE control bit must be checked
-+	 * before invoking the interrupt handler (e.g. call ISR only for
-+	 * IRQ-enabled ADCs).
-+	 */
-+	if (status & priv->cfg->regs->eoc1_msk &&
-+	    stm32_adc_eoc_enabled(priv, 0))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 0));
- 
--	if (status & priv->cfg->regs->eoc2_msk)
-+	if (status & priv->cfg->regs->eoc2_msk &&
-+	    stm32_adc_eoc_enabled(priv, 1))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 1));
- 
--	if (status & priv->cfg->regs->eoc3_msk)
-+	if (status & priv->cfg->regs->eoc3_msk &&
-+	    stm32_adc_eoc_enabled(priv, 2))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 2));
- 
- 	chained_irq_exit(chip, desc);
-diff --git a/drivers/iio/adc/stm32-adc-core.h b/drivers/iio/adc/stm32-adc-core.h
-index 8af507b..8dc936b 100644
---- a/drivers/iio/adc/stm32-adc-core.h
-+++ b/drivers/iio/adc/stm32-adc-core.h
-@@ -25,8 +25,21 @@
-  * --------------------------------------------------------
-  */
- #define STM32_ADC_MAX_ADCS		3
-+#define STM32_ADC_OFFSET		0x100
- #define STM32_ADCX_COMN_OFFSET		0x300
- 
-+/* STM32F4 - registers for each ADC instance */
-+#define STM32F4_ADC_CR1			0x04
-+
-+/* STM32F4_ADC_CR1 - bit fields */
-+#define STM32F4_EOCIE			BIT(5)
-+
-+/* STM32H7 - registers for each instance */
-+#define STM32H7_ADC_IER			0x04
-+
-+/* STM32H7_ADC_IER - bit fields */
-+#define STM32H7_EOCIE			BIT(2)
-+
- /**
-  * struct stm32_adc_common - stm32 ADC driver common data (for all instances)
-  * @base:		control registers base cpu addr
-diff --git a/drivers/iio/adc/stm32-adc.c b/drivers/iio/adc/stm32-adc.c
-index 6a7dd08..3c9f456 100644
---- a/drivers/iio/adc/stm32-adc.c
-+++ b/drivers/iio/adc/stm32-adc.c
-@@ -30,7 +30,6 @@
- 
- /* STM32F4 - Registers for each ADC instance */
- #define STM32F4_ADC_SR			0x00
--#define STM32F4_ADC_CR1			0x04
- #define STM32F4_ADC_CR2			0x08
- #define STM32F4_ADC_SMPR1		0x0C
- #define STM32F4_ADC_SMPR2		0x10
-@@ -54,7 +53,6 @@
- #define STM32F4_RES_SHIFT		24
- #define STM32F4_RES_MASK		GENMASK(25, 24)
- #define STM32F4_SCAN			BIT(8)
--#define STM32F4_EOCIE			BIT(5)
- 
- /* STM32F4_ADC_CR2 - bit fields */
- #define STM32F4_SWSTART			BIT(30)
-@@ -69,7 +67,6 @@
- 
- /* STM32H7 - Registers for each ADC instance */
- #define STM32H7_ADC_ISR			0x00
--#define STM32H7_ADC_IER			0x04
- #define STM32H7_ADC_CR			0x08
- #define STM32H7_ADC_CFGR		0x0C
- #define STM32H7_ADC_SMPR1		0x14
-@@ -89,9 +86,6 @@
- #define STM32H7_EOC			BIT(2)
- #define STM32H7_ADRDY			BIT(0)
- 
--/* STM32H7_ADC_IER - bit fields */
--#define STM32H7_EOCIE			STM32H7_EOC
--
- /* STM32H7_ADC_CR - bit fields */
- #define STM32H7_ADCAL			BIT(31)
- #define STM32H7_ADCALDIF		BIT(30)
--- 
-2.7.4
-
+ tools/include/asm/bug.h                      |   1 +
+ tools/perf/arch/arm/util/cs-etm.c            |   4 +-
+ tools/perf/arch/arm64/util/arm-spe.c         |   4 +-
+ tools/perf/arch/x86/tests/intel-cqm.c        |   4 +-
+ tools/perf/arch/x86/tests/perf-time-to-tsc.c |  19 +-
+ tools/perf/arch/x86/util/intel-bts.c         |   6 +-
+ tools/perf/arch/x86/util/intel-pt.c          |  14 +-
+ tools/perf/builtin-kvm.c                     |  23 +-
+ tools/perf/builtin-record.c                  |  90 ++---
+ tools/perf/builtin-script.c                  |   4 +-
+ tools/perf/builtin-stat.c                    |   6 +-
+ tools/perf/builtin-top.c                     |  29 +-
+ tools/perf/builtin-trace.c                   |  21 +-
+ tools/perf/lib/Build                         |   1 +
+ tools/perf/lib/Makefile                      |  42 ++-
+ tools/perf/lib/core.c                        |  13 +-
+ tools/perf/lib/evlist.c                      | 440 +++++++++++++++++++++++++
+ tools/perf/lib/evsel.c                       |  30 ++
+ tools/perf/lib/include/internal/evlist.h     |  74 +++++
+ tools/perf/lib/include/internal/evsel.h      |  32 ++
+ tools/perf/lib/include/internal/lib.h        |   2 +
+ tools/perf/lib/include/internal/mmap.h       |  59 ++++
+ tools/perf/lib/include/internal/tests.h      |  20 +-
+ tools/perf/lib/include/perf/core.h           |   5 +-
+ tools/perf/lib/include/perf/evlist.h         |  14 +-
+ tools/perf/lib/include/perf/evsel.h          |   2 -
+ tools/perf/lib/include/perf/mmap.h           |  14 +
+ tools/perf/lib/internal.h                    |   5 +
+ tools/perf/lib/lib.c                         |   2 +
+ tools/perf/lib/libperf.map                   |  13 +-
+ tools/perf/lib/mmap.c                        | 289 +++++++++++++++++
+ tools/perf/lib/tests/Makefile                |   8 +-
+ tools/perf/lib/tests/test-cpumap.c           |  10 +-
+ tools/perf/lib/tests/test-evlist.c           | 228 ++++++++++++-
+ tools/perf/lib/tests/test-evsel.c            |  10 +-
+ tools/perf/lib/tests/test-threadmap.c        |  10 +-
+ tools/perf/perf.c                            |  10 +-
+ tools/perf/tests/backward-ring-buffer.c      |  17 +-
+ tools/perf/tests/bpf.c                       |  15 +-
+ tools/perf/tests/code-reading.c              |  19 +-
+ tools/perf/tests/event-times.c               |  14 +-
+ tools/perf/tests/event_update.c              |   6 +-
+ tools/perf/tests/evsel-roundtrip-name.c      |   2 +-
+ tools/perf/tests/hists_cumulate.c            |   2 +-
+ tools/perf/tests/hists_link.c                |   4 +-
+ tools/perf/tests/hists_output.c              |   2 +-
+ tools/perf/tests/keep-tracking.c             |  19 +-
+ tools/perf/tests/make                        |   2 +-
+ tools/perf/tests/mmap-basic.c                |  13 +-
+ tools/perf/tests/openat-syscall-tp-fields.c  |  19 +-
+ tools/perf/tests/parse-events.c              | 116 +++----
+ tools/perf/tests/perf-record.c               |  21 +-
+ tools/perf/tests/sw-clock.c                  |  13 +-
+ tools/perf/tests/switch-tracking.c           |  37 ++-
+ tools/perf/tests/task-exit.c                 |  17 +-
+ tools/perf/ui/browsers/hists.c               |   6 +-
+ tools/perf/util/auxtrace.c                   |   6 +-
+ tools/perf/util/auxtrace.h                   |   8 +-
+ tools/perf/util/bpf-loader.c                 |   2 +-
+ tools/perf/util/evlist.c                     | 469 +++++++--------------------
+ tools/perf/util/evlist.h                     |  50 ++-
+ tools/perf/util/evsel.c                      |  44 +--
+ tools/perf/util/evsel.h                      |  29 --
+ tools/perf/util/header.c                     |  38 +--
+ tools/perf/util/intel-bts.c                  |   4 +-
+ tools/perf/util/intel-pt.c                   |  10 +-
+ tools/perf/util/jitdump.c                    |   2 +-
+ tools/perf/util/mmap.c                       | 309 +++---------------
+ tools/perf/util/mmap.h                       |  51 +--
+ tools/perf/util/parse-events.c               |   6 +-
+ tools/perf/util/python.c                     |  29 +-
+ tools/perf/util/record.c                     |   6 +-
+ tools/perf/util/session.c                    |  10 +-
+ tools/perf/util/sort.c                       |   2 +-
+ tools/perf/util/stat.c                       |   2 +-
+ tools/perf/util/top.c                        |   2 +-
+ tools/perf/util/util.h                       |   2 -
+ 77 files changed, 1862 insertions(+), 1121 deletions(-)
+ create mode 100644 tools/perf/lib/include/internal/mmap.h
+ create mode 100644 tools/perf/lib/include/perf/mmap.h
+ create mode 100644 tools/perf/lib/mmap.c
