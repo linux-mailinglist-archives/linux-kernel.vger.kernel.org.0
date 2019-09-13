@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E181B28DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 01:29:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF4E4B28E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 01:30:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389617AbfIMX24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 19:28:56 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:41579 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfIMX24 (ORCPT
+        id S2390578AbfIMXaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 19:30:01 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:38697 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388993AbfIMXaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 19:28:56 -0400
-Received: by mail-vs1-f65.google.com with SMTP id g11so19373074vsr.8
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 16:28:55 -0700 (PDT)
+        Fri, 13 Sep 2019 19:30:00 -0400
+Received: by mail-vs1-f66.google.com with SMTP id b123so19727510vsb.5
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 16:29:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ByWKtpvQqUKKvg1jiX3mJ0tx0yCgkYQnklhIV6UCr+Q=;
-        b=Nvjj2M1kY4o9x04H82VV1kfGtBWY77i5j95acGyNGiYlvKU9WiTHN+u1d1oqGmVOnV
-         gZQHFNNnioWNYDmpXf3lBtVIlKU3r4Gp5O6bece1yjI7h1PCOgpvy7WalBD8C4Hn9ReK
-         UWIy5/CVg5YkPswKr+jOQWIrB9tD341sq3DQScSpnmBx+r3Dr4fW8jriqFUAdWkNOLUs
-         UxSDaPJgqTSYfwh1zqNCFh8KCXyardbwCMg4szE3cnI0pl4jPueqqomtFq4Ez0BZ/cy2
-         XP/epAXZ9uY1dMGIII90dIhsioOxLOfZ2Ua9QXzyU9ypynei+UOpF63YHkrJAwCNA3Nx
-         BqeA==
+        bh=6e1N1HadwMgefYTfoH4GPm+Nq2OuNTMxQu6eofVTHgI=;
+        b=Fwi70FRcAmJTv0Dh/UDj+Sx87sUmeJcTq2dFxFXtV/ubv6WAEyGjp5+mRE7NXkKWGu
+         0V/EXOlbzfKDlb3Jbso/vZoR1xMpw0egUxGpk+mN9ds9STbRNGXp45IoZOY74oVh/9ia
+         IKH3PKUGJwAbblp3VhAcHkrWyzPb9LareUXEvdwloOvHLq2r94aPPw+ajgGg8BQ7MOZD
+         Cz39+CjBTnBTqfeSXjUpBU7tMX0MHMdezkqfE19P5Xe+aDAwTgB0JQyOLfxx1NvtPWCD
+         8xO8k7n1VNwdLW96q53r45M4ixHyBdhb8Dc/60VQbkjHA+yDq92bQMDmBRXxUq9CPW/f
+         eNJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ByWKtpvQqUKKvg1jiX3mJ0tx0yCgkYQnklhIV6UCr+Q=;
-        b=MNc3wQF6su4Y99C3rvQAT+O/JUTX7VIsY76P7xDQVlYrsYy5CVXWOwYClBhL7N6RVk
-         mm5USmu7H5GutE2LDDT3QBoxsaZOQbV9q8CBKX+QseJ1UTW6PLNukWUC0egchEQkgfel
-         N2afsOCGsVtvIRtTyGC95uGFDelCotrVQ1Pf7AtvRxwVepc0OXCa35GmUmBTwSZK1sL3
-         qUGmikCI83TdPT9CG4inwpFfczj+pxJnYjtfR1wqmkwPShk7PjGszCRT7ra9eVs3Unxz
-         kfMMI3D/c0+dAFWYMPp8YqyyAysMU9vZCmY/Oa01XOAffI1IQO5exPp0Z0Wju44mF/0q
-         KFjQ==
-X-Gm-Message-State: APjAAAWKCQkQNYVTRr9cv0BpsJGCKiPcRq5BYXMWTcHlszTj7nSMfgiI
-        C/rVfQ6B4QMIUl46cLVa/MXmoFYno4Rni7WyBdVzaw==
-X-Google-Smtp-Source: APXvYqxC7zFSr7TqheMiuOR5Uk6bhUaCanKa0PZgaXJue6LEfqPtqLgLxeg0TLq69SYWb4m4J08dAzStHWwKt3Xpp+I=
-X-Received: by 2002:a67:e219:: with SMTP id g25mr28195491vsa.112.1568417334723;
- Fri, 13 Sep 2019 16:28:54 -0700 (PDT)
+        bh=6e1N1HadwMgefYTfoH4GPm+Nq2OuNTMxQu6eofVTHgI=;
+        b=WYFcT0ONvq0rDGg/FzlzlLdjY7YNvwkH+CfmSA5PEmKsXuMdfJQuVv4HvxEMgaKPBf
+         /BKc5F5lBRm2c8Pyjt1c8ceufiJhHquAV6TLn9YTt3NHQogsK6oNrEgFlbCAr45kCRzR
+         mtUYMFMnzUTTytU/thA65aIv5xRXKyV5npWbLN4Yfzekq8dv9anF98kWeHzm20Z24705
+         teh8CjWXmyHn9oMwP79OAKDc3WaJeOsUz7oinF5AVNs2bnXYqbj7Z9Ya2V58QWsWbr7b
+         Or4yROHSxUZVahBOV7zSOVTfImWH0TgPWPZKnSaXGD+CMKwHTrsJD/yxb35G50MmVHmw
+         Kj8Q==
+X-Gm-Message-State: APjAAAW4ryJ+LtqvJ50flFxO4fF6rwTWrNyFuX8DIOMi629Wbr22pltn
+        i8iAzw2A3pJT8ToU4QnQw8oAd++oe90S0SK3SNCD8A==
+X-Google-Smtp-Source: APXvYqx9rjxVbBZZxcf7hpmGQwjsiOnMZvDaHUu8Ro3xlKLe6+44T4khXpb/tyE1fksUrJ8sC4v6WEI4xI4k+xsNoDY=
+X-Received: by 2002:a67:2606:: with SMTP id m6mr6031246vsm.5.1568417397917;
+ Fri, 13 Sep 2019 16:29:57 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190913210018.125266-1-samitolvanen@google.com>
- <20190913210018.125266-5-samitolvanen@google.com> <CALCETrXVVB4xP2Vv-BsvELsViamjgi-ZccPhOEP2sMxBZ4dyBg@mail.gmail.com>
-In-Reply-To: <CALCETrXVVB4xP2Vv-BsvELsViamjgi-ZccPhOEP2sMxBZ4dyBg@mail.gmail.com>
+ <20190913210018.125266-3-samitolvanen@google.com> <CALCETrXve9j=fwaH1rNptKB8OPv_wM4QSPoGa2u9qvHFNE8u7A@mail.gmail.com>
+In-Reply-To: <CALCETrXve9j=fwaH1rNptKB8OPv_wM4QSPoGa2u9qvHFNE8u7A@mail.gmail.com>
 From:   Sami Tolvanen <samitolvanen@google.com>
-Date:   Fri, 13 Sep 2019 16:28:43 -0700
-Message-ID: <CABCJKudjb7FzsM1iXukOqgcXuC31YkH1inBmFME5msbZ=jh4+Q@mail.gmail.com>
-Subject: Re: [PATCH 4/4] x86: fix function types in COND_SYSCALL
+Date:   Fri, 13 Sep 2019 16:29:47 -0700
+Message-ID: <CABCJKudUJn_q6H2DNtZYS--QJtsgydex9752PwFTT9tH608nww@mail.gmail.com>
+Subject: Re: [PATCH 2/4] x86: use the correct function type for sys32_(rt_)sigreturn
 To:     Andy Lutomirski <luto@kernel.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -61,12 +61,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 3:46 PM Andy Lutomirski <luto@kernel.org> wrote:
-> Didn't you just fix the type of sys_ni_syscall?  What am I missing here?
+On Fri, Sep 13, 2019 at 3:44 PM Andy Lutomirski <luto@kernel.org> wrote:
+> Shouldn't these be COMPAT_SYSCALL_DEFINE0?
 
-The other patch fixes indirect call type mismatches when the function
-is called through the syscall table. However, cond_syscall creates an
-alias to the actual sys_ni_syscall function defined in
-kernel/sys_ni.c, which still has the wrong type.
+Sure, that would work too.
+
+> I think you should pick this patch up and add it to your series:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/syscalls&id=07daeef08d26728c120ecbe57a55cb5714810b84
+>
+> with the obvious type fixup, of course.  And then write a little patch
+> to use COMPAT_SYSCALL_DEFINE0 for rt_sigreturn and sigreturn.
+
+Thanks. I'll do that and send v2 next week once I get some more
+feedback on the other patches.
 
 Sami
