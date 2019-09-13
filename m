@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3976B1E60
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B006B1E85
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388558AbfIMNJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:09:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34158 "EHLO mail.kernel.org"
+        id S2388846AbfIMNK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:10:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388533AbfIMNJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:09:33 -0400
+        id S2388191AbfIMNKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:10:51 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3A762089F;
-        Fri, 13 Sep 2019 13:09:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7603520CC7;
+        Fri, 13 Sep 2019 13:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380172;
-        bh=3PY/NNR9mlGmTuaPwzlQKVuEgDoiAjQwTzC3+QkvHZw=;
+        s=default; t=1568380250;
+        bh=FZzabBO5Oz6BzfbFqqZaE47YsPJpQelb9ln172BMCLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NtKmchMdDzdcbzrpCcWWg3MbJYoBSOQF364rdSxZ533jWKJ/9m4u43MxoJ5SA6wxx
-         2OL9AEepKieE+0zS2GAQnqxBrwwVaoxpe/hXJsBbdm4ljXS9szsmFVcSSqOd/MTkI9
-         81h5Hc4AagCky9FEIK26e7MFUkZCgiOMMX/4uezs=
+        b=y4d1+4JZbEfXi4vavVDJTooL4FzJkOfTH/cTOtoTUnOeljlg/H3Ld1hB16cpG/hQT
+         5Ybhc0b2sZirQkVXI9hnYSfwwJHQZs7426b38trFh60t/Owtw+2mn93y1XhHxxA276
+         A78m0vcl4oQuEbm3wXoUX+9xneAuw5O1ZmkQ9P6k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Gustavo Romero <gromero@linux.vnet.ibm.com>,
         Michael Neuling <mikey@neuling.org>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 05/14] powerpc/tm: Fix FP/VMX unavailable exceptions inside a transaction
-Date:   Fri, 13 Sep 2019 14:06:58 +0100
-Message-Id: <20190913130444.097940154@linuxfoundation.org>
+Subject: [PATCH 4.14 06/21] powerpc/tm: Fix FP/VMX unavailable exceptions inside a transaction
+Date:   Fri, 13 Sep 2019 14:06:59 +0100
+Message-Id: <20190913130503.671977770@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130440.264749443@linuxfoundation.org>
-References: <20190913130440.264749443@linuxfoundation.org>
+In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
+References: <20190913130501.285837292@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -138,7 +138,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/arch/powerpc/kernel/process.c
 +++ b/arch/powerpc/kernel/process.c
-@@ -476,13 +476,14 @@ void giveup_all(struct task_struct *tsk)
+@@ -475,13 +475,14 @@ void giveup_all(struct task_struct *tsk)
  	if (!tsk->thread.regs)
  		return;
  
@@ -152,7 +152,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	msr_check_and_set(msr_all_available);
 -	check_if_tm_restore_required(tsk);
  
- #ifdef CONFIG_PPC_FPU
- 	if (usermsr & MSR_FP)
+ 	WARN_ON((usermsr & MSR_VSX) && !((usermsr & MSR_FP) && (usermsr & MSR_VEC)));
+ 
 
 
