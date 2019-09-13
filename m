@@ -2,179 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84DF2B2240
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43ABDB2246
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:39:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730912AbfIMOga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 10:36:30 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37278 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730866AbfIMOg3 (ORCPT
+        id S2389711AbfIMOge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 10:36:34 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44771 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730887AbfIMOga (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 10:36:29 -0400
-Received: by mail-ot1-f65.google.com with SMTP id s28so29685626otd.4;
-        Fri, 13 Sep 2019 07:36:28 -0700 (PDT)
+        Fri, 13 Sep 2019 10:36:30 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 21so29631288otj.11;
+        Fri, 13 Sep 2019 07:36:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:to:cc:subject:references
          :mime-version:content-disposition:in-reply-to;
-        bh=6mdxbSnWKNEAwVfvLxB2FfniJx8A4oxY0hM22xopaEM=;
-        b=SRdh1/SXprYgx6EGtc1mDfIlNaJ7wWNH5Nd11yJyopLIlEZkZfr6NmVrZsMiCSWNl2
-         BCfHSdayYALVh1nyU4scC+5qiLzVJESQXmi768vN7idtfbg3vCBaN6OwQBLEHv917iwf
-         WSCMBm8Xb33tfb2UkTybNMRBUet59Geoo+OcTZ9u3LPPxQZ/DQGNMKk5XH2J96GbJ2ZJ
-         eAWXbwiCGiKSvfT+OdOv9Q7A/8rslMh2OPoupV/pTZ2lGjr4W6V9ag4ZGtMZn72dSNTr
-         0LH3PkFhqmb/WNZGPfDK3OwL90lGhBQrkhXmoB34huctGhnrTbgRdg/lKWnIX1FS8jgK
-         qfrw==
-X-Gm-Message-State: APjAAAXS5wPkR/J3NUsNqbZBtyOuwNAEKGurfmI/BnZrVCh1ENrkvQCT
-        bk5Fx5YqVQ37WfZ8vx9Hiw==
-X-Google-Smtp-Source: APXvYqzn+6nvNXJy1guR0eNWhQFcmEFwvOR5OJ3M+fz3f5Pzd7rqZacnsC89vhMVWQUfRbYFCcPn+Q==
-X-Received: by 2002:a05:6830:2306:: with SMTP id u6mr16025354ote.0.1568385388075;
-        Fri, 13 Sep 2019 07:36:28 -0700 (PDT)
+        bh=EE+keOIZ1AFHTETx/xa5OA2Ucn28ZMv9VA7ngTJ2uO4=;
+        b=Sx/qwDQMYx6IRLSYPYrt1izcJv4PBYaEnMMwRgkrD5C4n2z9kFNJL6HXaX7ldMnJRw
+         B1L+taMl00krgIHm9U/tVZ6z3WVtz2O50gWBntfTjDN40O6NZRXFTvriUgmSvdlqlina
+         1I2uPOBXthV/9Qmj60IfFEe5tPgxp6jbeCeoX6LcZ6GCkzzqiTTu2lmzjpBmRw3mbzuP
+         1jYJGvO41kI+7mtfLSYt1Iu/ADmJeIzWj0m9xVaCIlgaCft3xYNEJH8MSnle3d6+/8Vx
+         qjglfAj4F5NfPVvL5ANO7ZZI+I9MJWfXQZ7lFThRsSLXhH2e2ZSYHO8EYtiVO8FCtMOL
+         GwoA==
+X-Gm-Message-State: APjAAAVR4DKErL9qurU1bIZ56qD7S0xjz9AAQbzCuzI0BJgYktyTYHAj
+        IziI48A4ZXoxYkL702A6yA==
+X-Google-Smtp-Source: APXvYqyRB/M5XLXv7J5tHMtHFVpUxo8jev2xZZpJoYNBxXFfRA5I0vTsW+cuHiU4kLiCtEPE7YhWUg==
+X-Received: by 2002:a05:6830:100e:: with SMTP id a14mr13806578otp.238.1568385389243;
+        Fri, 13 Sep 2019 07:36:29 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v6sm913853oie.4.2019.09.13.07.36.27
+        by smtp.gmail.com with ESMTPSA id t7sm525642otp.58.2019.09.13.07.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 07:36:27 -0700 (PDT)
-Message-ID: <5d7ba96b.1c69fb81.edf8e.655e@mx.google.com>
-Date:   Fri, 13 Sep 2019 15:36:26 +0100
+        Fri, 13 Sep 2019 07:36:28 -0700 (PDT)
+Message-ID: <5d7ba96c.1c69fb81.ee467.32b9@mx.google.com>
+Date:   Fri, 13 Sep 2019 15:36:28 +0100
 From:   Rob Herring <robh@kernel.org>
-To:     Pragnesh Patel <pragnesh.patel@sifive.com>
-Cc:     palmer@sifive.com, paul.walmsley@sifive.com,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: dt-bindings: Convert spi-sifive binding to
- json-schema
-References: <1568098996-4180-1-git-send-email-pragnesh.patel@sifive.com>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     vkoul@kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: dma: Add documentation for DMA domains
+References: <20190910115037.23539-1-peter.ujfalusi@ti.com>
+ <20190910115037.23539-2-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1568098996-4180-1-git-send-email-pragnesh.patel@sifive.com>
-X-Mutt-References: <1568098996-4180-1-git-send-email-pragnesh.patel@sifive.com>
+In-Reply-To: <20190910115037.23539-2-peter.ujfalusi@ti.com>
+X-Mutt-References: <20190910115037.23539-2-peter.ujfalusi@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 12:32:51PM +0530, Pragnesh Patel wrote:
-> Convert the spi-sifive binding to DT schema format.
+On Tue, Sep 10, 2019 at 02:50:35PM +0300, Peter Ujfalusi wrote:
+> On systems where multiple DMA controllers available, non Slave (for example
+> memcpy operation) users can not be described in DT as there is no device
+> involved from the DMA controller's point of view, DMA binding is not usable.
+> However in these systems still a peripheral might need to be serviced by or
+> it is better to serviced by specific DMA controller.
+> When a memcpy is used to/from a memory mapped region for example a DMA in the
+> same domain can perform better.
+> For generic software modules doing mem 2 mem operations it also matter that
+> they will get a channel from a controller which is faster in DDR to DDR mode
+> rather then from the first controller happen to be loaded.
 > 
-> Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
+> This property is inherited, so it may be specified in a device node or in any
+> of its parent nodes.
+
+If a device needs mem2mem dma, I think we should just use the existing 
+dma binding. The provider will need a way to define cell values which 
+mean mem2mem.
+
+For generic s/w, it should be able to query the dma speed or get a 
+preferred one IMO. It's not a DT problem.
+
+We measure memcpy speeds at boot time to select the fastest 
+implementation for a chip, why not do that for mem2mem DMA?
+
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 > ---
->  .../devicetree/bindings/spi/spi-sifive.txt         | 37 ----------
->  .../devicetree/bindings/spi/spi-sifive.yaml        | 86 ++++++++++++++++++++++
->  2 files changed, 86 insertions(+), 37 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/spi/spi-sifive.txt
->  create mode 100644 Documentation/devicetree/bindings/spi/spi-sifive.yaml
+>  .../devicetree/bindings/dma/dma-domain.yaml   | 88 +++++++++++++++++++
+>  1 file changed, 88 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/dma-domain.yaml
 
+Note that you have several errors in your schema. Run 'make dt_bindings_check'.
 
-> diff --git a/Documentation/devicetree/bindings/spi/spi-sifive.yaml b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
-> new file mode 100644
-> index 0000000..368f5d5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
-> @@ -0,0 +1,86 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/spi-sifive.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SiFive SPI controller
-> +
-> +maintainers:
-> +  - Pragnesh Patel <pragnesh.patel@sifive.com>
-> +  - Paul Walmsley  <paul.walmsley@sifive.com>
-> +  - Palmer Dabbelt <palmer@sifive.com>
-> +
-> +allOf:
-> +  - $ref: "spi-controller.yaml#"
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: sifive,fu540-c000-spi
-> +      - const: sifive,spi0
-> +
-> +    description:
-> +      Should be "sifive,<chip>-spi" and "sifive,spi<version>".
-> +      Supported compatible strings are -
-> +      "sifive,fu540-c000-spi" for the SiFive SPI v0 as integrated
-> +      onto the SiFive FU540 chip, and "sifive,spi0" for the SiFive
-> +      SPI v0 IP block with no chip integration tweaks.
-> +      Please refer to sifive-blocks-ip-versioning.txt for details
-> +
-> +      SPI RTL that corresponds to the IP block version numbers can be found here -
-> +      https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/spi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +    description:
-> +      Physical base address and size of SPI registers map
-> +      A second (optional) range can indicate memory mapped flash
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +    description:
-> +      Must reference the frequency given to the controller
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-
-These 2 are covered by spi-controller.yaml, so you can drop them.
-
-> +
-> +  sifive,fifo-depth:
-> +    description:
-> +      Depth of hardware queues; defaults to 8
-
-default: 8
-
-What are valid values?
-
-> +    $ref: "/schemas/types.yaml#/definitions/uint32"
-
-Will need to be under 'allOf' with the above constraints.
-
-> +
-> +  sifive,max-bits-per-word:
-> +    description:
-> +      Maximum bits per word; defaults to 8
-> +    $ref: "/schemas/types.yaml#/definitions/uint32"
-
-Same comments here.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +
-> +examples:
-> +  - |
-> +    spi: spi@10040000 {
-> +      compatible = "sifive,fu540-c000-spi", "sifive,spi0";
-> +      reg = <0x0 0x10040000 0x0 0x1000 0x0 0x20000000 0x0 0x10000000>;
-> +      interrupt-parent = <&plic>;
-> +      interrupts = <51>;
-> +      clocks = <&tlclk>;
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      sifive,fifo-depth = <8>;
-> +      sifive,max-bits-per-word = <8>;
-> +    };
-> +
-> +...
-> -- 
-> 2.7.4
-> 
+Rob
 
