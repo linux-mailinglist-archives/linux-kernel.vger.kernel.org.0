@@ -2,116 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E0E8B21F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BAEB220A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389136AbfIMOeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 10:34:11 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:3030 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387600AbfIMOeK (ORCPT
+        id S2389426AbfIMOfP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 10:35:15 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:13306 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388414AbfIMOfN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 10:34:10 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id E72E63F919;
-        Fri, 13 Sep 2019 16:34:08 +0200 (CEST)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=C2N6Tpw8;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Vw_hi0fk4Ref; Fri, 13 Sep 2019 16:34:08 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 8EF763F8F3;
-        Fri, 13 Sep 2019 16:34:03 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id B5C68360195;
-        Fri, 13 Sep 2019 16:34:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1568385242; bh=BvEPU9tGdG9Bhovi4Q0bbdW07y3/r6iPP1tQbS5B3Dg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=C2N6Tpw8BPIFywM28iULu9uVwEykXdq683K3MIwLno68ImFSJZcnvmXSvgNcJIYdy
-         fs4C//xIQbV9rfjigSnkNMrqRAk1fZNIyu8n47xwzegCFDax40hgZFLFcTfQR1uDnD
-         U7ABEyDM6piI7eeUK+RBjldeM/OcAfSWfj7G4gTg=
-Subject: Re: [RFC PATCH 3/7] drm/ttm: TTM fault handler helpers
-To:     Hillf Danton <hdanton@sina.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, pv-drivers@vmware.com,
-        linux-graphics-maintainer@vmware.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>, jglisse@redhat.com,
-        christian.koenig@amd.com, Christoph Hellwig <hch@infradead.org>
-References: <20190913093213.27254-1-thomas_os@shipmail.org>
- <20190913134039.3164-1-hdanton@sina.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <f26f6096-8d11-82e4-390c-d110af8fdc49@shipmail.org>
-Date:   Fri, 13 Sep 2019 16:34:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 13 Sep 2019 10:35:13 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8DEV1EQ017893;
+        Fri, 13 Sep 2019 16:35:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=WcH/XeLRXrchzGM2oayh6FpZp9ixOv6Rjd72cfZUEDM=;
+ b=dEdNnG1PFncizfoScByurpL+4XLDP78kKGX2VXj5XAwHuJItlL96iVQhZhLXsannVizP
+ tyFEJpueQyblheGUGcSM8Xr7yB85XlCUlg0uoJJAH05Cprzm2aOZ3fy2ENaR7uNxtzx9
+ sbxpyCI0T0CMVizoc1HWiw0SqH/yvCGXukCoFA/PgrZbxZNm0v32vUEU9HidLEhHLryD
+ Ur3ghBBLiZCPpay1hXWNRI26JRn/GmWqqvsBWGRLzmUO0Bs0jt/nA1/5iF5+MKdQhBYx
+ INkWAyqKg11YTeFrkP4ux+w/Mvpzg2/dIjAIY65SGCQq0HjT/3aUm+D9efC8t0neqqF3 pg== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2uytdx5n81-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 13 Sep 2019 16:35:01 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2581F4B;
+        Fri, 13 Sep 2019 14:34:57 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3853E2C86AE;
+        Fri, 13 Sep 2019 16:34:57 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 13 Sep
+ 2019 16:34:57 +0200
+Received: from localhost (10.48.1.232) by Webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 13 Sep 2019 16:34:56 +0200
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <alexandre.torgue@st.com>
+CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <fabrice.gasnier@st.com>
+Subject: [PATCH 0/3] Add support for ADC on stm32mp157a-dk1
+Date:   Fri, 13 Sep 2019 16:34:37 +0200
+Message-ID: <1568385280-2633-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190913134039.3164-1-hdanton@sina.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.48.1.232]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-13_07:2019-09-11,2019-09-13 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/13/19 3:40 PM, Hillf Danton wrote:
-> On Fri, 13 Sep 2019 11:32:09 +0200
->>   	err = ttm_mem_io_lock(man, true);
->> -	if (unlikely(err != 0)) {
->> -		ret = VM_FAULT_NOPAGE;
->> -		goto out_unlock;
->> -	}
->> +	if (unlikely(err != 0))
->> +		return VM_FAULT_NOPAGE;
->>   	err = ttm_mem_io_reserve_vm(bo);
->> -	if (unlikely(err != 0)) {
->> -		ret = VM_FAULT_SIGBUS;
->> -		goto out_io_unlock;
->> -	}
->> +	if (unlikely(err != 0))
->> +		return VM_FAULT_SIGBUS;
->>
-> Hehe, no hurry.
+This series adds support for ADC on stm32mp157a-dk1 board:
+- enable vrefbuf regulator used as reference voltage
+- define ADC pins for AIN connector and USB Type-C CC pins
+- configure ADC1 and ADC2 to use these
 
-Could you be a bit more specific?
+Fabrice Gasnier (3):
+  ARM: dts: stm32: Enable VREFBUF on stm32mp157a-dk1
+  ARM: dts: stm32: add ADC pins used on stm32mp157a-dk1
+  ARM: dts: stm32: enable ADC support on stm32mp157a-dk1
 
-Thanks,
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 16 +++++++++++++++
+ arch/arm/boot/dts/stm32mp157a-dk1.dts     | 34 +++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
 
-Thomas
-
-
-
->
->> @@ -295,8 +307,28 @@ static vm_fault_t ttm_bo_vm_fault(struct vm_fault *vmf)
->>   	ret = VM_FAULT_NOPAGE;
->>   out_io_unlock:
->>   	ttm_mem_io_unlock(man);
->> -out_unlock:
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL(ttm_bo_vm_fault_reserved);
-
+-- 
+2.7.4
 
