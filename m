@@ -2,91 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43ABDB2246
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:39:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C82EDB2245
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389711AbfIMOge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 10:36:34 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44771 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730887AbfIMOga (ORCPT
+        id S2389625AbfIMOgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 10:36:33 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45625 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730866AbfIMOgb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 10:36:30 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 21so29631288otj.11;
-        Fri, 13 Sep 2019 07:36:29 -0700 (PDT)
+        Fri, 13 Sep 2019 10:36:31 -0400
+Received: by mail-oi1-f194.google.com with SMTP id o205so2778660oib.12;
+        Fri, 13 Sep 2019 07:36:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:to:cc:subject:references
          :mime-version:content-disposition:in-reply-to;
-        bh=EE+keOIZ1AFHTETx/xa5OA2Ucn28ZMv9VA7ngTJ2uO4=;
-        b=Sx/qwDQMYx6IRLSYPYrt1izcJv4PBYaEnMMwRgkrD5C4n2z9kFNJL6HXaX7ldMnJRw
-         B1L+taMl00krgIHm9U/tVZ6z3WVtz2O50gWBntfTjDN40O6NZRXFTvriUgmSvdlqlina
-         1I2uPOBXthV/9Qmj60IfFEe5tPgxp6jbeCeoX6LcZ6GCkzzqiTTu2lmzjpBmRw3mbzuP
-         1jYJGvO41kI+7mtfLSYt1Iu/ADmJeIzWj0m9xVaCIlgaCft3xYNEJH8MSnle3d6+/8Vx
-         qjglfAj4F5NfPVvL5ANO7ZZI+I9MJWfXQZ7lFThRsSLXhH2e2ZSYHO8EYtiVO8FCtMOL
-         GwoA==
-X-Gm-Message-State: APjAAAVR4DKErL9qurU1bIZ56qD7S0xjz9AAQbzCuzI0BJgYktyTYHAj
-        IziI48A4ZXoxYkL702A6yA==
-X-Google-Smtp-Source: APXvYqyRB/M5XLXv7J5tHMtHFVpUxo8jev2xZZpJoYNBxXFfRA5I0vTsW+cuHiU4kLiCtEPE7YhWUg==
-X-Received: by 2002:a05:6830:100e:: with SMTP id a14mr13806578otp.238.1568385389243;
-        Fri, 13 Sep 2019 07:36:29 -0700 (PDT)
+        bh=tdNsvXQrGgDSgKwJ0pKr0DdtL6lbinbXmEzdTSDl9+g=;
+        b=n1/bnfQAl+IjOAuiXqyKiwXhtgCmMfWJPPMjCQmsTiMrTCEoJDfZ31EPr+67AbzRZs
+         a95vGNhiVLHGD+dnIM5Y6ttjbc3nSBaVw7UcKL220MgFPo0vxBRgCSZFGJ7xk0YvPGqr
+         xde9SxdSnIO6nwXsV1DVm0jb7/0o/zCLMdnrZoFOoA0JUAYa3qvwZaoeeYOotZTFvfCj
+         eumjdgQllvGLfirFD0ugEyN3RJ1rxxOpy1JIJ67AncQ2/pfxr8n0VALM8VWUKTnT3Wm7
+         i6Ih5k8a04ZP/3IDH3iUP27zAxTxZk3j0lPaocIXqTjAyWY4bxZRsHgq8xP9u6TCLRVc
+         EhTw==
+X-Gm-Message-State: APjAAAW7TCtM6LbzS+oL44eTOzUMJtUcOYVQHNUUSeb4N69s6X19k3Zb
+        F580DOVBwnR2gLThSS7xEQ==
+X-Google-Smtp-Source: APXvYqyo4VuTwrRq+pKhI1VTnO6yPPsQd94kiSVqKzFSwGukRHVteAk9hqJYizq2K6SaO4AVS5j84Q==
+X-Received: by 2002:aca:4ccd:: with SMTP id z196mr3509393oia.46.1568385390520;
+        Fri, 13 Sep 2019 07:36:30 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t7sm525642otp.58.2019.09.13.07.36.28
+        by smtp.gmail.com with ESMTPSA id u26sm944370oic.9.2019.09.13.07.36.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 07:36:28 -0700 (PDT)
-Message-ID: <5d7ba96c.1c69fb81.ee467.32b9@mx.google.com>
-Date:   Fri, 13 Sep 2019 15:36:28 +0100
+        Fri, 13 Sep 2019 07:36:29 -0700 (PDT)
+Message-ID: <5d7ba96d.1c69fb81.59623.6c9f@mx.google.com>
+Date:   Fri, 13 Sep 2019 15:36:29 +0100
 From:   Rob Herring <robh@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     vkoul@kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: dma: Add documentation for DMA domains
-References: <20190910115037.23539-1-peter.ujfalusi@ti.com>
- <20190910115037.23539-2-peter.ujfalusi@ti.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/3] dt-bindings: gpio: Add binding document for xylon
+ logicvc-gpio
+References: <20190910152855.111588-1-paul.kocialkowski@bootlin.com>
+ <20190910152855.111588-2-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190910115037.23539-2-peter.ujfalusi@ti.com>
-X-Mutt-References: <20190910115037.23539-2-peter.ujfalusi@ti.com>
+In-Reply-To: <20190910152855.111588-2-paul.kocialkowski@bootlin.com>
+X-Mutt-References: <20190910152855.111588-2-paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 02:50:35PM +0300, Peter Ujfalusi wrote:
-> On systems where multiple DMA controllers available, non Slave (for example
-> memcpy operation) users can not be described in DT as there is no device
-> involved from the DMA controller's point of view, DMA binding is not usable.
-> However in these systems still a peripheral might need to be serviced by or
-> it is better to serviced by specific DMA controller.
-> When a memcpy is used to/from a memory mapped region for example a DMA in the
-> same domain can perform better.
-> For generic software modules doing mem 2 mem operations it also matter that
-> they will get a channel from a controller which is faster in DDR to DDR mode
-> rather then from the first controller happen to be loaded.
+On Tue, Sep 10, 2019 at 05:28:54PM +0200, Paul Kocialkowski wrote:
+> The Xylon LogiCVC display controller exports some GPIOs, which are
+> exposed as a dedicated driver.
 > 
-> This property is inherited, so it may be specified in a device node or in any
-> of its parent nodes.
-
-If a device needs mem2mem dma, I think we should just use the existing 
-dma binding. The provider will need a way to define cell values which 
-mean mem2mem.
-
-For generic s/w, it should be able to query the dma speed or get a 
-preferred one IMO. It's not a DT problem.
-
-We measure memcpy speeds at boot time to select the fastest 
-implementation for a chip, why not do that for mem2mem DMA?
-
+> This introduces the associated device-tree bindings documentation.
 > 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 > ---
->  .../devicetree/bindings/dma/dma-domain.yaml   | 88 +++++++++++++++++++
->  1 file changed, 88 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dma/dma-domain.yaml
+>  .../bindings/gpio/xylon,logicvc-gpio.txt      | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.txt
 
-Note that you have several errors in your schema. Run 'make dt_bindings_check'.
+Please consider using the new DT schema format.
 
-Rob
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.txt b/Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.txt
+> new file mode 100644
+> index 000000000000..4835659cb90b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.txt
+> @@ -0,0 +1,48 @@
+> +Xylon LogiCVC GPIO controller
+> +
+> +The Xylon LogiCVC is a display controller that contains a number of GPIO pins,
+> +meant to be used for controlling display-related signals.
+> +
+> +In practice, the GPIOs can be used for any purpose they might be needed for.
+> +
+> +The controller exposes GPIOs from the display and power control registers,
+> +which are mapped by the driver as follows:
+> +- GPIO[4:0] (display control) mapped to index 0-4
+> +- EN_BLIGHT (power control) mapped to index 5
+> +- EN_VDD (power control) mapped to index 6
+> +- EN_VEE (power control) mapped to index 7
+> +- V_EN (power control) mapped to index 8
+> +
+> +The driver was implemented and tested for version 3.02.a of the controller,
+> +but should be compatible with version 4 as well.
+> +
+> +Required properties:
+> +- compatible: Should contain "xylon,logicvc-3.02.a-gpio".
+> +- gpio-controller: Marks the device node as a gpio controller.
+> +- #gpio-cells: Should be 2. The first cell is the pin number and
+> +  the second cell is used to specify the gpio polarity:
+> +    0 = Active high,
+> +    1 = Active low.
+
+No need to define these standard flags again here.
+
+> +- gpio,syscon-dev: Syscon phandle representing the logicvc instance.
+
+Don't need this. It's the parent.
+
+> +
+> +Example:
+> +
+> +	logicvc: logicvc@43c00000 {
+> +		compatible = "syscon", "simple-mfd";
+
+This device needs a device specific compatible. These 2 alone are not 
+desired.
+
+Please define everything that's in the chip as much as you can. 
+
+> +		reg = <0x43c00000 0x6000>;
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +
+> +		logicvc_gpio: display-gpio@40 {
+
+Use standard node names: gpio@40
+
+You may not even need a child node here. It depends on what other child 
+nodes you have and whether they have their own DT resources.
+
+> +			compatible = "xylon,logicvc-3.02.a-gpio";
+> +			reg = <0x40 0x40>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio,syscon-dev = <&logicvc>;
+> +		};
+> +	};
+> +
+> +Note: the device-tree node should either be declared as a child of the logicvc
+> +syscon node or the syscon node should be precised with the gpio,syscon-dev
+> +property. Both are shown in the example above.
+
+Why? Just pick one and a child node is the preference.
+
+> -- 
+> 2.23.0
+> 
 
