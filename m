@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7E85B211E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E5B9B1FE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391295AbfIMNdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:33:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34510 "EHLO mail.kernel.org"
+        id S2388676AbfIMNKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:10:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388571AbfIMNJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:09:48 -0400
+        id S2388665AbfIMNKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:10:06 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E05B720CC7;
-        Fri, 13 Sep 2019 13:09:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5282214D8;
+        Fri, 13 Sep 2019 13:10:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380187;
-        bh=jORffADQrPKKT9/36UIdxIvAdJ5omm4N1b2CQf7U4JQ=;
+        s=default; t=1568380205;
+        bh=a2w4CYDBcGWKAeQc/xMACf+a/RKVnsKjdeVupWJ8Ix8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1UbAJjCm0SQRf/INI5nwBM57sgImd5iqI2qlaPL996FC7lBonhgJFBpyJu7BeG4FI
-         V28K0ALoi3Jkn/H/sOnQAqdcMKRrf/j0k0e2/zV7YQzfH3Dksa5BvxIRjuMugwqsum
-         AfC8FKu4xtRKrP1oHXOyODiJujA3Ahl+u8UdNqME=
+        b=VtA2iz2nU1EYIUjq5XD/G9OQEWAG7/0zf82lr/ScvBgvX3AGm5VNtgmL5+dfR30h7
+         y7AqP0JXbe/yPxGl/eA99L0KX4/aMVlwwpObgjCuk2zaiTfY34Y/YDoVEB+gpJ8Y5e
+         YR3GFhwsrG1lOLMs7OEjNqAB4U0BL9oTTJhOQ5uU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sven Eckelmann <sven@narfation.org>,
         Antonio Quartulli <a@unstable.cc>,
         Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.9 10/14] batman-adv: Only read OGM tvlv_len after buffer len check
-Date:   Fri, 13 Sep 2019 14:07:03 +0100
-Message-Id: <20190913130445.741374686@linuxfoundation.org>
+Subject: [PATCH 4.14 13/21] batman-adv: Only read OGM tvlv_len after buffer len check
+Date:   Fri, 13 Sep 2019 14:07:06 +0100
+Message-Id: <20190913130506.836333693@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130440.264749443@linuxfoundation.org>
-References: <20190913130440.264749443@linuxfoundation.org>
+In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
+References: <20190913130501.285837292@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -113,7 +113,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		/* we might have aggregated direct link packets with an
  		 * ordinary base packet
  		 */
-@@ -1841,7 +1847,7 @@ static int batadv_iv_ogm_receive(struct
+@@ -1838,7 +1844,7 @@ static int batadv_iv_ogm_receive(struct
  
  	/* unpack the aggregated packets and process them one by one */
  	while (batadv_iv_ogm_aggr_packet(ogm_offset, skb_headlen(skb),
