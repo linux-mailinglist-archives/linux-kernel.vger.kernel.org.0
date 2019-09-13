@@ -2,151 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B30B2776
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 23:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CB08B277D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 23:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731358AbfIMVpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 17:45:50 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:42477 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730990AbfIMVpu (ORCPT
+        id S1731360AbfIMVsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 17:48:53 -0400
+Received: from smtprelay0205.hostedemail.com ([216.40.44.205]:39734 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731274AbfIMVsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 17:45:50 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id C72AB21C39;
-        Fri, 13 Sep 2019 17:45:48 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Fri, 13 Sep 2019 17:45:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        pedrovanzella.com; h=subject:to:cc:references:from:message-id
-        :date:mime-version:in-reply-to:content-type
-        :content-transfer-encoding; s=fm1; bh=I5KYFSSfB4WK2rrNM9kVDaLOfX
-        vwrxisel5lvyCFyjY=; b=dBO2ZaWcH4b2o4/H5w7CFZxsfhZngszuT1tRyHIp1g
-        +Tgo6BqwYStcsXS0NUmuNhUrJxBNMHW8kzk5W5SrGeyzWNcTNtWHymmLi0goDVtN
-        NqCXvkroqxFDgfUvWS9FfdCtIhrrzI/yGbJ28ZUIzHlhFV8aNUQh8gJ8nuQzhAWD
-        NI+o7i95XVG0oOToyP42DzLq12fdjq5+mRmDMZLq8SE4v/TmmQPrvTBYZhwx8BWU
-        1JH/2wHsXGO22dTNOwQsHEC7Zpy2sbaQ0dtRjZ3gQsfQgxqMWwEWiSh0vpA5NJqA
-        2Sfl2597+lVLriggCt4uiHTd62Xh5w2kItyBbOZOoA6w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=I5KYFSSfB4WK2rrNM9kVDaLOfXvwrxisel5lvyCFy
-        jY=; b=XfAkFq8qCqzv2od14xY8ZjZJpEzooNcMQZ/NfQ6rHNaxBb6kia1IsYwDi
-        bT9pXG4g+Enj05qQs+hG3JfWeaauhMeS7g/qAu5+SMj8v4i78VRxvvYwgjqDHHHi
-        MmzqTGSQ6zBmWaHpjdnHMzQtUV9jolC4BmmXwuTmxTINVBFY8QBBpWhNN4kP+jqq
-        QdIh+tqL1CxAt+mrh8YTdDJL6Cc2c7uVclJwRCL9gsPDNVT0ykZw+NLerNT8xdxC
-        pP2A6QFWZIboFVVMxDCm4/Ph1FK8eFeuLP7lu6m+6t2kV8cS65/vAc79BK1LFSZR
-        GQV6D4Z5z6kLSpPkEnh7hwFOyE/XQ==
-X-ME-Sender: <xms:Cw58XdY_fZS2Z1Vk9nF6lv4Kj5DJXjnt1ORAoYVlKThjVq7Jb-PDmQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrtdejgdduieegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepuffvfhfhkffffgggjggtgfesthekredttdefjeenucfhrhhomheprfgvughr
-    ohcugggrnhiivghllhgruceophgvughrohesphgvughrohhvrghniigvlhhlrgdrtghomh
-    eqnecukfhppedukeegrddugeehrddufedtrdegjeenucfrrghrrghmpehmrghilhhfrhho
-    mhepphgvughrohesphgvughrohhvrghniigvlhhlrgdrtghomhenucevlhhushhtvghruf
-    hiiigvpedt
-X-ME-Proxy: <xmx:Cw58XZFZhZyEE1FfKODeAmyWMjQSoco98Sz_7xybwYYgPfC-qj505Q>
-    <xmx:Cw58XX1LXP5yBHYDhZcM9TVTuYNCfzl-poTXEx5uqaZO126EB1lB2Q>
-    <xmx:Cw58XfaeDWkhyWSjt-npZ8RlhvYPkMjyxKLU1G2K1WAH_qlgDRQg1w>
-    <xmx:DA58Xd9rO8cYbbSXnN7DFy7XqMXQgftx7LKxLpa9bOPnPzYHh88i4A>
-Received: from [192.168.2.43] (toroon020aw-lp130-01-184-145-130-47.dsl.bell.ca [184.145.130.47])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E618280064;
-        Fri, 13 Sep 2019 17:45:46 -0400 (EDT)
-Subject: Re: [PATCH v5] hid-logitech-hidpp: read battery voltage from newer
- devices
-To:     =?UTF-8?Q?Filipe_La=c3=adns?= <lains@archlinux.org>,
-        linux-input@vger.kernel.org
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org
-References: <20190831175659.7404-1-pedro@pedrovanzella.com>
- <80785df1c804796a01bbfbae4b2aeda66f30d7c5.camel@archlinux.org>
-From:   Pedro Vanzella <pedro@pedrovanzella.com>
-Message-ID: <cb3e7c8f-b8f9-7a59-d358-8682625e4adf@pedrovanzella.com>
-Date:   Fri, 13 Sep 2019 17:45:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Fri, 13 Sep 2019 17:48:53 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 99727100E86C1;
+        Fri, 13 Sep 2019 21:48:51 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:966:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2559:2562:2828:2904:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3872:4250:4321:4385:5007:6119:7901:7903:10004:10400:10848:11026:11232:11473:11658:11914:12043:12297:12438:12740:12760:12895:13019:13069:13141:13161:13200:13229:13230:13311:13357:13439:14181:14659:14721:21080:21433:21451:21627:30054:30070:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
+X-HE-Tag: hen01_301fba1184944
+X-Filterd-Recvd-Size: 2653
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 13 Sep 2019 21:48:50 +0000 (UTC)
+Message-ID: <713b2e5bbab16ddf850245ae1d92be66d9730e02.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Warn if DT bindings are not in schema format
+From:   Joe Perches <joe@perches.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Whitcroft <apw@canonical.com>
+Date:   Fri, 13 Sep 2019 14:48:49 -0700
+In-Reply-To: <20190913211349.28245-1-robh@kernel.org>
+References: <20190913211349.28245-1-robh@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-In-Reply-To: <80785df1c804796a01bbfbae4b2aeda66f30d7c5.camel@archlinux.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/9/19 8:00 AM, Filipe Laíns wrote:
-> On Sat, 2019-08-31 at 13:56 -0400, Pedro Vanzella wrote:
->> +static int hidpp20_battery_map_status_voltage(u8 data[3], int
->> *voltage)
->> +{
->> +	int status;
->> +
->> +	switch (data[2]) {
->> +	case 0x00: /* discharging */
->> +		status = POWER_SUPPLY_STATUS_DISCHARGING;
->> +		break;
->> +	case 0x10: /* wireless charging */
->> +	case 0x80: /* charging */
->> +		status = POWER_SUPPLY_STATUS_CHARGING;
->> +		break;
->> +	case 0x81: /* fully charged */
->> +		status = POWER_SUPPLY_STATUS_FULL;
->> +		break;
->> +	default:
->> +		status = POWER_SUPPLY_STATUS_NOT_CHARGING;
->> +	}
->> +
->> +	*voltage = get_unaligned_be16(data);
->> +
->> +	return status;
->> +}
-> 
-> Here's the missing specification:
-> 
-> +--------+-------------------------------------------------------------------------+
-> |  byte  |                                    2                                    |
-> +--------+--------------+------------+------------+----------+----------+----------+
-> |   bit  |     0..2     |      3     |      4     |     5    |     6    |     7    |
-> +--------+--------------+------------+------------+----------+----------+----------+
-> | buffer | chargeStatus | fastCharge | slowCharge | critical | (unused) | extPower |
-> +--------+--------------+------------+------------+----------+----------+----------+
-> Table 1 - battery voltage (0x1001), getBatteryInfo() (ASE 0), 3rd byte
-> 
-> +-------+--------------------------------------+
-> | value |                meaning               |
-> +-------+--------------------------------------+
-> |   0   | Charging                             |
-> +-------+--------------------------------------+
-> |   1   | End of charge (100% charged)         |
-> +-------+--------------------------------------+
-> |   2   | Charge stopped (any "normal" reason) |
-> +-------+--------------------------------------+
-> |   7   | Hardware error                       |
-> +-------+--------------------------------------+
-> Table 2 - chargeStatus value
-> 
-> I know this is already on the 5th revision but could you please change
-> hidpp20_battery_map_status_voltage() to properly handle the 3rd byte?
-> Also, if you could make sure those values are properly exported via
-> sysfs it would be great! We will need them for proper upower support.
+On Fri, 2019-09-13 at 16:13 -0500, Rob Herring wrote:
+> DT bindings are moving to using a json-schema based schema format
+> instead of freeform text. Add a checkpatch.pl check to encourage using
+> the schema for new bindings. It's not yet a requirement, but is
+> progressively being required by some maintainers.
+[]
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -2822,6 +2822,14 @@ sub process {
+>  			     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
+>  		}
+>  
+> +# Check for adding new DT bindings not in schema format
+> +		if (!$in_commit_log &&
+> +		    ($line =~ /^new file mode\s*\d+\s*$/) &&
+> +		    ($realfile =~ m@^Documentation/devicetree/bindings/.*\.txt$@)) {
+> +			WARN("DT_SCHEMA_BINDING_PATCH",
+> +			     "DT bindings should be in DT schema format. See: Documentation/devicetree/writing-schema.rst\n");
+> +		}
+> +
 
-Sure thing. I'll have a new patch in a few days.
+As this already seems to be git dependent, perhaps
+it's easier to read with a single line test like:
 
-Thanks for figuring that stuff out, by the way.
+		if ($line =~ m{^\s*create mode\s*\d+\s*Documentation/devicetree/bindings/.*\.txt$}) {
+			etc...
+		}
 
-> 
-> Sorry for not saying this in my first review. Since then I have done
-> some testing and I discovered that if we want to get accurate upower
-> support we will need the values exposed by the 3rd byte to be
-> exported properly.
-> 
-> I am not sure about the endianness of chargeStatus but you can find
-> that easily.
-> 
-> Thank you!
-> Filipe Laíns
-> 
+There are ~3500 existing .txt files:
+
+$ git ls-files -- 'Documentation/devicetree/bindings/*.txt' | wc -l
+3476
+
+Are these going to be converted somehow?
+
+What about files like these? (not .txt)
+
+Documentation/devicetree/bindings/timer/st,stih407-lpc
+Documentation/devicetree/bindings/nds32/andestech-boards
+Documentation/devicetree/bindings/media/nokia,n900-ir
+Documentation/devicetree/bindings/interrupt-controller/ti,omap4-wugen-mpu
+Documentation/devicetree/bindings/arm/cpu-enable-method/nuvoton,npcm750-smp
+Documentation/devicetree/bindings/arm/cpu-enable-method/marvell,berlin-smp
+Documentation/devicetree/bindings/arm/cpu-enable-method/al,alpine-smp
+Documentation/devicetree/bindings/arm/arm-boards
+
+
+
