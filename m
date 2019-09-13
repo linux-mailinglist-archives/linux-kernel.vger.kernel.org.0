@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72270B20ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA3D0B20F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391653AbfIMN3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:29:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47208 "EHLO mail.kernel.org"
+        id S2391178AbfIMN37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:29:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390390AbfIMNTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:19:14 -0400
+        id S2389649AbfIMNSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:18:21 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE45F20640;
-        Fri, 13 Sep 2019 13:19:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C01A206A5;
+        Fri, 13 Sep 2019 13:18:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380753;
-        bh=+HLiC11vGqxHSXKdFpYDJRMhz3DLeHPkz4fOm8VWOuc=;
+        s=default; t=1568380700;
+        bh=S6V1cmfw8HfzgKirGyyQ7ce3l/rqYCetLuamvel8DUs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hNW2KzMruo4eaKmDpri9ZyrSMUrlDW6AUVRx4t0vAUYJ5cX9QbPi6QkNHD/KKmcNx
-         hqMO43PGRsKu7JiYTvdqInR6abFG9sHyjTnf9HYiFESRH/TEJ3/ji3WQzrGKqaw4B+
-         uRM1Uy2gU2AR+72dNYeid0gmnmL7/EYtIBCKzDgQ=
+        b=SnZYwaFqy2+qDPQV1Ys/QWobnBUr7qYwyaLi+yzIxh/3M6+A19Msu2shj983/7L/k
+         ND1TqaS3F6vNPbxcKfnkNgSAb4BwKL6Ui8kp4uiEHDE56Hfq80N+LwOy3rNlpbovV7
+         oeCNKX2ZRc2tFf5SFp2AQqmm1v8N05IkfDwVgAcQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Bolshakov <r.bolshakov@yadro.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, "Paulo Alcantara (SUSE)" <paulo@paulo.ac>,
+        Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilove@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 146/190] scsi: target/iblock: Fix overrun in WRITE SAME emulation
-Date:   Fri, 13 Sep 2019 14:06:41 +0100
-Message-Id: <20190913130611.632934574@linuxfoundation.org>
+Subject: [PATCH 4.19 149/190] cifs: Properly handle auto disabling of serverino option
+Date:   Fri, 13 Sep 2019 14:06:44 +0100
+Message-Id: <20190913130611.864977851@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -45,42 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5676234f20fef02f6ca9bd66c63a8860fce62645 ]
+[ Upstream commit 29fbeb7a908a60a5ae8c50fbe171cb8fdcef1980 ]
 
-WRITE SAME corrupts data on the block device behind iblock if the command
-is emulated. The emulation code issues (M - 1) * N times more bios than
-requested, where M is the number of 512 blocks per real block size and N is
-the NUMBER OF LOGICAL BLOCKS specified in WRITE SAME command. So, for a
-device with 4k blocks, 7 * N more LBAs gets written after the requested
-range.
+Fix mount options comparison when serverino option is turned off later
+in cifs_autodisable_serverino() and thus avoiding mismatch of new cifs
+mounts.
 
-The issue happens because the number of 512 byte sectors to be written is
-decreased one by one while the real bios are typically from 1 to 8 512 byte
-sectors per bio.
-
-Fixes: c66ac9db8d4a ("[SCSI] target: Add LIO target core v4.0.0-rc6")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Roman Bolshakov <r.bolshakov@yadro.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paulo Alcantara (SUSE) <paulo@paulo.ac>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilove@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/target_core_iblock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/cifs_fs_sb.h | 5 +++++
+ fs/cifs/connect.c    | 8 ++++++--
+ fs/cifs/misc.c       | 1 +
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-index 1bc9b14236d8b..854b2bcca7c1a 100644
---- a/drivers/target/target_core_iblock.c
-+++ b/drivers/target/target_core_iblock.c
-@@ -515,7 +515,7 @@ iblock_execute_write_same(struct se_cmd *cmd)
+diff --git a/fs/cifs/cifs_fs_sb.h b/fs/cifs/cifs_fs_sb.h
+index 9731d0d891e7e..aba2b48d4da1a 100644
+--- a/fs/cifs/cifs_fs_sb.h
++++ b/fs/cifs/cifs_fs_sb.h
+@@ -72,5 +72,10 @@ struct cifs_sb_info {
+ 	struct delayed_work prune_tlinks;
+ 	struct rcu_head rcu;
+ 	char *prepath;
++	/*
++	 * Indicate whether serverino option was turned off later
++	 * (cifs_autodisable_serverino) in order to match new mounts.
++	 */
++	bool mnt_cifs_serverino_autodisabled;
+ };
+ #endif				/* _CIFS_FS_SB_H */
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index c53a2e86ed544..208430bb66fc6 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -3247,12 +3247,16 @@ compare_mount_options(struct super_block *sb, struct cifs_mnt_data *mnt_data)
+ {
+ 	struct cifs_sb_info *old = CIFS_SB(sb);
+ 	struct cifs_sb_info *new = mnt_data->cifs_sb;
++	unsigned int oldflags = old->mnt_cifs_flags & CIFS_MOUNT_MASK;
++	unsigned int newflags = new->mnt_cifs_flags & CIFS_MOUNT_MASK;
  
- 		/* Always in 512 byte units for Linux/Block */
- 		block_lba += sg->length >> SECTOR_SHIFT;
--		sectors -= 1;
-+		sectors -= sg->length >> SECTOR_SHIFT;
+ 	if ((sb->s_flags & CIFS_MS_MASK) != (mnt_data->flags & CIFS_MS_MASK))
+ 		return 0;
+ 
+-	if ((old->mnt_cifs_flags & CIFS_MOUNT_MASK) !=
+-	    (new->mnt_cifs_flags & CIFS_MOUNT_MASK))
++	if (old->mnt_cifs_serverino_autodisabled)
++		newflags &= ~CIFS_MOUNT_SERVER_INUM;
++
++	if (oldflags != newflags)
+ 		return 0;
+ 
+ 	/*
+diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+index facc94e159a16..e45f8e321371c 100644
+--- a/fs/cifs/misc.c
++++ b/fs/cifs/misc.c
+@@ -523,6 +523,7 @@ cifs_autodisable_serverino(struct cifs_sb_info *cifs_sb)
+ {
+ 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_SERVER_INUM) {
+ 		cifs_sb->mnt_cifs_flags &= ~CIFS_MOUNT_SERVER_INUM;
++		cifs_sb->mnt_cifs_serverino_autodisabled = true;
+ 		cifs_dbg(VFS, "Autodisabling the use of server inode numbers on %s. This server doesn't seem to support them properly. Hardlinks will not be recognized on this mount. Consider mounting with the \"noserverino\" option to silence this message.\n",
+ 			 cifs_sb_master_tcon(cifs_sb)->treeName);
  	}
- 
- 	iblock_submit_bios(&list);
 -- 
 2.20.1
 
