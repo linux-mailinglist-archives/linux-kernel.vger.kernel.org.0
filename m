@@ -2,99 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6F7FB173A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 04:40:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46B55B1759
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 04:47:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfIMCke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 22:40:34 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35871 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfIMCke (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 22:40:34 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y22so17175135pfr.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 19:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=yK99CWDEV+GMLXWhJb+XNR1rZIzkOo1KcI+8O5gSgak=;
-        b=pX8GfKNlP3H7LubXCrt3O4BEUxhmJt5lfVF3cSVQwZNgT5bWdx5ZLLkyRecsMHl3RP
-         gsomj7G6Cp+CUjvJngWvlC/cu+iNAJU1hSO48bbEBwN7PTvJKOjBqf0xEJI3hnCjxA+v
-         QgY8zJ0VFKbmzYwY3tEZf8LczcsqMCX04A8OLXyTPaqCFiRw+L9TOK9lidjYLjpOyCT6
-         F/+NAI3zDnmEkFJlZEjm7jmzPwbiiwUB4wBm28tMwDEEfe/j4Nrh2/SB1PaPtD8pQgI1
-         m7G0FmmvO+iVSQh3qt+tJMcoChqooWEsaG8jfHh64uq4j/aJl1wvycdfCj3sMtgXRVQt
-         pCqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yK99CWDEV+GMLXWhJb+XNR1rZIzkOo1KcI+8O5gSgak=;
-        b=Mg8h3+vC0dX6gqO2vL/CA47owJQghiSsryeYuZytv8+Wf3pJSIQqNlyaEGoRPJm4Nl
-         Vc/nxJHpqlAMN+Pplf+bYOa8yanHe0NG1k6dHUPliaXcsdnq27dTxWITfkfz0qvvDR2J
-         abUSNAys4EZHzi5cTRgVDSFB2D+QfXzG/5AKdRR7ma9dhzZULME9NQZ/B0D1PgmH/GY1
-         ptCLs1GUvvSRaPbACB4E2bBDe18yzs7H4ni8tUdV6eA99jE4XBU9lbtMwf+K2pVGzdaw
-         ERlozDrbGGESYmysABEtFbhdP3LJI11VdPhCiJJ7mYCnqKbSOeo+9TKN9KjA6NTjHysy
-         Zgtg==
-X-Gm-Message-State: APjAAAXQdDvuEw4+6pk2Ts0wm4suAl7COAYAdUo7Wx4HU5ZUdTdcMGos
-        u2jWS1u00p64tsKMPTytd0fDuA==
-X-Google-Smtp-Source: APXvYqwtiQkm2M/xKlHGAxKnIsR+ZI2Lqsa2MEw3Q53WdznmG4Z/bpTDe/Tk3NIvdO/QXK8Zax/CBA==
-X-Received: by 2002:a63:9249:: with SMTP id s9mr39988094pgn.356.1568342433021;
-        Thu, 12 Sep 2019 19:40:33 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i74sm40222938pfe.28.2019.09.12.19.40.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Sep 2019 19:40:32 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
-        Jordan Crouse <jcrouse@codeaurora.org>
-Subject: [PATCH] clk: Make clk_bulk_get_all() return a valid "id"
-Date:   Thu, 12 Sep 2019 19:40:29 -0700
-Message-Id: <20190913024029.2640-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        id S1728366AbfIMCrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 22:47:06 -0400
+Received: from mga07.intel.com ([134.134.136.100]:58608 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726032AbfIMCqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 22:46:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 19:46:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="176159501"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
+  by orsmga007.jf.intel.com with ESMTP; 12 Sep 2019 19:46:13 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        James Harvey <jamespharvey20@gmail.com>,
+        Alex Willamson <alex.williamson@redhat.com>
+Subject: [PATCH 00/11] KVM: x86/mmu: Restore fast invalidate/zap flow
+Date:   Thu, 12 Sep 2019 19:46:01 -0700
+Message-Id: <20190913024612.28392-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The adreno driver expects the "id" field of the returned clk_bulk_data
-to be filled in with strings from the clock-names property.
+Restore the fast invalidate flow for zapping shadow pages and use it
+whenever vCPUs can be active in the VM.  This fixes (in theory, not yet
+confirmed) a regression reported by James Harvey where KVM can livelock
+in kvm_mmu_zap_all() when it's invoked in response to a memslot update.
 
-But due to the use of kmalloc_array() in of_clk_bulk_get_all() it
-receives a list of bogus pointers instead.
+The fast invalidate flow was removed as it was deemed to be unnecessary
+after its primary user, memslot flushing, was reworked to zap only the
+memslot in question instead of all shadow pages.  Unfortunately, zapping
+only the memslot being (re)moved during a memslot update introduced a
+regression for VMs with assigned devices.  Because we could not discern
+why zapping only the relevant memslot broke device assignment, or if the
+regression extended beyond device assignment, we reverted to zapping all
+shadow pages when a memslot is (re)moved.
 
-Zero-initialize the "id" field and attempt to populate with strings from
-the clock-names property to resolve both these issues.
+The revert to "zap all" failed to account for subsequent changes that
+have been made to kvm_mmu_zap_all() between then and now.  Specifically,
+kvm_mmu_zap_all() now conditionally drops reschedules and drops mmu_lock
+if a reschedule is needed or if the lock is contended.  Dropping the lock
+allows other vCPUs to add shadow pages, and, with enough vCPUs, can cause
+kvm_mmu_zap_all() to get stuck in an infinite loop as it can never zap all
+pages before observing lock contention or the need to reschedule.
 
-Fixes: 616e45df7c4a ("clk: add new APIs to operate on all available clocks")
-Fixes: 8e3e791d20d2 ("drm/msm: Use generic bulk clock function")
-Cc: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: Jordan Crouse <jcrouse@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/clk/clk-bulk.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+The reasoning behind having kvm_mmu_zap_all() conditionally reschedule was
+that it would only be used when the VM is inaccesible, e.g. when its
+mm_struct is dying or when the VM itself is being destroyed.  In that case,
+playing nice with the rest of the kernel instead of hogging cycles to free
+unused shadow pages made sense.
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 524bf9a53098..e9e16425c739 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -18,10 +18,13 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
- 	int ret;
- 	int i;
- 
--	for (i = 0; i < num_clks; i++)
-+	for (i = 0; i < num_clks; i++) {
-+		clks[i].id = NULL;
- 		clks[i].clk = NULL;
-+	}
- 
- 	for (i = 0; i < num_clks; i++) {
-+		of_property_read_string_index(np, "clock-names", i, &clks[i].id);
- 		clks[i].clk = of_clk_get(np, i);
- 		if (IS_ERR(clks[i].clk)) {
- 			ret = PTR_ERR(clks[i].clk);
+Since it's unlikely we'll root cause the device assignment regression any
+time soon, and that simply removing the conditional rescheduling isn't
+guaranteed to return us to a known good state, restore the fast invalidate
+flow for zapping on memslot updates, including mmio generation wraparound.
+Opportunisticaly tack on a bug fix and a couple enhancements.
+
+Alex and James, it probably goes without saying... please test, especially
+patch 01/11 as a standalone patch as that'll likely need to be applied to
+stable branches, assuming it works.  Thanks!
+
+Sean Christopherson (11):
+  KVM: x86/mmu: Reintroduce fast invalidate/zap for flushing memslot
+  KVM: x86/mmu: Treat invalid shadow pages as obsolete
+  KVM: x86/mmu: Use fast invalidate mechanism to zap MMIO sptes
+  KVM: x86/mmu: Revert "Revert "KVM: MMU: show mmu_valid_gen in shadow
+    page related tracepoints""
+  KVM: x86/mmu: Revert "Revert "KVM: MMU: add tracepoint for
+    kvm_mmu_invalidate_all_pages""
+  KVM: x86/mmu: Revert "Revert "KVM: MMU: zap pages in batch""
+  KVM: x86/mmu: Revert "Revert "KVM: MMU: collapse TLB flushes when zap
+    all pages""
+  KVM: x86/mmu: Revert "Revert "KVM: MMU: reclaim the zapped-obsolete
+    page first""
+  KVM: x86/mmu: Revert "KVM: x86/mmu: Remove is_obsolete() call"
+  KVM: x86/mmu: Explicitly track only a single invalid mmu generation
+  KVM: x86/mmu: Skip invalid pages during zapping iff root_count is zero
+
+ arch/x86/include/asm/kvm_host.h |   4 +-
+ arch/x86/kvm/mmu.c              | 154 ++++++++++++++++++++++++++++----
+ arch/x86/kvm/mmutrace.h         |  42 +++++++--
+ arch/x86/kvm/x86.c              |   1 +
+ 4 files changed, 173 insertions(+), 28 deletions(-)
+
 -- 
-2.18.0
+2.22.0
 
