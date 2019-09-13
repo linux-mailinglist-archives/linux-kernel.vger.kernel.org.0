@@ -2,260 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8263AB1A0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 10:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57908B19D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 10:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387870AbfIMIrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 04:47:24 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47788 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387581AbfIMIrX (ORCPT
+        id S2387624AbfIMIqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 04:46:24 -0400
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:59426 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387594AbfIMIqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 04:47:23 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190913084720euoutp029c29ecf574d0ab770cb0d41bdba12794~D8yYsCBRj0687906879euoutp02m
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 08:47:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190913084720euoutp029c29ecf574d0ab770cb0d41bdba12794~D8yYsCBRj0687906879euoutp02m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1568364440;
-        bh=pHzQlbDo1C4cXmBS7A3CPSHtIvcSShpbfes0/svvBAk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=IQZ3Bhb7LDMPNUMHIk2lfvY63nLiQDJln2N9hGBybTPIBWde9NjzU6YpQ0Op/ygi8
-         c/fJq43NH5m6fF8+104+Sn1qlBuqYw8ZZnLTvITUu0O1AVsVb1js8mgUZ3evk0g86I
-         G5Og1+b5SKTebiE50AvNsmaPTRgl9pHrkAdUzdTU=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190913084719eucas1p13dd58e4dc9a40d174f07f71221dfcdce~D8yX10TT02512225122eucas1p1X;
-        Fri, 13 Sep 2019 08:47:19 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1A.5A.04374.7975B7D5; Fri, 13
-        Sep 2019 09:47:19 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190913084718eucas1p1ddebd180b28385b21873144dfdaccc57~D8yW_3pEY2930829308eucas1p1x;
-        Fri, 13 Sep 2019 08:47:18 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190913084718eusmtrp1f4c3830eba1d66ec5047d67dfa572e37~D8yWwLvQY2570325703eusmtrp1d;
-        Fri, 13 Sep 2019 08:47:18 +0000 (GMT)
-X-AuditID: cbfec7f5-4f7ff70000001116-90-5d7b579784a9
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 7F.C4.04117.6975B7D5; Fri, 13
-        Sep 2019 09:47:18 +0100 (BST)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190913084717eusmtip20eec82ae46ffc257da69575ea68a8e64~D8yWEbZkx1334313343eusmtip2x;
-        Fri, 13 Sep 2019 08:47:17 +0000 (GMT)
-Subject: Re: [RFC][PATCH] drm: kirin: Fix dsi probe/attach logic
-To:     Matt Redfearn <matt.redfearn@thinci.com>,
-        John Stultz <john.stultz@linaro.org>
-Cc:     Rob Clark <robdclark@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        David Airlie <airlied@linux.ie>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Amit Pundir <amit.pundir@linaro.org>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <084ab580-8ba8-b018-bc7a-bd705027f200@samsung.com>
-Date:   Fri, 13 Sep 2019 10:47:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Fri, 13 Sep 2019 04:46:22 -0400
+Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8D8gi80020152;
+        Fri, 13 Sep 2019 04:46:13 -0400
+Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2054.outbound.protection.outlook.com [104.47.45.54])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2uytcwh98m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 13 Sep 2019 04:46:13 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YQ7msHR/jIUMfYkrc0Txj+YzGoxxhHhrlWv2HqaLKkAK6Ej3mvvwL+y76cbsAn95zHndMRPxd6BhUiIXS2/hQVFWJD6UNkeuJeuj4oIpSbI7d9i9tdnrlGg1M/OThbffG2ZOmZtrUd/ZEOSYrAAEpK4sfjXEvIVROM/we/KT95Q4yPzBoHAu5+TqJ7uDCNN7EetfLIm6lTuhNIvvvRUWQhG+MI4Q5z8vEE+fOqWUHcvK/BytbAfUDBsXBqxY7movKjZbweNs//zssRXyLP4FAroGG3ob+zfj5vvwEGYQKwAnMgxsgrjpwUvKgWo3o9vwcoMQvqPaSwOhrZFKoqmBCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=05ip8YYTrKlx0zGMUFmD5GRzSl/oDVHFbJgj5Q1NczA=;
+ b=GVkaGiBcB2AqWtdVjf7NqZthgiVxc5sQgQiWWbr9Fxq0s8jJiTqa8Hmz63N9AbYd2WQYHk3EYGq4PcnD6/PrZ/Uug3LZvj8jEvOYJYEHTl9d28y7MpalnDMC1Ca1ScllXbu/sq9LdyjzqbGPxwaRvtona/526iwDe7r0KsvupYdNQwokWFKbPXiuHNuUBo74zAo0Sji/BXCltOKBizX7jSgaLShJHcTJqKUCUOHGCw7GNagFZK39a+arHXD805T7u7zZNTV/cObFySEE/F6wl/elQc71NElwQ0DEM4bX81osKLITV5em65XqOsvYgFWttqlVvmDmGaSgdhRQj0yY5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 137.71.25.57) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
+ dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=05ip8YYTrKlx0zGMUFmD5GRzSl/oDVHFbJgj5Q1NczA=;
+ b=UxXyttqyDp2IdwrLjM3jnSU+KFv2AeUfUqiXwvC0bcSkju8xQ+Fd3XbRoVBrx/WAOJC31c1dh8yYQ2+7LHlD8a8gOgT4L2qxbM0lYNJTukQV59taR1nyu1JrlpBW7xgf/BV2K9c81gndi/GkLclWLOAlvKEJAD8FjOPSfT7bFZQ=
+Received: from MWHPR03CA0002.namprd03.prod.outlook.com (2603:10b6:300:117::12)
+ by BN3PR03MB2132.namprd03.prod.outlook.com (2a01:111:e400:c5f1::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2241.14; Fri, 13 Sep
+ 2019 08:46:11 +0000
+Received: from SN1NAM02FT005.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::208) by MWHPR03CA0002.outlook.office365.com
+ (2603:10b6:300:117::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.13 via Frontend
+ Transport; Fri, 13 Sep 2019 08:46:10 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
+Received: from nwd2mta2.analog.com (137.71.25.57) by
+ SN1NAM02FT005.mail.protection.outlook.com (10.152.72.117) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2263.17
+ via Frontend Transport; Fri, 13 Sep 2019 08:46:10 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x8D8k4ps030512
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Fri, 13 Sep 2019 01:46:04 -0700
+Received: from saturn.ad.analog.com (10.48.65.123) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.408.0; Fri, 13 Sep 2019 04:46:09 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-spi@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <bcm-kernel-feedback-list@broadcom.com>
+CC:     <jic23@kernel.org>, <broonie@kernel.org>, <f.fainelli@gmail.com>,
+        <linus.walleij@linaro.org>, <orsonzhai@gmail.com>,
+        <baolin.wang@linaro.org>, <zhang.lyra@gmail.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [RFC PATCH 00/15] Unify SPI delays into an `struct spi_delay`
+Date:   Fri, 13 Sep 2019 14:45:35 +0300
+Message-ID: <20190913114550.956-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <00e4f553-a02c-6d98-a0e8-28c0183a3c8c@thinci.com>
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUyMcRz3u+flnuLscZW+81Jzw+YlMWY/I6PZPH+0+MOWoXHxuKIu7lF6
-        +cOZkJRdarUu9CLrZJTO9TZZLqSpSNIbLmlUSpZKt0ru8dT03+ft+/t+P9uPIZQT1CImRHuG
-        12nVoSramSx5YX/tlR4QG7j+fLoLTmqoleGfplyE340M0rj5dy+B68a9cG1/M4mvJOfJcVPF
-        DRpX2LJl2HrtIP6WM0Zgk92C8MeieoTtFbdIbB68QOKu3nxqB8sNtl6Uc5n6RpIrN36Uc19u
-        PnTQ+AyKe2l4K+M+vH9Mc6WjnRRnu1oj4/LSmmmuKimF5DJTuijuV7HHXsUB523H+NCQSF7n
-        vf2Ic3BGx8lTdSuj7rUMU3r03CMBOTHAboK+4Rw6ATkzStaEYOynRSaRYQTW8VYkkV8IEpsK
-        qJkRU1wxJRn5CPqtX6fJAILHcVNITLmwO+B7aY/DYBhXdh80564XMwT7hoRno3ZCzNDsKpg0
-        t9EiVrDboeplGRLzJLsC+n7MFWU3dj8MdVZTUmQB1GZ0kyJ2csTbC9PkIiZYT7hgySQk7A7t
-        3Vn/KgB7nwFzvG366l1gGOuaxi7QV/NILuEl8ColkZTwObCZ4ghpOB6BpaickIytUF3T+K8M
-        4Ti6sMJbknfCVP4DuSgDOx9aBxZIN8yH6yXphCQrIP6SUkovA1u9ZfpBd7jzZoQ2IJVxVjPj
-        rDbGWW2M//dmI7IAufMRQpiGFzZq+bPrBHWYEKHVrDsaHlaMHH/y1Z+akTL0ZCLIilgGqeYp
-        8NqYQCWljhSiw6wIGELlqvDrjw5UKo6po2N4XfhhXUQoL1jRYoZUuSti53QeVLIa9Rn+JM+f
-        4nUzroxxWqRHS0/7MLoPvkUdoT3LnPSu5s8hR5PCTzQlxCgrrVnLKw8N4OTbZX/ycs43rqmT
-        +0Jdakt9g5uNb+OFu0JVPmP03NNjCBqqrmp72rFtSsNvXv1Jm1puqEYL9ZsKQwIiorMrCY8t
-        9ZfTT+/2Y1LGXcfmePofzymftEeaffwLoko1KlIIVm9YTegE9V+4sB/sjwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRmVeSWpSXmKPExsVy+t/xe7rTwqtjDW7uFbPoPXeSyeLDikWM
-        Fle+vmezuPr9JbPFmd+6FiffXGWx6Jy4hN3i8q45bBa77i9gsjjUF23xfOEPZosVP7cyWtzd
-        cJbR4ueueSwWm983s1g8ermc1UHA4/2NVnaP2Q0XWTx2zrrL7vF47kYgt2Mmq8eJCZeYPO5c
-        28Pmsf3bA1aP+93HmTyWTLvK5nGgdzKLx+zJj1g9Pm+SC+CN0rMpyi8tSVXIyC8usVWKNrQw
-        0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MuYeTu74IxaxerrX1gbGI/KdTFyckgI
-        mEisaNnE2sXIxSEksJRRYsfNu0wQCXGJ3fPfMkPYwhJ/rnWxQRS9ZpS4dGwbWJGwgIPE6+0v
-        WEFsEYEQiRk9T8EmMQtcYpGY8fwpVMdmVomtS2aAjWIT0JT4u/kmG4jNK2AnceDEDsYuRg4O
-        FgFViVfvuEHCogIREod3zGKEKBGUODnzCQuIzQlUfmv9NHYQm1lAXeLPvEvMELa8RPPW2VC2
-        uMStJ/OZJjAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kRmBq2
-        Hfu5BejUd8GHGAU4GJV4eC10qmKFWBPLiitzDzFKcDArifD6vKmMFeJNSaysSi3Kjy8qzUkt
-        PsRoCvTbRGYp0eR8YNrKK4k3NDU0t7A0NDc2NzazUBLn7RA4GCMkkJ5YkpqdmlqQWgTTx8TB
-        KdXAyFI87+Gur7fLt06x1bWrWnji0dccxnLxl5cPl/hXrU68/K3l1DON9ZPlfqhM/3BkQ5R5
-        LceSV+c6mHb2MjsK75z/9ybn9PvnLh9ctNVkgVWfD8OyC78us9zT5L50WHcHT5DxPh3GA3c9
-        Sz9/Ul4X+bukLSv2hsrnEypXFNUlwx8unrQgPvu35CclluKMREMt5qLiRABEaVwuIwMAAA==
-X-CMS-MailID: 20190913084718eucas1p1ddebd180b28385b21873144dfdaccc57
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190829173938epcas3p1276089cb3d6f9813840d1bb6cac8b1da
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190829173938epcas3p1276089cb3d6f9813840d1bb6cac8b1da
-References: <20190829060550.62095-1-john.stultz@linaro.org>
-        <CGME20190829173938epcas3p1276089cb3d6f9813840d1bb6cac8b1da@epcas3p1.samsung.com>
-        <CAF6AEGvborwLmjfC6_vgZ-ZbfvF3HEFFyb_NHSLRoYWF35bw+g@mail.gmail.com>
-        <ebdf3ff5-5a9b-718d-2832-f326138a5b2d@samsung.com>
-        <CAF6AEGtkvRpXSoddjmxer2U6LxnV_SAe+jwE2Ct8B8dDpFy2mA@mail.gmail.com>
-        <b925e340-4b6a-fbda-3d8d-5c27204d2814@samsung.com>
-        <CALAqxLU5Ov+__b5gxnuMxQP1RLjndXkB4jAiGgmb-OMdaKePug@mail.gmail.com>
-        <9d31af23-8a65-d8e8-b73d-b2eb815fcd6f@samsung.com>
-        <CALAqxLVP=x9+p9scGyfgFUMN2di+ngOz9-fWW=A1YCM4aN7JRA@mail.gmail.com>
-        <16c9066b-091f-6d0e-23f1-2c1f83a7da1b@samsung.com>
-        <00e4f553-a02c-6d98-a0e8-28c0183a3c8c@thinci.com>
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(136003)(396003)(199004)(189003)(7636002)(305945005)(47776003)(2870700001)(8936002)(246002)(8676002)(50226002)(36756003)(110136005)(54906003)(106002)(316002)(1076003)(2201001)(7696005)(2906002)(7416002)(126002)(186003)(486006)(26005)(48376002)(356004)(6666004)(336012)(86362001)(70586007)(70206006)(478600001)(107886003)(50466002)(5660300002)(476003)(426003)(4326008)(44832011)(51416003)(2616005)(81973001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR03MB2132;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 901dcf5f-d346-4d63-c43b-08d73826d370
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(4709080)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:BN3PR03MB2132;
+X-MS-TrafficTypeDiagnostic: BN3PR03MB2132:
+X-Microsoft-Antispam-PRVS: <BN3PR03MB21328D0E623C33D470221441F9B30@BN3PR03MB2132.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0159AC2B97
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: SFVSMC4UrNJzauz+dLNerpdHZGwmVHqO1j0r5bxb8rVT5U1OvO0DC/i0Q7868lsrzaNHREDnsfeJc+hqjH80cka+XG1a13ankJulk8MswiLGWdFej4FCLuAzAsD1UjcJDmN4a8/fNT8KtSiqo7hoh+q4zKQakCDqIh4jc2T0HoqQabZ3RDE37wIXG4TT0oWjGVUjC46cs2n6qo3K5999ocisSsIjfWJOMuyLqb6Hj7GloH9UScmFN/Yr4pv0XVlJSLHgEIvLaJ6/HMdvleXHez7T5c4x1UmIpEjUbLBQ3BGOPiHfMGl4388cbavfZ5z0y6oQDb1tw8pfrPG/DEQbEcn75bg0pxAyGY1YL/sMakzC3GY9J2mt4g0gKjcEXU0rJGkiussQIXJfnDQNNN7GQdY0I7L2UQC2wNt9m1SjP8E=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2019 08:46:10.1428
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 901dcf5f-d346-4d63-c43b-08d73826d370
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR03MB2132
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-13_05:2019-09-11,2019-09-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ malwarescore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 suspectscore=0 phishscore=0 impostorscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1909130083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.09.2019 16:18, Matt Redfearn wrote:
->
-> On 12/09/2019 14:21, Andrzej Hajda wrote:
->> On 12.09.2019 04:38, John Stultz wrote:
->>> On Wed, Sep 4, 2019 at 3:26 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
->>>> On 03.09.2019 18:18, John Stultz wrote:
->>>>> On Mon, Sep 2, 2019 at 6:22 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
->>>>>> On 30.08.2019 19:00, Rob Clark wrote:
->>>>>>> On Thu, Aug 29, 2019 at 11:52 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
->>>>>>>> Of course it seems you have different opinion what is the right thing in
->>>>>>>> this case, so if you convince us that your approach is better one can
->>>>>>>> revert the patch.
->>>>>>> I guess my strongest / most immediate opinion is to not break other
->>>>>>> existing adv75xx bridge users.
->>>>>> It is pity that breakage happened, and next time we should be more
->>>>>> strict about testing other platforms, before patch acceptance.
->>>>>>
->>>>>> But reverting it now will break also platform which depend on it.
->>>>> I'm really of no opinion of which approach is better here, but I will
->>>>> say that when a patch breaks previously working boards, that's a
->>>>> regression and justifying that some other board is now enabled that
->>>>> would be broken by the revert (of a patch that is not yet upstream)
->>>>> isn't really a strong argument.
->>>>>
->>>>> I'm happy to work with folks to try to fixup the kirin driver if this
->>>>> patch really is the right approach, but we need someone to do the same
->>>>> for the db410c, and I don't think its fair to just dump that work onto
->>>>> folks under the threat of the board breaking.
->>>> These drivers should be fixed anyway - assumption that
->>>> drm_bridge/drm_panel will be registered before the bus it is attached to
->>>> is just incorrect.
->>>>
->>>> So instead of reverting, fixing and then re-applying the patch I have
->>>> gently proposed shorter path. If you prefer long path we can try to go
->>>> this way.
->>>>
->>>> Matt, is the pure revert OK for you or is it possible to prepare some
->>>> workaround allowing cooperation with both approaches?
->>> Rob/Andrzej: What's the call here?
->>>
->>> Should I resubmit the kirin fix for the adv7511 regression here?
->>> Or do we revert the adv7511 patch? I believe db410c still needs a fix.
->>>
->>> I'd just like to keep the HiKey board from breaking, so let me know so
->>> I can get the fix submitted if needed.
->>
->> Since there is no response from Matt, we can perform revert, since there
->> are no other ideas. I will apply it tomorrow, if there are no objections.
-> Hi,
->
-> Sorry - yeah I think reverting is probably best at this point to avoid 
-> breaking in-tree platforms.
-> It's a shame though that there is a built-in incompatibility within the 
-> tree between drivers.
+Initially, I started this patchset thinking: "we need a new delay for
+something-something" (in case someone is curios, we need a CS-hold-time for
+the first transfer, because the CS wakes a chip from sleep-mode).
 
+Then I added the delay, and felt a bit dirty-inside about adding a new one
+(just like that), and decided to look at maybe cleaning things up a bit,
+and a few days later, I got here.
 
-Quite common in development - some issues becomes visible after some time.
+Full disclaimer: this patchset is not complete. It's an RFC.
+It's based on top of Jonathan's `iio/togreg` branch which also includes the
+ADIS driver library changes and also includes `cs_change_delay`.
 
-> The way that the generic Synopsys DSI host driver 
-> probes is currently incompatible with the ADV7533 (hence the patch), 
-> other DSI host drivers are now compatible with the ADV7533 but break 
-> when we change it to probe in a similar way to panel drivers.
+I'll send a V2 patchset, which just the first 4 patches, since I feel that
+those are a bit more complete.
 
+I thought about just sending the first 4 patches on-their-own, but I
+figured that the whole series (even if not complete) serves as a better
+explanation about the whole "why?".
 
-1. The behavior should be consistent between all hosts/device drivers.
+Hopefully, this can sort-of-explain things.
+I'll reference this RFC on the next series.
 
-2. DSI controlled devices can expose drm objects (drm_bridge/drm_panel)
-only when they can probe, ie DSI bus they sit on must be created 1st.
+Thanks
 
-1 and 2 enforces policy that all host drivers should 1st create control
-bus (DSI in this case) then look for higher level objects
-(drm_bridge/drm_panel).
+Alexandru Ardelean (15):
+  spi: move `cs_change_delay` backwards compat logic outside switch
+  spi: introduce spi_delay struct as "value + unit" &  spi_delay_exec()
+  spi: make `cs_change_delay` the first user of the `spi_delay` logic
+  iio: imu: adis: convert cs_change_delay to spi_delay struct
+  spi: sprd: convert transfer word delay to spi_delay struct
+  spi: orion: use new `word_delay` field for SPI transfers
+  spi: spidev: use new `word_delay` field for spi transfers
+  spi: core,atmel: convert `word_delay_usecs` -> `word_delay` for
+    spi_device
+  spi: introduce `delay` field for `spi_transfer` + spi_transfer_exec()
+  spi: use new `spi_transfer_delay` helper where straightforward
+  spi: tegra114: use `spi_transfer_delay` helper
+  spi: spi-loopback-test: use new `delay` field
+  spi: spidev: use new `delay` field for spi transfers
+  spi: tegra114: change format for `spi_set_cs_timing()` function
+  spi: implement SW control for CS times
 
-As a consequence all bridges and panels should 1st gather the resources
-they depends on, and then they can expose higher level objects.
+ drivers/iio/imu/adis.c           |  24 ++---
+ drivers/spi/spi-atmel.c          |  29 +++++-
+ drivers/spi/spi-bcm63xx-hsspi.c  |   3 +-
+ drivers/spi/spi-cavium.c         |   3 +-
+ drivers/spi/spi-fsl-dspi.c       |   3 +-
+ drivers/spi/spi-fsl-espi.c       |   3 +-
+ drivers/spi/spi-fsl-spi.c        |   3 +-
+ drivers/spi/spi-loopback-test.c  |  12 ++-
+ drivers/spi/spi-mpc512x-psc.c    |   3 +-
+ drivers/spi/spi-mpc52xx-psc.c    |   3 +-
+ drivers/spi/spi-omap-100k.c      |   3 +-
+ drivers/spi/spi-orion.c          |   6 +-
+ drivers/spi/spi-pl022.c          |  25 +++--
+ drivers/spi/spi-sc18is602.c      |   3 +-
+ drivers/spi/spi-sh-hspi.c        |   3 +-
+ drivers/spi/spi-sprd.c           |  11 ++-
+ drivers/spi/spi-tegra114.c       |  39 +++++---
+ drivers/spi/spi-tegra20-sflash.c |   2 +-
+ drivers/spi/spi-topcliff-pch.c   |   7 +-
+ drivers/spi/spi-txx9.c           |   3 +-
+ drivers/spi/spi-xcomm.c          |   3 +-
+ drivers/spi/spi.c                | 162 +++++++++++++++++++++++++------
+ drivers/spi/spidev.c             |   6 +-
+ include/linux/spi/spi.h          |  65 ++++++++++---
+ 24 files changed, 293 insertions(+), 131 deletions(-)
 
-
->
->> And for the future: I guess it is not possible to make adv work with old
->> and new approach, but simple workaround for adv could be added later:
->>
->> if (source is msm or kirin)
->>
->>      do_the_old_way
->>
->> else
->>
->>      do_correctly.
-> Maybe this would work, but how do we know that the list "msm or kirin" 
-> is exhaustive to cope with all platforms?
-
-
-By checking dts/config files.
-
-
-> It seems to me the built in 
-> incompatibility between DSI hosts needs to be resolved really rather 
-> than trying to work around it in the ADV7533 driver (and any other DSI 
-> bus device that falls into this trap).
-
-
-If you know how, please describe. Atm the only real solution I see is
-explicit workaround to allow new adv7511, then fixing controllers,
-together with workaround-removal.
-
-OK, it could be possible to change msm, kirin and adv in one patch,
-however I am not sure if this is the best solution.
-
-
-Regards
-
-Andrzej
-
-
->
-> Anyway, my platform is out of tree so better to revert my patch and keep 
-> the in-tree platforms working.
->
-> Thanks everyone.
-> Matt
->
->>
->> And remove it after fixing both dsi masters.
->>
->>
->> Regards
->>
->> Andrzej
->>
->>
->>> thanks
->>> -john
->>>
->>>
+-- 
+2.20.1
 
