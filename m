@@ -2,107 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1055B213E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54141B214C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:50:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389685AbfIMNlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:41:13 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39778 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388927AbfIMNlN (ORCPT
+        id S2391470AbfIMNo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:44:29 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44306 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388489AbfIMNo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:41:13 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8DDfC2S094105;
-        Fri, 13 Sep 2019 08:41:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568382072;
-        bh=CmbLJ7PpeDku490Wh6BDSiCQHPLlezHiiaAQg2qYXnM=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=ykropRZ7yh9+HQIZLNa/QCkM2+GpbxSbalY1PmG3fVmd7eUs8o4RKcb/iLoCDRomv
-         3NSwYybEJKvT31v+qM4Lv/iNDy3Flh6T7Cum0lMY3V6PAwkDtUC5CwzrICmGsHHo1Q
-         E/nBVNc3iwXqOn/8EPCh6FzuoljdW0yj0XmKvUm0=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8DDfCF1054907
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Sep 2019 08:41:12 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 13
- Sep 2019 08:41:11 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 13 Sep 2019 08:41:11 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with SMTP id x8DDfBKY013552;
-        Fri, 13 Sep 2019 08:41:11 -0500
-Date:   Fri, 13 Sep 2019 08:43:17 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch 08/13] media: am437x-vpfe: Maintain a reference to the
- current vpfe_fmt
-Message-ID: <20190913134317.afnflvebna3xv35o@ti.com>
-References: <20190909162743.30114-1-bparrot@ti.com>
- <20190909162743.30114-9-bparrot@ti.com>
- <8b3d5c23-6784-fb1c-5e14-f3759b10aa0b@xs4all.nl>
- <20190913133245.6rvajfhlghbocuf4@ti.com>
- <693c483f-5342-ab0a-7023-222f06bd011e@xs4all.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <693c483f-5342-ab0a-7023-222f06bd011e@xs4all.nl>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 13 Sep 2019 09:44:28 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8DDiEI9169394;
+        Fri, 13 Sep 2019 13:44:19 GMT
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2uytd3ms1a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Sep 2019 13:44:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8DDhv5b028851;
+        Fri, 13 Sep 2019 13:44:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2uytdwtpyd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Sep 2019 13:44:18 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8DDi3pL032480;
+        Fri, 13 Sep 2019 13:44:04 GMT
+Received: from zhuyj-Latitude-E6220.lan (/124.126.211.68)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 13 Sep 2019 06:44:03 -0700
+From:   rain.1986.08.12@gmail.com
+To:     mchehab+samsung@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        rain.1986.08.12@gmail.com, netdev@vger.kernel.org
+Subject: [PATCH 1/1] MAINTAINERS: update FORCEDETH MAINTAINERS info
+Date:   Fri, 13 Sep 2019 21:43:45 +0800
+Message-Id: <20190913134345.28318-1-rain.1986.08.12@gmail.com>
+X-Mailer: git-send-email 2.17.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9378 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=817
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909130136
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9378 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1034
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=887 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909130136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hans Verkuil <hverkuil@xs4all.nl> wrote on Fri [2019-Sep-13 15:34:28 +0200]:
-> On 9/13/19 3:32 PM, Benoit Parrot wrote:
-> > Hans Verkuil <hverkuil@xs4all.nl> wrote on Fri [2019-Sep-13 15:14:45 +0200]:
-> >> On 9/9/19 6:27 PM, Benoit Parrot wrote:
-> >>> Keep a reference to the currently selected struct vpfe_fmt * object.
-> >>> By doing so we rename the current struct v4l2_format * member from
-> >>> fmt to v_fmt.
-> >>> The added struct vpfe_fmt * reference is set to "const" so we also
-> >>> constify all accesses and related helper functions.
-> >>
-> >> This explains what you do, but not why you do it.
-> > 
-> > Hmm ok I'll rework this a bit.
-> > 
-> >>
-> >> And I think fmt vs v_fmt is *very* confusing naming.
-> > 
-> > Well in this case v_fmt stands for "v4l2_fmt" and depending on the function
-> > I was using fmt to either mean a vpfe_fmt pointer or a v4l2_format pointer
-> > so tried (and apparently failed) to make it clearer which was which.
-> 
-> Well, v_fmt could refer to either v4l2_format or vpfe_fmt, so that prefix
-> doesn't help me :-)
-> 
-> Since 'fmt' was already defined in struct vpfe_device as v4l2_format, I'd
-> just keep that rather than causing code churn by changing it. And come up
-> with a better name for when you refer to a vpfe_fmt struct.
+From: Rain River <rain.1986.08.12@gmail.com>
 
-Fair enough.
+Many FORCEDETH NICs are used in our hosts. Several bugs are fixed and
+some features are developed for FORCEDETH NICs. And I have been
+reviewing patches for FORCEDETH NIC for several months. Mark me as the
+FORCEDETH NIC maintainer. I will send out the patches and maintain
+FORCEDETH NIC.
 
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> > 
-> >>
-> >> I'd keep fmt as-is, and come up with a different name for the vpfe_fmt
-> >> pointer. ref_vpfe_fmt?
-> >>
-> >> Regards,
-> >>
-> >> 	Hans
-> >>
+Signed-off-by: Rain River <rain.1986.08.12@gmail.com>
+---
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e7a47b5210fd..0a28090df677 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -649,6 +649,12 @@ M:	Lino Sanfilippo <LinoSanfilippo@gmx.de>
+ S:	Maintained
+ F:	drivers/net/ethernet/alacritech/*
+ 
++FORCEDETH GIGABIT ETHERNET DRIVER
++M:	Rain River <rain.1986.08.12@gmail.com>
++L:	netdev@vger.kernel.org
++S:	Maintained
++F:	drivers/net/ethernet/nvidia/*
++
+ ALCATEL SPEEDTOUCH USB DRIVER
+ M:	Duncan Sands <duncan.sands@free.fr>
+ L:	linux-usb@vger.kernel.org
+-- 
+2.17.1
+
