@@ -2,154 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3D0B21B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA5C7B21CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387968AbfIMOSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 10:18:44 -0400
-Received: from sauhun.de ([88.99.104.3]:35986 "EHLO pokefinder.org"
+        id S2389148AbfIMOUb convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 13 Sep 2019 10:20:31 -0400
+Received: from mga03.intel.com ([134.134.136.65]:44618 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727412AbfIMOSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 10:18:44 -0400
-Received: from localhost (234.77.63.94.rev.vodafone.pt [94.63.77.234])
-        by pokefinder.org (Postfix) with ESMTPSA id AB6CA2C3115;
-        Fri, 13 Sep 2019 16:18:41 +0200 (CEST)
-Date:   Fri, 13 Sep 2019 15:18:41 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: tegra: Move suspend handling to NOIRQ phase
-Message-ID: <20190913141841.GC1022@kunai>
-References: <20190910092917.29901-1-jonathanh@nvidia.com>
+        id S1727412AbfIMOU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 10:20:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2019 07:20:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,501,1559545200"; 
+   d="scan'208";a="185111065"
+Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
+  by fmsmga008.fm.intel.com with ESMTP; 13 Sep 2019 07:20:22 -0700
+Received: from orsmsx162.amr.corp.intel.com (10.22.240.85) by
+ ORSMSX104.amr.corp.intel.com (10.22.225.131) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 13 Sep 2019 07:20:22 -0700
+Received: from orsmsx110.amr.corp.intel.com ([169.254.10.57]) by
+ ORSMSX162.amr.corp.intel.com ([169.254.3.217]) with mapi id 14.03.0439.000;
+ Fri, 13 Sep 2019 07:20:22 -0700
+From:   "Moore, Robert" <robert.moore@intel.com>
+To:     Nikolaus Voss <nv@vosn.de>
+CC:     "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        "Pavel Machek" <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ferry Toth <ftoth@telfort.nl>,
+        "nikolaus.voss@loewensteinmedical.de" 
+        <nikolaus.voss@loewensteinmedical.de>
+Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table index
+Thread-Topic: [PATCH] ACPICA: make acpi_load_table() return table index
+Thread-Index: AQHVaUE6M44QnoJV0UqVXW85SrAmnKcoFnTQgAGaZwD///c2gA==
+Date:   Fri, 13 Sep 2019 14:20:21 +0000
+Message-ID: <94F2FBAB4432B54E8AACC7DFDE6C92E3B967ADF6@ORSMSX110.amr.corp.intel.com>
+References: <20190906174605.GY2680@smile.fi.intel.com>
+ <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B9679CE8@ORSMSX110.amr.corp.intel.com>
+ <alpine.DEB.2.20.1909130911180.20316@fox.voss.local>
+In-Reply-To: <alpine.DEB.2.20.1909130911180.20316@fox.voss.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWVkNGQxYWEtM2M4NC00MTUzLWIwMDYtMzBjYzUxNWY4ZTA3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieHFETnZUbHBtcml3MkEzS1lRaXBLSVVZdktQaHUrQkp0MnZWNFwvU1pMV1ErSUdwZ29cL1wvMjJcL3JHZDV2aVM2dmMifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="69pVuxX8awAiJ7fD"
-Content-Disposition: inline
-In-Reply-To: <20190910092917.29901-1-jonathanh@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---69pVuxX8awAiJ7fD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2019 at 10:29:17AM +0100, Jon Hunter wrote:
-> Commit acc8abcb2a9c ("i2c: tegra: Add suspend-resume support") added
-> suspend support for the Tegra I2C driver and following this change on
-> Tegra30 the following WARNING is seen on entering suspend ...
->=20
->  WARNING: CPU: 2 PID: 689 at /dvs/git/dirty/git-master_l4t-upstream/kerne=
-l/drivers/i2c/i2c-core.h:54 __i2c_transfer+0x35c/0x70c
->  i2c i2c-4: Transfer while suspended
->  Modules linked in: brcmfmac brcmutil
->  CPU: 2 PID: 689 Comm: rtcwake Not tainted 5.3.0-rc7-g089cf7f6ecb2 #1
->  Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
->  [<c0112264>] (unwind_backtrace) from [<c010ca94>] (show_stack+0x10/0x14)
->  [<c010ca94>] (show_stack) from [<c0a77024>] (dump_stack+0xb4/0xc8)
->  [<c0a77024>] (dump_stack) from [<c0124198>] (__warn+0xe0/0xf8)
->  [<c0124198>] (__warn) from [<c01241f8>] (warn_slowpath_fmt+0x48/0x6c)
->  [<c01241f8>] (warn_slowpath_fmt) from [<c06f6c40>] (__i2c_transfer+0x35c=
-/0x70c)
->  [<c06f6c40>] (__i2c_transfer) from [<c06f7048>] (i2c_transfer+0x58/0xf4)
->  [<c06f7048>] (i2c_transfer) from [<c06f7130>] (i2c_transfer_buffer_flags=
-+0x4c/0x70)
->  [<c06f7130>] (i2c_transfer_buffer_flags) from [<c05bee78>] (regmap_i2c_w=
-rite+0x14/0x30)
->  [<c05bee78>] (regmap_i2c_write) from [<c05b9cac>] (_regmap_raw_write_imp=
-l+0x35c/0x868)
->  [<c05b9cac>] (_regmap_raw_write_impl) from [<c05b984c>] (_regmap_update_=
-bits+0xe4/0xec)
->  [<c05b984c>] (_regmap_update_bits) from [<c05bad04>] (regmap_update_bits=
-_base+0x50/0x74)
->  [<c05bad04>] (regmap_update_bits_base) from [<c04d453c>] (regulator_disa=
-ble_regmap+0x44/0x54)
->  [<c04d453c>] (regulator_disable_regmap) from [<c04cf9d4>] (_regulator_do=
-_disable+0xf8/0x268)
->  [<c04cf9d4>] (_regulator_do_disable) from [<c04d1694>] (_regulator_disab=
-le+0xf4/0x19c)
->  [<c04d1694>] (_regulator_disable) from [<c04d1770>] (regulator_disable+0=
-x34/0x64)
->  [<c04d1770>] (regulator_disable) from [<c04d2310>] (regulator_bulk_disab=
-le+0x28/0xb4)
->  [<c04d2310>] (regulator_bulk_disable) from [<c0495cd4>] (tegra_pcie_powe=
-r_off+0x64/0xa8)
->  [<c0495cd4>] (tegra_pcie_power_off) from [<c0495f74>] (tegra_pcie_pm_sus=
-pend+0x25c/0x3f4)
->  [<c0495f74>] (tegra_pcie_pm_suspend) from [<c05af48c>] (dpm_run_callback=
-+0x38/0x1d4)
->  [<c05af48c>] (dpm_run_callback) from [<c05afe30>] (__device_suspend_noir=
-q+0xc0/0x2b8)
->  [<c05afe30>] (__device_suspend_noirq) from [<c05b1c24>] (dpm_noirq_suspe=
-nd_devices+0x100/0x37c)
->  [<c05b1c24>] (dpm_noirq_suspend_devices) from [<c05b1ebc>] (dpm_suspend_=
-noirq+0x1c/0x48)
->  [<c05b1ebc>] (dpm_suspend_noirq) from [<c017d2c0>] (suspend_devices_and_=
-enter+0x1d0/0xa00)
->  [<c017d2c0>] (suspend_devices_and_enter) from [<c017dd10>] (pm_suspend+0=
-x220/0x74c)
->  [<c017dd10>] (pm_suspend) from [<c017c2c8>] (state_store+0x6c/0xc8)
->  [<c017c2c8>] (state_store) from [<c02ef398>] (kernfs_fop_write+0xe8/0x1c=
-4)
->  [<c02ef398>] (kernfs_fop_write) from [<c0271e38>] (__vfs_write+0x2c/0x1c=
-4)
->  [<c0271e38>] (__vfs_write) from [<c02748dc>] (vfs_write+0xa4/0x184)
->  [<c02748dc>] (vfs_write) from [<c0274b7c>] (ksys_write+0x9c/0xdc)
->  [<c0274b7c>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x54)
->  Exception stack(0xe9f21fa8 to 0xe9f21ff0)
->  1fa0:                   0000006c 004b2438 00000004 004b2438 00000004 000=
-00000
->  1fc0: 0000006c 004b2438 004b1228 00000004 00000004 00000004 0049e78c 004=
-b1228
->  1fe0: 00000004 be9809b8 b6f0bc0b b6e96206
->=20
-> The problem is that the Tegra PCIe driver indirectly uses I2C for
-> controlling some regulators and the I2C driver is now being suspended
-> before the PCIe driver causing the PCIe suspend to fail. The Tegra PCIe
-> driver is suspended during the NOIRQ phase and this cannot be changed
-> due to other dependencies. Therefore, we also need to move the suspend
-> handling for the Tegra I2C driver to the NOIRQ phase as well.
->=20
-> In order to move the I2C suspend handling to the NOIRQ phase we also
-> need to avoid calling pm_runtime_get/put() because per commit
-> 1e2ef05bb8cf ("PM: Limit race conditions between runtime PM and system
-> sleep (v2)") these cannot be called early in resume. The function
-> tegra_i2c_init(), called during resume, calls pm_runtime_get/put() and
-> so move these calls outside of tegra_i2c_init(), so this function can
-> be used during the NOIRQ resume phase.
->=20
-> Fixes: acc8abcb2a9c ("i2c: tegra: Add suspend-resume support")
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+-----Original Message-----
+From: Nikolaus Voss [mailto:nv@vosn.de] 
+Sent: Friday, September 13, 2019 12:44 AM
+To: Moore, Robert <robert.moore@intel.com>
+Cc: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Schmauss, Erik <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Jacek Anaszewski <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy <dmurphy@ti.com>; linux-acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org; Ferry Toth <ftoth@telfort.nl>; nikolaus.voss@loewensteinmedical.de
+Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table index
 
-Applied to for-next, thanks!
+Bob,
+
+On Thu, 12 Sep 2019, Moore, Robert wrote:
+> The ability to unload an ACPI table (especially AML tables such as
+> SSDTs) is in the process of being deprecated in ACPICA -- since it is 
+> also deprecated in the current ACPI specification. This is being done 
+> because of the difficulty of deleting the namespace entries for the 
+> table.  FYI, Windows does not properly support this function either.
+
+ok, I see it can be a problem to unload an AML table with all it's consequences e.g. with respect to driver unregistering in setups with complex dependencies. It will only work properly under certain conditions
+- nevertheless acpi_tb_unload_table() is still exported in ACPICA and we should get this working as it worked before.
+
+AcpiTbUnloadTable is not exported, it is an internal interface only -- as recognized by the "AcpiTb". I'm not sure that I want to change the interface to AcpiLoadTable just for something that is being deprecated. Already, we throw an ACPI_EXCEPTION if the Unload operator is encountered in the AML byte stream. The same thing with AcpiUnloadParentTable - it is being deprecated.
 
 
---69pVuxX8awAiJ7fD
-Content-Type: application/pgp-signature; name="signature.asc"
+    ACPI_EXCEPTION ((AE_INFO, AE_NOT_IMPLEMENTED,
+        "AML Unload operator is not supported"));
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl17pUAACgkQFA3kzBSg
-KbYHuhAAlvTw4F2YkaELJucgf10FnYx+rri3f8bXFgPngE/Hm0Fa/zqFqvexSCjn
-P1dqa0GVptFu68JHSz64wbxnynZ/tTN9hcy0TxJA1Ob2Yd9zGz3UWkZMyQlYFMBE
-SoMDsGrTzoDm3Yh7ENATNJRZew0/Wr2+oe/z1IdBAYKiFh+p2bUVhVvwtHUydznT
-Q02/xe5BMPRRPZ4DY2gpO4OkttJbZz6qXFnJM5VCwLqBaUBYp6mIsmMOlOrBNc5F
-4ROfkmKhXn3fL3sRND+2P00BYVyaStHP6U7Jm7SZ+2fJncLlcF674CCMdm2r6H7C
-RB2XMAgP3YsPx/SFy0WDtMhKrHx32MUUwnJ329Vxj4xQ5GZH7lmEQKei1IOcdNdI
-AwAuBf+B68PRIdm5aL3tHWcrBklxKhwCD0XERjwl862C5/ugsuSb1UYzz/BIA/nv
-G52PYq70iD/ZBUswmkzzDd3/ehSFqyoD/XUlz5hrjRhADHJJN7Yt9y2ypPLEfsL6
-5na67Xf91L9sKRDIsI9CDD0hh6mjXdDVob993NUM0TVe/pmnmlPrneWV+kUrb1Du
-n7kVfQh6yN8+yigjA3heXBjs1WbaMSgZB9cwCpEVHFVSTCMvXVJCVtONjQfaiXyC
-aWb9EyCiNxvso6K2Y5M3M7QQU1DhrwcizvSeucNgp+B3mcqixjU=
-=ic6W
------END PGP SIGNATURE-----
+The API change I request is not directly related to table unloading, it's just that the index of the loaded table is returned for future reference:
 
---69pVuxX8awAiJ7fD--
+[...]
+
+>> diff --git a/include/acpi/acpixf.h b/include/acpi/acpixf.h index 
+>> 3845c8fcc94e5..c90bbdc4146a6 100644
+>> --- a/include/acpi/acpixf.h
+>> +++ b/include/acpi/acpixf.h
+>> @@ -452,7 +452,8 @@ ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
+>> 					       u8 physical))
+>>
+>> ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+>> -			    acpi_load_table(struct acpi_table_header *table))
+>> +			    acpi_load_table(struct acpi_table_header *table,
+>> +					    u32 *table_idx))
+>>
+>> ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+>> 			    acpi_unload_parent_table(acpi_handle object))
+>> --
+>> 2.17.1
+>>
+
+This allows for a simple fix of the regression and doesn't imply future support for table unloading. Would this be acceptable?
+
+Niko
