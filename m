@@ -2,257 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 703CEB1C15
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 13:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24B10B1C25
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 13:29:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388104AbfIMLRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 07:17:55 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41822 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387588AbfIMLRz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 07:17:55 -0400
-Received: by mail-lf1-f67.google.com with SMTP id r2so3794488lfn.8
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 04:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Eig8YBgc4AIpYsp7lUznhvhsAXEYkZmmBdoySh4xCVY=;
-        b=K4acSM1HTjeaBZXU0S8sxve39tZHmse4wCZFy6gfKu7vs+elpkudnaNrN4NqM3SGrD
-         DozWLFqC+bdV5LrOeXtaQINgd9qZpkpeb3a+fyia3zu8EdSaQqYx5zBysJuH1OV2/mOq
-         bSiJDh1qUHpISV07C0TRurnSoPNhDad9AwS6dujj7dyfT+GL1l1vinCKDNF0i8FOJdby
-         wZLUniDM+JbHEHenP3GXSu9NxwiVAGcphZsjlXCgPgir/NLE4Elig+94/zIHYsOrgw3y
-         sSU8bsUTFp4x0x9N0fC+domZwopl+bCTIbLnEvpyr0idO+KdD7NYFk7d0KHLWIHDI+/F
-         P3gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Eig8YBgc4AIpYsp7lUznhvhsAXEYkZmmBdoySh4xCVY=;
-        b=A/m5m57FrP0Ii6c60lRqraHUybzZxDCYhwzU2NQBNXxSfkwhwp9nc2M31fQenmJ+Vi
-         Vmraqf7aJMRPJ7EbWD4DFtes07suyotMVjQNs2l6NtBUBHhASihe8iV1ZrRquGKoPAo9
-         65E66BztC6S8SS1hO7B+RApz8ZvibOe8E6TrzjPNV1CRzsWwmH4gyNfgvR+JqUH/OPOi
-         c4cAy5zwGzoweFTVazgjPlnDOoOpyb/CGyQlgOTkMLAS+IaWBp0xVhgms6gH7YE9eoxF
-         2VTOXevS/wi0g3xCcxKEw/qg1zr6lkRqqizeeF2jiytvN65a3HvZxSj5Cg5Z0r5wiQzM
-         0nSw==
-X-Gm-Message-State: APjAAAVHn1GRwks91HLByb3G0jlOhomlrfqE+k5NA/ajukpOlddZddWd
-        hYMt4E70+0AkCiokIQYBHssyMLmL+Srbqw6Qjn0lyywg
-X-Google-Smtp-Source: APXvYqyUUgNUqZtDaRJ2n59eFJk5+ew4BYuPqaQ2r4WCfz1h/2Z2Hxw6sIjkQ7zICPTJpL+Cs7ygm1884Bpkm3yrw5Q=
-X-Received: by 2002:ac2:4c8f:: with SMTP id d15mr5844411lfl.74.1568373472512;
- Fri, 13 Sep 2019 04:17:52 -0700 (PDT)
+        id S2387577AbfIML27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 07:28:59 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:33576 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726266AbfIML26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 07:28:58 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1i8jkq-0001JP-3A; Fri, 13 Sep 2019 21:28:45 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 13 Sep 2019 21:28:39 +1000
+Date:   Fri, 13 Sep 2019 21:28:39 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: imx8mq: Add CAAM node
+Message-ID: <20190913112839.GA14972@gondor.apana.org.au>
+References: <20190830210139.7028-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-References: <20190912231820.590276-1-lucian@fb.com>
-In-Reply-To: <20190912231820.590276-1-lucian@fb.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Fri, 13 Sep 2019 16:47:40 +0530
-Message-ID: <CAFqt6zaVAuvoHveT9YeU5GWjWPZBeTXWnRjmHEazxZSUctT7+Q@mail.gmail.com>
-Subject: Re: [PATCH] mm: memory: fix /proc/meminfo reporting for MLOCK_ONFAULT
-To:     Lucian Adrian Grijincu <lucian@fb.com>
-Cc:     Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@fb.com>, Roman Gushchin <guro@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190830210139.7028-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 4:49 AM Lucian Adrian Grijincu <lucian@fb.com> wrote:
->
-> As pages are faulted in MLOCK_ONFAULT correctly updates
-> /proc/self/smaps, but doesn't update /proc/meminfo's Mlocked field.
->
-> - Before this /proc/meminfo fields didn't change as pages were faulted in:
->
-> ```
-> = Start =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> = Creating testfile =
->
-> = after mlock2(MLOCK_ONFAULT) =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> /proc/self/smaps
-> 7f8714000000-7f8754000000 rw-s 00000000 08:04 50857050   /root/testfile
-> Locked:                0 kB
->
-> = after reading half of the file =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> /proc/self/smaps
-> 7f8714000000-7f8754000000 rw-s 00000000 08:04 50857050   /root/testfile
-> Locked:           524288 kB
->
-> = after reading the entire the file =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> /proc/self/smaps
-> 7f8714000000-7f8754000000 rw-s 00000000 08:04 50857050   /root/testfile
-> Locked:          1048576 kB
->
-> = after munmap =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> /proc/self/smaps
-> ```
->
-> - After: /proc/meminfo fields are properly updated as pages are touched:
->
-> ```
-> = Start =
-> /proc/meminfo
-> Unevictable:          60 kB
-> Mlocked:              60 kB
-> = Creating testfile =
->
-> = after mlock2(MLOCK_ONFAULT) =
-> /proc/meminfo
-> Unevictable:          60 kB
-> Mlocked:              60 kB
-> /proc/self/smaps
-> 7f2b9c600000-7f2bdc600000 rw-s 00000000 08:04 63045798   /root/testfile
-> Locked:                0 kB
->
-> = after reading half of the file =
-> /proc/meminfo
-> Unevictable:      524220 kB
-> Mlocked:          524220 kB
-> /proc/self/smaps
-> 7f2b9c600000-7f2bdc600000 rw-s 00000000 08:04 63045798   /root/testfile
-> Locked:           524288 kB
->
-> = after reading the entire the file =
-> /proc/meminfo
-> Unevictable:     1048496 kB
-> Mlocked:         1048508 kB
-> /proc/self/smaps
-> 7f2b9c600000-7f2bdc600000 rw-s 00000000 08:04 63045798   /root/testfile
-> Locked:          1048576 kB
->
-> = after munmap =
-> /proc/meminfo
-> Unevictable:         176 kB
-> Mlocked:              60 kB
-> /proc/self/smaps
-> ```
->
-> Repro code.
+On Fri, Aug 30, 2019 at 02:01:39PM -0700, Andrey Smirnov wrote:
+> Add node for CAAM - Cryptographic Acceleration and Assurance Module.
+> 
+> Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Cory Tusar <cory.tusar@zii.aero>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 > ---
->
-> int mlock2wrap(const void* addr, size_t len, int flags) {
->   return syscall(SYS_mlock2, addr, len, flags);
-> }
->
-> void smaps() {
->   char smapscmd[1000];
->   snprintf(
->       smapscmd,
->       sizeof(smapscmd) - 1,
->       "grep testfile -A 20 /proc/%d/smaps | grep -E '(testfile|Locked)'",
->       getpid());
->   printf("/proc/self/smaps\n");
->   fflush(stdout);
->   system(smapscmd);
-> }
->
-> void meminfo() {
->   const char* meminfocmd = "grep -E '(Mlocked|Unevictable)' /proc/meminfo";
->   printf("/proc/meminfo\n");
->   fflush(stdout);
->   system(meminfocmd);
-> }
->
->   {                                                 \
->     int rc = (call);                                \
->     if (rc != 0) {                                  \
->       printf("error %d %s\n", rc, strerror(errno)); \
->       exit(1);                                      \
->     }                                               \
->   }
-> int main(int argc, char* argv[]) {
->   printf("= Start =\n");
->   meminfo();
->
->   printf("= Creating testfile =\n");
->   size_t size = 1 << 30; // 1 GiB
->   int fd = open("testfile", O_CREAT | O_RDWR, 0666);
->   {
->     void* buf = malloc(size);
->     write(fd, buf, size);
->     free(buf);
->   }
->   int ret = 0;
->   void* addr = NULL;
->   addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
->
->   if (argc > 1) {
->     PCHECK(mlock2wrap(addr, size, MLOCK_ONFAULT));
->     printf("= after mlock2(MLOCK_ONFAULT) =\n");
->     meminfo();
->     smaps();
->
->     for (size_t i = 0; i < size / 2; i += 4096) {
->       ret += ((char*)addr)[i];
->     }
->     printf("= after reading half of the file =\n");
->     meminfo();
->     smaps();
->
->     for (size_t i = 0; i < size; i += 4096) {
->       ret += ((char*)addr)[i];
->     }
->     printf("= after reading the entire the file =\n");
->     meminfo();
->     smaps();
->
->   } else {
->     PCHECK(mlock(addr, size));
->     printf("= after mlock =\n");
->     meminfo();
->     smaps();
->   }
->
->   PCHECK(munmap(addr, size));
->   printf("= after munmap =\n");
->   meminfo();
->   smaps();
->
->   return ret;
-> }
->
-> ---
->
-> Signed-off-by: Lucian Adrian Grijincu <lucian@fb.com>
-> ---
->  mm/memory.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index e0c232fe81d9..7e8dc3ed4e89 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -3311,6 +3311,9 @@ vm_fault_t alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
->         } else {
->                 inc_mm_counter_fast(vma->vm_mm, mm_counter_file(page));
->                 page_add_file_rmap(page, false);
-> +               if ((vma->vm_flags & (VM_LOCKED | VM_SPECIAL)) == VM_LOCKED &&
-> +                               !PageTransCompound(page))
+> 
+> Shawn:
+> 
+> Just a bit of a context: as per this thread
+> https://lore.kernel.org/linux-crypto/20190830131547.GA27480@gondor.apana.org.au/
+> I am hoping I can get and Ack from you for this patch, so it can go
+> via cryptodev tree.
+> 
+> Thanks,
+> Andrey Smirnov
+> 
+>  arch/arm64/boot/dts/freescale/imx8mq.dtsi | 30 +++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
 
-Do we need to check against VM_SPECIAL ?
-
-> +                       mlock_vma_page(page);
->         }
->         set_pte_at(vma->vm_mm, vmf->address, vmf->pte, entry);
->
-> --
-> 2.17.1
->
->
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
