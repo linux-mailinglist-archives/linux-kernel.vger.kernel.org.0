@@ -2,41 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37951B1749
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 04:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0100AB176B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 05:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbfIMCqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 22:46:21 -0400
-Received: from mga07.intel.com ([134.134.136.100]:58611 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727614AbfIMCqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 22:46:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 19:46:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
-   d="scan'208";a="176159533"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by orsmga007.jf.intel.com with ESMTP; 12 Sep 2019 19:46:13 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        James Harvey <jamespharvey20@gmail.com>,
-        Alex Willamson <alex.williamson@redhat.com>
-Subject: [PATCH 11/11] KVM: x86/mmu: Skip invalid pages during zapping iff root_count is zero
-Date:   Thu, 12 Sep 2019 19:46:12 -0700
-Message-Id: <20190913024612.28392-12-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190913024612.28392-1-sean.j.christopherson@intel.com>
-References: <20190913024612.28392-1-sean.j.christopherson@intel.com>
+        id S1727063AbfIMDWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 23:22:44 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37419 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfIMDWo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 23:22:44 -0400
+Received: by mail-pg1-f194.google.com with SMTP id c17so6755120pgg.4;
+        Thu, 12 Sep 2019 20:22:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mq3uEQUSbTsyi612FRhgkMJIVMuNd8+2nTcH+ZUp44U=;
+        b=Gq0/8HV9ZJFm98E/55dcvt7PbBQWsjnj6H3fSoM6mmyNhFxKsdwg8JqHQRTeWdf7d2
+         UZcD3feViQF5lAJH4PXoD3KbmjCeQtcIaaa98SNo6jESF8dQ6hxgj3bzRPr5xHR9YOoT
+         nM1zts/CIUouiCp12Tptw9w9AwIc9ThpwqbaymF9UX3gejveOg7PeqqaBoFPoAiz11Km
+         ub5qbwoj79GWKCVY9kRBpESD8KDfLrYtCfipdmItona6HU9FrHouZz/gE77ORzxUMGLe
+         jc+zX4HttZWiK13aEr7+bZxGFSYcoDL2NbnPdcg2Mb28aLL5ycQ3Wcg3WYUys3ifYgj4
+         NXng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mq3uEQUSbTsyi612FRhgkMJIVMuNd8+2nTcH+ZUp44U=;
+        b=rfLBGKeGnIeqfWJ4sWuB33z+oVkU40KOwmRGLzXMlpxMtt/YCtEPU7KWxpFssUXz88
+         wi7V+1+e1lqoXEhZHRPA359lLj5BwMEeq/dz1xj7wR21qXlEvnqiQtBOT99BRY7j2TxH
+         lR84wtYCWBFifJooH/YwgMtj6yE9COgtpnLQVxT/Mp9tUIdTa9ykecPtSvLtIiggFQfQ
+         GCZOpPNtVvV4rAel7xkEfXjf7H0Gd6csmwCr7fhgsbVvzjmKwEFTOOlwhBOazbfRaDgp
+         RFMAIyJ7P4+JkRa4y38vqE14hkwxjyIdu58Ttx1TERUYwV8DfrctPsafj+9HLgh0qL4y
+         68Gw==
+X-Gm-Message-State: APjAAAVDCei9rtyDpzRElORYAaqufD1i7QnkSWhcZ+Ca6W70JXQyJNDh
+        6N5TGR9zVymCi5Lqw5SgV5g=
+X-Google-Smtp-Source: APXvYqzGDU2p00rpKHHpgR0XKyIcdSAHlLJt1ols4C1Zo9DYgvfKJg2Rw8JMt0Hp+WH0ePmJorpdUA==
+X-Received: by 2002:a17:90a:25a9:: with SMTP id k38mr2660559pje.12.1568344963350;
+        Thu, 12 Sep 2019 20:22:43 -0700 (PDT)
+Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id b2sm8060936pfd.81.2019.09.12.20.22.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2019 20:22:42 -0700 (PDT)
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 0/2] Add support for software nodes to gpiolib
+Date:   Thu, 12 Sep 2019 20:22:37 -0700
+Message-Id: <20190913032240.50333-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,38 +62,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not skip invalid shadow pages when zapping obsolete pages if the
-pages' root_count has reached zero, in which case the page can be
-immediately zapped and freed.
+This is a part of the larger series previously posted at
 
-Update the comment accordingly.
+https://lore.kernel.org/linux-gpio/20190911075215.78047-1-dmitry.torokhov@gmail.com
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/mmu.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+that was rebased on top of linux-gpio devel branch.
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index a7b14750cde9..5e41b1f77a6d 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -5692,11 +5692,12 @@ static void kvm_zap_obsolete_pages(struct kvm *kvm)
- 			break;
- 
- 		/*
--		 * Since we are reversely walking the list and the invalid
--		 * list will be moved to the head, skip the invalid page
--		 * can help us to avoid the infinity list walking.
-+		 * Skip invalid pages with a non-zero root count, zapping pages
-+		 * with a non-zero root count will never succeed, i.e. the page
-+		 * will get thrown back on active_mmu_pages and we'll get stuck
-+		 * in an infinite loop.
- 		 */
--		if (sp->role.invalid)
-+		if (sp->role.invalid && sp->root_count)
- 			continue;
- 
- 		/*
+Changes in v2:
+- switched export to be EXPORT_SYMBOL_GPL to match the new export
+  markings for the rest of GPIO devres functions
+- rebased on top of Linus W devel branch
+- added Andy's Reviewed-by
+
+Dmitry Torokhov (2):
+  gpiolib: introduce devm_fwnode_gpiod_get_index()
+  gpiolib: introduce fwnode_gpiod_get_index()
+
+ drivers/gpio/gpiolib-devres.c | 33 ++++++---------------
+ drivers/gpio/gpiolib.c        | 48 +++++++++++++++++++++++++++++++
+ include/linux/gpio/consumer.h | 54 ++++++++++++++++++++++++++++-------
+ 3 files changed, 101 insertions(+), 34 deletions(-)
+
 -- 
-2.22.0
+2.23.0.237.gc6a4ce50a0-goog
 
