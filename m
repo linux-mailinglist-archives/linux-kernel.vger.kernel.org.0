@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D5E6B1A68
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 11:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0FD8B1A67
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 11:05:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387821AbfIMJFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2387872AbfIMJFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 13 Sep 2019 05:05:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52808 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:52830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387536AbfIMJFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387613AbfIMJFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Sep 2019 05:05:07 -0400
-Subject: Re: [GIT PULL] Last btrfs fixes for 5.3
+Subject: Re: [GIT PULL] cgroup fixes for v5.3-rc8
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1568365506;
-        bh=0hPwizLNWDeNLiSepXf9JSBRoD2nWHbIOgr9k7QCFg0=;
+        bh=y9zosm6Emxt7qS4zMnO2PZBMmj/UTTpSTgH+rozrYxY=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Efe07q1UOy80KdPb+ICcITjq8WFOGhrbDo14WOTEblPTB5fWMbLDmMD8jB8cemm5t
-         7iJxu8Vvw+eOVZzHYszbVOqaGO/EHoGwTovu0X3so55zGqBkDPBPy0bzbL5h7cxQRh
-         KeeKBV2imPJM8z8wQpISSo/yIC/7rmwRljreiia8=
+        b=qh+GPIuJXLFL+TLXp0P4fh/pWOakYAA83ToIlMeidNJucguuimgAT5TMrcW5WYBoe
+         I4tPNpNZerfoOJ4V2lMvlo34qVx9M9Vgz9kxp3MEvCaRx3oP6Hr5jrYNLyQYW3bIT2
+         5ilQt6psn5DHj0AP1pNkaJohdaim/LixCa/R0Z0o=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1568307806.git.dsterba@suse.com>
-References: <cover.1568307806.git.dsterba@suse.com>
+In-Reply-To: <20190912211150.GB3084169@devbig004.ftw2.facebook.com>
+References: <20190912211150.GB3084169@devbig004.ftw2.facebook.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1568307806.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.3-rc8-tag
-X-PR-Tracked-Commit-Id: 18dfa7117a3f379862dcd3f67cadd678013bb9dd
+X-PR-Tracked-Message-Id: <20190912211150.GB3084169@devbig004.ftw2.facebook.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-5.3-fixes
+X-PR-Tracked-Commit-Id: 97a61369830ab085df5aed0ff9256f35b07d425a
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1b304a1ae45de4df7d773f0a39d1100aabca615b
-Message-Id: <156836550649.13985.2850548447903893133.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: a7f89616b7376495424f682b6086e0c391a89a1d
+Message-Id: <156836550667.13985.9782542852327752376.pr-tracker-bot@kernel.org>
 Date:   Fri, 13 Sep 2019 09:05:06 +0000
-To:     David Sterba <dsterba@suse.com>
-Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
-        clm@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 12 Sep 2019 19:37:26 +0200:
+The pull request you sent on Thu, 12 Sep 2019 14:11:50 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.3-rc8-tag
+> git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-5.3-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1b304a1ae45de4df7d773f0a39d1100aabca615b
+https://git.kernel.org/torvalds/c/a7f89616b7376495424f682b6086e0c391a89a1d
 
 Thank you!
 
