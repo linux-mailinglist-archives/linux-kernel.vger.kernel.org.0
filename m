@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73792B1FDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B879AB1FD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388535AbfIMNJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:09:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34030 "EHLO mail.kernel.org"
+        id S2388255AbfIMNJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:09:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388508AbfIMNJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:09:27 -0400
+        id S2388354AbfIMNI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:08:56 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9433208C0;
-        Fri, 13 Sep 2019 13:09:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D87F208C2;
+        Fri, 13 Sep 2019 13:08:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380166;
-        bh=euFMXqA2+BIPRSYbvpi8iG+WO6A/bv97e1ShTSuKX8w=;
+        s=default; t=1568380136;
+        bh=18tAscth9FF9plE93REuaZYkwT31wbrMuT8sabAMCe4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s6I10AoqSbOeG88Rae7sdyiTEOc8ISGtYsVKKaTzLVm/C3cutZxDPyJaSR/kt1Sdf
-         i7qTZzEvMhiMsVjtMBzhmpLvkBSbuViL6CXTURfv4H6ei9BOSBWIHdknSU6VTMG338
-         B+zs1VlhOxj1aLWFsnps93JjZ4yiCBxMwgHNNV9k=
+        b=d1YX3lB1coAOlgUYIV2UxZ0QLkIib8sNd8IQAX6COMQb4DKKMCr3LmMNZSFebk/61
+         w3iFMljXtOlXJBNA7KemifQ755mU8Ihgau9tnSAZOAcR4dj49ngtQjW+yl4KKKNbFE
+         6yASltB8315kiyOq4Yb3Is5tSmHu52soWuJcfVqo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liangyan <liangyan.peng@linux.alibaba.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Ben Segall <bsegall@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        shanpeic@linux.alibaba.com, xlpang@linux.alibaba.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 03/14] sched/fair: Dont assign runtime for throttled cfs_rq
-Date:   Fri, 13 Sep 2019 14:06:56 +0100
-Message-Id: <20190913130443.326301688@linuxfoundation.org>
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.4 7/9] x86, boot: Remove multiple copy of static function sanitize_boot_params()
+Date:   Fri, 13 Sep 2019 14:06:57 +0100
+Message-Id: <20190913130430.474572665@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130440.264749443@linuxfoundation.org>
-References: <20190913130440.264749443@linuxfoundation.org>
+In-Reply-To: <20190913130424.160808669@linuxfoundation.org>
+References: <20190913130424.160808669@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,73 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liangyan <liangyan.peng@linux.alibaba.com>
+From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
 
-commit 5e2d2cc2588bd3307ce3937acbc2ed03c830a861 upstream.
+commit 8c5477e8046ca139bac250386c08453da37ec1ae upstream.
 
-do_sched_cfs_period_timer() will refill cfs_b runtime and call
-distribute_cfs_runtime to unthrottle cfs_rq, sometimes cfs_b->runtime
-will allocate all quota to one cfs_rq incorrectly, then other cfs_rqs
-attached to this cfs_b can't get runtime and will be throttled.
+Kernel build warns:
+ 'sanitize_boot_params' defined but not used [-Wunused-function]
 
-We find that one throttled cfs_rq has non-negative
-cfs_rq->runtime_remaining and cause an unexpetced cast from s64 to u64
-in snippet:
+at below files:
+  arch/x86/boot/compressed/cmdline.c
+  arch/x86/boot/compressed/error.c
+  arch/x86/boot/compressed/early_serial_console.c
+  arch/x86/boot/compressed/acpi.c
 
-  distribute_cfs_runtime() {
-    runtime = -cfs_rq->runtime_remaining + 1;
-  }
+That's becausethey each include misc.h which includes a definition of
+sanitize_boot_params() via bootparam_utils.h.
 
-The runtime here will change to a large number and consume all
-cfs_b->runtime in this cfs_b period.
+Remove the inclusion from misc.h and have the c file including
+bootparam_utils.h directly.
 
-According to Ben Segall, the throttled cfs_rq can have
-account_cfs_rq_runtime called on it because it is throttled before
-idle_balance, and the idle_balance calls update_rq_clock to add time
-that is accounted to the task.
-
-This commit prevents cfs_rq to be assgined new runtime if it has been
-throttled until that distribute_cfs_runtime is called.
-
-Signed-off-by: Liangyan <liangyan.peng@linux.alibaba.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
-Reviewed-by: Ben Segall <bsegall@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: shanpeic@linux.alibaba.com
-Cc: stable@vger.kernel.org
-Cc: xlpang@linux.alibaba.com
-Fixes: d3d9dc330236 ("sched: Throttle entities exceeding their allowed bandwidth")
-Link: https://lkml.kernel.org/r/20190826121633.6538-1-liangyan.peng@linux.alibaba.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/1563283092-1189-1-git-send-email-zhenzhong.duan@oracle.com
+[nc: Fixed conflict around lack of 67b6662559f7f]
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/fair.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/boot/compressed/misc.c |    1 +
+ arch/x86/boot/compressed/misc.h |    1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3882,6 +3882,8 @@ static void __account_cfs_rq_runtime(str
- 	if (likely(cfs_rq->runtime_remaining > 0))
- 		return;
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -11,6 +11,7 @@
  
-+	if (cfs_rq->throttled)
-+		return;
- 	/*
- 	 * if we're unable to extend our runtime we resched so that the active
- 	 * hierarchy can be throttled
-@@ -4077,6 +4079,9 @@ static u64 distribute_cfs_runtime(struct
- 		if (!cfs_rq_throttled(cfs_rq))
- 			goto next;
+ #include "misc.h"
+ #include "../string.h"
++#include <asm/bootparam_utils.h>
  
-+		/* By the above check, this should never be true */
-+		SCHED_WARN_ON(cfs_rq->runtime_remaining > 0);
-+
- 		runtime = -cfs_rq->runtime_remaining + 1;
- 		if (runtime > remaining)
- 			runtime = remaining;
+ /* WARNING!!
+  * This code is compiled with -fPIC and it is relocated dynamically
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -19,7 +19,6 @@
+ #include <asm/page.h>
+ #include <asm/boot.h>
+ #include <asm/bootparam.h>
+-#include <asm/bootparam_utils.h>
+ 
+ #define BOOT_BOOT_H
+ #include "../ctype.h"
 
 
