@@ -2,243 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EE5DB1A01
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 10:47:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF1D5B1A26
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 10:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387845AbfIMIrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 04:47:04 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:39290 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387581AbfIMIq6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 04:46:58 -0400
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8D8gds8001890;
-        Fri, 13 Sep 2019 04:46:53 -0400
-Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp2055.outbound.protection.outlook.com [104.47.48.55])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2uytdfsa8m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Sep 2019 04:46:52 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QcwrP4QnIjetMkoH5NLf0ibgB9XU8/pdiylNwS3t6rOtwBkduCCGpuk8Is56K34nb1SPkn6hIr62CBxeabWWWoGVvdRzxMbl1wb3C7tZuslc6373drm33AhmhZhm1zxKX3+Bn1sYH1SfxwgQdL6dim+cb6x2pP/KWXn0qq3FhgOKFKyGi70igoDXwMCEGI8uN/idIXAeIBq6jlFlLAy0o1Xy1hAndD0hM4P79+CqH3eX7556mNJ+cJR3UZlayCx4yO+LDRJ3u2zwFX5z9W6TQ6TXGLS4CpLqq/jZjcOKmN0MJWImEgFhHCNEiOk4uIt4iAy6ssjDSS1BXUY/faWnag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8SJm80TJlRotqx116nuGen8V9eGqdAKty0mbD7a8DOQ=;
- b=XNga6HYc2Kcgx5P195thaxhG2CSVGlOnmHVy4vYEZETvUGQbLxbtRVzIRuZB0mcz/LlkVb220hmQ45kQ2wwvcDrJK1ioVIpN8bstPT95hmI7nXBVNutKrPnw899YH+IrwSXLWJ1x1oJgjFGkHhcFadGnw/rZS9eEpE0sbTTop04o+nfYLlEKHcPYe6d2jIdaphDz+zFnM3X9ky/84TPRvrs8i0xtnHfXjrbJ8X+DOvGHoLOM4FqDuiEjV0rBoahBWC3b98hkv5gOgCaacelQ6aB9ZMtZXbEbk2R72bdmmKztnVhpZzeoe14AQSr0TKrRsJgB87Rii0c582j82kGHzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8SJm80TJlRotqx116nuGen8V9eGqdAKty0mbD7a8DOQ=;
- b=YMfbWMvCIS24KwC8FESpwzHFLIw802RdIEKduP+Iq7T/elCOnj0tBGgkvSahy5x6SCV9RHaI6M/vOh8g0hrLpa5rRYVBDOJZq9kEe2jlFrl4s3XPtUTRXlKOZKGnKhbfYh+z0SsC3ueGfOLJMWCs/dDw7yOZJUZkMBJ9wuHmiL4=
-Received: from BN6PR03CA0072.namprd03.prod.outlook.com (2603:10b6:404:4c::34)
- by MN2PR03MB4669.namprd03.prod.outlook.com (2603:10b6:208:ab::31) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2241.18; Fri, 13 Sep
- 2019 08:46:51 +0000
-Received: from CY1NAM02FT031.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::207) by BN6PR03CA0072.outlook.office365.com
- (2603:10b6:404:4c::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.13 via Frontend
- Transport; Fri, 13 Sep 2019 08:46:50 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- CY1NAM02FT031.mail.protection.outlook.com (10.152.75.180) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2263.17
- via Frontend Transport; Fri, 13 Sep 2019 08:46:50 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x8D8kjL3030753
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Fri, 13 Sep 2019 01:46:45 -0700
-Received: from saturn.ad.analog.com (10.48.65.123) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 13 Sep 2019 04:46:49 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-spi@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <bcm-kernel-feedback-list@broadcom.com>
-CC:     <jic23@kernel.org>, <broonie@kernel.org>, <f.fainelli@gmail.com>,
-        <linus.walleij@linaro.org>, <orsonzhai@gmail.com>,
-        <baolin.wang@linaro.org>, <zhang.lyra@gmail.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [RFC PATCH 15/15] spi: implement SW control for CS times
-Date:   Fri, 13 Sep 2019 14:45:50 +0300
-Message-ID: <20190913114550.956-16-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190913114550.956-1-alexandru.ardelean@analog.com>
-References: <20190913114550.956-1-alexandru.ardelean@analog.com>
+        id S2387629AbfIMIvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 04:51:05 -0400
+Received: from mout.gmx.net ([212.227.17.20]:37027 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387557AbfIMIvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 04:51:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1568364635;
+        bh=OZqY8YEmhSzYpVNahFixu1x4zax59nBDtoBfEOKOU5s=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=LgBrFGcKw3jzMlfJOCjItxE63zvj5he1+kky9ilivtcRdrHVQsn77FeH0WFVA/7o5
+         fQ+BbYa36NLTKwhjgpD+JeHKXyvPiuy7tyD+lNpC8LEHM5cMglVxMA/OIalDzoRSGI
+         n8ASzdbzVhqlhX/QhvOfCvQb7DyVFgu6o2AJUvF8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.1.162] ([37.4.249.90]) by mail.gmx.com (mrgmx103
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0Lzsf1-1iCMTA0Nu7-014yUk; Fri, 13
+ Sep 2019 10:50:35 +0200
+Subject: Re: [PATCH v5 0/4] Raspberry Pi 4 DMA addressing support
+To:     Matthias Brugger <mbrugger@suse.com>, catalin.marinas@arm.com,
+        marc.zyngier@arm.com, Matthias Brugger <matthias.bgg@gmail.com>,
+        robh+dt@kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-riscv@lists.infradead.org, hch@lst.de,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     robin.murphy@arm.com, f.fainelli@gmail.com, will@kernel.org,
+        linux-rpi-kernel@lists.infradead.org, phill@raspberrypi.org,
+        m.szyprowski@samsung.com, linux-kernel@vger.kernel.org
+References: <20190909095807.18709-1-nsaenzjulienne@suse.de>
+ <5a8af6e9-6b90-ce26-ebd7-9ee626c9fa0e@gmx.net>
+ <3f9af46e-2e1a-771f-57f2-86a53caaf94a@suse.com>
+ <09f82f88-a13a-b441-b723-7bb061a2f1e3@gmail.com>
+ <2c3e1ef3-0dba-9f79-52e2-314b6b500e14@gmx.net>
+ <4a6f965b-c988-5839-169f-9f24a0e7a567@suse.com>
+From:   Stefan Wahren <wahrenst@gmx.net>
+Message-ID: <48a6b72d-d554-b563-5ed6-9a79db5fb4ab@gmx.net>
+Date:   Fri, 13 Sep 2019 10:50:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(136003)(39860400002)(376002)(189003)(199004)(476003)(2870700001)(70206006)(44832011)(6666004)(50226002)(356004)(336012)(316002)(47776003)(76176011)(7416002)(70586007)(8936002)(305945005)(478600001)(51416003)(186003)(48376002)(5660300002)(50466002)(1076003)(26005)(14444005)(2201001)(86362001)(7696005)(54906003)(36756003)(107886003)(126002)(486006)(4326008)(2616005)(2906002)(11346002)(446003)(110136005)(7636002)(246002)(106002)(426003)(8676002)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR03MB4669;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e1bd2e00-ffbe-4a16-3d62-08d73826eb84
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(4709080)(1401327)(4618075)(2017052603328);SRVR:MN2PR03MB4669;
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4669:
-X-Microsoft-Antispam-PRVS: <MN2PR03MB4669DA5A59EFFA12608DBBFBF9B30@MN2PR03MB4669.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-Forefront-PRVS: 0159AC2B97
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: MtOCtlAqxM26bNa3hsjw+2gnJn3dlX2tC865y3toh/UR92xJvEcH4zTQ3qBcIvlw51PFY6rbQmo3et2T7zrak2eQP2GTXm6MKiXnJQn4tlpXXCz1BQQajZfAj/O2Gv5phiZujog/UPXp8UYrupPM8E1UEIcHsr/RpxnwQ7PO7Tq4omIKmf9GsH/3N3Ivpz4LhkB/+o6UDTqgxPUaQCpIoSlEhlFURksYMMdL7LFZtVFx8AN+kg60kHgON2/RZNrffzjZYDOustViWlCUWcXWopu90ZIZAW/bDdQbvJOOIoQQjnrR4PyZLkNy/EpFRPXwistSZaFdrW76bkVKWGqhUziPjdKx60sFL2OFyW1FWrEUyhR+c1Ep1T+BFpYRT8c2Mb2/PdJFw3zdR6rXAPBjjY5nTQKiUIofQVGWXf3vjto=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2019 08:46:50.6098
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1bd2e00-ffbe-4a16-3d62-08d73826eb84
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR03MB4669
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-13_05:2019-09-11,2019-09-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 spamscore=0 adultscore=0 mlxscore=0
- phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1909130083
+In-Reply-To: <4a6f965b-c988-5839-169f-9f24a0e7a567@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:5fDbWcniG6VsoBWaSc+GYFShgEo4REYeFeRHrSgDDglxm5sD6x2
+ UrWf7vgL6ch3G20ivsSWNIYWs/Bz1I+ZBgUC3eKNW5tdmxyn8E7T09758U+Tzf0wd/Wfw8R
+ nrZhE9fM238lCEGselAeaRWRKnV6VycB/TqFyuOdS/3m/0VwhMdxszt4cj6OQds8ZEJHgz5
+ lsHhLpKSOwmBUbNVq/KdA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PLc07q3TRNY=:+TtDNvVyj685IvAHzOOktc
+ kx+vI+eRRKzbqWd9bDoq8bo6RUCq2UiiBjt/4MAb2tnL51PkKCkYHzlLLVBuwOSz9m+mSJGYi
+ 3zQd9+4D5ZLnGGpSJKEJVvz2kSVmQiofGovvP1jXFcZWenr8riydzYGNY+HAYiqCxRaUA/eFX
+ E6xKpZo0iCDgnGdKi8+8xebctj7qpdvBjQif0wnINKavSgNh68oh0AUaigrhNyTkx7yCZSwv1
+ DxjnGg4fcjODfNNNEyYWmUd8MReYV1F0ehLs33w2Nxw60jHXeGmiep953V4atjlczfyqThy1R
+ uLcOMT92s/f7l7jtsN4dC+ZACigrck1L2eh2cBjDP9jBvEC79BTYXAe5bJQ/NLYlFNJzuJ0L5
+ KeM/4DFNCEJzuFJiNH3QdltPzA+2EIlzIZXl259m8wC5K2jB+gnScjnB3ZNYEg2pbIS6i4vp7
+ eA4IRIA1+P2jzMG9K8WKQp0T1aShulE+puyTCFwsz2eXeqLdxWuEbvtPiac2qMMqjLolkaG48
+ FV7hnRI3NkswtrztAzqfO+VJ0qPM00Kw6xotij/QHh8oU0BqpdD9+cAo+clP+40ysg0uKxV1Y
+ PYE2OWrVVwhEODxtvsJ+PGPADi0/tXm4fF3RyKNK5YQ69FtWTzQhecT5phJsYxTuEO6JRVFEH
+ tCm1NM+lN48t6dHOKPZPMeyASDCIy8pelwOiO5uAyg6u/RM65mkYXam7rrmEnYFTzfsw2IiCC
+ +FyqOyFxRVQbxIwaMlTwaBXGbad61xAueSYnodWFeuByuX0hGZ2Zm/uqxnLGJuQTpVrNMUDiA
+ 80QTtrA0KYBIaL2uqVZvjnTBNklNcb+Bul0JTVLe1+wSd/xs73IvfO/EH5Go5NpdCD2CHGNh/
+ SGnV/vUI0sShAZB3yhkhzvPzBDG3iWzcjKLCq9GQ2XQV6vWt/AQEE0iXQBZX5Fi85Qkf/9Orb
+ 7ZPA0klbpejckcIoscN1Vandk0ERHH6JArUBfIAQokm/ElVeOHqF7RcfpzlarmXkaz65JFY03
+ 4ZAxD1pCVkNsGrtcfta2mXQ97NrVDDVR6ZBwKR6IshAUVzG02FtirFYR/uvzQCiLzbzjhd2Jv
+ hnHwsSRwRw5L/ZeWRxt5BQOx4FXI4aaq7/ANCbqqurfTzVZ+SH+M6W7oxUb51cW+JPzUAxTxt
+ zWlhgmJD26gIhkPblPuZX6IyXK2IU/IvYLe5QIFuATMSATrzDVrMYP+IWVG4UYw4WaAdMQQf/
+ IzirydQqcD7FTclu9dRm0zhhepscswytTs0NfKopHHrsepk8IMYtE7M4DYk0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change implements CS control for setup, hold & inactive delays.
+Am 13.09.19 um 10:09 schrieb Matthias Brugger:
+>
+> On 12/09/2019 21:32, Stefan Wahren wrote:
+>> Am 12.09.19 um 19:18 schrieb Matthias Brugger:
+>>> On 10/09/2019 11:27, Matthias Brugger wrote:
+>>>> On 09/09/2019 21:33, Stefan Wahren wrote:
+>>>>> Hi Nicolas,
+>>>>>
+>>>>> Am 09.09.19 um 11:58 schrieb Nicolas Saenz Julienne:
+>>>>>> Hi all,
+>>>>>> this series attempts to address some issues we found while bringing up
+>>>>>> the new Raspberry Pi 4 in arm64 and it's intended to serve as a follow
+>>>>>> up of these discussions:
+>>>>>> v4: https://lkml.org/lkml/2019/9/6/352
+>>>>>> v3: https://lkml.org/lkml/2019/9/2/589
+>>>>>> v2: https://lkml.org/lkml/2019/8/20/767
+>>>>>> v1: https://lkml.org/lkml/2019/7/31/922
+>>>>>> RFC: https://lkml.org/lkml/2019/7/17/476
+>>>>>>
+>>>>>> The new Raspberry Pi 4 has up to 4GB of memory but most peripherals can
+>>>>>> only address the first GB: their DMA address range is
+>>>>>> 0xc0000000-0xfc000000 which is aliased to the first GB of physical
+>>>>>> memory 0x00000000-0x3c000000. Note that only some peripherals have these
+>>>>>> limitations: the PCIe, V3D, GENET, and 40-bit DMA channels have a wider
+>>>>>> view of the address space by virtue of being hooked up trough a second
+>>>>>> interconnect.
+>>>>>>
+>>>>>> Part of this is solved on arm32 by setting up the machine specific
+>>>>>> '.dma_zone_size = SZ_1G', which takes care of reserving the coherent
+>>>>>> memory area at the right spot. That said no buffer bouncing (needed for
+>>>>>> dma streaming) is available at the moment, but that's a story for
+>>>>>> another series.
+>>>>>>
+>>>>>> Unfortunately there is no such thing as 'dma_zone_size' in arm64. Only
+>>>>>> ZONE_DMA32 is created which is interpreted by dma-direct and the arm64
+>>>>>> arch code as if all peripherals where be able to address the first 4GB
+>>>>>> of memory.
+>>>>>>
+>>>>>> In the light of this, the series implements the following changes:
+>>>>>>
+>>>>>> - Create both DMA zones in arm64, ZONE_DMA will contain the first 1G
+>>>>>>   area and ZONE_DMA32 the rest of the 32 bit addressable memory. So far
+>>>>>>   the RPi4 is the only arm64 device with such DMA addressing limitations
+>>>>>>   so this hardcoded solution was deemed preferable.
+>>>>>>
+>>>>>> - Properly set ARCH_ZONE_DMA_BITS.
+>>>>>>
+>>>>>> - Reserve the CMA area in a place suitable for all peripherals.
+>>>>>>
+>>>>>> This series has been tested on multiple devices both by checking the
+>>>>>> zones setup matches the expectations and by double-checking physical
+>>>>>> addresses on pages allocated on the three relevant areas GFP_DMA,
+>>>>>> GFP_DMA32, GFP_KERNEL:
+>>>>>>
+>>>>>> - On an RPi4 with variations on the ram memory size. But also forcing
+>>>>>>   the situation where all three memory zones are nonempty by setting a 3G
+>>>>>>   ZONE_DMA32 ceiling on a 4G setup. Both with and without NUMA support.
+>>>>>>
+>>>>> i like to test this series on Raspberry Pi 4 and i have some questions
+>>>>> to get arm64 running:
+>>>>>
+>>>>> Do you use U-Boot? Which tree?
+>>>> If you want to use U-Boot, try v2019.10-rc4, it should have everything you need
+>>>> to boot your kernel.
+>>>>
+>>> Ok, here is a thing. In the linux kernel we now use bcm2711 as SoC name, but the
+>>> RPi4 devicetree provided by the FW uses mostly bcm2838.
+>> Do you mean the DTB provided at runtime?
+>>
+>> You mean the merged U-Boot changes, doesn't work with my Raspberry Pi
+>> series?
+>>
+>>>  U-Boot in its default
+>>> config uses the devicetree provided by the FW, mostly because this way you don't
+>>> have to do anything to find out how many RAM you really have. Secondly because
+>>> this will allow us, in the near future, to have one U-boot binary for both RPi3
+>>> and RPi4 (and as a side effect one binary for RPi1 and RPi2).
+>>>
+>>> Anyway, I found at least, that the following compatibles need to be added:
+>>>
+>>> "brcm,bcm2838-cprman"
+>>> "brcm,bcm2838-gpio"
+>>>
+>>> Without at least the cprman driver update, you won't see anything.
+>>>
+>>> "brcm,bcm2838-rng200" is also a candidate.
+>>>
+>>> I also suppose we will need to add "brcm,bcm2838" to
+>>> arch/arm/mach-bcm/bcm2711.c, but I haven't verified this.
+>> How about changing this in the downstream kernel? Which is much easier.
+> I'm not sure I understand what you want to say. My goal is to use the upstream
+> kernel with the device tree blob provided by the FW.
 
-The `cs_setup` delay is completely new, and can help with cases where
-asserting the CS, also brings the device out of power-sleep, where there
-needs to be a longer (than usual), before transferring data.
+The device tree blob you are talking is defined in this repository:
 
-The `cs_hold` time can overlap with the `delay` (or `delay_usecs`) from an
-SPI transfer. The main difference is that `cs_hold` implies that CS will be
-de-asserted.
+https://github.com/raspberrypi/linux
 
-The `cs_inactive` delay does not have a clear use-case yet. It has been
-implemented mostly because the `spi_set_cs_timing()` function implements
-it. To some degree, this could overlap or replace `cs_change_delay`, but
-this will require more consideration/investigation in the future.
+So the word FW is misleading to me.
 
-All these delays have been added to the `spi_controller` struct, as they
-would typically be configured by calling `spi_set_cs_timing()` after an
-`spi_setup()` call.
+>  If you talk about the
+> downstream kernel, I suppose you mean we should change this in the FW DT blob
+> and in the downstream kernel. That would work for me.
+>
+> Did I understand you correctly?
 
-Software-mode for CS control, implies that the `set_cs_timing()` hook has
-not been provided for the `spi_controller` object.
+Yes
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/spi/spi.c       | 50 ++++++++++++++++++++++++++++++++++++++++-
- include/linux/spi/spi.h |  5 +++++
- 2 files changed, 54 insertions(+), 1 deletion(-)
+So i suggest to add the upstream compatibles into the repo mentioned above.
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 54d00c0a26d2..acbbfee837ed 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -775,6 +775,15 @@ int spi_register_board_info(struct spi_board_info const *info, unsigned n)
- 
- static void spi_set_cs(struct spi_device *spi, bool enable)
- {
-+	bool enable1 = enable;
-+
-+	if (!spi->controller->set_cs_timing) {
-+		if (enable1)
-+			spi_delay_exec(&spi->controller->cs_setup, NULL);
-+		else
-+			spi_delay_exec(&spi->controller->cs_hold, NULL);
-+	}
-+
- 	if (spi->mode & SPI_CS_HIGH)
- 		enable = !enable;
- 
-@@ -800,6 +809,11 @@ static void spi_set_cs(struct spi_device *spi, bool enable)
- 	} else if (spi->controller->set_cs) {
- 		spi->controller->set_cs(spi, !enable);
- 	}
-+
-+	if (!spi->controller->set_cs_timing) {
-+		if (!enable1)
-+			spi_delay_exec(&spi->controller->cs_inactive, NULL);
-+	}
- }
- 
- #ifdef CONFIG_HAS_DMA
-@@ -3144,6 +3158,11 @@ int spi_setup(struct spi_device *spi)
- }
- EXPORT_SYMBOL_GPL(spi_setup);
- 
-+static inline bool _spi_delay_clock_cycles(struct spi_delay *d)
-+{
-+	return d && d->unit == SPI_DELAY_UNIT_SCK;
-+}
-+
- /**
-  * spi_set_cs_timing - configure CS setup, hold, and inactive delays
-  * @spi: the device that requires specific CS timing configuration
-@@ -3156,10 +3175,39 @@ EXPORT_SYMBOL_GPL(spi_setup);
- int spi_set_cs_timing(struct spi_device *spi, struct spi_delay *setup,
- 		      struct spi_delay *hold, struct spi_delay *inactive)
- {
-+	size_t len;
-+
- 	if (spi->controller->set_cs_timing)
- 		return spi->controller->set_cs_timing(spi, setup, hold,
- 						      inactive);
--	return -ENOTSUPP;
-+
-+	if (_spi_delay_clock_cycles(setup) ||
-+	    _spi_delay_clock_cycles(hold) ||
-+	    _spi_delay_clock_cycles(inactive)) {
-+		dev_err(&spi->dev,
-+			"Clock-cycle delays for CS not supported in SW mode\n");
-+		return -ENOTSUPP;
-+	}
-+
-+	len = sizeof(struct spi_delay);
-+
-+	/* copy delays to controller */
-+	if (setup)
-+		memcpy(&spi->controller->cs_setup, setup, len);
-+	else
-+		memset(&spi->controller->cs_setup, 0, len);
-+
-+	if (hold)
-+		memcpy(&spi->controller->cs_hold, hold, len);
-+	else
-+		memset(&spi->controller->cs_hold, 0, len);
-+
-+	if (inactive)
-+		memcpy(&spi->controller->cs_inactive, inactive, len);
-+	else
-+		memset(&spi->controller->cs_inactive, 0, len);
-+
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(spi_set_cs_timing);
- 
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 292e752ce34a..def49a76299f 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -602,6 +602,11 @@ struct spi_controller {
- 	/* Optimized handlers for SPI memory-like operations. */
- 	const struct spi_controller_mem_ops *mem_ops;
- 
-+	/* CS delays */
-+	struct spi_delay	cs_setup;
-+	struct spi_delay	cs_hold;
-+	struct spi_delay	cs_inactive;
-+
- 	/* gpio chip select */
- 	int			*cs_gpios;
- 	struct gpio_desc	**cs_gpiods;
--- 
-2.20.1
+Sorry, but in case you decided as a U-Boot developer to be compatible
+with a unreviewed DT, we also need to make U-Boot compatible with
+upstream and downstream DT blobs.
 
+>
+>>> Regards,
+>>> Matthias
+>>>
+>>>> Regards,
+>>>> Matthias
+>>>>
+>>>>> Are there any config.txt tweaks necessary?
+>>>>>
+>>>>>
+>>>> _______________________________________________
+>>>> linux-arm-kernel mailing list
+>>>> linux-arm-kernel@lists.infradead.org
+>>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>>>
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
