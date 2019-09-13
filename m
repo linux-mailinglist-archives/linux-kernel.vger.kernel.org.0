@@ -2,107 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 611FFB1D1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:11:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF5EB1D23
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbfIMML1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 08:11:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbfIMML1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 08:11:27 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 492572084F;
-        Fri, 13 Sep 2019 12:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568376686;
-        bh=/yuo8LkwG/vK/Jb+QiIu8OrXJNZtg/fik8C0+OyD7Hk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sUuajaYi7mGVPkYopS1AqkdFgGHainGr/gFIVTgTFj4NMzKmhzsepPa+usLvieQUN
-         dMuKx/90Qo2hO8vo88PimuVso31oG8ACymDRc1FiPDfcFb+uyCy3gJc/Br0IrC5YRH
-         N/jCU2YES2jDkCLv5dUBl3+wC5+8TahER8kXag7s=
-Date:   Fri, 13 Sep 2019 14:11:24 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Corentin Labbe <clabbe.montjoie@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-crypto@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 3/9] dt-bindings: crypto: Add DT bindings documentation
- for sun8i-ce Crypto Engine
-Message-ID: <20190913121124.clfi46vcnrxhzmwh@localhost.localdomain>
-References: <20190906184551.17858-1-clabbe.montjoie@gmail.com>
- <20190906184551.17858-4-clabbe.montjoie@gmail.com>
- <20190907040116.lib532o2eqt4qnvv@flea>
- <20190911183158.GA8264@Red>
- <20190912093737.s6iu63sdncij2qib@localhost.localdomain>
- <CAGb2v678WGQm5PNy8GhOTpz+fYeLP3k0dnR0F00yyZpSRcA4yA@mail.gmail.com>
- <20190912203301.is4ubixhk64dl5t7@localhost.localdomain>
- <CAGb2v646YkM93BAo=hrpL+tgDU-JJ49-uMCMGECUbouoJrpg=w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mxfblhwyykii33ch"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v646YkM93BAo=hrpL+tgDU-JJ49-uMCMGECUbouoJrpg=w@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        id S1729714AbfIMMM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 08:12:29 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:35203 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726822AbfIMMM2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 08:12:28 -0400
+X-IronPort-AV: E=Sophos;i="5.64,501,1559487600"; 
+   d="scan'208";a="26313255"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 13 Sep 2019 21:12:26 +0900
+Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id AE9F24007F43;
+        Fri, 13 Sep 2019 21:12:24 +0900 (JST)
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] spi: dw: Add basic runtime PM support
+Date:   Fri, 13 Sep 2019 13:11:57 +0100
+Message-Id: <1568376720-7402-1-git-send-email-gareth.williams.jx@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The Renesas RZ/N1 SPI Controller is based on the Synopsys DW SSI. This
+series enables power mode in the driver so the clock domain will enable
+the bus clock, adds the compatible string and updates the associated bindings
+documentation.
 
---mxfblhwyykii33ch
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Phil Edworthy (3):
+  dt: spi: Add Renesas RZ/N1 binding documentation
+  spi: dw: Add basic runtime PM support
+  spi: dw: Add compatible string for Renesas RZ/N1 SPI Controller
 
-On Thu, Sep 12, 2019 at 09:37:17PM +0100, Chen-Yu Tsai wrote:
-> On Thu, Sep 12, 2019 at 9:33 PM Maxime Ripard <mripard@kernel.org> wrote:
-> > On Thu, Sep 12, 2019 at 09:26:27PM +0100, Chen-Yu Tsai wrote:
-> > > > >
-> > > > >   clock-names:
-> > > > >     items:
-> > > > >       - const: ahb
-> > > > >       - const: mod
-> > > > >       - const: mbus
-> > > >
-> > > > And here as well
-> > > >
-> > > > Something I missed earlier though was that we've tried to unify as
-> > > > much as possible the ahb / apb / axi clocks around the bus name, it
-> > > > would be great if you could do it.
-> > >
-> > > I think we also want to standardize "mbus" as "dram"?
-> >
-> > Do we? The only user so far seems to be sun9i-de, while mbus has more
-> > users. I don't really care though, both mbus and dram are pretty
-> > generic to me. What makes you prefer dram over mbus?
->=20
-> Argh... it's actually "ram" we use the most. Both "dram" and "mbus"
-> have only one instance each.
+ Documentation/devicetree/bindings/spi/renesas,rzn1-spi.txt | 11 +++++++++++
+ drivers/spi/spi-dw-mmio.c                                  |  1 +
+ drivers/spi/spi-dw.c                                       |  4 ++++
+ 3 files changed, 16 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/renesas,rzn1-spi.txt
 
-Let's use ram then :)
+-- 
+2.7.4
 
-Maxime
-
---mxfblhwyykii33ch
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXXuHbAAKCRDj7w1vZxhR
-xazRAP9q4WVrPnh+fZ02hS/8DFlnUg4ZEiOZEKaupnYTZODnDgEA3aUQ5mkgXMdG
-FzX2x3Ap9qkbqSmmGBRWN/QtgReLcg0=
-=KM0B
------END PGP SIGNATURE-----
-
---mxfblhwyykii33ch--
