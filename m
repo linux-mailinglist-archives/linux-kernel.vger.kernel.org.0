@@ -2,904 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2FFB1E03
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 763BCB1E07
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:59:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388181AbfIMM6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 08:58:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44762 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387582AbfIMM6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 08:58:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 86A65B601;
-        Fri, 13 Sep 2019 12:58:15 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Breno Leitao <leitao@debian.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Stanley <joel@jms.id.au>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Russell Currey <ruscur@russell.cc>,
-        Diana Craciun <diana.craciun@nxp.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Hildenbrand <david@redhat.com>,
-        Allison Randal <allison@lohutok.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v9 8/8] powerpc/perf: split callchain.c by bitness
-Date:   Fri, 13 Sep 2019 14:58:02 +0200
-Message-Id: <e0a8b2c75fb46eff0e9e049b19eb4371cf839dc1.1568319276.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1568319275.git.msuchanek@suse.de>
-References: <cover.1568319275.git.msuchanek@suse.de>
+        id S1730266AbfIMM7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 08:59:34 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:35907 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729632AbfIMM7e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 08:59:34 -0400
+Received: from [IPv6:2001:420:44c1:2577:888a:538c:8dda:557b] ([IPv6:2001:420:44c1:2577:888a:538c:8dda:557b])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id 8lAeiWgNvV17O8lAhi2hNK; Fri, 13 Sep 2019 14:59:31 +0200
+Subject: Re: [Patch 01/13] media: am437x-vpfe: Fix suspend path to always
+ handle pinctrl config
+To:     Benoit Parrot <bparrot@ti.com>
+Cc:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>
+References: <20190909162743.30114-1-bparrot@ti.com>
+ <20190909162743.30114-2-bparrot@ti.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9250638e-52a4-c7bc-e969-763d45528780@xs4all.nl>
+Date:   Fri, 13 Sep 2019 14:59:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190909162743.30114-2-bparrot@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfK8DMgGh7B2Mr9NSTWKzuGh1rlfwKAPoIZlYu8HAsUXrm8zRyNK8n79wR9h39RiyPhETo97zGsr2q6/LnvEN67RaFtmF2j9jpB7DKkqAzy6w+m/rJOAa
+ miVbxthVCZS9R8zla0GUqA5zkO9Tr3Xy8YNRGoa5B7d8o7OYZHfy5MKz2xFTzAyuHIYUYCNVZ4ju+SkPdb4qIPswaTCCvFX6rrzVvzx5DEPbUJvxx7IacGq+
+ Bb+2JBp7+ABS0pMdYvg0HbpwQeE/r1Ni/QBaUPAzIDT1jzuaRvrYOJ99lIjQfufpCflxqs4kRthnB6sMvg5rzMR2GWR7nHPJc5tUgcGx+/6l4/7jsMQii3ah
+ 0QJonhWcYT8th62dPbokd59+o74E3TwGilhQWy5hcryVKkgoYvnQSyNApTuMcrPghBrKzfdLsWlBv+cfDbNgc0XFepvu/8iKE9e3ezEM4gTZI8EAmKg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building callchain.c with !COMPAT proved quite ugly with all the
-defines. Splitting out the 32bit and 64bit parts looks better.
+On 9/9/19 6:27 PM, Benoit Parrot wrote:
+> From: Dave Gerlach <d-gerlach@ti.com>
+> 
+> Currently if vpfe is not active then it returns immediately in the
+> suspend and resume handlers. Change this so that it always performs the
+> pinctrl config so that we can still get proper sleep state configuration
+> on the pins even if we do not need to worry about fully saving and
+> restoring context.
+> 
+> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> ---
+>  drivers/media/platform/am437x/am437x-vpfe.c | 44 ++++++++++-----------
+>  1 file changed, 22 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
+> index 2b42ba1f5949..ab959d61f9c9 100644
+> --- a/drivers/media/platform/am437x/am437x-vpfe.c
+> +++ b/drivers/media/platform/am437x/am437x-vpfe.c
+> @@ -2653,22 +2653,22 @@ static int vpfe_suspend(struct device *dev)
+>  	struct vpfe_device *vpfe = dev_get_drvdata(dev);
+>  	struct vpfe_ccdc *ccdc = &vpfe->ccdc;
+>  
+> -	/* if streaming has not started we don't care */
+> -	if (!vb2_start_streaming_called(&vpfe->buffer_queue))
+> -		return 0;
+> +	/* only do full suspend if streaming has started */
+> +	if (vb2_start_streaming_called(&vpfe->buffer_queue)) {
+>  
 
-No code change intended.
+It's a bit ugly to start a block with an empty line. Can you remove it?
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
-v6:
- - move current_is_64bit consolidetaion to earlier patch
- - move defines to the top of callchain_32.c
- - Makefile cleanup
-v8:
- - fix valid_user_sp
----
- arch/powerpc/perf/Makefile       |   5 +-
- arch/powerpc/perf/callchain.c    | 367 +------------------------------
- arch/powerpc/perf/callchain.h    |  25 +++
- arch/powerpc/perf/callchain_32.c | 197 +++++++++++++++++
- arch/powerpc/perf/callchain_64.c | 178 +++++++++++++++
- 5 files changed, 405 insertions(+), 367 deletions(-)
- create mode 100644 arch/powerpc/perf/callchain.h
- create mode 100644 arch/powerpc/perf/callchain_32.c
- create mode 100644 arch/powerpc/perf/callchain_64.c
+> -	pm_runtime_get_sync(dev);
+> -	vpfe_config_enable(ccdc, 1);
+> +		pm_runtime_get_sync(dev);
+> +		vpfe_config_enable(ccdc, 1);
+>  
+> -	/* Save VPFE context */
+> -	vpfe_save_context(ccdc);
+> +		/* Save VPFE context */
+> +		vpfe_save_context(ccdc);
+>  
+> -	/* Disable CCDC */
+> -	vpfe_pcr_enable(ccdc, 0);
+> -	vpfe_config_enable(ccdc, 0);
+> +		/* Disable CCDC */
+> +		vpfe_pcr_enable(ccdc, 0);
+> +		vpfe_config_enable(ccdc, 0);
+>  
+> -	/* Disable both master and slave clock */
+> -	pm_runtime_put_sync(dev);
+> +		/* Disable both master and slave clock */
+> +		pm_runtime_put_sync(dev);
+> +	}
+>  
+>  	/* Select sleep pin state */
+>  	pinctrl_pm_select_sleep_state(dev);
+> @@ -2710,19 +2710,19 @@ static int vpfe_resume(struct device *dev)
+>  	struct vpfe_device *vpfe = dev_get_drvdata(dev);
+>  	struct vpfe_ccdc *ccdc = &vpfe->ccdc;
+>  
+> -	/* if streaming has not started we don't care */
+> -	if (!vb2_start_streaming_called(&vpfe->buffer_queue))
+> -		return 0;
+> +	/* only do full resume if streaming has started */
+> +	if (vb2_start_streaming_called(&vpfe->buffer_queue)) {
+>  
 
-diff --git a/arch/powerpc/perf/Makefile b/arch/powerpc/perf/Makefile
-index c155dcbb8691..53d614e98537 100644
---- a/arch/powerpc/perf/Makefile
-+++ b/arch/powerpc/perf/Makefile
-@@ -1,6 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-$(CONFIG_PERF_EVENTS)	+= callchain.o perf_regs.o
-+obj-$(CONFIG_PERF_EVENTS)	+= callchain.o callchain_$(BITS).o perf_regs.o
-+ifdef CONFIG_COMPAT
-+obj-$(CONFIG_PERF_EVENTS)	+= callchain_32.o
-+endif
- 
- obj-$(CONFIG_PPC_PERF_CTRS)	+= core-book3s.o bhrb.o
- obj64-$(CONFIG_PPC_PERF_CTRS)	+= ppc970-pmu.o power5-pmu.o \
-diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
-index d6ab1a734a6a..dd5051015008 100644
---- a/arch/powerpc/perf/callchain.c
-+++ b/arch/powerpc/perf/callchain.c
-@@ -15,11 +15,9 @@
- #include <asm/sigcontext.h>
- #include <asm/ucontext.h>
- #include <asm/vdso.h>
--#ifdef CONFIG_COMPAT
--#include "../kernel/ppc32.h"
--#endif
- #include <asm/pte-walk.h>
- 
-+#include "callchain.h"
- 
- /*
-  * Is sp valid as the address of the next kernel stack frame after prev_sp?
-@@ -102,369 +100,6 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
- 	}
- }
- 
--static inline int valid_user_sp(unsigned long sp, int is_64)
--{
--	unsigned long stack_top;
--
--	if (IS_ENABLED(CONFIG_PPC32))
--		stack_top = STACK_TOP;
--	else    /* STACK_TOP uses is_32bit_task() but we want is_64 */
--		stack_top = is_64 ? STACK_TOP_USER64 : STACK_TOP_USER32;
--
--	if (!sp || (sp & (is_64 ? 7 : 3)) || sp > stack_top - (is_64 ? 32 : 16))
--		return 0;
--	return 1;
--}
--
--#ifdef CONFIG_PPC64
--/*
-- * On 64-bit we don't want to invoke hash_page on user addresses from
-- * interrupt context, so if the access faults, we read the page tables
-- * to find which page (if any) is mapped and access it directly.
-- */
--static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
--{
--	int ret = -EFAULT;
--	pgd_t *pgdir;
--	pte_t *ptep, pte;
--	unsigned shift;
--	unsigned long addr = (unsigned long) ptr;
--	unsigned long offset;
--	unsigned long pfn, flags;
--	void *kaddr;
--
--	pgdir = current->mm->pgd;
--	if (!pgdir)
--		return -EFAULT;
--
--	local_irq_save(flags);
--	ptep = find_current_mm_pte(pgdir, addr, NULL, &shift);
--	if (!ptep)
--		goto err_out;
--	if (!shift)
--		shift = PAGE_SHIFT;
--
--	/* align address to page boundary */
--	offset = addr & ((1UL << shift) - 1);
--
--	pte = READ_ONCE(*ptep);
--	if (!pte_present(pte) || !pte_user(pte))
--		goto err_out;
--	pfn = pte_pfn(pte);
--	if (!page_is_ram(pfn))
--		goto err_out;
--
--	/* no highmem to worry about here */
--	kaddr = pfn_to_kaddr(pfn);
--	memcpy(buf, kaddr + offset, nb);
--	ret = 0;
--err_out:
--	local_irq_restore(flags);
--	return ret;
--}
--
--static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
--{
--	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned long) ||
--	    ((unsigned long)ptr & 7))
--		return -EFAULT;
--
--	pagefault_disable();
--	if (!__get_user_inatomic(*ret, ptr)) {
--		pagefault_enable();
--		return 0;
--	}
--	pagefault_enable();
--
--	return read_user_stack_slow(ptr, ret, 8);
--}
--
--/*
-- * 64-bit user processes use the same stack frame for RT and non-RT signals.
-- */
--struct signal_frame_64 {
--	char		dummy[__SIGNAL_FRAMESIZE];
--	struct ucontext	uc;
--	unsigned long	unused[2];
--	unsigned int	tramp[6];
--	struct siginfo	*pinfo;
--	void		*puc;
--	struct siginfo	info;
--	char		abigap[288];
--};
--
--static int is_sigreturn_64_address(unsigned long nip, unsigned long fp)
--{
--	if (nip == fp + offsetof(struct signal_frame_64, tramp))
--		return 1;
--	if (vdso64_rt_sigtramp && current->mm->context.vdso_base &&
--	    nip == current->mm->context.vdso_base + vdso64_rt_sigtramp)
--		return 1;
--	return 0;
--}
--
--/*
-- * Do some sanity checking on the signal frame pointed to by sp.
-- * We check the pinfo and puc pointers in the frame.
-- */
--static int sane_signal_64_frame(unsigned long sp)
--{
--	struct signal_frame_64 __user *sf;
--	unsigned long pinfo, puc;
--
--	sf = (struct signal_frame_64 __user *) sp;
--	if (read_user_stack_64((unsigned long __user *) &sf->pinfo, &pinfo) ||
--	    read_user_stack_64((unsigned long __user *) &sf->puc, &puc))
--		return 0;
--	return pinfo == (unsigned long) &sf->info &&
--		puc == (unsigned long) &sf->uc;
--}
--
--static void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
--				   struct pt_regs *regs)
--{
--	unsigned long sp, next_sp;
--	unsigned long next_ip;
--	unsigned long lr;
--	long level = 0;
--	struct signal_frame_64 __user *sigframe;
--	unsigned long __user *fp, *uregs;
--
--	next_ip = perf_instruction_pointer(regs);
--	lr = regs->link;
--	sp = regs->gpr[1];
--	perf_callchain_store(entry, next_ip);
--
--	while (entry->nr < entry->max_stack) {
--		fp = (unsigned long __user *) sp;
--		if (!valid_user_sp(sp, 1) || read_user_stack_64(fp, &next_sp))
--			return;
--		if (level > 0 && read_user_stack_64(&fp[2], &next_ip))
--			return;
--
--		/*
--		 * Note: the next_sp - sp >= signal frame size check
--		 * is true when next_sp < sp, which can happen when
--		 * transitioning from an alternate signal stack to the
--		 * normal stack.
--		 */
--		if (next_sp - sp >= sizeof(struct signal_frame_64) &&
--		    (is_sigreturn_64_address(next_ip, sp) ||
--		     (level <= 1 && is_sigreturn_64_address(lr, sp))) &&
--		    sane_signal_64_frame(sp)) {
--			/*
--			 * This looks like an signal frame
--			 */
--			sigframe = (struct signal_frame_64 __user *) sp;
--			uregs = sigframe->uc.uc_mcontext.gp_regs;
--			if (read_user_stack_64(&uregs[PT_NIP], &next_ip) ||
--			    read_user_stack_64(&uregs[PT_LNK], &lr) ||
--			    read_user_stack_64(&uregs[PT_R1], &sp))
--				return;
--			level = 0;
--			perf_callchain_store_context(entry, PERF_CONTEXT_USER);
--			perf_callchain_store(entry, next_ip);
--			continue;
--		}
--
--		if (level == 0)
--			next_ip = lr;
--		perf_callchain_store(entry, next_ip);
--		++level;
--		sp = next_sp;
--	}
--}
--
--#else  /* CONFIG_PPC64 */
--static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
--{
--	return 0;
--}
--
--static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
--					  struct pt_regs *regs)
--{
--}
--
--#define __SIGNAL_FRAMESIZE32	__SIGNAL_FRAMESIZE
--#define sigcontext32		sigcontext
--#define mcontext32		mcontext
--#define ucontext32		ucontext
--#define compat_siginfo_t	struct siginfo
--
--#endif /* CONFIG_PPC64 */
--
--#if defined(CONFIG_PPC32) || defined(CONFIG_COMPAT)
--/*
-- * On 32-bit we just access the address and let hash_page create a
-- * HPTE if necessary, so there is no need to fall back to reading
-- * the page tables.  Since this is called at interrupt level,
-- * do_page_fault() won't treat a DSI as a page fault.
-- */
--static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
--{
--	int rc;
--
--	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
--	    ((unsigned long)ptr & 3))
--		return -EFAULT;
--
--	pagefault_disable();
--	rc = __get_user_inatomic(*ret, ptr);
--	pagefault_enable();
--
--	if (IS_ENABLED(CONFIG_PPC64) && rc)
--		return read_user_stack_slow(ptr, ret, 4);
--	return rc;
--}
--
--/*
-- * Layout for non-RT signal frames
-- */
--struct signal_frame_32 {
--	char			dummy[__SIGNAL_FRAMESIZE32];
--	struct sigcontext32	sctx;
--	struct mcontext32	mctx;
--	int			abigap[56];
--};
--
--/*
-- * Layout for RT signal frames
-- */
--struct rt_signal_frame_32 {
--	char			dummy[__SIGNAL_FRAMESIZE32 + 16];
--	compat_siginfo_t	info;
--	struct ucontext32	uc;
--	int			abigap[56];
--};
--
--static int is_sigreturn_32_address(unsigned int nip, unsigned int fp)
--{
--	if (nip == fp + offsetof(struct signal_frame_32, mctx.mc_pad))
--		return 1;
--	if (vdso32_sigtramp && current->mm->context.vdso_base &&
--	    nip == current->mm->context.vdso_base + vdso32_sigtramp)
--		return 1;
--	return 0;
--}
--
--static int is_rt_sigreturn_32_address(unsigned int nip, unsigned int fp)
--{
--	if (nip == fp + offsetof(struct rt_signal_frame_32,
--				 uc.uc_mcontext.mc_pad))
--		return 1;
--	if (vdso32_rt_sigtramp && current->mm->context.vdso_base &&
--	    nip == current->mm->context.vdso_base + vdso32_rt_sigtramp)
--		return 1;
--	return 0;
--}
--
--static int sane_signal_32_frame(unsigned int sp)
--{
--	struct signal_frame_32 __user *sf;
--	unsigned int regs;
--
--	sf = (struct signal_frame_32 __user *) (unsigned long) sp;
--	if (read_user_stack_32((unsigned int __user *) &sf->sctx.regs, &regs))
--		return 0;
--	return regs == (unsigned long) &sf->mctx;
--}
--
--static int sane_rt_signal_32_frame(unsigned int sp)
--{
--	struct rt_signal_frame_32 __user *sf;
--	unsigned int regs;
--
--	sf = (struct rt_signal_frame_32 __user *) (unsigned long) sp;
--	if (read_user_stack_32((unsigned int __user *) &sf->uc.uc_regs, &regs))
--		return 0;
--	return regs == (unsigned long) &sf->uc.uc_mcontext;
--}
--
--static unsigned int __user *signal_frame_32_regs(unsigned int sp,
--				unsigned int next_sp, unsigned int next_ip)
--{
--	struct mcontext32 __user *mctx = NULL;
--	struct signal_frame_32 __user *sf;
--	struct rt_signal_frame_32 __user *rt_sf;
--
--	/*
--	 * Note: the next_sp - sp >= signal frame size check
--	 * is true when next_sp < sp, for example, when
--	 * transitioning from an alternate signal stack to the
--	 * normal stack.
--	 */
--	if (next_sp - sp >= sizeof(struct signal_frame_32) &&
--	    is_sigreturn_32_address(next_ip, sp) &&
--	    sane_signal_32_frame(sp)) {
--		sf = (struct signal_frame_32 __user *) (unsigned long) sp;
--		mctx = &sf->mctx;
--	}
--
--	if (!mctx && next_sp - sp >= sizeof(struct rt_signal_frame_32) &&
--	    is_rt_sigreturn_32_address(next_ip, sp) &&
--	    sane_rt_signal_32_frame(sp)) {
--		rt_sf = (struct rt_signal_frame_32 __user *) (unsigned long) sp;
--		mctx = &rt_sf->uc.uc_mcontext;
--	}
--
--	if (!mctx)
--		return NULL;
--	return mctx->mc_gregs;
--}
--
--static void perf_callchain_user_32(struct perf_callchain_entry_ctx *entry,
--				   struct pt_regs *regs)
--{
--	unsigned int sp, next_sp;
--	unsigned int next_ip;
--	unsigned int lr;
--	long level = 0;
--	unsigned int __user *fp, *uregs;
--
--	next_ip = perf_instruction_pointer(regs);
--	lr = regs->link;
--	sp = regs->gpr[1];
--	perf_callchain_store(entry, next_ip);
--
--	while (entry->nr < entry->max_stack) {
--		fp = (unsigned int __user *) (unsigned long) sp;
--		if (!valid_user_sp(sp, 0) || read_user_stack_32(fp, &next_sp))
--			return;
--		if (level > 0 && read_user_stack_32(&fp[1], &next_ip))
--			return;
--
--		uregs = signal_frame_32_regs(sp, next_sp, next_ip);
--		if (!uregs && level <= 1)
--			uregs = signal_frame_32_regs(sp, next_sp, lr);
--		if (uregs) {
--			/*
--			 * This looks like an signal frame, so restart
--			 * the stack trace with the values in it.
--			 */
--			if (read_user_stack_32(&uregs[PT_NIP], &next_ip) ||
--			    read_user_stack_32(&uregs[PT_LNK], &lr) ||
--			    read_user_stack_32(&uregs[PT_R1], &sp))
--				return;
--			level = 0;
--			perf_callchain_store_context(entry, PERF_CONTEXT_USER);
--			perf_callchain_store(entry, next_ip);
--			continue;
--		}
--
--		if (level == 0)
--			next_ip = lr;
--		perf_callchain_store(entry, next_ip);
--		++level;
--		sp = next_sp;
--	}
--}
--#else /* 32bit */
--static void perf_callchain_user_32(struct perf_callchain_entry_ctx *entry,
--				   struct pt_regs *regs)
--{}
--#endif /* 32bit */
--
- void
- perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs)
- {
-diff --git a/arch/powerpc/perf/callchain.h b/arch/powerpc/perf/callchain.h
-new file mode 100644
-index 000000000000..76905c195497
---- /dev/null
-+++ b/arch/powerpc/perf/callchain.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#ifndef _POWERPC_PERF_CALLCHAIN_H
-+#define _POWERPC_PERF_CALLCHAIN_H
-+
-+int read_user_stack_slow(void __user *ptr, void *buf, int nb);
-+void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
-+			    struct pt_regs *regs);
-+void perf_callchain_user_32(struct perf_callchain_entry_ctx *entry,
-+			    struct pt_regs *regs);
-+
-+static inline int valid_user_sp(unsigned long sp, int is_64)
-+{
-+	unsigned long stack_top;
-+
-+	if (IS_ENABLED(CONFIG_PPC32))
-+		stack_top = STACK_TOP;
-+	else    /* STACK_TOP uses is_32bit_task() but we want is_64 */
-+		stack_top = is_64 ? STACK_TOP_USER64 : STACK_TOP_USER32;
-+
-+	if (!sp || (sp & (is_64 ? 7 : 3)) || sp > stack_top - (is_64 ? 32 : 16))
-+		return 0;
-+	return 1;
-+}
-+
-+#endif /* _POWERPC_PERF_CALLCHAIN_H */
-diff --git a/arch/powerpc/perf/callchain_32.c b/arch/powerpc/perf/callchain_32.c
-new file mode 100644
-index 000000000000..ae69d60953b8
---- /dev/null
-+++ b/arch/powerpc/perf/callchain_32.c
-@@ -0,0 +1,197 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Performance counter callchain support - powerpc architecture code
-+ *
-+ * Copyright © 2009 Paul Mackerras, IBM Corporation.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/sched.h>
-+#include <linux/perf_event.h>
-+#include <linux/percpu.h>
-+#include <linux/uaccess.h>
-+#include <linux/mm.h>
-+#include <asm/ptrace.h>
-+#include <asm/pgtable.h>
-+#include <asm/sigcontext.h>
-+#include <asm/ucontext.h>
-+#include <asm/vdso.h>
-+#include <asm/pte-walk.h>
-+
-+#include "callchain.h"
-+
-+#ifdef CONFIG_PPC64
-+#include "../kernel/ppc32.h"
-+#else  /* CONFIG_PPC64 */
-+
-+#define __SIGNAL_FRAMESIZE32	__SIGNAL_FRAMESIZE
-+#define sigcontext32		sigcontext
-+#define mcontext32		mcontext
-+#define ucontext32		ucontext
-+#define compat_siginfo_t	struct siginfo
-+
-+#endif /* CONFIG_PPC64 */
-+
-+/*
-+ * On 32-bit we just access the address and let hash_page create a
-+ * HPTE if necessary, so there is no need to fall back to reading
-+ * the page tables.  Since this is called at interrupt level,
-+ * do_page_fault() won't treat a DSI as a page fault.
-+ */
-+static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
-+{
-+	int rc;
-+
-+	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
-+	    ((unsigned long)ptr & 3))
-+		return -EFAULT;
-+
-+	pagefault_disable();
-+	rc = __get_user_inatomic(*ret, ptr);
-+	pagefault_enable();
-+
-+	if (IS_ENABLED(CONFIG_PPC64) && rc)
-+		return read_user_stack_slow(ptr, ret, 4);
-+	return rc;
-+}
-+
-+/*
-+ * Layout for non-RT signal frames
-+ */
-+struct signal_frame_32 {
-+	char			dummy[__SIGNAL_FRAMESIZE32];
-+	struct sigcontext32	sctx;
-+	struct mcontext32	mctx;
-+	int			abigap[56];
-+};
-+
-+/*
-+ * Layout for RT signal frames
-+ */
-+struct rt_signal_frame_32 {
-+	char			dummy[__SIGNAL_FRAMESIZE32 + 16];
-+	compat_siginfo_t	info;
-+	struct ucontext32	uc;
-+	int			abigap[56];
-+};
-+
-+static int is_sigreturn_32_address(unsigned int nip, unsigned int fp)
-+{
-+	if (nip == fp + offsetof(struct signal_frame_32, mctx.mc_pad))
-+		return 1;
-+	if (vdso32_sigtramp && current->mm->context.vdso_base &&
-+	    nip == current->mm->context.vdso_base + vdso32_sigtramp)
-+		return 1;
-+	return 0;
-+}
-+
-+static int is_rt_sigreturn_32_address(unsigned int nip, unsigned int fp)
-+{
-+	if (nip == fp + offsetof(struct rt_signal_frame_32,
-+				 uc.uc_mcontext.mc_pad))
-+		return 1;
-+	if (vdso32_rt_sigtramp && current->mm->context.vdso_base &&
-+	    nip == current->mm->context.vdso_base + vdso32_rt_sigtramp)
-+		return 1;
-+	return 0;
-+}
-+
-+static int sane_signal_32_frame(unsigned int sp)
-+{
-+	struct signal_frame_32 __user *sf;
-+	unsigned int regs;
-+
-+	sf = (struct signal_frame_32 __user *) (unsigned long) sp;
-+	if (read_user_stack_32((unsigned int __user *) &sf->sctx.regs, &regs))
-+		return 0;
-+	return regs == (unsigned long) &sf->mctx;
-+}
-+
-+static int sane_rt_signal_32_frame(unsigned int sp)
-+{
-+	struct rt_signal_frame_32 __user *sf;
-+	unsigned int regs;
-+
-+	sf = (struct rt_signal_frame_32 __user *) (unsigned long) sp;
-+	if (read_user_stack_32((unsigned int __user *) &sf->uc.uc_regs, &regs))
-+		return 0;
-+	return regs == (unsigned long) &sf->uc.uc_mcontext;
-+}
-+
-+static unsigned int __user *signal_frame_32_regs(unsigned int sp,
-+				unsigned int next_sp, unsigned int next_ip)
-+{
-+	struct mcontext32 __user *mctx = NULL;
-+	struct signal_frame_32 __user *sf;
-+	struct rt_signal_frame_32 __user *rt_sf;
-+
-+	/*
-+	 * Note: the next_sp - sp >= signal frame size check
-+	 * is true when next_sp < sp, for example, when
-+	 * transitioning from an alternate signal stack to the
-+	 * normal stack.
-+	 */
-+	if (next_sp - sp >= sizeof(struct signal_frame_32) &&
-+	    is_sigreturn_32_address(next_ip, sp) &&
-+	    sane_signal_32_frame(sp)) {
-+		sf = (struct signal_frame_32 __user *) (unsigned long) sp;
-+		mctx = &sf->mctx;
-+	}
-+
-+	if (!mctx && next_sp - sp >= sizeof(struct rt_signal_frame_32) &&
-+	    is_rt_sigreturn_32_address(next_ip, sp) &&
-+	    sane_rt_signal_32_frame(sp)) {
-+		rt_sf = (struct rt_signal_frame_32 __user *) (unsigned long) sp;
-+		mctx = &rt_sf->uc.uc_mcontext;
-+	}
-+
-+	if (!mctx)
-+		return NULL;
-+	return mctx->mc_gregs;
-+}
-+
-+void perf_callchain_user_32(struct perf_callchain_entry_ctx *entry,
-+			    struct pt_regs *regs)
-+{
-+	unsigned int sp, next_sp;
-+	unsigned int next_ip;
-+	unsigned int lr;
-+	long level = 0;
-+	unsigned int __user *fp, *uregs;
-+
-+	next_ip = perf_instruction_pointer(regs);
-+	lr = regs->link;
-+	sp = regs->gpr[1];
-+	perf_callchain_store(entry, next_ip);
-+
-+	while (entry->nr < entry->max_stack) {
-+		fp = (unsigned int __user *) (unsigned long) sp;
-+		if (!valid_user_sp(sp, 0) || read_user_stack_32(fp, &next_sp))
-+			return;
-+		if (level > 0 && read_user_stack_32(&fp[1], &next_ip))
-+			return;
-+
-+		uregs = signal_frame_32_regs(sp, next_sp, next_ip);
-+		if (!uregs && level <= 1)
-+			uregs = signal_frame_32_regs(sp, next_sp, lr);
-+		if (uregs) {
-+			/*
-+			 * This looks like an signal frame, so restart
-+			 * the stack trace with the values in it.
-+			 */
-+			if (read_user_stack_32(&uregs[PT_NIP], &next_ip) ||
-+			    read_user_stack_32(&uregs[PT_LNK], &lr) ||
-+			    read_user_stack_32(&uregs[PT_R1], &sp))
-+				return;
-+			level = 0;
-+			perf_callchain_store_context(entry, PERF_CONTEXT_USER);
-+			perf_callchain_store(entry, next_ip);
-+			continue;
-+		}
-+
-+		if (level == 0)
-+			next_ip = lr;
-+		perf_callchain_store(entry, next_ip);
-+		++level;
-+		sp = next_sp;
-+	}
-+}
-diff --git a/arch/powerpc/perf/callchain_64.c b/arch/powerpc/perf/callchain_64.c
-new file mode 100644
-index 000000000000..0a32e0bc4f03
---- /dev/null
-+++ b/arch/powerpc/perf/callchain_64.c
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Performance counter callchain support - powerpc architecture code
-+ *
-+ * Copyright © 2009 Paul Mackerras, IBM Corporation.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/sched.h>
-+#include <linux/perf_event.h>
-+#include <linux/percpu.h>
-+#include <linux/uaccess.h>
-+#include <linux/mm.h>
-+#include <asm/ptrace.h>
-+#include <asm/pgtable.h>
-+#include <asm/sigcontext.h>
-+#include <asm/ucontext.h>
-+#include <asm/vdso.h>
-+#include <asm/pte-walk.h>
-+
-+#include "callchain.h"
-+
-+/*
-+ * On 64-bit we don't want to invoke hash_page on user addresses from
-+ * interrupt context, so if the access faults, we read the page tables
-+ * to find which page (if any) is mapped and access it directly.
-+ */
-+int read_user_stack_slow(void __user *ptr, void *buf, int nb)
-+{
-+	int ret = -EFAULT;
-+	pgd_t *pgdir;
-+	pte_t *ptep, pte;
-+	unsigned int shift;
-+	unsigned long addr = (unsigned long) ptr;
-+	unsigned long offset;
-+	unsigned long pfn, flags;
-+	void *kaddr;
-+
-+	pgdir = current->mm->pgd;
-+	if (!pgdir)
-+		return -EFAULT;
-+
-+	local_irq_save(flags);
-+	ptep = find_current_mm_pte(pgdir, addr, NULL, &shift);
-+	if (!ptep)
-+		goto err_out;
-+	if (!shift)
-+		shift = PAGE_SHIFT;
-+
-+	/* align address to page boundary */
-+	offset = addr & ((1UL << shift) - 1);
-+
-+	pte = READ_ONCE(*ptep);
-+	if (!pte_present(pte) || !pte_user(pte))
-+		goto err_out;
-+	pfn = pte_pfn(pte);
-+	if (!page_is_ram(pfn))
-+		goto err_out;
-+
-+	/* no highmem to worry about here */
-+	kaddr = pfn_to_kaddr(pfn);
-+	memcpy(buf, kaddr + offset, nb);
-+	ret = 0;
-+err_out:
-+	local_irq_restore(flags);
-+	return ret;
-+}
-+
-+static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
-+{
-+	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned long) ||
-+	    ((unsigned long)ptr & 7))
-+		return -EFAULT;
-+
-+	pagefault_disable();
-+	if (!__get_user_inatomic(*ret, ptr)) {
-+		pagefault_enable();
-+		return 0;
-+	}
-+	pagefault_enable();
-+
-+	return read_user_stack_slow(ptr, ret, 8);
-+}
-+
-+/*
-+ * 64-bit user processes use the same stack frame for RT and non-RT signals.
-+ */
-+struct signal_frame_64 {
-+	char		dummy[__SIGNAL_FRAMESIZE];
-+	struct ucontext	uc;
-+	unsigned long	unused[2];
-+	unsigned int	tramp[6];
-+	struct siginfo	*pinfo;
-+	void		*puc;
-+	struct siginfo	info;
-+	char		abigap[288];
-+};
-+
-+static int is_sigreturn_64_address(unsigned long nip, unsigned long fp)
-+{
-+	if (nip == fp + offsetof(struct signal_frame_64, tramp))
-+		return 1;
-+	if (vdso64_rt_sigtramp && current->mm->context.vdso_base &&
-+	    nip == current->mm->context.vdso_base + vdso64_rt_sigtramp)
-+		return 1;
-+	return 0;
-+}
-+
-+/*
-+ * Do some sanity checking on the signal frame pointed to by sp.
-+ * We check the pinfo and puc pointers in the frame.
-+ */
-+static int sane_signal_64_frame(unsigned long sp)
-+{
-+	struct signal_frame_64 __user *sf;
-+	unsigned long pinfo, puc;
-+
-+	sf = (struct signal_frame_64 __user *) sp;
-+	if (read_user_stack_64((unsigned long __user *) &sf->pinfo, &pinfo) ||
-+	    read_user_stack_64((unsigned long __user *) &sf->puc, &puc))
-+		return 0;
-+	return pinfo == (unsigned long) &sf->info &&
-+		puc == (unsigned long) &sf->uc;
-+}
-+
-+void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
-+			    struct pt_regs *regs)
-+{
-+	unsigned long sp, next_sp;
-+	unsigned long next_ip;
-+	unsigned long lr;
-+	long level = 0;
-+	struct signal_frame_64 __user *sigframe;
-+	unsigned long __user *fp, *uregs;
-+
-+	next_ip = perf_instruction_pointer(regs);
-+	lr = regs->link;
-+	sp = regs->gpr[1];
-+	perf_callchain_store(entry, next_ip);
-+
-+	while (entry->nr < entry->max_stack) {
-+		fp = (unsigned long __user *) sp;
-+		if (!valid_user_sp(sp, 1) || read_user_stack_64(fp, &next_sp))
-+			return;
-+		if (level > 0 && read_user_stack_64(&fp[2], &next_ip))
-+			return;
-+
-+		/*
-+		 * Note: the next_sp - sp >= signal frame size check
-+		 * is true when next_sp < sp, which can happen when
-+		 * transitioning from an alternate signal stack to the
-+		 * normal stack.
-+		 */
-+		if (next_sp - sp >= sizeof(struct signal_frame_64) &&
-+		    (is_sigreturn_64_address(next_ip, sp) ||
-+		     (level <= 1 && is_sigreturn_64_address(lr, sp))) &&
-+		    sane_signal_64_frame(sp)) {
-+			/*
-+			 * This looks like an signal frame
-+			 */
-+			sigframe = (struct signal_frame_64 __user *) sp;
-+			uregs = sigframe->uc.uc_mcontext.gp_regs;
-+			if (read_user_stack_64(&uregs[PT_NIP], &next_ip) ||
-+			    read_user_stack_64(&uregs[PT_LNK], &lr) ||
-+			    read_user_stack_64(&uregs[PT_R1], &sp))
-+				return;
-+			level = 0;
-+			perf_callchain_store_context(entry, PERF_CONTEXT_USER);
-+			perf_callchain_store(entry, next_ip);
-+			continue;
-+		}
-+
-+		if (level == 0)
-+			next_ip = lr;
-+		perf_callchain_store(entry, next_ip);
-+		++level;
-+		sp = next_sp;
-+	}
-+}
--- 
-2.23.0
+Ditto.
 
+> -	/* Enable both master and slave clock */
+> -	pm_runtime_get_sync(dev);
+> -	vpfe_config_enable(ccdc, 1);
+> +		/* Enable both master and slave clock */
+> +		pm_runtime_get_sync(dev);
+> +		vpfe_config_enable(ccdc, 1);
+>  
+> -	/* Restore VPFE context */
+> -	vpfe_restore_context(ccdc);
+> +		/* Restore VPFE context */
+> +		vpfe_restore_context(ccdc);
+>  
+> -	vpfe_config_enable(ccdc, 0);
+> -	pm_runtime_put_sync(dev);
+> +		vpfe_config_enable(ccdc, 0);
+> +		pm_runtime_put_sync(dev);
+> +	}
+>  
+>  	/* Select default pin state */
+>  	pinctrl_pm_select_default_state(dev);
+> 
+
+Regards,
+
+	Hans
