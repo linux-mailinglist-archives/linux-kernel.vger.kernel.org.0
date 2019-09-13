@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C06B2059
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55DF6B1FE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390699AbfIMNU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:20:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50260 "EHLO mail.kernel.org"
+        id S2388739AbfIMNKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:10:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390680AbfIMNU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:20:56 -0400
+        id S2388711AbfIMNKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:10:19 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AF29214DE;
-        Fri, 13 Sep 2019 13:20:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38184206A5;
+        Fri, 13 Sep 2019 13:10:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380855;
-        bh=zm2mKZJbhXD36e1PCCkOnk5RqOK1VDdH6CD1TDRaXx0=;
+        s=default; t=1568380217;
+        bh=Xs++mhuXmM6PCHfhoFnMqARTGYYms+RpHEFXyftpFBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n92i55jSaMkFBOyN72YUTj6OGA24TTvRyrxRtb1GpG54rqPcbCKDPJ4uYxCrh5PFf
-         eIisXErE+zW6xGyX5vPkwOH2Besnt3GCLs1xM8dKbAXzzlaeJZIEnfSOf5VBog3i68
-         H5qq9O7LwFt8grxnVecQEUWbVm1UMYiDQQI5CP4Y=
+        b=IENhk3ia0zIPlNP2LhgUAdts7Y70qAFyr2GpdZke9vmYs2lCCli2gAQ49KO4+/d9A
+         3pzxYG7xjowq1a/BQqAd8R7KKmFEu+0qDL5l9fwjnjrtO1LNq76IZU4grI8Vk3iRTj
+         2y9/x4u8mCUmWPOH8n2NqljbaXP7pumMzHkDSrmM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.2 03/37] ALSA: hda - Fix potential endless loop at applying quirks
-Date:   Fri, 13 Sep 2019 14:07:08 +0100
-Message-Id: <20190913130511.612416529@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 17/21] scripts/decode_stacktrace: match basepath using shell prefix operator, not regex
+Date:   Fri, 13 Sep 2019 14:07:10 +0100
+Message-Id: <20190913130508.286213499@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
-References: <20190913130510.727515099@linuxfoundation.org>
+In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
+References: <20190913130501.285837292@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,43 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+[ Upstream commit 31013836a71e07751a6827f9d2ad41ef502ddaff ]
 
-commit 333f31436d3db19f4286f8862a00ea1d8d8420a1 upstream.
+The basepath may contain special characters, which would confuse the regex
+matcher.  ${var#prefix} does the right thing.
 
-Since the chained quirks via chained_before flag is applied before the
-depth check, it may lead to the endless recursive calls, when the
-chain were set up incorrectly.  Fix it by moving the depth check at
-the beginning of the loop.
-
-Fixes: 1f57825077dc ("ALSA: hda - Add chained_before flag to the fixup entry")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/20190518055946.181563-1-drinkcat@chromium.org
+Fixes: 67a28de47faa8358 ("scripts/decode_stacktrace: only strip base path when a prefix of the path")
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_auto_parser.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ scripts/decode_stacktrace.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/hda_auto_parser.c
-+++ b/sound/pci/hda/hda_auto_parser.c
-@@ -824,6 +824,8 @@ static void apply_fixup(struct hda_codec
- 	while (id >= 0) {
- 		const struct hda_fixup *fix = codec->fixup_list + id;
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index c4a9ddb174bc5..5aa75a0a1cede 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -78,7 +78,7 @@ parse_symbol() {
+ 	fi
  
-+		if (++depth > 10)
-+			break;
- 		if (fix->chained_before)
- 			apply_fixup(codec, fix->chain_id, action, depth + 1);
+ 	# Strip out the base of the path
+-	code=${code//^$basepath/""}
++	code=${code#$basepath/}
  
-@@ -863,8 +865,6 @@ static void apply_fixup(struct hda_codec
- 		}
- 		if (!fix->chained || fix->chained_before)
- 			break;
--		if (++depth > 10)
--			break;
- 		id = fix->chain_id;
- 	}
- }
+ 	# In the case of inlines, move everything to same line
+ 	code=${code//$'\n'/' '}
+-- 
+2.20.1
+
 
 
