@@ -2,91 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40BD6B234F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 17:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20708B2354
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 17:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391545AbfIMPZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 11:25:51 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33460 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391435AbfIMPZn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 11:25:43 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u16so32546458wrr.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 08:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YR/vHc0/aYOgQ7htuSAKCOpYZUSwbX4XADi3ha+KA8Q=;
-        b=Leu/DrQJjKKYfvqHogFl3YpcT43VdEBKD/+N9xaZ5aX1MwS8dy5gsahY0TJNorpYbj
-         RCM87o79r3lSZplmrXS7UrRD6815d9/SoKwUkCjFRlnYWOrDccnYMBMOP/LZQ2sCY/Sd
-         XVdH/57tU+/Oh19meKnLhqO3VPgF/2Ob1PKAPKmvhbIbkr6gplGq24WEvwL7ekeu7bYh
-         c1H3omILP/rlmpUkgQkyAarA4r4hlL+byuhBCLJ3Us5c4oY2LnWwh05rO3TQDL5yA4za
-         p/jZNguN1Tr1Z09DdtxeI3uGrpp5XCyGPCGiajOWr+3JV9Jj7tcMTH9jSaTQo1yIrybV
-         W5+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YR/vHc0/aYOgQ7htuSAKCOpYZUSwbX4XADi3ha+KA8Q=;
-        b=iq9fwssNDz/5LDcu5vZ1V95KFyT7s+fqRE8nXwflV8+fUxV5vVJWKi6hqRwn7NMhlP
-         3loGCuyvfnD640KzfDMAg6dgenck+r1IRO9ZPoijo/hU2eZTaXyIcp4MlstY6H9h67ON
-         1sP4ODBRK6lst8B/IygDdH1d/yF4WFVL16Acm7SQp7ia2j8debTrru4j1SXG5+Cd1NK/
-         qqQ6r9BcFAeHcgrWwZ9Bf5AwON8YLGbJN6ZjdlGLZITfMJrM28ew5ph/yNwY/qphC89v
-         mlqZ9bBOwPryzowKzTc/EA5eaPmOn54VH1BZ8vdFgx9K2lPNF3qOU3lFzLy5Tcdi5V89
-         6suQ==
-X-Gm-Message-State: APjAAAXH8KkpzE6GHHVkoPq/j754HpJ7eo+uruEX1OoRW/4vlv54Ljf6
-        Ch/MDgzRl0Tv8B6SZd6cjInl3g==
-X-Google-Smtp-Source: APXvYqx5KIGVhI6Q2FBF3QcxBYLhi5+KVQWIxV06imlRDiMLqZKuoCLmV2QR4gmgFC/+mTzjSt9zxg==
-X-Received: by 2002:adf:bb0a:: with SMTP id r10mr28521700wrg.13.1568388342113;
-        Fri, 13 Sep 2019 08:25:42 -0700 (PDT)
-Received: from localhost.localdomain (69.red-83-35-113.dynamicip.rima-tde.net. [83.35.113.69])
-        by smtp.gmail.com with ESMTPSA id d9sm48717728wrc.44.2019.09.13.08.25.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 13 Sep 2019 08:25:41 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, gregkh@linuxfoundation.org,
-        arnd@arndb.de, srinivas.kandagatla@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH 5/5] misc: fastrpc: revert max init file size back to 2MB
-Date:   Fri, 13 Sep 2019 17:25:32 +0200
-Message-Id: <20190913152532.24484-6-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913152532.24484-1-jorge.ramirez-ortiz@linaro.org>
-References: <20190913152532.24484-1-jorge.ramirez-ortiz@linaro.org>
+        id S2391312AbfIMP0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 11:26:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388231AbfIMP0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 11:26:39 -0400
+Received: from localhost (195-23-252-136.net.novis.pt [195.23.252.136])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CED520693;
+        Fri, 13 Sep 2019 15:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568388398;
+        bh=DKPb89gNVWrEkc2nPeyAuBft6QGWxruAsXiGTHC2k3Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PwShTKtviHhe7lIiolEaRlj1ESSWSdo+v7cy/OKAZtmXBjo527ajt4jQwK0y1ZJzW
+         IBehPhMhu/14uOk9gIhFPv9u5APdEObhtfvM8txCfYfcvt5EeCWMQ4t1nk/enW5uVM
+         h3e5fLu+ZkpXC5tKbSu3Nhs0CFtaeuqc+05KQMNY=
+Date:   Fri, 13 Sep 2019 11:26:35 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Ilia Mirkin <imirkin@alum.mit.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        "# 3.9+" <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.19 092/190] drm/nouveau: Dont WARN_ON VCPI allocation
+ failures
+Message-ID: <20190913152635.GK1546@sasha-vm>
+References: <20190913130559.669563815@linuxfoundation.org>
+ <20190913130606.981926197@linuxfoundation.org>
+ <CAKb7UviY0sjFUc6QqjU4eKxm2b-osKoJNO2CSP9HmQ5AdORgkw@mail.gmail.com>
+ <20190913144627.GH1546@sasha-vm>
+ <20190913145456.GA456842@kroah.com>
+ <20190913150111.GI1546@sasha-vm>
+ <CAKb7Uvj31ZuxB6S4EH8WBRsa2mDScpZN=dRjHScZmN94ajD0EA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAKb7Uvj31ZuxB6S4EH8WBRsa2mDScpZN=dRjHScZmN94ajD0EA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the integration of the mmap/unmap functionality, it is no longer
-necessary to allow large memory allocations upfront since they can be
-handled during runtime.
+On Fri, Sep 13, 2019 at 11:09:22AM -0400, Ilia Mirkin wrote:
+>On Fri, Sep 13, 2019 at 11:01 AM Sasha Levin <sashal@kernel.org> wrote:
+>>
+>> On Fri, Sep 13, 2019 at 03:54:56PM +0100, Greg Kroah-Hartman wrote:
+>> >On Fri, Sep 13, 2019 at 10:46:27AM -0400, Sasha Levin wrote:
+>> >> On Fri, Sep 13, 2019 at 09:33:36AM -0400, Ilia Mirkin wrote:
+>> >> > Hi Greg,
+>> >> >
+>> >> > This feels like it's missing a From: line.
+>> >> >
+>> >> > commit b513a18cf1d705bd04efd91c417e79e4938be093
+>> >> > Author: Lyude Paul <lyude@redhat.com>
+>> >> > Date:   Mon Jan 28 16:03:50 2019 -0500
+>> >> >
+>> >> >    drm/nouveau: Don't WARN_ON VCPI allocation failures
+>> >> >
+>> >> > Is this an artifact of your notification-of-patches process and I
+>> >> > never noticed before, or was the patch ingested incorrectly?
+>> >>
+>> >> It was always like this for patches that came through me. Greg's script
+>> >> generates an explicit "From:" line in the patch, but I never saw the
+>> >> value in that since git does the right thing by looking at the "From:"
+>> >> line in the mail header.
+>> >>
+>> >> The right thing is being done in stable-rc and for the releases. For
+>> >> your example here, this is how it looks like in the stable-rc tree:
+>> >>
+>> >> commit bdcc885be68289a37d0d063cd94390da81fd8178
+>> >> Author:     Lyude Paul <lyude@redhat.com>
+>> >> AuthorDate: Mon Jan 28 16:03:50 2019 -0500
+>> >> Commit:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> >> CommitDate: Fri Sep 13 14:05:29 2019 +0100
+>> >>
+>> >>    drm/nouveau: Don't WARN_ON VCPI allocation failures
+>> >
+>> >Yeah, we should fix your scripts to put the explicit From: line in here
+>> >as we are dealing with patches in this format and it causes confusion at
+>> >times (like now.)  It's not the first time and that's why I added those
+>> >lines to the patches.
+>>
+>> Heh, didn't think anyone cared about this scenario for the stable-rc
+>> patches.
+>>
+>> I'll go add it.
+>>
+>> But... why do you actually care?
+>
+>Just a hygiene thing. Everyone else sends patches the normal way, with
+>accurate attribution. Why should stable be different?
 
-Tested on QCS404 with CDSP Neural Processing test suite.
+It shouldn't.
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/misc/fastrpc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's just a mismatch between our two somewhat seperate workflow.
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 40b48db032b5..ee6de5d9993d 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -32,7 +32,7 @@
- #define FASTRPC_CTX_MAX (256)
- #define FASTRPC_INIT_HANDLE	1
- #define FASTRPC_CTXID_MASK (0xFF0)
--#define INIT_FILELEN_MAX (64 * 1024 * 1024)
-+#define INIT_FILELEN_MAX (2 * 1024 * 1024)
- #define INIT_MEMLEN_MAX  (8 * 1024 * 1024)
- #define FASTRPC_DEVICE_NAME	"fastrpc"
- #define ADSP_MMAP_ADD_PAGES 0x1000
--- 
-2.23.0
+Technically it's Greg who needs to be adding that line since the patches
+I have in stable-queue correctly state the author, and it only goes
+wrong when they're being formatted into mails sent for the -rc cycles.
 
+But yes, thanks for pointing it out, I'll go add it in the scripts.
+
+--
+Thanks,
+Sasha
