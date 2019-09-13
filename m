@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FBAAB20B7
+	by mail.lfdr.de (Postfix) with ESMTP id E91FAB20B8
 	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391396AbfIMNZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:25:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46934 "EHLO mx1.redhat.com"
+        id S2391405AbfIMNZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:25:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59838 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391387AbfIMNZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:25:34 -0400
+        id S2391391AbfIMNZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:25:35 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5011310C092F;
-        Fri, 13 Sep 2019 13:25:33 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 40FE618CB8EE;
+        Fri, 13 Sep 2019 13:25:35 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AC1715C1D4;
-        Fri, 13 Sep 2019 13:25:31 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BEF95C1D4;
+        Fri, 13 Sep 2019 13:25:33 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,191 +27,215 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 37/73] libperf: Add perf_evlist__add_pollfd function
-Date:   Fri, 13 Sep 2019 15:23:19 +0200
-Message-Id: <20190913132355.21634-38-jolsa@kernel.org>
+Subject: [PATCH 38/73] libperf: Add perf_evlist__poll function
+Date:   Fri, 13 Sep 2019 15:23:20 +0200
+Message-Id: <20190913132355.21634-39-jolsa@kernel.org>
 In-Reply-To: <20190913132355.21634-1-jolsa@kernel.org>
 References: <20190913132355.21634-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Fri, 13 Sep 2019 13:25:33 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Fri, 13 Sep 2019 13:25:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move perf_evlist__add_pollfd function under libperf,
-it will be used in following patches.
+Move perf_evlist__poll function under libperf,
+it will be used in following patches. And rename
+the existing perf's function to evlist__poll.
 
-Also renaming perf's perf_evlist__add_pollfd/perf_evlist__filter_pollfd
-to evlist__add_pollfd/evlist__filter_pollfd.
-
-Link: http://lkml.kernel.org/n/tip-ak1oqlj43qsbioo7q9m5fg9t@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-hvilw6n69knpyhdndrslgtdu@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/builtin-kvm.c                 |  4 ++--
- tools/perf/builtin-record.c              |  2 +-
- tools/perf/builtin-trace.c               |  2 +-
- tools/perf/lib/evlist.c                  | 16 +++++++++++++++
- tools/perf/lib/include/internal/evlist.h |  2 ++
- tools/perf/util/evlist.c                 | 25 ++++--------------------
- tools/perf/util/evlist.h                 |  4 ++--
- 7 files changed, 28 insertions(+), 27 deletions(-)
+ tools/perf/builtin-record.c                 | 2 +-
+ tools/perf/builtin-top.c                    | 4 ++--
+ tools/perf/builtin-trace.c                  | 2 +-
+ tools/perf/lib/evlist.c                     | 5 +++++
+ tools/perf/lib/include/perf/evlist.h        | 1 +
+ tools/perf/lib/libperf.map                  | 1 +
+ tools/perf/tests/openat-syscall-tp-fields.c | 2 +-
+ tools/perf/tests/perf-record.c              | 2 +-
+ tools/perf/tests/task-exit.c                | 2 +-
+ tools/perf/util/evlist.c                    | 6 +++---
+ tools/perf/util/evlist.h                    | 2 +-
+ tools/perf/util/python.c                    | 2 +-
+ 12 files changed, 19 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index 66acac16bcb2..a90c7d4302b9 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -964,10 +964,10 @@ static int kvm_events_live_report(struct perf_kvm_stat *kvm)
- 		goto out;
- 	}
- 
--	if (perf_evlist__add_pollfd(kvm->evlist, kvm->timerfd) < 0)
-+	if (evlist__add_pollfd(kvm->evlist, kvm->timerfd) < 0)
- 		goto out;
- 
--	nr_stdin = perf_evlist__add_pollfd(kvm->evlist, fileno(stdin));
-+	nr_stdin = evlist__add_pollfd(kvm->evlist, fileno(stdin));
- 	if (nr_stdin < 0)
- 		goto out;
- 
 diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index efad7e6a2dca..cb5d750cbbdf 100644
+index cb5d750cbbdf..7b12877de27c 100644
 --- a/tools/perf/builtin-record.c
 +++ b/tools/perf/builtin-record.c
-@@ -1619,7 +1619,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 				err = 0;
- 			waking++;
+@@ -1610,7 +1610,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		if (hits == rec->samples) {
+ 			if (done || draining)
+ 				break;
+-			err = perf_evlist__poll(rec->evlist, -1);
++			err = evlist__poll(rec->evlist, -1);
+ 			/*
+ 			 * Propagate error, only if there's any. Ignore positive
+ 			 * number of returned events and interrupt error.
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 0942e8d4c93b..fb62e10f4d4f 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1304,7 +1304,7 @@ static int __cmd_top(struct perf_top *top)
+ 	}
  
--			if (perf_evlist__filter_pollfd(rec->evlist, POLLERR | POLLHUP) == 0)
-+			if (evlist__filter_pollfd(rec->evlist, POLLERR | POLLHUP) == 0)
- 				draining = true;
- 		}
+ 	/* Wait for a minimal set of events before starting the snapshot */
+-	perf_evlist__poll(top->evlist, 100);
++	evlist__poll(top->evlist, 100);
  
+ 	perf_top__mmap_read(top);
+ 
+@@ -1314,7 +1314,7 @@ static int __cmd_top(struct perf_top *top)
+ 		perf_top__mmap_read(top);
+ 
+ 		if (opts->overwrite || (hits == top->samples))
+-			ret = perf_evlist__poll(top->evlist, 100);
++			ret = evlist__poll(top->evlist, 100);
+ 
+ 		if (resize) {
+ 			perf_top__resize(top);
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 0dc35aa624c5..685935b533f4 100644
+index 685935b533f4..55daadb001f6 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -3473,7 +3473,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+@@ -3472,7 +3472,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 	if (trace->nr_events == before) {
  		int timeout = done ? 100 : -1;
  
- 		if (!draining && perf_evlist__poll(evlist, timeout) > 0) {
--			if (perf_evlist__filter_pollfd(evlist, POLLERR | POLLHUP | POLLNVAL) == 0)
-+			if (evlist__filter_pollfd(evlist, POLLERR | POLLHUP | POLLNVAL) == 0)
+-		if (!draining && perf_evlist__poll(evlist, timeout) > 0) {
++		if (!draining && evlist__poll(evlist, timeout) > 0) {
+ 			if (evlist__filter_pollfd(evlist, POLLERR | POLLHUP | POLLNVAL) == 0)
  				draining = true;
  
- 			goto again;
 diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
-index 0f84f5dc519f..a2c01dcec5ae 100644
+index a2c01dcec5ae..160393cb9bed 100644
 --- a/tools/perf/lib/evlist.c
 +++ b/tools/perf/lib/evlist.c
-@@ -11,6 +11,9 @@
- #include <stdlib.h>
- #include <errno.h>
- #include <unistd.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <poll.h>
- #include <perf/cpumap.h>
- #include <perf/threadmap.h>
+@@ -274,3 +274,8 @@ int perf_evlist__add_pollfd(struct perf_evlist *evlist, int fd,
  
-@@ -258,3 +261,16 @@ int perf_evlist__alloc_pollfd(struct perf_evlist *evlist)
- 
- 	return 0;
+ 	return pos;
  }
 +
-+int perf_evlist__add_pollfd(struct perf_evlist *evlist, int fd,
-+			    void *ptr, short revent)
++int perf_evlist__poll(struct perf_evlist *evlist, int timeout)
 +{
-+	int pos = fdarray__add(&evlist->pollfd, fd, revent | POLLERR | POLLHUP);
-+
-+	if (pos >= 0) {
-+		evlist->pollfd.priv[pos].ptr = ptr;
-+		fcntl(fd, F_SETFL, O_NONBLOCK);
-+	}
-+
-+	return pos;
++	return fdarray__poll(&evlist->pollfd, timeout);
 +}
-diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
-index 88c0dfaf0ddc..9f440ab12b76 100644
---- a/tools/perf/lib/include/internal/evlist.h
-+++ b/tools/perf/lib/include/internal/evlist.h
-@@ -25,6 +25,8 @@ struct perf_evlist {
+diff --git a/tools/perf/lib/include/perf/evlist.h b/tools/perf/lib/include/perf/evlist.h
+index 38365f8f3fba..8a2ce0757ab2 100644
+--- a/tools/perf/lib/include/perf/evlist.h
++++ b/tools/perf/lib/include/perf/evlist.h
+@@ -31,5 +31,6 @@ LIBPERF_API void perf_evlist__disable(struct perf_evlist *evlist);
+ LIBPERF_API void perf_evlist__set_maps(struct perf_evlist *evlist,
+ 				       struct perf_cpu_map *cpus,
+ 				       struct perf_thread_map *threads);
++LIBPERF_API int perf_evlist__poll(struct perf_evlist *evlist, int timeout);
+ 
+ #endif /* __LIBPERF_EVLIST_H */
+diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
+index 507b4cc4784c..2672f21b4908 100644
+--- a/tools/perf/lib/libperf.map
++++ b/tools/perf/lib/libperf.map
+@@ -38,6 +38,7 @@ LIBPERF_0.0.1 {
+ 		perf_evlist__remove;
+ 		perf_evlist__next;
+ 		perf_evlist__set_maps;
++		perf_evlist__poll;
+ 	local:
+ 		*;
  };
+diff --git a/tools/perf/tests/openat-syscall-tp-fields.c b/tools/perf/tests/openat-syscall-tp-fields.c
+index abf4d4f5e429..a5daf4cf17ac 100644
+--- a/tools/perf/tests/openat-syscall-tp-fields.c
++++ b/tools/perf/tests/openat-syscall-tp-fields.c
+@@ -126,7 +126,7 @@ int test__syscall_openat_tp_fields(struct test *test __maybe_unused, int subtest
+ 		}
  
- int perf_evlist__alloc_pollfd(struct perf_evlist *evlist);
-+int perf_evlist__add_pollfd(struct perf_evlist *evlist, int fd,
-+			    void *ptr, short revent);
+ 		if (nr_events == before)
+-			perf_evlist__poll(evlist, 10);
++			evlist__poll(evlist, 10);
  
- /**
-  * __perf_evlist__for_each_entry - iterate thru all the evsels
+ 		if (++nr_polls > 5) {
+ 			pr_debug("%s: no events!\n", __func__);
+diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
+index 80da5b2c6bdc..1b313da8bce9 100644
+--- a/tools/perf/tests/perf-record.c
++++ b/tools/perf/tests/perf-record.c
+@@ -286,7 +286,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 		 * perf_event_attr.wakeup_events, just PERF_EVENT_SAMPLE does.
+ 		 */
+ 		if (total_events == before && false)
+-			perf_evlist__poll(evlist, -1);
++			evlist__poll(evlist, -1);
+ 
+ 		sleep(1);
+ 		if (++wakeups > 5) {
+diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
+index 81c57a6b627f..e6e8a7a970b6 100644
+--- a/tools/perf/tests/task-exit.c
++++ b/tools/perf/tests/task-exit.c
+@@ -129,7 +129,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
+ 
+ out_init:
+ 	if (!exited || !nr_exit) {
+-		perf_evlist__poll(evlist, -1);
++		evlist__poll(evlist, -1);
+ 		goto retry;
+ 	}
+ 
 diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 664c8e87ec96..449425d9a033 100644
+index 449425d9a033..dcc4accd3180 100644
 --- a/tools/perf/util/evlist.c
 +++ b/tools/perf/util/evlist.c
-@@ -397,26 +397,9 @@ int perf_evlist__enable_event_idx(struct evlist *evlist,
- 		return perf_evlist__enable_event_thread(evlist, evsel, idx);
- }
- 
--static int __perf_evlist__add_pollfd(struct evlist *evlist, int fd,
--				     struct mmap *map, short revent)
-+int evlist__add_pollfd(struct evlist *evlist, int fd)
- {
--	int pos = fdarray__add(&evlist->core.pollfd, fd, revent | POLLERR | POLLHUP);
--	/*
--	 * Save the idx so that when we filter out fds POLLHUP'ed we can
--	 * close the associated evlist->mmap[] entry.
--	 */
--	if (pos >= 0) {
--		evlist->core.pollfd.priv[pos].ptr = map;
--
--		fcntl(fd, F_SETFL, O_NONBLOCK);
--	}
--
--	return pos;
--}
--
--int perf_evlist__add_pollfd(struct evlist *evlist, int fd)
--{
--	return __perf_evlist__add_pollfd(evlist, fd, NULL, POLLIN);
-+	return perf_evlist__add_pollfd(&evlist->core, fd, NULL, POLLIN);
- }
- 
- static void perf_evlist__munmap_filtered(struct fdarray *fda, int fd,
-@@ -428,7 +411,7 @@ static void perf_evlist__munmap_filtered(struct fdarray *fda, int fd,
- 		perf_mmap__put(map);
- }
- 
--int perf_evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask)
-+int evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask)
- {
- 	return fdarray__filter(&evlist->core.pollfd, revents_and_mask,
+@@ -417,9 +417,9 @@ int evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask)
  			       perf_evlist__munmap_filtered, NULL);
-@@ -707,7 +690,7 @@ static int evlist__mmap_per_evsel(struct evlist *evlist, int idx,
- 		 * Therefore don't add it for polling.
- 		 */
- 		if (!evsel->core.system_wide &&
--		    __perf_evlist__add_pollfd(evlist, fd, &maps[idx], revent) < 0) {
-+		     perf_evlist__add_pollfd(&evlist->core, fd, &maps[idx], revent) < 0) {
- 			perf_mmap__put(&maps[idx]);
- 			return -1;
- 		}
+ }
+ 
+-int perf_evlist__poll(struct evlist *evlist, int timeout)
++int evlist__poll(struct evlist *evlist, int timeout)
+ {
+-	return fdarray__poll(&evlist->core.pollfd, timeout);
++	return perf_evlist__poll(&evlist->core, timeout);
+ }
+ 
+ static void perf_evlist__set_sid_idx(struct evlist *evlist,
+@@ -1735,7 +1735,7 @@ static void *perf_evlist__poll_thread(void *arg)
+ 			draining = true;
+ 
+ 		if (!draining)
+-			perf_evlist__poll(evlist, 1000);
++			evlist__poll(evlist, 1000);
+ 
+ 		for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 			struct mmap *map = &evlist->mmap[i];
 diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 9c90df51ce08..6c5455cf5829 100644
+index 6c5455cf5829..0042eac7e627 100644
 --- a/tools/perf/util/evlist.h
 +++ b/tools/perf/util/evlist.h
-@@ -113,8 +113,8 @@ struct evsel *
- perf_evlist__find_tracepoint_by_name(struct evlist *evlist,
- 				     const char *name);
+@@ -116,7 +116,7 @@ perf_evlist__find_tracepoint_by_name(struct evlist *evlist,
+ int evlist__add_pollfd(struct evlist *evlist, int fd);
+ int evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask);
  
--int perf_evlist__add_pollfd(struct evlist *evlist, int fd);
--int perf_evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask);
-+int evlist__add_pollfd(struct evlist *evlist, int fd);
-+int evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask);
+-int perf_evlist__poll(struct evlist *evlist, int timeout);
++int evlist__poll(struct evlist *evlist, int timeout);
  
- int perf_evlist__poll(struct evlist *evlist, int timeout);
+ struct evsel *perf_evlist__id2evsel(struct evlist *evlist, u64 id);
+ struct evsel *perf_evlist__id2evsel_strict(struct evlist *evlist,
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index fdc787cfa9f7..48fd93a6a247 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -918,7 +918,7 @@ static PyObject *pyrf_evlist__poll(struct pyrf_evlist *pevlist,
+ 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|i", kwlist, &timeout))
+ 		return NULL;
  
+-	n = perf_evlist__poll(evlist, timeout);
++	n = evlist__poll(evlist, timeout);
+ 	if (n < 0) {
+ 		PyErr_SetFromErrno(PyExc_OSError);
+ 		return NULL;
 -- 
 2.21.0
 
