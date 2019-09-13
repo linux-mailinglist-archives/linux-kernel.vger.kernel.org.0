@@ -2,44 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73499B1F93
+	by mail.lfdr.de (Postfix) with ESMTP id DBBCCB1F94
 	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390616AbfIMNUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:20:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49686 "EHLO mail.kernel.org"
+        id S2390627AbfIMNUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:20:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389469AbfIMNUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:20:38 -0400
+        id S2390608AbfIMNUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:20:40 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8421206BB;
-        Fri, 13 Sep 2019 13:20:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9253920717;
+        Fri, 13 Sep 2019 13:20:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380836;
-        bh=w9rMOSJJjyio0AAEDtCnA2QRY8NZqeOX69wnXBT1yE4=;
+        s=default; t=1568380839;
+        bh=kN2w/kcq9mBzaqs9yTiVeTulm8bkDRJ/dgotKQjrnuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jhGUfW7g8FCAKQGhwWOBEG7oWeUYLfkNQnJqAXlwRa40YjsbASLsdVcKTZGv6lyV+
-         kIUddXs5jqc9nziA8v/oGBJSekUUWjMSMRN+MHu8yCrhMjRO9fABk9t9VtemrdXCjl
-         MYVD9n0vSeXewtyzzq2eANUVAG7KwhuzLay9HpTU=
+        b=U6/A6XkRMvsyiF7wVOU5oL4Cfuudmz9RBU8GaNNUTxzFme++YRb4sODI7ty0NPQti
+         a69FTKu/Tzdj7ZKH7VO0e46Mmp6yttB/mknXYur14+tLS0/27ZgHKVjZMFrn/+a44A
+         MedaEP5cJx+up/IHI9seIZAnh3mGPiNozCVf1BKI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Daniel Drake <drake@endlessm.com>,
-        Aaron Plattner <aplattner@nvidia.com>,
-        Peter Wu <peter@lekensteyn.nl>,
-        Ilia Mirkin <imirkin@alum.mit.edu>,
-        Karol Herbst <kherbst@redhat.com>,
-        Maik Freudenberg <hhfeuer@gmx.de>,
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 186/190] PCI: Reset both NVIDIA GPU and HDA in ThinkPad P50 workaround
-Date:   Fri, 13 Sep 2019 14:07:21 +0100
-Message-Id: <20190913130614.757255328@linuxfoundation.org>
+Subject: [PATCH 4.19 187/190] powerpc/tm: Remove msr_tm_active()
+Date:   Fri, 13 Sep 2019 14:07:22 +0100
+Message-Id: <20190913130614.853366270@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -52,50 +44,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ad54567ad5d8e938ee6cf02e4f3867f18835ae6e ]
+[ Upstream commit 5c784c8414fba11b62e12439f11e109fb5751f38 ]
 
-quirk_reset_lenovo_thinkpad_50_nvgpu() resets NVIDIA GPUs to work around
-an apparent BIOS defect.  It previously used pci_reset_function(), and
-the available method was a bus reset, which was fine because there was
-only one function on the bus.  After b516ea586d71 ("PCI: Enable NVIDIA
-HDA controllers"), there are now two functions (the HDA controller and
-the GPU itself) on the bus, so the reset fails.
+Currently msr_tm_active() is a wrapper around MSR_TM_ACTIVE() if
+CONFIG_PPC_TRANSACTIONAL_MEM is set, or it is just a function that
+returns false if CONFIG_PPC_TRANSACTIONAL_MEM is not set.
 
-Use pci_reset_bus() explicitly instead of pci_reset_function() since it's
-OK to reset both devices.
+This function is not necessary, since MSR_TM_ACTIVE() just do the same and
+could be used, removing the dualism and simplifying the code.
 
-[bhelgaas: commit log, add e0547c81bfcf]
-Fixes: b516ea586d71 ("PCI: Enable NVIDIA HDA controllers")
-Fixes: e0547c81bfcf ("PCI: Reset Lenovo ThinkPad P50 nvgpu at boot if necessary")
-Link: https://lore.kernel.org/r/20190801220117.14952-1-lyude@redhat.com
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Ben Skeggs <bskeggs@redhat.com>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Daniel Drake <drake@endlessm.com>
-Cc: Aaron Plattner <aplattner@nvidia.com>
-Cc: Peter Wu <peter@lekensteyn.nl>
-Cc: Ilia Mirkin <imirkin@alum.mit.edu>
-Cc: Karol Herbst <kherbst@redhat.com>
-Cc: Maik Freudenberg <hhfeuer@gmx.de>
+This patchset remove every instance of msr_tm_active() and replaced it
+by MSR_TM_ACTIVE().
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/quirks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/include/asm/reg.h |  7 ++++++-
+ arch/powerpc/kernel/process.c  | 21 +++++++++------------
+ 2 files changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 311f8a33e62ff..06be52912dcdb 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -5162,7 +5162,7 @@ static void quirk_reset_lenovo_thinkpad_p50_nvgpu(struct pci_dev *pdev)
- 	 */
- 	if (ioread32(map + 0x2240c) & 0x2) {
- 		pci_info(pdev, FW_BUG "GPU left initialized by EFI, resetting\n");
--		ret = pci_reset_function(pdev);
-+		ret = pci_reset_bus(pdev);
- 		if (ret < 0)
- 			pci_err(pdev, "Failed to reset GPU: %d\n", ret);
+diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
+index e5b314ed054e0..640a4d818772a 100644
+--- a/arch/powerpc/include/asm/reg.h
++++ b/arch/powerpc/include/asm/reg.h
+@@ -118,11 +118,16 @@
+ #define MSR_TS_S	__MASK(MSR_TS_S_LG)	/*  Transaction Suspended */
+ #define MSR_TS_T	__MASK(MSR_TS_T_LG)	/*  Transaction Transactional */
+ #define MSR_TS_MASK	(MSR_TS_T | MSR_TS_S)   /* Transaction State bits */
+-#define MSR_TM_ACTIVE(x) (((x) & MSR_TS_MASK) != 0) /* Transaction active? */
+ #define MSR_TM_RESV(x) (((x) & MSR_TS_MASK) == MSR_TS_MASK) /* Reserved */
+ #define MSR_TM_TRANSACTIONAL(x)	(((x) & MSR_TS_MASK) == MSR_TS_T)
+ #define MSR_TM_SUSPENDED(x)	(((x) & MSR_TS_MASK) == MSR_TS_S)
+ 
++#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
++#define MSR_TM_ACTIVE(x) (((x) & MSR_TS_MASK) != 0) /* Transaction active? */
++#else
++#define MSR_TM_ACTIVE(x) 0
++#endif
++
+ #if defined(CONFIG_PPC_BOOK3S_64)
+ #define MSR_64BIT	MSR_SF
+ 
+diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+index 967c044036718..49c6d474eb5ac 100644
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -102,24 +102,18 @@ static void check_if_tm_restore_required(struct task_struct *tsk)
  	}
+ }
+ 
+-static inline bool msr_tm_active(unsigned long msr)
+-{
+-	return MSR_TM_ACTIVE(msr);
+-}
+-
+ static bool tm_active_with_fp(struct task_struct *tsk)
+ {
+-	return msr_tm_active(tsk->thread.regs->msr) &&
++	return MSR_TM_ACTIVE(tsk->thread.regs->msr) &&
+ 		(tsk->thread.ckpt_regs.msr & MSR_FP);
+ }
+ 
+ static bool tm_active_with_altivec(struct task_struct *tsk)
+ {
+-	return msr_tm_active(tsk->thread.regs->msr) &&
++	return MSR_TM_ACTIVE(tsk->thread.regs->msr) &&
+ 		(tsk->thread.ckpt_regs.msr & MSR_VEC);
+ }
+ #else
+-static inline bool msr_tm_active(unsigned long msr) { return false; }
+ static inline void check_if_tm_restore_required(struct task_struct *tsk) { }
+ static inline bool tm_active_with_fp(struct task_struct *tsk) { return false; }
+ static inline bool tm_active_with_altivec(struct task_struct *tsk) { return false; }
+@@ -247,7 +241,8 @@ void enable_kernel_fp(void)
+ 		 * giveup as this would save  to the 'live' structure not the
+ 		 * checkpointed structure.
+ 		 */
+-		if(!msr_tm_active(cpumsr) && msr_tm_active(current->thread.regs->msr))
++		if (!MSR_TM_ACTIVE(cpumsr) &&
++		     MSR_TM_ACTIVE(current->thread.regs->msr))
+ 			return;
+ 		__giveup_fpu(current);
+ 	}
+@@ -311,7 +306,8 @@ void enable_kernel_altivec(void)
+ 		 * giveup as this would save  to the 'live' structure not the
+ 		 * checkpointed structure.
+ 		 */
+-		if(!msr_tm_active(cpumsr) && msr_tm_active(current->thread.regs->msr))
++		if (!MSR_TM_ACTIVE(cpumsr) &&
++		     MSR_TM_ACTIVE(current->thread.regs->msr))
+ 			return;
+ 		__giveup_altivec(current);
+ 	}
+@@ -397,7 +393,8 @@ void enable_kernel_vsx(void)
+ 		 * giveup as this would save  to the 'live' structure not the
+ 		 * checkpointed structure.
+ 		 */
+-		if(!msr_tm_active(cpumsr) && msr_tm_active(current->thread.regs->msr))
++		if (!MSR_TM_ACTIVE(cpumsr) &&
++		     MSR_TM_ACTIVE(current->thread.regs->msr))
+ 			return;
+ 		__giveup_vsx(current);
+ 	}
+@@ -531,7 +528,7 @@ void restore_math(struct pt_regs *regs)
+ {
+ 	unsigned long msr;
+ 
+-	if (!msr_tm_active(regs->msr) &&
++	if (!MSR_TM_ACTIVE(regs->msr) &&
+ 		!current->thread.load_fp && !loadvec(current->thread))
+ 		return;
+ 
 -- 
 2.20.1
 
