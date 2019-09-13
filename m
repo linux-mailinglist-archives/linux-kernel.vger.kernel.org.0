@@ -2,115 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E296B1700
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 03:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BD11B1710
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 03:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbfIMBOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 12 Sep 2019 21:14:49 -0400
-Received: from mga12.intel.com ([192.55.52.136]:29376 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbfIMBOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Sep 2019 21:14:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Sep 2019 18:14:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
-   d="scan'208";a="197403719"
-Received: from megha-z97x-ud7-th.sc.intel.com ([143.183.85.162])
-  by orsmga002.jf.intel.com with ESMTP; 12 Sep 2019 18:14:48 -0700
-From:   Megha Dey <megha.dey@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-pci@vger.kernel.org, maz@kernel.org, bhelgaas@google.com,
-        rafael@kernel.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
-        hpa@zytor.com, alex.williamson@redhat.com, jgg@mellanox.com
-Cc:     ashok.raj@intel.com, megha.dey@intel.com, jacob.jun.pan@intel.com,
-        Megha Dey <megha.dey@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>
-Subject: [RFC V1 7/7] ims: Add the set_desc callback
-Date:   Thu, 12 Sep 2019 18:32:08 -0700
-Message-Id: <1568338328-22458-8-git-send-email-megha.dey@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568338328-22458-1-git-send-email-megha.dey@linux.intel.com>
-References: <1568338328-22458-1-git-send-email-megha.dey@linux.intel.com>
+        id S1726379AbfIMBqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 12 Sep 2019 21:46:08 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40926 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfIMBqH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Sep 2019 21:46:07 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w10so14419106pgj.7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2019 18:46:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=V6ZASlvWSN+T484aUlx76RKyuEnQ4L0RkMkGolD8D7c=;
+        b=C2ObW/Cr1/1pZMLcduDH2bviiisZSpRBfTvt0UPo2UDygEGZo8w8BLE/XjJuI5lIan
+         5ktW6ZwUJLa6fQvfDKOJHZhttSk9eoczn2OfFCy7dcZdaTOlvl223yqarGRgaikBbUje
+         I325surmEVTeQ3mXI3lvxonHZjBSc4XotItGw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=V6ZASlvWSN+T484aUlx76RKyuEnQ4L0RkMkGolD8D7c=;
+        b=PCqVdIx6lcHHXMG+Kijm15WtbDYMyTcKnGju2UmZz3gbG/ML5+QDve+Vbl29Z+tYbz
+         QtX4/X0QQpAU1WK4p8W9kVeE2cyrhjxXOPRf5YU2KH99xhaAmEktL3ONKOAoiMOCnSQE
+         1h48BBA3QQckstWg4VOT5/kL2pes7Xw9vvFchBXTbq984fEZCJuUT3btsWFzZYMqs0xp
+         RHG0CfH33h2PGnCaykyNQK2/emtTYDiX69kSMho6lJ401q2DmLF/CaC45W7QM9hMso/s
+         VJ1+fX1ItttAkXn9EQmuabyXK25kbnLHPmeAr2MuU6gUv0AQ8VTx/F1c3iH7AeBU3ZFU
+         PIsg==
+X-Gm-Message-State: APjAAAXXxi22lhTydxSTKGWArvxTL7NAOmNVuMf2CkfumMGFAOpFKVKP
+        jU1J3isnUnIvk9eRB9CC9wc6vw==
+X-Google-Smtp-Source: APXvYqyAo72HjBMEAKSgzzn9KuQ0eevJXBWTCLKHDZFrNtTiatEfNwg15R3m65Y50nu5FukhBI4bPQ==
+X-Received: by 2002:a17:90a:2464:: with SMTP id h91mr2192411pje.9.1568339166649;
+        Thu, 12 Sep 2019 18:46:06 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id x5sm27484682pfn.149.2019.09.12.18.46.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2019 18:46:05 -0700 (PDT)
+Date:   Thu, 12 Sep 2019 18:46:04 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, X86 ML <x86@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org
+Subject: Re: problem starting /sbin/init (32-bit 5.3-rc8)
+Message-ID: <201909121753.C242E16AA@keescook>
+References: <a6010953-16f3-efb9-b507-e46973fc9275@infradead.org>
+ <201909121637.B9C39DF@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201909121637.B9C39DF@keescook>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the set_desc callback to the ims domain ops.
+On Thu, Sep 12, 2019 at 05:16:02PM -0700, Kees Cook wrote:
+> On Thu, Sep 12, 2019 at 02:40:19PM -0700, Randy Dunlap wrote:
+> > This is 32-bit kernel, just happens to be running on a 64-bit laptop.
+> > I added the debug printk in __phys_addr() just before "[cut here]".
+> > 
+> > CONFIG_HARDENED_USERCOPY=y
+> 
+> I can reproduce this under CONFIG_DEBUG_VIRTUAL=y, and it goes back
+> to at least to v5.2. Booting with "hardened_usercopy=off" or without
+> CONFIG_DEBUG_VIRTUAL makes this go away (since __phys_addr() doesn't
+> get called):
+> 
+> __check_object_size+0xff/0x1b0:
+> pfn_to_section_nr at include/linux/mmzone.h:1153
+> (inlined by) __pfn_to_section at include/linux/mmzone.h:1291
+> (inlined by) virt_to_head_page at include/linux/mm.h:729
+> (inlined by) check_heap_object at mm/usercopy.c:230
+> (inlined by) __check_object_size at mm/usercopy.c:280
+> 
+> Is virt_to_head_page() illegal to use under some recently new conditions?
 
-The set_desc callback is used to find a unique hwirq number from a given
-domain.
+This combination appears to be bugged since the original introduction
+of hardened usercopy in v4.8. Is this an untested combination until
+now? (I don't usually do tests with CONFIG_DEBUG_VIRTUAL, but I guess
+I will from now on!)
 
-Each mdev can have a maximum of 2048 IMS interrupts.
+Note from the future (i.e. the end of this email where I figure it out):
+it turns out it's actually these three together:
 
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
-Signed-off-by: Megha Dey <megha.dey@linux.intel.com>
----
- arch/x86/kernel/apic/ims.c | 7 +++++++
- drivers/base/ims-msi.c     | 9 +++++++++
- include/linux/msi.h        | 1 +
- 3 files changed, 17 insertions(+)
+CONFIG_HIGHMEM=y
+CONFIG_DEBUG_VIRTUAL=y
+CONFIG_HARDENED_USERCOPY=y
 
-diff --git a/arch/x86/kernel/apic/ims.c b/arch/x86/kernel/apic/ims.c
-index a539666..7e36571 100644
---- a/arch/x86/kernel/apic/ims.c
-+++ b/arch/x86/kernel/apic/ims.c
-@@ -76,11 +76,18 @@ int dev_ims_prepare(struct irq_domain *domain, struct device *dev, int nvec,
- }
- EXPORT_SYMBOL_GPL(dev_ims_prepare);
+> 
+> > The BUG is this line in arch/x86/mm/physaddr.c:
+> > 		VIRTUAL_BUG_ON((phys_addr >> PAGE_SHIFT) > max_low_pfn);
+> > It's line 83 in my source file only due to adding <linux/printk.h> and
+> > a conditional pr_crit() call.
+
+What exactly is this trying to test?
+
+> > [   19.730409][    T1] debug: unmapping init [mem 0xdc7bc000-0xdca30fff]
+> > [   19.734289][    T1] Write protecting kernel text and read-only data: 13888k
+> > [   19.737675][    T1] rodata_test: all tests were successful
+> > [   19.740757][    T1] Run /sbin/init as init process
+> > [   19.792877][    T1] __phys_addr: max_low_pfn=0x36ffe, x=0xff001ff1, phys_addr=0x3f001ff1
+
+It seems like this address is way out of range of the physical memory.
+That seems like it's vmalloc or something, but that was actually
+explicitly tested for back in the v4.8 version (it became unneeded
+later).
+
+> > [   19.796561][    T1] ------------[ cut here ]------------
+> > [   19.797501][    T1] kernel BUG at ../arch/x86/mm/physaddr.c:83!
+> > [   19.802799][    T1] invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
+> > [   19.803782][    T1] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 5.3.0-rc8 #6
+> > [   19.803782][    T1] Hardware name: Dell Inc. Inspiron 1318                   /0C236D, BIOS A04 01/15/2009
+> > [   19.803782][    T1] EIP: __phys_addr+0xaf/0x100
+> > [   19.803782][    T1] Code: 85 c0 74 67 89 f7 c1 ef 0c 39 f8 73 2e 56 53 50 68 90 9f 1f dc 68 00 eb 45 dc e8 ec b3 09 00 83 c4 14 3b 3d 30 55 cf dc 76 11 <0f> 0b b8 7c 3b 5c dc e8 45 53 4c 00 90 8d 74 26 00 89 d8 e8 39 cd
+> > [   19.803782][    T1] EAX: 00000044 EBX: ff001ff1 ECX: 00000000 EDX: db90a471
+> > [   19.803782][    T1] ESI: 3f001ff1 EDI: 0003f001 EBP: f41ddea0 ESP: f41dde90
+> > [   19.803782][    T1] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010216
+> > [   19.803782][    T1] CR0: 80050033 CR2: dc218544 CR3: 1ca39000 CR4: 000406d0
+> > [   19.803782][    T1] Call Trace:
+> > [   19.803782][    T1]  __check_object_size+0xaf/0x3c0
+> > [   19.803782][    T1]  ? __might_sleep+0x80/0xa0
+> > [   19.803782][    T1]  copy_strings+0x1c2/0x370
+
+Oh, this is actually copying into a kmap() pointer due to the weird
+stuff exec() does:
+
+                        kaddr = kmap(kmapped_page);
+                ...
+                if (copy_from_user(kaddr+offset, str, bytes_to_copy)) {
+
+> > [   19.803782][    T1]  copy_strings_kernel+0x2b/0x40
+> > 
+> > Full boot log or kernel .config file are available if wanted.
+
+Is kmap somewhere "unexpected" in this case? Ah-ha, yes, it seems it is.
+There is even a helper to do the "right" thing as virt_to_page(). This
+seems to be used very rarely in the kernel... is there a page type for
+kmap pages? This seems like a hack, but it fixes it:
+
+
+diff --git a/mm/usercopy.c b/mm/usercopy.c
+index 98e924864554..5a14b80ad63e 100644
+--- a/mm/usercopy.c
++++ b/mm/usercopy.c
+@@ -11,6 +11,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
-+void dev_ims_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
-+{
-+	arg->msi_hwirq = dev_ims_calc_hwirq(desc);
-+}
-+EXPORT_SYMBOL_GPL(dev_ims_set_desc);
-+
- #ifdef CONFIG_IRQ_REMAP
+ #include <linux/mm.h>
++#include <linux/highmem.h>
+ #include <linux/slab.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task.h>
+@@ -227,7 +228,7 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
+ 	if (!virt_addr_valid(ptr))
+ 		return;
  
- static struct msi_domain_ops dev_ims_domain_ops = {
- 	.get_hwirq	= msi_get_hwirq,
- 	.msi_prepare	= dev_ims_prepare,
-+	.set_desc       = dev_ims_set_desc,
- };
+-	page = virt_to_head_page(ptr);
++	page = compound_head(kmap_to_page((void *)ptr));
  
- static struct irq_chip dev_ims_ir_controller = {
-diff --git a/drivers/base/ims-msi.c b/drivers/base/ims-msi.c
-index 3e579c9..48f3d24 100644
---- a/drivers/base/ims-msi.c
-+++ b/drivers/base/ims-msi.c
-@@ -22,6 +22,15 @@ struct dev_ims_priv_data {
- 
- static DEFINE_IDA(dev_ims_devid_ida);
- 
-+irq_hw_number_t dev_ims_calc_hwirq(struct msi_desc *desc)
-+{
-+	u32 devid;
-+
-+	devid = desc->dev_ims.priv->devid;
-+
-+	return (devid << (32 - DEVIMS_ID_SHIFT)) | desc->dev_ims.ims_index;
-+}
-+
- u32 __dev_ims_desc_mask_irq(struct msi_desc *desc, u32 flag)
- {
- 	u32 mask_bits = desc->dev_ims.masked;
-diff --git a/include/linux/msi.h b/include/linux/msi.h
-index 4543bbf..fe4678e 100644
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -237,6 +237,7 @@ void dev_ims_teardown_irqs(struct device *dev);
- void dev_ims_restore_irqs(struct device *dev);
- int dev_ims_alloc_irqs(struct device *dev, int nvec, struct dev_ims_ops *ops);
- void dev_ims_free_irqs(struct device *dev);
-+irq_hw_number_t dev_ims_calc_hwirq(struct msi_desc *desc);
- 
- /*
-  * The arch hooks to setup up msi irqs. Those functions are
+ 	if (PageSlab(page)) {
+ 		/* Check slab allocator for flags and size. */
+
+
+What's the right way to "ignore" the kmap range? (i.e. it's not Slab, so
+ignore it here: I can't find a page type nor a "is this kmap?" helper...)
+
 -- 
-2.7.4
-
+Kees Cook
