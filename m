@@ -2,95 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B47CB2299
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:52:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F54B22A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389337AbfIMOuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 10:50:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40794 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388998AbfIMOuh (ORCPT
+        id S2389840AbfIMOvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 10:51:43 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:41603 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388958AbfIMOvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 10:50:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
-        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=L2WuVgEWJ1S/DCcbljfrkSPlJ+BBqepA9EJiiwR270o=; b=YRmqjDAz7qLZqG5DjnEH4tIdzC
-        rQVoG/5shJSaY19hAestUS175lC/MF+EkaOPxnav1pO6w7jUwBEm6wa0Zj86HN+Ge5GQ7E7I9YHrt
-        yy1iSKs6kKvTkzziNfevgUU5sTDvngfoLcK5A7itgiT1tyK9z7Xdu05k8Nnwl7vrvj3EO8Hfk64Nq
-        lw4jgFH2iwf5HxTVjbN1Y4mUI9VtOfCWUljd3dobLadwAKygbLz4DaoyAC3NDcIlwnYfE0HcZjfAF
-        5hxJqw6JYjt1hpzALS4IC7gYRREm9uvggerN6gOqq7FhNiZbMHFZaVZS0l0Pi5cEupJufBoDaaXZh
-        LeGJAT8A==;
-Received: from 177.96.232.144.dynamic.adsl.gvt.net.br ([177.96.232.144] helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1i8muB-0002Mn-Qm; Fri, 13 Sep 2019 14:50:35 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92.2)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1i8mu9-00043F-JG; Fri, 13 Sep 2019 11:50:33 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Edac Mailing List <linux-edac@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rrichter@marvell.com>
-Subject: [PATCH 7/7] EDAC: skx_common: get rid of unused type var
-Date:   Fri, 13 Sep 2019 11:50:32 -0300
-Message-Id: <3bbd66908f60d43c2f60c8a16570994cce21a853.1568385816.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1568385816.git.mchehab+samsung@kernel.org>
-References: <cover.1568385816.git.mchehab+samsung@kernel.org>
+        Fri, 13 Sep 2019 10:51:42 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 46VJVz0cMsz1rQBD;
+        Fri, 13 Sep 2019 16:51:34 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 46VJVt04K9z1qqkR;
+        Fri, 13 Sep 2019 16:51:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id pn63FZNt3yCi; Fri, 13 Sep 2019 16:51:32 +0200 (CEST)
+X-Auth-Info: es9SV5MCsNKuZE81a1bCK7kQgeIbSZlFROOU+XfNAiQ=
+Received: from [192.168.1.106] (82-131-128-245.pool.digikabel.hu [82.131.128.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Fri, 13 Sep 2019 16:51:31 +0200 (CEST)
+Subject: Re: [PATCH] tty: 8250_of: Use software emulated RS485 direction
+ control
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-serial@vger.kernel.org,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        John Garry <john.garry@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lubomir Rintel <lkundrak@v3.sk>, Rob Herring <robh@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-kernel@vger.kernel.org
+References: <20190913050105.1132080-1-hs@denx.de>
+ <20190913102409.GF2680@smile.fi.intel.com>
+Reply-To: hs@denx.de
+From:   Heiko Schocher <hs@denx.de>
+Message-ID: <51a21dde-a471-6e8e-8048-50437d740f7f@denx.de>
+Date:   Fri, 13 Sep 2019 16:51:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20190913102409.GF2680@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	drivers/edac/skx_common.c: In function ‘skx_mce_output_error’:
-	drivers/edac/skx_common.c:478:8: warning: variable ‘type’ set but not used [-Wunused-but-set-variable]
-	  478 |  char *type, *optype;
-	      |        ^~~~
+Hello Andy,
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- drivers/edac/skx_common.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Am 13.09.2019 um 12:24 schrieb Andy Shevchenko:
+> On Fri, Sep 13, 2019 at 07:01:05AM +0200, Heiko Schocher wrote:
+>> Use software emulated RS485 direction control to provide RS485 API
+>>
+>> Currently it is not possible to use rs485 as pointer to
+>> rs485_config struct in struct uart_port is NULL in case we
+>> configure the port through device tree.
+> 
+> Thank you for the patch, few recommendations for the future submissions.
+> 
+>> Patch is based on:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>> commit:
+>> 505a8ec7e11a - Revert "drm/i915/userptr: Acquire the page lock around set_page_dirty()"
+> 
+> More reliably is to base on corresponding subsystem tree, i.e. tty-next for
+> this case.
 
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index d8ff63d91b86..83dd5da67a28 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -475,7 +475,7 @@ static void skx_mce_output_error(struct mem_ctl_info *mci,
- 				 struct decoded_addr *res)
- {
- 	enum hw_event_mc_err_type tp_event;
--	char *type, *optype;
-+	char *optype;
- 	bool ripv = GET_BITFIELD(m->mcgstatus, 0, 0);
- 	bool overflow = GET_BITFIELD(m->status, 62, 62);
- 	bool uncorrected_error = GET_BITFIELD(m->status, 61, 61);
-@@ -490,14 +490,11 @@ static void skx_mce_output_error(struct mem_ctl_info *mci,
- 	if (uncorrected_error) {
- 		core_err_cnt = 1;
- 		if (ripv) {
--			type = "FATAL";
- 			tp_event = HW_EVENT_ERR_FATAL;
- 		} else {
--			type = "NON_FATAL";
- 			tp_event = HW_EVENT_ERR_UNCORRECTED;
- 		}
- 	} else {
--		type = "CORRECTED";
- 		tp_event = HW_EVENT_ERR_CORRECTED;
- 	}
- 
+Ok, should I send a rebased v2 (I tend to wait for other comments)?
+
+>> checkpatch output:
+>> $ ./scripts/checkpatch.pl 0001-tty-8250_of-Use-software-emulated-RS485-direction-co.patch
+>> total: 0 errors, 0 warnings, 43 lines checked
+>>
+>> 0001-tty-8250_of-Use-software-emulated-RS485-direction-co.patch has no obvious style problems and is ready for submission.
+> 
+> There is no need to mention this. It's supposed that submitter did that
+> themselves.
+
+Hmm... ok.
+
+> When you gather people to send the patch to, I recommend to use some threshold,
+> e.g. `scripts/get_maintainer.pl --git --git-min-percent=67 ...`
+
+Ah, good tip, thanks!
+
+bye,
+Heiko
 -- 
-2.21.0
-
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
