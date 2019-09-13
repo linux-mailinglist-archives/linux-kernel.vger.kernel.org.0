@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E29BEB1EF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87946B1ED6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389525AbfIMNO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:14:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40362 "EHLO mail.kernel.org"
+        id S2389308AbfIMNNT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:13:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389520AbfIMNO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:14:26 -0400
+        id S2388696AbfIMNNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:13:16 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2E4F214AE;
-        Fri, 13 Sep 2019 13:14:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3023208C0;
+        Fri, 13 Sep 2019 13:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380465;
-        bh=3mAQ9lNo8/G4qstAGCcxNn9wlempJnmli19RkMJo0Qo=;
+        s=default; t=1568380395;
+        bh=aD8VtpCcJNxfCBKT8aY0eKIomDLB0IGe/8mpvYgVHLY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxDP5eUh/YdGM9uum1qe2mB2svR1SdoaxarlmIDzoT6zF+D5AMhdW0oGmYVZowcwX
-         liZaNF89iKeO+ahGJFvgq/dxS7tkGne+8+04AGtWWrRT911pZ0tWznsC4rRETzI743
-         6C/rIWDJO6rkqgiE15e7EGLJEtrAem8CkS/9ciFk=
+        b=Abn43D2vvB65BS5VsJ4p7DzKipzMprnC531H6re0vjVIfgJvzhMXbOXkuRGy2di+b
+         U/sKWVxezwzmWUDfSAad/X7UAJMHop+OCxkQAtRoVF/esJgPHlR3sLsqL6QtQy289I
+         iWHf+qw87kVbLf7j3YZzkUsIugxVz33OjYAh+N/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>, Stable@vger.kernel.org,
+        stable@vger.kernel.org, David Francis <David.Francis@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 050/190] Drivers: hv: kvp: Fix the recent regression caused by incorrect clean-up
-Date:   Fri, 13 Sep 2019 14:05:05 +0100
-Message-Id: <20190913130603.776628737@linuxfoundation.org>
+Subject: [PATCH 4.19 051/190] powerplay: Respect units on max dcfclk watermark
+Date:   Fri, 13 Sep 2019 14:05:06 +0100
+Message-Id: <20190913130603.859449994@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -46,95 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e670de54c813b5bc3672dd1c67871dc60e9206f4 ]
+[ Upstream commit f191415b24a3ad3fa22088af7cd7fc328a2f469f ]
 
-In kvp_send_key(), we do need call process_ib_ipinfo() if
-message->kvp_hdr.operation is KVP_OP_GET_IP_INFO, because it turns out
-the userland hv_kvp_daemon needs the info of operation, adapter_id and
-addr_family. With the incorrect fc62c3b1977d, the host can't get the
-VM's IP via KVP.
+In a refactor, the watermark clock inputs to
+powerplay from DC were changed from units of 10kHz to
+kHz clocks.
 
-And, fc62c3b1977d added a "break;", but actually forgot to initialize
-the key_size/value in the case of KVP_OP_SET, so the default key_size of
-0 is passed to the kvp daemon, and the pool files
-/var/lib/hyperv/.kvp_pool_* can't be updated.
+One division by 100 was not converted into a division
+by 1000.
 
-This patch effectively rolls back the previous fc62c3b1977d, and
-correctly fixes the "this statement may fall through" warnings.
-
-This patch is tested on WS 2012 R2 and 2016.
-
-Fixes: fc62c3b1977d ("Drivers: hv: kvp: Fix two "this statement may fall through" warnings")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David Francis <David.Francis@amd.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hv/hv_kvp.c | 26 ++++++++++++++++++++++----
- 1 file changed, 22 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
-index a7513a8a8e372..d6106e1a0d4af 100644
---- a/drivers/hv/hv_kvp.c
-+++ b/drivers/hv/hv_kvp.c
-@@ -353,6 +353,9 @@ static void process_ib_ipinfo(void *in_msg, void *out_msg, int op)
- 
- 		out->body.kvp_ip_val.dhcp_enabled = in->kvp_ip_val.dhcp_enabled;
- 
-+		/* fallthrough */
-+
-+	case KVP_OP_GET_IP_INFO:
- 		utf16s_to_utf8s((wchar_t *)in->kvp_ip_val.adapter_id,
- 				MAX_ADAPTER_ID_SIZE,
- 				UTF16_LITTLE_ENDIAN,
-@@ -405,7 +408,11 @@ kvp_send_key(struct work_struct *dummy)
- 		process_ib_ipinfo(in_msg, message, KVP_OP_SET_IP_INFO);
- 		break;
- 	case KVP_OP_GET_IP_INFO:
--		/* We only need to pass on message->kvp_hdr.operation.  */
-+		/*
-+		 * We only need to pass on the info of operation, adapter_id
-+		 * and addr_family to the userland kvp daemon.
-+		 */
-+		process_ib_ipinfo(in_msg, message, KVP_OP_GET_IP_INFO);
- 		break;
- 	case KVP_OP_SET:
- 		switch (in_msg->body.kvp_set.data.value_type) {
-@@ -446,9 +453,9 @@ kvp_send_key(struct work_struct *dummy)
- 
- 		}
- 
--		break;
--
--	case KVP_OP_GET:
-+		/*
-+		 * The key is always a string - utf16 encoding.
-+		 */
- 		message->body.kvp_set.data.key_size =
- 			utf16s_to_utf8s(
- 			(wchar_t *)in_msg->body.kvp_set.data.key,
-@@ -456,6 +463,17 @@ kvp_send_key(struct work_struct *dummy)
- 			UTF16_LITTLE_ENDIAN,
- 			message->body.kvp_set.data.key,
- 			HV_KVP_EXCHANGE_MAX_KEY_SIZE - 1) + 1;
-+
-+		break;
-+
-+	case KVP_OP_GET:
-+		message->body.kvp_get.data.key_size =
-+			utf16s_to_utf8s(
-+			(wchar_t *)in_msg->body.kvp_get.data.key,
-+			in_msg->body.kvp_get.data.key_size,
-+			UTF16_LITTLE_ENDIAN,
-+			message->body.kvp_get.data.key,
-+			HV_KVP_EXCHANGE_MAX_KEY_SIZE - 1) + 1;
- 		break;
- 
- 	case KVP_OP_DELETE:
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu_helper.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu_helper.c
+index 2aab1b4759459..a321c465b7dce 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu_helper.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu_helper.c
+@@ -674,7 +674,7 @@ int smu_set_watermarks_for_clocks_ranges(void *wt_table,
+ 		table->WatermarkRow[1][i].MaxClock =
+ 			cpu_to_le16((uint16_t)
+ 			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_max_dcfclk_clk_in_khz) /
+-			100);
++			1000);
+ 		table->WatermarkRow[1][i].MinUclk =
+ 			cpu_to_le16((uint16_t)
+ 			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_min_mem_clk_in_khz) /
 -- 
 2.20.1
 
