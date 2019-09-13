@@ -2,147 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FAF2B1DB8
+	by mail.lfdr.de (Postfix) with ESMTP id 899C0B1DB9
 	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:30:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbfIMM3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 08:29:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57132 "EHLO mx1.redhat.com"
+        id S1730146AbfIMM3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 08:29:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51540 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729796AbfIMM3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 08:29:13 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1730031AbfIMM3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 08:29:16 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C7BF418C892F;
-        Fri, 13 Sep 2019 12:29:12 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7BCAB30842AF;
+        Fri, 13 Sep 2019 12:29:16 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 940C45C219;
-        Fri, 13 Sep 2019 12:29:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F30E60C44;
+        Fri, 13 Sep 2019 12:29:13 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 58C6931F38; Fri, 13 Sep 2019 14:29:09 +0200 (CEST)
+        id 78E0031F3D; Fri, 13 Sep 2019 14:29:09 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Gerd Hoffmann <kraxel@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/8] drm/ttm: factor out ttm_bo_mmap_vma_setup
-Date:   Fri, 13 Sep 2019 14:29:04 +0200
-Message-Id: <20190913122908.784-5-kraxel@redhat.com>
+Subject: [PATCH 5/8] drm/ttm: add drm_gem_ttm_mmap()
+Date:   Fri, 13 Sep 2019 14:29:05 +0200
+Message-Id: <20190913122908.784-6-kraxel@redhat.com>
 In-Reply-To: <20190913122908.784-1-kraxel@redhat.com>
 References: <20190913122908.784-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.70]); Fri, 13 Sep 2019 12:29:12 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 13 Sep 2019 12:29:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Factor out ttm vma setup to a new function.  Reduces
-code duplication a bit and allows to implement
-&drm_gem_object_funcs.mmap in gem ttm helpers.
+Add helper function to mmap ttm bo's using &drm_gem_object_funcs.mmap().
+
+Note that with this code path access verification is done by
+drm_gem_mmap() (which calls drm_vma_node_is_allowed(()).
+The &ttm_bo_driver.verify_access() callback is is not used.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- include/drm/ttm/ttm_bo_api.h    |  8 ++++++
- drivers/gpu/drm/ttm/ttm_bo_vm.c | 47 ++++++++++++++++++---------------
- 2 files changed, 33 insertions(+), 22 deletions(-)
+ include/drm/drm_gem_ttm_helper.h     |  2 ++
+ drivers/gpu/drm/drm_gem_ttm_helper.c | 19 +++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
-index 43c4929a2171..88c652f49602 100644
---- a/include/drm/ttm/ttm_bo_api.h
-+++ b/include/drm/ttm/ttm_bo_api.h
-@@ -734,6 +734,14 @@ int ttm_fbdev_mmap(struct vm_area_struct *vma, struct ttm_buffer_object *bo);
- int ttm_bo_mmap(struct file *filp, struct vm_area_struct *vma,
- 		struct ttm_bo_device *bdev);
+diff --git a/include/drm/drm_gem_ttm_helper.h b/include/drm/drm_gem_ttm_helper.h
+index 6268f89c5a48..118cef76f84f 100644
+--- a/include/drm/drm_gem_ttm_helper.h
++++ b/include/drm/drm_gem_ttm_helper.h
+@@ -15,5 +15,7 @@
+ 
+ void drm_gem_ttm_print_info(struct drm_printer *p, unsigned int indent,
+ 			    const struct drm_gem_object *gem);
++int drm_gem_ttm_mmap(struct drm_gem_object *gem,
++		     struct vm_area_struct *vma);
+ 
+ #endif
+diff --git a/drivers/gpu/drm/drm_gem_ttm_helper.c b/drivers/gpu/drm/drm_gem_ttm_helper.c
+index 9a4bafcf20df..34ce6cf78b35 100644
+--- a/drivers/gpu/drm/drm_gem_ttm_helper.c
++++ b/drivers/gpu/drm/drm_gem_ttm_helper.c
+@@ -52,5 +52,24 @@ void drm_gem_ttm_print_info(struct drm_printer *p, unsigned int indent,
+ }
+ EXPORT_SYMBOL(drm_gem_ttm_print_info);
  
 +/**
-+ * ttm_bo_mmap_vma_setup - initialize vma for ttm bo mmap
++ * drm_gem_ttm_mmap() - mmap &ttm_buffer_object
++ * @gem: GEM object.
++ * @vma: vm area.
 + *
-+ * @bo: The buffer object.
-+ * @vma: vma as input from the mmap method.
++ * This function can be used as &drm_gem_object_funcs.mmap
++ * callback.
 + */
-+void ttm_bo_mmap_vma_setup(struct ttm_buffer_object *bo, struct vm_area_struct *vma);
-+
- void *ttm_kmap_atomic_prot(struct page *page, pgprot_t prot);
- 
- void ttm_kunmap_atomic_prot(void *addr, pgprot_t prot);
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-index 4aa007edffb0..7c0e85c10e0e 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
-@@ -426,6 +426,29 @@ static struct ttm_buffer_object *ttm_bo_vm_lookup(struct ttm_bo_device *bdev,
- 	return bo;
- }
- 
-+void ttm_bo_mmap_vma_setup(struct ttm_buffer_object *bo, struct vm_area_struct *vma)
++int drm_gem_ttm_mmap(struct drm_gem_object *gem,
++		     struct vm_area_struct *vma)
 +{
-+	vma->vm_ops = &ttm_bo_vm_ops;
++	struct ttm_buffer_object *bo = drm_gem_ttm_of_gem(gem);
 +
-+	/*
-+	 * Note: We're transferring the bo reference to
-+	 * vma->vm_private_data here.
-+	 */
-+
-+	vma->vm_private_data = bo;
-+
-+	/*
-+	 * We'd like to use VM_PFNMAP on shared mappings, where
-+	 * (vma->vm_flags & VM_SHARED) != 0, for performance reasons,
-+	 * but for some reason VM_PFNMAP + x86 PAT + write-combine is very
-+	 * bad for performance. Until that has been sorted out, use
-+	 * VM_MIXEDMAP on all mappings. See freedesktop.org bug #75719
-+	 */
-+	vma->vm_flags |= VM_MIXEDMAP;
-+	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
++	ttm_bo_get(bo);
++	ttm_bo_mmap_vma_setup(bo, vma);
++	return 0;
 +}
-+EXPORT_SYMBOL(ttm_bo_mmap_vma_setup);
++EXPORT_SYMBOL(drm_gem_ttm_mmap);
 +
- int ttm_bo_mmap(struct file *filp, struct vm_area_struct *vma,
- 		struct ttm_bo_device *bdev)
- {
-@@ -449,24 +472,7 @@ int ttm_bo_mmap(struct file *filp, struct vm_area_struct *vma,
- 	if (unlikely(ret != 0))
- 		goto out_unref;
- 
--	vma->vm_ops = &ttm_bo_vm_ops;
--
--	/*
--	 * Note: We're transferring the bo reference to
--	 * vma->vm_private_data here.
--	 */
--
--	vma->vm_private_data = bo;
--
--	/*
--	 * We'd like to use VM_PFNMAP on shared mappings, where
--	 * (vma->vm_flags & VM_SHARED) != 0, for performance reasons,
--	 * but for some reason VM_PFNMAP + x86 PAT + write-combine is very
--	 * bad for performance. Until that has been sorted out, use
--	 * VM_MIXEDMAP on all mappings. See freedesktop.org bug #75719
--	 */
--	vma->vm_flags |= VM_MIXEDMAP;
--	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
-+	ttm_bo_mmap_vma_setup(bo, vma);
- 	return 0;
- out_unref:
- 	ttm_bo_put(bo);
-@@ -481,10 +487,7 @@ int ttm_fbdev_mmap(struct vm_area_struct *vma, struct ttm_buffer_object *bo)
- 
- 	ttm_bo_get(bo);
- 
--	vma->vm_ops = &ttm_bo_vm_ops;
--	vma->vm_private_data = bo;
--	vma->vm_flags |= VM_MIXEDMAP;
--	vma->vm_flags |= VM_IO | VM_DONTEXPAND;
-+	ttm_bo_mmap_vma_setup(bo, vma);
- 	return 0;
- }
- EXPORT_SYMBOL(ttm_fbdev_mmap);
+ MODULE_DESCRIPTION("DRM gem ttm helpers");
+ MODULE_LICENSE("GPL");
 -- 
 2.18.1
 
