@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE2A1B2029
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12769B202C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390008AbfIMNRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:17:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44168 "EHLO mail.kernel.org"
+        id S2388236AbfIMNR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:17:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389415AbfIMNRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:17:06 -0400
+        id S2390033AbfIMNRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:17:18 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AD41208C0;
-        Fri, 13 Sep 2019 13:17:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12891206BB;
+        Fri, 13 Sep 2019 13:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380626;
-        bh=idB7S4GBwREfJt9IsNiq7AuzPjumW9BsBfo2bRyJezg=;
+        s=default; t=1568380637;
+        bh=qmOB3n/qyuqx5APPgMjwIF0rFMVyzdqDDGzVByua/Y8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oH9p1YssbclE8qHTUliWsrI/JfSXCfda4pJDY3icx7GJxlZVNe9F3v0hUaM9yRJ42
-         +ltNf0wttSWP0E9QN7NRSQ6b3SG7Jv3SyxsogmEWVzSuuZJvnPR2WGtwG6q0V8Y+cK
-         8tqi1jOI04787h4yBvhofJaTJ9hQTQLsJ5yGscTs=
+        b=wUBnb1JEava3By1hM91X6G5Z4rCNQZkCP2voa/XAy1dP5ttCecn6JVZY35g73VIR4
+         cigfb00bku0C17lwLV+vZf8AFQB2tnactEpSQPJuOha+AqJOl6eKn49Rb7DHfiY+J1
+         vWOaYrv2y3pp5A/RbdkTEs+8C3mVoTtWabyKQU34=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@vger.kernl.org,
-        Yufen Yu <yuyufen@huawei.com>,
-        Mike Snitzer <snitzer@redhat.com>,
+        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 126/190] dm mpath: fix missing call of path selector type->end_io
-Date:   Fri, 13 Sep 2019 14:06:21 +0100
-Message-Id: <20190913130609.957728739@linuxfoundation.org>
+Subject: [PATCH 4.19 130/190] cifs: smbd: take an array of reqeusts when sending upper layer data
+Date:   Fri, 13 Sep 2019 14:06:25 +0100
+Message-Id: <20190913130610.324318195@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -45,139 +44,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5de719e3d01b4abe0de0d7b857148a880ff2a90b ]
+[ Upstream commit 4739f2328661d070f93f9bcc8afb2a82706c826d ]
 
-After commit 396eaf21ee17 ("blk-mq: improve DM's blk-mq IO merging via
-blk_insert_cloned_request feedback"), map_request() will requeue the tio
-when issued clone request return BLK_STS_RESOURCE or BLK_STS_DEV_RESOURCE.
+To support compounding, __smb_send_rqst() now sends an array of requests to
+the transport layer.
+Change smbd_send() to take an array of requests, and send them in as few
+packets as possible.
 
-Thus, if device driver status is error, a tio may be requeued multiple
-times until the return value is not DM_MAPIO_REQUEUE.  That means
-type->start_io may be called multiple times, while type->end_io is only
-called when IO complete.
-
-In fact, even without commit 396eaf21ee17, setup_clone() failure can
-also cause tio requeue and associated missed call to type->end_io.
-
-The service-time path selector selects path based on in_flight_size,
-which is increased by st_start_io() and decreased by st_end_io().
-Missed calls to st_end_io() can lead to in_flight_size count error and
-will cause the selector to make the wrong choice.  In addition,
-queue-length path selector will also be affected.
-
-To fix the problem, call type->end_io in ->release_clone_rq before tio
-requeue.  map_info is passed to ->release_clone_rq() for map_request()
-error path that result in requeue.
-
-Fixes: 396eaf21ee17 ("blk-mq: improve DM's blk-mq IO merging via blk_insert_cloned_request feedback")
-Cc: stable@vger.kernl.org
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Long Li <longli@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-mpath.c         | 17 ++++++++++++++++-
- drivers/md/dm-rq.c            |  8 ++++----
- drivers/md/dm-target.c        |  3 ++-
- include/linux/device-mapper.h |  3 ++-
- 4 files changed, 24 insertions(+), 7 deletions(-)
+ fs/cifs/smbdirect.c | 55 +++++++++++++++++++++++----------------------
+ fs/cifs/smbdirect.h |  5 +++--
+ fs/cifs/transport.c |  2 +-
+ 3 files changed, 32 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
-index baa966e2778c0..481e54ded9dc7 100644
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -554,8 +554,23 @@ static int multipath_clone_and_map(struct dm_target *ti, struct request *rq,
- 	return DM_MAPIO_REMAPPED;
- }
- 
--static void multipath_release_clone(struct request *clone)
-+static void multipath_release_clone(struct request *clone,
-+				    union map_info *map_context)
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index 5fdb9a509a97f..1959931e14c1e 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -2090,7 +2090,8 @@ int smbd_recv(struct smbd_connection *info, struct msghdr *msg)
+  * rqst: the data to write
+  * return value: 0 if successfully write, otherwise error code
+  */
+-int smbd_send(struct TCP_Server_Info *server, struct smb_rqst *rqst)
++int smbd_send(struct TCP_Server_Info *server,
++	int num_rqst, struct smb_rqst *rqst_array)
  {
-+	if (unlikely(map_context)) {
-+		/*
-+		 * non-NULL map_context means caller is still map
-+		 * method; must undo multipath_clone_and_map()
-+		 */
-+		struct dm_mpath_io *mpio = get_mpio(map_context);
-+		struct pgpath *pgpath = mpio->pgpath;
-+
-+		if (pgpath && pgpath->pg->ps.type->end_io)
-+			pgpath->pg->ps.type->end_io(&pgpath->pg->ps,
-+						    &pgpath->path,
-+						    mpio->nr_bytes);
-+	}
-+
- 	blk_put_request(clone);
- }
+ 	struct smbd_connection *info = server->smbd_conn;
+ 	struct kvec vec;
+@@ -2102,6 +2103,8 @@ int smbd_send(struct TCP_Server_Info *server, struct smb_rqst *rqst)
+ 		info->max_send_size - sizeof(struct smbd_data_transfer);
+ 	struct kvec *iov;
+ 	int rc;
++	struct smb_rqst *rqst;
++	int rqst_idx;
  
-diff --git a/drivers/md/dm-rq.c b/drivers/md/dm-rq.c
-index 264b84e274aac..17c6a73c536c6 100644
---- a/drivers/md/dm-rq.c
-+++ b/drivers/md/dm-rq.c
-@@ -219,7 +219,7 @@ static void dm_end_request(struct request *clone, blk_status_t error)
- 	struct request *rq = tio->orig;
- 
- 	blk_rq_unprep_clone(clone);
--	tio->ti->type->release_clone_rq(clone);
-+	tio->ti->type->release_clone_rq(clone, NULL);
- 
- 	rq_end_stats(md, rq);
- 	if (!rq->q->mq_ops)
-@@ -270,7 +270,7 @@ static void dm_requeue_original_request(struct dm_rq_target_io *tio, bool delay_
- 	rq_end_stats(md, rq);
- 	if (tio->clone) {
- 		blk_rq_unprep_clone(tio->clone);
--		tio->ti->type->release_clone_rq(tio->clone);
-+		tio->ti->type->release_clone_rq(tio->clone, NULL);
+ 	info->smbd_send_pending++;
+ 	if (info->transport_status != SMBD_CONNECTED) {
+@@ -2109,47 +2112,41 @@ int smbd_send(struct TCP_Server_Info *server, struct smb_rqst *rqst)
+ 		goto done;
  	}
  
- 	if (!rq->q->mq_ops)
-@@ -495,7 +495,7 @@ check_again:
- 	case DM_MAPIO_REMAPPED:
- 		if (setup_clone(clone, rq, tio, GFP_ATOMIC)) {
- 			/* -ENOMEM */
--			ti->type->release_clone_rq(clone);
-+			ti->type->release_clone_rq(clone, &tio->info);
- 			return DM_MAPIO_REQUEUE;
+-	/*
+-	 * Skip the RFC1002 length defined in MS-SMB2 section 2.1
+-	 * It is used only for TCP transport in the iov[0]
+-	 * In future we may want to add a transport layer under protocol
+-	 * layer so this will only be issued to TCP transport
+-	 */
+-
+-	if (rqst->rq_iov[0].iov_len != 4) {
+-		log_write(ERR, "expected the pdu length in 1st iov, but got %zu\n", rqst->rq_iov[0].iov_len);
+-		return -EINVAL;
+-	}
+-
+ 	/*
+ 	 * Add in the page array if there is one. The caller needs to set
+ 	 * rq_tailsz to PAGE_SIZE when the buffer has multiple pages and
+ 	 * ends at page boundary
+ 	 */
+-	buflen = smb_rqst_len(server, rqst);
++	remaining_data_length = 0;
++	for (i = 0; i < num_rqst; i++)
++		remaining_data_length += smb_rqst_len(server, &rqst_array[i]);
+ 
+-	if (buflen + sizeof(struct smbd_data_transfer) >
++	if (remaining_data_length + sizeof(struct smbd_data_transfer) >
+ 		info->max_fragmented_send_size) {
+ 		log_write(ERR, "payload size %d > max size %d\n",
+-			buflen, info->max_fragmented_send_size);
++			remaining_data_length, info->max_fragmented_send_size);
+ 		rc = -EINVAL;
+ 		goto done;
+ 	}
+ 
+-	iov = &rqst->rq_iov[1];
++	rqst_idx = 0;
++
++next_rqst:
++	rqst = &rqst_array[rqst_idx];
++	iov = rqst->rq_iov;
+ 
+-	cifs_dbg(FYI, "Sending smb (RDMA): smb_len=%u\n", buflen);
+-	for (i = 0; i < rqst->rq_nvec-1; i++)
++	cifs_dbg(FYI, "Sending smb (RDMA): idx=%d smb_len=%lu\n",
++		rqst_idx, smb_rqst_len(server, rqst));
++	for (i = 0; i < rqst->rq_nvec; i++)
+ 		dump_smb(iov[i].iov_base, iov[i].iov_len);
+ 
+-	remaining_data_length = buflen;
+ 
+-	log_write(INFO, "rqst->rq_nvec=%d rqst->rq_npages=%d rq_pagesz=%d "
+-		"rq_tailsz=%d buflen=%d\n",
+-		rqst->rq_nvec, rqst->rq_npages, rqst->rq_pagesz,
+-		rqst->rq_tailsz, buflen);
++	log_write(INFO, "rqst_idx=%d nvec=%d rqst->rq_npages=%d rq_pagesz=%d "
++		"rq_tailsz=%d buflen=%lu\n",
++		rqst_idx, rqst->rq_nvec, rqst->rq_npages, rqst->rq_pagesz,
++		rqst->rq_tailsz, smb_rqst_len(server, rqst));
+ 
+-	start = i = iov[0].iov_len ? 0 : 1;
++	start = i = 0;
+ 	buflen = 0;
+ 	while (true) {
+ 		buflen += iov[i].iov_len;
+@@ -2197,14 +2194,14 @@ int smbd_send(struct TCP_Server_Info *server, struct smb_rqst *rqst)
+ 						goto done;
+ 				}
+ 				i++;
+-				if (i == rqst->rq_nvec-1)
++				if (i == rqst->rq_nvec)
+ 					break;
+ 			}
+ 			start = i;
+ 			buflen = 0;
+ 		} else {
+ 			i++;
+-			if (i == rqst->rq_nvec-1) {
++			if (i == rqst->rq_nvec) {
+ 				/* send out all remaining vecs */
+ 				remaining_data_length -= buflen;
+ 				log_write(INFO,
+@@ -2248,6 +2245,10 @@ int smbd_send(struct TCP_Server_Info *server, struct smb_rqst *rqst)
  		}
+ 	}
  
-@@ -505,7 +505,7 @@ check_again:
- 		ret = dm_dispatch_clone_request(clone, rq);
- 		if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE) {
- 			blk_rq_unprep_clone(clone);
--			tio->ti->type->release_clone_rq(clone);
-+			tio->ti->type->release_clone_rq(clone, &tio->info);
- 			tio->clone = NULL;
- 			if (!rq->q->mq_ops)
- 				r = DM_MAPIO_DELAY_REQUEUE;
-diff --git a/drivers/md/dm-target.c b/drivers/md/dm-target.c
-index 314d17ca64668..64dd0b34fcf49 100644
---- a/drivers/md/dm-target.c
-+++ b/drivers/md/dm-target.c
-@@ -136,7 +136,8 @@ static int io_err_clone_and_map_rq(struct dm_target *ti, struct request *rq,
- 	return DM_MAPIO_KILL;
- }
++	rqst_idx++;
++	if (rqst_idx < num_rqst)
++		goto next_rqst;
++
+ done:
+ 	/*
+ 	 * As an optimization, we don't wait for individual I/O to finish
+diff --git a/fs/cifs/smbdirect.h b/fs/cifs/smbdirect.h
+index a11096254f296..b5c240ff21919 100644
+--- a/fs/cifs/smbdirect.h
++++ b/fs/cifs/smbdirect.h
+@@ -292,7 +292,8 @@ void smbd_destroy(struct smbd_connection *info);
  
--static void io_err_release_clone_rq(struct request *clone)
-+static void io_err_release_clone_rq(struct request *clone,
-+				    union map_info *map_context)
- {
- }
+ /* Interface for carrying upper layer I/O through send/recv */
+ int smbd_recv(struct smbd_connection *info, struct msghdr *msg);
+-int smbd_send(struct TCP_Server_Info *server, struct smb_rqst *rqst);
++int smbd_send(struct TCP_Server_Info *server,
++	int num_rqst, struct smb_rqst *rqst);
  
-diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-index bef2e36c01b4b..91f9f95ad5066 100644
---- a/include/linux/device-mapper.h
-+++ b/include/linux/device-mapper.h
-@@ -62,7 +62,8 @@ typedef int (*dm_clone_and_map_request_fn) (struct dm_target *ti,
- 					    struct request *rq,
- 					    union map_info *map_context,
- 					    struct request **clone);
--typedef void (*dm_release_clone_request_fn) (struct request *clone);
-+typedef void (*dm_release_clone_request_fn) (struct request *clone,
-+					     union map_info *map_context);
+ enum mr_state {
+ 	MR_READY,
+@@ -332,7 +333,7 @@ static inline void *smbd_get_connection(
+ static inline int smbd_reconnect(struct TCP_Server_Info *server) {return -1; }
+ static inline void smbd_destroy(struct smbd_connection *info) {}
+ static inline int smbd_recv(struct smbd_connection *info, struct msghdr *msg) {return -1; }
+-static inline int smbd_send(struct TCP_Server_Info *server, struct smb_rqst *rqst) {return -1; }
++static inline int smbd_send(struct TCP_Server_Info *server, int num_rqst, struct smb_rqst *rqst) {return -1; }
+ #endif
  
- /*
-  * Returns:
+ #endif
+diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
+index f2938bd95c40e..fe77f41bff9f2 100644
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -287,7 +287,7 @@ __smb_send_rqst(struct TCP_Server_Info *server, int num_rqst,
+ 	__be32 rfc1002_marker;
+ 
+ 	if (cifs_rdma_enabled(server) && server->smbd_conn) {
+-		rc = smbd_send(server, rqst);
++		rc = smbd_send(server, num_rqst, rqst);
+ 		goto smbd_done;
+ 	}
+ 	if (ssocket == NULL)
 -- 
 2.20.1
 
