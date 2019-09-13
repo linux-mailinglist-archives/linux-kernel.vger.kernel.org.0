@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC450B1F60
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AB3EB1F91
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390317AbfIMNSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:18:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46606 "EHLO mail.kernel.org"
+        id S2390605AbfIMNUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:20:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390296AbfIMNSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:18:50 -0400
+        id S2389666AbfIMNUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:20:31 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5C17206A5;
-        Fri, 13 Sep 2019 13:18:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA0F3214D8;
+        Fri, 13 Sep 2019 13:20:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380730;
-        bh=WJbq07PQexHhHh8h+8A/c7rxEiPdXwlQTv9J9HxJxdU=;
+        s=default; t=1568380830;
+        bh=VoqOr//yZFOicsBULwh4G3FSgIQORcRzufwM9JsAIrg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PEzzxPuSHZ36V7KcwsAZS5PLhe58dVlDOJHrM2TUP1TdwX8EA4xCc9lkRivLbqG6q
-         X7JGFF7C0dOt+euzaTmwiE3xkVovBHqDukrzLd62bou2vEt2uW9RL5EtZsaluuX9iW
-         YSX9j02rUZ5yfJ9/cWIk65MZ+qTHcPho1ETFNjWM=
+        b=OYIuSF2hziHE7vZWwEOZbl/pMIJ6Z8ync+jbiNVGix9VDGn4xtFwMJ7PiP7APsD5c
+         OAqV/BqUh21v8t0KI+C/v3FXQ1ntCf5IQpd94L9b0BVWAa0CQk7wOWz31ci0G3SIPO
+         D+Gxnta0KsQvnAqoZaGlb5AN4Y9OPNTdlzXDCNTE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 158/190] ARM: dts: gemini: Set DIR-685 SPI CS as active low
-Date:   Fri, 13 Sep 2019 14:06:53 +0100
-Message-Id: <20190913130612.543697910@linuxfoundation.org>
+Subject: [PATCH 4.19 160/190] RDMA/srp: Accept again source addresses that do not have a port number
+Date:   Fri, 13 Sep 2019 14:06:55 +0100
+Message-Id: <20190913130612.699690892@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -44,34 +44,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f90b8fda3a9d72a9422ea80ae95843697f94ea4a ]
+[ Upstream commit bcef5b7215681250c4bf8961dfe15e9e4fef97d0 ]
 
-The SPI to the display on the DIR-685 is active low, we were
-just saved by the SPI library enforcing active low on everything
-before, so set it as active low to avoid ambiguity.
+The function srp_parse_in() is used both for parsing source address
+specifications and for target address specifications. Target addresses
+must have a port number. Having to specify a port number for source
+addresses is inconvenient. Make sure that srp_parse_in() supports again
+parsing addresses with no port number.
 
-Link: https://lore.kernel.org/r/20190715202101.16060-1-linus.walleij@linaro.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Cc: <stable@vger.kernel.org>
+Fixes: c62adb7def71 ("IB/srp: Fix IPv6 address parsing")
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/gemini-dlink-dir-685.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/ulp/srp/ib_srp.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/gemini-dlink-dir-685.dts b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-index 502a361d1fe90..15d6157b661db 100644
---- a/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-+++ b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-@@ -65,7 +65,7 @@
- 		gpio-miso = <&gpio1 8 GPIO_ACTIVE_HIGH>;
- 		gpio-mosi = <&gpio1 7 GPIO_ACTIVE_HIGH>;
- 		/* Collides with pflash CE1, not so cool */
--		cs-gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>;
-+		cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
- 		num-chipselects = <1>;
- 
- 		panel: display@0 {
+diff --git a/drivers/infiniband/ulp/srp/ib_srp.c b/drivers/infiniband/ulp/srp/ib_srp.c
+index 9da30d88a615e..bc6a44a16445c 100644
+--- a/drivers/infiniband/ulp/srp/ib_srp.c
++++ b/drivers/infiniband/ulp/srp/ib_srp.c
+@@ -3404,13 +3404,14 @@ static const match_table_t srp_opt_tokens = {
+  * @net:	   [in]  Network namespace.
+  * @sa:		   [out] Address family, IP address and port number.
+  * @addr_port_str: [in]  IP address and port number.
++ * @has_port:	   [out] Whether or not @addr_port_str includes a port number.
+  *
+  * Parse the following address formats:
+  * - IPv4: <ip_address>:<port>, e.g. 1.2.3.4:5.
+  * - IPv6: \[<ipv6_address>\]:<port>, e.g. [1::2:3%4]:5.
+  */
+ static int srp_parse_in(struct net *net, struct sockaddr_storage *sa,
+-			const char *addr_port_str)
++			const char *addr_port_str, bool *has_port)
+ {
+ 	char *addr_end, *addr = kstrdup(addr_port_str, GFP_KERNEL);
+ 	char *port_str;
+@@ -3419,9 +3420,12 @@ static int srp_parse_in(struct net *net, struct sockaddr_storage *sa,
+ 	if (!addr)
+ 		return -ENOMEM;
+ 	port_str = strrchr(addr, ':');
+-	if (!port_str)
+-		return -EINVAL;
+-	*port_str++ = '\0';
++	if (port_str && strchr(port_str, ']'))
++		port_str = NULL;
++	if (port_str)
++		*port_str++ = '\0';
++	if (has_port)
++		*has_port = port_str != NULL;
+ 	ret = inet_pton_with_scope(net, AF_INET, addr, port_str, sa);
+ 	if (ret && addr[0]) {
+ 		addr_end = addr + strlen(addr) - 1;
+@@ -3443,6 +3447,7 @@ static int srp_parse_options(struct net *net, const char *buf,
+ 	char *p;
+ 	substring_t args[MAX_OPT_ARGS];
+ 	unsigned long long ull;
++	bool has_port;
+ 	int opt_mask = 0;
+ 	int token;
+ 	int ret = -EINVAL;
+@@ -3541,7 +3546,8 @@ static int srp_parse_options(struct net *net, const char *buf,
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
+-			ret = srp_parse_in(net, &target->rdma_cm.src.ss, p);
++			ret = srp_parse_in(net, &target->rdma_cm.src.ss, p,
++					   NULL);
+ 			if (ret < 0) {
+ 				pr_warn("bad source parameter '%s'\n", p);
+ 				kfree(p);
+@@ -3557,7 +3563,10 @@ static int srp_parse_options(struct net *net, const char *buf,
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
+-			ret = srp_parse_in(net, &target->rdma_cm.dst.ss, p);
++			ret = srp_parse_in(net, &target->rdma_cm.dst.ss, p,
++					   &has_port);
++			if (!has_port)
++				ret = -EINVAL;
+ 			if (ret < 0) {
+ 				pr_warn("bad dest parameter '%s'\n", p);
+ 				kfree(p);
 -- 
 2.20.1
 
