@@ -2,326 +2,260 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD04B19CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 10:46:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8263AB1A0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 10:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387591AbfIMIqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 04:46:18 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40790 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387499AbfIMIqS (ORCPT
+        id S2387870AbfIMIrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 04:47:24 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47788 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387581AbfIMIrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 04:46:18 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l3so8491066wru.7
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 01:46:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=GzIH6oiBi70p/v479m1IVvyZsoprTy/n2kolGjI6PJ0=;
-        b=usywg2vtWrZ3CrJygqz+cMxJ2GJfW/aKureTUYjWcVrLQM68WGD4li+WbML7/zP8fz
-         H40NRgA455aa7v/qheQUrHVYvSDOPZv5Q2CH0i5Z/Gfs0o4C/PnuUQ5JqEUawUFpMRKv
-         JwxVk8BB5qZ7UBELb5sf0YAY4f+BIC8smvYIAwF4p4CtXP/bR6orQOZqbKUflty6ZNG2
-         Uojv/Dea+fFB3Xt/aFKzj7UXHcu0ht4ZIk6ZSDRq9naEclpxZsMmoQaPOgHWvlVXQA1I
-         2+oGHR9s7oddt0Yg25NOOwuUpROl2xZPBW0Oo6XRuSqu9ghE5bXarvfN5IRLnwieORvt
-         EIoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=GzIH6oiBi70p/v479m1IVvyZsoprTy/n2kolGjI6PJ0=;
-        b=b5eO7Jzyt8tQJryeEhqwqo5ZMnp7L6GSBPO1gGRnTe/f+0jtxLiK9qPJ/3TDOH92Tq
-         mKJiVdDvbZD19Skecw8j7o3F9I4ecup30P5XK8AL8ispbfVlLoJzBkenMH5T2Wt3Q4kM
-         GJjDfAqKWIBWvBC7qc/tVUOybNUWy+jVNse+67+HdvDaa90nLCaW1p57Vta4RzAlYX2t
-         WmnFbgbBfXr7CI9qg6ovNzZiCCcf10IzW4Nid+xxUaO2+czr1OKlRtncX6fgbEB2OChc
-         Bq59CBZ9bOEFmOJ3rychL2BOqH2X25fClB6/NkGLuGfNGJU/OTBpApnl+vFP36PQOa3p
-         L+sg==
-X-Gm-Message-State: APjAAAUFrCw+gTOnF1nxlCReZqa6MVq09fgnyhuE1LcuTrGiWtA7lPzO
-        4nJ9dlNCtT/XO/8i1JB0Tm2M5w==
-X-Google-Smtp-Source: APXvYqxVYGDhAUAwh7E8NpBq7VN5JG7K5VF+vuH6zorXtEY/Q3wuVryYjx0GGDplWdj2bi67MkpnLg==
-X-Received: by 2002:a5d:4444:: with SMTP id x4mr37232191wrr.11.1568364374507;
-        Fri, 13 Sep 2019 01:46:14 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id r18sm1990649wme.48.2019.09.13.01.46.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Sep 2019 01:46:13 -0700 (PDT)
-Subject: Re: [PATCH v3] drm: bridge/dw_hdmi: add audio sample channel status
- setting
-To:     Jonas Karlman <jonas@kwiboo.se>,
-        Cheng-yi Chiang <cychiang@chromium.org>
-Cc:     =?UTF-8?Q?Jernej_=c5=a0krabec?= <jernej.skrabec@siol.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Fri, 13 Sep 2019 04:47:23 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190913084720euoutp029c29ecf574d0ab770cb0d41bdba12794~D8yYsCBRj0687906879euoutp02m
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 08:47:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190913084720euoutp029c29ecf574d0ab770cb0d41bdba12794~D8yYsCBRj0687906879euoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1568364440;
+        bh=pHzQlbDo1C4cXmBS7A3CPSHtIvcSShpbfes0/svvBAk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=IQZ3Bhb7LDMPNUMHIk2lfvY63nLiQDJln2N9hGBybTPIBWde9NjzU6YpQ0Op/ygi8
+         c/fJq43NH5m6fF8+104+Sn1qlBuqYw8ZZnLTvITUu0O1AVsVb1js8mgUZ3evk0g86I
+         G5Og1+b5SKTebiE50AvNsmaPTRgl9pHrkAdUzdTU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190913084719eucas1p13dd58e4dc9a40d174f07f71221dfcdce~D8yX10TT02512225122eucas1p1X;
+        Fri, 13 Sep 2019 08:47:19 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1A.5A.04374.7975B7D5; Fri, 13
+        Sep 2019 09:47:19 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190913084718eucas1p1ddebd180b28385b21873144dfdaccc57~D8yW_3pEY2930829308eucas1p1x;
+        Fri, 13 Sep 2019 08:47:18 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190913084718eusmtrp1f4c3830eba1d66ec5047d67dfa572e37~D8yWwLvQY2570325703eusmtrp1d;
+        Fri, 13 Sep 2019 08:47:18 +0000 (GMT)
+X-AuditID: cbfec7f5-4f7ff70000001116-90-5d7b579784a9
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 7F.C4.04117.6975B7D5; Fri, 13
+        Sep 2019 09:47:18 +0100 (BST)
+Received: from [106.120.51.74] (unknown [106.120.51.74]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190913084717eusmtip20eec82ae46ffc257da69575ea68a8e64~D8yWEbZkx1334313343eusmtip2x;
+        Fri, 13 Sep 2019 08:47:17 +0000 (GMT)
+Subject: Re: [RFC][PATCH] drm: kirin: Fix dsi probe/attach logic
+To:     Matt Redfearn <matt.redfearn@thinci.com>,
+        John Stultz <john.stultz@linaro.org>
+Cc:     Rob Clark <robdclark@gmail.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "sam@ravnborg.org" <sam@ravnborg.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Dylan Reid <dgreid@chromium.org>,
-        "tzungbi@chromium.org" <tzungbi@chromium.org>,
-        Xing Zheng <zhengxing@rock-chips.com>,
-        "cain.cai@rock-chips.com" <cain.cai@rock-chips.com>,
-        =?UTF-8?B?6JSh5p6r?= <eddie.cai@rock-chips.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        "kuankuan.y@gmail.com" <kuankuan.y@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        lkml <linux-kernel@vger.kernel.org>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Yakir Yang <ykk@rock-chips.com>
-References: <20190911082646.134347-1-cychiang@chromium.org>
- <1e2ec69d-e42d-4e1b-7ce9-d1620cfbb4c9@baylibre.com>
- <10668907.r1TyVuJQb1@jernej-laptop>
- <CAFv8NwJGa0HXsnv2MvJhknpr9PxUL3jH2HZLSLiSD5s_nHiQhQ@mail.gmail.com>
- <HE1PR06MB4011478532D8E127697565EDACB30@HE1PR06MB4011.eurprd06.prod.outlook.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <5f8ec989-9f59-072f-20d4-4cb6ff76a5ac@baylibre.com>
-Date:   Fri, 13 Sep 2019 10:46:12 +0200
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Amit Pundir <amit.pundir@linaro.org>
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <084ab580-8ba8-b018-bc7a-bd705027f200@samsung.com>
+Date:   Fri, 13 Sep 2019 10:47:15 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <HE1PR06MB4011478532D8E127697565EDACB30@HE1PR06MB4011.eurprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <00e4f553-a02c-6d98-a0e8-28c0183a3c8c@thinci.com>
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUyMcRz3u+flnuLscZW+81Jzw+YlMWY/I6PZPH+0+MOWoXHxuKIu7lF6
+        +cOZkJRdarUu9CLrZJTO9TZZLqSpSNIbLmlUSpZKt0ru8dT03+ft+/t+P9uPIZQT1CImRHuG
+        12nVoSramSx5YX/tlR4QG7j+fLoLTmqoleGfplyE340M0rj5dy+B68a9cG1/M4mvJOfJcVPF
+        DRpX2LJl2HrtIP6WM0Zgk92C8MeieoTtFbdIbB68QOKu3nxqB8sNtl6Uc5n6RpIrN36Uc19u
+        PnTQ+AyKe2l4K+M+vH9Mc6WjnRRnu1oj4/LSmmmuKimF5DJTuijuV7HHXsUB523H+NCQSF7n
+        vf2Ic3BGx8lTdSuj7rUMU3r03CMBOTHAboK+4Rw6ATkzStaEYOynRSaRYQTW8VYkkV8IEpsK
+        qJkRU1wxJRn5CPqtX6fJAILHcVNITLmwO+B7aY/DYBhXdh80564XMwT7hoRno3ZCzNDsKpg0
+        t9EiVrDboeplGRLzJLsC+n7MFWU3dj8MdVZTUmQB1GZ0kyJ2csTbC9PkIiZYT7hgySQk7A7t
+        3Vn/KgB7nwFzvG366l1gGOuaxi7QV/NILuEl8ColkZTwObCZ4ghpOB6BpaickIytUF3T+K8M
+        4Ti6sMJbknfCVP4DuSgDOx9aBxZIN8yH6yXphCQrIP6SUkovA1u9ZfpBd7jzZoQ2IJVxVjPj
+        rDbGWW2M//dmI7IAufMRQpiGFzZq+bPrBHWYEKHVrDsaHlaMHH/y1Z+akTL0ZCLIilgGqeYp
+        8NqYQCWljhSiw6wIGELlqvDrjw5UKo6po2N4XfhhXUQoL1jRYoZUuSti53QeVLIa9Rn+JM+f
+        4nUzroxxWqRHS0/7MLoPvkUdoT3LnPSu5s8hR5PCTzQlxCgrrVnLKw8N4OTbZX/ycs43rqmT
+        +0Jdakt9g5uNb+OFu0JVPmP03NNjCBqqrmp72rFtSsNvXv1Jm1puqEYL9ZsKQwIiorMrCY8t
+        9ZfTT+/2Y1LGXcfmePofzymftEeaffwLoko1KlIIVm9YTegE9V+4sB/sjwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRmVeSWpSXmKPExsVy+t/xe7rTwqtjDW7uFbPoPXeSyeLDikWM
+        Fle+vmezuPr9JbPFmd+6FiffXGWx6Jy4hN3i8q45bBa77i9gsjjUF23xfOEPZosVP7cyWtzd
+        cJbR4ueueSwWm983s1g8ermc1UHA4/2NVnaP2Q0XWTx2zrrL7vF47kYgt2Mmq8eJCZeYPO5c
+        28Pmsf3bA1aP+93HmTyWTLvK5nGgdzKLx+zJj1g9Pm+SC+CN0rMpyi8tSVXIyC8usVWKNrQw
+        0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MuYeTu74IxaxerrX1gbGI/KdTFyckgI
+        mEisaNnE2sXIxSEksJRRYsfNu0wQCXGJ3fPfMkPYwhJ/rnWxQRS9ZpS4dGwbWJGwgIPE6+0v
+        WEFsEYEQiRk9T8EmMQtcYpGY8fwpVMdmVomtS2aAjWIT0JT4u/kmG4jNK2AnceDEDsYuRg4O
+        FgFViVfvuEHCogIREod3zGKEKBGUODnzCQuIzQlUfmv9NHYQm1lAXeLPvEvMELa8RPPW2VC2
+        uMStJ/OZJjAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kRmBq2
+        Hfu5BejUd8GHGAU4GJV4eC10qmKFWBPLiitzDzFKcDArifD6vKmMFeJNSaysSi3Kjy8qzUkt
+        PsRoCvTbRGYp0eR8YNrKK4k3NDU0t7A0NDc2NzazUBLn7RA4GCMkkJ5YkpqdmlqQWgTTx8TB
+        KdXAyFI87+Gur7fLt06x1bWrWnji0dccxnLxl5cPl/hXrU68/K3l1DON9ZPlfqhM/3BkQ5R5
+        LceSV+c6mHb2MjsK75z/9ybn9PvnLh9ctNVkgVWfD8OyC78us9zT5L50WHcHT5DxPh3GA3c9
+        Sz9/Ul4X+bukLSv2hsrnEypXFNUlwx8unrQgPvu35CclluKMREMt5qLiRABEaVwuIwMAAA==
+X-CMS-MailID: 20190913084718eucas1p1ddebd180b28385b21873144dfdaccc57
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190829173938epcas3p1276089cb3d6f9813840d1bb6cac8b1da
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190829173938epcas3p1276089cb3d6f9813840d1bb6cac8b1da
+References: <20190829060550.62095-1-john.stultz@linaro.org>
+        <CGME20190829173938epcas3p1276089cb3d6f9813840d1bb6cac8b1da@epcas3p1.samsung.com>
+        <CAF6AEGvborwLmjfC6_vgZ-ZbfvF3HEFFyb_NHSLRoYWF35bw+g@mail.gmail.com>
+        <ebdf3ff5-5a9b-718d-2832-f326138a5b2d@samsung.com>
+        <CAF6AEGtkvRpXSoddjmxer2U6LxnV_SAe+jwE2Ct8B8dDpFy2mA@mail.gmail.com>
+        <b925e340-4b6a-fbda-3d8d-5c27204d2814@samsung.com>
+        <CALAqxLU5Ov+__b5gxnuMxQP1RLjndXkB4jAiGgmb-OMdaKePug@mail.gmail.com>
+        <9d31af23-8a65-d8e8-b73d-b2eb815fcd6f@samsung.com>
+        <CALAqxLVP=x9+p9scGyfgFUMN2di+ngOz9-fWW=A1YCM4aN7JRA@mail.gmail.com>
+        <16c9066b-091f-6d0e-23f1-2c1f83a7da1b@samsung.com>
+        <00e4f553-a02c-6d98-a0e8-28c0183a3c8c@thinci.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/09/2019 08:37, Jonas Karlman wrote:
-> On 2019-09-11 19:02, Cheng-yi Chiang wrote:
->> On Thu, Sep 12, 2019 at 12:54 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
->>> Dne sreda, 11. september 2019 ob 18:23:59 CEST je Neil Armstrong napisal(a):
->>>> On 11/09/2019 10:26, Cheng-Yi Chiang wrote:
->>>>> From: Yakir Yang <ykk@rock-chips.com>
+On 12.09.2019 16:18, Matt Redfearn wrote:
+>
+> On 12/09/2019 14:21, Andrzej Hajda wrote:
+>> On 12.09.2019 04:38, John Stultz wrote:
+>>> On Wed, Sep 4, 2019 at 3:26 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>>> On 03.09.2019 18:18, John Stultz wrote:
+>>>>> On Mon, Sep 2, 2019 at 6:22 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>>>>> On 30.08.2019 19:00, Rob Clark wrote:
+>>>>>>> On Thu, Aug 29, 2019 at 11:52 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>>>>>>> Of course it seems you have different opinion what is the right thing in
+>>>>>>>> this case, so if you convince us that your approach is better one can
+>>>>>>>> revert the patch.
+>>>>>>> I guess my strongest / most immediate opinion is to not break other
+>>>>>>> existing adv75xx bridge users.
+>>>>>> It is pity that breakage happened, and next time we should be more
+>>>>>> strict about testing other platforms, before patch acceptance.
+>>>>>>
+>>>>>> But reverting it now will break also platform which depend on it.
+>>>>> I'm really of no opinion of which approach is better here, but I will
+>>>>> say that when a patch breaks previously working boards, that's a
+>>>>> regression and justifying that some other board is now enabled that
+>>>>> would be broken by the revert (of a patch that is not yet upstream)
+>>>>> isn't really a strong argument.
 >>>>>
->>>>> When transmitting IEC60985 linear PCM audio, we configure the
->>>>> Aduio Sample Channel Status information in the IEC60958 frame.
->>>>> The status bit is already available in iec.status of hdmi_codec_params.
->>>>>
->>>>> This fix the issue that audio does not come out on some monitors
->>>>> (e.g. LG 22CV241)
->>>>>
->>>>> Note that these registers are only for interfaces:
->>>>> I2S audio interface, General Purpose Audio (GPA), or AHB audio DMA
->>>>> (AHBAUDDMA).
->>>>> For S/PDIF interface this information comes from the stream.
->>>>>
->>>>> Currently this function dw_hdmi_set_channel_status is only called
->>>>> from dw-hdmi-i2s-audio in I2S setup.
->>>>>
->>>>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
->>>>> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
->>>>> ---
->>>>>
->>>>> Change from v2 to v3:
->>>>> 1. Reuse what is already set in iec.status in hw_param.
->>>>> 2. Remove all useless definition of registers and values.
->>>>> 3. Note that the original sampling frequency is not written to
->>>>>
->>>>>    the channel status as we reuse create_iec958_consumer in pcm_iec958.c.
->>>>>    Without that it can still play audio fine.
->>>>>
->>>>>  .../drm/bridge/synopsys/dw-hdmi-i2s-audio.c   |  1 +
->>>>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     | 20 +++++++++++++++++++
->>>>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h     |  2 ++
->>>>>  include/drm/bridge/dw_hdmi.h                  |  1 +
->>>>>  4 files changed, 24 insertions(+)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
->>>>> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c index
->>>>> 34d8e837555f..20f4f92dd866 100644
->>>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
->>>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
->>>>> @@ -102,6 +102,7 @@ static int dw_hdmi_i2s_hw_params(struct device *dev,
->>>>> void *data,>
->>>>>     }
->>>>>
->>>>>     dw_hdmi_set_sample_rate(hdmi, hparms->sample_rate);
->>>>>
->>>>> +   dw_hdmi_set_channel_status(hdmi, hparms->iec.status);
->>>>>
->>>>>     dw_hdmi_set_channel_count(hdmi, hparms->channels);
->>>>>     dw_hdmi_set_channel_allocation(hdmi, hparms-
->>>> cea.channel_allocation);
->>>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->>>>> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
->>>>> bd65d0479683..aa7efd4da1c8 100644
->>>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->>>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->>>>> @@ -582,6 +582,26 @@ static unsigned int hdmi_compute_n(unsigned int freq,
->>>>> unsigned long pixel_clk)>
->>>>>     return n;
->>>>>
->>>>>  }
->>>>>
->>>>> +/*
->>>>> + * When transmitting IEC60958 linear PCM audio, these registers allow to
->>>>> + * configure the channel status information of all the channel status
->>>>> + * bits in the IEC60958 frame. For the moment this configuration is only
->>>>> + * used when the I2S audio interface, General Purpose Audio (GPA),
->>>>> + * or AHB audio DMA (AHBAUDDMA) interface is active
->>>>> + * (for S/PDIF interface this information comes from the stream).
->>>>> + */
->>>>> +void dw_hdmi_set_channel_status(struct dw_hdmi *hdmi,
->>>>> +                           u8 *channel_status)
->>>>> +{
->>>>> +   /*
->>>>> +    * Set channel status register for frequency and word length.
->>>>> +    * Use default values for other registers.
->>>>> +    */
->>>>> +   hdmi_writeb(hdmi, channel_status[3], HDMI_FC_AUDSCHNLS7);
->>>>> +   hdmi_writeb(hdmi, channel_status[4], HDMI_FC_AUDSCHNLS8);
->>>>> +}
->>>>> +EXPORT_SYMBOL_GPL(dw_hdmi_set_channel_status);
->>>>> +
->>>>>
->>>>>  static void hdmi_set_clk_regenerator(struct dw_hdmi *hdmi,
->>>>>
->>>>>     unsigned long pixel_clk, unsigned int sample_rate)
->>>>>
->>>>>  {
->>>>>
->>>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
->>>>> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h index
->>>>> 6988f12d89d9..fcff5059db24 100644
->>>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
->>>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
->>>>> @@ -158,6 +158,8 @@
->>>>>
->>>>>  #define HDMI_FC_SPDDEVICEINF                    0x1062
->>>>>  #define HDMI_FC_AUDSCONF                        0x1063
->>>>>  #define HDMI_FC_AUDSSTAT                        0x1064
->>>>>
->>>>> +#define HDMI_FC_AUDSCHNLS7                      0x106e
->>>>> +#define HDMI_FC_AUDSCHNLS8                      0x106f
->>>>>
->>>>>  #define HDMI_FC_DATACH0FILL                     0x1070
->>>>>  #define HDMI_FC_DATACH1FILL                     0x1071
->>>>>  #define HDMI_FC_DATACH2FILL                     0x1072
->>>>>
->>>>> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
->>>>> index cf528c289857..4b3e863c4f8a 100644
->>>>> --- a/include/drm/bridge/dw_hdmi.h
->>>>> +++ b/include/drm/bridge/dw_hdmi.h
->>>>> @@ -156,6 +156,7 @@ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool
->>>>> hpd, bool rx_sense);>
->>>>>  void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
->>>>>  void dw_hdmi_set_channel_count(struct dw_hdmi *hdmi, unsigned int cnt);
->>>>>
->>>>> +void dw_hdmi_set_channel_status(struct dw_hdmi *hdmi, u8
->>>>> *channel_status);
->>>>>
->>>>>  void dw_hdmi_set_channel_allocation(struct dw_hdmi *hdmi, unsigned int
->>>>>  ca);
->>>>>  void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
->>>>>  void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
->>>> Looks fine for me:
->>>> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+>>>>> I'm happy to work with folks to try to fixup the kirin driver if this
+>>>>> patch really is the right approach, but we need someone to do the same
+>>>>> for the db410c, and I don't think its fair to just dump that work onto
+>>>>> folks under the threat of the board breaking.
+>>>> These drivers should be fixed anyway - assumption that
+>>>> drm_bridge/drm_panel will be registered before the bus it is attached to
+>>>> is just incorrect.
 >>>>
->>>> Jonas ? Jernej ? Russell ?
->>> Patch itself is fine, I'm just wondering if more information should be copied
->>> from status array to registers. But I think they are not 1:1 mapping so some
->>> more work would be needed. Anyway, patch is:
->> Hi Jernej,
->> Yes you are right. I was thinking about the same thing.
->> But there are also some fields in the IEC60958 spec not mapped to the
->> registers on dw-hdmi.
->> So I ended up just writing the two registers in the original ykk's
->> patch, and ignoring "original sampling frequency" like pcm_iec958.
->> It turns out that audio plays fine on my LG monitor. So I suggest we
->> can keep this patch as simple as it is, and add more register setting
->> if we find issue.
->> Thanks!
-> 
-> In my old multi-channel lpcm patch [1] I only wrote sample rate to FC_AUDSCHNLS7.
-> This is much cleaner and simpler, and setting FC_AUDSCHNLS8 does not cause any
-> problems when I tested on ASUS Tinker Board S (RK3288).
-> 
-> Reviewed-by: Jonas Karlman <jonas@kwiboo.se>
-> 
-> 
-> [1] https://github.com/Kwiboo/linux-rockchip/commit/4af9ebc567ccf0a0851fa260097021c27aebbb6b
-
-Thanks Jonas, Jernej,
-
-Applying now.
-
-Neil
-
-> 
-> Regards,
-> Jonas
-> 
+>>>> So instead of reverting, fixing and then re-applying the patch I have
+>>>> gently proposed shorter path. If you prefer long path we can try to go
+>>>> this way.
+>>>>
+>>>> Matt, is the pure revert OK for you or is it possible to prepare some
+>>>> workaround allowing cooperation with both approaches?
+>>> Rob/Andrzej: What's the call here?
+>>>
+>>> Should I resubmit the kirin fix for the adv7511 regression here?
+>>> Or do we revert the adv7511 patch? I believe db410c still needs a fix.
+>>>
+>>> I'd just like to keep the HiKey board from breaking, so let me know so
+>>> I can get the fix submitted if needed.
 >>
+>> Since there is no response from Matt, we can perform revert, since there
+>> are no other ideas. I will apply it tomorrow, if there are no objections.
+> Hi,
+>
+> Sorry - yeah I think reverting is probably best at this point to avoid 
+> breaking in-tree platforms.
+> It's a shame though that there is a built-in incompatibility within the 
+> tree between drivers.
+
+
+Quite common in development - some issues becomes visible after some time.
+
+> The way that the generic Synopsys DSI host driver 
+> probes is currently incompatible with the ADV7533 (hence the patch), 
+> other DSI host drivers are now compatible with the ADV7533 but break 
+> when we change it to probe in a similar way to panel drivers.
+
+
+1. The behavior should be consistent between all hosts/device drivers.
+
+2. DSI controlled devices can expose drm objects (drm_bridge/drm_panel)
+only when they can probe, ie DSI bus they sit on must be created 1st.
+
+1 and 2 enforces policy that all host drivers should 1st create control
+bus (DSI in this case) then look for higher level objects
+(drm_bridge/drm_panel).
+
+As a consequence all bridges and panels should 1st gather the resources
+they depends on, and then they can expose higher level objects.
+
+
+>
+>> And for the future: I guess it is not possible to make adv work with old
+>> and new approach, but simple workaround for adv could be added later:
+>>
+>> if (source is msm or kirin)
+>>
+>>      do_the_old_way
+>>
+>> else
+>>
+>>      do_correctly.
+> Maybe this would work, but how do we know that the list "msm or kirin" 
+> is exhaustive to cope with all platforms?
+
+
+By checking dts/config files.
+
+
+> It seems to me the built in 
+> incompatibility between DSI hosts needs to be resolved really rather 
+> than trying to work around it in the ADV7533 driver (and any other DSI 
+> bus device that falls into this trap).
+
+
+If you know how, please describe. Atm the only real solution I see is
+explicit workaround to allow new adv7511, then fixing controllers,
+together with workaround-removal.
+
+OK, it could be possible to change msm, kirin and adv in one patch,
+however I am not sure if this is the best solution.
+
+
+Regards
+
+Andrzej
+
+
+>
+> Anyway, my platform is out of tree so better to revert my patch and keep 
+> the in-tree platforms working.
+>
+> Thanks everyone.
+> Matt
+>
+>>
+>> And remove it after fixing both dsi masters.
+>>
+>>
+>> Regards
+>>
+>> Andrzej
+>>
+>>
+>>> thanks
+>>> -john
 >>>
->>> Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
 >>>
->>> Best regards,
->>> Jernej
->>>
->>>> If it's ok for you I'll apply it.
->>>>
->>>> Neil
->>>>
 
