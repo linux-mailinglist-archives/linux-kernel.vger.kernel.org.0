@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D0DBB211F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EA89B1FE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389390AbfIMNdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:33:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34220 "EHLO mail.kernel.org"
+        id S2388249AbfIMNLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:11:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388524AbfIMNJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:09:36 -0400
+        id S2388817AbfIMNKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:10:53 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D566720CC7;
-        Fri, 13 Sep 2019 13:09:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EC31206A5;
+        Fri, 13 Sep 2019 13:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380175;
-        bh=K6pKLWXHqc+Yt0nYkI/jxp9x1HNQc4F9C1cm09K8eFE=;
+        s=default; t=1568380253;
+        bh=nSkMp5SsJUzwDtJgQta27vFYYjdo66MfE/icZS4DgVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OBmPFQBe02QarFq7wYcIaAqzjT3zG2lp0eS84Dxp0vgc5tVxHCJzSDc+31j7FYNcm
-         YcW1MVX3Mie2XvGsZv/pXTaSWCwJu/Nx7RjV9zeClJXr0gGFMvray2N/6/iGREduim
-         4oIQpZwqbhXIp3cvDZZ3zTt+NNZyVIJEqR3yJ8H0=
+        b=bcmr7NHIrMy7WB3sm4Mo0Qt3Um7yehCDoFd4snlHoB18r+Z0F24yr3KEi5+9cJqmN
+         YrCo0x3vNNqpVpbhZMDX6eJD+CcE9kJ0rhNIf5C0bdswKHhUT2grVSRqO4u1mj2eVC
+         Fo+oVbg0DOzlgc0wDeFryhqa9MkmtreKOBmo3YAI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -32,12 +32,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Cong Wang <xiyou.wangcong@gmail.com>,
         Zubin Mithra <zsm@chromium.org>
-Subject: [PATCH 4.9 06/14] xfrm: clean up xfrm protocol checks
-Date:   Fri, 13 Sep 2019 14:06:59 +0100
-Message-Id: <20190913130444.653504118@linuxfoundation.org>
+Subject: [PATCH 4.14 07/21] xfrm: clean up xfrm protocol checks
+Date:   Fri, 13 Sep 2019 14:07:00 +0100
+Message-Id: <20190913130504.096382429@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130440.264749443@linuxfoundation.org>
-References: <20190913130440.264749443@linuxfoundation.org>
+In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
+References: <20190913130501.285837292@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -85,7 +85,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/include/net/xfrm.h
 +++ b/include/net/xfrm.h
-@@ -1297,6 +1297,23 @@ static inline int xfrm_state_kern(const
+@@ -1366,6 +1366,23 @@ static inline int xfrm_state_kern(const
  	return atomic_read(&x->tunnel_users);
  }
  
@@ -111,7 +111,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	return (!userproto || proto == userproto ||
 --- a/net/key/af_key.c
 +++ b/net/key/af_key.c
-@@ -1969,8 +1969,10 @@ parse_ipsecrequest(struct xfrm_policy *x
+@@ -1951,8 +1951,10 @@ parse_ipsecrequest(struct xfrm_policy *x
  
  	if (rq->sadb_x_ipsecrequest_mode == 0)
  		return -EINVAL;
@@ -125,7 +125,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	t->mode = mode;
 --- a/net/xfrm/xfrm_state.c
 +++ b/net/xfrm/xfrm_state.c
-@@ -2168,7 +2168,7 @@ void xfrm_state_fini(struct net *net)
+@@ -2330,7 +2330,7 @@ void xfrm_state_fini(struct net *net)
  	unsigned int sz;
  
  	flush_work(&net->xfrm.state_hash_work);
@@ -136,7 +136,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	WARN_ON(!list_empty(&net->xfrm.state_all));
 --- a/net/xfrm/xfrm_user.c
 +++ b/net/xfrm/xfrm_user.c
-@@ -1452,20 +1452,8 @@ static int validate_tmpl(int nr, struct
+@@ -1489,20 +1489,8 @@ static int validate_tmpl(int nr, struct
  			return -EINVAL;
  		}
  
