@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F0FB2033
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F7C8B20F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390175AbfIMNSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:18:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45632 "EHLO mail.kernel.org"
+        id S2391662AbfIMNaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:30:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390159AbfIMNSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:18:09 -0400
+        id S2389218AbfIMNR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:17:56 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBA44206A5;
-        Fri, 13 Sep 2019 13:18:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB4CF214AE;
+        Fri, 13 Sep 2019 13:17:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380688;
-        bh=Mq16pXPlu4E1qSNNsJtz9KChW6TIknEWstPnqmQ7nJ8=;
+        s=default; t=1568380675;
+        bh=lnJVnALC+xXmKEp6Di4Baj2+s1u4pjqDGx/Y+jtrYPc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zvbsVjBLZL7CKYyB2SVhUy4m/f5hLvkKR6XAofLcoGE6n36do+wl/BcFqSzV8gopY
-         FK7SbGqJXomsYrIW+RYiwKPEmTs2tEtmRoTaKe8IxbjxbPGqixh3tas58cW2EdmX4G
-         LaoEbkdyOp/pyZx3giM1Gq8Ml2G6SbPWBjajISqg=
+        b=AdWx7okdkVlhmVOSaW2tJtq3PH+jHu6hfhAsoSfiMdZFeecYd5vDYFR6Ui2iM40j5
+         n0T0IFoutS/rI0jqmBsK6EoS0U5nGAHbXKiGTxJ+VH0oAZkLbaTtvbLUtWRdNLv1pK
+         qR60GbBp6aHNYWTlvjI+LDNXgLKKTz1widk9fuWA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
-        Moni Shoua <monis@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 112/190] IB/mlx5: Reset access mask when looping inside page fault handler
-Date:   Fri, 13 Sep 2019 14:06:07 +0100
-Message-Id: <20190913130608.701812612@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 118/190] ext4: protect journal inodes blocks using block_validity
+Date:   Fri, 13 Sep 2019 14:06:13 +0100
+Message-Id: <20190913130609.260876778@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -46,44 +43,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1abe186ed8a6593069bc122da55fc684383fdc1c ]
+[ Upstream commit 345c0dbf3a30872d9b204db96b5857cd00808cae ]
 
-If page-fault handler spans multiple MRs then the access mask needs to
-be reset before each MR handling or otherwise write access will be
-granted to mapped pages instead of read-only.
+Add the blocks which belong to the journal inode to block_validity's
+system zone so attempts to deallocate or overwrite the journal due a
+corrupted file system where the journal blocks are also claimed by
+another inode.
 
-Cc: <stable@vger.kernel.org> # 3.19
-Fixes: 7bdf65d411c1 ("IB/mlx5: Handle page faults")
-Reported-by: Jerome Glisse <jglisse@redhat.com>
-Signed-off-by: Moni Shoua <monis@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202879
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx5/odp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ext4/block_validity.c | 48 ++++++++++++++++++++++++++++++++++++++++
+ fs/ext4/inode.c          |  4 ++++
+ 2 files changed, 52 insertions(+)
 
-diff --git a/drivers/infiniband/hw/mlx5/odp.c b/drivers/infiniband/hw/mlx5/odp.c
-index 9e1cac8cb2609..453e5c4ac19f4 100644
---- a/drivers/infiniband/hw/mlx5/odp.c
-+++ b/drivers/infiniband/hw/mlx5/odp.c
-@@ -497,7 +497,7 @@ void mlx5_ib_free_implicit_mr(struct mlx5_ib_mr *imr)
- static int pagefault_mr(struct mlx5_ib_dev *dev, struct mlx5_ib_mr *mr,
- 			u64 io_virt, size_t bcnt, u32 *bytes_mapped)
- {
--	u64 access_mask = ODP_READ_ALLOWED_BIT;
-+	u64 access_mask;
- 	int npages = 0, page_shift, np;
- 	u64 start_idx, page_mask;
- 	struct ib_umem_odp *odp;
-@@ -522,6 +522,7 @@ next_mr:
- 	page_shift = mr->umem->page_shift;
- 	page_mask = ~(BIT(page_shift) - 1);
- 	start_idx = (io_virt - (mr->mmkey.iova & page_mask)) >> page_shift;
-+	access_mask = ODP_READ_ALLOWED_BIT;
+diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
+index 913061c0de1b3..9409b1e11a22e 100644
+--- a/fs/ext4/block_validity.c
++++ b/fs/ext4/block_validity.c
+@@ -137,6 +137,48 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
+ 	printk(KERN_CONT "\n");
+ }
  
- 	if (mr->umem->writable)
- 		access_mask |= ODP_WRITE_ALLOWED_BIT;
++static int ext4_protect_reserved_inode(struct super_block *sb, u32 ino)
++{
++	struct inode *inode;
++	struct ext4_sb_info *sbi = EXT4_SB(sb);
++	struct ext4_map_blocks map;
++	u32 i = 0, err = 0, num, n;
++
++	if ((ino < EXT4_ROOT_INO) ||
++	    (ino > le32_to_cpu(sbi->s_es->s_inodes_count)))
++		return -EINVAL;
++	inode = ext4_iget(sb, ino, EXT4_IGET_SPECIAL);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++	num = (inode->i_size + sb->s_blocksize - 1) >> sb->s_blocksize_bits;
++	while (i < num) {
++		map.m_lblk = i;
++		map.m_len = num - i;
++		n = ext4_map_blocks(NULL, inode, &map, 0);
++		if (n < 0) {
++			err = n;
++			break;
++		}
++		if (n == 0) {
++			i++;
++		} else {
++			if (!ext4_data_block_valid(sbi, map.m_pblk, n)) {
++				ext4_error(sb, "blocks %llu-%llu from inode %u "
++					   "overlap system zone", map.m_pblk,
++					   map.m_pblk + map.m_len - 1, ino);
++				err = -EFSCORRUPTED;
++				break;
++			}
++			err = add_system_zone(sbi, map.m_pblk, n);
++			if (err < 0)
++				break;
++			i += n;
++		}
++	}
++	iput(inode);
++	return err;
++}
++
+ int ext4_setup_system_zone(struct super_block *sb)
+ {
+ 	ext4_group_t ngroups = ext4_get_groups_count(sb);
+@@ -171,6 +213,12 @@ int ext4_setup_system_zone(struct super_block *sb)
+ 		if (ret)
+ 			return ret;
+ 	}
++	if (ext4_has_feature_journal(sb) && sbi->s_es->s_journal_inum) {
++		ret = ext4_protect_reserved_inode(sb,
++				le32_to_cpu(sbi->s_es->s_journal_inum));
++		if (ret)
++			return ret;
++	}
+ 
+ 	if (test_opt(sb, DEBUG))
+ 		debug_print_tree(sbi);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index e65559bf77281..cff6277f7a9ff 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -399,6 +399,10 @@ static int __check_block_validity(struct inode *inode, const char *func,
+ 				unsigned int line,
+ 				struct ext4_map_blocks *map)
+ {
++	if (ext4_has_feature_journal(inode->i_sb) &&
++	    (inode->i_ino ==
++	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
++		return 0;
+ 	if (!ext4_data_block_valid(EXT4_SB(inode->i_sb), map->m_pblk,
+ 				   map->m_len)) {
+ 		ext4_error_inode(inode, func, line, map->m_pblk,
 -- 
 2.20.1
 
