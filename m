@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE8F4B20C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B5DB20C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391493AbfIMN0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:26:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39004 "EHLO mx1.redhat.com"
+        id S2391080AbfIMN0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:26:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59584 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391458AbfIMNZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:25:59 -0400
+        id S2391490AbfIMN0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:26:01 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0A052308FBFC;
-        Fri, 13 Sep 2019 13:25:59 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id F125018C4260;
+        Fri, 13 Sep 2019 13:26:00 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 618DA5C1D4;
-        Fri, 13 Sep 2019 13:25:57 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5502B5C1D4;
+        Fri, 13 Sep 2019 13:25:59 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,15 +27,15 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 49/73] libperf: Add perf_mmap__read_init function
-Date:   Fri, 13 Sep 2019 15:23:31 +0200
-Message-Id: <20190913132355.21634-50-jolsa@kernel.org>
+Subject: [PATCH 50/73] libperf: Add perf_mmap__read_done function
+Date:   Fri, 13 Sep 2019 15:23:32 +0200
+Message-Id: <20190913132355.21634-51-jolsa@kernel.org>
 In-Reply-To: <20190913132355.21634-1-jolsa@kernel.org>
 References: <20190913132355.21634-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 13 Sep 2019 13:25:59 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Fri, 13 Sep 2019 13:26:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -44,21 +44,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Move perf_mmap__read_init function under libperf
 and export it in perf/mmap.h header.
 
-And add pr_debug2/pr_debug3 macros support, because
-the code is using them.
-
-Link: http://lkml.kernel.org/n/tip-il44mm7h1m93imk0x84q7klp@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-qc6p8q4t9dk7x1ik2a8yuf8z@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
  tools/perf/arch/x86/tests/perf-time-to-tsc.c |  2 +-
  tools/perf/builtin-kvm.c                     |  2 +-
  tools/perf/builtin-top.c                     |  2 +-
  tools/perf/builtin-trace.c                   |  2 +-
- tools/perf/lib/include/perf/core.h           |  2 +
  tools/perf/lib/include/perf/mmap.h           |  1 +
- tools/perf/lib/internal.h                    |  2 +
  tools/perf/lib/libperf.map                   |  1 +
- tools/perf/lib/mmap.c                        | 84 ++++++++++++++++++++
+ tools/perf/lib/mmap.c                        | 17 +++++++++++++++++
  tools/perf/tests/backward-ring-buffer.c      |  2 +-
  tools/perf/tests/bpf.c                       |  2 +-
  tools/perf/tests/code-reading.c              |  2 +-
@@ -70,482 +65,288 @@ Signed-off-by: Jiri Olsa <jolsa@kernel.org>
  tools/perf/tests/switch-tracking.c           |  2 +-
  tools/perf/tests/task-exit.c                 |  2 +-
  tools/perf/util/evlist.c                     |  2 +-
- tools/perf/util/mmap.c                       | 82 +------------------
+ tools/perf/util/mmap.c                       | 17 -----------------
  tools/perf/util/mmap.h                       |  1 -
- tools/perf/util/python.c                     |  2 +-
- 23 files changed, 107 insertions(+), 98 deletions(-)
+ 20 files changed, 34 insertions(+), 33 deletions(-)
 
 diff --git a/tools/perf/arch/x86/tests/perf-time-to-tsc.c b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
-index c9b359a16f75..ca5e483c3fda 100644
+index ca5e483c3fda..04da28d15039 100644
 --- a/tools/perf/arch/x86/tests/perf-time-to-tsc.c
 +++ b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
-@@ -118,7 +118,7 @@ int test__perf_time_to_tsc(struct test *test __maybe_unused, int subtest __maybe
+@@ -142,7 +142,7 @@ int test__perf_time_to_tsc(struct test *test __maybe_unused, int subtest __maybe
+ next_event:
+ 			perf_mmap__consume(&md->core);
+ 		}
+-		perf_mmap__read_done(md);
++		perf_mmap__read_done(&md->core);
+ 	}
  
- 	for (i = 0; i < evlist->core.nr_mmaps; i++) {
- 		md = &evlist->mmap[i];
--		if (perf_mmap__read_init(md) < 0)
-+		if (perf_mmap__read_init(&md->core) < 0)
- 			continue;
- 
- 		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 	if (!comm1_time || !comm2_time)
 diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index fea07ee4c68b..ca7e48379f57 100644
+index ca7e48379f57..4b281d77d22c 100644
 --- a/tools/perf/builtin-kvm.c
 +++ b/tools/perf/builtin-kvm.c
-@@ -756,7 +756,7 @@ static s64 perf_kvm__mmap_read_idx(struct perf_kvm_stat *kvm, int idx,
+@@ -790,7 +790,7 @@ static s64 perf_kvm__mmap_read_idx(struct perf_kvm_stat *kvm, int idx,
+ 			break;
+ 	}
  
- 	*mmap_time = ULLONG_MAX;
- 	md = &evlist->mmap[idx];
--	err = perf_mmap__read_init(md);
-+	err = perf_mmap__read_init(&md->core);
- 	if (err < 0)
- 		return (err == -EAGAIN) ? 0 : -1;
+-	perf_mmap__read_done(md);
++	perf_mmap__read_done(&md->core);
+ 	return n;
+ }
  
 diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 19775c7a5563..86b7a71dc5ed 100644
+index 86b7a71dc5ed..c122aa1e9ca1 100644
 --- a/tools/perf/builtin-top.c
 +++ b/tools/perf/builtin-top.c
-@@ -866,7 +866,7 @@ static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
- 	union perf_event *event;
+@@ -890,7 +890,7 @@ static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
+ 		}
+ 	}
  
- 	md = opts->overwrite ? &evlist->overwrite_mmap[idx] : &evlist->mmap[idx];
--	if (perf_mmap__read_init(md) < 0)
-+	if (perf_mmap__read_init(&md->core) < 0)
- 		return;
+-	perf_mmap__read_done(md);
++	perf_mmap__read_done(&md->core);
+ }
  
- 	while ((event = perf_mmap__read_event(md)) != NULL) {
+ static void perf_top__mmap_read(struct perf_top *top)
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index fa8296e8be2a..fcdb30e93a81 100644
+index fcdb30e93a81..1ae249d9ecf0 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -3447,7 +3447,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
- 		struct mmap *md;
+@@ -3467,7 +3467,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 				draining = true;
+ 			}
+ 		}
+-		perf_mmap__read_done(md);
++		perf_mmap__read_done(&md->core);
+ 	}
  
- 		md = &evlist->mmap[i];
--		if (perf_mmap__read_init(md) < 0)
-+		if (perf_mmap__read_init(&md->core) < 0)
- 			continue;
- 
- 		while ((event = perf_mmap__read_event(md)) != NULL) {
-diff --git a/tools/perf/lib/include/perf/core.h b/tools/perf/lib/include/perf/core.h
-index cfd70e720c1c..2a80e4b6f819 100644
---- a/tools/perf/lib/include/perf/core.h
-+++ b/tools/perf/lib/include/perf/core.h
-@@ -12,6 +12,8 @@ enum libperf_print_level {
- 	LIBPERF_WARN,
- 	LIBPERF_INFO,
- 	LIBPERF_DEBUG,
-+	LIBPERF_DEBUG2,
-+	LIBPERF_DEBUG3,
- };
- 
- typedef int (*libperf_print_fn_t)(enum libperf_print_level level,
+ 	if (trace->nr_events == before) {
 diff --git a/tools/perf/lib/include/perf/mmap.h b/tools/perf/lib/include/perf/mmap.h
-index d3678d1834d9..646e9052b003 100644
+index 646e9052b003..4f946e7f724b 100644
 --- a/tools/perf/lib/include/perf/mmap.h
 +++ b/tools/perf/lib/include/perf/mmap.h
-@@ -7,5 +7,6 @@
- struct perf_mmap;
+@@ -8,5 +8,6 @@ struct perf_mmap;
  
  LIBPERF_API void perf_mmap__consume(struct perf_mmap *map);
-+LIBPERF_API int perf_mmap__read_init(struct perf_mmap *map);
+ LIBPERF_API int perf_mmap__read_init(struct perf_mmap *map);
++LIBPERF_API void perf_mmap__read_done(struct perf_mmap *map);
  
  #endif /* __LIBPERF_MMAP_H */
-diff --git a/tools/perf/lib/internal.h b/tools/perf/lib/internal.h
-index dc92f241732e..37db745e1502 100644
---- a/tools/perf/lib/internal.h
-+++ b/tools/perf/lib/internal.h
-@@ -14,5 +14,7 @@ do {                            \
- #define pr_warning(fmt, ...)    __pr(LIBPERF_WARN, fmt, ##__VA_ARGS__)
- #define pr_info(fmt, ...)       __pr(LIBPERF_INFO, fmt, ##__VA_ARGS__)
- #define pr_debug(fmt, ...)      __pr(LIBPERF_DEBUG, fmt, ##__VA_ARGS__)
-+#define pr_debug2(fmt, ...)     __pr(LIBPERF_DEBUG2, fmt, ##__VA_ARGS__)
-+#define pr_debug3(fmt, ...)     __pr(LIBPERF_DEBUG3, fmt, ##__VA_ARGS__)
- 
- #endif /* __LIBPERF_INTERNAL_H */
 diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
-index 8c876fbc1fa3..fba8cdfb3987 100644
+index fba8cdfb3987..eca40c75b753 100644
 --- a/tools/perf/lib/libperf.map
 +++ b/tools/perf/lib/libperf.map
-@@ -40,6 +40,7 @@ LIBPERF_0.0.1 {
- 		perf_evlist__set_maps;
+@@ -41,6 +41,7 @@ LIBPERF_0.0.1 {
  		perf_evlist__poll;
  		perf_mmap__consume;
-+		perf_mmap__read_init;
+ 		perf_mmap__read_init;
++		perf_mmap__read_done;
  	local:
  		*;
  };
 diff --git a/tools/perf/lib/mmap.c b/tools/perf/lib/mmap.c
-index 8545e7a03691..15f91b976ce7 100644
+index 15f91b976ce7..f27cb743183c 100644
 --- a/tools/perf/lib/mmap.c
 +++ b/tools/perf/lib/mmap.c
-@@ -1,11 +1,15 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <sys/mman.h>
-+#include <inttypes.h>
-+#include <asm/bug.h>
-+#include <errno.h>
- #include <linux/zalloc.h>
- #include <linux/ring_buffer.h>
- #include <linux/perf_event.h>
- #include <perf/mmap.h>
- #include <internal/mmap.h>
- #include <internal/lib.h>
-+#include "internal.h"
+@@ -185,3 +185,20 @@ int perf_mmap__read_init(struct perf_mmap *map)
  
- void perf_mmap__init(struct perf_mmap *map, bool overwrite,
- 		     libperf_unmap_cb_t unmap_cb)
-@@ -101,3 +105,83 @@ void perf_mmap__consume(struct perf_mmap *map)
- 	if (refcount_read(&map->refcnt) == 1 && perf_mmap__empty(map))
- 		perf_mmap__put(map);
+ 	return __perf_mmap__read_init(map);
  }
 +
-+static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
-+{
-+	struct perf_event_header *pheader;
-+	u64 evt_head = *start;
-+	int size = mask + 1;
-+
-+	pr_debug2("%s: buf=%p, start=%"PRIx64"\n", __func__, buf, *start);
-+	pheader = (struct perf_event_header *)(buf + (*start & mask));
-+	while (true) {
-+		if (evt_head - *start >= (unsigned int)size) {
-+			pr_debug("Finished reading overwrite ring buffer: rewind\n");
-+			if (evt_head - *start > (unsigned int)size)
-+				evt_head -= pheader->size;
-+			*end = evt_head;
-+			return 0;
-+		}
-+
-+		pheader = (struct perf_event_header *)(buf + (evt_head & mask));
-+
-+		if (pheader->size == 0) {
-+			pr_debug("Finished reading overwrite ring buffer: get start\n");
-+			*end = evt_head;
-+			return 0;
-+		}
-+
-+		evt_head += pheader->size;
-+		pr_debug3("move evt_head: %"PRIx64"\n", evt_head);
-+	}
-+	WARN_ONCE(1, "Shouldn't get here\n");
-+	return -1;
-+}
-+
 +/*
-+ * Report the start and end of the available data in ringbuffer
++ * Mandatory for overwrite mode
++ * The direction of overwrite mode is backward.
++ * The last perf_mmap__read() will set tail to map->core.prev.
++ * Need to correct the map->core.prev to head which is the end of next read.
 + */
-+static int __perf_mmap__read_init(struct perf_mmap *md)
-+{
-+	u64 head = perf_mmap__read_head(md);
-+	u64 old = md->prev;
-+	unsigned char *data = md->base + page_size;
-+	unsigned long size;
-+
-+	md->start = md->overwrite ? head : old;
-+	md->end = md->overwrite ? old : head;
-+
-+	if ((md->end - md->start) < md->flush)
-+		return -EAGAIN;
-+
-+	size = md->end - md->start;
-+	if (size > (unsigned long)(md->mask) + 1) {
-+		if (!md->overwrite) {
-+			WARN_ONCE(1, "failed to keep up with mmap data. (warn only once)\n");
-+
-+			md->prev = head;
-+			perf_mmap__consume(md);
-+			return -EAGAIN;
-+		}
-+
-+		/*
-+		 * Backward ring buffer is full. We still have a chance to read
-+		 * most of data from it.
-+		 */
-+		if (overwrite_rb_find_range(data, md->mask, &md->start, &md->end))
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+int perf_mmap__read_init(struct perf_mmap *map)
++void perf_mmap__read_done(struct perf_mmap *map)
 +{
 +	/*
 +	 * Check if event was unmapped due to a POLLHUP/POLLERR.
 +	 */
 +	if (!refcount_read(&map->refcnt))
-+		return -ENOENT;
++		return;
 +
-+	return __perf_mmap__read_init(map);
++	map->prev = perf_mmap__read_head(map);
 +}
 diff --git a/tools/perf/tests/backward-ring-buffer.c b/tools/perf/tests/backward-ring-buffer.c
-index 6d8a49b0d4e0..085e4d632be4 100644
+index 085e4d632be4..4b5625ac257c 100644
 --- a/tools/perf/tests/backward-ring-buffer.c
 +++ b/tools/perf/tests/backward-ring-buffer.c
-@@ -37,7 +37,7 @@ static int count_samples(struct evlist *evlist, int *sample_count,
- 		struct mmap *map = &evlist->overwrite_mmap[i];
- 		union perf_event *event;
- 
--		perf_mmap__read_init(map);
-+		perf_mmap__read_init(&map->core);
- 		while ((event = perf_mmap__read_event(map)) != NULL) {
- 			const u32 type = event->header.type;
- 
+@@ -53,7 +53,7 @@ static int count_samples(struct evlist *evlist, int *sample_count,
+ 				return TEST_FAIL;
+ 			}
+ 		}
+-		perf_mmap__read_done(map);
++		perf_mmap__read_done(&map->core);
+ 	}
+ 	return TEST_OK;
+ }
 diff --git a/tools/perf/tests/bpf.c b/tools/perf/tests/bpf.c
-index 79acb857841c..d7e328d2d1f2 100644
+index d7e328d2d1f2..a0b559c90f9b 100644
 --- a/tools/perf/tests/bpf.c
 +++ b/tools/perf/tests/bpf.c
-@@ -184,7 +184,7 @@ static int do_test(struct bpf_object *obj, int (*func)(void),
- 		struct mmap *md;
+@@ -193,7 +193,7 @@ static int do_test(struct bpf_object *obj, int (*func)(void),
+ 			if (type == PERF_RECORD_SAMPLE)
+ 				count ++;
+ 		}
+-		perf_mmap__read_done(md);
++		perf_mmap__read_done(&md->core);
+ 	}
  
- 		md = &evlist->mmap[i];
--		if (perf_mmap__read_init(md) < 0)
-+		if (perf_mmap__read_init(&md->core) < 0)
- 			continue;
- 
- 		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 	if (count != expect) {
 diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
-index 8ce99aeadb34..3c5de881b43c 100644
+index 3c5de881b43c..3306d75cb596 100644
 --- a/tools/perf/tests/code-reading.c
 +++ b/tools/perf/tests/code-reading.c
-@@ -425,7 +425,7 @@ static int process_events(struct machine *machine, struct evlist *evlist,
- 
- 	for (i = 0; i < evlist->core.nr_mmaps; i++) {
- 		md = &evlist->mmap[i];
--		if (perf_mmap__read_init(md) < 0)
-+		if (perf_mmap__read_init(&md->core) < 0)
- 			continue;
- 
- 		while ((event = perf_mmap__read_event(md)) != NULL) {
+@@ -434,7 +434,7 @@ static int process_events(struct machine *machine, struct evlist *evlist,
+ 			if (ret < 0)
+ 				return ret;
+ 		}
+-		perf_mmap__read_done(md);
++		perf_mmap__read_done(&md->core);
+ 	}
+ 	return 0;
+ }
 diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
-index 2169d74d9872..3cdee969958d 100644
+index 3cdee969958d..10ea5112b996 100644
 --- a/tools/perf/tests/keep-tracking.c
 +++ b/tools/perf/tests/keep-tracking.c
-@@ -39,7 +39,7 @@ static int find_comm(struct evlist *evlist, const char *comm)
- 	found = 0;
- 	for (i = 0; i < evlist->core.nr_mmaps; i++) {
- 		md = &evlist->mmap[i];
--		if (perf_mmap__read_init(md) < 0)
-+		if (perf_mmap__read_init(&md->core) < 0)
- 			continue;
- 		while ((event = perf_mmap__read_event(md)) != NULL) {
- 			if (event->header.type == PERF_RECORD_COMM &&
+@@ -49,7 +49,7 @@ static int find_comm(struct evlist *evlist, const char *comm)
+ 				found += 1;
+ 			perf_mmap__consume(&md->core);
+ 		}
+-		perf_mmap__read_done(md);
++		perf_mmap__read_done(&md->core);
+ 	}
+ 	return found;
+ }
 diff --git a/tools/perf/tests/mmap-basic.c b/tools/perf/tests/mmap-basic.c
-index 18dd25ed8a2c..e9c1fbe5a9aa 100644
+index e9c1fbe5a9aa..65b84032ee13 100644
 --- a/tools/perf/tests/mmap-basic.c
 +++ b/tools/perf/tests/mmap-basic.c
-@@ -114,7 +114,7 @@ int test__basic_mmap(struct test *test __maybe_unused, int subtest __maybe_unuse
- 		}
+@@ -142,7 +142,7 @@ int test__basic_mmap(struct test *test __maybe_unused, int subtest __maybe_unuse
+ 		nr_events[evsel->idx]++;
+ 		perf_mmap__consume(&md->core);
+ 	}
+-	perf_mmap__read_done(md);
++	perf_mmap__read_done(&md->core);
  
- 	md = &evlist->mmap[0];
--	if (perf_mmap__read_init(md) < 0)
-+	if (perf_mmap__read_init(&md->core) < 0)
- 		goto out_init;
- 
- 	while ((event = perf_mmap__read_event(md)) != NULL) {
+ out_init:
+ 	err = 0;
 diff --git a/tools/perf/tests/openat-syscall-tp-fields.c b/tools/perf/tests/openat-syscall-tp-fields.c
-index 878d32237fb3..6c04753fe5f0 100644
+index 6c04753fe5f0..771d1671f1fe 100644
 --- a/tools/perf/tests/openat-syscall-tp-fields.c
 +++ b/tools/perf/tests/openat-syscall-tp-fields.c
-@@ -92,7 +92,7 @@ int test__syscall_openat_tp_fields(struct test *test __maybe_unused, int subtest
- 			struct mmap *md;
+@@ -123,7 +123,7 @@ int test__syscall_openat_tp_fields(struct test *test __maybe_unused, int subtest
  
- 			md = &evlist->mmap[i];
--			if (perf_mmap__read_init(md) < 0)
-+			if (perf_mmap__read_init(&md->core) < 0)
- 				continue;
+ 				goto out_ok;
+ 			}
+-			perf_mmap__read_done(md);
++			perf_mmap__read_done(&md->core);
+ 		}
  
- 			while ((event = perf_mmap__read_event(md)) != NULL) {
+ 		if (nr_events == before)
 diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
-index b2552ee06329..086cabb56db2 100644
+index 086cabb56db2..a0a2d9a49157 100644
 --- a/tools/perf/tests/perf-record.c
 +++ b/tools/perf/tests/perf-record.c
-@@ -170,7 +170,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
- 			struct mmap *md;
+@@ -278,7 +278,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
  
- 			md = &evlist->mmap[i];
--			if (perf_mmap__read_init(md) < 0)
-+			if (perf_mmap__read_init(&md->core) < 0)
- 				continue;
+ 				perf_mmap__consume(&md->core);
+ 			}
+-			perf_mmap__read_done(md);
++			perf_mmap__read_done(&md->core);
+ 		}
  
- 			while ((event = perf_mmap__read_event(md)) != NULL) {
+ 		/*
 diff --git a/tools/perf/tests/sw-clock.c b/tools/perf/tests/sw-clock.c
-index 67615d90cd73..4b13d746f264 100644
+index 4b13d746f264..d2612960669f 100644
 --- a/tools/perf/tests/sw-clock.c
 +++ b/tools/perf/tests/sw-clock.c
-@@ -99,7 +99,7 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
- 	evlist__disable(evlist);
+@@ -119,7 +119,7 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
+ next_event:
+ 		perf_mmap__consume(&md->core);
+ 	}
+-	perf_mmap__read_done(md);
++	perf_mmap__read_done(&md->core);
  
- 	md = &evlist->mmap[0];
--	if (perf_mmap__read_init(md) < 0)
-+	if (perf_mmap__read_init(&md->core) < 0)
- 		goto out_init;
- 
- 	while ((event = perf_mmap__read_event(md)) != NULL) {
+ out_init:
+ 	if ((u64) nr_samples == total_periods) {
 diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
-index 529b39f39299..f774b50f926e 100644
+index f774b50f926e..e2beb68281e2 100644
 --- a/tools/perf/tests/switch-tracking.c
 +++ b/tools/perf/tests/switch-tracking.c
-@@ -270,7 +270,7 @@ static int process_events(struct evlist *evlist,
+@@ -280,7 +280,7 @@ static int process_events(struct evlist *evlist,
+ 			if (ret < 0)
+ 				goto out_free_nodes;
+ 		}
+-		perf_mmap__read_done(md);
++		perf_mmap__read_done(&md->core);
+ 	}
  
- 	for (i = 0; i < evlist->core.nr_mmaps; i++) {
- 		md = &evlist->mmap[i];
--		if (perf_mmap__read_init(md) < 0)
-+		if (perf_mmap__read_init(&md->core) < 0)
- 			continue;
- 
- 		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 	events_array = calloc(cnt, sizeof(struct event_node));
 diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-index 4fd52522357a..6a1ca5d6dfdf 100644
+index 6a1ca5d6dfdf..988739fcaf8d 100644
 --- a/tools/perf/tests/task-exit.c
 +++ b/tools/perf/tests/task-exit.c
-@@ -117,7 +117,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
+@@ -126,7 +126,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
  
- retry:
- 	md = &evlist->mmap[0];
--	if (perf_mmap__read_init(md) < 0)
-+	if (perf_mmap__read_init(&md->core) < 0)
- 		goto out_init;
+ 		perf_mmap__consume(&md->core);
+ 	}
+-	perf_mmap__read_done(md);
++	perf_mmap__read_done(&md->core);
  
- 	while ((event = perf_mmap__read_event(md)) != NULL) {
+ out_init:
+ 	if (!exited || !nr_exit) {
 diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index e9cc637881b8..38fd27f5bf0f 100644
+index 38fd27f5bf0f..4f92b65e702c 100644
 --- a/tools/perf/util/evlist.c
 +++ b/tools/perf/util/evlist.c
-@@ -1752,7 +1752,7 @@ static void *perf_evlist__poll_thread(void *arg)
- 			struct mmap *map = &evlist->mmap[i];
- 			union perf_event *event;
+@@ -1765,7 +1765,7 @@ static void *perf_evlist__poll_thread(void *arg)
+ 				perf_mmap__consume(&map->core);
+ 				got_data = true;
+ 			}
+-			perf_mmap__read_done(map);
++			perf_mmap__read_done(&map->core);
+ 		}
  
--			if (perf_mmap__read_init(map))
-+			if (perf_mmap__read_init(&map->core))
- 				continue;
- 			while ((event = perf_mmap__read_event(map)) != NULL) {
- 				struct evsel *evsel = perf_evlist__event2evsel(evlist, event);
+ 		if (draining && !got_data)
 diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 5ec12483e79d..5913f7354232 100644
+index 5913f7354232..5ede1d2c84b1 100644
 --- a/tools/perf/util/mmap.c
 +++ b/tools/perf/util/mmap.c
-@@ -364,86 +364,6 @@ int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, int cpu)
- 	return perf_mmap__aio_mmap(map, mp);
+@@ -404,20 +404,3 @@ int perf_mmap__push(struct mmap *md, void *to,
+ out:
+ 	return rc;
  }
- 
--static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
--{
--	struct perf_event_header *pheader;
--	u64 evt_head = *start;
--	int size = mask + 1;
--
--	pr_debug2("%s: buf=%p, start=%"PRIx64"\n", __func__, buf, *start);
--	pheader = (struct perf_event_header *)(buf + (*start & mask));
--	while (true) {
--		if (evt_head - *start >= (unsigned int)size) {
--			pr_debug("Finished reading overwrite ring buffer: rewind\n");
--			if (evt_head - *start > (unsigned int)size)
--				evt_head -= pheader->size;
--			*end = evt_head;
--			return 0;
--		}
--
--		pheader = (struct perf_event_header *)(buf + (evt_head & mask));
--
--		if (pheader->size == 0) {
--			pr_debug("Finished reading overwrite ring buffer: get start\n");
--			*end = evt_head;
--			return 0;
--		}
--
--		evt_head += pheader->size;
--		pr_debug3("move evt_head: %"PRIx64"\n", evt_head);
--	}
--	WARN_ONCE(1, "Shouldn't get here\n");
--	return -1;
--}
 -
 -/*
-- * Report the start and end of the available data in ringbuffer
+- * Mandatory for overwrite mode
+- * The direction of overwrite mode is backward.
+- * The last perf_mmap__read() will set tail to map->core.prev.
+- * Need to correct the map->core.prev to head which is the end of next read.
 - */
--static int __perf_mmap__read_init(struct mmap *md)
--{
--	u64 head = perf_mmap__read_head(&md->core);
--	u64 old = md->core.prev;
--	unsigned char *data = md->core.base + page_size;
--	unsigned long size;
--
--	md->core.start = md->core.overwrite ? head : old;
--	md->core.end = md->core.overwrite ? old : head;
--
--	if ((md->core.end - md->core.start) < md->core.flush)
--		return -EAGAIN;
--
--	size = md->core.end - md->core.start;
--	if (size > (unsigned long)(md->core.mask) + 1) {
--		if (!md->core.overwrite) {
--			WARN_ONCE(1, "failed to keep up with mmap data. (warn only once)\n");
--
--			md->core.prev = head;
--			perf_mmap__consume(&md->core);
--			return -EAGAIN;
--		}
--
--		/*
--		 * Backward ring buffer is full. We still have a chance to read
--		 * most of data from it.
--		 */
--		if (overwrite_rb_find_range(data, md->core.mask, &md->core.start, &md->core.end))
--			return -EINVAL;
--	}
--
--	return 0;
--}
--
--int perf_mmap__read_init(struct mmap *map)
+-void perf_mmap__read_done(struct mmap *map)
 -{
 -	/*
 -	 * Check if event was unmapped due to a POLLHUP/POLLERR.
 -	 */
 -	if (!refcount_read(&map->core.refcnt))
--		return -ENOENT;
+-		return;
 -
--	return __perf_mmap__read_init(map);
+-	map->core.prev = perf_mmap__read_head(&map->core);
 -}
--
- int perf_mmap__push(struct mmap *md, void *to,
- 		    int push(struct mmap *map, void *to, void *buf, size_t size))
- {
-@@ -453,7 +373,7 @@ int perf_mmap__push(struct mmap *md, void *to,
- 	void *buf;
- 	int rc = 0;
- 
--	rc = perf_mmap__read_init(md);
-+	rc = perf_mmap__read_init(&md->core);
- 	if (rc < 0)
- 		return (rc == -EAGAIN) ? 1 : -1;
- 
 diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index d90554168127..3849bcbbe9ce 100644
+index 3849bcbbe9ce..efc2392747ba 100644
 --- a/tools/perf/util/mmap.h
 +++ b/tools/perf/util/mmap.h
-@@ -82,6 +82,5 @@ int perf_mmap__push(struct mmap *md, void *to,
+@@ -82,5 +82,4 @@ int perf_mmap__push(struct mmap *md, void *to,
  
  size_t mmap__mmap_len(struct mmap *map);
  
--int perf_mmap__read_init(struct mmap *md);
- void perf_mmap__read_done(struct mmap *map);
+-void perf_mmap__read_done(struct mmap *map);
  #endif /*__PERF_MMAP_H */
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 04c1d350a9c5..ba7a7cace740 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -1017,7 +1017,7 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
- 	if (!md)
- 		return NULL;
- 
--	if (perf_mmap__read_init(md) < 0)
-+	if (perf_mmap__read_init(&md->core) < 0)
- 		goto end;
- 
- 	event = perf_mmap__read_event(md);
 -- 
 2.21.0
 
