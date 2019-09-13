@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B879AB1FD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D0DBB211F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388255AbfIMNJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:09:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33440 "EHLO mail.kernel.org"
+        id S2389390AbfIMNdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:33:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388354AbfIMNI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:08:56 -0400
+        id S2388524AbfIMNJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:09:36 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D87F208C2;
-        Fri, 13 Sep 2019 13:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D566720CC7;
+        Fri, 13 Sep 2019 13:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380136;
-        bh=18tAscth9FF9plE93REuaZYkwT31wbrMuT8sabAMCe4=;
+        s=default; t=1568380175;
+        bh=K6pKLWXHqc+Yt0nYkI/jxp9x1HNQc4F9C1cm09K8eFE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d1YX3lB1coAOlgUYIV2UxZ0QLkIib8sNd8IQAX6COMQb4DKKMCr3LmMNZSFebk/61
-         w3iFMljXtOlXJBNA7KemifQ755mU8Ihgau9tnSAZOAcR4dj49ngtQjW+yl4KKKNbFE
-         6yASltB8315kiyOq4Yb3Is5tSmHu52soWuJcfVqo=
+        b=OBmPFQBe02QarFq7wYcIaAqzjT3zG2lp0eS84Dxp0vgc5tVxHCJzSDc+31j7FYNcm
+         YcW1MVX3Mie2XvGsZv/pXTaSWCwJu/Nx7RjV9zeClJXr0gGFMvray2N/6/iGREduim
+         4oIQpZwqbhXIp3cvDZZ3zTt+NNZyVIJEqR3yJ8H0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 7/9] x86, boot: Remove multiple copy of static function sanitize_boot_params()
-Date:   Fri, 13 Sep 2019 14:06:57 +0100
-Message-Id: <20190913130430.474572665@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+0bf0519d6e0de15914fe@syzkaller.appspotmail.com,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Zubin Mithra <zsm@chromium.org>
+Subject: [PATCH 4.9 06/14] xfrm: clean up xfrm protocol checks
+Date:   Fri, 13 Sep 2019 14:06:59 +0100
+Message-Id: <20190913130444.653504118@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130424.160808669@linuxfoundation.org>
-References: <20190913130424.160808669@linuxfoundation.org>
+In-Reply-To: <20190913130440.264749443@linuxfoundation.org>
+References: <20190913130440.264749443@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +47,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 8c5477e8046ca139bac250386c08453da37ec1ae upstream.
+commit dbb2483b2a46fbaf833cfb5deb5ed9cace9c7399 upstream.
 
-Kernel build warns:
- 'sanitize_boot_params' defined but not used [-Wunused-function]
+In commit 6a53b7593233 ("xfrm: check id proto in validate_tmpl()")
+I introduced a check for xfrm protocol, but according to Herbert
+IPSEC_PROTO_ANY should only be used as a wildcard for lookup, so
+it should be removed from validate_tmpl().
 
-at below files:
-  arch/x86/boot/compressed/cmdline.c
-  arch/x86/boot/compressed/error.c
-  arch/x86/boot/compressed/early_serial_console.c
-  arch/x86/boot/compressed/acpi.c
+And, IPSEC_PROTO_ANY is expected to only match 3 IPSec-specific
+protocols, this is why xfrm_state_flush() could still miss
+IPPROTO_ROUTING, which leads that those entries are left in
+net->xfrm.state_all before exit net. Fix this by replacing
+IPSEC_PROTO_ANY with zero.
 
-That's becausethey each include misc.h which includes a definition of
-sanitize_boot_params() via bootparam_utils.h.
+This patch also extracts the check from validate_tmpl() to
+xfrm_id_proto_valid() and uses it in parse_ipsecrequest().
+With this, no other protocols should be added into xfrm.
 
-Remove the inclusion from misc.h and have the c file including
-bootparam_utils.h directly.
-
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/1563283092-1189-1-git-send-email-zhenzhong.duan@oracle.com
-[nc: Fixed conflict around lack of 67b6662559f7f]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Fixes: 6a53b7593233 ("xfrm: check id proto in validate_tmpl()")
+Reported-by: syzbot+0bf0519d6e0de15914fe@syzkaller.appspotmail.com
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/boot/compressed/misc.c |    1 +
- arch/x86/boot/compressed/misc.h |    1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ include/net/xfrm.h    |   17 +++++++++++++++++
+ net/key/af_key.c      |    4 +++-
+ net/xfrm/xfrm_state.c |    2 +-
+ net/xfrm/xfrm_user.c  |   14 +-------------
+ 4 files changed, 22 insertions(+), 15 deletions(-)
 
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -11,6 +11,7 @@
+--- a/include/net/xfrm.h
++++ b/include/net/xfrm.h
+@@ -1297,6 +1297,23 @@ static inline int xfrm_state_kern(const
+ 	return atomic_read(&x->tunnel_users);
+ }
  
- #include "misc.h"
- #include "../string.h"
-+#include <asm/bootparam_utils.h>
++static inline bool xfrm_id_proto_valid(u8 proto)
++{
++	switch (proto) {
++	case IPPROTO_AH:
++	case IPPROTO_ESP:
++	case IPPROTO_COMP:
++#if IS_ENABLED(CONFIG_IPV6)
++	case IPPROTO_ROUTING:
++	case IPPROTO_DSTOPTS:
++#endif
++		return true;
++	default:
++		return false;
++	}
++}
++
++/* IPSEC_PROTO_ANY only matches 3 IPsec protocols, 0 could match all. */
+ static inline int xfrm_id_proto_match(u8 proto, u8 userproto)
+ {
+ 	return (!userproto || proto == userproto ||
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -1969,8 +1969,10 @@ parse_ipsecrequest(struct xfrm_policy *x
  
- /* WARNING!!
-  * This code is compiled with -fPIC and it is relocated dynamically
---- a/arch/x86/boot/compressed/misc.h
-+++ b/arch/x86/boot/compressed/misc.h
-@@ -19,7 +19,6 @@
- #include <asm/page.h>
- #include <asm/boot.h>
- #include <asm/bootparam.h>
--#include <asm/bootparam_utils.h>
+ 	if (rq->sadb_x_ipsecrequest_mode == 0)
+ 		return -EINVAL;
++	if (!xfrm_id_proto_valid(rq->sadb_x_ipsecrequest_proto))
++		return -EINVAL;
  
- #define BOOT_BOOT_H
- #include "../ctype.h"
+-	t->id.proto = rq->sadb_x_ipsecrequest_proto; /* XXX check proto */
++	t->id.proto = rq->sadb_x_ipsecrequest_proto;
+ 	if ((mode = pfkey_mode_to_xfrm(rq->sadb_x_ipsecrequest_mode)) < 0)
+ 		return -EINVAL;
+ 	t->mode = mode;
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -2168,7 +2168,7 @@ void xfrm_state_fini(struct net *net)
+ 	unsigned int sz;
+ 
+ 	flush_work(&net->xfrm.state_hash_work);
+-	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
++	xfrm_state_flush(net, 0, false);
+ 	flush_work(&xfrm_state_gc_work);
+ 
+ 	WARN_ON(!list_empty(&net->xfrm.state_all));
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1452,20 +1452,8 @@ static int validate_tmpl(int nr, struct
+ 			return -EINVAL;
+ 		}
+ 
+-		switch (ut[i].id.proto) {
+-		case IPPROTO_AH:
+-		case IPPROTO_ESP:
+-		case IPPROTO_COMP:
+-#if IS_ENABLED(CONFIG_IPV6)
+-		case IPPROTO_ROUTING:
+-		case IPPROTO_DSTOPTS:
+-#endif
+-		case IPSEC_PROTO_ANY:
+-			break;
+-		default:
++		if (!xfrm_id_proto_valid(ut[i].id.proto))
+ 			return -EINVAL;
+-		}
+-
+ 	}
+ 
+ 	return 0;
 
 
