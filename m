@@ -2,97 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 221DEB1E7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34F52B1E6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388799AbfIMNKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:10:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388773AbfIMNKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:10:33 -0400
-Received: from localhost (unknown [104.132.45.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 764EE206A5;
-        Fri, 13 Sep 2019 13:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380233;
-        bh=yXwm8MgEmEID84fx8p8QR4M7wBqVOGT2lkZ6Iq9uT+Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Q+SWp3PPBDFNMHY6jumDBFtGoUSEv7Uwyya36QI1EB3JVgN9qWeBT0fDd4Z+FPsV
-         BG3u/c/KISWuXWJKtNuFmijQqkbl4y0Zs0PCJKlP6J0xw9AEU0xxBy+5ymoOROM0ZS
-         CFomT+zHW8UE1bNMUSB1y+9UhABItb6orFnSiUVk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lidong Chen <lidongchen@tencent.com>,
-        ruippan <ruippan@tencent.com>, yongduan <yongduan@tencent.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Tyler Hicks <tyhicks@canonical.com>
-Subject: [PATCH 4.14 21/21] vhost: make sure log_num < in_num
-Date:   Fri, 13 Sep 2019 14:07:14 +0100
-Message-Id: <20190913130509.533214384@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
-References: <20190913130501.285837292@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2388690AbfIMNKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:10:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55880 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388654AbfIMNKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:10:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9C784AF77;
+        Fri, 13 Sep 2019 13:10:03 +0000 (UTC)
+Subject: Re: [PATCH 6/8] drm/vram: switch vram helper to
+ &drm_gem_object_funcs.mmap()
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190913122908.784-1-kraxel@redhat.com>
+ <20190913122908.784-7-kraxel@redhat.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
+ IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
+ AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
+ 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
+ hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
+ YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
+ 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
+ tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
+ R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
+ E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
+ kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
+ 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
+ 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
+ A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
+ NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
+ VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
+ iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
+ VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
+ iNx9uqqx
+Message-ID: <dba5d37c-b1d8-4e25-778e-834eab56ac22@suse.de>
+Date:   Fri, 13 Sep 2019 15:10:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190913122908.784-7-kraxel@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="RmsZZWSXavej7oVe5ush19wY9mOx8b3S7"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yongduan <yongduan@tencent.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--RmsZZWSXavej7oVe5ush19wY9mOx8b3S7
+Content-Type: multipart/mixed; boundary="PJnqTNeeviakBB93394pK2IBJaf2SDsO7";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>,
+ David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+ open list <linux-kernel@vger.kernel.org>
+Message-ID: <dba5d37c-b1d8-4e25-778e-834eab56ac22@suse.de>
+Subject: Re: [PATCH 6/8] drm/vram: switch vram helper to
+ &drm_gem_object_funcs.mmap()
+References: <20190913122908.784-1-kraxel@redhat.com>
+ <20190913122908.784-7-kraxel@redhat.com>
+In-Reply-To: <20190913122908.784-7-kraxel@redhat.com>
 
-commit 060423bfdee3f8bc6e2c1bac97de24d5415e2bc4 upstream.
+--PJnqTNeeviakBB93394pK2IBJaf2SDsO7
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-The code assumes log_num < in_num everywhere, and that is true as long as
-in_num is incremented by descriptor iov count, and log_num by 1. However
-this breaks if there's a zero sized descriptor.
+Hi
 
-As a result, if a malicious guest creates a vring desc with desc.len = 0,
-it may cause the host kernel to crash by overflowing the log array. This
-bug can be triggered during the VM migration.
+Am 13.09.19 um 14:29 schrieb Gerd Hoffmann:
+> Wire up the new drm_gem_ttm_mmap() helper function,
+> use generic drm_gem_mmap for &fops.mmap and
+> delete dead drm_vram_mm_file_operations_mmap().
+>=20
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
-There's no need to log when desc.len = 0, so just don't increment log_num
-in this case.
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Fixes: 3a4d5c94e959 ("vhost_net: a kernel-level virtio server")
-Cc: stable@vger.kernel.org
-Reviewed-by: Lidong Chen <lidongchen@tencent.com>
-Signed-off-by: ruippan <ruippan@tencent.com>
-Signed-off-by: yongduan <yongduan@tencent.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  include/drm/drm_gem_vram_helper.h     |  9 +------
+>  drivers/gpu/drm/drm_gem_vram_helper.c | 34 +--------------------------=
 
----
- drivers/vhost/vhost.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>  2 files changed, 2 insertions(+), 41 deletions(-)
+>=20
+> diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vr=
+am_helper.h
+> index 9aaef4f8c327..9d5526650291 100644
+> --- a/include/drm/drm_gem_vram_helper.h
+> +++ b/include/drm/drm_gem_vram_helper.h
+> @@ -180,13 +180,6 @@ struct drm_vram_mm *drm_vram_helper_alloc_mm(
+>  	struct drm_device *dev, uint64_t vram_base, size_t vram_size);
+>  void drm_vram_helper_release_mm(struct drm_device *dev);
+> =20
+> -/*
+> - * Helpers for &struct file_operations
+> - */
+> -
+> -int drm_vram_mm_file_operations_mmap(
+> -	struct file *filp, struct vm_area_struct *vma);
+> -
+>  /**
+>   * define DRM_VRAM_MM_FILE_OPERATIONS - default callback functions for=
+ \
+>  	&struct file_operations
+> @@ -200,7 +193,7 @@ int drm_vram_mm_file_operations_mmap(
+>  	.poll		=3D drm_poll, \
+>  	.unlocked_ioctl =3D drm_ioctl, \
+>  	.compat_ioctl	=3D drm_compat_ioctl, \
+> -	.mmap		=3D drm_vram_mm_file_operations_mmap, \
+> +	.mmap		=3D drm_gem_mmap, \
+>  	.open		=3D drm_open, \
+>  	.release	=3D drm_release \
+> =20
+> diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/dr=
+m_gem_vram_helper.c
+> index 7bee80c6b6e8..e100b97ea6e3 100644
+> --- a/drivers/gpu/drm/drm_gem_vram_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+> @@ -681,6 +681,7 @@ static const struct drm_gem_object_funcs drm_gem_vr=
+am_object_funcs =3D {
+>  	.unpin	=3D drm_gem_vram_object_unpin,
+>  	.vmap	=3D drm_gem_vram_object_vmap,
+>  	.vunmap	=3D drm_gem_vram_object_vunmap,
+> +	.mmap   =3D drm_gem_ttm_mmap,
+>  	.print_info =3D drm_gem_ttm_print_info,
+>  };
+> =20
+> @@ -915,12 +916,6 @@ static void drm_vram_mm_cleanup(struct drm_vram_mm=
+ *vmm)
+>  	ttm_bo_device_release(&vmm->bdev);
+>  }
+> =20
+> -static int drm_vram_mm_mmap(struct file *filp, struct vm_area_struct *=
+vma,
+> -			    struct drm_vram_mm *vmm)
+> -{
+> -	return ttm_bo_mmap(filp, vma, &vmm->bdev);
+> -}
+> -
+>  /*
+>   * Helpers for integration with struct drm_device
+>   */
+> @@ -976,30 +971,3 @@ void drm_vram_helper_release_mm(struct drm_device =
+*dev)
+>  	dev->vram_mm =3D NULL;
+>  }
+>  EXPORT_SYMBOL(drm_vram_helper_release_mm);
+> -
+> -/*
+> - * Helpers for &struct file_operations
+> - */
+> -
+> -/**
+> - * drm_vram_mm_file_operations_mmap() - \
+> -	Implements &struct file_operations.mmap()
+> - * @filp:	the mapping's file structure
+> - * @vma:	the mapping's memory area
+> - *
+> - * Returns:
+> - * 0 on success, or
+> - * a negative error code otherwise.
+> - */
+> -int drm_vram_mm_file_operations_mmap(
+> -	struct file *filp, struct vm_area_struct *vma)
+> -{
+> -	struct drm_file *file_priv =3D filp->private_data;
+> -	struct drm_device *dev =3D file_priv->minor->dev;
+> -
+> -	if (WARN_ONCE(!dev->vram_mm, "VRAM MM not initialized"))
+> -		return -EINVAL;
+> -
+> -	return drm_vram_mm_mmap(filp, vma, dev->vram_mm);
+> -}
+> -EXPORT_SYMBOL(drm_vram_mm_file_operations_mmap);
+>=20
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2068,7 +2068,7 @@ static int get_indirect(struct vhost_vir
- 		/* If this is an input descriptor, increment that count. */
- 		if (access == VHOST_ACCESS_WO) {
- 			*in_num += ret;
--			if (unlikely(log)) {
-+			if (unlikely(log && ret)) {
- 				log[*log_num].addr = vhost64_to_cpu(vq, desc.addr);
- 				log[*log_num].len = vhost32_to_cpu(vq, desc.len);
- 				++*log_num;
-@@ -2211,7 +2211,7 @@ int vhost_get_vq_desc(struct vhost_virtq
- 			/* If this is an input descriptor,
- 			 * increment that count. */
- 			*in_num += ret;
--			if (unlikely(log)) {
-+			if (unlikely(log && ret)) {
- 				log[*log_num].addr = vhost64_to_cpu(vq, desc.addr);
- 				log[*log_num].len = vhost32_to_cpu(vq, desc.len);
- 				++*log_num;
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG N=C3=BCrnberg)
 
 
+--PJnqTNeeviakBB93394pK2IBJaf2SDsO7--
+
+--RmsZZWSXavej7oVe5ush19wY9mOx8b3S7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl17lSoACgkQaA3BHVML
+eiMlnAgAuxM3198AW62WoPQh/tnCpRgXAfVVr139GaUue632fn62jXkyNkqemGss
+0k+tOeN7cUqQvZJAnG1nY6dlsRYznmhRBTVeJpKngf/faFDuX8Ndj73KmQ5/JBCU
+UT9lWo7d5XlVOkdsF7Pm7U/haEwYi7HHe6yFdFGDN8P2t4CoCosFGLNqw41mdTlv
+JBrGg+kJbfPYDx/0uKHSO8r5nnwyUKTgAp3sDa3LmwG/wC232x4WHFk7ccDWmCph
+E4qO6KVnXFAWqKZfccnhNGHx1el5aKPBzxEoms/Gr8R2VCF0cNTj2bu4ETwfuDV+
+zUbPrHqLGjwVT+Kf2u3oYUt8Pdvmmg==
+=hVky
+-----END PGP SIGNATURE-----
+
+--RmsZZWSXavej7oVe5ush19wY9mOx8b3S7--
