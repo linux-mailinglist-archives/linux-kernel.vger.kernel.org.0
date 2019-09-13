@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B44DEB20A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29D4AB20A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391240AbfIMNYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:24:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59550 "EHLO mx1.redhat.com"
+        id S2391252AbfIMNYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:24:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42230 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391207AbfIMNYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:24:47 -0400
+        id S2391219AbfIMNYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:24:49 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 205DA18CB8E7;
-        Fri, 13 Sep 2019 13:24:47 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 10E307BDA1;
+        Fri, 13 Sep 2019 13:24:49 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A2F115C1D4;
-        Fri, 13 Sep 2019 13:24:43 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6CF575C1D4;
+        Fri, 13 Sep 2019 13:24:47 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,264 +27,366 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 19/73] libperf: Move system_wide from struct evsel to struct perf_evsel
-Date:   Fri, 13 Sep 2019 15:23:01 +0200
-Message-Id: <20190913132355.21634-20-jolsa@kernel.org>
+Subject: [PATCH 20/73] libperf: Move nr_mmaps from struct evlist to struct perf_evlist
+Date:   Fri, 13 Sep 2019 15:23:02 +0200
+Message-Id: <20190913132355.21634-21-jolsa@kernel.org>
 In-Reply-To: <20190913132355.21634-1-jolsa@kernel.org>
 References: <20190913132355.21634-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Fri, 13 Sep 2019 13:24:47 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 13 Sep 2019 13:24:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the system_wide member from perf's evsel to libperf's perf_evsel.
+Moving nr_mmaps from struct evlist to struct perf_evlist,
+it will be used in following patches.
 
-Link: http://lkml.kernel.org/n/tip-it7hq5v16y44z220vas1kf8p@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-g6auuaej31nsusuevuhcgxli@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/arch/x86/util/intel-pt.c     |  4 ++--
- tools/perf/builtin-script.c             |  2 +-
- tools/perf/builtin-stat.c               |  4 ++--
- tools/perf/lib/include/internal/evsel.h |  1 +
- tools/perf/tests/switch-tracking.c      |  6 +++---
- tools/perf/util/evlist.c                | 10 +++++-----
- tools/perf/util/evsel.c                 |  8 ++++----
- tools/perf/util/evsel.h                 |  1 -
- tools/perf/util/parse-events.c          |  2 +-
- tools/perf/util/stat.c                  |  2 +-
- 10 files changed, 20 insertions(+), 20 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c            |  2 +-
+ tools/perf/arch/arm64/util/arm-spe.c         |  2 +-
+ tools/perf/arch/x86/tests/perf-time-to-tsc.c |  2 +-
+ tools/perf/arch/x86/util/intel-bts.c         |  2 +-
+ tools/perf/arch/x86/util/intel-pt.c          |  2 +-
+ tools/perf/builtin-kvm.c                     |  2 +-
+ tools/perf/builtin-record.c                  |  6 +++---
+ tools/perf/builtin-top.c                     |  2 +-
+ tools/perf/builtin-trace.c                   |  2 +-
+ tools/perf/lib/include/internal/evlist.h     |  1 +
+ tools/perf/tests/backward-ring-buffer.c      |  2 +-
+ tools/perf/tests/bpf.c                       |  2 +-
+ tools/perf/tests/code-reading.c              |  2 +-
+ tools/perf/tests/keep-tracking.c             |  2 +-
+ tools/perf/tests/openat-syscall-tp-fields.c  |  2 +-
+ tools/perf/tests/perf-record.c               |  2 +-
+ tools/perf/tests/switch-tracking.c           |  2 +-
+ tools/perf/util/evlist.c                     | 16 ++++++++--------
+ tools/perf/util/evlist.h                     |  1 -
+ tools/perf/util/python.c                     |  2 +-
+ 20 files changed, 28 insertions(+), 28 deletions(-)
 
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index c32db09baf0d..6407edf72edd 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -648,7 +648,7 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
+ 	if (priv_size != cs_etm_info_priv_size(itr, session->evlist))
+ 		return -EINVAL;
+ 
+-	if (!session->evlist->nr_mmaps)
++	if (!session->evlist->core.nr_mmaps)
+ 		return -EINVAL;
+ 
+ 	/* If the cpu_map is empty all online CPUs are involved */
+diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
+index 4b364692da67..2fcabddd87b5 100644
+--- a/tools/perf/arch/arm64/util/arm-spe.c
++++ b/tools/perf/arch/arm64/util/arm-spe.c
+@@ -51,7 +51,7 @@ static int arm_spe_info_fill(struct auxtrace_record *itr,
+ 	if (priv_size != ARM_SPE_AUXTRACE_PRIV_SIZE)
+ 		return -EINVAL;
+ 
+-	if (!session->evlist->nr_mmaps)
++	if (!session->evlist->core.nr_mmaps)
+ 		return -EINVAL;
+ 
+ 	auxtrace_info->type = PERF_AUXTRACE_ARM_SPE;
+diff --git a/tools/perf/arch/x86/tests/perf-time-to-tsc.c b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
+index 42725e6882e9..185bdbf8cb9d 100644
+--- a/tools/perf/arch/x86/tests/perf-time-to-tsc.c
++++ b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
+@@ -115,7 +115,7 @@ int test__perf_time_to_tsc(struct test *test __maybe_unused, int subtest __maybe
+ 
+ 	evlist__disable(evlist);
+ 
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		md = &evlist->mmap[i];
+ 		if (perf_mmap__read_init(md) < 0)
+ 			continue;
+diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
+index aa13df948049..5dd42e6d22f9 100644
+--- a/tools/perf/arch/x86/util/intel-bts.c
++++ b/tools/perf/arch/x86/util/intel-bts.c
+@@ -74,7 +74,7 @@ static int intel_bts_info_fill(struct auxtrace_record *itr,
+ 	if (priv_size != INTEL_BTS_AUXTRACE_PRIV_SIZE)
+ 		return -EINVAL;
+ 
+-	if (!session->evlist->nr_mmaps)
++	if (!session->evlist->core.nr_mmaps)
+ 		return -EINVAL;
+ 
+ 	pc = session->evlist->mmap[0].core.base;
 diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index c0a7535cfd0e..1ae050c4045b 100644
+index 1ae050c4045b..42f111323c31 100644
 --- a/tools/perf/arch/x86/util/intel-pt.c
 +++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -421,7 +421,7 @@ static int intel_pt_track_switches(struct evlist *evlist)
- 	perf_evsel__set_sample_bit(evsel, CPU);
- 	perf_evsel__set_sample_bit(evsel, TIME);
+@@ -351,7 +351,7 @@ static int intel_pt_info_fill(struct auxtrace_record *itr,
+ 	filter = intel_pt_find_filter(session->evlist, ptr->intel_pt_pmu);
+ 	filter_str_len = filter ? strlen(filter) : 0;
  
--	evsel->system_wide = true;
-+	evsel->core.system_wide = true;
- 	evsel->no_aux_samples = true;
- 	evsel->immediate = true;
+-	if (!session->evlist->nr_mmaps)
++	if (!session->evlist->core.nr_mmaps)
+ 		return -EINVAL;
  
-@@ -722,7 +722,7 @@ static int intel_pt_recording_options(struct auxtrace_record *itr,
- 				switch_evsel->core.attr.sample_period = 1;
- 				switch_evsel->core.attr.context_switch = 1;
+ 	pc = session->evlist->mmap[0].core.base;
+diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+index da16349f2808..2b8e71d0a722 100644
+--- a/tools/perf/builtin-kvm.c
++++ b/tools/perf/builtin-kvm.c
+@@ -799,7 +799,7 @@ static int perf_kvm__mmap_read(struct perf_kvm_stat *kvm)
+ 	s64 n, ntotal = 0;
+ 	u64 flush_time = ULLONG_MAX, mmap_time;
  
--				switch_evsel->system_wide = true;
-+				switch_evsel->core.system_wide = true;
- 				switch_evsel->no_aux_samples = true;
- 				switch_evsel->immediate = true;
+-	for (i = 0; i < kvm->evlist->nr_mmaps; i++) {
++	for (i = 0; i < kvm->evlist->core.nr_mmaps; i++) {
+ 		n = perf_kvm__mmap_read_idx(kvm, i, &mmap_time);
+ 		if (n < 0)
+ 			return -1;
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 400ce2f3fa99..6e9f5619f062 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -354,7 +354,7 @@ static void record__aio_mmap_read_sync(struct record *rec)
+ 	if (!record__aio_enabled(rec))
+ 		return;
  
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index e079b34201f2..c602793d5483 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1915,7 +1915,7 @@ static void __process_stat(struct evsel *counter, u64 tstamp)
- 	int cpu, thread;
- 	static int header_printed;
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		struct mmap *map = &maps[i];
  
--	if (counter->system_wide)
-+	if (counter->core.system_wide)
- 		nthreads = 1;
+ 		if (map->core.base)
+@@ -600,7 +600,7 @@ static int record__auxtrace_read_snapshot_all(struct record *rec)
+ 	int i;
+ 	int rc = 0;
  
- 	if (!header_printed) {
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 7e17bf9f700a..35897048ba53 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -276,7 +276,7 @@ static int read_counter(struct evsel *counter, struct timespec *rs)
- 	if (!counter->supported)
- 		return -ENOENT;
+-	for (i = 0; i < rec->evlist->nr_mmaps; i++) {
++	for (i = 0; i < rec->evlist->core.nr_mmaps; i++) {
+ 		struct mmap *map = &rec->evlist->mmap[i];
  
--	if (counter->system_wide)
-+	if (counter->core.system_wide)
- 		nthreads = 1;
+ 		if (!map->auxtrace_mmap.base)
+@@ -952,7 +952,7 @@ static int record__mmap_read_evlist(struct record *rec, struct evlist *evlist,
+ 	if (record__aio_enabled(rec))
+ 		off = record__aio_get_pos(trace_fd);
  
- 	for (thread = 0; thread < nthreads; thread++) {
-@@ -1681,7 +1681,7 @@ static void setup_system_wide(int forks)
- 		struct evsel *counter;
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		u64 flush = 0;
+ 		struct mmap *map = &maps[i];
  
- 		evlist__for_each_entry(evsel_list, counter) {
--			if (!counter->system_wide)
-+			if (!counter->core.system_wide)
- 				return;
- 		}
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 9adc91d06e16..5698234cef88 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -901,7 +901,7 @@ static void perf_top__mmap_read(struct perf_top *top)
+ 	if (overwrite)
+ 		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_DATA_PENDING);
  
-diff --git a/tools/perf/lib/include/internal/evsel.h b/tools/perf/lib/include/internal/evsel.h
-index 8b854d1c9b45..220cb2e2b54e 100644
---- a/tools/perf/lib/include/internal/evsel.h
-+++ b/tools/perf/lib/include/internal/evsel.h
-@@ -18,6 +18,7 @@ struct perf_evsel {
+-	for (i = 0; i < top->evlist->nr_mmaps; i++)
++	for (i = 0; i < top->evlist->core.nr_mmaps; i++)
+ 		perf_top__mmap_read_idx(top, i);
  
- 	/* parse modifier helper */
- 	int			 nr_members;
-+	bool			 system_wide;
+ 	if (overwrite) {
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index c2e842a6467b..6e9797d85d54 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3441,7 +3441,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ again:
+ 	before = trace->nr_events;
+ 
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		union perf_event *event;
+ 		struct mmap *md;
+ 
+diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
+index 448891f06e3e..035c1e1cc324 100644
+--- a/tools/perf/lib/include/internal/evlist.h
++++ b/tools/perf/lib/include/internal/evlist.h
+@@ -13,6 +13,7 @@ struct perf_evlist {
+ 	bool			 has_user_cpus;
+ 	struct perf_cpu_map	*cpus;
+ 	struct perf_thread_map	*threads;
++	int			 nr_mmaps;
  };
  
- int perf_evsel__alloc_fd(struct perf_evsel *evsel, int ncpus, int nthreads);
+ /**
+diff --git a/tools/perf/tests/backward-ring-buffer.c b/tools/perf/tests/backward-ring-buffer.c
+index 3073a68d17b9..3297d2eb67fc 100644
+--- a/tools/perf/tests/backward-ring-buffer.c
++++ b/tools/perf/tests/backward-ring-buffer.c
+@@ -32,7 +32,7 @@ static int count_samples(struct evlist *evlist, int *sample_count,
+ {
+ 	int i;
+ 
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		struct mmap *map = &evlist->overwrite_mmap[i];
+ 		union perf_event *event;
+ 
+diff --git a/tools/perf/tests/bpf.c b/tools/perf/tests/bpf.c
+index 964731915498..20cacf1e980b 100644
+--- a/tools/perf/tests/bpf.c
++++ b/tools/perf/tests/bpf.c
+@@ -178,7 +178,7 @@ static int do_test(struct bpf_object *obj, int (*func)(void),
+ 	(*func)();
+ 	evlist__disable(evlist);
+ 
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		union perf_event *event;
+ 		struct mmap *md;
+ 
+diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+index 2c2400d93813..72ae94be686e 100644
+--- a/tools/perf/tests/code-reading.c
++++ b/tools/perf/tests/code-reading.c
+@@ -422,7 +422,7 @@ static int process_events(struct machine *machine, struct evlist *evlist,
+ 	struct mmap *md;
+ 	int i, ret;
+ 
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		md = &evlist->mmap[i];
+ 		if (perf_mmap__read_init(md) < 0)
+ 			continue;
+diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
+index ba77eaa215b3..ac44d72e39c3 100644
+--- a/tools/perf/tests/keep-tracking.c
++++ b/tools/perf/tests/keep-tracking.c
+@@ -36,7 +36,7 @@ static int find_comm(struct evlist *evlist, const char *comm)
+ 	int i, found;
+ 
+ 	found = 0;
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		md = &evlist->mmap[i];
+ 		if (perf_mmap__read_init(md) < 0)
+ 			continue;
+diff --git a/tools/perf/tests/openat-syscall-tp-fields.c b/tools/perf/tests/openat-syscall-tp-fields.c
+index 5c2576174ae9..abf4d4f5e429 100644
+--- a/tools/perf/tests/openat-syscall-tp-fields.c
++++ b/tools/perf/tests/openat-syscall-tp-fields.c
+@@ -86,7 +86,7 @@ int test__syscall_openat_tp_fields(struct test *test __maybe_unused, int subtest
+ 	while (1) {
+ 		int before = nr_events;
+ 
+-		for (i = 0; i < evlist->nr_mmaps; i++) {
++		for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 			union perf_event *event;
+ 			struct mmap *md;
+ 
+diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
+index 669fd88e7f30..dbecc66712af 100644
+--- a/tools/perf/tests/perf-record.c
++++ b/tools/perf/tests/perf-record.c
+@@ -164,7 +164,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 	while (1) {
+ 		int before = total_events;
+ 
+-		for (i = 0; i < evlist->nr_mmaps; i++) {
++		for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 			union perf_event *event;
+ 			struct mmap *md;
+ 
 diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
-index f6c2c026988a..01bfb087ce22 100644
+index 01bfb087ce22..115eae0f45f1 100644
 --- a/tools/perf/tests/switch-tracking.c
 +++ b/tools/perf/tests/switch-tracking.c
-@@ -144,7 +144,7 @@ static int process_sample_event(struct evlist *evlist,
- 			return err;
- 		/*
- 		 * Check for no missing sched_switch events i.e. that the
--		 * evsel->system_wide flag has worked.
-+		 * evsel->core.system_wide flag has worked.
- 		 */
- 		if (switch_tracking->tids[cpu] != -1 &&
- 		    switch_tracking->tids[cpu] != prev_tid) {
-@@ -316,7 +316,7 @@ static int process_events(struct evlist *evlist,
-  *
-  * This function implements a test that checks that sched_switch events and
-  * tracking events can be recorded for a workload (current process) using the
-- * evsel->system_wide and evsel->tracking flags (respectively) with other events
-+ * evsel->core.system_wide and evsel->tracking flags (respectively) with other events
-  * sometimes enabled or disabled.
-  */
- int test__switch_tracking(struct test *test __maybe_unused, int subtest __maybe_unused)
-@@ -396,7 +396,7 @@ int test__switch_tracking(struct test *test __maybe_unused, int subtest __maybe_
- 	perf_evsel__set_sample_bit(switch_evsel, CPU);
- 	perf_evsel__set_sample_bit(switch_evsel, TIME);
+@@ -267,7 +267,7 @@ static int process_events(struct evlist *evlist,
+ 	struct mmap *md;
+ 	int i, ret;
  
--	switch_evsel->system_wide = true;
-+	switch_evsel->core.system_wide = true;
- 	switch_evsel->no_aux_samples = true;
- 	switch_evsel->immediate = true;
- 
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		md = &evlist->mmap[i];
+ 		if (perf_mmap__read_init(md) < 0)
+ 			continue;
 diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 98827df5a40a..0ffa1e9b6243 100644
+index 0ffa1e9b6243..891052570e73 100644
 --- a/tools/perf/util/evlist.c
 +++ b/tools/perf/util/evlist.c
-@@ -318,7 +318,7 @@ int perf_evlist__add_newtp(struct evlist *evlist,
- static int perf_evlist__nr_threads(struct evlist *evlist,
- 				   struct evsel *evsel)
- {
--	if (evsel->system_wide)
-+	if (evsel->core.system_wide)
- 		return 1;
- 	else
- 		return perf_thread_map__nr(evlist->core.threads);
-@@ -409,7 +409,7 @@ int perf_evlist__alloc_pollfd(struct evlist *evlist)
- 	struct evsel *evsel;
- 
- 	evlist__for_each_entry(evlist, evsel) {
--		if (evsel->system_wide)
-+		if (evsel->core.system_wide)
- 			nfds += nr_cpus;
- 		else
- 			nfds += nr_cpus * nr_threads;
-@@ -535,7 +535,7 @@ static void perf_evlist__set_sid_idx(struct evlist *evlist,
- 		sid->cpu = evlist->core.cpus->map[cpu];
- 	else
- 		sid->cpu = -1;
--	if (!evsel->system_wide && evlist->core.threads && thread >= 0)
-+	if (!evsel->core.system_wide && evlist->core.threads && thread >= 0)
- 		sid->tid = perf_thread_map__pid(evlist->core.threads, thread);
- 	else
- 		sid->tid = -1;
-@@ -762,7 +762,7 @@ static int evlist__mmap_per_evsel(struct evlist *evlist, int idx,
- 			mp->prot &= ~PROT_WRITE;
- 		}
- 
--		if (evsel->system_wide && thread)
-+		if (evsel->core.system_wide && thread)
- 			continue;
- 
- 		cpu = perf_cpu_map__idx(evsel->core.cpus, evlist_cpu);
-@@ -792,7 +792,7 @@ static int evlist__mmap_per_evsel(struct evlist *evlist, int idx,
- 		 * other events, so it should not need to be polled anyway.
- 		 * Therefore don't add it for polling.
- 		 */
--		if (!evsel->system_wide &&
-+		if (!evsel->core.system_wide &&
- 		    __perf_evlist__add_pollfd(evlist, fd, &maps[idx], revent) < 0) {
- 			perf_mmap__put(&maps[idx]);
- 			return -1;
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 85825384f9e8..9dcee5a8875e 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1231,7 +1231,7 @@ int perf_evsel__alloc_id(struct evsel *evsel, int ncpus, int nthreads)
- 	if (ncpus == 0 || nthreads == 0)
+@@ -650,7 +650,7 @@ static int perf_evlist__set_paused(struct evlist *evlist, bool value)
+ 	if (!evlist->overwrite_mmap)
  		return 0;
  
--	if (evsel->system_wide)
-+	if (evsel->core.system_wide)
- 		nthreads = 1;
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		int fd = evlist->overwrite_mmap[i].core.fd;
+ 		int err;
  
- 	evsel->sample_id = xyarray__new(ncpus, nthreads, sizeof(struct perf_sample_id));
-@@ -1662,7 +1662,7 @@ static bool ignore_missing_thread(struct evsel *evsel,
- 		return false;
+@@ -678,11 +678,11 @@ static void evlist__munmap_nofree(struct evlist *evlist)
+ 	int i;
  
- 	/* The system wide setup does not work with threads. */
--	if (evsel->system_wide)
-+	if (evsel->core.system_wide)
- 		return false;
+ 	if (evlist->mmap)
+-		for (i = 0; i < evlist->nr_mmaps; i++)
++		for (i = 0; i < evlist->core.nr_mmaps; i++)
+ 			perf_mmap__munmap(&evlist->mmap[i]);
  
- 	/* The -ESRCH is perf event syscall errno for pid's not found. */
-@@ -1771,7 +1771,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 		threads = empty_thread_map;
- 	}
+ 	if (evlist->overwrite_mmap)
+-		for (i = 0; i < evlist->nr_mmaps; i++)
++		for (i = 0; i < evlist->core.nr_mmaps; i++)
+ 			perf_mmap__munmap(&evlist->overwrite_mmap[i]);
+ }
  
--	if (evsel->system_wide)
-+	if (evsel->core.system_wide)
- 		nthreads = 1;
- 	else
- 		nthreads = threads->nr;
-@@ -1818,7 +1818,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 		for (thread = 0; thread < nthreads; thread++) {
- 			int fd, group_fd;
+@@ -699,14 +699,14 @@ static struct mmap *evlist__alloc_mmap(struct evlist *evlist,
+ 	int i;
+ 	struct mmap *map;
  
--			if (!evsel->cgrp && !evsel->system_wide)
-+			if (!evsel->cgrp && !evsel->core.system_wide)
- 				pid = perf_thread_map__pid(threads, thread);
+-	evlist->nr_mmaps = perf_cpu_map__nr(evlist->core.cpus);
++	evlist->core.nr_mmaps = perf_cpu_map__nr(evlist->core.cpus);
+ 	if (perf_cpu_map__empty(evlist->core.cpus))
+-		evlist->nr_mmaps = perf_thread_map__nr(evlist->core.threads);
+-	map = zalloc(evlist->nr_mmaps * sizeof(struct mmap));
++		evlist->core.nr_mmaps = perf_thread_map__nr(evlist->core.threads);
++	map = zalloc(evlist->core.nr_mmaps * sizeof(struct mmap));
+ 	if (!map)
+ 		return NULL;
  
- 			group_fd = get_group_fd(evsel, cpu, thread);
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 68321d10eb2d..eb4d03cd0b17 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -146,7 +146,6 @@ struct evsel {
- 	bool 			disabled;
- 	bool			no_aux_samples;
- 	bool			immediate;
--	bool			system_wide;
- 	bool			tracking;
- 	bool			per_pkg;
- 	bool			precise_max;
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 5ec21d21113c..403fb5e05108 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -335,7 +335,7 @@ __add_event(struct list_head *list, int *idx,
- 	(*idx)++;
- 	evsel->core.cpus   = perf_cpu_map__get(cpus);
- 	evsel->core.own_cpus = perf_cpu_map__get(cpus);
--	evsel->system_wide = pmu ? pmu->is_uncore : false;
-+	evsel->core.system_wide = pmu ? pmu->is_uncore : false;
- 	evsel->auto_merge_stats = auto_merge_stats;
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		map[i].core.fd = -1;
+ 		map[i].core.overwrite = overwrite;
+ 		/*
+@@ -1846,7 +1846,7 @@ static void *perf_evlist__poll_thread(void *arg)
+ 		if (!draining)
+ 			perf_evlist__poll(evlist, 1000);
  
- 	if (name)
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 8f1ea27f976f..ef02d8b709ff 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -318,7 +318,7 @@ static int process_counter_maps(struct perf_stat_config *config,
- 	int ncpus = perf_evsel__nr_cpus(counter);
- 	int cpu, thread;
+-		for (i = 0; i < evlist->nr_mmaps; i++) {
++		for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 			struct mmap *map = &evlist->mmap[i];
+ 			union perf_event *event;
  
--	if (counter->system_wide)
-+	if (counter->core.system_wide)
- 		nthreads = 1;
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index b33c5d67410a..4c465b4aced8 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -27,7 +27,6 @@ struct evlist {
+ 	struct perf_evlist core;
+ 	struct hlist_head heads[PERF_EVLIST__HLIST_SIZE];
+ 	int		 nr_groups;
+-	int		 nr_mmaps;
+ 	bool		 enabled;
+ 	size_t		 mmap_len;
+ 	int		 id_pos;
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 96100ed73dbe..b71b899407df 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -988,7 +988,7 @@ static struct mmap *get_md(struct evlist *evlist, int cpu)
+ {
+ 	int i;
  
- 	for (thread = 0; thread < nthreads; thread++) {
+-	for (i = 0; i < evlist->nr_mmaps; i++) {
++	for (i = 0; i < evlist->core.nr_mmaps; i++) {
+ 		struct mmap *md = &evlist->mmap[i];
+ 
+ 		if (md->core.cpu == cpu)
 -- 
 2.21.0
 
