@@ -2,103 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47BC6B27DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:03:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 674A0B27FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403924AbfIMWDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 18:03:25 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41879 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389617AbfIMWDY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 18:03:24 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b13so18900270pfo.8
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 15:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=peRAbMQ2xKT0fFJ89FYNdeBR3nBllTZJZRN8uGrtZQY=;
-        b=a16SB8y7DtHAZOq5Hes9SBNTETQkEg+2M16auoZs6P5Nx+GDEkq6hcyakn5++4DdcB
-         xuotJ1/LBSLQ6/x9i8PSx9EORvkMkkcAslecx1PEO2e932P8IGbrvFqJcEOscwYd0Qjl
-         JGGr1z03FZH0C+mmPO4aH9P6LGbCOROUFsGTs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=peRAbMQ2xKT0fFJ89FYNdeBR3nBllTZJZRN8uGrtZQY=;
-        b=ns79cB5KgDOCWRDGZIOUJl/OMart86GI+Tkto5odGVa/8NvSEjTQXvP9VpAWnBZr3+
-         nzwK9XS6MxLt4bBk/o9bnu9okAmcdsHpaHHcdVCX+ji4tHculgDrdwhxT0HtjwG+CO56
-         nKDXB9IRe9Cjfs9LmkqmzMyzxfPLundwuqskaV/OVPC0V5vsm7iCWYJQu3LP9ervy5yi
-         9YdebWDPopQ1KjaskakAOxQiBf3yi821pBsZRBmhOhBqwe9N26l0ci8B49GuJWmrkyP8
-         K0SwPX/V/GoJExVNAdl34snQCAb4vae15WzXlTqGDTaRT16RZYkfZVMcFr/Xvi8SJOi9
-         5jjA==
-X-Gm-Message-State: APjAAAUGk6VkaKt6Hz1mSSL1sZqwFUm5QxQ9tJ8nN7sx8oEI5eQS9uAO
-        oo+Fu9RerowkGQhEihjnn4TfcA==
-X-Google-Smtp-Source: APXvYqyKIbWs4Y3boyjYAXcLk2CgyMhKDAHsPob+taOZvGOpsX89CxIujHHpsDtA4DxKLQQ7FYVN9Q==
-X-Received: by 2002:a63:c149:: with SMTP id p9mr11350330pgi.50.1568412203692;
-        Fri, 13 Sep 2019 15:03:23 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id o19sm2524486pjr.23.2019.09.13.15.03.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 15:03:22 -0700 (PDT)
-From:   Dmitry Torokhov <dtor@chromium.org>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] HID: google: whiskers: signal tablet mode on connect
-Date:   Fri, 13 Sep 2019 15:03:17 -0700
-Message-Id: <20190913220317.58289-3-dtor@chromium.org>
-X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
-In-Reply-To: <20190913220317.58289-1-dtor@chromium.org>
-References: <20190913220317.58289-1-dtor@chromium.org>
+        id S2403954AbfIMWFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 18:05:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38266 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390545AbfIMWFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 18:05:14 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1DC113CA19;
+        Fri, 13 Sep 2019 22:05:14 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-34.bss.redhat.com [10.20.1.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1DC02600C6;
+        Fri, 13 Sep 2019 22:05:10 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org
+Cc:     stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] drm/nouveau: dispnv50: Don't create MSTMs for eDP connectors
+Date:   Fri, 13 Sep 2019 18:03:50 -0400
+Message-Id: <20190913220355.6883-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 13 Sep 2019 22:05:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we receive "keyboard position" event from Whiskers we can
-conclude that the base is attached, even if we did not get EC event
-for that. We may miss EC event because there are some units which
-have a lot of leakage on the ADC pins that the EC uses to determine
-whether or not a base is attached.
+On the ThinkPad P71, we have one eDP connector exposed along with 5 DP
+connectors, resulting in a total of 11 TMDS encoders. Since the GPU on
+this system is also capable of MST, we create an additional 4 fake MST
+encoders for each DP port. Unfortunately, we also do this for the eDP
+port as well, resulting in:
 
-Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
+  1 eDP port: +1 TMDS encoder
+              +4 DPMST encoders
+  5 DP ports: +2 TMDS encoders
+              +4 DPMST encoders
+	      *5 ports
+	      == 35 encoders
+
+Which breaks things, since DRM has a hard coded limit of 32 encoders.
+So, fix this by not creating MSTMs for any eDP connectors. This brings
+us down to 31 encoders, although we can do better.
+
+This fixes driver probing for nouveau on the ThinkPad P71.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
 ---
- drivers/hid/hid-google-hammer.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-google-hammer.c b/drivers/hid/hid-google-hammer.c
-index 3dc6116c8f76..31e4a39946f5 100644
---- a/drivers/hid/hid-google-hammer.c
-+++ b/drivers/hid/hid-google-hammer.c
-@@ -402,16 +402,16 @@ static int hammer_event(struct hid_device *hid, struct hid_field *field,
- 	    usage->hid == WHISKERS_KBD_FOLDED) {
- 		spin_lock_irqsave(&cbas_ec_lock, flags);
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+index 307584107d77..b46be8a091e9 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -1603,7 +1603,8 @@ nv50_sor_create(struct drm_connector *connector, struct dcb_output *dcbe)
+ 			nv_encoder->aux = aux;
+ 		}
  
-+		/*
-+		 * If we are getting events from Whiskers that means that it
-+		 * is attached to the lid.
-+		 */
-+		cbas_ec.base_present = true;
- 		cbas_ec.base_folded = value;
- 		hid_dbg(hid, "%s: base: %d, folded: %d\n", __func__,
- 			cbas_ec.base_present, cbas_ec.base_folded);
- 
--		/*
--		 * We should not get event if base is detached, but in case
--		 * we happen to service HID and EC notifications out of order
--		 * let's still check the "base present" flag.
--		 */
--		if (cbas_ec.input && cbas_ec.base_present) {
-+		if (cbas_ec.input) {
- 			input_report_switch(cbas_ec.input,
- 					    SW_TABLET_MODE, value);
- 			input_sync(cbas_ec.input);
+-		if ((data = nvbios_dp_table(bios, &ver, &hdr, &cnt, &len)) &&
++		if (nv_connector->type != DCB_CONNECTOR_eDP &&
++		    (data = nvbios_dp_table(bios, &ver, &hdr, &cnt, &len)) &&
+ 		    ver >= 0x40 && (nvbios_rd08(bios, data + 0x08) & 0x04)) {
+ 			ret = nv50_mstm_new(nv_encoder, &nv_connector->aux, 16,
+ 					    nv_connector->base.base.id,
 -- 
-2.23.0.237.gc6a4ce50a0-goog
+2.21.0
 
