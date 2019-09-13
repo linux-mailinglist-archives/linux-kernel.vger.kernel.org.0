@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DEF7B1ED3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03754B1EC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388671AbfIMNNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:13:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38784 "EHLO mail.kernel.org"
+        id S2389224AbfIMNMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:12:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388221AbfIMNNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:13:10 -0400
+        id S2389197AbfIMNMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:12:46 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DD8420CC7;
-        Fri, 13 Sep 2019 13:13:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17912208C0;
+        Fri, 13 Sep 2019 13:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380389;
-        bh=Fh6x3TnZlVfMPvm9sMU6qVJ5Z+51Tl0SwVS2AF926hc=;
+        s=default; t=1568380365;
+        bh=Xs++mhuXmM6PCHfhoFnMqARTGYYms+RpHEFXyftpFBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f/kK3A4Tf6tdTKbwlHpPugkPuvI3P/XQr4wgGzZFSSw3dfQsaIjSAHPM1u9VX1+nc
-         dPaUHd2WpxYZCCWHcwJiHM+TKs45I0qIb5s1ZporvLvXuQJpyGXSUr33jY6wdoXLbM
-         QNNtNQmQTtznmnXEXGgCJpaQ1VnzGFSPHozwe3Qs=
+        b=VRjvlXP9aOqsXKZL6GAb3m3ssDHjIq7DrLo7ZCk/vILiDQZ+OwWMUgcJhqHPqz6vZ
+         FQncQp9NI6qrpqO02qbn5gZj7ROI37aXIEpolRQ2fvOUNhixhEVzosPh8jfC4pXjPG
+         aKBjcqXqXjcgSb24/belRgEhdrp0vaJ4nNBdYmpo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 021/190] media: stm32-dcmi: fix irq = 0 case
-Date:   Fri, 13 Sep 2019 14:04:36 +0100
-Message-Id: <20190913130601.279234917@linuxfoundation.org>
+Subject: [PATCH 4.19 023/190] scripts/decode_stacktrace: match basepath using shell prefix operator, not regex
+Date:   Fri, 13 Sep 2019 14:04:38 +0100
+Message-Id: <20190913130601.473314043@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -46,35 +46,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit dbb9fcc8c2d8d4ea1104f51d4947a8a8199a2cb5 ]
+[ Upstream commit 31013836a71e07751a6827f9d2ad41ef502ddaff ]
 
-Manage the irq = 0 case, where we shall return an error.
+The basepath may contain special characters, which would confuse the regex
+matcher.  ${var#prefix} does the right thing.
 
-Fixes: b5b5a27bee58 ("media: stm32-dcmi: return appropriate error codes during probe")
-
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Link: http://lkml.kernel.org/r/20190518055946.181563-1-drinkcat@chromium.org
+Fixes: 67a28de47faa8358 ("scripts/decode_stacktrace: only strip base path when a prefix of the path")
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/stm32/stm32-dcmi.c | 2 +-
+ scripts/decode_stacktrace.sh | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index d386822658922..1d9c028e52cba 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -1681,7 +1681,7 @@ static int dcmi_probe(struct platform_device *pdev)
- 	if (irq <= 0) {
- 		if (irq != -EPROBE_DEFER)
- 			dev_err(&pdev->dev, "Could not get irq\n");
--		return irq;
-+		return irq ? irq : -ENXIO;
- 	}
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index c4a9ddb174bc5..5aa75a0a1cede 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -78,7 +78,7 @@ parse_symbol() {
+ 	fi
  
- 	dcmi->res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	# Strip out the base of the path
+-	code=${code//^$basepath/""}
++	code=${code#$basepath/}
+ 
+ 	# In the case of inlines, move everything to same line
+ 	code=${code//$'\n'/' '}
 -- 
 2.20.1
 
