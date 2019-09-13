@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 116F7B1EC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C11D9B1EF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388593AbfIMNMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:12:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38250 "EHLO mail.kernel.org"
+        id S2389533AbfIMNOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:14:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389197AbfIMNMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:12:43 -0400
+        id S2389522AbfIMNO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:14:29 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 056D120CC7;
-        Fri, 13 Sep 2019 13:12:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C43EF208C0;
+        Fri, 13 Sep 2019 13:14:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380362;
-        bh=vCB8d08AOZ8EMbQad+wIbniBn9HC5VKjqJsR3Bl01sw=;
+        s=default; t=1568380468;
+        bh=xyMEzy5t3eJ3y9Ziqx6b8ifGTiMWJD8qz138okdkK+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xls2qJrZLzQDXXZy/gFxwm36WGAM3wqcwP5NsBAWA210XtXdIhIQgebZD1nRz2WbS
-         4BfIf78TUT6fUsb8gI6+Nf1IuDESD9mpQ3T/kLC86DOWHevXaGtZkeOfNfehJI4cNy
-         Ic4j//93aRoLZNyegrOVp27GfvCpaD/4XYZtty4w=
+        b=RxN2ebzagbtq//R02PDfDft8p3bdmjraDWQgKDDhO4iAUY3I+Tats/Uj9g2kla5gl
+         D0+zG7wsJ5exDdDPmBbPUl0NalAmG+pcQb4biLHIPTPLCjnxYyY2WMYXsqgU5PBIlE
+         bLjDhHpsCAwcjjLZ9qT31sH1GWLiK3yEkFYIi/bw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Roman Kagan <rkagan@virtuozzo.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 040/190] KVM: x86: hyperv: enforce vp_index < KVM_MAX_VCPUS
-Date:   Fri, 13 Sep 2019 14:04:55 +0100
-Message-Id: <20190913130602.935789529@linuxfoundation.org>
+Subject: [PATCH 4.19 041/190] KVM: x86: hyperv: consistently use hv_vcpu for struct kvm_vcpu_hv variables
+Date:   Fri, 13 Sep 2019 14:04:56 +0100
+Message-Id: <20190913130603.023458406@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -45,53 +45,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9170200ec0ebad70e5b9902bc93e2b1b11456a3b ]
+[ Upstream commit 1779a39f786397760ae7a7cc03cf37697d8ae58d ]
 
-Hyper-V TLFS (5.0b) states:
-
-> Virtual processors are identified by using an index (VP index). The
-> maximum number of virtual processors per partition supported by the
-> current implementation of the hypervisor can be obtained through CPUID
-> leaf 0x40000005. A virtual processor index must be less than the
-> maximum number of virtual processors per partition.
-
-Forbid userspace to set VP_INDEX above KVM_MAX_VCPUS. get_vcpu_by_vpidx()
-can now be optimized to bail early when supplied vpidx is >= KVM_MAX_VCPUS.
+Rename 'hv' to 'hv_vcpu' in kvm_hv_set_msr/kvm_hv_get_msr(); 'hv' is
+'reserved' for 'struct kvm_hv' variables across the file.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/hyperv.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/x86/kvm/hyperv.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 229d996051653..73fa074b9089a 100644
+index 73fa074b9089a..3f2775aac5545 100644
 --- a/arch/x86/kvm/hyperv.c
 +++ b/arch/x86/kvm/hyperv.c
-@@ -132,8 +132,10 @@ static struct kvm_vcpu *get_vcpu_by_vpidx(struct kvm *kvm, u32 vpidx)
- 	struct kvm_vcpu *vcpu = NULL;
- 	int i;
+@@ -1042,20 +1042,20 @@ static u64 current_task_runtime_100ns(void)
  
--	if (vpidx < KVM_MAX_VCPUS)
--		vcpu = kvm_get_vcpu(kvm, vpidx);
-+	if (vpidx >= KVM_MAX_VCPUS)
-+		return NULL;
-+
-+	vcpu = kvm_get_vcpu(kvm, vpidx);
- 	if (vcpu && vcpu_to_hv_vcpu(vcpu)->vp_index == vpidx)
- 		return vcpu;
- 	kvm_for_each_vcpu(i, vcpu, kvm)
-@@ -1044,7 +1046,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ {
+-	struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
++	struct kvm_vcpu_hv *hv_vcpu = &vcpu->arch.hyperv;
  
  	switch (msr) {
  	case HV_X64_MSR_VP_INDEX:
--		if (!host)
-+		if (!host || (u32)data >= KVM_MAX_VCPUS)
+ 		if (!host || (u32)data >= KVM_MAX_VCPUS)
  			return 1;
- 		hv->vp_index = (u32)data;
+-		hv->vp_index = (u32)data;
++		hv_vcpu->vp_index = (u32)data;
  		break;
+ 	case HV_X64_MSR_VP_ASSIST_PAGE: {
+ 		u64 gfn;
+ 		unsigned long addr;
+ 
+ 		if (!(data & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE)) {
+-			hv->hv_vapic = data;
++			hv_vcpu->hv_vapic = data;
+ 			if (kvm_lapic_enable_pv_eoi(vcpu, 0))
+ 				return 1;
+ 			break;
+@@ -1066,7 +1066,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ 			return 1;
+ 		if (__clear_user((void __user *)addr, PAGE_SIZE))
+ 			return 1;
+-		hv->hv_vapic = data;
++		hv_vcpu->hv_vapic = data;
+ 		kvm_vcpu_mark_page_dirty(vcpu, gfn);
+ 		if (kvm_lapic_enable_pv_eoi(vcpu,
+ 					    gfn_to_gpa(gfn) | KVM_MSR_ENABLED))
+@@ -1082,7 +1082,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ 	case HV_X64_MSR_VP_RUNTIME:
+ 		if (!host)
+ 			return 1;
+-		hv->runtime_offset = data - current_task_runtime_100ns();
++		hv_vcpu->runtime_offset = data - current_task_runtime_100ns();
+ 		break;
+ 	case HV_X64_MSR_SCONTROL:
+ 	case HV_X64_MSR_SVERSION:
+@@ -1174,11 +1174,11 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata,
+ 			  bool host)
+ {
+ 	u64 data = 0;
+-	struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
++	struct kvm_vcpu_hv *hv_vcpu = &vcpu->arch.hyperv;
+ 
+ 	switch (msr) {
+ 	case HV_X64_MSR_VP_INDEX:
+-		data = hv->vp_index;
++		data = hv_vcpu->vp_index;
+ 		break;
+ 	case HV_X64_MSR_EOI:
+ 		return kvm_hv_vapic_msr_read(vcpu, APIC_EOI, pdata);
+@@ -1187,10 +1187,10 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata,
+ 	case HV_X64_MSR_TPR:
+ 		return kvm_hv_vapic_msr_read(vcpu, APIC_TASKPRI, pdata);
+ 	case HV_X64_MSR_VP_ASSIST_PAGE:
+-		data = hv->hv_vapic;
++		data = hv_vcpu->hv_vapic;
+ 		break;
+ 	case HV_X64_MSR_VP_RUNTIME:
+-		data = current_task_runtime_100ns() + hv->runtime_offset;
++		data = current_task_runtime_100ns() + hv_vcpu->runtime_offset;
+ 		break;
+ 	case HV_X64_MSR_SCONTROL:
+ 	case HV_X64_MSR_SVERSION:
 -- 
 2.20.1
 
