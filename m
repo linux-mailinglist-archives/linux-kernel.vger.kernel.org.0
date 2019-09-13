@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D491B2023
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4284EB2018
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389930AbfIMNQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:16:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43682 "EHLO mail.kernel.org"
+        id S2389773AbfIMNQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:16:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389214AbfIMNQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:16:46 -0400
+        id S2389198AbfIMNPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:15:55 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E18F120717;
-        Fri, 13 Sep 2019 13:16:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECE9B206BB;
+        Fri, 13 Sep 2019 13:15:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380605;
-        bh=ao2KN6nkrJRRgCQMaG6wwvL0TDA2aYFqBntUtLWoWy4=;
+        s=default; t=1568380554;
+        bh=U0wNzKNYCMHHDFndm0nBkAk0ouQ99rkHQ5WSLEg6I8w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1AlLx+oaX9lAOvyxw4DWXHPoYFceMKcqIdVm4lmFiCz1gvUy4qUW49hfy0IBS8zj+
-         oQTurp6E9CEqq5Ongee7AK9XZaAnWXn/pzohxANiomxh+ha4HA4hh8yvJ1rt+fnLY8
-         zyCqdCOOo9293yN0Ajg2n6wUmfUTQtlntADc+NsA=
+        b=MWSqJGRUstOCbMSpvrU4m5GdHxnDMUbbPYjryYa/40aAH6jO542ZUmS0I6Opm9j3C
+         zjbzmH3Rlzrsfv3SOfMb+kXhKF3H/H5wVhHZgYKtgWVTCzg6DVE1fICJdJ+Ls4xMi6
+         bbbbBnjI/foPOmy+9G8VJ1Ho4LCPznU2rqSOhra0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Dan Robertson <dan@dlrobertson.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 098/190] mmc: renesas_sdhi: Fix card initialization failure in high speed mode
-Date:   Fri, 13 Sep 2019 14:05:53 +0100
-Message-Id: <20190913130607.445320954@linuxfoundation.org>
+Subject: [PATCH 4.19 102/190] btrfs: init csum_list before possible free
+Date:   Fri, 13 Sep 2019 14:05:57 +0100
+Message-Id: <20190913130607.741324726@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -50,79 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d30ae056adb81e1d2b8b953efa74735a020b8e3b ]
+[ Upstream commit e49be14b8d80e23bb7c53d78c21717a474ade76b ]
 
-This fixes card initialization failure in high speed mode.
+The scrub_ctx csum_list member must be initialized before scrub_free_ctx
+is called. If the csum_list is not initialized beforehand, the
+list_empty call in scrub_free_csums will result in a null deref if the
+allocation fails in the for loop.
 
-If U-Boot uses SDR or HS200/400 mode before starting Linux and Linux
-DT does not enable SDR/HS200/HS400 mode, card initialization fails in
-high speed mode.
-
-It is necessary to initialize SCC registers during card initialization
-phase. HW reset function is registered only for a port with either of
-SDR/HS200/HS400 properties in device tree. If SDR/HS200/HS400 properties
-are not present in device tree, SCC registers will not be reset. In SoC
-that support SCC registers, HW reset function should be registered
-regardless of the configuration of device tree.
-
-Reproduction procedure:
-- Use U-Boot that support MMC HS200/400 mode.
-- Delete HS200/HS400 properties in device tree.
-  (Delete mmc-hs200-1_8v and mmc-hs400-1_8v)
-- MMC port works high speed mode and all commands fail.
-
-Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: a2de733c78fa ("btrfs: scrub")
+CC: stable@vger.kernel.org # 3.0+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Dan Robertson <dan@dlrobertson.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/renesas_sdhi_core.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ fs/btrfs/scrub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 45baf5d9120e3..61f0faddfd889 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -636,6 +636,13 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		host->ops.card_busy = renesas_sdhi_card_busy;
- 		host->ops.start_signal_voltage_switch =
- 			renesas_sdhi_start_signal_voltage_switch;
-+
-+		/* SDR and HS200/400 registers requires HW reset */
-+		if (of_data && of_data->scc_offset) {
-+			priv->scc_ctl = host->ctl + of_data->scc_offset;
-+			host->mmc->caps |= MMC_CAP_HW_RESET;
-+			host->hw_reset = renesas_sdhi_hw_reset;
-+		}
- 	}
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index a08a4d6f540f9..916c397704679 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -592,6 +592,7 @@ static noinline_for_stack struct scrub_ctx *scrub_setup_ctx(
+ 	sctx->pages_per_rd_bio = SCRUB_PAGES_PER_RD_BIO;
+ 	sctx->curr = -1;
+ 	sctx->fs_info = fs_info;
++	INIT_LIST_HEAD(&sctx->csum_list);
+ 	for (i = 0; i < SCRUB_BIOS_PER_SCTX; ++i) {
+ 		struct scrub_bio *sbio;
  
- 	/* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
-@@ -693,8 +700,6 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		const struct renesas_sdhi_scc *taps = of_data->taps;
- 		bool hit = false;
+@@ -616,7 +617,6 @@ static noinline_for_stack struct scrub_ctx *scrub_setup_ctx(
+ 	atomic_set(&sctx->workers_pending, 0);
+ 	atomic_set(&sctx->cancel_req, 0);
+ 	sctx->csum_size = btrfs_super_csum_size(fs_info->super_copy);
+-	INIT_LIST_HEAD(&sctx->csum_list);
  
--		host->mmc->caps |= MMC_CAP_HW_RESET;
--
- 		for (i = 0; i < of_data->taps_num; i++) {
- 			if (taps[i].clk_rate == 0 ||
- 			    taps[i].clk_rate == host->mmc->f_max) {
-@@ -707,12 +712,10 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		if (!hit)
- 			dev_warn(&host->pdev->dev, "Unknown clock rate for SDR104\n");
- 
--		priv->scc_ctl = host->ctl + of_data->scc_offset;
- 		host->init_tuning = renesas_sdhi_init_tuning;
- 		host->prepare_tuning = renesas_sdhi_prepare_tuning;
- 		host->select_tuning = renesas_sdhi_select_tuning;
- 		host->check_scc_error = renesas_sdhi_check_scc_error;
--		host->hw_reset = renesas_sdhi_hw_reset;
- 		host->prepare_hs400_tuning =
- 			renesas_sdhi_prepare_hs400_tuning;
- 		host->hs400_downgrade = renesas_sdhi_disable_scc;
+ 	spin_lock_init(&sctx->list_lock);
+ 	spin_lock_init(&sctx->stat_lock);
 -- 
 2.20.1
 
