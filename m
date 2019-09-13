@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADC9FB1FF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01F1DB1FF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389145AbfIMNMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:12:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37798 "EHLO mail.kernel.org"
+        id S2389190AbfIMNMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:12:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389130AbfIMNMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:12:23 -0400
+        id S2389173AbfIMNMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:12:34 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B74120640;
-        Fri, 13 Sep 2019 13:12:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E9B3214AF;
+        Fri, 13 Sep 2019 13:12:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380342;
-        bh=dprHEE8vy79BjIOeg96HRcfIOGxfJAfVRYXf8QgEXJg=;
+        s=default; t=1568380353;
+        bh=npITvHoRuo/dc7q/atfoPZwYGNwMxYGXtDpExq3wcWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LgM/Eoy195TAtS8dy153HW1LKUmvByrZt5N3WJIx+CXzefJAZgkhC0P/f7ReXMqvb
-         D1kZW5oxalzd6QqO1GmvpgOkyf6OiR+SOWLyutxYV/qXZ58hHE5StsDpla6oEmDS9+
-         H9ZFmdf5EVVziWOwAu3lBU4W9fFovGgEnBcv4uRE=
+        b=ymyzn/7oWeQKIvsiISpx3ATNr9m7unCwLxQTNnrlc4BGC5a4RGgj48hTNRjy82IkK
+         z1D671XGVzzqPmBMZjqNCEADD5zDAIZqfjmwDTcSZOp9CSWWzRN+NcEjDLWoS/ZmOB
+         grBlOfTEzivIBPH6gSHDC680fw1u+c+t7wJygwiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Giridhar Malavali <giridhar.malavali@cavium.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 033/190] scsi: qla2xxx: Move log messages before issuing command to firmware
-Date:   Fri, 13 Sep 2019 14:04:48 +0100
-Message-Id: <20190913130602.301974012@linuxfoundation.org>
+Subject: [PATCH 4.19 037/190] remoteproc: qcom: q6v5-mss: add SCM probe dependency
+Date:   Fri, 13 Sep 2019 14:04:52 +0100
+Message-Id: <20190913130602.656270150@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -47,191 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9fe278f44b4bc06cc61e33b2af65f87d507d13d0 ]
+[ Upstream commit bbcda30271752bb7490f2e2aef5411dbcae69116 ]
 
-There is a probability that the SRB structure might have been released by the
-time the debug log message dereferences it.  This patch moved the log messages
-before the command is issued to the firmware to prevent unknown behavior and
-kernel crash
+The memory ownership transfer request is performed using SCM, ensure
+that SCM is available before we probe the driver if memory protection is
+needed by the subsystem.
 
-Fixes: 726b85487067 ("qla2xxx: Add framework for async fabric discovery")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Giridhar Malavali <giridhar.malavali@cavium.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
+Cc: stable@vger.kernel.org
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+[bjorn: Added condition for need_mem_protection, updated commit message]
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_gs.c   | 15 ++++++-----
- drivers/scsi/qla2xxx/qla_init.c | 48 +++++++++++++++++----------------
- 2 files changed, 33 insertions(+), 30 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
-index 1f1a05a90d3d7..fc08e46a93ca9 100644
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -3360,15 +3360,15 @@ int qla24xx_async_gpsc(scsi_qla_host_t *vha, fc_port_t *fcport)
- 	sp->u.iocb_cmd.timeout = qla2x00_async_iocb_timeout;
- 	sp->done = qla24xx_async_gpsc_sp_done;
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index d7a4b9eca5d25..6a84b6372897d 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -1132,6 +1132,9 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	if (!desc)
+ 		return -EINVAL;
  
--	rval = qla2x00_start_sp(sp);
--	if (rval != QLA_SUCCESS)
--		goto done_free_sp;
--
- 	ql_dbg(ql_dbg_disc, vha, 0x205e,
- 	    "Async-%s %8phC hdl=%x loopid=%x portid=%02x%02x%02x.\n",
- 	    sp->name, fcport->port_name, sp->handle,
- 	    fcport->loop_id, fcport->d_id.b.domain,
- 	    fcport->d_id.b.area, fcport->d_id.b.al_pa);
++	if (desc->need_mem_protection && !qcom_scm_is_available())
++		return -EPROBE_DEFER;
 +
-+	rval = qla2x00_start_sp(sp);
-+	if (rval != QLA_SUCCESS)
-+		goto done_free_sp;
- 	return rval;
- 
- done_free_sp:
-@@ -3729,13 +3729,14 @@ int qla24xx_async_gpnid(scsi_qla_host_t *vha, port_id_t *id)
- 	sp->u.iocb_cmd.timeout = qla2x00_async_iocb_timeout;
- 	sp->done = qla2x00_async_gpnid_sp_done;
- 
-+	ql_dbg(ql_dbg_disc, vha, 0x2067,
-+	    "Async-%s hdl=%x ID %3phC.\n", sp->name,
-+	    sp->handle, ct_req->req.port_id.port_id);
-+
- 	rval = qla2x00_start_sp(sp);
- 	if (rval != QLA_SUCCESS)
- 		goto done_free_sp;
- 
--	ql_dbg(ql_dbg_disc, vha, 0x2067,
--	    "Async-%s hdl=%x ID %3phC.\n", sp->name,
--	    sp->handle, ct_req->req.port_id.port_id);
- 	return rval;
- 
- done_free_sp:
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index ddce32fe0513a..39a8f4a671aaa 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -247,6 +247,12 @@ qla2x00_async_login(struct scsi_qla_host *vha, fc_port_t *fcport,
- 
- 	}
- 
-+	ql_dbg(ql_dbg_disc, vha, 0x2072,
-+	    "Async-login - %8phC hdl=%x, loopid=%x portid=%02x%02x%02x "
-+		"retries=%d.\n", fcport->port_name, sp->handle, fcport->loop_id,
-+	    fcport->d_id.b.domain, fcport->d_id.b.area, fcport->d_id.b.al_pa,
-+	    fcport->login_retry);
-+
- 	rval = qla2x00_start_sp(sp);
- 	if (rval != QLA_SUCCESS) {
- 		fcport->flags |= FCF_LOGIN_NEEDED;
-@@ -254,11 +260,6 @@ qla2x00_async_login(struct scsi_qla_host *vha, fc_port_t *fcport,
- 		goto done_free_sp;
- 	}
- 
--	ql_dbg(ql_dbg_disc, vha, 0x2072,
--	    "Async-login - %8phC hdl=%x, loopid=%x portid=%02x%02x%02x "
--		"retries=%d.\n", fcport->port_name, sp->handle, fcport->loop_id,
--	    fcport->d_id.b.domain, fcport->d_id.b.area, fcport->d_id.b.al_pa,
--	    fcport->login_retry);
- 	return rval;
- 
- done_free_sp:
-@@ -303,15 +304,16 @@ qla2x00_async_logout(struct scsi_qla_host *vha, fc_port_t *fcport)
- 	qla2x00_init_timer(sp, qla2x00_get_async_timeout(vha) + 2);
- 
- 	sp->done = qla2x00_async_logout_sp_done;
--	rval = qla2x00_start_sp(sp);
--	if (rval != QLA_SUCCESS)
--		goto done_free_sp;
- 
- 	ql_dbg(ql_dbg_disc, vha, 0x2070,
- 	    "Async-logout - hdl=%x loop-id=%x portid=%02x%02x%02x %8phC.\n",
- 	    sp->handle, fcport->loop_id, fcport->d_id.b.domain,
- 		fcport->d_id.b.area, fcport->d_id.b.al_pa,
- 		fcport->port_name);
-+
-+	rval = qla2x00_start_sp(sp);
-+	if (rval != QLA_SUCCESS)
-+		goto done_free_sp;
- 	return rval;
- 
- done_free_sp:
-@@ -489,13 +491,15 @@ qla2x00_async_adisc(struct scsi_qla_host *vha, fc_port_t *fcport,
- 	sp->done = qla2x00_async_adisc_sp_done;
- 	if (data[1] & QLA_LOGIO_LOGIN_RETRIED)
- 		lio->u.logio.flags |= SRB_LOGIN_RETRIED;
--	rval = qla2x00_start_sp(sp);
--	if (rval != QLA_SUCCESS)
--		goto done_free_sp;
- 
- 	ql_dbg(ql_dbg_disc, vha, 0x206f,
- 	    "Async-adisc - hdl=%x loopid=%x portid=%06x %8phC.\n",
- 	    sp->handle, fcport->loop_id, fcport->d_id.b24, fcport->port_name);
-+
-+	rval = qla2x00_start_sp(sp);
-+	if (rval != QLA_SUCCESS)
-+		goto done_free_sp;
-+
- 	return rval;
- 
- done_free_sp:
-@@ -1161,14 +1165,13 @@ int qla24xx_async_gpdb(struct scsi_qla_host *vha, fc_port_t *fcport, u8 opt)
- 
- 	sp->done = qla24xx_async_gpdb_sp_done;
- 
--	rval = qla2x00_start_sp(sp);
--	if (rval != QLA_SUCCESS)
--		goto done_free_sp;
--
- 	ql_dbg(ql_dbg_disc, vha, 0x20dc,
- 	    "Async-%s %8phC hndl %x opt %x\n",
- 	    sp->name, fcport->port_name, sp->handle, opt);
- 
-+	rval = qla2x00_start_sp(sp);
-+	if (rval != QLA_SUCCESS)
-+		goto done_free_sp;
- 	return rval;
- 
- done_free_sp:
-@@ -1698,15 +1701,14 @@ qla2x00_async_tm_cmd(fc_port_t *fcport, uint32_t flags, uint32_t lun,
- 	tm_iocb->u.tmf.data = tag;
- 	sp->done = qla2x00_tmf_sp_done;
- 
--	rval = qla2x00_start_sp(sp);
--	if (rval != QLA_SUCCESS)
--		goto done_free_sp;
--
- 	ql_dbg(ql_dbg_taskm, vha, 0x802f,
- 	    "Async-tmf hdl=%x loop-id=%x portid=%02x%02x%02x.\n",
- 	    sp->handle, fcport->loop_id, fcport->d_id.b.domain,
- 	    fcport->d_id.b.area, fcport->d_id.b.al_pa);
- 
-+	rval = qla2x00_start_sp(sp);
-+	if (rval != QLA_SUCCESS)
-+		goto done_free_sp;
- 	wait_for_completion(&tm_iocb->u.tmf.comp);
- 
- 	rval = tm_iocb->u.tmf.data;
-@@ -1790,14 +1792,14 @@ qla24xx_async_abort_cmd(srb_t *cmd_sp, bool wait)
- 
- 	sp->done = qla24xx_abort_sp_done;
- 
--	rval = qla2x00_start_sp(sp);
--	if (rval != QLA_SUCCESS)
--		goto done_free_sp;
--
- 	ql_dbg(ql_dbg_async, vha, 0x507c,
- 	    "Abort command issued - hdl=%x, target_id=%x\n",
- 	    cmd_sp->handle, fcport->tgt_id);
- 
-+	rval = qla2x00_start_sp(sp);
-+	if (rval != QLA_SUCCESS)
-+		goto done_free_sp;
-+
- 	if (wait) {
- 		wait_for_completion(&abt_iocb->u.abt.comp);
- 		rval = abt_iocb->u.abt.comp_status == CS_COMPLETE ?
+ 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
+ 			    desc->hexagon_mba_image, sizeof(*qproc));
+ 	if (!rproc) {
 -- 
 2.20.1
 
