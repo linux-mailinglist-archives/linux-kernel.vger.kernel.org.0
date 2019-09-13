@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C191B1E55
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD70BB1E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388469AbfIMNJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:09:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33730 "EHLO mail.kernel.org"
+        id S2388775AbfIMNKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:10:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388450AbfIMNJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:09:12 -0400
+        id S2388734AbfIMNK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:10:27 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4AAD214DA;
-        Fri, 13 Sep 2019 13:09:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 853DD206BB;
+        Fri, 13 Sep 2019 13:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380151;
-        bh=TgW3QEobgITHxpQo0bHKSbnp5YfPFBsgG5ek//Jxuc4=;
+        s=default; t=1568380227;
+        bh=boF61tNb6XatUKNw1ZGpKnGUN8RpjdfWG2vpBkeuOsU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DXfoW8rR4dZaFkhLE4522h+qesvX1Ij2CbI21WK8Lh52s0eKIUORct/HfNs+2lMEz
-         WV5D1MTgtFR39F3ihJbpEsUA9PY9kFud8YOvkhntG6MUawOkmJCYE2Xsfj8PJ8lFPr
-         ZHRgfPVChH4cpVQLQ2Cq4Vrs6DBsEF2Ryd0ZUwv8=
+        b=ixtodDtG8X1iU0V7LwvbuazYMYtL4IHK7BSoollsUG77iNRCn3EUk49lAL/UzeZP7
+         0z/VAoaBStSdjUHvdsFXP68AedYKkkqIjqP49EcORGe8HKpb/HmFfGWuh6WnUEhaKn
+         4+syxWRBrPUvQgEon+ubg4Ffbm3k0VedfXkqgIiw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 02/14] ALSA: hda/realtek - Fix overridden device-specific initialization
+Subject: [PATCH 4.14 02/21] ALSA: hda/realtek - Fix overridden device-specific initialization
 Date:   Fri, 13 Sep 2019 14:06:55 +0100
-Message-Id: <20190913130442.986600903@linuxfoundation.org>
+Message-Id: <20190913130502.714475863@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190913130440.264749443@linuxfoundation.org>
-References: <20190913130440.264749443@linuxfoundation.org>
+In-Reply-To: <20190913130501.285837292@linuxfoundation.org>
+References: <20190913130501.285837292@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -72,7 +72,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/sound/pci/hda/hda_generic.c
 +++ b/sound/pci/hda/hda_generic.c
-@@ -5807,7 +5807,8 @@ int snd_hda_gen_init(struct hda_codec *c
+@@ -5854,7 +5854,8 @@ int snd_hda_gen_init(struct hda_codec *c
  	if (spec->init_hook)
  		spec->init_hook(codec);
  
@@ -84,7 +84,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	init_extra_out(codec);
 --- a/sound/pci/hda/hda_generic.h
 +++ b/sound/pci/hda/hda_generic.h
-@@ -236,6 +236,7 @@ struct hda_gen_spec {
+@@ -237,6 +237,7 @@ struct hda_gen_spec {
  	unsigned int indep_hp_enabled:1; /* independent HP enabled */
  	unsigned int have_aamix_ctl:1;
  	unsigned int hp_mic_jack_modes:1;
@@ -94,7 +94,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	u64 mute_bits;
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -773,9 +773,11 @@ static int alc_init(struct hda_codec *co
+@@ -781,9 +781,11 @@ static int alc_init(struct hda_codec *co
  	if (spec->init_hook)
  		spec->init_hook(codec);
  
