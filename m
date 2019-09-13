@@ -2,109 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCC4FB208C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1969CB20DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390459AbfIMNXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:23:03 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:55284 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390909AbfIMNXB (ORCPT
+        id S2391622AbfIMN1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:27:18 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:34385 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391567AbfIMN0h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:23:01 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8DDMxhg074712;
-        Fri, 13 Sep 2019 08:22:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568380980;
-        bh=vnhD3PZ0mNE2hDulxxExCWGhochou6IDX6JVjee4zZo=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=Y9dbMQc0aE9/gKp7o4aKT4yxFvuv2bv5RTsbZG6T4voAXupV97yHdiktLJMPeHnCS
-         u5W5jOcO2C3h8b44NbwSPPTu+dAkEvtzrFtoCCbfhtuWojinwtmbkehD+/w2QkIol1
-         6J1Sc7IRV3IiYzDV7D6vH0U90p69qO9Y4xOrAvpA=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8DDMxnS116313
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Sep 2019 08:22:59 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 13
- Sep 2019 08:22:59 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 13 Sep 2019 08:22:59 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with SMTP id x8DDMxCB116905;
-        Fri, 13 Sep 2019 08:22:59 -0500
-Date:   Fri, 13 Sep 2019 08:25:04 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch 02/13] media: am437x-vpfe: Fix missing first line
-Message-ID: <20190913132504.sh5fpb4hrv5wqorp@ti.com>
-References: <20190909162743.30114-1-bparrot@ti.com>
- <20190909162743.30114-3-bparrot@ti.com>
- <018a5f55-a750-c86d-da82-2b7c586cb33e@xs4all.nl>
+        Fri, 13 Sep 2019 09:26:37 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1i8lam-0000Ir-Cw; Fri, 13 Sep 2019 15:26:28 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Paul Turner <pjt@google.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Prarit Bhargava <prarit@redhat.com>
+Subject: Re: printk meeting at LPC
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+        <20190904123531.GA2369@hirez.programming.kicks-ass.net>
+        <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
+        <20190905143118.GP2349@hirez.programming.kicks-ass.net>
+        <alpine.DEB.2.21.1909051736410.1902@nanos.tec.linutronix.de>
+        <20190905121101.60c78422@oasis.local.home>
+        <alpine.DEB.2.21.1909091507540.1791@nanos.tec.linutronix.de>
+Date:   Fri, 13 Sep 2019 15:26:26 +0200
+In-Reply-To: <alpine.DEB.2.21.1909091507540.1791@nanos.tec.linutronix.de>
+        (Thomas Gleixner's message of "Mon, 9 Sep 2019 15:11:52 +0100 (WEST)")
+Message-ID: <87k1acz5rx.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <018a5f55-a750-c86d-da82-2b7c586cb33e@xs4all.nl>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hans Verkuil <hverkuil@xs4all.nl> wrote on Fri [2019-Sep-13 15:00:08 +0200]:
-> On 9/9/19 6:27 PM, Benoit Parrot wrote:
-> > Previous generation of this driver were hard coded to handle
-> > encoder/decoder were the first line never contains any data and
-> 
-> were -> where
-> 
-> > was therefore always skipped, however when dealing with actual
-> > camera sensor the first line is always present.
-> 
-> sensor -> sensors
+On 2019-09-09, Thomas Gleixner <tglx@linutronix.de> wrote:
+> printk meeting at LPC Meeting Room - SAFIRA on Tuesday Sept 10. from
+> 2PM to 3PM.
 
-I'll fix those.
+The meeting was very effective in letting us come to decisions on the
+direction to take. Thanks for the outstanding attendance! It certainly
+saved hundreds of hours of reading/writing emails!
 
-Thanks
+The slides[0] from my printk talk served as a _rough_ basis for the
+discussion. Here is a summary of the decisions:
 
-Benoit
+1. As a new ringbuffer, the lockless state-based proof of concept
+posted[1] by Petr Mladek will be used. Since it has far fewer memory
+barriers in the code, it will be simpler to review. I posted[2] a patch
+to hack my RFCv4 into a fully functional version of Petr's PoC. So we
+know it will work. With this, printk() can be called from any context
+and the message will be put directly into the ringbuffer.
 
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> > 
-> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> > ---
-> >  drivers/media/platform/am437x/am437x-vpfe.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
-> > index ab959d61f9c9..0ecb75bf5abd 100644
-> > --- a/drivers/media/platform/am437x/am437x-vpfe.c
-> > +++ b/drivers/media/platform/am437x/am437x-vpfe.c
-> > @@ -345,13 +345,9 @@ static void vpfe_ccdc_setwin(struct vpfe_ccdc *ccdc,
-> >  	if (frm_fmt == CCDC_FRMFMT_INTERLACED) {
-> >  		vert_nr_lines = (image_win->height >> 1) - 1;
-> >  		vert_start >>= 1;
-> > -		/* Since first line doesn't have any data */
-> > -		vert_start += 1;
-> >  		/* configure VDINT0 */
-> >  		val = (vert_start << VPFE_VDINT_VDINT0_SHIFT);
-> >  	} else {
-> > -		/* Since first line doesn't have any data */
-> > -		vert_start += 1;
-> >  		vert_nr_lines = image_win->height - 1;
-> >  		/*
-> >  		 * configure VDINT0 and VDINT1. VDINT1 will be at half
-> > 
-> 
+2. A kernel thread will be created for each registered console, each
+responsible for being the sole printers to their respective
+consoles. With this, console printing is _fully_ decoupled from printk()
+callers.
+
+3. Rather than defining emergency _messages_, we define an emergency
+_state_ where the kernel wants to flush the messages immediately before
+dying. Unlike oops_in_progress, this state will not be visible to
+anything outside of the printk infrastructure.
+
+4. When in emergency state, the kernel will use a new console callback
+write_atomic() to flush the messages in whatever context the CPU is in
+at that moment. Only consoles that implement the NMI-safe write_atomic()
+will be able to flush in this state.
+
+5. LOG_CONT message pieces will be stored as individual records in the
+ringbuffer. They will be "assembled" by the ringbuffer reader (in
+kernel) before being copied to userspace or printed on the
+console. Since each record in the ringbuffer has its own sequence
+number, this has the effect for userspace that sequence numbers will
+appear to be skipped. (i.e. if there were LOG_CONT pieces with sequence
+numbers 4, 5, 6, the fully assembled message will appear only as
+sequence number 6 (and will have the timestamp from the first piece)).
+
+6. A new may-sleep function pr_flush() will be made available to wait
+for all previously printk'd messages to be output on all consoles before
+proceeding. For example:
+
+    pr_cont("Running test ABC... ");
+    pr_flush();
+
+    do_test();
+
+    pr_cont("PASSED\n");
+    pr_flush();
+
+7. The ringbuffer raw data (log_buf) will be simplified to only consist
+of alignment-padded strings separated by a single unsigned long. All
+record meta-data (timestamp, loglevel, caller_id, etc.) will move into
+the record descriptors, which are located in an extra array. The
+appropriate crash tools will need to be adjusted for this. (FYI: The
+unsigned long in the string data is the descriptor ID.)
+
+8. A CPU-reentrant spinlock (the so-called cpu-lock) will be used to
+synchronize/stop the kthreads during emergency state.
+
+9. Support for printk dictionaries will be discontinued. I will look
+into who is using this and why. If printk dictionaries are important for
+you, speak up now!
+
+(There was also some talk about possibly discontinuing kdb, but that is
+not directly related to printk. I'm mentioning it here in case anyone
+wants to pursue that.)
+
+If I missed (or misunderstood) anything, please let me know!
+
+John Ogness
+
+[0] https://www.linuxplumbersconf.org/event/4/contributions/290/attachments/276/463/lpc2019_jogness_printk.pdf
+[1] https://lkml.kernel.org/r/20190704103321.10022-1-pmladek@suse.com
+[2] https://lkml.kernel.org/r/87lfvwcssu.fsf@linutronix.de
