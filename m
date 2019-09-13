@@ -2,89 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D27AEB2802
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:07:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E784B27FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404033AbfIMWF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 18:05:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36234 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404024AbfIMWF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 18:05:26 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A715210C0925;
-        Fri, 13 Sep 2019 22:05:25 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-34.bss.redhat.com [10.20.1.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A46D7600C6;
-        Fri, 13 Sep 2019 22:05:24 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ilia Mirkin <imirkin@alum.mit.edu>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] drm/nouveau: dispnv50: Report possible_crtcs incorrectly on mstos, for now
-Date:   Fri, 13 Sep 2019 18:03:53 -0400
-Message-Id: <20190913220355.6883-4-lyude@redhat.com>
-In-Reply-To: <20190913220355.6883-1-lyude@redhat.com>
-References: <20190913220355.6883-1-lyude@redhat.com>
+        id S2404013AbfIMWEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 18:04:43 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41572 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390144AbfIMWEm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 18:04:42 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8DM4FJG147041;
+        Fri, 13 Sep 2019 22:04:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=cEmR1N7x+6nwpU4cpXCvEKl6j72A2b33JZR7hUchDTA=;
+ b=KZdnhezRSz81h0NoDSiiyY3bSl/k6ofmBb2GPHi7B3lUCDeFHu37nnJFmwOCfU35uwbS
+ 5F3Bp57lbhxm6y/VCNab/Z8DVv39sSSf/4duU+f0BDVGq6TILMlPtzFEKBtS4gMt6XPp
+ WF/nI+OHbNvbFZCUeNw22Fu37hEsRBpAjvShP1livRXAfQezyGIXnd+/I4u4f1a/aCfM
+ vG3BQNvlcXf/VRRb4QgqzpCzFn9yxTPiexQhXF+V9F/3QS5MU8Sf0vFV/AtJ6YocsbSX
+ YT6+K1udvqEeKgVA+YGbfe/osXluxufmPWIN3PJWIf6bn5aseY23M6BjZdo/Kt7skhth OQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2uytd378q1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Sep 2019 22:04:23 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8DM4Esd012615;
+        Fri, 13 Sep 2019 22:04:22 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2uytdju7a0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Sep 2019 22:04:22 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8DM3xGr008423;
+        Fri, 13 Sep 2019 22:03:59 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 13 Sep 2019 15:03:59 -0700
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steve French <stfrench@microsoft.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Tobin C. Harding" <me@tobin.cc>
+Subject: Re: [Ksummit-discuss] [PATCH v2 0/3] Maintainer Entry Profiles
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <156821692280.2951081.18036584954940423225.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <yq1o8zqeqhb.fsf@oracle.com>
+        <6fe45562-9493-25cf-afdb-6c0e702a49b4@acm.org>
+Date:   Fri, 13 Sep 2019 18:03:56 -0400
+In-Reply-To: <6fe45562-9493-25cf-afdb-6c0e702a49b4@acm.org> (Bart Van Assche's
+        message of "Thu, 12 Sep 2019 14:31:35 +0100")
+Message-ID: <yq1tv9fdfar.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Fri, 13 Sep 2019 22:05:25 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9379 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909130218
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9379 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909130218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit is seperate from the previous one to make it easier to
-revert in the future. Basically, while working on making MSTOs per-head
-as opposed to per-head-per-connector I discovered these lovely issues:
 
-https://gitlab.freedesktop.org/xorg/xserver/merge_requests/277
-https://gitlab.gnome.org/GNOME/mutter/issues/759
+Hi Bart,
 
-Note as well that Intel already has a temporary workaround for this in
-their kernel driver. So, unfortunately we need to follow suit to avoid
-causing a regression in userspace. Once these issues get fixed, this
-commit should be reverted.
+> On 9/11/19 5:40 PM, Martin K. Petersen wrote:
+>> * Do not use custom To: and Cc: for individual patches. We want to see the
+>>   whole series, even patches that potentially need to go through a different
+>>   subsystem tree.
+>
+> Thanks for having written this summary. This is very helpful. For the
+> above paragraph, should it be clarified whether that requirement
+> applies to mailing list e-mail addresses only or also to individual
+> e-mail addresses? When using git send-email it is easy to end up with
+> different cc-lists per patch.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
----
- drivers/gpu/drm/nouveau/dispnv50/disp.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+I prefer to have the entire series sent to linux-scsi or
+target-devel. It wouldn't be so bad if discussions about the merits of a
+tree-wide change consistently happened in responses to the cover
+letter. But more often than not discussion happens in response to a
+patch touching a different subsystem and therefore in a mail exchange
+that doesn't end up on linux-scsi.
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-index d23ac13763b5..f5ad20af0dd5 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -2366,6 +2366,18 @@ nv50_display_create(struct drm_device *dev)
- 				head->msto = NULL;
- 				goto out;
- 			}
-+
-+			/*
-+			 * FIXME: This is a hack to workaround the following
-+			 * issues:
-+			 *
-+			 * https://gitlab.gnome.org/GNOME/mutter/issues/759
-+			 * https://gitlab.freedesktop.org/xorg/xserver/merge_requests/277
-+			 *
-+			 * Once these issues are closed, this should be
-+			 * removed
-+			 */
-+			head->msto->encoder.possible_crtcs = crtcs;
- 		}
- 	}
- 
+>> * The patch must compile without warnings (make C=1 CF="-D__CHECK_ENDIAN__")
+>>   and does not incur any zeroday test robot complaints.
+>
+> How about adding W=1 to that make command?
+>
+> How about existing drivers that trigger tons of endianness warnings,
+> e.g. qla2xxx? How about requiring that no new warnings are introduced?
+
+This was in response to a driver submission (for a different driver)
+around the time this doc was written. The problem is that it's sometimes
+hard to distinguish new warnings from old ones. I'm all for requiring
+that no new warnings are introduced.
+
+>> * The patch must have a commit message that describes,
+>> comprehensively and in plain English, what the patch does.
+>
+> How about making this requirement more detailed and requiring that not
+> only what has been changed is document but also why that change has
+> been made?
+
+I'd really like all this patch submission guideline material to live in
+Documentation/process. But yes.
+
 -- 
-2.21.0
-
+Martin K. Petersen	Oracle Linux Engineering
