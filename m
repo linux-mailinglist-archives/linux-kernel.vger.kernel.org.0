@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC019B20AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB0D6B20AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:48:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391282AbfIMNZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:25:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39794 "EHLO mx1.redhat.com"
+        id S2391303AbfIMNZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:25:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60806 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390933AbfIMNZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:25:04 -0400
+        id S2391289AbfIMNZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:25:07 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9A011307CDE7;
-        Fri, 13 Sep 2019 13:25:03 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C444151EE4;
+        Fri, 13 Sep 2019 13:25:06 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 183D65C1D4;
-        Fri, 13 Sep 2019 13:24:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ED0935C1D4;
+        Fri, 13 Sep 2019 13:25:03 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,203 +27,127 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 25/73] libperf: Move ids from struct evsel to struct perf_evsel
-Date:   Fri, 13 Sep 2019 15:23:07 +0200
-Message-Id: <20190913132355.21634-26-jolsa@kernel.org>
+Subject: [PATCH 26/73] libperf: Move heads from struct evlist to struct perf_evlist
+Date:   Fri, 13 Sep 2019 15:23:08 +0200
+Message-Id: <20190913132355.21634-27-jolsa@kernel.org>
 In-Reply-To: <20190913132355.21634-1-jolsa@kernel.org>
 References: <20190913132355.21634-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 13 Sep 2019 13:25:03 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 13 Sep 2019 13:25:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move ids from struct evsel to libperf's struct perf_evsel.
+Move heads hash from struct evlist to struct perf_evlist.
 
-Link: http://lkml.kernel.org/n/tip-oaox9ryle29sepvxaur57swa@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-4y1fuw43ave7y32ypc9epthv@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/lib/include/internal/evsel.h |  1 +
- tools/perf/util/evlist.c                |  2 +-
- tools/perf/util/evsel.c                 |  2 +-
- tools/perf/util/evsel.h                 |  1 -
- tools/perf/util/header.c                | 16 ++++++++--------
- tools/perf/util/intel-bts.c             |  2 +-
- tools/perf/util/intel-pt.c              |  2 +-
- tools/perf/util/session.c               |  4 ++--
- 8 files changed, 15 insertions(+), 15 deletions(-)
+ tools/perf/lib/evlist.c                  |  4 ++++
+ tools/perf/lib/include/internal/evlist.h |  4 ++++
+ tools/perf/util/evlist.c                 | 10 +++-------
+ tools/perf/util/evlist.h                 |  4 ----
+ 4 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/tools/perf/lib/include/internal/evsel.h b/tools/perf/lib/include/internal/evsel.h
-index bea14e6e28f5..0b04065cae8e 100644
---- a/tools/perf/lib/include/internal/evsel.h
-+++ b/tools/perf/lib/include/internal/evsel.h
-@@ -17,6 +17,7 @@ struct perf_evsel {
- 	struct xyarray		*fd;
- 	struct xyarray		*sample_id;
- 	u64			*id;
-+	u32			 ids;
+diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
+index f4dc9a208332..2bdd9d2c79d9 100644
+--- a/tools/perf/lib/evlist.c
++++ b/tools/perf/lib/evlist.c
+@@ -11,6 +11,10 @@
  
- 	/* parse modifier helper */
- 	int			 nr_members;
+ void perf_evlist__init(struct perf_evlist *evlist)
+ {
++	int i;
++
++	for (i = 0; i < PERF_EVLIST__HLIST_SIZE; ++i)
++		INIT_HLIST_HEAD(&evlist->heads[i]);
+ 	INIT_LIST_HEAD(&evlist->entries);
+ 	evlist->nr_entries = 0;
+ }
+diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
+index 8a4eb66fbf3a..c5a06890fd6a 100644
+--- a/tools/perf/lib/include/internal/evlist.h
++++ b/tools/perf/lib/include/internal/evlist.h
+@@ -5,6 +5,9 @@
+ #include <linux/list.h>
+ #include <api/fd/array.h>
+ 
++#define PERF_EVLIST__HLIST_BITS 8
++#define PERF_EVLIST__HLIST_SIZE (1 << PERF_EVLIST__HLIST_BITS)
++
+ struct perf_cpu_map;
+ struct perf_thread_map;
+ 
+@@ -17,6 +20,7 @@ struct perf_evlist {
+ 	int			 nr_mmaps;
+ 	size_t			 mmap_len;
+ 	struct fdarray		 pollfd;
++	struct hlist_head	 heads[PERF_EVLIST__HLIST_SIZE];
+ };
+ 
+ /**
 diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index ae7f62ae1d29..9dcecb5e05a0 100644
+index 9dcecb5e05a0..2f883db7c8e7 100644
 --- a/tools/perf/util/evlist.c
 +++ b/tools/perf/util/evlist.c
-@@ -481,7 +481,7 @@ void perf_evlist__id_add(struct evlist *evlist, struct evsel *evsel,
- 			 int cpu, int thread, u64 id)
+@@ -54,10 +54,6 @@ int sigqueue(pid_t pid, int sig, const union sigval value);
+ void evlist__init(struct evlist *evlist, struct perf_cpu_map *cpus,
+ 		  struct perf_thread_map *threads)
  {
- 	perf_evlist__id_hash(evlist, evsel, cpu, thread, id);
--	evsel->core.id[evsel->ids++] = id;
-+	evsel->core.id[evsel->core.ids++] = id;
+-	int i;
+-
+-	for (i = 0; i < PERF_EVLIST__HLIST_SIZE; ++i)
+-		INIT_HLIST_HEAD(&evlist->heads[i]);
+ 	perf_evlist__init(&evlist->core);
+ 	perf_evlist__set_maps(&evlist->core, cpus, threads);
+ 	fdarray__init(&evlist->core.pollfd, 64);
+@@ -474,7 +470,7 @@ static void perf_evlist__id_hash(struct evlist *evlist,
+ 	sid->id = id;
+ 	sid->evsel = evsel;
+ 	hash = hash_64(sid->id, PERF_EVLIST__HLIST_BITS);
+-	hlist_add_head(&sid->node, &evlist->heads[hash]);
++	hlist_add_head(&sid->node, &evlist->core.heads[hash]);
  }
  
- int perf_evlist__id_add_fd(struct evlist *evlist,
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 194bead17f64..7501b4403b7f 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1253,7 +1253,7 @@ static void perf_evsel__free_id(struct evsel *evsel)
- 	xyarray__delete(evsel->core.sample_id);
- 	evsel->core.sample_id = NULL;
- 	zfree(&evsel->core.id);
--	evsel->ids = 0;
-+	evsel->core.ids = 0;
- }
+ void perf_evlist__id_add(struct evlist *evlist, struct evsel *evsel,
+@@ -548,7 +544,7 @@ struct perf_sample_id *perf_evlist__id2sid(struct evlist *evlist, u64 id)
+ 	int hash;
  
- static void perf_evsel__free_config_terms(struct evsel *evsel)
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index f313e07925c4..765f722fc128 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -120,7 +120,6 @@ struct evsel {
- 	struct perf_counts	*counts;
- 	struct perf_counts	*prev_raw_counts;
- 	int			idx;
--	u32			ids;
- 	unsigned long		max_events;
- 	unsigned long		nr_events_printed;
- 	char			*name;
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index ebdabaa33d8b..360fc61c5754 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -524,7 +524,7 @@ static int write_event_desc(struct feat_fd *ff,
- 		 * copy into an nri to be independent of the
- 		 * type of ids,
- 		 */
--		nri = evsel->ids;
-+		nri = evsel->core.ids;
- 		ret = do_write(ff, &nri, sizeof(nri));
- 		if (ret < 0)
- 			return ret;
-@@ -538,7 +538,7 @@ static int write_event_desc(struct feat_fd *ff,
- 		/*
- 		 * write unique ids for this event
- 		 */
--		ret = do_write(ff, evsel->core.id, evsel->ids * sizeof(u64));
-+		ret = do_write(ff, evsel->core.id, evsel->core.ids * sizeof(u64));
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -1664,7 +1664,7 @@ static struct evsel *read_event_desc(struct feat_fd *ff)
- 		id = calloc(nr, sizeof(*id));
- 		if (!id)
- 			goto error;
--		evsel->ids = nr;
-+		evsel->core.ids = nr;
- 		evsel->core.id = id;
+ 	hash = hash_64(id, PERF_EVLIST__HLIST_BITS);
+-	head = &evlist->heads[hash];
++	head = &evlist->core.heads[hash];
  
- 		for (j = 0 ; j < nr; j++) {
-@@ -1707,9 +1707,9 @@ static void print_event_desc(struct feat_fd *ff, FILE *fp)
- 	for (evsel = events; evsel->core.attr.size; evsel++) {
- 		fprintf(fp, "# event : name = %s, ", evsel->name);
+ 	hlist_for_each_entry(sid, head, node)
+ 		if (sid->id == id)
+@@ -634,7 +630,7 @@ struct evsel *perf_evlist__event2evsel(struct evlist *evlist,
+ 		return first;
  
--		if (evsel->ids) {
-+		if (evsel->core.ids) {
- 			fprintf(fp, ", id = {");
--			for (j = 0, id = evsel->core.id; j < evsel->ids; j++, id++) {
-+			for (j = 0, id = evsel->core.id; j < evsel->core.ids; j++, id++) {
- 				if (j)
- 					fputc(',', fp);
- 				fprintf(fp, " %"PRIu64, *id);
-@@ -3083,7 +3083,7 @@ int perf_session__write_header(struct perf_session *session,
+ 	hash = hash_64(id, PERF_EVLIST__HLIST_BITS);
+-	head = &evlist->heads[hash];
++	head = &evlist->core.heads[hash];
  
- 	evlist__for_each_entry(session->evlist, evsel) {
- 		evsel->id_offset = lseek(fd, 0, SEEK_CUR);
--		err = do_write(&ff, evsel->core.id, evsel->ids * sizeof(u64));
-+		err = do_write(&ff, evsel->core.id, evsel->core.ids * sizeof(u64));
- 		if (err < 0) {
- 			pr_debug("failed to write perf header\n");
- 			return err;
-@@ -3097,7 +3097,7 @@ int perf_session__write_header(struct perf_session *session,
- 			.attr = evsel->core.attr,
- 			.ids  = {
- 				.offset = evsel->id_offset,
--				.size   = evsel->ids * sizeof(u64),
-+				.size   = evsel->core.ids * sizeof(u64),
- 			}
- 		};
- 		err = do_write(&ff, &f_attr, sizeof(f_attr));
-@@ -3951,7 +3951,7 @@ int perf_event__synthesize_attrs(struct perf_tool *tool,
- 	int err = 0;
+ 	hlist_for_each_entry(sid, head, node) {
+ 		if (sid->id == id)
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index b8f03452196f..7306a0677171 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -20,12 +20,8 @@ struct thread_map;
+ struct perf_cpu_map;
+ struct record_opts;
  
- 	evlist__for_each_entry(evlist, evsel) {
--		err = perf_event__synthesize_attr(tool, &evsel->core.attr, evsel->ids,
-+		err = perf_event__synthesize_attr(tool, &evsel->core.attr, evsel->core.ids,
- 						  evsel->core.id, process);
- 		if (err) {
- 			pr_debug("failed to create perf header attribute\n");
-diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-index daf42915b326..e49d38b21909 100644
---- a/tools/perf/util/intel-bts.c
-+++ b/tools/perf/util/intel-bts.c
-@@ -768,7 +768,7 @@ static int intel_bts_synth_events(struct intel_bts *bts,
- 	int err;
- 
- 	evlist__for_each_entry(evlist, evsel) {
--		if (evsel->core.attr.type == bts->pmu_type && evsel->ids) {
-+		if (evsel->core.attr.type == bts->pmu_type && evsel->core.ids) {
- 			found = true;
- 			break;
- 		}
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 4a1d46158401..b08d80adfa32 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -2734,7 +2734,7 @@ static struct evsel *intel_pt_evsel(struct intel_pt *pt,
- 	struct evsel *evsel;
- 
- 	evlist__for_each_entry(evlist, evsel) {
--		if (evsel->core.attr.type == pt->pmu_type && evsel->ids)
-+		if (evsel->core.attr.type == pt->pmu_type && evsel->core.ids)
- 			return evsel;
- 	}
- 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index f50cd54cf96b..32226e71949e 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -2429,7 +2429,7 @@ int perf_event__synthesize_id_index(struct perf_tool *tool,
- 		 sizeof(struct id_index_entry);
- 
- 	evlist__for_each_entry(evlist, evsel)
--		nr += evsel->ids;
-+		nr += evsel->core.ids;
- 
- 	n = nr > max_nr ? max_nr : nr;
- 	sz = sizeof(struct perf_record_id_index) + n * sizeof(struct id_index_entry);
-@@ -2444,7 +2444,7 @@ int perf_event__synthesize_id_index(struct perf_tool *tool,
- 	evlist__for_each_entry(evlist, evsel) {
- 		u32 j;
- 
--		for (j = 0; j < evsel->ids; j++) {
-+		for (j = 0; j < evsel->core.ids; j++) {
- 			struct id_index_entry *e;
- 			struct perf_sample_id *sid;
- 
+-#define PERF_EVLIST__HLIST_BITS 8
+-#define PERF_EVLIST__HLIST_SIZE (1 << PERF_EVLIST__HLIST_BITS)
+-
+ struct evlist {
+ 	struct perf_evlist core;
+-	struct hlist_head heads[PERF_EVLIST__HLIST_SIZE];
+ 	int		 nr_groups;
+ 	bool		 enabled;
+ 	int		 id_pos;
 -- 
 2.21.0
 
