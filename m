@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5D08B220D
+	by mail.lfdr.de (Postfix) with ESMTP id 02DFDB220B
 	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:35:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389593AbfIMOfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 10:35:25 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42914 "EHLO
+        id S2389495AbfIMOfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 10:35:16 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:13192 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389174AbfIMOfN (ORCPT
+        by vger.kernel.org with ESMTP id S2387600AbfIMOfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 10:35:13 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8DEUoD2005823;
+        Fri, 13 Sep 2019 10:35:15 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8DEV2ZR017903;
         Fri, 13 Sep 2019 16:35:04 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=r9bCUxv8k2rqzfX0+tEylu2OZfX7xZ0K9dYIQm5sZ6w=;
- b=W/qZJCLLcfrZugV9YgOxipRn7Z6z7LMe8JKXGRv42C6trfe2sEpuY4founWUEy9r4q7o
- u3cNAJo5A4HZT7Oae/86PZNaDJ1ru2/U6KLD4Y2eH1whS6FRASMIIywHsJE0ia8qbJgs
- RC6nNp4oQvOEjDhiJrSCZT+XW5rXrb6XoiythsTWsEix1HZCC1ElozBy2HzaivVGu+S1
- 8J8+8zbUAEZyIzwxo852oju28gbsKMds+FU6wf2wZDY+mDqHQ2jLGWMsaW3URtMtHc6V
- FXpQsR+IgyLy7CI90gzwhCm2wDZhKLfX8zLBQJlJMZiMvLP92J78UgsdnazS9oZnYHb/ jg== 
+ bh=hryKjyfCxTA2dnqKEkk14SmwqqJ3l+c8gAOzB7s0IVA=;
+ b=1JWVK43fjD4/dHSvcvQQk318CIAnOUS9PlDb7E9UrkKWBPkvLOhUQAA+ttkePsMr9ScY
+ v0wAZe02xXOOEs86nn3WDwIkFM5mtjWroOoGGMLDl2qwUOIH66HYB7cTTIg+IAYvALCh
+ kZQnAlRPHnrr5Tl1ndalpo8MgsdoDf9Vvs4x1jbD8DHDTqb9eqUiN9gccv3tzRD7a5EE
+ J7ySaocVq0CY8t3500m9LLJZw0LCl+BXRu5K6iXGlSKhSyF3nFfzhqJSZuAVclPByQ+O
+ 1CO7mK+J599J6GnWVml4gJfm+UleSNeDdyiazE6r5inJcWzejyHzDP79Tvg/Q5Lrt5oQ KQ== 
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2uyte3wm11-1
+        by mx08-00178001.pphosted.com with ESMTP id 2uytdx5n8a-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
         Fri, 13 Sep 2019 16:35:04 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BF8F74E;
-        Fri, 13 Sep 2019 14:34:59 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 79A072C86AE;
-        Fri, 13 Sep 2019 16:34:59 +0200 (CEST)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 13 Sep
- 2019 16:34:59 +0200
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3639D50;
+        Fri, 13 Sep 2019 14:35:01 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 917192C86AE;
+        Fri, 13 Sep 2019 16:35:00 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 13 Sep
+ 2019 16:35:00 +0200
 Received: from localhost (10.48.1.232) by Webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 13 Sep 2019 16:34:59 +0200
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 13 Sep 2019 16:35:00 +0200
 From:   Fabrice Gasnier <fabrice.gasnier@st.com>
 To:     <alexandre.torgue@st.com>
 CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
@@ -46,9 +46,9 @@ CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <fabrice.gasnier@st.com>
-Subject: [PATCH 2/3] ARM: dts: stm32: add ADC pins used on stm32mp157a-dk1
-Date:   Fri, 13 Sep 2019 16:34:39 +0200
-Message-ID: <1568385280-2633-3-git-send-email-fabrice.gasnier@st.com>
+Subject: [PATCH 3/3] ARM: dts: stm32: enable ADC support on stm32mp157a-dk1
+Date:   Fri, 13 Sep 2019 16:34:40 +0200
+Message-ID: <1568385280-2633-4-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1568385280-2633-1-git-send-email-fabrice.gasnier@st.com>
 References: <1568385280-2633-1-git-send-email-fabrice.gasnier@st.com>
@@ -62,42 +62,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define pins that can be used for ADC on stm32mp157a-dk1 board:
-- AIN connector has ADC input pins
-- USB Type-C CC1 & CC2 pins (e.g. in18, in19)
+Configure ADC support on stm32mp157a-dk1. It can be used for various
+purpose:
+- AIN connector has several analog inputs: ANA0, ANA1, ADC2 in6 & in2,
+  ADC1 in13 & in6
+- USB Type-C CC1 & CC2 pins wired to in18 & in19
+It's easier then to Configure them all. But keep them disabled by default,
+so the pins are kept in their initial state to lower power consumption.
+This way they can also be used as GPIO.
+Add VDD and VDDA supplies to ADC on stm32mp157c-dk1 board. This allows to
+get full ADC analog performances in case VDDA is below 2.7V (not the case
+by default).
 
 Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 ---
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/stm32mp157a-dk1.dts | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-index e4a0d51..eeb60d0 100644
---- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-@@ -137,6 +137,22 @@
- 				status = "disabled";
- 			};
+diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+index ebd9f33..2f42fcd 100644
+--- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
++++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+@@ -97,6 +97,33 @@
+ 	};
+ };
  
-+			adc12_ain_pins_a: adc12-ain-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('C', 3, ANALOG)>, /* ADC1 in13 */
-+						 <STM32_PINMUX('F', 12, ANALOG)>, /* ADC1 in6 */
-+						 <STM32_PINMUX('F', 13, ANALOG)>, /* ADC2 in2 */
-+						 <STM32_PINMUX('F', 14, ANALOG)>; /* ADC2 in6 */
-+				};
-+			};
++&adc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&adc12_ain_pins_a>, <&adc12_usb_cc_pins_a>;
++	vdd-supply = <&vdd>;
++	vdda-supply = <&vdd>;
++	vref-supply = <&vrefbuf>;
++	status = "disabled";
++	adc1: adc@0 {
++		/*
++		 * Type-C USB_PWR_CC1 & USB_PWR_CC2 on in18 & in19.
++		 * Use at least 5 * RC time, e.g. 5 * (Rp + Rd) * C:
++		 * 5 * (56 + 47kOhms) * 5pF => 2.5us.
++		 * Use arbitrary margin here (e.g. 5us).
++		 */
++		st,min-sample-time-nsecs = <5000>;
++		/* AIN connector, USB Type-C CC1 & CC2 */
++		st,adc-channels = <0 1 6 13 18 19>;
++		status = "okay";
++	};
++	adc2: adc@100 {
++		/* AIN connector, USB Type-C CC1 & CC2 */
++		st,adc-channels = <0 1 2 6 18 19>;
++		st,min-sample-time-nsecs = <5000>;
++		status = "okay";
++	};
++};
 +
-+			adc12_usb_cc_pins_a: adc12-usb-cc-pins-0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('A', 4, ANALOG)>, /* ADC12 in18 */
-+						 <STM32_PINMUX('A', 5, ANALOG)>; /* ADC12 in19 */
-+				};
-+			};
-+
- 			cec_pins_a: cec-0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('A', 15, AF4)>;
+ &cec {
+ 	pinctrl-names = "default", "sleep";
+ 	pinctrl-0 = <&cec_pins_b>;
 -- 
 2.7.4
 
