@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC455B28D9
+	by mail.lfdr.de (Postfix) with ESMTP id 6E59FB28D8
 	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 01:23:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404331AbfIMXXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 19:23:02 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45116 "EHLO
+        id S2404317AbfIMXWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 19:22:55 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40405 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404288AbfIMXWv (ORCPT
+        with ESMTP id S2404295AbfIMXWw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 19:22:51 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 4so16016429pgm.12
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 16:22:51 -0700 (PDT)
+        Fri, 13 Sep 2019 19:22:52 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w10so16052490pgj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2019 16:22:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MAMlkRnO5l7BTKTwRIiopLRzEQTrPpsCd+4MsukYmNc=;
-        b=avvjYfke73Z96ZWvIbYCugt7OGDcicXE9i3gpl/jtc/mPF/nkwA0xUREeCTHc6/1Yo
-         DvcG/w/Bapcvdhv6brjo01L2EV3Srmpd84r3TyQSho54RnmYc0uYGRmwIF0LZkMOzIq7
-         eM28BvOangzerEIxjZYhfXvTyoLQHNN4sMUAIJl8QgnGj2nJn07IIJ0lxOTPkCcqyQz2
-         qdloVaCV9GtiQYk8AiWpt3GlL3F9V04nlc1XOJNjVTGWissMygY+5hkxm6+eDOvdEQPo
-         XiZXPIQwHTZ0od/QG+fHtrBRdBvZMHvT0UkhhHOBxkqXzzFqiY3rSwaBKSzqT9iaVgRj
-         jniw==
+        bh=lByhQoUDqedSEy5jA6OCeRd6BYLoC/Hj4IwADVyV/Nw=;
+        b=kkX+85gkrW2Buu+Xzskcqir8gvZG5lMldcBBLygf4PXf9udy9Yn4gHOn6AlRGXvi9J
+         7PhdCriwozvDlBmwEq/3pUA3H+MYuyi6/D83wtoqw1uI9OCUT7/XG/l59akvIF19rRCM
+         GTpoDeXbpgEX5p4wluTb9nPyChr1JS/8zKT5879mepD8rbdOdT1QBxemWJy8dhdbuKU2
+         nR/Y7Eqg0f9MWpPQdnqAsaPZ9j7YCS8OoO1c9W9s1IbNyphBeoEI9HMzTfm0QJGBC8nI
+         9vvxlIu8HfOOPv0E3PZvoIYIKoUdfWFdU1mQafBDq17wOP2hUmvm0bRudJZk+F6/Hpkt
+         MNYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MAMlkRnO5l7BTKTwRIiopLRzEQTrPpsCd+4MsukYmNc=;
-        b=qOEZZOkiGce+f07Mk+NIMk8IRPokABAYqkAZecrYlH3FHyUT/zGft+fxZhWy5cDGLb
-         HRpliDlJM9mdsHmb30xT2HzRda51Alj8UUV867E7QUPdHNgNkoynBuNxEjNG1ah5j5KR
-         cv9d4MPlyHRn613p5fWvMuqs3FSWxgteAtkpbcmAH1opWQxGpJ6s/hj/fzbx8BmfruDP
-         2NRS/UbIi8VDPkHv8lB2s+EbkjY5uhpWLZB7cfC7FfE3YiMW2Uj6wNa9Ky50kROjnCco
-         zpSnYMix/sMi9yRifWH0sBjVnckIY2IZ9jagnuWTh/GI6tr58Gl4twbeGzx6yqo5xbrA
-         XzPQ==
-X-Gm-Message-State: APjAAAWHsyrsEUGhdp+883Q5hr09dZMR9gbczZbi+mUyES/J6MCtyxEj
-        P1O/msDlKRo/ExS20j4h0+HmE2wm8GU=
-X-Google-Smtp-Source: APXvYqzAIwKqeTSg6jM8eD1brvTKO5HP6rLyJWTl41+PZoAF+Zdi76XGeyWGwBdZIZYO4v6HhzU3yw==
-X-Received: by 2002:a17:90a:c38a:: with SMTP id h10mr8186597pjt.129.1568416970743;
-        Fri, 13 Sep 2019 16:22:50 -0700 (PDT)
+        bh=lByhQoUDqedSEy5jA6OCeRd6BYLoC/Hj4IwADVyV/Nw=;
+        b=WKnMQleISm28CY2l0Vv9rIiBi8jOxaTiAz+hgmAhMXTSL1/xOXdLjHxgXWeIdDp+wA
+         qcBOP1GtFlF2Rh/r/kKg5k3Bd2graP3QWbeVNzaTCJg0l4fsOG82lNUTiAWFdC1f24F6
+         id1f6agFISZGMJYU7pEYnxihZL0BS0lPOQM9Id5Ww58iIOJiQ0nUYUy2NOMNJuXw9M95
+         w+y5p9gqOi5k2/HNDEUjZKUNDS52BQs/iyUnHlBH6n74iyv19zMA2swLHhmRc+75m9WK
+         OVuK0hIHeNzcJKFHJ9bI12mzL1eDgw4Zt5/lpq/rv11ULIguxlZtwHinJWGapW9m2KLR
+         6z2w==
+X-Gm-Message-State: APjAAAUyB0XvGufZ0JODGxwZih9ftYCmx40683+NKIATNYp6vZFkaTp7
+        WkXNTBlifEfJCXbnykXsdWmcFWI5trA=
+X-Google-Smtp-Source: APXvYqw5V4giGaYQM7saATgByD8AiGr53K7hgwnjrsM/mFIonSJcE58JGwgAh8LLDakgrbrvvMVMEA==
+X-Received: by 2002:aa7:9abb:: with SMTP id x27mr24756825pfi.206.1568416971878;
+        Fri, 13 Sep 2019 16:22:51 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 196sm38397564pfz.99.2019.09.13.16.22.49
+        by smtp.gmail.com with ESMTPSA id 196sm38397564pfz.99.2019.09.13.16.22.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 16:22:50 -0700 (PDT)
+        Fri, 13 Sep 2019 16:22:51 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH 6/7] irqchip: Build BCM283X_IRQ for ARCH_BRCMSTB
-Date:   Fri, 13 Sep 2019 16:22:35 -0700
-Message-Id: <20190913232236.10200-7-f.fainelli@gmail.com>
+Subject: [PATCH 7/7] irqchip/irq-bcm283x: Add registration prints
+Date:   Fri, 13 Sep 2019 16:22:36 -0700
+Message-Id: <20190913232236.10200-8-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190913232236.10200-1-f.fainelli@gmail.com>
 References: <20190913232236.10200-1-f.fainelli@gmail.com>
@@ -58,28 +58,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that irq-bcm2835.c and irq-bcm2836.c have been updated to support
-BCM7211 which is under ARCH_BRCMSTB, build both drivers for
-ARCH_BRCMSTB.
+With many different kind of interrupt controllers available and used on
+7211, add prints to help determine which ones are registered.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/irqchip/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/irqchip/irq-bcm2835.c | 9 +++++++++
+ drivers/irqchip/irq-bcm2836.c | 2 ++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index d1bb20d23d27..ffd5f986172a 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -116,7 +116,7 @@ config I8259
- config BCM283X_IRQ
- 	bool
- 	select IRQ_DOMAIN
--	default ARCH_BCM2835
-+	default ARCH_BCM2835 || ARCH_BRCMSTB
+diff --git a/drivers/irqchip/irq-bcm2835.c b/drivers/irqchip/irq-bcm2835.c
+index 55afc3487723..ae23e9ec86d0 100644
+--- a/drivers/irqchip/irq-bcm2835.c
++++ b/drivers/irqchip/irq-bcm2835.c
+@@ -76,6 +76,12 @@ enum armctrl_type {
+ 	ARMCTRL_BCM7211
+ };
  
- config BCM6345_L1_IRQ
- 	bool
++static const char *armctrl_type_str[] = {
++	[ARMCTRL_BCM2835] = "BCM2835",
++	[ARMCTRL_BCM2836] = "BCM2836",
++	[ARMCTRL_BCM7211] = "BCM7211",
++};
++
+ static const int reg_pending[] __initconst = { 0x00, 0x04, 0x08 };
+ static const int reg_enable[] __initconst = { 0x18, 0x10, 0x14 };
+ static const int reg_disable[] __initconst = { 0x24, 0x1c, 0x20 };
+@@ -205,6 +211,9 @@ static int __init armctrl_of_init(struct device_node *node,
+ 		set_handle_irq(bcm2835_handle_irq);
+ 	}
+ 
++	pr_info("registered %s intc (%pOF)\n", armctrl_type_str[type],
++		node);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/irqchip/irq-bcm2836.c b/drivers/irqchip/irq-bcm2836.c
+index 77fa395c8f6b..b159dc91919d 100644
+--- a/drivers/irqchip/irq-bcm2836.c
++++ b/drivers/irqchip/irq-bcm2836.c
+@@ -240,6 +240,8 @@ static int __init arm_irqchip_l1_intc_of_init_smp(struct device_node *node,
+ 
+ 	set_handle_irq(bcm2836_arm_irqchip_handle_irq);
+ 
++	pr_info("Registered BCM2836 intc (%s)\n", node->full_name);
++
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
