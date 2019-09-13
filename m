@@ -2,80 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D03BB21CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4967DB21D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389087AbfIMOU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 10:20:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41998 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387693AbfIMOU0 (ORCPT
+        id S1730302AbfIMOWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 10:22:07 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:53298 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727405AbfIMOWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 10:20:26 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E297360767; Fri, 13 Sep 2019 14:20:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568384424;
-        bh=SAShVU3cg4kjywNYAt7pKciptCpXufeKkrQJMy1mPa8=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=Iogji4XO3mbNTK32q4D4/esmb6Vhsxq5yp5+u396vfkSihudz8gJtquOfmM7XopVD
-         fiYLp2Rx17FWwjrgY7oM/5Km3ehIW8cbXLugTEYoPxvdsEPnVm4vTdwob5qNmYdgHK
-         K98RFjKmpLfjZ9bzOvbCikv5VpeTdDSzJcTBrGtc=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 102C1602EE;
-        Fri, 13 Sep 2019 14:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568384424;
-        bh=SAShVU3cg4kjywNYAt7pKciptCpXufeKkrQJMy1mPa8=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=ifV51aP/DalYVwZ0paErOcsj7IYtPXIvU6ZTf9vg8ODEwcgGIckgdqurkwHsbt+95
-         5//khtFQ2FmdHPBZ6H7dhxiAFBa9cJKJuplZ3apPRCSbu+1XQH0ibuhkhxRoaCr3iX
-         GOlgjVHs13GFHKWOtruhnO4iQDd185PxxpajncNo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 102C1602EE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 13 Sep 2019 10:22:07 -0400
+Received: (qmail 1755 invoked by uid 2102); 13 Sep 2019 10:22:05 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 13 Sep 2019 10:22:05 -0400
+Date:   Fri, 13 Sep 2019 10:22:05 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Joe Perches <joe@perches.com>
+cc:     Andy Whitcroft <apw@canonical.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] checkpatch.pl: Don't complain about nominal authors if
+ there isn't one
+In-Reply-To: <e4f60b3f68bd214261b946f34ea0459098da00c3.camel@perches.com>
+Message-ID: <Pine.LNX.4.44L0.1909131014410.1466-200000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] brcmsmac: Use DIV_ROUND_CLOSEST directly to make it
- readable
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1567700648-28162-1-git-send-email-zhongjiang@huawei.com>
-References: <1567700648-28162-1-git-send-email-zhongjiang@huawei.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     <davem@davemloft.net>, <zhongjiang@huawei.com>,
-        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190913142024.E297360767@smtp.codeaurora.org>
-Date:   Fri, 13 Sep 2019 14:20:24 +0000 (UTC)
+Content-Type: MULTIPART/MIXED; BOUNDARY="-1559625215-505712803-1568384525=:1466"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zhong jiang <zhongjiang@huawei.com> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+  Send mail to mime@docserver.cac.washington.edu for more info.
 
-> The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
-> but is perhaps more readable.
+---1559625215-505712803-1568384525=:1466
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+
+On Thu, 12 Sep 2019, Joe Perches wrote:
+
+> On Thu, 2019-09-12 at 16:55 -0400, Alan Stern wrote:
+> > checkpatch.pl shouldn't warn about a "Missing Signed-off-by: line by
+> > nominal patch author" if there is no nominal patch author.  Without
+> > this change, checkpatch always gives me the following warning:
+> > 
+> >         WARNING: Missing Signed-off-by: line by nominal patch author ''
 > 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> When/how does this occur?  Example please.
 
-Patch applied to wireless-drivers-next.git, thanks.
+The patch itself is a good example.  Attached to this email is the
+patch file in the form I keep it (from quilt, not git; note that quilt
+doesn't do a good job of handling the "---" line so I leave it out and
+insert it when submitting the patch).  Try saving the attachment and
+running it through checkpatch.pl.  Here's what I get:
 
-3dfb22003f98 brcmsmac: Use DIV_ROUND_CLOSEST directly to make it readable
 
--- 
-https://patchwork.kernel.org/patch/11133663/
+$ scripts/checkpatch.pl /tmp/checkpatch-author-fix.patch 
+WARNING: Missing Signed-off-by: line by nominal patch author ''
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+total: 0 errors, 1 warnings, 8 lines checked
 
+NOTE: For some of the reported defects, checkpatch may be able to
+      mechanically convert to the typical style using --fix or --fix-inplace.
+
+/tmp/checkpatch-author-fix.patch has style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+      them to the maintainer, see CHECKPATCH in MAINTAINERS.
+
+
+Would you like me to resubmit the patch with this example added to the
+patch description?
+
+Alan Stern
+
+---1559625215-505712803-1568384525=:1466
+Content-Type: TEXT/PLAIN; charset=US-ASCII; name="checkpatch-author-fix.patch"
+Content-Transfer-Encoding: BASE64
+Content-ID: <Pine.LNX.4.44L0.1909131022050.1466@iolanthe.rowland.org>
+Content-Description: 
+Content-Disposition: attachment; filename="checkpatch-author-fix.patch"
+
+Y2hlY2twYXRjaC5wbCBzaG91bGRuJ3Qgd2FybiBhYm91dCBhICJNaXNzaW5n
+IFNpZ25lZC1vZmYtYnk6IGxpbmUgYnkNCm5vbWluYWwgcGF0Y2ggYXV0aG9y
+IiBpZiB0aGVyZSBpcyBubyBub21pbmFsIHBhdGNoIGF1dGhvci4gIFdpdGhv
+dXQNCnRoaXMgY2hhbmdlLCBjaGVja3BhdGNoIGFsd2F5cyBnaXZlcyBtZSB0
+aGUgZm9sbG93aW5nIHdhcm5pbmc6DQoNCglXQVJOSU5HOiBNaXNzaW5nIFNp
+Z25lZC1vZmYtYnk6IGxpbmUgYnkgbm9taW5hbCBwYXRjaCBhdXRob3IgJycN
+Cg0KU2lnbmVkLW9mZi1ieTogQWxhbiBTdGVybiA8c3Rlcm5Acm93bGFuZC5o
+YXJ2YXJkLmVkdT4NCg0KDQoNCiBzY3JpcHRzL2NoZWNrcGF0Y2gucGwgfCAg
+ICAyICstDQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRl
+bGV0aW9uKC0pDQoNCkluZGV4OiB1c2ItZGV2ZWwvc2NyaXB0cy9jaGVja3Bh
+dGNoLnBsDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQotLS0gdXNiLWRldmVs
+Lm9yaWcvc2NyaXB0cy9jaGVja3BhdGNoLnBsDQorKysgdXNiLWRldmVsL3Nj
+cmlwdHMvY2hlY2twYXRjaC5wbA0KQEAgLTY2NzMsNyArNjY3Myw3IEBAIHN1
+YiBwcm9jZXNzIHsNCiAJCWlmICgkc2lnbm9mZiA9PSAwKSB7DQogCQkJRVJS
+T1IoIk1JU1NJTkdfU0lHTl9PRkYiLA0KIAkJCSAgICAgICJNaXNzaW5nIFNp
+Z25lZC1vZmYtYnk6IGxpbmUocylcbiIpOw0KLQkJfSBlbHNpZiAoISRhdXRo
+b3JzaWdub2ZmKSB7DQorCQl9IGVsc2lmICgkYXV0aG9yIG5lICcnICYmICEk
+YXV0aG9yc2lnbm9mZikgew0KIAkJCVdBUk4oIk5PX0FVVEhPUl9TSUdOX09G
+RiIsDQogCQkJICAgICAiTWlzc2luZyBTaWduZWQtb2ZmLWJ5OiBsaW5lIGJ5
+IG5vbWluYWwgcGF0Y2ggYXV0aG9yICckYXV0aG9yJ1xuIik7DQogCQl9DQo=
+---1559625215-505712803-1568384525=:1466--
