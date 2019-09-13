@@ -2,116 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20708B2354
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 17:26:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB8AB2341
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 17:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391312AbfIMP0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 11:26:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51174 "EHLO mail.kernel.org"
+        id S2390390AbfIMPYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 11:24:20 -0400
+Received: from mga09.intel.com ([134.134.136.24]:46516 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388231AbfIMP0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 11:26:39 -0400
-Received: from localhost (195-23-252-136.net.novis.pt [195.23.252.136])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CED520693;
-        Fri, 13 Sep 2019 15:26:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568388398;
-        bh=DKPb89gNVWrEkc2nPeyAuBft6QGWxruAsXiGTHC2k3Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PwShTKtviHhe7lIiolEaRlj1ESSWSdo+v7cy/OKAZtmXBjo527ajt4jQwK0y1ZJzW
-         IBehPhMhu/14uOk9gIhFPv9u5APdEObhtfvM8txCfYfcvt5EeCWMQ4t1nk/enW5uVM
-         h3e5fLu+ZkpXC5tKbSu3Nhs0CFtaeuqc+05KQMNY=
-Date:   Fri, 13 Sep 2019 11:26:35 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Ilia Mirkin <imirkin@alum.mit.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        "# 3.9+" <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.19 092/190] drm/nouveau: Dont WARN_ON VCPI allocation
- failures
-Message-ID: <20190913152635.GK1546@sasha-vm>
-References: <20190913130559.669563815@linuxfoundation.org>
- <20190913130606.981926197@linuxfoundation.org>
- <CAKb7UviY0sjFUc6QqjU4eKxm2b-osKoJNO2CSP9HmQ5AdORgkw@mail.gmail.com>
- <20190913144627.GH1546@sasha-vm>
- <20190913145456.GA456842@kroah.com>
- <20190913150111.GI1546@sasha-vm>
- <CAKb7Uvj31ZuxB6S4EH8WBRsa2mDScpZN=dRjHScZmN94ajD0EA@mail.gmail.com>
+        id S2388354AbfIMPYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 11:24:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2019 08:24:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="179706190"
+Received: from gao-cwp.sh.intel.com (HELO gao-cwp) ([10.239.159.26])
+  by orsmga008.jf.intel.com with ESMTP; 13 Sep 2019 08:24:16 -0700
+Date:   Fri, 13 Sep 2019 23:28:20 +0800
+From:   Chao Gao <chao.gao@intel.com>
+To:     "Spassov, Stanislav" <stanspas@amazon.de>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        "baijiaju1990@gmail.com" <baijiaju1990@gmail.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "sstabellini@kernel.org" <sstabellini@kernel.org>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "roger.pau@citrix.com" <roger.pau@citrix.com>,
+        "jbeulich@suse.com" <jbeulich@suse.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Subject: Re: [PATCH] xen: xen-pciback: Reset MSI-X state when exposing a
+ device
+Message-ID: <20190913152818.GA688@gao-cwp>
+References: <1543976357-1053-1-git-send-email-chao.gao@intel.com>
+ <2c0ad3bf96551ea6e96e812229507221b76876c6.camel@amazon.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAKb7Uvj31ZuxB6S4EH8WBRsa2mDScpZN=dRjHScZmN94ajD0EA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2c0ad3bf96551ea6e96e812229507221b76876c6.camel@amazon.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 11:09:22AM -0400, Ilia Mirkin wrote:
->On Fri, Sep 13, 2019 at 11:01 AM Sasha Levin <sashal@kernel.org> wrote:
+On Fri, Sep 13, 2019 at 10:02:24AM +0000, Spassov, Stanislav wrote:
+>On Thu, Dec 13, 2018 at 07:54, Chao Gao wrote:
+>>On Thu, Dec 13, 2018 at 12:54:52AM -0700, Jan Beulich wrote:
+>>>>>> On 13.12.18 at 04:46, <chao.gao@intel.com> wrote:
+>>>> On Wed, Dec 12, 2018 at 08:21:39AM -0700, Jan Beulich wrote:
+>>>>>>>> On 12.12.18 at 16:18, <chao.gao@intel.com> wrote:
+>>>>>> On Wed, Dec 12, 2018 at 01:51:01AM -0700, Jan Beulich wrote:
+>>>>>>>>>> On 12.12.18 at 08:06, <chao.gao@intel.com> wrote:
+>>>>>>>> On Wed, Dec 05, 2018 at 09:01:33AM -0500, Boris Ostrovsky wrote:
+>>>>>>>>>On 12/5/18 4:32 AM, Roger Pau Monné wrote:
+>>>>>>>>>> On Wed, Dec 05, 2018 at 10:19:17AM +0800, Chao Gao wrote:
+>>>>>>>>>>> I find some pass-thru devices don't work any more across guest reboot.
+>>>>>>>>>>> Assigning it to another guest also meets the same issue. And the only
+>>>>>>>>>>> way to make it work again is un-binding and binding it to pciback.
+>>>>>>>>>>> Someone reported this issue one year ago [1]. More detail also can be
+>>>>>>>>>>> found in [2].
+>>>>>>>>>>>
+>>>>>>>>>>> The root-cause is Xen's internal MSI-X state isn't reset properly
+>>>>>>>>>>> during reboot or re-assignment. In the above case, Xen set maskall bit
+>>>>>>>>>>> to mask all MSI interrupts after it detected a potential security
+>>>>>>>>>>> issue. Even after device reset, Xen didn't reset its internal maskall
+>>>>>>>>>>> bit. As a result, maskall bit would be set again in next write to
+>>>>>>>>>>> MSI-X message control register.
+>>>>>>>>>>>
+>>>>>>>>>>> Given that PHYSDEVOPS_prepare_msix() also triggers Xen resetting MSI-X
+>>>>>>>>>>> internal state of a device, we employ it to fix this issue rather than
+>>>>>>>>>>> introducing another dedicated sub-hypercall.
+>>>>>>>>>>>
+>>>>>>>>>>> Note that PHYSDEVOPS_release_msix() will fail if the mapping between
+>>>>>>>>>>> the device's msix and pirq has been created. This limitation prevents
+>>>>>>>>>>> us calling this function when detaching a device from a guest during
+>>>>>>>>>>> guest shutdown. Thus it is called right before calling
+>>>>>>>>>>> PHYSDEVOPS_prepare_msix().
+>>>>>>>>>> s/PHYSDEVOPS/PHYSDEVOP/ (no final S). And then I would also drop the
+>>>>>>>>>> () at the end of the hypercall name since it's not a function.
+>>>>>>>>>>
+>>>>>>>>>> I'm also wondering why the release can't be done when the device is
+>>>>>>>>>> detached from the guest (or the guest has been shut down). This makes
+>>>>>>>>>> me worry about the raciness of the attach/detach procedure: if there's
+>>>>>>>>>> a state where pciback assumes the device has been detached from the
+>>>>>>>>>> guest, but there are still pirqs bound, an attempt to attach to
+>>>>>>>>>> another guest in such state will fail.
+>>>>>>>>>
+>>>>>>>>>I wonder whether this additional reset functionality could be done out
+>>>>>>>>>of xen_pcibk_xenbus_remove(). We first do a (best effort) device reset
+>>>>>>>>>and then do the extra things that are not properly done there.
+>>>>>>>> 
+>>>>>>>> No. It cannot be done in xen_pcibk_xenbus_remove() without modifying
+>>>>>>>> the handler of PHYSDEVOP_release_msix. To do a successful Xen internal
+>>>>>>>> MSI-X state reset, PHYSDEVOP_{release, prepare}_msix should be finished
+>>>>>>>> without error. But ATM, xen expects that no msi is bound to pirq when
+>>>>>>>> doing PHYSDEVOP_release_msix. Otherwise it fails with error code -EBUSY.
+>>>>>>>> However, the expectation isn't guaranteed in xen_pcibk_xenbus_remove().
+>>>>>>>> In some cases, if qemu fails to unmap MSIs, MSIs are unmapped by Xen
+>>>>>>>> at last minute, which happens after device reset in 
+>>>>>>>> xen_pcibk_xenbus_remove().
+>>>>>>>
+>>>>>>>But that may need taking care of: I don't think it is a good idea to have
+>>>>>>>anything left from the prior owning domain when the device gets reset.
+>>>>>>>I.e. left over IRQ bindings should perhaps be forcibly cleared before
+>>>>>>>invoking the reset;
+>>>>>> 
+>>>>>> Agree. How about pciback to track the established IRQ bindings? Then
+>>>>>> pciback can clear irq binding before invoking the reset.
+>>>>>
+>>>>>How would pciback even know of those mappings, when it's qemu
+>>>>>who establishes (and manages) them?
+>>>> 
+>>>> I meant to expose some interfaces from pciback. And pciback serves
+>>>> as the proxy of IRQ (un)binding APIs.
+>>>
+>>>If at all possible we should avoid having to change more parties (qemu,
+>>>libxc, kernel, hypervisor) than really necessary. Remember that such
+>>>a bug fix may want backporting, and making sure affected people have
+>>>all relevant components updated is increasingly difficult with their
+>>>number growing.
+>>>
+>>>>>>>in fact I'd expect this to happen in the course of
+>>>>>>>domain destruction, and I'd expect the device reset to come after the
+>>>>>>>domain was cleaned up. Perhaps simply an ordering issue in the tool
+>>>>>>>stack?
+>>>>>> 
+>>>>>> I don't think reversing the sequences of device reset and domain
+>>>>>> destruction would be simple. Furthermore, during device hot-unplug,
+>>>>>> device reset is done when the owner is alive. So if we use domain
+>>>>>> destruction to enforce all irq binding cleared, in theory, it won't be
+>>>>>> applicable to hot-unplug case (if qemu's hot-unplug logic is
+>>>>>> compromised).
+>>>>>
+>>>>>Even in the hot-unplug case the tool stack could issue unbind
+>>>>>requests, behind the back of the possibly compromised qemu,
+>>>>>once neither the guest nor qemu have access to the device
+>>>>>anymore.
+>>>> 
+>>>> But currently, tool stack doesn't know the remaining IRQ bindings.
+>>>> If tool stack can maintaine IRQ binding information of a pass-thru
+>>>> device (stored in Xenstore?), we can come up with a clean solution
+>>>> without modifying linux kernel and Xen.
+>>>
+>>>If there's no way for the tool stack to either find out the bindings
+>>>or "blindly" issue unbind requests (accepting them to fail), then a
+>>>"wildcard" unbind operation may want adding. Or, perhaps even
+>>>better, XEN_DOMCTL_deassign_device could unbind anything left
+>>>in place for the specified device.
 >>
->> On Fri, Sep 13, 2019 at 03:54:56PM +0100, Greg Kroah-Hartman wrote:
->> >On Fri, Sep 13, 2019 at 10:46:27AM -0400, Sasha Levin wrote:
->> >> On Fri, Sep 13, 2019 at 09:33:36AM -0400, Ilia Mirkin wrote:
->> >> > Hi Greg,
->> >> >
->> >> > This feels like it's missing a From: line.
->> >> >
->> >> > commit b513a18cf1d705bd04efd91c417e79e4938be093
->> >> > Author: Lyude Paul <lyude@redhat.com>
->> >> > Date:   Mon Jan 28 16:03:50 2019 -0500
->> >> >
->> >> >    drm/nouveau: Don't WARN_ON VCPI allocation failures
->> >> >
->> >> > Is this an artifact of your notification-of-patches process and I
->> >> > never noticed before, or was the patch ingested incorrectly?
->> >>
->> >> It was always like this for patches that came through me. Greg's script
->> >> generates an explicit "From:" line in the patch, but I never saw the
->> >> value in that since git does the right thing by looking at the "From:"
->> >> line in the mail header.
->> >>
->> >> The right thing is being done in stable-rc and for the releases. For
->> >> your example here, this is how it looks like in the stable-rc tree:
->> >>
->> >> commit bdcc885be68289a37d0d063cd94390da81fd8178
->> >> Author:     Lyude Paul <lyude@redhat.com>
->> >> AuthorDate: Mon Jan 28 16:03:50 2019 -0500
->> >> Commit:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> >> CommitDate: Fri Sep 13 14:05:29 2019 +0100
->> >>
->> >>    drm/nouveau: Don't WARN_ON VCPI allocation failures
->> >
->> >Yeah, we should fix your scripts to put the explicit From: line in here
->> >as we are dealing with patches in this format and it causes confusion at
->> >times (like now.)  It's not the first time and that's why I added those
->> >lines to the patches.
+>>Good idea. I will take this advice.
 >>
->> Heh, didn't think anyone cared about this scenario for the stable-rc
->> patches.
->>
->> I'll go add it.
->>
->> But... why do you actually care?
+>>Thanks
+>>Chao
 >
->Just a hygiene thing. Everyone else sends patches the normal way, with
->accurate attribution. Why should stable be different?
+>I am having the same issue, and cannot find a fix in either xen-pciback or the Xen codebase.
+>Was a solution ever pushed as a result of this thread?
+>
 
-It shouldn't.
+I submitted patches [1] to Xen community. But I didn't get it merged.
+We made a change in device driver to disable MSI-X during guest OS
+shutdown to mitigate the issue. But when guest or qemu was crashed, we
+encountered this issue again. I have no plan to get back to these
+patches. But if you want to fix the issue completely along what the
+patches below did, please go ahead.
 
-It's just a mismatch between our two somewhat seperate workflow.
+[1]: https://lists.xenproject.org/archives/html/xen-devel/2019-01/msg01227.html
 
-Technically it's Greg who needs to be adding that line since the patches
-I have in stable-queue correctly state the author, and it only goes
-wrong when they're being formatted into mails sent for the -rc cycles.
-
-But yes, thanks for pointing it out, I'll go add it in the scripts.
-
---
-Thanks,
-Sasha
+Thanks
+Chao
