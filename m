@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A47FEB1E95
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F470B1EA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388981AbfIMNLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:11:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36610 "EHLO mail.kernel.org"
+        id S2389001AbfIMNLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:11:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388969AbfIMNL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:11:29 -0400
+        id S2388968AbfIMNLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:11:35 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79BD9208C2;
-        Fri, 13 Sep 2019 13:11:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84080208C0;
+        Fri, 13 Sep 2019 13:11:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380289;
-        bh=1mChLguwNvmsTCWxCMHukNMunGzA705l+b8oIxjE6ow=;
+        s=default; t=1568380295;
+        bh=r7cLoDktyovYgaOgT8Ie3in9jqttJSNsJN4fs8+l2ws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HdAGFfjkQpv5XR90UrJaR0gOgqQmb5CgahLHhxwMS/zpx0CGuCzOk13qMBIq960mb
-         tRDFNEfBfbbHqVorxi/NStFnsfCYdVpTPgWf9A3FU19X6KzrNPlgjkmGWV/oCuldAd
-         thFZvJDjPVcL7RCHOOkm99KSZ2009PUq+gctul+o=
+        b=ySOAeNotMNEEIaPlb4d9FgFZUgTirujstnHP8nAzwBfEJC7CTIRO4kVBDufTCxkP+
+         BGZ/ta7VpI/XaXqXVY0BaqJycjUrCGc8XobIqF+04SrYzvF0zAgNZuv3ZvgNNxhgiD
+         Ysz6UmllV1zoKWjV0ggWQc4N7barVSdNjkIqW184=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 017/190] timekeeping: Use proper ktime_add when adding nsecs in coarse offset
-Date:   Fri, 13 Sep 2019 14:04:32 +0100
-Message-Id: <20190913130600.943205156@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 019/190] x86/ftrace: Fix warning and considate ftrace_jmp_replace() and ftrace_call_replace()
+Date:   Fri, 13 Sep 2019 14:04:34 +0100
+Message-Id: <20190913130601.090972965@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -44,35 +44,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0354c1a3cdf31f44b035cfad14d32282e815a572 ]
+[ Upstream commit 745cfeaac09ce359130a5451d90cb0bd4094c290 ]
 
-While this doesn't actually amount to a real difference, since the macro
-evaluates to the same thing, every place else operates on ktime_t using
-these functions, so let's not break the pattern.
+Arnd reported the following compiler warning:
 
-Fixes: e3ff9c3678b4 ("timekeeping: Repair ktime_get_coarse*() granularity")
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lkml.kernel.org/r/20190621203249.3909-1-Jason@zx2c4.com
+arch/x86/kernel/ftrace.c:669:23: error: 'ftrace_jmp_replace' defined but not used [-Werror=unused-function]
+
+The ftrace_jmp_replace() function now only has a single user and should be
+simply moved by that user. But looking at the code, it shows that
+ftrace_jmp_replace() is similar to ftrace_call_replace() except that instead
+of using the opcode of 0xe8 it uses 0xe9. It makes more sense to consolidate
+that function into one implementation that both ftrace_jmp_replace() and
+ftrace_call_replace() use by passing in the op code separate.
+
+The structure in ftrace_code_union is also modified to replace the "e8"
+field with the more appropriate name "op".
+
+Cc: stable@vger.kernel.org
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Link: http://lkml.kernel.org/r/20190304200748.1418790-1-arnd@arndb.de
+Fixes: d2a68c4effd8 ("x86/ftrace: Do not call function graph from dynamic trampolines")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/time/timekeeping.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/ftrace.c | 42 ++++++++++++++++------------------------
+ 1 file changed, 17 insertions(+), 25 deletions(-)
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 443edcddac8ab..c2708e1f0c69f 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -823,7 +823,7 @@ ktime_t ktime_get_coarse_with_offset(enum tk_offsets offs)
- 
- 	} while (read_seqcount_retry(&tk_core.seq, seq));
- 
--	return base + nsecs;
-+	return ktime_add_ns(base, nsecs);
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 50d309662d78c..5790671857e55 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -53,7 +53,7 @@ int ftrace_arch_code_modify_post_process(void)
+ union ftrace_code_union {
+ 	char code[MCOUNT_INSN_SIZE];
+ 	struct {
+-		unsigned char e8;
++		unsigned char op;
+ 		int offset;
+ 	} __attribute__((packed));
+ };
+@@ -63,20 +63,23 @@ static int ftrace_calc_offset(long ip, long addr)
+ 	return (int)(addr - ip);
  }
- EXPORT_SYMBOL_GPL(ktime_get_coarse_with_offset);
  
+-static unsigned char *ftrace_call_replace(unsigned long ip, unsigned long addr)
++static unsigned char *
++ftrace_text_replace(unsigned char op, unsigned long ip, unsigned long addr)
+ {
+ 	static union ftrace_code_union calc;
+ 
+-	calc.e8		= 0xe8;
++	calc.op		= op;
+ 	calc.offset	= ftrace_calc_offset(ip + MCOUNT_INSN_SIZE, addr);
+ 
+-	/*
+-	 * No locking needed, this must be called via kstop_machine
+-	 * which in essence is like running on a uniprocessor machine.
+-	 */
+ 	return calc.code;
+ }
+ 
++static unsigned char *
++ftrace_call_replace(unsigned long ip, unsigned long addr)
++{
++	return ftrace_text_replace(0xe8, ip, addr);
++}
++
+ static inline int
+ within(unsigned long addr, unsigned long start, unsigned long end)
+ {
+@@ -686,22 +689,6 @@ int __init ftrace_dyn_arch_init(void)
+ 	return 0;
+ }
+ 
+-#if defined(CONFIG_X86_64) || defined(CONFIG_FUNCTION_GRAPH_TRACER)
+-static unsigned char *ftrace_jmp_replace(unsigned long ip, unsigned long addr)
+-{
+-	static union ftrace_code_union calc;
+-
+-	/* Jmp not a call (ignore the .e8) */
+-	calc.e8		= 0xe9;
+-	calc.offset	= ftrace_calc_offset(ip + MCOUNT_INSN_SIZE, addr);
+-
+-	/*
+-	 * ftrace external locks synchronize the access to the static variable.
+-	 */
+-	return calc.code;
+-}
+-#endif
+-
+ /* Currently only x86_64 supports dynamic trampolines */
+ #ifdef CONFIG_X86_64
+ 
+@@ -923,8 +910,8 @@ static void *addr_from_call(void *ptr)
+ 		return NULL;
+ 
+ 	/* Make sure this is a call */
+-	if (WARN_ON_ONCE(calc.e8 != 0xe8)) {
+-		pr_warn("Expected e8, got %x\n", calc.e8);
++	if (WARN_ON_ONCE(calc.op != 0xe8)) {
++		pr_warn("Expected e8, got %x\n", calc.op);
+ 		return NULL;
+ 	}
+ 
+@@ -995,6 +982,11 @@ void arch_ftrace_trampoline_free(struct ftrace_ops *ops)
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ extern void ftrace_graph_call(void);
+ 
++static unsigned char *ftrace_jmp_replace(unsigned long ip, unsigned long addr)
++{
++	return ftrace_text_replace(0xe9, ip, addr);
++}
++
+ static int ftrace_mod_jmp(unsigned long ip, void *func)
+ {
+ 	unsigned char *new;
 -- 
 2.20.1
 
