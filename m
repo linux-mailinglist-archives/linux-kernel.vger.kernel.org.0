@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B42DB1DA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:29:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64158B1DAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbfIMM3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 08:29:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56470 "EHLO mx1.redhat.com"
+        id S1730089AbfIMM3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 08:29:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45838 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729811AbfIMM3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 08:29:14 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1730023AbfIMM3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 08:29:16 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0177C308218D;
-        Fri, 13 Sep 2019 12:29:14 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 61555308A9E2;
+        Fri, 13 Sep 2019 12:29:16 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 738B36013A;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D422F19C78;
         Fri, 13 Sep 2019 12:29:13 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 9998231F62; Fri, 13 Sep 2019 14:29:09 +0200 (CEST)
+        id B225A31F96; Fri, 13 Sep 2019 14:29:09 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
@@ -31,111 +31,72 @@ Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 6/8] drm/vram: switch vram helper to &drm_gem_object_funcs.mmap()
-Date:   Fri, 13 Sep 2019 14:29:06 +0200
-Message-Id: <20190913122908.784-7-kraxel@redhat.com>
+Subject: [PATCH 7/8] drm/vram: drop verify_access
+Date:   Fri, 13 Sep 2019 14:29:07 +0200
+Message-Id: <20190913122908.784-8-kraxel@redhat.com>
 In-Reply-To: <20190913122908.784-1-kraxel@redhat.com>
 References: <20190913122908.784-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 13 Sep 2019 12:29:14 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 13 Sep 2019 12:29:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wire up the new drm_gem_ttm_mmap() helper function,
-use generic drm_gem_mmap for &fops.mmap and
-delete dead drm_vram_mm_file_operations_mmap().
+Not needed any more.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- include/drm/drm_gem_vram_helper.h     |  9 +------
- drivers/gpu/drm/drm_gem_vram_helper.c | 34 +--------------------------
- 2 files changed, 2 insertions(+), 41 deletions(-)
+ drivers/gpu/drm/drm_gem_vram_helper.c | 22 ----------------------
+ 1 file changed, 22 deletions(-)
 
-diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
-index 9aaef4f8c327..9d5526650291 100644
---- a/include/drm/drm_gem_vram_helper.h
-+++ b/include/drm/drm_gem_vram_helper.h
-@@ -180,13 +180,6 @@ struct drm_vram_mm *drm_vram_helper_alloc_mm(
- 	struct drm_device *dev, uint64_t vram_base, size_t vram_size);
- void drm_vram_helper_release_mm(struct drm_device *dev);
- 
--/*
-- * Helpers for &struct file_operations
-- */
--
--int drm_vram_mm_file_operations_mmap(
--	struct file *filp, struct vm_area_struct *vma);
--
- /**
-  * define DRM_VRAM_MM_FILE_OPERATIONS - default callback functions for \
- 	&struct file_operations
-@@ -200,7 +193,7 @@ int drm_vram_mm_file_operations_mmap(
- 	.poll		= drm_poll, \
- 	.unlocked_ioctl = drm_ioctl, \
- 	.compat_ioctl	= drm_compat_ioctl, \
--	.mmap		= drm_vram_mm_file_operations_mmap, \
-+	.mmap		= drm_gem_mmap, \
- 	.open		= drm_open, \
- 	.release	= drm_release \
- 
 diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
-index 7bee80c6b6e8..e100b97ea6e3 100644
+index e100b97ea6e3..42ee80414273 100644
 --- a/drivers/gpu/drm/drm_gem_vram_helper.c
 +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-@@ -681,6 +681,7 @@ static const struct drm_gem_object_funcs drm_gem_vram_object_funcs = {
- 	.unpin	= drm_gem_vram_object_unpin,
- 	.vmap	= drm_gem_vram_object_vmap,
- 	.vunmap	= drm_gem_vram_object_vunmap,
-+	.mmap   = drm_gem_ttm_mmap,
- 	.print_info = drm_gem_ttm_print_info,
- };
- 
-@@ -915,12 +916,6 @@ static void drm_vram_mm_cleanup(struct drm_vram_mm *vmm)
- 	ttm_bo_device_release(&vmm->bdev);
+@@ -469,13 +469,6 @@ static void drm_gem_vram_bo_driver_evict_flags(struct drm_gem_vram_object *gbo,
+ 	*pl = gbo->placement;
  }
  
--static int drm_vram_mm_mmap(struct file *filp, struct vm_area_struct *vma,
--			    struct drm_vram_mm *vmm)
+-static int drm_gem_vram_bo_driver_verify_access(struct drm_gem_vram_object *gbo,
+-						struct file *filp)
 -{
--	return ttm_bo_mmap(filp, vma, &vmm->bdev);
+-	return drm_vma_node_verify_access(&gbo->bo.base.vma_node,
+-					  filp->private_data);
 -}
 -
- /*
-  * Helpers for integration with struct drm_device
-  */
-@@ -976,30 +971,3 @@ void drm_vram_helper_release_mm(struct drm_device *dev)
- 	dev->vram_mm = NULL;
+ static void drm_gem_vram_bo_driver_move_notify(struct drm_gem_vram_object *gbo,
+ 					       bool evict,
+ 					       struct ttm_mem_reg *new_mem)
+@@ -767,20 +760,6 @@ static void bo_driver_evict_flags(struct ttm_buffer_object *bo,
+ 	drm_gem_vram_bo_driver_evict_flags(gbo, placement);
  }
- EXPORT_SYMBOL(drm_vram_helper_release_mm);
--
--/*
-- * Helpers for &struct file_operations
-- */
--
--/**
-- * drm_vram_mm_file_operations_mmap() - \
--	Implements &struct file_operations.mmap()
-- * @filp:	the mapping's file structure
-- * @vma:	the mapping's memory area
-- *
-- * Returns:
-- * 0 on success, or
-- * a negative error code otherwise.
-- */
--int drm_vram_mm_file_operations_mmap(
--	struct file *filp, struct vm_area_struct *vma)
+ 
+-static int bo_driver_verify_access(struct ttm_buffer_object *bo,
+-				   struct file *filp)
 -{
--	struct drm_file *file_priv = filp->private_data;
--	struct drm_device *dev = file_priv->minor->dev;
+-	struct drm_gem_vram_object *gbo;
 -
--	if (WARN_ONCE(!dev->vram_mm, "VRAM MM not initialized"))
+-	/* TTM may pass BOs that are not GEM VRAM BOs. */
+-	if (!drm_is_gem_vram(bo))
 -		return -EINVAL;
 -
--	return drm_vram_mm_mmap(filp, vma, dev->vram_mm);
+-	gbo = drm_gem_vram_of_bo(bo);
+-
+-	return drm_gem_vram_bo_driver_verify_access(gbo, filp);
 -}
--EXPORT_SYMBOL(drm_vram_mm_file_operations_mmap);
+-
+ static void bo_driver_move_notify(struct ttm_buffer_object *bo,
+ 				  bool evict,
+ 				  struct ttm_mem_reg *new_mem)
+@@ -837,7 +816,6 @@ static struct ttm_bo_driver bo_driver = {
+ 	.init_mem_type = bo_driver_init_mem_type,
+ 	.eviction_valuable = ttm_bo_eviction_valuable,
+ 	.evict_flags = bo_driver_evict_flags,
+-	.verify_access = bo_driver_verify_access,
+ 	.move_notify = bo_driver_move_notify,
+ 	.io_mem_reserve = bo_driver_io_mem_reserve,
+ 	.io_mem_free = bo_driver_io_mem_free,
 -- 
 2.18.1
 
