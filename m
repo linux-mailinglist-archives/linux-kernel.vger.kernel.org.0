@@ -2,164 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFD7BB242B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 18:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62FDFB2438
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 18:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390151AbfIMQf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 12:35:29 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36784 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387822AbfIMQf2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 12:35:28 -0400
-Received: by mail-io1-f67.google.com with SMTP id b136so63959363iof.3;
-        Fri, 13 Sep 2019 09:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KjwJiwmcH2/79ybI6jcq3ploVvAGPGEEuHdJsNide34=;
-        b=Tf9r7it5Nm7p62KuSGGb2k8JtyI/gS7gqlZcv+2cBaRdH/9pRVAIuSBQrX4XqlfCV3
-         Bp1wmypp2i1tkjtr3pUaVrd/MzIS+whjmHWKnbPHlt3qZ+M7ThRXAmgL7R7a/oSFs3S6
-         AbgFSXAVujz552kbjEVI+7DS2dCCI8ytdols0iBbY0rJyMTtlnF9+nMuTV7OJXQo7rpz
-         xkm0TRUwWVghrcrpVajExH89/J4whoqJLSUGZe/IGV3GVtmNxZ6VYSFrpeHEmvWF089g
-         bFU050zLq86T/khbSfqIAltZY6/Z3MSoNVa7qeRi4tOL9C+C4y5P+fdtSkZPSYQKGOtC
-         fGng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KjwJiwmcH2/79ybI6jcq3ploVvAGPGEEuHdJsNide34=;
-        b=Ntyg0NAkLDxWmIliSMimrJyZWwSoq12rlwMph+h8SPcoeiXmIcxmSLHUWXuGVRWGFe
-         GawKwI0FUyOiAWiBNa0gDxqU1GYzQvVmwZW4gNH16S0GSGkGtQWpZ3k8vP4wVGUN1fgo
-         PBjCISpRDqNoZv0fwQp1ZJIaqVZMCzqummOraLhqKMHfZAc2cIcehT95rEjIsXDVn85M
-         0HZrkzZSLTOxoZWYN9qckkd1YEYftrpzgPo4ZYC6LmsTeOH+Prrs16QLfqf3+ruCd6/Z
-         qmLi675ZazCgc6kbG9EH9NYWUpNtkZ/0qPuq4DwjXvBHScTKAIUiWZDTwfmQudArDwmR
-         lGxg==
-X-Gm-Message-State: APjAAAUq3RFMRD+EOHWEb63Ir8jShEZhdaImRQ0D5yHkhPUTmJCkB0lb
-        hFY7RmJAwmIpV89NJuttE7JrvTAGj7lQUuDeb8M=
-X-Google-Smtp-Source: APXvYqzKeHmSJRvJtlL+yF2VNMXHs6xIV1eggn3tngTE5IZYb9CUEvFC5LomeFzRpoLiqJM8NNneb8dprT+qGrS1nic=
-X-Received: by 2002:a6b:b213:: with SMTP id b19mr714079iof.58.1568392527255;
- Fri, 13 Sep 2019 09:35:27 -0700 (PDT)
+        id S2390644AbfIMQg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 12:36:57 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:35556 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388170AbfIMQg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 12:36:56 -0400
+Received: from zn.tnic (p200300EC2F0DC5006892875336F1420F.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:c500:6892:8753:36f1:420f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 513431EC026F;
+        Fri, 13 Sep 2019 18:36:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1568392611;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=9OQbjVPYe1Zr33bmVGPtBiEvoOiy1OipJKbotsaYm/w=;
+        b=bj01quzsCivkmBTlTxA814nX8naT3/KY2hxtB/Zphw2qUpbw7WelUghgVDUUEZyPBqPijQ
+        eoFEu0ntNABh6FcYAWkJia8oP2n8hgB1iKRY6zywRoqP9N8HULfxqeHtxr2jUel35U0p8X
+        EbxOos91wAXMEVEEogj+x3UW4WEgAVA=
+Date:   Fri, 13 Sep 2019 18:36:45 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rasmus Villemoes <mail@rasmusvillemoes.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        x86-ml <x86@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Improve memset
+Message-ID: <20190913163645.GC4190@zn.tnic>
+References: <20190913072237.GA12381@zn.tnic>
+ <CAHk-=wismo3SQvvKXg8j0W-eC+5Q-ctcYfr1QV3K-i90w5caBA@mail.gmail.com>
+ <9dc9f1e6-5d19-167c-793d-2f4a5ebee097@rasmusvillemoes.dk>
+ <20190913104232.GA4190@zn.tnic>
 MIME-Version: 1.0
-References: <20190912183037.18449-1-aford173@gmail.com> <D4F7E03C-1880-45AC-8F7C-6C8A336E2A01@goldelico.com>
- <CAHCN7xK100mR=fNns3qdDKpOyWsTWXgDnnngQfQ_j8cB_SFfuA@mail.gmail.com>
- <98751DAF-B3F7-4638-97BE-1D067B24EF18@goldelico.com> <CAHCN7xL-CmwmXP3PLdwAHiC-9tMjrpY4k7ZhxQ9WoXY6yUz8BA@mail.gmail.com>
- <ABCE2ACA-D19A-42D2-9606-C60F1A5CBCCB@goldelico.com> <CAHCN7xKfeh-cqJVfbW_km27cgee2MEBdPM3edACRi0fCaohxvw@mail.gmail.com>
- <7C9393BD-B23B-41A6-BF96-E53CD707AAC7@goldelico.com>
-In-Reply-To: <7C9393BD-B23B-41A6-BF96-E53CD707AAC7@goldelico.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Fri, 13 Sep 2019 11:35:16 -0500
-Message-ID: <CAHCN7x+_f_jrttUGyKHBOUyYjkOx0mJxba1Yb3tPm9ee7+21og@mail.gmail.com>
-Subject: Re: [RFC] ARM: dts: omap36xx: Enable thermal throttling
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        =?UTF-8?Q?Andr=C3=A9_Roth?= <neolynx@gmail.com>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Nishanth Menon <nm@ti.com>, Adam Ford <adam.ford@logicpd.com>,
-        kernel@pyra-handheld.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190913104232.GA4190@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 10:09 AM H. Nikolaus Schaller <hns@goldelico.com> wrote:
->
->
-> > Am 13.09.2019 um 17:01 schrieb Adam Ford <aford173@gmail.com>:
-> >
-> > On Fri, Sep 13, 2019 at 9:24 AM H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> >>
-> >>
-> >>> Am 13.09.2019 um 16:05 schrieb Adam Ford <aford173@gmail.com>:
-> >>>
-> >>> On Fri, Sep 13, 2019 at 8:32 AM H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> >>>>
-> >>>> Hi Adam,
-> >>>>
-> >>>>> Am 13.09.2019 um 13:07 schrieb Adam Ford <aford173@gmail.com>:
-> >>>>
-> >>>>>>> +     cpu_cooling_maps: cooling-maps {
-> >>>>>>> +             map0 {
-> >>>>>>> +                     trip = <&cpu_alert0>;
-> >>>>>>> +                     /* Only allow OPP50 and OPP100 */
-> >>>>>>> +                     cooling-device = <&cpu 0 1>;
-> >>>>>>
-> >>>>>> omap4-cpu-thermal.dtsi uses THERMAL_NO_LIMIT constants but I do not
-> >>>>>> understand their meaning (and how it relates to the opp list).
-> >>>>>
-> >>>>> I read through the documentation, but it wasn't completely clear to
-> >>>>> me. AFAICT, the numbers after &cpu represent the min and max index in
-> >>>>> the OPP table when the condition is hit.
-> >>>>
-> >>>> Ok. It seems to use "cooling state" for those and the first is minimum
-> >>>> and the last is maximum. Using THERMAL_NO_LIMIT (-1UL) means to have
-> >>>> no limits.
-> >>>>
-> >>>> Since here we use the &cpu node it is likely that the "cooling state"
-> >>>> is the same as the OPP index currently in use.
-> >>>>
-> >>>> I have looked through the .dts which use cpu_crit and the picture is
-> >>>> not unique...
-> >>>>
-> >>>> omap4           seems to only define it
-> >>>> am57xx          has two different grade dtsi files
-> >>>> dra7            overwrites critical temperature value
-> >>>> am57xx-beagle   defines a gpio to control a fan
-> >>>
-> >
-> > I am going to push a separate but related RFC with 2 patches in the
-> > series.  This new one will setup the alerts and maps without any
-> > throttling for all omap3's in the first patch.  The second patch will
-> > consolidate the thermal references to omap3.dtsi so omap34, omap36 and
-> > am35 can all use them without having to duplicate the entries.
-> >
-> > It will make the omap36xx changes simpler to manage, because we can
-> > just modify a portion of the entries instead of having the whole
-> > table.
-> >
-> > Once this parallel RFC gets comments/feedback, I'll re-integrate the
-> > omap36xx throttling.
->
-> Good idea. I have looked over them and they seem to be ok.
+On Fri, Sep 13, 2019 at 12:42:32PM +0200, Borislav Petkov wrote:
+> Or should we talk to Intel hw folks about it...
 
-Rebasing my omap36xx throttling after the v2 RFC I pushed moving the
-omap3-cpu thermal stuff, I modified the omap36xx accordingly to try
-and force the alert condition:
+Or, I can do something like this, while waiting. Benchmark at the end.
 
-&cpu_alert0 {
-     temperature = <55000>; /* millicelsius */
-};
+The numbers are from a KBL box:
 
-&cpu_cooling_maps {
-     map0 {
-          /* OPP130 and OPP1G are not available above 90C */
-          cooling-device = <&cpu 0 2>;
-     };
-};
+model           : 158
+model name      : Intel(R) Core(TM) i5-9600K CPU @ 3.70GHz
+stepping        : 12
 
-I would expect that with the temperature set for 55C, it would have
-done something, but it doesn't appear to be working as I would expect.
+and if I'm not doing anything wrong with the benchmark (the asm looks
+ok but I could very well be missing something), the numbers say that
+the REP; STOSB is better from sizes of 8 and upwards and up to two
+cachelines we're pretty much on-par with the builtin variant.
 
-# cat /sys/devices/virtual/thermal/thermal_zone0/temp
-58500
+But after that we're pretty close too.
 
-# cat /sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies
-300000 600000 800000
-#
+But this is just a single uarch which is pretty new, I guess the 32 or
+64 bytes cap should be good enough for most, especially those where REP;
+STOSB isn't as good.
 
-:-(
+Hmm.
+
+Loops: 1000000
+size            builtin_memset  rep;stosb       memset_rep
+0               46              85              131
+8               88              65              104
+16              66              65              103
+24              66              65              103
+32              66              65              104
+40              66              65              104
+48              66              65              103
+56              66              65              103
+64              66              65              103
+72              66              65              103
+80              66              65              103
+88              66              65              103
+96              66              65              103
+104             66              65              103
+112             66              65              103
+120             66              65              103
+128             66              65              103
+136             66              71              108
+144             73              71              108
+152             72              71              108
+160             73              71              108
+168             73              71              108
+176             73              71              108
+184             73              71              108
+192             72              74              107
+200             75              78              116
+208             80              78              116
+216             80              78              116
+224             80              78              116
+232             80              78              116
+240             80              78              116
+248             80              78              116
 
 
->
-> >
-> > adam
->
-> BR and thanks,
-> Nikolaus
->
+---
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef unsigned long long u64;
+
+#define DECLARE_ARGS(val, low, high)    unsigned low, high
+#define EAX_EDX_VAL(val, low, high)     ((low) | ((u64)(high) << 32))
+#define EAX_EDX_ARGS(val, low, high)    "a" (low), "d" (high)
+#define EAX_EDX_RET(val, low, high)     "=a" (low), "=d" (high)
+
+static __always_inline unsigned long long rdtsc(void)
+{
+        DECLARE_ARGS(val, low, high);
+
+        asm volatile("rdtsc" : EAX_EDX_RET(val, low, high));
+
+        return EAX_EDX_VAL(val, low, high);
+}
+
+/**
+ * rdtsc_ordered() - read the current TSC in program order
+ *
+ * rdtsc_ordered() returns the result of RDTSC as a 64-bit integer.
+ * It is ordered like a load to a global in-memory counter.  It should
+ * be impossible to observe non-monotonic rdtsc_unordered() behavior
+ * across multiple CPUs as long as the TSC is synced.
+ */
+static __always_inline unsigned long long rdtsc_ordered(void)
+{
+        /*
+         * The RDTSC instruction is not ordered relative to memory
+         * access.  The Intel SDM and the AMD APM are both vague on this
+         * point, but empirically an RDTSC instruction can be
+         * speculatively executed before prior loads.  An RDTSC
+         * immediately after an appropriate barrier appears to be
+         * ordered as a normal load, that is, it provides the same
+         * ordering guarantees as reading from a global memory location
+         * that some other imaginary CPU is updating continuously with a
+         * time stamp.
+         */
+        asm volatile("mfence");
+        return rdtsc();
+}
+
+static __always_inline void *rep_stosb(void *dest, int c, size_t n)
+{
+        void *ret, *dummy;
+
+	asm volatile("rep; stosb"
+		     : "=&D" (ret), "=c" (dummy)
+		     : "0" (dest), "a" (c), "c" (n)
+		     : "memory");
+
+	return ret;
+}
+
+static __always_inline void *memset_rep(void *dest, int c, size_t n)
+{
+	void *ret, *dummy;
+
+	asm volatile("push %%rdi\n\t"
+		     "mov %%rax, %%rsi\n\t"
+		     "mov %%rcx, %%rdx\n\t"
+		     "andl $7,%%edx\n\t"
+		     "shrq $3,%%rcx\n\t"
+		     "movzbl %%sil,%%esi\n\t"
+		     "movabs $0x0101010101010101,%%rax\n\t"
+		     "imulq %%rsi,%%rax\n\t"
+		     "rep stosq\n\t"
+		     "movl %%edx,%%ecx\n\t"
+		     "rep stosb\n\t"
+		     "pop %%rax\n\t"
+		     : "=&D" (ret), "=c" (dummy)
+		     : "0" (dest), "a" (c), "c" (n)
+		     : "rsi", "rdx", "memory");
+
+	return ret;
+}
+
+#define BUF_SIZE 1024
+static void bench_memset(unsigned int loops)
+{
+	u64 p0, p1, m_cycles = 0, r_cycles = 0, rep_cyc = 0;
+	int i, s;
+	void *dst;
+
+	dst = malloc(BUF_SIZE);
+	if (!dst)
+		perror("malloc");
+
+	printf("Loops: %d\n", loops);
+	printf("size\t\tbuiltin_memset\trep;stosb\tmemset_rep\n");
+
+	for (s = 0; s < BUF_SIZE; s += 16) {
+		for (i = 0; i < loops; i++) {
+			p0 = rdtsc_ordered();
+			__builtin_memset(dst, 0, s);
+			p1 = rdtsc_ordered();
+
+			m_cycles += p1 - p0;
+		}
+
+		for (i = 0; i < loops; i++) {
+			p0 = rdtsc_ordered();
+			rep_stosb(dst, 0, s);
+			p1 = rdtsc_ordered();
+
+			r_cycles += p1 - p0;
+		}
+
+		for (i = 0; i < loops; i++) {
+			p0 = rdtsc_ordered();
+			memset_rep(dst, 0, s);
+			p1 = rdtsc_ordered();
+
+			rep_cyc += p1 - p0;
+		}
+
+
+		m_cycles /= loops;
+		r_cycles /= loops;
+		rep_cyc  /= loops;
+
+		printf("%d\t\t%llu\t\t%llu\t\t%llu\n", s, m_cycles, r_cycles, rep_cyc);
+		m_cycles = r_cycles = rep_cyc = 0;
+	}
+
+	free(dst);
+}
+
+int main(void)
+{
+	bench_memset(1000000);
+
+	return 0;
+}
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
