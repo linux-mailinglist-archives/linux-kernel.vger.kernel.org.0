@@ -2,149 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4CF9B2257
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:39:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47A3AB2223
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 16:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730940AbfIMOhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 10:37:09 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41422 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730579AbfIMOgM (ORCPT
+        id S1730676AbfIMOgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 10:36:14 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46162 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730648AbfIMOgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 10:36:12 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g16so14495337otp.8;
-        Fri, 13 Sep 2019 07:36:12 -0700 (PDT)
+        Fri, 13 Sep 2019 10:36:13 -0400
+Received: by mail-oi1-f196.google.com with SMTP id v16so2774568oiv.13;
+        Fri, 13 Sep 2019 07:36:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:to:cc:subject:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Udp1qs2PnQd+suer1OhTIlkS/OekkcPK9CiDkJDjShA=;
-        b=slHt68/wZWZvVdF3p3n3Z3/kpIZrKM7cr7RoZ2CJUVnCJdw3nVxU2W9AELUPlBTQFw
-         fJR1bGq1EGIN5El8UcUCoUqNK9UHci2itT0n/Wpx3baC5ZdKqT6F0SaDzVXMLoPYbQhQ
-         sB+who7kl2LkF2w2KSgaltJEnHSPkAJyBtVr+SMh54W/f00wOhlQ8OxQ2HlTY6BVb4uj
-         zsEyNc4Hzsy78kh2ussv9hL9Zy9Fvge6TXdqRuXeNcKeNe160RfQwmff4TMzJnI0wA/g
-         KNdrEXJ/wTVmc4cpL8A6d8M3citjNPkCvTd9XespvXkUmqqL1IciAjy3g3eTv5zvpzrE
-         76ZQ==
-X-Gm-Message-State: APjAAAWluZmqw48+dtPVdHNyb3kyvghpIGe0u1SxpRwUxA/6+Xw+rBpn
-        IY8GOGcKMBPlW/BNrUj4mg==
-X-Google-Smtp-Source: APXvYqycFKRr57mlzxEV5y+yWerE/UvbEc15wS4dWm6MgJQ1ln7TuCcpwqsSqLk1VgSzUI9biggE8Q==
-X-Received: by 2002:a9d:5f9a:: with SMTP id g26mr9285769oti.27.1568385371763;
-        Fri, 13 Sep 2019 07:36:11 -0700 (PDT)
+        bh=Z79bT51s8X9t468gxQ2+1ZKqbdd8xzju/Fxq/NSNMTo=;
+        b=Jm+J5GkgwMCuUZ1KSyzH9i7NijIXZIl3spYFI92qz9iRF2aAUuBCmp9XCLZEEv+g/3
+         islda/JF+qAqnsOkpf//OLV2KrKKx6FzIiIKgI8uDRsF9UU/OdqDxPJ+wxumx17bbkuP
+         r5EjQQGuIANZE1Z0wRr6AoLZ6Oeoytz1Z2bmvxZ/P8UHFYDS4uLAzTHiNfelxvg0tT7n
+         PnKITcZBlqrN7zVp3Pac5x8heJQnsrGaacRcE3teqB9GcXSjGCAaPReIhspsRFIevp9m
+         wr+ypXHC4huVsPpyCrlvrEgyOUnb8Z8qUUZj0o5Z4syhJ5JQjF7QWONCQBbrDLVgP5pQ
+         btRg==
+X-Gm-Message-State: APjAAAXQd14hnP1olhry1Qk8tEjwDTqKxNenFsIKhwVntaHEWzgUHqNH
+        A1v4oW/4pccExM7c2sK1AQ==
+X-Google-Smtp-Source: APXvYqys48uCX3cKqHL275Upcx6Znn3+mIOh8UgFx1fG2pm+46Ii25BVGfwriubeNdu+E5Hy4OkcZA==
+X-Received: by 2002:aca:2402:: with SMTP id n2mr3696427oic.32.1568385373025;
+        Fri, 13 Sep 2019 07:36:13 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id j3sm1115259oih.52.2019.09.13.07.36.10
+        by smtp.gmail.com with ESMTPSA id v6sm913643oie.4.2019.09.13.07.36.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 07:36:10 -0700 (PDT)
-Message-ID: <5d7ba95a.1c69fb81.bfd81.77ba@mx.google.com>
-Date:   Fri, 13 Sep 2019 15:36:10 +0100
+        Fri, 13 Sep 2019 07:36:12 -0700 (PDT)
+Message-ID: <5d7ba95c.1c69fb81.edf8e.6556@mx.google.com>
+Date:   Fri, 13 Sep 2019 15:36:11 +0100
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Lukasz Luba <l.luba@partner.samsung.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        kyungmin.park@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH 3/3] dt-bindings: ddr: Add bindings for Samsung LPDDR3
- memories
-References: <CGME20190906101407eucas1p15eb0df53374b27497b4793eab24becf6@eucas1p1.samsung.com>
- <20190906101344.3535-1-l.luba@partner.samsung.com>
- <20190906101344.3535-4-l.luba@partner.samsung.com>
- <CAJKOXPfoYxTVvt_bMQOs1=BkHzUuW_WvL9zn0jTGS6LLpv=fhQ@mail.gmail.com>
- <52963d0d-cf48-7085-5581-a94c6e15e0bd@partner.samsung.com>
- <CAJKOXPfEcURr_bLRaAdjWT3cb7mcuKTk8rmn7OTO=xtvjvJ=jQ@mail.gmail.com>
+To:     Pradeep P V K <ppvk@codeaurora.org>
+Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        asutoshd@codeaurora.org, vbadigan@codeaurora.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        rampraka@codeaurora.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC 2/2] dt-bindings: mmc: sdhci-msm: Add Bus BW vote supported
+ strings
+References: <1567774037-2344-1-git-send-email-ppvk@codeaurora.org>
+ <1567774037-2344-3-git-send-email-ppvk@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPfEcURr_bLRaAdjWT3cb7mcuKTk8rmn7OTO=xtvjvJ=jQ@mail.gmail.com>
-X-Mutt-References: <CAJKOXPfEcURr_bLRaAdjWT3cb7mcuKTk8rmn7OTO=xtvjvJ=jQ@mail.gmail.com>
+In-Reply-To: <1567774037-2344-3-git-send-email-ppvk@codeaurora.org>
+X-Mutt-References: <1567774037-2344-3-git-send-email-ppvk@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 01:50:26PM +0200, Krzysztof Kozlowski wrote:
-> On Fri, 6 Sep 2019 at 13:39, Lukasz Luba <l.luba@partner.samsung.com> wrote:
-> >
-> > Hi Krzysztof,
-> >
-> > On 9/6/19 12:56 PM, Krzysztof Kozlowski wrote:
-> > > On Fri, 6 Sep 2019 at 12:14, Lukasz Luba <l.luba@partner.samsung.com> wrote:
-> > >>
-> > >> Add description of bindings for Samsung k3qf2f20db LPDDR3 memory.
-> > >> Minor fixes in the old documentation.
-> > >>
-> > >> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> > >> ---
-> > >>   .../devicetree/bindings/ddr/lpddr3.txt        | 29 +++++++++++++++++--
-> > >>   1 file changed, 27 insertions(+), 2 deletions(-)
-> > >>
-> > >> diff --git a/Documentation/devicetree/bindings/ddr/lpddr3.txt b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-> > >> index 3b2485b84b3f..de0905239767 100644
-> > >> --- a/Documentation/devicetree/bindings/ddr/lpddr3.txt
-> > >> +++ b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-> > >> @@ -40,10 +40,34 @@ Child nodes:
-> > >>     a given speed-bin. Please see Documentation/devicetree/
-> > >>     bindings/ddr/lpddr3-timings.txt for more information on "lpddr3-timings"
-> > >>
-> > >> +Samsung K3QF2F20DB LPDDR3 memory
-> > >> +------------------------------------------------------------
-> > >> +
-> > >> +This binding uses the LPDDR3 binding (described above)
-> > >> +
-> > >> +Required properties:
-> > >> +- compatible:  Should be:
-> > >> +               "samsung,K3QF2F20DB"
-> > >> +               followed by "jedec,lpddr3"
-> > >> +- density  : <u32> representing density in Mb (Mega bits)
-> > >> +- io-width : <u32> representing bus width. Possible value 32
-> > >> +- #address-cells: Must be set to 1
-> > >> +- #size-cells: Must be set to 0
-> > >
-> > > If you decided to repeat all properties again, then it deserves its
-> > > own bindings file. However I though about simpler solution - just
-> > > document compatible. Exactly the same as AT24 or AT25 EEPROM bindings.
-> > > There is not much benefit from copying all these properties.
-> > OK, I see. I will add only 'compatible' and skip the rest then.
-> > So the lpddr3.txt file will get this addition:
-> >
-> > +Samsung K3QF2F20DB LPDDR3 memory
-> > +------------------------------------------------------------
-> > +
-> > +This binding uses the LPDDR3 binding (described above)
-> > +
-> > +Required properties:
-> > +- compatible:  Should be:
-> > +               "samsung,K3QF2F20DB"
-> > +               followed by "jedec,lpddr3"
-> > +
-> > +Optional properties:
-> > +
-> > +The optional properties are the same as in the LPDDR3 generic bindings and
-> > +values should be taken from the data-sheet. Detailed bindings are described
-> > +above.
-> > +
-> > +Child nodes:
-> > +
-> > +Detailed bindings are described in LPDDR3 generic bindings described above.
-> > +
-> >
-> > Is it OK?
+On Fri, Sep 06, 2019 at 06:17:17PM +0530, Pradeep P V K wrote:
+> Add Bus bandwidth voting supported strings for qcom-sdhci controller.
+
+What is bus bandwidth voting?
+
 > 
-> To me it is still a lot of text just for one compatible and I can
-> image more of such entries for other memories... However I do not mind
-> and anyway, YAML will simplify it. If you're in doubt, wait for Rob's
-> reply as this is his part.
+> Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
+> ---
+>  .../devicetree/bindings/mmc/sdhci-msm.txt          | 32 ++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> index da4edb1..8255d92 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> @@ -39,6 +39,25 @@ Required properties:
+>  	"cal"	- reference clock for RCLK delay calibration (optional)
+>  	"sleep"	- sleep clock for RCLK delay calibration (optional)
+>  
+> +Optional Properties:
+> +* Following bus parameters are required for bus bw voting:
+> +- interconnects: Pairs of phandles and interconnect provider specifier
+> +		 to denote the edge source and destination ports of
+> +		 the interconnect path. Please refer to
+> +		 Documentation/devicetree/bindings/interconnect/
+> +		 for more details.
+> +- interconnect-names: List of interconnect path name strings sorted in the same
+> +		order as the interconnects property. Consumers drivers will use
+> +		interconnect-names to match interconnect paths with interconnect
+> +		specifiers. Please refer to Documentation/devicetree/bindings/
+> +		interconnect/ for more details.
 
-We can't have multiple (top-level) schema in one file, so better to add 
-in where the existing compatible strings are.
+How many? What are the strings?
 
-Rob
+> +- qcom,msm-bus,name: string describing the bus path
+> +- qcom,msm-bus,num-cases: number of configurations in which sdhc can operate in
+> +- qcom,msm-bus,num-paths: number of paths to vote for
+> +- qcom,msm-bus,vectors-KBps: Takes a tuple <ib ab>, <ib ab> (2 tuples for 2
+
+ib and ab are what? Didn't we just add interconnect bindings for 
+expressing bandwidth?
+
+> +				num-paths) The number of these entries *must*
+> +				be same as num-cases.
+
+Are all these properties SDHCI specific or can we expect to get these 
+for *all* the QCom blocks?
+
+> +
+>  Example:
+>  
+>  	sdhc_1: sdhci@f9824900 {
+> @@ -56,6 +75,19 @@ Example:
+>  
+>  		clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
+>  		clock-names = "core", "iface";
+> +		interconnects = <&qnoc 50 &qnoc 512>,
+> +				<&qnoc 1 &qnoc 544>;
+> +		interconnect-names = "sdhc-ddr","cpu-sdhc";
+> +		qcom,msm-bus,name = "sdhc1";
+> +		qcom,msm-bus,num-cases = <3>;
+> +		qcom,msm-bus,num-paths = <2>;
+> +		qcom,msm-bus,vectors-KBps =
+> +		/* No Vote */
+> +		<0 0>, <0 0>,
+> +		/* 50 MB/s */
+> +		<130718 200000>, <133320 133320>,
+> +		/* 200 MB/s */
+> +		<1338562 4096000>, <1338562 4096000>;
+>  	};
+>  
+>  	sdhc_2: sdhci@f98a4900 {
+> -- 
+> 1.9.1
+> 
 
