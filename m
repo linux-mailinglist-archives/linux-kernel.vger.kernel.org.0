@@ -2,65 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA9E2B1D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9827EB1D3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 14:18:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729833AbfIMMNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 08:13:05 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:46470 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729760AbfIMMNE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 08:13:04 -0400
-X-IronPort-AV: E=Sophos;i="5.64,501,1559487600"; 
-   d="scan'208";a="26313271"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 13 Sep 2019 21:13:03 +0900
-Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 04D1D4001DDD;
-        Fri, 13 Sep 2019 21:13:01 +0900 (JST)
-From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Subject: [PATCH 3/3] spi: dw: Add compatible string for Renesas RZ/N1 SPI  Controller
-Date:   Fri, 13 Sep 2019 13:12:00 +0100
-Message-Id: <1568376720-7402-4-git-send-email-gareth.williams.jx@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568376720-7402-1-git-send-email-gareth.williams.jx@renesas.com>
-References: <1568376720-7402-1-git-send-email-gareth.williams.jx@renesas.com>
+        id S2387553AbfIMMRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 08:17:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32978 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726822AbfIMMRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 08:17:49 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6C0D0308FBA9;
+        Fri, 13 Sep 2019 12:17:49 +0000 (UTC)
+Received: from coeurl.usersys.redhat.com (ovpn-122-52.rdu2.redhat.com [10.10.122.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1B9E6450A;
+        Fri, 13 Sep 2019 12:17:48 +0000 (UTC)
+Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
+        id 996D0206DE; Fri, 13 Sep 2019 08:17:48 -0400 (EDT)
+From:   Scott Mayhew <smayhew@redhat.com>
+To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 01/26] saner calling conventions for nfs_fs_mount_common()
+Date:   Fri, 13 Sep 2019 08:17:23 -0400
+Message-Id: <20190913121748.25391-2-smayhew@redhat.com>
+In-Reply-To: <20190913121748.25391-1-smayhew@redhat.com>
+References: <20190913121748.25391-1-smayhew@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 13 Sep 2019 12:17:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-The Renesas RZ/N1 SPI Controller is based on the Synopsys DW SSI, but has
-additional registers for software CS control and DMA. This patch does not
-address the changes required for DMA support, it simply adds the compatible
-string. The CS registers are not needed as Linux can use gpios for the CS
-signals.
+Allow it to take ERR_PTR() for server and return ERR_CAST() of it in
+such case.  All callers used to open-code that...
 
-Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Reviewed-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/spi/spi-dw-mmio.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/nfs/nfs4super.c | 16 +---------------
+ fs/nfs/super.c     | 11 ++++-------
+ 2 files changed, 5 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index edb3cf6..3640b01 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -225,6 +225,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
- 	{ .compatible = "mscc,ocelot-spi", .data = dw_spi_mscc_ocelot_init},
- 	{ .compatible = "mscc,jaguar2-spi", .data = dw_spi_mscc_jaguar2_init},
- 	{ .compatible = "amazon,alpine-dw-apb-ssi", .data = dw_spi_alpine_init},
-+	{ .compatible = "renesas,rzn1-spi", },
- 	{ /* end of table */}
- };
- MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
+diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+index 04c57066a11a..baece9857bcf 100644
+--- a/fs/nfs/nfs4super.c
++++ b/fs/nfs/nfs4super.c
+@@ -110,21 +110,12 @@ nfs4_remote_mount(struct file_system_type *fs_type, int flags,
+ {
+ 	struct nfs_mount_info *mount_info = info;
+ 	struct nfs_server *server;
+-	struct dentry *mntroot = ERR_PTR(-ENOMEM);
+ 
+ 	mount_info->set_security = nfs_set_sb_security;
+ 
+ 	/* Get a volume representation */
+ 	server = nfs4_create_server(mount_info, &nfs_v4);
+-	if (IS_ERR(server)) {
+-		mntroot = ERR_CAST(server);
+-		goto out;
+-	}
+-
+-	mntroot = nfs_fs_mount_common(server, flags, dev_name, mount_info, &nfs_v4);
+-
+-out:
+-	return mntroot;
++	return nfs_fs_mount_common(server, flags, dev_name, mount_info, &nfs_v4);
+ }
+ 
+ static struct vfsmount *nfs_do_root_mount(struct file_system_type *fs_type,
+@@ -280,11 +271,6 @@ nfs4_remote_referral_mount(struct file_system_type *fs_type, int flags,
+ 
+ 	/* create a new volume representation */
+ 	server = nfs4_create_referral_server(mount_info.cloned, mount_info.mntfh);
+-	if (IS_ERR(server)) {
+-		mntroot = ERR_CAST(server);
+-		goto out;
+-	}
+-
+ 	mntroot = nfs_fs_mount_common(server, flags, dev_name, &mount_info, &nfs_v4);
+ out:
+ 	nfs_free_fhandle(mount_info.mntfh);
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 703f595dce90..467d7a636f0b 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1903,9 +1903,6 @@ struct dentry *nfs_try_mount(int flags, const char *dev_name,
+ 	else
+ 		server = nfs_mod->rpc_ops->create_server(mount_info, nfs_mod);
+ 
+-	if (IS_ERR(server))
+-		return ERR_CAST(server);
+-
+ 	return nfs_fs_mount_common(server, flags, dev_name, mount_info, nfs_mod);
+ }
+ EXPORT_SYMBOL_GPL(nfs_try_mount);
+@@ -2641,6 +2638,9 @@ struct dentry *nfs_fs_mount_common(struct nfs_server *server,
+ 	};
+ 	int error;
+ 
++	if (IS_ERR(server))
++		return ERR_CAST(server);
++
+ 	if (server->flags & NFS_MOUNT_UNSHARED)
+ 		compare_super = NULL;
+ 
+@@ -2789,10 +2789,7 @@ nfs_xdev_mount(struct file_system_type *fs_type, int flags,
+ 	/* create a new volume representation */
+ 	server = nfs_mod->rpc_ops->clone_server(NFS_SB(data->sb), data->fh, data->fattr, data->authflavor);
+ 
+-	if (IS_ERR(server))
+-		mntroot = ERR_CAST(server);
+-	else
+-		mntroot = nfs_fs_mount_common(server, flags,
++	mntroot = nfs_fs_mount_common(server, flags,
+ 				dev_name, &mount_info, nfs_mod);
+ 
+ 	dprintk("<-- nfs_xdev_mount() = %ld\n",
 -- 
-2.7.4
+2.17.2
 
