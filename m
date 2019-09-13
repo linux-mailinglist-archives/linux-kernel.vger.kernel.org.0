@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F7C8B20F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE2A1B2029
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:47:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391662AbfIMNaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:30:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45334 "EHLO mail.kernel.org"
+        id S2390008AbfIMNRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:17:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389218AbfIMNR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:17:56 -0400
+        id S2389415AbfIMNRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:17:06 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB4CF214AE;
-        Fri, 13 Sep 2019 13:17:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AD41208C0;
+        Fri, 13 Sep 2019 13:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380675;
-        bh=lnJVnALC+xXmKEp6Di4Baj2+s1u4pjqDGx/Y+jtrYPc=;
+        s=default; t=1568380626;
+        bh=idB7S4GBwREfJt9IsNiq7AuzPjumW9BsBfo2bRyJezg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AdWx7okdkVlhmVOSaW2tJtq3PH+jHu6hfhAsoSfiMdZFeecYd5vDYFR6Ui2iM40j5
-         n0T0IFoutS/rI0jqmBsK6EoS0U5nGAHbXKiGTxJ+VH0oAZkLbaTtvbLUtWRdNLv1pK
-         qR60GbBp6aHNYWTlvjI+LDNXgLKKTz1widk9fuWA=
+        b=oH9p1YssbclE8qHTUliWsrI/JfSXCfda4pJDY3icx7GJxlZVNe9F3v0hUaM9yRJ42
+         +ltNf0wttSWP0E9QN7NRSQ6b3SG7Jv3SyxsogmEWVzSuuZJvnPR2WGtwG6q0V8Y+cK
+         8tqi1jOI04787h4yBvhofJaTJ9hQTQLsJ5yGscTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 118/190] ext4: protect journal inodes blocks using block_validity
-Date:   Fri, 13 Sep 2019 14:06:13 +0100
-Message-Id: <20190913130609.260876778@linuxfoundation.org>
+        stable@vger.kernel.org, stable@vger.kernl.org,
+        Yufen Yu <yuyufen@huawei.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 126/190] dm mpath: fix missing call of path selector type->end_io
+Date:   Fri, 13 Sep 2019 14:06:21 +0100
+Message-Id: <20190913130609.957728739@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -43,103 +45,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 345c0dbf3a30872d9b204db96b5857cd00808cae ]
+[ Upstream commit 5de719e3d01b4abe0de0d7b857148a880ff2a90b ]
 
-Add the blocks which belong to the journal inode to block_validity's
-system zone so attempts to deallocate or overwrite the journal due a
-corrupted file system where the journal blocks are also claimed by
-another inode.
+After commit 396eaf21ee17 ("blk-mq: improve DM's blk-mq IO merging via
+blk_insert_cloned_request feedback"), map_request() will requeue the tio
+when issued clone request return BLK_STS_RESOURCE or BLK_STS_DEV_RESOURCE.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202879
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Thus, if device driver status is error, a tio may be requeued multiple
+times until the return value is not DM_MAPIO_REQUEUE.  That means
+type->start_io may be called multiple times, while type->end_io is only
+called when IO complete.
+
+In fact, even without commit 396eaf21ee17, setup_clone() failure can
+also cause tio requeue and associated missed call to type->end_io.
+
+The service-time path selector selects path based on in_flight_size,
+which is increased by st_start_io() and decreased by st_end_io().
+Missed calls to st_end_io() can lead to in_flight_size count error and
+will cause the selector to make the wrong choice.  In addition,
+queue-length path selector will also be affected.
+
+To fix the problem, call type->end_io in ->release_clone_rq before tio
+requeue.  map_info is passed to ->release_clone_rq() for map_request()
+error path that result in requeue.
+
+Fixes: 396eaf21ee17 ("blk-mq: improve DM's blk-mq IO merging via blk_insert_cloned_request feedback")
+Cc: stable@vger.kernl.org
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/block_validity.c | 48 ++++++++++++++++++++++++++++++++++++++++
- fs/ext4/inode.c          |  4 ++++
- 2 files changed, 52 insertions(+)
+ drivers/md/dm-mpath.c         | 17 ++++++++++++++++-
+ drivers/md/dm-rq.c            |  8 ++++----
+ drivers/md/dm-target.c        |  3 ++-
+ include/linux/device-mapper.h |  3 ++-
+ 4 files changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-index 913061c0de1b3..9409b1e11a22e 100644
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -137,6 +137,48 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
- 	printk(KERN_CONT "\n");
+diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+index baa966e2778c0..481e54ded9dc7 100644
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -554,8 +554,23 @@ static int multipath_clone_and_map(struct dm_target *ti, struct request *rq,
+ 	return DM_MAPIO_REMAPPED;
  }
  
-+static int ext4_protect_reserved_inode(struct super_block *sb, u32 ino)
-+{
-+	struct inode *inode;
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	struct ext4_map_blocks map;
-+	u32 i = 0, err = 0, num, n;
-+
-+	if ((ino < EXT4_ROOT_INO) ||
-+	    (ino > le32_to_cpu(sbi->s_es->s_inodes_count)))
-+		return -EINVAL;
-+	inode = ext4_iget(sb, ino, EXT4_IGET_SPECIAL);
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
-+	num = (inode->i_size + sb->s_blocksize - 1) >> sb->s_blocksize_bits;
-+	while (i < num) {
-+		map.m_lblk = i;
-+		map.m_len = num - i;
-+		n = ext4_map_blocks(NULL, inode, &map, 0);
-+		if (n < 0) {
-+			err = n;
-+			break;
-+		}
-+		if (n == 0) {
-+			i++;
-+		} else {
-+			if (!ext4_data_block_valid(sbi, map.m_pblk, n)) {
-+				ext4_error(sb, "blocks %llu-%llu from inode %u "
-+					   "overlap system zone", map.m_pblk,
-+					   map.m_pblk + map.m_len - 1, ino);
-+				err = -EFSCORRUPTED;
-+				break;
-+			}
-+			err = add_system_zone(sbi, map.m_pblk, n);
-+			if (err < 0)
-+				break;
-+			i += n;
-+		}
-+	}
-+	iput(inode);
-+	return err;
-+}
-+
- int ext4_setup_system_zone(struct super_block *sb)
+-static void multipath_release_clone(struct request *clone)
++static void multipath_release_clone(struct request *clone,
++				    union map_info *map_context)
  {
- 	ext4_group_t ngroups = ext4_get_groups_count(sb);
-@@ -171,6 +213,12 @@ int ext4_setup_system_zone(struct super_block *sb)
- 		if (ret)
- 			return ret;
- 	}
-+	if (ext4_has_feature_journal(sb) && sbi->s_es->s_journal_inum) {
-+		ret = ext4_protect_reserved_inode(sb,
-+				le32_to_cpu(sbi->s_es->s_journal_inum));
-+		if (ret)
-+			return ret;
++	if (unlikely(map_context)) {
++		/*
++		 * non-NULL map_context means caller is still map
++		 * method; must undo multipath_clone_and_map()
++		 */
++		struct dm_mpath_io *mpio = get_mpio(map_context);
++		struct pgpath *pgpath = mpio->pgpath;
++
++		if (pgpath && pgpath->pg->ps.type->end_io)
++			pgpath->pg->ps.type->end_io(&pgpath->pg->ps,
++						    &pgpath->path,
++						    mpio->nr_bytes);
 +	}
++
+ 	blk_put_request(clone);
+ }
  
- 	if (test_opt(sb, DEBUG))
- 		debug_print_tree(sbi);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index e65559bf77281..cff6277f7a9ff 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -399,6 +399,10 @@ static int __check_block_validity(struct inode *inode, const char *func,
- 				unsigned int line,
- 				struct ext4_map_blocks *map)
+diff --git a/drivers/md/dm-rq.c b/drivers/md/dm-rq.c
+index 264b84e274aac..17c6a73c536c6 100644
+--- a/drivers/md/dm-rq.c
++++ b/drivers/md/dm-rq.c
+@@ -219,7 +219,7 @@ static void dm_end_request(struct request *clone, blk_status_t error)
+ 	struct request *rq = tio->orig;
+ 
+ 	blk_rq_unprep_clone(clone);
+-	tio->ti->type->release_clone_rq(clone);
++	tio->ti->type->release_clone_rq(clone, NULL);
+ 
+ 	rq_end_stats(md, rq);
+ 	if (!rq->q->mq_ops)
+@@ -270,7 +270,7 @@ static void dm_requeue_original_request(struct dm_rq_target_io *tio, bool delay_
+ 	rq_end_stats(md, rq);
+ 	if (tio->clone) {
+ 		blk_rq_unprep_clone(tio->clone);
+-		tio->ti->type->release_clone_rq(tio->clone);
++		tio->ti->type->release_clone_rq(tio->clone, NULL);
+ 	}
+ 
+ 	if (!rq->q->mq_ops)
+@@ -495,7 +495,7 @@ check_again:
+ 	case DM_MAPIO_REMAPPED:
+ 		if (setup_clone(clone, rq, tio, GFP_ATOMIC)) {
+ 			/* -ENOMEM */
+-			ti->type->release_clone_rq(clone);
++			ti->type->release_clone_rq(clone, &tio->info);
+ 			return DM_MAPIO_REQUEUE;
+ 		}
+ 
+@@ -505,7 +505,7 @@ check_again:
+ 		ret = dm_dispatch_clone_request(clone, rq);
+ 		if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE) {
+ 			blk_rq_unprep_clone(clone);
+-			tio->ti->type->release_clone_rq(clone);
++			tio->ti->type->release_clone_rq(clone, &tio->info);
+ 			tio->clone = NULL;
+ 			if (!rq->q->mq_ops)
+ 				r = DM_MAPIO_DELAY_REQUEUE;
+diff --git a/drivers/md/dm-target.c b/drivers/md/dm-target.c
+index 314d17ca64668..64dd0b34fcf49 100644
+--- a/drivers/md/dm-target.c
++++ b/drivers/md/dm-target.c
+@@ -136,7 +136,8 @@ static int io_err_clone_and_map_rq(struct dm_target *ti, struct request *rq,
+ 	return DM_MAPIO_KILL;
+ }
+ 
+-static void io_err_release_clone_rq(struct request *clone)
++static void io_err_release_clone_rq(struct request *clone,
++				    union map_info *map_context)
  {
-+	if (ext4_has_feature_journal(inode->i_sb) &&
-+	    (inode->i_ino ==
-+	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+		return 0;
- 	if (!ext4_data_block_valid(EXT4_SB(inode->i_sb), map->m_pblk,
- 				   map->m_len)) {
- 		ext4_error_inode(inode, func, line, map->m_pblk,
+ }
+ 
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index bef2e36c01b4b..91f9f95ad5066 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -62,7 +62,8 @@ typedef int (*dm_clone_and_map_request_fn) (struct dm_target *ti,
+ 					    struct request *rq,
+ 					    union map_info *map_context,
+ 					    struct request **clone);
+-typedef void (*dm_release_clone_request_fn) (struct request *clone);
++typedef void (*dm_release_clone_request_fn) (struct request *clone,
++					     union map_info *map_context);
+ 
+ /*
+  * Returns:
 -- 
 2.20.1
 
