@@ -2,52 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32564B285C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 240D6B285E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 00:27:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404063AbfIMW1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 18:27:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51034 "EHLO mx1.redhat.com"
+        id S2404076AbfIMW1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 18:27:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34348 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404021AbfIMW1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 18:27:13 -0400
+        id S2404021AbfIMW1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 18:27:14 -0400
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EA57D3082E57;
-        Fri, 13 Sep 2019 22:27:12 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0BDEA79704;
+        Fri, 13 Sep 2019 22:27:14 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-34.bss.redhat.com [10.20.1.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2025060BF1;
-        Fri, 13 Sep 2019 22:27:12 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A86A60BF1;
+        Fri, 13 Sep 2019 22:27:13 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] drm/encoder: Fix possible_clones documentation
-Date:   Fri, 13 Sep 2019 18:27:01 -0400
-Message-Id: <20190913222704.8241-2-lyude@redhat.com>
+Subject: [PATCH 2/3] drm/encoder: Fix possible_crtcs documentation
+Date:   Fri, 13 Sep 2019 18:27:02 -0400
+Message-Id: <20190913222704.8241-3-lyude@redhat.com>
 In-Reply-To: <20190913222704.8241-1-lyude@redhat.com>
 References: <20190913222704.8241-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 13 Sep 2019 22:27:13 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 13 Sep 2019 22:27:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We say that all of the bits in possible_clones must be set before
-calling drm_encoder_init(). This isn't true though, since:
-
-* The driver may not even have all of the encoder objects that could be
-  used as clones initialized at that point
-* possible_crtcs isn't used at all outside of userspace, so it's not
-  actually needed to initialize it until drm_dev_register()
-
-So, fix it.
+Similar to possible_clones, we don't actually use possible_crtcs until
+the driver is registered with userspace. So, fix the documentation to
+indicate this.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
@@ -55,18 +49,18 @@ Signed-off-by: Lyude Paul <lyude@redhat.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
-index 70cfca03d812..81273b50b3f6 100644
+index 81273b50b3f6..d65173d413b7 100644
 --- a/include/drm/drm_encoder.h
 +++ b/include/drm/drm_encoder.h
-@@ -154,7 +154,7 @@ struct drm_encoder {
- 	 * using drm_encoder_index() as the index into the bitfield. The driver
- 	 * must set the bits for all &drm_encoder objects which can clone a
- 	 * &drm_crtc together with this encoder before calling
--	 * drm_encoder_init(). Drivers should set the bit representing the
-+	 * drm_dev_register(). Drivers should set the bit representing the
- 	 * encoder itself, too. Cloning bits should be set such that when two
- 	 * encoders can be used in a cloned configuration, they both should have
- 	 * each another bits set.
+@@ -140,7 +140,7 @@ struct drm_encoder {
+ 	 * @possible_crtcs: Bitmask of potential CRTC bindings, using
+ 	 * drm_crtc_index() as the index into the bitfield. The driver must set
+ 	 * the bits for all &drm_crtc objects this encoder can be connected to
+-	 * before calling drm_encoder_init().
++	 * before calling drm_dev_register().
+ 	 *
+ 	 * In reality almost every driver gets this wrong.
+ 	 *
 -- 
 2.21.0
 
