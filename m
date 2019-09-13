@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70196B1F25
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C893B1F2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2019 15:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389834AbfIMNQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 13 Sep 2019 09:16:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42912 "EHLO mail.kernel.org"
+        id S2388976AbfIMNQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 13 Sep 2019 09:16:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389825AbfIMNQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:16:16 -0400
+        id S2389857AbfIMNQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:16:28 -0400
 Received: from localhost (unknown [104.132.45.99])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D0BF20717;
-        Fri, 13 Sep 2019 13:16:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1886B20CC7;
+        Fri, 13 Sep 2019 13:16:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568380575;
-        bh=A1OEtCB6vF6AkWgRcCleL1BEUoTuRzPNYoc/GZtwK1k=;
+        s=default; t=1568380587;
+        bh=zOG44NvZII34L1rJxUscROwjCbvLnAhsBzplt5zW7gE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WDf3l8xot3JAKdYXkM0MDwS7Qc06XTJqXtHXcMQY2FoJkPvRyEitR09IQWrG7yqXe
-         6Qu0vAq7bQU+Nuy/ALwgXZhZK8O+GFE+oaVtxye3PuKL/C7Wozk2RysBOVu9zFyfbo
-         EKG0Kt6xnb7ElhJgv604klNRZfGcVv48c0LWY4iw=
+        b=rMGbEDQaIgJqotn8TtEeOZBstFJiWMDoNjzJtw9PyzKt3xBDCGT7V2l3gC92EYdmb
+         JDGWcQ813/S2+3fbHX89DcHoAvPndziK9jr/JCM3KkAVhmBDVFXF4OHtMyqM2kzCws
+         qaZHNKSEf664DVjsmgZ4pJwiucfImCJ4XB4DvfIY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 091/190] mt76: fix corrupted software generated tx CCMP PN
-Date:   Fri, 13 Sep 2019 14:05:46 +0100
-Message-Id: <20190913130606.900459859@linuxfoundation.org>
+Subject: [PATCH 4.19 092/190] drm/nouveau: Dont WARN_ON VCPI allocation failures
+Date:   Fri, 13 Sep 2019 14:05:47 +0100
+Message-Id: <20190913130606.981926197@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190913130559.669563815@linuxfoundation.org>
 References: <20190913130559.669563815@linuxfoundation.org>
@@ -43,32 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 906d2d3f874a54183df5a609fda180adf0462428 ]
+[ Upstream commit b513a18cf1d705bd04efd91c417e79e4938be093 ]
 
-Since ccmp_pn is u8 *, the second half needs to start at array index 4
-instead of 0. Fixes a connection stall after a certain amount of traffic
+This is much louder then we want. VCPI allocation failures are quite
+normal, since they will happen if any part of the modesetting process is
+interrupted by removing the DP MST topology in question. So just print a
+debugging message on VCPI failures instead.
 
-Fixes: 23405236460b9 ("mt76: fix transmission of encrypted management frames")
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: f479c0ba4a17 ("drm/nouveau/kms/nv50: initial support for DP 1.2 multi-stream")
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: nouveau@lists.freedesktop.org
+Cc: <stable@vger.kernel.org> # v4.10+
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/mediatek/mt76/mt76x2_mac_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2_mac_common.c b/drivers/net/wireless/mediatek/mt76/mt76x2_mac_common.c
-index 6542644bc3259..cec31f0c3017b 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x2_mac_common.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2_mac_common.c
-@@ -402,7 +402,7 @@ void mt76x2_mac_write_txwi(struct mt76x2_dev *dev, struct mt76x2_txwi *txwi,
- 		ccmp_pn[6] = pn >> 32;
- 		ccmp_pn[7] = pn >> 40;
- 		txwi->iv = *((__le32 *)&ccmp_pn[0]);
--		txwi->eiv = *((__le32 *)&ccmp_pn[1]);
-+		txwi->eiv = *((__le32 *)&ccmp_pn[4]);
- 	}
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+index f889d41a281fa..5e01bfb69d7a3 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -759,7 +759,8 @@ nv50_msto_enable(struct drm_encoder *encoder)
  
- 	spin_lock_bh(&dev->mt76.lock);
+ 	slots = drm_dp_find_vcpi_slots(&mstm->mgr, mstc->pbn);
+ 	r = drm_dp_mst_allocate_vcpi(&mstm->mgr, mstc->port, mstc->pbn, slots);
+-	WARN_ON(!r);
++	if (!r)
++		DRM_DEBUG_KMS("Failed to allocate VCPI\n");
+ 
+ 	if (!mstm->links++)
+ 		nv50_outp_acquire(mstm->outp);
 -- 
 2.20.1
 
