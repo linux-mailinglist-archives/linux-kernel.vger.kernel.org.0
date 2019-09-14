@@ -2,54 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D93DB2D52
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 01:25:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D47BDB2D5B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 01:40:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731686AbfINXZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Sep 2019 19:25:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731619AbfINXZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Sep 2019 19:25:07 -0400
-Subject: Re: [PULL] vhost: a last minute revert
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568503506;
-        bh=iBQBEA3uIqdk00gdwd+B3Cq4P9l9gIj9SR2TQ2C82lM=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Na8bS16rUEizU0A5NcPGOinkD87+iv2mvooco1NWMrM3IdU8ioPH++LHyaV1Uvvgu
-         I/i8igs7Lk9s46AFsEen3hWOBAbeO72FeiksCZgM7DHdq72sBvrBkcxaOjUingyAJb
-         2f60vFbCMTz4GiSq4qOeJkahy8w2PdGk3nOIzZ60=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190914153859-mutt-send-email-mst@kernel.org>
-References: <20190914153859-mutt-send-email-mst@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190914153859-mutt-send-email-mst@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
-X-PR-Tracked-Commit-Id: 0d4a3f2abbef73b9e5bb5f12213c275565473588
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1f9c632cde0c3d781463a88ce430a8dd4a7c1a0e
-Message-Id: <156850350648.2116.2811850659740913129.pr-tracker-bot@kernel.org>
-Date:   Sat, 14 Sep 2019 23:25:06 +0000
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, mst@redhat.com
+        id S1726254AbfINXkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Sep 2019 19:40:24 -0400
+Received: from hera.aquilenet.fr ([185.233.100.1]:50460 "EHLO
+        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725795AbfINXkY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Sep 2019 19:40:24 -0400
+X-Greylist: delayed 467 seconds by postgrey-1.27 at vger.kernel.org; Sat, 14 Sep 2019 19:40:24 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by hera.aquilenet.fr (Postfix) with ESMTP id 08D131CA64;
+        Sun, 15 Sep 2019 01:32:35 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
+Received: from hera.aquilenet.fr ([127.0.0.1])
+        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id J-KoI0jHpXVu; Sun, 15 Sep 2019 01:32:34 +0200 (CEST)
+Received: from function.home (unknown [IPv6:2a01:cb19:979:800:9eb6:d0ff:fe88:c3c7])
+        by hera.aquilenet.fr (Postfix) with ESMTPSA id 664361CA47;
+        Sun, 15 Sep 2019 01:32:34 +0200 (CEST)
+Received: from samy by function.home with local (Exim 4.92.2)
+        (envelope-from <samuel.thibault@ens-lyon.org>)
+        id 1i9HWr-0001im-EC; Sun, 15 Sep 2019 01:32:33 +0200
+Date:   Sun, 15 Sep 2019 01:32:33 +0200
+From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
+To:     "Speakup is a screen review system for Linux." 
+        <speakup@linux-speakup.org>
+Cc:     Gregory Nowak <greg@gregn.net>, devel@driverdev.osuosl.org,
+        Simon Dickson <simonhdickson@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, John Covici <covici@ccs.covici.com>
+Subject: Re: [HELP REQUESTED from the community] Was: Staging status of
+ speakup
+Message-ID: <20190914233233.lvlxd3p4josiir7w@function>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        "Speakup is a screen review system for Linux." <speakup@linux-speakup.org>,
+        Gregory Nowak <greg@gregn.net>, devel@driverdev.osuosl.org,
+        Simon Dickson <simonhdickson@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, John Covici <covici@ccs.covici.com>
+References: <20190712092319.wmke4i7zqzr26tly@function>
+ <20190713004623.GA9159@gregn.net>
+ <20190725035352.GA7717@gregn.net>
+ <875znqhia0.fsf@cmbmachine.messageid.invalid>
+ <m3sgqucs1x.wl-covici@ccs.covici.com>
+ <CAOtcWM0qynSjnF6TtY_s7a51B7JweDb7jwdxStEmPvB9tJFU4Q@mail.gmail.com>
+ <20190821222209.GA4577@gregn.net>
+ <CAOtcWM0Jzo+wew-uiOmde+eZXEWZ310L8wXscWjJv5OXqXJe6Q@mail.gmail.com>
+ <20190909025429.GA4144@gregn.net>
+ <CAOtcWM0P=w-iBZzwekVrSpp7t2WO9RA5WP956zgDrNKvzA+4ZA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOtcWM0P=w-iBZzwekVrSpp7t2WO9RA5WP956zgDrNKvzA+4ZA@mail.gmail.com>
+Organization: I am not organized
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 14 Sep 2019 15:38:59 -0400:
+Hello,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+Okash Khawaja, le sam. 14 sept. 2019 22:08:35 +0100, a ecrit:
+> 2. We are still missing descriptions for i18n/ directory. I have added
+> filenames below. can someone can add description please:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1f9c632cde0c3d781463a88ce430a8dd4a7c1a0e
+There are some descriptions in the "14.1.  Files Under the i18n
+Subdirectory" section of spkguide.txt
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Samuel
