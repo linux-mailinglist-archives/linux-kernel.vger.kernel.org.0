@@ -2,116 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F13CAB2C49
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 18:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16948B2C4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 18:53:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfINQvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Sep 2019 12:51:17 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:17011 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbfINQvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Sep 2019 12:51:17 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46Vz6T5ggMz9tycq;
-        Sat, 14 Sep 2019 18:51:13 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=h6zRP2Ck; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id XHDQc381JH2O; Sat, 14 Sep 2019 18:51:13 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46Vz6T4ZRyz9tycp;
-        Sat, 14 Sep 2019 18:51:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1568479873; bh=LWujgpcYct92yuUDaXEeUAyD2wFvAtFvepKoZtQnzKI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=h6zRP2CkSx1dpu3chBbomnZh98BnpdMH1DKk++Q7zW7HWQxtVHU7WcR+u5U3s/e/w
-         XlaFmz0dW+i+BoTxvHsUGm742A6pFuaZph4mjvWhYifQ6FCMt74XyUa824uaJEvpJM
-         q0/sFYtJt/1a2PMh7xZGxnRjFtCvd4luYASDiVHQ=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 507C58B80B;
-        Sat, 14 Sep 2019 18:51:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id BOzyotLb7U4A; Sat, 14 Sep 2019 18:51:15 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 681C88B756;
-        Sat, 14 Sep 2019 18:51:14 +0200 (CEST)
-Subject: Re: [PATCH 2/2] powerpc/83xx: map IMMR with a BAT.
-To:     Scott Wood <oss@buserror.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        galak@kernel.crashing.org
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <b51b96090138aba1920d2cf7c0e0e348667f9a69.1566564560.git.christophe.leroy@c-s.fr>
- <331759c1bcba5797d30f8eace74afb16ac5f3c36.1566564560.git.christophe.leroy@c-s.fr>
- <b201df6242e7f6cebd525e0a301eef2afdb38f30.camel@buserror.net>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <e9437d8c-564e-cc76-e8fd-54e4000c2349@c-s.fr>
-Date:   Sat, 14 Sep 2019 18:51:14 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727776AbfINQxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Sep 2019 12:53:11 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39023 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727143AbfINQxL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Sep 2019 12:53:11 -0400
+Received: by mail-lj1-f195.google.com with SMTP id j16so29961732ljg.6
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2019 09:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QLIo6vFI0bpmCXFO87whfx1RKUoffbAynCeevQqzVaY=;
+        b=ELbD4LRyFSnkAfSPCSVXoyh3un74MVZCrn++kf+mNF8nH8v/FPyJ3yuLu+pNYRJ9Jm
+         zd5rpNwKA1AWkc4nMxoDraDB/EG2Z8O2lJDEPT2dz4ZuWB+7c9jdPlZGfkKpysD4rZN0
+         mM0oEqg+F6vSDXePBv81AnnhmKfV64W/yfUZ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QLIo6vFI0bpmCXFO87whfx1RKUoffbAynCeevQqzVaY=;
+        b=ZjJHah6ETG2IVZ4PzloaaIEzJh+wzpd+m8o4l+n+QjhedIZsbofRBqK/PKgqmvVE8c
+         aWZpF7oi8eZ73olpzaqDbmRlzqwZO1LBTMm3uHvgTozqyKVsX7nOMsbAPOx1BIpcznWb
+         V872+QGK2mPiCsXUFKl/MthxxrjvEIyfHRwAj9s9jSlwjJp9pisjWPGtGtqj258FJ7y0
+         3pwbFdJJZxz09EzQP1P8f+vg3j1o8EC9lX+k7a/cD8AZBHS6bylcNcLGDvyyBucEIPUA
+         J8v8TnPP8vOhLEcYLJ9CvOZjVtfnD/jP4VdoBrAiebzia1zu0BakxDGESMvEg1+pKnGm
+         6ZKQ==
+X-Gm-Message-State: APjAAAVZ3n8kmFLgwHB3Ob0clso0GQ7ncv/uu21x/1uy/95Rvc2uwF7H
+        7YKLTmW4M23q99413kpeXtVjHtt6Dww=
+X-Google-Smtp-Source: APXvYqyxX7R+LOtP21rt6kDZYIalfffWGCKzeYeNDVDHloJm7qktuVkIqmgk9o+Uqso1vSYYGEEn3A==
+X-Received: by 2002:a2e:884d:: with SMTP id z13mr31731258ljj.62.1568479986118;
+        Sat, 14 Sep 2019 09:53:06 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id p10sm7113930lji.71.2019.09.14.09.53.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Sep 2019 09:53:05 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id v24so2315756ljj.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2019 09:53:05 -0700 (PDT)
+X-Received: by 2002:a2e:814d:: with SMTP id t13mr33898456ljg.72.1568479984957;
+ Sat, 14 Sep 2019 09:53:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b201df6242e7f6cebd525e0a301eef2afdb38f30.camel@buserror.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <CAHk-=wimE=Rw4s8MHKpsgc-ZsdoTp-_CAs7fkm9scn87ZbkMFg@mail.gmail.com>
+ <20190910173243.GA3992@darwi-home-pc> <CAHk-=wjo6qDvh_fUnd2HdDb63YbWN09kE0FJPgCW+nBaWMCNAQ@mail.gmail.com>
+ <20190911160729.GF2740@mit.edu> <CAHk-=whW_AB0pZ0u6P9uVSWpqeb5t2NCX_sMpZNGy8shPDyDNg@mail.gmail.com>
+ <CAHk-=wi_yXK5KSmRhgNRSmJSD55x+2-pRdZZPOT8Fm1B8w6jUw@mail.gmail.com>
+ <20190911173624.GI2740@mit.edu> <20190912034421.GA2085@darwi-home-pc>
+ <20190912082530.GA27365@mit.edu> <CAHk-=wjyH910+JRBdZf_Y9G54c1M=LBF8NKXB6vJcm9XjLnRfg@mail.gmail.com>
+ <20190914150206.GA2270@darwi-home-pc> <CAHk-=wjuVT+2oj_U2V94MBVaJdWsbo1RWzy0qXQSMAUnSaQzxw@mail.gmail.com>
+ <214fed0e-6659-def9-b5f8-a9d7a8cb72af@gmail.com>
+In-Reply-To: <214fed0e-6659-def9-b5f8-a9d7a8cb72af@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 14 Sep 2019 09:52:49 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiB0e_uGpidYHf+dV4eeT+XmG-+rQBx=JJ110R48QFFWw@mail.gmail.com>
+Message-ID: <CAHk-=wiB0e_uGpidYHf+dV4eeT+XmG-+rQBx=JJ110R48QFFWw@mail.gmail.com>
+Subject: Re: Linux 5.3-rc8
+To:     "Alexander E. Patrakov" <patrakov@gmail.com>
+Cc:     "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Sep 14, 2019 at 9:35 AM Alexander E. Patrakov
+<patrakov@gmail.com> wrote:
+>
+> Let me repeat: not -EINVAL, please. Please find some other error code,
+> so that the application could sensibly distinguish between this case
+> (low quality entropy is in the buffer) and the "kernel is too dumb" case
+> (and no entropy is in the buffer).
 
+I'm not convinced we want applications to see that difference.
 
-Le 14/09/2019 à 16:34, Scott Wood a écrit :
-> On Fri, 2019-08-23 at 12:50 +0000, Christophe Leroy wrote:
->> On mpc83xx with a QE, IMMR is 2Mbytes.
->> On mpc83xx without a QE, IMMR is 1Mbytes.
->> Each driver will map a part of it to access the registers it needs.
->> Some driver will map the same part of IMMR as other drivers.
->>
->> In order to reduce TLB misses, map the full IMMR with a BAT.
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/platforms/83xx/misc.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/arch/powerpc/platforms/83xx/misc.c
->> b/arch/powerpc/platforms/83xx/misc.c
->> index f46d7bf3b140..1e395b01c535 100644
->> --- a/arch/powerpc/platforms/83xx/misc.c
->> +++ b/arch/powerpc/platforms/83xx/misc.c
->> @@ -18,6 +18,8 @@
->>   #include <sysdev/fsl_soc.h>
->>   #include <sysdev/fsl_pci.h>
->>   
->> +#include <mm/mmu_decl.h>
->> +
->>   #include "mpc83xx.h"
->>   
->>   static __be32 __iomem *restart_reg_base;
->> @@ -145,6 +147,14 @@ void __init mpc83xx_setup_arch(void)
->>   	if (ppc_md.progress)
->>   		ppc_md.progress("mpc83xx_setup_arch()", 0);
->>   
->> +	if (!__map_without_bats) {
->> +		int immrsize = IS_ENABLED(CONFIG_QUICC_ENGINE) ? SZ_2M :
->> SZ_1M;
-> 
-> Any reason not to unconditionally make it 2M?  After all, the kernel being
-> built with CONFIG_QUICC_ENGINE doesn't mean that the hardware you're running
-> on has it...
-> 
+The fact is, every time an application thinks it cares, it has caused
+problems. I can just see systemd saying "ok, the kernel didn't block,
+so I'll just do
 
-Euh .. ok. I didn't see it that way, but you are right.
+   while (getrandom(x) == -ENOENTROPY)
+       sleep(1);
 
-Do you think it is not a problem to map 2M even when the quicc engine is 
-not there ? Or should it check device tree instead ?
+instead. Which is still completely buggy garbage.
 
-Christophe
+The fact is, we can't guarantee entropy in general. It's probably
+there is practice, particularly with user space saving randomness from
+last boot etc, but that kind of data may be real entropy, but the
+kernel cannot *guarantee* that it is.
+
+And people don't like us guaranteeing that rdrand/rdseed is "real
+entropy" either, since they don't trust the CPU hw either.
+
+Which means that we're all kinds of screwed. The whole "we guarantee
+entropy" model is broken.
+
+               Linus
