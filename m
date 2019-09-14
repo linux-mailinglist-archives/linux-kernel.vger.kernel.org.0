@@ -2,207 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72F48B2CCC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 21:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0E85B2CD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 21:48:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbfINTqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Sep 2019 15:46:01 -0400
-Received: from mga12.intel.com ([192.55.52.136]:27815 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728803AbfINTpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Sep 2019 15:45:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2019 12:45:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,506,1559545200"; 
-   d="scan'208";a="201286937"
-Received: from spandruv-mobl.amr.corp.intel.com ([10.251.128.136])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Sep 2019 12:45:51 -0700
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     andy.shevchenko@gmail.com, andriy.shevchenko@intel.com
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        prarit@redhat.com, darcari@redhat.com,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2 5/5] tools/power/x86/intel-speed-select: Extend core-power command set
-Date:   Sat, 14 Sep 2019 12:45:47 -0700
-Message-Id: <20190914194547.24271-6-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190914194547.24271-1-srinivas.pandruvada@linux.intel.com>
-References: <20190914194547.24271-1-srinivas.pandruvada@linux.intel.com>
+        id S1731475AbfINTsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Sep 2019 15:48:47 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37743 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728741AbfINTsr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Sep 2019 15:48:47 -0400
+Received: by mail-pg1-f193.google.com with SMTP id c17so9293252pgg.4;
+        Sat, 14 Sep 2019 12:48:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lKInT2K3atHuPlqq8+cjdUQu+K/vViz1lIlROGINXn8=;
+        b=ltmeFcRmDc/TSVjQiuSmk9J4ylDAncd63yh67V/Fenijf1Sf3zdTpdPa81Uyppp0f3
+         6yOcsYuysTAH1RUB4ZGpGMSdq4tzjZFw+NbUTMRm2RCon5LJQWXP6TKV2pC5ZtmOLd6f
+         sYevofolclKABmoAsrXiZwC5BuaD0s4UUmQIidG9zwEw5oP9Xz7oK/trzLmelacWexCl
+         Z2wM/yruj3AeHY7NRCLTmcejWplW4t7jMxb0N9I+v+d/tCvku9ig3BU0Zp3HnzX75PJi
+         UOhj3QAEh46nk5qgeVbxBhXcTS9UWFnciklSYgrhcPbavGp1rWxRYaSZCEqsc1NUFoES
+         UUWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lKInT2K3atHuPlqq8+cjdUQu+K/vViz1lIlROGINXn8=;
+        b=G2sU6j6HYq/L8Y6tkq2w8DCtPFq5WCMiEmKjX2hLWywI86hjqTXrmDD10/ayV9LW5+
+         Z/qG1H4BaGKqeFVTSmVhVqYW1EZ4uwWpGlsgHGDu4xcu5QNkl4SsSjivdTRn2FR1nZFD
+         4FE9DTTLLVzrLf6ClezY51g1TMWRV2a2Fz+Cwvj+5Kfc+J77Hf7dBTNMAtRDpk/4bCA2
+         4c2w9dxwi4a5YpK+4BcZnZBME9E9XEXy6S1VIBTEjnFc3rTkFIAGzn/Wr8SEfzdEy97j
+         LlFj6CmEhHtVPnfBBxBOjwC4rxuGlp3WhJWF37TKiEE0g6wqRh1zT7FpuWNBZhwqqr09
+         wlLg==
+X-Gm-Message-State: APjAAAX1zxgElyvN22tAICfSf4axP/Sxn3xmADLpLQ3x7HT9+wFklkKh
+        eE9iALPv4GkPIxn5bLXGe/Rho8fUQHBjxaXacRfVEabWKpU=
+X-Google-Smtp-Source: APXvYqzHtdyPYTMkYN1DBv0EWRPjMw8USxk1F35fog+vlB3Wy2AN0Kvm0y/tyidI2X/LcbCPW81pb+8GxtYapzHGTYY=
+X-Received: by 2002:a17:90b:151:: with SMTP id em17mr5138324pjb.132.1568490526305;
+ Sat, 14 Sep 2019 12:48:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190914070513.19807-1-srinivas.pandruvada@linux.intel.com>
+ <20190914171950.GW2680@smile.fi.intel.com> <85876cd057ff5f871dd830ff19a6e32c83e8e344.camel@linux.intel.com>
+In-Reply-To: <85876cd057ff5f871dd830ff19a6e32c83e8e344.camel@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sat, 14 Sep 2019 22:48:35 +0300
+Message-ID: <CAHp75VeE+Z+KQOOvYgD+3-MsRTe7WPnxPTyTtQrLdQ8mQ=6y4Q@mail.gmail.com>
+Subject: Re: [PATCH 0/5] tools/power/x86/intel-speed-select: New command and
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prarit Bhargava <prarit@redhat.com>,
+        David Arcari <darcari@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add additional command to get the clos enable and priority type. The
-current info option is actually dumping per clos QOS config, so name
-the command appropriately to get-config.
+On Sat, Sep 14, 2019 at 10:22 PM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> On Sat, 2019-09-14 at 20:19 +0300, Andy Shevchenko wrote:
+> > On Sat, Sep 14, 2019 at 12:05:08AM -0700, Srinivas Pandruvada wrote:
+> > > This series contains some minor fixes, when firmware mask is
+> > > including
+> > > invalid CPU in the perf-profile mask. Also add some commands to
+> > > better manage core-power feature.
+> >
+> > Hmm... 150+ LOCs doesn't count to me as minor fixes.
+> > So, are you considering this a material for v5.4?
+> Sorry, I should be clear. It is for 5.4. I am trying to catch merge
+> window. None of the fixes are critical. The majority of the code is
+> added for new command features.
+>
+> What is your cut off for 5.4? I want to send some more features if
+> possible for 5.4.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../x86/intel-speed-select/isst-config.c      | 38 ++++++++++++++++++-
- .../power/x86/intel-speed-select/isst-core.c  | 25 ++++++++++++
- .../x86/intel-speed-select/isst-display.c     | 28 ++++++++++++++
- tools/power/x86/intel-speed-select/isst.h     |  5 +++
- 4 files changed, 95 insertions(+), 1 deletion(-)
+First PR already had been sent to Linus.
 
-diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 889396d676cb..6a54e165672d 100644
---- a/tools/power/x86/intel-speed-select/isst-config.c
-+++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -1133,6 +1133,40 @@ static void dump_clos_config(void)
- 	isst_ctdp_display_information_end(outf);
- }
- 
-+static void get_clos_info_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
-+				  void *arg4)
-+{
-+	int enable, ret, prio_type;
-+
-+	ret = isst_clos_get_clos_information(cpu, &enable, &prio_type);
-+	if (ret)
-+		perror("isst_clos_get_info");
-+	else
-+		isst_clos_display_clos_information(cpu, outf, enable, prio_type);
-+}
-+
-+static void dump_clos_info(void)
-+{
-+	if (cmd_help) {
-+		fprintf(stderr,
-+			"Print Intel Speed Select Technology core power information\n");
-+		fprintf(stderr, "\tSpecify targeted cpu id with [--cpu|-c]\n");
-+		exit(0);
-+	}
-+
-+	if (!max_target_cpus) {
-+		fprintf(stderr,
-+			"Invalid target cpu. Specify with [-c|--cpu]\n");
-+		exit(0);
-+	}
-+
-+	isst_ctdp_display_information_start(outf);
-+	for_each_online_target_cpu_in_set(get_clos_info_for_cpu, NULL,
-+					  NULL, NULL, NULL);
-+	isst_ctdp_display_information_end(outf);
-+
-+}
-+
- static void set_clos_config_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 				    void *arg4)
- {
-@@ -1286,10 +1320,11 @@ static struct process_cmd_struct isst_cmds[] = {
- 	{ "turbo-freq", "info", dump_fact_config },
- 	{ "turbo-freq", "enable", set_fact_enable },
- 	{ "turbo-freq", "disable", set_fact_disable },
--	{ "core-power", "info", dump_clos_config },
-+	{ "core-power", "info", dump_clos_info },
- 	{ "core-power", "enable", set_clos_enable },
- 	{ "core-power", "disable", set_clos_disable },
- 	{ "core-power", "config", set_clos_config },
-+	{ "core-power", "get-config", dump_clos_config },
- 	{ "core-power", "assoc", set_clos_assoc },
- 	{ "core-power", "get-assoc", get_clos_assoc },
- 	{ NULL, NULL, NULL }
-@@ -1491,6 +1526,7 @@ static void core_power_help(void)
- 	printf("\tenable\n");
- 	printf("\tdisable\n");
- 	printf("\tconfig\n");
-+	printf("\tget-config\n");
- 	printf("\tassoc\n");
- 	printf("\tget-assoc\n");
- }
-diff --git a/tools/power/x86/intel-speed-select/isst-core.c b/tools/power/x86/intel-speed-select/isst-core.c
-index 0bf341ad9697..6dee5332c9d3 100644
---- a/tools/power/x86/intel-speed-select/isst-core.c
-+++ b/tools/power/x86/intel-speed-select/isst-core.c
-@@ -619,6 +619,31 @@ int isst_get_process_ctdp(int cpu, int tdp_level, struct isst_pkg_ctdp *pkg_dev)
- 	return 0;
- }
- 
-+int isst_clos_get_clos_information(int cpu, int *enable, int *type)
-+{
-+	unsigned int resp;
-+	int ret;
-+
-+	ret = isst_send_mbox_command(cpu, CONFIG_CLOS, CLOS_PM_QOS_CONFIG, 0, 0,
-+				     &resp);
-+	if (ret)
-+		return ret;
-+
-+	debug_printf("cpu:%d CLOS_PM_QOS_CONFIG resp:%x\n", cpu, resp);
-+
-+	if (resp & BIT(1))
-+		*enable = 1;
-+	else
-+		*enable = 0;
-+
-+	if (resp & BIT(2))
-+		*type = 1;
-+	else
-+		*type = 0;
-+
-+	return 0;
-+}
-+
- int isst_pm_qos_config(int cpu, int enable_clos, int priority_type)
- {
- 	unsigned int req, resp;
-diff --git a/tools/power/x86/intel-speed-select/isst-display.c b/tools/power/x86/intel-speed-select/isst-display.c
-index bd7aaf27e4de..2e6e5fcdbd7c 100644
---- a/tools/power/x86/intel-speed-select/isst-display.c
-+++ b/tools/power/x86/intel-speed-select/isst-display.c
-@@ -503,6 +503,34 @@ void isst_clos_display_information(int cpu, FILE *outf, int clos,
- 	format_and_print(outf, 1, NULL, NULL);
- }
- 
-+void isst_clos_display_clos_information(int cpu, FILE *outf,
-+					int clos_enable, int type)
-+{
-+	char header[256];
-+	char value[256];
-+
-+	snprintf(header, sizeof(header), "package-%d",
-+		 get_physical_package_id(cpu));
-+	format_and_print(outf, 1, header, NULL);
-+	snprintf(header, sizeof(header), "die-%d", get_physical_die_id(cpu));
-+	format_and_print(outf, 2, header, NULL);
-+	snprintf(header, sizeof(header), "cpu-%d", cpu);
-+	format_and_print(outf, 3, header, NULL);
-+
-+	snprintf(header, sizeof(header), "core-power");
-+	format_and_print(outf, 4, header, NULL);
-+
-+	snprintf(header, sizeof(header), "enable-status");
-+	snprintf(value, sizeof(value), "%d", clos_enable);
-+	format_and_print(outf, 5, header, value);
-+
-+	snprintf(header, sizeof(header), "priority-type");
-+	snprintf(value, sizeof(value), "%d", type);
-+	format_and_print(outf, 5, header, value);
-+
-+	format_and_print(outf, 1, NULL, NULL);
-+}
-+
- void isst_clos_display_assoc_information(int cpu, FILE *outf, int clos)
- {
- 	char header[256];
-diff --git a/tools/power/x86/intel-speed-select/isst.h b/tools/power/x86/intel-speed-select/isst.h
-index 48655d0dee2d..09e16a41b57c 100644
---- a/tools/power/x86/intel-speed-select/isst.h
-+++ b/tools/power/x86/intel-speed-select/isst.h
-@@ -231,4 +231,9 @@ extern int isst_write_reg(int reg, unsigned int val);
- 
- extern void isst_display_result(int cpu, FILE *outf, char *feature, char *cmd,
- 				int result);
-+
-+extern int isst_clos_get_clos_information(int cpu, int *enable, int *type);
-+extern void isst_clos_display_clos_information(int cpu, FILE *outf,
-+					       int clos_enable, int type);
-+
- #endif
 -- 
-2.17.2
-
+With Best Regards,
+Andy Shevchenko
