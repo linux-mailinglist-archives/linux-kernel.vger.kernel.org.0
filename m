@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49B2B2D55
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 01:25:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D93DB2D52
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 01:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731695AbfINXZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Sep 2019 19:25:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59790 "EHLO mail.kernel.org"
+        id S1731686AbfINXZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Sep 2019 19:25:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbfINXZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Sep 2019 19:25:06 -0400
-Subject: Re: [GIT PULL] Urgent RISC-V fix for v5.3
+        id S1731619AbfINXZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Sep 2019 19:25:07 -0400
+Subject: Re: [PULL] vhost: a last minute revert
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1568503506;
-        bh=zN3AiQcN4OyiNPGhUtI2YBjvp2tsF6+c4sX8WDAP87o=;
+        bh=iBQBEA3uIqdk00gdwd+B3Cq4P9l9gIj9SR2TQ2C82lM=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=FgMzG401RLitCgZXMvXvc1xiSlLn4yaOOxbIvc+qJa3Gtpm8me5fPcEB+zyBlvWVS
-         JkhZVCuipJELlCGbs8XzdMvUZO74w7a8t+8EE8QzFyRIW91oC5XlSL6z8bWnFchD5K
-         PTPPt3S/D6ACZwcKGWdbHfaonECCHDrYx5Ct1qiM=
+        b=Na8bS16rUEizU0A5NcPGOinkD87+iv2mvooco1NWMrM3IdU8ioPH++LHyaV1Uvvgu
+         I/i8igs7Lk9s46AFsEen3hWOBAbeO72FeiksCZgM7DHdq72sBvrBkcxaOjUingyAJb
+         2f60vFbCMTz4GiSq4qOeJkahy8w2PdGk3nOIzZ60=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <alpine.DEB.2.21.9999.1909140651430.10284@viisi.sifive.com>
-References: <alpine.DEB.2.21.9999.1909140651430.10284@viisi.sifive.com>
+In-Reply-To: <20190914153859-mutt-send-email-mst@kernel.org>
+References: <20190914153859-mutt-send-email-mst@kernel.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <alpine.DEB.2.21.9999.1909140651430.10284@viisi.sifive.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git
- tags/riscv/for-v5.3
-X-PR-Tracked-Commit-Id: 474efecb65dceb15f793b6e2f2b226e952f0f8e9
+X-PR-Tracked-Message-Id: <20190914153859-mutt-send-email-mst@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+X-PR-Tracked-Commit-Id: 0d4a3f2abbef73b9e5bb5f12213c275565473588
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b03c036e6f96340dd311817c7b964dad183c4141
-Message-Id: <156850350617.2116.314351951829278963.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 1f9c632cde0c3d781463a88ce430a8dd4a7c1a0e
+Message-Id: <156850350648.2116.2811850659740913129.pr-tracker-bot@kernel.org>
 Date:   Sat, 14 Sep 2019 23:25:06 +0000
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     torvalds@linux-foundation.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, palmer@sifive.com
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, mst@redhat.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 14 Sep 2019 06:52:48 -0700 (PDT):
+The pull request you sent on Sat, 14 Sep 2019 15:38:59 -0400:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv/for-v5.3
+> https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b03c036e6f96340dd311817c7b964dad183c4141
+https://git.kernel.org/torvalds/c/1f9c632cde0c3d781463a88ce430a8dd4a7c1a0e
 
 Thank you!
 
