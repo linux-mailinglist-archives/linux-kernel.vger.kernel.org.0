@@ -2,103 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64783B2C76
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 19:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E76BB2C7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 19:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbfINRoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Sep 2019 13:44:21 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36308 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbfINRoV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Sep 2019 13:44:21 -0400
-Received: by mail-lf1-f65.google.com with SMTP id x80so24425962lff.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2019 10:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7rqA8gv8WBUcCizuodrqsXPHaEqxJVJcQpp9To/E3s8=;
-        b=T+nBmx+uhgoJWmGl4RszArFg7xvFs3jJCRP0lXywIDlIayWnPaYPPAMIsEG7H4Y9Ab
-         WEn/3QIGbPGJOKc/U2z7HqRfA+cQ9/kYyqXSf5YL10BJuW9pTebx+euQwWNe6vI2AQ7J
-         5pf3tO45wpIXAEUmDBXmhagMyuYzGO5oNxHHY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7rqA8gv8WBUcCizuodrqsXPHaEqxJVJcQpp9To/E3s8=;
-        b=fSpDg8to+KXB0IqaaYHy5iXOtKom8XpRUzKsaTgitQ4M3RPu8OGj+mMPd+/NTgtbr2
-         6+FnOba2j2Se/ClubsuyacsFagdenyB/2sXwzsA8tBMYN6lP2ayxPz1DGXYfeQNmztaC
-         vDBNXRBLsiQVNxrWbmFWufJYkYzeQk9wYrTlUkmw6cNsS0zHgtDLRN0/AWPnLNjmUc8d
-         kvK2qhgx+/oZMioJmP/Ze9O3RYspo7zeMatuWmKVzXhbFUgiKTJ0dsJsCRnvwQZzClfm
-         oVblsr2LclmtgTtStZdBPsct8SA0NqARbaS0IAiVXKMQXIuea8PHTdrnD85DcvXLnadV
-         ulsw==
-X-Gm-Message-State: APjAAAV6g9acoyvWaEyAJLyRNy8VMK7iz2WS60MYP+19DekfRyh5p/o/
-        gtgDmnLwMlEcRptZFdzANp4Kkh0iTcI=
-X-Google-Smtp-Source: APXvYqwkHMh8YnrFJJU+UCye7xLK+5X2pOgKOZ9z75Cr4cAJhBievXWEXWleAYsZVVcAFTuDef3fmA==
-X-Received: by 2002:ac2:4853:: with SMTP id 19mr33074529lfy.69.1568483057494;
-        Sat, 14 Sep 2019 10:44:17 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id z9sm7133079ljn.78.2019.09.14.10.44.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Sep 2019 10:44:16 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id j16so30029609ljg.6
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2019 10:44:15 -0700 (PDT)
-X-Received: by 2002:a2e:8943:: with SMTP id b3mr1420191ljk.165.1568483055484;
- Sat, 14 Sep 2019 10:44:15 -0700 (PDT)
+        id S1727539AbfINR6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Sep 2019 13:58:06 -0400
+Received: from muru.com ([72.249.23.125]:32832 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727356AbfINR6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Sep 2019 13:58:06 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id D0E9D8105;
+        Sat, 14 Sep 2019 17:58:33 +0000 (UTC)
+Date:   Sat, 14 Sep 2019 10:57:59 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-crypto@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Adam Ford <aford173@gmail.com>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/6] hwrng: omap3-rom - Call clk_prepare() on init and
+ exit only
+Message-ID: <20190914175759.GV52127@atomide.com>
+References: <20190913220922.29501-1-tony@atomide.com>
+ <20190913220922.29501-4-tony@atomide.com>
+ <20190914125427.nvbrxoubvll43b3j@earth.universe>
 MIME-Version: 1.0
-References: <20190830140805.GD13294@shell.armlinux.org.uk> <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
- <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
- <20190830160957.GC2634@redhat.com> <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
- <87o906wimo.fsf@x220.int.ebiederm.org> <20190902134003.GA14770@redhat.com>
- <87tv9uiq9r.fsf@x220.int.ebiederm.org> <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
- <87k1aqt23r.fsf_-_@x220.int.ebiederm.org> <87muf7f4bf.fsf_-_@x220.int.ebiederm.org>
-In-Reply-To: <87muf7f4bf.fsf_-_@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 14 Sep 2019 10:43:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whej3MMKJBHKWp66djfEP5=kyncX7FoqJacYtmBXB6v9w@mail.gmail.com>
-Message-ID: <CAHk-=whej3MMKJBHKWp66djfEP5=kyncX7FoqJacYtmBXB6v9w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] task: Making tasks on the runqueue rcu protected
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190914125427.nvbrxoubvll43b3j@earth.universe>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 14, 2019 at 5:30 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> I have reworked these patches one more time to make it clear that the
-> first 3 patches only fix task_struct so that it experiences a rcu grace
-> period after it leaves the runqueue for the last time.
+* Sebastian Reichel <sre@kernel.org> [190914 13:01]:
+> Hi,
+> 
+> On Fri, Sep 13, 2019 at 03:09:19PM -0700, Tony Lindgren wrote:
+> > Also, we should not call prepare and unprepare except during init, and
+> > only call enable and disable during use.
+> 
+> Why? Usually clk_(un)prepare() is the part saving most power, so I
+> would expect the runtime resume handlers to call clk_prepare_enable
+> and vice versa in the suspend handler.
 
-I remain a fan of these patches, and the added comment on the last one
-is I think a sufficient clarification of the issue.
+Sure yeah fine with me, clk_prepare_enable() is more generic at the
+cost of some extra calls to toggle a clock gate bit :) Let's also
+forget the probe changes, those will get cleared with the runtime
+PM changes anyways.
 
-But it's patch 3 that makes me go "yeah, this is the right approach",
-because it just removes subtle code in favor of something that is
-understandable.
+Regards,
 
-Yes, most of the lines removed may be comments, and so it doesn't
-actually remove a lot of _code_, but I think the comments are a result
-of just how subtle and fragile our current approach is, and the new
-model not needing them as much is I think a real issue (rather than
-just Eric being less verbose in the new comments and removing lines of
-code that way).
-
-Can anybody see anything wrong with the series? Because I'd love to
-have it for 5.4,
-
-             Linus
+Tony
