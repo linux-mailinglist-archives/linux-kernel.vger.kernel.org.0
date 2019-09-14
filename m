@@ -2,107 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F6E6B2AFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 12:32:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ACA7B2AFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 12:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729103AbfINKc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Sep 2019 06:32:26 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40398 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728841AbfINKc0 (ORCPT
+        id S1729618AbfINKeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Sep 2019 06:34:10 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36899 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbfINKeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Sep 2019 06:32:26 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x127so19634155pfb.7
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Sep 2019 03:32:26 -0700 (PDT)
+        Sat, 14 Sep 2019 06:34:10 -0400
+Received: by mail-ot1-f66.google.com with SMTP id s28so31700871otd.4;
+        Sat, 14 Sep 2019 03:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kMiRV74Zi6buasstnWsWMf+sxpVUSgy2RNkWLC1ySAE=;
-        b=tjH2DXWIPJzMfUSGBjiZfSkXXIQTgolVoS+0vo/XQEAfCNjqjf6Ju8suZBkH+2eZcm
-         7PWa+s9Ziw7iONfCgiBlZaGaBnERRJnMteqG5mBl8NwxxufyGe9xiXzmUaI+JG5Rskua
-         6bzzgC0J2PTRKoZW+XhwVav3w6zqFQ/ye/ZNPBV524Nh/LvhvFtT/yValIv0RFO27HOG
-         6xzrqysvdx1qTftOdUsEPyfoHkkvX4uqrr2IwPLlvWm7JR6JSl8XFVgvI1ejH/mJhv84
-         k1ckzRHy0D2ftLqI72m4xT6x/zmPZkrXZ4AfByNmX13FnboFM7AAcpzDH0FssB8IjNhz
-         msUA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mbl+TqU1RDnoByFgw6YTBN5hIBAakcwGG9n4xIXKC+c=;
+        b=tA7nWU3lXGqX+JpHOfUpDNhRLNRrl/cI6sGJCiUggydaE/S6ZkSqxtdt5kCmPqZMES
+         NWDPdSvDHfUXDYew5WaGZAB7Xgmkvnjd29YNbEyR9axnVffmmchZ/BHsojl/H3Z12TG0
+         XQvksO1xLsz334htc8qviaKaTmeepDRWOkuGIiE8lhwG1q6MjoN7H+GFt3auQark5aoz
+         Gxpd1aPzqrGpBi+7VoQM0claaW8LeONmt+9gOZPgpQVmF+gXQGodcLz1yp6XUaomdFOb
+         U2o12BGdODfqkuSAdRt+IiKwrWjhCc65AhAeHwkHalTA4/yEUKN3tn3mm2tUaqmL2+Pz
+         IwMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kMiRV74Zi6buasstnWsWMf+sxpVUSgy2RNkWLC1ySAE=;
-        b=Ex1IQGU5rvHyU/5bGaIDns1a/kksoHyOu7keT2TM5U3YGqgbQcwtBmrarjPZ/vB3VZ
-         O1Qq8KSD4yrECWiUiAcDKLpV7TZFkBn/o4tvHphqHK7syx4oApIsm4By9g8fBBh31zfw
-         KBuSsiRV/df7K5Iaf/xL6qNgvnmG/C4AOct7xz+yrFR/NnNqZBbeXSr6xYB9efNpiDkC
-         SuDBBnnJIIUlxu7dZIX529kUBQWDNMZUvP1DUzVZGY1mzraRiMckX9SaPvUvc7wijcVq
-         5GO1Op7If/BSmPZWMMSGuqsJDc53l7zlVGTa+Gb26DZMQwTtvQ4ZsQ1wPhbNpzJp2RNT
-         Q72w==
-X-Gm-Message-State: APjAAAWGlLx/74KsYjqf/288lmYMaLtQakBHVjstgyJjyKyQxyEKGR1p
-        HG54Sr7BZiDodhLXUaYO+DpdCUnKKDc2Zw==
-X-Google-Smtp-Source: APXvYqwA3Q6JIegT9xwctFSiqW7xDEHwxnKE9YSfS9H7X9l/pgoGIaberQJDu83cH8oI5fk7OozS4w==
-X-Received: by 2002:a63:487:: with SMTP id 129mr20664438pge.14.1568457145610;
-        Sat, 14 Sep 2019 03:32:25 -0700 (PDT)
-Received: from localhost.localdomain ([149.28.153.17])
-        by smtp.gmail.com with ESMTPSA id z2sm2345536pfq.58.2019.09.14.03.32.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2019 03:32:24 -0700 (PDT)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH] mm, tracing: print symbol name for call_site
-Date:   Sat, 14 Sep 2019 18:32:15 +0800
-Message-Id: <20190914103215.23301-1-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mbl+TqU1RDnoByFgw6YTBN5hIBAakcwGG9n4xIXKC+c=;
+        b=M5e+//XNlm8GKV+74TZtb7+2uPv5TgUVwnR0vbZR8WqtKGr3fQfdOb+264ukHCDoLc
+         aqBTHyy3Nq84L5xSp8Zmn4wljPasctCxpI85Zj8J7X2jUP4RmiMB6JHDdVJkhRPkUzOX
+         rAhLYGSzCRvpNRKBkW74EYW3gUOfZkPy+VkLRCGeg5dRvVU7AxYKbQLgIG4/rnLipiRA
+         cW4OjVsI90yHI8NCq6bH8oIAhzJnRzXIS4LDrPJ+xT09lsDJNf/He+PVKDkAz87+3s89
+         3pXW29eBWwRPFK92GkbgzkjGb7kCFdR6oe86nxTK4LYI5ihExfcwWQLIBHFrl+C2FGsB
+         RkBA==
+X-Gm-Message-State: APjAAAVRzUy9aJ/2xnQg9Gd/ouCAk/cXlEVxRPHTsct9/hElUk88G6Zq
+        KmVMmdsOHpT9J8ykZpmNq9bA8C0491HA49p6pLI=
+X-Google-Smtp-Source: APXvYqz11IoWGhoGXKjzb8F+hvckBLKA4ujj2NSQtgA3h1sXWfq74cy0DnzK69Jz9K7i6UWYYo405yTRzItDeF6LSFo=
+X-Received: by 2002:a9d:744c:: with SMTP id p12mr38958898otk.198.1568457249060;
+ Sat, 14 Sep 2019 03:34:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190912130007.4469-1-bparrot@ti.com> <20190912130007.4469-5-bparrot@ti.com>
+In-Reply-To: <20190912130007.4469-5-bparrot@ti.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Sat, 14 Sep 2019 11:33:42 +0100
+Message-ID: <CA+V-a8stmX2WmJEQRvvdOfHiFNgmEbtPTWtn+Fuq2h8SW4N3Hw@mail.gmail.com>
+Subject: Re: [Patch 4/6] media: i2c: ov2659: Add optional powerdown gpio handling
+To:     Benoit Parrot <bparrot@ti.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To improve the readability of raw slab trace points, print the call_site ip
-using '%pS'. Then we can grep events with function names.
+Hi Benoit,
 
-[002] ....   808.188897: kmem_cache_free: call_site=putname+0x47/0x50 ptr=00000000cef40c80
-[002] ....   808.188898: kfree: call_site=security_cred_free+0x42/0x50 ptr=0000000062400820
-[002] ....   808.188904: kmem_cache_free: call_site=put_cred_rcu+0x88/0xa0 ptr=0000000058d74ef8
-[002] ....   808.188913: kmem_cache_alloc: call_site=prepare_creds+0x26/0x100 ptr=0000000058d74ef8 bytes_req=168 bytes_alloc=576 gfp_flags=GFP_KERNEL
-[002] ....   808.188917: kmalloc: call_site=security_prepare_creds+0x77/0xa0 ptr=0000000062400820 bytes_req=8 bytes_alloc=336 gfp_flags=GFP_KERNEL|__GFP_ZERO
-[002] ....   808.188920: kmem_cache_alloc: call_site=getname_flags+0x4f/0x1e0 ptr=00000000cef40c80 bytes_req=4096 bytes_alloc=4480 gfp_flags=GFP_KERNEL
-[002] ....   808.188925: kmem_cache_free: call_site=putname+0x47/0x50 ptr=00000000cef40c80
-[002] ....   808.188926: kfree: call_site=security_cred_free+0x42/0x50 ptr=0000000062400820
-[002] ....   808.188931: kmem_cache_free: call_site=put_cred_rcu+0x88/0xa0 ptr=0000000058d74ef8
+On Thu, Sep 12, 2019 at 1:58 PM Benoit Parrot <bparrot@ti.com> wrote:
+>
+> On some board it is possible that the sensor 'powerdown'
+> pin might be controlled with a gpio instead of being
+> tied to always powered.
+>
+> This patch add support to specify an optional gpio
+> which will be set at probe time and remained on.
+>
+> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> ---
+>  drivers/media/i2c/Kconfig  |  2 +-
+>  drivers/media/i2c/ov2659.c | 13 +++++++++++++
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index 7eee1812bba3..315c1d8bdb7b 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -634,7 +634,7 @@ config VIDEO_OV2640
+>  config VIDEO_OV2659
+>         tristate "OmniVision OV2659 sensor support"
+>         depends on VIDEO_V4L2 && I2C
+> -       depends on MEDIA_CAMERA_SUPPORT
+> +       depends on MEDIA_CAMERA_SUPPORT && GPIOLIB
+>         select V4L2_FWNODE
+>         help
+>           This is a Video4Linux2 sensor driver for the OmniVision
+> diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+> index efbe6dc720e2..c64f73bef336 100644
+> --- a/drivers/media/i2c/ov2659.c
+> +++ b/drivers/media/i2c/ov2659.c
+> @@ -32,6 +32,8 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_graph.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/videodev2.h>
+> @@ -232,6 +234,8 @@ struct ov2659 {
+>         struct sensor_register *format_ctrl_regs;
+>         struct ov2659_pll_ctrl pll;
+>         int streaming;
+> +       /* used to control the sensor powerdownN pin */
+> +       struct gpio_desc *pwrdn_gpio;
+>  };
+>
+>  static const struct sensor_register ov2659_init_regs[] = {
+> @@ -1391,6 +1395,7 @@ static int ov2659_probe(struct i2c_client *client)
+>         struct v4l2_subdev *sd;
+>         struct ov2659 *ov2659;
+>         struct clk *clk;
+> +       struct gpio_desc *gpio;
 
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
----
- include/trace/events/kmem.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+you don't need the local var here you can just assign it directly to pwrdn_gpio.
 
-diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-index eb57e3037deb..69e8bb8963db 100644
---- a/include/trace/events/kmem.h
-+++ b/include/trace/events/kmem.h
-@@ -35,8 +35,8 @@ DECLARE_EVENT_CLASS(kmem_alloc,
- 		__entry->gfp_flags	= gfp_flags;
- 	),
- 
--	TP_printk("call_site=%lx ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s",
--		__entry->call_site,
-+	TP_printk("call_site=%pS ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s",
-+		(void *)__entry->call_site,
- 		__entry->ptr,
- 		__entry->bytes_req,
- 		__entry->bytes_alloc,
-@@ -131,7 +131,8 @@ DECLARE_EVENT_CLASS(kmem_free,
- 		__entry->ptr		= ptr;
- 	),
- 
--	TP_printk("call_site=%lx ptr=%p", __entry->call_site, __entry->ptr)
-+	TP_printk("call_site=%pS ptr=%p",
-+		  (void *)__entry->call_site, __entry->ptr)
- );
- 
- DEFINE_EVENT(kmem_free, kfree,
--- 
-2.20.1
+>         int ret;
+>
+>         if (!pdata) {
+> @@ -1414,6 +1419,14 @@ static int ov2659_probe(struct i2c_client *client)
+>             ov2659->xvclk_frequency > 27000000)
+>                 return -EINVAL;
+>
+> +       /* Optional gpio don't fail if not present */
+> +       gpio = devm_gpiod_get_optional(&client->dev, "powerdown",
+> +                                      GPIOD_OUT_HIGH);
+> +       if (IS_ERR(gpio))
+> +               return PTR_ERR(gpio);
+> +
+> +       ov2659->pwrdn_gpio = gpio;
+> +
+apart from assigning it you don't actually use it.
 
+you will also have to read the reset gpio pin and implement
+ov2659_set_power() and
+call it in appropriate places/ s_power ?
+
+Cheers,
+--Prabhakar Lad
