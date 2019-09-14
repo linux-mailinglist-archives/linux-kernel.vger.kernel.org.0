@@ -2,193 +2,325 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81520B2AEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 12:11:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3878BB2AF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 12:14:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbfINKLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Sep 2019 06:11:23 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36435 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfINKLW (ORCPT
+        id S1728585AbfINKOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Sep 2019 06:14:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48556 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbfINKOq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Sep 2019 06:11:22 -0400
-Received: by mail-wm1-f66.google.com with SMTP id t3so5201739wmj.1;
-        Sat, 14 Sep 2019 03:11:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:openpgp:autocrypt:subject:message-id:date
-         :user-agent:mime-version:in-reply-to;
-        bh=AntpfjJb+6RUr00R7hxLMBZcAFur0UaZMcMfYGGosJg=;
-        b=fEBXrn0A8uxynm4/Owsy0em31/hBNct9IJh630YO1GzJZlIuh6x5kGiPeAJJErsCzi
-         3NGXnFLjG3NwjprVywqHEbKQw5DYDLvm3gDqxI8CQEb2s+70J0uAK37FTIe3Y4QcPMAX
-         PKFIrlAcG19GczDetW+yZTQKFiWxEWl/DtlupcN7p9p4wnX5SYvWOvjvAf8v0QnW/vUu
-         cUsNuG+QMYDN0NqPTnJGWE6Ftfp+SddL03o+J/M4Zcpcl3QCcq7mS7SvktfwWJs94o2E
-         XtTlmeCK3tG88DkNFMm2C+u8s9fGWP9eXthwwlefg1FUxoUPeyK083tQAF2/Fzm0l0Bs
-         2imQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:openpgp:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to;
-        bh=AntpfjJb+6RUr00R7hxLMBZcAFur0UaZMcMfYGGosJg=;
-        b=bVkk7K6umGScynxc0ysrlDyyKhHaHFRGOQOZLyvpdUiR5QzOtsF+1dvHXgc7pPKn7C
-         DfjUvtNWBMwLWldazwpdVvYGoltqld3voDauamOwOOfVD1gNg4WyoftaM9h6nj8JMMNr
-         QBwsUQs8algXZKW2F/6vcjVTcPsdbF0l3/FUwTDw48pWpBpdHOJ9DLJsSnPKVlIR1B8B
-         M5FQ7l9tlyfJBmJVzgb6yvu60jFdTvlWRmylZUKsHJ0QHAip4cpdgTBIHQGdidDsIOMt
-         ooTbczLpGOhQDKqL6HbuzdhFcMNs6wJRdLFX1b73rkyNAYHc2Yp6LPs0CCyFua1m3Lqo
-         RZZw==
-X-Gm-Message-State: APjAAAV+KitdejpIiVIGZ0W2eKwatb1EbW53sEEiIEtSkztAHyhg7uzs
-        3j4ZOlTZ3Fqv8Yj42S/hR6+Lc3efj0U=
-X-Google-Smtp-Source: APXvYqwfXkgi7kf823flEHp0OEqzX1EcoG+bb6AFPMWB7SZyp6PnzsMCxpmbjk3WQdCSZNIJrrMZiw==
-X-Received: by 2002:a1c:7902:: with SMTP id l2mr6665209wme.55.1568455878951;
-        Sat, 14 Sep 2019 03:11:18 -0700 (PDT)
-Received: from [192.168.43.11] ([109.126.145.74])
-        by smtp.gmail.com with ESMTPSA id e30sm58062825wra.48.2019.09.14.03.11.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Sep 2019 03:11:18 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1568413210.git.asml.silence@gmail.com>
- <af5ba045-2ea8-b213-3625-354c10334540@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [RFC PATCH 0/2] Optimise io_uring completion waiting
-Message-ID: <cb105638-2394-5eef-216f-9c6ff918ee59@gmail.com>
-Date:   Sat, 14 Sep 2019 13:11:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Sat, 14 Sep 2019 06:14:46 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F10BA60770; Sat, 14 Sep 2019 10:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568456084;
+        bh=fUu3G73u8wJrx9tfph3HNlcTBRREdUClNrhZxCLdNq4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DdWW76/ap19/OyQsbTmDueeCp85kj0cW/QU58RqlnDD4Uud8dq0b0i3oAg3EWw+0Y
+         GS/OrBn2ceMinw1aL5sROT9kqTOpLm010q3CxSQzCasYx0v67pH4Z4J5UBLXcmoZ3h
+         1VflemmACp9o4X7MIjKZpr6e2eBkUfHI8IWXZ3t4=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D6469607F1;
+        Sat, 14 Sep 2019 10:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568456084;
+        bh=fUu3G73u8wJrx9tfph3HNlcTBRREdUClNrhZxCLdNq4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DdWW76/ap19/OyQsbTmDueeCp85kj0cW/QU58RqlnDD4Uud8dq0b0i3oAg3EWw+0Y
+         GS/OrBn2ceMinw1aL5sROT9kqTOpLm010q3CxSQzCasYx0v67pH4Z4J5UBLXcmoZ3h
+         1VflemmACp9o4X7MIjKZpr6e2eBkUfHI8IWXZ3t4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6469607F1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: pull-request: wireless-drivers-next 2019-09-14
+Date:   Sat, 14 Sep 2019 13:14:40 +0300
+Message-ID: <87r24jchgv.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <af5ba045-2ea8-b213-3625-354c10334540@kernel.dk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="1UpWvQKmHjh63s1q2D5QaIWPw37539xMm"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---1UpWvQKmHjh63s1q2D5QaIWPw37539xMm
-Content-Type: multipart/mixed; boundary="n83DNlQnNXXTEpVorGmAy12v3UslHPoME";
- protected-headers="v1"
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <cb105638-2394-5eef-216f-9c6ff918ee59@gmail.com>
-Subject: Re: [RFC PATCH 0/2] Optimise io_uring completion waiting
-References: <cover.1568413210.git.asml.silence@gmail.com>
- <af5ba045-2ea8-b213-3625-354c10334540@kernel.dk>
-In-Reply-To: <af5ba045-2ea8-b213-3625-354c10334540@kernel.dk>
+Hi Dave,
 
---n83DNlQnNXXTEpVorGmAy12v3UslHPoME
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+here's a pull request to net-next tree for v5.4, more info below. Please
+let me know if there are any problems.
 
-It solves much of the problem, though still have overhead on traversing
-a wait queue + indirect calls for checking.
+Kalle
 
-I've been thinking to either
-1. create n wait queues and bucketing waiter. E.g. log2(min_events)
-bucketing  would remove at least half of such calls for arbitary
-min_events and all if min_events is pow2.
+The following changes since commit 172ca8308b0517ca2522a8c885755fd5c20294e7:
 
-2. or dig deeper and add custom wake_up with perhaps sorted wait_queue.
-As I see it, it's pretty bulky and over-engineered, but maybe somebody
-knows an easier way?
+  cxgb4: Fix spelling typos (2019-09-12 12:50:56 +0100)
 
-Anyway, I don't have performance numbers for that, so don't know if this
-would be justified.
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next=
+.git tags/wireless-drivers-next-for-davem-2019-09-14
 
-On 14/09/2019 03:31, Jens Axboe wrote:
-> On 9/13/19 4:28 PM, Pavel Begunkov (Silence) wrote:
->> From: Pavel Begunkov <asml.silence@gmail.com>
->>
->> There could be a lot of overhead within generic wait_event_*() used fo=
-r
->> waiting for large number of completions. The patchset removes much of
->> it by using custom wait event (wait_threshold).
->>
->> Synthetic test showed ~40% performance boost. (see patch 2)
->=20
-> Nifty, from an io_uring perspective, I like this a lot.
->=20
-> The core changes needed to support it look fine as well. I'll await
-> Peter/Ingo's comments on it.
->=20
+for you to fetch changes up to f9e568754562e0f506e12aa899c378b4155080e9:
 
---=20
-Yours sincerely,
-Pavel Begunkov
+  Merge ath-next from git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/a=
+th.git (2019-09-13 18:15:58 +0300)
 
+----------------------------------------------------------------
+wireless-drivers-next patches for 5.4
 
---n83DNlQnNXXTEpVorGmAy12v3UslHPoME--
+Last set of patches for 5.4. wil6210 and rtw88 being most active this
+time, but ath9k also having a new module to load devices without
+EEPROM.
 
---1UpWvQKmHjh63s1q2D5QaIWPw37539xMm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Major changes:
 
------BEGIN PGP SIGNATURE-----
+wil6210
 
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl18vMEACgkQWt5b1Glr
-+6XnSw/7BNkPkh3Nd7JZKz/MxlxlDO9WJViWrafCx0DwriU7WUd3uE1u0cEda+hJ
-lv/biGOrIkhsFFBlnx7e//XdiliS6U9oYRE/2tuyts+bTKnbRvjKHApRFQO8fguO
-jBHbfUcXVANMq6O3CgeTzPOstPeXvU0va9Ey69AuWQQy1k7bZpn/8PJdTp7vn8l5
-aSfX3m/lobS5BG43jh0eThhghjHwwZdj4dybcP2Mzp2yuwzbxkERHIhR0jWN4Tt9
-Ngk43SYx8MHaS3X0incND2QR7ZaU0K58ztUf33U+umzV8kLRImiRX2nJu31wHv5g
-p9GbcUft6YBI6f5oO9Vh6VbxvCYoMenFkhEovf4aunxlDBLMUKFOuF6kfVg4E/oE
-tskpU2pn88USu0Yzc9ROOilOgBUhruVxToJCErgeQQFRzkI5+xlfAQ6HXmefDWhH
-ioUOmG5EFxXj8w+Pqjof13U/KczxANlmNGYNUPz2TEiwDyEpC4MpjzAsgZI65lkW
-l0Mv2GnE9sh7qv3gz+2QJhSH4nD0QYMHvHQVAVZ+N6Fq6Bg6fOkzfdLfI6BQT3OV
-XrOq8XBGKUK/8hG1r3+eMSGEMlkGg3zviov/Z83WznhvgEgc+yYOBtUrkHle0Iue
-Jws/PwXpSCl1FpXMPudATZghBG65zM8F1nSHajLlt7qBuzz1Ibg=
-=jlm/
------END PGP SIGNATURE-----
+* add support for Enhanced Directional Multi-Gigabit (EDMG) channels 9-11
 
---1UpWvQKmHjh63s1q2D5QaIWPw37539xMm--
+* add debugfs file to show PCM ring content
+
+* report boottime_ns in scan results
+
+ath9k
+
+* add a separate loader for AR92XX (and older) pci(e) without eeprom
+
+brcmfmac
+
+* use the same wiphy after PCIe reset to not confuse the user space
+
+rtw88
+
+* enable interrupt migration
+
+* enable AMSDU in AMPDU aggregation
+
+* report RX power for each antenna
+
+* enable to DPK and IQK calibration methods to improve performance
+
+----------------------------------------------------------------
+Ahmad Masri (1):
+      wil6210: fix PTK re-key race
+
+Alexei Avshalom Lazar (2):
+      wil6210: Add EDMG channel support
+      wil6210: verify cid value is valid
+
+Arnd Bergmann (1):
+      wcn36xx: use dynamic allocation for large variables
+
+Ben Greear (1):
+      ath10k: free beacon buf later in vdev teardown
+
+Chin-Yen Lee (1):
+      rtw88: 8822c: update pwr_seq to v13
+
+Christian Lamparter (1):
+      ath9k: add loader for AR92XX (and older) pci(e)
+
+Colin Ian King (4):
+      wil6210: fix wil_cid_valid with negative cid values
+      rtlwifi: rtl8821ae: make array static const and remove redundant assi=
+gnment
+      bcma: make arrays pwr_info_offset and sprom_sizes static const, shrin=
+ks object size
+      ssb: make array pwr_info_offset static const, makes object smaller
+
+Dedy Lansky (4):
+      wil6210: add wil_netif_rx() helper function
+      wil6210: add debugfs to show PMC ring content
+      wil6210: make sure DR bit is read before rest of the status message
+      wil6210: properly initialize discovery_expired_work
+
+Hui Peng (1):
+      ath6kl: fix a NULL-ptr-deref bug in ath6kl_usb_alloc_urb_from_pipe()
+
+Jia-Ju Bai (1):
+      ath6kl: Fix a possible null-pointer dereference in ath6kl_htc_mbox_cr=
+eate()
+
+Kalle Valo (1):
+      Merge ath-next from git://git.kernel.org/.../kvalo/ath.git
+
+Larry Finger (9):
+      rtlwifi: rtl8723ae: Remove unused GET_XXX and SET_XXX macros
+      rtlwifi: rtl8723ae: Replace local bit manipulation macros
+      rtlwifi: rtl8723ae: Convert macros that set descriptor
+      rtlwifi: rtl8723ae: Convert inline routines to little-endian words
+      rtlwifi: rtl8723be: Remove unused SET_XXX and GET_XXX macros
+      rtlwifi: rtl8723be: Replace local bit manipulation macros
+      rtlwifi: rtl8723be: Convert macros that set descriptor
+      rtlwifi: rtl8723be: Convert inline routines to little-endian words
+      rtlwifi: rtl8188ee: rtl8192ce: rtl8192de: rtl8723ae: rtl8821ae: Remov=
+e some unused bit manipulation macros
+
+Lior David (3):
+      wil6210: use writel_relaxed in wil_debugfs_iomem_x32_set
+      wil6210: fix RX short frame check
+      wil6210: ignore reset errors for FW during probe
+
+Lorenzo Bianconi (5):
+      ath9k: dynack: fix possible deadlock in ath_dynack_node_{de}init
+      ath9k: dyanck: introduce ath_dynack_set_timeout routine
+      ath9k: dynack: properly set last timeout timestamp in ath_dynack_reset
+      ath9k: dynack: set max timeout according to channel width
+      ath9k: dynack: set ackto to max timeout in ath_dynack_reset
+
+Lubomir Rintel (1):
+      libertas: use mesh_wdev->ssid instead of priv->mesh_ssid
+
+Luis Correia (1):
+      CREDITS: Update email address
+
+Markus Elfring (1):
+      wil6210: Delete an unnecessary kfree() call in wil_tid_ampdu_rx_alloc=
+()
+
+Maya Erez (1):
+      wil6210: report boottime_ns in scan results
+
+Michael Straube (3):
+      rtlwifi: rtl8192ce: replace _rtl92c_evm_db_to_percentage with generic=
+ version
+      rtlwifi: rtl8192cu: replace _rtl92c_evm_db_to_percentage with generic=
+ version
+      rtlwifi: rtl8192de: replace _rtl92d_evm_db_to_percentage with generic=
+ version
+
+Navid Emamdoost (2):
+      ath9k_htc: release allocated buffer if timed out
+      ath9k: release allocated buffer if timed out
+
+Nicolas Boichat (1):
+      ath10k: adjust skb length in ath10k_sdio_mbox_rx_packet
+
+Rafa=C5=82 Mi=C5=82ecki (3):
+      brcmfmac: move "cfg80211_ops" pointer to another struct
+      brcmfmac: split brcmf_attach() and brcmf_detach() functions
+      brcmfmac: don't realloc wiphy during PCIe reset
+
+Rakesh Pillai (1):
+      ath10k: fix channel info parsing for non tlv target
+
+Tsang-Shian Lin (2):
+      rtw88: 8822c: Enable interrupt migration
+      rtw88: fix wrong rx power calculation
+
+Tzu-En Huang (2):
+      rtw88: 8822c: add SW DPK support
+      rtw88: add dynamic cck pd mechanism
+
+Wen Gong (2):
+      ath10k: add mic bytes for pmf management packet
+      ath10k: add reorder and change PN check logic for mac80211
+
+Yan-Hsuan Chuang (5):
+      rtw88: 8822c: update PHY parameter to v38
+      rtw88: 8822c: add FW IQK support
+      rtw88: move IQK/DPK into phy_calibration
+      rtw88: allows to receive AMSDU in AMPDU
+      rtw88: report RX power for each antenna
+
+YueHaibing (1):
+      carl9170: remove set but not used variable 'udev'
+
+zhong jiang (2):
+      ath9k: Remove unneeded variable to store return value
+      brcmsmac: Use DIV_ROUND_CLOSEST directly to make it readable
+
+ CREDITS                                            |    2 +-
+ drivers/bcma/sprom.c                               |   10 +-
+ drivers/net/wireless/ath/ath10k/htt_rx.c           |   91 +-
+ drivers/net/wireless/ath/ath10k/htt_tx.c           |    8 +
+ drivers/net/wireless/ath/ath10k/mac.c              |    9 +-
+ drivers/net/wireless/ath/ath10k/sdio.c             |   29 +-
+ drivers/net/wireless/ath/ath10k/wmi-tlv.c          |    2 +-
+ drivers/net/wireless/ath/ath10k/wmi-tlv.h          |   16 +
+ drivers/net/wireless/ath/ath10k/wmi.h              |    8 -
+ drivers/net/wireless/ath/ath6kl/htc_mbox.c         |    4 +-
+ drivers/net/wireless/ath/ath6kl/usb.c              |    8 +
+ drivers/net/wireless/ath/ath9k/Kconfig             |   16 +
+ drivers/net/wireless/ath/ath9k/Makefile            |    2 +
+ .../net/wireless/ath/ath9k/ath9k_pci_owl_loader.c  |  215 +
+ drivers/net/wireless/ath/ath9k/dynack.c            |  101 +-
+ drivers/net/wireless/ath/ath9k/htc_drv_init.c      |    4 +-
+ drivers/net/wireless/ath/ath9k/htc_hst.c           |    3 +
+ drivers/net/wireless/ath/ath9k/wmi.c               |    1 +
+ drivers/net/wireless/ath/carl9170/usb.c            |    2 -
+ drivers/net/wireless/ath/wcn36xx/smd.c             |  186 +-
+ drivers/net/wireless/ath/wil6210/cfg80211.c        |  221 +-
+ drivers/net/wireless/ath/wil6210/debugfs.c         |   16 +-
+ drivers/net/wireless/ath/wil6210/main.c            |    4 +
+ drivers/net/wireless/ath/wil6210/netdev.c          |    4 +
+ drivers/net/wireless/ath/wil6210/pcie_bus.c        |    4 +-
+ drivers/net/wireless/ath/wil6210/pmc.c             |   26 +
+ drivers/net/wireless/ath/wil6210/pmc.h             |    1 +
+ drivers/net/wireless/ath/wil6210/rx_reorder.c      |    1 -
+ drivers/net/wireless/ath/wil6210/txrx.c            |  244 +-
+ drivers/net/wireless/ath/wil6210/txrx.h            |   42 +
+ drivers/net/wireless/ath/wil6210/txrx_edma.c       |   40 +-
+ drivers/net/wireless/ath/wil6210/txrx_edma.h       |   12 +-
+ drivers/net/wireless/ath/wil6210/wil6210.h         |   25 +-
+ drivers/net/wireless/ath/wil6210/wmi.c             |   43 +-
+ drivers/net/wireless/ath/wil6210/wmi.h             |   29 +-
+ .../net/wireless/broadcom/brcm80211/brcmfmac/bus.h |    4 +-
+ .../broadcom/brcm80211/brcmfmac/cfg80211.c         |    1 -
+ .../broadcom/brcm80211/brcmfmac/cfg80211.h         |    1 -
+ .../wireless/broadcom/brcm80211/brcmfmac/core.c    |   42 +-
+ .../wireless/broadcom/brcm80211/brcmfmac/core.h    |    1 +
+ .../wireless/broadcom/brcm80211/brcmfmac/pcie.c    |   13 +-
+ .../wireless/broadcom/brcm80211/brcmfmac/sdio.c    |   15 +-
+ .../net/wireless/broadcom/brcm80211/brcmfmac/usb.c |   34 +-
+ .../broadcom/brcm80211/brcmsmac/phy/phy_n.c        |   14 +-
+ drivers/net/wireless/marvell/libertas/dev.h        |    2 -
+ drivers/net/wireless/marvell/libertas/mesh.c       |   31 +-
+ drivers/net/wireless/marvell/libertas/mesh.h       |    3 +-
+ drivers/net/wireless/realtek/rtlwifi/base.h        |   27 -
+ .../net/wireless/realtek/rtlwifi/rtl8188ee/def.h   |   29 -
+ .../net/wireless/realtek/rtlwifi/rtl8192ce/def.h   |   33 -
+ .../net/wireless/realtek/rtlwifi/rtl8192ce/trx.c   |   23 +-
+ .../net/wireless/realtek/rtlwifi/rtl8192cu/mac.c   |   18 +-
+ .../net/wireless/realtek/rtlwifi/rtl8192de/def.h   |   31 -
+ .../net/wireless/realtek/rtlwifi/rtl8192de/trx.c   |   18 +-
+ .../net/wireless/realtek/rtlwifi/rtl8723ae/def.h   |   31 -
+ .../net/wireless/realtek/rtlwifi/rtl8723ae/trx.c   |  212 +-
+ .../net/wireless/realtek/rtlwifi/rtl8723ae/trx.h   |  794 +--
+ .../net/wireless/realtek/rtlwifi/rtl8723be/trx.c   |  236 +-
+ .../net/wireless/realtek/rtlwifi/rtl8723be/trx.h   |  718 +-
+ .../net/wireless/realtek/rtlwifi/rtl8821ae/def.h   |   31 -
+ .../net/wireless/realtek/rtlwifi/rtl8821ae/phy.c   |    4 +-
+ drivers/net/wireless/realtek/rtw88/coex.c          |    2 +-
+ drivers/net/wireless/realtek/rtw88/coex.h          |    1 +
+ drivers/net/wireless/realtek/rtw88/mac80211.c      |    2 +-
+ drivers/net/wireless/realtek/rtw88/main.c          |    1 +
+ drivers/net/wireless/realtek/rtw88/main.h          |   56 +-
+ drivers/net/wireless/realtek/rtw88/phy.c           |  145 +
+ drivers/net/wireless/realtek/rtw88/phy.h           |    2 +
+ drivers/net/wireless/realtek/rtw88/reg.h           |   17 +
+ drivers/net/wireless/realtek/rtw88/rtw8822b.c      |    8 +-
+ drivers/net/wireless/realtek/rtw88/rtw8822c.c      | 1188 +++-
+ drivers/net/wireless/realtek/rtw88/rtw8822c.h      |   86 +
+ .../net/wireless/realtek/rtw88/rtw8822c_table.c    | 6930 ++++++++++++++--=
+----
+ .../net/wireless/realtek/rtw88/rtw8822c_table.h    |    3 +
+ drivers/net/wireless/realtek/rtw88/rx.c            |    5 +
+ drivers/ssb/pci.c                                  |    2 +-
+ 76 files changed, 8589 insertions(+), 3654 deletions(-)
+ create mode 100644 drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c
