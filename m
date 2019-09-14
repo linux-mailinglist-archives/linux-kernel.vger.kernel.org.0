@@ -2,348 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 913ABB2AFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 12:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C14B2B04
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2019 12:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbfINKdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 14 Sep 2019 06:33:51 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38644 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbfINKdv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Sep 2019 06:33:51 -0400
-Received: by mail-wm1-f68.google.com with SMTP id o184so5211927wme.3;
-        Sat, 14 Sep 2019 03:33:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=RFGEI9cLeT+ICRrH8lD0vtyoieMj4FxXtXODF3qwM7A=;
-        b=f71+i13vq3Vzt+nWipLQbfTuVqZubeBYWuFCwg0FexDNec5n0cV/z+qNmzQCZT/ZZW
-         l//42cUEnqpToL1HRdkgjx2xxFn3c5WKEl7eHEtmthFI16HQFW6NB1tbY6RBeSjMR63m
-         sgqr+jCt94Hj3NqtRpN7NnLhZkNS/21n42RVp2POepcR+LDOTI+hB/IJNi1gAV94f3Yl
-         UMnNpYKDo6g3O/D0hmVoit10VRrlDWXvYwlqoeAqpcC7YPXw/t87ZAoQ1AWWHGwWRrk/
-         V4g7Beoi7Y+88r9V/BspZxxuKoT8mi4VKBd16HVhl8Xi6P5urdIF/zflhJ7f4aHa4s//
-         WqoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=RFGEI9cLeT+ICRrH8lD0vtyoieMj4FxXtXODF3qwM7A=;
-        b=iLuY9F/b2nvnYW8j0ShHtrcahGL0l7apFic/0nivLYRCj/kfAudpWW5XlcRY9cXAxv
-         YOsAS9aghZSiK34ifEr2ac+hH2enSdSEVnBtSNqUzSoGDHQRDiay+b/JEdichlJSblDz
-         LQ3b3VOpwLncNLgGHCuwxSu1lksrFhKsajSCbop4wljWGoL9Lw37sna4B0gXs21M0eDX
-         9OFnNy3DupjF4uFcrhQWGZmfi/ezV1mj++55Ab96I1dLJSQWJXXpV7EWLiX0SWcEVMk+
-         KqbPhFP3r57QxDcEgYRdBjqbBGZNxWW1vyxfY5187jrY68M7uKphOBhbDJxdyjG6ekax
-         HSKg==
-X-Gm-Message-State: APjAAAWwB5Urgr7y1DXWoF5/gVv2Djhy4XWlS3ETTgUA4vfm1a+c14Zq
-        ZGILs6ISi4TosUPw3IVIXg==
-X-Google-Smtp-Source: APXvYqyf09lLao/95ViAGryJPvxC4ygKdWgLm0Id9auPHTlEQq6G5zpbb1qCbwJ+u12iwzrT7ja4Ww==
-X-Received: by 2002:a05:600c:2308:: with SMTP id 8mr7223418wmo.67.1568457228424;
-        Sat, 14 Sep 2019 03:33:48 -0700 (PDT)
-Received: from avx2 ([46.53.250.254])
-        by smtp.gmail.com with ESMTPSA id d9sm52720356wrc.44.2019.09.14.03.33.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 14 Sep 2019 03:33:47 -0700 (PDT)
-Date:   Sat, 14 Sep 2019 13:33:45 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-Cc:     linux-kernel@vger.kernel.org, x86@vger.kernel.org,
-        linux@rasmusvillemoes.dk, torvalds@linux-foundation.org
-Subject: [PATCH] x86_64: new and improved memset()
-Message-ID: <20190914103345.GA5856@avx2>
+        id S1729686AbfINKlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 14 Sep 2019 06:41:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728546AbfINKlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Sep 2019 06:41:21 -0400
+Received: from rapoport-lnx (unknown [87.71.71.249])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CC6020578;
+        Sat, 14 Sep 2019 10:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568457680;
+        bh=9/H5bRCdNvvCpmNx4Gw/GSYF6iabQyLsISVeNmZqhYY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DL2w9gzAtsYQCurwg49AR0XlEL4OkIkKwNhLxkytBAiB4d3dhFaM6kPwIHruHNRTl
+         fwefz2CqhmNiSJzh/AyXpCV0yCK76A0KYpsOBP+0NnCfQwVtAQ76ZXe//5JBsilmfh
+         v/PXVgRP5YdVgokXhwmpvHVAmC0BIOwizkZ+q4V4=
+Date:   Sat, 14 Sep 2019 11:41:13 +0100
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc:     Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH] mips: sgi-ip27: switch from DISCONTIGMEM to SPARSEMEM
+Message-ID: <20190914104112.GA12045@rapoport-lnx>
+References: <20190905154831.88b7853b47ba7db7bd7626bd@suse.de>
+ <20190905154747.GB3650@rapoport-lnx>
+ <20190905233800.0f6b3fb3722cde2f5a88663a@suse.de>
+ <20190906130223.GA17704@rapoport-lnx>
+ <20190909182242.c1ef9717d14b20212ef75954@suse.de>
+ <20190910113243.GA19207@rapoport-lnx>
+ <20190911160939.19f776535770d12ff51a2af7@suse.de>
+ <20190912105831.GA10677@rapoport-lnx>
+ <20190912155539.6151b0811e858455be4c8d86@suse.de>
+ <20190912140912.GA13137@alpha.franken.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190912140912.GA13137@alpha.franken.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current memset() implementation does silly things:
-* multiplication to get register-wide constant:
-	waste of cycles if filler is known at compile time,
+Hi Thomas,
 
-* REP STOSQ followed by REP STOSB:
-	REP STOSB setup overhead is very high because trailing length
-	is very low (< 8)
+On Thu, Sep 12, 2019 at 04:09:12PM +0200, Thomas Bogendoerfer wrote:
+> On Thu, Sep 12, 2019 at 03:55:39PM +0200, Thomas Bogendoerfer wrote:
+> > - reserved[0xd]	[0x000000035bff8000-0x000000035bffffff], 0x0000000000008000 bytes flags: 0x0
+> > 
+> > I have no idea which reservation this is, but it's not from one of the
+> > node data.
+> 
+> that's sparsemem's mem_section. And 
+> 
+>  free_bootmem_with_active_regions(node, end_pfn);
 
-* suboptimal calling convention:
-	REP STOSB/STOSQ favours (rdi, rcx), ABI gives (rdi, rsi, rdx).
-	While shuffling registers is free, rcx and rdx are equivalent
-	code generation wise.
+It seems that the call to free_bootmem_with_active_regions() should have
+been removed along with bootmem and it's not needed now.
 
-* memset_orig():
-	memset(..., 0, ...) could be done within 3 registers,
-	memset(..., != 0, ...) -- within 4 registers, anything else is
-	a waste. CPUs which required unrolling are hopefully gone by now.
+Can you please test the below version of the patch?
 
-New implementation is based on the following observations:
-* c == 0 is the most common form,
-	filler can be done with "xor eax, eax" and pushed into memset()
-	saving 2 bytes per call and multiplication
-
-* "len" divisible by 8 is the most common form:
-	all it takes is one pointer or unsigned long inside structure,
-	dispatch at compile time to code without those ugly "lets fill
-	at most 7 bytes" tails,
-
-* multiplication to get wider filler value can be done at compile time
-  for "c != 0" with 1 insn/10 bytes at most saving multiplication.
-
-Note: "memset0" name is chosen because "bzero" is officially deprecated.
-
-Note: memset(,0,) form is interleaved into memset(,c,) form to save space.
-
-TODO:
-	CONFIG_FORTIFY_SOURCE is enabled by distros
-	inline "xor eax, eax; rep stosb"
-	benchmarks
-	testing
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- arch/x86/boot/compressed/Makefile     |    1 
- arch/x86/include/asm/string_64.h      |  104 ++++++++++++++++++++++++++++++++++
- arch/x86/lib/Makefile                 |    1 
- arch/x86/lib/memset0_64.S             |   86 ++++++++++++++++++++++++++++
- drivers/firmware/efi/libstub/Makefile |    2 
- 5 files changed, 193 insertions(+), 1 deletion(-)
-
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -38,6 +38,7 @@ KBUILD_CFLAGS += $(call cc-option,-fno-stack-protector)
- KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
- KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
- KBUILD_CFLAGS += -Wno-pointer-sign
-+KBUILD_CFLAGS += -D_ARCH_X86_BOOT
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index d50fafd..e4b02b5 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -669,6 +669,7 @@ config SGI_IP22
+ config SGI_IP27
+ 	bool "SGI IP27 (Origin200/2000)"
+ 	select ARCH_HAS_PHYS_TO_DMA
++	select ARCH_SPARSEMEM_ENABLE
+ 	select FW_ARC
+ 	select FW_ARC64
+ 	select BOOT_ELF64
+@@ -2633,18 +2634,9 @@ config ARCH_FLATMEM_ENABLE
+ 	def_bool y
+ 	depends on !NUMA && !CPU_LOONGSON2
  
- KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
- GCOV_PROFILE := n
---- a/arch/x86/include/asm/string_64.h
-+++ b/arch/x86/include/asm/string_64.h
-@@ -15,7 +15,111 @@ extern void *memcpy(void *to, const void *from, size_t len);
- extern void *__memcpy(void *to, const void *from, size_t len);
+-config ARCH_DISCONTIGMEM_ENABLE
+-	bool
+-	default y if SGI_IP27
+-	help
+-	  Say Y to support efficient handling of discontiguous physical memory,
+-	  for architectures which are either NUMA (Non-Uniform Memory Access)
+-	  or have huge holes in the physical address space for other reasons.
+-	  See <file:Documentation/vm/numa.rst> for more.
+-
+ config ARCH_SPARSEMEM_ENABLE
+ 	bool
+-	select SPARSEMEM_STATIC
++	select SPARSEMEM_STATIC if !SGI_IP27
  
- #define __HAVE_ARCH_MEMSET
-+#if defined(_ARCH_X86_BOOT) || defined(CONFIG_FORTIFY_SOURCE)
- void *memset(void *s, int c, size_t n);
-+#else
-+#include <asm/alternative.h>
-+#include <asm/cpufeatures.h>
-+
-+/* Internal, do not use. */
-+static __always_inline void memset0(void *s, size_t n)
-+{
-+	/* Internal, do not use. */
-+	void _memset0_mov(void);
-+	void _memset0_rep_stosq(void);
-+	void memset0_mov(void);
-+	void memset0_rep_stosq(void);
-+	void memset0_rep_stosb(void);
-+
-+	if (__builtin_constant_p(n) && n == 0) {
-+	} else if (__builtin_constant_p(n) && n == 1) {
-+		*(uint8_t *)s = 0;
-+	} else if (__builtin_constant_p(n) && n == 2) {
-+		*(uint16_t *)s = 0;
-+	} else if (__builtin_constant_p(n) && n == 4) {
-+		*(uint32_t *)s = 0;
-+	} else if (__builtin_constant_p(n) && n == 6) {
-+		*(uint32_t *)s = 0;
-+		*(uint16_t *)(s + 4) = 0;
-+	} else if (__builtin_constant_p(n) && n == 8) {
-+		*(uint64_t *)s = 0;
-+	} else if (__builtin_constant_p(n) && (n & 7) == 0) {
-+		alternative_call_2(
-+			_memset0_mov,
-+			_memset0_rep_stosq, X86_FEATURE_REP_GOOD,
-+			memset0_rep_stosb, X86_FEATURE_ERMS,
-+			ASM_OUTPUT2("=D" (s), "=c" (n)),
-+			"D" (s), "c" (n)
-+			: "rax", "cc", "memory"
-+		);
-+	} else {
-+		alternative_call_2(
-+			memset0_mov,
-+			memset0_rep_stosq, X86_FEATURE_REP_GOOD,
-+			memset0_rep_stosb, X86_FEATURE_ERMS,
-+			ASM_OUTPUT2("=D" (s), "=c" (n)),
-+			"D" (s), "c" (n)
-+			: "rax", "rsi", "cc", "memory"
-+		);
-+	}
-+}
-+
-+/* Internal, do not use. */
-+static __always_inline void memsetx(void *s, int c, size_t n)
-+{
-+	/* Internal, do not use. */
-+	void _memsetx_mov(void);
-+	void _memsetx_rep_stosq(void);
-+	void memsetx_mov(void);
-+	void memsetx_rep_stosq(void);
-+	void memsetx_rep_stosb(void);
-+
-+	const uint64_t ccc = (uint8_t)c * 0x0101010101010101ULL;
-+
-+	if (__builtin_constant_p(n) && n == 0) {
-+	} else if (__builtin_constant_p(n) && n == 1) {
-+		*(uint8_t *)s = ccc;
-+	} else if (__builtin_constant_p(n) && n == 2) {
-+		*(uint16_t *)s = ccc;
-+	} else if (__builtin_constant_p(n) && n == 4) {
-+		*(uint32_t *)s = ccc;
-+	} else if (__builtin_constant_p(n) && n == 8) {
-+		*(uint64_t *)s = ccc;
-+	} else if (__builtin_constant_p(n) && (n & 7) == 0) {
-+		alternative_call_2(
-+			_memsetx_mov,
-+			_memsetx_rep_stosq, X86_FEATURE_REP_GOOD,
-+			memsetx_rep_stosb, X86_FEATURE_ERMS,
-+			ASM_OUTPUT2("=D" (s), "=c" (n)),
-+			"D" (s), "c" (n), "a" (ccc)
-+			: "cc", "memory"
-+		);
-+	} else {
-+		alternative_call_2(
-+			memsetx_mov,
-+			memsetx_rep_stosq, X86_FEATURE_REP_GOOD,
-+			memsetx_rep_stosb, X86_FEATURE_ERMS,
-+			ASM_OUTPUT2("=D" (s), "=c" (n)),
-+			"D" (s), "c" (n), "a" (ccc)
-+			: "rsi", "cc", "memory"
-+		);
-+	}
-+}
-+
-+static __always_inline void *memset(void *s, int c, size_t n)
-+{
-+	if (__builtin_constant_p(c)) {
-+		if (c == 0) {
-+			memset0(s, n);
-+		} else {
-+			memsetx(s, c, n);
-+		}
-+		return s;
-+	} else {
-+		return __builtin_memset(s, c, n);
-+	}
-+}
-+#endif
- void *__memset(void *s, int c, size_t n);
+ config NUMA
+ 	bool "NUMA Support"
+diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
+index fb077a9..9db8692 100644
+--- a/arch/mips/sgi-ip27/ip27-memory.c
++++ b/arch/mips/sgi-ip27/ip27-memory.c
+@@ -406,12 +406,8 @@ static void __init node_mem_init(cnodeid_t node)
+ 	slot_freepfn += PFN_UP(sizeof(struct pglist_data) +
+ 			       sizeof(struct hub_data));
  
- #define __HAVE_ARCH_MEMSET16
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -58,6 +58,7 @@ else
-         lib-y += csum-partial_64.o csum-copy_64.o csum-wrappers_64.o
-         lib-y += clear_page_64.o copy_page_64.o
-         lib-y += memmove_64.o memset_64.o
-+	lib-y += memset0_64.o
-         lib-y += copy_user_64.o
- 	lib-y += cmpxchg16b_emu.o
- endif
-new file mode 100644
---- /dev/null
-+++ b/arch/x86/lib/memset0_64.S
-@@ -0,0 +1,86 @@
-+#include <linux/linkage.h>
-+#include <asm/export.h>
-+
-+.intel_syntax noprefix
-+
-+ENTRY(memset0_rep_stosb)
-+	xor	eax, eax
-+.globl memsetx_rep_stosb
-+memsetx_rep_stosb:
-+	rep stosb
-+	ret
-+ENDPROC(memset0_rep_stosb)
-+ENDPROC(memsetx_rep_stosb)
-+EXPORT_SYMBOL(memset0_rep_stosb)
-+EXPORT_SYMBOL(memsetx_rep_stosb)
-+
-+ENTRY(_memset0_rep_stosq)
-+	xor	eax, eax
-+.globl _memsetx_rep_stosq
-+_memsetx_rep_stosq:
-+	shr	rcx, 3
-+	rep stosq
-+	ret
-+ENDPROC(_memset0_rep_stosq)
-+ENDPROC(_memsetx_rep_stosq)
-+EXPORT_SYMBOL(_memset0_rep_stosq)
-+EXPORT_SYMBOL(_memsetx_rep_stosq)
-+
-+ENTRY(memset0_rep_stosq)
-+	xor	eax, eax
-+.globl memsetx_rep_stosq
-+memsetx_rep_stosq:
-+	lea	rsi, [rdi + rcx]
-+	shr	rcx, 3
-+	rep stosq
-+	cmp	rdi, rsi
-+	je	1f
-+2:
-+	mov	[rdi], al
-+	add	rdi, 1
-+	cmp	rdi, rsi
-+	jne	2b
-+1:
-+	ret
-+ENDPROC(memset0_rep_stosq)
-+ENDPROC(memsetx_rep_stosq)
-+EXPORT_SYMBOL(memset0_rep_stosq)
-+EXPORT_SYMBOL(memsetx_rep_stosq)
-+
-+ENTRY(_memset0_mov)
-+	xor	eax, eax
-+.globl _memsetx_mov
-+_memsetx_mov:
-+	add	rcx, rdi
-+	cmp	rdi, rcx
-+	je	1f
-+2:
-+	mov	[rdi], rax
-+	add	rdi, 8
-+	cmp	rdi, rcx
-+	jne	2b
-+1:
-+	ret
-+ENDPROC(_memset0_mov)
-+ENDPROC(_memsetx_mov)
-+EXPORT_SYMBOL(_memset0_mov)
-+EXPORT_SYMBOL(_memsetx_mov)
-+
-+ENTRY(memset0_mov)
-+	xor	eax, eax
-+.globl memsetx_mov
-+memsetx_mov:
-+	lea	rsi, [rdi + rcx]
-+	cmp	rdi, rsi
-+	je	1f
-+2:
-+	mov	[rdi], al
-+	add	rdi, 1
-+	cmp	rdi, rsi
-+	jne	2b
-+1:
-+	ret
-+ENDPROC(memset0_mov)
-+ENDPROC(memsetx_mov)
-+EXPORT_SYMBOL(memset0_mov)
-+EXPORT_SYMBOL(memsetx_mov)
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -28,7 +28,7 @@ KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
- 				   -D__NO_FORTIFY \
- 				   $(call cc-option,-ffreestanding) \
- 				   $(call cc-option,-fno-stack-protector) \
--				   -D__DISABLE_EXPORTS
-+				   -D__DISABLE_EXPORTS -D_ARCH_X86_BOOT
+-	free_bootmem_with_active_regions(node, end_pfn);
+-
+ 	memblock_reserve(slot_firstpfn << PAGE_SHIFT,
+ 			 ((slot_freepfn - slot_firstpfn) << PAGE_SHIFT));
+-
+-	sparse_memory_present_with_active_regions(node);
+ }
  
- GCOV_PROFILE			:= n
- KASAN_SANITIZE			:= n
+ /*
+@@ -444,6 +440,8 @@ void __init prom_meminit(void)
+ 		}
+ 		__node_data[node] = &null_node;
+ 	}
++
++	memblocks_present();
+ }
+ 
+ void __init prom_free_prom_memory(void)
+ 
+> on the last node will free this reserved memory, when memory
+> is added node by node. This explains it.
+> 
+> So when resending the patch add my
+> 
+> Tested-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> 
+> Thomas.
+> 
+> -- 
+> Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+> good idea.                                                [ RFC1925, 2.3 ]
+
+-- 
+Sincerely yours,
+Mike.
