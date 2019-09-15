@@ -2,93 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B705EB3191
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 21:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31892B3194
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 21:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbfIOTNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Sep 2019 15:13:16 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:45428 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725270AbfIOTNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Sep 2019 15:13:16 -0400
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id x8FJCwW5023224;
-        Sun, 15 Sep 2019 21:12:58 +0200
-Date:   Sun, 15 Sep 2019 21:12:58 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
-        William Jon McCann <mccann@jhu.edu>,
-        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Lennart Poettering <mzxreary@0pointer.de>
-Subject: Re: [PATCH RFC v2] random: optionally block in getrandom(2) when the
- CRNG is uninitialized
-Message-ID: <20190915191258.GA23212@1wt.eu>
-References: <20190911173624.GI2740@mit.edu>
- <20190912034421.GA2085@darwi-home-pc>
- <20190912082530.GA27365@mit.edu>
- <CAHk-=wjyH910+JRBdZf_Y9G54c1M=LBF8NKXB6vJcm9XjLnRfg@mail.gmail.com>
- <20190914122500.GA1425@darwi-home-pc>
- <008f17bc-102b-e762-a17c-e2766d48f515@gmail.com>
- <20190915052242.GG19710@mit.edu>
- <CAHk-=wgg2T=3KxrO-BY3nHJgMEyApjnO3cwbQb_0vxsn9qKN8Q@mail.gmail.com>
- <20190915183240.GA23155@1wt.eu>
- <CAHk-=wi0tSUuxqaCDMtwqdVbwvTXw2ZH2k1URHz069RTznEfVw@mail.gmail.com>
+        id S1727324AbfIOTRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Sep 2019 15:17:17 -0400
+Received: from mx1.cock.li ([185.10.68.5]:59461 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725270AbfIOTRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Sep 2019 15:17:16 -0400
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
+        autolearn=disabled version=3.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi0tSUuxqaCDMtwqdVbwvTXw2ZH2k1URHz069RTznEfVw@mail.gmail.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1568575033; bh=1XEKiW8lRosRp7rTNF760ZAE09CwkhitKBAyDD8ktjc=;
+        h=Date:From:To:Subject:From;
+        b=kxBZHa97pOxlB/ZmlF1pUj+PLVlHibCe4HLSofW3ZPw6p3adSjqXJt2Lp10bQHS73
+         HuM1+qAfNIxfmikPg35z7wlrgMH1xCBxpKx1c7y7KfVy5lj15oJiDui9BPK3/F3fsM
+         ORR7DhUF6kkxbHcHL8vHWGPdZULJGQh9LPz7Tly+vwWvLSOIPwb790pKynq2VWSBZr
+         6CNDMjnkTakYyejq+vfyM4WRg5IEAKxPO2A9o31UG/PRqTKR7bBSGt/umsczAQ0Pkh
+         Nfg5Rw1mwDyzu16g+0T9ZqNjm/houmM08bNdoU1Ls4Yqz5G35G2cmBrwjTCrHjf9aE
+         iB9mLoZSyDDIw==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sun, 15 Sep 2019 19:17:12 +0000
+From:   gameonlinux@redchan.it
+To:     rms@gnu.org, bruce@perens.com, linux-kernel@vger.kernel.org
+Subject: Why isn't Grsecurity being sued for its long standing GPL violations?
+Message-ID: <dd488b8e0b257b01d460c9017780b486@redchan.it>
+X-Sender: gameonlinux@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 15, 2019 at 11:59:41AM -0700, Linus Torvalds wrote:
-> > In addition, since you're leaving the door open to bikeshed around
-> > the timeout valeue, I'd say that while 30s is usually not huge in a
-> > desktop system's life, it actually is a lot in network environments
-> > when it delays a switchover.
-> 
-> Oh, absolutely.
-> 
-> But in that situation you have a MIS person on call, and somebody who
-> can fix it.
-> 
-> It's not like switchovers happen in a vacuum. What we should care
-> about is that updating a kernel _works_. No regressions. But if you
-> have some five-nines setup with switchover, you'd better have some
-> competent MIS people there too. You don't just switch kernels without
-> testing ;)
+Hi, RMS and Bruce Perens;
 
-I mean maybe I didn't use the right term, but typically in networked
-environments you'll have watchdogs on sensitive devices (e.g. the
-default gateways and load balancers), which will trigger an instant
-reboot of the system if something really bad happens. It can range
-from a dirty oops, FS remounted R/O, pure freeze, OOM, missing
-process, panic etc. And here the reset which used to take roughly
-10s to get the whole services back up for operations suddenly takes
-40s. My point is that I won't have issues explaining users that 10s
-or 13s is the same when they rely on five nices, but trying to argue
-that 40s is identical to 10s will be a hard position to stand by.
+I noticed that recently Grsecurity's Brad Spengler (who sued you, Bruce, 
+for speaking the truth), decided to "Flex" and basically advertise while 
+chastising the linux community:
 
-And actually there are other dirty cases. Such systems often work
-in active-backup or active-active modes. One typical issue is that
-the primary system reboots, the second takes over within one second,
-and once the primary system is back *apparently* operating, some
-processes which appear to be present and which possibly have already
-bound their listening ports are waiting for 30s in getrandom() while
-the monitoring systems around see them as ready, thus the primary
-machine goes back to its role and cannot reliably run the service
-for the first 30 seconds, which roughly multiplies the downtime by
-30. That's why I'd like to make it possible to lower it this value
-(either definitely or by cmdline, as I think it can be fine for
-all those who care about down time).
+news.ycombinator.com/item?id=20874470
 
-Willy
+
+Another poster then pointed out the history of Grsecurity's copyright 
+violations (as a derivative work that is restricting redistribution), 
+but said he didn't want to say to much, because he didn't want to get 
+sued. He referenced your good write-up on the situation: 
+perens.com/2017/06/28/warning-grsecurity-potential-contributory-infringement-risk-for-customers/
+
+(Which has not changed)
+
+Why isn't Grsecurity being sued for it's copyright violations? They've 
+been going on for years now. Clearly their scheme works: it can be shown 
+to a court both the attempt to restrict redistribution was tendered (the 
+agreement) and that said attempt has been successful.
+
+Also isn't Open Source Security simply an alter-ego of Brad Spengler? 
+Him being the only employee? Couldn't the corporate veil be pierced and 
+he be found personally liable for any damages?
