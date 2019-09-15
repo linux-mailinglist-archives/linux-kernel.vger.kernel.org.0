@@ -2,79 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBCB8B30EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 18:52:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A1EEB30FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 18:57:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfIOQwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Sep 2019 12:52:17 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54669 "EHLO
+        id S1727179AbfIOQzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Sep 2019 12:55:25 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55405 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbfIOQwQ (ORCPT
+        with ESMTP id S1726024AbfIOQzZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Sep 2019 12:52:16 -0400
+        Sun, 15 Sep 2019 12:55:25 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 4AC6381DD1; Sun, 15 Sep 2019 18:51:59 +0200 (CEST)
-Date:   Sun, 15 Sep 2019 18:52:04 +0200
+        id 86E1B81325; Sun, 15 Sep 2019 18:55:09 +0200 (CEST)
+Date:   Sun, 15 Sep 2019 18:55:16 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>, lee.jones@linaro.org,
-        jingoohan1@gmail.com, jacek.anaszewski@gmail.com, dmurphy@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCH 1/2] backlight: lm3630a: add an enable gpio for the HWEN
- pin
-Message-ID: <20190915165204.GA4857@bug>
-References: <20190908203704.30147-1-andreas@kemnade.info>
- <20190908203704.30147-2-andreas@kemnade.info>
- <20190909105729.w5552rtop7rhghy2@holly.lan>
- <20190909221349.46ca5a1f@aktux>
- <20190910102156.vmprsjebmlphkv34@holly.lan>
- <20190910210648.3594912d@kemnade.info>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 042/190] KVM: x86: hyperv: keep track of mismatched
+ VP indexes
+Message-ID: <20190915165516.GA4901@bug>
+References: <20190913130559.669563815@linuxfoundation.org>
+ <20190913130603.107888371@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190910210648.3594912d@kemnade.info>
+In-Reply-To: <20190913130603.107888371@linuxfoundation.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+On Fri 2019-09-13 14:04:57, Greg Kroah-Hartman wrote:
+> [ Upstream commit 87ee613d076351950b74383215437f841ebbeb75 ]
+> 
+> In most common cases VP index of a vcpu matches its vcpu index. Userspace is, however, 
+> free to set any mapping it wishes and we need to account for that when we need to find a 
+> vCPU with a particular VP index. To keep search algorithms optimal in both cases 
+> introduce 'num_mismatched_vp_indexes' counter showing how many vCPUs with mismatching VP 
+> index we have. In case the counter is zero we can assume vp_index == vcpu_idx.
 
-> > > > Is this needed?
-> > > > 
-> > > > This is a remove path, not a power management path, and we have no idea
-> > > > what the original status of the pin was anyway?
-> > > >   
-> > > 
-> > > Looking at Ishdn on page 5 of the datasheet, switching it off everytime
-> > > possible seems not needed. We would need to call chip_init() everytime
-> > > we enable the gpio or live with default values.
-> > > Therefore I did decide to not put it into any power management path.
-> > > But switching it on and not switching it off feels so unbalanced.   
-> > 
-> > Either the power consumed by the controller when strings aren't lit up
-> > matters, in which case the driver should implement proper power
-> > management or it doesn't matter and changing the pin state isn't needed.
-> > 
-> > I'm happy with either of the above but this looks like a third way,
-> > where eager users could hack in a bit of extra power management by
-> > forcing drivers to unbind. 
-> > 
-> I think I will take the simple way. I am quite sure that the power
-> consumption with HWEN on and leds off does not matter. If someone
-> later comes up and finds out that I misread the datasheet, things
-> are prepared to be improved.
+I don't see why this is stable material.
 
-Dunno.. if the power consumption does not matter, why does the chip have the enable
-pin in the first place, and why do we bother supporting it? We could hardcode the
-pin to enabled as well..
+>  	u64 hv_reenlightenment_control;
+>  	u64 hv_tsc_emulation_control;
+>  	u64 hv_tsc_emulation_status;
+> +
+> +	/* How many vCPUs have VP index != vCPU index */
+> +	atomic_t num_mismatched_vp_indexes;
+>  };
+>  
+
+It adds a write-only variable ...
+
+Best regards,
 									Pavel
-
 
 -- 
 (english) http://www.livejournal.com/~pavelmachek
