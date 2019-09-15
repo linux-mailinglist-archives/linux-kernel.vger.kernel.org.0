@@ -2,170 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F330B3074
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 16:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20315B306D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 16:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731611AbfIOOJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Sep 2019 10:09:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbfIOOJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Sep 2019 10:09:15 -0400
-Received: from paulmck-ThinkPad-P72 (96-84-246-146-static.hfc.comcastbusiness.net [96.84.246.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2003214D9;
-        Sun, 15 Sep 2019 14:09:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568556553;
-        bh=rmNKWNk/aXvpVA0xUaI9iWM2hf/hp6RjrNoDZVj/K74=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=TBZWLPqnS/yaAw+qJQMjb9WMQD0SJFfDDS7DWzm5GQSc2nnA2Ewn3YG/u/mPCyzl8
-         nhcL5f20JvInF34QIpSarjucakVhlg6SAp1JrxOSNg4demnsj6oGFZbQXQ3a1Lf+nG
-         GbsgUXLSC4FscM6vEO9o0qRqxrycLZx2pNHt7pHM=
-Date:   Sun, 15 Sep 2019 07:09:11 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 2/4] task: Ensure tasks are available for a grace
- period after leaving the runqueue
-Message-ID: <20190915140911.GA17248@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20190830160957.GC2634@redhat.com>
- <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
- <87o906wimo.fsf@x220.int.ebiederm.org>
- <20190902134003.GA14770@redhat.com>
- <87tv9uiq9r.fsf@x220.int.ebiederm.org>
- <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
- <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
- <87muf7f4bf.fsf_-_@x220.int.ebiederm.org>
- <87r24jdpl5.fsf_-_@x220.int.ebiederm.org>
- <20190915140752.GJ30224@paulmck-ThinkPad-P72>
+        id S1731472AbfIOOFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Sep 2019 10:05:17 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58434 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726146AbfIOOFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Sep 2019 10:05:16 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B66F8ED16131DCAC250C;
+        Sun, 15 Sep 2019 22:05:13 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Sun, 15 Sep 2019 22:05:05 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <valentina.manea.m@gmail.com>, <shuah@kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH v2] usbip: vhci_hcd indicate failed message
+Date:   Sun, 15 Sep 2019 22:22:23 +0800
+Message-ID: <20190915142223.158404-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <5D7E3D1A.5070906@bfs.de>
+References: <5D7E3D1A.5070906@bfs.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190915140752.GJ30224@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 15, 2019 at 07:07:52AM -0700, Paul E. McKenney wrote:
-> On Sat, Sep 14, 2019 at 07:33:58AM -0500, Eric W. Biederman wrote:
-> > 
-> > In the ordinary case today the rcu grace period for a task_struct is
-> > triggered when another process wait's for it's zombine and causes the
+If the return value of vhci_init_attr_group and
+sysfs_create_group is non-zero, which mean they failed
+to init attr_group and create sysfs group, so it would
+better add 'failed' message to indicate that.
+This patch also change pr_err to dev_err to trace which
+device is failed.
 
-Oh, and "waits for its", just to hit the grammar en passant...  ;-)
+Fixes: 0775a9cbc694 ("usbip: vhci extension: modifications to vhci driver")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: change pr_err to dev_err.
+ drivers/usb/usbip/vhci_hcd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-							Thanx, Paul
+diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+index 000ab7225717..bea28ec846ee 100644
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -1185,12 +1185,12 @@ static int vhci_start(struct usb_hcd *hcd)
+ 	if (id == 0 && usb_hcd_is_primary_hcd(hcd)) {
+ 		err = vhci_init_attr_group();
+ 		if (err) {
+-			pr_err("init attr group\n");
++			dev_err(hcd_dev(hcd), "init attr group failed\n");
+ 			return err;
+ 		}
+ 		err = sysfs_create_group(&hcd_dev(hcd)->kobj, &vhci_attr_group);
+ 		if (err) {
+-			pr_err("create sysfs files\n");
++			dev_err(hcd_dev(hcd), "create sysfs files failed\n");
+ 			vhci_finish_attr_group();
+ 			return err;
+ 		}
+-- 
+2.20.1
 
-> > kernel to call release_task().  As the waiting task has to receive a
-> > signal and then act upon it before this happens, typically this will
-> > occur after the original task as been removed from the runqueue.
-> > 
-> > Unfortunaty in some cases such as self reaping tasks it can be shown
-> > that release_task() will be called starting the grace period for
-> > task_struct long before the task leaves the runqueue.
-> > 
-> > Therefore use put_task_struct_rcu_user in finish_task_switch to
-> > guarantee that the there is a rcu lifetime after the task
-> > leaves the runqueue.
-> > 
-> > Besides the change in the start of the rcu grace period for the
-> > task_struct this change may cause perf_event_delayed_put and
-> > trace_sched_process_free.  The function perf_event_delayed_put boils
-> > down to just a WARN_ON for cases that I assume never show happen.  So
-> > I don't see any problem with delaying it.
-> > 
-> > The function trace_sched_process_free is a trace point and thus
-> > visible to user space.  Occassionally userspace has the strangest
-> > dependencies so this has a miniscule chance of causing a regression.
-> > This change only changes the timing of when the tracepoint is called.
-> > The change in timing arguably gives userspace a more accurate picture
-> > of what is going on.  So I don't expect there to be a regression.
-> > 
-> > In the case where a task self reaps we are pretty much guaranteed that
-> > the rcu grace period is delayed.  So we should get quite a bit of
-> > coverage in of this worst case for the change in a normal threaded
-> > workload.  So I expect any issues to turn up quickly or not at all.
-> > 
-> > I have lightly tested this change and everything appears to work
-> > fine.
-> > 
-> > Inspired-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Inspired-by: Oleg Nesterov <oleg@redhat.com>
-> > Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> > ---
-> >  kernel/fork.c       | 11 +++++++----
-> >  kernel/sched/core.c |  2 +-
-> >  2 files changed, 8 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index 9f04741d5c70..7a74ade4e7d6 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -900,10 +900,13 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
-> >  	if (orig->cpus_ptr == &orig->cpus_mask)
-> >  		tsk->cpus_ptr = &tsk->cpus_mask;
-> >  
-> > -	/* One for the user space visible state that goes away when reaped. */
-> > -	refcount_set(&tsk->rcu_users, 1);
-> > -	/* One for the rcu users, and one for the scheduler */
-> > -	refcount_set(&tsk->usage, 2);
-> > +	/*
-> > +	 * One for the user space visible state that goes away when reaped.
-> > +	 * One for the scheduler.
-> > +	 */
-> > +	refcount_set(&tsk->rcu_users, 2);
-> 
-> OK, this would allow us to add a later decrement-and-test of
-> ->rcu_users ...
-> 
-> > +	/* One for the rcu users */
-> > +	refcount_set(&tsk->usage, 1);
-> >  #ifdef CONFIG_BLK_DEV_IO_TRACE
-> >  	tsk->btrace_seq = 0;
-> >  #endif
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 2b037f195473..69015b7c28da 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -3135,7 +3135,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
-> >  		/* Task is done with its stack. */
-> >  		put_task_stack(prev);
-> >  
-> > -		put_task_struct(prev);
-> > +		put_task_struct_rcu_user(prev);
-> 
-> ... which is here.  And this looks to be invoked from the __schedule()
-> called from do_task_dead() at the very end of do_exit().
-> 
-> This looks plausible, but still requires that it no longer be possible to
-> enter an RCU read-side critical section that might increment ->rcu_users
-> after this point in time.  This might be enforced by a grace period
-> between the time that the task was removed from its lists and the current
-> time (seems unlikely, though, in that case why bother with call_rcu()?) or
-> by some other synchronization.
-> 
-> On to the next patch!
-> 
-> 							Thanx, Paul
-> 
-> >  	}
-> >  
-> >  	tick_nohz_task_switch();
-> > -- 
-> > 2.21.0.dirty
-> > 
