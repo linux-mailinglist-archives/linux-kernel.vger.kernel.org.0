@@ -2,168 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D18CB2F2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 10:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C323AB2F37
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 10:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfIOIVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Sep 2019 04:21:13 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2270 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725497AbfIOIVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Sep 2019 04:21:12 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6883986D29DAF84708BC;
-        Sun, 15 Sep 2019 16:21:10 +0800 (CST)
-Received: from HGHY2S004443181.china.huawei.com (10.184.52.157) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Sun, 15 Sep 2019 16:21:07 +0800
-From:   shikemeng <shikemeng@huawei.com>
-To:     <mingo@redhat.com>, <peterz@infradead.org>,
-        <valentin.schneider@arm.com>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: Re: Re: Re: [PATCH] sched: fix migration to invalid cpu in __set_cpus_allowed_ptr
-Date:   Sun, 15 Sep 2019 08:21:02 +0000
-Message-ID: <1568535662-14956-1-git-send-email-shikemeng@huawei.com>
-X-Mailer: git-send-email 2.7.0.windows.1
-In-Reply-To: <979d57f8-802b-57e5-632a-f94ad0f9d6a1@arm.com>
-References: <979d57f8-802b-57e5-632a-f94ad0f9d6a1@arm.com>
+        id S1727188AbfIOI0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Sep 2019 04:26:35 -0400
+Received: from mga06.intel.com ([134.134.136.31]:37734 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725951AbfIOI0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Sep 2019 04:26:34 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Sep 2019 01:26:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="190776812"
+Received: from shbuild999.sh.intel.com (HELO localhost) ([10.239.147.113])
+  by orsmga006.jf.intel.com with ESMTP; 15 Sep 2019 01:26:31 -0700
+Date:   Sun, 15 Sep 2019 16:27:02 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "Neftin, Sasha" <sasha.neftin@intel.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] igb/igc: Don't warn on fatal read failures when the
+ device is removed
+Message-ID: <20190915082702.GI5541@shbuild999.sh.intel.com>
+References: <20190822183318.27634-1-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.184.52.157]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822183318.27634-1-lyude@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/09/2019 6:13,shikemeng wrote:
->>> From 089dbf0216628ac6ae98742ab90725ca9c2bf201 Mon Sep 17 00:00:00 2001
->>> From:  <shikemeng@huawei.com>
->>> Date: Tue, 10 Sep 2019 09:44:58 -0400
->>> Subject: [PATCH] sched: fix migration to invalid cpu in 
->>> __set_cpus_allowed_ptr
->>> 
->>> reason: migration to invalid cpu in __set_cpus_allowed_ptr archive 
->>> path: patches/euleros/sched
->>> 
->>
->>The above should probably be trimmed from the log.
->>
->
->Thanks for reminding me. I will remove this part in a new patch.
->
->>> Oops occur when running qemu on arm64:
->>>  Unable to handle kernel paging request at virtual address 
->>> ffff000008effe40  Internal error: Oops: 96000007 [#1] SMP  Process 
->>> migration/0 (pid: 12, stack limit = 0x00000000084e3736)
->>>  pstate: 20000085 (nzCv daIf -PAN -UAO)  pc : 
->>> __ll_sc___cmpxchg_case_acq_4+0x4/0x20
->>>  lr : move_queued_task.isra.21+0x124/0x298
->>>  ...
->>>  Call trace:
->>>   __ll_sc___cmpxchg_case_acq_4+0x4/0x20
->>>   __migrate_task+0xc8/0xe0
->>>   migration_cpu_stop+0x170/0x180
->>>   cpu_stopper_thread+0xec/0x178
->>>   smpboot_thread_fn+0x1ac/0x1e8
->>>   kthread+0x134/0x138
->>>   ret_from_fork+0x10/0x18
->>> 
->>> __set_cpus_allowed_ptr will choose an active dest_cpu in affinity mask 
->>> to migrage the process if process is not currently running on any one 
->>> of the CPUs specified in affinity mask.__set_cpus_allowed_ptr will 
->>> choose an invalid dest_cpu(>= nr_cpu_ids, 1024 in my virtual machine) if CPUS in affinity mask are deactived by cpu_down after cpumask_intersects check.
->>
->>Right, cpumask_any_and() returns >= nr_cpu_ids when there isn't any valid CPU bit set.
->>
->>> Cpumask_test_cpu of dest_cpu afterwards is overflow and may passes if 
->>> corresponding bit is coincidentally set.
->>
->>Ouch. I was going to say the cpu_active_mask check from is_cpu_allowed() should've stopped the whole thing there, but AFAICT there's no safeguard against > nr_cpu_ids bit accesses. I see CONFIG_DEBUG_PER_CPU_MAPS should fire a warning for such accesses, but we don't enable it by default.
->>
->>Would it make sense to do something like
->>
->>	return test_bit(...) && cpu < nr_cpu_ids;
->>
->>for cpumask_test_cpu()? We still get the warn with the right config, but we prevent sneaky mistakes like this one. And it seems it's not the only one according to:
->>
->>--
->>virtual patch
->>virtual report
->>
->>@nocheck@
->>expression E;
->>identifier any_func =~ "^cpumask_any";
->>position pos;
->>@@
->>
->>E@pos = any_func(...);
->>... when != E >= nr_cpu_ids
->>    when != E < nr_cpu_ids
->>
->>@script:python depends on nocheck && report@ p << nocheck.pos; @@ coccilib.report.print_report(p[0], "Missing cpumask_any_*() return value check!")
->>---
->>
->>Some of those seem benign since they are on e.g. cpu_online_mask, some other are somewhat dubious (e.g. deadline.c::dl_task_can_attach()).
->>
->>As a consequence, kernel will access a invalid rq address associate with the invalid cpu in
->
->It's more thoughtful to add check in cpumask_test_cpu.It can solve this problem and can prevent other potential bugs.I will test it and resend
->a new patch.
+On Fri, Aug 23, 2019 at 02:33:18AM +0800, Lyude Paul wrote:
+> Fatal read errors are worth warning about, unless of course the device
+> was just unplugged from the machine - something that's a rather normal
+> occurence when the igb/igc adapter is located on a Thunderbolt dock. So,
+> let's only WARN() if there's a fatal read error while the device is
+> still present.
+> 
+> This fixes the following WARN splat that's been appearing whenever I
+> unplug my Caldigit TS3 Thunderbolt dock from my laptop:
+> 
+>   igb 0000:09:00.0 enp9s0: PCIe link lost
+>   ------------[ cut here ]------------
+>   igb: Failed to read reg 0x18!
+>   WARNING: CPU: 7 PID: 516 at
+>   drivers/net/ethernet/intel/igb/igb_main.c:756 igb_rd32+0x57/0x6a [igb]
+>   Modules linked in: igb dca thunderbolt fuse vfat fat elan_i2c mei_wdt
+>   mei_hdcp i915 wmi_bmof intel_wmi_thunderbolt iTCO_wdt
+>   iTCO_vendor_support x86_pkg_temp_thermal intel_powerclamp joydev
+>   coretemp crct10dif_pclmul crc32_pclmul i2c_algo_bit ghash_clmulni_intel
+>   intel_cstate drm_kms_helper intel_uncore syscopyarea sysfillrect
+>   sysimgblt fb_sys_fops intel_rapl_perf intel_xhci_usb_role_switch mei_me
+>   drm roles idma64 i2c_i801 ucsi_acpi typec_ucsi mei intel_lpss_pci
+>   processor_thermal_device typec intel_pch_thermal intel_soc_dts_iosf
+>   intel_lpss int3403_thermal thinkpad_acpi wmi int340x_thermal_zone
+>   ledtrig_audio int3400_thermal acpi_thermal_rel acpi_pad video
+>   pcc_cpufreq ip_tables serio_raw nvme nvme_core crc32c_intel uas
+>   usb_storage e1000e i2c_dev
+>   CPU: 7 PID: 516 Comm: kworker/u16:3 Not tainted 5.2.0-rc1Lyude-Test+ #14
+>   Hardware name: LENOVO 20L8S2N800/20L8S2N800, BIOS N22ET35W (1.12 ) 04/09/2018
+>   Workqueue: kacpi_hotplug acpi_hotplug_work_fn
+>   RIP: 0010:igb_rd32+0x57/0x6a [igb]
+>   Code: 87 b8 fc ff ff 48 c7 47 08 00 00 00 00 48 c7 c6 33 42 9b c0 4c 89
+>   c7 e8 47 45 cd dc 89 ee 48 c7 c7 43 42 9b c0 e8 c1 94 71 dc <0f> 0b eb
+>   08 8b 00 ff c0 75 b0 eb c8 44 89 e0 5d 41 5c c3 0f 1f 44
+>   RSP: 0018:ffffba5801cf7c48 EFLAGS: 00010286
+>   RAX: 0000000000000000 RBX: ffff9e7956608840 RCX: 0000000000000007
+>   RDX: 0000000000000000 RSI: ffffba5801cf7b24 RDI: ffff9e795e3d6a00
+>   RBP: 0000000000000018 R08: 000000009dec4a01 R09: ffffffff9e61018f
+>   R10: 0000000000000000 R11: ffffba5801cf7ae5 R12: 00000000ffffffff
+>   R13: ffff9e7956608840 R14: ffff9e795a6f10b0 R15: 0000000000000000
+>   FS:  0000000000000000(0000) GS:ffff9e795e3c0000(0000) knlGS:0000000000000000
+>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>   CR2: 0000564317bc4088 CR3: 000000010e00a006 CR4: 00000000003606e0
+>   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>   Call Trace:
+>    igb_release_hw_control+0x1a/0x30 [igb]
+>    igb_remove+0xc5/0x14b [igb]
+>    pci_device_remove+0x3b/0x93
+>    device_release_driver_internal+0xd7/0x17e
+>    pci_stop_bus_device+0x36/0x75
+>    pci_stop_bus_device+0x66/0x75
+>    pci_stop_bus_device+0x66/0x75
+>    pci_stop_and_remove_bus_device+0xf/0x19
+>    trim_stale_devices+0xc5/0x13a
+>    ? __pm_runtime_resume+0x6e/0x7b
+>    trim_stale_devices+0x103/0x13a
+>    ? __pm_runtime_resume+0x6e/0x7b
+>    trim_stale_devices+0x103/0x13a
+>    acpiphp_check_bridge+0xd8/0xf5
+>    acpiphp_hotplug_notify+0xf7/0x14b
+>    ? acpiphp_check_bridge+0xf5/0xf5
+>    acpi_device_hotplug+0x357/0x3b5
+>    acpi_hotplug_work_fn+0x1a/0x23
+>    process_one_work+0x1a7/0x296
+>    worker_thread+0x1a8/0x24c
+>    ? process_scheduled_works+0x2c/0x2c
+>    kthread+0xe9/0xee
+>    ? kthread_destroy_worker+0x41/0x41
+>    ret_from_fork+0x35/0x40
+>   ---[ end trace 252bf10352c63d22 ]---
 >
 
-Think again and again. As cpumask_check will fire a warning if cpu >= nr_cpu_ids, it seems that cpumask_check only expects cpu < nr_cpu_ids and it's
-caller's responsibility to very cpu is in valid range. Interfaces like cpumask_test_and_set_cpu, cpumask_test_and_clear_cpu and so on are not checking
-cpu < nr_cpu_ids either and may cause demage if cpu is out of range.
+Thanks for the fix.
 
->>> migration_cpu_stop->__migrate_task->move_queued_task and the Oops occurs. Process as follows may trigger the Oops:
->>> 1) A process repeatedly bind itself to cpu0 and cpu1 in turn by 
->>> calling sched_setaffinity
->>> 2) A shell script repeatedly "echo 0 > 
->>> /sys/devices/system/cpu/cpu1/online" and "echo 1 > 
->>> /sys/devices/system/cpu/cpu1/online" in turn
->>> 3) Oops appears if the invalid cpu is set in memory after tested cpumask.
->>> 
->>> 
->>> Change-Id: I9c2f95aecd3da568991b7408397215f26c990e40
->>
->>- This doesn't respect the 75 char per line limit
->>- Change IDs don't belong here (we're not using Gerrit)
->>- You're missing a Signed-off-by.
->>
->>You'll find all the guidelines you need for formatting patches in Documentation/process/submitting-patches.rst.
->>
->
->Thanks for the guide.I will read it carefully before send next patch.
->
->>> ---
->>>  kernel/sched/core.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>> 
->>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c index 
->>> 4b63fef..5181ea9 100644
->>> --- a/kernel/sched/core.c
->>> +++ b/kernel/sched/core.c
->>> @@ -1112,7 +1112,8 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
->>>     if (cpumask_equal(&p->cpus_allowed, new_mask))
->>>         goto out;
->>> 
->>> -   if (!cpumask_intersects(new_mask, cpu_valid_mask)) {
->>> +   dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);
->>> +   if (dest_cpu >= nr_cpu_ids) {
->>>         ret = -EINVAL;
->>>         goto out;
->>>     }
->>> @@ -1133,7 +1134,6 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
->>>     if (cpumask_test_cpu(task_cpu(p), new_mask))
->>>         goto out;
->>> 
->>> -   dest_cpu = cpumask_any_and(cpu_valid_mask, new_mask);>     if (task_running(rq, p) || p->state == TASK_WAKING) {
->>>         struct migration_arg arg = { p, dest_cpu };
->>>         /* Need help from migration thread: drop lock and wait. */
->>> --
->>> 1.8.5.6
->>> 
->
->Thansks for your review and advises.
+Acked-by: Feng Tang <feng.tang@intel.com>
 
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Fixes: 47e16692b26b ("igb/igc: warn when fatal read failure happens")
+> Cc: Feng Tang <feng.tang@intel.com>
+> Cc: Sasha Neftin <sasha.neftin@intel.com>
+> Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+> Cc: intel-wired-lan@lists.osuosl.org
+> ---
+>  drivers/net/ethernet/intel/igb/igb_main.c | 3 ++-
+>  drivers/net/ethernet/intel/igc/igc_main.c | 3 ++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+> index e5b7e638df28..1a7f7cd28df9 100644
+> --- a/drivers/net/ethernet/intel/igb/igb_main.c
+> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
+> @@ -753,7 +753,8 @@ u32 igb_rd32(struct e1000_hw *hw, u32 reg)
+>  		struct net_device *netdev = igb->netdev;
+>  		hw->hw_addr = NULL;
+>  		netdev_err(netdev, "PCIe link lost\n");
+> -		WARN(1, "igb: Failed to read reg 0x%x!\n", reg);
+> +		WARN(pci_device_is_present(igb->pdev),
+> +		     "igb: Failed to read reg 0x%x!\n", reg);
+>  	}
+>  
+>  	return value;
+> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+> index 28072b9aa932..f873a4b35eaf 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+> @@ -3934,7 +3934,8 @@ u32 igc_rd32(struct igc_hw *hw, u32 reg)
+>  		hw->hw_addr = NULL;
+>  		netif_device_detach(netdev);
+>  		netdev_err(netdev, "PCIe link lost, device now detached\n");
+> -		WARN(1, "igc: Failed to read reg 0x%x!\n", reg);
+> +		WARN(pci_device_is_present(igc->pdev),
+> +		     "igc: Failed to read reg 0x%x!\n", reg);
+>  	}
+>  
+>  	return value;
+> -- 
+> 2.21.0
