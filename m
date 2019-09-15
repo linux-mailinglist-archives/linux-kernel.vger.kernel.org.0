@@ -2,66 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A1EEB30FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 18:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BBF0B3104
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 19:00:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfIOQzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Sep 2019 12:55:25 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55405 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbfIOQzZ (ORCPT
+        id S1726089AbfIORAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Sep 2019 13:00:44 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:44412 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbfIORAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Sep 2019 12:55:25 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 86E1B81325; Sun, 15 Sep 2019 18:55:09 +0200 (CEST)
-Date:   Sun, 15 Sep 2019 18:55:16 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 042/190] KVM: x86: hyperv: keep track of mismatched
- VP indexes
-Message-ID: <20190915165516.GA4901@bug>
-References: <20190913130559.669563815@linuxfoundation.org>
- <20190913130603.107888371@linuxfoundation.org>
+        Sun, 15 Sep 2019 13:00:43 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1i9XYh-00032u-0f; Sun, 15 Sep 2019 16:39:31 +0000
+Date:   Sun, 15 Sep 2019 17:39:30 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: pci: endpoint test BUG
+Message-ID: <20190915163930.GX1131@ZenIV.linux.org.uk>
+References: <5d9eda26-fb92-063e-f84d-7dfafe5d6b29@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190913130603.107888371@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <5d9eda26-fb92-063e-f84d-7dfafe5d6b29@infradead.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2019-09-13 14:04:57, Greg Kroah-Hartman wrote:
-> [ Upstream commit 87ee613d076351950b74383215437f841ebbeb75 ]
+On Sun, Sep 15, 2019 at 09:34:37AM -0700, Randy Dunlap wrote:
+> Kernel is 5.3-rc8 on x86_64.
 > 
-> In most common cases VP index of a vcpu matches its vcpu index. Userspace is, however, 
-> free to set any mapping it wishes and we need to account for that when we need to find a 
-> vCPU with a particular VP index. To keep search algorithms optimal in both cases 
-> introduce 'num_mismatched_vp_indexes' counter showing how many vCPUs with mismatching VP 
-> index we have. In case the counter is zero we can assume vp_index == vcpu_idx.
+> Loading and removing the pci-epf-test module causes a BUG.
 
-I don't see why this is stable material.
-
->  	u64 hv_reenlightenment_control;
->  	u64 hv_tsc_emulation_control;
->  	u64 hv_tsc_emulation_status;
-> +
-> +	/* How many vCPUs have VP index != vCPU index */
-> +	atomic_t num_mismatched_vp_indexes;
->  };
->  
-
-It adds a write-only variable ...
-
-Best regards,
-									Pavel
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Ugh...  Could you try to reproduce it on earlier kernels?
