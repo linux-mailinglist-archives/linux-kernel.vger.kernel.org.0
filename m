@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A5D0B30F1
+	by mail.lfdr.de (Postfix) with ESMTP id 83E44B30F2
 	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 18:53:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfIOQwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Sep 2019 12:52:22 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44147 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbfIOQwU (ORCPT
+        id S1726462AbfIOQwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Sep 2019 12:52:30 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33264 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbfIOQw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Sep 2019 12:52:20 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q21so21102014pfn.11
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2019 09:52:20 -0700 (PDT)
+        Sun, 15 Sep 2019 12:52:29 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q10so21122232pfl.0
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2019 09:52:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
         bh=X86RdWoaDKqJbFDIoXti2bda7+kkyeUkiLhSN5JzlKU=;
-        b=G+yzSSKXmJhEM++iRzQ5m03oqsOK0gURMOljXVO2EqysSm4iIuA8NRRNAzOgjgp9o0
-         sO+oIkPpkU/Sp5z9Xvvt05SjxNgybmP59Iqv0pMgpE1rryezPSIjCAWwBApg9FKuh12a
-         A9zRNleYomC430D/DcAJPZTKpZ0d7KXzbh05CtiInyVKSAKWWQbzoJcl+X4HS9XCKvz5
-         CZ5W8hKFIdkXo1bHos/qh8RTXnc2JyknMtLKzFSt9JPwYMVbCx62Mlx5XfstNU8ZtmvB
-         GNQbyJOz56HKKnNBUbzNEybDic3axGq12Qi4DRLAQBWgVdNA84WHfhVpry3M1Yo33xLu
-         idjQ==
+        b=UVlqUskFF6lnSRhNIDONapUfjNYD1Nk3plqN/bZfrOxvI8jXvH2brUc3nFqa8l6/m2
+         bzJoXmb99FvFIz8wmkMhFV8OrapnQW+3rgFRcQi84Q0rv0sEXDlzjG35LkxFo4BzBimx
+         E/DEAi8w4LF2wNQ9W3KGhbSNq5T9370tn/2S3iEdZ31+bKcaRwRryklJJW1LxakGJwP2
+         hmryWpIP5WkJwKDqp2xJL8DpIbGmxZLsRXNr1cJQReJNW2y3Wzy84f0UJnpanyBiaQKz
+         HkHjvIcUU5OcKS+Dn6CCbRB2JjmXiiti8WZT7vWc8yYfL/iWgQMPtA78P41UWqUpkpGY
+         eHqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
         bh=X86RdWoaDKqJbFDIoXti2bda7+kkyeUkiLhSN5JzlKU=;
-        b=dVG78UCWk25gW81w/MZumChJB03VpnTd9PphBT5SrGKuqnPY2gcNHSAP6vL6ldkeep
-         tRk1KOXF3778IfGEQiH1eJGYDJmmwfX4eLCosfDNGq+YMFqGBop7scIK4V4IsNRoEQRs
-         E1UuH0Oes2t353Td6tz70Oh7PsGLVDnI6eJ21YzQjqkEzx1KD5QB4xYYwilxS/ZBiNEh
-         P0DtS3kNKRcgiji7GM1mNd3K1IZzra3iHpiRCtpyqiNzExF69396HeSa2Rn+vAA5GQaU
-         oGhxpky1kwQ5cmF/rllwTzIIpmiiYd6lvUB5nAJSUKV7MUjRqoIvPKELxS8UmtAI3tgh
-         kKgA==
-X-Gm-Message-State: APjAAAW92ToAACZ9jVfGDf86XXrZ0VbiRyosXSZax1AVpnnRot4qa982
-        gGEz38aVB1ODaGKRC1ZtTp0=
-X-Google-Smtp-Source: APXvYqyipnT98ResURsw038tfVzIDoxKbCXlrtw3kuy4NXyjm2pDCAcW6gupvqKfpody7f93AEDgXg==
-X-Received: by 2002:aa7:9307:: with SMTP id 7mr8117547pfj.224.1568566340018;
-        Sun, 15 Sep 2019 09:52:20 -0700 (PDT)
+        b=KAhcYDBoHnH5QxAsw94bbRa7hh93Ym3AFL++sAwZkPPZygzZLwhcfPg3lkXASHMAtT
+         RZn1AZVTACrQ5OdBylS1nurIzLAiPlRfO0Yk/DbwL8Cq9X8axDuqzKfnTz4dE8xZNdSC
+         nzGKWpWCdV09F3LqWtIzUQEJ8Fsf28NcgwC56lu+9p0DhQCOazSk7iTRI8Il0XfMkC5e
+         0W+IukWWcO4nHNpSyJEnSQO1C2/iorKyn+2eUpwtazJRt73DOPSpJ3zI32LG8/rINsQh
+         tm9rXV4IETM68Ucw5ZThOlzPt5zKgnk6YhUbMoLc67VTbcRcEvp1XEdc2Qwql1H81rNF
+         piyA==
+X-Gm-Message-State: APjAAAWm/IBpv9uYPhsdItslY6hEFsgm9LKrvjLbs0ZdYZVwJmcin7Og
+        g3BosH2KMZACUpHllBjWyGE=
+X-Google-Smtp-Source: APXvYqyQaiQnRW16hsy9jw0my3XuKFz+xcp5uJlbcjwUKSbH+CeKDB0TSECOfjFQc1MEbcv3mxb3aw==
+X-Received: by 2002:a62:5f83:: with SMTP id t125mr67798974pfb.125.1568566349157;
+        Sun, 15 Sep 2019 09:52:29 -0700 (PDT)
 Received: from localhost.localdomain.localdomain ([2408:823c:c11:160:b8c3:8577:bf2f:3])
-        by smtp.gmail.com with ESMTPSA id a4sm4383259pgq.6.2019.09.15.09.52.11
+        by smtp.gmail.com with ESMTPSA id a4sm4383259pgq.6.2019.09.15.09.52.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2019 09:52:19 -0700 (PDT)
+        Sun, 15 Sep 2019 09:52:28 -0700 (PDT)
 From:   Pengfei Li <lpf.vector@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     vbabka@suse.cz, cl@linux.com, penberg@kernel.org,
         rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, guro@fb.com,
         Pengfei Li <lpf.vector@gmail.com>
-Subject: [PATCH v4 3/7] mm, slab_common: use enum kmalloc_cache_type to iterate over kmalloc caches
-Date:   Mon, 16 Sep 2019 00:51:12 +0800
-Message-Id: <20190915165121.7237-4-lpf.vector@gmail.com>
+Subject: [PATCH v4 3/7] mm, slab_common: Use enum kmalloc_cache_type to iterate over kmalloc caches
+Date:   Mon, 16 Sep 2019 00:51:13 +0800
+Message-Id: <20190915165121.7237-5-lpf.vector@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190915165121.7237-1-lpf.vector@gmail.com>
 References: <20190915165121.7237-1-lpf.vector@gmail.com>
