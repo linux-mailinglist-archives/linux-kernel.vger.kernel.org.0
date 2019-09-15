@@ -2,291 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6130FB3116
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 19:09:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99BE3B3110
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Sep 2019 19:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbfIORJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Sep 2019 13:09:20 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45089 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfIORJT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Sep 2019 13:09:19 -0400
-Received: by mail-pl1-f195.google.com with SMTP id x3so15538871plr.12
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Sep 2019 10:09:19 -0700 (PDT)
+        id S1727171AbfIORIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Sep 2019 13:08:38 -0400
+Received: from mail-eopbgr790074.outbound.protection.outlook.com ([40.107.79.74]:14896
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726037AbfIORIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Sep 2019 13:08:37 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PGew9d5vyFaaLCCujUOmKLy1BcHicVEuADswNLvdFm8qBe7DGBmggkVH8WPfAHtk1GoBD51J7477X5mR6bcPhAKiMcRzkfP7rBYtQ+0q+Xrlgn0NsbsIT04hmFZufe2GgEBuGgwCO4RwdoBfBH9zZdDx7nJhN027cJ90He1FVwgIX/7wc0Pnro3IpfC2emW9pib/C4Ds5XZadHyaWM37BWGSTU7Gy2L2lolM7YTj3trzlbITG5lkz6cO2xZxGCxNEWpHxHYD+t6c+j2B4pau/DTWBsjZfXYhRRDMx/0S3td1DUec1Pn2iFtNxpUsduTrBA9vFdT9K/8mj44R5zytdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YqZVAMZ+RjzyFLGAEX3hXjrzDB6SOb595bQZhQ7ckFA=;
+ b=cm9yw8AoaGn7G0Bx9hbaNIiy4a0T1hqxuEHN1zdTIqMm7gFoWxp+pfZCt2b4J8FeIXSceTZ13KEiAITiH6BKfP9s5qHIkm37Q/Qn7nEHO8JpwkMcSXZWq3g1NwvFNtbQ7ecufraKgEeW0QTL+uI7OrnGEXxdbIzo948Nf8VkDFMyKWch+NURo1FKycAwoTEEcI3geN3Iu3/K94Ff00KUexl07ZR/tVwZtC5QgkH0Jr+91QWlXkBf5GTHTbkuEsCdvlhoT10youpORC8w9VH9hrmQldKcDfmWNFxJYBQ+qm0GyPAEaY/eUTWo/MzTSRomIWsHHojIrDwA234QLTPSPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wnjVX8y3jjuiJNFHe5uOkqxCWTM5n6lVUDEKEUO860s=;
-        b=GVtBCRiRyq/kpfJCMN9PTzJSyoPRk5hHTa0apTD8o1JnRvP+CBIxKbySFT9/pmbrkF
-         RdZfMa3Za7jK372A4MLhh2nD7wcUCKVgbMrQlSPBtzKaamLKGVc8q2/YkscX9+7812qH
-         tHDT0bWPZBxF0hXjL0uUS2W0XG3rXzGoROWzM+CkE99z/TRn7Q4OgbzlNI4p6uE6IAS/
-         vCzttVqLuqhIGI5ztIA0MomO9zzkcaXxnVozBsK9xdzF8Gi4xsFxWFD+Lk3PxJbZnvdX
-         PVmb2F/Hcs5usrYNiBNpxcwA6Etl9GXvnALPC0nozqyG3rx/4hIVspMvaAbnaziwnWfz
-         kr3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wnjVX8y3jjuiJNFHe5uOkqxCWTM5n6lVUDEKEUO860s=;
-        b=deNXOuPKP95Fl0OwDlP7Se9VunaSDGNel9lp0uZST2MEtaAGtSXhCWOJUqcYiH6FIL
-         xrjfGe/pm1MWxDDktAlEdl/GYhru+p0XBN9Ii7NS7tAQY3YiNMEb8QP2F6yETbBJqMzf
-         Tt3ScmsSHsm/lCtNDA8rcnhmIxE34j7OCy6uzYX2HDCUtwxpoUHxtRmo0ruy7WlJoZ0S
-         ZiTOow7N6G6O4PcjHZHFhPRVwmQwM6euavnyWhruv3l3btDPJlasph74Hr3QgVCsMP3U
-         XboSUhnJt5CBUbRfyv61wRZDqnmdcTeiGPmcHzQaJdX1cV50oyGOa8tJ9aIsoWbcLZvO
-         M+8Q==
-X-Gm-Message-State: APjAAAUrzRwVcgChItr5gWtAhwmVfeLEP/HCqHiroVPUuLL+oah6UTol
-        gE7OVScYWvL/2+cIYTE+m34=
-X-Google-Smtp-Source: APXvYqzkN+Fjn40oe2qYTb3JzEBX+pTVQL1iTnNtTqq0W48Miv1zkBF2YjJbNHBTHboSCf5aWkPiKQ==
-X-Received: by 2002:a17:902:a715:: with SMTP id w21mr57145704plq.274.1568567358833;
-        Sun, 15 Sep 2019 10:09:18 -0700 (PDT)
-Received: from localhost.localdomain.localdomain ([2408:823c:c11:160:b8c3:8577:bf2f:3])
-        by smtp.gmail.com with ESMTPSA id r28sm62279134pfg.62.2019.09.15.10.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2019 10:09:18 -0700 (PDT)
-From:   Pengfei Li <lpf.vector@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     vbabka@suse.cz, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, guro@fb.com,
-        Pengfei Li <lpf.vector@gmail.com>
-Subject: [RESEND v4 7/7] mm, slab_common: Modify kmalloc_caches[type][idx] to kmalloc_caches[idx][type]
-Date:   Mon, 16 Sep 2019 01:08:09 +0800
-Message-Id: <20190915170809.10702-8-lpf.vector@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190915170809.10702-1-lpf.vector@gmail.com>
-References: <20190915170809.10702-1-lpf.vector@gmail.com>
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YqZVAMZ+RjzyFLGAEX3hXjrzDB6SOb595bQZhQ7ckFA=;
+ b=J/u3pHBoXAhtZMCLxF0JgkKos4ySvAz3j40trYOjBU93GwSda77DJeYkTKNWEaRLjijCghkVNxySP+Wip8ebVQsZBAUL/6TRs4LYVlcQ43r4eCzn3oHaIXa52yu2sscdlgGdTciTNyw0p8NTI1XOfi+FRUAmMqCEctdIHYf8iWA=
+Received: from MN2PR12MB3455.namprd12.prod.outlook.com (20.178.244.22) by
+ MN2PR12MB3309.namprd12.prod.outlook.com (20.179.83.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2263.17; Sun, 15 Sep 2019 17:08:35 +0000
+Received: from MN2PR12MB3455.namprd12.prod.outlook.com
+ ([fe80::ec02:b95d:560a:ad36]) by MN2PR12MB3455.namprd12.prod.outlook.com
+ ([fe80::ec02:b95d:560a:ad36%7]) with mapi id 15.20.2263.023; Sun, 15 Sep 2019
+ 17:08:35 +0000
+From:   "Mehta, Sanju" <Sanju.Mehta@amd.com>
+To:     "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
+        "jdmason@kudzu.us" <jdmason@kudzu.us>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "allenbh@gmail.com" <allenbh@gmail.com>
+CC:     "linux-ntb@googlegroups.com" <linux-ntb@googlegroups.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Mehta, Sanju" <Sanju.Mehta@amd.com>
+Subject: [PATCH 2/2] ntb_hw_amd: Add memory window support for new AMD
+ hardware
+Thread-Topic: [PATCH 2/2] ntb_hw_amd: Add memory window support for new AMD
+ hardware
+Thread-Index: AQHVa+g1U8wnuc3ADUCHbHDfjwwgYQ==
+Date:   Sun, 15 Sep 2019 17:08:35 +0000
+Message-ID: <1568567293-26894-1-git-send-email-Sanju.Mehta@amd.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MA1PR0101CA0028.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:22::14) To MN2PR12MB3455.namprd12.prod.outlook.com
+ (2603:10b6:208:d0::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Sanju.Mehta@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [165.204.156.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2babc224-bd83-4a94-45bc-08d739ff5800
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MN2PR12MB3309;
+x-ms-traffictypediagnostic: MN2PR12MB3309:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR12MB3309961E66F82F9B052208DDE58D0@MN2PR12MB3309.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3513;
+x-forefront-prvs: 01613DFDC8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(376002)(366004)(136003)(396003)(199004)(189003)(66476007)(66556008)(6436002)(36756003)(64756008)(66446008)(66946007)(7736002)(2616005)(186003)(2906002)(305945005)(14454004)(3846002)(6116002)(316002)(26005)(86362001)(2201001)(8676002)(50226002)(8936002)(81166006)(25786009)(81156014)(2501003)(71200400001)(476003)(71190400001)(54906003)(102836004)(110136005)(66066001)(6486002)(478600001)(5660300002)(486006)(6512007)(4326008)(6506007)(256004)(386003)(53936002)(99286004)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3309;H:MN2PR12MB3455.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: oAYdD+lf+mWt6z8ksLPG9uZxaUgnG0u4Y/NcrGeJZkDiuIGOOYja2bhC8aEw+tJGDV/2G57y1evrsEbky5u6hpUuecTVzkpBKCFGgjfi3zVHuJHJBA6+fGTDgT11DH+nWBhO3gx9vfv3p7l31ie6pGaAPHOUQFgdiyc2KBseC1zs9OWQyn+bLlLDEf09rPbyjWuMQtnP0f5hscqxWTNgzyD9jGlJOtwuouKXxb6ZrSyBdF6/7IkhFZYAi5/eud5e3ZmDo65A8GwHzZM1r7IfAFCXBDS2EJ/8/E6RdxTQdg1k4w4YHA8xK6/DaDu/LlBHRMlsbvVOOkAWAFhpe3JqFq1hNn22C3wVICwx6L06E4LyU+w374FjztygbGqoHplj+fegfYMkxAlp0jzs7lZwhNvI2wRh1H5/fAM6enF1Npc=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2babc224-bd83-4a94-45bc-08d739ff5800
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2019 17:08:35.5928
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uVgkaqtJ6VWQ9zEWKoqA/2o6ZJMvLOnurLgBvml+EkieJLw0PMyCHmeh3JG6Y5wB/cQjJyvzbGmM5PcdW/sO3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3309
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KMALLOC_NORMAL is the most frequently accessed, and kmalloc_caches[]
-is initialized by different types of the same size.
+From: Sanjay R Mehta <sanju.mehta@amd.com>
 
-So modifying kmalloc_caches[type][idx] to kmalloc_caches[idx][type]
-will benefit performance.
+The AMD new hardware uses BAR23 and BAR45 as memory windows
+as compared to previos where BAR1, BAR23 and BAR45 is used
+for memory windows.
 
-$ ./scripts/bloat-o-meter vmlinux.patch_1-6 vmlinux.patch_1-7
-add/remove: 0/0 grow/shrink: 2/57 up/down: 8/-457 (-449)
-Function                                     old     new   delta
-tg3_self_test                               4255    4259      +4
-nf_queue                                     666     670      +4
-kmalloc_slab                                  97      93      -4
-i915_sw_fence_await_dma_fence                441     437      -4
-__igmp_group_dropped                         619     615      -4
-gss_import_sec_context                       176     170      -6
-xhci_alloc_command                           212     205      -7
-create_kmalloc_caches                        155     148      -7
-xprt_switch_alloc                            136     128      -8
-xhci_segment_alloc                           297     289      -8
-xhci_ring_alloc                              369     361      -8
-xhci_mem_init                               3664    3656      -8
-xhci_alloc_virt_device                       496     488      -8
-xhci_alloc_tt_info                           346     338      -8
-xhci_alloc_stream_info                       718     710      -8
-xhci_alloc_container_ctx                     215     207      -8
-xfrm_policy_alloc                            271     263      -8
-tcp_sendmsg_locked                          3120    3112      -8
-tcp_md5_do_add                               774     766      -8
-tcp_fastopen_defer_connect                   270     262      -8
-sr_read_tochdr.isra                          251     243      -8
-sr_read_tocentry.isra                        328     320      -8
-sr_is_xa                                     376     368      -8
-sr_get_mcn                                   260     252      -8
-selinux_sk_alloc_security                    113     105      -8
-sdev_evt_send_simple                         118     110      -8
-sdev_evt_alloc                                79      71      -8
-scsi_probe_and_add_lun                      2938    2930      -8
-sbitmap_queue_init_node                      418     410      -8
-ring_buffer_read_prepare                      94      86      -8
-request_firmware_nowait                      396     388      -8
-regulatory_hint_found_beacon                 394     386      -8
-ohci_urb_enqueue                            3176    3168      -8
-nla_strdup                                   142     134      -8
-nfs_alloc_seqid                               87      79      -8
-nfs4_get_state_owner                        1040    1032      -8
-nfs4_do_close                                578     570      -8
-nf_ct_tmpl_alloc                              85      77      -8
-mempool_create_node                          164     156      -8
-ip_setup_cork                                362     354      -8
-ip6_setup_cork                              1021    1013      -8
-gss_create_cred                              140     132      -8
-drm_flip_work_allocate_task                   70      62      -8
-dma_pool_alloc                               410     402      -8
-devres_open_group                            214     206      -8
-cfg80211_stop_iface                          260     252      -8
-cfg80211_sinfo_alloc_tid_stats                77      69      -8
-cfg80211_port_authorized                     212     204      -8
-cfg80211_parse_mbssid_data                  2397    2389      -8
-cfg80211_ibss_joined                         335     327      -8
-call_usermodehelper_setup                    149     141      -8
-bpf_prog_alloc_no_stats                      182     174      -8
-blk_alloc_flush_queue                        191     183      -8
-bdi_alloc_node                               195     187      -8
-audit_log_d_path                             196     188      -8
-_netlbl_catmap_getnode                       247     239      -8
-____ip_mc_inc_group                          475     467      -8
-__i915_sw_fence_await_sw_fence               417     405     -12
-ida_alloc_range                              955     934     -21
-Total: Before=14874316, After=14873867, chg -0.00%
+This patch add support for both AMD hardwares.
 
-Signed-off-by: Pengfei Li <lpf.vector@gmail.com>
+Signed-off-by: Sanjay R Mehta <sanju.mehta@amd.com>
 ---
- include/linux/slab.h |  6 +++---
- mm/slab.c            |  4 ++--
- mm/slab_common.c     |  8 ++++----
- mm/slub.c            | 12 ++++++------
- 4 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/ntb/hw/amd/ntb_hw_amd.c | 23 ++++++++++++++++++-----
+ drivers/ntb/hw/amd/ntb_hw_amd.h |  7 ++++++-
+ 2 files changed, 24 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index f53bb6980110..0842db5f7053 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -340,7 +340,7 @@ enum kmalloc_cache_type {
- 
- #ifndef CONFIG_SLOB
- extern struct kmem_cache *
--kmalloc_caches[NR_KMALLOC_TYPES][KMALLOC_CACHE_NUM];
-+kmalloc_caches[KMALLOC_CACHE_NUM][NR_KMALLOC_TYPES];
- 
- static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
+diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_am=
+d.c
+index e9286cf..156c2a1 100644
+--- a/drivers/ntb/hw/amd/ntb_hw_amd.c
++++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
+@@ -78,7 +78,7 @@ static int ndev_mw_to_bar(struct amd_ntb_dev *ndev, int i=
+dx)
+ 	if (idx < 0 || idx > ndev->mw_count)
+ 		return -EINVAL;
+=20
+-	return 1 << idx;
++	return ndev->dev_data->mw_idx << idx;
+ }
+=20
+ static int amd_ntb_mw_count(struct ntb_dev *ntb, int pidx)
+@@ -909,7 +909,7 @@ static int amd_init_ntb(struct amd_ntb_dev *ndev)
  {
-@@ -582,7 +582,7 @@ static __always_inline void *kmalloc(size_t size, gfp_t flags)
- 			return ZERO_SIZE_PTR;
- 
- 		return kmem_cache_alloc_trace(
--				kmalloc_caches[kmalloc_type(flags)][index],
-+				kmalloc_caches[index][kmalloc_type(flags)],
- 				flags, size);
- #endif
+ 	void __iomem *mmio =3D ndev->self_mmio;
+=20
+-	ndev->mw_count =3D AMD_MW_CNT;
++	ndev->mw_count =3D ndev->dev_data->mw_count;
+ 	ndev->spad_count =3D AMD_SPADS_CNT;
+ 	ndev->db_count =3D AMD_DB_CNT;
+=20
+@@ -1069,6 +1069,8 @@ static int amd_ntb_pci_probe(struct pci_dev *pdev,
+ 		goto err_ndev;
  	}
-@@ -600,7 +600,7 @@ static __always_inline void *kmalloc_node(size_t size, gfp_t flags, int node)
- 			return ZERO_SIZE_PTR;
- 
- 		return kmem_cache_alloc_node_trace(
--				kmalloc_caches[kmalloc_type(flags)][i],
-+				kmalloc_caches[i][kmalloc_type(flags)],
- 						flags, node, size);
- 	}
- #endif
-diff --git a/mm/slab.c b/mm/slab.c
-index 7bc4e90e1147..079c3e6ced1f 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -1246,7 +1246,7 @@ void __init kmem_cache_init(void)
- 	 * Initialize the caches that provide memory for the  kmem_cache_node
- 	 * structures first.  Without this, further allocations will bug.
- 	 */
--	kmalloc_caches[KMALLOC_NORMAL][INDEX_NODE] = create_kmalloc_cache(
-+	kmalloc_caches[INDEX_NODE][KMALLOC_NORMAL] = create_kmalloc_cache(
- 				kmalloc_info[INDEX_NODE].name[KMALLOC_NORMAL],
- 				kmalloc_info[INDEX_NODE].size,
- 				ARCH_KMALLOC_FLAGS, 0,
-@@ -1263,7 +1263,7 @@ void __init kmem_cache_init(void)
- 		for_each_online_node(nid) {
- 			init_list(kmem_cache, &init_kmem_cache_node[CACHE_CACHE + nid], nid);
- 
--			init_list(kmalloc_caches[KMALLOC_NORMAL][INDEX_NODE],
-+			init_list(kmalloc_caches[INDEX_NODE][KMALLOC_NORMAL],
- 					  &init_kmem_cache_node[SIZE_NODE + nid], nid);
- 		}
- 	}
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index e7903bd28b1f..0f465eae32f6 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1028,7 +1028,7 @@ struct kmem_cache *__init create_kmalloc_cache(const char *name,
- }
- 
- struct kmem_cache *
--kmalloc_caches[NR_KMALLOC_TYPES][KMALLOC_CACHE_NUM] __ro_after_init =
-+kmalloc_caches[KMALLOC_CACHE_NUM][NR_KMALLOC_TYPES] __ro_after_init =
- { /* initialization for https://bugs.llvm.org/show_bug.cgi?id=42570 */ };
- EXPORT_SYMBOL(kmalloc_caches);
- 
-@@ -1090,7 +1090,7 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
- 		index = fls(size - 1) - KMALLOC_IDX_ADJ_2;
- 	}
- 
--	return kmalloc_caches[kmalloc_type(flags)][index];
-+	return kmalloc_caches[index][kmalloc_type(flags)];
- }
- 
- #ifdef CONFIG_ZONE_DMA
-@@ -1168,7 +1168,7 @@ void __init setup_kmalloc_cache_index_table(void)
- static __always_inline void __init
- new_kmalloc_cache(int idx, enum kmalloc_cache_type type, slab_flags_t flags)
- {
--	kmalloc_caches[type][idx] = create_kmalloc_cache(
-+	kmalloc_caches[idx][type] = create_kmalloc_cache(
- 					kmalloc_info[idx].name[type],
- 					kmalloc_info[idx].size, flags, 0,
- 					kmalloc_info[idx].size);
-@@ -1184,7 +1184,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
- 	int i;
- 
- 	for (i = 0; i < KMALLOC_CACHE_NUM; i++) {
--		if (!kmalloc_caches[KMALLOC_NORMAL][i])
-+		if (!kmalloc_caches[i][KMALLOC_NORMAL])
- 			new_kmalloc_cache(i, KMALLOC_NORMAL, flags);
- 
- 		new_kmalloc_cache(i, KMALLOC_RECLAIM,
-diff --git a/mm/slub.c b/mm/slub.c
-index 0e92ebdcacc9..e87243a16768 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4711,7 +4711,7 @@ static void __init resiliency_test(void)
- 	pr_err("\n1. kmalloc-16: Clobber Redzone/next pointer 0x12->0x%p\n\n",
- 	       p + 16);
- 
--	validate_slab_cache(kmalloc_caches[type][1]);
-+	validate_slab_cache(kmalloc_caches[1][type]);
- 
- 	/* Hmmm... The next two are dangerous */
- 	p = kzalloc(32, GFP_KERNEL);
-@@ -4720,33 +4720,33 @@ static void __init resiliency_test(void)
- 	       p);
- 	pr_err("If allocated object is overwritten then not detectable\n\n");
- 
--	validate_slab_cache(kmalloc_caches[type][2]);
-+	validate_slab_cache(kmalloc_caches[2][type]);
- 	p = kzalloc(64, GFP_KERNEL);
- 	p += 64 + (get_cycles() & 0xff) * sizeof(void *);
- 	*p = 0x56;
- 	pr_err("\n3. kmalloc-64: corrupting random byte 0x56->0x%p\n",
- 	       p);
- 	pr_err("If allocated object is overwritten then not detectable\n\n");
--	validate_slab_cache(kmalloc_caches[type][3]);
-+	validate_slab_cache(kmalloc_caches[3][type]);
- 
- 	pr_err("\nB. Corruption after free\n");
- 	p = kzalloc(128, GFP_KERNEL);
- 	kfree(p);
- 	*p = 0x78;
- 	pr_err("1. kmalloc-128: Clobber first word 0x78->0x%p\n\n", p);
--	validate_slab_cache(kmalloc_caches[type][5]);
-+	validate_slab_cache(kmalloc_caches[5][type]);
- 
- 	p = kzalloc(256, GFP_KERNEL);
- 	kfree(p);
- 	p[50] = 0x9a;
- 	pr_err("\n2. kmalloc-256: Clobber 50th byte 0x9a->0x%p\n\n", p);
--	validate_slab_cache(kmalloc_caches[type][7]);
-+	validate_slab_cache(kmalloc_caches[7][type]);
- 
- 	p = kzalloc(512, GFP_KERNEL);
- 	kfree(p);
- 	p[512] = 0xab;
- 	pr_err("\n3. kmalloc-512: Clobber redzone 0xab->0x%p\n\n", p);
--	validate_slab_cache(kmalloc_caches[type][8]);
-+	validate_slab_cache(kmalloc_caches[8][type]);
- }
- #else
- #ifdef CONFIG_SYSFS
--- 
-2.21.0
+=20
++	ndev->dev_data =3D (struct ntb_dev_data *)id->driver_data;
++
+ 	ndev_init_struct(ndev, pdev);
+=20
+ 	rc =3D amd_ntb_init_pci(ndev, pdev);
+@@ -1123,10 +1125,21 @@ static const struct file_operations amd_ntb_debugfs=
+_info =3D {
+ 	.read =3D ndev_debugfs_read,
+ };
+=20
++static const struct ntb_dev_data dev_data[] =3D {
++	{ /* for device 145b */
++		.mw_count =3D 3,
++		.mw_idx =3D 1,
++	},
++	{ /* for device 148b */
++		.mw_count =3D 2,
++		.mw_idx =3D 2,
++	},
++};
++
+ static const struct pci_device_id amd_ntb_pci_tbl[] =3D {
+-	{PCI_VDEVICE(AMD, 0x145b)},
+-	{PCI_VDEVICE(AMD, 0x148b)},
+-	{0}
++	{ PCI_VDEVICE(AMD, 0x145b), (kernel_ulong_t)&dev_data[0] },
++	{ PCI_VDEVICE(AMD, 0x148b), (kernel_ulong_t)&dev_data[1] },
++	{ 0, }
+ };
+ MODULE_DEVICE_TABLE(pci, amd_ntb_pci_tbl);
+=20
+diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.h b/drivers/ntb/hw/amd/ntb_hw_am=
+d.h
+index 3aac994..139a307 100644
+--- a/drivers/ntb/hw/amd/ntb_hw_amd.h
++++ b/drivers/ntb/hw/amd/ntb_hw_amd.h
+@@ -92,7 +92,6 @@ static inline void _write64(u64 val, void __iomem *mmio)
+=20
+ enum {
+ 	/* AMD NTB Capability */
+-	AMD_MW_CNT		=3D 3,
+ 	AMD_DB_CNT		=3D 16,
+ 	AMD_MSIX_VECTOR_CNT	=3D 24,
+ 	AMD_SPADS_CNT		=3D 16,
+@@ -169,6 +168,11 @@ enum {
+ 	AMD_PEER_OFFSET		=3D 0x400,
+ };
+=20
++struct ntb_dev_data {
++	const unsigned char mw_count;
++	const unsigned int mw_idx;
++};
++
+ struct amd_ntb_dev;
+=20
+ struct amd_ntb_vec {
+@@ -184,6 +188,7 @@ struct amd_ntb_dev {
+ 	u32 cntl_sta;
+ 	u32 peer_sta;
+=20
++	struct ntb_dev_data *dev_data;
+ 	unsigned char mw_count;
+ 	unsigned char spad_count;
+ 	unsigned char db_count;
+--=20
+2.7.4
 
