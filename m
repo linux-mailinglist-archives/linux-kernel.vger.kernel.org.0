@@ -2,124 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1A9B3BDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E37BEB3BF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388055AbfIPNyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:54:44 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:42782 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728005AbfIPNyn (ORCPT
+        id S2388140AbfIPN6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:58:09 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:37294 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727989AbfIPN6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:54:43 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8GDsb4N084722;
-        Mon, 16 Sep 2019 08:54:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568642077;
-        bh=l8yeJsF8FmT2WnVdhCOfEujrwIHFMa/BZ4gjgWzLKWk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=S1iVH2MgMmOKe6ECllqnFkshWA551SXE7hsEYqnVjkJyD62SzdGUT8p62g04H5+/d
-         uTNgpp7/9L2guOauipwSX6UYECEIP41nQkAHm5aO718nH6AduE1zpMeaIDdEMOARTL
-         hKwRYlLSxMiUGw9FvYKQlciIlvvT6/rM0/GM33pI=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8GDsbhV072484;
-        Mon, 16 Sep 2019 08:54:37 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 16
- Sep 2019 08:54:35 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 16 Sep 2019 08:54:35 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8GDsauO095861;
-        Mon, 16 Sep 2019 08:54:37 -0500
-Subject: Re: [PATCH v5 1/9] leds: multicolor: Add sysfs interface definition
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <robh+dt@kernel.org>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190911180115.21035-1-dmurphy@ti.com>
- <20190911180115.21035-2-dmurphy@ti.com>
- <e34f4182-71d1-d51d-fb07-f88f6b88b6a3@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <eb08cd1b-a3eb-18db-0dd2-5c34637df9d5@ti.com>
-Date:   Mon, 16 Sep 2019 08:56:14 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 16 Sep 2019 09:58:09 -0400
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 0BFA83C0579;
+        Mon, 16 Sep 2019 15:58:06 +0200 (CEST)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id IWPcCamjG3-f; Mon, 16 Sep 2019 15:57:59 +0200 (CEST)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 6B0E33C00C4;
+        Mon, 16 Sep 2019 15:57:59 +0200 (CEST)
+Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Mon, 16 Sep
+ 2019 15:57:58 +0200
+Date:   Mon, 16 Sep 2019 15:57:56 +0200
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     shuah <shuah@kernel.org>
+CC:     Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: [PATCH 2/2] selftests: watchdog: Add command line option to show
+ watchdog_info
+Message-ID: <20190916135756.GA24319@vmlxhi-102.adit-jv.com>
+References: <20190907085833.21167-1-erosca@de.adit-jv.com>
+ <20190907085833.21167-2-erosca@de.adit-jv.com>
+ <2b08fa83-185b-4eb7-1217-37ed31d810b5@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e34f4182-71d1-d51d-fb07-f88f6b88b6a3@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2b08fa83-185b-4eb7-1217-37ed31d810b5@kernel.org>
+User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+Hi Shuah,
+CC George
 
-On 9/15/19 8:57 AM, Jacek Anaszewski wrote:
-> Hi Dan,
->
-> On 9/11/19 8:01 PM, Dan Murphy wrote:
->> Add a documentation of LED Multicolor LED class specific
->> sysfs attributes.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>   .../ABI/testing/sysfs-class-led-multicolor    | 73 +++++++++++++++++++
->>   1 file changed, 73 insertions(+)
->>   create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Documentation/ABI/testing/sysfs-class-led-multicolor
->> new file mode 100644
->> index 000000000000..4ea54c2ad4c8
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
->> @@ -0,0 +1,73 @@
->> +What:		/sys/class/leds/<led>/brightness
->> +Date:		Sept 2019
->> +KernelVersion:	5.5
->> +Contact:	Dan Murphy <dmurphy@ti.com>
->> +Description:	read/write
->> +		The multicolor class will redirect the device drivers call back
->> +		function for brightness control to the multicolor class
->> +		brightness control function.
->> +
->> +		Writing to this file will update all LEDs within the group to a
->> +		calculated percentage of what each color LED in the group is set
->> +		to.  The percentage is calculated via the equation below:
->> +
->> +		led_brightness = requested_value * led_color_intensity/led_color_max_intensity
->> +
->> +		For additional details please refer to
->> +		Documentation/leds/leds-class-multicolor.rst.
->> +
->> +		The value of the color is from 0 to
->> +		/sys/class/leds/<led>/max_brightness.
->> +
->> +What:		/sys/class/leds/<led>/colors/color_mix
->> +Date:		Sept 2019
->> +KernelVersion:	5.5
->> +Contact:	Dan Murphy <dmurphy@ti.com>
->> +Description:	read/write
->> +		The values written to this file should contain the intensity
->> +		values of each multicolor LED within the colors directory. The
->> +		index of given color is reported by the color_id file present in
->> +		colors/<color> directory. The index determines the position in
->> +		the sequence of	intensities on which the related intensity
->> +		should be passed to this file.
->> +
->> +		For additional details please refer to
->> +		Documentation/leds/leds-class-multicolor.rst.
-> As already mentioned in the reply to Pavel - let's avoid the
-> introduction of another sysfs file with multiple values.
+On Mon, Sep 16, 2019 at 07:26:41AM -0600, shuah wrote:
+[..]
+> >   		case 'f':
+> >   			/* Handled above */
+> >   			break;
+> > +		case 'i':
+> > +			/*
+> > +			 * watchdog_info was obtained as part of file open
+> > +			 * validation. So we just show it here.
+> > +			 */
+> > +			oneshot = 1;
+> > +			printf("watchdog_info:\n");
+> > +			printf(" identity:\t\t%s\n", info.identity);
+> > +			printf(" firmware_version:\t%u\n",
+> > +			       info.firmware_version);
+> > +			printf(" options:\t\t%08x\n", info.options);
+> > +			break;
+> >   		default:
+> >   			usage(argv[0]);
+> > 
+> 
+> I would like to see these combined. Please don't add another argument.
+> Combine patch and 1&2.
 
-OK for clarification remove the color_mix and color_id files and keep 
-the intensity files?
+With all my appreciation for your comment, why do you think it is better
+to get rid of the new argument? I don't think it is user-friendly to
+always report the watchdog_info to the user. Just look at outputs [1-2]
+and imagine that the watchdog_info part would pop up unconditionally.
+It looks too busy to me.
 
-Dan
+[1] watchdog-test -b -i
+Last boot is caused by: Power-On-Reset.
+watchdog_info:
+ identity:              Renesas WDT Watchdog
+ firmware_version:      0
+ options:               000081a0
 
+[2] watchdog-test -i --help    
+watchdog_info:
+ identity:              Renesas WDT Watchdog
+ firmware_version:      0
+ options:               000081a0
+Usage: ./watchdog-test [options]
+ -f, --file             Open watchdog device file
+                        Default is /dev/watchdog
+ -i, --info             Show watchdog_info
+ -b, --bootstatus       Get last boot status (Watchdog/POR)
+ -d, --disable          Turn off the watchdog timer
+ -e, --enable           Turn on the watchdog timer
+ -h, --help             Print the help message
+ -p, --pingrate=P       Set ping rate to P seconds (default 1)
+ -t, --timeout=T        Set timeout to T seconds
+ -T, --gettimeout       Get the timeout
+ -n, --pretimeout=T     Set the pretimeout to T seconds
+ -N, --getpretimeout    Get the pretimeout
+ -L, --gettimeleft      Get the time left until timer expires
+
+Parameters are parsed left-to-right in real-time.
+Example: ./watchdog-test -d -t 10 -p 5 -e
+Example: ./watchdog-test -t 12 -T -n 7 -N
+
+-- 
+Best Regards,
+Eugeniu.
