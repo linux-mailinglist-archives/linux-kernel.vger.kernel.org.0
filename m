@@ -2,132 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40E4AB4089
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 20:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D56B4092
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 20:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732328AbfIPStL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 14:49:11 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:35811 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730107AbfIPStK (ORCPT
+        id S2390610AbfIPStW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 14:49:22 -0400
+Received: from esa2.mentor.iphmx.com ([68.232.141.98]:58261 "EHLO
+        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfIPStV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 14:49:10 -0400
-Received: by mail-io1-f70.google.com with SMTP id 18so1180913iof.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 11:49:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=F5NQvrUFVwU+iYEomKDgHpNzH9BuzuG1Oq9cILqoF9w=;
-        b=XO8TIBcdaRVgBX4eJ6tSYRKipUX636YQRoN9G8DkQWCwMwIEB1JoGkjb2J4OWLj0ev
-         Zhrx0t526snLNU5YjdNjMOwHF2msZsSBxi0zEh2oXS+usxbS3627qDT8mjkd9eEEXNzO
-         H7CQTIGDg8qeUMXWWVhO30lNxpYRlf1eRhG5eDFSpi8AqlbdGVepcMfggGqqpCMJcw2R
-         /Bx6QFEmyC5tqf/9jybKbPdT55vE/gXbW8yD4HeuuVoYUCAOSL3wPKzZMGsINSY5wTPz
-         fc1eHv1eKqT3PFV0zTTdiVl+ZPFUuoSyGXKsMyIWfwpcl4FLBzvR/eaVKBewm78crvig
-         /kpw==
-X-Gm-Message-State: APjAAAURv5K2x8LWKad3EHBBm3ETyZaIMA2THa9YLHRRT9ly7iH7Hr+K
-        QvsUc7M3pcJ7ydJp0FxGJH/G62rObwiP/+bSz3rSc3ayinA8
-X-Google-Smtp-Source: APXvYqw3P64aFVztpt9L2rmR2DtHi9s6MW4xDKqLCr5gsOt4FQ/bH8ofPvnN+yxBVy6i+DOaBrafpW0wiKTu/tg1tSat6oibElQz
+        Mon, 16 Sep 2019 14:49:21 -0400
+IronPort-SDR: fjuu+Bltv+XtFHMi48Xe8tGGCxbw6wxXyT12cWA6qGUnz2g+uEVhtm4LpUOL05bhEymuoSdDlg
+ ngFk465xTpum8fmpwQzCDh2OWFBkSYZI8kxVltx4DV1lofGYMAc5zGguBQALkl3ntvcHb9/uoR
+ sPqrZwqivFGFBKwjZU+PJ3nwMOXBkhyK5JP5KVvy7T+LEVYcOKkiwfjlJqhXL0UUwzyoF0y5tp
+ U3FG2LrnbA30F6BJIcGvM/WHMS4qBIB/XfZzyuweS6UiONnZE6jvZsAGK3DT5dyP+FkMUKOaNf
+ Ip0=
+X-IronPort-AV: E=Sophos;i="5.64,513,1559548800"; 
+   d="scan'208";a="41353811"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa2.mentor.iphmx.com with ESMTP; 16 Sep 2019 10:49:20 -0800
+IronPort-SDR: XdRCbK2JfQ+cysn9dTuhxIVqaUJz2uR4LsAepk3340hRb8Ksnjsbpe8GEKzf3MPj7WmxwUctgh
+ lsAE5q3XnvLgTg5XGHGKaE2HiyZ3Uk5oQllQmnpbbovWohDQTTuR7q3TJFANnzbpM6HlJeXnEr
+ kemm+wS6u350XuM1qhF0xSN+7sSlWQH5FWh653ARmchynWeOVtWbJH7oXIgBaN4Brcgdzzw5eP
+ yS57oW3Xbak5eTRRBUmWw+6UM416R6jzXxUvjFK5UHLQDMttsLtZ7jCtJoabryqT5qZsNaGmqB
+ io0=
+From:   "George G. Davis" <george_davis@mentor.com>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] selftests: watchdog: Validate optional file argument
+Date:   Mon, 16 Sep 2019 14:49:10 -0400
+Message-ID: <1568659751-1845-1-git-send-email-george_davis@mentor.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-Received: by 2002:a6b:148b:: with SMTP id 133mr1540961iou.81.1568659749577;
- Mon, 16 Sep 2019 11:49:09 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 11:49:09 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000025ae690592b00fbd@google.com>
-Subject: WARNING in __alloc_pages_nodemask
-From:   syzbot <syzbot+e38fe539fedfc127987e@syzkaller.appspotmail.com>
-To:     aarcange@redhat.com, akpm@linux-foundation.org,
-        andreyknvl@google.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-usb@vger.kernel.org, mhocko@suse.com,
-        rientjes@google.com, syzkaller-bugs@googlegroups.com,
-        vbabka@suse.cz, yang.shi@linux.alibaba.com, zhongjiang@huawei.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+As reported by Eugeniu Rosca, a side of affect of commit c3f2490d6e92
+("selftests: watchdog: Add optional file argument") is that arbitrary files
+may be opened for watchdog testing, e.g.
 
-syzbot found the following crash on:
+./watchdog-test  -f /dev/zero
+Watchdog Ticking Away!
 
-HEAD commit:    f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=14b15371600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
-dashboard link: https://syzkaller.appspot.com/bug?extid=e38fe539fedfc127987e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1093bed1600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1603cfc6600000
+To prevent watchdog-test from operating on non-watchdog device files,
+validate that a file is indeed a watchdog device via an
+ioctl(WDIOC_GETSUPPORT) call.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e38fe539fedfc127987e@syzkaller.appspotmail.com
+While we're at it, since the watchdog_info is available as a result of the
+ioctl(WDIOC_GETSUPPORT) call, add a command line option to optionally show
+the watchdog_info.
 
-WARNING: CPU: 0 PID: 1720 at mm/page_alloc.c:4696  
-__alloc_pages_nodemask+0x36f/0x780 mm/page_alloc.c:4696
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 1720 Comm: syz-executor388 Not tainted 5.3.0-rc7+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  panic+0x2a3/0x6da kernel/panic.c:219
-  __warn.cold+0x20/0x4a kernel/panic.c:576
-  report_bug+0x262/0x2a0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:__alloc_pages_nodemask+0x36f/0x780 mm/page_alloc.c:4696
-Code: fe ff ff 65 48 8b 04 25 00 ef 01 00 48 05 60 10 00 00 41 be 01 00 00  
-00 48 89 44 24 58 e9 ee fd ff ff 81 e5 00 20 00 00 75 02 <0f> 0b 45 31 f6  
-e9 6b ff ff ff 8b 44 24 68 89 04 24 65 8b 2d e9 7e
-RSP: 0018:ffff8881d320f9d8 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 1ffff1103a641f3f RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000040a20
-RBP: 0000000000000000 R08: ffff8881d3bcc800 R09: ffffed103a541d19
-R10: ffffed103a541d18 R11: ffff8881d2a0e8c7 R12: 0000000000000012
-R13: 0000000000000012 R14: 0000000000000000 R15: ffff8881d2a0e8c0
-  alloc_pages_current+0xff/0x200 mm/mempolicy.c:2153
-  alloc_pages include/linux/gfp.h:509 [inline]
-  kmalloc_order+0x1a/0x60 mm/slab_common.c:1257
-  kmalloc_order_trace+0x18/0x110 mm/slab_common.c:1269
-  __usbhid_submit_report drivers/hid/usbhid/hid-core.c:588 [inline]
-  usbhid_submit_report+0x5b5/0xde0 drivers/hid/usbhid/hid-core.c:638
-  usbhid_request+0x3c/0x70 drivers/hid/usbhid/hid-core.c:1252
-  hid_hw_request include/linux/hid.h:1053 [inline]
-  hiddev_ioctl+0x526/0x1550 drivers/hid/usbhid/hiddev.c:735
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
-  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444949
-Code: e8 bc af 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 1b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffed614ab8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000444949
-RDX: 0000000020000080 RSI: 00000000400c4808 RDI: 0000000000000004
-RBP: 00000000006cf018 R08: 18c1180b508ac6d9 R09: 00000000004002e0
-R10: 000000000000000f R11: 0000000000000246 R12: 00000000004025f0
-R13: 0000000000402680 R14: 0000000000000000 R15: 0000000000000000
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Reported-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v1: Applied/tested on commit ce54eab71e210f ("kunit: fix failure to build without printk") of
+    https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=next
+v2: Squashed [1] and [2], and update commit description as discussed in [3].
+    [1] https://patchwork.kernel.org/patch/11136283/
+    [2] https://patchwork.kernel.org/patch/11136285/
+    [3] https://patchwork.kernel.org/patch/11136285/#22883573
+---
+ tools/testing/selftests/watchdog/watchdog-test.c | 27 +++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+index afff120c7be6..f45e510500c0 100644
+--- a/tools/testing/selftests/watchdog/watchdog-test.c
++++ b/tools/testing/selftests/watchdog/watchdog-test.c
+@@ -19,7 +19,7 @@
+ 
+ int fd;
+ const char v = 'V';
+-static const char sopts[] = "bdehp:t:Tn:NLf:";
++static const char sopts[] = "bdehp:t:Tn:NLf:i";
+ static const struct option lopts[] = {
+ 	{"bootstatus",          no_argument, NULL, 'b'},
+ 	{"disable",             no_argument, NULL, 'd'},
+@@ -32,6 +32,7 @@ static const struct option lopts[] = {
+ 	{"getpretimeout",       no_argument, NULL, 'N'},
+ 	{"gettimeleft",		no_argument, NULL, 'L'},
+ 	{"file",          required_argument, NULL, 'f'},
++	{"info",		no_argument, NULL, 'i'},
+ 	{NULL,                  no_argument, NULL, 0x0}
+ };
+ 
+@@ -72,6 +73,7 @@ static void usage(char *progname)
+ 	printf("Usage: %s [options]\n", progname);
+ 	printf(" -f, --file\t\tOpen watchdog device file\n");
+ 	printf("\t\t\tDefault is /dev/watchdog\n");
++	printf(" -i, --info\t\tShow watchdog_info\n");
+ 	printf(" -b, --bootstatus\tGet last boot status (Watchdog/POR)\n");
+ 	printf(" -d, --disable\t\tTurn off the watchdog timer\n");
+ 	printf(" -e, --enable\t\tTurn on the watchdog timer\n");
+@@ -97,6 +99,7 @@ int main(int argc, char *argv[])
+ 	int c;
+ 	int oneshot = 0;
+ 	char *file = "/dev/watchdog";
++	struct watchdog_info info;
+ 
+ 	setbuf(stdout, NULL);
+ 
+@@ -118,6 +121,16 @@ int main(int argc, char *argv[])
+ 		exit(-1);
+ 	}
+ 
++	/*
++	 * Validate that `file` is a watchdog device
++	 */
++	ret = ioctl(fd, WDIOC_GETSUPPORT, &info);
++	if (ret) {
++		printf("WDIOC_GETSUPPORT error '%s'\n", strerror(errno));
++		close(fd);
++		exit(ret);
++	}
++
+ 	optind = 0;
+ 
+ 	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
+@@ -205,6 +218,18 @@ int main(int argc, char *argv[])
+ 		case 'f':
+ 			/* Handled above */
+ 			break;
++		case 'i':
++			/*
++			 * watchdog_info was obtained as part of file open
++			 * validation. So we just show it here.
++			 */
++			oneshot = 1;
++			printf("watchdog_info:\n");
++			printf(" identity:\t\t%s\n", info.identity);
++			printf(" firmware_version:\t%u\n",
++			       info.firmware_version);
++			printf(" options:\t\t%08x\n", info.options);
++			break;
+ 
+ 		default:
+ 			usage(argv[0]);
+-- 
+2.7.4
+
