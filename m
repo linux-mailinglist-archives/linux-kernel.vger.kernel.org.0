@@ -2,30 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C65DB3B7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 152C8B3B6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733301AbfIPNh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:37:58 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39254 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733264AbfIPNh5 (ORCPT
+        id S2387502AbfIPNbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:31:14 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37547 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727899AbfIPNbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:37:57 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i9rCV-0006vZ-SQ; Mon, 16 Sep 2019 15:37:55 +0200
-Date:   Mon, 16 Sep 2019 13:30:20 -0000
-From:   Thomas Gleixner <tglx@linutronix.de>
+        Mon, 16 Sep 2019 09:31:13 -0400
+Received: by mail-wr1-f68.google.com with SMTP id i1so38327123wro.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 06:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=o0TxXG7lNuQ2xBLe8wTfn7BMxyDCwy4ihx0s4bVOqlM=;
+        b=KpwTZaBrg1cNhvn1igtrWTXovrN3KWpYTvSVDEGPH2cHEQ7zyb4O3qWE7iJeFDsfAr
+         4QjWHJB3B99bGbpaasWa6LVUIHRr3Kq5w9uZmSJc7gsPL/w5PoLAF8VP4PxKzNOd2tIg
+         LUj/3ejWDAaFbXQ4PxMjknjJ+Fq0B+GxcDRxE/Jqa7rICKsJi1L6gK/kzCGE8mISOgy6
+         C19KlOsFBuZuMjW3JGwalzhYonxuBNwfrD2r4W3t2GTpGz1cZ5g1jhBK6QPQdopPFXsd
+         fZma4Xe2kXaPxDOMbKYMn6PKCNilPZiP+6tSo9HwuehMcbf5fVFXKHj1fXU1+h2w2oGx
+         teFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=o0TxXG7lNuQ2xBLe8wTfn7BMxyDCwy4ihx0s4bVOqlM=;
+        b=TYTM0ijuEoqSU7t/H7aM0GRsLXSi985w7JgHuvnOK3rgYz63Qhb8Agmb5XVq1G8Oha
+         mWIKea6xgNwcooXMVLe8o7MoNpR/kT55HcspxWQ7pbAbrcmi8POmzYnqPtjQp/SV7bx4
+         1JuUpjjwo2BFJzVbz96hZ6o9T5sK0A4OdVB9Ut3Idgev/HpJAIr9fY7ug4y/WozIjHxq
+         rq1e7WggWQxGGgZH0zXduu5VdXXqzMHt5v6e6qQFO0BV5xKYzHguLXeEMf6+JrviW9mj
+         Humn31To5lI6MWLDZSROULXAE5/xZ+3/cY72Q8wn9bKVwhHj/Xkb/en0kY6gZ7RZl/4D
+         wv9A==
+X-Gm-Message-State: APjAAAXZKctwWaeqDzUJBs339+mUko4Mrc9+Vuo6Id20CGUDZ+M33n4N
+        hBHdBl1d4VLo4IDT8MjlgzLNcjyf
+X-Google-Smtp-Source: APXvYqwCx9m/PpirD0Ir3BobUO7NLiH7aayaPAU2gvrmZf94uCL57XI5jxlfNnyeTM/jMsOKmr7L8g==
+X-Received: by 2002:adf:fc0e:: with SMTP id i14mr20482902wrr.302.1568640671592;
+        Mon, 16 Sep 2019 06:31:11 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id r18sm15471781wme.48.2019.09.16.06.31.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 06:31:11 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 15:31:09 +0200
+From:   Ingo Molnar <mingo@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] timers/urgent for 5.4-rc1
-References: <156864062018.3407.16580572772546914005.tglx@nanos.tec.linutronix.de>
-Message-ID: <156864062018.3407.10822767012822306757.tglx@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86/platform changes for v5.4
+Message-ID: <20190916133109.GA111962@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -33,51 +65,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest timers-urgent-for-linus git tree from:
+Please pull the latest x86-platform-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-platform-for-linus
 
-up to:  f18ddc13af98: alarmtimer: Use EOPNOTSUPP instead of ENOTSUPP
+   # HEAD: 864b23f0169d5bff677e8443a7a90dfd6b090afc x86/platform/uv: Fix kmalloc() NULL check routine
 
-A single fix to prevent the alarm timer code from returning ENOTSUPP to
-user space. ENOTSUPP is a purely kernel internal error code related to
-NFSv3 and should never be handed back to user space. The risk for ABI
-breakage is low as the number of systems which do not have a working RTC is
-very limited.
+The biggest change is the rework of the intel/iosf_mbi locking code which 
+used a few non-standard locking patterns, to make it work under lockdep.
 
-Thanks,
+ Thanks,
 
-	tglx
+	Ingo
 
 ------------------>
-Thadeu Lima de Souza Cascardo (1):
-      alarmtimer: Use EOPNOTSUPP instead of ENOTSUPP
+Austin Kim (1):
+      x86/platform/uv: Fix kmalloc() NULL check routine
+
+Hans de Goede (1):
+      x86/platform/intel/iosf_mbi Rewrite locking
 
 
- kernel/time/alarmtimer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 57518efc3810..b7d75a9e8ccf 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -672,7 +672,7 @@ static int alarm_timer_create(struct k_itimer *new_timer)
- 	enum  alarmtimer_type type;
- 
- 	if (!alarmtimer_get_rtcdev())
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	if (!capable(CAP_WAKE_ALARM))
- 		return -EPERM;
-@@ -790,7 +790,7 @@ static int alarm_timer_nsleep(const clockid_t which_clock, int flags,
- 	int ret = 0;
- 
- 	if (!alarmtimer_get_rtcdev())
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
- 	if (flags & ~TIMER_ABSTIME)
- 		return -EINVAL;
-
+ arch/x86/platform/intel/iosf_mbi.c | 100 +++++++++++++++++++++++--------------
+ arch/x86/platform/uv/tlb_uv.c      |   4 +-
+ 2 files changed, 64 insertions(+), 40 deletions(-)
 
