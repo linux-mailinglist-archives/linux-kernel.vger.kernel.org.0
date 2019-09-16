@@ -2,78 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B32B3659
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 10:23:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0140CB3664
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 10:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729429AbfIPIXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 04:23:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47230 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727068AbfIPIXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 04:23:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 37F62B664;
-        Mon, 16 Sep 2019 08:22:59 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E309C1E47E5; Mon, 16 Sep 2019 10:23:06 +0200 (CEST)
-Date:   Mon, 16 Sep 2019 10:23:06 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Jan Kara <jack@suse.cz>, Jan Kara <jack@suse.com>, chao@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] quota: fix wrong condition in is_quota_modification()
-Message-ID: <20190916082306.GB2485@quack2.suse.cz>
-References: <20190911093650.35329-1-yuchao0@huawei.com>
- <20190912100610.GA14773@quack2.suse.cz>
- <ce4fe030-7ad4-134d-e0c4-77dc2c618b15@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce4fe030-7ad4-134d-e0c4-77dc2c618b15@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731013AbfIPIa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 04:30:26 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:39064 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729373AbfIPIa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 04:30:26 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BEC952001CF;
+        Mon, 16 Sep 2019 10:30:23 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1917220055F;
+        Mon, 16 Sep 2019 10:30:19 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 36940402BF;
+        Mon, 16 Sep 2019 16:30:13 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] ARM: dts: imx7s: Correct GPT's ipg clock source
+Date:   Mon, 16 Sep 2019 16:29:09 +0800
+Message-Id: <1568622549-15819-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 16-09-19 10:53:08, Chao Yu wrote:
-> On 2019/9/12 18:06, Jan Kara wrote:
-> > On Wed 11-09-19 17:36:50, Chao Yu wrote:
-> >> diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
-> >> index dc905a4ff8d7..bd30acad3a7f 100644
-> >> --- a/include/linux/quotaops.h
-> >> +++ b/include/linux/quotaops.h
-> >> @@ -22,7 +22,7 @@ static inline struct quota_info *sb_dqopt(struct super_block *sb)
-> >>  /* i_mutex must being held */
-> >>  static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
-> >>  {
-> >> -	return (ia->ia_valid & ATTR_SIZE && ia->ia_size != inode->i_size) ||
-> >> +	return (ia->ia_valid & ATTR_SIZE && ia->ia_size <= inode->i_size) ||
-> >>  		(ia->ia_valid & ATTR_UID && !uid_eq(ia->ia_uid, inode->i_uid)) ||
-> >>  		(ia->ia_valid & ATTR_GID && !gid_eq(ia->ia_gid, inode->i_gid));
-> >>  }
-> > 
-> > OK, but your change makes i_size extension not to be quota modification
-> 
-> I just try to adapt below rules covered with generic/092, which restrict
-> to not trim preallocate blocks beyond i_size, in that case, filesystem
-> won't change i_blocks.
-> 
-> 1) truncate(i_size) will trim all blocks past i_size.
-> 2) truncate(x) where x > i_size will not trim all blocks past i_size.
+i.MX7S/D's GPT ipg clock should be from GPT clock root and
+controlled by CCM's GPT CCGR, using correct clock source for
+GPT ipg clock instead of IMX7D_CLK_DUMMY.
 
-Ah, OK.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/imx7s.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> However, I'm okay with your change, because there could be filesystems won't
-> follow above rule.
-
-Yes, I'm concerned that some filesystem may change i_blocks in some corner
-case when growing inode size (e.g. when it decides to convert inode from
-inline format to a normal block based format or something like that). So I
-don't think the optimization is really worth the chance for breakage.
-
-								Honza
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index 710f850..e2e604d 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -448,7 +448,7 @@
+ 				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
+ 				reg = <0x302d0000 0x10000>;
+ 				interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&clks IMX7D_CLK_DUMMY>,
++				clocks = <&clks IMX7D_GPT1_ROOT_CLK>,
+ 					 <&clks IMX7D_GPT1_ROOT_CLK>;
+ 				clock-names = "ipg", "per";
+ 			};
+@@ -457,7 +457,7 @@
+ 				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
+ 				reg = <0x302e0000 0x10000>;
+ 				interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&clks IMX7D_CLK_DUMMY>,
++				clocks = <&clks IMX7D_GPT2_ROOT_CLK>,
+ 					 <&clks IMX7D_GPT2_ROOT_CLK>;
+ 				clock-names = "ipg", "per";
+ 				status = "disabled";
+@@ -467,7 +467,7 @@
+ 				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
+ 				reg = <0x302f0000 0x10000>;
+ 				interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&clks IMX7D_CLK_DUMMY>,
++				clocks = <&clks IMX7D_GPT3_ROOT_CLK>,
+ 					 <&clks IMX7D_GPT3_ROOT_CLK>;
+ 				clock-names = "ipg", "per";
+ 				status = "disabled";
+@@ -477,7 +477,7 @@
+ 				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
+ 				reg = <0x30300000 0x10000>;
+ 				interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&clks IMX7D_CLK_DUMMY>,
++				clocks = <&clks IMX7D_GPT4_ROOT_CLK>,
+ 					 <&clks IMX7D_GPT4_ROOT_CLK>;
+ 				clock-names = "ipg", "per";
+ 				status = "disabled";
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.7.4
+
