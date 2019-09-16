@@ -2,93 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30755B383B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:36:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26884B384A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:37:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731000AbfIPKgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 06:36:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34700 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726604AbfIPKgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 06:36:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2BC22ABD0;
-        Mon, 16 Sep 2019 10:36:03 +0000 (UTC)
-Date:   Mon, 16 Sep 2019 12:36:02 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH] mm, thp: Do not queue fully unmapped pages for deferred
- split
-Message-ID: <20190916103602.GD10231@dhcp22.suse.cz>
-References: <20190913091849.11151-1-kirill.shutemov@linux.intel.com>
+        id S1732333AbfIPKg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 06:36:28 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38790 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732316AbfIPKg1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 06:36:27 -0400
+Received: from pd9ef19d4.dip0.t-ipconnect.de ([217.239.25.212] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1i9oMe-0003B3-DK; Mon, 16 Sep 2019 12:36:12 +0200
+Date:   Mon, 16 Sep 2019 12:36:11 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Raj, Ashok" <ashok.raj@intel.com>
+cc:     Johannes Erdfelt <johannes@erdfelt.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jon Grimm <Jon.Grimm@amd.com>, kanth.ghatraju@oracle.com,
+        konrad.wilk@oracle.com, patrick.colp@oracle.com,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        x86-ml <x86@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/microcode: Add an option to reload microcode even
+ if revision is unchanged
+In-Reply-To: <alpine.DEB.2.21.1909071236120.1902@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1909161227060.10731@nanos.tec.linutronix.de>
+References: <41cee473-321c-2758-032a-ccf0f01359dc@oracle.com> <D8A3D2BD-1FD4-4183-8663-3EF02A6099F3@alien8.de> <20190905002132.GA26568@otc-nc-03> <20190905072029.GB19246@zn.tnic> <20190905194044.GA3663@otc-nc-03> <alpine.DEB.2.21.1909052316130.1902@nanos.tec.linutronix.de>
+ <20190905222706.GA4422@otc-nc-03> <alpine.DEB.2.21.1909061431330.1902@nanos.tec.linutronix.de> <20190906144039.GA29569@sventech.com> <alpine.DEB.2.21.1909062237580.1902@nanos.tec.linutronix.de> <20190907003338.GA14807@araj-mobl1.jf.intel.com>
+ <alpine.DEB.2.21.1909071236120.1902@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190913091849.11151-1-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 13-09-19 12:18:49, Kirill A. Shutemov wrote:
-> Adding fully unmapped pages into deferred split queue is not productive:
-> these pages are about to be freed or they are pinned and cannot be split
-> anyway.
+On Sat, 7 Sep 2019, Thomas Gleixner wrote:
+> On Fri, 6 Sep 2019, Raj, Ashok wrote:
+> > On Fri, Sep 06, 2019 at 11:16:00PM +0200, Thomas Gleixner wrote:
+> > > Now #1 is actually a sensible and feasible solution which can be pulled off
+> > > in a reasonably short time frame, avoids all the bound to be ugly and
+> > > failure laden attempts of fixing late loading completely and provides a
+> > > usable and safe solution for joe user, jack admin and the super experts at
+> > > big-cloud corporate.
+> > > 
+> > > That is not requiring any new format of microcode payload, as this can be
+> > > nicely done as a metadata package which comes with the microcode
+> > > payload. So you get the following backwards compatible states:
+> > > 
+> > >   Kernel  metadata	  result
+> > > 
+> > >   old	  don't care	  refuse late load
+> > > 
+> > >   new	  No   		  refuse late load
+> > > 
+> > >   new	  Yes		  decide based on metadata
+> > > 
+> > > Thoughts?
+> > 
+> > This is 100% in line with what we proposed... 
 > 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  mm/rmap.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 003377e24232..45388f1bf317 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1271,12 +1271,20 @@ static void page_remove_anon_compound_rmap(struct page *page)
->  	if (TestClearPageDoubleMap(page)) {
->  		/*
->  		 * Subpages can be mapped with PTEs too. Check how many of
-> -		 * themi are still mapped.
-> +		 * them are still mapped.
->  		 */
->  		for (i = 0, nr = 0; i < HPAGE_PMD_NR; i++) {
->  			if (atomic_add_negative(-1, &page[i]._mapcount))
->  				nr++;
->  		}
-> +
-> +		/*
-> +		 * Queue the page for deferred split if at least one small
-> +		 * page of the compound page is unmapped, but at least one
-> +		 * small page is still mapped.
-> +		 */
-> +		if (nr && nr < HPAGE_PMD_NR)
-> +			deferred_split_huge_page(page);
+> So what it hindering you to implement that? ucode teams whining about the
+> little bit of extra work?
 
-You've set nr to zero in the for loop so this cannot work AFAICS.
+That said, there is also a distinct lack of information about micro code
+loading in a safe way in general. We absolutely do not know whether a micro
+code update affects any instruction which might be in use during the update
+on a sibling. Right now it's all load and pray and the SDM is not really
+helpful with that either.
 
->  	} else {
->  		nr = HPAGE_PMD_NR;
->  	}
-> @@ -1284,10 +1292,8 @@ static void page_remove_anon_compound_rmap(struct page *page)
->  	if (unlikely(PageMlocked(page)))
->  		clear_page_mlock(page);
->  
-> -	if (nr) {
-> +	if (nr)
->  		__mod_node_page_state(page_pgdat(page), NR_ANON_MAPPED, -nr);
-> -		deferred_split_huge_page(page);
-> -	}
->  }
->  
->  /**
-> -- 
-> 2.21.0
+Thanks,
 
--- 
-Michal Hocko
-SUSE Labs
+	tglx
