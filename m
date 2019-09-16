@@ -2,70 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28799B3BDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11369B3BE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:55:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387857AbfIPNxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:53:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59146 "EHLO mx1.redhat.com"
+        id S2388146AbfIPNzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:55:07 -0400
+Received: from mx1.emlix.com ([188.40.240.192]:49150 "EHLO mx1.emlix.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387682AbfIPNxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:53:45 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728005AbfIPNzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 09:55:07 -0400
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B486318C4276;
-        Mon, 16 Sep 2019 13:53:44 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A5DA617F85;
-        Mon, 16 Sep 2019 13:53:43 +0000 (UTC)
-Subject: Re: [PATCH 5/5] hugetlbfs: Limit wait time when trying to share huge
- PMD
-To:     Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20190911150537.19527-1-longman@redhat.com>
- <20190911150537.19527-6-longman@redhat.com>
- <ae7edcb8-74e5-037c-17e7-01b3cf9320af@oracle.com>
- <20190912034143.GJ29434@bombadil.infradead.org>
- <20190912044002.xp3c7jbpbmq4dbz6@linux-p48b>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <f22d641f-d36e-e61e-70aa-3e54632485fe@redhat.com>
-Date:   Mon, 16 Sep 2019 09:53:43 -0400
+        by mx1.emlix.com (Postfix) with ESMTPS id E92B15FAD2;
+        Mon, 16 Sep 2019 15:55:04 +0200 (CEST)
+Subject: Re: [PATCH 0/4] Fix UART DMA freezes for iMX6
+To:     Fabio Estevam <festevam@gmail.com>,
+        Robin Gong <yibin.gong@nxp.com>,
+        Fugang Duan <fugang.duan@nxp.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Vinod <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org
+References: <20190911144943.21554-1-philipp.puschmann@emlix.com>
+ <CAOMZO5BKiZGF=iR071DaWLp-_7wTVJKLbOn3ihwPeVVSNF6nCg@mail.gmail.com>
+From:   Philipp Puschmann <philipp.puschmann@emlix.com>
+Openpgp: preference=signencrypt
+Message-ID: <2613a28d-d363-ee4e-679a-e7442e6fde48@emlix.com>
+Date:   Mon, 16 Sep 2019 15:55:04 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190912044002.xp3c7jbpbmq4dbz6@linux-p48b>
+In-Reply-To: <CAOMZO5BKiZGF=iR071DaWLp-_7wTVJKLbOn3ihwPeVVSNF6nCg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Mon, 16 Sep 2019 13:53:45 +0000 (UTC)
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/12/19 12:40 AM, Davidlohr Bueso wrote:
->
-> I also think that the right solution is within the mm instead of adding
-> a new api to rwsem and the extra complexity/overhead to osq _just_ for
-> this
-> case. We've managed to not need timeout extensions in our locking
-> primitives
-> thus far, which is a good thing imo. 
+Hi Fabio,
 
-Adding a variant with timeout can be useful in resolving some potential
-deadlock issues found by lockdep. Anyway, there were talk about merging
-rt-mutex and regular mutex in the LPC last week. So we will need to have
-mutex_lock() variant with timeout for that to happen.
+Am 12.09.19 um 20:23 schrieb Fabio Estevam:
+> Hi Philipp,
+> 
+> Thanks for submitting these fixes.
+> 
+> On Wed, Sep 11, 2019 at 11:50 AM Philipp Puschmann
+> <philipp.puschmann@emlix.com> wrote:
+>>
+>> For some years and since many kernel versions there are reports that
+>> RX UART DMA channel stops working at one point. So far the usual workaround was
+>> to disable RX DMA. This patches try to fix the underlying problem.
+>>
+>> When a running sdma script does not find any usable destination buffer to put
+>> its data into it just leads to stopping the channel being scheduled again. As
+>> solution we we manually retrigger the sdma script for this channel and by this
+>> dissolve the freeze.
+>>
+>> While this seems to work fine so far a further patch in this series increases
+>> the number of RX DMA periods for UART to reduce use cases running into such
+>> a situation.
+>>
+>> This patch series was tested with the current kernel and backported to
+>> kernel 4.15 with a special use case using a WL1837MOD via UART and provoking
+>> the hanging of UART RX DMA within seconds after starting a test application.
+>> It resulted in well known
+>>   "Bluetooth: hci0: command 0x0408 tx timeout"
+>> errors and complete stop of UART data reception. Our Bluetooth traffic consists
+>> of many independent small packets, mostly only a few bytes, causing high usage
+>> of periods.
+>>
+>>
+>> Philipp Puschmann (4):
+>>   dmaengine: imx-sdma: fix buffer ownership
+>>   dmaengine: imx-sdma: fix dma freezes
+>>   serial: imx: adapt rx buffer and dma periods
+>>   dmaengine: imx-sdma: drop redundant variable
+> 
+> I have some suggestions:
+> 
+> 1. Please split this in two series: one for dmaengine and other one for serial
+> 
+> 2. Please add Fixes tag when appropriate, so that the fixes can be
+> backported to stable kernels.
+> 
+> 3. Please Cc Robin and Andy
+> 
+> Thanks
+> 
 
-Cheers,
-Longman
+Thanks for the hints. I will apply them if the contentual feedback is positive.
+
+p.s. Did you forget to add Andy? I don't see a Andy in the to- and cc-list.
 
