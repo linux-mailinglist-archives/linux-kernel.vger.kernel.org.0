@@ -2,96 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88A5DB3B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59689B3B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733242AbfIPNgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:36:50 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36736 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbfIPNgu (ORCPT
+        id S2387620AbfIPNkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:40:01 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56886 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732992AbfIPNkB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:36:50 -0400
-Received: by mail-wm1-f65.google.com with SMTP id t3so10442297wmj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 06:36:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=D8kLvyH/OXn+ibww+vsUGpG0WVaMoA8C4bNES7Vdks4=;
-        b=PVOTFpuFbj/ezQJ6JAIVgE6mcZQoKkgEvPWpZ7QzoRxb357HCu7YWm8zRNgxTg+0Pb
-         kfB2/zHOH3q4kyYVtBVVxxTlyOnbQoghaFBr9ItFVq714HIarmeNzs5aNG2JHQUmYjzh
-         E9f45HLy51jgfMwe2MzsTiUTgfrdbEwuGmkoOTRc9TQHC+I9OBrBq6mUmPTV5ePJQRpW
-         BP0sEhkXSnoQ6WZy2DWddWyPa1DTeGjRjmj4f/gVQ4CUNJYFVoesVO3xozQvy92DttJu
-         K/Al9a+r0z8bznedmOcETGrkxhJC5OPEnVklDUnYoa6VoNGnWjNfckKvXHde9c8qaJ/K
-         j3mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=D8kLvyH/OXn+ibww+vsUGpG0WVaMoA8C4bNES7Vdks4=;
-        b=BWJ7dJPIl85L+8HKHESqPcNfI/uRlIfgT3Hz0zegg/rWSgYNgLIrIhByEg6EdzMBHk
-         zdtA6AdMHyjZok8TxtZ4V7Re56Cerl6gbXka5VRCtauuzN6KQ198c4CrTltdEPfyqbHd
-         YhkhSdgp3Ql2J3Vpav//k4UjbDooqoc42X1wmMP7+rxKG71YXLTb9RLqRT5MeMZvczyQ
-         FpHVwrSI8jrMy4B48mIwlflXG4Pb49quVSgFUwehWki1BEcIlhRcKAlreOvaWkNbFZ7v
-         A0YdFV+QpxL+obkcAt+56IBNjRmiDnll6kTFzo3bTfA2XGVa8sSrLvHkwf7xRBRPk+eo
-         VyJA==
-X-Gm-Message-State: APjAAAXa/6+dtSsIZz5TjKtJh+49N1UM/mBNopKkTXjonZDFgX9ZblVR
-        AwsQ+HR9BPqNW9OWmVSROBNTYpDJ
-X-Google-Smtp-Source: APXvYqyWDH7ioTbOouM6fvCtb3qF4WRXIJgKTkQT1T1uZCJaI2aBrcEbJ7k0WQ/8i7xFcFawcqiDUA==
-X-Received: by 2002:a1c:7902:: with SMTP id l2mr13988415wme.55.1568641008516;
-        Mon, 16 Sep 2019 06:36:48 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id w4sm8462369wrv.66.2019.09.16.06.36.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 06:36:47 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 15:36:46 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/vmware changes for v5.4
-Message-ID: <20190916133646.GA112398@gmail.com>
+        Mon, 16 Sep 2019 09:40:01 -0400
+Received: from [IPv6:2804:431:c7f4:d32a:d711:794d:1c68:5ed3] (unknown [IPv6:2804:431:c7f4:d32a:d711:794d:1c68:5ed3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tonyk)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 1688828D3B4;
+        Mon, 16 Sep 2019 14:39:57 +0100 (BST)
+Subject: Re: [PATCH v2 4/4] coding-style: add explanation about pr_fmt macro
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, axboe@kernel.dk,
+        kernel@collabora.com, krisman@collabora.com
+References: <20190913220300.422869-1-andrealmeid@collabora.com>
+ <20190913220300.422869-5-andrealmeid@collabora.com>
+ <20190914015018.4fa90f28@lwn.net>
+From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>
+Message-ID: <e8e82c8b-7a2f-e238-a687-8505195ecb39@collabora.com>
+Date:   Mon, 16 Sep 2019 10:38:50 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190914015018.4fa90f28@lwn.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 9/14/19 4:50 AM, Jonathan Corbet wrote:
+> On Fri, 13 Sep 2019 19:03:00 -0300
+> André Almeida <andrealmeid@collabora.com> wrote:
+> 
+>> The pr_fmt macro is useful to format log messages printed by pr_XXXX()
+>> functions. Add text to explain the purpose of it, how to use and an
+>> example.
+> 
+> So I've finally had a chance to take a real look at this...
+> 
+>> diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+>> index f4a2198187f9..1a33a933fbd3 100644
+>> --- a/Documentation/process/coding-style.rst
+>> +++ b/Documentation/process/coding-style.rst
+>> @@ -819,7 +819,15 @@ which you should use to make sure messages are matched to the right device
+>>  and driver, and are tagged with the right level:  dev_err(), dev_warn(),
+>>  dev_info(), and so forth.  For messages that aren't associated with a
+>>  particular device, <linux/printk.h> defines pr_notice(), pr_info(),
+>> -pr_warn(), pr_err(), etc.
+>> +pr_warn(), pr_err(), etc. It's possible to format pr_XXX() messages using the
+>> +macro pr_fmt() to prevent rewriting the style of messages. It should be
+>> +defined before ``#include <linux/kernel.h>``, to avoid compiler warning about
+>> +redefinitions, or just use ``#undef pr_fmt``. This is particularly useful for
+>> +adding the name of the module at the beginning of the message, for instance:
+>> +
+>> +.. code-block:: c
+>> +
+>> +        #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> 
+> Honestly, I think that this is out of scope for a document on coding
+> style.  That document is already far too long for most people to read, I
+> don't think we should load it down with more stuff that isn't directly
+> style related.
+> 
+> That said, the information can be useful.  I wanted to say that it should
+> go with the documentation of the pr_* macros but ... well ... um ... we
+> don't seem to have a whole lot of that.  Figures.
+> 
+> I suspect this is more than you wanted to sign up for, but...IMO, the right
+> thing to do is to fill printk.h with a nice set of kerneldoc comments
+> describing how this stuff should be used, then to pull that information
+> into the core-api manual, somewhere near our extensive discussion of printk
+> formats.  It's amazing that we lack docs for something so basic.
+> 
 
-Please pull the latest x86-vmware-for-linus git tree from:
+Thanks for the feedback jon. For now, I'll drop this patch for this
+series. In a future patch I'll move this text for
+Documentation/core-api/printk-formats.rst and will also add kernel-doc
+comments to pr_XXXX() functions.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-vmware-for-linus
+> Thanks,
+> 
+> jon
+> 
 
-   # HEAD: f7b15c74cffd760ec9959078982d8268a38456c4 input/vmmouse: Update the backdoor call with support for new instructions
-
-This tree updates the VMWARE guest driver with support for VMCALL/VMMCALL 
-based hypercalls.
-
- Thanks,
-
-	Ingo
-
------------------->
-Thomas Hellstrom (4):
-      x86/vmware: Update platform detection code for VMCALL/VMMCALL hypercalls
-      x86/vmware: Add a header file for hypercall definitions
-      drm/vmwgfx: Update the backdoor call with support for new instructions
-      input/vmmouse: Update the backdoor call with support for new instructions
-
-
- MAINTAINERS                         |  1 +
- arch/x86/include/asm/cpufeatures.h  |  2 +
- arch/x86/include/asm/vmware.h       | 53 +++++++++++++++++++++
- arch/x86/kernel/cpu/vmware.c        | 94 ++++++++++++++++++++++++++++++-------
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.c | 21 ++++-----
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.h | 35 +++++++-------
- drivers/input/mouse/vmmouse.c       |  6 +--
- 7 files changed, 163 insertions(+), 49 deletions(-)
- create mode 100644 arch/x86/include/asm/vmware.h
