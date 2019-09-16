@@ -2,141 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF5F5B3EBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 18:18:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46637B3EB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 18:17:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbfIPQSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 12:18:50 -0400
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:4324 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725850AbfIPQSu (ORCPT
+        id S1728252AbfIPQRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 12:17:32 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38500 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725270AbfIPQRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 12:18:50 -0400
-Received: from pps.filterd (m0134424.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8GFHhvk012323;
-        Mon, 16 Sep 2019 16:17:05 GMT
-Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2v24xewwkw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 Sep 2019 16:17:04 +0000
-Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
-        by g9t5008.houston.hpe.com (Postfix) with ESMTP id B36DF6F;
-        Mon, 16 Sep 2019 16:17:03 +0000 (UTC)
-Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
-        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 2D86D4C;
-        Mon, 16 Sep 2019 16:17:02 +0000 (UTC)
-Date:   Mon, 16 Sep 2019 11:17:01 -0500
-From:   Steve Wahl <steve.wahl@hpe.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Steve Wahl <steve.wahl@hpe.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
-        Baoquan He <bhe@redhat.com>, russ.anderson@hpe.com,
-        dimitri.sivanich@hpe.com, mike.travis@hpe.com
-Subject: Re: [PATCH] x86/boot/64: Make level2_kernel_pgt pages invalid
- outside kernel area.
-Message-ID: <20190916161701.GI7834@swahl-linux>
-References: <20190906212950.GA7792@swahl-linux>
- <20190909081414.5e3q47fzzruesscx@box>
- <20190910142810.GA7834@swahl-linux>
- <20190911002856.mx44pmswcjfpfjsb@box.shutemov.name>
- <20190911200835.GD7834@swahl-linux>
- <20190912101917.mbobjvkxhfttxddd@box>
- <20190913151415.GG7834@swahl-linux>
- <20190916090058.mteofmkkl37ob47k@box.shutemov.name>
+        Mon, 16 Sep 2019 12:17:32 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y23so518216ljn.5
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 09:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qm5nFp4L20gwZCk9xWhvdF6dE9PnPMuHjDPFlxhyVHw=;
+        b=MwiU5mWXMBSXfDgbMXxLnobo8HMGeJQR80lomHYctbelSfvBbvltS81l9dAKTU1gLz
+         dsS8BFsV+weSgE45H3VfjD88vhb4mAU1RPEwWm+45it3Ah1tAVI/MAkb/nAk+iJU0WeD
+         g8hBBvmDRQhs1SLCmtlw/SSvnhl9EIlxC1+wA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qm5nFp4L20gwZCk9xWhvdF6dE9PnPMuHjDPFlxhyVHw=;
+        b=WMCZzktLXVqRmnLBqYrR6u7JAC1XyEmjg16JKQotIroWfCUl7pDntMZejuew1nx1CO
+         DMXMMXrgwdyVaNCkZp9WsJGM4ndUBfnRLxIIcuYQWq8Se/eFO9U7yupCWEK5loIQRFT6
+         23H8dU3gzycIl6RLTtkfFeskMQlocS1F/b7YjG5IRv97kxDEUF37O/IAgRlONtLAX1lP
+         39XhUO52ZeoQWEpYh0fGT764X3cLNdytPD6q4oJOBRUzUu2vz4Au3DDibDJItYBm9fMW
+         g1a10i49Nna3gi+/p9xO25GomPSxxvBn/1UuE9MAO2WKKRVFyHYSroAw4WxUmTa6TZwn
+         Bswg==
+X-Gm-Message-State: APjAAAWxQ7J+SVE4OwVlott1aFw8la+wbAHC9eOJTXFc1UURNNErE5lI
+        G1g4axGar96RpOLS4y3odAgjEGa/eq4=
+X-Google-Smtp-Source: APXvYqzk/33dFIKW9gJltH8w9k0wPtvxJ/uep97LsT2iC9II+GFOx50LH9W7ittao/nvwmefezzxyw==
+X-Received: by 2002:a2e:8942:: with SMTP id b2mr272546ljk.38.1568650650262;
+        Mon, 16 Sep 2019 09:17:30 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id l3sm9148472lfc.31.2019.09.16.09.17.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2019 09:17:27 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id c195so409461lfg.9
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 09:17:27 -0700 (PDT)
+X-Received: by 2002:a19:f204:: with SMTP id q4mr116710lfh.29.1568650646859;
+ Mon, 16 Sep 2019 09:17:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190916090058.mteofmkkl37ob47k@box.shutemov.name>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-16_03:2019-09-11,2019-09-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- phishscore=0 impostorscore=0 spamscore=0 mlxscore=0 clxscore=1011
- malwarescore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1909160067
+References: <CAHk-=wjyH910+JRBdZf_Y9G54c1M=LBF8NKXB6vJcm9XjLnRfg@mail.gmail.com>
+ <20190914150206.GA2270@darwi-home-pc> <CAHk-=wjuVT+2oj_U2V94MBVaJdWsbo1RWzy0qXQSMAUnSaQzxw@mail.gmail.com>
+ <20190915065142.GA29681@gardel-login> <CAHk-=wiDNRPzuNE-eXs7QOpgPVLXsZOXEMQE9RmAWABiiZrSAQ@mail.gmail.com>
+ <20190916014050.GA7002@darwi-home-pc> <20190916014833.cbetw4sqm3lq4x6m@shells.gnugeneration.com>
+ <20190916024904.GA22035@mit.edu> <20190916042952.GB23719@1wt.eu>
+ <CAHk-=wg4cONuiN32Tne28Cg2kEx6gsJCoOVroqgPFT7_Kg18Hg@mail.gmail.com> <20190916061252.GA24002@1wt.eu>
+In-Reply-To: <20190916061252.GA24002@1wt.eu>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 16 Sep 2019 09:17:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjWSRzTjwN9F5gQcxtPkAgaRHJOOOTUjVakqP-Nzg9BXA@mail.gmail.com>
+Message-ID: <CAHk-=wjWSRzTjwN9F5gQcxtPkAgaRHJOOOTUjVakqP-Nzg9BXA@mail.gmail.com>
+Subject: Re: Linux 5.3-rc8
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 12:00:58PM +0300, Kirill A. Shutemov wrote:
-> On Fri, Sep 13, 2019 at 10:14:15AM -0500, Steve Wahl wrote:
-> > On Thu, Sep 12, 2019 at 01:19:17PM +0300, Kirill A. Shutemov wrote:
-> > > On Wed, Sep 11, 2019 at 03:08:35PM -0500, Steve Wahl wrote:
-> > > > Thank you for your time looking into this with me!
-> > > 
-> > > With all this explanation the original patch looks sane to me.
-> > > 
-> > > But I would like to see more information from this thread in the commit
-> > > message and some comments in the code on why it's crucial not to map more
-> > > than needed.
-> > 
-> > I am working on this.
-> > 
-> > > I think we also need to make it clear that this is workaround for a broken
-> > > hardware: speculative execution must not trigger a halt.
-> > 
-> > I think the word broken is a bit loaded here.  According to the UEFI
-> > spec (version 2.8, page 167), "Regions that are backed by the physical
-> > hardware, but are not supposed to be accessed by the OS, must be
-> > returned as EfiReservedMemoryType."  Our interpretation is that
-> > includes speculative accesses.
-> 
-> +Dave.
-> 
-> I don't think it is. Speculative access is done by hardware, not OS.
+On Sun, Sep 15, 2019 at 11:13 PM Willy Tarreau <w@1wt.eu> wrote:
+>
+> >
+> > So three out of four flag combinations end up being mostly "don't
+> > use", and the fourth one isn't what you'd normally want (which is just
+> > plain /dev/urandom semantics).
+>
+> I'm seeing it from a different angle. I now understand better why
+> getrandom() absolutely wants to have an initialized pool, it's to
+> encourage private key producers to use a secure, infinite source of
+> randomness.
 
-But the OS controls speculative access to physical addresses by their
-presence or absence in the page tables.  Speculation is done with
-calculations based on virtual addresses, without a valid translation
-to physical addresses it doesn't progress to an externally visible
-action.
+Right. There is absolutely no question that that is a useful thing to have.
 
-> BTW, isn't it a BIOS issue?
-> 
-> I believe it should have a way to hide a range of physical address space
-> from OS or force a caching mode on to exclude it from speculative
-> execution. Like setup MTRRs or something.
+And that's what GRND_RANDOM _should_ have meant. But didn't.
 
-This is their intent in marking it as reserved in the memory tables.
-They have explored many other avenues (I've even suggested a couple
-since pinning down this problem) and for each one there is a reason it
-doesn't work.
+So the semantics that getrandom() should have had are:
 
-> > I'd lean more toward "tightening of adherence to the spec required by
-> > some particular hardware."  Does that work for you?
-> 
-> Not really, no. I still believe it's issue of the platform, not OS.
+ getrandom(0) - just give me reasonable random numbers for any of a
+million non-strict-long-term-security use (ie the old urandom)
 
-My current wording for a comment to go above the code is:
+    - the nonblocking flag makes no sense here and would be a no-op
 
-/*
- * Only the region occupied by the kernel has so far been checked against
- * the table of usable memory regions provided by the firmware, so
- * invalidate pages outside that region.  A page table entry that maps to
- * a reserved area of memory would allow processor speculation into that
- * area, and on some hardware (particularly the UV platform) speculation
- * into reserved areas can cause a system halt.
- */
+ getrandom(GRND_RANDOM) - get me actual _secure_ random numbers with
+blocking until entropy pool fills (but not the completely invalid
+entropy decrease accounting)
 
-How close does that come to working for you?  (I'm going to dive
-specifically into the phrase "region occupied by the kernel" in a
-reply to Dave in another message; I understand that phrase may need
-work.  I'm more asking about the remainder of it here.)
+    - the nonblocking flag is useful for bootup and for "I will
+actually try to generate entropy".
 
---> Steve
+and both of those are very very sensible actions. That would actually
+have _fixed_ the problems we had with /dev/[u]random, both from a
+performance standpoint and for a filesystem access standpoint.
 
-> -- 
->  Kirill A. Shutemov
+But that is sadly not what we have right now.
 
--- 
-Steve Wahl, Hewlett Packard Enterprise
+And I suspect we can't fix it, since people have grown to depend on
+the old behavior, and already know to avoid GRND_RANDOM because it's
+useless with old kernels even if we fixed it with new ones.
+
+Does anybody really seriously debate the above? Ted? Are you seriously
+trying to claim that the existing GRND_RANDOM has any sensible use?
+Are you seriously trying to claim that the fact that we don't have a
+sane urandom source is a "feature"?
+
+                   Linus
