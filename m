@@ -2,62 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27188B32E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 03:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27344B32EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 03:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbfIPBVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Sep 2019 21:21:02 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56726 "EHLO huawei.com"
+        id S1729111AbfIPBXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Sep 2019 21:23:13 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2271 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727192AbfIPBVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Sep 2019 21:21:02 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DFFEE14AB25707A36B83;
-        Mon, 16 Sep 2019 09:21:00 +0800 (CST)
-Received: from [127.0.0.1] (10.177.224.82) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 16 Sep 2019
- 09:20:53 +0800
-Subject: Re: [PATCH] ubifs: ubifs_tnc_start_commit: Fix OOB in layout_in_gaps
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-CC:     "zhangyi (F)" <yi.zhang@huawei.com>,
-        Richard Weinberger <richard@nod.at>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
-References: <1563602720-113903-1-git-send-email-chengzhihao1@huawei.com>
- <CAFLxGvxEAGtQDFm4G3orY+M9yuthDA4j0+u=HbE9DKuo7H8WCg@mail.gmail.com>
- <0B80F9D4116B2F4484E7279D5A66984F7A7472@dggemi524-mbx.china.huawei.com>
- <CAFLxGvz__aw+BnfmGS3XXGqT6n6q-9miLPoVcL9KuvaZ2QbVUQ@mail.gmail.com>
- <0B80F9D4116B2F4484E7279D5A66984F7C0325@dggemi524-mbx.china.huawei.com>
- <CAFLxGvwpYHKi_nf0-uVWWpzG5Yv-hXgOD=9zHmmHHn+Fv+PJDA@mail.gmail.com>
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <173d4c4b-1846-5dd5-b477-4eb21258d4b6@huawei.com>
-Date:   Mon, 16 Sep 2019 09:20:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.0
+        id S1728872AbfIPBXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Sep 2019 21:23:12 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AD0EDE2B2C97BAF21A9E;
+        Mon, 16 Sep 2019 09:23:10 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 16 Sep
+ 2019 09:23:06 +0800
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: do not select same victim right
+ again
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20190909012532.20454-1-jaegeuk@kernel.org>
+ <69933b7f-48cc-47f9-ba6f-b5ca8f733cba@huawei.com>
+ <20190909080654.GD21625@jaegeuk-macbookpro.roam.corp.google.com>
+ <97237da2-897a-8420-94de-812e94aa751f@huawei.com>
+ <20190909120443.GA31108@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <27725e65-53fe-5731-0201-9959b8ef6b49@huawei.com>
+Date:   Mon, 16 Sep 2019 09:22:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAFLxGvwpYHKi_nf0-uVWWpzG5Yv-hXgOD=9zHmmHHn+Fv+PJDA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.224.82]
+In-Reply-To: <20190909120443.GA31108@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-在 2019/9/16 6:00, Richard Weinberger 写道:
-> On Fri, Aug 16, 2019 at 10:01 AM chengzhihao <chengzhihao1@huawei.com> wrote:
+On 2019/9/9 20:04, Jaegeuk Kim wrote:
+> On 09/09, Chao Yu wrote:
+>> On 2019/9/9 16:06, Jaegeuk Kim wrote:
+>>> On 09/09, Chao Yu wrote:
+>>>> On 2019/9/9 9:25, Jaegeuk Kim wrote:
+>>>>> GC must avoid select the same victim again.
+>>>>
+>>>> Blocks in previous victim will occupy addition free segment, I doubt after this
+>>>> change, FGGC may encounter out-of-free space issue more frequently.
+>>>
+>>> Hmm, actually this change seems wrong by sec_usage_check().
+>>> We may be able to avoid this only in the suspicious loop?
+>>>
+>>> ---
+>>>  fs/f2fs/gc.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index e88f98ddf396..5877bd729689 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -1326,7 +1326,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>  		round++;
+>>>  	}
+>>>  
+>>> -	if (gc_type == FG_GC)
+>>> +	if (gc_type == FG_GC && seg_freed)
 >>
->>>  ubifs_assert(c, p < c->gap_lebs + c->lst.idx_lebs);
->>
->> I've done 50 problem reproduces on different flash devices and made sure that the assertion was not triggered. See record.txt for details.
+>> That's original solution Sahitya provided to avoid infinite loop of GC, but I
+>> suggest to find the root cause first, then we added .invalid_segmap for that
+>> purpose.
 > 
-> Thanks for letting me know. :)
-> I need to give this another thought, then we can apply it for -rc2.
-> 
-ACK. :)
+> I've checked the Sahitya's patch. So, it seems the problem can happen due to
+> is_alive or atomic_file.
 
+For some conditions, this doesn't help, for example, two sections contain the
+same fewest valid blocks, it will cause to loop selecting them if it fails to
+migrate blocks.
+
+How about keeping it as it is to find potential bug.
+
+Thanks,
+
+> 
+>>
+>> Thanks,
+>>
+>>>  		sbi->cur_victim_sec = NULL_SEGNO;
+>>>  
+>>>  	if (sync)
+>>>
+> .
+> 
