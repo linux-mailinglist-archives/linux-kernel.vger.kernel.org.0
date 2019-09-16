@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAD3DB38D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05BC0B38B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:55:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732695AbfIPKzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 06:55:43 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36827 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732499AbfIPKyw (ORCPT
+        id S1732533AbfIPKyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 06:54:53 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40615 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbfIPKyw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Sep 2019 06:54:52 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v24so5649636ljj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 03:54:48 -0700 (PDT)
+Received: by mail-lf1-f66.google.com with SMTP id d17so9214673lfa.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 03:54:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ICv/vY4XAwe136r6/MDdnRXmmJJ1JFeohZKBWO948JI=;
-        b=renlPhv6Vx5CNHYksA5WzO20FVIYXEGpjJn5/YGtCgnC0BCwjUvLBlAbeS2QWSwpah
-         jcbI6KeCWf9WpTaXKqzoATiWjCG2prOysrOtXjGAuLCXoTntdh4Qt/9m80BBL8QN4pzD
-         XadY611DPWHua3DwZGOlRJTNUpZN6TrPk0Qwv6sDmublMKNGDX/eMekRKEEMHAPLynHN
-         5myrlSfFkSMecyixXnfJtcPFSkWkbeUOkkzmZn0e084lNX5MEANYr1m0mJB052RjofTA
-         cKvGdlGjvGxXUcAUQef27FEQY1g72gk+N/QCID6XsEJxukpv5MfPHG1nANwRFzRONI4R
-         ysPQ==
+        bh=qALJbnp9FTLPJAoGDKJIaiGyevgs6xsdVhuDmgFkzac=;
+        b=Tp5OvP8rCaZb13D4ww3vj2mw2PWVAqGybOa6fUs/oIVw5T7/73Nqpmo57DltCqgBmW
+         W/9ysUCIVjTtDUmMneoWsxRoIIm7/1ZmqNsLJ+HjEvvkOOIiQYjOkchVu5eqKs/Mqt1X
+         VjfxITukqZHlV1t0Rqp7NNolwQVY8JYuqJ9aTg8QvAEanrhVhyRBlUtWCC2xv0LResJy
+         TDMAy3NvtfKh5oTRrkwcPoMTpDX87g8TjD24bYIbVovX1/Wj9J6d5+Ri38Y1b0NWoLst
+         CHjgzSYJCQAkhWGFdxr3rIBRjCkEgXHxMGQFp+nj7h4J2kMn6KpOxmGFCXE87IoRKeWc
+         23Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ICv/vY4XAwe136r6/MDdnRXmmJJ1JFeohZKBWO948JI=;
-        b=SEKVvt9PVIjrOJ0euzxr6AA9sW5LBudLqJfCGUXrMjHFxjuc+1d0mNLz7NUsTMKX9z
-         rZw29NTVawUhd4LWUhpA5rY/BPesep3PZHPe3QPa7+IGQJsbur9gwzdAPB4j64+/uM+/
-         CKVPBep9Ba4SHtLfLpy2NsmI5NC8dqTjrJdbw/uHqYvEvUaI5WgO9219m8DLDw4VaNbw
-         xt6dFCq9jI01hZRUFmZJOBm/w2DCWwAyNQ0ZypZKjEkNQn3jB4yaXEySJIh4FjhsY8aj
-         gbvWn25aX2IGV+o+yKH9AsDC7UpetDxWo8p9Mb08W1/6MicS7Q2lpXFzoeCO3RnkAiOT
-         ajTg==
-X-Gm-Message-State: APjAAAVox9371/gw1khg1aZdszBNOz4IAtcrrOHr97yeij/sse/tzq9R
-        1P6d62Fcwx3WPWDmMSmLoJODeQ==
-X-Google-Smtp-Source: APXvYqxSBkjyrfAdAo3XLVu9mwgNU46b8BtP9TI1G+SDVPq/GRexV8qvD6bjRrTR9lMP98abCOCLiQ==
-X-Received: by 2002:a2e:9881:: with SMTP id b1mr19271028ljj.134.1568631288103;
-        Mon, 16 Sep 2019 03:54:48 -0700 (PDT)
+        bh=qALJbnp9FTLPJAoGDKJIaiGyevgs6xsdVhuDmgFkzac=;
+        b=YbK/e6f0g/AZsWZdtafHBkkSjnPoTUsr+oEvo/rF8e7J8f5tjfymiHyDIUroHVD7EM
+         PIXZq7iEgx2TwloyIR3M/4Ralnql3NnDUwBIgOy1fMg2vipCK90nkzMeyOUoI8OHFx9b
+         8Jw285uGCLnjFi4tuGn31Enp8riPuBep74V3cdfbm3AzJcOFD9cUj4ZBV+lyDdmU5sJo
+         hCapusLW4A9XTsT1ZYRDYR575lbOLmaGG63HqPTsdWOZGhfIx6+jeMgE2iKGU2hZ2l5Z
+         TRqdE+3RqpsCedOrXa5Hukps1WdWbBMGmHU9kFZlPf9TNKYo3ag3QQ2b07jxnieKnnqN
+         oCoA==
+X-Gm-Message-State: APjAAAWBxwnSzKeOoztWNaYgmCn/n2ViE7hfg242jd7+Nqt3ySggBaH+
+        M2J2vrxrAc4WHZvLboeRk/Pg4g==
+X-Google-Smtp-Source: APXvYqzllcvzn3zCr2/UXmKKBqQnnGjipxHPlSqink4eIoGTL2UlV4EM6dmS/RiJ2HlREaZdmF9AnQ==
+X-Received: by 2002:ac2:5451:: with SMTP id d17mr37030113lfn.77.1568631289427;
+        Mon, 16 Sep 2019 03:54:49 -0700 (PDT)
 Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id v1sm8987737lfq.89.2019.09.16.03.54.46
+        by smtp.gmail.com with ESMTPSA id v1sm8987737lfq.89.2019.09.16.03.54.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 03:54:47 -0700 (PDT)
+        Mon, 16 Sep 2019 03:54:48 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
         davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
@@ -52,9 +52,9 @@ Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
         sergei.shtylyov@cogentembedded.com,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v3 bpf-next 06/14] samples: bpf: makefile: drop unnecessarily inclusion for bpf_load
-Date:   Mon, 16 Sep 2019 13:54:25 +0300
-Message-Id: <20190916105433.11404-7-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v3 bpf-next 07/14] samples: bpf: add makefile.target for separate CC target build
+Date:   Mon, 16 Sep 2019 13:54:26 +0300
+Message-Id: <20190916105433.11404-8-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org>
 References: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org>
@@ -63,28 +63,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop inclusion for bpf_load -I$(objtree)/usr/include as it is
-included for all objects anyway, with above line:
-KBUILD_HOSTCFLAGS += -I$(objtree)/usr/include
+The makefile.target is added only and will be used in
+sample/bpf/Makefile later in order to switch cross-compiling on CC
+from HOSTCC environment.
+
+The HOSTCC is supposed to build binaries and tools running on the host
+afterwards, in order to simplify build or so, like "fixdep" or else.
+In case of cross compiling "fixdep" is executed on host when the rest
+samples should run on target arch. In order to build binaries for
+target arch with CC and tools running on host with HOSTCC, lets add
+Makefile.target for simplicity, having definition and routines similar
+to ones, used in script/Makefile.host. This allows later add
+cross-compilation to samples/bpf with minimum changes.
+
+The tprog stands for target programs built with CC.
+
+Makefile.target contains only stuff needed for samples/bpf, potentially
+can be reused later and now needed only for unblocking tricky
+samples/bpf cross compilation.
 
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- samples/bpf/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ samples/bpf/Makefile.target | 75 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
+ create mode 100644 samples/bpf/Makefile.target
 
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index d3c8db3df560..9d923546e087 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -176,7 +176,7 @@ KBUILD_HOSTCFLAGS += -I$(srctree)/tools/testing/selftests/bpf/
- KBUILD_HOSTCFLAGS += -I$(srctree)/tools/lib/ -I$(srctree)/tools/include
- KBUILD_HOSTCFLAGS += -I$(srctree)/tools/perf
- 
--HOSTCFLAGS_bpf_load.o += -I$(objtree)/usr/include -Wno-unused-variable
-+HOSTCFLAGS_bpf_load.o += -Wno-unused-variable
- 
- KBUILD_HOSTLDLIBS		+= $(LIBBPF) -lelf
- HOSTLDLIBS_tracex4		+= -lrt
+diff --git a/samples/bpf/Makefile.target b/samples/bpf/Makefile.target
+new file mode 100644
+index 000000000000..fb6de63f7d2f
+--- /dev/null
++++ b/samples/bpf/Makefile.target
+@@ -0,0 +1,75 @@
++# SPDX-License-Identifier: GPL-2.0
++# ==========================================================================
++# Building binaries on the host system
++# Binaries are not used during the compilation of the kernel, and intendent
++# to be build for target board, target board can be host ofc. Added to build
++# binaries to run not on host system.
++#
++# Sample syntax (see Documentation/kbuild/makefiles.rst for reference)
++# tprogs-y := xsk_example
++# Will compile xdpsock_example.c and create an executable named xsk_example
++#
++# tprogs-y    := xdpsock
++# xdpsock-objs := xdpsock_1.o xdpsock_2.o
++# Will compile xdpsock_1.c and xdpsock_2.c, and then link the executable
++# xdpsock, based on xdpsock_1.o and xdpsock_2.o
++#
++# Inherited from scripts/Makefile.host
++#
++__tprogs := $(sort $(tprogs-y))
++
++# C code
++# Executables compiled from a single .c file
++tprog-csingle	:= $(foreach m,$(__tprogs), \
++			$(if $($(m)-objs),,$(m)))
++
++# C executables linked based on several .o files
++tprog-cmulti	:= $(foreach m,$(__tprogs),\
++			$(if $($(m)-objs),$(m)))
++
++# Object (.o) files compiled from .c files
++tprog-cobjs	:= $(sort $(foreach m,$(__tprogs),$($(m)-objs)))
++
++tprog-csingle	:= $(addprefix $(obj)/,$(tprog-csingle))
++tprog-cmulti	:= $(addprefix $(obj)/,$(tprog-cmulti))
++tprog-cobjs	:= $(addprefix $(obj)/,$(tprog-cobjs))
++
++#####
++# Handle options to gcc. Support building with separate output directory
++
++_tprogc_flags   = $(TPROGS_CFLAGS) \
++                 $(TPROGCFLAGS_$(basetarget).o)
++
++# $(objtree)/$(obj) for including generated headers from checkin source files
++ifeq ($(KBUILD_EXTMOD),)
++ifdef building_out_of_srctree
++_tprogc_flags   += -I $(objtree)/$(obj)
++endif
++endif
++
++tprogc_flags    = -Wp,-MD,$(depfile) $(_tprogc_flags)
++
++# Create executable from a single .c file
++# tprog-csingle -> Executable
++quiet_cmd_tprog-csingle 	= CC  $@
++      cmd_tprog-csingle	= $(CC) $(tprogc_flags) $(TPROGS_LDFLAGS) -o $@ $< \
++		$(TPROGS_LDLIBS) $(TPROGLDLIBS_$(@F))
++$(tprog-csingle): $(obj)/%: $(src)/%.c FORCE
++	$(call if_changed_dep,tprog-csingle)
++
++# Link an executable based on list of .o files, all plain c
++# tprog-cmulti -> executable
++quiet_cmd_tprog-cmulti	= LD  $@
++      cmd_tprog-cmulti	= $(CC) $(tprogc_flags) $(TPROGS_LDFLAGS) -o $@ \
++			  $(addprefix $(obj)/,$($(@F)-objs)) \
++			  $(TPROGS_LDLIBS) $(TPROGLDLIBS_$(@F))
++$(tprog-cmulti): $(tprog-cobjs) FORCE
++	$(call if_changed,tprog-cmulti)
++$(call multi_depend, $(tprog-cmulti), , -objs)
++
++# Create .o file from a single .c file
++# tprog-cobjs -> .o
++quiet_cmd_tprog-cobjs	= CC  $@
++      cmd_tprog-cobjs	= $(CC) $(tprogc_flags) -c -o $@ $<
++$(tprog-cobjs): $(obj)/%.o: $(src)/%.c FORCE
++	$(call if_changed_dep,tprog-cobjs)
 -- 
 2.17.1
 
