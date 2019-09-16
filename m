@@ -2,126 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9543B3B46
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4114FB3B4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733200AbfIPN0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:26:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbfIPN0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:26:43 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F8E1214D9;
-        Mon, 16 Sep 2019 13:26:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568640402;
-        bh=PSoteR+A5iVobJBEbU2oCtmwDpUDfIPpl+dEg7efaNk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=F2qB8mhHC9oveVa98WTPDsXSywvnScm7yBOOwHD1tTVXsB9XSelvAqr3TELVJjPlq
-         IFYumRIEXRshZlThYThpjNnFU2P5uUEi340nxSmBeh0hOznTCtdwmygdYbocXAsiNC
-         7ThAeIR3psg6GbJrx0ZvZKqasO9bW+IQZAD8tunU=
-Subject: Re: [PATCH 2/2] selftests: watchdog: Add command line option to show
- watchdog_info
-To:     Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        "George G. Davis" <george_davis@mentor.com>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>, shuah <shuah@kernel.org>
-References: <20190907085833.21167-1-erosca@de.adit-jv.com>
- <20190907085833.21167-2-erosca@de.adit-jv.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <2b08fa83-185b-4eb7-1217-37ed31d810b5@kernel.org>
-Date:   Mon, 16 Sep 2019 07:26:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1733219AbfIPN3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:29:11 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:43544 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733106AbfIPN3J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 09:29:09 -0400
+Received: by mail-io1-f70.google.com with SMTP id o6so37006998ioh.10
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 06:29:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=iuyvgKlp0/jGRdzIYiqZttUg8snGBj6NuoX6jdbgouQ=;
+        b=jER6eZMPJWc9Xh7Rf+DQry1vGdhC0MNCfF74Op639/DkBrT/5RG1Z4QeOLVoK+7gfA
+         x165c+adjaL9u0KN/oo9DKh3Z2djduXIsV96LJurapW6MVP1KiAuhs8cuC0VUCucE5I1
+         5pOj14+E8JPZGVgpXyHzAnkeLFtAICPNI2N6n5uU6db87yHVOxeqS8UaN+AJHEd2LjAb
+         315jcBwdkUHkJFjFjRD8MSaJohbe85YF4ZtUDSc87YduQkIzf4VCBPQZfT3b/RK0An6K
+         +q3hs/VEPmGdTR7GtOwGcJKhd/6qOrXXLmQLoE9mov0jzYz5csaCePQHTS0A5x+ZGfew
+         QMtw==
+X-Gm-Message-State: APjAAAWBpy8htVmlvSh11FUwXdrGQ4epZcg6wz3KtcIlAS+xmU6Q23ER
+        L04/BSuRCX23okEwgURnycSt9gUsZFKREIO22epSjrDQQAhT
+X-Google-Smtp-Source: APXvYqwHHX1YGKx5EQblVusctD9IXbBbOXdJ0uPeJ82h9wU4Gzg40S35DtcOT8a71RopPPZnI9A38ekbCv4NXVfSYIZ8SudS/kNE
 MIME-Version: 1.0
-In-Reply-To: <20190907085833.21167-2-erosca@de.adit-jv.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a5e:9616:: with SMTP id a22mr162935ioq.46.1568640548857;
+ Mon, 16 Sep 2019 06:29:08 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 06:29:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b1f1050592ab96ee@google.com>
+Subject: possible deadlock in open_rio (2)
+From:   syzbot <syzbot+19cf612d23f66bc19f22@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        miquel@df.uba.ar, rio500-users@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/7/19 2:58 AM, Eugeniu Rosca wrote:
-> From: "George G. Davis" <george_davis@mentor.com>
-> 
-> A side of affect of commit "selftests: watchdog: Add optional file
-> argument" is that arbitrary files may be opened for watchdog testing, e.g.
-> /dev/null. To prevent watchdog-test from operating on non-watchdog device
-> files, commit "selftests: watchdog: Validate optional file argument" was
-> added to validate that a file is indeed a watchdog device via an
-> ioctl(WDIOC_GETSUPPORT) call. Since the watchdog_info is available as a
-> result of the ioctl(WDIOC_GETSUPPORT) call, add a command line option to
-> show the watchdog_info.
-> 
-> Suggested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> Signed-off-by: George G. Davis <george_davis@mentor.com>
-> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> ---
-> v1: Applied/tested on commit ce54eab71e210f ("kunit: fix failure to build without printk") of
->      https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=next
-> 
->   tools/testing/selftests/watchdog/watchdog-test.c | 16 +++++++++++++++-
->   1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-> index 6ed822dc2222..f45e510500c0 100644
-> --- a/tools/testing/selftests/watchdog/watchdog-test.c
-> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
-> @@ -19,7 +19,7 @@
->   
->   int fd;
->   const char v = 'V';
-> -static const char sopts[] = "bdehp:t:Tn:NLf:";
-> +static const char sopts[] = "bdehp:t:Tn:NLf:i";
->   static const struct option lopts[] = {
->   	{"bootstatus",          no_argument, NULL, 'b'},
->   	{"disable",             no_argument, NULL, 'd'},
-> @@ -32,6 +32,7 @@ static const struct option lopts[] = {
->   	{"getpretimeout",       no_argument, NULL, 'N'},
->   	{"gettimeleft",		no_argument, NULL, 'L'},
->   	{"file",          required_argument, NULL, 'f'},
-> +	{"info",		no_argument, NULL, 'i'},
->   	{NULL,                  no_argument, NULL, 0x0}
->   };
->   
-> @@ -72,6 +73,7 @@ static void usage(char *progname)
->   	printf("Usage: %s [options]\n", progname);
->   	printf(" -f, --file\t\tOpen watchdog device file\n");
->   	printf("\t\t\tDefault is /dev/watchdog\n");
-> +	printf(" -i, --info\t\tShow watchdog_info\n");
->   	printf(" -b, --bootstatus\tGet last boot status (Watchdog/POR)\n");
->   	printf(" -d, --disable\t\tTurn off the watchdog timer\n");
->   	printf(" -e, --enable\t\tTurn on the watchdog timer\n");
-> @@ -216,6 +218,18 @@ int main(int argc, char *argv[])
->   		case 'f':
->   			/* Handled above */
->   			break;
-> +		case 'i':
-> +			/*
-> +			 * watchdog_info was obtained as part of file open
-> +			 * validation. So we just show it here.
-> +			 */
-> +			oneshot = 1;
-> +			printf("watchdog_info:\n");
-> +			printf(" identity:\t\t%s\n", info.identity);
-> +			printf(" firmware_version:\t%u\n",
-> +			       info.firmware_version);
-> +			printf(" options:\t\t%08x\n", info.options);
-> +			break;
->   
->   		default:
->   			usage(argv[0]);
-> 
+Hello,
 
-I would like to see these combined. Please don't add another argument.
-Combine patch and 1&2.
+syzbot found the following crash on:
 
-thanks,
--- Shuah
+HEAD commit:    f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=11512cd1600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
+dashboard link: https://syzkaller.appspot.com/bug?extid=19cf612d23f66bc19f22
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f92c6e600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b9b85e600000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+19cf612d23f66bc19f22@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+5.3.0-rc7+ #0 Not tainted
+------------------------------------------------------
+syz-executor071/1724 is trying to acquire lock:
+00000000f749c934 (rio500_mutex){+.+.}, at: open_rio+0x16/0xe0  
+drivers/usb/misc/rio500.c:65
+
+but task is already holding lock:
+000000009c24ba51 (minor_rwsem){++++}, at: usb_open+0x23/0x270  
+drivers/usb/core/file.c:39
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (minor_rwsem){++++}:
+        down_write+0x92/0x150 kernel/locking/rwsem.c:1500
+        usb_register_dev drivers/usb/core/file.c:187 [inline]
+        usb_register_dev+0x131/0x670 drivers/usb/core/file.c:156
+        probe_rio.cold+0x53/0x237 drivers/usb/misc/rio500.c:474
+        usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+        really_probe+0x281/0x6d0 drivers/base/dd.c:548
+        driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
+        __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
+        bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
+        __device_attach+0x217/0x360 drivers/base/dd.c:894
+        bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+        device_add+0xae6/0x16f0 drivers/base/core.c:2165
+        usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+        generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+        usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+        really_probe+0x281/0x6d0 drivers/base/dd.c:548
+        driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
+        __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
+        bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
+        __device_attach+0x217/0x360 drivers/base/dd.c:894
+        bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+        device_add+0xae6/0x16f0 drivers/base/core.c:2165
+        usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+        hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+        hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+        port_event drivers/usb/core/hub.c:5359 [inline]
+        hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+        process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+        worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+        kthread+0x318/0x420 kernel/kthread.c:255
+        ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+-> #0 (rio500_mutex){+.+.}:
+        check_prev_add kernel/locking/lockdep.c:2405 [inline]
+        check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+        validate_chain kernel/locking/lockdep.c:2897 [inline]
+        __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+        lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+        __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+        __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+        open_rio+0x16/0xe0 drivers/usb/misc/rio500.c:65
+        usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+        chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+        do_dentry_open+0x494/0x1120 fs/open.c:797
+        do_last fs/namei.c:3416 [inline]
+        path_openat+0x1430/0x3f50 fs/namei.c:3533
+        do_filp_open+0x1a1/0x280 fs/namei.c:3563
+        do_sys_open+0x3c0/0x580 fs/open.c:1089
+        do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(minor_rwsem);
+                                lock(rio500_mutex);
+                                lock(minor_rwsem);
+   lock(rio500_mutex);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor071/1724:
+  #0: 000000009c24ba51 (minor_rwsem){++++}, at: usb_open+0x23/0x270  
+drivers/usb/core/file.c:39
+
+stack backtrace:
+CPU: 0 PID: 1724 Comm: syz-executor071 Not tainted 5.3.0-rc7+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  check_noncircular+0x345/0x3e0 kernel/locking/lockdep.c:1741
+  check_prev_add kernel/locking/lockdep.c:2405 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+  validate_chain kernel/locking/lockdep.c:2897 [inline]
+  __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+  __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+  __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+  open_rio+0x16/0xe0 drivers/usb/misc/rio500.c:65
+  usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+  chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+  do_dentry_open+0x494/0x1120 fs/open.c:797
+  do_last fs/namei.c:3416 [inline]
+  path_openat+0x1430/0x3f50 fs/namei.c:3533
+  do_filp_open+0x1a1/0x280 fs/namei.c:3563
+  do_sys_open+0x3c0/0x580 fs/open.c:1089
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x401130
+Code: 01 f0 ff ff 0f 83 00 0b 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f  
+44 00 00 83 3d 5d 0c 2d 00 00 75 14 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 d4 0a 00 00 c3 48 83 ec 08 e8 3a 00 00 00
+RSP: 002b:00007ffca0216788 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000401130
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00007ffca02167a0
+RBP: 00000000006cb018 R08: 0000000000000000 R09: 000000000000000f
+R10: 0000000000000064 R11: 0000000000000246 R12: 0000000000402090
+R13: 0000000000402120 R14: 0000000000000000 R15: 00
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
