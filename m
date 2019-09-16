@@ -2,215 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74995B36BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 10:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C39B36B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 10:56:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731528AbfIPI6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 04:58:05 -0400
-Received: from mga06.intel.com ([134.134.136.31]:49388 "EHLO mga06.intel.com"
+        id S1731479AbfIPI4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 04:56:49 -0400
+Received: from foss.arm.com ([217.140.110.172]:42136 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729541AbfIPI6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 04:58:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 01:58:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,512,1559545200"; 
-   d="scan'208";a="211088538"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.66])
-  by fmsmga004.fm.intel.com with ESMTP; 16 Sep 2019 01:58:00 -0700
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 1/2] perf tools: Support single perf.data file directory
-Date:   Mon, 16 Sep 2019 11:56:45 +0300
-Message-Id: <20190916085646.6199-2-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190916085646.6199-1-adrian.hunter@intel.com>
-References: <20190916085646.6199-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1731442AbfIPI4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 04:56:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 428591000;
+        Mon, 16 Sep 2019 01:56:48 -0700 (PDT)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D9AD3F59C;
+        Mon, 16 Sep 2019 01:56:47 -0700 (PDT)
+Subject: Re: [PATCH] sched/rt: silence double clock update warning by using
+ rq_lock wrappers
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     Phil Auld <pauld@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <20190815145354.27484-1-pauld@redhat.com>
+ <f094734a-eeae-02db-dd0b-d7fe7e9d5db8@arm.com>
+Message-ID: <f388725d-1725-401f-bb44-9bcc785a124a@arm.com>
+Date:   Mon, 16 Sep 2019 09:56:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <f094734a-eeae-02db-dd0b-d7fe7e9d5db8@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support directory output that contains a regular perf.data file. This is
-preparation for adding support for putting a copy of /proc/kcore in that
-directory.
+[Added Steven to Cc]
 
-Distinguish the multiple file case from the regular (single) perf.data file
-case by adding data->is_multi_file.
+On 15/08/2019 18:24, Valentin Schneider wrote:
+> On 15/08/2019 15:53, Phil Auld wrote:
+>> With WARN_DOUBLE_CLOCK enabled a false positive warning can occur in rt
+>>
+>>         [] rq->clock_update_flags & RQCF_UPDATED
+>>         [] WARNING: CPU: 6 PID: 21426 at kernel/sched/core.c:225 
+>> 						update_rq_clock+0x90/0x130
+>>           [] Call Trace:
+>>           []  update_rq_clock+0x90/0x130
+>>           []  sched_rt_period_timer+0x11f/0x340
+>>           []  __hrtimer_run_queues+0x100/0x280
+>>           []  hrtimer_interrupt+0x100/0x220
+>>           []  smp_apic_timer_interrupt+0x6a/0x130
+>>           []  apic_timer_interrupt+0xf/0x20
+>>
+>> sched_rt_period_timer does:
+>>                 raw_spin_lock(&rq->lock);
+>>                 update_rq_clock(rq);
+>>
+>> which triggers the warning because of not using the rq_lock wrappers.
+>> So, use the wrappers.
+>>
+>> Signed-off-by: Phil Auld <pauld@redhat.com>
+>> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: Valentin Schneider <valentin.schneider@arm.com>
+>> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> 
+> Looks sane to me, and no missing _irqsave this time around ;)
+> 
+> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+> 
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/builtin-record.c |  2 +-
- tools/perf/util/data.c      | 37 +++++++++++++++++++++++++++----------
- tools/perf/util/data.h      |  6 ++++++
- tools/perf/util/header.h    |  1 +
- tools/perf/util/session.c   |  2 +-
- tools/perf/util/util.c      |  1 +
- 6 files changed, 37 insertions(+), 12 deletions(-)
-
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 1447004eee8a..4c356a046dd3 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -534,7 +534,7 @@ static int record__process_auxtrace(struct perf_tool *tool,
- 	size_t padding;
- 	u8 pad[8] = {0};
- 
--	if (!perf_data__is_pipe(data) && !perf_data__is_dir(data)) {
-+	if (!perf_data__is_pipe(data) && !perf_data__is_multi_file(data)) {
- 		off_t file_offset;
- 		int fd = perf_data__fd(data);
- 		int err;
-diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-index 88fba2ba549f..2fd3114d1167 100644
---- a/tools/perf/util/data.c
-+++ b/tools/perf/util/data.c
-@@ -37,7 +37,7 @@ int perf_data__create_dir(struct perf_data *data, int nr)
- 	struct perf_data_file *files = NULL;
- 	int i, ret = -1;
- 
--	if (WARN_ON(!data->is_dir))
-+	if (WARN_ON(!data->is_multi_file))
- 		return -EINVAL;
- 
- 	files = zalloc(nr * sizeof(*files));
-@@ -76,7 +76,7 @@ int perf_data__open_dir(struct perf_data *data)
- 	DIR *dir;
- 	int nr = 0;
- 
--	if (WARN_ON(!data->is_dir))
-+	if (WARN_ON(!data->is_multi_file))
- 		return -EINVAL;
- 
- 	/* The version is provided by DIR_FORMAT feature. */
-@@ -217,6 +217,16 @@ static bool is_dir(struct perf_data *data)
- 	return (st.st_mode & S_IFMT) == S_IFDIR;
- }
- 
-+static bool is_multi_file(struct perf_data *data)
-+{
-+	char path[PATH_MAX];
-+	struct stat st;
-+
-+	snprintf(path, sizeof(path), "%s/header", data->path);
-+
-+	return !stat(path, &st);
-+}
-+
- static int open_file_read(struct perf_data *data)
- {
- 	struct stat st;
-@@ -302,12 +312,17 @@ static int open_dir(struct perf_data *data)
- {
- 	int ret;
- 
--	/*
--	 * So far we open only the header, so we can read the data version and
--	 * layout.
--	 */
--	if (asprintf(&data->file.path, "%s/header", data->path) < 0)
--		return -1;
-+	if (perf_data__is_multi_file(data)) {
-+		/*
-+		 * So far we open only the header, so we can read the data version and
-+		 * layout.
-+		 */
-+		if (asprintf(&data->file.path, "%s/header", data->path) < 0)
-+			return -1;
-+	} else {
-+		if (asprintf(&data->file.path, "%s/perf.data", data->path) < 0)
-+			return -1;
-+	}
- 
- 	if (perf_data__is_write(data) &&
- 	    mkdir(data->path, S_IRWXU) < 0)
-@@ -333,8 +348,10 @@ int perf_data__open(struct perf_data *data)
- 	if (check_backup(data))
- 		return -1;
- 
--	if (perf_data__is_read(data))
-+	if (perf_data__is_read(data)) {
- 		data->is_dir = is_dir(data);
-+		data->is_multi_file = is_multi_file(data);
-+	}
- 
- 	return perf_data__is_dir(data) ?
- 	       open_dir(data) : open_file_dup(data);
-@@ -406,7 +423,7 @@ unsigned long perf_data__size(struct perf_data *data)
- 	u64 size = data->file.size;
- 	int i;
- 
--	if (!data->is_dir)
-+	if (!data->is_multi_file)
- 		return size;
- 
- 	for (i = 0; i < data->dir.nr; i++) {
-diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
-index 259868a39019..0c5994d969c7 100644
---- a/tools/perf/util/data.h
-+++ b/tools/perf/util/data.h
-@@ -20,6 +20,7 @@ struct perf_data {
- 	struct perf_data_file	 file;
- 	bool			 is_pipe;
- 	bool			 is_dir;
-+	bool			 is_multi_file;
- 	bool			 force;
- 	enum perf_data_mode	 mode;
- 
-@@ -50,6 +51,11 @@ static inline bool perf_data__is_dir(struct perf_data *data)
- 	return data->is_dir;
- }
- 
-+static inline bool perf_data__is_multi_file(struct perf_data *data)
-+{
-+	return data->is_multi_file;
-+}
-+
- static inline int perf_data__fd(struct perf_data *data)
- {
- 	return data->file.fd;
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index 999dac41871e..73ad217958b8 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -53,6 +53,7 @@ enum perf_header_version {
- };
- 
- enum perf_dir_version {
-+	PERF_DIR_SINGLE_FILE	= 0,
- 	PERF_DIR_VERSION	= 1,
- };
- 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 2b583e6adb49..6dd04bd092d1 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -222,7 +222,7 @@ struct perf_session *perf_session__new(struct perf_data *data,
- 			perf_evlist__init_trace_event_sample_raw(session->evlist);
- 
- 			/* Open the directory data. */
--			if (data->is_dir && perf_data__open_dir(data))
-+			if (data->is_multi_file && perf_data__open_dir(data))
- 				goto out_delete;
- 		}
- 	} else  {
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 32322a20a68b..5ca7490afdd1 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -189,6 +189,7 @@ int rm_rf_perf_data(const char *path)
- 	const char *pat[] = {
- 		"header",
- 		"data.*",
-+		"perf.data",
- 		NULL,
- 	};
- 
--- 
-2.17.1
-
+Stumbled on that one while reviewing my inbox, ping?
