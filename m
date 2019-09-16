@@ -2,44 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FB4FB4099
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 20:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40E4AB4089
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 20:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390676AbfIPStl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 14:49:41 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:38693 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390517AbfIPStM (ORCPT
+        id S1732328AbfIPStL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 14:49:11 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:35811 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730107AbfIPStK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 14:49:12 -0400
-Received: by mail-io1-f69.google.com with SMTP id a8so1172023ios.5
+        Mon, 16 Sep 2019 14:49:10 -0400
+Received: by mail-io1-f70.google.com with SMTP id 18so1180913iof.2
         for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 11:49:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=2XxfILjNqvgOnvsx3ytCFDxVQdXM6VVuZeypAV3t46k=;
-        b=bjOKtAuyt65oZO6iFLKM89k5GLyWF8f14+Z6SGbEYgypnZ6nlJePmLF6aO10xG+74r
-         2IUcgDI0vXbBDhQq771WKBD0v7/qJOLj31e+F9VwYs9dY4xtvP1Uq1nB9hcaPrC/Wd8N
-         8eqbo4hC/jQ0QDV1W6CNVC6TCPYbuQJ42T0e9Nw+9AhKoiIZXzZF5injawz0DwdsVWp9
-         TpSRF3SsCJCiklxhK+D8V5Pn5TwdpZwseKGEfw6Y6EL0Nege7MrBSWmXHs0zbzX2TIhE
-         i9Qkqc8PsLCrpiLO1LQtNzuvaf1lGu/EznvDcucUx8+Rc0okddFo0uWLgGM+b9bVKwjj
-         7C4w==
-X-Gm-Message-State: APjAAAWMysidlOJClLxAEXjxcf9YtD8xACfkiaasZlcmmJbEjwvks38m
-        cqKlu/OP7HgDobY3WdGmEiW0MjRAMYjOthBqCNd9TYzYpYaL
-X-Google-Smtp-Source: APXvYqxAYehskRVQgzFrr0XdVWHwzuwgpJNhn+ZxrlmyrvG4FhfWqX1sw21wt+LSz1OiL8vSN93vNtKXCpzyTEAWVtLie46dgvGd
+        bh=F5NQvrUFVwU+iYEomKDgHpNzH9BuzuG1Oq9cILqoF9w=;
+        b=XO8TIBcdaRVgBX4eJ6tSYRKipUX636YQRoN9G8DkQWCwMwIEB1JoGkjb2J4OWLj0ev
+         Zhrx0t526snLNU5YjdNjMOwHF2msZsSBxi0zEh2oXS+usxbS3627qDT8mjkd9eEEXNzO
+         H7CQTIGDg8qeUMXWWVhO30lNxpYRlf1eRhG5eDFSpi8AqlbdGVepcMfggGqqpCMJcw2R
+         /Bx6QFEmyC5tqf/9jybKbPdT55vE/gXbW8yD4HeuuVoYUCAOSL3wPKzZMGsINSY5wTPz
+         fc1eHv1eKqT3PFV0zTTdiVl+ZPFUuoSyGXKsMyIWfwpcl4FLBzvR/eaVKBewm78crvig
+         /kpw==
+X-Gm-Message-State: APjAAAURv5K2x8LWKad3EHBBm3ETyZaIMA2THa9YLHRRT9ly7iH7Hr+K
+        QvsUc7M3pcJ7ydJp0FxGJH/G62rObwiP/+bSz3rSc3ayinA8
+X-Google-Smtp-Source: APXvYqw3P64aFVztpt9L2rmR2DtHi9s6MW4xDKqLCr5gsOt4FQ/bH8ofPvnN+yxBVy6i+DOaBrafpW0wiKTu/tg1tSat6oibElQz
 MIME-Version: 1.0
-X-Received: by 2002:a02:c8cd:: with SMTP id q13mr477547jao.133.1568659749937;
+X-Received: by 2002:a6b:148b:: with SMTP id 133mr1540961iou.81.1568659749577;
  Mon, 16 Sep 2019 11:49:09 -0700 (PDT)
 Date:   Mon, 16 Sep 2019 11:49:09 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002b27c60592b00f38@google.com>
-Subject: WARNING in implement
-From:   syzbot <syzbot+38e7237add3712479d65@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000025ae690592b00fbd@google.com>
+Subject: WARNING in __alloc_pages_nodemask
+From:   syzbot <syzbot+e38fe539fedfc127987e@syzkaller.appspotmail.com>
+To:     aarcange@redhat.com, akpm@linux-foundation.org,
+        andreyknvl@google.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-usb@vger.kernel.org, mhocko@suse.com,
+        rientjes@google.com, syzkaller-bugs@googlegroups.com,
+        vbabka@suse.cz, yang.shi@linux.alibaba.com, zhongjiang@huawei.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,26 +53,22 @@ syzbot found the following crash on:
 
 HEAD commit:    f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=170b213e600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b15371600000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
-dashboard link: https://syzkaller.appspot.com/bug?extid=38e7237add3712479d65
+dashboard link: https://syzkaller.appspot.com/bug?extid=e38fe539fedfc127987e
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16830dc1600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f2d3fa600000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1093bed1600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1603cfc6600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+38e7237add3712479d65@syzkaller.appspotmail.com
+Reported-by: syzbot+e38fe539fedfc127987e@syzkaller.appspotmail.com
 
-keytouch 0003:0926:3333.0001: implement() called with too large value 32769  
-(n: 1)! (kworker/0:1)
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 12 at drivers/hid/hid-core.c:1370  
-implement.cold+0x40/0x81 drivers/hid/hid-core.c:1370
+WARNING: CPU: 0 PID: 1720 at mm/page_alloc.c:4696  
+__alloc_pages_nodemask+0x36f/0x780 mm/page_alloc.c:4696
 Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.3.0-rc7+ #0
+CPU: 0 PID: 1720 Comm: syz-executor388 Not tainted 5.3.0-rc7+ #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: events hidinput_led_worker
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0xca/0x13e lib/dump_stack.c:113
@@ -83,27 +80,44 @@ Call Trace:
   do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
   do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
   invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:implement.cold+0x40/0x81 drivers/hid/hid-core.c:1370
-Code: 00 ef 01 00 48 c7 c2 a0 ac 52 86 48 c7 c6 c0 8a 52 86 4c 8d 88 70 06  
-00 00 e8 3f 3b 1a fe 48 c7 c7 20 8b 52 86 e8 fc 4e d7 fc <0f> 0b 44 21 e5  
-e9 06 3a ff ff e8 64 ad ec fc 49 8d bd 28 19 00 00
-RSP: 0018:ffff8881da20fb88 EFLAGS: 00010082
-RAX: 0000000000000024 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81288ddd RDI: ffffed103b441f63
-RBP: 0000000000008001 R08: 0000000000000024 R09: ffffed103b643ee7
-R10: ffffed103b643ee6 R11: ffff8881db21f737 R12: 0000000000000001
-R13: ffff8881d28d8000 R14: 0000000000000001 R15: 0000000000000001
-  hid_output_field drivers/hid/hid-core.c:1543 [inline]
-  hid_output_report+0x2dc/0x4c0 drivers/hid/hid-core.c:1562
-  __usbhid_submit_report drivers/hid/usbhid/hid-core.c:593 [inline]
-  usbhid_submit_report+0x65c/0xde0 drivers/hid/usbhid/hid-core.c:638
+RIP: 0010:__alloc_pages_nodemask+0x36f/0x780 mm/page_alloc.c:4696
+Code: fe ff ff 65 48 8b 04 25 00 ef 01 00 48 05 60 10 00 00 41 be 01 00 00  
+00 48 89 44 24 58 e9 ee fd ff ff 81 e5 00 20 00 00 75 02 <0f> 0b 45 31 f6  
+e9 6b ff ff ff 8b 44 24 68 89 04 24 65 8b 2d e9 7e
+RSP: 0018:ffff8881d320f9d8 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 1ffff1103a641f3f RCX: 0000000000000000
+RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000040a20
+RBP: 0000000000000000 R08: ffff8881d3bcc800 R09: ffffed103a541d19
+R10: ffffed103a541d18 R11: ffff8881d2a0e8c7 R12: 0000000000000012
+R13: 0000000000000012 R14: 0000000000000000 R15: ffff8881d2a0e8c0
+  alloc_pages_current+0xff/0x200 mm/mempolicy.c:2153
+  alloc_pages include/linux/gfp.h:509 [inline]
+  kmalloc_order+0x1a/0x60 mm/slab_common.c:1257
+  kmalloc_order_trace+0x18/0x110 mm/slab_common.c:1269
+  __usbhid_submit_report drivers/hid/usbhid/hid-core.c:588 [inline]
+  usbhid_submit_report+0x5b5/0xde0 drivers/hid/usbhid/hid-core.c:638
   usbhid_request+0x3c/0x70 drivers/hid/usbhid/hid-core.c:1252
-  hidinput_led_worker+0xbd/0x360 drivers/hid/hid-input.c:1495
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Shutting down cpus with NMI
+  hid_hw_request include/linux/hid.h:1053 [inline]
+  hiddev_ioctl+0x526/0x1550 drivers/hid/usbhid/hiddev.c:735
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
+  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x444949
+Code: e8 bc af 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 1b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fffed614ab8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000444949
+RDX: 0000000020000080 RSI: 00000000400c4808 RDI: 0000000000000004
+RBP: 00000000006cf018 R08: 18c1180b508ac6d9 R09: 00000000004002e0
+R10: 000000000000000f R11: 0000000000000246 R12: 00000000004025f0
+R13: 0000000000402680 R14: 0000000000000000 R15: 0000000000000000
 Kernel Offset: disabled
 Rebooting in 86400 seconds..
 
