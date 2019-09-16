@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BECF2B40D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 21:10:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78691B40D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 21:10:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390792AbfIPTKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 15:10:04 -0400
+        id S2390809AbfIPTKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 15:10:06 -0400
 Received: from mga02.intel.com ([134.134.136.20]:45447 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390759AbfIPTKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 15:10:02 -0400
+        id S1730194AbfIPTKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 15:10:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 12:10:02 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 12:10:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,513,1559545200"; 
-   d="scan'208";a="191161711"
+   d="scan'208";a="191161733"
 Received: from jvhicko1-mobl2.amr.corp.intel.com (HELO localhost.localdomain) ([10.254.104.227])
-  by orsmga006.jf.intel.com with ESMTP; 16 Sep 2019 12:10:01 -0700
+  by orsmga006.jf.intel.com with ESMTP; 16 Sep 2019 12:10:02 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v2 2/5] soundwire: cadence_master: add hw_reset capability in debugfs
-Date:   Mon, 16 Sep 2019 14:09:48 -0500
-Message-Id: <20190916190952.32388-3-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v2 3/5] soundwire: intel: add helper for initialization
+Date:   Mon, 16 Sep 2019 14:09:49 -0500
+Message-Id: <20190916190952.32388-4-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190916190952.32388-1-pierre-louis.bossart@linux.intel.com>
 References: <20190916190952.32388-1-pierre-louis.bossart@linux.intel.com>
@@ -43,53 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide debugfs capability to kick link and devices into hard-reset
-(as defined by MIPI). This capability is really useful when some
-devices are no longer responsive and/or to check the software handling
-of resynchronization.
+Move code to helper for reuse in power management routines
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/cadence_master.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/soundwire/intel.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-index e3d06330d125..5f900cf2acb9 100644
---- a/drivers/soundwire/cadence_master.c
-+++ b/drivers/soundwire/cadence_master.c
-@@ -340,6 +340,23 @@ static int cdns_reg_show(struct seq_file *s, void *data)
- }
- DEFINE_SHOW_ATTRIBUTE(cdns_reg);
+diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
+index 57e599919479..cdb3243e8823 100644
+--- a/drivers/soundwire/intel.c
++++ b/drivers/soundwire/intel.c
+@@ -994,6 +994,15 @@ static struct sdw_master_ops sdw_intel_ops = {
+ 	.post_bank_switch = intel_post_bank_switch,
+ };
  
-+static int cdns_hw_reset(void *data, u64 value)
++static int intel_init(struct sdw_intel *sdw)
 +{
-+	struct sdw_cdns *cdns = data;
-+	int ret;
++	/* Initialize shim and controller */
++	intel_link_power_up(sdw);
++	intel_shim_init(sdw);
 +
-+	if (value != 1)
-+		return -EINVAL;
-+
-+	ret = sdw_cdns_exit_reset(cdns);
-+
-+	dev_dbg(cdns->dev, "link hw_reset done: %d\n", ret);
-+
-+	return ret;
++	return sdw_cdns_init(&sdw->cdns);
 +}
 +
-+DEFINE_DEBUGFS_ATTRIBUTE(cdns_hw_reset_fops, NULL, cdns_hw_reset, "%llu\n");
-+
- /**
-  * sdw_cdns_debugfs_init() - Cadence debugfs init
-  * @cdns: Cadence instance
-@@ -348,6 +365,9 @@ DEFINE_SHOW_ATTRIBUTE(cdns_reg);
- void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root)
- {
- 	debugfs_create_file("cdns-registers", 0400, root, cdns, &cdns_reg_fops);
-+
-+	debugfs_create_file("cdns-hw-reset", 0200, root, cdns,
-+			    &cdns_hw_reset_fops);
- }
- EXPORT_SYMBOL_GPL(sdw_cdns_debugfs_init);
+ /*
+  * probe and init
+  */
+@@ -1036,11 +1045,8 @@ static int intel_probe(struct platform_device *pdev)
+ 		return 0;
+ 	}
+ 
+-	/* Initialize shim and controller */
+-	intel_link_power_up(sdw);
+-	intel_shim_init(sdw);
+-
+-	ret = sdw_cdns_init(&sdw->cdns);
++	/* Initialize shim, controller and Cadence IP */
++	ret = intel_init(sdw);
+ 	if (ret)
+ 		goto err_init;
  
 -- 
 2.20.1
