@@ -2,554 +2,590 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D4CB3ADB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 14:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7CDFB3AE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732948AbfIPM7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 08:59:49 -0400
-Received: from correo.registraduria.gov.co ([201.232.123.13]:3841 "EHLO
-        registraduria.gov.co" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727742AbfIPM7t (ORCPT
+        id S1732976AbfIPNAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:00:50 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45793 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732956AbfIPNAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 08:59:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; d=registraduria.gov.co; s=registraduria.gov.co; c=relaxed/simple;
-        q=dns/txt; i=@registraduria.gov.co; t=1568638632; x=1571230632;
-        h=From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KvFaQjy6O7n1myS076/dDSqoTFY5YkAG9QOAmI7oOqE=;
-        b=BqgtUcCxcOoqoUlJKopVIxMPRlXyvuJmyVEeClYOG7GJmq++0JNwOazopUvLS52D
-        seCEMamIz14LX2fgQqVm04+5OPx/FUyqfQXY7hF1sZgQmJbUbA4BBCNh8p2uycOk
-        bbMvYoR3JIRjC0EzvAWNrXUdh/phYorFgqreGNjIUsQ=;
-X-AuditID: c0a8e818-52fff7000001bab9-53-5d7f86a8cbee
-Received: from RNEC-MSG-00.registraduria.gov.co (Unknown_Domain [172.20.60.177])
-        by registraduria.gov.co (Symantec Messaging Gateway) with SMTP id 64.37.47801.8A68F7D5; Mon, 16 Sep 2019 07:57:12 -0500 (-05)
-Received: from RNEC-MSG-00.registraduria.gov.co (172.20.60.177) by
- RNEC-MSG-00.registraduria.gov.co (172.20.60.177) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Mon, 16 Sep 2019 07:58:31 -0500
-Received: from RNEC-MSG-00.registraduria.gov.co ([fe80::2c92:7fcd:a2d3:3ac5])
- by RNEC-MSG-00.registraduria.gov.co ([fe80::2c92:7fcd:a2d3:3ac5%20]) with
- mapi id 15.00.1395.000; Mon, 16 Sep 2019 07:58:31 -0500
-From:   Registraduria Municipal Caramanta - Antioquia 
-        <CaramantaAntioquia@registraduria.gov.co>
-To:     "NO-REPLY@MICROSOFT.NET" <NO-REPLY@MICROSOFT.NET>
-Subject: =?iso-8859-1?Q?Se_non_verifichi_il_tuo_account_entro_le_prossime_24_ore,_?=
- =?iso-8859-1?Q?il_tuo_account_verr=E0_sospeso.?=
-Thread-Topic: =?iso-8859-1?Q?Se_non_verifichi_il_tuo_account_entro_le_prossime_24_ore,_?=
- =?iso-8859-1?Q?il_tuo_account_verr=E0_sospeso.?=
-Thread-Index: AQHVbIxGwrV5varixU6kFz/B17jUgg==
-Date:   Mon, 16 Sep 2019 12:58:30 +0000
-Message-ID: <1568667559759.4076@registraduria.gov.co>
-Accept-Language: es-ES, en-US
-Content-Language: es-ES
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [192.168.5.43]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 16 Sep 2019 09:00:49 -0400
+Received: by mail-ed1-f65.google.com with SMTP id h33so4198821edh.12
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 06:00:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ngy+M76X7h+soHET04lVNsGU4eKBi37asITtpQKCKNo=;
+        b=gfGVg8LdyRisbx+BE9jPidvnk50uiCiKrT75MRH6/ZXeW9BCll5/zwy/Mefahmr41W
+         IWubJbjCVrQDhaGUdlrFiC9ICs8xsjSoXW93+KFHZCQ6wSHv41MbMMbMCLdgSdYB8L4M
+         CGgjGK0ztn/jbcOy/4Bm606nLXeyoohBJsLY4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ngy+M76X7h+soHET04lVNsGU4eKBi37asITtpQKCKNo=;
+        b=VEfdgRgWHbVwgHu3/chP8BcME4Lhpf5Xr5Z0lssZG+FJcpXYXnE+3jy2cV2owJyF+X
+         6df1jonw14iAFQFGQ84ycZf6/xaALNvVMC7yDuK2ozPdmeu5aDqekJWk4yBrrLTaXg8B
+         fsc3f1QdArfosK+Wj1MDI4D707CCU9NJrUpgUErfI4Z3MpOtK+tnOqWXM+eTurA3w6MT
+         qFn69a8e7OE5iXrj0P4PBYvXD5bn2MAU6F3PfgSXE7BDaU/5Jx2CjjKvpWxlZTEC5BFc
+         gPNQGODxncNfSE7W9FQLck68oSnn/m7kaminq0yhXSoAbMNnzZgiFN5+iRuSeC6dUSr0
+         hHfA==
+X-Gm-Message-State: APjAAAXNVdeIoDVAR7oMgLtW5hh/gwWpyOJ2HWuIOWPFZbcD51RtoHyY
+        CmLei+3E3q/f0S7gpafWOGU1zg==
+X-Google-Smtp-Source: APXvYqzICXng4EEDKjHUHsPbFF7O41G0bAdyuGX/lVbG+HLXcnUORjUJrcJuEbxGAuY6xX5pEIxXcg==
+X-Received: by 2002:a17:906:b298:: with SMTP id q24mr1930501ejz.168.1568638846155;
+        Mon, 16 Sep 2019 06:00:46 -0700 (PDT)
+Received: from google.com ([2a00:79e0:1b:202:7df4:abcf:6db2:95b5])
+        by smtp.gmail.com with ESMTPSA id os27sm383913ejb.18.2019.09.16.06.00.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 06:00:45 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Mon, 16 Sep 2019 15:00:43 +0200
+To:     Yonghong Song <yhs@fb.com>
+Cc:     KP Singh <kpsingh@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Garnier <thgarnie@chromium.org>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Paul Turner <pjt@google.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Florent Revest <revest@chromium.org>,
+        Martin Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
+Subject: Re: [RFC v1 12/14] krsi: Add an eBPF helper function to get the
+ value of an env variable
+Message-ID: <20190916130043.GA64010@google.com>
+References: <20190910115527.5235-1-kpsingh@chromium.org>
+ <20190910115527.5235-13-kpsingh@chromium.org>
+ <0a5386c9-3dbd-1ed8-d94c-d866c6369743@fb.com>
 MIME-Version: 1.0
-X-Brightmail-Tracker: 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
-        EF0HAAA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a5386c9-3dbd-1ed8-d94c-d866c6369743@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Aggiorna il tuo account
-
-Il nostro record indica che il tuo account non =E8 stato aggiornato, il che=
- potrebbe comportare la chiusura del tuo account. Se non aggiorni il tuo ac=
-count, non sarai pi=F9 in grado di inviare e ricevere e-mail e ti verr=E0 n=
-egato l'accesso a molte delle nostre ultime conversazioni, contatti e alleg=
-ati migliorati.
-
-Prenditi un minuto per aggiornare il tuo account per un'esperienza di maili=
-ng pi=F9 rapida e completa.
-
-Fai cl<http://hfnfgewf.000webhostapp.com/>ic qui per aggiornare il tuo <htt=
-p://jhgewads.000webhostapp.com/> account?
-
-Nota: il mancato aggiornamento della propria casella di posta comporter=E0 =
-la cancellazione permanente del proprio account.
-
-Grazie molto,
-Il team di sicurezza
-
-Copyright =A9 2019 Webmail .Inc. Tutti i diritti riservati.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-?
-
-
-
-Confidencialidad: La informaci=F3n contenida en este mensaje de e-mail y su=
-s anexos, es confidencial y est=E1 reservada para el destinatario =FAnicame=
-nte. Si usted no es el destinatario o un empleado o agente responsable de e=
-nviar este mensaje al destinatario final, se le notifica que no est=E1 auto=
-rizado para revisar, retransmitir, imprimir, copiar, usar o distribuir este=
- e-mail o sus anexos. Si usted ha recibido este e-mail por error, por favor=
- comun=EDquelo inmediatamente v=EDa e-mail al remitente y tenga la amabilid=
-ad de borrarlo de su computadora o cualquier otro banco de datos. Muchas gr=
-acias.
-
-Confidentiality Notice: The information contained in this email message, in=
-cluding any attachment, is confidential and is intended only for the person=
- or entity to which it is addressed. If you are neither the intended recipi=
-ent nor the employee or agent responsible for delivering this message to th=
-e intended recipient, you are hereby notified that you may not review, retr=
-ansmit, convert to hard copy, copy, use or distribute this email message or=
- any attachments to it. If you have received this email in error, please co=
-ntact the sender immediately and delete this message from any computer or o=
-ther data bank. Thank you.
+Thanks for reviewing!
+
+On 15-Sep 00:16, Yonghong Song wrote:
+> 
+> 
+> On 9/10/19 12:55 PM, KP Singh wrote:
+> > From: KP Singh <kpsingh@google.com>
+> 
+> This patch cannot apply cleanly.
+> 
+> -bash-4.4$ git apply ~/p12.txt
+> error: patch failed: include/uapi/linux/bpf.h:2715
+> error: include/uapi/linux/bpf.h: patch does not apply
+> error: patch failed: tools/include/uapi/linux/bpf.h:2715
+> error: tools/include/uapi/linux/bpf.h: patch does not apply
+> -bash-4.4$
+
+I am not sure why this is happening, I tried:
+
+git clone \
+  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git && \
+  cd linux-next && \
+  git checkout -b review v5.3-rc6 && \
+  wget -P /tmp https://lore.kernel.org/patchwork/series/410101/mbox && \
+  git am /tmp/mbox
+
+and it worked.
+
+This seems to work too:
+
+  patch -p1 < <file>.patch
+
+Can you try with "git am" please?
+
+> 
+> > 
+> > The helper returns the value of the environment variable in the buffer
+> > that is passed to it. If the var is set multiple times, the helper
+> > returns all the values as null separated strings.
+> > 
+> > If the buffer is too short for these values, the helper tries to fill it
+> > the best it can and guarantees that the value returned in the buffer
+> > is always null terminated. After the buffer is filled, the helper keeps
+> > counting the number of times the environment variable is set in the
+> > envp.
+> > 
+> > The return value of the helper is an u64 value which carries two pieces
+> > of information.
+> > 
+> >    * The upper 32 bits are a u32 value signifying the number of times
+> >      the environment variable is set in the envp.
+> 
+> Not sure how useful this 'upper 32' bit value is. What user expected to do?
+> 
+> Another option is to have upper 32 bits encode the required buffer size
+> to hold all values. This may cause some kind of user space action, e.g.,
+> to replace the program with new program with larger per cpu map value size?
+> 
+
+The upper 32-bit value is actually an important part of the LSM's MAC
+policy. It allows the user to:
+
+- Return an -EPERM when if the environment variable is set more than
+  once.
+- Log a warning (this is what we are doing in the example) so
+  this is flagged as a potential malicious actor.
+
+> >    * The lower 32 bits are a s32 value signifying the number of bytes
+> >      written to the buffer or an error code. >
+> > Since the value of the environment variable can be very long and exceed
+> > what can be allocated on the BPF stack, a per-cpu array can be used
+> > instead:
+> > 
+> > struct bpf_map_def SEC("maps") env_map = {
+> >          .type = BPF_MAP_TYPE_PERCPU_ARRAY,
+> >          .key_size = sizeof(u32),
+> >          .value_size = 4096,
+> >          .max_entries = 1,
+> > };
+> 
+> Could you use use map definition with SEC(".maps")?
+
+Sure, I added this example program in the commit message. Will update
+it to be more canonical. Thanks!
+
+> 
+> > 
+> > SEC("prgrm")
+> > int bpf_prog1(void *ctx)
+> > {
+> >          u32 map_id = 0;
+> >          u64 times_ret;
+> >          s32 ret;
+> >          char name[48] = "LD_PRELOAD";
+> 
+> Reverse Christmas tree coding style, here and other places?
+
+Will happily fix it.
+
+However, I did not find it mentioned in the style guide:
+
+  https://www.kernel.org/doc/html/v4.10/process/coding-style.html
+  https://elixir.bootlin.com/linux/v4.6/source/Documentation/CodingStyle
+
+Is there one specific to BPF?
+
+
+> 
+> > 
+> >          char *map_value = bpf_map_lookup_elem(&env_map, &map_id);
+> >          if (!map_value)
+> >                  return 0;
+> > 
+> >          // Read the lower 32 bits for the return value
+> >          times_ret = krsi_get_env_var(ctx, name, 48, map_value, 4096);
+> >          ret = times_ret & 0xffffffff;
+> >          if (ret < 0)
+> >                  return ret;
+> >          return 0;
+> > }
+> > 
+> > Signed-off-by: KP Singh <kpsingh@google.com>
+> > ---
+> >   include/uapi/linux/bpf.h                  |  42 ++++++-
+> >   security/krsi/ops.c                       | 129 ++++++++++++++++++++++
+> >   tools/include/uapi/linux/bpf.h            |  42 ++++++-
+> >   tools/testing/selftests/bpf/bpf_helpers.h |   3 +
+> >   4 files changed, 214 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > index 32ab38f1a2fe..a4ef07956e07 100644
+> > --- a/include/uapi/linux/bpf.h
+> > +++ b/include/uapi/linux/bpf.h
+> > @@ -2715,6 +2715,45 @@ union bpf_attr {
+> >    *		**-EPERM** if no permission to send the *sig*.
+> >    *
+> >    *		**-EAGAIN** if bpf program can try again.
+> > + *
+> > + * u64 krsi_get_env_var(void *ctx, char *name, char *buf,
+> > + *			size_t name_len, size_t buf_len)
+> 
+> This signature is not the same as the later
+> krsi_get_env_var(...) helper definition.
+> BPF_CALL_5(krsi_get_env_var, struct krsi_ctx *, ctx, char *, name, u32, 
+> n_size,
+> 	  char *, dest, u32, size)
+> 
+
+I did this because the krsi_ctx is not exposed to the userspace and
+allows KRSI to modify the context without worrying about breaking
+userspace.
+
+That said, I could mark it as a (void *) here and cast it internally.
+I guess that would be better/cleaner?
+
+> > + *	Description
+> > + *		This helper can be used as a part of the
+> > + *		process_execution hook of the KRSI LSM in
+> > + *		programs of type BPF_PROG_TYPE_KRSI.
+> > + *
+> > + *		The helper returns the value of the environment
+> > + *		variable with the provided "name" for process that's
+> > + *		going to be executed in the passed buffer, "buf". If the var
+> > + *		is set multiple times, the helper returns all
+> > + *		the values as null separated strings.
+> > + *
+> > + *		If the buffer is too short for these values, the helper
+> > + *		tries to fill it the best it can and guarantees that the value
+> > + *		returned in the buffer  is always null terminated.
+> > + *		After the buffer is filled, the helper keeps counting the number
+> > + *		of times the environment variable is set in the envp.
+> > + *
+> > + *	Return:
+> > + *
+> > + *		The return value of the helper is an u64 value
+> > + *		which carries two pieces of information:
+> > + *
+> > + *		   The upper 32 bits are a u32 value signifying
+> > + *		   the number of times the environment variable
+> > + *		   is set in the envp.
+> > + *		   The lower 32 bits are an s32 value signifying
+> > + *		   the number of bytes written to the buffer or an error code:
+> > + *
+> > + *		**-ENOMEM** if the kernel is unable to allocate memory
+> > + *			    for pinning the argv and envv.
+> > + *
+> > + *		**-E2BIG** if the value is larger than the size of the
+> > + *			   destination buffer. The higher bits will still
+> > + *			   the number of times the variable was set in the envp.
+> 
+> The -E2BIG is returned because buffer sizee is not big enough.
+> Another possible error code is -ENOSPC, which typically indicates
+> buffer size not big enough.
+
+Sure, I am fine with using either.
+
+> 
+> > + *
+> > + *		**-EINVAL** if name is not a NULL terminated string.
+> >    */
+> >   #define __BPF_FUNC_MAPPER(FN)		\
+> >   	FN(unspec),			\
+> > @@ -2826,7 +2865,8 @@ union bpf_attr {
+> >   	FN(strtoul),			\
+> >   	FN(sk_storage_get),		\
+> >   	FN(sk_storage_delete),		\
+> > -	FN(send_signal),
+> > +	FN(send_signal),		\
+> > +	FN(krsi_get_env_var),
+> >   
+> >   /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+> >    * function eBPF program intends to call
+> > diff --git a/security/krsi/ops.c b/security/krsi/ops.c
+> > index 1f4df920139c..1db94dfaac15 100644
+> > --- a/security/krsi/ops.c
+> > +++ b/security/krsi/ops.c
+> > @@ -6,6 +6,8 @@
+> >   #include <linux/bpf.h>
+> >   #include <linux/security.h>
+> >   #include <linux/krsi.h>
+> > +#include <linux/binfmts.h>
+> > +#include <linux/highmem.h>
+> >   
+> >   #include "krsi_init.h"
+> >   #include "krsi_fs.h"
+> > @@ -162,6 +164,131 @@ static bool krsi_prog_is_valid_access(int off, int size,
+> >   	return false;
+> >   }
+> >   
+> > +static char *array_next_entry(char *array, unsigned long *offset,
+> > +			      unsigned long end)
+> > +{
+> > +	char *entry;
+> > +	unsigned long current_offset = *offset;
+> > +
+> > +	if (current_offset >= end)
+> > +		return NULL;
+> > +
+> > +	/*
+> > +	 * iterate on the array till the null byte is encountered
+> > +	 * and check for any overflows.
+> > +	 */
+> > +	entry = array + current_offset;
+> > +	while (array[current_offset]) {
+> > +		if (unlikely(++current_offset >= end))
+> > +			return NULL;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Point the offset to the next element in the array.
+> > +	 */
+> > +	*offset = current_offset + 1;
+> > +
+> > +	return entry;
+> > +}
+> > +
+> > +static u64 get_env_var(struct krsi_ctx *ctx, char *name, char *dest,
+> > +		u32 n_size, u32 size)
+> > +{
+> > +	s32 ret = 0;
+> > +	u32 num_vars = 0;
+> > +	int i, name_len;
+> > +	struct linux_binprm *bprm = ctx->bprm_ctx.bprm;
+> > +	int argc = bprm->argc;
+> > +	int envc = bprm->envc;
+> > +	unsigned long end = ctx->bprm_ctx.max_arg_offset;
+> > +	unsigned long offset = bprm->p % PAGE_SIZE;
+> 
+> why we need bprm->p % PAGE_SIZE instead of bprm->p?
+
+bprm->p points to the top of the memory and it's not an offset.
+
+The pinned buffer contains the pages for the (argv+env) and the
+brpm->p % PAGE_SIZE is the offset into the first page where the
+(argv+envv) starts.
+
+> 
+> > +	char *buf = ctx->bprm_ctx.arg_pages;
+> > +	char *curr_dest = dest;
+> > +	char *entry;
+> > +
+> > +	if (unlikely(!buf))
+> > +		return -ENOMEM;
+> > +
+> > +	for (i = 0; i < argc; i++) {
+> > +		entry = array_next_entry(buf, &offset, end);
+> > +		if (!entry)
+> > +			return 0;
+> > +	}
+> > +
+> > +	name_len = strlen(name);
+> > +	for (i = 0; i < envc; i++) {
+> > +		entry = array_next_entry(buf, &offset, end);
+> > +		if (!entry)
+> > +			return 0;
+> 
+> If the buf is "LD_PRELOAD=a.so\0LD_PRELOAD=b.so" and argc=0,
+> we may skip the first entry?
+
+I think I need to rename the "array_next_entry" function / document it
+better.
+
+The function updates the offset to the next location and the
+returns the entry at the current offset.
+
+So, in the first instance:
+
+   // offset is the offset into the first page.
+   entry = buf + offset;
+   offset = <updated value to the next entry>.
+
+> 
+> 
+> > +
+> > +		if (!strncmp(entry, name, name_len)) {
+> > +			num_vars++;
+> 
+> There helper permits n_size = 0 (ARG_CONST_SIZE_OR_ZERO).
+> in this case, name_len = 0, strncmp(entry, name, name_len) will be always 0.
+
+Thanks, you are right, It does not make sense to have name_len = 0. I
+will change it to ARG_CONST_SIZE.
+
+> 
+> > +
+> > +			/*
+> > +			 * There is no need to do further copying
+> > +			 * if the buffer is already full. Just count how many
+> > +			 * times the environment variable is set.
+> > +			 */
+> > +			if (ret == -E2BIG)
+> > +				continue;
+> > +
+> > +			if (entry[name_len] != '=')
+> > +				continue;
+> > +
+> > +			/*
+> > +			 * Move the buf pointer by name_len + 1
+> > +			 * (for the "=" sign)
+> > +			 */
+> > +			entry += name_len + 1;
+> > +			ret = strlcpy(curr_dest, entry, size);
+> > +
+> > +			if (ret >= size) {
+> > +				ret = -E2BIG;
+> 
+> Here, we have a partial copy. Should you instead nullify (memset) it as 
+> it is not really invalid one?
+
+The function does specify that the it will return a null terminated
+value even if an -E2BIG is returned so that user does get a truncated
+value. It's better to give the user some data. (I mentioned this in
+the documentation for the helper).
+
+> 
+> > +				continue;
+> > +			}
+> > +
+> > +			/*
+> > +			 * strlcpy just returns the length of the string copied.
+> > +			 * The remaining space needs to account for the added
+> > +			 * null character.
+> > +			 */
+> > +			curr_dest += ret + 1;
+> > +			size -= ret + 1;
+> > +			/*
+> > +			 * Update ret to be the current number of bytes written
+> > +			 * to the destination
+> > +			 */
+> > +			ret = curr_dest - dest;
+> > +		}
+> > +	}
+> > +
+> > +	return (u64) num_vars << 32 | (u32) ret;
+> > +}
+> > +
+> > +BPF_CALL_5(krsi_get_env_var, struct krsi_ctx *, ctx, char *, name, u32, n_size,
+> > +	  char *, dest, u32, size)
+> > +{
+> > +	char *name_end;
+> > +
+> > +	name_end = memchr(name, '\0', n_size);
+> > +	if (!name_end)
+> > +		return -EINVAL;
+> > +
+> > +	memset(dest, 0, size);
+
+This memset ensures the buffer is zeroed out (incase the buffer is
+fully / partially empty).
+
+> > +	return get_env_var(ctx, name, dest, n_size, size);
+> > +}
+> > +
+> > +static const struct bpf_func_proto krsi_get_env_var_proto = {
+> > +	.func = krsi_get_env_var,
+> > +	.gpl_only = true,
+> > +	.ret_type = RET_INTEGER,
+> > +	.arg1_type = ARG_PTR_TO_CTX,
+> > +	.arg2_type = ARG_PTR_TO_MEM,
+> > +	.arg3_type = ARG_CONST_SIZE_OR_ZERO,
+> > +	.arg4_type = ARG_PTR_TO_UNINIT_MEM,
+> > +	.arg5_type = ARG_CONST_SIZE_OR_ZERO,
+> > +};
+> > +
+> >   BPF_CALL_5(krsi_event_output, void *, log,
+> >   	   struct bpf_map *, map, u64, flags, void *, data, u64, size)
+> >   {
+> > @@ -192,6 +319,8 @@ static const struct bpf_func_proto *krsi_prog_func_proto(enum bpf_func_id
+> >   		return &bpf_map_lookup_elem_proto;
+> >   	case BPF_FUNC_get_current_pid_tgid:
+> >   		return &bpf_get_current_pid_tgid_proto;
+> > +	case BPF_FUNC_krsi_get_env_var:
+> > +		return &krsi_get_env_var_proto;
+> >   	case BPF_FUNC_perf_event_output:
+> >   		return &krsi_event_output_proto;
+> >   	default:
+> > diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> > index 32ab38f1a2fe..a4ef07956e07 100644
+> > --- a/tools/include/uapi/linux/bpf.h
+> > +++ b/tools/include/uapi/linux/bpf.h
+> > @@ -2715,6 +2715,45 @@ union bpf_attr {
+> >    *		**-EPERM** if no permission to send the *sig*.
+> >    *
+> >    *		**-EAGAIN** if bpf program can try again.
+> > + *
+> > + * u64 krsi_get_env_var(void *ctx, char *name, char *buf,
+> > + *			size_t name_len, size_t buf_len)
+> 
+> Inconsistent helper definitions.
+
+As discussed above, I can change the BPF_CALL_5 declaration to have
+a (void *) and cast to the krsi_ctx in the helper itself.
+
+- KP
+
+> 
+> > + *	Description
+> > + *		This helper can be used as a part of the
+> > + *		process_execution hook of the KRSI LSM in
+> > + *		programs of type BPF_PROG_TYPE_KRSI.
+> > + *
+> > + *		The helper returns the value of the environment
+> > + *		variable with the provided "name" for process that's
+> > + *		going to be executed in the passed buffer, "buf". If the var
+> > + *		is set multiple times, the helper returns all
+> > + *		the values as null separated strings.
+> > + *
+> > + *		If the buffer is too short for these values, the helper
+> > + *		tries to fill it the best it can and guarantees that the value
+> > + *		returned in the buffer  is always null terminated.
+> > + *		After the buffer is filled, the helper keeps counting the number
+> > + *		of times the environment variable is set in the envp.
+> > + *
+> > + *	Return:
+> > + *
+> > + *		The return value of the helper is an u64 value
+> > + *		which carries two pieces of information:
+> > + *
+> > + *		   The upper 32 bits are a u32 value signifying
+> > + *		   the number of times the environment variable
+> > + *		   is set in the envp.
+> > + *		   The lower 32 bits are an s32 value signifying
+> > + *		   the number of bytes written to the buffer or an error code:
+> > + *
+> > + *		**-ENOMEM** if the kernel is unable to allocate memory
+> > + *			    for pinning the argv and envv.
+> > + *
+> > + *		**-E2BIG** if the value is larger than the size of the
+> > + *			   destination buffer. The higher bits will still
+> > + *			   the number of times the variable was set in the envp.
+> > + *
+> > + *		**-EINVAL** if name is not a NULL terminated string.
+> >    */
+> >   #define __BPF_FUNC_MAPPER(FN)		\
+> >   	FN(unspec),			\
+> > @@ -2826,7 +2865,8 @@ union bpf_attr {
+> >   	FN(strtoul),			\
+> >   	FN(sk_storage_get),		\
+> >   	FN(sk_storage_delete),		\
+> > -	FN(send_signal),
+> > +	FN(send_signal),		\
+> > +	FN(krsi_get_env_var),
+> >   
+> >   /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+> >    * function eBPF program intends to call
+> > diff --git a/tools/testing/selftests/bpf/bpf_helpers.h b/tools/testing/selftests/bpf/bpf_helpers.h
+> > index f804f210244e..ecebdb772a9d 100644
+> > --- a/tools/testing/selftests/bpf/bpf_helpers.h
+> > +++ b/tools/testing/selftests/bpf/bpf_helpers.h
+> > @@ -303,6 +303,9 @@ static int (*bpf_get_numa_node_id)(void) =
+> >   static int (*bpf_probe_read_str)(void *ctx, __u32 size,
+> >   				 const void *unsafe_ptr) =
+> >   	(void *) BPF_FUNC_probe_read_str;
+> > +static unsigned long long (*krsi_get_env_var)(void *ctx,
+> > +	void *name, __u32 n_size, void *buf, __u32 size) =
+> > +	(void *) BPF_FUNC_krsi_get_env_var;
+> >   static unsigned int (*bpf_get_socket_uid)(void *ctx) =
+> >   	(void *) BPF_FUNC_get_socket_uid;
+> >   static unsigned int (*bpf_set_hash)(void *ctx, __u32 hash) =
+> > 
