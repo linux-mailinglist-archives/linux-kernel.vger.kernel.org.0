@@ -2,77 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DE82B4168
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 21:54:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2D05B4178
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 22:00:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391079AbfIPTyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 15:54:13 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44842 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391064AbfIPTyM (ORCPT
+        id S2391134AbfIPUAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 16:00:14 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36773 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732982AbfIPUAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 15:54:12 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q21so540396pfn.11
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 12:54:11 -0700 (PDT)
+        Mon, 16 Sep 2019 16:00:14 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y22so576829pfr.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 13:00:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:to:from:subject:user-agent:date;
-        bh=lrC/Mm8MKJYbyIapp2rG+4YTQFTYoqtqhsULa6M5KsQ=;
-        b=mX2Xn+XJuSrIQX/3vRMQ3W21bf2fHZusW/23HHt9zZ96LdU0+hJ7E4PByjU+dH7zYD
-         ulY6b4QpLuANuBtNDdJHkGuUh/5d49Sin3OsQ1upuF6MRYF2Zc8V4Ke3MKCoka1L3h63
-         GKWf2RWu0iLRZoehcVgZgRmd/GlKHEpPnpYEE=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=GkrRDU4n+A0mwdRr9SZP5oIS+Dn9buzlq9OjWSBq+U4=;
+        b=c0ymhVx5/QZhSh4uc2bqUht0XOUXdrplY+Qinz9udzz/RGT4dQdYTF+k0Ndep7R67U
+         lf7pzTYmvUq5AxJ/QgXvuXBQUDat6iaqvhMv+kV5JtcMdEineArUr5zYk3y32qtUlgBv
+         7znrll+LPEAMk8LnQaD6kN5cRlDfJ38NwMXOhQILW0010Ja+5W+mbaLiE0pnDH8enyPz
+         GLiHo0jQOdKTxPOi00r2X5mQUbA7tDB6dVETXVcE/o0cgk0OJNHF3AvPZvDvlFHyKRkg
+         CdNfuAlvFb0wVDtCUMPcJSdC7WqCeKQw4G/sTI70yfsnzHxTl7ve7iSOxrY2C0/FubbH
+         /u/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :user-agent:date;
-        bh=lrC/Mm8MKJYbyIapp2rG+4YTQFTYoqtqhsULa6M5KsQ=;
-        b=t3NDzoey3oqCGW8EmuRVltVsnOFmy/NwguaAAAu8VKsVcpDB9KItx2MxPp2w1cZsvg
-         RMEySS6SjNFA2+daXb+r0zU21lDyPaR3641Nvv06NrongMDZRNBqY+L96DRO8xnDroL6
-         q/sQZWBdHHyhdaAqX2VnzGaijzap7sYAsov9+tsTnrO3yWM8hNw1zus6z6uZha3PyR3r
-         MaBCuwAYtbTfxGaLwnQNU2Ybb/TXVOm8K4TRqO/3DUeoNyo6jCq2fMk0jzbJxp/9wVtn
-         ietLYfoPHI0LwwaioBsUq11BCldwj2ZK3L9NfQ4OuKv/BkktRe9p1GBIETBmkXJEPv2T
-         3uaw==
-X-Gm-Message-State: APjAAAXvbCuUGdrwFlz7grIaJcNlbC3ycDFxd2eaVCXV6Cbg4+muhPX+
-        eGMeJ3gRaT2SakGjf3+d0NlYxg==
-X-Google-Smtp-Source: APXvYqxUk+ttSr+TjZgdfGoX+v3Z9CTe/np15NOWgn4t9uKNcWkEJTPtjJik+Fqf9hb0pS4No35+ug==
-X-Received: by 2002:a62:1658:: with SMTP id 85mr56563pfw.195.1568663650915;
-        Mon, 16 Sep 2019 12:54:10 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id x9sm29605116pgp.75.2019.09.16.12.54.10
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=GkrRDU4n+A0mwdRr9SZP5oIS+Dn9buzlq9OjWSBq+U4=;
+        b=YkvdSa5rgLO2qMvFE+0L7wkMberuri6TA5aM0cTaZECeA2EdkTv92JWKZp3tbrmHws
+         HLSKl8KdnEmO0/hosTFa8h7DhCi1EvMepVPCtsK2uKwi9cqtnCbH9HIslsn7oWz9Tz4J
+         E3JDrEuwyAodlQ+560pWhsK1vEN/Opc27+2+aSNqhZir+xBVfYjIqHmXJx+66Qf6rlA3
+         Mmqj6wKeRmrTcFU9a7Tu1N2Rw+UNQIdITIUu4HQsTbudLtgXfJS0X1yqjP1C7eWXs4fY
+         4xFZk+IQ94HihIzQMrud1aFFvsQZPUmNJrL49onMZ+Z1V+oK4pk0jcbNSmchcYz7NJlR
+         1Xjg==
+X-Gm-Message-State: APjAAAV89+3gbQMZRfzauaJpUDsDCdHh1VCfeXkUiKsVGzbnU3azt1eX
+        7Zo1wVf28VR8c/Ez3ZEopoX94w==
+X-Google-Smtp-Source: APXvYqzzeBqfN19EkgRYHn2FKS9cRAy4ZLMoQatugO67DgdlU8I5c+fdmfBKhC6fq8aw2Tpg8JT34w==
+X-Received: by 2002:a63:5a0a:: with SMTP id o10mr371691pgb.282.1568664012969;
+        Mon, 16 Sep 2019 13:00:12 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id f20sm31526161pgg.56.2019.09.16.13.00.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 12:54:10 -0700 (PDT)
-Message-ID: <5d7fe862.1c69fb81.8e5e3.2325@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 16 Sep 2019 13:00:12 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 13:00:11 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     syzbot <syzbot+e38fe539fedfc127987e@syzkaller.appspotmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        andreyknvl@google.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-usb@vger.kernel.org, mhocko@suse.com,
+        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
+        yang.shi@linux.alibaba.com, zhongjiang@huawei.com
+Subject: Re: WARNING in __alloc_pages_nodemask
+In-Reply-To: <00000000000025ae690592b00fbd@google.com>
+Message-ID: <alpine.DEB.2.21.1909161258150.118156@chino.kir.corp.google.com>
+References: <00000000000025ae690592b00fbd@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c88947d18c65a692a8f314e4ad996d9d2a997997.1568240476.git.amit.kucheria@linaro.org>
-References: <cover.1568240476.git.amit.kucheria@linaro.org> <c88947d18c65a692a8f314e4ad996d9d2a997997.1568240476.git.amit.kucheria@linaro.org>
-Cc:     linux-clk@vger.kernel.org
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, agross@kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com,
-        ilina@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tdas@codeaurora.org
-From:   Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 4/5] clk: qcom: Initialise clock drivers earlier
-User-Agent: alot/0.8.1
-Date:   Mon, 16 Sep 2019 12:54:09 -0700
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Amit Kucheria (2019-09-11 15:32:33)
-> Initialise the clock drivers on sdm845 and qcs404 in core_initcall so we
-> can have earlier access to cpufreq during booting.
->=20
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
+On Mon, 16 Sep 2019, syzbot wrote:
 
-Did you want this patch to go through clk tree?
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14b15371600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e38fe539fedfc127987e
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1093bed1600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1603cfc6600000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+e38fe539fedfc127987e@syzkaller.appspotmail.com
+> 
+> WARNING: CPU: 0 PID: 1720 at mm/page_alloc.c:4696
+> __alloc_pages_nodemask+0x36f/0x780 mm/page_alloc.c:4696
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 0 PID: 1720 Comm: syz-executor388 Not tainted 5.3.0-rc7+ #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+> 01/01/2011
+> Call Trace:
+> __dump_stack lib/dump_stack.c:77 [inline]
+> dump_stack+0xca/0x13e lib/dump_stack.c:113
+> panic+0x2a3/0x6da kernel/panic.c:219
+> __warn.cold+0x20/0x4a kernel/panic.c:576
+> report_bug+0x262/0x2a0 lib/bug.c:186
+> fixup_bug arch/x86/kernel/traps.c:179 [inline]
+> fixup_bug arch/x86/kernel/traps.c:174 [inline]
+> do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
+> do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
+> invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+> RIP: 0010:__alloc_pages_nodemask+0x36f/0x780 mm/page_alloc.c:4696
+> Code: fe ff ff 65 48 8b 04 25 00 ef 01 00 48 05 60 10 00 00 41 be 01 00 00 00
+> 48 89 44 24 58 e9 ee fd ff ff 81 e5 00 20 00 00 75 02 <0f> 0b 45 31 f6 e9 6b
+> ff ff ff 8b 44 24 68 89 04 24 65 8b 2d e9 7e
+> RSP: 0018:ffff8881d320f9d8 EFLAGS: 00010046
+> RAX: 0000000000000000 RBX: 1ffff1103a641f3f RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000040a20
+> RBP: 0000000000000000 R08: ffff8881d3bcc800 R09: ffffed103a541d19
+> R10: ffffed103a541d18 R11: ffff8881d2a0e8c7 R12: 0000000000000012
+> R13: 0000000000000012 R14: 0000000000000000 R15: ffff8881d2a0e8c0
+> alloc_pages_current+0xff/0x200 mm/mempolicy.c:2153
+> alloc_pages include/linux/gfp.h:509 [inline]
+> kmalloc_order+0x1a/0x60 mm/slab_common.c:1257
+> kmalloc_order_trace+0x18/0x110 mm/slab_common.c:1269
+> __usbhid_submit_report drivers/hid/usbhid/hid-core.c:588 [inline]
+> usbhid_submit_report+0x5b5/0xde0 drivers/hid/usbhid/hid-core.c:638
+> usbhid_request+0x3c/0x70 drivers/hid/usbhid/hid-core.c:1252
+> hid_hw_request include/linux/hid.h:1053 [inline]
+> hiddev_ioctl+0x526/0x1550 drivers/hid/usbhid/hiddev.c:735
+> vfs_ioctl fs/ioctl.c:46 [inline]
+> file_ioctl fs/ioctl.c:509 [inline]
+> do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
+> ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
+> __do_sys_ioctl fs/ioctl.c:720 [inline]
+> __se_sys_ioctl fs/ioctl.c:718 [inline]
+> __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
+> do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+> entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
+Adding Jiri and Benjamin.  The hid report length is simply too large for 
+the page allocator to allocate: this is triggering because the resulting 
+allocation order is > MAX_ORDER-1.  Any way to make this allocate less 
+physically contiguous memory?
