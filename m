@@ -2,64 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9BFAB3CB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 16:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E4B4B3CC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 16:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388798AbfIPOjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 10:39:12 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44010 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfIPOjL (ORCPT
+        id S1728344AbfIPOmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 10:42:22 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42984 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbfIPOmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 10:39:11 -0400
-Received: by mail-pl1-f193.google.com with SMTP id 4so17005252pld.10
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 07:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=6TeCF3VXf4XlIkYWA/FvkW6EVqZD/uNF0pvpACElVU8=;
-        b=A2aAkWrAfKKkEjUwbTafRF/lNiO/MnSdQdVx0EMD5SI3yrkxAz3L6pedIn5EGksFOu
-         XMEXjxaCk7J7qp8JsjJA/4D9K6i6z23Y48n3TOC2jlolok7hPqxT2R9EC1hePpv4R7I3
-         Og6lesDO+MbdqaZ2P1Zu96MzcCK4Y244YCCmnOJ+UIl4Fi8SWAfWbQZopUSjk8QebrlY
-         vDbs48aus3PZnYedzP+hoZmJe4/WlLSDCaL/4bBzyqwlrgEMmz4oLEA7JtQ8H8W8O6Tz
-         XNI9az1e/i806kt3/BNNdRpHonbZPb0KEobgMueE4Dz2HRaFeprAIBP5L8vbgIZmWWxW
-         W3aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=6TeCF3VXf4XlIkYWA/FvkW6EVqZD/uNF0pvpACElVU8=;
-        b=Wj2VXU6yq0U5eHG7XBWpDmMjcdBzyYhbMuyjXFbSU7o3lJfabrC/ooELaULgOc4NAX
-         5NVKhPtTeErTCLOzuD3YkL4SBQ21zCFlOsSUuKImk8jB+Tyka9O7YAoMqgTFgKoJ+loY
-         W28FlJ8vPPQAx0/b2VQLDQZvTw+UDyMRkvt+K2IPTUKO0TfJuPProeyKJIvRrkanmX+x
-         WgoQeGXdG/4n8aRcKopdoeKQim87LPPdtfuCzkh/TWrp8C0Q9qK4SRx/w2ImDMpo2XAe
-         TvZu8qwUoQH8pHSmD46kBse1T5xVnkbVK72Wje+uwWaVfJgbYk0kQEuMKvomdnHBqajb
-         xiBQ==
-X-Gm-Message-State: APjAAAWVNwDfM55kbfmoOUURqC/JL0gYcPZTsqGUHsViXl4pi76NBmEi
-        MEpE/zd7faP3U66TVAqoOLTjpeLgzdgGHwfF6LY=
-X-Google-Smtp-Source: APXvYqxtC96d0CXfyCEHgu8SI9c4eZKIHgihqaw8bkJSnCs8BApPzW3vl2tqiCTIqDAjD0Fhe7T9oBWgcfiZKs8XKQ8=
-X-Received: by 2002:a17:902:5ac3:: with SMTP id g3mr122609plm.25.1568644751218;
- Mon, 16 Sep 2019 07:39:11 -0700 (PDT)
+        Mon, 16 Sep 2019 10:42:21 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 580962BCB71;
+        Mon, 16 Sep 2019 10:42:20 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id k0unBvUJKu5S; Mon, 16 Sep 2019 10:42:20 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 0BB612BCB6B;
+        Mon, 16 Sep 2019 10:42:20 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0BB612BCB6B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1568644940;
+        bh=io4ddQ8pvBKTts4C+Pm2ajLWnUquU+K01gUuLLAUxmo=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=MvDZcbksjf3PuxeX8NRveA+kG1cR6p3iij/YxwCHnDNbpP3kehJKlskrNucrgFCQl
+         GjukTZUHb82vEtV8PiWxlMbUUUx1NoMilVjcx+0+bsD80itO46/BEhDTMvxcZn6Hoi
+         RKO4u3W67ovFuP2xQC7rFrA4thFUTCc+8b94SgIZz/HrAw3LVkNdWZ6XAZtlqDl6/b
+         G+YOrbX8mCTy0DdlMVqANuUpKNZm8Z3EnpMeqEi3R+LLxXXyuAvMXbhFNXW5NkL/Ld
+         Lofot3IpSpK0GbzgPTeM0O/FMztay8RY0rar4ndZXy542FofaVVQEsiGCMWpVnu77w
+         Xc5XJp266bJ1A==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id ZM3MuJlBHuiv; Mon, 16 Sep 2019 10:42:19 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id DEF6E2BCB60;
+        Mon, 16 Sep 2019 10:42:19 -0400 (EDT)
+Date:   Mon, 16 Sep 2019 10:42:19 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "Rantala, Tommi T." <tommi.t.rantala@nokia.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        paulmck <paulmck@linux.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Paul Turner <pjt@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        stable <stable@vger.kernel.org>
+Message-ID: <1109991919.5481.1568644939856.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20190914194716.ED5D020692@mail.kernel.org>
+References: <20190913151220.3105-3-mathieu.desnoyers@efficios.com> <20190914194716.ED5D020692@mail.kernel.org>
+Subject: Re: [PATCH for 5.3 3/3] rseq/selftests: Fix: Namespace gettid() for
+ compatibility with glibc 2.30
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ccd:0:0:0:0 with HTTP; Mon, 16 Sep 2019 07:39:10
- -0700 (PDT)
-Reply-To: jessicavail090@gmail.com
-From:   Jessica Vail <redmondkojo33@gmail.com>
-Date:   Mon, 16 Sep 2019 14:39:10 +0000
-Message-ID: <CAFLTgARUCnqwj+dJWsqC8kiLnjOrbwhfTiV3DyNttswoPegXWw@mail.gmail.com>
-Subject: Hi dear,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.15_GA_3847 (ZimbraWebClient - FF69 (Linux)/8.8.15_GA_3847)
+Thread-Topic: rseq/selftests: Fix: Namespace gettid() for compatibility with glibc 2.30
+Thread-Index: DD+Mue4dYmH4wOVQj914v5FtBbUeaw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi dear,
+----- On Sep 14, 2019, at 3:47 PM, Sasha Levin sashal@kernel.org wrote:
 
-I'm Jessica Vail, from the United States,please i wish to have a
-communication with you.
+> Hi,
+> 
+> [This is an automated email]
+> 
+> This commit has been processed because it contains a -stable tag.
+> The stable tag indicates that it's relevant for the following trees: all
+> 
+> The bot has tested the following trees: v5.2.14, v4.19.72, v4.14.143, v4.9.192,
+> v4.4.192.
+> 
+> v5.2.14: Build OK!
+> v4.19.72: Build OK!
+> v4.14.143: Failed to apply! Possible dependencies:
+>    c960e9909d33 ("rseq/selftests: Provide parametrized tests")
+> 
+> v4.9.192: Failed to apply! Possible dependencies:
+>    c960e9909d33 ("rseq/selftests: Provide parametrized tests")
+> 
+> v4.4.192: Failed to apply! Possible dependencies:
+>    c960e9909d33 ("rseq/selftests: Provide parametrized tests")
+> 
+> 
+> NOTE: The patch will not be queued to stable trees until it is upstream.
+> 
+> How should we proceed with this patch?
 
-I am waiting for your answer,
+rseq was merged into 4.18, so none of those patches are needed prior to that
+kernel version.
 
-Jessica Vail.
+This applies to all 3 rseq patches.
+
+Thanks,
+
+Mathieu
+
+
+> 
+> --
+> Thanks,
+> Sasha
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
