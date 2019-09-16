@@ -2,27 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B8DEB4420
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 00:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65754B4424
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 00:40:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388371AbfIPWkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 18:40:04 -0400
+        id S2388420AbfIPWkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 18:40:11 -0400
 Received: from mga02.intel.com ([134.134.136.20]:58611 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388283AbfIPWkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 18:40:02 -0400
+        id S2387590AbfIPWkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 18:40:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 15:40:02 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 15:40:01 -0700
 X-IronPort-AV: E=Sophos;i="5.64,514,1559545200"; 
-   d="scan'208";a="198493589"
+   d="scan'208";a="198493551"
 Received: from agluck-desk2.sc.intel.com ([10.3.52.68])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 15:40:01 -0700
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 15:40:00 -0700
 From:   Tony Luck <tony.luck@intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        David Laight <David.Laight@aculab.com>,
+Cc:     Fenghua Yu <fenghua.yu@intel.com>, Borislav Petkov <bp@suse.de>,
         Tony Luck <tony.luck@intel.com>,
         "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
         "H Peter Anvin" <hpa@zytor.com>,
@@ -35,9 +34,9 @@ Cc:     Fenghua Yu <fenghua.yu@intel.com>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>,
         "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>
-Subject: [PATCH 3/3] x86/split_lock: Align the x86_capability array to size of unsigned long
-Date:   Mon, 16 Sep 2019 15:39:58 -0700
-Message-Id: <20190916223958.27048-4-tony.luck@intel.com>
+Subject: [PATCH 1/3] x86/common: Align cpu_caps_cleared and cpu_caps_set to unsigned long
+Date:   Mon, 16 Sep 2019 15:39:56 -0700
+Message-Id: <20190916223958.27048-2-tony.luck@intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190916223958.27048-1-tony.luck@intel.com>
 References: <1560897679-228028-1-git-send-email-fenghua.yu@intel.com>
@@ -51,50 +50,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fenghua Yu <fenghua.yu@intel.com>
 
-The x86_capability array in cpuinfo_x86 is defined as u32 and thus is
-naturally aligned to 4 bytes. But, set_bit() and clear_bit() require
-the array to be aligned to size of unsigned long (i.e. 8 bytes in
-64-bit).
+cpu_caps_cleared[] and cpu_caps_set[] may not be aligned to unsigned long.
+Atomic operations (i.e. set_bit() and clear_bit()) on the bitmaps may
+access two cache lines (a.k.a. split lock) and cause the CPU to do a bus
+lock to block all memory accesses from other processors to ensure
+atomicity.
 
-To fix the alignment issue, align the x86_capability array to size of
-unsigned long by using unnamed union and 'unsigned long array_align'
-to force the alignment.
+To avoid the overall performance degradation from the bus locking, align
+the two variables to unsigned long.
 
-Changing the x86_capability array's type to unsigned long may also fix
-the issue because the x86_capability array will be naturally aligned
-to size of unsigned long. But this needs additional code changes.
-So choose the simpler solution by setting the array's alignment to size
-of unsigned long.
+Defining the variables as unsigned long may also fix the issue because
+they will be naturally aligned to unsigned long. But that needs additional
+code changes. Adding __aligned(unsigned long) is a simpler fix.
 
-Suggested-by: David Laight <David.Laight@aculab.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/include/asm/processor.h | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/common.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 6e0a3b43d027..c073534ca485 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -93,7 +93,15 @@ struct cpuinfo_x86 {
- 	__u32			extended_cpuid_level;
- 	/* Maximum supported CPUID level, -1=no CPUID: */
- 	int			cpuid_level;
--	__u32			x86_capability[NCAPINTS + NBUGINTS];
-+	/*
-+	 * Align to size of unsigned long because the x86_capability array
-+	 * is passed to bitops which require the alignment. Use unnamed
-+	 * union to enforce the array is aligned to size of unsigned long.
-+	 */
-+	union {
-+		__u32		x86_capability[NCAPINTS + NBUGINTS];
-+		unsigned long	x86_capability_alignment;
-+	};
- 	char			x86_vendor_id[16];
- 	char			x86_model_id[64];
- 	/* in KB - valid for CPUS which support this call: */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index f125bf7ecb6f..87627091f45f 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -565,8 +565,9 @@ static const char *table_lookup_model(struct cpuinfo_x86 *c)
+ 	return NULL;		/* Not found */
+ }
+ 
+-__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS];
+-__u32 cpu_caps_set[NCAPINTS + NBUGINTS];
++/* Aligned to unsigned long to avoid split lock in atomic bitmap ops */
++__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
++__u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
+ 
+ void load_percpu_segment(int cpu)
+ {
 -- 
 2.20.1
 
