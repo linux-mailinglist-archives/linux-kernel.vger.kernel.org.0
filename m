@@ -2,87 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72084B3E0A
+	by mail.lfdr.de (Postfix) with ESMTP id E0533B3E0B
 	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 17:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728727AbfIPPq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 11:46:58 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38769 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389522AbfIPPq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 11:46:56 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x10so231841pgi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 08:46:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0YPh4ZPworY3ZEjE24wMYeyXg9KZRbq3tqWyWWQ8XlQ=;
-        b=BfWwhPEGMjqhNnMmtn0lC4DzNN1IjQpfnqP/T++6lj+rV9L/5Bg0t/1kgQ5MOGeFAx
-         xvUy28z95tNCGC9WQKuJJ5uoldqdK9xtCEx8RAzKXN6zirGepppIDIEHtIXHtmmmxffj
-         ZIsLh5V4yQwFT9p5F3gIArlVndMNXi9LzjZucd23CMQ1n40vSGuqSb2eyvhzxq2bJMU+
-         SdghuOWAi+Hcr2wqG0wBhIOSLvQ7Bd3zqaMcChDhPfJaJpTE5aSUcE/UjeMG5OhRs13D
-         re7vcxUA/3C1ix8b6r8uh4RU3u3NCuHy6+jhrk3EW0f/3MDp1OpREjGICKmrz0IAEjHt
-         4c2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0YPh4ZPworY3ZEjE24wMYeyXg9KZRbq3tqWyWWQ8XlQ=;
-        b=Kc2zwR4o7MNMyxbTOP5n9Q+V6AaRgDmBn61O/jIv3uQWKouF9XaF2e/b28HDLaglma
-         H86hnsbvR4M2e0Pw2TM0+rEMsRCSvzhfN3D59EYZtbmPlxQX1yw14XSW5ccE/NHIeFO1
-         QIiNMSnyLqf1CmPqwfHJdTimCCJU42gVwiYKhPyomeVZ5gKk8AS4qEHHv7jAysujK+Lu
-         5cAqhuUa67UesNJSbMuEtumlVSiYlNkocvI0ThTXNyTIcqublWKqVTIDuhKmGVEEWdFK
-         Zg6bbp03bLVNFTwrOdjDF3kU/UzlAouQakFuA6VlMqPmyA5ROzQwkYQRntdZ/sUGjRBn
-         //9g==
-X-Gm-Message-State: APjAAAXKWHaMr91c7SMXBLq27SY+aQwGAwXY4W10+GVtqN+OBmDZAYr6
-        zIyZysLp6WnBYFZrKKjRHhyg
-X-Google-Smtp-Source: APXvYqyYx2ww8kVi2qoPwBEokJosm1TyyK6KqDfDlsvQfRrorAIUQCpG72R/TxSYvntUByBP1MkqIg==
-X-Received: by 2002:a62:1e82:: with SMTP id e124mr16568271pfe.136.1568648815572;
-        Mon, 16 Sep 2019 08:46:55 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:90b:91ce:94c2:ef93:5bd:cfe8])
-        by smtp.gmail.com with ESMTPSA id s5sm36227670pfe.52.2019.09.16.08.46.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 08:46:55 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     ulf.hansson@linaro.org, afaerber@suse.de, robh+dt@kernel.org,
-        sboyd@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 7/7] arm64: configs: Enable Actions Semi platform in defconfig
-Date:   Mon, 16 Sep 2019 21:15:46 +0530
-Message-Id: <20190916154546.24982-8-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190916154546.24982-1-manivannan.sadhasivam@linaro.org>
-References: <20190916154546.24982-1-manivannan.sadhasivam@linaro.org>
+        id S1731725AbfIPPrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 11:47:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728527AbfIPPrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 11:47:23 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C7442184D;
+        Mon, 16 Sep 2019 15:47:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568648842;
+        bh=MYm2zxY/xoEKbCW9H6wOf0Sfh5t3xNGKEsSQnRVcsH4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cHVGaHv8YCgHi6cn3H1obmAuK37C+VZAuzPfpZqRh/R2HzsdTvXNvw6UQgOGQNcFc
+         RdSu+9uWR0SWTdHM3gJ2XzEH/Zqqtct1rT3EfNH9QKQG66p++TLOIa7oMsxa2Q2ART
+         VARaL6FPeFZYCokDO2JDHvCt/rrArX2AwOpDxw7w=
+Subject: Re: [PATCH v3] usbip: vhci_hcd indicate failed message
+To:     Mao Wenan <maowenan@huawei.com>, valentina.manea.m@gmail.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, shuah <shuah@kernel.org>
+References: <2743ad5b-9348-bd2b-4763-a2a199e6edad@kernel.org>
+ <20190916150921.152977-1-maowenan@huawei.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <fb06edbf-e599-ada5-916d-405382cb6f6f@kernel.org>
+Date:   Mon, 16 Sep 2019 09:47:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190916150921.152977-1-maowenan@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the Actions Semi platform can now boot a distro, enable it in
-ARM64 defconfig.
+On 9/16/19 9:09 AM, Mao Wenan wrote:
+> If the return value of vhci_init_attr_group and
+> sysfs_create_group is non-zero, which mean they failed
+> to init attr_group and create sysfs group, so it would
+> better add 'failed' message to indicate that.
+> This patch also change pr_err to dev_err to trace which
+> device is failed.
+> 
+> Fixes: 0775a9cbc694 ("usbip: vhci extension: modifications to vhci driver")
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>   v2: change pr_err to dev_err.
+>   v3: add error code in failed messages.
+>   drivers/usb/usbip/vhci_hcd.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+> index 000ab7225717..144507751eae 100644
+> --- a/drivers/usb/usbip/vhci_hcd.c
+> +++ b/drivers/usb/usbip/vhci_hcd.c
+> @@ -1185,12 +1185,12 @@ static int vhci_start(struct usb_hcd *hcd)
+>   	if (id == 0 && usb_hcd_is_primary_hcd(hcd)) {
+>   		err = vhci_init_attr_group();
+>   		if (err) {
+> -			pr_err("init attr group\n");
+> +			dev_err(hcd_dev(hcd), "init attr group failed, err = %d\n", err);
+>   			return err;
+>   		}
+>   		err = sysfs_create_group(&hcd_dev(hcd)->kobj, &vhci_attr_group);
+>   		if (err) {
+> -			pr_err("create sysfs files\n");
+> +			dev_err(hcd_dev(hcd), "create sysfs files failed, err = %d\n", err);
+>   			vhci_finish_attr_group();
+>   			return err;
+>   		}
+> 
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Looks good to me.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 0e58ef02880c..8e27777d6687 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -29,6 +29,7 @@ CONFIG_BLK_DEV_INITRD=y
- CONFIG_KALLSYMS_ALL=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_PROFILING=y
-+CONFIG_ARCH_ACTIONS=y
- CONFIG_ARCH_AGILEX=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_ALPINE=y
--- 
-2.17.1
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
+thanks,
+-- Shuah
