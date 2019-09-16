@@ -2,65 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF359B3BC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:47:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76CB4B3BD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:50:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387720AbfIPNrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:47:31 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:41459
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727806AbfIPNra (ORCPT
+        id S2388087AbfIPNtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:49:32 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:39324 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733243AbfIPNtb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:47:30 -0400
-X-IronPort-AV: E=Sophos;i="5.64,512,1559512800"; 
-   d="scan'208";a="319571104"
-Received: from unknown (HELO function) ([193.50.111.121])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES256-GCM-SHA384; 16 Sep 2019 15:47:28 +0200
-Received: from samy by function with local (Exim 4.92.2)
-        (envelope-from <samuel.thibault@ens-lyon.org>)
-        id 1i9rLk-0001yw-18; Mon, 16 Sep 2019 15:47:28 +0200
-Date:   Mon, 16 Sep 2019 15:47:28 +0200
-From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
-To:     "Speakup is a screen review system for Linux." 
-        <speakup@linux-speakup.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Simon Dickson <simonhdickson@gmail.com>,
-        Gregory Nowak <greg@gregn.net>, linux-kernel@vger.kernel.org,
-        John Covici <covici@ccs.covici.com>
-Subject: Re: [HELP REQUESTED from the community] Was: Staging status of
- speakup
-Message-ID: <20190916134727.4gi6rvz4sm6znrqc@function>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        "Speakup is a screen review system for Linux." <speakup@linux-speakup.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Simon Dickson <simonhdickson@gmail.com>,
-        Gregory Nowak <greg@gregn.net>, linux-kernel@vger.kernel.org,
-        John Covici <covici@ccs.covici.com>
-References: <20190725035352.GA7717@gregn.net>
- <875znqhia0.fsf@cmbmachine.messageid.invalid>
- <m3sgqucs1x.wl-covici@ccs.covici.com>
- <CAOtcWM0qynSjnF6TtY_s7a51B7JweDb7jwdxStEmPvB9tJFU4Q@mail.gmail.com>
- <20190821222209.GA4577@gregn.net>
- <CAOtcWM0Jzo+wew-uiOmde+eZXEWZ310L8wXscWjJv5OXqXJe6Q@mail.gmail.com>
- <20190909025429.GA4144@gregn.net>
- <CAOtcWM0P=w-iBZzwekVrSpp7t2WO9RA5WP956zgDrNKvzA+4ZA@mail.gmail.com>
- <20190915134300.GA552892@kroah.com>
- <CAOtcWM2MD-Z1tg7gdgzrXiv7y62JrV7eHnTgXpv-LFW7zRApjg@mail.gmail.com>
+        Mon, 16 Sep 2019 09:49:31 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1i9rNT-0007Lt-H4; Mon, 16 Sep 2019 15:49:15 +0200
+Date:   Mon, 16 Sep 2019 15:49:09 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+cc:     "tony.luck@intel.com" <tony.luck@intel.com>,
+        "Borislav Petkov (bp@alien8.de)" <bp@alien8.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
+        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+        "qiuxu.zhuo@intel.com" <qiuxu.zhuo@intel.com>,
+        David Wang <DavidWang@zhaoxin.com>,
+        "Cooper Yan(BJ-RD)" <CooperYan@zhaoxin.com>,
+        "Qiyuan Wang(BJ-RD)" <QiyuanWang@zhaoxin.com>,
+        "Herry Yang(BJ-RD)" <HerryYang@zhaoxin.com>
+Subject: Re: [PATCH v3 0/4] x86/mce: Add supports for Zhaoxin MCA
+In-Reply-To: <a26cd9adb0b74b838c30ff9299de9932@zhaoxin.com>
+Message-ID: <alpine.DEB.2.21.1909161539510.1887@nanos.tec.linutronix.de>
+References: <a26cd9adb0b74b838c30ff9299de9932@zhaoxin.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOtcWM2MD-Z1tg7gdgzrXiv7y62JrV7eHnTgXpv-LFW7zRApjg@mail.gmail.com>
-Organization: I am not organized
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Okash Khawaja, le dim. 15 sept. 2019 19:41:30 +0100, a ecrit:
-> I have attached the descriptions.
+On Mon, 16 Sep 2019, Tony W Wang-oc wrote:
 
-Attachment is missing :)
+> Zhaoxin newer CPUs support MCE, CMCI and LMCE that compatible with
+> Intel's "Machine-Check Architecture".
 
-Samuel
+Thanks for providing a cover letter. Though threading does not work either
+with that simply because the 1-4/4 mails lack a
+
+   References: <Message-id-of-cover-letter>
+
+tag. They have some weird:
+
+   Thread-Index: AdVsgZ9UPwR7QKdtRlW4qXXe20fCvg==
+
+tag, but that is different for every mail.
+
+   Thread-Index: AdVsghaYSu2N9NgNSwS4zHAPRb3wjg==
+
+'Thread-Index' is a MS Outlook specific header which is not supported by
+real MUAs.
+
+Please make sure to fix that when you are going to send the next round of
+patches. Send them to yourself first and check the mail headers for a
+proper References: tag chain. If you want to know how that looks just have
+a look at the mail headers of any properly threaded patch series which you
+received from LKML.
+
+Thanks,
+
+	tglx
+
+
