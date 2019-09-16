@@ -2,76 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C0D2B37F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:21:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64F84B3840
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:36:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730040AbfIPKVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 06:21:09 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33256 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbfIPKVJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 06:21:09 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r17so6982006wme.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 03:21:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=s8jNMO99LalgIB0MNN5n8ucLI6Yy712UQYizzmnW3WM=;
-        b=lU3fehKz5Rq4X9MmWZdW0i8qsX0bulnAdihulOyBBydleMItW3OD2SAcjI594gFSyn
-         mlkqBfaGmUHStfoK/330byFtNFjOBKYek4XrcO7r7O2rHY9ayeFhesnGctcLaa0jj0Yy
-         PQWoHRAcxSWd+qu1T/odVdmLosyOzTPOQQ6CS0Pe2zJDSTHBp2oIhdv+us1lQIyC3h8n
-         tpWXIioy84lYoFWX/kfil+rO6lq3d1Hc8dbM+BSEN3y6vd4yEAb3Hx/sKS4GL8WxqrUU
-         Kdvt9vfjfAE0eO1nsh8eHNO6zqQOzK/9CuG0kmqDMpJoY5TihNO2jSPhc5DlDsCRNWhi
-         hxmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=s8jNMO99LalgIB0MNN5n8ucLI6Yy712UQYizzmnW3WM=;
-        b=HdmjRGqEmnJXBWqs2BwM0BaRsAiS4HFAzEoJ6JRoEFI+1gB4eIRdX3+vyEZJmJXmfF
-         EZmJ/r/PCGHS9wg/0umTNbJMU/oKf1yIXyynYIt1FPVZOq/g8pfowzfs/ucnkx1p3RL9
-         MeShB4oDktAFBUGnWVWV3nD37ukg8rbz+dkn7f7b5EyF6co8rhKPCM5kSQtEySVbNi7L
-         tUjG7RA34C2ZZp32ocHOk4PdPWypXXF716firS6d3WPXONdzv3H4Fd1vwHknoKSTPm38
-         pk+SExoxU2u+2v6y3hlsjH3FcPFAyRRcAMK302ap6KDAZs3QK53HpYwxL22UgaxtzcOI
-         NGvw==
-X-Gm-Message-State: APjAAAU/YTdeFfSNNxd4lFhWtlx9imhgnl+m7D2uQ6DU6Y71b2r2Va1r
-        GXJoC6rnamewYZ1VO6FyYU5x1g==
-X-Google-Smtp-Source: APXvYqzsTu55mbfMPQKaK1c0o/x2N47IuQtcU2zQuc6VY5VF1h0PhASxZpXnGQ9FqoBFF5/LJP04VQ==
-X-Received: by 2002:a7b:c8c3:: with SMTP id f3mr13024512wml.157.1568629267100;
-        Mon, 16 Sep 2019 03:21:07 -0700 (PDT)
-Received: from localhost ([195.200.173.126])
-        by smtp.gmail.com with ESMTPSA id a7sm43545756wra.43.2019.09.16.03.21.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 03:21:06 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 03:21:05 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Christoph Hellwig <hch@lst.de>
-cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial/sifive: select SERIAL_EARLYCON
-In-Reply-To: <20190910055923.28384-1-hch@lst.de>
-Message-ID: <alpine.DEB.2.21.9999.1909160320540.9917@viisi.sifive.com>
-References: <20190910055923.28384-1-hch@lst.de>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1731249AbfIPKgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 06:36:23 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:47284 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726604AbfIPKgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 06:36:23 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6520C1A0572;
+        Mon, 16 Sep 2019 12:36:21 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 22DBD1A0207;
+        Mon, 16 Sep 2019 12:36:17 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 92EDF402BF;
+        Mon, 16 Sep 2019 18:36:11 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     leoyang.li@nxp.com, shawnguo@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
+Subject: [1/3] soc: fsl: fix that flextimer cannot wakeup system in deep sleep on LS1021A
+Date:   Mon, 16 Sep 2019 18:25:54 +0800
+Message-Id: <20190916102556.16655-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Sep 2019, Christoph Hellwig wrote:
+Why:
+    - Cannot write register RCPM_IPPDEXPCR1 on LS1021A,
+      Register RCPM_IPPDEXPCR1's default value is zero.
+      So the register value that reading from register
+      RCPM_IPPDEXPCR1 is always zero.
 
-> The sifive serial driver implements earlycon support, but unless
-> another driver is built in that supports earlycon support it won't
-> be usable.  Explicitly select SERIAL_EARLYCON instead.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+How:
+    - Save register RCPM_IPPDEXPCR1's value to
+      register SCFG_SPARECR8.(uboot's psci also
+      need reading value from the register SCFG_SPARECR8
+      to set register RCPM_IPPDEXPCR1)
 
-Reviewed-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+ drivers/soc/fsl/rcpm.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-- Paul
+diff --git a/drivers/soc/fsl/rcpm.c b/drivers/soc/fsl/rcpm.c
+index 82c0ad5e663e..2bf37d38efe5 100644
+--- a/drivers/soc/fsl/rcpm.c
++++ b/drivers/soc/fsl/rcpm.c
+@@ -13,6 +13,8 @@
+ #include <linux/slab.h>
+ #include <linux/suspend.h>
+ #include <linux/kernel.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
+ 
+ #define RCPM_WAKEUP_CELL_MAX_SIZE	7
+ 
+@@ -63,6 +65,33 @@ static int rcpm_pm_prepare(struct device *dev)
+ 					tmp |= value[i + 1];
+ 					iowrite32be(tmp, rcpm->ippdexpcr_base + i * 4);
+ 				}
++				#ifdef CONFIG_SOC_LS1021A
++				/* Workaround: There is a bug of register ippdexpcr1,
++				 * cannot write it but can read it.Tt's default value is zero,
++				 * then read it will always returns zero.
++				 * So save ippdexpcr1's value to register SCFG_SPARECR8.
++				 * And the value of ippdexpcr1 will be read from SCFG_SPARECR8.
++				 */
++				{
++					struct regmap * rcpm_scfg_regmap = NULL;
++					u32 reg_offset[RCPM_WAKEUP_CELL_MAX_SIZE + 1];
++					u32 reg_value = 0;
++
++					rcpm_scfg_regmap = syscon_regmap_lookup_by_phandle(np, "fsl,rcpm-scfg");
++					if (rcpm_scfg_regmap) {
++						if (of_property_read_u32_array(dev->of_node,
++						    "fsl,rcpm-scfg", reg_offset, rcpm->wakeup_cells + 1)) {
++							rcpm_scfg_regmap = NULL;
++							continue;
++						}
++						regmap_read(rcpm_scfg_regmap, reg_offset[i + 1], &reg_value);
++						/* Write value to register SCFG_SPARECR8 */
++						regmap_write(rcpm_scfg_regmap, reg_offset[i + 1], tmp | reg_value);
++					}
++				}
++				#endif
++
++
+ 			}
+ 		}
+ 	} while (ws = wakeup_source_get_next(ws));
+-- 
+2.17.1
+
