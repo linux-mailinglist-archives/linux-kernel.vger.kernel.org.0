@@ -2,64 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D0E7B36DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 11:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D524B36DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 11:12:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731710AbfIPJMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 05:12:03 -0400
-Received: from mga05.intel.com ([192.55.52.43]:57221 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbfIPJMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 05:12:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 02:12:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,512,1559545200"; 
-   d="scan'208";a="201561380"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 16 Sep 2019 02:11:58 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 16 Sep 2019 12:11:57 +0300
-Date:   Mon, 16 Sep 2019 12:11:57 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] mtd: spi-nor: intel-spi: support chips without
- software sequencer
-Message-ID: <20190916091157.GR28281@lahna.fi.intel.com>
-References: <69f4a8e8-7889-8b00-0adc-7faaef6b42e4@fortanix.com>
- <32ab6570-c3b7-4eec-7a0b-69bc2f7f76dc@fortanix.com>
+        id S1731746AbfIPJM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 05:12:56 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34455 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727147AbfIPJMz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 05:12:55 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1i9n3x-0003F5-RD; Mon, 16 Sep 2019 09:12:49 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] memory: exynos5422: fix spelling mistake "counld" -> "could"
+Date:   Mon, 16 Sep 2019 10:12:49 +0100
+Message-Id: <20190916091249.31950-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32ab6570-c3b7-4eec-7a0b-69bc2f7f76dc@fortanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Sun, Sep 15, 2019 at 08:41:55PM +0000, Jethro Beekman wrote:
-> Could someone please review this?
-> 
-> On 2019-09-04 03:15, Jethro Beekman wrote:
-> > Some flash controllers don't have a software sequencer. Avoid
-> > configuring the register addresses for it, and double check
-> > everywhere that its not accidentally trying to be used.
+There is a spelling mistake in a dev_err message. Fix it.
 
-All the supported types in intel_spi_init() set ->sregs so I don't see
-how we could end up calling functions with that not set properly. Which
-controller we are talking about here? CNL?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/memory/samsung/exynos5422-dmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 8c2ec29a7d57..ac5f55813900 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -1078,7 +1078,7 @@ static int exynos5_performance_counters_init(struct exynos5_dmc *dmc)
+ 	ret = exynos5_counters_set_event(dmc);
+ 	if (ret < 0) {
+ 		exynos5_counters_disable_edev(dmc);
+-		dev_err(dmc->dev, "counld not set event counter\n");
++		dev_err(dmc->dev, "could not set event counter\n");
+ 		return ret;
+ 	}
+ 
+-- 
+2.20.1
+
