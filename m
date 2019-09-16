@@ -2,57 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6FA3B357A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 09:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 047CDB357D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 09:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729172AbfIPHWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 03:22:55 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:44476 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfIPHWy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 03:22:54 -0400
-Received: from localhost (unknown [85.119.46.8])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id ED851152483C6;
-        Mon, 16 Sep 2019 00:22:51 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 09:22:44 +0200 (CEST)
-Message-Id: <20190916.092244.764910996352099184.davem@davemloft.net>
-To:     alexandru.ardelean@analog.com
-Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, mcoquelin.stm32@gmail.com
-Subject: Re: [PATCH v3] net: stmmac: socfpga: re-use the `interface`
- parameter from platform data
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190916070400.18721-1-alexandru.ardelean@analog.com>
-References: <20190916070400.18721-1-alexandru.ardelean@analog.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 16 Sep 2019 00:22:54 -0700 (PDT)
+        id S1730183AbfIPHXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 03:23:30 -0400
+Received: from mga07.intel.com ([134.134.136.100]:35843 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbfIPHXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 03:23:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 00:23:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="270109760"
+Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
+  by orsmga001.jf.intel.com with ESMTP; 16 Sep 2019 00:23:27 -0700
+From:   "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+To:     broonie@kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, cheol.yong.kim@intel.com,
+        qi-ming.wu@intel.com,
+        "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Subject: [PATCH v3 0/2] spi: cadence-qspi: Add cadence-qspi support for Intel LGM SoC 
+Date:   Mon, 16 Sep 2019 15:23:23 +0800
+Message-Id: <20190916072325.32104-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Date: Mon, 16 Sep 2019 10:04:00 +0300
+patch 1: Add YAML for cadence-qspi devicetree cdocumentation.
+patch 2: cadence-qspi controller driver to support QSPI-NAND flash
+using existing spi-nand framework with legacy spi protocol.
 
-> The socfpga sub-driver defines an `interface` field in the `socfpga_dwmac`
-> struct and parses it on init.
-> 
-> The shared `stmmac_probe_config_dt()` function also parses this from the
-> device-tree and makes it available on the returned `plat_data` (which is
-> the same data available via `netdev_priv()`).
-> 
-> All that's needed now is to dig that information out, via some
-> `dev_get_drvdata()` && `netdev_priv()` calls and re-use it.
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Ramuthevar Vadivel Murugan (2):
+  dt-bindings: spi: Add support for cadence-qspi IP Intel LGM SoC
+  spi: cadence-qspi: Add QSPI support for Intel LGM SoC
 
-Applied.
+ .../devicetree/bindings/spi/cadence,qspi-nand.yaml |  84 +++
+ drivers/spi/Kconfig                                |   9 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-cadence-qspi-apb.c                 | 644 +++++++++++++++++++++
+ drivers/spi/spi-cadence-qspi-apb.h                 | 174 ++++++
+ drivers/spi/spi-cadence-qspi.c                     | 461 +++++++++++++++
+ drivers/spi/spi-cadence-qspi.h                     |  73 +++
+ 7 files changed, 1446 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/cadence,qspi-nand.yaml
+ create mode 100644 drivers/spi/spi-cadence-qspi-apb.c
+ create mode 100644 drivers/spi/spi-cadence-qspi-apb.h
+ create mode 100644 drivers/spi/spi-cadence-qspi.c
+ create mode 100644 drivers/spi/spi-cadence-qspi.h
+
+-- 
+2.11.0
+
