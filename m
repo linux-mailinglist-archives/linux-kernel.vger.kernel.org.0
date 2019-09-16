@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B48B38C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:55:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 116E5B38C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732609AbfIPKzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 06:55:02 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46673 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732563AbfIPKy6 (ORCPT
+        id S1732641AbfIPKzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 06:55:18 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33863 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732583AbfIPKzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 06:54:58 -0400
-Received: by mail-lf1-f65.google.com with SMTP id t8so27019010lfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 03:54:56 -0700 (PDT)
+        Mon, 16 Sep 2019 06:55:00 -0400
+Received: by mail-lf1-f68.google.com with SMTP id r22so15775518lfm.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 03:54:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GxawIQ/MKoaOi42wOtzkwYPMR5CVbDtqJel19jnEoB8=;
-        b=kBKPwGq0mxxasnUu8ZX4K5BUyfdUDK4at7rwgKR0KzP3udeJcRypxl6J6mXwSYptEI
-         GTvX/Y9iRzZddsykOu7Nlc8Pw/gKhZd+iad9pzVoqIiGe8rjSNE+J2mVt23GFITZ+Zy1
-         ENpShtY9dvkl0TIxofqTrkdzjwgILVAW6GT1zul5j6yyGWB56wXx34c7J7RUYINRpTdl
-         cu7B1+uzv1Nz4WWCL4UcKSvh8ShMCvcLzxr4WZSRinLS7NDUSri7YzJM1k6fvRn5p3+n
-         3Naodq56EveQzQ5cGR1+YAil3F1aalEHLr4w0rRvTpue+DuT6rfDoAYi0+8uPQ0+a3t9
-         utlQ==
+        bh=L1rbvOW+wQJfkI127ZZlgGnuYj2RYmEzxNGLFnF8DNQ=;
+        b=o+zzeQpt0mAYpx6mc2RIjYCWYyOjhTHqnHHulW/RKWFhLKUdVgrqTTPr3iHy5E374v
+         gG4cPe1wWsiBBnufog5HnjOQF5rH/3ruhSqJGzFNCB3Tx7RBfcMe458xx/vcOVqdU4ts
+         H/5JFK4Mt4r8nE+O035eNaJztJhlPuKngB+tr//LANN79yG1GKmd28Rk5SiJlpiZykoJ
+         V2B4/S10B+jsSXXcJqch1uNJyQ2ORizv9Nrw2rUMutmDleyxOSRakaDYiVvDKRcMHhej
+         Po+om1loSyc7BuoEjEhiDxDFLDwFH2Zx5+OY39T98MmR5JOB2iRCiX+TxdT2sBk1zq5o
+         cVYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GxawIQ/MKoaOi42wOtzkwYPMR5CVbDtqJel19jnEoB8=;
-        b=mY5e+QYVjROEmc1WO1qzB4+opIRdd5JVyxCrO2TMxMHqLBPEwe1mVEXRW4OiyWmWxd
-         8Xen09nM+4W4eV7iX61K5kmyBP23/pWaCvZ2t8Z4D1wbPhUx3A0kO2x/lSy5Y9xZCZpe
-         zWGmnJpbaBS5KwUIOGNgh/AaN2hnTzeLnTjg1KBz6lJbaGQ34aFFWO8EcqVpUZLtkLIh
-         Ood3rnZ6T3pqkcrabguV1ARUgt5vGRBkUJTcwdR54K1J/M0GtNa9UKHtoPAZ0wf5wzsK
-         7v+0bwpag8MvTUO2I2l7xauS/3OKD/p9kDuRUtoygaM4rV+KpJNjfaaECOxYQGRvrsyZ
-         y5UA==
-X-Gm-Message-State: APjAAAVyIPX0IXBkREfypl9/CFnoeSQ/+biRPvaKlwiKH77Xc9cHkqEP
-        KuNtgV8Vl4utbRScRvJ3rCvVqw==
-X-Google-Smtp-Source: APXvYqybDDXo4hm0aSUXkdMe63uO/eDR7vCuhBu9UXylhlta4Tq7LeJLlEG5S6mxBfSUaSqbl6/OHg==
-X-Received: by 2002:ac2:5090:: with SMTP id f16mr39613241lfm.66.1568631295949;
-        Mon, 16 Sep 2019 03:54:55 -0700 (PDT)
+        bh=L1rbvOW+wQJfkI127ZZlgGnuYj2RYmEzxNGLFnF8DNQ=;
+        b=OLzmxERlDcDsbeC7i8f8ZjSofP+e562wb8J+fiTU0xMZHO4xvIch4B1TivUYLHj4Pw
+         bQIbb6gWM8lFGF0MTHuRv52C0NId7fh9CRtEEo64uDMTp08ptzf71sRHUGzXoviU7uTj
+         cwFY0FmywPmoZLnszEfUq9lVPvLd/HMGW7fERfWVPeGwDP4aHfx0B1JrqZlYTAyzpNtc
+         03uvS2UEDOxYTrfHbmF9uRpeEAJo6EUPuKp6N0dtA7hpuIt4J+aHQweMAgUBENGb8/4C
+         ngLk6XEqqqxntiHYhGlO4Ga63tLzGDq10ey12KpGyLNT2uVdlv77A2lMGi467JEqzsi2
+         FTkQ==
+X-Gm-Message-State: APjAAAUVb5SxED9sjUurXf9wVLENk8xc+goL1fMFt+hFV+e6gerH43Al
+        UpFUauqWFIIevG6JgzP9NJ2+bw==
+X-Google-Smtp-Source: APXvYqw+IShRYsfCy6UuVP1nv9ec7UYDVaoYikIxgQwnNQBgJGl+EwStDh+PySmzILReJ/PEBeHdIQ==
+X-Received: by 2002:a05:6512:251:: with SMTP id b17mr16802393lfo.35.1568631297220;
+        Mon, 16 Sep 2019 03:54:57 -0700 (PDT)
 Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id v1sm8987737lfq.89.2019.09.16.03.54.54
+        by smtp.gmail.com with ESMTPSA id v1sm8987737lfq.89.2019.09.16.03.54.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 03:54:55 -0700 (PDT)
+        Mon, 16 Sep 2019 03:54:56 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
         davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
@@ -52,9 +52,9 @@ Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org, clang-built-linux@googlegroups.com,
         sergei.shtylyov@cogentembedded.com,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v3 bpf-next 12/14] samples: bpf: makefile: provide C/CXX/LD flags to libbpf
-Date:   Mon, 16 Sep 2019 13:54:31 +0300
-Message-Id: <20190916105433.11404-13-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v3 bpf-next 13/14] samples: bpf: makefile: add sysroot support
+Date:   Mon, 16 Sep 2019 13:54:32 +0300
+Message-Id: <20190916105433.11404-14-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org>
 References: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org>
@@ -63,53 +63,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to build libs using C/CXX/LD flags of target arch,
-provide them to libbpf make.
+Basically it only enables that was added by previous couple fixes.
+Sysroot contains correct libs installed and its headers ofc. Useful
+when working with NFC or virtual machine.
+
+Usage:
+
+clean (on demand)
+    make ARCH=arm -C samples/bpf clean
+    make ARCH=arm -C tools clean
+    make ARCH=arm clean
+
+configure and install headers:
+
+    make ARCH=arm defconfig
+    make ARCH=arm headers_install
+
+build samples/bpf:
+    make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- samples/bpf/ \
+    SYSROOT="path/to/sysroot"
 
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- samples/bpf/Makefile | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ samples/bpf/Makefile | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index 18ec22e7b444..133123d4c7d7 100644
+index 133123d4c7d7..57ddf055d6c3 100644
 --- a/samples/bpf/Makefile
 +++ b/samples/bpf/Makefile
-@@ -182,8 +182,6 @@ ifdef CROSS_COMPILE
- TPROGS_CFLAGS += -Wall
- TPROGS_CFLAGS += -O2
- TPROGS_CFLAGS += -fomit-frame-pointer
--TPROGS_CFLAGS += -Wmissing-prototypes
--TPROGS_CFLAGS += -Wstrict-prototypes
- else
- TPROGS_LDLIBS := $(KBUILD_HOSTLDLIBS)
- TPROGS_CFLAGS += $(KBUILD_HOSTCFLAGS) $(HOST_EXTRACFLAGS)
-@@ -196,6 +194,14 @@ TPROGS_CFLAGS += -I$(srctree)/tools/lib/
+@@ -194,6 +194,11 @@ TPROGS_CFLAGS += -I$(srctree)/tools/lib/
  TPROGS_CFLAGS += -I$(srctree)/tools/include
  TPROGS_CFLAGS += -I$(srctree)/tools/perf
  
-+EXTRA_CXXFLAGS := $(TPROGS_CFLAGS)
-+
-+# options not valid for C++
-+ifdef CROSS_COMPILE
-+$(TPROGS_CFLAGS) += -Wmissing-prototypes
-+$(TPROGS_CFLAGS) += -Wstrict-prototypes
++ifdef SYSROOT
++TPROGS_CFLAGS += --sysroot=${SYSROOT}
++TPROGS_LDFLAGS := -L${SYSROOT}/usr/lib
 +endif
 +
- TPROGCFLAGS_bpf_load.o += -Wno-unused-variable
+ EXTRA_CXXFLAGS := $(TPROGS_CFLAGS)
  
- TPROGS_LDLIBS			+= $(LIBBPF) -lelf
-@@ -257,7 +263,9 @@ clean:
- 
- $(LIBBPF): FORCE
- # Fix up variables inherited from Kbuild that tools/ build system won't like
--	$(MAKE) -C $(dir $@) RM='rm -rf' LDFLAGS= srctree=$(BPF_SAMPLES_PATH)/../../ O=
-+	$(MAKE) -C $(dir $@) RM='rm -rf' EXTRA_CFLAGS="$(TPROGS_CFLAGS)" \
-+		EXTRA_CXXFLAGS="$(EXTRA_CXXFLAGS)" LDFLAGS=$(TPROGS_LDFLAGS) \
-+		srctree=$(BPF_SAMPLES_PATH)/../../ O=
- 
- $(obj)/syscall_nrs.h:	$(obj)/syscall_nrs.s FORCE
- 	$(call filechk,offsets,__SYSCALL_NRS_H__)
+ # options not valid for C++
 -- 
 2.17.1
 
